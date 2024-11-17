@@ -26,11 +26,12 @@
  */
 
 #include "engines/wintermute/base/base_scriptable.h"
+#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 
-#ifndef WINTERMUTE_PLUGINS_H
-#define WINTERMUTE_PLUGINS_H
+#ifndef WINTERMUTE_EXTERNALS_H
+#define WINTERMUTE_EXTERNALS_H
 
 namespace Wintermute {
 
