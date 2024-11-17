@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-17 02:06+0000\n"
-"PO-Revision-Date: 2024-11-08 13:41+0000\n"
+"PO-Revision-Date: 2024-11-17 07:56+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1546,16 +1546,12 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM konnte keine passende Engine für dieses Spiel finden!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Hast du dieses Verzeichnis zum SAF hinzugefügt? Tippe auf den Hilfe-Button "
-"[?] für weitere Informationen"
+"Hast du ScummVM die Zugriffsberechtigungen für dieses Verzeichnis erteilt? "
+"Tippe auf den Hilfe-Button [?] für weitere Informationen"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -10963,8 +10959,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Sehr schneller Modus (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Zwischen Grafikfiltern wechseln"
 
@@ -11450,18 +11444,13 @@ msgid "Enable low latency audio mode"
 msgstr "Modus für niedrige Audio-Latenz aktivieren"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Erlaube dem Spiel, die Audiowiedergabe auf Kosten der Genauigkeit mit "
-"niedriger Lantenz durchzuführen.\t\tDieses Feature sollte nur dann aktiviert "
+"niedriger Lantenz durchzuführen. Dieses Feature sollte nur dann aktiviert "
 "werden, wenn du während des Spiels auf Wiedergabeprobleme stößt."
 
 #: engines/scumm/metaengine.cpp:756
@@ -11469,20 +11458,14 @@ msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Aktiviere den \"A Pirate I Was Meant to Be\"-Song"
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 "Aktiviere den Song \"A Pirate I Was Meant To Be\" am Anfang von Teil 3 des "
-"Spiels,\t\tder in den internationalen Veröffentlichungen entfernt wurde. "
-"Bitte beachte: Die Untertitel sind möglicherweise nicht vollständig "
-"übersetzt."
+"Spiels, der in den internationalen Veröffentlichungen entfernt wurde. Bitte "
+"beachte: Die Untertitel sind möglicherweise nicht vollständig übersetzt."
 
 #: engines/scumm/metaengine.cpp:775
 msgid "Enable demo/kiosk mode"
@@ -12924,6 +12907,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Benötigte Datei fehlt\n"
+"\n"
+"Der Start dieses Spiels benötigt die Datei SAVEGAME/U8SAVE.000\n"
+"einer originalen Installation.\n"
+"\n"
+"Bitte prüfe, ob du alle Dateien korrekt kopiert hast."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -13048,14 +13037,12 @@ msgstr ""
 "aufgetreten."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Felsen-Reise aktivieren"
+msgstr "Freigabe-System aktivieren"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Benötigt einen Freigabe-Code, um das Spiel zu starten."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
