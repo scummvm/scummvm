@@ -1028,7 +1028,9 @@ Common::Error TinselEngine::run() {
 		initGraphics(width, height, &noirFormat);
 
 #if defined(USE_TINYGL)
-		TinyGL::createContext(width, 432, noirFormat, 256, false, false);
+		// TODO: Find minimal viable drawcall memory
+		constexpr uint32 drawCallMemory = 1024 * 1024;
+		TinyGL::createContext(width, 432, noirFormat, 256, false, false, drawCallMemory);
 		TinyGL::getSurfaceRef(_screenSurface);
 
 		_spriter = new Spriter();
