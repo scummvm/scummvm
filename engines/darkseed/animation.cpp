@@ -233,7 +233,7 @@ void Animation::updateAnimation() {
 		_player->_position.y = 91;
 		advanceAnimationFrame(1);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			g_engine->gotoNextMorning(); // TODO there might be some extra logic required from original function
 			_player->_position.x = 242;
