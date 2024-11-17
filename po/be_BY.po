@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-16 23:54+0000\n"
+"POT-Creation-Date: 2024-11-17 02:06+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -125,7 +125,7 @@ msgstr "Уверх"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "Адмена"
 
@@ -3678,7 +3678,7 @@ msgstr ""
 "за ўсё, не будзе працаваць стабільна, і захаванні гульняў могуць не "
 "працаваць у будучых версіях ScummVM."
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "Усё адно запусціць"
 
@@ -12948,19 +12948,19 @@ msgstr "Уключаныя ў зборку опцыі:"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Уключаныя ў зборку опцыі:"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Гэта гульня патрабуе падтрымкі PNG, JPEG і Vorbis."
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Гэта гульня патрабуе рухавічок FoxTail, якога няма ў зборцы."
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Гэта гульня патрабуе рухавічок HeroCraft, якога няма ў зборцы."
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 #, fuzzy
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "

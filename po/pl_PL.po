@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-16 23:54+0000\n"
+"POT-Creation-Date: 2024-11-17 02:06+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -124,7 +124,7 @@ msgstr "W górę"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -3706,7 +3706,7 @@ msgstr ""
 "związku z tym może być niestabilnay, a wszelkie zapisane stany gry mogą nie "
 "działać w przyszłych wersjach ScummVM."
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "Włącz mimo to"
 
@@ -12937,19 +12937,19 @@ msgstr "Obsługa dla gry 'Hero Craft' nie jest wkompilowana"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Obsługa dla gier 3D dla silnika Wintermute nie jest wkompilowana"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Ta gra wymaga wsparcia plików PNG, JPG i Vorbis."
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Ta gra wymaga silnika FoxTail który nie jest zgodny z programem."
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Ta gra wymaga silnika HeroCraft który nie jest zgodny z programem."
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."

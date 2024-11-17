@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-16 23:54+0000\n"
+"POT-Creation-Date: 2024-11-17 02:06+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -119,7 +119,7 @@ msgstr "Joan gora"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "Utzi"
 
@@ -3708,7 +3708,7 @@ msgstr ""
 "Hori dela eta, ezegonkorra izan daiteke eta gerta daiteke gordeta izan "
 "ditzakezun partidan ez ibiltzea ScummVM-ren etorkizuneko bertsioetan."
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "Jolastu berdin-berdin"
 
@@ -12879,20 +12879,20 @@ msgstr "Ezaugarri erantsiak:"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Ezaugarri erantsiak:"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 #, fuzzy
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Jokoaren ID ez-onartua"
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
