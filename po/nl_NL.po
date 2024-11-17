@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-17 10:41+0000\n"
+"POT-Creation-Date: 2024-11-17 21:14+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -10098,11 +10098,11 @@ msgstr ""
 msgid "Game does not contain menu resources"
 msgstr "Initialisatie van bronnen mislukt"
 
-#: engines/sci/detection_tables.h:4645
+#: engines/sci/detection_tables.h:4673
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4700
+#: engines/sci/detection_tables.h:4728
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Onvolledig spel gevonden. U dient de data te kopiëren van alle CDs."
 
