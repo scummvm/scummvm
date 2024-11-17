@@ -55,7 +55,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 	gameRef->_renderer->initSaveLoad(false);
 
 	gameRef->_loadInProgress = true;
-	gameRef->_pluginEvents.clearEvents();
+	gameRef->pluginEvents().clearEvents();
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
 		//if (DID_SUCCEED(ret = cleanup())) {
@@ -67,7 +67,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 				// data initialization after load
 				SaveLoad::initAfterLoad();
 
-				gameRef->_pluginEvents.applyEvent(WME_EVENT_GAME_AFTER_LOAD, nullptr);
+				gameRef->pluginEvents().applyEvent(WME_EVENT_GAME_AFTER_LOAD, nullptr);
 				gameRef->applyEvent("AfterLoad", true);
 
 				gameRef->displayContent(true, false);
@@ -94,7 +94,7 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 
 	gameRef->LOG(0, "Saving game '%s'...", filename.c_str());
 
-	gameRef->_pluginEvents.applyEvent(WME_EVENT_GAME_BEFORE_SAVE, nullptr);
+	gameRef->pluginEvents().applyEvent(WME_EVENT_GAME_BEFORE_SAVE, nullptr);
 	gameRef->applyEvent("BeforeSave", true);
 
 	bool ret;

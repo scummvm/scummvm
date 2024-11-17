@@ -406,6 +406,7 @@ protected:
 
 public:
 	void autoSaveOnExit();
+	PluginEvent &pluginEvents() { return _pluginEvents; }
 
 #ifdef ENABLE_HEROCRAFT
 private:
