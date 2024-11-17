@@ -134,10 +134,9 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Příběhy myší rodinky I
 	GAMEl("3mice1", "a6060f3d17ea2e50a03216332e517817", 10022470,
 			"qd_game.exe", "b8b3545b022f8e0975a8a948c03ad76e", 917504, Common::CS_CZE),
-
 	// Były Sobie Myszki Trzy: Na Spotkanie Cioci Myszy
-	//GAMEl("3mice1", "???", 10022470,
-	//		"qd_game.exe", "???", 917504, Common::PL_POL),
+	GAMEl("3mice1", "6fe8feb6cf76f4642f6d6cb612b1d446", 10012908,
+			"qd_game.exe", "b8b3545b022f8e0975a8a948c03ad76e", 917504, Common::PL_POL),
 
 	// Похождения бравого солдата Швейка
 	// 2007/09/07. Lazy Games
