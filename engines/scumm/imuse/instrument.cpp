@@ -551,8 +551,8 @@ void Instrument_MacSfx::saveLoadWithSerializer(Common::Serializer &s) {
 void Instrument_MacSfx::send(MidiChannel *mc) {
 	if (!mc)
 		return;
-	mc->controlChange(0x20, 1);
+	mc->controlChange(0, 1);
 	mc->programChange(_program);
-	mc->controlChange(0x20, 0);
+	mc->controlChange(0, 0);
 }
 } // End of namespace Scumm

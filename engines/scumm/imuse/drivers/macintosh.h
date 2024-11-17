@@ -30,18 +30,18 @@ class Mixer;
 }
 
 namespace IMSMacintosh {
-class IMuseChannel_Mac_DJM;
-class DJMSoundSystem;
-struct ChannelNode;
+class IMuseChannel_Macintosh;
+class IMSMacSoundSystem;
+struct ChanControlNode;
 } // End of namespace IMSMacintosh
 
 namespace Scumm {
 
-class IMuseDriver_Mac_DJM final : public MidiDriver {
-	friend class IMSMacintosh::IMuseChannel_Mac_DJM;
+class IMuseDriver_Macintosh final : public MidiDriver {
+	friend class IMSMacintosh::IMuseChannel_Macintosh;
 public:
-	IMuseDriver_Mac_DJM(Audio::Mixer *mixer);
-	virtual ~IMuseDriver_Mac_DJM() override;
+	IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixer, byte gameID);
+	virtual ~IMuseDriver_Macintosh() override;
 
 	int open() override;
 	void close() override;
@@ -59,21 +59,20 @@ public:
 private:
 	void createChannels();
 	void releaseChannels();
-	bool loadDefaultInstruments(const char *const *tryFileNames, uint16 numTryFileNames);
 
 	bool _isOpen;
 	uint32 _quality;
 	uint32 _musicVolume;
 	uint32 _sfxVolume;
 
-	IMSMacintosh::DJMSoundSystem *_device;
-	IMSMacintosh::IMuseChannel_Mac_DJM **_imsParts;
-	IMSMacintosh::ChannelNode **_channels;
-	Common::Array<Common::SharedPtr<MacSndInstrument> > _instruments;
+	IMSMacintosh::IMSMacSoundSystem *_device;
+	IMSMacintosh::IMuseChannel_Macintosh **_imsParts;
+	IMSMacintosh::ChanControlNode **_channels;
 
-	const byte _numChannels;
-	const byte _numParts;
-	const uint32 _baseTempo;
+	byte _numChannels;
+	byte _numParts;
+	uint32 _baseTempo;
+	int8 _version;
 };
 
 } // End of namespace Scumm

@@ -162,7 +162,7 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
 		return false;
 
-	case MKTAG('R', 'O', 'L', ' '): // Unfortunately FOA Amiga also uses this resource type
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but FOA Amiga and and DOTT Demo Mac also use this resource type
 		return _soundType != MDT_AMIGA && _soundType != MDT_MACINTOSH;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
@@ -209,7 +209,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('A', 'M', 'I', ' '): // Amiga (return true, since the driver is initalized as native midi)
 		return true;
 
-	case MKTAG('R', 'O', 'L', ' '):
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track
 		return true;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
@@ -251,15 +251,15 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
 		return false;
 
-	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but also used by INDY4 Amiga
-		return _soundType != MDT_AMIGA && _soundType != MDT_MACINTOSH;
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but also used by INDY4 Amiga and DOTT Demo Mac (but the latter does support percussion).
+		return _soundType != MDT_AMIGA;
 
-	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
+	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2. The early Mac imuse system doesn't support percussion.
 		return false;
 
-	case MKTAG('G', 'M', 'D', ' '):
-	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
-		return true;
+	case MKTAG('G', 'M', 'D', ' '): // DOTT
+	case MKTAG('M', 'I', 'D', 'I'): // Sam & Max
+		return true;				// This is correct for Mac, too. The later Mac imuse system does have a percussion channel.
 
 	default:
 		break;

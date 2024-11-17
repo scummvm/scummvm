@@ -101,6 +101,8 @@ public:
 
 	void feed(int32 *dst, uint32 dstSize, byte dstFrameSize);
 
+	static uint32 calcRate(uint32 outRate, uint32 factor, uint32 dataRate);
+
 	const Audio::Mixer::SoundType _sndType;
 	const int _synth;
 	const bool _interpolate;
@@ -111,7 +113,6 @@ private:
 	void setupRateConv(uint32 drate, uint32 mod, uint32 srate, bool ppr);
 	void startSound(uint32 tmr);
 	void processSndCmdQueue();
-	uint32 calcRate(uint32 outRate, uint32 factor, uint32 dataRate);
 	uint32 calcNoteRateAdj(int diff);
 	void makeSquareWave(int8 *dstBuff, uint16 dstSize, byte timbre);
 
@@ -332,7 +333,7 @@ int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		*buffer++ = CLIP<int32>((smpL / _numGroups) >> 2, -32768, 32767);
 		if (_isStereo)
-			*buffer++ = CLIP<int32>((smpL / _numGroups) >> 2, -32768, 32767);
+			*buffer++ = CLIP<int32>((smpR / _numGroups) >> 2, -32768, 32767);
 	}
 	return numSamples;
 }
@@ -397,7 +398,7 @@ void MacLowLevelPCMDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundT
 
 MacLowLevelPCMDriver::ChanHandle MacLowLevelPCMDriver::createChannel(Audio::Mixer::SoundType sndType, SynthType synthType, byte attributes, ChanCallback *callback) {
 	Common::StackLock lock(_mutex);
-	MacSndChannel *ch = new MacSndChannel(this, sndType, synthType, synthType == kSampledSynth && !(attributes & kNoInterp), !(synthType == kSampledSynth && ((attributes & 3) == kInitChanRight)), !(synthType == kSampledSynth && (((attributes & 3) == kInitChanLeft) || ((attributes & 0x80) == kInitMono))), callback);
+	MacSndChannel *ch = new MacSndChannel(this, sndType, synthType, synthType == kSampledSynth && !(attributes & kNoInterp), !(synthType == kSampledSynth && ((attributes & 3) == kInitChanRight)), !(synthType == kSampledSynth && (((attributes & 3) == kInitChanLeft) || ((attributes & 0xC0) == kInitMono))), callback);
 	assert(ch);
 
 	_channels.push_back(ch);
@@ -533,6 +534,10 @@ uint8 MacLowLevelPCMDriver::getChannelStatus(ChanHandle handle) const {
 
 void MacLowLevelPCMDriver::clearChannelFlags(ChanHandle handle, uint8 flags) {
 	MacSndChannel *ch = findChannel(handle); if (ch) ch->clearFlags(flags);
+}
+
+uint32 MacLowLevelPCMDriver::calcRate(uint32 outRate, uint32 factor, uint32 dataRate) {
+	return MacSndChannel::calcRate(outRate, factor, dataRate);
 }
 
 void MacLowLevelPCMDriver::updateStatus(Audio::Mixer::SoundType sndType) {
@@ -891,128 +896,6 @@ void MacSndChannel::feed(int32 *dst, uint32 dstSize, byte dstFrameSize) {
 	}
 }
 
-void MacSndChannel::setupSound(const MacLowLevelPCMDriver::PCMSound *snd) {
-	assert(_synth == MacLowLevelPCMDriver::kSampledSynth);
-
-	_len = snd->len;
-	const byte *in = snd->data.get();
-	assert(in);
-	int8 *buff = new int8[_len];
-	for (uint32 i = 0; i < _len; ++i)
-		buff[i] = *in++ ^ 0x80;
-	_res = Common::SharedPtr<const int8>(buff, Common::ArrayDeleter<const int8>());
-	_frameSize = snd->stereo ? 2 : 1;
-	_loopSt = 0;
-	_data = nullptr;
-
-	if (snd->loopend - snd->loopst < 2 || snd->loopend < snd->loopst) {
-		_loopSt2 = 0;
-		_loopEnd = 0;
-	} else {
-		_loopSt2 = snd->loopst - (snd->loopst % _frameSize);
-		_loopEnd = snd->loopend - (snd->loopend % _frameSize);
-		assert(_loopEnd <= _len);
-	}
-
-	_baseFreq = snd->baseFreq;
-	_srate = snd->rate;
-}
-
-void MacSndChannel::setupRateConv(uint32 drate, uint32 mod, uint32 srate, bool ppr) {
-	uint32 rmul = calcRate(drate, mod, srate);
-
-	if (ppr) {
-		if (rmul >= 0x7FFD && rmul <= 0x8003)
-			rmul = 0x8000;
-		else if (ABS((int16)(rmul & 0xffff)) <= 7)
-			rmul = (rmul + 7) & ~0xffff;
-
-		if (rmul > (uint32)-64)
-			rmul = (uint32)-64;
-	}
-
-	assert(rmul);
-	_rmL = rmul & 0xffff;
-	_rmH = rmul >> 16;
-}
-
-void MacSndChannel::startSound(uint32 duration) {
-	_duration = duration;
-	_tmrInc = duration ? _tmrRate : 0;
-	_tmrPos = 0;
-
-	_data = _res.get();
-	_lastSmp[0] = _data[0];
-	if (_len >= _frameSize)
-		_lastSmp[1] = _data[1];
-	_rcPos = 0;
-	_loopSt = 0;
-	_loopLen = _loopEnd ? _loopEnd : _len;
-	_smpWtAcc = 0;
-	_phase = 0;
-}
-
-void MacSndChannel::processSndCmdQueue() {
-	if ((_data && _tmrInc == 0) || _duration)
-		return;
-
-	if (_sndCmdQueue.empty()) {
-		setFlags(MacLowLevelPCMDriver::kStatusDone);
-		clearFlags(MacLowLevelPCMDriver::kStatusPlaying);
-		return;
-	}
-
-	_drv->clearFlags(MacLowLevelPCMDriver::kStatusDone);
-	clearFlags(MacLowLevelPCMDriver::kStatusDone);
-	setFlags(MacLowLevelPCMDriver::kStatusPlaying);
-
-	SoundCommand &c = _sndCmdQueue.front();
-	MacLowLevelPCMDriver::PCMSound *p = (c.ptr && c.arg2 == 1) ? reinterpret_cast<MacLowLevelPCMDriver::PCMSound*>(c.ptr) : nullptr;
-	const byte *b = (c.ptr && c.arg2 == 2) ? reinterpret_cast<byte*>(c.ptr) : nullptr;
-
-	switch (c.cmd) {
-	case 3:
-		quiet();
-		break;
-	case 4:
-		flush();
-		break;
-	case 10:
-		wait(c.arg1);
-		break;
-	case 13:
-		callback(c.arg1, c.ptr);
-		break;
-	case 40:
-		playNote(c.arg1, c.arg2);
-		break;
-	case 44:
-		setTimbre(c.arg1);
-		break;
-	case 60:
-		loadWaveTable(b, c.arg1);
-		break;
-	case 80:
-		loadInstrument(p);
-		break;
-	case 81:
-		playSamples(p);
-		break;
-	default:
-		break;
-	}
-
-	if (p) {
-		p->data.reset();
-		delete p;
-	} else if (b) {
-		delete[] b;
-	}
-
-	if (!_sndCmdQueue.empty())
-		_sndCmdQueue.erase(_sndCmdQueue.begin());
-}
-
 uint32 MacSndChannel::calcRate(uint32 outRate, uint32 factor, uint32 dataRate) {
 	uint32 result = outRate;
 	uint64 t = 0;
@@ -1166,6 +1049,128 @@ uint32 MacSndChannel::calcRate(uint32 outRate, uint32 factor, uint32 dataRate) {
 	return result;
 }
 
+void MacSndChannel::setupSound(const MacLowLevelPCMDriver::PCMSound *snd) {
+	assert(_synth == MacLowLevelPCMDriver::kSampledSynth);
+
+	_len = snd->len;
+	const byte *in = snd->data.get();
+	assert(in);
+	int8 *buff = new int8[_len];
+	for (uint32 i = 0; i < _len; ++i)
+		buff[i] = *in++ ^ 0x80;
+	_res = Common::SharedPtr<const int8>(buff, Common::ArrayDeleter<const int8>());
+	_frameSize = snd->stereo ? 2 : 1;
+	_loopSt = 0;
+	_data = nullptr;
+
+	if (snd->loopend - snd->loopst < 2 || snd->loopend < snd->loopst) {
+		_loopSt2 = 0;
+		_loopEnd = 0;
+	} else {
+		_loopSt2 = snd->loopst - (snd->loopst % _frameSize);
+		_loopEnd = snd->loopend - (snd->loopend % _frameSize);
+		assert(_loopEnd <= _len);
+	}
+
+	_baseFreq = snd->baseFreq;
+	_srate = snd->rate;
+}
+
+void MacSndChannel::setupRateConv(uint32 drate, uint32 mod, uint32 srate, bool ppr) {
+	uint32 rmul = calcRate(drate, mod, srate);
+
+	if (ppr) {
+		if (rmul >= 0x7FFD && rmul <= 0x8003)
+			rmul = 0x8000;
+		else if (ABS((int16)(rmul & 0xffff)) <= 7)
+			rmul = (rmul + 7) & ~0xffff;
+
+		if (rmul > (uint32)-64)
+			rmul = (uint32)-64;
+	}
+
+	assert(rmul);
+	_rmL = rmul & 0xffff;
+	_rmH = rmul >> 16;
+}
+
+void MacSndChannel::startSound(uint32 duration) {
+	_duration = duration;
+	_tmrInc = duration ? _tmrRate : 0;
+	_tmrPos = 0;
+
+	_data = _res.get();
+	_lastSmp[0] = _data[0];
+	if (_len >= _frameSize)
+		_lastSmp[1] = _data[1];
+	_rcPos = 0;
+	_loopSt = 0;
+	_loopLen = _loopEnd ? _loopEnd : _len;
+	_smpWtAcc = 0;
+	_phase = 0;
+}
+
+void MacSndChannel::processSndCmdQueue() {
+	if ((_data && _tmrInc == 0) || _duration)
+		return;
+
+	if (_sndCmdQueue.empty()) {
+		setFlags(MacLowLevelPCMDriver::kStatusDone);
+		clearFlags(MacLowLevelPCMDriver::kStatusPlaying);
+		return;
+	}
+
+	_drv->clearFlags(MacLowLevelPCMDriver::kStatusDone);
+	clearFlags(MacLowLevelPCMDriver::kStatusDone);
+	setFlags(MacLowLevelPCMDriver::kStatusPlaying);
+
+	SoundCommand &c = _sndCmdQueue.front();
+	MacLowLevelPCMDriver::PCMSound *p = (c.ptr && c.arg2 == 1) ? reinterpret_cast<MacLowLevelPCMDriver::PCMSound*>(c.ptr) : nullptr;
+	const byte *b = (c.ptr && c.arg2 == 2) ? reinterpret_cast<byte*>(c.ptr) : nullptr;
+
+	switch (c.cmd) {
+	case 3:
+		quiet();
+		break;
+	case 4:
+		flush();
+		break;
+	case 10:
+		wait(c.arg1);
+		break;
+	case 13:
+		callback(c.arg1, c.ptr);
+		break;
+	case 40:
+		playNote(c.arg1, c.arg2);
+		break;
+	case 44:
+		setTimbre(c.arg1);
+		break;
+	case 60:
+		loadWaveTable(b, c.arg1);
+		break;
+	case 80:
+		loadInstrument(p);
+		break;
+	case 81:
+		playSamples(p);
+		break;
+	default:
+		break;
+	}
+
+	if (p) {
+		p->data.reset();
+		delete p;
+	} else if (b) {
+		delete[] b;
+	}
+
+	if (!_sndCmdQueue.empty())
+		_sndCmdQueue.erase(_sndCmdQueue.begin());
+}
+
 uint32 MacSndChannel::calcNoteRateAdj(int diff) {
 	static const uint32 adjFrac[23] = {
 		0x21e71f26, 0x23eb3588, 0x260dfc14, 0x285145f3, 0x2ab70212, 0x2d413ccd,
@@ -1247,7 +1252,7 @@ void DoubleBufferIntern::update() {
 	}
 }
 
-MacSndInstrument::MacSndInstrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name) : _id(id), _name(Common::move(name)) {
+MacSndResource::MacSndResource(uint32 id, Common::SeekableReadStream *&in, Common::String &&name) : _id(id), _name(Common::move(name)) {
 	in->seek(2);
 	uint16 numTypes = in->readUint16BE();
 	in->seek(numTypes * 6 + 4);
@@ -1263,6 +1268,24 @@ MacSndInstrument::MacSndInstrument(uint32 id, Common::SeekableReadStream *&in, C
 	byte *buff = new byte[_snd.len];
 	if (in->read(buff, _snd.len) != _snd.len)
 		error("%s(): Data error", __FUNCTION__);
+	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
+}
+
+MacSndResource::MacSndResource(uint32 id, const byte *in) : _id(id) {
+	in += 4;
+	_snd.len = READ_BE_UINT32(in);
+	in += 4;
+	_snd.rate = READ_BE_UINT32(in);
+	in += 4;
+	_snd.loopst = READ_BE_UINT32(in);
+	in += 4;
+	_snd.loopend = READ_BE_UINT32(in);
+	in += 4;
+	_snd.enc = *in++;
+	_snd.baseFreq = *in++;
+
+	byte *buff = new byte[_snd.len];
+	memcpy(buff, in, _snd.len);
 	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
 }
 

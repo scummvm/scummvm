@@ -589,6 +589,7 @@ protected:
 	// the sfx resources aren't even played through the imuse engine. The imuse engine can then just assume that everything it plays is music. For
 	// MI2/INDY4 Macintosh it won't work like this, because both music and sound effects have the same resource type and are played through the imuse
 	// engine. For these targets it works better to pass the volume values on to the driver where other methods of distinction may be available.
+	// This isn't needed for SCUMM6, since these games don't have MIDI sound effects.
 	const bool _lowLevelVolumeControl;
 
 public:

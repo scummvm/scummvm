@@ -160,6 +160,8 @@ public:
 	uint8 getChannelStatus(ChanHandle handle) const;
 	void clearChannelFlags(ChanHandle handle, uint8 flags);
 
+	static uint32 calcRate(uint32 outRate, uint32 factor, uint32 dataRate);
+
 private:
 	void updateStatus(Audio::Mixer::SoundType sndType);	
 	MacSndChannel *findAndCheckChannel(ChanHandle h, const char *caller, byte reqSynthType) const;
@@ -236,10 +238,13 @@ private:
 	const bool _isStereo;
 };
 
-struct MacSndInstrument {
+struct MacSndResource {
 public:
-	MacSndInstrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name);
-	~MacSndInstrument() {}
+	// Construct from Mac resource stream
+	MacSndResource(uint32 id, Common::SeekableReadStream *&in, Common::String &&name);
+	// Construct from Mac sound data buffer
+	MacSndResource(uint32 id, const byte *in);
+	~MacSndResource() {}
 	const MacLowLevelPCMDriver::PCMSound *data() const { return &_snd; }
 	uint32 id() const { return _id; }
 	const char* name() { return _name.c_str(); }

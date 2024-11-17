@@ -62,7 +62,7 @@ public:
 protected:
 	bool loadInstruments(const char *const *tryFileNames, uint16 numTryFileNames, uint16 numInstruments);
 
-	Common::Array<Common::SharedPtr<MacSndInstrument> > _instruments;
+	Common::Array<Common::SharedPtr<MacSndResource> > _instruments;
 
 	byte _sndRes6;
 	byte _isMusic;
@@ -75,8 +75,8 @@ protected:
 	const byte *_chanSndData[5];
 	uint32 _chanNumEvents[5];
 	uint32 _chanCurEvent[5];
-	const Common::SharedPtr<MacSndInstrument> *_chanInstr[5];
-	const Common::SharedPtr<MacSndInstrument> *_chanInstr2[5];
+	const Common::SharedPtr<MacSndResource> *_chanInstr[5];
+	const Common::SharedPtr<MacSndResource> *_chanInstr2[5];
 
 	const bool _useInstrTag;
 };
@@ -99,7 +99,7 @@ public:
 	bool restartSoundAfterLoad() const override { return isMusic(); }
 	bool ignoreMachineRating() const override { return false; }
 private:
-	const Common::SharedPtr<MacSndInstrument> *fetchInstrument(uint16 id) const;
+	const Common::SharedPtr<MacSndResource> *fetchInstrument(uint16 id) const;
 };
 
 class MonkeyMacSndLoader final : public MacSndLoader {
@@ -120,7 +120,7 @@ public:
 	bool restartSoundAfterLoad() const override { return _isMusic && _loop; }
 	bool ignoreMachineRating() const override { return true; }
 private:
-	const Common::SharedPtr<MacSndInstrument> *fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset);
+	const Common::SharedPtr<MacSndResource> *fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset);
 	bool _blockSfx;
 	byte _transpose;
 	const byte _numInstrumentsMax;
@@ -181,7 +181,7 @@ bool MacSndLoader::loadInstruments(const char *const *tryFileNames, uint16 numTr
 		Common::String nm(resMan.getResName(MKTAG('s', 'n', 'd', ' '), ids[i]));
 		memcpy(&tag, nm.c_str(), MIN<uint>(nm.size(), sizeof(tag)));
 		uint32 id = _useInstrTag ? FROM_BE_32(tag) : ids[i];
-		_instruments.push_back(Common::SharedPtr<MacSndInstrument>(new MacSndInstrument(id, str, Common::move(nm))));
+		_instruments.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(id, str, Common::move(nm))));
 		delete str;
 	}
 
@@ -245,9 +245,9 @@ bool LoomMacSndLoader::parseNextEvent(uint16 chan, uint16 &duration, uint8 &note
 	return true;
 }
 
-const Common::SharedPtr<MacSndInstrument> *LoomMacSndLoader::fetchInstrument(uint16 id) const {
-	Common::Array<Common::SharedPtr<MacSndInstrument> >::const_iterator instr = _instruments.end();
-	for (Common::Array<Common::SharedPtr<MacSndInstrument> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
+const Common::SharedPtr<MacSndResource> *LoomMacSndLoader::fetchInstrument(uint16 id) const {
+	Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator instr = _instruments.end();
+	for (Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
 		if ((*i)->id() == id)
 			return i;
 		else if ((*i)->id() == 0x2D1C)
@@ -356,10 +356,10 @@ bool MonkeyMacSndLoader::parseNextEvent(uint16 chan, uint16 &duration, uint8 &no
 	return true;
 }
 
-const Common::SharedPtr<MacSndInstrument> *MonkeyMacSndLoader::fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset) {
-	Common::Array<Common::SharedPtr<MacSndInstrument> >::const_iterator instr = _instruments.end();
+const Common::SharedPtr<MacSndResource> *MonkeyMacSndLoader::fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset) {
+	Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator instr = _instruments.end();
 	if (tagOrOffset & ~0x7fffff) {
-		for (Common::Array<Common::SharedPtr<MacSndInstrument> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
+		for (Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
 			if ((*i)->id() == tagOrOffset)
 				return i;
 			else if ((*i)->id() == MKTAG('s', 'i', 'l', 'e'))
@@ -369,7 +369,7 @@ const Common::SharedPtr<MacSndInstrument> *MonkeyMacSndLoader::fetchInstrument(c
 		Common::SeekableReadStream *str = new Common::MemoryReadStream(&data[tagOrOffset + 8], READ_BE_UINT32(data + tagOrOffset + 4), DisposeAfterUse::NO);
 		if (_instruments.size() == _numInstrumentsMax)
 			_instruments.pop_back();
-		_instruments.push_back(Common::SharedPtr<MacSndInstrument>(new MacSndInstrument(READ_BE_UINT32(&data[tagOrOffset]), str, Common::String())));
+		_instruments.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(READ_BE_UINT32(&data[tagOrOffset]), str, Common::String())));
 		delete str;
 		instr = _instruments.end() - 1;
 	}

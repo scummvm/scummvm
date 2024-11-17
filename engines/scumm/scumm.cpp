@@ -2339,8 +2339,7 @@ void ScummEngine::setupMusic(int midi) {
 			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_MACINTOSH) {
-			//nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
-			nativeMidiDriver = new IMuseDriver_Mac_DJM(_mixer);
+			nativeMidiDriver = new IMuseDriver_Macintosh(this, _mixer, _game.id);
 			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
