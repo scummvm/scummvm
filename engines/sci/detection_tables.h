@@ -2564,6 +2564,34 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
 
+	// King's Quest 7 - Japanese DOS (from m-kiewitz) - bug #15497
+	// VERSION file reports "2.00"
+	// This version features only Japanese. There is no option to change the language.
+	// Chapter intro titles are still in English.
+	{"kq7", "", {
+		{"resource.000", 0, "5e2f38ebf13188d5724e02254bfe0e4d", 90064291},
+		{"resource.map", 0, "ba6a4523df6f5bd321bcfb8ae55a66c1", 19177},
+		{"resource.aud", 0, "78ba3c42efc9451baa5af1da8e289d4f", 220633894},
+		{"avi/91.rbt", 0, "cc68d78315156f2d6a71b2b00eca90ea", 24701699},
+		{"avi/911.rbt", 0, "10250547c9f0767df37f726f335c1415", 8781594},
+		{"avi/912.rbt", 0, "c4cbebcaa58f6ab364a40896502271e8", 1373456},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_KQ7 },
+
+	// King's Quest 7 - Japanese Windows (from m-kiewitz) - bug #15497
+	// VERSION file reports "2.00"
+	// This version features only Japanese. There is no option to change the language.
+	// Chapter intro titles are still in English.
+	{"kq7", "", {
+		{"resource.000", 0, "5e2f38ebf13188d5724e02254bfe0e4d", 90064291},
+		{"resource.map", 0, "ba6a4523df6f5bd321bcfb8ae55a66c1", 19177},
+		{"resource.aud", 0, "78ba3c42efc9451baa5af1da8e289d4f", 220633894},
+		{"avi/e208x11.avi", 0, "11b0f6994a6cea61ce4efe047c84553d", 2014412},
+		{"avi/int08x11.avi", 0, "1e3e1448901ebbaa88071740f1a1e31e", 22547356},
+		{"avi/e108x11.avi", 0, "8daba53eeb77756c434bf52237e39b3b", 9991834},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
+
 	// King's Quest 7 - Russian Windows (SoftClub official translation)
 	// VERSION file reports "2.1b", provided by trcpman in Trac #11302.
 	// This version is Windows-only. It does not include a DOS interpreter and
