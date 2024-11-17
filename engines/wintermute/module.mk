@@ -106,6 +106,7 @@ MODULE_OBJS := \
 	ext/wme_3fstatistics.o \
 	ext/wme_commandlinehelper.o \
 	ext/wme_galaxy.o \
+	ext/wme_shadowmanager.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \
 	ext/wme_vlink.o \

@@ -85,6 +85,7 @@
 #include "engines/wintermute/ext/wme_steam.h"
 #include "engines/wintermute/ext/wme_galaxy.h"
 #include "engines/wintermute/ext/wme_vlink.h"
+#include "engines/wintermute/ext/wme_shadowmanager.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
 #include "engines/wintermute/ui/ui_entity.h"
@@ -176,6 +177,7 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 	REGISTER_CLASS(SXCommandLineHelper, false)
 	REGISTER_CLASS(SXVlink, false)
+	REGISTER_CLASS(SXShadowManager, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)
