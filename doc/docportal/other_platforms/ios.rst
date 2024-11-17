@@ -102,7 +102,7 @@ For external keyboards missing the special keys, e.g. the Apple Magic Keyboard f
         Key combination, Action
         CMD + 1, F1
         CMD + 2, F2
-        "..." , "..."
+        "...", "..."
         CMD + 0, F10
         CMD + SHIFT 1, F11
         CMD + SHIFT 2, F12
