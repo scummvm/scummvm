@@ -503,6 +503,8 @@ bool BaseGame::initialize1() {
 		}
 		registerObject(_fader);
 
+		_pluginEvents.clearEvents();
+
 		loaded = true;
 	}
 	if (loaded == true) {

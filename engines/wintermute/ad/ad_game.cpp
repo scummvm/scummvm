@@ -271,6 +271,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 		_scene = new AdScene(_gameRef);
 		registerObject(_scene);
 	} else {
+		_gameRef->_pluginEvents.applyEvent(WME_EVENT_SCENE_SHUTDOWN, _scene);
 		_scene->applyEvent("SceneShutdown", true);
 
 		setPrevSceneName(_scene->getName());
@@ -310,6 +311,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 			}
 
 			_scene->loadState();
+			_gameRef->_pluginEvents.applyEvent(WME_EVENT_SCENE_INIT, _scene);
 		}
 		if (fadeIn) {
 			_gameRef->_transMgr->start(TRANSITION_FADE_IN);
@@ -2092,12 +2094,18 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 			_scEngine->tick();
 		}
 
+		// process plugin events
+		if (doUpdate)
+			_gameRef->_pluginEvents.applyEvent(WME_EVENT_UPDATE, nullptr);
+
 		Point32 p;
 		getMousePos(&p);
 
 		_scene->update();
-		_scene->display();
 
+		_gameRef->_pluginEvents.applyEvent(WME_EVENT_SCENE_DRAW_BEGIN, _scene);
+		_scene->display();
+		_gameRef->_pluginEvents.applyEvent(WME_EVENT_SCENE_DRAW_END, _scene);
 
 		// display in-game windows
 		displayWindows(true);
