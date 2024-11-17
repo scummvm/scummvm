@@ -59,6 +59,12 @@ struct GlyphData {
 	void ReadFromMemory(Common::MemoryReadStream* stream);
 };
 
+struct Sprite {
+	uint16 Width;
+	uint16 Height;
+	Common::Array<uint8> Data;
+};
+
 struct AnimFrame {
 	byte *Data;
 	uint16 Width;
@@ -68,6 +74,7 @@ struct AnimFrame {
 	void ReadFromStream(Common::MemoryReadStream *stream);
 	bool PixelHit(const Common::Point &point) const;
 	Common::Point GetBottomMiddleOffset() const;
+	Sprite AsSprite();
 };
 
 struct BackgroundAnimation {
@@ -88,11 +95,7 @@ struct BackgroundAnimationBlob {
 	static uint16 Func1480(Common::Array<uint8>& blob, bool bpp6, uint16 bpp8);
 };
 
-struct Sprite {
-	uint16 Width;
-	uint16 Height;
-	Common::Array<uint8> Data;
-};
+
 
 enum DebugFlag {
 	DEBUG_RLE = 1 << 10,

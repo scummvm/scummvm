@@ -537,6 +537,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// _backgroundSurface = g_engine->_map;
 		_backgroundSurface = g_engine->_pathfindingMap;
 		redraw();
+	} else if (msg.ascii == (uint16)'x') {
+		CalculateCharacterScaling(0x79);
 	}
 	else if (msg.ascii == (uint16)'b') {
 		_backgroundSurface = g_engine->_bgImageShip;
@@ -857,7 +859,7 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, co
 	DrawSpriteClipped(x, y, clippingRect, sprite.Width, sprite.Height, sprite.Data.data(), s);
 }
 
-void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s) {
+void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s) {
 	int xScaling = 0;
 	int yScaling = 0;
 	
@@ -904,6 +906,10 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 
 }
 
+void View1::DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
+	DrawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite.Data.data(), s);
+}
+
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	int i = -1;
 	for (auto current : characters) {
@@ -923,8 +929,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		uint8 depth = current->GetPosition().y;
 		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
 		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
-
-		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
+		uint16 scalingFactor = CalculateCharacterScaling(depth);
+		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
+		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
@@ -953,24 +960,26 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 
 void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// fn0037_A65D proc
+	constexpr uint16 width = 6;
+
 	// TODO: Not sure what cmp	word ptr [2026h],1h does
 	// Draw the background
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 	// TODO: Continue here
 
 	// Left side
-	DrawBorderSide(pos, Common::Point(6, size.y), s);
+	DrawBorderSide(pos, Common::Point(width, size.y), s);
 
 	// Right side
 	// TODO: Check if we have the right offset on the right, I missed the part about adding
 	// the width originally
-	DrawBorderSide(pos + Common::Point(size.x - 6, 0), Common::Point(6, size.y), s);
+	DrawBorderSide(pos + Common::Point(size.x - width, 0), Common::Point(width, size.y), s);
 
 	// Top side
-	DrawBorderSide(pos, Common::Point(size.x, 6), s);
+	DrawBorderSide(pos, Common::Point(size.x, width), s);
 
 	// Bottom side
-	DrawBorderSide(pos + Common::Point(0, size.y - 6), Common::Point(size.x, 6), s);
+	DrawBorderSide(pos + Common::Point(0, size.y - width), Common::Point(size.x, width), s);
 
 	// Add the function for filling a side of the border
 	// Algorithm
@@ -986,10 +995,10 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 
 	// Bottom highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y + 1), size.x - 1, 0xFF, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0xFF, s);
 
 	// Right side
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1, 1), size.y - 1, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0xFF, s);
 }
 
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
@@ -1080,15 +1089,21 @@ void View1::TriggerDialogueChoice(uint8 index) {
 }
 
 uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
-	// l0037_93F4:
+	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
+
+	// Example is 6E - TODO: Difference could become negative
 	uint32 eax = g_engine->word51FD;
 	uint32 edx = 0;
 	uint32 ecx = eax;
 	uint32 ebx = edx;
 	eax = characterY;
+	// TODO: Check this case when it happens
+	assert(eax >= ecx);
 	eax -= ecx;
 	ebx = eax;
 	eax = g_engine->word51FF;
+	// TODO: Check this case when it happens
+	assert(eax == 0);
 	edx = 0;
 	eax *= ebx;
 	ebx = 0x64;
