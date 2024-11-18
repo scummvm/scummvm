@@ -3104,7 +3104,7 @@ void Room204::handleRipBangsBong() {
 	}
 }
 
-void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
+void Room204::gameSetScale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
 	_G(currentSceneDef).front_y = frontY;
 	_G(currentSceneDef).back_y = backY;
 	_G(currentSceneDef).front_scale = frontS;
