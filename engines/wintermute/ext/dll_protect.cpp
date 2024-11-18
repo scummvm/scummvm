@@ -75,7 +75,7 @@ bool EmulateProtectExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *this
 		bool flag3 = false;
 		bool flag4 = false;
 		bool flag5 = false;
-		*(uint32 *)(buffer) = (flag1 ? (1 < 0) : 0) | (flag2 ? (1 < 1) : 0) | (flag3 ? (1 < 2) : 0) | (flag4 ? (1 < 3) : 0) | (flag5 ? (1 < 4) : 0);
+		*(uint32 *)(buffer) = (flag1 ? (1 << 0) : 0) | (flag2 ? (1 << 1) : 0) | (flag3 ? (1 << 2) : 0) | (flag4 ? (1 << 3) : 0) | (flag5 ? (1 << 4) : 0);
 
 		stack->pushInt(0);
 		return STATUS_OK;
