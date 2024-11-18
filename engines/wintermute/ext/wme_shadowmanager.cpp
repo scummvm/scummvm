@@ -41,11 +41,10 @@ BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack) {
 SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
 	
-	PluginEventEntry event = {
-		._type = WME_EVENT_UPDATE,
-		._callback = callback,
-		._plugin = this
-	};
+	PluginEventEntry event;
+	event._type = WME_EVENT_UPDATE;
+	event._callback = callback;
+	event._plugin = this;
 	_gameRef->pluginEvents().subscribeEvent(event);
 	
 	_defaultLightPos = DXVector3(1.0f, 200.0f, 1.0f);
@@ -57,11 +56,10 @@ SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScripta
 
 //////////////////////////////////////////////////////////////////////////
 SXShadowManager::~SXShadowManager() {
-	PluginEventEntry event = {
-		._type = WME_EVENT_UPDATE,
-		._callback = callback,
-		._plugin = this
-	};
+	PluginEventEntry event;
+	event._type = WME_EVENT_UPDATE;
+	event._callback = callback;
+	event._plugin = this;
 	_gameRef->pluginEvents().unsubscribeEvent(event);
 }
 
@@ -338,11 +336,10 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	if (!persistMgr->getIsSaving()) {
-		PluginEventEntry event = {
-			._type = WME_EVENT_UPDATE,
-			._callback = callback,
-			._plugin = this
-		};
+		PluginEventEntry event;
+		event._type = WME_EVENT_UPDATE;
+		event._callback = callback;
+		event._plugin = this;
 		_gameRef->pluginEvents().subscribeEvent(event);
 		_actors.clear();
 		// Actor list is not get restored, plugin is not design work this way.
