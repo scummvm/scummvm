@@ -705,8 +705,8 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
-	// Skipping the copy protection screen in Gobliins 2
-	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746) &&
+	// Skipping the copy protection screen in Gobliins 2 (offset 1722 - Amiga, offset 1746 - PC)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1722 || offset == 1746) &&
 	    _vm->isCurrentTot("intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
