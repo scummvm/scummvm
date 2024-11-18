@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "atari-cursor.h"
+#include "atari-pendingscreenchanges.h"
 #include "atari-screen.h"
 
 #define MAX_HZ_SHAKE 16 // Falcon only
@@ -38,6 +39,7 @@
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
 	friend class Cursor;
+	friend class PendingScreenChanges;
 	friend class Screen;
 
 public:
@@ -178,12 +180,14 @@ private:
 
 	struct GraphicsState {
 		GraphicsState()
-			: mode(GraphicsMode::Unknown)
+			: inTransaction(false)
+			, mode(GraphicsMode::Unknown)
 			, width(0)
 			, height(0)
 			, format(Graphics::PixelFormat()) {
 		}
 
+		bool inTransaction;
 		GraphicsMode mode;
 		int width;
 		int height;
@@ -195,17 +199,7 @@ private:
 	// feature flags
 	bool _aspectRatioCorrection = false;
 
-	enum PendingScreenChange {
-		kPendingNone                  = 0,
-		kPendingVideoMode             = 1<<0,
-		kPendingScreenAddress         = 1<<1,
-		kPendingAspectRatioCorrection = 1<<2,
-		kPendingPalette               = 1<<3,
-		kPendingShakeScreen           = 1<<4,
-		kPendingTransaction           = kPendingVideoMode | kPendingScreenAddress | kPendingAspectRatioCorrection,
-		kPendingAll                   = kPendingTransaction | kPendingPalette | kPendingShakeScreen
-	};
-	int _pendingScreenChange = kPendingNone;
+	PendingScreenChanges _pendingScreenChanges;
 
 	enum {
 		FRONT_BUFFER,
