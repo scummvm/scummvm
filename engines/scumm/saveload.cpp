@@ -1344,7 +1344,6 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 
 void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	int i;
-	int var120Backup;
 	int var98Backup;
 	uint8 md5Backup[16];
 
@@ -1930,7 +1929,14 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	//
 	// Save/load script variables
 	//
-	var120Backup = _scummVars[120];
+
+	// From disasm...
+	int32 dottVarsBackup[5];
+	if (_game.id == GID_TENTACLE) {
+		for (int j = 0; j < 5; j++)
+			dottVarsBackup[j] = _scummVars[120 + j];
+	}
+
 	var98Backup = _scummVars[98];
 
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
@@ -1961,8 +1967,14 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
-		_scummVars[120] = var120Backup;
+	// This is again from disasm...
+	if (_game.id == GID_TENTACLE) {	
+		for (int j = 0; j < 5; j++)
+			_scummVars[120 + j] = dottVarsBackup[j];
+
+		_scummVars[70] = 1;
+	}
+
 	if (_game.id == GID_INDY4)
 		_scummVars[98] = var98Backup;
 
