@@ -1538,6 +1538,15 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+
+	// Fall back to the version from our detection tables, if the VERSION
+	// file does not exist - bug #14857
+	if (!stream && !scumm_stricmp(file, "version") && !offset && size == 5) {
+		Common::strlcpy((char *)buf, _vm->getGameVersion(), 5);
+		WRITE_VAR(1, 0);
+		return;
+	}
+
 	if (!stream)
 		return;
 
