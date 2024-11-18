@@ -231,7 +231,7 @@ void Room204::parser() {
 	bool moveAndLookFl = false;
 
 	if (player_said("conv204a")) {
-		subParser_1F42C();
+		conv204a();
 		goto done;
 	}
 
@@ -607,7 +607,7 @@ void Room204::parser() {
 		}
 
 		if ((player_said("MALLET", "GONG") || (gearFl && player_said("MALLET"))) && inv_player_has("MALLET")) {
-			subParser_1F71D();
+			handleRipBangsBong();
 			goto done;
 		}
 	} // if (!player_been_here(205)
@@ -1409,7 +1409,7 @@ void Room204::daemon() {
 		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, _G(player_info).depth, _field68, triggerMachineByHashCallback, "Rip Absolute Machine State");
 		switch (_field10) {
 		case 8:
-			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
 			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			_field14 = 8;
 			break;
@@ -1446,7 +1446,7 @@ void Room204::daemon() {
 		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, _G(player_info).depth, 0, triggerMachineByHashCallback, "Rip Delta Machine State");
 
 		if (_field10 == 8) {
-			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
 			_field14 = 8;
 		}
 
@@ -1515,13 +1515,13 @@ void Room204::daemon() {
 		case 8:
 			switch (_field10) {
 			case 8:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
 				_field14 = 8;
 
 				break;
 
 			case 9:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 16, 571, _field78_series, 16, 16, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 16, 571, _ripBangsBongSeries, 16, 16, 0);
 				_field14 = 9;
 
 				break;
@@ -1534,11 +1534,11 @@ void Room204::daemon() {
 		case 9:
 			switch (_field10) {
 			case 9:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 16, 16, 571, _field78_series, 16, 16, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 16, 16, 571, _ripBangsBongSeries, 16, 16, 0);
 				break;
 
 			case 10:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 17, 34, 571, _field78_series, 34, 34, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 17, 34, 571, _ripBangsBongSeries, 34, 34, 0);
 				_field14 = 8;
 				_field10 = 8;
 
@@ -2996,16 +2996,121 @@ void Room204::deleteMeiCheiHotspot() {
 	}
 }
 
-void Room204::subParser_1F42C() {
-	warning("STUB - subParser_1F42C");
+void Room204::conv204a() {
+	int32 node = conv_current_node();
+	int32 entry = conv_current_entry();
+	int32 who = conv_whos_talking();
+
+	if (node == 20)
+		_field164 = 1;
+	else if (node == 10 || node == 11)
+		_field168 = 1;
+
+	if (_G(kernel).trigger == 1) {
+		if (who == 1) {
+			_field10 = 16;
+		} else if (who <= 0) {
+			_field134 = 1;
+			if (node == 10 && entry == 1)
+				_field170 = 1;
+
+			if (node == 11 && entry == 0)
+				_field174 = 1;
+		}
+
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	if (who <= 0)
+		_field134 = 2;
+	else if (who != 1) {
+		if (node == 5 && entry == 2) {
+			_G(flags[V285]) = 1;
+		}
+
+		if ((node == 2 && entry == 0) || (node == 11 && entry == 0) || (node == 15 && entry == 0) || (node == 14 && entry == 3) || (node == 20 && entry == 3)) {
+			_field10 = 22;
+			return;
+		}
+
+		if (node == 17 && entry == 1) {
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 719, nullptr);
+			return;
+		}
+
+		_field10 = 19;
+	}
+
+	const char *sound = conv_sound_to_play();
+	if (sound)
+		digi_play(sound, 1, 255, 1, -1);
+	else
+		conv_resume(conv_get_handle());
 }
 
-void Room204::subParser_1F71D() {
-	warning("STUB - subParser_1F71D");
+void Room204::handleRipBangsBong() {
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 666:
+		player_set_commands_allowed(false);
+		_ripBangsBongSeries = series_load("RIP BANGS GONG", -1, nullptr);
+		ws_walk(_G(my_walker), 510, 325, nullptr, 2, 9, true);
+
+		break;
+	case 2:
+		_field10 = 8;
+		_field18_triggerNum = kernel_trigger_create(3);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(2, 570, nullptr);
+
+		break;
+
+	case 3:
+		_field10 = 9;
+		_field24_triggerNum = kernel_trigger_create(4);
+
+		break;
+
+	case 4:
+		digi_play("204_S03", 1, 255, -1, -1);
+		_field10 = 10;
+		_field18_triggerNum = kernel_trigger_create(5);
+
+		break;
+
+	case 5:
+		_field2C = 1;
+		kernel_timing_trigger(1, 6, nullptr);
+
+		break;
+
+	case 6:
+		if (_ripDeltaMachineStateMach)
+			kernel_timing_trigger(5, 6, nullptr);
+		else {
+			series_unload(_ripBangsBongSeries);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			_field40 = 1;
+
+			kernel_timing_trigger(1, 633, nullptr);
+		}
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
-	warning("STUB - game_set_scale");
+	_G(currentSceneDef).front_y = frontY;
+	_G(currentSceneDef).back_y = backY;
+	_G(currentSceneDef).front_scale = frontS;
+	_G(currentSceneDef).back_scale = backS;
+
+	player_inform_walker_new_scale(frontY, backY, frontS, backS);
 }
 
 } // namespace Rooms
