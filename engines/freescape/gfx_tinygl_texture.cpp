@@ -25,10 +25,6 @@
 
 namespace Freescape {
 
-const Graphics::PixelFormat TinyGL2DTexture::getRGBAPixelFormat() {
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-}
-
 TinyGL2DTexture::TinyGL2DTexture(const Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
@@ -57,10 +53,6 @@ void TinyGL2DTexture::updatePartial(const Graphics::Surface *surface, const Comm
 
 TinyGL::BlitImage *TinyGL2DTexture::getBlitTexture() const {
 	return _blitImage;
-}
-
-const Graphics::PixelFormat TinyGL3DTexture::getRGBAPixelFormat() {
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 }
 
 TinyGL3DTexture::TinyGL3DTexture(const Graphics::Surface *surface) {

@@ -41,14 +41,6 @@ static uint32 upperPowerOfTwo(uint32 v) {
 	return v;
 }
 
-const Graphics::PixelFormat OpenGLTexture::getRGBAPixelFormat() {
-#ifdef SCUMM_BIG_ENDIAN
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
-}
-
 OpenGLTexture::OpenGLTexture() :
 		_internalFormat(0),
 		_sourceFormat(0),

@@ -35,8 +35,6 @@ public:
 	OpenGLTexture();
 	virtual ~OpenGLTexture();
 
-	const static Graphics::PixelFormat getRGBAPixelFormat();
-
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 

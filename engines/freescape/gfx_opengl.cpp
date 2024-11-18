@@ -41,7 +41,7 @@ Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMod
 OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) : Renderer(screenW, screenH, renderMode, authenticGraphics) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_coords = (Coord *)malloc(sizeof(Coord) * kCoordsArraySize);
-	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
+	_texturePixelFormat = getRGBAPixelFormat();
 	_isAccelerated = true;
 	_variableStippleArray = nullptr;
 }
@@ -563,7 +563,7 @@ void OpenGLRenderer::flipBuffer() {}
 Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	Common::Rect screen = viewport();
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(screen.width(), screen.height(), OpenGLTexture::getRGBAPixelFormat());
+	s->create(screen.width(), screen.height(), getRGBAPixelFormat());
 	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 	flipVertical(s);
 	return s;

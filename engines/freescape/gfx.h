@@ -42,6 +42,8 @@ typedef Common::HashMap<int, int> ColorReMap;
 
 class Renderer;
 
+const Graphics::PixelFormat getRGBAPixelFormat();
+
 class Texture {
 public:
 	Texture(){ _width = 0; _height = 0; };
@@ -53,8 +55,6 @@ public:
 
 	virtual void update(const Graphics::Surface *surface) = 0;
 	virtual void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) = 0;
-
-	static const Graphics::PixelFormat getRGBAPixelFormat();
 };
 
 class Renderer {

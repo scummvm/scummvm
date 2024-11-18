@@ -39,7 +39,7 @@ Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMod
 
 TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode, true) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
-	_texturePixelFormat = TinyGL2DTexture::getRGBAPixelFormat();
+	_texturePixelFormat = getRGBAPixelFormat();
 	_variableStippleArray = nullptr;
 }
 
@@ -542,7 +542,7 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	TinyGL::getSurfaceRef(glBuffer);
 
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(_screenW, _screenH, TinyGL2DTexture::getRGBAPixelFormat());
+	s->create(_screenW, _screenH, getRGBAPixelFormat());
 	s->copyFrom(glBuffer);
 
 	return s;

@@ -52,7 +52,7 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::Ren
 	_bitmapShader = nullptr;
 	_bitmapVBO = 0;
 
-	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
+	_texturePixelFormat = getRGBAPixelFormat();
 	_isAccelerated = true;
 }
 
@@ -519,7 +519,7 @@ void OpenGLShaderRenderer::flipBuffer() {}
 Graphics::Surface *OpenGLShaderRenderer::getScreenshot() {
 	Common::Rect screen = viewport();
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(screen.width(), screen.height(), OpenGLTexture::getRGBAPixelFormat());
+	s->create(screen.width(), screen.height(), getRGBAPixelFormat());
 	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 	flipVertical(s);
 	return s;
