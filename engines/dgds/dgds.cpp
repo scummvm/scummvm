@@ -743,6 +743,10 @@ Common::Error DgdsEngine::run() {
 				_lastGlobalFade = fade;
 				_lastGlobalFadedPal = _gamePals->getCurPalNum();
 			}
+
+			// TODO: When should we show the cursor again?
+			if (globals->isHideMouseCursor())
+				CursorMan.showMouse(false);
 		}
 
 		g_system->updateScreen();

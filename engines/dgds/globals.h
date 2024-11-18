@@ -199,13 +199,14 @@ public:
 	int16 getPalFade() const { return _palFade; }
 
 	void setDroppedItemNum(int16 val) { _droppedItemNum = val; }
+	bool isHideMouseCursor() const { return _hideMouseCursor != 0; }
 
 private:
 	// Willy-specific globals
 	int16 _unk2;
 	int16 _unk3;
 	int16 _unk4;
-	int16 _unk5;
+	int16 _hideMouseCursor;
 	int16 _unk74;
 	int16 _unk75;
 	int16 _palFade;
