@@ -290,7 +290,7 @@ void Room401::daemon() {
 		_ctr1 = 0;
 
 		_G(kernel).trigger_mode = KT_PARSE;
-		digi_play(conv_sound_to_play(), 255, 1);
+		digi_play(conv_sound_to_play(), 1, 255, 1);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		break;
 
@@ -502,6 +502,7 @@ void Room401::daemon() {
 		break;
 
 	case 515:
+		ws_hide_walker();
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 516, _401rp01, 11, 11, 0);
