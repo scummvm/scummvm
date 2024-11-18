@@ -445,6 +445,12 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				showOwlHelp();
 				break;
 			case IDO_WTP_GOTO_RND:
+				// Amiga changed opcode 1E to display its very long
+				// platform-specific help messages in the first room
+				if (getPlatform() == Common::kPlatformAmiga) {
+					showAmigaHelp();
+					break;
+				}
 				_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 				return IDI_WTP_PAR_GOTO;
 			default:
@@ -732,6 +738,13 @@ void WinnieEngine::showOwlHelp() {
 	}
 }
 
+void WinnieEngine::showAmigaHelp() {
+	// print edited versions of Amiga help text that fit in four lines
+	printStr(IDS_WTP_AMIGA_HELP_EDITED_0);
+	getSelection(kSelAnyKey);
+	printStr(IDS_WTP_AMIGA_HELP_EDITED_1);
+	getSelection(kSelAnyKey);
+}
 
 void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	int iRow = 0, iCol = 0;

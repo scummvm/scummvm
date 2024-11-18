@@ -89,6 +89,14 @@ namespace Agi {
 #define IDS_WTP_HELP_1_C64          "<F3> takes you back to the playroom (if you get lost, or want to save the game).<F5> turns the sound off and on.        <F7> shows what you're carrying."
 #define IDS_WTP_WRONG_PLACE_C64 "\nOk, but this is not the right place."
 
+// Amiga strings
+
+// original strings from the executable and edited versions for our four-line interface
+#define IDS_WTP_AMIGA_HELP_0          "Use the mouse to select your choice from\nthe bottom of the screen or the menu.\n\nTo use the keyboard instead of the\nmouse, press the NUMBER or first LETTER\nof what you want."
+#define IDS_WTP_AMIGA_HELP_1          "From the keyboard you can also press:\n  'l' to look at the scene you're in.\n  'o' to look at an object in the room.\n  'c' to see what you're carrying and\n        how you're doing.\n  CTRL-S to turn the sound on or off."
+#define IDS_WTP_AMIGA_HELP_EDITED_0   "Use the mouse to select your choice fromthe bottom of the screen or the menu.\nTo use the keyboard instead of the\nmouse, press the NUMBER or first LETTER."
+#define IDS_WTP_AMIGA_HELP_EDITED_1   "From the keyboard you can also press:\n  <C> to see what you're carrying and\n      how you're doing.\n  <CTRL-S> to turn the sound on or off."
+
 // maximum values
 
 #define IDI_WTP_MAX_OBJ_MISSING 10
@@ -346,6 +354,7 @@ private:
 	void tigger();
 
 	void showOwlHelp();
+	void showAmigaHelp();
 	bool playSound(ENUM_WTP_SOUND);
 
 	void printStrWinnie(char *szMsg);
