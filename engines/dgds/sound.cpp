@@ -330,7 +330,7 @@ bool Sound::loadSXSoundData(const Common::String &filename, Common::Array<SoundD
 			debug(1, "  SX INF %u [%u entries]:  (%s)", type, count, filename.c_str());
 			for (uint16 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
-				debug(1, "        %2u: %u", k, idx);
+				debug(10, "        %2u: %u", k, idx);
 				idMap[idx] = k;
 			}
 		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
@@ -414,7 +414,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 			debug(1, "  SNG INF [%u entries]", count);
 			for (uint32 k = 0; k < count; k++) {
 				uint16 flags = stream->readUint16LE();
-				debug(1, "        %2u: 0x%04x", k, flags);
+				debug(10, "        %2u: 0x%04x", k, flags);
 				dataArray[k]._flags = flags;
 			}
 		} else {

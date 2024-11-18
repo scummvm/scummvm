@@ -224,6 +224,10 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 
 	uint16 chunkNum = str->readUint16LE();
 
+	// Slight HACK - only Willy Beamish has a different number for the main menu
+	if (chunkNum == kMenuMainBeamish)
+		chunkNum = kMenuMain;
+
 	// Note: The original has some logic about loading single request blocks
 	// here, is only ever called with "num" of -1 (load all),
 	// so maybe just skip it?

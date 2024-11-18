@@ -182,7 +182,8 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	}
 
 	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
-	if (!_resource->hasResource(sceneFile)) {
+	bool haveSceneFile = _resource->hasResource(sceneFile);
+	if (!haveSceneFile && sceneNum != 2) {
 		warning("Tried to switch to non-existent scene %d", sceneNum);
 		return false;
 	}
@@ -217,7 +218,11 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
-	_scene->load(sceneFile, _resource, _decompressor);
+	if (haveSceneFile)
+		_scene->load(sceneFile, _resource, _decompressor);
+	else
+		_scene->setSceneNum(sceneNum);
+
 	// These are done inside the load function in the original.. cleaner here..
 	if (!_isDemo)
 		_scene->addInvButtonToHotAreaList();
@@ -745,7 +750,7 @@ Common::Error DgdsEngine::run() {
 			}
 
 			// TODO: When should we show the cursor again?
-			if (globals->isHideMouseCursor())
+			if (globals->isHideMouseCursor() && !_menu->menuShown())
 				CursorMan.showMouse(false);
 		}
 
