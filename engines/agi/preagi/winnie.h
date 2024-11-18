@@ -227,7 +227,8 @@ enum {
 enum {
 	IDI_WTP_PAR_OK = 0,
 	IDI_WTP_PAR_GOTO,
-	IDI_WTP_PAR_BACK
+	IDI_WTP_PAR_BACK,
+	IDI_WTP_PAR_RELOAD
 };
 
 // room file option block

@@ -372,7 +372,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				setTakeDrop(fCanSel);
 				if (droppedInRightRoom) {
 					// reload room so that the dropped object's flag takes effect
-					return IDI_WTP_PAR_OK;
+					return IDI_WTP_PAR_RELOAD;
 				}
 				break;
 			}
@@ -1102,6 +1102,10 @@ void WinnieEngine::gameLoop() {
 				}
 				if (result == IDI_WTP_PAR_BACK) {
 					decodePhase = 2;
+					break;
+				}
+				if (result == IDI_WTP_PAR_RELOAD) {
+					// start over at block zero
 					break;
 				}
 			}
