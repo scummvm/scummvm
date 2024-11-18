@@ -180,7 +180,7 @@ HotSpotRec *hotspot_add_dynamic(const char *verb, const char *noun,
 		error("hotspot_new failed");
 
 	hotspot_newVocab(hotspot, noun);
-	hotspot_newVocab(hotspot, verb);
+	hotspot_newVerb(hotspot, verb);
 	hotspot->feet_x = walkto_x;
 	hotspot->feet_y = walkto_y;
 	hotspot->cursor_number = cursor;
