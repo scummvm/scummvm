@@ -508,9 +508,23 @@ bool WinnieEngine::isRightObj(int iRoom, int iObj, int *iCode) {
 	free(roomdata);
 	free(objdata);
 
+	// must return the object id before the workarounds are applied below.
+	// dropping the board (objId 34) must set flag 34 to change the room
+	// above the bridge, but the pine cones and sticks (objId 11) must not.
 	*iCode = objhdr.objId;
 
-	if (objhdr.objId == 11) objhdr.objId = 34;
+	// The pine cones and sticks have an id that does not exist in any room.
+	// The game worked around this by using the correct id for the bridge.
+	if (objhdr.objId == 11) {
+		objhdr.objId = 34; // bridge
+	}
+
+	// Eeyore's popped balloon is assigned to Piglet in the data file.
+	// The game's executable must contain a hard-coded workaround,
+	// because the balloon is correctly assigned to Eeyore at runtime.
+	if (iObj == 25 && objhdr.objId == 8) { // popped balloon, Piglet
+		objhdr.objId = 7; // Eeyore
+	}
 
 	if (roomhdr.objId == objhdr.objId)
 		return true;
@@ -539,7 +553,7 @@ void WinnieEngine::takeObj(int iRoom) {
 		printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_TAKE);
 		getSelection(kSelAnyKey);
 
-		// HACK WARNING
+		// set the has-lantern flag when taking the lantern
 		if (iObj == 18) {
 			_gameStateWinnie.fGame[0x0d] = 1;
 		}
@@ -554,7 +568,7 @@ void WinnieEngine::dropObj(int iRoom) {
 		printStr(IDS_WTP_CANT_DROP);
 		getSelection(kSelAnyKey);
 	} else {
-		// HACK WARNING
+		// clear the has-lantern flag when dropping the lantern
 		if (_gameStateWinnie.iObjHave == 18) {
 			_gameStateWinnie.fGame[0x0d] = 0;
 		}
