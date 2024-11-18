@@ -996,10 +996,9 @@ void Room204::parser() {
 			break;
 		}
 
-		goto done;
 	} // talkFl && player_said("MEI CHEN")
 
-	if (talkFl && player_said("ACOLYTE"))
+	else if (talkFl && player_said("ACOLYTE"))
 		digi_play("204R51", 1, 255, -1, -1);
 	else if (player_said("US DOLLARS", "ACOLYTE") || player_said("US DOLLARS", "YOUNG PRIEST"))
 		digi_play("204R24", 1, 255, -1, -1);
