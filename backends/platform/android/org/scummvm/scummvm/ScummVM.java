@@ -2,9 +2,6 @@ package org.scummvm.scummvm;
 
 import android.content.res.AssetManager;
 import android.graphics.PixelFormat;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -39,9 +36,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 
 	private SurfaceHolder _surface_holder;
 	private int bitsPerPixel;
-	private AudioTrack _audio_track;
-	private int _sample_rate = 0;
-	private int _buffer_size = 0;
 
 	private boolean _assetsUpdated;
 	private String[] _args;
@@ -49,9 +43,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	private native void create(AssetManager asset_manager,
 	                           EGL10 egl,
 	                           EGLDisplay egl_display,
-	                           AudioTrack audio_track,
-	                           int sample_rate,
-	                           int buffer_size,
 	                           boolean assetsUpdated);
 	private native void destroy();
 	private native void setSurface(int width, int height, int bpp);
@@ -67,6 +58,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	final public native void updateTouch(int action, int ptr, int x, int y);
 
 	final public native void syncVirtkeyboardState(boolean newState);
+
+	public static native void setDefaultAudioValues(int sampleRate, int framesPerBurst);
+	public static native void notifyAudioDisconnect();
 
 	final public native String getNativeVersionInfo();
 
@@ -170,17 +164,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 					_sem_surface.wait();
 			}
 
-			initAudio();
 			initEGL();
 		} catch (Exception e) {
 			deinitEGL();
-			deinitAudio();
 
 			throw new RuntimeException("Error preparing the ScummVM thread", e);
 		}
 
 		create(_asset_manager, _egl, _egl_display,
-				_audio_track, _sample_rate, _buffer_size,
 				_assetsUpdated);
 
 		int res = main(_args);
@@ -188,7 +179,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		destroy();
 
 		deinitEGL();
-		deinitAudio();
 
 		// Don't exit force-ably here!
 		if (_svm_destroyed_callback != null) {
@@ -300,45 +290,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		_egl_config = null;
 		_egl_display = EGL10.EGL_NO_DISPLAY;
 		_egl = null;
-	}
-
-	private void initAudio() throws Exception {
-		_sample_rate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
-		_buffer_size = AudioTrack.getMinBufferSize(_sample_rate,
-		                                           AudioFormat.CHANNEL_OUT_STEREO,
-		                                           AudioFormat.ENCODING_PCM_16BIT);
-
-		// ~50ms
-		int buffer_size_want = (_sample_rate * 2 * 2 / 20) & ~1023;
-
-		if (_buffer_size < buffer_size_want) {
-			Log.w(LOG_TAG, String.format(Locale.ROOT,
-				"adjusting audio buffer size (was: %d)", _buffer_size));
-
-			_buffer_size = buffer_size_want;
-		}
-
-		Log.i(LOG_TAG, String.format(Locale.ROOT, "Using %d bytes buffer for %dHz audio",
-										_buffer_size, _sample_rate));
-
-		CompatHelpers.AudioTrackCompat.AudioTrackCompatReturn audioTrackRet =
-			CompatHelpers.AudioTrackCompat.make(_sample_rate, _buffer_size);
-		_audio_track = audioTrackRet.audioTrack;
-		_buffer_size = audioTrackRet.bufferSize;
-
-		if (_audio_track.getState() != AudioTrack.STATE_INITIALIZED)
-			throw new Exception(
-				String.format(Locale.ROOT, "Error initializing AudioTrack: %d",
-								_audio_track.getState()));
-	}
-
-	private void deinitAudio() {
-		if (_audio_track != null)
-			_audio_track.release();
-
-		_audio_track = null;
-		_buffer_size = 0;
-		_sample_rate = 0;
 	}
 
 	private static final int[] s_eglAttribs = {

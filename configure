@@ -7650,7 +7650,7 @@ case $_host_os in
 			esac
 		done
 
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -ljnigraphics -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -loboe -ljnigraphics -lEGL"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
