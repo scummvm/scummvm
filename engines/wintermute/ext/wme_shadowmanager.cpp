@@ -42,9 +42,9 @@ SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScripta
 	stack->correctParams(0);
 	
 	PluginEventEntry event = {
-		event._type = WME_EVENT_UPDATE,
-		event._callback = callback,
-		event._plugin = this
+		._type = WME_EVENT_UPDATE,
+		._callback = callback,
+		._plugin = this
 	};
 	_gameRef->pluginEvents().subscribeEvent(event);
 	
@@ -58,9 +58,9 @@ SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScripta
 //////////////////////////////////////////////////////////////////////////
 SXShadowManager::~SXShadowManager() {
 	PluginEventEntry event = {
-		event._type = WME_EVENT_UPDATE,
-		event._callback = callback,
-		event._plugin = this
+		._type = WME_EVENT_UPDATE,
+		._callback = callback,
+		._plugin = this
 	};
 	_gameRef->pluginEvents().unsubscribeEvent(event);
 }
@@ -339,9 +339,9 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->getIsSaving()) {
 		PluginEventEntry event = {
-			event._type = WME_EVENT_UPDATE,
-			event._callback = callback,
-			event._plugin = this
+			._type = WME_EVENT_UPDATE,
+			._callback = callback,
+			._plugin = this
 		};
 		_gameRef->pluginEvents().subscribeEvent(event);
 		_actors.clear();
