@@ -118,6 +118,7 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// ShadowManager (from wme_shadows.dll of "Stroke of Fate" duology games)
 	//////////////////////////////////////////////////////////////////////////
@@ -129,7 +130,7 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		stack->pushNULL();
 		return STATUS_OK;
 	}
-
+#endif
 
 	return STATUS_FAILED;
 }

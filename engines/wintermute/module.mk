@@ -107,7 +107,6 @@ MODULE_OBJS := \
 	ext/wme_3fstatistics.o \
 	ext/wme_commandlinehelper.o \
 	ext/wme_galaxy.o \
-	ext/wme_shadowmanager.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \
 	ext/wme_vlink.o \
@@ -196,7 +195,8 @@ MODULE_OBJS += \
 	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/shadow_volume_opengl.o \
 	base/gfx/opengl/shadow_volume_opengl_shader.o \
-	base/base_animation_transition_time.o
+	base/base_animation_transition_time.o \
+	ext/wme_shadowmanager.o
 endif
 
 MODULE_DIRS += \

@@ -26,11 +26,9 @@
 
 #include "engines/wintermute/base/base_scriptable.h"
 
-#ifdef ENABLE_WME3D
-#include "engines/wintermute/ad/ad_actor_3dx.h"
-#endif
-
 namespace Wintermute {
+
+class AdActor3DX;
 
 class SXShadowManager : public BaseScriptable {
 public:
@@ -47,14 +45,12 @@ private:
 	void update();
 	void run();
 	void stop();
-	bool addActor(AdObject *actorObj);
+	bool addActor(AdActor3DX *actorObj);
 	bool removeAllActors();
 	bool enableLight(const char *lightName);
 	bool disableLight(const char *lightName);
 
-#ifdef ENABLE_WME3D
 	Common::List<Common::Pair<AdActor3DX *, uint32>> _actors;
-#endif
 	uint32 _lastTime{};
 	DXVector3 _defaultLightPos;
 	float _minShadow;

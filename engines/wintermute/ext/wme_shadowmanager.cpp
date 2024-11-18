@@ -25,7 +25,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/ad/ad_object.h"
+#include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ext/wme_shadowmanager.h"
 #include "engines/wintermute/ext/plugin_event.h"
 
@@ -102,9 +102,12 @@ bool SXShadowManager::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 	if (strcmp(name, "AddActor") == 0) {
 		stack->correctParams(1);
 
-		AdObject *actorObj = (AdObject *)stack->pop()->getNative();
-		if (actorObj) {
-			stack->pushBool(addActor(actorObj));
+		AdObject *obj = (AdObject *)stack->pop()->getNative();
+		if (obj) {
+			if (strcmp(obj->scGetProperty("Type")->getString(), "actor3dx") == 0) {
+				AdActor3DX *actor = (AdActor3DX *)obj;
+				stack->pushBool(addActor(actor));
+			}
 		}
 
 		return STATUS_OK;
@@ -341,11 +344,9 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 			event._plugin = this
 		};
 		_gameRef->pluginEvents().subscribeEvent(event);
-#ifdef ENABLE_WME3D
 		_actors.clear();
 		// Actor list is not get restored, plugin is not design work this way.
 		// List get refreshed by game script on scene change.
-#endif
 	}
 
 	persistMgr->transferUint32(TMEMBER(_lastTime));
@@ -368,7 +369,6 @@ void SXShadowManager::callback(void *eventData1, void *eventData2) {
 }
 
 void SXShadowManager::update() {
-#ifdef ENABLE_WME3D
 	if (_useSmartShadows) {
 		// TODO: value should be calculated, but for now it's a const
 		_shadowColor = 0x66000000;
@@ -377,7 +377,6 @@ void SXShadowManager::update() {
 			it->first->_shadowColor = _shadowColor;
 		}
 	}
-#endif
 }
 
 void SXShadowManager::run() {
@@ -387,25 +386,18 @@ void SXShadowManager::run() {
 void SXShadowManager::stop() {
 }
 
-bool SXShadowManager::addActor(AdObject *actorObj) {
-#ifdef ENABLE_WME3D
+bool SXShadowManager::addActor(AdActor3DX *actorObj) {
 	if (_useSmartShadows) {
-		if (strcmp(actorObj->scGetProperty("Type")->getString(), "actor3dx") == 0) {
-			AdActor3DX *actor = (AdActor3DX *)actorObj;
-			_actors.push_back(Common::Pair<AdActor3DX *, uint32>(actor, actor->_shadowColor));
-		}
+		_actors.push_back(Common::Pair<AdActor3DX *, uint32>(actorObj, actorObj->_shadowColor));
 	}
-#endif
 	return true;
 }
 
 bool SXShadowManager::removeAllActors() {
-#ifdef ENABLE_WME3D
 	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
 		it->first->_shadowColor = it->second;
 		_actors.erase(it);
 	}
-#endif
 	return true;
 }
 
