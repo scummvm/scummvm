@@ -54,7 +54,7 @@ void Room305::init() {
 		_triggerMode2 = KT_DAEMON;
 		_val2 = 0;
 		_val3 = 0;
-		_val4 = 0;
+		_drawerOpen = false;
 	}
 
 	_val5 = 0;
@@ -173,7 +173,7 @@ void Room305::init() {
 			hotspot_set_active("FENG LI", false);
 		}
 
-		if (_val4) {
+		if (_drawerOpen) {
 			ws_demand_facing(11);
 			player_update_info();
 
@@ -193,11 +193,11 @@ void Room305::init() {
 
 			hotspot_hide_all();
 			mouse_set_sprite(0);
-			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 480, 0);
+			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 480, false);
 
 			if (inv_object_is_here("TURTLE TREATS")) {
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6);
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6);
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6, true);
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6, true);
 			}
 
 			_openDrawer = series_show_sprite("open drawer", 0, 0);
@@ -576,7 +576,7 @@ void Room305::pre_parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	bool takeFlag = player_said("take");
 
-	if (_val4 && !(takeFlag && player_said("turtle treats"))
+	if (_drawerOpen && !(takeFlag && player_said("turtle treats"))
 			&& !(lookFlag && player_said("turtle treats"))) {
 		player_set_commands_allowed(false);
 		Common::strcpy_s(_G(player).verb, "close");
@@ -702,7 +702,7 @@ void Room305::parser() {
 		case 2:
 			series_unload(_rip4);
 			player_set_commands_allowed(true);
-			_val4 = 0;
+			_drawerOpen = false;
 			break;
 
 		default:
@@ -737,11 +737,11 @@ void Room305::parser() {
 			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 374, 0);
 
 			if (inv_object_is_here("TURTLE TREATS")) {
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6);
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6);
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6, true);
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6, true);
 			}
 
-			_val4 = 1;
+			_drawerOpen = true;
 			_openDrawer = series_show_sprite("open drawer", 0, 0);
 
 			if (inv_object_is_here("TURTLE TREATS")) {
@@ -778,7 +778,7 @@ void Room305::parser() {
 	} else if (takeFlag && player_said("turtle treats") && _G(kernel).trigger == 2) {
 		series_unload(_rip4);
 		player_set_commands_allowed(true);
-		_val4 = 0;
+		_drawerOpen = false;
 
 	} else if (takeFlag && player_said("turtle")) {
 		if (_G(flags)[GLB_TEMP_12]) {
@@ -1031,7 +1031,7 @@ next4:
 			interface_hide();
 			hotspot_hide_all();
 			mouse_set_sprite(0);
-			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 480, 0);
+			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 480, false);
 
 			Common::String digiName;
 			if (flag) {
@@ -1484,6 +1484,54 @@ int Room305::getItemX(int seriesHash) const {
 int Room305::getItemY(int seriesHash) const {
 	int h = ws_get_sprite_height(seriesHash, 0);
 	return (374 - h) / 2;
+}
+
+void Room305::syncGame(Common::Serializer &s) {
+	s.syncAsByte(_drawerOpen);
+	s.syncAsUint32LE(_val1);
+	s.syncAsUint32LE(_val2);
+	s.syncAsUint32LE(_val3);
+	s.syncAsUint32LE(_val5);
+	s.syncAsUint32LE(_val6);
+	s.syncAsUint32LE(_val7);
+	s.syncAsUint32LE(_val8);
+	s.syncAsUint32LE(_ripMedHigh);
+	s.syncAsUint32LE(_ripLooksDown);
+	s.syncAsUint32LE(_shrunkenHead1);
+	s.syncAsUint32LE(_incenseHolder1);
+	s.syncAsUint32LE(_crystalSkull1);
+	s.syncAsUint32LE(_whaleboneHorn1);
+	s.syncAsUint32LE(_wheeledToy1);
+	s.syncAsUint32LE(_butterfly1);
+	s.syncAsUint32LE(_amulet1);
+	s.syncAsUint32LE(_knife1);
+	s.syncAsUint32LE(_banknote1);
+	s.syncAsUint32LE(_stamp1);
+	s.syncAsUint32LE(_map1);
+	s.syncAsUint32LE(_emerald1);
+	s.syncAsUint32LE(_easterIslandCartoon);
+	s.syncAsUint32LE(_chinshiCartoon);
+	s.syncAsUint32LE(_tabletsCartoon);
+	s.syncAsUint32LE(_epitaphCartoon);
+	s.syncAsUint32LE(_graveyardCartoon);
+	s.syncAsUint32LE(_castleCartoon);
+	s.syncAsUint32LE(_mocaMocheCartoon);
+	s.syncAsUint32LE(_templeCartoon);
+	s.syncAsUint32LE(_emeraldCartoon);
+	s.syncAsUint32LE(_jellyBeans);
+	s.syncAsUint32LE(_feng1);
+	s.syncAsUint32LE(_feng2);
+	s.syncAsUint32LE(_feng3);
+	s.syncAsUint32LE(_rip1);
+	s.syncAsUint32LE(_rip2);
+	s.syncAsUint32LE(_rip3);
+	s.syncAsUint32LE(_rip4);
+	s.syncAsUint32LE(_suit1);
+	s.syncAsUint32LE(_suit2);
+	s.syncAsUint32LE(_suit3);
+	s.syncAsUint32LE(_conv1);
+	s.syncAsUint32LE(_cartoon);
+	s.syncAsUint32LE(_lookUp);
 }
 
 } // namespace Rooms

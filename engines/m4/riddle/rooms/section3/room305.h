@@ -33,13 +33,13 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
-	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
+	bool _drawerOpen = false;
 	int _ripMedHigh = 0;
 	int _ripLooksDown = 0;
 	machine *_turtle = nullptr;
@@ -120,6 +120,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms
