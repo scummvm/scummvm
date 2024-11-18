@@ -996,9 +996,26 @@ void Room204::parser() {
 		goto done;
 	} // talkFl && player_said("MEI CHEN")
 
-
-
-	warning("incomplete");
+	if (talkFl && player_said("ACOLYTE"))
+		digi_play("204R51", 1, 255, -1, -1);
+	else if (player_said("US DOLLARS", "ACOLYTE") || player_said("US DOLLARS", "YOUNG PRIEST"))
+		digi_play("204R24", 1, 255, -1, -1);
+	else if (player_said("CHINESE YUAN", "ACOLYTE") || player_said("CHINESE YUAN", "YOUNG PRIEST"))
+		digi_play("204R25", 1, 255, -1, -1);
+	else if (player_said("journal") && !takeFl && !esi && !inv_player_has(_G(player).noun)) {
+		if (_G(flags[kTabletsCartoon]) != 0) {
+			digi_play("204R15", 1, 255, -1, -1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags[V089]) = 1;
+				_G(flags[kTabletsCartoon]) = 1;
+			}
+			warning("Room204 Parser : sendWSMessage_multi(nullptr)");
+		}
+	} else if (esi && !inv_player_has(_G(player).noun) && !player_said("MEI CHEN"))
+		digi_play("204R06", 1, 255, -1, -1);
+	else
+		return;
 
 done:
 	_G(player).command_ready = false;
