@@ -670,11 +670,11 @@ void WinnieEngine::wind() {
 		return;
 
 	printStr(IDS_WTP_WIND_0);
-	playSound(IDI_WTP_SND_WIND_1); // not a bug, IDI_WTP_SND_WIND_0 isn't used here
+	playSound(IDI_WTP_SND_WIND_0);
 	getSelection(kSelAnyKey);
 
 	printStr(IDS_WTP_WIND_1);
-	playSound(IDI_WTP_SND_WIND_1);
+	playSound(IDI_WTP_SND_WIND_0);
 	getSelection(kSelAnyKey);
 
 	dropObjRnd();
@@ -1188,6 +1188,12 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	if (getPlatform() != Common::kPlatformDOS) {
 		warning("STUB: playSound(%d)", iSound);
 		return false;
+	}
+
+	// DOS version tests a platform global to choose the wind sound.
+	// Sound 10 is designed for PCJr, sound 11 for PC Speaker.
+	if (iSound == IDI_WTP_SND_WIND_0 && _soundemu == SOUND_EMU_PC) {
+		iSound = IDI_WTP_SND_WIND_1;
 	}
 
 	Common::Path fileName(Common::String::format(IDS_WTP_SND_DOS, iSound));
