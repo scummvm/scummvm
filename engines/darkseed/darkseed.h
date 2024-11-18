@@ -140,6 +140,7 @@ public:
 	int16 _soundTimer = 0;
 	bool _printedcomeheredawson = false;
 	void zeroMouseButtons();
+	void updateEvents();
 
 	void gotoNextMorning();
 
@@ -249,7 +250,7 @@ public:
 private:
 	void updateBaseSprites();
 	void gameLoop();
-	void updateEvents();
+
 	void handleInput();
 	void handlePointerAction();
 	void loadRoom(int roomNumber);

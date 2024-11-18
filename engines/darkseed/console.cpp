@@ -73,6 +73,10 @@ void Console::draw() {
 	g_engine->_screen->addDirtyRect(consoleArea);
 }
 
+void Console::drawStringAt(const int x, const int y, const Common::String &text) const {
+	_font.drawString(g_engine->_screen, text, x, y, _font.getStringWidth(text), 0);
+}
+
 void Console::addLine(const Common::String &line) {
 	_text[_startIdx] = line;
 	_startIdx = (_startIdx + 1) % _text.size();

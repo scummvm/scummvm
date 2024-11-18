@@ -21,6 +21,7 @@
 
 #include "darkseed/darkseed.h"
 #include "darkseed/inventory.h"
+#include "darkseed/menu.h"
 
 namespace Darkseed {
 
@@ -140,7 +141,7 @@ void Inventory::handleClick() {
 	} else if (icon == 43) {
 		rightArrowClicked();
 	} else if (icon == 4) {
-		// TODO handle in-game menu
+		loadMenu();
 	} else if (icon == 21) {
 		g_engine->_console->printTosText(935);
 		g_engine->_objectVar[21] = 1;
