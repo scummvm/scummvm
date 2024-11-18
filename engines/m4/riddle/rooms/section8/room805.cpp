@@ -139,8 +139,8 @@ void Room805::initSub2() {
 
 void Room805::initHotspots() {
 	if (inv_object_is_here("TWO SOLDIERS' SHIELDS")) {
-		_G(flags[V257]) = 0;
-		_G(flags[V258]) = 0;
+		_G(flags)[V257] = 0;
+		_G(flags)[V258] = 0;
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD ", true);
@@ -226,11 +226,11 @@ void Room805::daemonSub1() {
 		digi_stop(2);
 		digi_unload("950_s33");
 		_chariotRestMach = series_play("805 CHARIOT REST", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
-		_G(flags[V262]) = 1;
+		_G(flags)[V262] = 1;
 		kernel_load_variant("805LOCK1");
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", true);
 		ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
-		if (_G(flags[V276]) == 0)
+		if (_G(flags)[V276] == 0)
 			kernel_timing_trigger(10, 104, nullptr);
 		else
 			player_set_commands_allowed(true);
@@ -458,18 +458,18 @@ void Room805::parser() {
 		parserSub1("COM061", 1, 255, 1, 997);
 
 	else if (lookFl && player_said("SOLDIER")) {
-		if (_G(flags[V257]))
+		if (_G(flags)[V257])
 			parserSub1("COM074", 1, 255, 1, -1);
-		else if (_G(flags[V258]))
+		else if (_G(flags)[V258])
 			parserSub1("805R10a", 1, 255, 1, -1);
 		else
 			parserSub1("805R10", 1, 255, 1, -1);
 	} // if (lookFl && player_said("SOLDIER"))
 
 	else if (lookFl && player_said("SOLDIER ")) {
-		if (_G(flags[V258]))
+		if (_G(flags)[V258])
 			parserSub1("COM074", 1, 255, 1, -1);
-		else if (_G(flags[V257]))
+		else if (_G(flags)[V257])
 			parserSub1("805R10a", 1, 255, 1, -1);
 		else
 			parserSub1("805R10", 1, 255, 1, -1);
@@ -517,7 +517,7 @@ void Room805::parser() {
 	} // if (lookFl && player_said("WOODEN POST") && inv_object_is_here("WOODEN POST"))
 
 	else if (lookFl && player_said("HOLE IN ROOF")) {
-		if (_G(flags[V261]) != 1 && _G(flags[V276]) == 0 && _G(flags[V256]) != 1) {
+		if (_G(flags)[V261] != 1 && _G(flags)[V276] == 0 && _G(flags)[V256] != 1) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -614,7 +614,7 @@ void Room805::parser() {
 			case 17:
 				series_unload(_ripHeadTurnPos3);
 				series_unload(_meiTrekTalkerSeries);
-				_G(flags[V261]) = 1;
+				_G(flags)[V261] = 1;
 				ws_walk(_mcMach, 276, 201, nullptr, 100, 10, true);
 				player_set_commands_allowed(true);
 				break;
@@ -622,7 +622,7 @@ void Room805::parser() {
 			default:
 				break;
 			}
-		} else if (_G(flags[V256]) == 1) {
+		} else if (_G(flags)[V256] == 1) {
 			parserSub1("805R06A", 1, 255, 1, -1);
 		} else {
 			parserSub1("805R06", 1, 255, 1, -1);
@@ -654,9 +654,9 @@ void Room805::parser() {
 		case 10:
 			if (_unkFlag1)
 				kernel_timing_trigger(5, 1, nullptr);
-			_G(flags[V257]) = 1;
+			_G(flags)[V257] = 1;
 
-			if (_G(flags[V258]) == 0) {
+			if (_G(flags)[V258] == 0) {
 				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 310, 130, 20, nullptr, 1);
 				inv_give_to_player("SOLDIER'S SHIELD");
 				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
@@ -697,9 +697,9 @@ void Room805::parser() {
 		case 10:
 			if (_unkFlag1)
 				kernel_timing_trigger(5, 1, nullptr);
-			_G(flags[V258]) = 1;
+			_G(flags)[V258] = 1;
 
-			if (_G(flags[V257]) == 0) {
+			if (_G(flags)[V257] == 0) {
 				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 330, 170, 20, nullptr, 1);
 				inv_give_to_player("SOLDIER'S SHIELD");
 				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
@@ -831,14 +831,14 @@ void Room805::parser() {
 	else if (player_said("go", "jade door"))
 		parserSub1("805r34", 1, 255, 1, -1);
 
-	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags[V271]) == 1))
+	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags)[V271] == 1))
 		parserSub1("805R18", 1, 255, 1, -1);
 
-	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags[V272]) == 1))
+	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags)[V272] == 1))
 		parserSub1("805R19", 1, 255, 1, -1);
 
 	else if (gearFl && player_said("CHARIOT")) {
-		if (_G(flags[V272])!= 1) {
+		if (_G(flags)[V272] != 1) {
 			parserSub1("805R20", 1, 255, 1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -857,8 +857,8 @@ void Room805::parser() {
 				adv_kill_digi_between_rooms(false);
 				digi_play_loop("950_s29", 3, 180, -1, 950);
 				digi_play_loop("950_s33", 2, 255, -1, -1);
-				_G(flags[V270]) = 806;
-				_G(flags[V262]) = 0;
+				_G(flags)[V270] = 806;
+				_G(flags)[V262] = 0;
 				_G(game).new_room = 806;
 
 				break;
@@ -883,7 +883,7 @@ void Room805::parser() {
 	else if (player_said("SOLDIER'S SHIELD", "SOLDIER") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if (_G(flags[V257])) {
+			if (_G(flags)[V257]) {
 				player_set_commands_allowed(false);
 				setGlobals1(_unkSeries5, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 10);
@@ -900,8 +900,8 @@ void Room805::parser() {
 			break;
 
 		case 10:
-			_G(flags[V257]) = 0;
-			if (_G(flags[V258])) {
+			_G(flags)[V257] = 0;
+			if (_G(flags)[V258]) {
 				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
 				inv_give_to_player("SOLDIER'S SHIELD");
 			} else {
@@ -922,7 +922,7 @@ void Room805::parser() {
 	else if (player_said("SOLDIER'S SHIELD", "SOLDIER ") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if (_G(flags[V258])) {
+			if (_G(flags)[V258]) {
 				player_set_commands_allowed(false);
 				setGlobals1(_unkSeries6, 1, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 10);
@@ -939,8 +939,8 @@ void Room805::parser() {
 			break;
 
 		case 10:
-			_G(flags[V258]) = 0;
-			if (_G(flags[V257])) {
+			_G(flags)[V258] = 0;
+			if (_G(flags)[V257]) {
 				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
 				inv_give_to_player("SOLDIER'S SHIELD");
 			} else {
@@ -972,8 +972,8 @@ void Room805::parser() {
 	else if (gearFl && player_said("MEI CHEN"))
 		parserSub1("COM017", 1, 255, 1, 997);
 
-	else if ((player_said("WOODEN POST", "JADE DOOR") && inv_player_has("WOODEN POST") && !_G(flags[V272]))
-			|| (player_said("WOODEN POST", "JADE DOOR ") && inv_player_has("WOODEN POST") && !_G(flags[V272]))
+	else if ((player_said("WOODEN POST", "JADE DOOR") && inv_player_has("WOODEN POST") && !_G(flags)[V272])
+			|| (player_said("WOODEN POST", "JADE DOOR ") && inv_player_has("WOODEN POST") && !_G(flags)[V272])
 			|| (player_said("WOODEN BEAN", "JADE DOOR") && inv_player_has("WOODEN BEAN"))
 			|| (player_said("WOODEN BEAN", "JADE DOOR ") && inv_player_has("WOODEN BEAN")))
 		parserSub1("805r25", 1, 255, 1, -1);
@@ -1089,10 +1089,10 @@ void Room805::parser() {
 	else if (goFl && (player_said("Jade Door") || player_said("Jade Door "))) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if (_G(flags[V272])) {
+			if (_G(flags)[V272]) {
 				player_set_commands_allowed(false);
 				disable_player_commands_and_fade_init(3);
-			} else if (_G(flags[V271])) {
+			} else if (_G(flags)[V271]) {
 				parserSub1("805r34", 1, 255, 1, -1);
 			}
 
@@ -1211,7 +1211,7 @@ void Room805::daemon() {
 		digi_preload("950_s33", -1);
 		digi_play_loop("950_s33", 2, 255, -1, -1);
 		_ripChariotInMach = series_stream("805 RIP CHARIOT IN", 5, 1280, 111);
-		_G(flags[V262]) = 1;
+		_G(flags)[V262] = 1;
 
 		break; // case 110
 

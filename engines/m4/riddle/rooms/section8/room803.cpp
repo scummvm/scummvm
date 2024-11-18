@@ -443,7 +443,7 @@ void Room803::initWalker() {
 	case 824:
 		ws_demand_location(_G(my_walker), 570, 220);
 		ws_demand_facing(_G(my_walker), 9);
-		if (_G(flags[V276]) == 0) {
+		if (_G(flags)[V276] == 0) {
 			player_set_commands_allowed(false);
 			_mcWalkerMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 570, 220, 3, Walker::player_walker_callback, "mc");
 			ws_walk(_G(my_walker), 520, 220, nullptr, 52, 9, true);
@@ -455,7 +455,7 @@ void Room803::initWalker() {
 	case 834:
 		ws_demand_location(_G(my_walker), 491, 174);
 		ws_demand_facing(_G(my_walker), 9);
-		if (_G(flags[V276]) == 0) {
+		if (_G(flags)[V276] == 0) {
 			player_set_commands_allowed(false);
 			_mcWalkerMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 491, 174, 3, Walker::player_walker_callback, "mc");
 			ws_walk(_G(my_walker), 441, 174, nullptr, 53, 9, true);
@@ -467,7 +467,7 @@ void Room803::initWalker() {
 	case 844:
 		ws_demand_location(_G(my_walker), 475, 161);
 		ws_demand_facing(_G(my_walker), 9);
-		if (_G(flags[V276]) == 0) {
+		if (_G(flags)[V276] == 0) {
 			player_set_commands_allowed(false);
 			_mcWalkerMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 475, 161, 3, Walker::player_walker_callback, "mc");
 			ws_walk(_G(my_walker), 425, 161, nullptr, 54, 9, true);
@@ -479,7 +479,7 @@ void Room803::initWalker() {
 	default:
 		ws_demand_location(_G(my_walker), 202, 239);
 		ws_demand_facing(_G(my_walker), 7);
-		if (_G(flags[V276]) == 0) {
+		if (_G(flags)[V276] == 0) {
 			ws_hide_walker(_G(my_walker));
 			_meiStepOffPileMach = series_play("MEI STEPS OFF PILE", 0, 15, 2, 5, 0, 100, 0, 0, 0, 0);
 			kernel_timing_trigger(15, 1, nullptr);

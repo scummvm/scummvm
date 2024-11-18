@@ -57,7 +57,7 @@ void Room207::preload() {
 }
 
 void Room207::init() {
-	if (_G(flags[V061]) == 0)
+	if (_G(flags)[V061] == 0)
 		kernel_load_variant("207lock1");
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
@@ -90,7 +90,7 @@ void Room207::init() {
 	}
 
 	_oneFrameMoneySpriteSeries = series_load("one frame money sprite", -1, nullptr);
-	if (_G(flags[V058]) == 0) {
+	if (_G(flags)[V058] == 0) {
 		_metalRimSeries = series_load("metal rim", -1, nullptr);
 		_sevenSpokesSeries = series_load("SEVEN spokes", -1, nullptr);
 		_woodenRimSeries = series_load("wooden rim", -1, nullptr);
@@ -132,11 +132,11 @@ void Room207::init() {
 		_rebusAmuletSeries = series_load("rebus amulet", -1, nullptr);
 		_rebusAmuletMach = series_show_sprite("rebus amulet", 0, 3840);
 
-		if (_G(flags[V063]) == 0)
+		if (_G(flags)[V063] == 0)
 			hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
 	}
 
-	if (_G(flags[V061]) == 0) {
+	if (_G(flags)[V061] == 0) {
 		_peasantSquatTo9Series = series_load("peasant squat to 9", -1, nullptr);
 		_shadowPeskyFrom9ToSquatSeries = series_load("shadow pesky from 9 to squat", -1, nullptr);
 		_peskyRockLoopSeries = series_load("pesky rock loop", -1, nullptr);
@@ -179,7 +179,7 @@ void Room207::init() {
 	default:
 		ws_demand_location(_G(my_walker), 375, 347);
 		ws_demand_facing(_G(my_walker), 10);
-		if (_G(flags[V061]) == 0) {
+		if (_G(flags)[V061] == 0) {
 			player_set_commands_allowed(false);
 			_peasant3ToSquatSeries = series_load("peasant 3 to squat", -1, nullptr);
 			ws_walk_load_walker_series(S2_PEASANT_NORMAL_DIRS, S2_PEASANT_NORMAL_NAMES);
@@ -215,7 +215,7 @@ void Room207::pre_parser() {
 				player_set_commands_allowed(false);
 				_G(kernel).trigger_mode = KT_PARSE;
 				disable_player_commands_and_fade_init(203);
-				_G(flags[V067]) = 1;
+				_G(flags)[V067] = 1;
 			} else if (player_said("take", "METAL RIM") && inv_player_has("METAL RIM")) {
 				Common::strcpy_s(_G(player).verb, "take");
 				Common::strcpy_s(_G(player).noun, "SPLEEN");
@@ -241,7 +241,7 @@ void Room207::pre_parser() {
 				player_set_commands_allowed(false);
 				_G(kernel).trigger_mode = KT_PARSE;
 				disable_player_commands_and_fade_init(203);
-				_G(flags[V067]) = 1;
+				_G(flags)[V067] = 1;
 			} else if (player_said("take", "PIPES") && inv_player_has("LEAD PIPE")) {
 				Common::strcpy_s(_G(player).verb, "take");
 				Common::strcpy_s(_G(player).noun, "SPLEEN");
@@ -266,13 +266,13 @@ void Room207::pre_parser() {
 		}
 	} // if (_fieldAA)
 
-	if (ecx && player_said("PIPES") && inv_object_is_here("LEAD PIPE") && _G(flags[V061]) == 0) {
+	if (ecx && player_said("PIPES") && inv_object_is_here("LEAD PIPE") && _G(flags)[V061] == 0) {
 		_G(player).need_to_walk = false;
 		_G(kernel).trigger_mode = KT_PARSE;
 		kernel_timing_trigger(1, 1, nullptr);
 	}
 
-	if (ecx && player_said("REBUS AMULET") && inv_object_is_here("REBUS AMULET") && _G(flags[V061]) != 0) {
+	if (ecx && player_said("REBUS AMULET") && inv_object_is_here("REBUS AMULET") && _G(flags)[V061] != 0) {
 		_G(player).need_to_walk = false;
 		_G(kernel).trigger_mode = KT_PARSE;
 		kernel_timing_trigger(1, 1, nullptr);
@@ -303,7 +303,7 @@ void Room207::parser() {
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && player_said_any("anvil", "forge"))
-		_G(flags[V036] = 1);
+		_G(flags)[V036] = 1;
 
 	if (_G(kernel).trigger == 747) {
 		player_set_commands_allowed(false);
@@ -372,7 +372,7 @@ void Room207::parser() {
 			break;
 		}
 	} else if (player_said("give", "money")) {
-		if (_G(flags[V061]) != 0) {
+		if (_G(flags)[V061] != 0) {
 			switch (_G(kernel).trigger) {
 			case 1:
 				player_set_commands_allowed(false);
@@ -394,7 +394,7 @@ void Room207::parser() {
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek low reach pos2", 0, 2, 15, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
 				inv_give_to_player("REBUS AMULET");
 				hotspot_set_active("REBUS AMULET", false);
-				if (_G(flags[V063]) == 0) {
+				if (_G(flags)[V063] == 0) {
 					kernel_examine_inventory_object("ping REBUS AMULET", _G(master_palette), 5, 1, 387, 250, 4, "207R04", -1);
 				} else {
 					kernel_examine_inventory_object("ping REBUS AMULET", _G(master_palette), 5, 1, 387, 250, 4, nullptr, -1);
@@ -540,7 +540,7 @@ void Room207::parser() {
 		}
 	} else if (takeFlag && player_said("junkpile")) {
 		digi_play("207r35a", 1);
-	} else if (takeFlag && player_said("REBUS AMULET") && _G(flags[V061]) != 0 && _G(kernel).trigger > 0 && _G(kernel).trigger < 9) {
+	} else if (takeFlag && player_said("REBUS AMULET") && _G(flags)[V061] != 0 && _G(kernel).trigger > 0 && _G(kernel).trigger < 9) {
 		switch (_G(kernel).trigger) {
 		case 1:
 			ws_walk(_G(my_walker), 456, 366, nullptr, 2, 2, true);
@@ -562,7 +562,7 @@ void Room207::parser() {
 			inv_give_to_player("REBUS AMULET");
 			hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
 
-			if (_G(flags[V063]) == 0) {
+			if (_G(flags)[V063] == 0) {
 				kernel_examine_inventory_object("ping REBUS AMULET", _G(master_palette), 5, 1, 387, 250, 4, "207R04", -1);
 			} else {
 				kernel_examine_inventory_object("ping REBUS AMULET", _G(master_palette), 5, 1, 387, 250, 4, nullptr, -1);
@@ -613,7 +613,7 @@ void Room207::parser() {
 		default:
 			break;
 		}
-	} else if (takeFlag && player_said("REBUS AMULET") && _G(flags[V061]) == 0 && inv_object_is_here("REBUS AMULET")) {
+	} else if (takeFlag && player_said("REBUS AMULET") && _G(flags)[V061] == 0 && inv_object_is_here("REBUS AMULET")) {
 		digi_play("207r35a", 1);
 	} else if (_G(kernel).trigger == 666) {
 		digi_unload("ripwhis");
@@ -627,7 +627,7 @@ void Room207::parser() {
 			ws_hide_walker(_G(my_walker));
 			terminateMachine(_wheelMach);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "WHEEL", false);
-			_G(flags[V058]) = 1;
+			_G(flags)[V058] = 1;
 			hotspot_set_active(_G(currentSceneDef).hotspots, "METAL RIM", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "SEVEN SPOKES", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "WOODEN RIM", true);
@@ -669,8 +669,8 @@ void Room207::parser() {
 			break;
 		}
 	} else if (takeFlag && player_said("PIPES")) {
-		_G(flags[V036]) = 1;
-		if (_G(flags[V061]) != 0 && inv_object_is_here("LEAD PIPE")) {
+		_G(flags)[V036] = 1;
+		if (_G(flags)[V061] != 0 && inv_object_is_here("LEAD PIPE")) {
 			digi_play("207r36", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -748,7 +748,7 @@ void Room207::parser() {
 				_pipeFlag = false;
 				_peasantShould = 0;
 				_commandNotAllowedFl = true;
-				_G(flags[V043]) = 1;
+				_G(flags)[V043] = 1;
 				break;
 
 			default:
@@ -756,9 +756,9 @@ void Room207::parser() {
 			}
 		}
 	} else if (takeFlag && player_said("METAL RIM")) {
-		_G(flags[V036]) = 1;
+		_G(flags)[V036] = 1;
 
-		if (_G(flags[V061]) != 0) {
+		if (_G(flags)[V061] != 0) {
 			digi_play("207r29", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -812,7 +812,7 @@ void Room207::parser() {
 					_digiName = "207p01a";
 					_digiTriggerNum = 5;
 					_nextTriggerMode = KT_PARSE;
-				} else if (_G(flags[V061]) != 0) {
+				} else if (_G(flags)[V061] != 0) {
 					player_set_commands_allowed(true);
 				} else {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", false);
@@ -838,7 +838,7 @@ void Room207::parser() {
 				_pipeFlag = false;
 				_peasantShould = 0;
 				_commandNotAllowedFl = true;
-				_G(flags[V043]) = 1;
+				_G(flags)[V043] = 1;
 
 				break;
 
@@ -892,13 +892,13 @@ void Room207::parser() {
 		}
 
 	} else if (!_pipeFlag && lookFlag && player_said("REBUS AMULET") && !inv_object_is_here("REBUS AMULET")) {
-		if (_G(flags[V061] == 0)) {
-			_G(flags[V061]) = 1;
+		if (_G(flags)[V061] == 0) {
+			_G(flags)[V061] = 1;
 			digi_play("207r04", 1);
 		} else
 			digi_play("207r04a", 1);
 	} else if (!_pipeFlag && lookFlag && player_said("junkpile")) {
-		if (_G(flags[V061]) == 0 && _G(flags[V063]) == 0) {
+		if (_G(flags)[V061] == 0 && _G(flags)[V063] == 0) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -919,7 +919,7 @@ void Room207::parser() {
 				break;
 
 			case 2:
-				if (_G(flags[V036]) == 0)
+				if (_G(flags)[V036] == 0)
 					digi_play("207r03b", 1, 255, 8, -1);
 				else
 					digi_play("207r03", 1, 255, 3, -1);
@@ -955,8 +955,8 @@ void Room207::parser() {
 				series_unload(_ripTrekLowReacherPos1Series);
 				ws_unhide_walker();
 				player_set_commands_allowed(true);
-				_G(flags[V043]) = 1;
-				_G(flags[V063]) = 1;
+				_G(flags)[V043] = 1;
+				_G(flags)[V063] = 1;
 
 				if (inv_object_is_here("REBUS AMULET"))
 					hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", true);
@@ -970,7 +970,7 @@ void Room207::parser() {
 			default:
 				break;
 			}
-		} else if (_G(flags[V063]) == 0) {
+		} else if (_G(flags)[V063] == 0) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -1020,7 +1020,7 @@ void Room207::parser() {
 				series_unload(_ripTrekLowReacherPos1Series);
 				ws_unhide_walker();
 				player_set_commands_allowed(true);
-				_G(flags[V063]) = 1;
+				_G(flags)[V063] = 1;
 				if (inv_object_is_here("REBUS AMULET")) {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", true);
 				}
@@ -1050,9 +1050,9 @@ void Room207::parser() {
 			break;
 		}
 	} else if (lookFlag && player_said("peasant")) {
-		if (_G(flags[V062]) == 0) {
+		if (_G(flags)[V062] == 0) {
 			digi_play("207r01", 1);
-			_G(flags[V062]) = 1;
+			_G(flags)[V062] = 1;
 		} else {
 			digi_play("207r02", 1);
 		}
@@ -1087,7 +1087,7 @@ void Room207::parser() {
 	} else if (inv_player_has(_G(player).verb) && player_said("peasant")) {
 		digi_play("203r50", 1);
 	} else if (lookFlag && player_said(" ")) {
-		if (_G(flags[V054]) == 0)
+		if (_G(flags)[V054] == 0)
 			digi_play("207r23a", 1);
 		else
 			digi_play("207r23", 1);
@@ -1172,7 +1172,7 @@ void Room207::daemon() {
 			_G(kernel).trigger_mode = KT_PARSE;
 			conv_load("conv203d", 10, 10, 747);
 			conv_set_shading(65);
-			conv_export_value_curr(_G(flags[V054]), 0);
+			conv_export_value_curr(_G(flags)[V054], 0);
 
 			if (inv_player_has("REBUS AMULET"))
 				conv_export_value_curr(0, 1);
@@ -1233,7 +1233,7 @@ void Room207::daemon() {
 			} else {
 				other_save_game_for_resurrection();
 				disable_player_commands_and_fade_init(749);
-				_G(flags[V067]) = 1;
+				_G(flags)[V067] = 1;
 			}
 		}
 

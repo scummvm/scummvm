@@ -48,8 +48,8 @@ void Room204::preload() {
 void Room204::init() {
 	digi_preload("950_s04", -1);
 	digi_play_loop("950_s04", 3, 70, -1, -1);
-	if (!_G(flags[V070]))
-		_G(flags[V078]) = 0;
+	if (!_G(flags)[V070])
+		_G(flags)[V078] = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_field4 = 0;
@@ -57,10 +57,10 @@ void Room204::init() {
 		_field184 = 0;
 		_field188 = 0;
 
-		if (!player_been_here(205) && (!_G(flags[V056]) || _G(flags[V049]) == 1)) {
+		if (!player_been_here(205) && (!_G(flags)[V056] || _G(flags)[V049] == 1)) {
 			_field4 = 1;
 			initWalkerSeries();
-			_G(flags[V049]) = 0;
+			_G(flags)[V049] = 0;
 		}
 	}
 
@@ -134,7 +134,7 @@ void Room204::init() {
 		_fieldDC = 0;
 		_field40 = 0;
 		player_set_commands_allowed(false);
-		if (!_G(flags[V070])) {
+		if (!_G(flags)[V070]) {
 			digi_preload("204_S02", -1);
 			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 1864, 334, 9, Walker::player_walker_callback, "mc walker room 204");
 			DisposePath(_mcMach->walkPath);
@@ -143,16 +143,16 @@ void Room204::init() {
 			ws_demand_location(_G(my_walker), 1864, 334);
 			ws_demand_facing(_G(my_walker), 3);
 
-			_G(flags[V070]) = 1;
-			_G(flags[V068]) = 1;
-			_G(flags[V078]) = 1;
+			_G(flags)[V070] = 1;
+			_G(flags)[V068] = 1;
+			_G(flags)[V078] = 1;
 
 			int32 status;
 			ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
 			MoveScreenDelta(game_buff_ptr, -1280, 0);
 			kernel_timing_trigger(1, 500, nullptr);
 		} else {
-			_G(flags[V068]) = 1;
+			_G(flags)[V068] = 1;
 			if (!_field4) {
 				ws_demand_location(_G(my_walker), 1864, 334);
 				ws_demand_facing(_G(my_walker), 9);
@@ -160,9 +160,9 @@ void Room204::init() {
 				ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
 				MoveScreenDelta(game_buff_ptr, -1280, 0);
 				kernel_timing_trigger(1, 708, nullptr);
-			} else if (_G(flags[V049]) == 1) {
-				_G(flags[V049]) = 0;
-				_G(flags[V078]) = 2;
+			} else if (_G(flags)[V049] == 1) {
+				_G(flags)[V049] = 0;
+				_G(flags)[V078] = 2;
 				ws_demand_location(_G(my_walker), 1864, 334);
 				ws_demand_facing(_G(my_walker), 9);
 				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 1864, 334, 4, Walker::player_walker_callback, "mc walker room 204");
@@ -583,7 +583,7 @@ void Room204::parser() {
 		} // (ecx == 1)
 
 		if (player_said("walk through") && _field4 == 1) {
-			if (_G(flags[V056]) == 1) {
+			if (_G(flags)[V056] == 1) {
 				player_set_commands_allowed(false);
 				kernel_timing_trigger(2, 609, nullptr);
 			} else {
@@ -1943,7 +1943,7 @@ void Room204::daemon() {
 		_G(kernel).trigger_mode = KT_PARSE;
 
 		conv_load("conv204a", 10, 10, 747);
-		conv_export_value(conv_get_handle(), _G(flags[V071]) ? 0 : 1, 0);
+		conv_export_value(conv_get_handle(), _G(flags)[V071] ? 0 : 1, 0);
 		conv_play(conv_get_handle());
 
 		break;
@@ -1954,7 +1954,7 @@ void Room204::daemon() {
 			kernel_timing_trigger(1, 714, nullptr);
 
 			_field164 = 0;
-			_G(flags[V056]) = 1;
+			_G(flags)[V056] = 1;
 		} else if (_field168 == 1) {
 			player_set_commands_allowed(false);
 			_field168 = 0;
@@ -2171,7 +2171,7 @@ void Room204::daemon() {
 		break;
 
 	case 637:
-		if (_G(flags[V056]) == 1) {
+		if (_G(flags)[V056] == 1) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", true);
 			player_set_commands_allowed(true);
 		} else {

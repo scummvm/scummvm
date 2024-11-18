@@ -56,7 +56,7 @@ void Room205::init() {
 	_ripGetsShotSeries = series_load("RIP GETS SHOT", -1, nullptr);
 	_205GunFireSeries = series_load("205 gun fire", -1, nullptr);
 
-	if (!_G(flags[V029])) {
+	if (!_G(flags)[V029]) {
 		digi_preload("205R01", -1);
 		digi_preload("205M02", -1);
 
@@ -78,17 +78,17 @@ void Room205::init() {
 	series_show("205PRIES", 3840, 16, -1, -1, 0, 100, 0, 0);
 	_205LeftEntranceTabletMach = series_show("205 LEFT ENTRANCE TABLET", 257, 16, -1, -1, 0, 100, 0, 0);
 
-	if (!_G(flags[V028]))
+	if (!_G(flags)[V028])
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MASTER LU'S TABLET", false);
 
-	if (_G(flags[V024])) {
+	if (_G(flags)[V024]) {
 		_fieldE0 = 1;
 		series_show("205GONG", 1025, 16, -1, -1, 0, 100, 0, 0);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "GUN", false);
 		digi_preload("205_s34", -1);
 		digi_play_loop("205_s34", 3, 25, -1, -1);
 
-		if (!_G(flags[V028]))
+		if (!_G(flags)[V028])
 			kernel_timing_trigger(7200, 1055, nullptr);
 	} else {
 		_fieldE0 = 0;
@@ -98,29 +98,29 @@ void Room205::init() {
 		digi_preload("205_s34", -1);
 		digi_play_loop("205_s34", 3, 166, -1, -1);
 
-		if (_G(flags[V029]))
+		if (_G(flags)[V029])
 			_205GunInBrazierMach = series_show("205 gun in brazier", 768, 16, -1, -1, 0, 100, 0, 0);
 	}
 
 	if (inv_player_has("CHARCOAL")) {
-		if (_G(flags[V029]))
+		if (_G(flags)[V029])
 			hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", false);
-	} else if (_G(flags[V029]))
+	} else if (_G(flags)[V029])
 		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 3840, 16, -1, -1, 0, 100, 0, 0);
 
-	if (_G(flags[V025])) {
+	if (_G(flags)[V025]) {
 		series_show("205 MALLET LAYED ON GONG", 1024, 16, -1, -1, 0, 100, 0, 0);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "GAP WITH JOURNAL", false);
 	} else {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET ", false);
 	}
 
-	if (_G(flags[V029])) {
+	if (_G(flags)[V029]) {
 		series_show("205BITS", 3846, 16, -1, -1, 0, 100, 0, 0);
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
 	}
 
-	if (_G(flags[V028])) {
+	if (_G(flags)[V028]) {
 		_205MeiStanderMach = series_show("205 MEI STANDER", 3845, 16, -1, -1, 0, 100, 0, 0);
 		series_show("205 TABLETS DOWN", 3840, 16, -1, -1, 0, 100, 0, 0);
 		series_show("205GLASS", 3840, 16, -1, -1, 0, 100, 0, 0);
@@ -138,12 +138,12 @@ void Room205::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
 	}
 
-	_G(flags[V027]) = 0;
+	_G(flags)[V027] = 0;
 	_fieldDC = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		player_set_commands_allowed(false);
-		if (_G(flags[V029])) {
+		if (_G(flags)[V029]) {
 			ws_demand_facing(_G(my_walker), 11);
 			ws_demand_location(_G(my_walker), 320, 480);
 			ws_walk(_G(my_walker), 317, 356, nullptr, 500, 11, true);
@@ -161,18 +161,18 @@ void Room205::init() {
 		}
 	}
 
-	if (!_G(flags[V028]))
+	if (!_G(flags)[V028])
 		kernel_timing_trigger(1, 1000, nullptr);
 }
 
 void Room205::pre_parser() {
-	if (player_said("GEAR", "RIGHT TABLET") && _G(flags[V022]) && !_G(flags[V024])) {
+	if (player_said("GEAR", "RIGHT TABLET") && _G(flags)[V022] && !_G(flags)[V024]) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (player_said("EXIT") && _G(flags[V025])) {
+	if (player_said("EXIT") && _G(flags)[V025]) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -185,7 +185,7 @@ void Room205::parser() {
 	bool gearFl = player_said("gear");
 
 	if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN")) {
-		if (!_G(flags[V024])) {
+		if (!_G(flags)[V024]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				_fieldDC = 1;
@@ -216,7 +216,7 @@ void Room205::parser() {
 
 			case 7:
 				player_set_commands_allowed(true);
-				_G(flags[V024]) = 1;
+				_G(flags)[V024] = 1;
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(7200, 1055);
 				_fieldDC = 0;
@@ -228,7 +228,7 @@ void Room205::parser() {
 			}
 		}
 	} // if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN"))
-	else if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags[V028]) && _G(flags[V024])) {
+	else if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags)[V028] && _G(flags)[V024]) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -272,7 +272,7 @@ void Room205::parser() {
 			series_show("205 MALLET LAYED ON GONG", 1024, 16, -1, -1, 0, 100, 0, 0);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "GAP WITH JOURNAL", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET ", true);
-			_G(flags[V025]) = 1;
+			_G(flags)[V025] = 1;
 			inv_give_to_player("JOURNAL");
 			inv_move_object("MALLET", 999);
 
@@ -282,8 +282,8 @@ void Room205::parser() {
 			break;
 
 		}
-	} // if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags[V028]) && _G(flags[V024]))
-	else if (player_said("CHARCOAL", "JOURNAL") && _G(flags[V025]) && inv_player_has("CHARCOAL")) {
+	} // if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags)[V028] && _G(flags)[V024])
+	else if (player_said("CHARCOAL", "JOURNAL") && _G(flags)[V025] && inv_player_has("CHARCOAL")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -355,7 +355,7 @@ void Room205::parser() {
 			break;
 
 		case 20:
-			_G(flags[V290]) = 1;
+			_G(flags)[V290] = 1;
 			disable_player_commands_and_fade_init(21);
 
 			break;
@@ -371,14 +371,14 @@ void Room205::parser() {
 			break;
 		}
 
-	} // if (player_said("CHARCOAL", "JOURNAL") && _G(flags[V025]) && inv_player_has("CHARCOAL"))
+	} // if (player_said("CHARCOAL", "JOURNAL") && _G(flags)[V025] && inv_player_has("CHARCOAL"))
 
 	else if (gearFl && player_said_any("TABLET", "TABLET "))
 		digi_play("205R30", 1, 255, -1, -1);
 	else if (gearFl && player_said("GONG "))
 		digi_play("205R64", 1, 255, -1, -1);
 	else if (gearFl && player_said("LEFT TABLET")) {
-		if (_G(flags[V028])) {
+		if (_G(flags)[V028]) {
 			digi_play("205r57", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -417,9 +417,9 @@ void Room205::parser() {
 			case 7:
 				digi_stop(1);
 				digi_unload("205_S30");
-				_G(flags[V023]) = 1;
+				_G(flags)[V023] = 1;
 				_205LeftEntranceTabletMach = series_show("205 LEFT ENTRANCE TABLET", 257, 16, -1, -1, 0, 100, 0, 0);
-				if (_G (flags[V022])) {
+				if (_G(flags)[V022]) {
 					digi_preload("205R31");
 					digi_play("205R31", 1, 255, 9, -1);
 				} else {
@@ -461,7 +461,7 @@ void Room205::parser() {
 			break;
 
 		case 1:
-			if (!_G(flags[V022]) && _fieldDC)
+			if (!_G(flags)[V022] && _fieldDC)
 				kernel_timing_trigger(60, 1, nullptr);
 			else
 				kernel_timing_trigger(10, 3, nullptr);
@@ -469,14 +469,14 @@ void Room205::parser() {
 			break;
 
 		case 3:
-			if (!_G(flags[V022])) {
+			if (!_G(flags)[V022]) {
 				_fieldDC = 1;
 				digi_preload("205_S30", -1);
 				digi_preload("205R34", -1);
 				ws_unhide_walker(_G(my_walker));
 				series_stream("205RTEST", 7, 0, 7);
 				kernel_timing_trigger(240, 5, nullptr);
-			} else if (!_G(flags[V024])) {
+			} else if (!_G(flags)[V024]) {
 				ws_walk(_G(my_walker), 450, 351, nullptr, 15, 1, true);
 				intr_cancel_sentence();
 			} else {
@@ -497,7 +497,7 @@ void Room205::parser() {
 		case 7:
 			digi_stop(1);
 			digi_unload("205_S30");
-			if (_G(flags[V023])) {
+			if (_G(flags)[V023]) {
 				digi_preload("205R32");
 				digi_play("205R32", 1, 255, 9, -1);
 			} else {
@@ -505,7 +505,7 @@ void Room205::parser() {
 				digi_play("205R31", 1, 255, 9, -1);
 			}
 
-			_G(flags[V022]) = 1;
+			_G(flags)[V022] = 1;
 			ws_unhide_walker(_G(my_walker));
 			break;
 
@@ -567,7 +567,7 @@ void Room205::parser() {
 	} // if (edi && player_said("RIGHT TABLET"))
 
 	else if (takeFl && player_said("CHARCOAL")) {
-		if (!_G(flags[V028])) {
+		if (!_G(flags)[V028]) {
 			digi_play("205r26", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -607,7 +607,7 @@ void Room205::parser() {
 		}
 	} // if (esi && player_said("CHARCOAL"))
 
-	else if (takeFl && player_said("GAP WITH JOURNAL") && !_G(flags[V028]))
+	else if (takeFl && player_said("GAP WITH JOURNAL") && !_G(flags)[V028])
 		digi_play("205r27", 1, 255, -1, -1);
 	else if (takeFl && player_said_any("TABLET", "TABLET ", "LEFT TABLET", "RIGHT TABLET"))
 		digi_play("205r28", 1, 255, -1, -1);
@@ -621,7 +621,7 @@ void Room205::parser() {
 		digi_play("205r54", 1, 255, -1, -1);
 	else if (takeFl && player_said("MALLET "))
 		digi_play("205r55", 1, 255, -1, -1);
-	else if (lookFl && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl) {
+	else if (lookFl && player_said("JOURNAL") && _G(flags)[V025] && !_showMeiTalkFl) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -691,25 +691,25 @@ void Room205::parser() {
 			break;
 
 		}
-	} // if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl)
+	} // if (ecx && player_said("JOURNAL") && _G(flags)[V025] && !_showMeiTalkFl)
 
 	else if (lookFl && player_said("BRAZIER"))
 		digi_play("205r66", 1, 255, -1, -1);
 	else if (lookFl && player_said("ARM"))
 		digi_play("205r12a", 1, 255, -1, -1);
 	else if (lookFl && player_said("GUN")) {
-		if (!_G(flags[V024]))
+		if (!_G(flags)[V024])
 			digi_play("205R15", 1, 255, -1, -1);
-		else if (!_G(flags[V028]))
+		else if (!_G(flags)[V028])
 			digi_play("205R16", 1, 255, -1, -1);
 		else
 			digi_play("205r48", 1, 255, -1, -1);
 	} // if (ecx && player_said("GUN"))
 
 	else if (lookFl && player_said("GONG ")) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205R48", 1, 255, -1, -1);
-		else if (!_G(flags[V024]))
+		else if (!_G(flags)[V024])
 			digi_play("205R15", 1, 255, -1, -1);
 		else
 			digi_play("205R16", 1, 255, -1, -1);
@@ -741,14 +741,14 @@ void Room205::parser() {
 	else if (lookFl && player_said_any("TABLET", "TABLET "))
 		digi_play("205R18", 1, 255, -1, -1);
 	else if (lookFl && player_said_any("RIGHT TABLET", "LEFT TABLET")) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205R18", 1, 255, -1, -1);
 		else
 			digi_play("205R19", 1, 255, -1, -1);
 	} else if (lookFl && player_said("FALLEN TABLETS"))
 		digi_play("205R49", 1, 255, -1, -1);
 	else if (lookFl && player_said_any("MEI CHEN", "MEI CHEN ")) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205r50", 1, 255, -1, -1);
 		else
 			digi_play("205r20", 1, 255, -1, -1);
@@ -759,24 +759,24 @@ void Room205::parser() {
 	else if (lookFl && player_said("GLASSES"))
 		digi_play("205r51", 1, 255, -1, -1);
 	else if (lookFl && player_said("GAP WITH JOURNAL")) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205R52", 1, 255, -1, -1);
 		else
 			digi_play("205r27", 1, 255, -1, -1);
 	} else if (lookFl && player_said("MALLET "))
 		digi_play("205r55", 1, 255, -1, -1);
 	else if (lookFl && player_said(" ")) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205R47", 1, 255, -1, -1);
 		else
 			digi_play("205R14", 1, 255, -1, -1);
 	} else if (player_said("journal") && !takeFl && !lookFl) {
-		if (_G(flags[V028]))
+		if (_G(flags)[V028])
 			digi_play("205R43", 1, 255, -1, -1);
 		else
 			digi_play("205R42", 1, 255, -1, -1);
 	} else if (player_said("EXIT")) {
-		if (_G(flags[V025]))
+		if (_G(flags)[V025])
 			digi_play("205r59", 1, 255, -1, -1);
 		else {
 			switch (_G(kernel).trigger) {
@@ -1039,7 +1039,7 @@ void Room205::daemon() {
 
 	case 533:
 		series_play("205ALL0", 3840, 0, 534, 5, 0, 100, 0, 0, 66, -1);
-		_G(flags[V289]) = 1;
+		_G(flags)[V289] = 1;
 		digi_play("205R13", 1, 255, 538, -1);
 
 		break;
@@ -1598,7 +1598,7 @@ void Room205::daemon() {
 	case 901:
 		if (_fieldE0 || !player_commands_allowed()) {
 			kernel_timing_trigger(60, 901, nullptr);
-		} else if (_G(flags[V024])) {
+		} else if (_G(flags)[V024]) {
 			digi_stop(1);
 
 			switch (imath_ranged_rand(1, 2)) {
@@ -1620,7 +1620,7 @@ void Room205::daemon() {
 			digi_stop(1);
 			series_play("205 gun fire", 768, 0, -1, 3, 0, 100, 0, 0, 0,-1);
 
-			switch (_G(flags[V027])) {
+			switch (_G(flags)[V027]) {
 			case 0:
 				digi_play("205_s26", 1, 255, -1, -1);
 				kernel_timing_trigger(10, 902, nullptr);
@@ -1670,7 +1670,7 @@ void Room205::daemon() {
 
 	case 905:
 		_fieldDC = 0;
-		++_G(flags[V027]);
+		++_G(flags)[V027];
 		player_set_commands_allowed(true);
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
 
@@ -1714,7 +1714,7 @@ void Room205::daemon() {
 		break;
 
 	case 1000:
-		_G(flags[V029]) = 1;
+		_G(flags)[V029] = 1;
 		midi_play("vines", 191, -1, -1, 949);
 		digi_preload("205_s09", -1);
 		digi_preload("205_s10", -1);
@@ -2272,7 +2272,7 @@ void Room205::daemon() {
 
 	case 1041:
 		ws_walk(_G(my_walker), 324, 252, nullptr, 1042, 11, true);
-		_G(flags[V028]) = 1;
+		_G(flags)[V028] = 1;
 
 		break;
 
