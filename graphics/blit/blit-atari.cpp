@@ -66,14 +66,6 @@ static void syncSuperBlitter() {
 }
 #endif
 
-#ifdef USE_MOVE16
-static inline bool hasMove16() {
-	long val;
-	static bool hasMove16 = Getcookie(C__CPU, &val) == C_FOUND && val >= 40;
-	return hasMove16;
-}
-#endif
-
 void lockSuperBlitter() {
 #ifdef USE_SV_BLITTER
 	assert(!isSuperBlitterLocked);
@@ -189,152 +181,12 @@ void copyBlit(byte *dst, const byte *src,
 	} else
 #endif
 	if (dstPitch == srcPitch && dstPitch == (w * bytesPerPixel)) {
-#ifdef USE_MOVE16
-		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0) {
-			__asm__ volatile(
-			"	move.l	%2,%%d0\n"
-			"	lsr.l	#4,%%d0\n"
-			"	beq.b	3f\n"
-
-			"	moveq	#0x0f,%%d1\n"
-			"	and.l	%%d0,%%d1\n"
-			"	neg.l	%%d1\n"
-			"	lsr.l	#4,%%d0\n"
-			"	jmp		(2f,%%pc,%%d1.l*4)\n"
-			"1:\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"2:\n"
-			"	dbra	%%d0,1b\n"
-			// handle also the unlikely case when 'dstPitch'
-			// is not divisible by 16 but 'src' and 'dst' are
-			"3:\n"
-			"	moveq	#0x0f,%%d0\n"
-			"	and.l	%2,%%d0\n"
-			"	neg.l	%%d0\n"
-			"	jmp		(4f,%%pc,%%d0.l*2)\n"
-			// only 15x move.b as 16 would be handled above
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"4:\n"
-				: // outputs
-				: "a"(src), "a"(dst), "g"(dstPitch * h) // inputs
-				: "d0", "d1", "cc" AND_MEMORY
-			);
-		} else {
-#else
-		{
-#endif
-			memcpy(dst, src, dstPitch * h);
-		}
+		memcpy(dst, src, dstPitch * h);
 	} else {
-#ifdef USE_MOVE16
-		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0
-				&& (srcPitch & (ALIGN - 1)) == 0 && (dstPitch & (ALIGN - 1)) == 0) {
-			__asm__ volatile(
-			"	move.l	%2,%%d0\n"
-
-			"	moveq	#0x0f,%%d1\n"
-			"	and.l	%%d0,%%d1\n"
-			"	neg.l	%%d1\n"
-			"	lea		(4f,%%pc,%%d1.l*2),%%a0\n"
-			"	move.l	%%a0,%%a1\n"
-
-			"	lsr.l	#4,%%d0\n"
-			"	beq.b	3f\n"
-
-			"	moveq	#0x0f,%%d1\n"
-			"	and.l	%%d0,%%d1\n"
-			"	neg.l	%%d1\n"
-			"	lea		(2f,%%pc,%%d1.l*4),%%a0\n"
-			"	lsr.l	#4,%%d0\n"
-			"	move.l	%%d0,%%d1\n"
-			"0:\n"
-			"	move.l	%%d1,%%d0\n"
-			"	jmp		(%%a0)\n"
-			"1:\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"	move16	(%0)+,(%1)+\n"
-			"2:\n"
-			"	dbra	%%d0,1b\n"
-			// handle (w * bytesPerPixel) % 16
-			"3:\n"
-			"	jmp		(%%a1)\n"
-			// only 15x move.b as 16 would be handled above
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"	move.b	(%0)+,(%1)+\n"
-			"4:\n"
-			"	add.l	%4,%1\n"
-			"	add.l	%5,%0\n"
-			"	dbra	%3,0b\n"
-				: // outputs
-				: "a"(src), "a"(dst), "g"(w * bytesPerPixel), "d"(h - 1),
-				  "g"(dstPitch - w * bytesPerPixel), "g"(srcPitch - w * bytesPerPixel) // inputs
-				: "d0", "d1", "a0", "a1", "cc" AND_MEMORY
-			);
-		} else {
-#else
-		{
-#endif
-			for (uint i = 0; i < h; ++i) {
-				memcpy(dst, src, w * bytesPerPixel);
-				dst += dstPitch;
-				src += srcPitch;
-			}
+		for (uint i = 0; i < h; ++i) {
+			memcpy(dst, src, w * bytesPerPixel);
+			dst += dstPitch;
+			src += srcPitch;
 		}
 	}
 }
