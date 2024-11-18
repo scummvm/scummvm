@@ -40,7 +40,7 @@ private:
 	int _ripleyShould = 0;
 	int _wolfMode = 0;
 	int _wolfShould = 0;
-	int _val10 = 0;
+	int _ladderMode = 0;
 	Common::String _sound1;
 	int _val12 = 0;
 	int _val13 = 0;

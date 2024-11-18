@@ -109,11 +109,15 @@ void Room404::init() {
 		_machine1 = triggerMachineByHash_3000(8, 10, *NORMAL_DIRS, *SHADOW_DIRS,
 			380, 421, 1, triggerMachineByHashCallback3000, "BUTLER_walker");
 
-		if (!_G(kittyScreaming) || !player_been_here(404)) {
+		if (_G(kittyScreaming) || player_been_here(404)) {
+			sendWSMessage_10000(_machine1, 410, 332, 1, 42, 1);
+			kernel_timing_trigger(1, 40);
+		} else {
 			sendWSMessage_10000(_machine1, 410, 332, 1, 21, 1);
 			kernel_timing_trigger(120, 20);
-			digi_play("404_s01", 2);
 		}
+
+		digi_play("404_s01", 2);
 		break;
 	}
 }

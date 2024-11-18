@@ -149,7 +149,7 @@ void Room402::init() {
 
 			case 408:
 				ws_demand_location(517, 239, 3);
-				ws_walk(510, 260, 0, 50, 8);
+				ws_walk(510, 260, nullptr, 50, 8);
 				break;
 
 			default:
@@ -342,17 +342,17 @@ void Room402::daemon() {
 		sendWSMessage_110000(32);
 		break;
 
-	case 31:
+	case 32:
 		digi_play("402r29", 1, 255, 33);
 		sendWSMessage_120000(-1);
 		break;
 
-	case 32:
+	case 33:
 		sendWSMessage_110000(-1);
 		digi_play("402w09", 1, 255, 34);
 		break;
 
-	case 33:
+	case 34:
 		sendWSMessage_150000(35);
 		break;
 
