@@ -196,6 +196,7 @@ MODULE_OBJS += \
 	base/gfx/opengl/shadow_volume_opengl.o \
 	base/gfx/opengl/shadow_volume_opengl_shader.o \
 	base/base_animation_transition_time.o \
+	ext/wme_blackandwhite.o \
 	ext/wme_shadowmanager.o
 endif
 

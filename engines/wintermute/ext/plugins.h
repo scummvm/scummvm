@@ -41,6 +41,7 @@ BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXSample(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXVlink(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXBlackAndWhite(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
@@ -119,6 +120,18 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 	}
 
 #ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// BlackAndWhite (from wme_blackandwhite.dll of "Stroke of Fate" duology games)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "BlackAndWhite") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXBlackAndWhite(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// ShadowManager (from wme_shadows.dll of "Stroke of Fate" duology games)
 	//////////////////////////////////////////////////////////////////////////

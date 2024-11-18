@@ -102,6 +102,7 @@
 #include "engines/wintermute/ad/ad_path_point3d.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/ext/wme_blackandwhite.h"
 #include "engines/wintermute/ext/wme_shadowmanager.h"
 #endif
 
@@ -197,6 +198,7 @@ void SystemClassRegistry::register3DClasses() {
 	REGISTER_CLASS(AdPathPoint3D, false)
 	REGISTER_CLASS(AdSceneGeometry, false)
 	REGISTER_CLASS(XModel, false)
+	REGISTER_CLASS(SXBlackAndWhite, false)
 	REGISTER_CLASS(SXShadowManager, false)
 }
 #endif
