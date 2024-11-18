@@ -224,11 +224,11 @@ void Room204::pre_parser() {
 }
 
 void Room204::parser() {
-	bool esi = player_said_any("look", "look at");
+	bool lookFl = player_said_any("look", "look at");
 	bool takeFl = player_said("take");
 	bool talkFl = player_said_any("talk", "talk to");
-	bool edi = player_said("gear");
-	int32 ecx = 0;
+	bool gearFl = player_said("gear");
+	bool moveAndLookFl = false;
 
 	if (player_said("conv204a")) {
 		subParser_1F42C();
@@ -241,15 +241,15 @@ void Room204::parser() {
 		goto done;
 	}
 
-	if (player_been_here(205) && esi && player_said_any("FOO DOG", "PAGODA", "BRONZE LANTERN", "CONFUCIAN ANALECTS", "CONFUCIAN ANALECTS ", "TABLETS OF HISTORY", "LAO-TZU TABLETS")) {
+	if (player_been_here(205) && lookFl && player_said_any("FOO DOG", "PAGODA", "BRONZE LANTERN", "CONFUCIAN ANALECTS", "CONFUCIAN ANALECTS ", "TABLETS OF HISTORY", "LAO-TZU TABLETS")) {
 		digi_play("204R62", 1, 255, -1, -1);
 		goto done;
 	}
 
 	if (!player_been_here(205)) {
 		if (inv_player_has("MALLET") && !_field40 && !_field16C
-			&& !(player_said("MALLET") && player_said_any("GONG", "ACOLYTE")) && !(esi && player_said("MALLET"))
-			&& !(takeFl && player_said("GONG")) && !(esi && player_said("MEI CHEN"))&&  !(edi && player_said("MALLET"))) {
+			&& !(player_said("MALLET") && player_said_any("GONG", "ACOLYTE")) && !(lookFl && player_said("MALLET"))
+			&& !(takeFl && player_said("GONG")) && !(lookFl && player_said("MEI CHEN"))&&  !(gearFl && player_said("MALLET"))) {
 			_field124 = 2;
 			player_update_info(_G(my_walker), &_G(player_info));
 			_field40 = 1;
@@ -262,39 +262,39 @@ void Room204::parser() {
 			goto done;
 		}
 
-		if (esi && player_said("SHIH CHI TABLETS")) {
+		if (lookFl && player_said("SHIH CHI TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x > 1500) {
 				_fieldDC = 0;
 				_fieldE4_walkerDestX = 1663;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("SHIH CHING TABLETS")) {
+		if (lookFl && player_said("SHIH CHING TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x > 1400) {
 				_fieldDC = 0;
 				_fieldE4_walkerDestX = 1494;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("CONFUCIAN ANALECTS")) {
+		if (lookFl && player_said("CONFUCIAN ANALECTS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x > 1280) {
 				_fieldDC = 0;
 				_fieldE4_walkerDestX = 1412;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("CONFUCIAN ANALECTS ") && !_field4) {
+		if (lookFl && player_said("CONFUCIAN ANALECTS ") && !_field4) {
 			digi_play("204R52", 1, 255, -1, -1);
 			goto done;
 		}
 
-		if (esi && player_said("CONFUCIAN ANALECTS ")) {
+		if (lookFl && player_said("CONFUCIAN ANALECTS ")) {
 			switch (_G(kernel).trigger) {
 			case -1:
 			case 666:
@@ -367,66 +367,66 @@ void Room204::parser() {
 			}
 
 			goto done;
-		} // if (esi && player_said("CONFUCIAN ANALECTS "))
+		} // if (lookFl && player_said("CONFUCIAN ANALECTS "))
 
-		if (esi && player_said("TAO-TE CHING TABLETS")) {
+		if (lookFl && player_said("TAO-TE CHING TABLETS")) {
 			_fieldDC = 0;
 			_fieldE4_walkerDestX = 1328;
-			ecx = 1;
+			moveAndLookFl = true;
 		}
 
-		if (esi && player_said("SHIH CHI TABLETS")) {
+		if (lookFl && player_said("SHIH CHI TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x >= 1300) {
 				_fieldDC = 0;
 				_fieldE4_walkerDestX = 1245;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("LAO-TZU TABLETS")) {
+		if (lookFl && player_said("LAO-TZU TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x > 700) {
 				_fieldDC = 0;
 				_fieldE4_walkerDestX = 800;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("SHANG TABLETS")) {
+		if (lookFl && player_said("SHANG TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x < 900) {
 				_fieldDC = 1;
 				_fieldE4_walkerDestX = 717;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("TABLETS OF HISTORY")) {
+		if (lookFl && player_said("TABLETS OF HISTORY")) {
 			_fieldDC = 1;
 			_fieldE4_walkerDestX = 670;
-			ecx = 1;
+			moveAndLookFl = true;
 		}
 
-		if (esi && player_said("CONFUCIAN ANALECTS")) {
+		if (lookFl && player_said("CONFUCIAN ANALECTS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x < 1280) {
 				_fieldDC = 1;
 				_fieldE4_walkerDestX = 555;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (esi && player_said("LAO-TZU TABLETS")) {
+		if (lookFl && player_said("LAO-TZU TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x < 640) {
 				_fieldDC = 1;
 				_fieldE4_walkerDestX = 472;
-				ecx = 1;
+				moveAndLookFl = true;
 			}
 		}
 
-		if (ecx == 1) {
+		if (moveAndLookFl) {
 			if  (!_field4)
 				digi_play("204R52", 1, 255, -1, -1);
 			else {
@@ -578,11 +578,14 @@ void Room204::parser() {
 					player_set_commands_allowed(true);
 
 					break;
+
+				default:
+					break;
 				}
 			}
 
 			goto done;
-		} // (ecx == 1)
+		} // (moveAndLookFl)
 
 		if (player_said("walk through") && _field4 == 1) {
 			if (_G(flags)[V056] == 1) {
@@ -603,27 +606,27 @@ void Room204::parser() {
 			goto done;
 		}
 
-		if ((player_said("MALLET", "GONG") || (edi && player_said("MALLET"))) && inv_player_has("MALLET")) {
+		if ((player_said("MALLET", "GONG") || (gearFl && player_said("MALLET"))) && inv_player_has("MALLET")) {
 			subParser_1F71D();
 			goto done;
 		}
 	} // if (!player_been_here(205)
 
-	if (esi && player_said("GONG") && !inv_player_has("GONG")) {
+	if (lookFl && player_said("GONG") && !inv_player_has("GONG")) {
 		digi_play("204R10", 1, 255, -1, -1);
 		goto done;
 	}
 
-	if (esi && player_said("MALLET") && !inv_player_has("MALLET")) {
+	if (lookFl && player_said("MALLET") && !inv_player_has("MALLET")) {
 		digi_play("204R11", 1, 255, -1, -1);
 		goto done;
 	}
 
-	if (esi && player_said("ZHENMU SHOU FIGURINE")) {
+	if (lookFl && player_said("ZHENMU SHOU FIGURINE")) {
 		goto done;
 	}
 
-	if (esi && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")) {
+	if (lookFl && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
@@ -665,9 +668,9 @@ void Room204::parser() {
 		}
 
 		goto done;
-	} // esi && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")
+	} // lookFl && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")
 
-	if (esi && player_said("GIANT URN")) {
+	if (lookFl && player_said("GIANT URN")) {
 		digi_play("204R09", 1, 255, -1, -1);
 		goto done;
 	}
@@ -755,7 +758,7 @@ void Room204::parser() {
 		}
 	} // player_been_here(205)
 
-	if (edi && player_said("MAILLET")) {
+	if (gearFl && player_said("MAILLET")) {
 		digi_play("COM102", 1, 255, -1, -1);
 		goto done;
 	}
@@ -1002,7 +1005,7 @@ void Room204::parser() {
 		digi_play("204R24", 1, 255, -1, -1);
 	else if (player_said("CHINESE YUAN", "ACOLYTE") || player_said("CHINESE YUAN", "YOUNG PRIEST"))
 		digi_play("204R25", 1, 255, -1, -1);
-	else if (player_said("journal") && !takeFl && !esi && !inv_player_has(_G(player).noun)) {
+	else if (player_said("journal") && !takeFl && !lookFl && !inv_player_has(_G(player).noun)) {
 		if (_G(flags[kTabletsCartoon]) != 0) {
 			digi_play("204R15", 1, 255, -1, -1);
 		} else {
@@ -1012,7 +1015,7 @@ void Room204::parser() {
 			}
 			warning("Room204 Parser : sendWSMessage_multi(nullptr)");
 		}
-	} else if (esi && !inv_player_has(_G(player).noun) && !player_said("MEI CHEN"))
+	} else if (lookFl && !inv_player_has(_G(player).noun) && !player_said("MEI CHEN"))
 		digi_play("204R06", 1, 255, -1, -1);
 	else
 		return;
