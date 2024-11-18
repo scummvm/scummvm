@@ -2128,9 +2128,9 @@ void Room204::daemon() {
 		MoveScreenDelta(_G(game_buff_ptr), 0, 0);
 		ws_walk_load_walker_series(ROOM204_NORMAL_DIRS, ROOM204_NORMAL_NAMES, false);
 		ws_walk_load_walker_series(ROOM204_SHADOW_DIRS, ROOM204_SHADOW_NAMES, false);
-		game_set_scale(369, 326, 100, 99);
+		gameSetScale(369, 326, 100, 99);
 		_priestWalkerMach = triggerMachineByHash_3000(8, 14, *ROOM204_NORMAL_DIRS, *ROOM204_SHADOW_DIRS, 1864, 334, 3, triggerMachineByHashCallback3000, "Priest Walker");
-		game_set_scale(369, 326, 47, 38);
+		gameSetScale(369, 326, 47, 38);
 		kernel_timing_trigger(20, 590, nullptr);
 
 		break;
@@ -2142,9 +2142,9 @@ void Room204::daemon() {
 		break;
 
 	case 592:
-		game_set_scale(369, 326, 100, 99);
+		gameSetScale(369, 326, 100, 99);
 		ws_demand_location(_priestWalkerMach, 360, 305);
-		game_set_scale(369, 326, 47, 38);
+		gameSetScale(369, 326, 47, 38);
 		kernel_timing_trigger(5, 593, nullptr);
 
 		break;
@@ -2557,9 +2557,9 @@ void Room204::daemon() {
 		break;
 
 	case 664:
-		game_set_scale(369, 326, 100, 99);
+		gameSetScale(369, 326, 100, 99);
 		sendWSMessage_10000(_priestWalkerMach, 289, 305, 9, 665, 1);
-		game_set_scale(369, 326, 47, 38);
+		gameSetScale(369, 326, 47, 38);
 
 		break;
 
@@ -2669,9 +2669,9 @@ void Room204::daemon() {
 		break;
 
 	case 684:
-		game_set_scale(369, 326, 100, 99);
+		gameSetScale(369, 326, 100, 99);
 		sendWSMessage_10000(_priestWalkerMach, 289, 305, 9, 687, 1);
-		game_set_scale(369, 326, 47, 38);
+		gameSetScale(369, 326, 47, 38);
 
 		break;
 
