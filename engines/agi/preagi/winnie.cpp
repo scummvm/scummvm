@@ -367,10 +367,15 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				takeObj(_room);
 				setTakeDrop(fCanSel);
 				break;
-			case IDI_WTP_SEL_DROP:
-				dropObj(_room);
+			case IDI_WTP_SEL_DROP: {
+				bool droppedInRightRoom = dropObj(_room);
 				setTakeDrop(fCanSel);
+				if (droppedInRightRoom) {
+					// reload room so that the dropped object's flag takes effect
+					return IDI_WTP_PAR_OK;
+				}
 				break;
+			}
 			default:
 				break;
 			}
@@ -560,7 +565,8 @@ void WinnieEngine::takeObj(int iRoom) {
 	}
 }
 
-void WinnieEngine::dropObj(int iRoom) {
+// returns true if object was dropped in the right room
+bool WinnieEngine::dropObj(int iRoom) {
 	int iCode;
 
 	if (getObjInRoom(iRoom)) {
@@ -605,6 +611,7 @@ void WinnieEngine::dropObj(int iRoom) {
 				printStr(IDS_WTP_GAME_OVER_1);
 				getSelection(kSelAnyKey);
 			}
+			return true; // object dropped in right room
 		} else {
 			// drop object in the given room
 			_gameStateWinnie.iObjRoom[_gameStateWinnie.iObjHave] = iRoom;
@@ -627,6 +634,7 @@ void WinnieEngine::dropObj(int iRoom) {
 			_gameStateWinnie.iObjHave = 0;
 		}
 	}
+	return false; // object not dropped in right room
 }
 
 void WinnieEngine::dropObjRnd() {

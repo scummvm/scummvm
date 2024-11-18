@@ -327,7 +327,7 @@ private:
 	void printObjStr(int, int);
 	uint32 readObj(int, uint8 *);
 	void takeObj(int);
-	void dropObj(int);
+	bool dropObj(int);
 	bool isRightObj(int, int, int *);
 	void drawObjPic(int, int, int);
 	void getMenuMouseSel(int *, int[], int, int);
