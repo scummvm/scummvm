@@ -324,6 +324,8 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 										bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
 										bool mirrorX, bool mirrorY) {
 	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
+	if (!texture)
+		return false;
 
 	if (_spriteBatchMode) {
 		_batchTexture = texture;

@@ -312,6 +312,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 								  bool mirrorX, bool mirrorY) {
 
 	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
+	if (!texture)
+		return false;
 
 	if (_spriteBatchMode) {
 		_batchTexture = texture;
