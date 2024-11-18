@@ -79,7 +79,7 @@ public:
 	virtual void depthTesting(bool enabled) {};
 	virtual void polygonOffset(bool enabled) = 0;
 
-	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
+	virtual Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) = 0;
 	Graphics::Surface *convertImageFormatIfNecessary(Graphics::ManagedSurface *surface);
 
 	virtual void freeTexture(Texture *texture) = 0;
@@ -171,6 +171,91 @@ public:
 	};
 
 	byte *_variableStippleArray;
+
+	float _skyNormals[16][3] = {
+		{ 0.0, 0.0, 1.0 }, //front //0
+		{ 0.0, 0.0, 1.0 },		//1
+		{ 0.0, 0.0, 1.0 },		//2
+		{ 0.0, 0.0, 1.0 },		//3
+		{ 0.0, 0.0, -1.0 }, //back //0
+		{ 0.0, 0.0, -1.0 },		//1
+		{ 0.0, 0.0, -1.0 },		//2
+		{ 0.0, 0.0, -1.0 },		//3
+		{ -1.0, 0.0, 0.0 }, //left
+		{ -1.0, 0.0, 0.0 },
+		{ -1.0, 0.0, 0.0 },
+		{ -1.0, 0.0, 0.0 },
+		{ 1.0, 0.0, 0.0 }, //right
+		{ 1.0, 0.0, 0.0 },
+		{ 1.0, 0.0, 0.0 },
+		{ 1.0, 0.0, 0.0 }
+	};
+
+	float _skyUvs1008[16][2] = {
+		{ 0.0f, 0.0f }, //1
+		{ 0.0f, 2.0f }, //2
+		{ 0.4f, 2.0f }, //3
+		{ 0.4f, 0.0f }, //front //4
+
+		{ 0.0f, 2.0f }, //back //1
+		{ 0.4f, 2.0f }, //2
+		{ 0.4f, 0.0f }, //3
+		{ 0.0f, 0.0f }, //4
+
+		{ 0.0f, 0.0f }, //left //1
+		{ 0.4f, 0.0f }, //2
+		{ 0.4f, 2.0f }, //3
+		{ 0.0f, 2.0f }, //4
+
+		{ 0.4f, 0.0f }, //right //1
+		{ 0.0f, 0.0f }, //2
+		{ 0.0f, 2.0f }, //3
+		{ 0.4f, 2.0f }, //4
+	};
+
+	float _skyUvs128[16][2] = {
+		{ 0.0f, 0.0f }, //1
+		{ 0.0f, 2.0f }, //2
+		{ 2.5f, 2.0f }, //3
+		{ 2.5f, 0.0f }, //front //4
+
+		{ 0.0f, 2.0f }, //back //1
+		{ 2.5f, 2.0f }, //2
+		{ 2.5f, 0.0f }, //3
+		{ 0.0f, 0.0f }, //4
+
+		{ 0.0f, 0.0f }, //left //1
+		{ 2.5f, 0.0f }, //2
+		{ 2.5f, 2.0f }, //3
+		{ 0.0f, 2.0f }, //4
+
+		{ 2.5f, 0.0f }, //right //1
+		{ 0.0f, 0.0f }, //2
+		{ 0.0f, 2.0f }, //3
+		{ 2.5f, 2.0f }, //4
+	};
+
+	float _skyVertices[16][3] = {
+		{ -81280.0, 8128.0, 81280.0 },          //1     // Vertex #0 front
+		{ -81280.0, -8128.0, 81280.0 }, //2     // Vertex #1
+		{ 81280.0,  -8128.0, 81280.0 }, //3     // Vertex #2
+		{ 81280.0,  8128.0, 81280.0 },          //4     // Vertex #3
+
+		{ 81280.0f, -8128.0f, -81280.0f }, // 1
+		{ -81280.0f, -8128.0f, -81280.0f }, // 2
+		{ -81280.0f, 8128.0f, -81280.0f }, // 3
+		{ 81280.0f, 8128.0f, -81280.0f }, // 4
+
+		{ -81280.0f,  8128.0f,  81280.0f }, //left //1
+		{ -81280.0f,  8128.0f, -81280.0f }, //2
+		{ -81280.0f, -8128.0f, -81280.0f }, //3
+		{ -81280.0f, -8128.0f,  81280.0f }, //4
+
+		{ 81280.0f,  8128.0f, -81280.0f }, //right //1
+		{ 81280.0f,  8128.0f,  81280.0f }, //2
+		{ 81280.0f, -8128.0f,  81280.0f },//3
+		{ 81280.0f, -8128.0f, -81280.0f },//4
+	};
 
 	byte *_palette;
 	void setColorMap(ColorMap *colorMap_);

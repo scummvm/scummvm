@@ -76,7 +76,7 @@ public:
 	virtual void depthTesting(bool enabled) override;
 
 
-	Texture *createTexture(const Graphics::Surface *surface) override;
+	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
 
@@ -93,90 +93,6 @@ public:
 	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
 
 	virtual Graphics::Surface *getScreenshot() override;
-	GLfloat _skyNormals[16][3] = {
-		{ 0.0, 0.0, 1.0 }, //front //0
-		{ 0.0, 0.0, 1.0 },		//1
-		{ 0.0, 0.0, 1.0 },		//2
-		{ 0.0, 0.0, 1.0 },		//3
-		{ 0.0, 0.0, -1.0 }, //back //0
-		{ 0.0, 0.0, -1.0 },		//1
-		{ 0.0, 0.0, -1.0 },		//2
-		{ 0.0, 0.0, -1.0 },		//3
-		{ -1.0, 0.0, 0.0 }, //left
-		{ -1.0, 0.0, 0.0 },
-		{ -1.0, 0.0, 0.0 },
-		{ -1.0, 0.0, 0.0 },
-		{ 1.0, 0.0, 0.0 }, //right
-		{ 1.0, 0.0, 0.0 },
-		{ 1.0, 0.0, 0.0 },
-		{ 1.0, 0.0, 0.0 }
-	};
-
-	GLfloat _skyUvs1008[16][2] = {
-		{ 0.0f, 0.0f }, //1
-		{ 0.0f, 2.0f }, //2
-		{ 0.4f, 2.0f }, //3
-		{ 0.4f, 0.0f }, //front //4
-
-		{ 0.0f, 2.0f }, //back //1
-		{ 0.4f, 2.0f }, //2
-		{ 0.4f, 0.0f }, //3
-		{ 0.0f, 0.0f }, //4
-
-		{ 0.0f, 0.0f }, //left //1
-		{ 0.4f, 0.0f }, //2
-		{ 0.4f, 2.0f }, //3
-		{ 0.0f, 2.0f }, //4
-
-		{ 0.4f, 0.0f }, //right //1
-		{ 0.0f, 0.0f }, //2
-		{ 0.0f, 2.0f }, //3
-		{ 0.4f, 2.0f }, //4
-	};
-
-	GLfloat _skyUvs128[16][2] = {
-		{ 0.0f, 0.0f }, //1
-		{ 0.0f, 2.0f }, //2
-		{ 2.5f, 2.0f }, //3
-		{ 2.5f, 0.0f }, //front //4
-
-		{ 0.0f, 2.0f }, //back //1
-		{ 2.5f, 2.0f }, //2
-		{ 2.5f, 0.0f }, //3
-		{ 0.0f, 0.0f }, //4
-
-		{ 0.0f, 0.0f }, //left //1
-		{ 2.5f, 0.0f }, //2
-		{ 2.5f, 2.0f }, //3
-		{ 0.0f, 2.0f }, //4
-
-		{ 2.5f, 0.0f }, //right //1
-		{ 0.0f, 0.0f }, //2
-		{ 0.0f, 2.0f }, //3
-		{ 2.5f, 2.0f }, //4
-	};
-
-	GLfloat _skyVertices[16][3] = {
-		{ -81280.0, 8128.0, 81280.0 },		//1	// Vertex #0 front
-		{ -81280.0, -8128.0, 81280.0 },	//2	// Vertex #1
-		{ 81280.0,  -8128.0, 81280.0 },	//3	// Vertex #2
-		{ 81280.0,  8128.0, 81280.0 },		//4	// Vertex #3
-
-		{ 81280.0f, -8128.0f, -81280.0f }, // 1
-		{ -81280.0f, -8128.0f, -81280.0f }, // 2
-		{ -81280.0f, 8128.0f, -81280.0f }, // 3
-		{ 81280.0f, 8128.0f, -81280.0f }, // 4
-
-		{ -81280.0f,  8128.0f,  81280.0f }, //left //1
-		{ -81280.0f,  8128.0f, -81280.0f }, //2
-		{ -81280.0f, -8128.0f, -81280.0f }, //3
-		{ -81280.0f, -8128.0f,  81280.0f }, //4
-
-		{ 81280.0f,  8128.0f, -81280.0f }, //right //1
-		{ 81280.0f,  8128.0f,  81280.0f }, //2
-		{ 81280.0f, -8128.0f,  81280.0f },//3
-		{ 81280.0f, -8128.0f, -81280.0f },//4
-	};
 };
 
 } // End of namespace Freescape

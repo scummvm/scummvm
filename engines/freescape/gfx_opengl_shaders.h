@@ -78,7 +78,7 @@ public:
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
 
-	Texture *createTexture(const Graphics::Surface *surface) override;
+	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
 

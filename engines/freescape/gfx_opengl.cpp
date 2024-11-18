@@ -51,7 +51,7 @@ OpenGLRenderer::~OpenGLRenderer() {
 	free(_coords);
 }
 
-Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
+Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface, bool is3D) {
 	return new OpenGLTexture(surface);
 }
 

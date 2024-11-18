@@ -39,7 +39,7 @@ Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMod
 
 TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode, true) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
-	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
+	_texturePixelFormat = TinyGL2DTexture::getRGBAPixelFormat();
 	_variableStippleArray = nullptr;
 }
 
@@ -48,13 +48,16 @@ TinyGLRenderer::~TinyGLRenderer() {
 	free(_verts);
 }
 
-Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
-	return new TinyGLTexture(surface);
+Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface, bool is3D) {
+	if (is3D)
+		return new TinyGL3DTexture(surface);
+	else
+		return new TinyGL2DTexture(surface);
 }
 
 void TinyGLRenderer::freeTexture(Texture *texture) {
-	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
-	delete glTexture;
+	//TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
+	delete texture;
 }
 
 void TinyGLRenderer::init() {
@@ -92,7 +95,47 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 	TinyGL::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
-	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
+	tglBlit(((TinyGL2DTexture *)texture)->getBlitTexture(), transform);
+}
+
+void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
+	TinyGL3DTexture *glTexture = static_cast<TinyGL3DTexture *>(texture);
+	tglDisable(TGL_DEPTH_TEST);
+	tglEnable(TGL_TEXTURE_2D);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+
+	tglBindTexture(TGL_TEXTURE_2D, glTexture->_id);
+	tglColor4f(1.f, 1.f, 1.f, 1.f);
+	tglVertexPointer(3, TGL_FLOAT, 0, _skyVertices);
+	tglNormalPointer(TGL_FLOAT, 0, _skyNormals);
+	if (texture->_width == 1008)
+		tglTexCoordPointer(2, TGL_FLOAT, 0, _skyUvs1008);
+	else if (texture->_width == 128)
+		tglTexCoordPointer(2, TGL_FLOAT, 0, _skyUvs128);
+	else
+		error("Unsupported skybox texture width %d", glTexture->_width);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglEnableClientState(TGL_NORMAL_ARRAY);
+
+	tglPolygonMode(TGL_BACK, TGL_FILL);
+
+	tglPushMatrix();
+	{
+		tglTranslatef(camera.x(), camera.y(), camera.z());
+		tglDrawArrays(TGL_QUADS, 0, 16);
+	}
+	tglPopMatrix();
+
+	tglDisableClientState(TGL_NORMAL_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglBindTexture(TGL_TEXTURE_2D, 0);
+	tglDisable(TGL_TEXTURE_2D);
+	tglEnable(TGL_DEPTH_TEST);
+	tglFlush();
 }
 
 void TinyGLRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
@@ -499,7 +542,7 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	TinyGL::getSurfaceRef(glBuffer);
 
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(_screenW, _screenH, TinyGLTexture::getRGBAPixelFormat());
+	s->create(_screenW, _screenH, TinyGL2DTexture::getRGBAPixelFormat());
 	s->copyFrom(glBuffer);
 
 	return s;

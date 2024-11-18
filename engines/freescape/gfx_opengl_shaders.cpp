@@ -64,7 +64,7 @@ OpenGLShaderRenderer::~OpenGLShaderRenderer() {
 	free(_verts);
 }
 
-Texture *OpenGLShaderRenderer::createTexture(const Graphics::Surface *surface) {
+Texture *OpenGLShaderRenderer::createTexture(const Graphics::Surface *surface, bool is3D) {
 	return new OpenGLTexture(surface);
 }
 

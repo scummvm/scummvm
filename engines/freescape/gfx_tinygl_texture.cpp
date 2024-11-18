@@ -25,11 +25,11 @@
 
 namespace Freescape {
 
-const Graphics::PixelFormat TinyGLTexture::getRGBAPixelFormat() {
+const Graphics::PixelFormat TinyGL2DTexture::getRGBAPixelFormat() {
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 }
 
-TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
+TinyGL2DTexture::TinyGL2DTexture(const Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
 	_format = surface->format;
@@ -41,22 +41,72 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	update(surface);
 }
 
-TinyGLTexture::~TinyGLTexture() {
+TinyGL2DTexture::~TinyGL2DTexture() {
 	tglDeleteBlitImage(_blitImage);
 }
 
-void TinyGLTexture::update(const Graphics::Surface *surface) {
+void TinyGL2DTexture::update(const Graphics::Surface *surface) {
 	uint32 keyColor = getRGBAPixelFormat().RGBToColor(0xA0, 0xA0, 0xA0);
 	tglUploadBlitImage(_blitImage, *surface, keyColor, true);
 }
 
-void TinyGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+void TinyGL2DTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
 	// FIXME: TinyGL does not support partial texture update
 	update(surface);
 }
 
-TinyGL::BlitImage *TinyGLTexture::getBlitTexture() const {
+TinyGL::BlitImage *TinyGL2DTexture::getBlitTexture() const {
 	return _blitImage;
+}
+
+const Graphics::PixelFormat TinyGL3DTexture::getRGBAPixelFormat() {
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+}
+
+TinyGL3DTexture::TinyGL3DTexture(const Graphics::Surface *surface) {
+	_width = surface->w;
+	_height = surface->h;
+	_format = surface->format;
+	_upsideDown = false;
+
+	if (_format.bytesPerPixel == 4) {
+		assert(surface->format == getRGBAPixelFormat());
+		_format = surface->format;
+		_internalFormat = TGL_RGBA;
+		_sourceFormat = TGL_UNSIGNED_BYTE;
+	} else if (_format.bytesPerPixel == 2) {
+		_internalFormat = TGL_RGB;
+		_sourceFormat = TGL_UNSIGNED_SHORT_5_6_5;
+	} else
+		error("Unknown pixel format");
+
+
+	tglGenTextures(1, &_id);
+	tglBindTexture(TGL_TEXTURE_2D, _id);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, _internalFormat, _sourceFormat, nullptr);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+
+	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP_TO_EDGE);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP_TO_EDGE);
+	update(surface);
+}
+
+TinyGL3DTexture::~TinyGL3DTexture() {
+	tglDeleteTextures(1, &_id);
+}
+
+void TinyGL3DTexture::update(const Graphics::Surface *surface) {
+	assert(surface->format == _format);
+
+	tglBindTexture(TGL_TEXTURE_2D, _id);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, _internalFormat, surface->w, surface->h, 0, _internalFormat, _sourceFormat, const_cast<void *>(surface->getPixels()));
+}
+
+void TinyGL3DTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+	// FIXME: TinyGL does not support partial texture update
+	update(surface);
 }
 
 } // End of namespace Freescape

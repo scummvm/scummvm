@@ -110,18 +110,7 @@ void OpenGLTexture::updateTexture(const Graphics::Surface *surface, const Common
 	assert(surface->format == _format);
 
 	glBindTexture(GL_TEXTURE_2D, _id);
-
-	if (OpenGLContext.unpackSubImageSupported) {
-		const Graphics::Surface subArea = surface->getSubArea(rect);
-
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
-
-		glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, _internalFormat, _sourceFormat, const_cast<void *>(subArea.getPixels()));
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	} else {
-		// GL_UNPACK_ROW_LENGTH is not supported, don't bother and do a full texture update
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, _internalFormat, _sourceFormat, const_cast<void *>(surface->getPixels()));
-	}
+	glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, surface->w, surface->h, 0, _internalFormat, _sourceFormat, const_cast<void *>(surface->getPixels()));
 }
 
 void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {

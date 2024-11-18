@@ -60,9 +60,10 @@ public:
 
 	TGLubyte *_variableStippleArray;
 
-	Texture *createTexture(const Graphics::Surface *surface) override;
+	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
+	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
 
 	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewPort) override;
 	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) override;
