@@ -327,6 +327,8 @@ void Room204::parser() {
 					_field180 = 99999;
 				}
 
+				break;
+
 			case 3:
 				if (_dword1A1898 >= 1) {
 					_dword1A1898 = 0;
@@ -727,10 +729,274 @@ void Room204::parser() {
 			}
 
 			goto done;
+		} // if (talkFl && player_said("GONG"))
+
+		if (takeFl && player_said("MALLET")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_is_here("MALLET")) {
+					hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", false);
+					inv_give_to_player("MALLET");
+					kernel_examine_inventory_object("PING MALLET", _G(master_palette), 5, 1, 370, 264, 1, nullptr, -1);
+					terminateMachine(_courtyardGongMach);
+					goto done;
+				}
+
+				break;
+
+			case 1:
+				terminateMachine(_malletSpriteMach);
+				goto done;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // player_been_here(205)
+
+	if (edi && player_said("MAILLET")) {
+		digi_play("COM102", 1, 255, -1, -1);
+		goto done;
+	}
+
+	if (takeFl && player_said("MALLET") && inv_object_is_here("MALLET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			kernel_timing_trigger(30, 1, nullptr);
+			break;
+
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1);
+			} else {
+				ws_walk(_G(my_walker), 510, 325, nullptr, 2, 9, true);
+			}
+
+			break;
+
+		case 2:
+			terminateMachine(_malletSpriteMach);
+			kernel_examine_inventory_object("PING MALLET", _G(master_palette), 5, 1, 370, 264, 3, nullptr, -1);
+			break;
+
+		case 3:
+			_G(flags[V032]) = 1;
+			inv_give_to_player("MALLET");
+			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", false);
+			_field16C = 0;
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
 		}
 
-		warning("incomplete");
-	} // player_been_here(205)
+		goto done;
+	} // takeFl && player_said("MALLET") && inv_object_is_here("MALLET")
+
+	if (player_said("MALLET", "ACOLYTE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 497, 325, nullptr, 1, 9, true);
+
+			break;
+
+		case 1:
+			_field124 = 3;
+			_field12C_triggerNum = kernel_trigger_create(2);
+
+			break;
+
+		case 2:
+			kernel_timing_trigger(1, 3, nullptr);
+			break;
+
+		case 3:
+			ws_walk(_G(my_walker), 510, 325, nullptr, 4, 9, true);
+			break;
+
+		case 4:
+			_field40 = 0;
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+
+		}
+
+		goto done;
+	} // player_said("MALLET", "ACOLYTE")
+
+	if (takeFl && player_said("GONG") && inv_object_is_here("GONG")) {
+		digi_play("204r26", 1, 255, -1, -1);
+		goto done;
+	}
+
+	if (takeFl && player_said("SILVER BUTTERFLY")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			if (inv_object_is_here("SILVER BUTTERFLY")) {
+				player_set_commands_allowed(false);
+				kernel_timing_trigger(30, 1, nullptr);
+				goto done;
+			}
+
+			break;
+
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1);
+			} else {
+				g_engine->camera_shift_xy(1280, 0);
+				_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
+				setGlobals1(_ripTrekLowReachPos2Series, 1, 16, 16, 16, 0, 16, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+			}
+
+			goto done;
+			break;
+
+		case 2:
+			kernel_examine_inventory_object("PING SILVER BUTTERFLY", _G(master_palette), 5, 1, 387, 250, 3, "204R41", -1);
+
+			goto done;
+			break;
+
+		case 3:
+			inv_give_to_player("SILVER BUTTERFLY");
+			terminateMachine(_silverButterflyCoinMach);
+			sendWSMessage_120000(_G(my_walker), 4);
+
+			goto done;
+			break;
+
+		case 4:
+			sendWSMessage_150000(_G(my_walker), 5);
+			goto done;
+			break;
+
+		case 5:
+			series_unload(_ripTrekLowReachPos2Series);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "SILVER BUTTERFLY", false);
+			player_set_commands_allowed(true);
+
+			goto done;
+			break;
+
+		default:
+			break;
+		}
+	} // takeFl && player_said("SILVER BUTTERFLY")
+
+	if (talkFl && player_said("MEI CHEN")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			ws_get_walker_info(_mcMach, &_G(player_info).x, &_G(player_info).y, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+
+			_fieldF8 = (_fieldDC == 1) ? 10 : 2;
+			DisposePath(_mcMach->walkPath);
+			_mcMach->walkPath = CreateCustomPath(_G(player_info).x + 1, _G(player_info).y, -1);
+			ws_custom_walk(_mcMach, 4, 3, true);
+			break;
+
+		case 3:
+			_ripTrekTwoHandTalkPos2Series = series_load("RIP TREK TWO HAND TALK POS2", -1, nullptr);
+			setGlobals1(_ripTrekTwoHandTalkPos2Series, 1, 5, 5, 5, 0, 6, 8, 6, 8, 1, 9, 19, 19, 19, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 4);
+
+			break;
+
+		case 4:
+			sendWSMessage_120000(_G(my_walker), -1);
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("204r17", 1, 255, 5, -1);
+				break;
+
+			case 2:
+				digi_play("204r18", 1, 255, 5, -1);
+				break;
+
+			default:
+				digi_play("204r19", 1, 255, 5, -1);
+				break;
+			}
+
+			break;
+
+		case 5:
+			sendWSMessage_130000(_G(my_walker), 6);
+			break;
+
+		case 6:
+			sendWSMessage_150000(_G(my_walker), 7);
+			break;
+
+		case 7:
+			series_unload(_ripTrekTwoHandTalkPos2Series);
+			_meiTrekTalkerPos4Series = series_load("MEI TREK TALKER POS4", -1, nullptr);
+			setGlobals1(_meiTrekTalkerPos4Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcMach, 8);
+
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("204M16", 1, 255, 8, -1);
+				break;
+
+			case 2:
+				digi_play("204M17", 1, 255, 8, -1);
+				break;
+
+			case 3:
+				digi_play("204M18", 1, 255, 8, -1);
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 8:
+			if (_dword1A1898 < 1) {
+				++_dword1A1898;
+			} else {
+				_dword1A1898 = 0;
+				sendWSMessage_150000(_mcMach, 9);
+			}
+
+			break;
+
+		case 9:
+			series_unload(_meiTrekTalkerPos4Series);
+			DisposePath(_mcMach->walkPath);
+			_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+			ws_custom_walk(_mcMach, _fieldD8_facing, 10, true);
+
+			break;
+
+		case 10:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+
+		goto done;
+	} // talkFl && player_said("MEI CHEN")
+
+
 
 	warning("incomplete");
 
@@ -968,7 +1234,7 @@ void Room204::daemon() {
 		break;
 
 	case 535:
-		_fieldD8 = 1;
+		_fieldD8_facing = 1;
 		_field2C = 1;
 		kernel_timing_trigger(5, 537, nullptr);
 
@@ -1285,7 +1551,7 @@ void Room204::daemon() {
 
 			case 14:
 			case 15:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 1, 5, 571, _field90_series, 5, 5, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, 1, 5, 571, _ripTrekTwoHandTalkPos2Series, 5, 5, 0);
 				_field14 = 14;
 
 				break;
@@ -1328,18 +1594,18 @@ void Room204::daemon() {
 		case 14:
 			switch (_field10) {
 			case 11:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 13, 19, 571, _field90_series, 19, 19, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, 13, 19, 571, _ripTrekTwoHandTalkPos2Series, 19, 19, 0);
 				_field14 = 11;
 
 				break;
 
 			case 14:
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 5, 5, 571, _field90_series, 5, 5, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, 5, 5, 571, _ripTrekTwoHandTalkPos2Series, 5, 5, 0);
 				break;
 
 			case 15: {
 				int32 rnd = imath_ranged_rand(6, 12);
-				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, rnd, rnd, 571, _field90_series, rnd, rnd, 0);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 571, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 0);
 				}
 
 				break;
@@ -1454,7 +1720,7 @@ void Room204::daemon() {
 	case 574:
 		_fieldC0_trigger = -1;
 		_fieldCC_trigger = -1;
-		_fieldD8 = -1;
+		_fieldD8_facing = -1;
 		_fieldC8_trigger = -1;
 		_fieldF4 = -1;
 		ws_get_walker_info(_mcMach, &_field10C_x, &_field110_y, &_field118_scale, &_field11C_depth, &_field114_facing);
@@ -1524,7 +1790,7 @@ void Room204::daemon() {
 			_fieldCC_trigger = -1;
 		}
 
-		if (_fieldD8 != 1) {
+		if (_fieldD8_facing != 1) {
 			kernel_timing_trigger(1, 577, nullptr);
 			break;
 		}
@@ -1818,7 +2084,7 @@ void Room204::daemon() {
 		break;
 
 	case 582:
-		_fieldD8 = 1;
+		_fieldD8_facing = 1;
 		kernel_timing_trigger(1, 583, nullptr);
 
 		break;
@@ -2290,7 +2556,7 @@ void Room204::daemon() {
 
 	case 667:
 		_field10 = 21;
-		_fieldD8 = 1;
+		_fieldD8_facing = 1;
 		_fieldC8_trigger = kernel_trigger_create(669);
 
 		break;
@@ -2413,7 +2679,7 @@ void Room204::daemon() {
 		break;
 
 	case 691:
-		_fieldD8 = 1;
+		_fieldD8_facing = 1;
 		_fieldC8_trigger = kernel_trigger_create(692);
 
 		break;
@@ -2461,7 +2727,7 @@ void Room204::daemon() {
 		break;
 
 	case 701:
-		_fieldD8 = 1;
+		_fieldD8_facing = 1;
 		_fieldC8_trigger = kernel_trigger_create(702);
 
 		break;
