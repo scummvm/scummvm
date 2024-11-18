@@ -71,7 +71,7 @@ public:
 
 	// Used in Willy Beamish
 	uint16 _otherCursorNum;
-	uint16 _objInteractionListFlag;
+	uint16 _objInteractionRectNum;
 
 	Common::Array<SceneConditions> enableConditions;
 	Common::Array<SceneOp> onRClickOps;
@@ -81,6 +81,13 @@ public:
 	virtual ~HotArea() {}
 
 	virtual Common::String dump(const Common::String &indent) const;
+};
+
+class DynamicRect {
+public:
+	DynamicRect() : _num(0) {};
+	uint16 _num;
+	DgdsRect _rect;
 };
 
 enum SceneOpCode {
@@ -149,6 +156,8 @@ enum SceneOpCode {
 	kSceneOpOpenBeamishOpenSkipCreditsMenu = 101,
 
 	kSceneOpMaxCode = 255, // for checking file load
+
+	kSceneOpHasConditionalOpsFlag = 0x8000,
 };
 
 class SceneOp {
@@ -204,7 +213,8 @@ public:
 	Common::Array<SceneOp> opList;
 
 	bool matches(uint16 droppedItemNum, uint16 targetItemNum) const {
-		return _droppedItemNum == droppedItemNum && _targetItemNum == targetItemNum;
+		return (_droppedItemNum == 0xFFFF || _droppedItemNum == droppedItemNum)
+				&& _targetItemNum == targetItemNum;
 	}
 
 	Common::String dump(const Common::String &indent) const;
@@ -257,8 +267,8 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 	uint16 _frameNo;
-	uint16 _xoff;
-	uint16 _yoff;
+	int16 _xoff;
+	int16 _yoff;
 	uint16 _flipFlags;
 };
 
@@ -472,7 +482,6 @@ public:
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();
-	void sceneOpUpdatePasscodeGlobal();
 
 	void prevChoice();
 	void nextChoice();
@@ -482,6 +491,8 @@ public:
 	bool isRButtonDown() const { return _rbuttonDown; }
 	void showDialog(uint16 fileNum, uint16 dlgNum);
 	const Common::Array<ConditionalSceneOp> &getConditionalOps() { return _conditionalOps; }
+	void updateHotAreasFromDynamicRects();
+	void setDynamicSceneRect(int16 num, int16 x, int16 y, int16 width, int16 height);
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
@@ -506,6 +517,7 @@ private:
 	Common::List<HotArea> _hotAreaList;
 	Common::Array<ObjectInteraction> _objInteractions1;
 	Common::Array<ObjectInteraction> _objInteractions2;
+	Common::Array<DynamicRect> _dynamicRects; // Only used in Willy Beamish
 	//uint _field12_0x2b;
 	//uint _field15_0x33;
 

@@ -100,8 +100,8 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 
 Common::String HotArea::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d cursor2 %d interactionFlag %d",
-			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _otherCursorNum, _objInteractionListFlag);
+	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d cursor2 %d interactionRectNum %d",
+			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _otherCursorNum, _objInteractionRectNum);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
 	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
@@ -309,12 +309,12 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 		dst._otherCursorNum = 0;
 
 	if (isVersionOver(" 1.218")) {
-		dst._objInteractionListFlag = s->readUint16LE();
-		if (dst._objInteractionListFlag) {
+		dst._objInteractionRectNum = s->readUint16LE();
+		if (dst._objInteractionRectNum) {
 			dst._rect = DgdsRect();
 		}
 	} else {
-		dst._objInteractionListFlag = 0;
+		dst._objInteractionRectNum = 0;
 	}
 	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.onRClickOps);
@@ -402,7 +402,7 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 	for (SceneOp &dst : list) {
 		readConditionList(s, dst._conditionList);
 		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
-		if ((dst._opCode & 0x7fff) > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
+		if ((dst._opCode & ~kSceneOpHasConditionalOpsFlag) > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
 			error("Unexpected scene opcode %d", (int)dst._opCode);
 		uint16 nvals = s->readUint16LE();
 		_checkListNotTooLong(nvals, "scene op args");
@@ -834,8 +834,8 @@ bool Scene::runChinaOp(const SceneOp &op) {
 bool Scene::runBeamishOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	if (op._opCode & 0x8000) {
-		uint16 opcode = op._opCode & 0x7fff;
+	if (op._opCode & kSceneOpHasConditionalOpsFlag) {
+		uint16 opcode = op._opCode & ~kSceneOpHasConditionalOpsFlag;
 		for (const ConditionalSceneOp &cop : engine->getScene()->getConditionalOps()) {
 			if (cop._opCode == opcode && checkConditions(cop._conditionList)) {
 				if (!runOps(cop._opList))
@@ -1062,6 +1062,7 @@ void SDSScene::unload() {
 	_dialogs.clear();
 	_triggers.clear();
 	_talkData.clear();
+	_dynamicRects.clear();
 	_sceneDialogFlags = kDlgFlagNone;
 }
 
@@ -1225,8 +1226,8 @@ bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
 		h._headFrames.resize(nsub);
 		for (auto &sub : h._headFrames) {
 			sub._frameNo = s->readUint16LE();
-			sub._xoff = s->readUint16LE();
-			sub._yoff = s->readUint16LE();
+			sub._xoff = s->readSint16LE();
+			sub._yoff = s->readSint16LE();
 			if (isVersionOver(" 1.221")) {
 				sub._flipFlags = s->readUint16LE();
 			}
@@ -1850,8 +1851,12 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	GameItem *dragItem = _dragItem;
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	const Globals *globals = engine->getGameGlobals();
+	Globals *globals = engine->getGameGlobals();
 	GDSScene *gdsScene = engine->getGDSScene();
+
+	if (engine->getGameId() == GID_WILLY) {
+		static_cast<WillyGlobals *>(globals)->setDroppedItemNum(dragItem->_num);
+	}
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
 
@@ -1975,6 +1980,35 @@ bool SDSScene::hasVisibleOrOpeningDialog() const {
 	return false;
 }
 
+void SDSScene::setDynamicSceneRect(int16 num, int16 x, int16 y, int16 width, int16 height) {
+	for (auto &dynamicRect : _dynamicRects) {
+		if (dynamicRect._num == num) {
+			dynamicRect._rect = DgdsRect(x, y, width, height);
+			return;
+		}
+	}
+
+	_dynamicRects.push_back(DynamicRect());
+	_dynamicRects.back()._num = num;
+	_dynamicRects.back()._rect = DgdsRect(x, y, width, height);
+}
+
+
+void SDSScene::updateHotAreasFromDynamicRects() {
+	if (_dynamicRects.empty())
+		return;
+	for (auto &hotArea : _hotAreaList) {
+		if (!hotArea._objInteractionRectNum)
+			continue;
+		for (const auto &dynamicRect : _dynamicRects) {
+			if (hotArea._objInteractionRectNum == dynamicRect._num) {
+				hotArea._rect = dynamicRect._rect;
+				break;
+			}
+		}
+	}
+}
+
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	for (auto &item : DgdsEngine::getInstance()->getGDSScene()->getGameItems()) {
 		if (item._inSceneNum == _num && checkConditions(item.enableConditions)
@@ -2016,7 +2050,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
 	area._otherCursorNum = 0;
-	area._objInteractionListFlag = 0;
+	area._objInteractionRectNum = 0;
 
 	// Add swap character button for HoC
 	if (engine->getGameId() == GID_HOC && engine->getGDSScene()->getGlobal(0x34) != 0) {
@@ -2030,7 +2064,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 		area2._rect.x = 5;
 		area2._rect.y = SCREEN_HEIGHT - area2._rect.height - 5;
 		area2._otherCursorNum = 0;
-		area2._objInteractionListFlag = 0;
+		area2._objInteractionRectNum = 0;
 
 		_hotAreaList.push_front(area2);
 	}

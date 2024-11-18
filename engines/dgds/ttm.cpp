@@ -35,6 +35,7 @@
 #include "dgds/font.h"
 #include "dgds/sound_raw.h"
 #include "dgds/drawing.h"
+#include "dgds/scene.h"
 
 namespace Dgds {
 
@@ -176,6 +177,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x4120: return "FADE IN";
 	case 0x4200: return "STORE AREA";
 	case 0x4210: return "SAVE GETPUT REGION";
+	case 0x5000: return "SET DYNAMIC RECT";
 
 	case 0xa000: return "DRAW PIXEL";
 	case 0xa010: return "WIPE DISSOLVE";
@@ -840,10 +842,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env._getPuts[seq._currentGetPutId]._surf.reset(surf);
 		break;
 	}
-	case 0x5000:
-		// This opcode does nothing in SQ5 demo
-		debug(1, "TTM: 0x5000: Implement opcode? (%d %d %d %d %d)",
-				ivals[0], ivals[1], ivals[2], ivals[3], ivals[4]);
+	case 0x5000: // SET DYNAMIC RECT: x,y,w,h,num ??
+		_vm->getScene()->setDynamicSceneRect(ivals[4], ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0xa000: // DRAW PIXEL x,y:int
 		if (seq._drawWin.contains(ivals[0], ivals[1]))
