@@ -110,7 +110,9 @@ private:
 	Common::String getXAreaDigi2() const;
 	int getItemX(int seriesHash) const;
 	int getItemY(int seriesHash) const;
-	bool takeTurtleTreats();
+	void openDrawer();
+	void closeDrawer();
+	void takeTurtleTreats();
 
 public:
 	Room305() : Room() {}

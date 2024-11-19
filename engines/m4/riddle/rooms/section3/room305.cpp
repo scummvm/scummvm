@@ -673,90 +673,11 @@ void Room305::parser() {
 		_fengShould = 4;
 		_ripleyShould = 7;
 	} else if (player_said("close", "drawer")) {
-		switch (_G(kernel).trigger) {
-		case -1:
-			if (inv_object_is_here("TURTLE TREATS"))
-				terminateMachineAndNull(_openDrawerTreats);
-
-			terminateMachineAndNull(_openDrawer);
-			hotspot_restore_all();
-
-			if (_G(flags)[V000]) {
-				sendWSMessage_120000(1);
-			} else {
-				sendWSMessage_10000(1, _rip6, _rip4, 5, 1, 1, _rip4, 1, 1, 0);
-			}
-			break;
-
-		case 1:
-			if (_G(flags)[V000]) {
-				sendWSMessage_150000(-1);
-			} else {
-				terminateMachineAndNull(_rip6);
-				terminateMachineAndNull(_rip5);
-				ws_unhide_walker();
-			}
-			kernel_timing_trigger(1, 2);
-			break;
-
-		case 2:
-			series_unload(_rip4);
-			player_set_commands_allowed(true);
-			_drawerOpen = false;
-			break;
-
-		default:
-			break;
-		}
+		closeDrawer();
 	} else if (useFlag && player_said("drawer")) {
-		switch (_G(kernel).trigger) {
-		case -1:
-			player_set_commands_allowed(false);
-			player_update_info();
-
-			if (_G(flags)[V000]) {
-				_rip4 = series_load("RIP TREK MED REACH HAND POS1");
-				setGlobals1(1, 5, 5, 5, 0, 5, 1, 1, 1);
-				sendWSMessage_110000(1);
-			} else {
-				ws_hide_walker();
-				_rip4 = series_load("SUIT RIP REACHES FOR DRAWER");
-				_rip5 = series_show("ripsh1", 0xf00, 128, -1, -1, 0,
-					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
-				_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
-					triggerMachineByHashCallback, "rip reach");
-
-				sendWSMessage_10000(1, _rip6, _rip4, 1, 5, 1, _rip4, 5, 5, 0);
-			}
-			break;
-
-		case 1:
-			hotspot_hide_all();
-			intr_cancel_sentence();
-			mouse_set_sprite(0);
-			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 374, 0);
-
-			if (inv_object_is_here("TURTLE TREATS")) {
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6, true);
-				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6, true);
-			}
-
-			_drawerOpen = true;
-			_openDrawer = series_show_sprite("open drawer", 0, 0);
-
-			if (inv_object_is_here("TURTLE TREATS")) {
-				_openDrawerTreats = series_show_sprite("open drawer with treats", 0, 0);
-			}
-
-			player_set_commands_allowed(true);
-			digi_play("305_s02", 2);
-			break;
-
-		default:
-			break;
-		}
-	} else if (takeFlag && player_said("turtle treats") && takeTurtleTreats()) {
-		// Handled by function
+		openDrawer();
+	} else if (takeFlag && player_said("turtle treats")) {
+		takeTurtleTreats();
 	} else if (takeFlag && player_said("turtle")) {
 		if (_G(flags)[GLB_TEMP_12]) {
 			digi_play("305r55", 1);
@@ -1513,7 +1434,94 @@ void Room305::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(_lookUp);
 }
 
-bool Room305::takeTurtleTreats() {
+void Room305::openDrawer() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		player_update_info();
+
+		if (_G(flags)[V000]) {
+			_rip4 = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(1, 5, 5, 5, 0, 5, 1, 1, 1);
+			sendWSMessage_110000(1);
+		} else {
+			ws_hide_walker();
+			_rip4 = series_load("SUIT RIP REACHES FOR DRAWER");
+			_rip5 = series_show("ripsh1", 0xf00, 128, -1, -1, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
+				triggerMachineByHashCallback, "rip reach");
+
+			sendWSMessage_10000(1, _rip6, _rip4, 1, 5, 1, _rip4, 5, 5, 0);
+		}
+		break;
+
+	case 1:
+		hotspot_hide_all();
+		intr_cancel_sentence();
+		mouse_set_sprite(0);
+		hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 374, 0);
+
+		if (inv_object_is_here("TURTLE TREATS")) {
+			hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6, true);
+			hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6, true);
+		}
+
+		_drawerOpen = true;
+		_openDrawer = series_show_sprite("open drawer", 0, 0);
+
+		if (inv_object_is_here("TURTLE TREATS")) {
+			_openDrawerTreats = series_show_sprite("open drawer with treats", 0, 0);
+		}
+
+		player_set_commands_allowed(true);
+		digi_play("305_s02", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room305::closeDrawer() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("TURTLE TREATS"))
+			terminateMachineAndNull(_openDrawerTreats);
+
+		terminateMachineAndNull(_openDrawer);
+		hotspot_restore_all();
+
+		if (_G(flags)[V000]) {
+			sendWSMessage_120000(1);
+		} else {
+			sendWSMessage_10000(1, _rip6, _rip4, 5, 1, 1, _rip4, 1, 1, 0);
+		}
+		break;
+
+	case 1:
+		if (_G(flags)[V000]) {
+			sendWSMessage_150000(-1);
+		} else {
+			terminateMachineAndNull(_rip6);
+			terminateMachineAndNull(_rip5);
+			ws_unhide_walker();
+		}
+		kernel_timing_trigger(1, 2);
+		break;
+
+	case 2:
+		series_unload(_rip4);
+		player_set_commands_allowed(true);
+		_drawerOpen = false;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room305::takeTurtleTreats() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (inv_object_is_here("TURTLE TREATS")) {
@@ -1527,29 +1535,31 @@ bool Room305::takeTurtleTreats() {
 				sendWSMessage_10000(1, _rip6, _rip4, 5, 1, 1, _rip4, 1, 1, 0);
 
 			digi_play("305r20", 1);
-			return true;
 		}
 		break;
 
 	case 1:
 		inv_give_to_player("TURTLE TREATS");
-		terminateMachineAndNull(_rip6);
-		terminateMachineAndNull(_rip5);
-		ws_unhide_walker();
+
+		if (_G(flags)[V000]) {
+			sendWSMessage_150000(-1);
+		} else {
+			terminateMachineAndNull(_rip6);
+			terminateMachineAndNull(_rip5);
+			ws_unhide_walker();
+		}
 		kernel_timing_trigger(1, 2);
-		return true;
+		break;
 
 	case 2:
 		series_unload(_rip4);
 		player_set_commands_allowed(true);
 		_drawerOpen = false;
-		return true;
+		break;
 
 	default:
 		break;
 	}
-
-	return false;
 }
 
 } // namespace Rooms
