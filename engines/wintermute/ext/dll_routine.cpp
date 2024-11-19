@@ -70,7 +70,7 @@ bool EmulateRoutineExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *this
 	if (strcmp(function->name, "GetDPI") == 0) {
 		stack->correctParams(0);
 
-		stack->pushInt(96); // standard Windows settings 96 DPI
+		stack->pushInt(120); // standard Windows settings is 96 DPI, but 120 match original game
 
 		return STATUS_OK;
 	}
