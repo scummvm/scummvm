@@ -237,36 +237,42 @@ void initCommonGFX() {
 	// Any global or command line settings already have been applied at the time
 	// we get here, so we only do something if the game domain overrides those
 	// values
-	if (gameDomain) {
-		if (gameDomain->contains("aspect_ratio"))
-			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+	if (!gameDomain)
+		return;
 
-		if (gameDomain->contains("fullscreen"))
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	if (gameDomain->contains("aspect_ratio"))
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
-		if (gameDomain->contains("filtering"))
-			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	if (gameDomain->contains("fullscreen"))
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 
-		if (gameDomain->contains("vsync"))
-			g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync"));
+	if (gameDomain->contains("vsync"))
+		g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync"));
 
-		if (gameDomain->contains("stretch_mode"))
-			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
+	if (gameDomain->contains("stretch_mode"))
+		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
-		if (gameDomain->contains("scaler") || gameDomain->contains("scale_factor"))
-			g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
+	// Stop here for hardware-accelerated 3D games
+	if (g_system->hasFeature(OSystem::kFeatureOpenGLForGame))
+		return;
 
-		if (gameDomain->contains("shader"))
-			g_system->setShader(ConfMan.getPath("shader"));
+	// Set up filtering, scaling and shaders for 2D games
+	if (gameDomain->contains("filtering"))
+		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 
-		// TODO: switching between OpenGL and SurfaceSDL is quite fragile
-		// and the SDL backend doesn't really need this so leave it out
-		// for now to avoid regressions
+	if (gameDomain->contains("scaler") || gameDomain->contains("scale_factor"))
+		g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
+
+	if (gameDomain->contains("shader"))
+		g_system->setShader(ConfMan.getPath("shader"));
+
+	// TODO: switching between OpenGL and SurfaceSDL is quite fragile
+	// and the SDL backend doesn't really need this so leave it out
+	// for now to avoid regressions
 #ifndef SDL_BACKEND
-		if (gameDomain->contains("gfx_mode"))
-			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	if (gameDomain->contains("gfx_mode"))
+		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 #endif
-	}
 }
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
@@ -486,11 +492,8 @@ void initGraphics(int width, int height) {
 void initGraphics3d(int width, int height) {
 	g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
+		initCommonGFX();
 		g_system->initSize(width, height);
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen")); // TODO: Replace this with initCommonGFX()
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio")); // TODO: Replace this with initCommonGFX()
-		g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync")); // TODO: Replace this with initCommonGFX()
-		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str()); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
 
 	if (!splash && !GUI::GuiManager::instance()._launched) {
