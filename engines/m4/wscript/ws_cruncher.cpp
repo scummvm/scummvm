@@ -1403,6 +1403,11 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 		pCodeJmpTable[myInstruction](myAnim8);
 	}
 
+	if (_GWS(bailOut)) {
+		_GWS(bailOut) = false;
+		return true;
+	}
+
 	if (_GWS(terminated)) {
 		if (_GWS(mapTheCel) || (oldR != (int)(myRegs[IDX_R] >> 16)) ||
 				(oldW != (int)(myRegs[IDX_W] >> 16)) || (oldH != (int)(myRegs[IDX_H] >> 16)) ||

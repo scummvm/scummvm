@@ -108,6 +108,12 @@ void Room410::daemon() {
 		terminateMachineAndNull(_pu);
 		_pu = series_stream("410PU02", 7, 0x100, -1);
 		series_stream_break_on_frame(_pu, 8, 125);
+
+		// WORKAROUND: Way back up in the stack, the original _pu's anim
+		// is what called daemon. So we need to flag for it to bail out,
+		// so it doesn't try to use freed memory
+		_GWS(keepProcessing) = false;
+		_GWS(bailOut) = true;
 		break;
 
 	case 125:

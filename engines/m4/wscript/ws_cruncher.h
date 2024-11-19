@@ -96,6 +96,7 @@ struct WSCruncher_Globals {
 	frac16 *_myArg3 = nullptr;
 
 	bool _keepProcessing = false, _terminated = false, _mapTheCel = false;
+	bool _bailOut = false;
 	int32 _compareCCR = 0;
 	int32 _indexReg = 0;
 	int32 _pcOffsetOld = 0;
