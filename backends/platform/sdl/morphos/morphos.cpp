@@ -23,7 +23,6 @@
 #include "common/scummsys.h"
 
 #ifdef __MORPHOS__
-
 #include "backends/platform/sdl/morphos/morphos.h"
 #include "backends/fs/morphos/morphos-fs-factory.h"
 #include "backends/dialogs/morphos/morphos-dialogs.h"
@@ -41,7 +40,7 @@ void OSystem_MorphOS::init() {
 }
 
 bool OSystem_MorphOS::hasFeature(Feature f) {
-	if (f == kFeatureOpenUrl)
+	if (f == kFeatureOpenUrl || f == kFeatureClipboardSupport)
 		return true;
 
 #if defined(USE_SYSDIALOGS)
@@ -56,68 +55,23 @@ void OSystem_MorphOS::initBackend() {
 
 	// First time user defaults
 	ConfMan.registerDefault("audio_buffer_size", "2048");
-	ConfMan.registerDefault("fullscreen", false);
-	ConfMan.registerDefault("gfx_mode", "surfacesdl");
-	ConfMan.registerDefault("stretch_mode", "stretch");
-	ConfMan.registerDefault("gui_mode", "antialias");
-	ConfMan.registerDefault("gui_theme", "scummremastered");
-	ConfMan.registerDefault("gui_scale", "125");
-	ConfMan.registerDefault("extrapath", Common::Path("extras/"));
-	ConfMan.registerDefault("iconspath", Common::Path("icons/"));
-	ConfMan.registerDefault("pluginspath", Common::Path("plugins/"));
-	ConfMan.registerDefault("savepath", Common::Path("saves/"));
-	ConfMan.registerDefault("themepath", Common::Path("themes/"));
+	ConfMan.registerDefault("extrapath", Common::Path("PROGDIR:extras/"));
+	ConfMan.registerDefault("savepath", Common::Path("PROGDIR:saves/"));
+	ConfMan.registerDefault("themepath", Common::Path("PROGDIR:themes/"));
 	// First time .ini defaults
 	if (!ConfMan.hasKey("audio_buffer_size")) {
 		ConfMan.set("audio_buffer_size", "2048");
 	}
-	if (!ConfMan.hasKey("fullscreen")) {
-		ConfMan.setBool("fullscreen", false);
-	}
-	if (!ConfMan.hasKey("gfx_mode")) {
-		ConfMan.set("gfx_mode", "surfacesdl");
-	}
-	if (!ConfMan.hasKey("stretch_mode")) {
-		ConfMan.set("stretch_mode", "stretch");
-	}
-	if (!ConfMan.hasKey("gui_mode")) {
-		ConfMan.set("gui_mode", "antialias");
-	}
-	if (!ConfMan.hasKey("gui_theme")) {
-		ConfMan.set("gui_theme", "scummremastered");
-	}
-	if (!ConfMan.hasKey("gui_scale")) {
-		ConfMan.set("gui_scale", "125");
-	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.setPath("extrapath", "extras/");
-	}
-	if (!ConfMan.hasKey("iconspath")) {
-		ConfMan.setPath("iconspath", "icons/");
-	}
-	if (!ConfMan.hasKey("pluginspath")) {
-		ConfMan.setPath("pluginspath", "plugins/");
+		ConfMan.setPath("extrapath", "PROGDIR:extras/");
 	}
 	if (!ConfMan.hasKey("savepath")) {
-		ConfMan.setPath("savepath", "saves/");
+		ConfMan.setPath("savepath", "PROGDIR:saves/");
 	}
 	if (!ConfMan.hasKey("themepath")) {
-		ConfMan.setPath("themepath", "themes/");
+		ConfMan.setPath("themepath", "PROGDIR:themes/");
 	}
 	OSystem_SDL::initBackend();
-}
-
-Common::String OSystem_MorphOS::getSystemLanguage() const {
-#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
-	SDL_Locale *locales = SDL_GetPreferredLocales(); // USE SDL TO CHECK SYSTEM LANGUAGE
-    if (locales) {
-		if (locales[0].language != NULL) {
-			return Common::String::format("%s_%s", locales[0].country,	locales[0].language);
-		}
-		SDL_free(locales);
-    } 
-#endif // USE_DETECTLANG
-	return OSystem_SDL::getSystemLanguage();
 }
 
 void OSystem_MorphOS::logMessage(LogMessageType::Type type, const char * message) {

@@ -31,8 +31,6 @@ public:
 	bool hasFeature(Feature f) override;
 	void initBackend() override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
-	Common::String getSystemLanguage() const override;
-	
 };
 
 #endif

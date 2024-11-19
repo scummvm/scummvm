@@ -657,6 +657,17 @@ Common::WriteStream *OSystem_SDL::createLogFile() {
 
 Common::String OSystem_SDL::getSystemLanguage() const {
 #if defined(USE_DETECTLANG) && !defined(WIN32)
+
+#if SDL_VERSION_ATLEAST(2, 0, 14)
+	SDL_Locale *locales = SDL_GetPreferredLocales();
+	if (locales) {
+		if (locales[0].language != NULL) {
+			return Common::String::format("%s_%s", locales[0].country, locales[0].language);
+		}
+		SDL_free(locales);
+	}
+#endif // SDL_VERSION_ATLEAST(2, 0, 14)
+
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
 
