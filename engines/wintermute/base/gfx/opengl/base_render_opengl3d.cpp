@@ -31,8 +31,6 @@
 
 #include "common/config-manager.h"
 
-#include "math/glmath.h"
-
 #if defined(USE_OPENGL_GAME)
 
 #include "engines/wintermute/base/gfx/3dutils.h"

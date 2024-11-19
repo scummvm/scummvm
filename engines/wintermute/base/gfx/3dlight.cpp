@@ -34,8 +34,6 @@
 
 #include "graphics/opengl/system_headers.h"
 
-#include "math/glmath.h"
-
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////

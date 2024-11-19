@@ -30,8 +30,6 @@
 
 #include "common/config-manager.h"
 
-#include "math/glmath.h"
-
 #if defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/3dutils.h"

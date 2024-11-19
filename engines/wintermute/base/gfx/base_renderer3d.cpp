@@ -22,7 +22,6 @@
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/base_game.h"
 
-#include "math/glmath.h"
 #include "common/config-manager.h"
 
 namespace Wintermute {

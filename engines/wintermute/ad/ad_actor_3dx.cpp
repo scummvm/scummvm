@@ -26,7 +26,6 @@
  */
 
 #include "common/util.h"
-#include "math/utils.h"
 
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_attach_3dx.h"

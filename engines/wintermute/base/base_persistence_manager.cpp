@@ -43,12 +43,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
-#ifdef ENABLE_WME3D
-#include "math/angle.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#endif
-
 namespace Wintermute {
 
 // The original WME-Lite savegames had the following:

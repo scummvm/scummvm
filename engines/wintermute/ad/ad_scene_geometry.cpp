@@ -53,8 +53,6 @@
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
 
-#include "math/glmath.h"
-
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSceneGeometry, false)

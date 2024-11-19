@@ -38,7 +38,6 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
 #include "common/str.h"
-#include "math/utils.h"
 
 namespace Wintermute {
 
