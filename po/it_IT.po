@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-18 18:20+0000\n"
-"PO-Revision-Date: 2024-11-11 13:44+0000\n"
+"PO-Revision-Date: 2024-11-19 14:30+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1539,16 +1539,12 @@ msgstr ""
 "selezionato!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Hai aggiunto questa cartella al SAF? Premi il tasto aiuto [?] per "
-"informazioni dettagliate"
+"Hai consentito a ScummVM l'accesso a questa cartella? Premi il tasto aiuto "
+"[?] per informazioni dettagliate"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -10948,10 +10944,8 @@ msgid "Run in really fast mode (*)"
 msgstr "Esegui in modalità molto veloce (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
-msgstr "Cambia filtro grafico"
+msgstr "Itera tra i vari filtri grafici"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -11432,11 +11426,6 @@ msgid "Enable low latency audio mode"
 msgstr "Abilita audio a bassa latenza"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
@@ -11451,11 +11440,6 @@ msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Abilita la canzone \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -12902,6 +12886,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"File Mancante\n"
+"\n"
+"Per iniziare il gioco, è necessario il file SAVEGAME/U8SAVE.000\n"
+"proveniente da una installazione originale.\n"
+"\n"
+"Per cortesia, assicurati di avere copiato correttamente tutti i file."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -13025,14 +13015,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Rilevato un errore sconosciuto durante il caricamento del salvataggio."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Abilita \"rock travel\""
+msgstr "Abilita codice di blocco"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Richiede un codice di sicurezza all'avvio del gioco."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
