@@ -28,6 +28,7 @@
 #include "dgds/font.h"
 #include "dgds/request.h"
 #include "dgds/includes.h"
+#include "dgds/globals.h"
 
 namespace Dgds {
 
@@ -156,14 +157,24 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 	_nextPageBtn->setVisible(needPageButtons);
 
 	//
-	// Decide whether the time buttons should be visible (only in Dragon)
+	// Decide whether the time buttons should be visible (only in Dragon and Willy Beamish)
+	// In Willy Beamish the buttons are controlled by a global.
 	//
-	if (gameId != GID_DRAGON) {
-		if (_clockSkipMinBtn)
-			_clockSkipMinBtn->setVisible(false);
-		if (_clockSkipHrBtn)
-			_clockSkipHrBtn->setVisible(false);
+	bool showTimeButtons;
+	switch (gameId) {
+		case GID_DRAGON:
+			showTimeButtons = true;
+			break;
+		case GID_WILLY:
+			showTimeButtons = static_cast<WillyGlobals *>(engine->getGameGlobals())->isDrawTimeSkipButtons();
+		default:
+			showTimeButtons = false;
+			break;
 	}
+	if (_clockSkipMinBtn)
+		_clockSkipMinBtn->setVisible(showTimeButtons);
+	if (_clockSkipHrBtn)
+		_clockSkipHrBtn->setVisible(showTimeButtons);
 
 	//
 	// Decide whether the give-to and swap char buttons should be visible (only in China)

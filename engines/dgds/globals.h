@@ -200,12 +200,13 @@ public:
 
 	void setDroppedItemNum(int16 val) { _droppedItemNum = val; }
 	bool isHideMouseCursor() const { return _hideMouseCursor != 0; }
+	bool isDrawTimeSkipButtons() const { return _invDrawTimeSkipButtons != 0; }
 
 private:
 	// Willy-specific globals
 	int16 _unk2;
 	int16 _unk3;
-	int16 _unk4;
+	int16 _invDrawTimeSkipButtons;
 	int16 _hideMouseCursor;
 	int16 _unk74;
 	int16 _unk75;
