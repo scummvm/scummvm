@@ -2892,6 +2892,11 @@ void Room204::daemon() {
 
 }
 
+void Room204::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_dword1A189C);
+	s.syncAsSint32LE(_dword1A1898);
+}
+
 void Room204::initWalkerSeries() {
 	ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
 	ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);

@@ -38,6 +38,7 @@ public:
 	void pre_parser() override;
 	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
 
 private:
 	void addLookMalletHotspot();
