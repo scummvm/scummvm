@@ -706,7 +706,9 @@ void View1::draw() {
 		// Draw the position next to it
 		renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
 	}
-	
+
+	// Render the scaling factors
+	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
 }
 
 bool View1::tick() {
@@ -930,7 +932,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		uint8 depth = current->GetPosition().y;
 		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
 		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
-		uint16 scalingFactor = CalculateCharacterScaling(depth);
+		// Only output debug values for the character
+		uint16 scalingFactor = CalculateCharacterScaling(depth, index == 1);
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		// Draw the white dot
@@ -1097,7 +1100,7 @@ void View1::TriggerDialogueChoice(uint8 index) {
 	g_engine->RunScriptExecutor();
 }
 
-uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
+uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
 	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
 
 	
@@ -1106,6 +1109,9 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
 	int32 ecx = eax;
 	int32 ebx = edx;
 	eax = characterY;
+	if (updateDebugValues) {
+		scalingValues.characterY = characterY;
+	}
 	// TODO: Check this case when it happens
 	// assert(eax >= ecx);
 	eax -= ecx;
@@ -1121,6 +1127,9 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
 	eax = g_engine->word5201;
 	edx = 0;
 	eax += ebx;
+	if (updateDebugValues) {
+		scalingValues.scalingFactor = eax;
+	}
 	return eax;
 }
 
