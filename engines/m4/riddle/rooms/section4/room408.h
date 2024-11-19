@@ -31,14 +31,14 @@ namespace Rooms {
 class Room408 : public Room {
 private:
 	int _val1 = 0;
-	int _val2 = 0;
 	int _val3 = 0;
-	int _val4 = 0;
+	int _ripleyTrigger = -1;
+	int _wolfTrigger = -1;
 	int _currentNode = 0;
-	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
-	int _val9 = 0;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _wolfMode = 0;
+	int _wolfShould = 0;
 	machine *_exit = nullptr;
 	int _ripExits = 0;
 	machine *_edger = nullptr;
@@ -65,6 +65,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

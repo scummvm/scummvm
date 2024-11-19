@@ -34,14 +34,14 @@ void Room408::init() {
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val1 = 0;
-		_val2 = -1;
+		_ripleyTrigger = -1;
 		_val3 = 0;
-		_val4 = -1;
+		_wolfTrigger = -1;
 		_currentNode = -1;
-		_val6 = 0;
-		_val7 = 0;
-		_val8 = 0;
-		_val9 = 0;
+		_ripleyMode = 0;
+		_ripleyShould = 0;
+		_wolfMode = 0;
+		_wolfShould = 0;
 	}
 
 	digi_preload("950_s19");
@@ -88,10 +88,10 @@ void Room408::init() {
 		case KERNEL_RESTORING_GAME:
 			digi_preload("950_s22");
 
-			if (_G(flags)[V131] == 400) {
+			if (_G(flags)[V131] == 408) {
 				hotspot_set_active("WOLF", true);
-				_val8 = 2001;
-				_val9 = 2200;
+				_wolfMode = 2001;
+				_wolfShould = 2200;
 				_wolf = series_load("WOLF CLPNG LOOP LOOKS TO SIDE");
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
 					triggerMachineByHashCallback, "WOLFIE");
@@ -114,8 +114,8 @@ void Room408::init() {
 					_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
 						triggerMachineByHashCallback, "WOLFIE");
 					sendWSMessage_10000(1, _wolfie, _wolf, 1, 10, 110, _wolf, 10, 10, 0);
-					_val8 = 2001;
-					_val9 = 2200;
+					_wolfMode = 2001;
+					_wolfShould = 2200;
 				}
 
 				ws_demand_location(-20, 345, 3);
@@ -164,8 +164,8 @@ void Room408::init() {
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
 					triggerMachineByHashCallback, "WOLFIE");
 				sendWSMessage_10000(1, _wolfie, _wolf, 1, 10, 110, _wolf, 10, 10, 0);
-				_val8 = 2001;
-				_val9 = 2200;
+				_wolfMode = 2001;
+				_wolfShould = 2200;
 			}
 
 			ws_demand_location(660, 345, 9);
@@ -218,22 +218,22 @@ void Room408::daemon() {
 		break;
 
 	case 101:
-		_val6 = 1000;
-		_val7 = 1105;
+		_ripleyMode = 1000;
+		_ripleyShould = 1105;
 		break;
 
 	case 102:
-		if (_val2 != -1) {
-			kernel_timing_trigger(1, _val2);
-			_val2 = -1;
+		if (_ripleyTrigger != -1) {
+			kernel_timing_trigger(1, _ripleyTrigger);
+			_ripleyTrigger = -1;
 		} else {
 			kernel_timing_trigger(1, 103);
 		}
 		break;
 
 	case 103:
-		if (_val6 == 1000) {
-			switch (_val7) {
+		if (_ripleyMode == 1000) {
+			switch (_ripleyShould) {
 			case 1100:
 				ws_hide_walker();
 				player_set_commands_allowed(false);
@@ -251,14 +251,14 @@ void Room408::daemon() {
 					_ripHandsBehindBack, 15, 15, 0);
 				sendWSMessage_10000(1, _ripleyShadow, _ripShadowSeries, 1, 1, -1,
 					_ripShadowSeries, 1, 1, 0);
-				_val7 = 1101;
-				_val8 = 2000;
-				_val9 = 2100;
+				_ripleyShould = 1101;
+				_wolfMode = 2000;
+				_wolfShould = 2100;
 				kernel_timing_trigger(1, 110);
 				break;
 
 			case 1101:
-				_val7 = 1103;
+				_ripleyShould = 1103;
 				kernel_timing_trigger(1, 102);
 				conv_load("conv408a", 0, 10, 101);
 				conv_export_value_curr(_G(flags)[V117], 0);
@@ -284,8 +284,8 @@ void Room408::daemon() {
 			case 1105:
 				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 15, 1, 103,
 					_ripHandsBehindBack, 1, 1, 0);
-				_val7 = 1106;
-				_val9 = 2103;
+				_ripleyShould = 1106;
+				_wolfShould = 2103;
 				break;
 
 			case 1106:
@@ -295,12 +295,12 @@ void Room408::daemon() {
 				series_unload(_ripHandsBehindBack);
 
 				if (_currentNode != 8 && _currentNode != 9) {
-					_val8 = 2001;
-					_val9 = 2200;
+					_wolfMode = 2001;
+					_wolfShould = 2200;
 					kernel_timing_trigger(1, 110);
 					player_set_commands_allowed(true);
 				} else {
-					_val4 = 320;
+					_wolfTrigger = 320;
 					kernel_timing_trigger(1, 110);
 				}
 				break;
@@ -312,12 +312,12 @@ void Room408::daemon() {
 		break;
 
 	case 110:
-		switch (_val8) {
+		switch (_wolfMode) {
 		case 2000:
-			if (_val9 >= 2100 && _val9 <= 2104) {
-				if (_val4 != -1) {
-					kernel_timing_trigger(1, _val4);
-					_val4 = -1;
+			if (_wolfShould >= 2100 && _wolfShould <= 2104) {
+				if (_wolfTrigger != -1) {
+					kernel_timing_trigger(1, _wolfTrigger);
+					_wolfTrigger = -1;
 				} else {
 					kernel_timing_trigger(1, 111);
 				}
@@ -325,10 +325,10 @@ void Room408::daemon() {
 			break;
 
 		case 2001:
-			if (_val9 == 2200) {
-				if (_val4 != -1) {
-					kernel_timing_trigger(1, _val4);
-					_val4 = -1;
+			if (_wolfShould == 2200) {
+				if (_wolfTrigger != -1) {
+					kernel_timing_trigger(1, _wolfTrigger);
+					_wolfTrigger = -1;
 				} else {
 					kernel_timing_trigger(1, 111);
 				}
@@ -341,12 +341,12 @@ void Room408::daemon() {
 		break;
 
 	case 111:
-		switch (_val8) {
+		switch (_wolfMode) {
 		case 2000:
-			switch (_val9) {
+			switch (_wolfShould) {
 			case 2100:
 				sendWSMessage_10000(1, _wolfie, _wolf, 10, 13, 110, _wolf, 13, 13, 0);
-				_val9 = 2102;
+				_wolfShould = 2102;
 				break;
 			case 2101:
 				frame = imath_ranged_rand(14, 16);
@@ -355,7 +355,7 @@ void Room408::daemon() {
 				break;
 			case 2102:
 				sendWSMessage_10000(1, _wolfie, _wolf, 13, 13, 110, _wolf, 13, 13, 0);
-				_val9 = 2102;
+				_wolfShould = 2102;
 				break;
 			case 2103:
 				sendWSMessage_10000(1, _wolfie, _wolf, 13, 10, -1, _wolf, 10, 10, 0);
@@ -369,7 +369,7 @@ void Room408::daemon() {
 			break;
 
 		case 2001:
-			if (_val9 == 2200) {
+			if (_wolfShould == 2200) {
 				sendWSMessage_10000(1, _wolfie, _wolf, 1, 9, 110, _wolf, 9, 9, 0);
 
 				switch (imath_ranged_rand(1, 3)) {
@@ -393,8 +393,8 @@ void Room408::daemon() {
 		break;
 
 	case 220:
-		_val8 = 2000;
-		_val9 = 2100;
+		_wolfMode = 2000;
+		_wolfShould = 2100;
 
 		kernel_timing_trigger(1, 110);
 		_ripTrekTwoHandTalk = series_load("RIP TREK TWO HAND TALK POS2");
@@ -414,7 +414,7 @@ void Room408::daemon() {
 		break;
 
 	case 222:
-		_val9 = 2101;
+		_wolfShould = 2101;
 		kernel_timing_trigger(1, 110);
 		digi_play("402w008", 1, 255, 226);
 		kernel_timing_trigger(45, 224);
@@ -428,13 +428,13 @@ void Room408::daemon() {
 		break;
 
 	case 226:
-		_val9 = 2103;
+		_wolfShould = 2103;
 		kernel_timing_trigger(30, 227);
 		break;
 
 	case 227:
-		_val8 = 2001;
-		_val9 = 2200;
+		_wolfMode = 2001;
+		_wolfShould = 2200;
 		kernel_timing_trigger(1, 110);
 		player_set_commands_allowed(true);
 		break;
@@ -593,24 +593,24 @@ void Room408::pre_parser() {
 
 void Room408::parser() {
 	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said("talk", "talk to");
+	bool talkFlag = player_said_any("talk", "talk to");
 	bool takeFlag = player_said("take");
 	bool enterFlag = player_said("enter");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv408a")) {
-		if (_G(kernel).trigger == -1) {
-			_val7 = 1103;
-			_val9 = 2102;
+		if (_G(kernel).trigger == 1) {
+			_ripleyShould = 1103;
+			_wolfShould = 2102;
 			conv_resume();
 		} else {
 			conv408a();
 		}
 	} else if (talkFlag && player_said("WOLF")) {
 		player_set_commands_allowed(false);
-		_val4 = -1;
-		_val6 = 1000;
-		_val7 = 1100;
+		_wolfTrigger = -1;
+		_ripleyMode = 1000;
+		_ripleyShould = 1100;
 		kernel_timing_trigger(1, 102, KT_DAEMON, KT_PARSE);
 	} else if (lookFlag && player_said("WINDOW")) {
 		digi_play("408r03", 1);
@@ -756,11 +756,11 @@ void Room408::conv408a() {
 
 	if (sound) {
 		if (who <= 0) {
-			_val9 = 2101;
-			digi_play(sound, 1);
+			_wolfShould = 2101;
+			digi_play(sound, 1, 255, 1);
 		} else if (who == 1) {
-			_val7 = 1102;
-			digi_play(sound, 1);
+			_ripleyShould = 1102;
+			digi_play(sound, 1, 255, 1);
 		}
 	} else {
 		conv_resume();
@@ -770,7 +770,7 @@ void Room408::conv408a() {
 bool Room408::takePlank() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		if (inv_player_has("PLANK")) {
+		if (!inv_player_has("PLANK")) {
 			player_set_commands_allowed(false);
 
 			if (_G(flags)[V131] == 408) {
@@ -863,6 +863,20 @@ bool Room408::takeEdger() {
 	}
 
 	return true;
+}
+
+void Room408::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_ripleyMode);
+	s.syncAsSint32LE(_ripleyShould);
+	s.syncAsSint32LE(_wolfMode);
+	s.syncAsSint32LE(_wolfShould);
+	s.syncAsSint32LE(_currentNode);
+	s.syncAsSint32LE(_ripExits);
+	s.syncAsSint32LE(_wolf);
+	s.syncAsSint32LE(_val1);
+	s.syncAsSint32LE(_ripleyTrigger);
+	s.syncAsSint32LE(_val3);
+	s.syncAsSint32LE(_wolfTrigger);
 }
 
 } // namespace Rooms
