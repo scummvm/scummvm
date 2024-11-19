@@ -72,6 +72,7 @@ public:
 
 	Common::Error sync(Common::Serializer &s);
 
+	bool isMuted() const;
 	void playTosSpeech(int tosIdx);
 	void stopSpeech();
 	bool isPlayingSpeech() const;

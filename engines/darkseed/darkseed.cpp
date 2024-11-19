@@ -367,6 +367,7 @@ void DarkseedEngine::updateEvents() {
 			if (event.kbd.keycode == Common::KEYCODE_t) {
 				_timeAdvanceEventSelected = true;
 			}
+			_lastKeyPressed = event.kbd.keycode;
 			break;
 		default:
 			break;
@@ -652,6 +653,7 @@ void DarkseedEngine::handleInput() {
 	}
 	if (_isLeftMouseClicked && _cursor.getY() < 41) {
 		_inventory.handleClick();
+		return;
 	}
 	_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
 

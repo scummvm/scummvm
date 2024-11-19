@@ -22,6 +22,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
+#include "common/config-manager.h"
 #include "darkseed/sound.h"
 #include "darkseed/darkseed.h"
 
@@ -220,7 +221,7 @@ void Sound::playMusic(Common::String const &filename, bool loop) {
 		debug("Failed to load %s", path.toString().c_str());
 		return;
 	}
-	_musicPlayer->load(&file, file.size());
+	_musicPlayer->load(&file, (int32)file.size());
 	file.close();
 
 	_musicPlayer->play(loop);
@@ -243,6 +244,14 @@ void Sound::syncSoundSettings() {
 Common::Error Sound::sync(Common::Serializer &s) {
 	s.syncArray(_didSpeech.data(), _didSpeech.size(), Common::Serializer::Byte);
 	return Common::kNoError;
+}
+
+bool Sound::isMuted() const {
+	bool soundIsMuted = false;
+	if (ConfMan.hasKey("mute")) {
+		soundIsMuted = ConfMan.getBool("mute");
+	}
+	return soundIsMuted;
 }
 
 void Sound::playSfx(uint8 sfxId, int unk1, int unk2) {

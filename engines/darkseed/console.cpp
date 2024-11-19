@@ -56,8 +56,8 @@ void Console::addToCurrentLine(const Common::String &text) {
 	addTextLine(_text[_startIdx] + text);
 }
 
-void Console::draw() {
-	if (!_redrawRequired) {
+void Console::draw(bool forceRedraw) {
+	if (!_redrawRequired && !forceRedraw) {
 		return;
 	}
 
