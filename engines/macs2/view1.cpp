@@ -338,7 +338,7 @@ View1::View1() : UIElement("View1") {
 		}
 
 		// Draw the test results
-		Common::Array<uint8> &overlay = characters[0]->PathfindingOverlay;
+		Common::Array<uint8> &overlay = GetCharacterByIndex(1)->PathfindingOverlay;
 		for (int y = 0; y < 200; y++) {
 			for (int x = 0; x < 320; x++) {
 				const uint8 currentValue = overlay[y * 320 + x];
@@ -461,7 +461,8 @@ View1::View1() : UIElement("View1") {
 			if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
 				// TODO: Should address the protagonist differently
 				// TODO: Sort out the different modes and only define them once
-				characters[0]->StartLerpTo(msg._pos, 1000);
+				
+				GetCharacterByIndex(1)->StartLerpTo(msg._pos, 1000);
 				return true;
 			}
 
@@ -507,7 +508,7 @@ View1::View1() : UIElement("View1") {
 
 	bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 		// TODO: Check what we are hovering over and save this info
-		uint16 areaID = g_engine->_scriptExecutor->Func101D(msg._pos.x, msg._pos.y);
+		// uint16 areaID = g_engine->_scriptExecutor->Func101D(msg._pos.x, msg._pos.y);
 		// g_system->setWindowCaption(Common::String::format("Area ID: %.4x", areaID));
 		return true;
 	}
@@ -548,7 +549,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
 		g_engine->RunScriptExecutor(true);
 		// Also test the lerping
-		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
+		GetCharacterByIndex(1)->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		if (!_isShowingInventory) {
 			SetInventorySource(GameObjects::instance().GetProtagonistObject());
@@ -567,12 +568,12 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		characters[0]->Path.push_back(11);
 		characters[0]->Path.push_back(9); */
 		const Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		characters[0]->PathFinalDestination = mousePos;
-		characters[0]->Path.clear();
+		GetCharacterByIndex(1)->PathFinalDestination = mousePos;
+		GetCharacterByIndex(1)->Path.clear();
 		// g_engine->_path.clear();
 		bool pathfindingResult = characters[0]->FindPath(mousePos);
-		characters[0]->IsFollowingPath = pathfindingResult;
-		characters[0]->CurrentPathIndex = -1;
+		GetCharacterByIndex(1)->IsFollowingPath = pathfindingResult;
+		GetCharacterByIndex(1)->CurrentPathIndex = -1;
 		
 	}
 	return true;
@@ -874,7 +875,7 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 				uint16 finalX = x + currentTargetX;
 				uint16 finalY = y + currentTargetY;
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h)
-					s.setPixel(x + currentTargetX, y + currentTargetY, val);
+					s.setPixel(finalX, finalY, val);
 			}
 			xScaling += 0x64;
 			currentTargetX++;
@@ -999,6 +1000,14 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 	// Right side
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0xFF, s);
+
+	// Shadow parts, from top in clockwise order
+	// TODO: Adjust pos and sizes
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0xFF, s);
+
 }
 
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
@@ -1091,19 +1100,19 @@ void View1::TriggerDialogueChoice(uint8 index) {
 uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
 	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
 
-	// Example is 6E - TODO: Difference could become negative
-	uint32 eax = g_engine->word51FD;
-	uint32 edx = 0;
-	uint32 ecx = eax;
-	uint32 ebx = edx;
+	
+	int32 eax = g_engine->word51FD;
+	int32 edx = 0;
+	int32 ecx = eax;
+	int32 ebx = edx;
 	eax = characterY;
 	// TODO: Check this case when it happens
-	assert(eax >= ecx);
+	// assert(eax >= ecx);
 	eax -= ecx;
 	ebx = eax;
 	eax = g_engine->word51FF;
 	// TODO: Check this case when it happens
-	assert(eax == 0);
+	// assert(eax == 0);
 	edx = 0;
 	eax *= ebx;
 	ebx = 0x64;

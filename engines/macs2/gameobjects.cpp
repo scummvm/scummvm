@@ -99,7 +99,7 @@ Common::Array<uint8> Macs2::Scenes::ReadSpecialAnimBlob(uint16 index, Common::Me
 
 // TODO: Add all to namespace?
 Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
-	return instance().Objects[0];
+	return instance().GetObjectByIndex(1);
 }
 
 Macs2::GameObject *Macs2::GameObjects::GetObjectByIndex(uint16 index) {
