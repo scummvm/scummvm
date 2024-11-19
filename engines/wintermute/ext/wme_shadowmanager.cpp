@@ -393,8 +393,8 @@ bool SXShadowManager::addActor(AdActor3DX *actorObj) {
 bool SXShadowManager::removeAllActors() {
 	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
 		it->first->_shadowColor = it->second;
-		_actors.erase(it);
 	}
+	_actors.clear();
 	return true;
 }
 
