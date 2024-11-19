@@ -33,10 +33,6 @@
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/coll_templ.h"
 
-#include "math/matrix4.h"
-#include "math/quat.h"
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class XModel;
