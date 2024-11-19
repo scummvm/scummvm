@@ -1830,6 +1830,7 @@ void Room402::useTopiary() {
 		}
 
 		_branch = series_place_sprite("sprite of the pulled out branch", 0, 0, -53, 100, 0x300);
+		terminateMachineAndNull(_ripEnterLeave);
 		series_unload(_ripMessesBush);
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
