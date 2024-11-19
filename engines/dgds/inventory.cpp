@@ -167,6 +167,7 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 			break;
 		case GID_WILLY:
 			showTimeButtons = static_cast<WillyGlobals *>(engine->getGameGlobals())->isDrawTimeSkipButtons();
+			break;
 		default:
 			showTimeButtons = false;
 			break;
