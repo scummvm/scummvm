@@ -1558,9 +1558,7 @@ void Room403::pre_parser() {
 	}
 
 	if (player_said("PLANK", "URN") || player_said("EDGER", "URN")) {
-		_G(player).need_to_walk = false;
-		_G(player).ready_to_walk = true;
-		_G(player).waiting_for_walk = false;
+		_G(player).resetWalk();
 
 		kernel_timing_trigger(1, 69, KT_PARSE, KT_PREPARSE);
 	}
@@ -1715,8 +1713,10 @@ void Room403::parser() {
 		}
 	} else if (player_said("EDGER", "BELL") && inv_player_has("EDGER")) {
 		edgerBell();
+	} else if (player_said("PLANK", "URN")) {
+		plankUrn();
 	} else if (player_said("EDGER", "URN")) {
-		// No implementation
+		edgerUrn();
 	} else if ((player_said("STEP LADDER", "TOMB") ||
 			player_said("STEP LADDER", "STAIRS")) &&
 			stepLadderTomb()) {
@@ -1973,6 +1973,44 @@ void Room403::edgerBell() {
 		series_unload(S4_SHADOW_DIRS[0]);
 		series_unload(_ripHeadTurn);
 		sendWSMessage_150000(-1);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room403::plankUrn() {
+	switch (_G(kernel).trigger) {
+	case 69:
+		player_set_commands_allowed(false);
+		ws_walk(1110, 322, nullptr, 1, 11);
+		_plank = 2;
+		break;
+
+	case 1:
+		_ripPutBoard = series_load("RIPLEY PUTS BOARD ON POTS");
+		ws_hide_walker();
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+			triggerMachineByHashCallback, "RIP plants plank");
+		sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 1, 41, 2,
+			_ripPutBoard, 41, 41, 0);
+		break;
+
+	case 2:
+		digi_play("403_s07", 2);
+		sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 41, 57, 3,
+			_ripPutBoard, 57, 57, 0);
+		break;
+
+	case 3:
+		_board = series_place_sprite("1 SPRITE OF BOARD", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("PLANK", true);
+		inv_move_object("PLANK", 403);
+		terminateMachineAndNull(_ripOnLadder);
+		ws_unhide_walker();
+		series_unload(_ripPutBoard);
 		player_set_commands_allowed(true);
 		break;
 

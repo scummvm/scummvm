@@ -80,6 +80,7 @@ private:
 	void conv403a();
 	void conv403a1();
 	void edgerBell();
+	void plankUrn();
 	bool edgerUrn();
 	bool stepLadderTomb();
 	bool takePlank();
