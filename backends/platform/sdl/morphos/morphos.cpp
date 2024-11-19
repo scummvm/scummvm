@@ -52,6 +52,74 @@ bool OSystem_MorphOS::hasFeature(Feature f) {
 	return OSystem_SDL::hasFeature(f);
 }
 
+void OSystem_MorphOS::initBackend() {
+
+	// First time user defaults
+	ConfMan.registerDefault("audio_buffer_size", "2048");
+	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("gfx_mode", "surfacesdl");
+	ConfMan.registerDefault("stretch_mode", "stretch");
+	ConfMan.registerDefault("gui_mode", "antialias");
+	ConfMan.registerDefault("gui_theme", "scummremastered");
+	ConfMan.registerDefault("gui_scale", "125");
+	ConfMan.registerDefault("extrapath", Common::Path("extras/"));
+	ConfMan.registerDefault("iconspath", Common::Path("icons/"));
+	ConfMan.registerDefault("pluginspath", Common::Path("plugins/"));
+	ConfMan.registerDefault("savepath", Common::Path("saves/"));
+	ConfMan.registerDefault("themepath", Common::Path("themes/"));
+	// First time .ini defaults
+	if (!ConfMan.hasKey("audio_buffer_size")) {
+		ConfMan.set("audio_buffer_size", "2048");
+	}
+	if (!ConfMan.hasKey("fullscreen")) {
+		ConfMan.setBool("fullscreen", false);
+	}
+	if (!ConfMan.hasKey("gfx_mode")) {
+		ConfMan.set("gfx_mode", "surfacesdl");
+	}
+	if (!ConfMan.hasKey("stretch_mode")) {
+		ConfMan.set("stretch_mode", "stretch");
+	}
+	if (!ConfMan.hasKey("gui_mode")) {
+		ConfMan.set("gui_mode", "antialias");
+	}
+	if (!ConfMan.hasKey("gui_theme")) {
+		ConfMan.set("gui_theme", "scummremastered");
+	}
+	if (!ConfMan.hasKey("gui_scale")) {
+		ConfMan.set("gui_scale", "125");
+	}
+	if (!ConfMan.hasKey("extrapath")) {
+		ConfMan.setPath("extrapath", "extras/");
+	}
+	if (!ConfMan.hasKey("iconspath")) {
+		ConfMan.setPath("iconspath", "icons/");
+	}
+	if (!ConfMan.hasKey("pluginspath")) {
+		ConfMan.setPath("pluginspath", "plugins/");
+	}
+	if (!ConfMan.hasKey("savepath")) {
+		ConfMan.setPath("savepath", "saves/");
+	}
+	if (!ConfMan.hasKey("themepath")) {
+		ConfMan.setPath("themepath", "themes/");
+	}
+	OSystem_SDL::initBackend();
+}
+
+Common::String OSystem_MorphOS::getSystemLanguage() const {
+#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+	SDL_Locale *locales = SDL_GetPreferredLocales(); // USE SDL TO CHECK SYSTEM LANGUAGE
+    if (locales) {
+		if (locales[0].language != NULL) {
+			return Common::String::format("%s_%s", locales[0].country,	locales[0].language);
+		}
+		SDL_free(locales);
+    } 
+#endif // USE_DETECTLANG
+	return OSystem_SDL::getSystemLanguage();
+}
+
 void OSystem_MorphOS::logMessage(LogMessageType::Type type, const char * message) {
 #ifdef DEBUG_BUILD
 	printf("%s\n", message);

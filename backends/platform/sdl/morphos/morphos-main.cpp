@@ -28,15 +28,22 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
+static void cleanup() {
+	g_system->destroy();
+}
+
 int main(int argc, char *argv[]) {
 
-	// Set up a stack cookie to avoid crashes from a stack set too low
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
+	// Set a stack cookie to avoid crashes from a too low stack.
+	static const char *stack_cookie __attribute__((used)) = "$STACK: 4096000";
 
 	// Create our OSystem instance
 	g_system = new OSystem_MorphOS();
 	assert(g_system);
 
+	// Register cleanup function to avoid unfreed signals
+	atexit(cleanup);
+	
 	// Pre initialize the backend
 	g_system->init();
 
@@ -48,7 +55,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	g_system->destroy();
+	//g_system->destroy();
 
 	return res;
 }
