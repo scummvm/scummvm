@@ -33,8 +33,33 @@ public:
 	Room701() : Room() {}
 	~Room701() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	const char *_itemDigiName = nullptr;
+
+	int32 _field50 = 0;
+	int32 _field88 = 0;
+	int32 _field8C = 0;
+	int32 _field9E = 0;
+	int32 _field130 = 0;
+	int32 _field134 = 0;
+
+	int32 _701rp01Series = 0;
+	int32 _701rp99Series = 0;
+	int32 _agentGetTelegramSeries = 0;
+	int32 _agentGiveParcelSeries = 0;
+	int32 _agentShowMapSeries = 0;
+	int32 _agentTalkLoopTjSeries = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
+	int32 _ripTrekMedReachPos3Series = 0;
+	int32 _ripTrekTalkerPos3Series = 0;
+	
+	machine *_agentPoshExpressMach = nullptr;
 };
 
 } // namespace Rooms
