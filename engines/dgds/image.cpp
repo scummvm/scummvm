@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/str.h"
@@ -387,7 +388,7 @@ static inline byte _getVqtBits(struct VQTDecodeState *state, uint16 nbits) {
 	const uint32 index = offset >> 3;
 	const uint32 shift = offset & 7;
 	state->offset += nbits;
-	return (*(const uint16 *)(state->srcPtr + index) >> (shift)) & (byte)(0xff00 >> (16 - nbits));
+	return (READ_LE_UINT16(state->srcPtr + index) >> (shift)) & (byte)(0xff00 >> (16 - nbits));
 }
 
 static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const uint16 y, const uint16 w, const uint16 h) {
