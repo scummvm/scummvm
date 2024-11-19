@@ -30,16 +30,17 @@ namespace Rooms {
 
 class Room305 : public Room {
 private:
-	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
+	bool _showWalker = false;
+	bool _drawerOpen = false;
+	bool _hideCartoon = false;
+	bool _unused = false;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _fengMode = 0;
+	int _fengShould = 0;
+	int _trigger1 = -1;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
-	bool _drawerOpen = false;
 	int _ripMedHigh = 0;
 	int _ripLooksDown = 0;
 	machine *_turtle = nullptr;
@@ -88,7 +89,6 @@ private:
 	int _suit1 = 0;
 	int _suit2 = 0;
 	int _suit3 = 0;
-	int _conv1 = 0;
 	machine *_stander = nullptr;
 	machine *_shadow5 = nullptr;
 	machine *_rip5 = nullptr;
@@ -110,6 +110,7 @@ private:
 	Common::String getXAreaDigi2() const;
 	int getItemX(int seriesHash) const;
 	int getItemY(int seriesHash) const;
+	bool takeTurtleTreats();
 
 public:
 	Room305() : Room() {}
