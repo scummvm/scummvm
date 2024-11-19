@@ -38,6 +38,7 @@ BaseScriptable *makeSXBlackAndWhite(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXBlackAndWhite::SXBlackAndWhite(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
+	_postFilterMode = kPostFilterOff;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,8 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 	if (strcmp(name, "SetSepia") == 0) {
 		stack->correctParams(0);
 
-		setSepia();
+		_postFilterMode = kPostFilterSepia;
+		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -93,7 +95,8 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 	if (strcmp(name, "SetBlackAndWhite") == 0) {
 		stack->correctParams(0);
 
-		setBlackAndWhite();
+		_postFilterMode = kPostFilterBlackAndWhite;
+		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -105,7 +108,8 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 	if (strcmp(name, "SetNormalRender") == 0) {
 		stack->correctParams(0);
 
-		setNormalRender();
+		_postFilterMode = kPostFilterOff;
+		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -235,16 +239,12 @@ bool SXBlackAndWhite::scSetProperty(const char *name, ScValue *value) {
 bool SXBlackAndWhite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
+	persistMgr->transferSint32(TMEMBER_INT(_postFilterMode));
+	if (!persistMgr->getIsSaving()) {
+		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
+	}
+
 	return STATUS_OK;
-}
-
-void SXBlackAndWhite::setSepia() {
-}
-
-void SXBlackAndWhite::setBlackAndWhite() {
-}
-
-void SXBlackAndWhite::setNormalRender() {
 }
 
 } // End of namespace Wintermute

@@ -140,6 +140,9 @@ public:
 
 	bool setViewport3D(DXViewport *viewport) override;
 
+	void postfilter() override;
+	void setPostfilter(PostFilter postFilter) override { _postFilterMode = postFilter; };
+
 	OpenGL::Shader *_shadowMaskShader;
 
 private:

@@ -151,10 +151,14 @@ public:
 
 	bool setViewport3D(DXViewport *viewport) override;
 
+	void postfilter() override;
+	void setPostfilter(PostFilter postFilter) override { _postFilterMode = postFilter; };
+
 private:
 	SimpleShadowVertex _simpleShadow[4]{};
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;
+	GLuint _filterTexture;
 };
 
 } // wintermute namespace

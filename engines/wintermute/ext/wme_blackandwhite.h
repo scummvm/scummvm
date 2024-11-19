@@ -25,6 +25,7 @@
 #include "common/str.h"
 
 #include "engines/wintermute/base/base_scriptable.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 
 namespace Wintermute {
 
@@ -39,9 +40,7 @@ public:
 	~SXBlackAndWhite() override;
 
 private:
-	void setSepia();
-	void setBlackAndWhite();
-	void setNormalRender();
+	PostFilter _postFilterMode;
 };
 
 } // End of namespace Wintermute

@@ -899,7 +899,10 @@ bool BaseRenderOpenGL3DShader::setProjectionTransform(const DXMatrix &transform)
 	return true;
 }
 
-BaseSurface *Wintermute::BaseRenderOpenGL3DShader::createSurface() {
+void BaseRenderOpenGL3DShader::postfilter() {
+}
+
+BaseSurface *BaseRenderOpenGL3DShader::createSurface() {
 	return new BaseSurfaceOpenGL3D(_gameRef, this);
 }
 
