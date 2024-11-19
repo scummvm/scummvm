@@ -37,7 +37,7 @@ private:
 	int _val8 = 0;
 	bool _showWalker = false;
 	bool _ripley80000 = false;
-	int _val11 = 0;
+	//int _val11 = 0;
 	const char *_digiName1 = nullptr;
 	int _digiTrigger1 = 0;
 	Common::String _digiName2;
