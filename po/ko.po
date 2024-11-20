@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-20 06:10+0000\n"
+"POT-Creation-Date: 2024-11-20 10:16+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8511,14 +8511,14 @@ msgstr "주시자의 눈 지원이 컴파일되지 않았음"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
-#: engines/ultima/nuvie/metaengine.cpp:217
+#: engines/ultima/nuvie/metaengine.cpp:222
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
-#: engines/ultima/nuvie/metaengine.cpp:223
+#: engines/ultima/nuvie/metaengine.cpp:228
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
@@ -12495,15 +12495,15 @@ msgstr "빠른 저장 %d 저장 중"
 msgid "Original Save"
 msgstr "원본 저장"
 
-#: engines/ultima/nuvie/metaengine.cpp:206
+#: engines/ultima/nuvie/metaengine.cpp:211
 msgid "Ultima VI"
 msgstr "울티마 VI"
 
-#: engines/ultima/nuvie/metaengine.cpp:208
+#: engines/ultima/nuvie/metaengine.cpp:213
 msgid "Martian Dreams"
 msgstr "Martian Dreams"
 
-#: engines/ultima/nuvie/metaengine.cpp:210
+#: engines/ultima/nuvie/metaengine.cpp:215
 msgid "The Savage Empire"
 msgstr "The Savage Empire"
 

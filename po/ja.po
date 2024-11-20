@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-20 06:10+0000\n"
+"POT-Creation-Date: 2024-11-20 10:16+0000\n"
 "PO-Revision-Date: 2024-09-22 20:18+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -8660,14 +8660,14 @@ msgstr "Eye of Beholderのサポートはコンパイルされていません"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
-#: engines/ultima/nuvie/metaengine.cpp:217
+#: engines/ultima/nuvie/metaengine.cpp:222
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "左クリックでインタラクト"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
-#: engines/ultima/nuvie/metaengine.cpp:223
+#: engines/ultima/nuvie/metaengine.cpp:228
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "右クリックでインタラクト"
@@ -12840,15 +12840,15 @@ msgstr "%dにクイックセーブしています"
 msgid "Original Save"
 msgstr "オリジナルセーブ"
 
-#: engines/ultima/nuvie/metaengine.cpp:206
+#: engines/ultima/nuvie/metaengine.cpp:211
 msgid "Ultima VI"
 msgstr "ウルティマVI"
 
-#: engines/ultima/nuvie/metaengine.cpp:208
+#: engines/ultima/nuvie/metaengine.cpp:213
 msgid "Martian Dreams"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:210
+#: engines/ultima/nuvie/metaengine.cpp:215
 msgid "The Savage Empire"
 msgstr "恐竜帝国"
 

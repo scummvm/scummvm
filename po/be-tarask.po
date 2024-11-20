@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-20 06:10+0000\n"
+"POT-Creation-Date: 2024-11-20 10:16+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -8568,14 +8568,14 @@ msgstr "Падтрыманьне Eye of Beholder не сабранае"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
-#: engines/ultima/nuvie/metaengine.cpp:217
+#: engines/ultima/nuvie/metaengine.cpp:222
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "Інтэракцыя левым пстрыкам"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
-#: engines/ultima/nuvie/metaengine.cpp:223
+#: engines/ultima/nuvie/metaengine.cpp:228
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "Інтэракцыя правым пстрыкам"
@@ -12828,17 +12828,17 @@ msgstr "хуткае захаваньне %d"
 msgid "Original Save"
 msgstr "Арыґінальнае захаваньне"
 
-#: engines/ultima/nuvie/metaengine.cpp:206
+#: engines/ultima/nuvie/metaengine.cpp:211
 #, fuzzy
 #| msgid "Ultima VIII"
 msgid "Ultima VI"
 msgstr "Ultima VIII"
 
-#: engines/ultima/nuvie/metaengine.cpp:208
+#: engines/ultima/nuvie/metaengine.cpp:213
 msgid "Martian Dreams"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:210
+#: engines/ultima/nuvie/metaengine.cpp:215
 msgid "The Savage Empire"
 msgstr ""
 
