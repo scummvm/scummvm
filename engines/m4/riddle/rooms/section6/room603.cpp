@@ -723,7 +723,7 @@ void Room603::daemon() {
 
 	case 303:
 		if (_ttShould == 22)
-			kernel_timing_trigger(1, 22);
+			kernel_timing_trigger(1, 202);
 		else
 			_ttShould = 5;
 		break;
