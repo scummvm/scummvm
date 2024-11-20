@@ -99,6 +99,9 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		normalOffset = offset;
 		offset += sizeof(DXVector3) / sizeof(float);
 	}
+	if (fvf & DXFVF_DIFFUSE) {
+		offset += sizeof(DXColorValue) / sizeof(float);
+	}
 	if (fvf & DXFVF_TEX1) {
 		textureOffset = offset;
 	}
