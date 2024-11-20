@@ -40,6 +40,8 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+	_gui->updatePalette();
+
 	// Only apply menu style if the menu is open.
 	Graphics::MacMenu *menu = _gui->_windowManager->getMenu();
 

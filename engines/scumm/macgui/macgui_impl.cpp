@@ -92,8 +92,15 @@ int MacGuiImpl::toMacRoman(int unicode) const {
 	return macRoman;
 }
 
-void MacGuiImpl::setPalette(const byte *palette, uint size) {
-	_windowManager->passPalette(palette, size);
+void MacGuiImpl::setPaletteDirty() {
+	_paletteDirty = true;
+}
+
+void MacGuiImpl::updatePalette() {
+	if (_paletteDirty) {
+		_paletteDirty = false;
+		_windowManager->passPalette(_vm->_currentPalette, getNumColors());
+	}
 }
 
 bool MacGuiImpl::handleEvent(Common::Event event) {
@@ -495,6 +502,10 @@ void MacGuiImpl::updateWindowManager() {
 	}
 
 	_menuIsActive = isActive;
+
+	if (menu->isVisible())
+		updatePalette();
+
 	_windowManager->draw();
 }
 
