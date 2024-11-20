@@ -46,14 +46,14 @@ void Room402::init() {
 		_val1 = 0;
 		_val2 = -1;
 		_val4 = 0;
-		_val5 = -1;
+		_trigger1 = -1;
 		_val6 = 0;
 		_val8 = 0;
 		_currentNode = -1;
 		_val10 = 0;
 		_val11 = 0;
-		_val12 = 0;
-		_val13 = 0;
+		_wolfMode = 0;
+		_wolfShould = 0;
 		_sound1.clear();
 		_sound2.clear();
 	}
@@ -110,8 +110,8 @@ void Room402::init() {
 				triggerMachineByHashCallback, "WOLFIE");
 			sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 				_wolfClipping, 10, 10, 0);
-			_val12 = 2001;
-			_val13 = 2300;
+			_wolfMode = 2001;
+			_wolfShould = 2300;
 			ws_demand_facing(11);
 
 			if (!_G(kittyScreaming)) {
@@ -179,8 +179,8 @@ void Room402::init() {
 					sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 16, -1,
 						_wolfWantsMoney, 16, 16, 0);
 				} else {
-					_val12 = 2001;
-					_val13 = 2300;
+					_wolfMode = 2001;
+					_wolfShould = 2300;
 					sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 						_wolfClipping, 10, 10, 0);
 				}
@@ -220,10 +220,10 @@ void Room402::init() {
 
 					_wolfieMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x200, 0,
 						triggerMachineByHashCallback, "WOLFIE");
-					_val12 = 2001;
-					_val13 = 2300;
+					_wolfMode = 2001;
+					_wolfShould = 2300;
 
-					sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 100,
+					sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 						_wolfClipping, 10, 10, 0);
 					ws_demand_location(517, 239, 3);
 					ws_walk(503, 248, nullptr, 350, 7);
@@ -260,8 +260,8 @@ void Room402::init() {
 		_wolfClipping = series_load("WOLF CLIPPING LOOP");
 		_wolfieMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x200, 0,
 			triggerMachineByHashCallback, "WOLFIE");
-		_val12 = 2001;
-		_val13 = 2300;
+		_wolfMode = 2001;
+		_wolfShould = 2300;
 
 		sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 			_wolfClipping, 10, 10, 0);
@@ -398,7 +398,7 @@ void Room402::daemon() {
 			_val11 = 1105;
 			break;
 		case 1001:
-			_val5 = (_G(flags)[V132]) ? 300 : 1112;
+			_trigger1 = (_G(flags)[V132]) ? 300 : 1112;
 			break;
 
 		default:
@@ -436,8 +436,8 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, 102,
 					_shadow3, 1, 1, 0);
 				_val11 = 1101;
-				_val12 = 2000;
-				_val13 = 2100;
+				_wolfMode = 2000;
+				_wolfShould = 2100;
 				kernel_timing_trigger(1, 110);
 				break;
 
@@ -489,12 +489,12 @@ void Room402::daemon() {
 
 				if (_G(flags)[V115] && !_val8) {
 					_val6 = 1;
-					_val12 = 2000;
-					_val13 = 2230;
+					_wolfMode = 2000;
+					_wolfShould = 2230;
 				} else {
 					_val8 = 0;
-					_val12 = 2001;
-					_val13 = 2300;
+					_wolfMode = 2001;
+					_wolfShould = 2300;
 				}
 
 				player_set_commands_allowed(true);
@@ -564,8 +564,8 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
 					_ripTalker, 1, 1, 0);
 				player_set_commands_allowed(false);
-				_val12 = 2002;
-				_val13 = 2141;
+				_wolfMode = 2002;
+				_wolfShould = 2141;
 				kernel_timing_trigger(1, 110);
 
 				_val11 = 1111;
@@ -598,18 +598,18 @@ void Room402::daemon() {
 				_G(flags)[V112] = 0;
 
 				if (_currentNode == 19 || _currentNode == 22 || _currentNode == 23) {
-					_val12 = 2002;
-					_val13 = 2190;
+					_wolfMode = 2002;
+					_wolfShould = 2190;
 					kernel_timing_trigger(1, 110);
 				} else if (!_G(flags)[V115]) {
-					_val12 = 2001;
-					_val13 = 2300;
+					_wolfMode = 2001;
+					_wolfShould = 2300;
 					player_set_commands_allowed(true);
 				} else {
 					_val6 = 1;
 
 					if (!_sound2.empty()) {
-						_val13 = 2142;
+						_wolfShould = 2142;
 						_val11 = 1113;
 						digi_play(_sound2.c_str(), 1, 255, 103);
 						_sound2.clear();
@@ -618,7 +618,7 @@ void Room402::daemon() {
 				break;
 
 			case 1113:
-				_val13 = 2150;
+				_wolfShould = 2150;
 				break;
 
 			case 1114:
@@ -643,33 +643,33 @@ void Room402::daemon() {
 		break;
 
 	case 110:
-		switch (_val12) {
+		switch (_wolfMode) {
 		case 2000:
-			if (_val5 == -1) {
+			if (_trigger1 == -1) {
 				kernel_timing_trigger(1, 111);
 			} else {
-				kernel_timing_trigger(1, _val5);
-				_val5 = -1;
+				kernel_timing_trigger(1, _trigger1);
+				_trigger1 = -1;
 			}
 			break;
 
 		case 2001:
-			if (_val13 == 2300) {
-				if (_val5 == -1) {
+			if (_wolfShould == 2300) {
+				if (_trigger1 == -1) {
 					kernel_timing_trigger(1, 111);
 				} else {
-					kernel_timing_trigger(1, _val5);
-					_val5 = -1;
+					kernel_timing_trigger(1, _trigger1);
+					_trigger1 = -1;
 				}
 			}
 			break;
 
 		case 2002:
-			if (_val5 == -1) {
+			if (_trigger1 == -1) {
 				kernel_timing_trigger(1, 111);
 			} else {
-				kernel_timing_trigger(1, _val5);
-				_val5 = -1;
+				kernel_timing_trigger(1, _trigger1);
+				_trigger1 = -1;
 			}
 			break;
 
@@ -679,13 +679,13 @@ void Room402::daemon() {
 		break;
 
 	case 111:
-		switch (_val12) {
+		switch (_wolfMode) {
 		case 2000:
-			switch (_val13) {
+			switch (_wolfShould) {
 			case 2100:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 8, 8, 110,
 					_wolfClipping, 8, 8, 0);
-				_val13 = 2104;
+				_wolfShould = 2104;
 				break;
 
 			case 2101:
@@ -711,23 +711,23 @@ void Room402::daemon() {
 
 			case 2107:
 				_machine1 = series_stream("402 WOLF TAKE", 7, 0, 111);
-				_val13 = 2110;
+				_wolfShould = 2110;
 				break;
 
 			case 2108:
 				sendWSMessage_10000(1, _machine1, _machine1Series, 44, 16, 111,
 					_machine1Series, 16, 16, 0);
-				_val13 = 2110;
+				_wolfShould = 2110;
 				break;
 
 			case 2109:
 				kernel_timing_trigger(4, 111);
-				_val13 = 2108;
+				_wolfShould = 2108;
 				break;
 
 			case 2110:
 				terminateMachineAndNull(_machine1);
-				_val13 = 2101;
+				_wolfShould = 2101;
 				kernel_timing_trigger(1, 110);
 
 				if (!_sound2.empty()) {
@@ -742,14 +742,14 @@ void Room402::daemon() {
 				player_set_commands_allowed(false);
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 111,
 					_wolfClippersDown, 8, 8, 0);
-				_val13 = 2231;
+				_wolfShould = 2231;
 				break;
 
 			case 2231:
 				digi_play("402_s04", 2);
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 111,
 					_wolfClippersDown, 43, 43, 0);
-				_val13 = 2232;
+				_wolfShould = 2232;
 				break;
 
 			case 2232:
@@ -758,14 +758,14 @@ void Room402::daemon() {
 					_sound2.clear();
 				}
 
-				_val13 = 2233;
+				_wolfShould = 2233;
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 111,
 					_wolfWantsMoney, 16, 16, 0);
 				break;
 
 			case 2233:
 				if (_G(flags)[V111] > 0) {
-					_val13 = 2234;
+					_wolfShould = 2234;
 					series_stream("Rip popup", 7, 0, 111);
 				} else {
 					player_set_commands_allowed(true);
@@ -790,7 +790,7 @@ void Room402::daemon() {
 
 				sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, 111,
 					_ripTalkWolf, 7, 7, 0);
-				_val13 = 2242;
+				_wolfShould = 2242;
 				break;
 
 			case 2242:
@@ -802,18 +802,18 @@ void Room402::daemon() {
 			case 2250:
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
 					_wolfWantsMoney, 1, 1, 0);
-				_val13 = 2252;
+				_wolfShould = 2252;
 				break;
 
 			case 2252:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
 					_wolfClipping, 1, 1, 0);
-				_val13 = 2253;
+				_wolfShould = 2253;
 				break;
 
 			case 2253:
-				_val12 = 2001;
-				_val13 = 2300;
+				_wolfMode = 2001;
+				_wolfShould = 2300;
 				kernel_timing_trigger(1, 110);
 
 				if (!player_said("enter", "CASTLE DOOR") && !_G(flags)[V052]) {
@@ -827,7 +827,7 @@ void Room402::daemon() {
 			break;
 
 		case 2001:
-			if (_val13 == 2300) {
+			if (_wolfShould == 2300) {
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 					_wolfClipping, 10, 10, 0);
 				kernel_timing_trigger(35, 10000);
@@ -835,11 +835,11 @@ void Room402::daemon() {
 			break;
 
 		case 2002:
-			switch (_val13) {
+			switch (_wolfShould) {
 			case 2141:
 				sendWSMessage_10000(1, _wolfieMach, _wolfShakesHead, 1, 1, 110,
 					_wolfShakesHead, 1, 1, 0);
-				_val13 = 2143;
+				_wolfShould = 2143;
 				break;
 
 			case 2142:
@@ -854,7 +854,7 @@ void Room402::daemon() {
 				break;
 
 			case 2150:
-				_val13 = 2152;
+				_wolfShould = 2152;
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 111,
 					_wolfWantsMoney, 16, 16, 0);
 
@@ -865,7 +865,7 @@ void Room402::daemon() {
 				break;
 
 			case 2152:
-				_val13 = 2153;
+				_wolfShould = 2153;
 
 				if (_G(flags)[V111] > 0) {
 					_machine1 = series_stream("Rip popup", 7, 0, 111);
@@ -881,18 +881,18 @@ void Room402::daemon() {
 			case 2160:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
 					_wolfClipping, 1, 1, 0);
-				_val13 = 2162;
+				_wolfShould = 2162;
 				break;
 
 			case 2162:
-				_val12 = 2000;
-				_val13 = 2104;
+				_wolfMode = 2000;
+				_wolfShould = 2104;
 				kernel_timing_trigger(1, 110);
 				conv_resume();
 				break;
 
 			case 2170:
-				_val13 = 2272;
+				_wolfShould = 2272;
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, -1,
 					_wolfWantsMoney, 16, 16, 0);
 
@@ -903,19 +903,19 @@ void Room402::daemon() {
 				break;
 
 			case 2180:
-				_val13 = 2181;
+				_wolfShould = 2181;
 				digi_play(_sound2.c_str(), 1, 255, 111);
 				break;
 
 			case 2181:
-				_val13 = 2182;
+				_wolfShould = 2182;
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
 					_wolfWantsMoney, 1, 1, 0);
 				break;
 
 			case 2182:
-				_val12 = 2002;
-				_val13 = 2143;
+				_wolfMode = 2002;
+				_wolfShould = 2143;
 				kernel_timing_trigger(1, 110);
 				conv_resume();
 				break;
@@ -928,18 +928,18 @@ void Room402::daemon() {
 
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
 					_wolfWantsMoney, 1, 1, 0);
-				_val13 = 2192;
+				_wolfShould = 2192;
 				break;
 
 			case 2192:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
 					_wolfClipping, 1, 1, 0);
-				_val13 = 2193;
+				_wolfShould = 2193;
 				break;
 
 			case 2193:
-				_val12 = 2001;
-				_val13 = 2300;
+				_wolfMode = 2001;
+				_wolfShould = 2300;
 				kernel_timing_trigger(1, 110);
 				player_set_commands_allowed(true);
 				break;
@@ -947,14 +947,14 @@ void Room402::daemon() {
 			case 2260:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 111,
 					_wolfClippersDown, 8, 8, 0);
-				_val13 = 2261;
+				_wolfShould = 2261;
 				break;
 
 			case 2261:
 				digi_play("402_s04", 2);
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 111,
 					_wolfClippersDown, 43, 43, 0);
-				_val13 = 2262;
+				_wolfShould = 2262;
 				break;
 
 			case 2262:
@@ -970,7 +970,7 @@ void Room402::daemon() {
 						_sound2.clear();
 					}
 				} else {
-					_val13 = 2263;
+					_wolfShould = 2263;
 
 					if (!_sound2.empty()) {
 						digi_play(_sound2.c_str(), 1, 255, 111);
@@ -987,12 +987,12 @@ void Room402::daemon() {
 			case 2263:
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 110,
 					_wolfWantsMoney, 16, 16, 0);
-				_val13 = 2264;
+				_wolfShould = 2264;
 				break;
 
 			case 2264:
 				_machine1 = series_stream("Rip popup", 7, 0, 111);
-				_val13 = 2265;
+				_wolfShould = 2265;
 				break;
 
 			case 2265:
@@ -1154,7 +1154,7 @@ void Room402::daemon() {
 		terminateMachineAndNull(_ripEnterLeave);
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
-		_val5 = -1;
+		_trigger1 = -1;
 		_val10 = 1001;
 		_val11 = 1110;
 		kernel_timing_trigger(1, 102);
@@ -1251,8 +1251,8 @@ void Room402::daemon() {
 		break;
 
 	case 237:
-		_val12 = 2001;
-		_val13 = 2300;
+		_wolfMode = 2001;
+		_wolfShould = 2300;
 		player_set_commands_allowed(true);
 		kernel_timing_trigger(1, 110);
 		break;
@@ -1307,7 +1307,7 @@ void Room402::daemon() {
 	case 351:
 		if (_val14 == 1) {
 			digi_play("950_s27", 3, 255, 353, 950);
-			_val5 = 354;
+			_trigger1 = 354;
 		} else {
 			digi_play("950_s27", 3, 255, 352, 950);
 			++_val14;
@@ -1423,8 +1423,8 @@ void Room402::pre_parser() {
 		player_set_commands_allowed(false);
 		intr_cancel_sentence();
 		_G(flags)[V114] = 1;
-		_val12 = 2000;
-		_val13 = 2240;
+		_wolfMode = 2000;
+		_wolfShould = 2240;
 
 		_G(flags)[V111]++;
 		kernel_timing_trigger(1, 110, KT_DAEMON, KT_PREPARSE);
@@ -1441,8 +1441,8 @@ void Room402::pre_parser() {
 			intr_cancel_sentence();
 
 		player_set_commands_allowed(false);
-		_val12 = 2000;
-		_val13 = 2250;
+		_wolfMode = 2000;
+		_wolfShould = 2250;
 		kernel_timing_trigger(1, 110, KT_DAEMON, KT_PREPARSE);
 	}
 }
@@ -1462,7 +1462,7 @@ void Room402::parser() {
 		}
 	} else if (talkFlag && player_said("WOLF")) {
 		player_set_commands_allowed(false);
-		_val5 = -1;
+		_trigger1 = -1;
 		_val10 = 1000;
 		_val11 = 1100;
 
@@ -1488,10 +1488,10 @@ void Room402::parser() {
 			_G(flags)[V114] = 1;
 			_G(flags)[V111]++;
 			player_set_commands_allowed(false);
-			_val5 = 210;
+			_trigger1 = 210;
 		} else {
 			player_set_commands_allowed(false);
-			_val5 = 200;
+			_trigger1 = 200;
 		}
 	}
 #define MONEY(ITEM) (player_said("WOLF") && player_said(ITEM) && inv_player_has(ITEM))
@@ -1500,7 +1500,7 @@ void Room402::parser() {
 		if (!_G(flags)[V116]) {
 			_G(flags)[V116] = 1;
 			player_set_commands_allowed(false);
-			_val5 = 221;
+			_trigger1 = 221;
 		}
 	}
 #undef MONEY
@@ -1575,8 +1575,8 @@ void Room402::conv402a() {
 		case 4:
 		case 9:
 			_sound2 = sound;
-			_val12 = 2000;
-			_val13 = 2107;
+			_wolfMode = 2000;
+			_wolfShould = 2107;
 			break;
 
 		case 5:
@@ -1586,8 +1586,8 @@ void Room402::conv402a() {
 			if (inv_player_has("POMERANIAN MARKS")) {
 				conv_resume();
 			} else {
-				_val12 = 2002;
-				_val13 = 2260;
+				_wolfMode = 2002;
+				_wolfShould = 2260;
 			}
 			break;
 
@@ -1596,12 +1596,12 @@ void Room402::conv402a() {
 			switch (entry) {
 			case 1:
 				digi_play(sound, 1);
-				_val12 = 2002;
-				_val13 = 2160;
+				_wolfMode = 2002;
+				_wolfShould = 2160;
 				break;
 
 			default:
-				_val13 = 2142;
+				_wolfShould = 2142;
 				digi_play(sound, 1, 255, 777);
 				break;
 			}
@@ -1611,19 +1611,19 @@ void Room402::conv402a() {
 			switch (entry) {
 			case 0:
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2260;
+				_wolfMode = 2002;
+				_wolfShould = 2260;
 				break;
 			case 1:
 				_sound2 = sound;
 
 				if (inv_player_has("POMERANIAN MARKS")) {
-					_val12 = 2002;
-					_val13 = 2143;
+					_wolfMode = 2002;
+					_wolfShould = 2143;
 					conv_resume();
 				} else {
-					_val12 = 2002;
-					_val13 = 2170;
+					_wolfMode = 2002;
+					_wolfShould = 2170;
 				}
 				break;
 			default:
@@ -1635,13 +1635,13 @@ void Room402::conv402a() {
 			switch (entry) {
 			case 0:
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2260;
+				_wolfMode = 2002;
+				_wolfShould = 2260;
 				break;
 			case 1:
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2143;
+				_wolfMode = 2002;
+				_wolfShould = 2143;
 				break;
 			default:
 				break;
@@ -1658,10 +1658,10 @@ void Room402::conv402a() {
 		case 21:
 			if (entry == 1) {
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2260;
+				_wolfMode = 2002;
+				_wolfShould = 2260;
 			} else {
-				_val13 = 201;
+				_wolfShould = 201;
 				digi_play(sound, 1, 255, 777);
 			}
 			break;
@@ -1677,20 +1677,20 @@ void Room402::conv402a() {
 		case 26:
 			switch (entry) {
 			case 0:
-				_val13 = 2101;
+				_wolfShould = 2101;
 				digi_play(sound, 1, 255, 777);
 				break;
 
 			case 1:
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2260;
+				_wolfMode = 2002;
+				_wolfShould = 2260;
 				break;
 
 			case 2:
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2143;
+				_wolfMode = 2002;
+				_wolfShould = 2143;
 				conv_resume();
 				break;
 
@@ -1718,12 +1718,12 @@ void Room402::conv402a() {
 		case 53:
 		case 54:
 			_val8 = 1;
-			_val13 = 201;
+			_wolfShould = 201;
 			digi_play(sound, 1, 255, 777);
 			break;
 
 		default:
-			_val13 = (_val12 == 2002) ? 2142 : 2101;
+			_wolfShould = (_wolfMode == 2002) ? 2142 : 2101;
 			digi_play(sound, 1, 255, 777);
 			break;
 		}
@@ -1761,8 +1761,8 @@ void Room402::conv402a() {
 				_val10 = 1001;
 				_val11 = 1115;
 				_sound2 = sound;
-				_val12 = 2002;
-				_val13 = 2180;
+				_wolfMode = 2002;
+				_wolfShould = 2180;
 
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 110);
@@ -1794,7 +1794,7 @@ void Room402::conv402a777() {
 			kernel_timing_trigger(1, 102);
 			_G(kernel).trigger_mode = KT_PARSE;
 		} else {
-			_val13 = (_val12 == 2002) ? 2143 : 2104;
+			_wolfShould = (_wolfMode == 2002) ? 2143 : 2104;
 			conv_resume();
 		}
 	} else if (who == 1) {

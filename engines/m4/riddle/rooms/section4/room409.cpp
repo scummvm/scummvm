@@ -172,7 +172,7 @@ void Room409::daemon() {
 		break;
 
 	case 380:
-		setGlobals1(1, _seriesReachHand, 10, 10, 10, 0, 10, 1, 1, 1);
+		setGlobals1(_seriesReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 		sendWSMessage_110000(381);
 		break;
 
@@ -197,6 +197,7 @@ void Room409::daemon() {
 			triggerMachineByHashCallback, "rip looks around");
 		_shadow = series_place_sprite("SAFARI SHADOW 5", 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
 		sendWSMessage_10000(1, _ripley, _seriesReadTelegram, 1, 21, 386,
 			_seriesReadTelegram, 22, 31, 0);
 		break;
