@@ -139,11 +139,14 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 bool BaseRenderOpenGL3DShader::flip() {
 	_lastTexture = nullptr;
-	// Disable blend mode to prevent interfere with backend renderer
-	bool prevStateBlend = glIsEnabled(GL_BLEND);
+
+	// Disable blend mode and cull face to prevent interfere with backend renderer
 	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	
 	g_system->updateScreen();
-	prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+	
+	_state = RSTATE_NONE;
 	return true;
 }
 

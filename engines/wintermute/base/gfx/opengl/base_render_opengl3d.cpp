@@ -118,11 +118,14 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 bool BaseRenderOpenGL3D::flip() {
 	_lastTexture = nullptr;
 	postfilter();
-	// Disable blend mode to prevent interfere with backend renderer
-	bool prevStateBlend = glIsEnabled(GL_BLEND);
+
+	// Disable blend mode and cull face to prevent interfere with backend renderer
 	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+
 	g_system->updateScreen();
-	prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+
+	_state = RSTATE_NONE;
 	return true;
 }
 
@@ -1023,7 +1026,6 @@ void BaseRenderOpenGL3D::postfilter() {
 		return;
 
 	setup2D();
-	_state = RSTATE_NONE;
 	glViewport(0, 0, _width, _height);
 
 	glMatrixMode(GL_PROJECTION);
