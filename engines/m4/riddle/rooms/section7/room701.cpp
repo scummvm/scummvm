@@ -97,10 +97,10 @@ void Room701::pre_parser() {
 }
 
 void Room701::parser() {
-	bool ecx = player_said_any("look", "look at");
+	bool lookFl = player_said_any("look", "look at");
 	bool talkFl = player_said_any("talk", "talk to");
-	bool esi = player_said("take");
-	bool edi = player_said_any("push", "pull", "gear", "open", "close");
+	bool takeFl = player_said("take");
+	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv701a")) {
 		if (_G(kernel).trigger == 1) {
@@ -125,9 +125,9 @@ void Room701::parser() {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 102, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (ecx && player_said("COAT RACK")) {
+	} else if (lookFl && player_said("COAT RACK")) {
 		digi_play("com130", 1, 255, -1, -1);
-	} else if (ecx && player_said("Skin") && !_G(flags[V226])) {
+	} else if (lookFl && player_said("Skin") && !_G(flags[V226])) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -176,36 +176,36 @@ void Room701::parser() {
 		}
 	} // ecx && player_said("Skin") && !_G(flags[V226])
 
-	else if (ecx && player_said("Skin") && _G(flags[V226])) {
+	else if (lookFl && player_said("Skin") && _G(flags[V226])) {
 		player_set_commands_allowed(false);
 		digi_play("701R13", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
 
 	} // ecx && player_said("Skin") && _G(flags[V226])
 
-	else if (ecx && player_said("Window"))
+	else if (lookFl && player_said("Window"))
 		digi_play("701R17", 1, 255, -1, -1);
-	else if (ecx && player_said("Poster"))
+	else if (lookFl && player_said("Poster"))
 		digi_play("com002", 1, 255, -1, 997);
-	else if (ecx && player_said("Magazines"))
+	else if (lookFl && player_said("Magazines"))
 		digi_play("com003", 1, 255, -1, 997);
-	else if (ecx && player_said("Prayer Wheel"))
+	else if (lookFl && player_said("Prayer Wheel"))
 		digi_play("701R19", 1, 255, -1, -1);
-	else if (ecx && player_said("Agent"))
+	else if (lookFl && player_said("Agent"))
 		digi_play("701R20", 1, 255, -1, -1);
-	else if (ecx && player_said_any("Sofa", "Chair"))
+	else if (lookFl && player_said_any("Sofa", "Chair"))
 		digi_play("com023", 1, 255, -1, 997);
-	else if (ecx && player_said("Telephone"))
+	else if (lookFl && player_said("Telephone"))
 		digi_play("com024", 1, 255, -1, 997);
-	else if (ecx && player_said("Postcard Rack"))
+	else if (lookFl && player_said("Postcard Rack"))
 		digi_play("701R14", 1, 255, -1, -1);
-	else if (ecx && player_said("Brochures"))
+	else if (lookFl && player_said("Brochures"))
 		digi_play("701R15", 1, 255, -1, -1);
-	else if (ecx && player_said("BUSH"))
+	else if (lookFl && player_said("BUSH"))
 		digi_play("701R41", 1, 255, -1, -1);
-	else if (ecx && player_said(" "))
+	else if (lookFl && player_said(" "))
 		digi_play("com001", 1, 255, -1, -1);
-	else if (esi && player_said("Brochures")) {
+	else if (takeFl && player_said("Brochures")) {
 		if (inv_player_has("PRAYER WHEEL BROCHURE"))
 			digi_play("701R21", 1, 255, -1, -1);
 		else {
@@ -239,11 +239,11 @@ void Room701::parser() {
 		}
 	} // esi && player_said("Brochures")
 
-	else if (esi && player_said("Postcard Rack"))
+	else if (takeFl && player_said("Postcard Rack"))
 		digi_play("com004", 1, 255, -1, 997);
-	else if (esi && player_said("Magazines"))
+	else if (takeFl && player_said("Magazines"))
 		digi_play("com005", 1, 255, -1, 997);
-	else if (esi && player_said("Yeti Skin"))
+	else if (takeFl && player_said("Yeti Skin"))
 		digi_play("701R24", 1, 255, -1, -1);
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		switch (_G(kernel).trigger) {
@@ -276,9 +276,9 @@ void Room701::parser() {
 		}
 	} // player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE")
 
-	else if (edi && player_said_any("Sofa", "Chair"))
+	else if (gearFl && player_said_any("Sofa", "Chair"))
 		digi_play("com025", 1, 255, -1, 997);
-	else if (edi && player_said("Telephone"))
+	else if (gearFl && player_said("Telephone"))
 		digi_play("com026", 1, 255, -1, 997);
 	else if ((player_said("SIKKIMESE RUPEE", "Agent") && inv_player_has("SIKKIMESE RUPEE"))
 		||   player_said("US DOLLARS", "Agent") // 2 checks in the original: one checks if the payer has dollars, the other doesn't.
