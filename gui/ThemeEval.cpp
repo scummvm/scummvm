@@ -36,6 +36,13 @@ void ThemeEval::buildBuiltinVars() {
 	_builtin["kThumbnailWidth"] = kThumbnailWidth;
 	_builtin["kThumbnailHeight"] = kThumbnailHeight1;
 	_builtin["kThumbnailHeight2"] = kThumbnailHeight2;
+
+	int safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom;
+	g_system->getSafeAreaInsets(safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom);
+	_builtin["kLauncherSafeAreaInsetLeft"] = safeAreaInsetLeft;
+	_builtin["kLauncherSafeAreaInsetRight"] = safeAreaInsetRight;
+	_builtin["kLauncherSafeAreaInsetTop"] = safeAreaInsetTop;
+	_builtin["kLauncherSafeAreaInsetBottom"] = safeAreaInsetBottom;
 }
 
 void ThemeEval::reset() {
@@ -47,6 +54,7 @@ void ThemeEval::reset() {
 		delete i->_value;
 
 	_layouts.clear();
+	buildBuiltinVars();
 }
 
 bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {

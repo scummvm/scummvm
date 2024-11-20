@@ -881,6 +881,8 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
+	int paddingL = 0, paddingR = 0, paddingT = 0, paddingB = 0;
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
@@ -919,11 +921,24 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	else
 		return parserError("Invalid layout type. Only 'horizontal' and 'vertical' layouts allowed.");
 
-	if (node->values.contains("padding")) {
-		int paddingL, paddingR, paddingT, paddingB;
 
+	if (node->values.contains("padding")) {
 		if (!parseList(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
+
+		// values are scaled inside this method
+		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
+	}
+
+	if (node->values.contains("inset")) {
+		int safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom;
+		if (!parseList(node->values["inset"], 4, &safeAreaInsetLeft, &safeAreaInsetRight, &safeAreaInsetTop, &safeAreaInsetBottom))
+			return false;
+
+		paddingL += safeAreaInsetLeft;
+		paddingR += safeAreaInsetRight;
+		paddingT += safeAreaInsetTop;
+		paddingB += safeAreaInsetBottom;
 
 		// values are scaled inside this method
 		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
