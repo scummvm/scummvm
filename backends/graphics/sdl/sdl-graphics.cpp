@@ -353,10 +353,10 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
 		const bool maximized = (flags & SDL_WINDOW_MAXIMIZED);
 		if (!fullscreen && !maximized) {
-			if (_hintedWidth) {
+			if (_hintedWidth > width) {
 				width = _hintedWidth;
 			}
-			if (_hintedHeight) {
+			if (_hintedHeight > height) {
 				height = _hintedHeight;
 			}
 		}
