@@ -815,7 +815,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String name = node->values["name"];
-	int inset = 0;
+	Common::Rect inset;
 
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
@@ -823,8 +823,17 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	}
 
 	if (node->values.contains("inset")) {
-		if (!parseList(node->values["inset"], 1, &inset))
+		int dialogInset;
+		if (!parseList(node->values["inset"], 1, &dialogInset))
 			return false;
+
+		int safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom;
+		g_system->getSafeAreaInsets(safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom);
+
+		inset.left += dialogInset + safeAreaInsetLeft;
+		inset.right += dialogInset + safeAreaInsetRight;
+		inset.top += dialogInset + safeAreaInsetTop;
+		inset.bottom += dialogInset + safeAreaInsetBottom;
 	}
 
 	Common::String overlays = node->values["overlays"];

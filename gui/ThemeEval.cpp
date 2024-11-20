@@ -121,7 +121,7 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 	return *this;
 }
 
-ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) {
+ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, const Common::Rect &inset) {
 	Common::String var = "Dialog." + name;
 
 	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, width, height, inset);

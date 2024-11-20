@@ -142,7 +142,7 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) :
+	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, const Common::Rect &inset) :
 			ThemeLayout(nullptr),
 			_name(name),
 			_overlays(overlays),
@@ -171,7 +171,7 @@ protected:
 
 	Common::String _name;
 	Common::String _overlays;
-	int _inset;
+	Common::Rect _inset;
 };
 
 class ThemeLayoutStacked : public ThemeLayout {
