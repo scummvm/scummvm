@@ -58,11 +58,12 @@ void GobConsole::unregisterCheater() {
 }
 
 bool GobConsole::cmd_Help(int, const char **) {
-	debugPrintf("Debug flags\n");
-	debugPrintf("-----------\n");
+	debugPrintf("Debug\n");
+	debugPrintf("-----\n");
 	debugPrintf(" debugflag_list - Lists the available debug flags and their status\n");
 	debugPrintf(" debugflag_enable - Enables a debug flag\n");
 	debugPrintf(" debugflag_disable - Disables a debug flag\n");
+	debugPrintf(" debuglevel - Sets debug level\n");
 	debugPrintf("\n");
 	debugPrintf("Commands\n");
 	debugPrintf("--------\n");
@@ -77,6 +78,7 @@ bool GobConsole::cmd_Help(int, const char **) {
 	debugPrintf(" var8 - manipulates 8-bit variables; usage: var8 <var offset> (<value>)\n");
 	debugPrintf(" var16 - manipulates 16-bit variables; usage: var16 <var offset> (<value>)\n");
 	debugPrintf(" var32 - manipulates 32-bit variables; usage: var32 <var offset> (<value>)\n");
+	debugPrintf(" varString - manipulates string references; usage: varString <var offset> (<value>)\n");
 	debugPrintf("\n");
 	return true;
 }
@@ -169,7 +171,7 @@ bool GobConsole::cmd_var32(int argc, const char **argv) {
 		_vm->_inter->_variables->writeOff32(varNum, varVal);
 	}
 
-	debugPrintf("var8_%d = %d\n", varNum, _vm->_inter->_variables->readOff32(varNum));
+	debugPrintf("var32_%d = %d\n", varNum, _vm->_inter->_variables->readOff32(varNum));
 
 	return true;
 }
