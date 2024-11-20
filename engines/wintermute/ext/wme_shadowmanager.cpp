@@ -25,6 +25,10 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
+#include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/ad/ad_scene.h"
+#include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ext/wme_shadowmanager.h"
 #include "engines/wintermute/ext/plugin_event.h"
@@ -341,9 +345,11 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 		event._callback = callback;
 		event._plugin = this;
 		_gameRef->pluginEvents().subscribeEvent(event);
+
+		// Actor and light lists is not get restored, plugin is not designed to work this way.
+		// Lists get refreshed by game script on scene change.
 		_actors.clear();
-		// Actor list is not get restored, plugin is not design work this way.
-		// List get refreshed by game script on scene change.
+		_lights.clear();
 	}
 
 	persistMgr->transferUint32(TMEMBER(_lastTime));
@@ -367,20 +373,60 @@ void SXShadowManager::callback(void *eventData1, void *eventData2) {
 
 void SXShadowManager::update() {
 	if (_useSmartShadows) {
-		// TODO: value should be calculated, but for now it's a const
-		_shadowColor = 0x66000000;
-		for (auto it = _actors.begin(); it != _actors.end(); ++it) {
-			it->first->_shadowLightPos = _defaultLightPos;
-			it->first->_shadowColor = _shadowColor;
+		AdGame *adGame = (AdGame *)_gameRef;
+		if (!adGame->_scene || !adGame->_scene->_geom)
+			return;
+
+		for (auto actorIt = _actors.begin(); actorIt != _actors.end(); ++actorIt) {
+			_shadowColor = 0x00000000;
+			float shadowWeight = 0.0f;
+			uint32 numLights = 0;
+			for (auto lightIt = _lights.begin(); lightIt != _lights.end(); ++lightIt) {
+				if (!lightIt->second)
+					continue;
+				auto light = lightIt->first;
+
+				if (light->_isSpotlight)
+					continue;
+
+				float weight1 = 0.0 * 0.11f; // TODO
+
+				float r = RGBCOLGetR(light->_diffuseColor) / 255.0f;
+				float g = RGBCOLGetG(light->_diffuseColor) / 255.0f;
+				float b = RGBCOLGetB(light->_diffuseColor) / 255.0f;
+				float brightness = (r + g + b) / 3.0f;
+				float weight2 = brightness * 0.59f;
+
+				float weight3 = 0.0 * 0.3; // TODO
+
+				shadowWeight += (weight1 + weight2 + weight3);
+
+				numLights++;
+			}
+			if (numLights != 0)
+				shadowWeight /= numLights;
+			_shadowColor = (byte)(shadowWeight * 255) << 24;
+
+			actorIt->first->_shadowLightPos = _defaultLightPos;
+			actorIt->first->_shadowColor = _shadowColor;
 		}
 	}
 }
 
 void SXShadowManager::run() {
 	_lastTime = _gameRef->scGetProperty("CurrentTime")->getInt();
+	_lights.clear();
+	AdGame *adGame = (AdGame *)_gameRef;
+	if (!adGame->_scene || !adGame->_scene->_geom)
+		return;
+	for (uint32 l = 0; l < adGame->_scene->_geom->_lights.size(); l++) {
+		auto light = adGame->_scene->_geom->_lights[l];
+		_lights.push_back(Common::Pair<Light3D *, bool>(light, true));
+	}
 }
 
 void SXShadowManager::stop() {
+	_lights.clear();
 }
 
 bool SXShadowManager::addActor(AdActor3DX *actorObj) {
@@ -399,10 +445,18 @@ bool SXShadowManager::removeAllActors() {
 }
 
 bool SXShadowManager::enableLight(const char *lightName) {
+	for (auto it = _lights.begin(); it != _lights.end(); ++it) {
+		if (scumm_stricmp(it->first->_name, lightName) == 0)
+			it->second = true;
+	}
 	return true;
 }
 
 bool SXShadowManager::disableLight(const char *lightName) {
+	for (auto it = _lights.begin(); it != _lights.end(); ++it) {
+		if (scumm_stricmp(it->first->_name, lightName) == 0)
+			it->second = false;
+	}
 	return true;
 }
 

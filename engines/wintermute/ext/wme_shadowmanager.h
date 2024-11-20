@@ -29,6 +29,7 @@
 namespace Wintermute {
 
 class AdActor3DX;
+class Light3D;
 
 class SXShadowManager : public BaseScriptable {
 public:
@@ -51,6 +52,7 @@ private:
 	bool disableLight(const char *lightName);
 
 	Common::List<Common::Pair<AdActor3DX *, uint32>> _actors;
+	Common::List<Common::Pair<Light3D *, bool>> _lights;
 	uint32 _lastTime{};
 	DXVector3 _defaultLightPos;
 	float _minShadow;
