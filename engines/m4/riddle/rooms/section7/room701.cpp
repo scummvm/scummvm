@@ -112,7 +112,7 @@ void Room701::parser() {
 
 			conv_resume(conv_get_handle());
 		} else {
-			subparser_9B2FC();
+			conv701a();
 		}
 	} // if (player_said("conv701a"))
 
@@ -358,8 +358,84 @@ void Room701::daemon() {
 	warning("STUB - 701 Daemon");
 }
 
-void Room701::subparser_9B2FC() {
-	warning("STUB - 701 subparser_9B2FC");
+void Room701::conv701a() {
+	int32 node = _fieldB4 = conv_current_node();
+	int32 entry = conv_current_entry();
+	const char *digiName = conv_sound_to_play();
+
+	if (digiName == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	int32 who = conv_whos_talking();
+	if (who <= 0) {
+		if (node == 3 && entry == 0) {
+			_convDigiName_1 = Common::String(digiName);
+			_field94 = 3500;
+			_field98 = 3501;
+			return;
+		}
+
+		_field6C = 2101;
+
+	} else if (who == 1) {
+		if (node == 1 && entry == 1) {
+			conv_set_box_xy(490, -4);
+			set_dlg_rect();
+			int32 x1, y1, x2, y2;
+			conv_get_dlg_coords(&x1, &y1, &x2, &y2);
+			conv_get_dlg_coords(&x1, &y1, &x2, &y2); // useless?
+			conv_set_dlg_coords(x1, y1 - 10, x2, y2 - 10);
+			set_dlg_rect();
+		} else {
+			conv_set_box_xy(10, 10);
+		}
+
+		switch (node) {
+		case 1:
+			if (entry == 3) {
+				_convDigiName_2 = Common::String(digiName);
+				_field94 = 3600;
+				_field98 = 3601;
+
+				return;
+			}
+
+			_field98 = 1102;
+
+			break;
+
+		case 6:
+			if (entry == 0) {
+				_field98 = 1102;
+				digi_play(digiName, 1, 255, 1, -1);
+				_field90 = 1;
+
+				return;
+			}
+
+			_field98 = 1102;
+
+			break;
+
+		case 11:
+			if (entry != 12) {
+				_field94 = 3700;
+				_field98 = 3701;
+
+				return;
+			}
+
+			break;
+
+		default:
+			_field98 = 1102;
+			break;
+		}
+	}
+
+	digi_play(digiName, 1, 255, 1, -1);
 }
 
 } // namespace Rooms
