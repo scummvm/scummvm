@@ -194,6 +194,11 @@ static Common::Action *actionDescriptionFromNuvieAction(const NuvieActionDescrip
 		act->addDefaultInputMapping(n._key1);
 	if (n._key2)
 		act->addDefaultInputMapping(n._key2);
+	// Allow WALK operations to repeat so holding the key lets you keep moving
+	// TODO: This would be nice to handle manually inside the event loop so
+	// non-keyboard inputs also work and we can control the repeat rate.
+	if (strncmp(n._id, "WALK", 4) == 0)
+		act->allowKbdRepeats();
 	return act;
 }
 
