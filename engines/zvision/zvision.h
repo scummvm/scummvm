@@ -82,14 +82,14 @@ enum {
 	ZNM_WORKING_WINDOW_HEIGHT = 320,  //Original 320
 	
 	ZNM_SUBTITLE_HEIGHT = 80, //Original 80
-	ZNM_MENU_HEIGHT = 40,  //Original 80
+	ZNM_MENU_HEIGHT = 32,  //Original 80
 
 	// ZGI working window sizes (original aspect ratio 2:1)
 	ZGI_WORKING_WINDOW_WIDTH = 640, //Original 640
-	ZGI_WORKING_WINDOW_HEIGHT = 320,  //Original 320
+	ZGI_WORKING_WINDOW_HEIGHT = 344,  //Original 344
 	
   ZGI_SUBTITLE_HEIGHT = 68, //Original 68
-	ZGI_MENU_HEIGHT = 34,  //Original 68
+	ZGI_MENU_HEIGHT = 32,  //Original 68
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
