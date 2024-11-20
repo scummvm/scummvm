@@ -40,11 +40,22 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  AGOS:
    - Unterstützung für Tastenkürzel hinzugefügt.
+   - Fehler in der Zeit-Behandlung von Spielständen behoben, der zu Problemen wie Abstürzen im
+     dritten Egypten-Level von Waxworks und einer fehlenden Regenerierung von Kraftpunkten in
+     Elvira 2 geführt hat.
 
  AGS:
-   - Der AGS-Code wurde mit der Upstream-Version 3.6.0.58 synchronisiert.
+   - Der AGS-Code wurde mit der Upstream-Version 3.6.1.29 synchronisiert.
+   - Kommandozeilenoption --language hinzugefügt, mit der die Sprache eines Spiels gesetzt werden kann.
    - Fehlerhaftes Verhalten der Treppen in älteren Episoden von Maniac Mansion Mania korrigiert,
      die durch fehlerhafte Wegfindung verursacht wurde.
+   - Fehlerhafte Tastatur-Eingabe im Speicher-Bildschirm in einigen Spielen (z.B. An English Haunting) behoben.
+   - Farblose Texte in Spielen, die das SpriteFont-Plugin verwenden (z.B. Detective Gallo) behoben.
+   - Fehlerhafte Wiedergabe von .mod-Dateien in einigen seltenen Fällen behoben.
+   - Fehlerhaftes Upscaling in einigen alten Spielen behoben.
+   - Fehlerhafte Farbdarstellung, die in seltenen Fällen bei der Verwendung von AVX2-Optimierungen auftritt, behoben.
+   - Einige Überprüfungen auf nicht unterstützte Videos behoben, um Abstürze zu vermeiden.
+   - Mehrere Aktualisierungen der Erkennungsdatenbank.
 
  Asylum:
    - Die Steuerung ist jetzt auch über die Pfeiltasten der Tastatur möglich.
@@ -56,6 +67,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz für Izo in Hawker's Circle korrigiert.
    - Die "Designers cut"-Einstellung kann jetzt im Voraus gesetzt werden und wird für ein neues Spiel übernommen.
    - Verbesserte Zuverlässigkeit bei der Nutzung selbst gewählter Seeds für den Zufallsgenerator.
+
+ Chewy:
+   - Status der Cyber Crown vor der Surimy-Attacke behoben.
+   - Fehler bei der Darstellung von Hotspot-Texten behoben.
+   - Keyboard-Handling im Inventar-Bildschirm behoben.
+   - Entsperrte Zwischensequenten im Kino-Bildschirm behoben.
+   - Fehlerhafte Musikwiedergabe während des zweiten Hafen-Besuchs behoben.
+   - Fehlerhafte Bewegung von Chewys Boot während des Boote-Rennens behoben.
+   - Nichelle wird nach der Kong-Attacke nun korrekt im Raum platziert.
 
  Cine:
    - Unterstützung für Tastenkürzel hinzugefügt.
@@ -79,14 +99,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Freescape:
    - Unterstützung für die Atari/Amiga-Versionen von Dark Side hinzugefügt.
-   - Verbesserte Behandlung von nahen kolinearen Oberflächen.
    - "Authentische Grafik"-Modus hinzugefügt.
    - Einige Fehler in den verschiedenen Render-Modi behoben.
-   - Neuentwicklung der Sound-Behandlung in einigen Spielen.
-   - Neuentwicklung der Schrift-Behandlung unter Nutzung gemeinsamer Klassen.
    - Verbesserte Unterstützung für Tastenkürzel.
    - Verbesserte Unterstützung für Seitenverhältniskorrektur, basierend auf DOSBox.
-   - Verbesserung der Matrix-Berechnung, die nun eher dem Original entspricht.
 
  GLK/ADVSYS:
    - Verbesserte Interpretation von Eingabe-Befehlen.
@@ -99,6 +115,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Hugo:
    - Unterstützung für Tastenkürzel hinzugefügt.
+
+ Hypno:
+   - Hängender Maus-Cursor auf einigen Plattformen behoben.
 
  Illusions:
    - Unterstützung für Tastenkürzel hinzugefügt.
@@ -131,8 +150,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  NGI:
    - Unterstützung für die litauische Version von Full Pipe hinzugefügt.
 
+ PINK:
+   - Absturz behoben, der auftritt, wenn sich das Mädchen in einer Meerjungfrau verwandelt.
+
  SAGA:
    - Unterstützung für Tastenkürzel hinzugefügt.
+   - Fehler behoben, der zu einem nicht abschließbaren Spiel geführt hat, wenn einige Aktionen
+     in Nimdoks Kapitel in IHNM nicht durchgeführt wurden.
 
  SCI:
    - CGA- (4 Farben und schwarz/weiß) und Hercules-Rendering für die meisten
