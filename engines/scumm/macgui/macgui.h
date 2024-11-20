@@ -58,7 +58,7 @@ public:
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
-	void setPalette(const byte *palette, uint size);
+	void setPaletteDirty();
 
 	const Graphics::Font *getFontByScummId(int32 id);
 

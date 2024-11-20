@@ -994,14 +994,6 @@ void MacWindowManager::draw() {
 		}
 	}
 
-	if (_menuTimer && g_system->getMillis() >= _menuTimer) {
-		if (_menuHotzone.contains(_lastMousePos)) {
-			activateMenu();
-		}
-
-		_menuTimer = 0;
-	}
-
 	// Menu is drawn on top of everything and always
 	if (_menu && !(_mode & kWMModeFullscreen)) {
 		if (_fullRefresh)
@@ -1043,6 +1035,14 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 			if (!_menuTimer && _menuHotzone.contains(event.mouse)) {
 				_menuTimer = g_system->getMillis() + _menuDelay;
 			}
+		}
+
+		if (_menuTimer && g_system->getMillis() >= _menuTimer) {
+			if (_menuHotzone.contains(_lastMousePos)) {
+				activateMenu();
+			}
+
+			_menuTimer = 0;
 		}
 	}
 
