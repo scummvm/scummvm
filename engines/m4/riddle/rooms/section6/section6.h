@@ -66,10 +66,10 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-extern const int16 SECTION6_NORMAL_DIRS[];
-extern const char *SECTION6_NORMAL_NAMES[];
-extern const int16 SECTION6_SHADOW_DIRS[];
-extern const char *SECTION6_SHADOW_NAMES[];
+extern const int16 TT_NORMAL_DIRS[];
+extern const char *TT_NORMAL_NAMES[];
+extern const int16 TT_SHADOW_DIRS[];
+extern const char *TT_SHADOW_NAMES[];
 
 class Section6 : public Section {
 private:

@@ -138,10 +138,10 @@ void Room608::init() {
 		ws_demand_location(-30, 345, 1);
 		ws_walk(43, 345, nullptr, 18, 3);
 	
-		ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
-		ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
+		ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
+		ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
 
-		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *TT_NORMAL_DIRS, *TT_SHADOW_DIRS,
 			-30, 324, 3, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 105, 324, 5, 20, 1);
 	} else if (_G(flags)[V203] == 6) {
@@ -159,10 +159,10 @@ void Room608::init() {
 		ws_demand_location(-30, 345, 1);
 		kernel_timing_trigger(1, 698);
 
-		ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
-		ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
+		ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
+		ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
 
-		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *TT_NORMAL_DIRS, *TT_SHADOW_DIRS,
 			-30, 324, 3, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 103, 318, 3, 700, 1);
 	}
@@ -1284,10 +1284,10 @@ void Room608::daemon() {
 		series_unload(_ripHandChin);
 		series_unload(_ripTalker);
 
-		series_load(SECTION6_NORMAL_NAMES[0], SECTION6_NORMAL_DIRS[0]);
-		series_load(SECTION6_NORMAL_NAMES[1], SECTION6_NORMAL_DIRS[1]);
-		series_load(SECTION6_NORMAL_NAMES[3], SECTION6_NORMAL_DIRS[3]);
-		series_load(SECTION6_NORMAL_NAMES[4], SECTION6_NORMAL_DIRS[4]);
+		series_load(TT_NORMAL_NAMES[0], TT_NORMAL_DIRS[0]);
+		series_load(TT_NORMAL_NAMES[1], TT_NORMAL_DIRS[1]);
+		series_load(TT_NORMAL_NAMES[3], TT_NORMAL_DIRS[3]);
+		series_load(TT_NORMAL_NAMES[4], TT_NORMAL_DIRS[4]);
 		ws_hide_walker(_tt);
 
 		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,

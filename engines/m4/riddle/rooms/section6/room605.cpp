@@ -62,8 +62,8 @@ void Room605::init() {
 	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V203] == 2) {
 			_G(player).disable_hyperwalk = true;
-			ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
-			ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
+			ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
+			ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
 			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
 				triggerMachineByHashCallback, "tt");
 			sendWSMessage_10000(1, _tt, _605tt, 1, 1, 200, _605tt, 1, 1, 0);
@@ -85,9 +85,9 @@ void Room605::init() {
 			ws_demand_location(451, 368, 1);
 			ws_walk(513, 316, nullptr, -1, 10);
 
-			ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
-			ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
-			_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
+			ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
+			ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
+			_tt = triggerMachineByHash_3000(8, 9, *TT_NORMAL_DIRS, *TT_SHADOW_DIRS,
 				450, 339, 1, triggerMachineByHashCallback3000, "tt walker");
 			sendWSMessage_10000(_tt, 476, 290, 5, 10, 1);
 
@@ -281,7 +281,7 @@ void Room605::daemon() {
 	case 203:
 		terminateMachineAndNull(_tt);
 		terminateMachineAndNull(_ttShadow);
-		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *TT_NORMAL_DIRS, *TT_SHADOW_DIRS,
 			476, 290, 5, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 485, 199, 2, 208, 0);
 		digi_play("19_07n04", 1, 255, 206);
