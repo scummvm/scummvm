@@ -140,6 +140,8 @@ protected:
 
 	Common::Path _resourceFile;
 
+	bool _paletteDirty = false;
+
 	bool _menuIsActive = false;
 	bool _cursorWasVisible = false;
 
@@ -704,7 +706,9 @@ public:
 
 	int toMacRoman(int unicode) const;
 
-	void setPalette(const byte *palette, uint size);
+	void setPaletteDirty();
+	void updatePalette();
+
 	virtual bool handleEvent(Common::Event event);
 
 	static void menuCallback(int id, Common::String &name, void *data);

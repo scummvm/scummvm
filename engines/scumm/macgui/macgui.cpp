@@ -88,8 +88,8 @@ void MacGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, 
 	_impl->setupCursor(width, height, hotspotX, hotspotY, animate);
 }
 
-void MacGui::setPalette(const byte *palette, uint size) {
-	_impl->setPalette(palette, size);
+void MacGui::setPaletteDirty() {
+	_impl->setPaletteDirty();
 }
 
 const Graphics::Font *MacGui::getFontByScummId(int32 id) {
