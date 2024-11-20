@@ -41,7 +41,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGOS:
    - Unterstützung für Tastenkürzel hinzugefügt.
    - Fehler in der Zeit-Behandlung von Spielständen behoben, der zu Problemen wie Abstürzen im
-     dritten Egypten-Level von Waxworks und einer fehlenden Regenerierung von Kraftpunkten in
+     dritten Ägypten-Level von Waxworks und einer fehlenden Regenerierung von Kraftpunkten in
      Elvira 2 geführt hat.
 
  AGS:
