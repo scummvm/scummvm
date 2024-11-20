@@ -61,31 +61,7 @@ extern "C" void __system_allocateHeaps(void) {
 	// 0x00A00000 bytes = 10 MiB, for Old 3DS
 	// 0x01400000 bytes = 20 MiB, for New 3DS
 	__ctru_linear_heap_size = APPMEMTYPE < 6 ? 0x00A00000 : 0x01400000;
-
-	if (__ctru_heap_size + __ctru_linear_heap_size > remaining)
-		svcBreak(USERBREAK_PANIC);
-
-	if (__ctru_heap_size == 0 && __ctru_linear_heap_size == 0) {
-		// Split available memory equally between linear and application heaps (with rounding in favor of the latter)
-		__ctru_linear_heap_size = (remaining / 2) & ~0xFFF;
-		__ctru_heap_size = remaining - __ctru_linear_heap_size;
-
-		// If the application heap size is bigger than the cap, prefer to grow linear heap instead
-		if (__ctru_heap_size > HEAP_SPLIT_SIZE_CAP) {
-			__ctru_heap_size = HEAP_SPLIT_SIZE_CAP;
-			__ctru_linear_heap_size = remaining - __ctru_heap_size;
-
-			// However if the linear heap size is bigger than the cap, prefer to grow application heap
-			if (__ctru_linear_heap_size > LINEAR_HEAP_SIZE_CAP) {
-				__ctru_linear_heap_size = LINEAR_HEAP_SIZE_CAP;
-				__ctru_heap_size = remaining - __ctru_linear_heap_size;
-			}
-		}
-	} else if (__ctru_heap_size == 0) {
-		__ctru_heap_size = remaining - __ctru_linear_heap_size;
-	} else if (__ctru_linear_heap_size == 0) {
-		__ctru_linear_heap_size = remaining - __ctru_heap_size;
-	}
+	__ctru_heap_size = remaining - __ctru_linear_heap_size;
 
 	// Allocate the application heap
 	rc = svcControlMemory(&__ctru_heap, OS_HEAP_AREA_BEGIN, 0x0, __ctru_heap_size, MEMOP_ALLOC, static_cast<MemPerm>(static_cast<int>(MEMPERM_READ) | static_cast<int>(MEMPERM_WRITE)));
