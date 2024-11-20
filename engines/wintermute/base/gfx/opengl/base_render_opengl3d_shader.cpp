@@ -651,20 +651,32 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 }
 
 bool BaseRenderOpenGL3DShader::enableShadows() {
-	warning("BaseRenderOpenGL3DShader::disableShadows not implemented yet");
+	_gameRef->_supportsRealTimeShadows = false;
 	return true;
 }
 
 bool BaseRenderOpenGL3DShader::disableShadows() {
-	warning("BaseRenderOpenGL3DShader::disableShadows not implemented yet");
 	return true;
 }
 
 void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) {
+	if (!_ready || !object || !lightPos)
+		return;
+
+	// redirect simple shadow if needed
+	bool simpleShadow = _gameRef->getMaxShadowType(object) <= SHADOW_SIMPLE;
+	if (!_gameRef->_supportsRealTimeShadows)
+		simpleShadow = true;
+	if (simpleShadow)
+		return renderSimpleShadow(object);
+
 	// TODO: to be implemented
 	return;
 }
 
+void BaseRenderOpenGL3DShader::renderSimpleShadow(BaseObject *object) {
+	// TODO: to be implemented
+}
 
 void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange) {
 	if (blendMode == _blendMode && !forceChange)

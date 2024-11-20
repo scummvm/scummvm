@@ -152,6 +152,8 @@ public:
 	void setPostfilter(PostFilter postFilter) override { _postFilterMode = postFilter; };
 
 private:
+	void renderSimpleShadow(BaseObject *object);
+
 	SimpleShadowVertex _simpleShadow[4]{};
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;

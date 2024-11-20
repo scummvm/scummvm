@@ -4675,10 +4675,10 @@ bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
 
 //////////////////////////////////////////////////////////////////////////
 TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
-	if (object) {
-		return MIN(_maxShadowType, object->_shadowType);
-	} else {
+	if (!object) {
 		return _maxShadowType;
+	} else {
+		return MIN(_maxShadowType, object->_shadowType);
 	}
 }
 #endif

@@ -393,7 +393,6 @@ bool AdActor3DX::display() {
 	}
 
 	TShadowType shadowType = _gameRef->getMaxShadowType(this);
-
 	if (shadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
 	} else if (shadowType > SHADOW_NONE) {

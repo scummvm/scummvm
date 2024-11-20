@@ -143,6 +143,8 @@ public:
 	OpenGL::Shader *_shadowMaskShader;
 
 private:
+	void renderSimpleShadow(BaseObject *object);
+
 	DXMatrix _glProjectionMatrix;
 	float _alphaRef;
 
