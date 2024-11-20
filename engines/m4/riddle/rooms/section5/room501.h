@@ -47,15 +47,15 @@ private:
 	int _ripParcelExchange = 0;
 	int _ripMoneyExchange = 0;
 	int _ripSignsPaper = 0;
-	int _val1 = 0;
+	int _agentShould = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _ripleyShould = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
-	int _val9 = 0;
+	int _ripleyMode = 0;
 	int _xyzzy1 = 0;
 	int _xyzzy2 = 0;
 	int _xyzzy3 = 0;
@@ -63,7 +63,7 @@ private:
 	int _xyzzy5 = 0;
 	int _xyzzy6 = 0;
 	int _xyzzy7 = 0;
-	int _xyzzy8 = 0;
+	int _agentMode = 0;
 	int _xyzzy9 = 0;
 	int _xyzzy10 = 0;
 	int _itemsCount = 0;

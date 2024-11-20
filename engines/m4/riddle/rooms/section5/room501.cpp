@@ -94,7 +94,7 @@ void Room501::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 501:
-		_val9 = 1;
+		_ripleyMode = 1;
 		_xyzzy1 = 0;
 		_xyzzy2 = -1;
 		_xyzzy3 = 0;
@@ -106,25 +106,25 @@ void Room501::daemon() {
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
 			triggerMachineByHashCallback, "Rip Delta Machine State");
 
-		switch (_val3) {
+		switch (_ripleyShould) {
 		case 3:
 			ws_hide_walker();
 			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 2, 11, 502,
 				_ripTalkLoop, 11, 11, 0);
-			_val9 = 3;
+			_ripleyMode = 3;
 			break;
 
 		case 4:
 			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 11, 502,
 				_ripTalkLoop, 11, 11, 0);
-			_val9 = 3;
+			_ripleyMode = 3;
 			break;
 
 		case 5:
 			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 11, 502,
 				_ripTalkLoop, 11, 11, 0);
-			_val3 = 3;
-			_val9 = 3;
+			_ripleyShould = 3;
+			_ripleyMode = 3;
 			break;
 
 		default:
@@ -133,19 +133,19 @@ void Room501::daemon() {
 		break;
 
 	case 502:
-		if (_val9 == 3 && _val3 == 3 && _val6 != -1) {
+		if (_ripleyMode == 3 && _ripleyShould == 3 && _val6 != -1) {
 			kernel_trigger_dispatchx(_val6);
 			_val6 = -1;
 		}
-		if (_val9 == 7 && _val3 == 7 && _xyzzy2 != -1) {
+		if (_ripleyMode == 7 && _ripleyShould == 7 && _xyzzy2 != -1) {
 			kernel_trigger_dispatchx(_xyzzy2);
 			_xyzzy2 = -1;
 		}
-		if (_val9 == 13 && _val3 == 13 && _xyzzy4 != -1) {
+		if (_ripleyMode == 13 && _ripleyShould == 13 && _xyzzy4 != -1) {
 			kernel_trigger_dispatchx(_xyzzy4);
 			_xyzzy4 = -1;
 		}
-		if (_val9 == 3 && _val3 == 4 && _val7 != -1) {
+		if (_ripleyMode == 3 && _ripleyShould == 4 && _val7 != -1) {
 			kernel_trigger_dispatchx(_val7);
 			_val7 = -1;
 		}
@@ -159,7 +159,7 @@ void Room501::daemon() {
 			terminateMachineAndNull(_shadow);
 			_val5 = 0;
 
-			if (_val9 == 3)
+			if (_ripleyMode == 3)
 				series_unload(_ripTalkLoop);
 
 		} else {
@@ -168,11 +168,11 @@ void Room501::daemon() {
 		break;
 
 	case 503:
-		switch (_val9) {
+		switch (_ripleyMode) {
 		case 3:
-			switch (_val3) {
+			switch (_ripleyShould) {
 			case 2:
-				_val3 = 3;
+				_ripleyShould = 3;
 				_val6 = kernel_trigger_create(508);
 				kernel_timing_trigger(1, 502);
 				break;
@@ -190,50 +190,50 @@ void Room501::daemon() {
 				digi_play((_val4 == 1) ? "501x02" : "501x03", 1);
 				sendWSMessage_10000(1, _ripley, _ripSeries1, 1, 85, 502,
 					_ripSeries1, 85, 85, 0);
-				_val3 = 7;
-				_val9 = 7;
+				_ripleyShould = 7;
+				_ripleyMode = 7;
 				break;
 			case 9:
 				_xyzzy5 = 1;
 				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 90, 1, 502,
 					_ripParcelExchange, 1, 1, 0);
-				_val3 = 10;
+				_ripleyShould = 10;
 				break;
 			case 10:
 				digi_play("COM084", 1, 255, -1, 997);
 				kernel_timing_trigger(1, 505);
 				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 1, 502,
 					_ripParcelExchange, 1, 1, 0);
-				_val3 = 3;
+				_ripleyShould = 3;
 				break;
 			case 11:
 				_xyzzy5 = 1;
 				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 90, 502,
 					_ripParcelExchange, 90, 90, 0);
-				_val3 = 12;
+				_ripleyShould = 12;
 				break;
 			case 12:
 				kernel_timing_trigger(1, 505);
 				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 1, 502,
 					_ripParcelExchange, 1, 1, 0);
-				_val3 = 3;
+				_ripleyShould = 3;
 				break;
 			case 13:
 				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 2, 502,
 					_ripTalkLoop, 2, 2, 0);
-				_val9 = 13;
+				_ripleyMode = 13;
 				break;
 			case 14:
 				_xyzzy5 = 1;
 				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 1, 85, 502,
 					_ripMoneyExchange, 85, 85, 0);
-				_val3 = 15;
+				_ripleyShould = 15;
 				break;
 			case 15:
 				kernel_timing_trigger(1, 505);
 				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 85, 85, 502,
 					_ripMoneyExchange, 85, 85, 0);
-				_val3 = 3;
+				_ripleyShould = 3;
 				_val6 = kernel_trigger_create(551);
 
 				if (!inv_player_has("PERUVIAN INTI"))
@@ -245,13 +245,13 @@ void Room501::daemon() {
 				digi_play(conv_sound_to_play(), 1);
 				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 1, 91, 502,
 					_ripSignsPaper, 91, 91, 0);
-				_val3 = 17;
+				_ripleyShould = 17;
 				break;
 			case 17:
 				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 85, 92, -1,
 					_ripSignsPaper, 90, 92, 4);
 				digi_play("950_S35", 1, 255, 502);
-				_val3 = 18;
+				_ripleyShould = 18;
 				break;
 			case 18:
 				if (!_paper) {
@@ -262,14 +262,14 @@ void Room501::daemon() {
 				kernel_timing_trigger(1, 505);
 				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 92, 111, 502,
 					_ripSignsPaper, 111, 111, 0);
-				_val3 = 3;
+				_ripleyShould = 3;
 				break;
 			case 19:
 				_ripMoneyExchange = series_load("MONEY XCHANGE");
 				_xyzzy5 = 1;
 				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 61, 85, 502,
 					_ripMoneyExchange, 85, 85, 0);
-				_val3 = 20;
+				_ripleyShould = 20;
 				break;
 			case 20:
 				if (!inv_player_has("US DOLLARS"))
@@ -278,7 +278,7 @@ void Room501::daemon() {
 				kernel_timing_trigger(1, 505);
 				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 85, 85, 502,
 					_ripSignsPaper, 85, 85, 0);
-				_val3 = 3;
+				_ripleyShould = 3;
 				break;
 			default:
 				break;
@@ -286,13 +286,13 @@ void Room501::daemon() {
 			break;
 
 		case 7:
-			switch (_val3) {
+			switch (_ripleyShould) {
 			case 3:
 				kernel_timing_trigger(1, 504);
 				sendWSMessage_10000(1, _ripley, _ripSeries1, 86, 94, 502,
 					_ripTalkLoop, 11, 11, 0);
-				_val3 = 3;
-				_val9 = 3;
+				_ripleyShould = 3;
+				_ripleyMode = 3;
 				break;
 			case 7:
 				sendWSMessage_10000(1, _ripley, _ripSeries1, 85, 85, 502,
@@ -301,7 +301,7 @@ void Room501::daemon() {
 			case 8:
 				sendWSMessage_10000(1, _ripley, _ripSeries1, 85, 86, 502,
 					_ripSeries1, 86, 85, 0);
-				_val3 = 7;
+				_ripleyShould = 7;
 				break;
 			default:
 				break;
@@ -309,11 +309,11 @@ void Room501::daemon() {
 			break;
 
 		case 13:
-			switch (_val3) {
+			switch (_ripleyShould) {
 			case 3:
 				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 2, 11, 502,
 					_ripTalkLoop, 11, 11, 0);
-				_val9 = 3;
+				_ripleyMode = 3;
 				break;
 			case 13:
 				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 2, 502,
@@ -330,8 +330,8 @@ void Room501::daemon() {
 		break;
 
 	case 504:
-		_xyzzy8 = 1;
-		_val1 = 1;
+		_agentMode = 1;
+		_agentShould = 1;
 		_xyzzy6 = -1;
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
@@ -339,12 +339,12 @@ void Room501::daemon() {
 			triggerMachineByHashCallback, "Agent at Desk");
 		sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
 			_agentTalkLoop, 1, 1, 0);
-		_xyzzy8 = 1;
+		_agentMode = 1;
 		break;
 
 	case 505:
-		_xyzzy8 = 5;
-		_val1 = 5;
+		_agentMode = 5;
+		_agentShould = 5;
 		_xyzzy6 = -1;
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
@@ -355,11 +355,11 @@ void Room501::daemon() {
 		break;
 
 	case 506:
-		if (_val1 == 1 && _xyzzy8 == 1 && _xyzzy6 != -1) {
+		if (_agentShould == 1 && _agentMode == 1 && _xyzzy6 != -1) {
 			kernel_trigger_dispatchx(_xyzzy6);
 			_xyzzy6 = -1;
 		}
-		if (_val1 == 5 && _xyzzy8 == 5 && _xyzzy7 != -1) {
+		if (_agentShould == 5 && _agentMode == 5 && _xyzzy7 != -1) {
 			kernel_trigger_dispatchx(_xyzzy7);
 			_xyzzy7 = -1;
 		}
@@ -371,9 +371,9 @@ void Room501::daemon() {
 		break;
 
 	case 507:
-		switch (_xyzzy8) {
+		switch (_agentMode) {
 		case 1:
-			switch (_val1) {
+			switch (_agentShould) {
 			case 1:
 				sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
 					_agentTalkLoop, 1, 1, 0);
@@ -389,20 +389,20 @@ void Room501::daemon() {
 				ws_hide_walker();
 				sendWSMessage_10000(1, _agent, _ripMoneyExchange, 1, 86, 506,
 					_ripMoneyExchange, 1, 1, 0);
-				_val1 = 4;
+				_agentShould = 4;
 				break;
 			case 4:
 				ws_unhide_walker();
 				sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
 					_agentTalkLoop, 1, 1, 0);
 				series_unload(_ripMoneyExchange);
-				_val1 = 1;
+				_agentShould = 1;
 				player_set_commands_allowed(true);
 				break;
 			case 5:
 				sendWSMessage_10000(1, _agent, _agentStridesForward, 1, 15, 506,
 					_agentStridesForward, 15, 15, 0);
-				_xyzzy8 = 5;
+				_agentMode = 5;
 				break;
 			default:
 				break;
@@ -410,11 +410,11 @@ void Room501::daemon() {
 			break;
 
 		case 5:
-			switch (_val1) {
+			switch (_agentShould) {
 			case 1:
 				sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 1, 506,
 					_agentTalkLoop, 1, 1, 0);
-				_xyzzy8 = 1;
+				_agentMode = 1;
 				break;
 
 			case 5:
@@ -495,7 +495,7 @@ void Room501::daemon() {
 		break;
 
 	case 509:
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(510);
 		break;
 
@@ -503,7 +503,7 @@ void Room501::daemon() {
 		if (_val8 == 1) {
 			kernel_timing_trigger(1, 512);
 		} else {
-			_val3 = 13;
+			_ripleyShould = 13;
 			_xyzzy4 = kernel_trigger_create(511);
 		}
 		break;
@@ -550,26 +550,26 @@ void Room501::daemon() {
 		break;
 
 	case 514:
-		_val1 = 1;
-		_val3 = 3;
+		_agentShould = 1;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(515);
 		kernel_timing_trigger(2, 501);
 		break;
 
 	case 515:
-		_val3 = 4;
+		_ripleyShould = 4;
 		digi_play("501r01", 1, 255, 516);
 		break;
 
 	case 516:
-		_val3 = 3;
-		_val1 = 2;
+		_ripleyShould = 3;
+		_agentShould = 2;
 		digi_play("501x01", 1, 255, 517);
 		break;
 
 	case 517:
 		_val4 = checkFlags(true);
-		_val1 = 1;
+		_agentShould = 1;
 
 		if (_val4 > 0) {
 			_ripSeries1 = series_load("TELEGRAM XCHANGE");
@@ -580,7 +580,7 @@ void Room501::daemon() {
 		break;
 
 	case 518:
-		_val3 = 6;
+		_ripleyShould = 6;
 		_xyzzy2 = kernel_trigger_create(526);
 		break;
 
@@ -589,7 +589,7 @@ void Room501::daemon() {
 		break;
 
 	case 523:
-		_val3 = 13;
+		_ripleyShould = 13;
 		_xyzzy4 = kernel_trigger_create(524);
 		break;
 
@@ -643,7 +643,7 @@ void Room501::daemon() {
 		break;
 
 	case 527:
-		_val3 = 7;
+		_ripleyShould = 7;
 		_xyzzy2 = kernel_trigger_create(528);
 		break;
 
@@ -681,7 +681,7 @@ void Room501::daemon() {
 			kernel_timing_trigger(1, 534);
 		} else {
 			if (--_val4 > 0) {
-				_val3 = 8;
+				_ripleyShould = 8;
 				_xyzzy2 = kernel_trigger_create(526);
 			} else {
 				kernel_timing_trigger(1, 533);
@@ -690,23 +690,23 @@ void Room501::daemon() {
 		break;
 
 	case 533:
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(523);
 		break;
 
 	case 534:
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(535);
 		break;
 
 	case 535:
 		_ripParcelExchange = series_load("PARCEL XCHANGE");
-		_val1 = 5;
+		_agentShould = 5;
 		_xyzzy7 = kernel_trigger_create(536);
 		break;
 
 	case 536:
-		_val3 = 9;
+		_ripleyShould = 9;
 		_xyzzy7 = kernel_trigger_create(537);
 		break;
 
@@ -714,7 +714,7 @@ void Room501::daemon() {
 		if (!inv_player_has("ROMANOV EMERALD"))
 			inv_give_to_player("ROMANOV EMERALD");
 
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(538);
 		break;
 
@@ -725,22 +725,22 @@ void Room501::daemon() {
 
 	case 539:
 		_ripParcelExchange = series_load("PARCEL XCHANGE");
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(540);
 		break;
 
 	case 540:
-		_val1 = 5;
+		_agentShould = 5;
 		_xyzzy7 = kernel_trigger_create(540);
 		break;
 
 	case 541:
-		_val3 = 11;
+		_ripleyShould = 11;
 		_val6 = kernel_trigger_create(542);
 		break;
 
 	case 542:
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(543);
 		break;
 
@@ -794,12 +794,12 @@ void Room501::daemon() {
 	case 549:
 		player_set_commands_allowed(false);
 		_ripMoneyExchange = series_load("MONEY XCHANGE");
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(550);
 		break;
 
 	case 550:
-		_val3 = 14;
+		_ripleyShould = 14;
 		break;
 
 	case 551:
@@ -807,7 +807,7 @@ void Room501::daemon() {
 		break;
 
 	case 552:
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(553);
 		break;
 
@@ -819,9 +819,9 @@ void Room501::daemon() {
 
 	case 555:
 		_puffinExchange = series_load("PUFFIN XCHANGE");
-		_val1 = 5;
+		_agentShould = 5;
 		kernel_timing_trigger(1, 501);
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(556);
 		break;
 
@@ -875,7 +875,7 @@ void Room501::daemon() {
 
 	case 565:
 		kernel_timing_trigger(1, 501);
-		_val3 = 4;
+		_ripleyShould = 4;
 		_val7 = kernel_trigger_create(566);
 		break;
 
@@ -910,7 +910,7 @@ void Room501::daemon() {
 
 	case 572:
 		kernel_timing_trigger(1, 501);
-		_val3 = 4;
+		_ripleyShould = 4;
 		_val7 = kernel_trigger_create(573);
 		break;
 
@@ -948,7 +948,7 @@ void Room501::daemon() {
 	case 578:
 		kernel_timing_trigger(1, 505);
 		kernel_timing_trigger(1, 501);
-		_val3 = 5;
+		_ripleyShould = 5;
 		_val6 = kernel_trigger_create(579);
 		break;
 
@@ -960,7 +960,7 @@ void Room501::daemon() {
 		if (!inv_player_has("CLOCK FACING"))
 			inv_give_to_player("CLOCK FACING");
 
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(580);
 		break;
 
@@ -969,13 +969,13 @@ void Room501::daemon() {
 		break;
 
 	case 581:
-		_val1 = 1;
-		_val3 = 4;
+		_agentShould = 1;
+		_ripleyShould = 4;
 		digi_play("501R39", 1, 255, 582);
 		break;
 
 	case 582:
-		_val3 = 13;
+		_ripleyShould = 13;
 		_xyzzy4 = kernel_trigger_create(583);
 		break;
 
@@ -989,9 +989,9 @@ void Room501::daemon() {
 		break;
 
 	case 585:
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(586);
-		_val1 = 5;
+		_agentShould = 5;
 		break;
 
 	case 586:
@@ -999,22 +999,22 @@ void Room501::daemon() {
 		break;
 
 	case 587:
-		_val3 = 16;
+		_ripleyShould = 16;
 		_val6 = kernel_trigger_create(588);
 		break;
 
 	case 588:
-		_val1 = 5;
+		_agentShould = 5;
 		_xyzzy7 = kernel_trigger_create(589);
 		break;
 
 	case 589:
-		_val3 = 19;
+		_ripleyShould = 19;
 		_val6 = kernel_trigger_create(590);
 		break;
 
 	case 590:
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(591);
 		break;
 
@@ -1026,9 +1026,9 @@ void Room501::daemon() {
 
 	case 594:
 		_puffinExchange = series_load("PUFFIN XCHANGE");
-		_val1 = 5;
+		_agentShould = 5;
 		kernel_timing_trigger(1, 501);
-		_val3 = 3;
+		_ripleyShould = 3;
 		_val6 = kernel_trigger_create(595);
 		break;
 
@@ -1071,18 +1071,18 @@ void Room501::daemon() {
 	case 603:
 		kernel_timing_trigger(1, 505);
 		kernel_timing_trigger(1, 501);
-		_val3 = 5;
+		_ripleyShould = 5;
 		_val6 = kernel_trigger_create(604);
 		break;
 
 	case 604:
 		terminateMachineAndNull(_deltaPuffinMachine);
-		_val1 = 1;
+		_agentShould = 1;
 		_xyzzy6 = kernel_trigger_create(605);
 		break;
 
 	case 605:
-		_val3 = 13;
+		_ripleyShould = 13;
 		_xyzzy4 = kernel_trigger_create(606);
 		break;
 
@@ -1094,12 +1094,12 @@ void Room501::daemon() {
 		break;
 
 	case 610:
-		_val3 = 4;
+		_ripleyShould = 4;
 		digi_play("COM084", 1, 255, 611, 997);
 		break;
 
 	case 611:
-		_val3 = 3;
+		_ripleyShould = 3;
 		break;
 
 	case 612:
@@ -1264,14 +1264,14 @@ void Room501::parser() {
 		case -1:
 		case 666:
 			player_set_commands_allowed(false);
-			_val1 = 1;
-			_val3 = 3;
+			_agentShould = 1;
+			_ripleyShould = 3;
 			_val6 = kernel_trigger_create(2);
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_timing_trigger(2, 501);
 			break;
 		case 2:
-			_val3 = 2;
+			_ripleyShould = 2;
 			player_set_commands_allowed(true);
 			break;
 		default:
@@ -1299,7 +1299,7 @@ void Room501::conv501a() {
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
-			_val1 = 1;
+			_agentShould = 1;
 
 			if (node == 1 && (entry == 2 || entry == 3)) {
 				_G(kernel).trigger_mode = KT_DAEMON;
@@ -1322,7 +1322,7 @@ void Room501::conv501a() {
 				conv_set_box_xy(10, 10);
 			}
 
-			_val3 = 3;
+			_ripleyShould = 3;
 			if (node == 2)
 				_convEntry = entry;
 			if (node == 8 && entry == 0)
@@ -1339,7 +1339,7 @@ void Room501::conv501a() {
 				return;
 			}
 
-			_val1 = 2;
+			_agentShould = 2;
 
 		} else if (who == 1) {
 			if (node == 14 && entry != 12) {
