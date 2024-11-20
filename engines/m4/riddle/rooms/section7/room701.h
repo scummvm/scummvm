@@ -40,11 +40,17 @@ public:
 	void daemon() override;
 
 private:
+	void subparser_9B2FC();
+
 	const char *_itemDigiName = nullptr;
 
 	int32 _field50 = 0;
+	int32 _field6C = 0;
+	int32 _field72 = 0;
 	int32 _field88 = 0;
 	int32 _field8C = 0;
+	int32 _field94 = 0;
+	int32 _field98 = 0;
 	int32 _field9E = 0;
 	int32 _field130 = 0;
 	int32 _field134 = 0;
