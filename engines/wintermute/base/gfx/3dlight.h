@@ -33,9 +33,6 @@
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/base_scriptable.h"
 
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class Light3D : public BaseScriptable {

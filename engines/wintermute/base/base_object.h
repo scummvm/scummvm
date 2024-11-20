@@ -35,12 +35,6 @@
 #include "common/events.h"
 #include "graphics/transform_struct.h"
 
-#ifdef ENABLE_WME3D
-#include "math/angle.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#endif
-
 namespace Wintermute {
 
 class BaseSprite;

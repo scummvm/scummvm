@@ -32,8 +32,6 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class CAdSceneGeometry;

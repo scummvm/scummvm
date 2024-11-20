@@ -30,8 +30,6 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/math/rect32.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
 
 namespace Wintermute {
 

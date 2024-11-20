@@ -33,8 +33,6 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class AdPathPoint3D: public BaseClass {

@@ -38,10 +38,6 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
 
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#include "math/vector4d.h"
-
 namespace Wintermute {
 
 class AnimationChannel;

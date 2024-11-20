@@ -33,8 +33,6 @@
 #include "engines/wintermute/base/gfx/xmesh.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/coll_templ.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
 
 namespace Wintermute {
 

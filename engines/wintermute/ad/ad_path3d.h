@@ -32,8 +32,6 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
 
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class AdPath3D : public BaseClass {

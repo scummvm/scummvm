@@ -30,9 +30,6 @@
 
 #include "engines/wintermute/ad/ad_object.h"
 
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class ShadowVolume;

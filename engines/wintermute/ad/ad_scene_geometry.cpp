@@ -26,6 +26,7 @@
  */
 
 #include "common/util.h"
+#include "math/utils.h"
 
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/ad/ad_game.h"
