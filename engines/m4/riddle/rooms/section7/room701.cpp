@@ -355,7 +355,242 @@ void Room701::parser() {
 }
 
 void Room701::daemon() {
-	warning("STUB - 701 Daemon");
+	switch (_G(kernel).trigger) {
+	case 19:
+		digi_play("701_s01", 3, 127, 19, -1);
+		break;
+
+	case 40:
+		_field88 = 1;
+		player_set_commands_allowed(false);
+		player_update_info(_G(my_walker), &_G(player_info));
+		_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+		setGlobals1(_ripTrekHandTalkPos3Series, 1, 4, 4, 4, 0, 5, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1040);
+		digi_play("701R01", 1, 255, -1, -1);
+
+		break;
+
+	case 41:
+		sendWSMessage_150000(_G(my_walker), -1);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X01", 1, 255, 71, -1);
+
+		break;
+
+	case 42:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("701R02", 1, 255, 43, -1);
+
+		break;
+
+	case 43:
+		sendWSMessage_120000(_G(my_walker), -1);
+		subDaemon_D447C();
+		sendWSMessage_150000(_G(my_walker), -1);
+
+		if (_field50 == 1) {
+			_field8C = 1;
+			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+			sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+			digi_play("701X02", 1, 255, 2200, -1);
+
+		} else if (_field50 > 0) {
+			_field8C = 1;
+			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+			sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+			digi_play("701X03", 1, 255, 2200, -1);
+
+		} else {
+			kernel_timing_trigger(1, (_field134 == 1) ? 44 : 95, nullptr);
+		}
+
+		break;
+
+	case 44:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, 45, _agentTalkLoopTjSeries, 12, 12, 0);
+
+		break;
+
+	case 45:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("701R03", 1, 255, 47, -1);
+
+		break;
+
+	case 46:
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("701R03", 1, 255, 47, -1);
+
+		break;
+
+	case 47:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X04", 1, 255, 48, -1);
+
+		break;
+
+	case 48:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, -1, _agentTalkLoopTjSeries, 12, 12, 0);
+		sendWSMessage_150000(_G(my_walker), 948);
+
+		break;
+
+	case 49:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 11, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X05", 1, 255, 50, -1);
+
+		break;
+
+	case 50:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, -1, _agentTalkLoopTjSeries, 12, 12, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 19, 4);
+		sendWSMessage_1a0000(_agentPoshExpressMach02, 11);
+		digi_play("701R05", 1, 255, 51, -1);
+
+		break;
+
+	case 51:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 11, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 13, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X06", 1, 255, 52, -1);
+
+		break;
+
+	case 52:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, -1, _agentTalkLoopTjSeries, 12, 12, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 19, 4);
+		sendWSMessage_1a0000(_agentPoshExpressMach02, 11);
+		digi_play("701R06", 1, 255, 53, -1);
+
+		break;
+
+	case 53:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 11, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 13, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X07", 1, 255, 54, -1);
+
+		break;
+
+	case 54:
+		terminateMachine(_agentPoshExpressMach02);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentShowMapSeries, 1, 47, 55, _agentShowMapSeries, 47, 47, 0);
+
+		break;
+
+	case 55:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentShowMapSeries, 47, 50, -1, _agentShowMapSeries, 47, 50, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X07A", 1, 255, 56, -1);
+
+		break;
+
+	case 56:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentShowMapSeries, 47, 1, 73, _agentShowMapSeries, 1, 1, 0);
+
+		break;
+
+	case 57:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, -1, _701rp01Series, 11, 11, 4);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X08", 1, 255, 58);
+
+		break;
+
+	case 58:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, -1, _agentTalkLoopTjSeries, 12, 12, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 19, -1, _701rp01Series, 10, 19, 4);
+		sendWSMessage_1a0000(_agentPoshExpressMach02, 9);
+		digi_play("701R08", 1, 255, 59);
+
+		break;
+
+	case 59:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 60, _701rp01Series, 1, 1, 0);
+
+		break;
+
+	case 60:
+		terminateMachine(_agentPoshExpressMach02);
+		terminateMachine(_safariShadow3Mach);
+		ws_unhide_walker(_G(my_walker));
+		player_set_commands_allowed(true);
+
+		break;
+
+	case 71:
+	case 72:
+	case 73:
+	case 74:
+	case 75:
+	case 76:
+	case 80:
+	case 81:
+	case 82:
+	case 83:
+	case 84:
+	case 85:
+	case 86:
+	case 88:
+	case 89:
+	case 90:
+	case 91:
+	case 92:
+	case 93:
+	case 94:
+	case 95:
+	case 96:
+	case 97:
+	case 100:
+	case 101:
+	case 102:
+	case 103:
+	case 110:
+	case 111:
+	case 948:
+	case 1040:
+	case 1080:
+	case 1083:
+	case 1089:
+	case 2200:
+	case 2201:
+	case 2300:
+	case 2301:
+	case 2302:
+	case 2303:
+	case 2304:
+	case 2305:
+	case 2306:
+	case 2307:
+	case 2501:
+	case 2504:
+	case 2506:
+	case 2509:
+	case 2600:
+	case 2601:
+	case 2700:
+	case 2701:
+	case 2702:
+		warning("Not yet implemented");
+	default:
+		break;
+	}
 }
 
 void Room701::conv701a() {
@@ -436,6 +671,10 @@ void Room701::conv701a() {
 	}
 
 	digi_play(digiName, 1, 255, 1, -1);
+}
+
+void Room701::subDaemon_D447C() {
+	warning("STUB - subDaemon_D447C()");
 }
 
 } // namespace Rooms

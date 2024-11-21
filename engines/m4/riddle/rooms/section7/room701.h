@@ -41,6 +41,7 @@ public:
 
 private:
 	void conv701a();
+	void subDaemon_D447C();
 
 	const char *_itemDigiName = nullptr;
 	Common::String _convDigiName_1 = "";
@@ -70,7 +71,10 @@ private:
 	int32 _ripTrekTalkerPos3Series = 0;
 	
 	machine *_agentPoshExpressMach = nullptr;
+	machine *_agentPoshExpressMach02 = nullptr;
+	machine *_safariShadow3Mach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle
