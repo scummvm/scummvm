@@ -314,20 +314,19 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 			// get menu selection
 			getMenuSel(szMenu, &iSel, fCanSel);
 
-			if (++_gameStateWinnie.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
-				_doWind = true;
-
-			if (_winnieEvent && (_room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
-				if (!_tiggerMist) {
-					_tiggerMist = 1;
+			if (iSel == IDI_WTP_SEL_TIMER_EVENT) {
+				stopTimer();
+				if (!_tiggerOrMist) {
 					tigger();
 				} else {
-					_tiggerMist = 0;
 					mist();
 				}
-				_winnieEvent = false;
+				_tiggerOrMist = !_tiggerOrMist;
 				return IDI_WTP_PAR_GOTO;
 			}
+
+			if (++_gameStateWinnie.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
+				_doWind = true;
 
 			// process selection
 			switch (iSel) {
@@ -433,6 +432,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_WALK_MIST:
 				_mist--;
 				if (!_mist) {
+					startTimer();
 					_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 					return IDI_WTP_PAR_GOTO;
 				}
@@ -461,6 +461,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 					showAmigaHelp();
 					break;
 				}
+				startTimer();
 				_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 				return IDI_WTP_PAR_GOTO;
 			default:
@@ -471,6 +472,13 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 
 		if (iNewRoom) {
 			_room = iNewRoom;
+			return IDI_WTP_PAR_GOTO;
+		}
+
+		if (_room == IDI_WTP_ROOM_TIGGER && getPlatform() == Common::kPlatformAmiga) {
+			// Amiga removed Tigger's opcode that goes to a random room
+			startTimer();
+			_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 			return IDI_WTP_PAR_GOTO;
 		}
 
@@ -720,19 +728,30 @@ void WinnieEngine::mist() {
 	// mist length in turns is (2-5)
 	_mist = rnd(4) + 2;
 
+	printStr(IDS_WTP_MIST);
+	getSelection(kSelAnyKey);
+
 	_room = IDI_WTP_ROOM_MIST;
 	drawRoomPic();
-
-	printStr(IDS_WTP_MIST);
 }
 
 void WinnieEngine::tigger() {
-	_room = IDI_WTP_ROOM_TIGGER;
-
-	drawRoomPic();
 	printStr(IDS_WTP_TIGGER);
+	getSelection(kSelAnyKey);
+
+	_room = IDI_WTP_ROOM_TIGGER;
+	drawRoomPic();
 
 	dropObjRnd();
+}
+
+void WinnieEngine::startTimer() {
+	_timerEnabled = true;
+	_timerStart = _system->getMillis();
+}
+
+void WinnieEngine::stopTimer() {
+	_timerEnabled = false;
 }
 
 void WinnieEngine::showOwlHelp() {
@@ -1079,6 +1098,15 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 
 			drawMenu(szMenu, *iSel, fCanSel);
 		}
+
+		_system->delayMillis(10);
+		
+		if (_timerEnabled &&
+			_system->getMillis() - _timerStart >= IDI_WTP_TIMER_INTERVAL &&
+			_room <= IDI_WTP_MAX_ROOM_TELEPORT) {
+			*iSel = IDI_WTP_SEL_TIMER_EVENT;
+			return;
+		}
 	}
 }
 
@@ -1088,10 +1116,14 @@ void WinnieEngine::gameLoop() {
 	int iBlock;
 	uint8 decodePhase = 0;
 
+	startTimer();
+
 	while (!shouldQuit()) {
 		if (decodePhase == 0) {
-			if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC))
+			if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC)) {
 				_room = IDI_WTP_ROOM_PARTY;
+				stopTimer();
+			}
 
 			readRoom(_room, roomdata, hdr);
 			drawRoomPic();
@@ -1448,7 +1480,8 @@ void WinnieEngine::init() {
 
 	_mist = -1;
 	_doWind = false;
-	_winnieEvent = false;
+	_tiggerOrMist = false; // tigger appears first
+	stopTimer(); // timer starts after intro
 
 	if (getPlatform() != Common::kPlatformAmiga) {
 		_isBigEndian = false;
