@@ -118,6 +118,8 @@ namespace Agi {
 #define IDI_WTP_MAX_DIR                 4
 #define IDI_WTP_MAX_MOVES_UNTIL_WIND    150
 
+#define IDI_WTP_TIMER_INTERVAL          (10 * 60 * 1000) // 10 minutes on DOS
+
 // positions
 
 #define IDI_WTP_ROW_MENU        21
@@ -166,7 +168,8 @@ enum {
 	IDI_WTP_SEL_DROP,
 	IDI_WTP_SEL_REAL_OPT_1,
 	IDI_WTP_SEL_REAL_OPT_2,
-	IDI_WTP_SEL_REAL_OPT_3
+	IDI_WTP_SEL_REAL_OPT_3,
+	IDI_WTP_SEL_TIMER_EVENT
 };
 
 #define IDI_WTP_SEL_LAST    IDI_WTP_SEL_REAL_OPT_3
@@ -304,8 +307,9 @@ private:
 	int _room;
 	int _mist;
 	bool _doWind;
-	bool _winnieEvent;
-	int _tiggerMist;
+	bool _tiggerOrMist;
+	bool _timerEnabled;
+	uint32 _timerStart;
 
 	int _roomOffset;
 	int _objOffset;
@@ -352,6 +356,8 @@ private:
 	void wind();
 	void mist();
 	void tigger();
+	void startTimer();
+	void stopTimer();
 
 	void showOwlHelp();
 	void showAmigaHelp();
