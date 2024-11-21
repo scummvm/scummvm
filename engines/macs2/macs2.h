@@ -108,6 +108,12 @@ struct PathfindingPoint {
 	Common::Array<uint8> adjacentPoints;
 };
 
+struct PathfindingAreaOverride {
+	bool Active;
+	uint16 Index;
+	uint16 OverrideValue;
+};
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -153,6 +159,12 @@ public:
 	byte _palVanilla[256 * 3] = { 0 };
 
 	Common::Array<Common::String> debugOutput;
+
+	Common::Array<PathfindingAreaOverride> PathfindingOverrides;
+
+	bool GetPathfindingOverride(uint16 index, uint16& result);
+	void SetPathfindingOverride(uint16 index, uint16 overrideValue);
+	void RemovePathfindingOverride(uint16 index);
 
 	// fn0037_0E8C proc
 	uint16 getWalkabilityAt(uint16 x, uint16 y);

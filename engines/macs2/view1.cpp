@@ -934,8 +934,12 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
 		// Only output debug values for the character
 		uint16 scalingFactor = CalculateCharacterScaling(depth, index == 1);
+		// Adjust the position based on the scale
+		// TODO: Search where this is done in the game code
+		uint16 scaledHeightDiff = frame->Height / scalingFactor * 100;
+		uint16 scaledWidthDiff = frame->Width / scalingFactor * 100;
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
-		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset() + Common::Point(scaledWidthDiff, scaledHeightDiff), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
