@@ -1864,6 +1864,7 @@ namespace Director {
 #define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
+#define WINDEMO2f(t,e,f1,m1,s1,f2,m2,s2,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_DEMO),v)
 #define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
@@ -7216,6 +7217,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "SC_DATA/MAIN_SWE.Dxr",			"d:e4976c37b4cfbb8111f0919595b0dea2", 6383684, Common::SE_SWE, 501, GF_32BPP),
 	WINGAME2f("safecracker", "", "sc_eng.exe",						"t:01871e94a5d9b0fad2b063b486cda3f1", 1415977,
 								  "SC_DATA/Main_eng.dxr",			"ecc8f8b40956ad36041b5492ec5a4577", 6491010, 501, GF_32BPP),
+	WINDEMO2f("safecracker", "Demo", "sc_demo.exe",						"t:edec426e8e11231c8fad68f607ec4e0b", 1415543,
+								  "SC_DATA/Main_eng.dxr",			"00ccbc4268e3d9cac9323239a4e6be8a", 567556, 501, GF_32BPP),
 
 	// Published by the University of Arizona and the Environmental Education Exchange
 	MACGAME1("saguaro", "", "Settings/SCInstall", "ec6fba1c2d0fd9dbe987f4336cb08e2b", 719005, 501),
