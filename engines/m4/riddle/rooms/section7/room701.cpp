@@ -39,7 +39,7 @@ void Room701::init() {
 
 	_itemDigiName = nullptr;
 	_field8C = 0;
-	_field50 = 0;
+	_field50_counter = 0;
 	_field9E_triggerNum = -1;
 	_field130 = 0;
 
@@ -75,7 +75,7 @@ void Room701::init() {
 		if (setItemsPlacedFlags()) {
 			_field88 = 1;
 			_itemDigiName = getItemsPlacedDigi();
-			++_field50;
+			++_field50_counter;
 		}
 
 		ws_demand_location(_G(my_walker), 50, 264);
@@ -388,10 +388,10 @@ void Room701::daemon() {
 
 	case 43:
 		sendWSMessage_120000(_G(my_walker), -1);
-		subDaemon_D447C();
+		updateCounter();
 		sendWSMessage_150000(_G(my_walker), -1);
 
-		if (_field50 == 1) {
+		if (_field50_counter == 1) {
 			_field8C = 1;
 			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 			ws_hide_walker(_G(my_walker));
@@ -400,7 +400,7 @@ void Room701::daemon() {
 			sendWSMessage_1a0000(_agentPoshExpressMach, 11);
 			digi_play("701X02", 1, 255, 2200, -1);
 
-		} else if (_field50 > 0) {
+		} else if (_field50_counter > 0) {
 			_field8C = 1;
 			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
 			ws_hide_walker(_G(my_walker));
@@ -816,8 +816,120 @@ void Room701::conv701a() {
 	digi_play(digiName, 1, 255, 1, -1);
 }
 
-void Room701::subDaemon_D447C() {
-	warning("STUB - subDaemon_D447C()");
+void Room701::updateCounter() {
+	if (_G(flags[V364]) == 1) {
+		++_field50_counter;
+		switch (_G(flags[V005])) {
+		case 1:
+			_G(flags[V351]) = 1;
+			break;
+
+		case 2:
+			_G(flags[V352]) = 1;
+			break;
+
+		case 3:
+			_G(flags[V353]) = 1;
+			break;
+
+		case 4:
+			_G(flags[V354]) = 1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (_G(flags[V365]) == 1) {
+		_G(flags[V355]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V366]) == 1) {
+		_G(flags[V356]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V367]) == 1) {
+		_G(flags[V357]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V368]) == 1) {
+		_G(flags[V358]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V369]) == 1) {
+		_G(flags[V359]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V370]) == 1) {
+		_G(flags[V360]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V371]) == 1) {
+		_G(flags[V361]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V372]) == 1) {
+		_G(flags[V362]) = 1;
+		++_field50_counter;
+	}
+
+	if (_G(flags[V373]) == 1) {
+		_G(flags[V363]) = 1;
+		++_field50_counter;
+	}
+}
+
+bool Room701::inventoryCheck() {
+	for (int i = 0; i < 12; ++i)
+		_fieldD0[i] = 0;
+
+	_fieldFC_index = 0;
+
+	if (inv_player_has("CRYSTAL SKULL"))
+		_fieldD0[_fieldFC_index++] = 1;
+
+	if (inv_player_has("STICK AND SHELL MAP"))
+		_fieldD0[_fieldFC_index++] = 2;
+
+	if (inv_player_has("WHEELED TOY"))
+		_fieldD0[_fieldFC_index++] = 3;
+
+	if (inv_player_has("REBUS AMULET"))
+		_fieldD0[_fieldFC_index++] = 4;
+
+	if (inv_player_has("SHRUNKEN HEAD"))
+		_fieldD0[_fieldFC_index++] = 5;
+
+	if (inv_player_has("SILVER BUTTERFLY"))
+		_fieldD0[_fieldFC_index++] = 6;
+
+	if (inv_player_has("POSTAGE STAMP"))
+		_fieldD0[_fieldFC_index++] = 7;
+
+	if (inv_player_has("GERMAN BANKNOTE"))
+		_fieldD0[_fieldFC_index++] = 8;
+
+	if (inv_player_has("WHALE BONE HORN"))
+		_fieldD0[_fieldFC_index++] = 9;
+
+	if (inv_player_has("CHISEL"))
+		_fieldD0[_fieldFC_index++] = 10;
+
+	if (inv_player_has("INCENSE BURNER"))
+		_fieldD0[_fieldFC_index++] = 11;
+
+	if (inv_player_has("ROMANOV EMERALD"))
+		_fieldD0[_fieldFC_index++] = 12;
+
+	return _fieldFC_index > 0;
 }
 
 } // namespace Rooms

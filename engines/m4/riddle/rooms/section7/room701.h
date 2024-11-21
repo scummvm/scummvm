@@ -41,13 +41,14 @@ public:
 
 private:
 	void conv701a();
-	void subDaemon_D447C();
+	void updateCounter();
+	bool inventoryCheck();
 
 	const char *_itemDigiName = nullptr;
 	Common::String _convDigiName_1 = "";
 	Common::String _convDigiName_2 = "";
 
-	int32 _field50 = 0;
+	int32 _field50_counter = 0;
 	int32 _field6C = 0;
 	int32 _field72 = 0;
 	int32 _field88 = 0;
@@ -57,6 +58,8 @@ private:
 	int32 _field98 = 0;
 	int32 _field9E_triggerNum = -1;
 	int32 _fieldB4 = 0;
+	int32 _fieldD0[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+	int32 _fieldFC_index = 0;
 	int32 _field130 = 0;
 	int32 _field134 = 0;
 
