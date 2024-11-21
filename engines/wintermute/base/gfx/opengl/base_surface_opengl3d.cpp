@@ -141,16 +141,6 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		ckBlue = 255;
 	}
 
-	//
-	// ScummVM TGA decoder interpreting palette as RGB, but TGA data has as BGR
-	// swap R and B color components
-	//
-	if (img.getPaletteCount() != 0 && _filename.hasSuffix(".tga")) {
-		byte tmp = ckBlue;
-		ckBlue = ckRed;
-		ckRed = tmp;
-	}
-
 	_ckDefault = defaultCK;
 	_ckRed = ckRed;
 	_ckGreen = ckGreen;
@@ -165,17 +155,9 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	}
 
 #ifdef SCUMM_BIG_ENDIAN
-	if (img.getSurface()->format.bytesPerPixel == 1 && _filename.hasSuffix(".tga")) {
-		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 0, 8, 16), img.getPalette(), img.getPaletteCount());
-	} else {
-		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette(), img.getPaletteCount());
-	}
+	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette(), img.getPaletteCount());
 #else
-	if (img.getSurface()->format.bytesPerPixel == 1 && _filename.hasSuffix(".tga")) {
-		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), img.getPalette(), img.getPaletteCount());
-	} else {
-		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
-	}
+	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
 #endif
 
 	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {

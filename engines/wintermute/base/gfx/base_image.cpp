@@ -46,6 +46,7 @@ namespace Wintermute {
 BaseImage::BaseImage() {
 	_fileManager = BaseFileManager::getEngineInstance();
 	_palette = nullptr;
+	_paletteTga = nullptr;
 	_paletteCount = 0;
 	_surface = nullptr;
 	_decoder = nullptr;
@@ -60,6 +61,8 @@ BaseImage::~BaseImage() {
 		_deletableSurface->free();
 	}
 	delete _deletableSurface;
+	delete _paletteTga;
+	_paletteTga = nullptr;
 }
 
 bool BaseImage::loadFile(const Common::String &filename) {
@@ -87,6 +90,20 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	_palette = _decoder->getPalette();
 	_paletteCount = _decoder->getPaletteColorCount();
 	_fileManager->closeFile(file);
+
+	//
+	// W/A: ScummVM TGA decoder interpreting palette as RGB, but TGA format should be as BGR
+	// So, swap R and B color components
+	//
+	if (_filename.hasSuffix(".tga")) {
+		_paletteTga = new byte[_paletteCount * 3];
+		for (uint32 i = 0; i < _paletteCount * 3; i += 3) {
+			_paletteTga[i + 0] = _palette[i + 2];
+			_paletteTga[i + 1] = _palette[i + 1];
+			_paletteTga[i + 2] = _palette[i + 0];
+		}
+		_palette = _paletteTga;
+	}
 
 	return true;
 }
