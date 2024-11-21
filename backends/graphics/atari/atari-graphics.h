@@ -86,7 +86,7 @@ public:
 
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
-	bool isOverlayVisible() const override { return _overlayVisible; }
+	bool isOverlayVisible() const override { return _overlayState == kOverlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const override;
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
@@ -100,7 +100,14 @@ public:
 						bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
-	Common::Point getMousePosition() const { return _workScreen->cursor.getPosition(); }
+	Common::Point getMousePosition() const {
+		if (isOverlayVisible()) {
+			return _screen[kOverlayBuffer]->cursor.getPosition();
+		} else {
+			// kFrontBuffer is always up to date
+			return _screen[kFrontBuffer]->cursor.getPosition();
+		}
+	}
 	void updateMousePosition(int deltaX, int deltaY);
 
 	bool notifyEvent(const Common::Event &event) override;
@@ -133,10 +140,12 @@ private:
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 320 : 320*1.2); }
 #endif
 
-	bool updateScreenInternal(const Graphics::Surface &srcSurface);
-
-	void copyRectToScreenInternal(const void *buf, int pitch, int x, int y, int w, int h,
-								  const Graphics::PixelFormat &format, bool directRendering, bool tripleBuffer);
+	void unlockScreenInternal(const Graphics::Surface &dstSurface,
+							  int x, int y, int w, int h);
+	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface &srcSurface);
+	void copyRectToScreenInternal(Graphics::Surface &dstSurface,
+								  const void *buf, int pitch, int x, int y, int w, int h,
+								  const Graphics::PixelFormat &format, bool directRendering);
 
 	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
 
@@ -166,14 +175,6 @@ private:
 		return alignRect(rect.left, rect.top, rect.width(), rect.height());
 	}
 
-	int getOverlayPaletteSize() const {
-#ifndef DISABLE_FANCY_THEMES
-		return _tt ? 16 : 256;
-#else
-		return 16;
-#endif
-	}
-
 	bool _vgaMonitor = true;
 	bool _tt = false;
 	bool _checkUnalignedPitch = false;
@@ -185,6 +186,10 @@ private:
 			, width(0)
 			, height(0)
 			, format(Graphics::PixelFormat()) {
+		}
+
+		bool isValid() const {
+			return mode != kUnknownMode && width > 0 && height > 0 && format.bytesPerPixel != 0;
 		}
 
 		bool inTransaction;
@@ -209,13 +214,15 @@ private:
 		kBufferCount
 	};
 	Screen *_screen[kBufferCount] = {};
-	Screen *_workScreen = nullptr;
-	Screen *_oldWorkScreen = nullptr;	// used in hideOverlay()
 
 	Graphics::Surface _chunkySurface;
 
-	bool _overlayVisible = true;
-	bool _overlayPending = true;
+	enum {
+		kOverlayVisible,
+		kOverlayIgnoredHide,
+		kOverlayHidden
+	};
+	int _overlayState = kOverlayHidden;
 	bool _ignoreHideOverlay = true;
 	Graphics::Surface _overlaySurface;
 

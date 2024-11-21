@@ -396,7 +396,7 @@ Common::HardwareInputSet *OSystem_Atari::getHardwareInputSet() {
 void OSystem_Atari::quit() {
 	atari_debug("OSystem_Atari::quit()");
 
-	g_system->destroy();
+	destroy();
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
@@ -461,26 +461,16 @@ Common::Path OSystem_Atari::getDefaultConfigFileName() {
 void OSystem_Atari::update() {
 	// avoid a recursion loop if a timer callback decides to call OSystem::delayMillis()
 	static bool inTimer = false;
-	// flag to print the warning only once
-	static bool checkGameDomain = true;
-
-	if (!checkGameDomain) {
-		checkGameDomain = g_system->isOverlayVisible();
-	}
 
 	if (!inTimer) {
 		inTimer = true;
 		((DefaultTimerManager *)_timerManager)->checkTimers();
 		inTimer = false;
-	} else if (checkGameDomain) {
+	} else {
 		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-		if (activeDomain) {
-			atari_warning("%s/%s calls update() from timer",
-				activeDomain->getValOrDefault("engineid").c_str(),
-				activeDomain->getValOrDefault("gameid").c_str());
-
-			checkGameDomain = false;
-		}
+		warning("%s/%s calls update() from timer",
+			activeDomain->getValOrDefault("engineid").c_str(),
+			activeDomain->getValOrDefault("gameid").c_str());
 	}
 
 	((AtariMixerManager *)_mixerManager)->update();

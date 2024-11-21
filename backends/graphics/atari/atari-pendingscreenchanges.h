@@ -25,13 +25,14 @@
 #include <utility>
 
 class AtariGraphicsManager;
+class Screen;
 namespace Graphics {
 class Surface;
 }
 
 class PendingScreenChanges {
 public:
-	PendingScreenChanges(AtariGraphicsManager *manager)
+	PendingScreenChanges(const AtariGraphicsManager *manager)
 		: _manager(manager) {
 	}
 
@@ -60,10 +61,6 @@ public:
 	int get() const {
 		return _changes;
 	}
-
-	bool videoMode() const {
-		return _changes & kVideoMode;
-	}
 	bool empty() const {
 		return _changes == kNone;
 	}
@@ -81,12 +78,12 @@ public:
 		return _shrinkVidelVisibleArea;
 	}
 
-	void applyBeforeVblLock();
-	void applyAfterVblLock();
+	void applyBeforeVblLock(const Screen &screen);
+	void applyAfterVblLock(const Screen &screen);
 
 private:
-	void processAspectRatioCorrection();
-	void processVideoMode();
+	void processAspectRatioCorrection(const Screen &screen);
+	void processVideoMode(const Screen &screen);
 
 	enum Change {
 		kNone                  = 0,
@@ -99,10 +96,11 @@ private:
 	};
 	int _changes = kNone;
 
-	AtariGraphicsManager *_manager;
+	const AtariGraphicsManager *_manager;
 
 	Graphics::Surface *_surface = nullptr;
 
+	int _mode;
 	bool _resetSuperVidel;
 	bool _switchToBlackPalette;
 
