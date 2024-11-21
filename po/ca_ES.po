@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-21 17:50+0000\n"
+"POT-Creation-Date: 2024-11-21 19:30+0000\n"
 "PO-Revision-Date: 2024-11-13 11:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -10750,7 +10750,7 @@ msgstr "Canvia d'arma"
 msgid "Win the bike fight cheat"
 msgstr ""
 
-#: engines/scumm/saveload.cpp:1950
+#: engines/scumm/saveload.cpp:1949
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "

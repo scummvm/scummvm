@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-21 17:50+0000\n"
+"POT-Creation-Date: 2024-11-21 19:30+0000\n"
 "PO-Revision-Date: 2024-11-16 16:58+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -11891,7 +11891,7 @@ msgstr "Αλλαγή όπλου"
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
-#: engines/scumm/saveload.cpp:1950
+#: engines/scumm/saveload.cpp:1949
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
