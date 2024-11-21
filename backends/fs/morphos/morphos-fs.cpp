@@ -358,7 +358,6 @@ Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream(bool atomi
 }
 
 bool MorphOSFilesystemNode::createDirectory() {
-	//warning("MorphOSFilesystemNode::createDirectory(): Not supported");
 	Common::String createPath = _sPath;
 	if (createPath.lastChar() == '/') {
 		createPath = createPath.substr(0, createPath.size() - 1);
