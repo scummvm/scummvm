@@ -460,7 +460,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Awakening: Burning Ashes (Hayoola) (Persian)
 	WME_WINENTRY("awakening", "",
-		WME_ENTRY1s("data.dcp", "a7b8633fdc5cc8ff659dda5a11d3d971", 1900777616), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "a7b8633fdc5cc8ff659dda5a11d3d971", 1900777616), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_3),
 
 	// El Engaño de Barbapoca Chapter 1: Esta Pizza Esta de Muerte (Spanish)
 	WME_WINENTRY("barbapoca1", "",
@@ -1761,11 +1761,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Limbo of the Lost (English)
 	WME_WINENTRY("lotl", "",
-		WME_ENTRY1s("data.dcp", "637f2195a08f59e809ca48194a2ee73d", 354879400), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_7_2),
+		WME_ENTRY1s("data.dcp", "637f2195a08f59e809ca48194a2ee73d", 354879400), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_2),
 
 	// Limbo of the Lost (Russian)
 	WME_WINENTRY("lotl", "",
-		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_2),
+		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
 
 	// Tale of The Lost Bride and A Hidden Treasure (Russian)
 	WME_WINENTRY("lostbride", "",
@@ -5608,7 +5608,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Today, Mama!
 	WME_WINENTRY("todaymama", "",
-		WME_ENTRY1s("data.dcp", "b89e4a2000109f21d1aba10ef0920180", 1266324389), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_3),
+		WME_ENTRY1s("data.dcp", "b89e4a2000109f21d1aba10ef0920180", 1266324389), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_3),
 
 	// Vsevolod Prologue (Demo)
 	WME_WINENTRY("vsevolod", "Prologue",
