@@ -358,7 +358,20 @@ Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream(bool atomi
 }
 
 bool MorphOSFilesystemNode::createDirectory() {
-	warning("MorphOSFilesystemNode::createDirectory(): Not supported");
+	//warning("MorphOSFilesystemNode::createDirectory(): Not supported");
+	Common::String createPath = _sPath;
+	if (createPath.lastChar() == '/') {
+		createPath = createPath.substr(0, createPath.size() - 1);
+	}
+
+	BPTR dirLock = CreateDir(createPath.c_str());
+	if (dirLock) {
+		UnLock(dirLock);
+		_bIsValid = true;
+		_bIsDirectory = true;
+	} else {
+		debug(6, "MorphOSFilesystemNode::createDirectory() failed -> Directory '%s' could not be created!", createPath.c_str());
+	}
 	return _bIsValid && _bIsDirectory;
 }
 
