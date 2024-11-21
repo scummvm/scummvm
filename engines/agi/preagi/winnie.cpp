@@ -394,6 +394,16 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_GOTO_ROOM:
 				opcode = *(buffer + pc++);
 				iNewRoom = opcode;
+
+				// Apple II is missing a zero terminator in one script block of
+				// Christopher Robin's tree house. The room file was fixed in
+				// later versions, and the Apple II version behaves correctly,
+				// so the code must contain a workaround to prevent executing
+				// the next script block before exiting the room.
+				if (_room == 38 && getPlatform() == Common::kPlatformApple2) {
+					_room = iNewRoom; 
+					return IDI_WTP_PAR_GOTO; // change rooms immediately
+				}
 				break;
 			case IDO_WTP_PRINT_MSG:
 				opcode = *(buffer + pc++);
