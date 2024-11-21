@@ -191,6 +191,11 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+		// Disable blending for 3d rendering, it seems no need to enable it.
+		// It will be enabled in other places when needed.
+		// This is delta compared to original sources.
+		glDisable(GL_BLEND);
+		
 		glEnable(GL_DEPTH_TEST);
 		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
 		_alphaRef = 8 / 255.0f;

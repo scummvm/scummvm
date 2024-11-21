@@ -197,6 +197,11 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+		// Disable blending for 3d rendering, it seems no need to enable it.
+		// It will be enabled in other places when needed.
+		// This is delta compared to original sources.
+		glDisable(GL_BLEND);
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_ALPHA_TEST);
@@ -897,6 +902,9 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 			glEnd();
 		}
 	}
+
+	// This is delta compared to original sources.
+	glDisable(GL_BLEND);
 
 	glDisable(GL_COLOR_MATERIAL);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
