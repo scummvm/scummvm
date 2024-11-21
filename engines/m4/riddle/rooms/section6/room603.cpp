@@ -549,6 +549,7 @@ void Room603::daemon() {
 				break;
 			case 2:
 			case 8:
+			case 13:
 			case 14:
 				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 1, 15, 300,
 					_ripHandsBehindBack, 15, 15, 0);
@@ -1268,6 +1269,10 @@ void Room603::parser() {
 	} else if (_G(kernel).trigger == 747) {
 		if (_ttShould != 20) {
 			unloadSeries();
+			_G(player).disable_hyperwalk = false;
+			_G(flags)[V204] = 0;
+			_G(flags)[V205] = 0;
+
 			_val9 = 1000;
 			_ripleyShould = 11;
 			_ttShould = 17;
