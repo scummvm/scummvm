@@ -601,8 +601,10 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 	if (extra == "VGA")
 		return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
 
-	if (extra == "Steam")
+	if (extra == "Steam" && platform != Common::kPlatformMacintosh)
 		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+	else if (extra == "Steam" && platform == Common::kPlatformMacintosh)
+		return nullptr;
 	else if (platform == Common::kPlatformMacintosh)
 		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_LOOM);
 
