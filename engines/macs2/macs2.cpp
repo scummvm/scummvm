@@ -726,6 +726,32 @@ uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y){
 	error("Unhandled code in walkability check encountered");
 	return 0;
 	
+}
+bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16& result) {
+	for (auto current : PathfindingOverrides) {
+		if (current.Index == index && current.Active) {
+			result = current.OverrideValue;
+			return true;
+		}
+	}
+	return false;
+}
+void Macs2Engine::SetPathfindingOverride(uint16 index, uint16 overrideValue) {
+	RemovePathfindingOverride(index);
+	PathfindingAreaOverride override;
+	override.Active = true;
+	override.Index = index;
+	override.OverrideValue = overrideValue;
+	PathfindingOverrides.push_back(override);
+}
+void Macs2Engine::RemovePathfindingOverride(uint16 index){
+	for (int i = 0; i < PathfindingOverrides.size(); i++) {
+		PathfindingAreaOverride &current = PathfindingOverrides[i];
+		if (current.Index == index) {
+			PathfindingOverrides.remove_at(i);
+			return;
+		}
+	}
 };
 
 bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
