@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-21 10:33+0000\n"
-"PO-Revision-Date: 2024-11-16 14:18+0000\n"
+"PO-Revision-Date: 2024-11-21 12:30+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
 "org/projects/scummvm/scummvm/zh_Hans/>\n"
@@ -1791,10 +1791,8 @@ msgid "Scaler:"
 msgstr "缩放器："
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "渲染模式："
+msgstr "旋转模式："
 
 #: gui/options.cpp:1680
 msgid "Shader:"
