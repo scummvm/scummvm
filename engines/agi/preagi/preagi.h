@@ -89,7 +89,8 @@ protected:
 	// Keyboard
 	int getSelection(SelectionTypes type);
 
-	int rnd(int hi);
+	// Random number between 1 and max. Example: rnd(2) returns 1 or 2.
+	int rnd(int max);
 
 	// Text
 	void drawStr(int row, int col, int attr, const char *buffer);

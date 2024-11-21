@@ -83,8 +83,8 @@ PreAgiEngine::~PreAgiEngine() {
 	delete _font;
 }
 
-int PreAgiEngine::rnd(int hi) {
-	return (_rnd->getRandomNumber(hi - 1) + 1);
+int PreAgiEngine::rnd(int max) {
+	return (_rnd->getRandomNumber(max - 1) + 1);
 }
 
 // Screen functions

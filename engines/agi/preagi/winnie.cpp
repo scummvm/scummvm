@@ -158,7 +158,7 @@ void WinnieEngine::randomize() {
 		done = false;
 
 		while (!done) {
-			iObj = rnd(IDI_WTP_MAX_OBJ - 1);
+			iObj = rnd(IDI_WTP_MAX_OBJ); // 1-40
 			done = true;
 
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
@@ -173,7 +173,7 @@ void WinnieEngine::randomize() {
 
 		done = false;
 		while (!done) {
-			iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
+			iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL); // 1-57
 			done = true;
 
 			for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
@@ -433,7 +433,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				_mist--;
 				if (!_mist) {
 					startTimer();
-					_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
+					_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT); // 1-30
 					return IDI_WTP_PAR_GOTO;
 				}
 				break;
@@ -462,7 +462,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 					break;
 				}
 				startTimer();
-				_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
+				_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT); // 1-30
 				return IDI_WTP_PAR_GOTO;
 			default:
 				opcode = 0;
@@ -478,7 +478,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 		if (_room == IDI_WTP_ROOM_TIGGER && getPlatform() == Common::kPlatformAmiga) {
 			// Amiga removed Tigger's opcode that goes to a random room
 			startTimer();
-			_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
+			_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT); // 1-30
 			return IDI_WTP_PAR_GOTO;
 		}
 
@@ -669,7 +669,7 @@ void WinnieEngine::dropObjRnd() {
 	bool done = false;
 
 	while (!done) {
-		iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
+		iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL); // 1-57
 		done = true;
 		if (iRoom == _room)
 			done = false;
@@ -710,7 +710,7 @@ void WinnieEngine::wind() {
 
 			done = false;
 			while (!done) {
-				iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
+				iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL); // 1-57
 				done = true;
 
 				for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
@@ -725,8 +725,7 @@ void WinnieEngine::wind() {
 }
 
 void WinnieEngine::mist() {
-	// mist length in turns is (2-5)
-	_mist = rnd(4) + 2;
+	_mist = 1 + rnd(4); // 2-5 walks through the mist
 
 	printStr(IDS_WTP_MIST);
 	getSelection(kSelAnyKey);
