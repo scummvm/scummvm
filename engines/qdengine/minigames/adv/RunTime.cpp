@@ -46,7 +46,7 @@ class TimeManager {
 		DOWN
 	};
 public:
-	TimeManager(HoldData<TimeManagerData> &data);
+	TimeManager(HoldData<TimeManagerData> &data, MinigameManager *runtime);
 	~TimeManager();
 
 	bool timeIsOut() const;
@@ -65,6 +65,8 @@ private:
 	mgVect2f size_;
 	Direction direction_;
 	QDObject timeBar_;
+
+	MinigameManager *_runtime;
 };
 
 MinigameManager::MinigameManager(MinigameConsCallback callback)
@@ -173,7 +175,7 @@ bool MinigameManager::createGame() {
 	_mouseAdjast = getParameter("ajast_mouse", mgVect2f());
 
 	HoldData<TimeManagerData> timeData(_currentGameInfo ? &_currentGameInfo->_timeManagerData : 0, !_currentGameInfo || _currentGameInfo->_empty);
-	_timeManager = new TimeManager(timeData);
+	_timeManager = new TimeManager(timeData, this);
 
 	_textManager = new TextManager();
 
@@ -1014,8 +1016,10 @@ void MinigameManager::GameInfoIndex::read(Common::ReadStream &in) {
 //========================================================================================================================
 
 
-TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
-	if (const char *data = g_runtime->parameter("game_time", false)) {
+TimeManager::TimeManager(HoldData<TimeManagerData> &data_, MinigameManager *runtime) {
+	_runtime = runtime;
+
+	if (const char *data = _runtime->parameter("game_time", false)) {
 		if (sscanf(data, "%f", &_gameTime) != 1)
 			_gameTime = -1.f;
 	} else
@@ -1024,10 +1028,10 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 	timeCost_ = 0.f;
 
 	if (_gameTime > 0) {
-		if (const char *data = g_runtime->parameter("time_bar"))
-			timeBar_ = g_runtime->getObject(data);
+		if (const char *data = _runtime->parameter("time_bar"))
+			timeBar_ = _runtime->getObject(data);
 
-		if (const char *data = g_runtime->parameter("time_cost"))
+		if (const char *data = _runtime->parameter("time_cost"))
 			sscanf(data, "%f", &timeCost_);
 	}
 
@@ -1035,14 +1039,14 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 
 	if (timeBar_) {
 		TimeManagerData myData;
-		myData.crd = g_runtime->world2game(timeBar_);
+		myData.crd = _runtime->world2game(timeBar_);
 
 		data_.process(myData);
 
 		startPos_ = myData.crd;
-		size_ = g_runtime->getSize(timeBar_);
+		size_ = _runtime->getSize(timeBar_);
 
-		if (const char *data = g_runtime->parameter("time_bar_direction")) {
+		if (const char *data = _runtime->parameter("time_bar_direction")) {
 			int dir;
 			if (sscanf(data, "%d", &dir) == 1) {
 				assert(dir >= 0 && dir <= 3);
@@ -1052,20 +1056,20 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 	} else
 		size_ = mgVect2f(-1.f, -1.f);
 
-	assert(g_runtime->getTime() == 0.f);
+	assert(_runtime->getTime() == 0.f);
 
 	lastEventTime_ = 0;
 }
 
 TimeManager::~TimeManager() {
 	if (timeBar_)
-		g_runtime->release(timeBar_);
+		_runtime->release(timeBar_);
 
 }
 
 bool TimeManager::timeIsOut() const {
 	if (_gameTime > 0.f)
-		return g_runtime->getTime() > _gameTime;
+		return _runtime->getTime() > _gameTime;
 	return false;
 
 }
@@ -1073,33 +1077,33 @@ bool TimeManager::timeIsOut() const {
 float TimeManager::leftTime() const {
 	if (_gameTime <= 0.f)
 		return 0;
-	return g_runtime->getTime() > _gameTime ? 0 : _gameTime - g_runtime->getTime();
+	return _runtime->getTime() > _gameTime ? 0 : _gameTime - _runtime->getTime();
 
 }
 
 void TimeManager::quant(float dt) {
-	int seconds = round(g_runtime->getTime());
+	int seconds = round(_runtime->getTime());
 	if (seconds != lastEventTime_) {
 		lastEventTime_ = seconds;
-		g_runtime->textManager().updateTime(seconds);
+		_runtime->textManager().updateTime(seconds);
 		int amountSeconds = round(leftTime());
 		if (_gameTime < 0.f || amountSeconds > 10)
 			if (seconds % 60 == 0)
-				g_runtime->signal(EVENT_TIME_60_SECOND_TICK);
+				_runtime->signal(EVENT_TIME_60_SECOND_TICK);
 			else if (seconds % 10 == 0)
-				g_runtime->signal(EVENT_TIME_10_SECOND_TICK);
+				_runtime->signal(EVENT_TIME_10_SECOND_TICK);
 			else
-				g_runtime->signal(EVENT_TIME_1_SECOND_TICK);
+				_runtime->signal(EVENT_TIME_1_SECOND_TICK);
 		else if (amountSeconds == 10)
-			g_runtime->signal(EVENT_TIME_10_SECOND_LEFT);
+			_runtime->signal(EVENT_TIME_10_SECOND_LEFT);
 		else
-			g_runtime->signal(EVENT_TIME_LESS_10_SECOND_LEFT_SECOND_TICK);
+			_runtime->signal(EVENT_TIME_LESS_10_SECOND_LEFT_SECOND_TICK);
 	}
 
 	if (_gameTime <= 0.f || !timeBar_)
 		return;
 
-	float phase = clamp(g_runtime->getTime() / _gameTime, 0.f, 1.f);
+	float phase = clamp(_runtime->getTime() / _gameTime, 0.f, 1.f);
 	mgVect3f pos;
 	switch (direction_) {
 	case UP:
@@ -1118,7 +1122,7 @@ void TimeManager::quant(float dt) {
 
 	pos += startPos_;
 
-	timeBar_->set_R(g_runtime->game2world(pos));
+	timeBar_->set_R(_runtime->game2world(pos));
 }
 
 } // namespace QDEngine
