@@ -166,10 +166,14 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const bool useDefault = defaultGraphicsModeConfig();
 
+	// This gets called from engine before they call initGraphics(), which means we cannot use getScaleFactor()
+	// because the scale factor in the backend has not yet been updated to use the game settings. So directly
+	// read the game settings. This may be -1, which means we want to use the default. Fortunately runGame()
+	// in main.cpp sets the gaphics mode (OpenGL or SurfaceSDL) before starting the engine. So we already have
+	// the correct graphics manager and we can call getDefaultScaleFactor() here.
 	int scale = ConfMan.getInt("scale_factor");
 	if (scale == -1) {
-		warning("Unknown scaler; defaulting to 1");
-		scale = 1;
+		scale = getDefaultScaleFactor();
 	}
 
 	int16 bestWidth = 0, bestHeight = 0;
