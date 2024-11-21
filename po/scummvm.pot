@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-21 17:50+0000\n"
+"POT-Creation-Date: 2024-11-21 19:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10301,7 +10301,7 @@ msgstr ""
 msgid "Win the bike fight cheat"
 msgstr ""
 
-#: engines/scumm/saveload.cpp:1950
+#: engines/scumm/saveload.cpp:1949
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
