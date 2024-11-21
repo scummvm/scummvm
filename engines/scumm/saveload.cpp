@@ -2172,7 +2172,7 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Also reset Mac cursors if the original GUI isn't enabled for games
 		// which replace cursors that override the default cursor palette - bug #15520.
-		if (_game.id == GID_MONKEY && !_macGui) {
+		if (_game.version == 5 && !_macGui) {
 			setBuiltinCursor(0);
 		}
 	}
