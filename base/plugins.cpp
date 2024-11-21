@@ -296,7 +296,8 @@ PluginManagerUncached::~PluginManagerUncached() {
 	}
 	_allEnginePlugins.clear();
 
-	delete _detectionPlugin;
+	// Explicitly unload the detection plugin
+	unloadDetectionPlugin();
 }
 
 /**
