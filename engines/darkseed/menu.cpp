@@ -20,6 +20,7 @@
 */
 
 #include "common/keyboard.h"
+#include "common/config-manager.h"
 #include "darkseed/menu.h"
 #include "darkseed/darkseed.h"
 
@@ -99,6 +100,7 @@ void loadMenu() {
 		}
 		if (menuItemIdx == 2) { // sound settings
 			g_engine->flipMute();
+			ConfMan.flushToDisk();
 			drawSoundMenuItem();
 		}
 		if (menuItemIdx == 3) { // Resume
