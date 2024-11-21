@@ -74,8 +74,9 @@ void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
-	objHdr->fileLen = readS.readUint16();
-	objHdr->objId = readS.readUint16();
+	// these two values are always little endian, even on Amiga
+	objHdr->fileLen = readS.readUint16LE();
+	objHdr->objId = readS.readUint16LE();
 
 	for (i = 0; i < IDI_WTP_MAX_OBJ_STR_END; i++)
 		objHdr->ofsEndStr[i] = readS.readUint16();
