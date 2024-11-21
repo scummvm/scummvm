@@ -55,7 +55,7 @@ private:
 	int32 _field90 = 0;
 	int32 _field94 = 0;
 	int32 _field98 = 0;
-	int32 _field9E = 0;
+	int32 _field9E_triggerNum = -1;
 	int32 _fieldB4 = 0;
 	int32 _field130 = 0;
 	int32 _field134 = 0;
@@ -66,6 +66,7 @@ private:
 	int32 _agentGiveParcelSeries = 0;
 	int32 _agentShowMapSeries = 0;
 	int32 _agentTalkLoopTjSeries = 0;
+	int32 _ripSketchingInNotebookPos3Series = 0;
 	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _ripTrekMedReachPos3Series = 0;
 	int32 _ripTrekTalkerPos3Series = 0;

@@ -40,7 +40,7 @@ void Room701::init() {
 	_itemDigiName = nullptr;
 	_field8C = 0;
 	_field50 = 0;
-	_field9E = -1;
+	_field9E_triggerNum = -1;
 	_field130 = 0;
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
@@ -535,31 +535,174 @@ void Room701::daemon() {
 		break;
 
 	case 71:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 42, _agentTalkLoopTjSeries, 13, 13, 0);
+		break;
+
 	case 72:
+
+		sendWSMessage_150000(_G(my_walker), 54);
+		break;
+
 	case 73:
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, 74, _701rp01Series, 11, 11, 0);
+
+		break;
+
 	case 74:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 19, -1, _701rp01Series, 10, 19, 4);
+		sendWSMessage_1a0000(_agentPoshExpressMach02, 9);
+		digi_play("701R07", 1, 255, 57, -1);
+
+		break;
+
 	case 75:
 	case 76:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 43);
+
+		break;
+
 	case 80:
+		player_set_commands_allowed(false);
+		player_update_info(_G(my_walker), &_G(player_info));
+		_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+		setGlobals1(_ripTrekHandTalkPos3Series, 1, 4, 4, 4, 0, 5, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1080);
+		digi_play("701R37", 1, 255, -1, -1);
+
+		break;
+
 	case 81:
+		sendWSMessage_150000(_G(my_walker), -1);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X11", 1, 255, 96, -1);
+
+		break;
+
 	case 82:
+		if (_G(flags[V286]) != 1 || _G(flags[V362]) || _G(flags[V372]) || _G(flags[V225])) {
+			kernel_timing_trigger(1, 75, nullptr);
+		} else {
+			_G(flags[V225]) = 1;
+			kernel_timing_trigger(1, 83, nullptr);
+		}
+
+		break;
+
 	case 83:
+		digi_play("701r42", 1, 255, 1083, -1);
+
+		break;
+
 	case 84:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 12, 12, 85, _agentTalkLoopTjSeries, 12, 12, 0);
+
+		break;
+
 	case 85:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
+		sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+		digi_play("701X07", 1, 255, 86, -1);
+
+		break;
+
 	case 86:
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _agentTalkLoopTjSeries, 12, 12, -1, _agentTalkLoopTjSeries, 12, 12, 0);
+		_ripSketchingInNotebookPos3Series = series_load("RIP SKETCHING IN NOTEBOOK POS 3", -1, nullptr);
+		sendWSMessage_150000(_G(my_walker), -1);
+		kernel_timing_trigger(1, 88, nullptr);
+
+		break;
+
 	case 88:
+		setGlobals1(_ripSketchingInNotebookPos3Series, 1, 32, 32, 34, 1, 32, 32, 32, 32, 0, 32, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 89);
+
+		break;
+
 	case 89:
+		sendWSMessage_190000(_G(my_walker), 9);
+		digi_play("950_S34", 2, 255, 97, 950);
+
+		break;
+
 	case 90:
+		sendWSMessage_150000(_G(my_walker), 91);
+		break;
+
 	case 91:
+		series_unload(_ripSketchingInNotebookPos3Series);
+		ws_hide_walker(_G(my_walker));
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, 92, _701rp01Series, 11, 11, 0);
+
+		break;
+
 	case 92:
+		terminateMachine(_agentPoshExpressMach02);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 86, 1, 93, _agentGetTelegramSeries, 1, 1, 0);
+
+		break;
+
 	case 93:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 94, _701rp01Series, 1, 1, 0);
+
+		break;
+
 	case 94:
+		terminateMachine(_agentPoshExpressMach02);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
+		ws_unhide_walker(_G(my_walker));
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		kernel_timing_trigger(1, 76, nullptr);
+
+		break;
+
 	case 95:
+		if (_G(flags[V286]) == 1 && !_G(flags[V362]))
+			_G(flags[V372]) = 1;
+
+		terminateMachine(_safariShadow3Mach);
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 96:
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 82, _agentTalkLoopTjSeries, 13, 13, 0);
+
+		break;
+
 	case 97:
+		sendWSMessage_120000(_G(my_walker), 1089);
+
+		break;
+
 	case 100:
+		kernel_timing_trigger(1, 102, nullptr);
+
+		break;
+
 	case 101:
+		_field94 = 1000;
+		_field98 = 1105;
+
+		break;
+
 	case 102:
+		if (_field9E_triggerNum != -1) {
+			kernel_timing_trigger(1, _field9E_triggerNum, nullptr);
+			_field9E_triggerNum = -1;
+		} else
+			kernel_timing_trigger(1, 103, nullptr);
+
+		break;
+
 	case 103:
 	case 110:
 	case 111:
