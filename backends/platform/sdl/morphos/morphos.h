@@ -27,8 +27,13 @@
 
 class OSystem_MorphOS : public OSystem_SDL {
 public:
-	void init() override;
+	OSystem_MorphOS() {}
+	virtual ~OSystem_MorphOS();
+
 	bool hasFeature(Feature f) override;
+
+	void init() override;
+
 	void initBackend() override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 };

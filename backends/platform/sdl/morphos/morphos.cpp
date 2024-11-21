@@ -23,11 +23,27 @@
 #include "common/scummsys.h"
 
 #ifdef __MORPHOS__
+
 #include "backends/platform/sdl/morphos/morphos.h"
 #include "backends/fs/morphos/morphos-fs-factory.h"
 #include "backends/dialogs/morphos/morphos-dialogs.h"
 
+static bool cleanupDone = false;
+
+static void cleanup() {
+	if (!cleanupDone)
+		g_system->destroy();
+}
+
+OSystem_MorphOS::~OSystem_MorphOS() {
+	cleanupDone = true;
+}
+
 void OSystem_MorphOS::init() {
+	// Register cleanup function to avoid unfreed signals
+	if (atexit(cleanup))
+		warning("Failed to register cleanup function via atexit()");
+
 	// Initialze File System Factory
 	_fsFactory = new MorphOSFilesystemFactory();
 
