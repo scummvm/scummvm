@@ -1537,7 +1537,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// Don't restore the mouse position when using
 	// the original GUI, since the originals didn't
-	if (isUsingOriginalGUI()) {
+	if (s.isLoading() && isUsingOriginalGUI()) {
 		s.skip(2);
 		s.skip(2);
 	} else {
@@ -1658,7 +1658,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			x *= 2;
 			y *= 2;
 		} else if (_macScreen) {
-			y += _macScreenDrawOffset;
 			x *= 2;
 			y *= 2;
 		}
