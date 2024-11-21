@@ -2558,7 +2558,7 @@ void DarkseedEngine::doCircles() {
 
 	_frame.draw();
 	_room->draw();
-	_console->draw();
+	_console->draw(true);
 
 	// setup & draw Mike in bed.
 	_sprites.clearSpriteDrawList();
@@ -2627,7 +2627,7 @@ void DarkseedEngine::restartGame() {
 }
 
 void DarkseedEngine::newGame() {
-	_redrawFrame = true;
+	_redrawFrame = false;
 	_sprites.clearSpriteDrawList();
 	removeFullscreenPic();
 	_inventory.reset();
