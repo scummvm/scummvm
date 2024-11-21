@@ -107,6 +107,9 @@ ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDe
 
 	_saveLoadRequested = 0;
 	_isSaveAllowed = true;
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "english.pdi");
 }
 
 ToltecsEngine::~ToltecsEngine() {

@@ -172,6 +172,19 @@ static const ToltecsGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// 3 Skulls of the Toltecs English Demo version (original file layout)
+		{
+			"toltecs",
+			"Demo",
+			AD_ENTRY1s("english.pdi/WESTERN", "53a0abd1c0bc5cad8ba18f0e56877705", 46241833),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		},
+	},
+
+	{
 		// 3 Skulls of the Toltecs German Demo version
 		{
 			"toltecs",
