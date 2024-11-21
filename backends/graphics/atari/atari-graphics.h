@@ -52,16 +52,16 @@ public:
 
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
 		static const OSystem::GraphicsMode graphicsModes[] = {
-			{ "direct", "Direct rendering", (int)GraphicsMode::DirectRendering },
-			{ "single", "Single buffering", (int)GraphicsMode::SingleBuffering },
-			{ "triple", "Triple buffering", (int)GraphicsMode::TripleBuffering },
+			{ "direct", "Direct rendering", kDirectRendering },
+			{ "single", "Single buffering", kSingleBuffering },
+			{ "triple", "Triple buffering", kTripleBuffering },
 			{ nullptr, nullptr, 0 }
 		};
 		return graphicsModes;
 	}
-	int getDefaultGraphicsMode() const override { return (int)GraphicsMode::TripleBuffering; }
+	int getDefaultGraphicsMode() const override { return kTripleBuffering; }
 	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
-	int getGraphicsMode() const override { return (int)_currentState.mode; }
+	int getGraphicsMode() const override { return _currentState.mode; }
 
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override;
 
@@ -114,11 +114,11 @@ protected:
 	void freeSurfaces();
 
 private:
-	enum class GraphicsMode : int {
-		Unknown			= -1,
-		DirectRendering = 0,
-		SingleBuffering = 1,
-		TripleBuffering = 3
+	enum {
+		kUnknownMode		= -1,
+		kDirectRendering	= 0,
+		kSingleBuffering	= 1,
+		kTripleBuffering	= 3
 	};
 
 	enum CustomEventAction {
@@ -181,14 +181,14 @@ private:
 	struct GraphicsState {
 		GraphicsState()
 			: inTransaction(false)
-			, mode(GraphicsMode::Unknown)
+			, mode(kUnknownMode)
 			, width(0)
 			, height(0)
 			, format(Graphics::PixelFormat()) {
 		}
 
 		bool inTransaction;
-		GraphicsMode mode;
+		int mode;
 		int width;
 		int height;
 		Graphics::PixelFormat format;
@@ -202,13 +202,13 @@ private:
 	PendingScreenChanges _pendingScreenChanges;
 
 	enum {
-		FRONT_BUFFER,
-		BACK_BUFFER1,
-		BACK_BUFFER2,
-		OVERLAY_BUFFER,
-		BUFFER_COUNT
+		kFrontBuffer	= 0,
+		kBackBuffer1	= 1,
+		kBackBuffer2	= 2,
+		kOverlayBuffer	= 3,
+		kBufferCount
 	};
-	Screen *_screen[BUFFER_COUNT] = {};
+	Screen *_screen[kBufferCount] = {};
 	Screen *_workScreen = nullptr;
 	Screen *_oldWorkScreen = nullptr;	// used in hideOverlay()
 
