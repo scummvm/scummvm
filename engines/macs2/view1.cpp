@@ -869,8 +869,11 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 	int currentTargetX = 0;
 	int currentTargetY = 0;
 
+	// Outer loop: Advance over lines
+	// Inner loop: Advance over rows
 	for (int currentSourceY = 0; currentSourceY < height; currentSourceY++) {
 		currentTargetX = 0;
+		xScaling = 0;
 		for (int currentSourceX = 0; currentSourceX < width; currentSourceX++) {
 			uint8 val = data[currentSourceY * width + currentSourceX];
 			if (val != 0) {
@@ -936,10 +939,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		uint16 scalingFactor = CalculateCharacterScaling(depth, index == 1);
 		// Adjust the position based on the scale
 		// TODO: Search where this is done in the game code
-		uint16 scaledHeightDiff = frame->Height / scalingFactor * 100;
-		uint16 scaledWidthDiff = frame->Width / scalingFactor * 100;
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
-		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset() + Common::Point(scaledWidthDiff, scaledHeightDiff), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
