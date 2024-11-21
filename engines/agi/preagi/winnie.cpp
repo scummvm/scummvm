@@ -693,11 +693,13 @@ void WinnieEngine::wind() {
 	playSound(IDI_WTP_SND_WIND_0);
 	getSelection(kSelAnyKey);
 
-	dropObjRnd();
-
 	// randomize positions of objects at large
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
 		if (!(_gameStateWinnie.iUsedObj[i] & IDI_XOR_KEY)) {
+			if (_gameStateWinnie.iUsedObj[i] == _gameStateWinnie.iObjHave) {
+				continue; // skip inventory object
+			}
+
 			done = false;
 			while (!done) {
 				iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
