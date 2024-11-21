@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-20 21:12+0000\n"
+"POT-Creation-Date: 2024-11-21 10:33+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -596,7 +596,7 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2070 gui/options.cpp:2251
-#: backends/graphics/atari/atari-graphics.cpp:1066
+#: backends/graphics/atari/atari-graphics.cpp:1003
 #: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Graphics"
 msgstr "Obraz"
@@ -4070,7 +4070,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Zvolte soubor pro načtení"
 
-#: backends/graphics/atari/atari-graphics.cpp:1070
+#: backends/graphics/atari/atari-graphics.cpp:1007
 #: backends/graphics/sdl/sdl-graphics.cpp:503
 msgid "Toggle aspect ratio correction"
 msgstr "Přepnout korekci poměru stran"
