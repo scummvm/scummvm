@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-21 10:33+0000\n"
-"PO-Revision-Date: 2024-11-21 11:50+0000\n"
+"PO-Revision-Date: 2024-11-21 12:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -392,7 +392,7 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr "Selectionnez un fichier JSON copié depuis le site scummvm.org"
+msgstr "Sélectionnez un fichier JSON copié depuis le site scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
@@ -3016,7 +3016,7 @@ msgstr ""
 "fonctionnent plus, veuillez modifier ces chemins :\n"
 "  1. Dans le lanceur, allez dans **Options du jeu > Chemins**. Sélectionnez "
 "le chemin **Jeu** ou **Extra**, selon le cas.\n"
-"  2. A l'intérieur du navigateur de fichiers de ScummVM, selectionnez "
+"  2. A l'intérieur du navigateur de fichiers de ScummVM, sélectionnez "
 "**Précédent** jusqu'à ce que vous atteigniez le dossier racine qui a "
 "l'option **<Ajouter un nouveau dossier>**.\n"
 "  3. Double-tapez sur **<Ajouter un nouveau dossier>**. Dans le navigateur "
@@ -7071,7 +7071,7 @@ msgstr "raccourcis KIA uniquement"
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Marcher / Regarder / Parler /Selectionner / Tirer"
+msgstr "Marcher / Regarder / Parler /Sélectionner / Tirer"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -12011,7 +12011,7 @@ msgstr "Réplique précédente"
 
 #: engines/stark/metaengine.cpp:328
 msgid "Select dialogue"
-msgstr "Selectionner la réplique"
+msgstr "Sélectionner la réplique"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
