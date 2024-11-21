@@ -1341,8 +1341,13 @@ bool AnimFrame::PixelHit(const Common::Point& point) const {
 	return Data[point.y * Width + point.x] != 0;
 }
 
-Common::Point AnimFrame::GetBottomMiddleOffset() const {
-	return Common::Point(Width / 2, Height);
+Common::Point AnimFrame::GetBottomMiddleOffset(uint16 scale) const {
+	if (scale == 100) {
+		return Common::Point(Width / 2, Height);
+	}
+	return Common::Point(
+		Width * scale / 200, // scaled width / 2
+		Height * scale / 100);
 }
 
 Sprite AnimFrame::AsSprite() {
