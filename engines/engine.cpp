@@ -231,7 +231,7 @@ bool Engine::enhancementEnabled(int32 cls) {
 	return _activeEnhancements & cls;
 }
 
-void initCommonGFX() {
+void initCommonGFX(bool is3D) {
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
 	// Any global or command line settings already have been applied at the time
@@ -253,7 +253,7 @@ void initCommonGFX() {
 		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
 	// Stop here for hardware-accelerated 3D games
-	if (g_system->hasFeature(OSystem::kFeatureOpenGLForGame))
+	if (is3D)
 		return;
 
 	// Set up filtering, scaling and shaders for 2D games
@@ -370,7 +370,7 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 
 	for (candidate = start; candidate < (int)modes.size(); candidate++) {
 		g_system->beginGFXTransaction();
-		initCommonGFX();
+		initCommonGFX(false);
 #ifdef USE_RGB_COLOR
 		if (modes[candidate].hasFormat)
 			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
@@ -492,7 +492,7 @@ void initGraphics(int width, int height) {
 void initGraphics3d(int width, int height) {
 	g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
-		initCommonGFX();
+		initCommonGFX(true);
 		g_system->initSize(width, height);
 	g_system->endGFXTransaction();
 
@@ -518,7 +518,7 @@ void GUIErrorMessage(const Common::String &msg, const char *url) {
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
-		initCommonGFX();
+		initCommonGFX(false);
 		g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		if (url) {
