@@ -175,6 +175,9 @@ bool DgdsChunkReader::isPacked() const {
 	case EX_BMP:
 		packed = (_id == ID_BIN || _id == ID_VGA);
 		break;
+	case EX_CDS:
+		packed = (_id == ID_TT3);
+		break;
 	case EX_GDS:
 	case EX_SDS:
 		packed = (_id == ID_SDS);

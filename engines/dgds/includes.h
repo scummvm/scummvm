@@ -66,6 +66,7 @@ namespace Dgds {
 #define EX_ADS MKTAG24('A', 'D', 'S')
 #define EX_AMG MKTAG24('A', 'M', 'G')
 #define EX_BMP MKTAG24('B', 'M', 'P')
+#define EX_CDS MKTAG24('C', 'D', 'S')
 #define EX_FNT MKTAG24('F', 'N', 'T')
 #define EX_GDS MKTAG24('G', 'D', 'S')
 #define EX_INS MKTAG24('I', 'N', 'S')
