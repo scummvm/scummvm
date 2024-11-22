@@ -121,7 +121,7 @@ void Room615::daemon() {
 	case 21:
 		if (_flag1) {
 			_flag1 = false;
-			_pu = series_stream("515PU02", 6, 0x100, 24);
+			_pu = series_stream("615PU02", 6, 0x100, 24);
 			series_stream_break_on_frame(_pu, 5, 22);
 			series_set_frame_rate(_pu, 4);
 		} else {
@@ -464,6 +464,7 @@ void Room615::daemon() {
 		if (_ctr1 >= 2) {
 			_ctr1 = 0;
 			sendWSMessage_10000(1, _tt, _loop7, 1, 1, 133, _loop7, 1, 1, 1);
+			_untie = series_stream("615PU03", 6, 256, -1);
 			series_stream_break_on_frame(_untie, 5, 133);
 		} else {
 			++_ctr1;
