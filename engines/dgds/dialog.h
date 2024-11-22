@@ -72,6 +72,7 @@ enum DialogDrawStage {
 };
 
 struct DialogAction {
+	int16 num;
 	// The game initializes str offsets to pointers, but let's be a bit nicer.
 	uint16 strStart; /// The start of the clickable text for this action
 	uint16 strEnd;	 /// End of clickable text for this action

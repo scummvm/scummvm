@@ -42,8 +42,7 @@ void SoundRaw::load(const Common::String &filename) {
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_RAW)) {
-			_data.resize(chunk.getSize());
-			stream->read(_data.data(), chunk.getSize());
+			loadFromStream(stream, chunk.getSize());
 			break;
 		}
 	}
@@ -53,6 +52,10 @@ SoundRaw::~SoundRaw() {
 	stop();
 }
 
+void SoundRaw::loadFromStream(Common::SeekableReadStream *stream, int size) {
+	_data.resize(size);
+	stream->read(_data.data(), size);
+}
 
 void SoundRaw::play() {
 	Audio::Mixer *mixer = DgdsEngine::getInstance()->_mixer;

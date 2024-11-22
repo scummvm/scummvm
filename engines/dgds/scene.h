@@ -35,6 +35,7 @@ namespace Dgds {
 class ResourceManager;
 class Decompressor;
 class DgdsFont;
+class SoundRaw;
 
 enum SceneCondition {
 	kSceneCondNone = 0,
@@ -479,6 +480,7 @@ public:
 	void loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
 	void drawVisibleHeads(Graphics::ManagedSurface *dst);
 	bool hasVisibleHead() const;
+	bool loadCDSData(uint16 num, uint16 num2, int16 sub);
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();
@@ -527,6 +529,7 @@ private:
 	// From here on is mutable stuff that might need saving
 	Common::Array<Dialog> _dialogs;
 	Common::Array<SceneTrigger> _triggers;
+	Common::SharedPtr<SoundRaw> _dlgSound;
 
 	GameItem *_dragItem;
 	bool _shouldClearDlg;

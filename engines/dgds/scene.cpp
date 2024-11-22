@@ -46,6 +46,7 @@
 #include "dgds/minigames/dragon_arcade.h"
 #include "dgds/dragon_native.h"
 #include "dgds/hoc_intro.h"
+#include "dgds/sound_raw.h"
 
 namespace Dgds {
 
@@ -526,10 +527,11 @@ bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<Di
 	// if (!list.empty())
 	//	list[0].val = 1;
 
-	for (DialogAction &dst : list) {
-		dst.strStart = s->readUint16LE();
-		dst.strEnd = s->readUint16LE();
-		readOpList(s, dst.sceneOpList);
+	for (uint i = 0; i < list.size(); i++) {
+		list[i].num = i;
+		list[i].strStart = s->readUint16LE();
+		list[i].strEnd = s->readUint16LE();
+		readOpList(s, list[i].sceneOpList);
 	}
 
 	return !s->err();
@@ -1063,6 +1065,10 @@ void SDSScene::unload() {
 	_triggers.clear();
 	_talkData.clear();
 	_dynamicRects.clear();
+	if (_dlgSound) {
+		_dlgSound->stop();
+		_dlgSound.reset();
+	}
 	_sceneDialogFlags = kDlgFlagNone;
 }
 
@@ -1217,8 +1223,13 @@ bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
 			h._bmpFile = s->readString();
 			if (!h._bmpFile.empty()) {
 				DgdsEngine *engine = DgdsEngine::getInstance();
-				h._shape.reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
-				h._shape->loadBitmap(h._bmpFile);
+				ResourceManager *resMan = engine->getResourceManager();
+				if (resMan->hasResource(h._bmpFile)) {
+					h._shape.reset(new Image(resMan, engine->getDecompressor()));
+					h._shape->loadBitmap(h._bmpFile);
+				} else {
+					warning("Couldn't load talkdata %d head %d BMP: %s", dst._num, h._num, h._bmpFile.c_str());
+				}
 			}
 		}
 		uint16 nsub = s->readUint16LE();
@@ -1280,10 +1291,15 @@ bool SDSScene::loadTalkData(uint16 num) {
 			_talkData.front()._num = num;
 			_version = oldVer;
 
-			if (!_talkData.front()._bmpFile.empty()) {
-				Image *img = new Image(resourceManager, decompressor);
-				img->loadBitmap(_talkData.front()._bmpFile);
-				_talkData.front()._shape.reset(img);
+			const Common::String &bmpFile = _talkData.front()._bmpFile;
+			if (!bmpFile.empty()) {
+				if (resourceManager->hasResource(bmpFile)) {
+					Image *img = new Image(resourceManager, decompressor);
+					img->loadBitmap(bmpFile);
+					_talkData.front()._shape.reset(img);
+				} else {
+					warning("Couldn't load talkdata %d head BMP: %s", num, bmpFile.c_str());
+				}
 			}
 		}
 	}
@@ -1292,6 +1308,7 @@ bool SDSScene::loadTalkData(uint16 num) {
 
 	return result;
 }
+
 
 void SDSScene::freeTalkData(uint16 num) {
 	for (int i = 0; i < (int)_talkData.size(); i++) {
@@ -1311,6 +1328,57 @@ void SDSScene::updateVisibleTalkers() {
 	}
 }
 
+
+bool SDSScene::loadCDSData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
+	if (_dlgSound) {
+		_dlgSound->stop();
+		_dlgSound.reset();
+	}
+
+	Common::String fname;
+	if (sub >= 0) {
+		assert(sub < 26);
+		fname = Common::String::format("F%dB%d%c.CDS", dlgFileNum, dlgNum, 'A' + sub);
+	} else {
+		fname = Common::String::format("F%dB%d.CDS", dlgFileNum, dlgNum);
+	}
+
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	ResourceManager *resourceManager = engine->getResourceManager();
+	Common::SeekableReadStream *cdsFile = resourceManager->getResource(fname);
+	if (!cdsFile)
+		return false;
+
+	DgdsChunkReader chunk(cdsFile);
+	Decompressor *decompressor = engine->getDecompressor();
+
+	bool result = false;
+
+	while (chunk.readNextHeader(EX_CDS, fname)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
+		chunk.readContent(decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+
+		//
+		// All CDS files contain TT3 sections with little scripts that load
+		// and play a RAW sound file (eg F1B13.CDS loads CSCR013.RAW), but
+		// they also have RAW sections with the sound data, embedded and the named
+		// RAW files don't exist.
+		//
+		if (chunk.isSection(ID_RAW)) {
+			_dlgSound.reset(new SoundRaw(resourceManager, decompressor));
+			_dlgSound->loadFromStream(stream, chunk.getSize());
+			_dlgSound->play();
+			result = true;
+		}
+	}
+
+	delete cdsFile;
+	return result;
+}
 
 void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
 	uint drawtype = head._drawType ? head._drawType : 1;
@@ -1520,6 +1588,8 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 				loadTalkDataAndSetFlags(dialog._talkDataNum, dialog._talkDataHeadNum);
 			}
 
+			loadCDSData(fileNum, dlgNum, -1);
+
 			// hide time gets set the first time it's drawn.
 			if (_dlgWithFlagLo8IsClosing && dialog.hasFlag(kDlgFlagLo8)) {
 				_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags | kDlgFlagLo8 | kDlgFlagVisible);
@@ -1580,6 +1650,12 @@ bool SDSScene::checkDialogActive() {
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
+					// TODO: We can load selected item voice acting here, but it generally
+					// immediately starts another dialog or changes scene, so the sound
+					// doesn't end up playing.
+					// Need to work out how to correctly delay until the sound finishes?
+					loadCDSData(dlg._fileNum, dlg._num, action->num);
+
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;
 					debug(1, "Dialog %d closing: run action (%d ops)", dlg._num, action->sceneOpList.size());

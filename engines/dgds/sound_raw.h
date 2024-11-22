@@ -45,6 +45,7 @@ public:
 	void play();
 	void stop();
 	bool isPlaying() const;
+	void loadFromStream(Common::SeekableReadStream *stream, int size);
 
 private:
 	Common::Array<byte> _data;
