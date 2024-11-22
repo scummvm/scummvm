@@ -2368,8 +2368,6 @@ int AgiEngine::runLogic(int16 logicNr) {
 	_game._curLogic->cIP = _game._curLogic->sIP;
 
 	while (state->_curLogic->cIP < _game.logics[logicNr].size && !(shouldQuit() || _restartGame)) {
-		processScummVMEvents();
-
 		// TODO: old code, needs to be adjusted
 #if 0
 		if (_debug.enabled) {
