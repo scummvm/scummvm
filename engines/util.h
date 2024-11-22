@@ -39,8 +39,10 @@
 
 /**
  * Set up the graphics mode of the backend.
+ *
+ * @param is3D: set to true if the game to be launched uses 3D graphics
  */
-void initCommonGFX();
+void initCommonGFX(bool is3D);
 
 /**
  * Send a list of graphics modes to the backend so it can make a decision
