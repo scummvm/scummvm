@@ -2808,7 +2808,6 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# AmigaOS (PPC) target
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		# -mlongcall is needed to fix relocation errors,
@@ -2823,18 +2822,14 @@ case $_host_os in
 			_optimization_level=-O0
 			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
 		fi
-		# dynamic builds leave out resources to save binary size
-		# and detection features *must* be static
+		# dynamic builds will leave out resources to save binary size
 		if test "$_dynamic_modules" = yes ; then
 			_builtin_resources=no
+			_detection_features_static=no
 			_plugins_default=dynamic
-		else
-			_plugins_default=static
-			_static_build=yes
 		fi
-		# use 'long' for ScummVM's 4 byte typedef, because AmigaOS
-		# already typedefs (u)int32 as (unsigned) long and suppress
-		# those noisy format warnings caused by the 'long' 4 byte
+		# AmigaOS already typedefs uint32 as long unsigned int
+		# suppress the noisy [-Wformat=] warnings caused by it
 		append_var CXXFLAGS "-Wno-format"
 		;;
 	android)
