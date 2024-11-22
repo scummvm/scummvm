@@ -1440,7 +1440,7 @@ void Room608::pre_parser() {
 	bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (player_said("HORN/PULL CORD", "WATER") && !_G(flags)[GLB_TEMP_3])
+	if (player_said("HORN/PULL CORD", "WATER") && !_G(flags)[V009])
 		_G(player).resetWalk();
 	if (player_said("POLE", "DRIFTWOOD STUMP ") && inv_player_has("POLE"))
 		_G(player).resetWalk();
@@ -1464,7 +1464,7 @@ void Room608::parser() {
 		_val3 = 1;
 		_val4 = 2;
 	} else if (talkFlag && player_said("old woman")) {
-		if (_G(flags)[GLB_TEMP_7]) {
+		if (_G(flags)[V013]) {
 			digi_play(_G(flags)[V203] > 2 ? "608r04" : "608r35", 1);
 		} else {
 			if (_G(flags)[V203] >= 2 || !_G(flags)[V034]) {
@@ -1713,7 +1713,7 @@ void Room608::parser() {
 			Common::strcpy_s(_G(player).verb, "lung");
 			kernel_timing_trigger(1, 1);
 		} else {
-			digi_play(_G(flags)[GLB_TEMP_4] ? "608r04a" : "608r35a", 1);
+			digi_play(_G(flags)[V010] ? "608r04a" : "608r35a", 1);
 		}
 	} else if (player_said("clock facing", "old woman") &&
 			!inv_object_is_here("OBSIDIAN DISK")) {
@@ -1721,7 +1721,7 @@ void Room608::parser() {
 			Common::strcpy_s(_G(player).verb, "prostate");
 			kernel_timing_trigger(1, 1);
 		} else {
-			digi_play(_G(flags)[GLB_TEMP_4] ? "608r04a" : "608r35a", 1);
+			digi_play(_G(flags)[V010] ? "608r04a" : "608r35a", 1);
 		}
 	} else if (player_said_any("bowels", "scrotum")) {
 		switch (_G(kernel).trigger) {
@@ -1894,7 +1894,7 @@ void Room608::conv608a() {
 				_val3 = 5;
 		} else if (who == 1) {
 			if (node == 4)
-				_G(flags)[GLB_TEMP_7] = 1;
+				_G(flags)[V013] = 1;
 			if (!(node == 5 && entry == 3))
 				_val4 = 1;
 		}
@@ -2117,7 +2117,7 @@ bool Room608::hornCordWater() {
 			series_unload(_horn);
 			terminateMachineAndNull(_shadow5);
 			ws_unhide_walker();
-			_G(flags)[GLB_TEMP_3] = 1;
+			_G(flags)[V009] = 1;
 			player_set_commands_allowed(true);
 			digi_play("608r65", 1);
 			return true;

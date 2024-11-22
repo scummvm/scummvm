@@ -311,7 +311,7 @@ void RiddleEngine::global_parser() {
 			if (_messageLog._result != 16) {
 				_G(flags)[V052] = 1;
 
-				if (_G(player).walker_in_this_scene && _G(flags)[292]) {
+				if (_G(player).walker_in_this_scene && _G(flags)[V292]) {
 					player_update_info();
 
 					switch (_G(player_info).facing) {

@@ -70,7 +70,7 @@ void Room402::init() {
 	digi_preload("950_s21");
 	digi_preload("950_s23");
 
-	if (!_G(flags)[GLB_TEMP_12] && !_G(flags)[V117]) {
+	if (!_G(flags)[V018] && !_G(flags)[V117]) {
 		if (!_G(flags)[V110])
 			_G(flags)[V131] = 402;
 		else if (inv_player_has("TURTLE"))
@@ -208,7 +208,7 @@ void Room402::init() {
 
 			case 408:
 				if (_G(flags)[V125] == 3) {
-					_G(flags)[GLB_TEMP_12] = 1;
+					_G(flags)[V018] = 1;
 					_G(flags)[V125] = 4;
 					_G(flags)[V131] = 999;
 

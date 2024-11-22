@@ -221,7 +221,7 @@ void Room404::daemon() {
 		break;
 
 	case 43:
-		if (!_G(flags)[GLB_TEMP_12] || _G(flags)[V334]) {
+		if (!_G(flags)[V018] || _G(flags)[V334]) {
 			player_set_commands_allowed(true);
 		} else {
 			_G(flags)[V334] = 1;

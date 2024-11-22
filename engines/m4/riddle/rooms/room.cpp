@@ -168,7 +168,7 @@ bool Room::setItemsPlacedFlags() {
 		break;
 	}
 
-	_G(flags)[GLB_TEMP_1] = 0;
+	_G(flags)[V007] = 0;
 	return false;
 }
 

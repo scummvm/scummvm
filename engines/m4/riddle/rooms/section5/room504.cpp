@@ -3299,7 +3299,7 @@ void Room504::setVinesRope() {
 		addBrownVine();
 	}
 
-	if (_G(flags)[154] == 1) {
+	if (_G(flags)[V154] == 1) {
 		hotspot_set_active("ROPE ", true);
 		hotspot_set_active("ROPE COIL ", true);
 	}

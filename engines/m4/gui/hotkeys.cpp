@@ -286,8 +286,8 @@ void Hotkeys::changeGlobalChange(void *, void *) {
 
 	// Create secondary dialog to get value to set global to
 	int globalVal = (g_engine->getGameType() == GType_Burger) ?
-		Burger::g_vars->_flags[_globalToChange] :
-		Riddle::g_vars->_flags[_globalToChange];
+		Burger::g_vars->_flags[(Burger::Flag)_globalToChange] :
+		Riddle::g_vars->_flags[(Riddle::Flag)_globalToChange];
 
 	_changeGlobalDialog = DialogCreateAbsolute(250, 120, 450, 220, 242);
 	_changeGlobalDialog->addButton(60, 40,
@@ -308,9 +308,9 @@ void Hotkeys::changeGlobalDoChange(void *, void *) {
 	int globalVal = atoi(textField->prompt);
 
 	if (g_engine->getGameType() == GType_Burger)
-		Burger::g_vars->_flags[_globalToChange] = globalVal;
+		Burger::g_vars->_flags[(Burger::Flag)_globalToChange] = globalVal;
 	else
-		Riddle::g_vars->_flags[_globalToChange] = globalVal;
+		Riddle::g_vars->_flags[(Riddle::Flag)_globalToChange] = globalVal;
 
 	_changeGlobalDialog->destroy();
 	_changeGlobalDialog = nullptr;

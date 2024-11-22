@@ -73,13 +73,13 @@ void Room408::init() {
 
 	} else {
 		if (inv_player_has("TURTLE") && !inv_player_has("EDGER") &&
-				!_G(flags)[GLB_TEMP_12]) {
+				!_G(flags)[V018]) {
 			_edger = series_place_sprite("Edger gone", 0, 0, -53, 100, 0xf00);
 			hotspot_set_active("EDGER", true);
 		}
 
 		if (inv_player_has("TURTLE") && !inv_player_has("PLANK") &&
-				!_G(flags)[GLB_TEMP_12] && inv_object_is_here("PLANK")) {
+				!_G(flags)[V018] && inv_object_is_here("PLANK")) {
 			_plank = series_place_sprite("Plank gone", 0, 0, 0, 100, 0xf00);
 			hotspot_set_active("PLANK", true);
 		}
@@ -127,7 +127,7 @@ void Room408::init() {
 			digi_preload("950_s22");
 			terminateMachineAndNull(_exit);
 
-			if (_G(flags)[GLB_TEMP_12]) {
+			if (_G(flags)[V018]) {
 				_G(flags)[V131] = 999;
 			} else if (inv_player_has("TURTLE")) {
 				_G(flags)[V131] = 402;
@@ -152,7 +152,7 @@ void Room408::init() {
 			digi_preload("950_s22");
 
 			if (_G(flags)[V117] && _G(flags)[V125] == 3 &&
-				!_G(flags)[GLB_TEMP_12] && !inv_player_has("EDGER") &&
+				!_G(flags)[V018] && !inv_player_has("EDGER") &&
 				!inv_player_has("PLANK")) {
 				_G(flags)[V131] = 408;
 				_G(flags)[V117] = 0;

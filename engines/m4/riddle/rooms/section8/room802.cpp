@@ -305,7 +305,7 @@ void Room802::parser() {
 			_handInWallMach = series_place_sprite("HAND IN WALL", 0, 0, 0, 100, 512);
 			series_unload(_ripDragsSack);
 			series_unload(_sackAgainstWall);
-			_G(flags)[253] = 1;
+			_G(flags)[V253] = 1;
 			hotspot_set_active(_G(currentSceneDef).hotspots, "rice sack", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "rice sack ", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "hand", true);
@@ -324,7 +324,7 @@ void Room802::parser() {
 		}
 	}
 
-	else if ((player_said("farmer's shovel", "hand") || player_said("farmer's shovel", "wall")) && _G(flags)[254] == 0) {
+	else if ((player_said("farmer's shovel", "hand") || player_said("farmer's shovel", "wall")) && _G(flags)[V254] == 0) {
 		if (_G(flags)[V253]) {
 			switch (_G(kernel).trigger) {
 			case -1:

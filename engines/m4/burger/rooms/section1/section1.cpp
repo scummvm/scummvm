@@ -227,9 +227,9 @@ void Section1::daemon() {
 
 	case kAdvanceTime:
 		if (_G(flags)[V012] == 2) {
-			term_message("  Harry watches tv at: %d", _G(flags)[GLB_TEMP_3]);
+			term_message("  Harry watches tv at: %d", _G(flags)[V009]);
 
-			if (_G(flags).get_boonsville_time_and_display() == (int32)_G(flags)[GLB_TEMP_3]) {
+			if (_G(flags).get_boonsville_time_and_display() == (int32)_G(flags)[V009]) {
 				if (_G(game).room_id == 102) {
 					term_message("make harry walk in");
 					kernel_timing_trigger(1, 1037);

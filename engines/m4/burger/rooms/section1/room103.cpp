@@ -233,7 +233,7 @@ void Room103::daemon() {
 
 	case 7:
 		_G(flags)[kHarryComingToRoof] = 0;
-		_G(flags)[GLB_TEMP_3] = _G(flags).get_boonsville_time_and_display() + 1800;
+		_G(flags)[V009] = _G(flags).get_boonsville_time_and_display() + 1800;
 		_G(flags)[V012] = 2;
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 		break;
@@ -527,7 +527,7 @@ void Room103::daemon() {
 		break;
 
 	case 23:
-		if (_G(flags)[GLB_TEMP_4] == 2 || _G(flags)[V013]) {
+		if (_G(flags)[V010] == 2 || _G(flags)[V013]) {
 			switch (imath_ranged_rand(1, 3)) {
 			case 1:
 				digi_play("103h008a", 1, 255, 21);
@@ -545,7 +545,7 @@ void Room103::daemon() {
 			digi_play("103h007", 1, 255, 21);
 		}
 
-		_G(flags)[GLB_TEMP_3] = _G(flags).get_boonsville_time_and_display() + 1800;
+		_G(flags)[V009] = _G(flags).get_boonsville_time_and_display() + 1800;
 		_G(flags)[V012] = 2;
 		ws_walk(271, 265, 0, 24, 2);
 		break;

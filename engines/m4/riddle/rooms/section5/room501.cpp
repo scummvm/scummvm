@@ -459,11 +459,11 @@ void Room501::daemon() {
 		conv_export_pointer_curr(&_hasLetter, 3);
 		conv_export_pointer_curr(&_hasItems, 4);
 		conv_export_pointer_curr(&_G(flags)[V145], 5);
-		conv_export_value_curr(_G(flags)[146] > 0 ? 1 : 0, 6);
+		conv_export_value_curr(_G(flags)[V146] > 0 ? 1 : 0, 6);
 		conv_export_pointer_curr(&_G(flags)[V143], 7);
 		conv_export_pointer_curr(&_G(flags)[V142], 8);
 		conv_export_pointer_curr(&_G(flags)[V147], 9);
-		conv_export_value_curr(_G(flags)[145] == 1 ||
+		conv_export_value_curr(_G(flags)[V145] == 1 ||
 			_G(flags)[V146] > 0 || _G(flags)[V143] == 1 ? 1 : 0, 10);
 
 		_hasStickAndShellMap = inv_player_has("STICK AND SHELL MAP");

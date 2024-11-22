@@ -81,7 +81,7 @@ void Vars::initialize_game() {
 	_G(flags)[V071] = 2;
 	_G(flags)[V088] = 1;
 	_G(flags)[V086] = 2;
-	_G(flags)[GLB_TEMP_8] = 1;
+	_G(flags)[V014] = 1;
 	_G(flags)[V270] = 824;
 	_G(flags)[V282] = 1;
 	_G(flags)[V292] = 1;

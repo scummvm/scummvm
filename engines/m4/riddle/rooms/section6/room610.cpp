@@ -64,7 +64,7 @@ void Room610::init() {
 	_sgSlapsTt2 = series_load("SG SLAPS TT AGAIN");
 	_sgPullsGun = series_load("SG PULLS A GUN");
 
-	if (_G(flags)[GLB_TEMP_6]) {
+	if (_G(flags)[V012]) {
 		hotspot_set_active("window", false);
 		series_show("610 shed window open", 0xf00, 16);
 	} else {
@@ -645,7 +645,7 @@ void Room610::useWindow() {
 	case -1:
 		player_set_commands_allowed(false);
 
-		if (_G(flags)[GLB_TEMP_6]) {
+		if (_G(flags)[V012]) {
 			kernel_timing_trigger(1, 1);
 		} else {
 			ws_hide_walker();
@@ -666,7 +666,7 @@ void Room610::useWindow() {
 		digi_play("610_s01", 2);
 		hotspot_set_active("window", false);
 		hotspot_set_active("window ", true);
-		_G(flags)[GLB_TEMP_6] = 1;
+		_G(flags)[V012] = 1;
 		break;
 
 	case 4:

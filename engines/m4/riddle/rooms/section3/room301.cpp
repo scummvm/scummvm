@@ -458,7 +458,7 @@ void Room301::daemon() {
 		break;
 
 	case 15:
-		_G(flags)[GLB_TEMP_2] = 1;
+		_G(flags)[V008] = 1;
 		sendWSMessage_10000(1, _george, _agentSlidesPaper, 49, 1, 12,
 			_agentStander, 1, 1, 0);
 		break;
@@ -869,7 +869,7 @@ void Room301::daemon() {
 }
 
 void Room301::pre_parser() {
-	if (player_said("exit") && _G(flags)[GLB_TEMP_1]) {
+	if (player_said("exit") && _G(flags)[V007]) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -886,7 +886,7 @@ void Room301::parser() {
 	if (player_said("conv301a")) {
 		conv301a();
 	} else if (player_said("exit")) {
-		if (_G(flags)[GLB_TEMP_1]) {
+		if (_G(flags)[V007]) {
 			if (_G(kernel).trigger == -1) {
 				player_set_commands_allowed(false);
 				_marshalMatt = series_load("marshall matt");

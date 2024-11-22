@@ -266,13 +266,13 @@ void Room806::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (player_said_any("    ", "      ") && _G(flags)[266] == 0) {
+	if (player_said_any("    ", "      ") && _G(flags)[V266] == 0) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (player_said_any("    ", "      ") && _G(flags)[266] != 0 && !walkFl && !player_said("east")) {
+	if (player_said_any("    ", "      ") && _G(flags)[V266] != 0 && !walkFl && !player_said("east")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -302,14 +302,14 @@ void Room806::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (player_said("west") && _G(flags)[276] == 0) {
+	if (player_said("west") && _G(flags)[V276] == 0) {
 		sendWSMessage_10000(_mcTrekMach, 225, 306, 9, -1, 1);
 		_unkVar3 = 1;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
 	}
 
-	if (player_said("east") && _G(flags)[266] && _G(flags)[276] == 0) {
+	if (player_said("east") && _G(flags)[V266] && _G(flags)[V276] == 0) {
 		sendWSMessage_10000(_mcTrekMach, 624, 306, 3, -1, 1);
 		_unkVar3 = 0;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
@@ -1022,7 +1022,7 @@ void Room806::parser() {
 	else if (!gearFl && player_said_any("MEI CHEN", "MEI CHEN "))
 		digi_play("com017", 1, 255, 997);
 
-	else if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags)[266] == 0) {
+	else if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags)[V266] == 0) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			_G(player).disable_hyperwalk = true;
@@ -1081,7 +1081,7 @@ void Room806::parser() {
 		default:
 			break;
 		}
-	} // if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags)[266] == 0)
+	} // if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags)[V266] == 0)
 
 	else if (player_said("west") && (_G(kernel).trigger == -1 || _G(kernel).trigger == 1)) {
 		if (_G(kernel).trigger == -1) {
@@ -1192,8 +1192,8 @@ void Room806::daemon() {
 		break;
 
 	case 117:
-		_G(flags)[265] = 1;
-		_G(flags)[256] = 1;
+		_G(flags)[V265] = 1;
+		_G(flags)[V256] = 1;
 		series_unload(_806rp01Series);
 		series_unload(_806mc01Series);
 		digi_unload("806m01");
@@ -1241,7 +1241,7 @@ void Room806::daemon() {
 			else if (_G(player_info).facing > 5 && _G(player_info).facing <= 11)
 				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 205, 9, true);
 
-		} else if (_G(flags)[269])
+		} else if (_G(flags)[V269])
 			kernel_timing_trigger(60, 201, nullptr);
 
 		break;
@@ -1518,7 +1518,7 @@ void Room806::daemon() {
 		terminateMachine(_806ChartMach);
 		_806ChartMach = series_show("806chart", 3840, 16, -1, -1, 0, 100, 0, 0);
 
-		if (_G(flags)[265])
+		if (_G(flags)[V265])
 			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, -1, 1);
 		else
 			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, 101, 1);
@@ -1553,7 +1553,7 @@ void Room806::daemon() {
 		break;
 
 	case 999:
-		if (_G(flags)[265]) {
+		if (_G(flags)[V265]) {
 			player_set_commands_allowed(true);
 			_unkVar1 = 0;
 		}

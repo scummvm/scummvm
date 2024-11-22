@@ -679,7 +679,7 @@ void Room305::parser() {
 	} else if (takeFlag && player_said("turtle treats")) {
 		takeTurtleTreats();
 	} else if (takeFlag && player_said("turtle")) {
-		if (_G(flags)[GLB_TEMP_12]) {
+		if (_G(flags)[V018]) {
 			digi_play("305r55", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -1078,7 +1078,7 @@ next4:
 	} else if (lookFlag && player_said("terrarium")) {
 		if (inv_player_has("TURTLE")) {
 			digi_play("305r16a", 1);
-		} else if (_G(flags)[GLB_TEMP_12]) {
+		} else if (_G(flags)[V018]) {
 			digi_play("305r16b", 1);
 		} else if (inv_object_is_here("TURTLE")) {
 			digi_play("305r16c", 1);

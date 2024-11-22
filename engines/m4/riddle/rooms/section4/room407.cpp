@@ -4541,7 +4541,7 @@ void Room407::takeLetter() {
 	case 13:
 		kernel_examine_inventory_object("PING MENENDEZ'S LETTER",
 			_G(master_palette), 5, 1, 270, 150, 14, "407r41", -1);
-		_G(flags)[GLB_TEMP_11] = 1;
+		_G(flags)[V017] = 1;
 		_G(flags)[V280] = 1;
 		break;
 

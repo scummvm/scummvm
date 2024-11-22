@@ -35,11 +35,11 @@ Console::Console() : M4::Console() {
 bool Console::cmdGlobal(int argc, const char **argv) {
 	if (argc == 2) {
 		int flagNum = atol(argv[1]);
-		debugPrintf("Global %d = %d\n", flagNum, _G(flags)[flagNum]);
+		debugPrintf("Global %d = %d\n", flagNum, _G(flags)[(Flag)flagNum]);
 	} else if (argc == 3) {
 		int flagNum = atol(argv[1]);
 		int flagVal = atol(argv[2]);
-		_G(flags)[flagNum] = flagVal;
+		_G(flags)[(Flag)flagNum] = flagVal;
 		debugPrintf("Global set\n");
 	} else {
 		debugPrintf("Global <num> [<value>]\n");

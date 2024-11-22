@@ -137,7 +137,7 @@ void Room604::init() {
 
 		_shedDoor = series_show("SHED DOOR OPENS", 0xf00, 16);
 
-		if (_G(flags)[GLB_TEMP_5])
+		if (_G(flags)[V011])
 			digi_preload("genrun");
 		break;
 
@@ -167,7 +167,7 @@ void Room604::init() {
 	series_load("the generator cord");
 	_generatorCord = series_show_sprite("the generator cord", 0, 0xf00);
 
-	if (_G(flags)[GLB_TEMP_5])
+	if (_G(flags)[V011])
 		digi_play_loop("genrun", 3);
 }
 
@@ -306,13 +306,13 @@ void Room604::parser() {
 		} else {
 			digi_play_loop("genrun", 3);
 		}
-	} else if (useFlag && player_said("generator set") && _G(flags)[GLB_TEMP_5]) {
+	} else if (useFlag && player_said("generator set") && _G(flags)[V011]) {
 		digi_play("com115", 1, 255, -1, 997);
 	} else if (useFlag && (
 		(player_said("PULL CORD") && inv_object_is_here("PULL CORD")) ||
 		(player_said("generator set") && inv_object_is_here("PULL CORD"))
 	)) {
-		if (_G(flags)[GLB_TEMP_5]) {
+		if (_G(flags)[V011]) {
 			digi_play("com115", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -350,7 +350,7 @@ void Room604::parser() {
 					kernel_timing_trigger(180, 3);
 				} else {
 					player_set_commands_allowed(true);
-					_G(flags)[GLB_TEMP_5] = 1;
+					_G(flags)[V011] = 1;
 				}
 				break;
 
@@ -683,7 +683,7 @@ void Room604::parser() {
 			case 1:
 				adv_kill_digi_between_rooms(false);
 
-				if (_G(flags)[GLB_TEMP_5]) {
+				if (_G(flags)[V011]) {
 					digi_play_loop("genrun", 3);
 				} else {
 					digi_preload("950_s28");

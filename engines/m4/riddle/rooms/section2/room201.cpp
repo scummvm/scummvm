@@ -460,7 +460,7 @@ void Room201::daemon() {
 		_ripHandChin = series_load("RIP TREK HAND CHIN POS3");
 		setGlobals1(_ripHandChin, 1, 14, 14, 14);
 		sendWSMessage_110000(320);
-		digi_play(_G(flags)[GLB_TEMP_2] == 1 ? "201r05" : "201r06", 1, 255, 320);
+		digi_play(_G(flags)[V008] == 1 ? "201r05" : "201r06", 1, 255, 320);
 		break;
 
 	case 320:
@@ -1798,8 +1798,8 @@ void Room201::checkFlags() {
 	}
 
 	for (int i = V365; i <= V373; ++i) {
-		if (_G(flags)[i] == 1) {
-			_G(flags)[i - 10] = 1;
+		if (_G(flags)[(Flag)i] == 1) {
+			_G(flags)[(Flag)(i - 10)] = 1;
 			++_val1;
 		}
 	}

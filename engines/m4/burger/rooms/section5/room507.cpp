@@ -690,7 +690,7 @@ void Room507::parser() {
 	if (player_said("LOOK AT", "BORK") && _G(flags)[V223] == 1) {
 		wilbur_speech("507w003");
 	} else if (player_said("RUBBER DUCKY") && player_said("TUB")) {
-		wilbur_speech(_G(flags)[223] ? "500w040" : "500w039");
+		wilbur_speech(_G(flags)[V223] ? "500w040" : "500w039");
 	} else if (player_said("RUBBER DUCKY") && player_said("SINK")) {
 		wilbur_speech("500w041");
 	} else if (player_said("SOAPY WATER", "SINK")) {

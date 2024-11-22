@@ -78,7 +78,7 @@ void Room403::init() {
 		_G(flags)[V313] = player_been_here(403) && (
 			(_G(flags)[V110] && inv_player_has("TURTLE")) ||
 			inv_player_has("STEP LADDER") ||
-			_G(flags)[GLB_TEMP_12] ||
+			_G(flags)[V018] ||
 			!inv_object_is_here("STEP LADDER")) ? 0 : 1;
 		_plank = inv_object_in_scene("PLANK", 403) ? 2 : 0;
 
@@ -131,7 +131,7 @@ void Room403::init() {
 			break;
 		}
 
-		if (_G(flags)[V133] && !_G(flags)[GLB_TEMP_12] && _G(flags)[V131] != 403 &&
+		if (_G(flags)[V133] && !_G(flags)[V018] && _G(flags)[V131] != 403 &&
 				!inv_player_has("TURTLE") && !inv_player_has("EDGER")) {
 			_edger = series_place_sprite("ONE FRAME EDGER", 0, 0, 0, 100, 0xf00);
 			hotspot_set_active("EDGER", true);

@@ -86,10 +86,10 @@ void Room401::init() {
 		ws_demand_location(66, 266, 3);
 
 		if (_val1 ||
-			!_G(flags)[GLB_TEMP_14] ||
-			(_G(flags)[V110] && !_G(flags)[GLB_TEMP_10]) ||
-			(_G(flags)[GLB_TEMP_11] && player_been_here(407) && !_G(flags)[GLB_TEMP_13]) ||
-			(_G(flags)[GLB_TEMP_12] && !_G(flags)[V091])
+			!_G(flags)[V020] ||
+			(_G(flags)[V110] && !_G(flags)[V016]) ||
+			(_G(flags)[V017] && player_been_here(407) && !_G(flags)[V019]) ||
+			(_G(flags)[V018] && !_G(flags)[V091])
 		) {
 			ws_walk(346, 267, 0, 7, 3, 1);
 		} else {
@@ -453,7 +453,7 @@ void Room401::daemon() {
 	case 412:
 		_agentShould = 0;
 		kernel_timing_trigger(1, 100);
-		_G(flags)[GLB_TEMP_14] = 1;
+		_G(flags)[V020] = 1;
 		kernel_timing_trigger(1, 1000);
 		break;
 
@@ -521,7 +521,7 @@ void Room401::daemon() {
 	case 518:
 		series_show("401a06", 0x600, 16);
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
-		_G(flags)[GLB_TEMP_10] = 1;
+		_G(flags)[V016] = 1;
 		_G(flags)[V366] = 1;
 
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
@@ -570,7 +570,7 @@ void Room401::daemon() {
 			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 620, _401rp01, 1, 1, 0);
-		_G(flags)[GLB_TEMP_13] = 1;
+		_G(flags)[V019] = 1;
 		_agentShould = 0;
 		_ctr1 = 0;
 		break;
@@ -579,7 +579,7 @@ void Room401::daemon() {
 		setGlobals1(_rip4, 1, 1, 1, 5, 1);
 		sendWSMessage_110000(705);
 		_agentShould = 4;
-		digi_play(_G(flags)[GLB_TEMP_13] ? "401r33" : "401r34", 1, 255, 705);
+		digi_play(_G(flags)[V019] ? "401r33" : "401r34", 1, 255, 705);
 		break;
 
 	case 705:
@@ -760,14 +760,14 @@ void Room401::daemon() {
 		break;
 
 	case 1000:
-		if (_G(flags)[GLB_TEMP_14]) {
+		if (_G(flags)[V020]) {
 			kernel_timing_trigger(30, 400);
-		} else if (_G(flags)[V110] && !_G(flags)[GLB_TEMP_10]) {
+		} else if (_G(flags)[V110] && !_G(flags)[V016]) {
 			kernel_timing_trigger(30, 500);
-		} else if (_G(flags)[GLB_TEMP_11] && player_been_here(407) &&
-				!_G(flags)[GLB_TEMP_13]) {
+		} else if (_G(flags)[V017] && player_been_here(407) &&
+				!_G(flags)[V019]) {
 			kernel_timing_trigger(30, 600);
-		} else if (_G(flags)[GLB_TEMP_12] && !_G(flags)[V091]) {
+		} else if (_G(flags)[V018] && !_G(flags)[V091]) {
 			kernel_timing_trigger(30, 700);
 		} else {
 			player_set_commands_allowed(true);
@@ -854,7 +854,7 @@ void Room401::parser() {
 	} else if (takeFlag && player_said("BEER STEIN")) {
 		digi_play("203r58", 1);
 	} else if (lookFlag && player_said("BEER STEIN")) {
-		if (_G(flags)[GLB_TEMP_9]) {
+		if (_G(flags)[V015]) {
 			digi_play("401R07", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -898,7 +898,7 @@ void Room401::parser() {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 100);
 				_G(kernel).trigger_mode = KT_PARSE;
-				_G(flags)[GLB_TEMP_9] = 1;
+				_G(flags)[V015] = 1;
 				player_set_commands_allowed(true);
 				break;
 			default:
@@ -981,7 +981,7 @@ void Room401::conv401a() {
 		if (who <= 0) {
 			if (node == 3) {
 				_agentShould = 8;
-				_G(flags)[GLB_TEMP_8] = 0;
+				_G(flags)[V014] = 0;
 			} else if (node == 2 && entry == 0) {
 				_agentShould = 10;
 				return;

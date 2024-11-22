@@ -75,7 +75,7 @@ void Room603::init() {
 			inv_player_has("PULL CORD") && !inv_object_is_here("POLE") &&
 			_G(flags)[V203] == 4) {
 		_G(flags)[V203] = 5;
-		_G(flags)[GLB_TEMP_5] = 0;
+		_G(flags)[V011] = 0;
 	}
 
 	if (_G(flags)[V191]) {
@@ -276,7 +276,7 @@ void Room603::init() {
 		break;
 	}
 
-	if (_G(flags)[GLB_TEMP_5])
+	if (_G(flags)[V011])
 		digi_play_loop("genrun", 3, 140, -1, 604);
 	else
 		digi_play_loop("950_s28a", 3, 90, -1, -1);
@@ -1495,7 +1495,7 @@ void Room603::parser() {
 		if (_G(flags)[V038])
 			_G(flags)[V039] = 1;
 
-		_G(flags)[GLB_TEMP_5] = 0;
+		_G(flags)[V011] = 0;
 		_G(game).setRoom(495);
 		_G(flags)[kTravelDest] = 4;
 	} else if (_G(kernel).trigger == 556) {
@@ -1506,7 +1506,7 @@ void Room603::parser() {
 		digi_unload("603_S02b");
 		digi_unload("603_S02c");
 
-		if (_G(flags)[GLB_TEMP_5]) {
+		if (_G(flags)[V011]) {
 			digi_stop(3);
 			digi_unload("genrun");
 			digi_preload("950_s28a");
@@ -2162,7 +2162,7 @@ void Room603::enter() {
 			_G(game).setRoom(604);
 			digi_stop(1);
 
-			if (_G(flags)[GLB_TEMP_5]) {
+			if (_G(flags)[V011]) {
 				adv_kill_digi_between_rooms(false);
 				digi_play_loop("genrun", 3, 140, -1, 604);
 			}

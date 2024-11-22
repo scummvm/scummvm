@@ -65,7 +65,8 @@ void Room507::init() {
 	for (int i = 1; i <= 7; ++i) {
 		_blockFlag[i] = false;
 		_blockSeries[i] = series_load(BLOCK_NAMES[1]);
-		_block[1] = series_show(BLOCK_NAMES[1], 0x400, 16, -1, -1, _G(flags)[V172 + i]);
+		_block[1] = series_show(BLOCK_NAMES[1], 0x400, 16, -1, -1,
+			_G(flags)[(Flag)(V172 + i)]);
 	}
 
 	_doorSeries = series_load("507DOOR2");
@@ -89,7 +90,7 @@ void Room507::daemon() {
 
 	case 3:
 		for (int i = 1; i <= 7; ++i) {
-			if (_G(flags)[V172 + i] != BLOCK_CORRECT[i]) {
+			if (_G(flags)[(Flag)(V172 + i)] != BLOCK_CORRECT[i]) {
 				player_set_commands_allowed(true);
 				return;
 			}
@@ -202,13 +203,15 @@ void Room507::useStoneGlyph(int blockNum) {
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	sendWSMessage_190000(_block[blockNum], 15);
-	sendWSMessage_10000(1, _block[blockNum], _blockSeries[blockNum], _G(flags)[V172 + blockNum] + 1, _G(flags)[V172 + blockNum] + 4, 3,
-		_blockSeries[blockNum], _G(flags)[V172 + blockNum] + 5, _G(flags)[V172 + blockNum] + 5, 0);
+	sendWSMessage_10000(1, _block[blockNum], _blockSeries[blockNum],
+		_G(flags)[(Flag)(V172 + blockNum)] + 1, _G(flags)[(Flag)(V172 + blockNum)] + 4, 3,
+		_blockSeries[blockNum], _G(flags)[(Flag)(V172 + blockNum)] + 5,
+		_G(flags)[(Flag)(V172 + blockNum)] + 5, 0);
 	digi_play("507_s93", 2);
 
-	_G(flags)[V172 + blockNum] += 4;
-	if (_G(flags)[V172 + blockNum] > 16)
-		_G(flags)[V172 + blockNum] = 0;
+	_G(flags)[(Flag)(V172 + blockNum)] += 4;
+	if (_G(flags)[(Flag)(V172 + blockNum)] > 16)
+		_G(flags)[(Flag)(V172 + blockNum)] = 0;
 }
 
 } // namespace Rooms

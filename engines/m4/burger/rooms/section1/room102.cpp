@@ -195,7 +195,7 @@ void Room102::daemon() {
 					_harryMode = 26;
 					term_message("change channel");
 				} else {
-					digi_play(getDigi1(_G(flags)[GLB_TEMP_2]), 2, 255, 18);
+					digi_play(getDigi1(_G(flags)[V008]), 2, 255, 18);
 					_val9 = 1;
 					_harryMode = 20;
 					term_message("mumble");
@@ -474,7 +474,7 @@ void Room102::daemon() {
 
 			case 37:
 				_harryMode = 39;
-				_G(flags)[GLB_TEMP_5] = 2;
+				_G(flags)[V011] = 2;
 				digi_preload_stream_breaks(STREAMS2);
 				series_play("102ha09s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS2, "102ha09", 6, 0x100, 3);
@@ -482,7 +482,7 @@ void Room102::daemon() {
 
 			case 38:
 				_harryMode = 40;
-				_G(flags)[GLB_TEMP_5] = 1;
+				_G(flags)[V011] = 1;
 				digi_preload_stream_breaks(STREAMS3);
 				series_play("102ha10s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS3, "102ha10", 6, 0x100, 3);
@@ -1377,26 +1377,26 @@ void Room102::setup(int val1, int val2) {
 	if (val2)
 		digi_play_loop("102_001", 3, 255, -1);
 	if (_val1) {
-		digi_unload(getDigi1(_G(flags)[GLB_TEMP_2]));
-		digi_unload(getDigi2(_G(flags)[GLB_TEMP_2]));
+		digi_unload(getDigi1(_G(flags)[V008]));
+		digi_unload(getDigi2(_G(flags)[V008]));
 	}
 
 	if (val1) {
-		_G(flags)[GLB_TEMP_2] = val1;
+		_G(flags)[V008] = val1;
 	} else {
-		if (++_G(flags)[GLB_TEMP_2] == 36)
-			_G(flags)[GLB_TEMP_2] = 1;
+		if (++_G(flags)[V008] == 36)
+			_G(flags)[V008] = 1;
 	}
 
 	_val1 = 1;
-	digi_preload(getDigi1(_G(flags)[GLB_TEMP_2]));
-	digi_preload(getDigi2(_G(flags)[GLB_TEMP_2]));
+	digi_preload(getDigi1(_G(flags)[V008]));
+	digi_preload(getDigi2(_G(flags)[V008]));
 
 	if (val2)
 		digi_stop(3);
 
-	digi_play_loop(getDigi2(_G(flags)[GLB_TEMP_2]), 3, 255, -1);
-	_val10 = timer_read_60() + digi_ticks_to_play(getDigi2(_G(flags)[GLB_TEMP_2]));
+	digi_play_loop(getDigi2(_G(flags)[V008]), 3, 255, -1);
+	_val10 = timer_read_60() + digi_ticks_to_play(getDigi2(_G(flags)[V008]));
 	_val8 = 0;
 }
 
@@ -1642,7 +1642,7 @@ void Room102::conv06() {
 			if (node == 1 && entry == 1) {
 				_wilburChairShould = 63;
 			} else if (node == 2) {
-				_harryMode = _G(flags)[GLB_TEMP_4] == 1 ? 49 : 48;
+				_harryMode = _G(flags)[V010] == 1 ? 49 : 48;
 				_wilburChairShould = 58;
 			} else {
 				_wilburChairShould = 58;
@@ -1652,9 +1652,9 @@ void Room102::conv06() {
 	} else if (sound) {
 		if (who <= 0) {
 			if (node == 1 && entry == 3) {
-				_G(flags)[GLB_TEMP_4] = 3;
+				_G(flags)[V010] = 3;
 
-				if (_G(flags)[GLB_TEMP_5] == 1)
+				if (_G(flags)[V011] == 1)
 					_G(flags)[V021] = 10034;
 			}
 
@@ -1665,16 +1665,16 @@ void Room102::conv06() {
 				return;
 
 			} else if (node == 1 && entry == 1) {
-				_G(flags)[GLB_TEMP_4] = 1;
+				_G(flags)[V010] = 1;
 				_G(flags)[V001] -= 8;
 
-				if (_G(flags)[GLB_TEMP_5] == 1)
+				if (_G(flags)[V011] == 1)
 					_G(flags)[V021] = 10032;
 			} else if (node == 1 && entry == 4) {
 				_harryMode = 21;
-				_G(flags)[GLB_TEMP_4] = 2;
+				_G(flags)[V010] = 2;
 
-				if (_G(flags)[GLB_TEMP_5] == 1)
+				if (_G(flags)[V011] == 1)
 					_G(flags)[V021] = 10033;
 
 				_G(flags)[V013] = 1;

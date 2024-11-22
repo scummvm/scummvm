@@ -139,7 +139,7 @@ void Room801::init() {
 	_wilburMode = 10;
 	digi_preload("800_001");
 
-	if (_G(flags)[GLB_TEMP_5] == 1) {
+	if (_G(flags)[V011] == 1) {
 		term_message(HEADER);
 		term_message("Toxic wax in hair");
 
@@ -430,7 +430,7 @@ void Room801::daemon() {
 		break;
 
 	case 23:
-		if (_G(flags)[GLB_TEMP_5] == 1) {
+		if (_G(flags)[V011] == 1) {
 			kernel_trigger_dispatch_now(24);
 		} else if (_G(flags)[kNEURO_TEST_COUNTER] <= 2) {
 			digi_unload("804_003");
@@ -542,7 +542,7 @@ void Room801::daemon() {
 		break;
 
 	case 42:
-		if (_G(flags)[GLB_TEMP_5] != 1)
+		if (_G(flags)[V011] != 1)
 			digi_play("806w001", 1, 128);
 		break;
 
