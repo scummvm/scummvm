@@ -49,7 +49,7 @@ void Room648::init() {
 		break;
 	}
 
-	digi_play_loop("950_28c", 3);
+	digi_play_loop("950_s28c", 3);
 }
 
 void Room648::parser() {
