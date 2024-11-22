@@ -687,6 +687,9 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+
+// -- CD-i --
+
 {
 	{
 		"gob1",
@@ -726,10 +729,10 @@
 	kFeaturesAdLib,
 	0, "AVT003.TOT", 0
 },
-{ // Found on ADI Spielerisch lernen Deutsch Klasse 1 & 2 CD-i 
+{ // Found on ADI Spielerisch lernen (German CD-i version) Found on Klasse 1&2 also on 3&4
 	{
 		"gob1",
-		"Deutsch Klasse 1 & 2",
+		"",
 		AD_ENTRY1s("intro.stk", "0acc50f67f9323c3654921915dab2d63", 7098368),
 		DE_DEU,
 		kPlatformCDi,
