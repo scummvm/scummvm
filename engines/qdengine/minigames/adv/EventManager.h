@@ -26,7 +26,7 @@ namespace QDEngine {
 
 class EventManager {
 public:
-	EventManager();
+	EventManager(MinigameManager *runtime);
 
 	void sysEvent(int eventID);
 	void event(int eventID, const mgVect2f& pos, int factor);
@@ -51,6 +51,7 @@ private:
 	EventPresets _eventPresets;
 
 	QDObjects _triggerEvents;
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine

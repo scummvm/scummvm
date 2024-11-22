@@ -36,15 +36,16 @@ EventManager::EventPreset::EventPreset() {
 	triggerEventID = -1;
 }
 
-EventManager::EventManager() {
+EventManager::EventManager(MinigameManager *runtime) {
+	_runtime = runtime;
 	_score = 0;
 
 	char str_cache[256];
 
 	for (int idx = 0;; ++idx) {
 		snprintf(str_cache, 127, "register_trigger_%d", idx);
-		if (const char *descr = g_runtime->parameter(str_cache, false))
-			_triggerEvents.push_back(g_runtime->getObject(descr));
+		if (const char *descr = _runtime->parameter(str_cache, false))
+			_triggerEvents.push_back(_runtime->getObject(descr));
 		else
 			break;
 	}
@@ -53,7 +54,7 @@ EventManager::EventManager() {
 	_eventPresets.resize(SYSTEM_EVENTS_SIZE);
 	for (int idx = 0; idx < SYSTEM_EVENTS_SIZE; ++idx) {
 		snprintf(str_cache, 127, "system_event_%d", idx);
-		if (const char * descr = g_runtime->parameter(str_cache, false)) {
+		if (const char * descr = _runtime->parameter(str_cache, false)) {
 			EventPreset preset;
 			int read = sscanf(descr, "%d %d", &preset.score, &preset.triggerEventID);
 
@@ -72,7 +73,7 @@ EventManager::EventManager() {
 
 	for (int idx = 0;; ++idx) {
 		snprintf(str_cache, 127, "register_event_%d", idx);
-		if (const char * descr = g_runtime->parameter(str_cache, false)) {
+		if (const char * descr = _runtime->parameter(str_cache, false)) {
 			EventPreset preset;
 			int read = sscanf(descr, "%d %d %d %d", &preset.score, &preset.fontID, &preset.escapeID, &preset.triggerEventID);
 
@@ -91,7 +92,7 @@ EventManager::EventManager() {
 	}
 	debugC(2, kDebugMinigames, "EventManager(): registered %d events", _eventPresets.size());
 
-	if (const char * data = g_runtime->parameter("allow_negative", false)) {
+	if (const char * data = _runtime->parameter("allow_negative", false)) {
 		int tmp;
 		sscanf(data, "%d", &tmp);
 		_enableNegative = tmp;
@@ -105,7 +106,7 @@ void EventManager::sysEvent(int eventID) {
 
 	assert(eventID < SYSTEM_EVENTS_SIZE);
 
-	mgVect2i pos = g_runtime->screenSize() / 2;
+	mgVect2i pos = _runtime->screenSize() / 2;
 	event(eventID - SYSTEM_EVENTS_SIZE, mgVect2f(pos.x, pos.y), 1);
 }
 
@@ -128,7 +129,7 @@ void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
 		int diff = addScore(pr.score);
 
 		if (pr.fontID >= 0 && pr.escapeID >= 0 && diff != 0)
-			g_runtime->textManager().showNumber(diff, pos, pr.fontID, pr.escapeID);
+			_runtime->textManager().showNumber(diff, pos, pr.fontID, pr.escapeID);
 	}
 }
 
@@ -142,7 +143,7 @@ int EventManager::addScore(int sc) {
 	diff = _score - diff;
 
 	if (diff)
-		g_runtime->textManager().updateScore(_score);
+		_runtime->textManager().updateScore(_score);
 
 	return diff;
 }

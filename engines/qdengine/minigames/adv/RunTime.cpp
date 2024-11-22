@@ -179,7 +179,7 @@ bool MinigameManager::createGame() {
 
 	_textManager = new TextManager();
 
-	_eventManager = new EventManager();
+	_eventManager = new EventManager(this);
 
 	HoldData<EffectManagerData> effectData(_currentGameInfo ? &_currentGameInfo->_effectManagerData : 0, !_currentGameInfo || _currentGameInfo->_empty);
 	_effectManager = new EffectManager(effectData);
@@ -866,7 +866,7 @@ int MinigameManager::rnd(int min, int max) const {
 }
 
 int MinigameManager::rnd(const Std::vector<float> &prob) const {
-	float rnd = g_runtime->rnd(0.f, .9999f);
+	float rnd = this->rnd(0.f, .9999f);
 	float accum = 0.f;
 	int idx = 0;
 	int size = prob.size();
