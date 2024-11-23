@@ -1298,8 +1298,30 @@ void Room701::daemon() {
 		break;
 
 	case 2601:
-		// TODO
-		warning("TODO 2601");
+		switch (_fieldB8) {
+		case 1:
+			_G(flags[kTravelDest]) = 1;
+			break;
+
+		case 2:
+			_G(flags[kTravelDest]) = 0;
+			break;
+
+		case 3:
+			_G(flags[kTravelDest]) = 4;
+			break;
+
+		case 4:
+			_G(flags[kTravelDest]) = 2;
+			break;
+
+		default:
+			break;
+		}
+
+		_G(game).new_room = 495;
+		_G(game).new_section = 4;
+
 		break;
 
 	case 2700:
