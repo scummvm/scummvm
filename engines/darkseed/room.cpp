@@ -246,6 +246,14 @@ bool Room::load() {
 
 	loadLocationSprites(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
+	g_engine->_player->_frameIdx = 0;
+	if (g_engine->_player->_position.y > 239) {
+		g_engine->_player->_position.y = 239;
+	}
+	g_engine->_player->_walkTarget = g_engine->_player->_position;
+	g_engine->_player->_heroMoving = false;
+	g_engine->_player->_playerIsChangingDirection = false;
+
 	if (_roomNumber == 61 && g_engine->_objectVar[22] > 2) {
 		loadRoom61AWalkableLocations();
 	}
