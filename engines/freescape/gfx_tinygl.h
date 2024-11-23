@@ -23,8 +23,10 @@
 #define FREESCAPE_GFX_TINYGL_H
 
 #include "math/vector3d.h"
+#include "common/hashmap.h"
 
 #include "freescape/gfx.h"
+#include "freescape/gfx_tinygl_texture.h"
 
 namespace Freescape {
 
@@ -39,12 +41,29 @@ public:
 		TGLfloat z;
 	};
 
+	Vertex *_verts;
 	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
 		assert(idx < kVertexArraySize);
 		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
 	}
 
-	Vertex *_verts;
+	struct Coord {
+		TGLfloat x;
+		TGLfloat y;
+	};
+
+	Coord *_texCoord;
+
+	void copyToTexCoordArray(uint idx, float x, float y) {
+		assert(idx < kVertexArraySize);
+		_texCoord[idx].x = x; _texCoord[idx].y = y;
+	}
+
+	bool _stippleEnabled;
+	TinyGL3DTexture *_stippleTexture;
+	Common::HashMap<uint64, TinyGL3DTexture *> _stippleTextureCache;
+	uint32 _lastColorSet0;
+	uint32 _lastColorSet1;
 
 	virtual void init() override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
@@ -57,8 +76,6 @@ public:
 	virtual void depthTesting(bool enabled) override;
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
-
-	TGLubyte *_variableStippleArray;
 
 	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;

@@ -49,6 +49,7 @@ private:
 class TinyGL3DTexture : public Texture {
 public:
 	TinyGL3DTexture(const Graphics::Surface *surface);
+	TinyGL3DTexture(byte *stipple, uint32 color1, uint32 color2);
 	virtual ~TinyGL3DTexture();
 
 	void update(const Graphics::Surface *surface) override;
