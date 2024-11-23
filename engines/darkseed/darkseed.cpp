@@ -355,19 +355,19 @@ void DarkseedEngine::updateEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_cursor.updatePosition(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_isRightMouseClicked = true;
-			break;
-//		case Common::EVENT_RBUTTONUP: _isRightMouseClicked = false; break;
-		case Common::EVENT_LBUTTONDOWN:
-			_isLeftMouseClicked = true;
-			break;
-//		case Common::EVENT_LBUTTONUP: _isLeftMouseClicked = false; break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_t) {
-				_timeAdvanceEventSelected = true;
-			}
 			_lastKeyPressed = event.kbd.keycode;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kDarkseedActionSelect) {
+				_isLeftMouseClicked = true;
+			} else if (event.customType == kDarkseedActionChangeCommand) {
+				_isRightMouseClicked = true;
+			} else if (event.customType == kDarkseedActionTimeAdvance) {
+				_timeAdvanceEventSelected = true;
+			} else if (event.customType == kDarkseedActionQuit) {
+				quitGame();
+			}
 			break;
 		default:
 			break;

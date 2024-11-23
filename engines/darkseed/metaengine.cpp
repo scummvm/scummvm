@@ -20,6 +20,8 @@
  */
 
 #include "common/translation.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "darkseed/metaengine.h"
 #include "darkseed/detection.h"
@@ -50,6 +52,39 @@ const char *DarkseedMetaEngine::getName() const {
 
 const ADExtraGuiOptionsMap *DarkseedMetaEngine::getAdvancedExtraGuiOptions() const {
 	return Darkseed::optionsList;
+}
+
+Common::KeymapArray DarkseedMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "darkseed", "Darkseed");
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Action"));
+	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionSelect);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CHANGECOMMAND", _("Change Command"));
+	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionChangeCommand);
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TIMEADVANCE", _("Time Advance"));
+	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionTimeAdvance);
+	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionQuit);
+	act->addDefaultInputMapping("C+q");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 Common::Error DarkseedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

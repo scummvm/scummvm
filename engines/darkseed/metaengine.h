@@ -22,6 +22,7 @@
 #ifndef DARKSEED_METAENGINE_H
 #define DARKSEED_METAENGINE_H
 
+#include "backends/keymapper/keymap.h"
 #include "engines/advancedDetector.h"
 
 class DarkseedMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
@@ -38,6 +39,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // DARKSEED_METAENGINE_H

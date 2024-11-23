@@ -52,6 +52,14 @@ namespace Darkseed {
 
 struct DarkseedGameDescription;
 
+enum DarkseedAction {
+	kDarkseedActionNone,
+	kDarkseedActionSelect,
+	kDarkseedActionChangeCommand,
+	kDarkseedActionTimeAdvance,
+	kDarkseedActionQuit
+};
+
 enum ActionMode : uint8 {
 	kPointerAction = 0,
 	kHandAction = 2,
