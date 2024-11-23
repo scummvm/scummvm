@@ -170,9 +170,9 @@ public:
 private:
 	bool loadInstruments(const char *const *fileNames, int numFileNames) override;
 	Common::SharedPtr<MacSndResource> getNoteRangeSndResource(uint16 id, byte note);
-	void setInstrument(DeviceChannel *c) override;
-	void recalcFrequency(DeviceChannel *c) override;
-	void recalcVolume(DeviceChannel *c) override;
+	void setInstrument(DeviceChannel *chan) override;
+	void recalcFrequency(DeviceChannel *chan) override;
+	void recalcVolume(DeviceChannel *chan) override;
 	void noteOffIntern(DeviceChannel *chan) override;
 
 	DeviceChannel *allocateChannel(const ChanControlNode *node) override;
@@ -873,28 +873,28 @@ Common::SharedPtr<MacSndResource> NewMacSoundSystem::getNoteRangeSndResource(uin
 	return res;
 }
 
-void NewMacSoundSystem::setInstrument(DeviceChannel *c) {
-	assert(c && c->node);
-	if (c->instr == nullptr || (c->node->number != 9 && c->prog != c->node->prog) || c->note != c->node->note) {
-		c->note = c->node->note;
-		c->prog = c->node->prog;
-		c->instr = (c->node->number == 9) ? getSndResource(6000 + c->note) : getNoteRangeSndResource(c->prog, c->note);
+void NewMacSoundSystem::setInstrument(DeviceChannel *chan) {
+	assert(chan && chan->node);
+	if (chan->instr == nullptr || (chan->node->number != 9 && chan->prog != chan->node->prog) || chan->note != chan->node->note) {
+		chan->note = chan->node->note;
+		chan->prog = chan->node->prog;
+		chan->instr = (chan->node->number == 9) ? getSndResource(6000 + chan->note) : getNoteRangeSndResource(chan->prog, chan->note);
 	}
 }
 
-void NewMacSoundSystem::recalcFrequency(DeviceChannel *c) {
-	assert(c && c->node);
-	if (c->node->number == 9)
-		c->frequency = 0x8000;
+void NewMacSoundSystem::recalcFrequency(DeviceChannel *chan) {
+	assert(chan && chan->node);
+	if (chan->node->number == 9)
+		chan->frequency = 0x8000;
 	else
-		c->recalcFrequency();
-	c->frequency = MacLowLevelPCMDriver::calcRate(0x56220000, c->rate , c->frequency);
-	//if (c->frequency == (uint32)-1)
+		chan->recalcFrequency();
+	chan->frequency = MacLowLevelPCMDriver::calcRate(0x56220000, chan->rate , chan->frequency);
+	//if (chan->frequency == (uint32)-1)
 	//	error("%s(): Frequency calculation failed", __FUNCTION__);
 }
 
-void NewMacSoundSystem::recalcVolume(DeviceChannel *c) {
-	assert(c && c->node);
+void NewMacSoundSystem::recalcVolume(DeviceChannel *chan) {
+	assert(chan && chan->node);
 
 	static const byte volumeTable[] = {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02,
@@ -916,10 +916,10 @@ void NewMacSoundSystem::recalcVolume(DeviceChannel *c) {
 	};
 
 	if (_stereo) {
-		c->volumeL = (volumeTable[127 - (c->node->panPos >> 2)] * c->node->volume) >> 7;
-		c->volumeR = (volumeTable[96 + (c->node->panPos >> 2)] * c->node->volume) >> 7;
+		chan->volumeL = (volumeTable[127 - (chan->node->panPos >> 2)] * chan->node->volume) >> 7;
+		chan->volumeR = (volumeTable[96 + (chan->node->panPos >> 2)] * chan->node->volume) >> 7;
 	} else {
-		c->volumeL = c->node->volume;
+		chan->volumeL = chan->node->volume;
 	}
 
 	static const byte veloTable[] = {
@@ -941,14 +941,15 @@ void NewMacSoundSystem::recalcVolume(DeviceChannel *c) {
 		0x75, 0x76, 0x77, 0x79, 0x7a, 0x7b, 0x7d, 0x7f
 	};
 
-	if (c->release)
+	if (chan->release)
 		return;
 
-	c->totalLevelL = volumeTable[(veloTable[c->node->velocity] * c->volumeL) >> 7];
-	c->totalLevelR = volumeTable[(veloTable[c->node->velocity] * c->volumeR) >> 7];
+	chan->totalLevelL = volumeTable[(veloTable[chan->node->velocity] * chan->volumeL) >> 7];
+	chan->totalLevelR = volumeTable[(veloTable[chan->node->velocity] * chan->volumeR) >> 7];
 }
 
 void NewMacSoundSystem::noteOffIntern(DeviceChannel *chan) {
+	assert(chan && chan->node);
 	if (chan->node->number != 9)
 		chan->release = true;
 	chan->loopStart = nullptr;
