@@ -210,7 +210,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa520: return "DRAW SPRITE FLIPH";
 	case 0xa530: return "DRAW SPRITE FLIPHV";
 	case 0xa600: return "DRAW GETPUT";
-	case 0xa700: return "DRAW A700??";
+	case 0xa700: return "DRAW SCROLL";
 	case 0xaf00: return "DRAW FLOOD FILL";
 	case 0xaf10: return "DRAW EMPTY POLY";
 	case 0xaf20: return "DRAW FILLED POLY";
@@ -978,7 +978,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 						Common::Point(r.left, r.top));
 		break;
 	}
-	case 0xa700: { // DRAW scrollshape? x,y,w,h??
+	case 0xa700: { // DRAW SCROLL x,y,w,h??
 		if (!env._scrollShape) {
 			warning("Trying to draw scroll with no scrollshape loaded");
 		} else {
@@ -1034,21 +1034,21 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		}
 		break;
 	}
-	case 0xb600: { // COPY BUFFER: x, y, w, h, buf1, buf2
-		// buf1 and buf2 are buffer numbers.
-		// 	0 - composition
+	case 0xb600: { // COPY BUFFER: x, y, w, h, srcbuf, dstbuf
+		// srcbuf and dstbuf are buffer numbers.
+		// 	0 - background
 		// 	1 - stored area
-		// 	2 - background
+		// 	2 - composition
 		if (seq._executed) // this is a one-shot op
 			break;
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		int16 b1 = ivals[4];
 		int16 b2 = ivals[5];
-		Graphics::ManagedSurface &s1 = ((b1 == 0) ? _vm->_compositionBuffer :
-				(b1 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
-		Graphics::ManagedSurface &s2 = ((b2 == 0) ? _vm->_compositionBuffer :
-				(b2 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
-		s2.blitFrom(s1, r, r);
+		Graphics::ManagedSurface &src = ((b1 == 2) ? _vm->_compositionBuffer :
+				(b1 == 0 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		Graphics::ManagedSurface &dst = ((b2 == 2) ? _vm->_compositionBuffer :
+				(b2 == 0 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		dst.blitFrom(src, r, r);
 		break;
 	}
 	case 0xc020: {	// LOAD SAMPLE: filename:str
