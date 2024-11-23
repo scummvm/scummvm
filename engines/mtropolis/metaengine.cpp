@@ -24,7 +24,8 @@
 #include "engines/advancedDetector.h"
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
@@ -155,8 +156,26 @@ Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine
 
 Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mtropolis", "mTropolis");
-
 	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle Click"));
+	act->setMiddleClickEvent();
+	act->addDefaultInputMapping("MOUSE_MIDDLE");
+	act->addDefaultInputMapping("JOY_X");
+	keymap->addAction(act);
+
 	act = new Common::Action("DEBUG_TOGGLE_OVERLAY", _("Toggle debug overlay"));
 	act->setCustomEngineActionEvent(MTropolis::Actions::kDebugToggleOverlay);
 	act->addDefaultInputMapping("F10");
