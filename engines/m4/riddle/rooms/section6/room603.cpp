@@ -1795,6 +1795,7 @@ void Room603::conv603a() {
 					digi_preload("17_04n99");
 					_pu01 = series_stream("603pu01", 5, 0, 10);
 					series_stream_break_on_frame(_pu01, 6, 2);
+					return;
 				} else {
 					_ttShould = 8;
 				}
