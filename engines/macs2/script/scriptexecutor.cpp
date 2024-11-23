@@ -1024,7 +1024,9 @@ void ScriptExecutor::FuncB6BE() {
 
 uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
-	// Check if we have an override for the value
+	// Check if we have an override for the value. Since it will
+	// not override the existing value if there is none, we can just
+	// re-use the variable.
 	g_engine->GetPathfindingOverride(result, result);
 
 	// TODO: There is another condition and some more code for a second lookup,
@@ -1820,7 +1822,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 areaID = Func9F4D_16();
 			uint16 active = Func9F4D_16();
 			uint16 overrideValue = Func9F4D_16();
-			g_engine->SetPathfindingOverride(areaID, overrideValue);
+			if (active) {
+				g_engine->SetPathfindingOverride(areaID, overrideValue);
+			} else {
+				g_engine->RemovePathfindingOverride(areaID);
+			}
 		} else if (opcode1 == 0x14) {
 			// TODO: No idea why we only do this without other side effects or using the
 			// read value
