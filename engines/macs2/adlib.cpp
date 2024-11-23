@@ -846,6 +846,8 @@ void Adlib::OnTimer() {
 										bp2 = 0x3F;
 									}
 									// 1DFAh
+									Func2792(bp8 + 0xb0, 0);
+
 									// TODO: Continue from here
 								}
 							}

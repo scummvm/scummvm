@@ -56,6 +56,7 @@ namespace Macs2 {
 		// TODO: Maybe we need to add the caller, fn0017_24FD proc
 		void Func2686();
 
+		// Writes a value to the target register
 		void Func2792(byte registerIndex, byte value);
 		void Func2792r(byte value, byte registerIndex) {
 			Func2792(registerIndex, value);
