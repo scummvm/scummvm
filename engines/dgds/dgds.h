@@ -215,7 +215,7 @@ public:
 	Common::RandomSource &getRandom() { return _random; }
 
 	bool changeScene(int sceneNum);
-	void setMouseCursor(uint num);
+	void setMouseCursor(int num);
 
 	int getTextSpeed() const { return _textSpeed; }
 	void setTextSpeed(int16 speed) { _textSpeed = speed; }

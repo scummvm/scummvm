@@ -102,7 +102,7 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 Common::String HotArea::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d cursor2 %d interactionRectNum %d",
-			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _otherCursorNum, _objInteractionRectNum);
+			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _cursorNum2, _objInteractionRectNum);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
 	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
@@ -305,9 +305,9 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst._num = s->readUint16LE();
 	dst._cursorNum = s->readUint16LE();
 	if (isVersionOver(" 1.217"))
-		dst._otherCursorNum = s->readUint16LE();
+		dst._cursorNum2 = s->readUint16LE();
 	else
-		dst._otherCursorNum = 0;
+		dst._cursorNum2 = 0;
 
 	if (isVersionOver(" 1.218")) {
 		dst._objInteractionRectNum = s->readUint16LE();
@@ -1798,6 +1798,12 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 
 	int16 cursorNum = (!dlg && area) ? area->_cursorNum : 0;
 	if (_dragItem) {
+		if (area && area->_objInteractionRectNum == 1) {
+			// drag over Willy Beamish
+			engine->getInventory()->open();
+			return;
+		}
+
 		cursorNum = _dragItem->_iconNum;
 	} else if (_rbuttonDown) {
 		GameItem *activeItem = engine->getGDSScene()->getActiveItem();
@@ -1821,9 +1827,9 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	if (!area)
 		return;
 
-	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d. Run %d ops", area->_num,
+	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d cursor2 %d. Run %d ops", area->_num,
 			area->_rect.x, area->_rect.y, area->_rect.width, area->_rect.height,
-			area->_cursorNum, area->onLDownOps.size());
+			area->_cursorNum, area->_cursorNum2, area->onLDownOps.size());
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnStartDrag();
@@ -1867,8 +1873,8 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	if (!area)
 		return;
 
-	debug(9, "Mouse LUp on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->_rect.x, area->_rect.y,
-			area->_rect.width, area->_rect.height, area->_cursorNum);
+	debug(9, "Mouse LUp on area %d (%d,%d,%d,%d) cursor %d cursor2 %d", area->_num, area->_rect.x, area->_rect.y,
+		  area->_rect.width, area->_rect.height, area->_cursorNum, area->_cursorNum2);
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (!_rbuttonDown)
@@ -2127,7 +2133,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	area._rect.height = icons->height(invButtonIcon);
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
-	area._otherCursorNum = 0;
+	area._cursorNum2 = 0;
 	area._objInteractionRectNum = 0;
 
 	// Add swap character button for HoC
@@ -2141,7 +2147,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 		area2._rect.height = icons->height(iconNum);
 		area2._rect.x = 5;
 		area2._rect.y = SCREEN_HEIGHT - area2._rect.height - 5;
-		area2._otherCursorNum = 0;
+		area2._cursorNum2 = 0;
 		area2._objInteractionRectNum = 0;
 
 		_hotAreaList.push_front(area2);
@@ -2214,7 +2220,7 @@ void SDSScene::activateChoice() {
 }
 
 
-GDSScene::GDSScene() : _defaultMouseCursor(0), _field3a(0), _invIconNum(0), _invIconMouseCursor(0), _field40(0) {
+GDSScene::GDSScene() : _defaultMouseCursor(0), _defaultMouseCursor2(0), _invIconNum(0), _invIconMouseCursor(0), _defaultOtherMouseCursor(0) {
 }
 
 bool GDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -2388,17 +2394,17 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 		readObjInteractionList(stream, _objInteractions2);
 
 	if (isVersionOver(" 1.218")) {
-		_defaultMouseCursor = stream->readUint16LE();
-		_field3a = stream->readUint16LE();
+		_defaultMouseCursor = stream->readSint16LE();
+		_defaultMouseCursor2 = stream->readUint16LE();
 		_invIconNum = stream->readUint16LE();
-		_invIconMouseCursor = stream->readUint16LE();
-		_field40 = stream->readUint16LE();
+		_invIconMouseCursor = stream->readSint16LE();
+		_defaultOtherMouseCursor = stream->readSint16LE();
 	} else {
 		_defaultMouseCursor = 0;
-		_field3a = 1;
+		_defaultMouseCursor2 = 1;
 		_invIconNum = 2;
 		_invIconMouseCursor = 0;
-		_field40 = 6;
+		_defaultOtherMouseCursor = 6;
 	}
 
 	return !stream->err();

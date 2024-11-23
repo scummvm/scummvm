@@ -213,8 +213,10 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_gdsScene->runChangeSceneOps();
 
-	if (!_scene->getDragItem())
-		setMouseCursor(_gdsScene->getDefaultMouseCursor());
+	if (!_scene->getDragItem()) {
+		int16 cursorNum = (getGameId() == GID_WILLY) ? -2 : -1;
+		setMouseCursor(cursorNum);
+	}
 
 	_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
@@ -249,8 +251,13 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	return true;
 }
 
-void DgdsEngine::setMouseCursor(uint num) {
-	if (!_icons || (int)num >= _icons->loadedFrameCount())
+void DgdsEngine::setMouseCursor(int num) {
+	if (num == -1)
+		num = _gdsScene->getDefaultMouseCursor();
+	else if (num == -2)
+		num = _gdsScene->getDefaultMouseCursor2();
+
+	if (!_icons || num >= _icons->loadedFrameCount())
 		return;
 
 	if ((int)num == _currentCursor)
@@ -258,7 +265,7 @@ void DgdsEngine::setMouseCursor(uint num) {
 
 	const Common::Array<MouseCursor> &cursors = _gdsScene->getCursorList();
 
-	if (num >= cursors.size())
+	if (num >= (int)cursors.size())
 		error("Not enough cursor info, need %d have %d", num, cursors.size());
 
 	_currentCursorHot = cursors[num].getHot();
@@ -712,6 +719,7 @@ Common::Error DgdsEngine::run() {
 			if (getGameId() == GID_WILLY) {
 				_scene->drawVisibleHeads(&_compositionBuffer);
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
+				_scene->updateHotAreasFromDynamicRects();
 			} else {
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
 				_scene->drawVisibleHeads(&_compositionBuffer);
@@ -723,6 +731,7 @@ Common::Error DgdsEngine::run() {
 			_clock.update(gameRunning);
 
 			g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 			_justChangedScene1 = false;
 			_justChangedScene2 = false;
 		}
