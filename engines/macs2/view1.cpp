@@ -1011,7 +1011,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 	// Shadow parts, from top in clockwise order
 	// TODO: Adjust pos and sizes
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0xFF, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0xFF, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0xFF, s);
