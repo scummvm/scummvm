@@ -81,6 +81,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	debug(1, "ADSInterpreter: load %s", detailfile.c_str());
 
 	// Reset the state
+	_vm->setFlipMode(false);
 	_adsTexts.setVal(detailfile, ADSData());
 	_adsData = &(_adsTexts.getVal(detailfile));
 
