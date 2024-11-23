@@ -34,7 +34,7 @@ enum EffectType {
 
 class EffectManager {
 public:
-	EffectManager(HoldData<EffectManagerData> &data);
+	EffectManager(HoldData<EffectManagerData> &data, MinigameManager *runtime);
 	~EffectManager();
 
 	void quant(float dt);
@@ -53,6 +53,7 @@ private:
 	float _phaseTimer;
 	QDObject _effect;
 
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine

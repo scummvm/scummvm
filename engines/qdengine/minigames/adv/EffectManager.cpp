@@ -25,13 +25,14 @@
 
 namespace QDEngine {
 
-EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
-	const char *effectName = g_runtime->parameter("effect_name", "effect");
-	if (g_runtime->testObject(effectName)) {
-		_effect = g_runtime->getObject(effectName);
+EffectManager::EffectManager(HoldData<EffectManagerData> &data, MinigameManager *runtime) {
+	_runtime = runtime;
+	const char *effectName = _runtime->parameter("effect_name", "effect");
+	if (_runtime->testObject(effectName)) {
+		_effect = _runtime->getObject(effectName);
 		_data.crd = _effect->R();
 		_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
-		g_runtime->hide(_effect);
+		_runtime->hide(_effect);
 	}
 
 	data.process(_data);
@@ -47,21 +48,20 @@ EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
 }
 
 EffectManager::~EffectManager() {
-	g_runtime->release(_effect);
-
+	_runtime->release(_effect);
 }
 
 void EffectManager::quant(float dt) {
 	if (_current == EFFECT_COUNT)
 		return;
 
-	if (g_runtime->getTime() > _effectTimer) {
+	if (_runtime->getTime() > _effectTimer) {
 		stop(_current);
 		return;
 	}
 
-	if (g_runtime->getTime() > _phaseTimer) {
-		_phaseTimer = g_runtime->getTime() + _phaseTime;
+	if (_runtime->getTime() > _phaseTimer) {
+		_phaseTimer = _runtime->getTime() + _phaseTime;
 		mgVect2f scale = _effect->screen_scale();
 		mgVect2f speed = scale;
 		scale *= _phaseSpeed;
@@ -75,9 +75,9 @@ void EffectManager::quant(float dt) {
 void EffectManager::start(EffectType id) {
 	if (_current != EFFECT_COUNT || !_effect)
 		return;
-	_effectTimer = g_runtime->getTime() + _effectTime;
+	_effectTimer = _runtime->getTime() + _effectTime;
 	_current = id;
-	_phaseTimer = g_runtime->getTime();
+	_phaseTimer = _runtime->getTime();
 	_effect->set_screen_scale(mgVect2f(0.02f, 0.02f), mgVect2f(10000.f, 10000.f));
 	_effect->set_R(_data.crd);
 
@@ -86,7 +86,7 @@ void EffectManager::start(EffectType id) {
 void EffectManager::stop(EffectType id) {
 	if (_current == EFFECT_COUNT)
 		return;
-	g_runtime->hide(_effect);
+	_runtime->hide(_effect);
 	_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
 	_current = EFFECT_COUNT;
 }

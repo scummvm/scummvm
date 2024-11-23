@@ -182,7 +182,7 @@ bool MinigameManager::createGame() {
 	_eventManager = new EventManager(this);
 
 	HoldData<EffectManagerData> effectData(_currentGameInfo ? &_currentGameInfo->_effectManagerData : 0, !_currentGameInfo || _currentGameInfo->_empty);
-	_effectManager = new EffectManager(effectData);
+	_effectManager = new EffectManager(effectData, this);
 
 	const char *stateFlagName = parameter("_state_flagname", "state_flag");
 
