@@ -771,7 +771,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
-		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2] + 1, ivals[3] + 1);
 		break;
 	case 0x4110: // FADE OUT:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
