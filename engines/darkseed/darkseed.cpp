@@ -1402,14 +1402,14 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
 						_player->_flipSprite);
-				} else if (_animation->_otherNspAnimationType_maybe == 47) {
+				} else if (_animation->_otherNspAnimationType_maybe == 47) { // Mike stick throw
 					const Sprite &sprite = _room->_locationSprites.getSpriteAt(_player->_frameIdx);
 					_room->calculateScaledSpriteDimensions(
 						sprite._width,
 						sprite._height,
 						_player->_position.y);
 					_sprites.addSpriteToDrawList(
-						_player->_position.x,
+						_player->_position.x - _scaledSpriteWidth / 2,
 						_player->_position.y - _scaledSpriteHeight,
 						&sprite,
 						240 - _player->_position.y,
