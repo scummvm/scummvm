@@ -28,7 +28,22 @@
 #include "backends/fs/morphos/morphos-fs-factory.h"
 #include "backends/dialogs/morphos/morphos-dialogs.h"
 
+static bool cleanupDone = false;
+
+static void cleanup() {
+	if (!cleanupDone)
+		g_system->destroy();
+}
+
+OSystem_MorphOS::~OSystem_MorphOS() {
+	cleanupDone = true;
+}
+
 void OSystem_MorphOS::init() {
+	// Register cleanup function to avoid unfreed signals
+	if (atexit(cleanup))
+		warning("Failed to register cleanup function via atexit()");
+
 	// Initialze File System Factory
 	_fsFactory = new MorphOSFilesystemFactory();
 
@@ -41,8 +56,6 @@ void OSystem_MorphOS::init() {
 }
 
 bool OSystem_MorphOS::hasFeature(Feature f) {
-	if (f == kFeatureOpenUrl)
-		return true;
 
 #if defined(USE_SYSDIALOGS)
 	if (f == kFeatureSystemBrowserDialog)
@@ -50,6 +63,29 @@ bool OSystem_MorphOS::hasFeature(Feature f) {
 #endif
 
 	return OSystem_SDL::hasFeature(f);
+}
+
+void OSystem_MorphOS::initBackend() {
+
+	// First time user defaults
+	ConfMan.registerDefault("audio_buffer_size", "2048");
+	ConfMan.registerDefault("extrapath", Common::Path("PROGDIR:extras/"));
+	ConfMan.registerDefault("savepath", Common::Path("PROGDIR:saves/"));
+	ConfMan.registerDefault("themepath", Common::Path("PROGDIR:themes/"));
+	// First time .ini defaults
+	if (!ConfMan.hasKey("audio_buffer_size")) {
+		ConfMan.set("audio_buffer_size", "2048");
+	}
+	if (!ConfMan.hasKey("extrapath")) {
+		ConfMan.setPath("extrapath", "PROGDIR:extras/");
+	}
+	if (!ConfMan.hasKey("savepath")) {
+		ConfMan.setPath("savepath", "PROGDIR:saves/");
+	}
+	if (!ConfMan.hasKey("themepath")) {
+		ConfMan.setPath("themepath", "PROGDIR:themes/");
+	}
+	OSystem_SDL::initBackend();
 }
 
 void OSystem_MorphOS::logMessage(LogMessageType::Type type, const char * message) {
