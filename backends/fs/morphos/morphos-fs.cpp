@@ -360,7 +360,7 @@ Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream(bool atomi
 bool MorphOSFilesystemNode::createDirectory() {
 	Common::String createPath = _sPath;
 	if (createPath.lastChar() == '/') {
-		createPath = createPath.substr(0, createPath.size() - 1);
+		createPath.deleteLastChar();
 	}
 
 	BPTR dirLock = CreateDir(createPath.c_str());
