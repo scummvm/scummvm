@@ -989,7 +989,7 @@ void Room701::daemon() {
 				_field98 = 1103;
 
 				player_update_info(_G(my_walker), &_G(player_info));
-				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, 0, triggerMachineByHashCallback, "rip talks agent");
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, false, triggerMachineByHashCallback, "rip talks agent");
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
 				conv_resume(conv_get_handle());
 				series_unload(_agentExchangeMoneySeries);
@@ -1193,8 +1193,49 @@ void Room701::daemon() {
 		break;
 
 	case 2300:
-		// TODO
-		warning("TODO 2300");
+		_field58_digiName = nullptr;
+		_field5C_digiName = nullptr;
+		_field60_digiName = nullptr;
+		_field64_digiName = nullptr;
+
+		if (_field50_counter <= 0) {
+			kernel_timing_trigger(1, 44, nullptr);
+			return;
+		}
+
+		if (_itemDigiName) {
+			_field58_digiName = _itemDigiName;
+			_itemDigiName = nullptr;
+		} else if (_G(flags[V364]) == 1) {
+			_field58_digiName = "201R26";
+		} else if (_G(flags[V365]) == 1) {
+			_field58_digiName = "201R61";
+		} else if (_G(flags[V366]) == 1) {
+			_field58_digiName = "401R31";
+		} else if (_G(flags[V373]) == 1) {
+			_field58_digiName = "401R36";
+		} else if (_G(flags[V370]) == 1) {
+			_field58_digiName = "501R02";
+		} else if (_G(flags[V371]) == 1) {
+			_field58_digiName = "501R03";
+		} else if (_G(flags[V372]) == 1) {
+			_field58_digiName = "701R39";
+			_field5C_digiName = "701R39A";
+		} else if (_G(flags[V367]) == 1) {
+			_field58_digiName = "401R37";
+			_G(flags[V367]) = 0;
+			_field130 = 1;
+		} else if (_G(flags[V368]) == 1) {
+			_field58_digiName = "401R38";
+			_G(flags[V368]) = 0;
+			_field130 = 1;
+		} else if (_G(flags[V369]) == 1) {
+			_field58_digiName = "401R39";
+			_G(flags[V369]) = 0;
+			_field130 = 1;
+		}
+
+		kernel_timing_trigger(1, 2301, nullptr);
 		break;
 
 	case 2301:
