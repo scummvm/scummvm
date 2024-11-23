@@ -402,7 +402,7 @@ void Room701::daemon() {
 
 		} else if (_field50_counter > 0) {
 			_field8C = 1;
-			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 			ws_hide_walker(_G(my_walker));
 			sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
 			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 13, -1, _agentTalkLoopTjSeries, 11, 13, 1);
@@ -544,7 +544,7 @@ void Room701::daemon() {
 		break;
 
 	case 73:
-		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
 		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 11, 74, _701rp01Series, 11, 11, 0);
 
@@ -637,7 +637,7 @@ void Room701::daemon() {
 	case 91:
 		series_unload(_ripSketchingInNotebookPos3Series);
 		ws_hide_walker(_G(my_walker));
-		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, 92, _701rp01Series, 11, 11, 0);
 
 		break;
@@ -650,7 +650,7 @@ void Room701::daemon() {
 
 	case 93:
 		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
-		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 94, _701rp01Series, 1, 1, 0);
 
 		break;
@@ -715,7 +715,7 @@ void Room701::daemon() {
 				player_update_info(_G(my_walker), &_G(player_info));
 				_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 				ws_hide_walker(_G(my_walker));
-				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, 0, triggerMachineByHashCallback, "rip talks agent");
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, false, triggerMachineByHashCallback, "rip talks agent");
 				_field98 = 1103;
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 1);
 				conv_load("conv701a", 10, 10, 101);
@@ -974,9 +974,9 @@ void Room701::daemon() {
 			case 3606:
 				_field98 = 3607;
 				terminateMachine(_ripTalksAgentMach);
-				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 102, _701rp01Series, 1, 1, 0);
-				_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, 0, triggerMachineByHashCallback, "agent posh express");
+				_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
 				sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 110, _agentTalkLoopTjSeries, 13, 13, 0);
 
 				break;
