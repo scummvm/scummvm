@@ -1507,6 +1507,8 @@ bool SDSScene::checkDialogActive() {
 				if (action) {
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;
+					if (dlgCopy._state)
+						dlgCopy._state->_selectedAction = nullptr;
 					debug(1, "Dialog %d closing: run action (%d ops)", dlg._num, action->sceneOpList.size());
 					if (!runOps(action->sceneOpList)) {
 						// HACK: the scene changed, but we haven't yet drawn the foreground for the
