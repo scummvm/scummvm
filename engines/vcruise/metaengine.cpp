@@ -22,7 +22,8 @@
 #include "common/translation.h"
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
 #include "vcruise/vcruise.h"
@@ -152,8 +153,20 @@ Common::Error VCruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, 
 
 Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "vcruise", "V-Cruise");
-
 	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Common::Action("VCRUISE_ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(VCruise::kKeymappedEventEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	keymap->addAction(act);
+
 	act = new Common::Action("VCRUISE_HELP", _("Display help screen"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventHelp);
 	act->addDefaultInputMapping("F1");

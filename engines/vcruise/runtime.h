@@ -553,14 +553,13 @@ enum OSEventType {
 	kOSEventTypeLButtonDown,
 	kOSEventTypeLButtonUp,
 
-	kOSEventTypeKeyDown,
-
 	kOSEventTypeKeymappedEvent,
 };
 
 enum KeymappedEvent {
 	kKeymappedEventNone,
 
+	kKeymappedEventEscape,
 	kKeymappedEventHelp,
 	kKeymappedEventSaveGame,
 	kKeymappedEventLoadGame,
@@ -584,7 +583,6 @@ struct OSEvent {
 
 	OSEventType type;
 	Common::Point pos;
-	Common::KeyCode keyCode;
 	KeymappedEvent keymappedEvent;
 	uint32 timestamp;
 };
@@ -666,7 +664,6 @@ public:
 	void onLButtonDown(int16 x, int16 y);
 	void onLButtonUp(int16 x, int16 y);
 	void onMouseMove(int16 x, int16 y);
-	void onKeyDown(Common::KeyCode keyCode);
 	void onKeymappedEvent(KeymappedEvent evt);
 
 	bool canSave(bool onCurrentScreen) const;

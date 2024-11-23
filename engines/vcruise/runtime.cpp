@@ -553,7 +553,7 @@ ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc
 	panInteractionID(0), clickInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
-OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)), keymappedEvent(kKeymappedEventNone), timestamp(0) {
+OSEvent::OSEvent() : type(kOSEventTypeInvalid), keymappedEvent(kKeymappedEventNone), timestamp(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -2362,7 +2362,7 @@ bool Runtime::runWaitForAnimation() {
 	// Still waiting, check events
 	OSEvent evt;
 	while (popOSEvent(evt)) {
-		if (evt.type == kOSEventTypeKeyDown && evt.keyCode == Common::KEYCODE_ESCAPE) {
+		if (evt.type == kOSEventTypeKeymappedEvent && evt.keymappedEvent == kKeymappedEventEscape) {
 			if (_escOn) {
 				// Terminate the animation
 				if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -6854,14 +6854,6 @@ void Runtime::onMouseMove(int16 x, int16 y) {
 	OSEvent evt;
 	evt.type = kOSEventTypeMouseMove;
 	evt.pos = Common::Point(x, y);
-
-	queueOSEvent(evt);
-}
-
-void Runtime::onKeyDown(Common::KeyCode keyCode) {
-	OSEvent evt;
-	evt.type = kOSEventTypeKeyDown;
-	evt.keyCode = keyCode;
 
 	queueOSEvent(evt);
 }
