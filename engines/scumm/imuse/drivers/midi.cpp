@@ -882,7 +882,7 @@ void IMuseDriver_MT32::initDevice() {
 	for (int i = (20 - (int)infoStr.size()) >> 1; i > 0; --i)
 		infoStr = ' ' + infoStr + ' ';
 	sendMT32Sysex(0x80000, (const byte*)infoStr.c_str(), MIN<uint32>(infoStr.size(), 20));
-	
+
 	// Reset the MT-32
 	sendMT32Sysex(0x1FC000, 0, 0);
 

@@ -838,7 +838,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 		byte *b = new byte[sz]();
 		str->read(b, sz);
 		delete str;
-		
+
 		Instrument *ins = new Instrument(*i);
 
 		ins->sndRes.push_back(getSndResource(READ_BE_UINT16(b)));
@@ -858,7 +858,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 		delete[] b;
 		_instruments.push_back(Common::SharedPtr<Instrument>(ins));
 	}
-	
+
 	return !_instruments.empty();
 }
 
@@ -1035,7 +1035,7 @@ void IMuseChannel_Macintosh::noteOff(byte note)  {
 void IMuseChannel_Macintosh::noteOn(byte note, byte velocity)  {
 	ChanControlNode *node = (_version > 0 && _number == 9) ? _rtmChannel : allocateNode(_prio);
 	if (node == nullptr)
-		return;	
+		return;
 
 	if (node != _rtmChannel) {
 		if (_prog == 0)
@@ -1064,7 +1064,7 @@ void IMuseChannel_Macintosh::controlChange(byte control, byte value)  {
 		// The original MI2/INDY4 code doesn't have that. It will just call a different
 		// programChange() method from the sysex handler. Only DOTT and SAMNMAX have the
 		// bank select like this in the original code.
-		_bank = value;	
+		_bank = value;
 		break;
 	case 6:
 		dataEntry(value);

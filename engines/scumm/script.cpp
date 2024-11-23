@@ -59,7 +59,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		putOwner(56, VAR(VAR_EGO));
 	}
 
- 	if (!script)
+	if (!script)
 		return;
 
 	if (!recursive)

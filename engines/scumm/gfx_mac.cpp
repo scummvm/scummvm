@@ -279,17 +279,17 @@ void ScummEngine::mac_applyEPXToBuffer(const byte *inputBuffer, byte *outputBuff
 	//  C P B   -->   +---+---+
 	//    D           | 3 | 4 |
 	//                +---+---+
-	// 
+	//
 	// Let P be the pixel, and A,B,C,D its neighbors,
 	// then the new 1,2,3,4 pixels are defined as follows:
-	// 
+	//
 	// 1=P; 2=P; 3=P; 4=P;
-	// 
+	//
 	// IF C==A => 1=A
 	// IF A==B => 2=B
 	// IF D==C => 3=C
 	// IF B==D => 4=D
-	// 
+	//
 	// IF of A, B, C, D, three or more are identical: 1=2=3=4=P
 
 	for (int h = 0; h < height; h++) {

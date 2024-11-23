@@ -126,11 +126,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		if (_game.features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);
 	}
-	
+
 	// WORKAROUND: In the CD version of MI1 a certain palette slot (47)
 	// points to a dark blue color in room 36 (the Marley Mansion outside view).
 	// The same palette slot points to white in the Floppy VGA version.
-	// 
+	//
 	// This is believed to be an oversight in the scripts/datafiles, as it affects:
 	// - The "Important Notice" sign about how the dogs are only sleeping.
 	// - The color of some of the stars in the sky.
@@ -138,7 +138,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	// It has been noted that the Mac version apparently fixes that on the fly
 	// within the interpreter, so we do that as well even if kEnhVisualChanges
 	// is not active.
-	// 
+	//
 	// The SEGA CD version points to the correct color, and the FM Towns
 	// version makes the text more readable by giving it a black outline.
 	// The Ultimate Talkie version already takes care of that within the data files.
@@ -196,7 +196,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
 	if (_game.version >= 7) {
-		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;	
+		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
 		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
 		setCameraAt(_screenWidth / 2, _screenHeight / 2);
 	} else {

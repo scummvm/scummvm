@@ -682,7 +682,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 				return;
 			}
 
- 			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+			validKey = ks.keycode != Common::KEYCODE_INVALID &&
 					   ks.keycode != Common::KEYCODE_LALT    &&
 					   ks.keycode != Common::KEYCODE_RALT    &&
 					   ks.keycode != Common::KEYCODE_LCTRL   &&

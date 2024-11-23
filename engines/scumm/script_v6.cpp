@@ -3532,7 +3532,7 @@ void ScummEngine_v6::o6_findAllObjects() {
 	push(readVar(0));
 }
 
-void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {	
+void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 	int rand1, rand2;
 	int range = maxIdx - minIdx;
 	int count = range * 2;

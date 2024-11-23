@@ -47,7 +47,7 @@ public:
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override { if (_drv) _drv->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() override { return _drv ? _drv->getBaseTempo() : 0; }
 	void send(uint32 b) override { if (_drv) _drv->send(b); };
-	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); } 
+	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); }
 	virtual void setPitchBendRange(byte channel, uint range) override { if (_drv) _drv->setPitchBendRange(channel, range); }
 
 	// Channel allocation functions

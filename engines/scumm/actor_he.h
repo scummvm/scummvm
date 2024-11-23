@@ -46,7 +46,7 @@ struct HEAnimAuxEntry {
 };
 
 struct HEAnimAuxData {
-	HEAnimAuxData() : auxDefaultSearchBlock(nullptr), externalDataPtr(nullptr), auxDataBlock(nullptr), actor(0) {} 
+	HEAnimAuxData() : auxDefaultSearchBlock(nullptr), externalDataPtr(nullptr), auxDataBlock(nullptr), actor(0) {}
 	byte *auxDefaultSearchBlock;
 	byte *externalDataPtr;
 	const byte *auxDataBlock;

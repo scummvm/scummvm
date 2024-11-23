@@ -899,7 +899,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 				guiOptions.erase(pos, 1);
 		}
 	}
-	
+
 	Common::String defaultRenderOption = "";
 	Common::String defaultSoundOption = "";
 

@@ -1953,7 +1953,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			const char *soundCards[] = {
 				"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"
 			};
-			
+
 			GUI::MessageDialog dialog(
 				Common::U32String::format(_("Warning: incompatible sound settings detected between the current configuration and this saved game.\n\n"
 					"Current music device: %s (id %d)\nSave file music device: %s (id %d)\n\n"
@@ -1967,7 +1967,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	// This is again from disasm...
-	if (_game.id == GID_TENTACLE) {	
+	if (_game.id == GID_TENTACLE) {
 		for (int j = 0; j < 5; j++)
 			_scummVars[120 + j] = dottVarsBackup[j];
 

@@ -469,7 +469,7 @@ uint16 Player::sysExNoDelay(const byte *msg, uint16 length) {
 	// but most of the time not. So it seems to be rather a delicate and race-condition prone matter. The original
 	// parser handles the timing differently than our general purpose parser and the code execution is also expected
 	// to be much slower, so that might make all the difference here. It is really a flaw of the track. The time stamps
-	// after the sysex messages should have been made a bit more generous. 
+	// after the sysex messages should have been made a bit more generous.
 	// Now, I have added some delays here that I have taken from the original DOTT MT-32 driver's sysex function which
 	// are supposed to handle the situation when _scanning is enabled. For non-_scanning situations there is no delay in
 	// the original driver, since apparently is wasn't necessary.
@@ -617,7 +617,7 @@ int Player::setTranspose(byte relative, int b) {
 	if (b > 24 || b < -24 || relative > 1)
 		return -1;
 	if (relative)
-		b = transpose_clamp(_transpose + b, -7, 7);	
+		b = transpose_clamp(_transpose + b, -7, 7);
 
 	_transpose = b;
 
@@ -1085,7 +1085,7 @@ void Player::fixAfterLoad() {
 	_midi = _se->getBestMidiDriver(_id);
 	if (!_midi) {
 		clear();
-	} else {		
+	} else {
 		start_seq_sound(_id, false);
 		setSpeed(_speed);
 		if (_parser)
@@ -1128,7 +1128,7 @@ static void syncWithSerializer(Common::Serializer &s, ParameterFader &pf) {
 		}
 		pf.irem = 0;
 		pf.cntdwn = 0;
-		
+
 	} else {
 		s.syncAsSByte(pf.dir, VER(116));
 		s.syncAsSint16LE(pf.incr, VER(116));

@@ -611,7 +611,7 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 			if (_game.platform == Common::kPlatformFMTowns && vs->number == kBannerVirtScreen) {
 				int scl = _textSurfaceMultiplier;
 				towns_drawStripToScreen(vs, start * 8 * scl, (vs->topline + top) * scl, start * 8 * scl, top * scl, w * scl, bottom - top);
-			} else 
+			} else
 #endif
 				drawStripToScreen(vs, start * 8, w, top, bottom);
 			w = 8;
@@ -1949,7 +1949,7 @@ void ScummEngine_v5::drawFlashlight() {
 				}
 			} else {
 				const byte *fwdCurvePtr, *bkwdCurvePtr;
-		
+
 				switch (_game.version) {
 				case 1:
 					fwdCurvePtr = v1FwdCurveData;
@@ -2850,7 +2850,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	Common::Rect renderArea, clipArea, backgroundCoords;
 
 	if (_vm->_game.heversion > 98) {
-		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x + scrX, y, w, h);			
+		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x + scrX, y, w, h);
 
 		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRect(&clipArea, scrWidth, scrHeight);
 		((ScummEngine_v71he *)_vm)->_wiz->findRectOverlap(&renderArea, &clipArea);

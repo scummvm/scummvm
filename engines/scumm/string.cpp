@@ -79,7 +79,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// reactions to Max beating up the scientist run much too quick
 		// for the animation to match. We get around this by slowing
 		// down that animation.
- 		//
+		//
 		// In the italian CD version, the whole scene is sped up to
 		// keep up with Sam's speech. We compensate for this by slowing
 		// down the other animations.

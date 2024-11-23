@@ -1535,7 +1535,7 @@ int Actor_v2::remapDirection(int dir, bool is_walking) {
 
 	if (_moving & ~MF_TURN)
 		_targetFacing = oldDirToNewDir(remapTable2[newDirToOldDir(dir) * 8 + remapTable1[_walkdata.facing * 8 + (_vm->getBoxFlags(_walkbox) & 7)]]);
-	else 
+	else
 		_targetFacing = oldDirToNewDir(remapTable3[newDirToOldDir(dir) * 8 + (_vm->getBoxFlags(_walkbox) & 7)]);
 
 	return _targetFacing | 0x400;

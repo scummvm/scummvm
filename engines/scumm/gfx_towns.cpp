@@ -607,7 +607,7 @@ void TownsScreen::scrollLayer(int layer, int offset, int top, int bottom, bool f
 	if (top == 0 && bottom == _height - 1)
 		_numDirtyRects = kDirtyRectsMax;
 
-	addDirtyRect(0, top, _width, bottom - top);	
+	addDirtyRect(0, top, _width, bottom - top);
 }
 
 void TownsScreen::update() {
