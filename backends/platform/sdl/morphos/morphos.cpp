@@ -56,8 +56,6 @@ void OSystem_MorphOS::init() {
 }
 
 bool OSystem_MorphOS::hasFeature(Feature f) {
-	if (f == kFeatureOpenUrl || f == kFeatureClipboardSupport)
-		return true;
 
 #if defined(USE_SYSDIALOGS)
 	if (f == kFeatureSystemBrowserDialog)
