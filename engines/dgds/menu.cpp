@@ -42,11 +42,19 @@ namespace Dgds {
 
 // TODO: These are the IDs for Dragon, this code needs updates for China/Beamish/etc
 enum MenuButtonIds {
+	kMainMenuWillySave = 110,
+	kMainMenuWillyLoad = 111,
+	kMainMenuWillyRestart = 112,
+	kMainMenuWillyQuit = 113,
+	kMainMenuWillyHelp = 114,
+	kMainMenuWillySoundsOnOff = 115,
+	kMainMenuWillyMusicOnOff = 116,
+
 	kMenuMainPlay = 120,
 	kMenuMainControls = 20,
 	kMenuMainOptions = 121,
-	kMenuMainCalibrate = 118,
-	kMenuMainFiles = 119,
+	kMenuMainCalibrate = 118, // or Credits in Willy Beamish
+	kMenuMainFiles = 119, // or Play in Willy Beamish
 	kMenuMainQuit = 122,
 
 	kMenuControlsVCR = 127,
@@ -466,12 +474,14 @@ void Menu::handleClick(const Common::Point &mouse) {
 	case kMenuFilesRestore:
 	case kMenuGameOverRestore:
 	case kMenuIntroRestore:
+	case kMainMenuWillyLoad:
 		if (g_engine->loadGameDialog())
 			hideMenu();
 		else
 			drawMenu(_curMenu);
 		break;
 	case kMenuFilesRestart:
+	case kMainMenuWillyRestart:
 		drawMenu(kMenuRestart);
 		break;
 	case kMenuFilesSave: // TODO: Add an option to support original save/load dialogs?
@@ -479,6 +489,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 	//case kMenuSaveNext:
 	//case kMenuSaveSave:
 	case kMenuMaybeBetterSaveYes:
+	case kMainMenuWillySave:
 		if (g_engine->saveGameDialog())
 			hideMenu();
 		else
@@ -499,6 +510,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 		engine->restartGame();
 		break;
 	case kMenuGameOverQuit:
+	case kMainMenuWillyQuit:
 		drawMenu(kMenuReallyQuit);
 		break;
 	case kMenuGameOverRestart:
@@ -586,10 +598,12 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
 	case kMenuOptionsSoundsOnOffDE:
 	case kMenuOptionsSoundsOnOffHoC:
+	case kMainMenuWillySoundsOnOff:
 		soundType = Audio::Mixer::kSFXSoundType;
 		// fall through
 	case kMenuOptionsMusicOnOff:
 	case kMenuOptionsMusicOnOffHoC:
+	case kMainMenuWillyMusicOnOff:
 		if (!mixer->isSoundTypeMuted(soundType)) {
 			mixer->muteSoundType(soundType, true);
 			warning("TODO: Sync volume and pause music");

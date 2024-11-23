@@ -35,13 +35,11 @@
 
 namespace Dgds {
 
-// TODO: The following colors are from Rise of the Dragon.  Will need to check
-// if the same ones are hard-coded in the other games.
 static const byte DragonButtonColors[] = {
 	0x73, 0xF0, 0x7B, 0xDF, 0x5F, 0x5F, 0x7E, 0x27, 0x16, 0x73, 0x27, 0x16, 0xDF
 };
 
-static const byte SliderColors[] = {
+static const byte DragonSliderColors[] = {
 	0x7B, 0x4D, 0xF4, 0x54, 0xDF, 0x74, 0x58
 };
 
@@ -66,6 +64,7 @@ static const byte ChinaButtonColorsOff[] = {
 };
 
 static const byte WillyBackgroundColor = 16;
+static const byte WillyButtonColor = 20;
 
 static const byte MenuBackgroundColors[] {
 	0x71, 0x71, 0x71, 0x71, 0x71, 0x7B, 0x71, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
@@ -425,8 +424,12 @@ byte ButtonGadget::drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) cons
 }
 
 byte ButtonGadget::drawWillyBg(Graphics::ManagedSurface *dst, bool enabled) const {
-	// TODO: Write code to draw Willy Beamish type buttons..
-	return drawChinaBg(dst, enabled);
+	Common::Point pt = topLeft();
+	uint16 cornerFrame = enabled ? 8 : 16;
+	RequestData::drawCorners(dst, cornerFrame, pt.x, pt.y, _width, _height);
+	int16 fillHeight = enabled ? _height - 8 : _height - 6;
+	dst->fillRect(Common::Rect(Common::Point(pt.x + 8, pt.y + 3), _width - 16, fillHeight), WillyButtonColor);
+	return 0;
 }
 
 void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
@@ -467,6 +470,9 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 		}
 
 		yoffset = y + yoffset / 2;
+		if (gameId == GID_WILLY)
+			yoffset--;
+
 		int lineWidth = font->getStringWidth(line1);
 		font->drawString(dst, line1, x + (_width - lineWidth) / 2 + 1, yoffset + 2, lineWidth, textCol);
 
@@ -474,8 +480,84 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 			lineWidth = font->getStringWidth(line2);
 			font->drawString(dst, line2, x + (_width - lineWidth) / 2 + 1, yoffset + fontHeight, lineWidth, textCol);
 		}
+	} else if (gameId == GID_WILLY && _height == 32) {
+		drawWillyBmpButtons(dst);
 	}
+}
 
+enum WillyMenuIcons {
+	kWillyArrowRight = 33,
+	kWillyCD = 34,
+	kWillyRewind = 35,
+	kWillyStop = 36,
+	kWillyQuestionMark = 37,
+	kWillyBam = 38,
+	kWillyMusicNote = 39,
+	kWillyHelpText = 40,
+	kWillySwoosh = 42,
+	kWillyPlay = 43,
+	kWillyNoBam = 44,
+	kWillyNoMusicNote = 45,
+};
+
+void ButtonGadget::drawCenteredBmpIcon(Graphics::ManagedSurface *dst, int16 cornerNum) const {
+	const Image *uiCorners = RequestData::getCorners();
+	const Common::Rect screen(SCREEN_WIDTH, SCREEN_HEIGHT);
+	const Common::Point tl = topLeft();
+	int16 x = tl.x + (_width - uiCorners->width(cornerNum)) / 2;
+	int16 y = tl.y + (_height - uiCorners->height(cornerNum)) / 2;
+	uiCorners->drawBitmap(cornerNum, x, y, screen, *dst);
+}
+
+void ButtonGadget::drawWillyLoadSaveIcon(Graphics::ManagedSurface *dst, bool isLoad) const {
+	const Image *uiCorners = RequestData::getCorners();
+	const Common::Rect screen(SCREEN_WIDTH, SCREEN_HEIGHT);
+	const Common::Point tl = topLeft();
+	int16 cdIconWidth = uiCorners->width(kWillyCD);
+	int16 arrowIconWidth = uiCorners->width(kWillyArrowRight);
+	int16 x = tl.x + (_width - cdIconWidth - arrowIconWidth) / 2;
+	int16 cdy = tl.y + (_height - uiCorners->height(kWillyCD)) / 2;
+	int16 arrowy = tl.y + (_height - uiCorners->height(kWillyArrowRight)) / 2;
+	uiCorners->drawBitmap(kWillyCD, x, cdy, screen, *dst);
+	uiCorners->drawBitmap(kWillyArrowRight, x + cdIconWidth, arrowy, screen, *dst, isLoad ? kImageFlipNone : kImageFlipH);
+}
+
+void ButtonGadget::drawWillyBmpButtons(Graphics::ManagedSurface *dst) const {
+
+	switch (_gadgetNo) {
+	case 110: // SAVE (CD icon, arrow flipped)
+		drawWillyLoadSaveIcon(dst, false);
+		break;
+	case 111: // LOAD (CD icon, arrow)
+		drawWillyLoadSaveIcon(dst, true);
+		break;
+	case 112: // RESTART (rewind icon)
+		drawCenteredBmpIcon(dst, kWillyRewind);
+		break;
+	case 113: // QUIT (stop icon)
+		drawCenteredBmpIcon(dst, kWillyStop);
+		break;
+	case 114: // HELP (questionmark icon)
+		drawCenteredBmpIcon(dst, kWillyQuestionMark);
+		break;
+	case 115: // SFX (bam icon)
+		drawCenteredBmpIcon(dst, kWillyBam);
+		break;
+	case 116: // MUSIC (musical note icon)
+		drawCenteredBmpIcon(dst, kWillyMusicNote);
+		break;
+	case 120: // HELP (questionmark and text icon)
+		drawCenteredBmpIcon(dst, kWillyHelpText);
+		break;
+	case 118: // CREDITS (swoosh icon)
+		drawCenteredBmpIcon(dst, kWillySwoosh);
+		break;
+	case 119: // PLAY (play icon)
+		drawCenteredBmpIcon(dst, kWillyPlay);
+		break;
+	default:
+		break;
+	}
 }
 
 void ButtonGadget::toggle(bool enable) {
@@ -544,6 +626,35 @@ static const char *_sliderLabelsForGadget(uint16 num, Common::Language language)
 
 static const int SLIDER_HANDLE_FRAME = 28;
 
+void SliderGadget::drawDragonBg(Graphics::ManagedSurface *dst) const {
+	int16 x = _x + _parentX;
+	int16 y = _y + _parentY;
+	int16 x2 = x + _width;
+	int16 y2 = (y + _height) - 1;
+
+	int16 y1 = y - 1;
+	dst->drawLine(x - 2, y - 1, x - 2, y2, DragonSliderColors[0]);
+	dst->drawLine(x - 1, y1, x - 1, y2, DragonSliderColors[1]);
+	dst->drawLine(x, y2, x2 - 1, y2, DragonSliderColors[1]);
+	dst->drawLine(x, y1, x2, y1, DragonSliderColors[2]);
+	dst->drawLine(x2, y1, x2, y2, DragonSliderColors[2]);
+	dst->drawLine(x2 + 1, y1, x2 + 1, y2, DragonSliderColors[3]);
+	dst->drawLine(x, y, x2 - 1, y, DragonSliderColors[4]);
+	dst->drawLine(x2 - 1, y + 1, x2 - 1, (y + _height) - 2, DragonSliderColors[4]);
+	// This is not exactly what happens in the original, but gets the same result
+	Common::Rect fillrect = Common::Rect(x, y + 1, x + _width - 1, y + _height - 1);
+	dst->fillRect(fillrect, DragonSliderColors[5]);
+	fillrect.grow(-1);
+	dst->fillRect(fillrect, DragonSliderColors[6]);
+}
+
+void SliderGadget::drawChinaBg(Graphics::ManagedSurface *dst) const {
+	// TODO: Implement Heart of China style slider background
+	// and colors
+	drawDragonBg(dst);
+}
+
+
 void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	const DgdsFont *font = RequestData::getMenuFont();
 	Common::Language language = DgdsEngine::getInstance()->getGameLang();
@@ -551,8 +662,6 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
 
-	int16 x2 = x + _width;
-	int16 y2 = (y + _height) - 1;
 	int16 titley = (y - font->getFontHeight()) + 1;
 	const char *title = _sliderTitleForGadget(_gadgetNo, language);
 	const char *labels = _sliderLabelsForGadget(_gadgetNo, language);
@@ -561,20 +670,11 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, 0);
 	int16 labelWidth = font->getStringWidth(labels);
 	font->drawString(dst, labels, x + (_width - labelWidth) / 2, y + 7, labelWidth, 0);
-	int16 y1 = y - 1;
-	dst->drawLine(x - 2, y - 1, x - 2, y2, SliderColors[0]);
-	dst->drawLine(x - 1, y1, x - 1, y2, SliderColors[1]);
-	dst->drawLine(x, y2, x2 - 1, y2, SliderColors[1]);
-	dst->drawLine(x, y1, x2, y1, SliderColors[2]);
-	dst->drawLine(x2, y1, x2, y2, SliderColors[2]);
-	dst->drawLine(x2 + 1, y1, x2 + 1, y2, SliderColors[3]);
-	dst->drawLine(x, y, x2 - 1, y, SliderColors[4]);
-	dst->drawLine(x2 - 1, y + 1, x2 - 1, (y + _height) - 2, SliderColors[4]);
-	// This is not exactly what happens in the original, but gets the same result
-	Common::Rect fillrect = Common::Rect(x, y + 1, x + _width - 1, y + _height - 1);
-	dst->fillRect(fillrect, SliderColors[5]);
-	fillrect.grow(-1);
-	dst->fillRect(fillrect, SliderColors[6]);
+
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
+		drawDragonBg(dst);
+	else
+		drawChinaBg(dst);
 
 	// Draw the slider control in the right spot
 	const Image *uiCorners = RequestData::getCorners();
@@ -775,18 +875,38 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &cframes = uiCorners->getFrames();
 	const Common::SharedPtr<Graphics::ManagedSurface> *corners = cframes.data() + startNum;
 
-	for (int xoff = x + corners[0]->w; xoff < (x + width) - corners[2]->w; xoff += corners[1]->w)
-		dst->transBlitFrom(*corners[1], Common::Point(xoff, y));
+	//
+	// Corners images are:
+	//  0  1  2  3  4  5  6  7
+	// TL  T TR  L  R BL  B BR
+	//
 
-	for (int xoff = x + corners[6]->w; xoff < (x + width) - corners[7]->w; xoff += corners[6]->w)
-		dst->transBlitFrom(*corners[6], Common::Point(xoff, (y + height) - corners[6]->h));
+	//
+	// The T, L, R, and B blocks are repeated as many times as is needed to make the
+	// size of menu/button we need.
+	//
+	// The last repeated one is bottom/right-aligned so that it doesn't overlap with
+	// the corner (this is visible eg in Willy Beamish menu buttons)
+	//
+
+	for (int xoff = x + corners[0]->w; xoff < (x + width) - corners[2]->w; xoff += corners[1]->w) {
+		int xdraw = MIN(xoff, (x + width) - corners[2]->w - corners[1]->w);
+		dst->transBlitFrom(*corners[1], Common::Point(xdraw, y));
+	}
+
+	for (int xoff = x + corners[5]->w; xoff < (x + width) - corners[7]->w; xoff += corners[6]->w) {
+		int xdraw = MIN(xoff, (x + width) - corners[7]->w - corners[6]->w);
+		dst->transBlitFrom(*corners[6], Common::Point(xdraw, (y + height) - corners[6]->h));
+	}
 
 	for (int yoff = y + corners[0]->h; yoff < (y + height) - corners[5]->h; yoff += corners[3]->h) {
-		dst->transBlitFrom(*corners[3], Common::Point(x, yoff));
+		int ydraw = MIN(yoff, (y + height) - corners[5]->h - corners[3]->h);
+		dst->transBlitFrom(*corners[3], Common::Point(x, ydraw));
 	}
 
 	for (int yoff = y + corners[2]->h; yoff < (y + height) - corners[7]->h; yoff += corners[4]->h) {
-		dst->transBlitFrom(*corners[4], Common::Point((x + width) - corners[4]->w, yoff));
+		int ydraw = MIN(yoff, (y + height) - corners[7]->h - corners[4]->h);
+		dst->transBlitFrom(*corners[4], Common::Point((x + width) - corners[4]->w, ydraw));
 	}
 
 	dst->transBlitFrom(*corners[0], Common::Point(x, y));

@@ -118,6 +118,9 @@ private:
 	byte drawDragonBg(Graphics::ManagedSurface *dst, bool enabled) const;
 	byte drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) const;
 	byte drawWillyBg(Graphics::ManagedSurface *dst, bool enabled) const;
+	void drawWillyBmpButtons(Graphics::ManagedSurface *dst) const;
+	void drawCenteredBmpIcon(Graphics::ManagedSurface *dst, int16 cornerNum) const;
+	void drawWillyLoadSaveIcon(Graphics::ManagedSurface *dst, bool isLoad) const;
 };
 
 // extended gadget type 1 is 62 (0x3e) bytes
@@ -170,6 +173,9 @@ private:
 	bool _lock;
 	int16 _steps;
 	int16 _handleX;
+
+	void drawDragonBg(Graphics::ManagedSurface *dst) const;
+	void drawChinaBg(Graphics::ManagedSurface *dst) const;
 
 	int16 getHandleWidth() const;
 	int16 getUsableWidth() const;
