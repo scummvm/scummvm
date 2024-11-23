@@ -704,6 +704,434 @@ void Room701::daemon() {
 		break;
 
 	case 103:
+		switch (_field94) {
+		case 1000:
+			switch (_field98) {
+			case 1100:
+				player_set_commands_allowed(false);
+				_field68 = 2000;
+				_field6C = 2100;
+				kernel_timing_trigger(1, 110, nullptr);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+				ws_hide_walker(_G(my_walker));
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, 0, triggerMachineByHashCallback, "rip talks agent");
+				_field98 = 1103;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 1);
+				conv_load("conv701a", 10, 10, 101);
+				_fieldC4 = inventoryCheck();
+				_fieldBC = 1;
+
+				conv_export_value_curr((_G(flags[V088]) < 3) ? 0 : 1, 0);
+				conv_export_pointer_curr(&_fieldC4, 1);
+
+				_field100 = inv_player_has("CRYSTAL SKULL") ? 1 : 0;
+				_field104 = inv_player_has("STICK AND SHELL MAP") ? 1 : 0;
+				_field108 = inv_player_has("WHEELED TOY") ? 1 : 0;
+				_field10C = inv_player_has("REBUS AMULET") ? 1 : 0;
+				_field110 = inv_player_has("SHRUNKEN HEAD") ? 1 : 0;
+				_field114 = inv_player_has("SILVER BUTTERFLY") ? 1 : 0;
+				_field118 = inv_player_has("POSTAGE STAMP") ? 1 : 0;
+				_field11C = inv_player_has("GERMAN BANKNOTE") ? 1 : 0;
+				_field120 = inv_player_has("WHALE BONE HORN") ? 1 : 0;
+				_field124 = inv_player_has("CHISEL") ? 1 : 0;
+				_field128 = inv_player_has("INCENSE BURNER") ? 1 : 0;
+				_field12C = inv_player_has("ROMANOV EMERALD") ? 1 : 0;
+
+				conv_export_pointer_curr(&_field100, 3);
+				conv_export_pointer_curr(&_field104, 4);
+				conv_export_pointer_curr(&_field108, 5);
+				conv_export_pointer_curr(&_field10C, 6);
+				conv_export_pointer_curr(&_field110, 7);
+				conv_export_pointer_curr(&_field114, 8);
+				conv_export_pointer_curr(&_field118, 9);
+				conv_export_pointer_curr(&_field11C, 10);
+				conv_export_pointer_curr(&_field120, 11);
+				conv_export_pointer_curr(&_field124, 12);
+				conv_export_pointer_curr(&_field128, 13);
+				conv_export_pointer_curr(&_field12C, 14);
+
+				_fieldB8 = 0;
+				conv_export_pointer_curr(&_fieldB8, 15);
+				conv_export_pointer_curr(&_fieldC8, 17);
+				conv_play(conv_get_handle());
+
+				break;
+
+			case 1102: {
+				int32 rnd = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, rnd, rnd, 102, _ripTrekTalkerPos3Series, rnd, rnd, 0);
+				}
+
+				break;
+
+			case 1103:
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
+				break;
+
+			case 1104:
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, -1, _ripTrekTalkerPos3Series, 5, 5, 0);
+				break;
+
+			case 1105:
+				terminateMachine(_ripTalksAgentMach);
+				terminateMachine(_safariShadow3Mach);
+				ws_unhide_walker(_G(my_walker));
+				_field6C = 2103;
+				kernel_timing_trigger(1, 2700, nullptr);
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 3000:
+			switch (_field98) {
+			case 3100:
+				player_set_commands_allowed(false);
+				_field98 = 3101;
+				break;
+
+			case 3101:
+				terminateMachine(_agentPoshExpressMach02);
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 1, 60, 102, _agentGetTelegramSeries, 60, 60, 0);
+				_field98 = 3102;
+
+				break;
+
+			case 3102:
+				digi_play("950_S06", 2, 255, 102, 950);
+				inv_give_to_player("MESSAGE LOG");
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 69, 69, -1, _agentGetTelegramSeries, 69, 69, 0);
+				kernel_timing_trigger(1, 2204, nullptr);
+				_field98 = 3103;
+
+				break;
+
+			case 3103:
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 71, 71, -1, _agentGetTelegramSeries, 71, 71, 0);
+				_field98 = 3103;
+
+				break;
+
+			case 3105:
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 71, 86, 102, _agentGetTelegramSeries, 86, 86, 0);
+				_field98 = 3107;
+
+				break;
+
+			case 3106:
+				digi_play("950_S06", 2, 255, -1, 950);
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentGetTelegramSeries, 70, 71, -1, _agentGetTelegramSeries, 71, 71, 0);
+				_field98 = 3103;
+
+				break;
+
+			case 3107:
+				if (_field130) {
+					kernel_timing_trigger(1, 2501, nullptr);
+					_field130 = 0;
+				} else {
+					_field98 = 3108;
+					_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+					sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 102, _701rp01Series, 1, 1, 0);
+					sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 1, 1, -1, _agentTalkLoopTjSeries, 1, 1, 0);
+				}
+
+				break;
+
+			case 3108:
+				terminateMachine(_agentPoshExpressMach02);
+				kernel_timing_trigger(1, (_field134 == 1) ? 45 : 95, nullptr);
+				ws_unhide_walker(_G(my_walker));
+
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 3500:
+			switch (_field98) {
+			case 3501:
+				_agentSignsForMoneySeries = series_load("AGENT  SIGNS FOR MONEY", -1, nullptr);
+				_field98 = 3502;
+				_field6C = 2101;
+
+				terminateMachine(_ripTalksAgentMach);
+				player_set_commands_allowed(false);
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
+				digi_play(conv_sound_to_play(), 1, 255, 103, -1);
+
+				break;
+
+			case 3502:
+				_field6C = 2103;
+				kernel_timing_trigger(1, 103, nullptr);
+				_field98 = 3504;
+
+				break;
+
+			case 3503:
+				terminateMachine(_agentPoshExpressMach02);
+				_field98 = 3504;
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, 102, _701rp01Series, 11, 11, 0);
+
+				break;
+
+			case 3504:
+				terminateMachine(_agentPoshExpressMach);
+				terminateMachine(_agentPoshExpressMach02);
+				_field98 = 3505;
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, false, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentSignsForMoneySeries, 1, 70, 102, _agentSignsForMoneySeries, 70, 70, 0);
+
+				break;
+
+			case 3505:
+				digi_play("950_S06", 2, 255, -1, 950);
+				_field98 = 3506;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentSignsForMoneySeries, 70, 94, 102, _agentSignsForMoneySeries, 94, 94, 0);
+
+				break;
+
+			case 3506:
+				terminateMachine(_ripTalksAgentMach);
+				_field98 = 3507;
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 102, _701rp01Series, 1, 1, 0);
+				_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
+				_field68 = 2000;
+				_field6C = 2102;
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 110, _agentTalkLoopTjSeries, 13, 13, 0);
+
+				break;
+
+			case 3507:
+				_field94 = 1000;
+				inv_give_to_player("US DOLLARS");
+				terminateMachine(_agentPoshExpressMach02);
+				_field98 = 1103;
+				player_update_info(_G(my_walker), &_G(player_info));
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, false, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
+				conv_resume(conv_get_handle());
+				series_unload(_agentSignsForMoneySeries);
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+		case 3600:
+			switch (_field98) {
+			case 3601:
+				_agentExchangeMoneySeries = series_load("AGENT  EXCHANGE MONEY", -1, nullptr);
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 1, 5, -1, _ripTrekHandTalkPos3Series, 1, 5, 1);
+				_field98 = 3602;
+				digi_play_loop(_convDigiName_2.c_str(), 1, 255, 103, -1);
+
+				break;
+
+			case 3602:
+				_field98 = 3604;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 103, _ripTrekTalkerPos3Series, 5, 5, 1);
+
+				break;
+
+			case 3603:
+				terminateMachine(_agentPoshExpressMach);
+				terminateMachine(_agentPoshExpressMach02);
+				_field98 = 3605;
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, false, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentExchangeMoneySeries, 1, 52, 102, _agentExchangeMoneySeries, 52, 52, 0);
+
+				break;
+
+			case 3604:
+				terminateMachine(_ripTalksAgentMach);
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				_field98 = 3603;
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, 102, _701rp01Series, 11, 11, 0);
+
+				break;
+
+			case 3605:
+				digi_play("950_S06", 2, 255, -1, 959);
+				_field98 = 33605;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentExchangeMoneySeries, 52, 19, 102, _agentExchangeMoneySeries, 19, 19, 0);
+
+				break;
+
+			case 3606:
+				_field98 = 3607;
+				terminateMachine(_ripTalksAgentMach);
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 102, _701rp01Series, 1, 1, 0);
+				_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, 0, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 110, _agentTalkLoopTjSeries, 13, 13, 0);
+
+				break;
+
+			case 3607:
+				inv_give_to_player("SIKKIMESE RUPEE");
+				terminateMachine(_agentPoshExpressMach02);
+
+				_field94 = 1000;
+				_field98 = 1103;
+
+				player_update_info(_G(my_walker), &_G(player_info));
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, 0, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
+				conv_resume(conv_get_handle());
+				series_unload(_agentExchangeMoneySeries);
+
+				break;
+
+			case 33605:
+				digi_play("950_S06", 2, 255, -1, 950);
+				_field98 = 3606;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentExchangeMoneySeries, 19, 1, 102, _agentExchangeMoneySeries, 1, 1, 0);
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+		case 3700:
+			switch (_field98) {
+			case 3701:
+				player_set_commands_allowed(false);
+				terminateMachine(_ripTalksAgentMach);
+				_field98 = 3702;
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, 102, _701rp01Series, 11, 11, 0);
+
+				break;
+
+			case 3702:
+				terminateMachine(_agentPoshExpressMach);
+				terminateMachine(_agentPoshExpressMach02);
+				_field98 = 3709;
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, false, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentGiveParcelSeries, 1, 33, 102, _agentGiveParcelSeries, 33, 33, 0);
+
+				break;
+
+			case 3704:
+				switch (conv_current_entry()) {
+				case 0:
+					inv_move_object("CRYSTAL SKULL", 305);
+					break;
+
+				case 1:
+					inv_move_object("STICK AND SHELL MAP", 305);
+					break;
+
+				case 2:
+					inv_move_object("WHEELED TOY", 305);
+					break;
+
+				case 3:
+					inv_move_object("REBUS AMULET", 305);
+					break;
+
+				case 4:
+					inv_move_object("SHRUNKEN HEAD", 305);
+					break;
+
+				case 5:
+					inv_move_object("SILVER BUTTERFLY", 305);
+					break;
+
+				case 6:
+					inv_move_object("POSTAGE STAMP", 305);
+					break;
+
+				case 7:
+					inv_move_object("GERMAN BANKNOTE", 305);
+					break;
+
+				case 8:
+					inv_move_object("WHALE BONE HORN", 305);
+					break;
+
+				case 9:
+					inv_move_object("CHISEL", 305);
+					break;
+
+				case 10:
+					inv_move_object("INCENSE BURNER", 305);
+					break;
+
+				case 11:
+					setFlag45();
+					inv_move_object("ROMANOV EMERALD", 999);
+					break;
+
+				default:
+					break;
+				}
+
+				_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
+				_field6C = 2102;
+				_field68 = 2000;
+				_field98 = 3705;
+
+				kernel_timing_trigger(1, 102, nullptr);
+				sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 110, _agentTalkLoopTjSeries, 13, 13, 0);
+
+				break;
+
+			case 3705:
+				_field98 = 3706;
+				terminateMachine(_ripTalksAgentMach);
+				_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+				sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 102, _701rp01Series, 1, 1, 0);
+
+				break;
+
+			case 3706:
+				terminateMachine(_agentPoshExpressMach02);
+				_field94 = 1000;
+				_field98 = 98;
+				player_update_info(_G(my_walker), &_G(player_info));
+				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, false, triggerMachineByHashCallback, "rip talks agent");
+				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
+				conv_resume(conv_get_handle());
+
+				break;
+
+			case 3709:
+				_field98 = 3704;
+				sendWSMessage_10000(1, _ripTalksAgentMach, _agentGiveParcelSeries, 34, 51, 102, _agentGiveParcelSeries, 51, 51, 0);
+				digi_play("950_S09", 2, 255, -1, 950);
+
+				break;
+			default:
+				break;
+			}
+
+			break;
+
+		default:
+			break;
+
+		}
+
+
+		break;
+
 	case 110:
 	case 111:
 	case 948:
@@ -887,7 +1315,7 @@ void Room701::updateCounter() {
 	}
 }
 
-bool Room701::inventoryCheck() {
+int32 Room701::inventoryCheck() {
 	for (int i = 0; i < 12; ++i)
 		_fieldD0[i] = 0;
 
@@ -929,7 +1357,7 @@ bool Room701::inventoryCheck() {
 	if (inv_player_has("ROMANOV EMERALD"))
 		_fieldD0[_fieldFC_index++] = 12;
 
-	return _fieldFC_index > 0;
+	return _fieldFC_index > 0 ? 1 : 0;
 }
 
 } // namespace Rooms
