@@ -1227,7 +1227,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					const Sprite &playerSprite = _player->getSprite(26);
 					_room->calculateScaledSpriteDimensions(playerSprite._width, playerSprite._height, _player->_position.y);
 					_sprites.addSpriteToDrawList(
-						_player->_position.x,
+						_player->_position.x - _scaledSpriteWidth / 2,
 						_player->_position.y - _scaledSpriteHeight,
 						&playerSprite,
 						240 - _player->_position.y,
@@ -1382,7 +1382,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
 						_player->_flipSprite);
-				} else if (_animation->_otherNspAnimationType_maybe == 39) {
+				} else if (_animation->_otherNspAnimationType_maybe == 39) { // Mike arrested by cop.
 					int16 spriteX = 110;
 					int16 spriteY = _player->_position.y;
 					if (_room->_roomNumber == 10) {
@@ -1393,9 +1393,9 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					_room->calculateScaledSpriteDimensions(
 						sprite._width,
 						sprite._height,
-						spriteX);
+						spriteY);
 					_sprites.addSpriteToDrawList(
-						spriteX,
+						spriteX - _scaledSpriteWidth / 2,
 						spriteY - _scaledSpriteHeight,
 						&sprite,
 						240 - _player->_position.y,
