@@ -113,7 +113,7 @@ void loadMenu() {
 			g_engine->_lastKeyPressed = Common::KeyCode::KEYCODE_INVALID;
 			while (!g_engine->shouldQuit()) {
 				g_engine->updateEvents();
-				if (g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_y) {
+				if (g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_y || g_engine->_isLeftMouseClicked) {
 					g_engine->quitGame();
 					break;
 				}
