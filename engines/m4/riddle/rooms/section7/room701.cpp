@@ -38,10 +38,10 @@ void Room701::init() {
 		_G(flags[V224]) = 1;
 
 	_itemDigiName = nullptr;
-	_field8C = 0;
+	_field8C_unusedFl = false;
 	_field50_counter = 0;
 	_field9E_triggerNum = -1;
-	_field130 = 0;
+	_field130 = false;
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		_agentTalkLoopTjSeries = series_load("AGENT TALK LOOP TJ", -1, nullptr);
@@ -56,7 +56,7 @@ void Room701::init() {
 		_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
 		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, -1, _agentTalkLoopTjSeries, 13, 13, 0);
 	} else {
-		_field88 = 0;
+		_field88 = false;
 
 		player_set_commands_allowed(false);
 		_agentTalkLoopTjSeries = series_load("AGENT TALK LOOP TJ", -1, nullptr);
@@ -73,15 +73,22 @@ void Room701::init() {
 
 		++_G(flags[V006]);
 		if (setItemsPlacedFlags()) {
-			_field88 = 1;
+			_field88 = true;
 			_itemDigiName = getItemsPlacedDigi();
 			++_field50_counter;
 		}
 
 		ws_demand_location(_G(my_walker), 50, 264);
 		ws_demand_facing(_G(my_walker), 3);
-		_field134 = 0;
-		ws_walk(_G(my_walker), 352, 251, nullptr, player_been_here(701) ? 80 : 40, 3, true);
+		_alreadyBeenHereFl = false;
+
+		int32 trig = 80;
+		if (!player_been_here(701)) {
+			trig = 40;
+			_alreadyBeenHereFl = true;
+		}
+
+		ws_walk(_G(my_walker), 352, 251, nullptr, trig, 3, true);
 	}
 
 	digi_preload("701_s01", -1);
@@ -118,7 +125,7 @@ void Room701::parser() {
 
 	else if (talkFl && player_said("agent")) {
 		player_set_commands_allowed(false);
-		_field88 = 1;
+		_field88 = true;
 		_field72_triggerNum = -1;
 		_field94 = 1000;
 		_field98 = 1100;
@@ -361,7 +368,7 @@ void Room701::daemon() {
 		break;
 
 	case 40:
-		_field88 = 1;
+		_field88 = true;
 		player_set_commands_allowed(false);
 		player_update_info(_G(my_walker), &_G(player_info));
 		_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
@@ -392,7 +399,7 @@ void Room701::daemon() {
 		sendWSMessage_150000(_G(my_walker), -1);
 
 		if (_field50_counter == 1) {
-			_field8C = 1;
+			_field8C_unusedFl = true;
 			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 			ws_hide_walker(_G(my_walker));
 			sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
@@ -401,7 +408,7 @@ void Room701::daemon() {
 			digi_play("701X02", 1, 255, 2200, -1);
 
 		} else if (_field50_counter > 0) {
-			_field8C = 1;
+			_field8C_unusedFl = true;
 			_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
 			ws_hide_walker(_G(my_walker));
 			sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 11, -1, _701rp01Series, 11, 11, 0);
@@ -410,7 +417,7 @@ void Room701::daemon() {
 			digi_play("701X03", 1, 255, 2200, -1);
 
 		} else {
-			kernel_timing_trigger(1, (_field134 == 1) ? 44 : 95, nullptr);
+			kernel_timing_trigger(1, _alreadyBeenHereFl ? 44 : 95, nullptr);
 		}
 
 		break;
@@ -719,40 +726,40 @@ void Room701::daemon() {
 				_field98 = 1103;
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 1);
 				conv_load("conv701a", 10, 10, 101);
-				_fieldC4 = inventoryCheck();
-				_fieldBC = 1;
+				_lastInventoryCheck = inventoryCheck();
+				_fieldBC_unusedFl = true;
 
 				conv_export_value_curr((_G(flags[V088]) < 3) ? 0 : 1, 0);
-				conv_export_pointer_curr(&_fieldC4, 1);
+				conv_export_pointer_curr(&_lastInventoryCheck, 1);
 
-				_field100 = inv_player_has("CRYSTAL SKULL") ? 1 : 0;
-				_field104 = inv_player_has("STICK AND SHELL MAP") ? 1 : 0;
-				_field108 = inv_player_has("WHEELED TOY") ? 1 : 0;
-				_field10C = inv_player_has("REBUS AMULET") ? 1 : 0;
-				_field110 = inv_player_has("SHRUNKEN HEAD") ? 1 : 0;
-				_field114 = inv_player_has("SILVER BUTTERFLY") ? 1 : 0;
-				_field118 = inv_player_has("POSTAGE STAMP") ? 1 : 0;
-				_field11C = inv_player_has("GERMAN BANKNOTE") ? 1 : 0;
-				_field120 = inv_player_has("WHALE BONE HORN") ? 1 : 0;
-				_field124 = inv_player_has("CHISEL") ? 1 : 0;
-				_field128 = inv_player_has("INCENSE BURNER") ? 1 : 0;
-				_field12C = inv_player_has("ROMANOV EMERALD") ? 1 : 0;
+				_hasCrystalSkull = inv_player_has("CRYSTAL SKULL") ? 1 : 0;
+				_hasStickAnsShellMap = inv_player_has("STICK AND SHELL MAP") ? 1 : 0;
+				_hasWheeledToy = inv_player_has("WHEELED TOY") ? 1 : 0;
+				_hasRebusAmulet = inv_player_has("REBUS AMULET") ? 1 : 0;
+				_hasShrunkenHead = inv_player_has("SHRUNKEN HEAD") ? 1 : 0;
+				_hasSilverButterfly = inv_player_has("SILVER BUTTERFLY") ? 1 : 0;
+				_hasPostageStamp = inv_player_has("POSTAGE STAMP") ? 1 : 0;
+				_hasGermanBankNote = inv_player_has("GERMAN BANKNOTE") ? 1 : 0;
+				_hasWhaleBoneHorn = inv_player_has("WHALE BONE HORN") ? 1 : 0;
+				_hasChisel = inv_player_has("CHISEL") ? 1 : 0;
+				_hasIncenseBurner = inv_player_has("INCENSE BURNER") ? 1 : 0;
+				_hasRomanovEmerald = inv_player_has("ROMANOV EMERALD") ? 1 : 0;
 
-				conv_export_pointer_curr(&_field100, 3);
-				conv_export_pointer_curr(&_field104, 4);
-				conv_export_pointer_curr(&_field108, 5);
-				conv_export_pointer_curr(&_field10C, 6);
-				conv_export_pointer_curr(&_field110, 7);
-				conv_export_pointer_curr(&_field114, 8);
-				conv_export_pointer_curr(&_field118, 9);
-				conv_export_pointer_curr(&_field11C, 10);
-				conv_export_pointer_curr(&_field120, 11);
-				conv_export_pointer_curr(&_field124, 12);
-				conv_export_pointer_curr(&_field128, 13);
-				conv_export_pointer_curr(&_field12C, 14);
+				conv_export_pointer_curr(&_hasCrystalSkull, 3);
+				conv_export_pointer_curr(&_hasStickAnsShellMap, 4);
+				conv_export_pointer_curr(&_hasWheeledToy, 5);
+				conv_export_pointer_curr(&_hasRebusAmulet, 6);
+				conv_export_pointer_curr(&_hasShrunkenHead, 7);
+				conv_export_pointer_curr(&_hasSilverButterfly, 8);
+				conv_export_pointer_curr(&_hasPostageStamp, 9);
+				conv_export_pointer_curr(&_hasGermanBankNote, 10);
+				conv_export_pointer_curr(&_hasWhaleBoneHorn, 11);
+				conv_export_pointer_curr(&_hasChisel, 12);
+				conv_export_pointer_curr(&_hasIncenseBurner, 13);
+				conv_export_pointer_curr(&_hasRomanovEmerald, 14);
 
-				_fieldB8 = 0;
-				conv_export_pointer_curr(&_fieldB8, 15);
+				_travelDest = 0;
+				conv_export_pointer_curr(&_travelDest, 15);
 				conv_export_pointer_curr(&_fieldC8, 17);
 				conv_play(conv_get_handle());
 
@@ -833,7 +840,7 @@ void Room701::daemon() {
 			case 3107:
 				if (_field130) {
 					kernel_timing_trigger(1, 2501, nullptr);
-					_field130 = 0;
+					_field130 = false;
 				} else {
 					_field98 = 3108;
 					_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
@@ -845,7 +852,7 @@ void Room701::daemon() {
 
 			case 3108:
 				terminateMachine(_agentPoshExpressMach02);
-				kernel_timing_trigger(1, (_field134 == 1) ? 45 : 95, nullptr);
+				kernel_timing_trigger(1, _alreadyBeenHereFl ? 45 : 95, nullptr);
 				ws_unhide_walker(_G(my_walker));
 
 				break;
@@ -1141,8 +1148,40 @@ void Room701::daemon() {
 		break;
 
 	case 111:
-		// TODO
-		warning("TODO 111");
+		if (_field68 != 2000)
+			return;
+
+		switch (_field6C) {
+		case 2100:
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 14, 14, 110, _agentTalkLoopTjSeries, 14, 14, 0);
+			_field6C = 2102;
+
+			break;
+
+		case 2101: {
+			int32 rnd = imath_ranged_rand(14, 17);
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, rnd, rnd, 110, _agentTalkLoopTjSeries, rnd, rnd, 0);
+			}
+
+			break;
+
+		case 2102:
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 14, 14, 110, _agentTalkLoopTjSeries, 14, 14, 0);
+			break;
+
+		case 2103:
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 14, 14, -1, _agentTalkLoopTjSeries, 14, 14, 0);
+			break;
+
+		case 2104:
+			sendWSMessage_10000(1, _agentPoshExpressMach, _agentExchangeMoneySeries, 1, 66, 110, _agentExchangeMoneySeries, 66, 66, 0);
+			break;
+
+		default:
+			break;
+
+		}
+
 		break;
 
 	case 948:
@@ -1224,15 +1263,15 @@ void Room701::daemon() {
 		} else if (_G(flags[V367]) == 1) {
 			_field58_digiName = "401R37";
 			_G(flags[V367]) = 0;
-			_field130 = 1;
+			_field130 = true;
 		} else if (_G(flags[V368]) == 1) {
 			_field58_digiName = "401R38";
 			_G(flags[V368]) = 0;
-			_field130 = 1;
+			_field130 = true;
 		} else if (_G(flags[V369]) == 1) {
 			_field58_digiName = "401R39";
 			_G(flags[V369]) = 0;
-			_field130 = 1;
+			_field130 = true;
 		}
 
 		kernel_timing_trigger(1, 2301, nullptr);
@@ -1277,7 +1316,7 @@ void Room701::daemon() {
 		break;
 
 	case 2306:
-		if (_field130 == 1) {
+		if (_field130) {
 			_field94 = 3000;
 			_field98 = 3105;
 			kernel_timing_trigger(1, 102, nullptr);
@@ -1322,7 +1361,7 @@ void Room701::daemon() {
 	case 2506:
 		ws_unhide_walker(_G(my_walker));
 		terminateMachine(_agentPoshExpressMach02);
-		kernel_timing_trigger(1, _field134 == 1 ? 45 : 95, nullptr);
+		kernel_timing_trigger(1, _alreadyBeenHereFl ? 45 : 95, nullptr);
 
 		break;
 
@@ -1339,7 +1378,7 @@ void Room701::daemon() {
 		break;
 
 	case 2601:
-		switch (_fieldB8) {
+		switch (_travelDest) {
 		case 1:
 			_G(flags[kTravelDest]) = 1;
 			break;
@@ -1374,7 +1413,7 @@ void Room701::daemon() {
 		break;
 
 	case 2702:
-		if (_field90 == 1)
+		if (_field90)
 			kernel_timing_trigger(1, 2600, nullptr);
 		else
 			player_set_commands_allowed(true);
@@ -1387,7 +1426,7 @@ void Room701::daemon() {
 }
 
 void Room701::conv701a() {
-	int32 node = _fieldB4 = conv_current_node();
+	_conv701aNode = conv_current_node();
 	int32 entry = conv_current_entry();
 	const char *digiName = conv_sound_to_play();
 
@@ -1398,7 +1437,7 @@ void Room701::conv701a() {
 
 	int32 who = conv_whos_talking();
 	if (who <= 0) {
-		if (node == 3 && entry == 0) {
+		if (_conv701aNode == 3 && entry == 0) {
 			_convDigiName_1 = Common::String(digiName);
 			_field94 = 3500;
 			_field98 = 3501;
@@ -1408,7 +1447,7 @@ void Room701::conv701a() {
 		_field6C = 2101;
 
 	} else if (who == 1) {
-		if (node == 1 && entry == 1) {
+		if (_conv701aNode == 1 && entry == 1) {
 			conv_set_box_xy(490, -4);
 			set_dlg_rect();
 			int32 x1, y1, x2, y2;
@@ -1420,7 +1459,7 @@ void Room701::conv701a() {
 			conv_set_box_xy(10, 10);
 		}
 
-		switch (node) {
+		switch (_conv701aNode) {
 		case 1:
 			if (entry == 3) {
 				_convDigiName_2 = Common::String(digiName);
@@ -1438,7 +1477,7 @@ void Room701::conv701a() {
 			if (entry == 0) {
 				_field98 = 1102;
 				digi_play(digiName, 1, 255, 1, -1);
-				_field90 = 1;
+				_field90 = true;
 
 				return;
 			}
@@ -1539,47 +1578,47 @@ void Room701::updateCounter() {
 
 int32 Room701::inventoryCheck() {
 	for (int i = 0; i < 12; ++i)
-		_fieldD0[i] = 0;
+		_inventoryCheckArray[i] = 0;
 
-	_fieldFC_index = 0;
+	_inventoryCheckCounter = 0;
 
 	if (inv_player_has("CRYSTAL SKULL"))
-		_fieldD0[_fieldFC_index++] = 1;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 1;
 
 	if (inv_player_has("STICK AND SHELL MAP"))
-		_fieldD0[_fieldFC_index++] = 2;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 2;
 
 	if (inv_player_has("WHEELED TOY"))
-		_fieldD0[_fieldFC_index++] = 3;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 3;
 
 	if (inv_player_has("REBUS AMULET"))
-		_fieldD0[_fieldFC_index++] = 4;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 4;
 
 	if (inv_player_has("SHRUNKEN HEAD"))
-		_fieldD0[_fieldFC_index++] = 5;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 5;
 
 	if (inv_player_has("SILVER BUTTERFLY"))
-		_fieldD0[_fieldFC_index++] = 6;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 6;
 
 	if (inv_player_has("POSTAGE STAMP"))
-		_fieldD0[_fieldFC_index++] = 7;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 7;
 
 	if (inv_player_has("GERMAN BANKNOTE"))
-		_fieldD0[_fieldFC_index++] = 8;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 8;
 
 	if (inv_player_has("WHALE BONE HORN"))
-		_fieldD0[_fieldFC_index++] = 9;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 9;
 
 	if (inv_player_has("CHISEL"))
-		_fieldD0[_fieldFC_index++] = 10;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 10;
 
 	if (inv_player_has("INCENSE BURNER"))
-		_fieldD0[_fieldFC_index++] = 11;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 11;
 
 	if (inv_player_has("ROMANOV EMERALD"))
-		_fieldD0[_fieldFC_index++] = 12;
+		_inventoryCheckArray[_inventoryCheckCounter++] = 12;
 
-	return _fieldFC_index > 0 ? 1 : 0;
+	return _inventoryCheckCounter > 0 ? 1 : 0;
 }
 
 } // namespace Rooms
