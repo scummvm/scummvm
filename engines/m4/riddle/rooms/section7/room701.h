@@ -44,6 +44,11 @@ private:
 	void updateCounter();
 	int32 inventoryCheck();
 
+	const char *_field58_digiName = nullptr;
+	const char *_field5C_digiName = nullptr;
+	const char *_field60_digiName = nullptr;
+	const char *_field64_digiName = nullptr;
+
 	const char *_itemDigiName = nullptr;
 	Common::String _convDigiName_1 = "";
 	Common::String _convDigiName_2 = "";
@@ -51,7 +56,7 @@ private:
 	int32 _field50_counter = 0;
 	int32 _field68 = 0;
 	int32 _field6C = 0;
-	int32 _field72 = 0;
+	int32 _field72_triggerNum = -1;
 	int32 _field88 = 0;
 	int32 _field8C = 0;
 	int32 _field90 = 0;
@@ -95,6 +100,7 @@ private:
 	
 	machine *_agentPoshExpressMach = nullptr;
 	machine *_agentPoshExpressMach02 = nullptr;
+	machine *_agentPoshExpressMach03 = nullptr;
 	machine *_ripTalksAgentMach = nullptr;
 	machine *_safariShadow3Mach = nullptr;
 };

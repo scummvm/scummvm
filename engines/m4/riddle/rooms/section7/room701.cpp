@@ -119,7 +119,7 @@ void Room701::parser() {
 	else if (talkFl && player_said("agent")) {
 		player_set_commands_allowed(false);
 		_field88 = 1;
-		_field72 = -1;
+		_field72_triggerNum = -1;
 		_field94 = 1000;
 		_field98 = 1100;
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -1129,36 +1129,195 @@ void Room701::daemon() {
 
 		}
 
-
 		break;
 
 	case 110:
+		if (_field72_triggerNum != -1) {
+			kernel_timing_trigger(1, _field72_triggerNum, nullptr);
+			_field72_triggerNum = -1;
+		} else
+			kernel_timing_trigger(1, 111, nullptr);
+
+		break;
+
 	case 111:
+		// TODO
+		warning("TODO 111");
+		break;
+
 	case 948:
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+		ws_hide_walker(_G(my_walker));
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 1, 10, -1, _701rp01Series, 11, 19, 4);
+		sendWSMessage_1a0000(_agentPoshExpressMach02, 11);
+		digi_play("701R04", 1, 255, 49, -1);
+
+		break;
+
 	case 1040:
+		sendWSMessage_120000(_G(my_walker), 41);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 1, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
+
+		break;
+
 	case 1080:
+		sendWSMessage_120000(_G(my_walker), 81);
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 1, 11, -1, _agentTalkLoopTjSeries, 11, 11, 0);
+
+		break;
+
 	case 1083:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("701R38", 1, 255, 84, -1);
+
+		break;
+
 	case 1089:
+		sendWSMessage_190000(_G(my_walker), 5);
+		sendWSMessage_130000(_G(my_walker), 90);
+
+		break;
+
 	case 2200:
+		_field98 = 3100;
+		_field94 = 3000;
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, 102, _agentTalkLoopTjSeries, 13, 13, 0);
+
+		break;
+
 	case 2201:
+		_field98 = 3103;
+		kernel_timing_trigger(60, 2300, nullptr);
+
+		break;
+
 	case 2300:
+		// TODO
+		warning("TODO 2300");
+		break;
+
 	case 2301:
+		_field98 = 3106;
+		kernel_timing_trigger(1, 2302, nullptr);
+
+		break;
+
 	case 2302:
+		if (_field58_digiName)
+			digi_play(_field58_digiName, 1, 255, 2303, -1);
+		else
+			kernel_timing_trigger(1, 2303, nullptr);
+
+		break;
+
 	case 2303:
+		if (_field5C_digiName)
+			digi_play(_field5C_digiName, 1, 255, 2304, -1);
+		else
+			kernel_timing_trigger(1, 2304, nullptr);
+
+		break;
+
 	case 2304:
+		if (_field60_digiName)
+			digi_play(_field60_digiName, 1, 255, 2305, -1);
+		else
+			kernel_timing_trigger(1, 2305, nullptr);
+
+		break;
+
 	case 2305:
+		if (_field64_digiName)
+			digi_play(_field64_digiName, 1, 255, 2306, -1);
+		else
+			kernel_timing_trigger(1, 2306, nullptr);
+
+		break;
+
 	case 2306:
+		if (_field130 == 1) {
+			_field94 = 3000;
+			_field98 = 3105;
+			kernel_timing_trigger(1, 102, nullptr);
+		} else {
+			--_field50_counter;
+			if (_field50_counter <= 0) {
+				_field98 = 3106;
+				kernel_timing_trigger(1, 2300, nullptr);
+			} else {
+				kernel_timing_trigger(1, 2307, nullptr);
+			}
+		}
+
+		break;
+
 	case 2307:
+		_field98 = 3105;
+		kernel_timing_trigger(10, 102, nullptr);
+
+		break;
+
 	case 2501:
+		terminateMachine(_agentPoshExpressMach);
+		_agentPoshExpressMach03 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach03, _agentGiveParcelSeries, 51, 33, 2509, _agentGiveParcelSeries, 33, 33, 0);
+
+		break;
+
 	case 2504:
+		terminateMachine(_agentPoshExpressMach03);
+		_agentPoshExpressMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach02, _701rp01Series, 11, 1, 2506, _701rp01Series, 1, 1, 0);
+		if (!inv_player_has("ROMANOV EMERALD")) {
+			inv_give_to_player("ROMANOV EMERALD");
+		}
+
+		_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
+		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 1, 1, -1, _agentTalkLoopTjSeries, 1, 1, 0);
+
+		break;
+
 	case 2506:
+		ws_unhide_walker(_G(my_walker));
+		terminateMachine(_agentPoshExpressMach02);
+		kernel_timing_trigger(1, _field134 == 1 ? 45 : 95, nullptr);
+
+		break;
+
 	case 2509:
+		sendWSMessage_10000(1, _agentPoshExpressMach03, _agentGiveParcelSeries, 32, 1, 2504, _agentGiveParcelSeries, 1, 1, 0);
+		digi_play("950_S09", 2, 255, -1, 950);
+
+		break;
+
 	case 2600:
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(2601);
+
+		break;
+
 	case 2601:
+		// TODO
+		warning("TODO 2601");
+		break;
+
 	case 2700:
+		kernel_timing_trigger(1, 2701, nullptr);
+		break;
+
 	case 2701:
+		kernel_timing_trigger(1, 2702, nullptr);
+		break;
+
 	case 2702:
-		warning("Not yet implemented");
+		if (_field90 == 1)
+			kernel_timing_trigger(1, 2600, nullptr);
+		else
+			player_set_commands_allowed(true);
+
+		break;
+
 	default:
 		break;
 	}
