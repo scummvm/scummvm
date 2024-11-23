@@ -314,12 +314,17 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 	int tileH = _frames[0]->h;
 	byte *dst = (byte *)dstSurf.getBasePtr(0, 0);
 
-	for (int yTile = 0; yTile < height / tileH; yTile++) {
+	int nXTiles = (width + tileW - 1) / tileW;
+	int nYTiles = (height + tileH - 1) / tileH;
+
+	for (int yTile = 0; yTile < nYTiles; yTile++) {
 		int tileDstY = y + yTile * tileH;
 		int tileRowIndex = (yTile + scrollY) % _matrixY;
 		if (tileRowIndex < 0)
 			tileRowIndex += _matrixY;
-		for (int xTile = 0; xTile < width / tileW; xTile++) {
+		assert(tileRowIndex >= 0 && tileRowIndex < _matrixY);
+
+		for (int xTile = 0; xTile < nXTiles; xTile++) {
 			int tileDstX = x + xTile * tileW;
 			Common::Rect tileDest(Common::Point(tileDstX, tileDstY), tileW, tileH);
 			tileDest.clip(drawWin);
@@ -329,6 +334,7 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 			int tileColIndex = (xTile + scrollX) % _matrixX;
 			if (tileColIndex < 0)
 				tileColIndex += _matrixX;
+			assert(tileColIndex >= 0 && tileColIndex < _matrixX);
 
 			uint16 tileNo = _tileMatrix[tileRowIndex + tileColIndex * _matrixY];
 			Common::SharedPtr<Graphics::ManagedSurface> tile = _frames[tileNo];
