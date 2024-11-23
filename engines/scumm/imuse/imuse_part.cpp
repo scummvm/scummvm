@@ -425,20 +425,19 @@ void Part::sendDetune() {
 
 void Part::programChange(byte value) {
 	_bank = 0;
-	_instrument.program(value, _player->isMT32());
+	_instrument.program(value, 0, _player->isMT32());
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }
 
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
-	if (_bank)
-		error("Non-zero instrument bank selection. Please report this");
 
-	if (_se->_soundType == MDT_MACINTOSH)
-		_instrument.macSfx(b);
-	else
-		_instrument.program((byte)b, _player->isMT32());
+	// Indy4 and Monkey2 Macintosh versions always use the second bank for sound effects here.
+	if (_se->_soundType == MDT_MACINTOSH && (_se->_game_id == GID_MONKEY2 || _se->_game_id == GID_INDY4))
+		_bank = 1;
+
+	_instrument.program((byte)b, _bank, _player->isMT32());
 
 	if (clearToTransmit())
 		_instrument.send(_mc);

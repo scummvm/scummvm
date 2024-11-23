@@ -223,6 +223,7 @@ public:
 	void detune(int16 value) override { _detune = value; pitchBend(_pitchBendSet); }
 	void priority(byte value) override  { _prio = value; }
 	void sustain(bool value) override;
+	void bankSelect(byte bank) override { _bank = bank; }
 	void allNotesOff() override;
 	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override {}
 

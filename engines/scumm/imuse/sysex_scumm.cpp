@@ -88,7 +88,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 					// 0 is a valid program number. MI2 tests show that in such
 					// cases, a regular program change message always seems to follow
 					// anyway.
-					part->_instrument.program(buf[8], player->_isMT32);
+					part->_instrument.program(buf[8], 0, player->_isMT32);
 				} else {
 					// Like the original we set up the instrument data of the
 					// specified program here too. In case the global
