@@ -139,7 +139,7 @@ Supported audio file formats:
 
 - MP3
 - OGG
-- OGG
+- FLAC
 - Uncompressed audio
 
 Known issues
