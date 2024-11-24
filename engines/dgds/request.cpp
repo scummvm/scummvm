@@ -63,6 +63,10 @@ static const byte ChinaButtonColorsOff[] = {
 	0x10, 0x14, 0x06, 0x18, 0x10, 0x11, 0x14, 0x13,
 };
 
+static const byte ChinaSliderColors[] = {
+    0x1A, 0x15, 0x10, 0x06, 0x18
+};
+
 static const byte WillyBackgroundColor = 16;
 static const byte WillyButtonColor = 20;
 
@@ -649,9 +653,41 @@ void SliderGadget::drawDragonBg(Graphics::ManagedSurface *dst) const {
 }
 
 void SliderGadget::drawChinaBg(Graphics::ManagedSurface *dst) const {
-	// TODO: Implement Heart of China style slider background
-	// and colors
-	drawDragonBg(dst);
+	int16 x = _x + _parentX;
+	int16 y = _y + _parentY;
+	int16 y2 = y + 8;
+	int16 x2 = x + _width + 2;
+
+	// left 1st
+    dst->drawLine(x - 2, y - 1, x - 2, y2 + 1, ChinaSliderColors[0]);
+    // left 2nd
+    dst->drawLine(x - 1, y, x - 1, y2, ChinaSliderColors[1]);
+    // left 3rd
+	dst->drawLine(x, y + 1, x, y2 - 1, ChinaSliderColors[2]);
+
+	// top 1st
+	dst->drawLine(x - 1, y - 1, x2, y - 1, ChinaSliderColors[2]);
+	// top 2nd
+	dst->drawLine(x, y, x2 - 1, y, ChinaSliderColors[0]);
+	// top 3rd
+	dst->drawLine(x + 1, y + 1, x2 - 2, y + 1, ChinaSliderColors[3]);
+
+	// right 1st
+	dst->drawLine(x2 - 1, y + 1, x2 - 1, y2 - 1, ChinaSliderColors[3]);
+	// right 2nd
+	dst->drawLine(x2, y, x2, y2, ChinaSliderColors[0]);
+	// right 3rd
+	dst->drawLine(x2 + 1, y - 1, x2 + 1, y2 + 1, ChinaSliderColors[2]);
+
+	// bottom 1st
+	dst->drawLine(x + 1, y2 - 1, x2 - 2, y2 - 1, ChinaSliderColors[2]);
+	// bottom 2nd
+	dst->drawLine(x, y2, x2 - 1, y2, ChinaSliderColors[1]);
+	// bottom 3rd
+	dst->drawLine(x - 1, y2 + 1, x2, y2 + 1, ChinaSliderColors[0]);
+
+	Common::Rect fillrect = Common::Rect(x + 1, y + 2, x2 - 1, y2 - 1);
+	dst->fillRect(fillrect, ChinaSliderColors[4]);
 }
 
 
@@ -666,12 +702,16 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	const char *title = _sliderTitleForGadget(_gadgetNo, language);
 	const char *labels = _sliderLabelsForGadget(_gadgetNo, language);
 	int16 titleWidth = font->getStringWidth(title);
+	DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
 
-	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, 0);
+	byte textCol = (gameId == GID_DRAGON) ? 0 : 0x13;
+	int16 labelYOff = (gameId == GID_DRAGON) ? 7 : 11;
+
+	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, textCol);
 	int16 labelWidth = font->getStringWidth(labels);
-	font->drawString(dst, labels, x + (_width - labelWidth) / 2, y + 7, labelWidth, 0);
+	font->drawString(dst, labels, x + (_width - labelWidth) / 2, y + labelYOff, labelWidth, textCol);
 
-	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
+	if (gameId == GID_DRAGON)
 		drawDragonBg(dst);
 	else
 		drawChinaBg(dst);
@@ -825,7 +865,8 @@ void RequestData::drawBg(Graphics::ManagedSurface *dst) const {
 	if (!_textItemList.empty())
 		header = _textItemList[0]._txt.substr(1);
 
-	if (slidery)
+	bool isDragon = DgdsEngine::getInstance()->getGameId() == GID_DRAGON;
+	if (slidery && isDragon)
 		drawBackgroundWithSliderArea(dst, slidery, header);
 	else
 		drawBackgroundNoSliders(dst, header);
