@@ -221,6 +221,9 @@ l0017_2774:
 		*/
 }
 
+void Adlib::Func2779(uint8 arg1, uint8 args2) {
+}
+
 void Adlib::Func24FD() {
 	/*
 
@@ -848,6 +851,12 @@ void Adlib::OnTimer() {
 									// 1DFAh
 									Func2792(bp8 + 0xb0, 0);
 
+									// TODO: Confirm that these are indeed identical
+									uint8 arg1 = gArray96[bp8] + 0x40;
+									uint8 arg2 = gArray96[bp8] + 0x40;
+									// TODO: Reverse 2779 before continuing
+									Func2779(arg1, arg2);
+									
 									// TODO: Continue from here
 								}
 							}
