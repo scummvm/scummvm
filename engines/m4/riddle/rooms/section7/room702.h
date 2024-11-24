@@ -50,7 +50,7 @@ private:
 	int32 _field50 = 0;
 	int32 _field54 = 0;
 	int32 _field58 = 0;
-	
+
 	int32 _702GuardShadow1Series = 0;
 	int32 _702GuardShadow2Series = 0;
 	int32 _guardStepsAsideTalksSeries = 0;
@@ -62,7 +62,7 @@ private:
 
 	machine *_guardMach = nullptr;
 	machine *_guardShadowMach = nullptr;
-	
+
 };
 
 } // namespace Rooms

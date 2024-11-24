@@ -124,27 +124,66 @@ void Room702::daemon() {
 		player_set_commands_allowed(false);
 		setGlobals1(1, _ripShowsRingSeries, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
 		if (_G(flags[V210])) {
-			sendWSMessage_110000(_G(my_walker), 41);			
+			sendWSMessage_110000(_G(my_walker), 41);
 		} else {
 			_G(flags[V210]) = 1;
 			sendWSMessage_110000(_G(my_walker), 60);
 		}
 
 		break;
-		
+
 	case 41:
 		digi_play("702R06", 1, 255, 42, -1);
 		break;
-		
+
 	case 42:
+		sendWSMessage_120000(_G(my_walker),43);
+		break;
+
 	case 43:
+		digi_play("702R07",1,255,44,-1);
+		break;
+
 	case 44:
+		sendWSMessage_130000(_G(my_walker), 45);
+		break;
+
 	case 45:
+		sendWSMessage_150000(_G(my_walker), 46);
+		break;
+
 	case 46:
+		kernel_timing_trigger(1,47,nullptr);
+		break;
+
 	case 47:
+		sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 36, 46, 48, _guardTalksAndBowsSeries,46,46,0);
+		sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, 36, 46, -1, _702GuardShadow1Series,46,46,0);
+
+		break;
+
 	case 48:
+		sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 46, 36, 49, _guardTalksAndBowsSeries, 1, 1, 0);
+		sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, 46, 36, -1, _702GuardShadow1Series, 1, 1, 0);
+
+		break;
+
 	case 49:
+		digi_play("702G03", 1, 255, 50, -1);
+		sendWSMessage_10000(1, _guardMach, _guardStepsAsideTalksSeries, 1, 27, -1, _guardStepsAsideTalksSeries,27,29,1);
+		sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow2Series, 1, 27, -1, _702GuardShadow2Series,27,29,1);
+
+		break;
+
 	case 50:
+		sendWSMessage_10000(1, _guardMach, _guardStepsAsideTalksSeries, 29, 40, -1, _guardStepsAsideTalksSeries, 40, 40, 0);
+		sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow2Series, 29, 40, -1, _702GuardShadow2Series, 40, 40, 0);
+		_G(flags[V212]) = 1;
+
+		digi_play("702R11",1,255,51,-1);
+
+		break;
+
 	case 51:
 	case 52:
 	case 60:
