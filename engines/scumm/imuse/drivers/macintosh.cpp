@@ -36,7 +36,7 @@ using namespace Scumm;
 
 struct ChanControlNode;
 struct DeviceChannel {
-	DeviceChannel(const uint32 *pitchTable) : pitchTable(pitchTable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
+	DeviceChannel(const uint32 *_pitchTable) : pitchTable(_pitchTable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
 		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr),
 		prog(0), baseFreq(0), note(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
 	~DeviceChannel() {}
