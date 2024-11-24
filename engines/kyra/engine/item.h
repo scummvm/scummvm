@@ -28,11 +28,27 @@ namespace Kyra {
 
 typedef int16 Item;
 
-enum {
+enum ItemIndex : Item {
 	/**
 	 * Constant for invalid item.
 	 */
 	kItemNone = -1
+};
+
+enum ItemTypes : int8 {
+	kItemTypeBow = 0,
+	kItemTypeLongSword = 1,
+	kItemTypeShortSword = 2,
+	kItemTypeSling = 7,
+	kItemTypeArrow = 16,
+	kItemTypeRock = 18,
+	kItemTypeRations = 31
+};
+
+enum RingTypes : int8 {
+	kRingOfWizardry  = 1,
+	kRingOfSustenance  = 2,
+	kRingOfFeatherFalling = 3
 };
 
 } // End of namespace Kyra

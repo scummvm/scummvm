@@ -296,7 +296,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 		_animator->restoreAllObjectBackgrounds();
 
 		_screen->copyRegion(8, _text->_talkMessageY, 8, 136, 304, _text->_talkMessageH, 2, 2);
-	
+
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
 	}
 

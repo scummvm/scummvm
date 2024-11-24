@@ -252,7 +252,7 @@ void SeqPlayer::s1_skip() {
 	uint32 vocPlayTime = _vm->snd_getVoicePlayTime();
 	if (vocPlayTime) {
 		if (((_system->getMillis() - _seqVocStartTimer) / _vm->tickLength()) < (val * (vocPlayTime / _vm->tickLength()) / 100))
-			_seqSkipCommand = false;		
+			_seqSkipCommand = false;
 	}
 }
 

@@ -1332,7 +1332,7 @@ void KyraEngine_LoK::seq_playCredits() {
 		}
 
 		line.font = _screen->_currentFont;
-		
+
 		if (alignment == 3)
 			line.x = alignX3 - _screen->getTextWidth((const char *)currentString);
 		else if (alignment == 4)

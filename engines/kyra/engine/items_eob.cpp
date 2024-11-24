@@ -126,13 +126,13 @@ void EoBCoreEngine::loadItemDefs() {
 	 */
 	if (_flags.gameID == GI_EOB1 && _configADDRuleEnhancements) {
 		debugC(1, kDebugLevelMain, "patching EotB 1 bow   (%d), old dice S d%d, L d%d, new dice S d6, L d6",
-			   ITEM_TYPE_BOW, _itemTypes[ITEM_TYPE_BOW].dmgNumPipsS, _itemTypes[ITEM_TYPE_BOW].dmgNumPipsL);
-		_itemTypes[ITEM_TYPE_BOW].dmgNumPipsS = 6;
-		_itemTypes[ITEM_TYPE_BOW].dmgNumPipsL = 6;
+			   kItemTypeBow, _itemTypes[kItemTypeBow].dmgNumPipsS, _itemTypes[kItemTypeBow].dmgNumPipsL);
+		_itemTypes[kItemTypeBow].dmgNumPipsS = 6;
+		_itemTypes[kItemTypeBow].dmgNumPipsL = 6;
 		debugC(1, kDebugLevelMain, "patching EotB 1 sling (%d), old dice S d%d, L  d%d, new dice S d4, L d4",
-			   ITEM_TYPE_SLING, _itemTypes[ITEM_TYPE_SLING].dmgNumPipsS, _itemTypes[ITEM_TYPE_SLING].dmgNumPipsL);
-		_itemTypes[ITEM_TYPE_SLING].dmgNumPipsS = 4;
-		_itemTypes[ITEM_TYPE_SLING].dmgNumPipsL = 4;
+			   kItemTypeSling, _itemTypes[kItemTypeSling].dmgNumPipsS, _itemTypes[kItemTypeSling].dmgNumPipsL);
+		_itemTypes[kItemTypeSling].dmgNumPipsS = 4;
+		_itemTypes[kItemTypeSling].dmgNumPipsL = 4;
 	}
 
 	delete s;

@@ -570,7 +570,7 @@ void Screen::resetPagePtrsAndBuffers(int pageSize) {
 
 	int numPages = realPages.size();
 	uint32 bufferSize = numPages * _screenPageSize;
- 
+
 	uint8 *pos = new uint8[bufferSize]();
 	_pagePtrsBuff = pos;
 

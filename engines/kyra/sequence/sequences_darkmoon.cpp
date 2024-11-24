@@ -1596,7 +1596,7 @@ int DarkmoonSequenceHelper::hScroll(bool restart) {
 	}
 
 	_hScrollResumeTimeStamp = ct;
-	
+
 	if (state != _hScrollState) {
 		_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(state, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);

@@ -488,7 +488,7 @@ void KyraEngine_LoK::mainLoop() {
 
 		if (_deathHandler != -1) {
 			snd_playWanderScoreViaMap(0, 1);
- 			snd_playSoundEffect(49);
+			snd_playSoundEffect(49);
 			if (_flags.platform == Common::kPlatformMacintosh)
 				_sound->playTrack(15);
 			_screen->setMouseCursor(1, 1, _shapes[0]);

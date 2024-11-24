@@ -34,14 +34,6 @@ class Keymap;
 
 namespace Kyra {
 
-const int8 ITEM_TYPE_BOW = 0;
-const int8 ITEM_TYPE_LONG_SWORD = 1;
-const int8 ITEM_TYPE_SHORT_SWORD = 2;
-const int8 ITEM_TYPE_SLING = 7;
-const int8 ITEM_TYPE_ARROW = 16;
-const int8 ITEM_TYPE_ROCK= 18;
-const int8 ITEM_TYPE_RATIONS = 31;
-
 #define releaseShpArr(shapes, num) \
 if (shapes) { \
 	for (int iii = 0; iii < num; iii++) { \

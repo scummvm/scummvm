@@ -42,7 +42,7 @@ int LoLEngine::processPrologue() {
 		setupPrologueData(true);
 		bool hasSave = false;
 		for (int i = 0; i < 20 && !hasSave; ++i) {
-			if (saveFileLoadable(i)) 
+			if (saveFileLoadable(i))
 				hasSave = true;
 		}
 		if (!hasSave || _flags.isDemo)

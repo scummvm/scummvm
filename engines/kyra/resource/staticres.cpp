@@ -313,7 +313,7 @@ const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
 bool StaticResource::setLanguage(Common::Language lang, int id) {
 	if (lang == Common::UNK_LANG)
 		lang = _vm->gameFlags().lang;
-	
+
 	unloadId(id);
 
 	// load the ID map for our game

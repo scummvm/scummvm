@@ -250,7 +250,7 @@ Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, con
 	out->writeSint32BE(td.tm_hour);
 	out->writeSint32BE(td.tm_mday);
 	out->writeSint32BE(td.tm_mon);
-	out->writeSint32BE(td.tm_year);		
+	out->writeSint32BE(td.tm_year);
 	out->writeSint32BE(td.tm_wday);
 
 	out->writeUint32BE(_totalPlaySecs);

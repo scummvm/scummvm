@@ -35,7 +35,7 @@ Animator_LoK::Animator_LoK(KyraEngine_LoK *vm, OSystem *system) {
 	_noDrawShapesFlag = 0;
 	_brandonDrawFrame = 0;
 	_brandonScaleX = _brandonScaleY = _brandonAnimSeqSizeWidth = _brandonAnimSeqSizeHeight = 0;
-	
+
 	_actorBkgBackUp[0] = new uint8[_screen->getRectSize(8, 69)]();
 	_actorBkgBackUp[1] = new uint8[_screen->getRectSize(8, 69)]();
 }

@@ -372,7 +372,7 @@ class ChineseOneByteFontLoL final : public ChineseFont {
 public:
 	ChineseOneByteFontLoL(int pitch) : ChineseFont(pitch, 8, 14, 8, 16, 0, 0) { _pixelColorShading = false; }
 	void setStyles(int styles) override {}
-	
+
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
@@ -421,7 +421,7 @@ public:
 	// already been filled. It will then try the next slot. So, unlike other fonts the
 	// subset fonts cannot be allowed to call the load method as often as they want
 	// (which we never did anyway - we only ever load each font exactly one time).
-	// But this also means that different 
+	// But this also means that different
 	bool load(Common::SeekableReadStream &data) override;
 
 	void setStyles(int styles) override;

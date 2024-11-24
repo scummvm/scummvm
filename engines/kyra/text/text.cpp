@@ -210,7 +210,7 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 
 	_talkMessageY = top;
 	_talkMessageH = (lineCount * _screen->getFontHeight() + (lineCount - 1) * _screen->_lineSpacing) + _langExtraSpacing;
-	
+
 	int x1 = 12;
 	int x2 = Screen::SCREEN_W - 12;
 	if (_vm->gameFlags().lang != Common::ZH_TWN || lineCount == 1)

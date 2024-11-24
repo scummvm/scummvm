@@ -3591,7 +3591,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				np[i] = _vm->_numSpellsMage[lv * _numPages + i];
 			avltyFlags = c->mageSpellsAvailableFlags;
 		}
-		if (_vm->checkInventoryForRings(charIndex, 1)) {
+		if (_vm->checkInventoryForRings(charIndex, kRingOfWizardry)) {
 			np[3] <<= 1;
 			np[4] <<= 1;
 		}
@@ -4191,7 +4191,7 @@ bool GUI_EoB::restParty() {
 							_vm->gui_drawCharPortraitWithStats(i);
 						}
 
-						if (!_vm->checkInventoryForRings(i, 2)) {
+						if (!_vm->checkInventoryForRings(i, kRingOfSustenance)) {
 							if (_vm->_characters[i].food <= 5) {
 								_vm->_characters[i].food = 0;
 								starving = true;
