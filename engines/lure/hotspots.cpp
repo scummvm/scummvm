@@ -2269,7 +2269,8 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
 	uint16 talkIndex;
 	TalkHeaderData *headerEntry;
-	bool isEnglish = LureEngine::getReference().getLanguage() == Common::EN_ANY;
+	bool isEnglish = LureEngine::getReference().getLanguage() == Common::EN_ANY ||
+		LureEngine::getReference().getLanguage() == Common::RU_RUS; // Russian version is based on English one, same logic applies
 
 	// If the hotspot has a talk data override, return it
 	if (charHotspot->talkOverride != 0) {
