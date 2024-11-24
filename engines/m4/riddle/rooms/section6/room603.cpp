@@ -1276,6 +1276,11 @@ void Room603::parser() {
 			_val9 = 1000;
 			_ripleyShould = 11;
 			_ttShould = 17;
+
+			// FIXME: The _ripTalk series triggered by case 301, mode 0 should 5
+			// finishes too quickly, and triggers case 301 before should = 11 is set above.
+			// To fix this, manually trigger case 301
+			kernel_timing_trigger(1, 301, KT_DAEMON, KT_PARSE);
 		}
 	} else if (_G(kernel).trigger == 748) {
 		if (_ttShould == 21) {
