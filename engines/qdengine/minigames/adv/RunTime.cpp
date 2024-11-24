@@ -177,7 +177,7 @@ bool MinigameManager::createGame() {
 	HoldData<TimeManagerData> timeData(_currentGameInfo ? &_currentGameInfo->_timeManagerData : 0, !_currentGameInfo || _currentGameInfo->_empty);
 	_timeManager = new TimeManager(timeData, this);
 
-	_textManager = new TextManager();
+	_textManager = new TextManager(this);
 
 	_eventManager = new EventManager(this);
 

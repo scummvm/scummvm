@@ -34,7 +34,7 @@ enum TextAlign {
 
 class TextManager {
 public:
-	TextManager();
+	TextManager(MinigameManager *runtime);
 	~TextManager();
 
 	int createStaticText(const mgVect3f& screen_pos, int fontID, TextAlign align);
@@ -77,7 +77,7 @@ private:
 	bool getStaticPreset(StaticTextPreset& preset, const char *name) const;
 
 	struct StaticMessage {
-		StaticMessage(Font *font = 0, TextAlign _align = ALIGN_CENTER);
+		StaticMessage(MinigameManager *runtime, Font *font = 0, TextAlign _align = ALIGN_CENTER);
 		void release();
 
 		bool empty() const {
@@ -100,11 +100,13 @@ private:
 		Font *_font;
 
 		QDObjects _objects;
+
+		MinigameManager *_runtime;
 	};
 	typedef Std::vector<StaticMessage> StaticMessages;
 
 	struct Message : public StaticMessage {
-		Message(Font *font = 0);
+		Message(MinigameManager *runtime, Font *font = 0);
 		void release();
 
 		void quant(float dt);
@@ -112,7 +114,6 @@ private:
 		float _time;
 		mgVect2f _vel;
 		mgVect2f _accel;
-
 	};
 	typedef Std::vector<Message> Messages;
 
@@ -127,6 +128,8 @@ private:
 	int _currentScore;
 	float _scoreUpdateTime;
 	float _scoreUpdateTimer;
+
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine
