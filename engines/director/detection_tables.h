@@ -39,6 +39,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "1stcdtoddler",		"My First CD-ROM: Toddler School" },
 	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
 	{ "7invasores",			"Os 7 Invasores" }, // Portuguese title, English selectable in game
+	{ "aasunday",			"The Adventures of Andrea & Alexander: Sunday... that One Day" },
 	{ "abclunch",			"My Alphabet Lunch" },
 	{ "abcpacovska",		"Alphabet: Play with the ABCs"},
 	{ "abcpalsafety",		"Safety Scavenger Hunt" }, // Alphabet Pals
@@ -400,6 +401,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pippi",				"Astrid Lindgren's Pippi" },
 	{ "planetarizona",		"Escape from Planet Arizona" },
 	{ "playroom",			"The Playroom" },
+	{ "plbible",			"The Play & Learn Children's Bible On CD-ROM" },
 	{ "poohac",				"Winnie the Pooh Activity Center" },
 	{ "poohb",				"Winnie the Pooh Baby" },
 	{ "poohk",				"Winnie the Pooh Kindergarten" },
@@ -3416,6 +3418,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("9worlds", "", "Neun Welten", "3930940b5b4b2ae2563cc29b812855a6", 483518, Common::DE_DEU, 404),
 	WINGAME1_l("9worlds", "", "9WORLDS.EXE", "054e5af279a05ab64627ef664631fe37", 742002, Common::DE_DEU, 404),
 
+	MACGAME2("aasunday", "", "Sunday...that One Day", "rt:0ec765127390cef9e153f9c7a502210d",  483490,
+							 "CHAPEL.Dxr",			  "d:7fcb04494f2e743302148a5937cfcefd", 18695154, 404),
+	WINGAME2("aasunday", "", "SUNDAY.EXE",			  "t:564120fccf8ee9a7643e43a7ab977495",  2860611,
+							 "CHAPEL.DXR",			  "f:7fcb04494f2e743302148a5937cfcefd", 18695154, 404),
+
 	MACGAME1("abcpalsafety", "", "SAFETY SCAVENGER HUNT", "4577dd3eadc467a986ab172d90871b22", 325733, 404),
 	WINGAME1("abcpalsafety", "", "EWOLSFTY.EXE", "a998d49776a611940e872a97a5fe3d1d", 4586417, 404),
 
@@ -5475,6 +5482,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("playskool", "",  "goHIGmem PPC", "a6043fbba9186296faf8a2b82e5e4182", 64250, 404),
 	WINGAME2t("playskool", "", "SAMPLER.EXE",  "4de224099dd6f16d5c9892f94c975f2a", 696951,
 							   "START.DIR",	   "cbd61d015d533b25f3d568002f96bcee", 21469988, 404),
+
+	WINGAME2("plbible", "", "PLAY&LRN.EXE",		 "t:e32ea13972b689e2bc707304ae329553",  741444,
+							"MAIN/BIBLESTO.DIR", "f:084b2bce5c70e6ecbf82046f8dfb9869", 2583492, 404),
 
 	// Distributed with Vote America demo
 	WINGAME1t("poliq", "", "POLIQ.EXE", "08ea6f2f9af69af4d70967870fd92f81", 1376591, 404),
