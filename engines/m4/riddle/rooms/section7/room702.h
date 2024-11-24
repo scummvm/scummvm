@@ -41,6 +41,7 @@ public:
 
 private:
 	static void callback(frac16 myMessage, machine *sender);
+	void conv702a();
 
 	int32 _field3C = 0;
 	int32 _field40 = 0;
@@ -60,7 +61,7 @@ private:
 	int32 _ripShowsRingSeries = 0;
 	int32 _safariShadow1Series = 0;
 
-	machine *_field10_mach = nullptr;
+	machine *_ringCloseupMach = nullptr;
 	machine *_guardMach = nullptr;
 	machine *_guardShadowMach = nullptr;
 	machine *_ripTalksGuardMach = nullptr;
