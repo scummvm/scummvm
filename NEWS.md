@@ -200,6 +200,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added more game variants.
    - Restored the ability to choose language of subtitles on PC versions.
 
+ Sword25:
+   - Fixed looping scene background sounds.
+   - Fixed actor lighting when walking.
+
  Teenagent:
    - Added support for Polish floppy version.
 
