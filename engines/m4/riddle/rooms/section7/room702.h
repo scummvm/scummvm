@@ -38,19 +38,21 @@ public:
 	void pre_parser() override;
 	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
 
 private:
 	static void callback(frac16 myMessage, machine *sender);
 	void conv702a();
 
-	int32 _field3C = 0;
+	bool _alreadyBeen702Fl = false; // Unused : Set but never used
+
 	int32 _field40 = 0;
-	int32 _field44 = 0;
-	int32 _field48 = 0;
+	int32 _field44_mode = 0;
+	int32 _field48_should = 0;
 	int32 _field4C_triggerNum = 0;
-	int32 _field50 = 0;
-	int32 _field54 = 0;
-	int32 _field58 = 0;
+	int32 _field50_mode = 0;
+	int32 _field54_should = 0;
+	int32 _field58 = 0; // Useless (but synchronized?) - Always -1?
 
 	int32 _702GuardShadow1Series = 0;
 	int32 _702GuardShadow2Series = 0;
