@@ -22,14 +22,14 @@
 #ifndef DARKSEED_H
 #define DARKSEED_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/random.h"
-#include "common/serializer.h"
-#include "common/util.h"
 #include "common/keyboard.h"
+#include "common/random.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
 
@@ -39,6 +39,7 @@
 #include "darkseed/cutscene.h"
 #include "darkseed/detection.h"
 #include "darkseed/inventory.h"
+#include "darkseed/menu.h"
 #include "darkseed/nsp.h"
 #include "darkseed/objects.h"
 #include "darkseed/player.h"
@@ -116,6 +117,7 @@ public:
 	UseCode *_useCode = nullptr;
 	Cutscene _cutscene;
 	Animation *_animation = nullptr;
+	Menu _menu;
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
@@ -202,11 +204,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying();
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying() && !_menu.isOpen();
 	}
 
 	/**

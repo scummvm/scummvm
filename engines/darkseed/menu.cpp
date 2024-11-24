@@ -35,7 +35,8 @@ void drawSoundMenuItem() {
 	}
 }
 
-void loadMenu() {
+void Menu::loadMenu() {
+	_open = true;
 	Graphics::Surface screenCopy;
 	screenCopy.copyFrom(*g_engine->_screen);
 
@@ -95,6 +96,7 @@ void loadMenu() {
 			// restore game screen back for the save game thumbnail
 			g_engine->_screen->copyRectToSurface(screenCopy, 0, 0, {screenCopy.w, screenCopy.h});
 			g_engine->_screen->update();
+			_open = false; // mark menu as closed to allow saving.
 			g_engine->saveGameDialog();
 			break;
 		}
@@ -117,7 +119,9 @@ void loadMenu() {
 					g_engine->quitGame();
 					break;
 				}
-				if (g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_n || g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_ESCAPE) {
+				if (g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_n ||
+					g_engine->_lastKeyPressed == Common::KeyCode::KEYCODE_ESCAPE ||
+					g_engine->_isRightMouseClicked) {
 					g_engine->_console->printTosText(17);
 					g_engine->_console->draw();
 					g_engine->_screen->update();
@@ -133,6 +137,7 @@ void loadMenu() {
 	}
 
 	g_engine->removeFullscreenPic();
+	_open = false;
 }
 
 } // End of namespace Darkseed

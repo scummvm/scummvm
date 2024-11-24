@@ -24,7 +24,14 @@
 
 namespace Darkseed {
 
-void loadMenu();
+class Menu {
+private:
+	bool _open = false;
+public:
+	bool isOpen() const { return _open; }
+
+	void loadMenu();
+};
 
 } // namespace Darkseed
 
