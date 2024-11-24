@@ -119,7 +119,50 @@ void Room702::parser() {
 }
 
 void Room702::daemon() {
-	//TODO
+	switch (_G(kernel).trigger) {
+	case 40:
+		player_set_commands_allowed(false);
+		setGlobals1(1, _ripShowsRingSeries, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
+		if (_G(flags[V210])) {
+			sendWSMessage_110000(_G(my_walker), 41);			
+		} else {
+			_G(flags[V210]) = 1;
+			sendWSMessage_110000(_G(my_walker), 60);
+		}
+
+		break;
+		
+	case 41:
+		digi_play("702R06", 1, 255, 42, -1);
+		break;
+		
+	case 42:
+	case 43:
+	case 44:
+	case 45:
+	case 46:
+	case 47:
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+	case 60:
+	case 61:
+	case 62:
+	case 63:
+	case 64:
+	case 65:
+	case 100:
+	case 101:
+	case 102:
+	case 103:
+	case 110:
+	case 111:
+		break;
+	default:
+		break;
+	}
 }
 
 void Room702::callback(frac16 myMessage, machine *sender) {
