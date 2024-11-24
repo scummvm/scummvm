@@ -206,7 +206,7 @@ Audio::Mixer::SoundType getType(SoundEngine::SOUND_TYPES type) {
 }
 
 bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
-	debugC(1, kDebugSound, "SoundEngine::playSound(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+	debugC(1, kDebugSound, "SoundEngine::playSound(filename='%s', type=%d, volume=%f, pan=%f, loop=%d, loopStart=%d, loopEnd=%d, layer=%d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	playSoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
 
@@ -238,7 +238,7 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	handle->loopEnd = loopEnd;
 	handle->layer = layer;
 
-	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+	debugC(1, kDebugSound, "SoundEngine::playSoundEx(fileName='%s', type=%d, volume=%f, pan=%f, loop=%d, loopStart=%d, loopEnd=%d, layer=%d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 #ifdef USE_VORBIS
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
