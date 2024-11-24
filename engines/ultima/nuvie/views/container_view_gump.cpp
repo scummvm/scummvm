@@ -210,8 +210,8 @@ void ContainerViewGump::init_corpse(const Common::Path &datadir, Std::string bg_
 
 	build_path(datadir, "container", path);
 
-	up_arrow_button = loadButton(datadir, "cont_up", 67, 28);
-	down_arrow_button = loadButton(datadir, "cont_down", 67, 78);
+	up_arrow_button = loadButton(path, "cont_up", 67, 28);
+	down_arrow_button = loadButton(path, "cont_down", 67, 78);
 
 	build_path(path, bg_filename, imagefile);
 
