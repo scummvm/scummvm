@@ -5491,6 +5491,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("plbible", "", "PLAY&LRN.EXE",		 "t:e32ea13972b689e2bc707304ae329553",  741444,
 							"MAIN/BIBLESTO.DIR", "f:084b2bce5c70e6ecbf82046f8dfb9869", 2583492, 404),
 
+	WINGAME2("plbible", "", "PLAY&LRN.EXE",		 "t:e32ea13972b689e2bc707304ae329553",  741444,
+							"MAIN/BIBLESTO.DIR", "f:084b2bce5c70e6ecbf82046f8dfb9869", 2583492, 404),
+
 	// Distributed with Vote America demo
 	WINGAME1t("poliq", "", "POLIQ.EXE", "08ea6f2f9af69af4d70967870fd92f81", 1376591, 404),
 
