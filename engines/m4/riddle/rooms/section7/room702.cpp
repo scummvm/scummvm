@@ -677,7 +677,25 @@ void Room702::callback(frac16 myMessage, machine *sender) {
 }
 
 void Room702::conv702a() {
-	//TODO
+	if (conv_sound_to_play() == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	int32 who = conv_whos_talking();
+	if (who == 0) {
+		int32 node = conv_current_node();
+		int32 entry = conv_current_entry();
+
+		if (node == 1 && (entry == 1 || entry == 2)) {
+			_field54 = 2107;
+		} else {
+			_field54 = 2103;
+		}
+	} else if (who == 1) {
+		_field48 = 1104;
+		digi_play(conv_sound_to_play(), 1, 255, 1, -1);
+	}
 }
 
 } // namespace Rooms
