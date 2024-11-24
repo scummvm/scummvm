@@ -33,8 +33,36 @@ public:
 	Room702() : Room() {}
 	~Room702() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	static void callback(frac16 myMessage, machine *sender);
+
+	int32 _field3C = 0;
+	int32 _field40 = 0;
+	int32 _field44 = 0;
+	int32 _field48 = 0;
+	int32 _field4C = 0;
+	int32 _field50 = 0;
+	int32 _field54 = 0;
+	int32 _field58 = 0;
+	
+	int32 _702GuardShadow1Series = 0;
+	int32 _702GuardShadow2Series = 0;
+	int32 _guardStepsAsideTalksSeries = 0;
+	int32 _guardTalksAndBowsSeries = 0;
+	int32 _ringCloseupSeries = 0;
+	int32 _ripSafariWalkerPos1Series = 0;
+	int32 _ripShowsRingSeries = 0;
+	int32 _safariShadow1Series = 0;
+
+	machine *_guardMach = nullptr;
+	machine *_guardShadowMach = nullptr;
+	
 };
 
 } // namespace Rooms
