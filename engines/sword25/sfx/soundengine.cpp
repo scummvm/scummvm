@@ -217,10 +217,6 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	if (type == MUSIC && _noMusic)
 		return 0;
 
-#ifdef USE_VORBIS
-	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
-	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
-#endif
 	uint id = handleId;
 	SndHandle *handle;
 
@@ -241,7 +237,17 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	debugC(1, kDebugSound, "SoundEngine::playSoundEx(fileName='%s', type=%d, volume=%f, pan=%f, loop=%d, loopStart=%d, loopEnd=%d, layer=%d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 #ifdef USE_VORBIS
-	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
+
+	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
+
+	if (loop) {
+		Audio::AudioStream *audio = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
+
+		_mixer->playStream(getType(type), &(handle->handle), audio, -1, (byte)(volume * 255), (int8)(pan * 127));
+	} else {
+		_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+	}
 #endif
 
 	return id;
