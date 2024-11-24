@@ -34,9 +34,13 @@
 namespace IMSMacintosh {
 using namespace Scumm;
 
+enum : byte {
+	kRhythmPart = 9
+};
+
 struct ChanControlNode;
 struct DeviceChannel {
-	DeviceChannel(const uint32 *_pitchTable) : pitchTable(_pitchTable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
+	DeviceChannel(const uint32 *pitchtable) : pitchTable(pitchtable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
 		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr),
 		prog(0), baseFreq(0), note(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
 	~DeviceChannel() {}
@@ -82,7 +86,7 @@ public:
 	virtual void setQuality(int qual) = 0;
 	void noteOn(const ChanControlNode *node);
 	void noteOff(const ChanControlNode *node);
-	void soundOff(const ChanControlNode *node);
+	void voiceOff(const ChanControlNode *node);
 	void setVolume(const ChanControlNode *node);
 	void setPitchBend(const ChanControlNode *node);
 
@@ -149,9 +153,9 @@ public:
 
 private:
 	bool loadInstruments(const char *const *fileNames, int numFileNames) override;
-	void setInstrument(DeviceChannel *c) override;
-	void recalcFrequency(DeviceChannel *c) override;
-	void recalcVolume(DeviceChannel *c) override;
+	void setInstrument(DeviceChannel *chan) override;
+	void recalcFrequency(DeviceChannel *chan) override;
+	void recalcVolume(DeviceChannel *chan) override;
 	void noteOffIntern(DeviceChannel *chan) override;
 
 	DeviceChannel *allocateChannel(const ChanControlNode *node) override;
@@ -238,6 +242,9 @@ private:
 	byte _panPos;
 	int16 _detune;
 	int8 _transpose;
+	byte _polyphony;
+	byte _usage;
+	bool _overuse;
 	int16 _pitchBendSet;
 	byte _pitchBendSensitivity;
 	int16 _pitchBendEff;
@@ -262,10 +269,11 @@ private:
 };
 
 struct ChanControlNode {
-	ChanControlNode(int num) : in(nullptr), number(num), note(0), sustain(false), prio(0x7F), volume(0x7F), panPos(0x40), velocity(0), pitchBend(0), prog(0), prev(nullptr), next(nullptr) {}
+	ChanControlNode(byte num) : in(nullptr), number(num), note(0), sustain(false), rhythmPart(false), prio(0x7F), volume(0x7F), panPos(0x40), velocity(0), pitchBend(0), prog(0), prev(nullptr), next(nullptr) {}
 	IMuseChannel_Macintosh *in;
 	const byte number;
 	bool sustain;
+	bool rhythmPart;
 	byte prio;
 	byte note;
 	byte volume;
@@ -352,7 +360,7 @@ bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFile
 		return false;
 
 	_internal16Bit = internal16Bit;
-	_stereo = _version > 0 && stereo;
+	_stereo = (_version) > 0 && stereo;
 
 	uint16 feedBufferSize = _stereo ? 2048 : 1024;
 	if (_feedBufferSize != feedBufferSize) {
@@ -401,10 +409,11 @@ bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFile
 
 	_macstr->initBuffers(1024);
 	_macstr->addVolumeGroup(Audio::Mixer::kMusicSoundType);
-	// Only MI2 and FOA have MIDI sound effects
-	if (_version == 0)
+	// Only MI2 and FOA have MIDI sound effects. Also, the later versions use a different update method.
+	if (_version == 0) {
 		_macstr->addVolumeGroup(Audio::Mixer::kSFXSoundType);
-	_macstr->setVblCallback(&_vblTskProc);
+		_macstr->setVblCallback(&_vblTskProc);
+	}
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _macstr, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
@@ -415,6 +424,7 @@ void IMSMacSoundSystem::deinit() {
 	Common::StackLock lock(_mixer->mutex());
 	stop();
 	_mixer->stopHandle(_soundHandle);
+	_timerProc = nullptr;
 	delete _macstr;
 	_macstr = nullptr;
 	delete _sdrv;
@@ -445,12 +455,12 @@ void IMSMacSoundSystem::noteOn(const ChanControlNode *node) {
 	if (c->instr == nullptr)
 		return;
 
-	debug(6, "%s(): chan %d, note %d, instr id %d (%s)", __FUNCTION__, node->number, node->note, node->prog, c->instr.get()->name());
+	debug(6, "NOTE ON: ims part %d, chan node %d, note %d, instr id %d (%s)", node->in ? node->in->getNumber() : node->number, node->number, node->note, node->prog, c->instr.get()->name());
 
 	recalcVolume(c);
 
 	const MacLowLevelPCMDriver::PCMSound *s = c->instr.get()->data();
-	c->baseFreq = (node->number != 9) ? s->baseFreq : 60;
+	c->baseFreq = !node->rhythmPart ? s->baseFreq : 60;
 	c->rate = s->rate;
 	c->smpBuffStart = s->data.get();
 	c->smpBuffEnd = c->smpBuffStart + s->len;
@@ -475,18 +485,21 @@ void IMSMacSoundSystem::noteOff(const ChanControlNode *node) {
 	Common::StackLock lock(_mixer->mutex());
 	for (int i = 0; i < _numChannels; ++i) {
 		DeviceChannel *c = _channels[i];
-		if (c->node == node)
+		if (c->node == node) {
 			noteOffIntern(c);
+			c->node = nullptr;
+		}
 	}
 }
 
-void IMSMacSoundSystem::soundOff(const ChanControlNode *node) {
+void IMSMacSoundSystem::voiceOff(const ChanControlNode *node) {
 	Common::StackLock lock(_mixer->mutex());
 	for (int i = 0; i < _numChannels; ++i) {
 		DeviceChannel *c = _channels[i];
 		if (c->node == node) {
 			c->mute = true;
 			c->release = false;
+			c->node = nullptr;
 		}
 	}
 }
@@ -532,6 +545,9 @@ const MacSoundDriver::Status &IMSMacSoundSystem::getDriverStatus(Audio::Mixer::S
 }
 
 void IMSMacSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblBuffer) {
+	if (_version > 0 && _timerProc)
+		_timerProc(_timerParam);
+
 	uint16 sil = 0;
 	memset(_mixBuffer16Bit, 0, _feedBufferSize * sizeof(uint16));
 	uint16 frameSize = _stereo ? 2 : 1;
@@ -752,19 +768,19 @@ bool DJMSoundSystem::loadInstruments(const char *const *fileNames, int numFileNa
 	return !_smpResources.empty();
 }
 
-void DJMSoundSystem::setInstrument(DeviceChannel *c) {
-	assert(c && c->node);
-	if (c->instr == nullptr || c->prog != c->node->prog) {
-		c->instr = getSndResource(c->node->prog);
-		c->prog = c->node->prog;
+void DJMSoundSystem::setInstrument(DeviceChannel *chan) {
+	assert(chan && chan->node);
+	if (chan->instr == nullptr || chan->prog != chan->node->prog) {
+		chan->instr = getSndResource(chan->node->prog);
+		chan->prog = chan->node->prog;
 	}
 }
 
-void DJMSoundSystem::recalcFrequency(DeviceChannel *c) {
-	assert(c);
-	c->recalcFrequency();
-	if (c->instr != nullptr)
-		c->mute = false;
+void DJMSoundSystem::recalcFrequency(DeviceChannel *chan) {
+	assert(chan);
+	chan->recalcFrequency();
+	if (chan->instr != nullptr)
+		chan->mute = false;
 }
 
 void DJMSoundSystem::recalcVolume(DeviceChannel *c) {
@@ -787,12 +803,12 @@ DeviceChannel *DJMSoundSystem::allocateChannel(const ChanControlNode *node) {
 	return c;
 }
 
-NewMacSoundSystem::NewMacSoundSystem(ScummEngine *vm, Audio::Mixer *mixer) : IMSMacSoundSystem(mixer, 1),
+NewMacSoundSystem::NewMacSoundSystem(ScummEngine *vm, Audio::Mixer *mixer) : IMSMacSoundSystem(mixer, 1), // It is sufficient to distinguish version 0 and 1 here.
 	_fileMan(nullptr), _container(vm ? vm->_containerFile : _dummy), _dbCbProc(this, &MacLowLevelPCMDriver::CallbackClient::dblBuffCallback) {
 	assert(vm);
 	_defaultInstrID = 0xFFFF;
 	_fileMan = new ScummFile(vm);
-}
+	}
 
 NewMacSoundSystem::~NewMacSoundSystem() {
 	delete _fileMan;
@@ -875,16 +891,16 @@ Common::SharedPtr<MacSndResource> NewMacSoundSystem::getNoteRangeSndResource(uin
 
 void NewMacSoundSystem::setInstrument(DeviceChannel *chan) {
 	assert(chan && chan->node);
-	if (chan->instr == nullptr || (chan->node->number != 9 && chan->prog != chan->node->prog) || chan->note != chan->node->note) {
+	if (chan->instr == nullptr || (!chan->node->rhythmPart && chan->prog != chan->node->prog) || chan->note != chan->node->note) {
 		chan->note = chan->node->note;
 		chan->prog = chan->node->prog;
-		chan->instr = (chan->node->number == 9) ? getSndResource(6000 + chan->note) : getNoteRangeSndResource(chan->prog, chan->note);
+		chan->instr = chan->node->rhythmPart ? getSndResource(6000 + chan->note) : getNoteRangeSndResource(chan->prog, chan->note);
 	}
 }
 
 void NewMacSoundSystem::recalcFrequency(DeviceChannel *chan) {
 	assert(chan && chan->node);
-	if (chan->node->number == 9)
+	if (chan->node->rhythmPart)
 		chan->frequency = 0x8000;
 	else
 		chan->recalcFrequency();
@@ -950,7 +966,7 @@ void NewMacSoundSystem::recalcVolume(DeviceChannel *chan) {
 
 void NewMacSoundSystem::noteOffIntern(DeviceChannel *chan) {
 	assert(chan && chan->node);
-	if (chan->node->number != 9)
+	if (!chan->node->rhythmPart)
 		chan->release = true;
 	chan->loopStart = nullptr;
 	chan->loopEnd = chan->smpBuffEnd;
@@ -1001,10 +1017,10 @@ DeviceChannel *NewMacSoundSystem::allocateChannel(const ChanControlNode *node) {
 
 byte IMuseChannel_Macintosh::_allocCur = 0;
 
-IMuseChannel_Macintosh::IMuseChannel_Macintosh(IMuseDriver_Macintosh *drv, int number) : MidiChannel(), _drv(drv), _number(number), _allocated(false),
-	_sustain(false), _bank(0), _panPos(0x40), _pitchBendEff(0), _prio(0x80), _detune(0), _transpose(0), _pitchBendSet(0), _pitchBendSensitivity(2), _volume(0x7F),
-	_rpn(0), _pitchBendRange(0), _channels(drv ? drv->_channels : nullptr), _prog(0), _out(nullptr), _device(drv ? drv->_device : nullptr), _version(drv->_version),
-	_rtmChannel((drv && drv->_version > 0) ? drv->_channels[drv->_numChannels - 1] : nullptr), _numChannels(drv ? (drv->_version < 1 ? drv->_numChannels : drv->_numChannels - 1) : 0) {
+IMuseChannel_Macintosh::IMuseChannel_Macintosh(IMuseDriver_Macintosh *drv, int number) : MidiChannel(), _drv(drv), _number(number), _allocated(false), _polyphony(1), _usage(0),
+	_sustain(false), _bank(0), _panPos(0x40), _pitchBendEff(0), _prio(0x80), _detune(0), _transpose(0), _pitchBendSet(0), _pitchBendSensitivity(2), _volume(0x7F), _overuse(false),
+	_rpn(0), _pitchBendRange(0), _channels(drv ? drv->_channels : nullptr), _prog(0), _out(nullptr), _device(drv ? drv->_device : nullptr), _version(drv ? drv->_version : -1),
+	_rtmChannel((drv && drv->_version == 1) ? drv->_channels[drv->_numChannels - 1] : nullptr), _numChannels(drv ? (drv->_version != 1 ? drv->_numChannels : drv->_numChannels - 1) : 0) {
 	assert(_drv);
 	assert(_channels);
 	assert(_device);
@@ -1015,11 +1031,14 @@ bool IMuseChannel_Macintosh::allocate() {
 	if (_allocated)
 		return false;
 
+	_usage = 0;
+	_overuse = false;
+
 	return (_allocated = true);
 }
 
 void IMuseChannel_Macintosh::noteOff(byte note)  {
-	for (ChanControlNode *node = (_version > 0 && _number == 9) ? _rtmChannel : _out; node; ) {
+	for (ChanControlNode *node = (_version == 1 && _number == kRhythmPart) ? _rtmChannel : _out; node; ) {
 		ChanControlNode *n = node->next;
 		if (node->note == note) {
 			if (_sustain && node != _rtmChannel) {
@@ -1027,6 +1046,8 @@ void IMuseChannel_Macintosh::noteOff(byte note)  {
 			} else {
 				_device->noteOff(node);
 				disconnect(_out, node);
+				if (_version == 2)
+					_overuse = (--_usage > _polyphony);
 			}
 		}
 		node = n;
@@ -1034,27 +1055,33 @@ void IMuseChannel_Macintosh::noteOff(byte note)  {
 }
 
 void IMuseChannel_Macintosh::noteOn(byte note, byte velocity)  {
-	ChanControlNode *node = (_version > 0 && _number == 9) ? _rtmChannel : allocateNode(_prio);
+	ChanControlNode *node = allocateNode(_prio);
 	if (node == nullptr)
 		return;
 
-	if (node != _rtmChannel) {
-		if (_prog == 0)
-			return;
-		connect(_out, node);
+	if (_version == 0 || _number != kRhythmPart) {
 		node->in = this;
 		node->prio = _prio;
 		node->prog = _prog;
 		node->pitchBend = _pitchBendEff;
 		node->volume = _volume;
+		node->rhythmPart = false;
 	} else {
+		if (_version == 2) {
+			node->in = this;
+			node->prio = _prio;
+		}
 		node->volume = _volume * 6 / 7;
+		node->rhythmPart = true;
 	}
 
 	node->note = note;
 	node->sustain = false;
 	node->panPos = _panPos;
 	node->velocity = velocity;
+
+	if (_version == 2)
+		_overuse = (++_usage > _polyphony);
 
 	_device->noteOn(node);
 }
@@ -1063,8 +1090,8 @@ void IMuseChannel_Macintosh::controlChange(byte control, byte value)  {
 	switch (control) {
 	case 0:
 		// The original MI2/INDY4 code doesn't have that. It will just call a different
-		// programChange() method from the sysex handler. Only DOTT and SAMNMAX have the
-		// bank select like this in the original code.
+		// programChange() method from the sysex handler. Only DOTT and SAMNMAX call a
+		// bank select, but the actual selection is not implemented, since it is not needed.
 		_bank = value;
 		break;
 	case 6:
@@ -1078,6 +1105,15 @@ void IMuseChannel_Macintosh::controlChange(byte control, byte value)  {
 			_panPos = value;
 		updateVolume();
 		break;
+	case 17:
+		if (_version == 2)
+			_polyphony = value;
+		else
+			detune(value);
+		break;
+	case 18:
+		priority(value);
+		break;
 	case 64:
 		sustain(value);
 		break;
@@ -1086,6 +1122,9 @@ void IMuseChannel_Macintosh::controlChange(byte control, byte value)  {
 		break;
 	case 101:
 		_rpn = value | 0x80;
+		break;
+	case 123:
+		allNotesOff();
 		break;
 	default:
 		break;
@@ -1107,10 +1146,9 @@ void IMuseChannel_Macintosh::pitchBend(int16 bend)  {
 	else
 		bend = ((bend * _pitchBendSensitivity) >> 6) + _detune + (_transpose << 7); // DOTT, INDY4 and MI2 formula
 
-	if (_version == 1)
-		bend = CLIP<int16>(bend, -2048, 2047) << 2;
-
 	if (_version > 0) {
+		if (_version == 1)
+			bend = CLIP<int16>(bend, -2048, 2047) << 2;
 		if (bend > 7936)
 			bend = 8192;
 		else if (bend < -7936)
@@ -1119,6 +1157,9 @@ void IMuseChannel_Macintosh::pitchBend(int16 bend)  {
 	}
 
 	_pitchBendEff = bend;
+
+	if (_pitchBendSet)
+		debug(6, "PITCH BEND: ims part %d, pb para %d, pb snstvty %d, pb range %d, _detune %d, transpose %d, pb eff %d", _number, _pitchBendSet, _pitchBendSensitivity, _pitchBendRange, _detune, _transpose, _pitchBendEff);
 
 	for (ChanControlNode *node = _out; node; node = node->next) {
 		node->pitchBend = _pitchBendEff;
@@ -1136,16 +1177,20 @@ void IMuseChannel_Macintosh::sustain(bool value) {
 		if (node->sustain) {
 			_device->noteOff(node);
 			disconnect(_out, node);
+			if (_version == 2)
+				_overuse = (--_usage > _polyphony);
 		}
 		node = n;
 	}
 }
 
 void IMuseChannel_Macintosh::allNotesOff() {
-	for (ChanControlNode *node = (_version > 0 && _number == 9) ? _rtmChannel : _out; node; ) {
-		_device->soundOff(node);
+	for (ChanControlNode *node = (_version == 1 && _number == kRhythmPart) ? _rtmChannel : _out; node; ) {
+		_device->voiceOff(node);
 		ChanControlNode *n = node->next;
 		disconnect(_out, node);
+		if (_version == 2)
+			_overuse = (--_usage > _polyphony);
 		node = n;
 	}
 }
@@ -1167,31 +1212,51 @@ void IMuseChannel_Macintosh::dataEntry(byte value) {
 void IMuseChannel_Macintosh::updateVolume() {
 	for (ChanControlNode *node = _out; node; node = node->next) {
 		node->panPos = _panPos;
-		node->volume = (node == _rtmChannel) ? _volume * 6 / 7 : _volume;
+		node->volume = (_version > 0 && _number == kRhythmPart) ? _volume * 6 / 7 : _volume;
 		_device->setVolume(node);
 	}
 }
 
 ChanControlNode *IMuseChannel_Macintosh::allocateNode(int prio) {
-	ChanControlNode *res = nullptr;
-	if (_version > 0)
+	if (_version > 0) {
 		_allocCur = 0;
+		if (_version == 1 && _number == kRhythmPart)
+			return _rtmChannel;
+	}
+
+	if (_version < 1 && _prog == 0)
+		return nullptr;
+
+	IMuseChannel_Macintosh *best = this;
+	ChanControlNode *res = nullptr;
 
 	for (byte i = 0; i < _numChannels; ++i) {
 		_allocCur = (_allocCur + 1) % _numChannels;
 		ChanControlNode *node = _channels[_allocCur];
-		if (node->in == nullptr)
-			return node;
-		if (!node->next && node->in && node->in->_prio <= prio) {
+		if (node->in == nullptr) {
 			res = node;
-			prio = node->in->_prio;
+			best = nullptr;
+			break;
+		}
+
+		if ((_version == 2 && ((best->_overuse == node->in->_overuse && best->_prio >= node->prio) || (!best->_overuse && node->in->_overuse))) ||
+			(_version < 2 && (!node->next && node->in && node->in->_prio <= prio))) {
+			res = node;
+			best = node->in;
+			prio = best->_prio;
 		}
 	}
 
-	if (res) {
-		_device->soundOff(res);
-		disconnect(res->in->_out, res);
+	if (res && best) {
+		if (_version == 2)
+			best->_overuse = (--best->_usage > best->_polyphony);
+		_device->voiceOff(res);
+		disconnect(best->_out, res);
 	}
+
+	assert(!(_out && _out == res));
+	connect(_out, res);
+
 	return res;
 }
 
@@ -1201,21 +1266,19 @@ namespace Scumm {
 using namespace IMSMacintosh;
 
 IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixer, byte gameID) : MidiDriver(), _isOpen(false), _device(nullptr), _imsParts(nullptr), _channels(nullptr),
-	_numParts(24), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0), _sfxVolume(0), _version(-1) {
+	_numParts(32), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0), _sfxVolume(0), _version(-1) {
 
 	switch (gameID) {
-	case GID_SAMNMAX:
-		_version = 2;
-		_numChannels = 16;
-		_numParts = 32;
-		//_baseTempo = 46439;
-		_device = new NewMacSoundSystem(vm, mixer);
-		break;
 	case GID_TENTACLE:
-		_version = 1;
-		_numChannels = 16;
-		_numParts = 32;
-		//_baseTempo = 46439;
+	case GID_SAMNMAX:
+		if (gameID == GID_SAMNMAX) {
+			_version = 2;
+			_numChannels = 12;
+		} else {
+			_version = 1;
+			_numChannels = 16;
+		}
+		_baseTempo = 46439;
 		_device = new NewMacSoundSystem(vm, mixer);
 		break;
 	case GID_INDY4:
@@ -1279,7 +1342,7 @@ int IMuseDriver_Macintosh::open() {
 		_imsParts[i]->controlChange(0x00, 0x00);
 		_imsParts[i]->controlChange(0x7B, 0x00);
 		_imsParts[i]->programChange(0);
-		_imsParts[i]->pitchBend(0x2000);
+		_imsParts[i]->pitchBend(0);
 	}
 
 	return 0;
@@ -1340,7 +1403,7 @@ MidiChannel *IMuseDriver_Macintosh::allocateChannel() {
 
 	for (int i = 0; i < _numParts; ++i) {
 		IMuseChannel_Macintosh *ch = _imsParts[i];
-		if (ch && !(_version > 0 && i == 9) && ch->allocate())
+		if (ch && !(_version > 0 && i == kRhythmPart) && ch->allocate())
 			return ch;
 	}
 
@@ -1348,7 +1411,7 @@ MidiChannel *IMuseDriver_Macintosh::allocateChannel() {
 }
 
 MidiChannel *IMuseDriver_Macintosh::getPercussionChannel() {
-	return (_isOpen && _version > 0) ? _imsParts[9] : nullptr;
+	return (_isOpen && _version > 0) ? _imsParts[kRhythmPart] : nullptr;
 }
 
 void IMuseDriver_Macintosh::createChannels() {
@@ -1357,7 +1420,7 @@ void IMuseDriver_Macintosh::createChannels() {
 	_channels = new ChanControlNode*[_numChannels];
 	assert(_channels);
 	for (int i = 0; i < _numChannels; ++i) {
-		_channels[i] = new ChanControlNode(i < 9 ? i : (i == 15 ? 9 : i + 1));
+		_channels[i] = new ChanControlNode(i < kRhythmPart ? i : (i == _numChannels - 1 ? kRhythmPart : i + 1));
 		assert(_channels[i]);
 	}
 
