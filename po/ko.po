@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-22 00:21+0000\n"
+"POT-Creation-Date: 2024-11-25 14:10+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -365,7 +365,7 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
+#: engines/vcruise/vcruise.cpp:98 engines/vcruise/vcruise.cpp:108
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "확인"
@@ -3713,18 +3713,20 @@ msgstr "기본 게임 키설정"
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
-#: engines/mads/metaengine.cpp:280 engines/parallaction/metaengine.cpp:112
-#: engines/saga/metaengine.cpp:278 engines/stark/metaengine.cpp:189
-#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
-#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:122
-#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
-#: engines/tucker/metaengine.cpp:172 engines/wintermute/keymapper_tables.h:42
+#: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:278
+#: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
+#: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
+#: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
+#: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
+#: engines/vcruise/metaengine.cpp:158 engines/wintermute/keymapper_tables.h:42
 #: engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "왼쪽 클릭"
 
 #: engines/metaengine.cpp:68 backends/platform/maemo/maemo.cpp:165
-#: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:256
+#: engines/mtropolis/metaengine.cpp:173 engines/saga/metaengine.cpp:284
+#: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3739,12 +3741,13 @@ msgstr "중간 클릭"
 #: engines/hopkins/metaengine.cpp:219 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
-#: engines/parallaction/metaengine.cpp:118 engines/saga/metaengine.cpp:289
-#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
-#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
-#: engines/touche/metaengine.cpp:128 engines/trecision/metaengine.cpp:131
-#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/mtropolis/metaengine.cpp:167 engines/parallaction/metaengine.cpp:118
+#: engines/saga/metaengine.cpp:289 engines/stark/metaengine.cpp:195
+#: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
+#: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
+#: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
+#: engines/tucker/metaengine.cpp:178 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "오른쪽 클릭"
 
@@ -6345,19 +6348,19 @@ msgstr "예/아니요 키맵핑"
 msgid "Exit cutscene"
 msgstr "컷씬 나가기"
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:211
 msgid "Music volume down"
 msgstr "음악 볼륨 줄임"
 
-#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:216
 msgid "Music volume up"
 msgstr "음악 볼륨 높임"
 
-#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:201
 msgid "Toggle music on/off"
 msgstr "음악 켜기/끄기 전환"
 
-#: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:193
+#: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:206
 msgid "Toggle sound effects on/off"
 msgstr "사운드 효과 켜기/끄기 전환"
 
@@ -6706,7 +6709,8 @@ msgstr "Escape 키맵핑"
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
 #: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
-#: engines/twine/metaengine.cpp:388 engines/wintermute/keymapper_tables.h:60
+#: engines/twine/metaengine.cpp:388 engines/vcruise/metaengine.cpp:164
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "탈출"
 
@@ -7045,7 +7049,7 @@ msgstr ""
 "니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:367
+#: engines/vcruise/vcruise.cpp:364
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 불러올 수 없습니다."
@@ -7083,7 +7087,7 @@ msgstr "나가기/건너뛰기"
 #: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
 #: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
 #: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/vcruise/metaengine.cpp:162 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "게임 저장"
 
@@ -7092,7 +7096,7 @@ msgstr "게임 저장"
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:167
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:180
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -9336,11 +9340,11 @@ msgstr ""
 "ScummVM은 이를 수행할 수 없으며 \n"
 "해당 사이트는 더 이상 존재하지 않습니다."
 
-#: engines/mtropolis/metaengine.cpp:52
+#: engines/mtropolis/metaengine.cpp:53
 msgid "16:9 widescreen mod"
 msgstr "16:9 와이드스크린 개조"
 
-#: engines/mtropolis/metaengine.cpp:53
+#: engines/mtropolis/metaengine.cpp:54
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
@@ -9348,11 +9352,11 @@ msgstr ""
 "레터박싱을 제거하고 일부 디스플레이 요소를 이동하여 와이드스크린 디스플레이"
 "의 적용 범위를 개선함"
 
-#: engines/mtropolis/metaengine.cpp:63
+#: engines/mtropolis/metaengine.cpp:64
 msgid "Improved music mixing"
 msgstr "개선된 음악 믹싱"
 
-#: engines/mtropolis/metaengine.cpp:64
+#: engines/mtropolis/metaengine.cpp:65
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
@@ -9360,28 +9364,28 @@ msgstr ""
 "다이내믹 미디 믹서를 활성화하여, 품질을 향상시키지만, mTropolis 플레이어와는 "
 "다르게 작동합니다."
 
-#: engines/mtropolis/metaengine.cpp:74
+#: engines/mtropolis/metaengine.cpp:75
 msgid "Autosave at progress points"
 msgstr "진행 지점에서 자동 저장"
 
-#: engines/mtropolis/metaengine.cpp:75
+#: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr "퍼즐과 챕터를 완료한 후 자동으로 게임을 저장합니다."
 
-#: engines/mtropolis/metaengine.cpp:85
+#: engines/mtropolis/metaengine.cpp:86
 msgid "Enable short transitions"
 msgstr "짧은 전환을 활성화"
 
-#: engines/mtropolis/metaengine.cpp:86
+#: engines/mtropolis/metaengine.cpp:87
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr "건너뛰지 않고 최대 속도로 설정된 전환을 활성화합니다."
 
-#: engines/mtropolis/metaengine.cpp:96
+#: engines/mtropolis/metaengine.cpp:97
 msgid "Enable subtitles for important sound effects"
 msgstr "중요한 사운드 효과에 자막을 활성화"
 
-#: engines/mtropolis/metaengine.cpp:97
+#: engines/mtropolis/metaengine.cpp:98
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -9389,19 +9393,19 @@ msgstr ""
 "중요한 사운드 효과에 대한 자막을 활성화합니다.  이렇게 하면 사운드 인식 퍼즐"
 "과 미니게임의 난이도가 낮아질 수 있습니다."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Start with debugger"
 msgstr "디버거로 시작"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
+#: engines/mtropolis/metaengine.cpp:109 engines/vcruise/metaengine.cpp:66
 msgid "Starts with the debugger dashboard active."
 msgstr "디버거 대시보드가 활성화된 상태에서 시작합니다."
 
-#: engines/mtropolis/metaengine.cpp:160
+#: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
 msgstr "디버그 오버레이 전환"
 
-#: engines/mtropolis/metaengine.cpp:165
+#: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
 msgstr "재생 중인 동영상 강제로 종료"
 
@@ -9429,14 +9433,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "저장 파일에서 버전 정보를 읽기 실패함"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "저장 파일을 불러오는 데 실패했습니다. 저장 파일에 유효한 버전 정보가 없습니"
 "다."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:372
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9800,7 +9804,7 @@ msgstr "대화 위치 - 아래쪽"
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/sword1/metaengine.cpp:289
 #: engines/trecision/metaengine.cpp:150 engines/tsage/metaengine.cpp:252
-#: engines/vcruise/metaengine.cpp:182
+#: engines/vcruise/metaengine.cpp:195
 msgid "Pause game"
 msgstr "게임 일시 정지"
 
@@ -9887,7 +9891,7 @@ msgid "Continue game"
 msgstr "게임 계속하기"
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
-#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:177
+#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
 msgid "Quit game"
 msgstr "게임 종료"
 
@@ -12553,11 +12557,11 @@ msgstr ""
 "\n"
 "모든 파일을 올바르게 복사했는지 확인하세요."
 
-#: engines/vcruise/metaengine.cpp:42
+#: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
 msgstr "클릭 감도 개선"
 
-#: engines/vcruise/metaengine.cpp:43
+#: engines/vcruise/metaengine.cpp:44
 msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
@@ -12567,77 +12571,77 @@ msgstr ""
 "이 기능이 꺼져 있으면 마우스 버튼을 누른 상태에서 마우스를 움직이면 클릭 상호"
 "작용이 취소됩니다."
 
-#: engines/vcruise/metaengine.cpp:53
+#: engines/vcruise/metaengine.cpp:54
 msgid "Faster animations"
 msgstr "더 빠른 애니메이션"
 
-#: engines/vcruise/metaengine.cpp:54
+#: engines/vcruise/metaengine.cpp:55
 msgid "Speeds up animations."
 msgstr "애니메이션 속도가 빨라집니다."
 
-#: engines/vcruise/metaengine.cpp:75
+#: engines/vcruise/metaengine.cpp:76
 msgid "Skip main menu"
 msgstr "메인 메뉴 건너뛰기"
 
-#: engines/vcruise/metaengine.cpp:76
+#: engines/vcruise/metaengine.cpp:77
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "게임을 실행하면 메인 메뉴로 이동하는 대신 새로운 게임이 시작됩니다."
 
-#: engines/vcruise/metaengine.cpp:86
+#: engines/vcruise/metaengine.cpp:87
 msgid "Use 16-color graphics"
 msgstr "16 색 그래픽을 사용"
 
-#: engines/vcruise/metaengine.cpp:87
+#: engines/vcruise/metaengine.cpp:88
 msgid "Uses 16-color graphics."
 msgstr "16 색 그래픽을 사용합니다."
 
-#: engines/vcruise/metaengine.cpp:97
+#: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds"
 msgstr "사전 불러오기 사운드"
 
-#: engines/vcruise/metaengine.cpp:98
+#: engines/vcruise/metaengine.cpp:99
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
 "사전 불러오기 사운드입니다. 느린 하드 드라이브에서 성능을 개선 시킬 수 있습니"
 "다."
 
-#: engines/vcruise/metaengine.cpp:108
+#: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
 msgstr "더 빠른 비디오 디코더 (낮은 품질)"
 
-#: engines/vcruise/metaengine.cpp:109
+#: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr "품질을 낮추고 비디오 디코딩 CPU 사용량을 줄이세요."
 
-#: engines/vcruise/metaengine.cpp:157
+#: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
 msgstr "도움말 화면 표시"
 
-#: engines/vcruise/metaengine.cpp:172
+#: engines/vcruise/metaengine.cpp:185
 msgid "Open sound settings"
 msgstr "사운드 설정 열기"
 
-#: engines/vcruise/metaengine.cpp:208
+#: engines/vcruise/metaengine.cpp:221
 msgid "Sound effect volume down"
 msgstr "사운드 효과 볼륨 줄임"
 
-#: engines/vcruise/metaengine.cpp:213
+#: engines/vcruise/metaengine.cpp:226
 msgid "Sound effect volume up"
 msgstr "사운드 효과 볼륨 높임"
 
-#: engines/vcruise/metaengine.cpp:218
+#: engines/vcruise/metaengine.cpp:231
 msgid "Skip current animation"
 msgstr "현재 애니메이션 건너뛰기"
 
-#: engines/vcruise/metaengine.cpp:222
+#: engines/vcruise/metaengine.cpp:235
 msgid "Cycle item in scene (debug cheat)"
 msgstr "장면에서 아이템 순환 (디버그 치트)"
 
-#: engines/vcruise/vcruise.cpp:92
+#: engines/vcruise/vcruise.cpp:89
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "이 게임은 JPEG 지원이 필요하지만, 컴파일되지 않았습니다."
 
-#: engines/vcruise/vcruise.cpp:99
+#: engines/vcruise/vcruise.cpp:96
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12645,7 +12649,7 @@ msgstr ""
 "이 게임의 음악은 Ogg Vorbis 지원이 필요하지만, 컴파일되지 않았습니다.\n"
 "게임은 계속 플레이되지만, 음악은 없습니다."
 
-#: engines/vcruise/vcruise.cpp:109
+#: engines/vcruise/vcruise.cpp:106
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12653,16 +12657,16 @@ msgstr ""
 "이 게임의 음악은 MP3 지원이 필요하지만, 컴파일되지 않았습니다.\n"
 "게임은 계속 플레이되지만, 음악은 없습니다."
 
-#: engines/vcruise/vcruise.cpp:352
+#: engines/vcruise/vcruise.cpp:349
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장 데이터를 불러오는 데 실패했습니다, 저장 데이터가 손상된 것 같습니다."
 
-#: engines/vcruise/vcruise.cpp:357
+#: engines/vcruise/vcruise.cpp:354
 msgid "Failed to read version information from save file."
 msgstr "저장 파일에서 버전 정보를 읽는데 실패하였습니다."
 
-#: engines/vcruise/vcruise.cpp:377
+#: engines/vcruise/vcruise.cpp:374
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생했습니다."
 

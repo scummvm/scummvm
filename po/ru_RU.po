@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-22 00:21+0000\n"
+"POT-Creation-Date: 2024-11-25 14:10+0000\n"
 "PO-Revision-Date: 2024-11-15 17:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -365,7 +365,7 @@ msgstr "Содержимое кода JSON имеет неверный форм�
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
+#: engines/vcruise/vcruise.cpp:98 engines/vcruise/vcruise.cpp:108
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -3771,18 +3771,20 @@ msgstr "Раскладка клавиш по умолчанию"
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
-#: engines/mads/metaengine.cpp:280 engines/parallaction/metaengine.cpp:112
-#: engines/saga/metaengine.cpp:278 engines/stark/metaengine.cpp:189
-#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
-#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:122
-#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
-#: engines/tucker/metaengine.cpp:172 engines/wintermute/keymapper_tables.h:42
+#: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:278
+#: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
+#: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
+#: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
+#: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
+#: engines/vcruise/metaengine.cpp:158 engines/wintermute/keymapper_tables.h:42
 #: engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Левый щелчок"
 
 #: engines/metaengine.cpp:68 backends/platform/maemo/maemo.cpp:165
-#: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:256
+#: engines/mtropolis/metaengine.cpp:173 engines/saga/metaengine.cpp:284
+#: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3797,12 +3799,13 @@ msgstr "Средний щелчок"
 #: engines/hopkins/metaengine.cpp:219 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
-#: engines/parallaction/metaengine.cpp:118 engines/saga/metaengine.cpp:289
-#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
-#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
-#: engines/touche/metaengine.cpp:128 engines/trecision/metaengine.cpp:131
-#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/mtropolis/metaengine.cpp:167 engines/parallaction/metaengine.cpp:118
+#: engines/saga/metaengine.cpp:289 engines/stark/metaengine.cpp:195
+#: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
+#: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
+#: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
+#: engines/tucker/metaengine.cpp:178 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Правый щелчок"
 
@@ -6443,19 +6446,19 @@ msgstr "Раскладка клавиш Да/Нет"
 msgid "Exit cutscene"
 msgstr "Выйти из заставки"
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:211
 msgid "Music volume down"
 msgstr "Уменьшить громкость музыки"
 
-#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:216
 msgid "Music volume up"
 msgstr "Увеличить громкость музыки"
 
-#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:201
 msgid "Toggle music on/off"
 msgstr "Вкл/выкл музыку"
 
-#: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:193
+#: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:206
 msgid "Toggle sound effects on/off"
 msgstr "Вкл/выкл звуковые эффекты"
 
@@ -6811,7 +6814,8 @@ msgstr "Раскладки клавиш выхода"
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
 #: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
-#: engines/twine/metaengine.cpp:388 engines/wintermute/keymapper_tables.h:60
+#: engines/twine/metaengine.cpp:388 engines/vcruise/metaengine.cpp:164
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Клавиша Esc"
 
@@ -7156,7 +7160,7 @@ msgstr ""
 "сообщение появится снова при следующем запуске игры.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:367
+#: engines/vcruise/vcruise.cpp:364
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Этот файл сохранения был создан в более новой версии ScummVM. Не могу его "
@@ -7195,7 +7199,7 @@ msgstr "Выйти/Пропустить"
 #: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
 #: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
 #: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/vcruise/metaengine.cpp:162 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Сохранить игру"
 
@@ -7204,7 +7208,7 @@ msgstr "Сохранить игру"
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:167
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:180
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -9470,11 +9474,11 @@ msgstr ""
 "этого делать, а сайт магазина больше\n"
 "не существует."
 
-#: engines/mtropolis/metaengine.cpp:52
+#: engines/mtropolis/metaengine.cpp:53
 msgid "16:9 widescreen mod"
 msgstr "Широкоэкранный 16:9 мод"
 
-#: engines/mtropolis/metaengine.cpp:53
+#: engines/mtropolis/metaengine.cpp:54
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
@@ -9482,11 +9486,11 @@ msgstr ""
 "Убирает чёрные полосы по краям экрана, перемещает некоторые элементы, чтобы "
 "лучше выглядело на широкоэкранных мониторах"
 
-#: engines/mtropolis/metaengine.cpp:63
+#: engines/mtropolis/metaengine.cpp:64
 msgid "Improved music mixing"
 msgstr "Улучшенное микширование музыки"
 
-#: engines/mtropolis/metaengine.cpp:64
+#: engines/mtropolis/metaengine.cpp:65
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
@@ -9494,28 +9498,28 @@ msgstr ""
 "Включает динамическое MIDI микширование. Это улучшает качество, но "
 "отличается от оригинального mTropolis."
 
-#: engines/mtropolis/metaengine.cpp:74
+#: engines/mtropolis/metaengine.cpp:75
 msgid "Autosave at progress points"
 msgstr "Автоматически сохраняет игру в некоторых точках прогресса"
 
-#: engines/mtropolis/metaengine.cpp:75
+#: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr "Автоматически сохраняет игру по завершению головоломок и разделов."
 
-#: engines/mtropolis/metaengine.cpp:85
+#: engines/mtropolis/metaengine.cpp:86
 msgid "Enable short transitions"
 msgstr "Включить короткие переходы"
 
-#: engines/mtropolis/metaengine.cpp:86
+#: engines/mtropolis/metaengine.cpp:87
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr "Включить переходы с максимальной скоростью, а не просто их пропускать."
 
-#: engines/mtropolis/metaengine.cpp:96
+#: engines/mtropolis/metaengine.cpp:97
 msgid "Enable subtitles for important sound effects"
 msgstr "Включить субтитры для важных звуковых эффектов"
 
-#: engines/mtropolis/metaengine.cpp:97
+#: engines/mtropolis/metaengine.cpp:98
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -9523,19 +9527,19 @@ msgstr ""
 "Включить субтитры для важных звуковых эффектов.  Это поможет упростить "
 "распознавание значения звуков в головоломках и мини-играх."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Start with debugger"
 msgstr "Стартовать с отладчика"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
+#: engines/mtropolis/metaengine.cpp:109 engines/vcruise/metaengine.cpp:66
 msgid "Starts with the debugger dashboard active."
 msgstr "Стартовать с активной панелью отладчика."
 
-#: engines/mtropolis/metaengine.cpp:160
+#: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
 msgstr "Вкл/выкл слой для отладки"
 
-#: engines/mtropolis/metaengine.cpp:165
+#: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
 msgstr "Заставляет проигрывать все ролики до конца"
 
@@ -9563,14 +9567,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Не удалось загрузить информацию о версии из сохранения"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Не удалось загрузить игру, в файле сохранения отсутствует информация о "
 "версии."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:372
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9939,7 +9943,7 @@ msgstr "Позиция в диалоге -- вниз"
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/sword1/metaengine.cpp:289
 #: engines/trecision/metaengine.cpp:150 engines/tsage/metaengine.cpp:252
-#: engines/vcruise/metaengine.cpp:182
+#: engines/vcruise/metaengine.cpp:195
 msgid "Pause game"
 msgstr "Пауза игры"
 
@@ -10026,7 +10030,7 @@ msgid "Continue game"
 msgstr "Продолжить игру"
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
-#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:177
+#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
 msgid "Quit game"
 msgstr "Выйти из игры"
 
@@ -12752,11 +12756,11 @@ msgstr ""
 "\n"
 "Проверьте, правильно ли вы скопировали все файлы."
 
-#: engines/vcruise/metaengine.cpp:42
+#: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
 msgstr "Улучшена чувствительность щелчков"
 
-#: engines/vcruise/metaengine.cpp:43
+#: engines/vcruise/metaengine.cpp:44
 msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
@@ -12766,77 +12770,77 @@ msgstr ""
 "с щелчками. Если этот параметр отключен, любое движение мыши при удерживании "
 "кнопки мыши отменяет взаимодействие с щелчком."
 
-#: engines/vcruise/metaengine.cpp:53
+#: engines/vcruise/metaengine.cpp:54
 msgid "Faster animations"
 msgstr "Быстрая анимация"
 
-#: engines/vcruise/metaengine.cpp:54
+#: engines/vcruise/metaengine.cpp:55
 msgid "Speeds up animations."
 msgstr "Ускоряет анимацию."
 
-#: engines/vcruise/metaengine.cpp:75
+#: engines/vcruise/metaengine.cpp:76
 msgid "Skip main menu"
 msgstr "Пропустить главное меню"
 
-#: engines/vcruise/metaengine.cpp:76
+#: engines/vcruise/metaengine.cpp:77
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "Запускает новую игру при запуске вместо перехода в главное меню."
 
-#: engines/vcruise/metaengine.cpp:86
+#: engines/vcruise/metaengine.cpp:87
 msgid "Use 16-color graphics"
 msgstr "Использовать 16-цветную графику"
 
-#: engines/vcruise/metaengine.cpp:87
+#: engines/vcruise/metaengine.cpp:88
 msgid "Uses 16-color graphics."
 msgstr "Использует 16-цветную графику."
 
-#: engines/vcruise/metaengine.cpp:97
+#: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds"
 msgstr "Предварительная загрузка звуков"
 
-#: engines/vcruise/metaengine.cpp:98
+#: engines/vcruise/metaengine.cpp:99
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
 "Предварительно загрузить звуки. Это может улучшить производительность на "
 "медленных жестких дисках."
 
-#: engines/vcruise/metaengine.cpp:108
+#: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
 msgstr "Более быстрый видеодекодер (более низкое качество)"
 
-#: engines/vcruise/metaengine.cpp:109
+#: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr "Снижает загрузку ЦП при декодировании видео за счет качества."
 
-#: engines/vcruise/metaengine.cpp:157
+#: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
 msgstr "Показать экран помощи"
 
-#: engines/vcruise/metaengine.cpp:172
+#: engines/vcruise/metaengine.cpp:185
 msgid "Open sound settings"
 msgstr "Открыть настройки звука"
 
-#: engines/vcruise/metaengine.cpp:208
+#: engines/vcruise/metaengine.cpp:221
 msgid "Sound effect volume down"
 msgstr "Уменьшить громкость звуковых эффектов"
 
-#: engines/vcruise/metaengine.cpp:213
+#: engines/vcruise/metaengine.cpp:226
 msgid "Sound effect volume up"
 msgstr "Увеличить громкость звуковых эффектов"
 
-#: engines/vcruise/metaengine.cpp:218
+#: engines/vcruise/metaengine.cpp:231
 msgid "Skip current animation"
 msgstr "Пропустить текущую анимацию"
 
-#: engines/vcruise/metaengine.cpp:222
+#: engines/vcruise/metaengine.cpp:235
 msgid "Cycle item in scene (debug cheat)"
 msgstr "Зациклить элемент в сцене (чит-отладка)"
 
-#: engines/vcruise/vcruise.cpp:92
+#: engines/vcruise/vcruise.cpp:89
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Эта игра требует поддержку JPEG, которая не была скомпилирована."
 
-#: engines/vcruise/vcruise.cpp:99
+#: engines/vcruise/vcruise.cpp:96
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12845,7 +12849,7 @@ msgstr ""
 "скомпилирована.\n"
 "Игра запустится, но без музыки."
 
-#: engines/vcruise/vcruise.cpp:109
+#: engines/vcruise/vcruise.cpp:106
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12853,15 +12857,15 @@ msgstr ""
 "Музыка в этой игре требует поддержку MP3, которая не была скомпилирована.\n"
 "Игра запустится, но без музыки."
 
-#: engines/vcruise/vcruise.cpp:352
+#: engines/vcruise/vcruise.cpp:349
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Не удалось загрузить игру, файл сохранения выглядит повреждённым."
 
-#: engines/vcruise/vcruise.cpp:357
+#: engines/vcruise/vcruise.cpp:354
 msgid "Failed to read version information from save file."
 msgstr "Не удалось загрузить информацию о версии из сохранения."
 
-#: engines/vcruise/vcruise.cpp:377
+#: engines/vcruise/vcruise.cpp:374
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Возникла неизвестная ошибка при попытке чтения сохранения игры."
 
