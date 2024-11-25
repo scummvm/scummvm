@@ -40,7 +40,7 @@ public:
 	~SXBlackAndWhite() override;
 
 private:
-	PostFilter _postFilterMode;
+	PostFilter _postFilterMode{};
 };
 
 } // End of namespace Wintermute
