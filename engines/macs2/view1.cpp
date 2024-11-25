@@ -313,6 +313,7 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
+
 		constexpr bool drawNodes = false;
 		if (drawNodes) {
 		
@@ -338,7 +339,12 @@ View1::View1() : UIElement("View1") {
 		}
 
 		// Draw the test results
-		Common::Array<uint8> &overlay = GetCharacterByIndex(1)->PathfindingOverlay;
+		Macs2::Character *c = GetCharacterByIndex(1);
+		// Handle the protagonist not being in the scene
+		if (c == nullptr) {
+			return;
+		}
+		Common::Array<uint8> &overlay = c->PathfindingOverlay;
 		for (int y = 0; y < 200; y++) {
 			for (int x = 0; x < 320; x++) {
 				const uint8 currentValue = overlay[y * 320 + x];
