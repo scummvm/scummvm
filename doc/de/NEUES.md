@@ -28,6 +28,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Option "Seitenverhältnis korrigieren" ist jetzt standardmäßig aktiv.
    - libmpcdec (musepack) wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
    - Die Kommandozeilenoption --copy-protection wurde in die Benutzeroberfläche integriert.
+   - Speicherverbrauch auf Plattformen mit dynamischen Erkennungs-Bibliotheken reduziert.
+   - Verbesserte Nutzbarkeit der Benutzeroberfläche auf geräten mit kleinen Displays.
 
  ADL:
    - Der "gemusterte" Mauszeiger von Apple II wurde als Darstellungsoption hinzugefügt.
@@ -198,6 +200,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für weitere Spiele-Versionen hinzugefügt.
    - Die Sprache der Untertitel kann in der PC-Version nun wieder ausgewählt werden.
 
+   - Sound-Schleifen in Szenen-Hintergründen korrigiert.
+   - Charakter-Beleuchtung in Gang-Sequenzen korrigiert.
+
  Teenagent:
    - Unterstützung für die polnische Diskettenversion hinzugefügt.
 
@@ -248,6 +253,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  macOS-Portierung:
    - Der Auto-Updater verwendet nun Sparkle 2.x.
 
+ 3DS-Portierung:
+   - Port-spezifische Optionen in die Benutzeroberfläche integriert.
+   - Verbesserte Speicherverfügbarkeit auf 3DS-Geräten der ersten Generation.
 
 #### 2.8.1 (31.03.2024)
 
