@@ -41,13 +41,13 @@
 
 namespace Director {
 
-const char *RemixXCMD::xlibName = "Remix";
+const char *const RemixXCMD::xlibName = "Remix";
 const XlibFileDesc RemixXCMD::fileNames[] = {
 	{ "Remix",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "Remix", RemixXCMD::m_Remix, 1, 1, 300, CBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

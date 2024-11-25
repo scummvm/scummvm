@@ -57,7 +57,7 @@ XS     mRegister, serialNumber
 
 namespace Director {
 
-const char *BackdropXObj::xlibName = "Backdrop";
+const char *const BackdropXObj::xlibName = "Backdrop";
 const XlibFileDesc BackdropXObj::fileNames[] = {
 	{ "Backdrop",		nullptr },
 	{ "backdrop.obj",	nullptr },
@@ -65,7 +65,7 @@ const XlibFileDesc BackdropXObj::fileNames[] = {
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				BackdropXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				BackdropXObj::m_dispose,		 0, 0,	400 },
 	{ "show",				BackdropXObj::m_show,		 0, 0,	400 },
@@ -82,7 +82,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

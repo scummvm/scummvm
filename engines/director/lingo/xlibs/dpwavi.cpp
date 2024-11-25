@@ -47,13 +47,13 @@ XII    mVerb msg, qtPacker -- do something
 
 namespace Director {
 
-const char *DPWAVIXObj::xlibName = "DPWAVI";
+const char *const DPWAVIXObj::xlibName = "DPWAVI";
 const XlibFileDesc DPWAVIXObj::fileNames[] = {
 	{ "DPWAVI",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "startup",				DPWAVIXObj::m_startup,		 0, 0,	300 },
 	{ "quit",				DPWAVIXObj::m_quit,		 0, 0,	300 },
 	{ "new",				DPWAVIXObj::m_new,		 1, 1,	300 },
@@ -62,7 +62,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

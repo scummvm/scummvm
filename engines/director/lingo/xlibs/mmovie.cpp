@@ -73,13 +73,13 @@ S       mVolList
 
 namespace Director {
 
-const char *MMovieXObj::xlibName = "MMovie";
+const char *const MMovieXObj::xlibName = "MMovie";
 const XlibFileDesc MMovieXObj::fileNames[] = {
 	{ "MMovie",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "Movie",				MMovieXObj::m_Movie,		 4, 4,	400 },
 	{ "new",				MMovieXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				MMovieXObj::m_dispose,		 0, 0,	400 },
@@ -110,7 +110,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

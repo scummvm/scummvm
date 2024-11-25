@@ -117,10 +117,10 @@ struct StartOptions {
 
 struct PaletteV4 {
 	CastMemberID id;
-	byte *palette;
+	const byte *palette;
 	int length;
 
-	PaletteV4(CastMemberID i, byte *p, int l) : id(i), palette(p), length(l) {}
+	PaletteV4(CastMemberID i, const byte *p, int l) : id(i), palette(p), length(l) {}
 	PaletteV4() : id(), palette(nullptr), length(0) {}
 };
 
@@ -185,9 +185,9 @@ public:
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
 
-	void addPalette(CastMemberID &id, byte *palette, int length);
+	void addPalette(CastMemberID &id, const byte *palette, int length);
 	bool setPalette(const CastMemberID &id);
-	void setPalette(byte *palette, uint16 count);
+	void setPalette(const byte *palette, uint16 count);
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
 	PaletteV4 *getPalette(const CastMemberID &id);

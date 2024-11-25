@@ -52,14 +52,14 @@ X mMemoryPurge -- Clear chunk o' mem
 
 namespace Director {
 
-const char *MemCheckXObj::xlibName = "MemCheck";
+const char *const MemCheckXObj::xlibName = "MemCheck";
 const XlibFileDesc MemCheckXObj::fileNames[] = {
 	{ "MemCheck",		nullptr }, // Jewels of the Oracle - Win
 	{ "MemCheck.XObj",	nullptr }, // Jewels of the Oracle - Mac
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				MemCheckXObj::m_new,		 1, 1,	400 },
 	{ "dispose",				MemCheckXObj::m_dispose,		 0, 0,	400 },
 	{ "memoryCheck",				MemCheckXObj::m_memoryCheck,		 0, 0,	400 },

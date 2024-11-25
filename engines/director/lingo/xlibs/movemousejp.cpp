@@ -64,14 +64,14 @@ S      mGetWindowsDir      --GetWindows Directory
 
 namespace Director {
 
-const char *MoveMouseJPXObj::xlibName = "MoveMouse";
+const char *const MoveMouseJPXObj::xlibName = "MoveMouse";
 const XlibFileDesc MoveMouseJPXObj::fileNames[] = {
 	{ "MOVEWIN",   "junglepark" },
 	{ "MOVEMOUSE",   "junglepark" },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				MoveMouseJPXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				MoveMouseJPXObj::m_dispose,		 0, 0,	400 },
 	{ "setMouseLoc",				MoveMouseJPXObj::m_setMouseLoc,		 2, 2,	400 },
@@ -87,7 +87,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

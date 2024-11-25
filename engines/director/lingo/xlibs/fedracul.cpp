@@ -51,13 +51,13 @@
 
 namespace Director {
 
-const char *FEDraculXObj::xlibName = "FEDracul";
+const char *const FEDraculXObj::xlibName = "FEDracul";
 const XlibFileDesc FEDraculXObj::fileNames[] = {
 	{ "FEDracul",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				FEDraculXObj::m_new,				0,	0,	400 },	// D4
 	{ "AddToInventory",		FEDraculXObj::m_AddToInventory,		3,	3,	400 },	// D4
 	{ "CreateInventory",	FEDraculXObj::m_CreateInventory,	1,	1,	400 },	// D4

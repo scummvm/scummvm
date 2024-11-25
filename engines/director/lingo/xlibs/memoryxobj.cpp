@@ -65,14 +65,14 @@
 
 namespace Director {
 
-const char *MemoryXObj::xlibName = "Memory";
+const char *const MemoryXObj::xlibName = "Memory";
 const XlibFileDesc MemoryXObj::fileNames[] = {
 	{ "Memory XObj",	nullptr },
 	{ "Memory",			nullptr },
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",					MemoryXObj::m_new,			0,	0,	300 },	// D3
 	{ "Clear",					MemoryXObj::m_clear,		0,	0,	300 },	// D3
 	{ "Purge",					MemoryXObj::m_purge,		0,	0,	400 },	// D4

@@ -48,21 +48,21 @@ SSS    mPACo, commands, results    --Plays Paco movies
 
 namespace Director {
 
-const char *PACoXObj::xlibName = "PACo";
+const char *const PACoXObj::xlibName = "PACo";
 const XlibFileDesc PACoXObj::fileNames[] = {
 	{ "PACO",	nullptr },
 	{ "PACOW",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				PACoXObj::m_new,		 1, 1,	300 },
 	{ "dispose",				PACoXObj::m_dispose,		 0, 0,	300 },
 	{ "pACo",				PACoXObj::m_pACo,		 2, 2,	300 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

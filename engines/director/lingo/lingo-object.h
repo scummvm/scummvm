@@ -92,14 +92,14 @@ protected:
 	};
 
 public:
-	static void initMethods(MethodProto protos[]) {
+	static void initMethods(const MethodProto protos[]) {
 		if (_methods) {
 			warning("Object::initMethods: Methods already initialized");
 			return;
 		}
 
 		_methods = new SymbolHash;
-		for (MethodProto *mtd = protos; mtd->name; mtd++) {
+		for (const MethodProto *mtd = protos; mtd->name; mtd++) {
 			if (mtd->version > g_lingo->_vm->getVersion())
 				continue;
 

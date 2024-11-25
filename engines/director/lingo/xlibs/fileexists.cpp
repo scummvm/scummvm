@@ -42,13 +42,13 @@
 
 namespace Director {
 
-const char *FileExists::xlibName = "FileExists";
+const char *const FileExists::xlibName = "FileExists";
 const XlibFileDesc FileExists::fileNames[] = {
 	{ "FileExists",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "FileExists", FileExists::m_fileexists, 1, 1, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

@@ -331,7 +331,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 	// Check if the palette is in the middle of a color fade event
 	bool isColorCycling = score->isPaletteColorCycling();
 
-	byte *dstPalette = targetBpp == 1 ? currentPalette->palette : nullptr;
+	const byte *dstPalette = targetBpp == 1 ? currentPalette->palette : nullptr;
 	int dstPaletteCount = targetBpp == 1 ? currentPalette->length : 0;
 
 	// First, check if the palettes are different

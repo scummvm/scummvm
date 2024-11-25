@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *FadeGammaDownXCMD::xlibName = "FadeGammaDown";
+const char *const FadeGammaDownXCMD::xlibName = "FadeGammaDown";
 const XlibFileDesc FadeGammaDownXCMD::fileNames[] = {
 	{ "FadeGammaDown",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "FadeGammaDown", FadeGammaDownXCMD::m_FadeGammaDown, -1, 0, 400, CBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

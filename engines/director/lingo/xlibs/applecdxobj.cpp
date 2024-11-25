@@ -97,14 +97,14 @@
 
 namespace Director {
 
-const char *AppleCDXObj::xlibName = "AppleCD";
+const char *const AppleCDXObj::xlibName = "AppleCD";
 const XlibFileDesc AppleCDXObj::fileNames[] = {
 	{ "AppleCD",		nullptr },
 	{ "AppleCD XObj",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",					AppleCDXObj::m_new,			0,	0,	300 },	// D3
 	{ "dispose",				AppleCDXObj::m_dispose,			0,	0,	300 },	// D3
 	{ "Service",				AppleCDXObj::m_service,		0,	0,	300 },	// D4

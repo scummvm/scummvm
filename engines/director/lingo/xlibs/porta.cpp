@@ -37,14 +37,14 @@
 
 namespace Director {
 
-const char *Porta::xlibName = "Porta";
+const char *const Porta::xlibName = "Porta";
 const XlibFileDesc Porta::fileNames[] = {
 	{ "Porta",			nullptr },
 	{ "PortaXCMD.rsrc",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "Porta",	Porta::b_porta, 1, 1, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

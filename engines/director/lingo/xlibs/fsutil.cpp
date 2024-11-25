@@ -45,13 +45,13 @@ IS mMakeFolder, <FolderPath>
 
 namespace Director {
 
-const char *FSUtilXObj::xlibName = "FSUtil";
+const char *const FSUtilXObj::xlibName = "FSUtil";
 const XlibFileDesc FSUtilXObj::fileNames[] = {
 	{ "FSUtil",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				FSUtilXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				FSUtilXObj::m_dispose,		 0, 0,	400 },
 	{ "getSystemFolder",				FSUtilXObj::m_getSystemFolder,		 0, 0,	400 },
@@ -59,7 +59,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

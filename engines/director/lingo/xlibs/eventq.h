@@ -30,7 +30,7 @@ public:
 
 namespace EventQXObj {
 
-extern const char *xlibNames[];
+extern const char *const xlibNames[];
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);

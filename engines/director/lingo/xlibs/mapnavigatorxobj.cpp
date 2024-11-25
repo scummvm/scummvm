@@ -80,14 +80,14 @@ SIIII mGetInstruction, node, hotspot, condition, i --  return ith instruction
 
 namespace Director {
 
-const char *MapNavigatorXObj::xlibName = "MapNav";
+const char *const MapNavigatorXObj::xlibName = "MapNav";
 const XlibFileDesc MapNavigatorXObj::fileNames[] = {
 	{ "MAPNAV",				nullptr }, // Jewels of the Oracle - Win
 	{ "MapNavigator.XObj",	nullptr }, // Jewels of the Oracle - Mac
 	{ nullptr,				nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",					MapNavigatorXObj::m_new,		 		 1, 1,	400 },
 	{ "dispose",				MapNavigatorXObj::m_dispose,		 	 0, 0,	400 },
 	{ "getFirstNode",			MapNavigatorXObj::m_getFirstNode,		 0, 0,	400 },

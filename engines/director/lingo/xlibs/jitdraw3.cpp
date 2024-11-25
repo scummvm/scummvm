@@ -71,13 +71,13 @@
 
 namespace Director {
 
-const char *JITDraw3XObj::xlibName = "JITDraw3";
+const char *const JITDraw3XObj::xlibName = "JITDraw3";
 const XlibFileDesc JITDraw3XObj::fileNames[] = {
 	{ "JITDraw3",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "New",				JITDraw3XObj::m_new,			  0, 0,	400 },	// D4
 	{ "Dispose",			JITDraw3XObj::m_dispose,		  0, 0,	400 },	// D4
 	{ "CheckIfCDROM",		JITDraw3XObj::m_checkifcdrom,	  0, 0,	400 },	// D4

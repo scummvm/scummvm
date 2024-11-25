@@ -49,14 +49,14 @@
 
 namespace Director {
 
-const char *JourneyWareXINIXObj::xlibName = "INI";
+const char *const JourneyWareXINIXObj::xlibName = "INI";
 const XlibFileDesc JourneyWareXINIXObj::fileNames[] = {
 	{ "JWXINI",	nullptr },
 	{ "INI",	"www" },	// "Wellen, Wracks und Wassermaenner" names it INI.DLL
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{"new", 						JourneyWareXINIXObj::m_new, 0, 0, 400}, // D4
 	{"GetPrivateProfileInt", 		JourneyWareXINIXObj::m_GetPrivateProfileInt, 4, 4, 400}, // D4
 	{"GetPrivateProfileString", 	JourneyWareXINIXObj::m_GetPrivateProfileString, 5, 5, 400}, // D4

@@ -52,13 +52,13 @@
 
 namespace Director {
 
-const char *GpidXObj::xlibName = "gpid";
+const char *const GpidXObj::xlibName = "gpid";
 const XlibFileDesc GpidXObj::fileNames[] = {
 	{ "GPID",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",		GpidXObj::m_new,					0,	0,	400 },	// D4
 	{ "dispose",	GpidXObj::m_dispose,				0,	0,	400 },	// D4
 	{ "name",		GpidXObj::m_name,					0,	0,	400 },	// D4

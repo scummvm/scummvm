@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *FinderEventsXCMD::xlibName = "FinderEvents";
+const char *const FinderEventsXCMD::xlibName = "FinderEvents";
 const XlibFileDesc FinderEventsXCMD::fileNames[] = {
 	{ "FinderEvents",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "FinderEvents", FinderEventsXCMD::m_FinderEvents, -1, 0, 400, CBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

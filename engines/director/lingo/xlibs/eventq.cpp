@@ -49,7 +49,7 @@
 
 namespace Director {
 
-const char *EventQXObj::xlibNames[] = {
+const char *const EventQXObj::xlibNames[] = {
 	"EventQ",
 	nullptr
 };
@@ -59,7 +59,7 @@ const XlibFileDesc EventQXObj::fileNames[] = {
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",               EventQXObj::m_new,              0, 0,  400 },  // D4
 	{ "Dispose",           EventQXObj::m_dispose,          0, 0,  400 },  // D4
 	{ "BufferEvents",      EventQXObj::m_bufferEvents,     0, 0,  400 },  // D4

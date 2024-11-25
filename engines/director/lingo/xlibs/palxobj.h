@@ -34,7 +34,7 @@ public:
 
 namespace PalXObj {
 
-extern const char *xlibName;
+extern const char *const xlibName;
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
