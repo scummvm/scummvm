@@ -447,7 +447,7 @@ ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotKey, const C
 }
 
 bool ActionMenuBarEnable::execute() {
-	_engine->getMenuHandler()->setEnable(_menus);
+	_engine->getMenuManager()->setEnable(_menus);
 	return true;
 }
 

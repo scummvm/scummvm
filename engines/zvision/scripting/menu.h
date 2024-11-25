@@ -83,10 +83,10 @@ static const MenuParams zgiParams {
   0
 };
 
-class MenuHandler {
+class MenuManager {
 public:
-	MenuHandler(ZVision *engine, const Common::Rect menuArea, const MenuParams params);
-	virtual ~MenuHandler();
+	MenuManager(ZVision *engine, const Common::Rect menuArea, const MenuParams params);
+	virtual ~MenuManager();
 	virtual void onMouseMove(const Common::Point &Pos);
 	virtual void onMouseDown(const Common::Point &Pos);
 	virtual void onMouseUp(const Common::Point &Pos);
@@ -137,7 +137,7 @@ protected:
   LinearScroller* buttonAnim[4];
 };
  
-class MenuZGI: public MenuHandler {
+class MenuZGI: public MenuManager {
 public:
 	MenuZGI(ZVision *engine, Common::Rect menuArea);
 	~MenuZGI() override;
@@ -173,7 +173,7 @@ private:
   Common::Rect itemsArea;
 };
 
-class MenuNemesis: public MenuHandler {
+class MenuNemesis: public MenuManager {
 public:
 	MenuNemesis(ZVision *engine, Common::Rect menuArea);
 	~MenuNemesis() override;

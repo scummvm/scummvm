@@ -82,6 +82,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 		// Another idea would be to change if there are pending scripts
 		// in the exec queues, but that could cause this to hang
 		// indefinitely.
+		// TODO - this causes noticeable pauses on location change; see if these can be reduced by improving this functionality.
 		if (_changeLocationDelayCycles-- <= 0) {
 			ChangeLocationReal(false);
 		}
@@ -643,7 +644,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	_referenceTable.clear();
 	addPuzzlesToReferenceTable(universe);
 
-	_engine->getMenuHandler()->setEnable(0xFFFF);
+	_engine->getMenuManager()->setEnable(0xFFFF);
 
 	if (_nextLocation.world != _currentLocation.world) {
 		cleanScriptScope(nodeview);
