@@ -345,7 +345,7 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 }
 
 void MenuZGI::onMouseMove(const Common::Point &Pos) {
-  if(!inMenu(Pos) && prevInMenu) {
+  if(!inMenu(Pos)) {
     mainScroller.reset();
     magicScroller.reset();
     itemsScroller.reset();
