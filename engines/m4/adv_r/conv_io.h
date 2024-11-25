@@ -52,8 +52,7 @@ namespace M4 {
 #define DECL_POINTER	1
 
 struct Converstation_Globals {
-	Common::Array<byte> conv_save_buff;
-	Common::Array<byte> convSave;
+	Common::Array<byte> convSave;	// Original used an actual file. We use a memory buffer
 	int	event = 0;
 	int	event_ready = 0;
 	char conv_name[16];

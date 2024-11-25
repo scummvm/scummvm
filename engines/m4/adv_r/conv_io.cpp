@@ -56,18 +56,18 @@ void Converstation_Globals::syncGame(Common::Serializer &s) {
 		conv_reset_all();
 
 	// Handle size
-	count = conv_save_buff.size();
+	count = convSave.size();
 	s.syncAsUint32LE(count);
 	if (s.isLoading())
-		conv_save_buff.resize(count);
+		convSave.resize(count);
 
-	// Read in the buffer
+	// Sync buffer contents
 	if (count)
-		s.syncBytes(&conv_save_buff[0], count);
+		s.syncBytes(&convSave[0], count);
 }
 
 void Converstation_Globals::conv_reset_all() {
-	conv_save_buff.clear();
+	convSave.clear();
 }
 
 /*------------------------------------------------------------------------*/
@@ -384,10 +384,10 @@ static void conv_save_state(Conv *c) {
 
 	amt_to_write += (num_entries / 8) * sizeof(int32);
 	if ((num_entries % 8) != 0)
-		amt_to_write += sizeof(int32);	// pad the sucker
+		amt_to_write += sizeof(int32);	// Pad the sucker
 
 	//-------------------------------------------------------------------------------
-	// if consave.dat exists, read it in
+	// if consave data exists, read it in
 
 	int32 file_size = 0;
 	int32 offset = -1;
@@ -405,7 +405,7 @@ static void conv_save_state(Conv *c) {
 		Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
 
 		//----------------------------------------------------------------------------
-		// if this conversation already in save file, overwrite it,
+		// If this conversation already in conv data, overwrite it,
 		// otherwise chuck out the buffer, and create a new buffer which is just
 		// big enough to hold the new save data.
 
@@ -413,11 +413,11 @@ static void conv_save_state(Conv *c) {
 
 		if (offset != -1) {
 			overwrite_file = true;
-			memcpy(&prev_size, &conv_save_buff[offset], sizeof(int32));
+			prev_size = READ_LE_UINT32(&conv_save_buff[offset]);
 			prev_size += 3 * sizeof(int32);
-			offset += sizeof(int32); //skip header. (name + size)
+			offset += sizeof(int32);	// Skip header. (name + size)
 		} else {
-			//append!!!
+			// Append
 			offset = 0;
 
 			if (conv_save_buff)
@@ -429,13 +429,12 @@ static void conv_save_state(Conv *c) {
 
 			memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
 			offset += 8 * sizeof(char);
-			memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(int32));
+			WRITE_LE_UINT32(&conv_save_buff[offset], amt_to_write);
 			offset += sizeof(int32);
 		}
-	} else
-	{
+	} else {
 		//----------------------------------------------------------------------------
-		// convsav.dat didn't exist, so we set things up for a create here.
+		// Conv save dat didn't exist, so we set things up for a create here.
 
 		offset = 0;
 
@@ -445,20 +444,20 @@ static void conv_save_state(Conv *c) {
 
 		memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
 		offset += 8 * sizeof(char);
-		memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(int32));
+		WRITE_LE_UINT32(&conv_save_buff[offset], amt_to_write);
 		offset += sizeof(int32);
 	}
 
 	//----------------------------------------------------------------------------
 	// finish filling in conv_save_buff data with num of entries etc.
 
-	memcpy(&conv_save_buff[offset], &myCNode, sizeof(int32));
+	WRITE_LE_UINT32(&conv_save_buff[offset], myCNode);
 	offset += sizeof(int32);
 
-	memcpy(&conv_save_buff[offset], &num_decls, sizeof(int32));
+	WRITE_LE_UINT32(&conv_save_buff[offset], num_decls);
 	offset += sizeof(int32);
 
-	memcpy(&conv_save_buff[offset], &num_entries, sizeof(int32));
+	WRITE_LE_UINT32(&conv_save_buff[offset], num_entries);
 	offset += sizeof(int32);
 
 	int32 size = 3 * sizeof(int32);
@@ -483,7 +482,7 @@ static void conv_save_state(Conv *c) {
 			decl = get_decl(c, ent);
 			val = conv_get_decl_val(c, decl);
 
-			memcpy(&conv_save_buff[offset], &val, sizeof(int32));
+			WRITE_LE_UINT32(&conv_save_buff[offset], val);
 			offset += sizeof(int32);
 
 			size += sizeof(int32);
@@ -499,7 +498,7 @@ static void conv_save_state(Conv *c) {
 			if (flag_index == 32) {
 				flag_index = 0;
 
-				memcpy(&conv_save_buff[offset], &e_flags, sizeof(int32));
+				WRITE_LE_UINT32(&conv_save_buff[offset], e_flags);
 				offset += sizeof(int32);
 				size += sizeof(int32);
 
@@ -514,13 +513,13 @@ static void conv_save_state(Conv *c) {
 		default:
 			break;
 		}
+
 		ent = next;
 	}
 
 	// Copy the flags
-
 	if (flag_index != 0) {
-		memcpy(&conv_save_buff[offset], &e_flags, sizeof(int32));
+		WRITE_LE_UINT32(&conv_save_buff[offset], e_flags);
 		offset += sizeof(int32);
 		size += sizeof(int32);
 	}
@@ -554,7 +553,7 @@ static Conv *conv_restore_state(Conv *c) {
 	decl_chunk *decl;
 
 	int32 num_decls = 0, num_entries = 0;
-	short /*flag_num = 0, */flag_index = 0;
+	short flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
 	int32 myCNode;
@@ -594,13 +593,13 @@ static Conv *conv_restore_state(Conv *c) {
 	// Skip header.
 	offset += sizeof(int32);
 
-	memcpy(&myCNode, &conv_save_buff[offset], sizeof(int32));
+	myCNode = READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
-	memcpy(&num_decls, &conv_save_buff[offset], sizeof(int32));
+	num_decls = READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
-	memcpy(&num_entries, &conv_save_buff[offset], sizeof(int32));
+	num_entries = READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
 	ent = 0; c->myCNode = 0;
@@ -610,7 +609,7 @@ static Conv *conv_restore_state(Conv *c) {
 
 		switch (tag) {
 		case DECL_CHUNK:
-			memcpy(&val, &conv_save_buff[offset], sizeof(int32));
+			val = READ_LE_UINT32(&conv_save_buff[offset]);
 			offset += sizeof(int32);
 			decl = get_decl(c, ent);
 
@@ -620,10 +619,12 @@ static Conv *conv_restore_state(Conv *c) {
 		default:
 			break;
 		}
+
 		ent = next;
 	}
 
-	ent = 0; c->myCNode = 0;
+	ent = 0;
+	c->myCNode = 0;
 
 	while (ent < c->chunkSize) {
 		conv_ops_get_entry(ent, &next, &tag, c);
@@ -644,7 +645,7 @@ static Conv *conv_restore_state(Conv *c) {
 			}
 
 			if (flag_index == 0) {
-				memcpy(&e_flags, &conv_save_buff[offset], sizeof(int32));
+				e_flags = READ_LE_UINT32(&conv_save_buff[offset]);
 				offset += sizeof(int32);
 			}
 
@@ -657,6 +658,7 @@ static Conv *conv_restore_state(Conv *c) {
 		default:
 			break;
 		}
+
 		ent = next;
 	}
 
