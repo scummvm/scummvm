@@ -95,19 +95,19 @@ new object me
 
 namespace Director {
 
-const char *DirectsoundXtra::xlibName = "Directsound";
+const char *const DirectsoundXtra::xlibName = "Directsound";
 const XlibFileDesc DirectsoundXtra::fileNames[] = {
 	{ "directsound",	nullptr },
 	{ "Dsound_r", 		nullptr },
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				DirectsoundXtra::m_new,		 0, 0,	500 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ "dsOpen", DirectsoundXtra::m_dsOpen, 0, 0, 500, HBLTIN },
 	{ "dsNewSound", DirectsoundXtra::m_dsNewSound, 2, 2, 500, HBLTIN },
 	{ "dsDelSound", DirectsoundXtra::m_dsDelSound, 1, 1, 500, HBLTIN },

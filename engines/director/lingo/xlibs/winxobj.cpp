@@ -44,7 +44,7 @@
 
 namespace Director {
 
-const char *RearWindowXObj::xlibName = "RearWindow";
+const char *const RearWindowXObj::xlibName = "RearWindow";
 const XlibFileDesc RearWindowXObj::fileNames[] = {
 	{ "RearWindow",			nullptr },
 	{ "RearWindow.Xobj",	nullptr },
@@ -232,7 +232,7 @@ X mDispose -- closes the RearWindow, releases its data, and the XObject itself f
 /I    mDevPixMapToWindow
 */
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				RearWindowXObj::m_new,					1,	1,	400 },	// D4
 	{ "getappname",			RearWindowXObj::m_getAppName,			0,	0,	400 },	// D4
 	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4

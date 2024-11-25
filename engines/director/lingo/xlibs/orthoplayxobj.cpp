@@ -47,13 +47,13 @@
 
 namespace Director {
 
-const char *OrthoPlayXObj::xlibName = "OrthoPlayXObj";
+const char *const OrthoPlayXObj::xlibName = "OrthoPlayXObj";
 const XlibFileDesc OrthoPlayXObj::fileNames[] = {
 	{ "OrthoPlay XObj",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				OrthoPlayXObj::m_new,				 0, 0,	200 },	// D2
 	{ "SetSerialPort",		OrthoPlayXObj::m_setSerialPort,		 1, 1,	200 },	// D2
 	{ "SetInitViaDlog",		OrthoPlayXObj::m_setInitViaDlog,	 1, 1,	200 },	// D2

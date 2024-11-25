@@ -55,13 +55,13 @@
 
 namespace Director {
 
-const char *AiffXObj::xlibName = "aiff";
+const char *const AiffXObj::xlibName = "aiff";
 const XlibFileDesc AiffXObj::fileNames[] = {
 	{ "AIFF",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",   		AiffXObj::m_new,					0,	0,	400 },	// D4
 	{ "Duration",   AiffXObj::m_duration,				1,	1,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }

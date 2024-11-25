@@ -47,13 +47,13 @@
 
 namespace Director {
 
-const char *ValkyrieXObj::xlibName = "Valkyrie";
+const char *const ValkyrieXObj::xlibName = "Valkyrie";
 const XlibFileDesc ValkyrieXObj::fileNames[] = {
 	{ "VALKYRIE",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "New",					ValkyrieXObj::m_new,			0,	0,	400 },	// D4
 	{ "Dispose",				ValkyrieXObj::m_dispose,		0,	0,	400 },	// D4
 	{ "Name",					ValkyrieXObj::m_name,			0,	0,	400 },	// D4

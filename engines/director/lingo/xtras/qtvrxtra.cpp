@@ -154,14 +154,14 @@ IsQTVRMovie object me --> integer (non-zero if the movie is a valid, open QTVR m
  */
 
 namespace Director {
-const char *QtvrxtraXtra::xlibName = "QTVRXtra";
+const char *const QtvrxtraXtra::xlibName = "QTVRXtra";
 const XlibFileDesc QtvrxtraXtra::fileNames[] = {
 	{ "qtvrxtra",	nullptr },
 	{ "Qtvrw32",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				QtvrxtraXtra::m_new,		 0, 0,	500 },
 	{ "forget",				QtvrxtraXtra::m_forget,		 0, 0,	500 },
 	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 0, 0,	500 },
@@ -230,7 +230,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

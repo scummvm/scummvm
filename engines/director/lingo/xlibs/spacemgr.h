@@ -47,7 +47,7 @@ struct SpaceCollection {
 	Common::HashMap<Common::String, Space> spaces;
 };
 
-extern const char *xlibName;
+extern const char *const xlibName;
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);

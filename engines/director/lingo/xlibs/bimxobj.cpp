@@ -47,14 +47,14 @@
 
 namespace Director {
 
-const char *BIMXObj::xlibName = "BIM";
+const char *const BIMXObj::xlibName = "BIM";
 const XlibFileDesc BIMXObj::fileNames[] = {
 	{ "FLC",	nullptr },
 	{ "BIM",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{"new",		BIMXObj::m_new, 0, 0, 400},
 	{"play",	BIMXObj::m_play, 3, 3, 400},
 	{"playTo",	BIMXObj::m_playTo, 4, 4, 400},
@@ -63,7 +63,7 @@ static MethodProto xlibMethods[] = {
 	{nullptr, nullptr, 0, 0, 0}
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

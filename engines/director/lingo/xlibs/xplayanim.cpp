@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *XPlayAnim::xlibName = "XPlayAnim";
+const char *const XPlayAnim::xlibName = "XPlayAnim";
 const XlibFileDesc XPlayAnim::fileNames[] = {
 	{ "XPlayAnim",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "XPlayAnim",	XPlayAnim::b_xplayanim, 3, 3, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *GetScreenSizeXFCN::xlibName = "GetScreenSize";
+const char *const GetScreenSizeXFCN::xlibName = "GetScreenSize";
 const XlibFileDesc GetScreenSizeXFCN::fileNames[] = {
 	{ "GetScreenSize",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "GetScreenSize", GetScreenSizeXFCN::m_GetScreenSize, -1, 0, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

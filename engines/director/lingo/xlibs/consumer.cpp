@@ -52,13 +52,13 @@ I          mHackMenu                       --Hack to destroy menu
 
 namespace Director {
 
-const char *ConsumerXObj::xlibName = "Consumer";
+const char *const ConsumerXObj::xlibName = "Consumer";
 const XlibFileDesc ConsumerXObj::fileNames[] = {
 	{ "consumer",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",					ConsumerXObj::m_new,			 0, 0,	400 },	// D4
 	{ "dispose",				ConsumerXObj::m_dispose,		 0, 0,	400 },	// D4
 	{ "name",					ConsumerXObj::m_name,			 0, 0,	400 },	// D4

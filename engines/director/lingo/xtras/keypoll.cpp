@@ -50,19 +50,19 @@ new object me
 
 namespace Director {
 
-const char *KeypollXtra::xlibName = "Keypoll";
+const char *const KeypollXtra::xlibName = "Keypoll";
 const XlibFileDesc KeypollXtra::fileNames[] = {
 	{ "keypoll",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "xtra",				KeypollXtra::m_xtra,		 0, 0,	500 },
 	{ "new",				KeypollXtra::m_new,		 0, 0,	500 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ "bgOneKey", KeypollXtra::m_bgOneKey, 1, 1, 500, HBLTIN },
 	{ "bgAllKeys", KeypollXtra::m_bgAllKeys, 0, 0, 500, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }

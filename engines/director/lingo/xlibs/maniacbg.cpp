@@ -45,13 +45,13 @@ I      mIsForeMost --Is this Application foremost. 1=Yes, 0=No.
 
 namespace Director {
 
-const char *ManiacBgXObj::xlibName = "ForeMost";
+const char *const ManiacBgXObj::xlibName = "ForeMost";
 const XlibFileDesc ManiacBgXObj::fileNames[] = {
 	{ "maniacbg",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				ManiacBgXObj::m_new,		 0, 0,	300 },
 	{ "dispose",				ManiacBgXObj::m_dispose,		 0, 0,	300 },
 	{ "isForeMost",				ManiacBgXObj::m_isForeMost,		 0, 0,	300 },

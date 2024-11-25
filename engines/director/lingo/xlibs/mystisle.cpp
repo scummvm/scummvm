@@ -50,13 +50,13 @@ IPP    mDiagnostic, picHdl1, picHdl2 --for testing during development
 
 namespace Director {
 
-const char *MystIsleXObj::xlibName = "MystIsle";
+const char *const MystIsleXObj::xlibName = "MystIsle";
 const XlibFileDesc MystIsleXObj::fileNames[] = {
 	{ "MYSTISLE",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				MystIsleXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				MystIsleXObj::m_dispose,		 0, 0,	400 },
 	{ "name",				MystIsleXObj::m_name,		 0, 0,	400 },
@@ -69,7 +69,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

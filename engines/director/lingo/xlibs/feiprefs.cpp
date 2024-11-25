@@ -47,13 +47,13 @@
 
 namespace Director {
 
-const char *FEIPrefsXObj::xlibName = "FEIPrefs";
+const char *const FEIPrefsXObj::xlibName = "FEIPrefs";
 const XlibFileDesc FEIPrefsXObj::fileNames[] = {
 	{ "feiprefs",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",   FEIPrefsXObj::m_new,							0,	0,	400 },	// D4
 	{ "PrefAppName",   FEIPrefsXObj::m_prefAppName,			2,	2,	400 },	// D4
 	{ "PrefReadString",   FEIPrefsXObj::m_prefReadString,	3,	3,	400 },	// D4

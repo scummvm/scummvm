@@ -43,13 +43,13 @@
 
 namespace Director {
 
-const char *SerialPortXObj::xlibName = "SerialPort";
+const char *const SerialPortXObj::xlibName = "SerialPort";
 const XlibFileDesc SerialPortXObj::fileNames[] = {
 	{ "SerialPort",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				SerialPortXObj::m_new,			 1, 1,	200 },	// D2
 	{ "GetPortNum",			SerialPortXObj::m_getPortNum,	 0, 0,	200 },	// D2
 	{ "WriteString",		SerialPortXObj::m_writeString,	 1, 1,	200 },	// D2

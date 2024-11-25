@@ -148,7 +148,7 @@ bool DirectorEngine::hasPalette(const CastMemberID &id) {
 	return _loadedPalettes.contains(id);
 }
 
-void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
+void DirectorEngine::addPalette(CastMemberID &id, const byte *palette, int length) {
 	if (id.castLib < 0) {
 		warning("DirectorEngine::addPalette(): Negative cast library ids reserved for default palettes");
 		return;
@@ -177,7 +177,7 @@ bool DirectorEngine::setPalette(const CastMemberID &id) {
 	return true;
 }
 
-void DirectorEngine::setPalette(byte *palette, uint16 count) {
+void DirectorEngine::setPalette(const byte *palette, uint16 count) {
 
 	memset(_currentPalette, 0, 768);
 	memmove(_currentPalette, palette, count * 3);

@@ -71,13 +71,13 @@ OI	+mNthWindow, n	--Returns the n'th window.
 
 namespace Director {
 
-const char *WindowXObj::xlibName = "Window";
+const char *const WindowXObj::xlibName = "Window";
 const XlibFileDesc WindowXObj::fileNames[] = {
 	{ "Window",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				WindowXObj::m_new,		 2, 2,	200 },
 	{ "dispose",			WindowXObj::m_dispose,	 0, 0,	200 },
 	{ "name",				WindowXObj::m_name,		 0, 0,	200 },

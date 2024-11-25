@@ -42,13 +42,13 @@ II	mMask, state
 
 namespace Director {
 
-const char *MMaskXObj::xlibName = "mmaskxobj";
+const char *const MMaskXObj::xlibName = "mmaskxobj";
 const XlibFileDesc MMaskXObj::fileNames[] = {
 	{ "MMASK.XOB",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",			MMaskXObj::m_new,		0, 0,	400 },
 	{ "dispose",		MMaskXObj::m_dispose,	0, 0,	400 },
 	{ "mask",			MMaskXObj::m_mask,	 	1, 1,	400 },
