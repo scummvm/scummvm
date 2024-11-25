@@ -927,6 +927,7 @@ void Room603::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _tt, _ttD01, 76, 61, 400, _ttD01, 1, 1, 0);
+				_ttMode = 6;
 				break;
 			}
 			break;

@@ -125,6 +125,7 @@ void Room605::daemon() {
 		break;
 
 	case 10:
+		sendWSMessage_60000(_tt);
 		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
 			triggerMachineByHashCallback, "tt");
 		sendWSMessage_10000(1, _tt, _605tt, 222, 234, 11, _605tt, 1, 1, 0);
@@ -134,24 +135,24 @@ void Room605::daemon() {
 
 	case 11:
 		kernel_timing_trigger(1, 200);
-		_val7 = 0;
-		_val6 = 1;
+		_ttMode = 0;
+		_ttShould = 1;
 		digi_play("605t01", 1, 255, 12);
 		break;
 
 	case 12:
 		setGlobals1(_ripHandOnChin, 1, 16, 16, 16);
 		sendWSMessage_110000(-1);
-		digi_play("605r01", 1);
+		digi_play("605r01", 1, 255, 15);
 		break;
 
 	case 15:
-		_val6 = 3;
+		_ttShould = 3;
 		digi_play("605t02", 1, 255, 17);
 		break;
 
 	case 17:
-		_val6 = 0;
+		_ttShould = 0;
 		kernel_timing_trigger(1, 200);
 		sendWSMessage_140000(18);
 		break;
@@ -162,7 +163,7 @@ void Room605::daemon() {
 		break;
 
 	case 200:
-		if (!_val7 && !_val6 && _trigger1 != -1) {
+		if (!_ttMode && !_ttShould && _trigger1 != -1) {
 			kernel_trigger_dispatchx(_trigger1);
 			_trigger1 = -1;
 
@@ -176,18 +177,18 @@ void Room605::daemon() {
 		break;
 
 	case 201:
-		switch (_val7) {
+		switch (_ttMode) {
 		case 0:
-			switch (_val6) {
+			switch (_ttShould) {
 			case 0:
 				sendWSMessage_10000(1, _tt, _605tt, 1, 1, 200, _605tt, 1, 1, 0);
-				_val6 = 0;
+				_ttShould = 0;
 				break;
 
 			case 1:
 				sendWSMessage_10000(1, _tt, _605tt, 2, 12, 202, _605tt, 12, 12, 0);
 				sendWSMessage_190000(_tt, 7);
-				_val6 = 0;
+				_ttShould = 0;
 				break;
 
 			case 3:
@@ -196,7 +197,7 @@ void Room605::daemon() {
 
 			case 5:
 				sendWSMessage_10000(1, _tt, _605tt, 31, 37, 200, _605tt, 38, 38, 0);
-				_val7 = 4;
+				_ttMode = 4;
 				break;
 
 			case 6:
@@ -206,12 +207,12 @@ void Room605::daemon() {
 
 			case 8:
 				sendWSMessage_10000(1, _tt, _605tt, 134, 221, 207, _605tt, 221, 221, 0);
-				_val6 = 3;
+				_ttShould = 3;
 				break;
 
 			case 9:
 				sendWSMessage_10000(1, _tt, _605tt, 85, 93, 200, _605tt, 93, 93, 0);
-				_val7 = 9;
+				_ttMode = 9;
 				break;
 
 			case 10:
@@ -224,7 +225,7 @@ void Room605::daemon() {
 			break;
 
 		case 4:
-			switch (_val6) {
+			switch (_ttShould) {
 			case 4:
 				sendWSMessage_10000(1, _tt, _605tt, 38, 38, -1, _605tt, 38, 43, 4);
 				sendWSMessage_1a0000(_tt, 13);
@@ -236,13 +237,13 @@ void Room605::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _tt, _605tt, 44, 49, 200, _605tt, 1, 1, 0);
-				_val7 = 0;
+				_ttMode = 0;
 				break;
 			}
 			break;
 
 		case 6:
-			switch (_val6) {
+			switch (_ttShould) {
 			case 6:
 				sendWSMessage_10000(1, _tt, _605tt, 67, 67, -1, _605tt, 67, 76, 4);
 				sendWSMessage_1a0000(_tt, 13);
@@ -254,17 +255,17 @@ void Room605::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _tt, _605tt, 77, 86, 200, _605tt, 1, 1, 0);
-				_val7 = 0;
+				_ttMode = 0;
 				break;
 			}
 			break;
 
 		case 9:
-			if (_val6 == 9) {
+			if (_ttShould == 9) {
 				sendWSMessage_10000(1, _tt, _605tt, 93, 93, 200, _605tt, 93, 93, 0);
 			} else {
 				sendWSMessage_10000(1, _tt, _605tt, 93, 85, 200, _605tt, 1, 1, 0);
-				_val7 = 0;
+				_ttMode = 0;
 			}
 			break;
 
@@ -325,7 +326,7 @@ void Room605::daemon() {
 		break;
 
 	case 300:
-		if (!_val1 && !_val2 && _trigger1 != -1) {
+		if (!_ripleyMode && !_ripleyShould && _trigger1 != -1) {
 			kernel_trigger_dispatchx(_trigger1);
 			_trigger1 = -1;
 
@@ -339,26 +340,26 @@ void Room605::daemon() {
 		break;
 
 	case 301:
-		switch (_val1) {
+		switch (_ripleyMode) {
 		case 0:
-			switch (_val2) {
+			switch (_ripleyShould) {
 			case 0:
 				sendWSMessage_10000(1, _ripley, 1, 1, 1, 300, 1, 1, 1, 0);
 				break;
 			case 1:
 				sendWSMessage_10000(1, _ripley, _ripTwoHandTalk, 1, 6, 300,
 					_ripTwoHandTalk, 6, 6, 0);
-				_val1 = 1;
+				_ripleyMode = 1;
 				break;
 			case 2:
 				sendWSMessage_10000(1, _ripley, _ripHandOnChin, 1, 16, 300,
 					_ripHandOnChin, 16, 16, 0);
-				_val1 = 2;
+				_ripleyMode = 2;
 				break;
 			case 3:
 				sendWSMessage_10000(1, _ripley, _ripHandsHips, 1, 12, 300,
 					_ripHandsHips, 12, 12, 0);
-				_val1 = 3;
+				_ripleyMode = 3;
 				break;
 			case 5:
 				terminateMachineAndNull(_ripley);
@@ -376,32 +377,32 @@ void Room605::daemon() {
 			break;
 
 		case 1:
-			if (_val2 == 1) {
+			if (_ripleyShould == 1) {
 				sendWSMessage_10000(1, _ripley, _ripTwoHandTalk, 6, 6, 300,
 					_ripTwoHandTalk, 6, 6, 0);
 			} else {
 				sendWSMessage_10000(1, _ripley, _ripTwoHandTalk, 6, 1, 300, 1, 1, 1, 0);
-				_val1 = 0;
+				_ripleyMode = 0;
 			}
 			break;
 
 		case 2:
-			if (_val2 == 2) {
+			if (_ripleyShould == 2) {
 				sendWSMessage_10000(1, _ripley, _ripHandOnChin, 16, 16, 300,
 					_ripHandOnChin, 16, 16, 0);
 			} else {
 				sendWSMessage_10000(1, _ripley, _ripHandOnChin, 16, 1, 300, 1, 1, 1, 0);
-				_val1 = 0;
+				_ripleyMode = 0;
 			}
 			break;
 
 		case 3:
-			if (_val2 == 3) {
+			if (_ripleyShould == 3) {
 				sendWSMessage_10000(1, _ripley, _ripHandsHips, 12, 12, 300,
 					_ripHandsHips, 12, 12, 0);
 			} else {
 				sendWSMessage_10000(1, _ripley, _ripHandsHips, 12, 1, 300, 1, 1, 1, 0);
-				_val1 = 0;
+				_ripleyMode = 0;
 			}
 			break;
 
@@ -427,7 +428,7 @@ void Room605::pre_parser() {
 		conv_export_value_curr(_G(flags)[V195] ? 1 : 0, 0);
 		conv_export_value_curr(2, 1);
 		conv_play();
-		_val6 = 3;
+		_ttShould = 3;
 	}
 }
 
@@ -450,8 +451,8 @@ void Room605::parser() {
 		sendWSMessage_10000(1, _ripley, 1, 1, 1, 300, 1, 1, 1, 0);
 		_G(kernel).trigger_mode = KT_PARSE;
 
-		_val1 = 0;
-		_val2 = 0;
+		_ripleyMode = 0;
+		_ripleyShould = 0;
 		_shadow = series_show("safari shadow 2", 0xd00, 16, -1, -1, 0,
 			-_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		conv_load("conv605a", 10, 10, 747);
@@ -488,15 +489,15 @@ void Room605::parser() {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
-				_val6 = 5;
+				_ttShould = 5;
 				digi_play("605r04", 1, 255, 1);
 				break;
 			case 1:
-				_val6 = 4;
+				_ttShould = 4;
 				digi_play("605t03", 1, 255, 2);
 				break;
 			case 2:
-				_val6 = 0;
+				_ttShould = 0;
 				kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 				break;
 			default:
@@ -546,23 +547,23 @@ void Room605::conv605a() {
 	case 1:
 		if (who <= 0) {
 			if (node == 1 && entry == 0)
-				_val2 = 0;
+				_ripleyShould = 0;
 			if (node == 2 && entry == 0) {
 				kernel_timing_trigger(60, 4);
 				return;
 			}
-			if (_val6 == 3)
+			if (_ttShould == 3)
 				kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 
-			_val6 = 0;
+			_ttShould = 0;
 
 		} else if (who == 1) {
 			if (!(node == 6 && entry == 2) &&
 					!(node == 1 && entry == 0) &&
 					!(node == 2 && entry == 3)) {
-				if (_val2 == 6)
+				if (_ripleyShould == 6)
 					kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
-				_val2 = 0;
+				_ripleyShould = 0;
 			}
 		}
 
@@ -584,53 +585,53 @@ void Room605::conv605a() {
 		sendWSMessage_10000(1, _ripley, 1, 1, 1, 300, 1, 1, 1, 0);
 		_G(kernel).trigger_mode = KT_PARSE;
 
-		_val1 = 0;
-		_val2 = 0;
+		_ripleyMode = 0;
+		_ripleyShould = 0;
 		_shadow = series_show("safari shadow 2", 0xd00, 16, -1, -1, 0,
 			-_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		break;
 
 	case 4:
 		conv_resume();
-		_val6 = 0;
+		_ttShould = 0;
 		break;
 
 	case 5:
-		_val2 = 0;
+		_ripleyShould = 0;
 		break;
 
 	default:
 		if (sound) {
 			if (who <= 0) {
 				if (node == 6 && entry == 3) {
-					_val6 = 8;
+					_ttShould = 8;
 				} else if (node == 6 && entry == 4) {
-					_val6 = 10;
-					_val2 = 5;
+					_ttShould = 10;
+					_ripleyShould = 5;
 				} else if (node == 3 && entry == 0) {
 					kernel_timing_trigger(120, 2);
 				} else if (node == 2 && entry == 0) {
-					_val6 = 9;
+					_ttShould = 9;
 				} else {
-					_val6 = 3;
+					_ttShould = 3;
 				}
 			} else if (who == 1) {
 				if (node == 6 && entry == 2) {
-					_val2 = 3;
+					_ripleyShould = 3;
 				} else if (node == 6 && entry == 1) {
-					_val2 = 1;
+					_ripleyShould = 1;
 				} else if ((node == 1 && entry == 0) ||
 						(node == 2 && entry == 3)) {
-					_val2 = 2;
+					_ripleyShould = 2;
 				} else if (node == 2 && entry == 1) {
-					_val2 = 1;
+					_ripleyShould = 1;
 					kernel_timing_trigger(60, 5);
 				} else {
-					_val2 = 6;
+					_ripleyShould = 6;
 				}
 			}
 
-			digi_play(sound, 1);
+			digi_play(sound, 1, 255, 1);
 
 		} else {
 			conv_resume();
@@ -655,7 +656,7 @@ bool Room605::takePupilDisk() {
 		break;
 
 	case 1:
-		_val6 = 7;
+		_ttShould = 7;
 		return true;
 
 	case 2:
@@ -665,7 +666,7 @@ bool Room605::takePupilDisk() {
 		return true;
 
 	case 4:
-		_val6 = 6;
+		_ttShould = 6;
 		digi_play("605t06", 1, 255, 8);
 		return true;
 
@@ -676,7 +677,7 @@ bool Room605::takePupilDisk() {
 
 	case 8:
 		series_unload(_ripHandOnIris);
-		_val6 = 0;
+		_ttShould = 0;
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 200);
 		player_set_commands_allowed(true);
@@ -710,7 +711,7 @@ bool Room605::sleeveDisk1() {
 	case 1:
 		sendWSMessage_10000(1, _ripley, _ripGetsIrisWithCloth, 42, 43, 3,
 			_ripGetsIrisWithCloth, 43, 43, 1);
-		_val6 = 7;
+		_ttShould = 7;
 		digi_play("605_S01", 2);
 		return true;
 
@@ -730,12 +731,12 @@ bool Room605::sleeveDisk1() {
 		return true;
 
 	case 8:
-		_val6 = 6;
+		_ttShould = 6;
 		digi_play("605t07", 1, 255, 9);
 		return true;
 
 	case 9:
-		_val6 = 7;
+		_ttShould = 7;
 		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallback, "take pupil");
@@ -863,6 +864,16 @@ bool Room605::parserMisc() {
 	}
 
 	return true;
+}
+
+void Room605::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_ripleyMode);
+	s.syncAsSint32LE(_ripleyShould);
+	s.syncAsSint32LE(_val3);
+	s.syncAsSint32LE(_val4);
+	s.syncAsSint32LE(_val5);
+	s.syncAsSint32LE(_ttShould);
+	s.syncAsSint32LE(_ttMode);
 }
 
 } // namespace Rooms

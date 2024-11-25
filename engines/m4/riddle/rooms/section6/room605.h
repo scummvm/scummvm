@@ -32,13 +32,13 @@ class Room605 : public Room {
 private:
 	int _trigger1 = 0;
 	bool _walkerHidden = false;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
-	int _val6 = 0;
-	int _val7 = 0;
+	int _ttShould = 0;
+	int _ttMode = 0;
 	int _ripHandsHips = 0;
 	int _ripHandOnChin = 0;
 	int _ripTwoHandTalk = 0;
@@ -66,6 +66,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms
