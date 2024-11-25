@@ -963,6 +963,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "janoschverkehr",		"JANOSCH: Tiger und Bär im Straßenverkehr" },
 	{ "kommissar1",			"Kommissar Kugelblitz: Vermisst am Mississippi" },
 	{ "kommissar2",			"Kommissar Kugelblitz: Geheimnis von Spooky Hill" },
+	{ "kaiser",				"Des Kaisers neue Kleider" },
 	{ "loewe1",				"Löwenzahn 1" },
 	{ "loewe2",				"Löwenzahn 2" },
 	{ "loewe3",				"Löwenzahn 3" },
@@ -4750,6 +4751,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("karuta", "Demo", "Karuta",		 "r:78138a77207907642744d0960c14d9e5", 484311, Common::JA_JPN, 404),
 	WINDEMO2_l("karuta", "Demo", "S.EXE",		 "t:c8890a8cf579b08410ac063226736407", 746989,
 								 "OPENING4.DIR", "f:89beafaa3b41f1c533d13fb378d5eebf", 3995204, Common::JA_JPN, 404),
+
+	WINGAME1t_l("kaiser", "", "KAISER.EXE", "5f7442ffcdabc4858a3fc1011aaabca2", 989321, Common::DE_DEU, 404),
 
 	MACDEMO1_l("kenji", "Demo", "KENJI", "r:4577dd3eadc467a986ab172d90871b22", 501777, Common::JA_JPN, 404),
 
