@@ -63,7 +63,7 @@ class CursorManager;
 class StringManager;
 class SaveManager;
 class RLFDecoder;
-class MenuHandler;
+class MenuManager;
 class TextRenderer;
 class Subtitle;
 class MidiManager;
@@ -137,6 +137,7 @@ public:
 	 * and thus must be composited and rendered within renderSceneToScreen().
 	 */
 	Common::Rect _menuArea;
+	Common::Rect _subArea;
 	const Graphics::PixelFormat _resourcePixelFormat;
 	const Graphics::PixelFormat _screenPixelFormat;
 
@@ -157,7 +158,7 @@ private:
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
 	SaveManager *_saveManager;
-	MenuHandler *_menu;
+	MenuManager *_menu;
 
 	// Clock
 	Clock _clock;
@@ -213,7 +214,7 @@ public:
 	MidiManager *getMidiManager() const {
 		return _midiManager;
 	}
-	MenuHandler *getMenuHandler() const {
+	MenuManager *getMenuManager() const {
 		return _menu;
 	}
 
