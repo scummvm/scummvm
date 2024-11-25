@@ -112,7 +112,7 @@ class MacFont;
 
 class MacFontManager;
 
-typedef Common::Array<byte *> MacPatterns;
+typedef Common::Array<const byte *> MacPatterns;
 
 struct MacPlotData {
 	Graphics::ManagedSurface *surface;

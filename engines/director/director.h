@@ -40,7 +40,7 @@ namespace Graphics {
 class MacWindowManager;
 struct MacPlotData;
 struct WinCursorGroup;
-typedef Common::Array<byte *> MacPatterns;
+typedef Common::Array<const byte *> MacPatterns;
 
 class ManagedSurface;
 }

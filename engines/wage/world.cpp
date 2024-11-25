@@ -95,7 +95,7 @@ World::~World() {
 		delete _orderedScenes[i];
 
 	for (uint i = 0; i < _patterns->size(); i++)
-		free(_patterns->operator[](i));
+		free(const_cast<byte *>(_patterns->operator[](i)));
 
 	delete _patterns;
 
