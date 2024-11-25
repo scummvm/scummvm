@@ -34,7 +34,7 @@ enum {
 	kFocusMain = 2
 };
 
-MenuHandler::MenuHandler(ZVision *engine, const Common::Rect menuArea, const MenuParams params) :
+MenuManager::MenuManager(ZVision *engine, const Common::Rect menuArea, const MenuParams params) :
 	_engine{engine},
   _params{params},
 	menuBarFlag{0xFFFF},
@@ -57,13 +57,13 @@ MenuHandler::MenuHandler(ZVision *engine, const Common::Rect menuArea, const Men
 	mainArea.moveTo(menuOrigin+mainScroller.Pos);
 }
 
-MenuHandler::~MenuHandler() {
+MenuManager::~MenuManager() {
 	for (int i = 0; i < 4; i++)
 	  delete buttonAnim[i];
 	mainBack.free();
 }
 
-void MenuHandler::setEnable(uint16 flags) {
+void MenuManager::setEnable(uint16 flags) {
 	  static const uint16 flagMasks[6] = {0x8,0x4,0x2,0x1,0x100,0x200};  //Enum order: save,restore,prefs,quit,items,magic
 		menuBarFlag = flags;
 		for(uint i=0; i<=5; i++) {
@@ -74,7 +74,7 @@ void MenuHandler::setEnable(uint16 flags) {
     }		  
 	}
 
-void MenuHandler::onMouseUp(const Common::Point &Pos) {
+void MenuManager::onMouseUp(const Common::Point &Pos) {
   if(menuFocus.front() == kFocusMain) {
     mouseOnItem = mouseOverMain(Pos);
     if(mouseOnItem == mainClicked)
@@ -108,7 +108,7 @@ void MenuHandler::onMouseUp(const Common::Point &Pos) {
   mainClicked = -1;
 }
 
-void MenuHandler::onMouseDown(const Common::Point &Pos) {
+void MenuManager::onMouseDown(const Common::Point &Pos) {
   if(menuFocus.front() == kFocusMain) {
     mouseOnItem = mouseOverMain(Pos);
     //Show clicked graphic
@@ -121,7 +121,7 @@ void MenuHandler::onMouseDown(const Common::Point &Pos) {
   debug("mouse position %d %d", Pos.x, Pos.y);
 }
 
-void MenuHandler::onMouseMove(const Common::Point &Pos) {
+void MenuManager::onMouseMove(const Common::Point &Pos) {
   bool nowInMenu = inMenu(Pos);
   if(nowInMenu != prevInMenu)
     redraw = true;
@@ -154,7 +154,7 @@ void MenuHandler::onMouseMove(const Common::Point &Pos) {
     redraw = true;
 }
 
-int MenuHandler::mouseOverMain(const Common::Point &Pos) {
+int MenuManager::mouseOverMain(const Common::Point &Pos) {
   //Common::Rect mainHotspot(28,hSideMenu);
   //mainHotspot.moveTo(mainOrigin + mainScroller.Pos);
   for(int8 i = 0; i < 4; i++) {
@@ -164,7 +164,7 @@ int MenuHandler::mouseOverMain(const Common::Point &Pos) {
   return -1;
 }
 
-void MenuHandler::process(uint32 deltatime) {
+void MenuManager::process(uint32 deltatime) {
 	if(mainScroller.update(deltatime)) {
 	  mainArea.moveTo(menuOrigin+mainScroller.Pos);
     for (int i = 0; i < 4; i++)
@@ -188,7 +188,7 @@ void MenuNemesis::redrawAll() {
   redrawMain();
 };
 
-void MenuHandler::redrawMain() {
+void MenuManager::redrawMain() {
   //Draw menu background
   _engine->getRenderManager()->blitSurfaceToMenu(mainBack, mainScroller.Pos.x, mainScroller.Pos.y, 0);
   //Draw buttons
@@ -204,7 +204,7 @@ void MenuHandler::redrawMain() {
   clean = false;
 }
 
-void MenuHandler::setFocus(int8 currentFocus) {
+void MenuManager::setFocus(int8 currentFocus) {
   if(menuFocus.front() != currentFocus) {
     Common::Array<int8> _menuFocus;
     while(menuFocus.size() > 0) {
@@ -222,7 +222,7 @@ void MenuHandler::setFocus(int8 currentFocus) {
 }
 
 MenuZGI::MenuZGI(ZVision *engine, const Common::Rect menuArea) :
-	MenuHandler(engine, menuArea, zgiParams),
+	MenuManager(engine, menuArea, zgiParams),
 	itemsScroller{Common::Point(0,0), Common::Point(wSideMenuTab-wSideMenu,0), 1000},
 	magicScroller{Common::Point(-wSideMenu,0), Common::Point(-wSideMenuTab,0), 1000},
 	itemsOrigin{menuArea.left, menuArea.top},
@@ -337,7 +337,7 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 			  }
 			  break;
 		  case kFocusMain:
-        MenuHandler::onMouseUp(Pos);
+        MenuManager::onMouseUp(Pos);
 			  break;
 		  default:
 			  break;
@@ -408,7 +408,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 		    break;
     }
 	} 
-  MenuHandler::onMouseMove(Pos);
+  MenuManager::onMouseMove(Pos);
 }
 
 int MenuZGI::mouseOverItem(const Common::Point &Pos, int itemCount) {
@@ -444,11 +444,11 @@ void MenuZGI::process(uint32 deltatime) {
 	  magicArea.moveTo(magicOrigin+magicScroller.Pos);
 	  redraw = true;
   }
-  MenuHandler::process(deltatime);
+  MenuManager::process(deltatime);
 }
 
 void MenuZGI::redrawAll() {
-  if(MenuHandler::inMenu())
+  if(MenuManager::inMenu())
     for(int8 i=menuFocus.size()-1; i>=0; i--)
       switch (menuFocus[i]) {
         case kFocusItems:
@@ -560,7 +560,7 @@ void MenuZGI::redrawItems() {
 }
 
 MenuNemesis::MenuNemesis(ZVision *engine, const Common::Rect menuArea) :
-	MenuHandler(engine, menuArea, nemesisParams) {
+	MenuManager(engine, menuArea, nemesisParams) {
 
   //Buffer menu background image
 	_engine->getRenderManager()->readImageToSurface("bar.tga", mainBack, false);
@@ -593,7 +593,7 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
     setFocus(kFocusMain);
   else
     setFocus(kFocusNone);
-  MenuHandler::onMouseMove(Pos);
+  MenuManager::onMouseMove(Pos);
 }
 
 } // End of namespace ZVision
