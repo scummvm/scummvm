@@ -61,11 +61,11 @@ private:
 	bool _alreadyBeenHereFl = false;
 
 	int32 _field50_counter = 0;
-	int32 _field68 = 0;
-	int32 _field6C = 0;
+	int32 _field68_mode = 0;
+	int32 _field6C_should = 0;
 	int32 _field72_triggerNum = -1; // Useless : always -1
-	int32 _field94 = 0;
-	int32 _field98 = 0;
+	int32 _field94_mode = 0;
+	int32 _field98_should = 0;
 	int32 _field9E_triggerNum = -1; // Useless : always -1
 	int32 _conv701aNode = 0;
 	int32 _travelDest = 0;
