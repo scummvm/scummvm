@@ -62,13 +62,13 @@ ISSSS  mWriteProfile, File,Section,Item,NewVal --Write an INI profile string
 
 namespace Director {
 
-const char *InstObjXObj::xlibName = "InstObj";
+const char *const InstObjXObj::xlibName = "InstObj";
 const XlibFileDesc InstObjXObj::fileNames[] = {
 	{ "INSTOBJ",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				InstObjXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				InstObjXObj::m_dispose,		 0, 0,	400 },
 	{ "name",				InstObjXObj::m_name,		 0, 0,	400 },
@@ -93,7 +93,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

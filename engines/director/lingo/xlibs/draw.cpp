@@ -89,13 +89,13 @@
 
 namespace Director {
 
-const char *DrawXObj::xlibName = "Draw";
+const char *const DrawXObj::xlibName = "Draw";
 const XlibFileDesc DrawXObj::fileNames[] = {
 	{ "DRAW",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "New",						DrawXObj::m_new,						0,	0,	400 },	// D4
 	{ "Dispose",					DrawXObj::m_dispose,					0,	0,	400 },	// D4
 	{ "Line",						DrawXObj::m_line,						4,	4,	400 },	// D4

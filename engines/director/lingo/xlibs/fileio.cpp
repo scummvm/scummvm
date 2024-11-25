@@ -134,7 +134,7 @@ delete object me -- deletes the open file
 
 namespace Director {
 
-const char *FileIO::xlibName = "FileIO";
+const char *const FileIO::xlibName = "FileIO";
 const XlibFileDesc FileIO::fileNames[] = {
 	{ "FileIO",		nullptr },
 	{ "shFILEIO",	nullptr }, // TD loads this up using openXLib("@:shFILEIO.DLL")
@@ -142,7 +142,7 @@ const XlibFileDesc FileIO::fileNames[] = {
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	// XObject
 	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2
 	{ "error",					FileIO::m_error,			 1, 1,	200 },	// D2
@@ -174,7 +174,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ "getOSDirectory", FileIO::m_getOSDirectory, 0, 0, 500, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

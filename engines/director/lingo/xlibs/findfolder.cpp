@@ -90,13 +90,13 @@
 
 namespace Director {
 
-const char *FindFolder::xlibName = "FindFolder";
+const char *const FindFolder::xlibName = "FindFolder";
 const XlibFileDesc FindFolder::fileNames[] = {
 	{ "FindFolder",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "FindFolder", FindFolder::m_findfolder, 0, 2, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

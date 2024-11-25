@@ -50,13 +50,13 @@ O	mGetHandler
 
 namespace Director {
 
-const char *XCMDGlueXObj::xlibName = "XCMDGlue";
+const char *const XCMDGlueXObj::xlibName = "XCMDGlue";
 const XlibFileDesc XCMDGlueXObj::fileNames[] = {
 	{ "XCMDGlue",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				XCMDGlueXObj::m_new,		 2, 2,	200 },
 	{ "dispose",				XCMDGlueXObj::m_dispose,		 0, 0,	200 },
 	{ "verbDispose",				XCMDGlueXObj::m_verbDispose,		 1, 1,	200 },

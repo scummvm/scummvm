@@ -112,14 +112,14 @@ IS     mRegister, serialNumber
 
 namespace Director {
 
-const char *PrintOMaticXObj::xlibName = "PrintOMatic";
+const char *const PrintOMaticXObj::xlibName = "PrintOMatic";
 const XlibFileDesc PrintOMaticXObj::fileNames[] = {
 	{ "PMATIC",			nullptr },
 	{ "PrintOMatic",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "New",					PrintOMaticXObj::m_new,						0,	0,	400 },	// D4
 	{ "Dispose",				PrintOMaticXObj::m_dispose,					0,	0,	400 },	// D4
 	{ "Reset",					PrintOMaticXObj::m_reset,					0,	0,	400 },	// D4

@@ -53,7 +53,7 @@
 
 namespace Director {
 
-const char *SoundJam::xlibName = "SoundJam";
+const char *const SoundJam::xlibName = "SoundJam";
 const XlibFileDesc SoundJam::fileNames[] = {
 	{ "SoundJam",	nullptr },
 	{ nullptr,		nullptr },
@@ -61,7 +61,7 @@ const XlibFileDesc SoundJam::fileNames[] = {
 
 const int kJamChannel = 3;
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				SoundJam::m_new,			 1, 1,	400 },
 	{ "defineFileSound",	SoundJam::m_defineFileSound, 2, 2,	400 },
 	{ "defineCastSound",	SoundJam::m_defineCastSound, 2, 2,	400 },

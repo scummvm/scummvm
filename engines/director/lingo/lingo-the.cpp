@@ -47,7 +47,7 @@ namespace Director {
 
 class Sprite;
 
-TheEntity entities[] = {
+const TheEntity entities[] = {
 	{ kTheActorList,		"actorList",		false, 400, false },	//			D4 property
 	{ kTheBeepOn,			"beepOn",			false, 200, false },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false, 200, false },	// D2 p
@@ -168,7 +168,7 @@ TheEntity entities[] = {
 	{ kTheNOEntity, nullptr, false, 0, false }
 };
 
-TheEntityField fields[] = {
+const TheEntityField fields[] = {
 	{ kTheSprite,	"backColor",	kTheBackColor,	200 },// D2 p
 	{ kTheSprite,	"blend",		kTheBlend,		400 },//				D4 p
 	{ kTheSprite,	"bottom",		kTheBottom,		200 },// D2 p
@@ -313,7 +313,7 @@ TheEntityField fields[] = {
 void Lingo::initTheEntities() {
 	_objectEntityId = kTheObject;
 
-	TheEntity *e = entities;
+	const TheEntity *e = entities;
 	_entityNames.resize(kTheMaxTheEntityType);
 
 	while (e->entity != kTheNOEntity) {
@@ -326,7 +326,7 @@ void Lingo::initTheEntities() {
 		e++;
 	}
 
-	TheEntityField *f = fields;
+	const TheEntityField *f = fields;
 	_fieldNames.resize(kTheMaxTheFieldType);
 
 	while (f->entity != kTheNOEntity) {

@@ -45,13 +45,13 @@ S      mDo                 --Return the System directory path as a string
 namespace Director {
 
 // The name is different from the obj filename.
-const char *FindWin::xlibName = "FindWin";
+const char *const FindWin::xlibName = "FindWin";
 const XlibFileDesc FindWin::fileNames[] = {
 	{ "FindWin",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",		FindWin::m_new,			 0, 0,	400 },	// D4
 	{ "do",			FindWin::m_do,			 0, 0,  400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }

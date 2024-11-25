@@ -50,13 +50,13 @@ III     mClickCursor         --Moves the cursor to x,y and clicks it.
 
 namespace Director {
 
-const char *GenUtilsXObj::xlibName = "GenUtils";
+const char *const GenUtilsXObj::xlibName = "GenUtils";
 const XlibFileDesc GenUtilsXObj::fileNames[] = {
 	{ "GENUTILS",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				GenUtilsXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				GenUtilsXObj::m_dispose,		 0, 0,	400 },
 	{ "name",				GenUtilsXObj::m_name,		 0, 0,	400 },
@@ -68,7 +68,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

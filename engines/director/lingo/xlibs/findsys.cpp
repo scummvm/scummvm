@@ -48,13 +48,13 @@
 namespace Director {
 
 // The name is different from the obj filename.
-const char *FindSys::xlibName = "FindSys";
+const char *const FindSys::xlibName = "FindSys";
 const XlibFileDesc FindSys::fileNames[] = {
 	{ "FindSys",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",		FindSys::m_new,			 0, 0,	400 },	// D4
 	{ "do",			FindSys::m_do,			 0, 0,  400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }

@@ -34,13 +34,13 @@
 
 namespace Director {
 
-const char *IsCD::xlibName = "isCD";
+const char *const IsCD::xlibName = "isCD";
 const XlibFileDesc IsCD::fileNames[] = {
 	{ "isCD",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "isCD", IsCD::m_iscd, 1, 1, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

@@ -43,7 +43,7 @@
 
 namespace Director {
 
-const char *UnitTestXObj::xlibName = "UnitTest";
+const char *const UnitTestXObj::xlibName = "UnitTest";
 const XlibFileDesc UnitTestXObj::fileNames[] = {
 	{ "UnitTest",	nullptr },
 	{ nullptr,		nullptr },
@@ -60,7 +60,7 @@ I      mLeftMouseDown           --Press the LMB
 I      mLeftMouseUp             --Release the LMB
  */
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				UnitTestXObj::m_new,				0, 0,	400 },	// D4
 	{ "dispose",			UnitTestXObj::m_dispose,			0, 0,	400 },	// D4
 	{ "isRealDirector",		UnitTestXObj::m_isRealDirector,		0, 0,	400 },	// D4

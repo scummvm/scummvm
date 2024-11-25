@@ -48,17 +48,17 @@
 
 namespace Director {
 
-const char *ScrnUtilXtra::xlibName = "ScrnUtil";
+const char *const ScrnUtilXtra::xlibName = "ScrnUtil";
 const XlibFileDesc ScrnUtilXtra::fileNames[] = {
 	{ "scrnutil",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ "ScreenToClipboard", ScrnUtilXtra::m_ScreenToClipboard, 4, 4, 500, HBLTIN },
 	{ "ScreenToFile", ScrnUtilXtra::m_ScreenToFile, 5, 5, 500, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }

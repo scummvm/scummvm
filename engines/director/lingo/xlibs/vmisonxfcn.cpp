@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *VMisOnXFCN::xlibName = "VMisOn";
+const char *const VMisOnXFCN::xlibName = "VMisOn";
 const XlibFileDesc VMisOnXFCN::fileNames[] = {
 	{ "VMisOn",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "VMisOn", VMisOnXFCN::m_VMisOn, -1, 0, 400, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

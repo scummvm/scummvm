@@ -45,13 +45,13 @@ X      mRestoreColors      --Restores windows system colors
 
 namespace Director {
 
-const char *SysColorXObj::xlibName = "SysColor";
+const char *const SysColorXObj::xlibName = "SysColor";
 const XlibFileDesc SysColorXObj::fileNames[] = {
 	{ "SYSCOLOR",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				SysColorXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				SysColorXObj::m_dispose,		 0, 0,	400 },
 	{ "saveColors",				SysColorXObj::m_saveColors,		 0, 0,	400 },
@@ -59,7 +59,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

@@ -38,7 +38,7 @@
 
 namespace Director {
 
-static LingoV4Bytecode lingoV4[] = {
+static const LingoV4Bytecode lingoV4[] = {
 	{ 0x01, LC::c_procret,		"" },
 	{ 0x02, LC::c_procret,		"" },
 	{ 0x03, LC::cb_zeropush,	"" },
@@ -144,7 +144,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0, nullptr, nullptr }
 };
 
-static LingoV4TheEntity lingoV4TheEntity[] = {
+static const LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x00, 0x00, kTheFloatPrecision,	kTheNOField,		true, kTEANOArgs },
 	{ 0x00, 0x01, kTheMouseDownScript,	kTheNOField,		true, kTEANOArgs },
 	{ 0x00, 0x02, kTheMouseUpScript,	kTheNOField,		true, kTEANOArgs },
@@ -317,7 +317,7 @@ void Lingo::initBytecode() {
 	for (auto &it : _functions)
 		list[(inst)it._key] = true;
 
-	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
+	for (const LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
 		_lingoV4[op->opcode] = op;
 
 		if (!list.contains(op->func)) {
@@ -329,7 +329,7 @@ void Lingo::initBytecode() {
 	if (bailout)
 		error("Lingo::initBytecode(): Add entries to funcDescr[] in lingo-code.cpp");
 
-	for (LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != 0xff; ent++) {
+	for (const LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != 0xff; ent++) {
 		_lingoV4TheEntity[(ent->bank << 8) + ent->firstArg] = ent;
 	}
 }
@@ -615,7 +615,7 @@ void LC::cb_theassign2() {
 	Datum value = g_lingo->pop();
 
 	if (g_lingo->_theEntities.contains(name)) {
-		TheEntity *entity = g_lingo->_theEntities[name];
+		const TheEntity *entity = g_lingo->_theEntities[name];
 		Datum id;
 		id.u.i = 0;
 		id.type = VOID;
@@ -645,7 +645,7 @@ void LC::cb_thepush2() {
 	Datum result;
 	Common::String name = g_lingo->readString();
 	if (g_lingo->_theEntities.contains(name)) {
-		TheEntity *entity = g_lingo->_theEntities[name];
+		const TheEntity *entity = g_lingo->_theEntities[name];
 		Datum id;
 		id.u.i = 0;
 		id.type = VOID;
@@ -847,7 +847,7 @@ void LC::cb_v4theentitynamepush() {
 		g_lingo->push(Datum());
 		return;
 	}
-	TheEntity *entity = g_lingo->_theEntities[name];
+	const TheEntity *entity = g_lingo->_theEntities[name];
 
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(%s, VOID, kTheNOField)", g_lingo->entity2str(entity->entity));

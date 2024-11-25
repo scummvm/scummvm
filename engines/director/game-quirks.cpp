@@ -190,7 +190,7 @@ static void quirkMcLuhanMac() {
 	delete installer;
 }
 
-struct Quirk {
+const struct Quirk {
 	const char *target;
 	Common::Platform platform;
 	void (*quirk)();

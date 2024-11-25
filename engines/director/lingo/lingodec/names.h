@@ -20,21 +20,21 @@ namespace LingoDec {
 /* StandardNames */
 
 namespace StandardNames {
-extern const char *opcodeNamesS[];
-extern const char *opcodeNamesM[];
-extern const char *binaryOpNames[];
-extern const char *chunkTypeNames[];
-extern const char *putTypeNames[];
+extern const char *const opcodeNamesS[];
+extern const char *const opcodeNamesM[];
+extern const char *const binaryOpNames[];
+extern const char *const chunkTypeNames[];
+extern const char *const putTypeNames[];
 
-extern const char *moviePropertyNames[];
-extern const char *whenEventNames[];
-extern const char *menuPropertyNames[];
-extern const char *menuItemPropertyNames[];
-extern const char *soundPropertyNames[];
-extern const char *spritePropertyNames[];
-extern const char *animationPropertyNames[];
-extern const char *animation2PropertyNames[];
-extern const char *memberPropertyNames[];
+extern const char *const moviePropertyNames[];
+extern const char *const whenEventNames[];
+extern const char *const menuPropertyNames[];
+extern const char *const menuItemPropertyNames[];
+extern const char *const soundPropertyNames[];
+extern const char *const spritePropertyNames[];
+extern const char *const animationPropertyNames[];
+extern const char *const animation2PropertyNames[];
+extern const char *const memberPropertyNames[];
 
 Common::String getOpcodeName(byte id);
 }

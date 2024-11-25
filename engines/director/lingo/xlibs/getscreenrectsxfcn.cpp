@@ -36,13 +36,13 @@
 
 namespace Director {
 
-const char *GetScreenRectsXFCN::xlibName = "GetScreenRects";
+const char *const GetScreenRectsXFCN::xlibName = "GetScreenRects";
 const XlibFileDesc GetScreenRectsXFCN::fileNames[] = {
 	{ "GetScreenRects",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "GetScreenRects", GetScreenRectsXFCN::m_GetScreenRects, -1, 0, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

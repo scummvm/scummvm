@@ -45,13 +45,13 @@ namespace Director {
  * SSSS               mAsk                                                                                          --Data to display in the message box.
 */
 
-const char *AskUser::xlibName = "AskUser";
+const char *const AskUser::xlibName = "AskUser";
 const XlibFileDesc AskUser::fileNames[] = {
 	{ "AskUser",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",					AskUser::m_new,			 0, 0,	400 },	// D4
 	{ "ask",					AskUser::m_ask,			 3, 3,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }

@@ -45,20 +45,20 @@ I     mDispose     -- Disposes of XObject instance.
 
 namespace Director {
 
-const char *IniXObj::xlibName = "Ini";
+const char *const IniXObj::xlibName = "Ini";
 const XlibFileDesc IniXObj::fileNames[] = {
 	{ "INI",	"karma" },	// "Karma: Curse of the 12 Caves" conflicts with JWXIni in "www" gameid
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{"new",			IniXObj::m_new, 0, 0, 400},
 	{"readString",	IniXObj::m_readString, 4, 4, 400},
 	{"writeString",	IniXObj::m_writeString, 4, 4, 400},
 	{nullptr, nullptr, 0, 0, 0}
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{nullptr, nullptr, 0, 0, 0, VOIDSYM}
 };
 

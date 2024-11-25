@@ -52,7 +52,7 @@
 
 namespace Director {
 
-const char *DialogsXObj::xlibNames[] = {
+const char *const DialogsXObj::xlibNames[] = {
 	"DialogS",
 	nullptr
 };
@@ -63,7 +63,7 @@ const XlibFileDesc DialogsXObj::fileNames[] = {
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",               DialogsXObj::m_new,              0, 0,  400 },  // D4
 	{ "GetFile",           DialogsXObj::m_getFile,          3, 3,  400 },  // D4
 	{ "PutFile",           DialogsXObj::m_putFile,          3, 3,  400 },  // D4

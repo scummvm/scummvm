@@ -39,7 +39,7 @@
 
 namespace Director {
 
-static struct MacKeyCodeMapping {
+static const struct MacKeyCodeMapping {
 	Common::KeyCode scummvm;
 	int mac;
 } MackeyCodeMappings[] = {
@@ -167,7 +167,7 @@ static struct MacKeyCodeMapping {
 	{ Common::KEYCODE_INVALID,		0 }
 };
 
-static struct WinKeyCodeMapping {
+static const struct WinKeyCodeMapping {
 	Common::KeyCode scummvm;
 	int win;
 } WinkeyCodeMappings[] = {
@@ -282,10 +282,10 @@ void DirectorEngine::loadKeyCodes() {
 	if ((g_director->getPlatform() == Common::kPlatformWindows) && (g_director->getVersion() < 400)) {
 		// Allegedly this keykode list applies for the Windows version of D3.
 		// D4 and D5 for Windows are both confirmed to use the Mac keycode table.
-		for (WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+		for (const WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 			_KeyCodes[k->scummvm] = k->win;
 	} else {
-		for (MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+		for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 			_KeyCodes[k->scummvm] = k->mac;
 	}
 }
@@ -421,8 +421,8 @@ Common::String CastMemberID::asString() const {
 	return res;
 }
 
-int recLevel = 0;
-const char *tabs[] = {	"",
+const int recLevel = 0;
+const char *const tabs[] = {	"",
 						"  ",
 						"    ",
 						"      ",

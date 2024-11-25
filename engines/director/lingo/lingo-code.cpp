@@ -59,7 +59,7 @@
 
 namespace Director {
 
-static struct FuncDescr {
+static const struct FuncDescr {
 	const inst func;
 	const char *name;
 	const char *args;
@@ -173,7 +173,7 @@ static struct FuncDescr {
 
 void Lingo::initFuncs() {
 	Symbol sym;
-	for (FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
+	for (const FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
 		sym.u.func = fnc->func;
 		_functions[(void *)sym.u.s] = new FuncDesc(fnc->name, fnc->args);
 	}
@@ -1662,7 +1662,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			if (g_lingo->_theEntities.contains(*funcSym.name) && nargs == 0) {
 				warning("Calling builtin '%s' as a function", funcSym.name->c_str());
 
-				TheEntity *entity = g_lingo->_theEntities[*funcSym.name];
+				const TheEntity *entity = g_lingo->_theEntities[*funcSym.name];
 				Datum id;
 				id.u.i = 0;
 				id.type = VOID;

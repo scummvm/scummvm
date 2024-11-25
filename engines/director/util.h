@@ -125,7 +125,7 @@ inline byte lerpByte(byte a, byte b, int alpha, int span) {
 	return static_cast<byte>((bi * alpha + ai * (span - alpha)) / span);
 }
 
-inline void lerpPalette(byte *target, byte *palA, int palALength, byte *palB, int palBLength, int alpha, int span) {
+inline void lerpPalette(byte *target, const byte *palA, int palALength, const byte *palB, int palBLength, int alpha, int span) {
 	for (int i = 0; i < 768; i++) {
 		target[i] = lerpByte(
 			i < palALength * 3 ? palA[i] : 0,

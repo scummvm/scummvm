@@ -40,13 +40,13 @@ I      mGetHandle            --Copies a portion of the stage onto a cast member
 
 namespace Director {
 
-const char *StageTCXObj::xlibName = "StageTC";
+const char *const StageTCXObj::xlibName = "StageTC";
 const XlibFileDesc StageTCXObj::fileNames[] = {
 	{ "STAGETC",	nullptr },
 	{ nullptr,		nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "New",		StageTCXObj::m_new,			4,	4,	400 },	// D4
 	{ "Dispose",	StageTCXObj::m_dispose,		0,	0,	400 },	// D4
 	{ "GetHandle",	StageTCXObj::m_gethandle,	0,	0,	400 },	// D4

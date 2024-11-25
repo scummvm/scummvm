@@ -87,13 +87,13 @@ X              mResumeGame --
 
 namespace Director {
 
-const char *HenryXObj::xlibName = "Henry";
+const char *const HenryXObj::xlibName = "Henry";
 const XlibFileDesc HenryXObj::fileNames[] = {
 	{ "HENRY",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				HenryXObj::m_new,		 2, 2,	400 },
 	{ "dispose",				HenryXObj::m_dispose,		 0, 0,	400 },
 	{ "name",				HenryXObj::m_name,		 0, 0,	400 },
@@ -142,7 +142,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

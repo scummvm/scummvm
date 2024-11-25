@@ -47,13 +47,13 @@ XII    mVerb msg, qtPacker -- do something
 
 namespace Director {
 
-const char *DPWQTWXObj::xlibName = "DPWQTW";
+const char *const DPWQTWXObj::xlibName = "DPWQTW";
 const XlibFileDesc DPWQTWXObj::fileNames[] = {
 	{ "DPWQTW",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "startup",				DPWQTWXObj::m_startup,		 0, 0,	300 },
 	{ "quit",				DPWQTWXObj::m_quit,		 0, 0,	300 },
 	{ "new",				DPWQTWXObj::m_new,		 1, 1,	300 },
@@ -62,7 +62,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

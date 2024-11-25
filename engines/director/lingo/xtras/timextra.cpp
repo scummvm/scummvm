@@ -43,18 +43,18 @@ new object me, any
 
 namespace Director {
 
-const char *TimextraXtra::xlibName = "Timextra";
+const char *const TimextraXtra::xlibName = "Timextra";
 const XlibFileDesc TimextraXtra::fileNames[] = {
 	{ "timextra",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				TimextraXtra::m_new,		 1, 0,	500 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ "getTime", TimextraXtra::m_getTime, 0, 0, 500, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

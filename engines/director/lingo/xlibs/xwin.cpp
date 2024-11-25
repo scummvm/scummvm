@@ -62,13 +62,13 @@ I          mhwnd  --window handle
 
 namespace Director {
 
-const char *XWINXObj::xlibName = "XWIN";
+const char *const XWINXObj::xlibName = "XWIN";
 const XlibFileDesc XWINXObj::fileNames[] = {
 	{ "XWIN",	nullptr },
 	{ nullptr,	nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				XWINXObj::m_new,		 0, 0,	300 },
 	{ "dispose",				XWINXObj::m_dispose,		 0, 0,	300 },
 	{ "writeChar",				XWINXObj::m_writeChar,		 1, 1,	300 },
@@ -93,7 +93,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

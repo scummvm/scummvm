@@ -45,13 +45,13 @@ I	mGetSecond -- Second in number
 
 namespace Director {
 
-const char *DateUtilXObj::xlibName = "DateUtil";
+const char *const DateUtilXObj::xlibName = "DateUtil";
 const XlibFileDesc DateUtilXObj::fileNames[] = {
 	{ "DateUtil",   nullptr },
 	{ nullptr,        nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				DateUtilXObj::m_new,		 0, 0,	400 },
 	{ "getTime",				DateUtilXObj::m_getTime,		 0, 0,	400 },
 	{ "getDate",				DateUtilXObj::m_getDate,		 0, 0,	400 },
@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-static BuiltinProto xlibBuiltins[] = {
+static const BuiltinProto xlibBuiltins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };

@@ -50,14 +50,14 @@ SS mMovieInfo -- return info given name
 
 namespace Director {
 
-const char *MovieIdxXObj::xlibName = "MovieIdx";
+const char *const MovieIdxXObj::xlibName = "MovieIdx";
 const XlibFileDesc MovieIdxXObj::fileNames[] = {
 	{ "MovieIdx",		nullptr }, // Jewels of the Oracle - Win
 	{ "MovieIdx.XObj",	nullptr }, // Jewels of the Oracle - Mac
 	{ nullptr,			nullptr },
 };
 
-static MethodProto xlibMethods[] = {
+static const MethodProto xlibMethods[] = {
 	{ "new",				MovieIdxXObj::m_new,		 0, 0,	400 },
 	{ "dispose",				MovieIdxXObj::m_dispose,		 0, 0,	400 },
 	{ "movieInfo",				MovieIdxXObj::m_movieInfo,		 1, 1,	400 },

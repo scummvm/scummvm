@@ -39,13 +39,13 @@
 
 namespace Director {
 
-const char *DarkenScreen::xlibName = "darkenScreen";
+const char *const DarkenScreen::xlibName = "darkenScreen";
 const XlibFileDesc DarkenScreen::fileNames[] = {
 	{ "darkenScreen",	nullptr },
 	{ nullptr,			nullptr },
 };
 
-static BuiltinProto builtins[] = {
+static const BuiltinProto builtins[] = {
 	{ "darkenScreen", DarkenScreen::m_darkenscreen, 0, 0, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
