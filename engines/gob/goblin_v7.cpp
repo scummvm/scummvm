@@ -79,6 +79,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 			if (animVariablesForState[0] == 0) {
 				newXCorrection = animVariablesForState[1];
 				newYCorrection = animVariablesForState[2];
+				break;
 			} else {
 				if (animVariablesForState[0] == -2) {
 					// Reflexion relative to Y axis:
