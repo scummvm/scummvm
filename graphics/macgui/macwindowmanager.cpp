@@ -767,7 +767,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 	if (p->fillType > p->patterns->size() || !p->fillType)
 		return;
 
-	byte *pat = p->patterns->operator[](p->fillType - 1);
+	const byte *pat = p->patterns->operator[](p->fillType - 1);
 
 	if (p->thickness == 1) {
 		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
