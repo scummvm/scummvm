@@ -143,7 +143,8 @@ void RenderManager::renderSceneToScreen() {
 	
 	_backgroundManagedSurface.simpleBlitFrom(*out); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
 	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
-	_screenSurface.update();
+	if(_engine->canRender())
+	  _screenSurface.update();
 
   /*
 	if (!outWndDirtyRect.isEmpty()) {
