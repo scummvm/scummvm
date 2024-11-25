@@ -410,6 +410,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pothead",			"Pothead" },
 	{ "princessfashion",	"Disney's Princess Fashion Boutique" },
 	{ "puppetmotel",		"Puppet Motel" },
+	{ "pyatachok1",			"Pong-Pong's Learning Adventure: The Animals" },
 	{ "pyst",				"Pyst" },
 	{ "pyst2",				"Driven: The Sequel to Pyst" },
 	{ "pystmake",			"The Making of Pyst" },
@@ -912,6 +913,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pelitcd2000",		"Pelit CD 2000" },
 	{ "pelitpakki98",		"Pelit Pelipakki CD 1998" },
 	{ "petepilotti1",		"Pete Pilotti & Pontiac: Seikkailu Lapponiassa" },
+	{ "petepilotti2",		"Pete Pilotti & Pontiac: Vaaleanpunaiset tiikerit" },
 
 	// French titles
 	{ "1contre100",			"1 contre 100" },
@@ -1418,7 +1420,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "engl",				"English for Beginners" },
 	{ "max1max2",			"Макс демонстрация" },                         // Max (Tivola) demos of the first two games
 	{ "plcd",				"Подводная Лодка" },						   // Podvodnaya Lodka (Submarine) magazine
-	{ "pyatachok1",			"Пятачок и разные звери" },					   // Pong-Pong's Learning Adventure: The Animals
 	{ "pyatachok2",			"Пятачок в Волшебном Лесу" },				   // Pong-Pong's Learning Adventure: Insects and Plants
 	{ "pyatachok3",			"Пятачок в Затерянном мире" },				   // Pong-Pong's Learning Adventure: The Lost World
 	{ "pyatachok4",			"Пятачок: Назад в будущее" },				   // Pong-Pong's Learning Adventure: Back to the Future
@@ -5167,11 +5168,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("mylk", "", "mylk.exe", "032b0860a694ece5f64f37cfe1ebdfa0", 904859, 404),
 
-	MACGAME1("mysteriousegypt", "",   "Mysterious Egypt",		   "r:32cb3a881f2d47a7e525370b198b2c5c", 483490, 404),
-	MACGAME1_l("mysteriousegypt", "", "Matka muinaiseen Egyptiin", "r:17efee018a660458fae80de4364021ac", 483518, Common::FI_FIN, 404),
+	MACGAME1("mysteriousegypt", "",   "Mysterious Egypt",		   "r:32cb3a881f2d47a7e525370b198b2c5c",  483490, 404),
+	MACGAME1_l("mysteriousegypt", "", "Matka muinaiseen Egyptiin", "r:17efee018a660458fae80de4364021ac",  483518, Common::FI_FIN, 404),
 	WINGAME1_l("mysteriousegypt", "", "EGYPTI.EXE",				   "t:36a655be8b161e75edef762db6531db7", 1295295, Common::FI_FIN, 404),
-	MACDEMO1_l("mysteriousegypt", "Demo", "Egypti demo", "337c94c66b435e075a2d7f94b3cffc49", 483746, Common::FI_FIN, 404),
-	WINDEMO1_l("mysteriousegypt", "Demo", "EGYPTI.EXE",	 "2e8cba31e473bd1567476f57d6aeb4d6", 5574413, Common::FI_FIN, 404),
+	MACDEMO1_l("mysteriousegypt", "Demo", "Egypti demo", "r:337c94c66b435e075a2d7f94b3cffc49",  483490, Common::FI_FIN, 404),
+	WINDEMO1_l("mysteriousegypt", "Demo", "EGYPTI.EXE",	 "t:5223dbbcd9d68936fc40bdf629a52c92", 5574413, Common::FI_FIN, 404),
 
 	// version comes from debug mode (hold Ctrl+Shift when clicking on New Game/Load Game)
 	MACGAME2("mysteriousisland", "v96.04.23", "Mysterious Island", "r:17efee018a660458fae80de4364021ac", 483518,
@@ -5376,8 +5377,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("pecosbill", "", "Pecos Bill", "67f572196550aedb1f9523d782022be0", 483500, 404),
 	WINGAME1("pecosbill", "", "PECOS.EXE", "948eb8995faf757e4ad899ea45b3fae7", 700035, 404),
 
-	MACGAME1_l("peepeebonbon", "", "PPBB.MAC", "33f733b2809b94c3301096902f642b6e", 289518, Common::JA_JPN, 402),
-	WINGAME1t_l("peepeebonbon", "", "PPBB.EXE", "ccfe8e10528261b78f4a8c9657a54ff8", 746983, Common::JA_JPN, 404),
+	MACGAME1_l("peepeebonbon", "", "PPBB.MAC", "r:33f733b2809b94c3301096902f642b6e", 289518, Common::JA_JPN, 402),
+	WINGAME1_l("peepeebonbon", "", "PPBB.EXE", "t:ccfe8e10528261b78f4a8c9657a54ff8", 746983, Common::JA_JPN, 404),
 
 	MACGAME1("pentiumpro", "", "Making History with Intel", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 486726, 404),
 	WINGAME1("pentiumpro", "", "INTELSM.EXE", "t:6d112f4c4d40ca58d8777be8e13e539e", 697751, 404),
@@ -5417,10 +5418,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pod9", "", "POD9 For Macintsosh", "8ea9e9a699c61edddffd79ddd0c994d7", 315394, Common::JA_JPN, 404),
 	WINGAME1t_l("pod9", "", "POD9WIN.EXE", "771fcc769bdeea7887087e662e2c3430", 741859, Common::JA_JPN, 404),
 
-	MACGAME1_l("petepilotti1", "",	   "Seikkailu Lapponiassa", "a8e65a2268226bd59f12ebdc58a221f3", 483746, Common::FI_FIN, 404),
-	MACDEMO1_l("petepilotti1", "Demo", "Pete Pilotin esittely", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483746, Common::FI_FIN, 404),
-	WINGAME1_l("petepilotti1", "",	   "PETE.EXE",	   "4d4637a93653ece18e7d1238cc52a111", 1295281, Common::FI_FIN, 404),
-	WINDEMO1_l("petepilotti1", "Demo", "PETEDEMO.EXE", "fd8a1586ac3e8e95746b31e0c9daf767", 8772665, Common::FI_FIN, 404),
+	MACGAME1_l("petepilotti1", "",	   "Seikkailu Lapponiassa", "r:a8e65a2268226bd59f12ebdc58a221f3", 483490, Common::FI_FIN, 404),
+	MACDEMO1_l("petepilotti1", "Demo", "Pete Pilotin esittely", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 483490, Common::FI_FIN, 404),
+	WINGAME1_l("petepilotti1", "",	   "PETE.EXE",	   "t:36a655be8b161e75edef762db6531db7", 1295281, Common::FI_FIN, 404),
+	WINDEMO1_l("petepilotti1", "Demo", "PETEDEMO.EXE", "t:4e857a2c688c5401d895ded264e93a13", 8772665, Common::FI_FIN, 404),
 
 	// Mac version requires hard drive installation
 	// Choice of American or British English by selecting Language = 0 or 1 in PETER.INI
@@ -5441,7 +5442,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("phantplanet", "Demo", "MICROMONDO Demo", "8f597c0dc7a7f0d1d1e0b85404c62c1e", 286152, 404),
 	WINDEMO1t("phantplanet", "Demo", "MICRO.EXE", "ce31b9d507cb6355f8f8018f081671df", 744320, 404),
 
-	MACDEMO1("photos4us", "Demo", "Photos4us", "2c27791a84756be6201d281bad54f7bb", 351560, 404),
+	MACDEMO1("photos4us", "Demo", "Photos4us", "r:2c27791a84756be6201d281bad54f7bb", 351304, 404),
 
 	// From Star Trek: Borg (Disc 2)
 	MACGAME1("picarddossier", "", "Picard Dossier", "r:e1dc28c1dd8409c2d2e0d5d269df5ffc", 519813, 404),
@@ -5479,12 +5480,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// "Planet Earth", from "The Times Perspectives" series, published by News Multimedia (London)
 	MACDEMO1("planetearth", "Demo", "Planet Earth", "r:a546ef2b921a9b48fd93928f1a505f22", 483490, 404),
 	WINDEMO2("planetearth", "Demo", "PLANETE.EXE",	"t:1ab2d4f204eb42c9a8ff5257f7cef149", 690069,
-									"INTRO.DIR",	"d:44456604551f5670f801fc69cbbe5833", 10175740, 404),
+									"INTRO.DIR",	"f:44456604551f5670f801fc69cbbe5833", 10175740, 404),
 
 	// Found on the Play-Doh Creations CD
-	MACGAME1("playskool", "",  "goHIGmem PPC", "a6043fbba9186296faf8a2b82e5e4182", 64250, 404),
-	WINGAME2t("playskool", "", "SAMPLER.EXE",  "4de224099dd6f16d5c9892f94c975f2a", 696951,
-							   "START.DIR",	   "cbd61d015d533b25f3d568002f96bcee", 21469988, 404),
+	MACGAME1("playskool", "", "goHIGmem PPC", "r:a6043fbba9186296faf8a2b82e5e4182",    64250, 404),
+	WINGAME2("playskool", "", "SAMPLER.EXE",  "t:4de224099dd6f16d5c9892f94c975f2a",   696951,
+							  "START.DIR",    "t:cbd61d015d533b25f3d568002f96bcee", 21469988, 404),
 
 	WINGAME2("plbible", "", "PLAY&LRN.EXE",		 "t:e32ea13972b689e2bc707304ae329553",  741444,
 							"MAIN/BIBLESTO.DIR", "f:084b2bce5c70e6ecbf82046f8dfb9869", 2583492, 404),
@@ -5510,22 +5511,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From the Police Quest Collection
 	WINGAME1("pqmakingof", "", "MAKING.EXE", "aae6a546b0c6bc51758053d14d9f6db2", 2127119, 400),
 
-	MACGAME1("prangers1", "", "Power Rangers", "13fe5212d9fc599e34b1260dc09970be", 303281, 400),
-	MACGAME1("prangers2", "", "PR Part 2", "0ecc4b4483d638bfb727cc5472b2fde3", 303281, 400),
+	MACGAME1("prangers1", "", "Power Rangers", "r:13fe5212d9fc599e34b1260dc09970be", 303025, 400),
+	MACGAME1("prangers2", "", "PR Part 2", "r:0ecc4b4483d638bfb727cc5472b2fde3", 303025, 400),
 
 	// original file name is Paradise*Rescue
-	MACGAME1_l("prescue", "", "ParadiseRescue", "bcd3c718db258701496b3c5bcb827ef2", 502965, Common::JA_JPN, 404),
-	WINGAME1_l("prescue", "", "P_RESCUE.EXE", "c66e73719aff15a2ba4f33cf2e21581a", 813265, Common::JA_JPN, 404),
+	MACGAME1_l("prescue", "", "CopyMeToHD/xn--ParadiseRescue-xa07d", "r:bcd3c718db258701496b3c5bcb827ef2", 502709, Common::JA_JPN, 404),
+	WINGAME1_l("prescue", "", "WIN/P_RESCUE.EXE",					 "t:48e1da059d945505da2e2433d980dda5", 813265, Common::JA_JPN, 404),
 
-	MACDEMO1("princeint", "Demo", "Mac_Int2", "dc5a87dda7a0daf46604515f7d2cca66", 289980, 403),
-	WINDEMO1("princeint", "Demo", "PRINC2.EXE", "86fa884d22484ffa46407a2aa1ece297", 4758501, 400),
+	MACDEMO1("princeint", "Demo", "Mac_Int2",	"r:dc5a87dda7a0daf46604515f7d2cca66",  289724, 404),
+	WINDEMO1("princeint", "Demo", "PRINC2.EXE", "t:9c00ae42f7e026bad5991b526927f581", 4758501, 404),
 
 	// original file name is psych™
-	MACGAME1("psych", "v1.0.5", "psych", "85dfccc89072ba781bc90783998c3937", 284622, 403),
-	MACGAME1("psych", "v2.0.1", "psych", "1e0f16853ec1652a51ade41823405440", 406450, 403),
+	MACGAME1("psych", "v1.0.5", "xn--psych-j64b", "r:85dfccc89072ba781bc90783998c3937", 284366, 404),
+	// original file name is psych™ ending with a space
+	MACGAME1("psych", "v2.0.1", "xn--psych -7z1c", "r:19a813e1699b06156fd9686be7a11d93", 284366, 404),
 
 	// 1995 Mac only release
-	MACGAME1("puppetmotel", "", "Puppet Motel", "8719de9c083aca942fc0e5c0a127b6dc", 641110, 404),
+	MACGAME1("puppetmotel", "", "Puppet Motel", "r:8719de9c083aca942fc0e5c0a127b6dc", 641110, 404),
 
 	// Original filename is '除虫菊Vol.1 Demo(PPC)'
 	MACDEMO1_l("pyrethrum1", "Demo", "xn--Vol.1 Demo(PPC)-u825b41x5o6e", "422270206b9bd6aff43bbe95047f6ce9", 60665, Common::JA_JPN, 404),
@@ -7086,6 +7088,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("perfectblue", "", "xn--n8j6b4gra9i6ima", "687fa112eefc7ff11ed97ab0dce67401", 718381, Common::JA_JPN, 501),
 	WINGAME1_l("perfectblue", "", "PERFECTB.EXE", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1420772, Common::JA_JPN, 501),
 
+	MACGAME1_l("petepilotti2", "", "Pete Pilotti", "rt:6eec77ef9ebd74d3c500162939240539",  705445, Common::FI_FIN, 500),
+	WINGAME1_l("petepilotti2", "", "ALOITA95.EXE", "t:deac65743764402a2a81b955fa0b0d07",  1410713, Common::FI_FIN, 500),
+
 	WINGAME1_l("pettson1", "", "PETT32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1430755, Common::SE_SWE, 501),
 
 	// From Japanese Star Trek: Borg DVD (2000)
@@ -7144,8 +7149,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
 
 	// From Russian "Pyatachok Anthology" DVD
-	WINGAME2t_l("pyatachok1", "",	"START.EXE",	 "97ecdb7aa731b30ba6b1715eab4e0e0d", 917671,
-									"Data/Eorc.dir", "5c38097a92432551284a6540ee5a1159", 329642, Common::RU_RUS, 500),
+	// Russian title: Пятачок и разные звери
+	WINGAME2_l("pyatachok1", "",	"START.EXE",	 "t:97ecdb7aa731b30ba6b1715eab4e0e0d", 917671,
+									"Data/Eorc.dir", "t:5c38097a92432551284a6540ee5a1159", 329642, Common::RU_RUS, 500),
+	// Polish title: Przygody Prosiaczka Kwika: Świat Zwierząt
+	// TRAC #15029
+	WINGAME2_l("pyatachok1", "",	"START.EXE",	 "t:45746a896e57e5002f1de462abd5d9f7 ", 1394033,
+									"Data/Eorc.dxr", "f:f87c6c67f2c3bf983301c11d8d339768 ",  305968, Common::PL_POL, 500),
 
 	// Disc contains an audio track, not used by the game
 	// Mac version requires installation, 'PYST Installer' / 'MACINTOSH/Installer PYST(MAC)' (FR) / 'MACINTOSH/Installieren PYST(MAC)' (DE), VISE
