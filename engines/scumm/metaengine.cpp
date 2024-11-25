@@ -605,7 +605,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 	else if (extra == "Steam" && platform == Common::kPlatformMacintosh)
 		return nullptr;
 	else if (platform == Common::kPlatformMacintosh)
-		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_LOOM);
+		return new Scumm::MacGameOptionsWidget(boss, name, target, GID_LOOM, extra);
 
 	// These EGA Loom settings are only relevant for the EGA
 	// version, since that is the only one that has an overture.
@@ -617,7 +617,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObje
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
 	if (platform == Common::kPlatformMacintosh && extra != "Steam")
-		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_MONKEY);
+		return new Scumm::MacGameOptionsWidget(boss, name, target, GID_MONKEY, extra);
 
 	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
 		return nullptr;
@@ -629,6 +629,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObje
 GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
 	if (gameid == "loom") {
 		GUI::OptionsContainerWidget *widget = buildLoomOptionsWidget(boss, name, target);
@@ -636,6 +637,14 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 			return widget;
 	} else if (gameid == "monkey") {
 		GUI::OptionsContainerWidget *widget = buildMI1OptionsWidget(boss, name, target);
+		if (widget)
+			return widget;
+	} else if (platform == Common::kPlatformMacintosh) {
+		GUI::OptionsContainerWidget *widget = nullptr;
+		if (gameid == "monkey2")
+			widget = new Scumm::MacGameOptionsWidget(boss, name, target, GID_MONKEY2, extra);
+		else if (gameid == "atlantis")
+			widget = new Scumm::MacGameOptionsWidget(boss, name, target, GID_INDY4, extra);
 		if (widget)
 			return widget;
 	}

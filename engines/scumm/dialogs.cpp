@@ -1385,29 +1385,29 @@ void LoomEgaGameOptionsWidget::updateOvertureTicksValue() {
 	_overtureTicksValue->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
 }
 
-// Mac Loom/MI1 options
-LoomMonkeyMacGameOptionsWidget::LoomMonkeyMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId) :
-	ScummOptionsContainerWidget(boss, name, "LoomMonkeyMacGameOptionsWidget", domain), _sndQualitySlider(nullptr), _sndQualityValue(nullptr), _enableOriginalGUICheckbox(nullptr), _enableCopyProtectionCheckbox(nullptr), _quality(0) {
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQualityLabel", _("Music Quality:"));
+// Options for various Mac games
+MacGameOptionsWidget::MacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId, const Common::String &extra) :
+	ScummOptionsContainerWidget(boss, name, "MacGameOptionsWidget", domain), _sndQualitySlider(nullptr), _sndQualityValue(nullptr), _enableOriginalGUICheckbox(nullptr), _enableCopyProtectionCheckbox(nullptr), _quality(0) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MacGameOptionsWidget.SndQualityLabel", _("Music Quality:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-	_sndQualitySlider = new GUI::SliderWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQuality", gameId == GID_MONKEY ?
+	_sndQualitySlider = new GUI::SliderWidget(widgetsBoss(), "MacGameOptionsWidget.SndQuality", gameId == GID_MONKEY ?
 		_("Select music quality. The original lets you choose this from the Game menu.") :
 		_("Select music quality. The original determines the basic setup by hardware detection and speed tests, "
 			"but also allows changes through the Game menu to some degree."), kQualitySliderUpdate);
-	_sndQualitySlider->setMinValue(gameId == GID_MONKEY ? 6 : 0);
+	_sndQualitySlider->setMinValue(gameId == GID_LOOM ? 0 : 6);
 	_sndQualitySlider->setMaxValue(9);
-	_sndQualityValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQualityValue", Common::U32String());
+	_sndQualityValue = new GUI::StaticTextWidget(widgetsBoss(), "MacGameOptionsWidget.SndQualityValue", Common::U32String());
 	_sndQualityValue->setFlags(GUI::WIDGET_CLEARBG);
 	updateQualitySlider();
-	createEnhancementsWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget");
-	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.EnableOriginalGUI");
+	createEnhancementsWidget(widgetsBoss(), "MacGameOptionsWidget");
+	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableOriginalGUI");
 
-	if (gameId == GID_MONKEY)
-		_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.EnableCopyProtection");
+	if (gameId == GID_MONKEY || gameId == GID_MONKEY2 || (gameId == GID_INDY4 && extra == "Floppy"))
+		_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableCopyProtection");
 }
 
-void LoomMonkeyMacGameOptionsWidget::load() {
+void MacGameOptionsWidget::load() {
 	ScummOptionsContainerWidget::load();
 
 	_quality = 0;
@@ -1430,7 +1430,7 @@ void LoomMonkeyMacGameOptionsWidget::load() {
 		_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
 }
 
-bool LoomMonkeyMacGameOptionsWidget::save() {
+bool MacGameOptionsWidget::save() {
 	bool res = ScummOptionsContainerWidget::save();
 	ConfMan.setInt("mac_snd_quality", _quality, _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
@@ -1441,7 +1441,7 @@ bool LoomMonkeyMacGameOptionsWidget::save() {
 	return res;
 }
 
-void LoomMonkeyMacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+void MacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 			.addPadding(0, 0, 0, 0)
@@ -1467,7 +1467,7 @@ void LoomMonkeyMacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const
 		.closeDialog();
 }
 
-void LoomMonkeyMacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void MacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kQualitySliderUpdate:
 		updateQualitySlider();
@@ -1478,7 +1478,7 @@ void LoomMonkeyMacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, u
 	}
 }
 
-void LoomMonkeyMacGameOptionsWidget::updateQualitySlider() {
+void MacGameOptionsWidget::updateQualitySlider() {
 	_quality = _sndQualitySlider->getValue();
 	static const char *const descr1[] = { _s("auto"), _s("Low"), _s("Medium"), _s("High") };
 	static const char *const descr2[] = { _s("auto"), _s("Good"), _s("Better"), _s("Best") };
