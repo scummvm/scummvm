@@ -1243,7 +1243,7 @@ int IMuseDriver_Macintosh::open() {
 
 	createChannels();
 
-	static const char *fileNames[3][3] = {
+	static const char *const fileNames[3][3] = {
 		{
 			"iMUSE Setups",
 			nullptr,

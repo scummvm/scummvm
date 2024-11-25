@@ -85,7 +85,7 @@ struct VerbDemo {
 	int color;
 	const char *str;
 };
-static VerbDemo v0DemoStr[] = {
+static const VerbDemo v0DemoStr[] = {
 	{7,  "        MANIAC MANSION DEMO DISK        "},
 	{5,  "          from Lucasfilm Games          "},
 	{5,  "    Copyright = 1987 by Lucasfilm Ltd.  "},

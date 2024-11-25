@@ -27,7 +27,7 @@
 namespace Scumm {
 
 int LogicHEBasketball::u32_userInitCourt(int courtID) {
-	static Common::String courtNames[] = {
+	static const char *courtNames[] = {
 		"",
 		"Dobbaguchi", "Jocindas", "SandyFlats", "Queens",
 		"Park", "Scheffler", "Polk", "McMillan",
@@ -54,10 +54,10 @@ int LogicHEBasketball::u32_userInitCourt(int courtID) {
 	_vm->_basketball->_court->_shotSpot[RIGHT_BASKET].radius = SHOT_SPOT_RADIUS;
 
 	// Get the name and object file for this court.
-	_vm->_basketball->_court->_name = courtNames[courtID];
+	_vm->_basketball->_court->_name = Common::String(courtNames[courtID]);
 
 	// Put together to relative path and filename.
-	Common::Path objectFileName = Common::Path(Common::String::format("data/courts/%s.cof", courtNames[courtID].c_str()));
+	Common::Path objectFileName = Common::Path(Common::String::format("data/courts/%s.cof", courtNames[courtID]));
 
 	// Create a file stream to the collision object file
 	Common::File objectFile;

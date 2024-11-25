@@ -781,7 +781,7 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 	if (program == 128) {
 		// The hard-coded default instrument definitions and sample data are the same in MI2 and INDY4.
 		static const int8 defaultData[16] = { 0, 49, 90, 117, 127, 117, 90, 49, 0, -49, -90, -117, -127, -117, -90, -49 };
-		static Instrument_Amiga::Samples defaultSamples = { 428, 60, 0, 127, 33, 0, /*0, 0,*/16, 0, 0, 5, 300, 5, 100, defaultData };
+		static const Instrument_Amiga::Samples defaultSamples = { 428, 60, 0, 127, 33, 0, /*0, 0,*/16, 0, 0, 5, 300, 5, 100, defaultData };
 		_instruments[128].numBlocks = 1;
 		memcpy(&_instruments[128].samples[0], &defaultSamples, sizeof(Instrument_Amiga::Samples));
 	}

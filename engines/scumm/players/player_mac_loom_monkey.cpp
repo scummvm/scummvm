@@ -192,7 +192,7 @@ bool MacSndLoader::loadInstruments(const char *const *tryFileNames, uint16 numTr
 }
 
 bool LoomMacSndLoader::init() {
-	static const char *execNames[] = {
+	static const char *const execNames[] = {
 		"Loom",
 		"Loom\xaa",
 		"Loom PPC",
@@ -257,7 +257,7 @@ const Common::SharedPtr<MacSndResource> *LoomMacSndLoader::fetchInstrument(uint1
 }
 
 bool MonkeyMacSndLoader::init() {
-	static const char *execNames[] = {
+	static const char *const execNames[] = {
 		"Monkey Island"
 	};
 
