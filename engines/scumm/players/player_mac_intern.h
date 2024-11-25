@@ -170,7 +170,7 @@ private:
 		static MusicChannel *_ctrlChan;
 
 		static const uint32 _envShapes[98];
-		const uint8 *&_modShapes;
+		const uint8 *const &_modShapes;
 		const uint32 &_modShapesTableSize;
 
 		bool ctrlProc(int procId, const byte *&arg);

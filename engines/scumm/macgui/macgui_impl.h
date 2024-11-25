@@ -229,7 +229,7 @@ protected:
 	bool runOkCancelDialog(Common::String text);
 
 	bool readStrings();
-	void parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize);
+	void parseSTRSBlock(uint8 *strsData, const MacSTRSParsingEntry *parsingTable, int parsingTableSize);
 
 	// These are non interactable, no point in having them as widgets for now...
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text);

@@ -34,7 +34,7 @@ namespace Scumm {
 #define ASC_DEVICE_RATE		0x56EE8BA3
 #define PCM_BUFFER_SIZE		1024
 
-extern const uint8 *g_pv2ModTbl;
+extern const uint8 *const g_pv2ModTbl;
 extern const uint32 g_pv2ModTblSize;
 
 class LegacyMusicDriver : public MacSoundDriver {

@@ -53,7 +53,7 @@ Common::String MacGuiImpl::readPascalString(uint8 *&data) {
 #define SKIP_C(x) { MacGuiImpl::kMSISkip, MacGuiImpl::kStrC,      x }
 #define SKIP_P(x) { MacGuiImpl::kMSISkip, MacGuiImpl::kStrPascal, x }
 
-static MacGuiImpl::MacSTRSParsingEntry strsIndy3Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsIndy3Table[] = {
 	SKIP_C(6),
 	SKIP_P(2),
 	SKIP_C(2),
@@ -115,7 +115,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy3Table[] = {
 	// SKIP_P(5),
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsLoomTable[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsLoomTable[] = {
 	SKIP_C(6),
 	SKIP_P(2),
 	SKIP_C(2),
@@ -174,7 +174,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsLoomTable[] = {
 	// SKIP_C(7),
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsMI1Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsMI1Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -225,7 +225,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsMI1Table[] = {
 	// SKIP_C(75)
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -287,7 +287,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
 	// SKIP_C(95)
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant2Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsMI2Variant2Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -350,7 +350,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant2Table[] = {
 	// SKIP_C(95)
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
 	SKIP_C(144),
 	SKIP_P(1),
 	SKIP_C(2),
@@ -415,7 +415,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
 	{ MacGuiImpl::kMSIAboutString37,              MacGuiImpl::kStrPascal, 1 },
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant2Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant2Table[] = {
 	SKIP_C(97),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -476,7 +476,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant2Table[] = {
 	{ MacGuiImpl::kMSIAboutString37,              MacGuiImpl::kStrPascal, 1 },
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant1Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant1Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -537,7 +537,7 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant1Table[] = {
 	{ MacGuiImpl::kMSIAboutString37,              MacGuiImpl::kStrPascal, 1 },
 };
 
-static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant2Table[] = {
+static const MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant2Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
@@ -615,7 +615,7 @@ bool MacGuiImpl::readStrings() {
 	strsStream->read(strsBlock, strsLen);
 
 	uint8 *strsData = strsBlock;
-	MacSTRSParsingEntry *parsingTable = nullptr;
+	const MacSTRSParsingEntry *parsingTable = nullptr;
 	int parsingTableSize = 0;
 
 	if (_vm->_game.id == GID_INDY3) {
@@ -689,7 +689,7 @@ bool MacGuiImpl::readStrings() {
 	return parsingTable != nullptr;
 }
 
-void MacGuiImpl::parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize) {
+void MacGuiImpl::parseSTRSBlock(uint8 *strsData, const MacSTRSParsingEntry *parsingTable, int parsingTableSize) {
 	_strsStrings.clear();
 	_strsStrings.reserve(128);
 	for (int i = 0; i < 128; i++) {
