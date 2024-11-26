@@ -704,7 +704,9 @@ void sketchInJournal(const char *digiName) {
 
 		setGlobals1(_G(ripSketching), 1, start, start, start, 0, start + 1, finish, finish, finish);
 		sendWSMessage_110000(3);
-		digi_play(digiName, 1);
+
+		if (digiName)
+			digi_play(digiName, 1);
 		break;
 
 	case 3:

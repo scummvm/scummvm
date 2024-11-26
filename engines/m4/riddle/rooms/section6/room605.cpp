@@ -608,6 +608,7 @@ void Room605::conv605a() {
 				} else if (node == 6 && entry == 4) {
 					_ttShould = 10;
 					_ripleyShould = 5;
+					return;
 				} else if (node == 3 && entry == 0) {
 					kernel_timing_trigger(120, 2);
 				} else if (node == 2 && entry == 0) {
@@ -869,11 +870,11 @@ bool Room605::parserMisc() {
 void Room605::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_ripleyMode);
 	s.syncAsSint32LE(_ripleyShould);
+	s.syncAsSint32LE(_ttMode);
+	s.syncAsSint32LE(_ttShould);
 	s.syncAsSint32LE(_val3);
 	s.syncAsSint32LE(_val4);
 	s.syncAsSint32LE(_val5);
-	s.syncAsSint32LE(_ttShould);
-	s.syncAsSint32LE(_ttMode);
 }
 
 } // namespace Rooms

@@ -59,9 +59,9 @@ void Room608::init() {
 		_ol = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
 			triggerMachineByHashCallback, "ol");
 		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
-		_val1 = 0;
-		_val2 = 0;
-		_val3 = 0;
+		_ctr1 = 0;
+		_oldMode = 0;
+		_oldShould = 0;
 	}
 
 	if (inv_object_is_here("DRIFTWOOD STUMP")) {
@@ -220,7 +220,7 @@ void Room608::daemon() {
 
 	case 20:
 		player_update_info(_tt, &_G(player_info));
-		ws_hide_walker();
+		ws_hide_walker(_tt);
 
 		_ttShadow = series_show("tt walker shadow 5", 0xf00, 0, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
@@ -334,7 +334,7 @@ void Room608::daemon() {
 
 	case 55:
 		terminateMachineAndNull(_ttTalker);
-		ws_unhide_walker();
+		ws_unhide_walker(_tt);
 		terminateMachineAndNull(_ttShadow);
 		sendWSMessage_10000(_tt, -30, 324, 9, 60, 1);
 		_G(flags)[V203] = 3;
@@ -375,23 +375,23 @@ void Room608::daemon() {
 		break;
 
 	case 201:
-		switch (_val2) {
+		switch (_oldMode) {
 		case 0:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 0:
 				sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
 				break;
 
 			case 1:
-				if (imath_ranged_rand(10, 30) <= ++_val1) {
-					_val1 = 0;
+				if (imath_ranged_rand(10, 30) <= ++_ctr1) {
+					_ctr1 = 0;
 
 					if (imath_ranged_rand(1, 2) == 1) {
 						sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
 						break;
 					} else {
 						sendWSMessage_10000(1, _ol, _old1, 1, 3, 200, _old1, 3, 3, 0);
-						_val2 = 2;
+						_oldMode = 2;
 					}
 				} else {
 					kernel_timing_trigger(10, 200);
@@ -403,7 +403,7 @@ void Room608::daemon() {
 			case 10:
 			case 11:
 				sendWSMessage_10000(1, _ol, _old2, 1, 38, 200, _old2, 38, 38, 0);
-				_val2 = 8;
+				_oldMode = 8;
 				break;
 
 			case 13:
@@ -440,16 +440,16 @@ void Room608::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 1, 3, 200, _old1, 3, 3, 0);
-				_val2 = 2;
+				_oldMode = 2;
 				break;
 			}
 			break;
 
 		case 2:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 1:
-				if (imath_ranged_rand(10, 30) <= ++_val1) {
-					_val1 = 0;
+				if (imath_ranged_rand(10, 30) <= ++_ctr1) {
+					_ctr1 = 0;
 
 					switch (imath_ranged_rand(1, 3)) {
 					case 1:
@@ -487,10 +487,10 @@ void Room608::daemon() {
 			break;
 
 		case 3:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 1:
-				if (imath_ranged_rand(10, 30) <= ++_val1) {
-					_val1 = 0;
+				if (imath_ranged_rand(10, 30) <= ++_ctr1) {
+					_ctr1 = 0;
 
 					switch (imath_ranged_rand(1, 3)) {
 					case 1:
@@ -498,7 +498,7 @@ void Room608::daemon() {
 						break;
 					case 2:
 						sendWSMessage_10000(1, _ol, _old1, 5, 4, 200, _old1, 3, 3, 0);
-						_val2 = 2;
+						_oldMode = 2;
 						sendWSMessage_190000(_ol, 7);
 						break;
 					case 3:
@@ -529,10 +529,10 @@ void Room608::daemon() {
 			break;
 
 		case 4:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 1:
-				if (imath_ranged_rand(10, 30) <= ++_val1) {
-					_val1 = 0;
+				if (imath_ranged_rand(10, 30) <= ++_ctr1) {
+					_ctr1 = 0;
 
 					if (imath_ranged_rand(1, 2) == 1) {
 						sendWSMessage_10000(1, _ol, _old1, 7, 7, 200, _old1, 7, 7, 0);
@@ -548,18 +548,18 @@ void Room608::daemon() {
 			case 7:
 			case 12:
 				sendWSMessage_10000(1, _ol, _old1, 8, 14, 200, _old1, 26, 26, 0);
-				_val2 = 6;
+				_oldMode = 6;
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 7, 6, 200, _old1, 5, 5, 0);
-				_val2 = 3;
+				_oldMode = 3;
 				break;
 			}
 			break;
 
 		case 6:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 5:
 				sendWSMessage_10000(1, _ol, _old1, 26, 26, -1, _old1, 26, 42, 4);
 				sendWSMessage_1a0000(_ol, 11);
@@ -571,37 +571,37 @@ void Room608::daemon() {
 
 			case 7:
 				sendWSMessage_10000(1, _ol, _old1, 61, 74, 200, _old1, 74, 74, 0);
-				_val2 = 7;
-				_val3 = 5;
+				_oldMode = 7;
+				_oldShould = 5;
 				break;
 
 			case 12:
 				sendWSMessage_10000(1, _ol, _old1, 15, 28, 200, _old1, 26, 26, 0);
-				_val3 = 5;
+				_oldShould = 5;
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 14, 8, 200, _old1, 7, 7, 0);
-				_val2 = 4;
+				_oldMode = 4;
 				break;
 			}
 			break;
 
 		case 7:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 7:
 				sendWSMessage_10000(1, _ol, _old1, 74, 74, 200, _old1, 74, 74, 0);
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 74, 61, 200, _old1, 26, 26, 0);
-				_val2 = 6;
+				_oldMode = 6;
 				break;
 			}
 			break;
 
 		case 8:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 8:
 				sendWSMessage_10000(1, _ol, _old2, 38, 38, 200, _old2, 38, 38, 0);
 				break;
@@ -614,22 +614,22 @@ void Room608::daemon() {
 			case 10:
 			case 11:
 				sendWSMessage_10000(1, _ol, _old2, 49, 57, 200, _old2, 57, 57, 0);
-				_val2 = 11;
+				_oldMode = 11;
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old2, 38, 1, 200, _old1, 1, 1, 0);
-				_val2 = 0;
+				_oldMode = 0;
 				break;
 			}
 			break;
 
 		case 11:
-			switch (_val3) {
+			switch (_oldShould) {
 			case 10:
 				sendWSMessage_10000(1, _ol, _old2, 57, 49, 200, _old2, 38, 38, 0);
-				_val2 = 8;
-				_val3 = 8;
+				_oldMode = 8;
+				_oldShould = 8;
 				break;
 
 			case 11:
@@ -683,8 +683,8 @@ void Room608::daemon() {
 
 	case 225:
 		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
-		_val2 = 0;
-		_val3 = 1;
+		_oldMode = 0;
+		_oldShould = 1;
 		_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _ol2, _old5f, 1, 1, -1, _old5f, 1, 4, 1);
@@ -729,8 +729,8 @@ void Room608::daemon() {
 
 	case 267:
 		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
-		_val2 = 0;
-		_val3 = 1;
+		_oldMode = 0;
+		_oldShould = 1;
 		_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _ol2, _old5f, 1, 1, -1, _old5f, 1, 4, 1);
@@ -783,8 +783,8 @@ void Room608::daemon() {
 		break;
 
 	case 301:
-		if (!_val5) {
-			switch (_val4) {
+		if (!_ripleyMode) {
+			switch (_ripleyShould) {
 			case 0:
 				sendWSMessage_10000(1, _ripley, _rp09, 23, 23, 300, _rp09, 23, 23, 0);
 				break;
@@ -833,28 +833,28 @@ void Room608::daemon() {
 		terminateMachineAndNull(_shadow);
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		_val3 = 14;
+		_oldShould = 14;
 		break;
 
 	case 306:
 		terminateMachineAndNull(_shadow);
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		_val3 = 13;
+		_oldShould = 13;
 		break;
 
 	case 307:
 		terminateMachineAndNull(_shadow);
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		_val3 = 15;
+		_oldShould = 15;
 		break;
 
 	case 308:
 		terminateMachineAndNull(_shadow);
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		_val3 = 16;
+		_oldShould = 16;
 		break;
 
 	case 500:
@@ -1461,8 +1461,8 @@ void Room608::parser() {
 	if (player_said("conv608a")) {
 		conv608a();
 	} else if (_G(kernel).trigger == 747) {
-		_val3 = 1;
-		_val4 = 2;
+		_oldShould = 1;
+		_ripleyShould = 2;
 	} else if (talkFlag && player_said("old woman")) {
 		if (_G(flags)[V013]) {
 			digi_play(_G(flags)[V203] > 2 ? "608r04" : "608r35", 1);
@@ -1482,9 +1482,9 @@ void Room608::parser() {
 				sendWSMessage_10000(1, _ripley, _rp09, 1, 23, 300, _rp09, 23, 23, 0);
 				_G(kernel).trigger_mode = KT_PARSE;
 
-				_val5 = 0;
-				_val4 = 0;
-				_val3 = 6;
+				_ripleyMode = 0;
+				_ripleyShould = 0;
+				_oldShould = 6;
 				conv_load("conv608a", 10, 10, 747);
 				conv_export_value_curr(_G(flags)[V203] >= 3 ? 1 : 0, 0);
 				conv_play();
@@ -1612,7 +1612,7 @@ void Room608::parser() {
 			terminateMachineAndNull(_end1);
 			terminateMachineAndNull(_pole);
 			terminateMachineAndNull(_stump);
-			_val3 = 8;
+			_oldShould = 8;
 			digi_play("608_s01a", 1);
 			break;
 		case 10:
@@ -1641,7 +1641,7 @@ void Room608::parser() {
 			break;
 		case 15:
 			sendWSMessage_120000(2);
-			_val3 = 10;
+			_oldShould = 10;
 			digi_play("608o01", 1, 255, 18);
 			break;
 		case 18:
@@ -1650,11 +1650,11 @@ void Room608::parser() {
 			break;
 		case 20:
 			sendWSMessage_140000(-1);
-			_val3 = 9;
+			_oldShould = 9;
 			digi_play("608o02", 1, 255, 22);
 			break;
 		case 22:
-			_val3 = 1;
+			_oldShould = 1;
 			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 			kernel_timing_trigger(100, 25);
 			break;
@@ -1685,24 +1685,24 @@ void Room608::parser() {
 			sendWSMessage_10000(1, _ripley, _rp09, 1, 23, 300, _rp09, 23, 23, 0);
 			_G(kernel).trigger_mode = KT_PARSE;
 
-			_val5 = 0;
-			_val4 = 1;
-			_val3 = 6;
+			_ripleyMode = 0;
+			_ripleyShould = 1;
+			_oldShould = 6;
 			digi_play("608r70", 1, 255, 2);
 			break;
 		case 2:
-			_val3 = 5;
-			_val4 = 0;
+			_oldShould = 5;
+			_ripleyShould = 0;
 			digi_play("608o18", 1, 255, 3);
 			break;
 		case 3:
-			_val3 = 6;
+			_oldShould = 6;
 			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
-			_val4 = 1;
+			_ripleyShould = 1;
 			digi_play("608r71", 1, 255, 5);
 			break;
 		case 5:
-			_val4 = player_said("lung") ? 3 : 4;
+			_ripleyShould = player_said("lung") ? 3 : 4;
 			break;
 		default:
 			break;
@@ -1739,24 +1739,24 @@ void Room608::parser() {
 			sendWSMessage_10000(1, _ripley, _rp09, 1, 23, 300, _rp09, 23, 23, 0);
 			_G(kernel).trigger_mode = KT_PARSE;
 
-			_val5 = 0;
-			_val4 = 1;
-			_val3 = 6;
+			_ripleyMode = 0;
+			_ripleyShould = 1;
+			_oldShould = 6;
 			digi_play("608r67", 1, 255, 2);
 			break;
 		case 2:
-			_val3 = 5;
-			_val4 = 0;
+			_oldShould = 5;
+			_ripleyShould = 0;
 			digi_play("608o17", 1, 255, 3);
 			break;
 		case 3:
-			_val3 = 6;
+			_oldShould = 6;
 			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
-			_val4 = 1;
+			_ripleyShould = 1;
 			digi_play("608r68", 1, 255, 5);
 			break;
 		case 5:
-			_val4 = player_said("bowels") ? 5 : 6;
+			_ripleyShould = player_said("bowels") ? 5 : 6;
 			break;
 		default:
 			break;
@@ -1874,10 +1874,10 @@ void Room608::conv608a() {
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
-			_val3 = 6;
+			_oldShould = 6;
 			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 		} else if (who == 1) {
-			_val4 = 0;
+			_ripleyShould = 0;
 		}
 
 		conv_resume();
@@ -1887,16 +1887,16 @@ void Room608::conv608a() {
 			if (node == 4 && entry == 0)
 				midi_play("eastiswo", 255, 0, -1, 949);
 			if ((node == 2 && entry == 1) || (node == 3 && entry == 2))
-				_val3 = 7;
+				_oldShould = 7;
 			else if ((node == 2 && entry == 0) || (node == 3 && entry == 1))
-				_val3 = 12;
+				_oldShould = 12;
 			else
-				_val3 = 5;
+				_oldShould = 5;
 		} else if (who == 1) {
 			if (node == 4)
 				_G(flags)[V013] = 1;
 			if (!(node == 5 && entry == 3))
-				_val4 = 1;
+				_ripleyShould = 1;
 		}
 
 		digi_play(sound, 1, 255, 1);
@@ -2152,6 +2152,13 @@ bool Room608::lookPuffin() {
 	}
 
 	return false;
+}
+
+void Room608::syncGame(Common::Serializer &s) {
+	s.syncAsUint32LE(_ripleyShould);
+	s.syncAsUint32LE(_ripleyMode);
+	s.syncAsUint32LE(_oldMode);
+	s.syncAsUint32LE(_oldShould);
 }
 
 } // namespace Rooms

@@ -69,11 +69,11 @@ private:
 	machine *_puffin = nullptr;
 	machine *_end1 = nullptr;
 	machine *_end2 = nullptr;
-	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
-	int _val5 = 0;
+	int _ripleyShould = 0;
+	int _ripleyMode = 0;
+	int _oldMode = 0;
+	int _oldShould = 0;
+	int _ctr1 = 0;
 
 	void conv608a();
 	bool takeStump1();
@@ -92,6 +92,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms
