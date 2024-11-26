@@ -845,7 +845,7 @@ ThemeEngine::FontColor ListWidget::getThemeColor(const Common::U32String &color)
 
 Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 	Common::U32String stripped;
-	const uint32 *s = str.u32_str();
+	const Common::u32char_type_t *s = str.c_str();
 
 	while (*s) {
 		if (*s != '\001') { // normal symbol
@@ -878,7 +878,7 @@ Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 
 Common::U32String ListWidget::escapeString(const Common::U32String &str) {
 	Common::U32String escaped;
-	const uint32 *s = str.u32_str();
+	const Common::u32char_type_t *s = str.c_str();
 
 	while (*s) {
 		if (*s == '\001')
@@ -893,7 +893,7 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 				Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis,
 				ThemeEngine::FontColor color) {
 	Common::U32String chunk;
-	const uint32 *s = str.u32_str();
+	const Common::u32char_type_t *s = str.c_str();
 	ThemeEngine::FontStyle curfont = ThemeEngine::kFontStyleBold;
 	ThemeEngine::FontColor curcolor = ThemeEngine::kFontColorNormal;
 	Common::U32String tmp;

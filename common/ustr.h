@@ -67,8 +67,11 @@ public:
 	/** Construct a new string containing exactly @p len characters read from address @p str. */
 	U32String(const value_type *str, uint32 len) : BaseString<u32char_type_t>(str, len) {}
 
+	WARN_DEPRECATED("Use u32char_type_t instead of uint32")
 	explicit U32String(const uint32 *str) : BaseString<u32char_type_t>((const value_type *) str) {}
+	WARN_DEPRECATED("Use u32char_type_t instead of uint32")
 	U32String(const uint32 *str, uint32 len) : BaseString<u32char_type_t>((const value_type *) str, len) {}
+	WARN_DEPRECATED("Use u32char_type_t instead of uint32")
 	U32String(const uint32 *beginP, const uint32 *endP) : BaseString<u32char_type_t>((const value_type *) beginP, (const value_type *) endP) {}
 
 	/** Construct a new string containing the characters between @p beginP (including) and @p endP (excluding). */
@@ -165,6 +168,7 @@ public:
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
 
+	WARN_DEPRECATED("Use c_str() instead")
 	const uint32 *u32_str() const {   /*!< Return the string as a UTF-32 pointer. */
 		return (const uint32 *) _str;
 	}

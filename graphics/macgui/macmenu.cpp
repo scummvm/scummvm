@@ -183,12 +183,12 @@ Common::StringArray *MacMenu::readMenuFromResource(Common::SeekableReadStream *r
 }
 
 static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
-	Common::Array<uint32> strData;
+	Common::U32String strData;
 	uint16 wchar;
 	while ((wchar = stream->readUint16LE()) != '\0') {
-		strData.push_back(wchar);
+		strData += wchar;
 	}
-	return strData.empty() ? Common::U32String() : Common::U32String(strData.data(), strData.size());
+	return strData;
 }
 
 void MacMenu::setAlignment(Graphics::TextAlign align) {
