@@ -40,10 +40,10 @@ private:
 		int num;
 		MinigameData info;
 		bool operator< (const GameData& rsh) const {
-			return info.sequenceIndex_ < rsh.info.sequenceIndex_;
+			return info._sequenceIndex < rsh.info._sequenceIndex;
 		}
 	};
-	typedef vector<GameData> GameDatas;
+	typedef Std::vector<GameData> GameDatas;
 	struct Level {
 		Level(int lvl = 0) : level(lvl) {}
 		int level;
@@ -53,7 +53,7 @@ private:
 			return level < rsh.level;
 		}
 	};
-	typedef vector<Level> Levels;
+	typedef Std::vector<Level> Levels;
 	Levels levels_;
 
 	const char *currentLevel_;
