@@ -31,9 +31,9 @@ ObjectContainer::ObjectContainer() {
 
 }
 
-void ObjectContainer::release() {
+void ObjectContainer::release(MinigameManager *runtime) {
 	for (auto &it : _objects)
-		g_runtime->release(it);
+		runtime->release(it);
 
 	_objects.clear();
 	_current = 0;
@@ -52,8 +52,8 @@ const char *ObjectContainer::name() const {
 #endif
 }
 
-bool ObjectContainer::load(const char* base_name, bool hide) {
-	if (!g_runtime->testObject(base_name)) {
+bool ObjectContainer::load(const char* base_name, MinigameManager *runtime, bool hide) {
+	if (!runtime->testObject(base_name)) {
 		warning("ObjectContainer::load(): Object '%s' not found", transCyrillic(base_name));
 		return false;
 	}
@@ -62,21 +62,21 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 	_name = base_name;
 #endif
 
-	QDObject obj = g_runtime->getObject(base_name);
-	_coord = g_runtime->world2game(obj);
+	QDObject obj = runtime->getObject(base_name);
+	_coord = runtime->world2game(obj);
 	pushObject(obj);
 	if (hide)
-		g_runtime->hide(obj);
+		runtime->hide(obj);
 
 	char name[128];
 	name[127] = 0;
 	for (int dubl = 0; ; ++dubl) {
 		snprintf(name, 127, "%s%04d", base_name, dubl);
-		if (g_runtime->testObject(name)) {
-			obj = g_runtime->getObject(name);
+		if (runtime->testObject(name)) {
+			obj = runtime->getObject(name);
 			pushObject(obj);
 			if (hide)
-				g_runtime->hide(obj);
+				runtime->hide(obj);
 		} else
 			break;
 	}
@@ -84,9 +84,9 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 	return true;
 }
 
-void ObjectContainer::hideAll() {
+void ObjectContainer::hideAll(MinigameManager *runtime) {
 	for (auto &it : _objects)
-		g_runtime->hide(it);
+		runtime->hide(it);
 }
 
 QDObject ObjectContainer::getObject() {
@@ -97,13 +97,13 @@ QDObject ObjectContainer::getObject() {
 
 }
 
-void ObjectContainer::releaseObject(QDObject& obj) {
+void ObjectContainer::releaseObject(QDObject& obj, MinigameManager *runtime) {
 	QDObjects::iterator it = Common::find(_objects.begin(), _objects.end(), obj);
 	if (it != _objects.end()) {
 		if ((int)Common::distance(_objects.begin(), it) >= _current)
 			error("ObjectContainer::releaseObject(): Object released more than once in to the pool: %s", transCyrillic(name()));
 
-		g_runtime->hide(obj);
+		runtime->hide(obj);
 		if (_current > 0)
 			SWAP(*it, _objects[--_current]);
 		obj = 0;

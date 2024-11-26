@@ -36,17 +36,17 @@ class ObjectContainer {
 
 public:
 	ObjectContainer();
-	void release();
+	void release(MinigameManager *runtime);
 
-	bool load(const char *_name, bool hide = true);
-	void hideAll();
+	bool load(const char *_name, MinigameManager *runtime, bool hide = true);
+	void hideAll(MinigameManager *runtime);
 
 	const mgVect3f &coord() const {
 		return _coord;
 	}
 
 	QDObject getObject();
-	void releaseObject(QDObject& obj);
+	void releaseObject(QDObject& obj, MinigameManager *runtime);
 };
 
 } // namespace QDEngine

@@ -137,11 +137,11 @@ MinigameTriangle::MinigameTriangle() {
 	for (int num = 1; num <= 2; ++num) {
 		for (int angle = 1; angle <= 3; ++angle) {
 			snprintf(name, 63, "%s%1d_%1d", backNameBegin, num, angle);
-			if (!_backSides[(num - 1) * 3 + angle - 1].load(name))
+			if (!_backSides[(num - 1) * 3 + angle - 1].load(name, g_runtime))
 				return;
 		}
 		snprintf(name, 63, "%s%1d", selectNameBegin, num);
-		if (!_selectBorders[num - 1].load(name))
+		if (!_selectBorders[num - 1].load(name, g_runtime))
 			return;
 	}
 
@@ -177,10 +177,10 @@ MinigameTriangle::~MinigameTriangle() {
 		it.release();
 
 	for (int idx = 0; idx < 2; ++idx)
-		_selectBorders[idx].release();
+		_selectBorders[idx].release(g_runtime);
 
 	for (int idx = 0; idx < 6; ++idx)
-		_backSides[idx].release();
+		_backSides[idx].release(g_runtime);
 }
 
 void MinigameTriangle::Node::debugInfo() const {
@@ -216,7 +216,7 @@ void MinigameTriangle::releaseNodeBack(Node &node) {
 	if (node._back) {
 		node._back.setState(Node::getBackStateName(false, false, false));
 		for (int type = 0; type < 6; ++type)
-			_backSides[type].releaseObject(node._back);
+			_backSides[type].releaseObject(node._back, g_runtime);
 	}
 }
 
@@ -480,8 +480,8 @@ void MinigameTriangle::quant(float dt) {
 				node._border->update_screen_R();
 				g_runtime->setDepth(node._border, _selectDepth);
 			} else if (node._border) {
-				_selectBorders[0].releaseObject(node._border);
-				_selectBorders[1].releaseObject(node._border);
+				_selectBorders[0].releaseObject(node._border, g_runtime);
+				_selectBorders[1].releaseObject(node._border, g_runtime);
 			}
 		}
 	}

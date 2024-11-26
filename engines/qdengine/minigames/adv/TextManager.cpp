@@ -39,7 +39,7 @@ TextManager::TextManager(MinigameManager *runtime) {
 		if (const char *descr = _runtime->parameter(str_cache, false)) {
 			sscanf(descr, "%255s", str_cache);
 			Font digit;
-			if (!digit.pool.load(str_cache))
+			if (!digit.pool.load(str_cache, _runtime))
 				break;
 
 			debugCN(2, kDebugMinigames, "TextManager(): %d character set \"%s\" loaded, ", idx, str_cache);
@@ -53,7 +53,7 @@ TextManager::TextManager(MinigameManager *runtime) {
 				QDObject obj = digit.pool.getObject();
 				obj.setState("0");
 				digit.size = _runtime->getSize(obj);
-				digit.pool.releaseObject(obj);
+				digit.pool.releaseObject(obj, _runtime);
 			}
 			debugC(2, kDebugMinigames, "set size to (%5.1f, %5.1f)\n", digit.size.x, digit.size.y);
 			_fonts.push_back(digit);
@@ -153,7 +153,7 @@ TextManager::~TextManager() {
 		sit.release();
 
 	for (auto &dit : _fonts)
-		dit.pool.release();
+		dit.pool.release(_runtime);
 }
 
 int TextManager::createStaticText(const mgVect3f& pos, int fontID, TextAlign align) {
@@ -233,7 +233,7 @@ TextManager::StaticMessage::StaticMessage(MinigameManager *runtime, Font *font, 
 
 void TextManager::StaticMessage::release() {
 	for (auto &it : _objects)
-		_font->pool.releaseObject(it);
+		_font->pool.releaseObject(it, _runtime);
 
 	_objects.clear();
 }
@@ -253,7 +253,7 @@ void TextManager::StaticMessage::setText(const char *str) {
 	else
 		while ((int)_objects.size() > len) {
 			if (_objects.back())
-				_font->pool.releaseObject(_objects.back());
+				_font->pool.releaseObject(_objects.back(), _runtime);
 			_objects.pop_back();
 		}
 
@@ -262,7 +262,7 @@ void TextManager::StaticMessage::setText(const char *str) {
 			if (!_objects[idx])
 				_objects[idx] = _font->pool.getObject();
 		} else if (_objects[idx])
-			_font->pool.releaseObject(_objects[idx]);
+			_font->pool.releaseObject(_objects[idx], _runtime);
 	}
 
 	char name[2];
