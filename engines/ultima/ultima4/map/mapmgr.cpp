@@ -150,8 +150,8 @@ void MapMgr::registerMap(Map *map) {
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	Map *map;
-	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", "xml", nullptr };
-	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
+	static const char *const mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", "xml", nullptr };
+	static const char *const borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
 
 	map = initMap(static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings)));
 	if (!map)
@@ -230,7 +230,7 @@ void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
 
 PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) {
 	PersonRole *personrole;
-	static const char *roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
+	static const char *const roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
 	                                         "reagentsvendor", "healer", "innkeeper", "guildvendor", "horsevendor",
 	                                         "lordbritish", "hawkwind", nullptr
 	                                       };
@@ -326,7 +326,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 }
 
 void MapMgr::initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine) {
-	static const char *virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", nullptr};
+	static const char *const virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", nullptr};
 
 	shrine->setVirtue(static_cast<Virtue>(shrineConf.getEnum("virtue", virtues)));
 	shrine->setMantra(shrineConf.getString("mantra"));

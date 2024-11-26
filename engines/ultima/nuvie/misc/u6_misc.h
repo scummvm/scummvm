@@ -67,7 +67,7 @@ NuvieDir get_reverse_direction(NuvieDir dir);
 void get_relative_dir(NuvieDir dir, sint16 *rel_x, sint16 *rel_y);
 const char *get_direction_name(NuvieDir dir);
 const char *get_direction_name(sint16 rel_x, sint16 rel_y);
-int str_bsearch(const char *str[], int max, const char *value);
+int str_bsearch(const char *const str[], int max, const char *value);
 
 /* Does line xy->x2y2 cross rect, to any extent?
  */

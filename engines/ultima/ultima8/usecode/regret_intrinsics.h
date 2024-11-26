@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 // Crusader: No Regret Intrinsics
 // Main list for the updated version (1.06) (as on GOG)
-Intrinsic RegretIntrinsics[] = {
+const Intrinsic RegretIntrinsics[] = {
 	World::I_getAlertActive, // Intrinsic000()
 	Item::I_getFrame, // Intrinsic001()
 	Item::I_setFrame, // Intrinsic002()
@@ -410,7 +410,7 @@ Intrinsic RegretIntrinsics[] = {
 // changing part way through.
 //
 
-Intrinsic RegretDemoIntrinsics[] = {
+const Intrinsic RegretDemoIntrinsics[] = {
 	World::I_getAlertActive,        // Intrinsic000 10e8:048d
 	Item::I_getFrame,               // Intrinsic001 10b0:0826
 	Item::I_setFrame,               // Intrinsic002 10b0:0882
@@ -783,7 +783,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 // at 13F so they are all offset after that
 //
 
-Intrinsic RegretDeIntrinsics[] = {
+const Intrinsic RegretDeIntrinsics[] = {
 	// 0x000
 	World::I_getAlertActive,        // Intrinsic000 10e8:048d
 	Item::I_getFrame,               // Intrinsic001 10b0:0826

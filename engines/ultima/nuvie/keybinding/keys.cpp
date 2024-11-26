@@ -64,8 +64,8 @@ struct Action {
 	ActionKeyType keyType;
 };
 
-const char *appendAltCodeActionStr = "ALT_CODE";
-const char *toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
+const char *const appendAltCodeActionStr = "ALT_CODE";
+const char *const toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
 const uint toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr); // to identify END (KEYUP) events for alt-code mode toggle action
 
 const Action NuvieActions[] = {
@@ -143,7 +143,7 @@ const Action NuvieActions[] = {
 	{ "DO_NOTHING", ActionDoNothing, Action::KeyNotShown, true, OTHER_KEY },
 };
 
-const char *PerPartyMemberActions[] = {
+const char *const PerPartyMemberActions[] = {
 	"SOLO_MODE", "SHOW_STATS", "INVENTORY", "DOLL_GUMP"
 };
 

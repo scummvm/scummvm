@@ -99,7 +99,7 @@ bool ConfigElement::getBool(const Common::String &name) const {
 	return toupper(str[0]) == 'T' || str == "1";
 }
 
-int ConfigElement::getEnum(const Common::String &name, const char *enumValues[]) const {
+int ConfigElement::getEnum(const Common::String &name, const char *const enumValues[]) const {
 	Common::String str = (*_node)[name];
 	if (str.empty())
 		return 0;

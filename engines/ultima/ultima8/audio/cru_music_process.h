@@ -52,7 +52,7 @@ private:
 
 	// These are both initialized in constructor and do not need to be saved.
 	int _maxTrack;
-	const char **_trackNames;
+	const char *const *_trackNames;
 
 public:
 	CruMusicProcess();

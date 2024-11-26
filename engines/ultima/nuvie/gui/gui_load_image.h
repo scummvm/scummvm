@@ -36,7 +36,7 @@ namespace Nuvie {
  */
 /************************************************************************/
 
-extern Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data);
+extern Graphics::ManagedSurface *GUI_LoadImage(int w, int h, const uint8 *pal, const uint8 *data);
 
 /* Load the internal 8x8 font and return the associated font surface */
 extern Graphics::ManagedSurface *GUI_DefaultFont(void);
@@ -45,7 +45,7 @@ extern Graphics::ManagedSurface *GUI_Font6x8(void);
 
 extern Graphics::ManagedSurface *GUI_FontGump(void);
 
-extern uint8 *GUI_FontGumpWData(void);
+extern const uint8 *GUI_FontGumpWData(void);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
