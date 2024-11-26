@@ -29,7 +29,7 @@ namespace Nuvie {
 
 #define MD_DOWNWARD_FACING_FRAME_N 9
 
-extern uint8 walk_frame_tbl[4];
+extern const uint8 walk_frame_tbl[4];
 
 MDActor::MDActor(Map *m, ObjManager *om, GameClock *c) : WOUActor(m, om, c) {
 }

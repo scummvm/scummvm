@@ -33,9 +33,14 @@ struct Point3;
  */
 class FireType {
 public:
-	FireType(uint16 typeNo, uint16 minDamage, uint16 maxDamage, uint8 range,
+	constexpr FireType(uint16 typeNo, uint16 minDamage, uint16 maxDamage, uint8 range,
 			 uint8 numShots, uint16 shieldCost, uint8 shieldMask, bool accurate,
-			 uint16 cellsPerRound, uint16 roundDuration, bool nearSprite);
+			 uint16 cellsPerRound, uint16 roundDuration, bool nearSprite) :
+		_typeNo(typeNo), _minDamage(minDamage), _maxDamage(maxDamage),
+		_range(range), _numShots(numShots), _shieldCost(shieldCost),
+		_shieldMask(shieldMask), _accurate(accurate),
+		_cellsPerRound(cellsPerRound), _roundDuration(roundDuration),
+		_nearSprite(nearSprite) {}
 
 	uint16 getTypeNo() const {
 		return _typeNo;

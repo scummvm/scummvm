@@ -22,11 +22,13 @@
 #ifndef ULTIMA8_MISC_ENCODING_H
 #define ULTIMA8_MISC_ENCODING_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
-extern uint8 reverse_encoding[256];
-extern uint16 encoding[256];
+extern const uint8 reverse_encoding[256];
+extern const uint16 encoding[256];
 
 // first byte in shift_jis character stream encoded as LSbyte in sjis
 // if first byte is >= 0x80 then second byte in character stream as MSB in sjis

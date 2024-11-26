@@ -457,7 +457,7 @@ void get_relative_dir(NuvieDir dir, sint16 *rel_x, sint16 *rel_y) {
 	}
 }
 
-int str_bsearch(const char *str[], int max, const char *value) {
+int str_bsearch(const char *const str[], int max, const char *value) {
 	int position;
 	int begin = 0;
 	int end = max - 1;

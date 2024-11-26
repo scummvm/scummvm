@@ -43,7 +43,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump)
 
 
 // lots of CONSTANTS...
-struct equipcoords_struct {
+const struct equipcoords_struct {
 	int x, y;
 } equipcoords[] = {
 	{ 0, 0 },
@@ -55,7 +55,7 @@ struct equipcoords_struct {
 	{ 16, 18 }  // weapon
 };
 
-struct statcords_struct {
+const struct statcords_struct {
 
 	int xd, x, y;
 } statcoords[] = {

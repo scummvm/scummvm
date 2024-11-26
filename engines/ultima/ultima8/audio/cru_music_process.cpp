@@ -38,7 +38,7 @@ static const int MAX_TRACK_REGRET = 22;
 
 // NOTE: The order of these lists has to be the same as the original games
 // as they come as numbers from the usecode.
-static const char *TRACK_FILE_NAMES_REMORSE[] = {
+static const char *const TRACK_FILE_NAMES_REMORSE[] = {
 	nullptr,
 	"M01",
 	"M02",
@@ -63,7 +63,7 @@ static const char *TRACK_FILE_NAMES_REMORSE[] = {
 	"buyme" // for demo
 };
 
-static const char *TRACK_FILE_NAMES_REGRET[] = {
+static const char *const TRACK_FILE_NAMES_REGRET[] = {
 	nullptr,
 	"ninth",
 	"phil",

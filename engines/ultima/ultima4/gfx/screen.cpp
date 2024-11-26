@@ -379,7 +379,7 @@ void Screen::screenLoadGraphicsFromConf() {
 
 Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	Layout *layout;
-	static const char *typeEnumStrings[] = {"standard", "gem", "dungeon_gem", nullptr};
+	static const char *const typeEnumStrings[] = {"standard", "gem", "dungeon_gem", nullptr};
 
 	layout = new Layout();
 	layout->_name = conf.getString("name");

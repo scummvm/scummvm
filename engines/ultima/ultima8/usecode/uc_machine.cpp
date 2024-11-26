@@ -81,7 +81,7 @@ enum UCSegments {
 
 UCMachine *UCMachine::_ucMachine = nullptr;
 
-UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
+UCMachine::UCMachine(const Intrinsic *iset, unsigned int icount) {
 	debug(1, "Creating UCMachine...");
 
 	_ucMachine = this;
@@ -145,7 +145,7 @@ void UCMachine::reset() {
 	_stringHeap.clear();
 }
 
-void UCMachine::loadIntrinsics(Intrinsic *i, unsigned int icount) {
+void UCMachine::loadIntrinsics(const Intrinsic *i, unsigned int icount) {
 	_intrinsics = i;
 	_intrinsicCount = icount;
 }

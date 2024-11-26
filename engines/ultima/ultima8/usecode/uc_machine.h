@@ -41,7 +41,7 @@ class idMan;
 class UCMachine {
 	friend class Debugger;
 public:
-	UCMachine(Intrinsic *iset, unsigned int icount);
+	UCMachine(const Intrinsic *iset, unsigned int icount);
 	~UCMachine();
 
 	static UCMachine *get_instance() {
@@ -91,11 +91,11 @@ public:
 	INTRINSIC(I_numToStr);
 
 protected:
-	void loadIntrinsics(Intrinsic *i, unsigned int icount);
+	void loadIntrinsics(const Intrinsic *i, unsigned int icount);
 
 private:
 	ConvertUsecode *_convUse;
-	Intrinsic *_intrinsics;
+	const Intrinsic *_intrinsics;
 	unsigned int _intrinsicCount;
 
 	GlobalStorage *_globals;

@@ -143,7 +143,7 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 
 ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	ImageInfo *info;
-	static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", nullptr };
+	static const char *const fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", nullptr };
 
 	info = new ImageInfo();
 	info->_name = conf.getString("name");

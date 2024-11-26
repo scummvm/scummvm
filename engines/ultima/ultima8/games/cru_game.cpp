@@ -182,10 +182,10 @@ void CruGame::playDemoScreen() {
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
 
-	static const Common::Path bmp_filename = "static/buyme.dat";
+	const char *bmp_filename = "static/buyme.dat";
 	auto *bmprs = new Common::File();
 	if (!bmprs->open(bmp_filename)) {
-		warning("RemorseGame::playDemoScreen: error opening demo background: %s", bmp_filename.toString().c_str());
+		warning("RemorseGame::playDemoScreen: error opening demo background: %s", bmp_filename);
 		delete bmprs;
 		return;
 	}
@@ -200,20 +200,20 @@ void CruGame::playDemoScreen() {
 }
 
 ProcId CruGame::playCreditsNoMenu() {
-	static const Common::Path txt_filename = "static/credits.dat";
-	static const Common::Path bmp_filename = "static/cred.dat";
+	const char *txt_filename = "static/credits.dat";
+	const char *bmp_filename = "static/cred.dat";
 	auto *txtrs = new Common::File();
 	auto *bmprs = new Common::File();
 
 	if (!txtrs->open(txt_filename)) {
-		warning("RemorseGame::playCredits: error opening credits text: %s", txt_filename.toString().c_str());
+		warning("RemorseGame::playCredits: error opening credits text: %s", txt_filename);
 		delete txtrs;
 		delete bmprs;
 		return 0;
 	}
 
 	if (!bmprs->open(bmp_filename)) {
-		warning("RemorseGame::playCredits: error opening credits background: %s", bmp_filename.toString().c_str());
+		warning("RemorseGame::playCredits: error opening credits background: %s", bmp_filename);
 		delete txtrs;
 		delete bmprs;
 		return 0;

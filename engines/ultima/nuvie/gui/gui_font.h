@@ -45,7 +45,7 @@ protected:
 	/* dimensions */
 	int _charH, _charW;
 
-	byte *_wData;
+	const byte *_wData;
 public:
 	/* use default 8x8 font */
 	GUI_Font(uint8 fontType = GUI_FONT_DEFAULT);
