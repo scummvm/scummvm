@@ -196,7 +196,7 @@ void PinkEngine::initMenu() {
 			_menu->removeMenuItem(subMenu, kRecentSaveId);
 			int maxSaves = saves.size() > kMaxSaves ? kMaxSaves : saves.size();
 			for (int i = 0; i < maxSaves; ++i) {
-				_menu->insertMenuItem(subMenu, Common::U32String::format("%i. %S", i + 1, saves[i].getDescription().u32_str()),
+				_menu->insertMenuItem(subMenu, Common::U32String::format("%i. %S", i + 1, saves[i].getDescription().c_str()),
 										kRecentSaveId + i, saves[i].getSaveSlot() + kRecentSavesOffset);
 			}
 		}

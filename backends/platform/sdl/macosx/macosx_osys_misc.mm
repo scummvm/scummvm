@@ -149,7 +149,7 @@ Common::U32String OSystem_MacOSX::getTextFromClipboard() {
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
 	NSUInteger textLength = [str length];
-	uint32 *text = new uint32[textLength];
+	Common::u32char_type_t *text = new Common::u32char_type_t[textLength];
 	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
 		delete[] text;
 		return Common::U32String();

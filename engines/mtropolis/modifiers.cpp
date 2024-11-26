@@ -2439,7 +2439,7 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		if (keyEvt.ascii != 0) {
 			bool isQuestion = (keyEvt.ascii == '?');
 			uint32 uchar = keyEvt.ascii;
-			Common::U32String u(&uchar, 1);
+			Common::U32String u(uchar);
 			outCharStr = u.encode(Common::kMacRoman);
 
 			// STUPID HACK PLEASE FIX ME: ScummVM has no way of just telling us that the character mapping failed,
