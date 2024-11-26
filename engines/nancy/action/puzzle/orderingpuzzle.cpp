@@ -187,10 +187,27 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_solveExitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
+	if (ser.getVersion() == kGameTypeVampire) {
+		_solveExitScene._sceneChange.readData(stream, true);
+		ser.skip(2); // shouldStopRendering
+		ser.syncAsSint16LE(_solveExitScene._flag.label);
+		ser.syncAsByte(_solveExitScene._flag.flag);
+	} else {
+		_solveExitScene.readData(stream);
+	}
+
 	ser.syncAsUint16LE(_solveSoundDelay);
 	_solveSound.readNormal(stream);
-	_exitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
+
+	if (ser.getVersion() == kGameTypeVampire) {
+		_exitScene._sceneChange.readData(stream, true);
+		ser.skip(2); // shouldStopRendering
+		ser.syncAsSint16LE(_exitScene._flag.label);
+		ser.syncAsByte(_exitScene._flag.flag);
+	} else {
+		_exitScene.readData(stream);
+	}
+
 	readRect(stream, _exitHotspot);
 
 	if (isKeypad && g_nancy->getGameType() >= kGameTypeNancy7) {
