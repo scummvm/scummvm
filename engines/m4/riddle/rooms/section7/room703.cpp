@@ -287,10 +287,125 @@ void Room703::daemon() {
 		break;
 
 	case 123:
+		if (_field5C == 124) {
+			switch (_field60) {
+			case 121:
+				_703Eye4aSeries = series_load("703EYE4a", -1, nullptr);
+				_field60 = 922;
+				_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 1, 5, 123, _703Eye4aSeries, 5, 5, 0);
+
+				break;
+
+			case 122:
+				terminateMachine(_monkMach);
+				series_unload(_703Eye4aSeries);
+				conv_resume(conv_get_handle());
+
+				break;
+
+			case 125:
+				conv_load("conv703a", 10, 10, 91);
+				conv_export_value_curr(0, 0);
+				conv_export_value_curr(_G(flags[V211]), 1);
+				conv_export_value_curr(_G(flags[V213]), 2);
+				conv_export_value_curr((_G(flags[V217]) == 5) ? 1 : 0, 0);
+				conv_play(conv_get_handle());
+
+				break;
+
+			case 922:
+				switch (imath_ranged_rand(1, 2)) {
+				case 1:
+					_field60 = 923;
+					break;
+
+				case 2:
+					_field60 = 924;
+					break;
+
+				default:
+					break;
+				}
+
+				kernel_timing_trigger(10, 123, nullptr);
+
+				break;
+
+			case 923:
+				_field60 = 925;
+
+				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 6, 11, -1, _703Eye4aSeries, 12, 15, 4);
+				sendWSMessage_1a0000(_monkMach, 9);
+				digi_play(conv_sound_to_play(), 1, 255, 123, -1);
+
+				break;
+
+			case 924:
+				_field60 = 925;
+
+				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 6, 9, -1, _703Eye4aSeries, 12, 16, 4);
+				sendWSMessage_1a0000(_monkMach, 9);
+				digi_play(conv_sound_to_play(), 1, 255, 123, -1);
+
+				break;
+
+			case 925:
+				_field60 = 926;
+				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 17, 20, 123, _703Eye4aSeries, 20, 20, 0);
+				break;
+
+			case 926:
+				_field60 = 122;
+				kernel_timing_trigger(10, 123, nullptr);
+
+				break;
+
+			default:
+
+				break;
+			}
+		}
+
+		break;
+
 	case 127:
+		if (_field5C == 124) {
+			switch (_field60) {
+			case 121:
+			case 122:
+			case 124:
+			case 125:
+			case 126:
+			case 127:
+			case 922:
+			case 923:
+			case 924:
+			case 925:
+			case 926:
+				kernel_timing_trigger(1, 123, nullptr);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
 	case 140:
+		player_set_commands_allowed(true);
+		ws_unhide_walker(_G(my_walker));
+		terminateMachine(_ripStairsMach);
+		kernel_timing_trigger(10, 141, nullptr);
+
+		break;
+
 	case 141:
 		series_unload(_703RipGoesDownStairsSeries);
+		break;
+
+	default:
 		break;
 	}
 }
