@@ -28,7 +28,7 @@ namespace QDEngine {
 
 class Swap : public MinigameInterface {
 public:
-	Swap();
+	Swap(MinigameManager *runtime);
 	~Swap();
 
 	void quant(float dt);
@@ -71,6 +71,7 @@ private:
 	// мировые координаты слота на поле
 	const mgVect3f &position(int num) const;
 
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine
