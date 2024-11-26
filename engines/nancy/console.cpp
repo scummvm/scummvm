@@ -713,6 +713,12 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 
 	char descBuf[0x30];
 
+	Common::ArchiveMemberList searchManList;
+	SearchMan.listMatchingMembers(searchManList, "*.iff");
+	for (auto &i : searchManList) {
+		list.push_back(i->getPathInArchive());
+	}
+
 	for (Common::Path &cifName : list) {
 		Common::String name = cifName.baseName();
 		if (name.hasSuffixIgnoreCase(".iff")) {
