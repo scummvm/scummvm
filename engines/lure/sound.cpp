@@ -1049,7 +1049,7 @@ int32 MidiDriver_ADLIB_Lure::calculatePitchBend(uint8 channel, uint8 source, uin
 	return newPitchBend;
 }
 
-uint8 MidiDriver_ADLIB_Lure::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_ADLIB_Lure::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	uint8 operatorVolume = instrumentDef.getOperatorDefinition(operatorNum).level & OPL_MASK_LEVEL;
 
 	// Scale the instrument definition operator volume by velocity.
