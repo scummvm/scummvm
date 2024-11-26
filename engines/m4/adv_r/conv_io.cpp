@@ -552,7 +552,6 @@ static Conv *conv_restore_state(Conv *c) {
 	entry_chunk *entry;
 	decl_chunk *decl;
 
-	int32 num_decls = 0, num_entries = 0;
 	short flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
@@ -596,10 +595,10 @@ static Conv *conv_restore_state(Conv *c) {
 	myCNode = READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
-	num_decls = READ_LE_UINT32(&conv_save_buff[offset]);
+	/*int num_decls = */READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
-	num_entries = READ_LE_UINT32(&conv_save_buff[offset]);
+	/*int num_entries = */READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
 	ent = 0; c->myCNode = 0;
