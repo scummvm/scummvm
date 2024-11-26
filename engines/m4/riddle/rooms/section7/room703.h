@@ -46,8 +46,8 @@ private:
 	machine *_prayerWheelMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 	
-	int32 _field5C = 0;
-	int32 _field60 = 0;
+	int32 _field5C_mode = 0;
+	int32 _field60_should = 0;
 
 	int32 _703Eye4aSeries = 0;
 	int32 _703RipGoesDownStairsSeries = 0;

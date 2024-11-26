@@ -144,7 +144,7 @@ void Room703::parser() {
 }
 
 void Room703::daemon() {
-	bool ecx = player_said("take");
+	const bool takeFl = player_said("take");
 
 	switch (_G(kernel).trigger) {
 	case 70:
@@ -252,7 +252,7 @@ void Room703::daemon() {
 		break;
 
 	case 83:
-		if (ecx && _G(player).click_y <= 374) {
+		if (takeFl && _G(player).click_y <= 374) {
 			switch (imath_ranged_rand(1, 3)) {
 			case 1:
 				digi_play("com077", 1, 255, 84, -1);
@@ -287,11 +287,11 @@ void Room703::daemon() {
 		break;
 
 	case 123:
-		if (_field5C == 124) {
-			switch (_field60) {
+		if (_field5C_mode == 124) {
+			switch (_field60_should) {
 			case 121:
 				_703Eye4aSeries = series_load("703EYE4a", -1, nullptr);
-				_field60 = 922;
+				_field60_should = 922;
 				_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
 				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 1, 5, 123, _703Eye4aSeries, 5, 5, 0);
 
@@ -317,11 +317,11 @@ void Room703::daemon() {
 			case 922:
 				switch (imath_ranged_rand(1, 2)) {
 				case 1:
-					_field60 = 923;
+					_field60_should = 923;
 					break;
 
 				case 2:
-					_field60 = 924;
+					_field60_should = 924;
 					break;
 
 				default:
@@ -333,7 +333,7 @@ void Room703::daemon() {
 				break;
 
 			case 923:
-				_field60 = 925;
+				_field60_should = 925;
 
 				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 6, 11, -1, _703Eye4aSeries, 12, 15, 4);
 				sendWSMessage_1a0000(_monkMach, 9);
@@ -342,7 +342,7 @@ void Room703::daemon() {
 				break;
 
 			case 924:
-				_field60 = 925;
+				_field60_should = 925;
 
 				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 6, 9, -1, _703Eye4aSeries, 12, 16, 4);
 				sendWSMessage_1a0000(_monkMach, 9);
@@ -351,12 +351,12 @@ void Room703::daemon() {
 				break;
 
 			case 925:
-				_field60 = 926;
+				_field60_should = 926;
 				sendWSMessage_10000(1, _monkMach, _703Eye4aSeries, 17, 20, 123, _703Eye4aSeries, 20, 20, 0);
 				break;
 
 			case 926:
-				_field60 = 122;
+				_field60_should = 122;
 				kernel_timing_trigger(10, 123, nullptr);
 
 				break;
@@ -370,8 +370,8 @@ void Room703::daemon() {
 		break;
 
 	case 127:
-		if (_field5C == 124) {
-			switch (_field60) {
+		if (_field5C_mode == 124) {
+			switch (_field60_should) {
 			case 121:
 			case 122:
 			case 124:
