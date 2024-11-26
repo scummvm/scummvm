@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/m_swap.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -29,7 +32,7 @@ namespace QDEngine {
 typedef Rect<float, mgVect2f> Rectf;
 
 MinigameInterface *createGame() {
-	return new Swap(_runtime);
+	return new Swap(g_runtime);
 }
 
 enum {
@@ -49,9 +52,9 @@ const char *Swap::getStateName(int angle, bool selected) const {
 	static char buf[32];
 	buf[31] = 0;
 
-	xassert(angle >= 0 && angle < angles_);
+	assert(angle >= 0 && angle < angles_);
 
-	_snprintf(buf, 31, "%02d%s", angle + 1, selected ? selected_suf : "");
+	snprintf(buf, 31, "%02d%s", angle + 1, selected ? selected_suf : "");
 	return buf;
 }
 
@@ -70,16 +73,15 @@ Swap::Swap(MinigameManager *runtime) {
 
 	const char *name_begin = _runtime->parameter("obj_name_begin", "obj_");
 
-	char buf[128];
-	buf[127] = 0;
-
+	warning("STUB: Swap::Swap()");
+#if 0
 	XBuffer gameData;
 
 	for (int idx = 0; idx < gameSize_; ++idx) {
-		_snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
+		Common::String buf = Common::String::format("%s%02d", name_begin, idx + 1);
 
 		Node node(idx);
-		node.obj = _runtime->getObject(buf);
+		node.obj = _runtime->getObject(buf.c_str());
 		node.angle = 0;
 		node.obj.setState(getStateName(node.angle, false));
 		nodes_.push_back(node);
@@ -93,9 +95,10 @@ Swap::Swap(MinigameManager *runtime) {
 	positions_.resize(gameSize_);
 	for (int idx = 0; idx < gameSize_; ++idx)
 		gameData.read(positions_[idx]);
+#endif
 
 	size_ = getParameter("element_size", _runtime->getSize(nodes_[0].obj));
-	xassert(size_.x > 0.f && size_.y > 0.f && size_.x < 500.f && size_.y < 500.f);
+	assert(size_.x > 0.f && size_.y > 0.f && size_.x < 500.f && size_.y < 500.f);
 	debugC(2, kDebugMinigames, "element_size = (%6.2f,%6.2f)", size_.x, size_.y);
 
 	pickedItem_ = -1;
@@ -117,9 +120,8 @@ Swap::Swap(MinigameManager *runtime) {
 }
 
 Swap::~Swap() {
-	Nodes::iterator it;
-	FOR_EACH(nodes_, it)
-	_runtime->release(it->obj);
+	for (auto &it : nodes_)
+		_runtime->release(it.obj);
 
 }
 
@@ -146,12 +148,11 @@ void Swap::quant(float dt) {
 
 	int hovPlace = -1;  // Номер места которое сейчас под мышкой
 	if (pickedItem_ == -1) {
-		Nodes::iterator it;
-		FOR_EACH(nodes_, it)
-		if (it->obj.hit(mouse)) {
-			hovPlace = distance(nodes_.begin(), it);
-			break;
-		}
+		for (auto &it : nodes_)
+			if (it.obj.hit(mouse)) {
+				hovPlace = Common::distance(nodes_.begin(), &it);
+				break;
+			}
 	}
 	if (hovPlace == -1)
 		for (int idx = 0; idx < gameSize_; ++idx) {
@@ -207,12 +208,12 @@ void Swap::quant(float dt) {
 }
 
 const mgVect3f &Swap::position(int num) const {
-	xassert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < positions_.size());
 	return positions_[num];
 }
 
 void Swap::put(int item, bool hl) {
-	xassert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < nodes_.size());
 	nodes_[item].obj->set_R(position(item));
 	nodes_[item].obj.setState(getStateName(nodes_[item].angle, hl));
 
@@ -220,7 +221,7 @@ void Swap::put(int item, bool hl) {
 
 void Swap::deactivate() {
 	if (last1_ >= 0) {
-		xassert(last2_ >= 0);
+		assert(last2_ >= 0);
 		put(last1_, false);
 		put(last2_, false);
 	}
@@ -229,13 +230,13 @@ void Swap::deactivate() {
 }
 
 bool Swap::testPlace(int item) const {
-	xassert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < nodes_.size());
 	return nodes_[item].home == item && nodes_[item].angle == 0;
 }
 
 void Swap::swap(int item1, int item2, bool silent) {
-	xassert(item1 >= 0 && item1 < nodes_.size());
-	xassert(item2 >= 0 && item2 < nodes_.size());
+	assert(item1 >= 0 && item1 < nodes_.size());
+	assert(item2 >= 0 && item2 < nodes_.size());
 
 	bool res = false;
 	if (!silent) {
@@ -268,8 +269,8 @@ void Swap::swap(int item1, int item2, bool silent) {
 }
 
 void Swap::rotate(int item1, int item2, bool silent, bool avto) {
-	xassert(item1 >= 0 && item1 < nodes_.size());
-	xassert(item2 >= 0 && item2 < nodes_.size());
+	assert(item1 >= 0 && item1 < nodes_.size());
+	assert(item2 >= 0 && item2 < nodes_.size());
 
 	if (!silent) {
 		if (testPlace(item1)) // сняли со своего места

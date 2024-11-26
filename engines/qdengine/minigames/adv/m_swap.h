@@ -47,7 +47,7 @@ private:
 		int angle;
 		int home;
 	};
-	typedef vector<Node> Nodes;
+	typedef Std::vector<Node> Nodes;
 	Nodes nodes_;
 
 	// Индекс фрагмента на мыши
