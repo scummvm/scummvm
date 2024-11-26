@@ -68,7 +68,7 @@ struct OplInstrumentOperatorDefinition {
 	 *
 	 * @return True if this operator is empty; false otherwise.
 	 */
-	bool isEmpty();
+	bool isEmpty() const;
 };
 
 /**
@@ -120,13 +120,13 @@ struct OplInstrumentDefinition {
 	 *
 	 * @return True if this instrument is empty; false otherwise.
 	 */
-	bool isEmpty();
+	bool isEmpty() const;
 	/**
 	 * Returns the number of operators used by this instrument definition.
 	 *
 	 * @return The number of operators (2 or 4).
 	 */
-	uint8 getNumberOfOperators();
+	uint8 getNumberOfOperators() const;
 	/**
 	 * Returns the definition data for the operator with the specified number.
 	 * Specify 0 or 1 for 2 operator instruments or 0-3 for 4 operator
@@ -135,7 +135,7 @@ struct OplInstrumentDefinition {
 	 * @param operatorNum The operator for which the data should be returned.
 	 * @return Pointer to the definition data for the specified operator.
 	 */
-	OplInstrumentOperatorDefinition &getOperatorDefinition(uint8 operatorNum);
+	const OplInstrumentOperatorDefinition &getOperatorDefinition(uint8 operatorNum) const;
 };
 
 #include "common/pack-start.h" // START STRUCT PACKING
@@ -173,7 +173,7 @@ struct AdLibBnkInstrumentOperatorDefinition {
 	 * @param waveformSelect The value of the waveform select parameter for
 	 * this operator.
 	 */
-	void toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect);
+	void toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect) const;
 } PACKED_STRUCT;
 
 /**
@@ -209,7 +209,7 @@ struct AdLibBnkInstrumentDefinition {
 	 * @param instrumentDef The instrument definition to which the data should
 	 * be copied.
 	 */
-	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef);
+	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const;
 } PACKED_STRUCT;
 
 /**
@@ -248,7 +248,7 @@ struct AdLibIbkInstrumentDefinition {
 	 * @param instrumentDef The instrument definition to which the data should
 	 * be copied.
 	 */
-	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef);
+	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const;
 } PACKED_STRUCT;
 
 #include "common/pack-end.h" // END STRUCT PACKING
@@ -478,11 +478,11 @@ public:
 	/**
 	 * The default melodic instrument definitions.
 	 */
-	static OplInstrumentDefinition OPL_INSTRUMENT_BANK[];
+	static const OplInstrumentDefinition OPL_INSTRUMENT_BANK[];
 	/**
 	 * The default rhythm instrument definitions.
 	 */
-	static OplInstrumentDefinition OPL_RHYTHM_BANK[];
+	static const OplInstrumentDefinition OPL_RHYTHM_BANK[];
 
 protected:
 	/**
@@ -606,7 +606,7 @@ protected:
 		/**
 		 * Pointer to the instrument definition used to play the note.
 		 */
-		OplInstrumentDefinition *instrumentDef;
+		const OplInstrumentDefinition *instrumentDef;
 
 		/**
 		 * True if this OPL channel has been allocated to a MIDI channel.
@@ -635,7 +635,7 @@ protected:
 		/**
 		 * Pointer to the instrument definition.
 		 */
-		OplInstrumentDefinition *instrumentDef;
+		const OplInstrumentDefinition *instrumentDef;
 		/**
 		 * Unique identifer for this instrument (@see ActiveNote.instrumentId).
 		 */
@@ -1020,7 +1020,7 @@ protected:
 	 * instruments.
 	 * @return The calculated operator volume (level).
 	 */
-	virtual uint8 calculateVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	virtual uint8 calculateVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Calculates the unscaled volume for the specified operator of a note on
 	 * the specified MIDI channel and source, using the specified MIDI velocity
@@ -1042,7 +1042,7 @@ protected:
 	 * instruments.
 	 * @return The calculated unscaled operator volume (level).
 	 */
-	virtual uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	virtual uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Determines if volume settings should be applied to the operator level.
 	 * This depends on the type of the operator (carrier or modulator), which
@@ -1052,7 +1052,7 @@ protected:
 	 * @param operatorNum The number of the operator (0-1 or 0-3)
 	 * @return True if volume should be applied, false otherwise
 	 */
-	virtual bool isVolumeApplicableToOperator(OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	virtual bool isVolumeApplicableToOperator(const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Determines the panning that should be applied to notes played on the
 	 * specified MIDI channel and source.
@@ -1225,9 +1225,9 @@ protected:
 	bool _rhythmMode;
 
 	// Pointer to the melodic instrument definitions.
-	OplInstrumentDefinition *_instrumentBank;
+	const OplInstrumentDefinition *_instrumentBank;
 	// Pointer to the rhythm instrument definitions.
-	OplInstrumentDefinition *_rhythmBank;
+	const OplInstrumentDefinition *_rhythmBank;
 	// The MIDI note value of the first rhythm instrument in the bank.
 	uint8 _rhythmBankFirstNote;
 	// The MIDI note value of the last rhythm instrument in the bank.

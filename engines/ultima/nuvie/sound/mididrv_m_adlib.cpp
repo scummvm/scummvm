@@ -45,11 +45,11 @@ MidiDriver_M_AdLib::MidiDriver_M_AdLib() : MidiDriver_ADLIB_Multisource(OPL::Con
 	Common::fill(_fadeStepDelays, _fadeStepDelays + ARRAYSIZE(_fadeStepDelays), 0);
 	Common::fill(_fadeCurrentDelays, _fadeCurrentDelays + ARRAYSIZE(_fadeCurrentDelays), 0);
 
-	_instrumentBank = new OplInstrumentDefinition[16];
+	_instrumentBank = _instrumentBankPtr = new OplInstrumentDefinition[16];
 }
 
 MidiDriver_M_AdLib::~MidiDriver_M_AdLib() {
-	delete[] _instrumentBank;
+	delete[] _instrumentBankPtr;
 }
 
 void MidiDriver_M_AdLib::send(int8 source, uint32 b) {
@@ -244,7 +244,7 @@ void MidiDriver_M_AdLib::metaEvent(int8 source, byte type, byte* data, uint16 le
 
 		byte instrumentNumber = data[0];
 		assert(instrumentNumber < 16);
-		OplInstrumentDefinition *instrument = &_instrumentBank[instrumentNumber];
+		OplInstrumentDefinition *instrument = &_instrumentBankPtr[instrumentNumber];
 
 		instrument->fourOperator = false;
 		instrument->rhythmType = RHYTHM_TYPE_UNDEFINED;
@@ -309,7 +309,7 @@ uint16 MidiDriver_M_AdLib::calculateFrequency(uint8 channel, uint8 source, uint8
 	return oplFrequency | (block << 10);
 }
 
-uint8 MidiDriver_M_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition& instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_M_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition& instrumentDef, uint8 operatorNum) {
 	// M directy uses OPL level values, so no calculation is necessary.
 	return _controlData[source][channel].volume & OPL_MASK_LEVEL;
 }
