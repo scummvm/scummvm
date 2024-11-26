@@ -41,7 +41,7 @@ struct FlyQDObject : public FlyObjectBase {
 		return data == dat;
 	}
 
-	bool quant(float dt, QDObject& obj);
+	bool quant(float dt, QDObject& obj, MinigameManager *runtime);
 
 	float depth;
 	int data;

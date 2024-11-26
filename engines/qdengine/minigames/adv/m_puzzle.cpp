@@ -261,7 +261,7 @@ void Puzzle::quant(float dt) {
 
 	FlyQDObjects::iterator fit = flyObjs_.begin();
 	while (fit != flyObjs_.end())
-		if (!isOnMouse(nodes_[fit->data]) && fit->quant(dt, nodes_[fit->data].obj))
+		if (!isOnMouse(nodes_[fit->data]) && fit->quant(dt, nodes_[fit->data].obj, g_runtime))
 			++fit;
 		else
 			fit = flyObjs_.erase(fit);
