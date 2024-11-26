@@ -95,7 +95,7 @@ void *mem_get_from_stash(int32 memType, const Common::String &name) {
 
 	for (i = 0; i < _G(requests)[memType]; i++) {
 		if (!*b_ptr) {
-			*(uintptr *)b_ptr = 1;
+			*(uintptr *)b_ptr = FROM_LE_32(1);
 			void *result = (void *)(b_ptr + sizeof(uintptr));
 			Common::fill((byte *)result, (byte *)result + _G(sizeMem)[memType], 0);
 			return result;
