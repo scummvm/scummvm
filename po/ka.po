@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-25 14:10+0000\n"
-"PO-Revision-Date: 2024-11-10 02:18+0000\n"
+"PO-Revision-Date: 2024-11-26 11:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -2962,17 +2962,17 @@ msgstr "ბრუნვის გარეშე"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "საათის ისრის მიმართულებით"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 გრადუსი"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "საათის ისრის საწინააღმდეგო მიმართულებით"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -7110,7 +7110,7 @@ msgstr "გაშვება"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "ფორთხვა"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
@@ -9817,10 +9817,8 @@ msgid "Run in really fast mode (*)"
 msgstr ""
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Active graphics filter:"
 msgid "Cycle between graphics filters"
-msgstr "აქტიური გრაფიკის ფილტრი:"
+msgstr "გადართვა გრაფიკულ ფილტრებს შორის"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -10872,15 +10870,15 @@ msgstr "ინგლისური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "გერმანული"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "ფრანგული"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "იტალიური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Spanish"
@@ -10888,11 +10886,11 @@ msgstr "ესპანური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "ბრაზილიური პორტუგალიური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "ჩეხური"
 
 #: engines/sword1/metaengine.cpp:86
 msgid "Text language:"
@@ -11119,11 +11117,11 @@ msgstr "ხმის მორგება"
 
 #: engines/tsage/metaengine.cpp:264
 msgid "Crawl North"
-msgstr ""
+msgstr "ფორთხვა ჩრდილოეთისკენ"
 
 #: engines/tsage/metaengine.cpp:271
 msgid "Crawl South"
-msgstr ""
+msgstr "ფორთხვა სამხრეთისკენ"
 
 #: engines/tsage/metaengine.cpp:278
 msgid "Turn Left/Crawl West"
@@ -11716,10 +11714,8 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Rock travel-ის ჩართვა"
+msgstr "დაბლოკვის სისტემის ჩართვა"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
