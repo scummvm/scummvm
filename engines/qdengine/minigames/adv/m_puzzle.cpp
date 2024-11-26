@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/m_puzzle.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -54,17 +57,17 @@ const char *Puzzle::getStateName(int angle, bool selected, bool small) const {
 	static char buf[32];
 	buf[31] = 0;
 
-	xassert(angle >= 0 && angle < angles_);
+	assert(angle >= 0 && angle < angles_);
 	angle = (angle + globalAngle_) % angles_;
 
-	_snprintf(buf, 31, "%s%02d%s", !singleSize_ && small ? small_pref : "", angle + 1, selected ? selected_suf : "");
+	snprintf(buf, 31, "%s%02d%s", !singleSize_ && small ? small_pref : "", angle + 1, selected ? selected_suf : "");
 	return buf;
 }
 
 Puzzle::Puzzle() {
 	if (!getParameter("game_size", gameSize_, true))
 		return;
-	xassert(gameSize_ > 0 && gameSize_ < 100);
+	assert(gameSize_ > 0 && gameSize_ < 100);
 
 	field_.resize(gameSize_, -1);
 	globalAngle_ = 0;
@@ -72,7 +75,7 @@ Puzzle::Puzzle() {
 	singleSize_ = getParameter("small_objects", false);
 
 	angles_ = getParameter("angles", 4);
-	xassert(angles_ > 0 &&  angles_ < 10);
+	assert(angles_ > 0 &&  angles_ < 10);
 
 	if (!(stackBottom_ = g_runtime->getObject(g_runtime->parameter("inventory_bottom"))))
 		return;
@@ -80,7 +83,7 @@ Puzzle::Puzzle() {
 		return;
 
 	if (getParameter("rotate_period", rotateTimePeriod_, false)) {
-		xassert(sqr(sqrt((float)gameSize_)) == gameSize_);
+		assert(sqr(sqrt((float)gameSize_)) == gameSize_);
 		if (sqr(sqrt((float)gameSize_)) != gameSize_)
 			return;
 	} else
@@ -88,7 +91,7 @@ Puzzle::Puzzle() {
 	nextRotateTime_ = g_runtime->getTime() + rotateTimePeriod_;
 
 	flySpeed_ = getParameter("inventory_drop_speed", 240.f);
-	xassert(flySpeed_ > 0.f);
+	assert(flySpeed_ > 0.f);
 	returnSpeed_ = getParameter("inventory_return_speed", -1.f);
 
 	const char *name_begin = g_runtime->parameter("obj_name_begin", "obj_");
@@ -96,9 +99,12 @@ Puzzle::Puzzle() {
 	char buf[128];
 	buf[127] = 0;
 
+	warning("STUB: Puzzle::Puzzle()");
+
+#if 0
 	XBuffer gameData;
 	for (int idx = 0; idx < gameSize_; ++idx) {
-		_snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
+		snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
 
 		Node node;
 		node.obj = g_runtime->getObject(buf);
@@ -125,7 +131,7 @@ Puzzle::Puzzle() {
 		nodes_[idx].obj->set_R(crd);
 		positions_.push_back(crd);
 	}
-
+#endif
 	if (g_runtime->debugMode())
 		nodes_[0].angle = angles_ - 1;
 
@@ -135,7 +141,7 @@ Puzzle::Puzzle() {
 	depth_ = nodes_[0].obj.depth();
 
 	stackPlaceSize_ = getParameter("inventory_place_size", size_ * 1.2f);
-	xassert(stackPlaceSize_.x > 0.f && stackPlaceSize_.x < 500.f && stackPlaceSize_.y > 0.f && stackPlaceSize_.y < 500.f);
+	assert(stackPlaceSize_.x > 0.f && stackPlaceSize_.x < 500.f && stackPlaceSize_.y > 0.f && stackPlaceSize_.y < 500.f);
 	debugC(2, kDebugMinigames, "stackPlaceSize = (%5.1f, %5.1f)", stackPlaceSize_.x, stackPlaceSize_.y);
 
 	prevPlace_ = -1;
@@ -149,15 +155,14 @@ Puzzle::Puzzle() {
 }
 
 Puzzle::~Puzzle() {
-	Nodes::iterator it;
-	FOR_EACH(nodes_, it)
-	g_runtime->release(it->obj);
+	for (auto &it : nodes_)
+		g_runtime->release(it.obj);
 
 	g_runtime->release(stackBottom_);
 }
 
 void Puzzle::rotate(int item) {
-	xassert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < nodes_.size());
 	nodes_[item].angle = (nodes_[item].angle + 1) % angles_;
 }
 
@@ -166,15 +171,14 @@ int Puzzle::stidx(int idx) const {
 }
 
 bool Puzzle::testPlace(int item) const {
-	xassert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < nodes_.size());
 	return nodes_[item].pos == item && nodes_[item].angle == 0;
 }
 
 bool Puzzle::isFlying(int idx) const {
-	FlyQDObjects::const_iterator it;
-	FOR_EACH(flyObjs_, it)
-	if (it->data == idx)
-		return true;
+	for (auto &it : flyObjs_)
+		if (it.data == idx)
+			return true;
 	return false;
 }
 
@@ -186,8 +190,8 @@ bool Puzzle::isOnMouse(const Node& node) const {
 }
 
 void Puzzle::put(int where, int what, float flowSpeed) {
-	xassert(where < (int)field_.size());
-	xassert(what >= 0 && what < nodes_.size());
+	assert(where < (int)field_.size());
+	assert(what >= 0 && what < nodes_.size());
 
 	Node& node = nodes_[what];
 	int start = node.pos;
@@ -195,23 +199,23 @@ void Puzzle::put(int where, int what, float flowSpeed) {
 	if (flowSpeed > 0.f || isFlying(what)) {
 		FlyQDObject* flyObj = 0;
 
-		FlyQDObjects::iterator fit;
-		FOR_EACH(flyObjs_, fit)
-		if (fit->data == what)
-			break;
-		if (fit != flyObjs_.end()) // Этот фрагмент уже летит, просто поменять точку назначения
-			flyObj = &*fit;
-		else { // Добавляем новый летящий фрагмент
-			flyObjs_.push_back(FlyQDObject());
-			flyObj = &flyObjs_.back();
+		for (auto &fit : flyObjs_) {
+			if (fit.data == what)
+				break;
+			if (&fit != flyObjs_.end()) // Этот фрагмент уже летит, просто поменять точку назначения
+				flyObj = &fit;
+			else { // Добавляем новый летящий фрагмент
+				flyObjs_.push_back(FlyQDObject());
+				flyObj = &flyObjs_.back();
 
-			flyObj->data = what;
+				flyObj->data = what;
 
-			mgVect3f from = isOnMouse(node) ? node.obj->R() : start < -1 ? stackPosition(stidx(start)) : position(start);
-			flyObj->current = g_runtime->world2game(from);
-			node.obj->set_R(from);
+				mgVect3f from = isOnMouse(node) ? node.obj->R() : start < -1 ? stackPosition(stidx(start)) : position(start);
+				flyObj->current = g_runtime->world2game(from);
+				node.obj->set_R(from);
 
-			flyObj->speed = flowSpeed;
+				flyObj->speed = flowSpeed;
+			}
 		}
 
 		mgVect3f to = where < -1 ? stackPosition(stidx(where)) : position(where);
@@ -231,7 +235,7 @@ void Puzzle::putOnStack(int what, float speed) {
 }
 
 void Puzzle::returnToStack() {
-	xassert(pickedItem_ != -1);
+	assert(pickedItem_ != -1);
 	g_runtime->event(EVENT_RETURN, g_runtime->mousePosition());
 	if (prevPlace_ >= 0)
 		put(prevPlace_, pickedItem_);
@@ -263,7 +267,7 @@ void Puzzle::quant(float dt) {
 			fit = flyObjs_.erase(fit);
 
 	if (inField_ < nodes_.size() && g_runtime->getTime() > nextObjTime_ &&
-	(stack_.size() < stackSize_ - 1 || stack_.size() < stackSize_ && pickedItem_ == -1)) { // нужно добавить в инвентори фишку
+			(stack_.size() < stackSize_ - 1 || (stack_.size() < stackSize_ && pickedItem_ == -1))) { // нужно добавить в инвентори фишку
 		// ищем случайный не выставленный фрагмент
 		int freeIdx = round(g_runtime->rnd(0.f, nodes_.size() - 1));
 		Nodes::iterator it = nodes_.begin();
@@ -274,7 +278,7 @@ void Puzzle::quant(float dt) {
 				if (!freeIdx--)
 					break;
 		}
-		int idx = distance(nodes_.begin(), it);
+		int idx = Common::distance(nodes_.begin(), it);
 
 		++inField_;
 		nextObjTime_ = g_runtime->getTime() + stackPlaceSize_.y / flySpeed_;
@@ -359,7 +363,7 @@ void Puzzle::quant(float dt) {
 				if (hovStack < stack_.size()) { // взять фрагмент из стека на мышь
 					g_runtime->event(EVENT_GET, mouse);
 					Indexes::iterator it = stack_.begin() + hovStack;
-					xassert(*it >= 0);
+					assert(*it >= 0);
 					prevPlace_ = -1;
 					pickedItem_ = *it;
 					nodes_[pickedItem_].pos = mouseObjPose_;
@@ -433,7 +437,7 @@ void Puzzle::quant(float dt) {
 }
 
 const mgVect3f &Puzzle::position(int num) const {
-	xassert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < positions_.size());
 	// Если глобальный поворот ненулевой, пересчитываем индекс
 	if (globalAngle_ > 0) {
 		int size = sqrt((float)gameSize_);
@@ -447,7 +451,7 @@ const mgVect3f &Puzzle::position(int num) const {
 		}
 		num = y * (size + 1) + x;
 	}
-	xassert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < positions_.size());
 	return positions_[num];
 }
 

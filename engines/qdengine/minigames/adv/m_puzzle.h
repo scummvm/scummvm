@@ -43,7 +43,7 @@ class Puzzle : public MinigameInterface {
 		Node() : angle(1), pos(-1) {}
 	};
 
-	typedef vector<Node> Nodes;
+	typedef Std::vector<Node> Nodes;
 
 public:
 	Puzzle();
