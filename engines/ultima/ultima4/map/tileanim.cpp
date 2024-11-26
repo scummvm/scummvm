@@ -33,7 +33,7 @@ namespace Ultima4 {
 
 TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 	TileAnimTransform *transform;
-	static const char *transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", nullptr };
+	static const char *const transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", nullptr };
 
 	int type = conf.getEnum("type", transformTypeEnumStrings);
 
@@ -219,8 +219,8 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
 
 TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	TileAnimContext *context;
-	static const char *contextTypeEnumStrings[] = { "frame", "dir", nullptr };
-	static const char *dirEnumStrings[] = { "none", "west", "north", "east", "south", nullptr };
+	static const char *const contextTypeEnumStrings[] = { "frame", "dir", nullptr };
+	static const char *const dirEnumStrings[] = { "none", "west", "north", "east", "south", nullptr };
 
 	TileAnimContext::Type type = (TileAnimContext::Type)conf.getEnum("type", contextTypeEnumStrings);
 

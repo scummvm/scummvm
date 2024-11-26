@@ -144,7 +144,7 @@ public:
 	Common::String getString(const Common::String &name) const;
 	int getInt(const Common::String &name, int defaultValue = 0) const;
 	bool getBool(const Common::String &name) const;
-	int getEnum(const Common::String &name, const char *enumValues[]) const;
+	int getEnum(const Common::String &name, const char *const enumValues[]) const;
 
 	Std::vector<ConfigElement> getChildren() const;
 

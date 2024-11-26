@@ -207,7 +207,7 @@ static const struct luaL_Reg nscript_actorlib_m[] = {
 
 
 //Actor variables - must be in alphabetical order
-static const char *actor_set_vars[] = {
+static const char *const actor_set_vars[] = {
 	"align",
 	"asleep",
 	"base_obj_n",
@@ -243,7 +243,7 @@ static const char *actor_set_vars[] = {
 };
 
 //Actor variables - must be in alphabetical order
-static const char *actor_get_vars[] = {
+static const char *const actor_get_vars[] = {
 	"actor_num",
 	"align",
 	"alive",
@@ -325,7 +325,7 @@ static int nscript_actor_set_x(Actor *actor, lua_State *L);
 static int nscript_actor_set_y(Actor *actor, lua_State *L);
 static int nscript_actor_set_z(Actor *actor, lua_State *L);
 
-int (*actor_set_func[])(Actor *, lua_State *) = {
+int (*const actor_set_func[])(Actor *, lua_State *) = {
 	nscript_actor_set_align,
 	nscript_actor_set_asleep_flag,
 	nscript_actor_set_base_obj_n,
@@ -407,7 +407,7 @@ static int nscript_actor_get_xyz(Actor *actor, lua_State *L);
 static int nscript_actor_get_y(Actor *actor, lua_State *L);
 static int nscript_actor_get_z(Actor *actor, lua_State *L);
 
-int (*actor_get_func[])(Actor *, lua_State *) = {
+int (*const actor_get_func[])(Actor *, lua_State *) = {
 	nscript_actor_get_actor_num,
 	nscript_actor_get_align,
 	nscript_actor_get_alive,

@@ -46,7 +46,7 @@ namespace Nuvie {
 
 using Std::string;
 
-static Tile placeholder_tile = {
+static const Tile placeholder_tile = {
 	0,
 	false,
 	false,

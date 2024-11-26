@@ -188,8 +188,8 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 		{ "unflyable", MASK_UNFLYABLE },
 		{ "creatureunwalkable", MASK_CREATURE_UNWALKABLE }
 	};
-	static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", nullptr };
-	static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr };
+	static const char *const speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", nullptr };
+	static const char *const effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr };
 
 	_mask = 0;
 	_movementMask = 0;

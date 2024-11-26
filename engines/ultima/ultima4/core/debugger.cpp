@@ -166,11 +166,11 @@ void Debugger::prompt() {
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
-	static const char *DUNGEON_DISALLOWED[] = {
+	static const char *const DUNGEON_DISALLOWED[] = {
 		"attack", "board", "enter", "fire", "jimmy", "locate",
 		"open", "talk", "exit", "yell", nullptr
 	};
-	static const char *COMBAT_DISALLOWED[] = {
+	static const char *const COMBAT_DISALLOWED[] = {
 		"board", "climb", "descend", "enter", "exit", "fire", "hole",
 		"ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
 		"search", "wear", "yell", nullptr

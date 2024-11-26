@@ -40,7 +40,7 @@ namespace Nuvie {
 
 #define NUM_ORIGINAL_TILES 2048
 
-static char article_tbl[][5] = {"", "a ", "an ", "the "};
+static const char article_tbl[][5] = {"", "a ", "an ", "the "};
 
 static const uint16 U6_ANIM_SRC_TILE[32] = {0x16, 0x16, 0x1a, 0x1a, 0x1e, 0x1e, 0x12, 0x12,
 											0x1a, 0x1e, 0x16, 0x12, 0x16, 0x1a, 0x1e, 0x12,

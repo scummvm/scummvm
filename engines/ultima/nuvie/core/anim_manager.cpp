@@ -43,7 +43,7 @@ namespace Nuvie {
 #define MESG_ANIM_DONE      ANIM_CB_DONE
 
 static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up = 0);
-struct tossanim_tile_shifts_s tossanim_tile_shifts[] = {
+const struct tossanim_tile_shifts_s tossanim_tile_shifts[] = {
 	{ TILE_U6_BOLT, 4 },
 	{ TILE_U6_ARROW, 4 },
 	{ 0, 0}

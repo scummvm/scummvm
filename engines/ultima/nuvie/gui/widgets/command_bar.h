@@ -51,7 +51,7 @@ protected:
 	Game *game;
 	Events *event;
 	Font *font;
-	Tile *icon[13];
+	const Tile *icon[13];
 	U6Shape *background; // used to display the WoU command bar backgrounds
 
 	U6Shape *lever_up;	  // The lever in the up state (MD only)

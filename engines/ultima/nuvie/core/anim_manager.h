@@ -325,7 +325,7 @@ struct tossanim_tile_shifts_s {
 	uint16 tile_num;
 	sint8 shift; // plus or minus vertical position
 };
-extern struct tossanim_tile_shifts_s tossanim_tile_shifts[];
+extern const struct tossanim_tile_shifts_s tossanim_tile_shifts[];
 
 /* a line of fire */
 typedef struct {
