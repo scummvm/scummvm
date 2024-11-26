@@ -394,7 +394,7 @@ void unload_game() {
 	_GP(guis).clear();
 	_GP(scrGui).clear();
 
-	remove_screen_overlay(-1);
+	get_overlays().clear();
 
 	resetRoomStatuses();
 	_GP(thisroom).Free();
