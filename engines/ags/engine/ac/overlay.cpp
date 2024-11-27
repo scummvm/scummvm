@@ -58,9 +58,10 @@ void Overlay_SetText(ScriptOverlay *scover, int width, int fontid, int text_colo
 	auto *over = get_overlay(scover->overlayId);
 	if (!over)
 		quit("!Overlay.SetText: invalid overlay ID specified");
-	const int x = over->x;
-	const int y = over->y;
+	Overlay_SetText(*over, over->x, over->y, width, fontid, text_color, text);
+}
 
+void Overlay_SetText(ScreenOverlay &over, int x, int y, int width, int fontid, int text_color, const char *text) {
 	// TODO: find a nice way to refactor and share these code pieces
 	// from CreateTextOverlay
 	width = data_to_game_coord(width);
@@ -81,7 +82,7 @@ void Overlay_SetText(ScriptOverlay *scover, int width, int fontid, int text_colo
 										 width, fontid, allow_shrink, has_alpha);
 
 	// Update overlay properties
-	over->SetImage(std::unique_ptr<Bitmap>(image), has_alpha, adj_x - dummy_x, adj_y - dummy_y);
+	over.SetImage(std::unique_ptr<Bitmap>(image), has_alpha, adj_x - dummy_x, adj_y - dummy_y);
 }
 
 int Overlay_GetX(ScriptOverlay *scover) {
