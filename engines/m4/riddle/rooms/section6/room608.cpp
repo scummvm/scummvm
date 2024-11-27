@@ -458,10 +458,12 @@ void Room608::daemon() {
 					case 2:
 						sendWSMessage_10000(1, _ol, _old1, 3, 1, 200, _old1, 1, 1, 0);
 						sendWSMessage_190000(_ol, 7);
+						_oldMode = 0;
 						break;
 					case 3:
 						sendWSMessage_10000(1, _ol, _old1, 4, 5, 200, _old1, 5, 5, 0);
 						sendWSMessage_190000(_ol, 7);
+						_oldMode = 3;
 						break;
 					default:
 						break;
@@ -477,11 +479,13 @@ void Room608::daemon() {
 			case 12:
 				sendWSMessage_10000(1, _ol, _old1, 4, 5, 200, _old1, 5, 5, 0);
 				sendWSMessage_190000(_ol, 7);
+				_oldMode = 3;
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 3, 1, 200, _old1, 1, 1, 0);
 				sendWSMessage_190000(_ol, 7);
+				_oldMode = 0;
 				break;
 			}
 			break;
@@ -504,6 +508,7 @@ void Room608::daemon() {
 					case 3:
 						sendWSMessage_10000(1, _ol, _old1, 6, 7, 200, _old1, 7, 7, 0);
 						sendWSMessage_190000(_ol, 7);
+						_oldMode = 4;
 						break;
 					default:
 						break;
@@ -519,11 +524,13 @@ void Room608::daemon() {
 			case 12:
 				sendWSMessage_10000(1, _ol, _old1, 6, 7, 200, _old1, 7, 7, 0);
 				sendWSMessage_190000(_ol, 7);
+				_oldMode = 4;
 				break;
 
 			default:
 				sendWSMessage_10000(1, _ol, _old1, 5, 4, 200, _old1, 3, 3, 0);
 				sendWSMessage_190000(_ol, 7);
+				_oldMode = 2;
 				break;
 			}
 			break;
@@ -539,6 +546,7 @@ void Room608::daemon() {
 					} else {
 						sendWSMessage_10000(1, _ol, _old1, 7, 6, 200, _old1, 5, 5, 0);
 						sendWSMessage_190000(_ol, 7);
+						_oldMode = 3;
 					}
 				} else {
 					kernel_timing_trigger(10, 200);
@@ -638,6 +646,7 @@ void Room608::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _ol, _old2, 57, 49, 200, _old2, 38, 38, 0);
+				_oldMode = 8;
 				break;
 			}
 			break;
