@@ -281,7 +281,7 @@ void SetCharacterFrame(int chaa, int view, int loop, int frame) {
 // similar to SetCharView, but aligns the frame to make it line up
 void SetCharacterViewEx(int chaa, int vii, int loop, int align) {
 
-	Character_LockViewAligned(&_GP(game).chars[chaa], vii, loop, align);
+	Character_LockViewAligned(&_GP(game).chars[chaa], vii, loop, ConvertLegacyScriptAlignment((LegacyScriptAlignment)align));
 }
 
 void SetCharacterViewOffset(int chaa, int vii, int xoffs, int yoffs) {
