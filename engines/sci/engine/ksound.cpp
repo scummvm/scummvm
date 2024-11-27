@@ -174,13 +174,15 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->_features->usesCdTrack()) {
 		if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
 			// The CD audio version of Mothergoose256 CD is unique with a
-			// custom interpreter for its audio. English is only in the CD
-			// audio track while the other four languages are only in audio
-			// resource files. This is transparent to the scripts which are
-			// the same in all versions. The interpreter detected when
-			// English was selected and used CD audio in that case.
-			if (g_sci->getSciLanguage() == K_LANG_ENGLISH &&
-				argv[0].toUint16() != kSciAudioLanguage) {
+			// custom interpreter. Instead of using AUDIO001 files for English,
+			// the interpreter is hard-coded to use CD audio when the language
+			// is set to English. Otherwise, it uses the normal kDoAudio code
+			// to use AUDIO### files for the other four languages
+			// This is transparent to the scripts; they are the same as in the
+			// version that uses AUDIO001 for English and not CD Audio.
+			int audioLanguage = g_sci->getResMan()->getAudioLanguage();
+			bool english = (audioLanguage == K_LANG_NONE) || (audioLanguage == K_LANG_ENGLISH);
+			if (english && argv[0].toUint16() != kSciAudioLanguage) {
 				return kDoCdAudio(s, argc, argv);
 			}
 		} else {
@@ -273,42 +275,58 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case kSciAudioLanguage:
-		// In SCI1.1: tests for digital audio support
 		if (getSciVersion() == SCI_VERSION_1_1) {
+			// SCI1.1: tests for digital audio support
 			debugC(kDebugLevelSound, "kDoAudio: audio capability test");
 			return make_reg(0, 1);
 		} else {
-			int16 language = argv[1].toSint16();
+			// SCI1: sets audio language, queries current language
+			int newLanguage = argv[1].toSint16();
+			int previousLanguage = g_sci->getResMan()->getAudioLanguage();
 
-			// athrxx: It seems from disasm that the original KQ5 FM-Towns loads a default language (Japanese) audio map at the beginning
-			// right after loading the video and audio drivers. The -1 language argument in here simply means that the original will stick
-			// with Japanese. Instead of doing that we switch to the language selected in the launcher.
-			if (g_sci->getPlatform() == Common::kPlatformFMTowns && language == -1) {
-				// FM-Towns calls us to get the current language / also set the default language
-				// This doesn't just happen right at the start, but also when the user clicks on the Sierra logo in the game menu
-				// It uses the result of this call to either show "English Voices" or "Japanese Voices".
-
-				// Language should have been set by setLauncherLanguage() already (or could have been modified by the scripts).
-				// Get this language setting, so that the chosen language will get set for resource manager.
-				language = g_sci->getSciLanguage();
+			// Handle the CD audio version of Mothergoose256 CD.
+			// See above; when the language is English, kDoCdAudio is used
+			// for all subops except this one.
+			if (g_sci->_features->usesCdTrack()) {
+				// Unload language audio to indicate that the current language is
+				// English, and return success. There are no English audio files.
+				if (newLanguage == K_LANG_ENGLISH) {
+					g_sci->getResMan()->unloadAudioLanguage();
+					debugC(kDebugLevelSound, "kDoAudio: set language to %d", newLanguage);
+					return make_reg(0, newLanguage);
+				}
+				if (previousLanguage == K_LANG_NONE) {
+					previousLanguage = K_LANG_ENGLISH;
+				}
 			}
 
-			debugC(kDebugLevelSound, "kDoAudio: set language to %d", language);
-
-			if (language != -1)
-				g_sci->getResMan()->setAudioLanguage(language);
-
-			kLanguage kLang = g_sci->getSciLanguage();
-			if (g_sci->_features->usesCdTrack() && language == K_LANG_ENGLISH) {
-				// Mothergoose 256 CD has a multi-lingual version with English only on CD audio,
-				// so setAudioLanguage() will fail because there are no English resource files.
-				// The scripts cycle through languages to test which are available for the main
-				// menu, so setting English must succeed. This was handled by a custom interpreter.
-				kLang = K_LANG_ENGLISH;
+			if (newLanguage == -1) {
+				if (previousLanguage == K_LANG_NONE) {
+					// Initialize default language, fall back on English.
+					// The original interpreter had a language global with a hard-coded initial value.
+					// For example, KQ5 PC was set to English, FM-Towns was set Japanese.
+					// We initialize from getSciLanguage() to use our own default, or the launcher language
+					int initialLanguage = g_sci->getSciLanguage();
+					if (!g_sci->getResMan()->setAudioLanguage(initialLanguage) && initialLanguage != K_LANG_ENGLISH) {
+						initialLanguage = K_LANG_ENGLISH;
+						g_sci->getResMan()->setAudioLanguage(initialLanguage);
+					}
+					debugC(kDebugLevelSound, "kDoAudio: initialized language to %d", initialLanguage);
+					return make_reg(0, initialLanguage);
+				} else {
+					debugC(kDebugLevelSound, "kDoAudio: current language: %d", previousLanguage);
+					return make_reg(0, previousLanguage);
+				}
 			}
-			g_sci->setSciLanguage(kLang);
 
-			return make_reg(0, kLang);
+			if (g_sci->getResMan()->setAudioLanguage(newLanguage)) {
+				debugC(kDebugLevelSound, "kDoAudio: set language to %d", newLanguage);
+				return make_reg(0, newLanguage);
+			} else {
+				g_sci->getResMan()->setAudioLanguage(previousLanguage);
+				debugC(kDebugLevelSound, "kDoAudio: error setting language: %d, using: %d", newLanguage, previousLanguage);
+				return make_reg(0, previousLanguage);
+			}
 		}
 		break;
 	case kSciAudioCD:
