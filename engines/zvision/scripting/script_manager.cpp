@@ -275,7 +275,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 
 	// criteriaList can be empty. Aka, the puzzle should be executed immediately
 	if (puzzle->criteriaList.empty() || criteriaMet) {
-		debug(1, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+		debug(2, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
