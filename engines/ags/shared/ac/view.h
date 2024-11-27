@@ -59,8 +59,8 @@ struct ViewLoopNew {
 	int numFrames;
 	int   flags;
 	std::vector<ViewFrame> frames;
-	// NOTE: we still need numFrames for backward compatibility:
-	// some older versions could allocate extra frame(s) for safety,
+	// NOTE: we still need numFrames:
+	// as we always allocate at least 1 frame for safety, to avoid crashes,
 	// but have to report "logical" number of frames for the engine API.
 
 	ViewLoopNew();
