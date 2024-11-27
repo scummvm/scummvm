@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-27 12:18+0000\n"
+"POT-Creation-Date: 2024-11-27 22:48+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -1023,7 +1023,7 @@ msgstr "Interagir"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:925 engines/twine/metaengine.cpp:430
+#: engines/scumm/metaengine.cpp:916 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1038,7 +1038,7 @@ msgstr "Cima"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:892 engines/twine/metaengine.cpp:437
+#: engines/scumm/metaengine.cpp:883 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1052,7 +1052,7 @@ msgstr "Baixo"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:905
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:896
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1067,7 +1067,7 @@ msgstr "Esquerda"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:912
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:903
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6289,7 +6289,7 @@ msgstr "Menu rápido de adição de jogo (similar a versão para PC)"
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:777
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:768
 msgid "Enable copy protection"
 msgstr "Habilitar proteção contra cópia"
 
@@ -6297,7 +6297,7 @@ msgstr "Habilitar proteção contra cópia"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:778
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:769
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 "Ativa qualquer proteção contra cópia que, de outra forma, seria ignorada por "
@@ -7038,7 +7038,7 @@ msgstr "Alternar Modo de Combate"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:951 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:942 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Pular cena"
@@ -7492,7 +7492,7 @@ msgstr "Falar/Interagir"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:938
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:929
 msgid "Attack"
 msgstr "Atacar"
 
@@ -10621,11 +10621,11 @@ msgstr ""
 "Ativa alguns confortos modernos; por exemplo, remove a tela falsa de "
 "carregamento de som no Sam&Max e acelera a aparição dos menus de salvamento."
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:747
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:738
 msgid "Enable the original GUI and Menu"
 msgstr "Habilitar Interface e Menu originais"
 
-#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:748
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:739
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -10743,11 +10743,11 @@ msgstr ""
 "faixa onde deve começar a tocar. Use isso se a música estiver cortada ou se "
 "você ouvir parte da música anterior."
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:738
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:729
 msgid "Load modded audio"
 msgstr "Carregar áudio modificado"
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:739
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:730
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -11306,27 +11306,27 @@ msgstr "O suporte ao HE v71+ não está compilado"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "O suporte ao SCUMM v7-8 não está compilado"
 
-#: engines/scumm/metaengine.cpp:667
+#: engines/scumm/metaengine.cpp:658
 msgid "Show Object Line"
 msgstr "Exibir Linha de Objeto"
 
-#: engines/scumm/metaengine.cpp:668
+#: engines/scumm/metaengine.cpp:659
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Exibe os nomes de objetos na parte inferior da tela"
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:667
 msgid "Use NES Classic Palette"
 msgstr "Utilizar Paleta Clássica do NES"
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:668
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Utiliza uma paleta de cores mais neutra semelhante à do NES Classic"
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:676
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Cortar jogos FM-TOWNS para 200 pixels de altura"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:677
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -11334,11 +11334,11 @@ msgstr ""
 "Corta os 40 pixels extras na parte inferior da tela, para torná-la padrão de "
 "200 pixels de altura, permitindo o uso de 'correção de proporção de aspecto'"
 
-#: engines/scumm/metaengine.cpp:694
+#: engines/scumm/metaengine.cpp:685
 msgid "Run in original 640 x 480 resolution"
 msgstr "Executar na resolução original de 640 x 480"
 
-#: engines/scumm/metaengine.cpp:695
+#: engines/scumm/metaengine.cpp:686
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -11346,27 +11346,27 @@ msgstr ""
 "Permite telas de pausa/reinicialização mais precisas, mas pode afetar o "
 "desempenho ou o uso do shader/redimensionador."
 
-#: engines/scumm/metaengine.cpp:702
+#: engines/scumm/metaengine.cpp:693
 msgid "Play simplified music"
 msgstr "Música simplificada"
 
-#: engines/scumm/metaengine.cpp:703
+#: engines/scumm/metaengine.cpp:694
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr "Esta música era destinada a Macs de baixo custo e usa apenas um canal."
 
-#: engines/scumm/metaengine.cpp:711
+#: engines/scumm/metaengine.cpp:702
 msgid "Enable smooth scrolling"
 msgstr "Habilitar rolagem suave"
 
-#: engines/scumm/metaengine.cpp:712
+#: engines/scumm/metaengine.cpp:703
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(em vez das etapas normais de rolagem de 8 pixels)"
 
-#: engines/scumm/metaengine.cpp:720
+#: engines/scumm/metaengine.cpp:711
 msgid "Allow semi-smooth scrolling"
 msgstr "Permitir rolagem parcialmente suave"
 
-#: engines/scumm/metaengine.cpp:721
+#: engines/scumm/metaengine.cpp:712
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
@@ -11374,11 +11374,11 @@ msgstr ""
 "Permite que a rolagem seja menos suave durante o movimento rápido da câmera "
 "na introdução."
 
-#: engines/scumm/metaengine.cpp:757
+#: engines/scumm/metaengine.cpp:748
 msgid "Enable low latency audio mode"
 msgstr "Habilitar áudio de baixa latência"
 
-#: engines/scumm/metaengine.cpp:758
+#: engines/scumm/metaengine.cpp:749
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
@@ -11388,11 +11388,11 @@ msgstr ""
 "do som. É recomendável habilitar esse recurso apenas se você tiver problemas "
 "de atraso de áudio durante o jogo normal."
 
-#: engines/scumm/metaengine.cpp:767
+#: engines/scumm/metaengine.cpp:758
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Habilitar a música \"A Pirate I Was Meant To Be\""
 
-#: engines/scumm/metaengine.cpp:768
+#: engines/scumm/metaengine.cpp:759
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -11402,37 +11402,37 @@ msgstr ""
 "Be\", que foi cortada em lançamentos internacionais. Observe que as legendas "
 "podem não estar totalmente traduzidas."
 
-#: engines/scumm/metaengine.cpp:786
+#: engines/scumm/metaengine.cpp:777
 msgid "Enable demo/kiosk mode"
 msgstr "Ativar modo de demonstração/kiosk"
 
-#: engines/scumm/metaengine.cpp:787
+#: engines/scumm/metaengine.cpp:778
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 "Habilita o modo de demonstração/kiosk na versão completa de Maniac Mansion."
 
-#: engines/scumm/metaengine.cpp:886
+#: engines/scumm/metaengine.cpp:877
 msgid "Down Left"
 msgstr "Para Baixo à Esquerda"
 
-#: engines/scumm/metaengine.cpp:899
+#: engines/scumm/metaengine.cpp:890
 msgid "Down Right"
 msgstr "Para Baixo à Direita"
 
-#: engines/scumm/metaengine.cpp:919
+#: engines/scumm/metaengine.cpp:910
 msgid "Up Left"
 msgstr "Para Cima à Esquerda"
 
-#: engines/scumm/metaengine.cpp:932
+#: engines/scumm/metaengine.cpp:923
 msgid "Up Right"
 msgstr "Para Cima à Direita"
 
-#: engines/scumm/metaengine.cpp:944
+#: engines/scumm/metaengine.cpp:935
 msgid "Switch weapon"
 msgstr "Trocar arma"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:958
+#: engines/scumm/metaengine.cpp:949
 msgid "Win the bike fight cheat"
 msgstr "Trapaça para vencer a briga de motos"
 

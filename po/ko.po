@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-27 12:18+0000\n"
+"POT-Creation-Date: 2024-11-27 22:48+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1009,7 +1009,7 @@ msgstr "상호작용"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:925 engines/twine/metaengine.cpp:430
+#: engines/scumm/metaengine.cpp:916 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1024,7 +1024,7 @@ msgstr "위쪽"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:892 engines/twine/metaengine.cpp:437
+#: engines/scumm/metaengine.cpp:883 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1038,7 +1038,7 @@ msgstr "아래쪽"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:905
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:896
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1053,7 +1053,7 @@ msgstr "왼쪽"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:912
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:903
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6170,7 +6170,7 @@ msgstr "속도 메뉴를 추가합니다. (PC 버전과 유사)"
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:777
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:768
 msgid "Enable copy protection"
 msgstr "복사 방지 기능 활성화"
 
@@ -6178,7 +6178,7 @@ msgstr "복사 방지 기능 활성화"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:778
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:769
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합니다."
 
@@ -6897,7 +6897,7 @@ msgstr "전투 전환"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:951 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:942 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "컷씬 건너뛰기"
@@ -7348,7 +7348,7 @@ msgstr "대화/상호작용"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:938
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:929
 msgid "Attack"
 msgstr "공격"
 
@@ -10398,11 +10398,11 @@ msgstr ""
 "몇 가지 현대적인 편의 시설이 활성화되었습니다. 예를 들어, 샘&맥스에서 가짜 사"
 "운드 로딩 화면을 제거하고 초기 저장 메뉴를 더욱 빠르게 만듭니다."
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:747
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:738
 msgid "Enable the original GUI and Menu"
 msgstr "원본 GUI 및 메뉴 활성화"
 
-#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:748
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:739
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -10515,11 +10515,11 @@ msgstr ""
 "전망 음악은 인트로 트랙의 일부입니다. 트랙에서 재생이 시작되는 위치를 조정합"
 "니다. 음악이 끊어지거나 이전 음악의 일부가 들리는 경우 이 기능을 사용합니다."
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:738
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:729
 msgid "Load modded audio"
 msgstr "개조된 오디오 불러오기"
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:739
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:730
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -11074,27 +11074,27 @@ msgstr "HE v71+ 지원이 컴파일 되지 않았음"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 지원이 컴파일 되지 않았음"
 
-#: engines/scumm/metaengine.cpp:667
+#: engines/scumm/metaengine.cpp:658
 msgid "Show Object Line"
 msgstr "개체 줄 표시"
 
-#: engines/scumm/metaengine.cpp:668
+#: engines/scumm/metaengine.cpp:659
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "개체의 이름을 화면 하단에 표시"
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:667
 msgid "Use NES Classic Palette"
 msgstr "NES 클래식 팔레트"
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:668
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용"
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:676
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "FM-TOWNS 게임을 200 픽셀 높이로 잘라냄"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:677
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -11102,11 +11102,11 @@ msgstr ""
 "화면 하단의 추가 40 픽셀을 잘라내어 일반 높이인 200 픽셀로 만들고, '화면비 교"
 "정'을 사용할 수 있도록 함"
 
-#: engines/scumm/metaengine.cpp:694
+#: engines/scumm/metaengine.cpp:685
 msgid "Run in original 640 x 480 resolution"
 msgstr "원본 640 x 480 해상도로 실행"
 
-#: engines/scumm/metaengine.cpp:695
+#: engines/scumm/metaengine.cpp:686
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -11114,38 +11114,38 @@ msgstr ""
 "이를 통해 더 정확한 일시 정지/재시작 배너가 가능하지만 성능이나 셰이더/스케일"
 "러 사용에 영향을 미칠 수 있습니다."
 
-#: engines/scumm/metaengine.cpp:702
+#: engines/scumm/metaengine.cpp:693
 msgid "Play simplified music"
 msgstr "단순화된 음악을 재생"
 
-#: engines/scumm/metaengine.cpp:703
+#: engines/scumm/metaengine.cpp:694
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr "이 음악은 저사양 Mac용으로 제작되었으며, 한 채널만 사용합니다."
 
-#: engines/scumm/metaengine.cpp:711
+#: engines/scumm/metaengine.cpp:702
 msgid "Enable smooth scrolling"
 msgstr "부드러운 스크롤 활성화"
 
-#: engines/scumm/metaengine.cpp:712
+#: engines/scumm/metaengine.cpp:703
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(일반적인 8 픽셀 단계 스크롤 대신)"
 
-#: engines/scumm/metaengine.cpp:720
+#: engines/scumm/metaengine.cpp:711
 msgid "Allow semi-smooth scrolling"
 msgstr "약간 부드러운 스크롤을 허용"
 
-#: engines/scumm/metaengine.cpp:721
+#: engines/scumm/metaengine.cpp:712
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
 "인트로에서 카메라가 빠르게 움직이는 동안 스크롤이 덜 부드럽도록 허용합니다."
 
-#: engines/scumm/metaengine.cpp:757
+#: engines/scumm/metaengine.cpp:748
 msgid "Enable low latency audio mode"
 msgstr "저지연 오디오 모드 활성화"
 
-#: engines/scumm/metaengine.cpp:758
+#: engines/scumm/metaengine.cpp:749
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
@@ -11155,11 +11155,11 @@ msgstr ""
 "일반 게임 플레이 중에 오디오 지연 문제가 발생하는 경우에만 이 기능을 활성화하"
 "는 것이 좋습니다."
 
-#: engines/scumm/metaengine.cpp:767
+#: engines/scumm/metaengine.cpp:758
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "\"A Pirate I Was Meant To Be\" 노래 활성화"
 
-#: engines/scumm/metaengine.cpp:768
+#: engines/scumm/metaengine.cpp:759
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -11169,36 +11169,36 @@ msgstr ""
 "널 출시 버전에서는 활성화합니다. 하지만 자막이 완전히 번역되지 않았을 수 있으"
 "니 주의하세요."
 
-#: engines/scumm/metaengine.cpp:786
+#: engines/scumm/metaengine.cpp:777
 msgid "Enable demo/kiosk mode"
 msgstr "데모/키오스크 모드 활성화"
 
-#: engines/scumm/metaengine.cpp:787
+#: engines/scumm/metaengine.cpp:778
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "매니악 맨션의 정식 버전에서 데모/키오스크 모드를 활성화하세요."
 
-#: engines/scumm/metaengine.cpp:886
+#: engines/scumm/metaengine.cpp:877
 msgid "Down Left"
 msgstr "왼쪽 아래"
 
-#: engines/scumm/metaengine.cpp:899
+#: engines/scumm/metaengine.cpp:890
 msgid "Down Right"
 msgstr "오른쪽 아래"
 
-#: engines/scumm/metaengine.cpp:919
+#: engines/scumm/metaengine.cpp:910
 msgid "Up Left"
 msgstr "왼쪽 위"
 
-#: engines/scumm/metaengine.cpp:932
+#: engines/scumm/metaengine.cpp:923
 msgid "Up Right"
 msgstr "오른쪽 위"
 
-#: engines/scumm/metaengine.cpp:944
+#: engines/scumm/metaengine.cpp:935
 msgid "Switch weapon"
 msgstr "무기 전환"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:958
+#: engines/scumm/metaengine.cpp:949
 msgid "Win the bike fight cheat"
 msgstr "자전거 대결에서 승리하는 치트"
 
