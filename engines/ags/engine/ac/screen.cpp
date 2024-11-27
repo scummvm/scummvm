@@ -68,6 +68,10 @@ void current_fade_out_effect() {
 		theTransition = _GP(play).next_screen_transition;
 	const bool instant_transition = (theTransition == FADE_INSTANT) ||
 									_GP(play).screen_tint > 0; // for some reason we do not play fade if screen is tinted
+	if (_GP(play).fast_forward) {
+		_GP(play).screen_is_faded_out |= (!instant_transition);
+		return;
+	}
 	if (instant_transition) {
 		if (!_GP(play).keep_screen_during_instant_transition)
 			set_palette_range(_G(black_palette), 0, 255, 0);
