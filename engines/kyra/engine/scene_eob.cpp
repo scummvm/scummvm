@@ -314,7 +314,7 @@ void EoBCoreEngine::addLevelItems() {
 	for (int i = 0; i < 1024; i++)
 		_levelBlockProperties[i].drawObjects = 0;
 
-	for (int i = 0; i < 600; i++) {
+	for (uint i = 0; i < _items.size(); i++) {
 		if (_items[i].level != _currentLevel || _items[i].block <= 0)
 			continue;
 		setItemPosition((Item *)&_levelBlockProperties[_items[i].block & 0x3FF].drawObjects, _items[i].block, i, _items[i].pos);

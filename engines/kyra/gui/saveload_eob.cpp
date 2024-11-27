@@ -152,19 +152,23 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_inf->loadState(in);
 	}
 
-	for (int i = 0; i < 600; i++) {
-		EoBItem *t = &_items[i];
-		t->nameUnid = in.readByte();
-		t->nameId = in.readByte();
-		t->flags = in.readByte();
-		t->icon = in.readSByte();
-		t->type = in.readSByte();
-		t->pos = in.readSByte();
-		t->block = in.readSint16BE();
-		t->next = in.readSint16BE();
-		t->prev = in.readSint16BE();
-		t->level = in.readByte();
-		t->value = in.readSByte();
+	uint32 numItems = (header.version < 24) ? 600 : in.readUint32BE();
+	_items.clear();
+
+	for (uint i = 0; i < numItems; i++) {
+		EoBItem t;
+		t.nameUnid = in.readByte();
+		t.nameId = in.readByte();
+		t.flags = in.readByte();
+		t.icon = in.readSByte();
+		t.type = in.readSByte();
+		t.pos = in.readSByte();
+		t.block = in.readSint16BE();
+		t.next = in.readSint16BE();
+		t.prev = in.readSint16BE();
+		t.level = in.readByte();
+		t.value = in.readSByte();
+		_items.push_back(t);
 	}
 
 	// No more data needed for party transfer
@@ -436,7 +440,8 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 	_inf->saveState(out);
 
-	for (int i = 0; i < 600; i++) {
+	out->writeUint32BE(_items.size());
+	for (uint i = 0; i < _items.size(); i++) {
 		EoBItem *t = &_items[i];
 		out->writeByte(t->nameUnid);
 		out->writeByte(t->nameId);
@@ -827,20 +832,22 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 
 	loadItemDefs();
 
+	_items.clear();
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
 	for (int i = 0; i < numItems; i++) {
-		EoBItem *t = &_items[i];
-		t->nameUnid = in.readByte();
-		t->nameId = in.readByte();
-		t->flags = in.readByte();
-		t->icon = in.readSByte();
-		t->type = in.readSByte();
-		t->pos = in.readSByte();
-		t->block = in.readSint16();
-		t->next = in.readSint16();
-		t->prev = in.readSint16();
-		t->level = in.readByte();
-		t->value = in.readSByte();
+		EoBItem t;
+		t.nameUnid = in.readByte();
+		t.nameId = in.readByte();
+		t.flags = in.readByte();
+		t.icon = in.readSByte();
+		t.type = in.readSByte();
+		t.pos = in.readSByte();
+		t.block = in.readSint16();
+		t.next = in.readSint16();
+		t.prev = in.readSint16();
+		t.level = in.readByte();
+		t.value = in.readSByte();
+		_items.push_back(t);
 	}
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
@@ -1254,9 +1261,15 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	_inf->saveState(out, true);
 
-	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
-	for (int i = 0; i < numItems; i++) {
-		EoBItem *t = &_items[i];
+	uint numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
+
+	if (numItems < _items.size())
+		warning("%s(): Number of items in play exceed the limit of the original game. Items will be missing in the generated save file which might break the game.", __FUNCTION__);
+
+	EoBItem dummyItem;
+
+	for (uint i = 0; i < numItems; i++) {
+		EoBItem *t = (i < _items.size()) ? &_items[i] : &dummyItem;
 		out->writeByte(t->nameUnid);
 		out->writeByte(t->nameId);
 		out->writeByte(t->flags);

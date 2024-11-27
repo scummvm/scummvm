@@ -2037,7 +2037,7 @@ private:
 	Screen_EoB *_screen;
 
 	int _highlight;
-	EoBItem *_oldItems;
+	Common::Array<EoBItem> _oldItems;
 
 	const uint16 *_portraitFrames;
 	const uint8 *_convertTable;
@@ -2072,12 +2072,10 @@ TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(
 	_strings2 = _vm->staticres()->loadStrings(kEoB2TransferStrings2, temp);
 	_labels = _vm->staticres()->loadStrings(kEoB2TransferLabels, temp);
 	_highlight = -1;
-	_oldItems = 0;
 }
 
 TransferPartyWiz::~TransferPartyWiz() {
 	_vm->gui()->notifyUpdateSaveSlotsList();
-	delete[] _oldItems;
 }
 
 bool TransferPartyWiz::start() {
@@ -2091,8 +2089,9 @@ bool TransferPartyWiz::start() {
 
 	convertStats();
 
-	_oldItems = new EoBItem[600];
-	memcpy(_oldItems, _vm->_items, sizeof(EoBItem) * 600);
+	_oldItems.clear();
+	for (Common::Array<EoBItem>::const_iterator it = _vm->_items.begin(); it != _vm->_items.end(); ++it)
+		_oldItems.push_back(*it);
 	_vm->loadItemDefs();
 
 	int selection = selectCharactersMenu();
@@ -2485,8 +2484,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 		break;
 	case 48:
 		if (itm1->value == 5) {
-			memset(itm2, 0, sizeof(EoBItem));
-			itm2->block = -1;
+			*itm2 = EoBItem();
 			return 0;
 		}
 		itm2->value = itm1->value;
@@ -2520,7 +2518,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 		break;
 	}
 
-	for (int i = 1; i < 600; i++) {
+	for (uint i = 1; i < _vm->_items.size(); i++) {
 		if (i == 60 || i == 62 || i == 63 || i == 83)
 			continue;
 		EoBItem *tmp = &_vm->_items[i];
@@ -2533,7 +2531,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	}
 
 	if (!match) {
-		for (int i = 1; i < 600; i++) {
+		for (uint i = 1; i < _vm->_items.size(); i++) {
 			if (i == 60 || i == 62 || i == 63 || i == 83)
 				continue;
 			EoBItem *tmp = &_vm->_items[i];
@@ -2547,8 +2545,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	}
 
 	if (!match) {
-		memset(itm2, 0, sizeof(EoBItem));
-		itm2->block = -1;
+		*itm2 = EoBItem();
 		return 0;
 	}
 

@@ -34,50 +34,54 @@ Common::SeekableReadStreamEndian *EoBCoreEngine::getItemDefinitionFile(int index
 
 void EoBCoreEngine::loadItemDefs() {
 	Common::SeekableReadStreamEndian *s = getItemDefinitionFile(0);
-	memset(_items, 0, sizeof(EoBItem) * 600);
+	_items.clear();
 	_numItems = s->readUint16();
 
-	for (int i = 0; i < 600; i++)
-		_items[i].block = -1;
-
 	for (int i = 0; i < _numItems; i++) {
-		_items[i].nameUnid = s->readByte();
-		_items[i].nameId = s->readByte();
-		_items[i].flags = s->readByte();
-		_items[i].icon = s->readSByte();
-		_items[i].type = s->readSByte();
-		_items[i].pos = s->readSByte();
-		_items[i].block = s->readSint16();
-		_items[i].next = s->readSint16();
-		_items[i].prev = s->readSint16();
-		_items[i].level = s->readByte();
-		_items[i].value = s->readSByte();
+		EoBItem it;
+		it.nameUnid = s->readByte();
+		it.nameId = s->readByte();
+		it.flags = s->readByte();
+		it.icon = s->readSByte();
+		it.type = s->readSByte();
+		it.pos = s->readSByte();
+		it.block = s->readSint16();
+		it.next = s->readSint16();
+		it.prev = s->readSint16();
+		it.level = s->readByte();
+		it.value = s->readSByte();
+		_items.push_back(it);
 	}
 
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		_items[498].block = _items[499].block = -2;
-
 		int temp = 0;
 		const uint8 *pos = _staticres->loadRawData(kEoB1MapLevelData, temp);
 
 		for (int i = _numItems; i < _numItems + temp / 14; i++) {
-			_items[i].nameUnid = *pos++;
-			_items[i].nameId = *pos++;
-			_items[i].flags = *pos++;
-			_items[i].icon = (int8)*pos++;
-			_items[i].type = (int8)*pos++;
-			_items[i].pos = (int8)*pos++;
-			_items[i].block = (int16)READ_BE_UINT16(pos);
+			EoBItem it;
+			it.nameUnid = *pos++;
+			it.nameId = *pos++;
+			it.flags = *pos++;
+			it.icon = (int8)*pos++;
+			it.type = (int8)*pos++;
+			it.pos = (int8)*pos++;
+			it.block = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].next = (int16)READ_BE_UINT16(pos);
+			it.next = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].prev = (int16)READ_BE_UINT16(pos);
+			it.prev = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].level = *pos++;
-			_items[i].value = (int8)*pos++;
+			it.level = *pos++;
+			it.value = (int8)*pos++;
+			_items.push_back(it);
 		}
 		_numItems += (temp / 14);
 		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[59].nameUnid = 96;
+
+		for (int i = _numItems; i < 500; i++)
+			_items.emplace_back(EoBItem());
+
+		_items[498].block = _items[499].block = -2;
 	}
 
 	if (_itemNamesStatic) {
@@ -139,6 +143,7 @@ void EoBCoreEngine::loadItemDefs() {
 }
 
 Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
+	assert(itemIndex < (Item)_items.size());
 	EoBItem *itm = &_items[itemIndex];
 
 	if (itm->block == -1)
@@ -147,7 +152,7 @@ Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
 	Item i = 1;
 	bool foundSlot = false;
 
-	for (; i < 600; i++) {
+	for (; i < (Item)_items.size(); i++) {
 		if (_items[i].block == -1) {
 			foundSlot = true;
 			break;
@@ -155,9 +160,10 @@ Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
 	}
 
 	if (!foundSlot)
-		return 0;
+		_items.push_back(*itm);
+	else
+		_items[i] = *itm;
 
-	memcpy(&_items[i], itm, sizeof(EoBItem));
 	return i;
 }
 
@@ -373,7 +379,7 @@ int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 	int res = 0;
 
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = _items[o1].prev) {
-		EoBItem *itm = &_items[o1];
+		const EoBItem *itm = &_items[o1];
 		forceLoop = false;
 		if (id != -1 || type != -1) {
 			if (((id != -1) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))

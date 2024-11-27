@@ -455,7 +455,7 @@ int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 			}
 
 		} else {
-			for (int i = 0; i < 600; i++) {
+			for (uint i = 0; i < _vm->_items.size(); i++) {
 				if (_vm->_items[i].level != e || _vm->_items[i].block != c)
 					continue;
 				_vm->_items[i].level = f;
@@ -755,7 +755,7 @@ int EoBInfProcessor::oeob_eval_v1(int8 *data) {
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EoBItem *itm = &_vm->_items[_vm->_itemInHand];
+	const EoBItem *itm = &_vm->_items[_vm->_itemInHand];
 	Common::String tempString1;
 	Common::String tempString2;
 
@@ -975,7 +975,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EoBItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
+	const EoBItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
 	Common::String tempString1;
 	Common::String tempString2;
 

@@ -136,6 +136,7 @@ struct EoBCharacter {
 };
 
 struct EoBItem {
+	EoBItem() : nameUnid(0), nameId(0), flags(0), icon(0), type(0), pos(0), block(-1), next(0), prev(0), level(0), value(0) {}
 	uint8 nameUnid;
 	uint8 nameId;
 	uint8 flags;
@@ -491,7 +492,7 @@ protected:
 
 	void reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger);
 
-	EoBItem *_items;
+	Common::Array<EoBItem> _items;
 	uint16 _numItems;
 	EoBItemType *_itemTypes;
 	char **_itemNames;

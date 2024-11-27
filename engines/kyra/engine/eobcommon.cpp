@@ -89,7 +89,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 	_faceShapes = 0;
 	_characters = 0;
-	_items = 0;
 	_itemTypes = 0;
 	_itemNames = 0;
 	_itemNamesStatic = 0;
@@ -299,7 +298,6 @@ EoBCoreEngine::~EoBCoreEngine() {
 	}
 
 	delete[] _characters;
-	delete[] _items;
 	delete[] _itemTypes;
 
 	releaseShpArr(_itemNames, 130);
@@ -527,8 +525,6 @@ Common::Error EoBCoreEngine::init() {
 	_monsters = new EoBMonsterInPlay[30]();
 
 	_characters = new EoBCharacter[6]();
-
-	_items = new EoBItem[600]();
 
 	_itemNames = new char*[130];
 	for (int i = 0; i < 130; i++) {
