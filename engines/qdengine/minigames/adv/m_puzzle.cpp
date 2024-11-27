@@ -33,7 +33,7 @@ namespace QDEngine {
 
 typedef Rect<float, mgVect2f> Rectf;
 
-MinigameInterface *createGame() {
+MinigameInterface *createMinigamePuzzle() {
 	return new Puzzle;
 }
 

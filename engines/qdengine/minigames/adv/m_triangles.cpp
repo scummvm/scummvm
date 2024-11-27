@@ -30,7 +30,7 @@
 
 namespace QDEngine {
 
-MinigameInterface *createMinigameTriangleGame() {
+MinigameInterface *createMinigameTriangle() {
 	return new MinigameTriangle(g_runtime);
 }
 

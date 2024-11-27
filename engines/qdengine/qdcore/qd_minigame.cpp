@@ -376,7 +376,7 @@ bool qdMiniGame::load_interface() {
 
 		// dogncat
 		} else if (_dll_name == "DLL\\triangles.dll") {
-			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameTriangleGame);
+			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameTriangle);
 			return true;
 		// scores.dll
 		// triangles.dll
