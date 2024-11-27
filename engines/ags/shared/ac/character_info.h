@@ -212,8 +212,8 @@ struct CharacterInfo {
 	void WriteToSavegame(Shared::Stream *out, const CharacterInfo2 &chinfo2) const;
 
 private:
-	// Fixups loop value, in case it's set to an invalid loop which cannot be used with the current view
-	void FixupCurrentLoop();
+	// Fixups loop and frame values, in case any of them are set to a value out of the valid range
+	void FixupCurrentLoopAndFrame();
 
 	// Helper functions that read and write first data fields,
 	// common for both game file and save.

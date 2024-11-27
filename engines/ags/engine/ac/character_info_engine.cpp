@@ -63,7 +63,7 @@ int CharacterInfo::get_blocking_bottom() const {
 	return y + 3;
 }
 
-void CharacterInfo::FixupCurrentLoop() {
+void CharacterInfo::FixupCurrentLoopAndFrame() {
 	// If current loop property exceeds number of loops,
 	// or if selected loop has no frames, then try select any first loop that has frames.
 	// NOTE: although this may seem like a weird solution to a problem,
@@ -82,6 +82,13 @@ void CharacterInfo::FixupCurrentLoop() {
 			loop = 0;
 		}
 	}
+
+	// If the last saved frame exceeds a new loop, then switch to frame 1
+	// (first walking frame) if walking, or frame 0 otherwise or if there's less than 2 frames.
+	int frames_in_loop = _GP(views)[view].loops[loop].numFrames;
+	if (frame >= frames_in_loop) {
+		frame = (walking > 0 && frames_in_loop > 1) ? 1 : 0;
+	}
 }
 
 void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
@@ -93,7 +100,7 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, st
 	// Turn around during walk
 	res = update_character_walkturning(chex);
 	// Fixup character's loop prior to any further logic updates
-	FixupCurrentLoop();
+	FixupCurrentLoopAndFrame();
 
 	// FIXME: refactor this nonsense!
 	// [IKM] Yes, it should return! upon getting RETURN_CONTINUE here
@@ -159,9 +166,6 @@ int CharacterInfo::update_character_walkturning(CharacterExtras *chex) {
 				} else break;
 			}
 			loop = turnlooporder[wantloop];
-			if (frame >= _GP(views)[view].loops[loop].numFrames)
-				frame = 0; // AVD: make sure the loop always has a valid frame
-			if (frame >= _GP(views)[view].loops[loop].numFrames) frame = 0; // AVD: make sure the loop always has a valid frame
 			walking -= TURNING_AROUND;
 			// if still turning, wait for next frame
 			if (walking % TURNING_BACKWARDS >= TURNING_AROUND)
@@ -218,14 +222,7 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 		}
 
 		// Fixup character's loop, it may be changed when making a walk-move
-		FixupCurrentLoop();
-
-		// If last saved frame exceeds new loop, then switch to frame 1
-		// (first walking frame) or frame 0 if there's less than 2 frames.
-		int frames_in_loop = _GP(views)[view].loops[loop].numFrames;
-		if (frame >= frames_in_loop) {
-			frame = (frames_in_loop >= 2) ? 1 : 0;
-		}
+		FixupCurrentLoopAndFrame();
 
 		doing_nothing = 0; // still walking?
 
