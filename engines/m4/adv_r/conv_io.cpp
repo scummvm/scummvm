@@ -451,7 +451,7 @@ static void conv_save_state(Conv *c) {
 	//----------------------------------------------------------------------------
 	// finish filling in conv_save_buff data with num of entries etc.
 
-	WRITE_LE_UINT32(&conv_save_buff[offset], myCNode);
+	WRITE_LE_INT32(&conv_save_buff[offset], myCNode);
 	offset += sizeof(int32);
 
 	WRITE_LE_UINT32(&conv_save_buff[offset], num_decls);
@@ -592,7 +592,7 @@ static Conv *conv_restore_state(Conv *c) {
 	// Skip header.
 	offset += sizeof(int32);
 
-	myCNode = READ_LE_UINT32(&conv_save_buff[offset]);
+	myCNode = READ_LE_INT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
 	/*int num_decls = */READ_LE_UINT32(&conv_save_buff[offset]);
