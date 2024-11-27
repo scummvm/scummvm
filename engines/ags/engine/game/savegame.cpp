@@ -599,6 +599,9 @@ HSaveError DoAfterRestore(const PreservedParams &pp, RestoredData &r_data) {
 			ch->_xSource = chan_info.XSource;
 			ch->_ySource = chan_info.YSource;
 			ch->_maximumPossibleDistanceAway = chan_info.MaxDist;
+
+			if ((chan_info.Flags & kSvgAudioPaused) != 0)
+				ch->pause();
 		}
 	}
 	if ((cf_in_chan > 0) && (AudioChans::GetChannel(cf_in_chan) != nullptr))

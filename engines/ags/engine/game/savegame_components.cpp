@@ -326,6 +326,14 @@ HSaveError ReadGameState(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Pre
 	return err;
 }
 
+// Savegame data format for RoomStatus
+enum AudioSvgVersion {
+	kAudioSvgVersion_Initial = 0,
+	kAudioSvgVersion_35026 = 1,       // source position settings
+	kAudioSvgVersion_36009 = 2,       // up number of channels
+	kAudioSvgVersion_36130 = 3060130, // playback state
+};
+
 HSaveError WriteAudio(Stream *out) {
 	// Game content assertion
 	out->WriteInt32(_GP(game).audioClipTypes.size());
@@ -348,14 +356,22 @@ HSaveError WriteAudio(Stream *out) {
 			out->WriteInt32(ch->_priority);
 			out->WriteInt32(ch->_repeat ? 1 : 0);
 			out->WriteInt32(ch->get_volume255());
-			out->WriteInt32(0); // unused
+			out->WriteInt32(0); // was redundant data
 			out->WriteInt32(ch->get_volume100());
 			out->WriteInt32(ch->get_panning());
 			out->WriteInt32(ch->get_speed());
-			// since version 1
+			// since version kAudioSvgVersion_35026
 			out->WriteInt32(ch->_xSource);
 			out->WriteInt32(ch->_ySource);
 			out->WriteInt32(ch->_maximumPossibleDistanceAway);
+			// since version kAudioSvgVersion_36130
+			int playback_flags = 0;
+			if (ch->is_paused())
+				playback_flags |= kSvgAudioPaused;
+			out->WriteInt32(playback_flags);
+			out->WriteInt32(0); // reserved 3 ints
+			out->WriteInt32(0);
+			out->WriteInt32(0);
 		} else {
 			out->WriteInt32(-1);
 		}
@@ -372,13 +388,6 @@ HSaveError WriteAudio(Stream *out) {
 		_GP(ambient)[i].WriteToFile(out);
 	return HSaveError::None();
 }
-
-// Savegame data format for RoomStatus
-enum AudioSvgVersion {
-	kAudioSvgVersion_Initial = 0,
-	kAudioSvgVersion_35026	 = 1, // source position settings
-	kAudioSvgVersion_36009	 = 2, // up number of channels
-};
 
 HSaveError ReadAudio(Stream *in, int32_t cmp_ver, soff_t cmp_size, const PreservedParams & /*pp*/, RestoredData &r_data) {
 	HSaveError err;
@@ -417,7 +426,7 @@ HSaveError ReadAudio(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Preserv
 			chan_info.Priority = in->ReadInt32();
 			chan_info.Repeat = in->ReadInt32();
 			chan_info.Vol = in->ReadInt32();
-			in->ReadInt32(); // unused
+			in->ReadInt32(); // was redundant data
 			chan_info.VolAsPercent = in->ReadInt32();
 			chan_info.Pan = in->ReadInt32();
 			chan_info.Speed = 1000;
@@ -426,6 +435,12 @@ HSaveError ReadAudio(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Preserv
 				chan_info.XSource = in->ReadInt32();
 				chan_info.YSource = in->ReadInt32();
 				chan_info.MaxDist = in->ReadInt32();
+			}
+			if (cmp_ver >= kAudioSvgVersion_36130) {
+				chan_info.Flags = in->ReadInt32();
+				in->ReadInt32(); // reserved 3 ints
+				in->ReadInt32();
+				in->ReadInt32();
 			}
 		}
 	}
@@ -1065,7 +1080,7 @@ struct ComponentHandlers {
 		},
 		{
 			"Audio",
-			kAudioSvgVersion_36009,
+			kAudioSvgVersion_36130,
 			kAudioSvgVersion_Initial,
 			WriteAudio,
 			ReadAudio
