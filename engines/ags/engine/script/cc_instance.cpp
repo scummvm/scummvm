@@ -219,6 +219,7 @@ ccInstance *ccInstance::CreateEx(PScript scri, const ccInstance *joined) {
 	// allocate and copy all the memory with data, code and strings across
 	ccInstance *cinst = new ccInstance();
 	if (!cinst->_Create(scri, joined)) {
+		delete cinst;
 		return nullptr;
 	}
 	return cinst;
