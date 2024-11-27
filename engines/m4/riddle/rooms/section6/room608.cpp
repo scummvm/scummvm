@@ -1581,94 +1581,7 @@ void Room608::parser() {
 			break;
 		}
 	} else if (useFlag && HERE("POLE")) {
-		switch (_G(kernel).trigger) {
-		case -1:
-			ws_walk(453, 311, nullptr, 1, 1);
-			break;
-		case 1:
-			player_set_commands_allowed(false);
-			player_update_info();
-			ws_hide_walker();
-			kernel_load_variant("608lock1");
-			digi_preload("950_s37");
-			digi_preload("950_s37a");
-
-			_ol2 = series_stream("608rp04", 5, 0x300, 16);
-			series_stream_break_on_frame(_ol2, 25, 3);
-			break;
-		case 3:
-			series_stream_break_on_frame(_ol2, 33, 30);
-			digi_play("950_s37", 2);
-			break;
-		case 4:
-			series_stream_break_on_frame(_ol2, 76, 5);
-			digi_play("950_s37a", 2);
-			break;
-		case 5:
-			series_stream_break_on_frame(_ol2, 77, 7);
-			digi_play("950_s37", 2);
-			break;
-		case 7:
-			terminateMachineAndNull(_end1);
-			terminateMachineAndNull(_pole);
-			terminateMachineAndNull(_stump);
-			_oldShould = 8;
-			digi_play("608_s01a", 1);
-			break;
-		case 10:
-			digi_unload("950_s37");
-			digi_unload("950_s37a");
-			_G(flags)[V186] = 1;
-			_end1 = series_show("608END", 0xf00, 16);
-
-			hotspot_set_active("STATUE", false);
-			hotspot_set_active("STATUE ", true);
-			hotspot_set_active("DRIFTWOOD STUMP ", false);
-			hotspot_set_active("DRIFTWOOD STUMP  ", true);
-			hotspot_set_active("POLE", false);
-			hotspot_set_active("POLE ", true);
-			hotspot_set_active("stone", false);
-
-			ws_unhide_walker();
-			player_update_info();
-			ws_walk(_G(player_info).x + 1, _G(player_info).y,
-				nullptr, 12, 4);
-			break;
-		case 12:
-			_ripLHandTalk = series_load("RIP TREK L HAND TALK POS4");
-			setGlobals1(_ripLHandTalk, 2, 6, 6, 7, 1, 6, 1, 1, 1);
-			digi_play("608r15", 1, 255, 15);
-			break;
-		case 15:
-			sendWSMessage_120000(2);
-			_oldShould = 10;
-			digi_play("608o01", 1, 255, 18);
-			break;
-		case 18:
-			sendWSMessage_110000(2);
-			digi_play("608r16", 1, 255, 20);
-			break;
-		case 20:
-			sendWSMessage_140000(-1);
-			_oldShould = 9;
-			digi_play("608o02", 1, 255, 22);
-			break;
-		case 22:
-			_oldShould = 1;
-			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
-			kernel_timing_trigger(100, 25);
-			break;
-		case 25:
-			player_set_commands_allowed(true);
-			digi_play("608r17", 1);
-			break;
-		case 30:
-			series_stream_break_on_frame(_ol2, 44, 4);
-			digi_play("608_s01", 1);
-			break;
-		default:
-			break;
-		}
+		usePole();
 	} else if (player_said_any("lung", "prostate")) {
 		switch (_G(kernel).trigger) {
 		case 1:
@@ -2156,6 +2069,111 @@ bool Room608::lookPuffin() {
 	}
 
 	return false;
+}
+
+void Room608::usePole() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		ws_walk(453, 311, nullptr, 1, 1);
+		break;
+
+	case 1:
+		player_set_commands_allowed(false);
+		player_update_info();
+		ws_hide_walker();
+		kernel_load_variant("608lock1");
+		digi_preload("950_s37");
+		digi_preload("950_s37a");
+
+		_ol2 = series_stream("608rp04", 5, 0x300, 10);
+		series_stream_break_on_frame(_ol2, 25, 3);
+		break;
+
+	case 3:
+		series_stream_break_on_frame(_ol2, 33, 30);
+		digi_play("950_s37", 2);
+		break;
+
+	case 4:
+		series_stream_break_on_frame(_ol2, 76, 5);
+		digi_play("950_s37a", 2);
+		break;
+
+	case 5:
+		series_stream_break_on_frame(_ol2, 77, 7);
+		digi_play("950_s37", 2);
+		break;
+
+	case 7:
+		terminateMachineAndNull(_end1);
+		terminateMachineAndNull(_pole);
+		terminateMachineAndNull(_stump);
+		_oldShould = 8;
+		digi_play("608_s01a", 1);
+		break;
+
+	case 10:
+		digi_unload("950_s37");
+		digi_unload("950_s37a");
+		_G(flags)[V186] = 1;
+		_end1 = series_show("608END", 0xf00, 16);
+
+		hotspot_set_active("STATUE", false);
+		hotspot_set_active("STATUE ", true);
+		hotspot_set_active("DRIFTWOOD STUMP ", false);
+		hotspot_set_active("DRIFTWOOD STUMP  ", true);
+		hotspot_set_active("POLE", false);
+		hotspot_set_active("POLE ", true);
+		hotspot_set_active("stone", false);
+
+		ws_unhide_walker();
+		player_update_info();
+		ws_walk(_G(player_info).x + 1, _G(player_info).y,
+			nullptr, 12, 4);
+		break;
+
+	case 12:
+		_ripLHandTalk = series_load("RIP TREK L HAND TALK POS4");
+		setGlobals1(_ripLHandTalk, 1, 6, 6, 7, 1, 6, 1, 1, 1);
+		digi_play("608r15", 1, 255, 15);
+		break;
+
+	case 15:
+		sendWSMessage_120000(2);
+		_oldShould = 10;
+		digi_play("608o01", 1, 255, 18);
+		break;
+
+	case 18:
+		sendWSMessage_110000(2);
+		digi_play("608r16", 1, 255, 20);
+		break;
+
+	case 20:
+		sendWSMessage_140000(-1);
+		_oldShould = 9;
+		digi_play("608o02", 1, 255, 22);
+		break;
+
+	case 22:
+		_oldShould = 1;
+		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		kernel_timing_trigger(100, 25);
+		break;
+
+	case 25:
+		player_set_commands_allowed(true);
+		digi_play("608r17", 1);
+		break;
+
+	case 30:
+		series_stream_break_on_frame(_ol2, 44, 4);
+		digi_play("608_s01", 1);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room608::syncGame(Common::Serializer &s) {

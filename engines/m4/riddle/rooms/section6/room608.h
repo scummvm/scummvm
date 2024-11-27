@@ -83,6 +83,7 @@ private:
 	bool takeLighter();
 	bool hornCordWater();
 	bool lookPuffin();
+	void usePole();
 
 public:
 	Room608() : Room() {}
