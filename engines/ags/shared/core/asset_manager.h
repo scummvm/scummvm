@@ -77,7 +77,7 @@ struct AssetPath {
 
 class AssetManager {
 public:
-	AssetManager() = default;
+	AssetManager();
 	~AssetManager() {
 		RemoveAllLibraries();
 	}
