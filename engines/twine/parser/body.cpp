@@ -23,6 +23,9 @@
 #include "twine/renderer/renderer.h"
 #include "common/memstream.h"
 
+#define	INFO_TRI	1
+#define	INFO_ANIM	2
+
 namespace TwinE {
 
 void BodyData::reset() {
@@ -181,7 +184,7 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	reset();
 	if (lba1) {
 		const uint16 flags = stream.readUint16LE();
-		animated = (flags & 2) != 0;
+		animated = (flags & INFO_ANIM) != 0;
 		bbox.mins.x = stream.readSint16LE();
 		bbox.maxs.x = stream.readSint16LE();
 		bbox.mins.y = stream.readSint16LE();
@@ -203,7 +206,7 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	} else {
 		// T_BODY_HEADER (lba2)
 		const uint32 flags = stream.readUint32LE();
-		animated = (flags & 2) != 0;
+		animated = (flags & INFO_ANIM) != 0;
 		stream.skip(4); // int16 size of header and int16 dummy
 		bbox.mins.x = stream.readSint32LE();
 		bbox.maxs.x = stream.readSint32LE();
