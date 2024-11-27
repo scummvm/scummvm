@@ -133,6 +133,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_scrollOffsetY = 0;
 
 	_pattern = 0;
+	_cursorDrawnFromScripts = false;
 }
 
 Draw::~Draw() {
