@@ -2145,6 +2145,13 @@ void Room608::usePole() {
 		break;
 
 	case 18:
+		// FIXME: GLB_TEMP_2 is used by player walker to set current frame.
+		// But it's been send to an invalid value by a sendWSMessage_10000
+		// call for animating old lady. Is something supposed to set a value?
+		// For now, do a dummy ws_walk to reset internal states
+		player_update_info();
+		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 4);
+
 		sendWSMessage_110000(2);
 		digi_play("608r16", 1, 255, 20);
 		break;
