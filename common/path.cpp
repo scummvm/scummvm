@@ -1206,7 +1206,6 @@ String Path::toConfig() const {
 			}
 			return path;
 		}, tmp);
-	return tmp;
 }
 
 Path Path::fromCommandLine(const String &value) {
