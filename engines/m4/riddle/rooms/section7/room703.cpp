@@ -139,8 +139,74 @@ void Room703::pre_parser() {
 }
 
 void Room703::parser() {
-	//TODO Parser
+	bool lookFl = player_said_any("look", "look at");
+	bool talkFl = player_said_any("talk", "talk to");
+	bool takeFl = player_said("take");
+	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (player_said("conv703a")) {
+		if (_G(kernel).trigger == 90)
+			conv_resume(conv_get_handle());
+		else
+			conv703a();
+	} else if (player_said("PRAYER WHEEL BROCHURE", "EMPTY NICHE") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		digi_play("com123", 1, 255, -1, 997);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #1") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		sub9EA78("703r04", _G(kernel).trigger);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #2") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		sub9EA78("703r09", _G(kernel).trigger);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #3") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		sub9EA78("703r10", _G(kernel).trigger);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #4") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		switch (_G(flags[V217])) {
+		case 1:
+			sub9EA78("704r09", _G(kernel).trigger);
+			break;
+			
+		case 2:
+			sub9EA78("705r04", _G(kernel).trigger);
+			break;
+
+		case 3:
+			sub9EA78("703r11", _G(kernel).trigger);
+			break;
+
+		case 4:
+			sub9EA78("705r14a", _G(kernel).trigger);
+			break;
+
+		case 5:
+			sub9EA78("706r10", _G(kernel).trigger);
+			break;
+
+		default:
+			break;
+		}
+	} // player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #4") && inv_player_has("PRAYER WHEEL BROCHURE")
+	else if (player_said("PRAYER WHEEL BROCHURE", "SERENITY WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("SERENITY WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("703r11", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "INSIGHT WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("INSIGHT WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("705r04", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PEACE WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("PEACE WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("704r09", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "TRUTH WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("TRUTH WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("705r14a", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "WISDOM WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("WISDOM WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("706r10", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (talkFl && player_said_any("MONK #1", "MONK #2", "MONK #3", "MONK #4") && _G(flags[V286]))
+		digi_play("com142", 1, 255, -1, -1);
+
+	//TODO incomplete implementation
 }
 
 void Room703::daemon() {
@@ -413,6 +479,18 @@ void Room703::daemon() {
 void Room703::callback(frac16 myMessage, machine *sender) {
 	kernel_trigger_dispatchx(myMessage);
 }
+
+void Room703::conv703a() {
+	//TODO not implemented
+	warning("STUB conv703a");
+}
+
+void Room703::sub9EA78(const char *digiName, int32 trigger) {
+	//TODO not implemented
+	warning("STUB sub9EA78");
+}
+
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

@@ -41,6 +41,8 @@ public:
 
 private:
 	static void callback(frac16 myMessage, machine *sender);
+	void conv703a();
+	void sub9EA78(const char *digiName, int32 trigger);
 	
 	machine *_monkMach = nullptr;
 	machine *_prayerWheelMach = nullptr;
