@@ -63,19 +63,12 @@ int CharacterInfo::get_blocking_bottom() const {
 	return y + 3;
 }
 
-void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
-	int res;
+void CharacterInfo::FixupCurrentLoop() {
+	// If current loop property exceeds number of loops,
+	// or if selected loop has no frames, then try select any first loop that has frames.
+	// NOTE: although this may seem like a weird solution to a problem,
+	// we do so for backwards compatibility; this approximately emulates older games behavior.
 
-	if (on != 1) return;
-
-	// walking
-	res = update_character_walking(chex);
-	// [IKM] Yes, it should return! upon getting RETURN_CONTINUE here
-	if (res == RETURN_CONTINUE) { // [IKM] now, this is one of those places...
-		return;                   //  must be careful not to screw things up
-	}
-
-	// Fixup character's view when possible
 	if (view >= 0 &&
 		(loop >= _GP(views)[view].numLoops || _GP(views)[view].loops[loop].numFrames == 0)) {
 		for (loop = 0;
@@ -89,9 +82,26 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, st
 			loop = 0;
 		}
 	}
+}
+
+void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
+	int res;
+
+	if (on != 1)
+		return;
+
+	// Turn around during walk
+	res = update_character_walkturning(chex);
+	// Fixup character's loop prior to any further logic updates
+	FixupCurrentLoop();
+
+	// FIXME: refactor this nonsense!
+	// [IKM] Yes, it should return! upon getting RETURN_CONTINUE here
+	if (res == RETURN_CONTINUE) { // [IKM] now, this is one of those places...
+		return;                   //  must be careful not to screw things up
+	}
 
 	int doing_nothing = 1;
-
 	update_character_moving(char_index, chex, doing_nothing);
 
 	// [IKM] 2012-06-28:
@@ -124,7 +134,7 @@ void CharacterInfo::UpdateFollowingExactlyCharacter() {
 		baseline = usebase + 1;
 }
 
-int CharacterInfo::update_character_walking(CharacterExtras *chex) {
+int CharacterInfo::update_character_walkturning(CharacterExtras *chex) {
 	if (walking >= TURNING_AROUND) {
 		// Currently rotating to correct direction
 		if (walkwait > 0) walkwait--;
@@ -207,19 +217,14 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				walkwaitcounter++;
 		}
 
-		if (loop >= _GP(views)[view].numLoops)
-			quitprintf("Unable to render character %d (%s) because loop %d does not exist in view %d", index_id, scrname, loop, view + 1);
+		// Fixup character's loop, it may be changed when making a walk-move
+		FixupCurrentLoop();
 
-		// check don't overflow loop
-		int framesInLoop = _GP(views)[view].loops[loop].numFrames;
-		if (frame > framesInLoop) {
-			frame = 1;
-
-			if (framesInLoop < 2)
-				frame = 0;
-
-			if (framesInLoop < 1)
-				quitprintf("Unable to render character %d (%s) because there are no frames in loop %d", index_id, scrname, loop);
+		// If last saved frame exceeds new loop, then switch to frame 1
+		// (first walking frame) or frame 0 if there's less than 2 frames.
+		int frames_in_loop = _GP(views)[view].loops[loop].numFrames;
+		if (frame >= frames_in_loop) {
+			frame = (frames_in_loop >= 2) ? 1 : 0;
 		}
 
 		doing_nothing = 0; // still walking?
