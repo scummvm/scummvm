@@ -202,6 +202,7 @@ Common::SeekableReadStream *makeReadStream(const char *filename, int index) {
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
 		delete file;
+		warning("HQR: Could not open %s", filename);
 		return nullptr;
 	}
 

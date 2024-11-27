@@ -155,9 +155,17 @@ void Resources::preloadInventoryItems() {
 		// lba2 has this data in code
 		return;
 	}
-	const int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
-	if (numEntries > NUM_INVENTORY_ITEMS) {
-		error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
+	int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
+	if (_engine->isPreview()) {
+		if (numEntries != 32) {
+			error("Unexpected inventory items for lba1 preview version: %i/32", numEntries);
+		}
+		// TODO: this is obviously a hack
+		numEntries = NUM_INVENTORY_ITEMS;
+	} else {
+		if (numEntries > NUM_INVENTORY_ITEMS) {
+			error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
+		}
 	}
 	debugC(1, TwinE::kDebugResources, "preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
@@ -200,7 +208,9 @@ void Resources::initResources() {
 		}
 
 		if (!_holomapPointModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL), _engine->isLBA1())) {
-			error("Failed to load holomap point model");
+			if (!_engine->isPreview()) {
+				error("Failed to load holomap point model");
+			}
 		}
 
 		if (!_holomapArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL), _engine->isLBA1())) {
@@ -212,7 +222,9 @@ void Resources::initResources() {
 		}
 
 		if (!_trajectories.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM), _engine->isLBA1())) {
-			error("Failed to parse trajectory data");
+			if (!_engine->isPreview()) {
+				error("Failed to parse trajectory data");
+			}
 		}
 		debugC(1, TwinE::kDebugResources, "preload %i trajectories", (int)_trajectories.getTrajectories().size());
 	} else if (_engine->isLBA2()) {
@@ -226,13 +238,16 @@ void Resources::initResources() {
 
 	loadMovieInfo();
 
-	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
-	for (int32 i = 0; i < textEntryCount / 2; ++i) {
-		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile._languageId, _engine->isLBA1(), textEntryCount)) {
-			error("HQR ERROR: Parsing textbank %i failed", i);
+	if (!_engine->isPreview()) {
+		// TODO: where is the text in the preview version?
+		const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
+		for (int32 i = 0; i < textEntryCount / 2; ++i) {
+			if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile._languageId, _engine->isLBA1(), textEntryCount)) {
+				error("HQR ERROR: Parsing textbank %i failed for language %i (%i entries)", i, _engine->_cfgfile._languageId, textEntryCount);
+			}
 		}
+		debugC(1, TwinE::kDebugResources, "Loaded %i text banks", textEntryCount / 2);
 	}
-	debugC(1, TwinE::kDebugResources, "Loaded %i text banks", textEntryCount / 2);
 }
 
 const TextEntry *Resources::getText(TextBankId textBankId, TextId index) const {
@@ -254,7 +269,11 @@ void Resources::loadMovieInfo() {
 	uint8 *content = nullptr;
 	int32 size;
 	if (_engine->isLBA1()) {
-		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+		if (_engine->isPreview()) {
+			size = 0;
+		} else {
+			size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+		}
 	} else {
 		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, 48);
 	}

@@ -105,7 +105,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_NO_FLAGS | TwinE::TF_PREVIEW,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -114,7 +114,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_NO_FLAGS | TwinE::TF_PREVIEW,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -127,7 +127,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 298697),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | TwinE::TF_PREVIEW,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -136,7 +136,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 298697),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | TwinE::TF_PREVIEW,
 		GUIO1(GUIO_NONE)
 	},
 

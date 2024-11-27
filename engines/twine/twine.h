@@ -261,6 +261,7 @@ public:
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
 	bool isLBASlideShow() const { return _gameType == TwineGameType::GType_LBASHOW; }
+	bool isPreview() const { return (_gameFlags & TwinE::TF_PREVIEW) != 0; }
 	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDotEmuEnhanced() const { return (_gameFlags & TwinE::TF_DOTEMU_ENHANCED) != 0; }
 	bool isLba1Classic() const { return (_gameFlags & TwinE::TF_LBA1_CLASSIC) != 0; }
