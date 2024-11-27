@@ -652,44 +652,32 @@ bool Room605::takePupilDisk() {
 				triggerMachineByHashCallback, "take pupil");
 			sendWSMessage_10000(1, _ripley, _ripHandOnIris, 1, 26, 2,
 				_ripHandOnIris, 26, 26, 1);
-			return true;
+			break;
 		}
-		break;
-
-	case 1:
-		_ttShould = 7;
-		return true;
+		return false;
 
 	case 2:
 		sendWSMessage_10000(1, _ripley, _ripHandOnIris, 27, 41, 6,
 			_ripHandOnIris, 41, 41, 1);
-		digi_play("605r15", 1, 255, 4);
-		return true;
+		digi_play("605r15", 1, 255, 3);
+		break;
 
-	case 4:
-		_ttShould = 6;
-		digi_play("605t06", 1, 255, 8);
-		return true;
+	case 3:
+		digi_play(_G(flags)[V197] ? "605r33" : "605r32", 1);
+		break;
 
 	case 6:
 		terminateMachineAndNull(_ripley);
-		ws_unhide_walker();
-		return true;
-
-	case 8:
 		series_unload(_ripHandOnIris);
-		_ttShould = 0;
-		_G(kernel).trigger_mode = KT_DAEMON;
-		kernel_timing_trigger(1, 200);
+		ws_unhide_walker();
 		player_set_commands_allowed(true);
-		_G(flags)[V197] = 1;
-		return true;
+		break;
 
 	default:
-		break;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool Room605::sleeveDisk1() {
