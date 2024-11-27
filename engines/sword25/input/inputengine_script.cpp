@@ -163,10 +163,38 @@ static int wasKeyDown(lua_State *L) {
 	return 1;
 }
 
+static int setMouseX(lua_State *L) {
+	InputEngine *pIE = getIE();
+
+	pIE->setMouseX((int)luaL_checknumber(L, 1));
+	return 0;
+}
+
+static int setMouseY(lua_State *L) {
+	InputEngine *pIE = getIE();
+
+	pIE->setMouseY((int)luaL_checknumber(L, 1));
+	return 0;
+}
+
 static void theCharacterCallback(int character) {
 	characterCallbackPtr->_character = static_cast<byte>(character);
 	lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
 	characterCallbackPtr->invokeCallbackFunctions(L, 1);
+}
+
+static int registerCharacterCallback(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TFUNCTION);
+	characterCallbackPtr->registerCallbackFunction(L, 1);
+
+	return 0;
+}
+
+static int unregisterCharacterCallback(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TFUNCTION);
+	characterCallbackPtr->unregisterCallbackFunction(L, 1);
+
+	return 0;
 }
 
 static void theCommandCallback(int command) {
@@ -175,10 +203,18 @@ static void theCommandCallback(int command) {
 	commandCallbackPtr->invokeCallbackFunctions(L, 1);
 }
 
-// Marks a function that should never be used
-static int dummyFuncError(lua_State *L) {
-	error("Dummy function invoked by LUA");
-	return 1;
+static int registerCommandCallback(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TFUNCTION);
+	commandCallbackPtr->registerCallbackFunction(L, 1);
+
+	return 0;
+}
+
+static int unregisterCommandCallback(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TFUNCTION);
+	commandCallbackPtr->unregisterCallbackFunction(L, 1);
+
+	return 0;
 }
 
 static const char *PACKAGE_LIBRARY_NAME = "Input";
@@ -193,14 +229,14 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 	{"IsLeftDoubleClick", isLeftDoubleClick},
 	{"GetMouseX", getMouseX},
 	{"GetMouseY", getMouseY},
-	{"SetMouseX", dummyFuncError},
-	{"SetMouseY", dummyFuncError},
+	{"SetMouseX", setMouseX},
+	{"SetMouseY", setMouseY},
 	{"IsKeyDown", isKeyDown},
 	{"WasKeyDown", wasKeyDown},
-	{"RegisterCharacterCallback", dummyFuncError},	// debug
-	{"UnregisterCharacterCallback", dummyFuncError},
-	{"RegisterCommandCallback", dummyFuncError},
-	{"UnregisterCommandCallback", dummyFuncError},
+	{"RegisterCharacterCallback", registerCharacterCallback},
+	{"UnregisterCharacterCallback", unregisterCharacterCallback},
+	{"RegisterCommandCallback", registerCommandCallback},
+	{"UnregisterCommandCallback", unregisterCommandCallback},
 	{0, 0}
 };
 

@@ -206,6 +206,16 @@ bool InputEngine::wasKeyDown(uint keyCode) {
 	       ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
 }
 
+void InputEngine::setMouseX(int posX) {
+	_mouseX = posX;
+	g_system->warpMouse(_mouseX, _mouseY);
+}
+
+void InputEngine::setMouseY(int posY) {
+	_mouseY = posY;
+	g_system->warpMouse(_mouseX, _mouseY);
+}
+
 void InputEngine::setCharacterCallback(CharacterCallback callback) {
 	_characterCallback = callback;
 }

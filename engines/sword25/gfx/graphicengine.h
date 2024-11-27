@@ -119,6 +119,20 @@ public:
 	*/
 	bool endFrame();
 
+	// Debug methods
+
+	/**
+	 * Draws a line in the frame buffer
+	 *
+	 * This method must be called between calls to StartFrame() and EndFrame(), and is intended only for debugging
+	 * purposes. The line will only appear for a single frame. If the line is to be shown permanently, it must be
+	 * called for every frame.
+	 * @param Start      The starting point of the line
+	 * @param End        The ending point of the line
+	 * @param Color      The color of the line. The default is BS_RGB (255,255,255) (White)
+	 */
+	void drawDebugLine(const Vertex &start, const Vertex &end, uint color = BS_RGB(255, 255, 255));
+
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
 	 * the interface boards the image as a 16th of it's original size.
@@ -204,6 +218,13 @@ public:
 	bool getVsync() const;
 
 	/**
+	 * Returns true if the engine is running in Windowed mode.
+	 */
+	bool isWindowed() {
+		return false;
+	}
+
+	/**
 	 * Fills a rectangular area of the frame buffer with a color.
 	 * Notes: It is possible to create transparent rectangles by passing a color with an Alpha value of 255.
 	 * @param FillRectPtr   Pointer to a Common::Rect, which specifies the section of the frame buffer to be filled.
@@ -280,6 +301,7 @@ private:
 		uint _color;
 	};
 
+	Common::Array<DebugLine> _debugLines;
 };
 
 } // End of namespace Sword25
