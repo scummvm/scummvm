@@ -94,14 +94,14 @@ Puzzle::Puzzle() {
 	assert(flySpeed_ > 0.f);
 	returnSpeed_ = getParameter("inventory_return_speed", -1.f);
 
+	warning("STUB: Puzzle::Puzzle()");
+
+#if 0
 	const char *name_begin = g_runtime->parameter("obj_name_begin", "obj_");
 
 	char buf[128];
 	buf[127] = 0;
 
-	warning("STUB: Puzzle::Puzzle()");
-
-#if 0
 	XBuffer gameData;
 	for (int idx = 0; idx < gameSize_; ++idx) {
 		snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
@@ -162,7 +162,7 @@ Puzzle::~Puzzle() {
 }
 
 void Puzzle::rotate(int item) {
-	assert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < (int)nodes_.size());
 	nodes_[item].angle = (nodes_[item].angle + 1) % angles_;
 }
 
@@ -171,7 +171,7 @@ int Puzzle::stidx(int idx) const {
 }
 
 bool Puzzle::testPlace(int item) const {
-	assert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < (int)nodes_.size());
 	return nodes_[item].pos == item && nodes_[item].angle == 0;
 }
 
@@ -191,7 +191,7 @@ bool Puzzle::isOnMouse(const Node& node) const {
 
 void Puzzle::put(int where, int what, float flowSpeed) {
 	assert(where < (int)field_.size());
-	assert(what >= 0 && what < nodes_.size());
+	assert(what >= 0 && what < (int)nodes_.size());
 
 	Node& node = nodes_[what];
 	int start = node.pos;
@@ -266,8 +266,8 @@ void Puzzle::quant(float dt) {
 		else
 			fit = flyObjs_.erase(fit);
 
-	if (inField_ < nodes_.size() && g_runtime->getTime() > nextObjTime_ &&
-			(stack_.size() < stackSize_ - 1 || (stack_.size() < stackSize_ && pickedItem_ == -1))) { // нужно добавить в инвентори фишку
+	if (inField_ < (int)nodes_.size() && g_runtime->getTime() > nextObjTime_ &&
+			((int)stack_.size() < stackSize_ - 1 || ((int)stack_.size() < stackSize_ && pickedItem_ == -1))) { // нужно добавить в инвентори фишку
 		// ищем случайный не выставленный фрагмент
 		int freeIdx = round(g_runtime->rnd(0.f, nodes_.size() - 1));
 		Nodes::iterator it = nodes_.begin();
@@ -292,7 +292,7 @@ void Puzzle::quant(float dt) {
 	mgVect2f mouse = g_runtime->mousePosition();
 
 	int hovPlace = -1;  // Номер места которое сейчас под мышкой
-	for (int idx = 0; idx < stack_.size(); ++idx)
+	for (int idx = 0; idx < (int)stack_.size(); ++idx)
 		if (nodes_[stack_[idx]].obj.hit(mouse)) {
 			hovPlace = stidx(idx);
 			break;
@@ -360,7 +360,7 @@ void Puzzle::quant(float dt) {
 		} else if (hovPlace < -1) { // клик по стеку
 			int hovStack = stidx(hovPlace);
 			if (pickedItem_ == -1) // на мыши ничего нет
-				if (hovStack < stack_.size()) { // взять фрагмент из стека на мышь
+				if (hovStack < (int)stack_.size()) { // взять фрагмент из стека на мышь
 					g_runtime->event(EVENT_GET, mouse);
 					Indexes::iterator it = stack_.begin() + hovStack;
 					assert(*it >= 0);
@@ -368,7 +368,7 @@ void Puzzle::quant(float dt) {
 					pickedItem_ = *it;
 					nodes_[pickedItem_].pos = mouseObjPose_;
 					stack_.erase(it);
-					for (int idx = hovStack; idx < stack_.size(); ++idx)
+					for (int idx = hovStack; idx < (int)stack_.size(); ++idx)
 						put(stidx(idx), stack_[idx], flySpeed_);
 				} else // пустой клик в области стека
 					g_runtime->event(EVENT_CLICK, mouse);
@@ -394,7 +394,7 @@ void Puzzle::quant(float dt) {
 				}
 			} else  if (hovPlace < -1) { // клик по стеку
 				int hovStack = stidx(hovPlace);
-				if (hovStack < stack_.size()) { // покрутить внутри стека
+				if (hovStack < (int)stack_.size()) { // покрутить внутри стека
 					g_runtime->event(EVENT_ROTATE_IN_STACK, mouse);
 					rotate(stack_[hovStack]);
 				} else // попытка прокрутить пустое место
@@ -406,7 +406,7 @@ void Puzzle::quant(float dt) {
 	}
 
 	bool iWin = true;
-	for (int idx = 0; idx < nodes_.size(); ++idx) {
+	for (int idx = 0; idx < (int)nodes_.size(); ++idx) {
 		Node& node = nodes_[idx];
 		if (node.pos != -1) {
 			if (node.pos >= 0) {
@@ -437,7 +437,7 @@ void Puzzle::quant(float dt) {
 }
 
 const mgVect3f &Puzzle::position(int num) const {
-	assert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < (int)positions_.size());
 	// Если глобальный поворот ненулевой, пересчитываем индекс
 	if (globalAngle_ > 0) {
 		int size = sqrt((float)gameSize_);
@@ -451,7 +451,7 @@ const mgVect3f &Puzzle::position(int num) const {
 		}
 		num = y * (size + 1) + x;
 	}
-	assert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < (int)positions_.size());
 	return positions_[num];
 }
 

@@ -133,7 +133,7 @@ Scores::Scores() {
 
 	outMaxLevel_ = g_runtime->getObject(g_runtime->parameter("for_game_level"));
 	if (outMaxLevel_) {
-		int level = 0;
+		uint level = 0;
 		for (; level < levels_.size(); ++level)
 			if (levels_[level].data.size() < levels_[level].games.size())
 				break;
@@ -157,7 +157,7 @@ Scores::~Scores() {
 }
 
 void Scores::quant(float dt) {
-	assert(level_ >= 0 && level_ < levels_.size());
+	assert(level_ >= 0 && level_ < (int)levels_.size());
 	const Level& lvl = levels_[level_];
 
 	if (level_ != preLevel_) {
@@ -166,19 +166,19 @@ void Scores::quant(float dt) {
 
 		g_runtime->setText(currentLevel_, lvl.level);
 
-		for (int idx = 0; idx < games_.size(); ++idx)
+		for (int idx = 0; idx < (int)games_.size(); ++idx)
 			g_runtime->hide(games_[idx]);
 
-		for (int idx = 0; idx < games_.size(); ++idx) {
-			if (idx < lvl.data.size()) {
+		for (int idx = 0; idx < (int)games_.size(); ++idx) {
+			if (idx < (int)lvl.data.size()) {
 				const GameData& data = lvl.data[idx];
 				int gameId = data.num;
 				int gameNum;
-				for (gameNum = 0; gameNum < lvl.games.size(); ++gameNum)
+				for (gameNum = 0; gameNum < (int)lvl.games.size(); ++gameNum)
 					if (gameId == lvl.games[gameNum])
 						break;
-				assert(gameNum < lvl.games.size());
-				assert(gameNum < games_.size());
+				assert(gameNum < (int)lvl.games.size());
+				assert(gameNum < (int)games_.size());
 				games_[gameNum].setState(Common::String::format("%d", level_).c_str());
 				games_[gameNum]->set_R(positions_[idx]);
 				g_runtime->setText(getName(bestScore_, idx), data.info._bestScore);
@@ -195,7 +195,7 @@ void Scores::quant(float dt) {
 	}
 
 	if (g_runtime->mouseLeftPressed()) {
-		if (level_ < levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(g_runtime->mousePosition()))
+		if (level_ < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(g_runtime->mousePosition()))
 			++level_;
 		else if (level_ > 0 && prev_.hit(g_runtime->mousePosition()))
 			--level_;

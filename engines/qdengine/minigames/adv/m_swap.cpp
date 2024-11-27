@@ -71,7 +71,7 @@ Swap::Swap(MinigameManager *runtime) {
 		return;
 	nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
 
-	const char *name_begin = _runtime->parameter("obj_name_begin", "obj_");
+	/*const char *name_begin = */_runtime->parameter("obj_name_begin", "obj_");
 
 	warning("STUB: Swap::Swap()");
 #if 0
@@ -201,19 +201,19 @@ void Swap::quant(float dt) {
 		if (!testPlace(idx))
 			break;
 
-	if (idx == nodes_.size()) {
+	if (idx == (int)nodes_.size()) {
 		deactivate();
 		setState(MinigameInterface::GAME_WIN);
 	}
 }
 
 const mgVect3f &Swap::position(int num) const {
-	assert(num >= 0 && num < positions_.size());
+	assert(num >= 0 && num < (int)positions_.size());
 	return positions_[num];
 }
 
 void Swap::put(int item, bool hl) {
-	assert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < (int)nodes_.size());
 	nodes_[item].obj->set_R(position(item));
 	nodes_[item].obj.setState(getStateName(nodes_[item].angle, hl));
 
@@ -230,13 +230,13 @@ void Swap::deactivate() {
 }
 
 bool Swap::testPlace(int item) const {
-	assert(item >= 0 && item < nodes_.size());
+	assert(item >= 0 && item < (int)nodes_.size());
 	return nodes_[item].home == item && nodes_[item].angle == 0;
 }
 
 void Swap::swap(int item1, int item2, bool silent) {
-	assert(item1 >= 0 && item1 < nodes_.size());
-	assert(item2 >= 0 && item2 < nodes_.size());
+	assert(item1 >= 0 && item1 < (int)nodes_.size());
+	assert(item2 >= 0 && item2 < (int)nodes_.size());
 
 	bool res = false;
 	if (!silent) {
@@ -269,8 +269,8 @@ void Swap::swap(int item1, int item2, bool silent) {
 }
 
 void Swap::rotate(int item1, int item2, bool silent, bool avto) {
-	assert(item1 >= 0 && item1 < nodes_.size());
-	assert(item2 >= 0 && item2 < nodes_.size());
+	assert(item1 >= 0 && item1 < (int)nodes_.size());
+	assert(item2 >= 0 && item2 < (int)nodes_.size());
 
 	if (!silent) {
 		if (testPlace(item1)) // сняли со своего места
