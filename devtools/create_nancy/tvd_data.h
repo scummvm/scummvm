@@ -44,8 +44,8 @@ const SoundChannelInfo _tvdToNancy2SoundChannelInfo = {
 	{ 3, 4, 5, 6, 17, 18, 20, 21, 22, 23, 24, 25, 26, 31 }
 };
 
-const Common::Array<Common::Language> _tvdLanguagesOrder = {
-	Common::Language::EN_ANY
+const Common::Array<GameLanguage> _tvdLanguagesOrder = {
+	GameLanguage::kEnglish
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue = {
