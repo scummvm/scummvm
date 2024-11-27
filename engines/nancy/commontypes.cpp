@@ -410,7 +410,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 
 			break;
 		case MKTAG('L', 'A', 'N', 'G') :
-			// Order of languages inside game data
+			// Not used anymore
 			num = stream.readUint16LE();
 			languageID = -1;
 			for (uint16 i = 0; i < num; ++i) {
@@ -424,6 +424,42 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			}
 
 			break;
+		case MKTAG('L', 'A', 'N', '2') : {
+			// Order of languages inside game data
+			enum GameLanguage : byte { kEnglish = 0, kRussian = 1, kGerman = 2, kFrench = 3 };
+
+			num = stream.readUint16LE();
+			languageID = -1;
+			GameLanguage expectedLang = kEnglish;
+			switch (language) {
+				case Common::Language::EN_ANY:
+					languageID = kEnglish;
+					break;
+				case Common::Language::RU_RUS:
+					languageID = kRussian;
+					break;
+				case Common::Language::DE_DEU:
+					languageID = kGerman;
+					break;
+				case Common::Language::FR_FRA:
+					languageID = kFrench;
+					break;
+				default:
+					break;
+			}
+
+			for (uint16 i = 0; i < num; ++i) {
+				if (stream.readByte() == expectedLang) {
+					languageID = expectedLang;
+				}
+			}
+
+			if (languageID == -1) {
+				error("Language not present in nancy.dat");
+			}
+
+			break;
+		}
 		case MKTAG('C', 'D', 'L', 'G') :
 			// Conditional dialogue
 			num = stream.readUint16LE();
