@@ -1840,7 +1840,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 index = Func9F4D_16();
 			// We don't save the index, instead we make sure that we add them in the right
 			// order and use the array to keep track
-			assert(index - 1 == DialogueChoices.size());
+			// TODO: Removed this assert, during the dialogue in the beginning of chapter
+			// 3 (at the fort) an index of 3 came up when only one item had been there before
+			// Not sure if the way of handling it still works or reflects the game, needs
+			// to be tested
+			// assert(index - 1 == DialogueChoices.size());
 			uint16 offset = ReadWord();
 			uint16 numLines = ReadWord();
 			Common::StringArray lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
@@ -2089,6 +2093,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Unknown opcode so far
 			// Seems to load something from an object or scene, but not sure
 			ReadByte();
+		} else if (opcode1 == 0x03A) {
+			// TODO: Unknown opcode so far - happens at the end of the chapter 2 after
+			// cutting the ropes with the axe
+			// 0037:D82C proc
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			ReadWord();
+			ReadWord();
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 			// TODO: No idea what the byte does
