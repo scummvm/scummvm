@@ -457,7 +457,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 			else if (useloop >= maxLoops)
 				useloop = 0;
 
-			animate_character(this, useloop, idle_anim_speed, (idletime == 0) ? 1 : 0, 1);
+			animate_character(this, useloop, idle_anim_speed, (idletime == 0) ? 1 : 0 /* repeat */);
 
 			// don't set Animating while the idle anim plays (TODO: investigate why?)
 			animating = 0;
