@@ -44,6 +44,8 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	Common::String tmpFileName = fileName.baseName();
 	tmpFileName.toLowercase();
 	Video::VideoDecoder *animation = NULL;
+	
+ debug(1, "Loading animation %s", fileName.toString().c_str());
 
 	if (tmpFileName.hasSuffix(".rlf"))
 		animation = new RLFDecoder();
@@ -69,11 +71,25 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	return animation;
 }
 
-void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, bool skippable, Subtitle *sub) {
-	Common::Rect dst = destRect;
-	// If destRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
+  /**
+   * Play video at specified location.
+   *
+   * Pauses clock & normal game loop for duration of video; will still update & render subtitles & cursor.
+   *
+   * @param vid       Source video
+   * @param dstRect   Rectangle to play video into, defined relative to working window origin; video will scale to rectangle automatically.
+ 	 * @param skippable Allow video to be skipped
+   * @param sub       Subtitle associated with video
+   */	
+	 
+void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, Subtitle *sub) {
+	Common::Rect dst = dstRect;
+	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
 	if (dst.isEmpty())
 		dst = Common::Rect(vid.getWidth(), vid.getHeight());
+
+	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(dst);
+  debug(1, "Playing video, size %d x %d", outSurface.w, outSurface.h);
 
 	Graphics::Surface *scaled = NULL;
 
@@ -82,8 +98,6 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 		scaled->create(dst.width(), dst.height(), vid.getPixelFormat());
 	}
 
-	uint16 x = _workingWindow.left + dst.left;
-	uint16 y = _workingWindow.top + dst.top;
 	uint16 finalWidth = dst.width() < _workingWindow.width() ? dst.width() : _workingWindow.width();
 	uint16 finalHeight = dst.height() < _workingWindow.height() ? dst.height() : _workingWindow.height();
 	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
@@ -122,22 +136,20 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 			const Graphics::Surface *frame = vid.decodeNextFrame();
 			if (sub && showSubs)
 				sub->process(vid.getCurFrame());
-
 			if (frame) {
 				if (scaled) {
 					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
-					frame = scaled;
+					frame = scaled; 
 				}
-				Common::Rect rect = Common::Rect(x, y, x + finalWidth, y + finalHeight);
-				_renderManager->copyToScreen(*frame, rect, 0, 0);
+				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
+				debug(2,"Blitting from area %d x %d to video output surface", frame->w, frame->h);
+				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));
 				_renderManager->processSubs(0);
 			}
 		}
-
 		// Always update the screen so the mouse continues to render
-		_system->updateScreen();
-
-		_system->delayMillis(vid.getTimeToNextFrame() / 2);
+		_renderManager->renderSceneToScreen(true);
+		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
 
 	_cutscenesKeymap->setEnabled(false);
