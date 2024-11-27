@@ -83,6 +83,14 @@ bool is_valid_character(int char_id) {
 	return ((char_id >= 0) && (char_id < _GP(game).numcharacters));
 }
 
+// Checks if character is currently playing idle anim, and reset it
+static void stop_character_idling(CharacterInfo *chi) {
+	if (chi->idleleft < 0) {
+		Character_UnlockView(chi);
+		chi->idleleft = chi->idletime;
+	}
+}
+
 bool AssertCharacter(const char *apiname, int char_id) {
 	if ((char_id >= 0) && (char_id < _GP(game).numcharacters))
 		return true;
@@ -181,10 +189,14 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat,
 	int blocking, int direction, int sframe, int volume) {
 
+	// If idle view in progress for the character, stop the idle anim;
+	// do this prior to the loop check, as the view may switch back to defview here
+	stop_character_idling(chaa);
+
 	ValidateViewAnimVLF("Character.Animate", chaa->view, loop, sframe);
 	ValidateViewAnimParams("Character.Animate", repeat, blocking, direction);
 
-	animate_character(chaa, loop, delay, repeat, 0, direction, sframe, volume);
+	animate_character(chaa, loop, delay, repeat, direction, sframe, volume);
 
 	if (blocking != 0)
 		GameLoopUntilValueIsZero(&chaa->animating);
@@ -275,10 +287,7 @@ void Character_ChangeView(CharacterInfo *chap, int vii) {
 		debug_script_warn("Warning: ChangeCharacterView was used while the view was fixed - call ReleaseCharView first");
 
 	// if the idle animation is playing we should release the view
-	if (chap->idleleft < 0) {
-		Character_UnlockView(chap);
-		chap->idleleft = chap->idletime;
-	}
+	stop_character_idling(chap);
 
 	debug_script_log("%s: Change view to %d", chap->scrname, vii + 1);
 	chap->defview = vii;
@@ -562,11 +571,8 @@ void Character_LockViewEx(CharacterInfo *chap, int vii, int stopMoving) {
 	vii--; // convert to 0-based
 	AssertView("SetCharacterView", vii);
 
-	debug_script_log("%s: View locked to %d", chap->scrname, vii + 1);
-	if (chap->idleleft < 0) {
-		Character_UnlockView(chap);
-		chap->idleleft = chap->idletime;
-	}
+	stop_character_idling(chap);
+
 	if (stopMoving != KEEP_MOVING) {
 		Character_StopMoving(chap);
 	}
@@ -578,6 +584,7 @@ void Character_LockViewEx(CharacterInfo *chap, int vii, int stopMoving) {
 	chap->flags |= CHF_FIXVIEW;
 	chap->pic_xoffs = 0;
 	chap->pic_yoffs = 0;
+	debug_script_log("%s: View locked to %d", chap->scrname, vii + 1);
 }
 
 void Character_LockViewAligned_Old(CharacterInfo *chap, int vii, int loop, int align) {
@@ -773,8 +780,7 @@ void Character_SetIdleView(CharacterInfo *chaa, int iview, int itime) {
 		quit("!SetCharacterIdle: view 1 cannot be used as an idle view, sorry.");
 
 	// if an idle anim is currently playing, release it
-	if (chaa->idleleft < 0)
-		Character_UnlockView(chaa);
+	stop_character_idling(chaa);
 
 	chaa->idleview = iview - 1;
 	// make sure they don't appear idle while idle anim is disabled
@@ -1615,11 +1621,8 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 
 	if ((chin->animating) && (autoWalkAnims))
 		stop_character_anim(chin);
-
-	if (chin->idleleft < 0) {
-		ReleaseCharacterView(chac);
-		chin->idleleft = chin->idletime;
-	}
+	// Stop idling anim
+	stop_character_idling(chin);
 	// stop them to make sure they're on a walkable area
 	// but save their frame first so that if they're already
 	// moving it looks smoother
@@ -2051,14 +2054,7 @@ void setup_player_character(int charid) {
 // Animate character internal implementation;
 // this function may be called by the game logic too, so we assume
 // the arguments must be correct, and do not fix them up as we do for API functions.
-void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int noidleoverride, int direction, int sframe, int volume) {
-	// If idle view in progress for the character (and this is not the
-	// "start idle animation" animate_character call), stop the idle anim
-	if ((chap->idleleft < 0) && (noidleoverride == 0)) {
-		Character_UnlockView(chap);
-		chap->idleleft = chap->idletime;
-	}
-
+void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int direction, int sframe, int volume) {
 	if ((chap->view < 0) || (chap->view > _GP(game).numviews) ||
 		(loopn < 0) || (loopn >= _GP(views)[chap->view].numLoops)) {
 		quitprintf("!AnimateCharacter: invalid view and/or loop\n"
@@ -2432,8 +2428,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		allowShrink = 1;
 
 	// If has a valid speech view, and idle anim in progress for the character, then stop it
-	if (useview >= 0 && speakingChar->idleleft < 0) {
-		ReleaseCharacterView(aschar);
+	if (useview >= 0) {
+		stop_character_idling(speakingChar);
 	}
 
 	int tdxp = xx, tdyp = yy;
