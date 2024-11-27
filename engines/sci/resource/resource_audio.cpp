@@ -700,42 +700,22 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 	return 0;
 }
 
-void ResourceManager::setAudioLanguage(int language) {
+bool ResourceManager::setAudioLanguage(int language) {
 	if (_audioMapSCI1) {
 		if (_audioMapSCI1->_volumeNumber == language) {
 			// This language is already loaded
-			return;
+			return true;
 		}
 
-		// We already have a map loaded, so we unload it first
-		if (readAudioMapSCI1(_audioMapSCI1, true) != SCI_ERROR_NONE) {
-			_hasBadResources = true;
-		}
-
-		// Remove all volumes that use this map from the source list
-		Common::List<ResourceSource *>::iterator it = _sources.begin();
-		while (it != _sources.end()) {
-			ResourceSource *src = *it;
-			if (src->findVolume(_audioMapSCI1, src->_volumeNumber)) {
-				it = _sources.erase(it);
-				delete src;
-			} else {
-				++it;
-			}
-		}
-
-		// Remove the map itself from the source list
-		_sources.remove(_audioMapSCI1);
-		delete _audioMapSCI1;
-
-		_audioMapSCI1 = nullptr;
+		// We already have a map loaded, so we unload it and its sources
+		unloadAudioLanguage();
 	}
 
 	Common::Path filename(Common::String::format("AUDIO%03d", language));
 	Common::Path fullname = filename.append(".MAP");
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
-		return;
+		return false;
 	}
 
 	_audioMapSCI1 = addSource(new ExtAudioMapResourceSource(fullname, language));
@@ -752,6 +732,36 @@ void ResourceManager::setAudioLanguage(int language) {
 	}
 
 	scanNewSources();
+	return true;
+}
+
+void ResourceManager::unloadAudioLanguage() {
+	if (_audioMapSCI1 == nullptr) {
+		return;
+	}
+
+	// Unload the map
+	if (readAudioMapSCI1(_audioMapSCI1, true) != SCI_ERROR_NONE) {
+		_hasBadResources = true;
+	}
+
+	// Remove all volumes that use this map from the source list
+	Common::List<ResourceSource *>::iterator it = _sources.begin();
+	while (it != _sources.end()) {
+		ResourceSource *src = *it;
+		if (src->findVolume(_audioMapSCI1, src->_volumeNumber)) {
+			it = _sources.erase(it);
+			delete src;
+		} else {
+			++it;
+		}
+	}
+
+	// Remove the map itself from the source list
+	_sources.remove(_audioMapSCI1);
+	delete _audioMapSCI1;
+
+	_audioMapSCI1 = nullptr;
 }
 
 int ResourceManager::getAudioLanguage() const {
