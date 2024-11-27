@@ -76,11 +76,8 @@ private:
 	 * edges of this Rectangle
 	 */
 	Common::Rect _workingWindow;
-
-	// Center of the screen in the x direction
-	const int _screenCenterX;
-	// Center of the screen in the y direction
-	const int _screenCenterY;
+	
+	const Common::Point _screenCentre; //Centre of the screen at current resolution
 	
 	
 	/**
@@ -110,15 +107,20 @@ private:
 	Common::Rect _backgroundSurfaceDirtyRect;
 
 	// A buffer for subtitles
-	Graphics::Surface _subtitleSurface;
+	Graphics::Surface _subSurface;
+	Graphics::ManagedSurface _subManagedSurface;
+	Common::Rect _subSurfaceDirtyRect;
 
 	// Rectangle for subtitles area
-	Common::Rect _subtitleArea;
+	Common::Rect _subArea;
 
 	// A buffer for menu drawing
 	Graphics::Surface _menuSurface;
 	Graphics::ManagedSurface _menuManagedSurface;
 	Common::Rect _menuSurfaceDirtyRect;
+	
+	//Buffer for video playback (render directly for speed; no backbuffer)
+	Graphics::ManagedSurface _vidManagedSurface;
 
 	// Rectangle for menu area
 	Common::Rect _menuArea;
@@ -144,13 +146,24 @@ private:
 	bool _doubleFPS;
 
 public:
-	void initialize();
+	void init(bool hiRes = false);  //TODO - implement this & add to engine initialisation!
 
 	/**
 	 * Renders the scene to the screen
 	 */
-	void renderSceneToScreen();
+	void renderSceneToScreen(bool videoPlaying = false);
+	
+	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
 
+
+  //TODO - eliminate this function and all calls to it; do everything via ManagedSurface approach
+	/**
+	 *
+	 * @param src       Source surface
+	 * @param _srcRect  Rectangle defining area of target surface to blit to
+ 	 * @param srcLeft   X coord of area to blit within source
+	 * @param srcTop    Y coord of area to blit within source
+	 */	
 	void copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop);
 
 	/**
