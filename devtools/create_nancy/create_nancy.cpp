@@ -44,7 +44,7 @@
  * 2 bytes              Number of games (ignoring multiple languages)
  * 4 bytes per game     File offsets for every game's data
  * Rest of file			Game data
- * 
+ *
  * Game data contents:
  * 		Various data sections, depending on title;
  * 		e.g.: only nancy1 has a hint section, since later
@@ -53,14 +53,14 @@
  * 			4 bytes		Offset to next section
  * 			4 bytes		Section tag (generated using MKTAG macro)
  * 			variable	Section data
- * 
+ *
  * Arrays in the game data are variable-size.
  * All arrays are preceded by a 2-byte size property.
  * 2D arrays with strings (e.g conditional dialogue) are also preceded
  * by a list of 4-byte offsets (one per language).
  * All offsets are absolute (relative to start of file).
  * All data is little endian.
- * 
+ *
  * Game order:
  *      The Vampire Diaries
  *      Nancy Drew: Secrets Can Kill
@@ -108,8 +108,8 @@ void writeSoundChannels(File &output, const SoundChannelInfo &soundChannelInfo) 
 	writeToFile(output, soundChannelInfo.sfxChannels);
 }
 
-void writeLanguages(File &output, const Common::Array<Common::Language> &languages) {
-	output.writeUint32(MKTAG('L', 'A', 'N', 'G'));
+void writeLanguages(File &output, const Common::Array<GameLanguage> &languages) {
+	output.writeUint32(MKTAG('L', 'A', 'N', '2'));
 	writeToFile(output, languages);
 }
 
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _tvdGoodbyes, _tvdGoodbyeTexts))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _tvdEmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _tvdEventFlagNames))
-	
+
 	// Nancy Drew: Secrets Can Kill data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy1Constants))
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy1TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy1EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy1EventFlagNames))
-	
+
 	// Nancy Drew: Stay Tuned for Danger data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy2Constants))
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy2EventFlagNames))
 	WRAPWITHOFFSET(writePatchFile(output, 3, nancy2PatchSrcFiles, "files/nancy2"))
 	WRAPWITHOFFSET(writePatchAssociations(output, nancy2PatchAssociations))
-	
+
 	// Nancy Drew: Message in a Haunted Mansion data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy3Constants))
@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy3EventFlagNames))
 	WRAPWITHOFFSET(writePatchFile(output, 4, nancy3PatchSrcFiles, "files/nancy3"))
 	WRAPWITHOFFSET(writePatchAssociations(output, nancy3PatchAssociations))
-	
+
 	// Nancy Drew: Treasure in the Royal Tower data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy4Constants))
