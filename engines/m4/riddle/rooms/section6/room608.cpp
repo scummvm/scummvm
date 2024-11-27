@@ -64,7 +64,7 @@ void Room608::init() {
 		_oldShould = 0;
 	}
 
-	if (inv_object_is_here("DRIFTWOOD STUMP")) {
+	if (inv_object_in_scene("DRIFTWOOD STUMP", 600)) {
 		_stump = series_show("608ST_DN", 0xf00, 16);
 		hotspot_set_active("DRIFTWOOD STUMP ", false);
 	} else {
@@ -1913,7 +1913,6 @@ bool Room608::takeStump1() {
 			_ripLowReach = series_load("RIP LOW REACH POS1");
 			setGlobals1(_ripLowReach, 1, 10, 10, 10);
 			sendWSMessage_110000(2);
-			return true;
 		}
 		break;
 
@@ -1922,17 +1921,23 @@ bool Room608::takeStump1() {
 		inv_give_to_player("DRIFTWOOD STUMP");
 		kernel_examine_inventory_object("PING DRIFTWOOD STUMP",
 			5, 1, 230, 244, 3);
-		return true;
+		terminateMachineAndNull(_stump);
+		break;
 
 	case 3:
 		sendWSMessage_140000(5);
-		return true;
+		break;
+
+	case 5:
+		series_unload(_ripLowReach);
+		player_set_commands_allowed(true);
+		break;
 
 	default:
-		break;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool Room608::takePuffin() {
@@ -1940,10 +1945,9 @@ bool Room608::takePuffin() {
 	case -1:
 		if (inv_object_is_here("DRIFTWOOD PUFFIN")) {
 			player_set_commands_allowed(false);
-			_ripLowReach2 = series_load("RIP LOW REACH POS2");
+			_ripLowReach2 = series_load("RIP TREK LOW REACH POS2");
 			setGlobals1(_ripLowReach2, 1, 16, 16, 16);
 			sendWSMessage_110000(2);
-			return true;
 		}
 		break;
 
@@ -1953,21 +1957,22 @@ bool Room608::takePuffin() {
 		kernel_examine_inventory_object("PING DRIFTWOOD PUFFIN",
 			5, 1, 142, 239, 3);
 		terminateMachineAndNull(_puffin);
-		return true;
+		break;
 
 	case 3:
 		sendWSMessage_140000(5);
-		return true;
+		break;
 
 	case 5:
 		series_unload(_ripLowReach2);
+		player_set_commands_allowed(true);
 		break;
 
 	default:
-		break;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool Room608::stumpHole() {
@@ -2009,38 +2014,37 @@ bool Room608::stumpHole() {
 bool Room608::takeStump2() {
 	if (inv_object_is_here("POLE")) {
 		digi_play("608r74", 1);
-		return true;
 	} else {
 		switch (_G(kernel).trigger) {
 		case -1:
 			ws_walk(474, 309, nullptr, 1, 2);
-			return true;
+			break;
 
 		case 1:
 			player_set_commands_allowed(false);
 			_ripLowReach = series_load("RIP LOW REACH POS1");
 			setGlobals1(_ripLowReach, 1, 10, 10, 10);
 			sendWSMessage_110000(2);
-			return true;
+			break;
 
 		case 2:
 			hotspot_set_active("DRIFTWOOD STUMP ", false);
 			terminateMachineAndNull(_stump);
 			inv_give_to_player("DRIFTWOOD STUMP");
 			sendWSMessage_140000(5);
-			return true;
+			break;
 
 		case 5:
 			series_unload(_ripLowReach);
 			player_set_commands_allowed(true);
-			return true;
+			break;
 
 		default:
-			break;
+			return false;
 		}
-
-		return false;
 	}
+
+	return true;
 }
 
 bool Room608::takeLighter() {
