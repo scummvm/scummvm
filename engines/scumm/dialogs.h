@@ -301,12 +301,12 @@ private:
 };
 
 /**
-* Options widget for various Macintosh games.
+* Options widget for Mac Loom.
 */
-class MacGameOptionsWidget : public ScummOptionsContainerWidget {
+class LoomMonkeyMacGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	MacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId, const Common::String &extra);
-	~MacGameOptionsWidget() override {};
+	LoomMonkeyMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId);
+	~LoomMonkeyMacGameOptionsWidget() override {};
 
 	void load() override;
 	bool save() override;
