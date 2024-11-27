@@ -1208,10 +1208,11 @@ bool engine_try_switch_windowed_gfxmode() {
 	// Apply vsync in case it has been toggled at runtime
 	last_opposite_mode.Vsync = _GP(usetup).Screen.Params.VSync;
 
-	// If there are saved parameters for given mode (fullscreen/windowed)
-	// then use them, if there are not, get default setup for the new mode.
+	// If there are saved parameters for given mode (fullscreen/windowed),
+	// *and* if the window is on the same display where it's been last time,
+	// then use old params, otherwise - get default setup for the new mode.
 	bool res;
-	if (last_opposite_mode.IsValid()) {
+	if (last_opposite_mode.IsValid() && (setting.DisplayIndex == sys_get_window_display_index())) {
 		res = graphics_mode_set_dm(last_opposite_mode);
 	} else {
 		WindowSetup ws = windowed ? _GP(usetup).Screen.WinSetup : _GP(usetup).Screen.FsSetup;

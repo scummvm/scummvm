@@ -117,8 +117,9 @@ struct ColorDepthOption {
 // ActiveDisplaySetting struct merges DisplayMode and FrameScaleDef,
 // which is useful if you need to save active settings and reapply them later.
 struct ActiveDisplaySetting {
-	DisplayMode     Dm;
-	FrameScaleDef  Frame = kFrame_Undefined;
+	DisplayMode	  Dm;
+	FrameScaleDef Frame = kFrame_Undefined;
+	int			  DisplayIndex = -1;
 };
 
 // Initializes any possible gfx mode, using user config as a recommendation;

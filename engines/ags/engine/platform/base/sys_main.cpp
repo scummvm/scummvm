@@ -48,9 +48,20 @@ void sys_set_background_mode(bool /*on*/) {
 // ----------------------------------------------------------------------------
 // DISPLAY UTILS
 // ----------------------------------------------------------------------------
-#ifdef TODO
-const int DEFAULT_DISPLAY_INDEX = 0; // TODO: is this always right?
+
+const int DEFAULT_DISPLAY_INDEX = 0;
+
+int sys_get_window_display_index() {
+#if (AGS_PLATFORM_DESKTOP && !AGS_PLATFORM_SCUMMVM)
+	int index = -1;
+	SDL_Window *window = sys_get_window();
+	if (window)
+		index = SDL_GetWindowDisplayIndex(window);
+	return index >= 0 ? index : DEFAULT_DISPLAY_INDEX;
+#else
+	return DEFAULT_DISPLAY_INDEX;
 #endif
+}
 
 int sys_get_desktop_resolution(int &width, int &height) {
 	// TODO: ScummVM has a hardcoded dummy desktop resolution. See if there's any
@@ -64,7 +75,7 @@ int sys_get_desktop_resolution(int &width, int &height) {
 void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms, int color_depth) {
 #ifdef TODO
 	SDL_DisplayMode mode;
-	const int display_id = DEFAULT_DISPLAY_INDEX;
+	const int display_id = sys_get_window_display_index();
 	const int count = SDL_GetNumDisplayModes(display_id);
 	dms.clear();
 	for (int i = 0; i < count; ++i) {
@@ -240,7 +251,11 @@ bool sys_window_set_size(int w, int h, bool center) {
 	return false;
 }
 
-void sys_window_center() {
+void sys_window_center(int display_index) {
+	// No implementation in ScummVM
+}
+
+void sys_window_fit_in_display(int display_index) {
 	// No implementation in ScummVM
 }
 
