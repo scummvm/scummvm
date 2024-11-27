@@ -162,14 +162,14 @@ public:
 	// when destroying all script instances, e.g. on game quit.
 	static void FreeInstanceStack();
 	// create a runnable instance of the supplied script
-	static ccInstance *CreateFromScript(PScript script);
-	static ccInstance *CreateEx(PScript scri, const ccInstance *joined);
+	static std::unique_ptr<ccInstance> CreateFromScript(PScript script);
+	static std::unique_ptr<ccInstance> CreateEx(PScript scri, const ccInstance *joined);
 	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops);
 
 	ccInstance();
 	~ccInstance();
 	// Create a runnable instance of the same script, sharing global memory
-	ccInstance *Fork();
+	std::unique_ptr<ccInstance> Fork();
 	// Specifies that when the current function returns to the script, it
 	// will stop and return from CallInstance
 	void    Abort();

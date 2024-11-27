@@ -202,23 +202,22 @@ int create_global_script() {
 
 	std::vector<ccInstance *> all_insts; // gather all to resolve exports below
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
-		auto inst = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
-		if (!inst)
+		_GP(moduleInst)[i] = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
+		if (!_GP(moduleInst)[i])
 			return kscript_create_error;
-		_GP(moduleInst)[i].reset(inst);
-		all_insts.push_back(inst);
+		all_insts.push_back(_GP(moduleInst)[i].get()); // this is only for temp reference
 	}
 
-	_G(gameinst).reset(ccInstance::CreateFromScript(_GP(gamescript)));
+	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
 	if (!_G(gameinst))
 		return kscript_create_error;
-	all_insts.push_back(_G(gameinst).get());
+	all_insts.push_back(_G(gameinst).get()); // this is only for temp reference
 
 	if (_GP(dialogScriptsScript)) {
-		_G(dialogScriptsInst).reset(ccInstance::CreateFromScript(_GP(dialogScriptsScript)));
+		_G(dialogScriptsInst) = ccInstance::CreateFromScript(_GP(dialogScriptsScript));
 		if (!_G(dialogScriptsInst))
 			return kscript_create_error;
-		all_insts.push_back(_G(dialogScriptsInst).get());
+		all_insts.push_back(_G(dialogScriptsInst).get()); // this is only for temp reference
 	}
 
 	// Resolve the script imports after all the scripts have been loaded
@@ -236,11 +235,11 @@ int create_global_script() {
 		if (!fork)
 			return kscript_create_error;
 
-		_GP(moduleInstFork)[module_idx].reset(fork);
+		_GP(moduleInstFork)[module_idx] = std::move(fork);
 		_GP(moduleRepExecAddr)[module_idx] = _GP(moduleInst)[module_idx]->GetSymbolAddress(REP_EXEC_NAME);
 	}
 
-	_G(gameinstFork).reset(_G(gameinst)->Fork());
+	_G(gameinstFork) = _G(gameinst)->Fork();
 	if (_G(gameinstFork) == nullptr)
 		return kscript_create_error;
 
@@ -318,17 +317,7 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		return -3;
 	}
 	ExecutingScript exscript;
-	// CHECKME: this conditional block will never run, because
-	// function would have quit earlier (deprecated functionality?)
-	if (sci->IsBeingRun()) {
-		auto fork = sci->Fork();
-		if (!fork)
-			quit("unable to fork instance for secondary script");
-		exscript.forkedInst.reset(fork);
-		exscript.inst = fork;
-	} else {
-		exscript.inst = sci;
-	}
+	exscript.inst = sci;
 	_G(scripts)[_G(num_scripts)] = std::move(exscript);
 	_G(curscript) = &_G(scripts)[_G(num_scripts)];
 	_G(num_scripts)++;

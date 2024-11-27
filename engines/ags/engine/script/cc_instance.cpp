@@ -211,13 +211,13 @@ void ccInstance::FreeInstanceStack() {
 	_GP(InstThreads).clear();
 }
 
-ccInstance *ccInstance::CreateFromScript(PScript scri) {
+std::unique_ptr<ccInstance> ccInstance::CreateFromScript(PScript scri) {
 	return CreateEx(scri, nullptr);
 }
 
-ccInstance *ccInstance::CreateEx(PScript scri, const ccInstance *joined) {
+std::unique_ptr<ccInstance> ccInstance::CreateEx(PScript scri, const ccInstance *joined) {
 	// allocate and copy all the memory with data, code and strings across
-	ccInstance *cinst = new ccInstance();
+	std::unique_ptr<ccInstance> cinst(new ccInstance());
 	if (!cinst->_Create(scri, joined)) {
 		return nullptr;
 	}
@@ -263,7 +263,7 @@ ccInstance::~ccInstance() {
 	Free();
 }
 
-ccInstance *ccInstance::Fork() {
+std::unique_ptr<ccInstance> ccInstance::Fork() {
 	return CreateEx(instanceof, this);
 }
 
