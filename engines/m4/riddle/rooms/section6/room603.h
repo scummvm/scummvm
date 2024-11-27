@@ -34,9 +34,9 @@ private:
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
-	int _val6 = 0;
 	int _val9 = 0;
 	int _val10 = 0;
+	bool _showingNoteCloseup = false;
 	int _ripleyMode = 0;
 	int _ripleyShould = 0;
 	int _ttMode = 0;
@@ -55,7 +55,7 @@ private:
 	machine *_pu01 = nullptr;
 	machine *_ripley = nullptr;
 	machine *_shadow = nullptr;
-	machine *_treesGoneHome = nullptr;
+	machine *_ttNote = nullptr;
 	machine *_explosion = nullptr;
 	int _rp01 = 0;
 	int _rp02 = 0;

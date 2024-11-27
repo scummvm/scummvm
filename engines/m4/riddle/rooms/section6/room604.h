@@ -54,11 +54,11 @@ private:
 	machine *_shadow = nullptr;
 
 	void daemon1();
-	bool useWhaleBoneHorn();
-	bool takePullCord();
-	bool takeSparkPlugTool();
-	bool takeLighter();
-	bool pullCordPlug();
+	void useWhaleBoneHorn();
+	void takePullCord();
+	void takeSparkPlugTool();
+	void takeLighter();
+	void pullCordPlug();
 
 	/**
 	 * This Ripley is no more! It has ceased to be! It's expired

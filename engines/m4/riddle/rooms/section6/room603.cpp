@@ -69,7 +69,7 @@ void Room603::init() {
 		_val5 = 0;
 	}
 
-	_val6 = 0;
+	_showingNoteCloseup = false;
 
 	if (_G(game).previous_room != 604 && _G(game).previous_room != KERNEL_RESTORING_GAME &&
 			inv_player_has("PULL CORD") && !inv_object_is_here("POLE") &&
@@ -780,7 +780,7 @@ void Room603::daemon() {
 
 	case 320:
 		terminateMachineAndNull(_ripley);
-		_treesGoneHome = series_show("603rp02a", 0x100, 16);
+		_ttNote = series_show("603rp02a", 0x100, 16);
 		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
 			triggerMachineByHashCallback, "tt");
 		sendWSMessage_10000(1, _tt, _tt03, 1, 39, 322, _tt03, 39, 39, 0);
@@ -798,7 +798,7 @@ void Room603::daemon() {
 
 	case 325:
 		sendWSMessage_10000(1, _tt, _tt03, 83, 122, 326, _tt03, 122, 122, 0);
-		terminateMachineAndNull(_treesGoneHome);
+		terminateMachineAndNull(_ttNote);
 		terminateMachineAndNull(_shadow);
 		ws_unhide_walker();
 		ws_demand_facing(4);
@@ -1247,7 +1247,7 @@ void Room603::pre_parser() {
 	if (_G(flags)[V202] && !player_said("talk to", "twelvetrees"))
 		_G(flags)[V204] = 1;
 
-	if (_val6) {
+	if (_showingNoteCloseup) {
 		Common::strcpy_s(_G(player).noun, "remove note");
 		_G(player).resetWalk();
 	}
@@ -1477,25 +1477,25 @@ void Room603::parser() {
 			digi_play("603r02", 1);
 		}
 	} else if (lookFlag && player_said("note ")) {
-		_val6 = 1;
+		_showingNoteCloseup = true;
 		hotspot_hide_all();
-		_treesGoneHome = series_show("603 12TREES GONE HOME NOTE", 0, 16);
+		_ttNote = series_show("603 12TREES GONE HOME NOTE", 0, 16);
 		hotspot_add_dynamic("LOOK AT", " ", 0, 0, 640, 480, 0);
 		digi_play("603r44", 1);
 		interface_hide();
 	} else if (lookFlag && player_said("note") &&
 			inv_object_is_here("TWELVETREES' NOTE")) {
-		_val6 = 1;
+		_showingNoteCloseup = true;
 		hotspot_hide_all();
-		_treesGoneHome = series_show("603 tt map popup", 0, 16);
+		_ttNote = series_show("603 tt map popup", 0, 16);
 		hotspot_add_dynamic("LOOK AT", " ", 0, 0, 640, 480, 0);
 		_G(flags)[V046] = 1;
 		digi_play("603r28", 1);
 		interface_hide();
-	} else if (player_said("remote note")) {
-		_val6 = 0;
+	} else if (player_said("remove note")) {
+		_showingNoteCloseup = false;
 		hotspot_restore_all();
-		terminateMachineAndNull(_treesGoneHome);
+		terminateMachineAndNull(_ttNote);
 		interface_show();
 	} else if (_G(kernel).trigger == 555) {
 		if (_G(flags)[V038])
@@ -2226,7 +2226,7 @@ void Room603::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_val3);
 	s.syncAsSint32LE(_val4);
 	s.syncAsSint32LE(_val5);
-	s.syncAsSint32LE(_val6);
+	s.syncAsSint32LE(_showingNoteCloseup);
 	s.syncAsSint32LE(_val9);
 	s.syncAsSint32LE(_val10);
 	s.syncAsSint32LE(_ripleyMode);
