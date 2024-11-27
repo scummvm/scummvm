@@ -812,7 +812,14 @@ int WaitImpl(int skip_type, int nloops) {
 	if (_GP(play).fast_forward && ((skip_type & ~SKIP_AUTOTIMER) != 0))
 		return 0;
 
-	_GP(play).wait_counter = nloops;
+	// < 3.6.0 treated negative nloops as "no time";
+	// also old engine let nloops to overflow into neg when assigned to wait_counter...
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
+		if (nloops < 0 || nloops > INT16_MAX)
+			nloops = 0;
+	}
+	// clamp to int16
+	_GP(play).wait_counter = static_cast<int16_t>(Math::Clamp<int>(nloops, -1, INT16_MAX));
 	_GP(play).wait_skipped_by = SKIP_NONE;
 	_GP(play).wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
 	_GP(play).wait_skipped_by_data = 0;
@@ -821,7 +828,7 @@ int WaitImpl(int skip_type, int nloops) {
     GameLoopUntilValueIsZero(&_GP(play).wait_counter);
 
 	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
-		// < 3.6.0 return 1 is skipped by user input, otherwise 0
+		// < 3.6.0 return 1 if skipped by user input, otherwise 0
 		return ((_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0) ? 1 : 0;
 	}
 	// >= 3.6.0 return skip (input) type flags with keycode
