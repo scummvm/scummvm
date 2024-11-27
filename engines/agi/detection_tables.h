@@ -989,6 +989,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_L("Jõulumaa (v0.05)", "53982ecbfb907e41392b3961ad1c3475", Common::ET_EST),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Mar 26)", "a25d7379d281b1b296d4785df90a8e78"),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Aug 16)", "6b4f796d0421d2e12e501b511962e03a"),
+	FANMADE("King's Quest VI AGI Demake (2024-08-30)", "f7f498943de42913604da34cb9f5e0d1"),
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
 	FANMADE("Lawman for Hire", "c78b28bfd3767dd455b992cd8b7854fa"),
 	FANMADE("Lefty Goes on Vacation (Not in The Right Place)", "ccdc49a33870310b01f2c48b8a1f3c34"),
