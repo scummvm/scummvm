@@ -84,7 +84,7 @@ public:
 	String(String &&str) : BaseString<char>(static_cast<BaseString<char> &&>(str)) {}
 
 	/** Construct a string consisting of the given character. */
-	explicit String(char c);
+	explicit constexpr String(value_type c) : BaseString<char>(c) {}
 
 	/** Construct a new string from the given u32 string. */
 	String(const U32String &str, CodePage page = kUtf8);

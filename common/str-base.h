@@ -83,6 +83,9 @@ public:
 	/** Construct a new empty string. */
 	constexpr BaseString() : _size(0), _str(_storage), _storage{0} {}
 
+	/** Construct a string consisting of the given character. */
+	explicit constexpr BaseString(value_type c) : _size((c == 0) ? 0 : 1), _str(_storage), _storage{c, 0} {}
+
 	/** Construct a copy of the given string. */
 	BaseString(const BaseString &str);
 

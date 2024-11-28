@@ -77,7 +77,7 @@ public:
 	explicit DBCSString(const String &str);
 
 	/** Construct a string consisting of the given character. */
-	explicit DBCSString(value_type c);
+	explicit constexpr DBCSString(value_type c) : BaseString<uint16>(c) {}
 
 	/** Assign a given string to this string. */
 	DBCSString &operator=(const DBCSString &str);
