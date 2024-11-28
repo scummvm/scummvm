@@ -41,7 +41,7 @@ GameDescriptor HugoMetaEngine::findGame(const char *gameId) {
 			return *pd;
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {

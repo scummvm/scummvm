@@ -41,7 +41,7 @@ GameDescriptor MagneticMetaEngine::findGame(const char *gameId) {
 			return *pd;
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
