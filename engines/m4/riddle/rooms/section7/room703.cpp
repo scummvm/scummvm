@@ -162,7 +162,7 @@ void Room703::parser() {
 		case 1:
 			sub9EA78("704r09", _G(kernel).trigger);
 			break;
-			
+
 		case 2:
 			sub9EA78("705r04", _G(kernel).trigger);
 			break;
@@ -205,6 +205,311 @@ void Room703::parser() {
 		player_set_commands_allowed(true);
 	} else if (talkFl && player_said_any("MONK #1", "MONK #2", "MONK #3", "MONK #4") && _G(flags[V286]))
 		digi_play("com142", 1, 255, -1, -1);
+	else if (talkFl && player_said("MONK #1")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+
+			break;
+
+		case 2:
+			_monk1Series = series_load("703 MONK 1", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk1Series, 1, 19, 3, _monk1Series, 19, 19, 0);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _monk1Series, 20, 25, -1, _monk1Series, 25, 25, 0);
+			digi_play("703A01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _monk1Series, 26, 29, 5, _monk1Series, 29, 29, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_monk1Series);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #1")
+	else if (talkFl && player_said("MONK #2")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_monk2Series = series_load("703 MONK 2", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk2Series, 1, 14, 3, _monk2Series, 14, 14, 0);
+
+			break;
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _monk2Series, 15, 18, -1, _monk2Series, 19, 22, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("703B01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _monk2Series, 23, 26, 5, _monk2Series, 26, 26, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_monk2Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #2")
+	else if (talkFl && player_said("MONK #3")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_monk3Series = series_load("703 MONK 3", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk3Series, 1, 18, 3, _monk3Series, 18, 18, 0);
+
+			break;
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _monk3Series, 18, 19, -1, _monk3Series, 19, 19, 0);
+			digi_play("703C01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _monk3Series, 20, 23, 5, _monk3Series, 23, 23, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_monk3Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #3")
+
+	else if (talkFl && player_said("MONK #4")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_monk4Series = series_load("703 MONK 4", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk4Series, 21, 10, 3, _monk4Series, 9, 5, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+
+			break;
+		case 3:
+			digi_play("703D01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _monk4Series, 4, 1, 5, _monk4Series, 1, 1, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_monk4Series);
+			_field5C_mode = 124;
+			_field60_should = 125;
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(10, 127, nullptr);
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #4")
+
+	else if (lookFl && player_said("GRATE")) {
+		switch (_G(kernel).trigger) {
+		case -1: {
+			int32 keyValue = 0;
+
+			player_update_info(_G(my_walker), &_G(player_info));
+			switch (_G(player_info).facing) {
+			case 1:
+			case 11:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS1", -1, nullptr);
+				keyValue = 29;
+				break;
+
+			case 2:
+			case 10:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS2", -1, nullptr);
+				keyValue = 29;
+
+				break;
+
+			case 3:
+			case 9:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS3", -1, nullptr);
+				keyValue = 22;
+
+				break;
+
+			case 4:
+			case 8:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS4", -1, nullptr);
+				keyValue = 33;
+
+				break;
+
+			case 5:
+			case 7:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS5", -1, nullptr);
+				keyValue = 31;
+
+				break;
+
+			default:
+				// CHECKME: in the cases 6 and "other" the setGlobals is called without setting the keyValue.
+				// My best guess is that this never happens as the series isn't loaded, and I just guessed a value of 0 rather randomly.
+
+				break;
+			}
+
+			setGlobals1(_ripLooksDownSeries, 1, keyValue / 2, keyValue / 2, keyValue / 2, 0, keyValue / 2, keyValue, keyValue, keyValue, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 2);
+		}
+
+		break;
+
+		case 2:
+			digi_play("707r04", 1, 255, -1, -1);
+			kernel_timing_trigger(10, 3, nullptr);
+
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			sendWSMessage_150000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			series_unload(_ripLooksDownSeries);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // lookFl && player_said("GRATE")
+	else if (player_said("GRATE"))
+		digi_play("707r02", 1, 255, -1, -1);
+	else if (lookFl && player_said("MONK #1")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_monkMach = series_stream("703 MONK 1", 5, 0, 2);
+			break;
+
+		case 2:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFl && player_said("MONK #2")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_monk2Series = series_load("703 MONK 2", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk2Series, 1, 26, 2, _monk2Series, 26, 26, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_monk2Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFl && player_said("MONK #3")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_monk3Series = series_load("703 MONK 3", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk3Series, 1, 23, 2, _monk3Series, 23, 23, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_monk3Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFl && player_said("MONK #4")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_monk4Series = series_load("703 MONK 4", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _monk4Series, 1, 21, 2, _monk4Series, 21, 21, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_monk4Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("TRUTH WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger == -1 &&  ! inv_player_has("TRUTH WHEEL"))
+			player_set_commands_allowed(true);
+		else
+			sub9E50F(_G(kernel).trigger, 4);
+	}
 
 	//TODO incomplete implementation
 }
@@ -488,6 +793,11 @@ void Room703::conv703a() {
 void Room703::sub9EA78(const char *digiName, int32 trigger) {
 	//TODO not implemented
 	warning("STUB sub9EA78");
+}
+
+void Room703::sub9E50F(int32 trigger, int i) {
+	//TODO not implemented
+	warning("STUB sub9E50F");
 }
 
 
