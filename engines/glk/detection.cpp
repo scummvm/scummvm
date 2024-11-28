@@ -173,7 +173,7 @@ PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 	FIND_GAME(TADS);
 #endif
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 #undef FIND_GAME
@@ -242,8 +242,13 @@ Common::Error GlkMetaEngineDetection::identifyGame(DetectedGame &game, const voi
 
 	*descriptor = gameDesc;
 
-	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
-	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
+	PlainGameDescriptor pdesc(findGame(ConfMan.get("gameid").c_str()));
+
+	if (!pdesc.gameId || !*pdesc.gameId)
+		return Common::kUnknownError;
+
+	game = DetectedGame(getName(), pdesc);
+	return Common::kNoError;
 }
 
 DetectedGames GlkMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {

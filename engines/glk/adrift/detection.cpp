@@ -80,7 +80,7 @@ GameDescriptor AdriftMetaEngine::findGame(const char *gameId) {
 		}
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {

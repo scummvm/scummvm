@@ -716,7 +716,7 @@ GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
 		}
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
