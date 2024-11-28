@@ -28,15 +28,6 @@
 
 namespace Common {
 
-String::String(char c)
-	: BaseString<char>() {
-
-	_storage[0] = c;
-	_storage[1] = 0;
-
-	_size = (c == 0) ? 0 : 1;
-}
-
 #ifndef SCUMMVM_UTIL
 String::String(const U32String &str, Common::CodePage page)
 	: BaseString<char>() {

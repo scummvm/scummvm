@@ -63,13 +63,6 @@ DBCSString::DBCSString(const String &str) : BaseString<uint16>() {
 	decodeDBCS(str.c_str(), str.size());
 }
 
-DBCSString::DBCSString(uint16 c) : BaseString<uint16>() {
-	_storage[0] = c;
-	_storage[1] = 0;
-
-	_size = (c == 0) ? 0 : 1;
-}
-
 DBCSString &DBCSString::operator=(const DBCSString &str) {
 	assign(str);
 	return *this;
