@@ -150,6 +150,13 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			_noCursorSwitch = (Common::find(videosWithCursorLIT.begin(), videosWithCursorLIT.end(), videoFile) != videosWithCursorLIT.end());
 		}
 
+		if (primary && (_vm->getGameType() == kGameTypeGob3)) {
+			static const Common::StringArray videosWithCursorGob3 = {
+				"CAIL1", "CAIL2"
+			};
+			_noCursorSwitch = (Common::find(videosWithCursorGob3.begin(), videosWithCursorGob3.end(), videoFile) != videosWithCursorGob3.end());
+		}
+
 		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
 		// This is a bug in video, so we work around it.
 		_woodruffCohCottWorkaround = false;
