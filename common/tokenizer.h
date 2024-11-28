@@ -42,60 +42,33 @@ namespace Common {
  * Example of use:
  * StringTokenizer("Now, this is a test!", " ,!") gives tokens "Now", "this", "is", "a" and "test" using nextToken().
  */
-class StringTokenizer {
+template<class T>
+class BaseStringTokenizer {
 public:
 	/**
-	 * Creates a StringTokenizer.
+	 * Creates a BaseStringTokenizer.
 	 * @param str The string to be tokenized.
 	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
 	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
 	 */
-	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
-	void reset();       ///< Resets the tokenizer to its initial state
-	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
-	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
-	StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
-
-	String delimitersAtTokenBegin() const; ///< Returns a String with all delimiters between the current and previous token
-	String delimitersAtTokenEnd() const;   ///< Returns a String with all delimiters between the current and next token
-
-private:
-	const String _str;        ///< The string to be tokenized
-	const String _delimiters; ///< String containing all the delimiter characters
-	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
-};
-
-/**
- * A simple non-optimized unicode-string tokenizer.
- *
- * Example of use:
- * U32StringTokenizer("Now, this is a test!", " ,!") gives tokens "Now", "this", "is", "a" and "test" using nextToken().
- * Using non-ascii chars will also work, and is recommended to use this over StringTokenizer if string contains unicode chars.
- */
-class U32StringTokenizer {
-public:
-	/**
-	 * Creates a UnicodeStringTokenizer.
-	 * @param str The unicode string to be tokenized.
-	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
-	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
-	 */
-	U32StringTokenizer(const U32String &str, const String &delimiters = " \t\r\n\f\v");
+	BaseStringTokenizer(const T &str, const String &delimiters = " \t\r\n\f\v");
 	void reset();       ///< Resets the tokenizer to its initial state, i.e points boten token iterators to the beginning
 	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
-	U32String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
-	U32StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
+	T nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
+	Array<T> split(); ///< Returns an Array with all tokens. Beware of the memory usage
 
-	U32String delimitersAtTokenBegin() const; ///< Returns a U32String with all delimiters between the current and previous token
-	U32String delimitersAtTokenEnd() const;   ///< Returns a U32String with all delimiters between the current and next token
+	T delimitersAtTokenBegin() const; ///< Returns a String with all delimiters between the current and previous token
+	T delimitersAtTokenEnd() const;   ///< Returns a String with all delimiters between the current and next token
 
 private:
-	const U32String _str;        ///< The unicode string to be tokenized
-	const String    _delimiters; ///< String containing all the delimiter characters
-	U32String::const_iterator            _tokenBegin; ///< Latest found token's begin iterator (Valid after a call to nextToken())
-	U32String::const_iterator            _tokenEnd;   ///< Latest found token's end iterator (Valid after a call to nextToken())
+	const T           _str;        ///< The unicode string to be tokenized
+	const String      _delimiters; ///< String containing all the delimiter characters
+	typename T::const_iterator _tokenBegin; ///< Latest found token's begin iterator (Valid after a call to nextToken())
+	typename T::const_iterator _tokenEnd;   ///< Latest found token's end iterator (Valid after a call to nextToken())
 };
+
+typedef BaseStringTokenizer<String> StringTokenizer;
+typedef BaseStringTokenizer<U32String> U32StringTokenizer;
 
 /** @} */
 
