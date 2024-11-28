@@ -137,15 +137,17 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 		// WORKAROUND: In some rare cases, the cursor should still be
 		// displayed while a video is playing.
+		Common::String videoFile = file;
+		videoFile.toUppercase();
+		if (videoFile.hasSuffix(".IMD"))
+			videoFile = videoFile.substr(0, videoFile.find('.'));
 		_noCursorSwitch = false;
+
 		if (primary && (_vm->getGameType() == kGameTypeLostInTime)) {
-			if (!file.compareToIgnoreCase("PORTA03") ||
-			    !file.compareToIgnoreCase("PORTA03A") ||
-			    !file.compareToIgnoreCase("CALE1") ||
-			    !file.compareToIgnoreCase("AMIL2") ||
-			    !file.compareToIgnoreCase("AMIL3B") ||
-			    !file.compareToIgnoreCase("DELB"))
-				_noCursorSwitch = true;
+			static const Common::StringArray videosWithCursorLIT = {
+				"PORTA03", "PORTA03A", "CALE1", "AMIL2", "AMIL3B", "DELB", "DELG"
+			};
+			_noCursorSwitch = (Common::find(videosWithCursorLIT.begin(), videosWithCursorLIT.end(), videoFile) != videosWithCursorLIT.end());
 		}
 
 		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
