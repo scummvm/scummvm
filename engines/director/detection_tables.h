@@ -1599,6 +1599,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sfk",				"Science for Kids Product Demos" },
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
+	{ "terapreviews",		"TeraMedia Previews" },
 	{ "tivolaspring1997",	"Tivola Demo - Frühjahr '97" },
 	{ "tivolafall1998",		"Tivola Demo - Herbst 1998" },   // Contains D4, D5 and D6 executables
 	{ "tivolaspring1999",	"Tivola Demo - Frühling 1999" }, // Contains D4, D5 and D6 executables
@@ -5780,6 +5781,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("teamxtreme2", "", "Copy to HD/TX2", "r:f47c738636947451579473d9fe36041c", 507980, 404),
 	WINGAME1("teamxtreme2", "", "COPY2HD/TX2.EXE", "50c80bd2add25e574494838772973beb", 2585471, 404),
 
+	// Found on World of Whales
+	MACGAME1("terapreviews", "", "TeraMedia Previews", 	 "rt:9e4c0af102f40d2ae8ec4a131b5d9c3a",  483490, 404),
+	WINGAME2("terapreviews", "", "PREVIEWS.EXE",	  	 "t:9289cacef6dcea38e69554ac27ff59f1",   866108,
+								 "PREVIEWS/ACUPPRV.DIR", "f:110eb12d196fd1d51ed0093cb0310d88",  5379742, 404),
+
 	// From MacFormat #42
 	MACDEMO1("texturescape", "", "TextureScape Show", "77f4098988d5386794d1530065f514cd", 303961, 400),
 
@@ -5886,9 +5892,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("ugtmk", "", "TUG2MK.EXE", "3612d22c5c2f6bda8449828eaf338173", 692411, 404),
 
 	// Original filenames are 合わせ月の夜 (disc 1), フェンネル (disc 2), いにしえびと (disc 3)
-	MACGAME1_l("twistynight1", "", "Moonlit Night", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
-	MACGAME1_l("twistynight2", "", "Fennel", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
-	MACGAME1_l("twistynight3", "", "Young Man", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
+	MACGAME1_l("twistynight1", "", "to HD/xn--b9jvbwfx46n2kf6mx", "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
+	MACGAME1_l("twistynight2", "", "to HD#2/xn--hckzdwa4grb",	  "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
+	MACGAME1_l("twistynight3", "", "to HD#3/xn--n8ji8bydm4c",	  "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
 
 	// Demos from Big Top Productions: Felix the Cat, Hello Kitty, Keroppi & The Groove Thing
 	WINGAME1("ubt", "", "BTDEMO.EXE", "dbe72b7dc91c72db5b4597857aecf5c6", 696813, 404),
@@ -5916,7 +5922,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac full game filename is 波止の五目釣り
 	// Windows demos on Uki Uki 3 sample disc are hidden in MOVIE/BMP
 	// All of the Windows demo projectors use the S.EXE filename
-	MACGAME1_l("ukiuki2", "",	  "Hashi no gomoku-dzuri", "bcd3c718db258701496b3c5bcb827ef2", 488946, Common::JA_JPN, 404),
+	MACGAME1_l("ukiuki2", "",	  "xn--u9jwc349jyrz3tb9y0ahq8b", "r:bcd3c718db258701496b3c5bcb827ef2", 488690, Common::JA_JPN, 404),
 	MACDEMO2_l("ukiuki2", "Demo", "Demo",				   "5ef06a50a335ec0a9a0f9017057ccfe9", 1097469,
 								  "START",				   "c1eaf606b97d1fb5a55214485d330aa9", 9228, Common::JA_JPN, 404),
 	WINDEMO2_l("ukiuki2", "Demo", "S.EXE",				   "5ef06a50a335ec0a9a0f9017057ccfe9", 1097469,
@@ -5924,14 +5930,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Demo is D5
 	// Original filename is 人魚島のボート釣り
-	MACGAME1_l("ukiuki3", "", "Ningyo shima no boto-dzuri", "bcd3c718db258701496b3c5bcb827ef2", 488038, Common::JA_JPN, 404),
+	MACGAME1_l("ukiuki3", "", "xn--u9jwcxjzcuh504p22ubz0h51ra", "r:bcd3c718db258701496b3c5bcb827ef2", 487782, Common::JA_JPN, 404),
 
 	// Bilingual Japanese/English
-	MACGAME1("undergroundaz", "", "SO_OUT", "47e49b52d4c99ea6ea72c3dcbb57b34b", 290422, 400),
-	WINGAME1t("undergroundaz", "", "SO_OUT.EXE", "cbffbb52e532daf671a6398c25d6db1d", 4637941, 404),
+	MACGAME1("undergroundaz", "", "SO_OUT/SO_OUT",	   "r:47e49b52d4c99ea6ea72c3dcbb57b34b",  290422, 400),
+	WINGAME1("undergroundaz", "", "SO_OUT/SO_OUT.EXE", "t:cbffbb52e532daf671a6398c25d6db1d", 4637941, 404),
 	// Standalone app in a subdirectory
-	MACGAME1("undergroundaz", "Left Hand Drawings", "DRAWING", "8ea9e9a699c61edddffd79ddd0c994d7", 290398, 402),
-	WINGAME1t("undergroundaz", "Left Hand Drawings", "DRAWING.EXE", "e1afecdd3458db84a7a4a0c26b8ebad3", 716183, 404),
+	MACGAME1("undergroundaz", "Left Hand Drawings", "DRAWING/DRAWING",	   "r:8ea9e9a699c61edddffd79ddd0c994d7", 290398, 402),
+	WINGAME1("undergroundaz", "Left Hand Drawings", "DRAWING/DRAWING.EXE", "t:e1afecdd3458db84a7a4a0c26b8ebad3", 716183, 404),
 
 	MACGAME1("universe", "", "xn--Invisible Universe -ere/Invisible Universe", "78138a77207907642744d0960c14d9e5", 596510, 404),
 	WINGAME2t("universe", "", "UNIVERSE/UNIVERSE.EXE", "2ae0654d19de7b366e9d6e9ac4588c50", 700157,
@@ -5942,7 +5948,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above
 	MACGAME1t_l("uruuruexcellent", "", "xn--68j4bvcxb0d", "bd4b12aa33ec2deae4e26b2f6f744ba7", 294107, Common::JA_JPN, 404),
 
-	WINGAME1t("ushistory", "", "HISTORY.EXE", "5660e6a7b772b5bf8867627ab0d7a58b", 703629, 404),
+	// Byron Preiss Multimedia
+	// American Heritage - The History of the United States for Young People
+	WINGAME2("ushistory", "", "HISTORY.EXE",  "t:5660e6a7b772b5bf8867627ab0d7a58b",  703629,
+							  "PRES_NEW.DIR", "f:17b18398a3bbae084c7b03789f08b9b1", 2640566, 404),
 
 	MACGAME1("vangoghstarry", "", "Starry Night",	   "rt:23a4fa8e525840af775c32da27cd9822", 491920, 404),
 	WINGAME1("vangoghstarry", "", "STARRY/STARRY.EXE", "t:771df3cf7c07a514c3f40e6a173ea387",  697909, 404),
@@ -5961,16 +5970,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("vc_willie", "", "WNM.EXE", "t:8fd7da3295a87b864df8f2eca0aa7adc", 2702147, 404),
 
 	// Original Mac fllenames begin with Virtual Cop™
-	MACDEMO1("vcop", "Demo", "Virtual Cop IPK", "ea646eccc9a53f44ce082459d4809a06", 482838, 404),
-	MACGAME1("vcop1", "", "Virtual Cop (8MB)", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483774, 404),
-	WINGAME1("vcop1", "", "VCOP.EXE", "dfa4c8709ed83f2ac79aeecf9b2d1f95", 697427, 404),
-	MACGAME1("vcop2", "", "Cop II, The Angel Returns", "0c7bbb4b24823e5ab871cb4c1d6f3710", 482838, 404),
-	WINGAME1("vcop2", "", "VCOP2.EXE", "9683bc8aeb2d47f2e38908bac65fd9bd", 723653, 404),
+	MACDEMO1("vcop", "Demo", "xn--Virtual Cop IPK-ke3i", "r:ea646eccc9a53f44ce082459d4809a06", 482582, 404),
+	MACGAME2("vcop1", "", "xn--Virtual Cop (8MB)-x06j", "r:0c7bbb4b24823e5ab871cb4c1d6f3710",  483518,
+						  "APP/COPFILES.DIR",			"d:90c259f31cf3152d46ebfa935163e74e", 8445846, 404),
+	WINGAME2("vcop1", "", "VCOP.EXE",					"t:298b9bbd67ae7b4bc6f542bcc55f512b",  697427,
+						  "APP/COPFILES.DIR",			"f:90c259f31cf3152d46ebfa935163e74e", 8445846, 404),
+	MACGAME2("vcop2", "", "Cop II, The Angel Returns",  "r:0c7bbb4b24823e5ab871cb4c1d6f3710",  482582,
+						  "COPFILES.DXR",				"d:a0b5b3055750b51392ee2968c087fa6d", 9137834, 404),
+	WINGAME2("vcop2", "", "VCOP2.EXE",					"t:c7f9d6f5d40cfd5a6ad06197205af786",  723653,
+						  "COPFILES.DXR",				"f:a0b5b3055750b51392ee2968c087fa6d", 9137834, 404),
 
 	// Original filename is DreamLight® Verttice™ 2.0
-	MACGAME1("verttice", "v2.0", "DreamLight Verttice 2.0", "b7e69c37b7355022d400c14aa97c5d54", 512047, 404),
+	MACGAME1("verttice", "v2.0", "xn--DreamLight Verttice 2.0-35a3288r", "r:b7e69c37b7355022d400c14aa97c5d54", 511791, 404),
 
-	MACDEMO1_l("victorianpark", "Demo", "Victorian Park DEMO", "0d5f13d9321d36c23b63f229460928b4", 483443, Common::JA_JPN, 404),
+	// Original filename is ビクトリアンパークDEMO
+	MACDEMO1_l("victorianpark", "Demo", "xn--DEMO-kk4czcb2r4cq9wzd8e", "r:0d5f13d9321d36c23b63f229460928b4", 483187, Common::JA_JPN, 404),
 
 	// System 6 version is D3
 	MACGAME1("videocasino", "", "xn--Video Casino PowerMac-pb4m", "ccf864a8dc6e9d0d26eb73b4683e634b", 60068, 404),
@@ -6019,15 +6033,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// drive letter of the CD-ROM drive into a global called CDPath. This projector calls the movie CDPath&"PREVIEW.DIR"."
 	// WINGAME1t("vygrpresents", "Installed", "GOPREV.EXE", "d6cbe5df16170418dee965c5bc1d5e87", 712453, 400),
 	// Japanese version is Mac-only
-	MACGAME1("vygrpresents", "", "Voyager Preview", "4efba92cbb95eff273c40e57d0f0f535", 296494, 403),
-	WINGAME1t("vygrpresents", "", "PREVIEW.EXE", "d1e277b509be1fe48f5ca6c48324382c", 4278225, 404),
+	MACGAME2("vygrpresents", "", "Voyager Preview",	   "r:4efba92cbb95eff273c40e57d0f0f535",  296494,
+								 "PRODUCTS/AHDN1.PIC", "d:bcdb0ff85d23175da189cb9ef592a2e6",  152122, 403),
+	WINGAME2("vygrpresents", "", "PREVIEW.EXE",		   "t:d1e277b509be1fe48f5ca6c48324382c", 4278225,
+								 "PRODUCTS/AHDN1.PIC", "d:bcdb0ff85d23175da189cb9ef592a2e6",  152122, 404),
 	MACGAME1_l("vygrpresents", "", "Voyager Preview", "4577dd3eadc467a986ab172d90871b22", 310336, Common::JA_JPN, 402),
 
 	WINDEMO1t("vtarot", "Demo", "VTAROT.EXE", "4c6c3949bda323f92f09a5769bbb250c", 693261, 404),
 
 	// Original Mac filename is VUSIC™ The Screen Raver™
-	MACDEMO1("vusic", "Demo", "VUSIC The Screen Raver", "5bbb193a8785c70abe2a4d86b99e1536", 283291, 403),
-	WINDEMO1("vusic", "Demo", "VUSIC.EXE", "ff2c0a776d5f0c9aa5bc115d3b36676b", 693375, 400),
+	MACDEMO1("vusic", "Demo", "xn--VUSIC The Screen Raver-630nra", "r:5bbb193a8785c70abe2a4d86b99e1536", 283035, 404),
+	WINDEMO1("vusic", "Demo", "VUSIC.EXE",						   "t:022449ef5af577bff91ac49864dc91f2", 693375, 404),
 
 	MACGAME2_l("wallobee", "", "xn--u9j9exa4dyd1jh4lp602begzc", "0666ae690e459d3d0d91800ebd94de46", 290780,
 								   "001a", "85c99656df8d4f04eee2379c5c1e1020", 2469832, Common::JA_JPN, 402),
@@ -6057,18 +6073,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "NAV/SHARED.DIR", "18e32edc1081957290c03aafa89354e4", 624390, Common::JA_JPN, 400),
 
 	// Original Mac filename is わりわりワールド_デモ
-	MACDEMO1_l("wariwari", "Demo", "Wari Wari World Demo", "f808a9f231b77617fa559cf9d2da66c1", 502975, Common::JA_JPN, 400),
+	MACDEMO1_l("wariwari", "Demo", "xn--_-0cuasb25ama6rzcvb9j", "r:f808a9f231b77617fa559cf9d2da66c1", 502719, Common::JA_JPN, 400),
 	WINDEMO2_l("wariwari", "Demo", "S.EXE",				   "56faebd9531821fe9be95515c43f7fcc", 744019,
 								   "WADEMO.DXR",		   "cf6453b97f7e1cb1fb19ecb59bbb9caf", 6213026, Common::JA_JPN, 404),
 
-	MACDEMO1("warplanes", "Demo", "Warplanes Demo", "4f7ff33ce95ed9f42befdae4f9b6b690", 292244, 403),
+	MACDEMO1("warplanes", "Demo", "Warplanes Demo", "r:4f7ff33ce95ed9f42befdae4f9b6b690", 291988, 404),
 
-	MACGAME1("whales", "", "World Of Whales", "da0da5d543b237051975ad70bec129f4", 483774, 404),
+	MACGAME1("whales", "", "World Of Whales", "r:da0da5d543b237051975ad70bec129f4",  483518, 404),
+	WINGAME2("whales", "", "WHALES.EXE",	  "t:c48dc5b8af57ef656b0fc906143a8053",  741454,
+						   "LEADER.DIR",	  "f:74b913adc0fbb9e618f7b78897f3cf89", 3088618, 404),
 
-	MACGAME1("wildblueyonder1", "", "Wild Blue Yonder 1", "dc5a87dda7a0daf46604515f7d2cca66", 292244, 403),
+	// Needs installation
+	MACGAME1("wildblueyonder1", "", "Wild Blue Yonder 1", "r:dc5a87dda7a0daf46604515f7d2cca66", 291988, 403),
 
-	WINGAME1t("williamsbts", "", "BEHIND.EXE", "0a432cb988c9865c478bdc195429d3fd", 693077, 404),
-	MACGAME1("williamsbts", "", "Behind the Scenes", "5442b05b2d320eb2e2ec3c74fa41f953", 483490, 404),
+	MACGAME2("williamsbts", "", "Behind the Scenes", "r:5442b05b2d320eb2e2ec3c74fa41f953",  483490,
+								"BEHIND/BEHIND.DIR", "d:6f14d73e07077edcd07fc77fab0a4e88", 1894394, 404),
+	WINGAME2("williamsbts", "", "BEHIND.EXE",		 "t:0a432cb988c9865c478bdc195429d3fd",  693077,
+								"BEHIND/BEHIND.DIR", "f:6f14d73e07077edcd07fc77fab0a4e88", 1894394, 404),
 
 	// Windows version is D3
 	MACGAME1t("willywabbit", "North American release", "Willy Wabbit(Click me)", "04e5a9a6c98f48aaef7fe7115b3606ca", 304029, 400),
@@ -6089,7 +6110,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Published in the UK by Oxford University Press
 	WINGAME1_l("winniewitch", "", "HENNIE.EXE", "25b6c57704b8a2913cfa5d7f30adbc9a", 967339, Common::NL_NLD, 400),
 	WINGAME1t_l("winniewitch", "", "HEKLA.EXE", "4ccad55d613b194bc69684ebe3e03777", 698139, Common::SE_SWE, 404),
-	WINDEMO1("winniewitch", "Demo", "WINNIE.EXE", "6efbdb88014d09c9d189a019cffa89ff", 977277, 404),
+	WINDEMO2("winniewitch", "Demo", "WINNIE.EXE",	"t:1f6282585e73580385172356ba47ced3", 977277,
+									"BATHROOM.DIR", "f:c69da5b6ea5c713a8e7d435af76d5c48", 351807, 404),
 
 	// Japanese title 'よく見てごらん！'
 	// Original filename is 'よく見てごらん！DEMO'
@@ -6101,9 +6123,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("wolfgang", "v1.0", "TOSYS/WOLFGANG.EXE", "35faee21d2aadf32cf2e68535ed3a77e", 1256449, Common::IT_ITA, 404),
 	WINGAME1t_l("wolfgang", "v2.0", "WOLF95.EXE", "f6b43329b6ad968eb4fb15436549ef85", 1305318, Common::IT_ITA, 404),
 
-	MACDEMO1_l("wonderomcw", "Demo", "WONDEROM_CW", "549afa25835bcd35daff0f399e54149e", 290726, Common::JA_JPN, 402),
+	MACDEMO1_l("wonderomcw", "Demo", "WONDEROM_CW", "r:549afa25835bcd35daff0f399e54149e", 290470, Common::JA_JPN, 402),
 
-	WINDEMO1("worldatlas", "Sampler", "ATLAS.EXE", "dc58e6e06807f4a4a4cc278f8748659f", 696807, 404),
+	WINDEMO2("worldatlas", "Sampler", "ATLAS.EXE",		   "t:73fd017684b6fd92d0b8a743994705ab", 696807,
+									  "DATA/CONTENTM.DIR", "f:f4c9435dac6653651bf7c86480c3333b", 681228, 404),
 
 	// Full game is not Director
 	MACDEMO1("wttf", "Demo", "WTTF", "01be45e7241194dad07938e7059b88e3", 483518, 404),
@@ -6130,7 +6153,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Pippin version is D5
 	// Published by Oxford Multimedia (1995)
-	WINDEMO1("xmasstory", "Demo", "ACS.EXE", "864edd47c1870fafa463340f9e2ac878", 692713, 404),
+	WINDEMO2("xmasstory", "Demo", "ACS.EXE",	   "t:7dfac3144dbd9f9792f0e41f4dee5b70",  692713,
+								  "DATA/HOME.DIR", "f:1aab64ec35fa73f58efadcae7ce835cb", 1125818, 404),
 
 	// Windows version requires install, INSTALL.Z, InstallShield V3
 	// Mac version requires install, Install Me, uses Smaller Installer by Cyclos
@@ -6141,18 +6165,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("y2lgeography", "", "MSWorldGeography", "c5ca29779414b218e7cb8007e6a2c5ed", 550644, 404),
 	WINGAME1("y2lgeography", "", "MS_GEO.EXE", "97bed0dfebc8d7e1fd4547578fe07c3f", 710977, 404),
 
-	MACGAME1_l("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 400),
-	WINGAME1_l("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 400),
-	WINDEMO1_l("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 400),
+	MACGAME1_l("ybr2", "",	   "xn-- YBR2 -",   "r:b797956eb3a4dabcc15bfadf6fc66591", 503897, Common::JA_JPN, 404),
+	WINGAME1_l("ybr2", "",	   "YBR2/YBR2.EXE", "t:6a2cea5a937c41a1076d88759e266926", 860579, Common::JA_JPN, 404),
+	WINDEMO1_l("ybr2", "Demo", "YBR2DEMO.EXE",  "t:18d27efd0bb8b9a0e2611ab10bd8f4ea", 900973, Common::JA_JPN, 404),
 
 	// From Yeti Girls "Squeeeze"
 	// https://www.discogs.com/release/6771241
 	WINGAME1_l("yetigirlsquiz", "", "YETIQUIZ.EXE", "t:8802f85d2b2062caf840d1239edea74c", 2218809, Common::DE_DEU, 404),
 
 	// Original Mac filename is よーいドンDEMO
-	MACDEMO1_l("yoidon", "Demo", "Yo-i Don DEMO", "3a0c62a46f36157434c4204e50f22886", 305032, Common::JA_JPN, 403),
-	WINDEMO2_l("yoidon", "Demo", "S.EXE",		  "9448daa2ccbc2c3707df48323327feb0", 747007,
-								 "START.DXR",	  "651764cd9add9cc56022dc499b2aca92", 9803044, Common::JA_JPN, 404),
+	MACDEMO1_l("yoidon", "Demo", "xn--DEMO-453crpwo0kuc", "r:3a0c62a46f36157434c4204e50f22886",  304776, Common::JA_JPN, 403),
+	WINDEMO2_l("yoidon", "Demo", "S.EXE",				  "t:6008d4ee4f4bf1dc1b152f0c127f7c79",  747007,
+								 "DARUMA.DXR",			  "f:e0666195ee017989274df3ed7a532045", 2671226, Common::JA_JPN, 404),
 
 	// Original Mac filename is 真・百物語
 	MACGAME1_l("yokai", "", "xn--vek138qttcmsa439e", "17efee018a660458fae80de4364021ac", 556245, Common::JA_JPN, 404),
