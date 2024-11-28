@@ -58,6 +58,7 @@ private:
 	int32 _monk2Series = 0;
 	int32 _monk3Series = 0;
 	int32 _monk4Series = 0;
+	int32 _ripGoesUpStairsSeries = 0;
 	int32 _ripLooksDownSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 };
