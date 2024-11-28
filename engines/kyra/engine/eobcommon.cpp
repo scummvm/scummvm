@@ -393,6 +393,10 @@ Common::Error EoBCoreEngine::init() {
 	if (ConfMan.hasKey("render_mode"))
 		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
+	if (_flags.platform == Common::kPlatformDOS && ((_flags.gameID == GI_EOB1 && _configRenderMode != Common::kRenderVGA && _configRenderMode != Common::kRenderCGA && _configRenderMode != Common::kRenderEGA) ||
+		(_flags.gameID == GI_EOB2 && _configRenderMode != Common::kRenderVGA && _configRenderMode != Common::kRenderEGA)))
+			_configRenderMode = Common::kRenderDefault;
+
 	_enableHiResDithering = (_configRenderMode == Common::kRenderEGA && _flags.useHiRes);
 
 	_screen = new Screen_EoB(this, _system);

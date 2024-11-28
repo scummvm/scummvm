@@ -151,10 +151,13 @@ bool Screen::init() {
 	// to the engines. We already limit the selection via our GUIO flags in
 	// the game specific settings, but this is not enough due to global
 	// settings allowing everything.
-	if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2) {
+	if (_vm->gameFlags().platform == Common::kPlatformDOS && (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)) {
 		if (ConfMan.hasKey("render_mode"))
 			_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
-	}
+		if ((_vm->game() == GI_EOB1 && _renderMode != Common::kRenderVGA && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) ||
+			(_vm->game() == GI_EOB2 && _renderMode != Common::kRenderVGA && _renderMode != Common::kRenderEGA))
+				_renderMode = Common::kRenderDefault;
+	} 
 
 	// In VGA mode the odd and even page pointers point to the same buffers.
 	for (int i = 0; i < SCREEN_PAGE_NUM; i++)
