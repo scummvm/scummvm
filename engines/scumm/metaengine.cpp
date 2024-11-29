@@ -411,7 +411,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
-	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 7)
+	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 7 && res.game.heversion == 0)
 		res.game.midi = MDT_MACINTOSH;
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
