@@ -683,7 +683,7 @@ void Room405::parser() {
 		} else {
 			doAction("405r12");
 		}
-	} else if (lookFlag && player_said("GERMAN BAKNOTE") && inv_object_is_here("GERMAN BAKNOTE")) {
+	} else if (lookFlag && player_said("GERMAN BANKNOTE") && inv_object_is_here("GERMAN BANKNOTE")) {
 		doAction("405r17");
 	} else if (lookFlag && player_said(" ")) {
 		doAction("405r04");
