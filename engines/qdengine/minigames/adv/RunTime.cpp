@@ -232,7 +232,7 @@ bool MinigameManager::createGame() {
 	}
 
 	// Here we instantiate the specific game
-	_game = _callback();
+	_game = _callback(this);
 
 	if (_currentGameInfo)
 		_currentGameInfo->_empty = false;

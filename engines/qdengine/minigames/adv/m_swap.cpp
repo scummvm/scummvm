@@ -31,8 +31,8 @@ namespace QDEngine {
 
 typedef Rect<float, mgVect2f> Rectf;
 
-MinigameInterface *createMinigameSwap() {
-	return new Swap(g_runtime);
+MinigameInterface *createMinigameSwap(MinigameManager *runtime) {
+	return new Swap(runtime);
 }
 
 enum {

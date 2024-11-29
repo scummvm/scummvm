@@ -25,7 +25,7 @@
 
 namespace QDEngine {
 
-MinigameInterface *createGame() {
+MinigameInterface *createMinigameKaraoke(MinigameManager *runtime) {
 	return new Karaoke;
 }
 

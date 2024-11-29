@@ -27,7 +27,7 @@
 
 namespace QDEngine {
 
-MinigameInterface *createMinigameScores() {
+MinigameInterface *createMinigameScores(MinigameManager *runtime) {
 	return new Scores;
 }
 

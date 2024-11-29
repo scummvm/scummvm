@@ -85,7 +85,7 @@ struct GameInfo {
 	void *_gameData;
 };
 
-typedef MinigameInterface *(*MinigameConsCallback)();
+typedef MinigameInterface *(*MinigameConsCallback)(MinigameManager *runtime);
 
 qdMiniGameInterface *create_adv_minigame(const char *name, MinigameConsCallback callback);
 
