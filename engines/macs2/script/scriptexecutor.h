@@ -208,6 +208,8 @@ class GameObject;
 			// Implements opcode 28 - TODO: What exactly?
 			void FuncC8E4();
 
+			void FuncB6BE_actual();
+
 			// Implements opcode 0e - changing scene animations
 			void FuncB6BE();
 
