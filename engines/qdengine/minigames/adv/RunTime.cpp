@@ -331,35 +331,35 @@ bool MinigameManager::new_game(const qdEngineInterface *engine_interface) {
 }
 
 class TempValue {
-	const qdEngineInterface *pre_engine_;
-	qdMinigameSceneInterface *pre__scene;
-	MinigameManager *pre_runtime_;
+	const qdEngineInterface *_pre_engine;
+	qdMinigameSceneInterface *_pre_scene;
+	MinigameManager *_pre_runtime;
 public:
 	TempValue(MinigameManager *new_runtime, const qdEngineInterface *new_engine, qdMinigameSceneInterface *new_scene) {
 		assert(new_runtime);
-		pre_runtime_ = g_runtime;
+		_pre_runtime = g_runtime;
 		g_runtime = new_runtime;
 
 		assert(new_engine && new_scene);
-		pre_engine_ = g_runtime->_engine;
-		pre__scene = g_runtime->_scene;
+		_pre_engine = g_runtime->_engine;
+		_pre_scene = g_runtime->_scene;
 
 		g_runtime->_engine = new_engine;
 		g_runtime->_scene = new_scene;
 	}
 	~TempValue() {
-		g_runtime->_engine = pre_engine_;
-		g_runtime->_scene = pre__scene;
+		g_runtime->_engine = _pre_engine;
+		g_runtime->_scene = _pre_scene;
 
-		g_runtime = pre_runtime_;
+		g_runtime = _pre_runtime;
 	}
 };
 
-#define TEMP__sceneENTER() TempValue tempSceneObject(this, engine, const_cast<qdMinigameSceneInterface*>(scene))
+#define TEMP_scene_ENTER() TempValue tempSceneObject(this, engine, const_cast<qdMinigameSceneInterface*>(scene))
 
 int MinigameManager::save_game(const qdEngineInterface *engine, const qdMinigameSceneInterface *scene, char *buffer, int buffer_size) {
 	debugC(2, kDebugMinigames, "MinigameManager::save_game(): save game");
-	TEMP__sceneENTER();
+	TEMP_scene_ENTER();
 	loadState();
 	if (_currentGameInfo && !_currentGameInfo->empty()) {
 		debugC(2, kDebugMinigames, "MinigameManager::save_game(): save game (%d, %d)", _currentGameIndex._gameLevel, _currentGameIndex._gameNum);
@@ -380,7 +380,7 @@ int MinigameManager::load_game(const qdEngineInterface *engine, const qdMinigame
 		return buffer_size;
 	}
 	debugC(2, kDebugMinigames, "MinigameManager::load_game(): load game");
-	TEMP__sceneENTER();
+	TEMP_scene_ENTER();
 	loadState();
 
 	if (_currentGameInfo) {
