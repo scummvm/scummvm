@@ -221,7 +221,8 @@ l0017_2774:
 		*/
 }
 
-void Adlib::Func2779(uint8 arg1, uint8 args2) {
+uint8 Adlib::Func2779(uint8 arg1, uint8 args2) {
+	return gArray229C[arg1];
 }
 
 void Adlib::Func24FD() {
