@@ -187,5 +187,5 @@ scummvmAssertEqual(the last item of "onetwo", "onetwo")
 -- LB::b_offset
 set pos to offset("mov", "mov")
 scummvmAssertEqual(pos, 1)
-set pos to offset("mov", "MOV")
-scummvmAssertEqual(pos, 1)
+set pos to offset("mov", "C:\GAMES\OPEN.MOV")
+scummvmAssertEqual(pos, 15)
