@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-27 22:48+0000\n"
-"PO-Revision-Date: 2024-09-21 15:43+0000\n"
+"PO-Revision-Date: 2024-11-29 19:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Suomi\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh Ääni"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1527,16 +1527,12 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM ei löytänyt pelimoottoria joka tukee valittua peliä!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Lisäsitkö tämän kansion SAF:iin? Paina ohje-nappia [?] ylhäällä nähdäksesi "
-"tarkat ohjeet"
+"Oletko antanut ScummVM:lle pääsyn tähän kansioon? Paina ohjenappia [?] "
+"ylhäällä nähdäksesi tarkat ohjeet"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1831,10 +1827,8 @@ msgid "Scaler:"
 msgstr "Skalaaja:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Renderöintitila:"
+msgstr "Rotaatiotitila:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2802,10 +2796,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Haluatko varmasti poistaa tämän pelitallennuksen?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Pelitallennusta kirjoittaessa tapahtui virhe\n"
+msgstr "Pelitallennusta kirjoittaessa tapahtui virhe"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -3158,16 +3150,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA-harmaasävy"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 Väriä)"
+msgstr "Windows (256 Väriä)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 Väriä)"
+msgstr "Windows (16 Väriä)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3180,24 +3168,22 @@ msgid "Hercules Amber"
 msgstr "Hercules keltainen"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Mene sijaintiin"
+msgstr "Ei rotaatiota"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Myötäpäivään"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 astetta"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Vastapäivään"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -4877,75 +4863,6 @@ msgid "Touch Controls"
 msgstr "Kosketuskontrollit"
 
 #: backends/platform/android/android.cpp:1117
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5334,80 +5251,6 @@ msgstr ""
 "läpipeluuohjeen. Onnea matkaan!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner, by swiping two fingers from "
-#| "left to right, or in the global settings from the Launcher go to **Global "
-#| "Options > Backend > Choose the preferred touch mode**. It's possible to "
-#| "configure the touch mode for three situations (ScummVM menus, 2D games "
-#| "and 3D games).\n"
-#| "\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "| Gesture           | Action            \n"
-#| "| ------------------|-------------------\n"
-#| "| `One finger tap`  | Left mouse click  \n"
-#| "| `Two fingers tap` | Right mouse click \n"
-#| "| `Two fingers double tap` | ESC \n"
-#| "| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
-#| "such as for selection from action wheel in Curse of Monkey Island \n"
-#| "| `Two fingers press & hold for >0.5s` | Right mouse button hold and "
-#| "drag, such as for selection from action wheel in Tony Tough \n"
-#| "| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
-#| "| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
-#| "15) \n"
-#| "| `Two fingers swipe (top to bottom)` | Access Global Main Menu in "
-#| "games \n"
-#| "| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
-#| "\n"
-#| "### Virtual Gamepad \n"
-#| "\n"
-#| "Devices running iOS 15 or later can connect virtual gamepad controller by "
-#| "swiping two fingers from right to left or through **Global Options > "
-#| "Backend**. The directional button can be configured to either a "
-#| "thumbstick or a dpad.\n"
-#| "**Note** While the virtual controller is connected it is not possible to "
-#| "perform mouse clicks using tap gestures since they are disabled as long "
-#| "as the virtual controller is visible. Left mouse clicks are performed by "
-#| "pressing the A button. Tap gestures are enabled again when virtual "
-#| "controller is disconnected.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen or swipe two fingers downwards.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, perform a pinch gesture (zoom out) or tap on any "
-#| "editable text field. To hide the virtual keyboard, tap the controller "
-#| "icon again, do an opposite pinch gesture (zoom in) or tap outside the "
-#| "text field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -6345,10 +6188,8 @@ msgid ""
 msgstr "Aktivoi hiirituen. Mahdollistaa hiiren käyttämisen pelivalikoissa."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Ennustava tekstinsyöttö"
+msgstr "Ennakoiva tekstinsyöttö-dialogi hiirellä klikatessa"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6357,6 +6198,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Näyttää ennakoiva tekstinsyöttö-dialogin tekstikenttiä vasemmalla "
+"hiirennapilla klikatessa.\n"
+"Ennakoiva tekstinsyöttö-dialogin voi edelleen halutessaan aktivoida jos "
+"sille on kartoitettu näppäin"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6927,10 +6772,8 @@ msgstr "Näppäinten oletuskartoitukset"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Pelin näppäinkartoitukset"
+msgstr "Escape-näppäinkartoitukset"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -7655,29 +7498,21 @@ msgstr "Pikalataus"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Nopea liike"
+msgstr "Nopea tila"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Peliaika:"
+msgstr "Pelaajavalikko"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "Vauhdikkaampi pelinopeus"
+msgstr "Nopeuta peliä"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "Vauhdikkaampi pelinopeus"
+msgstr "Hidasta peliä"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -7689,54 +7524,38 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685-tukea ei ole käännetty mukaan"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Äänien mykistys päälle / pois"
+msgstr "Valikko"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Taistelumoodi päälle / pois"
+msgstr "Kello päälle / pois"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Seuraava dialogin / valikon kohta"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "Edellinen paletti"
+msgstr "Edellinen dialogin / valikon kohta"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Mene seuraavaan objektiin"
+msgstr "Seuraava objekti"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Mene edelliseen objektiin"
+msgstr "Edellinen objekti"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "Edellinen toiminto"
+msgstr "Poimi / Käytä"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Animoidut invenaarioesineet"
+msgstr "Aktivoi invenaario-objekti"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
 msgstr "Pelin näppäinkartta"
 
@@ -7750,26 +7569,20 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Ohita intro/Poistu kartasta tai inventaariosta"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Avaa holokartta"
+msgstr "Avaa kartta"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Näytä kartta"
+msgstr "Näytä kävelykartta"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "Nopea kävely päälle / pois"
+msgstr "Kävelynopeus"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7778,19 +7591,15 @@ msgstr "Avaa päävalikko"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Vaihda hiirenosoittimen ja viimeisimmän peliesineen välillä"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "Vieritä inventaariota ylös"
+msgstr "Edellinen esine inventaariossa"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "Avaa Inventaario"
+msgstr "Seuraava esine inventaariossa"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7888,8 +7697,6 @@ msgid "Automatic drilling"
 msgstr "Automaattinen poraus"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Salli onnistunut poraus missä tahansa alueella Driller:issä"
 
@@ -7974,16 +7781,12 @@ msgid "Info Menu"
 msgstr "Infovalikko"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "Valitse indeksi"
+msgstr "Valitse Prinssi"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "Valitse indeksi"
+msgstr "Valitse Prinsessa"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -8015,14 +7818,12 @@ msgstr "Juokse"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "Ryömi"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Liiku eteenpäin"
+msgstr "Katse eteenpäin"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -8062,23 +7863,17 @@ msgstr "Kerää porauslautta"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Vaihda tilaa"
+msgstr "Vaihda kulmaa"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Muuta fontin kokoa"
+msgstr "Muuta askelpituutta"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Äänien mykistys päälle / pois"
+msgstr "Muuta korkeutta"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8521,22 +8316,16 @@ msgid "Glowstick"
 msgstr "Valotikku"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Käyttäjä peruutti"
+msgstr "Käyttäjän ohjeet"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
 msgstr "Äänet päälle / pois"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "Toista viimeinen viesti"
+msgstr "Toista viimeisin rivi"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8562,64 +8351,48 @@ msgid "Show inventory"
 msgstr "Näytä inventaario"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Parannettu tila"
+msgstr "Turbotila"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Liiku ylöspäin"
+msgstr "Siirry ylöspäin"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Siirry alaspäin"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
-msgstr "Liiku vasemmalle"
+msgstr "Siirry vasemmalle"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
-msgstr "Liiku oikealle"
+msgstr "Siirry oikealle"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Liiku vasemmalle"
+msgstr "Siirry ylävasemmalle"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Liiku oikealle"
+msgstr "Siirry yläoikealle"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Liiku vasemmalle"
+msgstr "Siirry alavasemmalle"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Liiku oikealle"
+msgstr "Siirry alaoikealle"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8682,16 +8455,12 @@ msgid "Side Step"
 msgstr "Sivuaskel"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor up"
-msgstr "Siirrä kursoria vasemmalle"
+msgstr "Siirrä kursoria ylös"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor down"
-msgstr "Siirrä kursoria vasemmalle"
+msgstr "Siirrä kursoria alas"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
@@ -8863,10 +8632,8 @@ msgstr "Liiku eteenpäin"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
-msgstr "Liiku taaksepäin"
+msgstr "Siirry taaksepäin"
 
 #: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Left"
@@ -10371,13 +10138,15 @@ msgstr "Salli grafiikat jotka olivat poistettu lakiteknisistä syistä"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "Salli tallennus GMM:llä"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Sallii tallennuksen GMM:llä. VAROITUS: GMM:n pelitallennukset saattavat olla "
+"korruptoituneita ja käyttökelvottomia. Käytä omalla vastuullasi!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -11025,8 +10794,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Aja erittäin nopeassa tilassa (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Vaihda grafiikkasuodatinta"
 
@@ -11423,6 +11190,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Varoitus: tämä uudelleenjulkaisuversio sisältää korjattuja peliscriptejä,\n"
+"ja saattaa siten kaatuilla tai toimia väärin toistaiseksi."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11505,30 +11274,20 @@ msgid "Enable low latency audio mode"
 msgstr "Matalalatenssinen audio"
 
 #: engines/scumm/metaengine.cpp:749
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Sallii pelin käyttää matalalatenssista audiota äänentarkkuuden "
-"kustannuksella. \t\tSuosittelemme tätä asetusta vain jos huomaat viivettä "
-"pelin äänissä normaalissa pelitilanteessa."
+"kustannuksella. Suosittelemme tätä asetusta vain jos huomaat viivettä pelin "
+"äänissä normaalissa pelitilanteessa."
 
 #: engines/scumm/metaengine.cpp:758
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Esitä \"A Pirate I Was Meant To Be\"-laulu"
 
 #: engines/scumm/metaengine.cpp:759
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -11618,42 +11377,29 @@ msgstr ""
 "fonteilleen."
 
 #: engines/scumm/scumm.cpp:1266
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
 "\"Monkey Island\":in Macintosh ohjelmatiedostoa ei löydetty\n"
-"instrumenttien lukemiseksi. Emme soita musiikkia."
+"resurssien ja instrumenttien lukemiseksi. Emme soita musiikkia, emmekä näytä "
+"Mac-käyttöliittymää."
 
 #: engines/scumm/scumm.cpp:1299
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"\"Indy\":n Macintosh ohjelmatiedostoa ei löydetty. Korkearesoluutioiset\n"
-"versiot fontista eivät ole tuettuina."
+"\"Fate of Atlantis\":in Macintosh ohjelmatiedostoa ei löydetty.\n"
+"Emme näytä Mac-käyttöliittymää."
 
 #: engines/scumm/scumm.cpp:1319
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"\"Indy\":n Macintosh ohjelmatiedostoa ei löydetty. Korkearesoluutioiset\n"
-"versiot fontista eivät ole tuettuina."
+"\"LeChuck's Revenge\":n Macintosh ohjelmatiedostoa ei löydetty.\n"
+"Emme näytä Mac-käyttöliittymää."
 
 #: engines/scumm/scumm.cpp:1330
 #, c-format
@@ -11923,8 +11669,6 @@ msgid "Open control panel"
 msgstr "Avaa hallintapaneeli"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
 msgstr "Erittäin nopea tila päälle / pois"
 
@@ -12032,16 +11776,12 @@ msgid "Scroll down in your dialogues"
 msgstr "Vieritä dialogeja alas"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
-msgstr "siirry seuraavaan dialogiin"
+msgstr "Siirry seuraavaan dialogiin"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
-msgstr "siirry edeltäviin dialogeihin"
+msgstr "Siirry edeltäviin dialogeihin"
 
 #: engines/stark/metaengine.cpp:328
 msgid "Select dialogue"
@@ -12192,51 +11932,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Broken Sword 1:n demo päättyy tähän"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Puhe: Englanti"
+msgstr "Englanti"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Saksa"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Ranska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Italia"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Lopeta"
+msgstr "Espanja"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Brasilian Portugal"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Tšekki"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Pelin kieli:"
+msgstr "Tekstin kieli:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Valitse tekstityksen kieli. Tämä ei vaikuta ääniin."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Simuloi Windows-version äänimoottoria"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12244,18 +11977,17 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Peli käyttää pehmeämpää (logaritmista) äänikäyrää, mutta poistaa sisään- ja "
+"uloshäivytykset ääniefekteistä, sisäänhäivytyksen musiikista sekä "
+"automaattisen musiikinvaimennuksen puheen kuuluessa"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Suuntapainike:"
+msgstr "Lisäasetukset:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "Päävalikko ~u~"
+msgstr "Päävalikko"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12263,14 +11995,9 @@ msgid ""
 msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Enhanced Edition ei ole tuettu. Ole hyvä ja käytä julkaisusta löytyviä "
-"alkuperäisen version tiedostoja."
+"Remastered edition ei ole tuettu. Ole hyvä ja käytä alkuperäistä versiota"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12356,35 +12083,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Fonttivarianttia ei löydy '%s' pelimoottorin datatiedostosta."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Ohita rivi"
+msgstr "Ohita intro"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Ohita tämänhetkinen animaatio"
+msgstr "Pysäytä tämänhetkinen ääni"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
 msgstr "Ei musiikkia"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Lopeta puhe"
+msgstr "Ei puhetta"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Ääniefektit päälle/pois"
+msgstr "Ei ääniefektejä"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12416,36 +12133,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "Ohita videosekvenssi tai dialogi"
+msgstr "Ohita sekvenssi tai avaa lopetusdialogi"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "Ohita dialogi"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Avaa päävalikko"
+msgstr "Avaa asetusvalikko"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Nopea kävely päälle / pois"
+msgstr "Nopea kävely päälle"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Nopea kävely päälle / pois"
+msgstr "Nopea kävely pois päältä"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12453,11 +12160,9 @@ msgstr "Nopea tila päälle / pois"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Ääni/Teksti/Teksti ja ääni"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
 msgstr "Paina \"Kyllä\" -painiketta"
 
@@ -12476,108 +12181,74 @@ msgstr "Avaa järjestelmävalikko"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Kytke päälle"
+msgstr "Return"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Tarkastele"
+msgstr "Katso ohjetta"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Näytä asetukset"
+msgstr "Ääniasetukset"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Pohjoinen"
+msgstr "Ryömi pohjoiseen"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Etelä"
+msgstr "Ryömi etelään"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Käänny nopeasti vasemmalle"
+msgstr "Käänny vasemmalle/Ryömi länteen"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Käänny nopeasti oikealle"
+msgstr "Käänny oikealle/Ryömi itään"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Kasvata askelen pituutta"
+msgstr "Kasvata nopeutta"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Pienennä askelen pituutta"
+msgstr "Hidasta nopeutta"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "Lukunopeus"
+msgstr "Miniminopeus"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Maksimi äänenvoimakkuus"
+msgstr "Maksiminopeus"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "Hitaampi pelinopeus"
+msgstr "Hidas nopeus"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "Lukunopeus"
+msgstr "Keskinopeus"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Eteenpäin"
+msgstr "Vedä kortteja"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Puhe"
+msgstr "Ohita puhe"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Nopea tila päälle / pois"
+msgstr "Vaihda paneelin tyyliä"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Käytä tekstistä puheeksi -toimintoa"
+msgstr "Puhutut tekstit"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -13029,6 +12700,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Pakollinen tiedosto puuttuu\n"
+"\n"
+"Pelin käynnistäminen vaatii tiedoston SAVEGAME/U8SAVE.000\n"
+"alkuperäisestä asennuksesta.\n"
+"\n"
+"Ole hyvä ja tarkista että olet kopioinut kaikki tiedostot oikein."
 
 #: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
@@ -13147,14 +12824,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Tuntematon virhe pelitallennusta ladatessa."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Aktivoi kivimatkustaminen"
+msgstr "Aktivoi lukitusjärjestelmä"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Vaadi lukituskoodi pelin käynnistämiseksi."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
