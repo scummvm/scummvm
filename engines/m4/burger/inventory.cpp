@@ -22,61 +22,66 @@
 #include "m4/adv_r/adv_inv.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
 
 struct InvObject {
 	const char *_name;
-	const char *_verbs;
+	const char *_germanName;
+	const char *_frenchName;
 	int32 _scene, _cel, _cursor;
 };
 
 static const InvObject INVENTORY_ITEMS[] = {
-	{ "money", "GELD", 998, 55, 55 },
-	{ "block of ice", "EISBLOCK", 142, 51, 51 },
-	{ "pantyhose", "STRUMPFHOSE", 142, 45, 45 },
-	{ "phone bill", "TELEFONRECHNUNG", 170, 49, 49 },
-	{ "whistle", "PFEIFE", 170, 40, 40 },
-	{ "carrot juice", "M\xd6""HRENSAFT", 172, 25, 25 },
-	{ "deed", "URKUNDE", 105, 38, 38 },
-	{ "laxative", "ABF\xdcHRMITTEL", 174, 54, 54 },
-	{ "amplifier", "VERST\xc4""RKER", 145, 34, 34 },
-	{ "jawz o' life", "KLEMMBACKE", 137, 37, 37 },
-	{ "broken puz dispenser", "Bonbonspender,kaputt", 176, 16, 16 },
-	{ "spring", "SPRUNGFEDER", 999, 47, 47 },
-	{ "puz dispenser", "BONBONSPENDER", 999, 17, 17 },
-	{ "broken mouse trap", "KAPUTTE MAUSEFALLE", 143, 18, 18 },
-	{ "keys", "SCHL\xdc""SSEL", 138, 31, 31 },
-	{ "ray gun", "STRAHLENPISTOLE", 604, 50, 50 },
-	{ "kibble", "TROCKENFUTTER", 602, 44, 44 },
-	{ "burger morsel", "HAMBURGERST\xdc""CK", 999, 39, 39 },
-	{ "matches", "STREICHH\xd6""LZER", 999, 42, 42 },
-	{ "jug", "KRUG", 303, 14, 14 },
-	{ "distilled carrot juice", "DESTILLIERTER SAFT", 999, 15, 15 },
-	{ "gizmo", "GER\xc4""T", 999, 58, 58 },
-	{ "kindling", "ANZ\xdc""NDHOLZ", 999, 20, 20 },
-	{ "burning kindling", "BRENNENDES HOLZ", 999, 21, 21 },
-	{ "christmas lights", "LICHTERKETTE", 508, 22, 22 },
-	{ "christmas lights ", "LICHTERKETTE", 508, 23, 23 },
-	{ "bottle", "FLASCHE", 999, 24, 24 },
-	{ "soapy water", "SEIFENWASSER", 999, 26, 26 },
-	{ "rubber gloves", "GUMMIHANDSCHUHE", 503, 35, 35 },
-	{ "dirty sock", "DRECKIGE SOCKE", 504, 36, 36 },
-	{ "rubber ducky", "GUMMIENTCHEN", 507, 53, 53 },
-	{ "rolling pin", "NUDELHOLZ", 999, 52, 52 },
-	{ "fish", "FISCH", 999, 29, 29 },
-	{ "hook", "HAKEN", 999, 30, 30 },
-	{ "quarter", "VIERTELDOLLAR", 999, 41, 41 },
-	{ "dog collar", "HUNDEHALSBAND", 999, 33, 33 },
-	{ "records", "SCHALLPLATTEN", 405, 32, 32 },
-	{ "mirror", "SPIEGEL", 999, 48, 48 },
-	{ nullptr, nullptr, 0, 0, 0 }
+	{ "money", "GELD", "ARGENT", 998, 55, 55},
+	{ "block of ice", "EISBLOCK", "GLA\xc7ON", 142, 51, 51},
+	{ "pantyhose", "STRUMPFHOSE", "COLLAN", 142, 45, 45},
+	{ "phone bill", "TELEFONRECHNUNG", "FACTURE DE TELEPHONE", 170, 49, 49},
+	{ "whistle", "PFEIFE", "SIFFLET", 170, 40, 40},
+	{ "carrot juice", "M\xd6""HRENSAFT", "JUS DE CAROTTES", 172, 25, 25},
+	{ "deed", "URKUNDE", "ACTE DE VENTE", 105, 38, 38},
+	{ "laxative", "ABF\xdcHRMITTEL", "LAXATIF", 174, 54, 54},
+	{ "amplifier", "VERST\xc4""RKER", "AMPLIFICATEUR", 145, 34, 34},
+	{ "jawz o' life", "KLEMMBACKE", "LA TRON\xc7ONNEUSE", 137, 37, 37},
+	{ "broken puz dispenser", "Bonbonspender,kaputt", "BOITE A PEZ CASSEE", 176, 16, 16},
+	{ "spring", "SPRUNGFEDER", "RESSORT", 999, 47, 47},
+	{ "puz dispenser", "BONBONSPENDER", "BOITE A PEZ", 999, 17, 17},
+	{ "broken mouse trap", "KAPUTTE MAUSEFALLE", "PIEGE A SOURIS CASSE", 143, 18, 18},
+	{ "keys", "SCHL\xdc""SSEL", "CLEFS", 138, 31, 31},
+	{ "ray gun", "STRAHLENPISTOLE", "PISTOLET A LASER", 604, 50, 50},
+	{ "kibble", "TROCKENFUTTER", "CROQUETTES", 602, 44, 44},
+	{ "burger morsel", "HAMBURGERST\xdc""CK", "MOR\xc7""EAU DE BURGER", 999, 39, 39},
+	{ "matches", "STREICHH\xd6""LZER", "ALLUMETTES", 999, 42, 42},
+	{ "jug", "KRUG", "PICHET", 303, 14, 14},
+	{ "distilled carrot juice", "DESTILLIERTER SAFT", "CAROTTES DISTILLE", 999, 15, 15},
+	{ "gizmo", "GER\xc4""T", "GIZMO", 999, 58, 58},
+	{ "kindling", "ANZ\xdc""NDHOLZ", "PETIT BOIS", 999, 20, 20},
+	{ "burning kindling", "BRENNENDES HOLZ", "PETIT BOIS ENFLAMME", 999, 21, 21},
+	{ "christmas lights", "LICHTERKETTE", "LUMIERES DE NO\xebL", 508, 22, 22},
+	{ "christmas lights ", "LICHTERKETTE", "LUMIERES DE NO\xebL", 508, 23, 23 },
+	{ "bottle", "FLASCHE", "BOUTEILLE", 999, 24, 24},
+	{ "soapy water", "SEIFENWASSER", "EAU DE BAIN", 999, 26, 26},
+	{ "rubber gloves", "GUMMIHANDSCHUHE", "GANTS DE CAOUTCHOUC", 503, 35, 35},
+	{ "dirty sock", "DRECKIGE SOCKE", "CHAUSSETTE SALE", 504, 36, 36},
+	{ "rubber ducky", "GUMMIENTCHEN", "CANARD DE BAIN", 507, 53, 53},
+	{ "rolling pin", "NUDELHOLZ", "ROULEAU A PATISSERIE", 999, 52, 52},
+	{ "fish", "FISCH", "POISSON", 999, 29, 29},
+	{ "hook", "HAKEN", "CROCHET", 999, 30, 30},
+	{ "quarter", "VIERTELDOLLAR", "PIECE", 999, 41, 41},
+	{ "dog collar", "HUNDEHALSBAND", "COLLIER POUR CHIEN", 999, 33, 33},
+	{ "records", "SCHALLPLATTEN", "DISQUES", 405, 32, 32},
+	{ "mirror", "SPIEGEL", "MIROIR", 999, 48, 48},
+	{ nullptr, nullptr, nullptr, 0, 0, 0 }
 };
 
 void Inventory::init() {
+	bool isFrench = g_engine->getLanguage() == Common::FR_FRA;
+
 	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item) {
-		inv_register_thing(item->_name, item->_verbs, item->_scene, item->_cel, item->_cursor);
+		const char *foreignName = isFrench ? item->_frenchName : item->_germanName;
+		inv_register_thing(item->_name, foreignName, item->_scene, item->_cel, item->_cursor);
 
 		_items.push_back(InventoryItem(item->_name, item->_scene));
 	}
