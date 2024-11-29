@@ -243,7 +243,7 @@ public:
 	// Construct from Mac resource stream
 	MacSndResource(uint32 id, Common::SeekableReadStream *&in, Common::String &&name);
 	// Construct from Mac sound data buffer
-	MacSndResource(uint32 id, const byte *in);
+	MacSndResource(uint32 id, const byte *in, uint32 size);
 	~MacSndResource() {}
 	const MacLowLevelPCMDriver::PCMSound *data() const { return &_snd; }
 	uint32 id() const { return _id; }

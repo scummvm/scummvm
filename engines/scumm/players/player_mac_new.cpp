@@ -1265,13 +1265,23 @@ MacSndResource::MacSndResource(uint32 id, Common::SeekableReadStream *&in, Commo
 	_snd.enc = in->readByte();
 	_snd.baseFreq = in->readByte();
 
-	byte *buff = new byte[_snd.len];
-	if (in->read(buff, _snd.len) != _snd.len)
+	uint32 realSize = in->size() - in->pos();
+	if (_snd.len > realSize) {
+		debug(6, "%s(): Invalid data in resource '%d' - Fixing out of range samples count (samples buffer size '%d', samples count '%d')", __FUNCTION__, id, realSize, _snd.len);
+		_snd.len = realSize;
+	}
+	if ((int32)_snd.loopend > (int32)realSize) {
+		debug(6, "%s(): Invalid data in resource '%d' - Fixing out of range loop end (samples buffer size '%d', loop end '%d')", __FUNCTION__, id, realSize, _snd.loopend);
+		_snd.loopend = realSize;
+	}
+
+	byte *buff = new byte[realSize];
+	if (in->read(buff, realSize) != realSize)
 		error("%s(): Data error", __FUNCTION__);
 	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
 }
 
-MacSndResource::MacSndResource(uint32 id, const byte *in) : _id(id) {
+MacSndResource::MacSndResource(uint32 id, const byte *in, uint32 size) : _id(id) {
 	in += 4;
 	_snd.len = READ_BE_UINT32(in);
 	in += 4;
@@ -1284,8 +1294,18 @@ MacSndResource::MacSndResource(uint32 id, const byte *in) : _id(id) {
 	_snd.enc = *in++;
 	_snd.baseFreq = *in++;
 
-	byte *buff = new byte[_snd.len];
-	memcpy(buff, in, _snd.len);
+	size -= 22;
+	if (_snd.len > size) {
+		debug("%s(): Invalid data in resource '%d' - Fixing out of range samples count (samples buffer size '%d', samples count '%d')", __FUNCTION__, id, size, _snd.len);
+		_snd.len = size;
+	}
+	if ((int32)_snd.loopend > (int32)size) {
+		debug("%s(): Invalid data in resource '%d' - Fixing out of range loop end (samples buffer size '%d', loop end '%d')", __FUNCTION__, id, size, _snd.loopend);
+		_snd.loopend = size;
+	}
+
+	byte *buff = new byte[size];
+	memcpy(buff, in, size);
 	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
 }
 

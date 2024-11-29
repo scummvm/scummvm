@@ -139,7 +139,6 @@ private:
 	void *_timerParam;
 	Common::TimerManager::TimerProc _timerProc;
 
-	const byte _loopstLim;
 	const byte _version;
 };
 
@@ -327,7 +326,7 @@ void DeviceChannel::recalcFrequency() {
 
 IMSMacSoundSystem::IMSMacSoundSystem(Audio::Mixer *mixer, byte version) : VblTaskClientDriver(), _mixer(mixer), _macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback),
 	_musicChan(0), _sfxChan(0), _quality(22), _feedBufferSize(1024), _channels(nullptr), _timerParam(nullptr), _timerProc(nullptr), _pitchTable(nullptr),
-	_ampTable(nullptr), _mixTable(nullptr), _numChannels(version ? 12 : 8), _defaultInstrID(0), _version(version), _loopstLim(version ? 10 : 12), _stereo(false) {
+	_ampTable(nullptr), _mixTable(nullptr), _numChannels(version ? 12 : 8), _defaultInstrID(0), _version(version), _stereo(false) {
 	_pitchTable = new uint32[128]();
 	assert(_pitchTable);
 	_channels = new DeviceChannel*[_numChannels];
@@ -464,14 +463,13 @@ void IMSMacSoundSystem::noteOn(const ChanControlNode *node) {
 	c->rate = s->rate;
 	c->smpBuffStart = s->data.get();
 	c->smpBuffEnd = c->smpBuffStart + s->len;
-	if ((int32)s->loopst >= (int32)s->loopend - _loopstLim) {
+	if ((_version == 0 && (int32)s->loopst >= (int32)s->loopend - 12) || (_version > 0 && (!s->loopst || !s->loopend || node->rhythmPart || (int32)s->loopst > (int32)s->len - 10))) {
 		c->loopStart = nullptr;
 		c->loopEnd = c->smpBuffEnd;
 	} else {
 		c->loopStart = c->smpBuffStart + s->loopst;
 		c->loopEnd = c->smpBuffStart + s->loopend;
 	}
-
 	c->pitch = (node->note << 7) + node->pitchBend;
 	c->mute = c->release = false;
 	c->end = c->loopEnd;
@@ -833,7 +831,9 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 	_smpResources.clear();
 	const byte *s = buff;
 	for (uint i = 0; i < num; ++i) {
-		_smpResources.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(READ_BE_UINT16(s + 2), buff + READ_BE_UINT32(s + 4))));
+		uint32 offset = READ_BE_UINT32(s + 4);
+		uint32 resSize = (i < num - 1 ? READ_BE_UINT32(s + 12) : size) - offset;
+		_smpResources.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(READ_BE_UINT16(s + 2), buff + offset, resSize)));
 		s += 8;
 	}
 	delete[] buff;
