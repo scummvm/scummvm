@@ -210,7 +210,6 @@ MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o \
 	graphics3d/opengl/framebuffer.o \
 	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/texture.o \
 	graphics3d/opengl/tiledsurface.o \
 	graphics3d/openglsdl/openglsdl-graphics3d.o
 endif
@@ -308,7 +307,6 @@ MODULE_OBJS += \
 	graphics3d/android/texture.o \
 	graphics3d/opengl/framebuffer.o \
 	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/texture.o \
 	graphics3d/opengl/tiledsurface.o \
 	mutex/pthread/pthread-mutex.o
 endif
@@ -396,7 +394,6 @@ MODULE_OBJS += \
 	graphics3d/ios/ios-graphics3d.o \
 	graphics3d/opengl/framebuffer.o \
 	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/texture.o \
 	graphics3d/opengl/tiledsurface.o
 endif
 

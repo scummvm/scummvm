@@ -29,7 +29,7 @@
 namespace OpenGL {
 
 class Shader;
-class TextureGL;
+class Texture;
 
 /**
  * A renderer to draw textures as two dimensional surfaces to the screen.
@@ -52,7 +52,7 @@ public:
 	 * y: top [0.0, 1.0] bottom
 	 *
 	 */
-	virtual void render(const TextureGL *tex, const Math::Rect2d &dest) = 0;
+	virtual void render(const Texture *tex, const Math::Rect2d &dest) = 0;
 
 	/**
 	 * Pop the OpenGL state to restore it as it was before calling the prepareState method.
@@ -84,7 +84,7 @@ public:
 
 	// SurfaceRenderer API
 	void prepareState() override;
-	void render(const TextureGL *tex, const Math::Rect2d &dest) override;
+	void render(const Texture *tex, const Math::Rect2d &dest) override;
 	void restorePreviousState() override;
 };
 
@@ -99,7 +99,7 @@ public:
 
 	// SurfaceRenderer API
 	void prepareState() override;
-	void render(const TextureGL *tex, const Math::Rect2d &dest) override;
+	void render(const Texture *tex, const Math::Rect2d &dest) override;
 	void restorePreviousState() override;
 
 private:

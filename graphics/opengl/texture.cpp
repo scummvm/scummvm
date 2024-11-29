@@ -215,6 +215,14 @@ void Texture::updateArea(const Common::Rect &area, const Graphics::Surface &src)
 	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
 }
 
+const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+}
+
 } // End of namespace OpenGL
 
 #endif

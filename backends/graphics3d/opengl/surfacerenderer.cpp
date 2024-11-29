@@ -24,7 +24,7 @@
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "backends/graphics3d/opengl/surfacerenderer.h"
-#include "backends/graphics3d/opengl/texture.h"
+#include "graphics/opengl/texture.h"
 
 #include "graphics/opengl/context.h"
 
@@ -108,9 +108,9 @@ void FixedSurfaceRenderer::prepareState() {
 	glDepthMask(GL_FALSE);
 }
 
-void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
-	float texcropX = tex->getWidth() / float(tex->getTexWidth());
-	float texcropY = tex->getHeight() / float(tex->getTexHeight());
+void FixedSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
+	float texcropX = tex->getLogicalWidth() / float(tex->getWidth());
+	float texcropY = tex->getLogicalHeight() / float(tex->getHeight());
 	float texTop    = _flipY ? 0.0f : texcropY;
 	float texBottom = _flipY ? texcropY : 0.0f;
 
@@ -139,7 +139,7 @@ void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
+	tex->bind();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -247,11 +247,11 @@ void ShaderSurfaceRenderer::prepareState() {
 	glDisable(GL_SCISSOR_TEST);
 }
 
-void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
-	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
+void ShaderSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
+	tex->bind();
 
-	float texcropX = tex->getWidth() / float(tex->getTexWidth());
-	float texcropY = tex->getHeight() / float(tex->getTexHeight());
+	float texcropX = tex->getLogicalWidth() / float(tex->getWidth());
+	float texcropY = tex->getLogicalHeight() / float(tex->getHeight());
 	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
 	_boxShader->setUniform("flipY", _flipY);
 

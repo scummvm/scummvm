@@ -28,7 +28,7 @@
 #include "backends/graphics3d/ios/ios-graphics3d.h"
 #include "backends/platform/ios7/ios7_osys_main.h"
 #include "graphics/opengl/context.h"
-#include "backends/graphics3d/opengl/texture.h"
+#include "graphics/opengl/texture.h"
 #include "graphics/blit.h"
 #include "common/translation.h"
 
@@ -236,7 +236,7 @@ void iOSGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat 
 	}
 
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
-	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
+	_overlayFormat = OpenGL::Texture::getRGBAPixelFormat();
 
 	handleResize(sys->getScreenWidth(), sys->getScreenHeight());
 }

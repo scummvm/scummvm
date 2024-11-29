@@ -26,7 +26,6 @@
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "backends/graphics3d/opengl/surfacerenderer.h"
 #include "backends/graphics3d/opengl/tiledsurface.h"
-#include "backends/graphics3d/opengl/texture.h"
 #include "backends/graphics3d/opengl/framebuffer.h"
 #include "backends/events/sdl/sdl-events.h"
 
@@ -39,6 +38,7 @@
 #include "graphics/blit.h"
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
+#include "graphics/opengl/texture.h"
 
 #ifdef USE_PNG
 #include "image/png.h"
@@ -394,7 +394,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 #endif
 
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
-	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
+	_overlayFormat = OpenGL::Texture::getRGBAPixelFormat();
 
 	if (renderToFrameBuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

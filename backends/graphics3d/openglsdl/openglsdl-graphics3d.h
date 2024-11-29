@@ -33,7 +33,6 @@
 namespace OpenGL {
 	class FrameBuffer;
 	class SurfaceRenderer;
-	class TextureGL;
 	class TiledSurface;
 }
 
