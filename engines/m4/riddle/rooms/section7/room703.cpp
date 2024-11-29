@@ -644,9 +644,63 @@ void Room703::parser() {
 		default:
 			break;
 		}
-	}
+	} else if (player_said("East Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
 
-	//TODO incomplete implementation
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 704;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("West Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
+
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 706;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("rm702")) {
+		if (inv_player_has("WISDOM WHEEL") || inv_player_has("SERENITY WHEEL") || inv_player_has("PEACE WHEEL") || inv_player_has("INSIGHT WHEEL") || inv_player_has("TRUTH WHEEL")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 5, true);
+			digi_play("703r13", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(_G(my_walker), 640, 450, nullptr, -1, 0, false);
+				disable_player_commands_and_fade_init(2);
+
+				break;
+
+			case 2:
+				adv_kill_digi_between_rooms(false);
+				digi_play_loop("950_s39", 3, 255, -1, -1);
+				_G(game).new_room = 702;
+
+			default:
+				break;
+			}
+		}
+	} else if (!gearFl && !takeFl && player_said_any("MONK #1", "MONK #2", "MONK #3", "MONK #4")) {
+		digi_play("com017", 1, 255, -1, -1);
+	}
 }
 
 void Room703::daemon() {
@@ -921,8 +975,18 @@ void Room703::callback(frac16 myMessage, machine *sender) {
 }
 
 void Room703::conv703a() {
-	//TODO not implemented
-	warning("STUB conv703a");
+	int32 who = conv_whos_talking();
+
+	if (conv_sound_to_play() == nullptr) {
+		conv_resume(conv_get_handle());
+	} else if (who <= 0) {
+		_field60_should = 121;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(10, 127, nullptr);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (who == 1) {
+		digi_play(conv_sound_to_play(), 1, 255, 90, -1);
+	}
 }
 
 void Room703::sub9EA78(const char *digiName, int32 trigger) {
