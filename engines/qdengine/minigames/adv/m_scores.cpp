@@ -117,18 +117,18 @@ Scores::Scores(MinigameManager *runtime) {
 	level_ = 0;
 	preLevel_ = -1;
 
-	if (!(bestScore_ = _runtime->parameter("best_score")))
+	if (!(_bestScore = _runtime->parameter("best_score")))
 		return;
-	if (!(bestTime_ = _runtime->parameter("best_time")))
+	if (!(_bestTime = _runtime->parameter("best_time")))
 		return;
-	if (!(lastScore_ = _runtime->parameter("last_score")))
+	if (!(_lastScore = _runtime->parameter("last_score")))
 		return;
-	if (!(lastTime_ = _runtime->parameter("last_time")))
+	if (!(_lastTime = _runtime->parameter("last_time")))
 		return;
-	if (!(currentLevel_ = _runtime->parameter("current_level")))
+	if (!(_currentLevel = _runtime->parameter("current_level")))
 		return;
 
-	if (!(prev_ = _runtime->getObject(_runtime->parameter("prev_button"))))
+	if (!(_prev = _runtime->getObject(_runtime->parameter("_prevbutton"))))
 		return;
 	if (!(next_ = _runtime->getObject(_runtime->parameter("next_button"))))
 		return;
@@ -150,7 +150,7 @@ Scores::Scores(MinigameManager *runtime) {
 }
 
 Scores::~Scores() {
-	_runtime->release(prev_);
+	_runtime->release(_prev);
 	_runtime->release(next_);
 
 	for (auto &it : games_)
@@ -166,7 +166,7 @@ void Scores::quant(float dt) {
 		preLevel_ = level_;
 
 
-		_runtime->setText(currentLevel_, lvl.level);
+		_runtime->setText(_currentLevel, lvl.level);
 
 		for (int idx = 0; idx < (int)games_.size(); ++idx)
 			_runtime->hide(games_[idx]);
@@ -183,15 +183,15 @@ void Scores::quant(float dt) {
 				assert(gameNum < (int)games_.size());
 				games_[gameNum].setState(Common::String::format("%d", level_).c_str());
 				games_[gameNum]->set_R(positions_[idx]);
-				_runtime->setText(getName(bestScore_, idx), data.info._bestScore);
-				_runtime->setText(getName(bestTime_, idx), data.info._bestTime);
-				_runtime->setText(getName(lastScore_, idx), data.info._lastScore);
-				_runtime->setText(getName(lastTime_, idx), data.info._lastTime);
+				_runtime->setText(getName(_bestScore, idx), data.info._bestScore);
+				_runtime->setText(getName(_bestTime, idx), data.info._bestTime);
+				_runtime->setText(getName(_lastScore, idx), data.info._lastScore);
+				_runtime->setText(getName(_lastTime, idx), data.info._lastTime);
 			} else {
-				_runtime->setText(getName(bestScore_, idx), "");
-				_runtime->setText(getName(bestTime_, idx), "");
-				_runtime->setText(getName(lastScore_, idx), "");
-				_runtime->setText(getName(lastTime_, idx), "");
+				_runtime->setText(getName(_bestScore, idx), "");
+				_runtime->setText(getName(_bestTime, idx), "");
+				_runtime->setText(getName(_lastScore, idx), "");
+				_runtime->setText(getName(_lastTime, idx), "");
 			}
 		}
 	}
@@ -199,7 +199,7 @@ void Scores::quant(float dt) {
 	if (_runtime->mouseLeftPressed()) {
 		if (level_ < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(_runtime->mousePosition()))
 			++level_;
-		else if (level_ > 0 && prev_.hit(_runtime->mousePosition()))
+		else if (level_ > 0 && _prev.hit(_runtime->mousePosition()))
 			--level_;
 	}
 }

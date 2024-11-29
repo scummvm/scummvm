@@ -56,13 +56,13 @@ private:
 	typedef Std::vector<Level> Levels;
 	Levels levels_;
 
-	const char *currentLevel_;
-	const char *bestScore_;
-	const char *bestTime_;
-	const char *lastScore_;
-	const char *lastTime_;
+	const char *_currentLevel;
+	const char *_bestScore;
+	const char *_bestTime;
+	const char *_lastScore;
+	const char *_lastTime;
 
-	QDObject prev_;
+	QDObject _prev;
 	QDObject next_;
 	QDObject outMaxLevel_;
 
