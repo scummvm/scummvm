@@ -92,7 +92,7 @@ private:
 	int _hovered = 0;
 
 	AnimationState _animationState = NO_ANIMATION;
-	int animatedNodes_[2] =  { 0 };
+	int _animatedNodes[2] =  { 0 };
 	float _animationTime = 0.0;
 	float _animationTimer = 0.0;
 

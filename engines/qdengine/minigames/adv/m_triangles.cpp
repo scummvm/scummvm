@@ -153,7 +153,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 	_hovered = -1;
 
 	_animationState = NO_ANIMATION;
-	animatedNodes_[0] = animatedNodes_[1] = -1;
+	_animatedNodes[0] = _animatedNodes[1] = -1;
 	_animationTimer = 0.f;
 
 	if (!_runtime->debugMode())
@@ -261,8 +261,8 @@ void MinigameTriangle::beginSwapNodes(int pos1, int pos2) {
 	_animationState = FIRST_PHASE;
 	_animationTimer = _animationTime;
 
-	animatedNodes_[0] = pos1;
-	animatedNodes_[1] = pos2;
+	_animatedNodes[0] = pos1;
+	_animatedNodes[1] = pos2;
 
 	Node &node1 = _nodes[pos1];
 	Node &node2 = _nodes[pos2];
@@ -341,13 +341,13 @@ bool MinigameTriangle::animate(float dt) {
 	if (_animationTimer > 0)
 		return true;
 
-	Node &node1 = _nodes[animatedNodes_[0]];
-	Node &node2 = _nodes[animatedNodes_[1]];
+	Node &node1 = _nodes[_animatedNodes[0]];
+	Node &node2 = _nodes[_animatedNodes[1]];
 
 	switch (_animationState) {
 	case FIRST_PHASE: {
-		node1._rotation = getRotate(animatedNodes_[0], animatedNodes_[1]);
-		node2._rotation = getRotate(animatedNodes_[1], animatedNodes_[0]);
+		node1._rotation = getRotate(_animatedNodes[0], _animatedNodes[1]);
+		node2._rotation = getRotate(_animatedNodes[1], _animatedNodes[0]);
 
 		node1._isBack = !node1._isBack;
 		node2._isBack = !node2._isBack;
@@ -361,13 +361,13 @@ bool MinigameTriangle::animate(float dt) {
 		for (auto &it : node2._face)
 			it.setState(Node::getFaceStateName(0, false, false, false));
 
-		updateNode(node1, animatedNodes_[1], destination(animatedNodes_[0], animatedNodes_[1]), true);
-		updateNode(node2, animatedNodes_[0], destination(animatedNodes_[1], animatedNodes_[0]), true);
+		updateNode(node1, _animatedNodes[1], destination(_animatedNodes[0], _animatedNodes[1]), true);
+		updateNode(node2, _animatedNodes[0], destination(_animatedNodes[1], _animatedNodes[0]), true);
 
 		_animationTimer = 0.f;
 		_animationState = SECOND_PHASE;
 
-		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", animatedNodes_[0], animatedNodes_[1]);
+		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", _animatedNodes[0], _animatedNodes[1]);
 		node1.debugInfo();
 		node2.debugInfo();
 
@@ -377,15 +377,15 @@ bool MinigameTriangle::animate(float dt) {
 		node1._animated = false;
 		node2._animated = false;
 
-		updateNode(node1, animatedNodes_[1], destination(animatedNodes_[0], animatedNodes_[1]));
-		updateNode(node2, animatedNodes_[0], destination(animatedNodes_[1], animatedNodes_[0]));
+		updateNode(node1, _animatedNodes[1], destination(_animatedNodes[0], _animatedNodes[1]));
+		updateNode(node2, _animatedNodes[0], destination(_animatedNodes[1], _animatedNodes[0]));
 
 		SWAP(node1, node2);
 
 		_animationTimer = _animationTime;
 		_animationState = FIRD_PHASE;
 
-		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", animatedNodes_[0], animatedNodes_[1]);
+		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", _animatedNodes[0], _animatedNodes[1]);
 		node2.debugInfo();
 		node1.debugInfo();
 
@@ -398,14 +398,14 @@ bool MinigameTriangle::animate(float dt) {
 		releaseNodeBack(node1);
 		releaseNodeBack(node2);
 
-		updateNode(node1, animatedNodes_[0]);
-		updateNode(node2, animatedNodes_[1]);
+		updateNode(node1, _animatedNodes[0]);
+		updateNode(node2, _animatedNodes[1]);
 
-		endSwapNodes(animatedNodes_[0], animatedNodes_[1]);
-		debugC(5, kDebugMinigames, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ change %d <> %d, finished ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", animatedNodes_[0], animatedNodes_[1]);
+		endSwapNodes(_animatedNodes[0], _animatedNodes[1]);
+		debugC(5, kDebugMinigames, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ change %d <> %d, finished ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", _animatedNodes[0], _animatedNodes[1]);
 
-		animatedNodes_[0] = -1;
-		animatedNodes_[1] = -1;
+		_animatedNodes[0] = -1;
+		_animatedNodes[1] = -1;
 
 		return true;
 

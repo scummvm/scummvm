@@ -33,20 +33,20 @@ public:
 		GAME_LOST
 	};
 
-	MinigameInterface() : state_(NOT_INITED) {}
+	MinigameInterface() : _state(NOT_INITED) {}
 	virtual ~MinigameInterface() {}
 
 	virtual void quant(float dt) = 0;
 
 	void setState(StateType state) {
-		state_ = state;
+		_state = state;
 	}
 	StateType state() const {
-		return state_;
+		return _state;
 	}
 
 private:
-	StateType state_;
+	StateType _state;
 };
 
 } // namespace QDEngine

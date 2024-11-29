@@ -33,13 +33,13 @@ public:
 
 	void quant(float dt);
 private:
-	int gameSize_;
-	int angles_;
+	int _gameSize;
+	int _angles;
 
-	float rotateTimePeriod_;
-	float nextRotateTime_;
+	float _rotateTimePeriod;
+	float _nextRotateTime;
 
-	mgVect2f size_;
+	mgVect2f _size;
 
 	struct Node {
 		Node(int idx = -1) : home(idx), angle(0) {}
@@ -48,14 +48,14 @@ private:
 		int home;
 	};
 	typedef Std::vector<Node> Nodes;
-	Nodes nodes_;
+	Nodes _nodes;
 
 	// Индекс фрагмента на мыши
-	int pickedItem_;
+	int _pickedItem;
 	// активные фрагменты после обмена
-	int last1_, last2_;
+	int _last1, _last2;
 
-	Coords positions_;
+	Coords _positions;
 
 	const char *getStateName(int angle, bool selected) const;
 	// поменять местами, если было снятие или укладка на/с правильного места, то true

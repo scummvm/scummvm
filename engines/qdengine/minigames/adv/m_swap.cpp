@@ -52,7 +52,7 @@ const char *Swap::getStateName(int angle, bool selected) const {
 	static char buf[32];
 	buf[31] = 0;
 
-	assert(angle >= 0 && angle < angles_);
+	assert(angle >= 0 && angle < _angles);
 
 	snprintf(buf, 31, "%02d%s", angle + 1, selected ? selected_suf : "");
 	return buf;
@@ -61,15 +61,15 @@ const char *Swap::getStateName(int angle, bool selected) const {
 Swap::Swap(MinigameManager *runtime) {
 	_runtime = runtime;
 
-	if (!getParameter("game_size", gameSize_, true) || gameSize_ < 2)
+	if (!getParameter("game_size", _gameSize, true) || _gameSize < 2)
 		return;
 
-	if ((angles_ = getParameter("angles", 4)) < 1)
+	if ((_angles = getParameter("angles", 4)) < 1)
 		return;
 
-	if ((rotateTimePeriod_ = getParameter("rotate_period", 86400.f)) < 10.f)
+	if ((_rotateTimePeriod = getParameter("rotate_period", 86400.f)) < 10.f)
 		return;
-	nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
+	_nextRotateTime = _runtime->getTime() + _rotateTimePeriod;
 
 	/*const char *name_begin = */_runtime->parameter("obj_name_begin", "obj_");
 
@@ -77,14 +77,14 @@ Swap::Swap(MinigameManager *runtime) {
 #if 0
 	XBuffer gameData;
 
-	for (int idx = 0; idx < gameSize_; ++idx) {
+	for (int idx = 0; idx < _gameSize; ++idx) {
 		Common::String buf = Common::String::format("%s%02d", name_begin, idx + 1);
 
 		Node node(idx);
 		node.obj = _runtime->getObject(buf.c_str());
 		node.angle = 0;
 		node.obj.setState(getStateName(node.angle, false));
-		nodes_.push_back(node);
+		_nodes.push_back(node);
 
 		gameData.write(node.obj->R());
 	}
@@ -92,26 +92,26 @@ Swap::Swap(MinigameManager *runtime) {
 	if (!_runtime->processGameData(gameData))
 		return;
 
-	positions_.resize(gameSize_);
-	for (int idx = 0; idx < gameSize_; ++idx)
-		gameData.read(positions_[idx]);
+	_positions.resize(_gameSize);
+	for (int idx = 0; idx < _gameSize; ++idx)
+		gameData.read(_positions[idx]);
 #endif
 
-	size_ = getParameter("element_size", _runtime->getSize(nodes_[0].obj));
-	assert(size_.x > 0.f && size_.y > 0.f && size_.x < 500.f && size_.y < 500.f);
-	debugC(2, kDebugMinigames, "element_size = (%6.2f,%6.2f)", size_.x, size_.y);
+	_size = getParameter("element_size", _runtime->getSize(_nodes[0].obj));
+	assert(_size.x > 0.f && _size.y > 0.f && _size.x < 500.f && _size.y < 500.f);
+	debugC(2, kDebugMinigames, "element_size = (%6.2f,%6.2f)", _size.x, _size.y);
 
-	pickedItem_ = -1;
-	last1_ = last2_ = -1;
+	_pickedItem = -1;
+	_last1 = _last2 = -1;
 
 	if (_runtime->debugMode()) {
-		last1_ = 0;
-		last2_ = 1;
-		rotate(last1_, last2_, false);
+		_last1 = 0;
+		_last2 = 1;
+		rotate(_last1, _last2, false);
 	} else
 		for (int cnt = 0; cnt < 50; ++cnt) {
-			rotate(_runtime->rnd(0, gameSize_ - 1), _runtime->rnd(0, gameSize_ - 1), true, true);
-			swap(_runtime->rnd(0, gameSize_ - 1), _runtime->rnd(0, gameSize_ - 1), true);
+			rotate(_runtime->rnd(0, _gameSize - 1), _runtime->rnd(0, _gameSize - 1), true, true);
+			swap(_runtime->rnd(0, _gameSize - 1), _runtime->rnd(0, _gameSize - 1), true);
 		}
 
 
@@ -120,24 +120,24 @@ Swap::Swap(MinigameManager *runtime) {
 }
 
 Swap::~Swap() {
-	for (auto &it : nodes_)
+	for (auto &it : _nodes)
 		_runtime->release(it.obj);
 
 }
 
 void Swap::quant(float dt) {
-	if (pickedItem_ >= 0)
+	if (_pickedItem >= 0)
 		_runtime->setGameHelpVariant(1);
-	else if (last1_ >= 0)
+	else if (_last1 >= 0)
 		_runtime->setGameHelpVariant(2);
 	else
 		_runtime->setGameHelpVariant(0);
 
-	if (_runtime->getTime() > nextRotateTime_) {
-		int item1 = _runtime->rnd(0, gameSize_ - 1);
-		int item2 = _runtime->rnd(0, gameSize_ - 1);
-		if (item1 != last1_ && item1 != last2_ && item1 != pickedItem_ && item2 != last1_ && item2 != last2_ && item2 != pickedItem_) {
-			nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
+	if (_runtime->getTime() > _nextRotateTime) {
+		int item1 = _runtime->rnd(0, _gameSize - 1);
+		int item2 = _runtime->rnd(0, _gameSize - 1);
+		if (item1 != _last1 && item1 != _last2 && item1 != _pickedItem && item2 != _last1 && item2 != _last2 && item2 != _pickedItem) {
+			_nextRotateTime = _runtime->getTime() + _rotateTimePeriod;
 			rotate(item1, item2, false, true);
 			_runtime->event(EVENT_AUTO_ROTATE, mgVect2f(400, 300));
 			return;
@@ -147,16 +147,16 @@ void Swap::quant(float dt) {
 	mgVect2f mouse = _runtime->mousePosition();
 
 	int hovPlace = -1;  // Номер места которое сейчас под мышкой
-	if (pickedItem_ == -1) {
-		for (auto &it : nodes_)
+	if (_pickedItem == -1) {
+		for (auto &it : _nodes)
 			if (it.obj.hit(mouse)) {
-				hovPlace = Common::distance(nodes_.begin(), &it);
+				hovPlace = Common::distance(_nodes.begin(), &it);
 				break;
 			}
 	}
 	if (hovPlace == -1)
-		for (int idx = 0; idx < gameSize_; ++idx) {
-			Rectf rect(size_ * 0.9f);
+		for (int idx = 0; idx < _gameSize; ++idx) {
+			Rectf rect(_size * 0.9f);
 			rect.center(_runtime->world2game(position(idx)));
 			if (rect.point_inside(mouse)) {
 				hovPlace = idx;
@@ -166,77 +166,77 @@ void Swap::quant(float dt) {
 
 	if (_runtime->mouseLeftPressed()) {
 		if (hovPlace >= 0) { // клик по полю
-			if (pickedItem_ == -1) { // мышь пустая, берем
+			if (_pickedItem == -1) { // мышь пустая, берем
 				deactivate();
 				_runtime->event(EVENT_GET, mouse);
-				pickedItem_ = hovPlace;
-			} else if (pickedItem_ == hovPlace) { // вернуть на место
+				_pickedItem = hovPlace;
+			} else if (_pickedItem == hovPlace) { // вернуть на место
 				_runtime->event(EVENT_RETURN, mouse);
-				put(pickedItem_, false);
-				pickedItem_ = -1;
+				put(_pickedItem, false);
+				_pickedItem = -1;
 			} else { // поменять местами
-				last1_ = pickedItem_;
-				last2_ = hovPlace;
-				swap(last1_, last2_, false);
-				pickedItem_ = -1;
+				_last1 = _pickedItem;
+				_last2 = hovPlace;
+				swap(_last1, _last2, false);
+				_pickedItem = -1;
 			}
 		} else { // пустой клик мимо игрового поля
 			deactivate();
 			_runtime->event(EVENT_CLICK, mouse);
 		}
 	} else if (_runtime->mouseRightPressed()) {
-		if (pickedItem_ >= 0) // если на мыши фрагмент ничего не делаем
+		if (_pickedItem >= 0) // если на мыши фрагмент ничего не делаем
 			_runtime->event(EVENT_CLICK, mouse);
-		else if (hovPlace == last1_ || hovPlace == last2_) // клик по выделенным
-			rotate(last1_, last2_, false);
+		else if (hovPlace == _last1 || hovPlace == _last2) // клик по выделенным
+			rotate(_last1, _last2, false);
 		else // пустой клик мимо активного места
 			_runtime->event(EVENT_CLICK, mouse);
 	}
 
-	if (pickedItem_ >= 0)
-		nodes_[pickedItem_].obj->set_R(_runtime->game2world(mouse, -5000));
+	if (_pickedItem >= 0)
+		_nodes[_pickedItem].obj->set_R(_runtime->game2world(mouse, -5000));
 
 	int idx = 0;
-	for (; idx < gameSize_; ++idx)
+	for (; idx < _gameSize; ++idx)
 		if (!testPlace(idx))
 			break;
 
-	if (idx == (int)nodes_.size()) {
+	if (idx == (int)_nodes.size()) {
 		deactivate();
 		setState(MinigameInterface::GAME_WIN);
 	}
 }
 
 const mgVect3f &Swap::position(int num) const {
-	assert(num >= 0 && num < (int)positions_.size());
-	return positions_[num];
+	assert(num >= 0 && num < (int)_positions.size());
+	return _positions[num];
 }
 
 void Swap::put(int item, bool hl) {
-	assert(item >= 0 && item < (int)nodes_.size());
-	nodes_[item].obj->set_R(position(item));
-	nodes_[item].obj.setState(getStateName(nodes_[item].angle, hl));
+	assert(item >= 0 && item < (int)_nodes.size());
+	_nodes[item].obj->set_R(position(item));
+	_nodes[item].obj.setState(getStateName(_nodes[item].angle, hl));
 
 }
 
 void Swap::deactivate() {
-	if (last1_ >= 0) {
-		assert(last2_ >= 0);
-		put(last1_, false);
-		put(last2_, false);
+	if (_last1 >= 0) {
+		assert(_last2 >= 0);
+		put(_last1, false);
+		put(_last2, false);
 	}
-	last1_ = -1;
-	last2_ = -1;
+	_last1 = -1;
+	_last2 = -1;
 }
 
 bool Swap::testPlace(int item) const {
-	assert(item >= 0 && item < (int)nodes_.size());
-	return nodes_[item].home == item && nodes_[item].angle == 0;
+	assert(item >= 0 && item < (int)_nodes.size());
+	return _nodes[item].home == item && _nodes[item].angle == 0;
 }
 
 void Swap::swap(int item1, int item2, bool silent) {
-	assert(item1 >= 0 && item1 < (int)nodes_.size());
-	assert(item2 >= 0 && item2 < (int)nodes_.size());
+	assert(item1 >= 0 && item1 < (int)_nodes.size());
+	assert(item2 >= 0 && item2 < (int)_nodes.size());
 
 	bool res = false;
 	if (!silent) {
@@ -250,7 +250,7 @@ void Swap::swap(int item1, int item2, bool silent) {
 		}
 	}
 
-	SWAP(nodes_[item1], nodes_[item2]);
+	SWAP(_nodes[item1], _nodes[item2]);
 	put(item1, !silent);
 	put(item2, !silent);
 
@@ -269,8 +269,8 @@ void Swap::swap(int item1, int item2, bool silent) {
 }
 
 void Swap::rotate(int item1, int item2, bool silent, bool avto) {
-	assert(item1 >= 0 && item1 < (int)nodes_.size());
-	assert(item2 >= 0 && item2 < (int)nodes_.size());
+	assert(item1 >= 0 && item1 < (int)_nodes.size());
+	assert(item2 >= 0 && item2 < (int)_nodes.size());
 
 	if (!silent) {
 		if (testPlace(item1)) // сняли со своего места
@@ -279,8 +279,8 @@ void Swap::rotate(int item1, int item2, bool silent, bool avto) {
 			_runtime->event(EVENT_GET_RIGHT, _runtime->world2game(position(item2)));
 	}
 
-	nodes_[item1].angle = (nodes_[item1].angle + 1) % angles_;
-	nodes_[item2].angle = (nodes_[item2].angle + 1) % angles_;
+	_nodes[item1].angle = (_nodes[item1].angle + 1) % _angles;
+	_nodes[item2].angle = (_nodes[item2].angle + 1) % _angles;
 	put(item1, !avto);
 	put(item2, !avto);
 
