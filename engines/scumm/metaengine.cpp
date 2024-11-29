@@ -373,7 +373,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		return Common::kUnsupportedGameidError;
 	}
 
-	if (res.game.heversion != 0 && !strcmp(res.extra, "Steam")) {
+	if (res.game.heversion != 0 && (res.extra && !strcmp(res.extra, "Steam"))) {
 		if (!strcmp(res.game.gameid, "baseball") ||
 			!strcmp(res.game.gameid, "soccer") ||
 			!strcmp(res.game.gameid, "baseball2001") ||
