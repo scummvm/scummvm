@@ -152,31 +152,31 @@ void Room703::parser() {
 	} else if (player_said("PRAYER WHEEL BROCHURE", "EMPTY NICHE") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		digi_play("com123", 1, 255, -1, 997);
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #1") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		sub9EA78("703r04", _G(kernel).trigger);
+		playCheckBrochureAnim("703r04", _G(kernel).trigger);
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #2") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		sub9EA78("703r09", _G(kernel).trigger);
+		playCheckBrochureAnim("703r09", _G(kernel).trigger);
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #3") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		sub9EA78("703r10", _G(kernel).trigger);
+		playCheckBrochureAnim("703r10", _G(kernel).trigger);
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #4") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		switch (_G(flags[V217])) {
 		case 1:
-			sub9EA78("704r09", _G(kernel).trigger);
+			playCheckBrochureAnim("704r09", _G(kernel).trigger);
 			break;
 
 		case 2:
-			sub9EA78("705r04", _G(kernel).trigger);
+			playCheckBrochureAnim("705r04", _G(kernel).trigger);
 			break;
 
 		case 3:
-			sub9EA78("703r11", _G(kernel).trigger);
+			playCheckBrochureAnim("703r11", _G(kernel).trigger);
 			break;
 
 		case 4:
-			sub9EA78("705r14a", _G(kernel).trigger);
+			playCheckBrochureAnim("705r14a", _G(kernel).trigger);
 			break;
 
 		case 5:
-			sub9EA78("706r10", _G(kernel).trigger);
+			playCheckBrochureAnim("706r10", _G(kernel).trigger);
 			break;
 
 		default:
@@ -975,7 +975,7 @@ void Room703::callback(frac16 myMessage, machine *sender) {
 }
 
 void Room703::conv703a() {
-	int32 who = conv_whos_talking();
+	const int32 who = conv_whos_talking();
 
 	if (conv_sound_to_play() == nullptr) {
 		conv_resume(conv_get_handle());
@@ -989,9 +989,47 @@ void Room703::conv703a() {
 	}
 }
 
-void Room703::sub9EA78(const char *digiName, int32 trigger) {
-	//TODO not implemented
-	warning("STUB sub9EA78");
+void Room703::playCheckBrochureAnim(const char *digiName, int32 trigger) {
+	switch (trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripChecksBrochureSeries = series_load("RIP CHECKS BROCHURE", -1, nullptr);
+		setGlobals1(_ripChecksBrochureSeries, 1, 25, 25, 25, 0, 25, 31, 31, 31, 0, 31, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 41);
+
+		break;
+		
+	case 41:
+		kernel_timing_trigger(60, 43, nullptr);
+		break;
+		
+	case 43:
+		sendWSMessage_120000(_G(my_walker), -1);
+		digi_play(digiName, 1, 255, 44, -1);
+
+		break;
+		
+	case 44:
+		kernel_timing_trigger(10, 45, nullptr);
+		break;
+		
+	case 45:
+		sendWSMessage_130000(_G(my_walker), 48);
+		break;
+
+	case 48:
+		sendWSMessage_150000(_G(my_walker), 49);
+		break;
+		
+	case 49:
+		series_unload(_ripChecksBrochureSeries);
+		player_set_commands_allowed(true);
+
+		break;
+		
+	default:
+		break;
+	}
 }
 
 void Room703::sub9E50F(int32 trigger, int i) {
