@@ -92,7 +92,8 @@ public:
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _queuedEventTime(0),
 	_screenOrientation(kScreenOrientationAuto),
-	_runningTasks(0) {
+	_runningTasks(0),
+	_leftInset(0), _rightInset(0), _topInset(0), _bottomInset(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_currentTouchMode = kTouchModeTouchpad;
 
@@ -440,6 +441,13 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 
 void iOS7_buildSharedOSystemInstance() {
 	OSystem_iOS7::sharedInstance();
+}
+
+void iOS7_setSafeAreaInsets(int l, int r, int t, int b) {
+	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
+	if (sys) {
+		sys->setSafeAreaInsets(l, r, t, b);
+	}
 }
 
 TouchMode iOS7_getCurrentTouchMode() {

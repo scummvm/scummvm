@@ -75,6 +75,11 @@ protected:
 
 	Common::String _chrootBasePath;
 
+	int _leftInset;
+	int _rightInset;
+	int _topInset;
+	int _bottomInset;
+
 public:
 
 	OSystem_iOS7();
@@ -126,6 +131,9 @@ public:
 	uint32 getMillis(bool skipRecord = false) override;
 	void delayMillis(uint msecs) override;
 	Common::MutexInternal *createMutex() override;
+
+	void getSafeAreaInsets(int &l, int &r, int &t, int &b) const override { l = _leftInset; r = _rightInset; t = _topInset; b = _bottomInset; }
+	void setSafeAreaInsets(int l, int r, int t, int b) { _leftInset = l; _rightInset = r; _topInset = t; _bottomInset = b; }
 
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
