@@ -39,188 +39,6 @@
 
 namespace OpenGL {
 
-GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
-	: _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
-	  _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
-	  _texCoords(), _glFilter(GL_NEAREST),
-	  _glTexture(0) {
-	create();
-}
-
-GLTexture::~GLTexture() {
-	GL_CALL_SAFE(glDeleteTextures, (1, &_glTexture));
-}
-
-void GLTexture::enableLinearFiltering(bool enable) {
-	if (enable) {
-		_glFilter = GL_LINEAR;
-	} else {
-		_glFilter = GL_NEAREST;
-	}
-
-	bind();
-
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-}
-
-void GLTexture::setWrapMode(WrapMode wrapMode) {
-	GLuint glwrapMode;
-
-	switch(wrapMode) {
-		case kWrapModeBorder:
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-			if (OpenGLContext.textureBorderClampSupported) {
-				glwrapMode = GL_CLAMP_TO_BORDER;
-				break;
-			}
-#endif
-		// fall through
-		case kWrapModeEdge:
-			if (OpenGLContext.textureEdgeClampSupported) {
-				glwrapMode = GL_CLAMP_TO_EDGE;
-				break;
-			} else {
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-				// Fallback on clamp
-				glwrapMode = GL_CLAMP;
-#else
-				// This fallback should never happen in real life (GLES/GLES2 have border/edge clamp)
-				glwrapMode = GL_REPEAT;
-#endif
-				break;
-			}
-		case kWrapModeMirroredRepeat:
-#if !USE_FORCED_GLES
-			if (OpenGLContext.textureMirrorRepeatSupported) {
-				glwrapMode = GL_MIRRORED_REPEAT;
-				break;
-			}
-#endif
-		// fall through
-		case kWrapModeRepeat:
-		default:
-			glwrapMode = GL_REPEAT;
-	}
-
-
-	bind();
-
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrapMode));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrapMode));
-}
-
-void GLTexture::destroy() {
-	GL_CALL(glDeleteTextures(1, &_glTexture));
-	_glTexture = 0;
-}
-
-void GLTexture::create() {
-	// Release old texture name in case it exists.
-	destroy();
-
-	// Get a new texture name.
-	GL_CALL(glGenTextures(1, &_glTexture));
-
-	// Set up all texture parameters.
-	bind();
-	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	if (OpenGLContext.textureEdgeClampSupported) {
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-	} else {
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
-#endif
-	}
-
-	// If a size is specified, allocate memory for it.
-	if (_width != 0 && _height != 0) {
-		// Allocate storage for OpenGL texture.
-		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
-		                     0, _glFormat, _glType, nullptr));
-	}
-}
-
-void GLTexture::bind() const {
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-}
-
-bool GLTexture::setSize(uint width, uint height) {
-	const uint oldWidth  = _width;
-	const uint oldHeight = _height;
-
-	_logicalWidth  = width;
-	_logicalHeight = height;
-
-	if (!OpenGLContext.NPOTSupported) {
-		_width  = Common::nextHigher2(width);
-		_height = Common::nextHigher2(height);
-	} else {
-		_width  = width;
-		_height = height;
-	}
-
-	// If a size is specified, allocate memory for it.
-	if (width != 0 && height != 0) {
-		const GLfloat texWidth = (GLfloat)width / _width;
-		const GLfloat texHeight = (GLfloat)height / _height;
-
-		_texCoords[0] = 0;
-		_texCoords[1] = 0;
-
-		_texCoords[2] = texWidth;
-		_texCoords[3] = 0;
-
-		_texCoords[4] = 0;
-		_texCoords[5] = texHeight;
-
-		_texCoords[6] = texWidth;
-		_texCoords[7] = texHeight;
-
-		// Allocate storage for OpenGL texture if necessary.
-		if (oldWidth != _width || oldHeight != _height) {
-			bind();
-			bool error;
-			GL_CALL_CHECK(error, glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
-			             0, _glFormat, _glType, nullptr));
-			if (error) {
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
-	// Set the texture on the active texture unit.
-	bind();
-
-	// Update the actual texture.
-	// Although we have the area of the texture buffer we want to update we
-	// cannot take advantage of the left/right boundaries here because it is
-	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
-	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
-	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
-	// with the following options:
-	//
-	// 1) (As we do right now) Simply always update the whole texture lines of
-	//    rect changed. This is simplest to implement. In case performance is
-	//    really an issue we can think of switching to another method.
-	//
-	// 2) Copy the dirty rect to a temporary buffer and upload that by using
-	//    glTexSubImage2D. This is what the Android backend does. It is more
-	//    complicated though.
-	//
-	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
-	//    graphics manager did but it is much slower! Thus, we do not use it.
-	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, area.top, src.w, area.height(),
-	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
-}
-
 //
 // Surface
 //
@@ -290,20 +108,20 @@ Common::Rect Surface::getDirtyArea() const {
 // Surface implementations
 //
 
-Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
+TextureSurface::TextureSurface(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
 	: Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
 	  _textureData(), _userPixelData() {
 }
 
-Texture::~Texture() {
+TextureSurface::~TextureSurface() {
 	_textureData.free();
 }
 
-void Texture::destroy() {
+void TextureSurface::destroy() {
 	_glTexture.destroy();
 }
 
-void Texture::recreate() {
+void TextureSurface::recreate() {
 	_glTexture.create();
 
 	// In case image date exists assure it will be completely refreshed next
@@ -313,11 +131,11 @@ void Texture::recreate() {
 	}
 }
 
-void Texture::enableLinearFiltering(bool enable) {
+void TextureSurface::enableLinearFiltering(bool enable) {
 	_glTexture.enableLinearFiltering(enable);
 }
 
-void Texture::allocate(uint width, uint height) {
+void TextureSurface::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_glTexture.setSize(width, height);
 
@@ -338,7 +156,7 @@ void Texture::allocate(uint width, uint height) {
 	flagDirty();
 }
 
-void Texture::updateGLTexture() {
+void TextureSurface::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
@@ -348,7 +166,7 @@ void Texture::updateGLTexture() {
 	updateGLTexture(dirtyArea);
 }
 
-void Texture::updateGLTexture(Common::Rect &dirtyArea) {
+void TextureSurface::updateGLTexture(Common::Rect &dirtyArea) {
 	// In case we use linear filtering we might need to duplicate the last
 	// pixel row/column to avoid glitches with filtering.
 	if (_glTexture.isLinearFilteringEnabled()) {
@@ -384,8 +202,8 @@ void Texture::updateGLTexture(Common::Rect &dirtyArea) {
 	clearDirty();
 }
 
-FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
-	: Texture(glIntFormat, glFormat, glType, format),
+FakeTextureSurface::FakeTextureSurface(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: TextureSurface(glIntFormat, glFormat, glType, format),
 	  _fakeFormat(fakeFormat),
 	  _rgbData(),
 	  _palette(nullptr),
@@ -395,15 +213,15 @@ FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, con
 	}
 }
 
-FakeTexture::~FakeTexture() {
+FakeTextureSurface::~FakeTextureSurface() {
 	delete[] _palette;
 	delete[] _mask;
 	_palette = nullptr;
 	_rgbData.free();
 }
 
-void FakeTexture::allocate(uint width, uint height) {
-	Texture::allocate(width, height);
+void FakeTextureSurface::allocate(uint width, uint height) {
+	TextureSurface::allocate(width, height);
 
 	// We only need to reinitialize our surface when the output size
 	// changed.
@@ -414,7 +232,7 @@ void FakeTexture::allocate(uint width, uint height) {
 	_rgbData.create(width, height, getFormat());
 }
 
-void FakeTexture::setMask(const byte *mask) {
+void FakeTextureSurface::setMask(const byte *mask) {
 	if (mask) {
 		const uint numPixels = _rgbData.w * _rgbData.h;
 
@@ -430,7 +248,7 @@ void FakeTexture::setMask(const byte *mask) {
 	flagDirty();
 }
 
-void FakeTexture::setColorKey(uint colorKey) {
+void FakeTextureSurface::setColorKey(uint colorKey) {
 	if (!_palette)
 		return;
 
@@ -445,7 +263,7 @@ void FakeTexture::setColorKey(uint colorKey) {
 	flagDirty();
 }
 
-void FakeTexture::setPalette(uint start, uint colors, const byte *palData) {
+void FakeTextureSurface::setPalette(uint start, uint colors, const byte *palData) {
 	if (!_palette)
 		return;
 
@@ -455,13 +273,13 @@ void FakeTexture::setPalette(uint start, uint colors, const byte *palData) {
 	flagDirty();
 }
 
-void FakeTexture::updateGLTexture() {
+void FakeTextureSurface::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
 
 	// Convert color space.
-	Graphics::Surface *outSurf = Texture::getSurface();
+	Graphics::Surface *outSurf = TextureSurface::getSurface();
 
 	const Common::Rect dirtyArea = getDirtyArea();
 
@@ -471,10 +289,10 @@ void FakeTexture::updateGLTexture() {
 	applyPaletteAndMask(dst, src, outSurf->pitch, _rgbData.pitch, _rgbData.w, dirtyArea, outSurf->format, _rgbData.format);
 
 	// Do generic handling of updating the texture.
-	Texture::updateGLTexture();
+	TextureSurface::updateGLTexture();
 }
 
-void FakeTexture::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
+void FakeTextureSurface::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
 	if (_palette) {
 		Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat.bytesPerPixel, _palette);
 	} else {
@@ -508,17 +326,17 @@ void FakeTexture::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch,
 	}
 }
 
-TextureRGB555::TextureRGB555()
-	: FakeTexture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+TextureSurfaceRGB555::TextureSurfaceRGB555()
+	: FakeTextureSurface(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
 }
 
-void TextureRGB555::updateGLTexture() {
+void TextureSurfaceRGB555::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
 
 	// Convert color space.
-	Graphics::Surface *outSurf = Texture::getSurface();
+	Graphics::Surface *outSurf = TextureSurface::getSurface();
 
 	const Common::Rect dirtyArea = getDirtyArea();
 
@@ -542,25 +360,25 @@ void TextureRGB555::updateGLTexture() {
 	}
 
 	// Do generic handling of updating the texture.
-	Texture::updateGLTexture();
+	TextureSurface::updateGLTexture();
 }
 
-TextureRGBA8888Swap::TextureRGBA8888Swap()
+TextureSurfaceRGBA8888Swap::TextureSurfaceRGBA8888Swap()
 #ifdef SCUMM_LITTLE_ENDIAN
-	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
+	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
 #else
-	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
+	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
 #endif
 	  {
 }
 
-void TextureRGBA8888Swap::updateGLTexture() {
+void TextureSurfaceRGBA8888Swap::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
 
 	// Convert color space.
-	Graphics::Surface *outSurf = Texture::getSurface();
+	Graphics::Surface *outSurf = TextureSurface::getSurface();
 
 	const Common::Rect dirtyArea = getDirtyArea();
 
@@ -582,16 +400,16 @@ void TextureRGBA8888Swap::updateGLTexture() {
 	}
 
 	// Do generic handling of updating the texture.
-	Texture::updateGLTexture();
+	TextureSurface::updateGLTexture();
 }
 
 #ifdef USE_SCALERS
 
-ScaledTexture::ScaledTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
-	: FakeTexture(glIntFormat, glFormat, glType, format, fakeFormat), _convData(nullptr), _scaler(nullptr), _scalerIndex(0), _scaleFactor(1), _extraPixels(0) {
+ScaledTextureSurface::ScaledTextureSurface(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: FakeTextureSurface(glIntFormat, glFormat, glType, format, fakeFormat), _convData(nullptr), _scaler(nullptr), _scalerIndex(0), _scaleFactor(1), _extraPixels(0) {
 }
 
-ScaledTexture::~ScaledTexture() {
+ScaledTextureSurface::~ScaledTextureSurface() {
 	delete _scaler;
 
 	if (_convData) {
@@ -600,8 +418,8 @@ ScaledTexture::~ScaledTexture() {
 	}
 }
 
-void ScaledTexture::allocate(uint width, uint height) {
-	Texture::allocate(width * _scaleFactor, height * _scaleFactor);
+void ScaledTextureSurface::allocate(uint width, uint height) {
+	TextureSurface::allocate(width * _scaleFactor, height * _scaleFactor);
 
 	// We only need to reinitialize our surface when the output size
 	// changed.
@@ -621,13 +439,13 @@ void ScaledTexture::allocate(uint width, uint height) {
 	}
 }
 
-void ScaledTexture::updateGLTexture() {
+void ScaledTextureSurface::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
 
 	// Convert color space.
-	Graphics::Surface *outSurf = Texture::getSurface();
+	Graphics::Surface *outSurf = TextureSurface::getSurface();
 
 	Common::Rect dirtyArea = getDirtyArea();
 
@@ -668,10 +486,10 @@ void ScaledTexture::updateGLTexture() {
 	dirtyArea.bottom *= _scaleFactor;
 
 	// Do generic handling of updating the texture.
-	Texture::updateGLTexture(dirtyArea);
+	TextureSurface::updateGLTexture(dirtyArea);
 }
 
-void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
+void ScaledTextureSurface::setScaler(uint scalerIndex, int scaleFactor) {
 	const PluginList &scalerPlugins = ScalerMan.getPlugins();
 	const ScalerPluginObject &scalerPlugin = scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
 
@@ -699,7 +517,7 @@ void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
 // However, in practice (according to fuzzie) it's 8bit. If we run into
 // problems, we need to switch to GL_R8 and GL_RED, but that is only supported
 // for ARB_texture_rg and GLES3+ (EXT_rexture_rg does not support GL_R8).
-TextureCLUT8GPU::TextureCLUT8GPU()
+TextureSurfaceCLUT8GPU::TextureSurfaceCLUT8GPU()
 	: _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
 	  _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
 	  _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
@@ -714,13 +532,13 @@ TextureCLUT8GPU::TextureCLUT8GPU()
 	_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-TextureCLUT8GPU::~TextureCLUT8GPU() {
+TextureSurfaceCLUT8GPU::~TextureSurfaceCLUT8GPU() {
 	delete _clut8Pipeline;
 	delete _target;
 	_clut8Data.free();
 }
 
-void TextureCLUT8GPU::destroy() {
+void TextureSurfaceCLUT8GPU::destroy() {
 	_clut8Texture.destroy();
 	_paletteTexture.destroy();
 	_target->destroy();
@@ -728,7 +546,7 @@ void TextureCLUT8GPU::destroy() {
 	_clut8Pipeline = nullptr;
 }
 
-void TextureCLUT8GPU::recreate() {
+void TextureSurfaceCLUT8GPU::recreate() {
 	_clut8Texture.create();
 	_paletteTexture.create();
 	_target->create();
@@ -749,11 +567,11 @@ void TextureCLUT8GPU::recreate() {
 	}
 }
 
-void TextureCLUT8GPU::enableLinearFiltering(bool enable) {
+void TextureSurfaceCLUT8GPU::enableLinearFiltering(bool enable) {
 	_target->getTexture()->enableLinearFiltering(enable);
 }
 
-void TextureCLUT8GPU::allocate(uint width, uint height) {
+void TextureSurfaceCLUT8GPU::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_clut8Texture.setSize(width, height);
 	_target->setSize(width, height, Common::kRotationNormal);
@@ -788,11 +606,11 @@ void TextureCLUT8GPU::allocate(uint width, uint height) {
 	flagDirty();
 }
 
-Graphics::PixelFormat TextureCLUT8GPU::getFormat() const {
+Graphics::PixelFormat TextureSurfaceCLUT8GPU::getFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
-void TextureCLUT8GPU::setColorKey(uint colorKey) {
+void TextureSurfaceCLUT8GPU::setColorKey(uint colorKey) {
 	// The key color is set to black so the color value is pre-multiplied with the alpha value
 	// to avoid color fringes due to filtering.
 	// Erasing the color data is not a problem as the palette is always fully re-initialized
@@ -805,7 +623,7 @@ void TextureCLUT8GPU::setColorKey(uint colorKey) {
 	_paletteDirty = true;
 }
 
-void TextureCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
+void TextureSurfaceCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
 	byte *dst = _palette + start * 4;
 
 	while (colors-- > 0) {
@@ -819,11 +637,11 @@ void TextureCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
 	_paletteDirty = true;
 }
 
-const GLTexture &TextureCLUT8GPU::getGLTexture() const {
+const Texture &TextureSurfaceCLUT8GPU::getGLTexture() const {
 	return *_target->getTexture();
 }
 
-void TextureCLUT8GPU::updateGLTexture() {
+void TextureSurfaceCLUT8GPU::updateGLTexture() {
 	const bool needLookUp = Surface::isDirty() || _paletteDirty;
 
 	// Update CLUT8 texture if necessary.
@@ -853,7 +671,7 @@ void TextureCLUT8GPU::updateGLTexture() {
 	}
 }
 
-void TextureCLUT8GPU::lookUpColors() {
+void TextureSurfaceCLUT8GPU::lookUpColors() {
 	// Setup pipeline to do color look up.
 	_clut8Pipeline->activate();
 

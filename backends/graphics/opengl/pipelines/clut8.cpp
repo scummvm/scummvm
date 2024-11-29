@@ -31,7 +31,7 @@ CLUT8LookUpPipeline::CLUT8LookUpPipeline()
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kCLUT8LookUp)), _paletteTexture(nullptr) {
 }
 
-void CLUT8LookUpPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void CLUT8LookUpPipeline::drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	assert(isActive());
 
 	// Set the palette texture.

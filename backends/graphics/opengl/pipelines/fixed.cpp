@@ -56,7 +56,7 @@ void FixedPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	}
 }
 
-void FixedPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void FixedPipeline::drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	assert(isActive());
 
 	texture.bind();
