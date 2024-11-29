@@ -25,7 +25,7 @@
 
 #include "backends/graphics3d/opengl/tiledsurface.h"
 #include "backends/graphics3d/opengl/surfacerenderer.h"
-#include "backends/graphics3d/opengl/texture.h"
+#include "graphics/opengl/texture.h"
 
 namespace OpenGL {
 
@@ -42,7 +42,9 @@ TiledSurface::TiledSurface(uint width, uint height, const Graphics::PixelFormat 
 			Tile &tile = _tiles.back();
 			tile.rect = Common::Rect(textureWidth, textureHeight);
 			tile.rect.translate(x, y);
-			tile.texture = nullptr;
+			tile.texture = new Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+			tile.texture->setSize(textureWidth, textureHeight);
+			tile.texture->enableLinearFiltering(true);
 			tile.dirty = true;
 		}
 	}
@@ -72,10 +74,16 @@ void TiledSurface::update() {
 	for (uint i = 0; i < _tiles.size(); i++) {
 		Tile &tile = _tiles[i];
 		if (tile.dirty) {
-			Graphics::Surface subSurface = _backingSurface.getSubArea(tile.rect);
+			const Common::Rect rect(tile.rect.width(), tile.rect.height());
 
-			delete tile.texture;
-			tile.texture = new TextureGL(subSurface);
+			// TODO: Restore support for GL_UNPACK_ROW_LENGTH?
+			Graphics::Surface subSurface = _backingSurface.getSubArea(tile.rect);
+			Graphics::Surface *conv = subSurface.convertTo(OpenGL::Texture::getRGBAPixelFormat());
+
+			tile.texture->updateArea(rect, *conv);
+
+			conv->free();
+			delete conv;
 
 			tile.dirty = false;
 		}

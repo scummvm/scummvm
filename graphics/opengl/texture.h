@@ -144,6 +144,8 @@ public:
 	 * destroy will invalidate the texture name.
 	 */
 	GLuint getGLTexture() const { return _glTexture; }
+
+	static const Graphics::PixelFormat getRGBAPixelFormat();
 private:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;

@@ -46,16 +46,14 @@ static bool useDepthComponent24() {
 }
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
-		TextureGL(width, height) {
+		Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE) {
 	if (!OpenGLContext.framebufferObjectSupported) {
 		error("FrameBuffer Objects are not supported by the current OpenGL context");
 	}
 
-	init();
-}
+	setSize(width, height);
+	enableLinearFiltering(true);
 
-FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
-		TextureGL(texture_name, width, height, texture_width, texture_height) {
 	init();
 }
 
@@ -69,11 +67,11 @@ void FrameBuffer::init() {
 	glGenRenderbuffers(2, _renderBuffers);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, getGLTexture(), 0);
 
 	if (usePackedBuffer()) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _texWidth, _texHeight);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, getWidth(), getHeight());
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -87,18 +85,18 @@ void FrameBuffer::init() {
 #ifndef GL_DEPTH_STENCIL
 #define GL_DEPTH_STENCIL 0x84F9
 #endif
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, _texWidth, _texHeight);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, getWidth(), getHeight());
 
 #ifndef GL_DEPTH_STENCIL_ATTACHMENT
 #define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
 #endif
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 		} else {
-			glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, _texWidth, _texHeight);
+			glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, getWidth(), getHeight());
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, _texWidth, _texHeight);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, getWidth(), getHeight());
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
 		}
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -115,7 +113,7 @@ void FrameBuffer::init() {
 
 void FrameBuffer::attach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	glViewport(0, 0, _width, _height);
+	glViewport(0, 0, getLogicalWidth(), getLogicalHeight());
 }
 
 void FrameBuffer::detach() {
@@ -152,11 +150,11 @@ void MultiSampleFrameBuffer::init() {
 
 	glGenRenderbuffers(1, &_msColorId);
 	glBindRenderbuffer(GL_RENDERBUFFER, _msColorId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_RGBA8, getTexWidth(), getTexHeight());
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_RGBA8, getWidth(), getHeight());
 
 	glGenRenderbuffers(1, &_msDepthId);
 	glBindRenderbuffer(GL_RENDERBUFFER, _msDepthId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_DEPTH24_STENCIL8, getTexWidth(), getTexHeight());
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_DEPTH24_STENCIL8, getWidth(), getHeight());
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _msColorId);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _msDepthId);
@@ -172,13 +170,13 @@ void MultiSampleFrameBuffer::init() {
 void MultiSampleFrameBuffer::attach() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, getFrameBufferName());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _msFrameBufferId);
-	glViewport(0, 0, getWidth(), getHeight());
+	glViewport(0, 0, getLogicalWidth(), getLogicalHeight());
 }
 
 void MultiSampleFrameBuffer::detach() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _msFrameBufferId);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFrameBufferName());
-	glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, getLogicalWidth(), getLogicalHeight(), 0, 0, getLogicalWidth(), getLogicalHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

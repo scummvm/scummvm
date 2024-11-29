@@ -31,7 +31,7 @@
 
 namespace OpenGL {
 
-class TextureGL;
+class Texture;
 class SurfaceRenderer;
 
 /**
@@ -110,7 +110,7 @@ private:
 	static const uint maxTextureSize = 256;
 
 	struct Tile {
-		TextureGL *texture;
+		Texture *texture;
 		Common::Rect rect;
 		bool dirty;
 	};
