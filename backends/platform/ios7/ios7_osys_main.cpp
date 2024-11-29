@@ -408,6 +408,18 @@ void iOS7_buildSharedOSystemInstance() {
 	OSystem_iOS7::sharedInstance();
 }
 
+void iOS7_setSafeAreaInsets(int l, int r, int t, int b) {
+	ModularGraphicsBackend *sys = dynamic_cast<ModularGraphicsBackend *>(g_system);
+	if (!sys) {
+		return;
+	}
+	iOSGraphicsManager *gfx = dynamic_cast<iOSGraphicsManager *>(sys->getGraphicsManager());
+	if (!gfx) {
+		return;
+	}
+	gfx->setSafeAreaInsets(l, r, t, b);
+}
+
 TouchMode iOS7_getCurrentTouchMode() {
 	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
 	if (!sys) {
