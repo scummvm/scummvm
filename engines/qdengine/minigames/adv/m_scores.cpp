@@ -28,19 +28,21 @@
 namespace QDEngine {
 
 MinigameInterface *createMinigameScores(MinigameManager *runtime) {
-	return new Scores;
+	return new Scores(runtime);
 }
 
-Scores::Scores() {
-	const char *fileName = g_runtime->parameter("minigame_list");
+Scores::Scores(MinigameManager *runtime) {
+	_runtime = runtime;
+
+	const char *fileName = _runtime->parameter("minigame_list");
 	if (!fileName || !*fileName)
 		return;
 
-	if (!scumm_stricmp(fileName, g_runtime->gameListFileName())) {
-		error("[minigame_list] must refer to \"%s\"", transCyrillic(g_runtime->gameListFileName()));
+	if (!scumm_stricmp(fileName, _runtime->gameListFileName())) {
+		error("[minigame_list] must refer to \"%s\"", transCyrillic(_runtime->gameListFileName()));
 	}
 
-	const char *gameButtonName = g_runtime->parameter("game_miniature_button");
+	const char *gameButtonName = _runtime->parameter("game_miniature_button");
 	if (!gameButtonName || !*gameButtonName)
 		return;
 
@@ -51,10 +53,10 @@ Scores::Scores() {
 	name[127] = 0;
 	for (int num = 1; ; ++num) {
 		snprintf(name, 127, "%s%02d", gameButtonName, num);
-		if (g_runtime->testObject(name)) {
-			QDObject obj = g_runtime->getObject(name);
+		if (_runtime->testObject(name)) {
+			QDObject obj = _runtime->getObject(name);
 			gameData.write(obj->R());
-			games_.push_back(g_runtime->getObject(name));
+			games_.push_back(_runtime->getObject(name));
 		} else
 			break;
 	}
@@ -63,7 +65,7 @@ Scores::Scores() {
 		error("Game images not found '%s'", transCyrillic(gameButtonName));
 	}
 
-	if (!g_runtime->processGameData(gameData))
+	if (!_runtime->processGameData(gameData))
 		return;
 
 	positions_.resize(games_.size());
@@ -96,7 +98,7 @@ Scores::Scores() {
 				xbuf >= game;
 				lvl.games.push_back(game);
 				debugCN(2, kDebugMinigames, "%d, ", game);
-				if (const MinigameData * data = g_runtime->getScore(level, game))
+				if (const MinigameData * data = _runtime->getScore(level, game))
 					lvl.data.push_back(GameData(game, *data));
 			}
 		}
@@ -115,23 +117,23 @@ Scores::Scores() {
 	level_ = 0;
 	preLevel_ = -1;
 
-	if (!(bestScore_ = g_runtime->parameter("best_score")))
+	if (!(bestScore_ = _runtime->parameter("best_score")))
 		return;
-	if (!(bestTime_ = g_runtime->parameter("best_time")))
+	if (!(bestTime_ = _runtime->parameter("best_time")))
 		return;
-	if (!(lastScore_ = g_runtime->parameter("last_score")))
+	if (!(lastScore_ = _runtime->parameter("last_score")))
 		return;
-	if (!(lastTime_ = g_runtime->parameter("last_time")))
+	if (!(lastTime_ = _runtime->parameter("last_time")))
 		return;
-	if (!(currentLevel_ = g_runtime->parameter("current_level")))
-		return;
-
-	if (!(prev_ = g_runtime->getObject(g_runtime->parameter("prev_button"))))
-		return;
-	if (!(next_ = g_runtime->getObject(g_runtime->parameter("next_button"))))
+	if (!(currentLevel_ = _runtime->parameter("current_level")))
 		return;
 
-	outMaxLevel_ = g_runtime->getObject(g_runtime->parameter("for_game_level"));
+	if (!(prev_ = _runtime->getObject(_runtime->parameter("prev_button"))))
+		return;
+	if (!(next_ = _runtime->getObject(_runtime->parameter("next_button"))))
+		return;
+
+	outMaxLevel_ = _runtime->getObject(_runtime->parameter("for_game_level"));
 	if (outMaxLevel_) {
 		uint level = 0;
 		for (; level < levels_.size(); ++level)
@@ -148,11 +150,11 @@ Scores::Scores() {
 }
 
 Scores::~Scores() {
-	g_runtime->release(prev_);
-	g_runtime->release(next_);
+	_runtime->release(prev_);
+	_runtime->release(next_);
 
 	for (auto &it : games_)
-		g_runtime->release(it);
+		_runtime->release(it);
 
 }
 
@@ -164,10 +166,10 @@ void Scores::quant(float dt) {
 		preLevel_ = level_;
 
 
-		g_runtime->setText(currentLevel_, lvl.level);
+		_runtime->setText(currentLevel_, lvl.level);
 
 		for (int idx = 0; idx < (int)games_.size(); ++idx)
-			g_runtime->hide(games_[idx]);
+			_runtime->hide(games_[idx]);
 
 		for (int idx = 0; idx < (int)games_.size(); ++idx) {
 			if (idx < (int)lvl.data.size()) {
@@ -181,23 +183,23 @@ void Scores::quant(float dt) {
 				assert(gameNum < (int)games_.size());
 				games_[gameNum].setState(Common::String::format("%d", level_).c_str());
 				games_[gameNum]->set_R(positions_[idx]);
-				g_runtime->setText(getName(bestScore_, idx), data.info._bestScore);
-				g_runtime->setText(getName(bestTime_, idx), data.info._bestTime);
-				g_runtime->setText(getName(lastScore_, idx), data.info._lastScore);
-				g_runtime->setText(getName(lastTime_, idx), data.info._lastTime);
+				_runtime->setText(getName(bestScore_, idx), data.info._bestScore);
+				_runtime->setText(getName(bestTime_, idx), data.info._bestTime);
+				_runtime->setText(getName(lastScore_, idx), data.info._lastScore);
+				_runtime->setText(getName(lastTime_, idx), data.info._lastTime);
 			} else {
-				g_runtime->setText(getName(bestScore_, idx), "");
-				g_runtime->setText(getName(bestTime_, idx), "");
-				g_runtime->setText(getName(lastScore_, idx), "");
-				g_runtime->setText(getName(lastTime_, idx), "");
+				_runtime->setText(getName(bestScore_, idx), "");
+				_runtime->setText(getName(bestTime_, idx), "");
+				_runtime->setText(getName(lastScore_, idx), "");
+				_runtime->setText(getName(lastTime_, idx), "");
 			}
 		}
 	}
 
-	if (g_runtime->mouseLeftPressed()) {
-		if (level_ < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(g_runtime->mousePosition()))
+	if (_runtime->mouseLeftPressed()) {
+		if (level_ < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(_runtime->mousePosition()))
 			++level_;
-		else if (level_ > 0 && prev_.hit(g_runtime->mousePosition()))
+		else if (level_ > 0 && prev_.hit(_runtime->mousePosition()))
 			--level_;
 	}
 }

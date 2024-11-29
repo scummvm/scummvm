@@ -29,7 +29,7 @@ namespace QDEngine {
 
 class Scores : public MinigameInterface {
 public:
-	Scores();
+	Scores(MinigameManager *runtime);
 	~Scores();
 
 	void quant(float dt);
@@ -74,6 +74,8 @@ private:
 	Coords positions_;
 
 	const char *getName(const char* begin, int idx) const;
+
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine
