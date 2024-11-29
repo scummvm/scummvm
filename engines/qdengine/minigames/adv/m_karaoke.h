@@ -28,7 +28,7 @@ namespace QDEngine {
 
 class Karaoke : public MinigameInterface {
 public:
-	Karaoke();
+	Karaoke(MinigameManager *runtime);
 	void quant(float dt);
 
 	enum TagType {
@@ -55,6 +55,7 @@ private:
 	int currentTag_;
 	float startTagTime_;
 
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine

@@ -26,7 +26,7 @@
 namespace QDEngine {
 
 MinigameInterface *createMinigameKaraoke(MinigameManager *runtime) {
-	return new Karaoke;
+	return new Karaoke(runtime);
 }
 
 Karaoke::Node::Node() {
@@ -36,12 +36,14 @@ Karaoke::Node::Node() {
 }
 
 
-Karaoke::Karaoke() {
-	controlName_ = g_runtime->parameter("control_name", true);
+Karaoke::Karaoke(MinigameManager *runtime) {
+	_runtime = runtime;
+
+	controlName_ = _runtime->parameter("control_name", true);
 	if (!controlName_ || !*controlName_)
 		return;
 
-	colorReaded_ = g_runtime->parameter("color_first", true);
+	colorReaded_ = _runtime->parameter("color_first", true);
 	if (!colorReaded_ || !*colorReaded_)
 		return;
 
@@ -119,7 +121,7 @@ Karaoke::Karaoke() {
 		}
 	};
 
-	const char *fileName = g_runtime->parameter("text_file", true);
+	const char *fileName = _runtime->parameter("text_file", true);
 	if (!fileName)
 		return;
 
@@ -188,10 +190,10 @@ void Karaoke::quant(float dt) {
 		++idx;
 	}
 
-	if (g_runtime->mouseRightPressed())
+	if (_runtime->mouseRightPressed())
 		debugC(2, kDebugMinigames, "%s", outText.c_str());
 
-	g_runtime->setText(controlName_, outText.c_str());
+	_runtime->setText(controlName_, outText.c_str());
 }
 
 } // namespace QDEngine
