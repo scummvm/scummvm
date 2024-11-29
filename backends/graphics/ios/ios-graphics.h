@@ -43,6 +43,9 @@ public:
 
 	float getHiDPIScreenFactor() const override;
 
+	void setSafeAreaInsets(int l, int r, int t, int b) { _insets.left = l; _insets.top = t; _insets.right = r; _insets.bottom = b; }
+	WindowedGraphicsManager::Insets getSafeAreaInsets() const override { return _insets; }
+
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}
 
@@ -53,6 +56,7 @@ protected:
 	void refreshScreen() override;
 
 	int _old_touch_mode;
+	WindowedGraphicsManager::Insets _insets;
 };
 
 #endif
