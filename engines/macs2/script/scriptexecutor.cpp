@@ -994,6 +994,19 @@ void ScriptExecutor::FuncC8E4() {
 	Func9F4D(throwaway1, throwaway2);
 }
 
+void ScriptExecutor::FuncB6BE_actual() {
+	// bp-2h
+	uint32 id = Func9F4D_32();
+	id -= 0x1000;
+	uint16 bp4 = Func9F4D_16();
+	if (id <= 1) {
+		// mov	word ptr [1028h],8h
+		return;
+	}
+	// TODO: Continue here
+
+}
+
 void ScriptExecutor::FuncB6BE() {
 	// TODO: This is a very simplistic implementation, there's a lot
 	// to be discovered how this works exaclty
