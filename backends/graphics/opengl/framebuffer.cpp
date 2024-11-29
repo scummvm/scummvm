@@ -21,8 +21,8 @@
 
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
-#include "backends/graphics/opengl/texture.h"
 #include "graphics/opengl/debug.h"
+#include "graphics/opengl/texture.h"
 #include "common/rotationmode.h"
 
 namespace OpenGL {
@@ -266,7 +266,7 @@ bool Backbuffer::setSize(uint width, uint height, Common::RotationMode rotation)
 
 #if !USE_FORCED_GLES
 TextureTarget::TextureTarget()
-	: _texture(new GLTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)), _glFBO(0), _needUpdate(true) {
+	: _texture(new Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)), _glFBO(0), _needUpdate(true) {
 }
 
 TextureTarget::~TextureTarget() {

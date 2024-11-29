@@ -25,7 +25,7 @@
 #include "graphics/opengl/system_headers.h"
 
 #include "backends/graphics/opengl/framebuffer.h"
-#include "backends/graphics/opengl/texture.h"
+#include "graphics/opengl/texture.h"
 
 #include "math/matrix4.h"
 
@@ -83,15 +83,15 @@ public:
 	 * @param texture     Texture to use for drawing.
 	 * @param coordinates x1, y1, x2, y2 coordinates where to draw the texture.
 	 */
-	inline void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+	inline void drawTexture(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 		drawTextureInternal(texture, coordinates, texcoords);
 	}
 
-	inline void drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+	inline void drawTexture(const Texture &texture, const GLfloat *coordinates) {
 		drawTextureInternal(texture, coordinates, texture.getTexCoords());
 	}
 
-	inline void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
+	inline void drawTexture(const Texture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		const GLfloat coordinates[4*2] = {
 			x,     y,
 			x + w, y,
@@ -101,7 +101,7 @@ public:
 		drawTextureInternal(texture, coordinates, texture.getTexCoords());
 	}
 
-	inline void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h, const Common::Rect &clip) {
+	inline void drawTexture(const Texture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h, const Common::Rect &clip) {
 		const GLfloat coordinates[4*2] = {
 			x,     y,
 			x + w, y,
@@ -148,7 +148,7 @@ protected:
 	 */
 	virtual void deactivateInternal();
 
-	virtual void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
+	virtual void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
 
 	bool isActive() const { return activePipeline == this; }
 

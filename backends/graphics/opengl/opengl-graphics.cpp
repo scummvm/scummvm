@@ -1492,12 +1492,12 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 	if (wantScaler) {
 		// TODO: Ensure that the requested pixel format is supported by the scaler
 		if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
-			return new ScaledTexture(glIntFormat, glFormat, glType, format, format);
+			return new ScaledTextureSurface(glIntFormat, glFormat, glType, format, format);
 		} else {
 #ifdef SCUMM_LITTLE_ENDIAN
-			return new ScaledTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
+			return new ScaledTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
 #else
-			return new ScaledTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
+			return new ScaledTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
 #endif
 		}
 	}
@@ -1505,8 +1505,8 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 
 	if (format.bytesPerPixel == 1) {
 #if !USE_FORCED_GLES
-		if (TextureCLUT8GPU::isSupportedByContext() && !wantMask) {
-			return new TextureCLUT8GPU();
+		if (TextureSurfaceCLUT8GPU::isSupportedByContext() && !wantMask) {
+			return new TextureSurfaceCLUT8GPU();
 		}
 #endif
 
@@ -1515,27 +1515,27 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		if (!supported) {
 			return nullptr;
 		} else {
-			return new FakeTexture(glIntFormat, glFormat, glType, virtFormat, format);
+			return new FakeTextureSurface(glIntFormat, glFormat, glType, virtFormat, format);
 		}
 	} else if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
-		return new Texture(glIntFormat, glFormat, glType, format);
+		return new TextureSurface(glIntFormat, glFormat, glType, format);
 	} else if (OpenGLContext.packedPixelsSupported && format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
 		// OpenGL ES does not support a texture format usable for RGB555.
 		// Since SCUMM uses this pixel format for some games (and there is no
 		// hope for this to change anytime soon) we use pixel format
 		// conversion to a supported texture format.
-		return new TextureRGB555();
+		return new TextureSurfaceRGB555();
 #ifdef SCUMM_LITTLE_ENDIAN
 	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 #else
 	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
 #endif
-		return new TextureRGBA8888Swap();
+		return new TextureSurfaceRGBA8888Swap();
 	} else {
 #ifdef SCUMM_LITTLE_ENDIAN
-		return new FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
+		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
 #else
-		return new FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
+		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
 #endif
 	}
 }
@@ -1655,7 +1655,7 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 
 #if !USE_FORCED_GLES
 	if (_libretroPipeline) {
-		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
+		const Texture &gameScreenTexture = _gameScreen->getGLTexture();
 		_libretroPipeline->setDisplaySizes(gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight(),
 				_gameDrawRect);
 	}

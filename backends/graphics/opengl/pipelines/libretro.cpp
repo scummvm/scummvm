@@ -138,7 +138,7 @@ static const char *const g_compatFragment =
 class LibRetroTextureTarget : public TextureTarget {
 public:
 	bool setScaledSize(uint width, uint height, const Common::Rect &scalingRect) {
-		GLTexture *texture = getTexture();
+		Texture *texture = getTexture();
 		if (!texture->setSize(width, height)) {
 			return false;
 		}
@@ -196,7 +196,7 @@ public:
 protected:
 	void activateInternal() override {}
 	void deactivateInternal() override {}
-	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override { }
+	void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override { }
 };
 
 LibRetroPipeline::LibRetroPipeline()
@@ -228,7 +228,7 @@ static void setLinearFiltering(GLuint glTexture, bool enable) {
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glFilter));
 }
 
-void LibRetroPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void LibRetroPipeline::drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	if (!_needsScaling) {
 		_outputPipeline.drawTexture(texture, coordinates, texcoords);
 		return;
@@ -397,7 +397,7 @@ bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
 	for (LibRetro::ShaderPreset::TextureArray::const_iterator
 		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
 		 i != end; ++i) {
-		Texture texture = loadTexture(_shaderPreset->basePath.join(i->fileName).normalize(), _shaderPreset->container, archSet);
+		LibRetroTexture texture = loadTexture(_shaderPreset->basePath.join(i->fileName).normalize(), _shaderPreset->container, archSet);
 		texture.id = i->id;
 
 		if (!texture.textureData || !texture.glTexture) {
@@ -577,7 +577,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		pass.buildTexCoords(passId, aliases);
 		pass.buildTexSamplers(passId, _textures, aliases);
 		if (passId > 0) {
-			GLTexture *const texture = _passes[passId - 1].target->getTexture();
+			Texture *const texture = _passes[passId - 1].target->getTexture();
 			texture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
 			texture->setWrapMode(i->wrapMode);
 			pass.inputTexture = texture;
@@ -736,12 +736,12 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	}
 }
 
-void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture) {
+void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader *shader, const Texture &texture) {
 	shader->setUniform(prefix + "InputSize", Math::Vector2d(texture.getLogicalWidth(), texture.getLogicalHeight()));
 	shader->setUniform(prefix + "TextureSize", Math::Vector2d(texture.getWidth(), texture.getHeight()));
 }
 
-LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
+LibRetroPipeline::LibRetroTexture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
 	Common::String baseName(fileName.baseName());
 	const char *extension = nullptr;
 	for (int dotPos = baseName.size() - 1; dotPos >= 0; --dotPos) {
@@ -753,7 +753,7 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &file
 
 	if (!extension) {
 		warning("LibRetroPipeline::loadTexture: File name '%s' misses extension", fileName.toString().c_str());
-		return Texture();
+		return LibRetroTexture();
 	}
 
 	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
@@ -761,18 +761,18 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &file
 			Graphics::Surface *textureData = loader->load(fileName, container, archSet);
 			if (!textureData) {
 				warning("LibRetroPipeline::loadTexture: Loader for '%s' could not load file '%s'", loader->extension, fileName.toString().c_str());
-				return Texture();
+				return LibRetroTexture();
 			}
 
-			GLTexture *texture = new GLTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+			Texture *texture = new Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 			texture->setSize(textureData->w, textureData->h);
 			texture->updateArea(Common::Rect(textureData->w, textureData->h), *textureData);
-			return Texture(textureData, texture);
+			return LibRetroTexture(textureData, texture);
 		}
 	}
 
 	warning("LibRetroPipeline::loadTexture: No loader for file '%s' present", fileName.toString().c_str());
-	return Texture();
+	return LibRetroTexture();
 }
 
 void LibRetroPipeline::Pass::buildTexCoords(const uint id, const Common::StringArray &aliases) {
@@ -940,7 +940,7 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 
 	for (Pass::TextureSamplerArray::const_iterator i = pass.texSamplers.begin(), end = pass.texSamplers.end();
 		 i != end; ++i) {
-		const GLTexture *texture = nullptr;
+		const Texture *texture = nullptr;
 
 		switch (i->type) {
 		case Pass::TextureSampler::kTypeTexture:

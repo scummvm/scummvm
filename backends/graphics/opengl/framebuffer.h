@@ -192,7 +192,7 @@ protected:
 };
 
 #if !USE_FORCED_GLES
-class GLTexture;
+class Texture;
 
 /**
  * Render to texture framebuffer implementation.
@@ -223,13 +223,13 @@ public:
 	/**
 	 * Query pointer to underlying GL texture.
 	 */
-	GLTexture *getTexture() const { return _texture; }
+	Texture *getTexture() const { return _texture; }
 
 protected:
 	void activateInternal() override;
 
 private:
-	GLTexture *_texture;
+	Texture *_texture;
 	GLuint _glFBO;
 	bool _needUpdate;
 };
