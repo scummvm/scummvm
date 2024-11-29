@@ -25,7 +25,8 @@
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/platform/ios7/ios7_osys_main.h"
 
-iOSGraphicsManager::iOSGraphicsManager() {
+iOSGraphicsManager::iOSGraphicsManager() :
+	_insets{0, 0, 0, 0} {
 	initSurface();
 }
 
