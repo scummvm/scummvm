@@ -1296,11 +1296,11 @@ MacSndResource::MacSndResource(uint32 id, const byte *in, uint32 size) : _id(id)
 
 	size -= 22;
 	if (_snd.len > size) {
-		debug("%s(): Invalid data in resource '%d' - Fixing out of range samples count (samples buffer size '%d', samples count '%d')", __FUNCTION__, id, size, _snd.len);
+		debug(6, "%s(): Invalid data in resource '%d' - Fixing out of range samples count (samples buffer size '%d', samples count '%d')", __FUNCTION__, id, size, _snd.len);
 		_snd.len = size;
 	}
 	if ((int32)_snd.loopend > (int32)size) {
-		debug("%s(): Invalid data in resource '%d' - Fixing out of range loop end (samples buffer size '%d', loop end '%d')", __FUNCTION__, id, size, _snd.loopend);
+		debug(6, "%s(): Invalid data in resource '%d' - Fixing out of range loop end (samples buffer size '%d', loop end '%d')", __FUNCTION__, id, size, _snd.loopend);
 		_snd.loopend = size;
 	}
 
