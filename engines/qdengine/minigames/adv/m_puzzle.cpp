@@ -34,7 +34,7 @@ namespace QDEngine {
 typedef Rect<float, mgVect2f> Rectf;
 
 MinigameInterface *createMinigamePuzzle(MinigameManager *runtime) {
-	return new Puzzle;
+	return new Puzzle(runtime);
 }
 
 enum {
@@ -64,7 +64,9 @@ const char *Puzzle::getStateName(int angle, bool selected, bool small) const {
 	return buf;
 }
 
-Puzzle::Puzzle() {
+Puzzle::Puzzle(MinigameManager *runtime) {
+	_runtime = runtime;
+
 	if (!getParameter("game_size", gameSize_, true))
 		return;
 	assert(gameSize_ > 0 && gameSize_ < 100);
@@ -77,7 +79,7 @@ Puzzle::Puzzle() {
 	angles_ = getParameter("angles", 4);
 	assert(angles_ > 0 &&  angles_ < 10);
 
-	if (!(stackBottom_ = g_runtime->getObject(g_runtime->parameter("inventory_bottom"))))
+	if (!(stackBottom_ = _runtime->getObject(_runtime->parameter("inventory_bottom"))))
 		return;
 	if (!getParameter("inventory_size", stackSize_, true))
 		return;
@@ -88,7 +90,7 @@ Puzzle::Puzzle() {
 			return;
 	} else
 		rotateTimePeriod_ = 86400; // сутки
-	nextRotateTime_ = g_runtime->getTime() + rotateTimePeriod_;
+	nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
 
 	flySpeed_ = getParameter("inventory_drop_speed", 240.f);
 	assert(flySpeed_ > 0.f);
@@ -97,7 +99,7 @@ Puzzle::Puzzle() {
 	warning("STUB: Puzzle::Puzzle()");
 
 #if 0
-	const char *name_begin = g_runtime->parameter("obj_name_begin", "obj_");
+	const char *name_begin = _runtime->parameter("obj_name_begin", "obj_");
 
 	char buf[128];
 	buf[127] = 0;
@@ -107,14 +109,14 @@ Puzzle::Puzzle() {
 		snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
 
 		Node node;
-		node.obj = g_runtime->getObject(buf);
+		node.obj = _runtime->getObject(buf);
 
-		if (g_runtime->debugMode()) {
+		if (_runtime->debugMode()) {
 			node.pos = nodes_.size();
 			node.angle = 0;
 			field_[node.pos] = node.pos;
 		} else
-			node.angle = g_runtime->rnd(0, angles_ - 1);
+			node.angle = _runtime->rnd(0, angles_ - 1);
 		node.obj.setState(getStateName(node.angle, false, true));
 
 		gameData.write(node.obj->R());
@@ -122,7 +124,7 @@ Puzzle::Puzzle() {
 		nodes_.push_back(node);
 	}
 
-	if (!g_runtime->processGameData(gameData))
+	if (!_runtime->processGameData(gameData))
 		return;
 
 	for (int idx = 0; idx < gameSize_; ++idx) {
@@ -132,10 +134,10 @@ Puzzle::Puzzle() {
 		positions_.push_back(crd);
 	}
 #endif
-	if (g_runtime->debugMode())
+	if (_runtime->debugMode())
 		nodes_[0].angle = angles_ - 1;
 
-	size_ = g_runtime->getSize(nodes_[0].obj);
+	size_ = _runtime->getSize(nodes_[0].obj);
 	debugC(2, kDebugMinigames, "size = (%6.2f,%6.2f)", size_.x, size_.y);
 
 	depth_ = nodes_[0].obj.depth();
@@ -148,17 +150,17 @@ Puzzle::Puzzle() {
 	pickedItem_ = -1;
 	mouseObjPose_ = stidx(stackSize_ + 1);
 
-	inField_ = g_runtime->debugMode() ? nodes_.size() : 0;
-	nextObjTime_ = g_runtime->getTime();
+	inField_ = _runtime->debugMode() ? nodes_.size() : 0;
+	nextObjTime_ = _runtime->getTime();
 
 	setState(MinigameInterface::RUNNING);
 }
 
 Puzzle::~Puzzle() {
 	for (auto &it : nodes_)
-		g_runtime->release(it.obj);
+		_runtime->release(it.obj);
 
-	g_runtime->release(stackBottom_);
+	_runtime->release(stackBottom_);
 }
 
 void Puzzle::rotate(int item) {
@@ -211,7 +213,7 @@ void Puzzle::put(int where, int what, float flowSpeed) {
 				flyObj->data = what;
 
 				mgVect3f from = isOnMouse(node) ? node.obj->R() : start < -1 ? stackPosition(stidx(start)) : position(start);
-				flyObj->current = g_runtime->world2game(from);
+				flyObj->current = _runtime->world2game(from);
 				node.obj->set_R(from);
 
 				flyObj->speed = flowSpeed;
@@ -219,8 +221,8 @@ void Puzzle::put(int where, int what, float flowSpeed) {
 		}
 
 		mgVect3f to = where < -1 ? stackPosition(stidx(where)) : position(where);
-		flyObj->target = g_runtime->world2game(to);
-		flyObj->depth = g_runtime->getDepth(to);
+		flyObj->target = _runtime->world2game(to);
+		flyObj->depth = _runtime->getDepth(to);
 	}
 
 	if (where >= 0)
@@ -236,40 +238,40 @@ void Puzzle::putOnStack(int what, float speed) {
 
 void Puzzle::returnToStack() {
 	assert(pickedItem_ != -1);
-	g_runtime->event(EVENT_RETURN, g_runtime->mousePosition());
+	_runtime->event(EVENT_RETURN, _runtime->mousePosition());
 	if (prevPlace_ >= 0)
 		put(prevPlace_, pickedItem_);
 	else
 		putOnStack(pickedItem_, returnSpeed_);
 	prevPlace_ = -1;
 	pickedItem_ = -1;
-	g_runtime->event(EVENT_CLICK, g_runtime->mousePosition());
+	_runtime->event(EVENT_CLICK, _runtime->mousePosition());
 }
 
 void Puzzle::quant(float dt) {
 	if (pickedItem_ == -1)
-		g_runtime->setGameHelpVariant(0);
+		_runtime->setGameHelpVariant(0);
 	else
-		g_runtime->setGameHelpVariant(1);
+		_runtime->setGameHelpVariant(1);
 
-	if (g_runtime->getTime() > nextRotateTime_) {
-		g_runtime->event(EVENT_FIELD_ROTATE, mgVect2f(400, 300));
-		nextRotateTime_ = g_runtime->getTime() + rotateTimePeriod_;
+	if (_runtime->getTime() > nextRotateTime_) {
+		_runtime->event(EVENT_FIELD_ROTATE, mgVect2f(400, 300));
+		nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
 		globalAngle_ = (globalAngle_ + 1) % angles_;
-		g_runtime->setCompleteHelpVariant(globalAngle_);
+		_runtime->setCompleteHelpVariant(globalAngle_);
 	}
 
 	FlyQDObjects::iterator fit = flyObjs_.begin();
 	while (fit != flyObjs_.end())
-		if (!isOnMouse(nodes_[fit->data]) && fit->quant(dt, nodes_[fit->data].obj, g_runtime))
+		if (!isOnMouse(nodes_[fit->data]) && fit->quant(dt, nodes_[fit->data].obj, _runtime))
 			++fit;
 		else
 			fit = flyObjs_.erase(fit);
 
-	if (inField_ < (int)nodes_.size() && g_runtime->getTime() > nextObjTime_ &&
+	if (inField_ < (int)nodes_.size() && _runtime->getTime() > nextObjTime_ &&
 			((int)stack_.size() < stackSize_ - 1 || ((int)stack_.size() < stackSize_ && pickedItem_ == -1))) { // нужно добавить в инвентори фишку
 		// ищем случайный не выставленный фрагмент
-		int freeIdx = round(g_runtime->rnd(0.f, nodes_.size() - 1));
+		int freeIdx = round(_runtime->rnd(0.f, nodes_.size() - 1));
 		Nodes::iterator it = nodes_.begin();
 		for (;;) {
 			if (++it == nodes_.end())
@@ -281,7 +283,7 @@ void Puzzle::quant(float dt) {
 		int idx = Common::distance(nodes_.begin(), it);
 
 		++inField_;
-		nextObjTime_ = g_runtime->getTime() + stackPlaceSize_.y / flySpeed_;
+		nextObjTime_ = _runtime->getTime() + stackPlaceSize_.y / flySpeed_;
 
 		it->pos = stidx(stackSize_);
 		it->obj.setState(getStateName(it->angle, false, true));
@@ -289,7 +291,7 @@ void Puzzle::quant(float dt) {
 		putOnStack(idx, flySpeed_);
 	}
 
-	mgVect2f mouse = g_runtime->mousePosition();
+	mgVect2f mouse = _runtime->mousePosition();
 
 	int hovPlace = -1;  // Номер места которое сейчас под мышкой
 	for (int idx = 0; idx < (int)stack_.size(); ++idx)
@@ -300,7 +302,7 @@ void Puzzle::quant(float dt) {
 	if (hovPlace == -1) {
 		float radius = 0.5f * size_.x;
 		for (int idx = 0; idx < gameSize_; ++idx)
-			if (dist(g_runtime->world2game(position(idx)), mouse) < radius) {
+			if (dist(_runtime->world2game(position(idx)), mouse) < radius) {
 				hovPlace = idx;
 				break;
 			}
@@ -313,23 +315,23 @@ void Puzzle::quant(float dt) {
 			hovPlace = stidx(stackSize_);
 	}
 
-	if (g_runtime->mouseLeftPressed()) {
+	if (_runtime->mouseLeftPressed()) {
 		if (hovPlace >= 0) { // клик по полю
 			Indexes::value_type& hovItem = field_[hovPlace];
 			if (hovItem == -1) // клик по пустой ячейке
 				if (pickedItem_ == -1) // на мыши ничего нет
-					g_runtime->event(EVENT_CLICK, mouse);
+					_runtime->event(EVENT_CLICK, mouse);
 				else { // кладем фрагмент с мыши
 					put(hovPlace, pickedItem_);
 					if (testPlace(pickedItem_)) // положили на свое свое место
-						g_runtime->event(EVENT_PUT_RIGHT, mouse);
+						_runtime->event(EVENT_PUT_RIGHT, mouse);
 					else // просто положили
-						g_runtime->event(EVENT_PUT, mouse);
+						_runtime->event(EVENT_PUT, mouse);
 					pickedItem_ = -1;
 					prevPlace_ = -1;
 				} else { // клик по непустой ячейке
 				if (testPlace(hovPlace)) // клик по правильно уложенной фишке
-					g_runtime->event(EVENT_CLICK_RIGHT, mouse);
+					_runtime->event(EVENT_CLICK_RIGHT, mouse);
 				else if (pickedItem_ != -1) { // поменять с тем что на мыше
 					bool swap = true;
 					if (prevPlace_ >= 0)
@@ -337,20 +339,20 @@ void Puzzle::quant(float dt) {
 					else
 						putOnStack(hovItem, returnSpeed_);
 					if (testPlace(hovItem)) { // оказалась при обмене на своем месте
-						g_runtime->event(EVENT_PUT_RIGHT, g_runtime->world2game(position(prevPlace_)));
+						_runtime->event(EVENT_PUT_RIGHT, _runtime->world2game(position(prevPlace_)));
 						swap = false;
 					}
 					put(hovPlace, pickedItem_);
 					if (testPlace(pickedItem_)) { // положили на свое свое место
-						g_runtime->event(EVENT_PUT_RIGHT, mouse);
+						_runtime->event(EVENT_PUT_RIGHT, mouse);
 						swap = false;
 					}
 					if (swap) // просто обменяли
-						g_runtime->event(EVENT_SWAP, mouse);
+						_runtime->event(EVENT_SWAP, mouse);
 					pickedItem_ = -1;
 					prevPlace_ = -1;
 				} else { // взять фрагмент на мышь
-					g_runtime->event(EVENT_GET, mouse);
+					_runtime->event(EVENT_GET, mouse);
 					prevPlace_ = hovPlace;
 					pickedItem_ = hovItem;
 					nodes_[pickedItem_].pos = mouseObjPose_;
@@ -361,7 +363,7 @@ void Puzzle::quant(float dt) {
 			int hovStack = stidx(hovPlace);
 			if (pickedItem_ == -1) // на мыши ничего нет
 				if (hovStack < (int)stack_.size()) { // взять фрагмент из стека на мышь
-					g_runtime->event(EVENT_GET, mouse);
+					_runtime->event(EVENT_GET, mouse);
 					Indexes::iterator it = stack_.begin() + hovStack;
 					assert(*it >= 0);
 					prevPlace_ = -1;
@@ -371,36 +373,36 @@ void Puzzle::quant(float dt) {
 					for (int idx = hovStack; idx < (int)stack_.size(); ++idx)
 						put(stidx(idx), stack_[idx], flySpeed_);
 				} else // пустой клик в области стека
-					g_runtime->event(EVENT_CLICK, mouse);
+					_runtime->event(EVENT_CLICK, mouse);
 			else // вернуть фишку на место
 				returnToStack();
 		} else // пустой клик мимо игрового поля
-			g_runtime->event(EVENT_CLICK, mouse);
-	} else if (g_runtime->mouseRightPressed()) {
+			_runtime->event(EVENT_CLICK, mouse);
+	} else if (_runtime->mouseRightPressed()) {
 		if (pickedItem_ == -1) {
 			if (hovPlace >= 0) { // клик по полю
 				if (testPlace(hovPlace)) // клик по правильно уложенной фишке
-					g_runtime->event(EVENT_CLICK_RIGHT, mouse);
+					_runtime->event(EVENT_CLICK_RIGHT, mouse);
 				else {
 					Indexes::value_type& hovItem = field_[hovPlace];
 					if (hovItem >= 0) {
 						rotate(hovItem);
 						if (testPlace(hovItem)) // повернули на правильный угол
-							g_runtime->event(EVENT_PUT_RIGHT, mouse);
+							_runtime->event(EVENT_PUT_RIGHT, mouse);
 						else // просто положили
-							g_runtime->event(EVENT_ROTATE_IN_FIELD, mouse);
+							_runtime->event(EVENT_ROTATE_IN_FIELD, mouse);
 					} else // попытка прокрутить пустое место
-						g_runtime->event(EVENT_CLICK, mouse);
+						_runtime->event(EVENT_CLICK, mouse);
 				}
 			} else  if (hovPlace < -1) { // клик по стеку
 				int hovStack = stidx(hovPlace);
 				if (hovStack < (int)stack_.size()) { // покрутить внутри стека
-					g_runtime->event(EVENT_ROTATE_IN_STACK, mouse);
+					_runtime->event(EVENT_ROTATE_IN_STACK, mouse);
 					rotate(stack_[hovStack]);
 				} else // попытка прокрутить пустое место
-					g_runtime->event(EVENT_CLICK, mouse);
+					_runtime->event(EVENT_CLICK, mouse);
 			} else // пустой клик мимо игрового поля
-				g_runtime->event(EVENT_CLICK, mouse);
+				_runtime->event(EVENT_CLICK, mouse);
 		} else // вернуть фишку на место
 			returnToStack();
 	}
@@ -418,7 +420,7 @@ void Puzzle::quant(float dt) {
 				}
 			} else if (idx == pickedItem_) {
 				node.obj.setState(getStateName(node.angle, hovPlace >= 0 && !testPlace(hovPlace), false));
-				node.obj->set_R(g_runtime->game2world(mouse, stackBottom_.depth() - 200));
+				node.obj->set_R(_runtime->game2world(mouse, stackBottom_.depth() - 200));
 			} else {
 				node.obj.setState(getStateName(node.angle, node.pos == hovPlace && pickedItem_ == -1, true));
 				if (!isFlying(idx))
@@ -426,7 +428,7 @@ void Puzzle::quant(float dt) {
 			}
 			iWin = iWin && testPlace(idx);
 		} else {
-			g_runtime->hide(node.obj);
+			_runtime->hide(node.obj);
 			iWin = false;
 		}
 	}
@@ -456,9 +458,9 @@ const mgVect3f &Puzzle::position(int num) const {
 }
 
 mgVect3f Puzzle::stackPosition(int num) const {
-	mgVect3f bottom = g_runtime->world2game(stackBottom_);
+	mgVect3f bottom = _runtime->world2game(stackBottom_);
 	bottom.y -= stackPlaceSize_.y * num;
-	return g_runtime->game2world(bottom);
+	return _runtime->game2world(bottom);
 }
 
 } // namespace QDEngine

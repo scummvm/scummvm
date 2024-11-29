@@ -46,7 +46,7 @@ class Puzzle : public MinigameInterface {
 	typedef Std::vector<Node> Nodes;
 
 public:
-	Puzzle();
+	Puzzle(MinigameManager *runtime);
 	~Puzzle();
 
 	void quant(float dt);
@@ -110,6 +110,8 @@ private:
 	const mgVect3f &position(int num) const;
 	/// положение N-ой фишки в инвентори
 	mgVect3f stackPosition(int N) const;
+
+	MinigameManager *_runtime;
 };
 
 } // namespace QDEngine
