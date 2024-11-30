@@ -117,18 +117,10 @@ void Context::initialize(ContextType contextType) {
 		error("Couldn't initialize OpenGL");
 	}
 #else
-	if (!glGetString) {
-		error("Couldn't initialize OpenGL");
-	}
-
 	const char *verString = (const char *)glGetString(GL_VERSION);
-
 	if (!verString) {
 		majorVersion = minorVersion = 0;
-		int errorCode = 0;
-		if (glGetError) {
-			errorCode = glGetError();
-		}
+		int errorCode = glGetError();
 		warning("Could not fetch GL_VERSION: %d", errorCode);
 		return;
 	} else if (type == kContextGL) {
