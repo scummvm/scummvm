@@ -39,12 +39,20 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed restoring the state of unvisited rooms.
 
  AGI:
+   - Apple II games are now detected. Although not supported yet, most can be started.
    - Fixed duration of timed text boxes. They were shown only half as long as
      they should be, making e.g. the King's Quest III intro hard to read.
    - The predictive input dialog popup when clicking on the prompt line or in an input field
      is now an optional game setting, disabled by default.
-   - Fixed timed events (e.g. Tigger and mist) in Winnie the Pooh.
-   - Fixed logic for dropping objects in Winnie the Pooh.
+   - Fixed Black Cauldron witches not disappearing at end of game.
+   - Fixed King's Quest III mice event not occurring after listening to fish.
+   - Fixed Mixed-Up Mother Goose crash after nursery rhyme on certain platforms.
+   - Fixed Gold Rush game clock in Apple IIgs version.
+   - Fixed Donald Duck's Playground audio bugs in PC booter version.
+   - Improved detection for PC booter games.
+   - Added support for sound in CoCo3 games.
+   - Fixed many bugs in Winnie The Pooh In The Hundred Acre Wood, including
+     Tigger never appearing and Eeyore not accepting his balloon.
 
  AGOS:
    - Added keymapper support.
@@ -179,10 +187,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      mode for many SCI 1 DOS games, a 16 colors mode for KQ6 Windows and
      8 colors modes for all PC-98 games.
    - Improved PCjr audio.
+   - Improved KQ6 CD settings. The DOS platform now defaults to DOS behavior.
    - Better support for Mac KQ6.
    - Implemented KQ5 FM Towns save/restore UI.
    - Numerous script fixes to different games.
-   - Added support for German KQ5.
+   - Fixed SCI1.1 picture scaling inaccuracies.
+   - Fixed fallback detection for unknown fan games.
    - Added support for Spanish SQ3.
    - Added support for Russian Camelot, Laura Bow, PQ2
    - Added support for Russian fan-translation of QFG3.
