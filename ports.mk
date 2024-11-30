@@ -60,7 +60,7 @@ dist-generic: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p ./dist-generic/scummvm/data
 	mkdir -p ./dist-generic/scummvm/doc
 	rm -f ./dist-generic/scummvm/$(EXECUTABLE)
-	cp $(EXECUTABLE) ./dist-generic/scummvm
+	$(STRIP) "$(EXECUTABLE)" -o "./dist-generic/scummvm/$(EXECUTABLE)"
 	cp $(DIST_FILES_DOCS) ./dist-generic/scummvm/doc
 	cp $(DIST_FILES_THEMES) ./dist-generic/scummvm/data
 ifdef DIST_FILES_ENGINEDATA
