@@ -1003,6 +1003,23 @@ void ScriptExecutor::FuncB6BE_actual() {
 		// mov	word ptr [1028h],8h
 		return;
 	}
+	// l0037_B6F1:
+	// TODO: Check if we try to access an invalid index
+
+	// l0037_B715:
+	mov	ax,[bp-2h]
+	shl	ax,4h
+	les	di,[bp-0Ch]
+	add	di,ax
+	add	di,50E7h
+	;; Save the offset of the animation object
+	mov	[bp-10h],di
+	mov	[bp-0Eh],es
+	mov	ax,es:[di+8h]
+	or	ax,es:[di+0Ah]
+	jnz	0B73Ch
+
+
 	// TODO: Continue here
 
 }
