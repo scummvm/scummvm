@@ -66,7 +66,7 @@ namespace Scumm {
 		(wizComp) == kWCTTRLE16Bpp
 
 #define NATIVE_WIZ_TYPE(wizComp)                   \
-	(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
+		(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
 		(wizComp) == NATIVE_WIZ_COMP_TRLE_16BPP    \
 
 #define WIZ_16BPP(wizComp)                       \
