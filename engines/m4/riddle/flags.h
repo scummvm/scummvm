@@ -251,7 +251,7 @@ enum Flag {
 	V214 = 214,
 	kTempleCartoon = 215,
 	V216 = 216,
-	V217 = 217,
+	V217 = 217, // Prayer wheel in niche, room 703
 	V218 = 218,
 	V219 = 219,
 	V220 = 220,

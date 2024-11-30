@@ -43,7 +43,7 @@ private:
 	static void callback(frac16 myMessage, machine *sender);
 	void conv703a();
 	void playCheckBrochureAnim(const char *digiName, int32 trigger);
-	void sub9E50F(int32 trigger, int i);
+	void useWheelOnNiche(int32 trigger, int val1);
 	
 	machine *_monkMach = nullptr;
 	machine *_prayerWheelMach = nullptr;
