@@ -169,7 +169,9 @@ void AndroidGraphics3dManager::initSurface() {
 		// We had a frame buffer initialized, we must renew it as the game textured got renewed
 		if (_frame_buffer) {
 			delete _frame_buffer;
-			_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
+			_frame_buffer = new AndroidFrameBuffer(
+						_game_texture->getTextureFormat(), _game_texture->getTextureFormat(),
+						_game_texture->getTextureType(), _game_texture->getTextureName(),
 	                                        _game_texture->width(), _game_texture->height(),
 	                                        _game_texture->texWidth(), _game_texture->texHeight());
 
@@ -727,9 +729,10 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	delete _frame_buffer;
 
 	if (!engineSupportsArbitraryResolutions) {
-		_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
-		                                        _game_texture->width(), _game_texture->height(),
-		                                        _game_texture->texWidth(), _game_texture->texHeight());
+		_frame_buffer = new AndroidFrameBuffer(_game_texture->getTextureFormat(), _game_texture->getTextureFormat(),
+		                                       _game_texture->getTextureType(), _game_texture->getTextureName(),
+		                                       _game_texture->width(), _game_texture->height(),
+		                                       _game_texture->texWidth(), _game_texture->texHeight());
 		_frame_buffer->attach();
 	}
 

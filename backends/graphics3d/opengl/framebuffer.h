@@ -39,10 +39,14 @@ public:
 	virtual void detach();
 
 protected:
+	FrameBuffer(GLenum glIntFormat, GLenum glFormat, GLenum glType, bool autoCreate)
+		: Texture(glIntFormat, glFormat, glType, autoCreate) {}
+
 	GLuint getFrameBufferName() const { return _frameBuffer; }
 
-private:
 	void init();
+
+private:
 	GLuint _renderBuffers[2];
 	GLuint _frameBuffer;
 };

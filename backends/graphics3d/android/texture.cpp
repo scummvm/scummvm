@@ -50,6 +50,46 @@
 
 #include "backends/graphics3d/android/texture.h"
 
+
+AndroidFrameBuffer::AndroidFrameBuffer(GLenum glIntFormat, GLenum glFormat, GLenum glType, GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
+		OpenGL::FrameBuffer(glIntFormat, glFormat, glType, false) {
+	if (!OpenGLContext.framebufferObjectSupported) {
+		error("FrameBuffer Objects are not supported by the current OpenGL context");
+	}
+
+	_logicalWidth = width;
+	_logicalHeight = height;
+	_width = texture_width;
+	_height = texture_height;
+	_glTexture = texture_name;
+
+	if (_width != 0 && _height != 0) {
+		const GLfloat texWidth = (GLfloat)_logicalWidth / _width;
+		const GLfloat texHeight = (GLfloat)_logicalHeight / _height;
+
+		_texCoords[0] = 0;
+		_texCoords[1] = 0;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = 0;
+
+		_texCoords[4] = 0;
+		_texCoords[5] = texHeight;
+
+		_texCoords[6] = texWidth;
+		_texCoords[7] = texHeight;
+	}
+
+	enableLinearFiltering(true);
+
+	init();
+}
+
+AndroidFrameBuffer::~AndroidFrameBuffer() {
+	// Prevent the texture from being deleted by the parent class
+	_glTexture = 0;
+}
+
 // Supported GL extensions
 bool GLESBaseTexture::_npot_supported = false;
 OpenGL::Shader *GLESBaseTexture::_box_shader = nullptr;

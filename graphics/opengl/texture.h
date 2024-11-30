@@ -53,7 +53,7 @@ public:
 	 * @param glFormat    The input format.
 	 * @param glType      The input type.
 	 */
-	Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType);
+	Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, bool autoCreate = true);
 	~Texture();
 
 	/**
@@ -146,7 +146,8 @@ public:
 	GLuint getGLTexture() const { return _glTexture; }
 
 	static const Graphics::PixelFormat getRGBAPixelFormat();
-private:
+
+protected:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
 	const GLenum _glType;
