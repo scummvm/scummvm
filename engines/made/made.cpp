@@ -111,7 +111,8 @@ MadeEngine::~MadeEngine() {
 void MadeEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	_music->syncSoundSettings();
+	if (_music)
+		_music->syncSoundSettings();
 }
 
 int16 MadeEngine::getTicks() {
@@ -249,7 +250,10 @@ void MadeEngine::handleEvents() {
 }
 
 Common::Error MadeEngine::run() {
-	_music = new MusicPlayer(this, getGameID() == GID_RTZ);
+	if (getPlatform() == Common::kPlatformMacintosh)
+		_music = nullptr; // TODO: Macintosh music player
+	else
+		_music = new DOSMusicPlayer(this, getGameID() == GID_RTZ);
 	syncSoundSettings();
 
 	// Initialize backend
@@ -308,7 +312,8 @@ Common::Error MadeEngine::run() {
 	_script->runScript(_dat->getMainCodeObjectIndex());
 #endif
 
-	_music->close();
+	if (_music)
+		_music->close();
 
 	return Common::kNoError;
 }
