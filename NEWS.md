@@ -34,12 +34,17 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  ADL:
    - Added Apple II checkerboard cursor as a visual option.
+   - Removed broken strings in Time Zone.
+   - Fixed picking up all items via "GET ALL" from a scene.
+   - Fixed restoring the state of unvisited rooms.
 
  AGI:
    - Fixed duration of timed text boxes. They were shown only half as long as
      they should be, making e.g. the King's Quest III intro hard to read.
    - The predictive input dialog popup when clicking on the prompt line or in an input field
      is now an optional game setting, disabled by default.
+   - Fixed timed events (e.g. Tigger and mist) in Winnie the Pooh.
+   - Fixed logic for dropping objects in Winnie the Pooh.
 
  AGOS:
    - Added keymapper support.
@@ -47,7 +52,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Waxworks Egypt Level 3 and Power Points not regenerating in Elvira 2.
 
  AGS:
-   - Syncronized with upstream AGS 3.6.1.29.
+   - Syncronized with upstream AGS 3.6.1.30.
    - Added commandline --language option to specify the game language overriding the GUI.
    - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
      imperfect pathfinding.
@@ -109,6 +114,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  GLK/ADVSYS:
    - Fixed parsing for input commands.
 
+ Gob:
+   - Fixed Blount becoming inactive in the Gob3 brain level.
+   - Fixed flickering cursor during some videos in Gob3 and Lost in Time.
+
  Groovie:
    - Added keymapper support.
 
@@ -137,6 +146,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Lure:
    - Added keymapper support.
+
+ M4:
+   - Fixed restoring conversation state.
 
  MADE:
    - Added keymapper support.
@@ -258,6 +270,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  3DS port:
    - Integrated the port-specific options dialog with the main GUI.
    - Increased available memory on the Old 3DS.
+   - Fixed crashes in new 3DS models due to different memory handling.
 
 
 #### 2.8.1 (2024-03-31)
