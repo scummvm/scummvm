@@ -39,7 +39,7 @@ void load_palette() {
 }
 
 void set_screen_pal() {
-	char pal[3];
+	byte pal[3];
 
 	xgetpal(pal, 1, _G(scrn).pal_colors[0]);
 	xsetpal(251, pal[0], pal[1], pal[2]);
@@ -50,10 +50,12 @@ void set_screen_pal() {
 }
 
 void xsetpal(byte color, byte R, byte G, byte B) {
-
+	byte rgb[3] = { R, G, B };
+	g_system->getPaletteManager()->setPalette(rgb, color, 1);
 }
-void xgetpal(void *pal, int num_colrs, int start_index) {
 
+void xgetpal(byte *pal, int num_colrs, int start_index) {
+	g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
 }
 
 } // namespace Got
