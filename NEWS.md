@@ -230,8 +230,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash with rapid cursor switching.
 
  TsAGE:
-   - Added support for Russian CD fan-translation for Ringworld.
    - Added keymapper support.
+   - Added support for Russian CD fan-translation for Ringworld.
    - Added support for Russian CD fan-translation for Blue Force.
 
  Toon:
@@ -251,6 +251,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Several collision related fixes
 
  Ultima:
+   - Fix pathfinding not detecting some doors in Ultima VI.
    - Alter Ultima VIII default gamepad bindings.
    - Improved Ultima VIII keybind player movement.
    - Alter Ultima VIII target gump to no longer pause game.
