@@ -856,8 +856,11 @@ void Adlib::OnTimer() {
 									uint8 arg1 = gArray96[bp8] + 0x40;
 									uint8 arg2 = gArray96[bp8] + 0x40;
 									// TODO: Reverse 2779 before continuing
-									Func2779(arg1, arg2);
+									uint8 result = Func2779(arg1, arg2);
 									
+									// TODO: Clean up: I think that Func2779 does
+									// not pop an argument from the stack
+									Func2792(bp1 + result & 0xC0, 0);
 									// TODO: Continue from here
 								}
 							}
