@@ -786,7 +786,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
 
 			// TODO: this is a pretty bad way to do it - should pump messages in this loop?
-			for (int i = 0; i < SCREEN_WIDTH; i += ivals[3]) {
+			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
 				g_system->updateScreen();
