@@ -624,7 +624,7 @@ void OpenGLSdlGraphics3dManager::drawOverlay() {
 }
 
 OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
-#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
 	} else

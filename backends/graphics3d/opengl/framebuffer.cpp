@@ -120,7 +120,7 @@ void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height, int samples)
 		: FrameBuffer(width,height) {
 	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
@@ -180,7 +180,7 @@ void MultiSampleFrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-#endif // !USE_FORCED_GLES2
+#endif // !USE_FORCED_GLES2 || defined(USE_GLAD)
 
 } // End of namespace OpenGL
 
