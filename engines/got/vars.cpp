@@ -20,9 +20,15 @@
  */
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "got/vars.h"
+#include "got/gfx/palette.h"
+#include "got/utils/file.h"
+#include "got/got.h"
 
 namespace Got {
+
+Vars *g_vars;
 
 byte dialog_color[] = { 14,54,120,138,15,0,0,0,0,0,0,0,0,0,0,0 };
 const char *options_yesno[] = { "Yes","No", nullptr };
@@ -30,6 +36,63 @@ const char *save_filename = "XXXXXXXX.XXX";
 
 
 Vars::Vars() {
+	g_vars = this;
+}
+
+void Vars::load() {
+	_music_flag = !ConfMan.getBool("music_mute");
+	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
+
+	if (g_engine->isDemo()) {
+		_demo = _cheat = true;
+		_rdemo = ConfMan.getBool("rdemo");
+	}
+
+	if (_demo || _record) {
+		if (_record)
+			_demo = 0;
+
+		_area = 1;
+		_setup.area = 1;
+		_cash1_inform = 1;
+		_cash2_inform = 1;
+		_door_inform = 1;
+		_magic_inform = 1;
+		_carry_inform = 1;
+		_story_flag = 0;
+	}
+
+	if (_current_level != 23)
+		_story_flag = 0;
+
+	_setup.music = _music_flag;
+	_setup.dig_sound = _sound_flag;
+	_setup.pc_sound = _pcsound_flag;
+	if (_sound_flag)
+		_setup.pc_sound = false;
+	_setup.scroll_flag = true;
+	_setup.speed = _slow_mode;
+	_setup.skill = 1;
+
+	_tmp_buff = new byte[TMP_SIZE];
+	_mask_buff = new byte[15300];
+	_mask_buff_start = _mask_buff;
+ 
+	if (res_read("RANDOM", _rnd_array) < 0
+		|| res_read("DEMO", _demo_key) < 0
+		|| res_read("TEXT", _text) < 0
+		|| res_read("ODINPIC", _odin) < 0
+		|| res_read("HAMPIC", _hampic) < 0)
+		error("Error loading static data");
+
+	load_palette();
+}
+
+Vars::~Vars() {
+	g_vars = nullptr;
+
+	delete[] _tmp_buff;
+	delete[] _mask_buff;
 }
 
 } // namespace Got

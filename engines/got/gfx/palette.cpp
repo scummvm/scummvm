@@ -19,35 +19,41 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/paletteman.h"
+#include "got/gfx/palette.h"
+#include "got/utils/file.h"
+#include "got/vars.h"
+
 namespace Got {
 
-const PlainGameDescriptor gotGames[] = {
-	{ "got", "God of Thunder" },
-	{ 0, 0 }
-};
+void load_palette() {
+	byte buff[256 * 3];
 
-const ADGameDescription gameDescriptions[] = {
-	{
-		"got",
-		nullptr,
-		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+	if (res_read("PALETTE", buff) < 0)
+		error("Cannot Read PALETTE");
 
-{
-		"got",
-		"Demo",
-		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
-	},
+	g_system->getPaletteManager()->setPalette(buff, 0, 256);
 
-	AD_TABLE_END_MARKER
-};
+	set_screen_pal();
+}
 
-} // End of namespace Got
+void set_screen_pal() {
+	char pal[3];
+
+	xgetpal(pal, 1, _G(scrn).pal_colors[0]);
+	xsetpal(251, pal[0], pal[1], pal[2]);
+	xgetpal(pal, 1, _G(scrn).pal_colors[1]);
+	xsetpal(252, pal[0], pal[1], pal[2]);
+	xgetpal(pal, 1, _G(scrn).pal_colors[2]);
+	xsetpal(253, pal[0], pal[1], pal[2]);
+}
+
+void xsetpal(byte color, byte R, byte G, byte B) {
+
+}
+void xgetpal(void *pal, int num_colrs, int start_index) {
+
+}
+
+} // namespace Got

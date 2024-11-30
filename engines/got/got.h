@@ -65,6 +65,7 @@ public:
 	~GotEngine() override;
 
 	uint32 getFeatures() const;
+	bool isDemo() const;
 
 	/**
 	 * Returns the game Id
