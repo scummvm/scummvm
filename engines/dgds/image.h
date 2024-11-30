@@ -64,6 +64,8 @@ public:
 
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &getFrames() const { return _frames; }
 
+	int16 getFrameFromMatrix(int16 x, int16 y);
+
 	int16 width(uint frameno) const;
 	int16 height(uint frameno) const;
 

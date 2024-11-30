@@ -351,6 +351,11 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 	}
 }
 
+int16 Image::getFrameFromMatrix(int16 x, int16 y) {
+	assert(x >= 0 && y >= 0 && x < _matrixX && y < _matrixY);
+	return _tileMatrix[_matrixY * x + y];
+}
+
 
 void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte, uint16 tw, uint16 th) {
 	assert(th != 0);

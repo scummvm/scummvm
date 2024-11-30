@@ -36,6 +36,7 @@
 #include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/sound.h"
+#include "dgds/minigames/china_train.h"
 
 namespace Dgds {
 
@@ -120,12 +121,12 @@ enum MenuButtonIds {
 	kMenuRestartYes = 163,
 	kMenuRestartNo = 164,
 
-	// For Dragon arcade
-	kMenuDragonReplayArcadeYes = 139,
-	kMenuDragonReplayArcadeNo = 140,
+	// For Dragon/HOC arcade
+	kMenuReplayArcadeYes = 139,
+	kMenuReplayArcadeNo = 140,
 
-	kMenuDragonFrustratedArcadeWin = 147,
-	kMenuDragonFrustratedArcadeKeepTrying = 148,
+	kMenuFrustratedArcadeWin = 147,
+	kMenuFrustratedArcadeKeepTrying = 148,
 
 	kMenuGameOverQuit = 169,
 	kMenuGameOverRestart = 168,
@@ -419,7 +420,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 	//case kMenuCalibratePlay:
 	//case kMenuCalibratePlayHoC:
 	//case kMenuMouseCalibrationPlay:
-		_curMenu = kMenuNone;
+		hideMenu();
 		CursorMan.showMouse(false);
 		break;
 	case kMenuMainControls:
@@ -544,21 +545,29 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	}
-	case kMenuDragonReplayArcadeYes:
-	case kMenuDragonReplayArcadeNo:
-		if (engine->getGameId() == GID_DRAGON && _curMenu == kMenuReplayArcade) {
+	case kMenuReplayArcadeYes:
+	case kMenuReplayArcadeNo:
+		if (_curMenu != kMenuReplayArcade)
+			break;
+		if (engine->getGameId() == GID_DRAGON) {
 			DragonGlobals *dragonGlobals = static_cast<DragonGlobals *>(engine->getGameGlobals());
-			dragonGlobals->setArcadeState(clickedMenuItem == kMenuDragonReplayArcadeYes ? 20 : 10);
-			_curMenu = kMenuNone;
+			dragonGlobals->setArcadeState(clickedMenuItem == kMenuReplayArcadeYes ? 20 : 10);
+		} else if (engine->getGameId() == GID_HOC) {
+			engine->getChinaTrain()->setMenuResult(clickedMenuItem == kMenuReplayArcadeYes);
 		}
+		hideMenu();
 		break;
-	case kMenuDragonFrustratedArcadeWin:
-	case kMenuDragonFrustratedArcadeKeepTrying:
-		if (engine->getGameId() == GID_DRAGON && _curMenu == kMenuArcadeFrustrated) {
+	case kMenuFrustratedArcadeWin:
+	case kMenuFrustratedArcadeKeepTrying:
+		if (_curMenu != kMenuArcadeFrustrated)
+			break;
+		if (engine->getGameId() == GID_DRAGON) {
 			DragonGlobals *dragonGlobals = static_cast<DragonGlobals *>(engine->getGameGlobals());
-			dragonGlobals->setArcadeState(clickedMenuItem == kMenuDragonFrustratedArcadeWin ? 6 : 20);
-			_curMenu = kMenuNone;
+			dragonGlobals->setArcadeState(clickedMenuItem == kMenuFrustratedArcadeWin ? 6 : 20);
+		} else if (engine->getGameId() == GID_HOC) {
+			engine->getChinaTrain()->setMenuResult(clickedMenuItem == kMenuFrustratedArcadeKeepTrying);
 		}
+		hideMenu();
 		break;
 	case kMenuTankTrainSkipArcade:
 		hideMenu();
@@ -568,12 +577,14 @@ void Menu::handleClick(const Common::Point &mouse) {
 			engine->changeScene(106);	// skip train mini-game
 		break;
 	case kMenuTankTrainPlayArcade:
-		// TODO
-		if (currentScene == 73)
-			warning("Play tank mini-game");
-		else if (currentScene == 84)
-			warning("Play train mini-game");
-		drawMenu(_curMenu);
+		if (currentScene == 73) {
+			// Tank game - not implemented.
+			warning("TODO: Play tank mini-game");
+			drawMenu(_curMenu);
+		} else if (currentScene == 84) {
+			// Play train game - open the "save before arcade" menu.
+			drawMenu(kMenuSaveBeforeArcade);
+		}
 		break;
 	default:
 		debug(1, "Clicked ID %d", clickedMenuItem);

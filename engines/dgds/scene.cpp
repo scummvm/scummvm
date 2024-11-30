@@ -290,7 +290,7 @@ bool Scene::readConditionList(Common::SeekableReadStream *s, Common::Array<Scene
 	for (uint16 i = 0; i < num; i++) {
 		uint16 cnum = s->readUint16LE();
 		SceneCondition cond = static_cast<SceneCondition>(s->readUint16LE());
-		uint16 val = s->readUint16LE();
+		int16 val = s->readSint16LE();
 		list.push_back(SceneConditions(cnum, cond, val));
 	}
 	return !s->err();
@@ -788,7 +788,6 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		break;
 	case kSceneOpChinaTankTick:
 		engine->getChinaTank()->tick();
-		//engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
 	case kSceneOpShellGameTick:
 		engine->getShellGame()->shellGameTick();

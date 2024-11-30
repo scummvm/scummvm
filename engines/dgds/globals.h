@@ -164,6 +164,9 @@ public:
 	int16 getNativeGameState() const { return _nativeGameState; }
 	void setNativeGameState(int16 state) { _nativeGameState = state; }
 
+	int16 getTrainState() const { return _trainState; }
+	void setTrainState(int16 state) { _trainState = state; }
+
 	int16 getIntroState() const { return _introState; }
 	void setIntroState(int16 state) { _introState = state; }
 

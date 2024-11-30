@@ -260,8 +260,10 @@ void DgdsEngine::setMouseCursor(int num) {
 	if (!_icons || num >= _icons->loadedFrameCount())
 		return;
 
-	if ((int)num == _currentCursor)
+	if (num == _currentCursor) {
+		CursorMan.showMouse(true);
 		return;
+	}
 
 	const Common::Array<MouseCursor> &cursors = _gdsScene->getCursorList();
 
@@ -588,9 +590,13 @@ Common::Error DgdsEngine::run() {
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
 				if (_dragonArcade)
 					_dragonArcade->onKeyDown(ev.kbd);
+				if (_chinaTrain)
+					_chinaTrain->onKeyDown(ev.kbd);
 			} else if (ev.type == Common::EVENT_KEYUP) {
 				if (_dragonArcade)
 					_dragonArcade->onKeyUp(ev.kbd);
+				if (_chinaTrain)
+					_chinaTrain->onKeyUp(ev.kbd);
 			}
 		}
 

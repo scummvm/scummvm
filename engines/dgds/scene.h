@@ -51,17 +51,17 @@ enum SceneCondition {
 
 class SceneConditions {
 public:
-	SceneConditions(uint16 num, SceneCondition cond, uint16 val) : _num(num), _flags(cond), _val(val) {}
+	SceneConditions(uint16 num, SceneCondition cond, int16 val) : _num(num), _flags(cond), _val(val) {}
 	Common::String dump(const Common::String &indent) const;
 
 	uint16 getNum() const { return _num; }
 	SceneCondition getCond() const { return _flags; }
-	uint16 getVal() const { return _val; }
+	int16 getVal() const { return _val; }
 
 private:
 	uint16 _num;
 	SceneCondition _flags; /* eg, see usage in FUN_1f1a_2106 */
-	uint16 _val;
+	int16 _val;
 };
 
 class HotArea {
