@@ -179,7 +179,8 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	Common::String title;
 	Common::String txt;
 	uint32 colonpos = _str.find(':');
-	if (colonpos != Common::String::npos) {
+	uint32 crpos = _str.find('\r');
+	if (colonpos != Common::String::npos && (crpos == Common::String::npos || crpos > colonpos)) {
 		title = _str.substr(0, colonpos);
 		txt = _str.substr(colonpos + 1);
 		// Most have a CR after the colon? trim it to remove a blank line.
