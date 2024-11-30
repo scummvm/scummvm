@@ -40,6 +40,7 @@
 #include "backends/platform/android/jni-android.h"
 #include "backends/graphics/android/android-graphics.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/texture.h"
 
 #include "graphics/blit.h"
 #include "graphics/managed_surface.h"

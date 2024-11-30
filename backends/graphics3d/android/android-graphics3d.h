@@ -26,7 +26,6 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/android/android-graphics.h"
-#include "backends/graphics3d/opengl/framebuffer.h"
 #include "backends/graphics3d/android/texture.h"
 
 #include "backends/platform/android/touchcontrols.h"
@@ -162,7 +161,7 @@ private:
 
 	// Game layer
 	GLESTexture *_game_texture;
-	OpenGL::FrameBuffer *_frame_buffer;
+	AndroidFrameBuffer *_frame_buffer;
 
 #ifdef USE_RGB_COLOR
 	// Backup of the previous pixel format to pass it back when we leave 3d
