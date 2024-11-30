@@ -258,7 +258,7 @@ void MacPlayerAudioStream::setMasterVolume(Audio::Mixer::SoundType type, uint16 
 int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	static const char errFnNames[2][8] = {"Buffers", "Drivers"};
 	int errNo = -1;
-	for (int i = 0; i < _numGroups && errNo == -1; ++i) 
+	for (int i = 0; i < _numGroups && errNo == -1; ++i)
 		errNo = !_buffers[i].size ? 0 : (_buffers[i].rateConvAcc == -1 ? 1 : -1);
 	if (errNo != -1)
 		error("%s(): init%s() must be called before playback", __FUNCTION__, errFnNames[errNo]);
@@ -721,7 +721,7 @@ bool MacSndChannel::playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 ra
 		return false;
 	}
 
-	_dblBuff = new DoubleBufferIntern(getHandle(),  1024, bitsPerSample, numChan, callback, numMixChan);	
+	_dblBuff = new DoubleBufferIntern(getHandle(),  1024, bitsPerSample, numChan, callback, numMixChan);
 	setupRateConv(_drv->getStatus().deviceRate, 0x10000, rate, false);
 	_duration = _tmrInc = _tmrPos = _loopSt = _loopEnd = _rcPos = _smpWtAcc = _phase = 0;
 

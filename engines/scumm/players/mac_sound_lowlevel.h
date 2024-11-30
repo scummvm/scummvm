@@ -163,7 +163,7 @@ public:
 	static uint32 calcRate(uint32 outRate, uint32 factor, uint32 dataRate);
 
 private:
-	void updateStatus(Audio::Mixer::SoundType sndType);	
+	void updateStatus(Audio::Mixer::SoundType sndType);
 	MacSndChannel *findAndCheckChannel(ChanHandle h, const char *caller, byte reqSynthType) const;
 	MacSndChannel *findChannel(ChanHandle h) const;
 	Common::Array<MacSndChannel*> _channels;

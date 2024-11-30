@@ -384,7 +384,7 @@ LoomMonkeyMacSnd::LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTa
 	_chanConfigTable(nullptr), _chanPlaying(0), _curChanConfig(0), _curSynthType(0), _curSndType(Audio::Mixer::kPlainSoundType), _mixerThread(false),
 	_restartSound(0), _lastSndType(Audio::Mixer::kPlainSoundType), _chanCbProc(this, &MacLowLevelPCMDriver::CallbackClient::sndChannelCallback),
 	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5),
-	_checkSound(vm->_game.id == GID_MONKEY ? _curSound : _curSoundSaveVar) { 
+	_checkSound(vm->_game.id == GID_MONKEY ? _curSound : _curSoundSaveVar) {
 	assert(_vm);
 	assert(_mixer);
 
@@ -579,7 +579,7 @@ void LoomMonkeyMacSnd::setQuality(int qual) {
 	int csnd = _curSound;
 	int32 timeStamp = csnd ? _songTimer * 1000 + ((_songTimerInternal * 1000) / 30) : 0;
 	stopActiveSound();
-	
+
 	detectQuality();
 	if (csnd)
 		startSound(csnd, timeStamp);
@@ -741,7 +741,7 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 			}
 		}
 
-		
+
 		for (int i = 0; i < 4; ++i) {
 			if (_chanPlaying & (1 << i)) {
 				_sdrv->quiet(_musChannels[i], MacLowLevelPCMDriver::kEnqueue);

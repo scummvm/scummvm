@@ -806,7 +806,7 @@ NewMacSoundSystem::NewMacSoundSystem(ScummEngine *vm, Audio::Mixer *mixer) : IMS
 	assert(vm);
 	_defaultInstrID = 0xFFFF;
 	_fileMan = new ScummFile(vm);
-	}
+}
 
 NewMacSoundSystem::~NewMacSoundSystem() {
 	delete _fileMan;
@@ -860,7 +860,10 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 		ins->sndRes.push_back(getSndResource(READ_BE_UINT16(b)));
 		if (ins->sndRes[0] != nullptr)
 			memset(ins->noteSmplsMapping, 0, 128);
+
 		int8 numRanges = CLIP<int8>(b[13], 0, 7);
+		assert(sz >= 16 + numRanges * 8);
+
 		for (int ii = 0; ii < numRanges; ++ii) {
 			ins->sndRes.push_back(getSndResource(READ_BE_INT16(b + 16 + ii * 8)));
 			if (ins->sndRes.back() != nullptr) {
