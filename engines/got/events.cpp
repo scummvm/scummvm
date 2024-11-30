@@ -23,7 +23,7 @@
 #include "graphics/screen.h"
 #include "got/events.h"
 #include "got/got.h"
-#include "got/views.h"
+#include "got/views/views.h"
 
 namespace Got {
 
@@ -40,7 +40,7 @@ Events::~Events() {
 void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
-	Views views;	// Loads all views in the structure
+	Views::Views views;	// Loads all views in the structure
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");

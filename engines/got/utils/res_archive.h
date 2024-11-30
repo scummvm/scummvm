@@ -22,7 +22,7 @@
 #ifndef GOT_UTILS_RES_ARCHIVE_H
 #define GOT_UTILS_RES_ARCHIVE_H
 
-#include "got/view.h"
+#include "common/stream.h"
 
 namespace Got {
 

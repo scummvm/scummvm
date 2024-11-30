@@ -19,9 +19,10 @@
  *
  */
 
-#include "got/view.h"
+#include "got/views/view.h"
 
 namespace Got {
+namespace Views {
 
 void View::checkFocusedControl(const Common::Point &mousePos) {
 	if (_focusedElement) {
@@ -78,4 +79,5 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	return child ? child->send(msg) : false;
 }
 
+} // namespace Views
 } // namespace Got

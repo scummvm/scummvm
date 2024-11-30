@@ -19,12 +19,13 @@
  *
  */
 
-#ifndef GOT_VIEW_H
-#define GOT_VIEW_H
+#ifndef GOT_VIEWS_VIEW_H
+#define GOT_VIEWS_VIEW_H
 
 #include "got/events.h"
 
 namespace Got {
+namespace Views {
 
 /**
  * Base view class for screens and dialogs that appear on-screen.
@@ -68,6 +69,7 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
+} // namespace Views
 } // namespace Got
 
 #endif
