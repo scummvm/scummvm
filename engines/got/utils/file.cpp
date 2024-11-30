@@ -146,7 +146,9 @@ void setup_filenames(int level) {
 }
 
 void help(void) {
+#ifdef TODO
 	odin_speaks(2008, -1);
+#endif
 }
 
 void save_game() {
@@ -241,47 +243,14 @@ bool load_game(int flag) {
 	return true;
 }
 
-/*
-long res_read(char *name,char *buff){
-int num,bytes;
-size_t len;
-size_t total;
-char bf[256];
-char *p;
-unsigned int clen;
-unsigned int *up;
-
-if(!res_active) return RES_NOT_ACTIVE;
-if(!res_fp) return RES_NOT_OPEN;
-
-num=res_find_name(name);
-if(num<0) return RES_CANT_FIND;
-
-if(fseek(res_fp,res_header[num].offset,SEEK_SET)) return RES_CANT_SEEK;
-len=(size_t) res_header[num].length;
-
-total=0;
-if(res_header[num].key) p=buff;
-else p=lzss_buff;
-while(total<len){
-	 if(((len-total) >255) && (len > 255)) bytes=fread(bf,1,256,res_fp);
-	 else bytes=fread(bf,1,len-total,res_fp);
-	 if(!bytes) break;
-	 total+=bytes;
-	 movedata(FP_SEG(bf),FP_OFF(bf),FP_SEG(p),FP_OFF(p),bytes);
-	 p+=bytes;
+long res_read(const Common::String &name, void *buff) {
+	Common::File f;
+	if (f.open(Common::Path(name))) {
+		return f.read(buff, f.size());
+	} else {
+		return -1;
+	}
 }
-if(res_header[num].key) res_decode(buff,len,res_header[num].key);
-else{
-  p=lzss_buff;
-  up=(unsigned int *) p;
-  clen=*up;
-  p+=4;
-  UnLZSS(p,buff,clen);
-}
-return res_header[num].length;
-}
-*/
 
 bool load_music(int num) {
 	switch (num) {

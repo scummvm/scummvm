@@ -19,35 +19,18 @@
  *
  */
 
+#ifndef GOT_GFX_PALETTE_H
+#define GOT_GFX_PALETTE_H
+
+#include "graphics/paletteman.h"
+
 namespace Got {
 
-const PlainGameDescriptor gotGames[] = {
-	{ "got", "God of Thunder" },
-	{ 0, 0 }
-};
+extern void load_palette();
+extern void set_screen_pal();
+extern void xsetpal(byte color, byte R, byte G, byte B);
+extern void xgetpal(void *pal, int num_colrs, int start_index);
 
-const ADGameDescription gameDescriptions[] = {
-	{
-		"got",
-		nullptr,
-		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+} // namespace Got
 
-{
-		"got",
-		"Demo",
-		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
-	},
-
-	AD_TABLE_END_MARKER
-};
-
-} // End of namespace Got
+#endif

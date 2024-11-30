@@ -47,6 +47,10 @@ uint32 GotEngine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
+bool GotEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
 Common::String GotEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
@@ -58,8 +62,9 @@ Common::Error GotEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	// Initialize resource access
+	// Initialize resources and variables
 	resInit();
+	_vars.load();
 
 	runGame();
 

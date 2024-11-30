@@ -22,6 +22,7 @@
 #ifndef GOT_VARS_H
 #define GOT_VARS_H
 
+#include "common/events.h"
 #include "got/defines.h"
 
 namespace Got {
@@ -33,6 +34,9 @@ extern Vars *g_vars;
 class Vars {
 public:
 	Vars();
+	~Vars();
+
+	void load();
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -71,16 +75,16 @@ public:
 	int8 _music_current = 0;
 	int8 _boss_loaded = 0;
 	int8 _apple_drop = 0;
-	int8 _cheat = 0;
-	int8 _area = 0;
+	bool _cheat = false;
+	int8 _area = 1;
 	byte _last_setup[32] = {};
 
 	LEVEL _scrn;
 	byte *_scrnp = nullptr;
 
 	byte *_sd_data = nullptr;
-	int _current_level = 0, _new_level = 0, _new_level_tile = 0,
-		_current_area = 0;
+	int _current_level = 23;
+	int _new_level = 0, _new_level_tile = 0, _current_area = 0;
 
 	SETUP _setup;
 	byte *_tmp_buff = nullptr;
@@ -104,8 +108,10 @@ public:
 	ACTOR _explosion;
 	ACTOR _sparkle;
 	THOR_INFO _thor_info;
-	int _key_fire = 0, _key_up = 0, _key_down = 0, _key_left = 0,
-		_key_right = 0, _key_magic = 0, _key_select = 0;
+	Common::KeyCode _key_fire = Common::KEYCODE_LALT,
+		_key_up = Common::KEYCODE_UP, _key_down = Common::KEYCODE_DOWN,
+		_key_left = Common::KEYCODE_LEFT, _key_right = Common::KEYCODE_RIGHT,
+		_key_magic = Common::KEYCODE_LCTRL, _key_select = Common::KEYCODE_SPACE;
 	int _boss_dead = 0;
 
 	int _warp_flag = 0;
@@ -132,7 +138,7 @@ public:
 	byte _odin[4][262] = {};
 	byte _hampic[4][262] = {};
 	int _load_game_flag = 0;
-	int _music_flag = 0, _sound_flag = 0, _pcsound_flag = 0;
+	bool _music_flag = false, _sound_flag = false, _pcsound_flag = false;
 	int _cash1_inform = 0, _cash2_inform = 0, _door_inform = 0,
 		_magic_inform = 0, _carry_inform = 0;
 	int _killgg_inform = 0;
@@ -141,11 +147,11 @@ public:
 	byte *_pc_sound[NUM_SOUNDS] = {};
 	byte *_dig_sound[NUM_SOUNDS] = {};
 	int  _boss_active = 0;
-	int8 _story_flag = 0;
+	int8 _story_flag = 1;
 	int8 *_scr = nullptr;
 	char _demo_key[DEMO_LEN] = {};
 	int  _demo_cnt = 0;
-	int8 _demo = 0, _record = 0;
+	bool _demo = false, _record = false;
 	int8 _demo_enable = 0;
 	int  _rnd_index = 0;
 	int  _rnd_array[100] = {};
