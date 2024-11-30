@@ -51,7 +51,7 @@ private:
 	GLuint _frameBuffer;
 };
 
-#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 class MultiSampleFrameBuffer : public FrameBuffer {
 public:
 	MultiSampleFrameBuffer(uint width, uint height, int samples);

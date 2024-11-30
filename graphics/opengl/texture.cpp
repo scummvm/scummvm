@@ -64,12 +64,10 @@ void Texture::setWrapMode(WrapMode wrapMode) {
 
 	switch(wrapMode) {
 		case kWrapModeBorder:
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 			if (OpenGLContext.textureBorderClampSupported) {
 				glwrapMode = GL_CLAMP_TO_BORDER;
 				break;
 			}
-#endif
 		// fall through
 		case kWrapModeEdge:
 			if (OpenGLContext.textureEdgeClampSupported) {

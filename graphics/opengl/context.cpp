@@ -200,9 +200,10 @@ void Context::initialize(ContextType contextType) {
 			OESDepth24 = true;
 		} else if (token == "GL_SGIS_texture_edge_clamp") {
 			textureEdgeClampSupported = true;
-		} else if (token == "GL_SGIS_texture_border_clamp") {
+		} else if (token == "GL_ARB_texture_border_clamp" || token == "GL_SGIS_texture_border_clamp" || token == "GL_OES_texture_border_clamp" ||
+		           token == "GL_EXT_texture_border_clamp" || token == "GL_NV_texture_border_clamp") {
 			textureBorderClampSupported = true;
-		} else if (token == "GL_ARB_texture_mirrored_repeat") {
+		} else if (token == "GL_ARB_texture_mirrored_repeat" || token == "GL_OES_texture_mirrored_repeat" || token == "GL_IBM_texture_mirrored_repeat") {
 			textureMirrorRepeatSupported = true;
 		} else if (token == "GL_SGIS_texture_lod" || token == "GL_APPLE_texture_max_level") {
 			textureMaxLevelSupported = true;
@@ -231,22 +232,28 @@ void Context::initialize(ContextType contextType) {
 		// GLES2 always has FBO support.
 		framebufferObjectSupported = true;
 
-		// ScummVM does not support multisample FBOs with GLES2 for now
-		framebufferObjectMultisampleSupported = false;
-		multisampleMaxSamples = -1;
-
 		packedPixelsSupported = true;
 		textureEdgeClampSupported = true;
-		// No border clamping in GLES2
 		textureMirrorRepeatSupported = true;
-		// TODO: textureMaxLevelSupported with GLES3
+
+		// OpenGL ES 3.0 and later adds multisample FBOs, and always has the following extensions
+		if (isGLVersionOrHigher(3, 0)) {
+			framebufferObjectMultisampleSupported = true;
+			packedDepthStencilSupported = true;
+			textureMaxLevelSupported = true;
+			unpackSubImageSupported = true;
+			OESDepth24 = true;
+		}
+		// OpenGL ES 3.2 and later always has texture border clamp support
+		if (isGLVersionOrHigher(3, 2)) {
+			textureBorderClampSupported = true;
+		}
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
 
 		// ScummVM does not support multisample FBOs with GLES for now
 		framebufferObjectMultisampleSupported = false;
-		multisampleMaxSamples = -1;
 
 		packedPixelsSupported = true;
 		textureEdgeClampSupported = true;
@@ -263,10 +270,6 @@ void Context::initialize(ContextType contextType) {
 		unpackSubImageSupported = true;
 
 		framebufferObjectMultisampleSupported = EXTFramebufferMultisample && EXTFramebufferBlit;
-
-		if (framebufferObjectMultisampleSupported) {
-			glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
-		}
 
 		// OpenGL 1.2 and later always has packed pixels, texture edge clamp and texture max level support
 		if (isGLVersionOrHigher(1, 2)) {
@@ -285,6 +288,10 @@ void Context::initialize(ContextType contextType) {
 		debug(5, "OpenGL: GL context initialized");
 	} else {
 		warning("OpenGL: Unknown context initialized");
+	}
+
+	if (framebufferObjectMultisampleSupported) {
+		glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
 	}
 
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
