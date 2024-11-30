@@ -36,6 +36,7 @@
 
 #include "got/detection.h"
 #include "got/events.h"
+#include "got/vars.h"
 
 namespace Got {
 
@@ -55,6 +56,9 @@ protected:
 	bool shouldQuit() const override {
 		return Engine::shouldQuit();
 	}
+
+public:
+	Vars _vars;
 
 public:
 	GotEngine(OSystem *syst, const ADGameDescription *gameDesc);

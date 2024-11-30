@@ -1,0 +1,172 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef GOT_VARS_H
+#define GOT_VARS_H
+
+#include "got/defines.h"
+
+namespace Got {
+
+class Vars;
+
+extern Vars *g_vars;
+
+class Vars {
+public:
+	Vars();
+
+	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
+	uint _display_page = 0, _draw_page = 0;
+	uint _page3_offset = 0;
+	int8 _pge = 0;
+	int _exit_flag = 0;
+
+	byte _key_flag[100] = {};
+	byte _joy_flag[100] = {};
+	byte _tmp_flag[100] = {};
+	int8 _break_code = 0;
+	int8 _scan_code, _last_scan_code = 0;
+	int8 _diag = 0;
+	int8 _slow_mode = 0, _startup = 0;
+	int8 _shot_ok = 0;
+	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0,
+		_thor_real_y1 = 0;
+	int _thor_pos = 0;
+	int _max_shot = 0;
+
+	uint _timer_cnt = 0, _vbl_cnt = 0, _magic_cnt = 0, _extra_cnt = 0;
+
+	byte _text[94][72] = {};
+	//union REGS in, out = 0;
+	//struct SREGS seg = 0;
+	byte *_bg_pics = nullptr;
+	byte _objects[NUM_OBJECTS][262] = {};
+	int _ox = 0, _oy = 0, _of = 0;
+	byte _object_map[240] = {};
+	byte _object_index[240] = {};
+	byte *_bleep = nullptr;
+	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0,
+		_thor_icon4 = 0;
+	int8 _level_type = 0;
+	byte *_song = nullptr;
+	int8 _music_current = 0;
+	int8 _boss_loaded = 0;
+	int8 _apple_drop = 0;
+	int8 _cheat = 0;
+	int8 _area = 0;
+	byte _last_setup[32] = {};
+
+	LEVEL _scrn;
+	byte *_scrnp = nullptr;
+
+	byte *_sd_data = nullptr;
+	int _current_level = 0, _new_level = 0, _new_level_tile = 0,
+		_current_area = 0;
+
+	SETUP _setup;
+	byte *_tmp_buff = nullptr;
+	int _reps = 0;
+
+	byte *_mask_buff = nullptr;
+	byte *_mask_buff_start = nullptr;
+	byte _abuff[AMI_LEN] = {};
+	byte *_ami_buff = nullptr;
+	ACTOR _actor[MAX_ACTORS] = {};   //current actors
+	ACTOR _enemy[MAX_ENEMIES] = {};  //current enemies
+	ACTOR _shot[MAX_ENEMIES] = {};   //current shots
+	int8 _enemy_type[MAX_ENEMIES] = {};
+
+	ACTOR _magic_item[2] = {};
+	byte _magic_pic[2][1024] = {};
+	int8 _warp_scroll = 0;
+
+	ACTOR *_thor = nullptr;
+	ACTOR *_hammer = nullptr;
+	ACTOR _explosion;
+	ACTOR _sparkle;
+	THOR_INFO _thor_info;
+	int _key_fire = 0, _key_up = 0, _key_down = 0, _key_left = 0,
+		_key_right = 0, _key_magic = 0, _key_select = 0;
+	int _boss_dead = 0;
+
+	int _warp_flag = 0;
+
+	int8 *_std_sound_start = nullptr;
+	int8 *_pcstd_sound_start = nullptr;
+	int8 *_std_sound = nullptr;
+	int8 *_pcstd_sounds = nullptr;
+	byte *_boss_sound[3] = {};
+	byte *_boss_pcsound[3] = {};
+	long _pcsound_length[NUM_SOUNDS] = {};
+	int _rand1 = 0, _rand2 = 0;
+	int _restore_screen = 0;
+	int _last_oracle = 0;
+	int _hourglass_flag = 0, _thunder_flag = 0, _shield_on = 0,
+		_lightning_used = 0, _tornado_used = 0;
+	int _apple_flag = 0, _bomb_flag = 0;
+	int _switch_flag = 0;
+	uint _joy_x = 0, _joy_y = 0;
+	int8 _joy_b1 = 0, _joy_b2 = 0;
+	int _joystick = 0, _joylx = 0, _joyly = 0,
+		_joyhx = 0, _joyhy = 0;
+	byte _res_file[16] = {};
+	byte _odin[4][262] = {};
+	byte _hampic[4][262] = {};
+	int _load_game_flag = 0;
+	int _music_flag = 0, _sound_flag = 0, _pcsound_flag = 0;
+	int _cash1_inform = 0, _cash2_inform = 0, _door_inform = 0,
+		_magic_inform = 0, _carry_inform = 0;
+	int _killgg_inform = 0;
+
+	int8 *_std_sounds = nullptr;
+	byte *_pc_sound[NUM_SOUNDS] = {};
+	byte *_dig_sound[NUM_SOUNDS] = {};
+	int  _boss_active = 0;
+	int8 _story_flag = 0;
+	int8 *_scr = nullptr;
+	char _demo_key[DEMO_LEN] = {};
+	int  _demo_cnt = 0;
+	int8 _demo = 0, _record = 0;
+	int8 _demo_enable = 0;
+	int  _rnd_index = 0;
+	int  _rnd_array[100] = {};
+	int8 _rdemo = 0;
+	int8 _test_sdf[80] = {};
+	int8 _lzss_buff = 0;
+	int8 _game_over = 0;
+	int8 _noal = 0, _nosb = 0, _ret = 0;
+	char _tempstr[80] = {};
+	int8 _auto_load = 0;
+	int8 _ide_run = 0, _fast_exit = 0, _nojoy = 0, _gr = 0, _xdos = 0;
+	int8 _main_loop = 0;
+	int8 _end_tile = 0;
+};
+
+#define _G(X) (g_vars->_##X)
+
+extern byte dialog_color[];
+extern const char *options_yesno[];
+extern const char *save_filename;
+
+} // namespace Got
+
+#endif
