@@ -998,6 +998,7 @@ void ScriptExecutor::FuncB6BE_actual() {
 	// bp-2h
 	uint32 id = Func9F4D_32();
 	id -= 0x1000;
+	// bp-4h
 	uint16 bp4 = Func9F4D_16();
 	if (id <= 1) {
 		// mov	word ptr [1028h],8h
