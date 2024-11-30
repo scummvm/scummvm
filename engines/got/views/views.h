@@ -19,28 +19,19 @@
  *
  */
 
-#ifndef GOT_VIEW1_H
-#define GOT_VIEW1_H
+#ifndef GOT_VIEWS_H
+#define GOT_VIEWS_H
 
-#include "got/view.h"
+#include "got/views/view1.h"
 
 namespace Got {
+namespace Views {
 
-class View1 : public View {
-private:
-	byte _pal[256 * 3] = { 0 };
-	int _offset = 0;
-
-public:
-	View1() : View("View1") {}
-	virtual ~View1() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+struct Views {
+	View1 _view1;
 };
 
+} // namespace Views
 } // namespace Got
 
 #endif

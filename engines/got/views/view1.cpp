@@ -21,9 +21,10 @@
 
 #include "common/system.h"
 #include "graphics/paletteman.h"
-#include "got/view1.h"
+#include "got/views/view1.h"
 
 namespace Got {
+namespace Views {
 
 bool View1::msgFocus(const FocusMessage &msg) {
 	Common::fill(&_pal[0], &_pal[256 * 3], 0);
@@ -61,4 +62,5 @@ bool View1::tick() {
 	return true;
 }
 
+} // namespace Views
 } // namespace Got
