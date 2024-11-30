@@ -58,6 +58,7 @@ Common::String DarkseedEngine::getGameId() const {
 
 Common::Error DarkseedEngine::run() {
 	initGraphics(640, 350);
+	_canSaveGame = false;
 	_sound = new Sound(_mixer);
 	if (_sound->init() > 0) {
 		return Common::kAudioDeviceInitFailed;
@@ -2627,6 +2628,7 @@ void DarkseedEngine::restartGame() {
 }
 
 void DarkseedEngine::newGame() {
+	_canSaveGame = false;
 	_redrawFrame = false;
 	_sprites.clearSpriteDrawList();
 	removeFullscreenPic();
@@ -2647,6 +2649,7 @@ void DarkseedEngine::newGame() {
 	waitForSpeech();
 	_systemTimerCounter = 4;
 	_cursor.showCursor(true);
+	_canSaveGame = true;
 }
 
 void DarkseedEngine::waitForSpeech() {

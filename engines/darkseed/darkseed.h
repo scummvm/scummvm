@@ -85,6 +85,7 @@ class DarkseedEngine : public Engine {
 	bool _normalWorldSpritesLoaded = true;
 	bool _redrawFrame = true;
 	bool _restartGame = false;
+	bool _canSaveGame = false;
 
 	FadeDirection _fadeDirection = FadeDirection::NONE;
 	uint8 _fadeStepCounter = 0;
@@ -208,7 +209,7 @@ public:
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying() && !_menu.isOpen();
+		return _canSaveGame && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying() && !_menu.isOpen();
 	}
 
 	/**
@@ -228,6 +229,7 @@ public:
 		if (syncResult.getCode() == Common::kNoError) {
 			changeToRoom(_room->_roomNumber);
 		}
+		_canSaveGame = true;
 		return syncResult;
 	}
 
