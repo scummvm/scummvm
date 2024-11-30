@@ -19,9 +19,6 @@
  *
  */
 
-#include "got/got.h"
-#include "got/detection.h"
-#include "got/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -29,6 +26,10 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "got/got.h"
+#include "got/detection.h"
+#include "got/console.h"
+#include "got/utils/res_archive.h"
 
 namespace Got {
 
@@ -56,6 +57,9 @@ Common::Error GotEngine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+	// Initialize resource access
+	resInit();
 
 	runGame();
 

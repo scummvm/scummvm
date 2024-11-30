@@ -7,7 +7,8 @@ MODULE_OBJS = \
 	messages.o \
 	metaengine.o \
 	view.o \
-	view1.o
+	view1.o \
+	utils/res_archive.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOT), DYNAMIC_PLUGIN)
