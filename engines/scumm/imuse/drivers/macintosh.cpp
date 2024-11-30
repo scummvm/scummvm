@@ -41,7 +41,7 @@ enum : byte {
 struct ChanControlNode;
 struct DeviceChannel {
 	DeviceChannel(const uint32 *pitchtable) : pitchTable(pitchtable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
-		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr),
+		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr), rhtm(false),
 		prog(0), baseFreq(0), note(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
 	~DeviceChannel() {}
 
@@ -64,6 +64,7 @@ struct DeviceChannel {
 	uint32 rate;
 	uint16 prog;
 	byte note;
+	bool rhtm;
 	bool mute;
 	bool release;
 	const ChanControlNode *node;
@@ -318,7 +319,7 @@ void DeviceChannel::recalcFrequency() {
 	int cpos = (pitch >> 7) + 60 - baseFreq;
 	if (cpos < 0)
 		frequency = (uint32)-1;
-	else if (pitch & 0x7F)
+	else if ((pitch & 0x7F) && cpos < 0x7F)
 		frequency = pitchTable[cpos] + (((pitchTable[cpos + 1] - pitchTable[cpos]) * (pitch & 0x7F)) >> 7);
 	else
 		frequency = pitchTable[cpos];
@@ -456,6 +457,11 @@ void IMSMacSoundSystem::noteOn(const ChanControlNode *node) {
 
 	debug(6, "NOTE ON: ims part %d, chan node %d, note %d, instr id %d (%s)", node->in ? node->in->getNumber() : node->number, node->number, node->note, node->prog, c->instr.get()->name());
 
+	// SAMNMAX: This is a workaround to fix a hanging note in the final credits track. The issue is present in the original game,too.
+	bool fixHangingNote = (c->instr.get()->id() == 321 && c->note == 40);
+	if (fixHangingNote)
+		debug(7, "%s:() Triggered hanging note workaround.", __FUNCTION__);
+
 	recalcVolume(c);
 
 	const MacLowLevelPCMDriver::PCMSound *s = c->instr.get()->data();
@@ -463,7 +469,7 @@ void IMSMacSoundSystem::noteOn(const ChanControlNode *node) {
 	c->rate = s->rate;
 	c->smpBuffStart = s->data.get();
 	c->smpBuffEnd = c->smpBuffStart + s->len;
-	if ((_version == 0 && (int32)s->loopst >= (int32)s->loopend - 12) || (_version > 0 && (!s->loopst || !s->loopend || node->rhythmPart || (int32)s->loopst > (int32)s->len - 10))) {
+	if ((_version == 0 && (int32)s->loopst >= (int32)s->loopend - 12) || (_version > 0 && (fixHangingNote || !s->loopst || !s->loopend || node->rhythmPart || (int32)s->loopst > (int32)s->len - 10))) {
 		c->loopStart = nullptr;
 		c->loopEnd = c->smpBuffEnd;
 	} else {
@@ -603,8 +609,8 @@ void IMSMacSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblB
 			*t++ += a1[*c.pos];
 			if (_stereo)
 				*t++ += a2[*c.pos];
+			}
 		}
-	}
 
 	const int16 *s = _mixBuffer16Bit;
 	sil <<= 7;
@@ -861,8 +867,8 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 		if (ins->sndRes[0] != nullptr)
 			memset(ins->noteSmplsMapping, 0, 128);
 
-		int8 numRanges = CLIP<int8>(b[13], 0, 7);
-		assert(sz >= 16 + (uint)numRanges * 8);
+		byte numRanges = CLIP<int8>(b[13], 0, 7);
+		assert(sz >= 16 + numRanges * 8);
 
 		for (int ii = 0; ii < numRanges; ++ii) {
 			ins->sndRes.push_back(getSndResource(READ_BE_INT16(b + 16 + ii * 8)));
@@ -884,7 +890,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 Common::SharedPtr<MacSndResource> NewMacSoundSystem::getNoteRangeSndResource(uint16 id, byte note) {
 	assert(note < 128);
 	Common::SharedPtr<MacSndResource> res;
-	for (Common::Array<Common::SharedPtr<Instrument> >::iterator it = _instruments.begin(); res == nullptr && it != _instruments.end(); ++it) {
+	for (Common::Array<Common::SharedPtr<Instrument> >::const_iterator it = _instruments.begin(); res == nullptr && it != _instruments.end(); ++it) {
 		uint16 cid = (*it)->id;
 		if (cid == id)
 			res = (*it)->sndRes[(*it)->noteSmplsMapping[note]];
@@ -894,9 +900,10 @@ Common::SharedPtr<MacSndResource> NewMacSoundSystem::getNoteRangeSndResource(uin
 
 void NewMacSoundSystem::setInstrument(DeviceChannel *chan) {
 	assert(chan && chan->node);
-	if (chan->instr == nullptr || (!chan->node->rhythmPart && chan->prog != chan->node->prog) || chan->note != chan->node->note) {
+	if (chan->instr == nullptr || chan->node->rhythmPart != chan->rhtm || (!chan->node->rhythmPart && chan->prog != chan->node->prog) || chan->note != chan->node->note) {
 		chan->note = chan->node->note;
-		chan->prog = chan->node->prog;
+		chan->prog = chan->node->rhythmPart ? 0 : chan->node->prog;
+		chan->rhtm = chan->node->rhythmPart;
 		chan->instr = chan->node->rhythmPart ? getSndResource(6000 + chan->note) : getNoteRangeSndResource(chan->prog, chan->note);
 	}
 }
@@ -1074,6 +1081,7 @@ void IMuseChannel_Macintosh::noteOn(byte note, byte velocity)  {
 			node->in = this;
 			node->prio = _prio;
 		}
+		node->prog = 0;
 		node->volume = _volume * 6 / 7;
 		node->rhythmPart = true;
 	}
