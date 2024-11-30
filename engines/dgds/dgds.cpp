@@ -900,9 +900,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_justChangedScene2);
 
 	// sync engine play time to ensure various events run correctly.
-	uint32 playtime = DgdsEngine::getInstance()->getThisFrameMs();
-	s.syncAsUint32LE(playtime);
-	setTotalPlayTime(playtime);
+	s.syncAsUint32LE(_thisFrameMs);
+	setTotalPlayTime(_thisFrameMs);
 
 	s.syncString(_backgroundFile);
 	if (s.isLoading()) {
