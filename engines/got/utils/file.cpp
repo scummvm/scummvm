@@ -22,31 +22,9 @@
 #include "common/file.h"
 #include "got/utils/file.h"
 #include "got/prototypes.h"
+#include "got/vars.h"
 
 namespace Got {
-
-extern byte *bg_pics;
-extern char objects[NUM_OBJECTS][262];
-extern byte *sd_data;
-extern char *tmp_buff;
-extern char res_file[];
-extern THOR_INFO thor_info;
-extern int current_area;
-extern ACTOR *thor;
-extern char *save_filename;
-extern union REGS in, out;
-extern SETUP setup;
-extern char level_type, slow_mode;
-extern int  boss_active;
-extern char area;
-extern char test_sdf[];
-extern char *song;
-extern char *lzss_buff;
-extern char *options_yesno[];
-extern int music_flag, sound_flag, pcsound_flag;
-extern char game_over;
-extern unsigned int display_page, draw_page;
-extern volatile char key_flag[100];
 
 static const char *gotres = "GOTRES.00";
 
@@ -56,12 +34,12 @@ long file_size(char *path) {
 }
 
 bool load_bg_data() {
-	bg_pics = new byte[60460];
-	if (!bg_pics)
+	_G(bg_pics) = new byte[60460];
+	if (!_G(bg_pics))
 		return false;
 
 	if (GAME1) {
-		if (res_read("BPICS1", bg_pics) < 0)
+		if (res_read("BPICS1", _G(bg_pics)) < 0)
 			return false;
 	}
 
@@ -69,24 +47,24 @@ bool load_bg_data() {
 }
 
 bool load_sd_data() {
-	Common::String fname = Common::String::format("SDAT%d", area);
+	Common::String fname = Common::String::format("SDAT%d", _G(area));
 
-	if (!sd_data)
-		sd_data = new byte[61440];
-	if (!sd_data)
+	if (!_G(sd_data))
+		_G(sd_data) = new byte[61440];
+	if (!_G(sd_data))
 		return false;
 
-	return res_read(fname, sd_data) > 0;
+	return res_read(fname, _G(sd_data)) > 0;
 }
 
 bool load_objects() {
-	return res_read("OBJECTS", (char *)objects) > 0;
+	return res_read("OBJECTS", _G(objects)) > 0;
 }
 
 bool load_actor(int file, int num) {
 	Common::String fname = Common::String::format("ACTOR%d", num);
 
-	if (res_read(fname, tmp_buff) < 0)
+	if (res_read(fname, _G(tmp_buff)) < 0)
 		return false;
 
 	//file = file;
@@ -100,7 +78,7 @@ bool load_speech(int index) {
 	char *sp;
 	char tmps[5];
 
-	Common::String fname = Common::String::format("SPEAK%d", area);
+	Common::String fname = Common::String::format("SPEAK%d", _G(area));
 
 	sp = new char[30000];
 	if (!sp)
@@ -157,8 +135,8 @@ bool load_speech(int index) {
 		*(p - 1) = 0;
 	*p = 0;
 
-	Common::copy(pm, pm + cnt, tmp_buff);
-	tmp_buff[cnt] = 0;
+	Common::copy(pm, pm + cnt, _G(tmp_buff));
+	_G(tmp_buff)[cnt] = 0;
 
 	delete[] sp;
 	return true;
@@ -180,7 +158,7 @@ void save_game() {
 	if (game_over)
 		return;
 
-	setup.area = area;
+	setup.area = _G(area);
 	setup.game_over = game_over;
 
 	if (select_option(options_yesno, "Save Game?", 0) != 1) {
@@ -199,7 +177,7 @@ void save_game() {
 	_dos_write(handle, buff, 32, &total);
 	_dos_write(handle, &setup, sizeof(SETUP), &total);
 	_dos_write(handle, &thor_info, sizeof(THOR_INFO), &total);
-	_dos_write(handle, sd_data, 61440u, &total);
+	_dos_write(handle, _G(sd_data), 61440u, &total);
 	_dos_close(handle);
 	odin_speaks(2009, 0);
 #endif
@@ -222,7 +200,7 @@ bool load_game(int flag) {
 	_dos_read(handle, buff, 32, &total);
 	_dos_read(handle, &setup, sizeof(SETUP), &total);
 	_dos_read(handle, &thor_info, sizeof(THOR_INFO), &total);
-	_dos_read(handle, sd_data, 61440u, &total);
+	_dos_read(handle, _G(sd_data), 61440u, &total);
 	_dos_close(handle);
 
 	current_area = thor_info.last_screen;
@@ -308,26 +286,26 @@ return res_header[num].length;
 bool load_music(int num) {
 	switch (num) {
 	case 0:
-		res_read("SONG1", song);
+		res_read("SONG1", _G(song));
 		break;
 	case 1:
-		res_read("SONG2", song);
+		res_read("SONG2", _G(song));
 		break;
 	case 2:
-		res_read("SONG3", song);
+		res_read("SONG3", _G(song));
 		break;
 	case 3:
-		res_read("SONG4", song);
+		res_read("SONG4", _G(song));
 		break;
 	case 4:
-		res_read("WINSONG", song);
+		res_read("WINSONG", _G(song));
 		break;
 	case 5:
-		res_read("BOSSSONG", song);
+		res_read("BOSSSONG", _G(song));
 		break;
 	}
 
-	return song != nullptr;
+	return _G(song) != nullptr;
 }
 
 } // End of namespace Got

@@ -30,146 +30,146 @@ namespace Got {
  * Describes one alignment of a mask - image pair
  */
 struct ALIGNED_MASK_IMAGE {
-	int image_width;		// Image width in addresses in display memory
-	uint image_ptr;			// Offset of image bitmap in display mem
-	const char *mask_ptr;   // Pointer to mask bitmap
+	int image_width = 0;		// Image width in addresses in display memory
+	uint image_ptr = 0;			// Offset of image bitmap in display mem
+	const byte *mask_ptr = nullptr;   // Pointer to mask bitmap
 };
 
 struct MASK_IMAGE {
 	// ptrs to AlignedMaskedImage
 	// structs for four possible destination
 	// image alignments
-	ALIGNED_MASK_IMAGE *alignments[4];
+	ALIGNED_MASK_IMAGE *alignments[4] = { nullptr, nullptr, nullptr, nullptr };
 };
 
-struct LEVEL {               //size=512
-	char icon[12][20];       //0   grid of icons
-	char bg_color;           //240 background color
-	char type;               //241 music
-	char actor_type[16];     //242 type of enemies (12 max)
-	char actor_loc[16];      //254 location of enemies
-	char actor_value[16];    //pass value
-	char pal_colors[3];      //change 251,253,254 to these three
-	char actor_invis[16];
-	char extra[13];
-	char static_obj[30];     //302 static objects (treasure, keys,etc)
-	int  static_x[30];       //332 X coor of static objects
-	int  static_y[30];       //392 Y coor of static objects
-	char new_level[10];      //452 level jump for icon 200-204
-	char new_level_loc[10];  //462 grid location to jump in to
-	char area;               //472 game area (1=forest,etc)
-	char actor_dir[16];      //initial dir
-	char future[3];          //473
+struct LEVEL {                    // size=512
+	byte icon[12][20] = {};       // 0   grid of icons
+	byte bg_color = 0;            // 240 background color
+	byte type = 0;                // 241 music
+	byte actor_type[16] = {};     // 242 type of enemies (12 max)
+	byte actor_loc[16] = {};      // 254 location of enemies
+	byte actor_value[16] = {};    // pass value
+	byte pal_colors[3] = {};      // change 251,253,254 to these three
+	byte actor_invis[16] = {};
+	byte extra[13] = {};
+	byte static_obj[30] = {};     // 302 static objects (treasure, keys,etc)
+	int  static_x[30] = {};       // 332 X coor of static objects
+	int  static_y[30] = {};       // 392 Y coor of static objects
+	byte new_level[10] = {};      // 452 level jump for icon 200-204
+	byte new_level_loc[10] = {};  // 462 grid location to jump in to
+	byte area = 0;                // 472 game area (1=forest,etc)
+	byte actor_dir[16] = {};      // initial dir
+	byte future[3] = {};          // 473
 };
 
-struct ACTOR {                    //size=256
-	// first part loaded from disk    (size=40)
-	char move;                  //movement pattern (0=none)
-	char width;                 //physical width
-	char height;                //physical height
-	char directions;            //1,2 or 4 (1=uni-directional)
-	char frames;                //# frames per direction
-	char frame_speed;           //# cycles between frame changes
-	char frame_sequence[4];     //sequence
-	char speed;                 //move every Nth cycle
-	char size_x;                 //non-physical padding on X coor
-	char size_y;                 //non-phsyical padding on Y coor
-	char strength;              //hit strength
-	char health;                //
-	char num_moves;             //# of moves every <speed> cycles
-	char shot_type;             //actor # of shot
-	char shot_pattern;          //func number to decide to shoot
-	char shots_allowed;         //# shots allowed on screen
-	char solid;                 //1=solid (not ghost,etc)
-	char flying;                //
-	char rating;                //rnd(100) < rating = jewel
-	char type;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
-	char name[9];               //actors name
-	char func_num;              //special function when thor touches
-	char func_pass;             //value to pass to func
-	int  magic_hurts;           //bitwise magic hurts flags
-	char future1[4];
+struct ACTOR {                      //size=256
+	// first part loaded from disk  (size=40)
+	byte move = 0;                  //movement pattern (0=none)
+	byte width = 0;                 //physical width
+	byte height = 0;                //physical height
+	byte directions = 0;            //1,2 or 4 (1=uni-directional)
+	byte frames = 0;                //# frames per direction
+	byte frame_speed = 0;           //# cycles between frame changes
+	byte frame_sequence[4] = {};    //sequence
+	byte speed = 0;                 //move every Nth cycle
+	byte size_x = 0;                //non-physical padding on X coor
+	byte size_y = 0;                //non-phsyical padding on Y coor
+	byte strength = 0;              //hit strength
+	byte health = 0;                //
+	byte num_moves = 0;             //# of moves every <speed> cycles
+	byte shot_type = 0;             //actor # of shot
+	byte shot_pattern = 0;          //func number to decide to shoot
+	byte shots_allowed = 0;         //# shots allowed on screen
+	byte solid = 0;                 //1=solid (not ghost,etc)
+	byte flying = 0;                //
+	byte rating = 0;                //rnd(100) < rating = jewel
+	byte type = 0;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
+	byte name[9] = {};              //actors name
+	byte func_num = 0;              //special function when thor touches
+	byte func_pass = 0;             //value to pass to func
+	int  magic_hurts = 0;           //bitwise magic hurts flags
+	byte future1[4] = {};
 
 	//the rest is dynamic    //size=216
-	MASK_IMAGE pic[4][4];       //mask image pointers
-	char frame_count;           //count to switch frames
-	char dir;                   //direction of travel
-	char last_dir;              //last direction of travel
-	int  x;                     //actual X coor
-	int  y;                     //actual Y coor
-	int  center;                //center of object
-	int  last_x[2];             //last X coor on each page
-	int  last_y[2];             //last Y coor on each page
-	char used;                  //1=active, 0=not active
-	char next;                  //next frame to be shown
-	char speed_count;           //count down to movement
-	char vunerable;             //count down to vunerability
-	char shot_cnt;              //count down to another shot
-	char num_shots;             //# of shots currently on screen
-	char creator;               //which actor # created this actor
-	char pause;                 //pause must be 0 to move
-	char actor_num;
-	char move_count;
-	char dead;
-	char toggle;
-	char center_x;
-	char center_y;
-	char show;                  //display or not (for blinking)
-	char temp1;
-	char temp2;
-	char counter;
-	char move_counter;
-	char edge_counter;
-	char temp3;
-	char temp4;
-	char temp5;
-	char hit_thor;
-	int  rand;
-	char init_dir;
-	char pass_value;
-	char shot_actor;
-	char magic_hit;
-	char temp6;
-	int  i1, i2, i3, i4, i5, i6;
-	char init_health;
-	char talk_counter;
-	char etype;
-	char future2[25];
+	MASK_IMAGE pic[4][4] = {};      //mask image pointers
+	byte frame_count = 0;           //count to switch frames
+	byte dir = 0;                   //direction of travel
+	byte last_dir = 0;              //last direction of travel
+	int  x = 0;                     //actual X coor
+	int  y = 0;                     //actual Y coor
+	int  center = 0;                //center of object
+	int  last_x[2] = {};            //last X coor on each page
+	int  last_y[2] = {};            //last Y coor on each page
+	byte used = 0;                  //1=active, 0=not active
+	byte next = 0;                  //next frame to be shown
+	byte speed_count = 0;           //count down to movement
+	byte vunerable = 0;             //count down to vunerability
+	byte shot_cnt = 0;              //count down to another shot
+	byte num_shots = 0;             //# of shots currently on screen
+	byte creator = 0;               //which actor # created this actor
+	byte pause = 0;                 //pause must be 0 to move
+	byte actor_num = 0;
+	byte move_count = 0;
+	byte dead = 0;
+	byte toggle = 0;
+	byte center_x = 0;
+	byte center_y = 0;
+	byte show = 0;                  //display or not (for blinking)
+	byte temp1 = 0;
+	byte temp2 = 0;
+	byte counter = 0;
+	byte move_counter = 0;
+	byte edge_counter = 0;
+	byte temp3 = 0;
+	byte temp4 = 0;
+	byte temp5 = 0;
+	byte hit_thor = 0;
+	int  rand = 0;
+	byte init_dir = 0;
+	byte pass_value = 0;
+	byte shot_actor = 0;
+	byte magic_hit = 0;
+	byte temp6 = 0;
+	int  i1, i2, i3, i4, i5, i6 = 0;
+	byte init_health = 0;
+	byte talk_counter = 0;
+	byte etype = 0;
+	byte future2[25] = {};
 };
 
 struct ACTOR_NFO {				//size=40
-	char move;                  //movement pattern (0=none)
-	char width;                 //physical width
-	char height;                //physical height
-	char directions;            //1,2 or 4 (1=uni-directional)
-	char frames;                //# frames per direction
-	char frame_speed;           //# cycles between frame changes
-	char frame_sequence[4];     //sequence
-	char speed;                 //move every Nth cycle
-	char size_x;                 //non-physical padding on X coor
-	char size_y;                 //non-phsyical padding on Y coor
-	char strength;              //hit strength
-	char health;                //
-	char num_moves;             //# of moves every <speed> cycles
-	char shot_type;             //actor # of shot
-	char shot_pattern;          //func number to decide to shoot
-	char shots_allowed;         //# shots allowed on screen
-	char solid;                 //1=solid (not ghost,etc)
-	char flying;                //
-	char rating;                //rnd(100) < rating = jewel
-	char type;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
-	char name[9];               //actors name
-	char func_num;              //special function when thor touches
-	char func_pass;             //value to pass to func
-	char future1[6];
+	byte move = 0;                  //movement pattern (0=none)
+	byte width = 0;                 //physical width
+	byte height = 0;                //physical height
+	byte directions = 0;            //1,2 or 4 (1=uni-directional)
+	byte frames = 0;                //# frames per direction
+	byte frame_speed = 0;           //# cycles between frame changes
+	byte frame_sequence[4] = {};    //sequence
+	byte speed = 0;                 //move every Nth cycle
+	byte size_x = 0;                //non-physical padding on X coor
+	byte size_y = 0;                //non-phsyical padding on Y coor
+	byte strength = 0;              //hit strength
+	byte health = 0;                //
+	byte num_moves = 0;             //# of moves every <speed> cycles
+	byte shot_type = 0;             //actor # of shot
+	byte shot_pattern = 0;          //func number to decide to shoot
+	byte shots_allowed = 0;         //# shots allowed on screen
+	byte solid = 0;                 //1=solid (not ghost,etc)
+	byte flying = 0;                //
+	byte rating = 0;                //rnd(100) < rating = jewel
+	byte type = 0;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
+	byte name[9] = {};              //actors name
+	byte func_num = 0;              //special function when thor touches
+	byte func_pass = 0;             //value to pass to func
+	byte future1[6] = {};
 };
 
-struct ACTOR_DATA {               //5200
-	char pic[16][256];            //4096
-	char shot[4][256];            //1024
-	ACTOR_NFO actor_info;         //40
-	ACTOR_NFO shot_info;          //40
-} ;
+struct ACTOR_DATA {                 //5200
+	byte pic[16][256] = {};         //4096
+	byte shot[4][256] = {};         //1024
+	ACTOR_NFO actor_info = {};      //40
+	ACTOR_NFO shot_info = {};       //40
+};
 
 struct SETUP {
 	unsigned int  f00 : 1;
@@ -244,56 +244,56 @@ struct SETUP {
 	unsigned int  f62 : 1;
 	unsigned int  f63 : 1;
 
-	char value[16];
-	char junk;
-	char game;
-	char area;          //1,2,3
-	char pc_sound;      //1=enabled
-	char dig_sound;     //1 & !pc_sound = enabled
-	char music;         //1=enabled
-	char speed;         //1=slow mode (for slower 286's)
-	char scroll_flag;   //unused
-	char boss_dead[3];
-	char skill;         //0=easy, 1=normal, 2=hard
-	char game_over;
-	char future[19];    //probably not needed
+	byte value[16] = {};
+	byte junk = 0;
+	byte game = 0;
+	byte area = 0;          //1,2,3
+	byte pc_sound = 0;      //1=enabled
+	byte dig_sound = 0;     //1 & !pc_sound = enabled
+	byte music = 0;         //1=enabled
+	byte speed = 0;         //1=slow mode (for slower 286's)
+	byte scroll_flag = 0;   //unused
+	byte boss_dead[3] = {};
+	byte skill = 0;         //0=easy, 1=normal, 2=hard
+	byte game_over = 0;
+	byte future[19] = {};   //probably not needed
 };
 
 struct PIC_HEADER {
-	char width;
-	char height;
+	byte width = 0;
+	byte height = 0;
 };
 
 struct THOR_INFO {
-	char magic;
-	char keys;
-	int  jewels;
-	char last_area;
-	char last_screen;
-	char last_icon;
-	char last_dir;
-	int  inventory;
-	char item;         //currently selected item
-	char last_health;
-	char last_magic;
-	int  last_jewels;
-	char last_keys;
-	char last_item;
-	int  last_inventory;
-	char level;         //current level (1,2,3)
-	long score;
-	long last_score;
-	char object;
-	char *object_name;
-	char last_object;
-	char *last_object_name;
-	char armor;
-	char future[65];
+	byte magic = 0;
+	byte keys = 0;
+	int  jewels = 0;
+	byte last_area = 0;
+	byte last_screen = 0;
+	byte last_icon = 0;
+	byte last_dir = 0;
+	int  inventory = 0;
+	byte item = 0;         //currently selected item
+	byte last_health = 0;
+	byte last_magic = 0;
+	int  last_jewels = 0;
+	byte last_keys = 0;
+	byte last_item = 0;
+	int  last_inventory = 0;
+	byte level = 0;         //current level (1,2,3)
+	long score = 0;
+	long last_score = 0;
+	byte object = 0;
+	byte *object_name = 0;
+	byte last_object = 0;
+	byte *last_object_name = 0;
+	byte armor = 0;
+	byte future[65] = {};
 };
 
 struct HEADER {
-	long offset;
-	long length;
+	long offset = 0;
+	long length = 0;
 };
 
 //==========================================================================
@@ -437,10 +437,10 @@ enum {
 
 #define	status_Reg1 0x3da
 
-#define GAME1 (area==1)
-#define GAME2 (area==2)
-#define GAME3 (area==3)
-#define BP    (key_flag[_B])
+#define GAME1 (_G(area)==1)
+#define GAME2 (_G(area)==2)
+#define GAME3 (_G(area)==3)
+#define BP    (_G(key_flag)[_B])
 
 #define NUM_SOUNDS  19
 #define NUM_OBJECTS 32
