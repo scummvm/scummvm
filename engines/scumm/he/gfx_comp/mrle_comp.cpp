@@ -122,7 +122,11 @@ static void mrleFLIPAltSourceForwardXBppToXBpp(Wiz *wiz,
 				dest8 += runCount;
 				src8 += runCount;
 			} else {
-				memcpy(dest16, src16, (runCount * sizeof(WizRawPixel16)));
+				// memcpy(dest16, src16, (runCount * sizeof(WizRawPixel16)));
+				for (int i = 0; i < runCount; i++) {
+					dest16[i] = FROM_LE_16(src16[i]);
+				}
+
 				dest16 += runCount;
 				src16 += runCount;
 			}
@@ -165,7 +169,10 @@ static void mrleFLIPAltSourceBackwardXBppToXBpp(Wiz *wiz,
 			} else {
 				dest16 -= runCount;
 				src16 -= runCount;
-				memcpy(dest16 + 1, src16 + 1, (runCount * sizeof(WizRawPixel16)));
+				// memcpy(dest16 + 1, src16 + 1, (runCount * sizeof(WizRawPixel16)));
+				for (int i = 1; i < runCount; i++) {
+					dest16[i] = FROM_LE_16(src16[i]);
+				}
 			}
 		}
 	);

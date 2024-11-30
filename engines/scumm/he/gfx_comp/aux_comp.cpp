@@ -180,7 +180,9 @@ void Wiz::auxWRLEUncompressAndCopyFromStreamOffset(WizRawPixel *destStream, cons
 				if (!_uses16BitColor) {
 					memcpy(dest8, dest8 + streamOffset, (runCount * sizeof(WizRawPixel8)));
 				} else {
-					memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					// memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16((dest16 + streamOffset)[i]);
 				}
 			}
 
@@ -229,7 +231,9 @@ void Wiz::auxWRLEUncompressAndCopyFromStreamOffset(WizRawPixel *destStream, cons
 				if (!_uses16BitColor) {
 					memcpy(dest8, dest8 + streamOffset, (runCount * sizeof(WizRawPixel8)));
 				} else {
-					memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					// memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16((dest16 + streamOffset)[i]);	
 				}
 			}
 
@@ -319,7 +323,10 @@ void Wiz::auxDecompSRLEStream(WizRawPixel *destStream, const WizRawPixel *backgr
 				backgroundStream = (const WizRawPixel *)background8;
 				destStream = (WizRawPixel *)dest8;
 			} else {
-				memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+				// memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+				for (int i = 0; i < runCount; i++)
+					dest16[i] = FROM_LE_16(background16[i]);
+				
 				background16 += runCount;
 				dest16 += runCount;
 
@@ -1148,7 +1155,9 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 
 					destPtr = (WizRawPixel *)dest8;
 				} else {
-					memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16(background16[i]);
+					//memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
 					dest16 += runCount;
 					background16 += runCount;
 
@@ -1159,7 +1168,9 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 				if (!_uses16BitColor) {
 					memcpy(dest8, background8, runCount * sizeof(WizRawPixel8));
 				} else {
-					memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16(background16[i]);
+					//memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
 				}
 			}
 		}

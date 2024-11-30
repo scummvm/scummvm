@@ -2288,7 +2288,11 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 	return _vm->readVar(0);
 }
 
+// This function is currently deactivated until it can be assessed
+// that it doesn't do more damage than good. Currently it does more
+// damage (e.g. the images get re-byteswapped on every frame)...
 void Wiz::ensureNativeFormatImageForState(int image, int state) {
+#if 0
 	// If AWIZ block is an XMAP, we don't want to do anything with it...
 	if (dwGetImageGeneralProperty(image, state, kWIPXMAPBlockPresent)) {
 		return;
@@ -2337,6 +2341,7 @@ void Wiz::ensureNativeFormatImageForState(int image, int state) {
 		// Reset the compression type...
 		setWizCompressionType(image, state, newCompType);
 	}
+#endif
 }
 
 void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
