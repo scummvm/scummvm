@@ -862,7 +862,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 			memset(ins->noteSmplsMapping, 0, 128);
 
 		int8 numRanges = CLIP<int8>(b[13], 0, 7);
-		assert(sz >= 16 + numRanges * 8);
+		assert(sz >= 16 + (uint)numRanges * 8);
 
 		for (int ii = 0; ii < numRanges; ++ii) {
 			ins->sndRes.push_back(getSndResource(READ_BE_INT16(b + 16 + ii * 8)));
