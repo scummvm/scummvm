@@ -56,7 +56,7 @@ namespace Macs2 {
 		// TODO: Maybe we need to add the caller, fn0017_24FD proc
 		void Func2686();
 
-		uint8 Func2779(uint8 arg1, uint8 args2);
+		uint8 Func2779(uint8 arg1);
 
 		// Writes a value to the target register
 		void Func2792(byte registerIndex, byte value);
@@ -112,7 +112,7 @@ namespace Macs2 {
 
 		// Array at [229Ch] - accessed with byte values
 		// TODO: Initialization, access pattern, size
-		Common::Array<uint8> gArray229C
+		Common::Array<uint8> gArray229C;
 
 		// Array at [2235h] - accessed with bytes values
 		// TODO: Initialization, access pattern, size
