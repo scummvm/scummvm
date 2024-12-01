@@ -1,6 +1,6 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
 add_engine wintermute "Wintermute" yes "foxtail herocraft wme3d" "" "16bit highres jpeg png"
-add_engine wme3d "Wintermute3D" no
+add_engine wme3d "Wintermute3D" no "" "" "3d"
 add_engine foxtail "FoxTail" yes
 add_engine herocraft "HeroCraft" yes

@@ -374,6 +374,12 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
+	// Calculate 3D feature state
+	setFeatureBuildState("3d", setup.features,
+			getFeatureBuildState("tinygl", setup.features) ||
+			getFeatureBuildState("opengl_game_classic", setup.features) ||
+			getFeatureBuildState("opengl_game_shaders", setup.features));
+
 	// Disable engines for which we are missing dependencies
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
 		if (i->enable) {
@@ -1138,6 +1144,7 @@ const Feature s_features[] = {
 	{        "edgescalers",              "USE_EDGE_SCALERS", false, true,  "Edge scalers" },
 	{             "aspect",                    "USE_ASPECT", false, true,  "Aspect ratio correction" },
 	{              "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
+	{                 "3d",                              "", false, true,  "3D rendering" },
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
 	{              "imgui",                     "USE_IMGUI", false, true,  "Dear ImGui based debugger" },
 	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
