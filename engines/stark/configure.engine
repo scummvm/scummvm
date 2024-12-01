@@ -1,3 +1,3 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine stark "The Longest Journey" yes "" "" "16bit highres freetype2 vorbis bink"
+add_engine stark "The Longest Journey" yes "" "" "16bit 3d highres freetype2 vorbis bink"

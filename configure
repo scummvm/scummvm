@@ -269,6 +269,7 @@ _detection_features_static=yes
 _detection_features_full=yes
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
+_3d=no
 _posix=no
 _has_posix_spawn=no
 _has_fseeko_offt_64=no
@@ -282,6 +283,7 @@ _imgui=yes
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
+add_feature 3d "3D rendering" "_3d"
 add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
@@ -6899,6 +6901,14 @@ if test "$_16bit" = "no"; then
 fi
 define_in_config_if_yes $_tinygl 'USE_TINYGL'
 echo "$_tinygl"
+
+echo_n "Building any 3D game... "
+if (test "$_tinygl" = yes || test "$_opengl_game_classic" = yes || test "$_opengl_game_shaders" = yes); then
+	_3d=yes
+else
+	_3d=no
+fi
+echo "$_3d"
 
 #
 # Check whether to build Bink video support
