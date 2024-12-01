@@ -1554,6 +1554,46 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	return bp12;
 }
 
+uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
+	/*
+	fn00B7_168C proc
+	enter	6h,0h
+	push	ds
+	lds	si,[bp+6h]
+	add	si,0Ah
+	lodsw
+	inc	ax
+	mov	[bp-4h],ax
+	add	si,[bp-4h]
+	sub	si,2h
+	xor	ah,ah
+	lodsb
+	mov	[bp-6h],ax
+	pop	ds
+	cmp	word ptr [bp-4h],3h
+	jnc	16B4h
+
+l00B7_16AF:
+	xor	ax,ax
+	mov	[bp-2h],ax
+
+l00B7_16B4:
+	cmp	word ptr [bp-6h],3h
+	jz	16BFh
+
+l00B7_16BA:
+	xor	ax,ax
+	mov	[bp-2h],ax
+
+l00B7_16BF:
+	mov	ax,[bp-4h]
+	mov	[bp-2h],ax
+	mov	ax,[bp-2h]
+	leave
+	retf	4h*/
+	return 0;
+}
+
 
 } // End of namespace Macs2
 
