@@ -1,7 +1,7 @@
 # This file is included from the main "configure" script
-# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
 add_engine ultima "Ultima" yes "ultima1 ultima4 ultima6 ultima8"
-add_engine ultima1 "Ultima I - The First Age of Darkness" no "" "" ""	
+add_engine ultima1 "Ultima I - The First Age of Darkness" no "" "" ""
 add_engine ultima4 "Ultima IV - Quest of the Avatar" yes "" "" "16bit"
-add_engine ultima6 "Ultima VI = The False Prophet" yes "" "" "highres 16bit lua"
+add_engine ultima6 "Ultima VI = The False Prophet" yes "" "" "highres 16bit" "lua"
 add_engine ultima8 "Ultima VIII - Pagan" yes "" "" "highres 16bit"
