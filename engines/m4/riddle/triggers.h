@@ -62,7 +62,7 @@ extern void sendWSMessage_110000(machine *mach, int trigger);
 extern void sendWSMessage_110000(int trigger);
 extern void sendWSMessage_120000(int trigger);
 extern void sendWSMessage_120000(machine *mach, int trigger);
-extern void sendWSMessage_130000(machine *recv, int val1);
+extern void sendWSMessage_130000(machine *mach, int trigger);
 extern void sendWSMessage_130000(int val1);
 extern void sendWSMessage_140000(machine *mach, int trigger);
 extern void sendWSMessage_140000(int trigger);

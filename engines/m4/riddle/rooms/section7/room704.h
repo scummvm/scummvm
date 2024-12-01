@@ -42,9 +42,14 @@ public:
 private:
 	static void callback(frac16 myMessage, machine *sender);
 
+	int32 _field58 = 0;
+	int32 _field5C = 0;
+
+	int32 _704Eye2aSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 
+	machine *_monkMach = nullptr;
 	machine *_prayerWheelMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 };

@@ -209,12 +209,12 @@ void sendWSMessage_120000(int trigger) {
 	sendWSMessage_120000(_G(my_walker), trigger);
 }
 
-void sendWSMessage_130000(machine *recv, int val1) {
-	if (val1 == 0)
-		val1 = -1;
+void sendWSMessage_130000(machine *mach, int trigger) {
+	if (trigger == 0)
+		trigger = -1;
 
-	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(val1);
-	sendWSMessage(ACTION_19 << 16, 0, recv, 0, 0, 1);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
+	sendWSMessage(ACTION_19 << 16, 0, mach, 0, nullptr, 1);
 }
 
 void sendWSMessage_130000(int val1) {
