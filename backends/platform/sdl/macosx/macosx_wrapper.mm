@@ -46,6 +46,17 @@ Common::String getDesktopPathMacOSX() {
 	return Common::String([path fileSystemRepresentation]);
 }
 
+Common::String getDocumentsPathMacOSX() {
+	// See comment in getDesktopPathMacOSX()
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	if ([paths count] == 0)
+		return Common::String();
+	NSString *path = [paths objectAtIndex:0];
+	if (path == nil)
+		return Common::String();
+	return Common::String([path fileSystemRepresentation]);
+}
+
 Common::String getResourceAppBundlePathMacOSX() {
 	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
 	if (bundlePath == nil)

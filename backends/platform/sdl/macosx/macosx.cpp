@@ -117,6 +117,20 @@ void OSystem_MacOSX::initBackend() {
 	_textToSpeechManager = new MacOSXTextToSpeechManager();
 #endif
 
+	// Migrate savepath.
+	// It used to be in ~/Documents/ScummVM Savegames/, but was changed to use the application support
+	// directory. To migrate old config files we use a flag to indicate if the config file was migrated.
+	// This allows detecting old config files. If the flag is not set we:
+	// 1. Set the flag
+	// 2. If the config file has no custom savepath and has some games, we set the savepath to the old default.
+	if (!ConfMan.hasKey("macos_savepath_migrated", Common::ConfigManager::kApplicationDomain)) {
+		if (!ConfMan.hasKey("savepath", Common::ConfigManager::kApplicationDomain) && !ConfMan.getGameDomains().empty()) {
+			ConfMan.set("savepath", getDocumentsPathMacOSX() + "/ScummVM Savegames", Common::ConfigManager::kApplicationDomain);
+		}
+		ConfMan.setBool("macos_savepath_migrated", true, Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
+	}
+
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
 }
