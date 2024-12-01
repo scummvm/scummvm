@@ -62,7 +62,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 	_runtime = runtime;
 
 	int type = 0;
-	if (!getParameter("game_type", type, true))
+	if (!_runtime->getParameter("game_type", type, true))
 		return;
 
 	switch (type) {
@@ -78,13 +78,13 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 
 	_fieldLines = _fieldWidth = 0;
 
-	if (!getParameter("size", _fieldLines, true))
+	if (!_runtime->getParameter("size", _fieldLines, true))
 		return;
 	if (_fieldLines < 2)
 		return;
 
 	if (_gameType == RECTANGLE) {
-		if (!getParameter("width", _fieldWidth, true))
+		if (!_runtime->getParameter("width", _fieldWidth, true))
 			return;
 		if (_fieldWidth < 2)
 			return;
@@ -105,7 +105,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 		break;
 	}
 
-	if (!getParameter("animation_time", _animationTime, true))
+	if (!_runtime->getParameter("animation_time", _animationTime, true))
 		return;
 
 	const char *faceNameBegin = _runtime->parameter("object_name_begin", "obj_");
@@ -147,7 +147,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 			return;
 	}
 
-	_selectDepth = _nodes[0]._face[0].depth() - 1000;
+	_selectDepth = _nodes[0]._face[0].depth(_runtime) - 1000;
 
 	_selected = -1;
 	_hovered = -1;

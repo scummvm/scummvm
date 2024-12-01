@@ -95,7 +95,7 @@ TextManager::TextManager(MinigameManager *runtime) {
 	_currentScore = 0;
 	_scoreUpdateTimer = 0.f;
 
-	_scoreUpdateTime = getParameter("score_update_time", 0.1f);
+	_scoreUpdateTime = _runtime->getParameter("score_update_time", 0.1f);
 }
 
 bool TextManager::getStaticPreset(StaticTextPreset& preset, const char *name) const {

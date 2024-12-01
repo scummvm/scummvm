@@ -67,24 +67,24 @@ const char *Puzzle::getStateName(int angle, bool selected, bool small) const {
 Puzzle::Puzzle(MinigameManager *runtime) {
 	_runtime = runtime;
 
-	if (!getParameter("game_size", gameSize_, true))
+	if (!_runtime->getParameter("game_size", gameSize_, true))
 		return;
 	assert(gameSize_ > 0 && gameSize_ < 100);
 
 	field_.resize(gameSize_, -1);
 	globalAngle_ = 0;
 
-	singleSize_ = getParameter("small_objects", false);
+	singleSize_ = _runtime->getParameter("small_objects", false);
 
-	angles_ = getParameter("angles", 4);
+	angles_ = _runtime->getParameter("angles", 4);
 	assert(angles_ > 0 &&  angles_ < 10);
 
 	if (!(stackBottom_ = _runtime->getObject(_runtime->parameter("inventory_bottom"))))
 		return;
-	if (!getParameter("inventory_size", stackSize_, true))
+	if (!_runtime->getParameter("inventory_size", stackSize_, true))
 		return;
 
-	if (getParameter("rotate_period", rotateTimePeriod_, false)) {
+	if (_runtime->getParameter("rotate_period", rotateTimePeriod_, false)) {
 		assert(sqr(sqrt((float)gameSize_)) == gameSize_);
 		if (sqr(sqrt((float)gameSize_)) != gameSize_)
 			return;
@@ -92,9 +92,9 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 		rotateTimePeriod_ = 86400; // сутки
 	nextRotateTime_ = _runtime->getTime() + rotateTimePeriod_;
 
-	flySpeed_ = getParameter("inventory_drop_speed", 240.f);
+	flySpeed_ = _runtime->getParameter("inventory_drop_speed", 240.f);
 	assert(flySpeed_ > 0.f);
-	returnSpeed_ = getParameter("inventory_return_speed", -1.f);
+	returnSpeed_ = _runtime->getParameter("inventory_return_speed", -1.f);
 
 	warning("STUB: Puzzle::Puzzle()");
 
@@ -140,9 +140,9 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 	size_ = _runtime->getSize(nodes_[0].obj);
 	debugC(2, kDebugMinigames, "size = (%6.2f,%6.2f)", size_.x, size_.y);
 
-	depth_ = nodes_[0].obj.depth();
+	depth_ = nodes_[0].obj.depth(runtime);
 
-	stackPlaceSize_ = getParameter("inventory_place_size", size_ * 1.2f);
+	stackPlaceSize_ = _runtime->getParameter("inventory_place_size", size_ * 1.2f);
 	assert(stackPlaceSize_.x > 0.f && stackPlaceSize_.x < 500.f && stackPlaceSize_.y > 0.f && stackPlaceSize_.y < 500.f);
 	debugC(2, kDebugMinigames, "stackPlaceSize = (%5.1f, %5.1f)", stackPlaceSize_.x, stackPlaceSize_.y);
 
@@ -420,7 +420,7 @@ void Puzzle::quant(float dt) {
 				}
 			} else if (idx == pickedItem_) {
 				node.obj.setState(getStateName(node.angle, hovPlace >= 0 && !testPlace(hovPlace), false));
-				node.obj->set_R(_runtime->game2world(mouse, stackBottom_.depth() - 200));
+				node.obj->set_R(_runtime->game2world(mouse, stackBottom_.depth(_runtime) - 200));
 			} else {
 				node.obj.setState(getStateName(node.angle, node.pos == hovPlace && pickedItem_ == -1, true));
 				if (!isFlying(idx))

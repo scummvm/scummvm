@@ -37,9 +37,9 @@ EffectManager::EffectManager(HoldData<EffectManagerData> &data, MinigameManager 
 
 	data.process(_data);
 
-	_effectTime = clamp(getParameter("effect_time", 3.f), 0.5f, 10.f);
-	_phaseTime = clamp(getParameter("effect_phase_time", _effectTime / 20.f), 0.03f, 1.f);
-	_phaseSpeed = clamp(getParameter("effect_phase_speed", 1.5f), 1.05f, 10.f);
+	_effectTime = clamp(_runtime->getParameter("effect_time", 3.f), 0.5f, 10.f);
+	_phaseTime = clamp(_runtime->getParameter("effect_phase_time", _effectTime / 20.f), 0.03f, 1.f);
+	_phaseSpeed = clamp(_runtime->getParameter("effect_phase_speed", 1.5f), 1.05f, 10.f);
 
 	_current = EFFECT_COUNT;
 

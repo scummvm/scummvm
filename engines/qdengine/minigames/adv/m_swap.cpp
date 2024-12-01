@@ -61,13 +61,13 @@ const char *Swap::getStateName(int angle, bool selected) const {
 Swap::Swap(MinigameManager *runtime) {
 	_runtime = runtime;
 
-	if (!getParameter("game_size", _gameSize, true) || _gameSize < 2)
+	if (!_runtime->getParameter("game_size", _gameSize, true) || _gameSize < 2)
 		return;
 
-	if ((_angles = getParameter("angles", 4)) < 1)
+	if ((_angles = _runtime->getParameter("angles", 4)) < 1)
 		return;
 
-	if ((_rotateTimePeriod = getParameter("rotate_period", 86400.f)) < 10.f)
+	if ((_rotateTimePeriod = _runtime->getParameter("rotate_period", 86400.f)) < 10.f)
 		return;
 	_nextRotateTime = _runtime->getTime() + _rotateTimePeriod;
 
@@ -97,7 +97,7 @@ Swap::Swap(MinigameManager *runtime) {
 		gameData.read(_positions[idx]);
 #endif
 
-	_size = getParameter("element_size", _runtime->getSize(_nodes[0].obj));
+	_size = _runtime->getParameter("element_size", _runtime->getSize(_nodes[0].obj));
 	assert(_size.x > 0.f && _size.y > 0.f && _size.x < 500.f && _size.y < 500.f);
 	debugC(2, kDebugMinigames, "element_size = (%6.2f,%6.2f)", _size.x, _size.y);
 

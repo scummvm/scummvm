@@ -1013,6 +1013,82 @@ void MinigameManager::GameInfoIndex::read(Common::ReadStream &in) {
 	_gameLevel = in.readUint32LE();
 }
 
+int MinigameManager::getParameter(const char* name, const int& defValue) {
+	return round(getParameter(name, (float)defValue));
+}
+
+bool MinigameManager::getParameter(const char* name, int& out, bool obligatory) {
+	float retValue = out;
+	if (getParameter(name, retValue, obligatory)) {
+		out = round(retValue);
+		return true;
+	}
+	return false;
+}
+
+float MinigameManager::getParameter(const char* name, const float &defValue) {
+	if (const char *data = parameter(name, false)) {
+		float retValue = defValue;
+		if (sscanf(data, "%f", &retValue) == 1)
+			return retValue;
+		error("The parameter [%s] contains wrong data type. It must be a number", name);
+	}
+	return defValue;
+
+}
+
+bool MinigameManager::getParameter(const char* name, float &out, bool obligatory) {
+	if (const char * data = parameter(name, obligatory)) {
+		float retValue = out;
+		if (sscanf(data, "%f", &retValue) == 1) {
+			out = retValue;
+			return true;
+		}
+		error("The parameter [%s] contains wrong data type. It must be a number", name);
+	}
+	return false;
+
+}
+
+mgVect2f MinigameManager::getParameter(const char* name, const mgVect2f& defValue) {
+	if (const char * data = parameter(name, false)) {
+		mgVect2f retValue = defValue;
+		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2)
+			return retValue;
+		error("The parameter [%s] contains wrong data type. It must be a pair of numbers", name);
+	}
+	return defValue;
+
+}
+
+bool MinigameManager::getParameter(const char* name, mgVect2f& out, bool obligatory) {
+	if (const char * data = parameter(name, obligatory)) {
+		mgVect2f retValue = out;
+		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2) {
+			out = retValue;
+			return true;
+		}
+		error("The parameter [%s] contains wrong data type. It must be a pair of numbers", name);
+	}
+	return false;
+
+}
+
+mgVect2i MinigameManager::getParameter(const char* name, const mgVect2i& defValue) {
+	mgVect2f retValue = getParameter(name, mgVect2f(defValue.x, defValue.y));
+	return mgVect2i(round(retValue.x), round(retValue.y));
+
+}
+
+bool MinigameManager::getParameter(const char* name, mgVect2i& out, bool obligatory) {
+	mgVect2f retValue = mgVect2f(out.x, out.y);
+	if (getParameter(name, retValue, obligatory)) {
+		out = mgVect2i(round(retValue.x), round(retValue.y));
+		return true;
+	}
+	return false;
+}
+
 //========================================================================================================================
 
 
