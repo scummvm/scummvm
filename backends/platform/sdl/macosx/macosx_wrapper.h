@@ -25,6 +25,7 @@
 #include <common/str.h>
 
 Common::String getDesktopPathMacOSX();
+Common::String getDocumentsPathMacOSX();
 Common::String getResourceAppBundlePathMacOSX();
 Common::String getAppSupportPathMacOSX();
 Common::String getMacBundleName();

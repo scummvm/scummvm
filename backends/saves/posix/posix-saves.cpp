@@ -32,6 +32,9 @@
 
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs.h"
+#if defined(MACOSX)
+#include "backends/platform/sdl/macosx/macosx_wrapper.h"
+#endif
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -44,14 +47,11 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	Common::Path savePath;
 
 #if defined(MACOSX)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		savePath = home;
-		savePath.joinInPlace("Documents/ScummVM Savegames");
-
+	savePath = getAppSupportPathMacOSX();
+	if (!savePath.empty()) {
+		savePath.joinInPlace("Savegames");
 		ConfMan.registerDefault("savepath", savePath);
 	}
-
 #else
 	const char *envVar;
 

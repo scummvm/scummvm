@@ -60,7 +60,7 @@ Default saved game paths are shown below.
 
     .. tab-item:: macOS
 
-        ``~/Documents/ScummVM Savegames/``
+        ``~/Library/Application Support/ScummVM/Savegames/`` (with versions of ScummVM prior to 2.9 it was in ``~/Documents/ScummVM Savegames/``).
 
 
     .. tab-item:: Linux/Unix
