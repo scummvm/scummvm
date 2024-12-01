@@ -337,6 +337,12 @@ void OSystem_Wii::updateMousePalette() {
 	if (_texMouse.palette) {
 		if (!_cursorPaletteDisabled) {
 			memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
+#ifdef USE_RGB_COLOR
+		} else if (_pfGame.bytesPerPixel != 1) {
+			// When restoring the palette, there may be cases where game doesn't have any palette
+			// In this case, clear the palette
+			memset(_texMouse.palette, 0, 256 * 2);
+#endif
 		} else {
 			memcpy(_texMouse.palette, _texGame.palette, 256 * 2);
 		}
