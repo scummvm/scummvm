@@ -121,7 +121,7 @@ void Room704::parser() {
 }
 
 void Room704::daemon() {
-	bool ecx = player_said("take");
+	const bool takeFl = player_said("take");
 
 	switch (_G(kernel).trigger) {
 	case 70:
@@ -232,7 +232,7 @@ void Room704::daemon() {
 		break;
 
 	case 83:
-		if (ecx && _G(player).click_y <= 374) {
+		if (takeFl && _G(player).click_y <= 374) {
 			switch (imath_ranged_rand(1, 3)) {
 			case 1:
 				digi_play("com077", 1, 255, 84, -1);
@@ -266,13 +266,13 @@ void Room704::daemon() {
 		break;
 
 	case 123:
-		if (_field58 != 124)
+		if (_field58_mode != 124)
 			break;
 
-		switch (_field5C) {
+		switch (_field5C_should) {
 		case 121:
 			_704Eye2aSeries = series_load("704EYE2a", -1, nullptr);
-			_field5C = 922;
+			_field5C_should = 922;
 			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, callback, "monk");
 			sendWSMessage_10000(1, _monkMach, _704Eye2aSeries, 1, 5, 123, _704Eye2aSeries, 5, 5, 0);
 
@@ -298,11 +298,11 @@ void Room704::daemon() {
 		case 922:
 			switch (imath_ranged_rand(1, 2)) {
 			case 1:
-				_field5C = 923;
+				_field5C_should = 923;
 				break;
 
 			case 2:
-				_field5C = 924;
+				_field5C_should = 924;
 				break;
 
 			default:
@@ -314,7 +314,7 @@ void Room704::daemon() {
 			break;
 
 		case 923:
-			_field5C = 925;
+			_field5C_should = 925;
 			sendWSMessage_10000(1, _monkMach, _704Eye2aSeries, 6, 7, -1, _704Eye2aSeries, 11, 13, 4);
 			sendWSMessage_1a0000(_monkMach, 9);
 			digi_play(conv_sound_to_play(), 1, 255, 123, -1);
@@ -322,7 +322,7 @@ void Room704::daemon() {
 			break;
 
 		case 924:
-			_field5C = 925;
+			_field5C_should = 925;
 			sendWSMessage_10000(1, _monkMach, _704Eye2aSeries, 6, 10, -1, _704Eye2aSeries, 11, 13, 4);
 			sendWSMessage_1a0000(_monkMach, 9);
 			digi_play(conv_sound_to_play(), 1, 255, 123, -1);
@@ -330,13 +330,13 @@ void Room704::daemon() {
 			break;
 
 		case 925:
-			_field5C = 926;
+			_field5C_should = 926;
 			sendWSMessage_10000(1, _monkMach, _704Eye2aSeries, 14, 17, 123, _704Eye2aSeries, 17, 17, 0);
 
 			break;
 
 		case 926:
-			_field5C = 122;
+			_field5C_should = 122;
 			kernel_timing_trigger(10, 123, nullptr);
 
 			break;
@@ -348,10 +348,10 @@ void Room704::daemon() {
 		break;
 
 	case 127:
-		if (_field58 != 124)
+		if (_field58_mode != 124)
 			break;
 
-		switch (_field5C) {
+		switch (_field5C_should) {
 		case 121:
 		case 122:
 		case 124:

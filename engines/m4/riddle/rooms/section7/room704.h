@@ -42,8 +42,8 @@ public:
 private:
 	static void callback(frac16 myMessage, machine *sender);
 
-	int32 _field58 = 0;
-	int32 _field5C = 0;
+	int32 _field58_mode = 0;
+	int32 _field5C_should = 0;
 
 	int32 _704Eye2aSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
