@@ -24,8 +24,6 @@
 
 namespace QDEngine {
 
-QDObject QDObject::ZERO(0, "ZERO OBJECT");
-
 const char *QDObject::getName() const {
 #ifdef _DEBUG
 	return name_.c_str();

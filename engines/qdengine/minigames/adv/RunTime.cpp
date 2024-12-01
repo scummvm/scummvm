@@ -798,7 +798,7 @@ float MinigameManager::getDepth(const mgVect3f& pos) const {
 QDObject MinigameManager::getObject(const char *name) const {
 	if (!name || !*name) {
 		warning("MinigameManager::getObject(): null name");
-		return QDObject::ZERO;
+		return QDObject(0, "ZERO OBJECT");
 	}
 
 	qdMinigameObjectInterface *obj = _scene->object_interface(name);
@@ -807,7 +807,7 @@ QDObject MinigameManager::getObject(const char *name) const {
 
 	if (obj)
 		return QDObject(obj, name);
-	return QDObject::ZERO;
+	return QDObject(0, "ZERO OBJECT");
 }
 
 bool MinigameManager::testObject(const char *name) const {

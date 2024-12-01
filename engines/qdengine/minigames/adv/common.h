@@ -39,8 +39,6 @@ class QDObject {
 #endif
 
 public:
-	static QDObject ZERO;
-
 	QDObject(qdMinigameObjectInterface* obj = 0, const char* name = "") : _obj(obj) {
 #ifdef _DEBUG
 		name_ = name;
