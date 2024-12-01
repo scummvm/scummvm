@@ -36,6 +36,10 @@ function add_to_config_h_if_yes(value, define) {
 		print("/* " define " */") >> config_h
 }
 
+function add_line_to_config_h(line) {
+	print(line) >> config_h
+}
+
 #
 # Feature handling functions
 #
@@ -85,6 +89,11 @@ function get_engine_dependencies(engine, deps) {
 	return get_values("_engine_" engine "_deps", deps)
 }
 
+# Get the components
+function get_engine_components(engine, deps) {
+	return get_values("_engine_" engine "_components", components)
+}
+
 # Get the base engine game support description
 function get_engine_base(engine) {
 	return ENVIRON["_engine_" engine "_base"]
@@ -107,6 +116,18 @@ function disable_engine(engine) {
 	ENVIRON["_engine_" engine "_build"] = "no"
 }
 
+function enable_component(comp) {
+	ENVIRON["_component_" comp "_enabled"] = "yes"
+}
+
+function get_component_enabled(comp) {
+	return ENVIRON["_component_" comp "_enabled"]
+}
+
+function get_component_settings(comp) {
+	return ENVIRON["_component_" comp "_settings"]
+}
+
 function check_engine_deps(engine) {
 	unmet_deps = ""
 
@@ -123,6 +144,17 @@ function check_engine_deps(engine) {
 		if (unmet_deps) {
 			print("WARNING: Disabling engine " get_engine_name(engine) " because the following dependencies are unmet: " unmet_deps)
 			disable_engine(engine)
+		}
+	}
+}
+
+function check_engine_components(engine) {
+	# Check whether the engine is enabled
+	if (get_engine_build(engine) != "no") {
+		# Collect components
+		compcount = get_engine_components(engine, components)
+		for (c = 1; c <= compcount; c++) {
+			enable_component(components[c])
 		}
 	}
 }
@@ -267,6 +299,7 @@ END {
 	for (e = 1; e <= engine_count; e++) {
 		engine = engines[e]
 		check_engine_deps(engine)
+		check_engine_components(engine)
 		if (get_engine_sub(engine) == "no") {
 			# It's a main engine
 			if (get_engine_build(engine) == "no") {
@@ -341,6 +374,31 @@ END {
 	print_engines("Engines (plugins):", _engines_built_dynamic, _dynamic)
 	print_engines("Engines Skipped:", _engines_skipped, _skipped)
 	print_engines("WARNING: This ScummVM build contains the following UNSTABLE engines:", _engines_built_wip, _wip)
+
+	#
+	# Process components
+	#
+	add_line_to_config_h("\n/* components */")
+	add_line_to_config_mk("\n# components")
+	components_count = get_values("_components", components)
+	comp_enabled = ""
+	for (c = 1; c <= components_count; c++) {
+		setting = get_component_settings(components[c])
+		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " setting)
+
+		if (get_component_enabled(components[c]) == "yes") {
+			add_line_to_config_mk(setting "=1")
+			comp_enabled = comp_enabled components[c] " "
+		} else {
+			add_line_to_config_mk("# " setting)
+		}
+	}
+	add_line_to_config_h("/* end of components */")
+	add_line_to_config_mk("# end of components")
+
+	if (comp_enabled == "")
+		comp_enabled = "<none>"
+	print("\nComponents Enabled: " comp_enabled)
 
 	# Ensure engines folder exists prior to trying to generate
 	# files into it (used for out-of-tree-builds)
