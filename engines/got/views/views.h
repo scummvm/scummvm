@@ -22,13 +22,13 @@
 #ifndef GOT_VIEWS_H
 #define GOT_VIEWS_H
 
-#include "got/views/view1.h"
+#include "got/views/story.h"
 
 namespace Got {
 namespace Views {
 
 struct Views {
-	View1 _view1;
+	Story _story;
 };
 
 } // namespace Views

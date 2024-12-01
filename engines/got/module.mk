@@ -11,7 +11,7 @@ MODULE_OBJS = \
 	utils/file.o \
 	utils/res_archive.o \
 	views/view.o \
-	views/view1.o
+	views/story.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOT), DYNAMIC_PLUGIN)

@@ -19,26 +19,25 @@
  *
  */
 
-#ifndef GOT_VIEWS_VIEW1_H
-#define GOT_VIEWS_VIEW1_H
+#ifndef GOT_VIEWS_STORY_H
+#define GOT_VIEWS_STORY_H
 
+#include "graphics/managed_surface.h"
 #include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-class View1 : public View {
+class Story : public View {
 private:
-	byte _pal[256 * 3] = { 0 };
-	int _offset = 0;
+	Graphics::ManagedSurface _image1, _image2;
 
 public:
-	View1() : View("View1") {
-	}
-	virtual ~View1() {
-	}
+	Story() : View("Story") {}
+	virtual ~Story() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;

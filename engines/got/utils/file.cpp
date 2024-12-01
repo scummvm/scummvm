@@ -248,6 +248,7 @@ long res_read(const Common::String &name, void *buff) {
 	if (f.open(Common::Path(name))) {
 		return f.read(buff, f.size());
 	} else {
+		error("Could not load - %s", name.c_str());
 		return -1;
 	}
 }
