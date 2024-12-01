@@ -23,6 +23,7 @@
 #define GOT_VARS_H
 
 #include "common/events.h"
+#include "graphics/screen.h"
 #include "got/defines.h"
 
 namespace Got {
@@ -165,6 +166,8 @@ public:
 	int8 _ide_run = 0, _fast_exit = 0, _nojoy = 0, _gr = 0, _xdos = 0;
 	int8 _main_loop = 0;
 	int8 _end_tile = 0;
+
+	byte _pbuff[PALETTE_SIZE];
 };
 
 #define _G(X) (g_vars->_##X)

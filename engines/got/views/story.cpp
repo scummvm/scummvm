@@ -19,46 +19,60 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
-#include "got/views/view1.h"
+#include "got/views/story.h"
+#include "got/gfx/palette.h"
+#include "got/utils/file.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-bool View1::msgFocus(const FocusMessage &msg) {
-	Common::fill(&_pal[0], &_pal[256 * 3], 0);
-	_offset = 128;
+bool Story::msgFocus(const FocusMessage &msg) {
+	char back[4][262];
+
+	res_read("OPENSONG", _G(song));
+	res_read("STORY1", _G(tmp_buff));
+	res_read("OPENBACK", back);
+	res_read("STORYPIC", back);
+
+	// Load the images
+	_image1.create(320, 240);
+	_image2.create(320, 240);
+
+	for (int i = 0; i < 12; i++) {
+		Graphics::ManagedSurface *s = (i < 6) ? &_image1 : &_image2;
+		byte *destP = (byte *)s->getBasePtr(0, (i % 6) * 40);
+		res_read(Common::String::format("OPENP%d", i + 1), destP);
+	}
+
+	res_read("STORYPAL", _G(pbuff));
+	_G(pbuff)[2] = 0;
+	_G(pbuff)[1] = 0;
+	_G(pbuff)[0] = 0;
+	set_palette();
+
 	return true;
 }
 
-bool View1::msgKeypress(const KeypressMessage &msg) {
+bool Story::msgUnfocus(const UnfocusMessage &msg) {
+	_image1.clear();
+	_image2.clear();
+	return true;
+}
+
+bool Story::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	close();
 	return true;
 }
 
-void View1::draw() {
-	// Draw a bunch of squares on screen
+void Story::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
-	for (int i = 0; i < 100; ++i)
-		s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
+	s.blitFrom(_image1);
 }
 
-bool View1::tick() {
-	// Cycle the palette
-	++_offset;
-	for (int i = 0; i < 256; ++i)
-		_pal[i * 3 + 1] = (i + _offset) % 256;
-	g_system->getPaletteManager()->setPalette(_pal, 0, 256);
-
-	// Below is redundant since we're only cycling the palette, but it demonstrates
-	// how to trigger the view to do further draws after the first time, since views
-	// don't automatically keep redrawing unless you tell it to
-	if ((_offset % 256) == 0)
-		redraw();
-
+bool Story::tick() {
 	return true;
 }
 

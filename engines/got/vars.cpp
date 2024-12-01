@@ -86,6 +86,8 @@ void Vars::load() {
 		error("Error loading static data");
 
 	load_palette();
+
+	_song = new byte[20000];
 }
 
 Vars::~Vars() {
@@ -93,6 +95,7 @@ Vars::~Vars() {
 
 	delete[] _tmp_buff;
 	delete[] _mask_buff;
+	delete[] _song;
 }
 
 } // namespace Got

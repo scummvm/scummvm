@@ -30,6 +30,7 @@ extern void load_palette();
 extern void set_screen_pal();
 extern void xsetpal(byte color, byte R, byte G, byte B);
 extern void xgetpal(byte *pal, int num_colrs, int start_index);
+extern void set_palette();
 
 } // namespace Got
 
