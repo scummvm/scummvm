@@ -1555,21 +1555,14 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 }
 
 uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(blob.data(), blob.size());
+	stream->seek(0xA);
+	uint16 bp4 = stream->readUint16LE();
+	bp4++;
+	stream->seek(0xA + bp4 - 2);
+	uint8 bp6 = stream->readByte();
+
 	/*
-	fn00B7_168C proc
-	enter	6h,0h
-	push	ds
-	lds	si,[bp+6h]
-	add	si,0Ah
-	lodsw
-	inc	ax
-	mov	[bp-4h],ax
-	add	si,[bp-4h]
-	sub	si,2h
-	xor	ah,ah
-	lodsb
-	mov	[bp-6h],ax
-	pop	ds
 	cmp	word ptr [bp-4h],3h
 	jnc	16B4h
 
