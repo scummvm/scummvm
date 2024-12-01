@@ -93,6 +93,7 @@ struct BackgroundAnimationBlob {
 	AnimFrame GetFrame(uint32 index);
 	AnimFrame GetCurrentFrame();
 	static uint16 Func1480(Common::Array<uint8>& blob, bool bpp6, uint16 bpp8);
+	static uint16 Func168C(Common::Array<uint8> &blob);
 };
 
 

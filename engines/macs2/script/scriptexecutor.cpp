@@ -1008,6 +1008,9 @@ void ScriptExecutor::FuncB6BE_actual() {
 	// TODO: Check if we try to access an invalid index
 
 	// l0037_B715:
+	// TODO: Load the data of the animation
+
+
 	mov	ax,[bp-2h]
 	shl	ax,4h
 	les	di,[bp-0Ch]
