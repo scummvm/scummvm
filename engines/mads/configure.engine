@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
-# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
 add_engine mads "MADS" yes "madsv2" "Rex Nebular"
 add_engine madsv2 "MADS V2" no "" "Return of the Phantom, Dragonsphere"
