@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-27 22:48+0000\n"
-"PO-Revision-Date: 2024-11-21 12:30+0000\n"
+"PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
 "org/projects/scummvm/scummvm/zh_Hans/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh 音频"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1493,14 +1493,10 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM 找不到能运行此游戏的引擎！"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
-msgstr "你将此目录添加到 SAF 了吗？点击顶部的帮助按钮 [?] 获取详细说明"
+msgstr "你授予 ScummVM 访问此目录的权限了吗？点击顶部的帮助按钮 [?] 获取详细说明"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -2725,10 +2721,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "你真的要删除此存档吗？"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "写入存档文件时出错\n"
+msgstr "删除存档文件时出错"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -3061,10 +3055,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801（16 色）"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801（16 色）"
+msgstr "PC-9801（8 色）"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3073,19 +3065,15 @@ msgstr "Macintosh b/w"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA 灰阶"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821（256 色）"
+msgstr "Windows（256 色）"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801（16 色）"
+msgstr "Windows（16 色）"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3098,24 +3086,22 @@ msgid "Hercules Amber"
 msgstr "Hercules 琥珀色"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "前往位置"
+msgstr "不旋转"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "顺时针"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 度"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "逆时针"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -3650,10 +3636,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "%s 引擎匹配的游戏 ID："
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "游戏 ID 不支持"
+msgstr "游戏未实现"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -4766,75 +4750,6 @@ msgid "Touch Controls"
 msgstr "触屏控制"
 
 #: backends/platform/android/android.cpp:1117
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4906,10 +4821,10 @@ msgstr ""
 "点击或单击右上角的控制器图标，即可更改触摸控制模式\n"
 "### 直接鼠标 \n"
 "\n"
-"直接使用触摸屏控制光标位置。指针会跳转到手指触碰到屏幕的位置（默认用于菜"
-"单）。\n"
+"直接使用触摸屏控制光标位置。指针会跳转到手指触碰到屏幕的位置（默认用于菜单）"
+"。\n"
 "\n"
-"  ![直接鼠标模式](mouse.png \"直接鼠标模式\"){w=10em}。\n"
+"  ![直接鼠标模式](mouse.png \"直接鼠标模式\"){w=10em}\n"
 "\n"
 "### 触摸板模拟 \n"
 "\n"
@@ -4923,8 +4838,8 @@ msgstr ""
 "\n"
 "  ![游戏手柄模式](gamepad.png \"游戏手柄模式\"){w=10em}\n"
 "\n"
-"要为菜单、2D 游戏和 3D 游戏选择首选触控模式，请进入 **全局设置 > 后端 > 选择"
-"首选触控模式**。\n"
+"要为菜单、2D 游戏和 3D 游戏选择首选触控模式，请进入 **全局设置 > 后端 > "
+"选择首选触控模式**。\n"
 "\n"
 "## 触摸操作 \n"
 "\n"
@@ -5205,80 +5120,6 @@ msgstr ""
 "思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner, by swiping two fingers from "
-#| "left to right, or in the global settings from the Launcher go to **Global "
-#| "Options > Backend > Choose the preferred touch mode**. It's possible to "
-#| "configure the touch mode for three situations (ScummVM menus, 2D games "
-#| "and 3D games).\n"
-#| "\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "| Gesture           | Action            \n"
-#| "| ------------------|-------------------\n"
-#| "| `One finger tap`  | Left mouse click  \n"
-#| "| `Two fingers tap` | Right mouse click \n"
-#| "| `Two fingers double tap` | ESC \n"
-#| "| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
-#| "such as for selection from action wheel in Curse of Monkey Island \n"
-#| "| `Two fingers press & hold for >0.5s` | Right mouse button hold and "
-#| "drag, such as for selection from action wheel in Tony Tough \n"
-#| "| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
-#| "| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
-#| "15) \n"
-#| "| `Two fingers swipe (top to bottom)` | Access Global Main Menu in "
-#| "games \n"
-#| "| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
-#| "\n"
-#| "### Virtual Gamepad \n"
-#| "\n"
-#| "Devices running iOS 15 or later can connect virtual gamepad controller by "
-#| "swiping two fingers from right to left or through **Global Options > "
-#| "Backend**. The directional button can be configured to either a "
-#| "thumbstick or a dpad.\n"
-#| "**Note** While the virtual controller is connected it is not possible to "
-#| "perform mouse clicks using tap gestures since they are disabled as long "
-#| "as the virtual controller is visible. Left mouse clicks are performed by "
-#| "pressing the A button. Tap gestures are enabled again when virtual "
-#| "controller is disconnected.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen or swipe two fingers downwards.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, perform a pinch gesture (zoom out) or tap on any "
-#| "editable text field. To hide the virtual keyboard, tap the controller "
-#| "icon again, do an opposite pinch gesture (zoom in) or tap outside the "
-#| "text field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5353,8 +5194,9 @@ msgid ""
 msgstr ""
 "## 触摸控制模式\n"
 "通过轻点或点击右上角的控制器图标、用两根手指从左向右轻扫，或在启动器的全局设"
-"置中进入**全局设置 > 后端 > 选择首选触摸模式**，即可更改触摸控制模式。可以在"
-"三种情况下（ScummVM 菜单、2D 游戏和 3D 游戏）配置触摸模式。\n"
+"置中进入**全局设置 > 后端 > "
+"选择首选触摸模式**，即可更改触摸控制模式。可以在三种情况下（ScummVM 菜单、2D "
+"游戏和 3D 游戏）配置触摸模式。\n"
 "\n"
 "### 直接鼠标\n"
 "\n"
@@ -5368,8 +5210,8 @@ msgstr ""
 "\n"
 "  ![触摸板模式](touchpad.png \"触摸板模式\"){w=10em}\n"
 "\n"
-"转到**全局设置 > 后端 > 选择偏好触摸模式**以选择菜单、2D 和 3D 游戏的偏好触摸"
-"模式。\n"
+"转到**全局设置 > 后端 > 选择偏好触摸模式**以选择菜单、2D 和 3D "
+"游戏的偏好触摸模式。\n"
 "\n"
 "## 触摸操作 \n"
 "\n"
@@ -5378,8 +5220,8 @@ msgstr ""
 "| `单指点击`  | 鼠标左键点击  \n"
 "| `双指点击` | 鼠标右键点击 \n"
 "| `双指双击` | ESC \n"
-"| `单指长按 >0.5s` | 鼠标左键拖放（如 Curse of Monkey Island 中从操作滚轮选"
-"择） \n"
+"| `单指长按 >0.5s` | 鼠标左键拖放（如 Curse of Monkey Island "
+"中从操作滚轮选择） \n"
 "| `双指长按 >0.5s` | 鼠标右键拖放（如 Tony Tough 中从操作滚轮选择） \n"
 "| `双指滑动（从左向右）` | 切换触摸模式 \n"
 "| `双指滑动（从右向左）` | 开关虚拟控制器 (>iOS 15) \n"
@@ -5388,11 +5230,11 @@ msgstr ""
 "\n"
 "### 虚拟手柄  \n"
 "\n"
-"运行 iOS 15 或更高版本的设备可通过两根手指从右向左滑动或通过**全局设置 > 后端"
-"**连接虚拟游戏手柄控制器。方向键可配置为拇指杆或手柄。\n"
+"运行 iOS 15 或更高版本的设备可通过两根手指从右向左滑动或通过**全局设置 > "
+"后端**连接虚拟游戏手柄控制器。方向键可配置为拇指杆或手柄。\n"
 "**注意** 在连接虚拟控制器时，无法使用点击手势执行鼠标点击，因为只要虚拟控制器"
-"可见，点击手势就会被禁用。鼠标左键点击可通过按 A 键来执行。断开虚拟控制器连接"
-"后，点击手势将重新启用。\n"
+"可见，点击手势就会被禁用。鼠标左键点击可通过按 A "
+"键来执行。断开虚拟控制器连接后，点击手势将重新启用。\n"
 "\n"
 "### 全局主菜单 \n"
 "\n"
@@ -6117,14 +5959,12 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "不要为文本模拟 NTSC 交错"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "使用银色光标"
+msgstr "使用方格光标"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "使用较新 Apple II 机型中的方格光标"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -6183,10 +6023,8 @@ msgid ""
 msgstr "启用鼠标支持。允许使用鼠标移动与操作游戏内菜单。"
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "预测输入对话框"
+msgstr "鼠标点击时显示预测输入对话框"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6195,6 +6033,8 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"启用辅助预测输入对话框，在文本框区域内点击鼠标左键时会显示。\n"
+"如果有相关的按键绑定，依然可以按需触发对话框"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6393,16 +6233,12 @@ msgstr "AGOS 主页面"
 #: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
 #: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
 #: engines/tucker/metaengine.cpp:168
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Game keymappings"
 msgstr "游戏按键绑定"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymapping"
-msgstr "是/否绑定"
+msgstr "是/否按键绑定"
 
 #: engines/agos/metaengine.cpp:244
 msgid "Exit cutscene"
@@ -6425,8 +6261,6 @@ msgid "Toggle sound effects on/off"
 msgstr "开关音效"
 
 #: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle fast mode on/off"
 msgstr "开关快速模式"
 
@@ -7282,37 +7116,27 @@ msgstr "退出屏幕按键绑定"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "退出索尼入场屏幕"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "选中至行尾"
+msgstr "选择选项/游戏内点击"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "打开主菜单"
+msgstr "打开操作菜单/关闭菜单"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "默认游戏按键绑定"
+msgstr "默认游戏速度"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "显示游戏致谢界面"
+msgstr "减速游戏"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "影片加速"
+msgstr "加速游戏"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
@@ -7339,69 +7163,53 @@ msgid "Inventory"
 msgstr "物品栏"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
 msgstr "激活"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "说话"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "行动"
+msgstr "行动菜单"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Game menu"
 msgid "System menu"
 msgstr "游戏菜单"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show collisions"
-msgstr "显示设置"
+msgstr "显示碰撞"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "向左移动"
+msgstr "向左上方移动"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "向右移动"
+msgstr "向右上方移动"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "向下移动"
+msgstr "向左下方移动"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "向右移动"
+msgstr "向右下方移动"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "菜单选项上移"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "菜单选项下移"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7489,34 +7297,24 @@ msgstr "快速读档"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "快速移动修饰"
+msgstr "快速模式"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Game menu"
 msgid "Player menu"
-msgstr "游戏菜单"
+msgstr "玩家菜单"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Increase game speed"
-msgstr "影片加速"
+msgstr "加速游戏"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Decrease game speed"
-msgstr "影片加速"
+msgstr "减速游戏"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "退出游戏"
 
@@ -7525,56 +7323,40 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "未编译入 Versailles 1685 支持"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "开关静音"
+msgstr "开关菜单"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "开关战斗"
+msgstr "开关时钟"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "下一个对话框/菜单项"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "上一个调色板"
+msgstr "上一个对话框/菜单项"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "转到下一个物品"
+msgstr "下一个物品"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "转到前一个物品"
+msgstr "上一个物品"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Pick up/Put away"
 msgid "Pick up / Operate"
-msgstr "捡起/收起"
+msgstr "捡起/操作"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "物品栏物品动画"
+msgstr "激活物品栏物品"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "游戏按键绑定"
+msgstr "游戏按键"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7584,26 +7366,20 @@ msgstr "游戏阻止在此时退出。你确定依然要退出吗？"
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "跳过入场动画/退出地图或物品界面"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "打开 Holomap"
+msgstr "打开地图"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "显示地图"
+msgstr "显示行走区域地图"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle walk speed"
-msgstr "开关快速模式"
+msgstr "切换行走速度"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7612,19 +7388,15 @@ msgstr "打开主菜单"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "在鼠标指针与上一个游戏项目间切换"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
-msgstr "打开/关闭物品栏"
+msgstr "物品栏上个物品"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
-msgstr "打开/关闭物品栏"
+msgstr "物品栏下个物品"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7717,8 +7489,6 @@ msgid "Automatic drilling"
 msgstr "自动下钻"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "允许在钻井任意区域成功下钻"
 
@@ -7763,14 +7533,12 @@ msgid "Keep graphics as close as possible to the original"
 msgstr "使图形尽可能与原游戏相近"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "启用存储"
+msgstr "启用石块旅行"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "允许在起点使用岩石射击装置进行旅行"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7788,21 +7556,15 @@ msgid "Shoot"
 msgstr "射击"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "旋转"
+msgstr "向上旋转"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "旋转"
+msgstr "向下旋转"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "更改模式"
 
@@ -7811,25 +7573,19 @@ msgid "Info Menu"
 msgstr "信息菜单"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "选择着色器"
+msgstr "选择王子"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "选择着色器"
+msgstr "选择公主"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:208
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "开关静音"
+msgstr "开关声音"
 
 #: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
@@ -7854,30 +7610,24 @@ msgstr "跑步"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "爬行"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "向前移动"
+msgstr "面向前"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:167
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "增大缩放系数"
+msgstr "增大步长大小"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:173
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "减小缩放系数"
+msgstr "减小步长大小"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:178
@@ -7905,23 +7655,17 @@ msgstr "收集钻井平台"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "更改模式"
+msgstr "更改角度"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "更改字体大小"
+msgstr "更改步长"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "开关静音"
+msgstr "切换高度"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8242,16 +7986,12 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "未编译入 GroovieV2 支持"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "可用引擎："
+msgstr "Groovie 引擎"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "跳过 Hall of Records 故事板场景"
+msgstr "跳过或快进场景"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8302,10 +8042,8 @@ msgid "Enable Gore Mode when available"
 msgstr "可用时启用血腥模式"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "跳过对话"
+msgstr "设置对话框"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8362,29 +8100,21 @@ msgid "Glowstick"
 msgstr "荧光棒"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "用户取消"
+msgstr "用户帮助"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle sound"
-msgstr "开关静音"
+msgstr "开关声音"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat Last Message"
 msgid "Repeat last line"
 msgstr "重复上一消息"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "恢复游戏："
+msgstr "恢复游戏"
 
 #: engines/hugo/metaengine.cpp:142 engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -8405,64 +8135,48 @@ msgid "Show inventory"
 msgstr "显示物品栏"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "改良模式"
+msgstr "高速模式"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
 msgstr "向上移动"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "移到底部"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "向左移动"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "向右移动"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "向左移动"
+msgstr "向左上方移动"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "向右移动"
+msgstr "向右上方移动"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "向左移动"
+msgstr "向左下方移动"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "向右移动"
+msgstr "向右下方移动"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8525,26 +8239,18 @@ msgid "Side Step"
 msgstr "侧身避让"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Move cursor up"
 msgstr "光标上移"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Move cursor down"
 msgstr "光标下移"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Move cursor left"
 msgstr "光标左移"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Move cursor right"
 msgstr "光标右移"
 
@@ -8653,13 +8359,13 @@ msgstr "使用左按钮攻击，右按钮捡起物品"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "原版 AD&D 规则"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
-msgstr ""
+msgstr "让 AD&D 规则的实现与 AD&D 第二版手册中的内容更接近"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -8703,8 +8409,6 @@ msgstr "向前移动"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "向后移动"
 
@@ -8924,84 +8628,62 @@ msgid "TTS Narrator"
 msgstr "TTS 讲述人"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Fight sequence keymappings"
-msgstr "退出面板按键绑定"
+msgstr "战斗阵列按键绑定"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Index keymappings"
-msgstr "游戏按键绑定"
+msgstr "索引按键绑定"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymappings"
-msgstr "是/否绑定"
+msgstr "是/否按键绑定"
 
 #: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "恢复游戏："
+msgstr "重启游戏"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "光标左移"
+msgstr "移动光标 - 左上角"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "移动光标 - 左侧"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "移动光标 - 左下角"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "光标右移"
+msgstr "移动光标 - 右上角"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "光标右移"
+msgstr "移动光标 - 右侧"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "光标右移"
+msgstr "移动光标 - 右下角"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Go to next index"
-msgstr "转到下一个物品"
+msgstr "转到下一个索引"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "转到前一个物品"
+msgstr "转到上一个索引"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "选择着色器"
+msgstr "选择索引"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -9018,32 +8700,22 @@ msgid ""
 msgstr "选中后，游戏入场期间会使用数字音乐。否则会播放 MIDI 音乐。"
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
 msgstr "光标上移"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
 msgstr "光标下移"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
 msgstr "光标左移"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
 msgstr "光标右移"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Repeat Last Message"
 msgid "Repeat last message"
 msgstr "重复上一消息"
 
@@ -9068,64 +8740,44 @@ msgid "Naughty game mode"
 msgstr "调皮游戏模式"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Start menu keymappings"
-msgstr "游戏按键绑定"
+msgstr "开始菜单按键绑定"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "打开主菜单"
+msgstr "打开游戏菜单"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
 msgstr "向上滚动"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
 msgstr "向下滚动"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "恢复游戏："
+msgstr "启动游戏"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "恢复游戏："
+msgstr "继续游戏"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "显示提示"
+msgstr "显示入场动画"
 
 #: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
 msgstr "显示游戏致谢界面"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show quotes"
-msgstr "显示设置"
+msgstr "显示引言"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "加速动画"
+msgstr "重新播放动画"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -9960,20 +9612,14 @@ msgstr "对话面板按键绑定"
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
-#, fuzzy
-#| msgid "Boss Key"
 msgid "Boss key"
 msgstr "老板键"
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show options"
 msgstr "显示设置"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Exit Conversation"
 msgid "Exit conversation"
 msgstr "退出对话"
 
@@ -9993,14 +9639,10 @@ msgid "Pause game"
 msgstr "暂停游戏"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Abort Speech"
 msgid "Abort speech"
 msgstr "取消语音"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show Dialogue"
 msgid "Show dialogue"
 msgstr "显示对话"
 
@@ -10059,32 +9701,22 @@ msgid "Swallow"
 msgstr "吞下"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Reading speed"
 msgstr "读取速度"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change Music"
 msgid "Change music"
 msgstr "更改音乐"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change Sound"
 msgid "Change sound"
 msgstr "更改声音"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Change Voices"
 msgid "Change voices"
 msgstr "更改语音"
 
 #: engines/saga/metaengine.cpp:427
-#, fuzzy
-#| msgid "Continue Game"
 msgid "Continue game"
 msgstr "继续游戏"
 
@@ -10094,24 +9726,18 @@ msgid "Quit game"
 msgstr "退出游戏"
 
 #: engines/saga/metaengine.cpp:454
-#, fuzzy
-#| msgid "Cancel Quit"
 msgid "Cancel quit"
 msgstr "取消退出"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
-msgstr ""
+msgstr "好的"
 
 #: engines/saga/metaengine.cpp:464
-#, fuzzy
-#| msgid "Cancel Load"
 msgid "Cancel load"
 msgstr "取消加载"
 
 #: engines/saga/metaengine.cpp:474
-#, fuzzy
-#| msgid "Cancel Save"
 msgid "Cancel save"
 msgstr "取消保存"
 
@@ -10238,13 +9864,13 @@ msgstr "启用因法律原因禁用的图像"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "启用使用 GMM 保存"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
-msgstr ""
+msgstr "允许用 GMM 进行存档。警告：用其创建的存档可能损坏、无法使用。使用时风险自负！"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -10733,11 +10359,8 @@ msgid "Enable online competitive mods"
 msgstr "启用在线竞争模组"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
-msgstr "允许为在线经济设计的自定义更改。"
+msgstr "允许为在线竞技游戏设计的自定义更改。"
 
 #: engines/scumm/dialogs.cpp:1717
 msgid "Enable connection to Multiplayer Server"
@@ -10854,8 +10477,6 @@ msgid "Run in really fast mode (*)"
 msgstr "极速模式 (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "切换图形过滤器"
 
@@ -11251,6 +10872,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"警告：此再发布版本包含经过修补的游戏脚本，\n"
+"因此随时间可能会崩溃或无法正常工作。"
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11328,46 +10951,32 @@ msgid "Enable low latency audio mode"
 msgstr "启用低延迟音频模式"
 
 #: engines/scumm/metaengine.cpp:749
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
-msgstr ""
-"允许游戏以降低声音精确度为代价，使用低延迟音频。\t\t建议仅在你正常游玩遇到音"
-"频延迟问题时启用此功能。"
+msgstr "允许游戏以降低声音精确度为代价，使用低延迟音频。建议仅在你正常游玩遇到音频延"
+"迟问题时启用此功能。"
 
 #: engines/scumm/metaengine.cpp:758
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "启用“A Pirate I Was Meant To Be”歌曲"
 
 #: engines/scumm/metaengine.cpp:759
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
-msgstr ""
-"启用游戏第三部分的歌曲“A Pirate I Was Meant To Be”，\t\t此歌曲在国际版中被删"
-"除。但请注意：字幕翻译可能不完整。"
+msgstr "启用游戏第三部分开头的歌曲“A Pirate I Was Meant To "
+"Be”，此歌曲在国际版中被删除。但请注意：字幕翻译可能不完整。"
 
 #: engines/scumm/metaengine.cpp:777
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "禁用演示模式"
+msgstr "启用演示/展台模式"
 
 #: engines/scumm/metaengine.cpp:778
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
-msgstr ""
+msgstr "启用 Maniac Mansion 完整零售版中的演示/展台模式。"
 
 #: engines/scumm/metaengine.cpp:877
 msgid "Down Left"
@@ -11407,6 +11016,13 @@ msgid ""
 "Please change the audio configuration accordingly in order to properly load "
 "this save file."
 msgstr ""
+"警告：检测到当前配置与此存档的声音设置不兼容。\n"
+"\n"
+"当前音频设备：%s (id %d)\n"
+"存档音频设备：%s (id %d)\n"
+"\n"
+"将会尝试加载，但游戏可能表现异常或崩溃。\n"
+"请相应地更改音频配置，来正确加载此存档。"
 
 #: engines/scumm/scumm.cpp:300
 msgid ""
@@ -11429,40 +11045,28 @@ msgid ""
 msgstr "此游戏需要“Loom”Macintosh 可执行文件提供音乐与字体。"
 
 #: engines/scumm/scumm.cpp:1266
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"找不到用于读取乐器的“Monkey Island”\n"
-"Macintosh 可执行文件。音乐将被禁用。"
+"找不到用于读取资源与乐器的“Monkey Island”\n"
+"Macintosh 可执行文件。音乐与 Mac 图形界面将被禁用。"
 
 #: engines/scumm/scumm.cpp:1299
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"找不到用于读取乐器的“Monkey Island”\n"
-"Macintosh 可执行文件。音乐将被禁用。"
+"找不到“Fate of Atlantis” Macintosh\n"
+"可执行文件。Mac 图形界面将不会显示。"
 
 #: engines/scumm/scumm.cpp:1319
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"找不到用于读取乐器的“Monkey Island”\n"
-"Macintosh 可执行文件。音乐将被禁用。"
+"找不到“LeChuck's Revenge” Macintosh\n"
+"可执行文件。Mac 图形界面将不会显示。"
 
 #: engines/scumm/scumm.cpp:1330
 #, c-format
@@ -11727,8 +11331,6 @@ msgid "Open control panel"
 msgstr "打开控制面板"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
 msgstr "开关高速模式"
 
@@ -11772,32 +11374,24 @@ msgstr "启用时字体更平滑。"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "游戏菜单"
+msgstr "日记菜单"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Conversation position - Up"
 msgid "Conversation log"
-msgstr "对话位置 - 上"
+msgstr "对话日志"
 
 #. I18N: Opens in-game Diary. April is the female protagonist name
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "April 的日记（最初禁用）"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "快速回放"
+msgstr "视频回放"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
 msgstr "游戏设置"
 
@@ -11807,65 +11401,53 @@ msgid "Toggle subtitles"
 msgstr "开关字幕"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "退出游戏"
+msgstr "退出到菜单"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "向后循环切换物品区选中项目"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "向前循环切换物品区选中项目"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "显示当前位置的所有出口"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "打开/关闭物品栏"
+msgstr "物品界面向上滚动"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "显示物品栏"
+msgstr "物品界面向下滚动"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "向上滚动对话"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "向下滚动对话"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Go to next dialogue"
-msgstr "高亮显示下一对话"
+msgstr "转到下一对话"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous dialogues"
-msgstr "转到前一个物品"
+msgstr "转到上一物品"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "跳过对话"
+msgstr "选择对话"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "跳过视频镜头或对话"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11991,70 +11573,60 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "《断剑 1》演示到此结束"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "语音：英语"
+msgstr "英语"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "德语"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "法语"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "意大利语"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "完成"
+msgstr "西班牙语"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "葡萄牙语（巴西）"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "捷克语"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "游戏语言："
+msgstr "文本语言："
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "设置字幕语言，不会影响语音。"
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "模拟 Windows 可执行程序的音频引擎"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
 "Makes the game use softer (logarithmic) audio curves, but removes fade-in "
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
-msgstr ""
+msgstr "让游戏使用更柔和的（指数）音频曲线，但移除音效的淡入淡出效果、音乐的淡入效果"
+"，以及播放语音时的自动音乐音量下调效果"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "方向键："
+msgstr "附加设置："
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "主菜单 ("
+msgstr "主菜单"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12062,12 +11634,8 @@ msgid ""
 msgstr "找到 PSX 转场动画，但 ScummVM 未编入 RGB 颜色支持"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
-msgstr "不支持增强版。请使用原版文件（发行版的一部分）。"
+msgstr "不支持重制版。请使用原版"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12120,40 +11688,28 @@ msgstr ""
 "效果，使游戏更适合宽高比大于 4:3 的屏幕。"
 
 #: engines/tinsel/metaengine.cpp:242
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Save/Load keymappings"
-msgstr "是/否绑定"
+msgstr "保存/加载按键绑定"
 
 #: engines/tinsel/metaengine.cpp:307
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "跳过对话"
+msgstr "设置对话框"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Page Up in save/load menu"
-msgstr "使用原始存档/读档屏幕"
+msgstr "存读档菜单上一页"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Page down in save/load menu"
-msgstr "使用原始存档/读档屏幕"
+msgstr "存读档菜单下一页"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of save/load menu"
-msgstr "转到行首"
+msgstr "转到存读档菜单首页"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of save/load menu"
-msgstr "转到行尾"
+msgstr "转到存读档菜单末页"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -12161,35 +11717,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "“%s”引擎数据文件中不存在字体变体。"
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "跳过行"
+msgstr "跳过入场动画"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "跳过当前动画"
+msgstr "停止当前语音"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "无音乐"
+msgstr "静音音乐"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort Speech"
 msgid "Mute speech"
-msgstr "取消语音"
+msgstr "静音语音"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "开关音效"
+msgstr "静音音效"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12222,33 +11768,25 @@ msgstr "无法定位“%s”数据文件。"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence/open quit dialogue"
-msgstr ""
+msgstr "跳过镜头/打开退出对话框"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "跳过对话"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "打开主菜单"
+msgstr "打开设置菜单"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Enable fast walk"
-msgstr "开关快速模式"
+msgstr "启用快速行走"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Disable fast walk"
-msgstr "开关快速模式"
+msgstr "禁用快速行走"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12256,133 +11794,95 @@ msgstr "开关快速模式"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "切换纯语音/纯文本/文本与语音"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press Yes Key"
 msgid "Press \"Yes\" Key"
 msgstr "按下“是”按键"
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "跳过行"
+msgstr "跳过视频"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "开关快速模式"
+msgstr "开关快速行走"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
-#| msgid "Game menu"
 msgid "Open system menu"
-msgstr "游戏菜单"
+msgstr "打开系统菜单"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "打开"
+msgstr "Return 键"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "视图"
+msgstr "查看帮助"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show Options"
 msgid "Sound options"
-msgstr "显示设置"
+msgstr "声音设置"
 
 #: engines/tsage/metaengine.cpp:264
 msgid "Crawl North"
-msgstr ""
+msgstr "向北爬行"
 
 #: engines/tsage/metaengine.cpp:271
 msgid "Crawl South"
-msgstr ""
+msgstr "向南爬行"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "迅速左转"
+msgstr "左转/向西爬行"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "迅速右转"
+msgstr "右转/向东爬行"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase speed"
-msgstr "增大缩放系数"
+msgstr "加速"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease speed"
-msgstr "减小缩放系数"
+msgstr "减速"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Minimum speed"
-msgstr "读取速度"
+msgstr "最小速度"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "最高音量"
+msgstr "最大速度"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Low speed"
-msgstr "显示游戏致谢界面"
+msgstr "低速"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Medium speed"
-msgstr "读取速度"
+msgstr "中速"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "前进"
+msgstr "取卡"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "语音"
+msgstr "跳过语音"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "开关快速模式"
+msgstr "切换面板样式"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "使用文本转语音"
+msgstr "开关文本语音"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -12827,6 +12327,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"缺失所需文件\n"
+"\n"
+"启动游戏需要原版安装版本的\n"
+"SAVEGAME/U8SAVE.000 文件。\n"
+"\n"
+"请确保你已正确复制所有文件。"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
@@ -12866,22 +12372,20 @@ msgid "Uses 16-color graphics."
 msgstr "使用 16 色图形。"
 
 #: engines/vcruise/metaengine.cpp:98
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
 msgstr "预录制声音"
 
 #: engines/vcruise/metaengine.cpp:99
 msgid "Preload sounds. May improve performance on slow hard drives."
-msgstr ""
+msgstr "预加载声音。可能会改善硬盘速度较慢设备的表现。"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "加速视频解码（低质量）"
 
 #: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "以降低视频质量为代价，降低解码时的 CPU 占用。"
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
@@ -12940,14 +12444,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "尝试载入存档时发生未知错误。"
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable lockout system"
-msgstr "启用存储"
+msgstr "启用锁定系统"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "需要解锁码才能启动游戏。"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
