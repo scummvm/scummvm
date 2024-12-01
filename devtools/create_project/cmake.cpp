@@ -188,6 +188,8 @@ link_directories(/opt/local/lib)
 		if (!feature.enable || featureExcluded(feature.name)) continue;
 
 		writeFeatureLibSearch(setup, workspace, feature.name);
+
+		if (!feature.define || !feature.define[0]) continue;
 		workspace << "add_definitions(-D" << feature.define << ")\n";
 	}
 	workspace << "\n";

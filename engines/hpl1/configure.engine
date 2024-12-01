@@ -1,3 +1,3 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine hpl1 "Hpl1" no "" "" "16bit highres jpeg gif png opengl_game_shaders"
+add_engine hpl1 "Hpl1" no "" "" "16bit 3d highres jpeg gif png opengl_game_shaders"

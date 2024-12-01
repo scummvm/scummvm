@@ -1,3 +1,3 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine playground3d "Playground 3d: the testing and playground environment for 3d renderers" no "" "" "16bit highres"
+add_engine playground3d "Playground 3d: the testing and playground environment for 3d renderers" no "" "" "16bit 3d highres"
