@@ -1031,7 +1031,7 @@ Spardata lagras som standard i den aktiva katalogen på vissa plattformar och i 
 
 Plattformar som för närvarande har annorlunda standardkataloger:
     macOS:
-    $HOME/Documents/ScummVM Savegames/
+    $HOME/Library/Application Support/ScummVM/Savegames/
 
     Övriga unix-system:
     $HOME/.scummvm/

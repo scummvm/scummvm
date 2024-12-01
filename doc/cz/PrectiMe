@@ -1352,7 +1352,7 @@ Uložené hry jsou na některých platformách standardně umístěny do součas
 
 Platformy, které v současnosti mají jiné výchozí složky jsou:
     macOS:
-    $HOME/Documents/ScummVM Savegames/
+    $HOME/Library/Application Support/ScummVM/Savegames/
 
     Jiné unixy:
     Řídíme se specifikacemi základního adresáře XDG. To znamená, že nastavení lze nalézt v:

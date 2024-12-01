@@ -2017,7 +2017,7 @@ Sehen Sie sich das Beispiel weiter unten in dieser Liesmich-Datei an.
 
 Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
     macOS:
-    $HOME/Documents/ScummVM Savegames/
+    $HOME/Library/Application Support/ScummVM/Savegames/
 
     Andere UNIX-Systeme:
     Wir befolgen die Spezifikation XDG Base Directory. Dies bedeutet, dass
