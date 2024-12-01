@@ -541,7 +541,7 @@ bool HEMixer::mixerStartChannel(
 	}
 
 	bool hasCallbackData = false;
-	if ((flags & CHANNEL_CALLBACK_EARLY) && !(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
+	if ((flags & CHANNEL_CALLBACK_EARLY) && !(flags & CHANNEL_LOOPING)) {
 		va_start(params, flags);
 		_mixerChannels[channel].endSampleAdjustment = va_arg(params, int);
 		va_end(params);
