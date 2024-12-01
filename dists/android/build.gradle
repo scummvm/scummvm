@@ -43,8 +43,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 35
 
-        versionName "2.9.0"
-        versionCode 2090001
+        versionName "2.10.0"
+        versionCode 2100000
         // versioncode must be incremented for each market upload
         // maximum versioncode allowed by Play Store is: 2100000000
         // After 2.8.0 release the versioncode numbering schema changed to be more immediately helpful.
@@ -57,6 +57,7 @@ android {
         //     (0: unspecified/fat, 1: arm-v7a, 2: arm64-v8a, 3: x86, 4: x86_64)
         // eg. ScummVM 2.10.0 builds would have version codes: 2100000 - 2100004
         // --------------
+        // ScummVM 2.10.0:  2100000 - 2090004 (unspec/fat, arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.9.0:   2090001 - 2090004 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.8.1.1: 2081011 - 2081014 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (release on Play Store)
         // ScummVM 2.8.1:   2081001 - 2081004 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (rejected on Play Store)
