@@ -505,7 +505,6 @@ void Inter_v1::o1_initMult() {
 			_vm->_mult->_objects[i].animName[0] = '\0';
 			_vm->_mult->_objects[i].videoSlot = 0;
 			_vm->_mult->_objects[i].animVariables = nullptr;
-			_vm->_mult->_objects[i].ownAnimVariables = false;
 			_vm->_mult->_objects[i].lastLeft = -1;
 			_vm->_mult->_objects[i].lastRight = -1;
 			_vm->_mult->_objects[i].lastTop = -1;

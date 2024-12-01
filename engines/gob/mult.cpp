@@ -135,10 +135,7 @@ void Mult::freeMult(bool freeObjectSprites) {
 		for (int i = 0; i < _objCount; i++) {
 			delete _objects[i].pPosX;
 			delete _objects[i].pPosY;
-			if (_objects[i].ownAnimVariables) {
-				delete _objects[i].animVariables;
-				_objects[i].animVariables = nullptr;
-			}
+			delete _objects[i].animVariables;
 
 			if (freeObjectSprites)
 				_vm->_draw->freeSprite(50 + i);
