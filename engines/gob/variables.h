@@ -150,6 +150,19 @@ private:
 	Variables::Type _type;
 };
 
+class VariableReferenceArray {
+public:
+	VariableReferenceArray(Variables &vars, uint32 offset, Variables::Type type = Variables::kVariableType32);
+	VariableReference at(int32 i);
+	VariableReferenceArray arrayAt(int32 i);
+
+private:
+	Variables *_vars;
+	uint32 _offset;
+	Variables::Type _type;
+	uint32 _fieldSize;
+};
+
 class VariableStack {
 public:
 	VariableStack(uint32 size);
