@@ -30,6 +30,7 @@ namespace Views {
 
 class MainMenu : public View {
 private:
+	void drawBackground();
 
 public:
 	MainMenu() : View("MainMenu") {}
@@ -39,7 +40,6 @@ public:
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
-	bool tick() override;
 };
 
 } // namespace Views

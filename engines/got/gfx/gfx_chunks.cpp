@@ -20,45 +20,37 @@
  */
 
 #include "common/file.h"
-#include "got/gfx/images.h"
+#include "got/gfx/gfx_chunks.h"
 #include "got/utils/compression.h"
 
 namespace Got {
 namespace Gfx {
 
 void GraphicChunk::load(Common::SeekableReadStream *src, const byte *data) {
-	_data = data;
-
 	_compressMode = src->readUint16LE();
 	_offset = src->readUint32LE();
 	_uncompressedSize = src->readUint16LE();
 	_compressedSize = src->readUint16LE();
 	_width = src->readUint16LE();
 	_height = src->readUint16LE();
+
+	_data = data + _offset;
 }
 
-GraphicChunk::operator Graphics::ManagedSurface &() {
-	assert(_height != 0 && _width != 0);
+void GraphicChunk::enable() {
+	// Data already uncompressed, nothing further needed
+	if (_compressMode == UNCOMPRESSED)
+		return;
 
-	// Create the managed surface
-	_image.create(_width, _height);
-
-	const byte *src = _data + _offset;
-
-	size_t size = MIN((int)_uncompressedSize, _width * _height);
+	_decompressedData.resize(_uncompressedSize);
 
 	switch (_compressMode) {
-	case UNCOMPRESSED:
-		// Uncompressed image, simply read it in
-		Common::copy(src, src + size, (byte *)_image.getPixels());
-		break;
-
 	case LZSS:
-		lzss_decompress(src + _offset, (byte *)_image.getPixels(), size);
+		lzss_decompress(_data, &_decompressedData[0], _uncompressedSize);
 		break;
 
 	case RLE:
-		rle_decompress(src + _offset, (byte *)_image.getPixels(), size);
+		rle_decompress(_data, &_decompressedData[0], _uncompressedSize);
 		break;
 
 	default:
@@ -66,8 +58,19 @@ GraphicChunk::operator Graphics::ManagedSurface &() {
 		break;
 	}
 
-	// Return a reference to the now loaded surface
-	return _image;
+	// Mark the entry as uncompressed, and point to the data
+	_compressMode = UNCOMPRESSED;
+	_data = &_decompressedData[0];
+}
+
+GraphicChunk::operator const Graphics::ManagedSurface() const {
+	Graphics::ManagedSurface s;
+	s.w = s.pitch = _width;
+	s.h = _height;
+	s.format = Graphics::PixelFormat::createFormatCLUT8();
+	s.setPixels(const_cast<byte *>(_data));
+
+	return s;
 }
 
 
@@ -81,14 +84,25 @@ void GfxChunks::load() {
 
 	// Set the number of images
 	f->seek(0);
-	_images.resize(f->readUint16LE());
+	_chunks.resize(f->readUint16LE());
 
 	// Iterate through loading the image metrics
-	for (uint i = 0; i < _images.size(); ++i)
-		_images[i].load(f, _data);
+	for (uint i = 0; i < _chunks.size(); ++i)
+		_chunks[i].load(f, _data);
 
 	// Close the file
 	delete f;
+
+	// Decompress two ranges of chunks by default
+	for (uint i = 0; i < 34; ++i)
+		_chunks[i].enable();
+}
+
+GraphicChunk &GfxChunks::operator[](uint idx) {
+	GraphicChunk &chunk = _chunks[idx];
+	chunk.enable();
+
+	return chunk;
 }
 
 Common::SeekableReadStream *GfxChunks::getStream() const {

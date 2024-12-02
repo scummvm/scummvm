@@ -54,6 +54,10 @@ void xsetpal(byte color, byte R, byte G, byte B) {
 	g_system->getPaletteManager()->setPalette(rgb, color, 1);
 }
 
+void xsetpal(const byte *pal) {
+	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+}
+
 void xgetpal(byte *pal, int num_colrs, int start_index) {
 	g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
 }
