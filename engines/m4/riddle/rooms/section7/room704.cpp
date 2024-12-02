@@ -99,7 +99,7 @@ void Room704::init() {
 		_ripGoesDownStairsSeries = series_load("704 RIP GOES DOWN STAIRS", -1, nullptr);
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 0, 0, callback, "rip stairs machine");
+		_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 0, false, callback, "rip stairs machine");
 		sendWSMessage_10000(1, _ripStairsMach, _ripGoesDownStairsSeries, 4, 39, 140, _ripGoesDownStairsSeries, 39, 39, 0);
 
 		break;
@@ -130,27 +130,27 @@ void Room704::parser() {
 	} else if (player_said("PRAYER WHEEL BROCHURE", "EMPTY NICHE") && inv_player_has("PRAYER WHEEL BROCHURE"))
 		digi_play("com123", 1, 255, -1, 997);
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #5") && inv_player_has("PRAYER WHEEL BROCHURE"))
-		subA2344(_G(kernel).trigger, "704r04");
+		playCheckBrochureAnim(_G(kernel).trigger, "704r04");
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #6") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		switch (_G(flags[V218])) {
 		case 1:
-			subA2344(_G(kernel).trigger, "704r09");
+			playCheckBrochureAnim(_G(kernel).trigger, "704r09");
 			break;
 
 		case 2:
-			subA2344(_G(kernel).trigger, "705r04");
+			playCheckBrochureAnim(_G(kernel).trigger, "705r04");
 			break;
 
 		case 3:
-			subA2344(_G(kernel).trigger, "703r11");
+			playCheckBrochureAnim(_G(kernel).trigger, "703r11");
 			break;
 
 		case 4:
-			subA2344(_G(kernel).trigger, "705r14a");
+			playCheckBrochureAnim(_G(kernel).trigger, "705r14a");
 			break;
 
 		case 5:
-			subA2344(_G(kernel).trigger, "706r10");
+			playCheckBrochureAnim(_G(kernel).trigger, "706r10");
 			break;
 
 		default:
@@ -159,9 +159,9 @@ void Room704::parser() {
 	} // player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #6") && inv_player_has("PRAYER WHEEL BROCHURE")
 
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #7") && inv_player_has("PRAYER WHEEL BROCHURE"))
-		subA2344(_G(kernel).trigger, "704r11");
+		playCheckBrochureAnim(_G(kernel).trigger, "704r11");
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #8") && inv_player_has("PRAYER WHEEL BROCHURE"))
-		subA2344(_G(kernel).trigger, "704r12");
+		playCheckBrochureAnim(_G(kernel).trigger, "704r12");
 	else if (player_said("PRAYER WHEEL BROCHURE", "SERENITY WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("SERENITY WHEEL")) {
 		player_set_commands_allowed(false);
 		digi_play("703r11", 1, 255, -1, -1);
@@ -407,7 +407,7 @@ void Room704::parser() {
 		}
 	} // ecx && player_said("GRATE")
 
-	else if (player_said ("GRATE")) {
+	else if (player_said("GRATE")) {
 		digi_play("707r02", 1, 255, -1, -1);
 	} else if (lookFl && player_said("MONK #5")) {
 		switch (_G(kernel).trigger) {
@@ -528,10 +528,10 @@ void Room704::parser() {
 			player_set_commands_allowed(true);
 		}
 	} else if (player_said("TRUTH WHEEL", "PRAYER WHEEL #5") || player_said("PEACE WHEEL", "PRAYER WHEEL #5") || player_said("WISDOM WHEEL", "PRAYER WHEEL #5") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #5") || player_said("SERENITY WHEEL", "PRAYER WHEEL #5")
-			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #6") || player_said("PEACE WHEEL", "PRAYER WHEEL #6") || player_said("WISDOM WHEEL", "PRAYER WHEEL #6") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #6") || player_said("SERENITY WHEEL", "PRAYER WHEEL #6")
-			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #7") || player_said("PEACE WHEEL", "PRAYER WHEEL #7") || player_said("WISDOM WHEEL", "PRAYER WHEEL #7") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #7") || player_said("SERENITY WHEEL", "PRAYER WHEEL #7")
-			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #8") || player_said("PEACE WHEEL", "PRAYER WHEEL #8") || player_said("WISDOM WHEEL", "PRAYER WHEEL #8") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #8") || player_said("SERENITY WHEEL", "PRAYER WHEEL #8")
-		) {
+	           || player_said("TRUTH WHEEL", "PRAYER WHEEL #6") || player_said("PEACE WHEEL", "PRAYER WHEEL #6") || player_said("WISDOM WHEEL", "PRAYER WHEEL #6") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #6") || player_said("SERENITY WHEEL", "PRAYER WHEEL #6")
+	           || player_said("TRUTH WHEEL", "PRAYER WHEEL #7") || player_said("PEACE WHEEL", "PRAYER WHEEL #7") || player_said("WISDOM WHEEL", "PRAYER WHEEL #7") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #7") || player_said("SERENITY WHEEL", "PRAYER WHEEL #7")
+	           || player_said("TRUTH WHEEL", "PRAYER WHEEL #8") || player_said("PEACE WHEEL", "PRAYER WHEEL #8") || player_said("WISDOM WHEEL", "PRAYER WHEEL #8") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #8") || player_said("SERENITY WHEEL", "PRAYER WHEEL #8")
+	) {
 		digi_play("com080", 1, 255, -1, -1);
 	} else if (lookFl && player_said("EMPTY NICHE")) {
 		digi_play("com127", 1, 255, -1, -1);
@@ -893,11 +893,64 @@ void Room704::callback(frac16 myMessage, machine *sender) {
 }
 
 void Room704::conv704a() {
-	// TODO Not yet implemented
+	const char *digiName = conv_sound_to_play();
+
+	if (digiName == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	const int32 who = conv_whos_talking();
+	if (who <= 0) {
+		_field5C_should = 121;
+		kernel_timing_trigger(10, 127, nullptr);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (who == 1) {
+		digi_play(digiName, 1, 255, 90, -1);
+	}
 }
 
-void Room704::subA2344(int32 trigger, const char *digiName) {
-	// TODO Not yet implemented
+void Room704::playCheckBrochureAnim(int32 trigger, const char *digiName) {
+	switch (trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripChecksBrochureSeries = series_load("RIP CHECKS BROCHURE", -1, nullptr);
+		setGlobals1(_ripChecksBrochureSeries, 1, 25, 25, 25, 0, 25, 31, 31, 31, 0, 31, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 41);
+
+		break;
+
+	case 41:
+		kernel_timing_trigger(60, 43, nullptr);
+		break;
+
+	case 43:
+		sendWSMessage_120000(_G(my_walker), -1);
+		digi_play(digiName, 1, 255, 44, -1);
+
+		break;
+
+	case 44:
+		kernel_timing_trigger(10, 45, nullptr);
+		break;
+
+	case 45:
+		sendWSMessage_130000(_G(my_walker), 48);
+		break;
+
+	case 48:
+		sendWSMessage_150000(_G(my_walker), 49);
+		break;
+
+	case 49:
+		series_unload(_ripChecksBrochureSeries);
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room704::subA1DDF(int32 trigger, int val1) {

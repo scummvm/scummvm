@@ -42,7 +42,7 @@ public:
 private:
 	static void callback(frac16 myMessage, machine *sender);
 	void conv704a();
-	void subA2344(int32 trigger, const char *digiName);
+	void playCheckBrochureAnim(int32 trigger, const char *digiName);
 	void subA1DDF(int32 trigger, int val1);
 
 	int32 _field58_mode = 0;
@@ -53,6 +53,7 @@ private:
 	int32 _704Monk2Series = 0;
 	int32 _704Monk3Series = 0;
 	int32 _704Monk4Series = 0;
+	int32 _ripChecksBrochureSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripGoesUpStairsSeries = 0;
 	int32 _ripLooksDownSeries = 0;
