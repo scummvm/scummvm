@@ -168,13 +168,6 @@ Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
 	return _vidManagedSurface;
 }
 
-void RenderManager::copyToScreen(const Graphics::Surface &surface, Common::Rect &dstRect, int16 srcLeft, int16 srcTop) {
-	Common::Rect srcRect = dstRect;
-	srcRect.moveTo(srcLeft, srcTop);
-	_screenSurface.simpleBlitFrom(surface, srcRect, Common::Point(dstRect.left, dstRect.top));  
-  _screenSurface.update();
-}
-
 void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
