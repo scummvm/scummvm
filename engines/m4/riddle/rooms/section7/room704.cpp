@@ -497,7 +497,123 @@ void Room704::parser() {
 		}
 	} // ecx && player_said("MONK #8")
 
-	// TODO Incomplete implementation
+	else if (player_said("TRUTH WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger != -1 || inv_player_has("TRUTH WHEEL")) {
+			subA1DDF(_G(kernel).trigger, 4);
+		} else {
+			player_set_commands_allowed(true);
+		}
+	} else if (player_said("PEACE WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger != -1 || inv_player_has("PEACE WHEEL")) {
+			subA1DDF(_G(kernel).trigger, 1);
+		} else {
+			player_set_commands_allowed(true);
+		}
+	} else if (player_said("WISDOM WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger != -1 || inv_player_has("WISDOM WHEEL")) {
+			subA1DDF(_G(kernel).trigger, 5);
+		} else {
+			player_set_commands_allowed(true);
+		}
+	} else if (player_said("INSIGHT WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger != -1 || inv_player_has("INSIGHT WHEEL")) {
+			subA1DDF(_G(kernel).trigger, 2);
+		} else {
+			player_set_commands_allowed(true);
+		}
+	} else if (player_said("SERENITY WHEEL", "EMPTY NICHE")) {
+		if (_G(kernel).trigger != -1 || inv_player_has("SERENITY WHEEL")) {
+			subA1DDF(_G(kernel).trigger, 3);
+		} else {
+			player_set_commands_allowed(true);
+		}
+	} else if (player_said("TRUTH WHEEL", "PRAYER WHEEL #5") || player_said("PEACE WHEEL", "PRAYER WHEEL #5") || player_said("WISDOM WHEEL", "PRAYER WHEEL #5") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #5") || player_said("SERENITY WHEEL", "PRAYER WHEEL #5")
+			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #6") || player_said("PEACE WHEEL", "PRAYER WHEEL #6") || player_said("WISDOM WHEEL", "PRAYER WHEEL #6") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #6") || player_said("SERENITY WHEEL", "PRAYER WHEEL #6")
+			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #7") || player_said("PEACE WHEEL", "PRAYER WHEEL #7") || player_said("WISDOM WHEEL", "PRAYER WHEEL #7") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #7") || player_said("SERENITY WHEEL", "PRAYER WHEEL #7")
+			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #8") || player_said("PEACE WHEEL", "PRAYER WHEEL #8") || player_said("WISDOM WHEEL", "PRAYER WHEEL #8") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #8") || player_said("SERENITY WHEEL", "PRAYER WHEEL #8")
+		) {
+		digi_play("com080", 1, 255, -1, -1);
+	} else if (ecx && player_said("EMPTY NICHE")) {
+		digi_play("com127", 1, 255, -1, -1);
+	} else if (ecx && player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
+		digi_play("com076", 1, 255, -1, -1);
+	} else if (ecx && player_said("PRAYER WHEEL #6") && _G(flags[V218])) {
+		digi_play("com076", 1, 255, -1, -1);
+	} else if (esi && !player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8") && _G(flags[V286])) {
+		digi_play(_G(flags[V224]) ? "706r26" : "com143", 1, 255, -1, -1);
+	} else if (esi && player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_trigger_dispatchx(kernel_trigger_create(player_said("PRAYER WHEEL #6") ? 70 : 80));
+		_G(kernel).trigger_mode = KT_DAEMON;
+	} else if (ecx && player_said(" ")) {
+		digi_play(_G(flags[V224]) ? "706r24" : "com075", 1, 255, -1, -1);
+	} else if (player_said("CUPOLA")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripGoesUpStairsSeries = series_load("704 RIP GOES UP STAIRS", -1, nullptr);
+			ws_hide_walker(_G(my_walker));
+			_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 0, false, callback, "rip stairs machine");
+			sendWSMessage_10000(1, _ripStairsMach, _ripGoesUpStairsSeries, 1, 29, 2, _ripGoesUpStairsSeries, 29, 29, 0);
+
+			break;
+			
+		case 2:
+			sendWSMessage_10000(1, _ripStairsMach, _ripGoesUpStairsSeries, 30, 39, -1, _ripGoesUpStairsSeries, 39, 39, 0);
+			disable_player_commands_and_fade_init(3);
+
+			break;
+			
+		case 3:
+			terminateMachine(_ripStairsMach);
+			player_set_commands_allowed(true);
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 707;
+			
+			break;
+			
+		default:
+			break;
+		}
+	} // player_said("CUPOLA")
+
+	else if (player_said("North Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
+			
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 705;
+			
+			break;
+			
+		default:
+			break;
+		}
+	} else if (player_said("South Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
+
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 703;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (!gearFl && !esi && !player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
+		digi_play("com017", 1, 255, -1, -1);
+	} else
+		return;
 
 	_G(player).command_ready = 0;
 }
@@ -784,6 +900,9 @@ void Room704::subA2344(int32 trigger, const char *digiName) {
 	// TODO Not yet implemented
 }
 
+void Room704::subA1DDF(int32 trigger, int val1) {
+	// TODO Not yet implemented
+}
 
 } // namespace Rooms
 } // namespace Riddle
