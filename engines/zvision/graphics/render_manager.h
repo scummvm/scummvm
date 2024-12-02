@@ -156,17 +156,6 @@ public:
 	
 	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
 
-
-  //TODO - eliminate this function and all calls to it; do everything via ManagedSurface approach
-	/**
-	 *
-	 * @param src       Source surface
-	 * @param _srcRect  Rectangle defining area of target surface to blit to
- 	 * @param srcLeft   X coord of area to blit within source
-	 * @param srcTop    Y coord of area to blit within source
-	 */	
-	void copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop);
-
 	/**
 	 * Blits the image or a portion of the image to the background.
 	 *
