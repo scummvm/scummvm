@@ -811,6 +811,44 @@ static const uint16 sciPatchTimerRollover[] = {
 	PATCH_END
 };
 
+// Several SCI Version 1 games use a Talker class that doesn't handle kGetTime
+//  rollover correctly. Talker:init calculates the message's end-time in ticks
+//  (1/60ths of a second) and Talker:doit compares this to the current time
+//  with a naive signed comparison. When kGetTime approaches $8000, the end-time
+//  appears negative and Talker:doit prematurely closes the message.
+//
+// We fix this by replacing the comparison with the correct logic from later
+//  versions. We restructure this to fit within the limited space:
+//
+//  Existing:    GetTime > ticks
+//  Correct:     GetTime - ticks > 0
+//  Optimized:   0 > ticks - GetTime
+//
+// Applies to: Castle of Dr. Brain, LSL1 PC English, SQ1
+// Responsible method: Talker:doit
+// Fixes bug: #15303
+static const uint16 sciSignatureTalkerRollover[] = {
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x43, 0x42, 0x00,                   // callk GetTime 00
+	0x36,                               // push
+	0x63, SIG_ADDTOOFFSET(+1),          // pToa ticks
+	0x1e,                               // gt? [ GetTime > ticks ]
+	0x30, SIG_ADDTOOFFSET(+1), 0x00,    // bnt
+	SIG_END
+};
+
+static const uint16 sciPatchTalkerRollover[] = {
+	0x76,                               // push0
+	0x67, PATCH_GETORIGINALBYTE(+6),    // pTos ticks
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime 00
+	0x04,                               // sub [ ticks - GetTime ]
+	0x1e,                               // gt? [ 0 > ticks - GetTime ]
+	0x31, PATCH_GETORIGINALBYTE(+9),    // bnt
+	PATCH_END
+};
+
 // ===========================================================================
 // Conquests of Camelot
 // At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
@@ -1279,6 +1317,8 @@ static const SciScriptPatcherEntry camelotSignatures[] = {
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry castleBrainSignatures[] = {
 	{  true,   802, "disable speed test",                          1, sci01SpeedTestGlobalSignature,            sci01SpeedTestGlobalPatch },
+	{  true,   280, "talker rollover",                             1, sciSignatureTalkerRollover,               sciPatchTalkerRollover },
+	{  true,   928, "talker rollover",                             1, sciSignatureTalkerRollover,               sciPatchTalkerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -9436,6 +9476,7 @@ static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	{  true,   500, "speed up palette animation",                  1, larry5SignatureRoom500PaletteAnimation, larry5PatchRoom500PaletteAnimation },
+	{  true,   928, "talker rollover",                             1, sciSignatureTalkerRollover,             sciPatchTalkerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -24114,6 +24155,7 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages3,            sq1vgaPatchDeltaurMessages },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,               sci01SpeedTestLocalPatch },
+	{  true,   928, "talker rollover",                             1, sciSignatureTalkerRollover,                 sciPatchTalkerRollover },
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
 	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
