@@ -30,16 +30,16 @@ namespace Gfx {
 
 class GfxChunks;
 
-struct GraphicChunk {
+enum CompressMode { UNCOMPRESSED = 0, LZSS = 1, RLE = 2 };
+
+struct GraphicChunk  {
 private:
-	GfxChunks *_owner = nullptr;
-	int _index = 0;
+	Graphics::ManagedSurface _image;
+	const byte *_data = nullptr;
 
 public:
-	Graphics::ManagedSurface _image;
-	uint16 _field0 = 0;
-	uint16 _field2 = 0;
-	uint16 _field4 = 0;
+	int _compressMode = UNCOMPRESSED;
+	uint32 _offset = 0;
 	uint16 _uncompressedSize = 0;
 	uint16 _compressedSize = 0;
 	uint16 _width = 0;
@@ -48,10 +48,9 @@ public:
 	/**
 	 * Load the overall info for a chunk
 	 */
-	void loadInfo(GfxChunks *owner, int index, Common::SeekableReadStream *src);
+	void load(Common::SeekableReadStream *src, const byte *data);
 
-	void load();
-	void unload();
+	operator Graphics::ManagedSurface &();
 };
 
 /**
@@ -70,16 +69,14 @@ private:
 	Common::SeekableReadStream *getStream() const;
 
 public:
-	~GfxChunks();
+	~GfxChunks() {
+		delete[] _data;
+	}
 
 	/**
 	 * Loads the graphic data
 	 */
 	void load();
-
-	void load(int index);
-	void unload(int index);
-	void loadRange(int start, int count);
 };
 
 } // namespace Gfx

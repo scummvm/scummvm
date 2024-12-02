@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "got/utils/res_archive.h"
+#include "got/utils/compression.h"
 
 namespace Got {
 
@@ -138,32 +139,10 @@ Common::SeekableReadStream *ResArchive::createReadStreamForMember(const Common::
 
 void ResArchive::lzssDecompress(const byte *src, byte *dest) const {
 	uint16 size = READ_LE_UINT16(src);
-	byte *endP = dest + size;
 	assert(READ_LE_UINT16(src + 2) == 1);
 	src += 4;
 
-	for (;;) {
-		byte v = *src++;
-
-		for (int bits = 8; bits > 0; --bits) {
-			if (endP == dest)
-				return;
-
-			bool bit = (v & 1) != 0;
-			v >>= 1;
-			if (bit) {
-				*dest++ = *src++;
-			} else {
-				uint offset = READ_LE_UINT16(src);
-				src += 2;
-				int count = (offset >> 12) & 0xf + 2;
-				offset &= 0xfff;
-
-				Common::copy(dest - offset, dest - offset + count, dest);
-				dest += count;
-			}
-		}
-	}
+	lzss_decompress(src, dest, size);
 }
 
 } // namespace Got

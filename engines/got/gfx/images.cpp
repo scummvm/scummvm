@@ -21,45 +21,71 @@
 
 #include "common/file.h"
 #include "got/gfx/images.h"
+#include "got/utils/compression.h"
 
 namespace Got {
 namespace Gfx {
 
-void GraphicChunk::loadInfo(GfxChunks *owner, int index, Common::SeekableReadStream *src) {
-	_owner = owner;
-	_index = index;
+void GraphicChunk::load(Common::SeekableReadStream *src, const byte *data) {
+	_data = data;
 
-	_field0 = src->readUint16LE();
-	_field2 = src->readUint16LE();
-	_field4 = src->readUint16LE();
+	_compressMode = src->readUint16LE();
+	_offset = src->readUint32LE();
 	_uncompressedSize = src->readUint16LE();
 	_compressedSize = src->readUint16LE();
 	_width = src->readUint16LE();
 	_height = src->readUint16LE();
 }
 
-void GraphicChunk::load() {
-	_owner->load(_index);
+GraphicChunk::operator Graphics::ManagedSurface &() {
+	assert(_height != 0 && _width != 0);
+
+	// Create the managed surface
+	_image.create(_width, _height);
+
+	const byte *src = _data + _offset;
+
+	size_t size = MIN((int)_uncompressedSize, _width * _height);
+
+	switch (_compressMode) {
+	case UNCOMPRESSED:
+		// Uncompressed image, simply read it in
+		Common::copy(src, src + size, (byte *)_image.getPixels());
+		break;
+
+	case LZSS:
+		lzss_decompress(src + _offset, (byte *)_image.getPixels(), size);
+		break;
+
+	case RLE:
+		rle_decompress(src + _offset, (byte *)_image.getPixels(), size);
+		break;
+
+	default:
+		error("Unknown compression type %d", _compressMode);
+		break;
+	}
+
+	// Return a reference to the now loaded surface
+	return _image;
 }
 
-void GraphicChunk::unload() {
-	_owner->unload(_index);
-}
-
-GfxChunks::~GfxChunks() {
-	delete[] _data;
-}
 
 void GfxChunks::load() {
 	// Get stream to access images
 	Common::SeekableReadStream *f = getStream();
 
+	// Keep a copy in memory for decoding images as needed
+	_data = new byte[f->size()];
+	f->read(_data, f->size());
+
 	// Set the number of images
+	f->seek(0);
 	_images.resize(f->readUint16LE());
 
 	// Iterate through loading the image metrics
 	for (uint i = 0; i < _images.size(); ++i)
-		_images[i].loadInfo(this, i, f);
+		_images[i].load(f, _data);
 
 	// Close the file
 	delete f;
@@ -80,8 +106,8 @@ Common::SeekableReadStream *GfxChunks::getStream() const {
 	if (fExe.readUint16BE() != MKTAG16('M', 'Z'))
 		error("Invalid exe header");
 
-	int lastPageSize = f->readUint16LE();
-	int totalPages = f->readUint16LE();
+	int lastPageSize = fExe.readUint16LE();
+	int totalPages = fExe.readUint16LE();
 	int offset = lastPageSize ? ((totalPages - 1) << 9) + lastPageSize :
 		totalPages << 9;
 
@@ -90,19 +116,6 @@ Common::SeekableReadStream *GfxChunks::getStream() const {
 		error("Invalid embedded graphics signature");
 
 	return fExe.readStream(fExe.size() - fExe.pos());
-}
-
-void GfxChunks::load(int index) {
-
-}
-
-void GfxChunks::unload(int index) {
-	_images[index]._image.clear();
-}
-
-void GfxChunks::loadRange(int start, int count) {
-	for (; count > 0; ++start, --count)
-		load(start);
 }
 
 } // namespace Gfx
