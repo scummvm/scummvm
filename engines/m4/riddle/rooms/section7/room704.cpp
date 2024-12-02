@@ -117,7 +117,389 @@ void Room704::pre_parser() {
 }
 
 void Room704::parser() {
-	// TODO
+	bool ecx = player_said_any("look", "look at");
+	bool talkFl = player_said_any("talk", "talk to");
+	bool esi = player_said("take");
+	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+
+	if (player_said("conv704a")) {
+		if (_G(kernel).trigger == 90)
+			conv_resume(conv_get_handle());
+		else
+			conv704a();
+	} else if (player_said("PRAYER WHEEL BROCHURE", "EMPTY NICHE") && inv_player_has("PRAYER WHEEL BROCHURE"))
+		digi_play("com123", 1, 255, -1, 997);
+	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #5") && inv_player_has("PRAYER WHEEL BROCHURE"))
+		subA2344(_G(kernel).trigger, "704r04");
+	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #6") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+		switch (_G(flags[V218])) {
+		case 1:
+			subA2344(_G(kernel).trigger, "704r09");
+			break;
+
+		case 2:
+			subA2344(_G(kernel).trigger, "705r04");
+			break;
+
+		case 3:
+			subA2344(_G(kernel).trigger, "703r11");
+			break;
+
+		case 4:
+			subA2344(_G(kernel).trigger, "705r14a");
+			break;
+
+		case 5:
+			subA2344(_G(kernel).trigger, "706r10");
+			break;
+
+		default:
+			break;
+		}
+	} // player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #6") && inv_player_has("PRAYER WHEEL BROCHURE")
+
+	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #7") && inv_player_has("PRAYER WHEEL BROCHURE"))
+		subA2344(_G(kernel).trigger, "704r11");
+	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #8") && inv_player_has("PRAYER WHEEL BROCHURE"))
+		subA2344(_G(kernel).trigger, "704r12");
+	else if (player_said("PRAYER WHEEL BROCHURE", "SERENITY WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("SERENITY WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("703r11", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "INSIGHT WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("INSIGHT WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("705r04", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "PEACE WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("PEACE WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("704r09", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "TRUTH WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("TRUTH WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("705r14a", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (player_said("PRAYER WHEEL BROCHURE", "WISDOM WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE") && inv_player_has("WISDOM WHEEL")) {
+		player_set_commands_allowed(false);
+		digi_play("706r10", 1, 255, -1, -1);
+		player_set_commands_allowed(true);
+	} else if (talkFl && player_said_any("MONK #5", "MONK #6", "MONK #7", "MONK #8") && _G(flags[V286]))
+		digi_play("com142", 1, 255, -1, -1);
+	else if (talkFl && player_said("MONK #5")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_704Monk1Series = series_load("704 MONK 1", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk1Series, 1, 13, 3, _704Monk1Series, 13, 13, 0);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _704Monk1Series, 14, 18, -1, _704Monk1Series, 19, 22, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("704E01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _704Monk1Series, 23, 26, 5, _704Monk1Series, 26, 26, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk1Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #5")
+
+	else if (talkFl && player_said("MONK #6")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_704Monk2Series = series_load("704 MONK 2", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk2Series, 1, 17, 3, _704Monk2Series, 17, 17, 4);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _704Monk2Series, 18, 21, -1, _704Monk2Series, 22, 24, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("704F01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _704Monk2Series, 25, 28, 5, _704Monk2Series, 28, 28, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk2Series);
+			player_set_commands_allowed(true);
+			_field58_mode = 124;
+			_field5C_should = 125;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(10, 127, nullptr);
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #6")
+
+	else if (talkFl && player_said("MONK #7")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_704Monk3Series = series_load("704 MONK 3", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk3Series, 1, 22, 3, _704Monk3Series, 22, 22, 0);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _704Monk3Series, 23, 28, -1, _704Monk3Series, 29, 31, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("704H01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _704Monk3Series, 32, 35, 5, _704Monk3Series, 35, 35, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk3Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #7")
+
+	else if (talkFl && player_said("MONK #8")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			_704Monk4Series = series_load("704 MONK 4", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk4Series, 1, 12, 3, _704Monk4Series, 12, 12, 0);
+			sendWSMessage_190000(_monkMach, 9);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _704Monk4Series, 13, 13, -1, _704Monk4Series, 13, 15, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("704I01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _704Monk4Series, 16, 19, 5, _704Monk4Series, 16, 19, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk4Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #8")
+
+	else if (ecx && player_said("GRATE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_update_info(_G(my_walker), &_G(player_info));
+			switch (_G(player_info).facing) {
+			case 1:
+			case 11:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS1", -1, nullptr);
+				setGlobals1(_ripLooksDownSeries, 1, 14, 14, 14, 0, 14, 29, 29, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+				break;
+
+			case 2:
+			case 10:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS2", -1, nullptr);
+				setGlobals1(_ripLooksDownSeries, 1, 14, 14, 14, 0, 14, 29, 29, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+				break;
+
+			case 3:
+			case 9:
+				_ripLooksDownSeries = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
+				setGlobals1(_ripLooksDownSeries, 1, 11, 11, 11, 0, 11, 22, 22, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+				break;
+
+			case 4:
+			case 8:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS4", -1, nullptr);
+				setGlobals1(_ripLooksDownSeries, 1, 16, 16, 16, 0, 16, 33, 33, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+				break;
+
+			case 5:
+			case 7:
+				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS5", -1, nullptr);
+				setGlobals1(_ripLooksDownSeries, 1, 15, 15, 15, 0, 15, 31, 31, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+				break;
+
+			default:
+				// No value set for _ripLookDownSeries, most like an impossible value so I skipped
+				break;
+			}
+			break;
+
+		case 2:
+			digi_play("707r04", 1, 255, -1, -1);
+			kernel_timing_trigger(10, 3, nullptr);
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			sendWSMessage_150000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			series_unload(_ripLooksDownSeries);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} // ecx && player_said("GRATE")
+
+	else if (player_said ("GRATE")) {
+		digi_play("707r02", 1, 255, -1, -1);
+	} else if (ecx && player_said("MONK #5")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_704Monk1Series = series_load("704 MONK 1", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk1Series, 1, 26, 2, _704Monk1Series, 26, 26, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk1Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // ecx && player_said("MONK #5")
+
+	else if (ecx && player_said("MONK #6")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_704Monk2Series = series_load("704 MONK 2", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk2Series, 1, 28, 2, _704Monk2Series, 28, 28, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk2Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // ecx && player_said("MONK #6")
+
+	else if (ecx && player_said("MONK #7")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_704Monk3Series = series_load("704 MONK 3", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk3Series, 1, 35, 2, _704Monk3Series, 35, 35, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk3Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // ecx && player_said("MONK #7")
+
+	else if (ecx && player_said("MONK #8")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_704Monk4Series = series_load("704 MONK 4", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0, false, callback, "monk");
+			sendWSMessage_10000(1, _monkMach, _704Monk4Series, 1, 19, 2, _704Monk4Series, 19, 19, 0);
+
+			break;
+
+		case 2:
+			terminateMachine(_monkMach);
+			series_unload(_704Monk4Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // ecx && player_said("MONK #8")
+
+	// TODO Incomplete implementation
+
+	_G(player).command_ready = 0;
 }
 
 void Room704::daemon() {
@@ -394,6 +776,13 @@ void Room704::callback(frac16 myMessage, machine *sender) {
 	kernel_trigger_dispatchx(myMessage);
 }
 
+void Room704::conv704a() {
+	// TODO Not yet implemented
+}
+
+void Room704::subA2344(int32 trigger, const char *digiName) {
+	// TODO Not yet implemented
+}
 
 
 } // namespace Rooms
