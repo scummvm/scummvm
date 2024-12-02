@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "graphics/screen.h"
 #include "got/defines.h"
+#include "got/gfx/images.h"
 
 namespace Got {
 
@@ -38,6 +39,8 @@ public:
 	~Vars();
 
 	void load();
+
+	Gfx::GfxChunks _images;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;

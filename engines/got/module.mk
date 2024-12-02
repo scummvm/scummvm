@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	vars.o \
 	gfx/images.o \
 	gfx/palette.o \
+	utils/compression.o \
 	utils/file.o \
 	utils/res_archive.o \
 	views/main_menu.o \
