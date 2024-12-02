@@ -2047,6 +2047,29 @@ void ScummEngine_v5::o5_putActorInRoom() {
 	if (a->_visible && _currentRoom != room && getTalkingActor() == a->_number) {
 		stopTalk();
 	}
+
+	// WORKAROUND: The boat wreck in the foreground at the entrance to Woodtick
+	// isn't present in the Macintosh version. The instruction to place the
+	// actor is still there, but places it in room 0. The actor is not
+	// initialized, and the scroll script is never set. (It is however still
+	// cleared when you leave the room, so we don't need to worry about that
+	// part of it.)
+	//
+	// This may have been done for performance reasons, though would the Mac II
+	// really have been that under-powered?
+
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh &&
+		_currentRoom == 7 && vm.slot[_currentScript].number == 10002 &&
+		a->_number == 11 && room == 0 && enhancementEnabled(kEnhRestoredContent)) {
+		room = _currentRoom;
+		a->animateActor(250);
+		a->initActor(0);
+		a->setActorCostume(142);
+		a->_ignoreBoxes = 1;
+		a->_forceClip = 0;
+		VAR(VAR_SCROLL_SCRIPT) = 207;
+	}
+
 	a->_room = room;
 	if (!room)
 		a->putActor(0, 0, 0);
