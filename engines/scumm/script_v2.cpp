@@ -407,7 +407,7 @@ void ScummEngine_v2::decodeParseString() {
 	//
 	// (Using `kEnhGameBreakingBugFixes`, because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
-	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot[_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		while (ptr - buffer < 100) {
 			*ptr++ = ' ';
 		}
@@ -813,7 +813,7 @@ void ScummEngine_v2::o2_resourceRoutines() {
 		return;
 
 	// HACK V2 Maniac Mansion tries to load an invalid sound resource in demo script.
-	if (_game.id == GID_MANIAC && _game.version == 2 && _currentScript != 0xFF && vm.slot [_currentScript].number == 9 && type == rtSound && resid == 1)
+	if (_game.id == GID_MANIAC && _game.version == 2 && _currentScript != 0xFF && vm.slot[_currentScript].number == 9 && type == rtSound && resid == 1)
 		return;
 
 	if ((opcode & 0x0f) == 1) {

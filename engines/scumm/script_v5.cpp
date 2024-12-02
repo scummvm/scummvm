@@ -649,7 +649,7 @@ void ScummEngine_v5::o5_setClass() {
 		// are taken from the Ultimate Talkie Edition.
 		if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformFMTowns &&
 		    _game.platform != Common::kPlatformSegaCD && _roomResource == 59 &&
-			_currentScript != 0xFF && vm.slot [_currentScript].number == 10002 &&
+			_currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
 			obj == 915 && cls == 6 && _currentPalette[251 * 3] == 0 &&
 			enhancementEnabled(kEnhVisualChanges) && !(_game.features & GF_ULTIMATE_TALKIE)) {
 			// True as long as Guybrush isn't done with the voodoo recipe on the
@@ -798,7 +798,7 @@ void ScummEngine_v5::o5_breakHere() {
 	// least intrusive way of adding the delay. The script calls it a number
 	// of times, but only once from room 69.
 
-	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && _currentScript != 0xFF && vm.slot [_currentScript].number == 44 && _currentRoom == 69) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && _currentScript != 0xFF && vm.slot[_currentScript].number == 44 && _currentRoom == 69) {
 		vm.slot[_currentScript].delay = 120;
 		vm.slot[_currentScript].status = ssPaused;
 	}
@@ -1055,7 +1055,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// face Guybrush even if he's already looking at him.  drawObject() should never
 	// be called if Bit[129] is set in that script, so if it does happen, it means
 	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
-	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && _currentScript != 0xFF && vm.slot [_currentScript].number == 201 && obj == 237 &&
+	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && _currentScript != 0xFF && vm.slot[_currentScript].number == 201 && obj == 237 &&
 		state == 1 && readVar(0x8000 + 129) == 1 && enhancementEnabled(kEnhMinorBugFixes)) {
 		_scriptPointer += 32;
 		return;
@@ -1067,7 +1067,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// picked up the real Grail. This was probably done as a way to unconditionally
 	// reset the animation if it's already been played, but we can just do an
 	// unconditional reset of all previous frames instead, restoring the first one.
-	if (_game.id == GID_INDY3 && _roomResource == 87 && _currentScript != 0xFF && vm.slot [_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && enhancementEnabled(kEnhRestoredContent)) {
+	if (_game.id == GID_INDY3 && _roomResource == 87 && _currentScript != 0xFF && vm.slot[_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && enhancementEnabled(kEnhRestoredContent)) {
 		i = _numLocalObjects - 1;
 		do {
 			if (_objs[i].obj_nr)
@@ -1453,7 +1453,7 @@ void ScummEngine_v5::o5_isScriptRunning() {
 	// (AFAICS) no error. Fixing this would be nice as well (as a `kEnhMinorBugFixes` fix)
 	// but it would require a different workaround in a different place, since the script
 	// is a bit different.
-	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot [_currentScript].number == 204 && _currentRoom == 25 &&
+	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot[_currentScript].number == 204 && _currentRoom == 25 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
@@ -1534,7 +1534,7 @@ void ScummEngine_v5::o5_isEqual() {
 	//
 	// (It looks like the (or some?) Amiga releases already have this
 	// fix, but it's written in a way so that it can't hurt.)
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && _currentScript != 0xFF && vm.slot [_currentScript].number == 120 && var == VAR_ROOM && b == 29) {
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && _currentScript != 0xFF && vm.slot[_currentScript].number == 120 && var == VAR_ROOM && b == 29) {
 		// In Meathook's house; check is missing from both EGA and VGA SCUMMv4
 		// releases. It can cause a fatal "ERROR: (63:49:0x14A): Local script 207
 		// is not in room 63!" error, if one looks at the map instead of using
@@ -1562,7 +1562,7 @@ void ScummEngine_v5::o5_isEqual() {
 	//
 	// Not using enhancementEnabled, since this small oversight only
 	// exists in this fan-made edition which was made for enhancements.
-	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && _currentScript != 0xFF && vm.slot [_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && _currentScript != 0xFF && vm.slot[_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
 		if (a == 550 && b == 530)
 			b = a;
 		else if (a == 549 && b == 529)
@@ -2178,11 +2178,11 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	// TODO: For the following see also Hibernatus' information on bug #7315.
 	case 32:
 		// TODO (apparently never used in FM-TOWNS)
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot [_currentScript].number : -1);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot[_currentScript].number : -1);
 		break;
 	case 33:
 		// TODO (apparently never used in FM-TOWNS)
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot [_currentScript].number : -1);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot[_currentScript].number : -1);
 		break;
 	case 35:
 		if (_townsPlayer)
@@ -3262,7 +3262,7 @@ void ScummEngine_v5::decodeParseString() {
 			// with a shadow, but in a Mac emulator the text is
 			// drawn in light gray with a shadow instead. Very
 			// strange.
-			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && _currentScript != 0xFF && vm.slot [_currentScript].number == 134 && color == 0x8F)
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && _currentScript != 0xFF && vm.slot[_currentScript].number == 134 && color == 0x8F)
 				color = 0x87;
 
 			// WORKAROUND: In the CD version of MI1, the text in
