@@ -198,6 +198,7 @@ _verbose_build=no
 _werror_build=no
 _text_console=no
 _mt32emu=yes
+_lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
@@ -310,6 +311,7 @@ add_feature tinygl "TinyGL" "_tinygl"
 add_feature vpx "libvpx" "_vpx"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
+add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 add_feature imgui "imgui" "_imgui"
@@ -956,6 +958,7 @@ Optional Features:
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-lua            don't enable Lua support
   --disable-nuked-opl      don't build Nuked OPL driver
   --disable-16bit          don't enable 16bit color support
   --disable-highres        don't enable support for high resolution engines >320x240
@@ -1319,6 +1322,8 @@ for ac_option in $@; do
 	--default-dynamic)           _plugins_default=dynamic;;
 	--enable-mt32emu)            _mt32emu=yes            ;;
 	--disable-mt32emu)           _mt32emu=no             ;;
+	--enable-lua)                _lua=yes                ;;
+	--disable-lua)               _lua=no                 ;;
 	--enable-nuked-opl)          _nuked_opl=yes          ;;
 	--disable-nuked-opl)         _nuked_opl=no           ;;
 	--enable-translation)        _translation=yes        ;;
@@ -3610,6 +3615,7 @@ if test -n "$_host"; then
 			_nuked_opl=no
 			_tinygl=no
 			_bink=no
+			_lua=no
 			_png=no
 			_freetype2=no
 			_port_mk="backends/platform/ds/ds.mk"
@@ -4989,6 +4995,11 @@ echo "$_detection_features_full"
 # Check whether integrated MT-32 emulator support is requested
 #
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
+
+#
+# Check whether Lua support is requested
+#
+define_in_config_if_yes "$_lua" 'USE_LUA'
 
 #
 # Check whether Nuked OPL emulator support is disabled
@@ -7171,6 +7182,10 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emulator"
+fi
+
+if test "$_lua" = yes ; then
+	echo_n ", Lua"
 fi
 
 if test "$_nuked_opl" = yes ; then
