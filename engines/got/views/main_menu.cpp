@@ -20,12 +20,14 @@
  */
 
 #include "got/views/main_menu.h"
+#include "got/gfx/palette.h"
 #include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
+	xsetpal(_G(gfx)[0]._data);
 	return true;
 }
 
@@ -40,13 +42,19 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 }
 
 void MainMenu::draw() {
-	Graphics::ManagedSurface s = getSurface();
-
-	s.clear();
+	//Graphics::ManagedSurface s = getSurface();
+	drawBackground();
 }
 
-bool MainMenu::tick() {
-	return true;
+void MainMenu::drawBackground() {
+	Graphics::ManagedSurface s = getSurface();
+
+	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
+		for (int yp = 0; yp < 192; yp += 32)
+			s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
+
+		s.blitFrom(_G(gfx)[27], Common::Point(xp, 192));
+	}
 }
 
 } // namespace Views

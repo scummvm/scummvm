@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GOT_GFX_IMAGES_H
-#define GOT_GFX_IMAGES_H
+#ifndef GOT_GFX_GFX_CHUNKS_H
+#define GOT_GFX_GFX_CHUNKS_H
 
 #include "common/stream.h"
 #include "graphics/managed_surface.h"
@@ -34,8 +34,7 @@ enum CompressMode { UNCOMPRESSED = 0, LZSS = 1, RLE = 2 };
 
 struct GraphicChunk  {
 private:
-	Graphics::ManagedSurface _image;
-	const byte *_data = nullptr;
+	Common::Array<byte> _decompressedData;
 
 public:
 	int _compressMode = UNCOMPRESSED;
@@ -45,22 +44,34 @@ public:
 	uint16 _width = 0;
 	uint16 _height = 0;
 
+	const byte *_data = nullptr;
+
 	/**
 	 * Load the overall info for a chunk
 	 */
 	void load(Common::SeekableReadStream *src, const byte *data);
 
-	operator Graphics::ManagedSurface &();
+	/**
+	 * Handles any decompression necessary for the entry
+	 */
+	void enable();
+
+	/**
+	 * Provides a managed surface wrapper for raw data
+	 */
+	operator const Graphics::ManagedSurface() const;
 };
 
 /**
  * Interface for accessing the graphics.got file.
  * In the release, this is embedded in the executable starting
  * at offset 18af2h onwards. The preceding two bytes should be E2 4A.
+ * The collection is mostly images, but there are some palettes and
+ * sounds included as well.
  */
 class GfxChunks {
 private:
-	Common::Array<GraphicChunk> _images;
+	Common::Array<GraphicChunk> _chunks;
 	byte *_data = nullptr;
 
 	/**
@@ -77,6 +88,11 @@ public:
 	 * Loads the graphic data
 	 */
 	void load();
+
+	/**
+	 * Access a chunk
+	 */
+	GraphicChunk &operator[](uint idx);
 };
 
 } // namespace Gfx
