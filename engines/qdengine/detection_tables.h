@@ -163,8 +163,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 			"demo1.exe", "ffe20c2dbb131b01fccc1211a41e76e7", 962560),
 
 	// Były Sobie Myszki Trzy: Urodzinowe Śledztwo
-	//GAMEl("3mice2", "???", 10022470,
-	//		"qd_game.exe", "???", 917504, Common::PL_POL),
+	GAMEl("3mice2", "9128a0d801e547cb651c5fc7e09bee04", 8182142,
+			"qd_game.exe", "ffe20c2dbb131b01fccc1211a41e76e7", 962560, Common::PL_POL),
 
 	{ // Demo2, original
 	  // Video is in MP4 format which is not supported
