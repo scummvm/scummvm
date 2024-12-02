@@ -132,6 +132,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	setup.features = getAllFeatures();
+	setup.components = getAllComponents(setup.srcDir);
 
 	ProjectType projectType = kProjectNone;
 	const MSVCVersion *msvc = nullptr;
@@ -317,6 +318,11 @@ int main(int argc, char *argv[]) {
 			std::string libsDir = unifyPath(argv[++i]);
 			removeTrailingSlash(libsDir);
 			setup.libsDir = libsDir;
+		} else if (!std::strcmp(argv[i], "--list-components")) {
+			for (StringList::const_iterator j = setup.components.begin(); j != setup.components.end(); ++j)
+				cout << ' ' << *j << "\n";
+
+			return 0;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -434,6 +440,9 @@ int main(int argc, char *argv[]) {
 	// Add features
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
+
+	// Add all components
+	setup.defines.splice(setup.defines.begin(), setup.components);
 
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
@@ -1148,7 +1157,6 @@ const Feature s_features[] = {
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
 	{              "imgui",                     "USE_IMGUI", false, true,  "Dear ImGui based debugger" },
 	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
-	{                "lua",                       "USE_LUA", false, true,  "lua" },
 	{               "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
@@ -1218,6 +1226,51 @@ FeatureList getAllFeatures() {
 		features.push_back(s_features[i]);
 
 	return features;
+}
+
+StringList getAllComponents(const std::string &srcDir) {
+	std::string configureFile = srcDir + "/configure";
+
+	std::ifstream configure(configureFile.c_str());
+	if (!configure)
+		return StringList();
+
+	std::string line;
+	StringList components;
+	bool seenComponents = false;
+
+	for (;;) {
+		std::getline(configure, line);
+		if (configure.eof())
+			break;
+
+		if (configure.fail())
+			error("Failed while reading from " + configureFile);
+
+		TokenList tokens = tokenize(line);
+
+		if (tokens.size() < 4)
+			continue;
+
+		TokenList::const_iterator token = tokens.begin();
+
+		// add_component lua "lua" "USE_LUA"
+		if (*token != "add_component") {
+			if (seenComponents)	// No need to read whole file
+				break;
+			else
+				continue;
+		}
+
+		seenComponents = true;
+		++token;
+		++token;
+		++token;
+
+		components.push_back(*token);
+	}
+
+	return components;
 }
 
 StringList getFeatureDefines(const FeatureList &features) {

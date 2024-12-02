@@ -188,6 +188,8 @@ typedef std::list<Tool> ToolList;
  */
 FeatureList getAllFeatures();
 
+StringList getAllComponents(const std::string &srcDir);
+
 /**
  * Returns a list of all defines, according to the feature set
  * passed.
@@ -237,6 +239,8 @@ struct BuildSetup {
 
 	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
+
+	StringList components;
 
 	StringList defines;   ///< List of all defines for the build.
 	StringList testDirs;  ///< List of all folders containing tests
