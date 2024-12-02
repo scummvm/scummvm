@@ -56,8 +56,8 @@ Common::String GotEngine::getGameId() const {
 }
 
 Common::Error GotEngine::run() {
-	// Initialize 320x240 palleted graphics mode
-	initGraphics(320, 240);
+	// Initialize 320x200 palleted graphics mode
+	initGraphics(320, 200);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

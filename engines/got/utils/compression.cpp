@@ -40,9 +40,9 @@ void lzss_decompress(const byte *src, byte *dest, size_t destSize) {
 			if (bit) {
 				*dest++ = *src++;
 			} else {
-				uint offset = READ_LE_UINT16(src);
+				uint16 offset = READ_LE_UINT16(src);
 				src += 2;
-				int count = (offset >> 12) & 0xf + 2;
+				int count = (offset >> 12) + 2;
 				offset &= 0xfff;
 
 				Common::copy(dest - offset, dest - offset + count, dest);
