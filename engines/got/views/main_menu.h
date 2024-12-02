@@ -19,18 +19,27 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_MAIN_MENU_H
+#define GOT_VIEWS_MAIN_MENU_H
 
-#include "got/views/main_menu.h"
-#include "got/views/story.h"
+#include "graphics/managed_surface.h"
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	MainMenu _mainMenu;
-	Story _story;
+class MainMenu : public View {
+private:
+
+public:
+	MainMenu() : View("MainMenu") {}
+	virtual ~MainMenu() {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views

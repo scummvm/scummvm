@@ -19,21 +19,35 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
 #include "got/views/main_menu.h"
-#include "got/views/story.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	MainMenu _mainMenu;
-	Story _story;
-};
+bool MainMenu::msgFocus(const FocusMessage &msg) {
+	return true;
+}
+
+bool MainMenu::msgUnfocus(const UnfocusMessage &msg) {
+	return true;
+}
+
+bool MainMenu::msgKeypress(const KeypressMessage &msg) {
+	// Any keypress to close the view
+	close();
+	return true;
+}
+
+void MainMenu::draw() {
+	Graphics::ManagedSurface s = getSurface();
+
+	s.clear();
+}
+
+bool MainMenu::tick() {
+	return true;
+}
 
 } // namespace Views
 } // namespace Got
-
-#endif

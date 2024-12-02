@@ -7,9 +7,11 @@ MODULE_OBJS = \
 	messages.o \
 	metaengine.o \
 	vars.o \
+	gfx/images.o \
 	gfx/palette.o \
 	utils/file.o \
 	utils/res_archive.o \
+	views/main_menu.o \
 	views/view.o \
 	views/story.o
 
