@@ -249,6 +249,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "improv",				"Don't Quit Your Day Job" },
 	{ "ingenious",			"Ingenious!" },
 	{ "ingenioused",		"Ingenious! Education Resources" },
+	{ "intvlives",			"Intellivision Lives!" },
 	{ "ironhelix",			"Iron Helix" },
 	{ "isaslm",				"I Saw A Strange Little Man" },
 	{ "isis",				"Isis" },
@@ -3044,7 +3045,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		311
 	},
 
-	MACDEMO1("pagemaker", "5.0 Demo", "PageMaker 5.0 Demo", "cdb60bbb5f203e860de63df641bf5995", 1425719, 310),
+	MACDEMO1("pagemaker", "5.0 Demo", "PageMaker 5.0 Demo", "cdb60bbb5f203e860de63df641bf5995", 1425463, 310),
 
 	MACGAME1_l("peaceland", "", "PeaceLand 8m", "f5277c53bacd27936158dd3867e587e2", 392232, Common::JA_JPN, 311),
 	MACDEMO1_l("peaceland", "Demo", "PeaceLand", "276bee761e48a6fd709df77d5c2f60dd", 393877, Common::JA_JPN, 313),
@@ -4026,6 +4027,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "Int_1.Dir",	 "6210e24521f440ebd600d869c473444e", 5951298, 404),
 	WINGAME2_l("draculassecret", "", "Dracula.exe", 	  "033eed030a848f54a8f1671f50c616e9", 772925,
 									 "Dracula/INT_1.DIR", "bac609d9496142c8393a68435c25660d", 9387886, Common::FR_FRA, 404),
+	MACGAME2_l("draculassecret", "", "Secret.PPC",		  "r:ccf864a8dc6e9d0d26eb73b4683e634b", 60096,
+									 "Int_1.Dir",		  "d:bac609d9496142c8393a68435c25660d", 9387886, Common::FR_FRA, 404),
+	WINGAME2_l("draculassecret", "", "SECRET.EXE",		  "t:a68c7d55063ae0eececd4bb982689661",  808748,
+									 "Int_1.Dir",		  "f:bac609d9496142c8393a68435c25660d", 9387886,  Common::FR_FRA, 404),
 	MACGAME2_l("draculassecret", "", "Draculas Hemmelighet", "r:21cbec653e96e4c1bb6377d44050095e", 483490,
 									 "Int_1.Dir",			 "d:45d782f0cb6bf4023f026024e27f3fa2", 6001656, Common::NB_NOR, 404),
 	WINGAME2_l("draculassecret", "", "Dracula.exe", 	  "000d7509cd6459b35f271598ac8255f7", 800583,
@@ -5030,7 +5035,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 						  "MILO.EXE", "4035595e298631d18e23dd377fa469c0", 704645, 400),
 	WINGAME1("milo", "v2.02", "milo/milo.exe", "ade4937def30cb38c60f3ac737036577", 704645, 404),
 
-	WINDEMO1("mindbrain", "Demo", "INSTALL.EXE", "54fbe8edce6731ba6e89c16fd3be8e6d", 2558723, 404),
+	WINDEMO2("mindbrain", "Demo", "INSTALL.EXE", "t:6c902d94cbe67e43ddc8a1f22c80d388", 2558723,
+								  "BRAINSON",	 "f:95bdd99761df7b8d3990d2e2c17141e2", 3758690, 404),
 
 	MACGAME2("minkymomo1", "",  "MMM1",						"4577dd3eadc467a986ab172d90871b22", 520227,
 				    			"MOVIE/OPENING/OPEN01.MOV",	"9acb2d4608933a7a4cfb9bd737409d1d", 30200, 404),
@@ -6262,9 +6268,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "BIRTH1.Dxr", "4d2206c4a02f720aafae108334a7880a", 507450, Common::JA_JPN, 501),
 
 	// Original file names are ' ANKH2 ' and ' ANKH3 '
-	MACGAME1_l("ankh2", "", "ANKH2", "779a44f65837ded641cc3fbbebe5ace1", 721432, Common::JA_JPN, 501),
+	MACGAME1_l("ankh2", "", "xn-- ANKH2 -", "r:779a44f65837ded641cc3fbbebe5ace1", 721176, Common::JA_JPN, 501),
 
-	MACGAME1_l("ankh3", "", "ANKH3", "f715a3036c1b54ab1121e90388948018", 720456, Common::JA_JPN, 501),
+	MACGAME1_l("ankh3", "", "xn-- ANKH3 -", "r:f715a3036c1b54ab1121e90388948018", 720200, Common::JA_JPN, 501),
 
 	// From Ultra Gameplayers #98
 	MACDEMO2("aol", "", "WELCOME",	   "r:06ed90580400cd9e263525f84c8075fd", 705417,
@@ -6365,8 +6371,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("barbsskisses",  "Screensaver", "BARBIE/GLOBAL/SAVERS/MIN/KISSES.EXE",  "t:db389c1ddc2d4a78c4eba4c1f19f039a", 1145437, 501),
 	WINGAME1("barbssshoes",   "Screensaver", "BARBIE/GLOBAL/SAVERS/MAX/SHOES.EXE",	 "t:837a1020bad81fcd0bef0b04bcf6a108", 1380835, 501),
 
-	MACGAME1("battles", "", "BATTLES OF THE WORLD", "06ed90580400cd9e263525f84c8075fd", 705701, 500),
-	WINGAME1("battles", "", "BT_INT32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1400693, 500),
+	MACGAME1("battles", "", "BATTLES OF THE WORLD", "r:06ed90580400cd9e263525f84c8075fd",  705445, 500),
+	WINGAME1("battles", "", "BT_INT32.EXE",			"t:5ecb1bac9d6fb0f0a499505657ec6a50", 1400693, 500),
 
 	MACGAME2("biblechamps", "", "Startup", "ebae3c8021827b2d88f1a0297167415f", 1030114,
 								"INTRO.dxr", "09a572dd9a5346708a529eaa3a0df400", 432698, 500),
@@ -6396,8 +6402,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("browser", "", "Artropolis 97 (PPC)", "b6618c98b209ba70ed7ae7e85e7306ef", 107863, 501),
 	WINGAME1("browser", "", "Artropolis 97.exe", "3460ad87d2ba57104e2810a77b53c220", 1394247, 501),
 
-	MACGAME1("bvi1997", "", "BVI", "c148f66ae3511fb88733102aa27efe7e", 718353, 501),
-	WINGAME1("bvi1997", "", "BVI95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 9097249, 501),
+	MACGAME1("bvi1997", "", "BVI",		 "r:c148f66ae3511fb88733102aa27efe7e",  718097, 501),
+	WINGAME1("bvi1997", "", "BVI95.EXE", "t:1c707923b31985c818fcf193570d95d3", 9097249, 501),
 
 	// Bilingual English and French
 	MACGAME1("canelect", "", "Elect", "6e7e31d05709e1d38d63f4df6a59eec0", 719289, 501),
@@ -6421,8 +6427,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("cell1", "", "The Cell 1.0", "r:b37fd54b4f06bdc911ed57b8c074010d", 703153, 500),
 	WINGAME1("cell1", "", "CELL_195.EXE", "t:04767ed2096ccf8cba1b1c1511814d8a", 4144045, 501),
 
-	MACGAME1("cezanne", "", "CEZANNE", "8e171256e4811dc976720da230634d87", 705689, 500),
-	WINGAME1("cezanne", "", "CEZWIN95.EXE", "3460ad87d2ba57104e2810a77b53c220", 2763107, 500),
+	MACGAME1("cezanne", "", "A is for ART/CEZANNE", "r:8e171256e4811dc976720da230634d87",  705433, 500),
+	WINGAME1("cezanne", "", "CEZANNE/CEZWIN95.EXE", "t:a58b949bd54129b94b5be461701501c3", 2763107, 500),
 
 	WINGAME1t_l("choroli", "", "The trip of choroli.exe", "de072eb89068861c64d8abf08b70d29d", 4452460, Common::JA_JPN, 501),
 
@@ -6460,7 +6466,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Requires installation, DATA.Z, InstallShield v3
 	WINGAME1t("cocktailhour", "", "COCKT32.EXE", "f594dd4e50ea175e8d3453b3cd16b536", 1411465, 501),
 
-	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
+	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "r:37faaf693259d7a4fa031f4a2edf3098", 125831, 501),
 
 	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
 	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
@@ -6468,10 +6474,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
 							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500),
 
-	MACGAME1_l("crusader", "", "Croisades", "6e7e31d05709e1d38d63f4df6a59eec0", 718381, Common::FR_FRA, 501),
-	WINGAME1("crusader", "", "CRUSAD95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427, 501),
-	WINGAME1_l("crusader", "", "KREUZZ95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427, Common::DE_DEU, 501),
-	WINGAME1_l("crusader", "", "CROISA95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427, Common::FR_FRA, 501),
+	// Mac versions require installation
+	// Original Mac german filename is Kreuzzüge
+	MACGAME1("crusader", "",   "Crusader",	   	   "rt:b3630786f5ee183c85ae83a0e344bec9", 718125, 501),
+	MACGAME1_l("crusader", "", "Croisades",	   	   "rt:b3630786f5ee183c85ae83a0e344bec9", 718125, Common::FR_FRA, 501),
+	MACGAME1_l("crusader", "", "xn--Kreuzzge-c6a", "rt:b3630786f5ee183c85ae83a0e344bec9", 718125, Common::DE_DEU, 501),
+	WINGAME1("crusader", "",   "CRUSAD95.EXE",	   "t:526b05e3cfad798cc19c8159e485c983", 1410427, 501),
+	WINGAME1_l("crusader", "", "CROISA95.EXE",	   "t:526b05e3cfad798cc19c8159e485c983", 1410427, Common::FR_FRA, 501),
+	WINGAME1_l("crusader", "", "KREUZZ95.EXE",	   "t:526b05e3cfad798cc19c8159e485c983", 1410427, Common::DE_DEU, 501),
 
 	// Mac version requires installation, Crystal Skull Installer, uses VISE
 	// 3 CDs, executables are only on CD 1
@@ -6508,13 +6518,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("digihbd", "", "Digital Happy Birthday Card", "61f3e061ae6236d8f72312ae9de83f46", 703153, 500),
 
 	// Windows executables for Win 3.1 and 95; Mac executables for 68k, PPC, and Fat binary
-	MACGAME1("dimensionq", "", "Dimension Q", "c148f66ae3511fb88733102aa27efe7e", 719313, 501),
-	WINGAME1("dimensionq", "", "DIMENQ95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1416041, 501),
-	MACDEMO1("dimensionq", "Trailer", "Dimension Q Trailer", "08d6f6e39fbd8388faf57f602acaebcc", 705702, 500),
-	WINDEMO1("dimensionq", "Trailer", "DIMQ95.EXE", "3460ad87d2ba57104e2810a77b53c220", 6877089, 500),
+	MACGAME2("dimensionq", "", "Dimension Q",  "r:c148f66ae3511fb88733102aa27efe7e",  719057,
+							   "vxstart.Cxt",  "d:92f8fa130b10fb7ea1b9dae6e3133362",	 898, 501),
+	WINGAME2("dimensionq", "", "DIMENQ95.EXE", "t:f167962daea53f16d44aba1db92c90ba", 1416041,
+							   "vxstart.Cxt",  "f:92f8fa130b10fb7ea1b9dae6e3133362",	 898, 501),
+	MACDEMO1("dimensionq", "Trailer", "Dimension Q Trailer", "r:08d6f6e39fbd8388faf57f602acaebcc",  705446, 500),
+	WINDEMO1("dimensionq", "Trailer", "DIMQ95.EXE",			 "t:a6f676ca4c48c788db21dc82e35ba267", 6877089, 500),
 
-	MACGAME1("dinos", "", "Dinos", "231d3041df162be4a0ddd36a74eb03b6", 718285, 500),
-	WINGAME1("dinos", "", "DINO98.EXE", "3460ad87d2ba57104e2810a77b53c220", 1393813, 500),
+	MACGAME1("dinos", "", "Dinos",			 "r:231d3041df162be4a0ddd36a74eb03b6",  718029, 500),
+	WINGAME1("dinos", "", "DINO/DINO98.EXE", "t:e2619fe269e39928f630c489c46923c3", 1393813, 500),
 
 	MACGAME1_l("djrom", "", "DJ-ROM", "4a3fc901992d82fa2197da9da1be6992", 107572, Common::JA_JPN, 501),
 	WINGAME1_l("djrom", "", "DJROM.exe", "38b75ecdedf662326fe4931a68ae60cd", 1823050, Common::JA_JPN, 501),
@@ -6553,8 +6565,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("delaware", "the thinker", "11the_thinker.exe", "b12c52cb1ed6bf9658ee0f0d44ce9f6b", 8498468, 501),
 	WINGAME1t("delaware", "never mind the bollocks", "12never_mind_the_bollocks.exe", "bf6759ac50902409d53691d028705570", 2693444, 501),
 
-	// Other versions are D4
-	MACGAME1_l("draculassecret", "", "Dracula.PPC", "65f0701cced8f5c64813e1e0353f0510", 108119, Common::FR_FRA, 501),
+	// Splash screen, launches Dracula/Secret.PPC which is D4
+	MACGAME2_l("draculassecret", "Launcher", "Dracula.PPC",		  "r:65f0701cced8f5c64813e1e0353f0510", 107863,
+											 "Dracula/Int_1.Dir", "d:bac609d9496142c8393a68435c25660d", 9387886, Common::FR_FRA, 501),
 
 	MACGAME1("draculaterror", "", "Dracula - Truth and Terror/Dracula", "r:3649908b8c870285a83db91caced6cc0", 718945, 501),
 	WINGAME1("draculaterror", "", "DRACULA/DRACULA.EXE", "t:945023e80a3835a72c4d550701c12d5a", 917645, 500),
@@ -8758,6 +8771,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"Resources/ISS.mov", "d:c8ba149da1374e2cc741fbc9de6d08c4", 15031696, 700),
 	WINGAME2("isscommerce", "", "PC-Start.exe",		 "t:8af97cebe2069d8b92948c8ef66a0845",  6878037,
 								"Resources/ISS.mov", "d:c8ba149da1374e2cc741fbc9de6d08c4", 15031696, 700),
+
+	// Official encyclopedia/compilation dedicated to the Mattel Intellivision console
+	// Also includes two emulators (and a selection of ROMs), which are not Director
+	MACGAME1("intvlives", "", "Intellivision Lives!", "rt:81dedcc0cf0bfb62bc83b9da140387e7",  118022, 702),
+	WINGAME1("intvlives", "", "Inty_Lives.exe",		  "t:494733c3a5311ae6f465d5d2a3fed173",  2725946, 702),
 
 	// 1999 Re-Release
 	// Original version is D4
