@@ -2650,8 +2650,8 @@ if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
 elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
-echo $_endian;
-cc_check_clean tmp_endianness_check.cpp $TMPO-tmp_endianness_check.dwo
+echo $_endian
+cc_check_clean tmp_endianness_check.cpp $TMPO-tmp_endianness_check.dwo tmp_endianness_check.dwo
 
 case $_endian in
 	big)
