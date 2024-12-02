@@ -231,7 +231,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Added keymapper support.
-   - Added support for Discworld 1 Mac Japanese.
 
  Titanic:
    - Fixed crash if the word 'that' was used in a conversation.
