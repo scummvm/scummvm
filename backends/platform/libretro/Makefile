@@ -345,15 +345,14 @@ else ifneq (,$(findstring armv8,$(platform)))
    HAVE_OPENGLES2 := 1
 
 # Odroid Go Advance
-else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
+else ifneq (,$(findstring odroidgo2,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
-   DEFINES += -fPIC -D_ARM_ASSEM_ -DARM -marm -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a+crc
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DARM -DUSE_CXX11 -marm -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a+crc
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
-   USE_VORBIS = 0
-   USE_THEORADEC = 0
-   USE_TREMOR = 1
-   USE_MT32EMU = 0
-   HAVE_NEON := 1
+   CFLAGS += -fPIC -mcpu=cortex-a35 -fomit-frame-pointer -ffast-math
+   CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_NEON = 1
    HAVE_OPENGLES2 := 1
 
 # Emscripten
