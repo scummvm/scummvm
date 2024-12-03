@@ -593,6 +593,13 @@ int ScummEngine::readVar(uint var) {
 			return !ConfMan.getBool("subtitles");
 		}
 
+		// WORKAROUND: The Macintosh version version of MI2 first sets the
+		// machine speed to 2, then immediately to 1, in script 1. This affects
+		// at the very least the number of bats in the Scabb Island swamp.
+		if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && var == VAR_MACHINE_SPEED && enhancementEnabled(kEnhRestoredContent)) {
+			return 2;
+		}
+
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 		if (_enableHECompetitiveOnlineMods) {
 			// HACK: If we're reading var586, competitive mods enabled, playing online,
