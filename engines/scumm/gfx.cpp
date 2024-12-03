@@ -4803,7 +4803,7 @@ void ScummEngine::scrollEffect(int dir) {
 	byte *src;
 	int m = _textSurfaceMultiplier;
 
-	if (m == 1 && _game.platform == Common::kPlatformMacintosh)
+	if (m == 1 && _game.platform == Common::kPlatformMacintosh && _macScreen)
 		m = 2;
 
 	int vsPitch = vs->pitch;
