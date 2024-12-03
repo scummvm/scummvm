@@ -590,8 +590,12 @@ endif
 # Special target to create a static linked binary for macOS.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
+ifdef MACOSX_PPC
+OSX_STATIC_LD_FLAGS = -force_cpusubtype_ALL
+endif
+
 scummvm-static: $(DETECT_OBJS) $(OBJS)
-	+$(LD) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(PRE_OBJS_FLAGS) $(DETECT_OBJS) $(OBJS) $(POST_OBJS_FLAGS) \
+	+$(LD) $(LDFLAGS) $(OSX_STATIC_LD_FLAGS) -o scummvm-static $(PRE_OBJS_FLAGS) $(DETECT_OBJS) $(OBJS) $(POST_OBJS_FLAGS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)

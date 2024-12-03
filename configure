@@ -3075,9 +3075,14 @@ EOF
 				add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
 			fi
 		fi
-		if test "$_host_cpu" = "aarch64" ; then
+		case $_host_cpu in
+		powerpc*)
+			add_line_to_config_mk 'MACOSX_PPC = 1'
+			;;
+		aarch64)
 			add_line_to_config_mk 'MACOSX_ARM64 = 1'
-		fi
+			;;
+		esac
 
 		# Avoid "file has no symbols" noise from ranlib, if it's new enough
 		ranlib_version=`$_ranlib -V 2>/dev/null`
