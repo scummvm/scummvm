@@ -43,7 +43,7 @@ private:
 	static void callback(frac16 myMessage, machine *sender);
 	void conv704a();
 	void playCheckBrochureAnim(int32 trigger, const char *digiName);
-	void subA1DDF(int32 trigger, int val1);
+	void useWheelOnNiche(int32 trigger, int val1);
 
 	int32 _field58_mode = 0;
 	int32 _field5C_should = 0;
