@@ -29,9 +29,6 @@ namespace Got {
 namespace Views {
 
 class MainMenu : public View {
-private:
-	void drawBackground();
-
 public:
 	MainMenu() : View("MainMenu") {}
 	virtual ~MainMenu() {}
