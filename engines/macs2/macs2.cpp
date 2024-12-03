@@ -524,6 +524,13 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 	}
 }
 
+void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
+	// l0037_3355:
+	for (int i = 0; i < 0x21; i++) {
+
+	}
+}
+
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Macs2") {
 	g_engine = this;
