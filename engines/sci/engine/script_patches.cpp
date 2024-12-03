@@ -824,7 +824,7 @@ static const uint16 sciPatchTimerRollover[] = {
 //  Correct:     GetTime - ticks > 0
 //  Optimized:   0 > ticks - GetTime
 //
-// Applies to: Castle of Dr. Brain, LSL1 PC English, SQ1
+// Applies to: Castle of Dr. Brain, LSL5 PC English, SQ1
 // Responsible method: Talker:doit
 // Fixes bug: #15303
 static const uint16 sciSignatureTalkerRollover[] = {
@@ -870,7 +870,7 @@ static const uint16 sciPatchTalkerRollover[] = {
 // Responsible method: fawaz::handleEvent
 // Fixes bug: #6402
 static const uint16 camelotSignaturePeepingTom[] = {
-	0x72, SIG_MAGICDWORD, SIG_UINT16(0x077e), // lofsa fawaz <-- start of proper initializion code
+	0x72, SIG_MAGICDWORD, SIG_UINT16(0x077e), // lofsa fawaz <-- start of proper initialization code
 	0xa1, 0xb9,                      // sag global[b9h]
 	SIG_ADDTOOFFSET(+571),           // ...
 	0x39, 0x7a,                      // pushi 7a <-- initialization code when walking automatically
@@ -21193,7 +21193,7 @@ static const uint16 qfg4DeathScreenKeyboardPatch[] = {
 //  These scripts also prevent the player from throwing their last dagger with a
 //  message, but they repeat the check after removing the item from inventory
 //  and make a broken call to gloryMessgaer:say within a handsOff script. This
-//  redunant check wouldn't have any effect if it weren't for the first bug.
+//  redundant check wouldn't have any effect if it weren't for the first bug.
 //
 // We fix this by patching out all of the hero:use calls that consume daggers or
 //  rocks in the rooms with this bug. There are several forms of these scripts,
