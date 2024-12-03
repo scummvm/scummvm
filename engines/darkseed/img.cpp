@@ -42,8 +42,8 @@ bool Img::load(const Common::Path &filename) {
 bool Img::load(Common::SeekableReadStream &readStream) {
 	Common::Array<uint8> unpackedData;
 	unpackRLE(readStream, unpackedData);
-	_x = READ_UINT16(&unpackedData.data()[0]);
-	_y = READ_UINT16(&unpackedData.data()[2]);
+	_x = (uint16)READ_LE_INT16(&unpackedData.data()[0]);
+	_y = (uint16)READ_LE_INT16(&unpackedData.data()[2]);
 	unpackPlanarData(unpackedData, 4);
 	return true;
 }
@@ -86,8 +86,8 @@ bool Img::unpackRLE(Common::SeekableReadStream &readStream, Common::Array<byte> 
 }
 
 void Img::unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset) {
-	_height = READ_UINT16(&planarData.data()[headerOffset]);
-	_width = READ_UINT16(&planarData.data()[headerOffset + 2]) * 8;
+	_height = (uint16)READ_LE_INT16(&planarData.data()[headerOffset]);
+	_width = (uint16)READ_LE_INT16(&planarData.data()[headerOffset + 2]) * 8;
 	_mode = planarData.data()[headerOffset + 4];
 //	assert(mode == 0xff);
 	_pixels.resize(_width * _height, 0);
