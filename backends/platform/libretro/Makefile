@@ -38,14 +38,44 @@ CP       := cp
 
 LDFLAGS :=
 
-# Raspberry Pi 3 (64 bit)
-ifeq ($(platform), rpi3_64)
+
+# Raspberry Pi 1
+ifeq ($(platform), rpi1)
+   TARGET = $(TARGET_NAME)_libretro.so
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -marm -DARM
+   LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
+   CFLAGS += -fPIC -marm -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard -fomit-frame-pointer -ffast-math
+   CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 := 1
+
+# Raspberry Pi 3
+else ifeq ($(platform), rpi3)
+   TARGET = $(TARGET_NAME)_libretro.so
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -marm -DARM
+   LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
+   CFLAGS += -fPIC -mcpu=cortex-a53 -mtune=cortex-a53 -fomit-frame-pointer -ffast-math
+   CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 := 1
+   HAVE_NEON := 1
+
+ # Raspberry Pi 3 (64 bit)
+else ifeq ($(platform), rpi3_64)
    TARGET   = $(TARGET_NAME)_libretro.so
    DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
-   CFLAGS  += -fPIC -mcpu=cortex-a53 -mtune=cortex-a53 -fomit-frame-pointer -ffast-math
+   CFLAGS += -fPIC -mcpu=cortex-a53 -mtune=cortex-a53 -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
-   HAVE_OPENGLES2 :=1
+   HAVE_OPENGLES2 := 1
+   HAVE_NEON := 1
+
+# Raspberry Pi 5 (64 bit)
+else ifeq ($(platform), rpi5_64)
+   TARGET = $(TARGET_NAME)_libretro.so
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM
+   LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
+   CFLAGS += -fPIC -mcpu=cortex-a76 -mtune=cortex-a76 -fomit-frame-pointer -ffast-math
+   CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 := 1
    HAVE_NEON := 1
 
 # Raspberry Pi 4 (64 bit)
