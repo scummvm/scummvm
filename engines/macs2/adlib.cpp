@@ -860,7 +860,7 @@ void Adlib::OnTimer() {
 									uint8 arg2 = gArray96[bp8] + 0x40;
 									uint8 result = Func2779(arg1);
 									
-									Func2792(arg2, bp1 + result & 0xC0);
+									Func2779(arg2);
 									// TODO: Continue from here
 								}
 							}

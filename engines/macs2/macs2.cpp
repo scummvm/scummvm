@@ -1555,36 +1555,28 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 }
 
 uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
+	// [bp-2h]
+	uint16 result;
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(blob.data(), blob.size());
 	stream->seek(0xA);
 	uint16 bp4 = stream->readUint16LE();
 	bp4++;
 	stream->seek(0xA + bp4 - 2);
 	uint8 bp6 = stream->readByte();
-
-	/*
-	cmp	word ptr [bp-4h],3h
-	jnc	16B4h
-
-l00B7_16AF:
-	xor	ax,ax
-	mov	[bp-2h],ax
-
-l00B7_16B4:
-	cmp	word ptr [bp-6h],3h
-	jz	16BFh
-
-l00B7_16BA:
-	xor	ax,ax
-	mov	[bp-2h],ax
-
-l00B7_16BF:
-	mov	ax,[bp-4h]
-	mov	[bp-2h],ax
-	mov	ax,[bp-2h]
-	leave
-	retf	4h*/
-	return 0;
+	if (bp4 == 0x3) {
+		// l00B7_16AF:
+		result = 0;
+	}
+	// l00B7_16B4:
+	if (bp6 != 0x3) {
+		// l00B7_16BA:
+		result = 0;
+	}
+	// l00B7_16BF:
+	// TODO: I only realized this after finishing the function, but it looks like
+	// the calculations in between are actually superfluous
+	result = bp4;
+	return result;
 }
 
 

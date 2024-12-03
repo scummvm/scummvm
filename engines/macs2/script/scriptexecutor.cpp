@@ -1010,18 +1010,17 @@ void ScriptExecutor::FuncB6BE_actual() {
 	// l0037_B715:
 	// TODO: Load the data of the animation
 
+	// l0037_B73C:
+	// Use the function to extract some value
+	// Subtracting an additional 1 since mine are indexed from 0 and not 1 like the game does
+	id -= 1;
 
-	mov	ax,[bp-2h]
-	shl	ax,4h
-	les	di,[bp-0Ch]
-	add	di,ax
-	add	di,50E7h
-	;; Save the offset of the animation object
-	mov	[bp-10h],di
-	mov	[bp-0Eh],es
-	mov	ax,es:[di+8h]
-	or	ax,es:[di+0Ah]
-	jnz	0B73Ch
+	BackgroundAnimationBlob& blob = _engine->_backgroundAnimationsBlobs[id];
+	uint16 result168C = BackgroundAnimationBlob::Func168C(blob.Blob);
+
+	// TODO: Do some comparison with [bp-4h]
+	BackgroundAnimationBlob::Func1480(blob.Blob, true, bp4 + 0x64);
+
 
 
 	// TODO: Continue here
