@@ -52,6 +52,9 @@ private:
 	 */
 	UIElement *getElementAtPos(const Common::Point &pos) const;
 
+protected:
+	void drawBackground();
+
 public:
 	View(const Common::String &name, UIElement *uiParent) :
 		UIElement(name, uiParent) {

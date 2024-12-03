@@ -20,6 +20,7 @@
  */
 
 #include "got/views/view.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
@@ -78,6 +79,18 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	UIElement *child = getElementAtPos(msg._pos);
 	return child ? child->send(msg) : false;
 }
+
+void View::drawBackground() {
+	Graphics::ManagedSurface s = getSurface();
+
+	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
+		for (int yp = 0; yp < 192; yp += 32)
+			s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
+
+		s.blitFrom(_G(gfx)[27], Common::Point(xp, 192));
+	}
+}
+
 
 } // namespace Views
 } // namespace Got
