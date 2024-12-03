@@ -276,6 +276,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  macOS port:
    - Autoupdates now use Sparkle 2.x.
+   - Default savegame path was changed to use the Application Support folder.
 
  3DS port:
    - Integrated the port-specific options dialog with the main GUI.
