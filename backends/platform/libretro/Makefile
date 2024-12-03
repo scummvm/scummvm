@@ -551,7 +551,7 @@ ifneq (,$(findstring $(platform), wiiu vita))
    DEFINES += -Os
 else ifneq (,$(findstring $(platform), ios osx))
    DEFINES += -O1
-else ifneq (,$(findstring $(platform), msvc genode))
+else ifneq (,$(findstring $(platform), msvc genode rpi))
    DEFINES += -O2
 else
    DEFINES += -O3
