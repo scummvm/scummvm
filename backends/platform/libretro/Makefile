@@ -352,8 +352,18 @@ else ifneq (,$(findstring odroidgo2,$(platform)))
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS += -fPIC -mcpu=cortex-a35 -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
-   HAVE_NEON = 1
    HAVE_OPENGLES2 := 1
+   HAVE_NEON = 1
+
+# RG353x
+else ifneq (,$(findstring rg353x,$(platform)))
+   TARGET = $(TARGET_NAME)_libretro.so
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM
+   LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
+   CFLAGS += -fPIC -mcpu=cortex-a55 -mtune=cortex-a55 -fomit-frame-pointer -ffast-math
+   CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 := 1
+   HAVE_NEON = 1
 
 # Emscripten
 else ifeq ($(platform), emscripten)
