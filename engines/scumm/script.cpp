@@ -1041,6 +1041,16 @@ void ScummEngine::runEntryScript() {
 	}
 	if (VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
+
+	// WORKAROUND: The Macintosh version of MI2 doesn't have any bats in the
+	// Scabb Island swamp, because that line has been removed from the entry
+	// script for room 20. We re-insert that call here.
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh &&
+		_currentRoom == 20 && enhancementEnabled(kEnhRestoredContent)) {
+		int args[NUM_SCRIPT_LOCAL];
+		memset(args, 0, sizeof(args));
+		runScript(215, false, false, args);
+	}
 }
 
 void ScummEngine::runQuitScript() {
