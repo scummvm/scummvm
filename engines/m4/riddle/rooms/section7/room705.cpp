@@ -129,7 +129,7 @@ void Room705::init() {
 		break;
 	}
 
-	digi_play_loop("950_s39", 3, 255, -1, -1;
+	digi_play_loop("950_s39", 3, 255, -1, -1);
 }
 
 void Room705::pre_parser() {
