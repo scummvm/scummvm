@@ -141,6 +141,9 @@ protected:
 	// Assumes that the stream is at the location of the number of background animations
 	void ReadBackgroundAnimations(Common::MemoryReadStream *stream);
 
+	// Assumes that the stream is at the start of the right section
+	void ReadImageResources(Common::MemoryReadStream *stream);
+
 public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;

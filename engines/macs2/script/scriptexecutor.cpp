@@ -1017,14 +1017,10 @@ void ScriptExecutor::FuncB6BE_actual() {
 
 	BackgroundAnimationBlob& blob = _engine->_backgroundAnimationsBlobs[id];
 	uint16 result168C = BackgroundAnimationBlob::Func168C(blob.Blob);
+	// TODO: We should be doing some checking on the result value
 
 	// TODO: Do some comparison with [bp-4h]
 	BackgroundAnimationBlob::Func1480(blob.Blob, true, bp4 + 0x64);
-
-
-
-	// TODO: Continue here
-
 }
 
 void ScriptExecutor::FuncB6BE() {
@@ -1668,6 +1664,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
 			Character *c = currentView->GetCharacterByIndex(objectID);
+			if (c == nullptr) {
+				// TODO: This seems to happen in chapter 3 when leaving from the first
+				// interactive screen to the right.
+				// For now, just ignoring the command in this case
+				// TODO: Not sure if we should be returning or continuing here
+				return ExecutionResult::ScriptFinished;
+			}
 			c->RegisterWaitForMovementFinishedEvent();
 			requestCallback = false;
 			isAwaitingCallback = true;
@@ -1835,7 +1838,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		}
 		else
 		if (opcode1 == 0x0E) {
-			FuncB6BE();
+			FuncB6BE_actual();
 		} else if (opcode1 == 0x0F) {
 			// This is a timer for waiting to advance
 			// TODO: Mocked reads to advance the file correctly
