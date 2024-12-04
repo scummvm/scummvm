@@ -190,6 +190,7 @@ class View1 : public UIElement {
 	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
 
 	void renderString(uint16 x, uint16 y, Common::String s);
+	void renderString(const Common::Point pos, const Common::String &s);
 
 	void showStringBox(const Common::StringArray &sa);
 
