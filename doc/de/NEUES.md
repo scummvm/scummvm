@@ -231,7 +231,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Tinsel:
    - Unterstützung für Tastenkürzel hinzugefügt.
-   - Unterstützung für die japanische Mac-Version von Discworld 1 hinzugefügt.
 
  Titanic:
    - Absturz behoben, der auftritt, wenn das Wort "that" in einer Konversation verwendet wird.
