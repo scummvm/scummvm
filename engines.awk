@@ -59,6 +59,18 @@ function get_feature_state(feature) {
 	return "no"
 }
 
+function have_feature(feature) {
+	if (length(ENVIRON["_feature_" feature "_settings"]) == 0)
+		return "no"
+
+	return "yes"
+}
+
+function disable_feature(feature) {
+	ENVIRON["_feature_" feature "_settings"] = "no"
+
+	ENVIRON["_features_disabled"] = ENVIRON["_features_disabled"] feature " "
+}
 
 #
 # Engine handling functions
@@ -289,17 +301,29 @@ function print_engines(headline, engines, count) {
 BEGIN {
 	config_mk = "config.mk.engines"
 	config_h = "config.h.engines"
-	# Clear previous contents if any
-	printf("") > config_h
-	printf("") > config_mk
+
+	if (_pass == "pass1")
+		pass = 1
+	else
+		pass = 2
+
+	if (pass == 2) {
+		# Clear previous contents if any
+		printf("") > config_h
+		printf("") > config_mk
+	}
 }
 
 END {
 	engine_count = get_values("_engines", engines)
 	for (e = 1; e <= engine_count; e++) {
 		engine = engines[e]
-		check_engine_deps(engine)
+
+		if (pass == 2)
+			check_engine_deps(engine)
+
 		check_engine_components(engine)
+
 		if (get_engine_sub(engine) == "no") {
 			# It's a main engine
 			if (get_engine_build(engine) == "no") {
@@ -332,13 +356,33 @@ END {
 				isbuilt = "1"
 		}
 
-		# Save the settings
-		defname = "ENABLE_" toupper(engine)
-		if (isbuilt == "no")
-			add_line_to_config_mk("# " defname)
-		else
-			add_line_to_config_mk(defname " = " isbuilt)
+		if (pass == 2) {
+			# Save the settings
+			defname = "ENABLE_" toupper(engine)
+			if (isbuilt == "no")
+				add_line_to_config_mk("# " defname)
+			else
+				add_line_to_config_mk(defname " = " isbuilt)
+		}
 	}
+
+	if (pass == 1) {
+		components_count = get_values("_components", components)
+
+		for (c = 1; c <= components_count; c++) {
+			if (get_component_enabled(components[c]) != "yes") {
+				if (have_feature(components[c])) {
+					if (get_feature_state(components[c]) == "yes") {
+						disable_feature(components[c])
+						print("   Feature '" components[c] "' is disabled as unused")
+					}
+				}
+			}
+		}
+
+		exit 0
+	}
+
 
 	# Sort engines to place our headline engine at start...
 	# No technical reason, just historical convention
@@ -369,12 +413,6 @@ END {
 		}
 	}
 
-	add_to_config_h_if_yes(_tainted_build, "#define TAINTED_BUILD")
-	print_engines("Engines (builtin):", _engines_built_static, _static)
-	print_engines("Engines (plugins):", _engines_built_dynamic, _dynamic)
-	print_engines("Engines Skipped:", _engines_skipped, _skipped)
-	print_engines("WARNING: This ScummVM build contains the following UNSTABLE engines:", _engines_built_wip, _wip)
-
 	#
 	# Process components
 	#
@@ -395,6 +433,13 @@ END {
 	}
 	add_line_to_config_h("/* end of components */")
 	add_line_to_config_mk("# end of components")
+
+
+	add_to_config_h_if_yes(_tainted_build, "#define TAINTED_BUILD")
+	print_engines("Engines (builtin):", _engines_built_static, _static)
+	print_engines("Engines (plugins):", _engines_built_dynamic, _dynamic)
+	print_engines("Engines Skipped:", _engines_skipped, _skipped)
+	print_engines("WARNING: This ScummVM build contains the following UNSTABLE engines:", _engines_built_wip, _wip)
 
 	if (comp_enabled == "")
 		comp_enabled = "<none>"
