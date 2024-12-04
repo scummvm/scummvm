@@ -23,6 +23,8 @@
 #include "ags/engine/ac/dynobj/script_game.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_common.h" // cc_error
 #include "ags/globals.h"
 
@@ -231,6 +233,7 @@ void CCScriptGame::WriteInt32(void *address, intptr_t offset, int32_t val) {
 		break;
 	case 57:
 		_GP(play).inv_top = val;
+		GUI::MarkInventoryForUpdate(_GP(game).playercharacter, true);
 		break;
 	case 58: // play.inv_numdisp
 	case 59: // play.inv_numorder
