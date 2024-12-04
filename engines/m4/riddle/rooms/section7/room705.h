@@ -41,11 +41,17 @@ public:
 
 private:
 	int32 _field24Series = 0;
+	int32 _field60_mode = 0;
+	int32 _field64_should = 0;
 
+	int32 _705Eye1aSeries = 0;
+	int32 _705Eye4aSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripTrekMedReachPos1Series = 0;
 
 	machine *_leftWheelMach = nullptr;
+	machine *_monkMach = nullptr;
+	machine *_rightWheelMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 
 };

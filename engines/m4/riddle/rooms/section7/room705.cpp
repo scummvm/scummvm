@@ -79,23 +79,23 @@ void Room705::init() {
 
 	switch (_G(flags[V221])) {
 	case 1:
-		_leftWheelMach = series_place_sprite("705 RT PEACE WHEEL", 0, 640, 0, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT PEACE WHEEL", 0, 640, 0, 100, 1280);
 		break;
 
 	case 2:
-		_leftWheelMach = series_place_sprite("705 RT INSIGHT WHEEL", 0, 640, 0, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT INSIGHT WHEEL", 0, 640, 0, 100, 1280);
 		break;
 
 	case 3:
-		_leftWheelMach = series_place_sprite("705 RT SERENITY WHEEL", 0, 640, 0, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT SERENITY WHEEL", 0, 640, 0, 100, 1280);
 		break;
 
 	case 4:
-		_leftWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 0, 640, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 0, 640, 100, 1280);
 		break;
 
 	case 5:
-		_leftWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 0, 640, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 0, 640, 100, 1280);
 		break;
 
 	default:
@@ -283,9 +283,187 @@ void Room705::daemon() {
 		break;
 
 	case 123:
+		if (_field60_mode == 124) {
+			switch (_field64_should) {
+			case 121:
+				_705Eye1aSeries = series_load("705eye1a", -1, nullptr);
+				_field64_should = 822;
+				_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+				sendWSMessage_10000(1, _monkMach, _705Eye1aSeries, 1, 4, 123, _705Eye1aSeries, 5, 10, 4);
+				sendWSMessage_1a0000(_monkMach, 9);
+
+				break;
+
+			case 122:
+				terminateMachine(_monkMach);
+				series_unload(_705Eye1aSeries);
+				conv_resume(conv_get_handle());
+
+				break;
+
+			case 125:
+				conv_load("conv705a", 10, 10, 91);
+				conv_export_value_curr(0, 0);
+				conv_export_value_curr(_G(flags[V211]), 1);
+				conv_export_value_curr(_G(flags[V213]), 2);
+				conv_export_value_curr(_G(flags[V220]) == 1 ? 1 : 0, 0);
+				conv_play(conv_get_handle());
+
+				break;
+
+			case 822:
+				_field64_should = 823;
+				digi_play(conv_sound_to_play(), 1, 255, 123, -1);
+
+				break;
+
+			case 823:
+				_field64_should = 824;
+				sendWSMessage_10000(1, _monkMach, _705Eye1aSeries, 11, 14, 123, _705Eye1aSeries, 14, 14, 0);
+
+				break;
+
+			case 824:
+				_field64_should = 122;
+				kernel_timing_trigger(10, 123, nullptr);
+
+				break;
+
+			default: // includes case 126
+				break;
+			}
+
+		}
+
+		break;
+
 	case 127:
+		if (_field60_mode == 124) {
+			switch (_field64_should) {
+			case 121:
+			case 122:
+			case 124:
+			case 125:
+			case 126:
+			case 127:
+			case 822:
+			case 823:
+			case 824:
+				kernel_timing_trigger(1, 123, nullptr);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
 	case 133:
+		if (_field60_mode == 134) {
+			switch (_field64_should) {
+			case 131:
+				_705Eye4aSeries = series_load("705eye4a", -1, nullptr);
+				_field64_should = 832;
+				_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+				sendWSMessage_10000(1, _monkMach, _705Eye4aSeries, 1, 5, 133, _705Eye4aSeries, 5, 5, 0);
+
+				break;
+
+			case 132:
+				terminateMachine(_monkMach);
+				series_unload(_705Eye4aSeries);
+				conv_resume(conv_get_handle());
+
+				break;
+
+			case 135:
+				conv_load("conv705b", 10, 10, 94);
+				conv_export_value_curr(0, 0);
+				conv_export_value_curr(_G(flags[V211]), 1);
+				conv_export_value_curr(_G(flags[V213]), 2);
+				conv_export_value_curr(_G(flags[V221]) == 2 ? 1 : 0, 0);
+				conv_play(conv_get_handle());
+
+				break;
+
+			case 832:
+				switch (imath_ranged_rand(1, 2)) {
+				case 1:
+					_field64_should = 833;
+					break;
+
+				case 2:
+					_field64_should = 834;
+					break;
+
+				default:
+					break;
+				}
+
+				kernel_timing_trigger(10, 133);
+
+				break;
+
+			case 833:
+				_field64_should = 835;
+				sendWSMessage_10000(1, _monkMach, _705Eye4aSeries, 6, 7, -1, _705Eye4aSeries, 8, 12, 4);
+				sendWSMessage_1a0000(_monkMach, 9);
+				digi_play(conv_sound_to_play(), 1, 255, 133, -1);
+
+				break;
+
+			case 834:
+				_field64_should = 835;
+				sendWSMessage_10000(1, _monkMach, _705Eye4aSeries, 8, 8, -1, _705Eye4aSeries, 8, 12, 4);
+				sendWSMessage_1a0000(_monkMach, 9);
+				digi_play(conv_sound_to_play(), 1, 255, 133, -1);
+
+				break;
+
+			case 835:
+				_field64_should = 836;
+				sendWSMessage_10000(1, _monkMach, _705Eye4aSeries, 13, 16, 133, _705Eye4aSeries, 16, 16, 0);
+
+				break;
+
+			case 836:
+				_field64_should = 132;
+				kernel_timing_trigger(10, 133);
+				break;
+
+			default: // including 136
+				break;
+
+			}
+		}
+
+		break;
+
 	case 137:
+		if (_field60_mode == 134) {
+			switch (_field60_mode) {
+			case 131:
+			case 132:
+			case 134:
+			case 135:
+			case 136:
+			case 137:
+			case 832:
+			case 833:
+			case 834:
+			case 835:
+			case 836:
+				kernel_timing_trigger(1, 133, nullptr);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
 	case 140:
 		player_set_commands_allowed(false);
 		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
@@ -294,12 +472,70 @@ void Room705::daemon() {
 		break;
 
 	case 141:
+		kernel_timing_trigger(5, 142, nullptr);
+		break;
+
 	case 142:
 		sendWSMessage_120000(_G(my_walker), 143);
 		break;
 
 	case 143:
+		kernel_timing_trigger(5, 144, nullptr);
+		break;
+
 	case 144:
+		switch (_G(flags[V221])) {
+		case 1:
+			inv_give_to_player("PEACE WHEEL");
+			_G(flags[V221]) = 0;
+			terminateMachine(_rightWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING PEACE WHEEL", _G(master_palette), 5, 1, 388, 225, 145, nullptr, -1);
+
+			break;
+
+		case 2:
+			inv_give_to_player("INSIGHT WHEEL");
+			_G(flags[V221]) = 0;
+			terminateMachine(_rightWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING INSIGHT WHEEL", _G(master_palette), 5, 1, 388, 225, 145, nullptr, -1);
+
+			break;
+
+		case 3:
+			inv_give_to_player("SERENITY WHEEL");
+			_G(flags[V221]) = 0;
+			terminateMachine(_rightWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING SERENITY WHEEL", _G(master_palette), 5, 1, 388, 225, 145, nullptr, -1);
+
+			break;
+
+		case 4:
+			inv_give_to_player("TRUTH WHEEL");
+			_G(flags[V221]) = 0;
+			terminateMachine(_rightWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING TRUTH WHEEL", _G(master_palette), 5, 1, 388, 225, 145, nullptr, -1);
+
+			break;
+
+		case 5:
+			inv_give_to_player("WISDOM WHEEL");
+			_G(flags[V221]) = 0;
+			terminateMachine(_rightWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING WISDOM WHEEL", _G(master_palette), 5, 1, 388, 225, 145, nullptr, -1);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 145:
 		sendWSMessage_130000(_G(my_walker), 146);
 		break;
@@ -316,6 +552,9 @@ void Room705::daemon() {
 		break;
 
 	case 150:
+		digi_play("705R07", 1, 255, 151, -1);
+		break;
+
 	case 151:
 	case 152:
 	case 153:
