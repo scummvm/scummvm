@@ -406,6 +406,7 @@ void ComposerEngine::loadLibrary(uint id) {
 		// bookGroup is the basename of the path.
 		// TODO: tidy this up.
 		_bookGroup.clear();
+		filename = path.toString('/');
 		for (uint i = 0; i < filename.size(); i++) {
 			if (filename[i] == '~' || filename[i] == '/' || filename[i] == ':')
 				continue;
