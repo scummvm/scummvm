@@ -137,9 +137,200 @@ void Room705::pre_parser() {
 }
 
 void Room705::parser() {
+	// TODO not yet implemented
 }
 
 void Room705::daemon() {
+	bool esi = player_said("take");
+
+	switch (_G(kernel).trigger) {
+	case 70:
+		player_set_commands_allowed(false);
+		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 71);
+
+		break;
+
+	case 71:
+		kernel_timing_trigger(5, 72, nullptr);
+		break;
+
+	case 72:
+		sendWSMessage_120000(_G(my_walker), 73);
+		break;
+
+	case 73:
+		kernel_timing_trigger(5, 74);
+		break;
+
+	case 74:
+		switch (_G(flags[V220])) {
+		case 1:
+			inv_give_to_player("PEACE WHEEL");
+			_G(flags[V220]) = 0;
+			terminateMachine(_leftWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING PEACE WHEEL", _G(master_palette), 5, 1, 145, 225, 75, nullptr, -1);
+
+			break;
+
+		case 2:
+			inv_give_to_player("INSIGHT WHEEL");
+			_G(flags[V220]) = 0;
+			terminateMachine(_leftWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING INSIGHT WHEEL", _G(master_palette), 5, 1, 145, 225, 75, nullptr, -1);
+
+			break;
+
+		case 3:
+			inv_give_to_player("SERENITY WHEEL");
+			_G(flags[V220]) = 0;
+			terminateMachine(_leftWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING SERENITY WHEEL", _G(master_palette), 5, 1, 145, 225, 75, nullptr, -1);
+
+			break;
+
+		case 4:
+			inv_give_to_player("TRUTH WHEEL");
+			_G(flags[V220]) = 0;
+			terminateMachine(_leftWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING TRUTH WHEEL", _G(master_palette), 5, 1, 145, 225, 75, nullptr, -1);
+
+			break;
+
+		case 5:
+			inv_give_to_player("WISDOM WHEEL");
+			_G(flags[V220]) = 0;
+			terminateMachine(_leftWheelMach);
+			digi_play("950_S40", 2, 255, -1, 950);
+			kernel_examine_inventory_object("PING WISDOM WHEEL", _G(master_palette), 5, 1, 145, 225, 75, nullptr, -1);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 75:
+		sendWSMessage_130000(_G(my_walker), 76);
+		break;
+
+	case 76:
+		sendWSMessage_150000(_G(my_walker), 77);
+		break;
+
+	case 77:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "PRAYER WHEEL #9", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "EMPTY NICHE", true);
+		player_set_commands_allowed(true);
+
+		break;
+
+	case 80:
+		player_set_commands_allowed(false);
+		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 81);
+
+		break;
+
+	case 81:
+		kernel_timing_trigger(5, 82);
+		break;
+
+	case 82:
+		sendWSMessage_120000(_G(my_walker), 83);
+		break;
+
+	case 83:
+		if (esi && _G(player).click_y <= 374) {
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("com077", 1, 255, 84, -1);
+				break;
+
+			case 2:
+				digi_play("com078", 1, 255, 84, -1);
+				break;
+
+			case 3:
+				digi_play("com079", 1, 255, 84, -1);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
+	case 84:
+		sendWSMessage_130000(_G(my_walker), 86);
+		break;
+
+	case 86:
+		sendWSMessage_150000(_G(my_walker), 87);
+		break;
+
+	case 87:
+	case 91:
+	case 94:
+		player_set_commands_allowed(true);
+		break;
+
+	case 123:
+	case 127:
+	case 133:
+	case 137:
+	case 140:
+		player_set_commands_allowed(false);
+		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 141);
+
+		break;
+
+	case 141:
+	case 142:
+		sendWSMessage_120000(_G(my_walker), 143);
+		break;
+
+	case 143:
+	case 144:
+	case 145:
+		sendWSMessage_130000(_G(my_walker), 146);
+		break;
+
+	case 146:
+		sendWSMessage_150000(_G(my_walker), 147);
+		break;
+
+	case 147:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "PRAYER WHEEL #12", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "EMPTY NICHE ", true);
+		player_set_commands_allowed(true);
+
+		break;
+
+	case 150:
+	case 151:
+	case 152:
+	case 153:
+	case 154:
+	case 155:
+	case 160:
+	case 161:
+	case 951:
+	case 952:
+	case 954:
+	case 955:
+		//TODO incomplete implementation
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms

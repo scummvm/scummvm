@@ -40,6 +40,8 @@ public:
 	void daemon() override;
 
 private:
+	int32 _field24Series = 0;
+
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripTrekMedReachPos1Series = 0;
 
