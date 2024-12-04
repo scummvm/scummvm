@@ -45,7 +45,7 @@ KolibriOSSaveFileManager::KolibriOSSaveFileManager(const Common::Path& writeable
 		savePath = writeablePath.join("saves");
 	}
 
-	if (!savePath.empty() && savePath.size() < MAXPATHLEN) {
+	if (!savePath.empty() && savePath.toString('/').size() < MAXPATHLEN) {
 		ConfMan.registerDefault("savepath", savePath);
 	}
 

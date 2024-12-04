@@ -44,7 +44,7 @@ protected:
 	VoidFunc findSymbol(const char *symbol) override {
 		void *func = get_proc_address(_dlHandle, symbol);
 		if (!func)
-			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.toString('/').c_str());
 
 		return (void (*)())func;
 	}
