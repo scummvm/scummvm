@@ -38,12 +38,12 @@ namespace QDEngine {
 bool SplashScreen::create(int bitmapResID) {
 	if (!create_window()) return false;
 
-	Common::PEResources r;
+	Common::ScopedPtr<Common::PEResources> r(new Common::PEResources());
 	Common::WinResourceID resid(bitmapResID);
 	Image::BitmapDecoder decoder;
 
-	if (r.loadFromEXE(g_engine->getExeName())) {
-		Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
+	if (r->loadFromEXE(g_engine->getExeName())) {
+		Common::SeekableReadStream *stream = r->getResource(Common::kWinBitmap, resid);
 		if (stream && decoder.loadStream(*stream)) {
 			_splash = new Graphics::Surface();
 			_splash->copyFrom(*decoder.getSurface());
