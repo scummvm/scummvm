@@ -253,6 +253,10 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
+	void View1::renderString(const Common::Point pos, const Common::String &s) {
+		renderString(pos.x, pos.y, s);
+	}
+
 	void View1::showStringBox(const Common::StringArray &sa) {
 		// TODO: Naive and hardcoded implementation
 		int contentHeight = sa.size() * 10;
@@ -914,8 +918,6 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 			currentSourceY++;
 		} while (currentSourceY < height);
 	}
-
-
 }
 
 void View1::DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
@@ -947,6 +949,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+		Common::String number = Common::String::format("%u", scalingFactor);
+		renderString(current->GetPosition(), number.c_str());
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
