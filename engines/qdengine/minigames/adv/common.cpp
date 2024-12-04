@@ -26,7 +26,7 @@ namespace QDEngine {
 
 const char *QDObject::getName() const {
 #ifdef _DEBUG
-	return name_.c_str();
+	return _name.c_str();
 #else
 	return "";
 #endif
