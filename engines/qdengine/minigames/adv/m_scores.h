@@ -63,17 +63,17 @@ private:
 	const char *_lastTime;
 
 	QDObject _prev;
-	QDObject next_;
-	QDObject outMaxLevel_;
+	QDObject _next;
+	QDObject _outMaxLevel;
 
-	QDObjects games_;
+	QDObjects _games;
 
-	int preLevel_;
-	int level_;
+	int _preLevel;
+	int _level;
 
-	Coords positions_;
+	Coords _positions;
 
-	const char *getName(const char* begin, int idx) const;
+	const char *getName(const char *begin, int idx) const;
 
 	MinigameManager *_runtime;
 };

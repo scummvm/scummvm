@@ -56,21 +56,21 @@ Scores::Scores(MinigameManager *runtime) {
 		if (_runtime->testObject(name)) {
 			QDObject obj = _runtime->getObject(name);
 			gameData.write(obj->R());
-			games_.push_back(_runtime->getObject(name));
+			_games.push_back(_runtime->getObject(name));
 		} else
 			break;
 	}
 
-	if (games_.empty()) {
+	if (_games.empty()) {
 		error("Game images not found '%s'", transCyrillic(gameButtonName));
 	}
 
 	if (!_runtime->processGameData(gameData))
 		return;
 
-	positions_.resize(games_.size());
-	for (int idx = 0; idx < games_.size(); ++idx)
-		gameData.read(positions_[idx]);
+	_positions.resize(_games.size());
+	for (int idx = 0; idx < _games.size(); ++idx)
+		gameData.read(_positions[idx]);
 
 	XStream file(false);
 	if (!file.open(fileName, XS_IN)) {
@@ -98,11 +98,11 @@ Scores::Scores(MinigameManager *runtime) {
 				xbuf >= game;
 				lvl.games.push_back(game);
 				debugCN(2, kDebugMinigames, "%d, ", game);
-				if (const MinigameData * data = _runtime->getScore(level, game))
+				if (const MinigameData *data = _runtime->getScore(level, game))
 					lvl.data.push_back(GameData(game, *data));
 			}
 		}
-		if (lvl.games.size() > games_.size()) {
+		if (lvl.games.size() > _games.size()) {
 			error("Not enough game images");
 		}
 		Common::sort(lvl.data.begin(), lvl.data.end());
@@ -114,8 +114,8 @@ Scores::Scores(MinigameManager *runtime) {
 	if (levels_.empty())
 		return;
 	Common::sort(levels_.begin(), levels_.end());
-	level_ = 0;
-	preLevel_ = -1;
+	_level = 0;
+	_preLevel = -1;
 
 	if (!(_bestScore = _runtime->parameter("best_score")))
 		return;
@@ -130,19 +130,19 @@ Scores::Scores(MinigameManager *runtime) {
 
 	if (!(_prev = _runtime->getObject(_runtime->parameter("_prevbutton"))))
 		return;
-	if (!(next_ = _runtime->getObject(_runtime->parameter("next_button"))))
+	if (!(_next = _runtime->getObject(_runtime->parameter("_nextbutton"))))
 		return;
 
-	outMaxLevel_ = _runtime->getObject(_runtime->parameter("for_game_level"));
-	if (outMaxLevel_) {
+	_outMaxLevel = _runtime->getObject(_runtime->parameter("for_game_level"));
+	if (_outMaxLevel) {
 		uint level = 0;
 		for (; level < levels_.size(); ++level)
 			if (levels_[level].data.size() < levels_[level].games.size())
 				break;
 		if (level < levels_.size())
-			outMaxLevel_.setState(Common::String::format("%d", levels_[level].level).c_str());
+			_outMaxLevel.setState(Common::String::format("%d", levels_[level].level).c_str());
 		else
-			outMaxLevel_.setState("all");
+			_outMaxLevel.setState("all");
 	}
 
 	setState(MinigameInterface::RUNNING);
@@ -151,27 +151,27 @@ Scores::Scores(MinigameManager *runtime) {
 
 Scores::~Scores() {
 	_runtime->release(_prev);
-	_runtime->release(next_);
+	_runtime->release(_next);
 
-	for (auto &it : games_)
+	for (auto &it : _games)
 		_runtime->release(it);
 
 }
 
 void Scores::quant(float dt) {
-	assert(level_ >= 0 && level_ < (int)levels_.size());
-	const Level& lvl = levels_[level_];
+	assert(_level >= 0 && _level < (int)levels_.size());
+	const Level& lvl = levels_[_level];
 
-	if (level_ != preLevel_) {
-		preLevel_ = level_;
+	if (_level != _preLevel) {
+		_preLevel = _level;
 
 
 		_runtime->setText(_currentLevel, lvl.level);
 
-		for (int idx = 0; idx < (int)games_.size(); ++idx)
-			_runtime->hide(games_[idx]);
+		for (int idx = 0; idx < (int)_games.size(); ++idx)
+			_runtime->hide(_games[idx]);
 
-		for (int idx = 0; idx < (int)games_.size(); ++idx) {
+		for (int idx = 0; idx < (int)_games.size(); ++idx) {
 			if (idx < (int)lvl.data.size()) {
 				const GameData& data = lvl.data[idx];
 				int gameId = data.num;
@@ -180,9 +180,9 @@ void Scores::quant(float dt) {
 					if (gameId == lvl.games[gameNum])
 						break;
 				assert(gameNum < (int)lvl.games.size());
-				assert(gameNum < (int)games_.size());
-				games_[gameNum].setState(Common::String::format("%d", level_).c_str());
-				games_[gameNum]->set_R(positions_[idx]);
+				assert(gameNum < (int)_games.size());
+				_games[gameNum].setState(Common::String::format("%d", _level).c_str());
+				_games[gameNum]->set_R(_positions[idx]);
 				_runtime->setText(getName(_bestScore, idx), data.info._bestScore);
 				_runtime->setText(getName(_bestTime, idx), data.info._bestTime);
 				_runtime->setText(getName(_lastScore, idx), data.info._lastScore);
@@ -197,14 +197,14 @@ void Scores::quant(float dt) {
 	}
 
 	if (_runtime->mouseLeftPressed()) {
-		if (level_ < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && next_.hit(_runtime->mousePosition()))
-			++level_;
-		else if (level_ > 0 && _prev.hit(_runtime->mousePosition()))
-			--level_;
+		if (_level < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && _next.hit(_runtime->mousePosition()))
+			++_level;
+		else if (_level > 0 && _prev.hit(_runtime->mousePosition()))
+			--_level;
 	}
 }
 
-const char *Scores::getName(const char* begin, int idx) const {
+const char *Scores::getName(const char *begin, int idx) const {
 	static char buf[32];
 	buf[31] = 0;
 	snprintf(buf, 31, "%s%02d", begin, idx + 1);
