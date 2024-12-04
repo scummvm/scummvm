@@ -84,7 +84,7 @@ private:
 
 	int _fieldLines = 0;
 	int _fieldWidth = 0;
-	int fieldSize_ = 0;
+	int _fieldSize = 0;
 	Nodes _nodes;
 	ObjectContainer _selectBorders[2];
 	ObjectContainer _backSides[6];

@@ -35,13 +35,13 @@ class QDObject {
 	qdMinigameObjectInterface *_obj;
 
 #ifdef _DEBUG
-	Common::String name_;
+	Common::String _name;
 #endif
 
 public:
 	QDObject(qdMinigameObjectInterface* obj = 0, const char* name = "") : _obj(obj) {
 #ifdef _DEBUG
-		name_ = name;
+		_name = name;
 #endif
 	}
 

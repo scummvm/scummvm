@@ -92,16 +92,16 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 
 	switch (_gameType) {
 	case TRIANGLE:
-		fieldSize_ = sqr(_fieldLines);
+		_fieldSize = sqr(_fieldLines);
 		break;
 	case RECTANGLE:
-		fieldSize_ = _fieldLines * _fieldWidth;
+		_fieldSize = _fieldLines * _fieldWidth;
 		break;
 	case HEXAGON:
 		assert(_fieldLines % 2 == 0);
 		if (_fieldLines % 2 != 0)
 			return;
-		fieldSize_ = 3 * sqr(_fieldLines) / 2;
+		_fieldSize = 3 * sqr(_fieldLines) / 2;
 		break;
 	}
 
@@ -114,7 +114,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 
 	char name[64];
 	name[63] = 0;
-	for (int num = 0; num < fieldSize_; ++num) {
+	for (int num = 0; num < _fieldSize; ++num) {
 		_nodes.push_back(Node(num, 0));
 		Node &node = _nodes.back();
 		for (int angle = 1; angle <= 3; ++angle) {
@@ -168,7 +168,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 			}
 		}
 
-	for (int idx = 0; idx < fieldSize_; ++idx)
+	for (int idx = 0; idx < _fieldSize; ++idx)
 		updateNode(_nodes[idx], idx);
 
 	setState(RUNNING);
@@ -448,7 +448,7 @@ void MinigameTriangle::quant(float dt) {
 		return;
 
 	int mousePos = -1;
-	for (int idx = 0; idx < fieldSize_; ++idx)
+	for (int idx = 0; idx < _fieldSize; ++idx)
 		if (_nodes[idx].hit(_runtime->mousePosition())) {
 			mousePos = idx;
 			break;
@@ -472,7 +472,7 @@ void MinigameTriangle::quant(float dt) {
 	}
 
 	if (_selected != lastSelected) {
-		for (int idx = 0; idx < fieldSize_; ++idx) {
+		for (int idx = 0; idx < _fieldSize; ++idx) {
 			Node &node = _nodes[idx];
 			if (idx == _selected || compatible(_selected, idx)) { // с этой фишкой можно поменяться
 				if (!node._border)
@@ -519,7 +519,7 @@ void MinigameTriangle::quant(float dt) {
 
 int MinigameTriangle::rowBegin(int row) const {
 	if (row == _fieldLines)
-		return fieldSize_;
+		return _fieldSize;
 
 	switch (_gameType) {
 	case TRIANGLE:
@@ -533,14 +533,14 @@ int MinigameTriangle::rowBegin(int row) const {
 	assert(row >= 0 && row < _fieldLines);
 	if (row >= _fieldLines / 2) {
 		row -= _fieldLines / 2;
-		return fieldSize_ / 2 + (2 * _fieldLines - row) * row;
+		return _fieldSize / 2 + (2 * _fieldLines - row) * row;
 	}
 	return (_fieldLines + row) * row;
 
 }
 
 int MinigameTriangle::rowByNum(int num) const {
-	if (num >= fieldSize_)
+	if (num >= _fieldSize)
 		return _fieldLines;
 
 	switch (_gameType) {
@@ -552,7 +552,7 @@ int MinigameTriangle::rowByNum(int num) const {
 		break;
 	}
 	//case HEXAGON:
-	int row = num < fieldSize_ / 2 ? 0 : _fieldLines / 2;
+	int row = num < _fieldSize / 2 ? 0 : _fieldLines / 2;
 	while (row < _fieldLines && num >= rowBegin(row))
 		++row;
 	return row > 0 ? row - 1 : 0;
@@ -568,7 +568,7 @@ int MinigameTriangle::orientation(int num) const {
 		break;
 	}
 	//case HEXAGON:
-	return (num + rowByNum(num) + (num >= fieldSize_ / 2 ? 1 : 0)) % 2;
+	return (num + rowByNum(num) + (num >= _fieldSize / 2 ? 1 : 0)) % 2;
 }
 
 bool MinigameTriangle::compatible(int num1, int num2) const {
