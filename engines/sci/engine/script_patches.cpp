@@ -29,6 +29,7 @@
 #include "sci/engine/guest_additions.h"
 #endif
 
+#include "common/config-manager.h"
 #include "common/util.h"
 
 namespace Sci {
@@ -5847,10 +5848,48 @@ static const uint16 kq5PatchSinkingBoatPosition[] = {
 	PATCH_END
 };
 
+// In the mountains when jumping on the steps, KQ5 CD has a script that is
+//  incompatible with digital samples within sound resources. When ego jumps on
+//  a step and it falls, the death dialog never appears and the game is frozen
+/// in hands-off mode. The `jumping` script plays the sound of the step falling
+//  (SOUND 790) and the audio of Graham yelling (AUDIO 7053) and then waits on
+//  both to complete. If both are digital samples, then Graham interrupts the
+//  step sound and the script does not complete.
+//
+// This was not an issue in the original, because KQ5 CD introduced a separate
+//  audio driver for playing digital samples from audio resources, and the sound
+//  driver skipped digital samples in sound resources. In our interpreter,
+//  digital samples are always played when "prefer_digitalsfx" is enabled.
+//
+// We work around this by patching jumping:changeState when "prefer_digitalsfx"
+//  is enabled. We do this by patching the empty state where the script would be
+//  stuck to instead fall through to the next state.
+//
+// Applies to: PC CD
+// Responsible method: jumping:changeState(9)
+// Fixes bug: #15550
+static const uint16 kq5SignatureCdFallingSound[] = {
+	SIG_MAGICDWORD,
+	0x3c,                            // dup
+	0x35, 0x09,                      // ldi 09
+	0x1a,                            // eq? [ state == 9 ]
+	0x30, SIG_UINT16(0x0003),        // bnt 0003
+	0x32,                            // jmp [ end of switch ]
+	SIG_END
+};
+
+static const uint16 kq5PatchCdFallingSound[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x3a,                            // toss        [ toss old state ]
+	0x6f, 0x0a,                      // ipTos state [ increment state ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
 	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
+	{ false,    31, "CD: falling sound",                           1, kq5SignatureCdFallingSound,           kq5PatchCdFallingSound },
 	{  true,    47, "sinking boat position",                       1, kq5SignatureSinkingBoatPosition,      kq5PatchSinkingBoatPosition },
 	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
 	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,              sci11SpeedTestPatch },
@@ -26330,6 +26369,13 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					g_sci->getPlatform() == Common::kPlatformMacintosh ||
 					(g_sci->getPlatform() == Common::kPlatformAmiga && g_sci->getLanguage() == Common::EN_ANY)) {
 					enablePatch(signatureTable, "Crispin intro signal");
+				}
+				// enable a patch to fix a script incompatibility when we
+				//  play sounds that did not play in the original.
+				if (g_sci->isCD() &&
+					g_sci->getPlatform() != Common::kPlatformFMTowns &&
+					ConfMan.getBool("prefer_digitalsfx")) {
+					enablePatch(signatureTable, "CD: falling sound");
 				}
 				break;
 			case GID_KQ6:
