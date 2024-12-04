@@ -1026,7 +1026,7 @@ Path Path::punycodeEncode() const {
 }
 
 bool Path::punycodeNeedsEncode() const {
-	bool tmp;
+	bool tmp = false;
 	return reduceComponents<bool &>(
 		[](bool &result, const String &in, bool last) -> bool & {
 			// If we already need encode, we still need it
