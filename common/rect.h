@@ -378,14 +378,22 @@ struct Rect {
 		debugC(debuglevel, debugChannel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
-	/**
-	 * Create a rectangle around the given center.
-	 * @note The center point is rounded up and left when given an odd width and height.
-	 */
+  /**
+  * Create a rectangle around the given center.
+  * @note The center point is rounded up and left when given an odd width and height.
+  */
 	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
 		int x = cx - w / 2, y = cy - h / 2;
 		return Rect(x, y, x + w, y + h);
 	}
+
+  /**
+  * Return a Point indicating the centroid of the rectangle
+  * @note The center point is rounded up and left when width and/or height are odd
+  */
+  Point center() {
+    return Point((left+right)/2, (bottom+top)/2);
+  }	
 
 	/**
 	 * Given target surface with size clip, this function ensures that
