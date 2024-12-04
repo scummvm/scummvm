@@ -4144,6 +4144,13 @@ esac
 append_var MODULES "backends/platform/$_backend"
 
 #
+# Check if specific components are not used by enabled engines and disable them
+#
+echo "Checking for unused components..."
+awk -f "$_srcdir/engines.awk" -v _pass=pass1 < /dev/null
+echo "...check complete"
+
+#
 # Check for pkg-config
 #
 echocheck "pkg-config"
@@ -7387,7 +7394,7 @@ _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
 
-awk -f "$_srcdir/engines.awk" < /dev/null
+awk -f "$_srcdir/engines.awk" -v _pass=pass2 < /dev/null
 
 echo "Creating config.h"
 cat > config.h.new << EOF
