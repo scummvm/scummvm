@@ -361,6 +361,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						if (_puzzleState->order[i] == -1) {
 							// No, hide the picked up piece graphic
 							_pickedUpPiece.setVisible(false);
+							_puzzleState->_pickedUpPieceLastPos = -1;
 						} else {
 							// Yes, change the picked piece graphic
 							if (!_useCustomPickUpTile) {
@@ -374,7 +375,6 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 						SWAP<int8>(_puzzleState->order[i], _puzzleState->_pickedUpPieceID);
 						SWAP<byte>(_puzzleState->rotations[i], _puzzleState->_pickedUpPieceRot);
-						_puzzleState->_pickedUpPieceLastPos = -1;
 
 						// Draw the newly placed piece
 						drawPiece(i, _puzzleState->rotations[i], _puzzleState->order[i]);
