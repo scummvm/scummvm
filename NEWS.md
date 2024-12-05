@@ -24,13 +24,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
-   - Added optional dependency for libopenmpt for sound.
    - The "Aspect ratio correction" option within the Global Options section
      is now active by default.
-   - Added optional dependency for libmpcdec (musepack) for sound.
    - There is now a checkbox for the --copy-protection command-line option.
    - Reduced memory usage on platforms with dynamic detection plugins.
    - Improved GUI usability on small screens.
+   - Added optional dependency for libopenmpt for sound.
+   - Added optional dependency for libmpcdec (musepack) for sound.
 
  ADL:
    - Added Apple II checkerboard cursor as a visual option.
