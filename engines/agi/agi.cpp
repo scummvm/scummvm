@@ -371,31 +371,15 @@ void AgiBase::initRenderMode() {
 	// If render mode is explicitly set, force rendermode
 	switch (configRenderMode) {
 	case Common::kRenderCGA:
-		_renderMode = Common::kRenderCGA;
-		break;
 	case Common::kRenderEGA:
-		_renderMode = Common::kRenderEGA;
-		break;
 	case Common::kRenderVGA:
-		_renderMode = Common::kRenderVGA;
-		break;
 	case Common::kRenderHercG:
-		_renderMode = Common::kRenderHercG;
-		break;
 	case Common::kRenderHercA:
-		_renderMode = Common::kRenderHercA;
-		break;
 	case Common::kRenderAmiga:
-		_renderMode = Common::kRenderAmiga;
-		break;
 	case Common::kRenderApple2GS:
-		_renderMode = Common::kRenderApple2GS;
-		break;
 	case Common::kRenderAtariST:
-		_renderMode = Common::kRenderAtariST;
-		break;
 	case Common::kRenderMacintosh:
-		_renderMode = Common::kRenderMacintosh;
+		_renderMode = configRenderMode;
 		break;
 	default:
 		break;

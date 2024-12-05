@@ -35,8 +35,6 @@
 namespace Agi {
 
 void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
-	int i;
-
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
 	roomHdr->roomNumber = readS.readByte();
@@ -45,7 +43,7 @@ void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len)
 	roomHdr->fileLen = readS.readUint16();
 	roomHdr->reserved0 = readS.readUint16();
 
-	for (i = 0; i < IDI_WTP_MAX_DIR; i++)
+	for (int i = 0; i < IDI_WTP_MAX_DIR; i++)
 		roomHdr->roomNew[i] = readS.readByte();
 
 	roomHdr->objX = readS.readByte();
@@ -53,35 +51,33 @@ void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len)
 
 	roomHdr->reserved1 = readS.readUint16();
 
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+	for (int i = 0; i < IDI_WTP_MAX_BLOCK; i++)
 		roomHdr->ofsDesc[i] = readS.readUint16();
 
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+	for (int i = 0; i < IDI_WTP_MAX_BLOCK; i++)
 		roomHdr->ofsBlock[i] = readS.readUint16();
 
-	for (i = 0; i < IDI_WTP_MAX_STR; i++)
+	for (int i = 0; i < IDI_WTP_MAX_STR; i++)
 		roomHdr->ofsStr[i] = readS.readUint16();
 
 	roomHdr->reserved2 = readS.readUint32();
 
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+	for (int i = 0; i < IDI_WTP_MAX_BLOCK; i++)
 		for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
 			roomHdr->opt[i].ofsOpt[j] = readS.readUint16();
 }
 
 void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
-	int i;
-
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
 	// these two values are always little endian, even on Amiga
 	objHdr->fileLen = readS.readUint16LE();
 	objHdr->objId = readS.readUint16LE();
 
-	for (i = 0; i < IDI_WTP_MAX_OBJ_STR_END; i++)
+	for (int i = 0; i < IDI_WTP_MAX_OBJ_STR_END; i++)
 		objHdr->ofsEndStr[i] = readS.readUint16();
 
-	for (i = 0; i < IDI_WTP_MAX_OBJ_STR; i++)
+	for (int i = 0; i < IDI_WTP_MAX_OBJ_STR; i++)
 		objHdr->ofsStr[i] = readS.readUint16();
 
 	objHdr->ofsPic = readS.readUint16();
@@ -592,8 +588,6 @@ void WinnieEngine::takeObj(int iRoom) {
 
 // returns true if object was dropped in the right room
 bool WinnieEngine::dropObj(int iRoom) {
-	int iCode;
-
 	if (getObjInRoom(iRoom)) {
 		// there already is an object in the room, can't drop
 		printStr(IDS_WTP_CANT_DROP);
@@ -604,6 +598,7 @@ bool WinnieEngine::dropObj(int iRoom) {
 			_gameStateWinnie.fGame[0x0d] = 0;
 		}
 
+		int iCode;
 		if (isRightObj(iRoom, _gameStateWinnie.iObjHave, &iCode)) {
 			// object has been dropped in the right place
 			playSound(IDI_WTP_SND_DROP_OK);

@@ -141,7 +141,8 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 		break;
 	}
 
-	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++) {
+	const int stringLength = (int)strlen(buffer);
+	for (int iChar = 0; iChar < stringLength; iChar++) {
 		int code = buffer[iChar];
 
 		switch (code) {
@@ -165,11 +166,6 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			}
 		}
 	}
-}
-
-void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
-	int col = (25 / 2) - (strlen(buffer) / 2);  // 25 = 320 / 8 (maximum column)
-	drawStr(row, col, attr, buffer);
 }
 
 void PreAgiEngine::clearTextArea() {

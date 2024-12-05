@@ -63,9 +63,7 @@ protected:
 
 	PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	~PreAgiEngine() override;
-	int getGameId() {
-		return _gameId;
-	}
+	int getGameId() const { return _gameId; }
 
 	PictureMgr *_picture;
 
@@ -79,7 +77,7 @@ protected:
 	int loadGame(const Common::String &fileName, bool checkId = true) { return -1; }
 
 	// Game
-	Common::String getTargetName() { return _targetName; }
+	Common::String getTargetName() const { return _targetName; }
 
 	// Screen
 	void clearScreen(int attr, bool overrideDefault = true);
@@ -94,10 +92,9 @@ protected:
 
 	// Text
 	void drawStr(int row, int col, int attr, const char *buffer);
-	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
 	void clearRow(int row);
-	void XOR80(char *buffer);
+	static void XOR80(char *buffer);
 	void printStr(const char *szMsg);
 	void printStrXOR(char *szMsg);
 
