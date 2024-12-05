@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-27 22:48+0000\n"
-"PO-Revision-Date: 2024-12-05 16:39+0000\n"
+"PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -2164,7 +2164,7 @@ msgid ""
 "is temporary and will not get saved"
 msgstr ""
 "Angir hvor de lagrede spillene dine lagres. En rød farge indikerer at "
-"verdien er midlertidig og at den ikke blir lagret."
+"verdien er midlertidig og at den ikke blir lagret"
 
 #: gui/options.cpp:2526
 msgid "Theme Path:"
@@ -13019,10 +13019,8 @@ msgid "Use 16-color graphics"
 msgstr "Fargegrafikk"
 
 #: engines/vcruise/metaengine.cpp:88
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Fargegrafikk"
+msgstr "Bruker 16-fargers grafikk."
 
 #: engines/vcruise/metaengine.cpp:98
 #, fuzzy
