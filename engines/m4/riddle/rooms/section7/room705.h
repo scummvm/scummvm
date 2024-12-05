@@ -40,6 +40,10 @@ public:
 	void daemon() override;
 
 private:
+	void conv705a();
+	void conv705b();
+	void subA5C2B(int32 trigger, const char *digiName);
+
 	int32 _field24Series = 0;
 	int32 _field60_mode = 0;
 	int32 _field64_should = 0;
