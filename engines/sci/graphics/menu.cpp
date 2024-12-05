@@ -160,6 +160,7 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 			content.setChar(toupper(content[tempPos]), tempPos);
 		}
 		if (functionPos) {
+			// "#1" => "F1". Needs extra handling for F10; see below.
 			content.setChar(SCI_MENU_REPLACE_ONFUNCTION, functionPos);
 			int tempPos = functionPos + 1;
 			if (tempPos >= contentSize)
@@ -247,6 +248,17 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 				itemEntry->keyPress = '+';
 			} else if (itemEntry->textRightAligned == "=") {
 				itemEntry->keyPress = '=';
+			}
+
+			// Handle "F10". The parser built the keypress text from the menu string
+			// in place by replacing each control character with a display character.
+			// This assumed that the display text never exceeds the control text, but
+			// this is not the case for "#0" => "F10", so it must be patched. Bug #15557
+			if (itemEntry->keyPress == kSciKeyF10) {
+				size_t f10Pos = itemEntry->textRightAligned.find("F0");
+				if (f10Pos != Common::String::npos) {
+					itemEntry->textRightAligned.insertChar('1', f10Pos + 1);
+				}
 			}
 		}
 
