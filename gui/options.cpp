@@ -681,11 +681,18 @@ void OptionsDialog::apply() {
 			if (g_system->hasFeature(OSystem::kFeatureRotationMode)) {
 				if ((int32)_rotationModePopUp->getSelectedTag() >= 0) {
 					int rotationModeCode = ((Common::RotationMode)_rotationModePopUp->getSelectedTag());
-					if (_rotationModePopUp->getSelectedTag() == 0 || ConfMan.getInt("rotation_mode", _domain) != rotationModeCode) {
+					if (!ConfMan.hasKey("rotation_mode", _domain) ||
+						ConfMan.getInt("rotation_mode", _domain) != rotationModeCode) {
 						ConfMan.setInt("rotation_mode", rotationModeCode, _domain);
 						_rotationModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+						graphicsModeChanged = true;
 					}
-					g_system->setFeatureState(OSystem::kFeatureRotationMode, true);
+				} else {
+					// default selected
+					if (ConfMan.hasKey("rotation_mode", _domain)) {
+						ConfMan.removeKey("rotation_mode", _domain);
+						graphicsModeChanged = true;
+					}
 				}
 			}
 
@@ -775,6 +782,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("scaler", _domain);
 			ConfMan.removeKey("scale_factor", _domain);
 			ConfMan.removeKey("render_mode", _domain);
+			ConfMan.removeKey("rotation_mode", _domain);
 			ConfMan.removeKey("renderer", _domain);
 			ConfMan.removeKey("antialiasing", _domain);
 			ConfMan.removeKey("vsync", _domain);
@@ -825,6 +833,10 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
 		if (ConfMan.hasKey("vsync"))
 			g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync", _domain));
+
+		if (g_system->hasFeature(OSystem::kFeatureRotationMode)) {
+			g_system->setFeatureState(OSystem::kFeatureRotationMode, ConfMan.hasKey("rotation_mode", _domain));
+		}
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
