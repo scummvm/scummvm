@@ -704,6 +704,8 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 		//_tileAnimation->dumpTiles(fpath, 50);
 	}
 
+	delete fh;
+
 	init_size();
 
 	return true;

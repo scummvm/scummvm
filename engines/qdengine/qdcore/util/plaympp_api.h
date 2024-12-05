@@ -94,8 +94,6 @@ private:
 
 	Audio::SoundHandle _soundHandle;
 
-	Common::SeekableReadStream *_stream = nullptr;
-
 	Common::Path _file;
 };
 

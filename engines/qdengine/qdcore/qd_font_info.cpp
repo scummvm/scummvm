@@ -113,15 +113,18 @@ bool qdFontInfo::load_font() {
 
 			Common::replace(fpath, tgaExt, idxExt);
 
+			delete fh;
+			fh = nullptr;
+
 			// Открываем .idx и грузим индекс
 			if (qdFileManager::instance().open_file(&fh, Common::Path(fpath), false)) {
 				if (buf_font->load_index(fh))
 					load_fl = true;
 			}
 		}
-	}
 
-	delete fh;
+		delete fh;
+	}
 
 	if (!load_fl) {
 		delete buf_font;
