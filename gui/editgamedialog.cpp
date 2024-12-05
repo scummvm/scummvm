@@ -400,6 +400,7 @@ void EditGameDialog::open() {
 
 	e = ConfMan.hasKey("gfx_mode", _domain) ||
 		ConfMan.hasKey("render_mode", _domain) ||
+		ConfMan.hasKey("rotation_mode", _domain) ||
 		ConfMan.hasKey("stretch_mode", _domain) ||
 		ConfMan.hasKey("scaler", _domain) ||
 		ConfMan.hasKey("scale_factor", _domain) ||
