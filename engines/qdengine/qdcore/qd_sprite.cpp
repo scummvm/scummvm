@@ -243,6 +243,8 @@ bool qdSprite::load() {
 
 	Image::TGADecoder tgaDecoder;
 	tgaDecoder.loadStream(*fh);
+	delete fh;
+
 	const Graphics::Surface *tgaSurface = tgaDecoder.getSurface();
 
 	int width = _picture_size.x = tgaSurface->w;	///< width of the sprite. number of pixels in width
@@ -282,8 +284,6 @@ bool qdSprite::load() {
 		memcpy(dataPtr, ptr, widthNB);
 		dataPtr += widthNB;
 	}
-
-	delete fh;
 
 	const byte min_color = 8;
 	if (_format == GR_ARGB8888) {

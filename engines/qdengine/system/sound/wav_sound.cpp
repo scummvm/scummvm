@@ -51,13 +51,13 @@ bool wavSound::wav_file_load(const Common::Path fpath) {
 	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false)) {
 		if (_fname.baseName().hasSuffixIgnoreCase(".ogg")) {
 #ifdef USE_VORBIS
-			_audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::NO);
+			_audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 #else
 			warning("wavSound::wav_file_load(%s): Vorbis support not compiled", fpath.toString().c_str());
 			return false;
 #endif
 		} else {
-			_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+			_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 		}
 
 		_length = (float)_audioStream->getLength().msecs() / 1000.0;
