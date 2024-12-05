@@ -328,7 +328,6 @@ private:
 	void drawRoomPic();
 	int parser(int, int, uint8 *);
 	int getObjInRoom(int);
-	bool getSelOkBack();
 	void getMenuSel(char *, int *, int[]);
 	void keyHelp();
 	void clrMenuSel(int *, int[]);
