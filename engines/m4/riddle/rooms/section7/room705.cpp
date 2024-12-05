@@ -556,17 +556,70 @@ void Room705::daemon() {
 		break;
 
 	case 151:
+		_705Monk1Series = series_load("705 MONK 1", -1, nullptr);
+		_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 1, 7, 951, _705Monk1Series, 7, 7, 4);
+
+		break;
+
 	case 152:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 16, 19, 952, _705Monk1Series, 19, 19, 0);
+		break;
+
 	case 153:
+		digi_play("705J08", 1, 255, 154, -1);
+		break;
+
 	case 154:
+		_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 1, 7, 954, _705Monk1Series, 7, 7, 4);
+
+		break;
+
 	case 155:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 16, 19, 955, _705Monk1Series, 19, 19, 0);
+		digi_play("706_s01", 2, 127, -1, -1);
+		_G(flags[V222]) = 1;
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 160:
+		player_set_commands_allowed(true);
+		ws_unhide_walker(_G(my_walker));
+		terminateMachine(_ripStairsMach);
+		kernel_timing_trigger(10, 161, nullptr);
+
+		break;
+
 	case 161:
+		series_unload(_ripGoesDownStairsSeries);
+		break;
+
 	case 951:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 8, 8, -1, _705Monk1Series, 9, 15, 4);
+		sendWSMessage_1a0000(_monkMach, 9);
+		digi_play("705J03", 1, 255, 152, -1);
+
+		break;
+
 	case 952:
+		terminateMachine(_monkMach);
+		digi_play("705R08", 1, 255, 154, -1);
+
+		break;
+
 	case 954:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 8, 8, -1, _705Monk1Series, 9, 15, 4);
+		sendWSMessage_1a0000(_monkMach, 9);
+		digi_play("705J04", 1, 255, 155, -1);
+
+		break;
+
 	case 955:
-		//TODO incomplete implementation
+		terminateMachine(_monkMach);
+		break;
+
 	default:
 		break;
 	}
