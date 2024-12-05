@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 #include "common/substream.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 #include "sci/sci.h"
 #include "sci/sound/decoders/sol.h"
 #include "sci/resource/resource.h"
@@ -47,7 +48,9 @@ static const uint16 tableDPCM16[128] = {
 	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
 };
 
-static const byte tableDPCM8[8] = { 0, 1, 2, 3, 6, 10, 15, 21 };
+static const int8 tableDPCM8[16] = {
+	0, 1, 2, 3, 6, 10, 15, 21, -21, -15, -10, -6, -3, -2, -1, -0
+};
 
 /**
  * Decompresses one channel of 16-bit DPCM compressed audio.
@@ -113,15 +116,123 @@ static void deDPCM8Nibble(int16 *out, uint8 &sample, uint8 delta) {
 }
 
 /**
+ * Decompresses one half of an 8-bit DPCM compressed audio
+ * byte. Attempts to repair overflows on the fly.
+ */
+static void deDPCM8NibbleWithRepair(int16 *const out, uint8 &sample, const uint8 delta,
+									uint8 &repairState, uint8 &preRepairSample) {
+	const uint8 lastSample = sample;
+
+	// In Gabriel Knight: Sins of the Fathers CD, the DPCM8-encoded speech contains overflows.
+	// Overflows wrap from positive to negative, or negative to positive. This continues
+	// until the wave settles at a new (wrapped) zero DC offset.
+
+	// We can't look ahead to see where the wave "reconnects" to valid data, so we
+	// decay the wave on an artificial slope until it does. This seems to take on average
+	// around 9-10 samples. The slope value below was chosen through analysing spectrographs
+	// of the decoded/repaired wave data to find the slope which removed the pops most
+	// cleanly across a test selection of game speech.
+
+#define REPAIR_SLOPE 12
+//#define SHOW_REPAIR_EVENTS
+
+	switch (repairState) {
+	default:
+		assert(false); // Invalid state.
+		// Fall through...
+	case 0: {
+		const int16 newSampleOverflow = (int16)sample + tableDPCM8[delta & 15];
+
+		if (newSampleOverflow > 255) {
+			// Positive overflow has occurred; begin artificial negative slope.
+			repairState = 1;
+			sample = lastSample - REPAIR_SLOPE;
+			// We also begin tracking the un-repaired waveform, so we can tell when to stop.
+			preRepairSample = (uint8)newSampleOverflow;
+
+#ifdef SHOW_REPAIR_EVENTS
+			warning("DPCM8 OVERFLOW (+)");
+#endif
+
+		} else if (newSampleOverflow < 0) {
+			// Negative overflow has occurred; begin artificial positive slope.
+			repairState = 2;
+			sample = lastSample + REPAIR_SLOPE;
+			// We also begin tracking the un-repaired waveform, so we can tell when to stop.
+			preRepairSample = (uint8)newSampleOverflow;
+
+#ifdef SHOW_REPAIR_EVENTS
+			warning("DPCM8 OVERFLOW (-)");
+#endif
+
+		} else {
+			sample = (uint8)newSampleOverflow;
+		}
+	}	break;
+	case 1: {
+		// Check for a slope wrap. This circumstance should never happen in reality;
+		// the unrepaired wave would somehow need to be stuck near minimum
+		// value over the entire course of the slope.
+		assert(lastSample >= REPAIR_SLOPE);
+
+		const uint8 slopeSample = lastSample - REPAIR_SLOPE;
+		preRepairSample += tableDPCM8[delta & 15];
+
+		// Stop the repair if the artificial slope has intersected with real data.
+		if (preRepairSample >= slopeSample) {
+			// Return to real data.
+			repairState = 0;
+			sample = preRepairSample;
+		} else {
+			sample = slopeSample;
+		}
+	}	break;
+	case 2: {
+		// Check for a slope wrap. This circumstance should never happen in reality;
+		// the unrepaired wave would somehow need to be stuck near maximum
+		// value over the entire course of the slope.
+		assert(lastSample <= (255 - REPAIR_SLOPE));
+
+		const uint8 slopeSample = lastSample + REPAIR_SLOPE;
+		preRepairSample += tableDPCM8[delta & 15];
+
+		// Stop the repair if the artificial slope has intersected with real data.
+		if (preRepairSample <= slopeSample) {
+			// Return to real data.
+			repairState = 0;
+			sample = preRepairSample;
+		} else {
+			sample = slopeSample;
+		}
+	}	break;
+	}
+
+	*out = ((lastSample + sample) << 7) ^ 0x8000;
+}
+
+/**
  * Decompresses 8-bit DPCM compressed audio. Each byte read
  * outputs two samples into the decompression buffer.
  */
 template <bool OLD>
-static void deDPCM8Mono(int16 *out, Common::ReadStream &audioStream, uint32 numBytes, uint8 &sample) {
-	for (uint32 i = 0; i < numBytes; ++i) {
-		const uint8 delta = audioStream.readByte();
-		deDPCM8Nibble<OLD>(out++, sample, delta >> 4);
-		deDPCM8Nibble<OLD>(out++, sample, delta & 0xf);
+static void deDPCM8Mono(int16 *out, Common::ReadStream &audioStream, const uint32 numBytes, uint8 &sample,
+						const bool popfixEnabled, uint8 &repairState, uint8 &preRepairSample) {
+	if (popfixEnabled) {
+		// Only verified with (relevant to?) "old" DPCM8.
+		// Should never be called if popfix isn't enabled anyway, but just in case...
+		assert(OLD == true);
+
+		for (uint32 i = 0; i < numBytes; ++i) {
+			const uint8 delta = audioStream.readByte();
+			deDPCM8NibbleWithRepair(out++, sample, delta >> 4, repairState, preRepairSample);
+			deDPCM8NibbleWithRepair(out++, sample, delta & 0xf, repairState, preRepairSample);
+		}
+	} else {
+		for (uint32 i = 0; i < numBytes; ++i) {
+			const uint8 delta = audioStream.readByte();
+			deDPCM8Nibble<OLD>(out++, sample, delta >> 4);
+			deDPCM8Nibble<OLD>(out++, sample, delta & 0xf);
+		}
 	}
 }
 
@@ -140,7 +251,8 @@ SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *strea
 	_stream(stream, disposeAfterUse),
 	_sampleRate(sampleRate),
 	// SSCI aligns the size of SOL data to 32 bits
-	_rawDataSize(rawDataSize & ~3) {
+	_rawDataSize(rawDataSize & ~3),
+	_popfixDPCM8({ConfMan.getBool("popfix_enabled"), 0, 0}) {
 		if (S16BIT) {
 			_dpcmCarry16.l = _dpcmCarry16.r = 0;
 		} else {
@@ -201,7 +313,8 @@ int SOLStream<STEREO, S16BIT, OLDDPCM8>::readBuffer(int16 *buffer, const int num
 		if (STEREO) {
 			deDPCM8Stereo(buffer, *_stream, bytesToRead, _dpcmCarry8.l, _dpcmCarry8.r);
 		} else {
-			deDPCM8Mono<OLDDPCM8>(buffer, *_stream, bytesToRead, _dpcmCarry8.l);
+			deDPCM8Mono<OLDDPCM8>(buffer, *_stream, bytesToRead, _dpcmCarry8.l,
+								  _popfixDPCM8.enabled, _popfixDPCM8.state, _popfixDPCM8.preRepairSample);
 		}
 	}
 

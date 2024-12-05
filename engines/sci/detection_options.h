@@ -242,6 +242,18 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
  	},
 
+	{
+		GAMEOPTION_ENABLE_DPCM8_POPFIX,
+		{
+			_s("Enable runtime speech repairs"),
+			_s("Detect and attempt to repair overflows in DPCM8 audio, which cause noticable pops and crackles. May have a performance impact during speech."),
+			"popfix_enabled",
+			true,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
