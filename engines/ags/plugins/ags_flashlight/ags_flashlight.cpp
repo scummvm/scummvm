@@ -96,6 +96,17 @@ int64 AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here.
 		_engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
+
+		// TODO: There's no reliable way to figure out if a game is running in legacy upscale mode from the
+		// plugin interface, so for now let's just play it conservatively and check it per-game
+		AGSGameInfo *gameInfo = new AGSGameInfo;
+		gameInfo->Version = 26;
+		_engine->GetGameInfo(gameInfo);
+		if (gameInfo->UniqueId == 1050154255 || // MMD, MMM04, MMM13, MMM28, MMM46, MMM56, MMM57, MMM68, MMM78, MMMD9, MMMH5
+			gameInfo->UniqueId == 1161197869)   // MMM70
+			g_ScaleFactor = (screen_width > 320) ? 2 : 1;
+
+		delete gameInfo;
 		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	}
 
@@ -196,20 +207,20 @@ void AGSFlashlight::GetFlashlightDarkness(ScriptMethodParams &params) {
 
 void AGSFlashlight::SetFlashlightDarknessSize(ScriptMethodParams &params) {
 	PARAMS1(int, Size);
-	if (Size != g_DarknessSize) {
+	if (Size * g_ScaleFactor != g_DarknessSize) {
 		g_BitmapMustBeUpdated = true;
-		g_DarknessSize = Size;
+		g_DarknessSize = Size * g_ScaleFactor;
 		g_DarknessDiameter = g_DarknessSize * 2;
 
 		if (g_BrightnessSize > g_DarknessSize) {
-			ScriptMethodParams p(g_DarknessSize);
+			ScriptMethodParams p(g_DarknessSize / g_ScaleFactor);
 			SetFlashlightBrightnessSize(p);
 		}
 	}
 }
 
 void AGSFlashlight::GetFlashlightDarknessSize(ScriptMethodParams &params) {
-	params._result = g_DarknessSize;
+	params._result = (g_DarknessSize / g_ScaleFactor);
 }
 
 
@@ -232,19 +243,19 @@ void AGSFlashlight::GetFlashlightBrightness(ScriptMethodParams &params) {
 
 void AGSFlashlight::SetFlashlightBrightnessSize(ScriptMethodParams &params) {
 	PARAMS1(int, Size);
-	if (Size != g_BrightnessSize) {
+	if (Size * g_ScaleFactor != g_BrightnessSize) {
 		g_BitmapMustBeUpdated = true;
-		g_BrightnessSize = Size;
+		g_BrightnessSize = Size * g_ScaleFactor;
 
 		if (g_DarknessSize < g_BrightnessSize) {
-			ScriptMethodParams p(g_BrightnessSize);
+			ScriptMethodParams p(g_BrightnessSize / g_ScaleFactor);
 			SetFlashlightDarknessSize(p);
 		}
 	}
 }
 
 void AGSFlashlight::GetFlashlightBrightnessSize(ScriptMethodParams &params) {
-	params._result = g_BrightnessSize;
+	params._result = g_BrightnessSize / g_ScaleFactor;
 }
 
 void AGSFlashlight::SetFlashlightPosition(ScriptMethodParams &params) {

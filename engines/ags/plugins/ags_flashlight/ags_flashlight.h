@@ -49,6 +49,7 @@ private:
 	int g_DarknessSize = 0;
 	int g_DarknessDiameter = 0;
 	int g_BrightnessSize = 0;
+	int g_ScaleFactor =  1;
 	int32 g_FlashlightX = 0;
 	int32 g_FlashlightY = 0;
 	int32 g_FlashlightDrawAtX = 0;
