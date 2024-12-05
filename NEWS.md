@@ -274,6 +274,14 @@ For a more comprehensive changelog of the latest experimental code, see:
  ZVision:
    - Improved support of RTL languages.
 
+ Android port:
+   - Add support for Android 15.
+   - Add game shortcuts support on Android home screen either from a long press
+     on the ScummVM icon or from the launcher widgets selector.
+   - Rework the gamepad input mode with an improved UI. Add more virtual buttons.
+   - Scale UI according to display density.
+   - Various stability fixes.
+
  macOS port:
    - Autoupdates now use Sparkle 2.x.
 
