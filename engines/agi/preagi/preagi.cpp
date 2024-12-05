@@ -52,7 +52,7 @@ void PreAgiEngine::initialize() {
 
 	//_game._vm->_text->charAttrib_Set(15, 0);
 
-	_defaultColor = 0xF;
+	_defaultColor = IDA_DEFAULT;
 
 	//_game._vm->_text->configureScreen(0); // hardcoded
 
@@ -102,13 +102,47 @@ void PreAgiEngine::clearGfxScreen(int attr) {
 // String functions
 
 void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
-	int code;
-
 	if (attr == kColorDefault)
 		attr = _defaultColor;
 
+	byte foreground = attr & 0x0f;
+	byte background = attr >> 4;
+
+	// Simplistic CGA and Hercules mapping that handles all text
+	// in Mickey and Winnie. Troll text is handled correctly in
+	// graphics mode, but the original switched to CGA 16 color
+	// text mode for some parts, and we are not doing that.
+	switch (_renderMode) {
+	case Common::kRenderCGA:
+		// Map non-black text to white
+		if (foreground != 0) {
+			foreground = 3;
+		}
+		// Map white background to white
+		if (background == 15) {
+			background = 3;
+		}
+		break;
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
+		// Map non-black text to amber/green
+		if (foreground != 0) {
+			foreground = 1;
+		}
+		// Map white background to amber/green,
+		// all others to black
+		if (background == 0x0f) {
+			background = 1;
+		} else {
+			background = 0;
+		}
+		break;
+	default:
+		break;
+	}
+
 	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++) {
-		code = buffer[iChar];
+		int code = buffer[iChar];
 
 		switch (code) {
 		case '\n':
@@ -123,7 +157,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			_gfx->drawCharacter(row, col, code, attr & 0x0f, attr >> 4, false);
+			_gfx->drawCharacter(row, col, code, foreground, background, false);
 
 			if (++col == 320 / 8) {
 				col = 0;
