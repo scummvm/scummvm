@@ -70,9 +70,15 @@ void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len)
 void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
-	// these two values are always little endian, even on Amiga
-	objHdr->fileLen = readS.readUint16LE();
-	objHdr->objId = readS.readUint16LE();
+	if (getPlatform() == Common::kPlatformAmiga) {
+		// these two fields are little endian on Amiga
+		objHdr->fileLen = readS.readUint16LE();
+		objHdr->objId = readS.readUint16LE();
+	} else {
+		// endianness is consistent on other platforms
+		objHdr->fileLen = readS.readUint16();
+		objHdr->objId = readS.readUint16();
+	}
 
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_STR_END; i++)
 		objHdr->ofsEndStr[i] = readS.readUint16();
@@ -94,6 +100,8 @@ uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_C64, iRoom));
 	else if (getPlatform() == Common::kPlatformApple2)
 		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_APPLE, iRoom));
+	else if (getPlatform() == Common::kPlatformCoCo)
+		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_COCO, iRoom));
 
 	Common::File file;
 	if (!file.open(fileName)) {
@@ -127,6 +135,8 @@ uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_C64, iObj));
 	else if (getPlatform() == Common::kPlatformApple2)
 		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_APPLE, iObj));
+	else if (getPlatform() == Common::kPlatformCoCo)
+		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_COCO, iObj));
 
 	Common::File file;
 	if (!file.open(fileName)) {
@@ -149,13 +159,27 @@ uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 void WinnieEngine::randomize() {
 	int iObj = 0;
 	int iRoom = 0;
-	bool done;
+
+	// Object 1's file is missing, empty, or corrupt on several platforms.
+	bool skipObject1 = false;
+	switch (getPlatform()) {
+	case Common::kPlatformApple2:
+	case Common::kPlatformC64:
+	case Common::kPlatformCoCo:
+		skipObject1 = true;
+		break;
+	default:
+		break;
+	}
 
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
-		done = false;
+		bool done = false;
 
 		while (!done) {
 			iObj = rnd(IDI_WTP_MAX_OBJ); // 1-40
+			if (iObj == 1 && skipObject1) {
+				continue;
+			}
 			done = true;
 
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
@@ -391,12 +415,14 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				opcode = *(buffer + pc++);
 				iNewRoom = opcode;
 
-				// Apple II is missing a zero terminator in one script block of
-				// Christopher Robin's tree house. The room file was fixed in
-				// later versions, and the Apple II version behaves correctly,
+				// Apple II & C64 are missing a zero terminator in a script block
+				// of Christopher Robin's tree house. The room file was fixed in
+				// later versions, and the A2 and C64 versions behave correctly,
 				// so the code must contain a workaround to prevent executing
 				// the next script block before exiting the room.
-				if (_room == 38 && getPlatform() == Common::kPlatformApple2) {
+				if (_room == 38 && 
+					(getPlatform() == Common::kPlatformApple2 ||
+					 getPlatform() == Common::kPlatformC64)) {
 					_room = iNewRoom; 
 					return IDI_WTP_PAR_GOTO; // change rooms immediately
 				}
@@ -1478,18 +1504,29 @@ void WinnieEngine::init() {
 	_tiggerOrMist = false; // tigger appears first
 	stopTimer(); // timer starts after intro
 
-	if (getPlatform() != Common::kPlatformAmiga) {
-		_isBigEndian = false;
-		_roomOffset = IDI_WTP_OFS_ROOM;
-		_objOffset = IDI_WTP_OFS_OBJ;
-	} else {
+	switch (getPlatform()) {
+	case Common::kPlatformAmiga:
+	case Common::kPlatformCoCo:
 		_isBigEndian = true;
 		_roomOffset = 0;
 		_objOffset = 0;
+		break;
+	default:
+		_isBigEndian = false;
+		_roomOffset = IDI_WTP_OFS_ROOM;
+		_objOffset = IDI_WTP_OFS_OBJ;
+		break;
 	}
 
-	if (getPlatform() == Common::kPlatformC64 || getPlatform() == Common::kPlatformApple2)
+	switch (getPlatform()) {
+	case  Common::kPlatformApple2:
+	case  Common::kPlatformC64:
+	case  Common::kPlatformCoCo:
 		_picture->setPictureVersion(AGIPIC_C64);
+		break;
+	default:
+		break;
+	}
 
 	hotspotNorth = Common::Rect(20, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, 10);
 	hotspotSouth = Common::Rect(20, IDI_WTP_PIC_HEIGHT - 10, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
@@ -1501,9 +1538,15 @@ Common::Error WinnieEngine::go() {
 	init();
 	randomize();
 
-	// The intro is not supported on these platforms yet
-	if (getPlatform() != Common::kPlatformC64 && getPlatform() != Common::kPlatformApple2)
+	switch (getPlatform()) {
+	case Common::kPlatformAmiga:
+	case Common::kPlatformDOS:
 		intro();
+		break;
+	default:
+		warning("intro not implemented");
+		break;
+	}
 
 	gameLoop();
 
