@@ -387,13 +387,13 @@ public:
 	void runQuitGameOps() { runOps(_quitGameOps); }
 	void runChangeSceneOps() { runOps(_onChangeSceneOps); }
 	void globalOps(const Common::Array<uint16> &args);
-	int16 getGlobal(uint16 num);
+	int16 getGlobal(uint16 num) const;
 	int16 setGlobal(uint16 num, int16 val);
 
 	const Common::Array<MouseCursor> &getCursorList() const { return _cursorList; }
 	void drawItems(Graphics::ManagedSurface &surf);
 	Common::Array<GameItem> &getGameItems() { return _gameItems; }
-	int countItemsInScene2() const;
+	int countItemsInInventory() const;
 
 	const Common::Array<ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
 	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }

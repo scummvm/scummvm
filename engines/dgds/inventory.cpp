@@ -117,20 +117,29 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	else
 		error("Unsupported language %d", DgdsEngine::getInstance()->getGameLang());
 
-	int titleWidth = font->getStringWidth(title);
-	int y1 = r._rect.y + 7;
-	int x1 = r._rect.x + 112;
-	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, 0);
+	DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
+	byte txtColor = (gameId == GID_DRAGON ? 0 : 25);
 
-	// Only draw the box around the title in DRAGON
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	if (engine->getGameId() == GID_DRAGON) {
+	int titleWidth = font->getStringWidth(title);
+	int y1 = r._rect.y + (gameId == GID_DRAGON ? 7 : 11);
+	// Dragon always draws the header in the same spot; HoC centers it.
+	int x1;
+	if (gameId == GID_DRAGON)
+		x1 = r._rect.x + 112;
+	else
+		x1 = r._rect.x + (r._rect.width - font->getStringWidth(title)) / 2 - 3;
+	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, txtColor);
+
+	// Only draw the box around the title in DRAGON and HOC
+	if (gameId == GID_DRAGON || gameId == GID_HOC) {
+		byte topColor = (gameId == GID_DRAGON ? 0xdf : 16);
+		byte botColor = (gameId == GID_DRAGON ? 0xff : 20);
 		int x2 = x1 + titleWidth + 6;
 		int y2 = y1 + font->getFontHeight();
-		surf.drawLine(x1, y1, x2, y1, 0xdf);
-		surf.drawLine(x2, y1 + 1, x2, y2, 0xdf);
-		surf.drawLine(x1, y1 + 1, x1, y2, 0xff);
-		surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, 0xff);
+		surf.drawLine(x1, y1, x2, y1, topColor);
+		surf.drawLine(x2, y1 + 1, x2, y2, topColor);
+		surf.drawLine(x1, y1 + 1, x1, y2, botColor);
+		surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, botColor);
 	}
 }
 

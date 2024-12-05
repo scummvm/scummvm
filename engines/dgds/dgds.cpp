@@ -636,7 +636,7 @@ Common::Error DgdsEngine::run() {
 			_compositionBuffer.blitFrom(_backgroundBuffer);
 
 			if (_inventory->isOpen() && _scene->getNum() == 2) {
-				int invCount = _gdsScene->countItemsInScene2();
+				int invCount = _gdsScene->countItemsInInventory();
 				_inventory->draw(_compositionBuffer, invCount);
 			}
 

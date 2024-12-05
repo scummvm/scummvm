@@ -2465,7 +2465,7 @@ void GDSScene::globalOps(const Common::Array<uint16> &args) {
 	}
 }
 
-int16 GDSScene::getGlobal(uint16 num) {
+int16 GDSScene::getGlobal(uint16 num) const {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	int curSceneNum = engine->getScene()->getNum();
 	DgdsGameId gameId = engine->getGameId();
@@ -2541,11 +2541,19 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 	}
 }
 
-int GDSScene::countItemsInScene2() const {
+int GDSScene::countItemsInInventory() const {
 	int result = 0;
+	bool isHoc = DgdsEngine::getInstance()->getGameId() == GID_HOC;
 	for (const auto &item : _gameItems) {
-		if (item._inSceneNum == 2)
-			result++;
+		if (item._inSceneNum == 2) {
+			if (isHoc) {
+				int16 currentCharacter = getGlobal(0x33);
+				if (item._quality == Inventory::HOC_CHARACTER_QUALS[currentCharacter])
+					result++;
+			} else {
+				result++;
+			}
+		}
 	}
 	return result;
 }
