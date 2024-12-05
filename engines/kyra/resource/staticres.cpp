@@ -987,12 +987,12 @@ void KyraEngine_LoK::loadItems() {
 void KyraEngine_LoK::loadButtonShapes() {
 	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
-	_gui->_scrollUpButton.data0ShapePtr = _screen->encodeShape(0, 0, 24, 15, 1);
-	_gui->_scrollUpButton.data1ShapePtr = _screen->encodeShape(24, 0, 24, 15, 1);
-	_gui->_scrollUpButton.data2ShapePtr = _screen->encodeShape(48, 0, 24, 15, 1);
-	_gui->_scrollDownButton.data0ShapePtr = _screen->encodeShape(0, 15, 24, 15, 1);
-	_gui->_scrollDownButton.data1ShapePtr = _screen->encodeShape(24, 15, 24, 15, 1);
-	_gui->_scrollDownButton.data2ShapePtr = _screen->encodeShape(48, 15, 24, 15, 1);
+	_gui->_scrollUpButton.data0ShapePtr = _screen->encodeShape(0, 0, 24, 14, 1);
+	_gui->_scrollUpButton.data1ShapePtr = _screen->encodeShape(24, 0, 24, 14, 1);
+	_gui->_scrollUpButton.data2ShapePtr = _screen->encodeShape(48, 0, 24, 14, 1);
+	_gui->_scrollDownButton.data0ShapePtr = _screen->encodeShape(0, 15, 24, 14, 1);
+	_gui->_scrollDownButton.data1ShapePtr = _screen->encodeShape(24, 15, 24, 14, 1);
+	_gui->_scrollDownButton.data2ShapePtr = _screen->encodeShape(48, 15, 24, 14, 1);
 	_screen->_curPage = 0;
 }
 
@@ -1150,14 +1150,15 @@ const uint8 KyraEngine_LoK::_itemPosY[] = {
 };
 
 void GUI_LoK::initStaticResource() {
-	GUI_V1_BUTTON(_scrollUpButton,    0x12, 1, 1, 1, 0x483, 0, 0, 0, 24, 15, 0);
-	GUI_V1_BUTTON(_scrollDownButton,  0x13, 1, 1, 1, 0x483, 0, 0, 0, 24, 15, 0);
-	GUI_V1_BUTTON(_menuButtonData[0], 0x0C, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
-	GUI_V1_BUTTON(_menuButtonData[1], 0x0D, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
-	GUI_V1_BUTTON(_menuButtonData[2], 0x0E, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
-	GUI_V1_BUTTON(_menuButtonData[3], 0x0F, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
-	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
-	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0,  0,  0, 0);
+	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0F, 0);
+	GUI_V1_BUTTON(_scrollDownButton, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0F, 0);
+
+	GUI_V1_BUTTON(_menuButtonData[0], 0x0C, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[1], 0x0D, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[2], 0x0E, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[3], 0x0F, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 
 	delete[] _menu;
 	_menu = new Menu[6];
@@ -1171,13 +1172,7 @@ void GUI_LoK::initStaticResource() {
 	int menuItemYEnd = 110;
 	int menuItemYInc = 17;
 	int menuItemHeight = 15;
-	int menuItemWidth = 220;
-	int lastItemWidth = 220;
 	int menuHeight = 139;
-	int menuWidth = 256;
-	int menuItemOffset = -1;
-	int lastItemX = -1;
-	int lastItemLabelX = -1;
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN) {
 		menuItemYStart = 27;
@@ -1188,29 +1183,14 @@ void GUI_LoK::initStaticResource() {
 		menuItemHeight = 22;
 		menuHeight = 160;
 		menuItemYEnd = menuItemYStart + menuItemYInc * 4;
-	} else if (_vm->gameFlags().lang == Common::EN_ANY || _vm->gameFlags().replacedLang == Common::EN_ANY) {
-		// English releases (+ fan translations) have left-aligned text, right-floating "Resume game"
-		menuHeight = 136;
-		menuWidth = 208;
-		menuItemWidth = 148;
-		menuItemOffset = 24;
-		lastItemX = 86;
-		lastItemWidth = 92;
-		lastItemLabelX = -1;
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga || _vm->gameFlags().platform == Common::kPlatformDOS) {
-		// European DOS/Amiga releases
-		menuHeight = 136;
-		menuWidth = 208;
-		menuItemWidth = lastItemWidth = 162;
 	}
 
-	GUI_V1_MENU(_menu[0], -1, -1, menuWidth, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, menuItemYStart, menuItemWidth, menuItemHeight, 252, 253, menuItemOffset, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc, menuItemWidth, menuItemHeight, 252, 253, menuItemOffset, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 2, menuItemWidth, menuItemHeight, 252, 253, menuItemOffset, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 3, menuItemWidth, menuItemHeight, 252, 253, menuItemOffset, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, lastItemX,  0, menuItemYEnd, lastItemWidth, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, lastItemLabelX, 0, 0, 0);
-
+	GUI_V1_MENU(_menu[0], -1, -1, 0x100, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, menuItemYStart, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 2, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 3, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, menuItemYEnd, 0xDC, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[0].item[0].callback = loadGameMenuFunctor;
 	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGameMenu);
 	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
@@ -1218,20 +1198,12 @@ void GUI_LoK::initStaticResource() {
 	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
 
 	menuHeight = 56;
-	menuWidth = 320;
-	lastItemX = 216;
-	if (_vm->gameFlags().lang == Common::KO_KOR) {
+	if (_vm->gameFlags().lang == Common::KO_KOR)
 		menuHeight = 60;
-	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().lang == Common::EN_ANY) {
-		menuWidth = 288;
-		lastItemX = 192;
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		lastItemX = 192;
-	}
 
-	GUI_V1_MENU(_menu[1], -1, -1, menuWidth, menuHeight, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0,  24, 0, 30, 72, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, lastItemX, 0, 30, 72, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[1], -1, -1, 0x140, menuHeight, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
 	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmNo);
 
@@ -1269,7 +1241,10 @@ void GUI_LoK::initStaticResource() {
 	menuHeight = 67;
 	labelYStart = 44;
 
-	if (_vm->gameFlags().lang == Common::ZH_TWN || _vm->gameFlags().lang == Common::KO_KOR) {
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuHeight = 80;
+		labelYStart = 50;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
 		menuHeight = 80;
 		labelYStart = 50;
 	}
@@ -1280,9 +1255,9 @@ void GUI_LoK::initStaticResource() {
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 
-	menuWidth = 208;
+	int menuWidth = 208;
 	menuHeight = 76;
-	menuItemWidth = 180;
+	int menuItemWidth = 180;
 	menuItemYStart = 30;
 	menuItemYInc = 17;
 
@@ -1303,16 +1278,10 @@ void GUI_LoK::initStaticResource() {
 	_menu[4].item[1].callback = quitPlayingFunctor;
 
 	menuHeight = 153;
-	menuWidth = 304;
-	menuItemOffset = 165;
-	menuItemWidth = 128;
 	menuItemYStart = 30;
 	menuItemYInc = 17;
-	int labelXStart = 16;
 	labelYStart = 32;
 	menuItemYEnd = 127;
-	lastItemWidth = 108;
-	lastItemX = -1;
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN) {
 		menuItemYStart = 27;
@@ -1322,43 +1291,22 @@ void GUI_LoK::initStaticResource() {
 		menuItemYInc = 24;
 		menuHeight = 160;
 		menuItemYEnd = 130;
-	} else if (_vm->gameFlags().lang == Common::EN_ANY ||
-		_vm->gameFlags().platform == Common::kPlatformPC98 ||
-		_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		menuHeight = 136;
-		menuWidth = 208;
-		menuItemOffset = 110;
-		menuItemWidth = 64;
-		labelXStart = 34;
-		menuItemYEnd = 110;
-		lastItemWidth = 92;
-		lastItemX = 86;
-	} else if (_vm->gameFlags().platform == Common::kPlatformDOS) {
-		menuHeight = 136;
-		menuWidth = 288;
-		menuItemWidth = 116;
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		menuHeight = 136;
-		menuWidth = 288;
-		menuItemWidth = 116;
-		menuItemOffset = 160;
-		menuItemYEnd = 110;
 	}
 
-	GUI_V1_MENU(_menu[5], -1, -1, menuWidth, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, menuItemOffset, 0, menuItemYStart, menuItemWidth, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, labelXStart, labelYStart, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, menuItemOffset, 0, menuItemYStart + menuItemYInc, menuItemWidth, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, labelXStart, labelYStart + menuItemYInc, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, menuItemOffset, 0, menuItemYStart + menuItemYInc * 2, menuItemWidth, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, labelXStart, labelYStart + menuItemYInc * 2, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, menuItemOffset, 0, menuItemYStart + menuItemYInc * 3, menuItemWidth, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, labelXStart, labelYStart + menuItemYInc * 3, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, menuItemOffset, 0, menuItemYStart + menuItemYInc * 4, menuItemWidth, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, labelXStart, 101, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,  lastItemX, 0, menuItemYEnd, lastItemWidth, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[5], -1, -1, 0x130, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 0xA5, 0, menuItemYStart, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 2, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc * 2, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 3, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc * 3, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 4, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x65, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, menuItemYEnd, 0x6C, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeMusic);
 	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeSounds);
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
 	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeText);
 	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsApply);
 
-	// The Amiga version uses different colors, due to its 32 color nature. We did setup the 256 color version
+	// The AMIGA version uses different colors, due to its 32 color nature. We did setup the 256 color version
 	// colors above, so we need to overwrite those with the correct values over here.
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		for (int i = 0; i < 6; ++i) {

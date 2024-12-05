@@ -375,10 +375,6 @@ void GUI_LoK::setGUILabels() {
 			offset = offsetOn = 12;
 			offsetOptions = 21;
 			offsetMainMenu = 12;
-		} else if (_vm->gameFlags().lang == Common::IT_ITA) {
-			offset = offsetOn = 32;
-			offsetOptions = 32;
-			offsetMainMenu = 32;
 		}
 	} else if (_vm->gameFlags().lang == Common::ES_ESP) {
 		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
