@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/gui_options.h"
 
 namespace Sci {
 
@@ -46,6 +47,8 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_forceDOSTracks = false;
 	_useWindowsCursors = ConfMan.getBool("windows_cursors");
 	_pseudoMouseAbility = kPseudoMouseAbilityUninitialized;
+	_useAudioPopfix = Common::checkGameGUIOption(GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX, ConfMan.get("guioptions")) &&
+	                  ConfMan.getBool("audio_popfix_enabled");
 }
 
 reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
