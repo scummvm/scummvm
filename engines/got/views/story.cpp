@@ -67,7 +67,7 @@ bool Story::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Story::draw() {
-	Graphics::ManagedSurface s = getSurface();
+	GfxSurface s = getSurface();
 
 	//s.blitFrom(_image1);
 	for (int i = 0; i < 10 * 10; ++i) {

@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	vars.o \
 	gfx/gfx_chunks.o \
 	gfx/gfx_pics.o \
+	gfx/gfx_surface.o \
 	gfx/palette.o \
 	utils/compression.o \
 	utils/file.o \

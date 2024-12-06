@@ -81,7 +81,7 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 }
 
 void View::drawBackground() {
-	Graphics::ManagedSurface s = getSurface();
+	GfxSurface s = getSurface();
 
 	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
 		for (int yp = 0; yp < 192; yp += 32)

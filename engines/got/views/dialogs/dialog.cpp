@@ -71,7 +71,7 @@ bool Dialog::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Dialog::draw() {
-	Graphics::ManagedSurface s = getSurface();
+	GfxSurface s = getSurface();
 
 	// Draw four corners
 	s.clear(215);

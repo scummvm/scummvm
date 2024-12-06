@@ -26,12 +26,14 @@
 #include "common/stack.h"
 #include "graphics/screen.h"
 #include "got/messages.h"
+#include "got/gfx/gfx_surface.h"
 
 namespace Got {
 
 #define FRAME_RATE 20
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
+using Gfx::GfxSurface;
 class Events;
 
 /**
@@ -182,7 +184,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Graphics::ManagedSurface getSurface() const;
+	Gfx::GfxSurface getSurface() const;
 
 	/**
 	 * Clear the surface

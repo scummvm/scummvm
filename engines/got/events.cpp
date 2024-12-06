@@ -261,7 +261,7 @@ bool UIElement::isFocused() const {
 }
 
 void UIElement::clearSurface() {
-	Graphics::ManagedSurface s = getSurface();
+	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(s.w, s.h), 0);
 }
 
@@ -317,8 +317,8 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-Graphics::ManagedSurface UIElement::getSurface() const {
-	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
+GfxSurface UIElement::getSurface() const {
+	return GfxSurface(*g_events->getScreen(), _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {

@@ -19,32 +19,15 @@
  *
  */
 
-#include "got/views/main_menu.h"
-#include "got/gfx/palette.h"
-#include "got/vars.h"
+#include "got/gfx/gfx_surface.h"
 
 namespace Got {
-namespace Views {
+namespace Gfx {
 
-bool MainMenu::msgFocus(const FocusMessage &msg) {
-	xsetpal(_G(gfx)[0]._data);
-	return true;
+void GfxSurface::print(const Common::Point &pos,
+		const Common::String &str, int color) {
+	// TODO
 }
 
-bool MainMenu::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
-bool MainMenu::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	close();
-	return true;
-}
-
-void MainMenu::draw() {
-	//GfxSurface s = getSurface();
-	drawBackground();
-}
-
-} // namespace Views
+} // namespace Gfx
 } // namespace Got
