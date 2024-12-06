@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-11-15 17:22+0000\n"
+"PO-Revision-Date: 2024-12-06 13:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -10170,16 +10170,16 @@ msgstr ""
 "Використовуйте на свій страх і ризик!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "Швидкість читання"
+msgstr "Виправити озвучку"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Виявляйте та намагайтеся усунути переповнення аудіо DPCM8, які спричиняють "
+"помітні тріски та тріск."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
