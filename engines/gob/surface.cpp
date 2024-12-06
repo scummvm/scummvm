@@ -39,11 +39,11 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-#include "image/iff.h"
-#include "image/tga.h"
-
 #include "image/bmp.h"
+#include "image/brc.h"
+#include "image/iff.h"
 #include "image/jpeg.h"
+#include "image/tga.h"
 
 namespace Gob {
 
@@ -1042,8 +1042,8 @@ bool Surface::loadIFF(Common::SeekableReadStream &stream, int16 left, int16 top,
 }
 
 bool Surface::loadBRC(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
-	warning("TODO: Surface::loadBRC()");
-	return false;
+	Image::BRCDecoder decoder(format);
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
 }
 
 bool Surface::loadBMP(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
