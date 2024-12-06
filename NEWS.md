@@ -186,6 +186,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      SCI 0 DOS games. Also added an EGA dithering mode and a VGA gray scale
      mode for many SCI 1 DOS games, a 16 colors mode for KQ6 Windows and
      8 colors modes for all PC-98 games.
+   - Added Gabriel Knight 1 CD speech repair by AllTinker.
+     Fixes the majority of pops and clicks in the DPCM8 speech audio.
    - Improved PCjr audio.
    - Improved KQ6 CD settings. The DOS platform now defaults to DOS behavior.
    - Better support for Mac KQ6.
