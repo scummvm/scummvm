@@ -119,7 +119,7 @@ void Room705::init() {
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
 		_ripGoesDownStairsSeries = series_load("705 RIP GOES DOWN STAIRS", -1, nullptr);
-		_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 0, 0, triggerMachineByHashCallback, "rip stairs machine");
+		_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 0, false, triggerMachineByHashCallback, "rip stairs machine");
 		sendWSMessage_10000(1, _ripStairsMach, _ripGoesDownStairsSeries, 4, 39, 160, _ripGoesDownStairsSeries, 39, 39, 0);
 
 		break;
@@ -138,7 +138,7 @@ void Room705::pre_parser() {
 
 void Room705::parser() {
 	bool ecx = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
+	const bool talkFl = player_said_any("talk", "talk to");
 	bool edi = player_said("take");
 	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
@@ -277,8 +277,122 @@ void Room705::parser() {
 		default:
 			break;
 		}
-	}
+	} // talkFl && player_said("MONK #9")
+	else if (talkFl && player_said("MONK #10")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
 
+			break;
+
+		case 2:
+			_705Monk2Series = series_load("705 MONK 2", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+			sendWSMessage_10000(1, _monkMach, _705Monk2Series, 1, 14, 3, _705Monk2Series, 14, 14, 0);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _705Monk2Series, 15, 19, -1, _705Monk2Series, 20, 22, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("705K01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _705Monk2Series, 23, 26, 5, _705Monk2Series, 26, 26, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_705Monk2Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #10")
+	else if (talkFl && player_said("MONK #11")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+
+			break;
+
+		case 2:
+			_705Monk3Series = series_load("705 MONK 3", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+			sendWSMessage_10000(1, _monkMach, _705Monk3Series, 1, 9, 3, _705Monk3Series, 9, 9, 0);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _705Monk3Series, 10, 12, -1, _705Monk3Series, 13, 14, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("705L01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _705Monk3Series, 15, 18, 5, _705Monk3Series, 18, 18, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_705Monk3Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #11")
+	else if (talkFl && player_said("MONK #12")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("com081", 1, 255, 2, -1);
+
+			break;
+
+		case 2:
+			_705Monk4Series = series_load("705 MONK 4", -1, nullptr);
+			_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "monk");
+			sendWSMessage_10000(1, _monkMach, _705Monk4Series, 1, 12, 3, _705Monk4Series, 12, 12, 4);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _monkMach, _705Monk4Series, 13, 15, -1, _705Monk4Series, 16, 20, 4);
+			sendWSMessage_1a0000(_monkMach, 9);
+			digi_play("705N01", 1, 255, 4, -1);
+
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _monkMach, _705Monk4Series, 21, 24, 5, _705Monk4Series, 24, 24, 0);
+			break;
+
+		case 5:
+			terminateMachine(_monkMach);
+			series_unload(_705Monk4Series);
+			_field60_mode = 134;
+			_field64_should = 135;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(10, 177, nullptr);
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			break;
+
+		default:
+			break;
+		}
+	} // talkFl && player_said("MONK #12")
 
 
 
@@ -290,7 +404,7 @@ void Room705::parser() {
 }
 
 void Room705::daemon() {
-	bool takeFl = player_said("take");
+	const bool takeFl = player_said("take");
 
 	switch (_G(kernel).trigger) {
 	case 70:
