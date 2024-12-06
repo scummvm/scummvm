@@ -84,6 +84,8 @@ private:
 		uint16 getHeight() const override { return _height; }
 		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override {
+			if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+				return false;
 			_pixelFormat = format;
 			return true;
 		}

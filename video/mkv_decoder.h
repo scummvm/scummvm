@@ -95,7 +95,13 @@ private:
 		uint16 getWidth() const { return _width; }
 		uint16 getHeight() const { return _height; }
 		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) {
+			if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+				return false;
+			_pixelFormat = format;
+			return true;
+		}
+
 		int getCurFrame() const { return _curFrame; }
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
 		const Graphics::Surface *decodeNextFrame();
