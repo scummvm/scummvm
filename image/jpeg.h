@@ -60,7 +60,12 @@ public:
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	void setCodecAccuracy(CodecAccuracy accuracy) override;
 	Graphics::PixelFormat getPixelFormat() const override;
-	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _requestedPixelFormat = format; return true; }
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override {
+		if (format.isCLUT8())
+			return false;
+		_requestedPixelFormat = format;
+		return true;
+	}
 
 	// Special API for JPEG
 	enum ColorSpace {

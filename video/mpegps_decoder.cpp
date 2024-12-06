@@ -622,6 +622,8 @@ Graphics::PixelFormat MPEGPSDecoder::MPEGVideoTrack::getPixelFormat() const {
 }
 
 bool MPEGPSDecoder::MPEGVideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+		return false;
 	_pixelFormat = format;
 	return true;
 }
