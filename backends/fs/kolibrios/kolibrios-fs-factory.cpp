@@ -39,7 +39,8 @@ AbstractFSNode *KolibriOSFilesystemFactory::makeRootFileNode() const {
 
 AbstractFSNode *KolibriOSFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
-	return getcwd(buf, MAXPATHLEN) ? new KolibriOSFilesystemNode(buf) : NULL;
+	_ksys_getcwd(buf, MAXPATHLEN);
+	return new KolibriOSFilesystemNode(buf);
 }
 
 AbstractFSNode *KolibriOSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
