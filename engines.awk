@@ -53,7 +53,7 @@ function get_feature_name(feature) {
 function get_feature_state(feature) {
 	get_values("_feature_" feature "_settings", settings)
 	for (i in settings) {
-		if (ENVIRON[settings[i]] == "yes")
+		if (ENVIRON[settings[i]] == "yes" || ENVIRON[settings[i]] == "auto")
 			return "yes"
 	}
 	return "no"
@@ -372,7 +372,7 @@ END {
 		for (c = 1; c <= components_count; c++) {
 			if (get_component_enabled(components[c]) != "yes") {
 				if (have_feature(components[c])) {
-					if (get_feature_state(components[c]) == "yes") {
+					if (get_feature_state(components[c]) == "yes" || get_feature_state(components[c]) == "auto") {
 						disable_feature(components[c])
 						print("   Feature '" components[c] "' is disabled as unused by enabled engines")
 					}
@@ -380,7 +380,7 @@ END {
 			}
 		}
 
-		print("#!/bin/sh\necho _features_disabled='" _features_disabled "'") >> "engines.awk.out"
+		print("#!/bin/sh\necho '_features_disabled=\"" _features_disabled "\"'") >> "engines.awk.out"
 
 		exit 0
 	}

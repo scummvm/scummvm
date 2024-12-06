@@ -125,7 +125,7 @@ add_feature() {
 
 # Add a component: id name settings-list
 add_component() {
-	_components="${_components} ${1}"
+	set_var _components "$(get_var _components) ${1}"
 
 	set_var _component_${1}_name "${2}"
 	set_var _component_${1}_settings "${3}"
@@ -317,6 +317,7 @@ add_feature test_cxx11 "Test C++11" "_test_cxx11"
 add_feature imgui "imgui" "_imgui"
 
 add_component lua "lua" "USE_LUA"
+add_component vpx "libvpx" "USE_VPX"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -4154,7 +4155,6 @@ echo "...check complete"
 eval "`. engines.awk.out`"
 
 for f in $_features_disabled; do
-    echo $f  # XXXX
     set_var $(get_var _feature_${f}_settings) "no"
 done
 
