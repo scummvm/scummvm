@@ -59,7 +59,7 @@ namespace Sword2 {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _system(system) {
+	: _vm(vm), _system(system), _modeChange(false) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
@@ -75,11 +75,7 @@ MoviePlayer::~MoviePlayer() {
  * Plays an animated cutscene.
  * @param id the id of the file
  */
-bool MoviePlayer::load(const char *name) {
-	// This happens when quitting during the "eye" cutscene.
-	if (_vm->shouldQuit())
-		return false;
-
+Common::Error MoviePlayer::load(const char *name) {
 	_textSurface = nullptr;
 
 	Common::String filename;
@@ -100,16 +96,23 @@ bool MoviePlayer::load(const char *name) {
 		break;
 	}
 
-	// Need to switch to true color for PSX/MP2 videos
-	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-		initGraphics(g_system->getWidth(), g_system->getHeight(), nullptr);
-
 	if (!_decoder->loadFile(Common::Path(filename))) {
-		// Go back to 8bpp color
-		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-			initGraphics(g_system->getWidth(), g_system->getHeight());
+		return Common::Error(Common::kPathDoesNotExist, filename);
+	}
 
-		return false;
+	// Need to switch to true color for PSX/MP2 videos
+	if (!_decoder->getPixelFormat().isCLUT8()) {
+		if (!_decoder->setOutputPixelFormats(g_system->getSupportedFormats()))
+			return Common::kUnsupportedColorMode;
+
+		Graphics::PixelFormat format = _decoder->getPixelFormat();
+		initGraphics(g_system->getWidth(), g_system->getHeight(), &format);
+
+		if (g_system->getScreenFormat() != format) {
+			return Common::kUnsupportedColorMode;
+		} else {
+			_modeChange = true;
+		}
 	}
 
 	// For DXA/MP2, also add the external sound file
@@ -117,7 +120,7 @@ bool MoviePlayer::load(const char *name) {
 		_decoder->addStreamFileTrack(name);
 
 	_decoder->start();
-	return true;
+	return Common::kNoError;
 }
 
 void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut) {
@@ -143,8 +146,10 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 	}
 
 	// Need to jump back to paletted color
-	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+	if (_modeChange) {
 		initGraphics(640, 480);
+		_modeChange = false;
+	}
 }
 
 void MoviePlayer::openTextObject(uint32 index) {
@@ -385,11 +390,11 @@ bool MoviePlayer::playVideo() {
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
+	return _modeChange ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::getWhiteColor() {
-	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
+	return _modeChange ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
 }
 
 void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
@@ -414,19 +419,17 @@ void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system, uint32 frameCount) {
+	// This happens when quitting during the "eye" cutscene.
+	if (vm->shouldQuit())
+		return nullptr;
+
 	Common::String filename;
 
 	filename = Common::String::format("%s.str", name);
 
 	if (Common::File::exists(Common::Path(filename))) {
-#ifdef USE_RGB_COLOR
 		Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x, frameCount);
 		return new MoviePlayer(vm, system, psxDecoder, kVideoDecoderPSX);
-#else
-		GUI::MessageDialog dialog(_("PSX cutscenes found but ScummVM has been built without RGB color support"), _("OK"));
-		dialog.runModal();
-		return nullptr;
-#endif
 	}
 
 	filename = Common::String::format("%s.smk", name);
