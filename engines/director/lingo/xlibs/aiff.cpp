@@ -93,17 +93,22 @@ void AiffXObj::m_new(int nargs) {
 }
 
 void AiffXObj::m_duration(int nargs) {
-	g_lingo->printSTUBWithArglist("AiffXObj::m_duration", nargs);
-	auto filePath = g_lingo->pop().asString();
+	Common::String filePath = g_lingo->pop().asString();
 
-	auto aiffStream = Common::MacResManager::openFileOrDataFork(findPath(filePath));
+	Common::SeekableReadStream *aiffStream = Common::MacResManager::openFileOrDataFork(findPath(filePath));
 	if (!aiffStream) {
-		warning("Failed to open %s", filePath.c_str());
+		warning("AiffXObj::m_duration: Failed to open %s", filePath.c_str());
 		g_lingo->push(0);
 		return;
 	}
 
-	auto aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::YES);
+	Audio::AIFFHeader *aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::NO);
+	if (!aiffHeader) {
+		warning("AiffXObj::m_duration: No AIFF header found for %s", filePath.c_str());
+		g_lingo->push(0);
+		delete aiffStream;
+		return;
+	}
 
 	int duration = (aiffHeader->getFrameCount() / (float)aiffHeader->getFrameRate()) * 60;
 
