@@ -69,7 +69,7 @@ function have_feature(feature) {
 function disable_feature(feature) {
 	ENVIRON["_feature_" feature "_settings"] = "no"
 
-	ENVIRON["_features_disabled"] = ENVIRON["_features_disabled"] feature " "
+	_features_disabled = _features_disabled feature " "
 }
 
 #
@@ -374,11 +374,13 @@ END {
 				if (have_feature(components[c])) {
 					if (get_feature_state(components[c]) == "yes") {
 						disable_feature(components[c])
-						print("   Feature '" components[c] "' is disabled as unused")
+						print("   Feature '" components[c] "' is disabled as unused by enabled engines")
 					}
 				}
 			}
 		}
+
+		print("#!/bin/sh\necho _features_disabled='" _features_disabled "'") >> "engines.awk.out"
 
 		exit 0
 	}
