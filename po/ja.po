@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-05 23:03+0000\n"
-"PO-Revision-Date: 2024-12-05 16:39+0000\n"
+"PO-Revision-Date: 2024-12-06 09:18+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -12091,7 +12091,7 @@ msgstr "高速モードの切り替え"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "ボイス/テキスト/両方の切り替え"
 
 #: engines/touche/metaengine.cpp:182
 #, fuzzy
@@ -12439,40 +12439,32 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr "*ピー音*なし(DLC)"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "シェーダーを選択"
+msgstr "ハイライトされた動詞を選択"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "上のフォルダーへ移動"
+msgstr "前のオブジェクトへ"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "セットアップメニューへ"
+msgstr "次のオブジェクトへ"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "左の動詞/アイテムを選択"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "右へスライド"
+msgstr "右の動詞/アイテムを選択"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "上の動詞/アイテムを選択"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "下の動詞/アイテムを選択"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
