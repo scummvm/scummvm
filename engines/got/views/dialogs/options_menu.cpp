@@ -19,24 +19,23 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
-#include "got/views/main_menu.h"
-#include "got/views/story.h"
 #include "got/views/dialogs/options_menu.h"
+#include "got/gfx/palette.h"
+#include "got/utils/file.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	MainMenu _mainMenu;
-	Story _story;
-
-	Dialogs::OptionsMenu _optionsMenu;
+static const char *OPTIONS[] = {
+	"Sound/Music", "Skill Level", "Save Game", "Load Game",
+		"Die", "Turbo Mode", "Help", "Quit", nullptr
 };
 
+OptionsMenu::OptionsMenu() : Dialog("Options Menu", OPTIONS) {
+}
+
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
-
-#endif

@@ -19,23 +19,24 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_DIALOGS_OPTIONS_MENU_H
+#define GOT_VIEWS_DIALOGS_OPTIONS_MENU_H
 
-#include "got/views/main_menu.h"
-#include "got/views/story.h"
-#include "got/views/dialogs/options_menu.h"
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	MainMenu _mainMenu;
-	Story _story;
+class OptionsMenu : public Dialog {
+public:
+	OptionsMenu();
+	virtual ~OptionsMenu() {
+	}
 
-	Dialogs::OptionsMenu _optionsMenu;
 };
 
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
 

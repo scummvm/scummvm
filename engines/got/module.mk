@@ -15,7 +15,9 @@ MODULE_OBJS = \
 	utils/res_archive.o \
 	views/main_menu.o \
 	views/view.o \
-	views/story.o
+	views/story.o \
+	views/dialogs/dialog.o \
+	views/dialogs/options_menu.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOT), DYNAMIC_PLUGIN)
