@@ -125,7 +125,7 @@ bool BagelEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
-bool BagelEngine::canSaveLoadFromWindow() const {
+bool BagelEngine::canSaveLoadFromWindow(bool save) const {
 	CBofWindow *win = CBofWindow::getActiveWindow();
 
 	// Don't allow saves when capture/focus is active
@@ -136,7 +136,7 @@ bool BagelEngine::canSaveLoadFromWindow() const {
 
 	// These two dialogs need to allow save/load for the ScummVM
 	// dialogs to work from them when original save/load is disabled
-	if (dynamic_cast<CBagStartDialog *>(win) != nullptr ||
+	if ((dynamic_cast<CBagStartDialog *>(win) != nullptr && !save) ||
 		dynamic_cast<CBagOptWindow *>(win) != nullptr)
 		return true;
 
@@ -148,11 +148,11 @@ bool BagelEngine::canSaveLoadFromWindow() const {
 }
 
 bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return canSaveLoadFromWindow();
+	return canSaveLoadFromWindow(false);
 }
 
 bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return canSaveLoadFromWindow();
+	return canSaveLoadFromWindow(true);
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -171,6 +171,10 @@ Common::Error BagelEngine::loadGameState(int slot) {
 	Common::Error result = Engine::loadGameState(slot);
 
 	if (result.getCode() == Common::kNoError) {
+		// Make sure we close any GUI windows before loading from GMM
+		CBofWindow *win = CBofWindow::getActiveWindow();
+		if (win)
+			win->close();
 		_masterWin->doRestore(&_saveData);
 	}
 

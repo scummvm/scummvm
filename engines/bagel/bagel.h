@@ -38,7 +38,7 @@ private:
 	Common::RandomSource _randomSource;
 	StBagelSave _saveData;
 
-	bool canSaveLoadFromWindow() const;
+	bool canSaveLoadFromWindow(bool save) const;
 
 public:
 	Graphics::Screen *_screen = nullptr;
