@@ -25,13 +25,13 @@
 
 namespace Graphics {
 
-FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
+FrameLimiter::FrameLimiter(OSystem *system, const uint framerate, const bool vsync) :
 		_system(system),
 		_speedLimitMs(0),
 		_startFrameTime(0),
 		_lastFrameDurationMs(_speedLimitMs) {
 	// The frame limiter is disabled when vsync is enabled.
-	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync) && framerate != 0;
+	_enabled = !(vsync && _system->getFeatureState(OSystem::kFeatureVSync)) && (framerate != 0);
 
 	if (_enabled) {
 		_speedLimitMs = 1000 / CLIP<uint>(framerate, 0, 100);
