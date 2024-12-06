@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-11-16 14:18+0000\n"
+"PO-Revision-Date: 2024-12-06 13:47+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -82,7 +82,7 @@ msgstr "위로"
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr "상위 디렉토리로 이동"
+msgstr "상위 디렉터리로 이동"
 
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
@@ -415,12 +415,12 @@ msgstr "다운로드"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
+msgstr "게임 데이터를 다운로드할 디렉터리를 선택"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
 #: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
 msgid "Select directory with game data"
-msgstr "게임 데이터가 있는 디렉토리를 선택"
+msgstr "게임 데이터가 있는 디렉터리를 선택"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:209
 msgid "From: "
@@ -454,15 +454,14 @@ msgstr "연결이 제한된 것 같습니다. 정말 파일을 다운로드하�
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
+msgstr "ScummVM이 지정된 디렉터리를 열 수 없습니다!"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
-"다운로드할 디렉토리를 만들 수 없습니다. 지정된 디렉토리에 동일한 이름의 파일"
-"이 있습니다."
+msgstr "다운로드할 디렉터리를 만들 수 없습니다. 지정된 디렉터리에 동일한 이름의 "
+"파일이 있습니다."
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -470,8 +469,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
-"정말 해당 디렉토리에 파일을 다운로드하겠습니까?"
+"지정된 디렉터리에 \"%s\" 파일이 이미 존재합니다.\n"
+"정말 해당 디렉터리에 파일을 다운로드하겠습니까?"
 
 #: gui/downloaddialog.cpp:198 gui/downloaddlcsdialog.cpp:70
 #: gui/downloadpacksdialog.cpp:368
@@ -806,23 +805,22 @@ msgstr "사운드폰트 선택"
 
 #: gui/editgamedialog.cpp:598
 msgid "Select additional game directory"
-msgstr "추가 게임 디렉토리를 선택"
+msgstr "추가 게임 디렉터리를 선택"
 
 #: gui/editgamedialog.cpp:611 gui/options.cpp:3276
 msgid "Select directory for saved games"
-msgstr "저장된 게임을 위한 디렉토리를 선택"
+msgstr "저장된 게임을 위한 디렉터리를 선택"
 
 #: gui/editgamedialog.cpp:618 gui/options.cpp:3283
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "선택한 디렉토리에 기록할 수 없습니다. 다른 디렉토리를 선택하세요."
+msgstr "선택한 디렉터리에 기록할 수 없습니다. 다른 디렉터리를 선택하세요."
 
 #: gui/editgamedialog.cpp:623
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr ""
-"저장된 게임 동기화 기능은 기본이 아닌 디렉토리에서는 작동하지 않습니다. 저장"
-"된 게임을 동기화하려면 기본 디렉토리를 사용하세요."
+msgstr "저장된 게임 동기화 기능은 기본이 아닌 디렉터리에서는 작동하지 않습니다. "
+"저장된 게임을 동기화하려면 기본 디렉터리를 사용하세요."
 
 #: gui/editgamedialog.cpp:657
 msgid "This game ID is already taken. Please choose another one."
@@ -1489,7 +1487,7 @@ msgstr "게임 불러오기:"
 
 #: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "이 디렉토리는 아직 사용할 수 없고, 다운로드 중입니다!"
+msgstr "이 디렉터리는 아직 사용할 수 없고, 다운로드 중입니다!"
 
 #: gui/launcher.cpp:420
 msgid ""
@@ -1519,13 +1517,12 @@ msgstr "ScummVM이 선택한 게임을 실행할 수 있는 엔진을 찾을 수
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
-msgstr ""
-"이 디렉토리에 ScummVM 접속 권한을 부여했습니까? 자세한 지침은 상단의 도움말 "
+msgstr "이 디렉터리에 ScummVM 접속 권한을 부여했습니까? 자세한 지침은 상단의 도움말 "
 "[?] 버튼을 누름"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했습니다!"
+msgstr "ScummVM은 선택한 디렉터리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:707
@@ -1631,7 +1628,7 @@ msgstr ""
 #: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "%d 개의 디렉토리를 스캔했습니다..."
+msgstr "%d 개의 디렉터리를 스캔했습니다..."
 
 #: gui/massadd.cpp:293
 #, c-format
@@ -2287,9 +2284,8 @@ msgstr "기본 시스템 파일 브라우저 사용"
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
-msgstr ""
-"ScummVM 대신 기본 시스템 파일 브라우저를 사용하여 파일이나 디렉토리를 선택하"
-"세요."
+msgstr "ScummVM 대신 기본 시스템 파일 브라우저를 사용하여 파일이나 디렉터리를 "
+"선택하세요."
 
 #: gui/options.cpp:2729
 msgid "Download Icons"
@@ -2492,7 +2488,7 @@ msgstr "/root/ 경로:"
 
 #: gui/options.cpp:2858 gui/options.cpp:2860 gui/options.cpp:2861
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "파일 관리자에서 /root/로 표시될 디렉토리를 선택"
+msgstr "파일 관리자에서 /root/로 표시될 디렉터리를 선택"
 
 #: gui/options.cpp:2860
 msgid "/root/ Path:"
@@ -2598,27 +2594,27 @@ msgstr ""
 
 #: gui/options.cpp:3292
 msgid "Select directory for GUI themes"
-msgstr "GUI 테마 디렉토리를 선택"
+msgstr "GUI 테마 디렉터리를 선택"
 
 #: gui/options.cpp:3302
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "GUI 런처 썸네일을 위한 디렉토리 선택"
+msgstr "GUI 런처 섬네일을 위한 디렉터리 선택"
 
 #: gui/options.cpp:3313
 msgid "Select directory for DLC downloads"
-msgstr "DLC 다운로드를 위한 디렉토리를 선택"
+msgstr "DLC 다운로드를 위한 디렉터리를 선택"
 
 #: gui/options.cpp:3324
 msgid "Select directory for extra files"
-msgstr "추가 파일 디렉토리를 선택"
+msgstr "추가 파일 디렉터리를 선택"
 
 #: gui/options.cpp:3335
 msgid "Select directory for plugins"
-msgstr "플러그인 디렉토리를 선택"
+msgstr "플러그인 디렉터리를 선택"
 
 #: gui/options.cpp:3349
 msgid "Select directory for Files Manager /root/"
-msgstr "파일 매니저 /root/ 디렉토리를 선택"
+msgstr "파일 매니저 /root/ 디렉터리를 선택"
 
 #: gui/options.cpp:3528
 msgid "This Storage is working now. Do you want to interrupt it?"
@@ -2731,7 +2727,7 @@ msgstr "알 수 없는 원작자"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM이 디렉토리에 접근할 수 없습니다!"
+msgstr "ScummVM이 디렉터리에 접근할 수 없습니다!"
 
 #: gui/saveload-dialog.cpp:56
 msgid "Downloading saves..."
@@ -3050,7 +3046,7 @@ msgstr "경로가 존재하지 않음"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr "경로가 디렉토리가 아님"
+msgstr "경로가 디렉터리가 아님"
 
 #: common/error.cpp:57
 msgid "Path not a file"
@@ -4410,7 +4406,7 @@ msgstr "윈도우즈 미디"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:58
 msgid "Can't create directory here!"
-msgstr "여기에 디렉토리를 만들 수 없습니다!"
+msgstr "여기에 디렉터리를 만들 수 없습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:64
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -4429,30 +4425,30 @@ msgstr "잘못된 경로입니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:83
 msgid "Parent directory doesn't exists!"
-msgstr "상위 디렉토리가 존재하지 않습니다!"
+msgstr "상위 디렉터리가 존재하지 않습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr "파일 내에 디렉토리를 만들 수 없습니다!"
+msgstr "파일 내에 디렉터리를 만들 수 없습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:95
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
 msgid "There is a file with that name in the parent directory!"
-msgstr "상위 디렉토리에 해당 이름의 파일이 있습니다!"
+msgstr "상위 디렉터리에 해당 이름의 파일이 있습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:101
 msgid "Failed to create the directory!"
-msgstr "디렉토리 만들기에 실패했습니다!"
+msgstr "디렉터리 만들기에 실패했습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:108
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:117
 msgid "Directory created successfully!"
-msgstr "디렉토리 만들기에 성공했습니다!"
+msgstr "디렉터리 만들기에 성공했습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:200
 msgid "Back to parent directory"
-msgstr "상위 디렉토리로 돌아가기"
+msgstr "상위 디렉터리로 돌아가기"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:66
 msgid "The file doesn't exist!"
@@ -4460,7 +4456,7 @@ msgstr "파일이 존재하지 않습니다!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:70
 msgid "Can't download a directory!"
-msgstr "디렉토리를 다운로드할 수 없습니다!"
+msgstr "디렉터리를 다운로드할 수 없습니다!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
@@ -4479,7 +4475,7 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:219
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:220
 msgid "Create directory"
-msgstr "디렉토리 만들기"
+msgstr "디렉터리 만들기"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
@@ -4491,7 +4487,7 @@ msgstr "파일 업로드"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:225
 msgid "Type new directory name:"
-msgstr "새로운 디렉토리 이름을 입력:"
+msgstr "새로운 디렉터리 이름을 입력:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
@@ -4501,7 +4497,7 @@ msgstr "업로드할 파일을 선택:"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Or select a directory (works in Chrome only):"
-msgstr "또는 디렉토리를 선택 (Chrome에서만 작동):"
+msgstr "또는 디렉터리를 선택 (크롬에서만 작동):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
@@ -4524,11 +4520,11 @@ msgstr "저장된 게임"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:116
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:82
 msgid "Parent directory"
-msgstr "상위 디렉토리"
+msgstr "상위 디렉터리"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:214
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM이 지정한 디렉토리를 나열할 수 없습니다."
+msgstr "ScummVM이 지정한 디렉터리를 나열할 수 없습니다."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Index of"
@@ -4544,7 +4540,7 @@ msgstr "파일 관리자 열기"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
-msgstr "상위 디렉토리가 존재하지 않습니다!"
+msgstr "상위 디렉터리가 존재하지 않습니다!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
@@ -5561,7 +5557,7 @@ msgstr "실패함, 후크 파일을 생성할 수 없음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 msgid "Select Playlist directory"
-msgstr "재생목록 디렉토리 선택"
+msgstr "재생목록 디렉터리 선택"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
@@ -6073,7 +6069,7 @@ msgid ""
 "game directory"
 msgstr ""
 "허큘리스 고해상도 글꼴에 대한 파일 'hgc_font'를 열거나 사용할 수 없습니다.\n"
-"다른 AGI(시에라) 게임에 해당 파일이 있는 경우, 게임 디렉토리에 복사할 수 있음"
+"다른 AGI(시에라) 게임에 해당 파일이 있는 경우, 게임 디렉터리에 복사할 수 있음"
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
@@ -6569,9 +6565,9 @@ msgid ""
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
 "이제 게임은 시에라 게임에서 내보낸 캐릭터를 나열하여 가져올 수 있습니다.\n"
-"1. ScummVM 저장 디렉토리 내에 qfg1*.sav 또는 qfg1vga*.sav라는 이름의 저장 파"
-"일, 또는\n"
-"2. QfG2 리메이크 게임 디렉토리 내의 모든 .sav 파일"
+"1. ScummVM 저장 디렉터리 내에 qfg1*.sav 또는 qfg1vga*.sav라는 이름의 저장 "
+"파일, 또는\n"
+"2. QfG2 리메이크 게임 디렉터리 내의 모든 .sav 파일"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -8032,7 +8028,7 @@ msgstr ""
 "그림 판당고의 원본 패치가 없습니다.\n"
 "다음에서 다운로드하고\n"
 "%s\n"
-"게임 데이터 파일 디렉토리에 넣기"
+"게임 데이터 파일 디렉터리에 넣기"
 
 #: engines/grim/resource.cpp:107
 #, c-format
@@ -8045,7 +8041,7 @@ msgid ""
 msgstr ""
 "원숭이 섬의 탈출의 원본 패치가 없습니다.\n"
 "%s에서 다운로드하고\n"
-"게임 데이터 파일 디렉토리에 넣으세요.\n"
+"게임 데이터 파일 디렉터리에 넣으세요.\n"
 "게임 언어에 맞는 올바른 버전을 다운로드하는 데 주의하세요!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
@@ -8698,7 +8694,7 @@ msgstr ""
 "\n"
 "설치에 원래 설치 프로그램을 사용한 경우 이 파일은\n"
 "AmigaDOS 시스템 'Fonts/' 폴더에 있어야 합니다.\n"
-"EOB 게임 데이터 디렉토리에 복사하세요.\n"
+"EOB 게임 데이터 디렉터리에 복사하세요.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -8733,7 +8729,7 @@ msgstr ""
 "EOB I 게임의 글꼴 파일을 사용할 수 없습니다.\n"
 "\n"
 "게임은 계속되지만, 언어별 문자는 표시되지 않습니다.\n"
-"올바른 글꼴 파일을 EOB II 게임 데이터 디렉토리에 복사하세요.\n"
+"올바른 글꼴 파일을 EOB II 게임 데이터 디렉터리에 복사하세요.\n"
 "\n"
 
 #: engines/lab/engine.cpp:124
@@ -10045,16 +10041,15 @@ msgstr ""
 "할 수 없을 수 있습니다. 사용 시 모든 위험을 감수하세요!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "읽기 속도"
+msgstr "음성 오디오 복구"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
-msgstr ""
+msgstr "DPCM8 오디오에서 눈에 띄는 톡톡 튀는 소리를 발생시키는 오버플로우를 감지하고 "
+"복구를 시도합니다."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
@@ -10220,10 +10215,10 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원래 해석기에 저장된 캐릭터 파"
-"일은 ScummVM의 저장된 게임 디렉토리에 넣어야 하며 저장된 게임에 따라 접두사"
-"를 추가해야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory 2의 경"
-"우 'qfg2-'. 예: 'qfg2-thief.sav'."
+"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원래 해석기에 저장된 캐릭터 "
+"파일은 ScummVM의 저장된 게임 디렉터리에 넣어야 하며 저장된 게임에 따라 "
+"접두사를 추가해야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory "
+"2의 경우 'qfg2-'. 예: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -10254,7 +10249,7 @@ msgstr ""
 "사후 시장 패치로 제공되었으므로 원래 게임 설정의 일부로\n"
 "설치되지 않았을 수 있습니다.\n"
 "\n"
-"이 파일을 게임 데이터 디렉토리에 복사하세요.\n"
+"이 파일을 게임 데이터 디렉터리에 복사하세요.\n"
 "\n"
 "하지만 해당 파일은 개별적으로 사용할 수 없고 (패치된)\n"
 "리소스 번들의 콘텐츠로만 사용할 수 있습니다.\n"
@@ -11326,8 +11321,8 @@ msgid ""
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "보통, 매니악 맨션은 지금 시작해야 합니다. 하지만 그렇게 하려면 매니악 맨션의 "
-"게임 파일이 Tentacle 게임 디렉토리 내의 'Maniac' 디렉토리에 있어야 하고, 게임"
-"을 ScummVM에 추가해야 합니다."
+"게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, "
+"게임을 ScummVM에 추가해야 합니다."
 
 #: engines/scumm/scumm.cpp:4140
 msgid "Would you like to host or join a network play session?"
@@ -11484,7 +11479,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"다음 파일들을 게임 데이터 디렉토리에 복사해 주세요.\n"
+"다음 파일들을 게임 데이터 디렉터리에 복사해 주세요.\n"
 "\n"
 
 #: engines/sherlock/metaengine.cpp:51
@@ -11728,9 +11723,8 @@ msgstr "게임 폴더나 엔진 데이터 파일에서 '%s'을(를) 찾을 수 �
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr ""
-"임시 게임 상태 저장에 실패하였습니다. ScummVM에서 저장 게임 디렉토리가 설정되"
-"어 있고 여기에 쓸 수 있는지 확인하세요."
+msgstr "임시 게임 상태 저장에 실패하였습니다. ScummVM에서 저장 게임 디렉터리가 "
+"설정되어 있고 여기에 쓸 수 있는지 확인하세요."
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
@@ -12549,8 +12543,8 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
-"크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉토리가 복사"
-"되었는지 확인하세요.  자세한 내용은 위키에 나와 있습니다: https://wiki."
+"크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉터리가 "
+"복사되었는지 확인하세요.  자세한 내용은 위키에 나와 있습니다: https://wiki."
 "scummvm.org/index.php?title=Crusader:_No_Remorse"
 
 #: engines/ultima/ultima8/games/u8_game.cpp:108
@@ -13375,11 +13369,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
-"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉토리나 게임 디렉토리"
-"에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉토리에서 Times New "
-"Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 필요"
-"합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 있습니"
-"다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
+"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉터리나 게임 "
+"디렉터리에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉터리에서 Times "
+"New Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 "
+"필요합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 "
+"있습니다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
 "LiberationSerif 또는 FreeMono, FreeSans, FreeSerif가 필요합니다."
 
 #~ msgid ""
