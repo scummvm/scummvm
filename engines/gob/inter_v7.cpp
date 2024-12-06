@@ -103,6 +103,10 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xB1, o7_findNextDatabaseRecord);
 	OPCODEDRAW(0xB4, o7_getDatabaseRecordValue);
 	OPCODEDRAW(0xB6, o7_checkAnyDatabaseRecordFound);
+	OPCODEDRAW(0xBE, o7_draw0xBE);
+	OPCODEDRAW(0xBF, o7_draw0xBF);
+	OPCODEDRAW(0xC0, o7_draw0xC0);
+	OPCODEDRAW(0xC1, o7_draw0xC1);
 	OPCODEDRAW(0xC3, o7_draw0xC3);
 	OPCODEDRAW(0xC4, o7_openTranlsationDB);
 	OPCODEDRAW(0xC5, o7_closeTranslationDB);
@@ -1235,6 +1239,32 @@ void Inter_v7::o7_checkAnyDatabaseRecordFound() {
 	debugC(5, kDebugGameFlow, "o7_checkAnyDatabaseRecordFound: %s.%s = %s", databaseName.c_str(), tableName.c_str(), db->hasMatchingRecord() ? "true" : "false");
 
 	WRITE_VAR_OFFSET(varIndex, db->hasMatchingRecord() ? 0 : 1);
+}
+
+void Inter_v7::o7_draw0xBE() {
+	_vm->_game->_script->evalString();
+	warning("STUB: o7_draw0xBE (Adibou/Sciences)");
+}
+
+void Inter_v7::o7_draw0xBF() {
+	_vm->_game->_script->evalString();
+	warning("STUB: o7_draw0xBF (Adibou/Sciences)");
+}
+
+void Inter_v7::o7_draw0xC0() {
+	_vm->_game->_script->evalString();
+	_vm->_game->_script->evalString();
+	_vm->_game->_script->evalString();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xC0 (Adibou/Sciences)");
+}
+
+void Inter_v7::o7_draw0xC1() {
+	// Read HTML line
+	_vm->_game->_script->evalString();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xC1 (Adibou/Sciences)");
 }
 
 void Inter_v7::o7_draw0xC3() {

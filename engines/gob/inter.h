@@ -740,6 +740,8 @@ protected:
 	void o7_findNextDatabaseRecord();
 	void o7_getDatabaseRecordValue();
 	void o7_checkAnyDatabaseRecordFound();
+	void o7_draw0xC0();
+	void o7_draw0xC1();
 	void o7_draw0xC3();
 	void o7_openTranlsationDB();
 	void o7_closeTranslationDB();
@@ -747,6 +749,8 @@ protected:
 	void o7_draw0xCC();
 	void o7_draw0xCD();
 	void o7_draw0xCE();
+	void o7_draw0xBE();
+	void o7_draw0xBF();
 	void o7_draw0xDC();
 	void o7_draw0xDD();
 	void o7_draw0xDE();
