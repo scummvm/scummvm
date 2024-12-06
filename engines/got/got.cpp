@@ -56,8 +56,9 @@ Common::String GotEngine::getGameId() const {
 }
 
 Common::Error GotEngine::run() {
-	// Initialize 320x200 palleted graphics mode
-	initGraphics(320, 200);
+	// Initialize 320x240 palleted graphics mode. Note that the original
+	// main menu/dialogs ran at 320x200, but the game ran at 320x240.
+	initGraphics(320, 240);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

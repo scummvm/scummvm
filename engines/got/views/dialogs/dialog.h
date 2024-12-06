@@ -19,23 +19,35 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_DIALOGS_DIALOG_H
+#define GOT_VIEWS_DIALOGS_DIALOG_H
 
-#include "got/views/main_menu.h"
-#include "got/views/story.h"
-#include "got/views/dialogs/options_menu.h"
+#include "graphics/managed_surface.h"
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	MainMenu _mainMenu;
-	Story _story;
+class Dialog : public View {
+private:
+	const char *_title;
+	Common::StringArray _options;
+	int _selectedItem = 0;
 
-	Dialogs::OptionsMenu _optionsMenu;
+public:
+	Dialog(const char *title, const char *options[]);
+	virtual ~Dialog() {
+	}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
 
