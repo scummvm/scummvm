@@ -24,8 +24,8 @@
 #include "audio/decoders/raw.h"
 #include "common/substream.h"
 #include "common/util.h"
-#include "common/config-manager.h"
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/sound/decoders/sol.h"
 #include "sci/resource/resource.h"
 
@@ -252,7 +252,7 @@ SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *strea
 	// SSCI aligns the size of SOL data to 32 bits
 	_rawDataSize(rawDataSize & ~3),
 	// The pop fix is only verified with (relevant to?) "old" DPCM8, so we enforce that here.
-	_popfixDPCM8(ConfMan.getBool("audio_popfix_enabled") && OLDDPCM8) {
+	_popfixDPCM8(g_sci->_features->useAudioPopfix() && OLDDPCM8) {
 		if (S16BIT) {
 			_dpcmCarry16.l = _dpcmCarry16.r = 0;
 		} else {
