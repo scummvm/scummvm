@@ -2178,12 +2178,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	// BackPacker (Windows, Swedish)
-	// Reported via TRAC #14819
-	WINGAME1_l("backpacker", "", "BACKPACK.EXE", "t:8e6fb18a41a9baff740aecd4ce68e100", 698999, Common::SE_SWE, 404),
-
-	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
-			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
 
 	// Original filename is 'BD-J/Demo'
 	// Developed by ART Sector ONE / Richard M. Coombs
@@ -2298,12 +2292,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Korean Windows version is named 'Time Girl'
 	WINGAME1_l("timegal", "", "TIMEGIRL.EXE", "0e5a7734bdc74198a62171ea4d51a364", 687457, Common::KO_KOR, 400),
-
-	// Tivola demo/sampler disc, Spring 1997, released in Germany
-	MACGAME2_l("tivolaspring1997", "Sampler", "Tivola Demos",      "r:5debd53e3dd84431c9ca1e47f5e10c1b", 503636,
-											  "Demo/SAMPLECD.Dxr", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
-	WINGAME2_l("tivolaspring1997", "Sampler", "START.EXE",         "t:e38cb9f5acb91b498a7a6718385c82e2", 740011,
-											  "DEMO/SAMPLECD.DXR", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
 
 	// Found on
 	// 1995-08-16 Mac/Win hybrid v1.2 release of SimTower
@@ -3634,6 +3622,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 'オウム報道全記録Demo'
 	MACDEMO1_l("aumhodozenkiroku", "Demo", "xn--Demo-4k4cxa39ay43tw0mbx1jiloc9h", "7fd44b6dffa0ea0402eaed4c3769b39b", 304674, Common::JA_JPN, 404),
 
+	// BackPacker (Windows, Swedish)
+	// Reported via TRAC #14819
+	WINGAME1_l("backpacker", "", "BACKPACK.EXE", "t:8e6fb18a41a9baff740aecd4ce68e100", 698999, Common::SE_SWE, 404),
+
 	// Both Mac and Win english versions require installation to extract executable
 	// Russian version appears to be identical with only assets replaced
 	// Original Japanese Mac filename is バッドデイ(Power PC)
@@ -3645,6 +3637,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 							 "BADDAY/BADDAY.DXR", "b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404),
 	WINGAME2_l("badday", "", "BDM/BAD_DAY.EXE",	  "t:3023f944e8d494393bf08c0cb7a61ba0", 768773,
 							 "BADDAY/BADDAY.DXR", "d:26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404),
+
+	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
+			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
 
 	// Original filename is みんなであそぼ　デモ
 	// Kidsoft US packaging says A Bear Family Adventure featuring Playtime in the Park by Erica Dale
@@ -5838,6 +5833,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Full version is not Director
 	WINDEMO1("timelapse", "Demo", "TLOVIEW.EXE", "6cd9f5644c8aa66ce60a23ee02762eab", 75131959, 404),
+
+	// Tivola demo/sampler disc, Spring 1997, released in Germany
+	MACGAME2_l("tivolaspring1997", "Sampler", "Tivola Demos",      "r:5debd53e3dd84431c9ca1e47f5e10c1b", 503636,
+											  "Demo/SAMPLECD.Dxr", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
+	WINGAME2_l("tivolaspring1997", "Sampler", "START.EXE",         "t:e38cb9f5acb91b498a7a6718385c82e2", 740011,
+											  "DEMO/SAMPLECD.DXR", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
 
 	MACDEMO1_l("toeic", "Demo", "TOEIC", "r:77f4098988d5386794d1530065f514cd", 301681, Common::JA_JPN, 400),
 
