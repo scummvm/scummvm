@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-05 23:03+0000\n"
+"POT-Creation-Date: 2024-12-06 09:48+0000\n"
 "PO-Revision-Date: 2024-11-15 23:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -10311,11 +10311,23 @@ msgstr ""
 "partidas que se guarden a través del menú principal global podrían estar "
 "dañadas e inutilizables. ¡Utiliza esta opción bajo tu propia responsabilidad!"
 
-#: engines/sci/detection_options.h:251
+#: engines/sci/detection_options.h:248
+#, fuzzy
+#| msgid "Reading speed"
+msgid "Repair speech audio"
+msgstr "Velocidad de lectura"
+
+#: engines/sci/detection_options.h:249
+msgid ""
+"Detect and attempt to repair overflows in DPCM8 audio, which cause "
+"noticeable pops and crackles."
+msgstr ""
+
+#: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
 msgstr "Modo MIDI:"
 
-#: engines/sci/detection_options.h:252
+#: engines/sci/detection_options.h:264
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -10323,36 +10335,36 @@ msgstr ""
 "Si vas a usar dispositivos MIDI externos (p. ej.:, a través de USB-MIDI), "
 "selecciona aquí tu dispositivo"
 
-#: engines/sci/detection_options.h:257
+#: engines/sci/detection_options.h:269
 msgid "Standard (GM / MT-32)"
 msgstr "Estándar (GM/MT-32)"
 
-#: engines/sci/detection_options.h:261
+#: engines/sci/detection_options.h:273
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110/D-10/D-20"
 
-#: engines/sci/detection_options.h:265
+#: engines/sci/detection_options.h:277
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_options.h:269
+#: engines/sci/detection_options.h:281
 msgid "Casio MT-540"
 msgstr "Casio MT-540"
 
-#: engines/sci/detection_options.h:273
+#: engines/sci/detection_options.h:285
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460/CSM-1"
 
-#: engines/sci/detection_tables.h:1426 engines/sci/detection_tables.h:1437
+#: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
 msgid "Game does not contain menu resources"
 msgstr "El juego no tiene los recursos de los menús"
 
-#: engines/sci/detection_tables.h:4673
+#: engines/sci/detection_tables.h:4675
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 "Esta demo utiliza una versión sin implementar de los vídeos en formato Robot"
 
-#: engines/sci/detection_tables.h:4728
+#: engines/sci/detection_tables.h:4730
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Se ha detectado un juego incompleto. Faltan datos por copiar de todos los CD."
