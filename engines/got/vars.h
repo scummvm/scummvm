@@ -26,6 +26,7 @@
 #include "graphics/screen.h"
 #include "got/defines.h"
 #include "got/gfx/gfx_chunks.h"
+#include "got/gfx/gfx_pics.h"
 
 namespace Got {
 
@@ -41,6 +42,7 @@ public:
 	void load();
 
 	Gfx::GfxChunks _gfx;
+	Gfx::BgPics _bgPics;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -66,7 +68,6 @@ public:
 	byte _text[94][72] = {};
 	//union REGS in, out = 0;
 	//struct SREGS seg = 0;
-	byte *_bg_pics = nullptr;
 	byte _objects[NUM_OBJECTS][262] = {};
 	int _ox = 0, _oy = 0, _of = 0;
 	byte _object_map[240] = {};
