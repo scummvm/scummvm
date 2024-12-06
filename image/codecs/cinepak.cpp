@@ -651,6 +651,9 @@ bool CinepakDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
 	if (_bitsPerPixel == 8)
 		return false;
 
+	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+		return false;
+
 	_pixelFormat = format;
 	return true;
 }
