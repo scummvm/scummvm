@@ -865,6 +865,19 @@ void Adlib::OnTimer() {
 
 									
 									// TODO: Continue from here
+									/*
+									mov	di,[bp-8h]
+									mov	al,[di+8Dh]
+									xor	ah,ah
+									add	ax,40h
+									push	ax
+									mov	di,[bp-8h]
+									mov	al,[di+8Dh]
+									xor	ah,ah
+									add	ax,40h
+									push	ax
+									call	far 0017h:2779h
+									*/
 								}
 							}
 							
