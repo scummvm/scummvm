@@ -36,7 +36,7 @@ namespace Graphics {
  */
 class FrameLimiter {
 public:
-	FrameLimiter(OSystem *system, const uint framerate);
+	FrameLimiter(OSystem *system, const uint framerate, const bool vsync = true);
 
 	void startFrame();
 	void delayBeforeSwap();
