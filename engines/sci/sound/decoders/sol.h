@@ -57,10 +57,13 @@ private:
 	 *  - The current state of the repair (0 = inactive, 1 = positive, 2 = negative).
 	 *  - The sample state without repair, to detect where repairing should stop.
 	 */
-	struct {
+	struct PopFixData {
 		const bool enabled;
 		uint8 state;
 		uint8 preRepairSample;
+
+		PopFixData(const bool e):
+			enabled(e), state(0), preRepairSample(0) {}
 	} _popfixDPCM8;
 
 	/**
