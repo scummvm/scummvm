@@ -64,7 +64,7 @@ public:
 	MoviePlayer(Sword2Engine *vm, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
 
-	bool load(const char *name);
+	Common::Error load(const char *name);
 	void play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut);
 
 protected:
@@ -77,6 +77,7 @@ protected:
 	int _textX, _textY;
 	byte _white, _black;
 	DecoderType _decoderType;
+	bool _modeChange;
 
 	Video::VideoDecoder *_decoder;
 
