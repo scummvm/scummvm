@@ -62,7 +62,7 @@ class MoviePlayer {
 public:
 	MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Sound *sound, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
-	bool load(uint32 id);
+	Common::Error load(uint32 id);
 	void play();
 
 protected:
@@ -77,6 +77,7 @@ protected:
 	uint32 _black;
 	uint32 _c1Color, _c2Color, _c3Color, _c4Color;
 	DecoderType _decoderType;
+	bool _modeChange;
 
 	Video::VideoDecoder *_decoder;
 

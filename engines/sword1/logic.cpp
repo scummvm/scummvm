@@ -39,6 +39,7 @@
 
 #include "sword1/debug.h"
 
+#include "gui/error.h"
 #include "gui/message.h"
 
 namespace Sword1 {
@@ -1014,9 +1015,14 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	} else {
 		MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _sound, _system);
 		if (player) {
+			Common::Error err;
+
 			_screen->clearScreen();
-			if (player->load(sequenceId))
+			err = player->load(sequenceId);
+			if (err.getCode() == Common::kNoError)
 				player->play();
+			else
+				GUI::displayErrorDialog(err);
 			delete player;
 
 			// In some instances, when you start a video when the palette is still fading
