@@ -3072,9 +3072,17 @@ EOF
 				add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
 			fi
 		fi
-		if test "$_host_cpu" = "aarch64" ; then
+
+		case $_host_cpu in
+		powerpc*)
+			# We use -force_cpusubtype_ALL to ensure the binary runs on every
+			# PowerPC machine.
+			append_var LDFLAGS "-force_cpusubtype_ALL"
+			;;
+		aarch64)
 			add_line_to_config_mk 'MACOSX_ARM64 = 1'
-		fi
+			;;
+		esac
 
 		# Avoid "file has no symbols" noise from ranlib, if it's new enough
 		ranlib_version=`$_ranlib -V 2>/dev/null`
