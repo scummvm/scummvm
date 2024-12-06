@@ -19,32 +19,34 @@
  *
  */
 
-#ifndef GOT_UTILS_FILE_H
-#define GOT_UTILS_FILE_H
+#ifndef GOT_GFX_GFX_PICS_H
+#define GOT_GFX_GFX_PICS_H
 
-#include "common/str.h"
-#include "got/defines.h"
+#include "common/array.h"
+#include "graphics/managed_surface.h"
 
 namespace Got {
+namespace Gfx {
 
-extern long file_size(const char *path);
-extern unsigned int read_file(const char *filename, const char *buff,
-	long offset, unsigned int amount, int key);
+class BgPics : public Common::Array<Graphics::ManagedSurface> {
+private:
+	int _area = 1;
 
-extern bool load_sd_data();
-extern bool load_objects();
-extern bool load_actor(int file, int num);
-extern bool load_picture(int index, char *buff);
-extern void setup_filenames(int level);
-extern bool  load_speech(int index);
-extern long file_size(const char *path);
-extern void *get_file(const char *filename, int key);
-extern void save_game();
-extern bool load_game(int flag);
-extern void help();
-extern long res_read(const Common::String &name, void *buff);
-extern bool load_music(int num);
+public:
+	void load();
 
+	bool getArea() const {
+		return _area;
+	}
+	void setArea(int area);
+};
+
+class Pics : public Common::Array<Graphics::ManagedSurface> {
+public:
+	void load();
+};
+
+} // namespace Gfx
 } // namespace Got
 
 #endif

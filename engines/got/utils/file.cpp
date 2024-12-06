@@ -33,19 +33,6 @@ long file_size(char *path) {
 	return f.open(Common::Path(path)) ? f.size() : -1;
 }
 
-bool load_bg_data() {
-	_G(bg_pics) = new byte[60460];
-	if (!_G(bg_pics))
-		return false;
-
-	if (GAME1) {
-		if (res_read("BPICS1", _G(bg_pics)) < 0)
-			return false;
-	}
-
-	return true;
-}
-
 bool load_sd_data() {
 	Common::String fname = Common::String::format("SDAT%d", _G(area));
 

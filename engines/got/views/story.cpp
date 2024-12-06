@@ -34,7 +34,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	res_read("STORY1", _G(tmp_buff));
 	res_read("OPENBACK", back);
 	res_read("STORYPIC", back);
-
+#if 0
 	// Load the images
 	_image1.create(320, 240);
 	_image2.create(320, 240);
@@ -44,7 +44,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 		byte *destP = (byte *)s->getBasePtr(0, (i % 6) * 40);
 		res_read(Common::String::format("OPENP%d", i + 1), destP);
 	}
-
+#endif
 	res_read("STORYPAL", _G(pbuff));
 	_G(pbuff)[2] = 0;
 	_G(pbuff)[1] = 0;
@@ -69,7 +69,11 @@ bool Story::msgKeypress(const KeypressMessage &msg) {
 void Story::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
-	s.blitFrom(_image1);
+	//s.blitFrom(_image1);
+	for (int i = 0; i < 10 * 10; ++i) {
+		Graphics::ManagedSurface & img = _G(bgPics)[i];
+		s.blitFrom(img, Common::Point((i % 10) * 32, (i / 10) * 16));
+	}
 }
 
 bool Story::tick() {

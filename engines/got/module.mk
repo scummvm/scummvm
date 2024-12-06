@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	vars.o \
 	gfx/gfx_chunks.o \
+	gfx/gfx_pics.o \
 	gfx/palette.o \
 	utils/compression.o \
 	utils/file.o \

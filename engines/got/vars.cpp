@@ -41,6 +41,7 @@ Vars::Vars() {
 
 void Vars::load() {
 	_gfx.load();
+	_bgPics.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
 	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
@@ -80,12 +81,11 @@ void Vars::load() {
 	_mask_buff = new byte[15300];
 	_mask_buff_start = _mask_buff;
  
-	if (res_read("RANDOM", _rnd_array) < 0
-		|| res_read("DEMO", _demo_key) < 0
-		|| res_read("TEXT", _text) < 0
-		|| res_read("ODINPIC", _odin) < 0
-		|| res_read("HAMPIC", _hampic) < 0)
-		error("Error loading static data");
+	res_read("RANDOM", _rnd_array);
+	res_read("DEMO", _demo_key);
+	res_read("TEXT", _text);
+	res_read("ODINPIC", _odin);
+	res_read("HAMPIC", _hampic);
 
 	load_palette();
 
