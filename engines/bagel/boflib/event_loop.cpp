@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60),
+EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
 	_mode(mode) {
 }
 
