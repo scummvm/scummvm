@@ -521,7 +521,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	// For the PSX version, we'll try the PlayStation stream files
 	if (vm->isPsx()) {
 		// The demo uses the normal file names for the intro cutscene
-		filename = ((vm->_systemVars.isDemo && id == 4) ? Common::Path("intro") : Common::Path(Common::String(sequenceListPSX[id]) + ".str"));
+		filename = ((vm->_systemVars.isDemo && id == 4) ? Common::Path("intro.str") : Common::Path(Common::String(sequenceListPSX[id]) + ".str"));
 
 		if (Common::File::exists(filename)) {
 #ifdef USE_RGB_COLOR
