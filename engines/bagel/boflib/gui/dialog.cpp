@@ -257,7 +257,7 @@ int CBofDialog::doModal() {
 
 	// Acquire and dispatch messages until quit message is received,
 	// or until there are too many errors.
-	Graphics::FrameLimiter limiter(g_system, 60);
+	Graphics::FrameLimiter limiter(g_system, 60, false);
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::getErrorCount() < MAX_ERRORS)) {
 		CBofSound::audioTask();
