@@ -318,6 +318,7 @@ add_feature imgui "imgui" "_imgui"
 
 add_component lua "lua" "USE_LUA"
 add_component vpx "libvpx" "USE_VPX"
+add_component theoradec "libtheoradec" "USE_THEORADEC"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
