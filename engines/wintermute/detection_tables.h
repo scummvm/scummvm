@@ -4195,6 +4195,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
 					"xlanguage_zh_t.dcp", "6ca6a83edad54ec1c384fbcea2989ee4", 10170999), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_2),
 
+	// Reversion: The Return (Steam, December 2022) (French)
+	WME_WINENTRY("reversion3", "Steam",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_fr.dcp", "95e120a88b3205e8b58f71060c34e713", 10251638), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_2),
+
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
 		WME_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
