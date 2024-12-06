@@ -291,6 +291,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Increased available memory on the Old 3DS.
    - Fixed crashes in new 3DS models due to different memory handling.
 
+ iOS/iPadOS port:
+   - Add Apple Pencil support
+   - Add app icons for “Dark” and “Tinted” modes
+   - Various stability fixes
+
 
 #### 2.8.1 (2024-03-31)
 
