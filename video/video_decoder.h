@@ -408,6 +408,18 @@ public:
 	bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 
 	/**
+	 * Pick the default high color format from a list for videos that convert
+	 * from YUV.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * @param format The preferred output pixel format
+	 * @return true on success, false otherwise
+	 */
+	bool setOutputPixelFormats(const Common::List<Graphics::PixelFormat> &formatList);
+
+	/**
 	 * Set the accuracy of the video decoder
 	 */
 	virtual void setVideoCodecAccuracy(Image::CodecAccuracy accuracy);

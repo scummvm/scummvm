@@ -568,6 +568,14 @@ bool VideoDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
 	return result;
 }
 
+bool VideoDecoder::setOutputPixelFormats(const Common::List<Graphics::PixelFormat> &formatList) {
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = formatList.begin(); i != formatList.end(); ++i) {
+		if (setOutputPixelFormat(*i))
+			return true;
+	}
+	return false;
+}
+
 void VideoDecoder::setVideoCodecAccuracy(Image::CodecAccuracy accuracy) {
 	_videoCodecAccuracy = accuracy;
 
