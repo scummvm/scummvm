@@ -170,6 +170,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed spell SP/gem requirements in MM1 enhanced mode, and actually remove
      spell points & gems when spells are cast.
 
+
+ NANCY:
+   - Fixed a startup crash and some broken puzzles in The Vampire Diaries
+   - Fixed a crash when trying to play the Russian versions of early Nancy Drew games
+
  NGI:
    - Added support for Lithuanian version of fullpipe.
 
