@@ -2262,11 +2262,11 @@ local function print_transfer_field_names(image)
 end
 
 local function print_old_save_field_data(image, text, yOffset)
-	image_print_raw(image, text, 65, 21 + (yOffset * 8), 4)
+	image_print_raw(image, text, 65, 21 + (yOffset * 8), 2)
 end
 
 local function print_new_save_field_data(image, text, yOffset)
-	image_print_raw(image, text, 146, 21 + (yOffset * 8), 1)
+	image_print_raw(image, text, 146, 21 + (yOffset * 8), 9)
 end
 
 local function clicked_on_button(btnSprite)
@@ -2334,7 +2334,7 @@ local function transfer_showStats(transferData)
 
 	local name = sprite_new(nil, bg.x + 146, bg.y + 21, true)
 	name.text = transferData.newSave.name
-	name.text_color = 1
+	name.text_color = 9
 
 	local gender_sprite = sprite_new(nil, bg.x + 146, bg.y + 21 + 8, true)
 	if transferData.newSave.gender == 0 then
@@ -2342,7 +2342,7 @@ local function transfer_showStats(transferData)
 	else
 		gender_sprite.text = "Male"
 	end
-	gender_sprite.text_color = 1
+	gender_sprite.text_color = 9
 
 	image_print_raw(bg.image, transferGameName, 65, 9, 0x3d)
 	image_print_raw(bg.image, "Ultima VI", 146, 9, 0x3d)
@@ -2406,12 +2406,7 @@ local function transfer_showStats(transferData)
 				if collect_name_string(name) == false then
 					name.text = transferData.oldSave.name
 				end
-				name.text_color = 1
-			end
-			if input == 0 then
-				if clicked_on_button(continue_btn) == true then
-					break
-				end
+				name.text_color = 9
 			end
 			input = nil
 		end
@@ -2563,6 +2558,7 @@ local function transfer()
 		transferData.newSave.dex = update_u4_stat(transferData.newSave.dex)
 		transferData.newSave.int = update_u4_stat(transferData.newSave.int)
 	end
+	transferData.newSave.class = "Avatar"
 	transferData.newSave.magic = transferData.newSave.int
 	transferData.newSave.exp = math.floor(transferData.newSave.exp / 10)
 	transferData.newSave.level = 1
