@@ -35,7 +35,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -46,7 +46,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -57,7 +57,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "bar/pda/bzoom.bmp", "c05189dee78365eca067f58d444e8488", 4114),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -68,7 +68,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -79,7 +79,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -90,7 +90,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 

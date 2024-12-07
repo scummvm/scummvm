@@ -34,7 +34,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "b1c35b7a6b5b0c2e6f466ea384f22558", 435353845),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_5B6D,
@@ -48,7 +48,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "a97546ee2d9e19aab59714a267009a31", 502540584),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_566D,
@@ -62,7 +62,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "5532019821c077dda5cf86b619e4b173", 502495748),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_566D,
@@ -76,7 +76,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "f0bd29df9fcaba3d4047eac1046e0abf", 502503739),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_566D,
@@ -90,7 +90,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "5631cf51cb7afc4babf7f2d5a8bdfc21", 502661437),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_56AD,
@@ -104,7 +104,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "6180145221d18e9e9caac6459e840579", 502661439),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_56AD,
@@ -118,7 +118,7 @@ const TwpGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ThimbleweedPark.ggpack1", "6a3f457cf0545d7a5122fb8bcd4d62a6", 502503742),
 			Common::UNK_LANG,
 			Common::kPlatformUnknown,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_XORKEY_566D,

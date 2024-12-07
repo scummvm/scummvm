@@ -36,7 +36,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "10c8064e9c771072122f50737ac97245", 730771),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Burger,
@@ -49,7 +49,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "3887c30f0d2f93fed7549120748c07fd", 724755),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Burger,
@@ -62,7 +62,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "55be8693a4c36e7efcdca0f0c77758ae", 724191),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Burger,
@@ -97,7 +97,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "fc3f363b6153240a448bd3b7be9318da", 62159),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Burger,
@@ -110,7 +110,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "eee638f804c53b640218fbbb8c681fdc", 88137),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Burger,
