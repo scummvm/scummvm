@@ -91,6 +91,9 @@ void View::drawBackground() {
 	}
 }
 
+void View::play_sound(int index, int priority_override) {
+	warning("TODO: play_sound");
+}
 
 } // namespace Views
 } // namespace Got

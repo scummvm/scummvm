@@ -94,8 +94,8 @@ void Dialog::draw() {
 	// Draw selection pointer
 	if (_smackCtr > 0) {
 		// Selecting an item
-		s.blitFrom(_G(hampic)[0], Common::Point(8 + 2 * _smackCtr,
-			24 + (_selectedItem * 16)));
+		int xp = 8 + 2 * (_smackCtr < 3 ? (_smackCtr + 1) : (6 - _smackCtr));
+		s.blitFrom(_G(hampic)[0], Common::Point(xp, 24 + (_selectedItem * 16)));
 	} else {
 		// Normal animated cursor
 		s.blitFrom(_G(hampic)[_hammerFrame],
@@ -141,7 +141,10 @@ bool Dialog::tick() {
 
 	// Handle animation when an item is selected
 	if (_smackCtr != 0) {
-		if (++_smackCtr == 4) {
+		++_smackCtr;
+		if (_smackCtr == 3)
+			play_sound(CLANG, 1);
+		if (_smackCtr == 6) {
 			_smackCtr = 0;
 			selected();
 		}	
