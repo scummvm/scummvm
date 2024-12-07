@@ -57,7 +57,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "bar/pda/bzoom.bmp", "c05189dee78365eca067f58d444e8488", 4114),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
