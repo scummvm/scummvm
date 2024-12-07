@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-12-07 10:35+0000\n"
+"PO-Revision-Date: 2024-12-07 11:00+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6302,11 +6302,11 @@ msgstr "Να μη γίνει προσομοίωση \"παράσιτων\" το�
 
 #: engines/adl/metaengine.cpp:104
 msgid "Use checkered cursor"
-msgstr "Χρήση καρό κέρσορα"
+msgstr "Χρήση καρό δρομέα"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr "Χρήση του καρό κέρσορα από τα μεταγενέστερα μοντέλα Apple II"
+msgstr "Χρήση του καρό δρομέα από τα μεταγενέστερα μοντέλα Apple II"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -8601,15 +8601,11 @@ msgstr "Κίνηση προς τον πάτο"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "Κίνηση αριστερά"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "Κίνηση δεξιά"
 
@@ -8699,19 +8695,19 @@ msgstr "Βήμα πλάγια"
 
 #: engines/illusions/metaengine.cpp:108
 msgid "Move cursor up"
-msgstr "Κίνηση κέρσορα πάνω"
+msgstr "Κίνηση δρομέα πάνω"
 
 #: engines/illusions/metaengine.cpp:115
 msgid "Move cursor down"
-msgstr "Κίνηση κέρσορα κάτω"
+msgstr "Κίνηση δρομέα κάτω"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
-msgstr "Κίνηση κέρσορα αριστερά"
+msgstr "Κίνηση δρομέα αριστερά"
 
 #: engines/illusions/metaengine.cpp:129
 msgid "Move cursor right"
-msgstr "Κίνηση κέρσορα δεξιά"
+msgstr "Κίνηση δρομέα δεξιά"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -9127,59 +9123,45 @@ msgstr "Επανέναρξη παιχνιδιού"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Δρομέας Αριστερά"
+msgstr "Δρομέας - Πάνω Αριστερά"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Δρομέας -  Αριστερά στη μέση"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Δρομέας - Κάτω αριστερά"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Δρομέας Δεξιά"
+msgstr "Δρομέας - Πάνω δεξιά"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Δρομέας Δεξιά"
+msgstr "Δρομέας - Δεξιά στη μέση"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Δρομέας Δεξιά"
+msgstr "Δρομέας - Κάτω δεξιά"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next index"
-msgstr "Άνοιγμα μενού ρυθμίσεων"
+msgstr "Στην επόμενη καταχώριση"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous index"
-msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+msgstr "Στην προηγούμενη καταχώριση"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλέξτε καταχώριση"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -9198,34 +9180,24 @@ msgstr ""
 "soundtrack) κατά την εισαγωγή. Αλλιώς, θα παίξει μουσική MIDI."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Δρομέας Πάνω"
+msgstr "Δρομέας πάνω"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Δρομέας Κάτω"
+msgstr "Δρομέας κάτω"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Δρομέας Αριστερά"
+msgstr "Δρομέας αριστερά"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Δρομέας Δεξιά"
+msgstr "Δρομέας δεξιά"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last message"
-msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
+msgstr "Επανάληψη πρόσφατου μηνύματος"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
@@ -9253,20 +9225,14 @@ msgid "Start menu keymappings"
 msgstr "Πλήκτρα για μενού έναρξης"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Άνοιγμα κεντρικού μενού"
+msgstr "Άνοιγμα μενού παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
 msgstr "Κύλιση πάνω"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
 msgstr "Κύλιση κάτω"
 
@@ -9279,26 +9245,20 @@ msgid "Resume game"
 msgstr "Συνέχιση παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Προβολή υποδείξεων"
+msgstr "Προβολή εισαγωγής"
 
 #: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
 msgid "Show credits"
 msgstr "Προβολή συντελεστών"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show quotes"
-msgstr "Επιλογές Ομιλίας"
+msgstr "Προβολή διαλόγων"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Γρηγορότερες κινήσεις"
+msgstr "Επανέναρξη κίνησης"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -9492,7 +9452,7 @@ msgid ""
 "to a precise area you've already been."
 msgstr ""
 "Αν ενεργοποιηθεί, κάνοντας κλικ πάνω σε ένα αντικείμενο ή περιοχή με τον "
-"κέρσορα σε μοφή κεραυνού, θα μεταφερθείτε εκεί άμεσα, προσπερνώντας "
+"δρομέα σε μοφή κεραυνού, θα μεταφερθείτε εκεί άμεσα, προσπερνώντας "
 "ενδιάμεσες σκηνές. Μπορείτε να χρησιμοποιήσετε αυτή τη δυνατότητα ('Ζιπ') "
 "μόνο προς περιοχές που έχετε ήδη επισκεφθεί."
 
@@ -10206,34 +10166,30 @@ msgstr "Πλήκτρα για πάνελ εξόδου"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Πλήκρα για πάνελ διαλόγων"
 
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "Πλήκτρο Διευθυντή"
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show options"
-msgstr "Επιλογές Ομιλίας"
+msgstr "Προβολή επιλογών"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit conversation"
-msgstr "Επόμενο μέρος"
+msgstr "Έξοδος από συζήτηση"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "Θέση διαλόγου - Πάνω"
 
 #: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "Θέση διαλόγου - Κάτω"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/sword1/metaengine.cpp:289
@@ -10243,16 +10199,12 @@ msgid "Pause game"
 msgstr "Παύση παιχνιδιού"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort speech"
-msgstr "Ομιλία"
+msgstr "Ακύρωση ομιλίας"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show dialogue"
-msgstr "Παράκαμψη διαλόγου"
+msgstr "Προβολή διαλόγου"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:143
@@ -12214,11 +12166,11 @@ msgstr "Έξοδος από το παιχνίδι"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Ανάποδο πέρασμα από όλα τα αντικείμενα υπαρχόντων στο δρομέα"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Κανονικό πέρασμα από όλα τα αντικείμενα υπαρχόντων στο δρομέα"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
@@ -13185,7 +13137,7 @@ msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Τα άλματα χωρίς φορά (χωρίς πρότερη κίνηση) γίνονται προς το σημείο του "
-"κέρσορα ποντικιού αντί απλά την γενική κατεύθυνση."
+"δρομέα ποντικιού αντί απλά προς την γενική κατεύθυνση."
 
 #: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
