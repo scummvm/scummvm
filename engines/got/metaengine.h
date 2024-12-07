@@ -28,10 +28,10 @@ namespace Got {
 
 enum KeybindingAction {
 	KEYBIND_NONE, KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
-	KEYBIND_SELECT
+	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_FIRE, KEYBIND_MAGIC
 };
 
-}
+} // namespace Got
 
 class GotMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
