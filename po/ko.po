@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-06 09:48+0000\n"
+"POT-Creation-Date: 2024-12-07 20:32+0000\n"
 "PO-Revision-Date: 2024-12-06 13:47+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -313,9 +313,9 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:606 engines/kyra/gui/saveload_eob.cpp:639
+#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4134
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4136
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "예"
@@ -326,9 +326,9 @@ msgstr "예"
 #: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:606 engines/kyra/gui/saveload_eob.cpp:639
+#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4134
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4136
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "아니오"
@@ -359,8 +359,8 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1267
 #: engines/scumm/scumm.cpp:1301 engines/scumm/scumm.cpp:1321
-#: engines/scumm/scumm.cpp:1716 engines/scumm/scumm.cpp:2203
-#: engines/scumm/scumm.cpp:2219 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1716 engines/scumm/scumm.cpp:2206
+#: engines/scumm/scumm.cpp:2222 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -460,8 +460,9 @@ msgstr "ScummVM이 지정된 디렉터리를 열 수 없습니다!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr "다운로드할 디렉터리를 만들 수 없습니다. 지정된 디렉터리에 동일한 이름의 "
-"파일이 있습니다."
+msgstr ""
+"다운로드할 디렉터리를 만들 수 없습니다. 지정된 디렉터리에 동일한 이름의 파일"
+"이 있습니다."
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -819,8 +820,9 @@ msgstr "선택한 디렉터리에 기록할 수 없습니다. 다른 디렉터�
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr "저장된 게임 동기화 기능은 기본이 아닌 디렉터리에서는 작동하지 않습니다. "
-"저장된 게임을 동기화하려면 기본 디렉터리를 사용하세요."
+msgstr ""
+"저장된 게임 동기화 기능은 기본이 아닌 디렉터리에서는 작동하지 않습니다. 저장"
+"된 게임을 동기화하려면 기본 디렉터리를 사용하세요."
 
 #: gui/editgamedialog.cpp:657
 msgid "This game ID is already taken. Please choose another one."
@@ -1007,7 +1009,7 @@ msgstr "상호작용"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:916 engines/twine/metaengine.cpp:430
+#: engines/scumm/metaengine.cpp:924 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1022,7 +1024,7 @@ msgstr "위쪽"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:883 engines/twine/metaengine.cpp:437
+#: engines/scumm/metaengine.cpp:891 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1036,7 +1038,7 @@ msgstr "아래쪽"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:896
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:904
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1051,7 +1053,7 @@ msgstr "왼쪽"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:903
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:911
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -1517,7 +1519,8 @@ msgstr "ScummVM이 선택한 게임을 실행할 수 있는 엔진을 찾을 수
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
-msgstr "이 디렉터리에 ScummVM 접속 권한을 부여했습니까? 자세한 지침은 상단의 도움말 "
+msgstr ""
+"이 디렉터리에 ScummVM 접속 권한을 부여했습니까? 자세한 지침은 상단의 도움말 "
 "[?] 버튼을 누름"
 
 #: gui/launcher.cpp:686
@@ -2284,8 +2287,9 @@ msgstr "기본 시스템 파일 브라우저 사용"
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
-msgstr "ScummVM 대신 기본 시스템 파일 브라우저를 사용하여 파일이나 디렉터리를 "
-"선택하세요."
+msgstr ""
+"ScummVM 대신 기본 시스템 파일 브라우저를 사용하여 파일이나 디렉터리를 선택하"
+"세요."
 
 #: gui/options.cpp:2729
 msgid "Download Icons"
@@ -5594,11 +5598,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "클릭 모드"
 
-#: backends/platform/sdl/sdl.cpp:1042
+#: backends/platform/sdl/sdl.cpp:1054
 msgid "Keyboard"
 msgstr "키보드"
 
-#: backends/platform/sdl/sdl.cpp:1045
+#: backends/platform/sdl/sdl.cpp:1057
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5629,23 +5633,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | 글로벌 메인 메뉴 표시\n"
 
-#: backends/platform/sdl/sdl.cpp:1057
+#: backends/platform/sdl/sdl.cpp:1069
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | 종료 (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1059
+#: backends/platform/sdl/sdl.cpp:1071
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | 종료 (윈도우즈)\n"
 
-#: backends/platform/sdl/sdl.cpp:1061
+#: backends/platform/sdl/sdl.cpp:1073
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | 종료 (리눅스/유닉스)\n"
 
-#: backends/platform/sdl/sdl.cpp:1062
+#: backends/platform/sdl/sdl.cpp:1074
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | 종료 (기타 플랫폼)\n"
 
-#: backends/platform/sdl/sdl.cpp:1065
+#: backends/platform/sdl/sdl.cpp:1077
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -6073,7 +6077,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
-#: engines/crab/metaengine.cpp:34 engines/darkseed/metaengine.cpp:34
+#: engines/crab/metaengine.cpp:34 engines/darkseed/metaengine.cpp:36
 #: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:48
 #: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
 #: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
@@ -6085,7 +6089,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
-#: engines/crab/metaengine.cpp:35 engines/darkseed/metaengine.cpp:35
+#: engines/crab/metaengine.cpp:35 engines/darkseed/metaengine.cpp:37
 #: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:49
 #: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
 #: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
@@ -6166,7 +6170,7 @@ msgstr "속도 메뉴를 추가합니다. (PC 버전과 유사)"
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:768
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:776
 msgid "Enable copy protection"
 msgstr "복사 방지 기능 활성화"
 
@@ -6174,7 +6178,7 @@ msgstr "복사 방지 기능 활성화"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:769
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:777
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합니다."
 
@@ -6233,7 +6237,7 @@ msgstr "복원"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "이 위치에서는 빠른 게임 불러오기 또는 저장이 지원되지 않음"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3101
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3103
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6244,7 +6248,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3088
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3090
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6255,7 +6259,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3121
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3123
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6565,8 +6569,8 @@ msgid ""
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
 "이제 게임은 시에라 게임에서 내보낸 캐릭터를 나열하여 가져올 수 있습니다.\n"
-"1. ScummVM 저장 디렉터리 내에 qfg1*.sav 또는 qfg1vga*.sav라는 이름의 저장 "
-"파일, 또는\n"
+"1. ScummVM 저장 디렉터리 내에 qfg1*.sav 또는 qfg1vga*.sav라는 이름의 저장 파"
+"일, 또는\n"
 "2. QfG2 리메이크 게임 디렉터리 내의 모든 .sav 파일"
 
 #: engines/asylum/metaengine.cpp:115
@@ -6893,7 +6897,7 @@ msgstr "전투 전환"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:942 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:950 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "컷씬 건너뛰기"
@@ -6999,7 +7003,8 @@ msgstr "단서 데이터베이스"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
-#: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:82
+#: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:257
 #: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:142
@@ -7344,7 +7349,7 @@ msgstr "대화/상호작용"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:929
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:937
 msgid "Attack"
 msgstr "공격"
 
@@ -7439,6 +7444,22 @@ msgstr "게임 나가기"
 #: engines/cryomni3d/metaengine.cpp:143
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 지원이 컴파일 되지 않음"
+
+#. I18N: Perform action on object where cursor points
+#: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
+#: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
+msgid "Action"
+msgstr "액션"
+
+#: engines/darkseed/metaengine.cpp:70 engines/dragons/metaengine.cpp:142
+msgid "Change Command"
+msgstr "변경 명령"
+
+#: engines/darkseed/metaengine.cpp:76
+#, fuzzy
+#| msgid "Timer On"
+msgid "Time Advance"
+msgstr "타이머"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -7545,16 +7566,6 @@ msgstr ""
 "정상적으로 복사해야 합니다.\n"
 "\n"
 " %s 참조"
-
-#. I18N: Perform action on object where cursor points
-#: engines/dragons/metaengine.cpp:136 engines/tinsel/metaengine.cpp:294
-#: engines/twp/metaengine.cpp:150
-msgid "Action"
-msgstr "액션"
-
-#: engines/dragons/metaengine.cpp:142
-msgid "Change Command"
-msgstr "변경 명령"
 
 #: engines/dragons/metaengine.cpp:219
 msgid "Debug Graphics"
@@ -8509,21 +8520,21 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "주시자의 눈 지원이 컴파일되지 않았음"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -8532,7 +8543,7 @@ msgstr "오른쪽 클릭으로 상호 작용"
 msgid "Move Forward"
 msgstr "앞으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:511
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:511
 #: engines/mohawk/riven.cpp:895 engines/twine/metaengine.cpp:339
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -8540,63 +8551,63 @@ msgstr "앞으로 이동"
 msgid "Move Backwards"
 msgstr "뒤로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:373
+#: engines/kyra/engine/eobcommon.cpp:371
 msgid "Move Left"
 msgstr "왼쪽으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:374
+#: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
-#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "오른쪽으로 회전"
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:375
 msgid "Open/Close Inventory"
 msgstr "인벤토리 열기/닫기"
 
-#: engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/eobcommon.cpp:376
 msgid "Switch Inventory/Character screen"
 msgstr "인벤토리/캐릭터 화면 전환"
 
-#: engines/kyra/engine/eobcommon.cpp:379
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "캠프"
 
-#: engines/kyra/engine/eobcommon.cpp:380 engines/mm/mm1/metaengine.cpp:102
+#: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
 msgid "Cast Spell"
 msgstr "주문 시전"
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
 msgstr "주문 수준 1"
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 2"
 msgstr "주문 수준 2"
 
-#: engines/kyra/engine/eobcommon.cpp:385
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 3"
 msgstr "주문 수준 3"
 
-#: engines/kyra/engine/eobcommon.cpp:386
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 4"
 msgstr "주문 수준 4"
 
-#: engines/kyra/engine/eobcommon.cpp:387
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 5"
 msgstr "주문 수준 5"
 
-#: engines/kyra/engine/eobcommon.cpp:389
+#: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 6"
 msgstr "주문 수준 6"
 
@@ -8632,7 +8643,7 @@ msgstr "옵션"
 msgid "Choose Spell"
 msgstr "주문 선택"
 
-#: engines/kyra/gui/saveload_eob.cpp:606
+#: engines/kyra/gui/saveload_eob.cpp:611
 #, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
@@ -8649,7 +8660,7 @@ msgstr ""
 "이 저장된 게임 파일을 ScummVM에서 사용하겠습니까?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:639
+#: engines/kyra/gui/saveload_eob.cpp:644
 #, c-format
 msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
@@ -8658,7 +8669,7 @@ msgstr ""
 "지정된 슬롯 %d에서 저장된 게임 파일이 발견되었습니다. 덮어쓰겠습니까?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:672
+#: engines/kyra/gui/saveload_eob.cpp:677
 #, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
@@ -10048,7 +10059,8 @@ msgstr "음성 오디오 복구"
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
-msgstr "DPCM8 오디오에서 눈에 띄는 톡톡 튀는 소리를 발생시키는 오버플로우를 감지하고 "
+msgstr ""
+"DPCM8 오디오에서 눈에 띄는 톡톡 튀는 소리를 발생시키는 오버플로우를 감지하고 "
 "복구를 시도합니다."
 
 #: engines/sci/detection_options.h:263
@@ -10215,10 +10227,10 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원래 해석기에 저장된 캐릭터 "
-"파일은 ScummVM의 저장된 게임 디렉터리에 넣어야 하며 저장된 게임에 따라 "
-"접두사를 추가해야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory "
-"2의 경우 'qfg2-'. 예: 'qfg2-thief.sav'."
+"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원래 해석기에 저장된 캐릭터 파"
+"일은 ScummVM의 저장된 게임 디렉터리에 넣어야 하며 저장된 게임에 따라 접두사"
+"를 추가해야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory 2의 경"
+"우 'qfg2-'. 예: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -10289,7 +10301,7 @@ msgid "Your Name:"
 msgstr "사용자 이름:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4140
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4142
 msgid "Host"
 msgstr "호스트"
 
@@ -10299,7 +10311,7 @@ msgid "Querying games..."
 msgstr "게임 쿼리 중..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4140
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4142
 msgid "Join"
 msgstr "참여"
 
@@ -10405,11 +10417,11 @@ msgstr ""
 "몇 가지 현대적인 편의 시설이 활성화되었습니다. 예를 들어, 샘&맥스에서 가짜 사"
 "운드 로딩 화면을 제거하고 초기 저장 메뉴를 더욱 빠르게 만듭니다."
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:738
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:746
 msgid "Enable the original GUI and Menu"
 msgstr "원본 GUI 및 메뉴 활성화"
 
-#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:739
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:747
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -10522,11 +10534,11 @@ msgstr ""
 "전망 음악은 인트로 트랙의 일부입니다. 트랙에서 재생이 시작되는 위치를 조정합"
 "니다. 음악이 끊어지거나 이전 음악의 일부가 들리는 경우 이 기능을 사용합니다."
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:729
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:737
 msgid "Load modded audio"
 msgstr "개조된 오디오 불러오기"
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:730
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:738
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -11055,7 +11067,7 @@ msgstr "음악 볼륨: "
 msgid "Subtitle speed: "
 msgstr "자막 속도: "
 
-#: engines/scumm/metaengine.cpp:375
+#: engines/scumm/metaengine.cpp:371
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -11065,7 +11077,7 @@ msgstr ""
 "않습니다.\n"
 "풀 버전은 아이튠즈 스토어에서 구매할 수 있습니다."
 
-#: engines/scumm/metaengine.cpp:386
+#: engines/scumm/metaengine.cpp:382
 msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
@@ -11073,35 +11085,35 @@ msgstr ""
 "경고: 이 다시 출시된 버전에는 패치된 게임 스크립트가 포함되어 있으므로,\n"
 "당장은 충돌이 발생하거나 제대로 작동하지 않을 수 있습니다."
 
-#: engines/scumm/metaengine.cpp:486
+#: engines/scumm/metaengine.cpp:485
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+ 지원이 컴파일 되지 않았음"
 
-#: engines/scumm/metaengine.cpp:510
+#: engines/scumm/metaengine.cpp:509
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 지원이 컴파일 되지 않았음"
 
-#: engines/scumm/metaengine.cpp:658
+#: engines/scumm/metaengine.cpp:666
 msgid "Show Object Line"
 msgstr "개체 줄 표시"
 
-#: engines/scumm/metaengine.cpp:659
+#: engines/scumm/metaengine.cpp:667
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "개체의 이름을 화면 하단에 표시"
 
-#: engines/scumm/metaengine.cpp:667
+#: engines/scumm/metaengine.cpp:675
 msgid "Use NES Classic Palette"
 msgstr "NES 클래식 팔레트"
 
-#: engines/scumm/metaengine.cpp:668
+#: engines/scumm/metaengine.cpp:676
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용"
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:684
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "FM-TOWNS 게임을 200 픽셀 높이로 잘라냄"
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:685
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -11109,11 +11121,11 @@ msgstr ""
 "화면 하단의 추가 40 픽셀을 잘라내어 일반 높이인 200 픽셀로 만들고, '화면비 교"
 "정'을 사용할 수 있도록 함"
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:693
 msgid "Run in original 640 x 480 resolution"
 msgstr "원본 640 x 480 해상도로 실행"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:694
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -11121,38 +11133,38 @@ msgstr ""
 "이를 통해 더 정확한 일시 정지/재시작 배너가 가능하지만 성능이나 셰이더/스케일"
 "러 사용에 영향을 미칠 수 있습니다."
 
-#: engines/scumm/metaengine.cpp:693
+#: engines/scumm/metaengine.cpp:701
 msgid "Play simplified music"
 msgstr "단순화된 음악을 재생"
 
-#: engines/scumm/metaengine.cpp:694
+#: engines/scumm/metaengine.cpp:702
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr "이 음악은 저사양 Mac용으로 제작되었으며, 한 채널만 사용합니다."
 
-#: engines/scumm/metaengine.cpp:702
+#: engines/scumm/metaengine.cpp:710
 msgid "Enable smooth scrolling"
 msgstr "부드러운 스크롤 활성화"
 
-#: engines/scumm/metaengine.cpp:703
+#: engines/scumm/metaengine.cpp:711
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(일반적인 8 픽셀 단계 스크롤 대신)"
 
-#: engines/scumm/metaengine.cpp:711
+#: engines/scumm/metaengine.cpp:719
 msgid "Allow semi-smooth scrolling"
 msgstr "약간 부드러운 스크롤을 허용"
 
-#: engines/scumm/metaengine.cpp:712
+#: engines/scumm/metaengine.cpp:720
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
 "인트로에서 카메라가 빠르게 움직이는 동안 스크롤이 덜 부드럽도록 허용합니다."
 
-#: engines/scumm/metaengine.cpp:748
+#: engines/scumm/metaengine.cpp:756
 msgid "Enable low latency audio mode"
 msgstr "저지연 오디오 모드 활성화"
 
-#: engines/scumm/metaengine.cpp:749
+#: engines/scumm/metaengine.cpp:757
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
@@ -11162,11 +11174,11 @@ msgstr ""
 "일반 게임 플레이 중에 오디오 지연 문제가 발생하는 경우에만 이 기능을 활성화하"
 "는 것이 좋습니다."
 
-#: engines/scumm/metaengine.cpp:758
+#: engines/scumm/metaengine.cpp:766
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "\"A Pirate I Was Meant To Be\" 노래 활성화"
 
-#: engines/scumm/metaengine.cpp:759
+#: engines/scumm/metaengine.cpp:767
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -11176,36 +11188,36 @@ msgstr ""
 "널 출시 버전에서는 활성화합니다. 하지만 자막이 완전히 번역되지 않았을 수 있으"
 "니 주의하세요."
 
-#: engines/scumm/metaengine.cpp:777
+#: engines/scumm/metaengine.cpp:785
 msgid "Enable demo/kiosk mode"
 msgstr "데모/키오스크 모드 활성화"
 
-#: engines/scumm/metaengine.cpp:778
+#: engines/scumm/metaengine.cpp:786
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "매니악 맨션의 정식 버전에서 데모/키오스크 모드를 활성화하세요."
 
-#: engines/scumm/metaengine.cpp:877
+#: engines/scumm/metaengine.cpp:885
 msgid "Down Left"
 msgstr "왼쪽 아래"
 
-#: engines/scumm/metaengine.cpp:890
+#: engines/scumm/metaengine.cpp:898
 msgid "Down Right"
 msgstr "오른쪽 아래"
 
-#: engines/scumm/metaengine.cpp:910
+#: engines/scumm/metaengine.cpp:918
 msgid "Up Left"
 msgstr "왼쪽 위"
 
-#: engines/scumm/metaengine.cpp:923
+#: engines/scumm/metaengine.cpp:931
 msgid "Up Right"
 msgstr "오른쪽 위"
 
-#: engines/scumm/metaengine.cpp:935
+#: engines/scumm/metaengine.cpp:943
 msgid "Switch weapon"
 msgstr "무기 전환"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:949
+#: engines/scumm/metaengine.cpp:957
 msgid "Win the bike fight cheat"
 msgstr "자전거 대결에서 승리하는 치트"
 
@@ -11297,7 +11309,7 @@ msgstr ""
 "압축은 이 게임에서 더 이상 지원되지 않으므로 오디오가 비활성화됩니다.\n"
 "게임을 압축하지 않고 원본 미디어에서 복사하세요."
 
-#: engines/scumm/scumm.cpp:2201
+#: engines/scumm/scumm.cpp:2204
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11306,7 +11318,7 @@ msgstr ""
 "실기 미디 지원에는 루카스아츠의 롤랜드 업그레이드가 필요하지만,\n"
 "%s가 없습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:2217
+#: engines/scumm/scumm.cpp:2220
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11314,17 +11326,17 @@ msgstr ""
 "이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
 "빠진 것으로 알려져 있습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:4028
+#: engines/scumm/scumm.cpp:4030
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "보통, 매니악 맨션은 지금 시작해야 합니다. 하지만 그렇게 하려면 매니악 맨션의 "
-"게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, "
-"게임을 ScummVM에 추가해야 합니다."
+"게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, 게임"
+"을 ScummVM에 추가해야 합니다."
 
-#: engines/scumm/scumm.cpp:4140
+#: engines/scumm/scumm.cpp:4142
 msgid "Would you like to host or join a network play session?"
 msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습니까?"
 
@@ -11723,8 +11735,9 @@ msgstr "게임 폴더나 엔진 데이터 파일에서 '%s'을(를) 찾을 수 �
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr "임시 게임 상태 저장에 실패하였습니다. ScummVM에서 저장 게임 디렉터리가 "
-"설정되어 있고 여기에 쓸 수 있는지 확인하세요."
+msgstr ""
+"임시 게임 상태 저장에 실패하였습니다. ScummVM에서 저장 게임 디렉터리가 설정되"
+"어 있고 여기에 쓸 수 있는지 확인하세요."
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
@@ -12543,8 +12556,8 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
-"크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉터리가 "
-"복사되었는지 확인하세요.  자세한 내용은 위키에 나와 있습니다: https://wiki."
+"크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉터리가 복사"
+"되었는지 확인하세요.  자세한 내용은 위키에 나와 있습니다: https://wiki."
 "scummvm.org/index.php?title=Crusader:_No_Remorse"
 
 #: engines/ultima/ultima8/games/u8_game.cpp:108
@@ -13369,11 +13382,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
-"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉터리나 게임 "
-"디렉터리에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉터리에서 Times "
-"New Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 "
-"필요합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 "
-"있습니다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
+"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉터리나 게임 디렉터리"
+"에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉터리에서 Times New "
+"Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 필요"
+"합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 있습니"
+"다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
 "LiberationSerif 또는 FreeMono, FreeSans, FreeSerif가 필요합니다."
 
 #~ msgid ""
@@ -13751,9 +13764,6 @@ msgstr ""
 
 #~ msgid "Software Timer"
 #~ msgstr "소프트웨어 타이머"
-
-#~ msgid "Timer On"
-#~ msgstr "타이머"
 
 #~ msgid "Seconds"
 #~ msgstr "초"
