@@ -169,6 +169,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlerhafte SP/Edelstein-Voraussetzungen im erweiterten Modus von MM1 korrigiert.
    - Spruch-Punkte und Edelsteine werden jetzt korrekt abgezogen, wenn Zaubersprüche verwendet werden.
 
+ Nancy:
+   - Absturz beim Start des Spiels und einige kaputte Rätsel in The Vampire Diaries korrigiert.
+   - Absturz in den russischen Versionen einiger früher Nancy Drew-Spiele behoben.
+
  NGI:
    - Unterstützung für die litauische Version von Full Pipe hinzugefügt.
 
@@ -186,6 +190,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Graustufenmodus für viele SCI 1-DOS-Spiele sowie ein 16-Farben-Modus für die
      Windows-Version von KQ6 hinzugefügt. Für alle PC-98-Spiele steht jetzt ein
      Modus für 8 Farben zur Verfügung.
+   - Sprachdateien-Patch von AllTinker für die CD-Version von Gabriel Knight 1 hinzugefügt.
+     Dieser Patch korrigiert die meisten Störgeräusche in den DPCM8-Audiodaten der Sprachausgabe.
    - Verbesserte Unterstützung für PCjr-Audio.
    - Verbesserte Einstellungen für die CD-Version von KQ6. Die DOS-Version verhält sich nun eher wie das Original.
    - Verbesserte Unterstützung für die Mac-Version von KQ6.
@@ -274,13 +280,27 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  ZVision:
    - Verbesserte Unterstützung von RTL-Sprachen.
 
+ Android-Portierung:
+   - Unterstützung für Android 15 hinzugefügt.
+   - Spiele können jetzt direkt vom Homescreen aus mit einem langen Druck auf das ScummVM-Icon
+     oder über die Auswahl eines Widgets gestartet werden.
+   - Überarbeitung des Gamepad-Modus mit einer verbesserten Benutzeroberfläche.
+   - Die Benutzeroberfläche wird jetzt anhand der Pixeldichte des Displays skaliert.
+   - Mehrere Stabilitätsverbesserungen.
+
  macOS-Portierung:
    - Der Auto-Updater verwendet nun Sparkle 2.x.
+   - Spielstände werden jetzt standardmäßig im Application Support-Verzeichnis gespeichert.
 
  3DS-Portierung:
    - Port-spezifische Optionen in die Benutzeroberfläche integriert.
    - Verbesserte Speicherverfügbarkeit auf 3DS-Geräten der ersten Generation.
    - Abstürze aufgrund verändertem Speicherverhalten in neuen 3DS-Geräten behoben.
+
+ iOS-Portierung:
+   - Unterstützung für Apple Pencil hinzugefügt.
+   - App-Icons für den "Dark"- und "Tinted"-Modus hinzugefügt.
+   - Mehrere Stabilitätsverbesserungen.
 
 #### 2.8.1 (31.03.2024)
 
