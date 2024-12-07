@@ -20,6 +20,7 @@
  */
 
 #include "got/views/dialogs/dialog.h"
+#include "got/metaengine.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -58,15 +59,22 @@ Dialog::Dialog(const char *title, const char *options[]) :
 	_bounds.setBorderSize(16);
 }
 
-bool Dialog::msgFocus(const FocusMessage &msg) {
-	return true;
-}
+bool Dialog::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_UP:
+		if (--_selectedItem < 0)
+			_selectedItem = (int)_options.size() - 1;
+		break;
 
-bool Dialog::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
+	case KEYBIND_DOWN:
+		if (++_selectedItem >= (int)_options.size())
+			_selectedItem = 0;
+		break;
 
-bool Dialog::msgKeypress(const KeypressMessage &msg) {
+	default:
+		break;
+	}
+
 	return true;
 }
 
