@@ -409,6 +409,19 @@ View1::View1() : UIElement("View1") {
 		return -1;
 	}
 
+	bool View1::HasDuplicateCharacters() const {
+		Common::Array<uint16> uniqueIDs;
+		for (Macs2::Character *current : characters) {
+			for (uint16 currentID : uniqueIDs) {
+				if (currentID == current->GameObject->Index) {
+					return true;
+				}
+			}
+			uniqueIDs.push_back(current->GameObject->Index);
+		}
+		return false;
+	}
+
 	void View1::startFading() {
 		currentFadeValue = 0x40;
 	}
@@ -936,11 +949,18 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		if (is_in_list<uint16, 0x50, 0x17, 0x18, 0x23>(index)) { // || index == 0x10) {
 			continue;
 		}
+		if (index != 0x6) {
+			continue;
+		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
 		bool mirror = current->isAnimationMirrored();
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->GetPosition().y;
+		if (depth == 0) {
+			// TODO: This is a quick fix for the issue of the gangster at the beginning not being removed properly
+			continue;
+		}
 		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
 		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
 		// Only output debug values for the character

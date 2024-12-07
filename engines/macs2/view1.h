@@ -237,6 +237,7 @@ public:
 	Character *GetCharacterByIndex(uint16 index);
 
 	int GetCharacterArrayIndex(const Character *c) const;
+	bool HasDuplicateCharacters() const;
 
 	View1();
 	virtual ~View1() {}

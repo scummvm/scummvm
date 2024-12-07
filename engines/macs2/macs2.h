@@ -181,6 +181,8 @@ public:
 
 	Common::Array<Common::Point> _path;
 
+	Common::Array<Macs2::AnimFrame> imageResources;
+
 	void CalculatePath(const Common::Point &source, const Common::Point &destination);
 
 	byte* _charData;

@@ -136,6 +136,10 @@ void Macs2Engine::readResourceFile() {
 	
 	// Full implementation here
 
+	// Read the image resources
+	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
+	ReadImageResources(_fileStream);
+
 	// We need to skip reading the 776h global which comes first
 	_fileStream->seek(0xC + 0x2, SEEK_SET);
 
@@ -527,7 +531,14 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
 	// l0037_3355:
 	for (int i = 0; i < 0x21; i++) {
-
+		uint32 length = stream->readUint32LE();
+		// TODO: Figure out what value we are comparing here to in the original
+		AnimFrame frame;
+		// Move forward to skip the first word
+		stream->seek(0x2, SEEK_CUR);
+		frame.ReadFromStream(stream);
+		imageResources.push_back(frame);
+		debug("W: %u, H: %h", frame.Width, frame.Height);
 	}
 }
 
