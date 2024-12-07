@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.9.0 (XX.XX.XXXX)
+#### 2.9.0 (22.12.2024)
 
  Neue Spiele:
    - Unterstützung für Orion Burger hinzugefügt.
