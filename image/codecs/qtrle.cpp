@@ -260,6 +260,68 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream &stream, uint32 rowPtr, u
 	}
 }
 
+namespace {
+
+inline uint16 readDitherColor16(Common::ReadStream &stream) {
+	return stream.readUint16BE() >> 1;
+}
+
+} // End of anonymous namespace
+
+void QTRLEDecoder::dither16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
+	uint32 pixelPtr = 0;
+	byte *output = (byte *)_surface->getPixels();
+
+	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+
+	// clone2727 thinks this should be startLine & 3, but the original definitely
+	// isn't doing this. Unless startLine & 3 is always 0? Kinda defeats the
+	// purpose of the compression then.
+	byte curColorTableOffset = 0;
+
+	while (linesToChange--) {
+		CHECK_STREAM_PTR(2);
+
+		byte rowOffset = stream.readByte() - 1;
+		pixelPtr = rowPtr + rowOffset;
+		uint16 colorTableOffset = colorTableOffsets[curColorTableOffset] + (rowOffset << 14);
+
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+			if (rleCode == 0) {
+				// there's another skip code in the stream
+				CHECK_STREAM_PTR(1);
+				pixelPtr += stream.readByte() - 1;
+			} else if (rleCode < 0) {
+				// decode the run length code
+				rleCode = -rleCode;
+				CHECK_STREAM_PTR(2);
+
+				uint16 color = readDitherColor16(stream);
+
+				CHECK_PIXEL_PTR(rleCode);
+
+				while (rleCode--) {
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			} else {
+				CHECK_STREAM_PTR(rleCode * 2);
+				CHECK_PIXEL_PTR(rleCode);
+
+				// copy pixels directly to output
+				while (rleCode--) {
+					uint16 color = readDitherColor16(stream);
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			}
+		}
+
+		rowPtr += _paddedWidth;
+		curColorTableOffset = (curColorTableOffset + 1) & 3;
+	}
+}
+
 void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	uint32 *rgb = (uint32 *)_surface->getPixels();
@@ -309,9 +371,12 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 namespace {
 
 inline uint16 readDitherColor24(Common::ReadStream &stream) {
-	uint16 color = (stream.readByte() & 0xF8) << 6;
-	color |= (stream.readByte() & 0xF8) << 1;
-	color |= stream.readByte() >> 4;
+	uint8 rgb[3];
+	stream.read(rgb, 3);
+
+	uint16 color = (rgb[0] & 0xF8) << 6;
+	color |= (rgb[1] & 0xF8) << 1;
+	color |= rgb[2] >> 4;
 	return color;
 }
 
@@ -343,11 +408,11 @@ void QTRLEDecoder::dither24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
-
 				CHECK_STREAM_PTR(3);
-				CHECK_PIXEL_PTR(rleCode);
 
 				uint16 color = readDitherColor24(stream);
+
+				CHECK_PIXEL_PTR(rleCode);
 
 				while (rleCode--) {
 					output[pixelPtr++] = _colorMap[colorTableOffset + color];
@@ -419,6 +484,74 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, u
 	}
 }
 
+namespace {
+
+inline uint16 readDitherColor32(Common::ReadStream &stream) {
+	uint8 argb[4];
+	stream.read(argb, 4);
+
+	uint16 color = (argb[1] & 0xF8) << 6;
+	color |= (argb[2] & 0xF8) << 1;
+	color |= argb[3] >> 4;
+	return color;
+}
+
+} // End of anonymous namespace
+
+void QTRLEDecoder::dither32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
+	uint32 pixelPtr = 0;
+	byte *output = (byte *)_surface->getPixels();
+
+	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+
+	// clone2727 thinks this should be startLine & 3, but the original definitely
+	// isn't doing this. Unless startLine & 3 is always 0? Kinda defeats the
+	// purpose of the compression then.
+	byte curColorTableOffset = 0;
+
+	while (linesToChange--) {
+		CHECK_STREAM_PTR(2);
+
+		byte rowOffset = stream.readByte() - 1;
+		pixelPtr = rowPtr + rowOffset;
+		uint16 colorTableOffset = colorTableOffsets[curColorTableOffset] + (rowOffset << 14);
+
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+			if (rleCode == 0) {
+				// there's another skip code in the stream
+				CHECK_STREAM_PTR(1);
+				pixelPtr += stream.readByte() - 1;
+			} else if (rleCode < 0) {
+				// decode the run length code
+				rleCode = -rleCode;
+				CHECK_STREAM_PTR(4);
+
+				uint16 color = readDitherColor32(stream);
+
+				CHECK_PIXEL_PTR(rleCode);
+
+				while (rleCode--) {
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			} else {
+				CHECK_STREAM_PTR(rleCode * 4);
+				CHECK_PIXEL_PTR(rleCode);
+
+				// copy pixels directly to output
+				while (rleCode--) {
+					uint16 color = readDitherColor32(stream);
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			}
+		}
+
+		rowPtr += _paddedWidth;
+		curColorTableOffset = (curColorTableOffset + 1) & 3;
+	}
+}
+
 const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	if (!_surface)
 		createSurface();
@@ -467,7 +600,10 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 		decode8(stream, rowPtr, height);
 		break;
 	case 16:
-		decode16(stream, rowPtr, height);
+		if (_ditherPalette.size() > 0)
+			dither16(stream, rowPtr, height);
+		else
+			decode16(stream, rowPtr, height);
 		break;
 	case 24:
 		if (_ditherPalette.size() > 0)
@@ -476,7 +612,10 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 			decode24(stream, rowPtr, height);
 		break;
 	case 32:
-		decode32(stream, rowPtr, height);
+		if (_ditherPalette.size() > 0)
+			dither32(stream, rowPtr, height);
+		else
+			decode32(stream, rowPtr, height);
 		break;
 	default:
 		error("Unsupported QTRLE bits per pixel %d", _bitsPerPixel);
@@ -512,8 +651,7 @@ Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
 }
 
 bool QTRLEDecoder::canDither(DitherType type) const {
-	// Only 24-bit dithering is implemented at the moment
-	return type == kDitherTypeQT && _bitsPerPixel == 24;
+	return type == kDitherTypeQT && (_bitsPerPixel == 16 || _bitsPerPixel == 24 || _bitsPerPixel == 32);
 }
 
 void QTRLEDecoder::setDither(DitherType type, const byte *palette) {
