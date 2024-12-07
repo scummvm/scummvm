@@ -103,10 +103,15 @@ void Dialog::draw() {
 		s.print(Common::Point(32, 28 + i * 16), _options[i], 14);
 
 	// Draw selection pointer
-	s.blitFrom(_G(hampic)[0], Common::Point(8, 24 + (_selectedItem * 16)));
+	s.blitFrom(_G(hampic)[_hammerFrame],
+		Common::Point(8, 24 + (_selectedItem * 16)));
 }
 
 bool Dialog::tick() {
+	if (++_hammerFrame == 4)
+		_hammerFrame = 0;
+
+	redraw();
 	return true;
 }
 

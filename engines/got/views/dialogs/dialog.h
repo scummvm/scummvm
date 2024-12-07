@@ -34,6 +34,7 @@ private:
 	const char *_title;
 	Common::StringArray _options;
 	int _selectedItem = 0;
+	int _hammerFrame = 0;
 
 public:
 	Dialog(const char *title, const char *options[]);
