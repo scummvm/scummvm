@@ -109,6 +109,19 @@ struct CSMidGameData {
 	Std::vector<CSImage *> images;
 };
 
+struct TransferSaveData {
+	int gameType;
+	Common::String name;
+	int gender;
+	Common::String className;
+	int str;
+	int dex;
+	int intelligence;
+	int magic;
+	int exp;
+	int level;
+};
+
 void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundManager *sm);
 
 class ScriptCutscene : public GUI_Widget {
@@ -137,6 +150,8 @@ public:
 	Std::vector<Std::string> load_text(const char *filename, uint8 idx);
 
 	Std::vector<CSMidGameData> load_midgame_file(const char *filename);
+
+	TransferSaveData load_transfer_save();
 
 	CSImage *load_image(const char *filename, int idx, int sub_idx = 0);
 	Std::vector<Std::vector<CSImage *> > load_all_images(const char *filename);
@@ -205,6 +220,8 @@ private:
 	CSImage *load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx);
 	void display_wrapped_text(CSSprite *s);
 	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
+
+	bool load_u5_save_file(TransferSaveData &saveData);
 };
 
 ScriptCutscene *get_cutscene();

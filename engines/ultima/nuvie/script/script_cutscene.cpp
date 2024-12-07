@@ -1106,46 +1106,47 @@ static int nscript_engine_should_quit(lua_State *L) {
 }
 
 int nscript_transfer_save_game(lua_State *L) {
+	TransferSaveData saveData = cutScene->load_transfer_save();
 	lua_newtable(L);
 
 	lua_pushstring(L, "game_type");
-	lua_pushinteger(L, 5);
+	lua_pushinteger(L, saveData.gameType);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "name");
-	lua_pushstring(L, "Some Name");
+	lua_pushstring(L, saveData.name.c_str());
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "gender");
-	lua_pushinteger(L, 0);
+	lua_pushinteger(L, saveData.gender);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "class");
-	lua_pushstring(L, "Avatar");
+	lua_pushstring(L, saveData.className.c_str());
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "str");
-	lua_pushinteger(L, 20);
+	lua_pushinteger(L, saveData.str);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "dex");
-	lua_pushinteger(L, 23);
+	lua_pushinteger(L, saveData.dex);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "int");
-	lua_pushinteger(L, 17);
+	lua_pushinteger(L, saveData.intelligence);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "magic");
-	lua_pushinteger(L, 17);
+	lua_pushinteger(L, saveData.magic);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "exp");
-	lua_pushinteger(L, 250);
+	lua_pushinteger(L, saveData.exp);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "level");
-	lua_pushinteger(L, 8);
+	lua_pushinteger(L, saveData.level);
 	lua_settable(L, -3);
 
 	return 1;
@@ -1424,6 +1425,28 @@ Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filenam
 	}
 
 	return v;
+}
+
+TransferSaveData ScriptCutscene::load_transfer_save() {
+	TransferSaveData data;
+	data.gameType = 0;
+	data.name = "";
+	data.gender = 0;
+	data.className = "Avatar";
+	data.str = 0;
+	data.dex = 0;
+	data.intelligence = 0;
+	data.magic = 0;
+	data.exp = 0;
+	data.level = 0;
+
+	if (load_u5_save_file(data)) {
+		return data;
+	}
+
+	// TODO load U4 file here.
+
+	return data;
 }
 
 Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 idx) {
@@ -1755,6 +1778,39 @@ int ScriptCutscene::display_wrapped_text_line(Std::string str, uint8 text_color,
 
 	return y;
 }
+
+bool ScriptCutscene::load_u5_save_file(TransferSaveData &saveData) {
+	NuvieIOFileRead file;
+	Common::Path filename;
+	char name[9];
+
+	config_get_path(config, "saved.gam", filename);
+
+	if (file.open(filename) == false) {
+		return false;
+	}
+
+	saveData.gameType = 5;
+
+	file.seek(2);
+	file.readToBuf((unsigned char *)name, 9);
+	saveData.name = Common::String(name);
+	saveData.gender = file.read1() == 0xc ? 0 : 1;
+	file.read1(); // class
+	file.read1(); // status
+	saveData.str = file.read1();
+	saveData.dex = file.read1();
+	saveData.intelligence = file.read1();
+	saveData.magic = file.read1();
+	file.seek(0x16);
+	saveData.exp = file.read2();
+	saveData.level = file.read1();
+
+	file.close();
+
+	return true;
+}
+
 void CSImage::setScale(uint16 percentage) {
 	if (scale == percentage) {
 		return;

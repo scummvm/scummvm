@@ -467,18 +467,22 @@ void SaveGame::update_objlist_for_new_game_u6() {
 	objlist.seek(0xa01);
 	objlist.write1(stat);
 
-	config->value("config/newgamedata/int", stat, 0xf);
+	int intelligence;
+	config->value("config/newgamedata/int", intelligence, 0xf);
 	objlist.seek(0xb01);
-	objlist.write1(stat);
+	objlist.write1(intelligence);
 
+	config->value("config/newgamedata/exp", stat, 0x172);
 	objlist.seek(0xc02);
-	objlist.write2(0x172); // experience
+	objlist.write2(stat); // experience
 
+	config->value("config/newgamedata/magic", stat, intelligence * 2);
 	objlist.seek(0x13f2);
-	objlist.write1(stat * 2); // magic
+	objlist.write1(stat); // magic
 
+	config->value("config/newgamedata/level", stat, 3);
 	objlist.seek(0xff2);
-	objlist.write1(3); //level
+	objlist.write1(stat); //level
 }
 
 void SaveGame::update_objlist_for_new_game_se() {

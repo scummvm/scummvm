@@ -2525,6 +2525,16 @@ local function transfer()
 		transferData.newSave[k] = v
 	end
 
+	if transferData.oldSave.game_type == 5 then
+		transferData.newSave.exp = math.floor(transferData.newSave.exp / 10)
+		transferData.newSave.level = 1
+		local tmpXp = math.floor(transferData.oldSave.exp / 1000)
+		while tmpXp > 0 do
+			transferData.newSave.level = transferData.newSave.level + 1
+			tmpXp = math.floor(tmpXp / 2)
+		end
+	end
+
 	if transfer_showStats(transferData) == false then
 		return false
 	end
@@ -2541,7 +2551,9 @@ local function transfer()
 	config_set("config/newgamedata/str", transferData.newSave.str)
 	config_set("config/newgamedata/dex", transferData.newSave.dex)
 	config_set("config/newgamedata/int", transferData.newSave.int)
-	-- TODO add level + magic to new game
+	config_set("config/newgamedata/magic", transferData.newSave.magic)
+	config_set("config/newgamedata/exp", transferData.newSave.exp)
+	config_set("config/newgamedata/level", transferData.newSave.level)
 
 	return true
 end
