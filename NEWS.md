@@ -172,8 +172,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 
  NANCY:
-   - Fixed a startup crash and some broken puzzles in The Vampire Diaries
-   - Fixed a crash when trying to play the Russian versions of early Nancy Drew games
+   - Fixed a startup crash and some broken puzzles in The Vampire Diaries.
+   - Fixed a crash when trying to play the Russian versions of early Nancy Drew games.
 
  NGI:
    - Added support for Lithuanian version of fullpipe.
@@ -201,7 +201,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed SCI1.1 picture scaling inaccuracies.
    - Fixed fallback detection for unknown fan games.
    - Added support for Spanish SQ3.
-   - Added support for Russian Camelot, Laura Bow, PQ2
+   - Added support for Russian Camelot, Laura Bow, PQ2.
    - Added support for Russian fan-translation of QFG3.
 
  SCUMM:
@@ -264,7 +264,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed being unable to enter the Lower Hall in 2nd Chapter.
 
  TwinE:
-   - Several collision related fixes
+   - Several collision related fixes.
 
  Ultima:
    - Fix pathfinding not detecting some doors in Ultima VI.
@@ -299,9 +299,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crashes in new 3DS models due to different memory handling.
 
  iOS/iPadOS port:
-   - Add Apple Pencil support
-   - Add app icons for “Dark” and “Tinted” modes
-   - Various stability fixes
+   - Add Apple Pencil support.
+   - Add app icons for “Dark” and “Tinted” modes.
+   - Various stability fixes.
 
 
 #### 2.8.1 (2024-03-31)
