@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-12-07 11:00+0000\n"
+"PO-Revision-Date: 2024-12-07 11:58+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -10261,34 +10261,24 @@ msgid "Swallow"
 msgstr "Κατάπιε"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "Ταχύτητα ανάγνωσης"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "Αλλαγή μεγέθους γραμματοσειράς"
+msgstr "Αλλαγή μουσικής"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change sound"
-msgstr "Αλλαγή λειτουργίας"
+msgstr "Αλλαγή ήχου"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change voices"
-msgstr "Αλλαγή λειτουργίας"
+msgstr "Αλλαγή φωνών"
 
 #: engines/saga/metaengine.cpp:427
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "Συνέχεια"
+msgstr "Συνέχεια παιχνιδιού"
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
 #: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
@@ -10296,26 +10286,20 @@ msgid "Quit game"
 msgstr "Έξοδος από το παιχνίδι"
 
 #: engines/saga/metaengine.cpp:454
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "Ακύρωση εντολής"
+msgstr "Ακύρωση εξόδου"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
 msgstr "Εντάξει"
 
 #: engines/saga/metaengine.cpp:464
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Ακύρωση λήψης"
+msgstr "Ακύρωση φόρτωσης"
 
 #: engines/saga/metaengine.cpp:474
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "Ακύρωση αυτόματης αποθήκευσης"
+msgstr "Ακύρωση αποθήκευσης"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -10462,16 +10446,16 @@ msgstr ""
 "ευθύνη!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Repair speech audio"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "Επιδιόρθωση ήχου ομιλίας"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Εντοπίζει και επιχειρεί να επιδιορθώσει υπερχειλίσεις σε ήχο DPCM8, που "
+"οδηγούν σε αισθητά ηχητικά παράσιτα και θόρυβο."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
@@ -10506,10 +10490,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "Αποτυχία αρχικοποίησης πόρων"
+msgstr "Το παιχνίδι δεν περιέχει πόρους για μενού"
 
 #: engines/sci/detection_tables.h:4675
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -11028,9 +11010,6 @@ msgid "Enable online competitive mods"
 msgstr "Χρήση mods ανταγωνιστικού online"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Ενεργοποιεί ειδικές τροποποιήσεις (mods) που υποστηρίζουν ανταγωνιστικό "
@@ -11061,11 +11040,12 @@ msgstr ""
 #. I18N: Moonbase Console is a program name
 #: engines/scumm/dialogs.cpp:1722
 msgid "Generate random maps"
-msgstr ""
+msgstr "Δημιουργία τυχαίων χαρτών"
 
 #: engines/scumm/dialogs.cpp:1722
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
+"Επιτρέπει την δημιουργία τυχαίου χάρτη (βασισμένο στο Moonbase Console)."
 
 #: engines/scumm/dialogs.cpp:1725
 msgid ""
@@ -11157,10 +11137,8 @@ msgid "Run in really fast mode (*)"
 msgstr "Εκτέλεση σε πολύ γρήγορη λειτουργία (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
-msgstr "Εναλλαγή μεταξύ φίλτρων γραφικών"
+msgstr "Πέρασμα από φίλτρα γραφικών"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -11555,6 +11533,10 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Προσοχή: αυτή η επανέκδοση περιέχει τροποποιημένα αρχεία παιχνιδιού "
+"(scripts),\n"
+"και αυτό μπορεί να οδηγήσει σε απότομο τερματισμό (crash) ή λαθασμένη "
+"λειτουργία προς το παρόν."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11642,18 +11624,13 @@ msgid "Enable low latency audio mode"
 msgstr "Ενεργοποίηση γρήγορης απόκρισης ήχου"
 
 #: engines/scumm/metaengine.cpp:749
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Επιτρέπει στο παιχνίδι να χρησιμοποίησει ήχο γρήγορης απόκρισης (low latency "
-"audio) σε βάρος της πιστότητας ήχου (sound accuracy). \tΠροτείνεται να "
+"audio) σε βάρος της πιστότητας ήχου (sound accuracy). Προτείνεται να "
 "ενεργοποιήσετε αυτή τη δυνατότητα μόνο αν αντιμετωπίζετε θέματα καθυστέρησης "
 "του ήχου όσο παίζετε το κυρίως παιχνίδι."
 
@@ -11662,29 +11639,24 @@ msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Χρήση του τραγουδιού \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:759
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 "Επαναφέρει το τραγούδι στην αρχή του Τρίτου Μέρους του παιχνιδιού, το \"A "
-"Pirate I Was Meant To Be\", \t\tπου είχε αφαιρεθεί από τις διεθνείς "
-"εκδόσεις. Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
+"Pirate I Was Meant To Be\", που είχε αφαιρεθεί από τις διεθνείς εκδόσεις. "
+"Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
 
 #: engines/scumm/metaengine.cpp:777
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "Απενεργοποίηση λειτουργίας demo"
+msgstr "Ενεργοποίηση λειτουργίας demo/βιτρίνας"
 
 #: engines/scumm/metaengine.cpp:778
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
+"Ενεργοποιεί τη λειτουργία demo/παρουσίασης για \"βιτρίνα\" (kiosk) στην "
+"πλήρη έκδοση του Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:877
 msgid "Down Left"
@@ -11724,6 +11696,16 @@ msgid ""
 "Please change the audio configuration accordingly in order to properly load "
 "this save file."
 msgstr ""
+"Προσοχή: εντοπίστηκαν ασύμβατες επιλογές ήχου μεταξύ της τρέχουσας ρύθμισης "
+"και του αποθηκευμένου παιχνιδιού.\n"
+"\n"
+"Τρέχουσα συσκευή μουσικής: %s (id %d)\n"
+"Συσκευή μουσικής αποθ. παιχν: %s (id %d)\n"
+"\n"
+"Θα επιχειρηθεί η φόρτωση, αλλά το παιχνίδι μπορεί να μη λειτουργεί σωστά ή "
+"να τερματιστεί απότομα.\n"
+"Παρακαλούμε να αλλάξετε τις ρυθμίσεις ήχου αναλόγως, ώστε να φορτώσετε σωστά "
+"αυτό το αποθηκευμένο παιχνίδι."
 
 #: engines/scumm/scumm.cpp:300
 msgid ""
@@ -11752,42 +11734,30 @@ msgstr ""
 "και τις γραμματοσειρές του."
 
 #: engines/scumm/scumm.cpp:1266
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
-"το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
+"Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από το "
+"οποίο να διαβαστούν\n"
+"οι πόροι και τα όργανα μουσικής. Η μουσική και το περιβάλλον Mac GUI θα "
+"απενεργοποιηθούν."
 
 #: engines/scumm/scumm.cpp:1299
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Δεν βρέθηκε το εκτελέσιμο του 'Indy' για Macintosh. Οι εκδοχές\n"
-"υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
+"Δεν βρέθηκε το εκτελέσιμο του 'Fate of Atlantis' για Macintosh.\n"
+"Το περιβάλλον Mac GUI θα απενεργοποιηθεί."
 
 #: engines/scumm/scumm.cpp:1319
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Δεν βρέθηκε το εκτελέσιμο του 'Indy' για Macintosh. Οι εκδοχές\n"
-"υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
+"Δεν βρέθηκε το εκτελέσιμο του 'LeChuck's Revenge' για Macintosh.\n"
+"Το περιβάλλον Mac GUI θα απενεργοποιηθεί."
 
 #: engines/scumm/scumm.cpp:1330
 #, c-format
@@ -11847,25 +11817,23 @@ msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετ�
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Ρυθμίσεις Παιχνιδιού"
+msgstr "Τυχαίες επιλογές χάρτη"
 
 #. I18N: Map generator algorithms
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "Αλγόριθμος"
 
 #. I18N: Spiff algorithm
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorithm
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorithm
 #. I18N: Random map size
@@ -11880,22 +11848,20 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Random"
-msgstr "Τυχαίο"
+msgstr "Τυχαίος"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "Επιλέγει τυχαία τον αλγόριθμο δημιουργίας χάρτη."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "Μέγεθος"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Μικρό"
+msgstr "Μικρό"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -11903,15 +11869,15 @@ msgstr "Μεγάλo"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "Τεράστιο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "Παράλογο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
 msgid "Max"
@@ -11919,67 +11885,63 @@ msgstr "Μέγιστο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "Επιλέγει τυχαία το μέγεθος χάρτη."
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Επαναφορά"
+msgstr "Διάταξη πλακιδίων"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "Επιλέγει τυχαία τη διάταξη \"πλακιδίων\" στο χάρτη."
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "Ενέργεια"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "Λιγοστή - Άφθονη"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "Επιλέγει την τυχαία ποσότητα ενεργειακών κοιτασμάτων."
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "Έδαφος"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "Άγονο - Ανώμαλο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "Επιλέγει την τυχαία ποσότητα επιπέδου εδάφους."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Νερό"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "Πιο ξηρό - Πιο υγρό"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "Επιλέγει την τυχαία ποσότητα νερού."
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "Γενικά"
+msgstr "Δημιουργία"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -12068,8 +12030,6 @@ msgid "Open control panel"
 msgstr "Άνοιγμα πίνακα ελέγχου"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
 msgstr "Εναλλαγή πολύ γρήγορης λειτουργίας"
 
@@ -12124,34 +12084,26 @@ msgstr ""
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Μενού παιχνιδιού"
+msgstr "Μενού για Ημερολόγιο"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Next location"
 msgid "Conversation log"
-msgstr "Επόμενο μέρος"
+msgstr "Καταγραφή διαλόγων"
 
 #. I18N: Opens in-game Diary. April is the female protagonist name
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "Ημερολόγιο της April (απενεργοποιημένο αρχικά)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Γρήγορη επανάληψη"
+msgstr "Επανάληψη βίντεο"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Ρυθμίσεις Παιχνιδιού"
+msgstr "Ρυθμίσεις παιχνιδιού"
 
 #: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
 #: engines/wintermute/keymapper_tables.h:1345
@@ -12159,10 +12111,8 @@ msgid "Toggle subtitles"
 msgstr "Εναλλαγή υπότιτλων"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Έξοδος από το παιχνίδι"
+msgstr "Έξοδος στο κυρίως μενού"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
@@ -12175,49 +12125,39 @@ msgstr "Κανονικό πέρασμα από όλα τα αντικείμεν�
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Προβολή όλων των εξόδων από την τρέχουσα τοποθεσία"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+msgstr "Κύλιση προς τα πάνω στα υπάρχοντα"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Προβολή υπαρχόντων"
+msgstr "Κύλιση προς τα κάτω στα υπάρχοντα"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Κύλιση προς τα πάνω στους διαλόγους σας"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Κύλιση προς τα κάτω στους διαλόγους σας"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Go to next dialogue"
-msgstr "Επισήμανση επόμενου διαλόγου"
+msgstr "Πήγαινε στον επόμενο διάλογο"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous dialogues"
-msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+msgstr "Πήγαινε στον προηγούμενο διάλογο"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Παράκαμψη διαλόγου"
+msgstr "Επιλογή διαλόγου"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Παράκαμψη σκηνής βίντεο ή διαλόγου"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -12368,51 +12308,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Φωνές: Αγγλικά"
+msgstr "Αγγλικά"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Γερμανικά"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Γαλλικά"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Ιταλικά"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Ολοκλήρωση"
+msgstr "Ισπανικά"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Βραζιλιάνικα Πορτογαλικά"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Τσέχικα"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Γλώσσα παιχνιδιού:"
+msgstr "Γλώσσα κειμένου:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Θέτει τη γλώσσα για τους υπότιτλους. Δεν θα επηρεάσει τις ομιλίες."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Εξομοίωση της μηχανής ήχου από το εκτελέσιμο των Windows"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12420,18 +12353,18 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Το παιχνίδι θα χρησιμοποιήσει πιο ομαλές (λογαριθμικές) καμπύλες ήχου, αλλά "
+"θα αφαιρέσει την ομαλή εισαγωγή (fade-in) και έξοδο (fade-out) από ηχητικά "
+"εφέ, την ομαλή εισαγωγή μουσικής, και το αυτόματο χαμήλωμα έντασης μουσικής "
+"όταν ακούγονται ομιλίες"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Κουμπί Κατεύθυνσης:"
+msgstr "Πρόσθετες επιλογές:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "~Κ~εντρικό Μενού"
+msgstr "Κυρίως Μενού"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12508,34 +12441,24 @@ msgid "Save/Load keymappings"
 msgstr "Πλήκτρα για Αποθήκευση/Φόρτωση"
 
 #: engines/tinsel/metaengine.cpp:307
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "Παράκαμψη διαλόγου"
+msgstr "Παράθυρο Επιλογών"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
+msgstr "Πάνω σελίδα στο μενού αποθήκευσης/φόρτωσης"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
+msgstr "Κάτω σελίδα στο μενού αποθήκευσης/φόρτωσης"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
+msgstr "Έναρξη του μενού αποθήκευσης/φόρτωσης"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
+msgstr "Τέλος του μενού απόθήκευσης/φόρτωσης"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -12544,35 +12467,25 @@ msgstr ""
 "H παραλλαγή γραμματοσειράς δεν υπάρχει στο αρχείο δεδομένων '%s' της μηχανής."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Παράλειψη γραμμής"
+msgstr "Παράκαμψη εισαγωγής"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Παράκαμψη τρέχουσας κίνησης"
+msgstr "Σταμάτημα τρέχουσας φωνής"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Χωρίς μουσική"
+msgstr "Σίγαση μουσικής"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Speech"
 msgid "Mute speech"
-msgstr "Ομιλία"
+msgstr "Σίγαση ομιλίας"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
+msgstr "Σίγαση ηχητικών εφέ"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12605,33 +12518,25 @@ msgstr "Αδυναμία εντοπισμού του αρχείου παιχνι
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence/open quit dialogue"
-msgstr ""
+msgstr "Παράκαμψη σκηνής/άνοιγμα παραθύρου για έξοδο"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "Παράκαμψη διαλόγου"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Άνοιγμα κεντρικού μενού"
+msgstr "Άνοιγμα μενού επιλογών"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Enable fast walk"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Ενεργοποίηση γρήγορου βαδίσματος"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Disable fast walk"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Απενεργοποίηση γρήγορου βαδίσματος"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12639,135 +12544,95 @@ msgstr "Εναλλαγή γρήγορης λειτουργίας"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Εναλλαγή μεταξύ φωνής/κειμένου/φωνής με κείμενο"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
-msgstr ""
+msgstr "Πατήστε το πλήκτρο για \"Ναι\""
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "Παράλειψη γραμμής"
+msgstr "Παράκαμψη βίντεο"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή γρήγορου βαδίσματος"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "Open system menu"
-msgstr "Διακοπή/Μενού Παιχνιδιού"
+msgstr "Άνοιγμα μενού συστήματος"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Ενεργοποίησε"
+msgstr "Επιστροφή"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Επισκόπηση"
+msgstr "Προβολή βοήθειας"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Sound options"
-msgstr "Επιλογές Ομιλίας"
+msgstr "Επιλογές ήχου"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Βόρεια"
+msgstr "Σύρσου Βόρεια"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Νότια"
+msgstr "Σύρσου Νότια"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Στρίψε γρήγορα αριστερά"
+msgstr "Στρίψε Αριστερά/Σύρσου Δυτικά"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Στρίψε γρήγορα δεξιά"
+msgstr "Στρίψε Δεξιά/Σύρσου Ανατολικά"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase speed"
-msgstr "Αύξηση συντελεστή κλίμακας"
+msgstr "Αύξηση ταχύτητας"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease speed"
-msgstr "Μείωση συντελεστή κλίμακας"
+msgstr "Μείωση ταχύτητας"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Minimum speed"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "Ελάχιστη ταχύτητα"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Μέγιστη Ένταση"
+msgstr "Μέγιστη ταχύτητα"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Low speed"
-msgstr "Προβολή συντελεστών παιχνιδιού"
+msgstr "Χαμηλή ταχύτητα"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Medium speed"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "Μέση ταχύτητα"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Προς τα εμπρός"
+msgstr "Τράβηξε φύλλα"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Ομιλία"
+msgstr "Παράκαμψη ομιλίας"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή στυλ πάνελ"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Μετατροπή κειμένου σε ομιλία"
+msgstr "Εναλλαγή εκφώνησης κειμένου"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -12996,34 +12861,28 @@ msgid "Select highlighted verb"
 msgstr "Επιλογή επισημασμένου ρήματος"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+msgstr "Στο προηγούμενο αντικείμενο"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "Άνοιγμα μενού ρυθμίσεων"
+msgstr "Στο επόμενο αντικείμενο"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Επιλογή ενέργειας/αντικειμένου στα αριστερά"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Ολίσθηση Δεξιά"
+msgstr "Επιλογή ενέργειας/αντικειμένου στα δεξιά"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Επιλογή ενέργειας/αντικειμένου πάνω"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Επιλογή ενέργειας/αντικειμένου κάτω"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
@@ -13088,7 +12947,7 @@ msgstr "Προβολή Σημείων Αλληλεπίδρασης"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "Επιλέξατε το Ransome *unbeeped* (DLC) αλλά δεν βρέθηκε το DLC!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -13238,6 +13097,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Λείπει Απαιτούμενο Αρχείο\n"
+"\n"
+"Η έναρξη παιχνιδιού απαιτεί το SAVEGAME/U8SAVE.000\n"
+"από μια πρωτότυπη εγκατάσταση.\n"
+"\n"
+"Παρακαλούμε ελέγξτε πως έχετε αντιγράψει σωστά όλα τα αρχεία."
 
 #: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
@@ -13281,22 +13146,24 @@ msgid "Uses 16-color graphics."
 msgstr "Χρησιμοποιεί παλέτα 16 χρωμάτων για τα γραφικά."
 
 #: engines/vcruise/metaengine.cpp:98
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Προηχογραφημένα ηχητικά εφέ"
+msgstr "Προφόρτωση ήχων"
 
 #: engines/vcruise/metaengine.cpp:99
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
+"Φορτώνει ήχους εκ των προτέρων. Μπορεί να βελτιώσει τις επιδόσεις σε αργούς "
+"σκληρούς δίσκους."
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Γρηγορότερη αποκωδικοποίηση βίντεο (χαμηλότερη ποιότητα)"
 
 #: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr ""
+"Μειώνει τη χρήση του επεξεργαστή (CPU) για την αποκωδικοποίηση βίντεο σε "
+"βάρος της ποιότητας."
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
@@ -13363,14 +13230,12 @@ msgstr ""
 "παιχνιδιού."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable lockout system"
-msgstr "Ενεργοποίηση αποθήκευσης"
+msgstr "Ενεργοποίηση συστήματος κλειδώματος"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Απαιτεί ένα κωδικό ασφάλειας για την έναρξη του παιχνιδιού."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
