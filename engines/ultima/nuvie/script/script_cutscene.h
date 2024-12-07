@@ -163,6 +163,7 @@ public:
 	void Hide() override;
 
 	void print_text(CSImage *image, const char *string, uint16 *x, uint16 *y, uint16 startx, uint16 width, uint8 color);
+	void print_text_raw(CSImage *image, const char *string, uint16 x, uint16 y, uint8 color) const;
 
 	SoundManager *get_sound_manager() {
 		return sound_manager;

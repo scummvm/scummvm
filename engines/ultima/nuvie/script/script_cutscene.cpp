@@ -66,6 +66,7 @@ static int nscript_image_copy(lua_State *L);
 static int nscript_image_load(lua_State *L);
 static int nscript_image_load_all(lua_State *L);
 static int nscript_image_print(lua_State *L);
+static int nscript_image_print_raw(lua_State *L);
 static int nscript_image_draw_line(lua_State *L);
 static int nscript_image_blit(lua_State *L);
 static int nscript_image_update_effect(lua_State *L);
@@ -124,6 +125,8 @@ static int nscript_config_set(lua_State *L);
 
 static int nscript_engine_should_quit(lua_State *L);
 
+static int nscript_transfer_save_game(lua_State *L);
+
 void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundManager *sm) {
 	cutScene = new ScriptCutscene(gui, cfg, sm);
 
@@ -150,6 +153,9 @@ void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundMana
 
 	lua_pushcfunction(L, nscript_image_print);
 	lua_setglobal(L, "image_print");
+
+	lua_pushcfunction(L, nscript_image_print_raw);
+	lua_setglobal(L, "image_print_raw");
 
 	lua_pushcfunction(L, nscript_image_static);
 	lua_setglobal(L, "image_static");
@@ -243,6 +249,9 @@ void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundMana
 
 	lua_pushcfunction(L, nscript_engine_should_quit);
 	lua_setglobal(L, "engine_should_quit");
+
+	lua_pushcfunction(L, nscript_transfer_save_game);
+	lua_setglobal(L, "transfer_save_game");
 }
 
 bool nscript_new_image_var(lua_State *L, CSImage *image) {
@@ -454,6 +463,18 @@ static int nscript_image_load_all(lua_State *L) {
 	}
 
 	return 1;
+}
+
+static int nscript_image_print_raw(lua_State *L) {
+	CSImage *img = nscript_get_image_from_args(L, 1);
+	const char *text = lua_tostring(L, 2);
+	uint16 x = lua_tointeger(L, 3);
+	uint16 y = lua_tointeger(L, 4);
+	uint8 color = lua_tointeger(L, 5);
+
+	cutScene->print_text_raw(img, text, x, y, color);
+
+	return 0;
 }
 
 static int nscript_image_print(lua_State *L) {
@@ -1084,6 +1105,52 @@ static int nscript_engine_should_quit(lua_State *L) {
 	return 1;
 }
 
+int nscript_transfer_save_game(lua_State *L) {
+	lua_newtable(L);
+
+	lua_pushstring(L, "game_type");
+	lua_pushinteger(L, 5);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "name");
+	lua_pushstring(L, "Some Name");
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "gender");
+	lua_pushinteger(L, 0);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "class");
+	lua_pushstring(L, "Avatar");
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "str");
+	lua_pushinteger(L, 20);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "dex");
+	lua_pushinteger(L, 23);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "int");
+	lua_pushinteger(L, 17);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "magic");
+	lua_pushinteger(L, 17);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "exp");
+	lua_pushinteger(L, 250);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "level");
+	lua_pushinteger(L, 8);
+	lua_settable(L, -3);
+
+	return 1;
+}
+
 ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(nullptr) {
 	config = cfg;
 	gui = g;
@@ -1446,6 +1513,10 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 
 
 	//font->drawStringToShape(image->shp, string, x, y, color);
+}
+
+void ScriptCutscene::print_text_raw(CSImage *image, const char *string, uint16 x, uint16 y, uint8 color) const {
+	((WOUFont *)font)->drawStringToShape(image->shp, string, x, y, color);
 }
 
 void ScriptCutscene::load_palette(const char *filename, int idx) {
