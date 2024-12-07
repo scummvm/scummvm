@@ -19,24 +19,39 @@
  *
  */
 
-#ifndef GOT_GFX_SURFACE_H
-#define GOT_GFX_SURFACE_H
+#ifndef GOT_GFX_FONT_H
+#define GOT_GFX_FONT_H
 
+#include "common/array.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 
 namespace Got {
 namespace Gfx {
 
-class GfxSurface : public Graphics::ManagedSurface {
+class Font : public Graphics::Font {
+private:
+	Common::Array<Graphics::ManagedSurface> _font;
+
 public:
-	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
-		Graphics::ManagedSurface(surf, bounds) {
+	void load();
+
+	int getFontHeight() const override {
+		return 9;
+	}
+	int getMaxCharWidth() const override {
+		return 8;
+	}
+	int getCharWidth(uint32 chr) const override {
+		return 8;
+	}
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
+		Graphics::Font::drawChar(dst, chr, x, y, color);
 	}
 
-	/**
-	 * Write some text to the surface
-	 */
-	void print(const Common::Point &pos, const Common::String &text, int color);
+	void drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
+		const Common::String &text, int color);
 };
 
 } // namespace Gfx

@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	messages.o \
 	metaengine.o \
 	vars.o \
+	gfx/font.o \
 	gfx/gfx_chunks.o \
 	gfx/gfx_pics.o \
 	gfx/gfx_surface.o \

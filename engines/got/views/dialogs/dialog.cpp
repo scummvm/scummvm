@@ -36,7 +36,7 @@ static Common::String getDialogName(const char *title) {
 }
 
 Dialog::Dialog(const char *title, const char *options[]) :
-		View(getDialogName(title)) {
+		View(getDialogName(title)), _title(title) {
 	// Load the options list into the string array
 	for (const char **option = options; *option; ++option)
 		_options.push_back(*option);
@@ -81,18 +81,23 @@ void Dialog::draw() {
 	s.blitFrom(_G(bgPics)[194], Common::Point(0, _bounds.height() - 16));
 	s.blitFrom(_G(bgPics)[195], Common::Point(_bounds.width() - 16, _bounds.height() - 16));
 
-	// Draw horizontal
+	// Draw top/bottom horizontal lines
 	for (int x = 16; x < _bounds.width() - 16; x += 16) {
 		s.blitFrom(_G(bgPics)[196], Common::Point(x, 0));
 		s.blitFrom(_G(bgPics)[197], Common::Point(x, _bounds.height() - 16));
 	}
+
+	// Draw left/right vertical lines
 	for (int y = 16; y < _bounds.height() - 16; y += 16) {
 		s.blitFrom(_G(bgPics)[198], Common::Point(0, y));
 		s.blitFrom(_G(bgPics)[199], Common::Point(_bounds.width() - 16, y));
 	}
 
-#ifdef TODO
+	// Write the title
 	int titleStart = (_bounds.width() - strlen(_title) * 8) / 2;
+	s.print(Common::Point(titleStart, 16), _title, 54);
+
+#ifdef TODO
 
 	xprint(i, y1 + 4, title, pg, 54);
 
