@@ -70,6 +70,8 @@ public:
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+
+	void play_sound(int index, int priority_override);
 };
 
 } // namespace Views
