@@ -34,6 +34,7 @@ public:
 	virtual ~OptionsMenu() {
 	}
 
+	void selected() override;
 };
 
 } // namespace Dialogs

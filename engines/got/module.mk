@@ -20,7 +20,8 @@ MODULE_OBJS = \
 	views/view.o \
 	views/story.o \
 	views/dialogs/dialog.o \
-	views/dialogs/options_menu.o
+	views/dialogs/options_menu.o \
+	views/dialogs/set_sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOT), DYNAMIC_PLUGIN)

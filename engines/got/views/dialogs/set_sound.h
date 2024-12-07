@@ -19,33 +19,26 @@
  *
  */
 
-#include "got/views/dialogs/options_menu.h"
-#include "got/gfx/palette.h"
-#include "got/utils/file.h"
-#include "got/vars.h"
+#ifndef GOT_VIEWS_DIALOGS_SET_SOUND_H
+#define GOT_VIEWS_DIALOGS_SET_SOUND_H
+
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Sound/Music", "Skill Level", "Save Game", "Load Game",
-		"Die", "Turbo Mode", "Help", "Quit", nullptr
-};
-
-OptionsMenu::OptionsMenu() : Dialog("Options Menu", OPTIONS) {
-}
-
-void OptionsMenu::selected() {
-	switch (_selectedItem) {
-	case 0:
-		replaceView("SetSound");
-		break;
-	default:
-		break;
+class SetSound : public Dialog {
+public:
+	SetSound();
+	virtual ~SetSound() {
 	}
-}
+
+	void selected() override;
+};
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif
