@@ -62,9 +62,11 @@ private:
 	void decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
 	void decode8(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void dither16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void dither24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void dither32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 };
 
 } // End of namespace Image
