@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-12-07 12:33+0000\n"
+"PO-Revision-Date: 2024-12-07 12:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -9111,7 +9111,7 @@ msgstr "Πλήκτρα για μάχη"
 
 #: engines/lure/metaengine.cpp:171
 msgid "Index keymappings"
-msgstr "Πλήκτρα καταχωρίσεων"
+msgstr "Πλήκτρα επιλογής"
 
 #: engines/lure/metaengine.cpp:172
 msgid "Yes/No keymappings"
@@ -9153,15 +9153,15 @@ msgstr "Δρομέας - Κάτω δεξιά"
 
 #: engines/lure/metaengine.cpp:270
 msgid "Go to next index"
-msgstr "Στην επόμενη καταχώριση"
+msgstr "Στην επόμενη επιλογή"
 
 #: engines/lure/metaengine.cpp:277
 msgid "Go to previous index"
-msgstr "Στην προηγούμενη καταχώριση"
+msgstr "Στην προηγούμενη επιλογή"
 
 #: engines/lure/metaengine.cpp:284
 msgid "Select index"
-msgstr "Επιλέξτε καταχώριση"
+msgstr "Επιλέξτε"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
