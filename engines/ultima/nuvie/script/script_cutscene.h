@@ -221,6 +221,7 @@ private:
 	void display_wrapped_text(CSSprite *s);
 	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
 
+	bool load_u4_save_file(TransferSaveData &saveData);
 	bool load_u5_save_file(TransferSaveData &saveData);
 };
 

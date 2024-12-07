@@ -1444,7 +1444,7 @@ TransferSaveData ScriptCutscene::load_transfer_save() {
 		return data;
 	}
 
-	// TODO load U4 file here.
+	load_u4_save_file(data);
 
 	return data;
 }
@@ -1777,6 +1777,48 @@ int ScriptCutscene::display_wrapped_text_line(Std::string str, uint8 text_color,
 	}
 
 	return y;
+}
+
+static constexpr char u4ClassNameTbl[9][9] = {
+	"Mage",
+	"Bard",
+	"Fighter",
+	"Druid",
+	"Tinker",
+	"Paladin",
+	"Ranger",
+	"Shepherd",
+	"Avatar",
+};
+
+bool ScriptCutscene::load_u4_save_file(TransferSaveData &saveData) {
+	NuvieIOFileRead file;
+	Common::Path filename;
+	char name[16];
+
+	config_get_path(config, "party.sav", filename);
+
+	if (file.open(filename) == false) {
+		return false;
+	}
+
+	saveData.gameType = 4;
+	file.seek(10);
+	saveData.level = file.read2() / 100;
+	saveData.exp = file.read2();
+	saveData.str = file.read2();
+	saveData.dex = file.read2();
+	saveData.intelligence = file.read2();
+	saveData.magic = file.read2();
+	file.seek(28);
+	file.readToBuf((unsigned char *)name, 16);
+	saveData.name = Common::String(name).substr(0, 8);
+	saveData.gender = file.read1() == 0xc ? 0 : 1;
+	int classId = file.read1();
+	if (classId < 9) {
+		saveData.className = Common::String(u4ClassNameTbl[classId]);
+	}
+	return true;
 }
 
 bool ScriptCutscene::load_u5_save_file(TransferSaveData &saveData) {

@@ -1,7 +1,7 @@
-SDLK_UP           = 82 + 1073741824
-SDLK_DOWN         = 81 + 1073741824
-SDLK_RIGHT        = 79 + 1073741824
-SDLK_LEFT         = 80 + 1073741824
+SDLK_UP           = 273
+SDLK_DOWN         = 274
+SDLK_RIGHT        = 275
+SDLK_LEFT         = 276
 
 g_img_tbl = {}
 
@@ -2511,6 +2511,34 @@ local function transfer_portrait(transferData)
 	return not exiting
 end
 
+local function update_u4_stat(stat)
+	if stat > 9 then
+		if stat < 30 then
+			stat = math.floor((stat - 9) / 2) + 10
+		else
+			stat = math.floor((stat - 30) / 4) + 20
+		end
+	end
+	return stat
+end
+
+local function transfer_no_save_found()
+	load_images("vellum1.shp")
+	local bg = sprite_new(g_img_tbl[0], 0x10, 0x50, true)
+
+	centre_string(bg.image, "TRANSFER A CHARACTER", 9, 0x3d)
+	image_draw_line(bg.image, 9, 18, 274, 18, 0x3d)
+
+	centre_string(bg.image, "No character found! If you wish to", 40, 0x3d)
+	centre_string(bg.image, "transfer a character from a hard disk", 40 + 9, 0x3d)
+	centre_string(bg.image, "please copy either SAVED.GAM or PARTY.SAV", 40 + 18, 0x3d)
+	centre_string(bg.image, "into your Ultima VI game directory.", 40 + 27, 0x3d)
+
+	wait_for_input()
+
+	bg.visible = false
+end
+
 local function transfer()
 	if transfer_page1() == false then
 		return false
@@ -2525,14 +2553,23 @@ local function transfer()
 		transferData.newSave[k] = v
 	end
 
-	if transferData.oldSave.game_type == 5 then
-		transferData.newSave.exp = math.floor(transferData.newSave.exp / 10)
-		transferData.newSave.level = 1
-		local tmpXp = math.floor(transferData.oldSave.exp / 1000)
-		while tmpXp > 0 do
-			transferData.newSave.level = transferData.newSave.level + 1
-			tmpXp = math.floor(tmpXp / 2)
-		end
+	if transferData.oldSave.game_type == 0 then
+		transfer_no_save_found()
+		return false
+	end
+
+	if transferData.oldSave.game_type == 4 then
+		transferData.newSave.str = update_u4_stat(transferData.newSave.str)
+		transferData.newSave.dex = update_u4_stat(transferData.newSave.dex)
+		transferData.newSave.int = update_u4_stat(transferData.newSave.int)
+	end
+	transferData.newSave.magic = transferData.newSave.int
+	transferData.newSave.exp = math.floor(transferData.newSave.exp / 10)
+	transferData.newSave.level = 1
+	local tmpXp = math.floor(transferData.oldSave.exp / 1000)
+	while tmpXp > 0 do
+		transferData.newSave.level = transferData.newSave.level + 1
+		tmpXp = math.floor(tmpXp / 2)
 	end
 
 	if transfer_showStats(transferData) == false then
@@ -3474,7 +3511,10 @@ local function main_menu()
 							return "J"
 						end
 					elseif y > 127 and y < 149 then
-						--transfer a character
+						if selected_transfer() == true then
+							intro()
+							return "J"
+						end
 					elseif y > 148 and y < 170 then
 						selected_acknowledgments()
 					elseif y > 169 and y < 196 then
