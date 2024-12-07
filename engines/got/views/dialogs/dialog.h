@@ -33,14 +33,27 @@ class Dialog : public View {
 private:
 	const char *_title;
 	Common::StringArray _options;
-	int _selectedItem = 0;
 	int _hammerFrame = 0;
+	int _smackCtr = 0;
+
+protected:
+	int _selectedItem = 0;
+
+	virtual void closed() {
+		close();
+	}
+	virtual void selected() {}
 
 public:
 	Dialog(const char *title, const char *options[]);
 	virtual ~Dialog() {
 	}
 
+	bool msgFocus(const FocusMessage &msg) override {
+		_selectedItem = 0;
+		_smackCtr = 0;
+		return true;
+	}
 	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 	bool tick() override;

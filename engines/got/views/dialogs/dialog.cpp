@@ -59,25 +59,6 @@ Dialog::Dialog(const char *title, const char *options[]) :
 	_bounds.setBorderSize(16);
 }
 
-bool Dialog::msgAction(const ActionMessage &msg) {
-	switch (msg._action) {
-	case KEYBIND_UP:
-		if (--_selectedItem < 0)
-			_selectedItem = (int)_options.size() - 1;
-		break;
-
-	case KEYBIND_DOWN:
-		if (++_selectedItem >= (int)_options.size())
-			_selectedItem = 0;
-		break;
-
-	default:
-		break;
-	}
-
-	return true;
-}
-
 void Dialog::draw() {
 	GfxSurface s = getSurface();
 
@@ -111,13 +92,60 @@ void Dialog::draw() {
 		s.print(Common::Point(32, 28 + i * 16), _options[i], 14);
 
 	// Draw selection pointer
-	s.blitFrom(_G(hampic)[_hammerFrame],
-		Common::Point(8, 24 + (_selectedItem * 16)));
+	if (_smackCtr > 0) {
+		// Selecting an item
+		s.blitFrom(_G(hampic)[0], Common::Point(8 + 2 * _smackCtr,
+			24 + (_selectedItem * 16)));
+	} else {
+		// Normal animated cursor
+		s.blitFrom(_G(hampic)[_hammerFrame],
+			Common::Point(8, 24 + (_selectedItem * 16)));
+	}
+}
+
+bool Dialog::msgAction(const ActionMessage &msg) {
+	// Don't allow further actions if selection is in progress
+	if (_smackCtr != 0)
+		return true;
+
+	switch (msg._action) {
+	case KEYBIND_UP:
+		if (--_selectedItem < 0)
+			_selectedItem = (int)_options.size() - 1;
+		break;
+
+	case KEYBIND_DOWN:
+		if (++_selectedItem >= (int)_options.size())
+			_selectedItem = 0;
+		break;
+
+	case KEYBIND_SELECT:
+	case KEYBIND_FIRE:
+	case KEYBIND_MAGIC:
+		_smackCtr = 1;
+		break;
+
+	case KEYBIND_ESCAPE:
+		closed();
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 bool Dialog::tick() {
 	if (++_hammerFrame == 4)
 		_hammerFrame = 0;
+
+	// Handle animation when an item is selected
+	if (_smackCtr != 0) {
+		if (++_smackCtr == 4) {
+			_smackCtr = 0;
+			selected();
+		}	
+	}
 
 	redraw();
 	return true;

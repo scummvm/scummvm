@@ -53,11 +53,13 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord GAME_KEYS[] = {
-	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", "JOY_A" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP"},
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", "JOY_A" },
+	// I18N: ESC key
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
