@@ -28,6 +28,15 @@
 namespace Got {
 namespace Gfx {
 
+/**
+ * The original graphics screen was set up to use 4 panes,
+ * where each pane had a single pixel, repeating every 4 pixels.
+ * Because of this, graphics were stored with all the data for
+ * each pane one at a time. This helper methods takes care of
+ * "de-paneing" the graphics into a provided surface
+*/
+extern void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf);
+
 class BgPics : public Common::Array<Graphics::ManagedSurface> {
 private:
 	int _area = 1;

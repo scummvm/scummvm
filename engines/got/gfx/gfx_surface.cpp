@@ -20,13 +20,14 @@
  */
 
 #include "got/gfx/gfx_surface.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Gfx {
 
 void GfxSurface::print(const Common::Point &pos,
-		const Common::String &str, int color) {
-	// TODO
+		const Common::String &text, int color) {
+	_G(font).drawString(this, pos, text, color);
 }
 
 } // namespace Gfx

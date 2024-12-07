@@ -30,16 +30,12 @@ namespace Got {
 
 Vars *g_vars;
 
-byte dialog_color[] = { 14,54,120,138,15,0,0,0,0,0,0,0,0,0,0,0 };
-const char *options_yesno[] = { "Yes","No", nullptr };
-const char *save_filename = "XXXXXXXX.XXX";
-
-
 Vars::Vars() {
 	g_vars = this;
 }
 
 void Vars::load() {
+	_font.load();
 	_gfx.load();
 	_bgPics.load();
 

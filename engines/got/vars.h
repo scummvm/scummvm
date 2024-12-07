@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "graphics/screen.h"
 #include "got/defines.h"
+#include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"
 #include "got/gfx/gfx_pics.h"
 
@@ -43,6 +44,7 @@ public:
 
 	Gfx::GfxChunks _gfx;
 	Gfx::BgPics _bgPics;
+	Gfx::Font _font;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -54,7 +56,7 @@ public:
 	byte _joy_flag[100] = {};
 	byte _tmp_flag[100] = {};
 	int8 _break_code = 0;
-	int8 _scan_code, _last_scan_code = 0;
+	int8 _scan_code = 0, _last_scan_code = 0;
 	int8 _diag = 0;
 	int8 _slow_mode = 0, _startup = 0;
 	int8 _shot_ok = 0;
@@ -171,7 +173,7 @@ public:
 	int8 _main_loop = 0;
 	int8 _end_tile = 0;
 
-	byte _pbuff[PALETTE_SIZE];
+	byte _pbuff[PALETTE_SIZE] = {};
 };
 
 #define _G(X) (g_vars->_##X)

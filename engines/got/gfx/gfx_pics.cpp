@@ -26,6 +26,19 @@
 namespace Got {
 namespace Gfx {
 
+void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf) {
+	// It's split into 4 panes per 4 pixels, so we need
+	// to juggle the pixels into their correct order
+	for (int plane = 0; plane < 4; ++plane) {
+		for (int y = 0; y < surf.h; ++y) {
+			byte *dest = (byte *)surf.getBasePtr(plane, y);
+
+			for (int x = 0; x < (surf.w / 4); ++x, dest += 4)
+				*dest = *src++;
+		}
+	}
+}
+
 void BgPics::setArea(int area) {
 	if (area != _area) {
 		_area = area;
@@ -43,7 +56,7 @@ void BgPics::load() {
 	clear();
 	resize(f.size() / 262);
 
-	byte buff[256];
+	byte buff[16 * 16];
 	for (uint idx = 0; idx < size(); ++idx) {
 		Graphics::ManagedSurface &s = (*this)[idx];
 
@@ -52,18 +65,7 @@ void BgPics::load() {
 
 		f.skip(6);
 		f.read(buff, 16 * 16);
-
-		// It's split into 4 panes per 4 pixels, so we need
-		// to juggle the pixels into their correct order
-		const byte *src = buff;
-		for (int plane = 0; plane < 4; ++plane) {
-			for (int y = 0; y < 16; ++y) {
-				byte *dest = (byte *)s.getBasePtr(plane, y);
-
-				for (int x = 0; x < (16 / 4); ++x, dest += 4)
-					*dest = *src++;
-			}
-		}
+		convertPaneDataToSurface(buff, s);
 	}
 }
 
