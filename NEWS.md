@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.9.0 (XXXX-XX-XX)
+#### 2.9.0 (2024-12-22)
 
  New games:
    - Added support for Orion Burger.
