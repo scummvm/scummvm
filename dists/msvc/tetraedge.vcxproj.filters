@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="game">
+			<UniqueIdentifier>2DEA9651-90F5-445A-9503-673AA3F510FB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="te">
+			<UniqueIdentifier>3A8013D9-6C90-4780-83DC-942DD5B65470</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\tetraedge\game\amerzone_game.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\application.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\billboard.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\bonus_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\cellphone.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\character.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\character_settings_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow_opengl.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow_tinygl.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\confirm.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\credits.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\dialog2.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\document.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\documents_browser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\documents_browser_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\gallery_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\game.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\game_achievements.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\game_sound.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\global_bonus_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\help_option_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\how_to.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\in_game_scene.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\in_game_scene_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_object.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_objects_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\loc_file.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\lua_binds.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\main_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\notifier.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\object3d.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\object_settings_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\objectif.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\options_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\owner_error_menu.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\particle_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_cadenas.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_coffre.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_computer_hydra.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_computer_pwd.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_disjoncteur.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_hanjie.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_liquides.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_pentacle.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_transfusion.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\question2.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\scene_lights_xml_parser.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\splash_screens.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\syberia_game.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\upsell_screen.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\game\youki_manager.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\micropather.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_object2.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture_opengl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture_tinygl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_act_zone.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_animation.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_bezier_curve.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_button_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_camera.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_camera_xml_parser.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_checkbox_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_clip_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_color.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_core.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_extended_text_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_font2.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_font3.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_frame_anim.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_free_move_zone.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_frustum.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_3d_object2.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_font.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_loc.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_text_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_image.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_images_sequence.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_input_mgr.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_interpolation.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_jpeg.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light_opengl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light_tinygl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_list_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_context.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_gui.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_gui_lua_callbacks.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_script.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_thread.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_marker.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_material.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_matricies_stack.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_matrix4x4.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh_opengl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh_tinygl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model_animation.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model_vertex_animation.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_music.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_name_val_xml_parser.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_object.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_obp.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_palette.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_particle.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_pick_mesh.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_pick_mesh2.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_png.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_quaternion.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_ray_intersection.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_real_timer.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer_opengl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer_tinygl.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_resource.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_resource_manager.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene_warp.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene_warp_xml_parser.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scrolling_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scummvm_codec.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_sound_manager.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_sprite_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_base2.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_layout.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_layout_xml_parser.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tga.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_theora.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tiled_surface.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tiled_texture.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_timer.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_trs.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_variant.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector2f32.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector2s32.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector3f32.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_visual_fade.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp_bloc.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp_marker.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_xml_gui.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_xml_parser.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\te\te_zlib_jpeg.cpp">
+			<Filter>te</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tetraedge\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\tetraedge.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\to_lua.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\tetraedge\game\amerzone_game.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\application.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\billboard.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\bonus_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\cellphone.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\character.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\character_settings_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow_opengl.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow_tinygl.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\confirm.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\credits.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\dialog2.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\document.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\documents_browser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\documents_browser_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\gallery_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\game.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\game_achievements.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\game_sound.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\global_bonus_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\help_option_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\how_to.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\in_game_scene.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\in_game_scene_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_object.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_objects_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\loc_file.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\lua_binds.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\main_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\notifier.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\object3d.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\object_settings_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\objectif.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\options_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\owner_error_menu.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\particle_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_cadenas.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_coffre.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_computer_hydra.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_computer_pwd.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_disjoncteur.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_hanjie.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_liquides.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_pentacle.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_transfusion.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\question2.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\scene_lights_xml_parser.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\splash_screens.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\syberia_game.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\upsell_screen.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\game\youki_manager.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\micropather.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_object2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture_opengl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture_tinygl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_act_zone.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_animation.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_bezier_curve.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_button_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_callback.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_camera.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_camera_xml_parser.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_checkbox_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_clip_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_color.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_core.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_curve_anim2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_extended_text_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_font2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_font3.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_frame_anim.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_free_move_zone.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_frustum.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_3d_object2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_codec.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_font.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_loc.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_text_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_image.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_images_sequence.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_input_mgr.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_interpolation.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_intrusive_ptr.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_jpeg.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light_opengl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light_tinygl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_list_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_context.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_gui.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_gui_lua_callbacks.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_script.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_thread.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_marker.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_material.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_matricies_stack.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_matrix4x4.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh_opengl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh_tinygl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model_animation.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model_vertex_animation.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_music.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_name_val_xml_parser.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_object.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_obp.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_palette.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_particle.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_pick_mesh.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_pick_mesh2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_png.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_quaternion.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_ray_intersection.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_real_timer.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_references_counter.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer_opengl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer_tinygl.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_resource.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_resource_manager.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene_warp.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene_warp_xml_parser.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scrolling_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scummvm_codec.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_signal.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_sound_manager.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_sprite_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_base2.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_layout.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_layout_xml_parser.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tga.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_theora.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tiled_surface.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tiled_texture.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_timer.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_trs.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_variant.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector2f32.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector2s32.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector3f32.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_visual_fade.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp_bloc.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp_marker.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_xml_gui.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_xml_parser.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\te\te_zlib_jpeg.h">
+			<Filter>te</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tetraedge\detection.h" />
+		<ClInclude Include="..\..\engines\tetraedge\detection_tables.h" />
+		<ClInclude Include="..\..\engines\tetraedge\metaengine.h" />
+		<ClInclude Include="..\..\engines\tetraedge\tetraedge.h" />
+		<ClInclude Include="..\..\engines\tetraedge\to_lua.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\tetraedge\module.mk" />
+	</ItemGroup>
+</Project>

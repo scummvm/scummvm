@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="TMX">
+			<UniqueIdentifier>366F17E2-B635-44F2-B78C-0586B6EEAB5D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ai">
+			<UniqueIdentifier>0726D607-4BEE-4544-9A1E-25537496BFF2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="animation">
+			<UniqueIdentifier>1A5D9D68-02B7-4C04-B688-0637A5D0867B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="event">
+			<UniqueIdentifier>314A4608-40BC-4357-A43D-59C11D01556C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="image">
+			<UniqueIdentifier>D5C40BF8-16CB-4064-AB52-D0A08CCEA1AE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="input">
+			<UniqueIdentifier>1E1EF8A5-EE7D-4BEC-A302-DE4CF0329D00</UniqueIdentifier>
+		</Filter>
+		<Filter Include="item">
+			<UniqueIdentifier>F35E6994-CC29-4290-8AE3-5D294DA2F4C2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="level">
+			<UniqueIdentifier>E842629D-E820-4F90-845E-B9F7E4405F5A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="music">
+			<UniqueIdentifier>8623B8BE-57C9-4D77-8F9C-AF855D8BEABD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="people">
+			<UniqueIdentifier>A305AF68-3641-4EC8-B97C-8D89A7903CF5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="stat">
+			<UniqueIdentifier>E388F571-CE70-4173-8A2E-8C75A947A254</UniqueIdentifier>
+		</Filter>
+		<Filter Include="text">
+			<UniqueIdentifier>D1027A67-755B-4C18-A241-D00A2CD8236B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>415BB118-6D81-4B9D-A104-2BEA25A9ECCA</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\crab\TMX\TMXLayer.cpp">
+			<Filter>TMX</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\TMX\TMXMap.cpp">
+			<Filter>TMX</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\TMX\TMXTileSet.cpp">
+			<Filter>TMX</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ai\SpriteConstant.cpp">
+			<Filter>ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ai\moveeffect.cpp">
+			<Filter>ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ai\movement.cpp">
+			<Filter>ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ai\spriteai.cpp">
+			<Filter>ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\AnimationFrame.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\PopUp.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\animation.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\animframe.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\animset.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\fightanim.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\fightmove.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\fightmoves.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\imageeffect.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\sprite.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\animation\walkframes.cpp">
+			<Filter>animation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\EventSeqGroup.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\EventSequence.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\GameEventInfo.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\conversationdata.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\effect.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\eventstore.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\gameevent.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\gameeventmanager.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\quest.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\trigger.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\event\triggerset.cpp">
+			<Filter>event</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\image\Image.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\image\ImageManager.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\input\cursor.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\input\fightinput.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\input\hotkey.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\input\input.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\item\Item.cpp">
+			<Filter>item</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\item\ItemCollection.cpp">
+			<Filter>item</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\item\ItemMenu.cpp">
+			<Filter>item</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\item\ItemSlot.cpp">
+			<Filter>item</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\item\StatPreview.cpp">
+			<Filter>item</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\LevelExit.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\MusicArea.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\Stairs.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level_ai.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level_collide.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level_draw.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level_load.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\level_objects.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\level\talknotify.cpp">
+			<Filter>level</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\music\MusicManager.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\people\opinion.cpp">
+			<Filter>people</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\people\person.cpp">
+			<Filter>people</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\people\personbase.cpp">
+			<Filter>people</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\people\trait.cpp">
+			<Filter>people</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\stat\Stat.cpp">
+			<Filter>stat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\stat\StatDrawHelper.cpp">
+			<Filter>stat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\stat\StatTemplate.cpp">
+			<Filter>stat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\text\TextManager.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\text\color.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\AlphaImage.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\Caption.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ChapterIntro.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ClipButton.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\CreditScreen.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\DevConsole.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\FileData.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\GameOverMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\GeneralSettingMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\GfxSettingMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\HealthIndicator.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\HoverInfo.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ImageData.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\Inventory.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\KeyBindMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\MapData.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\MapMarkerMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ModMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\OptionMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\OptionSelect.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ParagraphData.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\PauseMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\PersonHandler.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\PersonScreen.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ProgressBar.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\QuestText.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ReplyButton.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ReplyMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ResolutionMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\SaveGameMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\SectionHeader.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\SlideShow.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\StateButton.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\ToggleButton.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\TraitButton.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\TraitMenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\button.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\dialogbox.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\element.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\emotion.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\hud.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\journal.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\map.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\questmenu.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\slider.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\textarea.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\ui\textdata.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\crab\GameParam.cpp" />
+		<ClCompile Include="..\..\engines\crab\LoadingScreen.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingAgent.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingGraphNode.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingGrid.cpp" />
+		<ClCompile Include="..\..\engines\crab\Polygon.cpp" />
+		<ClCompile Include="..\..\engines\crab\Rectangle.cpp" />
+		<ClCompile Include="..\..\engines\crab\ScreenSettings.cpp" />
+		<ClCompile Include="..\..\engines\crab\Shape.cpp" />
+		<ClCompile Include="..\..\engines\crab\TTSHandler.cpp" />
+		<ClCompile Include="..\..\engines\crab\XMLDoc.cpp" />
+		<ClCompile Include="..\..\engines\crab\app.cpp" />
+		<ClCompile Include="..\..\engines\crab\collision.cpp" />
+		<ClCompile Include="..\..\engines\crab\console.cpp" />
+		<ClCompile Include="..\..\engines\crab\crab.cpp" />
+		<ClCompile Include="..\..\engines\crab\filesystem.cpp" />
+		<ClCompile Include="..\..\engines\crab\game.cpp" />
+		<ClCompile Include="..\..\engines\crab\loaders.cpp" />
+		<ClCompile Include="..\..\engines\crab\mainmenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\crab\splash.cpp" />
+		<ClCompile Include="..\..\engines\crab\timer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\crab\TMX\TMXLayer.h">
+			<Filter>TMX</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\TMX\TMXMap.h">
+			<Filter>TMX</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\TMX\TMXTileSet.h">
+			<Filter>TMX</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\TMX\TileInfo.h">
+			<Filter>TMX</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ai\SpriteConstant.h">
+			<Filter>ai</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ai\moveeffect.h">
+			<Filter>ai</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ai\movement.h">
+			<Filter>ai</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ai\spriteai.h">
+			<Filter>ai</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\AnimationEffect.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\AnimationFrame.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\PopUp.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\animation.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\animframe.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\animset.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\fightanim.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\fightmove.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\fightmoves.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\fm_ai_data.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\imageeffect.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\range.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\shadow.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\sprite.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\animation\walkframes.h">
+			<Filter>animation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\EventSeqGroup.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\EventSequence.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\GameEventInfo.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\changeval.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\conversationdata.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\effect.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\eventstore.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\gameevent.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\gameeventmanager.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\quest.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\trigger.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\event\triggerset.h">
+			<Filter>event</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\image\Image.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\image\ImageManager.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\input\cursor.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\input\fightinput.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\input\hotkey.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\input\input.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\item\Item.h">
+			<Filter>item</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\item\ItemCollection.h">
+			<Filter>item</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\item\ItemMenu.h">
+			<Filter>item</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\item\ItemSlot.h">
+			<Filter>item</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\item\StatPreview.h">
+			<Filter>item</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\LevelExit.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\MusicArea.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\Stairs.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\level.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\level_objects.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\level\talknotify.h">
+			<Filter>level</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\music\MusicManager.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\music\musicparam.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\people\opinion.h">
+			<Filter>people</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\people\person.h">
+			<Filter>people</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\people\personbase.h">
+			<Filter>people</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\people\trait.h">
+			<Filter>people</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\stat\Stat.h">
+			<Filter>stat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\stat\StatDrawHelper.h">
+			<Filter>stat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\stat\StatTemplate.h">
+			<Filter>stat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\stat\bonus.h">
+			<Filter>stat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\text\TextManager.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\text\color.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\AlphaImage.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\Caption.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ChapterIntro.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ClipButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\CreditScreen.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\DevConsole.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\FileData.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\FileMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\GameOverMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\GeneralSettingMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\GfxSettingMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\HealthIndicator.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\HoverInfo.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ImageData.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\Inventory.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ItemDesc.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\KeyBindMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\MapData.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\MapMarkerMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ModMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\OptionMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\OptionSelect.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\PageMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ParagraphData.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\PauseMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\PersonHandler.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\PersonScreen.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ProgressBar.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\QuestText.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\RadioButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\RadioButtonMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ReplyButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ReplyMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ResolutionMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\SaveGameMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\SectionHeader.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\SlideShow.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\StateButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\TextData.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\ToggleButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\TraitButton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\TraitMenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\button.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\dialogbox.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\element.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\emotion.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\hud.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\journal.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\map.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\mapbutton.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\menu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\questmenu.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\slider.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\ui\textarea.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\crab\GameClock.h" />
+		<ClInclude Include="..\..\engines\crab\GameParam.h" />
+		<ClInclude Include="..\..\engines\crab\LevelResult.h" />
+		<ClInclude Include="..\..\engines\crab\Line.h" />
+		<ClInclude Include="..\..\engines\crab\LoadingScreen.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingAgent.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingGraphNode.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingGrid.h" />
+		<ClInclude Include="..\..\engines\crab\Polygon.h" />
+		<ClInclude Include="..\..\engines\crab\PriorityQueue.h" />
+		<ClInclude Include="..\..\engines\crab\Rectangle.h" />
+		<ClInclude Include="..\..\engines\crab\ScreenSettings.h" />
+		<ClInclude Include="..\..\engines\crab\Shape.h" />
+		<ClInclude Include="..\..\engines\crab\TTSHandler.h" />
+		<ClInclude Include="..\..\engines\crab\XMLDoc.h" />
+		<ClInclude Include="..\..\engines\crab\app.h" />
+		<ClInclude Include="..\..\engines\crab\backInserter.h" />
+		<ClInclude Include="..\..\engines\crab\collision.h" />
+		<ClInclude Include="..\..\engines\crab\color.h" />
+		<ClInclude Include="..\..\engines\crab\console.h" />
+		<ClInclude Include="..\..\engines\crab\crab.h" />
+		<ClInclude Include="..\..\engines\crab\detection.h" />
+		<ClInclude Include="..\..\engines\crab\filesystem.h" />
+		<ClInclude Include="..\..\engines\crab\game.h" />
+		<ClInclude Include="..\..\engines\crab\gamestate_container.h" />
+		<ClInclude Include="..\..\engines\crab\gamestates.h" />
+		<ClInclude Include="..\..\engines\crab\gametype.h" />
+		<ClInclude Include="..\..\engines\crab\levelpaths.h" />
+		<ClInclude Include="..\..\engines\crab\loaders.h" />
+		<ClInclude Include="..\..\engines\crab\mainmenu.h" />
+		<ClInclude Include="..\..\engines\crab\metaengine.h" />
+		<ClInclude Include="..\..\engines\crab\numstr.h" />
+		<ClInclude Include="..\..\engines\crab\splash.h" />
+		<ClInclude Include="..\..\engines\crab\timer.h" />
+		<ClInclude Include="..\..\engines\crab\vectors.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\crab\module.mk" />
+	</ItemGroup>
+</Project>

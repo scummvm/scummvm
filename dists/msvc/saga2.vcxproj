@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{6F3CDD66-F1E4-47AB-9AA2-9786255F219D}</ProjectGuid>
+		<RootNamespace>saga2</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\saga2\actor.cpp" />
+		<ClCompile Include="..\..\engines\saga2\assign.cpp" />
+		<ClCompile Include="..\..\engines\saga2\audio.cpp" />
+		<ClCompile Include="..\..\engines\saga2\automap.cpp" />
+		<ClCompile Include="..\..\engines\saga2\band.cpp" />
+		<ClCompile Include="..\..\engines\saga2\beegee.cpp" />
+		<ClCompile Include="..\..\engines\saga2\blitters.cpp" />
+		<ClCompile Include="..\..\engines\saga2\button.cpp" />
+		<ClCompile Include="..\..\engines\saga2\calendar.cpp" />
+		<ClCompile Include="..\..\engines\saga2\console.cpp" />
+		<ClCompile Include="..\..\engines\saga2\contain.cpp" />
+		<ClCompile Include="..\..\engines\saga2\display.cpp" />
+		<ClCompile Include="..\..\engines\saga2\dispnode.cpp" />
+		<ClCompile Include="..\..\engines\saga2\document.cpp" />
+		<ClCompile Include="..\..\engines\saga2\effects.cpp" />
+		<ClCompile Include="..\..\engines\saga2\enchant.cpp" />
+		<ClCompile Include="..\..\engines\saga2\floating.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gamemode.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gdraw.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gfx.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gpointer.cpp" />
+		<ClCompile Include="..\..\engines\saga2\grabinfo.cpp" />
+		<ClCompile Include="..\..\engines\saga2\grequest.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gtext.cpp" />
+		<ClCompile Include="..\..\engines\saga2\gtextbox.cpp" />
+		<ClCompile Include="..\..\engines\saga2\hresmgr.cpp" />
+		<ClCompile Include="..\..\engines\saga2\imagcach.cpp" />
+		<ClCompile Include="..\..\engines\saga2\interp.cpp" />
+		<ClCompile Include="..\..\engines\saga2\intrface.cpp" />
+		<ClCompile Include="..\..\engines\saga2\loadmsg.cpp" />
+		<ClCompile Include="..\..\engines\saga2\magic.cpp" />
+		<ClCompile Include="..\..\engines\saga2\main.cpp" />
+		<ClCompile Include="..\..\engines\saga2\mainmap.cpp" />
+		<ClCompile Include="..\..\engines\saga2\mapfeatr.cpp" />
+		<ClCompile Include="..\..\engines\saga2\messager.cpp" />
+		<ClCompile Include="..\..\engines\saga2\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\saga2\mission.cpp" />
+		<ClCompile Include="..\..\engines\saga2\modal.cpp" />
+		<ClCompile Include="..\..\engines\saga2\motion.cpp" />
+		<ClCompile Include="..\..\engines\saga2\mouseimg.cpp" />
+		<ClCompile Include="..\..\engines\saga2\msgbox.cpp" />
+		<ClCompile Include="..\..\engines\saga2\music.cpp" />
+		<ClCompile Include="..\..\engines\saga2\objects.cpp" />
+		<ClCompile Include="..\..\engines\saga2\objproto.cpp" />
+		<ClCompile Include="..\..\engines\saga2\panel.cpp" />
+		<ClCompile Include="..\..\engines\saga2\path.cpp" />
+		<ClCompile Include="..\..\engines\saga2\patrol.cpp" />
+		<ClCompile Include="..\..\engines\saga2\player.cpp" />
+		<ClCompile Include="..\..\engines\saga2\playmode.cpp" />
+		<ClCompile Include="..\..\engines\saga2\property.cpp" />
+		<ClCompile Include="..\..\engines\saga2\pt2angle.cpp" />
+		<ClCompile Include="..\..\engines\saga2\rect.cpp" />
+		<ClCompile Include="..\..\engines\saga2\saga2.cpp" />
+		<ClCompile Include="..\..\engines\saga2\sagafunc.cpp" />
+		<ClCompile Include="..\..\engines\saga2\saveload.cpp" />
+		<ClCompile Include="..\..\engines\saga2\sensor.cpp" />
+		<ClCompile Include="..\..\engines\saga2\shorten.cpp" />
+		<ClCompile Include="..\..\engines\saga2\speech.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spelcast.cpp" />
+		<ClCompile Include="..\..\engines\saga2\speldata.cpp" />
+		<ClCompile Include="..\..\engines\saga2\speldraw.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellini.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellio.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellloc.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellsiz.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellspr.cpp" />
+		<ClCompile Include="..\..\engines\saga2\spellsta.cpp" />
+		<ClCompile Include="..\..\engines\saga2\sprite.cpp" />
+		<ClCompile Include="..\..\engines\saga2\target.cpp" />
+		<ClCompile Include="..\..\engines\saga2\task.cpp" />
+		<ClCompile Include="..\..\engines\saga2\terrain.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tile.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tileline.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tileload.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tilemode.cpp" />
+		<ClCompile Include="..\..\engines\saga2\timers.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tower.cpp" />
+		<ClCompile Include="..\..\engines\saga2\towerfta.cpp" />
+		<ClCompile Include="..\..\engines\saga2\transit.cpp" />
+		<ClCompile Include="..\..\engines\saga2\tromode.cpp" />
+		<ClCompile Include="..\..\engines\saga2\uidialog.cpp" />
+		<ClCompile Include="..\..\engines\saga2\vbacksav.cpp" />
+		<ClCompile Include="..\..\engines\saga2\video.cpp" />
+		<ClCompile Include="..\..\engines\saga2\videobox.cpp" />
+		<ClCompile Include="..\..\engines\saga2\vpal.cpp" />
+		<ClCompile Include="..\..\engines\saga2\vwdraw.cpp" />
+		<ClCompile Include="..\..\engines\saga2\weapons.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\saga2\actor.h" />
+		<ClInclude Include="..\..\engines\saga2\annoy.h" />
+		<ClInclude Include="..\..\engines\saga2\assign.h" />
+		<ClInclude Include="..\..\engines\saga2\audio.h" />
+		<ClInclude Include="..\..\engines\saga2\automap.h" />
+		<ClInclude Include="..\..\engines\saga2\band.h" />
+		<ClInclude Include="..\..\engines\saga2\beegee.h" />
+		<ClInclude Include="..\..\engines\saga2\blitters.h" />
+		<ClInclude Include="..\..\engines\saga2\button.h" />
+		<ClInclude Include="..\..\engines\saga2\calendar.h" />
+		<ClInclude Include="..\..\engines\saga2\cmisc.h" />
+		<ClInclude Include="..\..\engines\saga2\code.h" />
+		<ClInclude Include="..\..\engines\saga2\combat.h" />
+		<ClInclude Include="..\..\engines\saga2\console.h" />
+		<ClInclude Include="..\..\engines\saga2\contain.h" />
+		<ClInclude Include="..\..\engines\saga2\detection.h" />
+		<ClInclude Include="..\..\engines\saga2\dice.h" />
+		<ClInclude Include="..\..\engines\saga2\display.h" />
+		<ClInclude Include="..\..\engines\saga2\dispnode.h" />
+		<ClInclude Include="..\..\engines\saga2\document.h" />
+		<ClInclude Include="..\..\engines\saga2\effects.h" />
+		<ClInclude Include="..\..\engines\saga2\enchant.h" />
+		<ClInclude Include="..\..\engines\saga2\floating.h" />
+		<ClInclude Include="..\..\engines\saga2\fontlib.h" />
+		<ClInclude Include="..\..\engines\saga2\fta.h" />
+		<ClInclude Include="..\..\engines\saga2\gamerate.h" />
+		<ClInclude Include="..\..\engines\saga2\gbevel.h" />
+		<ClInclude Include="..\..\engines\saga2\gblitter.h" />
+		<ClInclude Include="..\..\engines\saga2\gdraw.h" />
+		<ClInclude Include="..\..\engines\saga2\gfx.h" />
+		<ClInclude Include="..\..\engines\saga2\gpointer.h" />
+		<ClInclude Include="..\..\engines\saga2\grabinfo.h" />
+		<ClInclude Include="..\..\engines\saga2\grequest.h" />
+		<ClInclude Include="..\..\engines\saga2\gtextbox.h" />
+		<ClInclude Include="..\..\engines\saga2\hresmgr.h" />
+		<ClInclude Include="..\..\engines\saga2\idtypes.h" />
+		<ClInclude Include="..\..\engines\saga2\imagcach.h" />
+		<ClInclude Include="..\..\engines\saga2\input.h" />
+		<ClInclude Include="..\..\engines\saga2\intrface.h" />
+		<ClInclude Include="..\..\engines\saga2\loadmsg.h" />
+		<ClInclude Include="..\..\engines\saga2\localize.h" />
+		<ClInclude Include="..\..\engines\saga2\magic.h" />
+		<ClInclude Include="..\..\engines\saga2\mainmap.h" />
+		<ClInclude Include="..\..\engines\saga2\mapfeatr.h" />
+		<ClInclude Include="..\..\engines\saga2\messager.h" />
+		<ClInclude Include="..\..\engines\saga2\mission.h" />
+		<ClInclude Include="..\..\engines\saga2\modal.h" />
+		<ClInclude Include="..\..\engines\saga2\motion.h" />
+		<ClInclude Include="..\..\engines\saga2\mouseimg.h" />
+		<ClInclude Include="..\..\engines\saga2\msgbox.h" />
+		<ClInclude Include="..\..\engines\saga2\music.h" />
+		<ClInclude Include="..\..\engines\saga2\objects.h" />
+		<ClInclude Include="..\..\engines\saga2\objproto.h" />
+		<ClInclude Include="..\..\engines\saga2\oncall.h" />
+		<ClInclude Include="..\..\engines\saga2\palette.h" />
+		<ClInclude Include="..\..\engines\saga2\panel.h" />
+		<ClInclude Include="..\..\engines\saga2\patrol.h" />
+		<ClInclude Include="..\..\engines\saga2\player.h" />
+		<ClInclude Include="..\..\engines\saga2\priqueue.h" />
+		<ClInclude Include="..\..\engines\saga2\program.h" />
+		<ClInclude Include="..\..\engines\saga2\property.h" />
+		<ClInclude Include="..\..\engines\saga2\rect.h" />
+		<ClInclude Include="..\..\engines\saga2\saga2.h" />
+		<ClInclude Include="..\..\engines\saga2\saveload.h" />
+		<ClInclude Include="..\..\engines\saga2\script.h" />
+		<ClInclude Include="..\..\engines\saga2\sensor.h" />
+		<ClInclude Include="..\..\engines\saga2\setup.h" />
+		<ClInclude Include="..\..\engines\saga2\shorten.h" />
+		<ClInclude Include="..\..\engines\saga2\speech.h" />
+		<ClInclude Include="..\..\engines\saga2\speldefs.h" />
+		<ClInclude Include="..\..\engines\saga2\spellbuk.h" />
+		<ClInclude Include="..\..\engines\saga2\spellio.h" />
+		<ClInclude Include="..\..\engines\saga2\spells.h" />
+		<ClInclude Include="..\..\engines\saga2\spelshow.h" />
+		<ClInclude Include="..\..\engines\saga2\spelvals.h" />
+		<ClInclude Include="..\..\engines\saga2\sprite.h" />
+		<ClInclude Include="..\..\engines\saga2\stimtype.h" />
+		<ClInclude Include="..\..\engines\saga2\tagnoise.h" />
+		<ClInclude Include="..\..\engines\saga2\target.h" />
+		<ClInclude Include="..\..\engines\saga2\task.h" />
+		<ClInclude Include="..\..\engines\saga2\tcoords.h" />
+		<ClInclude Include="..\..\engines\saga2\terrain.h" />
+		<ClInclude Include="..\..\engines\saga2\tile.h" />
+		<ClInclude Include="..\..\engines\saga2\tileline.h" />
+		<ClInclude Include="..\..\engines\saga2\tileload.h" />
+		<ClInclude Include="..\..\engines\saga2\tilemode.h" />
+		<ClInclude Include="..\..\engines\saga2\tilevect.h" />
+		<ClInclude Include="..\..\engines\saga2\timers.h" />
+		<ClInclude Include="..\..\engines\saga2\tower.h" />
+		<ClInclude Include="..\..\engines\saga2\towerfta.h" />
+		<ClInclude Include="..\..\engines\saga2\towerwin.h" />
+		<ClInclude Include="..\..\engines\saga2\transit.h" />
+		<ClInclude Include="..\..\engines\saga2\tromode.h" />
+		<ClInclude Include="..\..\engines\saga2\uidialog.h" />
+		<ClInclude Include="..\..\engines\saga2\uimetrcs.h" />
+		<ClInclude Include="..\..\engines\saga2\uitext.h" />
+		<ClInclude Include="..\..\engines\saga2\vbacksav.h" />
+		<ClInclude Include="..\..\engines\saga2\vdraw.h" />
+		<ClInclude Include="..\..\engines\saga2\version.h" />
+		<ClInclude Include="..\..\engines\saga2\videobox.h" />
+		<ClInclude Include="..\..\engines\saga2\vpage.h" />
+		<ClInclude Include="..\..\engines\saga2\vpal.h" />
+		<ClInclude Include="..\..\engines\saga2\weapons.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\saga2\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

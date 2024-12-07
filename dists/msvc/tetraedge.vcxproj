@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{1DFA6378-D154-49D1-AEE1-07ED4D8E245B}</ProjectGuid>
+		<RootNamespace>tetraedge</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\tetraedge\game\amerzone_game.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\application.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\billboard.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\bonus_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\cellphone.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\character.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\character_settings_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow_opengl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\characters_shadow_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\confirm.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\credits.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\dialog2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\document.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\documents_browser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\documents_browser_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\gallery_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\game.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\game_achievements.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\game_sound.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\global_bonus_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\help_option_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\how_to.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\in_game_scene.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\in_game_scene_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_object.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\inventory_objects_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\loc_file.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\lua_binds.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\main_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\notifier.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\object3d.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\object_settings_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\objectif.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\options_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\owner_error_menu.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\particle_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_cadenas.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_coffre.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_computer_hydra.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_computer_pwd.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_disjoncteur.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_hanjie.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_liquides.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_pentacle.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\puzzle_transfusion.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\question2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\scene_lights_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\splash_screens.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\syberia_game.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\upsell_screen.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\game\youki_manager.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\micropather.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_object2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture_opengl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_3d_texture_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_act_zone.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_animation.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_bezier_curve.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_button_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_camera.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_camera_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_checkbox_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_clip_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_color.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_core.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_extended_text_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_font2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_font3.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_frame_anim.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_free_move_zone.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_frustum.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_3d_object2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_font.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_loc.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_i_text_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_image.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_images_sequence.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_input_mgr.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_interpolation.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_jpeg.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light_opengl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_light_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_list_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_context.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_gui.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_gui_lua_callbacks.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_script.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_lua_thread.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_marker.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_material.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_matricies_stack.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_matrix4x4.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh_opengl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_mesh_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model_animation.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_model_vertex_animation.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_music.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_name_val_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_object.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_obp.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_palette.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_particle.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_pick_mesh.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_pick_mesh2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_png.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_quaternion.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_ray_intersection.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_real_timer.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer_opengl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_renderer_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_resource.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_resource_manager.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene_warp.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scene_warp_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scrolling_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_scummvm_codec.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_sound_manager.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_sprite_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_base2.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_layout.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_text_layout_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tga.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_theora.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tiled_surface.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_tiled_texture.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_timer.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_trs.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_variant.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector2f32.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector2s32.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_vector3f32.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_visual_fade.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp_bloc.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_warp_marker.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_xml_gui.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\te\te_zlib_jpeg.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\tetraedge.cpp" />
+		<ClCompile Include="..\..\engines\tetraedge\to_lua.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\tetraedge\game\amerzone_game.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\application.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\billboard.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\bonus_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\cellphone.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\character.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\character_settings_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow_opengl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\characters_shadow_tinygl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\confirm.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\credits.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\dialog2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\document.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\documents_browser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\documents_browser_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\gallery_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\game.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\game_achievements.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\game_sound.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\global_bonus_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\help_option_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\how_to.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\in_game_scene.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\in_game_scene_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_object.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\inventory_objects_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\loc_file.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\lua_binds.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\main_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\notifier.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\object3d.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\object_settings_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\objectif.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\options_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\owner_error_menu.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\particle_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_cadenas.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_coffre.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_computer_hydra.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_computer_pwd.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_disjoncteur.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_hanjie.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_liquides.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_pentacle.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\puzzle_transfusion.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\question2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\scene_lights_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\splash_screens.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\syberia_game.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\upsell_screen.h" />
+		<ClInclude Include="..\..\engines\tetraedge\game\youki_manager.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\micropather.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_object2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture_opengl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_3d_texture_tinygl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_act_zone.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_animation.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_bezier_curve.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_button_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_callback.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_camera.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_camera_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_checkbox_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_clip_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_color.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_core.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_curve_anim2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_extended_text_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_font2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_font3.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_frame_anim.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_free_move_zone.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_frustum.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_3d_object2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_codec.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_font.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_loc.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_i_text_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_image.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_images_sequence.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_input_mgr.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_interpolation.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_intrusive_ptr.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_jpeg.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light_opengl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_light_tinygl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_list_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_context.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_gui.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_gui_lua_callbacks.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_script.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_lua_thread.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_marker.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_material.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_matricies_stack.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_matrix4x4.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh_opengl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_mesh_tinygl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model_animation.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_model_vertex_animation.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_music.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_name_val_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_object.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_obp.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_palette.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_particle.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_pick_mesh.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_pick_mesh2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_png.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_quaternion.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_ray_intersection.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_real_timer.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_references_counter.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer_opengl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_renderer_tinygl.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_resource.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_resource_manager.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene_warp.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scene_warp_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scrolling_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_scummvm_codec.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_signal.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_sound_manager.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_sprite_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_base2.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_layout.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_text_layout_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tga.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_theora.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tiled_surface.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_tiled_texture.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_timer.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_trs.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_variant.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector2f32.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector2s32.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_vector3f32.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_visual_fade.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp_bloc.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_warp_marker.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_xml_gui.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_xml_parser.h" />
+		<ClInclude Include="..\..\engines\tetraedge\te\te_zlib_jpeg.h" />
+		<ClInclude Include="..\..\engines\tetraedge\detection.h" />
+		<ClInclude Include="..\..\engines\tetraedge\detection_tables.h" />
+		<ClInclude Include="..\..\engines\tetraedge\metaengine.h" />
+		<ClInclude Include="..\..\engines\tetraedge\tetraedge.h" />
+		<ClInclude Include="..\..\engines\tetraedge\to_lua.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\tetraedge\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

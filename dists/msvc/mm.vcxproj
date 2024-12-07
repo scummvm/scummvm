@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{01828097-E19D-4D58-ADC9-DCA52D862AA4}</ProjectGuid>
+		<RootNamespace>mm</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mm\mm1\data\active_spells.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\character.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\game_state.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\items.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\locations.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\monsters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\party.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\roster.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\text_parser.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\trap.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\data\treasure.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\arenko.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\arrested.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\combat.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\detect_magic.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\duplication.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\encounter.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\equip_remove.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\fly.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\game_logic.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\leprechaun.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\monster_touch.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\recharge_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\rest.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\spell_casting.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\spells_monsters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\spells_party.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\use_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\view_base.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\game\wheel_spin.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\gfx\dta.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\gfx\gfx.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\gfx\screen_decoder.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map00.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map01.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map02.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map03.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map04.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map05.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map06.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map07.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map08.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map09.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map10.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map11.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map12.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map13.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map14.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map15.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map16.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map17.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map18.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map19.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map20.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map21.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map22.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map23.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map24.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map25.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map26.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map27.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map28.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map29.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map30.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map31.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map32.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map33.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map34.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map35.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map36.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map37.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map38.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map39.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map40.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map41.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map42.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map43.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map44.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map45.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map46.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map47.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map48.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map49.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map50.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map51.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map52.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map53.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map54.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map55.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map_desert.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\map_town.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\maps\maps.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\utils\mouse.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\utils\strings.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\access_code.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\alamar.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\alien.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\answer_entry.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\arenko.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\arrested.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\chess.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\dog_statue.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\ghost.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\giant.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\gypsy.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\hacker.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\ice_princess.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\inspectron.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\keeper.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\leprechaun.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\lion.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\lord_archer.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\lord_ironfist.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\orango.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\prisoners.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\resistances.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\ruby.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\trivia.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\volcano_god.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\interactions\won_game.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_armor.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_misc.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_weapons.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith_sell_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\blacksmith_subview.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\inn.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\location.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\market.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\statue.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\tavern.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\temple.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\locations\training.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\cast_spell.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\detect_magic.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\duplication.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\fly.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\location.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\recharge_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\spell_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\spells\teleport.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\are_you_ready.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\bash.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\character_base.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\character_info.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\character_manage.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\character_view_combat.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\characters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\color_questions.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\combat.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\create_characters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\dead.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\encounter.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\game.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\game_commands.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\game_messages.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\game_party.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\game_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\main_menu.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\order.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\protect.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\quick_ref.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\rest.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\search.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\text_entry.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\text_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\title.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\trap.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\unlock.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views\wheel_spin.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\access_code.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\alamar.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\alien.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\arenko.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\arrested.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\chess.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\dog_statue.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\ghost.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\giant.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\gypsy.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\hacker.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\ice_princess.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\inspectron.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\interaction.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\interaction_query.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\keeper.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\leprechaun.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\lion.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\lord_archer.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\lord_ironfist.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\orango.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\prisoners.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\resistances.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\ruby.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\scummvm.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\statue.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\trivia.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\interactions\volcano_god.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\blacksmith.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\blacksmith_items.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\inn.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\location.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\market.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\tavern.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\temple.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\locations\training.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\cast_spell.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\detect_magic.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\duplication.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\fly.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\location.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\recharge_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\spellbook.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\spells\teleport.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\button_container.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_base.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_info.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_inventory.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_manage.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_select.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\character_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\characters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\color_questions.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\combat.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\confirm.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\create_characters.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\dead.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\encounter.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\exchange.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\game.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\game_commands.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\game_messages.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\game_party.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\game_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\items_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\main_menu.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\map.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\map_popup.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\party_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\protect.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\quick_ref.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\rest.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\scroll_popup.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\scroll_text.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\scroll_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\search.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\select_number.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\text_entry.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\text_view.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\title.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\trade.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\trap.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\unlock.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\wheel_spin.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\which_character.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\which_item.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\who_will_try.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\won_game.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\views_enh\yes_no.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\console.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\events.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\globals.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\messages.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\mm1.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm1\sound.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\utils\bitmap_font.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\utils\strings.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\utils\strings_data.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\utils\xeen_font.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\cc_archive.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\file.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\sound.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\sound_driver.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\sound_driver_adlib.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\sound_driver_mt32.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\sprites.cpp" />
+		<ClCompile Include="..\..\engines\mm\shared\xeen\xsurface.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\credits_screen.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_awards.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_char_info.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_control_panel.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_copy_protection.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_create_char.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_difficulty.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_dismiss.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_exchange.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_info.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_input.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_items.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_map.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_message.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_party.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_query.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_quests.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_quick_fight.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_quick_ref.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_spells.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\dialogs_whowill.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\dialogs\please_wait.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\swordsofxeen\swordsofxeen.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\swordsofxeen\swordsofxeen_menu.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\worldofxeen\clouds_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\worldofxeen\darkside_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen_menu.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\character.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\combat.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\debugger.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\events.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\files.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\font.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\interface.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\interface_minimap.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\interface_scene.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\item.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\locations.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\map.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\party.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\patcher.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\resources.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\saves.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\screen.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\scripts.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\spells.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\sprites.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\subtitles.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\window.cpp" />
+		<ClCompile Include="..\..\engines\mm\xeen\xeen.cpp" />
+		<ClCompile Include="..\..\engines\mm\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\mm\mm.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mm\mm1\data\active_spells.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\character.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\game_state.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\int_array.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\items.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\locations.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\monsters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\party.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\roster.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\spells_state.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\text_parser.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\trap.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\data\treasure.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\arenko.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\arrested.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\combat.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\detect_magic.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\duplication.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\encounter.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\equip_remove.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\fly.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\game_logic.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\leprechaun.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\monster_touch.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\recharge_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\rest.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\spell_casting.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\spells_monsters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\spells_party.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\use_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\view_base.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\game\wheel_spin.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\gfx\bitmap_font.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\gfx\dta.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\gfx\gfx.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\gfx\screen_decoder.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map00.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map01.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map02.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map03.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map04.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map05.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map06.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map07.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map08.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map09.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map10.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map11.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map12.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map13.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map14.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map15.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map16.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map17.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map18.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map19.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map20.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map21.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map22.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map23.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map24.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map25.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map26.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map27.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map28.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map29.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map30.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map31.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map32.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map33.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map34.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map35.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map36.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map37.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map38.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map39.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map40.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map41.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map42.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map43.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map44.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map45.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map46.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map47.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map48.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map49.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map50.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map51.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map52.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map53.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map54.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map55.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map_desert.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\map_town.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\maps\maps.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\utils\mouse.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\utils\strings.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\access_code.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\alamar.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\alien.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\answer_entry.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\arenko.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\arrested.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\chess.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\dog_statue.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\ghost.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\giant.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\gypsy.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\hacker.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\ice_princess.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\inspectron.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\keeper.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\leprechaun.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\lion.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\lord_archer.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\lord_ironfist.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\orango.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\prisoners.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\resistances.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\ruby.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\trivia.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\volcano_god.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\interactions\won_game.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_armor.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_misc.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith_buy_weapons.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith_sell_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\blacksmith_subview.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\inn.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\location.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\market.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\statue.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\tavern.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\temple.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\locations\training.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\cast_spell.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\detect_magic.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\duplication.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\fly.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\location.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\recharge_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\spell_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\spells\teleport.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\are_you_ready.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\bash.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\character_base.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\character_info.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\character_manage.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\character_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\character_view_combat.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\characters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\color_questions.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\combat.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\create_characters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\dead.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\dialogs.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\encounter.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\game.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\game_commands.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\game_messages.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\game_party.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\game_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\main_menu.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\order.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\protect.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\quick_ref.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\rest.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\search.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\text_entry.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\text_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\title.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\trap.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\unlock.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views\wheel_spin.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\access_code.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\alamar.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\alien.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\arenko.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\arrested.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\chess.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\dog_statue.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\ghost.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\giant.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\gypsy.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\hacker.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\ice_princess.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\inspectron.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\interaction.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\interaction_query.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\keeper.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\leprechaun.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\lion.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\lord_archer.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\lord_ironfist.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\orango.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\prisoners.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\resistances.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\ruby.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\scummvm.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\statue.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\trivia.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\interactions\volcano_god.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\blacksmith.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\blacksmith_items.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\inn.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\location.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\market.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\tavern.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\temple.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\locations\training.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\cast_spell.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\detect_magic.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\duplication.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\fly.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\location.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\recharge_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\spellbook.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\spells\teleport.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\button_container.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_base.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_info.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_inventory.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_manage.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_select.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\character_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\characters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\color_questions.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\combat.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\confirm.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\create_characters.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\dead.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\dialogs.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\encounter.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\exchange.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\game.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\game_commands.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\game_messages.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\game_party.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\game_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\items_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\main_menu.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\map.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\map_popup.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\party_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\protect.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\quick_ref.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\rest.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\scroll_popup.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\scroll_text.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\scroll_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\search.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\select_number.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\text_entry.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\text_view.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\title.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\trade.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\trap.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\unlock.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\wheel_spin.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\which_character.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\which_item.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\who_will_try.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\won_game.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\views_enh\yes_no.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\console.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\events.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\globals.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\messages.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\metaengine.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\mm1.h" />
+		<ClInclude Include="..\..\engines\mm\mm1\sound.h" />
+		<ClInclude Include="..\..\engines\mm\shared\utils\bitmap_font.h" />
+		<ClInclude Include="..\..\engines\mm\shared\utils\strings.h" />
+		<ClInclude Include="..\..\engines\mm\shared\utils\strings_data.h" />
+		<ClInclude Include="..\..\engines\mm\shared\utils\xeen_font.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\cc_archive.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\file.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\sound.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\sound_driver.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\sound_driver_adlib.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\sound_driver_mt32.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\sprites.h" />
+		<ClInclude Include="..\..\engines\mm\shared\xeen\xsurface.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\credits_screen.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_awards.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_char_info.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_control_panel.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_copy_protection.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_create_char.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_difficulty.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_dismiss.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_exchange.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_info.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_input.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_items.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_map.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_message.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_party.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_query.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_quests.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_quick_fight.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_quick_ref.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_spells.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\dialogs_whowill.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\dialogs\please_wait.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\swordsofxeen\swordsofxeen.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\swordsofxeen\swordsofxeen_menu.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\worldofxeen\clouds_cutscenes.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\worldofxeen\darkside_cutscenes.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen_cutscenes.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\worldofxeen\worldofxeen_menu.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\character.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\combat.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\cutscenes.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\debugger.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\events.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\files.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\font.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\interface.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\interface_minimap.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\interface_scene.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\item.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\locations.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\map.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\metaengine.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\party.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\patcher.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\resources.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\saves.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\screen.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\scripts.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\sound.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\spells.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\sprites.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\subtitles.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\window.h" />
+		<ClInclude Include="..\..\engines\mm\xeen\xeen.h" />
+		<ClInclude Include="..\..\engines\mm\detection.h" />
+		<ClInclude Include="..\..\engines\mm\detection_tables.h" />
+		<ClInclude Include="..\..\engines\mm\mm.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mm\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

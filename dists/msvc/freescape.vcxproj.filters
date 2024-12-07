@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="games">
+			<UniqueIdentifier>956EE2B9-51E1-4F05-9512-BA678C4E8249</UniqueIdentifier>
+		</Filter>
+		<Filter Include="games\castle">
+			<UniqueIdentifier>C5FC4D2C-FC4D-4C38-9014-D4A68C08B2FE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="games\dark">
+			<UniqueIdentifier>A8E1E4AC-FC6D-483C-A64C-B310B26B0383</UniqueIdentifier>
+		</Filter>
+		<Filter Include="games\driller">
+			<UniqueIdentifier>891FF7A8-41F1-4179-B519-FA1C37A8A0DD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="games\eclipse">
+			<UniqueIdentifier>1992CAD2-B51A-4441-AFCD-BFA94822AFAE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="language">
+			<UniqueIdentifier>C7B58BC8-6E98-4240-828D-4225D3F19E15</UniqueIdentifier>
+		</Filter>
+		<Filter Include="loaders">
+			<UniqueIdentifier>C856B92C-6231-4B67-9C5A-60AE811D86BC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects">
+			<UniqueIdentifier>FDFBEA0F-5425-4BA7-BE87-D64800DCA496</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\freescape\games\castle\amiga.cpp">
+			<Filter>games\castle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\castle\castle.cpp">
+			<Filter>games\castle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\castle\dos.cpp">
+			<Filter>games\castle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\castle\zx.cpp">
+			<Filter>games\castle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\amiga.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\atari.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\cpc.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\dark.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\dos.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark\zx.cpp">
+			<Filter>games\dark</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\amiga.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\atari.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\c64.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\cpc.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\dos.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\driller.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller\zx.cpp">
+			<Filter>games\driller</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\atari.cpp">
+			<Filter>games\eclipse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\cpc.cpp">
+			<Filter>games\eclipse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\dos.cpp">
+			<Filter>games\eclipse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\eclipse.cpp">
+			<Filter>games\eclipse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\zx.cpp">
+			<Filter>games\eclipse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\palettes.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\language\8bitDetokeniser.cpp">
+			<Filter>language</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\language\instruction.cpp">
+			<Filter>language</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\loaders\8bitBinaryLoader.cpp">
+			<Filter>loaders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\loaders\8bitImage.cpp">
+			<Filter>loaders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\objects\geometricobject.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\objects\group.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\objects\sensor.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\area.cpp" />
+		<ClCompile Include="..\..\engines\freescape\assets.cpp" />
+		<ClCompile Include="..\..\engines\freescape\demo.cpp" />
+		<ClCompile Include="..\..\engines\freescape\events.cpp" />
+		<ClCompile Include="..\..\engines\freescape\font.cpp" />
+		<ClCompile Include="..\..\engines\freescape\freescape.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl_shaders.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\freescape\movement.cpp" />
+		<ClCompile Include="..\..\engines\freescape\sound.cpp" />
+		<ClCompile Include="..\..\engines\freescape\sweepAABB.cpp" />
+		<ClCompile Include="..\..\engines\freescape\ui.cpp" />
+		<ClCompile Include="..\..\engines\freescape\unpack.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\freescape\games\castle\castle.h">
+			<Filter>games\castle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\games\dark\dark.h">
+			<Filter>games\dark</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\games\driller\driller.h">
+			<Filter>games\driller</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\games\eclipse\eclipse.h">
+			<Filter>games\eclipse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\language\8bitDetokeniser.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\language\instruction.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\language\token.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\connections.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\entrance.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\geometricobject.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\global.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\group.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\object.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\sensor.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\area.h" />
+		<ClInclude Include="..\..\engines\freescape\detection.h" />
+		<ClInclude Include="..\..\engines\freescape\font.h" />
+		<ClInclude Include="..\..\engines\freescape\freescape.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl_shaders.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\sound.h" />
+		<ClInclude Include="..\..\engines\freescape\sweepAABB.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\freescape\module.mk" />
+	</ItemGroup>
+</Project>

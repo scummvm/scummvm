@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="debugger">
+			<UniqueIdentifier>18F77BCB-EF71-4747-B4B8-B0FE484BE09D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="minigames">
+			<UniqueIdentifier>0A066179-9C0D-4EF6-A8B9-3E1C8359B3D1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="minigames\adv">
+			<UniqueIdentifier>E890E84A-C782-4021-B389-FC48E65D10C8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="parser">
+			<UniqueIdentifier>BC6DEF66-B96B-4172-BAB5-2ABD250C0D35</UniqueIdentifier>
+		</Filter>
+		<Filter Include="qdcore">
+			<UniqueIdentifier>6D02A170-A5E1-4C85-87DE-C7D05A3B76BE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="qdcore\util">
+			<UniqueIdentifier>E5FDBE89-A95C-4916-97D2-C15076B38F83</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system">
+			<UniqueIdentifier>0F9CDB9B-742E-4DE6-B6D8-36932A2FE7AA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system\graphics">
+			<UniqueIdentifier>A0119E35-33BB-426D-A854-2DC4717FE2CD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system\input">
+			<UniqueIdentifier>525B7A4D-999B-44C6-82BD-DDC2E687B53C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system\sound">
+			<UniqueIdentifier>8251F675-C538-4EFC-A0FB-935B58E63D4E</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\qdengine\debugger\debugtools.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\EffectManager.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\EventManager.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\ExportInterface.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\FlyObject.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\ObjectContainer.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\Range.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\RunTime.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\TextManager.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\common.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\m_triangles.cpp">
+			<Filter>minigames\adv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\parser\qdscr_parser.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\parser\xml_parser.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\parser\xml_tag_buffer.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\AIAStar_API.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\LZ77.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\ResourceDispatcher.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\WinVideo.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\fps_counter.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\plaympp_api.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\splash_screen.cpp">
+			<Filter>qdcore\util</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_frame.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_info.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set_info.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set_preview.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_camera.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_camera_mode.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_data.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_group.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_object_reference.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_conditional_object.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_contour.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_coords_animation.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_coords_animation_point.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_counter.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_d3dutils.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_file_manager.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_font_info.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher_base.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_end.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_animated.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_mouse.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_moving.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_state.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_static.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_scene.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_grid_zone.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_grid_zone_state.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_background.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_button.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_counter.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_dispatcher.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element_state.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element_state_mode.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_object_base.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_save.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_screen.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_slider.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_text_window.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_inventory.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_inventory_cell.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame_config.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame_interface.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_music_track.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_base.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_indexer.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_reference.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_resource.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_scale_info.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text_dispatcher.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text_set.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_setup.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sound.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sound_info.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sprite.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_textdb.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_trigger_chain.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_trigger_element.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_video.cpp">
+			<Filter>qdcore</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\UI_TextParser.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_dispatcher.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_rle.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_rle_z.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_z.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_font.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_tile_animation.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_tile_sprite.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\rle_compress.cpp">
+			<Filter>system\graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\input\input_wndproc.cpp">
+			<Filter>system\input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\input\keyboard_input.cpp">
+			<Filter>system\input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\input\mouse_input.cpp">
+			<Filter>system\input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\sound\snd_dispatcher.cpp">
+			<Filter>system\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\sound\snd_sound.cpp">
+			<Filter>system\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\system\sound\wav_sound.cpp">
+			<Filter>system\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\qdengine\console.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdengine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\qdengine\debugger\debugtools.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\debugger\dt-internal.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\EffectManager.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\EventManager.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\FlyObject.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\HoldData.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\MinigameInterface.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\ObjectContainer.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\Range.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\Rect.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\RunTime.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\TextManager.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\common.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_karaoke.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_puzzle.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_scores.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_swap.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_triangles.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\qdMath.h">
+			<Filter>minigames\adv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_babochka.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_kovrik.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_plate.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_raskr_all.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_sbor_karty.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_states.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_sudoku.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_testo.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\arkada_avtomat.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\book_all.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\inv_popup.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\kartiny.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\maski_21.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\masky_order.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\orchestra.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\puzzle_all.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\qd_empty_minigame_interface.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\scroll.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\shveik_portret.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\shveik_shkatulka.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\minigames\tetris.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\parser\qdscr_parser.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_fwd.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_parser.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_tag.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_tag_buffer.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\2PassScale.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\AIAStar.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\AIAStar_API.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\Filters.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\Handle.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\LZ77.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\ResourceDispatcher.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\SynchroTimer.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\WinVideo.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\fps_counter.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\plaympp_api.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\splash_screen.h">
+			<Filter>qdcore\util</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_frame.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_info.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set_info.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set_preview.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_camera.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_camera_mode.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_data.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_group.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_object_reference.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_conditional_object.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_contour.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_coords_animation.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_coords_animation_point.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_counter.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_d3dutils.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_engine_interface.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_file_manager.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_file_owner.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_font_info.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher_base.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_end.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_animated.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_mouse.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_moving.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_state.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_static.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_scene.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_grid_zone.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_grid_zone_state.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_background.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_button.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_counter.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_dispatcher.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element_state.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element_state_mode.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_object_base.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_save.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_screen.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_slider.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_text_window.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_inventory.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_inventory_cell.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_list.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame_config.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame_interface.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_music_track.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_base.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_indexer.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_reference.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_object_list_container.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_object_map_container.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource_container.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource_dispatcher.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_rnd.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_scale_info.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text_dispatcher.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text_set.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_setup.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound_handle.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound_info.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sprite.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_textdb.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_trigger_chain.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_trigger_element.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_video.h">
+			<Filter>qdcore</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\UI_TextParser.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_dispatcher.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_font.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_screen_region.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_tile_animation.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_tile_sprite.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\rle_compress.h">
+			<Filter>system\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\input\input_wndproc.h">
+			<Filter>system\input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\input\keyboard_input.h">
+			<Filter>system\input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\input\mouse_input.h">
+			<Filter>system\input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\sound\snd_dispatcher.h">
+			<Filter>system\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\sound\snd_sound.h">
+			<Filter>system\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\system\sound\wav_sound.h">
+			<Filter>system\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\qdengine\console.h" />
+		<ClInclude Include="..\..\engines\qdengine\detection_tables.h" />
+		<ClInclude Include="..\..\engines\qdengine\metaengine.h" />
+		<ClInclude Include="..\..\engines\qdengine\qd_fwd.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdengine.h" />
+		<ClInclude Include="..\..\engines\qdengine\resource.h" />
+		<ClInclude Include="..\..\engines\qdengine\xmath.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\qdengine\module.mk" />
+	</ItemGroup>
+</Project>

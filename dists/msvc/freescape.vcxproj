@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{2CC8A409-685D-4EA7-97DF-48B0C8D9CC03}</ProjectGuid>
+		<RootNamespace>freescape</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\freescape\games\castle\amiga.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\castle\castle.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\castle\dos.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\castle\zx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\amiga.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\atari.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\cpc.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\dark.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\dos.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\dark\zx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\amiga.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\atari.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\c64.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\cpc.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\dos.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\driller.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\driller\zx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\atari.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\cpc.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\dos.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\eclipse.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\eclipse\zx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\palettes.cpp" />
+		<ClCompile Include="..\..\engines\freescape\language\8bitDetokeniser.cpp" />
+		<ClCompile Include="..\..\engines\freescape\language\instruction.cpp" />
+		<ClCompile Include="..\..\engines\freescape\loaders\8bitBinaryLoader.cpp" />
+		<ClCompile Include="..\..\engines\freescape\loaders\8bitImage.cpp" />
+		<ClCompile Include="..\..\engines\freescape\objects\geometricobject.cpp" />
+		<ClCompile Include="..\..\engines\freescape\objects\group.cpp" />
+		<ClCompile Include="..\..\engines\freescape\objects\sensor.cpp" />
+		<ClCompile Include="..\..\engines\freescape\area.cpp" />
+		<ClCompile Include="..\..\engines\freescape\assets.cpp" />
+		<ClCompile Include="..\..\engines\freescape\demo.cpp" />
+		<ClCompile Include="..\..\engines\freescape\events.cpp" />
+		<ClCompile Include="..\..\engines\freescape\font.cpp" />
+		<ClCompile Include="..\..\engines\freescape\freescape.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl_shaders.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\freescape\movement.cpp" />
+		<ClCompile Include="..\..\engines\freescape\sound.cpp" />
+		<ClCompile Include="..\..\engines\freescape\sweepAABB.cpp" />
+		<ClCompile Include="..\..\engines\freescape\ui.cpp" />
+		<ClCompile Include="..\..\engines\freescape\unpack.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\freescape\games\castle\castle.h" />
+		<ClInclude Include="..\..\engines\freescape\games\dark\dark.h" />
+		<ClInclude Include="..\..\engines\freescape\games\driller\driller.h" />
+		<ClInclude Include="..\..\engines\freescape\games\eclipse\eclipse.h" />
+		<ClInclude Include="..\..\engines\freescape\language\8bitDetokeniser.h" />
+		<ClInclude Include="..\..\engines\freescape\language\instruction.h" />
+		<ClInclude Include="..\..\engines\freescape\language\token.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\connections.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\entrance.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\geometricobject.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\global.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\group.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\object.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\sensor.h" />
+		<ClInclude Include="..\..\engines\freescape\area.h" />
+		<ClInclude Include="..\..\engines\freescape\detection.h" />
+		<ClInclude Include="..\..\engines\freescape\font.h" />
+		<ClInclude Include="..\..\engines\freescape\freescape.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl_shaders.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\sound.h" />
+		<ClInclude Include="..\..\engines\freescape\sweepAABB.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\freescape\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

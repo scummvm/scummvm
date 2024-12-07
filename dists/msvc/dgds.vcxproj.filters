@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="minigames">
+			<UniqueIdentifier>7E3D64E1-E80A-4035-B18D-0A8762C6C405</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>8972BFE7-B2E1-407D-B709-A2BD6A1058DB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound\drivers">
+			<UniqueIdentifier>1EB8EF9C-14C8-4E65-A29F-F11E086ABCF1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound\resource">
+			<UniqueIdentifier>A4D4DC76-A665-4947-B12D-1D8D284DAFD3</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\dgds\minigames\china_tank.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\minigames\china_train.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\minigames\dragon_arcade.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\minigames\dragon_arcade_ttm.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\minigames\shell_game.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\adlib.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\amigamac1.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\cms.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\midi.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\midipatch.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\resource\resource_audio.cpp">
+			<Filter>sound\resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\resource\sci_resource.cpp">
+			<Filter>sound\resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\midiparser_sci.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\sound\music.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dgds\ads.cpp" />
+		<ClCompile Include="..\..\engines\dgds\clock.cpp" />
+		<ClCompile Include="..\..\engines\dgds\console.cpp" />
+		<ClCompile Include="..\..\engines\dgds\decompress.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dgds.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dgds_rect.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dialog.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dragon_native.cpp" />
+		<ClCompile Include="..\..\engines\dgds\drawing.cpp" />
+		<ClCompile Include="..\..\engines\dgds\font.cpp" />
+		<ClCompile Include="..\..\engines\dgds\game_palettes.cpp" />
+		<ClCompile Include="..\..\engines\dgds\globals.cpp" />
+		<ClCompile Include="..\..\engines\dgds\hoc_intro.cpp" />
+		<ClCompile Include="..\..\engines\dgds\image.cpp" />
+		<ClCompile Include="..\..\engines\dgds\inventory.cpp" />
+		<ClCompile Include="..\..\engines\dgds\menu.cpp" />
+		<ClCompile Include="..\..\engines\dgds\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\dgds\parser.cpp" />
+		<ClCompile Include="..\..\engines\dgds\request.cpp" />
+		<ClCompile Include="..\..\engines\dgds\resource.cpp" />
+		<ClCompile Include="..\..\engines\dgds\scene.cpp" />
+		<ClCompile Include="..\..\engines\dgds\scripts.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound_raw.cpp" />
+		<ClCompile Include="..\..\engines\dgds\ttm.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\dgds\minigames\china_tank.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\minigames\china_train.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\minigames\dragon_arcade.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\minigames\dragon_arcade_ttm.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\minigames\shell_game.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\gm_names.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\macmixer.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\map-mt32-to-gm.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\mididriver.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\resource\sci_resource.h">
+			<Filter>sound\resource</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\midiparser_sci.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\music.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\sound\scispan.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dgds\ads.h" />
+		<ClInclude Include="..\..\engines\dgds\clock.h" />
+		<ClInclude Include="..\..\engines\dgds\console.h" />
+		<ClInclude Include="..\..\engines\dgds\decompress.h" />
+		<ClInclude Include="..\..\engines\dgds\detection_tables.h" />
+		<ClInclude Include="..\..\engines\dgds\dgds.h" />
+		<ClInclude Include="..\..\engines\dgds\dgds_rect.h" />
+		<ClInclude Include="..\..\engines\dgds\dialog.h" />
+		<ClInclude Include="..\..\engines\dgds\dragon_native.h" />
+		<ClInclude Include="..\..\engines\dgds\drawing.h" />
+		<ClInclude Include="..\..\engines\dgds\font.h" />
+		<ClInclude Include="..\..\engines\dgds\game_palettes.h" />
+		<ClInclude Include="..\..\engines\dgds\globals.h" />
+		<ClInclude Include="..\..\engines\dgds\hoc_intro.h" />
+		<ClInclude Include="..\..\engines\dgds\image.h" />
+		<ClInclude Include="..\..\engines\dgds\includes.h" />
+		<ClInclude Include="..\..\engines\dgds\inventory.h" />
+		<ClInclude Include="..\..\engines\dgds\menu.h" />
+		<ClInclude Include="..\..\engines\dgds\parser.h" />
+		<ClInclude Include="..\..\engines\dgds\request.h" />
+		<ClInclude Include="..\..\engines\dgds\resource.h" />
+		<ClInclude Include="..\..\engines\dgds\scene.h" />
+		<ClInclude Include="..\..\engines\dgds\scripts.h" />
+		<ClInclude Include="..\..\engines\dgds\sound.h" />
+		<ClInclude Include="..\..\engines\dgds\sound_raw.h" />
+		<ClInclude Include="..\..\engines\dgds\ttm.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\dgds\module.mk" />
+	</ItemGroup>
+</Project>

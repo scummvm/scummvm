@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="rooms">
+			<UniqueIdentifier>AD971D82-5DF5-4B26-9A62-6F8FDACF1447</UniqueIdentifier>
+		</Filter>
+		<Filter Include="rooms\monster">
+			<UniqueIdentifier>71E6173B-BFD4-4D96-A660-79559190BF78</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\hadesch\rooms\monster\cyclops.cpp">
+			<Filter>rooms\monster</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\monster\illusion.cpp">
+			<Filter>rooms\monster</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\monster\projectile.cpp">
+			<Filter>rooms\monster</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\monster\typhoon.cpp">
+			<Filter>rooms\monster</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\argo.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\athena.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\catacombs.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\credits.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\crete.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\daedalus.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\ferry.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\hadesthrone.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\intro.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\medisle.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\medusa.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\minos.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\minotaur.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\monster.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\olympus.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\options.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\priam.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\quiz.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\riverstyx.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\seriphos.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\trojan.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\troy.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\volcano.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\rooms\walloffame.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\hadesch\ambient.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\baptr.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\gfx_context.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\hadesch.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\herobelt.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\hotzone.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\persistent.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\pod_file.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\pod_image.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\table.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\tag_file.cpp" />
+		<ClCompile Include="..\..\engines\hadesch\video.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\hadesch\rooms\monster.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\hadesch\ambient.h" />
+		<ClInclude Include="..\..\engines\hadesch\baptr.h" />
+		<ClInclude Include="..\..\engines\hadesch\detection_tables.h" />
+		<ClInclude Include="..\..\engines\hadesch\enums.h" />
+		<ClInclude Include="..\..\engines\hadesch\event.h" />
+		<ClInclude Include="..\..\engines\hadesch\gfx_context.h" />
+		<ClInclude Include="..\..\engines\hadesch\hadesch.h" />
+		<ClInclude Include="..\..\engines\hadesch\herobelt.h" />
+		<ClInclude Include="..\..\engines\hadesch\hotzone.h" />
+		<ClInclude Include="..\..\engines\hadesch\persistent.h" />
+		<ClInclude Include="..\..\engines\hadesch\pod_file.h" />
+		<ClInclude Include="..\..\engines\hadesch\pod_image.h" />
+		<ClInclude Include="..\..\engines\hadesch\table.h" />
+		<ClInclude Include="..\..\engines\hadesch\tag_file.h" />
+		<ClInclude Include="..\..\engines\hadesch\video.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\hadesch\module.mk" />
+	</ItemGroup>
+</Project>

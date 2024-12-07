@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets">
+		<Import Project="ScummVM_Globalx86.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<_PropertySheetDisplayName>ScummVM_LLVMx86</_PropertySheetDisplayName>
+		<LinkIncremental>true</LinkIncremental>
+		<GenerateManifest>false</GenerateManifest>
+		<ExecutablePath>$(SCUMMVM_LIBS)\bin;$(SCUMMVM_LIBS)\bin\x86;$(SCUMMVM_LIBS)\Debug\bin;$(ExecutablePath)</ExecutablePath>
+		<LibraryPath>$(SCUMMVM_LIBS)\lib\x86;$(SCUMMVM_LIBS)\lib\x86\Debug;$(SCUMMVM_LIBS)\lib;$(SCUMMVM_LIBS)\Debug\lib;$(LibraryPath)</LibraryPath>
+		<IncludePath>$(SCUMMVM_LIBS)\include;$(SCUMMVM_LIBS)\include\SDL2;$(IncludePath)</IncludePath>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<Optimization>Disabled</Optimization>
+			<PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+			<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+			<FunctionLevelLinking>true</FunctionLevelLinking>
+			<TreatWarningAsError>false</TreatWarningAsError>
+			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+			<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>
+		</ClCompile>
+		<Link>
+			<GenerateDebugInformation>true</GenerateDebugInformation>
+			<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+		</Link>
+	</ItemDefinitionGroup>
+</Project>

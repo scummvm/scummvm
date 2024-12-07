@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{750C2C9A-893B-472D-A0E7-CC1AA2A812D1}</ProjectGuid>
+		<RootNamespace>twp</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\twp\clipper\clipper.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqapi.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqbaselib.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqclass.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqcompiler.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqdebug.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqfuncstate.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqlexer.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqmem.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqobject.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqstate.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqstdaux.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqstdmath.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqstdrex.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqstdstring.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqtable.cpp" />
+		<ClCompile Include="..\..\engines\twp\squirrel\sqvm.cpp" />
+		<ClCompile Include="..\..\engines\twp\actorlib.cpp" />
+		<ClCompile Include="..\..\engines\twp\actorswitcher.cpp" />
+		<ClCompile Include="..\..\engines\twp\audio.cpp" />
+		<ClCompile Include="..\..\engines\twp\callback.cpp" />
+		<ClCompile Include="..\..\engines\twp\camera.cpp" />
+		<ClCompile Include="..\..\engines\twp\console.cpp" />
+		<ClCompile Include="..\..\engines\twp\debugtools.cpp" />
+		<ClCompile Include="..\..\engines\twp\dialog.cpp" />
+		<ClCompile Include="..\..\engines\twp\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\twp\easing.cpp" />
+		<ClCompile Include="..\..\engines\twp\enginedialogtarget.cpp" />
+		<ClCompile Include="..\..\engines\twp\font.cpp" />
+		<ClCompile Include="..\..\engines\twp\genlib.cpp" />
+		<ClCompile Include="..\..\engines\twp\gfx.cpp" />
+		<ClCompile Include="..\..\engines\twp\ggpack.cpp" />
+		<ClCompile Include="..\..\engines\twp\graph.cpp" />
+		<ClCompile Include="..\..\engines\twp\hud.cpp" />
+		<ClCompile Include="..\..\engines\twp\lighting.cpp" />
+		<ClCompile Include="..\..\engines\twp\lip.cpp" />
+		<ClCompile Include="..\..\engines\twp\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\twp\motor.cpp" />
+		<ClCompile Include="..\..\engines\twp\object.cpp" />
+		<ClCompile Include="..\..\engines\twp\objlib.cpp" />
+		<ClCompile Include="..\..\engines\twp\rectf.cpp" />
+		<ClCompile Include="..\..\engines\twp\resmanager.cpp" />
+		<ClCompile Include="..\..\engines\twp\room.cpp" />
+		<ClCompile Include="..\..\engines\twp\roomlib.cpp" />
+		<ClCompile Include="..\..\engines\twp\savegame.cpp" />
+		<ClCompile Include="..\..\engines\twp\scenegraph.cpp" />
+		<ClCompile Include="..\..\engines\twp\shaders.cpp" />
+		<ClCompile Include="..\..\engines\twp\soundlib.cpp" />
+		<ClCompile Include="..\..\engines\twp\spritesheet.cpp" />
+		<ClCompile Include="..\..\engines\twp\sqgame.cpp" />
+		<ClCompile Include="..\..\engines\twp\squtil.cpp" />
+		<ClCompile Include="..\..\engines\twp\syslib.cpp" />
+		<ClCompile Include="..\..\engines\twp\thread.cpp" />
+		<ClCompile Include="..\..\engines\twp\time.cpp" />
+		<ClCompile Include="..\..\engines\twp\tsv.cpp" />
+		<ClCompile Include="..\..\engines\twp\twp.cpp" />
+		<ClCompile Include="..\..\engines\twp\util.cpp" />
+		<ClCompile Include="..\..\engines\twp\vm.cpp" />
+		<ClCompile Include="..\..\engines\twp\walkboxnode.cpp" />
+		<ClCompile Include="..\..\engines\twp\yack.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\twp\squirrel\sqarray.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqclass.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqclosure.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqcompiler.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqconfig.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqfuncproto.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqfuncstate.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqlexer.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqobject.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqopcodes.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqpcheader.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqstate.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqstdaux.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqstdmath.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqstdstring.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqstring.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqtable.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\squirrel.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\squserdata.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\squtils.h" />
+		<ClInclude Include="..\..\engines\twp\squirrel\sqvm.h" />
+		<ClInclude Include="..\..\engines\twp\achievements_tables.h" />
+		<ClInclude Include="..\..\engines\twp\actions.h" />
+		<ClInclude Include="..\..\engines\twp\actorswitcher.h" />
+		<ClInclude Include="..\..\engines\twp\audio.h" />
+		<ClInclude Include="..\..\engines\twp\callback.h" />
+		<ClInclude Include="..\..\engines\twp\camera.h" />
+		<ClInclude Include="..\..\engines\twp\console.h" />
+		<ClInclude Include="..\..\engines\twp\debugtools.h" />
+		<ClInclude Include="..\..\engines\twp\detection.h" />
+		<ClInclude Include="..\..\engines\twp\detection_tables.h" />
+		<ClInclude Include="..\..\engines\twp\dialog.h" />
+		<ClInclude Include="..\..\engines\twp\dialogs.h" />
+		<ClInclude Include="..\..\engines\twp\easing.h" />
+		<ClInclude Include="..\..\engines\twp\enginedialogtarget.h" />
+		<ClInclude Include="..\..\engines\twp\font.h" />
+		<ClInclude Include="..\..\engines\twp\gfx.h" />
+		<ClInclude Include="..\..\engines\twp\ggpack.h" />
+		<ClInclude Include="..\..\engines\twp\graph.h" />
+		<ClInclude Include="..\..\engines\twp\hud.h" />
+		<ClInclude Include="..\..\engines\twp\ids.h" />
+		<ClInclude Include="..\..\engines\twp\lighting.h" />
+		<ClInclude Include="..\..\engines\twp\lip.h" />
+		<ClInclude Include="..\..\engines\twp\metaengine.h" />
+		<ClInclude Include="..\..\engines\twp\motor.h" />
+		<ClInclude Include="..\..\engines\twp\object.h" />
+		<ClInclude Include="..\..\engines\twp\objectanimation.h" />
+		<ClInclude Include="..\..\engines\twp\rectf.h" />
+		<ClInclude Include="..\..\engines\twp\resmanager.h" />
+		<ClInclude Include="..\..\engines\twp\room.h" />
+		<ClInclude Include="..\..\engines\twp\savegame.h" />
+		<ClInclude Include="..\..\engines\twp\scenegraph.h" />
+		<ClInclude Include="..\..\engines\twp\shaders.h" />
+		<ClInclude Include="..\..\engines\twp\spritesheet.h" />
+		<ClInclude Include="..\..\engines\twp\sqgame.h" />
+		<ClInclude Include="..\..\engines\twp\squtil.h" />
+		<ClInclude Include="..\..\engines\twp\task.h" />
+		<ClInclude Include="..\..\engines\twp\thread.h" />
+		<ClInclude Include="..\..\engines\twp\time.h" />
+		<ClInclude Include="..\..\engines\twp\tsv.h" />
+		<ClInclude Include="..\..\engines\twp\twp.h" />
+		<ClInclude Include="..\..\engines\twp\util.h" />
+		<ClInclude Include="..\..\engines\twp\vm.h" />
+		<ClInclude Include="..\..\engines\twp\walkboxnode.h" />
+		<ClInclude Include="..\..\engines\twp\yack.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\twp\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

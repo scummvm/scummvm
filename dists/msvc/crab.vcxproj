@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{6EB66A7A-994D-4483-B33F-032B52B208D2}</ProjectGuid>
+		<RootNamespace>crab</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\crab\TMX\TMXLayer.cpp" />
+		<ClCompile Include="..\..\engines\crab\TMX\TMXMap.cpp" />
+		<ClCompile Include="..\..\engines\crab\TMX\TMXTileSet.cpp" />
+		<ClCompile Include="..\..\engines\crab\ai\SpriteConstant.cpp" />
+		<ClCompile Include="..\..\engines\crab\ai\moveeffect.cpp" />
+		<ClCompile Include="..\..\engines\crab\ai\movement.cpp" />
+		<ClCompile Include="..\..\engines\crab\ai\spriteai.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\AnimationFrame.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\PopUp.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\animation.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\animframe.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\animset.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\fightanim.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\fightmove.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\fightmoves.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\imageeffect.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\sprite.cpp" />
+		<ClCompile Include="..\..\engines\crab\animation\walkframes.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\EventSeqGroup.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\EventSequence.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\GameEventInfo.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\conversationdata.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\effect.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\eventstore.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\gameevent.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\gameeventmanager.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\quest.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\trigger.cpp" />
+		<ClCompile Include="..\..\engines\crab\event\triggerset.cpp" />
+		<ClCompile Include="..\..\engines\crab\image\Image.cpp" />
+		<ClCompile Include="..\..\engines\crab\image\ImageManager.cpp" />
+		<ClCompile Include="..\..\engines\crab\input\cursor.cpp" />
+		<ClCompile Include="..\..\engines\crab\input\fightinput.cpp" />
+		<ClCompile Include="..\..\engines\crab\input\hotkey.cpp" />
+		<ClCompile Include="..\..\engines\crab\input\input.cpp" />
+		<ClCompile Include="..\..\engines\crab\item\Item.cpp" />
+		<ClCompile Include="..\..\engines\crab\item\ItemCollection.cpp" />
+		<ClCompile Include="..\..\engines\crab\item\ItemMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\item\ItemSlot.cpp" />
+		<ClCompile Include="..\..\engines\crab\item\StatPreview.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\LevelExit.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\MusicArea.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\Stairs.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level_ai.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level_collide.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level_draw.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level_load.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\level_objects.cpp" />
+		<ClCompile Include="..\..\engines\crab\level\talknotify.cpp" />
+		<ClCompile Include="..\..\engines\crab\music\MusicManager.cpp" />
+		<ClCompile Include="..\..\engines\crab\people\opinion.cpp" />
+		<ClCompile Include="..\..\engines\crab\people\person.cpp" />
+		<ClCompile Include="..\..\engines\crab\people\personbase.cpp" />
+		<ClCompile Include="..\..\engines\crab\people\trait.cpp" />
+		<ClCompile Include="..\..\engines\crab\stat\Stat.cpp" />
+		<ClCompile Include="..\..\engines\crab\stat\StatDrawHelper.cpp" />
+		<ClCompile Include="..\..\engines\crab\stat\StatTemplate.cpp" />
+		<ClCompile Include="..\..\engines\crab\text\TextManager.cpp" />
+		<ClCompile Include="..\..\engines\crab\text\color.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\AlphaImage.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\Caption.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ChapterIntro.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ClipButton.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\CreditScreen.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\DevConsole.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\FileData.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\GameOverMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\GeneralSettingMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\GfxSettingMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\HealthIndicator.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\HoverInfo.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ImageData.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\Inventory.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\KeyBindMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\MapData.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\MapMarkerMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ModMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\OptionMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\OptionSelect.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ParagraphData.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\PauseMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\PersonHandler.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\PersonScreen.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ProgressBar.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\QuestText.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ReplyButton.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ReplyMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ResolutionMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\SaveGameMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\SectionHeader.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\SlideShow.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\StateButton.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\ToggleButton.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\TraitButton.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\TraitMenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\button.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\dialogbox.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\element.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\emotion.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\hud.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\journal.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\map.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\questmenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\slider.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\textarea.cpp" />
+		<ClCompile Include="..\..\engines\crab\ui\textdata.cpp" />
+		<ClCompile Include="..\..\engines\crab\GameParam.cpp" />
+		<ClCompile Include="..\..\engines\crab\LoadingScreen.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingAgent.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingGraphNode.cpp" />
+		<ClCompile Include="..\..\engines\crab\PathfindingGrid.cpp" />
+		<ClCompile Include="..\..\engines\crab\Polygon.cpp" />
+		<ClCompile Include="..\..\engines\crab\Rectangle.cpp" />
+		<ClCompile Include="..\..\engines\crab\ScreenSettings.cpp" />
+		<ClCompile Include="..\..\engines\crab\Shape.cpp" />
+		<ClCompile Include="..\..\engines\crab\TTSHandler.cpp" />
+		<ClCompile Include="..\..\engines\crab\XMLDoc.cpp" />
+		<ClCompile Include="..\..\engines\crab\app.cpp" />
+		<ClCompile Include="..\..\engines\crab\collision.cpp" />
+		<ClCompile Include="..\..\engines\crab\console.cpp" />
+		<ClCompile Include="..\..\engines\crab\crab.cpp" />
+		<ClCompile Include="..\..\engines\crab\filesystem.cpp" />
+		<ClCompile Include="..\..\engines\crab\game.cpp" />
+		<ClCompile Include="..\..\engines\crab\loaders.cpp" />
+		<ClCompile Include="..\..\engines\crab\mainmenu.cpp" />
+		<ClCompile Include="..\..\engines\crab\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\crab\splash.cpp" />
+		<ClCompile Include="..\..\engines\crab\timer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\crab\TMX\TMXLayer.h" />
+		<ClInclude Include="..\..\engines\crab\TMX\TMXMap.h" />
+		<ClInclude Include="..\..\engines\crab\TMX\TMXTileSet.h" />
+		<ClInclude Include="..\..\engines\crab\TMX\TileInfo.h" />
+		<ClInclude Include="..\..\engines\crab\ai\SpriteConstant.h" />
+		<ClInclude Include="..\..\engines\crab\ai\moveeffect.h" />
+		<ClInclude Include="..\..\engines\crab\ai\movement.h" />
+		<ClInclude Include="..\..\engines\crab\ai\spriteai.h" />
+		<ClInclude Include="..\..\engines\crab\animation\AnimationEffect.h" />
+		<ClInclude Include="..\..\engines\crab\animation\AnimationFrame.h" />
+		<ClInclude Include="..\..\engines\crab\animation\PopUp.h" />
+		<ClInclude Include="..\..\engines\crab\animation\animation.h" />
+		<ClInclude Include="..\..\engines\crab\animation\animframe.h" />
+		<ClInclude Include="..\..\engines\crab\animation\animset.h" />
+		<ClInclude Include="..\..\engines\crab\animation\fightanim.h" />
+		<ClInclude Include="..\..\engines\crab\animation\fightmove.h" />
+		<ClInclude Include="..\..\engines\crab\animation\fightmoves.h" />
+		<ClInclude Include="..\..\engines\crab\animation\fm_ai_data.h" />
+		<ClInclude Include="..\..\engines\crab\animation\imageeffect.h" />
+		<ClInclude Include="..\..\engines\crab\animation\range.h" />
+		<ClInclude Include="..\..\engines\crab\animation\shadow.h" />
+		<ClInclude Include="..\..\engines\crab\animation\sprite.h" />
+		<ClInclude Include="..\..\engines\crab\animation\walkframes.h" />
+		<ClInclude Include="..\..\engines\crab\event\EventSeqGroup.h" />
+		<ClInclude Include="..\..\engines\crab\event\EventSequence.h" />
+		<ClInclude Include="..\..\engines\crab\event\GameEventInfo.h" />
+		<ClInclude Include="..\..\engines\crab\event\changeval.h" />
+		<ClInclude Include="..\..\engines\crab\event\conversationdata.h" />
+		<ClInclude Include="..\..\engines\crab\event\effect.h" />
+		<ClInclude Include="..\..\engines\crab\event\eventstore.h" />
+		<ClInclude Include="..\..\engines\crab\event\gameevent.h" />
+		<ClInclude Include="..\..\engines\crab\event\gameeventmanager.h" />
+		<ClInclude Include="..\..\engines\crab\event\quest.h" />
+		<ClInclude Include="..\..\engines\crab\event\trigger.h" />
+		<ClInclude Include="..\..\engines\crab\event\triggerset.h" />
+		<ClInclude Include="..\..\engines\crab\image\Image.h" />
+		<ClInclude Include="..\..\engines\crab\image\ImageManager.h" />
+		<ClInclude Include="..\..\engines\crab\input\cursor.h" />
+		<ClInclude Include="..\..\engines\crab\input\fightinput.h" />
+		<ClInclude Include="..\..\engines\crab\input\hotkey.h" />
+		<ClInclude Include="..\..\engines\crab\input\input.h" />
+		<ClInclude Include="..\..\engines\crab\item\Item.h" />
+		<ClInclude Include="..\..\engines\crab\item\ItemCollection.h" />
+		<ClInclude Include="..\..\engines\crab\item\ItemMenu.h" />
+		<ClInclude Include="..\..\engines\crab\item\ItemSlot.h" />
+		<ClInclude Include="..\..\engines\crab\item\StatPreview.h" />
+		<ClInclude Include="..\..\engines\crab\level\LevelExit.h" />
+		<ClInclude Include="..\..\engines\crab\level\MusicArea.h" />
+		<ClInclude Include="..\..\engines\crab\level\Stairs.h" />
+		<ClInclude Include="..\..\engines\crab\level\level.h" />
+		<ClInclude Include="..\..\engines\crab\level\level_objects.h" />
+		<ClInclude Include="..\..\engines\crab\level\talknotify.h" />
+		<ClInclude Include="..\..\engines\crab\music\MusicManager.h" />
+		<ClInclude Include="..\..\engines\crab\music\musicparam.h" />
+		<ClInclude Include="..\..\engines\crab\people\opinion.h" />
+		<ClInclude Include="..\..\engines\crab\people\person.h" />
+		<ClInclude Include="..\..\engines\crab\people\personbase.h" />
+		<ClInclude Include="..\..\engines\crab\people\trait.h" />
+		<ClInclude Include="..\..\engines\crab\stat\Stat.h" />
+		<ClInclude Include="..\..\engines\crab\stat\StatDrawHelper.h" />
+		<ClInclude Include="..\..\engines\crab\stat\StatTemplate.h" />
+		<ClInclude Include="..\..\engines\crab\stat\bonus.h" />
+		<ClInclude Include="..\..\engines\crab\text\TextManager.h" />
+		<ClInclude Include="..\..\engines\crab\text\color.h" />
+		<ClInclude Include="..\..\engines\crab\ui\AlphaImage.h" />
+		<ClInclude Include="..\..\engines\crab\ui\Caption.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ChapterIntro.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ClipButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\CreditScreen.h" />
+		<ClInclude Include="..\..\engines\crab\ui\DevConsole.h" />
+		<ClInclude Include="..\..\engines\crab\ui\FileData.h" />
+		<ClInclude Include="..\..\engines\crab\ui\FileMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\GameOverMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\GeneralSettingMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\GfxSettingMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\HealthIndicator.h" />
+		<ClInclude Include="..\..\engines\crab\ui\HoverInfo.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ImageData.h" />
+		<ClInclude Include="..\..\engines\crab\ui\Inventory.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ItemDesc.h" />
+		<ClInclude Include="..\..\engines\crab\ui\KeyBindMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\MapData.h" />
+		<ClInclude Include="..\..\engines\crab\ui\MapMarkerMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ModMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\OptionMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\OptionSelect.h" />
+		<ClInclude Include="..\..\engines\crab\ui\PageMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ParagraphData.h" />
+		<ClInclude Include="..\..\engines\crab\ui\PauseMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\PersonHandler.h" />
+		<ClInclude Include="..\..\engines\crab\ui\PersonScreen.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ProgressBar.h" />
+		<ClInclude Include="..\..\engines\crab\ui\QuestText.h" />
+		<ClInclude Include="..\..\engines\crab\ui\RadioButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\RadioButtonMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ReplyButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ReplyMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ResolutionMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\SaveGameMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\SectionHeader.h" />
+		<ClInclude Include="..\..\engines\crab\ui\SlideShow.h" />
+		<ClInclude Include="..\..\engines\crab\ui\StateButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\TextData.h" />
+		<ClInclude Include="..\..\engines\crab\ui\ToggleButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\TraitButton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\TraitMenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\button.h" />
+		<ClInclude Include="..\..\engines\crab\ui\dialogbox.h" />
+		<ClInclude Include="..\..\engines\crab\ui\element.h" />
+		<ClInclude Include="..\..\engines\crab\ui\emotion.h" />
+		<ClInclude Include="..\..\engines\crab\ui\hud.h" />
+		<ClInclude Include="..\..\engines\crab\ui\journal.h" />
+		<ClInclude Include="..\..\engines\crab\ui\map.h" />
+		<ClInclude Include="..\..\engines\crab\ui\mapbutton.h" />
+		<ClInclude Include="..\..\engines\crab\ui\menu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\questmenu.h" />
+		<ClInclude Include="..\..\engines\crab\ui\slider.h" />
+		<ClInclude Include="..\..\engines\crab\ui\textarea.h" />
+		<ClInclude Include="..\..\engines\crab\GameClock.h" />
+		<ClInclude Include="..\..\engines\crab\GameParam.h" />
+		<ClInclude Include="..\..\engines\crab\LevelResult.h" />
+		<ClInclude Include="..\..\engines\crab\Line.h" />
+		<ClInclude Include="..\..\engines\crab\LoadingScreen.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingAgent.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingGraphNode.h" />
+		<ClInclude Include="..\..\engines\crab\PathfindingGrid.h" />
+		<ClInclude Include="..\..\engines\crab\Polygon.h" />
+		<ClInclude Include="..\..\engines\crab\PriorityQueue.h" />
+		<ClInclude Include="..\..\engines\crab\Rectangle.h" />
+		<ClInclude Include="..\..\engines\crab\ScreenSettings.h" />
+		<ClInclude Include="..\..\engines\crab\Shape.h" />
+		<ClInclude Include="..\..\engines\crab\TTSHandler.h" />
+		<ClInclude Include="..\..\engines\crab\XMLDoc.h" />
+		<ClInclude Include="..\..\engines\crab\app.h" />
+		<ClInclude Include="..\..\engines\crab\backInserter.h" />
+		<ClInclude Include="..\..\engines\crab\collision.h" />
+		<ClInclude Include="..\..\engines\crab\color.h" />
+		<ClInclude Include="..\..\engines\crab\console.h" />
+		<ClInclude Include="..\..\engines\crab\crab.h" />
+		<ClInclude Include="..\..\engines\crab\detection.h" />
+		<ClInclude Include="..\..\engines\crab\filesystem.h" />
+		<ClInclude Include="..\..\engines\crab\game.h" />
+		<ClInclude Include="..\..\engines\crab\gamestate_container.h" />
+		<ClInclude Include="..\..\engines\crab\gamestates.h" />
+		<ClInclude Include="..\..\engines\crab\gametype.h" />
+		<ClInclude Include="..\..\engines\crab\levelpaths.h" />
+		<ClInclude Include="..\..\engines\crab\loaders.h" />
+		<ClInclude Include="..\..\engines\crab\mainmenu.h" />
+		<ClInclude Include="..\..\engines\crab\metaengine.h" />
+		<ClInclude Include="..\..\engines\crab\numstr.h" />
+		<ClInclude Include="..\..\engines\crab\splash.h" />
+		<ClInclude Include="..\..\engines\crab\timer.h" />
+		<ClInclude Include="..\..\engines\crab\vectors.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\crab\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{231568B5-5EB7-4ACE-B019-8576EC4D799A}</ProjectGuid>
+		<RootNamespace>qdengine</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\qdengine\debugger\debugtools.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\EffectManager.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\EventManager.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\ExportInterface.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\FlyObject.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\ObjectContainer.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\Range.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\RunTime.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\TextManager.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\common.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\minigames\adv\m_triangles.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\parser\qdscr_parser.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\parser\xml_parser.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\parser\xml_tag_buffer.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\AIAStar_API.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\LZ77.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\ResourceDispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\WinVideo.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\fps_counter.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\plaympp_api.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\util\splash_screen.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_frame.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_info.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set_info.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_animation_set_preview.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_camera.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_camera_mode.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_data.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_group.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_condition_object_reference.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_conditional_object.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_contour.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_coords_animation.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_coords_animation_point.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_counter.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_d3dutils.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_file_manager.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_font_info.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher_base.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_end.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_animated.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_mouse.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_moving.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_state.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_object_static.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_game_scene.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_grid_zone.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_grid_zone_state.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_background.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_button.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_counter.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_dispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element_state.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_element_state_mode.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_object_base.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_save.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_screen.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_slider.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_interface_text_window.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_inventory.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_inventory_cell.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame_config.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_minigame_interface.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_music_track.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_base.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_indexer.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_named_object_reference.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_resource.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_scale_info.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text_dispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_screen_text_set.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_setup.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sound.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sound_info.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_sprite.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_textdb.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_trigger_chain.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_trigger_element.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdcore\qd_video.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\UI_TextParser.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_dispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_rle.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_rle_z.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_draw_sprite_z.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_font.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_tile_animation.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\gr_tile_sprite.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\graphics\rle_compress.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\input\input_wndproc.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\input\keyboard_input.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\input\mouse_input.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\sound\snd_dispatcher.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\sound\snd_sound.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\system\sound\wav_sound.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\console.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\qdengine\qdengine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\qdengine\debugger\debugtools.h" />
+		<ClInclude Include="..\..\engines\qdengine\debugger\dt-internal.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\EffectManager.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\EventManager.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\FlyObject.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\HoldData.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\MinigameInterface.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\ObjectContainer.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\Range.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\Rect.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\RunTime.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\TextManager.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\common.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_karaoke.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_puzzle.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_scores.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_swap.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\m_triangles.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\adv\qdMath.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_babochka.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_kovrik.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_plate.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_raskr_all.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_sbor_karty.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_states.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_sudoku.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\3mice2_testo.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\arkada_avtomat.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\book_all.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\inv_popup.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\kartiny.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\maski_21.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\masky_order.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\orchestra.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\puzzle_all.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\qd_empty_minigame_interface.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\scroll.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\shveik_portret.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\shveik_shkatulka.h" />
+		<ClInclude Include="..\..\engines\qdengine\minigames\tetris.h" />
+		<ClInclude Include="..\..\engines\qdengine\parser\qdscr_parser.h" />
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_fwd.h" />
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_parser.h" />
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_tag.h" />
+		<ClInclude Include="..\..\engines\qdengine\parser\xml_tag_buffer.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\2PassScale.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\AIAStar.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\AIAStar_API.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\Filters.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\Handle.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\LZ77.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\ResourceDispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\SynchroTimer.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\WinVideo.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\fps_counter.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\plaympp_api.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\util\splash_screen.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_frame.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_info.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set_info.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_animation_set_preview.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_camera.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_camera_mode.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_data.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_group.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_condition_object_reference.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_conditional_object.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_contour.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_coords_animation.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_coords_animation_point.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_counter.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_d3dutils.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_engine_interface.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_file_manager.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_file_owner.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_font_info.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_dispatcher_base.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_end.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_animated.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_mouse.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_moving.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_state.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_object_static.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_game_scene.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_grid_zone.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_grid_zone_state.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_background.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_button.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_counter.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element_state.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_element_state_mode.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_object_base.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_save.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_screen.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_slider.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_interface_text_window.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_inventory.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_inventory_cell.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_list.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame_config.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_minigame_interface.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_music_track.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_base.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_indexer.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_named_object_reference.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_object_list_container.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_object_map_container.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource_container.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_resource_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_rnd.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_scale_info.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_screen_text_set.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_setup.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound_handle.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sound_info.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_sprite.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_textdb.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_trigger_chain.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_trigger_element.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdcore\qd_video.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\UI_TextParser.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_font.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_screen_region.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_tile_animation.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\gr_tile_sprite.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\graphics\rle_compress.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\input\input_wndproc.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\input\keyboard_input.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\input\mouse_input.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\sound\snd_dispatcher.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\sound\snd_sound.h" />
+		<ClInclude Include="..\..\engines\qdengine\system\sound\wav_sound.h" />
+		<ClInclude Include="..\..\engines\qdengine\console.h" />
+		<ClInclude Include="..\..\engines\qdengine\detection_tables.h" />
+		<ClInclude Include="..\..\engines\qdengine\metaengine.h" />
+		<ClInclude Include="..\..\engines\qdengine\qd_fwd.h" />
+		<ClInclude Include="..\..\engines\qdengine\qdengine.h" />
+		<ClInclude Include="..\..\engines\qdengine\resource.h" />
+		<ClInclude Include="..\..\engines\qdengine\xmath.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\qdengine\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,3161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="nuvie">
+			<UniqueIdentifier>F6006933-3A7A-48FD-939D-591D509042DE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\actors">
+			<UniqueIdentifier>D39AE697-DFD1-4819-8A54-AA912B955B40</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\conf">
+			<UniqueIdentifier>8A64B6A5-BAC1-4EC1-AB65-2330F384C69C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\core">
+			<UniqueIdentifier>E72AD04D-EF20-47A8-B40C-18C7D501911D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\files">
+			<UniqueIdentifier>5AEF0383-DBD8-4785-8104-F07E7042ACC8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\fonts">
+			<UniqueIdentifier>3B5AEB9D-D005-4BB6-B20D-A82D78DB3EF9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\gui">
+			<UniqueIdentifier>A8928EC6-52A4-4128-979C-BDE2D30299AC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\gui\widgets">
+			<UniqueIdentifier>273825B0-B62E-44D0-8EB6-F7C1DB0C6765</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\keybinding">
+			<UniqueIdentifier>161F5D7C-BEF6-445E-883F-696268E5B7CB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\menus">
+			<UniqueIdentifier>BAC0652F-0B36-4F17-B6D0-00B13B49B4A6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\misc">
+			<UniqueIdentifier>7C68F4C5-125E-49B1-9581-5E4CBF931F6E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\pathfinder">
+			<UniqueIdentifier>0961C908-FD80-4EF5-B96F-F4D7281736B1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\portraits">
+			<UniqueIdentifier>D85E023B-A961-4516-90A4-C6AA7B259A8D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\save">
+			<UniqueIdentifier>FB420737-A9D9-49A1-A63A-4F369D65CD15</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\screen">
+			<UniqueIdentifier>13BF04BE-CCA3-4E5F-A63D-FD7D73F9109F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\script">
+			<UniqueIdentifier>B842EC1E-2ADE-4C60-8209-2521E8207D92</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\sound">
+			<UniqueIdentifier>58FED6F6-2182-4BAF-8FC7-6F5C958B43B2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\sound\adplug">
+			<UniqueIdentifier>8DAD678C-1F08-43E6-98B4-03297FF7471A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\sound\decoder">
+			<UniqueIdentifier>64953AB9-2A51-4999-99EA-65DCAFAD2105</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\usecode">
+			<UniqueIdentifier>AF758FD7-1906-4EB8-8A2A-880079EF449A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nuvie\views">
+			<UniqueIdentifier>7EE40E6E-BFD5-4F75-BB50-21F170B0585C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="shared">
+			<UniqueIdentifier>B89C8608-48CB-4F4B-8B6E-21211067EF31</UniqueIdentifier>
+		</Filter>
+		<Filter Include="shared\conf">
+			<UniqueIdentifier>36B3FA41-7BBE-4815-BC8C-F8288D113DE2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="shared\core">
+			<UniqueIdentifier>89121683-BB45-4B30-8176-E3CA70FEB24F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="shared\engine">
+			<UniqueIdentifier>B388CB09-DA91-4E0B-B989-779FF36C95BE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="shared\std">
+			<UniqueIdentifier>A87C266F-C21F-4300-922C-63240CB101F1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4">
+			<UniqueIdentifier>843DE9CE-85F9-4499-B249-85E2C742B04A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\controllers">
+			<UniqueIdentifier>2509E63D-F847-495A-814A-AE9BE7BFB897</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\conversation">
+			<UniqueIdentifier>343FD71D-556B-4A9A-A0D4-7D73A10262B9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\core">
+			<UniqueIdentifier>546D5188-E2E9-4222-A13C-7035A7DD4F42</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\core\lzw">
+			<UniqueIdentifier>4524C5D7-924F-4199-A9D8-B90434F01A1E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\events">
+			<UniqueIdentifier>1833C9F6-F76D-497A-B566-1C718A256100</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\filesys">
+			<UniqueIdentifier>297E5D7B-D1AC-4064-A202-28D5909C8370</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\game">
+			<UniqueIdentifier>C7019CB6-BF88-423B-8C67-947B6D9B44F3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\gfx">
+			<UniqueIdentifier>98223867-212E-43B7-AEC4-5DFA287F9278</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\map">
+			<UniqueIdentifier>516531B2-AC50-496F-9177-EC8843B9A5EC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\sound">
+			<UniqueIdentifier>9CAC82AB-FD33-4DE7-80BC-F31A40EE5924</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima4\views">
+			<UniqueIdentifier>89AEB0A5-CE1C-46EE-900C-2F00CD4110D8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8">
+			<UniqueIdentifier>849ABF29-6898-4129-95BC-09AEF53903D5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\audio">
+			<UniqueIdentifier>27BA5AB3-8C89-46FB-8562-77C4CBFEA2FB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\conf">
+			<UniqueIdentifier>87B786AE-1299-4340-8DD6-C9A80B6D6F69</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\convert">
+			<UniqueIdentifier>285D11C4-3495-4F2B-8D82-3F9F5559E76E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\convert\crusader">
+			<UniqueIdentifier>79BBBE5B-09AC-4E74-B7AB-88B95E139180</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\convert\u8">
+			<UniqueIdentifier>E561F53B-A448-411A-BC75-3638319D7A6A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\filesys">
+			<UniqueIdentifier>8259C865-39BB-4935-9FEE-99A347B37361</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\games">
+			<UniqueIdentifier>7F13E86C-6294-47EF-818B-42D522C009A8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\gfx">
+			<UniqueIdentifier>3193F827-818B-4450-B0A3-B7BC6BAA7C5F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\gfx\fonts">
+			<UniqueIdentifier>E6B9F508-9D65-4749-873B-FEBEE7462725</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\gumps">
+			<UniqueIdentifier>56B1E7FB-6CD6-45F9-806F-6AAFA513A549</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\gumps\widgets">
+			<UniqueIdentifier>BEE22B7F-1688-454D-B8C8-BB2D07965EE5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\kernel">
+			<UniqueIdentifier>48FC279D-746F-4474-8656-0F988DE9C2A0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\misc">
+			<UniqueIdentifier>DCE00A8C-68B3-49D8-874D-4C9FB3BCEBDF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\usecode">
+			<UniqueIdentifier>3BE78B6E-1C22-41DD-A1C0-EECBCC662576</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\world">
+			<UniqueIdentifier>C537BDC2-E555-40ED-B795-3DD6411727A8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ultima8\world\actors">
+			<UniqueIdentifier>C484CD18-D971-416F-9850-79A35E99ABA2</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\actor.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\actor_manager.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\md_actor.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\se_actor.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\u6_actor.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\actors\wou_actor.cpp">
+			<Filter>nuvie\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\conf\configuration.cpp">
+			<Filter>nuvie\conf</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\conf\misc.cpp">
+			<Filter>nuvie\conf</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\anim_manager.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\book.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\converse.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\converse_interpret.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\converse_speech.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\cursor.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\debug.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\debugger.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\effect.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\effect_manager.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\egg_manager.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\events.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\game.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\game_clock.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\look.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\magic.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\map.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\nuvie_defs.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\obj.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\obj_manager.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\party.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\player.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\tile_manager.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\timed_event.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\core\weather.cpp">
+			<Filter>nuvie\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\nuvie_bmp_file.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\nuvie_file_list.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\nuvie_io.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\nuvie_io_file.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\tmx_map.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\u6_bmp.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\u6_lib_n.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\u6_lzw.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\u6_shape.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\files\utils.cpp">
+			<Filter>nuvie\files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\bmp_font.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\conv_font.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\font.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\font_manager.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\u6_font.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\fonts\wou_font.cpp">
+			<Filter>nuvie\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\background.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\command_bar.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\command_bar_new_ui.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\console.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\converse_gump.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\converse_gump_wou.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\fps_counter.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\gui_widget.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\map_window.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\msg_scroll.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\widgets\msg_scroll_new_ui.cpp">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_area.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_button.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_console.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_dialog.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_drag_manager.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_font.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_load_image.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_scroll_bar.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_scroller.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_text.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_text_input.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_text_toggle_button.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\gui\gui_yes_no_dialog.cpp">
+			<Filter>nuvie\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\keybinding\key_actions.cpp">
+			<Filter>nuvie\keybinding</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\keybinding\key_help_dialog.cpp">
+			<Filter>nuvie\keybinding</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\keybinding\keys.cpp">
+			<Filter>nuvie\keybinding</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\asset_viewer_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\audio_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\cheats_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\game_menu_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\gameplay_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\input_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\menus\video_dialog.cpp">
+			<Filter>nuvie\menus</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\misc\iavl_tree.cpp">
+			<Filter>nuvie\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\misc\sdl_compat.cpp">
+			<Filter>nuvie\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\misc\u6_line_walker.cpp">
+			<Filter>nuvie\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\misc\u6_list.cpp">
+			<Filter>nuvie\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\misc\u6_misc.cpp">
+			<Filter>nuvie\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\actor_path_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\astar_path.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\combat_path_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\dir_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\party_path_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\path.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\path_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\sched_path_finder.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\seek_path.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\pathfinder\u6_astar_path.cpp">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\portraits\portrait.cpp">
+			<Filter>nuvie\portraits</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\portraits\portrait_md.cpp">
+			<Filter>nuvie\portraits</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\portraits\portrait_se.cpp">
+			<Filter>nuvie\portraits</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\portraits\portrait_u6.cpp">
+			<Filter>nuvie\portraits</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\save\save_game.cpp">
+			<Filter>nuvie\save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\screen\dither.cpp">
+			<Filter>nuvie\screen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\screen\game_palette.cpp">
+			<Filter>nuvie\screen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\screen\screen.cpp">
+			<Filter>nuvie\screen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\screen\surface.cpp">
+			<Filter>nuvie\screen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\script\script.cpp">
+			<Filter>nuvie\script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\script\script_actor.cpp">
+			<Filter>nuvie\script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\script\script_cutscene.cpp">
+			<Filter>nuvie\script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\adplug_player.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\emu_opl.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\fm_opl.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\mid.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\opl_class.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adplug\u6m.cpp">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\custom_sfx_manager.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\adlib_sfx_stream.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\fm_towns_decoder_stream.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\pc_speaker.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\pc_speaker_stream.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\random_collection_audio_stream.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\decoder\u6_adplug_decoder_stream.cpp">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\adlib_sfx_manager.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\mididrv_m_adlib.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\mididrv_m_mt32.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\midiparser_m.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\origin_fx_adib_driver.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\pc_speaker_sfx_manager.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\song.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\song_adplug.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\song_filename.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\sound_manager.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\sound\towns_sfx_manager.cpp">
+			<Filter>nuvie\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\usecode\u6_usecode.cpp">
+			<Filter>nuvie\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\usecode\usecode.cpp">
+			<Filter>nuvie\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\actor_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\container_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\container_widget.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\container_widget_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\doll_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\doll_widget.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\draggable_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\inventory_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\inventory_widget.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\map_editor_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\md_sky_strip_widget.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\party_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\portrait_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\portrait_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\scroll_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\scroll_widget_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\sign_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\spell_view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\spell_view_gump.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\sun_moon_ribbon.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\sun_moon_strip_widget.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\view.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\views\view_manager.cpp">
+			<Filter>nuvie\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\metaengine.cpp">
+			<Filter>nuvie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\nuvie\nuvie.cpp">
+			<Filter>nuvie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\conf\xml_node.cpp">
+			<Filter>shared\conf</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\conf\xml_tree.cpp">
+			<Filter>shared\conf</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\core\file.cpp">
+			<Filter>shared\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\engine\data_archive.cpp">
+			<Filter>shared\engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\engine\debugger.cpp">
+			<Filter>shared\engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\engine\events.cpp">
+			<Filter>shared\engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\engine\ultima.cpp">
+			<Filter>shared\engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\shared\std\string.cpp">
+			<Filter>shared\std</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\alpha_action_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\camp_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\combat_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\game_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\inn_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\intro_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\key_handler_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\menu_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\read_choice_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\read_dir_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\read_int_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\read_player_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\read_string_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\reagents_menu_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\wait_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\controllers\ztats_controller.cpp">
+			<Filter>ultima4\controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\conversation\conversation.cpp">
+			<Filter>ultima4\conversation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\conversation\dialogueloader.cpp">
+			<Filter>ultima4\conversation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_hw.cpp">
+			<Filter>ultima4\conversation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_lb.cpp">
+			<Filter>ultima4\conversation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_tlk.cpp">
+			<Filter>ultima4\conversation</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\lzw\hash.cpp">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\lzw\lzw.cpp">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\lzw\u4decode.cpp">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\config.cpp">
+			<Filter>ultima4\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\debugger.cpp">
+			<Filter>ultima4\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\debugger_actions.cpp">
+			<Filter>ultima4\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\settings.cpp">
+			<Filter>ultima4\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\core\utils.cpp">
+			<Filter>ultima4\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\events\event_handler.cpp">
+			<Filter>ultima4\events</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\events\timed_event_mgr.cpp">
+			<Filter>ultima4\events</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\filesys\rle.cpp">
+			<Filter>ultima4\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\filesys\savegame.cpp">
+			<Filter>ultima4\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\filesys\u4file.cpp">
+			<Filter>ultima4\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\armor.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\aura.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\codex.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\context.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\creature.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\death.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\game.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\item.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\moongate.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\names.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\object.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\person.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\player.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\portal.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\script.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\spell.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\game\weapon.cpp">
+			<Filter>ultima4\game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\image.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\imageloader.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\imageloader_fmtowns.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\imageloader_u4.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\imagemgr.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\scale.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\gfx\screen.cpp">
+			<Filter>ultima4\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\annotation.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\city.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\direction.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\dungeon.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\location.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\map.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\map_tile.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\maploader.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\mapmgr.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\movement.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\shrine.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\tile.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\tileanim.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\tilemap.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\map\tileset.cpp">
+			<Filter>ultima4\map</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\sound\music.cpp">
+			<Filter>ultima4\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\sound\sound.cpp">
+			<Filter>ultima4\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\ultima4.cpp">
+			<Filter>ultima4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\dungeonview.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\imageview.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\menu.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\menuitem.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\stats.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\textview.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\tileview.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\views\view.cpp">
+			<Filter>ultima4\views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima4\metaengine.cpp">
+			<Filter>ultima4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\audio_channel.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\audio_mixer.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\audio_process.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\audio_sample.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\cru_music_process.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\midi_player.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\music_flex.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\music_process.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\raw_audio_sample.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\sonarc_audio_sample.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\sound_flex.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\speech_flex.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\audio\u8_music_process.cpp">
+			<Filter>ultima8\audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\conf\config_file_manager.cpp">
+			<Filter>ultima8\conf</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\convert\crusader\convert_shape_crusader.cpp">
+			<Filter>ultima8\convert\crusader</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\convert\u8\convert_shape_u8.cpp">
+			<Filter>ultima8\convert\u8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\convert\convert_shape.cpp">
+			<Filter>ultima8\convert</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\filesys\archive.cpp">
+			<Filter>ultima8\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\filesys\flex_file.cpp">
+			<Filter>ultima8\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\filesys\raw_archive.cpp">
+			<Filter>ultima8\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\filesys\savegame.cpp">
+			<Filter>ultima8\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\filesys\u8_save_file.cpp">
+			<Filter>ultima8\filesys</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\cru_game.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\game.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\game_data.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\game_info.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\start_crusader_process.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\start_u8_process.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\treasure_loader.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\games\u8_game.cpp">
+			<Filter>ultima8\games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\font.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\font_manager.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\font_shape_archive.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\jp_font.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\jp_rendered_text.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\rendered_text.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\shape_font.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\shape_rendered_text.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\tt_font.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fonts\ttf_rendered_text.cpp">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\anim_dat.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\avi_player.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\cycle_process.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\fade_to_modal_process.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\frame_id.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\gump_shape_archive.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\inverter_process.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\main_shape_archive.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\palette.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\palette_fader_process.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\palette_manager.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\raw_shape_frame.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\render_surface.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\shape.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\shape_archive.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\shape_frame.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\shape_info.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\skf_player.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\type_flags.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\wpn_ovlay_dat.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gfx\xform_blend.cpp">
+			<Filter>ultima8\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\widgets\button_widget.cpp">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\widgets\edit_widget.cpp">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\widgets\sliding_widget.cpp">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\widgets\text_widget.cpp">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\ask_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\bark_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\book_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\computer_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\container_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\credits_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_ammo_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_credits_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_demo_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_energy_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_health_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_inventory_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_menu_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_pickup_area_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_pickup_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_stat_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_status_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\cru_weapon_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\desktop_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\difficulty_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\fast_area_vis_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\game_map_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\gump_notify_process.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\inverter_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\item_relative_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\keypad_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\main_menu_process.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\menu_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\message_box_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\mini_stats_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\minimap_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\modal_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\movie_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\paged_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\paperdoll_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\quit_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\readable_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\resizable_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\scroll_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\shape_viewer_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\slider_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\target_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\translucent_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\u8_save_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\weasel_dat.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\gumps\weasel_gump.cpp">
+			<Filter>ultima8\gumps</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\delay_process.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\kernel.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\mouse.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\object.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\object_manager.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\kernel\process.cpp">
+			<Filter>ultima8\kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\misc\debugger.cpp">
+			<Filter>ultima8\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\misc\encoding.cpp">
+			<Filter>ultima8\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\misc\id_man.cpp">
+			<Filter>ultima8\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\misc\util.cpp">
+			<Filter>ultima8\misc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\bit_set.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\byte_set.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\uc_list.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\uc_machine.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\uc_process.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\uc_stack.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\usecode.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\usecode\usecode_flex.cpp">
+			<Filter>ultima8\usecode</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\actor.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\actor_anim_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\actor_bark_notify_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\ambush_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\anim_action.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\animation.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\animation_tracker.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\attack_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\auto_firer_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\avatar_death_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\avatar_gravity_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\avatar_mover_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\battery_charger_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\clear_feign_death_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\combat_dat.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\combat_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\cru_avatar_mover_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\cru_healer_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\cru_pathfinder_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\grant_peace_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\guard_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\heal_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\loiter_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\main_actor.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\npc_dat.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\pace_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\pathfinder.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\pathfinder_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\quick_avatar_mover_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\resurrection_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\rolling_thunder_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\scheduler_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\surrender_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\targeted_anim_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\teleport_to_egg_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\actors\u8_avatar_mover_process.cpp">
+			<Filter>ultima8\world\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\bobo_boomer_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\camera_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\container.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\create_item_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\crosshair_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\current_map.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\damage_info.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\destroy_item_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\egg.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\egg_hatcher_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\fire_type.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\fire_type_table.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\fireball_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\get_object.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\glob_egg.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\gravity_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\item.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\item_factory.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\item_selection_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\item_sorter.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\map.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\map_glob.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\minimap.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\missile_tracker.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\monster_egg.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\snap_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\sort_item.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\split_item_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\sprite_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\super_sprite_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\target_reticle_process.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\teleport_egg.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\world\world.cpp">
+			<Filter>ultima8\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\metaengine.cpp">
+			<Filter>ultima8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\ultima8\ultima8.cpp">
+			<Filter>ultima8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\ultima\metaengine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\actor.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\actor_manager.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\md_actor.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\se_actor.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\u6_actor.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\u6_actor_types.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\u6_work_types.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\actors\wou_actor.h">
+			<Filter>nuvie\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\conf\config_node.h">
+			<Filter>nuvie\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\conf\configuration.h">
+			<Filter>nuvie\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\conf\misc.h">
+			<Filter>nuvie\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\anim_manager.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\book.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\converse.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\converse_interpret.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\converse_speech.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\cursor.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\debugger.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\effect.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\effect_manager.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\egg_manager.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\events.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\game.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\game_clock.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\look.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\magic.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\map.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\nuvie_defs.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\obj.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\obj_manager.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\party.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\player.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\tile_manager.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\timed_event.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\u6_objects.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\core\weather.h">
+			<Filter>nuvie\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\nuvie_bmp_file.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\nuvie_file_list.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\nuvie_io.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\nuvie_io_file.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\tmx_map.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\u6_bmp.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\u6_lib_n.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\u6_lzw.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\u6_shape.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\files\utils.h">
+			<Filter>nuvie\files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\bmp_font.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\conv_font.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\font.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\font_manager.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\u6_font.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\fonts\wou_font.h">
+			<Filter>nuvie\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\background.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\command_bar.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\command_bar_new_ui.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\console.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\converse_gump.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\converse_gump_wou.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\fps_counter.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\gui_widget.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\map_window.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\msg_scroll.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\widgets\msg_scroll_new_ui.h">
+			<Filter>nuvie\gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_area.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_button.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_callback.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_console.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_dialog.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_drag_area.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_drag_manager.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_font.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_load_image.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_scroll_bar.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_scroller.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_status.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_text.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_text_input.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_text_toggle_button.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_types.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\gui_yes_no_dialog.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\gui\the_font.h">
+			<Filter>nuvie\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\keybinding\key_actions.h">
+			<Filter>nuvie\keybinding</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\keybinding\key_help_dialog.h">
+			<Filter>nuvie\keybinding</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\keybinding\keys.h">
+			<Filter>nuvie\keybinding</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\keybinding\keys_enum.h">
+			<Filter>nuvie\keybinding</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\asset_viewer_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\audio_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\cheats_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\game_menu_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\gameplay_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\input_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\menus\video_dialog.h">
+			<Filter>nuvie\menus</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\actor_list.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\call_back.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\iavl_tree.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\map_entity.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\sdl_compat.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\u6_line_walker.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\u6_llist.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\misc\u6_misc.h">
+			<Filter>nuvie\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\actor_path_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\astar_path.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\combat_path_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\dir_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\party_path_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\path.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\path_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\sched_path_finder.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\seek_path.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\pathfinder\u6_astar_path.h">
+			<Filter>nuvie\pathfinder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\portraits\portrait.h">
+			<Filter>nuvie\portraits</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\portraits\portrait_md.h">
+			<Filter>nuvie\portraits</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\portraits\portrait_se.h">
+			<Filter>nuvie\portraits</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\portraits\portrait_u6.h">
+			<Filter>nuvie\portraits</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\save\obj_list.h">
+			<Filter>nuvie\save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\save\save_game.h">
+			<Filter>nuvie\save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\screen\dither.h">
+			<Filter>nuvie\screen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\screen\game_palette.h">
+			<Filter>nuvie\screen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\screen\screen.h">
+			<Filter>nuvie\screen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\screen\surface.h">
+			<Filter>nuvie\screen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\script\script.h">
+			<Filter>nuvie\script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\script\script_actor.h">
+			<Filter>nuvie\script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\script\script_cutscene.h">
+			<Filter>nuvie\script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\adplug_player.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\emu_opl.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\fm_opl.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\mid.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\opl.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\opl_class.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\silent_opl.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adplug\u6m.h">
+			<Filter>nuvie\sound\adplug</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\custom_sfx_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\adlib_sfx_stream.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\fm_towns_decoder_stream.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\pc_speaker.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\pc_speaker_stream.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\random_collection_audio_stream.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\decoder\u6_adplug_decoder_stream.h">
+			<Filter>nuvie\sound\decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\adlib_sfx_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\mididrv_m_adlib.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\mididrv_m_mt32.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\midiparser_m.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\origin_fx_adib_driver.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\pc_speaker_sfx_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\sfx.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\sfx_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\song.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\song_adplug.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\song_filename.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\sound.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\sound_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\sound\towns_sfx_manager.h">
+			<Filter>nuvie\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\usecode\u6_object_types.h">
+			<Filter>nuvie\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\usecode\u6_usecode.h">
+			<Filter>nuvie\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\usecode\usecode.h">
+			<Filter>nuvie\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\actor_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\container_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\container_widget.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\container_widget_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\doll_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\doll_widget.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\draggable_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\inventory_font.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\inventory_message.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\inventory_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\inventory_widget.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\map_editor_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\md_sky_strip_widget.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\party_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\portrait_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\portrait_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\scroll_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\scroll_widget_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\sign_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\spell_view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\spell_view_gump.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\sun_moon_ribbon.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\sun_moon_strip_widget.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\view.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\views\view_manager.h">
+			<Filter>nuvie\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\metaengine.h">
+			<Filter>nuvie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\nuvie\nuvie.h">
+			<Filter>nuvie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\conf\conf_serializer.h">
+			<Filter>shared\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\conf\xml_node.h">
+			<Filter>shared\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\conf\xml_tree.h">
+			<Filter>shared\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\base_object.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\character.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\file.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\game_state.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\lzw.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\map.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\message_target.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\mouse_cursor.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\named_item.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\party.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\rect.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\str.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\tree_item.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\utils.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\core\widgets.h">
+			<Filter>shared\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\data_archive.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\debugger.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\events.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\input_handler.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\input_translator.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\messages.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\resources.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\engine\ultima.h">
+			<Filter>shared\engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\std\containers.h">
+			<Filter>shared\std</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\shared\std\string.h">
+			<Filter>shared\std</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\alpha_action_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\camp_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\combat_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\game_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\inn_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\intro_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\key_handler_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\menu_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\read_choice_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\read_dir_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\read_int_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\read_player_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\read_string_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\reagents_menu_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\wait_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\controllers\ztats_controller.h">
+			<Filter>ultima4\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\conversation\conversation.h">
+			<Filter>ultima4\conversation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\conversation\dialogueloader.h">
+			<Filter>ultima4\conversation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_hw.h">
+			<Filter>ultima4\conversation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_lb.h">
+			<Filter>ultima4\conversation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\conversation\dialogueloader_tlk.h">
+			<Filter>ultima4\conversation</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\lzw\hash.h">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\lzw\lzw.h">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\lzw\u4decode.h">
+			<Filter>ultima4\core\lzw</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\config.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\coords.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\debugger.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\debugger_actions.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\observable.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\observer.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\settings.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\types.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\core\utils.h">
+			<Filter>ultima4\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\events\event_handler.h">
+			<Filter>ultima4\events</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\events\timed_event_mgr.h">
+			<Filter>ultima4\events</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\filesys\rle.h">
+			<Filter>ultima4\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\filesys\savegame.h">
+			<Filter>ultima4\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\filesys\u4file.h">
+			<Filter>ultima4\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\armor.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\aura.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\codex.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\context.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\creature.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\death.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\game.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\item.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\moongate.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\names.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\object.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\person.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\player.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\portal.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\script.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\spell.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\game\weapon.h">
+			<Filter>ultima4\game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\image.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\imageloader.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\imageloader_fmtowns.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\imageloader_u4.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\imagemgr.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\scale.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\screen.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\gfx\textcolor.h">
+			<Filter>ultima4\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\annotation.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\area.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\city.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\direction.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\dungeon.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\location.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\map.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\map_tile.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\maploader.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\mapmgr.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\movement.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\shrine.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\tile.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\tileanim.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\tilemap.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\tileset.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\map\xml_map.h">
+			<Filter>ultima4\map</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\sound\music.h">
+			<Filter>ultima4\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\sound\sound.h">
+			<Filter>ultima4\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\ultima4.h">
+			<Filter>ultima4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\dungeonview.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\imageview.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\menu.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\menuitem.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\stats.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\textview.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\tileview.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\views\view.h">
+			<Filter>ultima4\views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima4\metaengine.h">
+			<Filter>ultima4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\audio_channel.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\audio_mixer.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\audio_process.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\audio_sample.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\cru_music_process.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\midi_player.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\music_flex.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\music_process.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\raw_audio_sample.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\sonarc_audio_sample.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\sound_flex.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\speech_flex.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\audio\u8_music_process.h">
+			<Filter>ultima8\audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\conf\config_file_manager.h">
+			<Filter>ultima8\conf</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\crusader\convert_shape_crusader.h">
+			<Filter>ultima8\convert\crusader</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\crusader\convert_usecode_crusader.h">
+			<Filter>ultima8\convert\crusader</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\crusader\convert_usecode_regret.h">
+			<Filter>ultima8\convert\crusader</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\u8\convert_shape_u8.h">
+			<Filter>ultima8\convert\u8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\u8\convert_usecode_u8.h">
+			<Filter>ultima8\convert\u8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\convert_shape.h">
+			<Filter>ultima8\convert</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\convert\convert_usecode.h">
+			<Filter>ultima8\convert</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\filesys\archive.h">
+			<Filter>ultima8\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\filesys\flex_file.h">
+			<Filter>ultima8\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\filesys\raw_archive.h">
+			<Filter>ultima8\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\filesys\savegame.h">
+			<Filter>ultima8\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\filesys\u8_save_file.h">
+			<Filter>ultima8\filesys</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\cru_game.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\game.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\game_data.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\game_info.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\start_crusader_process.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\start_u8_process.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\treasure_loader.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\games\u8_game.h">
+			<Filter>ultima8\games</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\font.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\font_manager.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\font_shape_archive.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\jp_font.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\jp_rendered_text.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\rendered_text.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\shape_font.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\shape_rendered_text.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\tt_font.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fonts\ttf_rendered_text.h">
+			<Filter>ultima8\gfx\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\anim_dat.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\avi_player.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\cycle_process.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\fade_to_modal_process.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\frame_id.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\gump_shape_archive.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\inverter_process.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\main_shape_archive.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\mouse_shape_archive.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\movie_player.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\pal_transforms.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\palette.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\palette_fader_process.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\palette_manager.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\raw_shape_frame.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\render_surface.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\shape.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\shape_archive.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\shape_frame.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\shape_info.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\skf_player.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\texture.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\type_flags.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\wpn_ovlay_dat.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gfx\xform_blend.h">
+			<Filter>ultima8\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\widgets\button_widget.h">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\widgets\edit_widget.h">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\widgets\sliding_widget.h">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\widgets\text_widget.h">
+			<Filter>ultima8\gumps\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\ask_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\bark_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\book_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\computer_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\container_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\credits_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_ammo_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_credits_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_demo_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_energy_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_health_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_inventory_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_menu_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_pickup_area_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_pickup_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_stat_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_status_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\cru_weapon_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\desktop_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\difficulty_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\fast_area_vis_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\game_map_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\gump_notify_process.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\inverter_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\item_relative_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\keypad_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\main_menu_process.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\menu_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\message_box_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\mini_stats_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\minimap_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\modal_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\movie_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\paged_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\paperdoll_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\quit_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\readable_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\resizable_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\scroll_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\shape_viewer_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\slider_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\target_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\translucent_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\u8_save_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\weasel_dat.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\gumps\weasel_gump.h">
+			<Filter>ultima8\gumps</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\delay_process.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\kernel.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\mouse.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\object.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\object_manager.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\kernel\process.h">
+			<Filter>ultima8\kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\box.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\classtype.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\common_types.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\debugger.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\direction.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\direction_util.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\encoding.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\id_man.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\point3.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\rect.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\stream_util.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\misc\util.h">
+			<Filter>ultima8\misc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\bit_set.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\byte_set.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\global_storage.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\intrinsics.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\regret_intrinsics.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\remorse_intrinsics.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\u8_intrinsics.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\uc_list.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\uc_machine.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\uc_process.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\uc_stack.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\usecode.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\usecode\usecode_flex.h">
+			<Filter>ultima8\usecode</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\actor.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\actor_anim.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\actor_anim_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\actor_bark_notify_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\ambush_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\anim_action.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\animation.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\animation_tracker.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\attack_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\auto_firer_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\avatar_death_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\avatar_gravity_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\avatar_mover_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\battery_charger_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\clear_feign_death_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\combat_dat.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\combat_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\cru_avatar_mover_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\cru_healer_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\cru_pathfinder_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\grant_peace_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\guard_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\heal_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\loiter_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\main_actor.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\monster_info.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\npc_dat.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\pace_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\pathfinder.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\pathfinder_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\quick_avatar_mover_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\resurrection_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\rolling_thunder_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\scheduler_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\surrender_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\targeted_anim_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\teleport_to_egg_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\treasure_info.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\u8_avatar_mover_process.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\actors\weapon_overlay.h">
+			<Filter>ultima8\world\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\armour_info.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\bobo_boomer_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\camera_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\container.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\coord_utils.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\create_item_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\crosshair_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\current_map.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\damage_info.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\destroy_item_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\egg.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\egg_hatcher_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\fire_type.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\fire_type_table.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\fireball_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\get_object.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\glob_egg.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\gravity_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\item.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\item_factory.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\item_selection_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\item_sorter.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\loop_script.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\map.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\map_glob.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\minimap.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\missile_tracker.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\monster_egg.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\position_info.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\snap_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\sort_item.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\split_item_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\sprite_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\super_sprite_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\target_reticle_process.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\teleport_egg.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\weapon_info.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\world.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\world\world_point.h">
+			<Filter>ultima8\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\metaengine.h">
+			<Filter>ultima8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\ultima8\ultima8.h">
+			<Filter>ultima8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\ultima\detection.h" />
+		<ClInclude Include="..\..\engines\ultima\detection_tables.h" />
+		<ClInclude Include="..\..\engines\ultima\metaengine.h" />
+		<ClInclude Include="..\..\engines\ultima\ultima.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\ultima\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,2060 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="adv_db_r">
+			<UniqueIdentifier>A430BAC0-5BEE-47C7-9B46-15B44DB1FB3A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="adv_r">
+			<UniqueIdentifier>672BE516-ED9E-43BD-B528-6214D79CEBB5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger">
+			<UniqueIdentifier>BB5ADECA-12CD-4144-AFF7-E6FADA2D0E0E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\core">
+			<UniqueIdentifier>A934163C-7FD5-4F17-BD20-3E982B957630</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\gui">
+			<UniqueIdentifier>4590671E-438F-464B-976E-C15E9A728B3E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms">
+			<UniqueIdentifier>30164369-57A8-4115-9906-9310D8C6A08D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section1">
+			<UniqueIdentifier>00FD8A05-41DD-4198-8001-AC9663ADEB16</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section2">
+			<UniqueIdentifier>3C2CFB87-B91D-44D4-8EF7-552C7E6F4822</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section3">
+			<UniqueIdentifier>6F86485D-09C1-464E-A485-7CCB8B56B859</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section4">
+			<UniqueIdentifier>924B1152-143C-43FB-B0B7-3D1D1A5FB1A4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section5">
+			<UniqueIdentifier>328E3785-8052-40A0-9F4D-FBB90E91F5C7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section6">
+			<UniqueIdentifier>9AF35CA1-79FC-4D45-A228-2ED3C82968B8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section7">
+			<UniqueIdentifier>BDE46BFE-923A-48C1-A2C8-E5C78C7915C8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section8">
+			<UniqueIdentifier>797B6A84-F342-48AA-8E2A-4769C5BF6F36</UniqueIdentifier>
+		</Filter>
+		<Filter Include="burger\rooms\section9">
+			<UniqueIdentifier>91610730-982C-4C54-BAC8-72C3AE4AB1E4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="core">
+			<UniqueIdentifier>D0D4C3E1-77F2-452C-8028-CA0237A166F9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="dbg">
+			<UniqueIdentifier>16BFEB0D-E142-4675-9547-56160AF03E84</UniqueIdentifier>
+		</Filter>
+		<Filter Include="fileio">
+			<UniqueIdentifier>6106B7E9-0366-4E08-B867-51D050414570</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics">
+			<UniqueIdentifier>96526B49-1774-4C5C-99F6-17EA6EE86184</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gui">
+			<UniqueIdentifier>65D42B7C-DFC6-4241-91A9-DA004025C02A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="mem">
+			<UniqueIdentifier>769AD0EB-D461-46BB-BFC2-02DA03BA3DE1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="platform">
+			<UniqueIdentifier>A8C2B214-B376-48FB-BC3C-A825CDB725BA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="platform\sound">
+			<UniqueIdentifier>725EE7C4-B788-4440-88A3-15A3E13BABF9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="platform\tile">
+			<UniqueIdentifier>23F5203A-AC35-46E2-9D58-0588FEC68A64</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle">
+			<UniqueIdentifier>89FAE059-22F3-46F5-A156-204FA2A8E0C0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\gui">
+			<UniqueIdentifier>C6B40058-7058-4989-A669-58CE6CCF3523</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms">
+			<UniqueIdentifier>5C97466C-00CE-45C3-BDBF-275909ACA508</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section2">
+			<UniqueIdentifier>5462795E-AB02-43EC-99AA-DF63F0EAE4E5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section3">
+			<UniqueIdentifier>7524A89D-77B1-4F55-B764-1A494A25BE70</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section4">
+			<UniqueIdentifier>7C7E6021-8CBB-4C0D-9AD1-6E3FB335F97A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section5">
+			<UniqueIdentifier>F621D9D2-FDFB-43FE-B367-E7A58ADB8F1C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section6">
+			<UniqueIdentifier>B1EBBD32-DE6C-4D66-B2CD-D7538D67B91C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section7">
+			<UniqueIdentifier>08C275F9-B39F-4772-807A-E343999760A0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section8">
+			<UniqueIdentifier>E4AA8500-EC14-4A4E-83E3-4614FED46437</UniqueIdentifier>
+		</Filter>
+		<Filter Include="riddle\rooms\section9">
+			<UniqueIdentifier>B822727F-B714-47DC-8BCB-943992B51718</UniqueIdentifier>
+		</Filter>
+		<Filter Include="wscript">
+			<UniqueIdentifier>7C6C0FE3-F02E-4D3F-81B3-5A7A2605AB14</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\m4\adv_db_r\db_catalog.cpp">
+			<Filter>adv_db_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_background.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_been.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_chk.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_control.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_file.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_hotspot.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_interface.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_inv.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_player.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_rails.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_scale.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_trigger.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\adv_walk.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\chunk_ops.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\conv.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\conv_io.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\db_env.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\adv_r\other.cpp">
+			<Filter>adv_r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\core\conv.cpp">
+			<Filter>burger\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\core\play_break.cpp">
+			<Filter>burger\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\core\release_trigger.cpp">
+			<Filter>burger\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\core\stream_break.cpp">
+			<Filter>burger\core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\gui\game_menu.cpp">
+			<Filter>burger\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\gui\gui_gizmo.cpp">
+			<Filter>burger\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\gui\interface.cpp">
+			<Filter>burger\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\gui\inventory.cpp">
+			<Filter>burger\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\room.cpp">
+			<Filter>burger\rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room101.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room102.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room103.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room104.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room105.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room106.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room120.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room133_136.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room134_135.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room137.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room138.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room139_144.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room140_141.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room142.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room143.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room145.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room170.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room171.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room172.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room173.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room174.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room175.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\room176.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section1\section1.cpp">
+			<Filter>burger\rooms\section1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section2\room204.cpp">
+			<Filter>burger\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section2\room207.cpp">
+			<Filter>burger\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section2\section2.cpp">
+			<Filter>burger\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\mine.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room301.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room302.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room303.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room304.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room305.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room306.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room307.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\room310.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\section3.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section3\section3_room.cpp">
+			<Filter>burger\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room401.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room402.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room404.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room405.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room406.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\room407.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\section4.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section4\section4_room.cpp">
+			<Filter>burger\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room501.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room502.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room503.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room504.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room505.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room506.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room507.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room508.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room509.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room510.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room511.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room512.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\room513.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\section5.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section5\section5_room.cpp">
+			<Filter>burger\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room601.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room602.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room603.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room604.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room605.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room606.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room608.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room609.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\room610.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\section6.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section6\section6_room.cpp">
+			<Filter>burger\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section7\room701.cpp">
+			<Filter>burger\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section7\room702.cpp">
+			<Filter>burger\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section7\room706.cpp">
+			<Filter>burger\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section7\section7.cpp">
+			<Filter>burger\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section8\room801.cpp">
+			<Filter>burger\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section8\room802.cpp">
+			<Filter>burger\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section8\section8.cpp">
+			<Filter>burger\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\menu_room.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room901.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room902.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room903.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room904.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room951.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\room971.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section9\section9.cpp">
+			<Filter>burger\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\rooms\section.cpp">
+			<Filter>burger\rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\burger.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\console.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\flags.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\hotkeys.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\inventory.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\other.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\series_player.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\vars.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\burger\walker.cpp">
+			<Filter>burger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\cstring.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\errors.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\imath.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\mouse.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\param.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\rooms.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\core\term.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\dbg\dbg_wscript.cpp">
+			<Filter>dbg</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\fileio\extensions.cpp">
+			<Filter>fileio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\fileio\fileio.cpp">
+			<Filter>fileio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\fileio\fstream.cpp">
+			<Filter>fileio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\fileio\info.cpp">
+			<Filter>fileio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\fileio\sys_file.cpp">
+			<Filter>fileio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_buff.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_color.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_draw.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_font.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_line.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_pal.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_series.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_sprite.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\gr_surface.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\krn_pal.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\graphics\rend.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_buffer.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_cheapo.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_dialog.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_item.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_mouse.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_sys.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_vmng_core.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_vmng_rectangles.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\gui_vmng_screen.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\gui\hotkeys.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\mem\mem.cpp">
+			<Filter>mem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\mem\memman.cpp">
+			<Filter>mem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\mem\reloc.cpp">
+			<Filter>mem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\mem\res.cpp">
+			<Filter>mem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\sound\digi.cpp">
+			<Filter>platform\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\sound\midi.cpp">
+			<Filter>platform\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\tile\tile_read.cpp">
+			<Filter>platform\tile</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\draw.cpp">
+			<Filter>platform</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\events.cpp">
+			<Filter>platform</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\platform\timer.cpp">
+			<Filter>platform</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\gui\game_menu.cpp">
+			<Filter>riddle\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\gui\gui_messages.cpp">
+			<Filter>riddle\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\gui\interface.cpp">
+			<Filter>riddle\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\gui\inventory.cpp">
+			<Filter>riddle\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\room.cpp">
+			<Filter>riddle\rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room201.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room202.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room203.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room204.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room205.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\room207.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\section2.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section2\section2_room.cpp">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room301.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room303.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room304.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room305.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room309.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room352.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\room354.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section3\section3.cpp">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room401.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room402.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room403.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room404.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room405.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room406.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room407.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room408.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room409.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room410.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room413.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room456.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room493.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room494.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\room495.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section4\section4.cpp">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room501.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room504.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room506.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room507.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room508.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room509.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\room510.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section5\section5.cpp">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room603.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room604.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room605.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room607.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room608.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room610.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room615.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room620.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room621.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room622.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room623.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room624.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room625.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room626.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room627.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room628.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room629.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room630.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room631.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room632.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room633.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room634.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room635.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room636.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room637.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room638.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room640.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room641.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room642.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room643.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room644.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room645.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room646.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room647.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room648.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room649.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room650.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\room651.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\section6.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section6\section6_maze.cpp">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room701.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room702.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room703.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room704.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room705.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room706.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room707.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room709.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room710.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\room711.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section7\section7.cpp">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room801.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room802.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room803.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room804.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room805.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room806.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room807.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room808.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room809.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room810.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room811.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room814.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room818.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room824.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room834.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room844.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room850.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room860.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\room861.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\section8.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section8\section8_room.cpp">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room901.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room902.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room903.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room905.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room906.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room907.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room908.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room917.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room918.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\room996.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\section9.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section9\section9_room.cpp">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\rooms\section.cpp">
+			<Filter>riddle\rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\console.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\flags.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\hotkeys.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\inventory.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\riddle.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\triggers.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\vars.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\riddle\walker.cpp">
+			<Filter>riddle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\ws_cruncher.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\ws_hal.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\ws_load.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\ws_machine.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\ws_timer.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\wscript.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\wscript\wst_regs.cpp">
+			<Filter>wscript</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\m4\console.cpp" />
+		<ClCompile Include="..\..\engines\m4\m4.cpp" />
+		<ClCompile Include="..\..\engines\m4\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\m4\vars.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\m4\adv_db_r\database.h">
+			<Filter>adv_db_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_db_r\db_catalog.h">
+			<Filter>adv_db_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_background.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_been.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_chk.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_control.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_file.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_game.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_hotspot.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_interface.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_inv.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_player.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_rails.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_scale.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_trigger.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\adv_walk.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\chunk_ops.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\conv.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\conv_io.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\db_env.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\kernel.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\adv_r\other.h">
+			<Filter>adv_r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\core\conv.h">
+			<Filter>burger\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\core\play_break.h">
+			<Filter>burger\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\core\release_trigger.h">
+			<Filter>burger\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\core\stream_break.h">
+			<Filter>burger\core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\gui\game_menu.h">
+			<Filter>burger\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\gui\gui.h">
+			<Filter>burger\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\gui\gui_gizmo.h">
+			<Filter>burger\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\gui\interface.h">
+			<Filter>burger\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\gui\inventory.h">
+			<Filter>burger\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\room.h">
+			<Filter>burger\rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room101.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room102.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room103.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room104.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room105.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room106.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room120.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room133_136.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room134_135.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room137.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room138.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room139_144.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room140_141.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room142.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room143.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room145.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room170.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room171.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room172.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room173.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room174.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room175.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\room176.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section1\section1.h">
+			<Filter>burger\rooms\section1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section2\room204.h">
+			<Filter>burger\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section2\room207.h">
+			<Filter>burger\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section2\section2.h">
+			<Filter>burger\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\mine.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room301.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room302.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room303.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room304.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room305.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room306.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room307.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\room310.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\section3.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section3\section3_room.h">
+			<Filter>burger\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room401.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room402.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room404.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room405.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room406.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\room407.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\section4.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section4\section4_room.h">
+			<Filter>burger\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room501.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room502.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room503.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room504.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room505.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room506.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room507.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room508.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room509.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room510.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room511.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room512.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\room513.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\section5.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section5\section5_room.h">
+			<Filter>burger\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room601.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room602.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room603.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room604.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room605.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room606.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room608.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room609.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\room610.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\section6.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section6\section6_room.h">
+			<Filter>burger\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section7\room701.h">
+			<Filter>burger\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section7\room702.h">
+			<Filter>burger\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section7\room706.h">
+			<Filter>burger\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section7\section7.h">
+			<Filter>burger\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section8\room801.h">
+			<Filter>burger\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section8\room802.h">
+			<Filter>burger\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section8\section8.h">
+			<Filter>burger\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\menu_room.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room901.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room902.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room903.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room904.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room951.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\room971.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section9\section9.h">
+			<Filter>burger\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\rooms\section.h">
+			<Filter>burger\rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\burger.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\console.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\flags.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\hotkeys.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\inventory.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\other.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\series_player.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\vars.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\burger\walker.h">
+			<Filter>burger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\cstring.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\errors.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\globals.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\imath.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\mouse.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\param.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\rooms.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\core\term.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\dbg\dbg_defs.h">
+			<Filter>dbg</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\dbg\dbg_wscript.h">
+			<Filter>dbg</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\dbg\debug.h">
+			<Filter>dbg</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\fileio\extensions.h">
+			<Filter>fileio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\fileio\fileio.h">
+			<Filter>fileio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\fileio\fstream.h">
+			<Filter>fileio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\fileio\info.h">
+			<Filter>fileio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\fileio\sys_file.h">
+			<Filter>fileio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_buff.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_color.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_draw.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_font.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_line.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_pal.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_series.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_sprite.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\gr_surface.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\graphics.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\krn_pal.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\graphics\rend.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_buffer.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_cheapo.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_dialog.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_event.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_item.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_mouse.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_sys.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_univ.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_vmng.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_vmng_core.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_vmng_rectangles.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\gui_vmng_screen.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\gui\hotkeys.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\mem\mem.h">
+			<Filter>mem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\mem\memman.h">
+			<Filter>mem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\mem\reloc.h">
+			<Filter>mem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\mem\res.h">
+			<Filter>mem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\sound\digi.h">
+			<Filter>platform\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\sound\midi.h">
+			<Filter>platform\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\tile\tile_read.h">
+			<Filter>platform\tile</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\draw.h">
+			<Filter>platform</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\events.h">
+			<Filter>platform</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\keys.h">
+			<Filter>platform</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\platform\timer.h">
+			<Filter>platform</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\gui\game_menu.h">
+			<Filter>riddle\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\gui\gui_messages.h">
+			<Filter>riddle\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\gui\interface.h">
+			<Filter>riddle\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\gui\inventory.h">
+			<Filter>riddle\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\room.h">
+			<Filter>riddle\rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room201.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room202.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room203.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room204.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room205.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\room207.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\section2.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section2\section2_room.h">
+			<Filter>riddle\rooms\section2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room301.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room303.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room304.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room305.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room309.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room352.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\room354.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section3\section3.h">
+			<Filter>riddle\rooms\section3</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room401.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room402.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room403.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room404.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room405.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room406.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room407.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room408.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room409.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room410.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room413.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room456.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room493.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room494.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\room495.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section4\section4.h">
+			<Filter>riddle\rooms\section4</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room501.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room504.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room506.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room507.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room508.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room509.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\room510.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section5\section5.h">
+			<Filter>riddle\rooms\section5</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room603.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room604.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room605.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room607.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room608.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room610.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room615.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room620.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room621.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room622.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room623.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room624.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room625.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room626.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room627.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room628.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room629.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room630.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room631.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room632.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room633.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room634.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room635.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room636.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room637.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room638.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room640.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room641.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room642.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room643.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room644.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room645.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room646.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room647.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room648.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room649.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room650.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\room651.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\section6.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section6\section6_maze.h">
+			<Filter>riddle\rooms\section6</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room701.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room702.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room703.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room704.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room705.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room706.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room707.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room709.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room710.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\room711.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section7\section7.h">
+			<Filter>riddle\rooms\section7</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room801.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room802.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room803.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room804.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room805.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room806.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room807.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room808.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room809.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room810.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room811.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room814.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room818.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room824.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room834.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room844.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room850.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room860.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\room861.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\section8.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section8\section8_room.h">
+			<Filter>riddle\rooms\section8</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room901.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room902.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room903.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room905.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room906.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room907.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room908.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room917.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room918.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\room996.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\section9.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section9\section9_room.h">
+			<Filter>riddle\rooms\section9</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\rooms\section.h">
+			<Filter>riddle\rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\console.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\flags.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\hotkeys.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\inventory.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\riddle.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\triggers.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\vars.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\riddle\walker.h">
+			<Filter>riddle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_cruncher.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_hal.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_load.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_machine.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_timer.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\ws_univ.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\wscript.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\wscript\wst_regs.h">
+			<Filter>wscript</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\m4\console.h" />
+		<ClInclude Include="..\..\engines\m4\detection.h" />
+		<ClInclude Include="..\..\engines\m4\detection_tables.h" />
+		<ClInclude Include="..\..\engines\m4\m4.h" />
+		<ClInclude Include="..\..\engines\m4\m4_types.h" />
+		<ClInclude Include="..\..\engines\m4\metaengine.h" />
+		<ClInclude Include="..\..\engines\m4\vars.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\m4\module.mk" />
+	</ItemGroup>
+</Project>

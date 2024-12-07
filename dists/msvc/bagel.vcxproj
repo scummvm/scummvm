@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{5E5CB9E0-EA8F-46AF-A9D5-9B7DFDE4228A}</ProjectGuid>
+		<RootNamespace>bagel</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\bagel\baglib\area_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\bagel.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\base_pda.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\bmp_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\button_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\character_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\chat_wnd.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\command_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\cursor.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\dev_dlg.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\dossier_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\event_sdev.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\exam.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\expression.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\expression_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\fmovie.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\help.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\ifstream.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\inv.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\link_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\log_msg.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\master_win.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\menu_dlg.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\moo.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\movie_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\paint_table.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\pan_bitmap.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\pan_window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\parse_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\pda.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\rp_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\save_game_file.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\sound_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\sprite_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\storage_dev_bmp.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\storage_dev_win.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\text_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\time_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\var.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\variable_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\wield.cpp" />
+		<ClCompile Include="..\..\engines\bagel\baglib\zoom_pda.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\cursor.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\palette.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\sprite.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\text.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\button.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\edit_text.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\list_box.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\movie.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\scroll_bar.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\text_box.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\app.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\cache.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\crc.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\dat_file.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\debug.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\error.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\event_loop.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\file.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\file_functions.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\llist.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\log.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\misc.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\options.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\queue.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\res.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\sound.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\string.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\string_functions.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\timer.cpp" />
+		<ClCompile Include="..\..\engines\bagel\boflib\vector.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\credits_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\next_cd_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\opt_window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\quit_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\restart_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\restore_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\save_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\dialogs\start_dialog.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\bib_odds_wnd.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\bibble_window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\computer.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\filter.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\full_wnd.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_link_object.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\master_win.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\nav_window.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\slot_wnd.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\spacebar.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\sraf_computer.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\thud.cpp" />
+		<ClCompile Include="..\..\engines\bagel\spacebar\vid_wnd.cpp" />
+		<ClCompile Include="..\..\engines\bagel\bagel.cpp" />
+		<ClCompile Include="..\..\engines\bagel\console.cpp" />
+		<ClCompile Include="..\..\engines\bagel\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\bagel\music.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\bagel\baglib\area_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\bagel.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\base_pda.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\bmp_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\button_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\character_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\chat_wnd.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\command_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\cursor.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\dev_dlg.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\dossier_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\event_sdev.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\exam.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\expression.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\expression_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\fmovie.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\help.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\ifstream.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\inv.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\link_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\log_msg.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\master_win.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\menu_dlg.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\moo.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\movie_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\paint_table.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\pan_bitmap.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\pan_window.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\parse_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\pda.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\res.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\rp_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\save_game_file.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\sound_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\sprite_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\storage_dev_bmp.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\storage_dev_win.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\text_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\thing_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\time_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\var.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\variable_object.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\wield.h" />
+		<ClInclude Include="..\..\engines\bagel\baglib\zoom_pda.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\bitmap.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\cursor.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\palette.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\sprite.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\text.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\button.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\edit_text.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\list_box.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\movie.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\scroll_bar.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\text_box.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\window.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\app.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\array.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\cache.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\crc.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\dat_file.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\debug.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\error.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\event_loop.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\events.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\file.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\file_functions.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\fixed.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\list.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\llist.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\log.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\misc.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\object.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\options.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\point.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\queue.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\rect.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\res.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\size.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\sound.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\std_keys.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\stdinc.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\string.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\string_functions.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\timer.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\vector.h" />
+		<ClInclude Include="..\..\engines\bagel\boflib\vhash_table.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\credits_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\next_cd_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\opt_window.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\quit_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\restart_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\restore_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\save_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\dialogs\start_dialog.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\bib_odds_wnd.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\bibble_window.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\computer.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\filter.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\full_wnd.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\game_defs.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_link_object.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_window.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\master_win.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\nav_window.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\slot_wnd.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\spacebar.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_computer.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_file.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_msg.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\thud.h" />
+		<ClInclude Include="..\..\engines\bagel\spacebar\vid_wnd.h" />
+		<ClInclude Include="..\..\engines\bagel\bagel.h" />
+		<ClInclude Include="..\..\engines\bagel\console.h" />
+		<ClInclude Include="..\..\engines\bagel\detection.h" />
+		<ClInclude Include="..\..\engines\bagel\detection_tables.h" />
+		<ClInclude Include="..\..\engines\bagel\metaengine.h" />
+		<ClInclude Include="..\..\engines\bagel\music.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\bagel\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

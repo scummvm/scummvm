@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{D670D519-AB6D-405D-B98B-8348A3E1AE52}</ProjectGuid>
+		<RootNamespace>dgds</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\dgds\minigames\china_tank.cpp" />
+		<ClCompile Include="..\..\engines\dgds\minigames\china_train.cpp" />
+		<ClCompile Include="..\..\engines\dgds\minigames\dragon_arcade.cpp" />
+		<ClCompile Include="..\..\engines\dgds\minigames\dragon_arcade_ttm.cpp" />
+		<ClCompile Include="..\..\engines\dgds\minigames\shell_game.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\adlib.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\amigamac1.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\cms.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\midi.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\drivers\midipatch.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\resource\resource_audio.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\resource\sci_resource.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\midiparser_sci.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound\music.cpp" />
+		<ClCompile Include="..\..\engines\dgds\ads.cpp" />
+		<ClCompile Include="..\..\engines\dgds\clock.cpp" />
+		<ClCompile Include="..\..\engines\dgds\console.cpp" />
+		<ClCompile Include="..\..\engines\dgds\decompress.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dgds.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dgds_rect.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dialog.cpp" />
+		<ClCompile Include="..\..\engines\dgds\dragon_native.cpp" />
+		<ClCompile Include="..\..\engines\dgds\drawing.cpp" />
+		<ClCompile Include="..\..\engines\dgds\font.cpp" />
+		<ClCompile Include="..\..\engines\dgds\game_palettes.cpp" />
+		<ClCompile Include="..\..\engines\dgds\globals.cpp" />
+		<ClCompile Include="..\..\engines\dgds\hoc_intro.cpp" />
+		<ClCompile Include="..\..\engines\dgds\image.cpp" />
+		<ClCompile Include="..\..\engines\dgds\inventory.cpp" />
+		<ClCompile Include="..\..\engines\dgds\menu.cpp" />
+		<ClCompile Include="..\..\engines\dgds\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\dgds\parser.cpp" />
+		<ClCompile Include="..\..\engines\dgds\request.cpp" />
+		<ClCompile Include="..\..\engines\dgds\resource.cpp" />
+		<ClCompile Include="..\..\engines\dgds\scene.cpp" />
+		<ClCompile Include="..\..\engines\dgds\scripts.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound.cpp" />
+		<ClCompile Include="..\..\engines\dgds\sound_raw.cpp" />
+		<ClCompile Include="..\..\engines\dgds\ttm.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\dgds\minigames\china_tank.h" />
+		<ClInclude Include="..\..\engines\dgds\minigames\china_train.h" />
+		<ClInclude Include="..\..\engines\dgds\minigames\dragon_arcade.h" />
+		<ClInclude Include="..\..\engines\dgds\minigames\dragon_arcade_ttm.h" />
+		<ClInclude Include="..\..\engines\dgds\minigames\shell_game.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\gm_names.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\macmixer.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\map-mt32-to-gm.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\drivers\mididriver.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\resource\sci_resource.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\midiparser_sci.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\music.h" />
+		<ClInclude Include="..\..\engines\dgds\sound\scispan.h" />
+		<ClInclude Include="..\..\engines\dgds\ads.h" />
+		<ClInclude Include="..\..\engines\dgds\clock.h" />
+		<ClInclude Include="..\..\engines\dgds\console.h" />
+		<ClInclude Include="..\..\engines\dgds\decompress.h" />
+		<ClInclude Include="..\..\engines\dgds\detection_tables.h" />
+		<ClInclude Include="..\..\engines\dgds\dgds.h" />
+		<ClInclude Include="..\..\engines\dgds\dgds_rect.h" />
+		<ClInclude Include="..\..\engines\dgds\dialog.h" />
+		<ClInclude Include="..\..\engines\dgds\dragon_native.h" />
+		<ClInclude Include="..\..\engines\dgds\drawing.h" />
+		<ClInclude Include="..\..\engines\dgds\font.h" />
+		<ClInclude Include="..\..\engines\dgds\game_palettes.h" />
+		<ClInclude Include="..\..\engines\dgds\globals.h" />
+		<ClInclude Include="..\..\engines\dgds\hoc_intro.h" />
+		<ClInclude Include="..\..\engines\dgds\image.h" />
+		<ClInclude Include="..\..\engines\dgds\includes.h" />
+		<ClInclude Include="..\..\engines\dgds\inventory.h" />
+		<ClInclude Include="..\..\engines\dgds\menu.h" />
+		<ClInclude Include="..\..\engines\dgds\parser.h" />
+		<ClInclude Include="..\..\engines\dgds\request.h" />
+		<ClInclude Include="..\..\engines\dgds\resource.h" />
+		<ClInclude Include="..\..\engines\dgds\scene.h" />
+		<ClInclude Include="..\..\engines\dgds\scripts.h" />
+		<ClInclude Include="..\..\engines\dgds\sound.h" />
+		<ClInclude Include="..\..\engines\dgds\sound_raw.h" />
+		<ClInclude Include="..\..\engines\dgds\ttm.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\dgds\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

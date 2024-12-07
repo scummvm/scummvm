@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="baglib">
+			<UniqueIdentifier>5C458A3E-01AE-43D1-B8B6-CCE8093A2726</UniqueIdentifier>
+		</Filter>
+		<Filter Include="boflib">
+			<UniqueIdentifier>9408687E-0A11-4709-A2B6-79728860FDF3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="boflib\gfx">
+			<UniqueIdentifier>B8185702-C7ED-46A3-B354-9543035AED56</UniqueIdentifier>
+		</Filter>
+		<Filter Include="boflib\gui">
+			<UniqueIdentifier>43B4084A-A481-48CA-9818-3E716F3463D0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="dialogs">
+			<UniqueIdentifier>DD30FA5C-A27E-4E38-BAB7-643C46DDB929</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar">
+			<UniqueIdentifier>0941FA6A-9322-4CBA-A36D-ED0CFCEA0EBB</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\bagel\baglib\area_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\bagel.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\base_pda.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\bmp_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\button_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\character_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\chat_wnd.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\command_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\cursor.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\dev_dlg.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\dossier_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\event_sdev.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\exam.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\expression.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\expression_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\fmovie.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\help.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\ifstream.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\inv.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\link_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\log_msg.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\master_win.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\menu_dlg.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\moo.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\movie_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\paint_table.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\pan_bitmap.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\pan_window.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\parse_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\pda.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\rp_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\save_game_file.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\sound_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\sprite_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\storage_dev_bmp.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\storage_dev_win.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\text_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\time_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\var.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\variable_object.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\wield.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\baglib\zoom_pda.cpp">
+			<Filter>baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\file.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\file_functions.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\bitmap.cpp">
+			<Filter>boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\cursor.cpp">
+			<Filter>boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\palette.cpp">
+			<Filter>boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\sprite.cpp">
+			<Filter>boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gfx\text.cpp">
+			<Filter>boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\button.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\dialog.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\edit_text.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\list_box.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\movie.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\scroll_bar.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\text_box.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\gui\window.cpp">
+			<Filter>boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\app.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\cache.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\crc.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\dat_file.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\debug.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\error.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\event_loop.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\llist.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\log.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\misc.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\options.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\queue.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\res.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\sound.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\string.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\string_functions.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\timer.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\vector.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\credits_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\next_cd_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\opt_window.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\quit_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\restart_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\restore_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\save_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\dialogs\start_dialog.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\bib_odds_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\bibble_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\computer.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\filter.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\full_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_link_object.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\master_win.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\nav_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\slot_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\spacebar.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\sraf_computer.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\thud.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\vid_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\bagel.cpp" />
+		<ClCompile Include="..\..\engines\bagel\console.cpp" />
+		<ClCompile Include="..\..\engines\bagel\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\bagel\music.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\bagel\baglib\area_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\bagel.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\base_pda.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\bmp_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\button_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\character_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\chat_wnd.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\command_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\cursor.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\dev_dlg.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\dossier_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\event_sdev.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\exam.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\expression.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\expression_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\fmovie.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\help.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\ifstream.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\inv.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\link_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\log_msg.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\master_win.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\menu_dlg.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\moo.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\movie_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\paint_table.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\pan_bitmap.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\pan_window.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\parse_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\pda.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\res.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\rp_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\save_game_file.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\sound_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\sprite_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\storage_dev_bmp.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\storage_dev_win.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\text_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\thing_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\time_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\var.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\variable_object.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\wield.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\baglib\zoom_pda.h">
+			<Filter>baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\bitmap.h">
+			<Filter>boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\cursor.h">
+			<Filter>boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\palette.h">
+			<Filter>boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\sprite.h">
+			<Filter>boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gfx\text.h">
+			<Filter>boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\button.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\dialog.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\edit_text.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\list_box.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\movie.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\scroll_bar.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\text_box.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\gui\window.h">
+			<Filter>boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\app.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\array.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\cache.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\crc.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\dat_file.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\debug.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\error.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\event_loop.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\events.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\file.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\file_functions.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\fixed.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\list.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\llist.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\log.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\misc.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\object.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\options.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\point.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\queue.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\rect.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\res.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\size.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\sound.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\std_keys.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\stdinc.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\string.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\string_functions.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\timer.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\vector.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\vhash_table.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\credits_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\next_cd_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\opt_window.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\quit_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\restart_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\restore_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\save_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\dialogs\start_dialog.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\bib_odds_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\bibble_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\computer.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\filter.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\full_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\game_defs.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_link_object.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\master_win.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\nav_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\slot_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\spacebar.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_computer.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_file.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_msg.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\thud.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\vid_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\bagel.h" />
+		<ClInclude Include="..\..\engines\bagel\console.h" />
+		<ClInclude Include="..\..\engines\bagel\detection.h" />
+		<ClInclude Include="..\..\engines\bagel\detection_tables.h" />
+		<ClInclude Include="..\..\engines\bagel\metaengine.h" />
+		<ClInclude Include="..\..\engines\bagel\music.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\bagel\module.mk" />
+	</ItemGroup>
+</Project>
