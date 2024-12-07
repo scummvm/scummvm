@@ -19,21 +19,34 @@
  *
  */
 
-#include "got/views/dialogs/set_sound.h"
+#include "got/views/dialogs/quit_game.h"
+#include "got/got.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
 static const char *OPTIONS[] = {
-	"None", "Digitized", nullptr
+	"Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr
 };
 
-SetSound::SetSound() : Dialog("SetSound", "Set Sound", OPTIONS) {
+QuitGame::QuitGame() : Dialog("QuitGame", "Quit Game?", OPTIONS) {
 }
 
-void SetSound::selected() {
-	// TODO
+void QuitGame::selected() {
+	switch (_selectedItem) {
+	case 0:
+		close();
+		break;
+	case 1:
+		replaceView("Title", true);
+		break;
+	case 2:
+		g_engine->quitGame();
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Dialogs

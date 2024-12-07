@@ -30,17 +30,9 @@ namespace Dialogs {
 const char *ON_OFF[] = { "On", "Off", nullptr };
 
 
-// Forms a class name for the view hierarchy from the dialog title
-static Common::String getDialogName(const char *title) {
-	Common::String result = title;
-	size_t idx;
-	while ((idx = result.findFirstOf(' ')) != Common::String::npos)
-		result.deleteChar(idx);
-	return result;
-}
-
-Dialog::Dialog(const char *title, const char *options[]) :
-		View(getDialogName(title)), _title(title) {
+Dialog::Dialog(const Common::String &name, const char *title,
+		const char *options[]) :
+		View(name), _title(title) {
 	// Load the options list into the string array
 	for (const char **option = options; *option; ++option)
 		_options.push_back(*option);
@@ -87,7 +79,7 @@ void Dialog::draw() {
 
 	// Write the title
 	s = getSurface(true);
-	int titleStart = (s.w - strlen(_title) * 8) / 2;
+	int titleStart = (s.w - _title.size() * 8) / 2;
 	s.print(Common::Point(titleStart, 4), _title, 54);
 
 	// Write the options
