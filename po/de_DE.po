@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-11-17 07:56+0000\n"
+"PO-Revision-Date: 2024-12-07 08:41+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -10299,16 +10299,16 @@ msgstr ""
 "nutzbar. Verwende diese Option auf eigene Gefahr!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "Lesegeschwindigkeit"
+msgstr "Sprachausgabe reparieren"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Erkennt und versucht eine Reparatur von Überläufen in den DPCM8-Audiodaten, "
+"die hörbare Störgeräusche verursachen."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
