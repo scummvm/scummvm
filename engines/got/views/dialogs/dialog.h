@@ -34,7 +34,7 @@ extern const char *ON_OFF[];
 
 class Dialog : public View {
 private:
-	const char *_title;
+	Common::String _title;
 	Common::StringArray _options;
 	int _hammerFrame = 0;
 	int _smackCtr = 0;
@@ -48,7 +48,8 @@ protected:
 	virtual void selected() {}
 
 public:
-	Dialog(const char *title, const char *options[]);
+	Dialog(const Common::String &name, const char *title,
+		const char *options[]);
 	virtual ~Dialog() {
 	}
 

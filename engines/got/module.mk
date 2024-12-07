@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	views/story.o \
 	views/dialogs/dialog.o \
 	views/dialogs/options_menu.o \
+	views/dialogs/quit_game.o \
 	views/dialogs/set_sound.o
 
 # This module can be built as a plugin

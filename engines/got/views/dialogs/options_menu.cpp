@@ -33,13 +33,16 @@ static const char *OPTIONS[] = {
 		"Die", "Turbo Mode", "Help", "Quit", nullptr
 };
 
-OptionsMenu::OptionsMenu() : Dialog("Options Menu", OPTIONS) {
+OptionsMenu::OptionsMenu() : Dialog("OptionsMenu", "Options Menu", OPTIONS) {
 }
 
 void OptionsMenu::selected() {
 	switch (_selectedItem) {
 	case 0:
 		replaceView("SetSound");
+		break;
+	case 7:
+		replaceView("QuitGame");
 		break;
 	default:
 		break;

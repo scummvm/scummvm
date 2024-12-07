@@ -19,23 +19,26 @@
  *
  */
 
-#include "got/views/dialogs/set_sound.h"
+#ifndef GOT_VIEWS_DIALOGS_QUIT_GAME_H
+#define GOT_VIEWS_DIALOGS_QUIT_GAME_H
+
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"None", "Digitized", nullptr
+class QuitGame : public Dialog {
+public:
+	QuitGame();
+	virtual ~QuitGame() {
+	}
+
+	void selected() override;
 };
-
-SetSound::SetSound() : Dialog("SetSound", "Set Sound", OPTIONS) {
-}
-
-void SetSound::selected() {
-	// TODO
-}
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif
