@@ -19,30 +19,28 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
-#include "got/views/story.h"
-#include "got/views/title.h"
 #include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/set_sound.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	Story _story;
-	Title _title;
-
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SetSound _setSound;
+static const char *OPTIONS[] = {
+	"Play Game", "High Scores", "Credits", "Demo", "Quit", nullptr
 };
 
+MainMenu::MainMenu() : Dialog("MainMenu", "God of Thunder Menu", OPTIONS) {
+}
+
+void MainMenu::closed() {
+	_selectedItem = 4; // Quit game
+	selected();
+}
+
+void MainMenu::selected() {
+	// TODO
+}
+
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
-
-#endif

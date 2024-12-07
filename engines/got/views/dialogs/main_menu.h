@@ -19,32 +19,27 @@
  *
  */
 
-#include "got/views/main_menu.h"
-#include "got/gfx/palette.h"
-#include "got/vars.h"
+#ifndef GOT_VIEWS_DIALOGS_MAIN_MENU_H
+#define GOT_VIEWS_DIALOGS_MAIN_MENU_H
+
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-bool MainMenu::msgFocus(const FocusMessage &msg) {
-	xsetpal(_G(gfx)[0]._data);
-	return true;
-}
+class MainMenu : public Dialog {
+public:
+	MainMenu();
+	virtual ~MainMenu() {
+	}
 
-bool MainMenu::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
+	void closed() override;
+	void selected() override;
+};
 
-bool MainMenu::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	close();
-	return true;
-}
-
-void MainMenu::draw() {
-	//GfxSurface s = getSurface();
-	drawBackground();
-}
-
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif
