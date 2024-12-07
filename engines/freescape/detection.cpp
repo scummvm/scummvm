@@ -560,7 +560,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("totaleclipse.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
 	},
 	{
@@ -574,7 +574,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
 	{
@@ -588,7 +588,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
 	{
@@ -602,7 +602,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
 	{
@@ -618,7 +618,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{ // Erbe Software release
@@ -634,7 +634,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{

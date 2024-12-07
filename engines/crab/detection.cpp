@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "traits/tanya_intelligent.png", "441221becc2b70e7c9d7838d6a8bd990", 12593),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // These files are same on Windows, Linux and MacOS. Therefore, do not specify platform.
-		ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM,
 		GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOMIDI),
 	},
 	{
@@ -56,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "traits/tanya_intelligent.png", "441221becc2b70e7c9d7838d6a8bd990", 12593),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // These files are same on Windows, Linux and MacOS. Therefore, do not specify platform.
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
 		GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOMIDI),
 	},
 	AD_TABLE_END_MARKER};
