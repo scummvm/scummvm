@@ -19,27 +19,26 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_TITLE_H
+#define GOT_VIEWS_TITLE_H
 
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "graphics/managed_surface.h"
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	Story _story;
-	Title _title;
+/**
+ * This view provides the green background for the
+ * main menu and other dialogs on the title screen
+ */
+class Title : public View {
+public:
+	Title() : View("Title") {}
+	virtual ~Title() {}
 
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SetSound _setSound;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views

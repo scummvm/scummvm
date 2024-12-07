@@ -19,27 +19,30 @@
  *
  */
 
-#ifndef GOT_VIEWS_MAIN_MENU_H
-#define GOT_VIEWS_MAIN_MENU_H
-
-#include "graphics/managed_surface.h"
-#include "got/views/view.h"
+#include "got/views/title.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-class MainMenu : public View {
-public:
-	MainMenu() : View("MainMenu") {}
-	virtual ~MainMenu() {}
+void Title::draw() {
+	GfxSurface s = getSurface();
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
-};
+	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
+		for (int yp = 0; yp < 240; yp += 32)
+			s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
+	}
+}
+
+bool Title::tick() {
+	if (isFocused()) {
+		// When the title screen is shown, show the main menu
+		draw();
+		addView("MainMenu");
+	}
+
+	return true;
+}
 
 } // namespace Views
 } // namespace Got
-
-#endif

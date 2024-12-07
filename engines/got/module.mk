@@ -16,10 +16,11 @@ MODULE_OBJS = \
 	utils/compression.o \
 	utils/file.o \
 	utils/res_archive.o \
-	views/main_menu.o \
 	views/view.o \
 	views/story.o \
+	views/title.o \
 	views/dialogs/dialog.o \
+	views/dialogs/main_menu.o \
 	views/dialogs/options_menu.o \
 	views/dialogs/quit_game.o \
 	views/dialogs/set_sound.o

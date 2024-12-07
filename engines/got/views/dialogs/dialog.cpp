@@ -55,11 +55,12 @@ Dialog::Dialog(const Common::String &name, const char *title,
 }
 
 void Dialog::draw() {
-	GfxSurface s = getSurface();
-
-	// Draw four corners
+	// Clear the inner content first
+	GfxSurface s = getSurface(true);
 	s.clear(215);
 
+	// Draw four corners
+	s = getSurface();
 	s.blitFrom(_G(bgPics)[192], Common::Point(0, 0));
 	s.blitFrom(_G(bgPics)[193], Common::Point(_bounds.width() - 16, 0));
 	s.blitFrom(_G(bgPics)[194], Common::Point(0, _bounds.height() - 16));
