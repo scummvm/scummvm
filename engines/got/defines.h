@@ -23,6 +23,7 @@
 #define GOT_DEFINES_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Got {
 
@@ -130,7 +131,7 @@ struct ACTOR {                      //size=256
 	byte shot_actor = 0;
 	byte magic_hit = 0;
 	byte temp6 = 0;
-	int  i1, i2, i3, i4, i5, i6 = 0;
+	int  i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0;
 	byte init_health = 0;
 	byte talk_counter = 0;
 	byte etype = 0;
@@ -304,6 +305,11 @@ struct THOR_INFO {
 struct HEADER {
 	long offset = 0;
 	long length = 0;
+
+	void load(Common::SeekableReadStream *src) {
+		offset = src->readUint32LE();
+		length = src->readUint32LE();
+	}
 };
 
 //==========================================================================
@@ -423,36 +429,11 @@ enum {
 };
 #define	status_Reg1 0x3da
 
-enum {
-	OW,
-	GULP,
-	SWISH,
-	YAH,
-	ELECTRIC,
-	THUNDER,
-	DOOR,
-	FALL,
-	ANGEL,
-	WOOP,
-	DEAD,
-	BRAAPP,
-	WIND,
-	PUNCH1,
-	CLANG,
-	EXPLODE,
-	BOSS11,
-	BOSS12,
-	BOSS13,
-};
-
-#define	status_Reg1 0x3da
-
 #define GAME1 (_G(area)==1)
 #define GAME2 (_G(area)==2)
 #define GAME3 (_G(area)==3)
 #define BP    (_G(key_flag)[_B])
 
-#define NUM_SOUNDS  19
 #define NUM_OBJECTS 32
 
 #define APPLE_MAGIC     1

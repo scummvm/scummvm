@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "graphics/screen.h"
 #include "got/defines.h"
+#include "got/sound.h"
 #include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"
 #include "got/gfx/gfx_pics.h"
@@ -46,6 +47,7 @@ public:
 	Gfx::BgPics _bgPics;
 	Gfx::Font _font;
 	Gfx::Pics _hampic;
+	Sound _sound;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;

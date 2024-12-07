@@ -39,6 +39,7 @@ void Vars::load() {
 	_gfx.load();
 	_bgPics.load();
 	_hampic.load();
+	_sound.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
 	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
