@@ -147,8 +147,6 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	}
 
 	if (!skipThumbnail) {
-		header._thumbnail = new Graphics::Surface(); // freed by ScummVM's smartptr
-
 		s.skip(4); //skip size;
 
 		if (header._version >= 4) {
@@ -160,6 +158,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 				thumbnailData[i] = s.readUint16LE() | alphamask; // We set all pixels to non-transparency
 			}
 
+			header._thumbnail = new Graphics::Surface(); // freed by ScummVM's smartptr
 			header._thumbnail->init(80, 60, 160, thumbnailData, gameDataPixelFormat());
 		}
 
