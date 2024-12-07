@@ -45,6 +45,7 @@ public:
 	Gfx::GfxChunks _gfx;
 	Gfx::BgPics _bgPics;
 	Gfx::Font _font;
+	Gfx::Pics _hampic;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -67,7 +68,6 @@ public:
 
 	uint _timer_cnt = 0, _vbl_cnt = 0, _magic_cnt = 0, _extra_cnt = 0;
 
-	byte _text[94][72] = {};
 	//union REGS in, out = 0;
 	//struct SREGS seg = 0;
 	byte _objects[NUM_OBJECTS][262] = {};
@@ -143,7 +143,6 @@ public:
 		_joyhx = 0, _joyhy = 0;
 	byte _res_file[16] = {};
 	byte _odin[4][262] = {};
-	byte _hampic[4][262] = {};
 	int _load_game_flag = 0;
 	bool _music_flag = false, _sound_flag = false, _pcsound_flag = false;
 	int _cash1_inform = 0, _cash2_inform = 0, _door_inform = 0,

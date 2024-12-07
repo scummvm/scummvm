@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "common/file.h"
 #include "got/gfx/gfx_pics.h"
+#include "got/utils/file.h"
 
 namespace Got {
 namespace Gfx {
@@ -39,6 +40,33 @@ void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf) {
 	}
 }
 
+
+void GfxPics::load(const Common::String &name, int blockSize) {
+	File f(name);
+
+	// Set up array of images
+	clear();
+	resize(f.size() / blockSize);
+
+	byte *buff = new byte[blockSize];
+
+	for (uint idx = 0; idx < size(); ++idx) {
+		int w = f.readUint16LE() * 4;
+		int h = f.readUint16LE();
+		f.skip(2);	// Unused transparent color. It's always 15
+		f.read(buff, 16 * 16);
+
+		Graphics::ManagedSurface &s = (*this)[idx];
+		s.create(w, h);
+		s.setTransparentColor(15);
+
+		convertPaneDataToSurface(buff, s);
+	}
+
+	delete[] buff;
+}
+
+
 void BgPics::setArea(int area) {
 	if (area != _area) {
 		_area = area;
@@ -48,29 +76,7 @@ void BgPics::setArea(int area) {
 
 void BgPics::load() {
 	Common::String fname = Common::String::format("BPICS%d", _area);
-	Common::File f;
-	if (!f.open(Common::Path(fname)))
-		error("Could not open - %s", fname.c_str());
-
-	// Process the sprites - they're each 262 bytes
-	clear();
-	resize(f.size() / 262);
-
-	byte buff[16 * 16];
-	for (uint idx = 0; idx < size(); ++idx) {
-		Graphics::ManagedSurface &s = (*this)[idx];
-
-		s.create(16, 16);
-		s.setTransparentColor(15);
-
-		f.skip(6);
-		f.read(buff, 16 * 16);
-		convertPaneDataToSurface(buff, s);
-	}
-}
-
-void Pics::load() {
-
+	GfxPics::load(fname, 262);
 }
 
 } // namespace Gfx
