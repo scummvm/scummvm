@@ -29,6 +29,9 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
+// On/Off is commonly used across multiple dialogs
+extern const char *ON_OFF[];
+
 class Dialog : public View {
 private:
 	const char *_title;

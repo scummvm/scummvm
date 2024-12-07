@@ -27,6 +27,9 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
+const char *ON_OFF[] = { "On", "Off", nullptr };
+
+
 // Forms a class name for the view hierarchy from the dialog title
 static Common::String getDialogName(const char *title) {
 	Common::String result = title;
@@ -110,11 +113,13 @@ bool Dialog::msgAction(const ActionMessage &msg) {
 
 	switch (msg._action) {
 	case KEYBIND_UP:
+		play_sound(WOOP,1);
 		if (--_selectedItem < 0)
 			_selectedItem = (int)_options.size() - 1;
 		break;
 
 	case KEYBIND_DOWN:
+		play_sound(WOOP, 1);
 		if (++_selectedItem >= (int)_options.size())
 			_selectedItem = 0;
 		break;

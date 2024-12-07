@@ -25,6 +25,7 @@
 #include "got/views/main_menu.h"
 #include "got/views/story.h"
 #include "got/views/dialogs/options_menu.h"
+#include "got/views/dialogs/set_sound.h"
 
 namespace Got {
 namespace Views {
@@ -34,6 +35,7 @@ struct Views {
 	Story _story;
 
 	Dialogs::OptionsMenu _optionsMenu;
+	Dialogs::SetSound _setSound;
 };
 
 } // namespace Views
