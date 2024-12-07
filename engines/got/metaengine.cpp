@@ -20,7 +20,9 @@
  */
 
 #include "common/translation.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "got/metaengine.h"
 #include "got/detection.h"
 #include "got/got.h"
@@ -42,6 +44,23 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
+struct KeybindingRecord {
+	KeybindingAction _action;
+	const char *_id;
+	const char *_desc;
+	const char *_key;
+	const char *_joy;
+};
+
+static const KeybindingRecord GAME_KEYS[] = {
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", "JOY_A" },
+	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP"},
+	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
+	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
+	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 } // End of namespace Got
 
 const char *GotMetaEngine::getName() const {
@@ -61,6 +80,29 @@ bool GotMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
 }
+
+Common::Array<Common::Keymap *> GotMetaEngine::initKeymaps(const char *target) const {
+	Common::KeymapArray keymapArray;
+	Common::Keymap *keyMap;
+	Common::Action *act;
+
+	keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
+		"got", _s("Game Keys"));
+	keymapArray.push_back(keyMap);
+
+	for (const Got::KeybindingRecord *r = Got::GAME_KEYS; r->_id; ++r) {
+		act = new Common::Action(r->_id, _(r->_desc));
+		act->setCustomEngineActionEvent(r->_action);
+		act->addDefaultInputMapping(r->_key);
+		if (r->_joy)
+			act->addDefaultInputMapping(r->_joy);
+
+		keyMap->addAction(act);
+	}
+
+	return keymapArray;
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(GOT)
 REGISTER_PLUGIN_DYNAMIC(GOT, PLUGIN_TYPE_ENGINE, GotMetaEngine);

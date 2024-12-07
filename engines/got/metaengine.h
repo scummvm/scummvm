@@ -24,6 +24,15 @@
 
 #include "engines/advancedDetector.h"
 
+namespace Got {
+
+enum KeybindingAction {
+	KEYBIND_NONE, KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
+	KEYBIND_SELECT
+};
+
+}
+
 class GotMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
@@ -38,6 +47,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };
 
 #endif // GOT_METAENGINE_H
