@@ -94,19 +94,13 @@ void Dialog::draw() {
 	}
 
 	// Write the title
-	int titleStart = (_bounds.width() - strlen(_title) * 8) / 2;
-	s.print(Common::Point(titleStart, 16), _title, 54);
+	s = getSurface(true);
+	int titleStart = (s.w - strlen(_title) * 8) / 2;
+	s.print(Common::Point(titleStart, 4), _title, 54);
 
-#ifdef TODO
-
-	xprint(i, y1 + 4, title, pg, 54);
-
-	op = option;
-	for (i = 0; i < num_opts; i++) {
-		xprint(x1 + 32, (y1 + 28) + (i * 16), *op, pg, 14);
-		op++;
-	}
-#endif
+	// Write the options
+	for (uint i = 0; i < _options.size(); ++i)
+		s.print(Common::Point(32, 28 + i * 16), _options[i], 14);
 }
 
 bool Dialog::tick() {
