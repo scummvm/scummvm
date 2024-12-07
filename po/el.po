@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-11-16 16:58+0000\n"
+"PO-Revision-Date: 2024-12-07 10:35+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6601,11 +6601,11 @@ msgstr "AGOS - Κύρια"
 #: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
 #: engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
-msgstr "Αντιστοίχιση πλήκτρων"
+msgstr "Πλήκτρα παιχνιδιού"
 
 #: engines/agos/metaengine.cpp:229
 msgid "Yes/No keymapping"
-msgstr "Αντιστοίχιση πλήκτρων για Ναι/Όχι"
+msgstr "Πλήκτρα για Ναι/Όχι"
 
 #: engines/agos/metaengine.cpp:244
 msgid "Exit cutscene"
@@ -6694,7 +6694,7 @@ msgstr "Εναλλαγή μεταξύ μόνο υπότιτλων και συν�
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Απ/ενεργοποίηση λειτουργίας υψηλής ταχύτητας στο Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
@@ -6974,7 +6974,7 @@ msgstr "Προκαθορισμένες αντιστοιχίσεις"
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
 msgid "Escape keymappings"
-msgstr "Αντιστοιχίσεις πλήκτρου Escape"
+msgstr "Πλήκτρα για Escape"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -7366,14 +7366,12 @@ msgstr "Χρήση TTS για την ανάγνωση κειμένου στο π
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
 msgid "Game Keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα παιχνιδιού"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Παράλειψη"
+msgstr "Έξοδος/Παράλειψη"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
@@ -7526,48 +7524,36 @@ msgid "Empty autosave"
 msgstr "Κενή αυτόματη αποθήκευση"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Key to mouse keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για κουμπιά ποντικιού"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Exit screen keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για έξοδο από οθόνη"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
 msgstr "Έξοδος από την εισαγωγική οθόνη της Sony"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Επιλογή μέχρι το τέλος γραμμής"
+msgstr "Επιλογή / Κλικ στο παιχνίδι"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Άνοιγμα κεντρικού μενού"
+msgstr "Άνοιγμα μενού ενεργειών / Κλείσιμο μενού"
 
 #: engines/cine/metaengine.cpp:295
 msgid "Default game speed"
 msgstr "Προκαθορισμένη ταχύτητα παιχνιδιού"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Προβολή συντελεστών παιχνιδιού"
+msgstr "Χαμηλότερη ταχύτητα παιχνιδιού"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Γρήγορη ταχύτητα ταινιών"
+msgstr "Υψηλότερη ταχύτητα παιχνιδιού"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
@@ -7576,10 +7562,8 @@ msgid "Examine"
 msgstr "Εξέτασε"
 
 #: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Βγάλε"
+msgstr "Πάρε"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
@@ -7596,69 +7580,53 @@ msgid "Inventory"
 msgstr "Υπάρχοντα"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Ενεργό"
+msgstr "Ενεργοποίησε"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
 msgstr "Μίλησε"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Πράξη"
+msgstr "Μενού ενεργειών"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Διακοπή/Μενού Παιχνιδιού"
+msgstr "Μενού συστήματος"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show collisions"
-msgstr "Επιλογές Ομιλίας"
+msgstr "Προβολή εμποδίων"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Κίνηση αριστερά"
+msgstr "Κίνηση πάνω-αριστερά"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Κίνηση δεξιά"
+msgstr "Κίνηση πάνω-δεξιά"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Κίνηση κάτω"
+msgstr "Κίνηση κάτω-αριστερά"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Κίνηση δεξιά"
+msgstr "Κίνηση κάτω-δεξιά"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Πιο πάνω επιλογή μενού"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Πιο κάτω επιλογή μενού"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7748,10 +7716,8 @@ msgstr "Γρήγορη Φόρτωση"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Ρύθμιση γρήγορης κίνησης"
+msgstr "Ταχύτερη λειτουργία"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
@@ -7759,21 +7725,15 @@ msgid "Player menu"
 msgstr "Μενού Παίκτη"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Increase game speed"
-msgstr "Γρήγορη ταχύτητα ταινιών"
+msgstr "Επιτάχυνση παιχνιδιού"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Decrease game speed"
-msgstr "Γρήγορη ταχύτητα ταινιών"
+msgstr "Επιβράδυνση παιχνιδιού"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Έξοδος από το παιχνίδι"
 
@@ -7783,56 +7743,40 @@ msgstr ""
 "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Εναλλαγή σίγασης"
+msgstr "Εναλλαγή προβολής μενού"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
+msgstr "Εναλλαγή Ρολογιού"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Επόμενος διάλογος / επιλογή μενού"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous dialog / menu item"
-msgstr "Προηγούμενη σελίδα"
+msgstr "Προηγούμενος διάλογος / επιλογή μενού"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Next object"
-msgstr "Άνοιγμα μενού ρυθμίσεων"
+msgstr "Επόμενο αντικείμενο"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Previous object"
-msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+msgstr "Προηγούμενο αντικείμενο"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "Προηγούμενη ενέργεια"
+msgstr "Πάρε / Χειρίσου"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
+msgstr "Ενεργοποίησε αντικείμενο από τα υπάρχοντα"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα παιχνιδιού"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7844,26 +7788,20 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Παράκαμψη εισαγωγής / Έξοδος από χάρτη ή υπάρχοντα"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Άνοιγμα ολογραφικού χάρτη"
+msgstr "Άνοιγμα χάρτη"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Προβολή χάρτη"
+msgstr "Προβολή χάρτη μονοπατιών"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle walk speed"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή ταχύτητας βαδίσματος"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7872,19 +7810,15 @@ msgstr "Άνοιγμα κεντρικού μενού"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Εναλλαγή μεταξύ δείκτη ποντικιού και πρόσφατου αντικειμένου παιχνιδιού"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
-msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+msgstr "Προηγούμενο αντικείμενο στα υπαρχόντα"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
-msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+msgstr "Επόμενο αντικείμενο στα υπαρχόντα"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7984,8 +7918,6 @@ msgid "Automatic drilling"
 msgstr "Αυτόματη γεώτρηση"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Επιτρέπει την επιτυχημένη γεώτρηση σε οποιαδήποτε περιοχή στο Driller"
 
@@ -8022,24 +7954,20 @@ msgid "Use alternative camera controls"
 msgstr "Εναλλακτικός χειρισμός κάμερας"
 
 #: engines/freescape/metaengine.cpp:119
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Φίλτρο γραφικών"
+msgstr "Πιστά γραφικά"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "Τηρεί τα γραφικά όσο πιο πιστά γίνεται στο πρωτότυπο"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Ενεργοποίηση αποθήκευσης"
+msgstr "Ενεργοποίηση \"ταξιδιού με βράχο\""
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Δυνατότητα ταξιδιού χρησιμοποιώντας εκτόξευση βράχου στην αρχή"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8057,21 +7985,15 @@ msgid "Shoot"
 msgstr "Πυροβόλησε"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Περιστροφή"
+msgstr "Περιστροφή προς τα πάνω"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Περιστροφή"
+msgstr "Περιστροφή προς τα κάτω"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Αλλαγή λειτουργίας"
 
@@ -8080,25 +8002,19 @@ msgid "Info Menu"
 msgstr "Μενού Πληροφοριών"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλέξτε Πρίγκιπα"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλέξτε Πριγκίπισσα"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:208
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Εναλλαγή σίγασης"
+msgstr "Εναλλαγή ήχου"
 
 #: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
@@ -8127,26 +8043,20 @@ msgstr "Σύρσου"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Μέτωπο μπροστά"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:167
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Αύξηση συντελεστή κλίμακας"
+msgstr "Αύξηση διαστήματος βήματος"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:173
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Μείωση συντελεστή κλίμακας"
+msgstr "Μείωση διαστήματος βήματος"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:178
@@ -8164,35 +8074,27 @@ msgstr "Απ/ενεργοποίηση Jetpack"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:191
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "Αποσφαλμάτωση: Εφαρμογή Πλέγματος στο Ταβάνι"
+msgstr "Εγκατάσταση γεωτρύπανου"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:198
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Συμμάζεμα γεωτρύπανου"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Αλλαγή λειτουργίας"
+msgstr "Αλλαγή γωνίας περιστροφής"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Αλλαγή μεγέθους γραμματοσειράς"
+msgstr "Αλλαγή διαστήματος βήματος"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Εναλλαγή σίγασης"
+msgstr "Εναλλαγή ύψους"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8538,10 +8440,8 @@ msgid "Groovie engine"
 msgstr "Μηχανή Groovie"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Παράλειψη εικονογραφημένων σκηνών της Αίθουσας των Αρχείων"
+msgstr "Παράλειψη ή επιτάχυνση σκηνής"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8593,10 +8493,8 @@ msgid "Enable Gore Mode when available"
 msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Παράκαμψη διαλόγου"
+msgstr "Παράθυρο επιλογών"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8653,22 +8551,16 @@ msgid "Glowstick"
 msgstr "Ράβδος φωτός"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Ο χρήστης ακύρωσε"
+msgstr "Βοήθεια χρήστη"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle sound"
-msgstr "Εναλλαγή σίγασης"
+msgstr "Εναλλαγή ήχου"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last line"
-msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
+msgstr "Επανάληψη πρόσφατης γραμμής"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8694,22 +8586,18 @@ msgid "Show inventory"
 msgstr "Προβολή υπαρχόντων"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Βελτιωμένη λειτουργία"
+msgstr "Λειτουργία τούρμπο"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Κίνηση πάνω"
+msgstr "Κίνηση προς την κορυφή"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Κίνηση προς τον πάτο"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
@@ -8727,31 +8615,23 @@ msgstr "Κίνηση δεξιά"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Κίνηση αριστερά"
+msgstr "Κίνηση πάνω αριστερά"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Κίνηση δεξιά"
+msgstr "Κίνηση πάνω δεξιά"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Κίνηση αριστερά"
+msgstr "Κίνηση κάτω αριστερά"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Κίνηση δεξιά"
+msgstr "Κίνηση κάτω δεξιά"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8818,28 +8698,20 @@ msgid "Side Step"
 msgstr "Βήμα πλάγια"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor up"
-msgstr "Προχώρησε μπροστά κι αριστερά"
+msgstr "Κίνηση κέρσορα πάνω"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor down"
-msgstr "Προχώρησε μπροστά κι αριστερά"
+msgstr "Κίνηση κέρσορα κάτω"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Προχώρησε μπροστά κι αριστερά"
+msgstr "Κίνηση κέρσορα αριστερά"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Προχώρησε μπροστά και δεξιά"
+msgstr "Κίνηση κέρσορα δεξιά"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -9006,8 +8878,6 @@ msgstr "Προχώρησε Μπροστά"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Κίνηση προς τα πίσω"
 
@@ -9240,22 +9110,16 @@ msgid "TTS Narrator"
 msgstr "Αφηγητής Κειμένου"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Fight sequence keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για μάχη"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Index keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για ευρετήριο"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για Ναι/Όχι"
 
 #: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
 msgid "Restart game"
@@ -9385,10 +9249,8 @@ msgid "Naughty game mode"
 msgstr "Λειτουργία παιχνιδιού για άτακτους"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Start menu keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για μενού έναρξης"
 
 #: engines/mads/metaengine.cpp:299
 #, fuzzy
@@ -10323,34 +10185,24 @@ msgstr ""
 "Η υποστήριξη για το I Have No Mouth δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα παιχνιδιού"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για πάνελ επιλογών"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για πάνελ αποθήκευσης"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για πάνελ φόρτωσης"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για πάνελ εξόδου"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
@@ -12110,10 +11962,8 @@ msgid "Ridiculous"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Αντιστοίχιση"
+msgstr "Μέγιστο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
@@ -12702,10 +12552,8 @@ msgstr ""
 "ευρύτερη αναλογία διαστάσεων από 4:3."
 
 #: engines/tinsel/metaengine.cpp:242
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save/Load keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Πλήκτρα για Αποθήκευση/Φόρτωση"
 
 #: engines/tinsel/metaengine.cpp:307
 #, fuzzy
