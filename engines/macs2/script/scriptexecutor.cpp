@@ -1000,7 +1000,7 @@ void ScriptExecutor::FuncB6BE_actual() {
 	id -= 0x1000;
 	// bp-4h
 	uint16 bp4 = Func9F4D_16();
-	if (id <= 1) {
+	if (id <= 0) {
 		// mov	word ptr [1028h],8h
 		return;
 	}
@@ -1786,6 +1786,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				if (foundIndex > 0) {
 					currentView->inventoryItems.remove_at(foundIndex);
 				}
+				assert(!currentView->HasDuplicateCharacters());
 			}
 		} else if (opcode1 == 0x0c) {
 			// This is a scene change
@@ -2060,9 +2061,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Character *c = new Character();
 			c->GameObject = GameObjects::instance().Objects[objectID - 1];
 			// TODO: DRY principle
-			// c->Position = c->GameObject->Position = Common::Point(x, y);
-			// c->GameObject->SceneIndex = sceneID;
-			currentView->characters.push_back(c);
+			// c->Po>GameObject->SceneIndex = sceneID;
+			// currentView->characters.push_back(c);
 		} else if (opcode1 == 0x2B) {
 			// TODO: Mocking this one for now to see if this unlocks something
 			// It loads an object index, checks if it has a certain pointer in its
