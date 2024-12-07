@@ -140,7 +140,7 @@ void Room705::parser() {
 	bool ecx = player_said_any("look", "look at");
 	const bool talkFl = player_said_any("talk", "talk to");
 	//bool edi = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	//bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv705a")) {
 		if (_G(kernel).trigger == 90)
