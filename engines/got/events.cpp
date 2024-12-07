@@ -317,8 +317,9 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-GfxSurface UIElement::getSurface() const {
-	return GfxSurface(*g_events->getScreen(), _bounds);
+GfxSurface UIElement::getSurface(bool innerBounds) const {
+	return GfxSurface(*g_events->getScreen(),
+		innerBounds ? _innerBounds : _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {

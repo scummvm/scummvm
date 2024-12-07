@@ -184,7 +184,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Gfx::GfxSurface getSurface() const;
+	Gfx::GfxSurface getSurface(bool innerBounds = false) const;
 
 	/**
 	 * Clear the surface
