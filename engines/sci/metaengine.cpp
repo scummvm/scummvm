@@ -636,11 +636,8 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
 		Common::File file;
 		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
-			while (true) {
+			while (!file.eos()) {
 				Common::String line = file.readLine();
-				if (file.eos()) {
-					break;
-				}
 				uint32 separatorPos = line.find('=');
 				if (separatorPos == Common::String::npos) {
 					continue;
