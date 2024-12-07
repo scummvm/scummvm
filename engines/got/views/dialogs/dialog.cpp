@@ -101,6 +101,9 @@ void Dialog::draw() {
 	// Write the options
 	for (uint i = 0; i < _options.size(); ++i)
 		s.print(Common::Point(32, 28 + i * 16), _options[i], 14);
+
+	// Draw selection pointer
+	s.blitFrom(_G(hampic)[0], Common::Point(8, 24 + (_selectedItem * 16)));
 }
 
 bool Dialog::tick() {

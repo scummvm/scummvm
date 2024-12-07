@@ -37,7 +37,13 @@ namespace Gfx {
 */
 extern void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf);
 
-class BgPics : public Common::Array<Graphics::ManagedSurface> {
+
+class GfxPics : public Common::Array<Graphics::ManagedSurface> {
+public:
+	void load(const Common::String &name, int blockSize);
+};
+
+class BgPics : public GfxPics {
 private:
 	int _area = 1;
 
@@ -50,9 +56,18 @@ public:
 	void setArea(int area);
 };
 
-class Pics : public Common::Array<Graphics::ManagedSurface> {
+class Pics : public GfxPics {
+private:
+	const char *_resName;
+	int _blockSize;
+
 public:
-	void load();
+	Pics(const char *resName, int blockSize) :
+		_resName(resName), _blockSize(blockSize) {}
+
+	void load() {
+		GfxPics::load(_resName, _blockSize);
+	}
 };
 
 } // namespace Gfx

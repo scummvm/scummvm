@@ -22,7 +22,7 @@
 #ifndef GOT_UTILS_FILE_H
 #define GOT_UTILS_FILE_H
 
-#include "common/str.h"
+#include "common/file.h"
 #include "got/defines.h"
 
 namespace Got {
@@ -44,6 +44,16 @@ extern bool load_game(int flag);
 extern void help();
 extern long res_read(const Common::String &name, void *buff);
 extern bool load_music(int num);
+
+class File : public Common::File {
+public:
+	File() : Common::File() {}
+	File(const Common::String &filename) : Common::File() {
+		File::open(Common::Path(filename));
+	}
+
+	bool open(const Common::Path &filename) override;
+};
 
 } // namespace Got
 

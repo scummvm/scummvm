@@ -30,7 +30,7 @@ namespace Got {
 
 Vars *g_vars;
 
-Vars::Vars() {
+Vars::Vars() : _hampic("HAMPIC", 262) {
 	g_vars = this;
 }
 
@@ -38,6 +38,7 @@ void Vars::load() {
 	_font.load();
 	_gfx.load();
 	_bgPics.load();
+	_hampic.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
 	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
@@ -79,9 +80,7 @@ void Vars::load() {
  
 	res_read("RANDOM", _rnd_array);
 	res_read("DEMO", _demo_key);
-	res_read("TEXT", _text);
 	res_read("ODINPIC", _odin);
-	res_read("HAMPIC", _hampic);
 
 	load_palette();
 
