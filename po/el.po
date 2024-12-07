@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-06 09:48+0000\n"
-"PO-Revision-Date: 2024-12-07 11:58+0000\n"
+"PO-Revision-Date: 2024-12-07 12:33+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -9111,7 +9111,7 @@ msgstr "Πλήκτρα για μάχη"
 
 #: engines/lure/metaengine.cpp:171
 msgid "Index keymappings"
-msgstr "Πλήκτρα για ευρετήριο"
+msgstr "Πλήκτρα καταχωρίσεων"
 
 #: engines/lure/metaengine.cpp:172
 msgid "Yes/No keymappings"
