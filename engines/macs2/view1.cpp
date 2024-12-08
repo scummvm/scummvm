@@ -732,6 +732,8 @@ void View1::draw() {
 
 	// Render the scaling factors
 	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
+
+	DrawImageResources(s);
 }
 
 bool View1::tick() {
@@ -1107,6 +1109,22 @@ void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	while (currentY < clippingRect.bottom) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
 		currentY += sprite.Height;
+	}
+}
+
+void View1::DrawImageResources(Graphics::ManagedSurface &s) {
+	uint16 x = 0;
+	uint16 y = 0;
+	uint16 currentMaxHeight = 0;
+	for (AnimFrame &current : g_engine->imageResources) {
+		if (x + current.Width > 320) {
+			y += currentMaxHeight;
+			x = 0;
+			currentMaxHeight = 0;
+		}
+		DrawSprite(Common::Point(x, y), current.Width, current.Height, current.Data, s, false);
+		x += current.Width;
+		currentMaxHeight = MAX(current.Height, currentMaxHeight);
 	}
 }
 

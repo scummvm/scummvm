@@ -532,6 +532,9 @@ void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
 	// l0037_3355:
 	for (int i = 0; i < 0x21; i++) {
 		uint32 length = stream->readUint32LE();
+		if (length == 0) {
+			continue;
+		}
 		// TODO: Figure out what value we are comparing here to in the original
 		AnimFrame frame;
 		// Move forward to skip the first word
