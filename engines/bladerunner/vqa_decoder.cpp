@@ -148,17 +148,32 @@ VQADecoder::VQADecoder() {
 }
 
 VQADecoder::~VQADecoder() {
+	close();
+}
+
+void VQADecoder::close() {
 	for (uint i = _codebooks.size(); i != 0; --i) {
 		delete[] _codebooks[i - 1].data;
 	}
+	_codebooks.clear();
+
 	delete _audioTrack;
+	_audioTrack = nullptr;
+
 	delete _videoTrack;
+	_videoTrack = nullptr;
+
 	delete[] _frameInfo;
+	_frameInfo = nullptr;
+
+	_loopInfo.close();
+
 	deleteVQPTable();
 }
 
 bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
-	// close();
+	close();
+
 	_s = s;
 
 	IFFChunkHeader chd;

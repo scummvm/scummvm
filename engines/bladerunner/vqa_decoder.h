@@ -64,6 +64,7 @@ public:
 	~VQADecoder();
 
 	bool loadStream(Common::SeekableReadStream *s);
+	void close();
 
 	void readFrame(int frame, uint readFlags = kVQAReadAll);
 
@@ -135,7 +136,14 @@ public:
 
 		LoopInfo() : loopCount(0), loops(nullptr), flags(0) {}
 		~LoopInfo() {
+			close();
+		}
+
+		void close() {
 			delete[] loops;
+			loops = nullptr;
+			loopCount = 0;
+			flags = 0;
 		}
 	};
 
