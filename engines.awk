@@ -380,7 +380,7 @@ END {
 			}
 		}
 
-		print("#!/bin/sh\necho '_features_disabled=\"" _features_disabled "\"'") >> "engines.awk.out"
+		print("_features_disabled=\"" _features_disabled "\"") > "engines.awk.out"
 
 		exit 0
 	}
