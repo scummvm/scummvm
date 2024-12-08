@@ -115,7 +115,15 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 		_views.pop();
 	}
 
+	// Redraw any prior views to erase the removed view
+	for (uint i = 0; i < _views.size(); ++i) {
+		_views[i]->redraw();
+		_views[i]->draw();
+	}
+
+	// Add the new view
 	_views.push(ui);
+
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
 }
