@@ -56,6 +56,7 @@ private:
 	int32 _705Monk2Series = 0;
 	int32 _705Monk3Series = 0;
 	int32 _705Monk4Series = 0;
+	int32 _705RipGoesUpStairsSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripLooksDownSeries = 0;
 	int32 _ripTrekMedReachPos1Series = 0;

@@ -140,7 +140,7 @@ void Room705::parser() {
 	bool ecx = player_said_any("look", "look at");
 	const bool talkFl = player_said_any("talk", "talk to");
 	bool edi = player_said("take");
-	//bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv705a")) {
 		if (_G(kernel).trigger == 90)
@@ -636,10 +636,73 @@ void Room705::parser() {
 		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (ecx && player_said(" ")) {
 		digi_play(_G(flags[V224]) ? "706r24" : "com075", 1, 255, -1, -1);
-	}
-	
-	// TODO Incomplete implementation
+	} else if (player_said("CUPOLA")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_705RipGoesUpStairsSeries = series_load("705 RIP GOES UP STAIRS", -1, nullptr);
+			ws_hide_walker();
+			_ripStairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 320, 0, 100, 256, false, triggerMachineByHashCallback, "rip stairs machine");
+			sendWSMessage_10000(1, _ripStairsMach, _705RipGoesUpStairsSeries, 1, 29, 2, _705RipGoesUpStairsSeries, 29, 29, 0);
 
+			break;
+
+		case 2:
+			sendWSMessage_10000(1, _ripStairsMach, _705RipGoesUpStairsSeries, 30, 39, -1, _705RipGoesUpStairsSeries, 39, 39, 0);
+			disable_player_commands_and_fade_init(3);
+
+			break;
+
+		case 3:
+			terminateMachine(_ripStairsMach);
+			player_set_commands_allowed(true);
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 707;
+
+			break;
+
+		default:
+			break;
+		}
+	} // player_said("CUPOLA")
+
+	else if (player_said("West Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
+
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 706;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("East Face")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(4);
+			break;
+
+		case 4:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s39", 3, 255, -1, -1);
+			_G(game).new_room = 704;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (!gearFl && !edi && player_said_any("MONK #9", "MONK #10", "MONK #11")) {
+		digi_play("com017", 1, 255, -1, -1);
+	} else
+		return;
 
 	_G(player).command_ready = false;
 }
