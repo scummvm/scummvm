@@ -42,9 +42,9 @@ public:
 private:
 	void conv705a();
 	void conv705b();
-	void subA5C2B(int32 trigger, const char *digiName);
+	void playCheckBrochureAnim(int32 trigger, const char *digiName);
 	void subA50BC(int32 trigger, int val1);
-	void subA55D2(int32 trigger, int val1);
+	void useWheelOnRightNiche(int32 trigger, int val1);
 
 	int32 _field24Series = 0;
 	int32 _field60_mode = 0;
@@ -57,6 +57,7 @@ private:
 	int32 _705Monk3Series = 0;
 	int32 _705Monk4Series = 0;
 	int32 _705RipGoesUpStairsSeries = 0;
+	int32 _ripChecksBrochureSeries = 0;
 	int32 _ripGoesDownStairsSeries = 0;
 	int32 _ripLooksDownSeries = 0;
 	int32 _ripTrekMedReachPos1Series = 0;

@@ -255,7 +255,7 @@ enum Flag {
 	V218 = 218,
 	V219 = 219, // Prayer wheel in niche, room 704
 	V220 = 220, // prayer wheel in niche, room 705
-	V221 = 221,
+	V221 = 221, // prayer wheel (right), room 705
 	V222 = 222,
 	V223 = 223,
 	V224 = 224,
