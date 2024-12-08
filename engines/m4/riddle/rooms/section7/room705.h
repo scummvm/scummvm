@@ -43,6 +43,8 @@ private:
 	void conv705a();
 	void conv705b();
 	void subA5C2B(int32 trigger, const char *digiName);
+	void subA50BC(int32 trigger, int val1);
+	void subA55D2(int32 trigger, int val1);
 
 	int32 _field24Series = 0;
 	int32 _field60_mode = 0;
