@@ -272,6 +272,8 @@ public:
 	void DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint8 unknown, Graphics::ManagedSurface &s);
 	void DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint8 unknown, Graphics::ManagedSurface &s);
 
+	void DrawImageResources(Graphics::ManagedSurface &s);
+
 	void ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
 
 	void TriggerDialogueChoice(uint8 index);
