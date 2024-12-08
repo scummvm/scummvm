@@ -28,14 +28,20 @@ namespace Got {
 namespace Gfx {
 
 void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf) {
+	surf.setTransparentColor(0);
+
 	// It's split into 4 panes per 4 pixels, so we need
 	// to juggle the pixels into their correct order
 	for (int plane = 0; plane < 4; ++plane) {
 		for (int y = 0; y < surf.h; ++y) {
 			byte *dest = (byte *)surf.getBasePtr(plane, y);
 
-			for (int x = 0; x < (surf.w / 4); ++x, dest += 4)
-				*dest = *src++;
+			for (int x = 0; x < (surf.w / 4); ++x, dest += 4, ++src) {
+				// For some reason, both '0' and '15' are both hard-coded
+				// as transparent colors in the graphics drawing. Simplify
+				// this for ScummVM by changing all 15's to 0
+				*dest = (*src == 15) ? 0 : *src;
+			}
 		}
 	}
 }
@@ -58,7 +64,6 @@ void GfxPics::load(const Common::String &name, int blockSize) {
 
 		Graphics::ManagedSurface &s = (*this)[idx];
 		s.create(w, h);
-		s.setTransparentColor(15);
 
 		convertPaneDataToSurface(buff, s);
 	}
