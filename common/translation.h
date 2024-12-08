@@ -78,7 +78,7 @@ struct PoMessageEntry {
 	int msgid;         /*!< ID of the message. */
 	String msgctxt;    /*!< Context of the message. It can be empty.
 							Can be used to solve ambiguities. */
-	U32String msgstr;  /*!< Message string. */
+	String msgstr;     /*!< Message string. */
 };
 
 /**
@@ -240,11 +240,10 @@ private:
 	bool checkHeader(File &in);
 
 	StringArray _langs;
-	U32StringArray _langNames;
+	StringArray _langNames;
 
 	StringArray _messageIds;
 	Array<PoMessageEntry> _currentTranslationMessages;
-	String _currentCharset;
 	int _currentLang;
 	Common::String _translationsFileName;
 };
