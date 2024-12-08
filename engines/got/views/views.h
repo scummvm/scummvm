@@ -26,6 +26,7 @@
 #include "got/views/title.h"
 #include "got/views/dialogs/main_menu.h"
 #include "got/views/dialogs/options_menu.h"
+#include "got/views/dialogs/quit.h"
 #include "got/views/dialogs/quit_game.h"
 #include "got/views/dialogs/set_sound.h"
 
@@ -38,6 +39,7 @@ struct Views {
 
 	Dialogs::MainMenu _mainMenu;
 	Dialogs::OptionsMenu _optionsMenu;
+	Dialogs::Quit _quit;
 	Dialogs::QuitGame _quitGame;
 	Dialogs::SetSound _setSound;
 };

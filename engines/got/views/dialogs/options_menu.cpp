@@ -33,7 +33,7 @@ static const char *OPTIONS[] = {
 		"Die", "Turbo Mode", "Help", "Quit", nullptr
 };
 
-OptionsMenu::OptionsMenu() : Dialog("OptionsMenu", "Options Menu", OPTIONS) {
+OptionsMenu::OptionsMenu() : SelectOption("OptionsMenu", "Options Menu", OPTIONS) {
 }
 
 void OptionsMenu::selected() {

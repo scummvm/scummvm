@@ -29,38 +29,14 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
-// On/Off is commonly used across multiple dialogs
-extern const char *ON_OFF[];
-
 class Dialog : public View {
-private:
-	Common::String _title;
-	Common::StringArray _options;
-	int _hammerFrame = 0;
-	int _smackCtr = 0;
-
-protected:
-	int _selectedItem = 0;
-
-	virtual void closed() {
-		close();
-	}
-	virtual void selected() {}
-
 public:
-	Dialog(const Common::String &name, const char *title,
-		const char *options[]);
+	Dialog(const Common::String &name) : View(name) {
+	}
 	virtual ~Dialog() {
 	}
 
-	bool msgFocus(const FocusMessage &msg) override {
-		_selectedItem = 0;
-		_smackCtr = 0;
-		return true;
-	}
-	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
-	bool tick() override;
 };
 
 } // namespace Dialogs

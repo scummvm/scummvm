@@ -29,7 +29,7 @@ static const char *OPTIONS[] = {
 	"None", "Digitized", nullptr
 };
 
-SetSound::SetSound() : Dialog("SetSound", "Set Sound", OPTIONS) {
+SetSound::SetSound() : SelectOption("SetSound", "Set Sound", OPTIONS) {
 }
 
 void SetSound::selected() {

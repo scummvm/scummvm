@@ -19,35 +19,54 @@
  *
  */
 
-#include "got/views/dialogs/main_menu.h"
+#ifndef GOT_VIEWS_DIALOGS_SELECT_OPTION_H
+#define GOT_VIEWS_DIALOGS_SELECT_OPTION_H
+
+#include "graphics/managed_surface.h"
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Play Game", "High Scores", "Credits", "Demo", "Quit", nullptr
-};
+// Commonly used options across multiple dialogs
+extern const char *ON_OFF[];
+extern const char *YES_NO[];
 
-MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu", OPTIONS) {
-}
 
-void MainMenu::closed() {
-	_selectedItem = 4; // Quit game
-	selected();
-}
+class SelectOption : public Dialog {
+private:
+	Common::String _title;
+	Common::StringArray _options;
+	int _hammerFrame = 0;
+	int _smackCtr = 0;
 
-void MainMenu::selected() {
-	switch (_selectedItem) {
-	case 4:
-		replaceView("Quit");
-		break;
+protected:
+	int _selectedItem = 0;
 
-	default:
-		break;
+	virtual void closed() {
+		close();
 	}
-}
+	virtual void selected() {}
+
+public:
+	SelectOption(const Common::String &name, const char *title,
+		const char *options[]);
+	virtual ~SelectOption() {
+	}
+
+	bool msgFocus(const FocusMessage &msg) override {
+		_selectedItem = 0;
+		_smackCtr = 0;
+		return true;
+	}
+	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool tick() override;
+};
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif

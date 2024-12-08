@@ -19,35 +19,26 @@
  *
  */
 
-#include "got/views/dialogs/main_menu.h"
+#ifndef GOT_VIEWS_DIALOGS_QUIT_H
+#define GOT_VIEWS_DIALOGS_QUIT_H
+
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Play Game", "High Scores", "Credits", "Demo", "Quit", nullptr
-};
-
-MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu", OPTIONS) {
-}
-
-void MainMenu::closed() {
-	_selectedItem = 4; // Quit game
-	selected();
-}
-
-void MainMenu::selected() {
-	switch (_selectedItem) {
-	case 4:
-		replaceView("Quit");
-		break;
-
-	default:
-		break;
+class Quit : public SelectOption {
+public:
+	Quit();
+	virtual ~Quit() {
 	}
-}
+
+	void selected() override;
+};
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif
