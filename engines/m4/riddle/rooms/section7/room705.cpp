@@ -137,9 +137,9 @@ void Room705::pre_parser() {
 }
 
 void Room705::parser() {
-	bool ecx = player_said_any("look", "look at");
+	bool lookFl = player_said_any("look", "look at");
 	const bool talkFl = player_said_any("talk", "talk to");
-	bool edi = player_said("take");
+	bool takeFl = player_said("take");
 	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv705a")) {
@@ -394,7 +394,7 @@ void Room705::parser() {
 		}
 	} // talkFl && player_said("MONK #12")
 
-	else if (ecx && player_said("GRATE")) {
+	else if (lookFl && player_said("GRATE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_update_info(_G(my_walker), &_G(player_info));
@@ -466,7 +466,7 @@ void Room705::parser() {
 
 	else if (player_said("GRATE")) {
 		digi_play("707r02", 1, 255, -1, -1);
-	} else if (ecx && player_said("MONK #9")) {
+	} else if (lookFl && player_said("MONK #9")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -488,7 +488,7 @@ void Room705::parser() {
 		}
 	} // ecx && player_said("MONK #9")
 
-	else if (ecx && player_said("MONK #10")) {
+	else if (lookFl && player_said("MONK #10")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -510,7 +510,7 @@ void Room705::parser() {
 		}
 	} // ecx && player_said("MONK #10")
 
-	else if (ecx && player_said("MONK #11")) {
+	else if (lookFl && player_said("MONK #11")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -532,7 +532,7 @@ void Room705::parser() {
 		}
 	} // ecx && player_said("MONK #11")
 
-	else if (ecx && player_said("MONK #12")) {
+	else if (lookFl && player_said("MONK #12")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -610,31 +610,31 @@ void Room705::parser() {
 		|| player_said("TRUTH WHEEL", "PRAYER WHEEL #12") || player_said("PEACE WHEEL", "PRAYER WHEEL #12") || player_said("WISDOM WHEEL", "PRAYER WHEEL #12") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #12") || player_said("SERENITY WHEEL", "PRAYER WHEEL #12")
 		) {
 		digi_play("com080", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("EMPTY NICHE", "EMPTY NICHE ")) {
+	} else if (lookFl && player_said_any("EMPTY NICHE", "EMPTY NICHE ")) {
 		digi_play("com127", 1, 255, -1, 997);
-	} else if (ecx && player_said_any("EMPTY NICHE", "PRAYER WHEEL #9") && _G(flags[V220])) {
+	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #9") && _G(flags[V220])) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("EMPTY NICHE", "PRAYER WHEEL #12") && _G(flags[V221])) {
+	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #12") && _G(flags[V221])) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("EMPTY NICHE", "PRAYER WHEEL #10")) {
+	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #10")) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("EMPTY NICHE", "PRAYER WHEEL #11")) {
+	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #11")) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (edi && player_said_any("PRAYER WHEEL #9", "PRAYER WHEEL #10", "PRAYER WHEEL #11", "PRAYER WHEEL #12") && _G(flags[V286])) {
+	} else if (takeFl && player_said_any("PRAYER WHEEL #9", "PRAYER WHEEL #10", "PRAYER WHEEL #11", "PRAYER WHEEL #12") && _G(flags[V286])) {
 		digi_play(_G(flags[V224]) ? "706r26" : "com143", 1, 255, -1, -1);
-	} else if (edi && player_said("PRAYER WHEEL #9")) {
+	} else if (takeFl && player_said("PRAYER WHEEL #9")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(10, 70, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (edi && player_said_any("PRAYER WHEEL #10", "PRAYER WHEEL #11")) {
+	} else if (takeFl && player_said_any("PRAYER WHEEL #10", "PRAYER WHEEL #11")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(10, 80, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (edi && player_said("PRAYER WHEEL #12")) {
+	} else if (takeFl && player_said("PRAYER WHEEL #12")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(10, 140, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (ecx && player_said(" ")) {
+	} else if (lookFl && player_said(" ")) {
 		digi_play(_G(flags[V224]) ? "706r24" : "com075", 1, 255, -1, -1);
 	} else if (player_said("CUPOLA")) {
 		switch (_G(kernel).trigger) {
@@ -699,7 +699,7 @@ void Room705::parser() {
 		default:
 			break;
 		}
-	} else if (!gearFl && !edi && player_said_any("MONK #9", "MONK #10", "MONK #11")) {
+	} else if (!gearFl && !takeFl && player_said_any("MONK #9", "MONK #10", "MONK #11")) {
 		digi_play("com017", 1, 255, -1, -1);
 	} else
 		return;
