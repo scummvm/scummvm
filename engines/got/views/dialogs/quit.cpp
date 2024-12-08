@@ -35,7 +35,7 @@ void Quit::selected() {
 		g_engine->quitGame();
 		break;
 	case 1:
-		close();
+		replaceView("Title", true);
 		break;
 	default:
 		break;

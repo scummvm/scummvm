@@ -40,7 +40,7 @@ void MainMenu::closed() {
 void MainMenu::selected() {
 	switch (_selectedItem) {
 	case 4:
-		replaceView("Quit");
+		addView("Quit");
 		break;
 
 	default:
