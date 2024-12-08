@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-07 20:32+0000\n"
-"PO-Revision-Date: 2024-11-26 11:18+0000\n"
+"PO-Revision-Date: 2024-12-08 12:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -9271,10 +9271,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "კითხვის სიჩქარე"
+msgstr "საუბრის სიჩქარის შეკეთება"
 
 #: engines/sci/detection_options.h:249
 msgid ""
