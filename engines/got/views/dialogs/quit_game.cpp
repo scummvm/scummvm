@@ -30,7 +30,7 @@ static const char *OPTIONS[] = {
 	"Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr
 };
 
-QuitGame::QuitGame() : Dialog("QuitGame", "Quit Game?", OPTIONS) {
+QuitGame::QuitGame() : SelectOption("QuitGame", "Quit Game?", OPTIONS) {
 }
 
 void QuitGame::selected() {

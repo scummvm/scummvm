@@ -22,13 +22,13 @@
 #ifndef GOT_VIEWS_DIALOGS_OPTIONS_MENU_H
 #define GOT_VIEWS_DIALOGS_OPTIONS_MENU_H
 
-#include "got/views/dialogs/dialog.h"
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-class OptionsMenu : public Dialog {
+class OptionsMenu : public SelectOption {
 public:
 	OptionsMenu();
 	virtual ~OptionsMenu() {

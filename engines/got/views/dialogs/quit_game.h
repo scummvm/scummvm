@@ -22,13 +22,13 @@
 #ifndef GOT_VIEWS_DIALOGS_QUIT_GAME_H
 #define GOT_VIEWS_DIALOGS_QUIT_GAME_H
 
-#include "got/views/dialogs/dialog.h"
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-class QuitGame : public Dialog {
+class QuitGame : public SelectOption {
 public:
 	QuitGame();
 	virtual ~QuitGame() {

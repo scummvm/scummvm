@@ -22,13 +22,13 @@
 #ifndef GOT_VIEWS_DIALOGS_SET_SOUND_H
 #define GOT_VIEWS_DIALOGS_SET_SOUND_H
 
-#include "got/views/dialogs/dialog.h"
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-class SetSound : public Dialog {
+class SetSound : public SelectOption {
 public:
 	SetSound();
 	virtual ~SetSound() {
