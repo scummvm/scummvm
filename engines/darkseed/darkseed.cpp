@@ -2654,6 +2654,7 @@ void DarkseedEngine::newGame() {
 
 void DarkseedEngine::waitForSpeech() {
 	while (_sound && _sound->isPlayingSpeech()) {
+		_console->draw();
 		updateEvents();
 		if (_room) {
 			_room->update();
@@ -2665,6 +2666,7 @@ void DarkseedEngine::waitForSpeech() {
 
 void DarkseedEngine::waitForSpeechOrSfx() {
 	while (_sound && (_sound->isPlayingSpeech() || _sound->isPlayingSfx())) {
+		_console->draw();
 		updateEvents();
 		if (_room) {
 			_room->update();

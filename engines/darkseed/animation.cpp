@@ -160,7 +160,7 @@ void Animation::updateAnimation() {
 	case 1: // sleep wake anim
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->_position.x = 0xdf;
 			_player->_position.y = 0xbe;
@@ -172,7 +172,7 @@ void Animation::updateAnimation() {
 	case 2: // shower
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->_position.x = 218;
 			_player->_position.y = 198;
@@ -255,9 +255,9 @@ void Animation::updateAnimation() {
 		}
 		if (!_objRestarted) {
 			if (currentRoomNumber == 6) {
-				_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 			} else {
-				_player->_frameIdx = _player->_animations.getAnimAt(2)._frameNo[_player->_animations.getAnimAt(2)._frameNo[_animIndexTbl[2]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(2)._frameNo[_animIndexTbl[2]];
 			}
 		} else {
 			if (currentRoomNumber == 6) {
@@ -277,7 +277,7 @@ void Animation::updateAnimation() {
 				g_engine->playSound(4, 5, -1);
 			}
 			if (!_objRestarted) {
-				_player->_frameIdx = _player->_animations.getAnimAt(3)._frameNo[_player->_animations.getAnimAt(3)._frameNo[_animIndexTbl[3]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(3)._frameNo[_animIndexTbl[3]];
 			} else {
 				g_engine->_previousRoomNumber = 5;
 				g_engine->changeToRoom(6);
@@ -289,7 +289,7 @@ void Animation::updateAnimation() {
 				g_engine->playSound(4, 5, -1);
 			}
 			if (!_objRestarted) {
-				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 			}
 		}
 		break;
@@ -305,9 +305,9 @@ void Animation::updateAnimation() {
 		}
 		if (!_objRestarted) {
 			if (_otherNspAnimationType_maybe == 8) {
-				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 			} else {
-				_player->_frameIdx = _player->_animations.getAnimAt(2)._frameNo[_player->_animations.getAnimAt(2)._frameNo[_animIndexTbl[2]]];
+				_player->_frameIdx = _player->_animations.getAnimAt(2)._frameNo[_animIndexTbl[2]];
 			}
 		} else {
 			if (_otherNspAnimationType_maybe == 63) {
@@ -333,7 +333,7 @@ void Animation::updateAnimation() {
 	case 64:
 		advanceAnimationFrame(1);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_player->_position.x = 300;
 			_player->_position.y = 183;
@@ -358,10 +358,10 @@ void Animation::updateAnimation() {
 			}
 		}
 		break;
-	case 12:
+	case 12: // rt ladder climb up
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->_position.x = 360;
 			_player->_position.y = 238;
@@ -387,7 +387,7 @@ void Animation::updateAnimation() {
 	case 16: // climb down rope
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->_position.x = 336;
 			_player->_position.y = 195;
@@ -415,7 +415,7 @@ void Animation::updateAnimation() {
 	case 18: // push trunk
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		}
 		if (_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]] == 3 && _frameAdvanced) {
 			g_engine->_console->printTosText(_objectVar[22] + 662);
@@ -449,10 +449,10 @@ void Animation::updateAnimation() {
 			g_engine->_console->printTosText(468);
 		}
 		break;
-	case 10:
+	case 10: // climb ladder left
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 			g_engine->changeToRoom(61);
@@ -510,10 +510,10 @@ void Animation::updateAnimation() {
 			g_engine->changeToRoom(13);
 		}
 		break;
-	case 27:
+	case 27: // enter mirror from normal world
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]]; // TODO check if this is correct.
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 			g_engine->changeToRoom(38);
@@ -658,13 +658,13 @@ void Animation::updateAnimation() {
 	case 43:
 	case 44:
 	case 45:
-	case 46: {
+	case 46: { // pull lever
 		int iVar4 = 0;
 		if ((_otherNspAnimationType_maybe == 44) || (_otherNspAnimationType_maybe == 46)) {
 			iVar4 = 1;
 		}
 		advanceAnimationFrame(iVar4);
-		_player->_frameIdx = _player->_animations.getAnimAt(iVar4)._frameNo[_player->_animations.getAnimAt(iVar4)._frameNo[_animIndexTbl[iVar4]]];
+		_player->_frameIdx = _player->_animations.getAnimAt(iVar4)._frameNo[_animIndexTbl[iVar4]];
 		//		_HeroSpr = (uint) * (byte *)((int)&DAT_1060_7eb8 + *(int *)((int)&_ObjFrame + iVar4 * 2) + iVar4 * 202);
 		if (_frameAdvanced && _animIndexTbl[iVar4] == 3) { // TODO should we add this conditionally? This logic was missing from the original game. I assume they just forgot to add the sfx.
 			g_engine->playSound(8, 5, -1); // pull lever sound.
@@ -754,7 +754,7 @@ void Animation::updateAnimation() {
 	case 58:
 		advanceAnimationFrame((_otherNspAnimationType_maybe - 57) & 1);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]; //_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else if (_otherNspAnimationType_maybe == 57) {
 			g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 			g_engine->changeToRoom(g_engine->_room->_roomNumber == 41 ? 44 : 41);
