@@ -1193,11 +1193,39 @@ void Room705::daemon() {
 }
 
 void Room705::conv705a() {
-	//TODO Not yet implemented
+	if (conv_sound_to_play() == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	const int32 who = conv_whos_talking();
+	if (who == 0) {
+		_field64_should = 121;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(10, 127, nullptr);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (who == 1) {
+		digi_play(conv_sound_to_play(), 1, 255, 90, -1);
+	}
+
 }
 
 void Room705::conv705b() {
-	//TODO Not yet implemented
+	if (conv_sound_to_play() == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	const int32 who = conv_whos_talking();
+	if (who == 0) {
+		_field64_should = 131;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(10, 137, nullptr);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (who == 1) {
+		digi_play(conv_sound_to_play(), 1, 255, 93, -1);
+	}
+
 }
 
 void Room705::playCheckBrochureAnim(int32 trigger, const char *digiName) {
