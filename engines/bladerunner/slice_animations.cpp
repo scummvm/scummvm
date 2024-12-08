@@ -226,9 +226,9 @@ void *SliceAnimations::PageFile::loadPage(uint32 pageNumber) {
 
 	uint32 pageSize = _sliceAnimations->_pageSize;
 
-	// TODO: Retire oldest pages if we exceed some memory limit
-
 	void *data = malloc(pageSize);
+	assert(data);
+
 	_files[_pageOffsetsFileIdx[pageNumber]].seek(_pageOffsets[pageNumber], SEEK_SET);
 	uint32 r = _files[_pageOffsetsFileIdx[pageNumber]].read(data, pageSize);
 	assert(r == pageSize);
@@ -261,24 +261,110 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	uint32 frameOffset = _animations[animation].offset + frame * _animations[animation].frameSize;
-	uint32 page        = frameOffset / _pageSize;
+	uint32 pageId      = frameOffset / _pageSize;
 	uint32 pageOffset  = frameOffset % _pageSize;
 
-	if (_pages[page]._data == nullptr) {                          // if not cached already
-		_pages[page]._data = _coreAnimPageFile.loadPage(page);    // look in COREANIM first
+	Page &page = _pages[pageId];
 
-		if (_pages[page]._data == nullptr) {                      // if not in COREAMIM
-			_pages[page]._data = _framesPageFile.loadPage(page);  // Look in CDFRAMES or HDFRAMES loaded data
+	bool newPage = false;
 
-			if (_pages[page]._data == nullptr) {
-				error("Unable to locate page %d for animation %d frame %d", page, animation, frame);
+	if (page._data == nullptr) {                          // if not cached already
+		newPage = true;
+		page._data = _coreAnimPageFile.loadPage(pageId);    // look in COREANIM first
+
+		if (page._data == nullptr) {                      // if not in COREAMIM
+			page._data = _framesPageFile.loadPage(pageId);  // Look in CDFRAMES or HDFRAMES loaded data
+
+			if (page._data == nullptr) {
+				error("Unable to locate page %d for animation %d frame %d", pageId, animation, frame);
 			}
 		}
 	}
 
-	_pages[page]._lastAccess = _vm->_time->currentSystem();
+	page._lastAccess = _vm->_time->currentSystem();
+	updatePagesList(page, newPage);
 
-	return (byte *)_pages[page]._data + pageOffset;
+	return (byte *)page._data + pageOffset;
+}
+
+void SliceAnimations::updatePagesList(Page &page, bool newPage) {
+	// We are already at the end, nothing to update
+	// Only cleanup old pages if any
+	if (_lastUsedPage == &page) {
+		if (newPage) {
+			cleanupOutdatedPages();
+		}
+		return;
+	}
+
+	// As our list is circular, it's either full nullptr or non nullptr
+	assert((page._prevPage == nullptr) == (page._nextPage == nullptr));
+
+	// If the page was in the doubly chained list, unhook it
+	if (page._prevPage) {
+		// On a fully generic circular linked list, if we were the only item
+		// we would have to clear _lastUsedPage.
+		// But if we are alone, we are at the end of the list and we were handled above
+		page._prevPage->_nextPage = page._nextPage;
+		page._nextPage->_prevPage = page._prevPage;
+		page._prevPage = nullptr;
+		page._nextPage = nullptr;
+	}
+
+	// Now hook it at the end
+	if (!_lastUsedPage) {
+		// Empty list
+		page._prevPage = &page;
+		page._nextPage = &page;
+	} else {
+		page._nextPage = _lastUsedPage->_nextPage;
+		page._prevPage = _lastUsedPage;
+		_lastUsedPage->_nextPage->_prevPage = &page;
+		_lastUsedPage->_nextPage = &page;
+	}
+	_lastUsedPage = &page;
+
+	// Don't cleanup everytime, only when allocating new pages
+	if (newPage) {
+		cleanupOutdatedPages();
+	}
+}
+
+void SliceAnimations::cleanupOutdatedPages() {
+	if (!_lastUsedPage) {
+		return;
+	}
+
+	// If we are too young, no cleanup to do
+	// The counter will wrap in approx. 49 days
+	if (_lastUsedPage->_lastAccess < 60000) {
+		return;
+	}
+
+	// Keep all pages used in the last 60s
+	uint32 deadline = _lastUsedPage->_lastAccess - 60000;
+
+	// _lastUsedPage->_nextNode is the oldest page in the list
+	Page *page = _lastUsedPage->_nextPage;
+	while(page != _lastUsedPage) {
+		if (page->_lastAccess >= deadline) {
+			break;
+		}
+		Page *next = page->_nextPage;
+
+		// As we delete from the start of the list,
+		// the previous page is always the end of the list
+		_lastUsedPage->_nextPage = next;
+		next->_prevPage = _lastUsedPage;
+
+		free(page->_data);
+		page->_data = nullptr;
+		page->_lastAccess = 0;
+		page->_prevPage = nullptr;
+		page->_nextPage = nullptr;
+
+		page = next;
+	}
 }
 
 Vector3 SliceAnimations::getPositionChange(int animation) const {
