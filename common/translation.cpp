@@ -143,17 +143,17 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 			}
 			// Find the context we want
 			if (context == nullptr || *context == '\0' || leftIndex == rightIndex)
-				return _currentTranslationMessages[leftIndex].msgstr;
+				return _currentTranslationMessages[leftIndex].msgstr.decode();
 			// We could use again binary search, but there should be only a small number of contexts.
 			while (rightIndex > leftIndex) {
 				compareResult = strcmp(context, _currentTranslationMessages[rightIndex].msgctxt.c_str());
 				if (compareResult == 0)
-					return _currentTranslationMessages[rightIndex].msgstr;
+					return _currentTranslationMessages[rightIndex].msgstr.decode();
 				else if (compareResult > 0)
 					break;
 				--rightIndex;
 			}
-			return _currentTranslationMessages[leftIndex].msgstr;
+			return _currentTranslationMessages[leftIndex].msgstr.decode();
 		} else if (compareResult < 0)
 			rightIndex = midIndex - 1;
 		else
@@ -185,7 +185,7 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	TLangArray languages;
 
 	for (unsigned int i = 0; i < _langNames.size(); i++) {
-		TLanguage lng(_langNames[i], i + 1);
+		TLanguage lng(_langNames[i].decode(), i + 1);
 		languages.push_back(lng);
 	}
 
@@ -304,7 +304,7 @@ void TranslationManager::loadTranslationsInfoDat(const Common::String &name) {
 		_langs[i] = String(buf, len - 1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len - 1).decode();
+		_langNames[i] = String(buf, len - 1);
 	}
 
 	// Read messages
@@ -324,7 +324,6 @@ void TranslationManager::loadTranslationsInfoDat(const Common::String &name) {
 
 void TranslationManager::loadLanguageDat(int index) {
 	_currentTranslationMessages.clear();
-	_currentCharset.clear();
 	// Sanity check
 	if (index < 0 || index >= (int)_langs.size()) {
 		if (index != -1)
@@ -364,8 +363,6 @@ void TranslationManager::loadLanguageDat(int index) {
 	int nbMessages = in.readUint16BE();
 	_currentTranslationMessages.resize(nbMessages);
 
-	_currentCharset = "UTF-32";
-
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
@@ -376,7 +373,7 @@ void TranslationManager::loadLanguageDat(int index) {
 			msg += String(buf, len > 256 ? 256 : len - 1);
 			len -= 256;
 		}
-		_currentTranslationMessages[i].msgstr = msg.decode();
+		_currentTranslationMessages[i].msgstr = msg;
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
