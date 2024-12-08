@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-07 20:32+0000\n"
-"PO-Revision-Date: 2024-11-13 11:43+0000\n"
+"PO-Revision-Date: 2024-12-09 05:32+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5797,10 +5797,8 @@ msgstr ""
 "moviment i en els menús del joc."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Diàleg d'entrada predictiu"
+msgstr "Diàleg d'entrada predictiu en fer clic amb el ratolí"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6361,10 +6359,8 @@ msgstr "Assignació de tecles per defecte"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles d'escapament"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -7092,10 +7088,8 @@ msgstr "Càrrega ràpida"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Modificador de moviment ràpid"
+msgstr "Mode ràpid"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
@@ -7103,16 +7097,12 @@ msgid "Player menu"
 msgstr "Menú del jugador"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "Velocitat de joc més ràpida"
+msgstr "Augmenta la velocitat del joc"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "Velocitat de joc més ràpida"
+msgstr "Disminueix la velocitat del joc"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -7134,60 +7124,44 @@ msgid "Change Command"
 msgstr "Canvia l'ordre"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Temporitzador activat"
+msgstr "Avanç del temps"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Commuta el silenci"
+msgstr "Commuta el menú"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Mode de combat"
+msgstr "Commuta el rellotge"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
 msgstr ""
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "Paleta anterior"
+msgstr "Diàleg / element de menú anterior"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Ves al següent objecte"
+msgstr "Objecte següent"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Ves a l'objecte anterior"
+msgstr "Objecte anterior"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "Acció anterior"
+msgstr "Recull / Opera"
 
 #: engines/dgds/metaengine.cpp:83
 msgid "Activate Inventory Object"
 msgstr ""
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "Assignacions de tecles del joc"
+msgstr "Tecles de joc"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7201,23 +7175,17 @@ msgid "Skip intro/Exit map or inventory"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open"
 msgid "Open map"
-msgstr "Obre"
+msgstr "Obre el mapa"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Mostra el mapa"
+msgstr "Mostra el mapa de recorreguts"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "Commuta el caminar ràpid"
+msgstr "Commuta la velocitat de caminar"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7229,16 +7197,12 @@ msgid "Toggle between mouse pointer and the last game item"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "Desplaça't cap amunt a l'inventari"
+msgstr "Element anterior a l'inventari"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "Obre l'inventari"
+msgstr "Element següent a l'inventari"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7316,10 +7280,8 @@ msgid "Automatic drilling"
 msgstr "Perforació automàtica"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
-msgstr "Permet perforar amb èxit en qualsevol part de l'àrea a Driller"
+msgstr "Permet perforar amb èxit en qualsevol part de l'àrea de Driller"
 
 #: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
@@ -7402,16 +7364,12 @@ msgid "Info Menu"
 msgstr "Menú d'informació"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona el príncep"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona la princesa"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -7447,10 +7405,8 @@ msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Mou endavant"
+msgstr "Mira endavant"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -7490,23 +7446,17 @@ msgstr ""
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Canvia el mode"
+msgstr "Canvia l'angle"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Canvia la mida del tipus de lletra"
+msgstr "Canvia la mida dels passos"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Commuta el silenci"
+msgstr "Commuta l'alçada"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -7919,22 +7869,16 @@ msgid "Glowstick"
 msgstr "Bengala"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Cancel·lat per l'usuari"
+msgstr "Ajuda de l'usuari"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
 msgstr "Commuta el so"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "Repeteix l'últim missatge"
+msgstr "Repeteix l'última línia"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -7960,10 +7904,8 @@ msgid "Show inventory"
 msgstr "Mostra l'inventari"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Mode millorat"
+msgstr "Mode turbo"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
