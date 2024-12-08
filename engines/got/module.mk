@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	views/dialogs/select_option.o \
 	views/dialogs/main_menu.o \
 	views/dialogs/options_menu.o \
+	views/dialogs/play_game.o \
 	views/dialogs/quit.o \
 	views/dialogs/quit_game.o \
 	views/dialogs/set_sound.o
