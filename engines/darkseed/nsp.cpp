@@ -61,8 +61,8 @@ void Sprite::clipToScreen(int x, int y, uint16 frameBottom, uint16 *clippedWidth
 	if (x + _width > g_engine->_screen->w) {
 		*clippedWidth = g_engine->_screen->w - x;
 	}
-	if (x + _width > 569) {
-		*clippedWidth = 569 - x;
+	if (x + _width > 570) {
+		*clippedWidth = 570 - x;
 	}
 	if (frameBottom != 0 && y + _height > g_engine->_frameBottom) {
 		if (y >= frameBottom) {
@@ -137,7 +137,7 @@ void Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, boo
 		int xi = flipX ? xs : xs * clipX;
 		const byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
-			if (currX > 69 && currX < destSurface->w) { // clip to game window. TODO pass clip rect into method.
+			if (currX > 69 && currX < 570 && currX < destSurface->w) { // clip to game window. TODO pass clip rect into method.
 				byte colorIndex = *wsrc;
 				//				uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
 				if (colorIndex != 0xf) {
