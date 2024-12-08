@@ -58,8 +58,11 @@ class SliceAnimations {
 	struct Page {
 		void   *_data;
 		uint32 _lastAccess;
+		// Use a doubly linked list to sort pages by access time
+		Page   *_prevPage;
+		Page   *_nextPage;
 
-		Page() : _data(nullptr), _lastAccess(0) {}
+		Page() : _data(nullptr), _lastAccess(0), _prevPage(nullptr), _nextPage(nullptr) {}
 	};
 
 	struct PageFile {
@@ -86,9 +89,13 @@ class SliceAnimations {
 	Common::Array<Palette>      _palettes;
 	Common::Array<Animation>    _animations;
 	Common::Array<Page>         _pages;
+	Page                       *_lastUsedPage;
 
 	PageFile _coreAnimPageFile;
 	PageFile _framesPageFile;
+
+	void updatePagesList(Page &page, bool newPage);
+	void cleanupOutdatedPages();
 
 public:
 	SliceAnimations(BladeRunnerEngine *vm)
@@ -98,7 +105,8 @@ public:
 		, _timestamp(0)
 		, _pageSize(0)
 		, _pageCount(0)
-		, _paletteCount(0) {}
+		, _paletteCount(0)
+		, _lastUsedPage(nullptr) {}
 	~SliceAnimations();
 
 	bool open(const Common::String &name);
