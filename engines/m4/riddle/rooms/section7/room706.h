@@ -33,8 +33,19 @@ public:
 	Room706() : Room() {}
 	~Room706() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _706RipGoesDownStairsSeries = 0;
+	int32 _ripShieldsFaceSeries = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
+
+	machine *_prayerWheelMach = nullptr;
+	machine *_ripStairsMach = nullptr;
 };
 
 } // namespace Rooms
