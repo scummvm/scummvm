@@ -40,10 +40,15 @@ public:
 	void daemon() override;
 
 private:
+	int32 _field78_mode = 0;
+	int32 _field7C_should = 0;
+
+	int32 _706eye3aSeries = 0;
 	int32 _706RipGoesDownStairsSeries = 0;
 	int32 _ripShieldsFaceSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 
+	machine *_monkMach = nullptr;
 	machine *_prayerWheelMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 };
