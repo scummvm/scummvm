@@ -62,8 +62,12 @@ private:
 	int _blockSize;
 
 public:
-	Pics(const Common::String &resName, int blockSize = -1) :
-		_resName(resName), _blockSize(blockSize) {}
+	Pics(const Common::String &resName, int blockSize = -1,
+			bool immediateLoad = true) :
+			_resName(resName), _blockSize(blockSize) {
+		if (immediateLoad)
+			load();
+	}
 
 	void load() {
 		GfxPics::load(_resName, _blockSize);

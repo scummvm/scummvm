@@ -94,6 +94,16 @@ bool Story::msgFocus(const FocusMessage &msg) {
 		p++;
 	}
 
+	// Final two glyphs
+	Gfx::Pics bg1("STORYPIC");
+	_surface.blitFrom(bg1[0], Common::Point(146, 64));
+
+	if (_G(area) == 1) {
+		Gfx::Pics bg2("OPENBACK");
+		_surface.blitFrom(bg2[0], Common::Point(24, 88 + 240));
+	}
+
+	// Play the opening music
 	music_play("OPENSONG", 1);
 
 	return true;

@@ -30,7 +30,7 @@ namespace Got {
 
 Vars *g_vars;
 
-Vars::Vars() : _hampic("HAMPIC", 262) {
+Vars::Vars() : _hampic("HAMPIC", 262, false) {
 	g_vars = this;
 }
 
