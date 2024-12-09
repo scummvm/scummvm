@@ -30,7 +30,8 @@ namespace Views {
 
 class Story : public View {
 private:
-	Graphics::ManagedSurface _image1, _image2;
+	Gfx::GfxSurface _surface;
+	int _yp = 0;
 
 public:
 	Story() : View("Story") {}

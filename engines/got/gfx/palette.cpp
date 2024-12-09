@@ -62,9 +62,4 @@ void xgetpal(byte *pal, int num_colrs, int start_index) {
 	g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
 }
 
-void set_palette() {
-	const byte *pal = _G(pbuff);
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
-}
-
 } // namespace Got

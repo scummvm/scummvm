@@ -52,7 +52,13 @@ void GfxPics::load(const Common::String &name, int blockSize) {
 
 	// Set up array of images
 	clear();
-	resize(f.size() / blockSize);
+	if (blockSize == -1) {
+		// Only a single image
+		resize(1);
+		blockSize = f.size();
+	} else {
+		resize(f.size() / blockSize);
+	}
 
 	byte *buff = new byte[blockSize];
 
@@ -60,7 +66,7 @@ void GfxPics::load(const Common::String &name, int blockSize) {
 		int w = f.readUint16LE() * 4;
 		int h = f.readUint16LE();
 		f.skip(2);	// Unused transparent color. It's always 15
-		f.read(buff, 16 * 16);
+		f.read(buff, blockSize - 6);
 
 		Graphics::ManagedSurface &s = (*this)[idx];
 		s.create(w, h);

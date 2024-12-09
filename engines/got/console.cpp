@@ -20,19 +20,25 @@
  */
 
 #include "got/console.h"
+#include "got/events.h"
 
 namespace Got {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("view",   WRAP_METHOD(Console, cmdView));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
+bool Console::cmdView(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("view <view name>\n");
+		return true;
+	} else {
+		g_events->replaceView(argv[1], true);
+		return false;
+	}
 }
 
-} // End of namespace Got
+} // namespace Got

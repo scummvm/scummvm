@@ -31,49 +31,90 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	char back[4][262];
 
 	res_read("OPENSONG", _G(song));
-	res_read("STORY1", _G(tmp_buff));
+	res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
 	res_read("OPENBACK", back);
 	res_read("STORYPIC", back);
-#if 0
-	// Load the images
-	_image1.create(320, 240);
-	_image2.create(320, 240);
 
-	for (int i = 0; i < 12; i++) {
-		Graphics::ManagedSurface *s = (i < 6) ? &_image1 : &_image2;
-		byte *destP = (byte *)s->getBasePtr(0, (i % 6) * 40);
-		res_read(Common::String::format("OPENP%d", i + 1), destP);
-	}
-#endif
 	res_read("STORYPAL", _G(pbuff));
 	_G(pbuff)[2] = 0;
 	_G(pbuff)[1] = 0;
 	_G(pbuff)[0] = 0;
-	set_palette();
+
+	for (int i = 0; i < 768; ++i)
+		_G(pbuff)[i] = (_G(pbuff)[i] * 255 + 31) / 63;
+	xsetpal(_G(pbuff));
+
+	// Create story image and load in it's fragments
+	_surface.create(320, 240 * 2);
+
+	for (int i = 0; i < 12; i++) {
+		Gfx::Pics pics(Common::String::format("OPENP%d", i + 1));
+		pics.load();
+
+		_surface.blitFrom(pics[0], Common::Point(0, i * 40));
+	}
+
+	// Set up the story text
+	int i = 0;
+	int x = 8, y = 2;
+	byte color = 72;
+	char s[21];
+
+	const char *p = (const char *)_G(tmp_buff);
+
+	while (i < 46) {
+		if (*p == '\n') {
+			x = 8;
+			y += 10;
+			i++;
+
+			if (i == 23) {
+				// Move to start of of "second page" of the surface
+				y = 240 + 2;
+			}
+		} else if (*p == '/' && *(p + 4) == '/') {
+			p++;
+			s[0] = *p++;
+			s[1] = *p++;
+			s[2] = *p++;
+			s[3] = 0;
+			color = atoi(s);
+		} else if (*p != '\r') {
+			_surface.printChar(*p, x - 1, y - 1, 255);
+			_surface.printChar(*p, x + 1, y + 1, 255);
+			_surface.printChar(*p, x - 1, y + 1, 255);
+			_surface.printChar(*p, x + 1, y - 1, 255);
+			_surface.printChar(*p, x, y - 1, 255);
+			_surface.printChar(*p, x, y + 1, 255);
+			_surface.printChar(*p, x - 1, y, 255);
+			_surface.printChar(*p, x + 1, y, 255);
+			_surface.printChar(*p, x, y, color);
+			x += 8;
+		}
+
+		p++;
+	}
 
 	return true;
 }
 
 bool Story::msgUnfocus(const UnfocusMessage &msg) {
-	_image1.clear();
-	_image2.clear();
-	return true;
-}
-
-bool Story::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	close();
+	_surface.clear();
 	return true;
 }
 
 void Story::draw() {
 	GfxSurface s = getSurface();
 
-	//s.blitFrom(_image1);
-	for (int i = 0; i < 10 * 10; ++i) {
-		Graphics::ManagedSurface & img = _G(bgPics)[i];
-		s.blitFrom(img, Common::Point((i % 10) * 32, (i / 10) * 16));
-	}
+	// Draw the currently visible part of the surface
+	s.blitFrom(_surface, Common::Rect(0, _yp, 320, _yp + 240),
+		Common::Point(0, 0));
+}
+
+bool Story::msgKeypress(const KeypressMessage &msg) {
+	// Any keypress to close the view
+	close();
+	return true;
 }
 
 bool Story::tick() {

@@ -58,11 +58,11 @@ public:
 
 class Pics : public GfxPics {
 private:
-	const char *_resName;
+	Common::String _resName;
 	int _blockSize;
 
 public:
-	Pics(const char *resName, int blockSize) :
+	Pics(const Common::String &resName, int blockSize = -1) :
 		_resName(resName), _blockSize(blockSize) {}
 
 	void load() {
