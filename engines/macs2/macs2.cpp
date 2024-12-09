@@ -133,7 +133,7 @@ void Macs2Engine::readResourceFile() {
 
 		_fileStream = new Common::MemoryReadStream(fileData, size);
 	}
-	
+
 	// Full implementation here
 
 	// Read the image resources
@@ -211,13 +211,9 @@ void Macs2Engine::readResourceFile() {
 		GameObjects::instance().Objects.push_back(gameObject);
 	}
 
-
 	// Test implementations below
 
-
-
 	_fileStream->seek(0x23BE09);
-
 
 	// file.read(data, 320 * 240);
 
@@ -225,8 +221,8 @@ void Macs2Engine::readResourceFile() {
 
 	_bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
-	uint8* lengthData = new uint8[2];
-	uint8* data = new uint8[320];
+	uint8 *lengthData = new uint8[2];
+	uint8 *data = new uint8[320];
 
 	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
 	// try to RLE something which would be better not RLE encoded.
@@ -237,21 +233,20 @@ void Macs2Engine::readResourceFile() {
 		uint16 length = lengthData[1] << 8 | lengthData[0];
 		_fileStream->read(data, length);
 		uint16 remainingPixels = 320;
-		uint8* dataPointer = data;
+		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
-			const uint8& value = dataPointer[0];
+			const uint8 &value = dataPointer[0];
 			dataPointer++;
 			if (value != 0xF0) {
 				_bgImageShip.setPixel(x, y, value);
 				remainingPixels--;
 				x++;
-			}
-			else {
+			} else {
 				// We need to decode the RLE data
-				const uint8& runlength = dataPointer[0];
+				const uint8 &runlength = dataPointer[0];
 				dataPointer++;
-				const uint8& encodedValue = dataPointer[0];
+				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
 				for (int i = 0; i < runlength; i++) {
 					_bgImageShip.setPixel(x++, y, encodedValue);
@@ -260,8 +255,6 @@ void Macs2Engine::readResourceFile() {
 			}
 		}
 	}
-
-	
 
 	// Load the palette
 	_fileStream->seek(0x00248BCB);
@@ -294,8 +287,8 @@ void Macs2Engine::readResourceFile() {
 	}
 	_fileStream->seek(0x0024BF72);
 	for (int i = 0; i < 16; i++) {
-		_pathfindingPoints[i*2] = _fileStream->readUint16LE();
-		_pathfindingPoints[i*2 + 1] = _fileStream->readUint16LE();
+		_pathfindingPoints[i * 2] = _fileStream->readUint16LE();
+		_pathfindingPoints[i * 2 + 1] = _fileStream->readUint16LE();
 		// Need to read 6 more bytes of unknown purpose
 		// TODO: Add them when I know what they do
 		Common::Array<uint8> indices;
@@ -305,9 +298,6 @@ void Macs2Engine::readResourceFile() {
 		}
 		uint16 numConnections = _fileStream->readUint16LE();
 	}
-	
-
-	
 
 	// return check_cast<uint8>((c * 259 + 33) >> 6);
 
@@ -315,7 +305,6 @@ void Macs2Engine::readResourceFile() {
 	// Load the amount of bytes for the row
 	// Load the row data and do run-length decoding
 	// Save into the right row of the surface
-
 
 	// Load the data for a character
 
@@ -357,7 +346,6 @@ void Macs2Engine::readResourceFile() {
 
 	// And the highlight part
 	_fileStream->seek(0x6962);
-	
 
 	_borderHighlightWidth = _fileStream->readUint16LE();
 	_borderHighlightHeight = _fileStream->readUint16LE();
@@ -367,6 +355,10 @@ void Macs2Engine::readResourceFile() {
 	_borderHighlightSprite.Height = _borderHighlightHeight;
 	_borderHighlightSprite.Data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
 
+	AnimFrame &shadowFrame = imageResources[0x2];
+	_borderShadowSprite.Data.assign(shadowFrame.Data, shadowFrame.Data + shadowFrame.Width * shadowFrame.Height);
+	_borderShadowSprite.Width = shadowFrame.Width;
+	_borderShadowSprite.Height = shadowFrame.Height;
 
 	// The flag animation frames
 	_fileStream->seek(0x00250D47);

@@ -220,6 +220,8 @@ public:
 	uint16 _borderHighlightWidth;
 	uint16 _borderHighlightHeight;
 
+	Sprite _borderShadowSprite;
+
 	byte** _flagData;
 	uint16* _flagWidths;
 	uint16* _flagHeights;
