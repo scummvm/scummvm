@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-09 06:55+0000\n"
-"PO-Revision-Date: 2024-12-06 14:48+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2024-12-09 22:18+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -7649,10 +7649,8 @@ msgid "Change Command"
 msgstr "Changer de commande"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Timer activé"
+msgstr "Avancer l'horloge"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
