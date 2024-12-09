@@ -124,6 +124,20 @@ void EclipseEngine::loadAssets() {
 	if (!isDemo() && !isEclipse2()) {
 		_areaMap[51]->addFloor();
 		_areaMap[51]->_paperColor = 1;
+
+		// Workaround for fixing some planar objects from area 9 that have null size
+		Object *obj = nullptr;
+		obj = _areaMap[9]->objectWithID(7);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
+
+		obj = _areaMap[9]->objectWithID(8);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
+
+		obj = _areaMap[9]->objectWithID(9);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
 	}
 }
 
