@@ -148,7 +148,7 @@ const BorderOffsets &MacWindowBorder::getOffset() const {
 
 void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindowManager *wm) {
 	_title = title;
-	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
 	int sidesWidth = getOffset().left + getOffset().right;
 	int titleWidth = font->getStringWidth(_title) + 8;
 	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
@@ -185,7 +185,7 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 }
 
 void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset) {
-	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
 	int width = g->w;
 	int titleColor = getOffset().dark ? wm->_colorWhite: wm->_colorBlack;
 	int titleY = getOffset().titleTop;

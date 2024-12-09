@@ -109,7 +109,7 @@ Screen::Screen(PinkEngine *vm)
 	_textFontCleanup = true;
 #ifdef USE_FREETYPE2
 	if (vm->getLanguage() == Common::HE_ISR) {
-		_textFont = _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12, Graphics::kMacFontRegular));
+		_textFont = _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12, Graphics::kMacFontRegular));
 		_textFontCleanup = false;
 	} else {
 		_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);

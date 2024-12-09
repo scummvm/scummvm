@@ -55,13 +55,13 @@ const Graphics::Font *MacV5Gui::getFontByScummId(int32 id) {
 bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	switch (fontId) {
 	case kAboutFontRegular:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
 	case kAboutFontBold:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
@@ -82,13 +82,13 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 		return true;
 
 	case kAboutFontHeaderSimple1:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 12;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
 		return true;
 
 	case kAboutFontHeaderSimple2:
-		id = Graphics::kMacFontChicago;
+		id = Graphics::kMacFontSystem;
 		size = 12;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
 		return true;

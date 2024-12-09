@@ -525,7 +525,7 @@ const Graphics::Font *MacGuiImpl::getFont(FontId fontId) {
 
 	switch (fontId) {
 	case kSystemFont:
-		id = Graphics::kMacFontChicago;
+		id = Graphics::kMacFontSystem;
 		size = 12;
 		slant = Graphics::kMacFontRegular;
 		break;
@@ -557,7 +557,7 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 		return true;
 
 	case kAboutFontRegular:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;

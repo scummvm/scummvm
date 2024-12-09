@@ -126,7 +126,7 @@ Gui::Gui(WageEngine *engine) {
 	//TODO: Make the font we use here work
 	// (currently MacFontRun::getFont gets called with the fonts being uninitialized,
 	// so it initializes them by itself with default params, and not those here)
-	const Graphics::MacFont *font = new Graphics::MacFont(Graphics::kMacFontChicago, 8);
+	const Graphics::MacFont *font = new Graphics::MacFont(Graphics::kMacFontSystem, 8);
 
 	uint maxWidth = _screen.w;
 

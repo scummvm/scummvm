@@ -95,7 +95,7 @@ MacDialog::~MacDialog() {
 }
 
 const Graphics::Font *MacDialog::getDialogFont() {
-	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
+	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
 }
 
 void MacDialog::paint() {

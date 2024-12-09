@@ -795,7 +795,7 @@ const Font *MacMenu::getMenuFont(int slant) {
 	}
 #endif
 
-	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12, slant));
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12, slant));
 }
 
 const Common::String MacMenu::getAcceleratorString(MacMenuItem *item, const char *prefix) {
