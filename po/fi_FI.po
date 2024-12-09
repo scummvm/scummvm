@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-09 06:55+0000\n"
-"PO-Revision-Date: 2024-11-29 19:18+0000\n"
+"PO-Revision-Date: 2024-12-09 22:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7535,10 +7535,8 @@ msgid "Change Command"
 msgstr "Vaihda komento"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Ajastin päällä"
+msgstr "Siirry ajassa eteenpäin"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -10156,16 +10154,16 @@ msgstr ""
 "korruptoituneita ja käyttökelvottomia. Käytä omalla vastuullasi!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "Lukunopeus"
+msgstr "Korjaa puheäänet"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Tunnistaa ja yrittää korjata DPCM8-audion ylivuodot, jotka aiheuttavat "
+"naksahduksia ja rätinää."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
