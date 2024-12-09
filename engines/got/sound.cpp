@@ -95,6 +95,11 @@ void Sound::music_resume() {
 	g_engine->_mixer->pauseHandle(_musicHandle, false);
 }
 
+void Sound::music_stop() {
+	music_pause();
+	_currentMusic = nullptr;
+}
+
 bool Sound::music_is_on() const {
 	return g_engine->_mixer->isSoundHandleActive(_musicHandle);
 }

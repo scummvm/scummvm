@@ -100,6 +100,10 @@ void View::music_resume() {
 	_G(sound).music_resume();
 }
 
+void View::music_stop() {
+	_G(sound).music_stop();
+}
+
 bool View::music_is_on() const {
 	return _G(sound).music_is_on();
 }
