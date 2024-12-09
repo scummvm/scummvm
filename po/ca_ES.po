@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-09 06:55+0000\n"
-"PO-Revision-Date: 2024-12-09 05:32+0000\n"
+"PO-Revision-Date: 2024-12-09 14:26+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1452,16 +1452,12 @@ msgstr ""
 "ScummVM no ha pogut trobar cap motor capaç d'executar el joc seleccionat!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Heu afegit aquest directori al SAF? Premeu el botó d'ajuda [?] a la part "
-"superior per a obtenir instruccions detallades"
+"Heu donat a ScummVM drets d'accés a aquest directori? Premeu el botó d'ajuda "
+"[?] a la part superior per a veure instruccions detallades"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -7909,10 +7905,8 @@ msgstr "Mode turbo"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Mou amunt"
+msgstr "Mou cap amunt"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
@@ -7921,45 +7915,33 @@ msgstr ""
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "Mou a l'esquerra"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "Mou a la dreta"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Mou a l'esquerra"
+msgstr "Mou cap amunt a l'esquerra"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Mou a la dreta"
+msgstr "Mou cap amunt a la dreta"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Mou a l'esquerra"
+msgstr "Mou cap avall a l'esquerra"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Mou a la dreta"
+msgstr "Mou cap avall a la dreta"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8025,28 +8007,20 @@ msgid "Side Step"
 msgstr "Pas lateral"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor up"
-msgstr "Mou endavant a l'esquerra"
+msgstr "Mou el cursor cap amunt"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor down"
-msgstr "Mou endavant a l'esquerra"
+msgstr "Mou el cursor cap avall"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Mou endavant a l'esquerra"
+msgstr "Mou el cursor a l'esquerra"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Mou endavant a la dreta"
+msgstr "Mou el cursor a la dreta"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -8208,8 +8182,6 @@ msgstr "Mou endavant"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Mou cap enrere"
 
@@ -9047,10 +9019,8 @@ msgid "An error occurred while writing the save game"
 msgstr "S'ha produït un error en escriure la partida desada"
 
 #: engines/mtropolis/plugin/standard.cpp:1670
-#, fuzzy
-#| msgid "PNG Image File"
 msgid "Image Viewer"
-msgstr "Fitxer d'imatge PNG"
+msgstr "Visualitzador d'imatges"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9625,10 +9595,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "Velocitat de lectura"
+msgstr "Repara l'àudio de la veu"
 
 #: engines/sci/detection_options.h:249
 msgid ""
@@ -10194,10 +10162,8 @@ msgid "Run in really fast mode (*)"
 msgstr "Executa en mode realment ràpid (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
-msgstr "Commuta entre els filtres gràfics"
+msgstr "Mou-te entre els filtres gràfics"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -11017,10 +10983,8 @@ msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
-msgstr "Commuta el mode realment ràpid"
+msgstr "Activa/desactiva el mode realment ràpid"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -11123,16 +11087,12 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
-msgstr "ves al diàleg següent"
+msgstr "Ves al diàleg següent"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
-msgstr "ves als diàlegs anteriors"
+msgstr "Ves als diàlegs anteriors"
 
 #: engines/stark/metaengine.cpp:328
 msgid "Select dialogue"
@@ -11284,10 +11244,8 @@ msgid "Italian"
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Finalitza"
+msgstr "Espanyol"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
@@ -11298,10 +11256,8 @@ msgid "Czech"
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Idioma del joc:"
+msgstr "Idioma del text:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
@@ -11319,10 +11275,8 @@ msgid ""
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Botó direccional:"
+msgstr "Opcions addicionals:"
 
 #: engines/sword1/metaengine.cpp:301
 #, fuzzy
