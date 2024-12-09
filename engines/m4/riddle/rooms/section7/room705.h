@@ -43,7 +43,7 @@ private:
 	void conv705a();
 	void conv705b();
 	void playCheckBrochureAnim(int32 trigger, const char *digiName);
-	void subA50BC(int32 trigger, int val1);
+	void useWheelOnLeftNiche(int32 trigger, int val1);
 	void useWheelOnRightNiche(int32 trigger, int val1);
 
 	int32 _field24Series = 0;

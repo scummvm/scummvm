@@ -556,27 +556,27 @@ void Room705::parser() {
 
 	else if (player_said("TRUTH WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger != -1 || inv_player_has("TRUTH WHEEL"))
-			subA50BC(_G(kernel).trigger, 4);
+			useWheelOnLeftNiche(_G(kernel).trigger, 4);
 		else
 			player_set_commands_allowed(true);
 	} else if (player_said("PEACE WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger != -1 || inv_player_has("PEACE WHEEL"))
-			subA50BC(_G(kernel).trigger, 1);
+			useWheelOnLeftNiche(_G(kernel).trigger, 1);
 		else
 			player_set_commands_allowed(true);
 	} else if (player_said("WISDOM WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger != -1 || inv_player_has("WISDOM WHEEL"))
-			subA50BC(_G(kernel).trigger, 5);
+			useWheelOnLeftNiche(_G(kernel).trigger, 5);
 		else
 			player_set_commands_allowed(true);
 	} else if (player_said("INSIGHT WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger != -1 || inv_player_has("INSIGHT WHEEL"))
-			subA50BC(_G(kernel).trigger, 2);
+			useWheelOnLeftNiche(_G(kernel).trigger, 2);
 		else
 			player_set_commands_allowed(true);
 	} else if (player_said("SERENITY WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger != -1 || inv_player_has("SERENITY WHEEL"))
-			subA50BC(_G(kernel).trigger, 3);
+			useWheelOnLeftNiche(_G(kernel).trigger, 3);
 		else
 			player_set_commands_allowed(true);
 	} else if (player_said("TRUTH WHEEL", "EMPTY NICHE ")) {
@@ -1276,8 +1276,156 @@ void Room705::playCheckBrochureAnim(int32 trigger, const char *digiName) {
 	}
 }
 
-void Room705::subA50BC(int32 trigger, int val1) {
-	//TODO Not yet implemented
+void Room705::useWheelOnLeftNiche(int32 trigger, int val1) {
+	switch (trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		if (_G(flags[V220])) {
+			digi_play("com080", 1, 255, 114, -1);
+		} else {
+			setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 101);
+		}
+
+		break;
+
+	case 101:
+		kernel_timing_trigger(6, 102, nullptr);
+		break;
+
+	case 102:
+		sendWSMessage_120000(_G(my_walker), 103);
+		break;
+
+	case 103:
+		kernel_timing_trigger(5, 104, nullptr);
+		break;
+
+	case 104:
+		switch (_G(flags[V220])) {
+		case 0:
+			return;
+
+		case 1:
+			inv_move_object("PEACE WHEEL", 705);
+			_G(flags[V220]) = 1;
+			digi_play("950_S40A", 2, 255, -1, 950);
+			_rightWheelMach = series_place_sprite("705 LEFT PEACE WHEEL", 0, 0, 0, 100, 1280);
+
+			break;
+
+		case 2:
+			inv_move_object("INSIGHT WHEEL", 705);
+			_G(flags[V220]) = 2;
+			digi_play("950_S40A", 2, 255, -1, 950);
+			_rightWheelMach = series_place_sprite("705 LEFT INSIGHT WHEEL", 0, 0, 0, 100, 1280);
+
+			break;
+
+		case 3:
+			inv_move_object("SERENITY WHEEL", 705);
+			_G(flags[V220]) = 3;
+			digi_play("950_S40A", 2, 255, -1, 950);
+			_rightWheelMach = series_place_sprite("705 LEFT SERENITY WHEEL", 0, 0, 0, 100, 1280);
+
+			break;
+
+		case 4:
+			inv_move_object("TRUTH WHEEL", 705);
+			_G(flags[V220]) = 4;
+			digi_play("950_S40A", 2, 255, -1, 950);
+			_rightWheelMach = series_place_sprite("705 LEFT TRUTH WHEEL", 0, 0, 0, 100, 1280);
+
+			break;
+
+		case 5:
+			inv_move_object("WISDOM WHEEL", 705);
+			_G(flags[V220]) = 5;
+			digi_play("950_S40A", 2, 255, -1, 950);
+			_rightWheelMach = series_place_sprite("705 LEFT WISDOM WHEEL", 0, 0, 0, 100, 1280);
+
+			break;
+
+		default:
+			break;
+		}
+
+		kernel_timing_trigger(5, 105, nullptr);
+
+		break;
+
+	case 105:
+		switch (val1) {
+		case 1:
+			sendWSMessage_130000(_G(my_walker), 106);
+			return;
+
+		case 2:
+			digi_play("705r15", 1, 255, -1, 705);
+			break;
+
+		case 3:
+			digi_play("704r10", 1, 255, -1, 704);
+			break;
+
+		case 4:
+			digi_play("706r11", 1, 255, -1, 706);
+			break;
+
+		case 5:
+			digi_play("703r12", 1, 255, -1, 703);
+			break;
+
+		default:
+			break;
+		}
+
+		sendWSMessage_130000(_G(my_walker), 113);
+
+		break;
+
+	case 106:
+		digi_play("705r06", 1, 255, 107, -1);
+		break;
+
+	case 107:
+		_705Monk1Series = series_load("705 MONK 1", -1, nullptr);
+		_monkMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false, triggerMachineByHashCallback, "monk");
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 1, 8, 908, _705Monk1Series, 8, 8, 0);
+
+		break;
+
+	case 113:
+		if (_G(flags[V220]) == 1) {
+			terminateMachine(_monkMach);
+			series_unload(_705Monk1Series);
+		}
+
+		sendWSMessage_150000(_G(my_walker), 114);
+
+		break;
+
+	case 114:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "EMPTY NICHE", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "PRAYER WHEEL #9", true);
+		player_set_commands_allowed(true);
+
+		break;
+
+	case 908:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 9, 9, -1, _705Monk1Series, 9, 15, 4);
+		sendWSMessage_1a0000(_monkMach, 9);
+		digi_play("705j02", 1, 255, 912, -1);
+
+		break;
+
+	case 912:
+		sendWSMessage_10000(1, _monkMach, _705Monk1Series, 16, 19, 113, _705Monk1Series, 19, 19, 0);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room705::useWheelOnRightNiche(int32 trigger, int val1) {
