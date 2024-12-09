@@ -357,11 +357,11 @@ int Room::checkCursorAndStaticObjects(int x, int y) {
 	bool hasObject = false;
 	_collisionType = 0;
 	for (uint i = 0; i < _roomObj.size(); i++) {
-		if (_roomObj[i].type == 0
-			&& _roomObj[i].xOffset <= cursorSprite._width + g_engine->_cursor.getX()
-			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
-			&& _roomObj[i].yOffset <= cursorSprite._height + g_engine->_cursor.getY()
-			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
+		if (_roomObj[i].type == 0 // check if the cursor rect overlaps with room rect.
+			&& g_engine->_cursor.getX() + cursorSprite._width >= _roomObj[i].xOffset
+			&& _roomObj[i].xOffset +_roomObj[i].width >= g_engine->_cursor.getX()
+			&& g_engine->_cursor.getY() + cursorSprite._height >= _roomObj[i].yOffset
+			&& _roomObj[i].yOffset + _roomObj[i].height >= g_engine->_cursor.getY()
 		) {
 			if (actionMode != kPointerAction && _roomObj[i].objNum >= 5) {
 				hasObject = true;
@@ -711,9 +711,10 @@ void Room::printRoomDescriptionText() const {
 }
 
 int Room::getRoomExitAtCursor() {
+	auto cursorRect = g_engine->_cursor.getRect();
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		Common::Rect roomRect(_roomObj[i].xOffset, _roomObj[i].yOffset, _roomObj[i].xOffset + _roomObj[i].width, _roomObj[i].yOffset + _roomObj[i].height);
-		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
+		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.intersects(cursorRect)) {
 			_selectedObjIndex = i;
 			return _roomObj[i].objNum;
 		}

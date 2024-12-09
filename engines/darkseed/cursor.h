@@ -65,6 +65,10 @@ public:
 		return _position.y;
 	}
 
+	Common::Rect getRect() const {
+		return Common::Rect(_position, getWidth(), getHeight());
+	}
+
 	int getWidth() const;
 	int getHeight() const;
 	const Sprite &getSprite() const;
