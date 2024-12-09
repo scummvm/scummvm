@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-09 06:55+0000\n"
-"PO-Revision-Date: 2024-12-06 13:47+0000\n"
+"PO-Revision-Date: 2024-12-09 14:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7456,10 +7456,8 @@ msgid "Change Command"
 msgstr "변경 명령"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "타이머"
+msgstr "시간 진행"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
