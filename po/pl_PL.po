@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-07 20:32+0000\n"
+"POT-Creation-Date: 2024-12-09 06:55+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -7071,7 +7071,7 @@ msgstr "Przełącz prywatność wskazówek"
 #: engines/freescape/games/castle/castle.cpp:244
 #: engines/freescape/games/dark/dark.cpp:183
 #: engines/freescape/games/driller/driller.cpp:132
-#: engines/freescape/games/eclipse/eclipse.cpp:190
+#: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Zapisz grę"
@@ -7084,7 +7084,7 @@ msgstr "Zapisz grę"
 #: engines/freescape/games/castle/castle.cpp:249
 #: engines/freescape/games/dark/dark.cpp:188
 #: engines/freescape/games/driller/driller.cpp:137
-#: engines/freescape/games/eclipse/eclipse.cpp:195
+#: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Wczytaj grę"
@@ -7122,7 +7122,7 @@ msgstr "Baza danych wskazówek"
 #: engines/freescape/games/castle/castle.cpp:257
 #: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:142
-#: engines/freescape/games/eclipse/eclipse.cpp:200
+#: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
 msgstr "Zamknij grę"
@@ -7839,21 +7839,21 @@ msgstr "Wybierz księżniczkę"
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
-#: engines/freescape/games/eclipse/eclipse.cpp:208
+#: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "Włącz/wyłącz dźwięk"
 
 #: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:156
-#: engines/freescape/games/eclipse/eclipse.cpp:213
+#: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "Obrót w lewo"
 
 #: engines/freescape/games/castle/castle.cpp:276
 #: engines/freescape/games/dark/dark.cpp:214
 #: engines/freescape/games/driller/driller.cpp:161
-#: engines/freescape/games/eclipse/eclipse.cpp:218
+#: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "Obrót w prawo"
 
@@ -7869,7 +7869,7 @@ msgid "Crawl"
 msgstr "Czołganie"
 
 #: engines/freescape/games/castle/castle.cpp:298
-#: engines/freescape/games/eclipse/eclipse.cpp:245
+#: engines/freescape/games/eclipse/eclipse.cpp:259
 msgid "Face Forward"
 msgstr "Twarzą do przodu"
 
@@ -7910,21 +7910,21 @@ msgid "Collect drilling rig"
 msgstr "Zabierz platformę wiertniczą"
 
 #. I18N: Illustrates the angle at which you turn left or right.
-#: engines/freescape/games/eclipse/eclipse.cpp:224
+#: engines/freescape/games/eclipse/eclipse.cpp:238
 msgid "Change Angle"
 msgstr "Zmień kąt"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/eclipse/eclipse.cpp:230
+#: engines/freescape/games/eclipse/eclipse.cpp:244
 msgid "Change Step Size"
 msgstr "Zmień rozmiar kroku"
 
-#: engines/freescape/games/eclipse/eclipse.cpp:235
+#: engines/freescape/games/eclipse/eclipse.cpp:249
 msgid "Toggle Height"
 msgstr "Przełącz wysokość"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/freescape/games/eclipse/eclipse.cpp:240
+#: engines/freescape/games/eclipse/eclipse.cpp:254
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "Odpoczynek"

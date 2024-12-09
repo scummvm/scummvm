@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-07 20:32+0000\n"
+"POT-Creation-Date: 2024-12-09 06:55+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6832,7 +6832,7 @@ msgstr "Museindfangning til/fra"
 #: engines/freescape/games/castle/castle.cpp:244
 #: engines/freescape/games/dark/dark.cpp:183
 #: engines/freescape/games/driller/driller.cpp:132
-#: engines/freescape/games/eclipse/eclipse.cpp:190
+#: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 #, fuzzy
 msgid "Save Game"
@@ -6846,7 +6846,7 @@ msgstr "Gemt spil:"
 #: engines/freescape/games/castle/castle.cpp:249
 #: engines/freescape/games/dark/dark.cpp:188
 #: engines/freescape/games/driller/driller.cpp:137
-#: engines/freescape/games/eclipse/eclipse.cpp:195
+#: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 #, fuzzy
 msgid "Load Game"
@@ -6885,7 +6885,7 @@ msgstr ""
 #: engines/freescape/games/castle/castle.cpp:257
 #: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:142
-#: engines/freescape/games/eclipse/eclipse.cpp:200
+#: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 #, fuzzy
 msgid "Quit Game"
@@ -7683,7 +7683,7 @@ msgstr "Vælg et tema"
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
-#: engines/freescape/games/eclipse/eclipse.cpp:208
+#: engines/freescape/games/eclipse/eclipse.cpp:222
 #, fuzzy
 msgid "Toggle Sound"
 msgstr "Museindfangning til/fra"
@@ -7691,7 +7691,7 @@ msgstr "Museindfangning til/fra"
 #: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:156
-#: engines/freescape/games/eclipse/eclipse.cpp:213
+#: engines/freescape/games/eclipse/eclipse.cpp:227
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Rotate Left"
@@ -7700,7 +7700,7 @@ msgstr "Flyt til venstre"
 #: engines/freescape/games/castle/castle.cpp:276
 #: engines/freescape/games/dark/dark.cpp:214
 #: engines/freescape/games/driller/driller.cpp:161
-#: engines/freescape/games/eclipse/eclipse.cpp:218
+#: engines/freescape/games/eclipse/eclipse.cpp:232
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Rotate Right"
@@ -7718,7 +7718,7 @@ msgid "Crawl"
 msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:298
-#: engines/freescape/games/eclipse/eclipse.cpp:245
+#: engines/freescape/games/eclipse/eclipse.cpp:259
 #, fuzzy
 #| msgid "Move Forward"
 msgid "Face Forward"
@@ -7765,25 +7765,25 @@ msgid "Collect drilling rig"
 msgstr ""
 
 #. I18N: Illustrates the angle at which you turn left or right.
-#: engines/freescape/games/eclipse/eclipse.cpp:224
+#: engines/freescape/games/eclipse/eclipse.cpp:238
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Change Angle"
 msgstr "Hurtigtilstand"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/eclipse/eclipse.cpp:230
+#: engines/freescape/games/eclipse/eclipse.cpp:244
 #, fuzzy
 msgid "Change Step Size"
 msgstr "Hæv/sænk skaleringsfaktor"
 
-#: engines/freescape/games/eclipse/eclipse.cpp:235
+#: engines/freescape/games/eclipse/eclipse.cpp:249
 #, fuzzy
 msgid "Toggle Height"
 msgstr "Museindfangning til/fra"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/freescape/games/eclipse/eclipse.cpp:240
+#: engines/freescape/games/eclipse/eclipse.cpp:254
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "Hvil"
