@@ -862,22 +862,18 @@ void Adlib::OnTimer() {
 									
 									uint8 result = Func2779(arg2);
 									Func2792(arg1, (result & 0xC0) + bp1);
-									Func2779(
+									result = Func2779(
 										gArray8d[bp8] + 0x40);
 
-									
-									// TODO: Continue from here
-									// TODO: Note that we again push one more copy of the
+									// Note that we again push one more copy of the
 									// value which is not used in g2779 above.
-									/*
-								
-									mov	di,[bp-8h]
-									mov	al,[di+8Dh]
-									xor	ah,ah
-									add	ax,40h
-									push	ax
-									call	far 0017h:2779h
-									*/
+									Func2792(gArray8d[bp8] + 0x40,
+										result & 0xC0 + bp2)
+									// TODO: Continue from here
+									
+									
+
+									
 								}
 							}
 							

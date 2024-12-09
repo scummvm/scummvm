@@ -733,7 +733,7 @@ void View1::draw() {
 	// Render the scaling factors
 	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
 
-	DrawImageResources(s);
+	// DrawImageResources(s);
 }
 
 bool View1::tick() {
@@ -951,9 +951,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		if (is_in_list<uint16, 0x50, 0x17, 0x18, 0x23>(index)) { // || index == 0x10) {
 			continue;
 		}
-		if (index != 0x6) {
-			continue;
-		}
+		
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
 		bool mirror = current->isAnimationMirrored();
 		
@@ -1030,23 +1028,23 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the highlights
 	// TODO: Check if positions are really correct
 	// Top side
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
 
 	// Left side
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x5, s);
 
 	// Bottom highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0xFF, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0x5, s);
 
 	// Right side
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0x5, s);
 
 	// Shadow parts, from top in clockwise order
 	// TODO: Adjust pos and sizes
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 0xB, 0x00, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(width, width), size.y - 0xB, 0x00, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(width, size.y - width), size.x - 0xB, 0x00, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x00, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 0xB, 0x6, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(width, width), size.y - 0xB, 0x6, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(width, size.y - width), size.x - 0xB, 0x6, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x6, s);
 
 }
 
@@ -1084,7 +1082,7 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = g_engine->_borderHighlightSprite;
+	const Sprite &sprite = unknown == 0x6 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
 
 	while (currentX < clippingRect.right) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
@@ -1104,7 +1102,8 @@ void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = g_engine->_borderHighlightSprite;
+	const Sprite &sprite = unknown == 0x6 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
+
 
 	while (currentY < clippingRect.bottom) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
