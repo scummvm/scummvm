@@ -46,7 +46,6 @@ private:
 	void useWheelOnLeftNiche(int32 trigger, int val1);
 	void useWheelOnRightNiche(int32 trigger, int val1);
 
-	int32 _field24Series = 0;
 	int32 _field60_mode = 0;
 	int32 _field64_should = 0;
 

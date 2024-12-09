@@ -713,7 +713,7 @@ void Room705::daemon() {
 	switch (_G(kernel).trigger) {
 	case 70:
 		player_set_commands_allowed(false);
-		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		setGlobals1(_ripTrekMedReachPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 71);
 
 		break;
@@ -800,7 +800,7 @@ void Room705::daemon() {
 
 	case 80:
 		player_set_commands_allowed(false);
-		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		setGlobals1(_ripTrekMedReachPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 81);
 
 		break;
@@ -1033,7 +1033,7 @@ void Room705::daemon() {
 
 	case 140:
 		player_set_commands_allowed(false);
-		setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		setGlobals1(_ripTrekMedReachPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 141);
 
 		break;
@@ -1283,7 +1283,7 @@ void Room705::useWheelOnLeftNiche(int32 trigger, int val1) {
 		if (_G(flags[V220])) {
 			digi_play("com080", 1, 255, 114, -1);
 		} else {
-			setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+			setGlobals1(_ripTrekMedReachPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 			sendWSMessage_110000(_G(my_walker), 101);
 		}
 
@@ -1435,7 +1435,7 @@ void Room705::useWheelOnRightNiche(int32 trigger, int val1) {
 		if (_G(flags[V221])) {
 			digi_play("com080", 1, 255, 114, -1);
 		} else {
-			setGlobals1(_field24Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+			setGlobals1(_ripTrekMedReachPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 			sendWSMessage_110000(_G(my_walker), 101);
 		}
 
