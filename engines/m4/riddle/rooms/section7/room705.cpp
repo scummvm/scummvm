@@ -1009,7 +1009,7 @@ void Room705::daemon() {
 
 	case 137:
 		if (_field60_mode == 134) {
-			switch (_field60_mode) {
+			switch (_field64_should) {
 			case 131:
 			case 132:
 			case 134:
