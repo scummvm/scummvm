@@ -263,10 +263,8 @@ Common::Error ZVision::run() {
 	// Before starting, make absolutely sure that the user has copied the needed fonts
 	for (int i = 0; i < FONT_COUNT; i++) {
 		FontStyle curFont = getSystemFont(i);
-		Common::String freeFontBoldItalic = Common::String("Bold") + curFont.freeFontItalicName;
 
 		const char *fontSuffixes[4] = { "", "bd", "i", "bi" };
-		const char *freeFontSuffixes[4] = { "", "Bold", curFont.freeFontItalicName, freeFontBoldItalic.c_str() };
 		const char *liberationFontSuffixes[4] = { "-Regular", "-Bold", "-Italic", "-BoldItalic" };
 
 		for (int j = 0; j < 4; j++) {
@@ -283,17 +281,12 @@ Common::Error ZVision::run() {
 			if (fontName == "garai.ttf")
 				fontName = "garait.ttf";
 
-			Common::String freeFontName = curFont.freeFontBase;
-			freeFontName += freeFontSuffixes[j];
-			freeFontName += ".ttf";
-
 			Common::String liberationFontName = curFont.liberationFontBase;
 			liberationFontName += liberationFontSuffixes[j];
 			liberationFontName += ".ttf";
 
 			if (!Common::File::exists(Common::Path(fontName)) && !_searchManager->hasFile(Common::Path(fontName)) &&
 				!Common::File::exists(Common::Path(liberationFontName)) && !_searchManager->hasFile(Common::Path(liberationFontName)) &&
-				!Common::File::exists(Common::Path(freeFontName)) && !_searchManager->hasFile(Common::Path(freeFontName)) &&
 				!Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
 				foundAllFonts = false;
 				break;
@@ -311,10 +304,9 @@ Common::Error ZVision::run() {
 				"On Windows, you'll need the following font files from the Windows "
 				"font directory: Times New Roman, Century Schoolbook, Garamond, "
 				"Courier New and Arial. Alternatively, you can download the "
-				"Liberation Fonts or the GNU FreeFont package. You'll need all the "
-				"fonts from the font package you choose, i.e., LiberationMono, "
-				"LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
-				"FreeSerif respectively."
+				"Liberation Fonts package. You'll need all the fonts from the "
+				"font package you choose, i.e., LiberationMono, LiberationSans "
+				"and LiberationSerif."
 		));
 		dialog.runModal();
 		quitGame();
