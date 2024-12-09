@@ -59,6 +59,7 @@ protected:
 	void music_play(const char *name, bool override);
 	void music_pause();
 	void music_resume();
+	void music_stop();
 	bool music_is_on() const;
 
 public:

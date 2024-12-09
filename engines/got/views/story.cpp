@@ -155,6 +155,7 @@ bool Story::tick() {
 
 void Story::done() {
 	warning("TODO: Story::done");
+	music_stop();
 	load_palette();
 }
 
