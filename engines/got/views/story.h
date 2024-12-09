@@ -32,6 +32,9 @@ class Story : public View {
 private:
 	Gfx::GfxSurface _surface;
 	int _yp = 0;
+	bool _scrolling = false;
+
+	void done();
 
 public:
 	Story() : View("Story") {}
@@ -39,6 +42,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;

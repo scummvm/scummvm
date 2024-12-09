@@ -22,6 +22,7 @@
 #include "got/views/story.h"
 #include "got/gfx/palette.h"
 #include "got/utils/file.h"
+#include "got/metaengine.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -95,13 +96,10 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	}
 
 	// Final two glyphs
-	Gfx::Pics bg1("STORYPIC");
-	_surface.blitFrom(bg1[0], Common::Point(146, 64));
-
-	if (_G(area) == 1) {
-		Gfx::Pics bg2("OPENBACK");
-		_surface.blitFrom(bg2[0], Common::Point(24, 88 + 240));
-	}
+	Gfx::Pics glyphs("STORYPIC", 262);
+	_surface.blitFrom(glyphs[0], Common::Point(146, 64));
+	if (_G(area) == 1)
+		_surface.blitFrom(glyphs[1], Common::Point(24, 88 + 240));
 
 	// Play the opening music
 	music_play("OPENSONG", 1);
@@ -124,14 +122,40 @@ void Story::draw() {
 		Common::Point(0, 0));
 }
 
+bool Story::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE || _yp == 240)
+		done();
+	else if (!_scrolling)
+		_scrolling = true;
+	else
+		_yp = 240;
+
+	return true;
+}
+
 bool Story::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	close();
+	if (_yp == 240)
+		done();
+	else if (!_scrolling)
+		_scrolling = true;
+	else
+		_yp = 240;
+
 	return true;
 }
 
 bool Story::tick() {
+	if (_scrolling && _yp < 240) {
+		_yp += 4;
+		redraw();
+	}
+
 	return true;
+}
+
+void Story::done() {
+	warning("TODO: Story::done");
+	load_palette();
 }
 
 } // namespace Views
