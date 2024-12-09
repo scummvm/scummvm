@@ -80,19 +80,28 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	return child ? child->send(msg) : false;
 }
 
-void View::drawBackground() {
-	GfxSurface s = getSurface();
-
-	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
-		for (int yp = 0; yp < 192; yp += 32)
-			s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
-
-		s.blitFrom(_G(gfx)[27], Common::Point(xp, 192));
-	}
-}
-
 void View::play_sound(int index, bool priority_override) {
 	_G(sound).play_sound(index, priority_override);
+}
+
+void View::music_play(int num, bool override) {
+	_G(sound).music_play(num, override);
+}
+
+void View::music_play(const char *name, bool override) {
+	_G(sound).music_play(name, override);
+}
+
+void View::music_pause() {
+	_G(sound).music_pause();
+}
+
+void View::music_resume() {
+	_G(sound).music_resume();
+}
+
+bool View::music_is_on() const {
+	return _G(sound).music_is_on();
 }
 
 } // namespace Views

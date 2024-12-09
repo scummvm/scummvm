@@ -53,7 +53,13 @@ private:
 	UIElement *getElementAtPos(const Common::Point &pos) const;
 
 protected:
-	void drawBackground();
+	void play_sound(int index, bool priority_override);
+
+	void music_play(int num, bool override);
+	void music_play(const char *name, bool override);
+	void music_pause();
+	void music_resume();
+	bool music_is_on() const;
 
 public:
 	View(const Common::String &name, UIElement *uiParent) :
@@ -70,8 +76,6 @@ public:
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
-
-	void play_sound(int index, bool priority_override);
 };
 
 } // namespace Views

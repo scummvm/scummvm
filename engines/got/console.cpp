@@ -21,11 +21,14 @@
 
 #include "got/console.h"
 #include "got/events.h"
+#include "got/vars.h"
 
 namespace Got {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("view",   WRAP_METHOD(Console, cmdView));
+	registerCmd("sound", WRAP_METHOD(Console, cmdSound));
+	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 }
 
 Console::~Console() {
@@ -39,6 +42,18 @@ bool Console::cmdView(int argc, const char **argv) {
 		g_events->replaceView(argv[1], true);
 		return false;
 	}
+}
+
+bool Console::cmdSound(int argc, const char **argv) {
+	if (argc == 2)
+		_G(sound).play_sound(atoi(argv[1]), true);
+	return false;
+}
+
+bool Console::cmdMusic(int argc, const char **argv) {
+	if (argc == 2)
+		_G(sound).music_play(atoi(argv[1]), true);
+	return false;
 }
 
 } // namespace Got

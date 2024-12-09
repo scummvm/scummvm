@@ -247,29 +247,4 @@ long res_read(const Common::String &name, void *buff) {
 	}
 }
 
-bool load_music(int num) {
-	switch (num) {
-	case 0:
-		res_read("SONG1", _G(song));
-		break;
-	case 1:
-		res_read("SONG2", _G(song));
-		break;
-	case 2:
-		res_read("SONG3", _G(song));
-		break;
-	case 3:
-		res_read("SONG4", _G(song));
-		break;
-	case 4:
-		res_read("WINSONG", _G(song));
-		break;
-	case 5:
-		res_read("BOSSSONG", _G(song));
-		break;
-	}
-
-	return _G(song) != nullptr;
-}
-
 } // End of namespace Got

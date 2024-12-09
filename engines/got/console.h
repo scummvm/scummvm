@@ -30,6 +30,8 @@ namespace Got {
 class Console : public GUI::Debugger {
 private:
 	bool cmdView(int argc, const char **argv);
+	bool cmdSound(int argc, const char **argv);
+	bool cmdMusic(int argc, const char **argv);
 
 public:
 	Console();

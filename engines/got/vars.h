@@ -80,7 +80,6 @@ public:
 	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0,
 		_thor_icon4 = 0;
 	int8 _level_type = 0;
-	byte *_song = nullptr;
 	int8 _music_current = 0;
 	int8 _boss_loaded = 0;
 	int8 _apple_drop = 0;
