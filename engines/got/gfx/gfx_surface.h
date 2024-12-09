@@ -29,6 +29,8 @@ namespace Gfx {
 
 class GfxSurface : public Graphics::ManagedSurface {
 public:
+	GfxSurface() : Graphics::ManagedSurface() {
+	}
 	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
 		Graphics::ManagedSurface(surf, bounds) {
 	}
@@ -37,6 +39,7 @@ public:
 	 * Write some text to the surface
 	 */
 	void print(const Common::Point &pos, const Common::String &text, int color);
+	void printChar(uint32 chr, int x, int y, uint32 color);
 };
 
 } // namespace Gfx

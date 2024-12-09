@@ -30,5 +30,9 @@ void GfxSurface::print(const Common::Point &pos,
 	_G(font).drawString(this, pos, text, color);
 }
 
+void GfxSurface::printChar(uint32 chr, int x, int y, uint32 color) {
+	_G(font).drawChar(this, chr, x, y, color);
+}
+
 } // namespace Gfx
 } // namespace Got
