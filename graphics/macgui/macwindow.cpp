@@ -82,7 +82,7 @@ void MacWindow::disableBorder() {
 }
 
 const Font *MacWindow::getTitleFont() {
-	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
 }
 
 void MacWindow::setActive(bool active) {

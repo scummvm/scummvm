@@ -289,7 +289,7 @@ const WindowData &Gui::getWindowData(WindowReference reference) {
 }
 
 const Graphics::Font &Gui::getCurrentFont() {
-	return *_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
+	return *_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
 }
 
 void Gui::bringToFront(WindowReference winID) {

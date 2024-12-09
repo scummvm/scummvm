@@ -65,7 +65,7 @@ void Window::testFontScaling() {
 
 	Graphics::MacFONTFont::testBlit(font1, &surface, 0xff, x, y + 200, 500);
 
-	Graphics::MacFont bigFont(Graphics::kMacFontChicago, 12);
+	Graphics::MacFont bigFont(Graphics::kMacFontSystem, 12);
 
 	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
 

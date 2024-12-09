@@ -1000,19 +1000,19 @@ bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) c
 		return true;
 
 	case kIndy3VerbFontRegular:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
 	case kIndy3VerbFontBold:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
 
 	case kIndy3VerbFontOutline:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
 		return true;

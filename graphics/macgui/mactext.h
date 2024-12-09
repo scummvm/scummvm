@@ -87,8 +87,8 @@ public:
 	void setTextColor(uint32 color, uint32 line);
 	void setTextColor(uint32 color, uint32 start, uint32 end);
 
-	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
-	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
+	void appendText(const Common::U32String &str, int fontId = kMacFontSystem, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendText(const Common::U32String &str, int fontId = kMacFontSystem, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
 	int getTextFont() { return _defaultFormatting.fontId; }

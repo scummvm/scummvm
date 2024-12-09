@@ -43,21 +43,42 @@ class MacFontFamily;
 
 enum {
 	kMacFontNonStandard = -1,
-	kMacFontChicago = 0,
-	kMacFontGeneva = 1,
+	kMacFontSystem = 0,
+	kMacFontApplication = 1,
+
 	kMacFontNewYork = 2,
+	kMacFontGeneva = 3,
 	kMacFontMonaco = 4,
 	kMacFontVenice = 5,
 	kMacFontLondon = 6,
 	kMacFontAthens = 7,
 	kMacFontSanFrancisco = 8,
+	kMacFontToronto = 9,
 	kMacFontCairo = 11,
 	kMacFontLosAngeles = 12,
+	kMacFontZapfDingbats = 13,
+	kMacFontBookman = 14,
+	kMacFontHelveticaNarrow = 15,
 	kMacFontPalatino = 16,
+	kMacFontZapfChancery = 18,
 	kMacFontTimes = 20,
 	kMacFontHelvetica = 21,
 	kMacFontCourier = 22,
-	kMacFontSymbol = 23
+	kMacFontSymbol = 23,
+	kMacFontTaliesin = 24,
+	kMacFontAvantGarde = 33,
+	kMacFontNewCenturySchoolbook = 34,
+	kMacFontChicago = 16383,
+
+	kMacFontOsaka = 16384,
+	kMacFontBookMinchoM = 16396,
+	kMacFontMonoGothic = 16433,
+	kMacFontMonoMing = 16435,
+	kMacFontOsakaMono = 16436,
+	kMacFontMediumGothic = 16640,
+	kMacFontMing = 16641,
+	kMacFontHeiseiMincho = 16700,
+	kMacFontHeiseiKakuGothic = 16701
 };
 
 enum {
@@ -84,7 +105,7 @@ struct FontInfo {
 
 class MacFont {
 public:
-	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular) {
+	MacFont(int id = kMacFontSystem, int size = 12, int slant = kMacFontRegular) {
 		_id = id;
 		_size = size ? size : 12;
 		_slant = slant;
