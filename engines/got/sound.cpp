@@ -66,4 +66,138 @@ bool Sound::sound_playing() const {
 	return g_engine->_mixer->isSoundHandleActive(_soundHandle);
 }
 
+void Sound::music_play(const char *name, bool override) {
+	if (name != _currentMusic || override) {
+		g_engine->_mixer->stopHandle(_musicHandle);
+		_currentMusic = name;
+
+#ifdef TODO
+		// FIXME: Completely wrong. Don't know music format yet
+		// Open it up for access
+		File file(name);
+
+		Common::SeekableReadStream *f = file.readStream(file.size());
+		Audio::AudioStream *audioStream = Audio::makeRawStream(
+			f, 11025, 0, DisposeAfterUse::YES);
+		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType,
+			&_musicHandle, audioStream);
+#else
+		warning("TODO: play_music %s", name);
+#endif
+	}
+}
+
+void Sound::music_pause() {
+	g_engine->_mixer->pauseHandle(_musicHandle, true);
+}
+
+void Sound::music_resume() {
+	g_engine->_mixer->pauseHandle(_musicHandle, false);
+}
+
+bool Sound::music_is_on() const {
+	return g_engine->_mixer->isSoundHandleActive(_musicHandle);
+}
+
+const char *Sound::getMusicName(int num) const {
+	const char *name = nullptr;
+
+	switch (_G(area)) {
+	case 1:
+		switch (num) {
+		case 0:
+			name = "SONG1";
+			break;
+		case 1:
+			name = "SONG2";
+			break;
+		case 2:
+			name = "SONG3";
+			break;
+		case 3:
+			name = "SONG4";
+			break;
+		case 4:
+			name = "WINSONG";
+			break;
+		case 5:
+			name = "BOSSSONG";
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		switch (num) {
+		case 0:
+			name = "SONG21";
+			break;
+		case 1:
+			name = "SONG22";
+			break;
+		case 2:
+			name = "SONG23";
+			break;
+		case 3:
+			name = "SONG24";
+			break;
+		case 4:
+			name = "SONG35";
+			break;
+		case 5:
+			name = "SONG25";
+			break;
+		case 6:
+			name = "WINSONG";
+			break;
+		case 7:
+			name = "BOSSSONG";
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (num) {
+		case 0:
+			name = "SONG31";
+			break;
+		case 1:
+			name = "SONG32";
+			break;
+		case 2:
+			name = "SONG33";
+			break;
+		case 3:
+			name = "SONG34";
+			break;
+		case 4:
+			name = "SONG35";
+			break;
+		case 5:
+			name = "SONG36";
+			break;
+		case 6:
+			name = "WINSONG";
+			break;
+		case 7:
+			name = "BOSSSONG";
+			break;
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (!name)
+		error("Invalid music");
+
+	return name;
+}
+
 } // namespace Got

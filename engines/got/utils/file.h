@@ -43,7 +43,6 @@ extern void save_game();
 extern bool load_game(int flag);
 extern void help();
 extern long res_read(const Common::String &name, void *buff);
-extern bool load_music(int num);
 
 class File : public Common::File {
 public:

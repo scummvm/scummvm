@@ -58,6 +58,11 @@ private:
 	Audio::SoundHandle _soundHandle;
 	int _currentPriority = 0;
 
+	const char *_currentMusic = nullptr;
+	Audio::SoundHandle _musicHandle;
+
+	const char *getMusicName(int num) const;
+
 public:
 	~Sound() {
 		delete[] _soundData;
@@ -65,8 +70,15 @@ public:
 	void load();
 
 	void play_sound(int index, bool priority_override);
-
 	bool sound_playing() const;
+
+	void music_play(int num, bool override) {
+		music_play(getMusicName(num), override);
+	}
+	void music_play(const char *name, bool override);
+	void music_pause();
+	void music_resume();
+	bool music_is_on() const;
 };
 
 } // namespace Got
