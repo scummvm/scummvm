@@ -150,8 +150,8 @@ public:
 	/**
 	 * Sets the focus to a new view
 	 */
-	void replaceView(UIElement *ui, bool replaceAllViews = false);
-	void replaceView(const Common::String &name, bool replaceAllViews = false);
+	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
 
 	/**
 	 * Adds a focused view to the view stack without replacing current one
@@ -298,8 +298,8 @@ public:
 	/**
 	 * Sets the focus to a new view
 	 */
-	void replaceView(UIElement *ui, bool replaceAllViews = false);
-	void replaceView(const Common::String &name, bool replaceAllViews = false);
+	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
 
 	/**
 	 * Adds a focused view to the view stack without replacing current one

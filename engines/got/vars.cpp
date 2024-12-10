@@ -83,7 +83,7 @@ void Vars::load() {
 	res_read("DEMO", _demo_key);
 	res_read("ODINPIC", _odin);
 
-	load_palette();
+	Gfx::load_palette();
 }
 
 Vars::~Vars() {

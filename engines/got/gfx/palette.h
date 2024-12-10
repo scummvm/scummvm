@@ -25,13 +25,17 @@
 #include "graphics/paletteman.h"
 
 namespace Got {
+namespace Gfx {
 
 extern void load_palette();
 extern void set_screen_pal();
 extern void xsetpal(byte color, byte R, byte G, byte B);
 extern void xsetpal(const byte *pal);
 extern void xgetpal(byte *pal, int num_colrs, int start_index);
+extern void fade_out();
+extern void fade_in();
 
+} // namespace Gfx
 } // namespace Got
 
 #endif
