@@ -154,9 +154,12 @@ bool Story::tick() {
 }
 
 void Story::done() {
-	warning("TODO: Story::done");
 	music_stop();
+
+	fadeOut();
 	Gfx::load_palette();
+	replaceView("PartTitle");
+	fadeIn();
 }
 
 } // namespace Views
