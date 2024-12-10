@@ -217,6 +217,10 @@ bool MacGuiImpl::initialize() {
 			maxMenu = 130;
 			break;
 		case GID_MONKEY:
+		case GID_TENTACLE:
+		case GID_SAMNMAX:
+		case GID_DIG:
+		case GID_FT:
 			maxMenu = 131;
 			break;
 		default:
@@ -459,7 +463,7 @@ void MacGuiImpl::updateWindowManager() {
 		}
 	}
 
-	if (_vm->_game.version > 3) {
+	if (_vm->_game.version > 3 && _vm->_game.version < 6) {
 		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
 		Graphics::MacMenuItem *hideDesktopMenu = menu->getSubMenuItem(windowMenu, 0);
 		Graphics::MacMenuItem *hideBarMenu = menu->getSubMenuItem(windowMenu, 1);

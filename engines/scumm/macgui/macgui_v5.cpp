@@ -36,7 +36,6 @@
 #include "scumm/macgui/macgui_v5.h"
 #include "scumm/music.h"
 #include "scumm/sound.h"
-#include "scumm/verbs.h"
 
 namespace Scumm {
 

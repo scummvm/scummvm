@@ -603,6 +603,17 @@ static const MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant2Table[] = {
 #undef SKIP_P
 
 bool MacGuiImpl::readStrings() {
+	if (_vm->_game.version >= 6) {
+		// TODO: Fix this!
+		_strsStrings.clear();
+		_strsStrings.reserve(128);
+		for (int i = 0; i < 128; i++) {
+			_strsStrings.emplace_back("");
+		}
+		_strsStrings[kMSIAboutGameName] = "Some Game";
+		return true;
+	}
+
 	Common::MacResManager resource;
 	resource.open(_resourceFile);
 	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
