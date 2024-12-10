@@ -48,7 +48,7 @@ enum PluginType {
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking (posibly from the checkout revision)
+// because of the back linking (possibly from the checkout revision)
 #define PLUGIN_TYPE_ENGINE_DETECTION_VERSION 1
 #define PLUGIN_TYPE_ENGINE_VERSION 2
 #define PLUGIN_TYPE_MUSIC_VERSION 1
@@ -346,7 +346,7 @@ protected:
 
 	bool _isDetectionLoaded;
 
-	PluginManagerUncached() : _isDetectionLoaded(false), _detectionPlugin(nullptr) {}
+	PluginManagerUncached() : _detectionPlugin(nullptr), _currentPlugin(nullptr), _isDetectionLoaded(false) {}
 	bool loadPluginByFileName(const Common::Path &filename);
 
 public:
