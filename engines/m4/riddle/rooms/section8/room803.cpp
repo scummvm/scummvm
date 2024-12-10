@@ -47,24 +47,11 @@ void Room803::init() {
 }
 
 void Room803::parser() {
-	bool cl = false;
-	if (player_said("look") || player_said("look at")) {
-		cl = true;
-	}
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool talkFl = player_said_any("talk", "talk to");
 
-	bool ch = false;
-	if (player_said("take")) {
-		ch = true;
-	}
-
-	bool talkFl = false;
-	if (player_said("talk") || player_said("talk to")) {
-		talkFl = true;
-	}
-
-	player_said("gear");
-
-	if (cl && player_said("HOLE IN THE WALL")) {
+	if (lookFl && player_said("HOLE IN THE WALL")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -89,15 +76,15 @@ void Room803::parser() {
 		}
 	}
 
-	else if (cl && player_said("MURAL")) {
+	else if (lookFl && player_said("MURAL")) {
 		digi_play("803R05", 1, 255, -1, -1);
 	}
 
-	else if (cl && player_said("SOLDIER")) {
+	else if (lookFl && player_said("SOLDIER")) {
 		digi_play("COM074", 1, 255, -1, 997);
 	}
 
-	else if (cl && player_said("FALLEN SOLDIER")) {
+	else if (lookFl && player_said("FALLEN SOLDIER")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -127,7 +114,7 @@ void Room803::parser() {
 		}
 	}
 
-	else if (cl && player_said("FALLEN STATUE")) {
+	else if (lookFl && player_said("FALLEN STATUE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -157,7 +144,7 @@ void Room803::parser() {
 		}
 	}
 
-	else if (cl && player_said("BROKEN STATUE")) {
+	else if (lookFl && player_said("BROKEN STATUE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -187,35 +174,35 @@ void Room803::parser() {
 		}
 	}
 
-	else if (cl && player_said("URN")) {
+	else if (lookFl && player_said("URN")) {
 		digi_play("803R08", 1, 255, -1, -1);
 	}
 
-	else if (cl && player_said("UNLIT URN")) {
+	else if (lookFl && player_said("UNLIT URN")) {
 		digi_play("COM061", 1, 255, -1, 997);
 	}
 
-	else if (cl && player_said("FALLEN URN")) {
+	else if (lookFl && player_said("FALLEN URN")) {
 		digi_play("803R10", 1, 255, -1, -1);
 	}
 
-	else if (cl && player_said(" ")) {
+	else if (lookFl && player_said(" ")) {
 		digi_play("803R11", 1, 255, -1, -1);
 	}
 
-	else if (cl && player_said("MEI CHEN")) {
+	else if (lookFl && player_said("MEI CHEN")) {
 		digi_play("COM043", 1, 255, -1, 997);
 	}
 
-	else if (cl && player_said("BROKEN BEAM")) {
+	else if (lookFl && player_said("BROKEN BEAM")) {
 		digi_play("844R12", 1, 255, -1, -1);
 	}
 
-	else if (cl && player_said("tipped soldier")) {
+	else if (lookFl && player_said("tipped soldier")) {
 		digi_play("com062", 1, 255, -1, 997);
 	}
 
-	else if (cl && player_said(" ")) { // Previously checked??...
+	else if (lookFl && player_said(" ")) { // Previously checked??...
 		digi_play("803R11", 1, 255, -1, -1);
 	}
 
@@ -249,7 +236,7 @@ void Room803::parser() {
 		sendWSMessage_110000(_G(my_walker), -1);
 	}
 
-	else if (ch && (player_said("BROKEN STATUE") || player_said("FALLEN STATUE"))) {
+	else if (takeFl && (player_said("BROKEN STATUE") || player_said("FALLEN STATUE"))) {
 		digi_play("803R13", 1, 255, -1, -1);
 	}
 
@@ -373,9 +360,9 @@ void Room803::parser() {
 }
 
 void Room803::daemon() {
-	int32 trigger = _G(kernel).trigger;
+	const int32 trigger = _G(kernel).trigger;
 
-	if ((trigger >= 1) && (trigger < 15))
+	if ((trigger >= 1 && trigger < 15) || (trigger >= 50 && trigger <= 56) || (trigger == 999))
 		daemonSub1();
 	else if (trigger == 15) {
 		sendWSMessage_150000(_mcWalkerMach, -1);
@@ -404,8 +391,7 @@ void Room803::daemon() {
 		_meiTalksPos3 = series_load("Mei talks pos3", -1, nullptr);
 		setGlobals1(_meiTalksPos3, 1, 4, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_mcWalkerMach, -1);
-	} else if ((trigger >= 50) && ((trigger <= 56) || (trigger == 999)))
-		daemonSub1();
+	}
 }
 
 void Room803::initWalker() {
@@ -523,7 +509,7 @@ void Room803::daemonSub1() {
 			terminateMachine(_meiStepOffPileMach);
 
 		_meiStepOffPile = series_load("MEI STEPS OFF PILE", -1, nullptr);
-		_meiStepOffPileMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, 0, triggerMachineByHashCallback, "rip");
+		_meiStepOffPileMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, false, triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _meiStepOffPileMach, _meiStepOffPile, 57, 50, -1, _meiStepOffPile, 57, 60, 1);
 		digi_play("803r01", 1, 255, 5, -1);
 		break;
