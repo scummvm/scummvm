@@ -505,6 +505,67 @@ bool isSciCDVersion(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	return false;
 }
 
+Common::Language determineGameLanguage(ResourceManager &resMan, const SciMetaEngine::FileMap &allFiles) {
+	Common::Language language = Common::EN_ANY;
+
+	// Try to determine the game language
+	// Load up text 0 and start looking for "#" characters
+	// Non-English versions contain strings like XXXX#YZZZZ
+	// Where XXXX is the English string, #Y a separator indicating the language
+	// (e.g. #G for German) and ZZZZ is the translated text
+	// NOTE: This doesn't work for games which use message instead of text resources
+	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas).
+	// As far as we know, these games store the messages of each language in separate
+	// resources, and it's not possible to detect that easily
+	// Also look for "%J" which is used in japanese games
+	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
+	if (text) {
+		uint seeker = 0;
+		while (seeker < text->size()) {
+			if (text->getUint8At(seeker) == '#') {
+				if (seeker + 1 < text->size())
+					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
+				break;
+			}
+			if (text->getUint8At(seeker) == '%') {
+				if ((seeker + 1 < text->size()) && (text->getUint8At(seeker + 1) == 'J')) {
+					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
+					break;
+				}
+			}
+			seeker++;
+		}
+	}
+
+	// Try to determine the game language from config file (SCI1.1 and later)
+	const char *configNames[] = {"resource.cfg", "resource.win"};
+	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
+		Common::File file;
+		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
+			while (!file.eos()) {
+				Common::String line = file.readLine();
+				uint32 separatorPos = line.find('=');
+				if (separatorPos == Common::String::npos) {
+					continue;
+				}
+				Common::String key = line.substr(0, separatorPos);
+				key.trim();
+				if (key.equalsIgnoreCase("language")) {
+					Common::String val = line.substr(separatorPos + 1);
+					val.trim();
+					Common::Language parsedLanguage = sciToScummVMLanguage(atoi(val.c_str()));
+					if (parsedLanguage != Common::UNK_LANG) {
+						language = parsedLanguage;
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	return language;
+}
+
 void constructFallbackDetectionEntry(const Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
 	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
 
@@ -600,62 +661,7 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 
 	bool isDemo = false;
 	Common::String gameId = convertSierraGameId(sierraGameId, sciVersion, resMan, &isDemo);
-	Common::Language language = Common::EN_ANY;
-
-	// Try to determine the game language
-	// Load up text 0 and start looking for "#" characters
-	// Non-English versions contain strings like XXXX#YZZZZ
-	// Where XXXX is the English string, #Y a separator indicating the language
-	// (e.g. #G for German) and ZZZZ is the translated text
-	// NOTE: This doesn't work for games which use message instead of text resources
-	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas).
-	// As far as we know, these games store the messages of each language in separate
-	// resources, and it's not possible to detect that easily
-	// Also look for "%J" which is used in japanese games
-	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
-	if (text) {
-		uint seeker = 0;
-		while (seeker < text->size()) {
-			if (text->getUint8At(seeker) == '#')  {
-				if (seeker + 1 < text->size())
-					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
-				break;
-			}
-			if (text->getUint8At(seeker) == '%') {
-				if ((seeker + 1 < text->size()) && (text->getUint8At(seeker + 1) == 'J')) {
-					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
-					break;
-				}
-			}
-			seeker++;
-		}
-	}
-
-	// Try to determine the game language from config file (SCI1.1 and later)
-	const char *configNames[] = { "resource.cfg", "resource.win" };
-	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
-		Common::File file;
-		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
-			while (!file.eos()) {
-				Common::String line = file.readLine();
-				uint32 separatorPos = line.find('=');
-				if (separatorPos == Common::String::npos) {
-					continue;
-				}
-				Common::String key = line.substr(0, separatorPos);
-				key.trim();
-				if (key.equalsIgnoreCase("language")) {
-					Common::String val = line.substr(separatorPos + 1);
-					val.trim();
-					Common::Language parsedLanguage = sciToScummVMLanguage(atoi(val.c_str()));
-					if (parsedLanguage != Common::UNK_LANG) {
-						language = parsedLanguage;
-					}
-					break;
-				}
-			}
-		}
-	}
+	Common::Language language = determineGameLanguage(resMan, allFiles);
 
 	constructFallbackDetectionEntry(gameId, platform, sciVersion, language, gameViews == kViewEga, isCD, isDemo);
 
