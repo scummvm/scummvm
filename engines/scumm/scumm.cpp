@@ -1223,142 +1223,117 @@ Common::Error ScummEngine::init() {
 			_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
+		struct MacFileName {
+			byte _id;
+			const char *_name;
+		};
+
 		// \xAA is a trademark glyph in Mac OS Roman. We try that, but
 		// also the Windows version, the UTF-8 version, and just plain
 		// without in case the file system can't handle exotic
 		// characters like that.
 
-		if (_game.id == GID_INDY3) {
-			static const char *indyFileNames[] = {
-				"Indy\xAA",
-				"Indy\x99",
-				"Indy\xE2\x84\xA2",
-				"Indy"
-			};
+		MacFileName macFileNames[] = {
+			{ GID_MANIAC,   "Day of the Tentacle",   },
+			{ GID_INDY3,    "Indy\xAA"               },
+			{ GID_INDY3,    "Indy\x99"               },
+			{ GID_INDY3,    "Indy\xE2\x84\xA2"       },
+			{ GID_INDY3,    "Indy"                   },
+			{ GID_LOOM,     "Loom\xAA"               },
+			{ GID_LOOM,     "Loom\x99"               },
+			{ GID_LOOM,     "Loom\xE2\x84\xA2"       },
+			{ GID_LOOM,     "Loom"                   },
+			{ GID_MONKEY,   "Monkey Island"          },
+			{ GID_INDY4,    "Fate of Atlantis"       },
+			{ GID_INDY4,    "Fate of Atlantis 1.1"   },
+			{ GID_INDY4,    "Indy Fate"              },
+			{ GID_INDY4,    "fate v1.5"              },
+			{ GID_INDY4,    "Indy 12/15/92"          },
+			{ GID_INDY4,    "Indy 12-15-92"          },
+			{ GID_INDY4,    "Fate of Atlantis v1.5"  },
+			{ GID_INDY4,    "Fate of Atlantis v.1.5" },
+			{ GID_MONKEY2,  "LeChuck's Revenge"      },
+			{ GID_TENTACLE, "Day of the Tentacle"    },
+			{ GID_SAMNMAX,  "Sam & Max"              },
+			{ GID_DIG,      "The Dig"                },
+			{ GID_FT,       "Full Throttle"          }
+		};
 
-			for (int i = 0; i < ARRAYSIZE(indyFileNames); i++) {
-				if (resource.exists(indyFileNames[i])) {
-					macResourceFile = indyFileNames[i];
+		bool macScumm = false;
 
-					_textSurfaceMultiplier = 2;
-					// FIXME: THIS IS A TEMPORARY WORKAROUND!
-					// The reason why we are initializing the Mac GUI even without original GUI active
-					// is because the engine will attempt to load Mac fonts from resources... using the
-					// _macGui object. This is not optimal, ideally we would want to decouple resource
-					// handling from the responsibilities of a simulated OS interface.
-					_macGui = new MacGui(this, macResourceFile);
+		char filename[40];
+
+		for (int i = 0; i < ARRAYSIZE(macFileNames); i++) {
+			if (_game.id == macFileNames[i]._id) {
+				macScumm = true;
+
+				strncpy(filename, macFileNames[i]._name, sizeof(filename));
+
+				if (resource.exists(filename)) {
+					macResourceFile = filename;
+					break;
+				}
+
+				for (int j = 0; filename[j]; j++)
+					if (filename[j] == ' ')
+						filename[j] = '_';
+
+				if (resource.exists(filename)) {
+					macResourceFile = filename;
 					break;
 				}
 			}
+		}
+
+		if (macScumm) {
+			const char *gameName;
+
+			if (_game.id == GID_MANIAC)
+				gameName = "Maniac Mansion";
+			else if (_game.id == GID_INDY3)
+				gameName = "Indiana Jones and the Last Crusade";
+			else if (_game.id == GID_LOOM)
+				gameName = "Loom";
+			else if (_game.id == GID_MONKEY)
+				gameName = "The Secret of Monkey Island";
+			else if (_game.id == GID_INDY4)
+				gameName = "Indiana Jones and the Fate of Atlantis";
+			else if (_game.id == GID_MONKEY2)
+				gameName = "Monkey Island 2: LeChuck's Revenge";
+			else if (_game.id == GID_TENTACLE)
+				gameName = "The Day of the Tentacle";
+			else if (_game.id == GID_SAMNMAX)
+				gameName = "Sam & Max Hit the Road";
+			else if (_game.id == GID_DIG)
+				gameName = "The Dig";
+			else if (_game.id == GID_FT)
+				gameName = "Full Throttle";
+			else
+				gameName = "Unknown";
 
 			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _("This game requires the 'Indy' Macintosh executable for its fonts."));
-			}
-
-		} else if (_game.id == GID_LOOM) {
-			static const char *loomFileNames[] = {
-				"Loom\xAA",
-				"Loom\x99",
-				"Loom\xE2\x84\xA2",
-				"Loom"
-			};
-
-			for (int i = 0; i < ARRAYSIZE(loomFileNames); i++) {
-				if (resource.exists(loomFileNames[i])) {
-					macResourceFile = loomFileNames[i];
-
-					_textSurfaceMultiplier = 2;
-					// FIXME: THIS IS A TEMPORARY WORKAROUND!
-					// The reason why we are initializing the Mac GUI even without original GUI active
-					// is because the engine will attempt to load Mac fonts from resources... using the
-					// _macGui object. This is not optimal, ideally we would want to decouple resource
-					// handling from the responsibilities of a simulated OS interface.
-					_macGui = new MacGui(this, macResourceFile);
-					break;
+				if (_game.id == GID_INDY3) {
+					return Common::Error(Common::kReadingFailed, Common::U32String::format(_("This game requires the '%s' Macintosh executable for its fonts."), gameName));
 				}
-			}
 
-			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _("This game requires the 'Loom' Macintosh executable for its music and fonts."));
-			}
-		} else if (_game.id == GID_MONKEY) {
-			// Try both with and without underscore in the
-			// filename, because some tools (e.g. hfsutils) may
-			// turn the space into an underscore.
-
-			static const char *monkeyIslandFileNames[] = {
-				"Monkey Island",
-				"Monkey_Island"
-			};
-
-			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
-				if (resource.exists(monkeyIslandFileNames[i])) {
-					macResourceFile = monkeyIslandFileNames[i];
-					break;
+				if (_game.id == GID_LOOM || _game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) {
+					return Common::Error(Common::kReadingFailed, Common::U32String::format(_("This game requires the '%s' Macintosh executable for its music and fonts."), gameName));
 				}
-			}
 
-			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_("Could not find the 'Monkey Island' Macintosh executable to read resources\n"
-											"and instruments from. Music and Mac GUI will be disabled."), _("OK"));
+				GUI::MessageDialog dialog(Common::U32String::format(
+	_("Could not find the '%s' Macintosh executable to read resources from. Music and Mac GUI will be disabled"), gameName), _("OK"));
 				dialog.runModal();
-			} else if (isUsingOriginalGUI()) {
+			} else if (isUsingOriginalGUI() || _game.id == GID_INDY3 || _game.id == GID_LOOM) {
+				// FIXME: THIS IS A TEMPORARY WORKAROUND!
+				// The reason why we are initializing the Mac GUI even without original GUI active
+				// is because the engine will attempt to load Mac fonts from resources... using the
+				// _macGui object. This is not optimal, ideally we would want to decouple resource
+				// handling from the responsibilities of a simulated OS interface.
 				_macGui = new MacGui(this, macResourceFile);
 			}
-		} else if (_game.id == GID_INDY4 && _language != Common::JA_JPN) {
-			static const char *indy4FileNames[] = {
-				"Fate of Atlantis",
-				"Fate_of_Atlantis",
-				"Fate of Atlantis 1.1",
-				"Fate_of_Atlantis_1.1",
-				"Indy Fate",
-				"Indy_Fate",
-				"fate_v1.5",
-				"Indy 12/15/92",
-				"Indy_12/15/92",
-				"Indy 12-15-92",
-				"Indy_12-15-92",
-				"Fate of Atlantis v1.5",
-				"Fate_of_Atlantis_v1.5",
-				"Fate of Atlantis v.1.5",
-				"Fate_of_Atlantis_v.1.5"
-			};
 
-			for (int i = 0; i < ARRAYSIZE(indy4FileNames); i++) {
-				if (resource.exists(indy4FileNames[i])) {
-					macResourceFile = indy4FileNames[i];
-					break;
-				}
-			}
-
-			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_("Could not find the 'Fate of Atlantis' Macintosh executable.\n"
-											"Mac GUI will not be shown."),
-										_("OK"));
-				dialog.runModal();
-			} else if (isUsingOriginalGUI()) {
-				_macGui = new MacGui(this, macResourceFile);
-			}
-		} else if (_game.id == GID_MONKEY2) {
-			static const char *monkeyIsland2FileNames[] = {
-				"LeChuck's Revenge",
-				"LeChuck's_Revenge"};
-
-			for (int i = 0; i < ARRAYSIZE(monkeyIsland2FileNames); i++) {
-				if (resource.exists(monkeyIsland2FileNames[i])) {
-					macResourceFile = monkeyIsland2FileNames[i];
-					break;
-				}
-			}
-
-			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_("Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
-											"Mac GUI will not be shown."),
-										  _("OK"));
-				dialog.runModal();
-			} else if (isUsingOriginalGUI()) {
-				_macGui = new MacGui(this, macResourceFile);
-			}
+			if (_game.id == GID_INDY3 || _game.id == GID_LOOM)
+				_textSurfaceMultiplier = 2;
 		}
 
 		if (!macResourceFile.empty()) {
