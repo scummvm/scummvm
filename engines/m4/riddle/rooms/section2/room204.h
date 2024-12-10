@@ -116,7 +116,7 @@ private:
 	
 	int32 _204pu99Series = 0;
 	int32 _acolyteGrabsMalletSeries = 0;
-	int32 _acolyteSaysHaltSeries;
+	int32 _acolyteSaysHaltSeries = 0;
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
 	int32 _meiReadsTabletsSeries = 0;
