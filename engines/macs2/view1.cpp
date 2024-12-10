@@ -969,7 +969,10 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+
 		Common::String number = Common::String::format("%u", scalingFactor);
+		// number = Common::String::format("%u", scalingFactor);
+		number = Common::String::format("%u", current->GameObject->Index);
 		renderString(current->GetPosition(), number.c_str());
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
