@@ -47,6 +47,7 @@ public:
 	Gfx::BgPics _bgPics;
 	Gfx::Font _font;
 	Gfx::Pics _hampic;
+	Gfx::Pics _status;
 	Sound _sound;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
