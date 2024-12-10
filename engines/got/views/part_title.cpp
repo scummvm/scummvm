@@ -19,34 +19,52 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
 #include "got/views/part_title.h"
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "got/metaengine.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	PartTitle _partTitle;
-	Story _story;
-	Title _title;
+void PartTitle::draw() {
+	GfxSurface s = getSurface();
+	s.clear();
+	s.print(Common::Point(13 * 8, 13 * 8), "God of Thunder", 14);
 
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SetSound _setSound;
-};
+	switch (_G(area)) {
+	case 1:
+		s.print(Common::Point(8 * 8, 15 * 8), "Part I: Serpent Surprise", 32);
+		break;
+	case 2:
+		s.print(Common::Point(7 * 8, 15 * 8), "Part II: Non-Stick Nognir", 32);
+		break;
+	case 3:
+		s.print(Common::Point(7 * 8, 15 * 8), "Part III: Lookin' for Loki", 32);
+		break;
+	default:
+		break;
+	}
+}
+
+bool PartTitle::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE)
+		done();
+
+	return true;
+}
+
+bool PartTitle::tick() {
+	if (++_timeoutCtr == 50) {
+		_timeoutCtr = 0;
+		done();
+	}
+
+	return true;
+}
+
+void PartTitle::done() {
+	replaceView("Game", true, true);
+}
 
 } // namespace Views
 } // namespace Got
-
-#endif
