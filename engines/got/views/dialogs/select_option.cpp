@@ -39,7 +39,11 @@ SelectOption::SelectOption(const Common::String &name, const char *title,
 
 	// Calculate the bounds for the dialog
 	int w, h, x1, y1, x2, y2;
+
 	w = strlen(title);
+	for (uint i = 0; i < _options.size(); ++i)
+		w = MAX(w, (int)_options[i].size());
+
 	if (w & 1)
 		w++;
 	w = (w * 8) + 32;
