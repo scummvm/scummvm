@@ -210,7 +210,8 @@ static SQInteger breaktime(HSQUIRRELVM v) {
 	SQFloat time;
 	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
 		return sq_throwerror(v, "failed to get time");
-	if (time == 0.f) {
+	// it can happen to have a negative time, in this case wait for 1 frame
+	if (time <= 0.f) {
 		int frame = 1;
 		return breakfunc(v, threadFrames, &frame);
 	}
