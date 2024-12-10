@@ -147,15 +147,7 @@ void Room802::init() {
 }
 
 void Room802::pre_parser() {
-	player_said("take"); // CHECKME: completely useless -> suspicious
-
-	bool lookFl = false;
-	if (player_said("look"))
-		lookFl = true;
-
-	if (player_said("push") || player_said("pull") || player_said("gear") || player_said("open") || player_said("close")) {
-		// CHECKME: completely useless -> suspicious
-	}
+	const bool lookFl = player_said("look");
 
 	if (player_said("go") && player_said("root cellar")) {
 		digi_play("802R13", 1, 255, -1, -1);
@@ -172,26 +164,10 @@ void Room802::pre_parser() {
 }
 
 void Room802::parser() {
-	bool lookFl = false;
-	bool takeFl = false;
-	bool gearFl = false;
-	bool climbFl = false;
-
-	if (player_said("look") || player_said("look at"))
-		lookFl = true;
-
-	if (player_said("talk") || player_said("talk to")) {
-		// Nothing...
-	}
-
-	if (player_said("take"))
-		takeFl = true;
-
-	if (player_said("gear"))
-		gearFl = true;
-
-	if (player_said("go") || player_said("climb"))
-		climbFl = true;
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said("gear");
+	const bool climbFl = player_said_any("go", "climb");
 
 	if (lookFl && _G(walker).ripley_said(SAID)) {
 		// Nothing on purpose
