@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-09 06:55+0000\n"
+"POT-Creation-Date: 2024-12-10 20:56+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -12530,7 +12530,7 @@ msgstr "Přeskočit text"
 msgid "Show hotspots"
 msgstr "Zobrazit skryté soubory"
 
-#: engines/twp/twp.cpp:829
+#: engines/twp/twp.cpp:825
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr ""

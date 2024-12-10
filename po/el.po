@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-09 06:55+0000\n"
+"POT-Creation-Date: 2024-12-10 20:56+0000\n"
 "PO-Revision-Date: 2024-12-07 13:02+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -12951,7 +12951,7 @@ msgstr "Παράλειψη Κειμένου"
 msgid "Show hotspots"
 msgstr "Προβολή Σημείων Αλληλεπίδρασης"
 
-#: engines/twp/twp.cpp:829
+#: engines/twp/twp.cpp:825
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr "Επιλέξατε το Ransome *unbeeped* (DLC) αλλά δεν βρέθηκε το DLC!"

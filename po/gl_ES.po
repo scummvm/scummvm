@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-09 06:55+0000\n"
+"POT-Creation-Date: 2024-12-10 20:56+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -12559,7 +12559,7 @@ msgstr "Omitir texto"
 msgid "Show hotspots"
 msgstr "Mostrar ficheiros ocultos"
 
-#: engines/twp/twp.cpp:829
+#: engines/twp/twp.cpp:825
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr ""

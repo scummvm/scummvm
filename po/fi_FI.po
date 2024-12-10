@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-09 06:55+0000\n"
+"POT-Creation-Date: 2024-12-10 20:56+0000\n"
 "PO-Revision-Date: 2024-12-09 22:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -12574,7 +12574,7 @@ msgstr "Ohita teksti"
 msgid "Show hotspots"
 msgstr "Näytä kohdealueet"
 
-#: engines/twp/twp.cpp:829
+#: engines/twp/twp.cpp:825
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr "Valitsit Ransome *unbeeped* (DLC) mutta DLC:tä ei löydetty!"
