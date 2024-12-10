@@ -243,6 +243,8 @@ bool Room::load() {
 	}
 
 	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))), false);
+	_workPal.load(_pal);
+	_palLoaded = false;
 
 	loadLocationSprites(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
@@ -292,7 +294,7 @@ Common::String Room::stripSpaces(const Common::String &source) {
 
 void Room::draw() {
 	if (!_palLoaded) {
-		_pal.installPalette();
+		_workPal.installPalette();
 		_palLoaded = true;
 	}
 	_pic.draw(0x45, 0x28);
@@ -1390,24 +1392,25 @@ void Room::loadRoom61AWalkableLocations() {
 }
 
 void Room::restorePalette() {
+	_workPal.load(_pal);
 	_palLoaded = false;
 }
 
 void Room::darkenSky() {
 	if (isOutside() && g_engine->_currentTimeInSeconds / 3600 > 16) {
-		Pal workPal(_pal);
+		_workPal.load(_pal);
 		int timeOffset = g_engine->_currentTimeInSeconds - 61200;
 		if (timeOffset == 0) {
 			timeOffset = 1;
 		}
 		for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
-			uint8 p = workPal._palData[i];
+			uint8 p = _workPal._palData[i];
 			if (p == 0) {
 				p = 1;
 			}
-			workPal._palData[i] = p - (p / (26 - timeOffset / 750));
+			_workPal._palData[i] = p - (p / (26 - timeOffset / 750));
 		}
-		workPal.installPalette();
+		_palLoaded = false;
 	}
 }
 

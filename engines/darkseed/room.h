@@ -62,6 +62,7 @@ public:
 	uint8 _roomNumber;
 	Pic _pic;
 	Pal _pal;
+	Pal _workPal; // used to darken the sky.
 	Nsp _locationSprites;
 	Common::Array<int16> _locObjFrame;
 	Common::Array<int16> _locObjFrameTimer;
