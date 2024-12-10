@@ -93,8 +93,8 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	return 1;
 }
 
-static SQInteger breakfunc(HSQUIRRELVM v, void func(Common::SharedPtr<Thread> t, void *data), void *data) {
-	Common::SharedPtr<Thread> thread(sqthread(v));
+static SQInteger breakfunc(HSQUIRRELVM v, void func(Common::SharedPtr<ThreadBase> t, void *data), void *data) {
+	Common::SharedPtr<ThreadBase> thread(sqthread(v));
 	if (!thread)
 		return sq_throwerror(v, "failed to get thread");
 	thread->suspend();
@@ -164,12 +164,12 @@ static SQInteger addFolder(HSQUIRRELVM v) {
 	return 0;
 }
 
-static void threadFrames(Common::SharedPtr<Thread> tb, void *data) {
+static void threadFrames(Common::SharedPtr<ThreadBase> tb, void *data) {
 	int numFrames = *(int *)data;
 	tb->_numFrames = numFrames;
 }
 
-static void threadTime(Common::SharedPtr<Thread> tb, void *data) {
+static void threadTime(Common::SharedPtr<ThreadBase> tb, void *data) {
 	float time = *(float *)data;
 	tb->_waitTime = time;
 }
@@ -224,7 +224,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	Common::String name = Common::String::format(fmt, va);
 	va_end(va);
 
-	Common::SharedPtr<Thread> curThread = sqthread(v);
+	Common::SharedPtr<ThreadBase> curThread = sqthread(v);
 	if (!curThread)
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
@@ -279,7 +279,7 @@ static SQInteger breakwhilecamera(HSQUIRRELVM v) {
 
 struct CutsceneRunning {
 	bool operator()() {
-		return g_twp->_cutscene.id != 0;
+		return g_twp->_cutscene != nullptr;
 	}
 };
 
@@ -337,7 +337,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get id");
 	debugC(kDebugSysScript, "breakwhilerunning: %lld", id);
 
-	Common::SharedPtr<Thread> t = sqthread(id);
+	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (!t) {
 		if (!g_twp->_resManager->isSound(id)) {
 			warning("thread and sound not found: %lld", id);
@@ -471,35 +471,21 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 		if (SQ_FAILED(sq_getstackobj(v, 3, &closureOverride)))
 			return sq_throwerror(v, "failed to get cutscene override closure");
 	}
-	sq_addref(v, &closureOverride);
 
-	Common::SharedPtr<Thread> parentThread = sqthread(v);
+	Common::SharedPtr<ThreadBase> parentThread = sqthread(v);
 	Common::String cutsceneName = Common::String::format("%s (%lld)", _stringval(_closure(closure)->_function->_sourcename), _closure(closure)->_function->_lineinfos->_line);
-	Common::SharedPtr<Thread> cutscene(new Thread(cutsceneName, true, threadObj, envObj, closure, {}));
-	g_twp->_threads.push_back(cutscene);
-	if (!g_twp->_cutscene.id) {
-		g_twp->_cutscene.inputState = g_twp->_inputState.getState();
-		g_twp->_cutscene.showCursor = g_twp->_inputState.getShowCursor();
-		g_twp->_inputState.setInputActive(false);
-		g_twp->_inputState.setShowCursor(false);
-	}
-	g_twp->_cutscene.inOverride = false;
-	g_twp->_cutscene.envObj = envObj;
-	g_twp->_cutscene.closureOverride = closureOverride;
-	g_twp->_cutscene.id = cutscene->getId();
-
-	debugC(kDebugSysScript, "create cutscene: %s", cutsceneName.c_str());
+	Common::SharedPtr<Cutscene> cutscene(new Cutscene(cutsceneName, parentThread->getId(), threadObj, closure, closureOverride, envObj));
+	g_twp->_cutscene = cutscene;
 
 	// call the closure in the thread
-	if (!cutscene->call())
-		return sq_throwerror(v, "call failed");
-
+	cutscene->update(0.f);
 	return breakwhilecutscene(v);
 }
 
 static SQInteger cutsceneOverride(HSQUIRRELVM v) {
 	debugC(kDebugSysScript, "cutsceneOverride");
-	return g_twp->skipCutscene();
+	g_twp->_cutscene->cutsceneOverride();
+	return 0;
 }
 
 static SQInteger dumpvar(HSQUIRRELVM v) {
@@ -606,7 +592,7 @@ static SQInteger inputHUD(HSQUIRRELVM v) {
 }
 
 static SQInteger inputOff(HSQUIRRELVM v) {
-	if (!g_twp->_cutscene.id) {
+	if (!g_twp->_cutscene || g_twp->_cutscene->isStopped()) {
 		g_twp->_inputState.setInputActive(false);
 		g_twp->_inputState.setShowCursor(false);
 	}
@@ -614,7 +600,8 @@ static SQInteger inputOff(HSQUIRRELVM v) {
 }
 
 static SQInteger inputOn(HSQUIRRELVM v) {
-	if (!g_twp->_cutscene.id) {
+	Common::SharedPtr<Cutscene> scene(g_twp->_cutscene);
+	if (!scene || scene->isStopped()) {
 		g_twp->_inputState.setInputActive(true);
 		g_twp->_inputState.setShowCursor(true);
 	} else {
@@ -623,8 +610,8 @@ static SQInteger inputOn(HSQUIRRELVM v) {
 		state &= (~UI_INPUT_OFF);
 		state |= UI_CURSOR_ON;
 		state &= (~UI_CURSOR_OFF);
-		g_twp->_cutscene.inputState = (InputStateFlag)state;
-		g_twp->_cutscene.showCursor = true;
+		scene->setInputState((InputStateFlag)state);
+		scene->setShowCursor(true);
 	}
 	return 0;
 }
@@ -767,7 +754,7 @@ static SQInteger stopthread(HSQUIRRELVM v) {
 		return 1;
 	}
 
-	Common::SharedPtr<Thread> t = sqthread(id);
+	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (t) {
 		t->stop();
 	}
@@ -795,7 +782,7 @@ static SQInteger stopthread(HSQUIRRELVM v) {
 //     }
 // }
 static SQInteger threadid(HSQUIRRELVM v) {
-	Common::SharedPtr<Thread> t = sqthread(v);
+	Common::SharedPtr<ThreadBase> t = sqthread(v);
 	if (t)
 		sqpush(v, t->getId());
 	else
@@ -806,7 +793,7 @@ static SQInteger threadid(HSQUIRRELVM v) {
 // Specify whether a thread should be pauseable or not.
 // If a thread is not pauseable, it won't be possible to pause this thread.
 static SQInteger threadpauseable(HSQUIRRELVM v) {
-	Common::SharedPtr<Thread> t = sqthread(v, 2);
+	Common::SharedPtr<ThreadBase> t = sqthread(v, 2);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	SQInteger pauseable = 0;

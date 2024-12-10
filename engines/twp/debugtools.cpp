@@ -90,7 +90,7 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-56s", thread->getName().c_str());
 				ImGui::TableNextColumn();
-				if (thread->getId() != g_twp->_cutscene.id) {
+				if(!g_twp->_cutscene || (thread->getId() != g_twp->_cutscene->getId())) {
 					ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
 				} else {
 					ImGui::Text("%-6s", "cutscene");
@@ -369,8 +369,8 @@ static void drawGeneral() {
 	ImGui::Text("%lld", size);
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	if (g_twp->_cutscene.id) {
-		Common::SharedPtr<Thread> cutscene(sqthread(g_twp->_cutscene.id));
+	if (g_twp->_cutscene) {
+		Common::SharedPtr<ThreadBase> cutscene(sqthread(g_twp->_cutscene->getId()));
 		ImGui::Text("%s", cutscene->getName().c_str());
 	} else {
 		ImGui::Text("no");
