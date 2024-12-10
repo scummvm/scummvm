@@ -868,9 +868,32 @@ void Adlib::OnTimer() {
 									// Note that we again push one more copy of the
 									// value which is not used in g2779 above.
 									Func2792(gArray8d[bp8] + 0x40,
-										result & 0xC0 + bp2)
+											 result & 0xC0 + bp2);
 									// TODO: Continue from here
-									
+									/* mov al, [bp - 3h]
+									xor	ah,ah
+									mov	di,ax
+									mov	byte ptr [di+226Fh],0h
+									;; This is the channel ID
+									mov	al,[bp-8h]
+									push	ax
+									;; This is the index in the notes structure
+									;; #note_on_data: This is where we get the offset from
+									mov	al,[bp-4h]
+									;; #note_on_data: This should be the data in question
+									push	ax
+									;; [bp+6h] in the function - is often 0?
+									mov	al,[bp-3h]
+									xor	ah,ah
+									mov	di,ax
+									mov	al,[di+226Fh]
+									push	ax
+									;; #first_note_on_timing: Using this one to find out what the timing for this
+									;; call is. We know that we are in a system timer interrupt handler
+									;; #first_note_on_timing: This call ends up in the first note on event
+									;; #note_on_data: This is the call for the note-on, we're looking for the second-
+									;; to-last pushed argument
+									call	far 0017h:294Eh*/
 									
 
 									

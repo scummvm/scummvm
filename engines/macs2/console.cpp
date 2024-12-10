@@ -106,7 +106,11 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 
 bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	int orientation = std::stoi(argv[1], nullptr, 16);
-	GameObjects::instance().GetProtagonistObject()->Orientation = orientation;
+	int index = 1;
+	if (argc > 2) {
+		index = std::stoi(argv[2], nullptr, 16);
+	}
+	GameObjects::instance().GetObjectByIndex(index)->Orientation = orientation;
 	
 	return true;
 }
