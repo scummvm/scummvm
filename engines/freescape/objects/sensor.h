@@ -57,7 +57,7 @@ public:
 	bool isDrawable() override { return true; }
 	bool isPlanar() override { return true; }
 	bool isShooting() { return _isShooting; }
-	void scale(int factor) override { _origin = _origin / factor; };
+	void scale(int factor) override;
 	Object *duplicate() override;
 
 	ObjectType getType() override { return kSensorType; };

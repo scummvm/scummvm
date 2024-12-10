@@ -171,6 +171,8 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 }
 
 void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewArea) {
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	tglColor3ub(255, 255, 255);
 	polygonOffset(true);
 	tglEnableClientState(TGL_VERTEX_ARRAY);
@@ -180,6 +182,7 @@ void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 	tglDrawArrays(TGL_LINES, 0, 2);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	polygonOffset(false);
+	tglDisable(TGL_BLEND);
 }
 
 void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {

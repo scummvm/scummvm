@@ -255,7 +255,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			if (obj->isPlanar() && (obj->getType() != ObjectType::kSensorType))
+			if (obj->isPlanar())
 				planarObjects.push_back(obj);
 			else
 				nonPlanarObjects.push_back(obj);

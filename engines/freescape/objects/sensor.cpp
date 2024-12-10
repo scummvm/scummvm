@@ -37,7 +37,15 @@ Sensor::Sensor(
 	_objectID = objectID_;
 	_origin = origin_;
 	_rotation = rotation_;
-	_size = Math::Vector3d(3, 3, 3);
+
+	if (axis_ == 0x01 || axis_ == 0x02)
+		_size = Math::Vector3d(0, 3, 3);
+	else if (axis_ == 0x04 || axis_ == 0x08)
+		_size = Math::Vector3d(3, 0, 3);
+	else if (axis_ == 0x10 || axis_ == 0x20)
+		_size = Math::Vector3d(3, 3, 0);
+	else
+		error("Invalid axis %x", axis_);
 	_colours = new Common::Array<uint8>;
 	for (int i = 0; i < 6; i++)
 		_colours->push_back(color_);
@@ -56,14 +64,18 @@ Sensor::Sensor(
 	_isShooting = false;
 }
 
+void Sensor::scale(int factor) {
+	_origin = _origin / factor;
+	_size = _size / factor;
+};
+
 Object *Sensor::duplicate() {
 	Sensor *sensor = new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _axis, _flags, _condition, _conditionSource);
 	return sensor;
 }
 
 void Sensor::draw(Freescape::Renderer *gfx, float offset) {
-	Math::Vector3d origin(_origin.x() - 1, _origin.y() - 1, _origin.z() - 1);
-	gfx->renderCube(_origin, _size, _colours, nullptr);
+	gfx->renderCube(_origin, _size, _colours, nullptr, offset);
 }
 
 bool Sensor::playerDetected(const Math::Vector3d &position, Area *area) {
