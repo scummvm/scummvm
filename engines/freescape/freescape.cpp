@@ -785,6 +785,8 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	_eventManager->clearExitEvents();
+	g_system->showMouse(true);
+	g_system->lockMouse(false);
 	return Common::kNoError;
 }
 
