@@ -30,6 +30,8 @@
 namespace Got {
 namespace Gfx {
 
+#define FADE_STEPS 10
+
 static byte saved_palette[PALETTE_SIZE];
 
 void load_palette() {
@@ -66,28 +68,25 @@ void xgetpal(byte *pal, int num_colrs, int start_index) {
 }
 
 void fade_out() {
-	const int FADE_AMOUNT = 2;
 	byte tempPal[PALETTE_SIZE];
-	bool repeatFlag;
-	byte *srcP;
+	const byte *srcP;
+	byte *destP;
 	int count;
 	Common::Event evt;
 
 	xgetpal(saved_palette, PALETTE_COUNT, 0);
-	Common::copy(saved_palette, saved_palette + PALETTE_SIZE, tempPal);
 
-	do {
-		repeatFlag = false;
-		for (srcP = &tempPal[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
-			int v = *srcP;
-			if (v) {
-				repeatFlag = true;
-				*srcP = MAX((int)*srcP - FADE_AMOUNT, 0);
-			}
+	for (int step = FADE_STEPS - 1; step >= 0; --step) {
+		// Set each palette RGB proportionately
+		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
+				count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+			*destP = *srcP * step / FADE_STEPS;
 		}
 
+		// Set new palette
 		xsetpal(tempPal);
 
+		// Use up any pending events and update the screen
 		while (g_system->getEventManager()->pollEvent(evt)) {
 			if (evt.type == Common::EVENT_QUIT)
 				return;
@@ -95,34 +94,27 @@ void fade_out() {
 
 		g_events->getScreen()->update();
 		g_system->delayMillis(10);
-
-	} while (repeatFlag);
+	}
 }
 
 void fade_in() {
-	const int FADE_AMOUNT = 10;
 	byte tempPal[PALETTE_SIZE];
-	bool repeatFlag;
-	byte *srcP, *destP;
+	const byte *srcP;
+	byte *destP;
 	int count;
 	Common::Event evt;
 
-	Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
-
-	do {
-		repeatFlag = false;
-		for (srcP = &tempPal[0], destP = &saved_palette[0], count = 0;
+	for (int step = 1; step <= FADE_STEPS; ++step) {
+		// Set each palette RGB proportionately
+		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
 			count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
-			int v = *srcP;
-
-			if (v != *destP) {
-				repeatFlag = true;
-				*srcP = MIN((int)*srcP + FADE_AMOUNT, (int)*destP);
-			}
+			*destP = *srcP * step / FADE_STEPS;
 		}
 
+		// Set new palette
 		xsetpal(tempPal);
 
+		// Use up any pending events and update the screen
 		while (g_system->getEventManager()->pollEvent(evt)) {
 			if (evt.type == Common::EVENT_QUIT)
 				return;
@@ -130,8 +122,7 @@ void fade_in() {
 
 		g_events->getScreen()->update();
 		g_system->delayMillis(10);
-
-	} while (repeatFlag);
+	}
 }
 
 } // namespace Gfx
