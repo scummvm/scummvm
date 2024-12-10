@@ -547,7 +547,7 @@ void SciEngine::suggestDownloadGK2SubTitlesPatch() {
 		downloadMessage = "";
 	}
 
-	int result = showScummVMDialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
+	int result = showScummVMDialog(_("GK2 has fan made subtitles, available thanks to the good people at SierraHelp.\n\n"
 		"Installation:\n"
 		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
 		downloadMessage +
