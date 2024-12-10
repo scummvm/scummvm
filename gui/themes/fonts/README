@@ -1,6 +1,12 @@
-These are fonts used in ScummVM. Most of them come from Xorg.
+These are fonts used in ScummVM, and are included in the fonts.dat and fonts-cjk.dat packages.
 
-The GNU FreeFont files are distributed under the license in COPYING.FREEFONT.
-The Material Design Icons (https://github.com/google/material-design-icons) files are distributed under Apache 2.0 license
+The GNU FreeFont (https://www.gnu.org/software/freefont/) files are distributed under the license in COPYING.FREEFONT.
+The Go Mono fonts (https://github.com/golang/image/blob/master/font/gofont/ttfs/README) are distributed under the license in COPYING.BSD.
+The Liberation fonts (https://github.com/liberationfonts) are distributed under the SIL Open Font License.
+The Material Design Icons (https://github.com/google/material-design-icons) files are distributed under the Apache 2.0 license.
+The Noto fonts (https://notofonts.github.io) are distributed under the SIL Open Font License.
+The Source Code Variable font (https://fonts.adobe.com/fonts/source-code-variable) is distributed under the SIL Open Font License.
+The VL Gothic font (https://vlgothic.dicey.org)...
+The Wine fonts (https://gitlab.winehq.org/wine/wine/-/tree/master/fonts?ref_type=heads) are distributed under the GNU Lesser General Public License version 2.1 or later.
 
-Also other potentially usable fonts are stored here as well.
+Other potentially usable fonts are stored here as well, however bundling of the files with ScummVM is handled elsewhere.
