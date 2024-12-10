@@ -19,36 +19,36 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
 #include "got/views/game.h"
-#include "got/views/part_title.h"
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "got/metaengine.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	Game _game;
-	PartTitle _partTitle;
-	Story _story;
-	Title _title;
+bool Game::msgFocus(const FocusMessage &msg) {
+	return true;
+}
 
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SetSound _setSound;
-};
+bool Game::msgUnfocus(const UnfocusMessage &msg) {
+	return true;
+}
+
+void Game::draw() {
+	GfxSurface s = getSurface();
+
+	// Status area
+	const Graphics::ManagedSurface &status = _G(status)[0];
+	s.blitFrom(status, Common::Point(0, 240 - status.h));
+}
+
+bool Game::msgAction(const ActionMessage &msg) {
+	return true;
+}
+
+bool Game::tick() {
+	return true;
+}
 
 } // namespace Views
 } // namespace Got
-
-#endif

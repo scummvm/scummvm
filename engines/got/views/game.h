@@ -19,33 +19,24 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_GAME_H
+#define GOT_VIEWS_GAME_H
 
-#include "got/views/game.h"
-#include "got/views/part_title.h"
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-struct Views {
-	Game _game;
-	PartTitle _partTitle;
-	Story _story;
-	Title _title;
+class Game : public View {
+public:
+	Game() : View("Game") {}
+	virtual ~Game() {}
 
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SetSound _setSound;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views
