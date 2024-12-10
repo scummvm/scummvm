@@ -147,7 +147,7 @@ void Room706::parser() {
 }
 
 void Room706::daemon() {
-	bool esi = player_said("take");
+	const bool takeFl = player_said("take");
 
 	switch (_G(kernel).trigger) {
 	case 70:
@@ -253,7 +253,7 @@ void Room706::daemon() {
 		break;
 
 	case 83:
-		if (!esi || _G(player).click_y > 374)
+		if (!takeFl || _G(player).click_y > 374)
 			break;
 
 		switch (imath_ranged_rand(1, 3)) {
