@@ -118,23 +118,6 @@ void story(void);
 
 
 //G_PANEL.C
-void status_panel(void);
-void display_health(void);
-void display_magic(void);
-void display_jewels(void);
-void display_score(void);
-void display_keys(void);
-void display_item(void);
-int  init_status_panel(void);
-void add_jewels(int num);
-void add_score(int num);
-void add_magic(int num);
-void add_health(int num);
-void add_keys(int num);
-void fill_health(void);
-void fill_magic(void);
-void fill_score(int num);
-void score_for_inv(void);
 void boss_status(int health);
 int  select_option(const char *option[], const char *title, int ipos);
 int  option_menu(void);
