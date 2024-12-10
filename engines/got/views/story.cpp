@@ -42,7 +42,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
 	for (int i = 0; i < 768; ++i)
 		_G(pbuff)[i] = (_G(pbuff)[i] * 255 + 31) / 63;
-	xsetpal(_G(pbuff));
+	Gfx::xsetpal(_G(pbuff));
 
 	// Create story image and load in it's fragments
 	_surface.create(320, 240 * 2);
@@ -156,7 +156,7 @@ bool Story::tick() {
 void Story::done() {
 	warning("TODO: Story::done");
 	music_stop();
-	load_palette();
+	Gfx::load_palette();
 }
 
 } // namespace Views

@@ -20,6 +20,7 @@
  */
 
 #include "got/views/view.h"
+#include "got/gfx/palette.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -106,6 +107,14 @@ void View::music_stop() {
 
 bool View::music_is_on() const {
 	return _G(sound).music_is_on();
+}
+
+void View::fadeOut() {
+	Gfx::fade_out();
+}
+
+void View::fadeIn() {
+	Gfx::fade_in();
 }
 
 } // namespace Views

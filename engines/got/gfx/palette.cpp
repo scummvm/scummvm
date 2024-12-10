@@ -20,20 +20,23 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "graphics/paletteman.h"
 #include "got/gfx/palette.h"
 #include "got/utils/file.h"
+#include "got/got.h"
 #include "got/vars.h"
 
 namespace Got {
+namespace Gfx {
+
+static byte saved_palette[PALETTE_SIZE];
 
 void load_palette() {
-	byte buff[256 * 3];
-
-	if (res_read("PALETTE", buff) < 0)
+	if (res_read("PALETTE", saved_palette) < 0)
 		error("Cannot Read PALETTE");
 
-	g_system->getPaletteManager()->setPalette(buff, 0, 256);
+	g_system->getPaletteManager()->setPalette(saved_palette, 0, 256);
 
 	set_screen_pal();
 }
@@ -62,4 +65,74 @@ void xgetpal(byte *pal, int num_colrs, int start_index) {
 	g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
 }
 
+void fade_out() {
+	const int FADE_AMOUNT = 2;
+	byte tempPal[PALETTE_SIZE];
+	bool repeatFlag;
+	byte *srcP;
+	int count;
+	Common::Event evt;
+
+	xgetpal(saved_palette, PALETTE_COUNT, 0);
+	Common::copy(saved_palette, saved_palette + PALETTE_SIZE, tempPal);
+
+	do {
+		repeatFlag = false;
+		for (srcP = &tempPal[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
+			int v = *srcP;
+			if (v) {
+				repeatFlag = true;
+				*srcP = MAX((int)*srcP - FADE_AMOUNT, 0);
+			}
+		}
+
+		xsetpal(tempPal);
+
+		while (g_system->getEventManager()->pollEvent(evt)) {
+			if (evt.type == Common::EVENT_QUIT)
+				return;
+		}
+
+		g_events->getScreen()->update();
+		g_system->delayMillis(10);
+
+	} while (repeatFlag);
+}
+
+void fade_in() {
+	const int FADE_AMOUNT = 10;
+	byte tempPal[PALETTE_SIZE];
+	bool repeatFlag;
+	byte *srcP, *destP;
+	int count;
+	Common::Event evt;
+
+	Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
+
+	do {
+		repeatFlag = false;
+		for (srcP = &tempPal[0], destP = &saved_palette[0], count = 0;
+			count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+			int v = *srcP;
+
+			if (v != *destP) {
+				repeatFlag = true;
+				*srcP = MIN((int)*srcP + FADE_AMOUNT, (int)*destP);
+			}
+		}
+
+		xsetpal(tempPal);
+
+		while (g_system->getEventManager()->pollEvent(evt)) {
+			if (evt.type == Common::EVENT_QUIT)
+				return;
+		}
+
+		g_events->getScreen()->update();
+		g_system->delayMillis(10);
+
+	} while (repeatFlag);
+}
+
+} // namespace Gfx
 } // namespace Got

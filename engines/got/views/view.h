@@ -62,6 +62,9 @@ protected:
 	void music_stop();
 	bool music_is_on() const;
 
+	void fadeOut();
+	void fadeIn();
+
 public:
 	View(const Common::String &name, UIElement *uiParent) :
 		UIElement(name, uiParent) {

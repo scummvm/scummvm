@@ -23,6 +23,7 @@
 #include "graphics/screen.h"
 #include "got/events.h"
 #include "got/got.h"
+#include "got/gfx/palette.h"
 #include "got/views/views.h"
 
 namespace Got {
@@ -103,9 +104,12 @@ void Events::processEvent(Common::Event &ev) {
 	}
 }
 
-void Events::replaceView(UIElement *ui, bool replaceAllViews) {
+void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 	assert(ui);
 	UIElement *priorView = focusedView();
+
+	if (fadeOutIn)
+		Gfx::fade_out();
 
 	if (replaceAllViews) {
 		clearViews();
@@ -126,10 +130,14 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
+	ui->draw();
+
+	if (fadeOutIn)
+		Gfx::fade_in();
 }
 
-void Events::replaceView(const Common::String &name, bool replaceAllViews) {
-	replaceView(findView(name));
+void Events::replaceView(const Common::String &name, bool replaceAllViews, bool fadeOutIn) {
+	replaceView(findView(name), replaceAllViews, fadeOutIn);
 }
 
 void Events::addView(UIElement *ui) {
@@ -305,12 +313,12 @@ UIElement *UIElement::findView(const Common::String &name) {
 	return nullptr;
 }
 
-void UIElement::replaceView(UIElement *ui, bool replaceAllViews) {
-	g_events->replaceView(ui, replaceAllViews);
+void UIElement::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
+	g_events->replaceView(ui, replaceAllViews, fadeOutIn);
 }
 
-void UIElement::replaceView(const Common::String &name, bool replaceAllViews) {
-	g_events->replaceView(name, replaceAllViews);
+void UIElement::replaceView(const Common::String &name, bool replaceAllViews, bool fadeOutIn) {
+	g_events->replaceView(name, replaceAllViews, fadeOutIn);
 }
 
 void UIElement::addView(UIElement *ui) {
