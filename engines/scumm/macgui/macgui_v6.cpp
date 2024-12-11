@@ -25,15 +25,17 @@
 
 #include "engines/engine.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+
 #if 0
 #include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
 #endif
 
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
+#include "scumm/file.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_v6.h"
 
@@ -62,13 +64,142 @@ bool MacV6Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 }
 
 bool MacV6Gui::handleMenu(int id, Common::String &name) {
-	if (MacGuiImpl::handleMenu(id, name))
+	// Don't call the original method. The menus are too different.
+	// TODO: Separate the common code into its own method?
+
+	// This menu item (e.g. a menu separator) has no action, so it's
+	// handled trivially.
+	if (id == 0)
 		return true;
+
+	// This is how we keep the menu bar visible.
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+
+	// If the menu is opened through a shortcut key, force it to activate
+	// to avoid screen corruption. In that case, we also force the menu to
+	// close afterwards, or the game will stay paused. Which is
+	// particularly bad during a restart.
+
+	if (!menu->_active) {
+		_windowManager->activateMenu();
+		_forceMenuClosed = true;
+	}
+
+	menu->closeMenu();
+	menu->setActive(true);
+	menu->setVisible(true);
+	updateWindowManager();
+
+	int saveSlotToHandle = -1;
+	Common::String savegameName;
+
+	// The Dig and Full Throttle don't have a Restart menu entry
+	if (_vm->_game.version > 6 && id >= 204 && id < 300)
+		id++;
+
+	PauseToken token;
+
+	switch (id) {
+	case 100:	// About
+		token = _vm->pauseEngine();
+		runAboutDialog();
+		token.clear();
+		return true;
+
+	case 200:	// Open
+		debug("Open");
+		if (runOpenDialog(saveSlotToHandle)) {
+			if (saveSlotToHandle > -1) {
+				_vm->loadGameState(saveSlotToHandle);
+			}
+		}
+
+		return true;
+
+	case 201:	// Save
+		debug("Save");
+		_vm->beginTextInput();
+		if (runSaveDialog(saveSlotToHandle, savegameName)) {
+			if (saveSlotToHandle > -1) {
+				_vm->saveGameState(saveSlotToHandle, savegameName);
+			}
+		}
+		_vm->endTextInput();
+		return true;
+
+	case 202:
+		debug("Skip scene");
+		return true;
+
+	case 203:
+		debug("Resume");
+		return true;
+
+	case 204:	// Restart
+		debug("Restart");
+		if (runRestartDialog())
+			_vm->restart();
+		return true;
+
+	case 205:
+		debug("Preferences");
+		break;
+
+	case 206:
+		debug("Quit");
+		break;
+
+	// In the original, the Edit menu is active during save dialogs, though
+	// only Cut, Copy and Paste.
+
+	case 300:	// Undo
+	case 301:	// Cut
+	case 302:	// Copy
+	case 303:	// Paste
+	case 304:	// Clear
+		return true;
+
+	case 403:
+		debug("Graphics smoothing");
+		break;
+	}
 
 	return false;
 }
 
 void MacV6Gui::runAboutDialog() {
+	ScummFile aboutFile(_vm);
+
+	if (!_vm->openFile(aboutFile, "ABOUT"))
+		return;
+
+	while (!aboutFile.eos()) {
+		uint32 r = aboutFile.readByte();
+		uint32 g = aboutFile.readByte();
+		uint32 b = aboutFile.readByte();
+
+		uint32 color = (r << 16) | (g << 8) | b;
+	}
+
+	aboutFile.close();
+
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_KEYDOWN:
+				return;
+
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(10);
+		_system->updateScreen();
+	}
 }
 
 bool MacV6Gui::runOptionsDialog() {
