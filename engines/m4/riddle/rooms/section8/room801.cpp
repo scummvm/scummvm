@@ -88,7 +88,7 @@ void Room801::init() {
 		_G(flags)[V251] = 0;
 		_G(flags)[V252] = 0;
 		_G(flags)[V273] = 0;
-		_cellarDoorOpened = false;
+		_cellarDoorOpened = 0;
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", false);
@@ -132,7 +132,7 @@ void Room801::init() {
 		ws_demand_facing(_G(my_walker), 8);
 		ws_demand_location(_G(my_walker), 525, 301);
 		_ripReturnsFromRootCellarSeries = series_load("rip returns from root cellar", -1, nullptr);
-		_cellarDoorOpened = true;
+		_cellarDoorOpened = 1;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
@@ -1110,6 +1110,10 @@ void Room801::daemon() {
 	default:
 		break;
 	}
+}
+
+void Room801::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_cellarDoorOpened);
 }
 
 void Room801::room801_conv801a() {
