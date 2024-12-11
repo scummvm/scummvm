@@ -3059,6 +3059,13 @@ EOF
 			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
 				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
+
+				# OSX 10.4/10.5 has no native C++11 support, thus we need to
+				# embed an updated libstdc++ in the bundle, and fix its
+				# dynamic references with install_name_tool(1), which requires
+				# linking with a bit of padding for the updated references.
+				append_var LDFLAGS "-Wl,-headerpad_max_install_names"
+
 				if test "$_debug_build" != no ; then
 					# Prefer DWARF over stabs on older OSX; this requires a
 					# newer GDB, but we need it for the updated toolchain
