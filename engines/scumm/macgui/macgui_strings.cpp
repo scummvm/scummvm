@@ -610,7 +610,7 @@ bool MacGuiImpl::readStrings() {
 		for (int i = 0; i < 128; i++) {
 			_strsStrings.emplace_back("");
 		}
-		_strsStrings[kMSIAboutGameName] = "Some Game";
+		_strsStrings[kMSIAboutGameName] = "About some game...";
 		return true;
 	}
 
