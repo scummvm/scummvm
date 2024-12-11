@@ -23,13 +23,17 @@
 #define GOT_VIEWS_GAME_H
 
 #include "got/views/view.h"
+#include "got/views/game_status.h"
 
 namespace Got {
 namespace Views {
 
 class Game : public View {
+private:
+	GameStatus _status;
+
 public:
-	Game() : View("Game") {}
+	Game();
 	virtual ~Game() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
