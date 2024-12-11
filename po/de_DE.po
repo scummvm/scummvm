@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-11 08:16+0000\n"
+"POT-Creation-Date: 2024-12-11 21:40+0000\n"
 "PO-Revision-Date: 2024-12-07 08:41+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6886,7 +6886,7 @@ msgid "Use"
 msgstr "Benutze"
 
 #: engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:286 engines/scumm/help.cpp:225
+#: engines/freescape/games/castle/castle.cpp:288 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Gehe"
@@ -7110,7 +7110,7 @@ msgstr "Hinweis-Geheimhaltung umschalten"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:74
-#: engines/freescape/games/castle/castle.cpp:244
+#: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:183
 #: engines/freescape/games/driller/driller.cpp:132
 #: engines/freescape/games/eclipse/eclipse.cpp:204
@@ -7123,7 +7123,7 @@ msgstr "Spiel speichern"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:73
-#: engines/freescape/games/castle/castle.cpp:249
+#: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:188
 #: engines/freescape/games/driller/driller.cpp:137
 #: engines/freescape/games/eclipse/eclipse.cpp:209
@@ -7161,7 +7161,7 @@ msgstr "Hinweis-Menü"
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:82
 #: engines/dragons/metaengine.cpp:224
-#: engines/freescape/games/castle/castle.cpp:257
+#: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:142
 #: engines/freescape/games/eclipse/eclipse.cpp:214
@@ -7877,29 +7877,29 @@ msgstr "Modus ändern"
 msgid "Info Menu"
 msgstr "Info-Menü"
 
-#: engines/freescape/games/castle/castle.cpp:234
+#: engines/freescape/games/castle/castle.cpp:236
 msgid "Select Prince"
 msgstr "Prinz auswählen"
 
-#: engines/freescape/games/castle/castle.cpp:239
+#: engines/freescape/games/castle/castle.cpp:241
 msgid "Select Princess"
 msgstr "Prinzessin auswählen"
 
-#: engines/freescape/games/castle/castle.cpp:266
+#: engines/freescape/games/castle/castle.cpp:268
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "Sound umschalten"
 
-#: engines/freescape/games/castle/castle.cpp:271
+#: engines/freescape/games/castle/castle.cpp:273
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:156
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "Nach links drehen"
 
-#: engines/freescape/games/castle/castle.cpp:276
+#: engines/freescape/games/castle/castle.cpp:278
 #: engines/freescape/games/dark/dark.cpp:214
 #: engines/freescape/games/driller/driller.cpp:161
 #: engines/freescape/games/eclipse/eclipse.cpp:232
@@ -7907,17 +7907,17 @@ msgid "Rotate Right"
 msgstr "Nach rechts drehen"
 
 #. I18N: Action in In Cold Blood
-#: engines/freescape/games/castle/castle.cpp:281 engines/grim/grim.cpp:501
+#: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:592 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "Laufe"
 
-#: engines/freescape/games/castle/castle.cpp:292
+#: engines/freescape/games/castle/castle.cpp:294
 msgid "Crawl"
 msgstr "Kriechen"
 
-#: engines/freescape/games/castle/castle.cpp:298
+#: engines/freescape/games/castle/castle.cpp:300
 #: engines/freescape/games/eclipse/eclipse.cpp:259
 msgid "Face Forward"
 msgstr "Nach vorne blicken"
