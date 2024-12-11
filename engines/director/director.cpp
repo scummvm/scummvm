@@ -332,6 +332,10 @@ Common::Error DirectorEngine::run() {
 #endif
 	}
 
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
