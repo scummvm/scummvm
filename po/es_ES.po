@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-11 08:16+0000\n"
-"PO-Revision-Date: 2024-12-11 01:43+0000\n"
+"PO-Revision-Date: 2024-12-11 12:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7890,8 +7890,6 @@ msgid "Rotate down"
 msgstr "Rotar hacia abajo"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
 msgstr "Dar media vuelta"
 
