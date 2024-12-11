@@ -19,38 +19,30 @@
  *
  */
 
-#include "got/views/game.h"
-#include "got/metaengine.h"
-#include "got/vars.h"
+#ifndef GOT_VIEWS_GAME_STATUS_H
+#define GOT_VIEWS_GAME_STATUS_H
+
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-Game::Game() : View("Game") {
-	_children.push_back(&_status);
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
+class GameStatus : public View {
+private:
+	void displayHealth();
+	void displayMagic();
+	void displayJewels();
+	void displayScore();
+	void displayKeys();
 
-bool Game::msgFocus(const FocusMessage &msg) {
-	return true;
-}
+public:
+	GameStatus() : View("GameStatus") {}
+	virtual ~GameStatus() {}
 
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
-void Game::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-}
-
-bool Game::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
-bool Game::tick() {
-	return true;
-}
+	void draw() override;
+};
 
 } // namespace Views
 } // namespace Got
+
+#endif
