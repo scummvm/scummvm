@@ -83,7 +83,7 @@ private:
 	int32 _205rtlk4Series = 0;
 	int32 _205rtlk5Series = 0;
 	int32 _205ShenGouStaresSeries = 0;
-	int32 _205strlk1Series;
+	int32 _205strlk1Series = 0;
 	int32 _205TabletsSeries = 0;
 	int32 _ripGetsShotSeries = 0;
 	int32 _ripTalkerPos5Series = 0;
