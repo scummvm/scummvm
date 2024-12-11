@@ -552,6 +552,26 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 }
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlGraphicsManager::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
+	if (_imGuiInited) {
+		if (_imGuiCallbacks.cleanup) {
+			_imGuiCallbacks.cleanup();
+		}
+		_imGuiInited = false;
+	}
+
+	_imGuiCallbacks = callbacks;
+
+	if (!_imGuiReady) {
+		return;
+	}
+
+	if (_imGuiCallbacks.init) {
+		_imGuiCallbacks.init();
+	}
+	_imGuiInited = true;
+}
+
 void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 	assert(!_imGuiReady);
 	_imGuiInited = false;
@@ -613,8 +633,8 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 
 	if (_imGuiCallbacks.init) {
 		_imGuiCallbacks.init();
-		_imGuiInited = true;
 	}
+	_imGuiInited = true;
 }
 
 void SdlGraphicsManager::renderImGui() {

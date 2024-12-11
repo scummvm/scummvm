@@ -210,7 +210,7 @@ private:
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 public:
-	void setImGuiCallbacks(const ImGuiCallbacks &callbacks) override { _imGuiCallbacks = callbacks; }
+	void setImGuiCallbacks(const ImGuiCallbacks &callbacks) override;
 
 protected:
 	ImGuiCallbacks _imGuiCallbacks;
