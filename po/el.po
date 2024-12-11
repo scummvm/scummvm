@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-11 08:16+0000\n"
-"PO-Revision-Date: 2024-12-07 13:02+0000\n"
+"PO-Revision-Date: 2024-12-11 12:38+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7754,10 +7754,8 @@ msgid "Change Command"
 msgstr "Αλλαγή Εντολής"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Ενεργοποίηση Χρονομετρητή"
+msgstr "Πρόοδος Ρολογιού"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -8000,10 +7998,8 @@ msgid "Rotate down"
 msgstr "Περιστροφή προς τα κάτω"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "Στροφή προς τα πίσω"
+msgstr "Στροφή πίσω"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
@@ -10636,14 +10632,6 @@ msgstr ""
 "και θα χρειαστεί να κάνετε τα υπόλοιπα εσείς)\n"
 
 #: engines/sci/sci.cpp:550
-#, fuzzy
-#| msgid ""
-#| "GK2 has a fan made subtitles, available thanks to the good persons at "
-#| "SierraHelp.\n"
-#| "\n"
-#| "Installation:\n"
-#| "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-#| "GK2Subtitles.zip\n"
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -10652,8 +10640,8 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"Υπάρχουν υπότιτλοι φτιαγμένοι από fans για το GK2, διαθέσιμοι χάρη σε "
-"δημιουργικά μέλη του SierraHelp.\n"
+"Για το GK2 υπάρχουν υπότιτλοι φτιαγμένοι από φίλους του παιχνιδιού, "
+"διαθέσιμοι χάρη σε δημιουργικά μέλη του SierraHelp.\n"
 "\n"
 "Εγκατάσταση:\n"
 "- Κάνετε λήψη του http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
