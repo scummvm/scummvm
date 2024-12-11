@@ -30,8 +30,12 @@ namespace ZVision {
 MidiManager::MidiManager() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
-	if (_driver->open())
+	if (_driver->open()) {
 		warning("Can't open MIDI, no MIDI output!");
+		available = false;
+		}
+	else
+	  available = true;
 }
 
 MidiManager::~MidiManager() {
