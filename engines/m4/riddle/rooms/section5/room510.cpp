@@ -163,9 +163,9 @@ void Room510::daemon() {
 }
 
 void Room510::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (!useFlag && !lookFlag && !takeFlag)
 		return;
@@ -192,8 +192,6 @@ void Room510::pre_parser() {
 		if (lookFlag && player_said("TOWER"))
 			return;
 		if (lookFlag && player_said("SKULL"))
-			return;
-		if (!lookFlag && !takeFlag && !useFlag)
 			return;
 
 		if (player_said_any("ALTAR POST", "ALTAR POST ", "TROUGH", "STAIRS")) {
@@ -224,9 +222,9 @@ void Room510::pre_parser() {
 #define HAS(ITEM) (player_said(ITEM) && inv_player_has(ITEM))
 
 void Room510::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (lookFlag && player_said(" ")) {
 		digi_play("510R02", 1);
