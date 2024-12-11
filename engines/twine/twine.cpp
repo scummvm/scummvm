@@ -337,6 +337,10 @@ Common::Error TwinEEngine::run() {
 		if (saveSlot >= 0 && saveSlot <= 999) {
 			Common::Error state = loadGameState(saveSlot);
 			if (state.getCode() != Common::kNoError) {
+#ifdef USE_IMGUI
+				_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 				return state;
 			}
 		}
@@ -415,6 +419,11 @@ Common::Error TwinEEngine::run() {
 
 	_sound->stopSamples();
 	_music->stopMusic();
+
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
