@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-11 08:16+0000\n"
-"PO-Revision-Date: 2024-12-09 14:26+0000\n"
+"PO-Revision-Date: 2024-12-11 16:14+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7695,10 +7695,8 @@ msgid "Rotate down"
 msgstr "아래로 회전"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "뒤로 돌아가기"
+msgstr "되돌아오기"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
@@ -10209,14 +10207,6 @@ msgstr ""
 "거기서 계속 진행해야 함)\n"
 
 #: engines/sci/sci.cpp:550
-#, fuzzy
-#| msgid ""
-#| "GK2 has a fan made subtitles, available thanks to the good persons at "
-#| "SierraHelp.\n"
-#| "\n"
-#| "Installation:\n"
-#| "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-#| "GK2Subtitles.zip\n"
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -10225,7 +10215,7 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"GK2에는 SierraHelp에서 팬이 제작한 비공식 자막이 존재합니다.\n"
+"GK2에는 SierraHelp의 팬이 제작한 비공식 자막이 존재합니다.\n"
 "\n"
 "설치:\n"
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip 을 "
