@@ -39,13 +39,15 @@ public:
 	void setProgram(int8 channel, int8 prog);
 
 	int8 getFreeChannel();
+	bool isAvailable() {
+	  return available;
+	};
 
 protected:
-
+  bool available = false;
 	struct chan {
 		bool playing;
 		int8 note;
-
 		chan() : playing(false), note(0) {};
 	};
 
