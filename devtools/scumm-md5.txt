@@ -166,18 +166,18 @@ loom	Loom
 	39cb9dec16fa16f38d79acd80effb059	5748	All	Amiga	EGA	EGA	IT and FR	Gerald Vincent (IT), Andrea Petrucci (FR)
 	2fe369ad70f52a8cf7ad6077ee64f81a	5748	de	Amiga	EGA	EGA	-	Norbert Lange
 	48b9f04b348bc5013327753f0d12a144	5748	es	Amiga	EGA	EGA	-	VooD
-	a0a7dea72003933b8b3f8b99b9f7ddeb	5748	en	Atari	No AdLib	EGA	-
-	0e9b01430e31d9fcd94071d433bbc6bf	5748	fr	Atari	No AdLib	EGA	-
-	c24c490373aeb48fbd54caa8e7ae376d	5748	de	Atari	No AdLib	EGA	-	Andreas Bylund
+	a0a7dea72003933b8b3f8b99b9f7ddeb	5748	en	Atari	No AdLib	EGA	v1.2 from 16 May 90
+	0e9b01430e31d9fcd94071d433bbc6bf	5748	fr	Atari	No AdLib	EGA	v1.2 French from 26 Jul 90
+	c24c490373aeb48fbd54caa8e7ae376d	5748	de	Atari	No AdLib	EGA	v1.2 Deutsch from 7 Jun 90	Andreas Bylund
 	28ef68ee3ed76d7e2ee8ee13c15fbd5b	5748	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein, Fingolfin
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	5748	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
 	22f4ea88a09da12df9308ba30bcb7d0f	5748	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
 	b886b0a5d909c7158a914e1d7c1c6c65	-1	fr	DOS	EGA	EGA	-	Andrea Petrucci
-	6f8a22bfa397be1f7ed4b74aba0e397e	5748	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
+	6f8a22bfa397be1f7ed4b74aba0e397e	5748	fr	DOS	EGA	EGA	v1.2 French from 26 Jun 90	Jorpho
 	470c45b636139bb40716daa1c7edaad0	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
 	fa127d7c4bb47d05bb1c33ddcaa9f767	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
-	187d315f6b5168f68680dfe8c3d76a3e	5748	he	DOS	EGA	EGA	-
+	187d315f6b5168f68680dfe8c3d76a3e	5748	he	DOS	EGA	EGA	v3.2 (sic) 16 Jul 1991
 	c3df37df9d3b481b45f75283a9907c47	5752	it	DOS	EGA	EGA	-	Andrea Petrucci
 	0be88565f734b1e9e77ccaaf3bb14b29	5748	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	5748	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
@@ -188,15 +188,15 @@ loom	Loom
 	b4a677bf27c010a747975705108ff1e6	393572	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	c7689be9f82426f9a7c8906f62e64ab1	592280	en	Windows	Steam	Amazon	Amazon Games Launcher	Fancy2209
 
-	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	dhewg, Andrea Petrucci
 	1ba1f030ad387be3d7e8d278006bdfde	7540	he	FM-TOWNS	FM-TOWNS	-	-	phcoder
-	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
+	31b8fda4c8c7413fa6b39997e776eba4	7540	jp	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	khalek, Andrea Petrucci
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	6532	en	PC-Engine	PC-Engine	-	-	Kirben
 	79b05f628586837e7166e82b2279bb50	6532	jp	PC-Engine	PC-Engine	-	-	clone2727
 
-	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	Demo	EGA Demo	non-interactive	Fingolfin
-	a00554c31d623fdb9fcb0f924b89b42b	5748	en	DOS	Demo	EGA Demo	non-interactive	Adrian C. Fruehwirth
+	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	Demo	EGA Demo	Demo - 02/01/90, non-interactive	Fingolfin
+	a00554c31d623fdb9fcb0f924b89b42b	5748	en	DOS	Demo	EGA Demo	Demo IBM - 03/20/90, non-interactive	Adrian C. Fruehwirth
 
 #	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.1 (uses custom launcher)
 	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.2 16 Mar 07
