@@ -1324,6 +1324,10 @@ Common::Error TwpEngine::run() {
 		}
 	}
 
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
