@@ -324,6 +324,10 @@ Common::Error QDEngineEngine::run() {
 		g_system->delayMillis(10);
 	}
 
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	delete _gameD;
 
 	grDispatcher::instance()->finit();
