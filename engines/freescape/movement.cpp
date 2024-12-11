@@ -79,6 +79,11 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("TURNB", _("Turn back"));
+	act->setCustomEngineActionEvent(kActionTurnBack);
+	act->addDefaultInputMapping("u");
+	engineKeyMap->addAction(act);
+
 	act = new Common::Action("SKIP", _("Skip"));
 	act->setCustomEngineActionEvent(kActionSkip);
 	act->addDefaultInputMapping("SPACE");
