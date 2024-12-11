@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-10 21:55+0000\n"
+"POT-Creation-Date: 2024-12-11 08:16+0000\n"
 "PO-Revision-Date: 2024-12-06 13:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3821,7 +3821,7 @@ msgid "Game menu"
 msgstr "Меню гри"
 
 #: engines/metaengine.cpp:92 engines/composer/metaengine.cpp:125
-#: engines/freescape/movement.cpp:82 engines/grim/grim.cpp:532
+#: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:532
 #: engines/grim/grim.cpp:628 engines/illusions/metaengine.cpp:142
 #: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
@@ -6795,7 +6795,7 @@ msgstr "Мапа клавіш ESC"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
-#: engines/freescape/movement.cpp:96 engines/hugo/metaengine.cpp:160
+#: engines/freescape/movement.cpp:101 engines/hugo/metaengine.cpp:160
 #: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
@@ -7794,12 +7794,18 @@ msgstr "Повернути догори"
 msgid "Rotate down"
 msgstr "Повернути донизу"
 
+#: engines/freescape/movement.cpp:82
+#, fuzzy
+#| msgid "Turn backward"
+msgid "Turn back"
+msgstr "Повернутися назад"
+
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
-#: engines/freescape/movement.cpp:90
+#: engines/freescape/movement.cpp:95
 msgid "Change mode"
 msgstr "Змінити режим"
 
-#: engines/freescape/movement.cpp:101
+#: engines/freescape/movement.cpp:106
 msgid "Info Menu"
 msgstr "Інфо-меню"
 
