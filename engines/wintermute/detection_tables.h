@@ -96,6 +96,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"jamesperis2",     "James Peris 2: The Fountain of Eternal Drunkenness"},
+	{"keshaskazok",     "Кеша в мире сказок"},
 	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -1706,6 +1707,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// J.U.L.I.A.: Untold (GOG)
 	WME_WINENTRY("juliauntold", "GOG.com",
 		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// Kesha v Mire skazok (Kesha in the World of Fairy Tales)
+	WME_WINENTRY("keshaskazok", "",
+		WME_ENTRY1s("common.dcp", "5161e6aacc79471563f2af4cf1ed1d7c", 31509010), Common::RU_RUS, ADGF_UNSTABLE, WME_1_5_2),
 
 	// Klaymen Episodes: Pilot
 	WME_WINENTRY("klaymen1", "",
