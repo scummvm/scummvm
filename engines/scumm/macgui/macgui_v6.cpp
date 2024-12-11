@@ -175,7 +175,9 @@ void MacV6Gui::runAboutDialog() {
 
 	Graphics::Surface *screen = _vm->_macScreen;
 	Graphics::Surface screenCopy;
-	Graphics::Palette paletteCopy = _system->getPaletteManager()->grabPalette(0, 256);
+	byte paletteCopy[3 * 256];
+
+	memcpy(paletteCopy, _vm->_currentPalette, sizeof(paletteCopy));
 
 	screenCopy.copyFrom(*screen);
 
@@ -190,7 +192,6 @@ void MacV6Gui::runAboutDialog() {
 	aboutArea.moveTo(aboutX, aboutY);
 
 	Graphics::Surface aboutImage = screen->getSubArea(aboutArea);
-	Graphics::Palette palette(256);
 
 	uint black = 0;
 
@@ -198,12 +199,13 @@ void MacV6Gui::runAboutDialog() {
 		byte r = aboutFile.readByte();
 		byte g = aboutFile.readByte();
 		byte b = aboutFile.readByte();
-		palette.set(i, r, g, b);
+		_vm->setPalColor(i, r, g, b);
 
 		if (r == 0 && g == 0 && b == 0)
 			black = i;
 	}
 
+	_vm->updatePalette();
 	screen->fillRect(Common::Rect(screen->w, screen->h), black);
 
 	for (int y = 0; y < aboutH; y++) {
@@ -215,7 +217,6 @@ void MacV6Gui::runAboutDialog() {
 
 	aboutFile.close();
 
-	_system->getPaletteManager()->setPalette(palette);
 	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
 
 	bool done = false;
@@ -243,9 +244,14 @@ void MacV6Gui::runAboutDialog() {
 		_system->updateScreen();
 	}
 
-	_system->getPaletteManager()->setPalette(paletteCopy);
+	byte *p = paletteCopy;
+
+	for (int i = 0; i < 256; i++, p += 3)
+		_vm->setPalColor(i, p[0], p[1], p[2]);
+
 	screen->copyFrom(screenCopy);
 	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+	_vm->updatePalette();
 	_system->updateScreen();
 
 	token.clear();
