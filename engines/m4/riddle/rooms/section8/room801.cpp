@@ -88,7 +88,7 @@ void Room801::init() {
 		_G(flags)[V251] = 0;
 		_G(flags)[V252] = 0;
 		_G(flags)[V273] = 0;
-		_unkVal1 = 0;
+		_cellarDoorOpened = false;
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", false);
@@ -111,7 +111,7 @@ void Room801::init() {
 														 20, 310, 3, triggerMachineByHashCallback3000, "mc_trek");
 		kernel_timing_trigger(60, 1, nullptr);
 	} else if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
-		if (_unkVal1) {
+		if (_cellarDoorOpened) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
@@ -132,7 +132,7 @@ void Room801::init() {
 		ws_demand_facing(_G(my_walker), 8);
 		ws_demand_location(_G(my_walker), 525, 301);
 		_ripReturnsFromRootCellarSeries = series_load("rip returns from root cellar", -1, nullptr);
-		_unkVal1 = 1;
+		_cellarDoorOpened = true;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
@@ -143,17 +143,16 @@ void Room801::init() {
 }
 
 void Room801::pre_parser() {
-	player_said("take");
-	bool lookCheck = (player_said("look") || player_said("look at"));
+	const bool lookFl = player_said_any("look", "look at");
 
-	if (lookCheck && player_said("farm")) {
+	if (lookFl && player_said("farm")) {
 		digi_play("801R23", 1, 255, -1, -1);
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (lookCheck && player_said(" ")) {
+	if (lookFl && player_said(" ")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -161,35 +160,14 @@ void Room801::pre_parser() {
 }
 
 void Room801::parser() {
-	bool lookFl = false;
-	bool takeFl = false;
-	bool gearFl = false;
-	bool talkFl = false;
-	bool goFl = false;
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said_any("talk", "talk to");
+	const bool gearFl = player_said("gear");
+	const bool talkFl = player_said("take");
+	const bool goFl = player_said("go");
 
-	if (player_said("look") || player_said("look at")) {
-		lookFl = true;
-	}
-
-	if (player_said("talk") || player_said("talk TO")) {
-		talkFl = true;
-	}
-
-	if (player_said("take")) {
-		takeFl = true;
-	}
-
-	if (player_said("gear")) {
-		gearFl = true;
-	}
-
-	if (player_said("go")) {
-		goFl = true;
-	}
-
-	if (player_said("conv801a")) {
+	if (player_said("conv801a"))
 		room801_conv801a();
-	}
 
 	else if (_G(kernel).trigger == 747) {
 		_unkVal2 = 4;
@@ -200,7 +178,7 @@ void Room801::parser() {
 	} // if (_G(kernel).trigger == 747)
 
 	else if (lookFl && _G(walker).ripley_said(SAID)) {
-		// Nothing (though it may be important to keep it because of the cascade of checks
+		// Nothing, though it's important to keep it because of the digi_play call in ripley_said (+ the cascade of checks)
 	}
 
 	else if (lookFl && player_said("house")) {
@@ -1135,11 +1113,11 @@ void Room801::daemon() {
 }
 
 void Room801::room801_conv801a() {
-	int32 entry = conv_current_entry();
-	int32 node = conv_current_node();
+	const int32 entry = conv_current_entry();
+	const int32 node = conv_current_node();
 
 	if (_G(kernel).trigger == 1) {
-		int32 who = conv_whos_talking();
+		const int32 who = conv_whos_talking();
 		if (who <= 0) {
 			_unkVal3 = 1;
 			_ripOpensCellarSeries = 1;
@@ -1164,7 +1142,7 @@ void Room801::room801_conv801a() {
 		return;
 	}
 
-	int32 who = conv_whos_talking();
+	const int32 who = conv_whos_talking();
 	if (who <= 0) {
 		if ((node == 1 && entry == 0) || (node == 1 && entry == 1) || (node == 1 && entry == 2) || (node == 4 && entry == 2))
 			_unkVal3 = 3;
