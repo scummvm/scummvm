@@ -25,13 +25,16 @@
 
 #include "engines/engine.h"
 
+#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #if 0
 #include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/surface.h"
 #endif
+
+#include "graphics/surface.h"
 
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
@@ -97,13 +100,9 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	if (_vm->_game.version > 6 && id >= 204 && id < 300)
 		id++;
 
-	PauseToken token;
-
 	switch (id) {
 	case 100:	// About
-		token = _vm->pauseEngine();
 		runAboutDialog();
-		token.clear();
 		return true;
 
 	case 200:	// Open
@@ -169,28 +168,71 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 
 void MacV6Gui::runAboutDialog() {
 	ScummFile aboutFile(_vm);
-
 	if (!_vm->openFile(aboutFile, "ABOUT"))
 		return;
 
-	while (!aboutFile.eos()) {
-		uint32 r = aboutFile.readByte();
-		uint32 g = aboutFile.readByte();
-		uint32 b = aboutFile.readByte();
+	PauseToken token = _vm->pauseEngine();
 
-		uint32 color = (r << 16) | (g << 8) | b;
+	Graphics::Surface *screen = _vm->_macScreen;
+	Graphics::Surface screenCopy;
+	Graphics::Palette paletteCopy = _system->getPaletteManager()->grabPalette(0, 256);
+
+	screenCopy.copyFrom(*screen);
+
+	const int aboutW = 480;
+	const int aboutH = 299;
+
+	Common::Rect aboutArea(aboutW, aboutH);
+
+	const int aboutX = (screen->w - aboutW) / 2;
+	const int aboutY = (screen->h - aboutH) / 2;
+
+	aboutArea.moveTo(aboutX, aboutY);
+
+	Graphics::Surface aboutImage = screen->getSubArea(aboutArea);
+	Graphics::Palette palette(256);
+
+	uint black = 0;
+
+	for (uint i = 0; i < 256; i++) {
+		byte r = aboutFile.readByte();
+		byte g = aboutFile.readByte();
+		byte b = aboutFile.readByte();
+		palette.set(i, r, g, b);
+
+		if (r == 0 && g == 0 && b == 0)
+			black = i;
+	}
+
+	screen->fillRect(Common::Rect(screen->w, screen->h), black);
+
+	for (int y = 0; y < aboutH; y++) {
+		for (int x = 0; x < aboutW; x++) {
+			byte *dst = (byte *)aboutImage.getBasePtr(x, y);
+			*dst = aboutFile.readByte();
+		}
 	}
 
 	aboutFile.close();
 
-	while (!_vm->shouldQuit()) {
+	_system->getPaletteManager()->setPalette(palette);
+	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+
+	bool done = false;
+
+	while (!_vm->shouldQuit() && !done) {
 		Common::Event event;
 
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
+				done = true;
+				break;
+
 			case Common::EVENT_KEYDOWN:
-				return;
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					done = true;
+				break;
 
 			default:
 				break;
@@ -200,6 +242,13 @@ void MacV6Gui::runAboutDialog() {
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
+
+	_system->getPaletteManager()->setPalette(paletteCopy);
+	screen->copyFrom(screenCopy);
+	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+	_system->updateScreen();
+
+	token.clear();
 }
 
 bool MacV6Gui::runOptionsDialog() {
