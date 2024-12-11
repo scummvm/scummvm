@@ -40,7 +40,7 @@ private:
 	int _selectedBtn1 = -1;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
-	machine *_buttons[6];
+	machine *_buttons[6] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	HotkeyCB _hotkeyEscape = nullptr;
 	HotkeyCB _hotkeySave = nullptr;
 	HotkeyCB _hotkeyLoad = nullptr;
