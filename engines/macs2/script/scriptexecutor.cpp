@@ -1939,9 +1939,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x1e) {
 			// This is playing an animation
 			// TODO: Skipped for now until the animation system is more in the focus
-			Func9F4D_32();
-			Func9F4D_32();
-			Func9F4D_32();
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint32 unknown1 = Func9F4D_16();
+			uint32 unknown2 = Func9F4D_16();
 		} else if (opcode1 == 0x1f) {
 			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
 			// Object ID
@@ -1968,10 +1968,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
 			// Based on previous experimentation, this will play the fumbling animation
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
+			//uint16 throwaway1;
+			//uint16 throwaway2;
+			//Func9F4D(throwaway1, throwaway2);
+			//Func9F4D(throwaway1, throwaway2);
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint32 animIndex = Func9F4D_32();
+			GameObjects::GetObjectByIndex(objectID)->testOverloadAnimation = animIndex;
+			return ExecutionResult::ScriptFinished;
 		} else if (opcode1 == 0x23) {
 			// TODO: Not fully understood - need to check how exactly it works
 			// Basically implements a move to (maybe in conjunction with an offset applied

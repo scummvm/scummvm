@@ -972,7 +972,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 
 		Common::String number = Common::String::format("%u", scalingFactor);
 		// number = Common::String::format("%u", scalingFactor);
-		number = Common::String::format("%u", current->GameObject->Index);
+		// number = Common::String::format("%u", current->GameObject->Index);
+		number = Common::String::format("%u", current->GameObject->Orientation);
 		renderString(current->GetPosition(), number.c_str());
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
