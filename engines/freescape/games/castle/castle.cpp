@@ -47,6 +47,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 		initDOS();
 	else if (isSpectrum())
 		initZX();
+	else if (isCPC())
+		initCPC();
 
 	_playerHeightNumber = 1;
 	_playerHeightMaxNumber = 1;
@@ -929,7 +931,7 @@ void CastleEngine::loadAssets() {
 	_outOfReachMessage = _messagesList[7];
 	_noEffectMessage = _messagesList[8];
 
-	if (!isAmiga()) {
+	if (!isAmiga() && !isCPC()) {
 		Graphics::Surface *tmp;
 		tmp = loadBundledImage("castle_gate", !isDOS());
 		_gameOverBackgroundFrame = new Graphics::ManagedSurface;
@@ -975,7 +977,7 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 	}
 
 	debugC(1, kFreescapeDebugParser, "Riddle table:");
-	int maxLineSize = isSpectrum() ? 20 : 24;
+	int maxLineSize = (isSpectrum()) ? 20 : 24;
 
 	for (int i = 0; i < number; i++) {
 		Riddle riddle;
@@ -1105,7 +1107,7 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	if (isDOS()) {
 		x = 40;
 		y = 34;
-	} else if (isSpectrum()) {
+	} else if (isSpectrum() || isCPC()) {
 		x = 64;
 		y = 37;
 	}
@@ -1123,7 +1125,7 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	if (isDOS()) {
 		x = 38;
 		y = 33;
-	} else if (isSpectrum()) {
+	} else if (isSpectrum() || isCPC()) {
 		x = 64;
 		y = 36;
 	}
@@ -1205,7 +1207,7 @@ void CastleEngine::addGhosts() {
 				if (isDOS()) {
 					_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
 					_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
-				} else if (isSpectrum()) {
+				} else if (isSpectrum() || isCPC()) {
 					_areaMap[it._key]->addObjectFromArea(170, _areaMap[255]);
 					_areaMap[it._key]->addObjectFromArea(172, _areaMap[255]);
 					_areaMap[it._key]->addObjectFromArea(173, _areaMap[255]);
@@ -1221,7 +1223,7 @@ void CastleEngine::addGhosts() {
 			} else if (sensor->getObjectID() == 127) {
 				if (isDOS())
 					_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-				else if (isSpectrum()) {
+				else if (isSpectrum() || isCPC()) {
 					_areaMap[it._key]->addObjectFromArea(142, _areaMap[255]);
 					_areaMap[it._key]->addObjectFromArea(143, _areaMap[255]);
 					_areaMap[it._key]->addObjectFromArea(144, _areaMap[255]);
@@ -1360,7 +1362,7 @@ void CastleEngine::borderScreen() {
 	if (isAmiga() && isDemo())
 		return; // Skip character selection
 
-	if (isSpectrum())
+	if (isSpectrum() || isCPC())
 		FreescapeEngine::borderScreen();
 	else {
 		uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
@@ -1407,7 +1409,7 @@ void CastleEngine::selectCharacterScreen() {
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, color);
 
-	if (isSpectrum()) {
+	if (isSpectrum() || isCPC()) {
 		if (_language == Common::ES_ESP) {
 			// No accent in "príncipe" since it is not supported by the font
 			lines.push_back(centerAndPadString("*******************", 21));

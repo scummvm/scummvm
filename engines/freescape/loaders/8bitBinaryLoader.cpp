@@ -625,7 +625,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 paperColor = 0;
 	uint8 inkColor = 0;
 
-	if (!(isCastle() && isSpectrum())) {
+	if (!(isCastle() && (isSpectrum() || isCPC()))) {
 		usualBackgroundColor = readField(file, 8);
 		underFireBackgroundColor = readField(file, 8);
 		paperColor = readField(file, 8);
@@ -633,7 +633,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	} else {
 		uint8 attribute = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "Attribute: %x", attribute);
-		paperColor = attribute > 4;
+		paperColor = attribute >> 4;
 		inkColor = attribute & 0xf;
 		skyColor = 0;
 	}
@@ -690,7 +690,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte idx = readField(file, 8);
 		if (isAmiga())
 			name = _messagesList[idx + 51];
-		else if (isSpectrum())
+		else if (isSpectrum() || isCPC())
 			name = areaNumber == 255 ? "GLOBAL" : _messagesList[idx + 16];
 		else
 			name = _messagesList[idx + 41];
@@ -821,7 +821,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 initialEnergy2 = 0;
 	uint8 initialShield2 = 0;
 
-	if (isCastle() && isSpectrum()) {
+	if (isCastle() && (isSpectrum() || isCPC())) {
 		initialShield1 = readField(file, 8);
 	} else {
 		readField(file, 8); // Unknown
@@ -835,7 +835,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy1, initialShield1);
 	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy2, initialShield2);
 
-	if (isCastle() && isSpectrum())
+	if (isCastle() && (isSpectrum() || isCPC()))
 		file->seek(offset + 0x6);
 	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x14);
@@ -865,7 +865,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		_colorMap.push_back(entry - 3);
 	}
 
-	if (isCastle() && isSpectrum())
+	if (isCastle() && (isSpectrum() || isCPC()))
 		file->seek(offset + 0x42);
 	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x8c);
@@ -940,7 +940,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	else if (isEclipse())
 		_initialCountdown = 7200; // 02:00:00
 
-	if (isCastle() && isSpectrum())
+	if (isCastle() && (isSpectrum() || isCPC()))
 		file->seek(offset + 0x4f);
 	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x190);

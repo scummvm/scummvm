@@ -38,7 +38,9 @@ Sensor::Sensor(
 	_origin = origin_;
 	_rotation = rotation_;
 
-	if (axis_ == 0x01 || axis_ == 0x02)
+	if (axis_ == 0)
+		_size = Math::Vector3d(3, 3, 3);
+	else if (axis_ == 0x01 || axis_ == 0x02)
 		_size = Math::Vector3d(0, 3, 3);
 	else if (axis_ == 0x04 || axis_ == 0x08)
 		_size = Math::Vector3d(3, 0, 3);

@@ -172,7 +172,9 @@ void Renderer::fillColorPairArray() {
 			if (k != 4)
 				break;
 		}
-		assert(c2 >= 0);
+		// The Castle Master CPC release needs the following workaround
+		if (c2 < 0)
+			c2 = c1;
 		assert((c1 < 16) & (c2 < 16));
 		_colorPair[i] = byte(c1) | (byte(c2) << 4);
 	}

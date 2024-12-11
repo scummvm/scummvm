@@ -766,6 +766,20 @@ static const ADGameDescription gameDescriptions[] = {
 		"castlemaster",
 		"",
 		{
+			{"CM.BIN", 0, "b971443542d1f8cfe0b8a92054f0aa61", 39866},
+			{"CMLOAD.BIN", 0, "14806e71e2d14980a4ba8e3e35e66593", 16512},
+			{"CMSCR.BIN", 0, "75fe4a8af0ca797c51922f0ceeb8d383", 16512},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
+	},
+	{
+		"castlemaster",
+		"",
+		{
 			{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
 			{"CMC.EXE", 0, "03af2b79b1aad690684cf89025c5f425", 60240},
 			{"CMT.EXE", 0, "a603d3f96e981ab0014b7b1a5a2dc28c", 81840},
