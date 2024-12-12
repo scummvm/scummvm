@@ -19,54 +19,16 @@
  *
  */
 
-#include "got/views/game.h"
-#include "got/game/init.h"
-#include "got/gfx/image.h"
-#include "got/metaengine.h"
-#include "got/vars.h"
+#ifndef GOT_GAME_INIT_H
+#define GOT_GAME_INIT_H
+
+#include "got/defines.h"
 
 namespace Got {
-namespace Views {
 
-Game::Game() : View("Game") {
-	_children.push_back(&_status);
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
+extern int setup_level();
+extern int setup_player();
 
-void Game::initialize() {
-	load_standard_actors();
-	if (!setup_player())
-		error("setup_player failed");
-	if (!setup_level())
-		error("setup_level failed");
-	// TODO
-}
-
-bool Game::msgFocus(const FocusMessage &msg) {
-	if (_firstTime) {
-		initialize();
-		_firstTime = false;
-	}
-
-	return true;
-}
-
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
-void Game::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-}
-
-bool Game::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
-bool Game::tick() {
-	return true;
-}
-
-} // namespace Views
 } // namespace Got
+
+#endif
