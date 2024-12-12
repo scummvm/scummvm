@@ -208,8 +208,7 @@ void MacV6Gui::onMenuOpen() {
 	_system->updateScreen();
 
 	// HACK: Make sure the Mac window manager is operating on a blank screen
-	_windowManager->disableScreenCopy();
-	_windowManager->activateScreenCopy();
+	_windowManager->_screenCopy->copyFrom(*screen);
 }
 
 void MacV6Gui::onMenuClose() {
@@ -311,6 +310,14 @@ void MacV6Gui::runAboutDialog() {
 
 bool MacV6Gui::runOptionsDialog() {
 	return false;
+}
+
+bool MacV6Gui::runQuitDialog() {
+	return true;
+}
+
+bool MacV6Gui::runRestartDialog() {
+	return true;
 }
 
 void MacV6Gui::resetAfterLoad() {

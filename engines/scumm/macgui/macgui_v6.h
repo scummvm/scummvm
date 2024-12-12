@@ -60,6 +60,8 @@ protected:
 
 	void runAboutDialog() override;
 	bool runOptionsDialog() override;
+	bool runQuitDialog() override;
+	bool runRestartDialog() override;
 };
 
 } // End of namespace Scumm
