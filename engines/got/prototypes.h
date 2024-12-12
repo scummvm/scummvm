@@ -158,18 +158,6 @@ void remove_objects(int y, int x);
 void place_tile(int x, int y, int tile);
 int  bgtile(int x, int y);
 
-//G_IMAGE.C
-unsigned int make_mask(MASK_IMAGE *image,
-	unsigned int page_start, char *Image, int image_width,
-	int image_height);
-int  load_standard_actors(void);
-void setup_actor(ACTOR *actr, char num, char dir, int x, int y);
-void show_enemies(void);
-int  load_enemy(int type);
-int actor_visible(int invis_num);
-void setup_magic_item(int item);
-void load_new_thor(void);
-
 //G_MOVE.C
 void next_frame(ACTOR *actr);
 int  point_within(int x, int y, int x1, int y1, int x2, int y2);

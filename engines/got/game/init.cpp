@@ -19,54 +19,49 @@
  *
  */
 
-#include "got/views/game.h"
 #include "got/game/init.h"
-#include "got/gfx/image.h"
-#include "got/metaengine.h"
+#include "got/utils/file.h"
+#include "got/events.h"
 #include "got/vars.h"
 
 namespace Got {
-namespace Views {
 
-Game::Game() : View("Game") {
-	_children.push_back(&_status);
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
+int setup_level() {
+	_G(bgPics).setArea(_G(area));
 
-void Game::initialize() {
-	load_standard_actors();
-	if (!setup_player())
-		error("setup_player failed");
-	if (!setup_level())
-		error("setup_level failed");
-	// TODO
-}
-
-bool Game::msgFocus(const FocusMessage &msg) {
-	if (_firstTime) {
-		initialize();
-		_firstTime = false;
+	if (_G(load_game_flag) != 1) {
+		if (!load_sd_data())
+			return 0;
 	}
 
-	return true;
+	return 1;
 }
 
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
+int setup_player() {
+	memset(&_G(thor_info), 0, sizeof(_G(thor_info)));
+	_G(thor_info).inventory = 0;
+	if (_G(area) > 1) _G(thor_info).inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
+	if (_G(area) > 2) _G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
+
+	_G(thor)->health = 150;
+	_G(thor_info).magic = 0;
+	_G(thor_info).jewels = 0;
+	_G(thor_info).score = 0;
+	_G(thor_info).keys = 0;
+	_G(thor_info).last_item = 0;
+	_G(thor_info).object = 0;
+	_G(thor_info).object_name = nullptr;
+	_G(thor)->x = 152;
+	_G(thor)->y = 96;
+	_G(thor)->last_x[0] = _G(thor)->x;
+	_G(thor)->last_x[1] = _G(thor)->x;
+	_G(thor)->last_y[0] = _G(thor)->y;
+	_G(thor)->last_y[1] = _G(thor)->y;
+	_G(thor_info).last_icon = (6 * 20) + 8;
+	_G(thor_info).last_screen = 23;
+	_G(thor)->dir = 1;
+
+	return 1;
 }
 
-void Game::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-}
-
-bool Game::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
-bool Game::tick() {
-	return true;
-}
-
-} // namespace Views
 } // namespace Got
