@@ -219,6 +219,8 @@ protected:
 	Common::String getDialogString(Common::SeekableReadStream *res, int len);
 
 	virtual bool handleMenu(int id, Common::String &name);
+	virtual void onMenuOpen();
+	virtual void onMenuClose();
 
 	virtual void runAboutDialog() = 0;
 	virtual bool runOpenDialog(int &saveSlotToHandle);
