@@ -21,7 +21,6 @@
 
 #include "got/views/game.h"
 #include "got/game/init.h"
-#include "got/gfx/image.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
 
@@ -31,15 +30,6 @@ namespace Views {
 Game::Game() : View("Game") {
 	_children.push_back(&_status);
 	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
-
-void Game::initialize() {
-	load_standard_actors();
-	if (!setup_player())
-		error("setup_player failed");
-	if (!setup_level())
-		error("setup_level failed");
-	// TODO
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {

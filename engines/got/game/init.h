@@ -26,8 +26,10 @@
 
 namespace Got {
 
-extern int setup_level();
-extern int setup_player();
+/**
+ * Handles in-game initialization the first time
+ */
+extern void initialize();
 
 } // namespace Got
 
