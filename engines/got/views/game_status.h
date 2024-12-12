@@ -29,11 +29,12 @@ namespace Views {
 
 class GameStatus : public View {
 private:
-	void displayHealth();
-	void displayMagic();
-	void displayJewels();
-	void displayScore();
-	void displayKeys();
+	void displayHealth(GfxSurface &s);
+	void displayMagic(GfxSurface &s);
+	void displayJewels(GfxSurface &s);
+	void displayScore(GfxSurface &s);
+	void displayKeys(GfxSurface &s);
+	void displayItem(GfxSurface &s);
 
 public:
 	GameStatus() : View("GameStatus") {}

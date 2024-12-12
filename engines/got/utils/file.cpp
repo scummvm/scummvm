@@ -51,10 +51,6 @@ bool load_sd_data() {
 	return res_read(fname, _G(sd_data)) > 0;
 }
 
-bool load_objects() {
-	return res_read("OBJECTS", _G(objects)) > 0;
-}
-
 bool load_actor(int file, int num) {
 	Common::String fname = Common::String::format("ACTOR%d", num);
 
