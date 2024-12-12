@@ -19,37 +19,24 @@
  *
  */
 
-#ifndef GOT_VIEWS_GAME_H
-#define GOT_VIEWS_GAME_H
+#ifndef GOT_GAME_IMAGE_H
+#define GOT_GAME_IMAGE_H
 
-#include "got/views/view.h"
-#include "got/views/game_status.h"
+#include "got/defines.h"
 
 namespace Got {
-namespace Views {
 
-class Game : public View {
-private:
-	GameStatus _status;
-	bool _firstTime = true;
+extern uint make_mask(MASK_IMAGE *new_image, uint page_start,
+	byte *Image, int image_width, int image_height);
+extern void setup_actor(ACTOR *actr, char num, char dir, int x, int y);
+extern void make_actor_mask(ACTOR *actr);
+extern int load_standard_actors();
+extern void show_enemies();
+extern int load_enemy(int type);
+extern int actor_visible(int invis_num);
+extern void setup_magic_item(int item);
+extern void load_new_thor();
 
-	/**
-	 * Handles in-game initialization the first time
-	 */
-	void initialize();
-
-public:
-	Game();
-	virtual ~Game() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-};
-
-} // namespace Views
 } // namespace Got
 
 #endif

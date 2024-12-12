@@ -20,6 +20,7 @@
  */
 
 #include "got/views/game.h"
+#include "got/game/image.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
 
@@ -31,7 +32,16 @@ Game::Game() : View("Game") {
 	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
 }
 
+void Game::initialize() {
+	load_standard_actors();
+}
+
 bool Game::msgFocus(const FocusMessage &msg) {
+	if (_firstTime) {
+		initialize();
+		_firstTime = false;
+	}
+
 	return true;
 }
 

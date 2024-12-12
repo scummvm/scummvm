@@ -55,7 +55,7 @@ void xcopyd2dmasked2(
 	unsigned int DestPageBase);
 void xcopys2d(int SourceStartX, int SourceStartY,
 	int SourceEndX, int SourceEndY, int DestStartX,
-	int DestStartY, char *SourcePtr, unsigned int DestPageBase,
+	int DestStartY, byte *SourcePtr, unsigned int DestPageBase,
 	int SourceBitmapWidth, int DestBitmapWidth);
 void xcopyd2d(int SourceStartX, int SourceStartY,
 	int SourceEndX, int SourceEndY, int DestStartX,
