@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/textconsole.h"
 #include "got/game/init.h"
 #include "got/gfx/image.h"
@@ -95,6 +96,11 @@ void initialize() {
 	}
 
 	_G(new_level) = _G(current_level);
+
+	// Load level data
+	Common::MemoryReadStream levelStream(
+		_G(sd_data) + _G(new_level) * 512, 512);
+	_G(scrn).load(&levelStream);
 }
 
 } // namespace Got

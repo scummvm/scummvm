@@ -19,18 +19,36 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
-
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
+void LEVEL::load(Common::SeekableReadStream *src) {
+	for (int i = 0; i < 12; ++i)
+		src->read(icon[i], 20);
+
+	bg_color = src->readByte();
+	type = src->readByte();
+
+	src->read(actor_type, 16);
+	src->read(actor_loc, 16);
+	src->read(actor_value, 16);
+	src->read(pal_colors, 3);
+	src->read(actor_invis, 16);
+	src->read(extra, 13);
+	src->read(static_obj, 30);
+
+	for (int i = 0; i < 30; ++i)
+		static_x[i] = src->readSint16LE();
+	for (int i = 0; i < 30; ++i)
+		static_y[i] = src->readSint16LE();
+
+	src->read(new_level, 10);
+	src->read(new_level_loc, 10);
+
+	area = src->readByte();
+	src->read(actor_dir, 16);
+	src->read(future, 3);
+}
 
 } // namespace Got
-
-#endif

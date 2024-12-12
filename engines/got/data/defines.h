@@ -61,6 +61,8 @@ struct LEVEL {                    // size=512
 	byte area = 0;                // 472 game area (1=forest,etc)
 	byte actor_dir[16] = {};      // initial dir
 	byte future[3] = {};          // 473
+
+	void load(Common::SeekableReadStream *src);
 };
 
 struct ACTOR {                      //size=256
