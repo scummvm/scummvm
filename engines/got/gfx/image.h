@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GOT_GAME_IMAGE_H
-#define GOT_GAME_IMAGE_H
+#ifndef GOT_GFX_IMAGE_H
+#define GOT_GFX_IMAGE_H
 
 #include "got/defines.h"
 

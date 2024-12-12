@@ -48,7 +48,7 @@ void Events::runGame() {
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
 
-	addView("Title");
+	addView("Game");
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
