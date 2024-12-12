@@ -33,11 +33,6 @@ private:
 	GameStatus _status;
 	bool _firstTime = true;
 
-	/**
-	 * Handles in-game initialization the first time
-	 */
-	void initialize();
-
 public:
 	Game();
 	virtual ~Game() {}
