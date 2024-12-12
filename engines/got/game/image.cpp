@@ -53,15 +53,15 @@ uint make_mask(MASK_IMAGE *new_image, uint page_start, byte *Image,
 		_G(ami_buff) += sizeof(ALIGNED_MASK_IMAGE);
 
 		work_ami->image_width = (image_width + align + 3) / 4;
-		work_ami->image_ptr = page_offset; /* image dest */
+		work_ami->image_ptr = page_offset;	// Image dest
 
-		/* Download this alignment of the image */
+		// Download this alignment of the image
 		xcopys2d(0, 0, image_width, image_height, align, 0,
 			Image, page_offset, image_width,
 			work_ami->image_width * 4);
 
-		/* Calculate the number of bytes needed to store the mask in
-		   nibble (Map Mask-ready) form, then allocate that space */
+		// Calculate the number of bytes needed to store the mask in
+		// nibble (Map Mask-ready) form, then allocate that space */
 		size = work_ami->image_width * image_height;
 		work_ami->mask_ptr = (byte *)_G(mask_buff);
 		_G(mask_buff) += size;
@@ -75,8 +75,7 @@ uint make_mask(MASK_IMAGE *new_image, uint page_start, byte *Image,
 			mask_temp = 0;
 			temp_image_width = image_width;
 			do {
-
-				/* Set the mask bit for next pixel according to its alignment */
+				// Set the mask bit for next pixel according to its alignment
 				mask_temp |= (*old_mask_ptr != 15 && *old_mask_ptr != 0) << bit_num;
 				old_mask_ptr++;
 				if (++bit_num > 3) {
@@ -87,23 +86,23 @@ uint make_mask(MASK_IMAGE *new_image, uint page_start, byte *Image,
 			} while (--temp_image_width);
 
 
-			/* Set any partial final mask on this scan line */
+			// Set any partial final mask on this scan line
 			if (bit_num != 0) {
 				*new_mask_ptr = mask_temp;
 				new_mask_ptr++;
 			}
 		}
-		page_offset += size; /* mark off the space we just used */
+		page_offset += size; // Mark off the space we just used
 	}
 	return page_offset - page_start;
 }
 
 void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 
-	actr->next = 0;                    //next frame to be shown
+	actr->next = 0;                    // Next frame to be shown
 	actr->frame_count = actr->frame_speed;
-	actr->dir = dir;                   //direction of travel
-	actr->last_dir = dir;              //last direction of travel
+	actr->dir = dir;                   // Direction of travel
+	actr->last_dir = dir;              // Last direction of travel
 	if (actr->directions == 1) actr->dir = 0;
 	if (actr->directions == 2) actr->dir &= 1;
 	if (actr->directions == 4 && actr->frames == 1) {
@@ -111,22 +110,22 @@ void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 		actr->next = dir;
 	}
 
-	actr->x = x;                       //actual X coor
-	actr->y = y;                       //actual Y coor
-	actr->width = 16;                  //actual X coor
-	actr->height = 16;                  //actual Y coor
-	actr->center = 0;                        //center of object
-	actr->last_x[0] = x;               //last X coor on each page
+	actr->x = x;                       // Actual X coor
+	actr->y = y;                       // Actual Y coor
+	actr->width = 16;                  // Actual X coor
+	actr->height = 16;                 // Actual Y coor
+	actr->center = 0;                  // Center of object
+	actr->last_x[0] = x;               // Last X coor on each page
 	actr->last_x[1] = x;
-	actr->last_y[0] = y;               //last Y coor on each page
+	actr->last_y[0] = y;               // Last Y coor on each page
 	actr->last_y[1] = y;
-	actr->used = 1;                    //1=active, 0=not active
-	actr->speed_count = 8;             //count down to movement
-	actr->vunerable = STAMINA;         //count down to vunerability
-	actr->shot_cnt = 20;               //count down to another shot
-	actr->num_shots = 0;               //# of shots currently on screen
-	actr->creator = 0;                 //which actor # created this actor
-	actr->pause = 0;                   //pause must be 0 to move
+	actr->used = 1;                    // 1=active, 0=not active
+	actr->speed_count = 8;             // Count down to movement
+	actr->vunerable = STAMINA;         // Count down to vunerability
+	actr->shot_cnt = 20;               // Count down to another shot
+	actr->num_shots = 0;               // # of shots currently on screen
+	actr->creator = 0;                 // which actor # created this actor
+	actr->pause = 0;                   // Pause must be 0 to move
 	actr->show = 0;
 	actr->actor_num = num;
 	actr->counter = 0;
@@ -152,8 +151,7 @@ void make_actor_mask(ACTOR *actr) {
 	}
 }
 
-int load_standard_actors(void) {
-
+int load_standard_actors() {
 	_G(latch_mem) = 50160u;
 	_G(mask_buff) = _G(mask_buff_start);
 	_G(ami_buff) = _G(abuff);
@@ -172,7 +170,7 @@ int load_standard_actors(void) {
 	_G(thor_x2) = _G(thor)->x + 14;
 	_G(thor_y2) = _G(thor)->y + 14;
 
-	load_actor(0, 103 + _G(thor_info).armor);   //load hammer
+	load_actor(0, 103 + _G(thor_info).armor);   // Load hammer
 	memcpy(&_G(actor)[1], (_G(tmp_buff) + 5120), 40);
 	setup_actor(&_G(actor)[1], 1, 0, 100, 100);
 	_G(actor)[1].used = 0;
@@ -194,13 +192,13 @@ int load_standard_actors(void) {
 	_G(explosion).used = 0;
 	make_actor_mask(&_G(explosion));
 
-	load_actor(0, 108);   //load tornado
+	load_actor(0, 108);   // Load tornado
 	memcpy(&_G(magic_item)[0], (_G(tmp_buff) + 5120), 40);
 	memcpy(&_G(magic_pic)[0], _G(tmp_buff), 1024);
 	setup_actor(&_G(magic_item)[0], 20, 0, 0, 0);
 	_G(magic_item)[0].used = 0;
 
-	load_actor(0, 1099);   //load shield
+	load_actor(0, 1099);   // Load shield
 	memcpy(&_G(magic_item)[1], (_G(tmp_buff) + 5120), 40);
 	memcpy(&_G(magic_pic)[1], _G(tmp_buff), 1024);
 	setup_actor(&_G(magic_item)[1], 20, 0, 0, 0);
@@ -210,15 +208,16 @@ int load_standard_actors(void) {
 	_G(magic_ami) = _G(ami_buff);
 	_G(magic_mask_buff) = _G(mask_buff);
 
-	make_actor_mask(&_G(magic_item)[0]);  //to fool next lines
+	make_actor_mask(&_G(magic_item)[0]);  // To fool next lines
 
 	_G(enemy_mb) = _G(mask_buff);
 	_G(enemy_ami) = _G(ami_buff);
 	_G(enemy_lm) = _G(latch_mem);
+
 	return 1;
 }
 
-void show_enemies(void) {
+void show_enemies() {
 	int i, d, r;
 
 	for (i = 3; i < MAX_ACTORS; i++)
@@ -241,8 +240,10 @@ void show_enemies(void) {
 					(_G(scrn).actor_loc[i] / 20) * 16);
 				_G(actor)[i + 3].init_dir = _G(scrn).actor_dir[i];
 				_G(actor)[i + 3].pass_value = _G(scrn).actor_value[i];
-				if (_G(actor)[i + 3].move == 23) {  //spinball
-					if (_G(actor)[i + 3].pass_value & 1) _G(actor)[i + 3].move = 24;
+				if (_G(actor)[i + 3].move == 23) {
+					// Spinball
+					if (_G(actor)[i + 3].pass_value & 1)
+						_G(actor)[i + 3].move = 24;
 				}
 				if (_G(scrn).actor_invis[i]) _G(actor)[i + 3].used = 0;
 			}
@@ -297,6 +298,7 @@ int load_enemy(int type) {
 			}
 		}
 	}
+
 	return e;
 }
 
@@ -339,7 +341,7 @@ void setup_magic_item(int item) {
 	_G(mask_buff) = mb;
 }
 
-void load_new_thor(void) {
+void load_new_thor() {
 	int rep;
 	byte *ami;
 	byte *mb;
@@ -351,13 +353,13 @@ void load_new_thor(void) {
 	_G(mask_buff) = _G(mask_store1);
 	_G(ami_buff) = _G(ami_store1);
 
-	load_actor(0, 100 + _G(thor_info).armor);   //load thor
+	load_actor(0, 100 + _G(thor_info).armor);   // Load thor
 	for (rep = 0; rep < 16; rep++) {
 		make_mask(&_G(actor)[0].pic[rep / 4][rep % 4], PAGE3 + (144 * rep), &_G(tmp_buff)[256 * rep], 16, 16);
 	}
 	_G(mask_buff) = _G(mask_store2);
 	_G(ami_buff) = _G(ami_store2);
-	load_actor(0, 103 + _G(thor_info).armor);   //load hammer
+	load_actor(0, 103 + _G(thor_info).armor);   // Load hammer
 	for (rep = 0; rep < 16; rep++) {
 		make_mask(&_G(actor)[1].pic[rep / 4][rep % 4], 52464u + (144 * rep), &_G(tmp_buff)[256 * rep], 16, 16);
 	}
