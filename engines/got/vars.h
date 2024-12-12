@@ -47,6 +47,8 @@ public:
 	Gfx::BgPics _bgPics;
 	Gfx::Font _font;
 	Gfx::Pics _hampic;
+	Gfx::Pics _objects;
+
 	Gfx::Pics _status;
 	Sound _sound;
 
@@ -72,7 +74,6 @@ public:
 
 	//union REGS in, out = 0;
 	//struct SREGS seg = 0;
-	byte _objects[NUM_OBJECTS][262] = {};
 	int _ox = 0, _oy = 0, _of = 0;
 	byte _object_map[240] = {};
 	byte _object_index[240] = {};

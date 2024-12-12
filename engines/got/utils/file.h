@@ -32,7 +32,6 @@ extern unsigned int read_file(const char *filename, const char *buff,
 	long offset, unsigned int amount, int key);
 
 extern bool load_sd_data();
-extern bool load_objects();
 extern bool load_actor(int file, int num);
 extern bool load_picture(int index, char *buff);
 extern void setup_filenames(int level);

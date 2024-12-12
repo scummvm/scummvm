@@ -35,30 +35,29 @@ void GameStatus::draw() {
 	s.blitFrom(status);
 
 	// Draw the elements
-	displayHealth();
-	displayMagic();
-	displayJewels();
-	displayScore();
-	displayKeys();
+	displayHealth(s);
+	displayMagic(s);
+	displayJewels(s);
+	displayScore(s);
+	displayKeys(s);
+	displayItem(s);
 }
 
-void GameStatus::displayHealth() {
+void GameStatus::displayHealth(GfxSurface &s) {
 	int b = 59 + _G(thor)->health;
 
-	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(59, 8, b, 12), 32);
 	s.fillRect(Common::Rect(b, 8, 209, 12), STAT_COLOR);
 }
 
-void GameStatus::displayMagic() {
+void GameStatus::displayMagic(GfxSurface &s) {
 	int b = 59 + _G(thor_info).magic;
 
-	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(59, 20, b, 24), 96);
 	s.fillRect(Common::Rect(b, 20, 209, 24), STAT_COLOR);
 }
 
-void GameStatus::displayJewels() {
+void GameStatus::displayJewels(GfxSurface &s) {
 	Common::String str = Common::String::format("%d", _G(thor_info).jewels);
 	int x;
 	if (str.size() == 1)
@@ -68,21 +67,19 @@ void GameStatus::displayJewels() {
 	else
 		x = 62;
 
-	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(59, 32, 85, 42), STAT_COLOR);
 	s.print(Common::Point(x, 32), str, 14);
 }
 
-void GameStatus::displayScore() {
+void GameStatus::displayScore(GfxSurface &s) {
 	Common::String str = Common::String::format("%d", _G(thor_info).score);
 	int x = 276 - (str.size() * 8);
 
-	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(223, 32, 279, 42), STAT_COLOR);
 	s.print(Common::Point(x, 32), str, 14);
 }
 
-void GameStatus::displayKeys() {
+void GameStatus::displayKeys(GfxSurface &s) {
 	Common::String str = Common::String::format("%d", _G(thor_info).keys);
 
 	int x;
@@ -93,11 +90,20 @@ void GameStatus::displayKeys() {
 	else
 		x = 142;
 
-	GfxSurface s = getSurface();
 	s.fillRect(Common::Rect(139, 32, 164, 42), STAT_COLOR);
 	s.print(Common::Point(x, 32), str, 14);
 }
 
+void GameStatus::displayItem(GfxSurface &s) {
+	s.fillRect(Common::Rect(280, 8, 296, 24), STAT_COLOR);
+
+	if (_G(thor_info).item) {
+		if (_G(thor_info).item == 7)
+			s.blitFrom(_G(objects)[_G(thor_info).object + 10], Common::Point(282, 8));
+		else
+			s.blitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(282, 8));
+	}
+}
 
 } // namespace Views
 } // namespace Got

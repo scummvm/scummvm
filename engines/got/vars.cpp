@@ -32,6 +32,7 @@ Vars *g_vars;
 
 Vars::Vars() :
 		_hampic("HAMPIC", 262, false),
+		_objects("OBJECTS", 262, false),
 		_status("STATUS", -1, false) {
 	g_vars = this;
 }
@@ -41,6 +42,7 @@ void Vars::load() {
 	_gfx.load();
 	_bgPics.load();
 	_hampic.load();
+	_objects.load();
 	_status.load();
 	_sound.load();
 
