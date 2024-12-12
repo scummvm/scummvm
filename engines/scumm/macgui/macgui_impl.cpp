@@ -451,16 +451,11 @@ void MacGuiImpl::updateWindowManager() {
 		saveMenu->enabled = canSave;
 
 	if (isActive) {
-		if (!_menuIsActive) {
-			_cursorWasVisible = CursorMan.showMouse(true);
-			_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
-		}
+		if (!_menuIsActive)
+			onMenuOpen();
 	} else {
-		if (_menuIsActive) {
-			if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
-				_windowManager->popCursor();
-			CursorMan.showMouse(_cursorWasVisible);
-		}
+		if (_menuIsActive)
+			onMenuClose();
 	}
 
 	if (_vm->_game.version > 3 && _vm->_game.version < 6) {
@@ -511,6 +506,17 @@ void MacGuiImpl::updateWindowManager() {
 		updatePalette();
 
 	_windowManager->draw();
+}
+
+void MacGuiImpl::onMenuOpen() {
+	_cursorWasVisible = CursorMan.showMouse(true);
+	_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+}
+
+void MacGuiImpl::onMenuClose() {
+	if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
+		_windowManager->popCursor();
+	CursorMan.showMouse(_cursorWasVisible);
 }
 
 // ---------------------------------------------------------------------------

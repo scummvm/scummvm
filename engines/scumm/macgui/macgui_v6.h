@@ -31,9 +31,13 @@ namespace Scumm {
 class MacGuiImpl;
 
 class MacV6Gui : public MacGuiImpl {
+private:
+	byte *_backupPalette;
+	Graphics::Surface *_backupSurface;
+
 public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
-	~MacV6Gui() {}
+	~MacV6Gui();
 
 	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
 	int getNumColors() const override { return 256; }
@@ -51,6 +55,8 @@ protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
 	bool handleMenu(int id, Common::String &name) override;
+	void onMenuOpen() override;
+	void onMenuClose() override;
 
 	void runAboutDialog() override;
 	bool runOptionsDialog() override;

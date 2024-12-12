@@ -55,6 +55,17 @@ namespace Scumm {
 // ===========================================================================
 
 MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
+	_backupPalette = nullptr;
+	_backupSurface = nullptr;
+}
+
+MacV6Gui::~MacV6Gui() {
+	if (_backupSurface) {
+		_backupSurface->free();
+		delete _backupSurface;
+	}
+
+	delete _backupPalette;
 }
 
 const Graphics::Font *MacV6Gui::getFontByScummId(int32 id) {
@@ -166,6 +177,62 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
+void MacV6Gui::onMenuOpen() {
+	MacGuiImpl::onMenuOpen();
+
+	Graphics::Surface *screen = _vm->_macScreen;
+
+	_backupSurface = new Graphics::Surface();
+	_backupSurface->copyFrom(*screen);
+
+	_backupPalette = new byte[256 * 3];
+
+	screen->fillRect(Common::Rect(screen->w, screen->h), 255);
+	memcpy(_backupPalette, _vm->_currentPalette, 256 * 3);
+
+	// HACK: Make sure we have the Mac window manager's preferred colors
+
+	_vm->setPalColor(0, 0, 0, 0);          // Black
+	_vm->setPalColor(1, 0x80, 0x80, 0x80); // Gray80
+	_vm->setPalColor(2, 0x88, 0x88, 0x88); // Gray88
+	_vm->setPalColor(3, 0xEE, 0xEE, 0xEE); // GrayEE
+	_vm->setPalColor(4, 0xFF, 0xFF, 0xFF); // White
+	_vm->setPalColor(5, 0x00, 0xFF, 0x00); // Green
+	_vm->setPalColor(6, 0x00, 0xCF, 0x00); // Green2
+
+	for (int i = 7; i < 256; i++)
+		_vm->setPalColor(i, 0, 0, 0);
+
+	_vm->updatePalette();
+	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+	_system->updateScreen();
+
+	// HACK: Make sure the Mac window manager is operating on a blank screen
+	_windowManager->disableScreenCopy();
+	_windowManager->activateScreenCopy();
+}
+
+void MacV6Gui::onMenuClose() {
+	MacGuiImpl::onMenuClose();
+	Graphics::Surface *screen = _vm->_macScreen;
+
+	screen->copyFrom(*_backupSurface);
+
+	byte *p = _backupPalette;
+	for (int i = 0; i < 256; i++, p += 3)
+		_vm->setPalColor(i, p[0], p[1], p[2]);
+
+	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+	_vm->updatePalette();
+
+	_backupSurface->free();
+	delete _backupSurface;
+	_backupSurface = nullptr;
+
+	delete _backupPalette;
+	_backupPalette = nullptr;
+}
+
 void MacV6Gui::runAboutDialog() {
 	ScummFile aboutFile(_vm);
 	if (!_vm->openFile(aboutFile, "ABOUT"))
@@ -173,17 +240,10 @@ void MacV6Gui::runAboutDialog() {
 
 	PauseToken token = _vm->pauseEngine();
 
-	Graphics::Surface *screen = _vm->_macScreen;
-	Graphics::Surface screenCopy;
-	byte paletteCopy[3 * 256];
-
-	memcpy(paletteCopy, _vm->_currentPalette, sizeof(paletteCopy));
-
-	screenCopy.copyFrom(*screen);
-
 	const int aboutW = 480;
 	const int aboutH = 299;
 
+	Graphics::Surface *screen = _vm->_macScreen;
 	Common::Rect aboutArea(aboutW, aboutH);
 
 	const int aboutX = (screen->w - aboutW) / 2;
@@ -205,7 +265,8 @@ void MacV6Gui::runAboutDialog() {
 			black = i;
 	}
 
-	_vm->updatePalette();
+	// The screen is already black, but what's black in the palette may
+	// have changed. Also, we want to clear the menu area.
 	screen->fillRect(Common::Rect(screen->w, screen->h), black);
 
 	for (int y = 0; y < aboutH; y++) {
@@ -218,6 +279,7 @@ void MacV6Gui::runAboutDialog() {
 	aboutFile.close();
 
 	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+	_vm->updatePalette();
 
 	bool done = false;
 
@@ -243,16 +305,6 @@ void MacV6Gui::runAboutDialog() {
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
-
-	byte *p = paletteCopy;
-
-	for (int i = 0; i < 256; i++, p += 3)
-		_vm->setPalColor(i, p[0], p[1], p[2]);
-
-	screen->copyFrom(screenCopy);
-	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-	_vm->updatePalette();
-	_system->updateScreen();
 
 	token.clear();
 }
