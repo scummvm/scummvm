@@ -23,7 +23,7 @@
 #define GOT_UTILS_FILE_H
 
 #include "common/file.h"
-#include "got/defines.h"
+#include "got/data/defines.h"
 
 namespace Got {
 

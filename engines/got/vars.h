@@ -24,7 +24,7 @@
 
 #include "common/events.h"
 #include "graphics/screen.h"
-#include "got/defines.h"
+#include "got/data/defines.h"
 #include "got/sound.h"
 #include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"

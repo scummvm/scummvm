@@ -22,7 +22,7 @@
 #ifndef GOT_GAME_STATUS_H
 #define GOT_GAME_STATUS_H
 
-#include "got/defines.h"
+#include "got/data/defines.h"
 
 namespace Got {
 

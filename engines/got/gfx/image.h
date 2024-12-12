@@ -22,7 +22,7 @@
 #ifndef GOT_GFX_IMAGE_H
 #define GOT_GFX_IMAGE_H
 
-#include "got/defines.h"
+#include "got/data/defines.h"
 
 namespace Got {
 

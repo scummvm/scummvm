@@ -23,7 +23,7 @@
 #define GOT_SOUND_H
 
 #include "audio/mixer.h"
-#include "got/defines.h"
+#include "got/data/defines.h"
 
 namespace Got {
 
