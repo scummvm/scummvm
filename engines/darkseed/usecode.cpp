@@ -257,7 +257,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		_inventory.addItem(26);
 		return;
 	}
-	if ((162 < objNum) && (objNum < 169)) {
+	if (objNum > 162 && objNum < 169) {
 		g_engine->playSound(47, 5, -1);
 	}
 	if (objNum == 175) { // car horn
