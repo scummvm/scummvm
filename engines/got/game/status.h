@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GOT_DATA_STATUS_H
-#define GOT_DATA_STATUS_H
+#ifndef GOT_GAME_STATUS_H
+#define GOT_GAME_STATUS_H
 
 #include "got/defines.h"
 

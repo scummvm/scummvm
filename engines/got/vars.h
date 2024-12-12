@@ -54,7 +54,6 @@ public:
 	uint _display_page = 0, _draw_page = 0;
 	uint _page3_offset = 0;
 	int8 _pge = 0;
-	int _exit_flag = 0;
 
 	byte _key_flag[100] = {};
 	byte _joy_flag[100] = {};
@@ -92,8 +91,6 @@ public:
 	byte *_scrnp = nullptr;
 
 	byte *_sd_data = nullptr;
-	int _current_level = 23;
-	int _new_level = 0, _new_level_tile = 0, _current_area = 0;
 
 	SETUP _setup;
 	byte *_tmp_buff = nullptr;
@@ -107,6 +104,7 @@ public:
 	ACTOR _enemy[MAX_ENEMIES] = {};  //current enemies
 	ACTOR _shot[MAX_ENEMIES] = {};   //current shots
 	int8 _enemy_type[MAX_ENEMIES] = {};
+	int _etype[MAX_ENEMIES] = {};
 
 	ACTOR _magic_item[2] = {};
 	byte _magic_pic[2][1024] = {};
@@ -173,8 +171,19 @@ public:
 	int8 _ide_run = 0, _fast_exit = 0, _nojoy = 0, _gr = 0, _xdos = 0;
 	int8 _main_loop = 0;
 	int8 _end_tile = 0;
-
 	byte _pbuff[PALETTE_SIZE] = {};
+	int _current_level, _new_level;
+	int _new_level_tile = 0, _current_area = 0;
+	uint _latch_mem = 0;
+	byte *_enemy_mb = nullptr;
+	uint _enemy_lm = 0;
+	byte *_enemy_ami = nullptr;
+	char _sd_header[128] = {};
+	char _play_speed = 0;
+	byte *_magic_ami = nullptr;
+	byte *_magic_mask_buff = nullptr;
+	byte *_ami_store1 = nullptr, *_ami_store2 = nullptr;
+	byte *_mask_store1 = nullptr, *_mask_store2 = nullptr;
 };
 
 #define _G(X) (g_vars->_##X)

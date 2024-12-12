@@ -33,7 +33,7 @@ namespace Got {
 struct ALIGNED_MASK_IMAGE {
 	int image_width = 0;		// Image width in addresses in display memory
 	uint image_ptr = 0;			// Offset of image bitmap in display mem
-	const byte *mask_ptr = nullptr;   // Pointer to mask bitmap
+	byte *mask_ptr = nullptr;   // Pointer to mask bitmap
 };
 
 struct MASK_IMAGE {

@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	sound.o \
 	vars.o \
+	game/image.o \
 	game/status.o \
 	gfx/font.o \
 	gfx/gfx_chunks.o \
