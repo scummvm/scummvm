@@ -23,6 +23,7 @@ namespace Got {
 
 const PlainGameDescriptor gotGames[] = {
 	{ "got", "God of Thunder" },
+	{ "gotdemo", "God of Thunder" },
 	{ 0, 0 }
 };
 
@@ -38,7 +39,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 {
-		"got",
+		"gotdemo",
 		"Demo",
 		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
 		Common::EN_ANY,
