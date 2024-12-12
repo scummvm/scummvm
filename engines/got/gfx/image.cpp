@@ -19,7 +19,7 @@
  *
  */
 
-#include "got/game/image.h"
+#include "got/gfx/image.h"
 #include "got/events.h"
 #include "got/utils/file.h"
 #include "got/got.h"
@@ -160,7 +160,7 @@ int load_standard_actors() {
 	memcpy(&_G(actor)[0], (_G(tmp_buff) + 5120), 40);
 	setup_actor(&_G(actor)[0], 0, 0, 100, 100);
 	_G(thor) = &_G(actor)[0];
-
+#ifdef TODO
 	_G(ami_store1) = _G(ami_buff);
 	_G(mask_store1) = _G(mask_buff);
 	make_actor_mask(&_G(actor)[0]);
@@ -213,7 +213,7 @@ int load_standard_actors() {
 	_G(enemy_mb) = _G(mask_buff);
 	_G(enemy_ami) = _G(ami_buff);
 	_G(enemy_lm) = _G(latch_mem);
-
+#endif
 	return 1;
 }
 

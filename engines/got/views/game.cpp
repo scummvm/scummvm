@@ -20,7 +20,7 @@
  */
 
 #include "got/views/game.h"
-#include "got/game/image.h"
+#include "got/gfx/image.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
 
