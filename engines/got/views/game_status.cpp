@@ -99,9 +99,9 @@ void GameStatus::displayItem(GfxSurface &s) {
 
 	if (_G(thor_info).item) {
 		if (_G(thor_info).item == 7)
-			s.blitFrom(_G(objects)[_G(thor_info).object + 10], Common::Point(282, 8));
+			s.blitFrom(_G(objects)[_G(thor_info).object + 10], Common::Point(280, 8));
 		else
-			s.blitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(282, 8));
+			s.blitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(280, 8));
 	}
 }
 
