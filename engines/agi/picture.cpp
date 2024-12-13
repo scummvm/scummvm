@@ -907,14 +907,10 @@ void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearSc
 	_height = height;
 
 	if (clearScreen) {
-		clear();
+		_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
 	}
 
 	drawPicture(); // Draw 16 color picture.
-}
-
-void PictureMgr::clear() {
-	_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
 }
 
 void PictureMgr::showPic() {

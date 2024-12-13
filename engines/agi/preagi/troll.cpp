@@ -134,6 +134,7 @@ void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 	}
 
 	// draw the frame picture
+	_picture->setPictureFlags(kPicFNone);
 	_picture->decodePictureFromBuffer(_gameData + IDO_TRO_FRAMEPIC, 4096, clr, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
 	// draw the picture
@@ -421,7 +422,6 @@ int TrollEngine::drawRoom(char *menu) {
 
 	if (_currentRoom == 1) {
 		clearScreen(0x00, false);
-		_picture->clear();
 	} else {
 
 		if (_currentRoom != 42) {
