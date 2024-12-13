@@ -79,6 +79,7 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 7: // stairs down
 		_nsp_sprite_scaling_y_position = 0xbe;
 		_scaleSequence = true;
+		_player->_walkTarget.x -= 60;
 		break;
 	case 8:
 		_player->_position.x = 249;
