@@ -293,8 +293,6 @@ void PictureMgr::plotPattern(int x, int y) {
 
 		pen_x = pen_final_x;
 	}
-
-	return;
 }
 
 /**************************************************************************
@@ -993,12 +991,6 @@ void PictureMgr::showPicWithTransition() {
 	}
 
 	_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
-}
-
-// preagi needed functions (for plotPattern)
-void PictureMgr::setPattern(uint8 code, uint8 num) {
-	_patCode = code;
-	_patNum = num;
 }
 
 void PictureMgr::setPictureVersion(AgiPictureVersion version) {
