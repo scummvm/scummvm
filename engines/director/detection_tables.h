@@ -955,6 +955,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
 	{ "frankiekaraoke",		"Frankie Tierwelt Karaoke" },
+	{ "funquiz",			"FunQuiz" },
 	{ "geograficus",		"Geograficus ... und Geografie wird zum Abenteuer" },
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
@@ -6675,6 +6676,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("franklm", "Demo", "xn--Franklin Learns Math Info.-", "f637b7b88b82c0772082f84a0b2cf628", 705417, 500),
 	WINDEMO1("franklm", "Demo", "FLMINFO.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1119725, 500),
 
+	// Released by Remus
+	WINGAME1_l("funquiz", "", "PRG/FUNQUIZ.EXE", "t:fcb30a24c59a89bb006ccb12070c323f", 2184545, Common::DE_DEU, 501),
+
 	// Other versions are D3
 	PIPGAME1("gadget", "", "GADGET", "d7e907d3933869f055ae59774c87f501", 111000, 501),
 
@@ -6857,8 +6861,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 									 "LU_main.Dxr", "b3a548cd57f5129afac208e24463fa1d", 13234768, 501),
 
 	// Reissue is D10
-	WINGAME2_l("loewe1", "", "STARTW95.exe",	"t:3729a35f770f3362b0d992c329b9ddf6", 1410427,
-							 "MEDIA/SALPO.DXR", "f:b2b26111f46bbc688da324768c80dc82",  632954, Common::DE_DEU, 501),
+	MACGAME1_l("loewe1", "", "PowerMac/Start PowerMac_16bit", "rt:fba492a97c27e800b7101aae4f3d0bce", 107835, Common::DE_DEU, 501),
+	WINGAME2_l("loewe1", "", "STARTW95.exe",				  "t:3729a35f770f3362b0d992c329b9ddf6", 1410427,
+							 "MEDIA/SALPO.DXR",				  "f:b2b26111f46bbc688da324768c80dc82",  632954, Common::DE_DEU, 501),
 
 	MACGAME1("lovedisk", "", "MAP/LOVEDISK", "b69f9cb79da512852ed383a1cfef14b9", 719005, 501),
 
@@ -8145,8 +8150,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("letterrally", "1.0", "L_Rally.exe", "b0f3841f6e8005e519445b22de37749b", 3921651, 600),
 
+	MACGAME2_l("loewe2", "", "MEDIA/MACSTART",			"rt:282d2d4d2959fbf698b2cdf238c7d588", 1033198,
+							 "MEDIA/DATA/BAUWAGEN.DXR", "d:56702894e84d310c5b7548b689953fbd",  8361884, Common::DE_DEU, 602),
 	WINGAME2_l("loewe2", "", "MEDIA/WIN95.exe",			"t:f808f4b3d526367fa8a1e32bf463dd64",  1512856,
 							 "MEDIA/DATA/BAUWAGEN.DXR", "f:56702894e84d310c5b7548b689953fbd",  8361884, Common::DE_DEU, 602),
+
+	// Original Mac filename is Löwenzahn 3
+	MACGAME1_l("loewe3", "", "xn--Lwenzahn 3-ecb",					"rt:e03c6cc5f2cdeef199f75c02928edafe", 1032378, Common::DE_DEU, 602),
+	WINGAME1_l("loewe3", "", "DATA/LOEWE3/SETUP/WIN95/LOEWE95.exe",	"t:0772adacde0f8fa5a9767de25be13527",  1514451, Common::DE_DEU, 602),
 
 	MACDEMO1("macos85", "Demo", "Mac OS 8.5 Demo", "49cc011560110af5e19d0cd1ee22b821", 1032397, 650),
 
@@ -8837,6 +8848,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("littlebilly", "", "quest.exe", "t:73ca03e8a10e3266f20442ce50fd0311", 105118,
 								"Child.dxr", "t:57e4acc11a12a483541cfb69eb570810", 387835, 700),
+
+	// Original Mac filename is Löwenzahn 4
+	MACGAME1_l("loewe4", "", "xn--Lwenzahn 4-ecb",		"rt:6f75666ef42bcd1d34bd120d011b42b1",  114029, Common::DE_DEU, 702),
+	WINGAME1_l("loewe4", "", "SETUP/WIN95/LOEWE4.exe",	"t:4766360be9f3067a9f314b3b3a454fa7",  1818036, Common::DE_DEU, 702),
 
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
