@@ -877,7 +877,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 		genericResponse(actionObjNum, 112, 996);
 	} else if ((actionObjNum == 38) && (targetObjNum == 49)) {
 		_console->printTosText(251);
-	} else if ((targetObjNum == 147) && (actionObjNum != 7)) {
+	} else if (targetObjNum == 147) {
 		_console->printTosText(319);
 	} else if (targetObjNum == 197) {
 		genericResponse(actionObjNum, 197, 993);
@@ -895,7 +895,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 		_console->printTosText(386);
 	} else if (targetObjNum == 110) {
 		_console->printTosText(392);
-	} else if ((targetObjNum == 131) && (actionObjNum != 7)) {
+	} else if (targetObjNum == 131) {
 		_console->printTosText(405);
 	} else if (targetObjNum == 85) {
 		_console->printTosText(434);
@@ -973,7 +973,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 				genericResponse(actionObjNum, 185, 982);
 			} else if ((actionObjNum == 38) && (targetObjNum == 79)) {
 				_console->printTosText(833);
-			} else if ((targetObjNum == 79) && (actionObjNum != 7)) {
+			} else if (targetObjNum == 79) {
 				_console->printTosText(836);
 			} else if ((actionObjNum == 38) && (targetObjNum == 58)) {
 				_console->printTosText(849);
