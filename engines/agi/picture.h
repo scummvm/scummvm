@@ -47,8 +47,7 @@ enum AgiPictureVersion {
 	AGIPIC_C64,
 	AGIPIC_V1,
 	AGIPIC_V15,
-	AGIPIC_V2,
-	AGIPIC_256
+	AGIPIC_V2
 };
 
 enum AgiPictureFlags {

@@ -339,9 +339,6 @@ void PictureMgr::drawPicture() {
 	case AGIPIC_V2:
 		drawPictureV2();
 		break;
-	case AGIPIC_256:
-		drawPictureAGI256();
-		break;
 	default:
 		break;
 	}
