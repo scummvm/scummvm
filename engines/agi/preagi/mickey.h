@@ -99,6 +99,8 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 
 #define IDI_MSA_PIC_WIDTH   140
 #define IDI_MSA_PIC_HEIGHT  159
+#define IDI_MSA_PIC_X0      10
+#define IDI_MSA_PIC_Y0      0
 
 // pictures
 
