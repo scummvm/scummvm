@@ -62,7 +62,7 @@ void PictureMgr::putVirtPixel(int x, int y) {
 	x += _xOffset;
 	y += _yOffset;
 
-	byte drawMask;
+	byte drawMask= 0;
 	if (_priOn)
 		drawMask |= GFX_SCREEN_MASK_PRIORITY;
 	if (_scrOn)
@@ -534,6 +534,9 @@ void PictureMgr::drawPictureV2() {
 		case 0xfa:
 			plotBrush();
 			break;
+		// FIXME: There is no opcode FC. A refactor in 2016 moved it to this
+		//        function and removed the comment that it was for V1 or V1.5.
+		//        Determine where this should go (if anywhere) before removing.
 		case 0xfc:
 			draw_SetColor();
 			draw_SetPriority();
