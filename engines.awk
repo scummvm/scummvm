@@ -436,6 +436,7 @@ END {
 	add_line_to_config_mk("\n# components")
 	components_count = get_values("_components", components)
 	comp_enabled = ""
+	comp_disabled = ""
 	for (c = 1; c <= components_count; c++) {
 		setting = get_component_settings(components[c])
 		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " setting)
@@ -445,6 +446,7 @@ END {
 			comp_enabled = comp_enabled components[c] " "
 		} else {
 			add_line_to_config_mk("# " setting)
+			comp_disabled = comp_disabled components[c] " "
 		}
 	}
 	add_line_to_config_h("/* end of components */")
@@ -460,6 +462,7 @@ END {
 	if (comp_enabled == "")
 		comp_enabled = "<none>"
 	print("\nComponents Enabled: " comp_enabled)
+	print("Components Disabled: " comp_disabled)
 
 	# Ensure engines folder exists prior to trying to generate
 	# files into it (used for out-of-tree-builds)
