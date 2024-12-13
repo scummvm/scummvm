@@ -721,7 +721,7 @@ protected:
 	void playSound(ENUM_MSA_SOUND);
 	void drawRoomAnimation();
 	void drawRoom();
-	void drawLogo();
+	bool drawLogo();
 	void animate();
 	void printRoomDesc();
 	bool loadGame();

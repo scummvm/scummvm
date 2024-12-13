@@ -890,7 +890,7 @@ static const byte BCGColorMappingCGAToEGA[4] = {
 	0, 11, 13, 15
 };
 
-void MickeyEngine::drawLogo() {
+bool MickeyEngine::drawLogo() {
 	const int width = 80;
 	const int height = 85 * 2;
 	const byte *BCGColorMapping = BCGColorMappingCGAToEGA;
@@ -901,16 +901,18 @@ void MickeyEngine::drawLogo() {
 
 	// read logos.bcg
 	Common::File infile;
-	if (!infile.open(IDS_MSA_PATH_LOGO))
-		return;
+	if (!infile.open(IDS_MSA_PATH_LOGO)) {
+		warning("%s: file not found", IDS_MSA_PATH_LOGO);
+		return false;
+	}
 
 	uint32 fileBufferSize = infile.size();
+	if (fileBufferSize < (width * height / 4)) {
+		warning("%s: truncated file: %d", IDS_MSA_PATH_LOGO, fileBufferSize);
+		return false;
+	}
 	byte *fileBuffer = new byte[fileBufferSize];
 	infile.read(fileBuffer, fileBufferSize);
-	infile.close();
-
-	if (fileBufferSize < (width * height / 4))
-		error("logos.bcg: unexpected end of file");
 
 	// Show BCG picture
 	// It's basically uncompressed CGA 4-color data (4 pixels per byte)
@@ -934,6 +936,7 @@ void MickeyEngine::drawLogo() {
 	_gfx->copyDisplayToScreen();
 
 	delete[] fileBuffer;
+	return true;
 }
 
 void MickeyEngine::animate() {
@@ -1362,8 +1365,10 @@ void MickeyEngine::inventory() {
 
 void MickeyEngine::intro() {
 	// Draw Sierra logo
-	drawLogo();     // Original does not even show this, so we skip it too
-	waitAnyKey();       // Not in the original, but needed so that the logo is visible
+	if (drawLogo()) {          // Original does not show the logo, we do if available
+		waitAnyKey();          // Not in the original, but needed so that the logo is visible
+		_gfx->clearDisplay(0); // Logo is larger than picture area, clear entire screen
+	}
 
 	// draw title picture
 	_gameStateMickey.iRoom = IDI_MSA_PIC_TITLE;
