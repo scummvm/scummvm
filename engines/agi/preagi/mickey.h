@@ -754,6 +754,8 @@ protected:
 			return false;
 		}
 	}
+
+	bool isCrystalOnCurrentPlanet() const;
 };
 
 } // End of namespace Agi
