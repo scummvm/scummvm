@@ -664,7 +664,7 @@ void MickeyEngine::playNote(MSA_SND_NOTE note) {
 		// Pause
 		_system->delayMillis((uint)(note.length / IDI_SND_TIMER_RESOLUTION));
 	} else {
-		PreAgiEngine::playNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, (int32)(note.length / IDI_SND_TIMER_RESOLUTION));
+		playSpeakerNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, (int32)(note.length / IDI_SND_TIMER_RESOLUTION));
 	}
 }
 

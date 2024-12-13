@@ -468,16 +468,15 @@ void TrollEngine::playTune(int tune, int len) {
 	if (!_soundOn)
 		return;
 
-	int freq, duration;
 	int ptr = _tunes[tune - 1];
 
 	for (int i = 0; i < len; i++) {
-		freq = READ_LE_UINT16(_gameData + ptr);
+		int freq = READ_LE_UINT16(_gameData + ptr);
 		ptr += 2;
-		duration = READ_LE_UINT16(_gameData + ptr);
+		int duration = READ_LE_UINT16(_gameData + ptr);
 		ptr += 2;
 
-		playNote(freq, duration);
+		playSpeakerNote(freq, duration);
 	}
 }
 

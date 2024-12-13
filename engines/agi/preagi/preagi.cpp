@@ -275,15 +275,11 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 	return 0;
 }
 
-void PreAgiEngine::playNote(int16 frequency, int32 length) {
+void PreAgiEngine::playSpeakerNote(int16 frequency, int32 length) {
 	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
-	waitForTimer(length);
-}
 
-void PreAgiEngine::waitForTimer(int msec_delay) {
-	uint32 start_time = _system->getMillis();
-
-	while (_system->getMillis() < start_time + msec_delay) {
+	uint32 startTime = _system->getMillis();
+	while (_system->getMillis() - startTime < (uint32)length) {
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

@@ -56,7 +56,6 @@ class PreAgiEngine : public AgiBase {
 protected:
 	void initialize() override;
 
-	void pollTimer() {}
 	int getKeypress() override { return 0; }
 	bool isKeypress() override { return false; }
 	void clearKeyQueue() override {}
@@ -101,8 +100,7 @@ protected:
 	// Saved Games
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 
-	void playNote(int16 frequency, int32 length);
-	void waitForTimer(int msec_delay);
+	void playSpeakerNote(int16 frequency, int32 length);
 
 private:
 	int _defaultColor;
