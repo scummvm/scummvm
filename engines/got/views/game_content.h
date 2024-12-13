@@ -19,46 +19,23 @@
  *
  */
 
-#include "got/views/game.h"
-#include "got/game/init.h"
-#include "got/metaengine.h"
-#include "got/vars.h"
+#ifndef GOT_VIEWS_GAME_CONTENT_H
+#define GOT_VIEWS_GAME_CONTENT_H
+
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
-Game::Game() : View("Game") {
-	_children.push_back(&_content);
-	_children.push_back(&_status);
-	_content.setBounds(Common::Rect(0, 0, 320, 240 - 48));
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
+class GameContent : public View {
+public:
+	GameContent() : View("GameContent") {}
+	virtual ~GameContent() {}
 
-bool Game::msgFocus(const FocusMessage &msg) {
-	if (_firstTime) {
-		initialize();
-		_firstTime = false;
-	}
-
-	return true;
-}
-
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
-void Game::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-}
-
-bool Game::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
-bool Game::tick() {
-	return true;
-}
+	void draw() override;
+};
 
 } // namespace Views
 } // namespace Got
+
+#endif

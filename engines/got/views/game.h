@@ -23,6 +23,7 @@
 #define GOT_VIEWS_GAME_H
 
 #include "got/views/view.h"
+#include "got/views/game_content.h"
 #include "got/views/game_status.h"
 
 namespace Got {
@@ -30,6 +31,7 @@ namespace Views {
 
 class Game : public View {
 private:
+	GameContent _content;
 	GameStatus _status;
 	bool _firstTime = true;
 

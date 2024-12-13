@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	utils/res_archive.o \
 	views/view.o \
 	views/game.o \
+	views/game_content.o \
 	views/game_status.o \
 	views/part_title.o \
 	views/story.o \

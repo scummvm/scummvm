@@ -19,45 +19,27 @@
  *
  */
 
-#include "got/views/game.h"
-#include "got/game/init.h"
-#include "got/metaengine.h"
+#include "got/views/game_content.h"
 #include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-Game::Game() : View("Game") {
-	_children.push_back(&_content);
-	_children.push_back(&_status);
-	_content.setBounds(Common::Rect(0, 0, 320, 240 - 48));
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
-}
+#define TILE_SIZE 16
 
-bool Game::msgFocus(const FocusMessage &msg) {
-	if (_firstTime) {
-		initialize();
-		_firstTime = false;
-	}
-
-	return true;
-}
-
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
-void Game::draw() {
+void GameContent::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
-}
 
-bool Game::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
-bool Game::tick() {
-	return true;
+	for (int y = 0; y < (s.h / TILE_SIZE); y++) {
+		for (int x = 0; x < (s.w / TILE_SIZE); x++) {
+			if (_G(scrn).icon[y][x] != 0) {
+				const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
+				s.blitFrom(_G(bgPics)[_G(scrn).bg_color], pt);
+				s.blitFrom(_G(bgPics)[_G(scrn).icon[y][x]], pt);
+			}
+		}
+	}
 }
 
 } // namespace Views
