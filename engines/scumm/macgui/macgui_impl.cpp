@@ -790,6 +790,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				res->skip(len);
 				break;
 			}
+			case 32:
+				// Icon
+				res->skip(len);
+				break;
+
 			case 64:
 				// Picture
 				window->addPicture(r, res->readUint16BE(), enabled);
