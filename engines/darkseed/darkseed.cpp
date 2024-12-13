@@ -2371,17 +2371,16 @@ void DarkseedEngine::runObjects() {
 				if (_animation->_isPlayingAnimation_maybe && _animation->_otherNspAnimationType_maybe == 53) {
 					_animation->_isPlayingAnimation_maybe = false;
 				}
-				if (!_player->_heroMoving) {
-					Common::Point oldCursor = g_engine->_cursor.getPosition();
-					Common::Point newTarget = {322, 226};
-					g_engine->_cursor.setPosition(newTarget);
-					_player->calculateWalkTarget();
-					g_engine->_cursor.setPosition(oldCursor);
-					_player->playerFaceWalkTarget();
-					if (!_printedcomeheredawson) {
-						_console->printTosText(934);
-						_printedcomeheredawson = true;
-					}
+
+				Common::Point oldCursor = g_engine->_cursor.getPosition();
+				Common::Point newTarget = {322, 226};
+				g_engine->_cursor.setPosition(newTarget);
+				_player->calculateWalkTarget();
+				g_engine->_cursor.setPosition(oldCursor);
+				_player->playerFaceWalkTarget();
+				if (!_printedcomeheredawson) {
+					_console->printTosText(934);
+					_printedcomeheredawson = true;
 				}
 			}
 		}
