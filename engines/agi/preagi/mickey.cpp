@@ -1816,9 +1816,12 @@ bool MickeyEngine::parse(int cmd, int arg) {
 
 		break;
 	case IDI_MSA_ACTION_USE_MATTRESS:
-		_gameStateMickey.iRoom = IDI_MSA_PIC_SATURN_ISLAND;
-
 		printDatMessage(arg);
+		
+		// must set room after printDatMessage, or else the crystal from
+		// the next room will appear and animate while still displaying
+		// the picture for the current room
+		_gameStateMickey.iRoom = IDI_MSA_PIC_SATURN_ISLAND;
 
 		return true;
 	case IDI_MSA_ACTION_GET_XTAL_SATURN:
