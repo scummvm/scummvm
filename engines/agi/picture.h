@@ -42,19 +42,18 @@ struct AgiPicture {
 	AgiPicture() { reset(); }
 };
 
-// AGI picture version
 enum AgiPictureVersion {
-	AGIPIC_C64,
-	AGIPIC_V1,
-	AGIPIC_V15,
-	AGIPIC_V2
+	AGIPIC_C64,     // Winnie (Apple II, C64, CoCo)
+	AGIPIC_V1,      // Currently unused
+	AGIPIC_V15,     // Troll (DOS)
+	AGIPIC_V2       // AGIv2, AGIv3, Winnie (DOS, Amiga), Mickey (DOS)
 };
 
 enum AgiPictureFlags {
 	kPicFNone      = (1 << 0),
-	kPicFCircle    = (1 << 1),
-	kPicFf3Stop    = (1 << 2),
-	kPicFTrollMode = (1 << 3)
+	kPicFCircle    = (1 << 1), // Mickey, spaceship lights (not drawn accurately)
+	kPicFf3Stop    = (1 << 2), // Troll, certain pictures
+	kPicFTrollMode = (1 << 3)  // Troll, drawing the Troll
 };
 
 class AgiBase;
@@ -70,6 +69,7 @@ public:
 	int16 getResourceNr() const { return _resourceNr; };
 
 private:
+	void putVirtPixel(int x, int y);
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
 	void plotPattern(int x, int y);
@@ -80,8 +80,6 @@ private:
 	byte getNextNibble();
 
 public:
-	void putVirtPixel(int x, int y);
-
 	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 
@@ -107,9 +105,8 @@ private:
 	void draw_Fill();
 
 public:
-	void showPic(); // <-- for regular AGI games
-	void showPic(int16 x, int16 y, int16 pic_width, int16 pic_height); // <-- for preAGI games
-	void showPicWithTransition();
+	void showPicture(int16 x = 0, int16 y = 0, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
+	void showPictureWithTransition();
 
 	void setPictureVersion(AgiPictureVersion version);
 

@@ -1185,7 +1185,7 @@ void cmdShowPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
 	vm->_text->closeWindow();
-	vm->_picture->showPicWithTransition();
+	vm->_picture->showPictureWithTransition();
 	state->pictureShown = true;
 
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
@@ -2310,6 +2310,8 @@ void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
 
 	// Draw the picture. Similar to void cmdDrawPic.
+	// Must not clear the screen; AGI256 uses the priority
+	// screen from the previously drawn picture.
 	vm->_picture->decodePicture(resourceNr, false, true);
 	spritesMgr->drawAllSpriteLists();
 	state->pictureShown = false;

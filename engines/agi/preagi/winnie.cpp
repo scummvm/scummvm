@@ -1209,7 +1209,7 @@ void WinnieEngine::drawPic(const char *szName) {
 
 	_picture->setOffset(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0);
 	_picture->decodePictureFromBuffer(buffer, size, true, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->showPicture(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	free(buffer);
 }
@@ -1225,7 +1225,7 @@ void WinnieEngine::drawObjPic(int iObj, int x0, int y0) {
 
 	_picture->setOffset(x0, y0);
 	_picture->decodePictureFromBuffer(buffer + objhdr.ofsPic - _objOffset, objSize, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->showPicture(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	free(buffer);
 }
@@ -1244,7 +1244,7 @@ void WinnieEngine::drawRoomPic() {
 	// draw room picture
 	_picture->setOffset(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0);
 	_picture->decodePictureFromBuffer(buffer + roomhdr.ofsPic - _roomOffset, 4096, true, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->showPicture(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
 	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);

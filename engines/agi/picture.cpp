@@ -56,14 +56,13 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
-	byte drawMask = 0;
-
 	if (x < 0 || y < 0 || x >= _width || y >= _height)
 		return;
 
 	x += _xOffset;
 	y += _yOffset;
 
+	byte drawMask;
 	if (_priOn)
 		drawMask |= GFX_SCREEN_MASK_PRIORITY;
 	if (_scrOn)
@@ -319,6 +318,8 @@ void PictureMgr::plotBrush() {
 ** Draw AGI picture
 **************************************************************************/
 void PictureMgr::drawPicture() {
+	_dataOffset = 0;
+	_dataOffsetNibble = false;
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = false;
@@ -345,9 +346,9 @@ void PictureMgr::drawPicture() {
 }
 
 void PictureMgr::drawPictureC64() {
-	debugC(8, kDebugLevelMain, "Drawing C64 picture");
+	debugC(8, kDebugLevelMain, "Drawing Apple II / C64 / CoCo picture");
 
-	_scrColor = 0x0;
+	_scrColor = 0;
 
 	while (_dataOffset < _dataSize) {
 		byte curByte = getNextByte();
@@ -476,14 +477,10 @@ void PictureMgr::drawPictureV15() {
 }
 
 void PictureMgr::drawPictureV2() {
-	bool nibbleMode = false;
-
 	debugC(8, kDebugLevelMain, "Drawing V2/V3 picture");
 
-	if (_vm->_game.dirPic[_resourceNr].flags & RES_PICTURE_V3_NIBBLE_PARM) {
-		// check, if this resource uses nibble mode (0xF0 + 0xF2 commands take nibbles instead of bytes)
-		nibbleMode = true;
-	}
+	// AGIv3 nibble parameters are indicated by a flag in the picture's directory entry
+	bool nibbleMode = (_vm->_game.dirPic[_resourceNr].flags & RES_PICTURE_V3_NIBBLE_PARM) != 0;
 
 	int step = 0;
 	while (_dataOffset < _dataSize) {
@@ -842,7 +839,7 @@ bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
 }
 
 /**
- * Decode an AGI picture resource.
+ * Decode an AGI picture resource. Used by regular AGI games.
  * This function decodes an AGI picture resource into the correct slot
  * and draws it on the AGI screen, optionally clearing the screen before
  * drawing.
@@ -851,27 +848,18 @@ bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
  * @param agi256 load an AGI256 picture resource
  */
 void PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, int16 width, int16 height) {
-	_patCode = 0;
-	_patNum = 0;
-	_priOn = _scrOn = false;
-	_scrColor = 0xF;
-	_priColor = 0x4;
-
 	_resourceNr = resourceNr;
 	_data = _vm->_game.pictures[resourceNr].rdata;
 	_dataSize = _vm->_game.dirPic[resourceNr].len;
-	_dataOffset = 0;
-	_dataOffsetNibble = false;
-
 	_width = width;
 	_height = height;
 
-	if (clearScreen && !agi256) { // 256 color pictures should always fill the whole screen, so no clearing for them.
-		_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
+	if (clearScreen) {
+		_gfx->clear(15, 4); // white, priority 4
 	}
 
 	if (!agi256) {
-		drawPicture(); // Draw 16 color picture.
+		drawPicture();
 	} else {
 		drawPictureAGI256();
 	}
@@ -883,7 +871,7 @@ void PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, 
 }
 
 /**
- * Decode an AGI picture resource.
+ * Decode an AGI picture resource. Used by preAGI.
  * This function decodes an AGI picture resource into the correct slot
  * and draws it on the AGI screen, optionally clearing the screen before
  * drawing.
@@ -892,51 +880,29 @@ void PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, 
  * @param clear  clear AGI screen before drawing
  */
 void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width, int16 height) {
-	_patCode = 0;
-	_patNum = 0;
-	_priOn = _scrOn = false;
-	_scrColor = 0xF;
-	_priColor = 0x4;
-
 	_data = data;
 	_dataSize = length;
-	_dataOffset = 0;
-	_dataOffsetNibble = false;
-
 	_width = width;
 	_height = height;
 
 	if (clearScreen) {
-		_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
+		_gfx->clear(15, 4); // white, priority 4
 	}
 
-	drawPicture(); // Draw 16 color picture.
+	drawPicture();
 }
 
-void PictureMgr::showPic() {
-	debugC(8, kDebugLevelMain, "Show picture!");
+void PictureMgr::showPicture(int16 x, int16 y, int16 width, int16 height) {
+	debugC(8, kDebugLevelMain, "Show picture");
 
-	_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
+	_gfx->render_Block(x, y, width, height);
 }
 
-/**
- * Show AGI picture.
- * This function copies a ``hidden'' AGI picture to the output device.
- */
-void PictureMgr::showPic(int16 x, int16 y, int16 pic_width, int16 pic_height) {
-	_width = pic_width;
-	_height = pic_height;
-
-	debugC(8, kDebugLevelMain, "Show picture!");
-
-	_gfx->render_Block(x, y, pic_width, pic_height);
-}
-
-void PictureMgr::showPicWithTransition() {
+void PictureMgr::showPictureWithTransition() {
 	_width = SCRIPT_WIDTH;
 	_height = SCRIPT_HEIGHT;
 
-	debugC(8, kDebugLevelMain, "Show picture!");
+	debugC(8, kDebugLevelMain, "Show picture");
 
 	if (!_vm->_game.automaticRestoreGame) {
 		// only do transitions when we are not restoring a saved game
@@ -955,7 +921,6 @@ void PictureMgr::showPicWithTransition() {
 			_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
 			_gfx->transition_Amiga();
 			return;
-			break;
 		case Common::kRenderAtariST:
 			// Platform Atari ST used a different transition, looks "high-res" (full 320x168)
 			_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);

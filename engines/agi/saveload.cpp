@@ -744,7 +744,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_sprites->eraseSprites();
 	_sprites->buildAllSpriteLists();
 	_sprites->drawAllSpriteLists();
-	_picture->showPicWithTransition();
+	_picture->showPictureWithTransition();
 	_game.pictureShown = true;
 	_text->statusDraw();
 	_text->promptRedraw();
