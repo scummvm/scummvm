@@ -1195,8 +1195,7 @@ void MickeyEngine::saveGame() {
 
 void MickeyEngine::showPlanetInfo() {
 	for (int i = 0; i < 4; i++) {
-		printExeStr(IDO_MSA_PLANET_INFO[_gameStateMickey.iPlanet][i]);
-		waitAnyKey();
+		printExeMsg(IDO_MSA_PLANET_INFO[_gameStateMickey.iPlanet][i]);
 	}
 }
 
@@ -1268,7 +1267,7 @@ void MickeyEngine::pressOB(int iButton) {
 	}
 
 	// print pressed buttons
-	printLine("MICKEY HAS PRESSED:                  ");
+	printExeStr(IDO_MSA_MICKEY_HAS_PRESSED);
 	drawStr(20, 22, IDA_DEFAULT, szButtons);
 	waitAnyKey();
 }

@@ -618,6 +618,7 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 
 #define IDO_MSA_PRESS_1_TO_9                    0x7530
 #define IDO_MSA_PRESS_YES_OR_NO                 0x480D
+#define IDO_MSA_MICKEY_HAS_PRESSED              0x5D90
 #define IDO_MSA_TOO_MANY_BUTTONS_PRESSED        0x5DF7
 
 #define IDO_MSA_XL30_SPEAKING                   0x4725
