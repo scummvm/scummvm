@@ -740,9 +740,18 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	file.read(buffer, size);
 	file.close();
 
-	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
-		_picture->setPictureFlags(kPicFStep);
+	int maxStep = 0; // default: draw all opcodes
+	if (iObj == IDI_MSA_OBJECT_CRYSTAL) {
+		// Handle crystal animation. Each "frame" is the picture
+		// drawn with an additional opcode until it wraps around.
+		// The crystal has 14 opcodes followed by the terminator.
+		maxStep = _picture->getMaxStep() + 1;
+		if (maxStep == 15) {
+			maxStep = 1;
+		}
+	}
 
+	_picture->setMaxStep(maxStep);
 	_picture->setOffset(x0, y0);
 	_picture->decodePictureFromBuffer(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_picture->setOffset(0, 0);
@@ -763,6 +772,7 @@ void MickeyEngine::drawPic(int iPic) {
 	file.close();
 
 	// Note that decodePicture clears the screen
+	_picture->setMaxStep(0);
 	_picture->setOffset(10, 0);
 	_picture->decodePictureFromBuffer(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_picture->setOffset(0, 0);
@@ -808,6 +818,7 @@ void MickeyEngine::drawRoomAnimation() {
 
 			_picture->setPictureData(objLight);
 			_picture->setPictureFlags(kPicFCircle);
+			_picture->setMaxStep(0);
 			_picture->drawPicture();
 		}
 		_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);

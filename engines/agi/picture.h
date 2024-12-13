@@ -54,10 +54,9 @@ enum AgiPictureVersion {
 enum AgiPictureFlags {
 	kPicFNone      = (1 << 0),
 	kPicFCircle    = (1 << 1),
-	kPicFStep      = (1 << 2),
-	kPicFf3Stop    = (1 << 3),
-	kPicFf3Cont    = (1 << 4),
-	kPicFTrollMode = (1 << 5)
+	kPicFf3Stop    = (1 << 2),
+	kPicFf3Cont    = (1 << 3),
+	kPicFTrollMode = (1 << 4)
 };
 
 class AgiBase;
@@ -134,6 +133,9 @@ public:
 		_height = h;
 	}
 
+	void setMaxStep(int maxStep) { _maxStep = maxStep; }
+	int getMaxStep() const { return _maxStep; }
+
 private:
 	int16  _resourceNr;
 	uint8 *_data;
@@ -157,7 +159,7 @@ private:
 	int16 _yOffset;
 
 	int _flags;
-	int _currentStep;
+	int _maxStep; // Max opcodes to draw, zero for all. Used by preagi (Mickey)
 };
 
 } // End of namespace Agi

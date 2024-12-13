@@ -52,7 +52,7 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_yOffset = 0;
 
 	_flags = 0;
-	_currentStep = 0;
+	_maxStep = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
@@ -482,8 +482,6 @@ void PictureMgr::drawPictureV15() {
 
 void PictureMgr::drawPictureV2() {
 	bool nibbleMode = false;
-	bool mickeyCrystalAnimation = false;
-	int  mickeyIteration = 0;
 
 	debugC(8, kDebugLevelMain, "Drawing V2/V3 picture");
 
@@ -492,10 +490,7 @@ void PictureMgr::drawPictureV2() {
 		nibbleMode = true;
 	}
 
-	if ((_flags & kPicFStep) && _vm->getGameType() == GType_PreAGI) {
-		mickeyCrystalAnimation = true;
-	}
-
+	int step = 0;
 	while (_dataOffset < _dataSize) {
 		byte curByte = getNextByte();
 
@@ -559,24 +554,10 @@ void PictureMgr::drawPictureV2() {
 			break;
 		}
 
-		// This is used by Mickey for the crystal animation
-		// One frame of the crystal animation is shown on each iteration, based on _currentStep
-		if (mickeyCrystalAnimation) {
-			if (_currentStep == mickeyIteration) {
-				int16 storedXOffset = _xOffset;
-				int16 storedYOffset = _yOffset;
-				// Note that picture coordinates are correct for Mickey only
-				showPic(10, 0, _width, _height);
-				_xOffset = storedXOffset;
-				_yOffset = storedYOffset;
-				_currentStep++;
-				if (_currentStep > 14)  // crystal animation is 15 frames
-					_currentStep = 0;
-				// reset the picture step flag - it will be set when the next frame of the crystal animation is drawn
-				_flags &= ~kPicFStep;
-				return;     // return back to the game loop
-			}
-			mickeyIteration++;
+		// Limit drawing to the optional maximum number of opcodes
+		step++;
+		if (step == _maxStep) {
+			return;
 		}
 	}
 }
