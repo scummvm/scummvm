@@ -138,9 +138,8 @@ void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 
 	// draw the picture
 	int flags = 0;
-	if (f3IsCont) {
-		flags |= kPicFf3Cont;
-	} else {
+	if (!f3IsCont) {
+		// stop on opcode F3
 		flags |= kPicFf3Stop;
 	}
 	if (troll) {
