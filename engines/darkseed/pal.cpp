@@ -32,6 +32,13 @@ Pal::Pal(const Pal &pal) {
 	load(pal);
 }
 
+Pal &Pal::operator=(const Pal &pal) {
+	if (this != &pal) {
+		load(pal);
+	}
+	return *this;
+}
+
 void Pal::load(const Pal &pal) {
 	memcpy(_palData, pal._palData, DARKSEED_PAL_SIZE);
 }

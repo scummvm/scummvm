@@ -36,6 +36,7 @@ public:
 
 	Pal() {};
 	Pal(const Pal &pal);
+	Pal & operator=(const Pal &pal);
 	void loadFromScreen();
 	void load(const Pal &pal);
 	bool load(const Common::Path &filename, bool shouldInstallPalette = true);
