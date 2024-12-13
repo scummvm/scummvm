@@ -666,7 +666,7 @@ void DarkseedEngine::handleInput() {
 			return;
 		}
 		_player->_heroMoving = false;
-		if (_useDoorTarget || _doorEnabled) {
+		if (_doorEnabled) {
 			for (unsigned int i = 0; i < _room->_room1.size(); i++) {
 				RoomExit &roomExit = _room->_room1[i];
 				if (roomExit.roomNumber != 0xff
