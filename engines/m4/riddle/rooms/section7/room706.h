@@ -40,11 +40,19 @@ public:
 	void daemon() override;
 
 private:
+	void conv706a();
+	void subA8BA8(int32 trigger, const char *digiName);
+
 	int32 _field78_mode = 0;
 	int32 _field7C_should = 0;
 
 	int32 _706eye3aSeries = 0;
+	int32 _706Monk1Series = 0;
+	int32 _706Monk2Series = 0;
+	int32 _706Monk3Series = 0;
+	int32 _706Monk4Series = 0;
 	int32 _706RipGoesDownStairsSeries = 0;
+	int32 _ripLooksDownSeries = 0;
 	int32 _ripShieldsFaceSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 
