@@ -43,6 +43,8 @@ struct MASK_IMAGE {
 	ALIGNED_MASK_IMAGE *alignments[4] = { nullptr, nullptr, nullptr, nullptr };
 };
 
+#define OBJECTS_COUNT 30
+
 struct LEVEL {                    // size=512
 	byte icon[12][20] = {};       // 0   grid of icons
 	byte bg_color = 0;            // 240 background color
@@ -53,9 +55,9 @@ struct LEVEL {                    // size=512
 	byte pal_colors[3] = {};      // change 251,253,254 to these three
 	byte actor_invis[16] = {};
 	byte extra[13] = {};
-	byte static_obj[30] = {};     // 302 static objects (treasure, keys,etc)
-	int  static_x[30] = {};       // 332 X coor of static objects
-	int  static_y[30] = {};       // 392 Y coor of static objects
+	byte static_obj[OBJECTS_COUNT] = {};     // 302 static objects (treasure, keys,etc)
+	int  static_x[OBJECTS_COUNT] = {};       // 332 X coor of static objects
+	int  static_y[OBJECTS_COUNT] = {};       // 392 Y coor of static objects
 	byte new_level[10] = {};      // 452 level jump for icon 200-204
 	byte new_level_loc[10] = {};  // 462 grid location to jump in to
 	byte area = 0;                // 472 game area (1=forest,etc)
