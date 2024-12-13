@@ -83,7 +83,7 @@ void Menu::loadMenu() {
 			g_engine->_lastKeyPressed = Common::KeyCode::KEYCODE_INVALID;
 		}
 
-		if (menuItemIdx > -1 && menuItemIdx < 5) {
+		if (menuItemIdx > -1) {
 			g_engine->_sound->playSfx(5, 0, -1);
 			g_engine->waitForSpeechOrSfx();
 		}
