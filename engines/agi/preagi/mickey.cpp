@@ -849,7 +849,7 @@ void MickeyEngine::drawRoomAnimation() {
 
 		// draw crystal
 		if (_gameStateMickey.iRoom == IDI_MSA_XTAL_ROOM_XY[_gameStateMickey.iPlanet][0]) {
-			if (!_gameStateMickey.fHasXtal) {
+			if (isCrystalOnCurrentPlanet()) {
 				switch (_gameStateMickey.iPlanet) {
 				case IDI_MSA_PLANET_VENUS:
 					if (_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] != 2)
@@ -1301,7 +1301,7 @@ void MickeyEngine::gameOver() {
 }
 
 void MickeyEngine::flipSwitch() {
-	if (_gameStateMickey.fHasXtal || _gameStateMickey.nXtals) {
+	if (_gameStateMickey.nXtals) {
 		if (!_gameStateMickey.fStoryShown)
 			printStory();
 
@@ -1784,14 +1784,14 @@ bool MickeyEngine::parse(int cmd, int arg) {
 	// MERCURY
 
 	case IDI_MSA_ACTION_GET_XTAL_MERCURY:
-		if (_gameStateMickey.fHasXtal) {
-			_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 2;
-			printDatMessage(32);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_SUNGLASSES]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 2;
+			printDatMessage(32);
 		}
 		break;
 	case IDI_MSA_ACTION_GIVE_SUNGLASSES:
@@ -1822,10 +1822,10 @@ bool MickeyEngine::parse(int cmd, int arg) {
 
 		return true;
 	case IDI_MSA_ACTION_GET_XTAL_SATURN:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(29);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			getXtal(arg);
+		} else {
+			printDatMessage(29);
 		}
 		break;
 	case IDI_MSA_ACTION_LEAVE_ISLAND:
@@ -1838,13 +1838,13 @@ bool MickeyEngine::parse(int cmd, int arg) {
 	// PLUTO
 
 	case IDI_MSA_ACTION_GET_XTAL_PLUTO:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(19);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_BONE]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			printDatMessage(19);
 		}
 		break;
 	case IDI_MSA_ACTION_GIVE_BONE:
@@ -1870,9 +1870,7 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_JUPITER:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(15);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			switch (_gameStateMickey.nRocks) {
 			case 0:
 				if (_gameStateMickey.fItem[IDI_MSA_ITEM_ROCK]) {
@@ -1892,6 +1890,8 @@ bool MickeyEngine::parse(int cmd, int arg) {
 			default:
 				break;
 			}
+		} else {
+			printDatMessage(15);
 		}
 		break;
 	case IDI_MSA_ACTION_THROW_ROCK:
@@ -1928,17 +1928,17 @@ bool MickeyEngine::parse(int cmd, int arg) {
 
 		return true;
 	case IDI_MSA_ACTION_PLUTO_DIG:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(21);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			getXtal(arg);
+		} else {
+			printDatMessage(21);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_MARS:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(23);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			printDatMessage(arg);
+		} else {
+			printDatMessage(23);
 		}
 		break;
 
@@ -1984,13 +1984,13 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_URANUS:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(34);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_CROWBAR]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			printDatMessage(34);
 		}
 		break;
 	case IDI_MSA_ACTION_USE_CROWBAR_1:
@@ -2019,7 +2019,6 @@ bool MickeyEngine::parse(int cmd, int arg) {
 			if ((_gameStateMickey.nXtals == IDI_MSA_MAX_PLANET) && (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH))
 				gameOver();
 			if ((_gameStateMickey.iPlanet == _gameStateMickey.iPlanetXtal[_gameStateMickey.nXtals]) || (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH)) {
-				_gameStateMickey.fHasXtal = false;
 				_gameStateMickey.iRoom = IDI_MSA_HOME_PLANET[_gameStateMickey.iPlanet];
 
 				if (_gameStateMickey.iPlanet != IDI_MSA_PLANET_EARTH)
@@ -2365,6 +2364,24 @@ Common::Error MickeyEngine::go() {
 	gameOver();
 
 	return Common::kNoError;
+}
+
+bool MickeyEngine::isCrystalOnCurrentPlanet() const {
+	// Earth is a special case, because the planet list may not have been
+	// initialized yet. Earth is always the first planet, so if no crystals
+	// have been gotten yet, then earth's crystal must still be there.
+	if (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH) {
+		return (_gameStateMickey.nXtals == 0);
+	}
+
+	if (_gameStateMickey.fPlanetsInitialized) {
+		for (uint8 i = 1; i < IDI_MSA_MAX_DAT; i++) {
+			if (_gameStateMickey.iPlanetXtal[i] == _gameStateMickey.iPlanet) {
+				return (_gameStateMickey.nXtals <= i);
+			}
+		}
+	}
+	return false;
 }
 
 } // End of namespace Agi
