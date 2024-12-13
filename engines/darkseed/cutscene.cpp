@@ -54,9 +54,6 @@ void Cutscene::update() {
 	case 'G' :
 		bookScene();
 		break;
-	case 'H' :
-		_movieStep = 9999;
-		break;
 	case 'I' :
 		introScene();
 		break;
@@ -66,6 +63,7 @@ void Cutscene::update() {
 	case 'Y' :
 		alienBornScene();
 		break;
+	case 'H' :
 	case 'Z' :
 		_movieStep = 9999;
 		break;
