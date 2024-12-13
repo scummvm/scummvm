@@ -212,17 +212,11 @@ void WinnieEngine::randomize() {
 void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	printStr(IDS_WTP_INTRO_0);
-	_system->updateScreen();
-	_system->delayMillis(0x640);
-
-	if (getPlatform() == Common::kPlatformAmiga)
-		_gfx->clearDisplay(0);
+	wait(1600);
 
 	drawPic(IDS_WTP_FILE_TITLE);
-
 	printStr(IDS_WTP_INTRO_1);
-	_system->updateScreen();
-	_system->delayMillis(0x640);
+	wait(1600);
 
 	if (!playSound(IDI_WTP_SND_POOH_0))
 		return;
@@ -1298,10 +1292,19 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	// Loop until the sound is done
 	bool skippedSound = false;
 	while (!shouldQuit() && _game.sounds[0]->isPlaying()) {
+		// process all events to keep window responsive and to
+		// allow interruption by mouse button or key press.
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
+				// don't interrupt if a modifier is pressed
+				if (event.kbd.flags & Common::KBD_NON_STICKY) {
+					continue;
+				}
+				// fall through
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
 				_sound->stopSound();
 				skippedSound = true;
 				break;
@@ -1310,6 +1313,7 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 			}
 		}
 
+		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 
