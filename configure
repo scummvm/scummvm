@@ -302,6 +302,7 @@ add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
 add_feature mpeg2 "mpeg2" "_mpeg2"
+add_feature mt32emu "mt32emu" "_mt32emu"
 add_feature opengl_game_classic "OpenGL (classic)" "_opengl_game_classic"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
@@ -319,6 +320,7 @@ add_feature imgui "imgui" "_imgui"
 add_component lua "lua" "USE_LUA"
 add_component vpx "libvpx" "USE_VPX"
 add_component theoradec "libtheoradec" "USE_THEORADEC"
+add_component mt32emu "mt32emu" "USE_MT32EMU"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -5007,11 +5009,6 @@ echo "$_detection_features_static"
 define_in_config_if_yes "$_detection_features_full" "DETECTION_FULL"
 echo_n "Checking if building detection features for all engines... "
 echo "$_detection_features_full"
-
-#
-# Check whether integrated MT-32 emulator support is requested
-#
-define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 #
 # Check whether Nuked OPL emulator support is disabled

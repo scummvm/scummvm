@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine saga "SAGA" yes "ihnm" "ITE"
+add_engine saga "SAGA" yes "ihnm" "ITE" "" "mt32emu"
 add_engine ihnm "IHNM" yes "" "" "highres"
