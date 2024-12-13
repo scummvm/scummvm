@@ -1134,13 +1134,13 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 void WinnieEngine::gameLoop() {
 	WTP_ROOM_HDR hdr;
 	uint8 *roomdata = (uint8 *)malloc(4096);
-	int iBlock;
 	uint8 decodePhase = 0;
 
 	startTimer();
 
 	while (!shouldQuit()) {
-		if (decodePhase == 0) {
+		switch (decodePhase) {
+		case 0:
 			if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC)) {
 				_room = IDI_WTP_ROOM_PARTY;
 				stopTimer();
@@ -1150,18 +1150,16 @@ void WinnieEngine::gameLoop() {
 			drawRoomPic();
 			_system->updateScreen();
 			decodePhase = 1;
-		}
-
-		if (decodePhase == 1) {
+			break;
+		case 1:
 			if (getObjInRoom(_room)) {
 				printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_DESC);
 				getSelection(kSelAnyKey);
 			}
 			decodePhase = 2;
-		}
-
-		if (decodePhase == 2) {
-			for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
+			break;
+		case 2:
+			for (int iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 				if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK) {
 					decodePhase = 1;
 					break;
@@ -1169,10 +1167,9 @@ void WinnieEngine::gameLoop() {
 			}
 			if (decodePhase == 2)
 				decodePhase = 3;
-		}
-
-		if (decodePhase == 3) {
-			for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
+			break;
+		case 3:
+			for (int iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 				int result = parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata);
 				if (result == IDI_WTP_PAR_GOTO) {
 					decodePhase = 0;
@@ -1187,6 +1184,9 @@ void WinnieEngine::gameLoop() {
 					break;
 				}
 			}
+			break;
+		default:
+			break;
 		}
 	}
 
