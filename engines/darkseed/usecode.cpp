@@ -464,13 +464,12 @@ void Darkseed::UseCode::useCode(int objNum) {
 			}
 			return;
 		}
-		if (objNum < 42 && objNum != 22 && (objNum != 7 || _objectVar[7] == 1) &&
-			objNum != 31 && objNum != 33 && objNum != 32 && objNum != 86) {
+		if (objNum < 42 && objNum != 22 && (objNum != 7 || _objectVar[7] == 1)) {
 			_console->printTosText(955); // "You pick up the "
 			_console->addToCurrentLine(Common::String::format("%s.", _objectVar.getObjectName(objNum)));
 			_inventory.addItem(objNum);
 			g_engine->_room->_collisionType = 0;
-			if (((objNum != 25) || (_objectVar[25] == 1)) || (_objectVar[25] == 101)) {
+			if (objNum != 25 || _objectVar[25] == 1 || _objectVar[25] == 101) {
 				g_engine->_room->removeObjectFromRoom(objNum);
 			}
 			_objectVar.setMoveObjectRoom(objNum, 254);
