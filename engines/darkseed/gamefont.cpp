@@ -40,12 +40,14 @@ const Sprite *GameFont::getCharacterSprite(char c) const {
 	int letterIdx = 1000;
 	switch (c) {
 	case 0x20 :
+	case 0x2d :
 		letterIdx = 0x46;
 		break;
 	case 0x21 :
 		letterIdx = 0x36;
 		break;
 	case 0x22 :
+	case 0x5e :
 		letterIdx = 0x3a;
 		break;
 	case 0x27 :
@@ -63,9 +65,6 @@ const Sprite *GameFont::getCharacterSprite(char c) const {
 	case 0x2c :
 		letterIdx = 0x34;
 		break;
-	case 0x2d :
-		letterIdx = 0x46;
-		break;
 	case 0x2e :
 		letterIdx = 0x35;
 		break;
@@ -74,9 +73,6 @@ const Sprite *GameFont::getCharacterSprite(char c) const {
 		break;
 	case 0x3f :
 		letterIdx = 0x39;
-		break;
-	case 0x5e :
-		letterIdx = 0x3a;
 		break;
 
 	default: {
