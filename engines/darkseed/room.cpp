@@ -334,8 +334,6 @@ int Room::checkCursorAndMoveableObjects() {
 			if (_roomObj[i].objNum == 25) {
 				if (g_engine->_objectVar.getVar(80) < 3) {
 					hasObject = false;
-				} else {
-					hasObject = true;
 				}
 			}
 
@@ -381,11 +379,9 @@ int Room::checkCursorAndStaticObjects(int x, int y) {
 				}
 			}
 
-			if (_roomObj[i].objNum == 0x19 && hasObject) {
+			if (_roomObj[i].objNum == 25 && hasObject) {
 				if (g_engine->_objectVar.getVar(80) < 2) {
 					hasObject = false;
-				} else {
-					hasObject = true;
 				}
 			}
 
