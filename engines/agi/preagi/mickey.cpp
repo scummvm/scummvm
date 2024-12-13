@@ -1279,10 +1279,6 @@ void MickeyEngine::insertDisk(int iDisk) {
 }
 
 void MickeyEngine::gameOver() {
-	// We shouldn't run the game over segment if we're quitting.
-	if (shouldQuit())
-		return;
-
 	drawPic(IDI_MSA_PIC_EARTH_SHIP_LEAVING);
 	printExeMsg(IDO_MSA_GAME_OVER[3]);
 	playSound(IDI_MSA_SND_GAME_OVER);
@@ -1296,7 +1292,7 @@ void MickeyEngine::gameOver() {
 		printExeMsg(IDO_MSA_GAME_OVER[7]);
 	}
 
-	waitAnyKey();
+	_isGameOver = true;
 }
 
 void MickeyEngine::flipSwitch() {
@@ -2018,8 +2014,11 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_GO_PLANET:
 		if (!_gameStateMickey.fShipDoorOpen) {
-			if ((_gameStateMickey.nXtals == IDI_MSA_MAX_PLANET) && (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH))
+			if ((_gameStateMickey.nXtals == IDI_MSA_MAX_PLANET) && (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH)) {
 				gameOver();
+				return true;
+			}
+
 			if ((_gameStateMickey.iPlanet == _gameStateMickey.iPlanetXtal[_gameStateMickey.nXtals]) || (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH)) {
 				_gameStateMickey.iRoom = IDI_MSA_HOME_PLANET[_gameStateMickey.iPlanet];
 
@@ -2256,6 +2255,7 @@ void MickeyEngine::debugGotoRoom(int room) {
 }
 
 MickeyEngine::MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_isGameOver = false;
 	setDebugger(new MickeyConsole(this));
 }
 
@@ -2323,7 +2323,7 @@ Common::Error MickeyEngine::go() {
 	intro();
 
 	// Game loop
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_isGameOver) {
 		drawRoom();
 
 		if (_gameStateMickey.fIntro) {
@@ -2362,8 +2362,6 @@ Common::Error MickeyEngine::go() {
 
 		_gameStateMickey.nFrame = 0;
 	}
-
-	gameOver();
 
 	return Common::kNoError;
 }

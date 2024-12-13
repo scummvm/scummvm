@@ -694,6 +694,7 @@ public:
 protected:
 	MSA_GAME _gameStateMickey;
 	bool _clickToMove;
+	bool _isGameOver;
 
 	int getDat(int);
 	void readExe(int, uint8 *, long);
