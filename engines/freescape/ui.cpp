@@ -188,7 +188,7 @@ void FreescapeEngine::borderScreen() {
 			return;
 	}
 
-	if (isDOS() || isSpectrum()) {
+	if (isDOS() || isSpectrum() || isCPC()) {
 		Common::Array<Common::String> lines;
 		int pad = 25;
 		if (isDOS()) {
@@ -205,8 +205,8 @@ void FreescapeEngine::borderScreen() {
 			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", pad));
 			lines.push_back("");
 			lines.push_back(centerAndPadString("COPYRIGHT 1988 INCENTIVE", pad));
-		} else if (isSpectrum()) {
-			if (isSpectrum() && isCastle())
+		} else if (isSpectrum() || isCPC()) {
+			if (isCastle())
 				pad = 22;
 
 			if (_language == Common::ES_ESP) {

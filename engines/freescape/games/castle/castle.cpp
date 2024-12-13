@@ -380,8 +380,17 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		(*palette)[5][2] = 0xcc;
 	}
 
-	if (isSpectrum() || isCPC())
+	if (isSpectrum())
 		_gfx->_paperColor = 0;
+
+	// Unclear why this is needed
+	if (isCPC()) {
+		for (int i = 0; i < 128; i++) {
+			_gfx->_stipples[2][i] = _gfx->_stipples[11][i];
+		}
+		ColorMap *cm = _gfx->_colorMap;
+		(*cm)[2] = (*cm)[11];
+	}
 	resetInput();
 
 	/*if (entranceID > 0) {

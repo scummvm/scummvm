@@ -633,8 +633,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	} else {
 		uint8 attribute = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "Attribute: %x", attribute);
-		paperColor = attribute >> 4;
-		inkColor = attribute & 0xf;
+		if (isSpectrum()) {
+			paperColor = attribute >> 4;
+			inkColor = attribute & 0xf;
+		} else if (isCPC()) {
+			paperColor = attribute;
+			inkColor = 0xb;
+		}
 		skyColor = 0;
 	}
 
