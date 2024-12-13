@@ -28,6 +28,10 @@ namespace Got {
 namespace Views {
 
 class GameContent : public View {
+private:
+	void drawBackground(GfxSurface &s);
+	void drawObjects(GfxSurface &s);
+
 public:
 	GameContent() : View("GameContent") {}
 	virtual ~GameContent() {}

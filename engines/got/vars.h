@@ -32,6 +32,11 @@
 
 namespace Got {
 
+#define TILE_SIZE 16
+#define TILES_X (320 / TILE_SIZE)
+#define TILES_Y (192 / TILE_SIZE)
+#define TILES_COUNT (TILES_X * TILES_Y)
+
 class Vars;
 
 extern Vars *g_vars;
@@ -75,8 +80,8 @@ public:
 	//union REGS in, out = 0;
 	//struct SREGS seg = 0;
 	int _ox = 0, _oy = 0, _of = 0;
-	byte _object_map[240] = {};
-	byte _object_index[240] = {};
+	byte _object_map[TILES_COUNT] = {};
+	byte _object_index[TILES_COUNT] = {};
 	byte *_bleep = nullptr;
 	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0,
 		_thor_icon4 = 0;

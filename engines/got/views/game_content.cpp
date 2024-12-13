@@ -25,19 +25,52 @@
 namespace Got {
 namespace Views {
 
-#define TILE_SIZE 16
-
 void GameContent::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
 
-	for (int y = 0; y < (s.h / TILE_SIZE); y++) {
-		for (int x = 0; x < (s.w / TILE_SIZE); x++) {
+	int save_d;
+
+	_G(boss_active) = 0;
+	if (!_G(shield_on))
+		_G(actor)[2].used = 0;
+	_G(bomb_flag) = 0;
+
+	save_d = _G(thor)->dir;
+	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
+		_G(thor)->dir = 0;
+
+	drawBackground(s);
+	drawObjects(s);
+}
+
+void GameContent::drawBackground(GfxSurface &s) {
+	for (int y = 0; y < TILES_Y; y++) {
+		for (int x = 0; x < TILES_X; x++) {
 			if (_G(scrn).icon[y][x] != 0) {
 				const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
 				s.blitFrom(_G(bgPics)[_G(scrn).bg_color], pt);
 				s.blitFrom(_G(bgPics)[_G(scrn).icon[y][x]], pt);
 			}
+		}
+	}
+}
+
+void GameContent::drawObjects(GfxSurface &s) {
+	int i, p;
+
+	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
+	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
+
+	for (i = 0; i < OBJECTS_COUNT; i++) {
+		if (_G(scrn).static_obj[i]) {
+			s.blitFrom(_G(objects)[_G(scrn).static_obj[i] - 1],
+				Common::Point(_G(scrn).static_x[i] * TILE_SIZE,
+					_G(scrn).static_y[i] * TILE_SIZE));
+
+			p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
+			_G(object_index)[p] = i;
+			_G(object_map)[p] = _G(scrn).static_obj[i];
 		}
 	}
 }
