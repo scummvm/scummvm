@@ -110,6 +110,7 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		_player->_position.y = 77;
 		break;
 	case 39:
+	case 47:
 		_scaleSequence = true;
 		_player->_frameIdx = g_engine->_room->_locationSprites.getAnimAt(nspAnimIdx)._frameNo[0];
 		break;
@@ -121,10 +122,6 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 44:
 	case 46:
 		g_engine->playSound(30, 5, -1);
-		break;
-	case 47:
-		_scaleSequence = true;
-		_player->_frameIdx = g_engine->_room->_locationSprites.getAnimAt(nspAnimIdx)._frameNo[0];
 		break;
 	case 53 :
 	case 54 :
