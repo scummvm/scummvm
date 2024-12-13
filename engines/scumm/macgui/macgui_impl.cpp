@@ -209,6 +209,8 @@ bool MacGuiImpl::initialize() {
 			{ 0, nullptr, 0, 0, false }
 		};
 
+		// TODO: For V6-7 games we could look at the MBAR resource.
+
 		Common::String aboutMenuDef = _strsStrings[kMSIAboutGameName].c_str();
 		int maxMenu = -1;
 		switch (_vm->_game.id) {
@@ -217,10 +219,6 @@ bool MacGuiImpl::initialize() {
 			maxMenu = 130;
 			break;
 		case GID_MONKEY:
-		case GID_TENTACLE:
-		case GID_SAMNMAX:
-		case GID_DIG:
-		case GID_FT:
 			maxMenu = 131;
 			break;
 		default:
