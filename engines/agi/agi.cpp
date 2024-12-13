@@ -305,7 +305,7 @@ void AgiEngine::unloadResource(int16 resourceType, int16 resourceNr) {
 		unloadLogic(resourceNr);
 		break;
 	case RESOURCETYPE_PICTURE:
-		_picture->unloadPicture(resourceNr);
+		unloadPicture(resourceNr);
 		break;
 	case RESOURCETYPE_VIEW:
 		unloadView(resourceNr);
@@ -315,6 +315,14 @@ void AgiEngine::unloadResource(int16 resourceType, int16 resourceNr) {
 		break;
 	default:
 		break;
+	}
+}
+
+void AgiEngine::unloadPicture(int16 picNr) {
+	if (_game.dirPic[picNr].flags & RES_LOADED) {
+		free(_game.pictures[picNr].rdata);
+		_game.pictures[picNr].rdata = nullptr;
+		_game.dirPic[picNr].flags &= ~RES_LOADED;
 	}
 }
 
