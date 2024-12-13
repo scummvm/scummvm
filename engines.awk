@@ -140,6 +140,13 @@ function get_component_settings(comp) {
 	return ENVIRON["_component_" comp "_settings"]
 }
 
+function have_component(comp) {
+	if (length(ENVIRON["_component_" comp "_settings"]) == 0)
+		return "no"
+
+	return "yes"
+}
+
 function check_engine_deps(engine) {
 	unmet_deps = ""
 
@@ -167,6 +174,13 @@ function check_engine_components(engine) {
 		compcount = get_engine_components(engine, components)
 		for (c = 1; c <= compcount; c++) {
 			enable_component(components[c])
+		}
+
+		# And collect those features that also declared as components
+		depcount = get_engine_dependencies(engine, deps)
+		for (d = 1; d <= depcount; d++) {
+			if (have_component(deps[d]) == "yes")
+				enable_component(deps[d])
 		}
 	}
 }
