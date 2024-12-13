@@ -196,10 +196,16 @@ void TrollEngine::waitAnyKeyIntro() {
 	while (!shouldQuit()) {
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				// don't interrupt if a modifier is pressed
+				if (event.kbd.flags & Common::KBD_NON_STICKY) {
+					continue;
+				}
+				// fall through
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_RBUTTONUP:
 				return;
 			default:
 				break;
@@ -212,11 +218,9 @@ void TrollEngine::waitAnyKeyIntro() {
 			// fall through
 		case 0:
 			drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_2);
-			_system->updateScreen();
 			break;
 		case 100:
 			drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_3);
-			_system->updateScreen();
 			break;
 		default:
 			break;
@@ -356,8 +360,7 @@ void TrollEngine::intro() {
 	clearScreen(0x2F);
 	drawStr(9, 10, kColorDefault, IDS_TRO_INTRO_0);
 	drawStr(14, 15, kColorDefault, IDS_TRO_INTRO_1);
-	_system->updateScreen();
-	_system->delayMillis(3200);
+	wait(3200);
 
 	CursorMan.showMouse(true);
 
