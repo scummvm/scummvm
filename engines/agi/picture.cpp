@@ -913,21 +913,6 @@ void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearSc
 	drawPicture(); // Draw 16 color picture.
 }
 
-/**
- * Unload an AGI picture resource.
- * This function unloads an AGI picture resource and deallocates
- * resource data.
- * @param picNr AGI picture resource number
- */
-void PictureMgr::unloadPicture(int picNr) {
-	// remove visual buffer & priority buffer if they exist
-	if (_vm->_game.dirPic[picNr].flags & RES_LOADED) {
-		free(_vm->_game.pictures[picNr].rdata);
-		_vm->_game.pictures[picNr].rdata = nullptr;
-		_vm->_game.dirPic[picNr].flags &= ~RES_LOADED;
-	}
-}
-
 void PictureMgr::clear() {
 	_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
 }

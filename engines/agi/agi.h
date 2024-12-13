@@ -991,6 +991,10 @@ public:
 	bool testController(uint8 cont);
 	bool testCompareStrings(uint8 s1, uint8 s2);
 
+	// Picture
+private:
+	void unloadPicture(int16 picNr);
+
 	// View
 private:
 	void updateView(ScreenObjEntry *screenObj);
