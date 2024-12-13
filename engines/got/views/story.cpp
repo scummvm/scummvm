@@ -29,11 +29,7 @@ namespace Got {
 namespace Views {
 
 bool Story::msgFocus(const FocusMessage &msg) {
-	char back[4][262];
-
 	res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
-	res_read("OPENBACK", back);
-	res_read("STORYPIC", back);
 
 	res_read("STORYPAL", _G(pbuff));
 	_G(pbuff)[2] = 0;
