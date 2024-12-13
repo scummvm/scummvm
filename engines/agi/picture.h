@@ -54,8 +54,7 @@ enum AgiPictureFlags {
 	kPicFNone      = (1 << 0),
 	kPicFCircle    = (1 << 1),
 	kPicFf3Stop    = (1 << 2),
-	kPicFf3Cont    = (1 << 3),
-	kPicFTrollMode = (1 << 4)
+	kPicFTrollMode = (1 << 3)
 };
 
 class AgiBase;
