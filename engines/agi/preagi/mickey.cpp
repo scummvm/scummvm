@@ -730,7 +730,7 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	_picture->setMaxStep(maxStep);
 	_picture->setOffset(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0);
 	_picture->decodePictureFromBuffer(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void MickeyEngine::drawPic(int iPic) {
@@ -750,7 +750,7 @@ void MickeyEngine::drawPic(int iPic) {
 	_picture->setMaxStep(0);
 	_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
 	_picture->decodePictureFromBuffer(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void MickeyEngine::drawRoomAnimation() {
@@ -795,7 +795,7 @@ void MickeyEngine::drawRoomAnimation() {
 			_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
 			_picture->decodePictureFromBuffer(lightPicture, sizeof(lightPicture), false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 		}
-		_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+		_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 
 		_gameStateMickey.nFrame--;
 		if (_gameStateMickey.nFrame < 0)

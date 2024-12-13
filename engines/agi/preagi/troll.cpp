@@ -149,7 +149,7 @@ void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 	_picture->setPictureFlags(flags);
 	_picture->decodePictureFromBuffer(_gameData + _pictureOffsets[iPic], 4096, false, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
-	_picture->showPic(0, 0, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
+	_picture->showPicture(0, 0, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 	_system->updateScreen();
 }
 

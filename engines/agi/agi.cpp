@@ -544,7 +544,7 @@ void AgiEngine::redrawScreen() {
 	_gfx->setPalette(true); // set graphics mode palette
 	_text->charAttrib_Set(_text->_textAttrib.foreground, _text->_textAttrib.background);
 	_gfx->clearDisplay(0);
-	_picture->showPic();
+	_picture->showPicture();
 	_text->statusDraw();
 	_text->promptRedraw();
 }
