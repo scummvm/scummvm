@@ -169,6 +169,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 	if (objNum == 42) {
 		switch (_objectVar[42]) {
 		case 0:
+		case 4:
 			_console->printTosText(653);
 			break;
 		case 1:
@@ -183,9 +184,6 @@ void Darkseed::UseCode::useCode(int objNum) {
 		case 3:
 			_console->printTosText(655);
 			_objectVar[42] = 4;
-			break;
-		case 4:
-			_console->printTosText(653);
 			break;
 		default:
 			break;
