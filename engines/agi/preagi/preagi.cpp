@@ -285,4 +285,22 @@ void PreAgiEngine::playSpeakerNote(int16 frequency, int32 length) {
 	}
 }
 
+void PreAgiEngine::wait(uint32 delay) {
+	Common::Event event;
+	uint32 startTime = _system->getMillis();
+
+	while (!shouldQuit()) {
+		// process events
+		while (_eventMan->pollEvent(event)) {
+		}
+
+		if (_system->getMillis() - startTime >= delay) {
+			return;
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+}
+
 } // End of namespace Agi

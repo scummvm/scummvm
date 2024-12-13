@@ -101,6 +101,7 @@ protected:
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 
 	void playSpeakerNote(int16 frequency, int32 length);
+	void wait(uint32 delay);
 
 private:
 	int _defaultColor;
