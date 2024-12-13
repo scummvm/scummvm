@@ -75,6 +75,6 @@ private:
 	void freeMorph();
 };
 
-}; // End of namespace Darkseed
+} // namespace Darkseed
 
 #endif // DARKSEED_CUTSCENE_H
