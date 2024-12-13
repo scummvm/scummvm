@@ -1414,7 +1414,7 @@ void MickeyEngine::intro() {
 		playSound(IDI_MSA_SND_PRESS_BLUE);
 
 		//Set screen to white
-		_gfx->clearDisplay(15);
+		_gfx->clearDisplay(getWhite());
 		_gfx->updateScreen();
 
 		_system->delayMillis(IDI_MSA_ANIM_DELAY);

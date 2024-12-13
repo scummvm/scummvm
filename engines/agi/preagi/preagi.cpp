@@ -99,6 +99,18 @@ void PreAgiEngine::clearGfxScreen(int attr) {
 	_gfx->drawDisplayRect(0, 0, DISPLAY_DEFAULT_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
 }
 
+byte PreAgiEngine::getWhite() const {
+	switch (_renderMode) {
+	case Common::kRenderCGA:
+		return 3;
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
+		return 1;
+	default:
+		return 15;
+	}
+}
+
 // String functions
 
 void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {

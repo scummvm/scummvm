@@ -82,6 +82,7 @@ protected:
 	void clearScreen(int attr, bool overrideDefault = true);
 	void clearGfxScreen(int attr);
 	void setDefaultTextColor(int attr) { _defaultColor = attr; }
+	byte getWhite() const;
 
 	// Keyboard
 	int getSelection(SelectionTypes type);
