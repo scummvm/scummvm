@@ -1675,6 +1675,7 @@ void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 42) {
 		switch (_objectVar[42]) {
 		case 0:
+		case 4:
 			_console->printTosText(652);
 			break;
 		case 1:
@@ -1686,9 +1687,6 @@ void DarkseedEngine::lookCode(int objNum) {
 			break;
 		case 3:
 			_console->printTosText(658);
-			break;
-		case 4:
-			_console->printTosText(652);
 			break;
 		default:
 			break;
