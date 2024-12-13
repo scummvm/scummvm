@@ -156,7 +156,8 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		break;
 
 	case 206:
-		debug("Quit");
+		if (runQuitDialog())
+			_vm->quitGame();
 		break;
 
 	// In the original, the Edit menu is active during save dialogs, though
@@ -313,6 +314,15 @@ bool MacV6Gui::runOptionsDialog() {
 }
 
 bool MacV6Gui::runQuitDialog() {
+	MacDialogWindow *window = createDialog(128);
+
+	Common::Array<int> deferredActionsIds;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog(deferredActionsIds);
+	}
+
+	delete window;
 	return true;
 }
 
