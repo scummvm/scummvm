@@ -189,6 +189,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "frankrw",			"Franklin's Reading World" },
 	{ "freakshow",			"Freak Show" },
 	{ "fsky",				"A Field Trip to the Sky" },
+	{ "funquiz",			"FunQuiz" },
 	{ "fuzzyfloppy1",		"Fuzzy & Floppy: The Adventure of the Golden Bee" },
 	{ "gadget",				"Gadget: Invention, Travel & Adventure" },
 	{ "gadgetpaf",			"Gadget: Past as Future" },
@@ -6674,6 +6675,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("franklm", "Demo", "xn--Franklin Learns Math Info.-", "f637b7b88b82c0772082f84a0b2cf628", 705417, 500),
 	WINDEMO1("franklm", "Demo", "FLMINFO.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1119725, 500),
+
+	// Released by Remus
+	WINGAME1_l("funquiz", "", "funquiz.exe", "65ef7246e9ab04aff59fb734e9551727", 2184545, Common::DE_DEU, 501),
 
 	// Other versions are D3
 	PIPGAME1("gadget", "", "GADGET", "d7e907d3933869f055ae59774c87f501", 111000, 501),
