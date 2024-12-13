@@ -1002,12 +1002,4 @@ void PictureMgr::setPictureVersion(AgiPictureVersion version) {
 		_minCommand = 0xf0;
 }
 
-void PictureMgr::setPictureData(uint8 *data, int len) {
-	_data = data;
-	_dataSize = len;
-	_dataOffset = 0;
-	_dataOffsetNibble = false;
-	_flags = 0;
-}
-
 } // End of namespace Agi
