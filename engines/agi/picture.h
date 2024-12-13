@@ -87,8 +87,9 @@ public:
 	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void unloadPicture(int picNr);
-	void drawPicture();
+
 private:
+	void drawPicture();
 	void drawPictureC64();
 	void drawPictureV1();
 	void drawPictureV15();
@@ -114,7 +115,6 @@ public:
 	void showPicWithTransition();
 
 	void setPictureVersion(AgiPictureVersion version);
-	void setPictureData(uint8 *data, int len = 4096);
 
 	void setPictureFlags(int flags) { _flags = flags; }
 
@@ -123,11 +123,6 @@ public:
 	void setOffset(int offX, int offY) {
 		_xOffset = offX;
 		_yOffset = offY;
-	}
-
-	void setDimensions(int w, int h) {
-		_width = w;
-		_height = h;
 	}
 
 	void setMaxStep(int maxStep) { _maxStep = maxStep; }

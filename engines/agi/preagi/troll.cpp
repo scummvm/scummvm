@@ -129,32 +129,27 @@ bool TrollEngine::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 // Graphics
 
 void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
-	_picture->setDimensions(IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
-
 	if (clr) {
 		clearScreen(0x0f, false);
-		_picture->clear();
 	}
 
-	_picture->setPictureData(_gameData + IDO_TRO_FRAMEPIC);
-	_picture->drawPicture();
+	// draw the frame picture
+	_picture->decodePictureFromBuffer(_gameData + IDO_TRO_FRAMEPIC, 4096, clr, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
-	_picture->setPictureData(_gameData + _pictureOffsets[iPic]);
-
-	int addFlag = 0;
-
-	if (troll)
-		addFlag = kPicFTrollMode;
-
+	// draw the picture
+	int flags = 0;
 	if (f3IsCont) {
-		_picture->setPictureFlags(kPicFf3Cont | addFlag);
+		flags |= kPicFf3Cont;
 	} else {
-		_picture->setPictureFlags(kPicFf3Stop | addFlag);
+		flags |= kPicFf3Stop;
 	}
+	if (troll) {
+		flags |= kPicFTrollMode;
+	}
+	_picture->setPictureFlags(flags);
+	_picture->decodePictureFromBuffer(_gameData + _pictureOffsets[iPic], 4096, false, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
-	_picture->drawPicture();
-
-	_picture->showPic(); // TODO: *HAVE* to add coordinates + height/width!!
+	_picture->showPic(0, 0, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 	_system->updateScreen();
 }
 
@@ -426,7 +421,6 @@ int TrollEngine::drawRoom(char *menu) {
 	bool contFlag = false;
 
 	if (_currentRoom == 1) {
-		_picture->setDimensions(IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 		clearScreen(0x00, false);
 		_picture->clear();
 	} else {
