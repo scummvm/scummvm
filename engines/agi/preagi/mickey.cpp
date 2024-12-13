@@ -136,15 +136,13 @@ int MickeyEngine::choose1to9(int ofsPrompt) {
 }
 
 void MickeyEngine::printStr(char *buffer) {
-	int pc = 1;
-	int nRows, iCol, iRow;
-
-	nRows = *buffer + IDI_MSA_ROW_MENU_0;
-
 	clearTextArea();
 
-	for (iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
-		iCol = *(buffer + pc++);
+	int pc = 1;
+	const int nRows = *buffer + IDI_MSA_ROW_MENU_0;
+
+	for (int iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
+		int iCol = *(buffer + pc++);
 		drawStr(iRow, iCol, IDA_DEFAULT, buffer + pc);
 		pc += strlen(buffer + pc) + 1;
 	}
@@ -255,26 +253,12 @@ bool MickeyEngine::checkMenu() {
 }
 
 void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
-	int iWord;
-	int iRow;
-	int sel;
-	uint8 attr;
-
-	// draw menu
-
 	clearTextArea();
 
-	for (iRow = 0; iRow < 2; iRow++) {
-		for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
-			if (iRow)
-				sel = sel1;
-			else
-				sel = sel0;
-
-			if (iWord == sel)
-				attr = IDA_DEFAULT_REV;
-			else
-				attr = IDA_DEFAULT;
+	for (int iRow = 0; iRow < 2; iRow++) {
+		for (int iWord = 0; iWord < menu.row[iRow].count; iWord++) {
+			int sel = (iRow == 0) ? sel0 : sel1;
+			uint8 attr = (iWord == sel) ? IDA_DEFAULT_REV : IDA_DEFAULT;
 
 			drawStr(IDI_MSA_ROW_MENU_0 + iRow, menu.row[iRow].entry[iWord].x0,
 			        attr, (char *)menu.row[iRow].entry[iWord].szText);
@@ -286,7 +270,6 @@ void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
 }
 
 void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow, int x, int y) {
-	int iWord;
 	int *sel = nullptr;
 
 	switch (iRow) {
@@ -302,7 +285,7 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int 
 		return;
 	}
 
-	for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
+	for (int iWord = 0; iWord < menu.row[iRow].count; iWord++) {
 		if ((x >= menu.row[iRow].entry[iWord].x0) &&
 		        (x < (int)(menu.row[iRow].entry[iWord].x0 +
 		                   strlen((char *)menu.row[iRow].entry[iWord].szText)))) {
@@ -315,7 +298,6 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int 
 bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow) {
 	Common::Event event;
 	int *sel = nullptr;
-	int nWords;
 	int x, y;
 	int goIndex = -1, northIndex = -1, southIndex = -1, eastIndex = -1, westIndex = -1;
 
@@ -329,7 +311,7 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow)
 	default:
 		break;
 	}
-	nWords = menu.row[iRow].count;
+	int nWords = menu.row[iRow].count;
 	_clickToMove = false;
 
 	for (int i = 0; i <= menu.row[0].count; i++)
@@ -587,19 +569,15 @@ void MickeyEngine::getMenuSel(char *buffer, int *sel0, int *sel1) {
 }
 
 void MickeyEngine::centerMenu(MSA_MENU *menu) {
-	int iWord;
-	int iRow;
-	int w, x;
-
-	for (iRow = 0; iRow < 2; iRow++) {
-		w = 0;
-		for (iWord = 0; iWord < menu->row[iRow].count; iWord++) {
+	for (int iRow = 0; iRow < 2; iRow++) {
+		int w = 0;
+		for (int iWord = 0; iWord < menu->row[iRow].count; iWord++) {
 			w += strlen((char *)menu->row[iRow].entry[iWord].szText);
 		}
 		w += menu->row[iRow].count - 1;
-		x = (40 - w) / 2;   // FIX
+		int x = (40 - w) / 2;   // FIX
 
-		for (iWord = 0; iWord < menu->row[iRow].count; iWord++) {
+		for (int iWord = 0; iWord < menu->row[iRow].count; iWord++) {
 			menu->row[iRow].entry[iWord].x0 = x;
 			x += strlen((char *)menu->row[iRow].entry[iWord].szText) + 1;
 		}
@@ -607,11 +585,6 @@ void MickeyEngine::centerMenu(MSA_MENU *menu) {
 }
 
 void MickeyEngine::patchMenu(MSA_MENU *menu) {
-	uint8 buffer[512];
-	uint8 menubuf[sizeof(MSA_MENU)];
-	int nPatches;
-	int pBuf = 0;
-
 	// change planet name in ship airlock menu
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_SHIP_AIRLOCK) {
 		Common::strcpy_s(menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
@@ -624,9 +597,11 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 	}
 
 	// copy menu to menubuf
+	uint8 menubuf[sizeof(MSA_MENU)];
 	memcpy(menubuf, menu, sizeof(menubuf));
 
 	// read patches
+	uint8 buffer[512];
 	readOfsData(
 	    IDOFS_MSA_MENU_PATCHES,
 	    _gameStateMickey.nRmMenu[_gameStateMickey.iRoom] + _gameStateMickey.iRmMenu[_gameStateMickey.iRoom] - 1,
@@ -634,7 +609,8 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 	);
 
 	// get number of patches
-	nPatches = buffer[pBuf++];
+	int pBuf = 0;
+	int nPatches = buffer[pBuf++];
 
 	// patch menubuf
 	for (int iPatch = 0; iPatch < nPatches; iPatch++) {
@@ -754,7 +730,6 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	_picture->setMaxStep(maxStep);
 	_picture->setOffset(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0);
 	_picture->decodePictureFromBuffer(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->setOffset(0, 0);
 	_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
@@ -775,7 +750,6 @@ void MickeyEngine::drawPic(int iPic) {
 	_picture->setMaxStep(0);
 	_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
 	_picture->decodePictureFromBuffer(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->setOffset(0, 0);
 	_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
@@ -804,12 +778,10 @@ void MickeyEngine::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_URANUS: {
 		// draw blinking ship lights
 
-		uint8 iColor = 0;
-
 		_picture->setPattern(2, 0);
 
 		for (int i = 0; i < 12; i++) {
-			iColor = _gameStateMickey.nFrame + i;
+			uint8 iColor = _gameStateMickey.nFrame + i;
 			if (iColor > 15)
 				iColor -= 15;
 
@@ -871,10 +843,6 @@ void MickeyEngine::drawRoomAnimation() {
 }
 
 void MickeyEngine::drawRoom() {
-	uint8 buffer[512];
-	int pBuf = 0;
-	int nObjs;
-
 	// Draw room picture
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_TITLE) {
 		drawPic(IDI_MSA_PIC_TITLE);
@@ -894,10 +862,12 @@ void MickeyEngine::drawRoom() {
 	// Draw room objects
 	if (_gameStateMickey.iRoom < IDI_MSA_MAX_ROOM &&
 		_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
+		uint8 buffer[512];
 		readOfsData(IDO_MSA_ROOM_OBJECT_XY_OFFSETS,
 		            _gameStateMickey.iRmObj[_gameStateMickey.iRoom], buffer, sizeof(buffer));
 
-		nObjs = buffer[pBuf++];
+		int pBuf = 0;
+		int nObjs = buffer[pBuf++];
 
 		for (int iObj = 0; iObj < nObjs; iObj++) {
 			drawObj((ENUM_MSA_OBJECT)buffer[pBuf], buffer[pBuf + 1], buffer[pBuf + 2]);
@@ -910,23 +880,18 @@ void MickeyEngine::drawRoom() {
 }
 
 // Straight mapping, CGA colors to CGA
-const byte BCGColorMappingCGAToCGA[4] = {
+static const byte BCGColorMappingCGAToCGA[4] = {
 	0, 1, 2, 3
 };
 
 // Mapping table to map CGA colors to EGA
-const byte BCGColorMappingCGAToEGA[4] = {
+static const byte BCGColorMappingCGAToEGA[4] = {
 	0, 11, 13, 15
 };
 
 void MickeyEngine::drawLogo() {
 	const int width = 80;
 	const int height = 85 * 2;
-	byte  color1, color2, color3, color4;
-	byte  *fileBuffer = nullptr;
-	uint32 fileBufferSize = 0;
-	byte  *dataBuffer;
-	byte   curByte;
 	const byte *BCGColorMapping = BCGColorMappingCGAToEGA;
 
 	// disable color mapping in case we are in CGA mode
@@ -938,8 +903,8 @@ void MickeyEngine::drawLogo() {
 	if (!infile.open(IDS_MSA_PATH_LOGO))
 		return;
 
-	fileBufferSize = infile.size();
-	fileBuffer = new byte[fileBufferSize];
+	uint32 fileBufferSize = infile.size();
+	byte *fileBuffer = new byte[fileBufferSize];
 	infile.read(fileBuffer, fileBufferSize);
 	infile.close();
 
@@ -948,15 +913,15 @@ void MickeyEngine::drawLogo() {
 
 	// Show BCG picture
 	// It's basically uncompressed CGA 4-color data (4 pixels per byte)
-	dataBuffer = fileBuffer;
+	byte *dataBuffer = fileBuffer;
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			curByte = *dataBuffer++;
+			byte curByte = *dataBuffer++;
 
-			color1 = BCGColorMapping[(curByte >> 6) & 0x03];
-			color2 = BCGColorMapping[(curByte >> 4) & 0x03];
-			color3 = BCGColorMapping[(curByte >> 2) & 0x03];
-			color4 = BCGColorMapping[(curByte >> 0) & 0x03];
+			byte color1 = BCGColorMapping[(curByte >> 6) & 0x03];
+			byte color2 = BCGColorMapping[(curByte >> 4) & 0x03];
+			byte color3 = BCGColorMapping[(curByte >> 2) & 0x03];
+			byte color4 = BCGColorMapping[(curByte >> 0) & 0x03];
 
 			_gfx->putPixelOnDisplay(x * 4 + 0, y, color1);
 			_gfx->putPixelOnDisplay(x * 4 + 1, y, color2);
@@ -990,12 +955,10 @@ bool MickeyEngine::loadGame() {
 	Common::InSaveFile *infile;
 	char szFile[256] = {0};
 	bool diskerror = true;
-	int sel;
-	int saveVersion = 0;
 	int i = 0;
 
 	while (diskerror) {
-		sel = choose1to9(IDO_MSA_LOAD_GAME[1]);
+		int sel = choose1to9(IDO_MSA_LOAD_GAME[1]);
 		if (!sel)
 			return false;
 
@@ -1009,12 +972,14 @@ bool MickeyEngine::loadGame() {
 		} else {
 			if (infile->readUint32BE() != MKTAG('M', 'I', 'C', 'K')) {
 				warning("MickeyEngine::loadGame wrong save game format");
+				delete infile;
 				return false;
 			}
 
-			saveVersion = infile->readByte();
+			byte saveVersion = infile->readByte();
 			if (saveVersion != MSA_SAVEGAME_VERSION) { // currently only one valid version
 				warning("MickeyEngine::loadGame unknown save version: %d", saveVersion);
+				delete infile;
 				return false;
 			}
 
@@ -1087,7 +1052,6 @@ void MickeyEngine::saveGame() {
 	Common::OutSaveFile *outfile;
 	char szFile[256] = {0};
 	bool diskerror = true;
-	int sel;
 	int i = 0;
 
 	bool fOldDisk = chooseY_N(IDO_MSA_SAVE_GAME[0], false);
@@ -1101,7 +1065,7 @@ void MickeyEngine::saveGame() {
 		return;
 
 	while (diskerror) {
-		sel = choose1to9(IDO_MSA_SAVE_GAME[3]);
+		int sel = choose1to9(IDO_MSA_SAVE_GAME[3]);
 		if (!sel)
 			return;
 
@@ -1202,13 +1166,12 @@ void MickeyEngine::showPlanetInfo() {
 void MickeyEngine::printStory() {
 	char buffer[IDI_MSA_LEN_STORY] = {0};
 	char szLine[41] = {0};
-	int iRow;
 	int pBuf = 0;
 
 	readExe(IDO_MSA_GAME_STORY, (uint8 *)buffer, sizeof(buffer));
 
 	clearScreen(IDA_DEFAULT);
-	for (iRow = 0; iRow < 25; iRow++) {
+	for (int iRow = 0; iRow < 25; iRow++) {
 		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
@@ -1216,7 +1179,7 @@ void MickeyEngine::printStory() {
 	waitAnyKey();
 
 	clearScreen(IDA_DEFAULT);
-	for (iRow = 0; iRow < 21; iRow++) {
+	for (int iRow = 0; iRow < 21; iRow++) {
 		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
