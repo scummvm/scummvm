@@ -5014,11 +5014,6 @@ echo "$_detection_features_full"
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 #
-# Check whether Lua support is requested
-#
-define_in_config_if_yes "$_lua" 'USE_LUA'
-
-#
 # Check whether Nuked OPL emulator support is disabled
 #
 define_in_config_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
@@ -5417,7 +5412,7 @@ if test "$_theoradec" = yes ; then
 	append_var LIBS "$THEORADEC_LIBS"
 	append_var INCLUDES "$THEORADEC_CFLAGS"
 fi
-define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
+
 if test ! "$_theoradec" = notsupported ; then
 	echo "$_theoradec"
 fi
@@ -5467,7 +5462,7 @@ if test "$_vpx" = yes ; then
 	append_var LIBS "$VPX_LIBS -lvpx"
 	append_var INCLUDES "$VPX_CFLAGS"
 fi
-define_in_config_if_yes "$_vpx" 'USE_VPX'
+
 if test ! "$_vpx" = notsupported ; then
 	echo "$_vpx"
 fi
