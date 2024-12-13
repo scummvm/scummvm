@@ -1013,13 +1013,10 @@ bool MickeyEngine::loadGame() {
 			}
 
 			saveVersion = infile->readByte();
-			if (saveVersion < 2) {
-				warning("The planet data in this save game is corrupted. Load aborted");
+			if (saveVersion != MSA_SAVEGAME_VERSION) { // currently only one valid version
+				warning("MickeyEngine::loadGame unknown save version: %d", saveVersion);
 				return false;
 			}
-
-			if (saveVersion != MSA_SAVEGAME_VERSION)
-				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, MSA_SAVEGAME_VERSION);
 
 			_gameStateMickey.iRoom = infile->readByte();
 			_gameStateMickey.iPlanet = infile->readByte();
@@ -1426,9 +1423,7 @@ void MickeyEngine::intro() {
 	_gameStateMickey.fIntro = true;
 	if (chooseY_N(IDO_MSA_LOAD_GAME[0], true)) {
 		if (loadGame()) {
-			_gameStateMickey.iPlanet = IDI_MSA_PLANET_EARTH;
 			_gameStateMickey.fIntro = false;
-			_gameStateMickey.iRoom = IDI_MSA_PIC_SHIP_CORRIDOR;
 			return;
 		}
 	}
