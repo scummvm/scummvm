@@ -42,7 +42,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("TOS.EXE", "679abf5829b2453d30b17caabafea168", 168432),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_CD,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{	// 1.51 according to DS.BAT, 1.5P according to intro
@@ -51,7 +51,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("TOS.EXE", "afaeb490ef8e7625008867aa8f20c703", 168480),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_CD,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
