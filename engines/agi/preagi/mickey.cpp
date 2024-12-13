@@ -754,10 +754,6 @@ void MickeyEngine::drawPic(int iPic) {
 }
 
 void MickeyEngine::drawRoomAnimation() {
-	uint8 objLight[] = {
-		0xF0, 1, 0xF9, 2, 43, 45, 0xFF
-	};
-
 	switch (_gameStateMickey.iRoom) {
 	case IDI_MSA_PIC_EARTH_SHIP:
 	case IDI_MSA_PIC_VENUS_SHIP:
@@ -777,22 +773,27 @@ void MickeyEngine::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_MARS:
 	case IDI_MSA_PIC_SHIP_URANUS: {
 		// draw blinking ship lights
-
-		_picture->setPattern(2, 0);
+		uint8 lightPicture[] = {
+			0xF0, 1,          // Set Color: 1
+			0xF9, 2, 43, 45,  // Set Pattern: 2, plot at 43,45
+			0xFF              // End
+		};
 
 		for (int i = 0; i < 12; i++) {
 			uint8 iColor = _gameStateMickey.nFrame + i;
 			if (iColor > 15)
 				iColor -= 15;
 
-			objLight[1] = iColor;
-			objLight[4] += 7;
+			// FIXME: this is not the correct animation pattern.
+			// the lights do not simply advance in a sequence from
+			// left to right in the original, they do something else.
+			lightPicture[1] = iColor; // change light color
+			lightPicture[4] += 7;     // increase x coordinate
 
-			_picture->setPictureData(objLight);
 			_picture->setPictureFlags(kPicFCircle);
 			_picture->setMaxStep(0);
 			_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
-			_picture->drawPicture();
+			_picture->decodePictureFromBuffer(lightPicture, sizeof(lightPicture), false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 		}
 		_picture->showPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 

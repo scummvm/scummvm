@@ -74,6 +74,7 @@ public:
 private:
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
+	void plotPattern(int x, int y);
 	void plotBrush();
 
 	byte getNextByte();
@@ -111,10 +112,6 @@ public:
 	void showPic(); // <-- for regular AGI games
 	void showPic(int16 x, int16 y, int16 pic_width, int16 pic_height); // <-- for preAGI games
 	void showPicWithTransition();
-
-	void plotPattern(int x, int y);     // public because it's used directly by preagi
-
-	void setPattern(uint8 code, uint8 num);
 
 	void setPictureVersion(AgiPictureVersion version);
 	void setPictureData(uint8 *data, int len = 4096);
