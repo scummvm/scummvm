@@ -469,9 +469,8 @@ void Darkseed::UseCode::useCode(int objNum) {
 			_console->addToCurrentLine(Common::String::format("%s.", _objectVar.getObjectName(objNum)));
 			_inventory.addItem(objNum);
 			g_engine->_room->_collisionType = 0;
-			if (objNum != 25 || _objectVar[25] == 1 || _objectVar[25] == 101) {
-				g_engine->_room->removeObjectFromRoom(objNum);
-			}
+			g_engine->_room->removeObjectFromRoom(objNum);
+
 			_objectVar.setMoveObjectRoom(objNum, 254);
 			if (objNum == 28) {
 				_objectVar[28] = 1;
