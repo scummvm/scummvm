@@ -1283,9 +1283,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 							y = 0x71;
 						} else if (_player->_frameIdx == 4) {
 							x = 0x75;
-							y = 0x69;
 						} else if (_player->_frameIdx == 7) {
-							x = 0xa6;
 							y = 0x5b;
 						}
 
