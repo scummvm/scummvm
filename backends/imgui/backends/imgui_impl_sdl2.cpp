@@ -130,7 +130,7 @@
 #if SDL_HAS_VULKAN
 //extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
 #include <SDL_vulkan.h>
-#elif
+#else
 static const Uint32 SDL_WINDOW_VULKAN = 0x10000000;
 #endif
 
