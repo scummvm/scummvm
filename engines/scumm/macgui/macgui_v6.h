@@ -35,6 +35,8 @@ private:
 	byte *_backupPalette;
 	Graphics::Surface *_backupSurface;
 
+	int _lightLevel = 0;
+
 public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV6Gui();
@@ -58,6 +60,9 @@ protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
 	bool handleMenu(int id, Common::String &name) override;
+
+	void lightsOff() override;
+	void lightsOn() override;
 
   	void onMenuOpen() override;
 	void onMenuClose() override;

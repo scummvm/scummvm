@@ -186,70 +186,81 @@ uint32 MacV6Gui::getWhite() const {
 	return 251;
 }
 
+void MacV6Gui::lightsOff() {
+	if (_lightLevel++ == 0) {
+		Graphics::Surface *screen = _vm->_macScreen;
+
+		_backupSurface = new Graphics::Surface();
+		_backupSurface->copyFrom(*screen);
+
+		_backupPalette = new byte[256 * 3];
+
+		screen->fillRect(Common::Rect(screen->w, screen->h), 255);
+		memcpy(_backupPalette, _vm->_currentPalette, 256 * 3);
+
+		for (int i = 0; i < 256; i++)
+			_vm->setPalColor(i, 0, 0, 0);
+
+		// HACK: Make sure we have the Mac window manager's preferred colors
+		// and other GUI elements. We put it at the end, because the beginning
+		// of the palette is reserved for icon palettes.
+		//
+		// TODO: Make sure that this palette doesn't get overwritten!
+
+		_vm->setPalColor(255, 0, 0, 0);          // Black
+		_vm->setPalColor(254, 0x80, 0x80, 0x80); // Gray80
+		_vm->setPalColor(253, 0x88, 0x88, 0x88); // Gray88
+		_vm->setPalColor(252, 0xEE, 0xEE, 0xEE); // GrayEE
+		_vm->setPalColor(251, 0xFF, 0xFF, 0xFF); // White
+		_vm->setPalColor(250, 0x00, 0xFF, 0x00); // Green
+		_vm->setPalColor(249, 0x00, 0xCF, 0x00); // Green2
+
+		_vm->setPalColor(248, 0xCC, 0xCC, 0xFF);
+		_vm->setPalColor(247, 0xBB, 0xBB, 0xBB);
+		_vm->setPalColor(246, 0x66, 0x66, 0x99);
+
+		_vm->updatePalette();
+		_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+		_system->updateScreen();
+
+		// HACK: Make sure the Mac window manager is operating on a blank screen
+		if (_windowManager->_screenCopy)
+			_windowManager->_screenCopy->copyFrom(*screen);
+	}
+}
+
+void MacV6Gui::lightsOn() {
+	assert(_lightLevel > 0);
+
+	if (--_lightLevel == 0) {
+		Graphics::Surface *screen = _vm->_macScreen;
+
+		screen->copyFrom(*_backupSurface);
+
+		byte *p = _backupPalette;
+		for (int i = 0; i < 256; i++, p += 3)
+			_vm->setPalColor(i, p[0], p[1], p[2]);
+
+		_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
+		_vm->updatePalette();
+
+		_backupSurface->free();
+		delete _backupSurface;
+		_backupSurface = nullptr;
+
+		delete _backupPalette;
+		_backupPalette = nullptr;
+	}
+}
+
 void MacV6Gui::onMenuOpen() {
 	MacGuiImpl::onMenuOpen();
-
-	Graphics::Surface *screen = _vm->_macScreen;
-
-	_backupSurface = new Graphics::Surface();
-	_backupSurface->copyFrom(*screen);
-
-	_backupPalette = new byte[256 * 3];
-
-	screen->fillRect(Common::Rect(screen->w, screen->h), 255);
-	memcpy(_backupPalette, _vm->_currentPalette, 256 * 3);
-
-	for (int i = 0; i < 256; i++)
-		_vm->setPalColor(i, 0, 0, 0);
-
-	// HACK: Make sure we have the Mac window manager's preferred colors
-	// and other GUI elements. We put it at the end, because the beginning
-	// of the palette is reserved for icon palettes.
-	//
-	// TODO: Make sure that this palette doesn't get overwritten!
-	//
-	// TODO: Make sure this palette is available to the GUI even when the
-	// menu hasn't been opened by mouseover!
-
-	_vm->setPalColor(255, 0, 0, 0);          // Black
-	_vm->setPalColor(254, 0x80, 0x80, 0x80); // Gray80
-	_vm->setPalColor(253, 0x88, 0x88, 0x88); // Gray88
-	_vm->setPalColor(252, 0xEE, 0xEE, 0xEE); // GrayEE
-	_vm->setPalColor(251, 0xFF, 0xFF, 0xFF); // White
-	_vm->setPalColor(250, 0x00, 0xFF, 0x00); // Green
-	_vm->setPalColor(249, 0x00, 0xCF, 0x00); // Green2
-
-	_vm->setPalColor(248, 0xCC, 0xCC, 0xFF);
-	_vm->setPalColor(247, 0xBB, 0xBB, 0xBB);
-	_vm->setPalColor(246, 0x66, 0x66, 0x99);
-
-	_vm->updatePalette();
-	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-	_system->updateScreen();
-
-	// HACK: Make sure the Mac window manager is operating on a blank screen
-	_windowManager->_screenCopy->copyFrom(*screen);
+	lightsOff();
 }
 
 void MacV6Gui::onMenuClose() {
 	MacGuiImpl::onMenuClose();
-	Graphics::Surface *screen = _vm->_macScreen;
-
-	screen->copyFrom(*_backupSurface);
-
-	byte *p = _backupPalette;
-	for (int i = 0; i < 256; i++, p += 3)
-		_vm->setPalColor(i, p[0], p[1], p[2]);
-
-	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-	_vm->updatePalette();
-
-	_backupSurface->free();
-	delete _backupSurface;
-	_backupSurface = nullptr;
-
-	delete _backupPalette;
-	_backupPalette = nullptr;
+	lightsOn();
 }
 
 void MacV6Gui::runAboutDialog() {

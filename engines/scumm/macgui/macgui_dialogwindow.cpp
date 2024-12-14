@@ -40,16 +40,11 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
-	_gui->updatePalette();
-
 	// Only apply menu style if the menu is open.
 	Graphics::MacMenu *menu = _gui->_windowManager->getMenu();
 
 	if (!menu->_active)
 		menuStyle = kMenuStyleNone;
-
-	_black = _gui->getBlack();
-	_white = _gui->getWhite();
 
 	_pauseToken = _gui->_vm->pauseEngine();
 
@@ -59,6 +54,12 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 
 	_shakeWasEnabled = _gui->_vm->_shakeEnabled;
 	_gui->_vm->setShake(0);
+
+	_gui->lightsOff();
+	_gui->updatePalette();
+
+	_black = _gui->getBlack();
+	_white = _gui->getWhite();
 
 	_backup = new Graphics::Surface();
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -189,6 +190,8 @@ MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
 	_widgets.clear();
 	_pauseToken.clear();
 	_gui->_vm->setShake(_shakeWasEnabled);
+
+	_gui->lightsOn();
 }
 
 void MacGuiImpl::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {

@@ -224,6 +224,9 @@ protected:
 	virtual void onMenuOpen();
 	virtual void onMenuClose();
 
+	virtual void lightsOff() {}
+	virtual void lightsOn() {}
+
 	virtual void runAboutDialog() = 0;
 	virtual bool runOpenDialog(int &saveSlotToHandle);
 	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName);
