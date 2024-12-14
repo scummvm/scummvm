@@ -138,7 +138,7 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 202:
-		debug("Skip scene");
+		_vm->processKeyboard(Common::KEYCODE_ESCAPE);
 		return true;
 
 	case 203:
