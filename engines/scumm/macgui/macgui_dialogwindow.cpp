@@ -87,26 +87,17 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 				s->frameRect(r, _black);
 			}
 		} else {
-			uint32 c1 = _gui->_windowManager->findBestColor(0xCC, 0xCC, 0xFF);
-			uint32 c2 = _gui->_windowManager->findBestColor(0xBB, 0xBB, 0xBB);
-			uint32 c3 = _gui->_windowManager->findBestColor(0x66, 0x66, 0x99);
+			uint32 light = _gui->_windowManager->findBestColor(0xCC, 0xCC, 0xFF);
+			uint32 medium = _gui->_windowManager->findBestColor(0xBB, 0xBB, 0xBB);
+			uint32 dark = _gui->_windowManager->findBestColor(0x66, 0x66, 0x99);
 
-			r.grow(1);
 			s->frameRect(r, _black);
-			r.grow(-2);
-			s->frameRect(r, c2);
-			r.grow(-2);
-			s->frameRect(r, _black);
-
-			s->hLine(r.left - 3, r.top - 3, r.right + 1, c1);
-			s->hLine(r.left, r.bottom, r.right, c1);
-			s->vLine(r.left - 3, r.top - 2, r.bottom + 1, c1);
-			s->vLine(r.right, r.top, r.bottom, c1);
-
-			s->hLine(r.left - 1, r.top - 1, r.right, c3);
-			s->hLine(r.left - 3, r.bottom + 2, r.right + 2, c3);
-			s->vLine(r.left - 1, r.top, r.bottom, c3);
-			s->vLine(r.right + 2, r.top - 3, r.bottom + 1, c3);
+			s->frameRect(Common::Rect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1), dark);
+			s->frameRect(Common::Rect(r.left + 1, r.top + 1, r.right - 2, r.bottom - 2), light);
+			s->frameRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.bottom - 2), medium);
+			s->frameRect(Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.bottom - 3), dark);
+			s->frameRect(Common::Rect(r.left + 4, r.top + 4, r.right - 3, r.bottom - 3), light);
+			s->frameRect(Common::Rect(r.left + 4, r.top + 4, r.right - 4, r.bottom - 4), _black);
 		}
 	} else if (windowStyle == kWindowStyleRounded) {
 		r.grow(1);
