@@ -344,6 +344,7 @@ bool MacV6Gui::runOptionsDialog() {
 }
 
 bool MacV6Gui::runQuitDialog() {
+	// TODO: 192 in Maniac Mansion? The icon looks wrong in that one.
 	MacDialogWindow *window = createDialog(128);
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
