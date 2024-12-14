@@ -146,9 +146,13 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 204:	// Restart
-		debug("Restart");
-		if (runRestartDialog())
+		if (runRestartDialog()) {
+			// WORKAROUND: Don't turn the lights back on because
+			// that will mess up the palette.
+			_lightLevel = 0;
+
 			_vm->restart();
+		}
 		return true;
 
 	case 205:
@@ -230,7 +234,9 @@ void MacV6Gui::lightsOff() {
 }
 
 void MacV6Gui::lightsOn() {
-	assert(_lightLevel > 0);
+	// This will happen on restart
+	if (_lightLevel == 0)
+		return;
 
 	if (--_lightLevel == 0) {
 		Graphics::Surface *screen = _vm->_macScreen;
@@ -377,7 +383,42 @@ bool MacV6Gui::runQuitDialog() {
 }
 
 bool MacV6Gui::runRestartDialog() {
-	return true;
+	// TODO: 193 in Maniac Mansion? The icon looks wrong in that one.
+	MacDialogWindow *window = createDialog(137);
+
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
+
+	textWidget->setWordWrap(true);
+
+	window->setDefaultWidget(buttonOk);
+
+	// Only Day of the Tentacle seems to have a Restart dialog?
+	window->addSubstitution("");
+	window->addSubstitution("");
+	window->addSubstitution("");
+	window->addSubstitution("Day of the Tentacle");
+
+	Common::Array<int> deferredActionsIds;
+
+	// When quitting, the default action is to quit
+	bool ret = true;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog(deferredActionsIds);
+
+		if (clicked == buttonOk->getId())
+			break;
+
+		if (clicked == buttonCancel->getId()) {
+			ret = false;
+			break;
+		}
+	}
+
+	delete window;
+	return ret;
 }
 
 void MacV6Gui::resetAfterLoad() {
