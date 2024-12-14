@@ -42,6 +42,7 @@ public:
 private:
 	void conv706a();
 	void subA8BA8(int32 trigger, const char *digiName);
+	void subA85B0(int32 trigger, int val1);
 
 	int32 _field78_mode = 0;
 	int32 _field7C_should = 0;
@@ -52,14 +53,18 @@ private:
 	int32 _706Monk3Series = 0;
 	int32 _706Monk4Series = 0;
 	int32 _706RipGoesDownStairsSeries = 0;
+	int32 _706RipGoesUpStairsSeries = 0;
 	int32 _ripLooksDownSeries = 0;
 	int32 _ripShieldsFaceSeries = 0;
+	int32 _ripStepsDownSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 
+	machine *_downToMazeMach = nullptr;
 	machine *_monkMach = nullptr;
 	machine *_prayerWheelMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle
