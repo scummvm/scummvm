@@ -99,7 +99,8 @@ diff --color -rbu ./backends/imgui_impl_sdl2.cpp ../scummvm/scummvm/backends/img
 -extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
 +//extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
 +#include <SDL_vulkan.h>
- #elif
+-#elif
++#else
  static const Uint32 SDL_WINDOW_VULKAN = 0x10000000;
  #endif
 @@ -346,6 +348,11 @@
