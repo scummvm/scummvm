@@ -717,8 +717,8 @@ protected:
 	void patchMenu(MSA_MENU *);
 	void printDatString(int);
 	void printDatMessage(int);
-	void playNote(MSA_SND_NOTE);
-	void playSound(ENUM_MSA_SOUND);
+	bool playNote(MSA_SND_NOTE note, WaitOptions options);
+	bool playSound(ENUM_MSA_SOUND iSound, WaitOptions options = kWaitProcessEvents);
 	void drawRoomAnimation();
 	void drawRoom();
 	bool drawLogo();

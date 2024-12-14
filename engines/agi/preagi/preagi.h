@@ -50,6 +50,13 @@ enum SelectionTypes {
 	kSelBackspace
 };
 
+// Options for controlling behavior during waits and sound playback
+enum WaitOptions {
+	kWaitBlock          = 0x00, // no event processing, cannot be interrupted
+	kWaitProcessEvents  = 0x01, // process events, stops on quit
+	kWaitAllowInterrupt = 0x03  // process events, stops on input or quit
+};
+
 class PreAgiEngine : public AgiBase {
 	int _gameId;
 
@@ -101,8 +108,8 @@ protected:
 	// Saved Games
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 
-	void playSpeakerNote(int16 frequency, int32 length);
-	void wait(uint32 delay);
+	bool playSpeakerNote(int16 frequency, int32 length, WaitOptions options);
+	bool wait(uint32 delay, WaitOptions options = kWaitProcessEvents);
 
 private:
 	int _defaultColor;

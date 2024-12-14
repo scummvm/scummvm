@@ -472,7 +472,10 @@ void TrollEngine::playTune(int tune, int len) {
 		int duration = READ_LE_UINT16(_gameData + ptr);
 		ptr += 2;
 
-		playSpeakerNote(freq, duration);
+		// Play note without processing events.
+		// The sounds are so short in this game that we don't
+		// need to process events while playing notes.
+		playSpeakerNote(freq, duration, kWaitBlock);
 	}
 }
 

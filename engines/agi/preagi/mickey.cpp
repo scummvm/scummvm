@@ -635,18 +635,19 @@ void MickeyEngine::printDatMessage(int iStr) {
 
 // Sound
 
-void MickeyEngine::playNote(MSA_SND_NOTE note) {
-	if (!note.counter) {
-		// Pause
-		_system->delayMillis((uint)(note.length / IDI_SND_TIMER_RESOLUTION));
-	} else {
-		playSpeakerNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, (int32)(note.length / IDI_SND_TIMER_RESOLUTION));
+bool MickeyEngine::playNote(MSA_SND_NOTE note, WaitOptions options) {
+	int16 frequency = 0;
+	if (note.counter != 0) {
+		frequency = IDI_SND_OSCILLATOR_FREQUENCY / note.counter;
 	}
+	int32 lengthMs = (int32)(note.length / IDI_SND_TIMER_RESOLUTION);
+	return playSpeakerNote(frequency, lengthMs, options);
 }
 
-void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
+bool MickeyEngine::playSound(ENUM_MSA_SOUND iSound, WaitOptions options) {
+	bool completed = true;
 	if (!getFlag(VM_FLAG_SOUND_ON))
-		return;
+		return completed;
 
 	Common::Event event;
 	MSA_SND_NOTE note;
@@ -658,7 +659,10 @@ void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
 		for (int iNote = 0; iNote < 6; iNote++) {
 			note.counter = rnd(59600) + 59;
 			note.length = 4;
-			playNote(note);
+			if (!playNote(note, options)) {
+				completed = false;
+				break;
+			}
 		}
 		break;
 	default:
@@ -669,36 +673,19 @@ void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
 			if (!note.counter && !note.length)
 				break;
 
-			playNote(note);
+			if (!playNote(note, options)) {
+				completed = false;
+				break;
+			}
 
 			pBuf += 3;
-
-			if (iSound == IDI_MSA_SND_THEME) {
-				while (_system->getEventManager()->pollEvent(event)) {
-					switch (event.type) {
-					case Common::EVENT_KEYDOWN:
-						// don't interrupt if a modifier is pressed
-						if (event.kbd.flags & Common::KBD_NON_STICKY) {
-							continue;
-						}
-						// fall through
-					case Common::EVENT_RETURN_TO_LAUNCHER:
-					case Common::EVENT_QUIT:
-					case Common::EVENT_LBUTTONUP:
-					case Common::EVENT_RBUTTONUP:
-						delete[] buffer;
-						return;
-					default:
-						break;
-					}
-				}
-			}
 		}
 
 		break;
 	}
 
 	delete[] buffer;
+	return completed;
 }
 
 // Graphics
@@ -801,7 +788,11 @@ void MickeyEngine::drawRoomAnimation() {
 		if (_gameStateMickey.nFrame < 0)
 			_gameStateMickey.nFrame = 15;
 
-		playSound(IDI_MSA_SND_PRESS_BLUE);
+		// play the spaceship beep but don't process events during playback.
+		// this sound plays during menu usage, so events must not be consumed
+		// while waiting or else inputs will be dropped. playing this sound
+		// does create an input lag, but that is what happened in the original.
+		playSound(IDI_MSA_SND_PRESS_BLUE, kWaitBlock);
 	}
 	break;
 
@@ -1374,14 +1365,15 @@ void MickeyEngine::intro() {
 	_gameStateMickey.iRoom = IDI_MSA_PIC_TITLE;
 	drawRoom();
 
-	// show copyright and play theme
+	// show copyright
 	printExeMsg(IDO_MSA_COPYRIGHT);
 
 	// Quit if necessary
 	if (shouldQuit())
 		return;
 
-	playSound(IDI_MSA_SND_THEME);
+	// play theme
+	playSound(IDI_MSA_SND_THEME, kWaitAllowInterrupt);
 
 	// load game
 	_gameStateMickey.fIntro = true;
