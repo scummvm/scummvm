@@ -321,6 +321,7 @@ add_component lua "lua" "USE_LUA"
 add_component vpx "libvpx" "USE_VPX"
 add_component theoradec "libtheoradec" "USE_THEORADEC"
 add_component mt32emu "mt32emu" "USE_MT32EMU"
+add_component tinygl "TinyGL" "USE_TINYGL"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -6942,7 +6943,6 @@ echo_n "Building TinyGL support... "
 if test "$_16bit" = "no"; then
 	_tinygl=no
 fi
-define_in_config_if_yes $_tinygl 'USE_TINYGL'
 echo "$_tinygl"
 
 echo_n "Building any 3D game... "
