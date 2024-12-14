@@ -143,10 +143,10 @@ void Room706::pre_parser() {
 }
 
 void Room706::parser() {
-	bool ecx = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool esi = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv706a")) {
 		if (_G(kernel).trigger == 90) {
@@ -325,7 +325,7 @@ void Room706::parser() {
 		}
 	} // talkFl && player_said("MONK #15")
 
-	else if (ecx && player_said("GRATE")) {
+	else if (lookFl && player_said("GRATE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_update_info(_G(my_walker), &_G(player_info));
@@ -403,7 +403,7 @@ void Room706::parser() {
 
 	else if (player_said("GRATE"))
 		digi_play("707r02", 1, 255, -1, -1);
-	else if (ecx && player_said("MONK #13")) {
+	else if (lookFl && player_said("MONK #13")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -425,7 +425,7 @@ void Room706::parser() {
 		}
 	} // ecx && player_said("MONK #13")
 
-	else if (ecx && player_said("empty cell")) {
+	else if (lookFl && player_said("empty cell")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -457,7 +457,7 @@ void Room706::parser() {
 		}
 	} // ecx && player_said("empty cell")
 
-	else if (ecx && player_said("MONK #14")) {
+	else if (lookFl && player_said("MONK #14")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -480,7 +480,7 @@ void Room706::parser() {
 
 	} // ecx && player_said("MONK #14")
 
-	else if (ecx && player_said("MONK #15")) {
+	else if (lookFl && player_said("MONK #15")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -498,9 +498,9 @@ void Room706::parser() {
 
 	} // ecx && player_said("MONK #15")
 
-	else if (ecx && player_said("Note"))
+	else if (lookFl && player_said("Note"))
 		digi_play("706R25", 1, 255, -1, -1);
-	else if (esi && player_said("Note"))
+	else if (takeFl && player_said("Note"))
 		digi_play("706R27", 1, 255, -1, -1);
 	else if (player_said("TRUTH WHEEL", "EMPTY NICHE")) {
 		if (_G(kernel).trigger == -1 && !inv_player_has("TRUTH WHEEL"))
@@ -533,21 +533,21 @@ void Room706::parser() {
 			|| player_said("TRUTH WHEEL", "PRAYER WHEEL #16") || player_said("PEACE WHEEL", "PRAYER WHEEL #16") || player_said("WISDOM WHEEL", "PRAYER WHEEL #16") || player_said("INSIGHT WHEEL", "PRAYER WHEEL #16") || player_said("SERENITY WHEEL", "PRAYER WHEEL #16")
 		)
 		digi_play("com080", 1, 255, -1, -1);
-	else if (ecx && player_said("EMPTY NICHE"))
+	else if (lookFl && player_said("EMPTY NICHE"))
 		digi_play("com127", 1, 255, -1, 997);
-	else if (ecx && (player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #16") || (player_said("PRAYER WHEEL #15") && _G(flags[V219]))))
+	else if (lookFl && (player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #16") || (player_said("PRAYER WHEEL #15") && _G(flags[V219]))))
 		digi_play("com076", 1, 255, -1, -1);
-	else if (esi && player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #15", "PRAYER WHEEL #16") && _G(flags[V286]))
+	else if (takeFl && player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #15", "PRAYER WHEEL #16") && _G(flags[V286]))
 		digi_play(_G(flags[V224]) ? "706r26" : "com143", 1, 255, -1, -1);
-	else if (esi && player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #16")) {
+	else if (takeFl && player_said_any("PRAYER WHEEL #13", "PRAYER WHEEL #14", "PRAYER WHEEL #16")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_trigger_dispatchx(kernel_trigger_create(80));
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (esi && player_said("PRAYER WHEEL #15")) {
+	} else if (takeFl && player_said("PRAYER WHEEL #15")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_trigger_dispatchx(kernel_trigger_create(70));
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (ecx && player_said(" ")) {
+	} else if (lookFl && player_said(" ")) {
 		digi_play(_G(flags[V224]) ? "706r24" : "com075", 1, 255, -1, -1);
 	} else if (player_said("CUPOLA")) {
 		switch (_G(kernel).trigger) {
@@ -616,9 +616,9 @@ void Room706::parser() {
 		}
 	} // player_said("South Face")
 
-	else if (ecx && player_said("  "))
+	else if (lookFl && player_said("  "))
 		digi_play("709r01", 1, 255, -1, 709);
-	else if (!esi && player_said("  ")) {
+	else if (!takeFl && player_said("  ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			_ripStepsDownSeries = series_load("RIP STEPS DOWN", -1, nullptr);
@@ -642,7 +642,7 @@ void Room706::parser() {
 		}
 	} // !esi && player_said("  ")
 
-	else if (!gearFl && !esi && player_said_any("MONK #13", "MONK #14", "MONK #16")) {
+	else if (!gearFl && !takeFl && player_said_any("MONK #13", "MONK #14", "MONK #16")) {
 		// The original is testing 2 times the monk #14 and is missing the monk #16, I think it's better that way
 		digi_play("com017", 1, 255, -1, -1);
 	} else
