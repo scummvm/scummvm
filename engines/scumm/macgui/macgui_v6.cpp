@@ -178,6 +178,14 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
+uint32 MacV6Gui::getBlack() const {
+	return 255;
+}
+
+uint32 MacV6Gui::getWhite() const {
+	return 251;
+}
+
 void MacV6Gui::onMenuOpen() {
 	MacGuiImpl::onMenuOpen();
 
@@ -191,18 +199,29 @@ void MacV6Gui::onMenuOpen() {
 	screen->fillRect(Common::Rect(screen->w, screen->h), 255);
 	memcpy(_backupPalette, _vm->_currentPalette, 256 * 3);
 
-	// HACK: Make sure we have the Mac window manager's preferred colors
-
-	_vm->setPalColor(0, 0, 0, 0);          // Black
-	_vm->setPalColor(1, 0x80, 0x80, 0x80); // Gray80
-	_vm->setPalColor(2, 0x88, 0x88, 0x88); // Gray88
-	_vm->setPalColor(3, 0xEE, 0xEE, 0xEE); // GrayEE
-	_vm->setPalColor(4, 0xFF, 0xFF, 0xFF); // White
-	_vm->setPalColor(5, 0x00, 0xFF, 0x00); // Green
-	_vm->setPalColor(6, 0x00, 0xCF, 0x00); // Green2
-
-	for (int i = 7; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 		_vm->setPalColor(i, 0, 0, 0);
+
+	// HACK: Make sure we have the Mac window manager's preferred colors
+	// and other GUI elements. We put it at the end, because the beginning
+	// of the palette is reserved for icon palettes.
+	//
+	// TODO: Make sure that this palette doesn't get overwritten!
+	//
+	// TODO: Make sure this palette is available to the GUI even when the
+	// menu hasn't been opened by mouseover!
+
+	_vm->setPalColor(255, 0, 0, 0);          // Black
+	_vm->setPalColor(254, 0x80, 0x80, 0x80); // Gray80
+	_vm->setPalColor(253, 0x88, 0x88, 0x88); // Gray88
+	_vm->setPalColor(252, 0xEE, 0xEE, 0xEE); // GrayEE
+	_vm->setPalColor(251, 0xFF, 0xFF, 0xFF); // White
+	_vm->setPalColor(250, 0x00, 0xFF, 0x00); // Green
+	_vm->setPalColor(249, 0x00, 0xCF, 0x00); // Green2
+
+	_vm->setPalColor(248, 0xCC, 0xCC, 0xFF);
+	_vm->setPalColor(247, 0xBB, 0xBB, 0xBB);
+	_vm->setPalColor(246, 0x66, 0x66, 0x99);
 
 	_vm->updatePalette();
 	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
@@ -316,14 +335,33 @@ bool MacV6Gui::runOptionsDialog() {
 bool MacV6Gui::runQuitDialog() {
 	MacDialogWindow *window = createDialog(128);
 
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
+
+	textWidget->setWordWrap(true);
+
+	window->setDefaultWidget(buttonOk);
+
 	Common::Array<int> deferredActionsIds;
+
+	// When quitting, the default action is to quit
+	bool ret = true;
 
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
+
+		if (clicked == buttonOk->getId())
+			break;
+
+		if (clicked == buttonCancel->getId()) {
+			ret = false;
+			break;
+		}
 	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 bool MacV6Gui::runRestartDialog() {

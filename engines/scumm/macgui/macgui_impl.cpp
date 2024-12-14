@@ -405,8 +405,6 @@ void MacGuiImpl::updateWindowManager() {
 	// original did allow you to open the menu with Alt even when the
 	// cursor was visible, so for now it's a feature.
 
-	bool isActive = _windowManager->isMenuActive();
-
 	bool saveCondition = true;
 	bool loadCondition = true;
 
@@ -448,7 +446,7 @@ void MacGuiImpl::updateWindowManager() {
 	if (saveMenu)
 		saveMenu->enabled = canSave;
 
-	if (isActive) {
+	if (_windowManager->isMenuActive()) {
 		if (!_menuIsActive)
 			onMenuOpen();
 	} else {
@@ -498,8 +496,6 @@ void MacGuiImpl::updateWindowManager() {
 		}
 	}
 
-	_menuIsActive = isActive;
-
 	if (menu->isVisible())
 		updatePalette();
 
@@ -507,11 +503,13 @@ void MacGuiImpl::updateWindowManager() {
 }
 
 void MacGuiImpl::onMenuOpen() {
+	_menuIsActive = true;
 	_cursorWasVisible = CursorMan.showMouse(true);
 	_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 }
 
 void MacGuiImpl::onMenuClose() {
+	_menuIsActive = false;
 	if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
 		_windowManager->popCursor();
 	CursorMan.showMouse(_cursorWasVisible);
@@ -588,6 +586,66 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 }
 
 // ---------------------------------------------------------------------------
+// Icon loader
+// ---------------------------------------------------------------------------
+
+Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
+	Common::MacResManager resource;
+	Graphics::Surface *s = nullptr;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *res = resource.getResource(MKTAG('c', 'i', 'c', 'n'), id);
+
+	if (res) {
+		// TODO: This is based on the Pegasus engine. Convert into
+		// common code, perhaps?
+
+		Image::PICTDecoder::PixMap pixMap = Image::PICTDecoder::readPixMap(*res);
+
+		// Mask section
+		res->skip(4);
+		uint16 maskRowBytes = res->readUint16BE();
+		res->skip(3 * 2);
+		res->readUint16BE();
+
+		// Bitmap section
+		res->skip(4);
+		uint16 rowBytes = res->readUint16BE();
+		res->readUint16BE(); // top
+		res->readUint16BE(); // left
+		uint16 height = res->readUint16BE(); // bottom
+		res->readUint16BE(); // right
+
+		// Data section
+		res->skip(4);
+		res->skip(maskRowBytes * height);
+		res->skip(rowBytes * height);
+
+		// Palette
+		res->skip(6);
+		uint numColors = res->readUint16BE() + 1;
+
+		*palette = new Graphics::Palette(numColors);
+
+		for (uint i = 0; i < numColors; i++) {
+			res->skip(2);
+			uint16 r = res->readUint16BE();
+			uint16 g = res->readUint16BE();
+			uint16 b = res->readUint16BE();
+
+			(*palette)->set(i, r >> 8, g >> 8, b >> 8);
+		}
+
+		s = new Graphics::Surface();
+		s->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+		res->read(s->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
+	}
+
+	return s;
+}
+
+// ---------------------------------------------------------------------------
 // PICT loader
 // ---------------------------------------------------------------------------
 
@@ -600,7 +658,7 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
 
 	Image::PICTDecoder pict;
-	if (pict.loadStream(*res)) {
+	if (res && pict.loadStream(*res)) {
 		const Graphics::Surface *s1 = pict.getSurface();
 		const byte *palette = pict.getPalette();
 
@@ -700,13 +758,20 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 		// Compensate for the original not drawing the game at the very top of
 		// the screen.
 		bounds.translate(0, -40);
-	} else {
+	} else if (_vm->_game.version < 6) {
 		bounds.top = 0;
 		bounds.left = 0;
 		bounds.bottom = 86;
 		bounds.right = 340;
 
 		bounds.translate(86, 88);
+	} else {
+		bounds.top = 0;
+		bounds.left = 0;
+		bounds.bottom = 113;
+		bounds.right = 267;
+
+		bounds.translate(187, 94);
 	}
 
 	delete res;
@@ -792,7 +857,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 			}
 			case 32:
 				// Icon
-				res->skip(len);
+				window->addIcon(r, res->readUint16BE(), enabled);
 				break;
 
 			case 64:

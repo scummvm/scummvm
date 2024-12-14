@@ -804,6 +804,34 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
+// Icon widget
+// ---------------------------------------------------------------------------
+
+MacGuiImpl::MacIcon::MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Icon", enabled) {
+	_icon = _window->_gui->loadIcon(id, &_palette);
+}
+
+MacGuiImpl::MacIcon::~MacIcon() {
+	if (_icon) {
+		_icon->free();
+		delete _icon;
+	}
+}
+
+void MacGuiImpl::MacIcon::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGuiImpl::MacIcon: Drawing icon %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
+	_window->setPalette(_palette);
+	_window->drawSprite(_icon, _bounds.left, _bounds.top);
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
+// ---------------------------------------------------------------------------
 // Picture widget
 // ---------------------------------------------------------------------------
 
