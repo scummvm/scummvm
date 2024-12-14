@@ -44,6 +44,7 @@ class OSystem;
 
 namespace Graphics {
 struct Surface;
+class Palette;
 class MacWindowManager;
 }
 
@@ -125,6 +126,7 @@ public:
 		kWidgetCheckbox,
 		kWidgetStaticText,
 		kWidgetEditText,
+		kWidgetIcon,
 		kWidgetPicture,
 		kWidgetSlider,
 		kWidgetListBox,
@@ -432,6 +434,21 @@ public:
 		void handleMouseMove(Common::Event &event) override;
 	};
 
+	class MacIcon : public MacWidget {
+	private:
+		Graphics::Surface *_icon = nullptr;
+		Graphics::Palette *_palette = nullptr;
+
+	public:
+		MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
+		~MacIcon();
+
+		Graphics::Palette *getPalette() const { return _palette; }
+		Graphics::Surface *getIcon() const { return _icon; }
+
+		void draw(bool drawFocused = false);
+	};
+
 	class MacPicture : public MacWidget {
 	private:
 		Graphics::Surface *_picture = nullptr;
@@ -625,6 +642,7 @@ public:
 
 		Common::StringArray _substitutions;
 		Common::Array<Common::Rect> _dirtyRects;
+		bool _dirtyPalette = false;
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
@@ -663,6 +681,7 @@ public:
 		MacGuiImpl::MacCheckbox *addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
 		MacGuiImpl::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 		MacGuiImpl::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
+		MacGuiImpl::MacIcon *addIcon(Common::Rect bounds, int id, bool enabled);
 		MacGuiImpl::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
 		MacGuiImpl::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGuiImpl::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
@@ -683,6 +702,7 @@ public:
 
 		void drawDottedHLine(int x0, int y, int x1);
 		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
+		void setPalette(const Graphics::Palette *palette);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
 		void drawTexts(Common::Rect r, const TextLine *lines, bool inverse = false);
@@ -698,8 +718,8 @@ public:
 	virtual int getNumColors() const = 0;
 
 	Graphics::Surface *surface() { return _surface; }
-	uint32 getBlack() const;
-	uint32 getWhite() const;
+	virtual uint32 getBlack() const;
+	virtual uint32 getWhite() const;
 
 	virtual const Common::String name() const = 0;
 
@@ -720,6 +740,7 @@ public:
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 
+	Graphics::Surface *loadIcon(int id, Graphics::Palette **palette);
 	Graphics::Surface *loadPict(int id);
 
 	virtual bool isVerbGuiActive() const { return false; }

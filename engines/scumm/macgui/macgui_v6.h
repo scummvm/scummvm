@@ -39,6 +39,9 @@ public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV6Gui();
 
+	uint32 getBlack() const override;
+	uint32 getWhite() const override;
+
 	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
 	int getNumColors() const override { return 256; }
 
@@ -55,7 +58,8 @@ protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
 	bool handleMenu(int id, Common::String &name) override;
-	void onMenuOpen() override;
+
+  	void onMenuOpen() override;
 	void onMenuClose() override;
 
 	void runAboutDialog() override;

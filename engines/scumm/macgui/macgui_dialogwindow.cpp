@@ -79,15 +79,34 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	s->fillRect(r, _white);
 
 	if (windowStyle == kWindowStyleNormal) {
-		int growths[] = { 1, -3, -1 };
+		if (_gui->_vm->_game.version < 6) {
+			int growths[] = { 1, -3, -1 };
 
-		for (int i = 0; i < ARRAYSIZE(growths); i++) {
-			r.grow(growths[i]);
+			for (int i = 0; i < ARRAYSIZE(growths); i++) {
+				r.grow(growths[i]);
+				s->frameRect(r, _black);
+			}
+		} else {
+			uint32 c1 = _gui->_windowManager->findBestColor(0xCC, 0xCC, 0xFF);
+			uint32 c2 = _gui->_windowManager->findBestColor(0xBB, 0xBB, 0xBB);
+			uint32 c3 = _gui->_windowManager->findBestColor(0x66, 0x66, 0x99);
 
-			s->hLine(r.left, r.top, r.right - 1, _black);
-			s->hLine(r.left, r.bottom - 1, r.right - 1, _black);
-			s->vLine(r.left, r.top + 1, r.bottom - 2, _black);
-			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, _black);
+			r.grow(1);
+			s->frameRect(r, _black);
+			r.grow(-2);
+			s->frameRect(r, c2);
+			r.grow(-2);
+			s->frameRect(r, _black);
+
+			s->hLine(r.left - 3, r.top - 3, r.right + 1, c1);
+			s->hLine(r.left, r.bottom, r.right, c1);
+			s->vLine(r.left - 3, r.top - 2, r.bottom + 1, c1);
+			s->vLine(r.right, r.top, r.bottom, c1);
+
+			s->hLine(r.left - 1, r.top - 1, r.right, c3);
+			s->hLine(r.left - 3, r.bottom + 2, r.right + 2, c3);
+			s->vLine(r.left - 1, r.top, r.bottom, c3);
+			s->vLine(r.right + 2, r.top - 3, r.bottom + 1, c3);
 		}
 	} else if (windowStyle == kWindowStyleRounded) {
 		r.grow(1);
@@ -118,6 +137,19 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 		// thing that is actually used for is the Edit menu, which we
 		// don't implement. In ScummVM, the menu bar is just a drawing
 		// at the point, so we can retouch it to look correct.
+		//
+		// However, the Mac Window Manager's ideas of what's black and
+		// what's white may no longer be valid.
+
+		for (int y = 0; y < 19; y++) {
+			for (int x = 0; x < 640; x++) {
+				uint32 color = realScreen->getPixel(x, y);
+				if (color == _gui->_windowManager->_colorWhite)
+					realScreen->setPixel(x, y, _white);
+				else if (color == _gui->_windowManager->_colorBlack)
+					realScreen->setPixel(x, y, _black);
+			}
+		}
 
 		if (menuStyle == kMenuStyleDisabled) {
 			for (int y = 0; y < 19; y++) {
@@ -130,7 +162,10 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 			for (int y = 1; y < 19; y++) {
 				for (int x = 10; x < 38; x++) {
 					uint32 color = realScreen->getPixel(x, y);
-					realScreen->setPixel(x, y, _gui->_windowManager->inverter(color));
+					if (color == _black)
+						realScreen->setPixel(x, y, _white);
+					else
+						realScreen->setPixel(x, y, _black);
 				}
 			}
 		}
@@ -234,6 +269,12 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 	return editText;
 }
 
+MacGuiImpl::MacIcon *MacGuiImpl::MacDialogWindow::addIcon(Common::Rect bounds, int id, bool enabled) {
+	MacGuiImpl::MacIcon *icon = new MacIcon(this, bounds, id, false);
+	addWidget(icon, kWidgetIcon);
+	return icon;
+}
+
 MacGuiImpl::MacPicture *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
 	MacGuiImpl::MacPicture *picture = new MacPicture(this, bounds, id, false);
 	addWidget(picture, kWidgetPicture);
@@ -328,6 +369,11 @@ void MacGuiImpl::MacDialogWindow::undrawBeamCursor() {
 }
 
 void MacGuiImpl::MacDialogWindow::update(bool fullRedraw) {
+	if (_dirtyPalette) {
+		_gui->_vm->updatePalette();
+		_dirtyPalette = false;
+	}
+
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->isVisible())
 			_widgets[i]->draw();
@@ -674,6 +720,17 @@ MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type
 	}
 
 	return nullptr;
+}
+
+void MacGuiImpl::MacDialogWindow::setPalette(const Graphics::Palette *palette) {
+	for (uint i = 0; i < palette->size(); i++) {
+		byte r, g, b;
+
+		palette->get(i, r, g, b);
+		_gui->_vm->setPalColor(i, r, g, b);
+	}
+
+	_dirtyPalette = true;
 }
 
 void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
