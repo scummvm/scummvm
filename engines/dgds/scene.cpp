@@ -47,6 +47,7 @@
 #include "dgds/dragon_native.h"
 #include "dgds/hoc_intro.h"
 #include "dgds/sound_raw.h"
+#include "dgds/ttm.h"
 
 namespace Dgds {
 
@@ -1064,10 +1065,7 @@ void SDSScene::unload() {
 	_triggers.clear();
 	_talkData.clear();
 	_dynamicRects.clear();
-	if (_dlgSound) {
-		_dlgSound->stop();
-		_dlgSound.reset();
-	}
+	_conversation.unload();
 	_sceneDialogFlags = kDlgFlagNone;
 }
 
@@ -1320,193 +1318,21 @@ void SDSScene::freeTalkData(uint16 num) {
 
 void SDSScene::updateVisibleTalkers() {
 	for (auto &data : _talkData) {
-		for (auto &head : data._heads) {
-			if (head._flags & kHeadFlagVisible)
-				updateHead(head);
-		}
+		data.updateVisibleHeads();
 	}
-}
-
-
-bool SDSScene::loadCDSData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
-	if (_dlgSound) {
-		_dlgSound->stop();
-		_dlgSound.reset();
-	}
-
-	Common::String fname;
-	if (sub >= 0) {
-		assert(sub < 26);
-		fname = Common::String::format("F%dB%d%c.CDS", dlgFileNum, dlgNum, 'A' + sub);
-	} else {
-		fname = Common::String::format("F%dB%d.CDS", dlgFileNum, dlgNum);
-	}
-
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	ResourceManager *resourceManager = engine->getResourceManager();
-	Common::SeekableReadStream *cdsFile = resourceManager->getResource(fname);
-	if (!cdsFile)
-		return false;
-
-	DgdsChunkReader chunk(cdsFile);
-	Decompressor *decompressor = engine->getDecompressor();
-
-	bool result = false;
-
-	while (chunk.readNextHeader(EX_CDS, fname)) {
-		if (chunk.isContainer()) {
-			continue;
-		}
-
-		chunk.readContent(decompressor);
-		Common::SeekableReadStream *stream = chunk.getContent();
-
-		//
-		// All CDS files contain TT3 sections with little scripts that load
-		// and play a RAW sound file (eg F1B13.CDS loads CSCR013.RAW), but
-		// they also have RAW sections with the sound data, embedded and the named
-		// RAW files don't exist.
-		//
-		if (chunk.isSection(ID_RAW)) {
-			_dlgSound.reset(new SoundRaw(resourceManager, decompressor));
-			_dlgSound->loadFromStream(stream, chunk.getSize());
-			_dlgSound->play();
-			result = true;
-		}
-	}
-
-	delete cdsFile;
-	return result;
-}
-
-void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
-	uint drawtype = head._drawType ? head._drawType : 1;
-	// Use specific head shape if available (eg, in Willy Beamish), if not use talk data shape
-	Common::SharedPtr<Image> img = head._shape;
-	if (!img)
-		img = data._shape;
-	if (!img)
-		return;
-	switch (drawtype) {
-	case 1:
-		drawHeadType1(dst, head, *img);
-		break;
-	case 2:
-		drawHeadType2(dst, head, *img);
-		break;
-	case 3:
-		if (DgdsEngine::getInstance()->getGameId() == GID_WILLY)
-			drawHeadType3Beamish(dst, data, head);
-		else
-			drawHeadType3(dst, head, *img);
-		break;
-	default:
-		error("Unsupported head draw type %d", drawtype);
-	}
-}
-
-void SDSScene::drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-	Common::Rect r = head._rect.toCommonRect();
-	dst->fillRect(r, head._drawCol);
-	r.grow(-1);
-	dst->fillRect(r, head._drawCol == 0 ? 15 : 0);
-	r.left += 2;
-	r.top += 2;
-	const int x = head._rect.x;
-	const int y = head._rect.y;
-	if (img.isLoaded()) {
-		for (const auto &frame : head._headFrames) {
-			img.drawBitmap(frame._frameNo & 0xff, x + frame._xoff, y + frame._yoff, r, *dst);
-		}
-	}
-}
-
-void SDSScene::drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-	if (!img.isLoaded())
-		return;
-	const Common::Rect r = head._rect.toCommonRect();
-	for (const auto &frame : head._headFrames) {
-		img.drawBitmap(frame._frameNo & 0xff, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
-	}
-}
-
-void SDSScene::drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
-	const Common::Rect r = head._rect.toCommonRect();
-
-	// Note: only really need the 1px border here but just fill the box.
-	dst->fillRect(r, 8);
-
-	Common::Rect fillRect(r);
-	fillRect.grow(-1);
-	dst->fillRect(fillRect, head._drawCol);
-
-	for (const auto &frame : head._headFrames) {
-		int frameNo = frame._frameNo & 0x7fff;
-		bool useHeadShape = frame._frameNo & 0x8000;
-
-		Common::SharedPtr<Image> img = useHeadShape ? head._shape : data._shape;
-		if (!img || !img->isLoaded() || frameNo >= img->loadedFrameCount())
-			continue;
-
-		ImageFlipMode flip = kImageFlipNone;
-		// Yes, the numerical values are revesed here (1 -> 2 and 2 -> 1).
-		// The head flip flags are reversed from the image draw flags.
-		if (frame._flipFlags & 1)
-			flip = static_cast<ImageFlipMode>(flip & kImageFlipH);
-		if (frame._flipFlags & 2)
-			flip = static_cast<ImageFlipMode>(flip & kImageFlipV);
-
-		img->drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, fillRect, *dst);
-	}
-}
-
-void SDSScene::drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-	Common::Rect r = head._rect.toCommonRect();
-	dst->fillRect(r, 0);
-	if (!img.isLoaded())
-		return;
-	for (const auto &frame : head._headFrames) {
-		int frameNo = frame._frameNo;
-		if (frameNo < img.loadedFrameCount())
-			img.drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
-		else
-			dst->fillRect(r, 4);
-	}
-}
-
-void SDSScene::updateHead(TalkDataHead &head) {
-	warning("TODO: Update head");
-	head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag8 | kHeadFlag10 | kHeadFlagVisible));
-
-	/* This seems to just be a "needs redraw" flag, but we always redraw
-	for (auto tds : _talkData) {
-		for (auto h : tds._heads) {
-			if ((h._flags & kHeadFlagVisible) && !(h._flags & (kHeadFlag8 | kHeadFlag10 | kHeadFlag80))) {
-				if (h._rect.toCommonRect().intersects(head._rect.toCommonRect())) {
-					h._flags = static_cast<HeadFlags>(h._flags | kHeadFlag4);
-				}
-			}
-		}
-	}
-	*/
 }
 
 void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
 	for (const auto &tds : _talkData) {
-		for (const auto &h : tds._heads) {
-			if ((h._flags & kHeadFlagVisible) && !(h._flags & kHeadFlag40)) {
-				drawHead(dst, tds, h);
-			}
-		}
+		tds.drawVisibleHeads(dst);
 	}
+	_conversation.runScript();
 }
 
 bool SDSScene::hasVisibleHead() const {
 	for (const auto &tds : _talkData) {
-		for (const auto &h : tds._heads) {
-			if (h._flags & kHeadFlagVisible)
-				return true;
-		}
+		if (tds.hasVisibleHead())
+			return true;
 	}
 	return false;
 }
@@ -1587,7 +1413,7 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 				loadTalkDataAndSetFlags(dialog._talkDataNum, dialog._talkDataHeadNum);
 			}
 
-			loadCDSData(fileNum, dlgNum, -1);
+			_conversation.loadData(fileNum, dlgNum, -1);
 
 			// hide time gets set the first time it's drawn.
 			if (_dlgWithFlagLo8IsClosing && dialog.hasFlag(kDlgFlagLo8)) {
@@ -1653,7 +1479,7 @@ bool SDSScene::checkDialogActive() {
 					// immediately starts another dialog or changes scene, so the sound
 					// doesn't end up playing.
 					// Need to work out how to correctly delay until the sound finishes?
-					loadCDSData(dlg._fileNum, dlg._num, action->num);
+					_conversation.loadData(dlg._fileNum, dlg._num, action->num);
 
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;
@@ -1679,6 +1505,9 @@ bool SDSScene::checkDialogActive() {
 			if (dlg._nextDialogDlgNum) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				showDialog(dlg._nextDialogFileNum, dlg._nextDialogDlgNum);
+			} else {
+				// No next dialog clear CDS data
+				_conversation.unload();
 			}
 		}
 		if (dlg.hasFlag(kDlgFlagVisible)) {

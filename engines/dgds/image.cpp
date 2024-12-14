@@ -146,8 +146,8 @@ void Image::loadBitmap(const Common::String &filename) {
 		ex = 0;
 	}
 
-	if (ex != EX_BMP) {
-		warning("Unknown bitmap tag: %d", ex);
+	if (ex != EX_BMP && ex != EX_CDS) {
+		warning("Unknown bitmap extension: %d", ex);
 		delete fileStream;
 		return;
 	}

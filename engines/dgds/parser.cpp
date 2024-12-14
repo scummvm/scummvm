@@ -117,7 +117,7 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 		scriptData->_frameOffsets.resize(scriptData->_totalFrames + 1, -1);
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
+		debug("TTMParser: Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
 		//chunk._contentStream->skip(chunk._size);
 		break;
 	}
@@ -153,7 +153,7 @@ bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	case ID_VER: // Version - ignore
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
+		warning("ADSParser: Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
 		break;
 	}
 	return false;

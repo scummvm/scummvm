@@ -172,6 +172,8 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2400: return "PAL DO BLOCK SWAP";
 	case 0x3000: return "GOSUB";
 	case 0x3100: return "SCROLL";
+	case 0x3200: return "CDS FIND TARGET";
+	case 0x3300: return "CDS GOSUB";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -251,7 +253,9 @@ static const char *ttmOpName(uint16 op) {
 	case 0xc0f0: return "SONG CONTROLLER??";
 	case 0xc100: return "SAMPLE VOL";
 	case 0xc210: return "LOAD RAW SFX";
-	case 0xc220: return "PLAY RAW SFX ??";
+	case 0xc220: return "PLAY RAW SFX";
+	case 0xc240: return "STOP RAW SFX";
+	case 0xc250: return "SYNC RAW SFX";
 	case 0xcf10: return "SFX MASTER VOL";
 
 	default: return "UNKNOWN!!";
@@ -570,7 +574,7 @@ void TTMInterpreter::doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &
 }
 
 
-void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
+bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
 	switch (op) {
 	case 0x0000: // FINISH:	void
 		break;
@@ -643,11 +647,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	case 0x0ff0: // REFRESH:	void
 		break;
-	case 0x1020: // SET DELAY:	    i:int   [0..n]
+	case 0x1020: { // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		_vm->adsInterpreter()->setScriptDelay((int)round(ivals[0] * MS_PER_FRAME));
+		int delayMillis = (int)round(ivals[0] * MS_PER_FRAME);
+		_vm->adsInterpreter()->setScriptDelay(delayMillis);
 		break;
+	}
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
 		break;
@@ -771,6 +777,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		break;
 	}
+	case 0x3200:
+		env._cdsTarget = findGOTOTarget(env, seq, ivals[0]);
+		break;
+	case 0x3300:
+		if (!env._cdsJumped && env._frameOffsets[env._cdsTarget] != env.scr->pos()) {
+			env._cdsJumped = true;
+			int64 prevPos = env.scr->pos();
+			env.scr->seek(env._frameOffsets[env._cdsTarget]);
+			run(env, seq);
+			env.scr->seek(prevPos);
+			env._cdsJumped = false;
+		}
+		break;
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2] + 1, ivals[3] + 1);
@@ -1072,9 +1091,14 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xc210: {  // LOAD RAW SFX filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		SoundRaw *snd = new SoundRaw(_vm->getResourceManager(), _vm->getDecompressor());
-		snd->load(sval);
-		env._soundRaw.reset(snd);
+		if (_vm->getResourceManager()->hasResource(sval)) {
+			SoundRaw *snd = new SoundRaw(_vm->getResourceManager(), _vm->getDecompressor());
+			snd->load(sval);
+			env._soundRaw.reset(snd);
+		} else {
+			// This happens in Willy Beamish talkie CDS files.
+			debug("TTM 0xC210: Skip loading RAW %s, not found.", sval.c_str());
+		}
 		break;
 	}
 	case 0xc220: {	// PLAY RAW SFX
@@ -1085,6 +1109,26 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		else
 			env._soundRaw->play();
 		break;
+	}
+	case 0xc240: {	// STOP RAW SFX
+		if (env._soundRaw) {
+			env._soundRaw->stop();
+		} else {
+			warning("TODO: Trying to stop raw SFX but nothing loaded");
+		}
+	}
+	case 0xc250: {	// SYNC RAW SFX
+		uint16 hi = (uint16)ivals[1];
+		uint16 lo = (uint16)ivals[0];
+		uint32 offset = ((uint32)hi << 16) + lo;
+		debug("TODO: 0xC250 Sync raw sfx?? offset %d", offset);
+		/*
+		if (env._soundRaw->playedOffset() < offset) {
+			// Not played to this point yet.
+			env.scr->seek(-6);
+			return false;
+		}
+		*/
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
@@ -1100,8 +1144,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (seq._executed) // this is a one-shot op
 			break;
 		//debug(1, "0xf020: Load bitmap %s to slot %d for env %d", sval.c_str(), env._enviro, seq._currentBmpId);
-		env._scriptShapes[seq._currentBmpId].reset(new Image(_vm->getResourceManager(), _vm->getDecompressor()));
-		env._scriptShapes[seq._currentBmpId]->loadBitmap(sval);
+		if (_vm->getResourceManager()->hasResource(sval)) {
+			env._scriptShapes[seq._currentBmpId].reset(new Image(_vm->getResourceManager(), _vm->getDecompressor()));
+			env._scriptShapes[seq._currentBmpId]->loadBitmap(sval);
+		} else {
+			// This happens in Willy Beamish talkie CDS files.
+			debug("TTM 0xF020: Skip loading BMP %s, not found.", sval.c_str());
+		}
 		break;
 	case 0xf040: { // LOAD FONT:	filename:str
 		if (seq._executed) // this is a one-shot op
@@ -1162,6 +1211,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 					ttmOpName(op), sval.c_str());
 		break;
 	}
+	return true;
 }
 
 Common::String TTMInterpreter::readTTMStringVal(Common::SeekableReadStream *scr) {
@@ -1230,7 +1280,9 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		}
 		debug(10, " (%s)", ttmOpName(op));
 
-		handleOperation(env, seq, op, count, ivals, sval, pts);
+		bool opResult = handleOperation(env, seq, op, count, ivals, sval, pts);
+		if (!opResult)
+			break;
 	}
 
 	return true;

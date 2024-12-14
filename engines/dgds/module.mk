@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	font.o \
 	game_palettes.o \
 	globals.o \
+	head.o \
 	hoc_intro.o \
 	image.o \
 	inventory.o \

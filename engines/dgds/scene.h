@@ -27,6 +27,7 @@
 #include "common/serializer.h"
 
 #include "dgds/dialog.h"
+#include "dgds/head.h"
 #include "dgds/dgds_rect.h"
 #include "dgds/minigames/shell_game.h"
 
@@ -36,6 +37,8 @@ class ResourceManager;
 class Decompressor;
 class DgdsFont;
 class SoundRaw;
+class TTMInterpreter;
+class TTMEnviro;
 
 enum SceneCondition {
 	kSceneCondNone = 0,
@@ -262,57 +265,6 @@ private:
 };
 
 
-class TalkDataHeadFrame {
-public:
-	TalkDataHeadFrame() : _xoff(0), _yoff(0), _frameNo(0), _flipFlags(0) {}
-	Common::String dump(const Common::String &indent) const;
-
-	uint16 _frameNo;
-	int16 _xoff;
-	int16 _yoff;
-	uint16 _flipFlags;
-};
-
-enum HeadFlags {
-	kHeadFlagNone = 0,
-	kHeadFlag1 = 1,
-	kHeadFlag2 = 2,
-	kHeadFlag4 = 4,
-	kHeadFlag8 = 8,
-	kHeadFlag10 = 0x10,
-	kHeadFlagVisible = 0x20,
-	kHeadFlag40 = 0x40,
-	kHeadFlag80 = 0x80,
-};
-
-class TalkDataHead {
-public:
-	TalkDataHead() : _num(0), _drawType(0), _drawCol(0), _flags(kHeadFlagNone) {}
-	Common::String dump(const Common::String &indent) const;
-
-	uint16 _num;
-	uint16 _drawType;
-	uint16 _drawCol;
-	DgdsRect _rect;
-	Common::Array<TalkDataHeadFrame> _headFrames;
-	Common::String _bmpFile;
-	HeadFlags _flags;
-	Common::SharedPtr<Image> _shape;
-};
-
-class TalkData {
-public:
-	TalkData() : _num(0), _val(0) {}
-	Common::String dump(const Common::String &indent) const;
-
-	uint16 _num;
-	Common::SharedPtr<Image> _shape;
-	Common::Array<TalkDataHead> _heads;
-	uint16 _val;
-	Common::String _bmpFile;
-};
-
-
 /**
  * A scene is described by an SDS file, which points to the ADS script to load
  * and holds the dialog info.
@@ -482,7 +434,6 @@ public:
 	void loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
 	void drawVisibleHeads(Graphics::ManagedSurface *dst);
 	bool hasVisibleHead() const;
-	bool loadCDSData(uint16 num, uint16 num2, int16 sub);
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();
@@ -505,12 +456,6 @@ protected:
 private:
 	Dialog *getVisibleDialog();
 	bool readTalkData(Common::SeekableReadStream *s, TalkData &dst);
-	void updateHead(TalkDataHead &head);
-	void drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head);
-	void drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
-	void drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
-	void drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
-	void drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head);
 
 	int _num;
 	Common::Array<SceneOp> _enterSceneOps;
@@ -531,7 +476,7 @@ private:
 	// From here on is mutable stuff that might need saving
 	Common::Array<Dialog> _dialogs;
 	Common::Array<SceneTrigger> _triggers;
-	Common::SharedPtr<SoundRaw> _dlgSound;
+	Conversation _conversation;
 
 	GameItem *_dragItem;
 	bool _shouldClearDlg;

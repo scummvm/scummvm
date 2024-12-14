@@ -74,4 +74,12 @@ bool SoundRaw::isPlaying() const {
 	return mixer->isSoundHandleActive(_handle);
 }
 
+uint32 SoundRaw::playedOffset() const {
+	if (!isPlaying())
+		return 0xFFFFFFFF;
+	Audio::Mixer *mixer = DgdsEngine::getInstance()->_mixer;
+	uint32 msecs = mixer->getSoundElapsedTime(_handle);
+	return (msecs * 11025) / 1000;
+}
+
 } // end namespace Dgds

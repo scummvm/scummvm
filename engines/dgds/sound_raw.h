@@ -46,6 +46,7 @@ public:
 	void stop();
 	bool isPlaying() const;
 	void loadFromStream(Common::SeekableReadStream *stream, int size);
+	uint32 playedOffset() const;
 
 private:
 	Common::Array<byte> _data;
