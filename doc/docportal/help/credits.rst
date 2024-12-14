@@ -359,7 +359,7 @@ Composer
    * - Alyssa Milburn
      -
 
-Crab
+CRAB
 ^^^^
 
 .. list-table::
@@ -401,6 +401,28 @@ Cryomni3D
    :widths: 35 65
 
    * - Philippe Valembois
+     -
+
+Darkseed
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Eric Fry
+     -
+
+DGDS
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Matthew Duggan
+     -
+   * - Filippos Karapetis
+     -
+   * - Vasco Alexandre da Silva Costa
      -
 
 Director
@@ -1006,6 +1028,17 @@ Private
    * - Gustavo Grieco
      -
 
+QDEngine
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Eugene Sandulenko
+     -
+   * - Kunal Tiwari
+     -
+
 Queen
 ^^^^^
 
@@ -1503,9 +1536,13 @@ Wintermute
 
    * - Gunnar Birke
      - Wintermute 3D
+   * - Paweł Kołodziejski
+     - Wintermute 3D
    * - Einar Johan T. Sømåen
      -
    * - Tobia Tesan
+     -
+   * - lolbot-iichan
      -
 
 Z-Vision
