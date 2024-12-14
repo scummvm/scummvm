@@ -141,13 +141,18 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 		// However, the Mac Window Manager's ideas of what's black and
 		// what's white may no longer be valid.
 
-		for (int y = 0; y < 19; y++) {
-			for (int x = 0; x < 640; x++) {
-				uint32 color = realScreen->getPixel(x, y);
-				if (color == _gui->_windowManager->_colorWhite)
-					realScreen->setPixel(x, y, _white);
-				else if (color == _gui->_windowManager->_colorBlack)
-					realScreen->setPixel(x, y, _black);
+		uint32 macWhite = _gui->_windowManager->_colorWhite;
+		uint32 macBlack = _gui->_windowManager->_colorBlack;
+
+		if (macWhite != _white || macBlack != _black) {
+			for (int y = 0; y < 19; y++) {
+				for (int x = 0; x < realScreen->w; x++) {
+					uint32 color = realScreen->getPixel(x, y);
+					if (color == macWhite)
+						realScreen->setPixel(x, y, _white);
+					else if (color == macBlack)
+						realScreen->setPixel(x, y, _black);
+				}
 			}
 		}
 
