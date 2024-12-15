@@ -41,7 +41,7 @@ public:
 
 private:
 	void conv706a();
-	void subA8BA8(int32 trigger, const char *digiName);
+	void playCheckBrochureAnim(int32 trigger, const char *digiName);
 	void useWheelOnNiche(int32 trigger, int32 val1);
 
 	int32 _field78_mode = 0;
@@ -54,6 +54,7 @@ private:
 	int32 _706Monk4Series = 0;
 	int32 _706RipGoesDownStairsSeries = 0;
 	int32 _706RipGoesUpStairsSeries = 0;
+	int32 _ripChecksBrochureSeries = 0;
 	int32 _ripLooksDownSeries = 0;
 	int32 _ripShieldsFaceSeries = 0;
 	int32 _ripStepsDownSeries = 0;

@@ -157,31 +157,31 @@ void Room706::parser() {
 	} else if (player_said("PRAYER WHEEL BROCHURE", "EMPTY NICHE") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		digi_play("com123", 1, 255, -1, 997);
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #13") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		subA8BA8(_G(kernel).trigger, "706r04");
+		playCheckBrochureAnim(_G(kernel).trigger, "706r04");
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #14") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		subA8BA8(_G(kernel).trigger, "706r09");
+		playCheckBrochureAnim(_G(kernel).trigger, "706r09");
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #16") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		subA8BA8(_G(kernel).trigger, "706r12");
+		playCheckBrochureAnim(_G(kernel).trigger, "706r12");
 	} else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #15") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		switch (_G(flags[V219])) {
 		case 1:
-			subA8BA8(_G(kernel).trigger, "704r09");
+			playCheckBrochureAnim(_G(kernel).trigger, "704r09");
 			break;
 
 		case 2:
-			subA8BA8(_G(kernel).trigger, "705r04");
+			playCheckBrochureAnim(_G(kernel).trigger, "705r04");
 			break;
 
 		case 3:
-			subA8BA8(_G(kernel).trigger, "703r11");
+			playCheckBrochureAnim(_G(kernel).trigger, "703r11");
 			break;
 
 		case 4:
-			subA8BA8(_G(kernel).trigger, "705r14a");
+			playCheckBrochureAnim(_G(kernel).trigger, "705r14a");
 			break;
 
 		case 5:
-			subA8BA8(_G(kernel).trigger, "706r10");
+			playCheckBrochureAnim(_G(kernel).trigger, "706r10");
 			break;
 
 		default:
@@ -956,8 +956,53 @@ void Room706::conv706a() {
 
 }
 
-void Room706::subA8BA8(int32 trigger, const char *digiName) {
-	// TODO Not implemented yet
+void Room706::playCheckBrochureAnim(int32 trigger, const char *digiName) {
+	switch (trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y - 1, nullptr, 41, 1, true);
+
+		break;
+
+	case 41:
+		_ripChecksBrochureSeries = series_load("RIP CHECKS BROCHURE", -1, nullptr);
+		setGlobals1(_ripChecksBrochureSeries, 1, 25, 25, 25, 0, 25, 31, 31, 31, 0, 31, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		kernel_timing_trigger(60, 43, nullptr);
+
+		break;
+
+	case 43:
+		sendWSMessage_120000(_G(my_walker), -1);
+		digi_play(digiName, 1, 255, 44, -1);
+
+		break;
+
+	case 44:
+		kernel_timing_trigger(10, 45, nullptr);
+		break;
+
+	case 45:
+		sendWSMessage_130000(_G(my_walker), 48);
+		break;
+
+	case 48:
+		sendWSMessage_150000(_G(my_walker), 49);
+		break;
+
+	case 49:
+		// CHECKME: Loading the series is totally illogical, despite it's in the original game.
+		// At this point, we usually unload the series (+ it's already loaded). I suspect it could lead to a memory leak.
+		_ripChecksBrochureSeries = series_load("RIP CHECKS BROCHURE");
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+
+	}
 }
 
 void Room706::useWheelOnNiche(int32 trigger, int32 val1) {
