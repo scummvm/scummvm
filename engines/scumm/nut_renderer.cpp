@@ -101,21 +101,23 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 }
 
 void NutRenderer::loadFont(const char *filename) {
-	ScummFile file(_vm);
-	_vm->openFile(file, filename);
-	if (!file.isOpen()) {
+	ScummFile *file = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
+
+	_vm->openFile(*file, filename);
+	if (!file->isOpen()) {
 		error("NutRenderer::loadFont() Can't open font file: %s", filename);
 	}
 
-	uint32 tag = file.readUint32BE();
+	uint32 tag = file->readUint32BE();
 	if (tag != MKTAG('A','N','I','M')) {
 		error("NutRenderer::loadFont() there is no ANIM chunk in font header");
 	}
 
-	uint32 length = file.readUint32BE();
+	uint32 length = file->readUint32BE();
 	byte *dataSrc = new byte[length];
-	file.read(dataSrc, length);
-	file.close();
+	file->read(dataSrc, length);
+	file->close();
+	delete file;
 
 	if (READ_BE_UINT32(dataSrc) != MKTAG('A','H','D','R')) {
 		error("NutRenderer::loadFont() there is no AHDR chunk in font header");

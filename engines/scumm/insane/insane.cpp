@@ -611,14 +611,16 @@ int32 Insane::processKeyboard() {
 }
 
 void Insane::readFileToMem(const char *name, byte **buf) {
-	ScummFile in(_vm);
+	ScummFile *file = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
 	uint32 len;
 
-	if (!_vm->openFile(in, name))
+	if (!_vm->openFile(*file, name))
 		error("Cannot open file %s", name);
-	len = in.size();
+	len = file->size();
 	*buf = (byte *)malloc(len);
-	in.read(*buf, len);
+	file->read(*buf, len);
+	file->close();
+	delete file;
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
