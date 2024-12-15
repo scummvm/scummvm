@@ -708,7 +708,21 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 		int totalOffset, soundSize, fileSize, headerTag, vctlBlockSize;
 
 		if (_vm->_voiceMode != 2) {
-			file.reset(new ScummFile(_vm));
+			if (_vm->_containerFile.empty()) {
+				file.reset(new ScummFile(_vm));
+			} else {
+				// Don't read the index of the PAK file, as we cached the
+				// location and size of monster.sou, which is the only file
+				// we need at this point. We do this to avoid reading the
+				// whole PAK file index for each speech sound.
+				ScummPAKFile *pakFile = new ScummPAKFile(_vm, false);
+				PAKFile tmpPak;
+				tmpPak.start = _cachedSfxLocationInPak;
+				tmpPak.len = _cachedSfxLengthInPak;
+				pakFile->setPAKFileIndex(DEFAULT_SFX_FILE, tmpPak);
+				file.reset(pakFile);
+			}
+
 			if (!file)
 				error("startTalkSound: Out of memory");
 
@@ -825,7 +839,21 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			offset += 8;
 		}
 
-		file.reset(new ScummFile(_vm));
+		if (_vm->_containerFile.empty()) {
+			file.reset(new ScummFile(_vm));
+		} else {
+			// Don't read the index of the PAK file, as we cached the
+			// location and size of monster.sou, which is the only file
+			// we need at this point. We do this to avoid reading the
+			// whole PAK file index for each speech sound.
+			ScummPAKFile *pakFile = new ScummPAKFile(_vm, false);
+			PAKFile tmpPak;
+			tmpPak.start = _cachedSfxLocationInPak;
+			tmpPak.len = _cachedSfxLengthInPak;
+			pakFile->setPAKFileIndex(DEFAULT_SFX_FILE, tmpPak);
+			file.reset(pakFile);
+		}
+		
 		if (!file)
 			error("startTalkSound: Out of memory");
 
@@ -1188,7 +1216,7 @@ bool Sound::hasSfxFile() const
 
 ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
 	Common::ScopedPtr<ScummFile> file;
-	file.reset(new ScummFile(_vm));
+	file.reset(_vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm));
 	if (!_vm->openFile(*file, fileName)) {
 		return NULL;
 	}
@@ -1283,6 +1311,19 @@ void Sound::setupSfxFile() {
 					_sfxFilename = tmp.toString('/');
 					break;
 				}
+			}
+		}
+
+		// Handle SFX file for classic game versions packed within remastered ones
+		if (!_vm->_containerFile.empty()) {
+			ScummPAKFile pakFile(_vm);
+			if (_vm->openFile(pakFile, DEFAULT_SFX_FILE)) {
+				_soundMode = kVOCMode;
+				_sfxFilename = DEFAULT_SFX_FILE;
+
+				PAKFile tmpPak = *pakFile.getPAKFileIndex(DEFAULT_SFX_FILE);
+				_cachedSfxLocationInPak = tmpPak.start;
+				_cachedSfxLengthInPak = tmpPak.len;
 			}
 		}
 	}

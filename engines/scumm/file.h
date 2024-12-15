@@ -166,6 +166,8 @@ public:
 	~ScummPAKFile() override { _pakIndex.clear(); }
 
 	bool openSubFile(const Common::Path &filePath) override;
+	PAKFile *getPAKFileIndex(Common::String fileName);
+	void setPAKFileIndex(Common::String fileName, const PAKFile &pakFile);
 };
 
 } // End of namespace Scumm
