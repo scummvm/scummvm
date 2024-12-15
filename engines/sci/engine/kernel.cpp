@@ -681,7 +681,7 @@ void Kernel::mapFunctions(GameFeatures *features) {
 									while (kernelSubLeft) {
 										kernelSubLeft--;
 										kernelSubMapBack--;
-										if (kernelSubMapBack->name == kernelSubMap->name) {
+										if (!strcmp(kernelSubMapBack->name, kernelSubMap->name)) {
 											if (kernelSubMapBack->signature) {
 												subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
 												break;
