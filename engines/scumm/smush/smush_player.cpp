@@ -35,6 +35,7 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
@@ -1329,6 +1330,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
 			break;
 		}
+
+		if (_vm->_macGui)
+			_vm->_macGui->updateWindowManager();
+
 		_vm->_system->delayMillis(10);
 	}
 
