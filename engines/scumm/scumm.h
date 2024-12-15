@@ -40,6 +40,7 @@
 #include "graphics/sjis.h"
 #include "graphics/palette.h"
 
+#include "scumm/file.h"
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
 #include "scumm/script.h"
@@ -1089,6 +1090,7 @@ public:
 	Common::Path _macCursorFile;
 
 	bool openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile = false);
+	ScummFile *instantiateScummFile(bool indexPAKFiles = true);
 
 protected:
 	int _resourceHeaderSize = 8;

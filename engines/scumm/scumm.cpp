@@ -1041,12 +1041,33 @@ Common::Error ScummEngine::init() {
 
 	// The	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
-	// This is the case of the NES, v0 and Mac versions of certain games.
+	// This is the case of the DoubleFine, NES, v0 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
 	// are treated like any other SCUMM game.
 	if (_filenamePattern.genMethod == kGenUnchanged) {
+		if (_game.platform == Common::kPlatformDOS && (_game.features & GF_DOUBLEFINE_PAK)) {
+			// Container files used in remastered/SE versions
+			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
+			_fileHandle = new ScummPAKFile(this);
+			_filenamePattern.genMethod = kGenDiskNum;
 
-		if (_game.platform == Common::kPlatformNES) {
+			switch (_game.id) {
+			case GID_MONKEY:
+				_filenamePattern.pattern = "monkey1.%03d";
+				break;
+			case GID_MONKEY2:
+				_filenamePattern.pattern = "monkey2.%03d";
+				break;
+			case GID_TENTACLE:
+				_filenamePattern.pattern = "tentacle.%03d";
+				break;
+			case GID_FT:
+				_filenamePattern.pattern = "ft.la%d";
+				break;
+			default:
+				error("Unsupported Doublefine packed game");
+			}
+		} else if (_game.platform == Common::kPlatformNES) {
 			// We read data directly from NES ROM instead of extracting it with
 			// external tool
 			assert(_game.id == GID_MANIAC);
@@ -1154,28 +1175,6 @@ Common::Error ScummEngine::init() {
 				error("Couldn't find index file description for Steam version");
 			} else {
 				_fileHandle = new ScummSteamFile(this, *indexFile);
-			}
-		} else if (_filenamePattern.genMethod == kGenDiskNumPak) {
-			// Container files used in remastered/SE versions
-			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
-			_fileHandle = new ScummPAKFile(this);
-			_filenamePattern.genMethod = kGenDiskNum;
-
-			switch (_game.id) {
-			case GID_MONKEY:
-				_filenamePattern.pattern = "monkey1.%03d";
-				break;
-			case GID_MONKEY2:
-				_filenamePattern.pattern = "monkey2.%03d";
-				break;
-			case GID_TENTACLE:
-				_filenamePattern.pattern = "tentacle.%03d";
-				break;
-			case GID_FT:
-				_filenamePattern.pattern = "ft.la%d";
-				break;
-			default:
-				error("kGenDiskNumPak used with unsupported game");
 			}
 		} else {
 			// Regular access, no container file involved

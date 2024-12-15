@@ -101,7 +101,7 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 }
 
 void NutRenderer::loadFont(const char *filename) {
-	ScummFile *file = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
+	ScummFile *file = _vm->instantiateScummFile();
 
 	_vm->openFile(*file, filename);
 	if (!file->isOpen()) {

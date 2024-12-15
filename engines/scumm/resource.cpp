@@ -182,6 +182,10 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
+ScummFile *ScummEngine::instantiateScummFile(bool indexPAKFiles) {
+	return !(_game.features & GF_DOUBLEFINE_PAK) ? new ScummFile(this) : new ScummPAKFile(this, indexPAKFiles);
+}
+
 bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile) {
 	bool result = false;
 

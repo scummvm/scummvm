@@ -182,7 +182,7 @@ public:
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
 	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
-	ScummFile *theFile = vm->_containerFile.empty() ? new ScummFile(vm) : new ScummPAKFile(vm);
+	ScummFile *theFile = vm->instantiateScummFile();
 
 	vm->openFile(*theFile, file);
 	if (!theFile->isOpen()) {
@@ -1026,8 +1026,8 @@ void SmushPlayer::parseNextFrame() {
 		if (_seekFile.size() > 0) {
 			delete _base;
 
-			ScummFile *tmp = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
-			if (!g_scumm->openFile(*tmp, Common::Path(_seekFile)))
+			ScummFile *tmp = _vm->instantiateScummFile();
+			if (!_vm->openFile(*tmp, Common::Path(_seekFile)))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
 			_base->readUint32BE();
@@ -1193,7 +1193,7 @@ void SmushPlayer::unpause() {
 
 void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 	// Verify the specified file exists
-	ScummFile *file = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
+	ScummFile *file = _vm->instantiateScummFile();
 
 	_vm->openFile(*file, filename);
 	if (!file->isOpen()) {
