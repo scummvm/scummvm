@@ -182,17 +182,20 @@ public:
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
 	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
-	ScummFile theFile(vm);
+	ScummFile *theFile = vm->_containerFile.empty() ? new ScummFile(vm) : new ScummPAKFile(vm);
 
-	vm->openFile(theFile, file);
-	if (!theFile.isOpen()) {
+	vm->openFile(*theFile, file);
+	if (!theFile->isOpen()) {
+		delete theFile;
 		return 0;
 	}
-	int32 length = theFile.size();
+	int32 length = theFile->size();
 	char *filebuffer = new char [length + 1];
 	assert(filebuffer);
-	theFile.read(filebuffer, length);
+	theFile->read(filebuffer, length);
 	filebuffer[length] = 0;
+	theFile->close();
+	delete theFile;
 
 	if (is_encoded && READ_BE_UINT32(filebuffer) == MKTAG('E','T','R','S')) {
 		assert(length > ETRS_HEADER_LENGTH);
