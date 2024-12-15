@@ -1023,7 +1023,7 @@ void SmushPlayer::parseNextFrame() {
 		if (_seekFile.size() > 0) {
 			delete _base;
 
-			ScummFile *tmp = new ScummFile(_vm);
+			ScummFile *tmp = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
 			if (!g_scumm->openFile(*tmp, Common::Path(_seekFile)))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
@@ -1190,13 +1190,15 @@ void SmushPlayer::unpause() {
 
 void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 	// Verify the specified file exists
-	ScummFile f(_vm);
-	_vm->openFile(f, filename);
-	if (!f.isOpen()) {
+	ScummFile *file = _vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm);
+
+	_vm->openFile(*file, filename);
+	if (!file->isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);
 		return;
 	}
-	f.close();
+	file->close();
+	delete file;
 
 	_updateNeeded = false;
 	_warpNeeded = false;
@@ -1238,7 +1240,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 		if (_insanity) {
 			// Seeking makes a mess of trying to sync the audio to
-			// the sound. Synt to time instead.
+			// the sound. Sync to time instead.
 			now = _vm->_system->getMillis() - _pauseTime;
 			elapsed = now - _startTime;
 		} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
