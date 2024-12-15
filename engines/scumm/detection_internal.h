@@ -91,6 +91,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		break;
 
 	case kGenUnchanged:
+	case kGenDiskNumPak:
 		result = pattern;
 		break;
 
@@ -527,7 +528,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			if (tmp)
 				md5str = computeStreamMD5AsString(*tmp, kMD5FileSizeLimit);
 			if (!md5str.empty()) {
-				int filesize = tmp->size();
+				int64 filesize = tmp->size();
 
 				d.md5 = md5str;
 				d.md5Entry = findInMD5Table(md5str.c_str());
@@ -554,7 +555,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
 					// Print some debug info.
-					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
+					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %ld\n",
 						file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid/variant at this point.

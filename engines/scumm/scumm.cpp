@@ -1155,6 +1155,28 @@ Common::Error ScummEngine::init() {
 			} else {
 				_fileHandle = new ScummSteamFile(this, *indexFile);
 			}
+		} else if (_filenamePattern.genMethod == kGenDiskNumPak) {
+			// Container files used in remastered/SE versions
+			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
+			_fileHandle = new ScummPAKFile(this);
+			_filenamePattern.genMethod = kGenDiskNum;
+
+			switch (_game.id) {
+			case GID_MONKEY:
+				_filenamePattern.pattern = "monkey1.%03d";
+				break;
+			case GID_MONKEY2:
+				_filenamePattern.pattern = "monkey2.%03d";
+				break;
+			case GID_TENTACLE:
+				_filenamePattern.pattern = "tentacle.%03d";
+				break;
+			case GID_FT:
+				_filenamePattern.pattern = "ft.la%d";
+				break;
+			default:
+				error("kGenDiskNumPak used with unsupported game");
+			}
 		} else {
 			// Regular access, no container file involved
 			_fileHandle = new ScummFile(this);
@@ -4014,7 +4036,7 @@ bool ScummEngine::startManiac() {
 		_saveLoadSlot = 100;
 		_saveTemporaryState = true;
 
-		// Set up the chanined games to Maniac Mansion, and then back
+		// Set up the chained games to Maniac Mansion, and then back
 		// to the current game again with that save slot.
 		ChainedGamesMan.push(Common::move(maniacTarget));
 		ChainedGamesMan.push(ConfMan.getActiveDomainName(), 100);
