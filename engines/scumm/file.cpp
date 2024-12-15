@@ -40,9 +40,9 @@ void BaseScummFile::close() {
 ScummFile::ScummFile(const ScummEngine *vm) : _subFileStart(0), _subFileLen(0), _myEos(false), _isMac(vm->_game.platform == Common::kPlatformMacintosh) {
 }
 
-void ScummFile::setSubfileRange(int32 start, int32 len) {
+void ScummFile::setSubfileRange(int64 start, int32 len) {
 	// TODO: Add sanity checks
-	const int32 fileSize = _baseStream->size();
+	const int64 fileSize = _baseStream->size();
 	assert(start <= fileSize);
 	assert(start + len <= fileSize);
 	_subFileStart = start;
@@ -155,7 +155,7 @@ bool ScummFile::seek(int64 offs, int whence) {
 			offs += _baseStream->pos();
 			break;
 		}
-		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
+		assert(_subFileStart <= offs && offs <= _subFileStart + _subFileLen);
 		whence = SEEK_SET;
 	}
 	bool ret = _baseStream->seek(offs, whence);
@@ -212,6 +212,86 @@ bool ScummSteamFile::openWithSubRange(const Common::Path &filename, int32 subFil
 		_subFileStart = subFileStart;
 		_subFileLen = subFileLen;
 		seek(0, SEEK_SET);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+#pragma mark -
+#pragma mark--- ScummPAKFile ---
+#pragma mark -
+
+ScummPAKFile::ScummPAKFile(const ScummEngine *vm, bool indexFiles) : ScummFile(vm) {
+	if (!indexFiles)
+		return;
+
+	ScummFile::open(vm->_containerFile);
+
+	const uint32 magic = _baseStream->readUint32BE();
+	const bool isFT = vm->_game.id == GID_FT;
+	const byte recordSize = isFT ? 24 : 20;
+
+	if (magic != MKTAG('K', 'A', 'P', 'L')) {
+		warning("ScummPAKFile: invalid PAK file");
+		return;
+	}
+
+	_baseStream->skip(4); // skip version
+
+	if (!isFT)
+		_baseStream->skip(4); // skip start of index
+
+	const uint32 fileEntriesOffset = _baseStream->readUint32LE();
+
+	if (isFT)
+		_baseStream->skip(4); // skip start of index
+
+	const uint32 fileNamesOffset = _baseStream->readUint32LE();
+	const uint32 dataOffset = _baseStream->readUint32LE();
+	_baseStream->skip(4); // skip size of index
+	const uint32 fileEntriesLength = _baseStream->readUint32LE();
+
+	const uint32 fileCount = fileEntriesLength / recordSize;
+	uint32 curNameOffset = 0;
+
+	for (uint32 i = 0; i < fileCount; i++) {
+		PAKFile pakFile;
+
+		_baseStream->seek(fileEntriesOffset + i * recordSize, SEEK_SET);
+		pakFile.start = !isFT ? _baseStream->readUint32LE() : _baseStream->readUint64LE();
+		pakFile.start += dataOffset;
+		_baseStream->skip(4); // skip file name offset
+		pakFile.len = _baseStream->readUint32LE();
+
+		_baseStream->seek(fileNamesOffset + curNameOffset, SEEK_SET);
+		Common::String fileName = _baseStream->readString();
+		curNameOffset += fileName.size() + 1;
+
+		// We only want to index the files of the classic versions
+		// FT data and video folders are located in the root folder
+		if (fileName.hasPrefixIgnoreCase("classic/") ||
+			fileName.hasPrefixIgnoreCase("data/") ||
+			fileName.hasPrefixIgnoreCase("video/")) {
+			// Remove the directory prefix
+			fileName = fileName.substr(fileName.findLastOf("/") + 1);
+			fileName.toLowercase();
+			_pakIndex[fileName] = pakFile;
+		}
+	}
+
+	ScummFile::close();
+}
+
+bool ScummPAKFile::openSubFile(const Common::Path &filePath) {
+	assert(_baseStream);
+
+	Common::String fileName = filePath.toString();
+	fileName.toLowercase();
+
+	if (_pakIndex.contains(fileName)) {
+		PAKFile pakFile = _pakIndex[fileName];
+		setSubfileRange(pakFile.start, pakFile.len);
 		return true;
 	} else {
 		return false;

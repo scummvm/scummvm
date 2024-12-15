@@ -62,12 +62,12 @@ public:
 
 class ScummFile : public BaseScummFile {
 protected:
-	int32	_subFileStart;
+	int64	_subFileStart;
 	int32	_subFileLen;
 	bool	_myEos; // Have we read past the end of the subfile?
 	bool    _isMac;
 
-	void setSubfileRange(int32 start, int32 len);
+	void setSubfileRange(int64 start, int32 len);
 	void resetSubfile();
 
 public:
@@ -148,6 +148,24 @@ public:
 	ScummSteamFile(const ScummEngine *vm, const SteamIndexFile &indexFile) : ScummFile(vm), _indexFile(indexFile) {}
 
 	bool open(const Common::Path &filename) override;
+};
+
+struct PAKFile {
+	uint64 start;
+	uint32 len;
+};
+
+typedef Common::HashMap<Common::String, PAKFile> PAKFileHashMap;
+
+class ScummPAKFile : public ScummFile {
+private:
+	PAKFileHashMap _pakIndex;
+
+public:
+	ScummPAKFile(const ScummEngine *vm, bool indexFiles = true);
+	~ScummPAKFile() override { _pakIndex.clear(); }
+
+	bool openSubFile(const Common::Path &filePath) override;
 };
 
 } // End of namespace Scumm
