@@ -268,11 +268,13 @@ ScummPAKFile::ScummPAKFile(const ScummEngine *vm, bool indexFiles) : ScummFile(v
 		Common::String fileName = _baseStream->readString();
 		curNameOffset += fileName.size() + 1;
 
-		// We only want to index the files of the classic versions
+		// We only want to index the files of the classic versions.
 		// FT data and video folders are located in the root folder
 		if (fileName.hasPrefixIgnoreCase("classic/") ||
 			fileName.hasPrefixIgnoreCase("data/") ||
-			fileName.hasPrefixIgnoreCase("video/")) {
+			fileName.hasPrefixIgnoreCase("video/") ||
+			fileName.hasPrefixIgnoreCase("en/data/") ||  // TODO: Support non-English versions
+			fileName.hasPrefixIgnoreCase("en/video/")) { // TODO: Support non-English versions
 			// Remove the directory prefix
 			fileName = fileName.substr(fileName.findLastOf("/") + 1);
 			fileName.toLowercase();
