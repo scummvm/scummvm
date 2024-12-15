@@ -105,6 +105,7 @@ struct GameSettings {
 enum FilenameGenMethod {
 	kGenDiskNum,
 	kGenDiskNumSteam,
+	kGenDiskNumPak,
 	kGenRoomNum,
 	kGenRoomNumSteam,
 	kGenHEMac,
@@ -204,8 +205,8 @@ enum GameFeatures {
 	GF_ULTIMATE_TALKIE = 1 << 18,
 
 	/**
-	 *  HE99 games which were ported to a C++ codebase with HE99 opcodes
-	 *  and several HE100 GFX/Wiz features.
+	 * HE99 games which were ported to a C++ codebase with HE99 opcodes
+	 * and several HE100 GFX/Wiz features.
 	 */
 	GF_HE_995 = 1 << 19
 };
