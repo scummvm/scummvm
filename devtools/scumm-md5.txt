@@ -240,6 +240,7 @@ monkey	The Secret of Monkey Island
 	8776caed014c321272af407c1502a2df	8955	en	Mac	Mac	-	Mac v2.4	Petr Maruska (#3295)
 
 	2d1e891fe52df707c30185e52c50cd92	8955	en	DOS	CD	CD	CD-ROM v2.3	Fingolfin
+	190ab1effbfd186cda821b71a9732c7d	1242812968	en	DOS	SE	SE	SE	Filippos Karapetis
 	aa8a0cb65f3afbbe2c14c3f9f92775a3	8955	fr	DOS	CD	CD	CD-ROM v2.3	Fingolfin, Andrej Sinicyn, Andrea Petrucci
 	305d3dd57c96c65b017bc70c8c7cfb5e	8955	de	DOS	CD	CD	CD-ROM v2.3	Fingolfin
 	da6269b18fcb08189c0aa9c95533cce2	8955	it	DOS	CD	CD	CD-ROM v2.3	Fingolfin, Andrej Sinicyn, Andrea Petrucci
@@ -285,6 +286,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	Amiga	-	-	Andrea Petrucci
 	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	Amiga	-	-	Andreas Bylund
 	3686cf8f89e102ececf4366e1d2c8126	11135	en	DOS	-	-	v1.0 11/21/91
+	d670454da245c19bef988a341c416e40	506101054	en	DOS	SE	SE	SE	Filippos Karapetis
 	8e4ee4db46954bfe2912e259a16fad82	11135	fr	DOS	-	-	v1.0 21/12/91	Nicolas Sauz&egrave;de, Andrea Petrucci
 	6886e5d08cee329b1f2e743ae2e3ceed	11135	de	DOS	-	-	v1.0D 17Feb92	Fingolfin
 	69ea626f1f87eecb78ea0d6c6b983a1d	-1	it	DOS	-	-	-	Andrea Petrucci
@@ -356,6 +358,7 @@ tentacle	Day of the Tentacle
 	ae94f110a14ce71fc515d5b648827a8f	7932	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
 
 	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	1.6	Fingolfin
+	64d07dec2bf0789c4f2a7b656cf5bb83	2731584777	en	DOS	SE	SE	Filippos Karapetis
 	8aa05d3cdb0e795436043f0546af2da2	7932	fr	All?	-	CD	-	Andrea Petrucci
 	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
@@ -403,6 +406,7 @@ ft	Full Throttle
 	41958e24d03181ff9a381a66d048a581	-1	br	All?	-	-	-	Danilo E.S.
 	09820417db26687bb7fe0c83cc4c553b	19697	en	All?	-	Version A	-	Fingolfin
 	60ba818dc3bede86d40357e3913f8505	19697	en	All?	-	Version B	-	sev, Fingolfin
+	3ad7672a6c4d190f0a08ea524f711dd6	5465581773	en	DOS	SE	SE	SE	Filippos Karapetis
 	4bedb49943df95a9c900a5a82ccbe9de	19752	fr	All?	-	-	-	cyx
 	8bdb0bf87b5e303dd35693afb9351215	-1	de	All?	-	-	-	dhewg
 	55518cd73cf9c6d23ea29c51ee06bdfe	-1	it	All?	-	-	-	delfino
