@@ -1597,10 +1597,13 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 }
 
 void SceneItem::doAction(int action) {
+#ifdef ENABLE_RINGWORLD2
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		Event dummyEvent;
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
-	} else {
+	} else
+#endif
+	{
 		const char *msg = NULL;
 
 		if (g_vm->getLanguage() == Common::ES_ESP) {
@@ -1921,11 +1924,14 @@ void SceneHotspot::synchronize(Serializer &s) {
 
 bool SceneHotspot::startAction(CursorType action, Event &event) {
 	switch (g_vm->getGameID()) {
+#ifdef ENABLE_BLUEFORCE
 	case GType_BlueForce: {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
 		return scene->display(action);
 	}
+#endif
+#ifdef ENABLE_RINGWORLD2
 	case GType_Ringworld2: {
 		switch (action) {
 		case CURSOR_LOOK:
@@ -1952,6 +1958,7 @@ bool SceneHotspot::startAction(CursorType action, Event &event) {
 
 		return ((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display(action, event);
 	}
+#endif
 	default:
 		return SceneItem::startAction(action, event);
 	}
@@ -2887,6 +2894,7 @@ void SceneObject::draw() {
 	GfxSurface frame = getFrame();
 	Region *priorityRegion = scene->_priorities.find(_priority);
 
+#ifdef ENABLE_RINGWORLD2
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		switch (_effect) {
 		case EFFECT_SHADOW_MAP: {
@@ -2901,6 +2909,7 @@ void SceneObject::draw() {
 			break;
 		}
 	}
+#endif
 
 	GLOBALS.gfxManager().copyFrom(frame, destRect, priorityRegion);
 }
@@ -3011,10 +3020,12 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 void BackgroundSceneObject::copySceneToBackground() {
 	GLOBALS._sceneManager._scene->_backSurface.copyFrom(g_globals->gfxManager().getSurface(), 0, 0);
 
+#ifdef ENABLE_RINGWORLD2
 	// WORKAROUND: Since savegames don't store the active screen data, once we copy the
 	// foreground objects to the background, we have to prevent the scene being saved.
 	if (g_vm->getGameID() == GType_Ringworld2)
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->_preventSaving = true;
+#endif
 }
 
 /*--------------------------------------------------------------------------*/

@@ -50,8 +50,10 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "PaletteFader") return new PaletteFader();
 	if (className == "SceneText") return new SceneText();
 
+#ifdef ENABLE_RINGWORLD2
 	// Return to Ringworld specific classes
 	if (className == "Scene205_Star") return new Ringworld2::Star();
+#endif
 
 	return NULL;
 }
@@ -135,6 +137,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 	_sceneHandler = nullptr;
 
 	switch (g_vm->getGameID()) {
+#ifdef ENABLE_RINGWORLD
 	case GType_Ringworld:
 		if (!(g_vm->getFeatures() & GF_DEMO)) {
 			_inventory = new Ringworld::RingworldInvObjectList();
@@ -144,18 +147,21 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 		}
 		_sceneHandler = new SceneHandler();
 		break;
-
+#endif
+#ifdef ENABLE_BLUEFORCE
 	case GType_BlueForce:
 		_game = new BlueForce::BlueForceGame();
 		_inventory = new BlueForce::BlueForceInvObjectList();
 		_sceneHandler = new BlueForce::SceneHandlerExt();
 		break;
-
+#endif
+#ifdef ENABLE_RINGWORLD2
 	case GType_Ringworld2:
 		_inventory = new Ringworld2::Ringworld2InvObjectList();
 		_game = new Ringworld2::Ringworld2Game();
 		_sceneHandler = new Ringworld2::SceneHandlerExt();
 		break;
+#endif
 #ifdef TSAGE_SHERLOCK_ENABLED
 	case GType_Sherlock1:
 		_inventory = nullptr;
@@ -247,6 +253,8 @@ void TsAGE2Globals::synchronize(Serializer &s) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+#ifdef ENABLE_BLUEFORCE
 
 namespace BlueForce {
 
@@ -419,6 +427,10 @@ bool BlueForceGlobals::removeFlag(int flagNum) {
 }
 
 } // end of namespace BlueForce
+
+#endif
+
+#ifdef ENABLE_RINGWORLD2
 
 namespace Ringworld2 {
 
@@ -673,5 +685,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 }
 
 } // end of namespace Ringworld2
+
+#endif
 
 } // end of namespace TsAGE
