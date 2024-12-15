@@ -23,6 +23,8 @@ MODULE_OBJS := \
 	request.o \
 	resource.o \
 	scene.o \
+	scene_condition.o \
+	scene_op.o \
 	scripts.o \
 	sound.o \
 	sound_raw.o \

@@ -26,194 +26,33 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "graphics/cursorman.h"
 #include "graphics/surface.h"
-#include "graphics/primitives.h"
 
 #include "dgds/dgds.h"
 #include "dgds/includes.h"
 #include "dgds/resource.h"
-#include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/ads.h"
 #include "dgds/menu.h"
-#include "dgds/font.h"
 #include "dgds/globals.h"
-#include "dgds/image.h"
 #include "dgds/inventory.h"
-#include "dgds/minigames/china_tank.h"
-#include "dgds/minigames/china_train.h"
-#include "dgds/minigames/dragon_arcade.h"
-#include "dgds/dragon_native.h"
-#include "dgds/hoc_intro.h"
-#include "dgds/sound_raw.h"
-#include "dgds/ttm.h"
+#include "dgds/debug_util.h"
 
 namespace Dgds {
-
-template<class C> static Common::String _dumpStructList(const Common::String &indent, const Common::String &name, const C &list) {
-	if (list.empty())
-		return "";
-
-	const Common::String nextind = indent + "    ";
-	Common::String str = Common::String::format("\n%s%s=", Common::String(indent + "  ").c_str(), name.c_str());
-	for (const auto &s : list) {
-		str += "\n";
-		str += s.dump(nextind);
-	}
-	return str;
-}
-
-
-Common::String _sceneConditionStr(SceneCondition cflag) {
-	Common::String ret;
-
-	if (cflag & kSceneCondOr)
-		return "or";
-
-	if (cflag & kSceneCondSceneState)
-		ret += "state|";
-	if (cflag & kSceneCondNeedItemSceneNum)
-		ret += "itemsnum|";
-	if (cflag & kSceneCondNeedItemQuality)
-		ret += "quality|";
-	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality)) == 0)
-		ret += "global|";
-
-	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality));
-	if (cflag == kSceneCondNone)
-		ret += "nocond";
-	if (cflag & kSceneCondLessThan)
-		ret += "less";
-	if (cflag & kSceneCondEqual)
-		ret += "equal";
-	if (cflag & kSceneCondNegate)
-		ret += "-not";
-	if (cflag & kSceneCondAbsVal)
-		ret += "(abs)";
-
-	return ret;
-}
-
-Common::String SceneConditions::dump(const Common::String &indent) const {
-	return Common::String::format("%sSceneCondition<flg 0x%02x(%s) num %d val %d>", indent.c_str(),
-			_flags, _sceneConditionStr(_flags).c_str(), _num, _val);
-}
 
 
 Common::String HotArea::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d cursor2 %d interactionRectNum %d",
 			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _cursorNum2, _objInteractionRectNum);
-	str += _dumpStructList(indent, "enableConditions", enableConditions);
-	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
-	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
-	str += _dumpStructList(indent, "onLClickOps", onLClickOps);
+	str += DebugUtil::dumpStructList(indent, "enableConditions", enableConditions);
+	str += DebugUtil::dumpStructList(indent, "onRClickOps", onRClickOps);
+	str += DebugUtil::dumpStructList(indent, "onLDownOps", onLDownOps);
+	str += DebugUtil::dumpStructList(indent, "onLClickOps", onLClickOps);
 	str += "\n";
 	str += indent + ">";
 	return str;
 }
 
-
-static Common::String _sceneOpCodeName(SceneOpCode code) {
-	switch (code) {
-	case kSceneOpNone: 		  	return "none";
-	case kSceneOpChangeScene: 	return "changeScene";
-	case kSceneOpNoop:		  	return "noop";
-	case kSceneOpGlobal:		return "global";
-	case kSceneOpSegmentStateOps: return "sceneOpSegmentStateOps";
-	case kSceneOpSetItemAttr:   return "setItemAttr";
-	case kSceneOpSetDragItem:   return "setDragItem";
-	case kSceneOpOpenInventory: return "openInventory";
-	case kSceneOpShowDlg:		return "showdlg";
-	case kSceneOpShowInvButton:	return "showInvButton";
-	case kSceneOpHideInvButton:	return "hideInvButton";
-	case kSceneOpEnableTrigger: return "enabletrigger";
-	case kSceneOpChangeSceneToStored: 	return "changeSceneToStored";
-	case kSceneOpAddFlagToDragItem:		return "addFlagToDragItem";
-	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
-	case kSceneOpOpenInventoryZoom:   	return "openInventoryZoom";
-	case kSceneOpShowClock:		return "sceneOpShowClock";
-	case kSceneOpHideClock:		return "sceneOpHideClock";
-	case kSceneOpShowMouse:		return "sceneOpShowMouse";
-	case kSceneOpHideMouse:		return "sceneOpHideMouse";
-	case kSceneOpLoadTalkDataAndSetFlags: return "sceneOpLoadTalkDataAndSetFlags";
-	case kSceneOpDrawVisibleTalkHeads: return "sceneOpDrawVisibleTalksHeads";
-	case kSceneOpLoadTalkData: 	return "sceneOpLoadTalkData";
-	case kSceneOpLoadDDSData: 	return "sceneOpLoadDDSData";
-	case kSceneOpFreeDDSData: 	return "sceneOpFreeDDSData";
-	case kSceneOpFreeTalkData: 	return "sceneOpFreeTalkData";
-
-	default:
-		break;
-	}
-
-	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
-		switch (code) {
-		case kSceneOpPasscode:		return "passcode";
-		case kSceneOpMeanwhile:   	return "meanwhile";
-		case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
-		case kSceneOpTiredDialog:	return "openTiredDialog";
-		case kSceneOpArcadeTick: 	return "sceneOpArcadeTick";
-		case kSceneOpDrawDragonCountdown1: 	return "drawDragonCountdown1";
-		case kSceneOpDrawDragonCountdown2:	return "drawDragonCountdown2";
-		case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
-		case kSceneOpOpenBetterSaveGameMenu: return "openBetterSaveGameMenu";
-		default:
-			break;
-		}
-	} else if (DgdsEngine::getInstance()->getGameId() == GID_HOC) {
-		switch (code) {
-		case kSceneOpChinaTankInit:			return "tankInit";
-		case kSceneOpChinaTankEnd:			return "tankEnd";
-		case kSceneOpChinaTankTick:			return "tankTick";
-		case kSceneOpChinaScrollLeft:		return "scrollLeft";
-		case kSceneOpChinaScrollRight:		return "scrollRight";
-		case kSceneOpShellGameInit:			return "shellGameInit";
-		case kSceneOpShellGameEnd:			return "shellGameEnd";
-		case kSceneOpShellGameTick:			return "shellGameTick";
-		case kSceneOpChinaTrainInit:		return "trainInit";
-		case kSceneOpChinaTrainEnd:			return "trainEnd";
-		case kSceneOpChinaTrainTick:		return "trainTick";
-		case kSceneOpChinaOpenGameOverMenu: return "gameOverMenu";
-		case kSceneOpChinaOpenSkipCreditsMenu: return "skipCreditsMenu";
-		case kSceneOpChinaOnIntroInit:		return "chinaOnIntroInit";
-		case kSceneOpChinaOnIntroTick:		return "chinaOnIntroTick";
-		case kSceneOpChinaOnIntroEnd:  		return "chinaOnIntroEnd";
-		default:
-			break;
-		}
-	} else if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
-		switch (code) {
-		case kSceneOpOpenBeamishGameOverMenu: return "openGameOverMenu";
-		case kSceneOpOpenBeamishOpenSkipCreditsMenu: return "skipCreditsMenu";
-		default:
-			break;
-		}
-	}
-
-	return Common::String::format("sceneOp%d", (int)code);
-}
-
-Common::String SceneOp::dump(const Common::String &indent) const {
-	Common::String argsStr;
-	if (_args.empty()) {
-		argsStr = "[]";
-	} else {
-		argsStr = "[";
-		for  (uint i : _args)
-			argsStr += Common::String::format("%d ", i);
-		argsStr.setChar(']', argsStr.size() - 1);
-	}
-	Common::String str = Common::String::format("%sSceneOp<op: %s args: %s", indent.c_str(), _sceneOpCodeName(_opCode).c_str(), argsStr.c_str());
-
-	str += _dumpStructList(indent, "conditionList", _conditionList);
-	if (!_conditionList.empty()) {
-		str += "\n";
-		str += indent;
-	}
-	str += ">";
-	return str;
-}
 
 Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = HotArea::dump(indent + "  ");
@@ -222,8 +61,8 @@ Common::String GameItem::dump(const Common::String &indent) const {
 			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags %d quality %d",
 			indent.c_str(), super.c_str(), indent.c_str(), _altCursor,
 			_iconNum, _inSceneNum, _flags, _quality);
-	str += _dumpStructList(indent, "onDragFinishedOps", onDragFinishedOps);
-	str += _dumpStructList(indent, "onBothButtonsOps", onBothButtonsOps);
+	str += DebugUtil::dumpStructList(indent, "onDragFinishedOps", onDragFinishedOps);
+	str += DebugUtil::dumpStructList(indent, "onBothButtonsOps", onBothButtonsOps);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -238,7 +77,7 @@ Common::String MouseCursor::dump(const Common::String &indent) const {
 Common::String ObjectInteraction::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sObjectInteraction<dropped %d target %d", indent.c_str(), _droppedItemNum, _targetItemNum);
 
-	str += _dumpStructList(indent, "opList", opList);
+	str += DebugUtil::dumpStructList(indent, "opList", opList);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -247,8 +86,8 @@ Common::String ObjectInteraction::dump(const Common::String &indent) const {
 
 Common::String SceneTrigger::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneTrigger<num %d %s %d", indent.c_str(), _num, _enabled ? "enabled" : "disabled", _timesToCheckBeforeRunning);
-	str += _dumpStructList(indent, "conditionList", conditionList);
-	str += _dumpStructList(indent, "opList", sceneOpList);
+	str += DebugUtil::dumpStructList(indent, "conditionList", conditionList);
+	str += DebugUtil::dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -623,244 +462,6 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 }
 
 
-bool Scene::runSceneOp(const SceneOp &op) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	switch (op._opCode) {
-	case kSceneOpChangeScene:
-		if (engine->changeScene(op._args[0]))
-			return true;
-		break;
-	case kSceneOpNoop:
-		break;
-	case kSceneOpGlobal:
-		// The globals are held by the GDS scene
-		engine->getGDSScene()->globalOps(op._args);
-		break;
-	case kSceneOpSegmentStateOps:
-		SDSScene::segmentStateOps(op._args);
-		break;
-	case kSceneOpSetItemAttr:
-		SDSScene::setItemAttrOp(op._args);
-		break;
-	case kSceneOpSetDragItem:
-		SDSScene::setDragItemOp(op._args);
-		break;
-	case kSceneOpOpenInventory:
-		engine->getInventory()->open();
-		// This implicitly changes scene num
-		break;
-	case kSceneOpShowDlg:
-		if (op._args.size() == 1)
-			engine->getScene()->showDialog(0, op._args[0]);
-		else if (op._args.size() > 1)
-			engine->getScene()->showDialog(op._args[0], op._args[1]);
-		break;
-	case kSceneOpShowInvButton:
-		engine->getScene()->addInvButtonToHotAreaList();
-		break;
-	case kSceneOpHideInvButton:
-		engine->getScene()->removeInvButtonFromHotAreaList();
-		break;
-	case kSceneOpEnableTrigger:
-		engine->getScene()->enableTrigger(op._args[0]);
-		break;
-	case kSceneOpChangeSceneToStored: {
-		int16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
-		if (engine->changeScene(sceneNo))
-			return true;
-		break;
-	}
-	case kSceneOpAddFlagToDragItem: {
-		GameItem *item = engine->getScene()->getDragItem();
-		if (item) {
-			item->_flags |= 1;
-			// TODO: Use hot x/y or just position?
-			Common::Point lastMouse = engine->getLastMouseMinusHot();
-			item->_rect.x = lastMouse.x;
-			item->_rect.y = lastMouse.y;
-		}
-		break;
-	}
-	case kSceneOpOpenInventoryZoom:
-		engine->getInventory()->setShowZoomBox(true);
-		engine->getInventory()->open();
-		return true;
-	case kSceneOpMoveItemsBetweenScenes: {
-		int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
-		int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
-		for (auto &item : engine->getGDSScene()->getGameItems()) {
-			if (item._inSceneNum == fromScene)
-				item._inSceneNum = toScene;
-		}
-		break;
-	}
-	case kSceneOpShowClock:
-		engine->setShowClock(true);
-		break;
-	case kSceneOpHideClock:
-		engine->setShowClock(false);
-		break;
-	case kSceneOpShowMouse:
-		CursorMan.showMouse(true);
-		break;
-	case kSceneOpHideMouse:
-		CursorMan.showMouse(false);
-		break;
-	case kSceneOpLoadTalkDataAndSetFlags: // args: tdsnum to load, headnum
-		engine->getScene()->loadTalkDataAndSetFlags(op._args[0], op._args[1]);
-		break;
-	case kSceneOpDrawVisibleTalkHeads: // args: none
-		engine->getScene()->updateVisibleTalkers();
-		break;
-	case kSceneOpLoadTalkData: 	// args: tds num to load
-		engine->getScene()->loadTalkData(op._args[0]);
-		break;
-	case kSceneOpLoadDDSData: 	// args: dds num to load
-		if (op._args[0])
-			engine->getScene()->loadDialogData(op._args[0]);
-		break;
-	case kSceneOpFreeDDSData:	// args: dds num to free
-		engine->getScene()->freeDialogData(op._args[0]);
-		break;
-	case kSceneOpFreeTalkData: 	// args: tds num to free
-		engine->getScene()->freeTalkData(op._args[0]);
-		break;
-
-	default:
-		warning("TODO: Implement generic scene op %d", op._opCode);
-		break;
-	}
-	return false;
-}
-
-/*static*/
-bool Scene::runDragonOp(const SceneOp &op) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	switch (op._opCode) {
-	case kSceneOpPasscode:
-		DragonNative::updatePasscodeGlobal();
-		break;
-	case kSceneOpMeanwhile:
-		// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
-		// Probably need to do something here to avoid flashing..
-		//engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		break;
-	case kSceneOpOpenGameOverMenu:
-		engine->setMenuToTrigger(kMenuGameOver);
-		break;
-	case kSceneOpTiredDialog:
-		engine->getInventory()->close();
-		engine->getScene()->addAndShowTiredDialog();
-		break;
-	case kSceneOpArcadeTick:
-		// TODO: Add a configuration option to skip arcade sequence?
-		// g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
-		// engine->getGameGlobals()->setGlobal(0x21, 6);
-		engine->getDragonArcade()->arcadeTick();
-		break;
-	case kSceneOpDrawDragonCountdown1:
-		DragonNative::drawCountdown(FontManager::k4x5Font, 141, 56);
-		break;
-	case kSceneOpDrawDragonCountdown2:
-		DragonNative::drawCountdown(FontManager::k8x8Font, 250, 42);
-		break;
-	case kSceneOpOpenPlaySkipIntroMenu:
-		engine->setMenuToTrigger(kMenuSkipPlayIntro);
-		break;
-	case kSceneOpOpenBetterSaveGameMenu:
-		engine->setMenuToTrigger(kMenuSaveBeforeArcade);
-		break;
-	default:
-		error("Unexpected Dragon scene opcode %d", op._opCode);
-		break;
-	}
-	return false;
-}
-
-/*static*/
-bool Scene::runChinaOp(const SceneOp &op) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	switch (op._opCode) {
-	case kSceneOpChinaTankInit:
-		engine->getChinaTank()->init();
-		break;
-	case kSceneOpChinaTankEnd:
-		engine->getChinaTank()->end();
-		break;
-	case kSceneOpChinaTankTick:
-		engine->getChinaTank()->tick();
-		break;
-	case kSceneOpShellGameTick:
-		engine->getShellGame()->shellGameTick();
-		break;
-	case kSceneOpShellGameEnd:
-		engine->getShellGame()->shellGameEnd();
-		break;
-	case kSceneOpChinaTrainInit:
-		engine->getChinaTrain()->init();
-		break;
-	case kSceneOpChinaTrainEnd:
-		engine->getChinaTrain()->end();
-		break;
-	case kSceneOpChinaTrainTick:
-		engine->getChinaTrain()->tick();
-		break;
-	case kSceneOpChinaOpenGameOverMenu:
-		engine->setMenuToTrigger(kMenuGameOver);
-		break;
-	case kSceneOpChinaOpenSkipCreditsMenu:
-		engine->setMenuToTrigger(kMenuSkipPlayIntro);
-		break;
-	case kSceneOpChinaOnIntroInit:
-		engine->getHocIntro()->init();
-		break;
-	case kSceneOpChinaOnIntroTick:
-		engine->getHocIntro()->tick();
-		break;
-	case kSceneOpChinaOnIntroEnd:
-		engine->getHocIntro()->end();
-		break;
-	case kSceneOpChinaScrollIntro:
-	case kSceneOpChinaScrollLeft:
-	case kSceneOpChinaScrollRight:
-		// These map to null functions.
-		break;
-	default:
-		warning("TODO: Implement china-specific scene opcode %d (%s)", op._opCode,
-			_sceneOpCodeName(op._opCode).c_str());
-		break;
-	}
-	return false;
-}
-
-bool Scene::runBeamishOp(const SceneOp &op) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-
-	if (op._opCode & kSceneOpHasConditionalOpsFlag) {
-		uint16 opcode = op._opCode & ~kSceneOpHasConditionalOpsFlag;
-		for (const ConditionalSceneOp &cop : engine->getScene()->getConditionalOps()) {
-			if (cop._opCode == opcode && checkConditions(cop._conditionList)) {
-				if (!runOps(cop._opList))
-					return true;
-			}
-		}
-		return false;
-	}
-
-	switch (op._opCode) {
-	case kSceneOpOpenBeamishGameOverMenu:
-		engine->setMenuToTrigger(kMenuGameOver);
-		break;
-	case kSceneOpOpenBeamishOpenSkipCreditsMenu:
-		engine->setMenuToTrigger(kMenuSkipPlayIntro);
-		break;
-	default:
-		warning("TODO: Implement beamish-specific scene opcode %d", op._opCode);
-		break;
-	}
-	return false;
-}
-
 //
 // Note: ops list here is not a reference on purpose, it must be copied.
 // The underlying list might be freed during execution if the scene changes, but
@@ -884,24 +485,8 @@ bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */
 			engine->getClock().addGameTime(addMinuites);
 			addMinuites = 0;
 		}
-		if (op._opCode < 100) {
-			sceneChanged = runSceneOp(op);
-		} else {
-			// Game-specific opcode
-			switch (engine->getGameId()) {
-			case GID_DRAGON:
-				sceneChanged = runDragonOp(op);
-				break;
-			case GID_HOC:
-				sceneChanged = runChinaOp(op);
-				break;
-			case GID_WILLY:
-				sceneChanged = runBeamishOp(op);
-				break;
-			default:
-				error("TODO: Implement game-specific scene op for this game");
-			}
-		}
+
+		sceneChanged = op.runOp();
 
 		if (sceneChanged)
 			break;
@@ -1072,15 +657,15 @@ void SDSScene::unload() {
 
 Common::String SDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
-	str += _dumpStructList(indent, "enterSceneOps", _enterSceneOps);
-	str += _dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
-	str += _dumpStructList(indent, "preTickOps", _preTickOps);
-	str += _dumpStructList(indent, "postTickOps", _postTickOps);
-	str += _dumpStructList(indent, "hotAreaList", _hotAreaList);
-	str += _dumpStructList(indent, "objInteractions1", _objInteractions1);
-	str += _dumpStructList(indent, "objInteractions2", _objInteractions2);
-	str += _dumpStructList(indent, "dialogues", _dialogs);
-	str += _dumpStructList(indent, "triggers", _triggers);
+	str += DebugUtil::dumpStructList(indent, "enterSceneOps", _enterSceneOps);
+	str += DebugUtil::dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
+	str += DebugUtil::dumpStructList(indent, "preTickOps", _preTickOps);
+	str += DebugUtil::dumpStructList(indent, "postTickOps", _postTickOps);
+	str += DebugUtil::dumpStructList(indent, "hotAreaList", _hotAreaList);
+	str += DebugUtil::dumpStructList(indent, "objInteractions1", _objInteractions1);
+	str += DebugUtil::dumpStructList(indent, "objInteractions2", _objInteractions2);
+	str += DebugUtil::dumpStructList(indent, "dialogues", _dialogs);
+	str += DebugUtil::dumpStructList(indent, "triggers", _triggers);
 
 	str += "\n";
 	str += indent + ">";
@@ -1348,6 +933,8 @@ void SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
 			for (auto &head : data._heads) {
 				if (head._num != headnum)
 					continue;
+
+				_conversation._drawRect = head._rect;
 				head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag10));
 				head._flags = static_cast<HeadFlags>(head._flags | (kHeadFlag8 | kHeadFlagVisible));
 				break;
@@ -2240,15 +1827,15 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 
 Common::String GDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
-	str += _dumpStructList(indent, "gameItems", _gameItems);
-	str += _dumpStructList(indent, "startGameOps", _startGameOps);
-	str += _dumpStructList(indent, "quitGameOps", _quitGameOps);
-	str += _dumpStructList(indent, "preTickOps", _preTickOps);
-	str += _dumpStructList(indent, "postTickOps", _postTickOps);
-	str += _dumpStructList(indent, "onChangeSceneOps", _onChangeSceneOps);
-	str += _dumpStructList(indent, "perSceneGlobals", _perSceneGlobals);
-	str += _dumpStructList(indent, "objInteractions1", _objInteractions1);
-	str += _dumpStructList(indent, "objInteractions2", _objInteractions2);
+	str += DebugUtil::dumpStructList(indent, "gameItems", _gameItems);
+	str += DebugUtil::dumpStructList(indent, "startGameOps", _startGameOps);
+	str += DebugUtil::dumpStructList(indent, "quitGameOps", _quitGameOps);
+	str += DebugUtil::dumpStructList(indent, "preTickOps", _preTickOps);
+	str += DebugUtil::dumpStructList(indent, "postTickOps", _postTickOps);
+	str += DebugUtil::dumpStructList(indent, "onChangeSceneOps", _onChangeSceneOps);
+	str += DebugUtil::dumpStructList(indent, "perSceneGlobals", _perSceneGlobals);
+	str += DebugUtil::dumpStructList(indent, "objInteractions1", _objInteractions1);
+	str += DebugUtil::dumpStructList(indent, "objInteractions2", _objInteractions2);
 
 	str += "\n";
 	str += indent + ">";

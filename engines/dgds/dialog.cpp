@@ -36,22 +36,9 @@
 #include "dgds/scene.h"
 #include "dgds/font.h"
 #include "dgds/drawing.h"
+#include "dgds/debug_util.h"
 
 namespace Dgds {
-
-// TODO: This is repeated here and in scene.cpp
-template<class S> static Common::String _dumpStructList(const Common::String &indent, const Common::String &name, const Common::Array<S> &list) {
-	if (list.empty())
-		return "";
-
-	const Common::String nextind = indent + "    ";
-	Common::String str = Common::String::format("\n%s%s=", Common::String(indent + "  ").c_str(), name.c_str());
-	for (const auto &s : list) {
-		str += "\n";
-		str += s.dump(nextind);
-	}
-	return str;
-}
 
 
 int Dialog::_lastSelectedDialogItemNum = 0;
@@ -694,7 +681,7 @@ Common::String Dialog::dump(const Common::String &indent) const {
 			_flags, _frameType, _time, _nextDialogFileNum, _nextDialogDlgNum, _talkDataNum, _talkDataHeadNum);
 	str += indent + "state=" + (_state ? _state->dump("") : "null");
 	str += "\n";
-	str += _dumpStructList(indent, "actions", _action);
+	str += DebugUtil::dumpStructList(indent, "actions", _action);
 	str += "\n";
 	str += indent + "  str='" + _str + "'>";
 	return str;
@@ -739,7 +726,7 @@ Common::Error DialogState::syncState(Common::Serializer &s) {
 
 Common::String DialogAction::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sDialogueAction<span: %d-%d", indent.c_str(), strStart, strEnd);
-	str += _dumpStructList(indent, "opList", sceneOpList);
+	str += DebugUtil::dumpStructList(indent, "opList", sceneOpList);
 	if (!sceneOpList.empty()) {
 		str += "\n";
 		str += indent;

@@ -41,7 +41,7 @@ class TTMEnviro : public ScriptParserData {
 public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), _creditScrollMeasure(0),
 			_creditScrollYOffset(0), _xOff(0), _yOff(0), _xScroll(0), _yScroll(0),
-			_cdsTarget(0), _cdsJumped(false), ScriptParserData() {
+			_cdsSeqNum(-1), _cdsJumped(false), _cdsDelay(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
 	}
 
@@ -65,7 +65,8 @@ public:
 	int16 _xScroll;
 	int16 _yScroll;
 	Common::SharedPtr<SoundRaw> _soundRaw;
-	int16 _cdsTarget; // The GOTO target to use in the CDS script (Willy Beamish talkie)
+	int16 _cdsSeqNum; // The GOTO target to use in the CDS script (Willy Beamish talkie)
+	int16 _cdsDelay;
 	bool _cdsJumped;
 };
 

@@ -30,6 +30,8 @@
 #include "dgds/head.h"
 #include "dgds/dgds_rect.h"
 #include "dgds/minigames/shell_game.h"
+#include "dgds/scene_condition.h"
+#include "dgds/scene_op.h"
 
 namespace Dgds {
 
@@ -40,32 +42,6 @@ class SoundRaw;
 class TTMInterpreter;
 class TTMEnviro;
 
-enum SceneCondition {
-	kSceneCondNone = 0,
-	kSceneCondLessThan = 1,
-	kSceneCondEqual = 2,
-	kSceneCondNegate = 4,
-	kSceneCondAbsVal = 8,
-	kSceneCondOr = 0x10,
-	kSceneCondNeedItemSceneNum = 0x20,
-	kSceneCondNeedItemQuality = 0x40,
-	kSceneCondSceneState = 0x80
-};
-
-class SceneConditions {
-public:
-	SceneConditions(uint16 num, SceneCondition cond, int16 val) : _num(num), _flags(cond), _val(val) {}
-	Common::String dump(const Common::String &indent) const;
-
-	uint16 getNum() const { return _num; }
-	SceneCondition getCond() const { return _flags; }
-	int16 getVal() const { return _val; }
-
-private:
-	uint16 _num;
-	SceneCondition _flags; /* eg, see usage in FUN_1f1a_2106 */
-	int16 _val;
-};
 
 class HotArea {
 public:
@@ -94,93 +70,6 @@ public:
 	DgdsRect _rect;
 };
 
-enum SceneOpCode {
-	kSceneOpNone = 0,
-	kSceneOpChangeScene = 1,  	// args: scene num
-	kSceneOpNoop = 2,		 	// args: none. Maybe should close dialogue?
-	kSceneOpGlobal = 3,			// args: array of uints
-	kSceneOpSegmentStateOps = 4,	// args: array of uint pairs [op seg, op seg], term with 0,0 that modify segment states
-	kSceneOpSetItemAttr = 5,	// args: [item num, item param 0x28, item param 0x2c]. set item attrs?
-	kSceneOpSetDragItem = 6,		// args: item num. give item?
-	kSceneOpOpenInventory = 7,	// args: none.
-	kSceneOpShowDlg = 8,		// args: dialogue number.
-	kSceneOpShowInvButton = 9,		// args: none.
-	kSceneOpHideInvButton = 10,	// args: none.
-	kSceneOpEnableTrigger = 11,	// args: trigger num
-	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
-	kSceneOpAddFlagToDragItem = 13,			// args: none.
-	kSceneOpOpenInventoryZoom = 14,	// args: none.
-	kSceneOpMoveItemsBetweenScenes = 15,	// args: none.
-	kSceneOpShowClock = 16,		// args: none.  set clock script-visible.
-	kSceneOpHideClock = 17,		// args: none.  set clock script-hidden.
-	kSceneOpShowMouse = 18,		// args: none.
-	kSceneOpHideMouse = 19,		// args: none.
-	// Op 20 onward are common, but not in dragon
-
-	kSceneOpLoadTalkDataAndSetFlags = 20, // args: tdsnum to load, headnum
-	kSceneOpDrawVisibleTalkHeads = 21, // args: none
-	kSceneOpLoadTalkData = 22, 	// args: tds num to load
-	kSceneOpLoadDDSData = 24, 	// args: dds num to load
-	kSceneOpFreeDDSData = 25,	// args: dds num to free
-	kSceneOpFreeTalkData = 26, 	// args: tds num to free
-
-	// Dragon-specific opcodes
-	kSceneOpPasscode = 100,			// args: none.
-	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
-	kSceneOpOpenGameOverMenu = 102,	// args: none.
-	kSceneOpTiredDialog = 103,			// args: none. Something about "boy am I tired"?
-	kSceneOpArcadeTick = 104,			// args: none. Called in arcade post-tick.
-	kSceneOpDrawDragonCountdown1 = 105,			// args: none. Draw special countdown number at 141, 56
-	kSceneOpDrawDragonCountdown2 = 106,			// args: none. Draw some number at 250, 42
-	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
-	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
-
-	// China-specific opcodes
-	kSceneOpChinaTankInit = 100,
-	kSceneOpChinaTankEnd = 101,
-	kSceneOpChinaTankTick = 102,
-	kSceneOpChinaSetLanding = 103,
-	kSceneOpChinaScrollIntro = 104,
-	kSceneOpChinaScrollLeft = 105,
-	kSceneOpChinaScrollRight = 107,
-	kSceneOpShellGameInit = 108,
-	kSceneOpShellGameEnd = 109,
-	kSceneOpShellGameTick = 110,
-	kSceneOpChinaTrainInit = 111,
-	kSceneOpChinaTrainEnd = 112,
-	kSceneOpChinaTrainTick = 113,
-	kSceneOpChinaOpenGameOverMenu = 114,	// args: none.
-	kSceneOpChinaOpenSkipCreditsMenu = 115,	// args: none.
-	kSceneOpChinaOnIntroTick = 116,	// args: none.
-	kSceneOpChinaOnIntroInit = 117,	// args: none.
-	kSceneOpChinaOnIntroEnd = 118,	// args: none.
-
-	// Beamish-specific opcodes
-	kSceneOpOpenBeamishGameOverMenu = 100,
-	kSceneOpOpenBeamishOpenSkipCreditsMenu = 101,
-
-	kSceneOpMaxCode = 255, // for checking file load
-
-	kSceneOpHasConditionalOpsFlag = 0x8000,
-};
-
-class SceneOp {
-public:
-	Common::Array<SceneConditions> _conditionList;
-	Common::Array<uint16> _args;
-	SceneOpCode _opCode;
-
-	Common::String dump(const Common::String &indent) const;
-};
-
-class ConditionalSceneOp {
-public:
-	uint _opCode;
-	Common::Array<SceneConditions> _conditionList;
-	Common::Array<SceneOp> _opList;
-
-	Common::String dump(const Common::String &indent) const;
-};
 
 class GameItem : public HotArea {
 public:
@@ -289,6 +178,13 @@ public:
 
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
 
+	// These are all static as they are potentially run over scene changes.
+	static bool checkConditions(const Common::Array<SceneConditions> &cond);
+
+	static void segmentStateOps(const Common::Array<uint16> &args);
+	static void setItemAttrOp(const Common::Array<uint16> &args);
+	static void setDragItemOp(const Common::Array<uint16> &args);
+
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
 	bool readHotArea(Common::SeekableReadStream *s, HotArea &dst) const;
@@ -301,17 +197,6 @@ protected:
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 	bool readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Array<ConditionalSceneOp> &list) const;
-
-	static void segmentStateOps(const Common::Array<uint16> &args);
-	static void setItemAttrOp(const Common::Array<uint16> &args);
-	static void setDragItemOp(const Common::Array<uint16> &args);
-
-	// These are all static as they are potentially run over scene changes.
-	static bool checkConditions(const Common::Array<SceneConditions> &cond);
-	static bool runSceneOp(const SceneOp &op);
-	static bool runDragonOp(const SceneOp &op);
-	static bool runChinaOp(const SceneOp &op);
-	static bool runBeamishOp(const SceneOp &op);
 
 	uint32 _magic;
 	Common::String _version;

@@ -99,7 +99,7 @@ public:
 	Common::Array<TalkDataHead> _heads;
 	uint16 _val;
 	Common::String _bmpFile;
-	
+
 	void updateVisibleHeads();
 	void drawVisibleHeads(Graphics::ManagedSurface *dst) const;
 	bool hasVisibleHead() const;
@@ -108,7 +108,7 @@ public:
 /** CDS data from Willy Beamish talkie */
 class Conversation {
 public:
-	Conversation() {}
+	Conversation() : _nextExec(0) {}
 
 	void unload();
 	void runScript();
@@ -119,6 +119,8 @@ public:
 	Common::SharedPtr<TTMInterpreter> _ttmScript;
 	Common::Array<Common::SharedPtr<TTMSeq>> _ttmSeqs;
 	TTMEnviro _ttmEnv;
+	uint32 _nextExec;
+	DgdsRect _drawRect;
 };
 
 

@@ -178,6 +178,11 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
 	unload();
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
+
+	// These files are only present in Willy Beamish CD version
+	if (engine->getGameId() != GID_WILLY)
+		return;
+
 	ResourceManager *resourceManager = engine->getResourceManager();
 	Decompressor *decompressor = engine->getDecompressor();
 
@@ -188,6 +193,9 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
 	} else {
 		fname = Common::String::format("F%dB%d.CDS", dlgFileNum, dlgNum);
 	}
+
+	if (!resourceManager->hasResource(fname))
+		return;
 
 	_sound.reset(new SoundRaw(resourceManager, decompressor));
 	_sound->load(fname);
@@ -201,15 +209,37 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
 	// they use the sound and image data from the CDS file.
 	_ttmEnv._soundRaw = _sound;
 	_ttmEnv._scriptShapes[0] = _img;
-	_ttmEnv._cdsTarget = _ttmSeqs[0]->_seqNum;
+
+	// Always run seq 1 on init.
+	_ttmEnv._cdsSeqNum = 1;
+	runScript();
 }
 
 void Conversation::runScript() {
 	if (!_ttmScript)
 		return;
+
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	if (_nextExec && engine->getThisFrameMs() < _nextExec)
+		return;
+
+	_nextExec = 0;
+	_ttmEnv._xOff = _drawRect.x;
+	_ttmEnv._yOff = _drawRect.y;
+
 	for (auto seq : _ttmSeqs) {
-		if (seq->_seqNum == _ttmEnv._cdsTarget) {
+		if (seq->_seqNum == _ttmEnv._cdsSeqNum) {
+			debug(10, "CDS: Running TTM sequence %d frame %d", seq->_seqNum, seq->_currentFrame);
+			_ttmEnv.scr->seek(_ttmEnv._frameOffsets[seq->_currentFrame]);
+
+			seq->_drawWin = _drawRect.toCommonRect();
 			_ttmScript->run(_ttmEnv, *seq);
+			if (_ttmEnv._cdsDelay) {
+				_nextExec = engine->getThisFrameMs() + _ttmEnv._cdsDelay;
+				_ttmEnv._cdsDelay = 0;
+			} else {
+				seq->_currentFrame++;
+			}
 		}
 	}
 }

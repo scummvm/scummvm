@@ -627,7 +627,11 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env._getPuts[seq._currentGetPutId].reset();
 		break;
 	case 0x0110: // PURGE void
-		_vm->adsInterpreter()->setHitTTMOp0110();
+		// only set if not running from CDS script
+		if (env._cdsSeqNum < 0)
+			_vm->adsInterpreter()->setHitTTMOp0110();
+		else
+			env._cdsSeqNum++;
 		break;
 	case 0x0220: // STOP CURRENT MUSIC
 		if (seq._executed) // this is a one-shot op
@@ -651,7 +655,12 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
 		int delayMillis = (int)round(ivals[0] * MS_PER_FRAME);
-		_vm->adsInterpreter()->setScriptDelay(delayMillis);
+		// Slight HACK - if we are running from CDS (Willy Beamish conversation) script,
+		// set that delay, otherwise set ADS interpreter delay.
+		if (env._cdsSeqNum >= 0)
+			env._cdsDelay = delayMillis;
+		else
+			_vm->adsInterpreter()->setScriptDelay(delayMillis);
 		break;
 	}
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
@@ -778,13 +787,13 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0x3200:
-		env._cdsTarget = findGOTOTarget(env, seq, ivals[0]);
+		env._cdsSeqNum = findGOTOTarget(env, seq, ivals[0]);
 		break;
 	case 0x3300:
-		if (!env._cdsJumped && env._frameOffsets[env._cdsTarget] != env.scr->pos()) {
+		if (!env._cdsJumped && env._frameOffsets[env._cdsSeqNum] != seq._currentFrame) {
 			env._cdsJumped = true;
 			int64 prevPos = env.scr->pos();
-			env.scr->seek(env._frameOffsets[env._cdsTarget]);
+			env.scr->seek(env._frameOffsets[env._cdsSeqNum]);
 			run(env, seq);
 			env.scr->seek(prevPos);
 			env._cdsJumped = false;
@@ -842,7 +851,9 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x4200: { // STORE AREA: x,y,w,h:int [0..n]  ; makes this area of foreground persist in the next frames.
 		if (seq._executed) // this is a one-shot op
 			break;
-		const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		if (env._cdsSeqNum >= 0)
+			rect.translate(env._xOff, env._yOff);
 		_vm->getStoredAreaBuffer().blitFrom(_vm->_compositionBuffer, rect, rect);
 		break;
 	}
@@ -973,7 +984,8 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (img) {
 			int x = ivals[0];
 			int y = ivals[1];
-			if (_stackDepth > 0) {
+			// Use env offset if we are in gosub *or* running from CDS
+			if (_stackDepth > 0 || env._cdsSeqNum >= 0) {
 				x += env._xOff;
 				y += env._yOff;
 			}
@@ -1122,16 +1134,16 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		uint16 lo = (uint16)ivals[0];
 		uint32 offset = ((uint32)hi << 16) + lo;
 		debug("TODO: 0xC250 Sync raw sfx?? offset %d", offset);
-		/*
-		if (env._soundRaw->playedOffset() < offset) {
+		/*if (env._soundRaw->playedOffset() < offset) {
 			// Not played to this point yet.
-			env.scr->seek(-6);
+			env.scr->seek(-6, SEEK_CUR);
 			return false;
-		}
-		*/
+		}*/
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
+			break;
+		if (env._cdsSeqNum >= 0) // don't run from CDS scripts?
 			break;
 		Image tmp(_vm->getResourceManager(), _vm->getDecompressor());
 		tmp.drawScreen(sval, _vm->getBackgroundBuffer());
