@@ -24,9 +24,11 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "graphics/managed_surface.h"
 
 namespace Got {
 
+#ifdef DEPRECATED
 /**
  * Describes one alignment of a mask - image pair
  */
@@ -40,8 +42,9 @@ struct MASK_IMAGE {
 	// ptrs to AlignedMaskedImage
 	// structs for four possible destination
 	// image alignments
-	ALIGNED_MASK_IMAGE *alignments[4] = { nullptr, nullptr, nullptr, nullptr };
+	ALIGNED_MASK_IMAGE *alignments[4] = {};
 };
+#endif
 
 #define OBJECTS_COUNT 30
 
@@ -67,59 +70,64 @@ struct LEVEL {                    // size=512
 	void load(Common::SeekableReadStream *src);
 };
 
-struct ACTOR {                      //size=256
-	// first part loaded from disk  (size=40)
-	byte move = 0;                  //movement pattern (0=none)
-	byte width = 0;                 //physical width
-	byte height = 0;                //physical height
-	byte directions = 0;            //1,2 or 4 (1=uni-directional)
-	byte frames = 0;                //# frames per direction
-	byte frame_speed = 0;           //# cycles between frame changes
-	byte frame_sequence[4] = {};    //sequence
-	byte speed = 0;                 //move every Nth cycle
-	byte size_x = 0;                //non-physical padding on X coor
-	byte size_y = 0;                //non-phsyical padding on Y coor
-	byte strength = 0;              //hit strength
-	byte health = 0;                //
-	byte num_moves = 0;             //# of moves every <speed> cycles
-	byte shot_type = 0;             //actor # of shot
-	byte shot_pattern = 0;          //func number to decide to shoot
-	byte shots_allowed = 0;         //# shots allowed on screen
-	byte solid = 0;                 //1=solid (not ghost,etc)
-	byte flying = 0;                //
-	byte rating = 0;                //rnd(100) < rating = jewel
-	byte type = 0;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
-	byte name[9] = {};              //actors name
-	byte func_num = 0;              //special function when thor touches
-	byte func_pass = 0;             //value to pass to func
-	int  magic_hurts = 0;           //bitwise magic hurts flags
+#define DIRECTION_COUNT 4
+#define FRAME_COUNT 4
+
+struct ACTOR {                      // Size=256
+	// First part loaded from disk  (size=40)
+	byte move = 0;                  // Movement pattern (0=none)
+	byte width = 0;                 // Physical width
+	byte height = 0;                // Physical height
+	byte directions = 0;            // 1,2 or 4 (1=uni-directional)
+	byte frames = 0;                // # frames per direction
+	byte frame_speed = 0;           // # cycles between frame changes
+	byte frame_sequence[4] = {};    // Sequence
+	byte speed = 0;                 // Move every Nth cycle
+	byte size_x = 0;                // Non-physical padding on X coor
+	byte size_y = 0;                // Non-phsyical padding on Y coor
+	byte strength = 0;              // Hit strength
+	byte health = 0;                // 
+	byte num_moves = 0;             // # of moves every <speed> cycles
+	byte shot_type = 0;             // Actor # of shot
+	byte shot_pattern = 0;          // Func number to decide to shoot
+	byte shots_allowed = 0;         // # shots allowed on screen
+	byte solid = 0;                 // 1=solid (not ghost,etc)
+	byte flying = 0;                // 
+	byte rating = 0;                // rnd(100) < rating = jewel
+	byte type = 0;                  // Actor (0=thor,1=hammer,2=enemy,3=shot)
+	byte name[9] = {};              // Actors name
+	byte func_num = 0;              // Special function when thor touches
+	byte func_pass = 0;             // Value to pass to func
+	int  magic_hurts = 0;           // Bitwise magic hurts flags
 	byte future1[4] = {};
 
-	//the rest is dynamic    //size=216
-	MASK_IMAGE pic[4][4] = {};      //mask image pointers
-	byte frame_count = 0;           //count to switch frames
-	byte dir = 0;                   //direction of travel
-	byte last_dir = 0;              //last direction of travel
-	int  x = 0;                     //actual X coor
-	int  y = 0;                     //actual Y coor
-	int  center = 0;                //center of object
-	int  last_x[2] = {};            //last X coor on each page
-	int  last_y[2] = {};            //last Y coor on each page
-	byte used = 0;                  //1=active, 0=not active
-	byte next = 0;                  //next frame to be shown
-	byte speed_count = 0;           //count down to movement
-	byte vunerable = 0;             //count down to vunerability
-	byte shot_cnt = 0;              //count down to another shot
-	byte num_shots = 0;             //# of shots currently on screen
-	byte creator = 0;               //which actor # created this actor
-	byte pause = 0;                 //pause must be 0 to move
+	// The rest is dynamic    //size=216
+	// Direction/frame surfaces
+	Graphics::ManagedSurface pic[DIRECTION_COUNT][FRAME_COUNT];
+
+	byte frame_count = 0;           // Count to switch frames
+	byte dir = 0;                   // Direction of travel
+	byte last_dir = 0;              // Last direction of travel
+	int  x = 0;                     // Actual X coor
+	int  y = 0;                     // Actual Y coor
+	int  center = 0;                // Center of object
+	int  last_x[2] = {};            // Last X coor on each page
+	int  last_y[2] = {};            // Last Y coor on each page
+	byte used = 0;                  // 1=active, 0=not active
+	byte next = 0;                  // Next frame to be shown
+	byte speed_count = 0;           // Count down to movement
+	byte vunerable = 0;             // Count down to vunerability
+	byte shot_cnt = 0;              // Count down to another shot
+	byte num_shots = 0;             // # of shots currently on screen
+	byte creator = 0;               // Which actor # created this actor
+	byte pause = 0;                 // Pause must be 0 to move
 	byte actor_num = 0;
 	byte move_count = 0;
 	byte dead = 0;
 	byte toggle = 0;
 	byte center_x = 0;
 	byte center_y = 0;
-	byte show = 0;                  //display or not (for blinking)
+	byte show = 0;                  // Display or not (for blinking)
 	byte temp1 = 0;
 	byte temp2 = 0;
 	byte counter = 0;

@@ -27,76 +27,6 @@
 
 namespace Got {
 
-void xcopys2d(int SourceStartX, int SourceStartY,
-		int SourceEndX, int SourceEndY, int DestStartX,
-		int DestStartY, byte *SourcePtr, unsigned int DestPageBase,
-		int SourceBitmapWidth, int DestBitmapWidth) {
-	error("TODO: Refactor this to use surfaces");
-}
-
-
-uint make_mask(MASK_IMAGE *new_image, uint page_start, byte *Image,
-		int image_width, int image_height) {
-	uint page_offset, size;
-	int align, set;
-	ALIGNED_MASK_IMAGE *work_ami;
-	int scan_line, bit_num, temp_image_width;
-	unsigned char mask_temp;
-	byte *new_mask_ptr;
-	byte *old_mask_ptr;
-
-	page_offset = page_start;
-	set = 0;
-
-	for (align = 0; align < 3; align += 2) {
-		work_ami = new_image->alignments[set++] = (ALIGNED_MASK_IMAGE *)_G(ami_buff);
-		_G(ami_buff) += sizeof(ALIGNED_MASK_IMAGE);
-
-		work_ami->image_width = (image_width + align + 3) / 4;
-		work_ami->image_ptr = page_offset;	// Image dest
-
-		// Download this alignment of the image
-		xcopys2d(0, 0, image_width, image_height, align, 0,
-			Image, page_offset, image_width,
-			work_ami->image_width * 4);
-
-		// Calculate the number of bytes needed to store the mask in
-		// nibble (Map Mask-ready) form, then allocate that space */
-		size = work_ami->image_width * image_height;
-		work_ami->mask_ptr = (byte *)_G(mask_buff);
-		_G(mask_buff) += size;
-
-		/* Generate this nibble oriented (Map Mask-ready) alignment of
-		   the mask, one scan line at a time */
-		old_mask_ptr = Image;
-		new_mask_ptr = work_ami->mask_ptr;
-		for (scan_line = 0; scan_line < image_height; scan_line++) {
-			bit_num = align;
-			mask_temp = 0;
-			temp_image_width = image_width;
-			do {
-				// Set the mask bit for next pixel according to its alignment
-				mask_temp |= (*old_mask_ptr != 15 && *old_mask_ptr != 0) << bit_num;
-				old_mask_ptr++;
-				if (++bit_num > 3) {
-					*new_mask_ptr = mask_temp;
-					new_mask_ptr++;
-					mask_temp = bit_num = 0;
-				}
-			} while (--temp_image_width);
-
-
-			// Set any partial final mask on this scan line
-			if (bit_num != 0) {
-				*new_mask_ptr = mask_temp;
-				new_mask_ptr++;
-			}
-		}
-		page_offset += size; // Mark off the space we just used
-	}
-	return page_offset - page_start;
-}
-
 void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 
 	actr->next = 0;                    // Next frame to be shown
@@ -137,12 +67,18 @@ void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 	actr->init_health = actr->health;
 }
 
-void make_actor_mask(ACTOR *actr) {
+void make_actor_surface(ACTOR *actr) {
 	int d, f;
 
+	assert(actr->directions <= 4 && actr->frames <= 4);
 	for (d = 0; d < actr->directions; d++) {
 		for (f = 0; f < actr->frames; f++) {
-			make_mask(&actr->pic[d][f], _G(latch_mem), &_G(tmp_buff)[256 * ((d * 4) + f)], 16, 16);
+			Graphics::ManagedSurface &s = actr->pic[d][f];
+			if (s.empty())
+				s.create(16, 16);
+			const byte *src = &_G(tmp_buff)[256 * ((d * 4) + f)];
+			Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
+
 			_G(latch_mem) += 144;
 			if (_G(latch_mem) > 65421u) {
 				error("Too Many Actor Frames=");
@@ -156,14 +92,14 @@ int load_standard_actors() {
 	_G(mask_buff) = _G(mask_buff_start);
 	_G(ami_buff) = _G(abuff);
 
-	load_actor(0, 100 + _G(thor_info).armor);   // Load thor
+	load_actor(0, 100 + _G(thor_info).armor);   // Load Thor
 	memcpy(&_G(actor)[0], (_G(tmp_buff) + 5120), 40);
 	setup_actor(&_G(actor)[0], 0, 0, 100, 100);
 	_G(thor) = &_G(actor)[0];
-#ifdef TODO
+
 	_G(ami_store1) = _G(ami_buff);
 	_G(mask_store1) = _G(mask_buff);
-	make_actor_mask(&_G(actor)[0]);
+	make_actor_surface(&_G(actor)[0]);
 
 	_G(thor_x1) = _G(thor)->x + 2;
 	_G(thor_y1) = _G(thor)->y + 2;
@@ -178,19 +114,19 @@ int load_standard_actors() {
 
 	_G(ami_store2) = _G(ami_buff);
 	_G(mask_store2) = _G(mask_buff);
-	make_actor_mask(&_G(actor)[1]);
+	make_actor_surface(&_G(actor)[1]);
 
 	load_actor(0, 106);   // Load sparkle
 	memcpy(&_G(sparkle), (_G(tmp_buff) + 5120), 40);
 	setup_actor(&_G(sparkle), 20, 0, 100, 100);
 	_G(sparkle).used = 0;
-	make_actor_mask(&_G(sparkle));
+	make_actor_surface(&_G(sparkle));
 
 	load_actor(0, 107);   // Load explosion
 	memcpy(&_G(explosion), (_G(tmp_buff) + 5120), 40);
 	setup_actor(&_G(explosion), 21, 0, 100, 100);
 	_G(explosion).used = 0;
-	make_actor_mask(&_G(explosion));
+	make_actor_surface(&_G(explosion));
 
 	load_actor(0, 108);   // Load tornado
 	memcpy(&_G(magic_item)[0], (_G(tmp_buff) + 5120), 40);
@@ -208,12 +144,12 @@ int load_standard_actors() {
 	_G(magic_ami) = _G(ami_buff);
 	_G(magic_mask_buff) = _G(mask_buff);
 
-	make_actor_mask(&_G(magic_item)[0]);  // To fool next lines
+	make_actor_surface(&_G(magic_item)[0]);  // To fool next lines
 
 	_G(enemy_mb) = _G(mask_buff);
 	_G(enemy_ami) = _G(ami_buff);
 	_G(enemy_lm) = _G(latch_mem);
-#endif
+
 	return 1;
 }
 
@@ -275,10 +211,10 @@ int load_enemy(int type) {
 
 	memcpy(&_G(enemy)[e], enm, sizeof(ACTOR_NFO));
 
-	make_actor_mask(&_G(enemy)[e]);
+	make_actor_surface(&_G(enemy)[e]);
 	_G(enemy_type)[e] = type;
 	_G(enemy)[e].shot_type = 0;
-
+#ifdef TODO
 	if (_G(enemy)[e].shots_allowed) {
 		_G(enemy)[e].shot_type = e + 1;
 		enm = (ACTOR *)(_G(tmp_buff) + 5160);
@@ -298,7 +234,7 @@ int load_enemy(int type) {
 			}
 		}
 	}
-
+#endif
 	return e;
 }
 
@@ -323,6 +259,7 @@ int actor_visible(int invis_num) {
 }
 
 void setup_magic_item(int item) {
+#ifdef TODO
 	int i;
 	byte *ami;
 	byte *mb;
@@ -339,9 +276,13 @@ void setup_magic_item(int item) {
 	}
 	_G(ami_buff) = ami;
 	_G(mask_buff) = mb;
+#else
+	error("TODO: setup_magic_item");
+#endif
 }
 
 void load_new_thor() {
+#ifdef TODO
 	int rep;
 	byte *ami;
 	byte *mb;
@@ -366,6 +307,9 @@ void load_new_thor() {
 
 	_G(ami_buff) = ami;
 	_G(mask_buff) = mb;
+#else
+	error("TODO: load_new_thor");
+#endif
 }
 
 } // namespace Got

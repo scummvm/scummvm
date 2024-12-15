@@ -28,6 +28,7 @@ namespace Got {
 
 //G_LIB.LIB
 
+#ifdef DEPRECATED
 void xsetmode(void);
 void xshowpage(unsigned page);
 void xline(int x0, int y0, int x1, int y1, int page, int color);
@@ -74,6 +75,7 @@ void xddfast(int source_x, int source_y, int width, int height,
 	unsigned int source_page, unsigned int dest_page);
 void xsetpal(unsigned char color, unsigned char R, unsigned char G, unsigned char B);
 void xgetpal(char *pal, int num_colrs, int start_index);
+#endif
 
 //G_MAIN.C
 void run_gotm(void);
