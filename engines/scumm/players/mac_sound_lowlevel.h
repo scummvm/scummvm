@@ -188,7 +188,7 @@ public:
 	void initBuffers(uint32 feedBufferSize);
 	void initDrivers();
 	void addVolumeGroup(Audio::Mixer::SoundType type);
-	void scaleVolume(uint scale) { _scale = scale; }
+	void scaleVolume(uint upscale, uint downscale) { _upscale = upscale; _downscale = downscale; }
 	typedef Common::Functor0Mem<void, VblTaskClientDriver> CallbackProc;
 	void setVblCallback(const CallbackProc *proc);
 	void clearBuffer();
@@ -207,7 +207,8 @@ private:
 
 	VblTaskClientDriver *_drv;
 	int _numGroups;
-	uint16 _scale;
+	uint16 _upscale;
+	uint16 _downscale;
 
 	uint32 _vblSmpQty;
 	uint32 _vblSmpQtyRem;

@@ -857,23 +857,29 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 	if (VAR_SOUNDCARD == 0xFF)
 		return;
 
+	switch (_sound->_musicType) {
+	case MDT_MACINTOSH:
+		switch (_game.id) {
+		case GID_INDY3:
+			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 10 : 11;
+			break;
+		case GID_LOOM:
+			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_snd_quality") && ConfMan.getInt("mac_snd_quality") > 0 && ConfMan.getInt("mac_snd_quality") < 4) ? 10 : 11;
+			break;
+		case GID_MONKEY:
+			VAR(VAR_SOUNDCARD) = 0xFFFF;
+			break;
+		default:
+			VAR(VAR_SOUNDCARD) = (_game.version >= 6) ? 0 : 4; 
+			break;
+		}
+		break;
 	// VAR_SOUNDCARD modes
 	// 0 PC Speaker
 	// 1 Tandy
 	// 2 CMS
 	// 3 AdLib
 	// 4 Roland
-	switch (_sound->_musicType) {
-	case MDT_MACINTOSH:
-		if (_game.id == GID_INDY3)
-			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 10 : 11;
-		else if (_game.id == GID_LOOM)
-			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_snd_quality") && ConfMan.getInt("mac_snd_quality") > 0 && ConfMan.getInt("mac_snd_quality") < 4) ? 10 : 11;
-		else if (_game.id == GID_MONKEY)
-			VAR(VAR_SOUNDCARD) = 0xffff;
-		else // GID_MONKEY2 || GID_INDY4
-			VAR(VAR_SOUNDCARD) = 4;
-		break;
 	case MDT_NONE:
 	case MDT_PCSPK:
 		VAR(VAR_SOUNDCARD) = 0;

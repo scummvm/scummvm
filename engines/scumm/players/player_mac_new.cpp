@@ -176,7 +176,7 @@ uint32 fixMul(uint32 fx1, uint32 fx2) {
 
 MacPlayerAudioStream::MacPlayerAudioStream(VblTaskClientDriver *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate, bool internal16Bit) : Audio::AudioStream(), _drv(drv),
 	_vblSmpQty(0), _vblSmpQtyRem(0), _frameSize((stereo ? 2 : 1) * (internal16Bit ? 2 : 1)), _vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate),
-		_vblCbProc(nullptr), _numGroups(1), _isStereo(stereo), _interp(interpolate), _smpInternalSize(internal16Bit ? 2 : 1), _scale(1) {
+		_vblCbProc(nullptr), _numGroups(1), _isStereo(stereo), _interp(interpolate), _smpInternalSize(internal16Bit ? 2 : 1), _upscale(0), _downscale(0) {
 	assert(_drv);
 	_buffers = new SmpBuffer[2];
 	_vblSmpQty = (_outputRate << 16) / VBL_UPDATE_RATE;
@@ -287,14 +287,14 @@ int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			int diff = smpN - _buffers[ii].lastL;
 			if (diff && _buffers[ii].rateConvAcc && interp)
 				diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-			smpL += (int32)((_buffers[ii].lastL + diff) * (_buffers[ii].volume * _scale / numch));
+			smpL += (int32)((_buffers[ii].lastL + diff) * ((_buffers[ii].volume << _upscale) / numch));
 
 			if (_isStereo) {
 				smpN = _smpInternalSize == 2 ? *reinterpret_cast<int16*>(&_buffers[ii].pos[2]) : _buffers[ii].pos[1];
 				diff = smpN - _buffers[ii].lastR;
 				if (diff && _buffers[ii].rateConvAcc && interp)
 					diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-				smpR += (int32)((_buffers[ii].lastR + diff) * (_buffers[ii].volume * _scale / numch));
+				smpR += (int32)((_buffers[ii].lastR + diff) * ((_buffers[ii].volume << _upscale) / numch));
 			}
 		}
 
@@ -331,9 +331,9 @@ int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			}
 		}
 
-		*buffer++ = CLIP<int32>((smpL / _numGroups) >> 2, -32768, 32767);
+		*buffer++ = CLIP<int32>((smpL / _numGroups) >> (2 + _downscale), -32768, 32767);
 		if (_isStereo)
-			*buffer++ = CLIP<int32>((smpR / _numGroups) >> 2, -32768, 32767);
+			*buffer++ = CLIP<int32>((smpR / _numGroups) >> (2 + _downscale), -32768, 32767);
 	}
 	return numSamples;
 }

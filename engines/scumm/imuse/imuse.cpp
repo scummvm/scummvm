@@ -48,7 +48,7 @@ IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nati
 	_vm(vm),
 	_native_mt32(nativeMT32),
 	_newSystem(vm && vm->_game.id == GID_SAMNMAX),
-	_dynamicChanAllocation(vm && (vm->_game.id != GID_MONKEY2 && vm->_game.id != GID_INDY4)), // For the non-iMuse games that (unfortunately) run on this player we need to pretend we're on the more modern version
+	_dynamicChanAllocation(vm && vm->_game.id != GID_MONKEY2 && vm->_game.id != GID_INDY4), // For the non-iMuse games that (unfortunately) run on this player we need to pretend we're on the more modern version
 	_midi_adlib(nullptr),
 	_midi_native(nullptr),
 	_sysex(nullptr),
@@ -1228,7 +1228,8 @@ int IMuseInternal::query_queue(int param) {
 }
 
 int IMuseInternal::setImuseMasterVolume(uint vol) {
-	if (vol > 255)
+	// The DOTT Macintosh driver ignores the vol argument and always sets the volume to max.
+	if (vol > 255 || (_soundType == MDT_MACINTOSH && _game_id == GID_TENTACLE))
 		vol = 255;
 	if (_master_volume == vol)
 		return 0;

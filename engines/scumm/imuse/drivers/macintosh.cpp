@@ -388,13 +388,27 @@ bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFile
 	int16 *d1 = &_mixTable[m];
 	int16 *d2 = &_mixTable[m - 1];
 
-	byte base = _internal16Bit? 0 : 128;
-	uint16 ml = _internal16Bit ? _numChannels : 1;
-	uint16 sv = _stereo ? 2 : 1;
-	for (uint32 i = 0; i < m; ++i) {
-		int val = (((((i * (m - _numChannels)) << 7) >> 1) / (((_numChannels >> 1) - 1) * i + m - _numChannels) + base) * ml * sv) >> 7;
-		*d1++ = base + val;
-		*d2-- = base -val - 1;
+	if (_version == 0) {
+		byte sh = _internal16Bit ? 5 : 0;
+		byte div = _internal16Bit ? 1 : _numChannels;
+		byte base = _internal16Bit? 0 : 128;
+		for (uint32 i = 0; i < m; ++i) {
+			uint16 val = (i << sh) / div;
+			*d1++ = base + val;
+			*d2-- = base - val - 1;
+		}
+	} else if (_internal16Bit) {
+		for (uint32 i = 0; i < m; ++i) {
+			uint16 val = (((i * _numChannels * 127) << 6) / (((_numChannels >> 1) - 1) * i + _numChannels * 127)) << 1;
+			*d1++ = val;
+			*d2-- = -val - 1;
+		}
+	} else {
+		for (uint32 i = 0; i < m; ++i) {
+			uint16 val = ((((i * _numChannels * 127) << 7) >> 1) / (((_numChannels >> 1) - 1) * i + _numChannels * 127) + 128) >> 7;
+			*d1++ = (byte)(128 + val);
+			*d2-- = (byte)(128 - val - 1);
+		}
 	}
 
 	_macstr = new MacPlayerAudioStream(this, _mixer->getOutputRate(), _stereo, false, internal16Bit);
@@ -412,8 +426,13 @@ bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFile
 	// Only MI2 and FOA have MIDI sound effects. Also, the later versions use a different update method.
 	if (_version == 0) {
 		_macstr->addVolumeGroup(Audio::Mixer::kSFXSoundType);
-		_macstr->setVblCallback(&_vblTskProc);
+		_macstr->setVblCallback(&_vblTskProc);		
 	}
+
+	// The stream will by default expect 8-bit data and scale that to 16-bit. Or at least only low amplitude 16-bit data that only needs minor adjustment.
+	// For full range 16-bit input, we need some post-process downscaling, otherwise the application of the ScummVM global volume setting will cause overflows.
+	if (internal16Bit)
+		_macstr->scaleVolume(0, 5);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _macstr, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
@@ -609,8 +628,8 @@ void IMSMacSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblB
 			*t++ += a1[*c.pos];
 			if (_stereo)
 				*t++ += a2[*c.pos];
-			}
 		}
+	}
 
 	const int16 *s = _mixBuffer16Bit;
 	sil <<= 7;
@@ -820,7 +839,7 @@ NewMacSoundSystem::~NewMacSoundSystem() {
 
 bool NewMacSoundSystem::start() {
 	_musicChan = _sdrv->createChannel(Audio::Mixer::kMusicSoundType, MacLowLevelPCMDriver::kSampledSynth, _stereo ? 0xCC : 0x8C, nullptr);
-	return _musicChan ? _sdrv->playDoubleBuffer(_musicChan, _stereo ? 2 : 1, _internal16Bit ? 16 : 8, 0x56220000, &_dbCbProc, _internal16Bit ? _numChannels : 1) : false;
+	return _musicChan ? _sdrv->playDoubleBuffer(_musicChan, _stereo ? 2 : 1, _internal16Bit ? 16 : 8, 0x56220000, &_dbCbProc,  _internal16Bit ? _numChannels : 1) : false;
 }
 
 bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFileNames) {
@@ -868,7 +887,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 			memset(ins->noteSmplsMapping, 0, 128);
 
 		byte numRanges = CLIP<int8>(b[13], 0, 7);
-		assert(sz >= 16 + numRanges * 8);
+		assert(sz >= 16u + numRanges * 8u);
 
 		for (int ii = 0; ii < numRanges; ++ii) {
 			ins->sndRes.push_back(getSndResource(READ_BE_INT16(b + 16 + ii * 8)));
@@ -1109,13 +1128,11 @@ void IMuseChannel_Macintosh::controlChange(byte control, byte value)  {
 		dataEntry(value);
 		break;
 	case 7:
-	case 10:
-		if (control == 7)
-			_volume = value;
-		else
-			_panPos = value;
+	case 10: {
+		byte &param = (control == 7) ? _volume : _panPos;
+		param = value;
 		updateVolume();
-		break;
+		} break;
 	case 17:
 		if (_version == 2)
 			_polyphony = value;
