@@ -39,6 +39,8 @@
 #define DIGI_SND_MODE_SFX    1
 #define DIGI_SND_MODE_TALKIE 2
 
+#define DEFAULT_SFX_FILE "monster.sou"
+
 namespace Audio {
 class Mixer;
 class SoundHandle;
@@ -87,6 +89,8 @@ protected:
 	SoundMode _soundMode;
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
+	int64 _cachedSfxLocationInPak = -1;	// For sfx files in pak files
+	int32 _cachedSfxLengthInPak = 0;    // For sfx files in pak files
 
 	uint32 _queuedSfxOffset, _queuedTalkieOffset, _queuedSfxLen, _queuedTalkieLen;
 	byte _queuedSoundMode, _queuedSfxChannel;

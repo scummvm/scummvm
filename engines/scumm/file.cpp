@@ -298,6 +298,20 @@ bool ScummPAKFile::openSubFile(const Common::Path &filePath) {
 	}
 }
 
+PAKFile *ScummPAKFile::getPAKFileIndex(Common::String fileName) {
+	fileName.toLowercase();
+
+	assert(_pakIndex.contains(fileName));
+
+	return &_pakIndex[fileName];
+}
+
+void ScummPAKFile::setPAKFileIndex(Common::String fileName, const PAKFile &pakFile) {
+	fileName.toLowercase();
+
+	_pakIndex[fileName] = pakFile;
+}
+
 #pragma mark -
 #pragma mark --- ScummDiskImage ---
 #pragma mark -
