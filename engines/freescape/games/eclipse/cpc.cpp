@@ -32,8 +32,20 @@ void EclipseEngine::initCPC() {
 	_viewArea = Common::Rect(36 + 3, 24 + 8, 284, 130 + 3);
 }
 
-extern byte kCPCPaletteTitleData[4][3];
-extern byte kCPCPaletteBorderData[4][3];
+byte kCPCPaletteEclipseTitleData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0xff, 0xff, 0x00},
+	{0xff, 0x00, 0xff},
+	{0xff, 0x80, 0x00},
+};
+
+byte kCPCPaletteEclipseBorderData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0xff, 0x80, 0x00},
+	{0x80, 0xff, 0xff},
+	{0x00, 0x80, 0x00},
+};
+
 
 extern Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0);
 
@@ -49,7 +61,7 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		error("Failed to open TESCR.SCR/TE2.BI1");
 
 	_title = readCPCImage(&file, true);
-	_title->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
+	_title->setPalette((byte*)&kCPCPaletteEclipseTitleData, 0, 4);
 
 	file.close();
 	if (isEclipse2())
@@ -61,7 +73,7 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		error("Failed to open TECON.SCR/TE2.BI3");
 
 	_border = readCPCImage(&file, true);
-	_border->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
+	_border->setPalette((byte*)&kCPCPaletteEclipseBorderData, 0, 4);
 
 	file.close();
 	if (isEclipse2())
@@ -111,7 +123,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 		error("Failed to open TECON.BIN");
 
 	_border = readCPCImage(&file, true);
-	_border->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
+	_border->setPalette((byte*)&kCPCPaletteEclipseTitleData, 0, 4);
 
 	file.close();
 	file.open("TEPROG.BIN");

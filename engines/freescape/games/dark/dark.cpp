@@ -43,6 +43,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_soundIndexAreaChange = 5;
 	_soundIndexHit = 2;
 	_soundIndexRestoreECD = 19;
+	_soundIndexDestroyECD = -1;
 
 	_soundIndexNoShield = -1;
 	_soundIndexNoEnergy = -1;

@@ -325,12 +325,13 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	} else if (isSpectrum() && !isDriller()) {
 		playSoundZX(_soundsSpeakerFxZX[index]);
 		return;
-	} else if (isCPC() && !isDriller()) {
-		debugC(1, kFreescapeDebugMedia, "Not implemented");
-		return;
 	}
 
-	switch (index) {
+	Common::Path filename;
+	filename = Common::String::format("%s-%d.wav", _targetName.c_str(), index);
+	debugC(1,  kFreescapeDebugMedia, "Playing sound %s", filename.toString().c_str());
+	playWav(filename);
+	/*switch (index) {
 	case 1:
 		playWav("fsDOS_laserFire.wav");
 		break;
@@ -392,13 +393,16 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	default:
 		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
 		break;
-	}
+	}*/
 	_syncSound = sync;
 }
 void FreescapeEngine::playWav(const Common::Path &filename) {
 
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
-	assert(s);
+	if (!s) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %s not found", filename.toString().c_str());
+		return;
+	}
 	Audio::AudioStream *stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
 }

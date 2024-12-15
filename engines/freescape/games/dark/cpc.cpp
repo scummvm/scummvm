@@ -30,6 +30,11 @@ namespace Freescape {
 
 void DarkEngine::initCPC() {
 	_viewArea = Common::Rect(36, 24, 284, 125);
+	_soundIndexShoot = 0xa;
+	_soundIndexStart = 0x17;
+	_soundIndexAreaChange = 0x1c;
+	_soundIndexDestroyECD = 0x1b;
+	_soundIndexRestoreECD = 8;
 }
 
 extern byte kCPCPaletteTitleData[4][3];
