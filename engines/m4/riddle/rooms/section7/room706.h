@@ -42,7 +42,7 @@ public:
 private:
 	void conv706a();
 	void subA8BA8(int32 trigger, const char *digiName);
-	void subA85B0(int32 trigger, int val1);
+	void useWheelOnNiche(int32 trigger, int32 val1);
 
 	int32 _field78_mode = 0;
 	int32 _field7C_should = 0;
