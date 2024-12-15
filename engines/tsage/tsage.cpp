@@ -37,16 +37,24 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 
+#ifdef ENABLE_RINGWORLD
 	if (g_vm->getGameID() == GType_Ringworld) {
 		if (g_vm->getFeatures() & GF_DEMO)
 			setDebugger(new DemoDebugger());
 		else
 			setDebugger(new RingworldDebugger());
-	} else if (g_vm->getGameID() == GType_BlueForce)
+	} else
+#endif
+#ifdef ENABLE_BLUEFORCE
+	if (g_vm->getGameID() == GType_BlueForce)
 		setDebugger(new BlueForceDebugger());
-	else if (g_vm->getGameID() == GType_Ringworld2)
+	else
+#endif
+#ifdef ENABLE_RINGWORLD2
+	if (g_vm->getGameID() == GType_Ringworld2)
 		setDebugger(new Ringworld2Debugger());
-	else if (g_vm->getGameID() == GType_Sherlock1)
+	else
+#endif
 		setDebugger(new DemoDebugger());
 }
 
@@ -74,6 +82,7 @@ void TSageEngine::initialize() {
 
 	// Set up the resource manager
 	g_resourceManager = new ResourceManager();
+#ifdef ENABLE_RINGWORLD
 	if (g_vm->getGameID() == GType_Ringworld) {
 		if (g_vm->getFeatures() & GF_DEMO) {
 			// Add the single library file associated with the demo
@@ -84,7 +93,10 @@ void TSageEngine::initialize() {
 			g_resourceManager->addLib("TSAGE.RLB");
 			g_globals = new Globals();
 		}
-	} else if (g_vm->getGameID() == GType_BlueForce) {
+	} else
+#endif
+#ifdef ENABLE_BLUEFORCE
+	if (g_vm->getGameID() == GType_BlueForce) {
 		g_resourceManager->addLib("BLUE.RLB");
 		if (g_vm->getFeatures() & GF_FLOPPY) {
 			g_resourceManager->addLib("FILES.RLB");
@@ -97,7 +109,10 @@ void TSageEngine::initialize() {
 
 		// Reset all global variables
 		BF_GLOBALS.reset();
-	} else if (g_vm->getGameID() == GType_Ringworld2) {
+	} else
+#endif
+#ifdef ENABLE_RINGWORLD2
+	if (g_vm->getGameID() == GType_Ringworld2) {
 		g_resourceManager->addLib("R2RW.RLB");
 		g_globals = new Ringworld2::Ringworld2Globals();
 
@@ -106,7 +121,9 @@ void TSageEngine::initialize() {
 
 		// Reset all global variables
 		R2_GLOBALS.reset();
-	} else if (g_vm->getGameID() == GType_Sherlock1) {
+	} else
+#endif
+	if (g_vm->getGameID() == GType_Sherlock1) {
 #ifdef TSAGE_SHERLOCK_ENABLED
 		g_resourceManager->addLib("SF3.RLB");
 		g_globals = new Globals();
