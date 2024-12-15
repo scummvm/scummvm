@@ -4443,6 +4443,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239, "itch.io"), // 1.02b itch.io
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159920906), // 1.07b Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160015780), // 1.10k Win
+	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160027802), // 1.10l Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "ac2game.dat", "38fb5c85b695ea0eb4efa062d17c46d8", 156738294), // 1.07b Mac
 	GAME_ENTRY_EN_GOG("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 160015780),    // 1.10k Mac
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),  // Multilang
@@ -7166,6 +7167,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888895169),
 	GAME_ENTRY_EN("ioawn4t", "game.ags", "11bd8123982f9442f372ed5defc88b50", 888895169),
 	GAME_ENTRY_EN_STEAM("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888897420),
+	GAME_ENTRY_EN_STEAM("ioawn4t", "ioawn4t.ags", "295882f683e7cc85845190436ea706a0", 885860216),
 	GAME_ENTRY_EN_PLATFORM("irentedaboat", "I_rented_a_boat.exe", "792c0a0eaeba1a8846cb7b1af1e3266e", 144007992, "MAGS"),  // Windows
 	GAME_ENTRY_EN_PLATFORM("irentedaboat", "I_rented_a_boat.ags", "9c8cbf1ee6f0a797fdaee29177a43224", 140971300, "MAGS"),  // Linux
 	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.exe", "69059264cbe5973082ddeec0aead82a9", 121845045),  // Windows
