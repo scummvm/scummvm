@@ -23,6 +23,7 @@
 #define GOT_VIEWS_GAME_CONTENT_H
 
 #include "got/views/view.h"
+#include "got/data/defines.h"
 
 namespace Got {
 namespace Views {
@@ -31,6 +32,8 @@ class GameContent : public View {
 private:
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
+	void setupEnemies();
+	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
 
 public:
 	GameContent() : View("GameContent") {}
