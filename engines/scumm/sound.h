@@ -39,8 +39,6 @@
 #define DIGI_SND_MODE_SFX    1
 #define DIGI_SND_MODE_TALKIE 2
 
-#define DEFAULT_SFX_FILE "monster.sou"
-
 namespace Audio {
 class Mixer;
 class SoundHandle;

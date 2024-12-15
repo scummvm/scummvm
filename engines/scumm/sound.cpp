@@ -708,20 +708,18 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 		int totalOffset, soundSize, fileSize, headerTag, vctlBlockSize;
 
 		if (_vm->_voiceMode != 2) {
-			if (_vm->_containerFile.empty()) {
-				file.reset(new ScummFile(_vm));
-			} else {
-				// Don't read the index of the PAK file, as we cached the
-				// location and size of monster.sou, which is the only file
-				// we need at this point. We do this to avoid reading the
-				// whole PAK file index for each speech sound.
-				ScummPAKFile *pakFile = new ScummPAKFile(_vm, false);
+			// Don't read the index of the PAK file, as we cached the
+			// location and size of monster.sou, which is the only file
+			// we need at this point. We do this to avoid reading the
+			// whole PAK file index for each speech sound.
+			ScummFile *scummFile = _vm->instantiateScummFile(false);
+			if (_vm->_game.features & GF_DOUBLEFINE_PAK) {
 				PAKFile tmpPak;
 				tmpPak.start = _cachedSfxLocationInPak;
 				tmpPak.len = _cachedSfxLengthInPak;
-				pakFile->setPAKFileIndex(DEFAULT_SFX_FILE, tmpPak);
-				file.reset(pakFile);
+				dynamic_cast<ScummPAKFile *>(scummFile)->setPAKFileIndex(_sfxFilename, tmpPak);
 			}
+			file.reset(scummFile);
 
 			if (!file)
 				error("startTalkSound: Out of memory");
@@ -839,20 +837,18 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			offset += 8;
 		}
 
-		if (_vm->_containerFile.empty()) {
-			file.reset(new ScummFile(_vm));
-		} else {
-			// Don't read the index of the PAK file, as we cached the
-			// location and size of monster.sou, which is the only file
-			// we need at this point. We do this to avoid reading the
-			// whole PAK file index for each speech sound.
-			ScummPAKFile *pakFile = new ScummPAKFile(_vm, false);
+		// Don't read the index of the PAK file, as we cached the
+		// location and size of monster.sou, which is the only file
+		// we need at this point. We do this to avoid reading the
+		// whole PAK file index for each speech sound.
+		ScummFile *scummFile = _vm->instantiateScummFile(false);
+		if (_vm->_game.features & GF_DOUBLEFINE_PAK) {
 			PAKFile tmpPak;
 			tmpPak.start = _cachedSfxLocationInPak;
 			tmpPak.len = _cachedSfxLengthInPak;
-			pakFile->setPAKFileIndex(DEFAULT_SFX_FILE, tmpPak);
-			file.reset(pakFile);
+			dynamic_cast<ScummPAKFile *>(scummFile)->setPAKFileIndex(_sfxFilename, tmpPak);
 		}
+		file.reset(scummFile);
 		
 		if (!file)
 			error("startTalkSound: Out of memory");
@@ -1216,7 +1212,7 @@ bool Sound::hasSfxFile() const
 
 ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
 	Common::ScopedPtr<ScummFile> file;
-	file.reset(_vm->_containerFile.empty() ? new ScummFile(_vm) : new ScummPAKFile(_vm));
+	file.reset(_vm->instantiateScummFile());
 	if (!_vm->openFile(*file, fileName)) {
 		return NULL;
 	}
@@ -1265,7 +1261,7 @@ void Sound::setupSfxFile() {
 		{ nullptr, kVOCMode }
 	};
 
-	ScummFile file(_vm);
+	ScummFile *file = _vm->instantiateScummFile();
 	_offsetTable = nullptr;
 	_sfxFileEncByte = 0;
 	_sfxFilename.clear();
@@ -1294,7 +1290,7 @@ void Sound::setupSfxFile() {
 			tmp.appendInPlace("tlk");
 		}
 
-		if (file.open(Common::Path(tmp)))
+		if (file->open(Common::Path(tmp)))
 			_sfxFilename = tmp.toString('/');
 
 		if (_vm->_game.heversion <= 74)
@@ -1302,28 +1298,23 @@ void Sound::setupSfxFile() {
 
 		_soundMode = kVOCMode;
 	} else {
-		for (uint j = 0; j < 2 && !file.isOpen(); ++j) {
+		for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
 			for (int i = 0; extensions[i].ext; ++i) {
 				tmp = basename[j];
 				tmp.appendInPlace(extensions[i].ext);
-				if (_vm->openFile(file, tmp)) {
+				if (_vm->openFile(*file, tmp)) {
 					_soundMode = extensions[i].mode;
 					_sfxFilename = tmp.toString('/');
+
+					// Cache SFX file location for classic game versions
+					// packed within remastered ones
+					if (_vm->_game.features & GF_DOUBLEFINE_PAK) {
+						PAKFile *tmpPak = dynamic_cast<ScummPAKFile *>(file)->getPAKFileIndex(_sfxFilename);
+						_cachedSfxLocationInPak = tmpPak->start;
+						_cachedSfxLengthInPak = tmpPak->len;
+					}
 					break;
 				}
-			}
-		}
-
-		// Handle SFX file for classic game versions packed within remastered ones
-		if (!_vm->_containerFile.empty()) {
-			ScummPAKFile pakFile(_vm);
-			if (_vm->openFile(pakFile, DEFAULT_SFX_FILE)) {
-				_soundMode = kVOCMode;
-				_sfxFilename = DEFAULT_SFX_FILE;
-
-				PAKFile tmpPak = *pakFile.getPAKFileIndex(DEFAULT_SFX_FILE);
-				_cachedSfxLocationInPak = tmpPak.start;
-				_cachedSfxLengthInPak = tmpPak.len;
 			}
 		}
 	}
@@ -1345,21 +1336,24 @@ void Sound::setupSfxFile() {
 		 */
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
-		compressed_offset = file.readUint32BE();
+		compressed_offset = file->readUint32BE();
 		_offsetTable = (MP3OffsetTable *) malloc(compressed_offset);
 		_numSoundEffects = compressed_offset / 16;
 
 		size = compressed_offset;
 		cur = _offsetTable;
 		while (size > 0) {
-			cur->org_offset = file.readUint32BE();
-			cur->new_offset = file.readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur->num_tags = file.readUint32BE();
-			cur->compressed_size = file.readUint32BE();
+			cur->org_offset = file->readUint32BE();
+			cur->new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur->num_tags = file->readUint32BE();
+			cur->compressed_size = file->readUint32BE();
 			size -= 4 * 4;
 			cur++;
 		}
 	}
+
+	file->close();
+	delete file;
 }
 
 bool Sound::isSfxFinished() const {

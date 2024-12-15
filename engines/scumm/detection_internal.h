@@ -91,7 +91,6 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		break;
 
 	case kGenUnchanged:
-	case kGenDiskNumPak:
 		result = pattern;
 		break;
 

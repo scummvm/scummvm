@@ -105,7 +105,6 @@ struct GameSettings {
 enum FilenameGenMethod {
 	kGenDiskNum,
 	kGenDiskNumSteam,
-	kGenDiskNumPak,
 	kGenRoomNum,
 	kGenRoomNumSteam,
 	kGenHEMac,
@@ -208,7 +207,12 @@ enum GameFeatures {
 	 * HE99 games which were ported to a C++ codebase with HE99 opcodes
 	 * and several HE100 GFX/Wiz features.
 	 */
-	GF_HE_995 = 1 << 19
+	GF_HE_995 = 1 << 19,
+
+	/**
+	 * Games packed within Doublefine PAK containers.
+	 */
+	GF_DOUBLEFINE_PAK = 1 << 20
 };
 
 enum ScummGameId {
