@@ -338,11 +338,18 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		break;
 
 	case Common::kRenderAmiga:
-		// Allow v2 games to be rendered in forced Amiga mode; this works, and
-		// doing this to avoid the "sunburn effect" in MM/Zak is popular.
-		// Also allow this for Indy3 EGA.
-		if (_game.platform != Common::kPlatformAmiga && _game.version != 2 &&
-(_game.version != 3 || _game.id != GID_INDY3 || _game.platform == Common::kPlatformMacintosh))
+		// Allow V2 DOS/EGA games to be rendered with the Amiga palette; this works,
+		// and doing so to avoid the "sunburnt" effect in MM/Zak is popular to the
+		// point of being suggested in some online guides. Some players also like
+		// this setting for the V3/V4 EGA titles (especially since ScummVM < 2.7.0
+		// allowed it; see Trac#15458) and one may say that LucasArts made this
+		// option "canon" if you read the `Common::kRenderEGA` case above.
+		if (_game.platform == Common::kPlatformDOS && (_game.version == 2 ||
+			(_game.version == 3 && !(_game.features & GF_OLD256)) ||
+			(_game.version == 4 && (_game.features & GF_16COLOR))))
+			break;
+
+		if (_game.platform != Common::kPlatformAmiga)
 			_renderMode = Common::kRenderDefault;
 		break;
 
