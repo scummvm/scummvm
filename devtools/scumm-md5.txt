@@ -73,6 +73,7 @@ maniac	Maniac Mansion
 	be83e882b44f2767bc08d4f766ebc347	-1	de	Atari	V2	V2	-	Joachim Eberhard
 	15240c59d3681ed53f714f8d925cb2d6	-1	es	Atari	V2	V2	-	VooD
 	624cdb93654667c869d204a64af7e57f	1988	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
+	ff678e9ef8e4af2a37ca8658833c795a	1988	en	DOS	SE	SE	-	Filippos Karapetis
 	b250d0f9cc83f80ced56fe11a4fb057c	1988	en	DOS	V2	V2	alt?	Andrea Petrucci, Fingolfin
 	114acdc2659a273c220f86ee9edb24c1	-1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
 	99a3699f80b8f776efae592b44b9b991	1988	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
