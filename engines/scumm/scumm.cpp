@@ -1048,6 +1048,8 @@ Common::Error ScummEngine::init() {
 		if (_game.platform == Common::kPlatformDOS && (_game.features & GF_DOUBLEFINE_PAK)) {
 			// Container files used in remastered/SE versions
 			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
+			if (_game.id == GID_MANIAC)
+				_containerFile = "tenta.cle";
 			_fileHandle = new ScummPAKFile(this);
 			_filenamePattern.genMethod = kGenDiskNum;
 
@@ -1063,6 +1065,10 @@ Common::Error ScummEngine::init() {
 				break;
 			case GID_FT:
 				_filenamePattern.pattern = "ft.la%d";
+				break;
+			case GID_MANIAC:
+				_filenamePattern.pattern = "%.2d.LFL";
+				_filenamePattern.genMethod = kGenRoomNum;
 				break;
 			default:
 				error("Unsupported Doublefine packed game");
@@ -4007,11 +4013,13 @@ void ScummEngine_v90he::runBootscript() {
 
 bool ScummEngine::startManiac() {
 	Common::Path currentPath = ConfMan.getPath("path");
+	Common::String gameId = ConfMan.get("gameid");
 	Common::String maniacTarget;
 
 	if (!ConfMan.hasKey("easter_egg")) {
 		// Look for a game with a game path pointing to a 'Maniac' directory
-		// as a subdirectory to the current game.
+		// as a subdirectory to the current game. For the Double Fine SE version,
+		// we'll look for a game with the same path as the current game.
 		Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
 		for (; iter != ConfMan.endGameDomains(); ++iter) {
 			Common::ConfigManager::Domain &dom = iter->_value;
@@ -4022,6 +4030,16 @@ bool ScummEngine::startManiac() {
 				if (path.baseName().equalsIgnoreCase("maniac")) {
 					maniacTarget = iter->_key;
 					break;
+				}
+
+				// Since DOTT and MM are enclosed in the same PAK file, find
+				// a target with the same path as the current game and a game
+				// ID containing "maniac".
+				if (path.empty() && (_game.features & GF_DOUBLEFINE_PAK)) {
+					if (iter->_key != gameId && iter->_key.contains("maniac")) {
+						maniacTarget = iter->_key;
+						break;
+					}
 				}
 			}
 		}
