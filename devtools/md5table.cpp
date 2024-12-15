@@ -146,7 +146,7 @@ static const char *c_header =
 	"	const char *gameid;\n"
 	"	const char *variant;\n"
 	"	const char *extra;\n"
-	"	int32 filesize;\n"
+	"	int64 filesize;\n"
 	"	Common::Language language;\n"
 	"	Common::Platform platform;\n"
 	"};\n"

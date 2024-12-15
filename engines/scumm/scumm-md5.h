@@ -14,7 +14,7 @@ struct MD5Table {
 	const char *gameid;
 	const char *variant;
 	const char *extra;
-	int32 filesize;
+	int64 filesize;
 	Common::Language language;
 	Common::Platform platform;
 };
