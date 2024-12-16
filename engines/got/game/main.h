@@ -19,30 +19,15 @@
  *
  */
 
-#ifndef GOT_VIEWS_GAME_CONTENT_H
-#define GOT_VIEWS_GAME_CONTENT_H
+#ifndef GOT_GAME_MAIN_H
+#define GOT_GAME_MAIN_H
 
-#include "got/views/view.h"
 #include "got/data/defines.h"
 
 namespace Got {
-namespace Views {
 
-class GameContent : public View {
-private:
-	void drawBackground(GfxSurface &s);
-	void drawObjects(GfxSurface &s);
-	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
+extern void setup_load();
 
-public:
-	GameContent() : View("GameContent") {}
-	virtual ~GameContent() {}
-
-	void draw() override;
-	bool msgGame(const GameMessage &msg) override;
-};
-
-} // namespace Views
 } // namespace Got
 
 #endif

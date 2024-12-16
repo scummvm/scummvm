@@ -136,7 +136,6 @@ void show_scr(void);
 
 //G_BACK.C
 void build_screen(unsigned int pg);
-void show_level(int new_level);
 void scroll_level_left(void);
 void scroll_level_up(void);
 void scroll_level_right(void);

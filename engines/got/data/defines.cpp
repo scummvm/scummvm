@@ -23,32 +23,32 @@
 
 namespace Got {
 
-void LEVEL::load(Common::SeekableReadStream *src) {
+void LEVEL::sync(Common::Serializer &s) {
 	for (int i = 0; i < 12; ++i)
-		src->read(icon[i], 20);
+		s.syncBytes(icon[i], 20);
 
-	bg_color = src->readByte();
-	type = src->readByte();
+	s.syncAsByte(bg_color);
+	s.syncAsByte(type);
 
-	src->read(actor_type, 16);
-	src->read(actor_loc, 16);
-	src->read(actor_value, 16);
-	src->read(pal_colors, 3);
-	src->read(actor_invis, 16);
-	src->read(extra, 13);
-	src->read(static_obj, 30);
+	s.syncBytes(actor_type, 16);
+	s.syncBytes(actor_loc, 16);
+	s.syncBytes(actor_value, 16);
+	s.syncBytes(pal_colors, 3);
+	s.syncBytes(actor_invis, 16);
+	s.syncBytes(extra, 13);
+	s.syncBytes(static_obj, 30);
 
 	for (int i = 0; i < 30; ++i)
-		static_x[i] = src->readSint16LE();
+		s.syncAsSint16LE(static_x[i]);
 	for (int i = 0; i < 30; ++i)
-		static_y[i] = src->readSint16LE();
+		s.syncAsSint16LE(static_y[i]);
 
-	src->read(new_level, 10);
-	src->read(new_level_loc, 10);
+	s.syncBytes(new_level, 10);
+	s.syncBytes(new_level_loc, 10);
 
-	area = src->readByte();
-	src->read(actor_dir, 16);
-	src->read(future, 3);
+	s.syncAsByte(area);
+	s.syncBytes(actor_dir, 16);
+	s.syncBytes(future, 3);
 }
 
 } // namespace Got

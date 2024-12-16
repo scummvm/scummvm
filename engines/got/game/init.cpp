@@ -22,9 +22,12 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "got/game/init.h"
+#include "got/game/back.h"
+#include "got/game/main.h"
 #include "got/gfx/image.h"
 #include "got/utils/file.h"
 #include "got/events.h"
+#include "got/sound.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -95,12 +98,44 @@ void initialize() {
 		_G(thor_info).item = 2;
 	}
 
+	_G(thor)->speed_count = 6;
+
 	_G(new_level) = _G(current_level);
 
 	// Load level data
 	Common::MemoryReadStream levelStream(
 		_G(sd_data) + _G(new_level) * 512, 512);
 	_G(scrn).load(&levelStream);
+
+	show_level(_G(current_level));
+
+	if (_G(auto_load)) {
+		if (load_game(0)) {
+			setup_load();
+		}
+		_G(auto_load) = 0;
+		if (GAME1 && _G(current_area) == 59 && !_G(setup).game_over) {
+			_G(auto_load) = 1;
+#ifdef TODO
+			fade_in();
+			boss_level1();
+#else
+			error("TODO: boss_level1");
+#endif
+		}
+	} else if (!_G(cheat)) {
+//		key_flag[ESC] = 1;
+	}
+
+	if (!_G(auto_load)) {
+//		fade_in();
+		_G(sound).music_play(_G(level_type), 1);
+	}
+	_G(auto_load) = 0;
+
+	_G(startup) = false;
+	if (_G(record))
+		memset(_G(demo_key), 0, DEMO_LEN);
 }
 
 } // namespace Got

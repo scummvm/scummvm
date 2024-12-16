@@ -190,7 +190,7 @@ void show_enemies() {
 }
 
 int load_enemy(int type) {
-	int i, f, d, e;
+	int i, d, e;
 	ACTOR *enm;
 
 	for (i = 0; i < MAX_ENEMIES; i++) if (_G(enemy_type)[i] == type) return i;
