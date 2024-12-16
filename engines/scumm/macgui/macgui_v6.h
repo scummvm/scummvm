@@ -72,6 +72,8 @@ protected:
 	void onMenuClose() override;
 
 	void runAboutDialog() override;
+	bool runOpenDialog(int &saveSlotToHandle) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
 	bool runOptionsDialog() override;
 	bool runQuitDialog() override;
 	bool runRestartDialog() override;

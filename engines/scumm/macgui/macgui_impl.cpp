@@ -607,20 +607,20 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
 		res->skip(4);
 		uint16 maskRowBytes = res->readUint16BE();
 		res->skip(3 * 2);
-		res->readUint16BE();
+		uint16 maskHeight = res->readUint16BE();
 
 		// Bitmap section
 		res->skip(4);
-		uint16 rowBytes = res->readUint16BE();
+		uint16 bitmapRowBytes = res->readUint16BE();
 		res->readUint16BE(); // top
 		res->readUint16BE(); // left
-		uint16 height = res->readUint16BE(); // bottom
+		uint16 bitmapHeight = res->readUint16BE(); // bottom
 		res->readUint16BE(); // right
 
 		// Data section
 		res->skip(4);
-		res->skip(maskRowBytes * height);
-		res->skip(rowBytes * height);
+		res->skip(maskRowBytes * maskHeight);
+		res->skip(bitmapRowBytes * bitmapHeight);
 
 		// Palette
 		res->skip(6);
@@ -638,8 +638,23 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
 		}
 
 		s = new Graphics::Surface();
-		s->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-		res->read(s->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
+		s->create(pixMap.bounds.width(), pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+
+		if (pixMap.pixelSize == 2) {
+			byte *buf = new byte[pixMap.rowBytes];
+			for (int y = 0; y < pixMap.bounds.height(); y++) {
+				res->read(buf, pixMap.rowBytes);
+				for (int x = 0; x < pixMap.rowBytes; x++) {
+					s->setPixel(4 * x, y, (buf[x] >> 6) & 0x03);
+					s->setPixel(4 * x + 1, y, (buf[x] >> 4) & 0x03);
+					s->setPixel(4 * x + 2, y, (buf[x] >> 2) & 0x03);
+					s->setPixel(4 * x + 3, y, buf[x] & 0x03);
+				}
+			}
+			delete[] buf;
+		} else if (pixMap.pixelSize == 8) {
+			res->read(s->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
+		}
 	}
 
 	return s;
@@ -734,16 +749,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 
-	Common::String saveGameFileAsResStr, gameFileResStr;
-	saveGameFileAsResStr = _strsStrings[kMSISaveGameFileAs].c_str();
-	gameFileResStr = _strsStrings[kMSIGameFile].c_str();
+	Common::String gameFileResStr = _strsStrings[kMSIGameFile].c_str();
 
 	resource.open(_resourceFile);
 
 	Common::Rect bounds;
-
-	bool isOpenDialog = dialogId == 4000 || dialogId == 4001;
-	bool isSaveDialog = dialogId == 3998 || dialogId == 3999;
 
 	res = resource.getResource(MKTAG('D', 'L', 'O', 'G'), dialogId);
 	if (res) {
@@ -806,23 +816,12 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 			case 0:
 			{
 				// User item
-
-				// Skip drive label box and listbox
-				bool doNotDraw = (isOpenDialog && (i == 6 || i == 7)) || ((isOpenDialog || isSaveDialog) && i == 3);
-				if (!doNotDraw) {
-					window->innerSurface()->frameRect(r, black);
-				} else if (_vm->_game.id == GID_INDY3 && i == 3) {
-					drawFakeDriveLabel(window, Common::Rect(r.left + 5, r.top, r.right, r.bottom), "ScummVM");
-				}
-
+//				window->innerSurface()->frameRect(r, black);
 				break;
 			}
 			case 4:
 				// Button
 				str = getDialogString(res, len);
-				if ((isOpenDialog || isSaveDialog) && (i == 4 || i == 5)) // "Eject" and "Drive"
-					enabled = false;
-
 				window->addButton(r, str, enabled);
 				break;
 
@@ -835,9 +834,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
-				if (isSaveDialog && i == 2)
-					str = saveGameFileAsResStr;
-
 				window->addStaticText(r, str, enabled);
 				break;
 

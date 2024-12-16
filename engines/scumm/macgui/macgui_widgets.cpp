@@ -851,7 +851,8 @@ void MacGuiImpl::MacPicture::draw(bool drawFocused) {
 
 	debug(1, "MacGuiImpl::MacPicture: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	_window->drawSprite(_picture, _bounds.left, _bounds.top);
+	if (_picture)
+		_window->drawSprite(_picture, _bounds.left, _bounds.top);
 
 	_redraw = false;
 	_fullRedraw = false;
