@@ -35,7 +35,10 @@
 
 namespace Dgds {
 
-/* Not used anywhere.
+/*
+ * Not used anywhere, but these strings are in the EXE and conveniently
+ * tell us what the PlayerAction enum values are.
+ *
 static const char *ACTIONS[] = {
 	"Stand Right",
 	"Walk Right",
@@ -1416,10 +1419,17 @@ void ChinaTrain::checkRegions(TrainPlayer &player) {
 			if (mode == 0 || (mode == 2 && _cabooseTrail == 0)) {
 				player.setAction(kActionJumpRight, true);
 				engine->_soundPlayer->playSFX(134);
-			} else if (mode == 0 && _cabooseTrail != 0) {
-				player.setAction(kActionHeroicJump, true);
-				engine->_soundPlayer->playSFX(134);
 			}
+			//
+			// The original also has this code, but it can never execute because
+			// mode == 0 would have taken the above branch.
+			// There's also no code to handle kActionHeroicJump in doProcess,
+			// so it was probably vestigal.
+			//
+			// } else if (mode == 0 && _cabooseTrail != 0) {
+			//    player.setAction(kActionHeroicJump, true);
+			//    engine->_soundPlayer->playSFX(134);
+			// }
 		} else if (player._action == kActionWalkLeft) {
 			if ((mode == 1 || mode == 3) && (_players._tong._intent != 5 || _currentCar != 3 || &player == &_players._tong)) {
 				player.setAction(kActionJumpLeft, true);

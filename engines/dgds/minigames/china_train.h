@@ -82,6 +82,7 @@ struct PlayerData {
 };
 
 struct TunnelData {
+	TunnelData() : _start(0), _end(0) {}
 	int32 _start;
 	int32 _end;
 };
@@ -94,7 +95,7 @@ public:
 	bool isBlocking() const { return _action == kActionBlock || _action == kActionBlockUp; }
 	bool isDucking() const { return _action == kActionDuckRight || _action == kActionDuckLeft; }
 	bool isFalling() const { return _action == kActionFallRight || _action == kActionFallLeft; }
-	bool isJumping() const { return _action == kActionJumpRight || _action == kActionJumpRight; }
+	bool isJumping() const { return _action == kActionJumpRight || _action == kActionJumpLeft; }
 	bool isStaggering() const { return _action == kActionStagger; }
 	bool isStanding() const { return _action == kActionStandRight || _action == kActionStandLeft; }
 	bool isWalking() const { return _action == kActionWalkLeft || _action == kActionWalkRight; }
