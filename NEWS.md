@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Dark Seed.
 
+ Nuvie:
+   - Added "Transfer a Character" feature to main menu.
+
 
 #### 2.9.0 (2024-12-22)
 
