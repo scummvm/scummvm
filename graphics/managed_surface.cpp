@@ -152,12 +152,12 @@ ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
 		_innerSurface.h = surf.h;
 		_innerSurface.pitch = surf.pitch;
 		this->format = surf.format;
-
-		// Copy miscellaneous properties
-		_transparentColorSet = surf._transparentColorSet;
-		_transparentColor = surf._transparentColor;
-		_palette = surf._palette ? new Palette(*surf._palette) : nullptr;
 	}
+
+	// Copy miscellaneous properties
+	_transparentColorSet = surf._transparentColorSet;
+	_transparentColor = surf._transparentColor;
+	_palette = surf._palette ? new Palette(*surf._palette) : nullptr;
 
 	return *this;
 }
