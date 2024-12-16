@@ -824,7 +824,6 @@ void MacGuiImpl::MacIcon::draw(bool drawFocused) {
 
 	debug(1, "MacGuiImpl::MacIcon: Drawing icon %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	_window->setPalette(_palette);
 	_window->drawSprite(_icon, _bounds.left, _bounds.top);
 
 	_redraw = false;

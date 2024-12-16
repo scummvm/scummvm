@@ -23,6 +23,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/paletteman.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 
@@ -55,7 +56,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	_shakeWasEnabled = _gui->_vm->_shakeEnabled;
 	_gui->_vm->setShake(0);
 
-	_gui->lightsOff();
+	_gui->saveScreen();
 	_gui->updatePalette();
 
 	_black = _gui->getBlack();
@@ -191,7 +192,7 @@ MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
 	_pauseToken.clear();
 	_gui->_vm->setShake(_shakeWasEnabled);
 
-	_gui->lightsOn();
+	_gui->restoreScreen();
 }
 
 void MacGuiImpl::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
@@ -203,6 +204,32 @@ void MacGuiImpl::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
 
 void MacGuiImpl::MacDialogWindow::show() {
 	_visible = true;
+
+	// Icons have their own palette, so we have to update it. It's assumed
+	// that this will clash with any other part of the palette.
+
+	MacIcon *icon = (MacIcon *)getWidget(kWidgetIcon, 0);
+
+	if (icon) {
+		Graphics::Palette *palette = icon->getPalette();
+		Graphics::Palette *paletteCopy = new Graphics::Palette(palette->size());
+
+		for (uint i = 0; i < palette->size(); i++) {
+			byte r, g, b;
+
+			palette->get(i, r, g, b);
+
+			r = _gui->_vm->_macGammaCorrectionLookUp[r];
+			g = _gui->_vm->_macGammaCorrectionLookUp[g];
+			b = _gui->_vm->_macGammaCorrectionLookUp[b];
+
+			paletteCopy->set(i, r, g, b);
+		}
+
+		_system->getPaletteManager()->setPalette(*paletteCopy);
+		delete paletteCopy;
+	}
+
 	copyToScreen();
 	_dirtyRects.clear();
 	_gui->_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
@@ -719,17 +746,6 @@ MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type
 	}
 
 	return nullptr;
-}
-
-void MacGuiImpl::MacDialogWindow::setPalette(const Graphics::Palette *palette) {
-	for (uint i = 0; i < palette->size(); i++) {
-		byte r, g, b;
-
-		palette->get(i, r, g, b);
-		_gui->_vm->setPalColor(i, r, g, b);
-	}
-
-	_dirtyPalette = true;
 }
 
 void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
