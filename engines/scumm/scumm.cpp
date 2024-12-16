@@ -975,6 +975,11 @@ Common::Error ScummEngine::init() {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms");
 	}
+	
+	if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && (_game.features & GF_DOUBLEFINE_PAK)) {
+		// This is for the DoubleFine SE versions of Monkey Island 1 and 2
+		SearchMan.addSubDirectoryMatching(gameDataDir, "audio");
+	}
 
 	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
 		// This is for the Mac version of Indy3/Loom
