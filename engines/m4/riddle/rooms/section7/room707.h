@@ -44,11 +44,17 @@ private:
 
 	int32 _peerIntoCupolaPos1Series = 0;
 	int32 _peerIntoCupolaPos2Series = 0;
+	int32 _ripDownStairsPos4Series = 0;
+	int32 _ripDownStairsPos8Series = 0;
+	int32 _ripLooksDownSeries = 0;
 	int32 _ripUpStairsPos10Series = 0;
 	int32 _ripUpStairsPos2Series = 0;
+	int32 _ripWalksDownFarStairsSeries = 0;
+	int32 _ripWalksDownLeftStairsSeries = 0;
 	int32 _ripWalksUpFarStairsSeries = 0;
 	int32 _ripWalksUpLeftStairsSeries = 0;
 
+	machine *_popUpMach = nullptr;
 	machine *_ripStairsMach = nullptr;
 };
 
