@@ -57,6 +57,19 @@ namespace Scumm {
 MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
 	_backupScreen = nullptr;
 	_backupPalette = nullptr;
+
+	if (_vm->_game.id == GID_TENTACLE)
+		_gameName = "Day of the Tentacle";
+	else if (_vm->_game.id == GID_SAMNMAX)
+		_gameName = "Sam & Max";
+	else if (_vm->_game.id == GID_DIG)
+		_gameName = "The Dig";
+	else if (_vm->_game.id == GID_FT)
+		_gameName = "Full Throttle";
+	else if (_vm->_game.id == GID_MANIAC)
+		_gameName = "Maniac Mansion";
+	else
+		_gameName = "Some Game I Do Not Know";
 }
 
 MacV6Gui::~MacV6Gui() {
@@ -68,8 +81,18 @@ MacV6Gui::~MacV6Gui() {
 	delete _backupPalette;
 }
 
+bool MacV6Gui::readStrings() {
+	_strsStrings.clear();
+	_strsStrings.reserve(128);
+	for (int i = 0; i < 128; i++)
+		_strsStrings.emplace_back("");
+
+	_strsStrings[kMSIAboutGameName] = "About " + _gameName + "...";
+	return true;
+}
+
 const Graphics::Font *MacV6Gui::getFontByScummId(int32 id) {
-	// V5 games do not use CharsetRendererMac
+	// V6 and V7 games (and Maniac Mansion) do not use CharsetRendererMac
 	return nullptr;
 }
 
@@ -408,11 +431,14 @@ bool MacV6Gui::runRestartDialog() {
 
 	window->setDefaultWidget(buttonOk);
 
-	// Only Day of the Tentacle seems to have a Restart dialog?
 	window->addSubstitution("");
 	window->addSubstitution("");
 	window->addSubstitution("");
-	window->addSubstitution("Day of the Tentacle");
+
+	if (_vm->_game.id == GID_TENTACLE)
+		window->addSubstitution("Day of the Tentacle");
+	else
+		window->addSubstitution("Sam & Max");
 
 	Common::Array<int> deferredActionsIds;
 
