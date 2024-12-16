@@ -567,6 +567,162 @@ void Adlib::Func2839() {
 	// TODO: Refactor, this code is unnecessarily cumbersome
 }
 
+void Adlib::Func294E() {
+	/*
+	;; Arguments:
+	;; [bp+0Ah]: The channel index
+	;; [bp+8h]: The index into the note data structure
+	;; [bp+6h]: TODO: Seems to be 0 for a lot (all) of the note heights?
+	mov	al,[bp+8h]
+	xor	ah,ah
+	mov	di,ax
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	al,[bp+8h]
+	xor	ah,ah
+	mov	di,ax
+	;; #note_on_data: This is where we set the data before it is being processed
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-2h],ax
+	cmp	byte ptr [bp+6h],0h ;; 2976
+	jnz	297Fh
+
+l0017_297C:
+	jmp	2A4Fh
+
+l0017_297F:
+	cmp	byte ptr [bp+6h],80h
+	jnc	29EBh
+
+l0017_2985:
+	cmp	byte ptr [bp+8h],7Fh
+	jnc	2996h
+
+l0017_298B:
+	mov	al,[bp+8h]
+	xor	ah,ah
+	inc	ax
+	mov	[bp-6h],ax
+	jmp	299Bh
+
+l0017_2996:
+	mov	word ptr [bp-6h],7Fh
+
+l0017_299B:
+	mov	di,[bp-6h]
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	di,[bp-6h]
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-4h],ax
+	mov	al,[bp+6h]
+	xor	ah,ah
+	xor	dx,dx
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-4h]
+	sub	ax,[bp-2h]
+	xor	dx,dx
+	call	far 00CDh:0C97h
+	mov	cx,7h
+	xor	bx,bx
+	call	far 00CDh:0D7Ah
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	xor	dx,dx
+	add	ax,cx
+	adc	dx,bx
+	;; #note_on_data: This could be where we set the data
+	mov	[bp-2h],ax
+	jmp	2A4Fh ;; 29E9
+
+l0017_29EB:
+	cmp	byte ptr [bp+8h],0h
+	jbe	29FCh
+
+l0017_29F1:
+	mov	al,[bp+8h]
+	xor	ah,ah
+	dec	ax
+	mov	[bp-6h],ax
+	jmp	2A01h
+
+l0017_29FC:
+	xor	ax,ax
+	mov	[bp-6h],ax
+
+l0017_2A01:
+	mov	di,[bp-6h]
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	di,[bp-6h]
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-4h],ax
+	mov	al,[bp+6h]
+	xor	ah,ah
+	xor	dx,dx
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	sub	ax,[bp-4h]
+	xor	dx,dx
+	;; #note_on_timing: Maybe these have timing purposes, but disregard for now
+	call	far 00CDh:0C97h
+	mov	cx,7h
+	xor	bx,bx
+	call	far 00CDh:0D7Ah
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	xor	dx,dx
+	sub	ax,cx
+	sbb	dx,bx
+	;; #note_on_data: This could be where we set the data
+	mov	[bp-2h],ax ;; 2A4C - need to print ax
+
+l0017_2A4F:
+	;; This part is a note on, see the OR with 200h 
+	;; #note_on_timing: Following up where the info when to execute this comes from
+	;; #note_on_data: Using this to find out where the data comes from
+	mov	al,[bp+0Ah]
+	xor	ah,ah
+	add	ax,0A0h
+	push	ax
+	;; #note_on_data: Our data lives in [bp-02]. It is a 16 bit value including both bytes
+	;; necessary for frequency and note-on event data
+	mov	ax,[bp-2h]
+	and	ax,0FFh
+	push	ax
+	;; This writes a frequency for the following note-on event
+	;; First pushed is the register, second is the note data
+	call	far 0017h:2792h
+	mov	al,[bp+0Ah]
+	xor	ah,ah
+	add	ax,0B0h
+	push	ax
+	mov	ax,[bp-2h]
+	shr	ax,8h
+	or	ax,20h
+	push	ax
+	;; This writes a note-on event
+	call	far 0017h:2792h
+	leave
+	retf	6h*/
+}
+
 void Adlib::OnTimer() {
 
 	/* TODO: Skipped:
@@ -869,6 +1025,8 @@ void Adlib::OnTimer() {
 									// value which is not used in g2779 above.
 									Func2792(gArray8d[bp8] + 0x40,
 											 result & 0xC0 + bp2);
+
+									
 									// TODO: Continue from here
 									/* mov al, [bp - 3h]
 									xor	ah,ah

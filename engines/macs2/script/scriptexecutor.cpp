@@ -1848,7 +1848,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 duration = Func9F4D_16();
 			requestCallback = false;
 			// TODO: Need to figure out the units/duration of the timer
-			constexpr uint32 durationMultiplier = 5;
+			// constexpr uint32 durationMultiplier = 5;
+			constexpr uint32 durationMultiplier = 1;
 			StartTimer(duration * durationMultiplier);
 			isAwaitingCallback = true;
 			EndBuffering(lastOpcodeTriggeredSkip);
@@ -1973,9 +1974,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			//Func9F4D(throwaway1, throwaway2);
 			//Func9F4D(throwaway1, throwaway2);
 			uint32 objectID = Func9F4D_32() - 0x400;
-			uint32 animIndex = Func9F4D_32();
-			GameObjects::GetObjectByIndex(objectID)->testOverloadAnimation = animIndex;
-			return ExecutionResult::ScriptFinished;
+			uint16 animIndex = Func9F4D_16();
+			// GameObjects::GetObjectByIndex(objectID)->testOverloadAnimation = animIndex;
+			GameObjects::GetObjectByIndex(objectID)->Orientation = animIndex;
 		} else if (opcode1 == 0x23) {
 			// TODO: Not fully understood - need to check how exactly it works
 			// Basically implements a move to (maybe in conjunction with an offset applied
