@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-15 12:25+0000\n"
+"POT-Creation-Date: 2024-12-16 21:51+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -10275,11 +10275,11 @@ msgstr "Casio CT-460 / CSM-1"
 msgid "Game does not contain menu resources"
 msgstr "فشل تهيئة الموارد"
 
-#: engines/sci/detection_tables.h:4675
+#: engines/sci/detection_tables.h:4694
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4730
+#: engines/sci/detection_tables.h:4749
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "تم اكتشاف لعبة غير مكتملة. يجب عليك نسخ البيانات من جميع الأقراص المضغوطة."
