@@ -1369,8 +1369,13 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 3);
+	MacButton *buttonDrive = (MacButton *)window->getWidget(kWidgetButton, 4);
 
 	window->setDefaultWidget(buttonSave);
+	buttonEject->setEnabled(false);
+	buttonDrive->setEnabled(false);
+
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1382,6 +1387,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
 
 	drawFakePathList(window, Common::Rect(14, 18, 231, 37), "Indy Last Crusade");
+	drawFakeDriveLabel(window, Common::Rect(239, 41, 349, 61), "ScummVM");
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -1425,9 +1431,16 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 
 	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonDrive = (MacButton *)window->getWidget(kWidgetButton, 3);
+	MacStaticText *saveText = (MacStaticText *)window->getWidget(kWidgetStaticText, 0);
 	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
 
 	window->setDefaultWidget(buttonSave);
+	buttonEject->setEnabled(false);
+	buttonDrive->setEnabled(false);
+	saveText->setText(_strsStrings[kMSISaveGameFileAs]);
+
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1437,6 +1450,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
 
 	drawFakePathList(window, Common::Rect(16, 8, 198, 27), "Indy Last Crusade");
+	drawFakeDriveLabel(window, Common::Rect(205, 31, 304, 51), "ScummVM");
 
 	int firstAvailableSlot = -1;
 	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {

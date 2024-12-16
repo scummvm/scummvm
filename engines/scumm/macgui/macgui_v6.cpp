@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "common/macresman.h"
 
 #include "engines/engine.h"
@@ -28,12 +27,6 @@
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
-
-#if 0
-#include "graphics/maccursor.h"
-#include "graphics/macgui/macfontmanager.h"
-#endif
-
 #include "graphics/surface.h"
 
 #include "scumm/scumm.h"
@@ -41,12 +34,6 @@
 #include "scumm/file.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_v6.h"
-
-#if 0
-#include "scumm/music.h"
-#include "scumm/sound.h"
-#include "scumm/verbs.h"
-#endif
 
 namespace Scumm {
 
@@ -78,7 +65,7 @@ MacV6Gui::~MacV6Gui() {
 		delete _backupScreen;
 	}
 
-	delete _backupPalette;
+	delete[] _backupPalette;
 }
 
 bool MacV6Gui::readStrings() {
@@ -140,7 +127,6 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 200:	// Open
-		debug("Open");
 		if (runOpenDialog(saveSlotToHandle)) {
 			if (saveSlotToHandle > -1) {
 				_vm->loadGameState(saveSlotToHandle);
@@ -150,7 +136,6 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 201:	// Save
-		debug("Save");
 		_vm->beginTextInput();
 		if (runSaveDialog(saveSlotToHandle, savegameName)) {
 			if (saveSlotToHandle > -1) {
@@ -284,7 +269,7 @@ void MacV6Gui::restoreScreen() {
 		delete _backupScreen;
 		_backupScreen = nullptr;
 
-		delete _backupPalette;
+		delete[] _backupPalette;
 		_backupPalette = nullptr;
 	}
 }
@@ -382,13 +367,164 @@ void MacV6Gui::runAboutDialog() {
 	token.clear();
 }
 
+bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
+	// Widgets:
+	//
+	// 0 - Open button
+	// 1 - Cancel button
+	// 2 - Unknown item type 129
+	// 3 - User item
+	// 4 - Eject button
+	// 5 - Desktop button
+	// 6 - User item
+	// 7 - User item
+	// 8 - Picture (thumbnail?)
+	//
+	// Not in Maniac Mansion:
+	//
+	// 9 - User item
+	// 10 - "Where you were:" text
+
+	int dialogId = (_vm->_game.id == GID_MANIAC) ? 384 : 256;
+
+	MacDialogWindow *window = createDialog(dialogId);
+
+	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonDesktop = (MacButton *)window->getWidget(kWidgetButton, 3);
+
+
+	window->setDefaultWidget(buttonSave);
+	buttonEject->setEnabled(false);
+	buttonDesktop->setEnabled(false);
+
+	bool availSlots[100];
+	int slotIds[100];
+	Common::StringArray savegameNames;
+	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
+
+	MacListBox *listBox;
+
+	if (_vm->_game.id == GID_MANIAC) {
+		listBox = window->addListBox(Common::Rect(10, 31, 228, 161), savegameNames, true);
+		drawFakePathList(window, Common::Rect(10, 8, 228, 27), _gameName.c_str());
+		drawFakeDriveLabel(window, Common::Rect(238, 10, 335, 26), "ScummVM");
+	} else {
+		listBox = window->addListBox(Common::Rect(184, 31, 402, 161), savegameNames, true);
+		drawFakePathList(window, Common::Rect(184, 8, 402, 27), _gameName.c_str());
+		drawFakeDriveLabel(window, Common::Rect(412, 10, 509, 26), "ScummVM");
+		window->innerSurface()->frameRect(Common::Rect(11, 31, 173, 133), getBlack());
+	}
+
+	// When quitting, the default action is to not open a saved game
+	bool ret = false;
+	Common::Array<int> deferredActionsIds;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog(deferredActionsIds);
+
+		if (clicked == buttonSave->getId() || clicked == listBox->getId()) {
+			ret = true;
+			saveSlotToHandle =
+				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+			break;
+		}
+
+		if (clicked == buttonCancel->getId())
+			break;
+	}
+
+	delete window;
+	return ret;
+}
+
+bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
+	// Widgets:
+	//
+	// 0 - Save button
+	// 1 - Cancel button
+	// 2 - Unknown item type 129
+	// 3 - User item
+	// 4 - Eject button
+	// 5 - Desktop button
+	// 6 - User item
+	// 7 - User item
+	// 8 - Picture
+	// 9 - "Save as:" text
+	// 10 - User item
+
+	int dialogId = (_vm->_game.id == GID_MANIAC) ? 386 : 258;
+
+	MacDialogWindow *window = createDialog(dialogId);
+
+	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonDrive = (MacButton *)window->getWidget(kWidgetButton, 3);
+	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
+
+	window->setDefaultWidget(buttonSave);
+	buttonEject->setEnabled(false);
+	buttonDrive->setEnabled(false);
+
+	bool busySlots[100];
+	int slotIds[100];
+	Common::StringArray savegameNames;
+	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+
+	drawFakePathList(window, Common::Rect(14, 8, 232, 27), _gameName.c_str());
+	drawFakeDriveLabel(window, Common::Rect(242, 10, 339, 26), "ScummVM");
+
+	int firstAvailableSlot = -1;
+	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
+		if (!busySlots[i]) {
+			firstAvailableSlot = i;
+			break;
+		}
+	}
+
+	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
+
+	// When quitting, the default action is not to save a game
+	bool ret = false;
+	Common::Array<int> deferredActionsIds;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog(deferredActionsIds);
+
+		if (clicked == buttonSave->getId()) {
+			ret = true;
+			saveName = editText->getText();
+			saveSlotToHandle = firstAvailableSlot;
+			break;
+		}
+
+		if (clicked == buttonCancel->getId())
+			break;
+
+		if (clicked == kDialogWantsAttention) {
+			// Cycle through deferred actions
+			for (uint i = 0; i < deferredActionsIds.size(); i++) {
+				if (deferredActionsIds[i] == editText->getId()) {
+					// Disable "Save" button when text is empty
+					buttonSave->setEnabled(!editText->getText().empty());
+				}
+			}
+		}
+	}
+
+	delete window;
+	return ret;
+}
+
 bool MacV6Gui::runOptionsDialog() {
 	return false;
 }
 
 bool MacV6Gui::runQuitDialog() {
-	// TODO: 192 in Maniac Mansion? The icon looks wrong in that one.
-	MacDialogWindow *window = createDialog(128);
+	int dialogId = (_vm->_game.id == GID_MANIAC) ? 192 : 128;
+	MacDialogWindow *window = createDialog(dialogId);
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
@@ -420,8 +556,8 @@ bool MacV6Gui::runQuitDialog() {
 }
 
 bool MacV6Gui::runRestartDialog() {
-	// TODO: 193 in Maniac Mansion? The icon looks wrong in that one.
-	MacDialogWindow *window = createDialog(137);
+	int dialogId = (_vm->_game.id == GID_MANIAC) ? 193 : 137;
+	MacDialogWindow *window = createDialog(dialogId);
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
