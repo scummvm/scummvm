@@ -55,14 +55,14 @@ namespace Scumm {
 // ===========================================================================
 
 MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
+	_backupScreen = nullptr;
 	_backupPalette = nullptr;
-	_backupSurface = nullptr;
 }
 
 MacV6Gui::~MacV6Gui() {
-	if (_backupSurface) {
-		_backupSurface->free();
-		delete _backupSurface;
+	if (_backupScreen) {
+		_backupScreen->free();
+		delete _backupScreen;
 	}
 
 	delete _backupPalette;
@@ -146,13 +146,8 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 204:	// Restart
-		if (runRestartDialog()) {
-			// WORKAROUND: Don't turn the lights back on because
-			// that will mess up the palette.
-			_lightLevel = 0;
-
+		if (runRestartDialog())
 			_vm->restart();
-		}
 		return true;
 
 	case 205:
@@ -190,69 +185,81 @@ uint32 MacV6Gui::getWhite() const {
 	return 251;
 }
 
-void MacV6Gui::lightsOff() {
-	if (_lightLevel++ == 0) {
+void MacV6Gui::saveScreen() {
+	if (_screenSaveLevel++ == 0) {
+		_suspendPaletteUpdates = true;
+
 		Graphics::Surface *screen = _vm->_macScreen;
 
-		_backupSurface = new Graphics::Surface();
-		_backupSurface->copyFrom(*screen);
+		_backupScreen = new Graphics::Surface();
+		_backupScreen->copyFrom(*screen);
+
+		// We have to grab the actual palette, becaues the engine
+		// palette may not be what's on screen, e.g. during SMUSH
+		// movies.
 
 		_backupPalette = new byte[256 * 3];
 
-		screen->fillRect(Common::Rect(screen->w, screen->h), 255);
-		memcpy(_backupPalette, _vm->_currentPalette, 256 * 3);
+		_system->getPaletteManager()->grabPalette(_backupPalette, 0, 256);
 
-		for (int i = 0; i < 256; i++)
-			_vm->setPalColor(i, 0, 0, 0);
+		Graphics::Palette palette(256);
 
-		// HACK: Make sure we have the Mac window manager's preferred colors
-		// and other GUI elements. We put it at the end, because the beginning
-		// of the palette is reserved for icon palettes.
-		//
-		// TODO: Make sure that this palette doesn't get overwritten!
+		// Colors used by the Mac Window Manager
+		palette.set(255, 0x00, 0x00, 0x00); // Black
+		palette.set(254, 0x80, 0x80, 0x80); // Gray80
+		palette.set(253, 0x88, 0x88, 0x88); // Gray88
+		palette.set(252, 0xEE, 0xEE, 0xEE); // GrayEE
+		palette.set(251, 0xFF, 0xFF, 0xFF); // White
+		palette.set(250, 0x00, 0xFF, 0x00); // Green
+		palette.set(249, 0x00, 0xCF, 0x00); // Green2
 
-		_vm->setPalColor(255, 0, 0, 0);          // Black
-		_vm->setPalColor(254, 0x80, 0x80, 0x80); // Gray80
-		_vm->setPalColor(253, 0x88, 0x88, 0x88); // Gray88
-		_vm->setPalColor(252, 0xEE, 0xEE, 0xEE); // GrayEE
-		_vm->setPalColor(251, 0xFF, 0xFF, 0xFF); // White
-		_vm->setPalColor(250, 0x00, 0xFF, 0x00); // Green
-		_vm->setPalColor(249, 0x00, 0xCF, 0x00); // Green2
+		// Colors used by Mac dialog window borders
+		palette.set(248, 0xCC, 0xCC, 0xFF);
+		palette.set(247, 0xBB, 0xBB, 0xBB);
+		palette.set(246, 0x66, 0x66, 0x99);
 
-		_vm->setPalColor(248, 0xCC, 0xCC, 0xFF);
-		_vm->setPalColor(247, 0xBB, 0xBB, 0xBB);
-		_vm->setPalColor(246, 0x66, 0x66, 0x99);
+		for (int i = 0; i < 246; i++)
+			palette.set(i, 0x00, 0x00, 0x00);
 
-		_vm->updatePalette();
+		_windowManager->passPalette(palette.data(), 256);
+
+		for (int i = 0; i < 256; i++) {
+			byte r, g, b;
+
+			palette.get(i, r, g, b);
+			r = _vm->_macGammaCorrectionLookUp[r];
+			g = _vm->_macGammaCorrectionLookUp[g];
+			b = _vm->_macGammaCorrectionLookUp[b];
+			palette.set(i, r, g, b);
+		}
+
+		screen->fillRect(Common::Rect(screen->w, screen->h), getBlack());
 		_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-		_system->updateScreen();
 
-		// HACK: Make sure the Mac window manager is operating on a blank screen
+		_system->getPaletteManager()->setPalette(palette);
+
 		if (_windowManager->_screenCopy)
-			_windowManager->_screenCopy->copyFrom(*screen);
+			_windowManager->_screenCopy->copyFrom(*_vm->_macScreen);
+
+		_system->updateScreen();
 	}
 }
 
-void MacV6Gui::lightsOn() {
-	// This will happen on restart
-	if (_lightLevel == 0)
-		return;
+void MacV6Gui::restoreScreen() {
+	if (--_screenSaveLevel == 0) {
+		_suspendPaletteUpdates = false;
 
-	if (--_lightLevel == 0) {
 		Graphics::Surface *screen = _vm->_macScreen;
 
-		screen->copyFrom(*_backupSurface);
-
-		byte *p = _backupPalette;
-		for (int i = 0; i < 256; i++, p += 3)
-			_vm->setPalColor(i, p[0], p[1], p[2]);
+		screen->copyFrom(*_backupScreen);
 
 		_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-		_vm->updatePalette();
 
-		_backupSurface->free();
-		delete _backupSurface;
-		_backupSurface = nullptr;
+		_system->getPaletteManager()->setPalette(_backupPalette, 0, 256);
+
+		_backupScreen->free();
+		delete _backupScreen;
+		_backupScreen = nullptr;
 
 		delete _backupPalette;
 		_backupPalette = nullptr;
@@ -261,12 +268,12 @@ void MacV6Gui::lightsOn() {
 
 void MacV6Gui::onMenuOpen() {
 	MacGuiImpl::onMenuOpen();
-	lightsOff();
+	saveScreen();
 }
 
 void MacV6Gui::onMenuClose() {
 	MacGuiImpl::onMenuClose();
-	lightsOn();
+	restoreScreen();
 }
 
 void MacV6Gui::runAboutDialog() {
@@ -291,14 +298,21 @@ void MacV6Gui::runAboutDialog() {
 
 	uint black = 0;
 
+	Graphics::Palette palette(256);
+
 	for (uint i = 0; i < 256; i++) {
 		byte r = aboutFile.readByte();
 		byte g = aboutFile.readByte();
 		byte b = aboutFile.readByte();
-		_vm->setPalColor(i, r, g, b);
 
 		if (r == 0 && g == 0 && b == 0)
 			black = i;
+
+		r = _vm->_macGammaCorrectionLookUp[r];
+		g = _vm->_macGammaCorrectionLookUp[g];
+		b = _vm->_macGammaCorrectionLookUp[b];
+
+		palette.set(i, r, g, b);
 	}
 
 	// The screen is already black, but what's black in the palette may
@@ -315,7 +329,7 @@ void MacV6Gui::runAboutDialog() {
 	aboutFile.close();
 
 	_system->copyRectToScreen(screen->getBasePtr(0, 0), screen->pitch, 0, 0, screen->w, screen->h);
-	_vm->updatePalette();
+	_system->getPaletteManager()->setPalette(palette);
 
 	bool done = false;
 

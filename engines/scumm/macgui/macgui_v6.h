@@ -32,10 +32,10 @@ class MacGuiImpl;
 
 class MacV6Gui : public MacGuiImpl {
 private:
+	Graphics::Surface *_backupScreen;
 	byte *_backupPalette;
-	Graphics::Surface *_backupSurface;
 
-	int _lightLevel = 0;
+	int _screenSaveLevel = 0;
 
 public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
@@ -61,8 +61,8 @@ protected:
 
 	bool handleMenu(int id, Common::String &name) override;
 
-	void lightsOff() override;
-	void lightsOn() override;
+	void saveScreen() override;
+	void restoreScreen() override;
 
   	void onMenuOpen() override;
 	void onMenuClose() override;

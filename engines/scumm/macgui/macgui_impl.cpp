@@ -97,7 +97,7 @@ void MacGuiImpl::setPaletteDirty() {
 }
 
 void MacGuiImpl::updatePalette() {
-	if (_paletteDirty) {
+	if (_paletteDirty && !_suspendPaletteUpdates) {
 		_paletteDirty = false;
 		_windowManager->passPalette(_vm->_currentPalette, getNumColors());
 	}

@@ -143,6 +143,7 @@ protected:
 	Common::Path _resourceFile;
 
 	bool _paletteDirty = false;
+	bool _suspendPaletteUpdates = false;
 
 	bool _menuIsActive = false;
 	bool _cursorWasVisible = false;
@@ -224,8 +225,10 @@ protected:
 	virtual void onMenuOpen();
 	virtual void onMenuClose();
 
-	virtual void lightsOff() {}
-	virtual void lightsOn() {}
+	// For older games, there is no problem with displaying the Mac GUI and
+	// the game at the same time. For newer, there is.
+	virtual void saveScreen() {}
+	virtual void restoreScreen() {}
 
 	virtual void runAboutDialog() = 0;
 	virtual bool runOpenDialog(int &saveSlotToHandle);
@@ -705,7 +708,6 @@ public:
 
 		void drawDottedHLine(int x0, int y, int x1);
 		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
-		void setPalette(const Graphics::Palette *palette);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
 		void drawTexts(Common::Rect r, const TextLine *lines, bool inverse = false);
