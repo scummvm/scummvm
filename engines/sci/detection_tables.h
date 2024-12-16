@@ -2049,7 +2049,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// King's Quest V DOS 0.000.062 EGA (5 x 5.25" disks)
+	// King's Quest 5 DOS 0.000.062 EGA (5 x 5.25" disks)
 	// Supplied by ssburnout in bug report #5254
 	{"kq5", "EGA", {
 		{"resource.map", 0, "ef4fdc72ca7aef62054e8b075d7960d8", 7596},
@@ -2058,6 +2058,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 1194799},
 		{"resource.003", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 1092325},
 		{"resource.004", 0, "8e5c1bc4d738cf7316ff506f59d265e2", 1187803},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	// King's Quest 5 DOS 0.000.062 EGA (12 x 5.25" 360k disks)
+	// Supplied by ns394 in bug report #15571
+	{"kq5", "EGA", {
+		{"resource.map", 0, "c6c167ee097517f10eb5825678a4d9e0", 6876},
+		{"resource.000", 0, "281c51f7ebbaf9d6507ef3442165069e", 180936},
+		{"resource.001", 0, "0087ecc427b29c9d6e97215a1c401403", 351165},
+		{"resource.002", 0, "446a416628584d0e0ecb5fd999fec26b", 355432},
+		{"resource.003", 0, "b8caa1a0ebd9533a7bdef8b1777acd48", 355008},
+		{"resource.004", 0, "121e271ef5e9a453a14f084171e2829c", 355459},
+		{"resource.005", 0, "ea0a562146887a98be994a2ed6199e90", 308649},
+		{"resource.006", 0, "9f17cf9064908491e611befae4334460", 352973},
+		{"resource.007", 0, "877143d23a5e01bb68942deabed99a2b", 308216},
+		{"resource.008", 0, "5f7c8b08393546048305f3eccf09e971", 272561},
+		{"resource.009", 0, "a0aad5edec946254bb33ed18ea84886c", 286519},
+		{"resource.010", 0, "caa65f21e62c82d994a617e1e1058f9a", 302497},
+		{"resource.011", 0, "c21a052c1a64c3e470705ac9a7f490d6", 329490},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
@@ -5907,7 +5926,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Space Quest IV DOS 1.060 EGA (6 x 3.5" disks)
+	// Space Quest 4 DOS 1.060 EGA (6 x 3.5" disks)
 	// Supplied by ssburnout in bug report #5255
 	{"sq4", "EGA", {
 		{"resource.map", 0, "4f59814d23a3721f251140fdcfebe35d", 5556},
@@ -5917,6 +5936,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "33c396eb78bafaec38480bcdd9024843", 627369},
 		{"resource.004", 0, "9a673e33c3f6dd560b993ffed77eeb49", 534994},
 		{"resource.005", 0, "3c4841d0a3ebba4404af588c93620c22", 595465},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	// Space Quest 4 DOS 1.065 EGA (10 x 5.25" 360k disks)
+	// Supplied by ns394 in bug report #15572
+	{"sq4", "EGA", {
+		{"resource.map", 0, "b0d425ab4fce54ec238b64c19ba3851e", 5148},
+		{"resource.000", 0, "419bdd9ad892755a9e684fd763529d78", 197195},
+		{"resource.001", 0, "30501118992807731d0076c1f8e0d994", 357345},
+		{"resource.002", 0, "258dff2f8aaf54017e99f06b63cc5c66", 354516},
+		{"resource.003", 0, "bcc897eb283728974a3227c390d2f1e8", 357792},
+		{"resource.004", 0, "b2dcebcb1cf15dfa93a98a1642761e65", 358648},
+		{"resource.005", 0, "d24bcd1250f5eff93e9cf525f53b9ec2", 355496},
+		{"resource.006", 0, "b9a9ed4d1efd2efd8e7c4653d85da472", 354625},
+		{"resource.007", 0, "4eb28ffa51bfde6eac6324771831ac9d", 360330},
+		{"resource.008", 0, "f238547863b3a69fcfc37571c5af432c", 356975},
+		{"resource.009", 0, "c47651a70c7209e5bac8ea726a47f6fc", 88103},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
