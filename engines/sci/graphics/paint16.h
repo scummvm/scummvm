@@ -29,6 +29,7 @@ class GfxScreen;
 class GfxPalette;
 class Font;
 class GfxView;
+struct HiresDrawData;
 
 /**
  * Paint16 class, handles painting/drawing for SCI16 (SCI0-SCI1.1) games
@@ -46,7 +47,8 @@ public:
 	void drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128, uint16 scaleSignal = 0);
 	void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128, uint16 scaleSignal = 0);
 	void drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128, uint16 scaleSignal = 0);
-	void drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX = 128, uint16 scaleY = 128);
+	void drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t hiresHandle, bool storeDrawingInfo);
+	void redrawHiresCels();
 
 	void clearScreen(byte color = 255);
 	void invertRect(const Common::Rect &rect);
@@ -63,7 +65,7 @@ public:
 	void bitsFree(reg_t memoryHandle);
 
 	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
-	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle);
+	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t hiresHandle);
 
 	void kernelGraphFillBoxForeground(const Common::Rect &rect);
 	void kernelGraphFillBoxBackground(const Common::Rect &rect);
@@ -96,6 +98,16 @@ private:
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;
+
+	// The original KQ6WinCD interpreter saves the hires drawing information in a linked list. There are two use cases, one is redrawing the
+	// window background when recieving WM_PAINT messages (which is irrelevant for us, since that happens in the backend) and the other is
+	// redrawing the inventory after displaying a text window over it. This only happens in mixed speech+text mode which does not even exist
+	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
+	void removeHiresDrawObject(reg_t handle);
+	Common::Rect makeHiresRect(Common::Rect &rect) const;
+
+	HiresDrawData *_hiresDrawObjs;
+	bool _hiresPortraitWorkaroundFlag;
 };
 
 } // End of namespace Sci

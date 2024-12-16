@@ -233,18 +233,6 @@ private:
 	GfxScreenUpscaledMode _upscaledHires;
 
 	/**
-	 * This flag is part of a hack to properly remove hires graphics from the screen
-	 * when mixed speech/text mode is enabled. Sometimes the portrait is drawn
-	 * out of bounds of the window/view port rect, so GfxPaint16::bitsShow() will
-	 * not be able to refresh that part of the screen.
-	 * The mixed speech/text is a mode that wasn't part of the original game, so
-	 * there wasn't any need for Sierra to fix it. The mode has been added to ScummVM
-	 * via complex script patches. Another solution would be to update these patches
-	 * with better y-coordinates (inside the port rect)...
-	 */
-	bool _activeHiresView;
-
-	/**
 	 * This buffer is used to draw a single hires font glyph.
 	 */
 	byte *_hiresGlyphBuffer;
@@ -474,9 +462,6 @@ public:
 			break;
 		}
 	}
-
-	bool hasActiveHiresView() const { return _activeHiresView; }
-	void toggleActiveHiresView(bool toggle) { _activeHiresView = toggle; }
 };
 
 } // End of namespace Sci
