@@ -49,8 +49,8 @@ ResExtractor::~ResExtractor() {
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
 		CachedCursor *cc = &_cursorCache[i];
 		if (cc->valid) {
-			free(cc->bitmap);
-			free(cc->palette);
+			delete[] cc->bitmap;
+			delete[] cc->palette;
 		}
 	}
 
