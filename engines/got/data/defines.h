@@ -23,7 +23,7 @@
 #define GOT_DEFINES_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
+#include "common/serializer.h"
 #include "graphics/managed_surface.h"
 
 namespace Got {
@@ -58,6 +58,7 @@ struct LEVEL {                    // size=512
 	byte pal_colors[3] = {};      // change 251,253,254 to these three
 	byte actor_invis[16] = {};
 	byte extra[13] = {};
+
 	byte static_obj[OBJECTS_COUNT] = {};     // 302 static objects (treasure, keys,etc)
 	int  static_x[OBJECTS_COUNT] = {};       // 332 X coor of static objects
 	int  static_y[OBJECTS_COUNT] = {};       // 392 Y coor of static objects
@@ -67,7 +68,15 @@ struct LEVEL {                    // size=512
 	byte actor_dir[16] = {};      // initial dir
 	byte future[3] = {};          // 473
 
-	void load(Common::SeekableReadStream *src);
+	void sync(Common::Serializer &s);
+	void load(Common::SeekableReadStream *src) {
+		Common::Serializer s(src, nullptr);
+		sync(s);
+	}
+	void save(Common::WriteStream *dest) {
+		Common::Serializer s(nullptr, dest);
+		sync(s);
+	}
 };
 
 #define DIRECTION_COUNT 4

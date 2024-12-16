@@ -68,7 +68,7 @@ public:
 	int8 _break_code = 0;
 	int8 _scan_code = 0, _last_scan_code = 0;
 	int8 _diag = 0;
-	int8 _slow_mode = 0, _startup = 0;
+	bool _slow_mode = false, _startup = true;
 	int8 _shot_ok = 0;
 	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0,
 		_thor_real_y1 = 0;
@@ -86,12 +86,11 @@ public:
 	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0,
 		_thor_icon4 = 0;
 	int8 _level_type = 0;
-	int8 _music_current = 0;
+	int8 _music_current = -1;
 	int8 _boss_loaded = 0;
 	int8 _apple_drop = 0;
 	bool _cheat = false;
 	int8 _area = 1;
-	byte _last_setup[32] = {};
 
 	LEVEL _scrn;
 	byte *_scrnp = nullptr;
@@ -99,6 +98,7 @@ public:
 	byte *_sd_data = nullptr;
 
 	SETUP _setup;
+	SETUP _last_setup;
 	byte *_tmp_buff = nullptr;
 	int _reps = 0;
 
@@ -164,7 +164,7 @@ public:
 	char _demo_key[DEMO_LEN] = {};
 	int  _demo_cnt = 0;
 	bool _demo = false, _record = false;
-	int8 _demo_enable = 0;
+	int8 _demo_enable = 1;
 	int  _rnd_index = 0;
 	int  _rnd_array[100] = {};
 	int8 _rdemo = 0;

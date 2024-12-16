@@ -26,6 +26,13 @@
 
 namespace Got {
 
+/**
+ * Shows a new level
+ * In the original this did some initial actors setup and rendering.
+ * Now in ScummVM, it only does the setup portions, since the
+ * GameContent view takes care of the scene rendering.
+*/
+extern void show_level(int new_level);
 
 } // namespace Got
 

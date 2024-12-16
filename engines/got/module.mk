@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	data/defines.o \
 	game/back.o \
 	game/init.o \
+	game/main.o \
 	game/status.o \
 	gfx/font.o \
 	gfx/gfx_chunks.o \
