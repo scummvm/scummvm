@@ -25,28 +25,46 @@
  *
  */
 
-/* Detection tables for Le pays des Pierres Magiques / The Land of the Magic Stones */
+/* Detection tables for Le pays des Pierres Magiques / The Land of the Magic Stones / Das Zauberland der Zaubersteine */
 /* This Game uses the DEV7 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV7_Information */
 
-#ifndef GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
-#define GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
+#ifndef GOB_DETECTION_TABLES_MAGICSTONES_H
+#define GOB_DETECTION_TABLES_MAGICSTONES_H
 
 // -- French: Le pays des Pierres Magiques --
 
 {
-	{
+	{ // Added by Strangerke in 2009
 
-		"pierresmagiques",
+		"magicstones",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY2s("ed4.stk", "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882,
-				   "ed4cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
+			   		"ed4cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"ed4.stk","main.obc",0
 },
 
-#endif // GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
+// -- German: Das Zauberland der Zaubersteine --
+
+{
+	{
+
+		"magicstones",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Die Suche nach dem Feuerdrachen (Engine: DEV7 version 1.2.0.0)
+		AD_ENTRY2s("ed4.stk", "805ceadf60b9446e06078ba9cb7f75ee", 542754,
+			   		"ed4_cd.itk", "02de8ac4f12ed0e4cf5577683f443dcb", 599645278),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"ed4.stk","main.obc",0
+},
+
+#endif // GOB_DETECTION_TABLES_MAGICSTONES_H
