@@ -107,7 +107,7 @@ struct ACTOR {                      // Size=256
 	byte name[9] = {};              // Actors name
 	byte func_num = 0;              // Special function when thor touches
 	byte func_pass = 0;             // Value to pass to func
-	int  magic_hurts = 0;           // Bitwise magic hurts flags
+	uint16  magic_hurts = 0;           // Bitwise magic hurts flags
 	byte future1[4] = {};
 
 	// The rest is dynamic    //size=216
@@ -157,6 +157,8 @@ struct ACTOR {                      // Size=256
 	byte talk_counter = 0;
 	byte etype = 0;
 	byte future2[25] = {};
+
+	void loadFixed(Common::SeekableReadStream *src);
 };
 
 struct ACTOR_NFO {				//size=40

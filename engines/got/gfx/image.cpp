@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "got/gfx/image.h"
 #include "got/events.h"
 #include "got/utils/file.h"
@@ -129,14 +130,20 @@ int load_standard_actors() {
 	make_actor_surface(&_G(explosion));
 
 	load_actor(0, 108);   // Load tornado
-	memcpy(&_G(magic_item)[0], (_G(tmp_buff) + 5120), 40);
-	memcpy(&_G(magic_pic)[0], _G(tmp_buff), 1024);
+
+	Common::MemoryReadStream mi((const byte *)_G(tmp_buff) + 5120, 40);
+	_G(magic_item)[0].loadFixed(&mi);
+	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[0]);
+
 	setup_actor(&_G(magic_item)[0], 20, 0, 0, 0);
 	_G(magic_item)[0].used = 0;
 
 	load_actor(0, 1099);   // Load shield
-	memcpy(&_G(magic_item)[1], (_G(tmp_buff) + 5120), 40);
-	memcpy(&_G(magic_pic)[1], _G(tmp_buff), 1024);
+
+	mi.seek(0);
+	_G(magic_item)[1].loadFixed(&mi);
+	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[1]);
+
 	setup_actor(&_G(magic_item)[1], 20, 0, 0, 0);
 	_G(magic_item)[1].used = 0;
 
@@ -169,19 +176,23 @@ void show_enemies() {
 		if (_G(scrn).actor_type[i] > 0) {
 			r = load_enemy(_G(scrn).actor_type[i]);
 			if (r >= 0) {
-				memcpy(&_G(actor)[i + 3], &_G(enemy)[r], sizeof(ACTOR));
+				_G(actor)[i + 3] = _G(enemy)[r];
+
 				d = _G(scrn).actor_dir[i];
-				//       _G(scrn).actor_type[i] &= 0x3f;
+
 				setup_actor(&_G(actor)[i + 3], i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
 					(_G(scrn).actor_loc[i] / 20) * 16);
 				_G(actor)[i + 3].init_dir = _G(scrn).actor_dir[i];
 				_G(actor)[i + 3].pass_value = _G(scrn).actor_value[i];
+
 				if (_G(actor)[i + 3].move == 23) {
 					// Spinball
 					if (_G(actor)[i + 3].pass_value & 1)
 						_G(actor)[i + 3].move = 24;
 				}
-				if (_G(scrn).actor_invis[i]) _G(actor)[i + 3].used = 0;
+
+				if (_G(scrn).actor_invis[i])
+					_G(actor)[i + 3].used = 0;
 			}
 
 			_G(etype)[i] = r;
@@ -190,15 +201,16 @@ void show_enemies() {
 }
 
 int load_enemy(int type) {
-	int i, d, e;
-	ACTOR *enm;
+	int i, e;
 
-	for (i = 0; i < MAX_ENEMIES; i++) if (_G(enemy_type)[i] == type) return i;
+	for (i = 0; i < MAX_ENEMIES; i++) {
+		if (_G(enemy_type)[i] == type)
+			return i;
+	}
 
 	if (!load_actor(1, type)) {
 		return -1;
 	}
-	enm = (ACTOR *)(_G(tmp_buff) + 5120);
 
 	e = -1;
 	for (i = 0; i < MAX_ENEMIES; i++) {
@@ -207,9 +219,11 @@ int load_enemy(int type) {
 			break;
 		}
 	}
-	if (e == -1) return -1;
+	if (e == -1)
+		return -1;
 
-	memcpy(&_G(enemy)[e], enm, sizeof(ACTOR_NFO));
+	Common::MemoryReadStream inf(_G(tmp_buff) + 5120, 40);
+	_G(enemy)[e].loadFixed(&inf);
 
 	make_actor_surface(&_G(enemy)[e]);
 	_G(enemy_type)[e] = type;
@@ -219,6 +233,7 @@ int load_enemy(int type) {
 		_G(enemy)[e].shot_type = e + 1;
 		enm = (ACTOR *)(_G(tmp_buff) + 5160);
 		memcpy(&_G(shot)[e], enm, sizeof(ACTOR_NFO));
+
 		for (d = 0; d < _G(shot)[e].directions; d++) {
 			for (f = 0; f < _G(shot)[e].frames; f++) {
 				if (_G(shot)[e].directions < _G(shot)[e].frames)
