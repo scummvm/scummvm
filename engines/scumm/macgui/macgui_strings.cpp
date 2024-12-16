@@ -603,14 +603,12 @@ static const MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant2Table[] = {
 #undef SKIP_P
 
 bool MacGuiImpl::readStrings() {
-	if (_vm->_game.version >= 6) {
-		// TODO: Fix this!
+	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
 		_strsStrings.clear();
 		_strsStrings.reserve(128);
 		for (int i = 0; i < 128; i++) {
 			_strsStrings.emplace_back("");
 		}
-		_strsStrings[kMSIAboutGameName] = "About some game...";
 		return true;
 	}
 

@@ -32,6 +32,8 @@ class MacGuiImpl;
 
 class MacV6Gui : public MacGuiImpl {
 private:
+	Common::String _gameName;
+
 	Graphics::Surface *_backupScreen;
 	byte *_backupPalette;
 
@@ -40,6 +42,8 @@ private:
 public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV6Gui();
+
+	bool readStrings() override;
 
 	uint32 getBlack() const override;
 	uint32 getWhite() const override;

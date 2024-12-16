@@ -238,7 +238,7 @@ protected:
 
 	bool runOkCancelDialog(Common::String text);
 
-	bool readStrings();
+	virtual bool readStrings();
 	void parseSTRSBlock(uint8 *strsData, const MacSTRSParsingEntry *parsingTable, int parsingTableSize);
 
 	// These are non interactable, no point in having them as widgets for now...
