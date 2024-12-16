@@ -64,7 +64,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"playtnck2", "Playtoons Construction Kit 2 - Knights"},
 	{"playtnck3", "Playtoons Construction Kit 3 - Far West"},
 	{"playtoonsdemo", "Playtoons Demo"},
-	{"pierresmagiques", "Le pays des Pierres Magiques"},
+	{"magicstones", "The Land of the Magic Stones"},
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
@@ -104,7 +104,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_dynasty.h"   // The Last Dynasty
 	#include "gob/detection/tables_urban.h"     // Urban Runner
 	#include "gob/detection/tables_playtoons.h" // The Playtoons series
-	#include "gob/detection/tables_pierresmagiques.h" // Le pays des Pierres Magiques / The Land of the Magic Stones
+	#include "gob/detection/tables_magicstones.h" // Le pays des Pierres Magiques / The Land of the Magic Stones
 	#include "gob/detection/tables_englishfever.h" // English Fever
 	#include "gob/detection/tables_adi1.h"      // The ADI 1 series
 	#include "gob/detection/tables_adi2.h"      // The ADI 2 series

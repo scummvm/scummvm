@@ -34,6 +34,7 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"gob1mac", "gob1", Common::kPlatformMacintosh},
 	{"gob2cd", "gob2", Common::kPlatformDOS},
 	{"gob3cd", "gob3", Common::kPlatformDOS},
+	{"pierresmagiques", "magicstones", Common::kPlatformWindows},
 	{0, 0, Common::kPlatformUnknown}
 };
 
