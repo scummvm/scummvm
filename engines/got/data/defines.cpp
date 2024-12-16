@@ -51,4 +51,32 @@ void LEVEL::sync(Common::Serializer &s) {
 	s.syncBytes(future, 3);
 }
 
+void ACTOR::loadFixed(Common::SeekableReadStream *src) {
+	move = src->readByte();
+	width = src->readByte();
+	height = src->readByte();
+	directions = src->readByte();
+	frames = src->readByte();
+	frame_speed = src->readByte();
+	src->read(frame_sequence, 4);
+	speed = src->readByte();
+	size_x = src->readByte();
+	size_y = src->readByte();
+	strength = src->readByte();
+	health = src->readByte();
+	num_moves = src->readByte();
+	shot_type = src->readByte();
+	shot_pattern = src->readByte();
+	shots_allowed = src->readByte();
+	solid = src->readByte();
+	flying = src->readByte();
+	rating = src->readByte();
+	type = src->readByte();
+	src->read(name, 9);
+	func_num = src->readByte();
+	func_pass = src->readByte();
+	magic_hurts = src->readSint16LE();
+	src->read(future1, 4);
+}
+
 } // namespace Got
