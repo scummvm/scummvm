@@ -80,10 +80,8 @@ void make_actor_surface(ACTOR *actr) {
 			const byte *src = &_G(tmp_buff)[256 * ((d * 4) + f)];
 			Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
 
-			_G(latch_mem) += 144;
-			if (_G(latch_mem) > 65421u) {
-				error("Too Many Actor Frames=");
-			}
+			// Use the top-left corner pixel as the transparency color
+			s.setTransparentColor(*src);
 		}
 	}
 }
