@@ -67,6 +67,8 @@ namespace Macs2 {
 		// TODO: Consider adding the caller
 		void Func2839();
 
+		void Func294E();
+
 		// Array accessed as [di + 8dh]
 		Common::Array<uint8> gArray8d;
 
