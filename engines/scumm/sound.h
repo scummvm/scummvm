@@ -39,9 +39,14 @@
 #define DIGI_SND_MODE_SFX    1
 #define DIGI_SND_MODE_TALKIE 2
 
+namespace Common {
+class SeekableSubReadStream;
+}
+
 namespace Audio {
 class Mixer;
 class SoundHandle;
+class SeekableAudioStream;
 }
 
 namespace Scumm {
@@ -53,6 +58,11 @@ struct MP3OffsetTable;
 enum {
 	kTalkSoundID = 10000
 };
+
+// TODO: XWB audio packages, used in Doublefine MI1 and MI2.
+// We're still missing WMA support in SCUMM, so we can't play
+// the audio files contained in these packages.
+//#define ENABLE_DOUBLEFINE_XWB 1
 
 // TODO: Consider splitting Sound into even more subclasses.
 // E.g. for v1-v4, v5, v6+, ...
@@ -182,6 +192,41 @@ protected:
 	virtual void processSoundQueues();
 
 	int getReplacementAudioTrack(int soundID);
+
+#ifdef ENABLE_DOUBLEFINE_XWB
+private:
+
+	// For XWB files in Doublefine game variants
+	enum XWBCodec {
+		kXWBCodecPCM = 0,
+		kXWBCodecADPCM = 1,
+		kXWBCodecMP3 = 2,
+		kXWBCodecWMA = 3
+	};
+
+	enum XWBSegmentType {
+		kXWBSegmentBankData = 0,
+		kXWBSegmentEntryMetaData = 1,
+		kXWBSegmentSeekTables = 2,
+		kXWBSegmentEntryNames = 3,
+		kXWBSegmentEntryWaveData = 4
+	};
+
+	struct XWBEntry {
+		uint32 offset;
+		uint32 length;
+		XWBCodec codec;
+		byte channels;
+		uint16 rate;
+		uint16 align;
+		byte bits;
+	};
+
+	Common::Array<XWBEntry> _xwbEntries;
+
+	void indexXWBFile(const Common::String &filename);
+	Audio::SeekableAudioStream *createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry);
+#endif
 };
 
 

@@ -106,6 +106,13 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_fileBasedCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
 
+#ifdef ENABLE_DOUBLEFINE_XWB
+	if (_vm->_game.id == GID_MONKEY && (_vm->_game.features & GF_DOUBLEFINE_PAK)) {
+		_hasFileBasedCDAudio = true;
+		indexXWBFile("MusicOriginal.xwb");
+	}
+#endif
+
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
 	// handles lipsync within Digital iMUSE.
@@ -1444,6 +1451,37 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	startCDTimer();
 }
 
+#ifdef ENABLE_DOUBLEFINE_XWB
+Audio::SeekableAudioStream *Sound::createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry) {
+	byte flags = Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS;
+	if (entry.channels == 2)
+		flags |= Audio::FLAG_STEREO;
+
+	switch (entry.codec) {
+	case kXWBCodecPCM:
+		return Audio::makeRawStream(stream, entry.rate, flags, DisposeAfterUse::YES);
+	case kXWBCodecADPCM:
+		error("createXWBStream: ADPCM codec not supported");
+	case kXWBCodecMP3:
+#ifdef USE_MAD
+		return Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+#endif
+	case kXWBCodecWMA:
+		// TODO: Implement WMA stream
+		/*return new Audio::WMACodec(
+			2,
+			entry.rate,
+			entry.channels,
+			entry.bits,
+			entry.align,
+			stream
+		);*/
+	default:
+		error("createXWBStream: Unknown XWB codec %d", entry.codec);
+	}
+}
+#endif
+
 void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int duration) {
 	_fileBasedCDStatus.track = track;
 	_fileBasedCDStatus.numLoops = numLoops;
@@ -1456,17 +1494,44 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 		// Stop any currently playing track
 		_mixer->stopHandle(*_fileBasedCDAudioHandle);
 
-		Common::File *cddaFile = new Common::File();
-		if (cddaFile->open("CDDA.SOU")) {
-			Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
-			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
-			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
+		Common::File *cdAudioFile = new Common::File();
+		Audio::SeekableAudioStream *stream = nullptr;
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, _fileBasedCDAudioHandle,
-			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
-		} else {
-			delete cddaFile;
+		if (_vm->_game.id == GID_LOOM) {
+			if (!cdAudioFile->open("CDDA.SOU")) {
+				delete cdAudioFile;
+				return;
+			}
+			stream = makeCDDAStream(cdAudioFile, DisposeAfterUse::YES);
+
+#ifdef ENABLE_DOUBLEFINE_XWB
+		} else if (_vm->_game.id == GID_MONKEY) {
+			if (!cdAudioFile->open("MusicOriginal.xwb")) {
+				delete cdAudioFile;
+				return;
+			}
+
+			// HACK: Since we don't support WMA files yet, we'll just play a PCM entry
+			// TODO: Remove this, once WMA streams are supported!
+			track = 20;
+
+			XWBEntry entry = _xwbEntries[track];
+			auto subStream = new Common::SeekableSubReadStream(
+				cdAudioFile,
+				entry.offset,
+				entry.offset + entry.length,
+				DisposeAfterUse::YES
+			);
+
+			stream = createXWBStream(subStream, entry);
+#endif
 		}
+
+		Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
+		Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
+		
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, _fileBasedCDAudioHandle,
+		                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 	}
 }
 
@@ -1582,6 +1647,88 @@ bool Sound::isAudioDisabled() {
 
 	return false;
 }
+
+#ifdef ENABLE_DOUBLEFINE_XWB
+void Sound::indexXWBFile(const Common::String &filename) {
+	// This implementation is based off unxwb: https://github.com/mariodon/unxwb/
+	// Only the parts that apply to the Doublefine releases of
+	// MI1 and MI2 have been implemented.
+
+	struct SegmentData {
+		uint32 offset;
+		uint32 length;
+	};
+	SegmentData segments[5] = {};
+
+	Common::File *f = new Common::File();
+	f->open(Common::Path(filename));
+
+	const uint32 magic = f->readUint32BE();
+	if (magic != MKTAG('W', 'B', 'N', 'D')) {
+		warning("Invalid XWB file");
+		f->close();
+		delete f;
+		return;
+	}
+
+	const uint32 version = f->readUint32LE();
+	if (version < 42) {
+		warning("Unsupported XWB version: %d", version);
+		f->close();
+		delete f;
+		return;
+	}
+
+	f->skip(4); // skip dwHeaderVersion
+
+	for (uint32 i = 0; i < 5; i++) {
+		segments[i].offset = f->readUint32LE();
+		segments[i].length = f->readUint32LE();
+	}
+
+	f->seek(segments[kXWBSegmentBankData].offset);
+	const uint32 flags = f->readUint32LE();
+	const uint32 entryCount = f->readUint32LE();
+	f->skip(64); // skip bank name
+	const uint32 entrySize = f->readUint32LE();
+	if (entrySize < 24) {
+		warning("Unsupported XWB entry size: %d", entrySize);
+		f->close();
+		delete f;
+		return;
+	}
+
+	if (flags & 0x00020000) {
+		warning("XWB compact format is not supported");
+		f->close();
+		delete f;
+		return;
+	}
+
+	f->seek(segments[kXWBSegmentEntryMetaData].offset);
+
+	for (uint32 i = 0; i < entryCount; i++) {
+		XWBEntry entry;
+		/*uint32 flagsAndDuration = */ f->readUint32LE();
+		uint32 format = f->readUint32LE();
+		entry.offset = f->readUint32LE() + segments[kXWBSegmentEntryWaveData].offset;
+		entry.length = f->readUint32LE();
+		/*uint32 loopOffset = */ f->readUint32LE();
+		/*uint32 loopLength = */ f->readUint32LE();
+
+		entry.codec = static_cast<XWBCodec>(format & ((1 << 2) - 1));
+		entry.channels = (format >> (2)) & ((1 << 3) - 1);
+		entry.rate = (format >> (2 + 3)) & ((1 << 18) - 1);
+		entry.align = (format >> (2 + 3 + 18)) & ((1 << 8) - 1);
+		entry.bits = (format >> (2 + 3 + 18 + 8)) & ((1 << 1) - 1);
+
+		_xwbEntries.push_back(entry);
+	}
+
+	f->close();
+	delete f;
+}
+#endif
 
 #pragma mark -
 #pragma mark --- Sound resource handling ---
