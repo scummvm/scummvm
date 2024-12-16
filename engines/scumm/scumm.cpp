@@ -1562,7 +1562,8 @@ void ScummEngine::setupScumm(const Common::Path &macResourceFile) {
 		// fallback with MIDI music when CD tracks are not found.
 		if (!existExtractedCDAudioFiles(track)
 		    && !isDataAndCDAudioReadFromSameCD()
-			&& !(_game.id == GID_MONKEY && _game.features & GF_ULTIMATE_TALKIE)) {
+			&& !(_game.id == GID_MONKEY && _game.features & GF_ULTIMATE_TALKIE)
+			&& !(_game.id == GID_MONKEY && _game.features & GF_DOUBLEFINE_PAK)) {
 			warnMissingExtractedCDAudio();
 		}
 		_system->getAudioCDManager()->open();
