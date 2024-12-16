@@ -434,11 +434,7 @@ bool MacV6Gui::runRestartDialog() {
 	window->addSubstitution("");
 	window->addSubstitution("");
 	window->addSubstitution("");
-
-	if (_vm->_game.id == GID_TENTACLE)
-		window->addSubstitution("Day of the Tentacle");
-	else
-		window->addSubstitution("Sam & Max");
+	window->addSubstitution(_gameName);
 
 	Common::Array<int> deferredActionsIds;
 
