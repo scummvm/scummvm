@@ -51,10 +51,10 @@ bool load_sd_data() {
 	return res_read(fname, _G(sd_data)) > 0;
 }
 
-bool load_actor(int file, int num) {
+bool load_actor(int /*file*/, int num) {
 	Common::String fname = Common::String::format("ACTOR%d", num);
 
-	if (res_read(fname, _G(tmp_buff)) < 0)
+	if (res_read(fname, _G(tmp_buff), true) < 0)
 		return false;
 
 	//file = file;
@@ -233,12 +233,13 @@ bool load_game(int flag) {
 	return true;
 }
 
-long res_read(const Common::String &name, void *buff) {
+long res_read(const Common::String &name, void *buff, bool failAllowed) {
 	Common::File f;
 	if (f.open(Common::Path(name))) {
 		return f.read(buff, f.size());
 	} else {
-		error("Could not load - %s", name.c_str());
+		if (!failAllowed)
+			error("Could not load - %s", name.c_str());
 		return -1;
 	}
 }

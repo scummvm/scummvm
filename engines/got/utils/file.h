@@ -32,7 +32,7 @@ extern unsigned int read_file(const char *filename, const char *buff,
 	long offset, unsigned int amount, int key);
 
 extern bool load_sd_data();
-extern bool load_actor(int file, int num);
+extern bool load_actor(int, int num);
 extern bool load_picture(int index, char *buff);
 extern void setup_filenames(int level);
 extern bool  load_speech(int index);
@@ -41,7 +41,8 @@ extern void *get_file(const char *filename, int key);
 extern void save_game();
 extern bool load_game(int flag);
 extern void help();
-extern long res_read(const Common::String &name, void *buff);
+extern long res_read(const Common::String &name, void *buff,
+	bool failAllowed = false);
 
 class File : public Common::File {
 public:
