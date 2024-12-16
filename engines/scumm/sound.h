@@ -100,9 +100,9 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
-	Audio::SoundHandle *_loomSteamCDAudioHandle;
-	bool _isLoomSteam;
-	AudioCDManager::Status _loomSteamCD;
+	Audio::SoundHandle *_fileBasedCDAudioHandle;
+	bool _hasFileBasedCDAudio;
+	AudioCDManager::Status _fileBasedCDStatus;
 	bool _useReplacementAudioTracks;
 	int _musicTimer;
 	int _loomOvertureTransition;

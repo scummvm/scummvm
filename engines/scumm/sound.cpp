@@ -92,18 +92,18 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 
 	_musicType = MDT_NONE;
 
-	_loomSteamCD.playing = false;
-	_loomSteamCD.track = 0;
-	_loomSteamCD.start = 0;
-	_loomSteamCD.duration = 0;
-	_loomSteamCD.numLoops = 0;
-	_loomSteamCD.volume = Audio::Mixer::kMaxChannelVolume;
-	_loomSteamCD.balance = 0;
+	_fileBasedCDStatus.playing = false;
+	_fileBasedCDStatus.track = 0;
+	_fileBasedCDStatus.start = 0;
+	_fileBasedCDStatus.duration = 0;
+	_fileBasedCDStatus.numLoops = 0;
+	_fileBasedCDStatus.volume = Audio::Mixer::kMaxChannelVolume;
+	_fileBasedCDStatus.balance = 0;
 
-	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
+	_hasFileBasedCDAudio = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
 	_loomOvertureTransition = DEFAULT_LOOM_OVERTURE_TRANSITION + ConfMan.getInt("loom_overture_ticks");
 
-	_loomSteamCDAudioHandle = new Audio::SoundHandle();
+	_fileBasedCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
 
 	// This timer targets every talkie game, except for LOOM CD
@@ -118,7 +118,7 @@ Sound::~Sound() {
 	stopCDTimer();
 	stopCD();
 	free(_offsetTable);
-	delete _loomSteamCDAudioHandle;
+	delete _fileBasedCDAudioHandle;
 	delete _talkChannelHandle;
 	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		stopSpeechTimer();
@@ -1414,7 +1414,7 @@ void Sound::startCDTimer() {
 	// LOOM Steam uses a fixed 240Hz rate. This was probably done to get rid of some
 	// audio glitches which are confirmed to be in the original. So let's activate this
 	// fix for the DOS version of LOOM as well, if enhancements are enabled.
-	if (_isLoomSteam || (_vm->_game.id == GID_LOOM && _vm->enhancementEnabled(kEnhMinorBugFixes)))
+	if (_vm->_game.id == GID_LOOM && (_hasFileBasedCDAudio || _vm->enhancementEnabled(kEnhMinorBugFixes)))
 		interval = 1000000 / LOOM_STEAM_CDDA_RATE;
 
 	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
@@ -1445,16 +1445,16 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 }
 
 void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int duration) {
-	_loomSteamCD.track = track;
-	_loomSteamCD.numLoops = numLoops;
-	_loomSteamCD.start = startFrame;
-	_loomSteamCD.duration = duration;
+	_fileBasedCDStatus.track = track;
+	_fileBasedCDStatus.numLoops = numLoops;
+	_fileBasedCDStatus.start = startFrame;
+	_fileBasedCDStatus.duration = duration;
 
-	if (!_isLoomSteam) {
+	if (!_hasFileBasedCDAudio) {
 		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
 	} else {
 		// Stop any currently playing track
-		_mixer->stopHandle(*_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_fileBasedCDAudioHandle);
 
 		Common::File *cddaFile = new Common::File();
 		if (cddaFile->open("CDDA.SOU")) {
@@ -1462,7 +1462,7 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
 			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, _loomSteamCDAudioHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, _fileBasedCDAudioHandle,
 			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
 			delete cddaFile;
@@ -1471,30 +1471,30 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 }
 
 void Sound::stopCD() {
-	if (!_isLoomSteam)
+	if (!_hasFileBasedCDAudio)
 		g_system->getAudioCDManager()->stop();
 	else
-		_mixer->stopHandle(*_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_fileBasedCDAudioHandle);
 }
 
 int Sound::pollCD() const {
-	if (!_isLoomSteam)
+	if (!_hasFileBasedCDAudio)
 		return g_system->getAudioCDManager()->isPlaying();
 	else
-		return _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
+		return _mixer->isSoundHandleActive(*_fileBasedCDAudioHandle);
 }
 
 void Sound::updateCD() {
-	if (!_isLoomSteam)
+	if (!_hasFileBasedCDAudio)
 		g_system->getAudioCDManager()->update();
 }
 
 AudioCDManager::Status Sound::getCDStatus() {
-	if (!_isLoomSteam)
+	if (!_hasFileBasedCDAudio)
 		return g_system->getAudioCDManager()->getStatus();
 	else {
-		AudioCDManager::Status info = _loomSteamCD;
-		info.playing = _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
+		AudioCDManager::Status info = _fileBasedCDStatus;
+		info.playing = _mixer->isSoundHandleActive(*_fileBasedCDAudioHandle);
 		return info;
 	}
 }
