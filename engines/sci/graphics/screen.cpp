@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _resMan(resMan), _hiresGlyphBuffer(nullptr), _activeHiresView(false) {
+GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _resMan(resMan), _hiresGlyphBuffer(nullptr) {
 
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
@@ -350,7 +350,6 @@ void GfxScreen::copyHiResRectToScreen(const byte *srcBuffer, int pitch, int x, i
 	_gfxDrv->setColorMap(colorMap);
 	_gfxDrv->copyRectToScreen(srcBuffer, 0, 0, pitch, x, y, w, h, nullptr, nullptr);
 	_gfxDrv->clearFlags(GfxDriver::kHiResMode);
-	toggleActiveHiresView(true);
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
