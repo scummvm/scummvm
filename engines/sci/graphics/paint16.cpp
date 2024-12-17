@@ -378,7 +378,8 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 		}
 
 		// KQ6WinCD specific
-		removeHiresDrawObject(memoryHandle);
+		if (_screen->gfxDriver()->supportsHiResGraphics())
+			removeHiresDrawObject(memoryHandle);
 	}
 }
 
