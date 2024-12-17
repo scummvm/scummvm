@@ -660,7 +660,7 @@ void GfxPaint16::removeHiresDrawObject(reg_t handle) {
 			continue;
 
 		// WORKAROUND for vertically misplaced hires portraits in mixed speech+text mode in KQ6CD. If we have
-		// an entry which is flagged as needing a workaround we set the notification for bitsShow() here.
+		// an entry which is flagged as needing a workaround, we set the notification for bitsShow() here.
 		_hiresPortraitWorkaroundFlag = i->waFlag;
 
 		// Unlink and delete entry
