@@ -549,25 +549,14 @@ else if (value == 0x0d) {
 	out2 = 0;
 	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
-}
+	// l0037_A120:
+	} else if (value >= 0xE && value <= 0x22) {
+		// l0037_A12A:
+		out1 = value - 0x0D;
+		out2 = 0;
+		return;
+	}
 	/*
-
-l0037_A120:
-	cmp	ax,0Eh
-	jc	0A13Bh
-
-l0037_A125:
-	cmp	ax,22h
-	ja	0A13Bh
-
-l0037_A12A:
-	mov	ax,[bp-7h]
-	sub	ax,0Dh
-	xor	dx,dx
-	mov	[bp-4h],ax
-	mov	[bp-2h],dx
-	jmp	0A32Ch
-
 l0037_A13B:
 	cmp	ax,23h
 	jnz	0A15Eh
@@ -1848,8 +1837,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 duration = Func9F4D_16();
 			requestCallback = false;
 			// TODO: Need to figure out the units/duration of the timer
-			// constexpr uint32 durationMultiplier = 5;
-			constexpr uint32 durationMultiplier = 1;
+			constexpr uint32 durationMultiplier = 50;
+			// constexpr uint32 durationMultiplier = 1;
 			StartTimer(duration * durationMultiplier);
 			isAwaitingCallback = true;
 			EndBuffering(lastOpcodeTriggeredSkip);
