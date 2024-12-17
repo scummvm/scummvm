@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/macresman.h"
 
 #include "engines/engine.h"
@@ -165,7 +166,7 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	case 206:
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	// In the original, the Edit menu is active during save dialogs, though
 	// only Cut, Copy and Paste.
@@ -177,9 +178,64 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	case 304:	// Clear
 		return true;
 
-	case 403:
-		debug("Graphics smoothing");
+	case 403:	// Graphics Smoothing
+		_vm->mac_toggleSmoothing();
+		return true;
+
+	case 500:	// Music
+		debug("Music");
 		break;
+
+	case 501:	// Effects
+		debug("Effects");
+		break;
+
+	case 502:	// Toggle Text & Voice
+		switch (_vm->_voiceMode) {
+		case 0:	// Voice Only -> Text & Voice
+			ConfMan.setBool("subtitles", true);
+			ConfMan.setBool("speech_mute", false);
+			break;
+
+		case 1:	// Text & Voice -> Text Only
+			ConfMan.setBool("subtitles", true);
+			ConfMan.setBool("speech_mute", true);
+			break;
+
+		case 2:	// Text Only -> Voice Only
+			ConfMan.setBool("subtitles", false);
+			ConfMan.setBool("speech_mute", false);
+			break;
+
+		default:
+			warning("Invalid voice mode %d", _vm->_voiceMode);
+			return  true;
+		}
+
+		ConfMan.flushToDisk();
+		_vm->syncSoundSettings();
+		return true;
+
+	case 503:	// Text Only
+		ConfMan.setBool("subtitles", true);
+		ConfMan.setBool("speech_mute", true);
+		ConfMan.flushToDisk();
+		_vm->syncSoundSettings();
+		return true;
+
+	case 504:	// Voice Only
+		ConfMan.setBool("subtitles", false);
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.flushToDisk();
+		_vm->syncSoundSettings();
+		return true;
+
+	case 505:	// Text & Voice
+		ConfMan.setBool("subtitles", true);
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.flushToDisk();
+		_vm->syncSoundSettings();
+		return true;
 	}
 
 	return false;

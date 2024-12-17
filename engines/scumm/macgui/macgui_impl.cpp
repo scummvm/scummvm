@@ -491,8 +491,39 @@ void MacGuiImpl::updateWindowManager() {
 				menu->getSubMenuItem(speechMenu, 1)->checked = true;
 				break;
 			default:
-				warning("MacGuiImpl::updateWindowManager(): Invalid voice mode");
+				warning("MacGuiImpl::updateWindowManager(): Invalid voice mode %d", _vm->_voiceMode);
+				break;
 			}
+		}
+	} else if (_vm->_game.version >= 6) {
+		Graphics::MacMenuItem *videoMenu = menu->getMenuItem("Video");
+
+		menu->getSubMenuItem(videoMenu, 0)->enabled = false;
+		menu->getSubMenuItem(videoMenu, 1)->enabled = false;
+		menu->getSubMenuItem(videoMenu, 2)->checked = true;
+		menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
+
+		Graphics::MacMenuItem *soundMenu = menu->getMenuItem("Sound");
+
+		menu->getSubMenuItem(soundMenu, 0)->checked = false; // Music
+		menu->getSubMenuItem(soundMenu, 1)->checked = false; // Effects
+		menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
+		menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
+		menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice
+
+		switch (_vm->_voiceMode) {
+		case 0:	// Voice Only
+			menu->getSubMenuItem(soundMenu, 6)->checked = true;
+			break;
+		case 1: // Voice and Text
+			menu->getSubMenuItem(soundMenu, 7)->checked = true;
+			break;
+		case 2:	// Text Only
+			menu->getSubMenuItem(soundMenu, 5)->checked = true;
+			break;
+		default:
+			warning("MacGuiImpl::updateWindowManager(): Invalid voice mode %d", _vm->_voiceMode);
+			break;
 		}
 	}
 
