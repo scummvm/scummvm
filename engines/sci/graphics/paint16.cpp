@@ -179,7 +179,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 	// window background when receiving WM_PAINT messages (which is irrelevant for us, since that happens in the backend) and the other is
 	// redrawing the inventory after displaying a text window over it. This only happens in mixed speech+text mode, which does not even exist
 	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
-	// We also check if the portrait is drawn outside the viewport boundaries (happens in the inofficial mixed speech+text mode) and set
+	// We also check if the portrait is drawn outside the viewport boundaries (happens in the unofficial mixed speech+text mode) and set
 	// a flag to trigger a workaround when restoring the background.
 	if (storeDrawingInfo)
 		_hiresDrawObjs = new HiresDrawData(_hiresDrawObjs, hiresHandle, viewId, loopNo, celNo, leftPos, topPos, paletteNo, priority, portraitRect.top < _ports->_curPort->top);
