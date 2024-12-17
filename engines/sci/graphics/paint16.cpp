@@ -153,7 +153,7 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY, scaleSignal);
 }
 
-// This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen. Hires-cels are available only SCI 1.1+.
+// This is used as replacement for drawCelAndShow() when hires cels are drawn to screen. Hires cels are available only in SCI 1.1.
 void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t hiresHandle, bool storeDrawingInfo) {
 	GfxView *view = _cache->getView(viewId);
 	if (!view)
