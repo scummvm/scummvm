@@ -129,6 +129,7 @@ void HudShader::applyUniforms() {
 
 Hud::Hud() : Node("hud") {
 	_zOrder = 100;
+	_visible = false;
 	for (auto &_actorSlot : _actorSlots) {
 		ActorSlot *slot = &_actorSlot;
 		slot->actor = nullptr;

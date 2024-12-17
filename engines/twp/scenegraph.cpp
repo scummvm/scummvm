@@ -590,6 +590,7 @@ static bool hasDownArrow(Common::SharedPtr<Object> actor) {
 }
 
 Inventory::Inventory() : Node("Inventory") {
+	_visible = false;
 	for (int i = 0; i < NUMOBJECTS; i++) {
 		float x = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET));
 		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
