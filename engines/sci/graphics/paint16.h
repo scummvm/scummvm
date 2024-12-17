@@ -99,7 +99,7 @@ private:
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;
 
-	// The original KQ6WinCD interpreter saves the hires drawing information in a linked list. There are two use cases, one is redrawing the
+	// The original KQ6WinCD interpreter saves the hires drawing information in a linked list. There are two use cases: one is redrawing the
 	// window background when recieving WM_PAINT messages (which is irrelevant for us, since that happens in the backend) and the other is
 	// redrawing the inventory after displaying a text window over it. This only happens in mixed speech+text mode which does not even exist
 	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
