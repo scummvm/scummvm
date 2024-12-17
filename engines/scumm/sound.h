@@ -199,8 +199,8 @@ private:
 	// For XWB files in Doublefine game variants
 	enum XWBCodec {
 		kXWBCodecPCM = 0,
-		kXWBCodecADPCM = 1,
-		kXWBCodecMP3 = 2,
+		kXWBCodecXMA = 1,
+		kXWBCodecADPCM = 2,
 		kXWBCodecWMA = 3
 	};
 

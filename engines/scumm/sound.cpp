@@ -39,6 +39,7 @@
 #include "audio/decoders/flac.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
@@ -1451,37 +1452,6 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	startCDTimer();
 }
 
-#ifdef ENABLE_DOUBLEFINE_XWB
-Audio::SeekableAudioStream *Sound::createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry) {
-	byte flags = Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS;
-	if (entry.channels == 2)
-		flags |= Audio::FLAG_STEREO;
-
-	switch (entry.codec) {
-	case kXWBCodecPCM:
-		return Audio::makeRawStream(stream, entry.rate, flags, DisposeAfterUse::YES);
-	case kXWBCodecADPCM:
-		error("createXWBStream: ADPCM codec not supported");
-	case kXWBCodecMP3:
-#ifdef USE_MAD
-		return Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-#endif
-	case kXWBCodecWMA:
-		// TODO: Implement WMA stream
-		/*return new Audio::WMACodec(
-			2,
-			entry.rate,
-			entry.channels,
-			entry.bits,
-			entry.align,
-			stream
-		);*/
-	default:
-		error("createXWBStream: Unknown XWB codec %d", entry.codec);
-	}
-}
-#endif
-
 void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int duration) {
 	_fileBasedCDStatus.track = track;
 	_fileBasedCDStatus.numLoops = numLoops;
@@ -1649,8 +1619,18 @@ bool Sound::isAudioDisabled() {
 }
 
 #ifdef ENABLE_DOUBLEFINE_XWB
+
+#define WARN_AND_RETURN_XWB(message)          \
+	{                                         \
+		warning("indexXWBFile: %s", message); \
+		f->close();                           \
+		delete f;                             \
+		return;                               \
+	}
+
 void Sound::indexXWBFile(const Common::String &filename) {
 	// This implementation is based off unxwb: https://github.com/mariodon/unxwb/
+	// as well as xwbdump: https://raw.githubusercontent.com/wiki/Microsoft/DirectXTK/xwbdump.cpp
 	// Only the parts that apply to the Doublefine releases of
 	// MI1 and MI2 have been implemented.
 
@@ -1664,22 +1644,14 @@ void Sound::indexXWBFile(const Common::String &filename) {
 	f->open(Common::Path(filename));
 
 	const uint32 magic = f->readUint32BE();
-	if (magic != MKTAG('W', 'B', 'N', 'D')) {
-		warning("Invalid XWB file");
-		f->close();
-		delete f;
-		return;
-	}
-
 	const uint32 version = f->readUint32LE();
-	if (version < 42) {
-		warning("Unsupported XWB version: %d", version);
-		f->close();
-		delete f;
-		return;
-	}
-
 	f->skip(4); // skip dwHeaderVersion
+
+	if (magic != MKTAG('W', 'B', 'N', 'D'))
+		WARN_AND_RETURN_XWB("Invalid XWB file")
+
+	if (version < 42)
+		WARN_AND_RETURN_XWB("Unsupported XWB version")
 
 	for (uint32 i = 0; i < 5; i++) {
 		segments[i].offset = f->readUint32LE();
@@ -1691,19 +1663,11 @@ void Sound::indexXWBFile(const Common::String &filename) {
 	const uint32 entryCount = f->readUint32LE();
 	f->skip(64); // skip bank name
 	const uint32 entrySize = f->readUint32LE();
-	if (entrySize < 24) {
-		warning("Unsupported XWB entry size: %d", entrySize);
-		f->close();
-		delete f;
-		return;
-	}
+	if (entrySize < 24)
+		WARN_AND_RETURN_XWB("Unsupported XWB entry size")
 
-	if (flags & 0x00020000) {
-		warning("XWB compact format is not supported");
-		f->close();
-		delete f;
-		return;
-	}
+	if (flags & 0x00020000)
+		WARN_AND_RETURN_XWB("XWB compact format is not supported")
 
 	f->seek(segments[kXWBSegmentEntryMetaData].offset);
 
@@ -1728,6 +1692,51 @@ void Sound::indexXWBFile(const Common::String &filename) {
 	f->close();
 	delete f;
 }
+
+#undef WARN_AND_RETURN_XWB
+
+Audio::SeekableAudioStream *Sound::createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry) {
+	switch (entry.codec) {
+	case kXWBCodecPCM: {
+		byte flags = Audio::FLAG_LITTLE_ENDIAN;
+		if (entry.bits == 1)	// 0: 8 bits, 1: 16 bits
+			flags |= Audio::FLAG_16BITS;
+		if (entry.channels == 2)
+			flags |= Audio::FLAG_STEREO;
+		return Audio::makeRawStream(stream, entry.rate, flags, DisposeAfterUse::YES);
+	}
+	case kXWBCodecXMA:
+		// Unused in MI1SE and MI2SE
+		error("createXWBStream: XMA codec not supported");
+	case kXWBCodecADPCM: {
+		const uint32 blockAlign = (entry.align + 22) * entry.channels;
+		return Audio::makeADPCMStream(
+			stream,
+			DisposeAfterUse::YES,
+			entry.length,
+			Audio::kADPCMMS,
+			entry.rate,
+			entry.channels,
+			blockAlign
+		);
+	}
+	case kXWBCodecWMA:
+		error("createXWBStream: WMA codec not implemented");
+		// TODO: Implement WMA codec
+		/*return new Audio::WMACodec(
+			2,
+			entry.rate,
+			entry.channels,
+			entry.bits,
+			entry.align,
+			stream
+		);*/
+
+	}
+
+	error("createXWBStream: Unknown XWB codec %d", entry.codec);
+}
+
 #endif
 
 #pragma mark -
