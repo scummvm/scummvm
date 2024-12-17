@@ -160,8 +160,8 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 205:
-		debug("Preferences");
-		break;
+		runOptionsDialog();
+		return true;
 
 	case 206:
 		if (runQuitDialog())
@@ -236,6 +236,10 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		ConfMan.flushToDisk();
 		_vm->syncSoundSettings();
 		return true;
+
+	default:
+		warning("Unknown menu command: %d", id);
+		break;
 	}
 
 	return false;
@@ -442,7 +446,6 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 	// 10 - "Where you were:" text
 
 	int dialogId = (_vm->_game.id == GID_MANIAC) ? 384 : 256;
-
 	MacDialogWindow *window = createDialog(dialogId);
 
 	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
@@ -575,7 +578,56 @@ bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 }
 
 bool MacV6Gui::runOptionsDialog() {
-	return false;
+	// TODO: How to guarantee that the window has all the colors it needs
+	// for its pictures?
+
+	// There are too many different variations to list all widgets here.
+	// The important thing that they share are that the first three buttons
+	// are OK, Cancel, and Defaults, and that with the exception of Maniac
+	// Mansion they expect the first text to contain the name of the game
+	// as "^3".
+	//
+	// Strangely enough, Day of the Tentacle seems to use a lot more "User
+	// items" than the other ones, which means we'll have to hard-code them
+	// here instead.
+
+	int dialogId = (_vm->_game.id == GID_MANIAC) ? 385 : 257;
+
+	MacDialogWindow *window = createDialog(dialogId);
+
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	// MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
+
+	if (_vm->_game.id != GID_MANIAC) {
+		window->addSubstitution("");
+		window->addSubstitution("");
+		window->addSubstitution("");
+		window->addSubstitution(_gameName);
+	}
+
+	// When quitting, the default action is not to not apply options
+	bool ret = false;
+	Common::Array<int> deferredActionsIds;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog(deferredActionsIds);
+
+		if (clicked == buttonOk->getId()) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == buttonCancel->getId())
+			break;
+	}
+
+	if (ret) {
+		// Update settings
+	}
+
+	delete window;
+	return ret;
 }
 
 bool MacV6Gui::runQuitDialog() {

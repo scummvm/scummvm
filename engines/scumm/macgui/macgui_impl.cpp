@@ -637,8 +637,10 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
 		// Mask section
 		res->skip(4);
 		uint16 maskRowBytes = res->readUint16BE();
-		res->skip(3 * 2);
-		uint16 maskHeight = res->readUint16BE();
+		res->readUint16BE(); // top
+		res->readUint16BE(); // left
+		uint16 maskHeight = res->readUint16BE(); // bottom
+		res->readUint16BE(); // right
 
 		// Bitmap section
 		res->skip(4);
@@ -675,16 +677,27 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
 			byte *buf = new byte[pixMap.rowBytes];
 			for (int y = 0; y < pixMap.bounds.height(); y++) {
 				res->read(buf, pixMap.rowBytes);
-				for (int x = 0; x < pixMap.rowBytes; x++) {
-					s->setPixel(4 * x, y, (buf[x] >> 6) & 0x03);
-					s->setPixel(4 * x + 1, y, (buf[x] >> 4) & 0x03);
-					s->setPixel(4 * x + 2, y, (buf[x] >> 2) & 0x03);
-					s->setPixel(4 * x + 3, y, buf[x] & 0x03);
+				for (int x = 0; x < pixMap.bounds.width(); x += 4) {
+					for (int i = 0; i < 4 && x + i < pixMap.bounds.width(); i++) {
+						s->setPixel(x + i, y, (buf[x / 4] >> (6 - 2 * i)) & 0x03);
+					}
 				}
 			}
 			delete[] buf;
+		} else if (pixMap.pixelSize == 4) {
+			byte *buf = new byte[pixMap.rowBytes];
+			for (int y = 0; y < pixMap.bounds.height(); y++) {
+				res->read(buf, pixMap.rowBytes);
+				for (int x = 0; x < pixMap.bounds.width(); x += 2) {
+					for (int i = 0; i < 2 && x + i < pixMap.bounds.width(); i++) {
+						s->setPixel(x + i, y, (buf[x / 2] >> (4 - 4 * i)) & 0x0F);
+					}
+				}
+			}
 		} else if (pixMap.pixelSize == 8) {
 			res->read(s->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
+		} else {
+			error("MacGuiImpl::loadIcon(): Invalid pixel size %d", pixMap.pixelSize);
 		}
 	}
 

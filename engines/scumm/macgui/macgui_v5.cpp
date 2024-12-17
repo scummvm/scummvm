@@ -134,16 +134,16 @@ bool MacV5Gui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 204:   // Fix color map
-		break; // Do a no-op
+		return true;
 
 	case 205:   // Options
 		runOptionsDialog();
-		break;
+		return true;
 
 	case 206:   // Quit
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	// Window menu
 	case 402: // Tiny

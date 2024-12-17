@@ -137,16 +137,16 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	switch (id) {
 	case 101:	// Drafts inventory
 		runDraftsInventory();
-		break;
+		return true;
 
 	case 204:	// Options
 		runOptionsDialog();
-		break;
+		return true;
 
 	case 205:	// Quit
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	default:
 		warning("Unknown menu command: %d", id);
