@@ -166,9 +166,9 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		return;
 	}
 
-	Common::Rect portraitRect;
-	_screen->bitsGetRect(memoryPtr, &portraitRect);
-	Common::Rect clipRect(makeHiresRect(portraitRect));
+	Common::Rect picRect;
+	_screen->bitsGetRect(memoryPtr, &picRect);
+	Common::Rect clipRect(makeHiresRect(picRect));
 	Common::Rect celRect(view->getWidth(loopNo, celNo), view->getHeight(loopNo, celNo));
 	celRect.translate(leftPos + clipRect.left, topPos + clipRect.top);
 	clipRect.clip(celRect);
@@ -182,7 +182,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 	// We also check if the portrait is drawn outside the viewport boundaries (happens in the unofficial mixed speech+text mode) and set
 	// a flag to trigger a workaround when restoring the background.
 	if (storeDrawingInfo)
-		_hiresDrawObjs = new HiresDrawData(_hiresDrawObjs, hiresHandle, viewId, loopNo, celNo, leftPos, topPos, paletteNo, priority, portraitRect.top < _ports->_curPort->top);
+		_hiresDrawObjs = new HiresDrawData(_hiresDrawObjs, hiresHandle, viewId, loopNo, celNo, leftPos, topPos, paletteNo, priority, picRect.top < _ports->_curPort->top);
 }
 
 void GfxPaint16::redrawHiresCels() {

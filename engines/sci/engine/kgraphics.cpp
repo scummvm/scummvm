@@ -1209,7 +1209,8 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 	// This is only needed for KQ6WinCD when using the mixed speech+text mode with hires graphics enabled.
 	// The original interpreter does not support the mixed mode, but it still does have this code here. So
 	// we can use that without having to make up a solution ourselves.
-	g_sci->_gfxPaint16->redrawHiresCels();
+	if (g_sci->_gfxScreen && g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics())
+		g_sci->_gfxPaint16->redrawHiresCels();
 
 	return s->r_acc;
 }
