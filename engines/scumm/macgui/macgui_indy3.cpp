@@ -1088,16 +1088,16 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	switch (id) {
 	case 204:	// IQ Points
 		runIqPointsDialog();
-		break;
+		return true;
 
 	case 205:	// Options
 		runOptionsDialog();
-		break;
+		return true;
 
 	case 206:	// Quit
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	default:
 		debug("MacIndy3Gui::handleMenu: Unknown menu command: %d", id);
