@@ -96,7 +96,7 @@ void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface *dst, const Tal
 			continue;
 
 		ImageFlipMode flip = kImageFlipNone;
-		// Yes, the numerical values are revesed here (1 -> 2 and 2 -> 1).
+		// Yes, the numerical values are reversed here (1 -> 2 and 2 -> 1).
 		// The head flip flags are reversed from the image draw flags.
 		if (frame._flipFlags & 1)
 			flip = static_cast<ImageFlipMode>(flip & kImageFlipH);
@@ -205,7 +205,7 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
 	_ttmScript->load(fname, _ttmEnv);
 	_ttmScript->findAndAddSequences(_ttmEnv, _ttmSeqs);
 
-	// The scripts are desiged so the resources are patchable, but by default
+	// The scripts are designed so the resources are patchable, but by default
 	// they use the sound and image data from the CDS file.
 	_ttmEnv._soundRaw = _sound;
 	_ttmEnv._scriptShapes[0] = _img;
