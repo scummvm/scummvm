@@ -1128,6 +1128,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		} else {
 			warning("TODO: Trying to stop raw SFX but nothing loaded");
 		}
+		break;
 	}
 	case 0xc250: {	// SYNC RAW SFX
 		uint16 hi = (uint16)ivals[1];
@@ -1139,6 +1140,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			env.scr->seek(-6, SEEK_CUR);
 			return false;
 		}*/
+		break;
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
