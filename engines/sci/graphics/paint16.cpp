@@ -162,7 +162,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 	byte *memoryPtr = _segMan->getHunkPointer(hiresHandle);
 	if (!memoryPtr) {
 		// The original KQ6WinCD interpreter does not treat this as an error, it just skips the hires drawing. It happens all the time
-		// when attempting to redraw the hires cels from the _hiresDrawObjs chain, we're supposed to just skip the invalidated items.
+		// when attempting to redraw the hires cels from the _hiresDrawObjs chain. We're supposed to just skip the invalidated items.
 		return;
 	}
 
