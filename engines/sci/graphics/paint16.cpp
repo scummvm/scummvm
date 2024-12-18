@@ -56,8 +56,8 @@ GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *ca
 
 // The original KQ6WinCD interpreter saves the hires drawing information in a linked list. This is used to redraw the hires cels after disposing a window.
 struct HiresDrawData {
-	HiresDrawData(HiresDrawData *chain, reg_t hiresHandle, GuiResourceId id, int16 loop, int16 cel, uint16 left, uint16 top, uint16 pal, byte prio, bool needsWorkaround)
-		: handle(hiresHandle), viewId(id), lpNo(loop), celNo(cel), leftPos(left), topPos(top), palNo(pal), prio(prio), waFlag(needsWorkaround), prev(nullptr), next(chain) {
+	HiresDrawData(HiresDrawData *chain, reg_t hiresHandle, GuiResourceId id, int16 loop, int16 cel, uint16 left, uint16 top, uint16 pal, byte priority, bool needsWorkaround)
+		: handle(hiresHandle), viewId(id), lpNo(loop), celNo(cel), leftPos(left), topPos(top), palNo(pal), prio(priority), waFlag(needsWorkaround), prev(nullptr), next(chain) {
 		if (chain)
 			chain->prev = this;
 	}
