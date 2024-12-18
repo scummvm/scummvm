@@ -622,16 +622,24 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 	s->create(surface->w, surface->h, Graphics::PixelFormat::createFormatCLUT8());
 
 	byte paletteMap[256];
-	memset(paletteMap, 0, ARRAYSIZE(paletteMap));
+	memset(paletteMap, 0, sizeof(paletteMap));
 
 	for (int i = 0; i < colorCount; i++) {
 		int r = palette[3 * i];
 		int g = palette[3 * i + 1];
 		int b = palette[3 * i + 2];
 
-		uint32 c = _windowManager->findBestColor(r, g, b);
+		uint32 c;
+
+		c = _windowManager->findBestColor(r, g, b);
 		paletteMap[i] = c;
 	}
+
+	// Colors outside the palette are not remapped. Some images use 0xFF
+	// for black, and that's what we're using too.
+
+	for (int i = colorCount; i < 256; i++)
+		paletteMap[i] = i;
 
 	if (palette) {
 		for (int y = 0; y < s->h; y++) {
@@ -705,6 +713,39 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 // Window handling
 // ---------------------------------------------------------------------------
 
+// In the older Mac games, the GUI and game graphics are made to coexist, so
+// the GUI should look good regardless of what's on screen. In the newer ones
+// there is no such guarantee, so the screen is blacked out whenever the GUI
+// is shown.
+//
+// We hard-code the upper part of the palette to have all the colors used by
+// the Mac Window manager and window borders. This is so that drawing the
+// window will not mess up what's already on screen. The lower part is used for
+// any graphical elements (pictures and icons) in the window. Anything in
+// between is set to black.
+//
+// The Mac window manager gets the palette before gamma correction, the backend
+// gets it afterwards.
+
+void MacGuiImpl::setMacGuiColors(Graphics::Palette &palette) {
+	// Colors used by the Mac Window Manager
+	palette.set(255, 0x00, 0x00, 0x00); // Black
+	palette.set(254, 0xFF, 0xFF, 0xFF); // White
+	palette.set(253, 0x80, 0x80, 0x80); // Gray80
+	palette.set(252, 0x88, 0x88, 0x88); // Gray88
+	palette.set(251, 0xEE, 0xEE, 0xEE); // GrayEE
+	palette.set(250, 0x00, 0xFF, 0x00); // Green
+	palette.set(249, 0x00, 0xCF, 0x00); // Green2
+
+	// Colors used by Mac dialog window borders
+	palette.set(248, 0xCC, 0xCC, 0xFF);
+	palette.set(247, 0xBB, 0xBB, 0xBB);
+	palette.set(246, 0x66, 0x66, 0x99);
+
+	for (int i = 0; i < 246; i++)
+		palette.set(i, 0x00, 0x00, 0x00);
+}
+
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) {
 	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
 		// This happens with the Last Crusade file dialogs.
@@ -773,6 +814,9 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 
 	delete res;
 
+	_macWhite = _windowManager->_colorWhite;
+	_macBlack = _windowManager->_colorBlack;
+
 	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
 		res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
 
@@ -780,21 +824,10 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 			saveScreen();
 
 			Common::HashMap<uint32, byte> paletteMap;
+			int numWindowColors = 0;
 
-			// Mac window manager colors. Do we need all of these?
-
-			paletteMap[0x000000] = 1;	// Black
-			paletteMap[0x808080] = 1;	// Gray80
-			paletteMap[0x888888] = 1;	// Gray88
-			paletteMap[0xEEEEEE] = 1;	// GrayEE
-			paletteMap[0xFFFFFF] = 1;	// White
-			paletteMap[0x00FF00] = 1;	// Green
-			paletteMap[0x00CF00] = 1;	// Green2
-
-			// Mac dialog window borders
-			paletteMap[0xCCCCFF] = 1;
-			paletteMap[0xBBBBBB] = 1;
-			paletteMap[0x666699] = 1;
+			// Additional colors for hard-coded elements
+			paletteMap[0xCDCDCD] = numWindowColors++;
 
 			int numItems = res->readUint16BE() + 1;
 
@@ -833,25 +866,30 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 					paletteColorCount = decoder->getPaletteColorCount();
 					for (int j = 0; j < paletteColorCount; j++) {
 						uint32 color = (palette[3 * j] << 16) | (palette[3 * j + 1] << 8) | palette[3 * j + 2];
-						paletteMap[color] = 1;
+						if (!paletteMap.contains(color))
+							paletteMap[color] = numWindowColors++;
 					}
 				}
 			}
 
-			Graphics::Palette palette(paletteMap.size());
-			int numColors = 0;
+			Graphics::Palette palette(256);
+			setMacGuiColors(palette);
 
 			for (auto &k : paletteMap) {
 				int r = (k._key >> 16) & 0xFF;
 				int g = (k._key >> 8) & 0xFF;
 				int b = k._key & 0xFF;
-
-				palette.set(numColors++, r, g, b);
+				palette.set(k._value, r, g, b);
 			}
 
-			_windowManager->passPalette(palette.data(), numColors);
+			for (int i = 0; i < 256; i++) {
+				byte r, g, b;
+				palette.get(i, r, g, b);
+			}
 
-			for (int i = 0; i < numColors; i++) {
+			_windowManager->passPalette(palette.data(), 256);
+
+			for (int i = 0; i < 256; i++) {
 				byte r, g, b;
 
 				palette.get(i, r, g, b);

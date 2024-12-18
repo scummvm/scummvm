@@ -264,22 +264,7 @@ void MacV6Gui::saveScreen() {
 
 		Graphics::Palette palette(256);
 
-		// Colors used by the Mac Window Manager
-		palette.set(255, 0x00, 0x00, 0x00); // Black
-		palette.set(254, 0x80, 0x80, 0x80); // Gray80
-		palette.set(253, 0x88, 0x88, 0x88); // Gray88
-		palette.set(252, 0xEE, 0xEE, 0xEE); // GrayEE
-		palette.set(251, 0xFF, 0xFF, 0xFF); // White
-		palette.set(250, 0x00, 0xFF, 0x00); // Green
-		palette.set(249, 0x00, 0xCF, 0x00); // Green2
-
-		// Colors used by Mac dialog window borders
-		palette.set(248, 0xCC, 0xCC, 0xFF);
-		palette.set(247, 0xBB, 0xBB, 0xBB);
-		palette.set(246, 0x66, 0x66, 0x99);
-
-		for (int i = 0; i < 246; i++)
-			palette.set(i, 0x00, 0x00, 0x00);
+		setMacGuiColors(palette);
 
 		_windowManager->passPalette(palette.data(), 256);
 
@@ -334,6 +319,47 @@ void MacV6Gui::onMenuOpen() {
 void MacV6Gui::onMenuClose() {
 	MacGuiImpl::onMenuClose();
 	restoreScreen();
+}
+
+void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int ticks) {
+	Graphics::Surface *s = window->innerSurface();
+
+	uint32 gray = _windowManager->findBestColor(0xCD, 0xCD, 0xCD);
+	uint32 black = getBlack();
+
+	Common::Rect r(width, 12);
+	r.moveTo(x, y);
+
+	s->fillRect(r, gray);
+	s->frameRect(r, black);
+
+	int yt = y + 14;
+
+	for (int i = 0; i < ticks; i++) {
+		int ht = ((i % 4) == 0) ? 4 : 2;
+		s->vLine(x + (i * (width - 1)) / (ticks - 1), yt, yt + ht, black);
+	}
+}
+
+void MacV6Gui::drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2) {
+	Graphics::Surface *s = window->innerSurface();
+	uint32 black = getBlack();
+
+	for (int x = bounds.left; x < bounds.right; x++) {
+		if (((x + bounds.bottom - 1) & 1) == 0)
+			s->setPixel(x, bounds.bottom - 1, black);
+
+		if ((x <= x1 || x >= x2) && ((x + bounds.top) & 1) == 0)
+			s->setPixel(x, bounds.top, black);
+	}
+
+	for (int y = bounds.top; y < bounds.bottom; y++) {
+		if (((bounds.left + y) & 1) == 0)
+			s->setPixel(bounds.left, y, black);
+
+		if (((bounds.right - 1 + y) & 1) == 0)
+			s->setPixel(bounds.right - 1, y, black);
+	}
 }
 
 void MacV6Gui::runAboutDialog() {
@@ -599,6 +625,44 @@ bool MacV6Gui::runOptionsDialog() {
 	}
 
 	window->setDefaultWidget(buttonOk);
+
+	if (_vm->_game.id == GID_TENTACLE) {
+		// Unlike the other games, Day of the Tentacle uses a lot of
+		// "user items" which we don't have a way to parse.
+
+		drawSliderBackground(window, 152, 63, 147, 17);
+		drawSliderBackground(window, 152, 87, 147, 17);
+		drawSliderBackground(window, 151, 177, 147, 9);
+
+		Common::Point spritePos[] = {
+			Common::Point(133, 87),
+			Common::Point(310, 86),
+			Common::Point(125, 175),
+			Common::Point(307, 175)
+		};
+
+		for (int i = 0; i < ARRAYSIZE(spritePos); i++) {
+			Graphics::Surface *s = loadPict(1000 + i);
+			if (s) {
+				window->drawSprite(s, spritePos[i].x, spritePos[i].y);
+				s->free();
+				delete s;
+			}
+		}
+
+		uint32 black = getBlack();
+
+		const Graphics::Font *font = getFont(kSystemFont);
+		font->drawString(window->innerSurface(), "Volume Settings", 27, 33, 110, black);
+		font->drawString(window->innerSurface(), "Voice & Effects:", 23, 85, 105, black);
+		font->drawString(window->innerSurface(), "Text & Voice Settings", 26, 122, 140, black);
+		font->drawString(window->innerSurface(), "Interact using:", 21, 149, 105, black);
+		font->drawString(window->innerSurface(), "Text Speed:", 22, 175, 105, black);
+		font->drawString(window->innerSurface(), "Video Quality:", 21, 219, 105, black);
+
+		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
+		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
+	}
 
 	Common::Array<int> deferredActionsIds;
 
