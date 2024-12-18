@@ -205,4 +205,28 @@ const char *Sound::getMusicName(int num) const {
 	return name;
 }
 
+void play_sound(int index, bool priority_override) {
+	_G(sound).play_sound(index, priority_override);
+}
+
+bool sound_playing() {
+	return _G(sound).sound_playing();
+}
+
+void music_play(int num, bool override) {
+	_G(sound).music_play(num, override);
+}
+
+void music_play(const char *name, bool override) {
+	_G(sound).music_play(name, override);
+}
+
+void music_pause() {
+	_G(sound).music_pause();
+}
+
+void music_resume() {
+	_G(sound).music_resume();
+}
+
 } // namespace Got

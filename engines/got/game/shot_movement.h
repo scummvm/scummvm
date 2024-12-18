@@ -19,18 +19,14 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_GAME_SHOT_MOVEMENT_H
+#define GOT_GAME_SHOT_MOVEMENT_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+extern int (*const shot_movement_func[]) (ACTOR *actr);
 
 } // namespace Got
 

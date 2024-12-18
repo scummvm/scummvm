@@ -21,7 +21,6 @@
 
 #include "common/file.h"
 #include "got/utils/file.h"
-#include "got/prototypes.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -241,6 +240,17 @@ long res_read(const Common::String &name, void *buff, bool failAllowed) {
 		if (!failAllowed)
 			error("Could not load - %s", name.c_str());
 		return -1;
+	}
+}
+
+void *res_falloc_read(const Common::String &name) {
+	Common::File f;
+	if (f.open(Common::Path(name))) {
+		byte *result = (byte *)malloc(f.size());
+		f.read(result, f.size());
+		return result;
+	} else {
+		return nullptr;
 	}
 }
 

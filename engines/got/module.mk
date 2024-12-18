@@ -9,9 +9,18 @@ MODULE_OBJS = \
 	sound.o \
 	vars.o \
 	data/defines.o \
+	game/boss1.o \
 	game/back.o \
 	game/init.o \
 	game/main.o \
+	game/move.o \
+	game/move_patterns.o \
+	game/object.o \
+	game/panel.o \
+	game/script.o \
+	game/shot_movement.o \
+	game/shot_pattern.o \
+	game/special_tile.o \
 	game/status.o \
 	gfx/font.o \
 	gfx/gfx_chunks.o \

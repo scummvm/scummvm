@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GOT_DEFINES_H
-#define GOT_DEFINES_H
+#ifndef GOT_DATA_DEFINES_H
+#define GOT_DATA_DEFINES_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -28,23 +28,8 @@
 
 namespace Got {
 
-#ifdef DEPRECATED
-/**
- * Describes one alignment of a mask - image pair
- */
-struct ALIGNED_MASK_IMAGE {
-	int image_width = 0;		// Image width in addresses in display memory
-	uint image_ptr = 0;			// Offset of image bitmap in display mem
-	byte *mask_ptr = nullptr;   // Pointer to mask bitmap
-};
-
-struct MASK_IMAGE {
-	// ptrs to AlignedMaskedImage
-	// structs for four possible destination
-	// image alignments
-	ALIGNED_MASK_IMAGE *alignments[4] = {};
-};
-#endif
+#define REPEAT(a) for(rep=0;rep<a;rep++)
+#define IN_RANGE(v,l,h) (v>=l && v<=h)
 
 #define OBJECTS_COUNT 30
 
@@ -104,7 +89,7 @@ struct ACTOR {                      // Size=256
 	byte flying = 0;                // 
 	byte rating = 0;                // rnd(100) < rating = jewel
 	byte type = 0;                  // Actor (0=thor,1=hammer,2=enemy,3=shot)
-	byte name[9] = {};              // Actors name
+	char name[9] = {};              // Actors name
 	byte func_num = 0;              // Special function when thor touches
 	byte func_pass = 0;             // Value to pass to func
 	uint16  magic_hurts = 0;           // Bitwise magic hurts flags
@@ -318,9 +303,9 @@ struct THOR_INFO {
 	long score = 0;
 	long last_score = 0;
 	byte object = 0;
-	byte *object_name = 0;
+	const char *object_name = nullptr;
 	byte last_object = 0;
-	byte *last_object_name = 0;
+	const char *last_object_name = nullptr;
 	byte armor = 0;
 	byte future[65] = {};
 };

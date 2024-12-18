@@ -43,6 +43,7 @@ extern bool load_game(int flag);
 extern void help();
 extern long res_read(const Common::String &name, void *buff,
 	bool failAllowed = false);
+extern void *res_falloc_read(const Common::String &name);
 
 class File : public Common::File {
 public:

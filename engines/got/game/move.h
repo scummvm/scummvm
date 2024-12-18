@@ -19,18 +19,24 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_GAME_MOVE_H
+#define GOT_GAME_MOVE_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+extern void next_frame(ACTOR *actr);
+extern bool point_within(int x, int y, int x1, int y1, int x2, int y2);
+extern bool overlap(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
+extern int  reverse_direction(ACTOR *actr);
+extern void thor_shoots(void);
+extern void thor_damaged(ACTOR *actr);
+extern void actor_destroyed(ACTOR *actr);
+extern int  actor_shoots(ACTOR *actr, int dir);
+extern void actor_always_shoots(ACTOR *actr, int dir);
+extern void actor_damaged(ACTOR *actr, int damage);
+extern void move_actor(ACTOR *actr);
 
 } // namespace Got
 

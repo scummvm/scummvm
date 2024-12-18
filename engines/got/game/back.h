@@ -26,6 +26,10 @@
 
 namespace Got {
 
+extern const char *object_names[];
+extern const char *item_name[];
+
+
 /**
  * Shows a new level
  * In the original this did some initial actors setup and rendering.
@@ -33,6 +37,15 @@ namespace Got {
  * GameContent view takes care of the scene rendering.
 */
 extern void show_level(int new_level);
+extern int odin_speaks(int index, int item);
+extern int switch_icons();
+extern int rotate_arrows();
+extern void kill_enemies(int iy, int ix);
+extern void remove_objects(int y, int x);
+extern void place_tile(int x, int y, int tile);
+extern int bgtile(int x, int y);
+extern void select_item();
+extern int actor_speaks(ACTOR *actr, int index, int item);
 
 } // namespace Got
 
