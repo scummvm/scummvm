@@ -598,9 +598,12 @@ bool MacV6Gui::runOptionsDialog() {
 		window->addSubstitution(_gameName);
 	}
 
+	window->setDefaultWidget(buttonOk);
+
+	Common::Array<int> deferredActionsIds;
+
 	// When quitting, the default action is not to not apply options
 	bool ret = false;
-	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
