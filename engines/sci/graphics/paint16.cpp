@@ -181,7 +181,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
 	// We also check if the portrait is drawn outside the viewport boundaries (happens in the unofficial mixed speech+text mode) and set
 	// a flag to trigger a workaround when restoring the background.
-	if (storeDrawingInfo)
+	if (storeDrawingInfo && !hasHiresDrawObjectAt(leftPos, topPos))
 		_hiresDrawObjs = new HiresDrawData(_hiresDrawObjs, hiresHandle, viewId, loopNo, celNo, leftPos, topPos, paletteNo, priority, picRect.top < _ports->_curPort->top);
 }
 
@@ -656,13 +656,17 @@ void GfxPaint16::kernelPortraitUnload(uint16 portraitId) {
 }
 
 void GfxPaint16::removeHiresDrawObject(reg_t handle) {
-	for (HiresDrawData *i = _hiresDrawObjs; i; i = i->next) {
-		if (i->handle != handle)
+	for (HiresDrawData *i = _hiresDrawObjs; i; ) {
+		HiresDrawData *next = i->next;
+		if (i->handle != handle) {
+			i = next;
 			continue;
+		}
 
 		// WORKAROUND for vertically misplaced hires portraits in mixed speech+text mode in KQ6CD. If we have
 		// an entry which is flagged as needing a workaround, we set the notification for bitsShow() here.
-		_hiresPortraitWorkaroundFlag = i->waFlag;
+		if (i->waFlag)
+			_hiresPortraitWorkaroundFlag = true;
 
 		// Unlink and delete entry
 		if (i->next)
@@ -673,8 +677,16 @@ void GfxPaint16::removeHiresDrawObject(reg_t handle) {
 			_hiresDrawObjs = i->next;
 		delete i;
 
-		return;
+		i = next;
 	}
+}
+
+bool GfxPaint16::hasHiresDrawObjectAt(uint16 x, uint16 y) const {
+	for (HiresDrawData *i = _hiresDrawObjs; i; i = i->next) {
+		if (i->leftPos == x && i->topPos == y)
+			return true;
+	}
+	return false;
 }
 
 Common::Rect GfxPaint16::makeHiresRect(Common::Rect &rect) const {
