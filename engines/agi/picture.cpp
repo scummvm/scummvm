@@ -337,6 +337,9 @@ void PictureMgr::drawPicture() {
 	case AGIPIC_V15:
 		drawPictureV15();
 		break;
+	case AGIPIC_PREAGI:
+		drawPicturePreAGI();
+		break;
 	case AGIPIC_V2:
 		drawPictureV2();
 		break;
@@ -480,13 +483,62 @@ void PictureMgr::drawPictureV15() {
 	}
 }
 
+void PictureMgr::drawPicturePreAGI() {
+	debugC(8, kDebugLevelMain, "Drawing PreAGI picture");
+
+	int step = 0;
+	while (_dataOffset < _dataSize) {
+		byte curByte = getNextByte();
+
+		switch (curByte) {
+		case 0xf0:
+			draw_SetColor();
+			_scrOn = true;
+			break;
+		case 0xf1:
+			_scrOn = false;
+			break;
+		case 0xf4:
+			yCorner();
+			break;
+		case 0xf5:
+			xCorner();
+			break;
+		case 0xf6:
+			draw_LineAbsolute();
+			break;
+		case 0xf7:
+			draw_LineShort();
+			break;
+		case 0xf8:
+			draw_Fill();
+			break;
+		case 0xf9:
+			_patCode = getNextByte();
+			plotBrush();
+			break;
+		case 0xff: // end of data
+			return;
+		default:
+			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
+			break;
+		}
+
+		// Limit drawing to the optional maximum number of opcodes.
+		// Used by Mickey for crystal animation.
+		step++;
+		if (step == _maxStep) {
+			return;
+		}
+	}
+}
+
 void PictureMgr::drawPictureV2() {
 	debugC(8, kDebugLevelMain, "Drawing V2/V3 picture");
 
 	// AGIv3 nibble parameters are indicated by a flag in the picture's directory entry
 	bool nibbleMode = (_vm->_game.dirPic[_resourceNr].flags & RES_PICTURE_V3_NIBBLE_PARM) != 0;
 
-	int step = 0;
 	while (_dataOffset < _dataSize) {
 		byte curByte = getNextByte();
 
@@ -530,9 +582,6 @@ void PictureMgr::drawPictureV2() {
 			break;
 		case 0xf9:
 			_patCode = getNextByte();
-
-			if (_vm->getGameType() == GType_PreAGI)
-				plotBrush();
 			break;
 		case 0xfa:
 			plotBrush();
@@ -542,12 +591,6 @@ void PictureMgr::drawPictureV2() {
 		default:
 			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
 			break;
-		}
-
-		// Limit drawing to the optional maximum number of opcodes
-		step++;
-		if (step == _maxStep) {
-			return;
 		}
 	}
 }

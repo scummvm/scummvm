@@ -46,7 +46,8 @@ enum AgiPictureVersion {
 	AGIPIC_C64,     // Winnie (Apple II, C64, CoCo)
 	AGIPIC_V1,      // Currently unused
 	AGIPIC_V15,     // Troll (DOS)
-	AGIPIC_V2       // AGIv2, AGIv3, Winnie (DOS, Amiga), Mickey (DOS)
+	AGIPIC_PREAGI,  // Winnie (DOS, Amiga), Mickey (DOS)
+	AGIPIC_V2       // AGIv2, AGIv3
 };
 
 enum AgiPictureFlags {
@@ -88,6 +89,7 @@ private:
 	void drawPictureC64();
 	void drawPictureV1();
 	void drawPictureV15();
+	void drawPicturePreAGI();
 	void drawPictureV2();
 	void drawPictureAGI256();
 
