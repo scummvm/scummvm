@@ -80,7 +80,7 @@ private:
 	machine *_709ChiselMach = nullptr;
 	machine *_ripPullMach = nullptr;
 
-	Maze709Struc maze709Arr[99];
+	Maze709Struc _maze709Arr[99];
 
 	static void clearPressed(void *, void *);
 };
