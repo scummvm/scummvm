@@ -81,6 +81,10 @@ private:
 	bool getNextParamByte(byte &b);
 	byte getNextNibble();
 
+	bool getNextXCoordinate(byte &x);
+	bool getNextYCoordinate(byte &y);
+	bool getNextCoordinates(byte &x, byte &y);
+
 public:
 	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
