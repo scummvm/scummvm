@@ -91,12 +91,12 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 			uint32 dark = _gui->_windowManager->findBestColor(0x66, 0x66, 0x99);
 
 			s->frameRect(r, _black);
-			s->frameRect(Common::Rect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1), dark);
-			s->frameRect(Common::Rect(r.left + 1, r.top + 1, r.right - 2, r.bottom - 2), light);
-			s->frameRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.bottom - 2), medium);
-			s->frameRect(Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.bottom - 3), dark);
-			s->frameRect(Common::Rect(r.left + 4, r.top + 4, r.right - 3, r.bottom - 3), light);
-			s->frameRect(Common::Rect(r.left + 4, r.top + 4, r.right - 4, r.bottom - 4), _black);
+			s->frameRect(Common::Rect(r.left, r.top, r.right, r.bottom), dark);
+			s->frameRect(Common::Rect(r.left, r.top, r.right - 1, r.bottom - 1), light);
+			s->frameRect(Common::Rect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1), medium);
+			s->frameRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.bottom - 2), dark);
+			s->frameRect(Common::Rect(r.left + 3, r.top + 3, r.right - 2, r.bottom - 2), light);
+			s->frameRect(Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.bottom - 3), _black);
 		}
 	} else if (windowStyle == kWindowStyleRounded) {
 		r.grow(1);
@@ -131,8 +131,8 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 		// However, the Mac Window Manager's ideas of what's black and
 		// what's white may no longer be valid.
 
-		uint32 macWhite = _gui->_windowManager->_colorWhite;
-		uint32 macBlack = _gui->_windowManager->_colorBlack;
+		uint32 macWhite = _gui->_macWhite;
+		uint32 macBlack = _gui->_macBlack;
 
 		if (macWhite != _white || macBlack != _black) {
 			for (int y = 0; y < 19; y++) {

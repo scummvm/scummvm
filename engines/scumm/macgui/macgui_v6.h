@@ -48,6 +48,10 @@ public:
 	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
 	int getNumColors() const override { return 256; }
 
+	// See setMacGuiColors()
+	uint32 getBlack() const override { return 255; }
+	uint32 getWhite() const override { return 254; }
+
 	bool handleEvent(Common::Event event) override;
 
 	const Graphics::Font *getFontByScummId(int32 id) override;
@@ -67,6 +71,9 @@ protected:
 
   	void onMenuOpen() override;
 	void onMenuClose() override;
+
+	void drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int ticks);
+	void drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2);
 
 	void runAboutDialog() override;
 	bool runOpenDialog(int &saveSlotToHandle) override;

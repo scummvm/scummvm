@@ -723,8 +723,11 @@ public:
 	virtual int getNumColors() const = 0;
 
 	Graphics::Surface *surface() { return _surface; }
-	uint32 getBlack() const;
-	uint32 getWhite() const;
+	virtual uint32 getBlack() const;
+	virtual uint32 getWhite() const;
+
+	uint32 _macWhite;
+	uint32 _macBlack;
 
 	virtual const Common::String name() const = 0;
 
@@ -762,6 +765,8 @@ public:
 	virtual void clearTextArea() {}
 	virtual void initTextAreaForActor(Actor *a, byte color) {}
 	virtual void printCharToTextArea(int chr, int x, int y, int color) {}
+
+	void setMacGuiColors(Graphics::Palette &palette);
 
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kWindowStyleNormal, MacDialogMenuStyle menuStyle = kMenuStyleDisabled);
 	MacDialogWindow *createDialog(int dialogId);
