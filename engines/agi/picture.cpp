@@ -379,7 +379,6 @@ void PictureMgr::drawPictureC64() {
 			_scrOn = true;
 			break;
 		case 0xe6:  // plot brush
-			// TODO: should this be getNextParamByte()?
 			_patCode = getNextByte();
 			plotBrush();
 			break;
@@ -419,6 +418,11 @@ void PictureMgr::drawPictureV1() {
 			break;
 		case 0xfb:
 			draw_LineShort();
+			break;
+		case 0xfc:
+			draw_SetColor();
+			draw_SetPriority();
+			draw_Fill();
 			break;
 		case 0xff: // end of data
 			return;
@@ -525,7 +529,6 @@ void PictureMgr::drawPictureV2() {
 			draw_Fill();
 			break;
 		case 0xf9:
-			// TODO: should this be getNextParamByte()?
 			_patCode = getNextByte();
 
 			if (_vm->getGameType() == GType_PreAGI)
@@ -533,14 +536,6 @@ void PictureMgr::drawPictureV2() {
 			break;
 		case 0xfa:
 			plotBrush();
-			break;
-		// FIXME: There is no opcode FC. A refactor in 2016 moved it to this
-		//        function and removed the comment that it was for V1 or V1.5.
-		//        Determine where this should go (if anywhere) before removing.
-		case 0xfc:
-			draw_SetColor();
-			draw_SetPriority();
-			draw_Fill();
 			break;
 		case 0xff: // end of data
 			return;
@@ -597,8 +592,7 @@ void PictureMgr::drawPictureAGI256() {
 }
 
 void PictureMgr::draw_SetColor() {
-	if (!getNextParamByte(_scrColor))
-		return;
+	_scrColor = getNextByte();
 
 	// For CGA, replace the color with its mixture color
 	if (_vm->_renderMode == Common::kRenderCGA) {
@@ -607,7 +601,7 @@ void PictureMgr::draw_SetColor() {
 }
 
 void PictureMgr::draw_SetPriority() {
-	getNextParamByte(_priColor);
+	_priColor = getNextByte();
 }
 
 // this gets a nibble instead of a full byte
