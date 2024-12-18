@@ -100,6 +100,38 @@ byte PictureMgr::getNextNibble() {
 	}
 }
 
+bool PictureMgr::getNextXCoordinate(byte &x) {
+	if (!(getNextParamByte(x))) {
+		return false;
+	}
+
+	if (_pictureVersion == AGIPIC_PREAGI) {
+		if (x >= _width) {
+			debugC(kDebugLevelPictures, "preagi: clipping x from %d to %d", x, _width - 1);
+			x = _width - 1; // 139
+		}
+	}
+	return true;
+}
+
+bool PictureMgr::getNextYCoordinate(byte &y) {
+	if (!(getNextParamByte(y))) {
+		return false;
+	}
+
+	if (_pictureVersion == AGIPIC_PREAGI) {
+		if (y > _height) {
+			debugC(kDebugLevelPictures, "preagi: clipping y from %d to %d", y, _height);
+			y = _height; // 159
+		}
+	}
+	return true;
+}
+
+bool PictureMgr::getNextCoordinates(byte &x, byte &y) {
+	return getNextXCoordinate(x) && getNextYCoordinate(y);
+}
+
 /**************************************************************************
 ** xCorner
 **
@@ -108,13 +140,13 @@ byte PictureMgr::getNextNibble() {
 void PictureMgr::xCorner(bool skipOtherCoords) {
 	byte x1, x2, y1, y2, dummy;
 
-	if (!(getNextParamByte(x1) && getNextParamByte(y1)))
+	if (!getNextCoordinates(x1, y1))
 		return;
 
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if (!getNextParamByte(x2))
+		if (!getNextXCoordinate(x2))
 			break;
 
 		if (skipOtherCoords)
@@ -128,7 +160,7 @@ void PictureMgr::xCorner(bool skipOtherCoords) {
 			if (!getNextParamByte(dummy))
 				break;
 
-		if (!getNextParamByte(y2))
+		if (!getNextYCoordinate(y2))
 			break;
 
 		draw_Line(x1, y1, x1, y2);
@@ -144,7 +176,7 @@ void PictureMgr::xCorner(bool skipOtherCoords) {
 void PictureMgr::yCorner(bool skipOtherCoords) {
 	byte x1, x2, y1, y2, dummy;
 
-	if (!(getNextParamByte(x1) && getNextParamByte(y1)))
+	if (!getNextCoordinates(x1, y1))
 		return;
 
 	putVirtPixel(x1, y1);
@@ -154,12 +186,12 @@ void PictureMgr::yCorner(bool skipOtherCoords) {
 			if (!getNextParamByte(dummy))
 				break;
 
-		if (!getNextParamByte(y2))
+		if (!getNextYCoordinate(y2))
 			break;
 
 		draw_Line(x1, y1, x1, y2);
 		y1 = y2;
-		if (!getNextParamByte(x2))
+		if (!getNextXCoordinate(x2))
 			break;
 
 		if (skipOtherCoords)
@@ -288,7 +320,7 @@ void PictureMgr::plotBrush() {
 		}
 
 		byte x1, y1;
-		if (!(getNextParamByte(x1) && getNextParamByte(y1)))
+		if (!getNextCoordinates(x1, y1))
 			break;
 
 		plotPattern(x1, y1);
@@ -303,7 +335,7 @@ void PictureMgr::plotBrush_PreAGI() {
 
 	for (;;) {
 		byte x, y;
-		if (!(getNextParamByte(x) && getNextParamByte(y)))
+		if (!getNextCoordinates(x, y))
 			break;
 
 		plotPattern_PreAGI(x, y);
@@ -792,7 +824,7 @@ void PictureMgr::draw_Line(int16 x1, int16 y1, int16 x2, int16 y2) {
 void PictureMgr::draw_LineShort() {
 	byte x1, y1, disp;
 
-	if (!(getNextParamByte(x1) && getNextParamByte(y1)))
+	if (!getNextCoordinates(x1, y1))
 		return;
 
 	putVirtPixel(x1, y1);
@@ -823,13 +855,13 @@ void PictureMgr::draw_LineShort() {
 void PictureMgr::draw_LineAbsolute() {
 	byte x1, y1, x2, y2;
 
-	if (!(getNextParamByte(x1) && getNextParamByte(y1)))
+	if (!getNextCoordinates(x1, y1))
 		return;
 
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if (!(getNextParamByte(x2) && getNextParamByte(y2)))
+		if (!getNextCoordinates(x2, y2))
 			break;
 
 		draw_Line(x1, y1, x2, y2);
@@ -840,10 +872,24 @@ void PictureMgr::draw_LineAbsolute() {
 
 // flood fill
 void PictureMgr::draw_Fill() {
-	byte x1, y1;
+	byte x, y;
 
-	while (getNextParamByte(x1) && getNextParamByte(y1))
-		draw_Fill(x1, y1);
+	while (getNextCoordinates(x, y)) {
+		// PreAGI: getNextCoordinates clips to (139, 159), and then
+		// flood fill checks if y >= 159 and decrements to 158.
+		// The flood fill check is not in in Apple II/C64/CoCo
+		// versions of Winnie, as can be seen by the table edge
+		// being a different color than Winnie's shirt in the first
+		// room, but the same color in DOS/Amiga (picture 28).
+		if (_pictureVersion == AGIPIC_PREAGI) {
+			if (y >= _height) { // 159
+				debugC(kDebugLevelPictures, "preagi: fill clipping y from %d to %d", y, _height - 1);
+				y = _height - 1; // 158
+			}
+		}
+
+		draw_Fill(x, y);
+	}
 }
 
 void PictureMgr::draw_Fill(int16 x, int16 y) {
