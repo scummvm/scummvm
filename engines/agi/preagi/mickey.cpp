@@ -2275,6 +2275,8 @@ void MickeyEngine::init() {
 #endif
 
 	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
+
+	_picture->setPictureVersion(AGIPIC_PREAGI);
 }
 
 Common::Error MickeyEngine::go() {
