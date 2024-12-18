@@ -19,18 +19,14 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_DATA_FLAGS_H
+#define GOT_DATA_FLAGS_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+#define HERMIT_HAS_DOLL _G(setup).f04
 
 } // namespace Got
 

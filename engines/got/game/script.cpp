@@ -19,19 +19,13 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
-
-#include "got/data/defines.h"
+#include "common/textconsole.h"
+#include "got/game/script.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+void execute_script(long index, Graphics::ManagedSurface *pic) {
+	error("TODO: execute_script");
+}
 
 } // namespace Got
-
-#endif

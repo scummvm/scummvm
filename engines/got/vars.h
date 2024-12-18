@@ -53,6 +53,7 @@ public:
 	Gfx::Font _font;
 	Gfx::Pics _hampic;
 	Gfx::Pics _objects;
+	Gfx::Pics _odin;
 
 	Gfx::Pics _status;
 	Sound _sound;
@@ -61,6 +62,7 @@ public:
 	uint _display_page = 0, _draw_page = 0;
 	uint _page3_offset = 0;
 	int8 _pge = 0;
+	int _exit_flag = 0;
 
 	byte _key_flag[100] = {};
 	byte _joy_flag[100] = {};
@@ -68,6 +70,7 @@ public:
 	int8 _break_code = 0;
 	int8 _scan_code = 0, _last_scan_code = 0;
 	int8 _diag = 0;
+	bool _diag_flag = false;
 	bool _slow_mode = false, _startup = true;
 	int8 _shot_ok = 0;
 	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0,
@@ -148,7 +151,6 @@ public:
 	int _joystick = 0, _joylx = 0, _joyly = 0,
 		_joyhx = 0, _joyhy = 0;
 	byte _res_file[16] = {};
-	byte _odin[4][262] = {};
 	int _load_game_flag = 0;
 	bool _music_flag = false, _sound_flag = false, _pcsound_flag = false;
 	int _cash1_inform = 0, _cash2_inform = 0, _door_inform = 0,
@@ -190,6 +192,11 @@ public:
 	byte *_magic_mask_buff = nullptr;
 	byte *_ami_store1 = nullptr, *_ami_store2 = nullptr;
 	byte *_mask_store1 = nullptr, *_mask_store2 = nullptr;
+	bool _thor_special_flag = false;
+	int  _pixel_x[8][25] = {};
+	int  _pixel_y[8][25] = {};
+	byte _pixel_p[8][25] = {};
+	byte _pixel_c[8] = {};
 };
 
 #define _G(X) (g_vars->_##X)

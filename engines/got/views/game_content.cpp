@@ -21,6 +21,7 @@
 
 #include "got/views/game_content.h"
 #include "got/game/back.h"
+#include "got/game/move.h"
 #include "got/gfx/image.h"
 #include "got/vars.h"
 
@@ -28,12 +29,23 @@ namespace Got {
 namespace Views {
 
 void GameContent::draw() {
-	GfxSurface s = getSurface();
+	GfxSurface s;
+	if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
+		s = getSurface();
+	} else {
+		s.create(320, 192);
+	}
 	s.clear();
 
 	drawBackground(s);
 	drawObjects(s);
 	drawEnemies(s, &_G(actor)[MAX_ACTORS - 1]);
+
+	// If we're shaking the screen, render the content with the shake X/Y
+	if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
+		GfxSurface win = getSurface();
+		win.blitFrom(s, _shakeDelta);
+	}
 }
 
 bool GameContent::msgGame(const GameMessage &msg) {
@@ -43,6 +55,11 @@ bool GameContent::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
+}
+
+bool GameContent::tick() {
+	checkThunderShake();
+	return true;
 }
 
 void GameContent::drawBackground(GfxSurface &s) {
@@ -101,6 +118,32 @@ void GameContent::drawEnemies(GfxSurface &s, ACTOR *lastActor) {
 			else if (actor_num == (MAX_ACTORS - 3))
 				actor2_storage = actor_ptr;
 		} while (actor_num == (MAX_ACTORS - 3));
+	}
+}
+
+void GameContent::checkThunderShake() {
+	if (_G(thunder_flag)) {
+		// Introduce a random screen shake by rendering screen 1 pixel offset randomly
+		static const int8 DELTA_X[4] = { -1, 1, 0, 0 };
+		static const int8 DELTA_Y[4] = { 0, 0, -1, 1 };
+		int delta = g_events->getRandomNumber(3);
+
+		_shakeDelta.x = DELTA_X[delta];
+		_shakeDelta.y = DELTA_Y[delta];
+
+		_G(thunder_flag)--;
+		if ((_G(thunder_flag) < MAX_ACTORS) && _G(thunder_flag) > 2) {
+			if (_G(actor)[_G(thunder_flag)].used) {
+				_G(actor)[_G(thunder_flag)].vunerable = 0;
+				actor_damaged(&_G(actor)[_G(thunder_flag)], 20);
+			}
+		}
+
+		redraw();
+
+	} else if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
+		_shakeDelta = Common::Point(0, 0);
+		redraw();
 	}
 }
 

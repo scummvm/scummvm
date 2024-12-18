@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_GAME_MOVE_PATTERNS_H
+#define GOT_GAME_MOVE_PATTERNS_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+extern int (*const movement_func[]) (ACTOR *actr);
+extern int check_move2(int x, int y, ACTOR *actr);
+extern int check_move3(int x, int y, ACTOR *actr);
+extern int check_move4(int x, int y, ACTOR *actr);
+extern void set_thor_vars();
 
 } // namespace Got
 

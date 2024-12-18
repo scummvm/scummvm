@@ -19,18 +19,21 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_GAME_PANEL_H
+#define GOT_GAME_PANEL_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+extern void boss_status(int health);
+
+// Dummy functions for displaying on-screen elements
+// that are now handled by the GameContent and GameStatus views
+inline void display_item() {}
+inline void display_health() {}
+inline void display_magic() {}
+inline void d_restore() {}
 
 } // namespace Got
 

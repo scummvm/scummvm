@@ -82,6 +82,13 @@ public:
 	bool music_is_on() const;
 };
 
+extern void play_sound(int index, bool priority_override);
+extern bool sound_playing();
+extern void music_play(int num, bool override);
+extern void music_play(const char *name, bool override);
+extern void music_pause();
+extern void music_resume();
+
 } // namespace Got
 
 #endif

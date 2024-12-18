@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
+#ifndef GOT_GAME_OBJECT_H
+#define GOT_GAME_OBJECT_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+extern void show_objects(int level, unsigned int pg);
+extern void pick_up_object(int p);
+extern int drop_object(ACTOR *actr);
+extern int _drop_obj(ACTOR *actr, int o);
+extern void delete_object();
 
 } // namespace Got
 

@@ -30,9 +30,12 @@ namespace Views {
 
 class GameContent : public View {
 private:
+	Common::Point _shakeDelta;
+
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
 	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
+	void checkThunderShake();
 
 public:
 	GameContent() : View("GameContent") {}
@@ -40,6 +43,7 @@ public:
 
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace Views

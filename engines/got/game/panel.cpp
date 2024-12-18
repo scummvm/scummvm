@@ -19,19 +19,13 @@
  *
  */
 
-#ifndef GOT_GAME_INIT_H
-#define GOT_GAME_INIT_H
-
-#include "got/data/defines.h"
+#include "common/textconsole.h"
+#include "got/game/panel.h"
 
 namespace Got {
 
-/**
- * Handles in-game initialization the first time
- */
-extern void initialize();
-extern int setup_boss(int num);
+void boss_status(int health) {
+	error("TODO: boss_status");
+}
 
 } // namespace Got
-
-#endif

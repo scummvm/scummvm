@@ -32,19 +32,21 @@ Vars *g_vars;
 
 Vars::Vars() :
 		_hampic("HAMPIC", 262, false),
+		_odin("ODINPIC", 262, false),
 		_objects("OBJECTS", 262, false),
 		_status("STATUS", -1, false) {
 	g_vars = this;
 }
 
 void Vars::load() {
+	_bgPics.load();
 	_font.load();
 	_gfx.load();
-	_bgPics.load();
 	_hampic.load();
 	_objects.load();
-	_status.load();
+	_odin.load();
 	_sound.load();
+	_status.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
 	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
@@ -86,7 +88,6 @@ void Vars::load() {
  
 	res_read("RANDOM", _rnd_array);
 	res_read("DEMO", _demo_key);
-	res_read("ODINPIC", _odin);
 
 	Gfx::load_palette();
 }
