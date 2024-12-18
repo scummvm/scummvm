@@ -209,6 +209,11 @@ protected:
 	void saveHistory();
 	void addToHistory(const Common::String &str);
 	void historyScroll(int direction);
+
+	/**
+	 * Returns whether sel was modified
+	 */
+	bool clampSelection(int &sel);
 };
 
 } // End of namespace GUI
