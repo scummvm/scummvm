@@ -762,7 +762,7 @@ void MickeyEngine::drawRoomAnimation() {
 		// draw blinking ship lights
 		uint8 lightPicture[] = {
 			0xF0, 1,          // Set Color: 1
-			0xF9, 2, 43, 45,  // Set Pattern: 2, plot at 43,45
+			0xF9, 2, 44, 45,  // Set Pattern: 2, plot at 44,45
 			0xFF              // End
 		};
 
@@ -777,7 +777,6 @@ void MickeyEngine::drawRoomAnimation() {
 			lightPicture[1] = iColor; // change light color
 			lightPicture[4] += 7;     // increase x coordinate
 
-			_picture->setPictureFlags(kPicFCircle);
 			_picture->setMaxStep(0);
 			_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
 			_picture->decodePictureFromBuffer(lightPicture, sizeof(lightPicture), false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
