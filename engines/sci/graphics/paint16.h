@@ -104,6 +104,7 @@ private:
 	// redrawing the inventory after displaying a text window over it. This only happens in mixed speech+text mode, which does not even exist
 	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
 	void removeHiresDrawObject(reg_t handle);
+	bool hasHiresDrawObjectAt(uint16 x, uint16 y) const;
 	Common::Rect makeHiresRect(Common::Rect &rect) const;
 
 	HiresDrawData *_hiresDrawObjs;
