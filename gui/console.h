@@ -119,9 +119,6 @@ protected:
 	int _historyIndex;
 	int _historyLine;
 
-	void loadHistory();
-	void saveHistory();
-
 	float _widthPercent, _heightPercent;
 
 	int _leftPadding;
@@ -208,6 +205,8 @@ protected:
 	void killLastWord();
 
 	// History
+	void loadHistory();
+	void saveHistory();
 	void addToHistory(const Common::String &str);
 	void historyScroll(int direction);
 };
