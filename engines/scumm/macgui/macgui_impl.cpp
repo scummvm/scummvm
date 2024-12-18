@@ -29,6 +29,7 @@
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "image/cicn.h"
 #include "image/pict.h"
 
 #include "scumm/macgui/macgui_impl.h"
@@ -616,90 +617,59 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 	}
 }
 
+Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *surface, const byte *palette, int colorCount) {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(surface->w, surface->h, Graphics::PixelFormat::createFormatCLUT8());
+
+	byte paletteMap[256];
+	memset(paletteMap, 0, ARRAYSIZE(paletteMap));
+
+	for (int i = 0; i < colorCount; i++) {
+		int r = palette[3 * i];
+		int g = palette[3 * i + 1];
+		int b = palette[3 * i + 2];
+
+		uint32 c = _windowManager->findBestColor(r, g, b);
+		paletteMap[i] = c;
+	}
+
+	if (palette) {
+		for (int y = 0; y < s->h; y++) {
+			for (int x = 0; x < s->w; x++) {
+				int color = surface->getPixel(x, y);
+				s->setPixel(x, y, paletteMap[color]);
+			}
+		}
+	} else {
+		s->copyFrom(*surface);
+	}
+
+	return s;
+}
+
 // ---------------------------------------------------------------------------
 // Icon loader
 // ---------------------------------------------------------------------------
 
-Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
+Graphics::Surface *MacGuiImpl::loadIcon(int id) {
 	Common::MacResManager resource;
-	Graphics::Surface *s = nullptr;
 
 	resource.open(_resourceFile);
 
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('c', 'i', 'c', 'n'), id);
 
-	if (res) {
-		// TODO: This is based on the Pegasus engine. Convert into
-		// common code, perhaps?
+	Image::CicnDecoder iconDecoder;
+	Graphics::Surface *s = nullptr;
 
-		Image::PICTDecoder::PixMap pixMap = Image::PICTDecoder::readPixMap(*res);
+	if (res && iconDecoder.loadStream(*res)) {
+		const Graphics::Surface *surface = iconDecoder.getSurface();
+		const byte *palette = iconDecoder.getPalette();
 
-		// Mask section
-		res->skip(4);
-		uint16 maskRowBytes = res->readUint16BE();
-		res->readUint16BE(); // top
-		res->readUint16BE(); // left
-		uint16 maskHeight = res->readUint16BE(); // bottom
-		res->readUint16BE(); // right
-
-		// Bitmap section
-		res->skip(4);
-		uint16 bitmapRowBytes = res->readUint16BE();
-		res->readUint16BE(); // top
-		res->readUint16BE(); // left
-		uint16 bitmapHeight = res->readUint16BE(); // bottom
-		res->readUint16BE(); // right
-
-		// Data section
-		res->skip(4);
-		res->skip(maskRowBytes * maskHeight);
-		res->skip(bitmapRowBytes * bitmapHeight);
-
-		// Palette
-		res->skip(6);
-		uint numColors = res->readUint16BE() + 1;
-
-		*palette = new Graphics::Palette(numColors);
-
-		for (uint i = 0; i < numColors; i++) {
-			res->skip(2);
-			uint16 r = res->readUint16BE();
-			uint16 g = res->readUint16BE();
-			uint16 b = res->readUint16BE();
-
-			(*palette)->set(i, r >> 8, g >> 8, b >> 8);
-		}
-
-		s = new Graphics::Surface();
-		s->create(pixMap.bounds.width(), pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-
-		if (pixMap.pixelSize == 2) {
-			byte *buf = new byte[pixMap.rowBytes];
-			for (int y = 0; y < pixMap.bounds.height(); y++) {
-				res->read(buf, pixMap.rowBytes);
-				for (int x = 0; x < pixMap.bounds.width(); x += 4) {
-					for (int i = 0; i < 4 && x + i < pixMap.bounds.width(); i++) {
-						s->setPixel(x + i, y, (buf[x / 4] >> (6 - 2 * i)) & 0x03);
-					}
-				}
-			}
-			delete[] buf;
-		} else if (pixMap.pixelSize == 4) {
-			byte *buf = new byte[pixMap.rowBytes];
-			for (int y = 0; y < pixMap.bounds.height(); y++) {
-				res->read(buf, pixMap.rowBytes);
-				for (int x = 0; x < pixMap.bounds.width(); x += 2) {
-					for (int i = 0; i < 2 && x + i < pixMap.bounds.width(); i++) {
-						s->setPixel(x + i, y, (buf[x / 2] >> (4 - 4 * i)) & 0x0F);
-					}
-				}
-			}
-		} else if (pixMap.pixelSize == 8) {
-			res->read(s->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
-		} else {
-			error("MacGuiImpl::loadIcon(): Invalid pixel size %d", pixMap.pixelSize);
-		}
+		s = createRemappedSurface(surface, palette, iconDecoder.getPaletteColorCount());
 	}
+
+	delete res;
+	resource.close();
 
 	return s;
 }
@@ -710,46 +680,19 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, Graphics::Palette **palette) {
 
 Graphics::Surface *MacGuiImpl::loadPict(int id) {
 	Common::MacResManager resource;
-	Graphics::Surface *s = nullptr;
 
 	resource.open(_resourceFile);
 
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
 
-	Image::PICTDecoder pict;
-	if (res && pict.loadStream(*res)) {
-		const Graphics::Surface *s1 = pict.getSurface();
-		const byte *palette = pict.getPalette();
+	Image::PICTDecoder pictDecoder;
+	Graphics::Surface *s = nullptr;
 
-		s = new Graphics::Surface();
-		s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
+	if (res && pictDecoder.loadStream(*res)) {
+		const Graphics::Surface *surface = pictDecoder.getSurface();
+		const byte *palette = pictDecoder.getPalette();
 
-		byte paletteMap[256];
-		memset(paletteMap, 0, ARRAYSIZE(paletteMap));
-
-		for (int i = 0; i < pict.getPaletteColorCount(); i++) {
-			int r = palette[3 * i];
-			int g = palette[3 * i + 1];
-			int b = palette[3 * i + 2];
-
-			uint32 c = _windowManager->findBestColor(r, g, b);
-			paletteMap[i] = c;
-		}
-
-		if (!pict.getPaletteColorCount()) {
-			paletteMap[0] = getWhite();
-			paletteMap[1] = getBlack();
-		}
-
-		if (palette) {
-			for (int y = 0; y < s->h; y++) {
-				for (int x = 0; x < s->w; x++) {
-					int color = s1->getPixel(x, y);
-					s->setPixel(x, y, paletteMap[color]);
-				}
-			}
-		} else
-			s->copyFrom(*s1);
+		s = createRemappedSurface(surface, palette, pictDecoder.getPaletteColorCount());
 	}
 
 	delete res;
@@ -829,6 +772,98 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	}
 
 	delete res;
+
+	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
+		res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
+
+		if (res) {
+			saveScreen();
+
+			Common::HashMap<uint32, byte> paletteMap;
+
+			// Mac window manager colors. Do we need all of these?
+
+			paletteMap[0x000000] = 1;	// Black
+			paletteMap[0x808080] = 1;	// Gray80
+			paletteMap[0x888888] = 1;	// Gray88
+			paletteMap[0xEEEEEE] = 1;	// GrayEE
+			paletteMap[0xFFFFFF] = 1;	// White
+			paletteMap[0x00FF00] = 1;	// Green
+			paletteMap[0x00CF00] = 1;	// Green2
+
+			// Mac dialog window borders
+			paletteMap[0xCCCCFF] = 1;
+			paletteMap[0xBBBBBB] = 1;
+			paletteMap[0x666699] = 1;
+
+			int numItems = res->readUint16BE() + 1;
+
+			for (int i = 0; i < numItems; i++) {
+				res->skip(12);
+				int type = res->readByte();
+				int len = res->readByte();
+
+				Image::PICTDecoder pictDecoder;
+				Image::CicnDecoder iconDecoder;
+
+				const byte *palette = nullptr;
+				int paletteColorCount = 0;
+
+				Common::SeekableReadStream *imageRes = nullptr;
+				Image::ImageDecoder *decoder = nullptr;
+
+				switch (type & 0x7F) {
+				case 32:
+					imageRes = resource.getResource(MKTAG('c', 'i', 'c', 'n'), res->readUint16BE());
+					decoder = &iconDecoder;
+					break;
+
+				case 64:
+					imageRes = resource.getResource(MKTAG('P', 'I', 'C', 'T'), res->readUint16BE());
+					decoder = &pictDecoder;
+					break;
+
+				default:
+					res->skip(len);
+					break;
+				}
+
+				if (imageRes && decoder->loadStream(*imageRes)) {
+					palette = decoder->getPalette();
+					paletteColorCount = decoder->getPaletteColorCount();
+					for (int j = 0; j < paletteColorCount; j++) {
+						uint32 color = (palette[3 * j] << 16) | (palette[3 * j + 1] << 8) | palette[3 * j + 2];
+						paletteMap[color] = 1;
+					}
+				}
+			}
+
+			Graphics::Palette palette(paletteMap.size());
+			int numColors = 0;
+
+			for (auto &k : paletteMap) {
+				int r = (k._key >> 16) & 0xFF;
+				int g = (k._key >> 8) & 0xFF;
+				int b = k._key & 0xFF;
+
+				palette.set(numColors++, r, g, b);
+			}
+
+			_windowManager->passPalette(palette.data(), numColors);
+
+			for (int i = 0; i < numColors; i++) {
+				byte r, g, b;
+
+				palette.get(i, r, g, b);
+				r = _vm->_macGammaCorrectionLookUp[r];
+				g = _vm->_macGammaCorrectionLookUp[g];
+				b = _vm->_macGammaCorrectionLookUp[b];
+				palette.set(i, r, g, b);
+			}
+
+			_system->getPaletteManager()->setPalette(palette);
+		}
+	}
 
 	MacDialogWindow *window = createWindow(bounds);
 

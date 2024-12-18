@@ -45,9 +45,6 @@ public:
 
 	bool readStrings() override;
 
-	uint32 getBlack() const override;
-	uint32 getWhite() const override;
-
 	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
 	int getNumColors() const override { return 256; }
 

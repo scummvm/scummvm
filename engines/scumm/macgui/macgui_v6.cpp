@@ -245,14 +245,6 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
-uint32 MacV6Gui::getBlack() const {
-	return 255;
-}
-
-uint32 MacV6Gui::getWhite() const {
-	return 251;
-}
-
 void MacV6Gui::saveScreen() {
 	if (_screenSaveLevel++ == 0) {
 		_suspendPaletteUpdates = true;
