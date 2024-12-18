@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	ani.o \
 	bmp.o \
 	cel_3do.o \
+	cicn.o \
 	icocur.o \
 	iff.o \
 	jpeg.o \

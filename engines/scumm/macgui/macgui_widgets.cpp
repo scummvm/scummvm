@@ -808,7 +808,7 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacIcon::MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Icon", enabled) {
-	_icon = _window->_gui->loadIcon(id, &_palette);
+	_icon = _window->_gui->loadIcon(id);
 }
 
 MacGuiImpl::MacIcon::~MacIcon() {
@@ -824,7 +824,8 @@ void MacGuiImpl::MacIcon::draw(bool drawFocused) {
 
 	debug(1, "MacGuiImpl::MacIcon: Drawing icon %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	_window->drawSprite(_icon, _bounds.left, _bounds.top);
+	if (_icon)
+		_window->drawSprite(_icon, _bounds.left, _bounds.top);
 
 	_redraw = false;
 	_fullRedraw = false;

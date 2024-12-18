@@ -245,6 +245,8 @@ protected:
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text);
 	void drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, const char *text);
 
+	Graphics::Surface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, int colorCount);
+
 public:
 	class MacGuiObject {
 	protected:
@@ -443,13 +445,11 @@ public:
 	class MacIcon : public MacWidget {
 	private:
 		Graphics::Surface *_icon = nullptr;
-		Graphics::Palette *_palette = nullptr;
 
 	public:
 		MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
 		~MacIcon();
 
-		Graphics::Palette *getPalette() const { return _palette; }
 		Graphics::Surface *getIcon() const { return _icon; }
 
 		void draw(bool drawFocused = false);
@@ -723,8 +723,8 @@ public:
 	virtual int getNumColors() const = 0;
 
 	Graphics::Surface *surface() { return _surface; }
-	virtual uint32 getBlack() const;
-	virtual uint32 getWhite() const;
+	uint32 getBlack() const;
+	uint32 getWhite() const;
 
 	virtual const Common::String name() const = 0;
 
@@ -745,7 +745,7 @@ public:
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 
-	Graphics::Surface *loadIcon(int id, Graphics::Palette **palette);
+	Graphics::Surface *loadIcon(int id);
 	Graphics::Surface *loadPict(int id);
 
 	virtual bool isVerbGuiActive() const { return false; }
