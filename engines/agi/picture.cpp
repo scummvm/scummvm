@@ -187,9 +187,9 @@ void PictureMgr::plotPattern(int x, int y) {
 		0, 1, 4, 9, 16, 25, 37, 50
 	};
 
-	static uint16 circle_data[] = {
+	static const uint16 circle_data[] = {
 		0x8000,
-		0xE000, 0xE000, 0xE000,
+		0x0000, 0xE000, 0x0000,
 		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000,
 		0x3800, 0x7C00, 0x0FE00, 0x0FE00, 0x0FE00, 0x7C00, 0x3800,
 		0x1C00, 0x7F00, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x7F00, 0x1C00,
@@ -214,12 +214,6 @@ void PictureMgr::plotPattern(int x, int y) {
 	uint16 pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
-
-	// SGEORGE : Fix v3 picture data for drawing circles. Manifests in goldrush
-	if (_pictureVersion == AGIPIC_V2) {
-		circle_data[1] = 0;
-		circle_data[3] = 0;
-	}
 
 	// setup the X position
 	// = pen_x - pen.size/2
@@ -254,22 +248,9 @@ void PictureMgr::plotPattern(int x, int y) {
 	temp16 = temp16 << 1;
 	pen_width = temp16;                 // width of shape?
 
-	bool circleCond;
-	int counterStep;
-	int ditherCond;
-
-	if (_flags & kPicFCircle)
-		_patCode |= 0x10;
-
-	if (_vm->getGameType() == GType_PreAGI) {
-		circleCond = ((_patCode & 0x10) == 0);
-		counterStep = 3;
-		ditherCond = 0x03;
-	} else {
-		circleCond = ((_patCode & 0x10) != 0);
-		counterStep = 4;
-		ditherCond = 0x02;
-	}
+	bool circleCond = ((_patCode & 0x10) != 0);
+	int counterStep = 4;
+	int ditherCond = 0x02;
 
 	for (; pen_y < pen_final_y; pen_y++) {
 		circle_word = *circle_ptr++;
@@ -311,6 +292,62 @@ void PictureMgr::plotBrush() {
 			break;
 
 		plotPattern(x1, y1);
+	}
+}
+
+void PictureMgr::plotBrush_PreAGI() {
+	_patCode = getNextByte();
+	if (_patCode > 12) {
+		_patCode = 12;
+	}
+
+	for (;;) {
+		byte x, y;
+		if (!(getNextParamByte(x) && getNextParamByte(y)))
+			break;
+
+		plotPattern_PreAGI(x, y);
+	}
+}
+
+void PictureMgr::plotPattern_PreAGI(byte x, byte y) {
+	// PreAGI patterns are 13 solid circles
+	static const byte circleData[] = {
+		0x00,
+		0x01, 0x01,
+		0x01, 0x02, 0x02,
+		0x01, 0x02, 0x03, 0x03,
+		0x02, 0x03, 0x04, 0x04, 0x04,
+		0x02, 0x03, 0x04, 0x05, 0x05, 0x05,
+		0x02, 0x04, 0x05, 0x05, 0x06, 0x06, 0x06,
+		0x02, 0x04, 0x05, 0x06, 0x06, 0x07, 0x07, 0x07,
+		0x02, 0x04, 0x06, 0x06, 0x07, 0x07, 0x08, 0x08, 0x08,
+		0x03, 0x05, 0x06, 0x07, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09,
+		0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x09, 0x0a, 0x0a, 0x0a, 0x0a,
+		0x03, 0x05, 0x07, 0x08, 0x09, 0x09, 0x0a, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b,
+		0x03, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0a, 0x0b, 0x0b, 0x0c, 0x0c, 0x0c, 0x0c
+	};
+
+	int circleDataIndex = (_patCode * (_patCode + 1)) / 2;
+
+	// draw the circle by drawing its vertical lines two at a time, starting at the
+	// left and right edges and working inwards. circles have odd widths, so the
+	// final iteration draws the middle line twice.
+	for (int i = _patCode; i >= 0; i--) {
+		const byte height = circleData[circleDataIndex++];
+		int16 x1, y1, x2, y2;
+
+		// left vertical line
+		x1 = x - i;
+		x2 = x1;
+		y1 = y - height;
+		y2 = y + height;
+		draw_Line(x1, y1, x2, y2);
+
+		// right vertical line
+		x1 = x + i;
+		x2 = x1;
+		draw_Line(x1, y1, x2, y2);
 	}
 }
 
@@ -382,8 +419,7 @@ void PictureMgr::drawPictureC64() {
 			_scrOn = true;
 			break;
 		case 0xe6:  // plot brush
-			_patCode = getNextByte();
-			plotBrush();
+			plotBrush_PreAGI();
 			break;
 		case 0xff: // end of data
 			return;
@@ -514,8 +550,7 @@ void PictureMgr::drawPicturePreAGI() {
 			draw_Fill();
 			break;
 		case 0xf9:
-			_patCode = getNextByte();
-			plotBrush();
+			plotBrush_PreAGI();
 			break;
 		case 0xff: // end of data
 			return;

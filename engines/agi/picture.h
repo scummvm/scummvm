@@ -52,9 +52,8 @@ enum AgiPictureVersion {
 
 enum AgiPictureFlags {
 	kPicFNone      = (1 << 0),
-	kPicFCircle    = (1 << 1), // Mickey, spaceship lights (not drawn accurately)
-	kPicFf3Stop    = (1 << 2), // Troll, certain pictures
-	kPicFTrollMode = (1 << 3)  // Troll, drawing the Troll
+	kPicFf3Stop    = (1 << 1), // Troll, certain pictures
+	kPicFTrollMode = (1 << 2)  // Troll, drawing the Troll
 };
 
 class AgiBase;
@@ -75,6 +74,8 @@ private:
 	void yCorner(bool skipOtherCoords = false);
 	void plotPattern(int x, int y);
 	void plotBrush();
+	void plotPattern_PreAGI(byte x, byte y);
+	void plotBrush_PreAGI();
 
 	byte getNextByte();
 	bool getNextParamByte(byte &b);
