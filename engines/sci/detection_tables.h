@@ -2061,7 +2061,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// King's Quest 5 DOS 0.000.062 EGA (12 x 5.25" 360k disks)
+	// King's Quest 5 DOS 0.000.062 EGA (15 x 5.25" 360k disks)
 	// Supplied by ns394 in bug report #15571
 	{"kq5", "EGA", {
 		{"resource.map", 0, "c6c167ee097517f10eb5825678a4d9e0", 6876},
@@ -2077,6 +2077,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.009", 0, "a0aad5edec946254bb33ed18ea84886c", 286519},
 		{"resource.010", 0, "caa65f21e62c82d994a617e1e1058f9a", 302497},
 		{"resource.011", 0, "c21a052c1a64c3e470705ac9a7f490d6", 329490},
+		//{"resource.012", 0, "1d3b7540f8b93b6e6b70c69c539202ba", 324620},
+		//{"resource.013", 0, "178fa65916d63415e46e610f86b0ba8b", 350464},
+		//{"resource.014", 0, "36a031cadaa9e2ad110157c8b6de9f4d", 319184},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
