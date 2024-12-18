@@ -910,8 +910,8 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 	} else if (_selBegin == -1 || _selEnd == -1) {
-		if (y > _h)
-			return;
+		x = MIN(MAX(x, _leftPadding), kCharsPerLine * kConsoleCharWidth + _leftPadding);
+		y = MIN(MAX(y, _topPadding), (decltype(y))_h - kConsoleLineHeight);
 
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
 		int ind = (x - _leftPadding) / kConsoleCharWidth;
@@ -944,6 +944,8 @@ void ConsoleDialog::handleMouseMoved(int x, int y, int button) {
 		Dialog::handleMouseMoved(x, y, button);
 	else {
 		int selEndPreviousMove = _selEnd;
+		x = MIN(MAX(x, _leftPadding), kCharsPerLine * kConsoleCharWidth + _leftPadding);
+		y = MIN(MAX(y, _topPadding), (decltype(y))_h - kConsoleLineHeight);
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
 		lineNumber = MIN(lineNumber, _linesPerPage - 1);
 		int col = (x - _leftPadding) / kConsoleCharWidth;
