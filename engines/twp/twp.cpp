@@ -846,7 +846,7 @@ static void moveCursorTo(const Math::Vector2d &pos) {
 }
 
 static void gotoObject(bool next) {
-	if (!g_twp->_room || !g_twp->_inputState._inputActive || !g_twp->_inputState._showCursor)
+	if (!g_twp->_room || !g_twp->_actor || !g_twp->_inputState._inputActive || !g_twp->_inputState._showCursor)
 		return;
 
 	// get all objects touchable and on screen and get their distance to the actor
