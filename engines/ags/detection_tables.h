@@ -604,7 +604,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "amtag", "AMTAG: another medieval themed adventure game" },
 	{ "amused", "A-Mused" },
 	{ "analienswork", "An Alien's Work Is Never Done..." },
-	{ "anchorite", "Anchorite" },
+	{ "anchorite", "The Anchorite" },
 	{ "ancientaliens", "Ancient Aliens - The Roots of Sound" },
 	{ "anentertainingspeech", "An Entertaining Speech" },
 	{ "aneternityreflecting", "An Eternity, Reflecting" },
@@ -4915,6 +4915,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819275, 0), // Windows/Linux v1.1.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819875, 0), // Windows/Linux v1.2.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820344, 0), // Windows/Linux v1.2.2
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617821115, 0), // Windows/Linux v1.2.3
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, 0), // Windows/Linux
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, 0), // Windows/Linux v0.9.0 (GOG v1.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756037170, 0), // Windows/Linux v0.9.0 (GOG v1.3)
@@ -4926,6 +4927,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819592, 0), // Windows/Linux v1.1.1 (GOG v2.0.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820192, 0), // Windows/Linux v1.2.1 (GOG v2.1)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820661, 0), // Windows/Linux v1.2.2 (GOG v2.2)
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617821432, 0), // Windows/Linux v1.2.3 (GOG v2.3)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819592, 0), // Mac v1.1.1 (GOG v2.0.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820192, 0), // Mac v1.2.1 (GOG v2.1-v2.3)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820661, 0), // Mac v1.2.2 (GOG v2.4)
@@ -5516,7 +5518,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701), // Eng-Ita Official website
 	DEMO_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 595787927),
 	DEMO_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 59578792),
-	DEMO_ENTRY_EN("templethreerules", "tottr_demo.ags", "89f934903cae68280b77012c6df07155", 5664107),
+	DEMO_ENTRY_EN("templethreerules", "tottr_demo.ags", "89f934903cae68280b77012c6df07155", 5664107),  // v1.0.0
+	DEMO_ENTRY_EN("templethreerules", "tottr_demo.ags", "286e3d0c8a2ec15d8742b2b479736d99", 5663935),  // v1.0.3
 	DEMO_ENTRY_EN("thatday", "ThatDay.exe", "b142b43c146c25443a1d155d441a6a81", 9534366),
 	DEMO_ENTRY_EN("theartifact", "artifact-demo.exe", "465f972675db2da6040518221af5b0ba", 161590301),
 	DEMO_ENTRY_EN("thecatlady", "Cat Lady.exe", "92320e20e3d4c70a94d89e2f797e65c1", 752683721),  // v1.1 Screen7
@@ -8030,6 +8033,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY_GUIO("offtheclock", "Off The Clock.ags", "8918895c5c695bae90af13ea4f1a9807", 495345700, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), ADGF_NO_FLAGS, 0),  // Linux
 	DETECTION_ENTRY_GUIO("offtheclock", "Off The Clock.exe", "b2eb107c1f9784b7fc4f58c2a7678dea", 498392456, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), ADGF_NO_FLAGS, 0),  // Win
 	DETECTION_ENTRY_GUIO("offtheclock", "ac2game.dat", "b2eb107c1f9784b7fc4f58c2a7678dea", 498257938, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), ADGF_NO_FLAGS, 0),  // Mac
+	DETECTION_ENTRY_GUIO("offtheclock", "Off The Clock.ags", "6ac26f952a5d48a2fba6feb006eb4c3d", 133776888, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), ADGF_NO_FLAGS, 0),  // v2.0
 	GAME_ENTRY("ohdulieber", "Augustin.exe", "b142b43c146c25443a1d155d441a6a81", 13477896),  // En-Fr-De
 	GAME_ENTRY_EN_PLATFORM("ohdulieber", "Augustin.exe", "b5c41e08919834b549ca350a28f18f87", 12576785, "MAGS"),
 	GAME_ENTRY_EN("ohitschristmas", "soi_c.exe", "0241777c2537fc5d077c05cde10bfa9f", 17522925),
