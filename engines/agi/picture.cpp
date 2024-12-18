@@ -62,6 +62,12 @@ void PictureMgr::putVirtPixel(int x, int y) {
 	x += _xOffset;
 	y += _yOffset;
 
+	// validate coordinate after applying preagi offset.
+	// winnie objects go past the bottom of the screen.
+	if (x >= SCRIPT_WIDTH || y >= SCRIPT_HEIGHT) {
+		return;
+	}
+
 	byte drawMask= 0;
 	if (_priOn)
 		drawMask |= GFX_SCREEN_MASK_PRIORITY;
@@ -949,6 +955,12 @@ bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
 
 	x += _xOffset;
 	y += _yOffset;
+
+	// validate coordinate after applying preagi offset.
+	// winnie objects go past the bottom of the screen.
+	if (x >= SCRIPT_WIDTH || y >= SCRIPT_HEIGHT) {
+		return false;
+	}
 
 	byte screenColor = _gfx->getColor(x, y);
 	byte screenPriority = _gfx->getPriority(x, y);
