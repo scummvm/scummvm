@@ -578,9 +578,15 @@ void PictureMgr::drawPicturePreAGI() {
 		case 0xf7:
 			draw_LineShort();
 			break;
-		case 0xf8:
+		case 0xf8: {
+			// The screen-on flag does not prevent PreAGI flood fills.
+			// Winnie picture 7 (Roo) contains F1 before several fills.
+			byte prevScrOn = _scrOn;
+			_scrOn = true;
 			draw_Fill();
+			_scrOn = prevScrOn;
 			break;
+		}
 		case 0xf9:
 			plotBrush_PreAGI();
 			break;
