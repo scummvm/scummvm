@@ -1526,6 +1526,7 @@ void WinnieEngine::init() {
 		_picture->setPictureVersion(AGIPIC_C64);
 		break;
 	default:
+		_picture->setPictureVersion(AGIPIC_PREAGI);
 		break;
 	}
 
