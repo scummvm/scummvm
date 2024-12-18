@@ -462,7 +462,7 @@ msgid "Die Luft hier ist atembar,|du ziehst den Anzug aus."
 msgstr "Qui l'aria e` respirabile,|ti togli la tuta."
 
 #: ../../msn/msn_r0.c:387 ../../msn/msn_r0.c:424 ../../msn/msn_r0.c:460
-msgid "Hier drinnen brauchtst du deinen Anzug nicht."
+msgid "Hier drinnen brauchst du deinen Anzug nicht."
 msgstr "Qui non hai bisogno della tuta spaziale."
 
 #: ../../msn/msn_r0.c:395
