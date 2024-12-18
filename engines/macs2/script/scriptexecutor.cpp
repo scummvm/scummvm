@@ -1928,10 +1928,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// object scripts, it only changes the value of global [102Ah]
 		} else if (opcode1 == 0x1e) {
 			// This is playing an animation
+			// fn0037_BD58 proc
 			// TODO: Skipped for now until the animation system is more in the focus
 			uint32 objectID = Func9F4D_32() - 0x400;
-			uint32 unknown1 = Func9F4D_16();
-			uint32 unknown2 = Func9F4D_16();
+			uint32 animationID = Func9F4D_16();
+			uint32 offset = Func9F4D_16();
+			GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
+			BackgroundAnimationBlob::Func1480(gameObject->Blobs[animationID - 1],
+											  true, offset + 0x64);
 		} else if (opcode1 == 0x1f) {
 			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
 			// Object ID
