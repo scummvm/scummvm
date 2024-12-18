@@ -386,7 +386,7 @@ void PictureMgr::drawPicture() {
 }
 
 void PictureMgr::drawPictureC64() {
-	debugC(8, kDebugLevelMain, "Drawing Apple II / C64 / CoCo picture");
+	debugC(kDebugLevelPictures, "Drawing Apple II / C64 / CoCo picture");
 
 	_scrColor = 0;
 
@@ -431,7 +431,7 @@ void PictureMgr::drawPictureC64() {
 }
 
 void PictureMgr::drawPictureV1() {
-	debugC(8, kDebugLevelMain, "Drawing V1 picture");
+	debugC(kDebugLevelPictures, "Drawing V1 picture");
 
 	while (_dataOffset < _dataSize) {
 		byte curByte = getNextByte();
@@ -473,7 +473,7 @@ void PictureMgr::drawPictureV1() {
 }
 
 void PictureMgr::drawPictureV15() {
-	debugC(8, kDebugLevelMain, "Drawing V1.5 picture");
+	debugC(kDebugLevelPictures, "Drawing V1.5 picture");
 
 	while (_dataOffset < _dataSize) {
 		byte curByte = getNextByte();
@@ -520,7 +520,7 @@ void PictureMgr::drawPictureV15() {
 }
 
 void PictureMgr::drawPicturePreAGI() {
-	debugC(8, kDebugLevelMain, "Drawing PreAGI picture");
+	debugC(kDebugLevelPictures, "Drawing PreAGI picture");
 
 	int step = 0;
 	while (_dataOffset < _dataSize) {
@@ -569,7 +569,7 @@ void PictureMgr::drawPicturePreAGI() {
 }
 
 void PictureMgr::drawPictureV2() {
-	debugC(8, kDebugLevelMain, "Drawing V2/V3 picture");
+	debugC(kDebugLevelPictures, "Drawing V2/V3 picture");
 
 	// AGIv3 nibble parameters are indicated by a flag in the picture's directory entry
 	bool nibbleMode = (_vm->_game.dirPic[_resourceNr].flags & RES_PICTURE_V3_NIBBLE_PARM) != 0;
@@ -637,7 +637,7 @@ void PictureMgr::drawPictureAGI256() {
 	byte *dataPtr = _data;
 	byte *dataEndPtr = _data + _dataSize;
 
-	debugC(8, kDebugLevelMain, "Drawing AGI256 picture");
+	debugC(kDebugLevelPictures, "Drawing AGI256 picture");
 
 	while (dataPtr < dataEndPtr) {
 		byte color = *dataPtr++;
@@ -968,7 +968,7 @@ void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearSc
 }
 
 void PictureMgr::showPicture(int16 x, int16 y, int16 width, int16 height) {
-	debugC(8, kDebugLevelMain, "Show picture");
+	debugC(kDebugLevelPictures, "Show picture");
 
 	_gfx->render_Block(x, y, width, height);
 }
@@ -977,7 +977,7 @@ void PictureMgr::showPictureWithTransition() {
 	_width = SCRIPT_WIDTH;
 	_height = SCRIPT_HEIGHT;
 
-	debugC(8, kDebugLevelMain, "Show picture");
+	debugC(kDebugLevelPictures, "Show picture");
 
 	if (!_vm->_game.automaticRestoreGame) {
 		// only do transitions when we are not restoring a saved game

@@ -37,6 +37,7 @@
 static const DebugChannelDef debugFlagList[] = {
 	{Agi::kDebugLevelMain, "Main", "Generic debug level"},
 	{Agi::kDebugLevelResources, "Resources", "Resources debugging"},
+	{Agi::kDebugLevelPictures, "Pictures", "Pictures debugging"},
 	{Agi::kDebugLevelSprites, "Sprites", "Sprites debugging"},
 	{Agi::kDebugLevelInventory, "Inventory", "Inventory debugging"},
 	{Agi::kDebugLevelInput, "Input", "Input events debugging"},

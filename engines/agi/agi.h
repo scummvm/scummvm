@@ -153,13 +153,14 @@ enum kDebugLevels {
 	kDebugLevelMain =      1 << 0,
 	kDebugLevelResources = 1 << 1,
 	kDebugLevelSprites =   1 << 2,
-	kDebugLevelInventory = 1 << 3,
-	kDebugLevelInput =     1 << 4,
-	kDebugLevelMenu =      1 << 5,
-	kDebugLevelScripts =   1 << 6,
-	kDebugLevelSound =     1 << 7,
-	kDebugLevelText =      1 << 8,
-	kDebugLevelSavegame =  1 << 9
+	kDebugLevelPictures =  1 << 3,
+	kDebugLevelInventory = 1 << 4,
+	kDebugLevelInput =     1 << 5,
+	kDebugLevelMenu =      1 << 6,
+	kDebugLevelScripts =   1 << 7,
+	kDebugLevelSound =     1 << 8,
+	kDebugLevelText =      1 << 9,
+	kDebugLevelSavegame =  1 << 10
 };
 
 /**
