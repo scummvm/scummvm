@@ -130,7 +130,8 @@ public:
 		kWidgetPicture,
 		kWidgetSlider,
 		kWidgetListBox,
-		kWidgetPictureSlider
+		kWidgetPictureSlider,
+		kWidgetDropDownList
 	};
 
 protected:
@@ -604,6 +605,24 @@ public:
 		bool handleKeyDown(Common::Event &event);
 	};
 
+	class MacDropDownList : public MacWidget {
+	private:
+		Common::StringArray _texts;
+		int _textWidth;
+		Graphics::Surface _dropDownBackground;
+		Common::Rect _dropDownBounds;
+
+	public:
+		MacDropDownList(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
+		~MacDropDownList();
+
+		bool findWidget(int x, int y) const;
+		void draw(bool drawFocused = false);
+
+		void handleMouseDown(Common::Event &event);
+		bool handleMouseUp(Common::Event &event);
+	};
+
 	class MacDialogWindow {
 	private:
 		uint32 _black;
@@ -692,6 +711,7 @@ public:
 		MacGuiImpl::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGuiImpl::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 		MacGuiImpl::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
+		MacGuiImpl::MacDropDownList *addDropDownList(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }

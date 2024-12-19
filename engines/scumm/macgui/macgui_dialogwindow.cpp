@@ -303,6 +303,12 @@ MacGuiImpl::MacListBox *MacGuiImpl::MacDialogWindow::addListBox(Common::Rect bou
 	return listBox;
 }
 
+MacGuiImpl::MacDropDownList *MacGuiImpl::MacDialogWindow::addDropDownList(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) {
+	MacGuiImpl::MacDropDownList *dropDownList = new MacDropDownList(this, bounds, text, textWidth, texts, enabled);
+	addWidget(dropDownList, kWidgetDropDownList);
+	return dropDownList;
+}
+
 void MacGuiImpl::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
