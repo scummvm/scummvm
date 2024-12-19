@@ -72,7 +72,7 @@ protected:
   	void onMenuOpen() override;
 	void onMenuClose() override;
 
-	void drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int ticks);
+	void drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings = 4);
 	void drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2);
 
 	void runAboutDialog() override;

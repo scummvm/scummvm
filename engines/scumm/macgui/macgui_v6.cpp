@@ -321,7 +321,7 @@ void MacV6Gui::onMenuClose() {
 	restoreScreen();
 }
 
-void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int ticks) {
+void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings) {
 	Graphics::Surface *s = window->innerSurface();
 
 	uint32 gray = _windowManager->findBestColor(0xCD, 0xCD, 0xCD);
@@ -335,9 +335,9 @@ void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int w
 
 	int yt = y + 14;
 
-	for (int i = 0; i < ticks; i++) {
-		int ht = ((i % 4) == 0) ? 4 : 2;
-		s->vLine(x + (i * (width - 1)) / (ticks - 1), yt, yt + ht, black);
+	for (int i = 0; i < numMarkings; i++) {
+		int ht = ((i % primaryMarkings) == 0) ? 4 : 2;
+		s->vLine(x + (i * (width - 1)) / (numMarkings - 1), yt, yt + ht, black);
 	}
 }
 
@@ -659,6 +659,10 @@ bool MacV6Gui::runOptionsDialog() {
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
+	} else if (_vm->_game.id == GID_MANIAC) {
+		drawSliderBackground(window, 152, 41, 147, 17);
+		drawSliderBackground(window, 152, 72, 147, 10, 5);
+		font->drawString(surface, "Video Quality:", 22, 101, 105, black);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawSliderBackground(window, 152, 63, 147, 17);
 		drawSliderBackground(window, 152, 87, 147, 17);
