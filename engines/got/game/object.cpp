@@ -256,7 +256,7 @@ int use_hourglass(int flag) {
 					 510,540,570,600,630,660,690 };
 
 	if (_G(hourglass_flag)) {
-		if (_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
+		if ((int)_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
 			_G(hourglass_flag)++;
 			if (_G(hourglass_flag) == 16) {
 				_G(hourglass_flag) = 0;
@@ -415,7 +415,7 @@ void use_item() {
 	static int flag = 0;
 	int kf, ret = 0, mf;
 
-	kf = _G(key_flag)[_G(key_magic)];
+	kf = _G(key_flag)[key_magic];
 
 	if (!kf && _G(tornado_used)) {
 		actor_destroyed(&_G(actor)[2]);

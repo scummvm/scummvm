@@ -41,6 +41,12 @@ class Vars;
 
 extern Vars *g_vars;
 
+enum Key {
+	key_fire, key_up, key_down, key_left, key_right,
+	key_magic, key_select,
+	KEY_MAX
+};
+
 class Vars {
 public:
 	Vars();
@@ -124,10 +130,6 @@ public:
 	ACTOR _explosion;
 	ACTOR _sparkle;
 	THOR_INFO _thor_info;
-	Common::KeyCode _key_fire = Common::KEYCODE_LALT,
-		_key_up = Common::KEYCODE_UP, _key_down = Common::KEYCODE_DOWN,
-		_key_left = Common::KEYCODE_LEFT, _key_right = Common::KEYCODE_RIGHT,
-		_key_magic = Common::KEYCODE_LCTRL, _key_select = Common::KEYCODE_SPACE;
 	int _boss_dead = 0;
 
 	int _warp_flag = 0;
