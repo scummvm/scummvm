@@ -31,9 +31,9 @@ namespace Views {
 void GameContent::draw() {
 	GfxSurface s;
 	if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
-		s = getSurface();
-	} else {
 		s.create(320, 192);
+	} else {
+		s = getSurface();
 	}
 	s.clear();
 
