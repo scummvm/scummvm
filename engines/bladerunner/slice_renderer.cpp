@@ -732,7 +732,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 			if (z >= zMin) {
 				int index = (x & 3) + ((y & 3) << 2);
 				if (transparency - ditheringFactor[index] <= 0) {
-					uint32 color;
+					uint32 color = 0;
 					uint8 r, g, b;
 					getPixel(surface, pixel, color);
 					surface.format.colorToRGB(color, r, g, b);
