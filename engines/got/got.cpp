@@ -73,12 +73,16 @@ Common::Error GotEngine::run() {
 }
 
 Common::Error GotEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+	byte version = 1;
+	s.syncAsByte(version);
+
+	_G(setup).sync(s);
+	_G(thor_info).sync(s);
+	_G(sd_data).sync(s);
+
+	if (s.isLoading()) {
+		// TODO
+	}
 
 	return Common::kNoError;
 }
