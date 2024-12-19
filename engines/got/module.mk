@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	sound.o \
 	vars.o \
 	data/defines.o \
+	data/sd_data.o \
 	game/boss1.o \
 	game/back.o \
 	game/init.o \

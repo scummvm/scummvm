@@ -39,17 +39,6 @@ long file_size(char *path) {
 	return f.open(Common::Path(path)) ? f.size() : -1;
 }
 
-bool load_sd_data() {
-	Common::String fname = Common::String::format("SDAT%d", _G(area));
-
-	if (!_G(sd_data))
-		_G(sd_data) = new byte[61440];
-	if (!_G(sd_data))
-		return false;
-
-	return res_read(fname, _G(sd_data)) > 0;
-}
-
 bool load_actor(int /*file*/, int num) {
 	Common::String fname = Common::String::format("ACTOR%d", num);
 
