@@ -120,6 +120,8 @@ void Group::run() {
 		debugC(1, kFreescapeDebugGroup, "Executing group rewind");
 		_active = true;
 		_step = -1;
+		if (opcode == 0xff)
+			return;
 		//reset();
 	}
 
