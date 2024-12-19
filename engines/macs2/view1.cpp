@@ -1457,7 +1457,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 		// TODO: Figure out how the game realizes that this animation
 		// (the tiger at the start in orientation 15d) is not mirrored
 		// TODO: FIgure out where we got the glitch with the chicken from
-	} else if (isAnimationMirrored() && GameObject->Index != 0x9) {
+	} else if (isAnimationMirrored() && GameObject->Index != 0x9 && GameObject->Index != 0x6) {
 		blobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
 		// blobIndex = GameObject->Orientation - 1 -
 	}
