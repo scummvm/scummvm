@@ -19,48 +19,27 @@
  *
  */
 
-#include "common/memstream.h"
-#include "got/data/sd_data.h"
-#include "got/utils/file.h"
+#include "got/data/setup.h"
 
 namespace Got {
 
-#define SD_DATA_SIZE 61440
+void SETUP::sync(Common::Serializer &s) {
+	// Write out the flags
+	s.syncBytes((byte *)this, 16);
 
-SdData::SdData() {
-	_data = new byte[SD_DATA_SIZE];
-}
-
-SdData::~SdData() {
-	delete[] _data;
-}
-
-void SdData::load() {
-	Common::String fname = Common::String::format("SDAT%d", _area);
-	res_read(fname, _data);
-}
-
-void SdData::setArea(int area) {
-	if (area != _area) {
-		_area = area;
-		load();
-	}
-}
-
-void SdData::sync(Common::Serializer &s) {
-	s.syncBytes(_data, SD_DATA_SIZE);
-}
-
-void SdData::load(int level, LEVEL *dest) {
-	byte *addr = getLevelAddr(level);
-	Common::MemoryReadStream inStream(addr, 512);
-	dest->load(&inStream);
-}
-
-void SdData::save(int level, LEVEL *src) {
-	byte *addr = getLevelAddr(level);
-	Common::MemoryWriteStream outStream(addr, 512);
-	src->save(&outStream);
+	s.syncBytes(value, 16);
+	s.syncAsByte(junk);
+	s.syncAsByte(game);
+	s.syncAsByte(area);
+	s.syncAsByte(pc_sound);
+	s.syncAsByte(dig_sound);
+	s.syncAsByte(music);
+	s.syncAsByte(speed);
+	s.syncAsByte(scroll_flag);
+	s.syncBytes(boss_dead, 3);
+	s.syncAsByte(skill);
+	s.syncAsByte(game_over);
+	s.syncBytes(future, 19);
 }
 
 } // namespace Got

@@ -15,45 +15,43 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * as.syncAsUint32LE(with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef GOT_DATA_SD_DATA_H
-#define GOT_DATA_SD_DATA_H
-
-#include "common/serializer.h"
-#include "got/data/level.h"
+#include "got/data/thor_info.h"
 
 namespace Got {
 
-class SdData {
-private:
-	byte *_data;
-	int _area = 1;
+void THOR_INFO::sync(Common::Serializer &s) {
+	uint32 ptr = 0;
 
-	byte *getLevelAddr(int level) const {
-		return _data + level * 512;
-	}
-public:
-	SdData();
-	~SdData();
-	void load();
+	s.syncAsByte(magic);
+	s.syncAsByte(keys);
+	s.syncAsSint16LE(jewels);
+	s.syncAsByte(last_area);
+	s.syncAsByte(last_screen);
+	s.syncAsByte(last_icon);
+	s.syncAsByte(last_dir);
+	s.syncAsSint16LE(inventory);
+	s.syncAsByte(item);
+	s.syncAsByte(last_health);
+	s.syncAsByte(last_magic);
+	s.syncAsSint16LE(last_jewels);
+	s.syncAsByte(last_keys);
+	s.syncAsByte(last_item);
+	s.syncAsSint16LE(last_inventory);
+	s.syncAsByte(level);
+	s.syncAsUint32LE(score);
+	s.syncAsUint32LE(last_score);
 
-	bool getArea() const {
-		return _area;
-	}
-	void setArea(int area);
+	s.syncAsByte(object);
+	s.syncAsUint32LE(ptr);
+	s.syncAsByte(last_object);
+	s.syncAsUint32LE(ptr);
 
-	void sync(Common::Serializer &s);
-	void load(int level, LEVEL *dest);
-	void save(int level, LEVEL *src);
-
-	operator const byte *() const {
-		return _data;
-	}
-};
+	s.syncAsByte(armor);
+	s.syncBytes(future, 65);
+}
 
 } // namespace Got
-
-#endif

@@ -8,8 +8,10 @@ MODULE_OBJS = \
 	metaengine.o \
 	sound.o \
 	vars.o \
-	data/defines.o \
+	data/level.o \
 	data/sd_data.o \
+	data/setup.o \
+	data/thor_info.o \
 	game/boss1.o \
 	game/back.o \
 	game/init.o \
