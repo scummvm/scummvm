@@ -298,7 +298,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 				thor_damaged(act);
 				if (act->solid < 2) {
 					if (!act->vunerable && (!(act->type & 1))) play_sound(PUNCH1, 0);
-					if (!_G(hammer)->used && _G(key_flag)[_G(key_fire)])
+					if (!_G(hammer)->used && _G(key_flag)[key_fire])
 						actor_damaged(act, _G(hammer)->strength);
 					else
 						actor_damaged(act, _G(thor)->strength);
@@ -595,9 +595,9 @@ int movement_zero(ACTOR *actr) {       //player control
 
 	set_thor_vars();
 
-	if (_G(key_flag)[_G(key_fire)])
+	if (_G(key_flag)[key_fire])
 		thor_shoots();
-	if (_G(key_flag)[_G(key_select)])
+	if (_G(key_flag)[key_select])
 		select_item();
 
 	if ((_G(hammer)->used) && (_G(hammer)->move == 5)) {
@@ -610,7 +610,7 @@ int movement_zero(ACTOR *actr) {       //player control
 	y = actr->y;
 	_G(diag_flag) = 0;
 	if (actr->move_counter) actr->move_counter--;
-	if (_G(key_flag)[_G(key_up)] && _G(key_flag)[_G(key_left)]) {
+	if (_G(key_flag)[key_up] && _G(key_flag)[key_left]) {
 		d = 2;
 		actr->dir = d;
 		_G(diag) = 1;
@@ -619,7 +619,7 @@ int movement_zero(ACTOR *actr) {       //player control
 			next_frame(actr);
 			return d;
 		}
-	} else if (_G(key_flag)[_G(key_up)] && _G(key_flag)[_G(key_right)]) {
+	} else if (_G(key_flag)[key_up] && _G(key_flag)[key_right]) {
 		d = 3;
 		actr->dir = d;
 		_G(diag) = 2;
@@ -628,7 +628,7 @@ int movement_zero(ACTOR *actr) {       //player control
 			next_frame(actr);
 			return d;
 		}
-	} else if (_G(key_flag)[_G(key_down)] && _G(key_flag)[_G(key_left)]) {
+	} else if (_G(key_flag)[key_down] && _G(key_flag)[key_left]) {
 		d = 2;
 		actr->dir = d;
 		_G(diag) = 4;
@@ -637,7 +637,7 @@ int movement_zero(ACTOR *actr) {       //player control
 			next_frame(actr);
 			return d;
 		}
-	} else if (_G(key_flag)[_G(key_down)] && _G(key_flag)[_G(key_right)]) {
+	} else if (_G(key_flag)[key_down] && _G(key_flag)[key_right]) {
 		d = 3;
 		actr->dir = d;
 		_G(diag) = 3;
@@ -648,8 +648,8 @@ int movement_zero(ACTOR *actr) {       //player control
 		}
 	}
 	_G(diag) = 0;
-	if (_G(key_flag)[_G(key_right)]) {
-		if (!_G(key_flag)[_G(key_left)]) {
+	if (_G(key_flag)[key_right]) {
+		if (!_G(key_flag)[key_left]) {
 			d = 3;
 			actr->dir = d;
 			if (check_thor_move(x + 2, y, actr)) {
@@ -658,8 +658,8 @@ int movement_zero(ACTOR *actr) {       //player control
 			}
 		}
 	}
-	if (_G(key_flag)[_G(key_left)]) {
-		if (!_G(key_flag)[_G(key_right)]) {
+	if (_G(key_flag)[key_left]) {
+		if (!_G(key_flag)[key_right]) {
 			d = 2;
 			actr->dir = d;
 			if (check_thor_move(x - 2, y, actr)) {
@@ -668,8 +668,8 @@ int movement_zero(ACTOR *actr) {       //player control
 			}
 		}
 	}
-	if (_G(key_flag)[_G(key_down)]) {
-		if (!_G(key_flag)[_G(key_up)]) {
+	if (_G(key_flag)[key_down]) {
+		if (!_G(key_flag)[key_up]) {
 			d = 1;
 			actr->dir = d;
 			if (check_thor_move(x, y + 2, actr)) {
@@ -678,8 +678,8 @@ int movement_zero(ACTOR *actr) {       //player control
 			}
 		}
 	}
-	if (_G(key_flag)[_G(key_up)]) {
-		if (!_G(key_flag)[_G(key_down)]) {
+	if (_G(key_flag)[key_up]) {
+		if (!_G(key_flag)[key_down]) {
 			d = 0;
 			actr->dir = d;
 			if (check_thor_move(x, y - 2, actr)) {
