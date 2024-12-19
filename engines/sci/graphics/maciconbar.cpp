@@ -44,7 +44,7 @@ GfxMacIconBar::GfxMacIconBar(ResourceManager *resMan, EventManager *eventMan, Se
 
 	_inventoryIcon = nullptr;
 	_allDisabled = true;
-	
+
 	_isUpscaled = (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400);
 }
 

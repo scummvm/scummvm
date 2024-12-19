@@ -323,7 +323,7 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 
 	// WORKAROUND, see comment above. Normally, the call to _ports->offsetRect(workerRect) would be unconditional here.
 	if (!triggeredWorkaround)
-		_ports->offsetRect(workerRect);	
+		_ports->offsetRect(workerRect);
 
 	// We adjust the left/right coordinates to even coordinates
 	workerRect.left &= 0xFFFE; // round down

@@ -130,11 +130,15 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_16C },
 		{ SCI_VERSION_1_LATE,	SCI_VERSION_1_LATE,			"9801V8.DRV",		GUIO_RENDERPC98_8C },
 		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801V8M.DRV",		GUIO_RENDERPC98_8C },
-		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_8C }
+		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_8C },
+		{ SCI_VERSION_1_1,		SCI_VERSION_1_1,			"SCIWV.EXE",		GUIO_RENDERWIN_16C }
 	};
 
-	if (idStr.equals("kq6") && platform == Common::kPlatformWindows)
-		return guiOptions + GUIO_RENDERWIN_256C + GUIO_RENDERWIN_16C;
+	bool isWindows = false;
+	if ((idStr.equals("kq6") || idStr.equals("sq4")) && platform == Common::kPlatformWindows) {
+		guiOptions += GUIO_RENDERWIN_256C;
+		isWindows = true;
+	}
 
 	Common::FSNode node(gamePath);
 	Common::FSList files;
@@ -147,7 +151,10 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		for (int ii = 0; ii < ARRAYSIZE(rmodes); ii++) {
 			if (version == SCI_VERSION_NONE || (rmodes[ii].min <= version && version <= rmodes[ii].max)) {
 				if (i->getFileName().equalsIgnoreCase(rmodes[ii].gfxDriverName)) {
-					guiOptions += rmodes[ii].guio;
+					// Make sure that the Windows 16 colors mode is only ever added to the above mentioned
+					// windows versions and the other modes only get added to the other versions.
+					if (isWindows != (strncmp(rmodes[ii].guio, GUIO_RENDERWIN_16C, 1) != 0))
+						guiOptions += rmodes[ii].guio;
 				}
 			}
 		}

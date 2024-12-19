@@ -235,13 +235,13 @@ protected:
 	uint16 _vScaleMult, _vScaleDiv;
 	const byte *_egaMatchTable;
 	byte *_egaColorPatterns;
+	uint8 _colAdjust;
 	byte *_compositeBuffer;
 	byte *_currentPalette;
 private:
 	virtual void loadData();
 	virtual void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight);
 	byte *_currentBitmap;
-	uint8 _colAdjust;
 	const byte *_internalPalette;
 	const bool _requestRGBMode;
 	static const char *_driverFile;
@@ -283,10 +283,10 @@ private:
 	bool _needCursorBuffer;
 };
 
-class KQ6WinGfxDriver final : public UpscaledGfxDriver {
+class WindowsGfx256ColorsDriver final : public UpscaledGfxDriver {
 public:
-	KQ6WinGfxDriver(bool dosStyleCursors, bool smallWindow, bool rgbRendering);
-	~KQ6WinGfxDriver() override {}
+	WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow, bool rgbRendering);
+	~WindowsGfx256ColorsDriver() override {}
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -309,22 +309,22 @@ private:
 	uint16 _vScaleMult2;
 };
 
-class KQ6WinGfx16ColorsDriver final : public SCI1_EGADriver {
+class WindowsGfx16ColorsDriver final : public SCI1_EGADriver {
 public:
 	// The original does not take into account the extra lines required for the 200->440 vertical scaling. There is a noticeable dithering glitch every 11th line, as the
 	// two pixels of the checkerbox pattern appear in the wrong order. I have implemented a fix for this which can be activated with the fixDithering parameter.
-	KQ6WinGfx16ColorsDriver(bool fixDithering, bool rgbRendering);
-	~KQ6WinGfx16ColorsDriver() override;
+	WindowsGfx16ColorsDriver(bool fixDithering, bool rgbRendering);
+	~WindowsGfx16ColorsDriver() override {}
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
-	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS || p == Common::kPlatformWindows); }
+	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformWindows && checkDriver(&_driverFile, 1)); }
 private:
 	void loadData() override;
 	void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) override;
 	LineProc _renderLine2;
 	const bool _enhancedDithering;
-	static const byte _win16ColorsDitherPatterns[512];
+	static const char *_driverFile;
 };
 
 class PC98Gfx16ColorsDriver final : public UpscaledGfxDriver {
