@@ -823,6 +823,18 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 		if (res) {
 			saveScreen();
 
+			// Collect the palettes from all the icons and pictures
+			// in the dialog, and combine them into a single palette
+			// that they will all be remapped to use. This is
+			// probably not what the original did, as the colors
+			// become slightly different. Maybe the original just
+			// picked one of the palettes, and then used the
+			// closest available colors for the rest?
+			//
+			// That might explain why some of them have seemingly
+			// larger palettes than necessary, but why not use the
+			// exact colors when we can?
+
 			Common::HashMap<uint32, byte> paletteMap;
 			int numWindowColors = 0;
 
