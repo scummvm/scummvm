@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "graphics/screen.h"
 #include "got/data/defines.h"
+#include "got/data/sd_data.h"
 #include "got/sound.h"
 #include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"
@@ -60,8 +61,8 @@ public:
 	Gfx::Pics _hampic;
 	Gfx::Pics _objects;
 	Gfx::Pics _odin;
-
 	Gfx::Pics _status;
+	SdData _sd_data;
 	Sound _sound;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
@@ -103,8 +104,6 @@ public:
 
 	LEVEL _scrn;
 	byte *_scrnp = nullptr;
-
-	byte *_sd_data = nullptr;
 
 	SETUP _setup;
 	SETUP _last_setup;

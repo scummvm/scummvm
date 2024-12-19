@@ -19,39 +19,39 @@
  *
  */
 
-#ifndef GOT_UTILS_FILE_H
-#define GOT_UTILS_FILE_H
+#ifndef GOT_DATA_SD_DATA_H
+#define GOT_DATA_SD_DATA_H
 
-#include "common/file.h"
+#include "common/serializer.h"
 #include "got/data/defines.h"
 
 namespace Got {
 
-extern long file_size(const char *path);
-extern unsigned int read_file(const char *filename, const char *buff,
-	long offset, unsigned int amount, int key);
+class SdData {
+private:
+	byte *_data;
+	int _area = 1;
 
-extern bool load_actor(int, int num);
-extern bool load_picture(int index, char *buff);
-extern void setup_filenames(int level);
-extern bool  load_speech(int index);
-extern long file_size(const char *path);
-extern void *get_file(const char *filename, int key);
-extern void save_game();
-extern bool load_game(int flag);
-extern void help();
-extern long res_read(const Common::String &name, void *buff,
-	bool failAllowed = false);
-extern void *res_falloc_read(const Common::String &name);
-
-class File : public Common::File {
-public:
-	File() : Common::File() {}
-	File(const Common::String &filename) : Common::File() {
-		File::open(Common::Path(filename));
+	byte *getLevelAddr(int level) const {
+		return _data + level * 512;
 	}
+public:
+	SdData();
+	~SdData();
+	void load();
 
-	bool open(const Common::Path &filename) override;
+	bool getArea() const {
+		return _area;
+	}
+	void setArea(int area);
+
+	void sync(Common::Serializer &s);
+	void load(int level, LEVEL *dest);
+	void save(int level, LEVEL *src);
+
+	operator const byte *() const {
+		return _data;
+	}
 };
 
 } // namespace Got

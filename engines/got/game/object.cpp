@@ -399,7 +399,8 @@ int use_tornado(int flag) {
 
 int use_object(int flag) {
 	if (!flag) return 0;
-	if (!_G(thor_info).inventory & 64) return 0;
+	if (!(_G(thor_info).inventory & 64))
+		return 0;
 
 	//xshowpage(draw_page);
 	//xerase_actors(actor, display_page);

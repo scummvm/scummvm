@@ -34,11 +34,7 @@ namespace Got {
 
 int setup_level() {
 	_G(bgPics).setArea(_G(area));
-
-	if (_G(load_game_flag) != 1) {
-		if (!load_sd_data())
-			return 0;
-	}
+	_G(sd_data).setArea(_G(area));
 
 	return 1;
 }

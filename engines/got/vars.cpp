@@ -45,6 +45,7 @@ void Vars::load() {
 	_hampic.load();
 	_objects.load();
 	_odin.load();
+	_sd_data.load();
 	_sound.load();
 	_status.load();
 

@@ -20,7 +20,6 @@
  */
 
 #include "common/file.h"
-#include "common/memstream.h"
 #include "got/game/back.h"
 #include "got/game/move.h"
 #include "got/game/panel.h"
@@ -58,10 +57,8 @@ void show_level(int new_level) {
 	// This doesn't make sense, because that would put the ending in the middle of static_y.
 	// Plus, it follows with an entire copy of scrn into sd_data anyway, so the first
 	// move seems entirely redundant.
-	Common::MemoryWriteStream outStream(_G(sd_data) + (_G(current_level) * 512), 512);
-	_G(scrn).save(&outStream);
-	Common::MemoryReadStream inStream(_G(sd_data) + (_G(current_level) * 512), 512);
-	_G(scrn).load(&inStream);
+	_G(sd_data).save(_G(current_level), &_G(scrn));
+	_G(sd_data).load(_G(new_level), &_G(scrn));
 
 	_G(scrnp) = (byte *)&_G(scrn);
 	_G(level_type) = _G(scrn).type;
