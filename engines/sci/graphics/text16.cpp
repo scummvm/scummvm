@@ -838,7 +838,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	// Default max width is 193, otherwise increment the specified max
 	maxWidth = (maxWidth == 0) ? 193 : (maxWidth + 1);
 
-	// Build lists of lines and widths and calculate the largest line width. 
+	// Build lists of lines and widths and calculate the largest line width.
 	// The Mac interpreter did this by creating a hidden TEdit, settings its width
 	// and text, and then querying TEdit's internal structures to count the lines
 	// and find the largest. This means that Mac's own text wrapping algorithm
@@ -889,7 +889,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	// Leading can be zero for fonts that have spacing embedded in their glyphs.
 	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
 
-	if (_macFontManager->usesSystemFonts() && 
+	if (_macFontManager->usesSystemFonts() &&
 		_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		// QFG1VGA and LSL6 make this adjustment when the large font is used.
 		*textHeight -= (lineCount + 1);

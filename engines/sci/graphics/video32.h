@@ -170,7 +170,7 @@ protected:
 
 	/**
 	 * Sets the subtitle position according to the draw rect and overlay size.
-	 * 
+	 *
 	 */
 	void setSubtitlePosition() const;
 

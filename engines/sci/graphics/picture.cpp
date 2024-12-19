@@ -47,7 +47,7 @@ GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuste
 	_EGApaletteNo(0),
 	_priority(0),
 	_EGAdrawingVisualize(EGAdrawingVisualize) {
-	
+
 	assert(resourceId != -1);
 	initData(resourceId);
 }

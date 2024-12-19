@@ -128,7 +128,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		// We add 2 to the height of the icon bar to add a buffer between the screen and the
 		// icon bar (as did the original interpreter).
 		switch (g_sci->getGameId()) {
-		case GID_KQ6: 
+		case GID_KQ6:
 			extraHeight = 26 + 2;
 			break;
 		case GID_FREDDYPHARKAS:
@@ -166,7 +166,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
 		break;
 	case Common::kRenderWin16c:
-		_gfxDrv = new KQ6WinGfx16ColorsDriver(true, requestRGB);
+		_gfxDrv = new WindowsGfx16ColorsDriver(true, requestRGB);
 		break;
 	case Common::kRenderPC98_8c:
 		if (g_sci->getGameId() == GID_PQ2)
@@ -203,12 +203,13 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		case Common::kPlatformWindows:
 		case Common::kPlatformDOS:
 			// King's Quest 6 has hires content in the Windows version which we also allow to be optionally enabled in the DOS version
-			// and which we also optionally allow to be disabled in the Windows version (the Windows version has support in the original
-			// interpreter code for a small 320 x 240 window on desktops with resolutions of less than 640 x 480, but I haven't managed
-			// to produce it in a Win95 VM; the windows setting don't seem to allow less than 640 x 480, so I don't know if it is actually
-			// possible to set it up).
-			if (g_sci->getGameId() == GID_KQ6 && (g_sci->getPlatform() == Common::kPlatformWindows || g_sci->useHiresGraphics())) {
-				_gfxDrv = new KQ6WinGfxDriver(ConfMan.getBool("windows_cursors") == false, !g_sci->useHiresGraphics(), requestRGB);
+			// and which we also optionally allow to be disabled in the Windows version. Also, the Windows versions of King's Quest 6
+			// and Space Quest 4 have support in the original interpreter code for a small 320 x 240 window on desktops with resolutions
+			// of less than 640 x 480, but I haven't managed to produce it in a Win95 VM; the windows setting don't seem to allow less
+			// than 640 x 480, so I don't know if it is actually possible to set it up. Anyway, we can use it here, for the configs that
+			// do not require hires support.
+			if ((g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_SQ4) && (g_sci->getPlatform() == Common::kPlatformWindows || g_sci->useHiresGraphics())) {
+				_gfxDrv = new WindowsGfx256ColorsDriver(!ConfMan.getBool("windows_cursors"), !g_sci->useHiresGraphics(), requestRGB);
 				break;
 			}
 			// fallthrough
@@ -233,7 +234,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 	_priorityScreen = (byte *)calloc(_pixels, 1);
 	_controlScreen = (byte *)calloc(_pixels, 1);
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
-	
+
 	// Create a Surface for _displayPixels so that we can draw to it from interfaces
 	// that only draw to Surfaces. Currently that's just Graphics::Font.
 	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
@@ -982,7 +983,7 @@ void GfxScreen::grabPalette(byte *buffer, uint start, uint num) const {
 
 void GfxScreen::setPalette(const byte *buffer, uint start, uint num, bool update) {
 	assert(start + num <= 256);
-	_gfxDrv->setPalette(buffer, start, num, update, _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);	
+	_gfxDrv->setPalette(buffer, start, num, update, _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 

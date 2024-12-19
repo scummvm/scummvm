@@ -35,7 +35,13 @@ namespace Sci {
 
 #define GFXDRV_ASSERT_READY \
 	if (!_ready) \
-		error("%s: initScreen() must be called before using this method", __FUNCTION__)
+		error("%s(): initScreen() must be called before using this method", __FUNCTION__)
+
+#define GFXDRV_ERR_OPEN(x) \
+	error("%s(): Failed to open '%s'", __FUNCTION__, x)
+
+#define GFXDRV_ERR_VERSION(x) \
+	error("%s(): Driver file '%s' unknown version", __FUNCTION__, x)
 
 Common::Point GfxDriver::getMousePos() const {
 	return g_system->getEventManager()->getMousePos();
@@ -429,7 +435,7 @@ SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) 
 
 	Common::File drv;
 	if (!drv.open(_driverFile))
-		error("Failed to open '%s'", _driverFile);
+		GFXDRV_ERR_OPEN(_driverFile);
 
 	byte palIndex = 1;
 	byte palIntensity = 1;
@@ -445,7 +451,7 @@ SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) 
 		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
 
 	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR))
-		error("Driver file '%s' unknown version", _driverFile);
+		GFXDRV_ERR_VERSION(_driverFile);
 
 	drv.skip(drv.readByte() == 0x90 ? 2 : 1);
 
@@ -588,7 +594,7 @@ const byte *monochrInit(const char *drvFile, bool &earlyVersion) {
 		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
 
 	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR))
-		error("Driver file '%s' unknown version", drv.getName());
+		GFXDRV_ERR_VERSION(drv.getName());
 
 	// This is a safe assumption, as the early version pattern map is 4 times the size of the later one.
 	earlyVersion = (eprcOffs > 0x500);
@@ -788,7 +794,7 @@ SCI0_HerculesDriver::SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRenderi
 	bool unused = false;
 
 	if (!(_monochromePatterns = monochrInit(_driverFile, unused)))
-		error("Failed to open '%s'", _driverFile);
+		GFXDRV_ERR_OPEN(_driverFile);
 }
 
 SCI0_HerculesDriver::~SCI0_HerculesDriver() {
@@ -919,7 +925,7 @@ SCI1_VGAGreyScaleDriver::~SCI1_VGAGreyScaleDriver() {
 }
 
 void SCI1_VGAGreyScaleDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
-	GFXDRV_ASSERT_READY; 
+	GFXDRV_ASSERT_READY;
 	byte *d = _greyScalePalette;
 	for (uint i = 0; i < num; ++i) {
 		// In the driver files I inspected there were never any other color distributions than this.
@@ -1132,7 +1138,7 @@ Common::Point SCI1_EGADriver::getRealCoords(Common::Point &pos) const {
 void SCI1_EGADriver::loadData() {
 	Common::File drv;
 	if (!drv.open(_driverFile))
-		error("SCI1_EGADriver: Failed to open '%s'", _driverFile);
+		GFXDRV_ERR_OPEN(_driverFile);
 
 	uint16 eprcOffs = 0;
 
@@ -1141,7 +1147,7 @@ void SCI1_EGADriver::loadData() {
 		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
 
 	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR) || drv.readUint32LE() != 0xFEDCBA98 || !drv.skip(4))
-		error("SCI1_EGADriver: Driver file '%s' unknown version", _driverFile);
+		GFXDRV_ERR_VERSION(_driverFile);
 
 	uint32 pos = (drv.pos() + 1) & ~1;
 
@@ -1151,7 +1157,7 @@ void SCI1_EGADriver::loadData() {
 	_numColors = (colResponse >> 8) & 0xffff;
 	if (_numColors < 16 || _numColors > 256 || (colResponse & 0xff0000ff) != 0xC30000B8)
 		error("SCI1_EGADriver: Failed to retrieve color info from '%s'", _driverFile);
-	
+
 	drv.seek(pos + 20);
 	drv.seek(drv.readUint16LE());
 	byte *buff = new byte[128];
@@ -1184,7 +1190,7 @@ void SCI1_EGADriver::loadData() {
 	_egaMatchTable = table;
 
 	if (drv.readUint16LE() != 152 || drv.readUint16LE() != 160)
-		error("SCI1_EGADriver: Driver file '%s' unknown version", _driverFile);
+		GFXDRV_ERR_VERSION(_driverFile);
 
 	drv.close();
 }
@@ -1272,7 +1278,7 @@ void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, boo
 		return;
 	}
 	updatePalette(colors, start, num);
-	if (update) 
+	if (update)
 		updateScreen(0, 0, _screenW, _screenH, palMods, palModMapping);
 	if (_cursorUsesScreenPalette)
 		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
@@ -1380,8 +1386,8 @@ void UpscaledGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy,
 	realHeight = h << 1;
 }
 
-KQ6WinGfxDriver::KQ6WinGfxDriver(bool dosStyleCursors, bool smallWindow,bool rgbRendering) :
-	UpscaledGfxDriver(smallWindow ? 320 : 640, smallWindow ? 240 : 440, 1, dosStyleCursors && !smallWindow, rgbRendering), _dosStyleCursors(dosStyleCursors), _smallWindow(smallWindow),
+WindowsGfx256ColorsDriver::WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow,bool rgbRendering) :
+	UpscaledGfxDriver(smallWindow ? 320 : 640, smallWindow ? 240 : 440, 1, coloredDosStyleCursors && !smallWindow, rgbRendering), _dosStyleCursors(coloredDosStyleCursors), _smallWindow(smallWindow),
 		_renderLine(nullptr), _renderLine2(nullptr), _flags(0), _colorMap(nullptr), _vScaleMult2(smallWindow ? 1 : 2) {
 	_virtualW = 320;
 	_virtualH = 200;
@@ -1470,13 +1476,13 @@ void hiresRenderLine(byte *&dst, const byte *src, int pitch, int w, const byte *
 void renderLineDummy(byte *&, const byte* , int, int, const byte*) {
 }
 
-void KQ6WinGfxDriver::initScreen(const Graphics::PixelFormat *format) {
+void WindowsGfx256ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
 	_renderLine = _smallWindow ? &smallWindowRenderLine : &largeWindowRenderLine;
 	_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
 }
 
-void KQ6WinGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+void WindowsGfx256ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
 	assert (h >= 0 && w >= 0);
 
@@ -1525,7 +1531,7 @@ byte findColorInPalette(uint32 rgbTriplet, const byte *palette, int numColors) {
 	return match;
 }
 
-void renderWinMonochromeCursor(byte *dst, const void *src, const byte *palette, uint &w, uint &h, int &hotX, int &hotY, byte blackColor, byte whiteColor, uint32 &keycolor) {
+void renderWinMonochromeCursor(byte *dst, const void *src, const byte *palette, uint &w, uint &h, int &hotX, int &hotY, byte blackColor, byte whiteColor, uint32 &keycolor, bool noScale) {
 	const byte *s = reinterpret_cast<const byte*>(src);
 	uint16 min = 65025;
 	uint16 max = 0;
@@ -1557,7 +1563,7 @@ void renderWinMonochromeCursor(byte *dst, const void *src, const byte *palette, 
 	uint16 lim2 = min + max - lim1;
 	s = reinterpret_cast<const byte*>(src);
 
-	if (w < 17 && h < 17) {
+	if (w < 17 && h < 17 && !noScale) {
 		// Small cursors (like the insignia ring in KQ6) get scaled and dithered.
 		byte *dst2 = dst + (w << 1);
 		for (uint i = 0; i < h; ++i) {
@@ -1598,12 +1604,13 @@ void renderWinMonochromeCursor(byte *dst, const void *src, const byte *palette, 
 	keycolor = newKeyColor;
 }
 
-void KQ6WinGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+void WindowsGfx256ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
 	if (_dosStyleCursors) {
 		// The original windows interpreter always renders the cursor as b/w, regardless of which cursor views (the DOS
 		// cursors or the new Windows ones) the user selects. This is also regardless of color mode (16 or 256 colors).
-		// But I think it is on purpose that we have the cursors look like in the DOS version as a default.
+		// It is a technical limitation on Windows 95 with VGA hardware that mouse cursors have to be b/w.
+		// Instead, we use the colored DOS style cursors as a default, since there was consensus to do that.
 		UpscaledGfxDriver::replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
 		return;
 	}
@@ -1614,15 +1621,15 @@ void KQ6WinGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hots
 
 	byte col1 = findColorInPalette(0x00000000, _currentPalette, _numColors);
 	byte col2 = findColorInPalette(0x00FFFFFF, _currentPalette, _numColors);
-	renderWinMonochromeCursor(_compositeBuffer, cursor, _currentPalette, w, h, hotspotX, hotspotY, col1, col2, keycolor);
+	renderWinMonochromeCursor(_compositeBuffer, cursor, _currentPalette, w, h, hotspotX, hotspotY, col1, col2, keycolor, _smallWindow);
 	CursorMan.replaceCursor(_compositeBuffer, w, h, hotspotX, hotspotY, keycolor);
 }
 
-Common::Point KQ6WinGfxDriver::getRealCoords(Common::Point &pos) const {
+Common::Point WindowsGfx256ColorsDriver::getRealCoords(Common::Point &pos) const {
 	return Common::Point(pos.x * _hScaleMult, pos.y * _vScaleMult2 + (pos.y + 4) / 5);
 }
 
-void KQ6WinGfxDriver::setFlags(uint32 flags) {
+void WindowsGfx256ColorsDriver::setFlags(uint32 flags) {
 	flags ^= (_flags & flags);
 	if (!flags)
 		return;
@@ -1633,7 +1640,7 @@ void KQ6WinGfxDriver::setFlags(uint32 flags) {
 	_flags |= flags;
 }
 
-void KQ6WinGfxDriver::clearFlags(uint32 flags) {
+void WindowsGfx256ColorsDriver::clearFlags(uint32 flags) {
 	flags &= _flags;
 	if (!flags)
 		return;
@@ -1644,7 +1651,7 @@ void KQ6WinGfxDriver::clearFlags(uint32 flags) {
 	_flags &= ~flags;
 }
 
-void KQ6WinGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) {
+void WindowsGfx256ColorsDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) {
 	assert(_renderLine);
 
 	byte *dst = _scaledBitmap + (dy * _vScaleMult2 + (dy + 4) / 5) * _screenW * _srcPixelSize + dx *_hScaleMult * _srcPixelSize;
@@ -1661,7 +1668,7 @@ void KQ6WinGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, i
 	realHeight = (dst - dstart) / _screenW;
 }
 
-KQ6WinGfx16ColorsDriver::KQ6WinGfx16ColorsDriver(bool enhancedDithering, bool rgbRendering) : SCI1_EGADriver(rgbRendering), _enhancedDithering(enhancedDithering), _renderLine2(nullptr) {
+WindowsGfx16ColorsDriver::WindowsGfx16ColorsDriver(bool enhancedDithering, bool rgbRendering) : SCI1_EGADriver(rgbRendering), _enhancedDithering(enhancedDithering), _renderLine2(nullptr) {
 	static const byte win16Colors[48] = {
 		0x00, 0x00, 0x00, 0xA8, 0x00, 0x57, 0x00, 0xA8, 0x57, 0xA8, 0xA8, 0x57,
 		0x00, 0x00, 0xA8, 0xA8, 0x57, 0xA8, 0x57, 0xA8, 0xA8, 0x87, 0x88, 0x8F,
@@ -1672,10 +1679,6 @@ KQ6WinGfx16ColorsDriver::KQ6WinGfx16ColorsDriver(bool enhancedDithering, bool rg
 	_convPalette = win16Colors;
 	_vScaleMult = 11;
 	_vScaleDiv = 5;
-}
-
-KQ6WinGfx16ColorsDriver::~KQ6WinGfx16ColorsDriver() {
-	_egaMatchTable = nullptr; // prevent invalid deletion in SCI1_EGADriver::~SCI1_EGADriver()
 }
 
 template <typename T, bool extScale> void win16ColRenderLine(byte *&dst, const byte *src, int w, const byte *patterns, const byte *pal, bool swap) {
@@ -1708,7 +1711,7 @@ template <typename T, bool extScale> void win16ColRenderLine(byte *&dst, const b
 	dst = reinterpret_cast<byte*>(extScale ? d3 : (swap ? d1 : d2));
 }
 
-void KQ6WinGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+void WindowsGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	SCI1_EGADriver::initScreen(format);
 
 	static const LineProc lineProcs[] = {
@@ -1725,26 +1728,56 @@ void KQ6WinGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	_renderLine2 = lineProcs[_pixelSize | 1];
 }
 
-void KQ6WinGfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+void WindowsGfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
 	// The original windows interpreter always renders the cursor as b/w, regardless of which cursor views (the DOS
 	// cursors or the new Windows ones) the user selects. This is also regardless of color mode (16 or 256 colors).
 	byte col1 = findColorInPalette(0x00000000, _convPalette, _numColors);
 	byte col2 = findColorInPalette(0x00FFFFFF, _convPalette, _numColors);
-	renderWinMonochromeCursor(_compositeBuffer, cursor, _currentPalette, w, h, hotspotX, hotspotY, col1, col2, keycolor);
+	renderWinMonochromeCursor(_compositeBuffer, cursor, _currentPalette, w, h, hotspotX, hotspotY, col1, col2, keycolor, false);
 	CursorMan.replaceCursor(_compositeBuffer, w, h, hotspotX, hotspotY, keycolor);
 }
 
-Common::Point KQ6WinGfx16ColorsDriver::getRealCoords(Common::Point &pos) const {
+Common::Point WindowsGfx16ColorsDriver::getRealCoords(Common::Point &pos) const {
 	return Common::Point(pos.x << 1, (pos.y << 1) + (pos.y + 4) / 5);
 }
 
-void KQ6WinGfx16ColorsDriver::loadData() {
-	_egaMatchTable = _win16ColorsDitherPatterns;
+void WindowsGfx16ColorsDriver::loadData() {
+	Common::File file;
+	if (!file.open(_driverFile))
+		GFXDRV_ERR_OPEN(_driverFile);
+
+	int64 sz = file.size();
+	byte *buf = new byte[sz];
+	file.read(buf, sz);
+	file.close();
+
+	// We can keep the search for the table simple, since there are only two supported executables (KQ6
+	// Windows and SQ4 Windows) and both contain the following value only within the pattern table...
+	uint32 srch = FROM_LE_32(0xCC4C4404);
+
+	const byte *tblOffs = nullptr;
+	for (const byte *pos = buf; pos < buf + sz - 67 && tblOffs == nullptr; ++pos) {
+		// We check three times, just to be sure. Checking once would actually suffice.
+		if (READ_UINT32(pos) != srch || READ_UINT32(pos + 8) != srch || READ_UINT32(pos + 64) != srch)
+			continue;
+		tblOffs = pos - 4;
+	}
+
+	if (tblOffs == nullptr)
+		error("%s(): Failed to load 16 colors match table", __FUNCTION__);
+
+	byte *tbl = new byte[512];
+	memcpy(tbl, tblOffs, 512);
+	_egaMatchTable = tbl;
+
+	delete[] buf;
+
+	_colAdjust = (_egaMatchTable[482] == 0x79) ? 4 : 0;
 	_numColors = 16;
 }
 
-void KQ6WinGfx16ColorsDriver::renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) {
+void WindowsGfx16ColorsDriver::renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) {
 	const byte *dst0 = dst;
 	byte mod = (y + 4) % 5;
 	byte swap = _enhancedDithering ? ((y + 4) / 5) & 1 : 0;
@@ -1763,40 +1796,7 @@ void KQ6WinGfx16ColorsDriver::renderBitmap(byte *dst, const byte *src, int pitch
 	realHeight = (dst - dst0) / (realWidth * _pixelSize);
 }
 
-const byte KQ6WinGfx16ColorsDriver::_win16ColorsDitherPatterns[512] = {
-	0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc, 0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc,
-	0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc, 0x02, 0x02, 0x02, 0x06, 0x06, 0x46, 0x6c, 0x6c,
-	0x02, 0x02, 0x02, 0x06, 0x06, 0x2c, 0x6c, 0xce, 0x22, 0x22, 0x22, 0x26, 0x26, 0x66, 0x4e, 0xce,
-	0x2a, 0x2a, 0x2a, 0x6a, 0x6a, 0x2e, 0x6e, 0x6e, 0xaa, 0xaa, 0xaa, 0xaa, 0xae, 0xae, 0xee, 0xee,
-	0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc, 0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc,
-	0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc, 0x02, 0x02, 0x02, 0x06, 0x06, 0x46, 0x6c, 0x6c,
-	0x02, 0x02, 0x02, 0x06, 0x06, 0x2c, 0x6c, 0xce, 0x22, 0x22, 0x22, 0x26, 0x26, 0x66, 0x4e, 0xce,
-	0x2a, 0x2a, 0x2a, 0x6a, 0x6a, 0x2e, 0x6e, 0x6e, 0xaa, 0xaa, 0xaa, 0xaa, 0xae, 0xae, 0xae, 0xee,
-	0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc, 0x00, 0x00, 0x00, 0x04, 0x04, 0x44, 0x4c, 0xcc,
-	0x00, 0x00, 0x00, 0x05, 0x04, 0x44, 0x4c, 0xcc, 0x02, 0x02, 0x02, 0x06, 0x06, 0x46, 0x6c, 0x6c,
-	0x02, 0x02, 0x02, 0x06, 0x06, 0x2c, 0x6c, 0xce, 0x22, 0x22, 0x22, 0x26, 0x26, 0x66, 0x4e, 0xce,
-	0x2a, 0x2a, 0x2a, 0x6a, 0x6a, 0x2e, 0x6e, 0x6e, 0xaa, 0xaa, 0xaa, 0xaa, 0xae, 0xae, 0xee, 0xee,
-	0x01, 0x01, 0x01, 0x05, 0x05, 0x45, 0x5c, 0x5c, 0x01, 0x01, 0x01, 0x05, 0x05, 0x45, 0x5c, 0x5c,
-	0x01, 0x01, 0x01, 0x05, 0x05, 0x1c, 0x5c, 0x5c, 0x03, 0x03, 0x03, 0x07, 0x07, 0x47, 0x7c, 0x7c,
-	0x03, 0x03, 0x03, 0x07, 0x08, 0x3c, 0x7c, 0x8c, 0x23, 0x23, 0x23, 0x27, 0x27, 0x67, 0x5e, 0x5e,
-	0x3a, 0x3a, 0x3a, 0x7a, 0x7a, 0x3e, 0x7e, 0x7e, 0xaa, 0xaa, 0xaa, 0x8a, 0x8a, 0xae, 0x8e, 0xee,
-	0x01, 0x01, 0x01, 0x05, 0x05, 0x45, 0x5c, 0xcd, 0x01, 0x01, 0x01, 0x49, 0x05, 0x1c, 0x5c, 0xcd,
-	0x11, 0x01, 0x01, 0x49, 0x05, 0x1c, 0x4d, 0xcd, 0x03, 0x03, 0x03, 0x07, 0x07, 0x47, 0x7c, 0x7c,
-	0x13, 0x03, 0x03, 0x08, 0x08, 0x48, 0x48, 0x8c, 0x9a, 0x23, 0x1a, 0x4b, 0x28, 0x68, 0x4f, 0xcf,
-	0x3a, 0x3a, 0x3a, 0x6b, 0x7a, 0x3e, 0x7e, 0x8e, 0xab, 0xab, 0xab, 0xab, 0xaf, 0xaf, 0xaf, 0xef,
-	0x11, 0x11, 0x11, 0x15, 0x15, 0x55, 0x4d, 0xcd, 0x11, 0x11, 0x11, 0x15, 0x15, 0x55, 0x4d, 0xcd,
-	0x11, 0x11, 0x11, 0x49, 0x49, 0x9c, 0x4d, 0xcd, 0x29, 0x29, 0x13, 0x17, 0x17, 0x2d, 0x6d, 0x6d,
-	0x13, 0x13, 0x13, 0x18, 0x18, 0x58, 0x58, 0x8c, 0x33, 0x33, 0x33, 0x37, 0x37, 0x77, 0x4f, 0xcf,
-	0x2b, 0x2b, 0x2b, 0x6b, 0x6b, 0x2f, 0x6f, 0x6f, 0xab, 0xab, 0xab, 0xab, 0xaf, 0xaf, 0xef, 0xef,
-	0x19, 0x19, 0x19, 0x59, 0x59, 0x1d, 0x5d, 0x5d, 0x19, 0x19, 0x19, 0x59, 0x59, 0x1d, 0x5d, 0x5d,
-	0x19, 0x19, 0x19, 0x59, 0x59, 0x1d, 0x5d, 0xdd, 0x39, 0x39, 0x39, 0x79, 0x79, 0x3d, 0x7d, 0x7d,
-	0x39, 0x39, 0x39, 0x89, 0x89, 0x3d, 0x8d, 0x8d, 0x1b, 0x1b, 0x1b, 0x5b, 0x5b, 0x1f, 0x5f, 0x5f,
-	0x3b, 0x3b, 0x3b, 0x7b, 0x7b, 0x3f, 0x88, 0x88, 0xbb, 0xab, 0xab, 0x8b, 0x8b, 0xaf, 0x8f, 0x8f,
-	0x99, 0x99, 0x99, 0x99, 0x9d, 0x9d, 0xdd, 0xdd, 0x99, 0x99, 0x99, 0x99, 0x9d, 0x9d, 0xdd, 0xdd,
-	0x99, 0x99, 0x99, 0x99, 0x9d, 0x9d, 0x7d, 0xdd, 0x39, 0x39, 0x39, 0x79, 0x89, 0x3d, 0x7d, 0x5d,
-	0x9b, 0x9b, 0x89, 0x89, 0x89, 0x89, 0x8d, 0x8d, 0x9b, 0x9b, 0x9b, 0x9b, 0x9f, 0x9f, 0xdf, 0xdf,
-	0x3b, 0x3b, 0x3b, 0x8b, 0x8b, 0x3f, 0x8f, 0x8f, 0xbb, 0xbb, 0xbb, 0xbb, 0xbf, 0xbf, 0xff, 0xff
-};
+const char *WindowsGfx16ColorsDriver::_driverFile = "SCIWV.EXE";
 
 PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette) :
 	UpscaledGfxDriver(textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
@@ -2095,7 +2095,7 @@ const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801V
 SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(1, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
-		error("SCI1_PC98Gfx8ColorsDriver: Failed to open '%s'", _driverFile);
+		GFXDRV_ERR_OPEN(_driverFile);
 
 	uint16 eprcOffs = 0;
 
@@ -2104,7 +2104,7 @@ SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : Upscal
 		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
 
 	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR))
-		error("SCI1_PC98Gfx8ColorsDriver: Driver file '%s' unknown version", _driverFile);
+		GFXDRV_ERR_VERSION(_driverFile);
 
 	uint32 pos = (drv.pos() + 1) & ~1;
 
@@ -2142,12 +2142,12 @@ SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : Upscal
 	drv.read(dmx, 96);
 
 	if (drv.readUint16LE() != 0xA800 || drv.readUint16LE() != 0xB000)
-		error("SCI1_PC98Gfx8ColorsDriver: Driver file '%s' unknown version", _driverFile);
+		GFXDRV_ERR_VERSION(_driverFile);
 
 	drv.close();
 
 	byte *dt = new byte[1536]();
-	_ditheringTable = dt;	
+	_ditheringTable = dt;
 
 	for (uint16 i = 0; i < 256; ++i) {
 		for (int ii = 0; ii < 6; ++ii)
@@ -2234,7 +2234,7 @@ void SCI1_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 	uint32 newKeyColor = 0xFF;
 
 	int dstPitch = (w << 1);
-	byte *d2 = _compositeBuffer + dstPitch;	
+	byte *d2 = _compositeBuffer + dstPitch;
 
 	for (uint i = 0; i < h; ++i) {
 		for (uint ii = 0; ii < w; ++ii) {
@@ -2261,6 +2261,7 @@ byte SCI1_PC98Gfx8ColorsDriver::remapTextColor(byte) const {
 const char *SCI1_PC98Gfx8ColorsDriver::_driverFile = "9801V8.DRV";
 
 #undef GFXDRV_ASSERT_READY
-#undef GFXDRV_ASEERT_ALIGNED
+#undef GFXDRV_ERR_OPEN
+#undef GFXDRV_ERR_VERSION
 
 } // End of namespace Sci
