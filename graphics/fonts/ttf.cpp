@@ -149,7 +149,10 @@ void TTFLibrary::closeFont(FT_Face &face) {
 
 unsigned long TTFLibrary::readCallback(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count) {
 	Common::SeekableReadStream *ttfFile = (Common::SeekableReadStream *)stream->descriptor.pointer;
-	ttfFile->seek(offset);
+	bool seekSuccess = ttfFile->seek(offset);
+	if (count == 0)
+		// a seek operation was requested: return zero if success else non-zero
+		return !seekSuccess;
 	return ttfFile->read(buffer, count);
 }
 
