@@ -401,7 +401,7 @@ MacGuiImpl::MacEditText::MacEditText(MacGuiImpl::MacDialogWindow *window, Common
 }
 
 bool MacGuiImpl::MacEditText::findWidget(int x, int y) const {
-	// Once we start dragging the handle, any mouse position is considered
+	// Once we start drag-selecting, any mouse position is considered
 	// within the widget.
 
 	if (_window->getFocusedWidget() == this)
@@ -1610,6 +1610,123 @@ bool MacGuiImpl::MacListBox::handleKeyDown(Common::Event &event) {
 
 		updateTexts();
 	}
+
+	return false;
+}
+
+// ---------------------------------------------------------------------------
+// Drop down widget
+// ---------------------------------------------------------------------------
+
+MacGuiImpl::MacDropDownList::MacDropDownList(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
+	_black = _window->_gui->getBlack();
+	_white = _window->_gui->getWhite();
+
+	_dropDownBounds.left = _bounds.left + _textWidth;
+	_dropDownBounds.right = _bounds.right;
+}
+
+MacGuiImpl::MacDropDownList::~MacDropDownList() {
+	_texts.clear();
+	_dropDownBackground.free();
+}
+
+bool MacGuiImpl::MacDropDownList::findWidget(int x, int y) const {
+	// Once we have opened the drop down list, any mouse position is
+	// considered within the widget.
+
+	if (_window->getFocusedWidget() == this)
+		return true;
+
+	return _bounds.contains(x, y);
+}
+
+void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGuiImpl::MacDropDownList: Drawing list box (_fullRedraw = %d, drawFocused = %d)", _fullRedraw, drawFocused);
+
+	// I don't know how Mac originally drew disabled drop downs lists, or
+	// if that was even a thing. For our purposes, the text is still
+	// relevant. We just need to make it obvious that you can't change it
+	// in any way.
+
+	uint32 fg, bg;
+	bool focused = drawFocused || _window->getFocusedWidget() == this;
+
+	if (focused) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
+
+	Graphics::Surface *s = _window->innerSurface();
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	s->fillRect(Common::Rect(_bounds.left, _bounds.top + 1, _bounds.left + _textWidth, _bounds.bottom - 2), bg);
+	font->drawString(s, _text, _bounds.left, _bounds.top + 1, _textWidth, fg, Graphics::kTextAlignLeft, 4);
+
+	if (focused) {
+		Common::Rect r = _dropDownBounds;
+		r.bottom--;
+		r.right--;
+
+		s->fillRect(r, _white);
+		s->frameRect(r, _black);
+		s->hLine(r.left + 3, r.bottom, r.right, _black);
+		s->vLine(r.right, r.top + 3, r.bottom - 1, _black);
+
+		for (uint i = 0; i < _texts.size(); i++) {
+			font->drawString(s, _texts[i], _dropDownBounds.left, _dropDownBounds.top + 16 * i + 1, _dropDownBounds.width() - 3, _black, Graphics::kTextAlignLeft, 15);
+		}
+
+		font->drawString(s, "\x12", _dropDownBounds.left, _bounds.top + 1, 15, _black, Graphics::kTextAlignLeft, 3);
+	} else {
+		s->frameRect(Common::Rect(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 1), _black);
+		s->hLine(_bounds.left + _textWidth + 3, _bounds.bottom - 1, _bounds.right - 1, _black);
+		s->vLine(_bounds.right - 1, _bounds.top + 3, _bounds.bottom - 2, _black);
+
+		font->drawString(s, _texts[_value], _bounds.left + _textWidth + 15, _bounds.top + 1, _bounds.width() - _textWidth - 25, _black);
+
+		const uint16 arrowDownIcon[16] = {
+			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x3FF8, 0x1FF0, 0x0FE0,
+			0x07C0, 0x0380, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+		};
+
+		const uint16 disabledArrowDownIcon[16] = {
+			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2AA8, 0x1550, 0x0AA0,
+			0x0540, 0x0280, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+		};
+
+		Common::Rect iconRect(16, 16);
+		iconRect.moveTo(_bounds.right - 20, _bounds.top + 1);
+
+		drawBitmap(iconRect, _enabled ? arrowDownIcon : disabledArrowDownIcon, _black);
+	}
+
+	_redraw = false;
+	_fullRedraw = false;
+
+	_window->markRectAsDirty(_bounds);
+	if (focused)
+		_window->markRectAsDirty(_dropDownBounds);
+}
+
+void MacGuiImpl::MacDropDownList::handleMouseDown(Common::Event &event) {
+	_dropDownBounds.top = _bounds.top - 16 * _value;
+	_dropDownBounds.bottom = _bounds.bottom + 16 * (_texts.size() - _value - 1);
+
+	Graphics::Surface background = _window->innerSurface()->getSubArea(_dropDownBounds);
+
+	_dropDownBackground.free();
+	_dropDownBackground.copyFrom(background);
+}
+
+bool MacGuiImpl::MacDropDownList::handleMouseUp(Common::Event &event) {
+	_window->drawSprite(&_dropDownBackground, _dropDownBounds.left, _dropDownBounds.top);
 
 	return false;
 }

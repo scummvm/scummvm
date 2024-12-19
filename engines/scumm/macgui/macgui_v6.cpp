@@ -623,6 +623,22 @@ bool MacV6Gui::runOptionsDialog() {
 	const Graphics::Font *font = getFont(kSystemFont);
 	uint32 black = getBlack();
 
+	MacDropDownList *interactionDropDown = nullptr;
+	MacDropDownList *videoQualityDropDown = nullptr;
+
+	Common::StringArray interactMode;
+
+	if (_vm->_game.id != GID_MANIAC) {
+		interactMode.push_back("Text Only");
+		interactMode.push_back("Voice Only");
+		interactMode.push_back("Text & Voice");
+	}
+
+	Common::StringArray videoQuality;
+	videoQuality.push_back("Double Size");
+	videoQuality.push_back("Interlaced");
+	videoQuality.push_back("Small");
+
 	if (_vm->_game.id == GID_TENTACLE) {
 		// Unlike the other games, Day of the Tentacle uses a lot of
 		// "user items" which we don't have a way to parse.
@@ -650,41 +666,45 @@ bool MacV6Gui::runOptionsDialog() {
 		font->drawString(surface, "Volume Settings", 27, 33, 110, black);
 		font->drawString(surface, "Voice & Effects:", 23, 85, 105, black);
 		font->drawString(surface, "Text & Voice Settings", 26, 122, 140, black);
-		font->drawString(surface, "Interact using:", 21, 149, 105, black);
 		font->drawString(surface, "Text Speed:", 22, 175, 105, black);
-		font->drawString(surface, "Video Quality:", 21, 219, 105, black);
 
 		// Yes, the frames really are supposed to be slightly
 		// misaligned to match the original appearance.
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
+
+		interactionDropDown = window->addDropDownList(Common::Rect(17, 148, 322, 167), "Interact using:", 125, interactMode, true);
+		videoQualityDropDown = window->addDropDownList(Common::Rect(17, 218, 322, 237), "Video Quality:", 125, videoQuality, false);
+
+		interactionDropDown->setValue(2);
+		videoQualityDropDown->setValue(0);
 	} else if (_vm->_game.id == GID_MANIAC) {
 		drawSliderBackground(window, 152, 41, 147, 17);
 		drawSliderBackground(window, 152, 72, 147, 10, 5);
-		font->drawString(surface, "Video Quality:", 22, 101, 105, black);
+
+		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 100, 323, 119), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawSliderBackground(window, 152, 63, 147, 17);
 		drawSliderBackground(window, 152, 87, 147, 17);
 		drawSliderBackground(window, 152, 111, 147, 17);
 		drawSliderBackground(window, 152, 203, 147, 9);
 
-		font->drawString(surface, "Interact using:", 22, 175, 105, black);
-		font->drawString(surface, "Video Quality:", 22, 245, 105, black);
-
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
+
+		interactionDropDown = window->addDropDownList(Common::Rect(18, 174, 323, 193), "Interact using:", 125, interactMode, true);
+		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 244, 323, 263), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_FT) {
 		drawSliderBackground(window, 152, 63, 147, 17);
 		drawSliderBackground(window, 152, 87, 147, 17);
 		drawSliderBackground(window, 152, 111, 147, 17);
 		drawSliderBackground(window, 152, 231, 147, 9);
 
-		font->drawString(surface, "Interact using:", 22, 203, 105, black);
-		font->drawString(surface, "Video Quality:", 22, 273, 105, black);
-
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
+		interactionDropDown = window->addDropDownList(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
+		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
 	}
 
 	Common::Array<int> deferredActionsIds;
