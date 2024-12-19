@@ -659,7 +659,7 @@ bool MacV6Gui::runOptionsDialog() {
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
-	} else if (_vm->_game.id == GID_SAMNMAX) {
+	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawSliderBackground(window, 152, 63, 147, 17);
 		drawSliderBackground(window, 152, 87, 147, 17);
 		drawSliderBackground(window, 152, 111, 147, 17);
@@ -670,6 +670,17 @@ bool MacV6Gui::runOptionsDialog() {
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
+	} else if (_vm->_game.id == GID_FT) {
+		drawSliderBackground(window, 152, 63, 147, 17);
+		drawSliderBackground(window, 152, 87, 147, 17);
+		drawSliderBackground(window, 152, 111, 147, 17);
+		drawSliderBackground(window, 152, 231, 147, 9);
+
+		font->drawString(surface, "Interact using:", 22, 203, 105, black);
+		font->drawString(surface, "Video Quality:", 22, 273, 105, black);
+
+		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
+		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
 	}
 
 	Common::Array<int> deferredActionsIds;
