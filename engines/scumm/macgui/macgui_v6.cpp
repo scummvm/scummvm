@@ -596,18 +596,11 @@ bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 }
 
 bool MacV6Gui::runOptionsDialog() {
-	// TODO: How to guarantee that the window has all the colors it needs
-	// for its pictures?
-
 	// There are too many different variations to list all widgets here.
 	// The important thing that they share are that the first three buttons
 	// are OK, Cancel, and Defaults, and that with the exception of Maniac
 	// Mansion they expect the first text to contain the name of the game
 	// as "^3".
-	//
-	// Strangely enough, Day of the Tentacle seems to use a lot more "User
-	// items" than the other ones, which means we'll have to hard-code them
-	// here instead.
 
 	int dialogId = (_vm->_game.id == GID_MANIAC) ? 385 : 257;
 
@@ -625,6 +618,10 @@ bool MacV6Gui::runOptionsDialog() {
 	}
 
 	window->setDefaultWidget(buttonOk);
+
+	Graphics::Surface *surface = window->innerSurface();
+	const Graphics::Font *font = getFont(kSystemFont);
+	uint32 black = getBlack();
 
 	if (_vm->_game.id == GID_TENTACLE) {
 		// Unlike the other games, Day of the Tentacle uses a lot of
@@ -650,18 +647,29 @@ bool MacV6Gui::runOptionsDialog() {
 			}
 		}
 
-		uint32 black = getBlack();
+		font->drawString(surface, "Volume Settings", 27, 33, 110, black);
+		font->drawString(surface, "Voice & Effects:", 23, 85, 105, black);
+		font->drawString(surface, "Text & Voice Settings", 26, 122, 140, black);
+		font->drawString(surface, "Interact using:", 21, 149, 105, black);
+		font->drawString(surface, "Text Speed:", 22, 175, 105, black);
+		font->drawString(surface, "Video Quality:", 21, 219, 105, black);
 
-		const Graphics::Font *font = getFont(kSystemFont);
-		font->drawString(window->innerSurface(), "Volume Settings", 27, 33, 110, black);
-		font->drawString(window->innerSurface(), "Voice & Effects:", 23, 85, 105, black);
-		font->drawString(window->innerSurface(), "Text & Voice Settings", 26, 122, 140, black);
-		font->drawString(window->innerSurface(), "Interact using:", 21, 149, 105, black);
-		font->drawString(window->innerSurface(), "Text Speed:", 22, 175, 105, black);
-		font->drawString(window->innerSurface(), "Video Quality:", 21, 219, 105, black);
+		// Yes, the frames really are supposed to be slightly
+		// misaligned to match the original appearance.
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
+	} else if (_vm->_game.id == GID_SAMNMAX) {
+		drawSliderBackground(window, 152, 63, 147, 17);
+		drawSliderBackground(window, 152, 87, 147, 17);
+		drawSliderBackground(window, 152, 111, 147, 17);
+		drawSliderBackground(window, 152, 203, 147, 9);
+
+		font->drawString(surface, "Interact using:", 22, 175, 105, black);
+		font->drawString(surface, "Video Quality:", 22, 245, 105, black);
+
+		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
+		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
 	}
 
 	Common::Array<int> deferredActionsIds;
