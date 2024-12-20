@@ -624,6 +624,16 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 	byte paletteMap[256];
 	memset(paletteMap, 0, sizeof(paletteMap));
 
+	const byte monoPalette[] = {
+		0xFF, 0xFF, 0xFF,
+		0x00, 0x00, 0x00
+	};
+
+	if (colorCount == 0) {
+		colorCount = 2;
+		palette = monoPalette;
+	}
+
 	for (int i = 0; i < colorCount; i++) {
 		int r = palette[3 * i];
 		int g = palette[3 * i + 1];
