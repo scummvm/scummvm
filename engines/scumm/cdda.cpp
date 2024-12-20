@@ -20,6 +20,7 @@
  */
 
 #include "scumm/cdda.h"
+#include "common/file.h"
 #include "common/stream.h"
 #include "audio/audiostream.h"
 
@@ -104,16 +105,22 @@ int CDDAStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark -
 
 Audio::SeekableAudioStream *makeCDDAStream(
-	Common::SeekableReadStream *stream,
+	const Common::String &filename,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	Audio::SeekableAudioStream *s = new CDDAStream(stream, disposeAfterUse);
+	Common::File *cdAudioFile = new Common::File();
+
+	if (!cdAudioFile->open(Common::Path(filename))) {
+		delete cdAudioFile;
+		return nullptr;
+	}
+
+	Audio::SeekableAudioStream *s = new CDDAStream(cdAudioFile, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;
 		return nullptr;
 	} else {
 		return s;
 	}
-	return nullptr;
 }
 
 } // End of namespace Scumm

@@ -28,6 +28,7 @@
 #include "audio/mididrv.h"
 #include "backends/audiocd/audiocd.h"
 #include "scumm/file.h"
+#include "scumm/soundse.h"
 
 // The number of "ticks" (1/10th of a second) into the Overture that the
 // LucasFilm logo should appear. This corresponds to a timer value of 204.
@@ -118,6 +119,8 @@ protected:
 	int _loomOvertureTransition;
 	uint32 _replacementTrackStartTime;
 
+	SoundSE *_soundSE = nullptr;
+
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 
@@ -192,41 +195,6 @@ protected:
 	virtual void processSoundQueues();
 
 	int getReplacementAudioTrack(int soundID);
-
-#ifdef ENABLE_DOUBLEFINE_XWB
-private:
-
-	// For XWB files in Doublefine game variants
-	enum XWBCodec {
-		kXWBCodecPCM = 0,
-		kXWBCodecXMA = 1,
-		kXWBCodecADPCM = 2,
-		kXWBCodecWMA = 3
-	};
-
-	enum XWBSegmentType {
-		kXWBSegmentBankData = 0,
-		kXWBSegmentEntryMetaData = 1,
-		kXWBSegmentSeekTables = 2,
-		kXWBSegmentEntryNames = 3,
-		kXWBSegmentEntryWaveData = 4
-	};
-
-	struct XWBEntry {
-		uint32 offset;
-		uint32 length;
-		XWBCodec codec;
-		byte channels;
-		uint16 rate;
-		uint16 align;
-		byte bits;
-	};
-
-	Common::Array<XWBEntry> _xwbEntries;
-
-	void indexXWBFile(const Common::String &filename);
-	Audio::SeekableAudioStream *createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry);
-#endif
 };
 
 

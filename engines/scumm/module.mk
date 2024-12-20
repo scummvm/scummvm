@@ -84,6 +84,7 @@ MODULE_OBJS := \
 	script.o \
 	scumm.o \
 	sound.o \
+	soundse.o \
 	string.o \
 	usage_bits.o \
 	util.o \
