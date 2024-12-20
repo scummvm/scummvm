@@ -111,7 +111,7 @@ Common::String ReadStream::readPascalString(bool transformCR) {
 }
 
 uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
-	if(dataPtr == nullptr)
+	if (!dataPtr)
 		return 0;
 
 	// Read at most as many bytes as are still available...
