@@ -1679,17 +1679,35 @@ void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
 		s->hLine(r.left + 3, r.bottom, r.right, _black);
 		s->vLine(r.right, r.top + 3, r.bottom - 1, _black);
 
-		for (uint i = 0; i < _texts.size(); i++) {
-			font->drawString(s, _texts[i], _dropDownBounds.left, _dropDownBounds.top + 16 * i + 1, _dropDownBounds.width() - 3, _black, Graphics::kTextAlignLeft, 15);
+		Common::Rect textRect(r.left + 1, r.top + 1, r.right - 1, r.top + 17);
+
+		for (int i = 0; i < (int)_texts.size(); i++) {
+			if (i == _selected) {
+				fg = _white;
+				bg = _black;
+			} else {
+				fg = _black;
+				bg = _white;
+			}
+
+			s->fillRect(textRect, bg);
+
+			font->drawString(s, _texts[i], textRect.left, textRect.top, textRect.width(), fg, Graphics::kTextAlignLeft, 14);
+
+			if (i == _value)
+				font->drawString(s, "\x12", textRect.left + 2, textRect.top, 10, fg);
+
+			textRect.translate(0, 16);
 		}
-
-		font->drawString(s, "\x12", _dropDownBounds.left, _bounds.top + 1, 15, _black, Graphics::kTextAlignLeft, 3);
 	} else {
-		s->frameRect(Common::Rect(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 1), _black);
-		s->hLine(_bounds.left + _textWidth + 3, _bounds.bottom - 1, _bounds.right - 1, _black);
-		s->vLine(_bounds.right - 1, _bounds.top + 3, _bounds.bottom - 2, _black);
+		Common::Rect r(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 1);
 
-		font->drawString(s, _texts[_value], _bounds.left + _textWidth + 15, _bounds.top + 1, _bounds.width() - _textWidth - 25, _black);
+		s->fillRect(r, _white);
+		s->frameRect(r, _black);
+		s->hLine(r.left + 3, r.bottom, r.right, _black);
+		s->vLine(r.right, r.top + 3, r.bottom - 1, _black);
+
+		font->drawString(s, _texts[_value], r.left, r.top + 1, r.width() - 20, _black, Graphics::kTextAlignLeft, 15);
 
 		const uint16 arrowDownIcon[16] = {
 			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x3FF8, 0x1FF0, 0x0FE0,
@@ -1702,7 +1720,7 @@ void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
 		};
 
 		Common::Rect iconRect(16, 16);
-		iconRect.moveTo(_bounds.right - 20, _bounds.top + 1);
+		iconRect.moveTo(r.right - 19, r.top + 1);
 
 		drawBitmap(iconRect, _enabled ? arrowDownIcon : disabledArrowDownIcon, _black);
 	}
@@ -1723,12 +1741,68 @@ void MacGuiImpl::MacDropDownList::handleMouseDown(Common::Event &event) {
 
 	_dropDownBackground.free();
 	_dropDownBackground.copyFrom(background);
+
+	_menuVisible = true;
+	_selected = _value;
 }
 
 bool MacGuiImpl::MacDropDownList::handleMouseUp(Common::Event &event) {
+	if (_selected != -1) {
+		int selected = _selected;
+
+		for (int i = 0; i < 6; i++) {
+			if (_selected == selected)
+				_selected = -1;
+			else
+				_selected = selected;
+
+			// It is a bit wasteful to redraw the entire widget
+			// just for this. It's also a lot easier.
+
+			setRedraw();
+			_window->update();
+
+			for (int j = 0; j < 3; j++) {
+				Common::Event e;
+				while (_window->_system->getEventManager()->pollEvent(e))
+					;
+				_window->_system->delayMillis(10);
+				_window->_system->updateScreen();
+			}
+		}
+
+		setValue(selected);
+	}
+
 	_window->drawSprite(&_dropDownBackground, _dropDownBounds.left, _dropDownBounds.top);
+	_menuVisible = false;
 
 	return false;
+}
+
+void MacGuiImpl::MacDropDownList::handleMouseMove(Common::Event &event) {
+	if (!_menuVisible)
+		return;
+
+	Common::Rect menuBounds(_dropDownBounds.left + 1, _dropDownBounds.top + 1, _dropDownBounds.right - 2, _dropDownBounds.bottom - 2);
+
+	int selected = -1;
+
+	if (menuBounds.contains(event.mouse.x, event.mouse.y)) {
+		selected = (event.mouse.y - menuBounds.top) / 16;
+
+		int maxValue = _texts.size() - 1;
+
+		if (selected > maxValue) {
+			warning("MacGuiImpl::MacDropDownList::handleMouseMove: Max selection value exceeded");
+			selected = -1;
+		}
+	}
+
+	if (selected != _selected) {
+		_selected = selected;
+		setRedraw();
+	}
 }
 
 } // End of namespace Scumm
