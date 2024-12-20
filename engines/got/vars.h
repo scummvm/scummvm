@@ -54,6 +54,7 @@ public:
 	~Vars();
 
 	void load();
+	void setArea(int areaNum);
 
 	Gfx::GfxChunks _gfx;
 	Gfx::BgPics _bgPics;
