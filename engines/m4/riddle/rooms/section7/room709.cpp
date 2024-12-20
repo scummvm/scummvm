@@ -595,6 +595,384 @@ void Room709::parser() {
 }
 
 void Room709::daemon() {
+	int32 delay;
+
+	switch (_G(kernel).trigger) {
+	case 10:
+		player_set_commands_allowed(false);
+		setGlobals1(_ripTrekLowReachPos2Series, 1, 16, 16, 16, 0, 16, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 11);
+
+		break;
+
+	case 11:
+		if (_field80_save == 97) {
+			inv_give_to_player("CHISEL");
+			terminateMachine(_709ChiselMach);
+			_field44 = 0;
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			kernel_examine_inventory_object("PING CHISEL", _G(master_palette), 5, 1, 163, 203, -1, nullptr, -1);
+			digi_play("709R03", 1, 255, 12, -1);
+		}
+
+		if (_field80_save == 22) {
+			inv_give_to_player("INCENSE BURNER");
+			terminateMachine(_709IncenseHolderMach);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			_field48 = 0;
+			kernel_examine_inventory_object("PING INCENSE BURNER", _G(master_palette), 5, 1, 329, 189, -1, nullptr, -1);
+			digi_play("709R13", 1, 255, 12, -1);
+		}
+
+		break;
+
+	case 12:
+		sendWSMessage_120000(_G(my_walker), 13);
+		break;
+
+	case 13:
+		kernel_timing_trigger(5, 14, nullptr);
+		break;
+
+	case 14:
+		sendWSMessage_150000(_G(my_walker), 15);
+		break;
+
+	case 15:
+		player_set_commands_allowed(true);
+		break;
+
+	case 20:
+		ws_demand_location(_G(my_walker), 410, 300);
+		ws_demand_facing(_G(my_walker), 9);
+		_field80_save = _maze709Arr[_field80_save]._field_10;
+		if (_field44 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			terminateMachine(_709ChiselMach);
+		}
+
+		if (_field80_save == 97 && inv_object_is_here("CHISEL")) {
+			_field44 = 1;
+			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
+		}
+
+		if (_field48 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			terminateMachine(_709IncenseHolderMach);
+		}
+
+		if (_field80_save == 22 && inv_object_is_here("INCENSE BURNER")) {
+			_field48 = 1;
+			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
+		}
+
+		if (_field74 == 1) {
+			terminateMachine(_field24Mach);
+			_field74 = 0;
+		}
+
+		if (_field70 == 1) {
+			terminateMachine(_ripPullMach);
+			_field70 = 0;
+		}
+
+		if (_field78 == 1) {
+			terminateMachine(_field2CMach);
+			_field78 = 0;
+		}
+
+		if (_field7C == 1) {
+			terminateMachine(_field30Mach);
+			_field7C = 0;
+		}
+
+		if (_field80_save == 82) {
+			_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
+			sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
+			_field70 = 1;
+			pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+			player_set_commands_allowed(true);
+			delay = imath_ranged_rand(1, 10);
+			if (delay == 10) {
+				kernel_timing_trigger(delay, 1000, nullptr);
+			}
+		}
+
+		break;
+
+	case 30:
+		ws_demand_location(_G(my_walker), 230, 300);
+		ws_demand_facing(_G(my_walker), 3);
+		_field80_save = _maze709Arr[_field80_save]._field_14;
+		if (_field44 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			terminateMachine(_709ChiselMach);
+		}
+
+		if (_field80_save == 97 && inv_object_is_here("Chisel")) {
+			_field44 = 1;
+			_709ChiselMach = series_place_sprite("709 CHISEL", 0,0,0,100,3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
+		}
+
+		if (_field48 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			terminateMachine(_709IncenseHolderMach);
+		}
+
+		if (_field80_save == 22 && inv_object_is_here("INCENSE BURNER")) {
+			_field48 = 1;
+			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
+		}
+
+		if (_field74 == 1) {
+			terminateMachine(_field24Mach);
+			_field74 = 0;
+		}
+
+		if (_field70 == 1) {
+			terminateMachine(_ripPullMach);
+			_field70 = 0;
+		}
+
+		if (_field78 == 1) {
+			terminateMachine(_field2CMach);
+			_field78 = 0;
+		}
+
+		if (_field7C == 1) {
+			terminateMachine(_field30Mach);
+			_field7C = 0;
+		}
+
+		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+		player_set_commands_allowed(true);
+		delay = imath_ranged_rand(1, 10);
+		if (delay == 10) {
+			kernel_timing_trigger(delay, 1000, nullptr);
+		}
+
+		break;
+
+	case 40:
+		ws_demand_location(_G(my_walker), 320, 400);
+		ws_demand_facing(_G(my_walker), 1);
+		_field80_save = _maze709Arr[_field80_save]._field_18;
+		if (_field44 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			terminateMachine(_709ChiselMach);
+		}
+
+		if (_field80_save == 97 && inv_object_is_here("Chisel")) {
+			_field44 = 1;
+			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
+		}
+
+		if (_field48 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			terminateMachine(_709IncenseHolderMach);
+		}
+
+		if (_field80_save == 22 && inv_object_is_here("INCENSE BURNER")) {
+			_field48 = 1;
+			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
+		}
+
+		if (_field74 == 1) {
+			terminateMachine(_field24Mach);
+			_field74 = 0;
+		}
+
+		if (_field70 == 1) {
+			terminateMachine(_ripPullMach);
+			_field70 = 0;
+		}
+
+		if (_field78 == 1) {
+			terminateMachine(_field2CMach);
+			_field78 = 0;
+		}
+
+		if (_field7C == 1) {
+			terminateMachine(_field30Mach);
+			_field7C = 0;
+		}
+
+		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+		player_set_commands_allowed(true);
+		delay = imath_ranged_rand(1, 10);
+		if (delay == 10) {
+			kernel_timing_trigger(delay, 1000, nullptr);
+		}
+
+		break;
+
+	case 50:
+		ws_demand_location(_G(my_walker), 320, 280);
+		ws_demand_facing(_G(my_walker), 5);
+		_field80_save = _maze709Arr[_field80_save]._field_1C;
+
+		if (_field80_save == 50) {
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s41", 3, 255, -1, -1);
+			RemoveSystemHotkey(KEY_CLEAR);
+			RemoveSystemHotkey(5);
+			_G(game).new_room = 710;
+		}
+
+		if (_field44 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			terminateMachine(_709ChiselMach);
+		}
+
+		if (_field80_save == 97 && inv_object_is_here("Chisel")) {
+			_field44 = 1;
+			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
+		}
+
+		if (_field48 == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			terminateMachine(_709IncenseHolderMach);
+		}
+
+		if (_field80_save == 22 && inv_object_is_here("INCENSE BURNER")) {
+			_field48 = 1;
+			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
+		}
+
+		if (_field74 == 1) {
+			terminateMachine(_field24Mach);
+			_field74 = 0;
+		}
+
+		if (_field70 == 1) {
+			terminateMachine(_ripPullMach);
+			_field70 = 0;
+		}
+
+		if (_field78 == 1) {
+			terminateMachine(_field2CMach);
+			_field78 = 0;
+		}
+
+		if (_field7C == 1) {
+			terminateMachine(_field30Mach);
+			_field7C = 0;
+		}
+
+		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+		player_set_commands_allowed(true);
+		delay = imath_ranged_rand(1, 10);
+		if (delay == 10) {
+			kernel_timing_trigger(delay, 1000, nullptr);
+		}
+
+		break;
+
+	case 100:
+		digi_play("950_s41", 3, 255, 100, -1);
+		break;
+
+	case 500:
+		digi_stop(1);
+		digi_play_loop("304_s05", 2, 255, -1, -1);
+		kernel_timing_trigger(20, 502, nullptr);
+
+		break;
+
+	case 502:
+		digi_play("709_s99", 3, 255, 504, -1);
+		break;
+
+	case 504:
+		adv_kill_digi_between_rooms(false);
+		digi_play_loop("950_s41", 3, 255, -1, -1);
+		RemoveSystemHotkey(KEY_CLEAR);
+		RemoveSystemHotkey(5);
+		_G(game).new_room = 710;
+
+		break;
+
+	case 1000:
+		player_set_commands_allowed(false);
+		kernel_timing_trigger(10, 1001, nullptr);
+
+		break;
+
+	case 1001:
+		player_update_info(_G(my_walker), &_G(player_info));
+
+		switch (_G(player_info).facing) {
+		case 1:
+			kernel_timing_trigger(10, 1002);
+			break;
+
+		case 3:
+		case 9:
+			kernel_timing_trigger(10, 1047);
+			break;
+
+		case 5:
+			kernel_timing_trigger(10, 1022);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 1002:
+	case 1007:
+	case 1008:
+		sendWSMessage_190000(_G(my_walker), 5);
+		sendWSMessage_120000(_G(my_walker), 1009);
+
+		break;
+
+	case 1009:
+	case 1010:
+	case 1011:
+	case 1012:
+	case 1013:
+	case 1014:
+	case 1015:
+	case 1022:
+	case 1027:
+	case 1028:
+	case 1029:
+	case 1030:
+	case 1031:
+	case 1032:
+	case 1033:
+	case 1034:
+	case 1037:
+	case 1038:
+	case 1039:
+	case 1040:
+	case 1041:
+	case 1047:
+	case 1057:
+	case 1058:
+	case 1059:
+	case 1060:
+	case 1061:
+	case 1067:
+	case 1068:
+	case 1069:
+	case 1070:
+	case 1073:
+
+	default:
+		break;
+	}
+
 	// TODO Not implemented yet
 }
 

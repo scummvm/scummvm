@@ -72,6 +72,10 @@ private:
 	int32 _mazeRightDoorLiteSeries = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 
+	machine *_field24Mach = nullptr;
+	machine *_field2CMach = nullptr;
+	machine *_field30Mach = nullptr;
+
 	machine *_709IncenseHolderMach = nullptr;
 	machine *_709rpro5Mach = nullptr;
 	machine *_709rpro6Mach = nullptr;
