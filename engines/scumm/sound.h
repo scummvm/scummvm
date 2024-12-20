@@ -60,11 +60,6 @@ enum {
 	kTalkSoundID = 10000
 };
 
-// TODO: XWB audio packages, used in Doublefine MI1 and MI2.
-// We're still missing WMA support in SCUMM, so we can't play
-// the audio files contained in these packages.
-//#define ENABLE_DOUBLEFINE_XWB 1
-
 // TODO: Consider splitting Sound into even more subclasses.
 // E.g. for v1-v4, v5, v6+, ...
 class Sound : public Common::Serializable {
