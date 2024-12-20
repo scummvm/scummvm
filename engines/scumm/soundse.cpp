@@ -76,12 +76,6 @@ Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 
 	XWBEntry entry = _xwbMusicEntries[track];
 
-	// TODO: Remove this, once WMA streams are supported!
-	if (entry.codec == kXWBCodecWMA) {
-		delete cdAudioFile;
-		return nullptr;
-	}
-
 	auto subStream = new Common::SeekableSubReadStream(
 		cdAudioFile,
 		entry.offset,
@@ -193,7 +187,6 @@ Audio::SeekableAudioStream *SoundSE::createXWBStream(Common::SeekableSubReadStre
 		);
 	}
 	case kXWBCodecWMA:
-		error("createXWBStream: WMA codec not implemented");
 		// TODO: Implement WMA codec
 		/*return new Audio::WMACodec(
 			2,
@@ -203,7 +196,9 @@ Audio::SeekableAudioStream *SoundSE::createXWBStream(Common::SeekableSubReadStre
 			entry.align,
 			stream
 		);*/
-
+		warning("createXWBStream: WMA codec not implemented");
+		delete stream;
+		return nullptr;
 	}
 
 	error("createXWBStream: Unknown XWB codec %d", entry.codec);
