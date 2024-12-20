@@ -70,6 +70,7 @@ private:
 	int32 _mazeCenterDoorLiteSeries = 0;
 	int32 _mazeLeftDoorLiteSeries = 0;
 	int32 _mazeRightDoorLiteSeries = 0;
+	int32 _ripTrekHeadTurnPos1Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 
 	machine *_field24Mach = nullptr;

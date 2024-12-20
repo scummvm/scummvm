@@ -929,7 +929,16 @@ void Room709::daemon() {
 		break;
 
 	case 1002:
+		kernel_timing_trigger(10, imath_ranged_rand(1, 2) == 1 ? 1007 : 1012, nullptr);
+		break;
+
 	case 1007:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HEAD TURN POS1", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 3, 3, 3, 0, 3, 1, 1, 1, 0, 4, 8, 8, 8, 0, 8, 4, 4, 4, 0);
+		sendWSMessage_110000(_G(my_walker), 1008);
+
+		break;
+
 	case 1008:
 		sendWSMessage_190000(_G(my_walker), 5);
 		sendWSMessage_120000(_G(my_walker), 1009);
@@ -937,43 +946,159 @@ void Room709::daemon() {
 		break;
 
 	case 1009:
+		sendWSMessage_130000(_G(my_walker), 1010);
+		break;
+
 	case 1010:
+		sendWSMessage_180000(_G(my_walker), 1011);
+		break;
+
 	case 1011:
+		sendWSMessage_150000(_G(my_walker), 1073);
+		break;
+
 	case 1012:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HANDS HIPS POS1", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 1, 1, 1, 0, 1, 12, 12, 12, 0, 12, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1013);
+
+		break;
+
 	case 1013:
+		sendWSMessage_190000(_G(my_walker), 5);
+		sendWSMessage_120000(_G(my_walker), 1014);
+		break;
+
 	case 1014:
+		sendWSMessage_130000(_G(my_walker), 1015);
+		break;
+
 	case 1015:
-	case 1022:
-	case 1027:
-	case 1028:
-	case 1029:
-	case 1030:
 	case 1031:
-	case 1032:
-	case 1033:
 	case 1034:
-	case 1037:
-	case 1038:
-	case 1039:
-	case 1040:
 	case 1041:
-	case 1047:
-	case 1057:
-	case 1058:
-	case 1059:
-	case 1060:
 	case 1061:
-	case 1067:
-	case 1068:
-	case 1069:
 	case 1070:
+		sendWSMessage_150000(_G(my_walker), 1073);
+		break;
+
+	case 1022:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			kernel_timing_trigger(10, 1027, nullptr);
+			break;
+
+		case 2:
+			kernel_timing_trigger(10, 1032, nullptr);
+			break;
+
+		case 3:
+			kernel_timing_trigger(10, 1037, nullptr);
+			break;
+
+
+		default:
+			break;
+		}
+		break;
+
+	case 1027:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HEAD TURN POS5", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 7, 7, 7, 0, 7, 1, 1, 1, 0, 8, 12, 12, 12, 0, 12, 8, 8, 8, 0);
+		sendWSMessage_110000(_G(my_walker), 1028);
+
+		break;
+
+	case 1028:
+		sendWSMessage_120000(_G(my_walker), 1029);
+		break;
+
+	case 1029:
+		sendWSMessage_130000(_G(my_walker), 1030);
+		break;
+
+	case 1030:
+		sendWSMessage_180000(_G(my_walker), 1031);
+		break;
+
+	case 1032:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HANDS HIP POS5", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1033);
+
+		break;
+
+	case 1033:
+		sendWSMessage_120000(_G(my_walker), 1034);
+		break;
+
+	case 1037:
+		_ripTrekHeadTurnPos1Series = series_load("RIP LOOKS L R DOWN", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 4, 4, 4, 0, 4, 1, 1, 1, 0, 5, 9, 9, 9, 0, 9, 5, 5, 5, 0);
+		sendWSMessage_110000(_G(my_walker), 1038);
+
+		break;
+
+	case 1038:
+		sendWSMessage_120000(_G(my_walker), 1039);
+		break;
+
+	case 1039:
+		sendWSMessage_130000(_G(my_walker), 1040);
+		break;
+
+	case 1040:
+		sendWSMessage_180000(_G(my_walker), 1041);
+		break;
+
+	case 1047:
+		kernel_timing_trigger(10, imath_ranged_rand(1, 2) == 1 ? 1057 : 1067, nullptr);
+		break;
+
+	case 1057:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HEAD TURN POS3", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 5, 5, 5, 0, 5, 1, 1, 1, 0, 6, 9, 9, 9, 0, 9, 6, 6, 6, 0);
+		sendWSMessage_110000(_G(my_walker), 1058);
+
+		break;
+
+	case 1058:
+		sendWSMessage_120000(_G(my_walker), 1059);
+		break;
+
+	case 1059:
+		sendWSMessage_130000(_G(my_walker), 1060);
+		break;
+
+	case 1060:
+		sendWSMessage_180000(_G(my_walker), 1061);
+		break;
+
+	case 1067:
+		_ripTrekHeadTurnPos1Series = series_load("RIP TREK HAND CHIN POS3", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos1Series, 1, 14, 14, 14, 0, 14, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1068);
+
+		break;
+
+	case 1068:
+		kernel_timing_trigger(60, 1069, nullptr);
+		break;
+
+	case 1069:
+		sendWSMessage_120000(_G(my_walker), 1070);
+		break;
+
 	case 1073:
+		series_unload(_ripTrekHeadTurnPos1Series);
+		player_set_commands_allowed(true);
+		ws_unhide_walker(_G(my_walker));
+
+		break;
 
 	default:
 		break;
 	}
-
-	// TODO Not implemented yet
 }
 
 void Room709::clearPressed(void *, void *) {
