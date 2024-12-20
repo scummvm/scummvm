@@ -841,12 +841,16 @@ void MacGuiImpl::MacSliderBase::setValue(int value) {
 }
 
 int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
+	return calculateValueFromPos(_handlePos);
+}
+
+int MacGuiImpl::MacSliderBase::calculateValueFromPos(int pos) const {
 	int value;
 
-	if (_posToValue.tryGetVal(_handlePos, value))
+	if (_posToValue.tryGetVal(pos, value))
 		return value;
 
-	int posOffset = _handlePos - _minPos;
+	int posOffset = pos - _minPos;
 	int posRange = _maxPos - _minPos;
 
 	int valueRange = _maxValue - _minValue;
@@ -856,13 +860,17 @@ int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
 }
 
 int MacGuiImpl::MacSliderBase::calculatePosFromValue() const {
+	return calculatePosFromValue(_value);
+}
+
+int MacGuiImpl::MacSliderBase::calculatePosFromValue(int value) const {
 	int pos;
 
-	if (_valueToPos.tryGetVal(_value, pos))
+	if (_valueToPos.tryGetVal(value, pos))
 		return pos;
 
 	int valueRange = _maxValue - _minValue;
-	int valueOffset = _value - _minValue;
+	int valueOffset = value - _minValue;
 
 	int posRange = _maxPos - _minPos;
 	int posOffset = (valueRange / 2 + posRange * valueOffset) / valueRange;
@@ -1361,7 +1369,15 @@ bool MacGuiImpl::MacImageSlider::handleMouseUp(Common::Event &event) {
 }
 
 void MacGuiImpl::MacImageSlider::handleMouseMove(Common::Event &event) {
-	int newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
+	int newPos;
+
+	if (_snapWhileDragging) {
+		// Even when overriding the stops, the calculated one should
+		// be close enough here.
+		int newValue = calculateValueFromPos(CLIP<int>(event.mouse.x - _bounds.left - _handle->getImage()->w / 2, _minX, _maxX));
+		newPos = calculatePosFromValue(newValue);
+	} else
+		newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
 
 	if (newPos != _handlePos) {
 		eraseHandle();
