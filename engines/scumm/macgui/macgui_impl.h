@@ -538,8 +538,7 @@ public:
 	public:
 		 MacImageSlider(MacGuiImpl::MacDialogWindow *window, MacImage *background, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
 			: MacSliderBase(window, background->getBounds(), minValue, maxValue, minX + leftMargin, maxX - rightMargin, enabled),
-			_background(background->getImage()), _handle(handle), _minX(minX),
-			_maxX(maxX) {}
+			_background(background->getImage()), _handle(handle), _minX(minX), _maxX(maxX) {}
 		MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		~MacImageSlider();
 

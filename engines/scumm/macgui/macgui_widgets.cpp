@@ -1268,7 +1268,8 @@ void MacGuiImpl::MacSlider::handleWheelDown() {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacImageSlider::MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue)
-	: MacSliderBase(window, bounds, minX, maxX, minX, maxX, enabled), _handle(handle), _minX(minX), _maxX(maxX) {
+	: MacSliderBase(window, bounds, minValue, maxValue, minX, maxX, enabled), _handle(handle), _minX(minX), _maxX(maxX) {
+	_background = new Graphics::Surface();
 	_background->copyFrom(window->innerSurface()->getSubArea(bounds));
 	_freeBackground = true;
 }

@@ -72,8 +72,9 @@ protected:
   	void onMenuOpen() override;
 	void onMenuClose() override;
 
-	void drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings = 4);
 	void drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2);
+
+	MacGuiImpl::MacImageSlider *addSlider(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings = 4);
 
 	void runAboutDialog() override;
 	bool runOpenDialog(int &saveSlotToHandle) override;
