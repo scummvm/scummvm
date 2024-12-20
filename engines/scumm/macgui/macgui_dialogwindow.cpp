@@ -268,15 +268,16 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 }
 
 MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(int x, int y, int id, bool enabled) {
-	MacGuiImpl::MacImage *icon = new MacImage(this, Common::Rect(x, y, x + 32, y + 32), _gui->loadIcon(id), false);
-	addWidget(icon, kWidgetIcon);
-	return icon;
+	Graphics::Surface *icon = _gui->loadIcon(id);
+	MacGuiImpl::MacImage *image = new MacImage(this, Common::Rect(x, y, x + icon->w, y + icon->h), icon, false);
+	addWidget(image, kWidgetIcon);
+	return image;
 }
 
 MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	MacGuiImpl::MacImage *picture = new MacImage(this, bounds, _gui->loadPict(id), false);
-	addWidget(picture, kWidgetImage);
-	return picture;
+	MacGuiImpl::MacImage *image = new MacImage(this, bounds, _gui->loadPict(id), false);
+	addWidget(image, kWidgetImage);
+	return image;
 }
 
 MacGuiImpl::MacSlider *MacGuiImpl::MacDialogWindow::addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled) {
