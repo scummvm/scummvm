@@ -127,10 +127,10 @@ public:
 		kWidgetStaticText,
 		kWidgetEditText,
 		kWidgetIcon,
-		kWidgetPicture,
+		kWidgetImage,
 		kWidgetSlider,
 		kWidgetListBox,
-		kWidgetPictureSlider,
+		kWidgetImageSlider,
 		kWidgetDropDownList
 	};
 
@@ -443,28 +443,15 @@ public:
 		void handleMouseMove(Common::Event &event) override;
 	};
 
-	class MacIcon : public MacWidget {
+	class MacImage : public MacWidget {
 	private:
-		Graphics::Surface *_icon = nullptr;
+		Graphics::Surface *_image = nullptr;
 
 	public:
-		MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
-		~MacIcon();
+		MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, bool enabled);
+		~MacImage();
 
-		Graphics::Surface *getIcon() const { return _icon; }
-
-		void draw(bool drawFocused = false);
-	};
-
-	class MacPicture : public MacWidget {
-	private:
-		Graphics::Surface *_picture = nullptr;
-
-	public:
-		MacPicture(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
-		~MacPicture();
-
-		Graphics::Surface *getPicture() const { return _picture; }
+		Graphics::Surface *getImage() const { return _image; }
 
 		void draw(bool drawFocused = false);
 	};
@@ -537,10 +524,10 @@ public:
 		void handleWheelDown();
 	};
 
-	class MacPictureSlider : public MacSliderBase {
+	class MacImageSlider : public MacSliderBase {
 	private:
-		MacPicture *_background;
-		MacPicture *_handle;
+		MacImage *_background;
+		MacImage *_handle;
 		int _minX;
 		int _maxX;
 
@@ -548,7 +535,7 @@ public:
 		void drawHandle();
 
 	public:
-		 MacPictureSlider(MacGuiImpl::MacDialogWindow *window, MacPicture *background, MacPicture *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
+		 MacImageSlider(MacGuiImpl::MacDialogWindow *window, MacImage *background, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
 			: MacSliderBase(window, background->getBounds(), minValue, maxValue, minX + leftMargin, maxX - rightMargin, enabled),
 			_background(background), _handle(handle), _minX(minX),
 			_maxX(maxX) {}
@@ -709,10 +696,10 @@ public:
 		MacGuiImpl::MacCheckbox *addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
 		MacGuiImpl::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 		MacGuiImpl::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
-		MacGuiImpl::MacIcon *addIcon(Common::Rect bounds, int id, bool enabled);
-		MacGuiImpl::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
+		MacGuiImpl::MacImage *addIcon(Common::Rect bounds, int id, bool enabled);
+		MacGuiImpl::MacImage *addPicture(Common::Rect bounds, int id, bool enabled);
 		MacGuiImpl::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
-		MacGuiImpl::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
+		MacGuiImpl::MacImageSlider *addImageSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 		MacGuiImpl::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
 		MacGuiImpl::MacDropDownList *addDropDownList(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
 

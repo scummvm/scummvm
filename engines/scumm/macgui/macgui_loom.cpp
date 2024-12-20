@@ -530,10 +530,10 @@ bool MacLoomGui::runOptionsDialog() {
 	if (!sound)
 		checkboxMusic->setEnabled(false);
 
-	MacPictureSlider *sliderTextSpeed = window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
+	MacImageSlider *sliderTextSpeed = window->addImageSlider(4, 5, true, 5, 105, 0, 9);
 	sliderTextSpeed->setValue(textSpeed);
 
-	MacPictureSlider *sliderMusicQuality = window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+	MacImageSlider *sliderMusicQuality = window->addImageSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
 	sliderMusicQuality->setValue(musicQualityOption);
 
 	// Machine rating

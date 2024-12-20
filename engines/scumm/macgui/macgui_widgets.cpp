@@ -804,56 +804,28 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
-// Icon widget
+// Image widget
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacIcon::MacIcon(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Icon", enabled) {
-	_icon = _window->_gui->loadIcon(id);
+MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
+	_image = surface;
 }
 
-MacGuiImpl::MacIcon::~MacIcon() {
-	if (_icon) {
-		_icon->free();
-		delete _icon;
+MacGuiImpl::MacImage::~MacImage() {
+	if (_image) {
+		_image->free();
+		delete _image;
 	}
 }
 
-void MacGuiImpl::MacIcon::draw(bool drawFocused) {
+void MacGuiImpl::MacImage::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGuiImpl::MacIcon: Drawing icon %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGuiImpl::MacImage: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	if (_icon)
-		_window->drawSprite(_icon, _bounds.left, _bounds.top);
-
-	_redraw = false;
-	_fullRedraw = false;
-}
-
-// ---------------------------------------------------------------------------
-// Picture widget
-// ---------------------------------------------------------------------------
-
-MacGuiImpl::MacPicture::MacPicture(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
-	_picture = _window->_gui->loadPict(id);
-}
-
-MacGuiImpl::MacPicture::~MacPicture() {
-	if (_picture) {
-		_picture->free();
-		delete _picture;
-	}
-}
-
-void MacGuiImpl::MacPicture::draw(bool drawFocused) {
-	if (!_redraw && !_fullRedraw)
-		return;
-
-	debug(1, "MacGuiImpl::MacPicture: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
-
-	if (_picture)
-		_window->drawSprite(_picture, _bounds.left, _bounds.top);
+	if (_image)
+		_window->drawSprite(_image, _bounds.left, _bounds.top);
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -1290,12 +1262,12 @@ void MacGuiImpl::MacSlider::handleWheelDown() {
 }
 
 // ---------------------------------------------------------------------------
-// Picture slider widget. This is the custom slider widget used for the Loom
+// Image slider widget. This is the custom slider widget used for the Loom
 // and Indy 3 options dialogs. It consists of a background image and a slider
 // drag handle.
 // ---------------------------------------------------------------------------
 
-bool MacGuiImpl::MacPictureSlider::findWidget(int x, int y) const {
+bool MacGuiImpl::MacImageSlider::findWidget(int x, int y) const {
 	// Once we start dragging the handle, any mouse position is considered
 	// within the widget.
 
@@ -1305,14 +1277,14 @@ bool MacGuiImpl::MacPictureSlider::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGuiImpl::MacPictureSlider::draw(bool drawFocused) {
+void MacGuiImpl::MacImageSlider::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGuiImpl::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGuiImpl::MacImageSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	if (_fullRedraw) {
-		_window->drawSprite(_background->getPicture(), _bounds.left, _bounds.top);
+		_window->drawSprite(_background->getImage(), _bounds.left, _bounds.top);
 		drawHandle();
 	}
 
@@ -1320,25 +1292,25 @@ void MacGuiImpl::MacPictureSlider::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGuiImpl::MacPictureSlider::eraseHandle() {
+void MacGuiImpl::MacImageSlider::eraseHandle() {
 	Common::Rect r = _handle->getBounds();
 	int y = r.top - _bounds.top;
 	int w = r.width();
 	int h = r.height();
 
-	Graphics::Surface *background = _background->getPicture();
+	Graphics::Surface *background = _background->getImage();
 	Graphics::Surface sprite = background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
 	_window->drawSprite(&sprite, _bounds.left + _handlePos, r.top);
 }
 
-void MacGuiImpl::MacPictureSlider::drawHandle() {
-	Graphics::Surface *sprite = _handle->getPicture();
+void MacGuiImpl::MacImageSlider::drawHandle() {
+	Graphics::Surface *sprite = _handle->getImage();
 	Common::Rect r = _handle->getBounds();
 
 	_window->drawSprite(sprite, _bounds.left + _handlePos, r.top);
 }
 
-void MacGuiImpl::MacPictureSlider::handleMouseDown(Common::Event &event) {
+void MacGuiImpl::MacImageSlider::handleMouseDown(Common::Event &event) {
 	int mouseX = event.mouse.x;
 	int handleWidth = _handle->getBounds().width();
 
@@ -1350,7 +1322,7 @@ void MacGuiImpl::MacPictureSlider::handleMouseDown(Common::Event &event) {
 	handleMouseMove(event);
 }
 
-bool MacGuiImpl::MacPictureSlider::handleMouseUp(Common::Event &event) {
+bool MacGuiImpl::MacImageSlider::handleMouseUp(Common::Event &event) {
 	// Erase the drag rect, since the handle might not end up in
 	// the exact same spot.
 	int newValue = calculateValueFromPos();
@@ -1365,7 +1337,7 @@ bool MacGuiImpl::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	return false;
 }
 
-void MacGuiImpl::MacPictureSlider::handleMouseMove(Common::Event &event) {
+void MacGuiImpl::MacImageSlider::handleMouseMove(Common::Event &event) {
 	int newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
 
 	if (newPos != _handlePos) {
@@ -1375,7 +1347,7 @@ void MacGuiImpl::MacPictureSlider::handleMouseMove(Common::Event &event) {
 	}
 }
 
-void MacGuiImpl::MacPictureSlider::handleWheelUp() {
+void MacGuiImpl::MacImageSlider::handleWheelUp() {
 	int newValue = MAX(_minValue, _value + 1);
 
 	if (_value != newValue) {
@@ -1385,7 +1357,7 @@ void MacGuiImpl::MacPictureSlider::handleWheelUp() {
 	}
 }
 
-void MacGuiImpl::MacPictureSlider::handleWheelDown() {
+void MacGuiImpl::MacImageSlider::handleWheelDown() {
 	int newValue = MIN(_maxValue, _value - 1);
 
 	if (_value != newValue) {
