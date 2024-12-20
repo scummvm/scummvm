@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
 
+ SCUMM:
+   - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
+
 
 #### 2.9.0 (2024-12-22)
 
