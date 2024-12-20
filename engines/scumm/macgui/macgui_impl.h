@@ -468,6 +468,8 @@ public:
 		Common::HashMap<int, int> _posToValue;
 		Common::HashMap<int, int> _valueToPos;
 
+		int calculateValueFromPos(int pos) const;
+		int calculatePosFromValue(int value) const;
 		int calculateValueFromPos() const;
 		int calculatePosFromValue() const;
 
@@ -544,6 +546,7 @@ public:
 		int _minX;
 		int _maxX;
 		bool _freeBackground = false;
+		bool _snapWhileDragging = false;
 
 		void eraseHandle();
 		void drawHandle();
@@ -557,6 +560,8 @@ public:
 
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocused = false);
+
+		void setSnapWhileDragging(bool snap) { _snapWhileDragging = snap; }
 
 		void handleMouseDown(Common::Event &event);
 		bool handleMouseUp(Common::Event &event);

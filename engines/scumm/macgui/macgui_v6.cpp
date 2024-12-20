@@ -371,6 +371,7 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 	for (int i = 0; i < numMarkings; i++)
 		slider->addStop(positions[i], i);
 
+	slider->setSnapWhileDragging(true);
 	slider->setValue(0);
 
 	delete[] positions;
