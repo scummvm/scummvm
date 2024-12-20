@@ -526,10 +526,11 @@ public:
 
 	class MacImageSlider : public MacSliderBase {
 	private:
-		MacImage *_background;
+		Graphics::Surface *_background;
 		MacImage *_handle;
 		int _minX;
 		int _maxX;
+		bool _freeBackground = false;
 
 		void eraseHandle();
 		void drawHandle();
@@ -537,8 +538,10 @@ public:
 	public:
 		 MacImageSlider(MacGuiImpl::MacDialogWindow *window, MacImage *background, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
 			: MacSliderBase(window, background->getBounds(), minValue, maxValue, minX + leftMargin, maxX - rightMargin, enabled),
-			_background(background), _handle(handle), _minX(minX),
+			_background(background->getImage()), _handle(handle), _minX(minX),
 			_maxX(maxX) {}
+		MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
+		~MacImageSlider();
 
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocused = false);
@@ -696,10 +699,11 @@ public:
 		MacGuiImpl::MacCheckbox *addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
 		MacGuiImpl::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 		MacGuiImpl::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
-		MacGuiImpl::MacImage *addIcon(Common::Rect bounds, int id, bool enabled);
+		MacGuiImpl::MacImage *addIcon(int x, int y, int id, bool enabled);
 		MacGuiImpl::MacImage *addPicture(Common::Rect bounds, int id, bool enabled);
 		MacGuiImpl::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGuiImpl::MacImageSlider *addImageSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
+		MacGuiImpl::MacImageSlider *addImageSlider(Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		MacGuiImpl::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
 		MacGuiImpl::MacDropDownList *addDropDownList(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
 

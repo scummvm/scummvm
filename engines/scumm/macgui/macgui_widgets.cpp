@@ -1267,6 +1267,19 @@ void MacGuiImpl::MacSlider::handleWheelDown() {
 // drag handle.
 // ---------------------------------------------------------------------------
 
+MacGuiImpl::MacImageSlider::MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue)
+	: MacSliderBase(window, bounds, minX, maxX, minX, maxX, enabled), _handle(handle), _minX(minX), _maxX(maxX) {
+	_background->copyFrom(window->innerSurface()->getSubArea(bounds));
+	_freeBackground = true;
+}
+
+MacGuiImpl::MacImageSlider::~MacImageSlider() {
+	if (_freeBackground && _background) {
+		_background->free();
+		delete _background;
+	}
+}
+
 bool MacGuiImpl::MacImageSlider::findWidget(int x, int y) const {
 	// Once we start dragging the handle, any mouse position is considered
 	// within the widget.
@@ -1284,7 +1297,7 @@ void MacGuiImpl::MacImageSlider::draw(bool drawFocused) {
 	debug(1, "MacGuiImpl::MacImageSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	if (_fullRedraw) {
-		_window->drawSprite(_background->getImage(), _bounds.left, _bounds.top);
+		_window->drawSprite(_background, _bounds.left, _bounds.top);
 		drawHandle();
 	}
 
@@ -1298,8 +1311,7 @@ void MacGuiImpl::MacImageSlider::eraseHandle() {
 	int w = r.width();
 	int h = r.height();
 
-	Graphics::Surface *background = _background->getImage();
-	Graphics::Surface sprite = background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
+	Graphics::Surface sprite = _background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
 	_window->drawSprite(&sprite, _bounds.left + _handlePos, r.top);
 }
 

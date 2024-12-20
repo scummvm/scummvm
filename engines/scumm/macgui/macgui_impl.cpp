@@ -645,8 +645,7 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 		paletteMap[i] = c;
 	}
 
-	// Colors outside the palette are not remapped. Some images use 0xFF
-	// for black, and that's what we're using too.
+	// Colors outside the palette are not remapped.
 
 	for (int i = colorCount; i < 256; i++)
 		paletteMap[i] = i;
@@ -655,7 +654,12 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 		for (int y = 0; y < s->h; y++) {
 			for (int x = 0; x < s->w; x++) {
 				int color = surface->getPixel(x, y);
-				s->setPixel(x, y, paletteMap[color]);
+				if (color > colorCount)
+					color = getBlack();
+				else
+					color = paletteMap[color];
+
+				s->setPixel(x, y, color);
 			}
 		}
 	} else {
@@ -827,6 +831,8 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	_macWhite = _windowManager->_colorWhite;
 	_macBlack = _windowManager->_colorBlack;
 
+
+debug("Collect palette");
 	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
 		res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
 
@@ -992,7 +998,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 			}
 			case 32:
 				// Icon
-				window->addIcon(r, res->readUint16BE(), enabled);
+				window->addIcon(r.left, r.top, res->readUint16BE(), enabled);
 				break;
 
 			case 64:
