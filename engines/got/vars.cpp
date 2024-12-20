@@ -100,4 +100,12 @@ Vars::~Vars() {
 	delete[] _mask_buff;
 }
 
+void Vars::setArea(int areaNum) {
+	if (areaNum != _area) {
+		_area = areaNum;
+		_sd_data.setArea(areaNum);
+		_bgPics.setArea(areaNum);
+	}
+}
+
 } // namespace Got
