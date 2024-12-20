@@ -19,9 +19,11 @@
  *
  */
 
+#include "common/file.h"
 #include "got/console.h"
 #include "got/events.h"
 #include "got/vars.h"
+#include "got/got.h"
 
 namespace Got {
 
@@ -29,6 +31,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("view",   WRAP_METHOD(Console, cmdView));
 	registerCmd("sound", WRAP_METHOD(Console, cmdSound));
 	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
+	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
 }
 
 Console::~Console() {
@@ -54,6 +57,24 @@ bool Console::cmdMusic(int argc, const char **argv) {
 	if (argc == 2)
 		_G(sound).music_play(atoi(argv[1]), true);
 	return false;
+}
+
+bool Console::cmdLoad(int argc, const char **argv) {
+	if (argc == 2) {
+		Common::File f;
+		if (!f.open(argv[1])) {
+			debugPrintf("Could not open savegame\n");
+			return true;
+		} else {
+			f.skip(32); // Skip the 32 bytes title
+
+			g_engine->loadGameStream(&f);
+			return false;
+		}
+	}
+
+	debugPrintf("load <original savegame name>\n");
+	return true;
 }
 
 } // namespace Got

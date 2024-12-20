@@ -99,14 +99,8 @@ public:
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 };
 
 extern GotEngine *g_engine;
