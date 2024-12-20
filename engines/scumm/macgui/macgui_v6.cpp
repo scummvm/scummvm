@@ -339,6 +339,8 @@ void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int w
 		int ht = ((i % primaryMarkings) == 0) ? 4 : 2;
 		s->vLine(x + (i * (width - 1)) / (numMarkings - 1), yt, yt + ht, black);
 	}
+
+	window->addIcon(x - 6, y - 4, 300, true);
 }
 
 void MacV6Gui::drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2) {
@@ -703,6 +705,7 @@ bool MacV6Gui::runOptionsDialog() {
 
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
+
 		interactionDropDown = window->addDropDownList(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
 		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
 	}

@@ -267,8 +267,8 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 	return editText;
 }
 
-MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(Common::Rect bounds, int id, bool enabled) {
-	MacGuiImpl::MacImage *icon = new MacImage(this, bounds, _gui->loadIcon(id), false);
+MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(int x, int y, int id, bool enabled) {
+	MacGuiImpl::MacImage *icon = new MacImage(this, Common::Rect(x, y, x + 32, y + 32), _gui->loadIcon(id), false);
 	addWidget(icon, kWidgetIcon);
 	return icon;
 }
@@ -293,6 +293,14 @@ MacGuiImpl::MacImageSlider *MacGuiImpl::MacDialogWindow::addImageSlider(int back
 	handle->setVisible(false);
 
 	MacGuiImpl::MacImageSlider *slider = new MacImageSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
+	addWidget(slider, kWidgetImageSlider);
+	return slider;
+}
+
+MacGuiImpl::MacImageSlider *MacGuiImpl::MacDialogWindow::addImageSlider(Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue) {
+	handle->setVisible(false);
+
+	MacGuiImpl::MacImageSlider *slider = new MacImageSlider(this, bounds, handle, enabled, minX, maxX, minValue, maxValue);
 	addWidget(slider, kWidgetImageSlider);
 	return slider;
 }
