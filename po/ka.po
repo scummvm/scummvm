@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-18 19:45+0000\n"
-"PO-Revision-Date: 2024-12-08 12:18+0000\n"
+"PO-Revision-Date: 2024-12-20 11:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -7069,8 +7069,6 @@ msgid "Rotate down"
 msgstr "დატრიალება დაბლა"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
 msgstr "უკან მიბრუნება"
 
