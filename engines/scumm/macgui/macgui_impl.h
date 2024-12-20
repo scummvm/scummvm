@@ -609,6 +609,8 @@ public:
 	private:
 		Common::StringArray _texts;
 		int _textWidth;
+		bool _menuVisible = false;
+		int _selected;
 		Graphics::Surface _dropDownBackground;
 		Common::Rect _dropDownBounds;
 
@@ -621,6 +623,7 @@ public:
 
 		void handleMouseDown(Common::Event &event);
 		bool handleMouseUp(Common::Event &event);
+		void handleMouseMove(Common::Event &event);
 	};
 
 	class MacDialogWindow {
