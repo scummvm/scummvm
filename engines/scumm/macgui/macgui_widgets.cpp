@@ -841,8 +841,13 @@ void MacGuiImpl::MacSliderBase::setValue(int value) {
 }
 
 int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
-	int posRange = _maxPos - _minPos;
+	int value;
+
+	if (_posToValue.tryGetVal(_handlePos, value))
+		return value;
+
 	int posOffset = _handlePos - _minPos;
+	int posRange = _maxPos - _minPos;
 
 	int valueRange = _maxValue - _minValue;
 	int valueOffset = (posRange / 2 + valueRange * posOffset) / posRange;
@@ -851,6 +856,11 @@ int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
 }
 
 int MacGuiImpl::MacSliderBase::calculatePosFromValue() const {
+	int pos;
+
+	if (_valueToPos.tryGetVal(_value, pos))
+		return pos;
+
 	int valueRange = _maxValue - _minValue;
 	int valueOffset = _value - _minValue;
 

@@ -356,14 +356,24 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 
 	int yt = y + 14;
 
+	int *positions = new int[numMarkings];
+
 	for (int i = 0; i < numMarkings; i++) {
 		int ht = ((i % primaryMarkings) == 0) ? 4 : 2;
-		s->vLine(x + (i * (width - 1)) / (numMarkings - 1), yt, yt + ht, black);
+		int xt = x + (i * (width - 1)) / (numMarkings - 1);
+		s->vLine(xt, yt, yt + ht, black);
+		positions[i] = xt - x;
 	}
 
 	MacImage *handle = window->addIcon(x - 6, y - 4, 300, true);
 	MacImageSlider *slider = window->addImageSlider(Common::Rect(x - 6, y - 4, x + width + 7, y + 16), handle, true, 0, width - 1, 0, numMarkings - 1);
 
+	for (int i = 0; i < numMarkings; i++)
+		slider->addStop(positions[i], i);
+
+	slider->setValue(0);
+
+	delete[] positions;
 	return slider;
 }
 
