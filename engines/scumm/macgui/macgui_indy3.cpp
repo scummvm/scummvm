@@ -1529,7 +1529,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 	if (!sound)
 		checkboxMusic->setEnabled(false);
 
-	MacPictureSlider *sliderTextSpeed = window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
+	MacImageSlider *sliderTextSpeed = window->addImageSlider(4, 5, true, 5, 105, 0, 9);
 	sliderTextSpeed->setValue(textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));

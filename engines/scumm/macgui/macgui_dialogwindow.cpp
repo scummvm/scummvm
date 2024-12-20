@@ -267,15 +267,15 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 	return editText;
 }
 
-MacGuiImpl::MacIcon *MacGuiImpl::MacDialogWindow::addIcon(Common::Rect bounds, int id, bool enabled) {
-	MacGuiImpl::MacIcon *icon = new MacIcon(this, bounds, id, false);
+MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(Common::Rect bounds, int id, bool enabled) {
+	MacGuiImpl::MacImage *icon = new MacImage(this, bounds, _gui->loadIcon(id), false);
 	addWidget(icon, kWidgetIcon);
 	return icon;
 }
 
-MacGuiImpl::MacPicture *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	MacGuiImpl::MacPicture *picture = new MacPicture(this, bounds, id, false);
-	addWidget(picture, kWidgetPicture);
+MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
+	MacGuiImpl::MacImage *picture = new MacImage(this, bounds, _gui->loadPict(id), false);
+	addWidget(picture, kWidgetImage);
 	return picture;
 }
 
@@ -285,15 +285,15 @@ MacGuiImpl::MacSlider *MacGuiImpl::MacDialogWindow::addSlider(int x, int y, int 
 	return slider;
 }
 
-MacGuiImpl::MacPictureSlider *MacGuiImpl::MacDialogWindow::addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
-	MacPicture *background = (MacPicture *)_widgets[backgroundId];
-	MacPicture *handle = (MacPicture *)_widgets[handleId];
+MacGuiImpl::MacImageSlider *MacGuiImpl::MacDialogWindow::addImageSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
+	MacImage *background = (MacImage *)_widgets[backgroundId];
+	MacImage *handle = (MacImage *)_widgets[handleId];
 
 	background->setVisible(false);
 	handle->setVisible(false);
 
-	MacGuiImpl::MacPictureSlider *slider = new MacPictureSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
-	addWidget(slider, kWidgetPictureSlider);
+	MacGuiImpl::MacImageSlider *slider = new MacImageSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
+	addWidget(slider, kWidgetImageSlider);
 	return slider;
 }
 

@@ -836,8 +836,8 @@ bool MacV5Gui::runOptionsDialog() {
 	MacCheckbox *checkboxSound = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 	MacCheckbox *checkboxMusic = nullptr;
 
-	MacPictureSlider *sliderTextSpeed = window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
-	MacPictureSlider *sliderMusicQuality = window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+	MacImageSlider *sliderTextSpeed = window->addImageSlider(4, 5, true, 5, 105, 0, 9);
+	MacImageSlider *sliderMusicQuality = window->addImageSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
 
 	bool sound = !ConfMan.hasKey("mute") || !ConfMan.getBool("mute");
 	bool music;
