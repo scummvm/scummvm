@@ -33,6 +33,8 @@
 
 namespace Got {
 
+#define SAVEGAME_VERSION 1
+
 GotEngine *g_engine;
 
 GotEngine::GotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -72,15 +74,33 @@ Common::Error GotEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error GotEngine::syncGame(Common::Serializer &s) {
-	byte version = 1;
-	s.syncAsByte(version);
+Common::Error GotEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+	Common::Serializer s(nullptr, stream);
+	s.setVersion(SAVEGAME_VERSION);
 
+	return syncGame(s);
+}
+
+Common::Error GotEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	byte version = stream->readByte();
+	if (version != SAVEGAME_VERSION)
+		error("Invalid savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(version);
+
+	return syncGame(s);
+}
+
+
+Common::Error GotEngine::syncGame(Common::Serializer &s) {
 	_G(setup).sync(s);
 	_G(thor_info).sync(s);
 	_G(sd_data).sync(s);
 
 	if (s.isLoading()) {
+
 		// TODO
 	}
 
