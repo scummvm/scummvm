@@ -107,12 +107,12 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_fileBasedCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
 
-#ifdef ENABLE_DOUBLEFINE_XWB
-	if (_vm->_game.id == GID_MONKEY && (_vm->_game.features & GF_DOUBLEFINE_PAK)) {
-		_hasFileBasedCDAudio = true;
-		indexXWBFile("MusicOriginal.xwb");
+	if (_vm->_game.features & GF_DOUBLEFINE_PAK) {
+		_soundSE = new SoundSE(_vm, _mixer);
+
+		if (_vm->_game.id == GID_MONKEY)
+			_hasFileBasedCDAudio = true;
 	}
-#endif
 
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
@@ -128,6 +128,7 @@ Sound::~Sound() {
 	free(_offsetTable);
 	delete _fileBasedCDAudioHandle;
 	delete _talkChannelHandle;
+	delete _soundSE;
 	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		stopSpeechTimer();
 	}
@@ -529,6 +530,13 @@ void Sound::triggerSound(int soundID) {
 					_vm->_imuse->stopAllSounds();
 			}
 		}
+
+		// TODO: If called from MI2SE, this will play the music
+		// multiple times
+		//if (_soundSE) {
+		//	_soundSE->startMusic(soundID);
+		//	return;
+		//}
 
 		if (_vm->_musicEngine)
 			_vm->_musicEngine->startSound(soundID);
@@ -1464,38 +1472,16 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 		// Stop any currently playing track
 		_mixer->stopHandle(*_fileBasedCDAudioHandle);
 
-		Common::File *cdAudioFile = new Common::File();
 		Audio::SeekableAudioStream *stream = nullptr;
 
 		if (_vm->_game.id == GID_LOOM) {
-			if (!cdAudioFile->open("CDDA.SOU")) {
-				delete cdAudioFile;
-				return;
-			}
-			stream = makeCDDAStream(cdAudioFile, DisposeAfterUse::YES);
-
-#ifdef ENABLE_DOUBLEFINE_XWB
-		} else if (_vm->_game.id == GID_MONKEY) {
-			if (!cdAudioFile->open("MusicOriginal.xwb")) {
-				delete cdAudioFile;
-				return;
-			}
-
-			// HACK: Since we don't support WMA files yet, we'll just play a PCM entry
-			// TODO: Remove this, once WMA streams are supported!
-			track = 20;
-
-			XWBEntry entry = _xwbEntries[track];
-			auto subStream = new Common::SeekableSubReadStream(
-				cdAudioFile,
-				entry.offset,
-				entry.offset + entry.length,
-				DisposeAfterUse::YES
-			);
-
-			stream = createXWBStream(subStream, entry);
-#endif
+			stream = makeCDDAStream("CDDA.SOU", DisposeAfterUse::YES);
+		} else if (_soundSE) {
+			stream = _soundSE->getXWBTrack(track);
 		}
+
+		if (!stream)
+			return;
 
 		Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
 		Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
@@ -1617,127 +1603,6 @@ bool Sound::isAudioDisabled() {
 
 	return false;
 }
-
-#ifdef ENABLE_DOUBLEFINE_XWB
-
-#define WARN_AND_RETURN_XWB(message)          \
-	{                                         \
-		warning("indexXWBFile: %s", message); \
-		f->close();                           \
-		delete f;                             \
-		return;                               \
-	}
-
-void Sound::indexXWBFile(const Common::String &filename) {
-	// This implementation is based off unxwb: https://github.com/mariodon/unxwb/
-	// as well as xwbdump: https://raw.githubusercontent.com/wiki/Microsoft/DirectXTK/xwbdump.cpp
-	// Only the parts that apply to the Doublefine releases of
-	// MI1 and MI2 have been implemented.
-
-	struct SegmentData {
-		uint32 offset;
-		uint32 length;
-	};
-	SegmentData segments[5] = {};
-
-	Common::File *f = new Common::File();
-	f->open(Common::Path(filename));
-
-	const uint32 magic = f->readUint32BE();
-	const uint32 version = f->readUint32LE();
-	f->skip(4); // skip dwHeaderVersion
-
-	if (magic != MKTAG('W', 'B', 'N', 'D'))
-		WARN_AND_RETURN_XWB("Invalid XWB file")
-
-	if (version < 42)
-		WARN_AND_RETURN_XWB("Unsupported XWB version")
-
-	for (uint32 i = 0; i < 5; i++) {
-		segments[i].offset = f->readUint32LE();
-		segments[i].length = f->readUint32LE();
-	}
-
-	f->seek(segments[kXWBSegmentBankData].offset);
-	const uint32 flags = f->readUint32LE();
-	const uint32 entryCount = f->readUint32LE();
-	f->skip(64); // skip bank name
-	const uint32 entrySize = f->readUint32LE();
-	if (entrySize < 24)
-		WARN_AND_RETURN_XWB("Unsupported XWB entry size")
-
-	if (flags & 0x00020000)
-		WARN_AND_RETURN_XWB("XWB compact format is not supported")
-
-	f->seek(segments[kXWBSegmentEntryMetaData].offset);
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		XWBEntry entry;
-		/*uint32 flagsAndDuration = */ f->readUint32LE();
-		uint32 format = f->readUint32LE();
-		entry.offset = f->readUint32LE() + segments[kXWBSegmentEntryWaveData].offset;
-		entry.length = f->readUint32LE();
-		/*uint32 loopOffset = */ f->readUint32LE();
-		/*uint32 loopLength = */ f->readUint32LE();
-
-		entry.codec = static_cast<XWBCodec>(format & ((1 << 2) - 1));
-		entry.channels = (format >> (2)) & ((1 << 3) - 1);
-		entry.rate = (format >> (2 + 3)) & ((1 << 18) - 1);
-		entry.align = (format >> (2 + 3 + 18)) & ((1 << 8) - 1);
-		entry.bits = (format >> (2 + 3 + 18 + 8)) & ((1 << 1) - 1);
-
-		_xwbEntries.push_back(entry);
-	}
-
-	f->close();
-	delete f;
-}
-
-#undef WARN_AND_RETURN_XWB
-
-Audio::SeekableAudioStream *Sound::createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry) {
-	switch (entry.codec) {
-	case kXWBCodecPCM: {
-		byte flags = Audio::FLAG_LITTLE_ENDIAN;
-		if (entry.bits == 1)	// 0: 8 bits, 1: 16 bits
-			flags |= Audio::FLAG_16BITS;
-		if (entry.channels == 2)
-			flags |= Audio::FLAG_STEREO;
-		return Audio::makeRawStream(stream, entry.rate, flags, DisposeAfterUse::YES);
-	}
-	case kXWBCodecXMA:
-		// Unused in MI1SE and MI2SE
-		error("createXWBStream: XMA codec not supported");
-	case kXWBCodecADPCM: {
-		const uint32 blockAlign = (entry.align + 22) * entry.channels;
-		return Audio::makeADPCMStream(
-			stream,
-			DisposeAfterUse::YES,
-			entry.length,
-			Audio::kADPCMMS,
-			entry.rate,
-			entry.channels,
-			blockAlign
-		);
-	}
-	case kXWBCodecWMA:
-		error("createXWBStream: WMA codec not implemented");
-		// TODO: Implement WMA codec
-		/*return new Audio::WMACodec(
-			2,
-			entry.rate,
-			entry.channels,
-			entry.bits,
-			entry.align,
-			stream
-		);*/
-
-	}
-
-	error("createXWBStream: Unknown XWB codec %d", entry.codec);
-}
-
-#endif
 
 #pragma mark -
 #pragma mark --- Sound resource handling ---
