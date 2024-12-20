@@ -321,28 +321,6 @@ void MacV6Gui::onMenuClose() {
 	restoreScreen();
 }
 
-void MacV6Gui::drawSliderBackground(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings) {
-	Graphics::Surface *s = window->innerSurface();
-
-	uint32 gray = _windowManager->findBestColor(0xCD, 0xCD, 0xCD);
-	uint32 black = getBlack();
-
-	Common::Rect r(width, 12);
-	r.moveTo(x, y);
-
-	s->fillRect(r, gray);
-	s->frameRect(r, black);
-
-	int yt = y + 14;
-
-	for (int i = 0; i < numMarkings; i++) {
-		int ht = ((i % primaryMarkings) == 0) ? 4 : 2;
-		s->vLine(x + (i * (width - 1)) / (numMarkings - 1), yt, yt + ht, black);
-	}
-
-	window->addIcon(x - 6, y - 4, 300, true);
-}
-
 void MacV6Gui::drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2) {
 	Graphics::Surface *s = window->innerSurface();
 	uint32 black = getBlack();
@@ -362,6 +340,31 @@ void MacV6Gui::drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int
 		if (((bounds.right - 1 + y) & 1) == 0)
 			s->setPixel(bounds.right - 1, y, black);
 	}
+}
+
+MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings) {
+	Graphics::Surface *s = window->innerSurface();
+
+	uint32 gray = _windowManager->findBestColor(0xCD, 0xCD, 0xCD);
+	uint32 black = getBlack();
+
+	Common::Rect r(width, 12);
+	r.moveTo(x, y);
+
+	s->fillRect(r, gray);
+	s->frameRect(r, black);
+
+	int yt = y + 14;
+
+	for (int i = 0; i < numMarkings; i++) {
+		int ht = ((i % primaryMarkings) == 0) ? 4 : 2;
+		s->vLine(x + (i * (width - 1)) / (numMarkings - 1), yt, yt + ht, black);
+	}
+
+	MacImage *handle = window->addIcon(x - 6, y - 4, 300, true);
+	MacImageSlider *slider = window->addImageSlider(Common::Rect(x - 6, y - 4, x + width + 7, y + 16), handle, true, 0, width - 1, 0, numMarkings - 1);
+
+	return slider;
 }
 
 void MacV6Gui::runAboutDialog() {
@@ -645,10 +648,6 @@ bool MacV6Gui::runOptionsDialog() {
 		// Unlike the other games, Day of the Tentacle uses a lot of
 		// "user items" which we don't have a way to parse.
 
-		drawSliderBackground(window, 152, 63, 147, 17);
-		drawSliderBackground(window, 152, 87, 147, 17);
-		drawSliderBackground(window, 151, 177, 147, 9);
-
 		Common::Point spritePos[] = {
 			Common::Point(133, 87),
 			Common::Point(310, 86),
@@ -676,35 +675,39 @@ bool MacV6Gui::runOptionsDialog() {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
 
+		addSlider(window, 152, 63, 147, 17);
+		addSlider(window, 152, 87, 147, 17);
+		addSlider(window, 151, 177, 147, 9);
+
 		interactionDropDown = window->addDropDownList(Common::Rect(17, 148, 322, 167), "Interact using:", 125, interactMode, true);
 		videoQualityDropDown = window->addDropDownList(Common::Rect(17, 218, 322, 237), "Video Quality:", 125, videoQuality, false);
 
 		interactionDropDown->setValue(2);
 		videoQualityDropDown->setValue(0);
 	} else if (_vm->_game.id == GID_MANIAC) {
-		drawSliderBackground(window, 152, 41, 147, 17);
-		drawSliderBackground(window, 152, 72, 147, 10, 5);
+		addSlider(window, 152, 41, 147, 17);
+		addSlider(window, 152, 72, 147, 10, 5);
 
 		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 100, 323, 119), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
-		drawSliderBackground(window, 152, 63, 147, 17);
-		drawSliderBackground(window, 152, 87, 147, 17);
-		drawSliderBackground(window, 152, 111, 147, 17);
-		drawSliderBackground(window, 152, 203, 147, 9);
-
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
+
+		addSlider(window, 152, 63, 147, 17);
+		addSlider(window, 152, 87, 147, 17);
+		addSlider(window, 152, 111, 147, 17);
+		addSlider(window, 152, 203, 147, 9);
 
 		interactionDropDown = window->addDropDownList(Common::Rect(18, 174, 323, 193), "Interact using:", 125, interactMode, true);
 		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 244, 323, 263), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_FT) {
-		drawSliderBackground(window, 152, 63, 147, 17);
-		drawSliderBackground(window, 152, 87, 147, 17);
-		drawSliderBackground(window, 152, 111, 147, 17);
-		drawSliderBackground(window, 152, 231, 147, 9);
-
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
+
+		addSlider(window, 152, 63, 147, 17);
+		addSlider(window, 152, 87, 147, 17);
+		addSlider(window, 152, 111, 147, 17);
+		addSlider(window, 152, 231, 147, 9);
 
 		interactionDropDown = window->addDropDownList(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
 		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
