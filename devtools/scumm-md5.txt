@@ -360,6 +360,7 @@ tentacle	Day of the Tentacle
 
 	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	1.6	Fingolfin
 	64d07dec2bf0789c4f2a7b656cf5bb83	2731584777	en	DOS	SE	SE	Filippos Karapetis
+	7ff69e4905f3c30f3a86ab8fb8cfe34b	2731425417	en	DOS	SE	SE	Filippos Karapetis
 	8aa05d3cdb0e795436043f0546af2da2	7932	fr	All?	-	CD	-	Andrea Petrucci
 	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
