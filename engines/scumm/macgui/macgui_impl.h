@@ -465,6 +465,9 @@ public:
 		int _handlePos = -1;
 		int _grabOffset = -1;
 
+		Common::HashMap<int, int> _posToValue;
+		Common::HashMap<int, int> _valueToPos;
+
 		int calculateValueFromPos() const;
 		int calculatePosFromValue() const;
 
@@ -474,10 +477,20 @@ public:
 			_minValue(minValue), _maxValue(maxValue),
 			_minPos(minPos), _maxPos(maxPos) {}
 
+		virtual ~MacSliderBase() {
+			_posToValue.clear();
+			_valueToPos.clear();
+		}
+
 		void getFocus() {}
 		void loseFocus() {}
 
 		void setValue(int value);
+
+		void addStop(int pos, int value) {
+			_posToValue[pos] = value;
+			_valueToPos[value] = pos;
+		}
 	};
 
 	class MacSlider : public MacSliderBase {
