@@ -73,7 +73,7 @@ const DgdsFont *Dialog::getDlgTextFont() const {
 	else if (_fontSize == 3)
 		fontType = FontManager::k4x5Font;
 	else if (_fontSize == 4 && DgdsEngine::getInstance()->getGameId() == GID_WILLY)
-		fontType = FontManager::kGameFont;
+		fontType = FontManager::kGameDlgFont;
 	else if (_fontSize == 5 && DgdsEngine::getInstance()->getGameId() == GID_HOC)
 		fontType = FontManager::kChinaFont;
 	return fontman->getFont(fontType);
