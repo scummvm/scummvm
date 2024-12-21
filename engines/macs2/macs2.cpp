@@ -676,6 +676,28 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	word51FF = _fileStream->readUint16LE();
 	word5201 = _fileStream->readUint16LE();
 	
+	word5203 = _fileStream->readUint16LE();
+	word5205 = _fileStream->readUint16LE();
+
+	// Seek to next place
+	// TODO: Duplicated seek address calculation code
+	// This addressing can be found in the l0037_2856 code block
+
+	uint16 sceneDataOffset = newSceneIndex * 0xC;
+	// Offset of the data in [0752h] global
+	constexpr uint16 globalDataOffset = 0xC + 0x4;
+	sceneDataOffset += globalDataOffset;
+	_fileStream->seek(sceneDataOffset - 0x8);
+	uint32 sceneDataOffset2 = _fileStream->readUint32LE();
+	_fileStream->seek(sceneDataOffset2, SEEK_SET);
+
+	// We read 80h bytes
+	array520D.resize(0x80 / 4);
+	_fileStream->read(array520D.data(), 0x80);
+
+
+	
+	
 
 
 	// TODO: There are some more data points missing from the function

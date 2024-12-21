@@ -260,7 +260,10 @@ public:
 	// [5201h]
 	uint16 word5201;
 
-	
+	uint16 word5203;
+	uint16 word5205;
+
+	Common::Array<uint32> array520D;
 
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
