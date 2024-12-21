@@ -19,38 +19,31 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
-
-#include "got/views/game.h"
-#include "got/views/part_title.h"
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit.h"
-#include "got/views/dialogs/quit_game.h"
 #include "got/views/dialogs/select_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "got/got.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	Game _game;
-	PartTitle _partTitle;
-	Story _story;
-	Title _title;
-
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SelectGame _selectGame;
-	Dialogs::SetSound _setSound;
+static const char *OPTIONS[] = {
+	"Part 1: Serpent Surprise!",
+	"Part 2: Non-stick Nognir",
+	"Part 3: Lookin' for Loki",
+	nullptr
 };
 
+SelectGame::SelectGame() : SelectOption("SelectGame", "Play WHich Game?", OPTIONS) {
+}
+
+void SelectGame::selected() {
+	// Select the game area to start from
+	g_vars->setArea(_selectedItem + 1);
+
+	// Switch to the game view
+	replaceView("Game", true);
+}
+
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
-
-#endif
