@@ -26,7 +26,6 @@
 namespace Got {
 
 void setup_load() {
-
 	_G(thor)->used = 1;
 	_G(new_level) = _G(thor_info).last_screen;
 	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
@@ -67,6 +66,10 @@ void setup_load() {
 
 	_G(current_level) = _G(new_level);
 	show_level(_G(new_level));
+}
+
+void pause(int delay) {
+	g_system->delayMillis(delay);
 }
 
 } // namespace Got

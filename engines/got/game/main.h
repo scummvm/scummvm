@@ -27,6 +27,7 @@
 namespace Got {
 
 extern void setup_load();
+extern void pause(int delay);
 
 } // namespace Got
 
