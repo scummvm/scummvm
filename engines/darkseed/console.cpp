@@ -56,6 +56,10 @@ void Console::addToCurrentLine(const Common::String &text) {
 	addTextLine(_text[_startIdx] + text);
 }
 
+void Console::addI18NText(const I18nText &text) {
+	addTextLine(getI18NText(text));
+}
+
 void Console::draw(bool forceRedraw) {
 	if (!_redrawRequired && !forceRedraw) {
 		return;

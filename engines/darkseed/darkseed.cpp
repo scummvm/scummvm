@@ -1659,15 +1659,15 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 
 void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 71 && _objectVar[71] == 2) {
-		_console->addTextLine("You see the car keys in the ignition.");
+		_console->addI18NText(kI18N_CarKeysIgnitionText);
 		return;
 	}
 	if (objNum == 189) {
-		_console->addTextLine("You see the iron bars of your cell.");
+		_console->addI18NText(kI18N_YouSeeIronBarsText);
 		return;
 	}
 	if (objNum == 141) {
-		_console->addTextLine("You see Delbert, not much to look at.");
+		_console->addI18NText(kI18N_YouSeeDelbertText);
 		return;
 	}
 	if (objNum == 42) {
@@ -1724,11 +1724,11 @@ void DarkseedEngine::lookCode(int objNum) {
 		return;
 	}
 	if (objNum == 138) {
-		_console->addTextLine("You see the clerk.");
+		_console->addI18NText(kI18N_YouSeeTheClerkText);
 		return;
 	}
 	if (objNum == 86 && _objectVar[86] != 0) {
-		_console->addTextLine("You see the open glove box.");
+		_console->addI18NText(kI18N_YouSeeTheOpenGloveBoxText);
 		return;
 	}
 	if (objNum == 9) {
@@ -1891,7 +1891,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		}
 		return;
 	}
-	_console->addTextLine(Common::String::format("You see the %s.", _objectVar.getObjectName(objNum)));
+	_console->addTextLine(Common::String::format("%s %s.", getI18NText(kI18N_youSeeTheText), _objectVar.getObjectName(objNum)));
 }
 
 void DarkseedEngine::printTime() {
@@ -2414,7 +2414,7 @@ void DarkseedEngine::runObjects() {
 				} else {
 					playSound(25, 5, -1);
 				}
-				_console->addTextLine("The phone is ringing.");
+				_console->addI18NText(kI18N_ThePhoneIsRingingText);
 			}
 			break;
 		case 1080:
@@ -2442,7 +2442,7 @@ void DarkseedEngine::runObjects() {
 					playSound(29, 5, -1);
 //					FUN_1208_0dac_sound_related(95,5); TODO floppy sound
 				}
-				_console->addTextLine("The doorbell is ringing.");
+				_console->addI18NText(kI18N_TheDoorbellIsRingingText);
 			}
 			break;
 		case 900:

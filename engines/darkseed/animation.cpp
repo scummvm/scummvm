@@ -809,7 +809,7 @@ void Animation::updateAnimation() {
 				_spriteAnimCountdownTimer[0] = 3;
 				_objectVar[1] = 2000;
 			} else {
-				g_engine->_console->addTextLine("The cops ignore your demands for attention.");
+				g_engine->_console->addI18NText(kI18N_TheCopsIgnoreYourDemandsText);
 			}
 		}
 		if (_frameAdvanced && _player->_frameIdx == 1) {

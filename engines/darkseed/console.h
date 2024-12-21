@@ -25,6 +25,7 @@
 #include "darkseed/gamefont.h"
 #include "darkseed/sound.h"
 #include "darkseed/tostext.h"
+#include "darkseed/langtext.h"
 
 namespace Darkseed {
 
@@ -44,6 +45,8 @@ public:
 	void printTosText(int tosIndex);
 	void addTextLine(const Common::String &text);
 	void addToCurrentLine(const Common::String &text);
+
+	void addI18NText(const I18nText &text);
 
 	void draw(bool forceRedraw = false);
 	void drawStringAt(int x, int y, const Common::String &text) const;

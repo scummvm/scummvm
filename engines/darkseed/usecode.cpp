@@ -159,11 +159,11 @@ void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 
 	if (objNum == 141) {
-		_console->addTextLine("You touch Delbert...");
+		_console->addI18NText(kI18N_YouTouchDelbertText);
 		return;
 	}
 	if (objNum == 189) {
-		_console->addTextLine("You touch the cold iron bars.");
+		_console->addI18NText(kI18N_YouTouchTheColdIronBarsText);
 		return;
 	}
 	if (objNum == 42) {
@@ -334,7 +334,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			return;
 		}
 		if ((objNum == 28) && (_objectVar[28] == 2)) {
-			_console->addTextLine("The sergeant says 'Nice gun eh? It's a Browning'");
+			_console->addI18NText(kI18N_TheSergeantSaysNiceGunText);
 			return;
 		}
 		if (objNum > 103 && objNum < 111) {
@@ -510,12 +510,12 @@ void Darkseed::UseCode::useCode(int objNum) {
 							g_engine->_sound->playMusic(MusicId::kRadio);
 							g_engine->playSound(0, 6, -1);
 							_objectVar[62] = 101;
-							_console->addTextLine("You turn on the music.");
+							_console->addI18NText(kI18N_YouTurnOnTheMusicText);
 						} else if (_objectVar[62] == 101) {
 							g_engine->_sound->killAllSound();
 							g_engine->_sound->stopMusic();
 							_objectVar[62] = 100;
-							_console->addTextLine("You turn off the music.");
+							_console->addI18NText(kI18N_YouTurnOffTheMusicText);
 						}
 					} else {
 						_objectVar[62] = _objectVar[62] + 1;
@@ -613,7 +613,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 					_objectVar[66] = 0;
 				}
 			} else {
-				_console->addTextLine("You touch the surface of the ornate sigil.");
+				_console->addI18NText(kI18N_YouTouchTheOrnateSignalText);
 			}
 		} else if (objNum == 67 && _objectVar[68] == 0) {
 			if (_objectVar[12] == 2) {
@@ -628,7 +628,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 					_objectVar[67] = 0;
 				}
 			} else {
-				_console->addTextLine("You touch the surface of the ornate sigil.");
+				_console->addI18NText(kI18N_YouTouchTheOrnateSignalText);
 			}
 		} else if ((objNum == 68) && (_objectVar[68] == 0)) {
 			if (_objectVar[12] == 2) {
@@ -640,7 +640,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 					_objectVar[68] = 2;
 				}
 			} else {
-				_console->addTextLine("You touch the surface of the ornate sigil.");
+				_console->addI18NText(kI18N_YouTouchTheOrnateSignalText);
 			}
 		} else if (objNum == 84) {
 			_console->printTosText(566);
@@ -709,7 +709,7 @@ void Darkseed::UseCode::useCodeMoney(int16 targetObjNum) {
 		_player->loadAnimations("givclerk.nsp");
 		g_engine->_animation->setupOtherNspAnimation(6, 35);
 	} else {
-		_console->addTextLine("Choose an item before giving clerk more money.");
+		_console->addI18NText(kI18N_ChooseAnItemBeforeText);
 	}
 }
 
