@@ -27,10 +27,11 @@
 #include "got/data/defines.h"
 #include "got/data/sd_data.h"
 #include "got/game/script.h"
-#include "got/sound.h"
 #include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"
 #include "got/gfx/gfx_pics.h"
+#include "got/metaengine.h"
+#include "got/sound.h"
 
 namespace Got {
 
@@ -44,9 +45,14 @@ class Vars;
 extern Vars *g_vars;
 
 enum Key {
-	key_fire, key_up, key_down, key_left, key_right,
-	key_magic, key_select,
-	KEY_MAX
+	key_none = KEYBIND_NONE,
+	key_up = KEYBIND_UP,
+	key_down = KEYBIND_DOWN,
+	key_left = KEYBIND_LEFT,
+	key_right = KEYBIND_RIGHT,
+	key_fire = KEYBIND_FIRE, 
+	key_magic = KEYBIND_ESCAPE,
+	key_select = KEYBIND_SELECT
 };
 
 class Vars {
