@@ -226,9 +226,9 @@ bool DgdsEngine::changeScene(int sceneNum) {
 		_scene->setSceneNum(sceneNum);
 
 	// These are done inside the load function in the original.. cleaner here..
-	if (!_isDemo)
+	if (!_isDemo && getGameId() != GID_WILLY)
 		_scene->addInvButtonToHotAreaList();
-	if (_gameId == GID_DRAGON)
+	if (getGameId() == GID_DRAGON)
 		_clock.setVisibleScript(true);
 
 	if (_scene->getMagic() != _gdsScene->getMagic())
@@ -362,9 +362,9 @@ void DgdsEngine::init(bool restarting) {
 	_menu = new Menu();
 	_adsInterp = new ADSInterpreter(this);
 	_inventory = new Inventory();
-	if (_gameId == GID_DRAGON)
+	if (getGameId() == GID_DRAGON)
 		_dragonArcade = new DragonArcade();
-	else if (_gameId == GID_HOC) {
+	else if (getGameId() == GID_HOC) {
 		_shellGame = new ShellGame();
 		_hocIntro = new HocIntro();
 		_chinaTank = new ChinaTank();
@@ -743,7 +743,7 @@ Common::Error DgdsEngine::run() {
 		}
 
 		// Willy Beamish dims the palette of the screen while dialogs are active
-		if (_gameId == GID_WILLY) {
+		if (getGameId() == GID_WILLY) {
 			WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
 			int16 fade = globals->getPalFade();
 			fade = CLIP(fade, (int16)0, (int16)255);
@@ -888,7 +888,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 
 	// Add inv button - we deferred this to now to make sure globals etc
 	// are in the right state.
-	if (s.isLoading())
+	if (s.isLoading() && getGameId() != GID_WILLY)
 		_scene->addInvButtonToHotAreaList();
 
 	if (s.getVersion() < 4) {

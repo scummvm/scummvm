@@ -124,12 +124,13 @@ Common::String Clock::getTimeStr() const {
 }
 
 void Clock::draw(Graphics::ManagedSurface &surf) {
-	if (!_visibleUser || !_visibleScript)
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	if (!_visibleUser || !_visibleScript || engine->getGameId() != GID_DRAGON)
 		return;
 
 	const Common::String clockStr = getTimeStr();
 
-	const FontManager *fontman = DgdsEngine::getInstance()->getFontMan();
+	const FontManager *fontman = engine->getFontMan();
 	const DgdsFont *font = fontman->getFont(FontManager::k4x5Font);
 	int width = font->getMaxCharWidth() * 12 + 3;
 	_drawPos.top = 0;

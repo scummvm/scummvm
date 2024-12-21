@@ -981,6 +981,10 @@ void SDSScene::addAndShowTiredDialog() {
 
 
 void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
+	// TODO: In Willy Beamish, if the inventory button is visible here then
+	// it should be hidden and a flag set to re-enabled it once the dialog
+	// is closed.  Other games leave it visible.
+
 	if (fileNum)
 		loadDialogData(fileNum);
 
@@ -1548,7 +1552,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	area._rect.height = icons->height(invButtonIcon);
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
-	area._cursorNum2 = 0;
+	area._cursorNum2 = engine->getGDSScene()->getInvIconMouseCursor();
 	area._objInteractionRectNum = 0;
 
 	// Add swap character button for HoC
