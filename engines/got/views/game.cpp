@@ -59,6 +59,14 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 		odin_speaks(2008, -1);
 		return true;
 
+	case Common::KEYCODE_s:
+		g_engine->saveGameDialog();
+		break;
+
+	case Common::KEYCODE_l:
+		g_engine->loadGameDialog();
+		break;
+
 	default:
 		break;
 	}
