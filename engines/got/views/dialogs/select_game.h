@@ -19,37 +19,25 @@
  *
  */
 
-#ifndef GOT_VIEWS_H
-#define GOT_VIEWS_H
+#ifndef GOT_VIEWS_DIALOGS_SELECT_GAME_H
+#define GOT_VIEWS_DIALOGS_SELECT_GAME_H
 
-#include "got/views/game.h"
-#include "got/views/part_title.h"
-#include "got/views/story.h"
-#include "got/views/title.h"
-#include "got/views/dialogs/main_menu.h"
-#include "got/views/dialogs/options_menu.h"
-#include "got/views/dialogs/quit.h"
-#include "got/views/dialogs/quit_game.h"
-#include "got/views/dialogs/select_game.h"
-#include "got/views/dialogs/set_sound.h"
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
+namespace Dialogs {
 
-struct Views {
-	Game _game;
-	PartTitle _partTitle;
-	Story _story;
-	Title _title;
+class SelectGame : public SelectOption {
+public:
+	SelectGame();
+	virtual ~SelectGame() {
+	}
 
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SelectGame _selectGame;
-	Dialogs::SetSound _setSound;
+	void selected() override;
 };
 
+} // namespace Dialogs
 } // namespace Views
 } // namespace Got
 
