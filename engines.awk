@@ -173,7 +173,8 @@ function check_engine_components(engine) {
 		# Collect components
 		compcount = get_engine_components(engine, components)
 		for (c = 1; c <= compcount; c++) {
-			enable_component(components[c])
+			if (get_feature_state(components[c]) != "no")
+				enable_component(components[c])
 		}
 
 		# And collect those features that also declared as components
