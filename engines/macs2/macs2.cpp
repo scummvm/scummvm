@@ -1210,6 +1210,19 @@ uint32 Macs2Engine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
+void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex) {
+	// We need to account for the game starting indices at 1
+	uint32 address = array520D[arrayIndex - 1];
+	_fileStream->seek(address);
+	uint32 size = _fileStream->readUint32LE();
+	_fileStream->seek(address + 0x4 + 0xC);
+	Common::Array<uint8> data;
+	data.resize(size);
+	_fileStream->read(data.data(), size);
+	GameObject* go = GameObjects::instance().GetObjectByIndex(objectIndex);
+	go->Blobs[slotIndex - 1] = data;
+}
+
 Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
