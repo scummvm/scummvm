@@ -1252,7 +1252,7 @@ Common::Error ScummEngine::init() {
 			{ GID_MONKEY2,  "LeChuck's Revenge"      },
 			{ GID_TENTACLE, "Day of the Tentacle"    },
 			{ GID_SAMNMAX,  "Sam & Max"              },
-//			{ GID_SAMNMAX,  "Sam & Max Demo"         },
+			{ GID_SAMNMAX,  "Sam & Max Demo"         },
 			{ GID_DIG,      "The Dig"                },
 			{ GID_DIG,      "The Dig Demo"           },
 			{ GID_FT,       "Full Throttle"          },
