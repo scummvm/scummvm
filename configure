@@ -3367,8 +3367,12 @@ EOF
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		_optimization_level=-O2
+		_optimization_level=-O3
 		_freetypepath="$PSPDEV/psp/bin"
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
