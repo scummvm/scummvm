@@ -313,6 +313,14 @@ function print_engines(headline, engines, count) {
 		print("    " engines[e])
 }
 
+function print_components(headline, components, count) {
+	if (!count)
+		return
+	print("\n" headline)
+	for (c = 1; c <= count; c++)
+		print("    " get_feature_name(components[c]))
+}
+
 BEGIN {
 	config_mk = "config.mk.engines"
 	config_h = "config.h.engines"
@@ -389,7 +397,7 @@ END {
 				if (have_feature(components[c])) {
 					if (get_feature_state(components[c]) == "yes" || get_feature_state(components[c]) == "auto") {
 						disable_feature(components[c])
-						print("   Feature '" components[c] "' is disabled as unused by enabled engines")
+						print("   Feature " get_feature_name(components[c]) " is disabled as unused by enabled engines")
 					}
 				}
 			}
@@ -436,18 +444,16 @@ END {
 	add_line_to_config_h("\n/* components */")
 	add_line_to_config_mk("\n# components")
 	components_count = get_values("_components", components)
-	comp_enabled = ""
-	comp_disabled = ""
 	for (c = 1; c <= components_count; c++) {
 		define = get_component_define(components[c])
 		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " define)
 
 		if (get_component_enabled(components[c]) == "yes") {
 			add_line_to_config_mk(define "=1")
-			comp_enabled = comp_enabled components[c] " "
+			_comp_enabled[++_comp_enabled_count] = components[c]
 		} else {
 			add_line_to_config_mk("# " define)
-			comp_disabled = comp_disabled components[c] " "
+			_comp_disabled[++_comp_disabled_count] = components[c]
 		}
 	}
 	add_line_to_config_h("/* end of components */")
@@ -460,10 +466,8 @@ END {
 	print_engines("Engines Skipped:", _engines_skipped, _skipped)
 	print_engines("WARNING: This ScummVM build contains the following UNSTABLE engines:", _engines_built_wip, _wip)
 
-	if (comp_enabled == "")
-		comp_enabled = "<none>"
-	print("\nComponents Enabled: " comp_enabled)
-	print("Components Disabled: " comp_disabled)
+	print_components("Components Enabled: ", _comp_enabled, _comp_enabled_count)
+	print_components("Components Disabled: ", _comp_disabled, _comp_disabled_count)
 
 	# Ensure engines folder exists prior to trying to generate
 	# files into it (used for out-of-tree-builds)
