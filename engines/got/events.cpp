@@ -93,11 +93,22 @@ void Events::nextFrame() {
 void Events::processEvent(Common::Event &ev) {
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
+		if (ev.kbd.keycode < 100)
+			_G(key_flag)[ev.kbd.keycode] = true;
+
 		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
 			msgKeypress(KeypressMessage(ev.kbd));
 		break;
+	case Common::EVENT_KEYUP:
+		if (ev.kbd.keycode < 100)
+			_G(key_flag)[ev.kbd.keycode] = false;
+		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		_G(key_flag)[actionToKeyFlag(ev.customType)] = true;
 		msgAction(ActionMessage(ev.customType));
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		_G(key_flag)[actionToKeyFlag(ev.customType)] = false;
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -115,6 +126,11 @@ void Events::processEvent(Common::Event &ev) {
 	default:
 		break;
 	}
+}
+
+int Events::actionToKeyFlag(int action) const {
+	return (action == KEYBIND_ESCAPE) ? Common::KEYCODE_ESCAPE :
+		(int)action;
 }
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {

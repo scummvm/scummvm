@@ -260,6 +260,7 @@ private:
 	Common::Stack<UIElement *> _views;
 
 	void nextFrame();
+	int actionToKeyFlag(int action) const;
 
 protected:
 	/**
