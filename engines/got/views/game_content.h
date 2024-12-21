@@ -36,6 +36,8 @@ private:
 	void drawObjects(GfxSurface &s);
 	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
 	void checkThunderShake();
+	void checkSwitchFlag();
+	void checkForItem();
 
 public:
 	GameContent() : View("GameContent") {}

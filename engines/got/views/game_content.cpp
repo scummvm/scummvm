@@ -22,6 +22,7 @@
 #include "got/views/game_content.h"
 #include "got/game/back.h"
 #include "got/game/move.h"
+#include "got/game/object.h"
 #include "got/gfx/image.h"
 #include "got/vars.h"
 
@@ -59,6 +60,9 @@ bool GameContent::msgGame(const GameMessage &msg) {
 
 bool GameContent::tick() {
 	checkThunderShake();
+	checkSwitchFlag();
+	checkForItem();
+
 	return true;
 }
 
@@ -145,6 +149,29 @@ void GameContent::checkThunderShake() {
 		_shakeDelta = Common::Point(0, 0);
 		redraw();
 	}
+}
+
+void GameContent::checkSwitchFlag() {
+	if (_G(switch_flag)) {
+		switch (_G(switch_flag)) {
+		case 1:
+			switch_icons();
+			break;
+		case 2:
+			rotate_arrows();
+			break;
+		default:
+			break;
+		}
+
+		_G(switch_flag) = 0;
+	}
+}
+
+void GameContent::checkForItem() {
+	int thor_pos = ((_G(thor)->x + 7) / 16) + (((_G(thor)->y + 8) / 16) * 20);
+	if (_G(object_map)[thor_pos])
+		pick_up_object(thor_pos);
 }
 
 } // namespace Views
