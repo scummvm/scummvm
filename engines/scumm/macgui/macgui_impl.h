@@ -339,7 +339,7 @@ public:
 	public:
 		MacButton(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
-		void draw(bool drawFocused = false);
+		void draw(bool drawFocused = false) override;
 
 		bool handleMouseUp(Common::Event &event) { return true; }
 	};
@@ -351,9 +351,9 @@ public:
 	public:
 		MacCheckbox(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 
-		bool findWidget(int x, int y) const;
-		void draw(bool drawFocused = false);
-		bool handleMouseUp(Common::Event &event);
+		bool findWidget(int x, int y) const override;
+		void draw(bool drawFocused = false) override;
+		bool handleMouseUp(Common::Event &event) override;
 	};
 
 	// The dialogs add texts as disabled, but we don't want it to be drawn
@@ -377,8 +377,8 @@ public:
 			_bg = _white;
 		}
 
-		void getFocus() {}
-		void loseFocus() {}
+		void getFocus() override {}
+		void loseFocus() override {}
 
 		void setWordWrap(bool wordWrap) { _wordWrap = wordWrap; }
 
@@ -397,7 +397,7 @@ public:
 			}
 		}
 
-		void draw(bool drawFocused = false);
+		void draw(bool drawFocused = false) override;
 	};
 
 	class MacEditText : public MacWidget {
@@ -472,7 +472,7 @@ public:
 		uint16 getMaskRowBytes() const { return _maskRowBytes; }
 		uint16 getMaskHeight() const { return _maskHeight; }
 
-		void draw(bool drawFocused = false);
+		void draw(bool drawFocused = false) override;
 	};
 
 	class MacSliderBase : public MacWidget {
@@ -503,10 +503,10 @@ public:
 			_valueToPos.clear();
 		}
 
-		void getFocus() {}
-		void loseFocus() {}
+		void getFocus() override {}
+		void loseFocus() override {}
 
-		void setValue(int value);
+		void setValue(int value) override;
 
 		void addStop(int pos, int value) {
 			_posToValue[pos] = value;
@@ -546,16 +546,16 @@ public:
 		bool isScrollable() const { return (_maxValue - _minValue) > 0; }
 		int getPageSize() const { return _pageSize; }
 
-		bool findWidget(int x, int y) const;
-		void draw(bool drawFocued = false);
+		bool findWidget(int x, int y) const override;
+		void draw(bool drawFocued = false) override;
 		void redrawHandle(int oldValue, int newValue);
 
-		void handleMouseDown(Common::Event &event);
-		bool handleMouseUp(Common::Event &event);
-		void handleMouseMove(Common::Event &event);
-		void handleMouseHeld();
-		void handleWheelUp();
-		void handleWheelDown();
+		void handleMouseDown(Common::Event &event) override;
+		bool handleMouseUp(Common::Event &event) override;
+		void handleMouseMove(Common::Event &event) override;
+		void handleMouseHeld() override;
+		void handleWheelUp() override;
+		void handleWheelDown() override;
 	};
 
 	class MacImageSlider : public MacSliderBase {
@@ -577,16 +577,16 @@ public:
 		MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		~MacImageSlider();
 
-		bool findWidget(int x, int y) const;
-		void draw(bool drawFocused = false);
+		bool findWidget(int x, int y) const override;
+		void draw(bool drawFocused = false) override;
 
 		void setSnapWhileDragging(bool snap) { _snapWhileDragging = snap; }
 
-		void handleMouseDown(Common::Event &event);
-		bool handleMouseUp(Common::Event &event);
-		void handleMouseMove(Common::Event &event);
-		void handleWheelUp();
-		void handleWheelDown();
+		void handleMouseDown(Common::Event &event) override;
+		bool handleMouseUp(Common::Event &event) override;
+		void handleMouseMove(Common::Event &event) override;
+		void handleWheelUp() override;
+		void handleWheelDown() override;
 	};
 
 	class MacListBox : public MacWidget {
@@ -603,32 +603,28 @@ public:
 		MacListBox(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = true);
 		~MacListBox();
 
-		void getFocus() {}
-		void loseFocus() {}
+		void getFocus() override {}
+		void loseFocus() override {}
 
-		void setValue(int value) {
+		void setValue(int value) override {
 			if (value != _value) {
 				_value = value;
 				updateTexts();
 			}
 		}
 
-		int getValue() {
-			return _value;
-		}
+		bool findWidget(int x, int y) const override;
+		void setRedraw(bool fullRedraw = false) override;
+		void draw(bool drawFocused = false) override;
 
-		bool findWidget(int x, int y) const;
-		void setRedraw(bool fullRedraw = false);
-		void draw(bool drawFocused = false);
-
-		void handleMouseDown(Common::Event &event);
-		bool handleDoubleClick(Common::Event &event);
-		bool handleMouseUp(Common::Event &event);
-		void handleMouseMove(Common::Event &event);
-		void handleMouseHeld();
-		void handleWheelUp();
-		void handleWheelDown();
-		bool handleKeyDown(Common::Event &event);
+		void handleMouseDown(Common::Event &event) override;
+		bool handleDoubleClick(Common::Event &event) override;
+		bool handleMouseUp(Common::Event &event) override;
+		void handleMouseMove(Common::Event &event) override;
+		void handleMouseHeld() override;
+		void handleWheelUp() override;
+		void handleWheelDown() override;
+		bool handleKeyDown(Common::Event &event) override;
 	};
 
 	class MacDropDownList : public MacWidget {
@@ -644,12 +640,12 @@ public:
 		MacDropDownList(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
 		~MacDropDownList();
 
-		bool findWidget(int x, int y) const;
-		void draw(bool drawFocused = false);
+		bool findWidget(int x, int y) const override;
+		void draw(bool drawFocused = false) override;
 
-		void handleMouseDown(Common::Event &event);
-		bool handleMouseUp(Common::Event &event);
-		void handleMouseMove(Common::Event &event);
+		void handleMouseDown(Common::Event &event) override;
+		bool handleMouseUp(Common::Event &event) override;
+		void handleMouseMove(Common::Event &event) override;
 	};
 
 	class MacDialogWindow {
@@ -793,7 +789,7 @@ public:
 	virtual bool handleEvent(Common::Event event);
 
 	static void menuCallback(int id, Common::String &name, void *data);
-	virtual bool initialize();
+	bool initialize();
 	void updateWindowManager();
 
 	const Graphics::Font *getFont(FontId fontId);
