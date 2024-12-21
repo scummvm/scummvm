@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-20 11:20+0000\n"
-"PO-Revision-Date: 2024-12-09 14:26+0000\n"
+"PO-Revision-Date: 2024-12-22 05:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3082,17 +3082,17 @@ msgstr "Sense rotació"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "En sentit horari"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 graus"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "En sentit antihorari"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -5012,7 +5012,7 @@ msgstr "Creueta"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "Usa una disposició mínima del teclat"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
@@ -5208,11 +5208,13 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "GENERADOR DE LLISTES DE REPRODUCCIÓ LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
+"(comproveu '? > llista de reproducció de Libretro' per a informació "
+"detallada)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5236,15 +5238,15 @@ msgstr "Tot a la carpeta de desament"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Un a cada carpeta de joc"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Neteja els enllaços existents"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Genera la llista de reproducció"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5268,7 +5270,7 @@ msgstr "Seleccioneu el directori de la llista de reproducció"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Llista de reproducció Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
 msgid ""
@@ -5726,7 +5728,7 @@ msgstr "Utilitzeu el cursor amb quadrícula"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "Usa el cursor quadrat dels models posteriors d'Apple II"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -5803,6 +5805,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Habilita el diàleg d'entrada predictiva d'assistència només quan feu clic "
+"amb el botó esquerre del ratolí dins dels camps d'entrada de text.\n"
+"El diàleg d'entrada predictiva encara es pot activar sota demanda si hi ha "
+"una tecla assignada específica"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -5849,6 +5855,8 @@ msgstr "Habilita la protecció contra còpia"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:777
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Habilita qualsevol sistema de protecció de còpia que d'altra manera seria "
+"ignorada per defecte."
 
 #: engines/agi/metaengine.cpp:420 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -5997,7 +6005,7 @@ msgstr "No s'ha compilat el suport per a AGOS 2"
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS principal"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
@@ -6095,24 +6103,24 @@ msgstr "Activa/desactiva els noms dels punts d'interès"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Commuta entre només veu i entre veu i subtítols"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Commuta entre només subtítols i entre veu i subtítols"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Activa/apaga el mode d'alta velocitat en el joc Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Premeu la tecla «Sí»"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Premeu la tecla «No»"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6135,6 +6143,9 @@ msgid ""
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"No s'ha pogut trobar el fitxer %s\n"
+"de definició d'instrument AdLib . Sense aquest fitxer,\n"
+"la música no sonarà igual que la del joc original."
 
 #: engines/agos/midi.cpp:374
 #, c-format
@@ -6143,6 +6154,9 @@ msgid ""
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
+"No s'ha pogut trobar el fitxer %s\n"
+"de definició d'instrument AdLib . Sense aquest fitxer,\n"
+"els efectes de so no sonaran igual que els del joc original."
 
 #: engines/agos/midi.cpp:453
 #, c-format
@@ -6151,6 +6165,9 @@ msgid ""
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"No s'ha pogut trobar el fitxer %s o %s\n"
+"de definició d'instrument AdLib . Sense un d'aquests fitxers,\n"
+"la música no sonarà igual que la del joc original."
 
 #: engines/ags/ags.cpp:152
 msgid ""
@@ -6174,6 +6191,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Per preservar l'experiència original, aquest joc s'ha de carregar utilitzant "
+"la interfície del joc.\n"
+"No obstant això, podeu anul·lar aquesta configuració a les opcions del joc."
 
 #: engines/ags/ags.cpp:353
 msgid ""
@@ -6181,6 +6201,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Per preservar l'experiència original, aquest joc s'ha de desar utilitzant la "
+"interfície del joc.\n"
+"No obstant això, podeu anul·lar aquesta configuració a les opcions del joc."
 
 #: engines/ags/dialogs.cpp:61
 msgid "Game language:"
@@ -6192,13 +6215,16 @@ msgstr "Idioma a usar per a jocs multilingües"
 
 #: engines/ags/dialogs.cpp:77
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Habilita la gestió de partides de ScummVM"
 
 #: engines/ags/dialogs.cpp:77
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"No desactivis mai la gestió de partides desades i desaments automàtics de "
+"ScummVM.\n"
+"NOTA: Això pot provocar una duplicació de partides desades i altres rareses"
 
 #: engines/ags/dialogs.cpp:82
 msgid "Force antialiased text"
@@ -7351,10 +7377,8 @@ msgid "Rotate down"
 msgstr "Rota cap avall"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "Gira cap enrere"
+msgstr "Torna enrere"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
@@ -11285,10 +11309,8 @@ msgid "Additional options:"
 msgstr "Opcions addicionals:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "Men~ú~ principal"
+msgstr "Menú principal"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -11381,35 +11403,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Salta la línia"
+msgstr "Omet la introducció"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Omet l'animació actual"
+msgstr "Atura la veu actual"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Sense música"
+msgstr "Silencia la música"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Interromp la veu"
+msgstr "Silencia les veus"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Activa/desactiva els efectes de so"
+msgstr "Silencia els efectes de so"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -11445,30 +11457,22 @@ msgid "Skip sequence/open quit dialogue"
 msgstr ""
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
-msgstr "Omet la línia de diàleg"
+msgstr "Omet el diàleg"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Obre el menú principal"
+msgstr "Obre el menú d'opcions"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Commuta el caminar ràpid"
+msgstr "Habilita el caminar ràpid"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Commuta el caminar ràpid"
+msgstr "Desactiva el caminar ràpid"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -11497,108 +11501,74 @@ msgstr "Obre el menú del sistema"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "engega"
+msgstr "Retorn"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Visualitza"
+msgstr "Visualitza l'ajuda"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Mostra les opcions"
+msgstr "Opcions de so"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Nord"
+msgstr "Arrossegueu-vos cap al nord"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Sud"
+msgstr "Arrossegueu-vos cap al sud"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Gira a l'esquerra de pressa"
+msgstr "Gireu a l'esquerra/arrossegueu-vos cap a l'oest"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Gira a la dreta de pressa"
+msgstr "Gireu a la dreta/arrossegueu-vos cap a l'est"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Augmenta la mida dels passos"
+msgstr "Augmenta la velocitat"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Disminueix la mida dels passos"
+msgstr "Disminueix la velocitat"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "Velocitat de lectura"
+msgstr "Velocitat mínima"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Volum màxim"
+msgstr "Velocitat màxima"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "Velocitat de joc més lenta"
+msgstr "Velocitat baixa"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "Velocitat de lectura"
+msgstr "Velocitat mitjana"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Endavant"
+msgstr "Robar cartes"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Veus"
+msgstr "Omet les veus"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Commuta el mode ràpid"
+msgstr "Commuta l'estil del panell"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Conversió de text a veu"
+msgstr "Commuta la veu i el text"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -11910,6 +11880,7 @@ msgstr ""
 #: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Permet que el joc ometi els fotogrames d'animació quan s'executi massa lent."
 
 #: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
@@ -11917,7 +11888,7 @@ msgstr "Activa la limitació de fotogrames"
 
 #: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "Limita la velocitat del joc per evitar que s'executi massa ràpid."
 
 #: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
@@ -11925,7 +11896,7 @@ msgstr "Habilita els trucs (cheats)"
 
 #: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "Permet els trucs amb ordres i un menú quan es fa clic al jugador."
 
 #: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
@@ -12051,6 +12022,10 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Permet que el ratolí es mogui a poca distància sense cancel·lar les "
+"interaccions amb el clic.   Si això està desactivat, qualsevol moviment del "
+"ratolí mentre es manté premut el botó del ratolí cancel·la una interacció de "
+"clic."
 
 #: engines/vcruise/metaengine.cpp:54
 msgid "Faster animations"
@@ -12088,11 +12063,12 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Descodificador de vídeo més ràpid (baixa qualitat)"
 
 #: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr ""
+"Redueix l'ús de la CPU en la descodificació de vídeo a costa de la qualitat."
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
@@ -12127,12 +12103,18 @@ msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"La música per a aquest joc requereix suport per a Ogg Vorbis, que no està en "
+"la compilació.\n"
+"El joc seguirà executant-se, però no tindrà cap música."
 
 #: engines/vcruise/vcruise.cpp:106
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"La música per a aquest joc requereix suport per a MP3, que no està en la "
+"compilació.\n"
+"El joc seguirà executant-se, però no tindrà cap música."
 
 #: engines/vcruise/vcruise.cpp:349
 msgid "Failed to load save, the save data appears to be damaged."
@@ -12150,14 +12132,12 @@ msgstr ""
 "S'ha produït un error desconegut en intentar carregar la partida desada."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Habilita el viatge amb roca"
+msgstr "Habilita el sistema de bloqueig"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Requereix un codi de desbloqueig per iniciar la partida."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
