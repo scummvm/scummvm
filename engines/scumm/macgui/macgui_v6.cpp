@@ -382,8 +382,23 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 }
 
 void MacV6Gui::runAboutDialog() {
-	if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
-		MacDialogWindow *window = createDialog(136, Common::Rect(121, 15, 519, 364));
+	if (_vm->_game.features & GF_DEMO) {
+		// HACK: Use the largest bounds as default for unknown demos
+		Common::Rect bounds(117, 5, 523, 384);
+
+		if (_vm->_game.id == GID_SAMNMAX) {
+			bounds.left = 117;
+			bounds.top = 5;
+			bounds.right = 523;
+			bounds.bottom = 384;
+		} else if (_vm->_game.id == GID_DIG) {
+			bounds.left = 121;
+			bounds.top = 15;
+			bounds.right = 519;
+			bounds.bottom = 364;
+		}
+
+		MacDialogWindow *window = createDialog(136, bounds);
 		MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 
 		window->setDefaultWidget(buttonOk);
