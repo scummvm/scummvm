@@ -68,13 +68,25 @@ void Events::runGame() {
 		g_system->delayMillis(10);
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
-			tick();
-			drawElements();
-			_screen->update();
+			nextFrame();
 		}
 	}
 
 	delete _screen;
+}
+
+void Events::nextFrame() {
+	// Update state variables
+	_G(rand1) = getRandomNumber(99);
+	_G(rand2) = getRandomNumber(99);
+	_G(pge) = _G(pge) ^ 1;
+
+	// Do once-per-frame tick action to the views
+	tick();
+
+	// Draw the current view's elements as needed, and update screen
+	drawElements();
+	_screen->update();
 }
 
 void Events::processEvent(Common::Event &ev) {

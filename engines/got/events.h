@@ -258,6 +258,9 @@ class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
+
+	void nextFrame();
+
 protected:
 	/**
 	 * Process an event
