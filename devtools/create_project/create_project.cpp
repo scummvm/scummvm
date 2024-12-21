@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	setup.features = getAllFeatures();
-	setup.components = getAllComponents(setup.srcDir);
+	setup.components = getAllComponents(setup.srcDir, setup.features);
 
 	ProjectType projectType = kProjectNone;
 	const MSVCVersion *msvc = nullptr;
@@ -319,8 +319,8 @@ int main(int argc, char *argv[]) {
 			removeTrailingSlash(libsDir);
 			setup.libsDir = libsDir;
 		} else if (!std::strcmp(argv[i], "--list-components")) {
-			for (StringList::const_iterator j = setup.components.begin(); j != setup.components.end(); ++j)
-				cout << ' ' << *j << "\n";
+			for (ComponentList::const_iterator j = setup.components.begin(); j != setup.components.end(); ++j)
+				cout << ' ' << j->description << "\n";
 
 			return 0;
 		} else {
@@ -386,9 +386,10 @@ int main(int argc, char *argv[]) {
 			getFeatureBuildState("opengl_game_classic", setup.features) ||
 			getFeatureBuildState("opengl_game_shaders", setup.features));
 
-	// Disable engines for which we are missing dependencies
+	// Disable engines for which we are missing dependencies and mark components as needed
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
 		if (i->enable) {
+			bool enabled = true;
 			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
 				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
 				if (feature == setup.features.end()) {
@@ -396,12 +397,35 @@ int main(int argc, char *argv[]) {
 					return -1;
 				} else if (!feature->enable) {
 					setEngineBuildState(i->name, setup.engines, false);
+					enabled = false;
 					break;
 				}
 			}
-			isEngineEnabled[i->name] = true;
+			isEngineEnabled[i->name] = enabled;
+			if (!enabled) {
+				continue;
+			}
+			// Mark components as needed now the engine is definitely enabled
+			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+				ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+				if (component == setup.components.end()) {
+					continue;
+				}
+				component->needed = true;
+			}
+			for (StringList::const_iterator ef = i->wishedComponents.begin(); ef != i->wishedComponents.end(); ++ef) {
+				ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+				if (component == setup.components.end()) {
+					std::cerr << "ERROR: Missing component " << *ef << " from engine " << i->name << '\n';
+					return -1;
+				}
+				component->needed = true;
+			}
 		}
 	}
+
+	// Disable unused features / components
+	disableComponents(setup.components);
 
 	// Print status
 	cout << "Enabled engines:\n\n";
@@ -440,9 +464,6 @@ int main(int argc, char *argv[]) {
 	// Add features
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
-
-	// Add all components
-	setup.defines.splice(setup.defines.begin(), setup.components);
 
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
@@ -1011,7 +1032,7 @@ namespace {
  */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
-	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"]
+	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"] ["components"]
 	TokenList tokens = tokenize(line);
 
 	if (tokens.size() < 4)
@@ -1034,8 +1055,12 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 		++token;
 		if (token != tokens.end())
 			++token;
-		if (token != tokens.end())
+		if (token != tokens.end()) {
 			engine.requiredFeatures = tokenize(*token);
+			++token;
+		}
+		if (token != tokens.end())
+			engine.wishedComponents = tokenize(*token);
 	}
 
 	return true;
@@ -1229,15 +1254,15 @@ FeatureList getAllFeatures() {
 	return features;
 }
 
-StringList getAllComponents(const std::string &srcDir) {
+ComponentList getAllComponents(const std::string &srcDir, FeatureList &features) {
 	std::string configureFile = srcDir + "/configure";
 
 	std::ifstream configure(configureFile.c_str());
 	if (!configure)
-		return StringList();
+		return ComponentList();
 
 	std::string line;
-	StringList components;
+	ComponentList components;
 	bool seenComponents = false;
 
 	for (;;) {
@@ -1255,7 +1280,7 @@ StringList getAllComponents(const std::string &srcDir) {
 
 		TokenList::const_iterator token = tokens.begin();
 
-		// add_component lua "lua" "USE_LUA"
+		// add_component lua "lua" "_lua" "USE_LUA"
 		if (*token != "add_component") {
 			if (seenComponents)	// No need to read whole file
 				break;
@@ -1265,13 +1290,30 @@ StringList getAllComponents(const std::string &srcDir) {
 
 		seenComponents = true;
 		++token;
+		std::string name = *token;
+		++token;
+		std::string description = *token;
 		++token;
 		++token;
+		std::string define = *token;
 
-		components.push_back(*token);
+		FeatureList::iterator itr = std::find(features.begin(), features.end(), name);
+		if (itr == features.end()) {
+			error("Missing matching feature for component " + name);
+		}
+
+		Component comp = { name, define, *itr, description, false };
+		components.push_back(comp);
 	}
 
 	return components;
+}
+
+void disableComponents(const ComponentList &components) {
+	for (ComponentList::const_iterator i = components.begin(); i != components.end(); ++i) {
+		if (!i->needed)
+			i->feature.enable = false;
+	}
 }
 
 StringList getFeatureDefines(const FeatureList &features) {
