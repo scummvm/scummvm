@@ -63,7 +63,7 @@ bool GameContent::tick() {
 	checkSwitchFlag();
 	checkForItem();
 
-	return true;
+	return false;
 }
 
 void GameContent::drawBackground(GfxSurface &s) {
