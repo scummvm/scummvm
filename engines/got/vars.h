@@ -182,7 +182,8 @@ public:
 	int8 _main_loop = 0;
 	int8 _end_tile = 0;
 	byte _pbuff[PALETTE_SIZE] = {};
-	int _current_level, _new_level;
+	int _current_level = 23;
+	int _new_level = 0;
 	int _new_level_tile = 0, _current_area = 0;
 	uint _latch_mem = 0;
 	byte *_enemy_mb = nullptr;

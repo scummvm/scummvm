@@ -105,6 +105,23 @@ void Vars::setArea(int areaNum) {
 		_area = areaNum;
 		_sd_data.setArea(areaNum);
 		_bgPics.setArea(areaNum);
+
+		switch (areaNum) {
+		case 1:
+			_current_level = 23;
+			break;
+
+		case 2:
+			_current_level = 51;
+			break;
+
+		case 3:
+			_current_level = 33;
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
