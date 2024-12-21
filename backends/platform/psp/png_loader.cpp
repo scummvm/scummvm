@@ -93,6 +93,13 @@ bool PngLoader::load() {
 
 void PngLoader::warningFn(png_structp png_ptr, png_const_charp warning_msg) {
 	// ignore PNG warnings
+	PSP_ERROR("Got PNG warning: %s\n", warning_msg);
+}
+
+void PngLoader::errorFn(png_structp png_ptr, png_const_charp error_msg) {
+	// ignore PNG warnings
+	PSP_ERROR("Got PNG error: %s\n", error_msg);
+	abort();
 }
 
 // Read function for png library to be able to read from our SeekableReadStream
@@ -100,7 +107,8 @@ void PngLoader::warningFn(png_structp png_ptr, png_const_charp warning_msg) {
 void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length) {
 	Common::SeekableReadStream &file = *(Common::SeekableReadStream *)png_get_io_ptr(pngPtr);
 
-	file.read(data, length);
+	uint32 ret = file.read(data, length);
+	assert(ret == length);
 }
 
 bool PngLoader::basicImageLoad() {
@@ -109,7 +117,7 @@ bool PngLoader::basicImageLoad() {
 	if (!_pngPtr)
 		return false;
 
-	png_set_error_fn(_pngPtr, (png_voidp) nullptr, (png_error_ptr) nullptr, warningFn);
+	png_set_error_fn(_pngPtr, (png_voidp) nullptr, (png_error_ptr) errorFn, warningFn);
 
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
