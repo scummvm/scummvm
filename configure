@@ -123,12 +123,14 @@ add_feature() {
 	set_var _feature_${1}_settings "${3}"
 }
 
-# Add a component: id name settings-list
+# Add a component: id name settings-list use-define
 add_component() {
+	add_feature "$1" "$2" "$3"
+
 	set_var _components "$(get_var _components) ${1}"
 
 	set_var _component_${1}_name "${2}"
-	set_var _component_${1}_settings "${3}"
+	set_var _component_${1}_settings "${4}"
 }
 
 _srcdir=`dirname $0`
@@ -302,26 +304,22 @@ add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
 add_feature mpeg2 "mpeg2" "_mpeg2"
-add_feature mt32emu "mt32emu" "_mt32emu"
 add_feature opengl_game_classic "OpenGL (classic)" "_opengl_game_classic"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
 add_feature gif "GIF" "_gif"
-add_feature theoradec "libtheoradec" "_theoradec"
-add_feature tinygl "TinyGL" "_tinygl"
-add_feature vpx "libvpx" "_vpx"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
-add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 add_feature imgui "imgui" "_imgui"
 
-add_component lua "lua" "USE_LUA"
-add_component vpx "libvpx" "USE_VPX"
-add_component theoradec "libtheoradec" "USE_THEORADEC"
-add_component mt32emu "mt32emu" "USE_MT32EMU"
-add_component tinygl "TinyGL" "USE_TINYGL"
+# Components are features which may be disabled if unused by the engines
+add_component lua "lua" "_lua" "USE_LUA"
+add_component vpx "libvpx" "_vpx" "USE_VPX"
+add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
+add_component mt32emu "mt32emu" "_mt32emu" "USE_MT32EMU"
+add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
