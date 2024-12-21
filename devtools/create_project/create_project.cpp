@@ -2570,10 +2570,10 @@ bool BuildSetup::featureEnabled(const std::string &feature) const {
 }
 
 Feature BuildSetup::getFeature(const std::string &feature) const {
-	for (FeatureList::const_iterator itr = features.begin(); itr != features.end(); ++itr) {
-		if (itr->name != feature)
-			continue;
-		return *itr;
+	FeatureList::const_iterator itr = std::find(features.begin(), features.end(), feature);
+	if (itr == features.end()) {
+		error("invalid feature request: " + feature);
 	}
-	error("invalid feature request: " + feature);
+
+	return *itr;
 }
