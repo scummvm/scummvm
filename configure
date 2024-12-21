@@ -3377,7 +3377,7 @@ EOF
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		_optimization_level=-O1
+		_optimization_level=-O2
 		_freetypepath="$PSPDEV/psp/bin"
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
