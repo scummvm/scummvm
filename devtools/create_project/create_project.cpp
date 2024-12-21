@@ -1156,6 +1156,7 @@ const Feature s_features[] = {
 	{                 "3d",                              "", false, true,  "3D rendering" },
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
 	{              "imgui",                     "USE_IMGUI", false, true,  "Dear ImGui based debugger" },
+	{                "lua",                       "USE_LUA", false, true,  "Lua" },
 	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
 	{               "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
