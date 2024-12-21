@@ -817,6 +817,7 @@ public:
 
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kWindowStyleNormal, MacDialogMenuStyle menuStyle = kMenuStyleDisabled);
 	MacDialogWindow *createDialog(int dialogId);
+	MacDialogWindow *createDialog(int dialogId, Common::Rect bounds);
 	void drawBanner(char *message);
 	void undrawBanner();
 

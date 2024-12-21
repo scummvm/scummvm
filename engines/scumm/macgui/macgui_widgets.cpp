@@ -114,8 +114,25 @@ int MacGuiImpl::MacWidget::drawText(Common::String text, int x, int y, int w, ui
 	if (wordWrap) {
 		maxLineWidth = font->wordWrapText(text, w, lines);
 	} else {
-		lines.push_back(text);
-		maxLineWidth = font->getStringWidth(text);
+		if (text.contains('\r')) {
+			Common::String line = "";
+
+			for (uint i = 0; i < text.size(); i++) {
+				if (text[i] != '\r')
+					line += text[i];
+
+				if (text[i] == '\r' || i == text.size() - 1) {
+					int lineWidth = font->getStringWidth(line);
+					if (lineWidth > maxLineWidth)
+						maxLineWidth = lineWidth;
+					lines.push_back(line);
+					line = "";
+				}
+			}
+		} else {
+			lines.push_back(text);
+			maxLineWidth = font->getStringWidth(text);
+		}
 	}
 
 	// Draw the text. Disabled text is implemented as a filter on top of

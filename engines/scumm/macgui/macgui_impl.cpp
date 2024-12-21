@@ -797,6 +797,30 @@ Common::String MacGuiImpl::getDialogString(Common::SeekableReadStream *res, int 
 }
 
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
+	Common::Rect bounds;
+
+	// Default dialog sizes for dialogs without a DITL resource.
+
+	if (_vm->_game.version < 6) {
+		bounds.top = 0;
+		bounds.left = 0;
+		bounds.bottom = 86;
+		bounds.right = 340;
+
+		bounds.translate(86, 88);
+	} else {
+		bounds.top = 0;
+		bounds.left = 0;
+		bounds.bottom = 113;
+		bounds.right = 267;
+
+		bounds.translate(187, 94);
+	}
+
+	return createDialog(dialogId, bounds);
+}
+
+MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect bounds) {
 	uint32 black = getBlack();
 
 	Common::MacResManager resource;
@@ -805,8 +829,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::String gameFileResStr = _strsStrings[kMSIGameFile].c_str();
 
 	resource.open(_resourceFile);
-
-	Common::Rect bounds;
 
 	res = resource.getResource(MKTAG('D', 'L', 'O', 'G'), dialogId);
 	if (res) {
@@ -821,20 +843,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 		// Compensate for the original not drawing the game at the very top of
 		// the screen.
 		bounds.translate(0, -40);
-	} else if (_vm->_game.version < 6) {
-		bounds.top = 0;
-		bounds.left = 0;
-		bounds.bottom = 86;
-		bounds.right = 340;
-
-		bounds.translate(86, 88);
-	} else {
-		bounds.top = 0;
-		bounds.left = 0;
-		bounds.bottom = 113;
-		bounds.right = 267;
-
-		bounds.translate(187, 94);
 	}
 
 	delete res;
