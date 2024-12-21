@@ -129,8 +129,7 @@ add_component() {
 
 	set_var _components "$(get_var _components) ${1}"
 
-	set_var _component_${1}_name "${2}"
-	set_var _component_${1}_settings "${4}"
+	set_var _component_${1}_define "${4}"
 }
 
 _srcdir=`dirname $0`

@@ -136,12 +136,12 @@ function get_component_enabled(comp) {
 	return ENVIRON["_component_" comp "_enabled"]
 }
 
-function get_component_settings(comp) {
-	return ENVIRON["_component_" comp "_settings"]
+function get_component_define(comp) {
+	return ENVIRON["_component_" comp "_define"]
 }
 
 function have_component(comp) {
-	if (length(ENVIRON["_component_" comp "_settings"]) == 0)
+	if (length(ENVIRON["_component_" comp "_define"]) == 0)
 		return "no"
 
 	return "yes"
@@ -439,14 +439,14 @@ END {
 	comp_enabled = ""
 	comp_disabled = ""
 	for (c = 1; c <= components_count; c++) {
-		setting = get_component_settings(components[c])
-		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " setting)
+		define = get_component_define(components[c])
+		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " define)
 
 		if (get_component_enabled(components[c]) == "yes") {
-			add_line_to_config_mk(setting "=1")
+			add_line_to_config_mk(define "=1")
 			comp_enabled = comp_enabled components[c] " "
 		} else {
-			add_line_to_config_mk("# " setting)
+			add_line_to_config_mk("# " define)
 			comp_disabled = comp_disabled components[c] " "
 		}
 	}
