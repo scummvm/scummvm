@@ -20,6 +20,7 @@
  */
 
 #include "got/views/game.h"
+#include "got/game/back.h"
 #include "got/game/init.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
@@ -50,6 +51,19 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 void Game::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
+}
+
+bool Game::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_F1:
+		odin_speaks(2008, -1);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 bool Game::msgAction(const ActionMessage &msg) {

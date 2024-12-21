@@ -152,15 +152,13 @@ void show_level(int new_level) {
 #endif
 }
 
-int odin_speaks(int index, int item) {
-	execute_script((long)index, &_G(odin)[0]);
+void odin_speaks(int index, int item) {
+	execute_script((long)index, &_G(odin));
+
 	if (!_G(thor)->health) {
 		_G(thor)->show = 0;
 		_G(exit_flag) = 2;
 	}
-
-	item = item;
-	return 1;
 }
 
 
@@ -297,7 +295,7 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 	Common::String str;
 	int v;
 	long lind;
-	Graphics::ManagedSurface *pic;
+	Gfx::Pics *pic;
 
 	if (actr->type != 4)
 		return 0;
@@ -310,9 +308,9 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 	Gfx::Pics pics(str, -1, false);
 	if (Common::File::exists(Common::Path(str))) {
 		pics.load();
-		pic = &pics[0];
+		pic = &pics;
 	} else {
-		pic = &_G(odin)[0];
+		pic = &_G(odin);
 	}
 
 	lind = (long)_G(current_level);
