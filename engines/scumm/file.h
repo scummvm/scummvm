@@ -161,6 +161,8 @@ class ScummPAKFile : public ScummFile {
 private:
 	PAKFileHashMap _pakIndex;
 
+	void readIndex(const Common::Path &containerFile, bool isFT);
+
 public:
 	ScummPAKFile(const ScummEngine *vm, bool indexFiles = true);
 	~ScummPAKFile() override { _pakIndex.clear(); }

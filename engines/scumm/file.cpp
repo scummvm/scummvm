@@ -223,13 +223,15 @@ bool ScummSteamFile::openWithSubRange(const Common::Path &filename, int32 subFil
 #pragma mark -
 
 ScummPAKFile::ScummPAKFile(const ScummEngine *vm, bool indexFiles) : ScummFile(vm) {
-	if (!indexFiles)
-		return;
+	if (indexFiles)
+		readIndex(vm->_containerFile, vm->_game.id == GID_FT);
+}
 
-	ScummFile::open(vm->_containerFile);
+void ScummPAKFile::readIndex(const Common::Path &containerFile, bool isFT) {
+	// Based off DoubleFine Explorer: https://github.com/bgbennyboy/DoubleFine-Explorer/blob/master/uDFExplorer_LPAKManager.pas
+	ScummFile::open(containerFile);
 
 	const uint32 magic = _baseStream->readUint32BE();
-	const bool isFT = vm->_game.id == GID_FT;
 	const byte recordSize = isFT ? 24 : 20;
 
 	if (magic != MKTAG('K', 'A', 'P', 'L')) {
