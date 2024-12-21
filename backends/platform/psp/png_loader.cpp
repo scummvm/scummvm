@@ -33,6 +33,13 @@
 
 #include "backends/platform/psp/trace.h"
 
+PngLoader::~PngLoader() {
+	if (!_pngPtr) {
+		return;
+	}
+	png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
+}
+
 PngLoader::Status PngLoader::allocate() {
 	DEBUG_ENTER_FUNC();
 
@@ -76,9 +83,8 @@ PngLoader::Status PngLoader::allocate() {
 
 bool PngLoader::load() {
 	DEBUG_ENTER_FUNC();
-	// Try to load the image
-	_file.seek(0);	// Go back to start
 
+	// Try to really load the image
 	if (!loadImageIntoBuffer()) {
 		PSP_DEBUG_PRINT("failed to load image\n");
 		return false;
@@ -121,15 +127,11 @@ bool PngLoader::basicImageLoad() {
 
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
-		png_destroy_read_struct(&_pngPtr, nullptr, nullptr);
 		return false;
 	}
 	// Set the png lib to use our read function
 	png_set_read_fn(_pngPtr, &_file, libReadFunc);
 
-	unsigned int sig_read = 0;
-
-	png_set_sig_bytes(_pngPtr, sig_read);
 	png_read_info(_pngPtr, _infoPtr);
 	int interlaceType;
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
@@ -154,7 +156,6 @@ bool PngLoader::findImageDimensions() {
 	bool status = basicImageLoad();
 
 	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, png_get_rowbytes(_pngPtr, _infoPtr));
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
 	return status;
 }
 
@@ -164,10 +165,9 @@ bool PngLoader::findImageDimensions() {
 bool PngLoader::loadImageIntoBuffer() {
 	DEBUG_ENTER_FUNC();
 
-	if (!basicImageLoad()) {
-		png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
-		return false;
-	}
+	// Everything has already been set up in allocate
+	assert(_pngPtr);
+
 	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
 
 	if (_paletteSize) {
@@ -206,7 +206,6 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
-		png_destroy_read_struct(&_pngPtr, nullptr, nullptr);
 		PSP_ERROR("Couldn't allocate line\n");
 		return false;
 	}
@@ -217,7 +216,6 @@ bool PngLoader::loadImageIntoBuffer() {
 	}
 	free(line);
 	png_read_end(_pngPtr, _infoPtr);
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
 
 	return true;
 }
