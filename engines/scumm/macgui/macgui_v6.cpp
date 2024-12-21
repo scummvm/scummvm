@@ -58,6 +58,9 @@ MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiIm
 		_gameName = "Maniac Mansion";
 	else
 		_gameName = "Some Game I Do Not Know";
+
+	if (_vm->_game.features & GF_DEMO)
+		_gameName += " Demo";
 }
 
 MacV6Gui::~MacV6Gui() {
@@ -379,6 +382,25 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 }
 
 void MacV6Gui::runAboutDialog() {
+	if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
+		MacDialogWindow *window = createDialog(136, Common::Rect(121, 15, 519, 364));
+		MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+
+		window->setDefaultWidget(buttonOk);
+
+		Common::Array<int> deferredActionsIds;
+
+		while (!_vm->shouldQuit()) {
+			int clicked = window->runDialog(deferredActionsIds);
+
+			if (clicked == buttonOk->getId())
+				break;
+		}
+
+		delete window;
+		return;
+	}
+
 	ScummFile aboutFile(_vm);
 	if (!_vm->openFile(aboutFile, "ABOUT"))
 		return;
