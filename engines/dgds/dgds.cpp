@@ -186,6 +186,11 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	if (!haveSceneFile && sceneNum != 2) {
 		warning("Tried to switch to non-existent scene %d", sceneNum);
 		return false;
+	} else if (!haveSceneFile && getGameId() == GID_WILLY) {
+		// Willy does not have a separate scene file for inventory.
+		// Leave the currenty scene data loaded and just show the inventory.
+		_inventory->open();
+		return true;
 	}
 
 	_gameGlobals->setLastSceneNum(sceneNum);
@@ -641,12 +646,14 @@ Common::Error DgdsEngine::run() {
 
 			_compositionBuffer.blitFrom(_backgroundBuffer);
 
-			if (_inventory->isOpen() && _scene->getNum() == 2) {
+			if (_inventory->isOpen() && (_scene->getNum() == 2 || getGameId() == GID_WILLY)) {
 				int invCount = _gdsScene->countItemsInInventory();
 				_inventory->draw(_compositionBuffer, invCount);
 			}
 
-			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
+			// Don't draw stored buffer over Willy Beamish inventory
+			if (!(_inventory->isOpen() && getGameId() == GID_WILLY))
+				_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 
 			//
 			// The originals do something about drawing the background of dialogs here
@@ -657,7 +664,7 @@ Common::Error DgdsEngine::run() {
 			//
 			//_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			if (_scene->getNum() != 2 || _inventory->isZoomVisible())
+			if (!_inventory->isOpen() || _inventory->isZoomVisible())
 				_adsInterp->run();
 
 			if (mouseEvent != Common::EVENT_INVALID) {

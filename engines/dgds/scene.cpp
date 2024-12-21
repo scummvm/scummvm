@@ -1301,7 +1301,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 
 	GDSScene *gds = engine->getGDSScene();
 
-	if (area->_num == 0) {
+	if (area->_num == 0 || area->_objInteractionRectNum == 1) {
 		debug(1, "Mouseup on inventory.");
 		engine->getInventory()->open();
 	} else if (area->_num == 0xffff) {

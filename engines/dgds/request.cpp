@@ -822,18 +822,27 @@ void ImageGadget::draw(Graphics::ManagedSurface *dst) const {
 	if (!xstep || !ystep)
 		return;
 
+	const DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
+
 	int xoff = _x + _parentX;
 	int yoff = _y + _parentY;
-	Common::Rect drawRect(Common::Point(xoff, yoff), _width, _height);
+	int fillHeight = _height;
+	if (gameId == GID_WILLY)
+		fillHeight++;
+
+	Common::Rect drawRect(Common::Point(xoff, yoff), _width, fillHeight);
 	dst->fillRect(drawRect, _col1);
 	// Note: not quite the same as the original logic here, but gets the same result.
 	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
 
-	// NOTE: This only done in inventory in originals
-	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
+	// NOTE: This only done in inventory in originals, but no other
+	// Request uses the ImageGadget.
+	if (gameId == GID_DRAGON)
 		RequestData::drawCorners(dst, 19, xoff - 2, yoff - 2, _width + 4, _height + 4);
-	else
+	else if (gameId == GID_HOC)
 		RequestData::drawCorners(dst, 19, xoff - 4, yoff - 4, _width + 8, _height + 8);
+	else if (gameId == GID_WILLY)
+		RequestData::drawCorners(dst, 25, xoff - 4, yoff - 4, _width + 8, _height + 8);
 }
 
 Common::String RequestData::dump() const {

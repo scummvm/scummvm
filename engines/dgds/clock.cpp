@@ -114,9 +114,13 @@ Common::String Clock::getTimeStr() const {
 			month = 0;
 	}
 
-	if (DgdsEngine::getInstance()->getGameLang() == Common::EN_ANY) {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+
+	if (engine->getGameId() == GID_WILLY) {
+		return Common::String::format("DAY %d, %2d:%02d", day - 1, _hours, _mins);
+	} else if (engine->getGameLang() == Common::EN_ANY) {
 		return Common::String::format("%2d/%02d %2d:%02d", month + 1, day, _hours, _mins);
-	} else if (DgdsEngine::getInstance()->getGameLang() == Common::DE_DEU) {
+	} else if (engine->getGameLang() == Common::DE_DEU) {
 		return Common::String::format("%2d.%d %2d.%02d", day, month + 1, _hours, _mins);
 	} else {
 		error("Unsupported language %d", DgdsEngine::getInstance()->getGameLang());
