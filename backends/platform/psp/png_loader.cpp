@@ -129,8 +129,10 @@ bool PngLoader::basicImageLoad() {
 	_channels = png_get_channels(_pngPtr, _infoPtr);
 
 	if (_colorType & PNG_COLOR_MASK_PALETTE) {
-		int paletteSize;
-		png_get_PLTE(_pngPtr, _infoPtr, nullptr, &paletteSize);
+		int paletteSize = 0;
+		png_colorp palettePtr = nullptr;
+		png_uint_32 ret = png_get_PLTE(_pngPtr, _infoPtr, &palettePtr, &paletteSize);
+		assert(ret == PNG_INFO_PLTE);
 		_paletteSize = paletteSize;
 	}
 
