@@ -10,21 +10,25 @@ Runs many old point-and-click adventures and RPGs
 
 *** Full description:
 
-NO GAME DATA FILES ARE INCLUDED.
-
-ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs - such as SCUMM games (like Monkey Island and Day of the Tentacle), Revolution's Beneath A Steel Sky, and many more. NO GAME DATA FILES ARE INCLUDED; you must supply your own.
+ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs. The application is bundled with two playable demos, Indiana Jones and the Fate of Atlantis (DOS Demo) and The Secret of Monkey Island (DOS EGA Demo), both titles copyright of Lucasfilm Ltd.
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.8.1/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.9.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
+ScummVM is open source software available under the term of the GPL v3.0 license.
+The source code is available from https://github.com/scummvm/scummvm.
+
 *** Current release:
-2.8.1.1
+2.9.0
 
 *** Release notes (limit is 500 characters):
-- Fixed reported graphical glitches and app crashes
-- Upgrade to Android 14
+- Add support for Android 15.
+- Add game shortcuts support on Android home screen either from a long press on the ScummVM icon or from the launcher widgets selector.
+- Rework the gamepad input mode with an improved UI. Add more virtual buttons.
+- Scale UI according to display density.
+- Various stability fixes.
 
-Full release notes: https://scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
+Full release notes: https://scummvm.org/frs/scummvm/2.9.0/ReleaseNotes.html
