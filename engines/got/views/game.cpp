@@ -57,7 +57,13 @@ bool Game::msgAction(const ActionMessage &msg) {
 }
 
 bool Game::tick() {
-	return true;
+	// There are many things in original game code that can trigger
+	// changes on screen, and for simplicity they each no longer have
+	// the code that partially updates the screen. Due to this,
+	// we set to redraw the screen every frame in case of updates
+	redraw();
+
+	return false;
 }
 
 } // namespace Views

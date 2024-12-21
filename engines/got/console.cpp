@@ -32,6 +32,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("sound", WRAP_METHOD(Console, cmdSound));
 	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
+	registerCmd("magic", WRAP_METHOD(Console, cmdMagic));
 }
 
 Console::~Console() {
@@ -75,6 +76,12 @@ bool Console::cmdLoad(int argc, const char **argv) {
 
 	debugPrintf("load <original savegame name>\n");
 	return true;
+}
+
+bool Console::cmdMagic(int argc, const char **argv) {
+	_G(thor_info).magic = (argc == 2) ? CLIP(atoi(argv[1]), 0, 150): 150;
+	
+	return false;
 }
 
 } // namespace Got
