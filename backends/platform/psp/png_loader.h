@@ -31,6 +31,7 @@ private:
 	bool loadImageIntoBuffer();
 
 	static void warningFn(png_structp png_ptr, png_const_charp warning_msg);
+	static void errorFn(png_structp png_ptr, png_const_charp warning_msg);
 	static void libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length);
 
 	Common::SeekableReadStream &_file;
