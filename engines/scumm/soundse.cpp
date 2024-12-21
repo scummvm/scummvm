@@ -46,20 +46,35 @@ void SoundSE::initSoundFiles() {
 	switch (_vm->_game.id) {
 	case GID_MONKEY:
 	case GID_MONKEY2:
-		_xwbMusicFilename = "MusicOriginal.xwb";
-		//_xwbMusicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
-		indexXWBFile(_xwbMusicFilename, &_xwbMusicEntries);
-		_xwbSfxFilename = "SFXOriginal.xwb";
-		//_xwbSfxFilename = "SFXNew.xwb";	// TODO: allow toggle between original and new SFX
-		indexXWBFile(_xwbSfxFilename, &_xwbSfxEntries);
-		_xwbSpeechFilename = "Speech.xwb";
-		indexXWBFile(_xwbSpeechFilename, &_xwbSpeechEntries);
+		_musicFilename = "MusicOriginal.xwb";
+		//_musicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
+		indexXWBFile(_musicFilename, &_musicEntries);
+		_sfxFilename = "SFXOriginal.xwb";
+		//_sfxFilename = "SFXNew.xwb";	// TODO: allow toggle between original and new SFX
+		indexXWBFile(_sfxFilename, &_sfxEntries);
+		_speechFilename = "Speech.xwb";
+		indexXWBFile(_speechFilename, &_speechEntries);
+		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	case GID_TENTACLE:
-		// TODO
+		_musicFilename = "iMUSEClient_Music.fsb";
+		indexFSBFile(_musicFilename, &_musicEntries);
+		_sfxFilename = "iMUSEClient_SFX.fsb";
+		indexFSBFile(_sfxFilename, &_sfxEntries);
+		_speechFilename = "iMUSEClient_VO.fsb";
+		indexFSBFile(_speechFilename, &_speechEntries);
+		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	case GID_FT:
-		// TODO
+		_musicFilename = "iMUSEClient_Music.fsb";
+		indexFSBFile(_musicFilename, &_musicEntries);
+		_sfxFilename = "iMUSEClient_SFX_INMEMORY.fsb";
+		indexFSBFile(_sfxFilename, &_sfxEntries);
+		_speechFilename = "iMUSEClient_SPEECH.fsb";
+		indexFSBFile(_speechFilename, &_speechEntries);
+		// TODO: iMUSEClient_SFX_STREAMING.fsb
+		// TODO: iMUSEClient_UI.fsb
+		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	default:
 		error("initSoundFiles: unhandled game");
@@ -69,12 +84,12 @@ void SoundSE::initSoundFiles() {
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 	Common::File *cdAudioFile = new Common::File();
 
-	if (!cdAudioFile->open(Common::Path(_xwbMusicFilename))) {
+	if (!cdAudioFile->open(Common::Path(_musicFilename))) {
 		delete cdAudioFile;
 		return nullptr;
 	}
 
-	XWBEntry entry = _xwbMusicEntries[track];
+	AudioEntry entry = _musicEntries[track];
 
 	auto subStream = new Common::SeekableSubReadStream(
 		cdAudioFile,
@@ -83,7 +98,7 @@ Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 		DisposeAfterUse::YES
 	);
 
-	return createXWBStream(subStream, entry);
+	return createSoundStream(subStream, entry);
 }
 
 #define WARN_AND_RETURN_XWB(message)          \
@@ -94,7 +109,7 @@ Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 		return;                               \
 	}
 
-void SoundSE::indexXWBFile(const Common::String &filename, XWBIndex *xwbIndex) {
+void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioIndex) {
 	// This implementation is based off unxwb: https://github.com/mariodon/unxwb/
 	// as well as xwbdump: https://raw.githubusercontent.com/wiki/Microsoft/DirectXTK/xwbdump.cpp
 	// Only the parts that apply to the Doublefine releases of
@@ -138,7 +153,7 @@ void SoundSE::indexXWBFile(const Common::String &filename, XWBIndex *xwbIndex) {
 	f->seek(segments[kXWBSegmentEntryMetaData].offset);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		XWBEntry entry;
+		AudioEntry entry;
 		/*uint32 flagsAndDuration = */ f->readUint32LE();
 		uint32 format = f->readUint32LE();
 		entry.offset = f->readUint32LE() + segments[kXWBSegmentEntryWaveData].offset;
@@ -146,13 +161,13 @@ void SoundSE::indexXWBFile(const Common::String &filename, XWBIndex *xwbIndex) {
 		/*uint32 loopOffset = */ f->readUint32LE();
 		/*uint32 loopLength = */ f->readUint32LE();
 
-		entry.codec = static_cast<XWBCodec>(format & ((1 << 2) - 1));
+		entry.codec = static_cast<AudioCodec>(format & ((1 << 2) - 1));
 		entry.channels = (format >> (2)) & ((1 << 3) - 1);
 		entry.rate = (format >> (2 + 3)) & ((1 << 18) - 1);
 		entry.align = (format >> (2 + 3 + 18)) & ((1 << 8) - 1);
 		entry.bits = (format >> (2 + 3 + 18 + 8)) & ((1 << 1) - 1);
 
-		xwbIndex->push_back(entry);
+		audioIndex->push_back(entry);
 	}
 
 	f->close();
@@ -161,7 +176,90 @@ void SoundSE::indexXWBFile(const Common::String &filename, XWBIndex *xwbIndex) {
 
 #undef WARN_AND_RETURN_XWB
 
-Audio::SeekableAudioStream *SoundSE::createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry) {
+#define WARN_AND_RETURN_FSB(message)          \
+	{                                         \
+		warning("indexFSBFile: %s", message); \
+		f->close();                           \
+		delete f;                             \
+		return;                               \
+	}
+
+#define GET_FSB5_OFFSET(X) ((((X) >> (uint64)7) << (uint64)5) & (((uint64)1 << (uint64)32) - 1))
+
+void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioIndex) {
+	// Based off DoubleFine Explorer: https://github.com/bgbennyboy/DoubleFine-Explorer/blob/master/uDFExplorer_FSBManager.pas
+	// and fsbext: https://aluigi.altervista.org/search.php?src=fsbext
+	ScummPAKFile *f = new ScummPAKFile(_vm);
+	_vm->openFile(*f, Common::Path(filename));
+
+	const uint32 headerSize = 60; // 4 * 7 + 8 + 16 + 8
+	const uint32 magic = f->readUint32BE();
+	if (magic != MKTAG('F', 'S', 'B', '5'))
+		WARN_AND_RETURN_FSB("Invalid FSB file")
+
+	/*const uint32 version = */f->readUint32LE();
+	const uint32 sampleCount = f->readUint32LE();
+	const uint32 sampleHeaderSize = f->readUint32LE();
+	const uint32 nameSize = f->readUint32LE();
+	const uint32 dataSize = f->readUint32LE();
+	/*const uint32 mode = */f->readUint32LE();
+	f->skip(8);	// skip zero
+	f->skip(16);	// skip hash
+	f->skip(8);	// skip dummy
+	const uint32 nameOffset = sampleHeaderSize + headerSize;
+	const uint32 baseOffset = headerSize + sampleHeaderSize + nameSize;
+
+	for (uint32 i = 0; i < sampleCount; i++) {
+		const uint32 origOffset = f->readUint32LE();
+		f->skip(4); // samples, used in XMA
+		uint32 type = origOffset & ((1 << 7) - 1);
+		const uint32 fileOffset = nameOffset + nameSize + GET_FSB5_OFFSET(origOffset);
+		uint32 size;
+
+		// Meta data, skip it
+		while (type & 1) {
+			const uint32 t = f->readUint32LE();
+			type = t & 1;
+			const uint32 metaDataSize = (t & 0xffffff) >> 1;
+			f->skip(metaDataSize);
+		}
+
+		if (f->pos() < nameOffset) {
+			size = f->readUint32LE();
+			f->seek(-4, SEEK_CUR);
+			if (!size) {
+				size = dataSize + baseOffset;
+			} else {
+				size = GET_FSB5_OFFSET(size) + baseOffset;
+			}
+		} else {
+			size = dataSize + baseOffset;
+		}
+
+		size -= fileOffset;
+
+		AudioEntry entry;
+		entry.length = size;
+		entry.offset = fileOffset;
+		// The following are all unused - they'll
+		// be read from the MP3 streams
+		entry.rate = 48000;
+		entry.channels = 2;
+		entry.codec = kFSBCodecMP3;
+		entry.align = 0;
+		entry.bits = 16;
+
+		audioIndex->push_back(entry);
+	}
+
+	f->close();
+	delete f;
+}
+
+#undef GET_FSB5_OFFSET
+#undef WARN_AND_RETURN_FSB
+
+Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry) {
 	switch (entry.codec) {
 	case kXWBCodecPCM: {
 		byte flags = Audio::FLAG_LITTLE_ENDIAN;
@@ -173,7 +271,7 @@ Audio::SeekableAudioStream *SoundSE::createXWBStream(Common::SeekableSubReadStre
 	}
 	case kXWBCodecXMA:
 		// Unused in MI1SE and MI2SE
-		error("createXWBStream: XMA codec not supported");
+		error("createSoundStream: XMA codec not supported");
 	case kXWBCodecADPCM: {
 		const uint32 blockAlign = (entry.align + 22) * entry.channels;
 		return Audio::makeADPCMStream(
@@ -196,50 +294,76 @@ Audio::SeekableAudioStream *SoundSE::createXWBStream(Common::SeekableSubReadStre
 			entry.align,
 			stream
 		);*/
-		warning("createXWBStream: WMA codec not implemented");
+		warning("createSoundStream: WMA codec not implemented");
 		delete stream;
 		return nullptr;
+	case kFSBCodecMP3:
+		return Audio::makeMP3Stream(
+			stream,
+			DisposeAfterUse::YES
+		);
 	}
 
-	error("createXWBStream: Unknown XWB codec %d", entry.codec);
+	error("createSoundStream: Unknown XWB codec %d", entry.codec);
 }
 
-#if 0
-void SoundSE::startMusic(int soundID) {
-	int entry = -1;
+void SoundSE::startSoundEntry(int soundIndex, SoundSEType type) {
+	Common::SeekableReadStream *stream = nullptr;
+	Audio::SoundHandle *handle = nullptr;
+	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+	Common::String audioFileName;
+	AudioIndex &audioEntries = _musicEntries;
 
-	// HACK: Find the first entry with offset 8192 (MI2 theme)
-	// TODO: Map soundID to entry (*.xsb files)
-	for (int i = 0; i < _xwbMusicEntries.size(); i++) {
-		if (_xwbMusicEntries[i].offset == 8192) {
-			entry = i;
-			break;
+	switch (type) {
+	case kSoundSETypeMusic:
+		handle = &_musicHandle;
+		soundType = Audio::Mixer::kMusicSoundType;
+		audioFileName = _musicFilename;
+		audioEntries = _musicEntries;
+		break;
+	case kSoundSETypeSpeech:
+		handle = &_speechHandle;
+		soundType = Audio::Mixer::kSpeechSoundType;
+		audioFileName = _speechFilename;
+		audioEntries = _speechEntries;
+		break;
+	case kSoundSETypeSFX:
+		handle = &_sfxHandle;
+		soundType = Audio::Mixer::kSFXSoundType;
+		audioFileName = _sfxFilename;
+		audioEntries = _sfxEntries;
+		break;
+	}
+
+	if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) {
+		Common::File *audioFile = new Common::File();
+		stream = audioFile;
+		if (!audioFile->open(Common::Path(audioFileName))) {
+			delete audioFile;
+			return;
+		}
+	} else {
+		ScummPAKFile *audioFile = new ScummPAKFile(_vm);
+		stream = audioFile;
+		if (!_vm->openFile(*audioFile, Common::Path(audioFileName))) {
+			delete audioFile;
+			return;
 		}
 	}
 
-	if (entry == -1)
-		return;
-
-	Common::File *musicFile = new Common::File();
-
-	if (!musicFile->open(Common::Path(_xwbMusicFilename))) {
-		delete musicFile;
-		return;
-	}
-
-	XWBEntry xwbEntry = _xwbMusicEntries[entry];
-	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(
-		musicFile,
-		xwbEntry.offset,
-		xwbEntry.offset + xwbEntry.length,
+	AudioEntry audioEntry = audioEntries[soundIndex];
+	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(
+		stream,
+		audioEntry.offset,
+		audioEntry.offset + audioEntry.length,
 		DisposeAfterUse::YES
 	);
 
 	_mixer->playStream(
-		Audio::Mixer::kMusicSoundType,
-		&_musicHandle, createXWBStream(stream, xwbEntry)
+		soundType,
+		handle,
+		createSoundStream(subStream, audioEntry)
 	);
 }
-#endif
 
 } // End of namespace Scumm

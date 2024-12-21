@@ -38,6 +38,12 @@ namespace Scumm {
 
 class ScummEngine;
 
+enum SoundSEType {
+	kSoundSETypeMusic,
+	kSoundSETypeSpeech,
+	kSoundSETypeSFX
+};
+
 class SoundSE {
 
 protected:
@@ -50,14 +56,15 @@ public:
 
 	Audio::SeekableAudioStream *getXWBTrack(int track);
 
-	//void startMusic(int soundID);
+	void startSoundEntry(int soundIndex, SoundSEType type);
 
 private:
-	enum XWBCodec {
+	enum AudioCodec {
 		kXWBCodecPCM = 0,
 		kXWBCodecXMA = 1,
 		kXWBCodecADPCM = 2,
-		kXWBCodecWMA = 3
+		kXWBCodecWMA = 3,
+		kFSBCodecMP3 = 4
 	};
 
 	enum XWBSegmentType {
@@ -68,33 +75,34 @@ private:
 		kXWBSegmentEntryWaveData = 4
 	};
 
-	struct XWBEntry {
-		uint32 offset;
+	struct AudioEntry {
+		uint64 offset;
 		uint32 length;
-		XWBCodec codec;
+		AudioCodec codec;
 		byte channels;
 		uint16 rate;
 		uint16 align;
 		byte bits;
 	};
 
-	typedef Common::Array<XWBEntry> XWBIndex;
+	typedef Common::Array<AudioEntry> AudioIndex;
 
-	XWBIndex _xwbMusicEntries;
-	Common::String _xwbMusicFilename;
+	AudioIndex _musicEntries;
+	Common::String _musicFilename;
 	Audio::SoundHandle _musicHandle;
 
-	XWBIndex _xwbSpeechEntries;
-	Common::String _xwbSpeechFilename;
+	AudioIndex _speechEntries;
+	Common::String _speechFilename;
 	Audio::SoundHandle _speechHandle;
 
-	XWBIndex _xwbSfxEntries;
-	Common::String _xwbSfxFilename;
+	AudioIndex _sfxEntries;
+	Common::String _sfxFilename;
 	Audio::SoundHandle _sfxHandle;
 
 	void initSoundFiles();
-	void indexXWBFile(const Common::String &filename, XWBIndex *xwbIndex);
-	Audio::SeekableAudioStream *createXWBStream(Common::SeekableSubReadStream *stream, XWBEntry entry);
+	void indexXWBFile(const Common::String &filename, AudioIndex *audioIndex);
+	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry);
+	void indexFSBFile(const Common::String &filename, AudioIndex *audioIndex);
 };
 
 

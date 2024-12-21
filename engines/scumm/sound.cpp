@@ -534,7 +534,7 @@ void Sound::triggerSound(int soundID) {
 		// TODO: If called from MI2SE, this will play the music
 		// multiple times
 		//if (_soundSE) {
-		//	_soundSE->startMusic(soundID);
+		//	_soundSE->startSound(soundID);
 		//	return;
 		//}
 
