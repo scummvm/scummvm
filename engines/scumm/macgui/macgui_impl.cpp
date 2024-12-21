@@ -673,7 +673,7 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 // Icon loader
 // ---------------------------------------------------------------------------
 
-Graphics::Surface *MacGuiImpl::loadIcon(int id) {
+Graphics::Surface *MacGuiImpl::loadIcon(int id, MacImageMask **mask) {
 	Common::MacResManager resource;
 
 	resource.open(_resourceFile);
@@ -686,6 +686,17 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id) {
 	if (res && iconDecoder.loadStream(*res)) {
 		const Graphics::Surface *surface = iconDecoder.getSurface();
 		const byte *palette = iconDecoder.getPalette();
+
+		if (iconDecoder.hasMask()) {
+			*mask = new MacImageMask();
+			uint maskSize = iconDecoder.getMaskRowBytes() * iconDecoder.getMaskHeight();
+			(*mask)->w = surface->w;
+			(*mask)->h = iconDecoder.getMaskHeight();
+			(*mask)->rowBytes = iconDecoder.getMaskRowBytes();
+
+			(*mask)->data = new byte[maskSize];
+			memcpy((*mask)->data, iconDecoder.getMask(), maskSize);
+		}
 
 		s = createRemappedSurface(surface, palette, iconDecoder.getPaletteColorCount());
 	}

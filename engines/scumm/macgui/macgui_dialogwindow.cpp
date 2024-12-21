@@ -268,14 +268,15 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 }
 
 MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(int x, int y, int id, bool enabled) {
-	Graphics::Surface *icon = _gui->loadIcon(id);
-	MacGuiImpl::MacImage *image = new MacImage(this, Common::Rect(x, y, x + icon->w, y + icon->h), icon, false);
+	MacImageMask *mask;
+	Graphics::Surface *icon = _gui->loadIcon(id, &mask);
+	MacGuiImpl::MacImage *image = new MacImage(this, Common::Rect(x, y, x + icon->w, y + icon->h), icon, mask, false);
 	addWidget(image, kWidgetIcon);
 	return image;
 }
 
 MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	MacGuiImpl::MacImage *image = new MacImage(this, bounds, _gui->loadPict(id), false);
+	MacGuiImpl::MacImage *image = new MacImage(this, bounds, _gui->loadPict(id), nullptr, false);
 	addWidget(image, kWidgetImage);
 	return image;
 }
@@ -733,6 +734,22 @@ MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type
 	}
 
 	return nullptr;
+}
+
+void MacGuiImpl::MacDialogWindow::drawSprite(const MacImage *image, int x, int y) {
+	const Graphics::Surface *surface = image->getImage();
+	const MacImageMask *mask = image->getMask();
+
+	if (mask) {
+		for (int y1 = 0; y1 < mask->h; y1++) {
+			for (int x1 = 0; x1 < mask->w; x1++) {
+				if (!mask->isMasked(x1, y1))
+					_innerSurface.setPixel(x + x1, y + y1, surface->getPixel(x1, y1));
+			}
+		}
+		markRectAsDirty(Common::Rect(x, y, x + surface->w, y + surface->h));
+	} else
+		drawSprite(image->getImage(), x, y);
 }
 
 void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {

@@ -807,14 +807,19 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 // Image widget
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
+MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, MacImageMask *mask, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
 	_image = surface;
+	_mask = mask;
 }
 
 MacGuiImpl::MacImage::~MacImage() {
 	if (_image) {
 		_image->free();
 		delete _image;
+	}
+	if (_mask) {
+		delete[] _mask->data;
+		delete _mask;
 	}
 }
 
@@ -825,7 +830,7 @@ void MacGuiImpl::MacImage::draw(bool drawFocused) {
 	debug(1, "MacGuiImpl::MacImage: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	if (_image)
-		_window->drawSprite(_image, _bounds.left, _bounds.top);
+		_window->drawSprite(this, _bounds.left, _bounds.top);
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -1335,10 +1340,8 @@ void MacGuiImpl::MacImageSlider::eraseHandle() {
 }
 
 void MacGuiImpl::MacImageSlider::drawHandle() {
-	Graphics::Surface *sprite = _handle->getImage();
 	Common::Rect r = _handle->getBounds();
-
-	_window->drawSprite(sprite, _bounds.left + _handlePos, r.top);
+	_window->drawSprite(_handle, _bounds.left + _handlePos, r.top);
 }
 
 void MacGuiImpl::MacImageSlider::handleMouseDown(Common::Event &event) {

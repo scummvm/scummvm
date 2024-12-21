@@ -33,6 +33,9 @@ CicnDecoder::CicnDecoder() {
 	_surface = nullptr;
 	_palette = nullptr;
 	_paletteColorCount = 0;
+	_mask = nullptr;
+	_maskRowBytes = 0;
+	_maskHeight = 0;
 }
 
 CicnDecoder::~CicnDecoder() {
@@ -48,9 +51,15 @@ void CicnDecoder::destroy() {
 
 	delete[] _palette;
 	_palette = nullptr;
-
 	_paletteColorCount = 0;
+
+	delete[] _mask;
+	_mask = nullptr;
+	_maskRowBytes = 0;
+	_maskHeight = 0;
 }
+
+
 
 bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
@@ -59,10 +68,10 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Mask header
 	stream.skip(4);
-	uint16 maskRowBytes = stream.readUint16BE();
+	_maskRowBytes = stream.readUint16BE();
 	stream.readUint16BE(); // top
 	stream.readUint16BE(); // left
-	uint16 maskHeight = stream.readUint16BE(); // bottom
+	_maskHeight = stream.readUint16BE(); // bottom
 	stream.readUint16BE(); // right
 
 	// Bitmap header
@@ -75,7 +84,11 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Mask and bitmap data
 	stream.skip(4);
-	stream.skip(maskRowBytes * maskHeight);
+
+	if (_maskRowBytes && _maskHeight) {
+		_mask = new byte[_maskRowBytes * _maskHeight];
+		stream.read(_mask, _maskRowBytes * _maskHeight);
+	}
 	stream.skip(bitmapRowBytes * bitmapHeight);
 
 	// Palette
