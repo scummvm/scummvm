@@ -168,12 +168,12 @@ private:
 		void threaten() { _kill = true; }
 		bool isDying() const { return _kill; }
 
-		void reset();
+		void reset() override;
 
 		virtual void updateVerb(int verbslot);
 
-		void draw();
-		void undraw();
+		void draw() override;
+		void undraw() override;
 	};
 
 	class Button : public VerbWidget {
@@ -183,13 +183,13 @@ private:
 	public:
 		Button(int x, int y, int width, int height);
 
-		bool handleEvent(Common::Event &event);
+		bool handleEvent(Common::Event &event) override;
 
-		void reset();
-		void timeOut();
-		void updateVerb(int verbslot);
+		void reset() override;
+		void timeOut() override;
+		void updateVerb(int verbslot) override;
 
-		void draw();
+		void draw() override;
 	};
 
 	class Inventory : public VerbWidget {
@@ -206,11 +206,11 @@ private:
 			void scroll(ScrollDirection dir);
 			int getHandlePosition();
 
-			void reset();
+			void reset() override;
 
-			bool handleEvent(Common::Event &event);
+			bool handleEvent(Common::Event &event) override;
 
-			void draw();
+			void draw() override;
 		};
 
 		class ScrollButton : public Widget {
@@ -219,11 +219,11 @@ private:
 
 			ScrollButton(int x, int y, int width, int height, ScrollDirection direction);
 
-			bool handleEvent(Common::Event &event);
-			bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
+			bool handleEvent(Common::Event &event) override;
+			bool handleMouseHeld(Common::Point &pressed, Common::Point &held) override;
 			void timeOut();
 
-			void draw();
+			void draw() override;
 		};
 
 		class Slot : public Widget {
@@ -242,12 +242,12 @@ private:
 			void setObject(int n);
 			int getObject() const { return _obj; }
 
-			void reset();
+			void reset() override;
 
-			bool handleEvent(Common::Event &event);
+			bool handleEvent(Common::Event &event) override;
 			void timeOut();
 
-			void draw();
+			void draw() override;
 		};
 
 		Slot *_slots[6];
@@ -261,16 +261,16 @@ private:
 		Inventory(int x, int y, int width, int height);
 		~Inventory();
 
-		void setRedraw(bool redraw);
+		void setRedraw(bool redraw) override;
 
-		void reset();
+		void reset() override;
 
-		bool handleEvent(Common::Event &event);
-		bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
-		void updateTimer(int delta);
-		void updateVerb(int verbslot);
+		bool handleEvent(Common::Event &event) override;
+		bool handleMouseHeld(Common::Point &pressed, Common::Point &held) override;
+		void updateTimer(int delta) override;
+		void updateVerb(int verbslot) override;
 
-		void draw();
+		void draw() override;
 	};
 
 	Common::HashMap<int, VerbWidget *> _widgets;
