@@ -2050,9 +2050,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// data for an object not yet added to the scene
 			// But it is called several times, for example for the gangster 406 in the scene 6 start
 			uint32 objectID = Func9F4D_32() - 0x400;
+			uint16 slotID = Func9F4D_16();
+			// TODO: Unknown purpose
 			Func9F4D_32();
-			Func9F4D_32();
-			ReadByte();
+			uint8 arrayIndex = ReadByte();
+
+			g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex);
+			// TODO: Consider removing below code
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			// TODO: Need to check if this object is really added to the scene like this
