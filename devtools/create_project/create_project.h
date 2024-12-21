@@ -98,6 +98,11 @@ struct EngineDesc {
 	StringList requiredFeatures;
 
 	/**
+	 * Components wished for this engine.
+	 */
+	StringList wishedComponents;
+
+	/**
 	 * A list of all available sub engine names. Sub engines are engines
 	 * which are built on top of an existing engines and can be only
 	 * enabled when the parten engine is enabled.
@@ -175,6 +180,22 @@ struct Feature {
 };
 typedef std::list<Feature> FeatureList;
 
+struct Component {
+	std::string name;   ///< Name of the component
+	std::string define; ///< Define of the component
+
+	Feature &feature; ///< Associated feature
+
+	std::string description; ///< Human readable description of the component
+
+	bool needed;
+
+	bool operator==(const std::string &n) const {
+		return (name == n);
+	}
+};
+typedef std::list<Component> ComponentList;
+
 struct Tool {
 	const char *name; ///< Name of the tools
 	bool enable;      ///< Whether the tools is enabled or not
@@ -188,7 +209,22 @@ typedef std::list<Tool> ToolList;
  */
 FeatureList getAllFeatures();
 
-StringList getAllComponents(const std::string &srcDir);
+/**
+ * Creates a list of all components.
+ *
+ * @param srcDir The source directory containing the configure script
+ * @param features The features list used to link the component to its feature
+ *
+ * @return A list including all components available linked to its features.
+ */
+ComponentList getAllComponents(const std::string &srcDir, FeatureList &features);
+
+/**
+ * Disable the features for the unused components.
+ *
+ * @param components List of components for the build
+ */
+void disableComponents(const ComponentList &components);
 
 /**
  * Returns a list of all defines, according to the feature set
@@ -240,7 +276,7 @@ struct BuildSetup {
 	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
 
-	StringList components;
+	ComponentList components;
 
 	StringList defines;   ///< List of all defines for the build.
 	StringList testDirs;  ///< List of all folders containing tests
