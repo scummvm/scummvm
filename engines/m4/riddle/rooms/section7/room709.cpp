@@ -850,6 +850,94 @@ void Room709::parser() {
 
 	} // player_said("Left")
 
+	else if (player_said("Straight")) {
+		if (_maze709Arr[_field80_save]._field_8 == 0 || _field78 == 0) {
+			digi_play("708R01", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(2);
+
+				break;
+
+			case 2:
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatchx(kernel_trigger_create(40));
+				_G(kernel).trigger_mode = KT_PARSE;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // player_said("Straight")
+
+	else if (player_said("Back")) {
+		if (_maze709Arr[_field80_save]._field_C == 0 || _field7C == 0) {
+			digi_play("708R01", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(2);
+
+				break;
+
+			case 2:
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatchx(kernel_trigger_create(50));
+				_G(kernel).trigger_mode = KT_PARSE;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // player_said("Back")
+
+	else if (ecx && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
+		digi_play("709R12", 1, 255, -1, -1);
+	} else if (ecx && player_said("Chisel") && inv_object_is_here("Chisel")) {
+		digi_play("709R02", 1, 255, -1, -1);
+	} else if (ecx && player_said_any("rope  ", "rope   ", "rope    ", "rope     ")) {
+		digi_play("com110", 1, 255, -1, 997);
+	} else if (edi && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(_G(my_walker), 373, 279, nullptr, 2, 2, true);
+			break;
+
+		case 2:
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(10));
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			break;
+
+		default:
+			break;
+		}
+	} else if (edi && player_said("Chisel") && inv_object_is_here("chisel")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(_G(my_walker), 267, 278, nullptr, 2, 10, true);
+			break;
+
+		case 2:
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(10));
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	warning("Fake variable use - %d %d %d", ecx ? 1 : 0, esi ? 1 : 0, edi ? 1 : 0);
 
 	_G(player).command_ready = false;
