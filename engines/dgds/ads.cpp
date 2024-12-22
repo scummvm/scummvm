@@ -342,7 +342,7 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
 
-	assert(seq || code == 0x1380 || code == 0x1390);
+	assert(seq || (code & 0xFF) >= 0x80);
 
 	switch (code) {
 	case 0x1010: // WHILE paused
@@ -390,6 +390,24 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		debugN(10, "ADS 0x%04x: if detail >= %d", code, arg);
 		return true;
 		//return ((int)DgdsEngine::getInstance()->getDetailLevel() >= arg);
+	case 0x13A0: // IF _adsVariable[0] <=
+		debugN(10, "ADS 0x%04x: if adsVariable[0] <= %d", code, arg);
+		return _adsData->_adsVariable[0] <= arg;
+	case 0x13A1: // IF some_ads_variable[1] <=
+		debugN(10, "ADS 0x%04x: if adsVariable[1] <= %d", code, arg);
+		return _adsData->_adsVariable[1] <= arg;
+	case 0x13B0: // IF some_ads_variable[0] >
+		debugN(10, "ADS 0x%04x: if adsVariable[0] > %d", code, arg);
+		return _adsData->_adsVariable[0] > arg;
+	case 0x13B1: // IF some_ads_variable[1] >
+		debugN(10, "ADS 0x%04x: if adsVariable[1] > %d", code, arg);
+		return _adsData->_adsVariable[1] > arg;
+	case 0x13C0: // IF some_ads_variable[0] ==
+		debugN(10, "ADS 0x%04x: if adsVariable[0] == %d", code, arg);
+		return _adsData->_adsVariable[0] == arg;
+	case 0x13C1: // IF some_ads_variable[1] ==
+		debugN(10, "ADS 0x%04x: if adsVariable[1] == %d", code, arg);
+		return _adsData->_adsVariable[1] == arg;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}
@@ -405,7 +423,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 		Common::SharedPtr<TTMSeq> seq;
 		TTMEnviro *env = nullptr;
 
-		if (code != 0x1380 && code != 0x1390) {
+		if ((code & 0xFF) < 0x80) {
 			enviro = scr->readUint16LE();
 			seqnum = scr->readUint16LE();
 			seq = findTTMSeq(enviro, seqnum);
@@ -415,7 +433,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 				return false;
 			}
 		} else {
-			// TODO: this value is not actually enviro? for now just read it.
+			// We load this into "enviro" but it's just the parameter of the op.
 			enviro = scr->readUint16LE();
 		}
 
@@ -544,6 +562,13 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1370: // IF RUNNING, 2 params
 	case 0x1380: // IF DETAIL LEVEL <= x, 1 param (HOC+ only)
 	case 0x1390: // IF DETAIL LEVEL >= x, 1 param (HOC+ only)
+	// The next 6 are in HoC code but maybe never used?
+	case 0x13A0: // IF _adsVariable[0] <=
+	case 0x13A1: // IF _adsVariable[1] <=
+	case 0x13B0: // IF _adsVariable[0] >
+	case 0x13B1: // IF _adsVariable[1] >
+	case 0x13C0: // IF _adsVariable[0] ==
+	case 0x13C1: // IF _adsVariable[1] ==
 		return handleLogicOp(code, scr);
 	case 0x1500: // ELSE / Skip to end-if, 0 params
 		debug(10, "ADS 0x%04x: else (skip to end if)", code);
@@ -738,19 +763,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return true;
 	}
 
-	case 0xffff:	// END
+	case 0xFFFF:	// END
 		debug(10, "ADS 0xFFFF: end");
 		return false;
 
 	//// unknown / to-be-implemented
-	// The next 6 are in HoC code but maybe never used?
-	case 0x13A0: // IF some_ads_variable[0] <=
-	case 0x13A1: // IF some_ads_variable[1] <=
-	case 0x13B0: // IF some_ads_variable[0] >
-	case 0x13B1: // IF some_ads_variable[1] >
-	case 0x13C0: // IF some_ads_variable[0] ==
-	case 0x13C1: // IF some_ads_variable[1] ==
-
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
 	default: {
