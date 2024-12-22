@@ -11,6 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
+   - Added support for the remastered speech and sound effects in the
+     remastered version of Day of the Tentacle.
 
 
 #### 2.9.0 (2024-12-22)
