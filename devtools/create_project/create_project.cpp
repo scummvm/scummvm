@@ -388,39 +388,47 @@ int main(int argc, char *argv[]) {
 
 	// Disable engines for which we are missing dependencies and mark components as needed
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
-		if (i->enable) {
-			bool enabled = true;
-			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
-				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
-				if (feature == setup.features.end()) {
-					std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
-					return -1;
-				} else if (!feature->enable) {
-					setEngineBuildState(i->name, setup.engines, false);
-					enabled = false;
-					break;
-				}
+		if (!i->enable) {
+			continue;
+		}
+
+		bool enabled = true;
+		std::list<FeatureList::iterator> missingFeatures;
+		for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+			FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
+			if (feature == setup.features.end()) {
+				std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
+				return -1;
+			} else if (!feature->enable) {
+				enabled = false;
+				missingFeatures.push_back(feature);
 			}
-			isEngineEnabled[i->name] = enabled;
-			if (!enabled) {
+		}
+		isEngineEnabled[i->name] = enabled;
+		if (!enabled) {
+			setEngineBuildState(i->name, setup.engines, false);
+			std::cout << "WARNING: Disabling engine " << i->desc << " because the following dependencies are unmet:";
+			for (std::list<FeatureList::iterator>::iterator itr = missingFeatures.begin(); itr != missingFeatures.end(); itr++) {
+				std::cout << " " << (*itr)->description;
+			}
+			std::cout << "\n";
+			continue;
+		}
+		// Mark components as needed now the engine is definitely enabled
+		for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+			ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+			if (component == setup.components.end()) {
 				continue;
 			}
-			// Mark components as needed now the engine is definitely enabled
-			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
-				ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
-				if (component == setup.components.end()) {
-					continue;
-				}
-				component->needed = true;
+			component->needed = true;
+		}
+		for (StringList::const_iterator ef = i->wishedComponents.begin(); ef != i->wishedComponents.end(); ++ef) {
+			ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+			if (component == setup.components.end()) {
+				std::cerr << "ERROR: Missing component " << *ef << " from engine " << i->name << '\n';
+				return -1;
 			}
-			for (StringList::const_iterator ef = i->wishedComponents.begin(); ef != i->wishedComponents.end(); ++ef) {
-				ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
-				if (component == setup.components.end()) {
-					std::cerr << "ERROR: Missing component " << *ef << " from engine " << i->name << '\n';
-					return -1;
-				}
-				component->needed = true;
-			}
+			component->needed = true;
 		}
 	}
 
