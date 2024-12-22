@@ -74,20 +74,24 @@ void SelectItem::draw() {
 bool SelectItem::msgFocus(const FocusMessage &msg) {
 	int b;
 
-	_selectedItem = _G(thor_info).item - 1;
-	if (_selectedItem < 1)
-		_selectedItem = 0;
-
-	b = 1 << _selectedItem;
-	for (;;) {
-		if (_G(thor_info).inventory & b)
-			break;
-		if (_selectedItem < 7)
-			_selectedItem++;
-		else
+	if (_G(thor_info).inventory == 0) {
+		_selectedItem = -1;
+	} else {
+		_selectedItem = _G(thor_info).item - 1;
+		if (_selectedItem < 1)
 			_selectedItem = 0;
 
 		b = 1 << _selectedItem;
+		for (;;) {
+			if (_G(thor_info).inventory & b)
+				break;
+			if (_selectedItem < 7)
+				_selectedItem++;
+			else
+				_selectedItem = 0;
+
+			b = 1 << _selectedItem;
+		}
 	}
 
 	return true;
