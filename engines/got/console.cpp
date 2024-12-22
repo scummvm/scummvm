@@ -19,7 +19,8 @@
  *
  */
 
-#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "got/console.h"
 #include "got/events.h"
 #include "got/vars.h"
@@ -62,14 +63,15 @@ bool Console::cmdMusic(int argc, const char **argv) {
 
 bool Console::cmdLoad(int argc, const char **argv) {
 	if (argc == 2) {
-		Common::File f;
-		if (!f.open(argv[1])) {
+		Common::SeekableReadStream *f;
+		if ((f = g_system->getSavefileManager()->openForLoading(argv[1])) == nullptr) {
 			debugPrintf("Could not open savegame\n");
 			return true;
 		} else {
-			f.skip(32); // Skip the 32 bytes title
+			f->skip(32); // Skip the 32 bytes title
 
-			g_engine->loadGameStream(&f);
+			g_engine->loadGameStream(f);
+			delete f;
 			return false;
 		}
 	}
