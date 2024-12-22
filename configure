@@ -311,9 +311,9 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
-add_feature imgui "imgui" "_imgui"
 
 # Components are features which may be disabled if unused by the engines
+add_component imgui "ImGui" "_imgui" "USE_IMGUI"
 add_component lua "lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
@@ -6804,7 +6804,6 @@ EOF
 else
 	echo "$_imgui"
 fi
-define_in_config_if_yes "$_imgui" 'USE_IMGUI'
 
 #
 # Enable vkeybd / event recorder
