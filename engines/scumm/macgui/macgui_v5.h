@@ -68,6 +68,7 @@ private:
 	void runAboutDialogMI1(MacDialogWindow *window);
 	void runAboutDialogMI2(MacDialogWindow *window);
 	void runAboutDialogIndy4(MacDialogWindow *window);
+	void runAboutDialogIndy4Demo(MacDialogWindow *window);
 
 	void drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData);
 };
