@@ -1310,9 +1310,16 @@ ComponentList getAllComponents(const std::string &srcDir, FeatureList &features)
 }
 
 void disableComponents(const ComponentList &components) {
+	bool disabled = false;
 	for (ComponentList::const_iterator i = components.begin(); i != components.end(); ++i) {
-		if (!i->needed)
+		if (!i->needed) {
 			i->feature.enable = false;
+			disabled = true;
+			std::cout << "Feature " << i->feature.description << " is disabled as unused by enabled engines\n";
+		}
+	}
+	if (disabled) {
+		std::cout << "\n";
 	}
 }
 
