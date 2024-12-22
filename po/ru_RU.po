@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-20 11:20+0000\n"
+"POT-Creation-Date: 2024-12-22 08:16+0000\n"
 "PO-Revision-Date: 2024-12-06 13:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1016,7 +1016,7 @@ msgstr "Взаимодействие"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:924 engines/twine/metaengine.cpp:430
+#: engines/scumm/metaengine.cpp:936 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1031,7 +1031,7 @@ msgstr "Вверх"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:891 engines/twine/metaengine.cpp:437
+#: engines/scumm/metaengine.cpp:903 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1045,7 +1045,7 @@ msgstr "Вниз"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:904
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:916
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1060,7 +1060,7 @@ msgstr "Влево"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:911
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:923
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -7008,7 +7008,7 @@ msgstr "Переключить режим боя"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:950 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:962 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Пропустить заставку"
@@ -7461,7 +7461,7 @@ msgstr "Говорить/Взаимодействовать"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:937
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:949
 msgid "Attack"
 msgstr "Атака"
 
@@ -11387,28 +11387,38 @@ msgstr "Включить режим демо/киоска"
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "Включите режим демо/киоска в полной версии Maniac Mansion."
 
-#: engines/scumm/metaengine.cpp:885
+#: engines/scumm/metaengine.cpp:794
+#, fuzzy
+#| msgid "Use CD audio"
+msgid "Use remastered audio"
+msgstr "Использовать CD-аудио"
+
+#: engines/scumm/metaengine.cpp:795
+msgid "Use the remastered speech and sound effects."
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:897
 msgid "Down Left"
 msgstr "Вниз-влево"
 
-#: engines/scumm/metaengine.cpp:898
+#: engines/scumm/metaengine.cpp:910
 msgid "Down Right"
 msgstr "Вниз-вправо"
 
-#: engines/scumm/metaengine.cpp:918
+#: engines/scumm/metaengine.cpp:930
 msgid "Up Left"
 msgstr "Вверх-влево"
 
-#: engines/scumm/metaengine.cpp:931
+#: engines/scumm/metaengine.cpp:943
 msgid "Up Right"
 msgstr "Вверх-вправо"
 
-#: engines/scumm/metaengine.cpp:943
+#: engines/scumm/metaengine.cpp:955
 msgid "Switch weapon"
 msgstr "Переключить оружие"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:957
+#: engines/scumm/metaengine.cpp:969
 msgid "Win the bike fight cheat"
 msgstr "Чит для выигрыша боёв на байках"
 
