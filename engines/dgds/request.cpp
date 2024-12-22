@@ -475,7 +475,7 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 
 		yoffset = y + yoffset / 2;
 		if (gameId == GID_WILLY)
-			yoffset--;
+			yoffset -= 2;
 
 		int lineWidth = font->getStringWidth(line1);
 		font->drawString(dst, line1, x + (_width - lineWidth) / 2 + 1, yoffset + 2, lineWidth, textCol);

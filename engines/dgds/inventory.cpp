@@ -129,18 +129,20 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	byte txtColor = (gameId == GID_HOC ? 25 : 0);
 
 	int titleWidth = font->getStringWidth(title);
-	int y1 = r._rect.y + (gameId == GID_DRAGON ? 7 : 11);
 	// Dragon always draws the header in the same spot; HoC centers it.
-	int x1;
+	int x1, y1;
 	if (gameId == GID_DRAGON) {
 		// Constant offset
 		x1 = r._rect.x + 112;
+		y1 = r._rect.y + 7;
 	} else if (gameId == GID_HOC) {
 		// Centered on window
 		x1 = r._rect.x + (r._rect.width - font->getStringWidth(title)) / 2 - 3;
+		y1 = r._rect.y + 11;
 	} else { // GID_WILLY
 		// Constant offset
-		x1 = r._rect.x + 155;
+		x1 = r._rect.x + 154;
+		y1 = r._rect.y + 8;
 	}
 
 	// Draw the border around the text
@@ -171,9 +173,11 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 			_itemZoomBox->setVisible(true);
 		boxreq._rect.width = _fullWidth;
 	} else {
-		if (gameId != GID_WILLY)
-			_itemZoomBox->setVisible(false);
 		boxreq._rect.width = _itemBox->_width + _itemBox->_x * 2;
+		if (gameId != GID_WILLY) {
+			_itemZoomBox->setVisible(false);
+			boxreq._rect.width--;
+		}
 	}
 
 	//
@@ -254,7 +258,7 @@ void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
-	int x = 0;
+	int x = (engine->getGameId() == GID_WILLY ? -2 : 0);
 	int y = 0;
 
 	const int xstep = _itemArea->_xStep;

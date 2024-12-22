@@ -146,7 +146,7 @@ void Dialog::drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Com
 	// TODO: This needs updating.
 	_state->_loc = DgdsRect(_rect.x + 12, _rect.y + 10, _rect.width - 24, _rect.height - 20);
 	if (title.empty()) {
-		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+		dst->fillRect(Common::Rect(Common::Point(_rect.x + 2, _rect.y + 2), _rect.width - 4, _rect.height - 4), 0);
 		RequestData::drawCorners(dst, 54, _rect.x, _rect.y, _rect.width, _rect.height);
 	} else {
 		dst->fillRect(Common::Rect(Common::Point(_rect.x + 2, _rect.y + 2), _rect.width - 4, _rect.height - 4), 0);
