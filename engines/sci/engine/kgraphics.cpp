@@ -43,7 +43,7 @@
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"

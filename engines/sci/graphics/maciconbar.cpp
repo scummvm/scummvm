@@ -23,7 +23,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"

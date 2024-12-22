@@ -28,7 +28,7 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
