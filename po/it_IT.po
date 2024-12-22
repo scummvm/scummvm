@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-22 08:16+0000\n"
-"PO-Revision-Date: 2024-12-11 18:07+0000\n"
+"PO-Revision-Date: 2024-12-22 19:18+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11485,14 +11485,12 @@ msgstr ""
 "Mension."
 
 #: engines/scumm/metaengine.cpp:794
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Usa audio da CD"
+msgstr "Usa audio rimasterizzato"
 
 #: engines/scumm/metaengine.cpp:795
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Usa il parlato e gli effetti sonori rimasterizzati."
 
 #: engines/scumm/metaengine.cpp:897
 msgid "Down Left"
