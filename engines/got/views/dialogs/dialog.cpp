@@ -26,13 +26,19 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
+Dialog::Dialog(const Common::String &name) : View(name) {
+	_bounds.setBorderSize(16);
+}
+
 void Dialog::draw() {
 	// Clear the inner content first
 	GfxSurface s = getSurface(true);
 	s.clear(215);
 
-	// Draw four corners
 	s = getSurface();
+	assert((s.w % 16) == 0 && (s.h % 16) == 0);
+
+	// Draw four corners
 	s.blitFrom(_G(bgPics)[192], Common::Point(0, 0));
 	s.blitFrom(_G(bgPics)[193], Common::Point(_bounds.width() - 16, 0));
 	s.blitFrom(_G(bgPics)[194], Common::Point(0, _bounds.height() - 16));

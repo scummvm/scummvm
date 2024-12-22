@@ -75,7 +75,13 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
-	return true;
+	switch (msg._action) {
+	case KEYBIND_SELECT:
+		select_item();
+		return true;
+	}
+
+	return false;
 }
 
 bool Game::tick() {

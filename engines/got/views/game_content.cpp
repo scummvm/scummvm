@@ -180,5 +180,10 @@ void GameContent::checkForItem() {
 		pick_up_object(thor_pos);
 }
 
+bool GameContent::canSaveLoad() const {
+	// TODO: Disallow saving during animations like scene changes or Thor dying
+	return true;
+}
+
 } // namespace Views
 } // namespace Got

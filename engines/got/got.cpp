@@ -31,6 +31,7 @@
 #include "got/console.h"
 #include "got/gfx/image.h"
 #include "got/utils/res_archive.h"
+#include "got/views/game_content.h"
 
 namespace Got {
 
@@ -148,6 +149,18 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 	}
 
 	return Common::kNoError;
+}
+
+bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (_G(key_flag)[key_magic] || _G(tornado_used) || _G(lightning_used) ||
+			_G(thunder_flag) || _G(hourglass_flag) || _G(thor)->num_moves > 1 ||
+			_G(shield_on))
+		return false;
+
+	// TODO: Consider if there is a cleaner way to do this. Maybe have a
+	// global flag or a message sent to the views 
+	Views::GameContent *content = (Views::GameContent *)findView("GameContent");
+	return content && content->canSaveLoad();
 }
 
 } // End of namespace Got

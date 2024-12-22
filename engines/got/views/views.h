@@ -31,6 +31,7 @@
 #include "got/views/dialogs/quit.h"
 #include "got/views/dialogs/quit_game.h"
 #include "got/views/dialogs/select_game.h"
+#include "got/views/dialogs/select_item.h"
 #include "got/views/dialogs/set_sound.h"
 
 namespace Got {
@@ -47,6 +48,7 @@ struct Views {
 	Dialogs::Quit _quit;
 	Dialogs::QuitGame _quitGame;
 	Dialogs::SelectGame _selectGame;
+	Dialogs::SelectItem _selectItem;
 	Dialogs::SetSound _setSound;
 };
 

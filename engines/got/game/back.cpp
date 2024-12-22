@@ -25,6 +25,7 @@
 #include "got/game/panel.h"
 #include "got/game/script.h"
 #include "got/gfx/image.h"
+#include "got/events.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -288,7 +289,10 @@ int bgtile(int x, int y) {
 }
 
 void select_item() {
-	error("TODO: select_item");
+	// Only allow opening the dialog if something isn't currently going on
+	if (g_engine->canSaveAutosaveCurrently()) {
+		g_events->addView("SelectItem");
+	}
 }
 
 int actor_speaks(ACTOR *actr, int index, int item) {

@@ -46,6 +46,8 @@ public:
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;
+
+	bool canSaveLoad() const;
 };
 
 } // namespace Views
