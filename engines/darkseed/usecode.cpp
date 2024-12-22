@@ -1551,43 +1551,44 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	case 979:
 		_console->addTextLine(
 			Common::String::format(
-				"This sentry cannot be stopped with a %s.",
+				"%s %s.",
+				getI18NText(kI18N_ThisSentryCannotBeStoppedWithText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 980:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s has no effect on the alien tubes.",
+				getI18NText(kI18N_HasNoEffectOnTheAlienTubesText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 981:
 		_console->addTextLine(
 			Common::String::format(
-				"You incinerate the %s inside the power nexus!.",
+				getI18NText(kI18N_YouIncinerateTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 982:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s has no effect on this alien monstrosity.",
+				getI18NText(kI18N_HasNoEffectOnTheAlienMonstrosityText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 983:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s is not strong enough to cut the cables.\nPerhaps if you had some wire cutters?",
+				getI18NText(kI18N_cutTheWiresText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 984:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s has no effect on the protected ancient.",
+				getI18NText(kI18N_NoEffectOnTheProtectedAncientText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 985:
 		_console->addTextLine(
 			Common::String::format(
-				"You hide the %s under the pillow.",
+				getI18NText(kI18N_YouHideTheObjectUnderThePillowText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 986:

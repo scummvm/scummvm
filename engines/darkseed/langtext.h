@@ -33,13 +33,6 @@ struct I18nText {
 
 const char *getI18NText(const I18nText &text);
 
-constexpr I18nText kI18N_blankText = {
-	"",
-	"",
-	"",
-	""
-};
-
 constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"You see the car keys in the ignition.",
 	"VES LAS LLAVES DEL COCHE EN EL CONTACTO.",
@@ -152,6 +145,61 @@ constexpr I18nText kI18N_YouTouchTheOrnateSignalText = {
   "GREIFE DIE VERZAUBERTEN STEINE AN."
 };
 
+constexpr I18nText kI18N_ThisSentryCannotBeStoppedWithText = {
+	"This sentry cannot be stopped with a",
+	"NO PUEDES PARAR A ESTE CENTINELA CON",
+	"VOUS N'ARRETEREZ PAS LA SENTINELLE AVEC",
+	"DIESE WACHE KANN NICHT AUFGEHALTEN WERDEN MIT"
+};
+
+constexpr I18nText kI18N_HasNoEffectOnTheAlienTubesText = {
+	"The %s has no effect on the alien tubes.",
+	"%s NO TIENE EFECTO SOBRE LOS TUBOS ALIENIGENAS.",
+	"%s RESTE SANS EFFET SUR LES TUBES EXTRA-TERRESTRES.",
+	"%s BEWIRKT NICHTS AN AUSSERIRDISCHEN TUNNELS."
+};
+
+constexpr I18nText kI18N_YouIncinerateTheText = {
+	"You incinerate the %s inside the power nexus!.",
+	"INCINERAS %s DENTRO DE LA FUENTA DE ENERGIA.",
+	"VOUS INCINEREZ %s A L'INTERIEUR DU LIEN DE PUISSANCE.",
+	"DU VERNICHTEST %s MIT DER STROMVERSORGUNG!"
+};
+
+constexpr I18nText kI18N_HasNoEffectOnTheAlienMonstrosityText = {
+	"The %s has no effect on this alien monstrosity.",
+	"%s NO TIENE EFECTO SOBRE ESTA MONSTRUOSIDAD ALIENIGENA.",
+	"%s RESTE SANS EFFET SUR CETTE MONSTRUOSITE EXTRA-TERRESTRE.",
+	"%s BEWIRKT NICHTS AM AUSSERIRDISCHEN MONSTRUM."
+};
+
+constexpr I18nText kI18N_cutTheWiresText = {
+	"The %s is not strong enough to cut the cables.\nPerhaps if you had some wire cutters?",
+	"%s NO ES LO BASTANTE RESISTENTE COMO PARA CORTAR LOS CABLES.\nY SI TUVIERAS UN CORTACABLES?",
+	"%s NE POURRA PAS COUPER LES CABLES.\nET SI VOUS AVIEZ DES PINCES COUPANTES?",
+	"%s IST NICHT STARK GENUG, UM DIE KABEL ABZUSCHNEIDEN.\nHAST DU VIELLEICHT EINEN KABELSCHNEIDER?"
+};
+
+constexpr I18nText kI18N_NoEffectOnTheProtectedAncientText = {
+	"The %s has no effect on the protected ancient.",
+	"%s NO TIENE EFECTO SOBRE EL ANTEPASADO PROTEGIDO.",
+	"%s N'A AUCUN EFFET SUR L'ANCIEN PROTEGE.",
+	"%s BEWIRKT NICHTS BEI DEM GESCHUETZTEN ALTEN."
+};
+
+constexpr I18nText kI18N_YouHideTheObjectUnderThePillowText = {
+	"You hide the %s under the pillow.",
+	"OCULTAS %s BAJO LA ALMOHADA.",
+	"VOUS CACHEZ %s SOUS L'OREILLER.",
+	"DU VERSTECKST %s UNTER DEM KISSEN."
+};
+
+constexpr I18nText kI18N_blankText = {
+	"",
+	"",
+	"",
+	""
+};
 } // namespace Darkseed
 
 #endif //DARKSEED_LANGTEXT_H
