@@ -198,7 +198,10 @@ void MacV5Gui::runAboutDialog() {
 		runAboutDialogMI2(window);
 		break;
 	case GID_INDY4:
-		runAboutDialogIndy4(window);
+		if (_strsStrings[kMSIAboutString34] != "")
+			runAboutDialogIndy4(window);
+		else
+			runAboutDialogIndy4Demo(window);
 		break;
 	default:
 		break;
@@ -779,9 +782,6 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 			break;
 		}
 
-		if (aboutPages[page].drawArea != 2)
-			window->markRectAsDirty(drawArea);
-
 		if (aboutPages[page].text) {
 			if (aboutPages[page].drawArea == 1) {
 				window->drawTextBox(drawArea, aboutPages[page].text);
@@ -803,6 +803,148 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 
 	delete lucasArts;
 	delete indianaJones;
+}
+
+void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
+	Graphics::Surface *s = window->innerSurface();
+
+	Graphics::Surface *lucasArts = loadPict(5000);
+
+	const TextLine page3[] = {
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page4[] = {
+		{ 0, 5, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "Indiana Jones"
+		{ 73, 18, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString5].c_str() }, // "and the"
+		{ 40, 31, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString4].c_str() }, // "Fate of Atlantis"
+//		{ 317, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "\xA8"
+		{ 178, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 312, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "All rights reserved."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page5[] = {
+		{ 0, 47, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Macintosh version by
+		{ 50, 62, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString9].c_str() }, // "Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page6[] = {
+		{ 85, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "Created by"
+		{ 55, 47, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "Hal Barwood"
+		{ 58, 70, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Scripting by"
+		{ 44, 85, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString13].c_str() }, // "Alric Wilmunder"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page7[] = {
+		{ 59, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
+		{ 85, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "created by"
+		{ 35, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
+		{ 102, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "and"
+		{ 59, 87, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page8[] = {
+		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "Stumped?  Hint books are available!"
+		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "In the U.S. call"
+		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "1 (800) STAR-WARS"
+		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 19, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "In Canada call"
+		{ 89, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "1 (800) 828-7927"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page9[] = {
+		{ 27, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 6, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "For technical support call"
+		{ 130, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (415) 721-3333"
+		{ 62, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "For hints call"
+		{ 130, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "1 (900) 740-JEDI"
+		{ 5, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString31].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString32].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString33].c_str() }, // "call this number if you are under 18.)"
+		TEXT_END_MARKER
+	};
+
+	AboutPage aboutPages[] = {
+		{ nullptr, 0,  2800 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   100 },
+		{ page3,   0,  2100 },
+		{ page4,   0,  2900 },
+		{ page5,   1,  4200 },
+		{ page6,   1,  4300 },
+		{ page7,   1,  4200 },
+		{ page8,   1, 14100 },
+		{ page9,   1,     0 }
+	};
+
+	Common::Rect drawAreas[] = {
+		Common::Rect(0, 2, s->w, s->h - 2),
+		Common::Rect(176, 10, s->w - 10, s->h - 10)
+	};
+
+	int page = 0;
+
+	window->show();
+
+	uint32 black = getBlack();
+	uint32 white = getWhite();
+
+	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
+		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
+
+		switch (page) {
+		case 0:
+			s->fillRect(drawArea, black);
+			window->drawSprite(lucasArts, 64, 2, drawArea);
+			break;
+
+		case 1:
+			window->fillPattern(drawArea, 0xD7D7, false, true);
+			break;
+
+		case 2:
+			window->fillPattern(drawArea, 0x5A5A, false, true);
+			break;
+
+		case 3:
+			s->fillRect(drawArea, white);
+			break;
+
+		case 4:
+			s->fillRect(drawArea, white);
+			break;
+
+		case 5:
+			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), white);
+			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
+			break;
+
+		default:
+			break;
+		}
+
+		if (aboutPages[page].text) {
+			if (aboutPages[page].drawArea == 1) {
+				window->drawTextBox(drawArea, aboutPages[page].text);
+			} else {
+				window->drawTexts(drawArea, aboutPages[page].text);
+			}
+		}
+
+		window->markRectAsDirty(drawArea);
+		window->update();
+		delay(aboutPages[page].delayMs);
+		page++;
+	}
+
+	lucasArts->free();
+	delete lucasArts;
 }
 
 bool MacV5Gui::runOptionsDialog() {
