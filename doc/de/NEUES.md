@@ -1,6 +1,20 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.10.0 (xx.xx.xxxx)
+
+ Neue Spiele:
+   - Unterstützung für Dark Seed hinzugefügt.
+
+ Nuvie:
+   - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
+
+ SCUMM:
+   - Unterstützung für die "klassischen" SE-Varianten von MI1, MI2, DOTT und FT hinzugefügt.
+   - Unterstützung für die neue Sprachausgabe und verbesserten Soundeffekte der
+     Remastered-Version von Day of the Tentacle hinzugefügt.
+
+
 #### 2.9.0 (22.12.2024)
 
  Neue Spiele:
