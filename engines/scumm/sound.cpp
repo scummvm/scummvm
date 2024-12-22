@@ -114,6 +114,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 			_hasFileBasedCDAudio = true;
 	}
 
+	_useRemasteredAudio = ConfMan.getBool("use_remastered_audio");
+
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
 	// handles lipsync within Digital iMUSE.
@@ -936,6 +938,13 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			// harsh white noise which could damage one's ears when wearing headphones.
 			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbd4 && _vm->enhancementEnabled(kEnhGameBreakingBugFixes))
 				input = checkForBrokenIndy4Sample(file.release(), offset);
+
+			if (!input && _soundSE && _useRemasteredAudio) {
+				input = _soundSE->getAudioStream(
+					offset,
+					mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech
+				);
+			}
 
 			if (!input) {
 				input = Audio::makeVOCStream(

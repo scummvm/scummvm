@@ -57,6 +57,7 @@ void SoundSE::initSoundFiles() {
 		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	case GID_TENTACLE:
+		initAudioMapping();
 		_musicFilename = "iMUSEClient_Music.fsb";
 		indexFSBFile(_musicFilename, &_musicEntries);
 		_sfxFilename = "iMUSEClient_SFX.fsb";
@@ -209,6 +210,11 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 	const uint32 nameOffset = sampleHeaderSize + headerSize;
 	const uint32 baseOffset = headerSize + sampleHeaderSize + nameSize;
 
+	uint64 pos = f->pos();
+	f->seek(nameOffset);
+	const uint32 firstNameOffset = nameOffset + f->readUint32LE();
+	f->seek(pos);
+
 	for (uint32 i = 0; i < sampleCount; i++) {
 		const uint32 origOffset = f->readUint32LE();
 		f->skip(4); // samples, used in XMA
@@ -252,12 +258,65 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 		audioIndex->push_back(entry);
 	}
 
+	f->seek(firstNameOffset);
+
+	for (uint32 i = 0; i < sampleCount; i++) {
+		Common::String name = f->readString();
+		name.toLowercase();
+
+		(*audioIndex)[i].name = name;
+
+		if (name.hasPrefix("ui_"))
+			continue;
+
+		// TODO: Support non-English audio files
+		if (name.hasPrefix("de_"))
+			continue;
+
+		if (!_audioNameToOriginalOffsetMap.contains(name)) {
+			if (name.hasPrefix("classic_"))
+				name = name.substr(8);
+
+			if (name.hasPrefix("en_") || name.hasPrefix("de_"))
+				name = name.substr(3);
+		}
+
+		if (!_audioNameToOriginalOffsetMap.contains(name)) {
+			//warning("indexFSBFile: name %s not found in audiomapping.info", name.c_str());
+			continue;
+		}
+
+		const uint32 origOffset = _audioNameToOriginalOffsetMap[name] & 0xFFFFFF00;
+		_offsetToIndex[origOffset] = i;
+		//debug("indexFSBFile: %s -> offset %d, index %d", name.c_str(), origOffset, i);
+	}
+
 	f->close();
 	delete f;
 }
 
 #undef GET_FSB5_OFFSET
 #undef WARN_AND_RETURN_FSB
+
+void SoundSE::initAudioMapping() {
+	ScummPAKFile *f = new ScummPAKFile(_vm);
+	_vm->openFile(*f, Common::Path("audiomapping.info"));
+
+	do {
+		const uint32 origOffset = f->readUint32LE();
+		Common::String name = f->readString(0, 64);
+		name.toLowercase();
+
+		if (f->eos())
+			break;
+		f->skip(4); // unknown
+
+		_audioNameToOriginalOffsetMap[name] = origOffset + 10;
+	} while (!f->eos());
+
+	f->close();
+	delete f;
+}
 
 Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry) {
 	switch (entry.codec) {
@@ -307,32 +366,43 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 	error("createSoundStream: Unknown XWB codec %d", entry.codec);
 }
 
-void SoundSE::startSoundEntry(int soundIndex, SoundSEType type) {
-	Common::SeekableReadStream *stream = nullptr;
-	Audio::SoundHandle *handle = nullptr;
-	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
+	// Some of the remastered sound offsets are off compared to the
+	// ones from the classic version, so we chop off the last 2 digits
+	const uint32 offsetToCheck = offset & 0xFFFFFF00;
+	if (_offsetToIndex.contains(offsetToCheck))
+		return _offsetToIndex[offsetToCheck];
+
+	return -1;
+}
+
+Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
+	Common::SeekableReadStream *stream;
 	Common::String audioFileName;
 	AudioIndex &audioEntries = _musicEntries;
+	int32 soundIndex = 0;
 
 	switch (type) {
 	case kSoundSETypeMusic:
-		handle = &_musicHandle;
-		soundType = Audio::Mixer::kMusicSoundType;
 		audioFileName = _musicFilename;
 		audioEntries = _musicEntries;
+		soundIndex = getSoundIndexFromOffset(offset);
 		break;
 	case kSoundSETypeSpeech:
-		handle = &_speechHandle;
-		soundType = Audio::Mixer::kSpeechSoundType;
 		audioFileName = _speechFilename;
 		audioEntries = _speechEntries;
+		soundIndex = getSoundIndexFromOffset(offset);
 		break;
 	case kSoundSETypeSFX:
-		handle = &_sfxHandle;
-		soundType = Audio::Mixer::kSFXSoundType;
 		audioFileName = _sfxFilename;
 		audioEntries = _sfxEntries;
+		soundIndex = getSoundIndexFromOffset(offset);
 		break;
+	}
+
+	if (soundIndex == -1) {
+		warning("getAudioStream: sound index not found for offset %d", offset);
+		return nullptr;
 	}
 
 	if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) {
@@ -340,14 +410,14 @@ void SoundSE::startSoundEntry(int soundIndex, SoundSEType type) {
 		stream = audioFile;
 		if (!audioFile->open(Common::Path(audioFileName))) {
 			delete audioFile;
-			return;
+			return nullptr;
 		}
 	} else {
 		ScummPAKFile *audioFile = new ScummPAKFile(_vm);
 		stream = audioFile;
 		if (!_vm->openFile(*audioFile, Common::Path(audioFileName))) {
 			delete audioFile;
-			return;
+			return nullptr;
 		}
 	}
 
@@ -359,11 +429,7 @@ void SoundSE::startSoundEntry(int soundIndex, SoundSEType type) {
 		DisposeAfterUse::YES
 	);
 
-	_mixer->playStream(
-		soundType,
-		handle,
-		createSoundStream(subStream, audioEntry)
-	);
+	return createSoundStream(subStream, audioEntry);
 }
 
 } // End of namespace Scumm

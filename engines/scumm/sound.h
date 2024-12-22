@@ -115,6 +115,7 @@ protected:
 	uint32 _replacementTrackStartTime;
 
 	SoundSE *_soundSE = nullptr;
+	bool _useRemasteredAudio = false;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on

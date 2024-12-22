@@ -790,6 +790,15 @@ static const ExtraGuiOption mmDemoModeOption = {
 	0
 };
 
+static const ExtraGuiOption useRemasteredAudio = {
+	_s("Use remastered audio"),
+	_s("Use the remastered speech and sound effects."),
+	"use_remastered_audio",
+	true,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -814,6 +823,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE)) {
 		options.push_back(audioOverride);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_USE_REMASTERED_AUDIO)) {
+		options.push_back(useRemasteredAudio);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

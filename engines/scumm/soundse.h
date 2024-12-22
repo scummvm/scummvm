@@ -55,8 +55,7 @@ public:
 	~SoundSE() = default;
 
 	Audio::SeekableAudioStream *getXWBTrack(int track);
-
-	void startSoundEntry(int soundIndex, SoundSEType type);
+	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
 
 private:
 	enum AudioCodec {
@@ -83,22 +82,26 @@ private:
 		uint16 rate;
 		uint16 align;
 		byte bits;
+		Common::String name;
 	};
 
+	Common::HashMap<Common::String, uint32> _audioNameToOriginalOffsetMap;
+
 	typedef Common::Array<AudioEntry> AudioIndex;
+	typedef Common::HashMap<uint32, uint32> OffsetToIndexMap;
+
+	OffsetToIndexMap _offsetToIndex;
 
 	AudioIndex _musicEntries;
 	Common::String _musicFilename;
-	Audio::SoundHandle _musicHandle;
-
 	AudioIndex _speechEntries;
 	Common::String _speechFilename;
-	Audio::SoundHandle _speechHandle;
-
 	AudioIndex _sfxEntries;
 	Common::String _sfxFilename;
-	Audio::SoundHandle _sfxHandle;
 
+	int32 getSoundIndexFromOffset(uint32 offset);
+
+	void initAudioMapping();
 	void initSoundFiles();
 	void indexXWBFile(const Common::String &filename, AudioIndex *audioIndex);
 	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry);

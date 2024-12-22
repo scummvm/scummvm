@@ -36,6 +36,7 @@ namespace Scumm {
 #define GAMEOPTION_LOWLATENCYAUDIO                           GUIO_GAMEOPTIONS5
 #define GAMEOPTION_NETWORK                                   GUIO_GAMEOPTIONS6
 #define GAMEOPTION_COPY_PROTECTION                           GUIO_GAMEOPTIONS7
+#define GAMEOPTION_USE_REMASTERED_AUDIO                      GUIO_GAMEOPTIONS8
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store
