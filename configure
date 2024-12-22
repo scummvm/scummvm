@@ -298,18 +298,18 @@ add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
+add_feature fribidi "FriBidi" "_fribidi"
 add_feature freetype2 "FreeType2" "_freetype2"
+add_feature gif "GIF" "_gif"
 add_feature highres "high resolution" "_highres"
-add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
+add_feature mad "MAD" "_mad"
 add_feature mpeg2 "mpeg2" "_mpeg2"
 add_feature opengl_game_classic "OpenGL (classic)" "_opengl_game_classic"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
-add_feature gif "GIF" "_gif"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
-add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
@@ -319,6 +319,21 @@ add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
 add_component mt32emu "mt32emu" "_mt32emu" "USE_MT32EMU"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
+
+# The following list of features cannot be declared as components
+# because they are used in the common code:
+# 16bit: used by the GUI
+# 3d: not a real feature
+# cloud: used by the GUI
+# flac: used by DefaultAudioCDManager
+# fribidi: used by the GUI
+# freetype2: used by the GUI
+# highres: not a real feature
+# mad: used by DefaultAudioCDManager
+# png: used by the GUI
+# vorbis: used by DefaultAudioCDManager
+# zlib: used by the GUI
+# test_cxx11: used by the build system
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
