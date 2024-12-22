@@ -950,7 +950,8 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 
 			_system->getPaletteManager()->setPalette(palette);
 		}
-	}
+	} else
+		updatePalette();
 
 	MacDialogWindow *window = createWindow(bounds);
 
