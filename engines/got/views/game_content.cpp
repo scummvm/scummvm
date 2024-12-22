@@ -70,6 +70,7 @@ bool GameContent::tick() {
 	checkSwitchFlag();
 	checkForItem();
 	moveActors();
+	use_item();
 
 	return false;
 }

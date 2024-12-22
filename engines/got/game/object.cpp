@@ -402,13 +402,7 @@ int use_object(int flag) {
 	if (!(_G(thor_info).inventory & 64))
 		return 0;
 
-	//xshowpage(draw_page);
-	//xerase_actors(actor, display_page);
-	//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], display_page);
-	//xshowpage(display_page);
-
 	odin_speaks((_G(thor_info).object - 1) + 5501, _G(thor_info).object - 1);
-	//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], draw_page);
 	return 1;
 }
 
