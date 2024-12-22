@@ -117,7 +117,7 @@ private:
 
 class ConditionalSceneOp {
 public:
-	uint _opCode;
+	SceneOpCode _opCode;
 	Common::Array<SceneConditions> _conditionList;
 	Common::Array<SceneOp> _opList;
 

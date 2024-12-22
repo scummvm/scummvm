@@ -36,6 +36,7 @@
 namespace Dgds {
 
 static Common::String _sceneOpCodeName(SceneOpCode code) {
+	code = static_cast<SceneOpCode>(code & ~kSceneOpHasConditionalOpsFlag);
 	switch (code) {
 	case kSceneOpNone: 		  	return "none";
 	case kSceneOpChangeScene: 	return "changeScene";
@@ -53,16 +54,16 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpAddFlagToDragItem:		return "addFlagToDragItem";
 	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
 	case kSceneOpOpenInventoryZoom:   	return "openInventoryZoom";
-	case kSceneOpShowClock:		return "sceneOpShowClock";
-	case kSceneOpHideClock:		return "sceneOpHideClock";
-	case kSceneOpShowMouse:		return "sceneOpShowMouse";
-	case kSceneOpHideMouse:		return "sceneOpHideMouse";
-	case kSceneOpLoadTalkDataAndSetFlags: return "sceneOpLoadTalkDataAndSetFlags";
-	case kSceneOpDrawVisibleTalkHeads: return "sceneOpDrawVisibleTalksHeads";
-	case kSceneOpLoadTalkData: 	return "sceneOpLoadTalkData";
-	case kSceneOpLoadDDSData: 	return "sceneOpLoadDDSData";
-	case kSceneOpFreeDDSData: 	return "sceneOpFreeDDSData";
-	case kSceneOpFreeTalkData: 	return "sceneOpFreeTalkData";
+	case kSceneOpShowClock:		return "showClock";
+	case kSceneOpHideClock:		return "hideClock";
+	case kSceneOpShowMouse:		return "showMouse";
+	case kSceneOpHideMouse:		return "hideMouse";
+	case kSceneOpLoadTalkDataAndSetFlags: return "loadTalkDataAndSetFlags";
+	case kSceneOpDrawVisibleTalkHeads: return "drawVisibleTalksHeads";
+	case kSceneOpLoadTalkData: 	return "loadTalkData";
+	case kSceneOpLoadDDSData: 	return "loadDDSData";
+	case kSceneOpFreeDDSData: 	return "freeDDSData";
+	case kSceneOpFreeTalkData: 	return "freeTalkData";
 
 	default:
 		break;
@@ -126,7 +127,10 @@ Common::String SceneOp::dump(const Common::String &indent) const {
 			argsStr += Common::String::format("%d ", i);
 		argsStr.setChar(']', argsStr.size() - 1);
 	}
-	Common::String str = Common::String::format("%sSceneOp<op: %s args: %s", indent.c_str(), _sceneOpCodeName(_opCode).c_str(), argsStr.c_str());
+
+	const Common::String opName = _sceneOpCodeName(_opCode);
+	const char *isConditional = (_opCode & kSceneOpHasConditionalOpsFlag) ? "(cond)": "";
+	Common::String str = Common::String::format("%sSceneOp<op: %s%s args: %s", indent.c_str(), opName.c_str(), isConditional, argsStr.c_str());
 
 	str += DebugUtil::dumpStructList(indent, "conditionList", _conditionList);
 	if (!_conditionList.empty()) {
@@ -200,7 +204,10 @@ bool SceneOp::runCommonOp() const {
 		engine->getScene()->removeInvButtonFromHotAreaList();
 		break;
 	case kSceneOpEnableTrigger:
-		engine->getScene()->enableTrigger(_args[0]);
+		if (_args.size() == 1)
+			engine->getScene()->enableTrigger(0, _args[0]);
+		else if (_args.size() > 1)
+			engine->getScene()->enableTrigger(_args[1], _args[0]);
 		break;
 	case kSceneOpChangeSceneToStored: {
 		int16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
@@ -394,6 +401,25 @@ bool SceneOp::runBeamishOp() const {
 		break;
 	}
 	return false;
+}
+
+
+Common::String ConditionalSceneOp::dump(const Common::String &indent) const {
+	const Common::String opName = _sceneOpCodeName(static_cast<SceneOpCode>(_opCode));
+	Common::String str = Common::String::format("%sConditionalSceneOp<op: %s", indent.c_str(), opName.c_str());
+
+	str += DebugUtil::dumpStructList(indent, "conditionList", _conditionList);
+	if (!_conditionList.empty()) {
+		str += "\n";
+		str += indent;
+	}
+	str += DebugUtil::dumpStructList(indent, "opList", _opList);
+	if (!_opList.empty()) {
+		str += "\n";
+		str += indent;
+	}
+	str += ">";
+	return str;
 }
 
 } // end namespace Dgds

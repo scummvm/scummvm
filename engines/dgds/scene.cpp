@@ -349,7 +349,9 @@ bool Scene::readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Ar
 	list.resize(num);
 
 	for (ConditionalSceneOp &dst : list) {
-		dst._opCode = s->readUint16LE();
+		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
+		if (dst._opCode > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
+			error("Unexpected scene opcode %d", (int)dst._opCode);
 		readConditionList(s, dst._conditionList);
 		readOpList(s, dst._opList);
 	}
@@ -651,12 +653,13 @@ void SDSScene::unload() {
 	_talkData.clear();
 	_dynamicRects.clear();
 	_conversation.unload();
+	_conditionalOps.clear();
 	_sceneDialogFlags = kDlgFlagNone;
 }
 
 
 Common::String SDSScene::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
+	Common::String str = Common::String::format("%sSDSScene<ver %s num %d %d ads %s", indent.c_str(), _version.c_str(), _num, _field6_0x14, _adsFile.c_str());
 	str += DebugUtil::dumpStructList(indent, "enterSceneOps", _enterSceneOps);
 	str += DebugUtil::dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
 	str += DebugUtil::dumpStructList(indent, "preTickOps", _preTickOps);
@@ -666,6 +669,7 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += DebugUtil::dumpStructList(indent, "objInteractions2", _objInteractions2);
 	str += DebugUtil::dumpStructList(indent, "dialogues", _dialogs);
 	str += DebugUtil::dumpStructList(indent, "triggers", _triggers);
+	str += DebugUtil::dumpStructList(indent, "conditionalOps", _conditionalOps);
 
 	str += "\n";
 	str += indent + ">";
@@ -673,10 +677,15 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 }
 
 
-void SDSScene::enableTrigger(uint16 num, bool enable /* = true */) {
+void SDSScene::enableTrigger(uint16 sceneNum, uint16 num, bool enable /* = true */) {
+	if (sceneNum && sceneNum != _num)
+		return;
+
 	for (auto &trigger : _triggers) {
 		if (trigger.getNum() == num) {
 			trigger._enabled = enable;
+			if (enable)
+				trigger._checksUntilRun = trigger._timesToCheckBeforeRunning;
 			return;
 		}
 	}
@@ -700,8 +709,8 @@ void SDSScene::checkTriggers() {
 		if (!trigger._enabled)
 			continue;
 
-		if (trigger._timesToCheckBeforeRunning) {
-			trigger._timesToCheckBeforeRunning--;
+		if (trigger._checksUntilRun) {
+			trigger._checksUntilRun--;
 			continue;
 		}
 
@@ -989,7 +998,7 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 		loadDialogData(fileNum);
 
 	for (auto &dialog : _dialogs) {
-		if (dialog._num == dlgNum) {
+		if (dialog._num == dlgNum && fileNum == dialog._fileNum) {
 			dialog.clearFlag(kDlgFlagHiFinished);
 			dialog.clearFlag(kDlgFlagRedrawSelectedActionChanged);
 			dialog.clearFlag(kDlgFlagHi10);
@@ -1757,7 +1766,7 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 	num = triggers[t++];
 	while (num) {
 		uint16 val = triggers[t++];
-		scene->enableTrigger(num, (bool)val);
+		scene->enableTrigger(0, num, (bool)val);
 		num = triggers[t++];
 	}
 
@@ -1830,7 +1839,7 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 }
 
 Common::String GDSScene::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
+	Common::String str = Common::String::format("%sGDSScene<ver %s icons %s", indent.c_str(), _version.c_str(), _iconFile.c_str());
 	str += DebugUtil::dumpStructList(indent, "gameItems", _gameItems);
 	str += DebugUtil::dumpStructList(indent, "startGameOps", _startGameOps);
 	str += DebugUtil::dumpStructList(indent, "quitGameOps", _quitGameOps);

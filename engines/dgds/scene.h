@@ -120,13 +120,14 @@ private:
 
 class SceneTrigger {
 public:
-	SceneTrigger(uint16 num) : _num(num), _enabled(false), _timesToCheckBeforeRunning(0) {}
+	SceneTrigger(uint16 num) : _num(num), _enabled(false), _timesToCheckBeforeRunning(0), _checksUntilRun(0) {}
 	Common::String dump(const Common::String &indent) const;
 
 	Common::Array<SceneConditions> conditionList;
 	Common::Array<SceneOp> sceneOpList;
 
 	uint16 _timesToCheckBeforeRunning; // Only used in Beamish.
+	uint16 _checksUntilRun;
 	bool _enabled;
 	uint16 getNum() const { return _num; }
 
@@ -309,7 +310,7 @@ public:
 	Common::Error syncState(Common::Serializer &s) override;
 
 	void onDragFinish(const Common::Point &pt);
-	void enableTrigger(uint16 num, bool enable = true);
+	void enableTrigger(uint16 sceneNum, uint16 num, bool enable = true);
 
 	Dialog *loadDialogData(uint16 num);
 	void freeDialogData(uint16 num);

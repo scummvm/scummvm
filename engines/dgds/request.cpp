@@ -432,7 +432,8 @@ byte ButtonGadget::drawWillyBg(Graphics::ManagedSurface *dst, bool enabled) cons
 	uint16 cornerFrame = enabled ? 8 : 16;
 	RequestData::drawCorners(dst, cornerFrame, pt.x, pt.y, _width, _height);
 	int16 fillHeight = enabled ? _height - 8 : _height - 6;
-	dst->fillRect(Common::Rect(Common::Point(pt.x + 8, pt.y + 3), _width - 16, fillHeight), WillyButtonColor);
+	if (_width > 16 && fillHeight > 0)
+		dst->fillRect(Common::Rect(Common::Point(pt.x + 8, pt.y + 3), _width - 16, fillHeight), WillyButtonColor);
 	return 0;
 }
 

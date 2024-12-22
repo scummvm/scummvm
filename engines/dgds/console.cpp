@@ -306,7 +306,7 @@ bool Console::cmdTrigger(int argc, const char **argv) {
 		debugPrintf("Trigger %d is %d\n", num, val);
 	} else if (argc == 3) {
 		bool enable = atoi(argv[2]);
-		scene->enableTrigger(num, enable);
+		scene->enableTrigger(0, num, enable);
 		debugPrintf("Trigger %d set to %d\n", num, enable);
 	}
 
