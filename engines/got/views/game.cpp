@@ -91,7 +91,7 @@ bool Game::tick() {
 	// we set to redraw the screen every frame in case of updates
 	redraw();
 
-	return false;
+	return View::tick();
 }
 
 } // namespace Views

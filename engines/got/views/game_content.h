@@ -38,6 +38,7 @@ private:
 	void checkThunderShake();
 	void checkSwitchFlag();
 	void checkForItem();
+	void moveActors();
 
 public:
 	GameContent() : View("GameContent") {}
