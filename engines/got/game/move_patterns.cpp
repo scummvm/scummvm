@@ -168,7 +168,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 	int x3, x4, y3, y4;
 	int i, ti;
 	ACTOR *act;
-	char icn1, icn2, icn3, icn4;
+	byte icn1, icn2, icn3, icn4;
 
 	_G(thor_icon1) = 0;
 	_G(thor_icon2) = 0;
@@ -316,7 +316,7 @@ int check_move1(int x, int y, ACTOR *actr) {   //check hammer move
 	int  x1, x2, y1, y2, i;
 	int  x3, y3, x4, y4;
 	int  icn, f;
-	char icn1, icn2, icn3, icn4;
+	byte icn1, icn2, icn3, icn4;
 
 	ACTOR *act;
 
@@ -386,7 +386,7 @@ int check_move2(int x, int y, ACTOR *actr) {   //check enemy move
 	int x1, x2, y1, y2, i;
 	int x3, y3, x4, y4;
 	int icn;
-	char icn1, icn2, icn3, icn4;
+	byte icn1, icn2, icn3, icn4;
 
 	ACTOR *act;
 
@@ -459,7 +459,7 @@ int check_move2(int x, int y, ACTOR *actr) {   //check enemy move
 int check_move3(int x, int y, ACTOR *actr) {   //check enemy shot move
 	int x1, x2, y1, y2;
 	int x3, x4, y3, y4, i;
-	char icn1, icn2, icn3, icn4;
+	byte icn1, icn2, icn3, icn4;
 	ACTOR *act;
 
 	int icn;
@@ -532,11 +532,15 @@ int check_move4(int x, int y, ACTOR *actr) {   //flying enemies
 
 #define THOR_PAD1 2
 #define THOR_PAD2 4
-int  check_thor_move(int x, int y, ACTOR *actr) {
 
-	if (check_move0(x, y, actr)) return 1;
-	if (_G(diag_flag) || _G(thor_special_flag)) return 0;
-	if ((_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4)) > 1) return 0;
+int  check_thor_move(int x, int y, ACTOR *actr) {
+	if (check_move0(x, y, actr))
+		return 1;
+	if (_G(diag_flag) || _G(thor_special_flag))
+		return 0;
+	if ((_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4)) > 1)
+		return 0;
+
 	switch (actr->dir) {
 	case 0:
 		if (_G(thor_icon1)) {
@@ -585,6 +589,7 @@ int  check_thor_move(int x, int y, ACTOR *actr) {
 		}
 		break;
 	}
+
 	return 0;
 }
 
@@ -698,7 +703,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 	int x1, x2, y1, y2, i;
 	int x3, y3, x4, y4;
 	int icn;
-	char icn1, icn2, icn3, icn4;
+	byte icn1, icn2, icn3, icn4;
 
 	ACTOR *act;
 
