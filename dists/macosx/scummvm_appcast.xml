@@ -6,19 +6,20 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 2.8.1</title>
+			<title>Version 2.9.0</title>
 			<sparkle:releaseNotesLink>
-				https://www.scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
+				https://www.scummvm.org/frs/scummvm/2.9.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Sun, 31 Mar 2024 18:00:00 +0000</pubDate>
-			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.8.1/scummvm-2.8.1-macosx.dmg"
-						sparkle:version="2.8.1" length="131876141" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFHQYkVU/al8lpVKHLV7abyoSQPnwAhUAmtVw9WmUXNpprexNnIADQ5ZB5Xc="/>
+			<pubDate>Sun, 22 Dec 2024 18:00:00 +0000</pubDate>
+			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.9.0/scummvm-2.9.0-macosx.dmg"
+						sparkle:version="2.9.0" length="145266354" type="application/octet-stream"
+						sparkle:edSignature="mMnpRiheG0wZ+QKXU+2UpKa11VO3YZEOKZwlCWf22PpMLE2ZSF1BtV4gJgMByuBK4gVzlanP9v2GeOKyif2GDw=="
+						sparkle:dsaSignature="MCwCFEt5LMnMUPgkcMj0OGotnQ1UwOj0AhRizXrWqOovjn4nCsvjqXC4Hj17YQ=="/>
 
 			<enclosure sparkle:os="windows"
-						url="https://downloads.scummvm.org/frs/scummvm/2.8.1/scummvm-2.8.1-win32.exe"
-						sparkle:version="2.8.1" length="125937424" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFHnDTflfnAP+uwfPyxHoB20rkO66AhUA4UyLnQ57s0fx/AUYXMaEv4k39ps="/>
+						url="https://downloads.scummvm.org/frs/scummvm/2.9.0/scummvm-2.9.0-win32.exe"
+						sparkle:version="2.9.0" length="134118080" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDSAnhPwsmdROYQYgSA5KF+Q3nDxQIUcPFI0HUcXC6sc2ksp4fR4exeP9Y="/>
 		</item>
 	</channel>
 </rss>
