@@ -35,7 +35,7 @@
 #endif
 #include "sci/engine/savegame.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 #ifdef ENABLE_SCI32

@@ -54,7 +54,7 @@
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/macfont.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/menu.h"
@@ -319,29 +319,11 @@ Common::Error SciEngine::run() {
 	}
 
 	if (getSciVersion() < SCI_VERSION_2) {
-		Common::RenderMode renderMode = Common::kRenderDefault;
-
 		bool undither = ConfMan.getBool("disable_dithering");
-		if (ConfMan.hasKey("render_mode"))
-			renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+		Common::RenderMode renderMode = SciGfxDriver::getRenderMode();
 
-		// Check if the selected render mode is available for the game. This is quite specific for each game.
-		// Sometime it is only EGA, sometimes only CGA b/w without CGA 4 colors, etc. Also set default mode if undithering is enabled.
-		Common::Platform p = getPlatform();
-		if ((renderMode == Common::kRenderEGA && (((getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) && undither) ||
-			(getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_1 && !SCI1_EGADriver::validateMode(p)))) ||
-			(renderMode == Common::kRenderVGAGrey && !SCI1_VGAGreyScaleDriver::validateMode(p)) ||
-			(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode(p)) ||
-			(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode(p)) ||
-			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode(p)) ||
-			(renderMode == Common::kRenderPC98_8c && ((getSciVersion() <= SCI_VERSION_01 && !SCI0_PC98Gfx8ColorsDriver::validateMode(p)) ||
-			(getSciVersion() > SCI_VERSION_01 && !SCI1_PC98Gfx8ColorsDriver::validateMode(p)))) ||
-			(renderMode == Common::kRenderWin16c && getSciVersion() >= SCI_VERSION_1_1 && !WindowsGfx16ColorsDriver::validateMode(p)) ||
-			(renderMode == Common::kRenderPC98_16c && undither) ||
-			(getLanguage() == Common::KO_KOR)) // No extra modes supported for the Korean fan-patched games
-				renderMode = Common::kRenderDefault;
-
-		// Disable undithering for CGA, Hercules and other unsuitable video modes
+		// Disable undithering for CGA, Hercules and other unsuitable video modes. The render mode should have been set to
+		// kRenderDefault by determineRenderMode() if undithering is selected, but we want to make sure that this matches.
 		if (renderMode != Common::kRenderDefault)
 			undither = false;
 

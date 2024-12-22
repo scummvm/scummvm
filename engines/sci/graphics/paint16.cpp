@@ -33,7 +33,7 @@
 #include "sci/graphics/picture.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"

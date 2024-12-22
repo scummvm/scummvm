@@ -23,7 +23,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 #include "sci/util.h"

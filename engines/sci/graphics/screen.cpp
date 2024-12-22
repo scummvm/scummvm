@@ -34,7 +34,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/scifx.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 
 namespace Sci {
 
@@ -143,84 +143,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		}
 	}
 
-	bool enablePaletteMods = ConfMan.hasKey("palette_mods") && ConfMan.getBool("palette_mods");
-	bool requestRGB = enablePaletteMods || (ConfMan.hasKey("rgb_rendering") && ConfMan.getBool("rgb_rendering"));
-
-	_gfxDrv = nullptr;
-	switch (renderMode) {
-	case Common::kRenderCGA:
-		_gfxDrv = new SCI0_CGADriver(false, requestRGB);
-		break;
-	case Common::kRenderCGA_BW:
-		_gfxDrv = new SCI0_CGABWDriver(0xffffff, requestRGB);
-		break;
-	case Common::kRenderHercA:
-	case Common::kRenderHercG:
-		_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 0x66ff66 : 0xffbf66, requestRGB, false);
-		break;
-	case Common::kRenderEGA:
-		if (getSciVersion() > SCI_VERSION_1_EGA_ONLY)
-			_gfxDrv = new SCI1_EGADriver(requestRGB);
-		break;
-	case Common::kRenderVGAGrey:
-		_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
-		break;
-	case Common::kRenderWin16c:
-		_gfxDrv = new WindowsGfx16ColorsDriver(true, requestRGB);
-		break;
-	case Common::kRenderPC98_8c:
-		if (g_sci->getGameId() == GID_PQ2)
-			// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print
-			// and it doesn't even have a 16 colors drivers. See comment below...
-			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(true, true, requestRGB);
-		else if (getSciVersion() <= SCI_VERSION_01)
-			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(false, false, requestRGB);
-		else
-			_gfxDrv = new SCI1_PC98Gfx8ColorsDriver(requestRGB);
-		_hiresGlyphBuffer = new byte[16 * 16]();
-		break;
-	default:
-		break;
-	}
-
-	if (_gfxDrv == nullptr) {
-		switch (g_sci->getPlatform()) {
-		case Common::kPlatformPC98:
-			if (g_sci->getGameId() == GID_PQ2)
-				// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print,
-				// so the text color is a system color outside the normal 16 colors palette. The original does not even have a
-				// 16 colors mode driver. Only the 8 colors mode, where the colors are identical for text and graphics mode.
-				// But we do want to provide the 16 colors mode, since it is not a big deal (i.e., it does not require data
-				// from a driver file and the fat print is also already there for the 8 colors mode). So we just make the
-				// necessary adjustments.
-				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, true, PC98Gfx16ColorsDriver::kFontStyleTextMode, requestRGB, ConfMan.getBool("disable_dithering"));
-			else if (getSciVersion() <= SCI_VERSION_01)
-				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, false, PC98Gfx16ColorsDriver::kFontStyleNone, requestRGB, true);
-			else
-				_gfxDrv = new PC98Gfx16ColorsDriver(1, true, true, PC98Gfx16ColorsDriver::kFontStyleSpecialSCI1, requestRGB, true);
-			break;
-
-		case Common::kPlatformWindows:
-		case Common::kPlatformDOS:
-			// King's Quest 6 has hires content in the Windows version which we also allow to be optionally enabled in the DOS version
-			// and which we also optionally allow to be disabled in the Windows version. Also, the Windows versions of King's Quest 6
-			// and Space Quest 4 have support in the original interpreter code for a small 320 x 240 window on desktops with resolutions
-			// of less than 640 x 480, but I haven't managed to produce it in a Win95 VM; the windows setting don't seem to allow less
-			// than 640 x 480, so I don't know if it is actually possible to set it up. Anyway, we can use it here, for the configs that
-			// do not require hires support.
-			if ((g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_SQ4) && (g_sci->getPlatform() == Common::kPlatformWindows || g_sci->useHiresGraphics())) {
-				_gfxDrv = new WindowsGfx256ColorsDriver(!ConfMan.getBool("windows_cursors"), !g_sci->useHiresGraphics(), requestRGB);
-				break;
-			}
-			// fallthrough
-		default:
-			if (g_sci->getLanguage() == Common::KO_KOR)
-				_gfxDrv = new UpscaledGfxDriver(1, true, requestRGB);
-			else // The driver has to be told if is SCI_VERSION_01, since that cannot be determined from the number of colors.
-				_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight + extraHeight, getSciVersion() < SCI_VERSION_01, requestRGB);
-			break;
-		}
-	}
+	_gfxDrv = SciGfxDriver::create(renderMode, _displayWidth, _displayHeight + extraHeight);
 	assert(_gfxDrv);
 
 	// Buffer for rendering a single two-byte character
@@ -265,7 +188,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 	}
 
 	// Set up palette mods if requested
-	if (enablePaletteMods)
+	if (ConfMan.hasKey("palette_mods") && ConfMan.getBool("palette_mods"))
 		setupCustomPaletteMods(this);
 
 	// Initialize the actual screen

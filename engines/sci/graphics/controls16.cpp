@@ -32,7 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/tts.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/gfxdrivers.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/scifont.h"
