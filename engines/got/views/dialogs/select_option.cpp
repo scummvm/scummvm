@@ -55,7 +55,6 @@ SelectOption::SelectOption(const Common::String &name, const char *title,
 	y2 = (y1 + h);
 
 	_bounds = Common::Rect(x1 - 16, y1 - 16, x2 + 16, y2 + 16);
-	_bounds.setBorderSize(16);
 }
 
 void SelectOption::draw() {
