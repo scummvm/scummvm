@@ -67,6 +67,7 @@ void SoundSE::initSoundFiles() {
 		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	case GID_FT:
+		initAudioMapping();
 		_musicFilename = "iMUSEClient_Music.fsb";
 		indexFSBFile(_musicFilename, &_musicEntries);
 		_sfxFilename = "iMUSEClient_SFX_INMEMORY.fsb";
@@ -264,22 +265,29 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 		Common::String name = f->readString();
 		name.toLowercase();
 
-		(*audioIndex)[i].name = name;
+		// Ignore sound files for the SE in-game UI
+		if (name.hasPrefix("ui_") || name.hasPrefix("ft_front_end_"))
+			continue;
 
-		if (name.hasPrefix("ui_"))
+		// Ignore seemingly duplicate audio files in FT
+		if (name.hasSuffix("-copy"))
 			continue;
 
 		// TODO: Support non-English audio files
-		if (name.hasPrefix("de_"))
+		if (name.hasPrefix("de_") || name.hasPrefix("fr_") || name.hasPrefix("it_"))
 			continue;
 
-		if (!_audioNameToOriginalOffsetMap.contains(name)) {
-			if (name.hasPrefix("classic_"))
-				name = name.substr(8);
+		if (name.hasPrefix("en_") || name.hasPrefix("de_") || name.hasPrefix("fr_") || name.hasPrefix("it_"))
+			name = name.substr(3);
 
-			if (name.hasPrefix("en_") || name.hasPrefix("de_"))
-				name = name.substr(3);
-		}
+		// Ignore classic files and use the HQ ones
+		if (name.hasPrefix("classic_"))
+			continue;
+
+		if (name.hasPrefix("hq_"))
+			name = name.substr(3);
+
+		(*audioIndex)[i].name = name;
 
 		if (!_audioNameToOriginalOffsetMap.contains(name)) {
 			//warning("indexFSBFile: name %s not found in audiomapping.info", name.c_str());
@@ -309,7 +317,9 @@ void SoundSE::initAudioMapping() {
 
 		if (f->eos())
 			break;
-		f->skip(4); // unknown
+		f->skip(4); // unknown flag
+		if (_vm->_game.id == GID_FT)
+			f->skip(4); // unknown flag
 
 		_audioNameToOriginalOffsetMap[name] = origOffset + 10;
 	} while (!f->eos());
