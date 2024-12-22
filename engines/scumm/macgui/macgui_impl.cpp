@@ -772,6 +772,12 @@ void MacGuiImpl::setMacGuiColors(Graphics::Palette &palette) {
 }
 
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) {
+	if (_vm->_game.version < 6 && _vm->_game.id != GID_MANIAC) {
+		updatePalette();
+		_macBlack = _windowManager->_colorBlack;
+		_macWhite = _windowManager->_colorWhite;
+	}
+
 	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
 		// This happens with the Last Crusade file dialogs.
 		bounds.moveTo((640 - bounds.width()) / 2, 27);
@@ -950,8 +956,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 
 			_system->getPaletteManager()->setPalette(palette);
 		}
-	} else
-		updatePalette();
+	}
 
 	MacDialogWindow *window = createWindow(bounds);
 
