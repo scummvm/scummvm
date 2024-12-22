@@ -855,6 +855,13 @@ void MacGuiImpl::MacImage::draw(bool drawFocused) {
 
 // ---------------------------------------------------------------------------
 // Slider base class
+//
+// The idea here is that _maxPos and _minPos correspond to _maxValue and
+// _minValue respectively. The position can be calculated from the value and
+// vice versa.
+//
+// For more exact positioning, where you have to match it exactly to a visible
+// ruler, you can use addStop() to override the calculated values.
 // ---------------------------------------------------------------------------
 
 void MacGuiImpl::MacSliderBase::setValue(int value) {
@@ -1305,6 +1312,10 @@ void MacGuiImpl::MacSlider::handleWheelDown() {
 // Image slider widget. This is the custom slider widget used for the Loom
 // and Indy 3 options dialogs. It consists of a background image and a slider
 // drag handle.
+//
+// In addition to the min and max value positions, this one also maintains a
+// _minX and _maxX position to which the handle can be dragged. This is only
+// used for the older games.
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacImageSlider::MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue)
