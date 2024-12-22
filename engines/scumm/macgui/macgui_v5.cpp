@@ -871,15 +871,15 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 	};
 
 	AboutPage aboutPages[] = {
-		{ nullptr, 0,  2800 },
+		{ nullptr, 0,  3500 },
 		{ nullptr, 0,   100 },
 		{ nullptr, 0,   100 },
-		{ page3,   0,  2100 },
-		{ page4,   0,  2900 },
-		{ page5,   1,  4200 },
-		{ page6,   1,  4300 },
-		{ page7,   1,  4200 },
-		{ page8,   1, 14100 },
+		{ page3,   0,  2000 },
+		{ page4,   0,  7000 },
+		{ page5,   1,  4100 },
+		{ page6,   1,  4100 },
+		{ page7,   1,  4100 },
+		{ page8,   1, 14000 },
 		{ page9,   1,     0 }
 	};
 
