@@ -73,10 +73,6 @@ private:
 	int32 _ripTrekHeadTurnPos1Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 
-	machine *_field24Mach = nullptr;
-	machine *_field2CMach = nullptr;
-	machine *_field30Mach = nullptr;
-
 	machine *_709IncenseHolderMach = nullptr;
 	machine *_709rpro5Mach = nullptr;
 	machine *_709rpro6Mach = nullptr;
@@ -84,6 +80,11 @@ private:
 	machine *_709rpro8Mach = nullptr;
 	machine *_709ChiselMach = nullptr;
 	machine *_ripPullMach = nullptr;
+	machine *_ripPullMach02 = nullptr;
+	machine *_ripPullMach03 = nullptr;
+	machine *_ripPullMach04 = nullptr;
+	machine *_ripPullMach05 = nullptr;
+	machine *_safariShadow1Mach = nullptr;
 
 	Maze709Struc _maze709Arr[99];
 

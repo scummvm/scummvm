@@ -591,6 +591,269 @@ void Room709::pre_parser() {
 }
 
 void Room709::parser() {
+	bool ecx = player_said_any("look", "look at");
+	bool edi = player_said_any("talk", "talk to", "take");
+	bool esi = player_said_any("push", "pull", "gear", "open", "close", "RopeS", "RopeL", "RopeR", "RopeB");
+
+	if (esi && player_said("rope   ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_709rpro8Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 2048, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro4Series, 1, 16, 1, _709rpro4Series, 16, 16, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro4Series, 17, 38, 2, _709rpro4Series, 1, 1, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 2:
+			if (_maze709Arr[_field80_save]._field_4 != 0 && _field74 == 0) {
+				_ripPullMach03 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
+				sendWSMessage_10000(1, _ripPullMach03, _mazeRightDoorLiteSeries, 1, 10, 3, _mazeRightDoorLiteSeries, 10, 10, 0);
+				_field74 = 1;
+			} else {
+				kernel_timing_trigger(5, 3, nullptr);
+			}
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_709rpro8Mach = series_place_sprite("709RPRO8", 0, 0, -53, 100, 2048);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("rope   ")
+
+	else if (esi && player_said("rope     ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_709rpro6Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1792, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro2Series, 1, 15, 1, _709rpro2Series, 15, 15, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro2Series, 15, 38, 2, _709rpro2Series, 1, 1, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 2:
+			if (_maze709Arr[_field80_save]._field_0 != 0 && _field70 == 0) {
+				_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
+				sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, 3, _mazeLeftDoorLiteSeries, 10, 10, 0);
+				_field70 = 1;
+			} else {
+				kernel_timing_trigger(5, 3, nullptr);
+			}
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_709rpro6Mach = series_place_sprite("709RPRO6", 0, 0, -53, 100, 1792);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("rope     ")
+
+	else if (esi && player_said("rope  ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_709rpro7Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 2304, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro3Series, 1, 16, 1, _709rpro3Series, 16, 16, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro3Series, 16, 38, 2, _709rpro3Series, 1, 1, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 2:
+			if (_maze709Arr[_field80_save]._field_8 != 0 && _field78 == 0) {
+				_ripPullMach04 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
+				sendWSMessage_10000(1, _ripPullMach04, _mazeCenterDoorLiteSeries, 1, 10, 3, _mazeCenterDoorLiteSeries, 10, 10, 0);
+				_field78 = 1;
+			} else {
+				kernel_timing_trigger(5, 3, nullptr);
+			}
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_709rpro7Mach = series_place_sprite("709RPRO7", 0, 0, -53, 100, 2304);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+
+		}
+	} // esi && player_said("rope  ")
+
+	else if (esi && player_said("rope    ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_709rpro5Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 512, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro1Series, 1, 17, 1, _709rpro1Series, 17, 17, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _709rpro1Series, 17, 38, 2, _709rpro1Series, 1, 1, 0);
+			sendWSMessage_190000(_ripPullMach02, 4);
+
+			break;
+
+		case 2:
+			if (_maze709Arr[_field80_save]._field_C != 0 && _field7C == 0) {
+				_ripPullMach05 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
+				sendWSMessage_10000(1, _ripPullMach05, _709NearDoorLiteSeries, 1, 10, 3, _709NearDoorLiteSeries, 10, 10, 0);
+				_field7C = 1;
+			} else {
+				kernel_timing_trigger(5, 3, nullptr);
+			}
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_709rpro5Mach = series_place_sprite("709RPRO5", 0, 0, -53, 100, 512);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("rope    ")
+
+	else if (player_said("Right")) {
+		if (_maze709Arr[_field80_save]._field_4 == 0 || _field74 == 0) {
+			digi_play("708R01", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(2);
+				kernel_timing_trigger(30, 2, nullptr);
+
+				break;
+
+			case 2:
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatchx(kernel_trigger_create(30));
+				_G(kernel).trigger_mode = KT_PARSE;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // player_said("Right")
+
+	else if (player_said("Left")) {
+		if (_maze709Arr[_field80_save]._field_0 == 0 || _field70 == 0) {
+			if (_field80_save == 82) {
+				switch (_G(kernel).trigger) {
+				case -1:
+					ws_walk(_G(my_walker), 182, 292, nullptr, 2, 9, true);
+					break;
+
+				case 2:
+					disable_player_commands_and_fade_init(3);
+					break;
+
+				case 3:
+					RemoveSystemHotkey(KEY_CLEAR);
+					RemoveSystemHotkey(5);
+					_G(game).new_room = 706;
+					break;
+
+				default:
+					break;
+				}
+			} else {
+				digi_play("708R01", 1, 255, -1, -1);
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(2);
+				break;
+
+			case 2:
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatchx(kernel_trigger_create(20));
+				_G(kernel).trigger_mode = KT_PARSE;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	} // player_said("Left")
+
+	warning("Fake variable use - %d %d %d", ecx ? 1 : 0, esi ? 1 : 0, edi ? 1 : 0);
+
+	_G(player).command_ready = false;
+
 	// TODO Not implemented yet
 }
 
@@ -669,7 +932,7 @@ void Room709::daemon() {
 		}
 
 		if (_field74 == 1) {
-			terminateMachine(_field24Mach);
+			terminateMachine(_ripPullMach03);
 			_field74 = 0;
 		}
 
@@ -679,12 +942,12 @@ void Room709::daemon() {
 		}
 
 		if (_field78 == 1) {
-			terminateMachine(_field2CMach);
+			terminateMachine(_ripPullMach04);
 			_field78 = 0;
 		}
 
 		if (_field7C == 1) {
-			terminateMachine(_field30Mach);
+			terminateMachine(_ripPullMach05);
 			_field7C = 0;
 		}
 
@@ -729,7 +992,7 @@ void Room709::daemon() {
 		}
 
 		if (_field74 == 1) {
-			terminateMachine(_field24Mach);
+			terminateMachine(_ripPullMach03);
 			_field74 = 0;
 		}
 
@@ -739,12 +1002,12 @@ void Room709::daemon() {
 		}
 
 		if (_field78 == 1) {
-			terminateMachine(_field2CMach);
+			terminateMachine(_ripPullMach04);
 			_field78 = 0;
 		}
 
 		if (_field7C == 1) {
-			terminateMachine(_field30Mach);
+			terminateMachine(_ripPullMach05);
 			_field7C = 0;
 		}
 
@@ -784,7 +1047,7 @@ void Room709::daemon() {
 		}
 
 		if (_field74 == 1) {
-			terminateMachine(_field24Mach);
+			terminateMachine(_ripPullMach03);
 			_field74 = 0;
 		}
 
@@ -794,12 +1057,12 @@ void Room709::daemon() {
 		}
 
 		if (_field78 == 1) {
-			terminateMachine(_field2CMach);
+			terminateMachine(_ripPullMach04);
 			_field78 = 0;
 		}
 
 		if (_field7C == 1) {
-			terminateMachine(_field30Mach);
+			terminateMachine(_ripPullMach05);
 			_field7C = 0;
 		}
 
@@ -848,7 +1111,7 @@ void Room709::daemon() {
 		}
 
 		if (_field74 == 1) {
-			terminateMachine(_field24Mach);
+			terminateMachine(_ripPullMach03);
 			_field74 = 0;
 		}
 
@@ -858,12 +1121,12 @@ void Room709::daemon() {
 		}
 
 		if (_field78 == 1) {
-			terminateMachine(_field2CMach);
+			terminateMachine(_ripPullMach04);
 			_field78 = 0;
 		}
 
 		if (_field7C == 1) {
-			terminateMachine(_field30Mach);
+			terminateMachine(_ripPullMach05);
 			_field7C = 0;
 		}
 
