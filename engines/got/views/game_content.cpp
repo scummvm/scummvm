@@ -22,6 +22,7 @@
 #include "got/views/game_content.h"
 #include "got/game/back.h"
 #include "got/game/move.h"
+#include "got/game/move_patterns.h"
 #include "got/game/object.h"
 #include "got/gfx/image.h"
 #include "got/vars.h"
@@ -68,8 +69,14 @@ bool GameContent::tick() {
 	checkThunderShake();
 	checkSwitchFlag();
 	checkForItem();
+	moveActors();
 
 	return false;
+}
+
+bool GameContent::canSaveLoad() const {
+	// TODO: Disallow saving during animations like scene changes or Thor dying
+	return true;
 }
 
 void GameContent::drawBackground(GfxSurface &s) {
@@ -175,14 +182,34 @@ void GameContent::checkSwitchFlag() {
 }
 
 void GameContent::checkForItem() {
-	int thor_pos = ((_G(thor)->x + 7) / 16) + (((_G(thor)->y + 8) / 16) * 20);
+	int thor_pos = _G(thor)->getPos();
 	if (_G(object_map)[thor_pos])
 		pick_up_object(thor_pos);
 }
 
-bool GameContent::canSaveLoad() const {
-	// TODO: Disallow saving during animations like scene changes or Thor dying
-	return true;
+void GameContent::moveActors() {
+	for (int i = 0; i < MAX_ACTORS; i++) {
+		if (_G(actor)[i].used) {
+			if (_G(hourglass_flag))
+				if ((i > 2) && (!_G(pge)) && (!(_G(actor)[i].magic_hurts & HOURGLASS_MAGIC)))
+					continue;
+
+			_G(actor)[i].move_count = _G(actor)[i].num_moves;
+			while (_G(actor)[i].move_count--)
+				move_actor(&_G(actor)[i]);
+
+			if (i == 0)
+				set_thor_vars();
+
+			if (_G(new_level) != _G(current_level))
+				return;
+		}
+	}
+
+	int thor_pos = _G(thor)->getPos();
+	_G(thor)->center_x = thor_pos % 20;
+	_G(thor)->center_y = thor_pos / 20;
+
 }
 
 } // namespace Views
