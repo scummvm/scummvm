@@ -57,10 +57,11 @@ static const KeybindingRecord GAME_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
-	{ KEYBIND_MAGIC, "MAGIC", _s("Magic"), "CTRL", "JOY_A" },
-	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "JOY_B" },
+	{ KEYBIND_FIRE, "FIRE", _s("Magic"), "LALT", "JOY_A" },
+	{ KEYBIND_MAGIC, "MAGIC", _s("Magic"), "LCTRL", "JOY_B" },
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "JOY_X" },
 	// I18N: ESC key
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
