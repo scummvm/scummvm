@@ -26,11 +26,11 @@
 
 namespace Got {
 
-extern void show_objects(int level, unsigned int pg);
 extern void pick_up_object(int p);
 extern int drop_object(ACTOR *actr);
 extern int _drop_obj(ACTOR *actr, int o);
 extern void delete_object();
+extern void use_item();
 
 } // namespace Got
 
