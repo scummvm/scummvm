@@ -915,7 +915,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 							paletteMap[color] = numWindowColors++;
 					}
 				}
+
+				delete imageRes;
 			}
+
+			delete res;
 
 			Graphics::Palette palette(256);
 			setMacGuiColors(palette);
