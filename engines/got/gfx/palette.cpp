@@ -39,8 +39,6 @@ void load_palette() {
 		error("Cannot Read PALETTE");
 
 	g_system->getPaletteManager()->setPalette(saved_palette, 0, 256);
-
-	set_screen_pal();
 }
 
 void set_screen_pal() {

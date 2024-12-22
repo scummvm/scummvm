@@ -258,9 +258,13 @@ class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
+	int _palLoop = 0;
+	int _palCnt1 = 0;
+	int _palCnt2 = 0;
 
 	void nextFrame();
 	int actionToKeyFlag(int action) const;
+	void rotatePalette();
 
 protected:
 	/**

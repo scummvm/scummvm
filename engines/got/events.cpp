@@ -30,6 +30,21 @@ namespace Got {
 
 Events *g_events;
 
+// Index and RGB63 values used for palette animation
+// like water effects and gems sparkling
+static const uint16 PAL_CLR1[] = {
+	0xf300, 0x003b, 0xf000, 0x003b, 0xf100, 0x003b, 0xf200, 0x003b
+};
+static const uint16 PAL_SET1[] = {
+	0xf027, 0x273f, 0xf127, 0x273f, 0xf227, 0x273f, 0xf327, 0x273f
+};
+static const uint16 PAL_CLR2[] = {
+	0xf73b, 0x0000, 0xf43b, 0x0000, 0xf53b, 0x0000, 0xf63b, 0x0000
+};
+static const uint16 PAL_SET2[] = {
+	0xf43f, 0x2727, 0xf53f, 0x2727, 0xf63f, 0x2727, 0xf73f, 0x2727
+};
+
 Events::Events() : UIElement("Root", nullptr) {
 	g_events = this;
 }
@@ -40,6 +55,7 @@ Events::~Events() {
 
 void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
+	int palCycleCtr = 0;
 	_screen = new Graphics::Screen();
 	Views::Views views;	// Loads all views in the structure
 
@@ -66,6 +82,13 @@ void Events::runGame() {
 			break;
 
 		g_system->delayMillis(10);
+
+		// Rotate the palette
+		if (++palCycleCtr == 2) {
+			palCycleCtr = 0;
+			rotatePalette();
+		}
+
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			nextFrame();
@@ -88,6 +111,45 @@ void Events::nextFrame() {
 	// Draw the current view's elements as needed, and update screen
 	drawElements();
 	_screen->update();
+}
+
+#define LOOP_THRESHOLD 5
+
+void Events::rotatePalette() {
+	const uint16 *entry;
+	++_palLoop;
+
+	if (_palLoop > LOOP_THRESHOLD) {
+		_palLoop = 0;
+	} else {
+		switch (_palLoop) {
+		case LOOP_THRESHOLD - 4:
+			entry = &PAL_CLR2[_palCnt2];
+			break;
+		case LOOP_THRESHOLD - 3:
+			entry = &PAL_SET2[_palCnt2];
+
+			_palCnt2 += 2;
+			if (_palCnt2 >= 8)
+				_palCnt2 = 0;
+			break;
+		case LOOP_THRESHOLD - 2:
+			entry = &PAL_CLR1[_palCnt1];
+			break;
+		case LOOP_THRESHOLD - 1:
+			entry = &PAL_SET1[_palCnt1];
+
+			_palCnt1 += 2;
+			if (_palCnt1 >= 8)
+				_palCnt1 = 0;
+			break;
+		default:
+			return;
+		}
+
+		Gfx::xsetpal(entry[0] >> 8, (entry[0] & 0xff) << 2,
+			(entry[1] >> 8) << 2, (entry[1] & 0xff) << 2);
+	}
 }
 
 void Events::processEvent(Common::Event &ev) {
