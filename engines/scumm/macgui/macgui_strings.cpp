@@ -770,7 +770,6 @@ void MacGuiImpl::parseSTRSBlock(uint8 *strsData, const MacSTRSParsingEntry *pars
 				} else {
 					error("MacGuiImpl::parseSTRSBlock(): invalid parsing method encountered (%d)", entry.parsingMethod);
 				}
-debug("_strs[%d] = '%s'", entry.strId, _strsStrings[entry.strId].c_str());
 			}
 		}
 	}
