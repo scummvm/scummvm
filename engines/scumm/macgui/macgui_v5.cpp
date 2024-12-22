@@ -98,33 +98,30 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 }
 
 void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	if (_vm->_game.id == GID_MONKEY) {
+	Common::MacResManager resource;
+	Graphics::MacCursor macCursor;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 128);
+
+	if (curs && macCursor.readFromStream(*curs)) {
+		width = macCursor.getWidth();
+		height = macCursor.getHeight();
+		hotspotX = macCursor.getHotspotX();
+		hotspotY = macCursor.getHotspotY();
+		animate = 0;
+
+		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
+	} else {
+		// Monkey Island 1 uses the arrow cursor, and we have to use it
+		// for the Fate of Atlantis demo as well.
 		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 		width = 11;
 		height = 16;
 		hotspotX = 1;
 		hotspotY = 3;
 		animate = 0;
-	} else if (_vm->_game.version == 5) {
-		Common::MacResManager resource;
-		Graphics::MacCursor macCursor;
-
-		resource.open(_resourceFile);
-
-		Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 128);
-
-		if (macCursor.readFromStream(*curs)) {
-			width = macCursor.getWidth();
-			height = macCursor.getHeight();
-			hotspotX = macCursor.getHotspotX();
-			hotspotY = macCursor.getHotspotY();
-			animate = 0;
-
-			_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
-		}
-
-		delete curs;
-		resource.close();
 	}
 }
 
