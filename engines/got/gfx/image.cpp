@@ -295,11 +295,8 @@ void setup_magic_item(int item) {
 }
 
 void load_new_thor() {
-#ifdef TODO
-	int rep;
 	byte *ami;
 	byte *mb;
-
 
 	mb = _G(mask_buff);
 	ami = _G(ami_buff);
@@ -308,21 +305,12 @@ void load_new_thor() {
 	_G(ami_buff) = _G(ami_store1);
 
 	load_actor(0, 100 + _G(thor_info).armor);   // Load thor
-	for (rep = 0; rep < 16; rep++) {
-		make_mask(&_G(actor)[0].pic[rep / 4][rep % 4], PAGE3 + (144 * rep), &_G(tmp_buff)[256 * rep], 16, 16);
-	}
-	_G(mask_buff) = _G(mask_store2);
-	_G(ami_buff) = _G(ami_store2);
-	load_actor(0, 103 + _G(thor_info).armor);   // Load hammer
-	for (rep = 0; rep < 16; rep++) {
-		make_mask(&_G(actor)[1].pic[rep / 4][rep % 4], 52464u + (144 * rep), &_G(tmp_buff)[256 * rep], 16, 16);
-	}
+
+	// TODO: Confirm if this is an okay replacement for original mask code
+	make_actor_surface(&_G(actor)[0]);
 
 	_G(ami_buff) = ami;
 	_G(mask_buff) = mb;
-#else
-	error("TODO: load_new_thor");
-#endif
 }
 
 } // namespace Got
