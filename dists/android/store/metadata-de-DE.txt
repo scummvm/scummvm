@@ -21,10 +21,13 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.8.1.1
+2.9.0
 
 *** Release notes:
-- Gemeldete Grafikfehler und App-Abstürze behoben
-- Upgrade auf Android 14
+- Unterstützung für Android 15 hinzugefügt
+- Spieleverknüpfungen können zum Android-Startbildschirm hinzugefügt werden
+- Verbesserter Gamepad-Eingabemodus mit zusätzlichen Einstellungen über die Benutzeroberfläche
+- Benutzeroberfläche wird anhand der Display-Auflösung skaliert
+- Allgemeine Verbesserung der Stabilität
 
-Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
+Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.9.0/ReleaseNotes.html
