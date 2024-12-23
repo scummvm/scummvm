@@ -990,11 +990,9 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 
 			switch (type & 0x7F) {
 			case 0:
-			{
 				// User item
 //				window->innerSurface()->frameRect(r, black);
 				break;
-			}
 			case 4:
 				// Button
 				str = getDialogString(res, len);
