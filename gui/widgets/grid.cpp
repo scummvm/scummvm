@@ -1112,12 +1112,6 @@ void GridWidget::reflowLayout() {
 	markAsDirty();
 }
 
-void GridWidget::openTray(int x, int y, int entryId) {
-	GridItemTray *tray = new GridItemTray(this, x - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
-	tray->runModal();
-	delete tray;
-}
-
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
 		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->x - _gridXSpacing / 3, _y + _selectedEntry->y + _selectedEntry->h - _scrollPos,
