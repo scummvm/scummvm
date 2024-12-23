@@ -733,7 +733,7 @@ void View1::draw() {
 	// Render the scaling factors
 	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
 
-	// DrawImageResources(s);
+	DrawImageResources(s);
 }
 
 bool View1::tick() {
@@ -1032,7 +1032,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the highlights
 	// TODO: Check if positions are really correct
 	// Top side
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
+	/*  DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
 
 	// Left side
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x5, s);
@@ -1042,7 +1042,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 	// Right side
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0x5, s);
-
+	*/
 	// Shadow parts, from top in clockwise order
 	// TODO: Adjust pos and sizes
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 0xB, 0x6, s);
@@ -1086,7 +1086,7 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = unknown == 0x6 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
+	const Sprite &sprite = unknown == 0x5 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
 
 	while (currentX < clippingRect.right) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
@@ -1106,7 +1106,7 @@ void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = unknown == 0x6 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
+	const Sprite &sprite = unknown == 0x5 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
 
 
 	while (currentY < clippingRect.bottom) {

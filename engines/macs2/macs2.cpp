@@ -333,16 +333,16 @@ void Macs2Engine::readResourceFile() {
 	}
 
 	// Load the data for a border part
-	// _fileStream->seek(0x64C6);
-	_fileStream->seek(0x0000602A);
+	AnimFrame &borderFrame = imageResources[imageResources.size() - 2];
+	_borderSprite.Data.assign(borderFrame.Data, borderFrame.Data + borderFrame.Width * borderFrame.Height);
+	_borderSprite.Width = borderFrame.Width;
+	_borderSprite.Height = borderFrame.Height;
+	_borderData = borderFrame.Data;
 
-	_borderWidth = _fileStream->readUint16LE();
-	_borderHeight = _fileStream->readUint16LE();
-	_borderData = new byte[_borderWidth * _borderHeight];
-	_fileStream->read(_borderData, _borderWidth * _borderHeight);
-	_borderSprite.Width = _borderWidth;
-	_borderSprite.Height = _borderHeight;
-	_borderSprite.Data = Common::Array<uint8>(_borderData, _borderWidth * _borderHeight);
+	// TODO: Get rid of these
+	_borderWidth = _borderSprite.Width;
+	_borderHeight = _borderSprite.Height;
+	
 
 	// And the highlight part
 	_fileStream->seek(0x6962);
@@ -355,7 +355,7 @@ void Macs2Engine::readResourceFile() {
 	_borderHighlightSprite.Height = _borderHighlightHeight;
 	_borderHighlightSprite.Data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
 
-	AnimFrame &shadowFrame = imageResources[0x2];
+	AnimFrame &shadowFrame = imageResources[imageResources.size() - 3];
 	_borderShadowSprite.Data.assign(shadowFrame.Data, shadowFrame.Data + shadowFrame.Width * shadowFrame.Height);
 	_borderShadowSprite.Width = shadowFrame.Width;
 	_borderShadowSprite.Height = shadowFrame.Height;
