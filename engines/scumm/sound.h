@@ -26,15 +26,9 @@
 #include "common/serializer.h"
 #include "common/str.h"
 #include "audio/mididrv.h"
-#include "backends/audiocd/audiocd.h"
 #include "scumm/file.h"
+#include "scumm/soundcd.h"
 #include "scumm/soundse.h"
-
-// The number of "ticks" (1/10th of a second) into the Overture that the
-// LucasFilm logo should appear. This corresponds to a timer value of 204.
-// The default value is selected to work well with the Ozawa recording.
-
-#define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
 
 #define DIGI_SND_MODE_EMPTY  0
 #define DIGI_SND_MODE_SFX    1
@@ -103,17 +97,9 @@ protected:
 	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
 
-	int16 _currentCDSound;
-	int16 _currentMusic;
+	int16 _currentMusic;	// used by HE games
 
-	Audio::SoundHandle *_fileBasedCDAudioHandle;
-	bool _hasFileBasedCDAudio;
-	AudioCDManager::Status _fileBasedCDStatus;
-	bool _useReplacementAudioTracks;
-	int _musicTimer;
-	int _loomOvertureTransition;
-	uint32 _replacementTrackStartTime;
-
+	SoundCD *_soundCD = nullptr;
 	SoundSE *_soundSE = nullptr;
 	bool _useRemasteredAudio = false;
 
@@ -123,8 +109,6 @@ public:
 	bool _soundsPaused;
 	byte _digiSndMode;
 	uint _lastSound;
-	uint32 _cdMusicTimerMod;
-	uint32 _cdMusicTimer;
 	uint32 _speechTimerMod;
 
 	MidiDriverFlags _musicType;
@@ -159,27 +143,30 @@ public:
 	void stopSpeechTimer();
 	bool speechIsPlaying(); // Used within MIDI iMUSE
 
-	void startCDTimer();
-	void stopCDTimer();
-
-	void playCDTrack(int track, int numLoops, int startFrame, int duration);
-	void playCDTrackInternal(int track, int numLoops, int startFrame, int duration);
-	void stopCD();
-	int pollCD() const;
-	void updateCD();
-	AudioCDManager::Status getCDStatus();
-	int getCurrentCDSound() const { return _currentCDSound; }
-	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
-	bool isRolandLoom() const;
-	bool useReplacementAudio() const { return _useReplacementAudioTracks; }
-	void updateMusicTimer();
-	int getMusicTimer() const { return _musicTimer; }
-	int getCDMusicTimer() const { return _cdMusicTimer; }
-
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();
 
 	bool isAudioDisabled();
+
+	void updateMusicTimer();
+
+	// TODO: Duplicate this in Sound as well?
+	bool isRolandLoom() const { return _soundCD->isRolandLoom(); }
+
+	// CD audio wrapper methods
+	int pollCD() const { return _soundCD->pollCD(); }
+	void updateCD() { _soundCD->updateCD(); }
+	void stopCD() {
+		_soundCD->stopCD();
+		_soundCD->stopCDTimer();
+	}
+	void playCDTrack(int track, int numLoops, int startFrame, int duration) {
+		_soundCD->playCDTrack(track, numLoops, startFrame, duration);
+	}
+	int getCurrentCDSound() const { return _soundCD->getCurrentCDSound(); }
+	void restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
+		_soundCD->restoreCDAudioAfterLoad(info);
+	}
 
 protected:
 	void setupSfxFile();
@@ -189,8 +176,6 @@ protected:
 	bool isSoundInQueue(int sound) const;
 
 	virtual void processSoundQueues();
-
-	int getReplacementAudioTrack(int soundID);
 };
 
 

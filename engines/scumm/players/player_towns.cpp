@@ -266,7 +266,6 @@ void Player_Towns_v1::stopSound(int sound) {
 	if (sound == 0 || sound == _cdaCurrentSound) {
 		_cdaCurrentSound = 0;
 		_vm->_sound->stopCD();
-		_vm->_sound->stopCDTimer();
 	}
 
 	if (sound != 0 && sound == _eupCurrentSound) {
@@ -281,7 +280,6 @@ void Player_Towns_v1::stopSound(int sound) {
 void Player_Towns_v1::stopAllSounds() {
 	_cdaCurrentSound = 0;
 	_vm->_sound->stopCD();
-	_vm->_sound->stopCDTimer();
 
 	_eupCurrentSound = 0;
 	_eupLooping = false;
