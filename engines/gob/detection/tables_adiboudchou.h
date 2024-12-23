@@ -104,4 +104,20 @@
 	"adbc_envir_obc.stk", "adbc_init.obc", 0
 },
 
+// -- Russian: Антошка
+
+{
+	{
+		"adiboudchoucampagne",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Антошка. В гостях у друзей 1.00 (Engine: DEV7 version 1.0.0.0)
+		AD_ENTRY1s("adbc_envir_obc.stk", "1b65643b2aa794f38f3b18efb9e68b92", 3210008),
+		RU_RUS,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADIBOUDCHOU_H
