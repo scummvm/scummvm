@@ -103,8 +103,6 @@ Scripts::~Scripts() {
 }
 
 void Scripts::execute_script(long index, Gfx::Pics *pic) {
-	int i, ret, re_execute;
-
 	// Firstly hide any on-screen actors
 	g_events->send(GameMessage("HIDE_ACTORS"));
 
@@ -113,9 +111,11 @@ void Scripts::execute_script(long index, Gfx::Pics *pic) {
 
 	Common::fill(num_var, num_var + 26, 0);
 	Common::fill((char *)str_var, (char *)str_var + 81 * 26, 0);
+	runScript();
+}
 
-	re_execute = 0;
-run_script:                            // Jump point for RUN command
+void Scripts::runScript(bool firstTime) {
+	int i;
 
 	// Clear line label buffer, line ptrs, and the gosub stack
 	Common::fill((char *)line_label, (char *)line_label + 32 * 9, 0);
@@ -123,11 +123,9 @@ run_script:                            // Jump point for RUN command
 	Common::fill(gosub_stack, gosub_stack + 32, (char *)nullptr);
 	gosub_ptr = 0;
 
-	for (i = 0; i < 11; i++) {
-		for_var[i] = 0;
-		for_val[i] = 0;
-		for_stack[i] = 0;
-	}
+	Common::fill(for_var, for_var + 11, 0);
+	Common::fill(for_val, for_val + 11, 0);
+	Common::fill(for_stack, for_stack + 11, (char *)nullptr);
 	for_ptr = 0;
 
 	i = read_script_file();
@@ -136,27 +134,36 @@ run_script:                            // Jump point for RUN command
 		script_exit();
 		return;
 	}
-	if (!re_execute)
+
+	if (firstTime)
 		script_entry();
 
 	buff_ptr = buffer;
+	scriptLoop();
+}
 
-	for (;;) {
+void Scripts::scriptLoop() {
+	int ret;
+
+	while (!_paused) {
 		if (_G(cheat) && _G(key_flag)[_B]) break;
 		ret = get_command();
 		if (ret == -1)
-			break;       // ignore NO END error
+			break;       // Ignore NO END error
 		else if (ret == -2) {
-			script_error(5);       // syntax error
+			script_error(5);       // Syntax error
 			break;
 		} else if (ret > 0) {
 			ret = exec_command(ret);
-			if (ret == -100) {         //RUN command
-				re_execute = 1;
-				if (buffer) free(buffer);
-				goto run_script;
+			if (ret == -100) {         // RUN command
+				if (buffer)
+					free(buffer);
+
+				runScript(false);
+				return;
 			}
-			if (!ret) break;
+			if (!ret)
+				break;
 		}
 	}
 
@@ -892,7 +899,7 @@ int Scripts::cmd_pause() {
 	if (lvalue < 1 || lvalue>65535l)
 		return 6;
 
-	pause((int)lvalue);
+	Got::pause((int)lvalue);
 	return 0;
 }
 

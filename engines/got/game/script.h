@@ -39,8 +39,8 @@ private:
 	char  gosub_ptr = 0;           // GOSUB stack pointer
 	char  *for_stack[10] = {};     // FOR stack
 	long  for_val[10] = {};        // current FOR value
-	char  for_var[10] = {};        // ending FOR value (target var)
-	char  for_ptr = 0;	           // FOR stack pointer
+	int8  for_var[10] = {};        // ending FOR value (target var)
+	int8  for_ptr = 0;	           // FOR stack pointer
 	char  *buff_ptr = nullptr;     // pointer to current command
 	char  *buff_end = nullptr;	   // pointer to end of buffer
 	char  *buffer = nullptr;       // buffer space (alloc'ed)
@@ -49,6 +49,7 @@ private:
 	long  lvalue = 0;
 	long  ltemp = 0;
 	char  temps[255] = {};
+	bool _paused = false;
 
 private:
 	int  read_script_file();
@@ -95,11 +96,22 @@ private:
 	typedef void (Scripts:: *ScrFunction)();
 	static ScrFunction scr_func[5];
 
+	void runScript(bool firstTime = true);
+	void scriptLoop();
+
 public:
 	Scripts();
 	~Scripts();
 
 	void execute_script(long index, Gfx::Pics *pic);
+
+	void pause() {
+		_paused = true;
+	}
+	void resume() {
+		_paused = false;
+		scriptLoop();
+	}
 };
 
 extern void execute_script(long index, Gfx::Pics *pic);
