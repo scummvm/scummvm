@@ -123,14 +123,14 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 static const NuvieActionDescription CheatKeyDescriptions[] = {
 	{ "ASSET_VIEWER", "Open the asset viewer", nullptr, nullptr },
 	{ "SHOW_EGGS", "Show eggs", "e", nullptr },
-	{ "TOGGLE_HACKMOVE", "Toggle hack move", "M+h", nullptr },
-	{ "TOGGLE_EGG_SPAWN", "Toggle egg spawn", "M+C+e", nullptr },
-	{ "TOGGLE_NO_DARKNESS", "Toggle no darkness", "M+i", nullptr },
-	{ "TOGGLE_PICKPOCKET_MODE", "Toggle pickpocket mode", "M+C+p", nullptr },
-	{ "TOGGLE_GOD_MODE", "Toggle god mode", "M+C+g", nullptr },
-	{ "TOGGLE_ETHEREAL", "Toggle ethereal mode", "M+e", nullptr},
+	{ "TOGGLE_HACKMOVE", "Toggle hack move", "A+h", nullptr },
+	{ "TOGGLE_EGG_SPAWN", "Toggle egg spawn", "A+C+e", nullptr },
+	{ "TOGGLE_NO_DARKNESS", "Toggle no darkness", "A+i", nullptr },
+	{ "TOGGLE_PICKPOCKET_MODE", "Toggle pickpocket mode", "A+C+p", nullptr },
+	{ "TOGGLE_GOD_MODE", "Toggle god mode", "A+C+g", nullptr },
+	{ "TOGGLE_ETHEREAL", "Toggle ethereal mode", "A+e", nullptr},
 	{ "TOGGLE_X_RAY", "Toggle X-ray mode", "x", nullptr },
-	{ "HEAL_PARTY", "Heal party", "M+C+h", nullptr },
+	{ "HEAL_PARTY", "Heal party", "A+C+h", nullptr },
 	{ "TELEPORT_TO_CURSOR", "Teleport to cursor", "C+t", nullptr },
 	{ "TOGGLE_CHEATS", "Toggle cheats", "C+c", nullptr },
 };
@@ -163,26 +163,26 @@ static const NuvieActionDescription PerPartyMemberActionDescriptions[] {
 	{ "INVENTORY_7", "Show inventory for party member 7", "F7", nullptr },
 	{ "INVENTORY_8", "Show inventory for party member 8", "F8", nullptr },
 	{ "INVENTORY_9", "Show inventory for party member 9", "F9", nullptr },
-	{ "DOLL_GUMP_1", "Show doll gump for Avatar", "M+F1", nullptr },
-	{ "DOLL_GUMP_2", "Show doll gump for party member 2", "M+F2", nullptr },
-	{ "DOLL_GUMP_3", "Show doll gump for party member 3", "M+F3", nullptr },
-	{ "DOLL_GUMP_4", "Show doll gump for party member 4", "M+F4", nullptr },
-	{ "DOLL_GUMP_5", "Show doll gump for party member 5", "M+F5", nullptr },
-	{ "DOLL_GUMP_6", "Show doll gump for party member 6", "M+F6", nullptr },
-	{ "DOLL_GUMP_7", "Show doll gump for party member 7", "M+F7", nullptr },
-	{ "DOLL_GUMP_8", "Show doll gump for party member 8", "M+F8", nullptr },
-	{ "DOLL_GUMP_9", "Show doll gump for party member 9", "M+F9", nullptr },
+	{ "DOLL_GUMP_1", "Show doll gump for Avatar", "S+F1", nullptr },
+	{ "DOLL_GUMP_2", "Show doll gump for party member 2", "S+F2", nullptr },
+	{ "DOLL_GUMP_3", "Show doll gump for party member 3", "S+F3", nullptr },
+	{ "DOLL_GUMP_4", "Show doll gump for party member 4", "S+F4", nullptr },
+	{ "DOLL_GUMP_5", "Show doll gump for party member 5", "S+F5", nullptr },
+	{ "DOLL_GUMP_6", "Show doll gump for party member 6", "S+F6", nullptr },
+	{ "DOLL_GUMP_7", "Show doll gump for party member 7", "S+F7", nullptr },
+	{ "DOLL_GUMP_8", "Show doll gump for party member 8", "S+F8", nullptr },
+	{ "DOLL_GUMP_9", "Show doll gump for party member 9", "S+F9", nullptr },
 };
 
 static const NuvieActionDescription U6ActionDescriptions[] = {
 	{ "CAST", "Cast", "c", nullptr },
 	{ "REST", "Rest", "r", nullptr },
-	{ "TOGGLE_UNLIMITED_CASTING", "Toggle unlimited casting", "M+w", nullptr },
+	{ "TOGGLE_UNLIMITED_CASTING", "Toggle unlimited casting", "A+w", nullptr },
 };
 
 static const NuvieActionDescription SEActionDescriptions[] = {
 	{ "REST", "Rest", "r", nullptr },
-	{ "TOGGLE_UNLIMITED_CASTING", "Toggle unlimited casting", "M+w", nullptr },
+	{ "TOGGLE_UNLIMITED_CASTING", "Toggle unlimited casting", "A+w", nullptr },
 };
 
 
@@ -194,10 +194,10 @@ static Common::Action *actionDescriptionFromNuvieAction(const NuvieActionDescrip
 		act->addDefaultInputMapping(n._key1);
 	if (n._key2)
 		act->addDefaultInputMapping(n._key2);
-	// Allow WALK operations to repeat so holding the key lets you keep moving
+	// Allow WALK and TELEPORT_TO_CURSOR operations to repeat so holding the key lets you keep moving
 	// TODO: This would be nice to handle manually inside the event loop so
 	// non-keyboard inputs also work and we can control the repeat rate.
-	if (strncmp(n._id, "WALK", 4) == 0)
+	if (strncmp(n._id, "WALK", 4) == 0 || strncmp(n._id, "TELE", 4) == 0)
 		act->allowKbdRepeats();
 	return act;
 }
