@@ -810,12 +810,12 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 
 	Graphics::Surface *lucasArts = loadPict(5000);
 
-	const TextLine page3[] = {
+	const TextLine page4[] = {
 		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
-	const TextLine page4[] = {
+	const TextLine page5[] = {
 		{ 0, 5, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "Indiana Jones"
 		{ 73, 18, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString5].c_str() }, // "and the"
 		{ 40, 31, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString4].c_str() }, // "Fate of Atlantis"
@@ -825,13 +825,13 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		TEXT_END_MARKER
 	};
 
-	const TextLine page5[] = {
+	const TextLine page6[] = {
 		{ 0, 47, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Macintosh version by
 		{ 50, 62, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString9].c_str() }, // "Eric Johnston"
 		TEXT_END_MARKER
 	};
 
-	const TextLine page6[] = {
+	const TextLine page7[] = {
 		{ 85, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "Created by"
 		{ 55, 47, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "Hal Barwood"
 		{ 58, 70, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Scripting by"
@@ -839,7 +839,7 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		TEXT_END_MARKER
 	};
 
-	const TextLine page7[] = {
+	const TextLine page8[] = {
 		{ 59, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
 		{ 85, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "created by"
 		{ 35, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
@@ -848,7 +848,7 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		TEXT_END_MARKER
 	};
 
-	const TextLine page8[] = {
+	const TextLine page9[] = {
 		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "Stumped?  Hint books are available!"
 		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "In the U.S. call"
 		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "1 (800) STAR-WARS"
@@ -858,7 +858,7 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		TEXT_END_MARKER
 	};
 
-	const TextLine page9[] = {
+	const TextLine page10[] = {
 		{ 27, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "Need a hint NOW?  Having problems?"
 		{ 6, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "For technical support call"
 		{ 130, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (415) 721-3333"
@@ -874,16 +874,18 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		{ nullptr, 0,  3500 },
 		{ nullptr, 0,   100 },
 		{ nullptr, 0,   100 },
-		{ page3,   0,  2000 },
-		{ page4,   0,  7000 },
-		{ page5,   1,  4100 },
-		{ page6,   1,  4100 },
-		{ page7,   1,  4100 },
-		{ page8,   1, 14000 },
-		{ page9,   1,     0 }
+		{ nullptr, 0,   100 },
+		{ page4,   1,  2100 },
+		{ page5,   1,  7000 },
+		{ page6,   2,  4200 },
+		{ page7,   2,  4200 },
+		{ page8,   2,  4200 },
+		{ page9,   2, 14100 },
+		{ page10,  2,     0 }
 	};
 
 	Common::Rect drawAreas[] = {
+		Common::Rect(2, 2, s->w - 2, s->h - 2),
 		Common::Rect(0, 2, s->w, s->h - 2),
 		Common::Rect(176, 10, s->w - 10, s->h - 10)
 	};
@@ -913,16 +915,13 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 			break;
 
 		case 3:
-			s->fillRect(drawArea, white);
-			break;
-
-		case 4:
-			s->fillRect(drawArea, white);
-			break;
-
 		case 5:
-			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), white);
-			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
+			s->fillRect(drawArea, white);
+			break;
+
+		case 6:
+			s->fillRect(Common::Rect(176, 129, s->w - 2, s->h - 2), white);
+			window->markRectAsDirty(Common::Rect(176, 129, s->w - 2, s->h - 2));
 			break;
 
 		default:
@@ -930,7 +929,7 @@ void MacV5Gui::runAboutDialogIndy4Demo(MacDialogWindow *window) {
 		}
 
 		if (aboutPages[page].text) {
-			if (aboutPages[page].drawArea == 1) {
+			if (aboutPages[page].drawArea == 2) {
 				window->drawTextBox(drawArea, aboutPages[page].text);
 			} else {
 				window->drawTexts(drawArea, aboutPages[page].text);
