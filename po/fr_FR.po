@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-23 00:36+0000\n"
-"PO-Revision-Date: 2024-12-11 16:14+0000\n"
+"PO-Revision-Date: 2024-12-23 16:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11540,14 +11540,12 @@ msgstr ""
 "Mansion."
 
 #: engines/scumm/metaengine.cpp:794
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Utiliser la musique du CD"
+msgstr "Utiliser l'audio remastérisée"
 
 #: engines/scumm/metaengine.cpp:795
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Utilise les dialogues et les effets sonores remastérisés."
 
 #: engines/scumm/metaengine.cpp:897
 msgid "Down Left"
