@@ -28,6 +28,7 @@
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
+#include "gui/launcher.h"
 
 #include "gui/ThemeEval.h"
 
@@ -264,7 +265,7 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 #pragma mark -
 
-GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid)
+GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid, LauncherDialog *launcher)
 	: Dialog(x, y, w, h), CommandSender(boss) {
 
 	_entryID = entryID;
@@ -286,6 +287,8 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_loadButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
 									  _("Saves"), kLoadButtonCmd);
+	if (launcher)
+		_loadButton->setEnabled(launcher->canLoadSavegames(entryID));
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
 									  _("Edit"), kEditButtonCmd);
@@ -400,9 +403,10 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 #pragma mark -
 
-GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
+GridWidget::GridWidget(GuiObject *boss, const Common::String &name, LauncherDialog *launcher)
 	: ContainerWidget(boss, name), CommandSender(boss) {
 
+	_launcher = launcher;
 	_thumbnailHeight = 0;
 	_thumbnailWidth = 0;
 	_flagIconHeight = 0;
@@ -1115,7 +1119,7 @@ void GridWidget::reflowLayout() {
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
 		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->x - _gridXSpacing / 3, _y + _selectedEntry->y + _selectedEntry->h - _scrollPos,
-								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
+											  _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this, _launcher);
 		tray->runModal();
 		delete tray;
 	}
