@@ -1660,20 +1660,20 @@ bool MacGuiImpl::MacListBox::handleKeyDown(Common::Event &event) {
 // Drop down widget
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacDropDownList::MacDropDownList(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
+MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
 	_black = _window->_gui->getBlack();
 	_white = _window->_gui->getWhite();
 
-	_dropDownBounds.left = _bounds.left + _textWidth;
-	_dropDownBounds.right = _bounds.right;
+	_popUpBounds.left = _bounds.left + _textWidth;
+	_popUpBounds.right = _bounds.right;
 }
 
-MacGuiImpl::MacDropDownList::~MacDropDownList() {
+MacGuiImpl::MacPopUpMenu::~MacPopUpMenu() {
 	_texts.clear();
-	_dropDownBackground.free();
+	_popUpBackground.free();
 }
 
-bool MacGuiImpl::MacDropDownList::findWidget(int x, int y) const {
+bool MacGuiImpl::MacPopUpMenu::findWidget(int x, int y) const {
 	// Once we have opened the drop down list, any mouse position is
 	// considered within the widget.
 
@@ -1683,11 +1683,11 @@ bool MacGuiImpl::MacDropDownList::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
+void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGuiImpl::MacDropDownList: Drawing list box (_fullRedraw = %d, drawFocused = %d)", _fullRedraw, drawFocused);
+	debug(1, "MacGuiImpl::MacPopUpMenu: Drawing list box (_fullRedraw = %d, drawFocused = %d)", _fullRedraw, drawFocused);
 
 	// I don't know how Mac originally drew disabled drop downs lists, or
 	// if that was even a thing. For our purposes, the text is still
@@ -1712,7 +1712,7 @@ void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
 	font->drawString(s, _text, _bounds.left, _bounds.top + 1, _textWidth, fg, Graphics::kTextAlignLeft, 4);
 
 	if (focused) {
-		Common::Rect r = _dropDownBounds;
+		Common::Rect r = _popUpBounds;
 		r.bottom--;
 		r.right--;
 
@@ -1772,23 +1772,23 @@ void MacGuiImpl::MacDropDownList::draw(bool drawFocused) {
 
 	_window->markRectAsDirty(_bounds);
 	if (focused)
-		_window->markRectAsDirty(_dropDownBounds);
+		_window->markRectAsDirty(_popUpBounds);
 }
 
-void MacGuiImpl::MacDropDownList::handleMouseDown(Common::Event &event) {
-	_dropDownBounds.top = _bounds.top - 16 * _value;
-	_dropDownBounds.bottom = _bounds.bottom + 16 * (_texts.size() - _value - 1);
+void MacGuiImpl::MacPopUpMenu::handleMouseDown(Common::Event &event) {
+	_popUpBounds.top = _bounds.top - 16 * _value;
+	_popUpBounds.bottom = _bounds.bottom + 16 * (_texts.size() - _value - 1);
 
-	Graphics::Surface background = _window->innerSurface()->getSubArea(_dropDownBounds);
+	Graphics::Surface background = _window->innerSurface()->getSubArea(_popUpBounds);
 
-	_dropDownBackground.free();
-	_dropDownBackground.copyFrom(background);
+	_popUpBackground.free();
+	_popUpBackground.copyFrom(background);
 
 	_menuVisible = true;
 	_selected = _value;
 }
 
-bool MacGuiImpl::MacDropDownList::handleMouseUp(Common::Event &event) {
+bool MacGuiImpl::MacPopUpMenu::handleMouseUp(Common::Event &event) {
 	if (_selected != -1) {
 		int selected = _selected;
 
@@ -1816,17 +1816,17 @@ bool MacGuiImpl::MacDropDownList::handleMouseUp(Common::Event &event) {
 		setValue(selected);
 	}
 
-	_window->drawSprite(&_dropDownBackground, _dropDownBounds.left, _dropDownBounds.top);
+	_window->drawSprite(&_popUpBackground, _popUpBounds.left, _popUpBounds.top);
 	_menuVisible = false;
 
 	return false;
 }
 
-void MacGuiImpl::MacDropDownList::handleMouseMove(Common::Event &event) {
+void MacGuiImpl::MacPopUpMenu::handleMouseMove(Common::Event &event) {
 	if (!_menuVisible)
 		return;
 
-	Common::Rect menuBounds(_dropDownBounds.left + 1, _dropDownBounds.top + 1, _dropDownBounds.right - 2, _dropDownBounds.bottom - 2);
+	Common::Rect menuBounds(_popUpBounds.left + 1, _popUpBounds.top + 1, _popUpBounds.right - 2, _popUpBounds.bottom - 2);
 
 	int selected = -1;
 
@@ -1836,7 +1836,7 @@ void MacGuiImpl::MacDropDownList::handleMouseMove(Common::Event &event) {
 		int maxValue = _texts.size() - 1;
 
 		if (selected > maxValue) {
-			warning("MacGuiImpl::MacDropDownList::handleMouseMove: Max selection value exceeded");
+			warning("MacGuiImpl::MacPopUpMenu::handleMouseMove: Max selection value exceeded");
 			selected = -1;
 		}
 	}

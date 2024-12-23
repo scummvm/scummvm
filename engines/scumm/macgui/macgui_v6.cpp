@@ -672,8 +672,8 @@ bool MacV6Gui::runOptionsDialog() {
 
 	window->setDefaultWidget(buttonOk);
 
-	MacDropDownList *interactionDropDown = nullptr;
-	MacDropDownList *videoQualityDropDown = nullptr;
+	MacPopUpMenu *interactionPopUp = nullptr;
+	MacPopUpMenu *videoQualityPopUp = nullptr;
 
 	Common::StringArray interactMode;
 
@@ -699,16 +699,16 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 87, 147, 17);
 		addSlider(window, 151, 177, 147, 9);
 
-		interactionDropDown = window->addDropDownList(Common::Rect(17, 148, 322, 167), "Interact using:", 125, interactMode, true);
-		videoQualityDropDown = window->addDropDownList(Common::Rect(17, 218, 322, 237), "Video Quality:", 125, videoQuality, false);
+		interactionPopUp = window->addPopUpMenu(Common::Rect(17, 148, 322, 167), "Interact using:", 125, interactMode, true);
+		videoQualityPopUp = window->addPopUpMenu(Common::Rect(17, 218, 322, 237), "Video Quality:", 125, videoQuality, false);
 
-		interactionDropDown->setValue(2);
-		videoQualityDropDown->setValue(0);
+		interactionPopUp->setValue(2);
+		videoQualityPopUp->setValue(0);
 	} else if (_vm->_game.id == GID_MANIAC) {
 		addSlider(window, 152, 41, 147, 17);
 		addSlider(window, 152, 72, 147, 10, 5);
 
-		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 100, 323, 119), "Video Quality:", 125, videoQuality, false);
+		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 100, 323, 119), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
@@ -718,8 +718,8 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 111, 147, 17);
 		addSlider(window, 152, 203, 147, 9);
 
-		interactionDropDown = window->addDropDownList(Common::Rect(18, 174, 323, 193), "Interact using:", 125, interactMode, true);
-		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 244, 323, 263), "Video Quality:", 125, videoQuality, false);
+		interactionPopUp = window->addPopUpMenu(Common::Rect(18, 174, 323, 193), "Interact using:", 125, interactMode, true);
+		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 244, 323, 263), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
@@ -729,8 +729,8 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 111, 147, 17);
 		addSlider(window, 152, 231, 147, 9);
 
-		interactionDropDown = window->addDropDownList(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
-		videoQualityDropDown = window->addDropDownList(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
+		interactionPopUp = window->addPopUpMenu(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
+		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
 	}
 
 	Common::Array<int> deferredActionsIds;
