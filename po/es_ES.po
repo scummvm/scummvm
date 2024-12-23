@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-23 00:36+0000\n"
-"PO-Revision-Date: 2024-12-22 19:18+0000\n"
+"PO-Revision-Date: 2024-12-23 16:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10236,11 +10236,12 @@ msgstr ""
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
-msgstr "Usar CD audio"
+msgstr "Usar audio de CD"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Usar CD audio en vez del sonido interno del juego si está disponible"
+msgstr ""
+"Usar el audio de CD en vez del sonido interno del juego si está disponible"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
