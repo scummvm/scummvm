@@ -621,7 +621,7 @@ void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 }
 
 void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
-	bool isFloppyVersion = _vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy");
+	bool isFloppyVersion = (_strsStrings[kMSIAboutString38] != "");
 
 	Graphics::Surface *s = window->innerSurface();
 
