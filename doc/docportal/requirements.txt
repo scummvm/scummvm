@@ -8,7 +8,7 @@ alabaster==1.0.0
     # via sphinx
 babel==2.16.0
     # via sphinx
-certifi==2024.8.30
+certifi==2024.12.14
     # via requests
 charset-normalizer==3.4.0
     # via requests
@@ -64,5 +64,5 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-urllib3==2.2.3
+urllib3==2.3.0
     # via requests
