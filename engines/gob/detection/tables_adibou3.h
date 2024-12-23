@@ -197,6 +197,23 @@
 	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
+// -- Rusian: Антошка 3 --
+
+{
+	{
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Антошка 3 3.10 (Published by Akella) (Engine: DEV7 version 1.3.0.0)
+		AD_ENTRY1s("b3_common.stk", "9795c08d44b7d79dd6ecfdb415892fbf", 553095),
+		RU_RUS,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+
 // -- Demos --
 
 {
