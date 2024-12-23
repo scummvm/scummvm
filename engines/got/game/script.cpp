@@ -35,43 +35,43 @@ namespace Got {
 #define ERROR_MAX 10
 #define SCR_BUFF_SIZE 5000
 
-static const char *scr_command[] = {
-	"!@#$%","END","GOTO","GOSUB","RETURN","FOR","NEXT",
-	"IF","ELSE","RUN",
-	"ADDJEWELS","ADDHEALTH","ADDMAGIC","ADDKEYS",
-	"ADDSCORE","SAY","ASK","SOUND","PLACETILE",
-	"ITEMGIVE","ITEMTAKE","ITEMSAY","SETFLAG","LTOA",
-	"PAUSE","TEXT","EXEC","VISIBLE","RANDOM",
+static const char *SCR_COMMAND[] = {
+	"!@#$%", "END", "GOTO", "GOSUB", "RETURN", "FOR", "NEXT",
+	"IF", "ELSE", "RUN",
+	"ADDJEWELS", "ADDHEALTH", "ADDMAGIC", "ADDKEYS",
+	"ADDSCORE", "SAY", "ASK", "SOUND", "PLACETILE",
+	"ITEMGIVE", "ITEMTAKE", "ITEMSAY", "SETFLAG", "LTOA",
+	"PAUSE", "TEXT", "EXEC", "VISIBLE", "RANDOM",
 	NULL
 };
 
-static const char *internal_variable[] = {
-	"@JEWELS","@HEALTH","@MAGIC","@SCORE",
-	"@SCREEN","@KEYS",
-	"@OW","@GULP","@SWISH","@YAH","@ELECTRIC",
-	"@THUNDER","@DOOR","@FALL","@ANGEL","@WOOP",
-	"@DEAD","@BRAAPP","@WIND","@PUNCH","@CLANG",
-	"@EXPLODE","@FLAG","@ITEM","@THORTILE",
+static const char *INTERNAL_VARIABLE[] = {
+	"@JEWELS", "@HEALTH", "@MAGIC", "@SCORE",
+	"@SCREEN", "@KEYS",
+	"@OW", "@GULP", "@SWISH", "@YAH", "@ELECTRIC",
+	"@THUNDER", "@DOOR", "@FALL", "@ANGEL", "@WOOP",
+	"@DEAD", "@BRAAPP", "@WIND", "@PUNCH", "@CLANG",
+	"@EXPLODE", "@FLAG", "@ITEM", "@THORTILE",
 	"@THORPOS",
 	NULL
 };
 
-static const char *scr_error[] = {
-	"!@#$%","Out of Memory","Can't Read Script",
-	"Too Many Labels","No END",
-	"Syntax","Out of Range","Undefined Label",
-	"RETURN Without GOSUB","Nesting",
+static const char *SCR_ERROR[] = {
+	"!@#$%", "Out of Memory", "Can't Read Script",
+	"Too Many Labels", "No END",
+	"Syntax", "Out of Range", "Undefined Label",
+	"RETURN Without GOSUB", "Nesting",
 	"NEXT Without FOR",
 	NULL
 };
 
-static const char *offense[] = {
-	"Cussing","Rebellion","Kissing Your Mother Goodbye",
-	"Being a Thunder God","Door-to-Door Sales",
+static const char *OFFENSE[] = {
+	"Cussing", "Rebellion", "Kissing Your Mother Goodbye",
+	"Being a Thunder God", "Door-to-Door Sales",
 	"Carrying a Concealed Hammer"
 };
 
-static const char *reason[] = {
+static const char *REASON[] = {
 	"We heard you say 'Booger'.",
 	"You look kind of rebellious.",
 	"Your mother turned you in.",
@@ -184,11 +184,11 @@ int Scripts::get_command() {
 
 	i = 0;
 	while (1) {
-		if (!scr_command[i])
+		if (!SCR_COMMAND[i])
 			break;           // Lookup command
 
-		len = strlen(scr_command[i]);
-		if (!strncmp(buff_ptr, (char *)scr_command[i], len)) {
+		len = strlen(SCR_COMMAND[i]);
+		if (!strncmp(buff_ptr, (char *)SCR_COMMAND[i], len)) {
 			buff_ptr += len;
 			return i;
 		}
@@ -373,9 +373,9 @@ int Scripts::get_internal_variable() {
 
 	i = 0;
 	while (1) {
-		if (!internal_variable[i]) return 0;         // Lookup internal variable
-		len = strlen(internal_variable[i]);
-		if (!strncmp(buff_ptr, internal_variable[i], len)) {
+		if (!INTERNAL_VARIABLE[i]) return 0;         // Lookup internal variable
+		len = strlen(INTERNAL_VARIABLE[i]);
+		if (!strncmp(buff_ptr, INTERNAL_VARIABLE[i], len)) {
 			buff_ptr += len;
 			break;
 		}
@@ -588,7 +588,7 @@ void Scripts::script_error(int err_num) {
 	if (err_num > ERROR_MAX)
 		err_num = 5;       // unknown=syntax
 
-	warning("%s in Line #%d", scr_error[err_num], line_num);
+	warning("%s in Line #%d", SCR_ERROR[err_num], line_num);
 }
 
 int Scripts::cmd_goto() {
@@ -943,8 +943,8 @@ void Scripts::scr_func2() {
 	int r;
 
 	r = g_events->getRandomNumber(5);
-	Common::strcpy_s(str_var[0], 81, offense[r]);
-	Common::strcpy_s(str_var[1], 81, reason[r]);
+	Common::strcpy_s(str_var[0], 81, OFFENSE[r]);
+	Common::strcpy_s(str_var[1], 81, REASON[r]);
 }
 
 void Scripts::scr_func3() {
