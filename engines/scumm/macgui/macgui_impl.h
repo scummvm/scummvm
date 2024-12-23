@@ -46,6 +46,7 @@ namespace Graphics {
 struct Surface;
 class Palette;
 class MacWindowManager;
+class MacMenu;
 }
 
 namespace Scumm {
@@ -239,6 +240,8 @@ protected:
 
 	virtual bool readStrings();
 	void parseSTRSBlock(uint8 *strsData, const MacSTRSParsingEntry *parsingTable, int parsingTableSize);
+
+	void addMenu(Graphics::MacMenu *menu, int menuId);
 
 	// These are non interactable, no point in having them as widgets for now...
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text);
