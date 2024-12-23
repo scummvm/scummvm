@@ -797,15 +797,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDi
 	return new MacDialogWindow(this, _system, _surface, bounds, windowStyle, menuStyle);
 }
 
-Common::String MacGuiImpl::getDialogString(Common::SeekableReadStream *res, int len) {
-	Common::String str;
-
-	for (int i = 0; i < len; i++)
-		str += res->readByte();
-
-	return str;
-}
-
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::Rect bounds;
 
@@ -996,24 +987,27 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 				break;
 			case 4:
 				// Button
-				str = getDialogString(res, len);
+				res->seek(-1, SEEK_CUR);
+				str = res->readPascalString();
 				window->addButton(r, str, enabled);
 				break;
 
 			case 5:
 				// Checkbox
-				str = getDialogString(res, len);
+				res->seek(-1, SEEK_CUR);
+				str = res->readPascalString();
 				window->addCheckbox(r, str, enabled);
 				break;
 
 			case 7:
 				// Control
-				res->skip(len);
+				window->addControl(r, res->readUint16BE());
 				break;
 
 			case 8:
 				// Static text
-				str = getDialogString(res, len);
+				res->seek(-1, SEEK_CUR);
+				str = res->readPascalString();
 				window->addStaticText(r, str, enabled);
 				break;
 

@@ -1664,6 +1664,8 @@ MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Comm
 	_black = _window->_gui->getBlack();
 	_white = _window->_gui->getWhite();
 
+	_bounds.bottom--;
+
 	_popUpBounds.left = _bounds.left + _textWidth;
 	_popUpBounds.right = _bounds.right;
 }

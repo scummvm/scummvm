@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/macresman.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -317,6 +318,57 @@ MacGuiImpl::MacPopUpMenu *MacGuiImpl::MacDialogWindow::addPopUpMenu(Common::Rect
 	MacGuiImpl::MacPopUpMenu *popUpMenu = new MacPopUpMenu(this, bounds, text, textWidth, texts, enabled);
 	addWidget(popUpMenu, kWidgetPopUpMenu);
 	return popUpMenu;
+}
+
+void MacGuiImpl::MacDialogWindow::addControl(Common::Rect bounds, uint16 controlId) {
+	Common::MacResManager resource;
+
+	resource.open(_gui->_resourceFile);
+
+	Common::SeekableReadStream *cntl = resource.getResource(MKTAG('C', 'N', 'T', 'L'), controlId);
+	if (cntl) {
+		byte cntlHeader[22];
+
+		cntl->read(cntlHeader, sizeof(cntlHeader));
+		Common::String cntlText = cntl->readPascalString();
+
+		uint16 procId = READ_BE_UINT16(cntlHeader + 16);
+
+		if ((procId & 0xFFF0) == 0x03F0) {
+			uint16 textWidth = READ_BE_UINT16(cntlHeader + 12);
+			uint16 menuId = READ_BE_UINT16(cntlHeader + 14);
+
+			Common::SeekableReadStream *menu = resource.getResource(MKTAG('M', 'E', 'N', 'U'), menuId);
+			if (menu) {
+				menu->skip(14);
+				menu->skip(menu->readByte());
+
+				Common::StringArray items;
+
+				while (true) {
+					Common::String str;
+
+					str = menu->readPascalString();
+
+					if (str.empty())
+						break;
+
+					items.push_back(str);
+					menu->skip(4);
+				}
+
+				delete menu;
+
+				addPopUpMenu(bounds, cntlText, textWidth, items, true);
+			} else
+				warning("MacGuiImpl::addPopUpMenu: Could not load MENU %d", menuId);
+		} else
+			warning("MacGuiImpl::addPopUpMenu: Unknown control ProcID: %d", procId);
+		delete cntl;
+	} else
+		warning("MacGuiImpl::addPopUpMenu: Could not load CNTL %d", controlId);
+
+	resource.close();
 }
 
 void MacGuiImpl::MacDialogWindow::markRectAsDirty(Common::Rect r) {
