@@ -39,6 +39,7 @@ private:
 	void checkSwitchFlag();
 	void checkForItem();
 	void moveActors();
+	void updateActors();
 
 public:
 	GameContent() : View("GameContent") {}
