@@ -497,14 +497,18 @@ void MacGuiImpl::updateWindowManager() {
 			}
 		}
 	} else if (_vm->_game.version >= 6) {
-		Graphics::MacMenuItem *videoMenu = menu->getMenuItem("Video");
+		// We can't use the name of the menus here, because there are
+		// non-English versions. Let's hope the menu positions are
+		// always the same, at least!
+
+		Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
 
 		menu->getSubMenuItem(videoMenu, 0)->enabled = false;
 		menu->getSubMenuItem(videoMenu, 1)->enabled = false;
 		menu->getSubMenuItem(videoMenu, 2)->checked = true;
 		menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
 
-		Graphics::MacMenuItem *soundMenu = menu->getMenuItem("Sound");
+		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
 
 		menu->getSubMenuItem(soundMenu, 0)->checked = false; // Music
 		menu->getSubMenuItem(soundMenu, 1)->checked = false; // Effects
