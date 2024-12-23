@@ -568,26 +568,22 @@ void Adlib::Func2839() {
 }
 
 void Adlib::Func294E() {
+	// TODO: As argument
+	uint8 bpp8;
 	/*
 	;; Arguments:
 	;; [bp+0Ah]: The channel index
 	;; [bp+8h]: The index into the note data structure
 	;; [bp+6h]: TODO: Seems to be 0 for a lot (all) of the note heights?
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	;; #note_on_data: This is where we set the data before it is being processed
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-2h],ax
+
+	*/
+	uint8 al = gArray9F[bpp8];
+	uint16 dx = al;
+	al = gArray11F[bpp8];
+	// TODO: Check if we need 16 bits
+	uint16 bp2 = al << 0x8;
+	/*
+	
 	cmp	byte ptr [bp+6h],0h ;; 2976
 	jnz	297Fh
 
