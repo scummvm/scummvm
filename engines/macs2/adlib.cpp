@@ -569,7 +569,11 @@ void Adlib::Func2839() {
 
 void Adlib::Func294E() {
 	// TODO: As argument
+	
 	uint8 bpp8;
+	uint16 bpp6;
+
+	uint8 bp6;
 	/*
 	;; Arguments:
 	;; [bp+0Ah]: The channel index
@@ -582,31 +586,27 @@ void Adlib::Func294E() {
 	al = gArray11F[bpp8];
 	// TODO: Check if we need 16 bits
 	uint16 bp2 = al << 0x8;
+	if (bpp6 != 0) {
+		// l0017_297F:
+		if (bpp6 < 0x80) {
+			// l0017_2985:
+			if (bpp8 < 0x7F) {
+				// l0017_298B:
+				bp6 = bpp8 + 1;
+			} else {
+				// l0017_2996:
+				bp6 = 0x7F;
+			}
+			// TODO: Do we hit the label?
+			// l0017_2996:
+		}
+		// TODO: Do we hit the label?
+		// l0017_29EB:
+	}
+	// TODO:
+	// l0017_2A4F:
 	/*
-	
-	cmp	byte ptr [bp+6h],0h ;; 2976
-	jnz	297Fh
 
-l0017_297C:
-	jmp	2A4Fh
-
-l0017_297F:
-	cmp	byte ptr [bp+6h],80h
-	jnc	29EBh
-
-l0017_2985:
-	cmp	byte ptr [bp+8h],7Fh
-	jnc	2996h
-
-l0017_298B:
-	mov	al,[bp+8h]
-	xor	ah,ah
-	inc	ax
-	mov	[bp-6h],ax
-	jmp	299Bh
-
-l0017_2996:
-	mov	word ptr [bp-6h],7Fh
 
 l0017_299B:
 	mov	di,[bp-6h]
