@@ -1679,7 +1679,7 @@ void LauncherGrid::build() {
 	_gridItemSizeLabel->setValue(ConfMan.getInt("grid_items_per_row"));
 
 	// Add list with game titles
-	_grid = new GridWidget(this, "LauncherGrid.IconArea");
+	_grid = new GridWidget(this, "LauncherGrid.IconArea", this);
 	// Populate the list
 	updateListing();
 

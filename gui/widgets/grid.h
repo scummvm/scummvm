@@ -35,6 +35,7 @@ namespace GUI {
 class ScrollBarWidget;
 class GridItemWidget;
 class GridWidget;
+class LauncherDialog;
 
 enum {
 	kPlayButtonCmd = 'PLAY',
@@ -84,7 +85,7 @@ class GridItemTray: public Dialog, public CommandSender {
 	PicButtonWidget	*_loadButton;
 	PicButtonWidget	*_editButton;
 public:
-	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
+	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid, LauncherDialog *launcher);
 
 	void reflowLayout() override;
 
@@ -126,6 +127,7 @@ protected:
 	Common::Array<GridItemWidget *>		_gridItems;
 
 	ScrollBarWidget *_scrollBar;
+	LauncherDialog *_launcher;
 
 	int				_scrollBarWidth;
 	int				_scrollWindowHeight;
@@ -169,7 +171,7 @@ public:
 
 	Common::U32String	_filter;
 
-	GridWidget(GuiObject *boss, const Common::String &name);
+	GridWidget(GuiObject *boss, const Common::String &name, LauncherDialog *launcher);
 	~GridWidget();
 
 	template<typename T>
