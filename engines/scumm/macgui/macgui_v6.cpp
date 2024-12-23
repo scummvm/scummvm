@@ -672,10 +672,6 @@ bool MacV6Gui::runOptionsDialog() {
 
 	window->setDefaultWidget(buttonOk);
 
-	Graphics::Surface *surface = window->innerSurface();
-	const Graphics::Font *font = getFont(kSystemFont);
-	uint32 black = getBlack();
-
 	MacDropDownList *interactionDropDown = nullptr;
 	MacDropDownList *videoQualityDropDown = nullptr;
 
@@ -693,30 +689,6 @@ bool MacV6Gui::runOptionsDialog() {
 	videoQuality.push_back("Small");
 
 	if (_vm->_game.id == GID_TENTACLE) {
-		// Unlike the other games, Day of the Tentacle uses a lot of
-		// "user items" which we don't have a way to parse.
-
-		Common::Point spritePos[] = {
-			Common::Point(133, 87),
-			Common::Point(310, 86),
-			Common::Point(125, 175),
-			Common::Point(307, 175)
-		};
-
-		for (int i = 0; i < ARRAYSIZE(spritePos); i++) {
-			Graphics::Surface *s = loadPict(1000 + i);
-			if (s) {
-				window->drawSprite(s, spritePos[i].x, spritePos[i].y);
-				s->free();
-				delete s;
-			}
-		}
-
-		font->drawString(surface, "Volume Settings", 27, 33, 110, black);
-		font->drawString(surface, "Voice & Effects:", 23, 85, 105, black);
-		font->drawString(surface, "Text & Voice Settings", 26, 122, 140, black);
-		font->drawString(surface, "Text Speed:", 22, 175, 105, black);
-
 		// Yes, the frames really are supposed to be slightly
 		// misaligned to match the original appearance.
 
