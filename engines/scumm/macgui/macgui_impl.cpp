@@ -1006,6 +1006,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 				window->addCheckbox(r, str, enabled);
 				break;
 
+			case 7:
+				// Control
+				res->skip(len);
+				break;
+
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
