@@ -32,7 +32,7 @@
 #include <Cocoa/Cocoa.h>
 #include <AppKit/NSWorkspace.h>
 
-#if defined(MAC_OS_X_VERSION_10_12) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+#if defined(MAC_OS_X_VERSION_10_12_2) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12_2
 
 @interface ScummVMlTouchbarDelegate : NSResponder <NSTouchBarDelegate>
 @end
@@ -106,6 +106,9 @@ void macOSTouchbarUpdate(const char *message) {
 
 void macOSTouchbarCreate() {
 	if (g_tb_delegate)
+		return;
+
+	if (NSAppKitVersionNumber < NSAppKitVersionNumber10_12_2)
 		return;
 
 	NSApplication *app = [NSApplication sharedApplication];
