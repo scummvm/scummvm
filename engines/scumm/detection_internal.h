@@ -554,7 +554,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
 					// Print some debug info.
-					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %lld\n",
+					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %" PRId64 "\n",
 						file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid/variant at this point.
