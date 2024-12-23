@@ -663,30 +663,33 @@ bool MacV6Gui::runOptionsDialog() {
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
 	// MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
 
+	MacPopUpMenu *interactionPopUp = nullptr;
+	MacPopUpMenu *videoQualityPopUp = nullptr;
+
 	if (_vm->_game.id != GID_MANIAC) {
 		window->addSubstitution("");
 		window->addSubstitution("");
 		window->addSubstitution("");
 		window->addSubstitution(_gameName);
+
+		interactionPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
+		videoQualityPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 1);
+	} else {
+		videoQualityPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
 	}
+
+	if (interactionPopUp)
+		interactionPopUp->setValue(2);
+
+	// Note: The video quality menu contains an additional "Graphics
+	// Smoothing" entry. I don't know why it doesn't show up in the
+	// original, but as long as we disabled the pop-up that's not a
+	// problem. My future self can thank me later.
+
+	videoQualityPopUp->setValue(1);
+	videoQualityPopUp->setEnabled(false);
 
 	window->setDefaultWidget(buttonOk);
-
-	MacPopUpMenu *interactionPopUp = nullptr;
-	MacPopUpMenu *videoQualityPopUp = nullptr;
-
-	Common::StringArray interactMode;
-
-	if (_vm->_game.id != GID_MANIAC) {
-		interactMode.push_back("Text Only");
-		interactMode.push_back("Voice Only");
-		interactMode.push_back("Text & Voice");
-	}
-
-	Common::StringArray videoQuality;
-	videoQuality.push_back("Double Size");
-	videoQuality.push_back("Interlaced");
-	videoQuality.push_back("Small");
 
 	if (_vm->_game.id == GID_TENTACLE) {
 		// Yes, the frames really are supposed to be slightly
@@ -698,17 +701,9 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 63, 147, 17);
 		addSlider(window, 152, 87, 147, 17);
 		addSlider(window, 151, 177, 147, 9);
-
-		interactionPopUp = window->addPopUpMenu(Common::Rect(17, 148, 322, 167), "Interact using:", 125, interactMode, true);
-		videoQualityPopUp = window->addPopUpMenu(Common::Rect(17, 218, 322, 237), "Video Quality:", 125, videoQuality, false);
-
-		interactionPopUp->setValue(2);
-		videoQualityPopUp->setValue(0);
 	} else if (_vm->_game.id == GID_MANIAC) {
 		addSlider(window, 152, 41, 147, 17);
 		addSlider(window, 152, 72, 147, 10, 5);
-
-		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 100, 323, 119), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
@@ -717,9 +712,6 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 87, 147, 17);
 		addSlider(window, 152, 111, 147, 17);
 		addSlider(window, 152, 203, 147, 9);
-
-		interactionPopUp = window->addPopUpMenu(Common::Rect(18, 174, 323, 193), "Interact using:", 125, interactMode, true);
-		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 244, 323, 263), "Video Quality:", 125, videoQuality, false);
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
@@ -728,9 +720,6 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 87, 147, 17);
 		addSlider(window, 152, 111, 147, 17);
 		addSlider(window, 152, 231, 147, 9);
-
-		interactionPopUp = window->addPopUpMenu(Common::Rect(18, 202, 323, 221), "Interact using:", 125, interactMode, true);
-		videoQualityPopUp = window->addPopUpMenu(Common::Rect(18, 272, 323, 291), "Video Quality:", 125, videoQuality, false);
 	}
 
 	Common::Array<int> deferredActionsIds;

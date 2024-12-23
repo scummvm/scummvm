@@ -220,8 +220,6 @@ protected:
 
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
-	Common::String getDialogString(Common::SeekableReadStream *res, int len);
-
 	virtual bool handleMenu(int id, Common::String &name);
 	virtual void onMenuOpen();
 	virtual void onMenuClose();
@@ -733,11 +731,14 @@ public:
 		MacGuiImpl::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
 		MacGuiImpl::MacImage *addIcon(int x, int y, int id, bool enabled);
 		MacGuiImpl::MacImage *addPicture(Common::Rect bounds, int id, bool enabled);
+		MacGuiImpl::
 		MacGuiImpl::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGuiImpl::MacImageSlider *addImageSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 		MacGuiImpl::MacImageSlider *addImageSlider(Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		MacGuiImpl::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
 		MacGuiImpl::MacPopUpMenu *addPopUpMenu(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
+
+		void addControl(Common::Rect bounds, uint16 controlId);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
