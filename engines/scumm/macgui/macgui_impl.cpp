@@ -992,6 +992,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 			case 0:
 				// User item
 //				window->innerSurface()->frameRect(r, black);
+				res->skip(len);
 				break;
 			case 4:
 				// Button
