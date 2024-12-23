@@ -77,8 +77,6 @@ bool MacV6Gui::readStrings() {
 	_strsStrings.reserve(128);
 	for (int i = 0; i < 128; i++)
 		_strsStrings.emplace_back("");
-
-	_strsStrings[kMSIAboutGameName] = "About " + _gameName + "...";
 	return true;
 }
 

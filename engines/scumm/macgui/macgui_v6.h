@@ -45,7 +45,7 @@ public:
 
 	bool readStrings() override;
 
-	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
+	const Common::String name() const override { return _gameName; }
 	int getNumColors() const override { return 256; }
 
 	// See setMacGuiColors()

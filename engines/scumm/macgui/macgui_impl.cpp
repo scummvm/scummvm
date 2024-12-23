@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/enc-internal.h"
 #include "common/macresman.h"
+#include "common/str.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
@@ -210,70 +211,52 @@ bool MacGuiImpl::initialize() {
 			{ 0, nullptr, 0, 0, false }
 		};
 
-		// TODO: For V6-7 games we could look at the MBAR resource.
-
-		Common::String aboutMenuDef = _strsStrings[kMSIAboutGameName].c_str();
-		int maxMenu = -1;
-		switch (_vm->_game.id) {
-		case GID_INDY3:
-		case GID_LOOM:
-			maxMenu = 130;
-			break;
-		case GID_MONKEY:
-			maxMenu = 131;
-			break;
-		default:
-			maxMenu = 132;
-		}
-
-		if (_vm->_game.id == GID_LOOM) {
-			aboutMenuDef += ";";
-
-			if (!_vm->enhancementEnabled(kEnhUIUX))
-				aboutMenuDef += "(";
-
-			aboutMenuDef += "Drafts Inventory";
-		}
-
-		menu->addStaticMenus(menuSubItems);
-		menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
-
 		menu->setCommandsCallback(menuCallback, this);
 
-		for (int i = 129; i <= maxMenu; i++) {
-			Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
+		// Newer games define their menus through an MBAR resource
 
-			if (!res)
-				continue;
+		Common::SeekableReadStream *mbar = resource.getResource(MKTAG('M', 'B', 'A', 'R'), 128);
 
-			Common::StringArray *menuDef = Graphics::MacMenu::readMenuFromResource(res);
-			Common::String name = menuDef->operator[](0);
-			Common::String string = menuDef->operator[](1);
-			int id = menu->addMenuItem(nullptr, name);
-
-			// The CD version of Fate of Atlantis has a menu item
-			// for toggling graphics smoothing. We retroactively
-			// add that to the remaining V5 games, but not to
-			// Loom and Last Crusade.
-
-			if (_vm->enhancementEnabled(kEnhUIUX)) {
-				if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
-					string += ";(-;Smooth Graphics";
-				}
-
-				// Floppy version
-				if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
-					string += ";(-;Smooth Graphics";
-				}
+		if (mbar) {
+			uint16 numMenus = mbar->readUint16BE();
+			for (uint i = 0; i < numMenus; i++) {
+				uint16 menuId = mbar->readUint16BE();
+				addMenu(menu, menuId);
+			}
+			delete mbar;
+		} else {
+			Common::String aboutMenuDef = _strsStrings[kMSIAboutGameName].c_str();
+			int maxMenu = -1;
+			switch (_vm->_game.id) {
+			case GID_INDY3:
+			case GID_LOOM:
+				maxMenu = 130;
+				break;
+			case GID_MONKEY:
+				maxMenu = 131;
+				break;
+			default:
+				maxMenu = 132;
 			}
 
-			menu->createSubMenuFromString(id, string.c_str(), 0);
+			if (_vm->_game.id == GID_LOOM) {
+				aboutMenuDef += ";";
 
-			delete menuDef;
-			delete res;
+				if (!_vm->enhancementEnabled(kEnhUIUX))
+					aboutMenuDef += "(";
+
+				aboutMenuDef += "Drafts Inventory";
+			}
+
+			menu->addStaticMenus(menuSubItems);
+			menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
+
+			for (int i = 129; i <= maxMenu; i++) {
+				addMenu(menu, i);
+			}
+
+			resource.close();
 		}
-
-		resource.close();
 
 		// Assign sensible IDs to the menu items
 
@@ -285,10 +268,16 @@ bool MacGuiImpl::initialize() {
 			int id = 100 * (i + 1);
 			for (int j = 0; j < numberOfMenuItems; j++) {
 				Graphics::MacMenuItem *subItem = menu->getSubMenuItem(item, j);
-				Common::String name = menu->getName(subItem);
+				Common::String str = menu->getName(subItem);
 
-				if (!name.empty())
+				if (!str.empty()) {
 					menu->setAction(subItem, id++);
+				}
+
+				if (str.contains("^3")) {
+					Common::replace(str, "^3", name());
+					menu->setName(subItem, str);
+				}
 			}
 		}
 	}
@@ -310,6 +299,46 @@ bool MacGuiImpl::initialize() {
 	}
 
 	return true;
+}
+
+void MacGuiImpl::addMenu(Graphics::MacMenu *menu, int menuId) {
+	Common::MacResManager resource;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), menuId);
+
+	if (!res) {
+		resource.close();
+		return;
+	}
+
+	Common::StringArray *menuDef = Graphics::MacMenu::readMenuFromResource(res);
+	Common::String name = menuDef->operator[](0);
+	Common::String string = menuDef->operator[](1);
+	int id = menu->addMenuItem(nullptr, name);
+
+	// The CD version of Fate of Atlantis has a menu item for toggling graphics
+	// smoothing. We retroactively add that to the remaining V5 games, but not
+	// to Loom and Last Crusade.
+
+	if (_vm->enhancementEnabled(kEnhUIUX)) {
+		if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
+			string += ";(-;Smooth Graphics";
+		}
+
+		// Floppy version
+		if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
+			string += ";(-;Smooth Graphics";
+		}
+	}
+
+	menu->createSubMenuFromString(id, string.c_str(), 0);
+
+	delete menuDef;
+	delete res;
+
+	resource.close();
 }
 
 bool MacGuiImpl::handleMenu(int id, Common::String &name) {
