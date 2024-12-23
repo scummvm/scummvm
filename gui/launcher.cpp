@@ -1369,8 +1369,29 @@ void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
 	bool en = enable;
 
-	if (item >= 0)
+	if (item >= 0) {
+		// Check load from launcher is supported
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
+		// Check savegames are available
+		if (en) {
+			Common::String target = _domains[item];
+			target.toLowercase();
+			EngineMan.upgradeTargetIfNecessary(target);
+			QualifiedGameDescriptor game = EngineMan.findTarget(target);
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+			// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+			PluginMan.unloadDetectionPlugin();
+#endif
+			const Plugin *enginePlugin = PluginMan.findEnginePlugin(game.engineId);
+			if (enginePlugin) {
+				const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
+				if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
+					SaveStateList saveList = metaEngine.listSaves(target.c_str());
+					en = !saveList.empty();
+				}
+			}
+		}
+	}
 
 	_loadButton->setEnabled(en);
 }
