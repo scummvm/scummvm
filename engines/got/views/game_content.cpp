@@ -72,6 +72,7 @@ bool GameContent::tick() {
 	moveActors();
 	use_item();
 
+	updateActors();
 	return false;
 }
 
@@ -210,7 +211,15 @@ void GameContent::moveActors() {
 	int thor_pos = _G(thor)->getPos();
 	_G(thor)->center_x = thor_pos % 20;
 	_G(thor)->center_y = thor_pos / 20;
+}
 
+void GameContent::updateActors() {
+	for (int i = 0; i < MAX_ACTORS; ++i) {
+		ACTOR *actor = &_G(actor)[i];
+
+		if (!actor->used && actor->dead > 0)
+			actor->dead--;
+	}
 }
 
 } // namespace Views
