@@ -621,8 +621,6 @@ void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 }
 
 void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
-	bool isFloppyVersion = (_strsStrings[kMSIAboutString38] != "");
-
 	Graphics::Surface *s = window->innerSurface();
 
 	Graphics::Surface *lucasArts = loadPict(5000);
@@ -676,17 +674,10 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		TEXT_END_MARKER
 	};
 
-	// Annoyingly, this page is missing a string in the CD version of the
-	// game so we need two different versions. Note that the "rough" command
-	// does work in both versions.
+	// In the CD version, kMSIAboutString38 is empty. Probably because it
+	// added a menu item for it instead.
 
-	const TextLine page10_cd[] = {
-		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
-		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString23].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
-		TEXT_END_MARKER
-	};
-
-	const TextLine page10_floppy[] = {
+	const TextLine page10[] = {
 		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
 		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString23].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
 		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString38].c_str() }, // "Type 'rough' to see the difference."
@@ -726,7 +717,7 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		{ page7,   1,  4300 },
 		{ page8,   1,  4200 },
 		{ page9,   1,  4200 },
-		{ nullptr, 1,  4200 },
+		{ page10,  1,  4200 },
 		{ page11,  1, 14100 },
 		{ page12,  1,     0 }
 	};
@@ -772,10 +763,6 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		case 6:
 			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), white);
 			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
-			break;
-
-		case 10:
-			aboutPages[10].text = isFloppyVersion ? page10_floppy : page10_cd;
 			break;
 
 		default:
