@@ -131,7 +131,7 @@ public:
 		kWidgetSlider,
 		kWidgetListBox,
 		kWidgetImageSlider,
-		kWidgetDropDownList
+		kWidgetPopUpMenu
 	};
 
 protected:
@@ -627,18 +627,18 @@ public:
 		bool handleKeyDown(Common::Event &event) override;
 	};
 
-	class MacDropDownList : public MacWidget {
+	class MacPopUpMenu : public MacWidget {
 	private:
 		Common::StringArray _texts;
 		int _textWidth;
 		bool _menuVisible = false;
 		int _selected;
-		Graphics::Surface _dropDownBackground;
-		Common::Rect _dropDownBounds;
+		Graphics::Surface _popUpBackground;
+		Common::Rect _popUpBounds;
 
 	public:
-		MacDropDownList(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
-		~MacDropDownList();
+		MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
+		~MacPopUpMenu();
 
 		bool findWidget(int x, int y) const override;
 		void draw(bool drawFocused = false) override;
@@ -737,7 +737,7 @@ public:
 		MacGuiImpl::MacImageSlider *addImageSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 		MacGuiImpl::MacImageSlider *addImageSlider(Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		MacGuiImpl::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
-		MacGuiImpl::MacDropDownList *addDropDownList(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
+		MacGuiImpl::MacPopUpMenu *addPopUpMenu(Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
