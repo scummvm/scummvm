@@ -25,6 +25,10 @@
 #ifndef ULTIMA8_WORLD_MINIMAP_H
 #define ULTIMA8_WORLD_MINIMAP_H
 
+namespace Common {
+class Path;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -54,6 +58,7 @@ public:
 
 	bool load(Common::ReadStream *rs, uint32 version);
 	void save(Common::WriteStream *ws) const;
+	bool dump(const Common::Path &filename) const;
 };
 
 } // End of namespace Ultima8

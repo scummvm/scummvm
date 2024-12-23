@@ -20,6 +20,10 @@
  */
 
 #include "common/stream.h"
+#include "common/file.h"
+
+#include "image/png.h"
+#include "image/bmp.h"
 
 #include "ultima/ultima8/world/minimap.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -320,6 +324,20 @@ void MiniMap::save(Common::WriteStream *ws) const {
 			ws->writeByte(*pixels++);
 		}
 	}
+}
+
+bool MiniMap::dump(const Common::Path &filename) const {
+	Palette *p = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	Common::DumpFile dumpFile;
+	bool result = dumpFile.open(filename);
+	if (result) {
+#ifdef USE_PNG
+		result = Image::writePNG(dumpFile, _surface, p->data());
+#else
+		result = Image::writeBMP(dumpFile, _surface, p->data());
+#endif
+	}
+	return result;
 }
 
 } // End of namespace Ultima8

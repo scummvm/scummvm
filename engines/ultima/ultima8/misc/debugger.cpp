@@ -1605,6 +1605,16 @@ bool Debugger::cmdGenerateMinimap(int argc, const char **argv) {
 
 	if (gump) {
 		gump->generate();
+
+		if (argc > 1) {
+			Common::Path filename(argv[1]);
+			bool result = gump->dump(filename);
+			if (result) {
+				debugPrintf("Mini map dumped: %s\n", filename.toString().c_str());
+			} else {
+				debugPrintf("Could not write file: %s\n", filename.toString().c_str());
+			}
+		}
 	}
 	return false;
 }

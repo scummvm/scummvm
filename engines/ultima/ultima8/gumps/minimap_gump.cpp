@@ -109,6 +109,16 @@ void MiniMapGump::clear() {
 	_minimaps.clear();
 }
 
+bool MiniMapGump::dump(const Common::Path &filename) const {
+	World *world = World::get_instance();
+	CurrentMap *currentmap = world->getCurrentMap();
+
+	uint32 mapNum = currentmap->getNum();
+
+	MiniMap *minimap = _minimaps[mapNum];
+	return minimap ? minimap->dump(filename) : false;	
+}
+
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	uint32 *map = pal->_native;
