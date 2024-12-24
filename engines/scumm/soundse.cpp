@@ -367,10 +367,16 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 		delete stream;
 		return nullptr;
 	case kFSBCodecMP3:
+#ifdef USE_MAD
 		return Audio::makeMP3Stream(
 			stream,
 			DisposeAfterUse::YES
 		);
+#else
+		warning("createSoundStream: MP3 codec not supported");
+		delete stream;
+		return nullptr;
+#endif
 	}
 
 	error("createSoundStream: Unknown XWB codec %d", entry.codec);
