@@ -76,11 +76,6 @@ bool GameContent::tick() {
 	return false;
 }
 
-bool GameContent::canSaveLoad() const {
-	// TODO: Disallow saving during animations like scene changes or Thor dying
-	return true;
-}
-
 void GameContent::drawBackground(GfxSurface &s) {
 	for (int y = 0; y < TILES_Y; y++) {
 		for (int x = 0; x < TILES_X; x++) {
@@ -142,6 +137,8 @@ void GameContent::drawEnemies(GfxSurface &s, ACTOR *lastActor) {
 
 void GameContent::checkThunderShake() {
 	if (_G(thunder_flag)) {
+		_mode = MODE_THUNDER;
+
 		// Introduce a random screen shake by rendering screen 1 pixel offset randomly
 		static const int8 DELTA_X[4] = { -1, 1, 0, 0 };
 		static const int8 DELTA_Y[4] = { 0, 0, -1, 1 };
@@ -158,10 +155,11 @@ void GameContent::checkThunderShake() {
 			}
 		}
 
-		redraw();
+		if (!_G(thunder_flag)) {
+			_mode = MODE_NORMAL;
+			_shakeDelta = Common::Point(0, 0);
+		}
 
-	} else if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
-		_shakeDelta = Common::Point(0, 0);
 		redraw();
 	}
 }
