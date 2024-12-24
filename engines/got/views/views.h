@@ -26,6 +26,7 @@
 #include "got/views/part_title.h"
 #include "got/views/story.h"
 #include "got/views/title.h"
+#include "got/views/dialogs/ask.h"
 #include "got/views/dialogs/main_menu.h"
 #include "got/views/dialogs/options_menu.h"
 #include "got/views/dialogs/quit.h"
@@ -43,6 +44,7 @@ struct Views {
 	Story _story;
 	Title _title;
 
+	Dialogs::Ask _ask;
 	Dialogs::MainMenu _mainMenu;
 	Dialogs::OptionsMenu _optionsMenu;
 	Dialogs::Quit _quit;

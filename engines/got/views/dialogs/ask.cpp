@@ -19,56 +19,26 @@
  *
  */
 
-#ifndef GOT_VIEWS_DIALOGS_SELECT_OPTION_H
-#define GOT_VIEWS_DIALOGS_SELECT_OPTION_H
-
-#include "graphics/managed_surface.h"
-#include "got/views/dialogs/dialog.h"
+#include "got/views/dialogs/ask.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-// Commonly used options across multiple dialogs
-extern const char *ON_OFF[];
-extern const char *YES_NO[];
+Ask::Ask() : SelectOption("Ask") {
+}
 
+void Ask::show(const Common::String &title, const Common::StringArray &options) {
+	Ask *view = (Ask *)g_events->findView("Ask");
+	view->setContent(title, options);
+	view->addView();
+}
 
-class SelectOption : public Dialog {
-private:
-	Common::String _title;
-	Common::StringArray _options;
-	int _hammerFrame = 0;
-	int _smackCtr = 0;
-
-protected:
-	int _selectedItem = 0;
-
-	void setContent(const Common::String &title,
-		const Common::StringArray &options);
-	virtual void closed() {
-		close();
-	}
-	virtual void selected() {}
-
-public:
-	SelectOption(const Common::String &name, const char *title,
-		const char *options[]);
-	SelectOption(const Common::String &name);
-	virtual ~SelectOption() {}
-
-	bool msgFocus(const FocusMessage &msg) override {
-		_selectedItem = 0;
-		_smackCtr = 0;
-		return true;
-	}
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-};
+void Ask::closed() {
+	_G(scripts).setAskResponse(_selectedItem + 1);
+}
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
-
-#endif

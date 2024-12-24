@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	views/title.o \
 	views/dialogs/dialog.o \
 	views/dialogs/select_option.o \
+	views/dialogs/ask.o \
 	views/dialogs/main_menu.o \
 	views/dialogs/options_menu.o \
 	views/dialogs/play_game.o \
