@@ -29,7 +29,12 @@ namespace Got {
 namespace Views {
 
 class GameContent : public View {
+	enum Mode {
+		MODE_NORMAL = 0, MODE_ROOM_CHANGE = 1, MODE_THUNDER = 2,
+		MODE_THOR_DIES = 3
+	};
 private:
+	Mode _mode = MODE_NORMAL;
 	Common::Point _shakeDelta;
 
 	void drawBackground(GfxSurface &s);
@@ -49,7 +54,9 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;
 
-	bool canSaveLoad() const;
+	bool canSaveLoad() const {
+		return _mode == MODE_NORMAL;
+	}
 };
 
 } // namespace Views
