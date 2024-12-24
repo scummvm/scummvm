@@ -989,56 +989,63 @@ bool MacV5Gui::runOptionsDialog() {
 	sliderTextSpeed->setValue(textSpeed);
 	sliderMusicQuality->setValue(musicQualityOption);
 
-	// When quitting, the default action is not to not apply options
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOk->getId()) {
-			ret = true;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					// TEXT SPEED
+					_vm->_defaultTextSpeed = CLIP<int>(sliderTextSpeed->getValue(), 0, 9);
+					ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+					_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+
+					// SOUND&MUSIC ACTIVATION
+					sound = checkboxSound->getValue();
+					music = checkboxMusic ? checkboxMusic->getValue() : sound;
+
+					if (!sound)
+						music = false;
+
+					_vm->_musicEngine->toggleMusic(music);
+					_vm->_musicEngine->toggleSoundEffects(sound);
+					ConfMan.setBool("music_mute", !music);
+					ConfMan.setBool("mute", !sound);
+
+					// MUSIC QUALITY SELECTOR
+					musicQuality = musicQuality * 3 + 1 + sliderMusicQuality->getValue();
+					_vm->_musicEngine->setQuality(musicQuality);
+					ConfMan.setInt("mac_snd_quality", musicQuality);
+
+					_vm->syncSoundSettings();
+					ConfMan.flushToDisk();
+
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			case kDialogValueChange:
+				if (event.widget == checkboxSound && checkboxMusic) {
+					checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == buttonCancel->getId())
-			break;
-
-		if (clicked == checkboxSound->getId() && checkboxMusic)
-			checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
-	}
-
-	if (ret) {
-		// Update settings
-
-		// TEXT SPEED
-		_vm->_defaultTextSpeed = CLIP<int>(sliderTextSpeed->getValue(), 0, 9);
-		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
-		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
-
-		// SOUND&MUSIC ACTIVATION
-		sound = checkboxSound->getValue();
-		music = checkboxMusic ? checkboxMusic->getValue() : sound;
-
-		if (!sound)
-			music = false;
-
-		_vm->_musicEngine->toggleMusic(music);
-		_vm->_musicEngine->toggleSoundEffects(sound);
-		ConfMan.setBool("music_mute", !music);
-		ConfMan.setBool("mute", !sound);
-
-		// MUSIC QUALITY SELECTOR
-		musicQuality = musicQuality * 3 + 1 + sliderMusicQuality->getValue();
-		_vm->_musicEngine->setQuality(musicQuality);
-		ConfMan.setInt("mac_snd_quality", musicQuality);
-
-		_vm->syncSoundSettings();
-		ConfMan.flushToDisk();
+		window->delayAndUpdate();
 	}
 
 	delete window;
-	return ret;
+	return false;
 }
 
 void MacV5Gui::resetAfterLoad() {

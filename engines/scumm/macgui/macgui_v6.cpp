@@ -402,13 +402,24 @@ void MacV6Gui::runAboutDialog() {
 
 		window->setDefaultWidget(buttonOk);
 
-		Common::Array<int> deferredActionsIds;
-
 		while (!_vm->shouldQuit()) {
-			int clicked = window->runDialog(deferredActionsIds);
+			MacDialogEvent event;
 
-			if (clicked == buttonOk->getId())
-				break;
+			while (window->runDialog(event)) {
+				switch (event.type) {
+				case kDialogClick:
+					if (event.widget == buttonOk) {
+						delete window;
+						return;
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			window->delayAndUpdate();
 		}
 
 		delete window;
@@ -546,26 +557,35 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 		window->innerSurface()->frameRect(Common::Rect(11, 31, 173, 133), getBlack());
 	}
 
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonSave->getId() || clicked == listBox->getId()) {
-			ret = true;
-			saveSlotToHandle =
-				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonSave || event.widget == listBox) {
+					saveSlotToHandle =
+						listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == buttonCancel->getId())
-			break;
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not load the saved game
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
@@ -615,36 +635,41 @@ bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 
 	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
 
-	// When quitting, the default action is not to save a game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonSave->getId()) {
-			ret = true;
-			saveName = editText->getText();
-			saveSlotToHandle = firstAvailableSlot;
-			break;
-		}
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonSave) {
+					saveName = editText->getText();
+					saveSlotToHandle = firstAvailableSlot;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
 
-		if (clicked == buttonCancel->getId())
-			break;
+				break;
 
-		if (clicked == kDialogWantsAttention) {
-			// Cycle through deferred actions
-			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				if (deferredActionsIds[i] == editText->getId()) {
-					// Disable "Save" button when text is empty
+			case kDialogValueChange:
+				if (event.widget == editText) {
 					buttonSave->setEnabled(!editText->getText().empty());
 				}
+				break;
+
+			default:
+				break;
 			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not save the game
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacV6Gui::runOptionsDialog() {
@@ -660,7 +685,7 @@ bool MacV6Gui::runOptionsDialog() {
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
-	// MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
 
 	MacPopUpMenu *interactionPopUp = nullptr;
 	MacPopUpMenu *videoQualityPopUp = nullptr;
@@ -721,29 +746,33 @@ bool MacV6Gui::runOptionsDialog() {
 		addSlider(window, 152, 231, 147, 9);
 	}
 
-	Common::Array<int> deferredActionsIds;
-
-	// When quitting, the default action is not to not apply options
-	bool ret = false;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOk->getId()) {
-			ret = true;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				} else if (event.widget == buttonDefaults) {
+				}
+
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == buttonCancel->getId())
-			break;
-	}
-
-	if (ret) {
-		// Update settings
+		window->delayAndUpdate();
 	}
 
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacV6Gui::runQuitDialog() {
@@ -758,25 +787,33 @@ bool MacV6Gui::runQuitDialog() {
 
 	window->setDefaultWidget(buttonOk);
 
-	Common::Array<int> deferredActionsIds;
-
-	// When quitting, the default action is to quit
-	bool ret = true;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOk->getId())
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
 
-		if (clicked == buttonCancel->getId()) {
-			ret = false;
-			break;
+				break;
+
+			default:
+				break;
+			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// When quitting, quit
 	delete window;
-	return ret;
+	return true;
 }
 
 bool MacV6Gui::runRestartDialog() {
@@ -796,25 +833,33 @@ bool MacV6Gui::runRestartDialog() {
 	window->addSubstitution("");
 	window->addSubstitution(_gameName);
 
-	Common::Array<int> deferredActionsIds;
-
-	// When quitting, the default action is to quit
-	bool ret = true;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOk->getId())
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
 
-		if (clicked == buttonCancel->getId()) {
-			ret = false;
-			break;
+				break;
+
+			default:
+				break;
+			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not restart
 	delete window;
-	return ret;
+	return false;
 }
 
 void MacV6Gui::resetAfterLoad() {
