@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-23 00:36+0000\n"
+"POT-Creation-Date: 2024-12-24 11:15+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -10338,7 +10338,7 @@ msgstr ""
 "صحيح. يرجى التحقق من وحدة التحكم للحصول على مزيد من المعلومات ، والتحقق من "
 "أن ملفات اللعبة الخاصة بك صالحة."
 
-#: engines/sci/sci.cpp:426
+#: engines/sci/sci.cpp:408
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -10351,7 +10351,7 @@ msgstr ""
 "من اللعبة الأصلية ، فإنها لا تعرض دائمًا بشكل صحيح أو تعكس خطاب اللعبة "
 "الفعلي. هذا ليس خطأ ScummVM - إنها مشكلة في أصول اللعبة."
 
-#: engines/sci/sci.cpp:450
+#: engines/sci/sci.cpp:432
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -10372,11 +10372,11 @@ msgstr ""
 "مجلد اللعبة. بدون هذا التصحيح ، ستبدو موسيقى MIDI العامة لهذه اللعبة مشوهة "
 "بشكل سيئ."
 
-#: engines/sci/sci.cpp:542
+#: engines/sci/sci.cpp:524
 msgid "Download patch"
 msgstr "تحميل الباتش"
 
-#: engines/sci/sci.cpp:543
+#: engines/sci/sci.cpp:525
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -10384,7 +10384,7 @@ msgstr ""
 "(أو انقر فوق الزر \"تنزيل التصحيح\". ولكن لاحظ أنه يتم تنزيله فقط ، وسيتعين "
 "عليك المتابعة من هناك)\n"
 
-#: engines/sci/sci.cpp:550
+#: engines/sci/sci.cpp:532
 #, fuzzy
 #| msgid ""
 #| "GK2 has a fan made subtitles, available thanks to the good persons at "
@@ -10408,7 +10408,7 @@ msgstr ""
 "- تنزيل http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
 "zip\n"
 
-#: engines/sci/sci.cpp:983
+#: engines/sci/sci.cpp:965
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

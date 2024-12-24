@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-23 00:36+0000\n"
+"POT-Creation-Date: 2024-12-24 11:15+0000\n"
 "PO-Revision-Date: 2024-12-22 11:00+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -10161,7 +10161,7 @@ msgstr ""
 "하지 않을 수 있습니다. 자세한 내용은 콘솔 창을 확인하고 게임 파일이 유효한지 "
 "확인하세요."
 
-#: engines/sci/sci.cpp:426
+#: engines/sci/sci.cpp:408
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -10174,7 +10174,7 @@ msgstr ""
 "원래 게임에서 제거되었기 때문에 항상 제대로 렌더링되지 않거나 실제 게임 음성"
 "을 반영하지 않습니다. 이것은 ScummVM 버그가 아니라 게임 자산의 문제입니다."
 
-#: engines/sci/sci.cpp:450
+#: engines/sci/sci.cpp:432
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -10194,11 +10194,11 @@ msgstr ""
 "4.PAT로 변경하여 게임 폴더에 넣을 수 있습니다. 이 패치가 없으면 이 게임의 일"
 "반 미디 음악이 심하게 왜곡된 사운드가 들립니다."
 
-#: engines/sci/sci.cpp:542
+#: engines/sci/sci.cpp:524
 msgid "Download patch"
 msgstr "패치 다운로드"
 
-#: engines/sci/sci.cpp:543
+#: engines/sci/sci.cpp:525
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -10206,7 +10206,7 @@ msgstr ""
 "(또는 '패치 다운로드' 버튼을 클릭하세요. 하지만 참고 - 다운로드만 가능하며, "
 "거기서 계속 진행해야 함)\n"
 
-#: engines/sci/sci.cpp:550
+#: engines/sci/sci.cpp:532
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -10221,7 +10221,7 @@ msgstr ""
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip 을 "
 "다운로드\n"
 
-#: engines/sci/sci.cpp:983
+#: engines/sci/sci.cpp:965
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

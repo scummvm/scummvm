@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-23 00:36+0000\n"
+"POT-Creation-Date: 2024-12-24 11:15+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -9990,7 +9990,7 @@ msgstr ""
 "检测到缺失或损坏的游戏资源。部分游戏功能可能无法正常进行。请检查控制台获取更"
 "多信息，并检查游戏文件有效。"
 
-#: engines/sci/sci.cpp:426
+#: engines/sci/sci.cpp:408
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -10002,7 +10002,7 @@ msgstr ""
 "ScummVM 允许重新启用字幕，但因为其在原游戏中被移除，字幕不总是渲染正确或反映"
 "游戏实际语音。这不是 ScummVM 的问题 -- 是游戏资源的问题。"
 
-#: engines/sci/sci.cpp:450
+#: engines/sci/sci.cpp:432
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -10021,17 +10021,17 @@ msgstr ""
 "重命名为 4.PAT 并将其放入游戏文件夹中。如果没有这个补丁，这款游戏的通用 MIDI "
 "音乐听起来会严重失真。"
 
-#: engines/sci/sci.cpp:542
+#: engines/sci/sci.cpp:524
 msgid "Download patch"
 msgstr "下载补丁"
 
-#: engines/sci/sci.cpp:543
+#: engines/sci/sci.cpp:525
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr "（或点击“下载补丁”按钮。但注意 - 它只负责下载，你需要继续操作）\n"
 
-#: engines/sci/sci.cpp:550
+#: engines/sci/sci.cpp:532
 #, fuzzy
 #| msgid ""
 #| "GK2 has a fan made subtitles, available thanks to the good persons at "
@@ -10054,7 +10054,7 @@ msgstr ""
 "- 下载 http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
 "zip\n"
 
-#: engines/sci/sci.cpp:983
+#: engines/sci/sci.cpp:965
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

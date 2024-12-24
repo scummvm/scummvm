@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-23 00:36+0000\n"
+"POT-Creation-Date: 2024-12-24 11:15+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -10345,7 +10345,7 @@ msgstr ""
 "могуць працаваць няправільна. Калі ласка, праглядзіце кансоль для "
 "падрабязнасьцей, а таксама праверце, што вашыя файлы гульні вартыя."
 
-#: engines/sci/sci.cpp:426
+#: engines/sci/sci.cpp:408
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -10358,7 +10358,7 @@ msgstr ""
 "заўжды правільна выглядаюць ці перадаюць пэўны сэнс, бо былі выдалены з "
 "арыґінальнай гульні. Гэта хіба ня ScummVM, а рэсурсаў гульні."
 
-#: engines/sci/sci.cpp:450
+#: engines/sci/sci.cpp:432
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -10378,11 +10378,11 @@ msgstr ""
 "пераназваць улучаны файл *.PAT на 4.PAT й памясьціць у тэчцы гульні. Без "
 "гэатй латкі, музыка MIDI будзе даволі крывой."
 
-#: engines/sci/sci.cpp:542
+#: engines/sci/sci.cpp:524
 msgid "Download patch"
 msgstr "Заладаваць латку"
 
-#: engines/sci/sci.cpp:543
+#: engines/sci/sci.cpp:525
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -10390,7 +10390,7 @@ msgstr ""
 "(або націсьніце „Заладаваць латку“. Але заўважце — яна проста заладуецца, "
 "далей вы самі)\n"
 
-#: engines/sci/sci.cpp:550
+#: engines/sci/sci.cpp:532
 #, fuzzy
 #| msgid ""
 #| "GK2 has a fan made subtitles, available thanks to the good persons at "
@@ -10412,7 +10412,7 @@ msgstr ""
 "Каб усталяваць, заладуйце:\n"
 "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:983
+#: engines/sci/sci.cpp:965
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
