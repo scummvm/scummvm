@@ -89,6 +89,9 @@ void Events::runGame() {
 			rotatePalette();
 		}
 
+		// Do tick action to the views to handle gameplay logic
+		tick();
+
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			nextFrame();
@@ -104,9 +107,6 @@ void Events::nextFrame() {
 	_G(rand2) = getRandomNumber(99);
 	_G(pge) = _G(pge) ^ 1;
 	_G(shot_ok) = true;
-
-	// Do once-per-frame tick action to the views
-	tick();
 
 	// Draw the current view's elements as needed, and update screen
 	drawElements();
