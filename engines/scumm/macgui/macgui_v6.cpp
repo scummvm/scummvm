@@ -382,6 +382,7 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 void MacV6Gui::runAboutDialog() {
 	if (_vm->_game.features & GF_DEMO) {
 		// HACK: Use the largest bounds as default for unknown demos
+		// It would be nice if we could figure these out automatically
 		Common::Rect bounds(117, 5, 523, 384);
 
 		if (_vm->_game.id == GID_SAMNMAX) {
