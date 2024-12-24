@@ -194,17 +194,19 @@ int drop_object(ACTOR *actr) {
 }
 
 int _drop_obj(ACTOR *actr, int o) {
-	int x, y, p;
+	int p;
 
 	p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
 	if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
 		_G(object_map)[p] = o;
 		_G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
+#if 0
 		x = (p % 20) * 16;
 		y = (p / 20) * 16;
-		//xfput(x, y, PAGE2, (char far *) objects[o - 1]);
-		//xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, draw_page, 320, 320);
-		//xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, display_page, 320, 320);
+		xfput(x, y, PAGE2, (char far *) objects[o - 1]);
+		xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, draw_page, 320, 320);
+		xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, display_page, 320, 320);
+#endif
 		return 1;
 	}
 

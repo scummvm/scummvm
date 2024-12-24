@@ -250,31 +250,35 @@ dead:
 }
 
 void remove_objects(int y, int x) {
-	int p, ix, iy;
+	int p;
 
 	p = (y * 20) + x;
-	ix = x * 16;
-	iy = y * 16;
 
 	if (_G(object_map)[p] > 0) {
-		//xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-		//xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).icon[y][x] * 262)));
-		//xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
+#if 0
+		ix = x * 16;
+		iy = y * 16;
+		xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
+		xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).icon[y][x] * 262)));
+		xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
+#endif
 		_G(object_map)[p] = 0;
 		_G(object_index)[p] = 0;
 	}
 }
 
 void place_tile(int x, int y, int tile) {
+#if 0
 	int ix, iy;
 
 	ix = x * 16;
 	iy = y * 16;
 
-	//xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	//xfput(ix, iy, PAGE2, (char far *) (bg_pics + (tile * 262)));
-	//xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
-	//xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, display_page, 320, 320);
+	xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
+	xfput(ix, iy, PAGE2, (char far *) (bg_pics + (tile * 262)));
+	xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
+	xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, display_page, 320, 320);
+#endif
 	_G(scrn).icon[y][x] = tile;
 	remove_objects(y, x);
 }

@@ -49,14 +49,10 @@ struct LEVEL {                    // size=512
 	byte future[3] = {};          // 473
 
 	void sync(Common::Serializer &s);
-	void load(Common::SeekableReadStream *src) {
-		Common::Serializer s(src, nullptr);
-		sync(s);
-	}
-	void save(Common::WriteStream *dest) {
-		Common::Serializer s(nullptr, dest);
-		sync(s);
-	}
+	void load(Common::SeekableReadStream *src);
+	void save(Common::WriteStream * dest);
+	void load(const byte *src);
+	void save(byte *dest);
 };
 
 } // namespace Got
