@@ -434,6 +434,8 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 			DisposeAfterUse::YES
 		);
 #else
+		warning("createSoundStream: MP3 codec is not built in");
+		delete stream;
 		return nullptr;
 #endif
 	}
