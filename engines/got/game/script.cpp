@@ -201,7 +201,7 @@ int Scripts::get_command() {
 			break;           // Lookup command
 
 		len = strlen(SCR_COMMAND[i]);
-		if (!strncmp(buff_ptr, (char *)SCR_COMMAND[i], len)) {
+		if (!strncmp(buff_ptr, SCR_COMMAND[i], len)) {
 			buff_ptr += len;
 			return i;
 		}
@@ -236,7 +236,7 @@ int Scripts::get_command() {
 int Scripts::calc_string(int mode) {
 	// if mode==1 stop at comma
 	char varstr[255];
-	char varnum;
+	uint varnum;
 
 	Common::strcpy_s(varstr, "");
 
@@ -512,7 +512,7 @@ int Scripts::read_script_file() {
 		ret = 6; goto done;
 	}
 
-	str = Common::String::format("|%d", scr_index);
+	str = Common::String::format("|%ld", scr_index);
 	Common::strcpy_s(temp_buff, str.c_str());
 
 	while (1) {
@@ -840,8 +840,10 @@ int Scripts::cmd_settile() {
 	if (screen == _G(current_level)) {
 		place_tile(pos % 20, pos / 20, tile);
 	} else {
-		lvl = (LEVEL *) (_G(sd_data) + (screen * 512));
-		lvl->icon[pos / 20][pos % 20] = tile;
+		LEVEL tmp;
+		tmp.load(_G(sd_data) + (screen * 512));
+		tmp.icon[pos / 20][pos % 20] = tile;
+		tmp.save(_G(sd_data) + (screen * 512));
 	}
 	return 0;
 }
@@ -892,7 +894,6 @@ int Scripts::cmd_setflag() {
 
 int Scripts::cmd_ltoa() {
 	int sv;
-	char str[21];
 
 	if (!calc_value()) return 5;
 	buff_ptr++;
@@ -904,8 +905,8 @@ int Scripts::cmd_ltoa() {
 		} else return 5;
 	} else return 5;
 
-	ltoa(lvalue, str, 10);
-	Common::strcpy_s(str_var[sv], (char *) str);
+	Common::String str = Common::String::format("%ld", lvalue);
+	Common::strcpy_s(str_var[sv], str.c_str());
 	return 0;
 }
 

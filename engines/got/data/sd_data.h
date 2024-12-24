@@ -52,6 +52,9 @@ public:
 	operator const byte *() const {
 		return _data;
 	}
+	operator byte *() {
+		return _data;
+	}
 };
 
 } // namespace Got

@@ -36,7 +36,7 @@ private:
 	char  *new_ptr = nullptr;
 	int   num_labels = 0;          // number of labels
 	char  *gosub_stack[32] = {};   // stack for GOSUB return addresses
-	char  gosub_ptr = 0;           // GOSUB stack pointer
+	int   gosub_ptr = 0;           // GOSUB stack pointer
 	char  *for_stack[10] = {};     // FOR stack
 	long  for_val[10] = {};        // current FOR value
 	int8  for_var[10] = {};        // ending FOR value (target var)

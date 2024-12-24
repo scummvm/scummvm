@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "got/data/defines.h"
 
 namespace Got {
@@ -50,6 +51,27 @@ void LEVEL::sync(Common::Serializer &s) {
 	s.syncBytes(actor_dir, 16);
 	s.syncBytes(future, 3);
 }
+
+void LEVEL::load(Common::SeekableReadStream *src) {
+	Common::Serializer s(src, nullptr);
+	sync(s);
+}
+
+void LEVEL::save(Common::WriteStream *dest) {
+	Common::Serializer s(nullptr, dest);
+	sync(s);
+}
+
+void LEVEL::load(const byte *src) {
+	Common::MemoryReadStream stream(src, 512);
+	load(&stream);
+}
+
+void LEVEL::save(byte *dest) {
+	Common::MemoryWriteStream stream(dest, 512);
+	save(&stream);
+}
+
 
 void ACTOR::loadFixed(Common::SeekableReadStream *src) {
 	move = src->readByte();
