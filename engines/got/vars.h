@@ -212,10 +212,6 @@ public:
 
 #define _G(X) (g_vars->_##X)
 
-extern byte dialog_color[];
-extern const char *options_yesno[];
-extern const char *save_filename;
-
 } // namespace Got
 
 #endif

@@ -24,10 +24,12 @@
 #include "got/game/back.h"
 #include "got/game/main.h"
 #include "got/game/object.h"
+#include "got/game/panel.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
 #include "got/utils/file.h"
 #include "got/views/dialogs/ask.h"
+#include "got/views/dialogs/say.h"
 #include "got/events.h"
 #include "got/vars.h"
 
@@ -168,12 +170,15 @@ void Scripts::scriptLoop() {
 		}
 	}
 
-	script_exit();
+	if (!_paused)
+		script_exit();
 }
 
 void Scripts::script_exit() {
-	if (buffer)
+	if (buffer) {
 		free(buffer);
+		buffer = nullptr;
+	}
 }
 
 int Scripts::skip_colon() {
@@ -719,7 +724,6 @@ int Scripts::cmd_addscore() {
 }
 
 int Scripts::cmd_say(int mode, int type) {
-#ifdef TODO
 	char *p;
 	int obj;
 
@@ -742,12 +746,10 @@ int Scripts::cmd_say(int mode, int type) {
 	}
 	*(p - 1) = 0;
 
-	display_speech(obj, (char *)scr_pic, type);
-	d_restore();
+	pause();
+	Views::Dialogs::Say::show(obj, scr_pic, type);
+
 	return 0;
-#else
-	error("TODO: cmd_say");
-#endif
 }
 
 int Scripts::cmd_ask() {
