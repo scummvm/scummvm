@@ -993,7 +993,6 @@ protected:
 	void saveInfos(Common::WriteStream *file);
 	static bool loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff);
 
-protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[1024];
 	const byte *_scriptPointer = nullptr;
