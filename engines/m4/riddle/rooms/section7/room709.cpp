@@ -936,13 +936,43 @@ void Room709::parser() {
 		default:
 			break;
 		}
-	}
+	} else if (!ecx && player_said("journal") && !inv_player_has(_G(player).noun)) {
+		digi_play("709R11", 1, 255, -1, -1);
+	} else if (!ecx && !edi && player_said_any("LIGHTER", "LIT LIGHTER")) {
+		digi_play("com141", 1, 255, -1, 997);
+	} else if (ecx && player_said(" ")) {
+		digi_play("709R01", 1, 255, -1, -1);
+	} else if (ecx && player_said("  ")) {
+		digi_play("708R02", 1, 255, -1, 708);
+	} else if (esi || edi) {
+		switch (imath_ranged_rand(1, 5)) {
+		case 1:
+			digi_play("com006", 1, 255, -1, 997);
+			break;
 
-	warning("Fake variable use - %d %d %d", ecx ? 1 : 0, esi ? 1 : 0, edi ? 1 : 0);
+		case 2:
+			digi_play("com008", 1, 255, -1, 997);
+			break;
+
+		case 3:
+			digi_play("com013", 1, 255, -1, 997);
+			break;
+
+		case 4:
+			digi_play("com010", 1, 255, -1, 997);
+			break;
+
+		case 5:
+			digi_play("com011", 1, 255, -1, 997);
+			break;
+
+		default:
+			break;
+		}
+	} else
+		return;
 
 	_G(player).command_ready = false;
-
-	// TODO Not implemented yet
 }
 
 void Room709::daemon() {
