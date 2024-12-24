@@ -733,7 +733,7 @@ void View1::draw() {
 	// Render the scaling factors
 	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
 
-	DrawImageResources(s);
+	// DrawImageResources(s);
 }
 
 bool View1::tick() {
@@ -1045,10 +1045,64 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	*/
 	// Shadow parts, from top in clockwise order
 	// TODO: Adjust pos and sizes
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 0xB, 0x6, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 0xB, 0x5, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(width, width), size.y - 0xB, 0x6, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(width, size.y - width), size.x - 0xB, 0x6, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x6, s);
+
+
+
+	/*
+
+	;; These here should be the shadow parts
+	;; Args are x and y (+C, +A), width (+8) and height (+6)
+	;; Arguments pushed: X+6, Y + 6, W - Bh, Lowlight color
+	x + 6, y + 6, w-Bh
+	call	far 0037h:3737h
+	mov	ax,[bp+0Ch]
+	add	ax,6h
+	push	ax
+	mov	ax,[bp+0Ah]
+	add	ax,6h
+	push	ax
+	mov	ax,[bp+6h]
+	sub	ax,0Bh
+	push	ax
+	les	di,[bp-4h]
+	mov	al,es:[di+1011h]
+	xor	ah,ah
+	push	ax
+	call	far 0037h:3876h
+	mov	ax,[bp+0Ch]
+	add	ax,6h
+	push	ax
+	mov	ax,[bp+0Ah]
+	add	ax,[bp+6h]
+	sub	ax,6h
+	push	ax
+	mov	ax,[bp+8h]
+	sub	ax,0Bh
+	push	ax
+	les	di,[bp-4h]
+	mov	al,es:[di+1012h]
+	xor	ah,ah
+	push	ax
+	call	far 0037h:3737h
+	mov	ax,[bp+0Ch]
+	add	ax,[bp+8h]
+	sub	ax,6h
+	push	ax
+	mov	ax,[bp+0Ah]
+	add	ax,6h
+	push	ax
+	mov	ax,[bp+6h]
+	sub	ax,0Bh
+	push	ax
+	les	di,[bp-4h]
+	mov	al,es:[di+1012h]
+	xor	ah,ah
+	push	ax
+	call	far 0037h:3876h*/
 
 }
 
@@ -1080,7 +1134,7 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 
 	// TODO: There is quite some setup going on in this function before we get to the drawing
 	
-	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
+	Common::Rect clippingRect(pos, pos + Common::Point(width, 20));
 	// TODO: Should check which texture we actually use at the moment
 
 	// TODO: Check which area we actually fill
@@ -1100,7 +1154,7 @@ void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 
 	// TODO: There is quite some setup going on in this function before we get to the drawing
 
-	Common::Rect clippingRect(pos, pos + Common::Point(1, height));
+	Common::Rect clippingRect(pos, pos + Common::Point(20, height));
 	// TODO: Should check which texture we actually use at the moment
 
 	// TODO: Check which area we actually fill
