@@ -513,11 +513,21 @@ void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern, bo
 	markRectAsDirty(r);
 }
 
-int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
+void MacGuiImpl::MacDialogWindow::queueEvent(MacWidget *widget, MacDialogEventType type) {
+	MacDialogEvent event;
+
+	event.widget = widget;
+	event.type = type;
+
+	_eventQueue.push(event);
+}
+
+bool MacGuiImpl::MacDialogWindow::runDialog(MacGuiImpl::MacDialogEvent &dialogEvent) {
+	for (uint i = 0; i < _widgets.size(); i++)
+		_widgets[i]->rememberValue();
+
 	// The first time the function is called, show the dialog and redraw
 	// all widgets completely.
-
-	deferredActionIds.clear();
 
 	if (!_visible) {
 		show();
@@ -530,229 +540,224 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 		}
 	}
 
-	// Run the dialog until something interesting happens to a widget. It's
-	// up to the caller to repeat the calls to runDialog() until the dialog
-	// has ended.
+	// Handle all incoming events and turn them into dialog events.
 
 	bool buttonPressed = false;
 	uint32 nextMouseRepeat = 0;
 
-	while (!_gui->_vm->shouldQuit()) {
-		Common::Event event;
-		int widgetId = -1;
+	Common::Event event;
 
-		while (_system->getEventManager()->pollEvent(event)) {
-			// Adjust mouse coordinates to the dialog window
+	while (_system->getEventManager()->pollEvent(event)) {
+		// Adjust mouse coordinates to the dialog window
 
-			if (Common::isMouseEvent(event)) {
-				_realMousePos.x = event.mouse.x;
-				_realMousePos.y = event.mouse.y;
+		if (Common::isMouseEvent(event)) {
+			_realMousePos.x = event.mouse.x;
+			_realMousePos.y = event.mouse.y;
 
-				event.mouse.x -= (_bounds.left + _margin);
-				event.mouse.y -= (_bounds.top + _margin);
+			event.mouse.x -= (_bounds.left + _margin);
+			event.mouse.y -= (_bounds.top + _margin);
 
-				_oldMousePos = _mousePos;
+			_oldMousePos = _mousePos;
 
-				_mousePos.x = event.mouse.x;
-				_mousePos.y = event.mouse.y;
+			_mousePos.x = event.mouse.x;
+			_mousePos.y = event.mouse.y;
 
-				// Update engine mouse position
-				_gui->_vm->_mouse.x = _realMousePos.x / 2;
-				_gui->_vm->_mouse.y = _realMousePos.y / 2;
-			}
-
-			int w;
-
-			switch (event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-				// When a widget is clicked, it becomes the
-				// focused widget. Focused widgets are often
-				// indicated by some sort of highlight, e.g.
-				// buttons become inverted.
-				//
-				// This highlight is usually only shown while
-				// the mouse is within the widget bounds, but
-				// as long as it remains focused it can regain
-				// the highlight by moving the cursor back into
-				// the widget bounds again.
-				//
-				// It's unclear to me if Macs should handle
-				// double clicks on mouse down, mouse up or
-				// both.
-
-				buttonPressed = true;
-				nextMouseRepeat = _system->getMillis() + 40;
-				setFocusedWidget(event.mouse.x, event.mouse.y);
-				if (_focusedWidget) {
-					_focusedWidget->handleMouseDown(event);
-
-					uint32 now = _system->getMillis();
-					bool doubleClick =
-						(now - _lastClickTime < 500 &&
-						ABS(event.mouse.x - _lastClickPos.x) < 5 &&
-						ABS(event.mouse.y - _lastClickPos.y) < 5);
-
-					_lastClickTime = _system->getMillis();
-					_lastClickPos.x = event.mouse.x;
-					_lastClickPos.y = event.mouse.y;
-
-					if (doubleClick && _focusedWidget->handleDoubleClick(event))
-						return _focusedWidget->getId();
-				}
-				break;
-
-			case Common::EVENT_LBUTTONUP:
-				buttonPressed = false;
-
-				// Only the focused widget receives the button
-				// up event. If the widget handles the event,
-				// control is passed back to the caller of
-				// runDialog() so that it can react, e.g. to
-				// the user clicking the "Okay" button.
-
-				if (_focusedWidget) {
-					MacWidget *widget = _focusedWidget;
-
-					if (widget->findWidget(event.mouse.x, event.mouse.y)) {
-						widgetId = widget->getId();
-						if (widget->handleMouseUp(event)) {
-							clearFocusedWidget();
-							return widgetId;
-						}
-					}
-
-					clearFocusedWidget();
-				}
-
-				updateCursor();
-				break;
-
-			case Common::EVENT_MOUSEMOVE:
-				// The "beam" cursor can be hidden, but will
-				// become visible again when the user moves
-				// the mouse.
-
-				if (_beamCursor)
-					_beamCursorVisible = true;
-
-				// Only the focused widget receives mouse move
-				// events, and then only if the mouse is within
-				// the widget's area of control. This are of
-				// control is usually the widget bounds, but
-				// widgets can redefine findWidget() to change
-				// this, e.g. for slider widgets.
-
-				if (_focusedWidget) {
-					bool wasActive = _focusedWidget->findWidget(_oldMousePos.x, _oldMousePos.y);
-					bool isActive = _focusedWidget->findWidget(_mousePos.x, _mousePos.y);
-
-					if (wasActive != isActive)
-						_focusedWidget->setRedraw();
-
-					// The widget gets mouse events while
-					// it's active, but also one last one
-					// when it becomes inactive.
-
-					if (isActive || wasActive)
-						_focusedWidget->handleMouseMove(event);
-				} else {
-					updateCursor();
-				}
-
-				break;
-
-			case Common::EVENT_WHEELUP:
-				if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
-					break;
-
-				w = findWidget(event.mouse.x, event.mouse.y);
-				if (w >= 0)
-					_widgets[w]->handleWheelUp();
-
-				break;
-
-			case Common::EVENT_WHEELDOWN:
-				if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
-					break;
-
-				w = findWidget(event.mouse.x, event.mouse.y);
-				if (w >= 0)
-					_widgets[w]->handleWheelDown();
-
-				break;
-
-			case Common::EVENT_KEYDOWN:
-				// Ignore keyboard while mouse is pressed
-				if (buttonPressed)
-					break;
-
-				// Handle default button
-				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
-					MacWidget *widget = getDefaultWidget();
-					if (widget && widget->isEnabled() && widget->isVisible()) {
-						for (int i = 0; i < 2; i++) {
-							widget->setRedraw();
-							widget->draw(i == 0);
-							update();
-
-							for (int j = 0; j < 10; j++) {
-								_system->delayMillis(10);
-								_system->updateScreen();
-							}
-						}
-
-						return widget->getId();
-					}
-				}
-
-				// Otherwise, give widgets a chance to react
-				// to key presses. All widgets get a chance,
-				// whether or not they are focused. This may
-				// be a bad idea, if there is ever more than
-				// one edit text widget in the window.
-				//
-				// Typing hides the "beam" cursor.
-
-				for (uint i = 0; i < _widgets.size(); i++) {
-					if (_widgets[i]->isVisible() && _widgets[i]->isEnabled() && _widgets[i]->handleKeyDown(event)) {
-						if (_beamCursor) {
-							_beamCursorVisible = false;
-							undrawBeamCursor();
-						}
-
-						if (_widgets[i]->shouldDeferAction())
-							deferredActionIds.push_back(_widgets[i]->getId());
-
-						break;
-					}
-				}
-
-				if (!deferredActionIds.empty())
-					return kDialogWantsAttention;
-
-				break;
-
-			default:
-				break;
-			}
+			// Update engine mouse position
+			_gui->_vm->_mouse.x = _realMousePos.x / 2;
+			_gui->_vm->_mouse.y = _realMousePos.y / 2;
 		}
 
-		// A focused widget implies that the mouse button is being
-		// held down. It must be active and visible, so it can receive
-		// mouse repeat events, e.g. for holding down scroll buttons
-		// on a slider widget.
+		int w;
 
-		if (_focusedWidget && _system->getMillis() > nextMouseRepeat) {
+		switch (event.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			// When a widget is clicked, it becomes the focused
+			// widget. Focused widgets are often indicated by some
+			// sort of highlight, e.g. buttons become inverted.
+			//
+			// This highlight is usually only shown while the mouse
+			// is within the widget bounds, but as long as it
+			// remains focused it can regain the highlight by
+			// moving the cursor back into the widget bounds again.
+			//
+			// It's unclear to me if Macs should handle double
+			// clicks on mouse down, mouse up or both.
+
+			buttonPressed = true;
 			nextMouseRepeat = _system->getMillis() + 40;
-			_focusedWidget->handleMouseHeld();
-		}
+			setFocusedWidget(event.mouse.x, event.mouse.y);
+			if (_focusedWidget) {
+				_focusedWidget->handleMouseDown(event);
 
-		_system->delayMillis(10);
-		update();
-		_system->updateScreen();
+				uint32 now = _system->getMillis();
+				bool doubleClick =
+					(now - _lastClickTime < 500 &&
+					ABS(event.mouse.x - _lastClickPos.x) < 5 &&
+					ABS(event.mouse.y - _lastClickPos.y) < 5);
+
+				_lastClickTime = _system->getMillis();
+				_lastClickPos.x = event.mouse.x;
+				_lastClickPos.y = event.mouse.y;
+
+				if (doubleClick && _focusedWidget->handleDoubleClick(event))
+					queueEvent(_focusedWidget, kDialogClick);
+			}
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			buttonPressed = false;
+
+			// Only the focused widget receives the button up
+			// event. If the widget handles the event, it produces
+			// a dialog click event.
+
+			if (_focusedWidget) {
+				MacWidget *widget = _focusedWidget;
+
+				if (widget->findWidget(event.mouse.x, event.mouse.y)) {
+					if (widget->handleMouseUp(event)) {
+						clearFocusedWidget();
+						queueEvent(widget, kDialogClick);
+					}
+				}
+
+				clearFocusedWidget();
+			}
+
+			updateCursor();
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			// The "beam" cursor can be hidden, but will become
+			// visible again when the user moves the mouse.
+
+			if (_beamCursor)
+				_beamCursorVisible = true;
+
+			// Only the focused widget receives mouse move events,
+			// and then only if the mouse is within the widget's
+			// area of control. This are of control is usually the
+			// widget bounds, but widgets can redefine findWidget()
+			// to change this, e.g. for slider widgets.
+
+			if (_focusedWidget) {
+				bool wasActive = _focusedWidget->findWidget(_oldMousePos.x, _oldMousePos.y);
+				bool isActive = _focusedWidget->findWidget(_mousePos.x, _mousePos.y);
+
+				if (wasActive != isActive)
+					_focusedWidget->setRedraw();
+
+				// The widget gets mouse events while it's
+				// active, but also one last one when it
+				// becomes inactive.
+
+				if (isActive || wasActive)
+					_focusedWidget->handleMouseMove(event);
+			} else {
+				updateCursor();
+			}
+
+			break;
+
+		case Common::EVENT_WHEELUP:
+			if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
+				break;
+
+			w = findWidget(event.mouse.x, event.mouse.y);
+			if (w >= 0)
+				_widgets[w]->handleWheelUp();
+
+			break;
+
+		case Common::EVENT_WHEELDOWN:
+			if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
+				break;
+
+			w = findWidget(event.mouse.x, event.mouse.y);
+			if (w >= 0)
+				_widgets[w]->handleWheelDown();
+
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			// Ignore keyboard while mouse is pressed
+			if (buttonPressed)
+				break;
+
+			// Handle default button
+			if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+				MacWidget *widget = getDefaultWidget();
+				if (widget && widget->isEnabled() && widget->isVisible()) {
+					for (int i = 0; i < 2; i++) {
+						widget->setRedraw();
+						widget->draw(i == 0);
+						update();
+
+						for (int j = 0; j < 10; j++) {
+							_system->delayMillis(10);
+							_system->updateScreen();
+						}
+					}
+
+					queueEvent(widget, kDialogClick);
+				}
+			}
+
+			// Otherwise, give widgets a chance to react to key
+			// presses. All widgets get a chance, whether or not
+			// they are focused. This may be a bad idea if there
+			// is ever more than one edit text widget in the
+			// window.
+			//
+			// Typing hides the "beam" cursor.
+
+			for (uint i = 0; i < _widgets.size(); i++) {
+				if (_widgets[i]->isVisible() && _widgets[i]->isEnabled() && _widgets[i]->handleKeyDown(event)) {
+					if (_beamCursor) {
+						_beamCursorVisible = false;
+						undrawBeamCursor();
+					}
+
+					if (_widgets[i]->reactsToKeyDown())
+						queueEvent(_widgets[i], kDialogKeyDown);
+
+					break;
+				}
+			}
+
+			break;
+
+		default:
+			break;
+		}
 	}
 
-	return kDialogQuit;
+	// A focused widget implies that the mouse button is being held down.
+	// It must be active and visible, so it can receive mouse repeat
+	// events, e.g. for holding down scroll buttons on a slider widget.
+
+	if (_focusedWidget && _system->getMillis() > nextMouseRepeat) {
+		nextMouseRepeat = _system->getMillis() + 40;
+		_focusedWidget->handleMouseHeld();
+	}
+
+	for (uint i = 0; i < _widgets.size(); i++) {
+		if (_widgets[i]->valueHasChanged())
+			queueEvent(_widgets[i], kDialogValueChange);
+	}
+
+	if (!_eventQueue.empty()) {
+		dialogEvent = _eventQueue.pop();
+		return true;
+	}
+
+	return false;
+}
+
+void MacGuiImpl::MacDialogWindow::delayAndUpdate() {
+	_system->delayMillis(10);
+	update();
+	_system->updateScreen();
 }
 
 void MacGuiImpl::MacDialogWindow::updateCursor() {

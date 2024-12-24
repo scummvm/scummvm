@@ -1112,27 +1112,36 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 
 	window->setDefaultWidget(buttonOpen);
 
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOpen->getId() || clicked == listBox->getId()) {
-			saveSlotToHandle =
-				listBox->getValue() < ARRAYSIZE(slotIds) ?
-				slotIds[listBox->getValue()] : -1;
-			ret = true;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOpen || event.widget == listBox) {
+					saveSlotToHandle =
+						listBox->getValue() < ARRAYSIZE(slotIds) ?
+						slotIds[listBox->getValue()] : -1;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == buttonCancel->getId())
-			break;
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not load the saved game
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
@@ -1183,36 +1192,43 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 	window->setDefaultWidget(buttonSave);
 	editText->selectAll();
 
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonSave->getId()) {
-			ret = true;
-			saveName = editText->getText();
-			saveSlotToHandle = firstAvailableSlot;
-			break;
-		}
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonSave) {
+					saveName = editText->getText();
+					saveSlotToHandle = firstAvailableSlot;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
 
-		if (clicked == buttonCancel->getId())
-			break;
+				break;
 
-		if (clicked == kDialogWantsAttention) {
-			// Cycle through deferred actions
-			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				if (deferredActionsIds[i] == editText->getId()) {
+			case kDialogKeyDown:
+				if (event.widget == editText) {
 					// Disable "Save" button when text is empty
 					buttonSave->setEnabled(!editText->getText().empty());
 				}
+
+				break;
+
+			default:
+				break;
 			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not save the game
 	delete window;
-	return ret;
+	return false;
 }
 
 void MacGuiImpl::prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size) {
@@ -1259,25 +1275,31 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 	window->setDefaultWidget(buttonOk);
 	window->addSubstitution(text);
 
-	// When quitting, the default action is to quit
-	bool ret = true;
-
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == buttonOk->getId())
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
 
-		if (clicked == buttonCancel->getId()) {
-			ret = false;
-			break;
+			default:
+				break;
+			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// Quitting is the same as clicking Ok
 	delete window;
-	return ret;
+	return true;
 }
 
 void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text) {

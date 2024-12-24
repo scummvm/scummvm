@@ -35,11 +35,6 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
-// Use negative values for these. Zero and upwards are reserved for widget IDs.
-
-#define kDialogQuit           -1
-#define kDialogWantsAttention -2
-
 class OSystem;
 
 namespace Graphics {
@@ -279,6 +274,7 @@ public:
 		bool _fullRedraw = false;
 
 		Common::String _text;
+		int _oldValue = 0;
 		int _value = 0;
 
 		int drawText(Common::String text, int x, int y, int w, uint32 fg = 0, uint32 bg = 0, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
@@ -308,11 +304,19 @@ public:
 		virtual void setValue(int value);
 		int getValue() const { return _value; }
 
+		void rememberValue() {
+			_oldValue = _value;
+		}
+
+		bool valueHasChanged() {
+			return _oldValue != _value;
+		}
+
 		Common::String getText() const;
 
 		virtual bool useBeamCursor() { return false; }
 		virtual bool findWidget(int x, int y) const;
-		virtual bool shouldDeferAction() { return false; }
+		virtual bool reactsToKeyDown() { return false; }
 
 		virtual void draw(bool drawFocused = false) = 0;
 
@@ -433,7 +437,7 @@ public:
 
 		bool useBeamCursor() override { return true; }
 		bool findWidget(int x, int y) const override;
-		bool shouldDeferAction() override { return true; }
+		bool reactsToKeyDown() override { return true; }
 
 		void draw(bool drawFocused = false) override;
 
@@ -649,8 +653,20 @@ public:
 		void handleMouseMove(Common::Event &event) override;
 	};
 
+	enum MacDialogEventType {
+		kDialogClick,
+		kDialogValueChange,
+		kDialogKeyDown
+	};
+
+	struct MacDialogEvent {
+		MacWidget *widget;
+		MacDialogEventType type;
+	};
+
 	class MacDialogWindow {
 	private:
+		Common::Queue<MacDialogEvent> _eventQueue;
 		uint32 _black;
 		uint32 _white;
 
@@ -695,6 +711,8 @@ public:
 		Common::Array<Common::Rect> _dirtyRects;
 		bool _dirtyPalette = false;
 
+		void queueEvent(MacGuiImpl::MacWidget *widget, MacGuiImpl::MacDialogEventType type);
+
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
 		void addWidget(MacWidget *widget, MacWidgetType type);
@@ -712,7 +730,8 @@ public:
 		bool isVisible() const { return _visible; }
 
 		void show();
-		int runDialog(Common::Array<int> &deferredActionIds);
+		bool runDialog(MacDialogEvent &dialogEvent);
+		void delayAndUpdate();
 		void updateCursor();
 
 		MacWidget *getWidget(MacWidgetType type, int nr = 0) const;
