@@ -424,9 +424,10 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
 	if (sdlkey_index != _bindings.end())
 		return DoAction((*sdlkey_index)._value);
-
+	// Avoid modifier keys being detected as invalid input
 	if (ev->kbd.keycode != Common::KEYCODE_LALT && ev->kbd.keycode != Common::KEYCODE_RALT
-	        && ev->kbd.keycode != Common::KEYCODE_LCTRL && ev->kbd.keycode != Common::KEYCODE_RCTRL) {
+	        && ev->kbd.keycode != Common::KEYCODE_LCTRL && ev->kbd.keycode != Common::KEYCODE_RCTRL
+	        && ev->kbd.keycode != Common::KEYCODE_LSHIFT && ev->kbd.keycode != Common::KEYCODE_RSHIFT) {
 		handle_wrong_key_pressed();
 	}
 
