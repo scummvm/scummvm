@@ -572,7 +572,7 @@ void Adlib::Func294E() {
 	
 	uint8 bpp8;
 	uint16 bpp6;
-
+	uint16 bp4;
 	uint8 bp6;
 	/*
 	;; Arguments:
@@ -597,28 +597,20 @@ void Adlib::Func294E() {
 				// l0017_2996:
 				bp6 = 0x7F;
 			}
-			// TODO: Do we hit the label?
-			// l0017_2996:
 		}
 		// TODO: Do we hit the label?
 		// l0017_29EB:
 	}
 	// TODO:
 	// l0017_2A4F:
+	
 	/*
 
 
 l0017_299B:
-	mov	di,[bp-6h]
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	di,[bp-6h]
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-4h],ax
+	dx = gArray9F[bp6];
+	bp4 = (gArray11F[bp6] << 0x8) + dx;
+	// TODO: Implement the multiplication here
 	mov	al,[bp+6h]
 	xor	ah,ah
 	xor	dx,dx
