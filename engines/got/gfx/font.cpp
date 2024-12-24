@@ -26,7 +26,7 @@
 namespace Got {
 namespace Gfx {
 
-static const byte DIALOG_COLOR[] = { 14,54,120,138,15,0,0,0,0,0,0,0,0,0,0,0 };
+const byte DIALOG_COLOR[] = { 14,54,120,138,15,0,0,0,0,0,0,0,0,0,0,0 };
 
 void Font::load() {
 	Common::File f;

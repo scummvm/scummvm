@@ -19,44 +19,51 @@
  *
  */
 
-#ifndef GOT_GFX_FONT_H
-#define GOT_GFX_FONT_H
+#ifndef GOT_VIEWS_DIALOGS_SAY_H
+#define GOT_VIEWS_DIALOGS_SAY_H
 
-#include "common/array.h"
-#include "graphics/font.h"
-#include "graphics/managed_surface.h"
+#include "got/views/dialogs/dialog.h"
+#include "got/gfx/gfx_pics.h"
 
 namespace Got {
-namespace Gfx {
+namespace Views {
+namespace Dialogs {
 
-extern const byte DIALOG_COLOR[];
-
-class Font : public Graphics::Font {
+class Say : public Dialog {
+	enum WaitResponse {
+		WAIT_NONE, WAIT_MORE, WAIT_DONE
+	};
 private:
-	Common::Array<Graphics::ManagedSurface> _font;
+	Gfx::Pics *_pic = nullptr;
+	int _item = 0;
+	int _type = 0;
+	int _picIndex = 0;
+	const char *_content = nullptr;
+	int _contentLength = 0;
+	int _woopCtr = 0;
+	WaitResponse _waitForResponse = WAIT_NONE;
+
+	/**
+	 * Advance to showing the entirety of the current page
+	 */
+	void showEntirePage();
 
 public:
-	void load();
+	Say();
+	virtual ~Say() {}
 
-	int getFontHeight() const override {
-		return 9;
-	}
-	int getMaxCharWidth() const override {
-		return 8;
-	}
-	int getCharWidth(uint32 chr) const override {
-		return 8;
-	}
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
-		Graphics::Font::drawChar(dst, chr, x, y, color);
-	}
+	static void show(int item, Gfx::Pics *pic, int type);
 
-	void drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
-		const Common::String &text, int color);
+	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool tick() override;
 };
 
-} // namespace Gfx
+} // namespace Dialogs
+} // namespace Views
 } // namespace Got
 
 #endif
