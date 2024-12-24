@@ -31,16 +31,26 @@ const char *ON_OFF[] = { "On", "Off", nullptr };
 const char *YES_NO[] = { "Yes", "No", nullptr };
 
 SelectOption::SelectOption(const Common::String &name, const char *title,
-		const char *options[]) :
-		Dialog(name), _title(title) {
-	// Load the options list into the string array
+		const char *options[]) : Dialog(name) {
+	// Set up string array of options
+	Common::StringArray optionsArray;
 	for (const char **option = options; *option; ++option)
-		_options.push_back(*option);
+		optionsArray.push_back(*option);
+
+	setContent(title, optionsArray);
+}
+
+SelectOption::SelectOption(const Common::String &name) : Dialog(name) {
+}
+
+void SelectOption::setContent(const Common::String &title,
+		const Common::StringArray &options) {
+	_title = title;
 
 	// Calculate the bounds for the dialog
 	int w, h, x1, y1, x2, y2;
 
-	w = strlen(title);
+	w = title.size();
 	for (uint i = 0; i < _options.size(); ++i)
 		w = MAX(w, (int)_options[i].size());
 
@@ -106,6 +116,7 @@ bool SelectOption::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_ESCAPE:
+		_selectedItem = -1;
 		closed();
 
 	default:

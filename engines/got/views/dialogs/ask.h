@@ -19,52 +19,23 @@
  *
  */
 
-#ifndef GOT_VIEWS_DIALOGS_SELECT_OPTION_H
-#define GOT_VIEWS_DIALOGS_SELECT_OPTION_H
+#ifndef GOT_VIEWS_DIALOGS_ASK_H
+#define GOT_VIEWS_DIALOGS_ASK_H
 
-#include "graphics/managed_surface.h"
-#include "got/views/dialogs/dialog.h"
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-// Commonly used options across multiple dialogs
-extern const char *ON_OFF[];
-extern const char *YES_NO[];
-
-
-class SelectOption : public Dialog {
-private:
-	Common::String _title;
-	Common::StringArray _options;
-	int _hammerFrame = 0;
-	int _smackCtr = 0;
-
-protected:
-	int _selectedItem = 0;
-
-	void setContent(const Common::String &title,
-		const Common::StringArray &options);
-	virtual void closed() {
-		close();
-	}
-	virtual void selected() {}
-
+class Ask : public SelectOption {
 public:
-	SelectOption(const Common::String &name, const char *title,
-		const char *options[]);
-	SelectOption(const Common::String &name);
-	virtual ~SelectOption() {}
+	Ask();
+	virtual ~Ask() {}
 
-	bool msgFocus(const FocusMessage &msg) override {
-		_selectedItem = 0;
-		_smackCtr = 0;
-		return true;
-	}
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+	static void show(const Common::String &title,
+		const Common::StringArray &options);
+	void closed() override;
 };
 
 } // namespace Dialogs

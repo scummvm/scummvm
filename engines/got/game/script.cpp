@@ -27,6 +27,7 @@
 #include "got/game/status.h"
 #include "got/gfx/image.h"
 #include "got/utils/file.h"
+#include "got/views/dialogs/ask.h"
 #include "got/events.h"
 #include "got/vars.h"
 
@@ -750,51 +751,65 @@ int Scripts::cmd_say(int mode, int type) {
 }
 
 int Scripts::cmd_ask() {
-#ifdef TODO
-	int i, v, p;
-	char title[41];
-	char *op[] = { NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
-	char opts[10][41];
+	int v = 0;
+	uint p;
+	char title[41], opt[41];
+	Common::StringArray opts;
 
 	memset(_G(tmp_buff), 0, TMP_SIZE);
-	memset(opts, 0, 10 * 41);
 
-	if (!skip_colon()) return 5;
+	if (!skip_colon())
+		return 5;
 
 	if (Common::isAlpha(*buff_ptr)) {
 		v = *buff_ptr - 65;
 		buff_ptr++;
 		if (*buff_ptr != ',') return 5;
 		buff_ptr++;
-	} else return 5;
+	} else {
+		return 5;
+	}
 
-	if (!calc_string(1)) return 5;
+	if (!calc_string(1))
+		return 5;
 
 	strncpy(title, temps, 41);
 	title[40] = 0;
 
 	if (*buff_ptr == ',') {
 		buff_ptr++;
-		if (!calc_value()) return 5;
-		buff_ptr++;
-		p = (int)lvalue;
-	} else return 5;
+		if (!calc_value())
+			return 5;
 
-	i = 0;
-	while (calc_string(0)) {
-		strncpy((char *) opts[i], temps, 41);
-		opts[i][40] = 0;
-		op[i] = opts[i];
-		i++;
-		if (i > 9) return 3;
+		buff_ptr++;
+		p = lvalue;
+	} else {
+		return 5;
 	}
-	if (p > i) p = 0;
-	num_var[v] = select_option(op, title, p - 1);
-	d_restore();
+
+	_askVar = v;
+
+	while (calc_string(0)) {
+		Common::strcpy_s(opt, temps);
+		opts.push_back(opt);
+
+		if (opts.size() > 9)
+			return 3;
+	}
+
+	if (p > opts.size())
+		p = 0;
+
+	// Pause the script execution, and open up an ask window.
+	// Execution of the script will resume after a selection.
+	pause();
+	Views::Dialogs::Ask::show(title, opts);
 	return 0;
-#else
-	error("TODO: cmd_ask");
-#endif
+}
+
+void Scripts::setAskResponse(int option) {
+	num_var[_askVar] = option;
+	resume();
 }
 
 int Scripts::cmd_sound() {

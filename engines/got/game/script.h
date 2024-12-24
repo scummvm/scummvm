@@ -50,6 +50,7 @@ private:
 	long  ltemp = 0;
 	char  temps[255] = {};
 	bool _paused = false;
+	int _askVar = -1;
 
 private:
 	int  read_script_file();
@@ -112,6 +113,8 @@ public:
 		_paused = false;
 		scriptLoop();
 	}
+
+	void setAskResponse(int option);
 };
 
 extern void execute_script(long index, Gfx::Pics *pic);
