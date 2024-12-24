@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:15+0000\n"
+"POT-Creation-Date: 2024-12-24 11:18+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -307,8 +307,8 @@ msgstr "另一存储正工作中。您要中断它吗？"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -321,8 +321,8 @@ msgstr "是"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -344,7 +344,7 @@ msgstr "JSON 代码内容有误。"
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/launcher.cpp:582 gui/launcher.cpp:586 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:586 engines/engine.cpp:609
@@ -451,7 +451,7 @@ msgid ""
 "files with it?"
 msgstr "你的连接似乎受限。确定要使用它下载文件吗？"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM 无法打开指定目录！"
 
@@ -548,7 +548,7 @@ msgstr "图标包"
 msgid "shader packs"
 msgstr "光影包"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:737
 msgid "Pick the game:"
 msgstr "选择游戏："
 
@@ -1358,7 +1358,7 @@ msgstr "年份"
 msgid "Select Group by"
 msgstr "分组依据"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:898
+#: gui/launcher.cpp:234 gui/launcher.cpp:922
 msgid "Group:"
 msgstr "分组："
 
@@ -1449,12 +1449,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "批量添加..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:892 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "在游戏列表中搜索"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:913 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "搜索："
@@ -1476,117 +1476,117 @@ msgid ""
 "a huge number of games."
 msgstr "你确定要进行全盘扫描吗？这可能会添加大量的游戏。"
 
-#: gui/launcher.cpp:450
+#: gui/launcher.cpp:474
 msgid "Do you really want to remove this game configuration?"
 msgstr "你确定要删除此游戏配置吗？"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:525
 msgid "Do you want to load saved game?"
 msgstr "你要载入存档吗？"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:582
 msgid "This game does not support loading games from the launcher."
 msgstr "这个游戏不支持直接从启动器载入存档。"
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:586
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM 找不到能运行此游戏的引擎！"
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:689 gui/launcher.cpp:713
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
 "你授予 ScummVM 访问此目录的权限了吗？点击顶部的帮助按钮 [?] 获取详细说明"
 
-#: gui/launcher.cpp:686
+#: gui/launcher.cpp:710
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM 在指定目录找不到游戏！"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:707
+#: gui/launcher.cpp:731
 msgid "Unknown variant"
 msgstr "未知变体"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:962 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "列表视图"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:963 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "网格视图"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "~S~tart"
 msgstr "启动 (~S~)"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "Start selected game"
 msgstr "启动选中游戏"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "~L~oad..."
 msgstr "载入 (~L~)..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "Load saved game for selected game"
 msgstr "为选定游戏载入存档"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1132
 msgid "Record..."
 msgstr "录制..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "~G~ame Options..."
 msgstr "游戏设置 (~G~)..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "Change game options"
 msgstr "更改游戏设置"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "游戏设置 (~G~)..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1236 gui/launcher.cpp:1432
 msgid "Unknown Engine"
 msgstr "未知引擎"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1253 gui/launcher.cpp:1449
 msgid "Unknown Publisher"
 msgstr "未知发行商"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1270 gui/launcher.cpp:1466
 msgid "No Series"
 msgstr "无系列"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1284 gui/launcher.cpp:1480
 msgid "Language not detected"
 msgstr "未检测到语言"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1298 gui/launcher.cpp:1494
 msgid "Platform not detected"
 msgstr "未检测到平台"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1315 gui/launcher.cpp:1511
 msgid "Unknown Year"
 msgstr "未知年份"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1518 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "全部"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1673
 msgid "Icons per row:"
 msgstr "每行图标数："
 
@@ -2662,7 +2662,7 @@ msgstr "录制"
 msgid "Playback"
 msgstr "回放"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:294
 msgid "Edit"
 msgstr "编辑"
 
@@ -2852,11 +2852,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "清除数值"
 
-#: gui/widgets/grid.cpp:285
+#: gui/widgets/grid.cpp:286
 msgid "Play"
 msgstr "游玩"
 
-#: gui/widgets/grid.cpp:288
+#: gui/widgets/grid.cpp:289
 msgid "Saves"
 msgstr "存档"
 

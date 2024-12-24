@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:15+0000\n"
+"POT-Creation-Date: 2024-12-24 11:18+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -325,8 +325,8 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -339,8 +339,8 @@ msgstr "Так"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -364,7 +364,7 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/launcher.cpp:582 gui/launcher.cpp:586 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:586 engines/engine.cpp:609
@@ -478,7 +478,7 @@ msgid ""
 msgstr ""
 "Здаецца, што ваша злучэнне абмежавана. Вы сапраўды жадаеце загрузіць файлы?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не можа адкрыць азначаную дырэкторыю!"
 
@@ -583,7 +583,7 @@ msgstr ""
 msgid "shader packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:737
 msgid "Pick the game:"
 msgstr "Абярыце гульню:"
 
@@ -1346,7 +1346,7 @@ msgstr ""
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:898
+#: gui/launcher.cpp:234 gui/launcher.cpp:922
 msgid "Group:"
 msgstr ""
 
@@ -1442,12 +1442,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Шмат гульняў..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:892 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Пошук у спісе гульняў"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:913 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Пошук:"
@@ -1473,123 +1473,123 @@ msgstr ""
 "Вы сапраўды жадаеце запусціць дэтэктар усіх гульняў? Гэта патэнцыяльна можа "
 "дадаць вялікую колькасць гульняў."
 
-#: gui/launcher.cpp:450
+#: gui/launcher.cpp:474
 msgid "Do you really want to remove this game configuration?"
 msgstr "Вы сапраўды жадаеце выдаліць налады для гэтай гульні?"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:525
 msgid "Do you want to load saved game?"
 msgstr "Вы жадаеце загрузіць гульню?"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:582
 msgid "This game does not support loading games from the launcher."
 msgstr "Гэтая гульня не падтрымвае загрузку захаванняў праз галоўнае меню."
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:586
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не можа знайсці рухавічок для запуску абранай гульні!"
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:689 gui/launcher.cpp:713
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
 
-#: gui/launcher.cpp:686
+#: gui/launcher.cpp:710
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не можа знайсці гульню ў азначанай дырэкторыі!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:707
+#: gui/launcher.cpp:731
 msgid "Unknown variant"
 msgstr "Невядомы варыянт"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:962 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Выгляд спісу"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:963 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Выгляд сеткі"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "~S~tart"
 msgstr "П~у~ск"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "Start selected game"
 msgstr "Запусціць абраную гульню"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "~L~oad..."
 msgstr "~З~агрузіць..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "Load saved game for selected game"
 msgstr "Загрузіць захаванне для абранай гульні"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1132
 msgid "Record..."
 msgstr "Запіс..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~Н~алады..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "Change game options"
 msgstr "Змяніць налады гульні"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~Н~алады..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1236 gui/launcher.cpp:1432
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Невядомы варыянт"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1253 gui/launcher.cpp:1449
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Невядомы аўтар"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1270 gui/launcher.cpp:1466
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1284 gui/launcher.cpp:1480
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1298 gui/launcher.cpp:1494
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1315 gui/launcher.cpp:1511
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "Невядомая памылка"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1518 gui/widgets/groupedlist.cpp:81
 #, fuzzy
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1673
 msgid "Icons per row:"
 msgstr ""
 
@@ -2730,7 +2730,7 @@ msgstr "Запісаць"
 msgid "Playback"
 msgstr "Прайграць"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:294
 msgid "Edit"
 msgstr "Рэдагаваць"
 
@@ -2927,11 +2927,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Ачысціць значэнне"
 
-#: gui/widgets/grid.cpp:285
+#: gui/widgets/grid.cpp:286
 msgid "Play"
 msgstr "Гуляць"
 
-#: gui/widgets/grid.cpp:288
+#: gui/widgets/grid.cpp:289
 #, fuzzy
 msgid "Saves"
 msgstr "Захаваць"

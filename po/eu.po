@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:15+0000\n"
+"POT-Creation-Date: 2024-12-24 11:18+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -308,8 +308,8 @@ msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -322,8 +322,8 @@ msgstr "Bai"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -345,7 +345,7 @@ msgstr "JSON kodearen edukia ez dago ongi osatuta."
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/launcher.cpp:582 gui/launcher.cpp:586 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:586 engines/engine.cpp:609
@@ -454,7 +454,7 @@ msgstr ""
 "Antza denez, zure konexioa mugatua da. Ziur al zaude fitxategiak deskargatu "
 "nahi dituzula?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
 
@@ -555,7 +555,7 @@ msgstr "ikono multzoak"
 msgid "shader packs"
 msgstr "shader multzoak"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:737
 msgid "Pick the game:"
 msgstr "Jokoa aukeratu:"
 
@@ -1388,7 +1388,7 @@ msgstr "Urtea"
 msgid "Select Group by"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:898
+#: gui/launcher.cpp:234 gui/launcher.cpp:922
 msgid "Group:"
 msgstr "Taldea:"
 
@@ -1479,12 +1479,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Hainbat gehitu..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:892 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Bilatu joko-zerrendan"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:913 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Bilatu:"
@@ -1510,25 +1510,25 @@ msgstr ""
 "Joko detektatzaile masiboa exekutatu nahi al duzu? Honek joko kantitate "
 "handia gehitu dezake."
 
-#: gui/launcher.cpp:450
+#: gui/launcher.cpp:474
 msgid "Do you really want to remove this game configuration?"
 msgstr "Benetan ezabatu nahi duzu joko-konfigurazio hau?"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:525
 msgid "Do you want to load saved game?"
 msgstr "Gordetako jokoa kargatu?"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:582
 msgid "This game does not support loading games from the launcher."
 msgstr "Joko honek ez du uzten partidak abiarazletik kargatzen."
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:586
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM-k ezin izan du aukeraturiko jokoa exekutatzeko gai den motorerik "
 "aurkitu!"
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:689 gui/launcher.cpp:713
 #, fuzzy
 #| msgid ""
 #| "Did you add this directory to the SAF? Press the help button [?] on the "
@@ -1540,96 +1540,96 @@ msgstr ""
 "Zuk gehitu duzu direktorio hau SAFen? Sakatu goiko laguntza botoia [?] "
 "argibide gehiagorako"
 
-#: gui/launcher.cpp:686
+#: gui/launcher.cpp:710
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:707
+#: gui/launcher.cpp:731
 msgid "Unknown variant"
 msgstr "Aldaera ezezaguna"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:962 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Zerrenda ikuspegia"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:963 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Sareta ikuspegia"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "~S~tart"
 msgstr "~H~asi"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "Start selected game"
 msgstr "Aukeraturiko jokora jolastu"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "~L~oad..."
 msgstr "~K~argatu..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "Load saved game for selected game"
 msgstr "Aukeraturiko jokorako partida gordea kargatu"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1132
 msgid "Record..."
 msgstr "Grabatu..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~A~ukerak..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "Change game options"
 msgstr "Aldatu jokoaren aukerak"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~A~ukerak..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1236 gui/launcher.cpp:1432
 msgid "Unknown Engine"
 msgstr "Motore Ezezaguna"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1253 gui/launcher.cpp:1449
 msgid "Unknown Publisher"
 msgstr "Argitaratzaile ezezaguna"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1270 gui/launcher.cpp:1466
 msgid "No Series"
 msgstr "Sailik ez"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1284 gui/launcher.cpp:1480
 msgid "Language not detected"
 msgstr "Hizkuntza ez da detektatu"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1298 gui/launcher.cpp:1494
 msgid "Platform not detected"
 msgstr "Plataforma ez da detektatu"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1315 gui/launcher.cpp:1511
 msgid "Unknown Year"
 msgstr "Urte ezezaguna"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1518 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Guztiak"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1673
 msgid "Icons per row:"
 msgstr ""
 
@@ -2740,7 +2740,7 @@ msgstr "Grabatu"
 msgid "Playback"
 msgstr "Erreproduzitu"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:294
 msgid "Edit"
 msgstr "Editatu"
 
@@ -2931,11 +2931,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Balioa kendu"
 
-#: gui/widgets/grid.cpp:285
+#: gui/widgets/grid.cpp:286
 msgid "Play"
 msgstr "Jolastu"
 
-#: gui/widgets/grid.cpp:288
+#: gui/widgets/grid.cpp:289
 msgid "Saves"
 msgstr "Gordeak"
 

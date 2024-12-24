@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:15+0000\n"
+"POT-Creation-Date: 2024-12-24 11:18+0000\n"
 "PO-Revision-Date: 2024-12-22 11:00+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -308,8 +308,8 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -322,8 +322,8 @@ msgstr "예"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
+#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -345,7 +345,7 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/launcher.cpp:582 gui/launcher.cpp:586 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:586 engines/engine.cpp:609
@@ -452,7 +452,7 @@ msgid ""
 "files with it?"
 msgstr "연결이 제한된 것 같습니다. 정말 파일을 다운로드하겠습니까?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM이 지정된 디렉터리를 열 수 없습니다!"
 
@@ -553,7 +553,7 @@ msgstr "아이콘 팩"
 msgid "shader packs"
 msgstr "셰이더 팩"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:737
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
@@ -1379,7 +1379,7 @@ msgstr "연도"
 msgid "Select Group by"
 msgstr "그룹 선택 기준"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:898
+#: gui/launcher.cpp:234 gui/launcher.cpp:922
 msgid "Group:"
 msgstr "그룹:"
 
@@ -1470,12 +1470,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "일괄 추가..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:892 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "게임 목록에서 검색"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:913 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "검색:"
@@ -1499,23 +1499,23 @@ msgstr ""
 "정말 일괄 게임 탐지기를 실행하겠습니까? 이렇게 하면 엄청난 수의 게임이 추가"
 "될 가능성이 있습니다."
 
-#: gui/launcher.cpp:450
+#: gui/launcher.cpp:474
 msgid "Do you really want to remove this game configuration?"
 msgstr "정말 이 게임 구성을 제거하겠습니까?"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:525
 msgid "Do you want to load saved game?"
 msgstr "저장된 게임을 불러오겠습니까?"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:582
 msgid "This game does not support loading games from the launcher."
 msgstr "이 게임은 런처에서 게임을 불러오는 것을 지원하지 않습니다."
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:586
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM이 선택한 게임을 실행할 수 있는 엔진을 찾을 수 없습니다!"
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:689 gui/launcher.cpp:713
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
@@ -1523,94 +1523,94 @@ msgstr ""
 "이 디렉터리에 ScummVM 접속 권한을 부여했습니까? 자세한 지침은 상단의 도움말 "
 "[?] 버튼을 누름"
 
-#: gui/launcher.cpp:686
+#: gui/launcher.cpp:710
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉터리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:707
+#: gui/launcher.cpp:731
 msgid "Unknown variant"
 msgstr "알 수 없는 변종 게임"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:962 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "목록 표시"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:963 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "격자 표시"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "~S~tart"
 msgstr "시작(~S~)"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1127
 msgid "Start selected game"
 msgstr "선택한 게임을 시작"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "~L~oad..."
 msgstr "불러오기(~L~)..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1130
 msgid "Load saved game for selected game"
 msgstr "선택된 게임의 저장된 게임을 불러옴"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1132
 msgid "Record..."
 msgstr "녹화..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "~G~ame Options..."
 msgstr "게임 옵션(~G~)..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgid "Change game options"
 msgstr "게임 옵션 변경"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1138
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "게임 옵션(~G~)..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1236 gui/launcher.cpp:1432
 msgid "Unknown Engine"
 msgstr "알 수 없는 엔진"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1253 gui/launcher.cpp:1449
 msgid "Unknown Publisher"
 msgstr "알 수 없는 배급사"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1270 gui/launcher.cpp:1466
 msgid "No Series"
 msgstr "시리즈 없음"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1284 gui/launcher.cpp:1480
 msgid "Language not detected"
 msgstr "언어가 감지되지 않았음"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1298 gui/launcher.cpp:1494
 msgid "Platform not detected"
 msgstr "플랫폼이 감지되지 않았음"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1315 gui/launcher.cpp:1511
 msgid "Unknown Year"
 msgstr "알 수 없는 연도"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1518 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "모두"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1673
 msgid "Icons per row:"
 msgstr "열당 아이콘:"
 
@@ -2707,7 +2707,7 @@ msgstr "녹화"
 msgid "Playback"
 msgstr "재생"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:294
 msgid "Edit"
 msgstr "편집"
 
@@ -2897,11 +2897,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "값 지우기"
 
-#: gui/widgets/grid.cpp:285
+#: gui/widgets/grid.cpp:286
 msgid "Play"
 msgstr "플레이"
 
-#: gui/widgets/grid.cpp:288
+#: gui/widgets/grid.cpp:289
 msgid "Saves"
 msgstr "저장"
 
