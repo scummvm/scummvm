@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.9.0 (22.12.2024)
+#### 2.9.0 "Close Encounters of the 2.9th Kind" (22.12.2024)
 
  Neue Spiele:
    - Unterstützung für Orion Burger hinzugefügt.
@@ -302,7 +302,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - App-Icons für den "Dark"- und "Tinted"-Modus hinzugefügt.
    - Mehrere Stabilitätsverbesserungen.
 
-#### 2.8.1 (31.03.2024)
+#### 2.8.1 "Oh MMy!" (31.03.2024)
 
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
