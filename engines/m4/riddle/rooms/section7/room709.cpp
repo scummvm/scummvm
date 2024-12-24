@@ -591,11 +591,11 @@ void Room709::pre_parser() {
 }
 
 void Room709::parser() {
-	bool ecx = player_said_any("look", "look at");
-	bool edi = player_said_any("talk", "talk to", "take");
-	bool esi = player_said_any("push", "pull", "gear", "open", "close", "RopeS", "RopeL", "RopeR", "RopeB");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to", "take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close", "RopeS", "RopeL", "RopeR", "RopeB");
 
-	if (esi && player_said("rope   ")) {
+	if (gearFl && player_said("rope   ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -641,7 +641,7 @@ void Room709::parser() {
 		}
 	} // esi && player_said("rope   ")
 
-	else if (esi && player_said("rope     ")) {
+	else if (gearFl && player_said("rope     ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -687,7 +687,7 @@ void Room709::parser() {
 		}
 	} // esi && player_said("rope     ")
 
-	else if (esi && player_said("rope  ")) {
+	else if (gearFl && player_said("rope  ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -734,7 +734,7 @@ void Room709::parser() {
 		}
 	} // esi && player_said("rope  ")
 
-	else if (esi && player_said("rope    ")) {
+	else if (gearFl && player_said("rope    ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -898,13 +898,13 @@ void Room709::parser() {
 		}
 	} // player_said("Back")
 
-	else if (ecx && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
+	else if (lookFl && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
 		digi_play("709R12", 1, 255, -1, -1);
-	} else if (ecx && player_said("Chisel") && inv_object_is_here("Chisel")) {
+	} else if (lookFl && player_said("Chisel") && inv_object_is_here("Chisel")) {
 		digi_play("709R02", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("rope  ", "rope   ", "rope    ", "rope     ")) {
+	} else if (lookFl && player_said_any("rope  ", "rope   ", "rope    ", "rope     ")) {
 		digi_play("com110", 1, 255, -1, 997);
-	} else if (edi && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
+	} else if (talkFl && player_said("Incense Burner") && inv_object_is_here("Incense Burner")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			ws_walk(_G(my_walker), 373, 279, nullptr, 2, 2, true);
@@ -920,7 +920,7 @@ void Room709::parser() {
 		default:
 			break;
 		}
-	} else if (edi && player_said("Chisel") && inv_object_is_here("chisel")) {
+	} else if (talkFl && player_said("Chisel") && inv_object_is_here("chisel")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			ws_walk(_G(my_walker), 267, 278, nullptr, 2, 10, true);
@@ -936,15 +936,15 @@ void Room709::parser() {
 		default:
 			break;
 		}
-	} else if (!ecx && player_said("journal") && !inv_player_has(_G(player).noun)) {
+	} else if (!lookFl && player_said("journal") && !inv_player_has(_G(player).noun)) {
 		digi_play("709R11", 1, 255, -1, -1);
-	} else if (!ecx && !edi && player_said_any("LIGHTER", "LIT LIGHTER")) {
+	} else if (!lookFl && !talkFl && player_said_any("LIGHTER", "LIT LIGHTER")) {
 		digi_play("com141", 1, 255, -1, 997);
-	} else if (ecx && player_said(" ")) {
+	} else if (lookFl && player_said(" ")) {
 		digi_play("709R01", 1, 255, -1, -1);
-	} else if (ecx && player_said("  ")) {
+	} else if (lookFl && player_said("  ")) {
 		digi_play("708R02", 1, 255, -1, 708);
-	} else if (esi || edi) {
+	} else if (gearFl || talkFl) {
 		switch (imath_ranged_rand(1, 5)) {
 		case 1:
 			digi_play("com006", 1, 255, -1, 997);
