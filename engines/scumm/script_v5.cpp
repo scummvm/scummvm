@@ -1942,6 +1942,38 @@ void ScummEngine_v5::o5_pickupObject() {
 	runInventoryScript(1);
 }
 
+// Inject the speech from the SE version in the classic one, for MI1SE
+void ScummEngine_v5::injectMISESpeech() {
+	// TODOs:
+	// - Correctly calculate the local script offset for all scripts
+	//   (e.g. object scripts, such as Elaine's poster in the second screen)
+	// - Handle multiple speech files for the same message
+	// - Add handling for speech delay
+#if 0
+	if (_game.id == GID_MONKEY && (_game.features & GF_DOUBLEFINE_PAK)) {
+		uint16 currentScriptNum = vm.slot[_currentScript].number;
+		// Ignore texts from global scripts
+		if (currentScriptNum < _numGlobalScripts)
+			return;
+
+		// Ignore empty texts
+		if (!memcmp(_scriptPointer, "\xFF\x01\x0F\x00", 4) ||
+			!memcmp(_scriptPointer, "\xFF\x0F\x20\x00", 4) ||
+			!memcmp(_scriptPointer, "\xFE\x01\x0F\x04\x00", 5))
+			return;
+
+		// TODO: This isn't calculated correctly for all scripts
+		uint32 localOffset = _scriptPointer - _scriptOrgPointer - 1;
+		if (localOffset > _localScriptOffsets[currentScriptNum - _numGlobalScripts])
+			localOffset -= _localScriptOffsets[currentScriptNum - _numGlobalScripts];
+		// Construct a unique offset for each sound
+		uint32 offset = ((_currentRoom + currentScriptNum) << 16) | (localOffset & 0xFFFF);
+		_sound->talkSound(offset, 10, DIGI_SND_MODE_TALKIE);
+		//debug("injectMISESpeech: room %d, script %d, offset %d", _currentRoom, currentScriptNum, localOffset);
+	}
+#endif
+}
+
 void ScummEngine_v5::o5_print() {
 	// WORKAROUND bug #13374: The patched script for the Ultimate Talkie
 	// is missing a WaitForMessage() after Lemonhead says "Oooh, that's
@@ -1956,11 +1988,15 @@ void ScummEngine_v5::o5_print() {
 		return;
 	}
 
+	injectMISESpeech();
+
 	_actorToPrintStrFor = getVarOrDirectByte(PARAM_1);
 	decodeParseString();
 }
 
 void ScummEngine_v5::o5_printEgo() {
+	injectMISESpeech();
+
 	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
 }

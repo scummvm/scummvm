@@ -99,8 +99,30 @@ private:
 	AudioIndex _sfxEntries;
 	Common::String _sfxFilename;
 
+	// Used in MI1 + MI2
+	struct AudioEntryMI {
+		uint16 unk1;
+		uint16 unk2;
+		uint16 room;
+		uint16 script;
+		uint16 localScriptOffset;
+		uint16 messageIndex;        // message index, used in messages split with wait()
+		uint16 isEgoTalking;        // 1 if ego is talking, 0 otherwise
+		uint16 wait;                // wait time in ms
+		Common::String textEnglish; // 256 bytes, English text
+		// 256 bytes, French text
+		// 256 bytes, Italian text
+		// 256 bytes, German text
+		// 256 bytes, Spanish text
+		Common::String speechFile; // 32 bytes
+	};
+
+	typedef Common::Array<AudioEntryMI> AudioIndexMI;
+	AudioIndexMI _audioEntriesMI;
+
 	int32 getSoundIndexFromOffset(uint32 offset);
 
+	void initAudioMappingMI();
 	void initAudioMapping();
 	void initSoundFiles();
 	void indexXWBFile(const Common::String &filename, AudioIndex *audioIndex);

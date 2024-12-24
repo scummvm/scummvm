@@ -46,6 +46,7 @@ void SoundSE::initSoundFiles() {
 	switch (_vm->_game.id) {
 	case GID_MONKEY:
 	case GID_MONKEY2:
+		initAudioMappingMI();
 		_musicFilename = "MusicOriginal.xwb";
 		//_musicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
 		indexXWBFile(_musicFilename, &_musicEntries);
@@ -84,6 +85,11 @@ void SoundSE::initSoundFiles() {
 }
 
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
+	// TODO: Enable once WMA audio is implemented.
+	// Also, some of the PCM music tracks are not playing correctly
+	// (e.g. the act 1 track)
+	return nullptr;
+
 	Common::File *cdAudioFile = new Common::File();
 
 	if (!cdAudioFile->open(Common::Path(_musicFilename))) {
@@ -170,6 +176,24 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 		entry.bits = (format >> (2 + 3 + 18 + 8)) & ((1 << 1) - 1);
 
 		audioIndex->push_back(entry);
+	}
+
+	f->seek(segments[kXWBSegmentEntryNames].offset);
+
+	for (uint32 i = 0; i < entryCount; i++) {
+		Common::String name = f->readString(0, 64);
+		name.toLowercase();
+
+		(*audioIndex)[i].name = name;
+
+		if (!_audioNameToOriginalOffsetMap.contains(name)) {
+			// warning("indexXWBFile: name %s not found in speech.info", name.c_str());
+			continue;
+		}
+
+		const uint32 origOffset = _audioNameToOriginalOffsetMap[name];
+		_offsetToIndex[origOffset] = i;
+		// debug("indexXWBFile: %s -> offset %d, index %d", name.c_str(), origOffset, i);
 	}
 
 	f->close();
@@ -306,6 +330,43 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 #undef GET_FSB5_OFFSET
 #undef WARN_AND_RETURN_FSB
 
+void SoundSE::initAudioMappingMI() {
+	Common::File *f = new Common::File();
+	if (!f->open(Common::Path("speech.info"))) {
+		delete f;
+		return;
+	}
+
+	do {
+		AudioEntryMI entry;
+		entry.unk1 = f->readUint16LE();
+		entry.unk2 = f->readUint16LE();
+		entry.room = f->readUint16LE();
+		entry.script = f->readUint16LE();
+		entry.localScriptOffset = f->readUint16LE();
+		entry.messageIndex = f->readUint16LE();
+		entry.isEgoTalking = f->readUint16LE();
+		entry.wait = f->readUint16LE();
+		entry.textEnglish = f->readString(0, 256);
+		f->skip(256 * 4); // skip the rest of the text
+		entry.speechFile = f->readString(0, 32);
+		entry.speechFile.toLowercase();
+
+		//debug("unk1 %d, unk2 %d, room %d, script %d, localScriptOffset: %d, messageIndex %d, isEgoTalking: %d, wait: %d, textEnglish '%s', speechFile '%s'",
+		//	  entry.unk1, entry.unk2, entry.room, entry.script,
+		//	  entry.localScriptOffset, entry.messageIndex, entry.isEgoTalking, entry.wait,
+		//	  entry.textEnglish.c_str(), entry.speechFile.c_str());
+
+		uint32 offset = ((entry.room + entry.script) << 16) | (entry.localScriptOffset & 0xFFFF);
+		_audioNameToOriginalOffsetMap[entry.speechFile] = offset;
+
+		_audioEntriesMI.push_back(entry);
+	} while (!f->eos());
+
+	f->close();
+	delete f;
+}
+
 void SoundSE::initAudioMapping() {
 	ScummPAKFile *f = new ScummPAKFile(_vm);
 	_vm->openFile(*f, Common::Path("audiomapping.info"));
@@ -367,23 +428,32 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 		delete stream;
 		return nullptr;
 	case kFSBCodecMP3:
+#ifdef USE_MAD
 		return Audio::makeMP3Stream(
 			stream,
 			DisposeAfterUse::YES
 		);
+#else
+		return nullptr;
+#endif
 	}
 
 	error("createSoundStream: Unknown XWB codec %d", entry.codec);
 }
 
 int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
-	// Some of the remastered sound offsets are off compared to the
-	// ones from the classic version, so we chop off the last 2 digits
-	const uint32 offsetToCheck = offset & 0xFFFFFF00;
+	uint32 offsetToCheck = offset;
+
+	if (_vm->_game.id == GID_TENTACLE) {
+		// Some of the remastered sound offsets are off compared to the
+		// ones from the classic version, so we chop off the last 2 digits
+		offsetToCheck = offset & 0xFFFFFF00;
+	}
+
 	if (_offsetToIndex.contains(offsetToCheck))
 		return _offsetToIndex[offsetToCheck];
-
-	return -1;
+	else
+		return -1;
 }
 
 Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
