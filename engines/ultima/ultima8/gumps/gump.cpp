@@ -571,7 +571,7 @@ Gump *Gump::FindGump(const FindGumpPredicate predicate, bool recursive) {
 
 // Makes this gump the focus
 void Gump::MakeFocus() {
-	// By default we WONT do anything
+	// By default we WON'T do anything
 	if (_parent) {
 		if (_parent->_focusChild) _parent->_focusChild->OnFocus(false);
 		_parent->_focusChild = this;
