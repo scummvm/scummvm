@@ -62,6 +62,7 @@ static const KeybindingRecord GAME_KEYS[] = {
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "JOY_X" },
 	// I18N: ESC key
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
+	{ KEYBIND_THOR_DIES, "THOR_DIES", _s("Thor Dies"), "d", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 

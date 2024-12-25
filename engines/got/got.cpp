@@ -101,54 +101,58 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 	_G(thor_info).sync(s);
 	_G(sd_data).sync(s);
 
-	if (s.isLoading()) {
-		int area = _G(setup).area;
-		if (area == 0)
-			area = 1;
-
-		g_vars->setArea(area);
-
-		_G(current_area) = _G(thor_info).last_screen;
-
-		_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
-		_G(thor)->y = ((_G(thor_info).last_icon / 20) * 16) - 1;
-		if (_G(thor)->x < 1) _G(thor)->x = 1;
-		if (_G(thor)->y < 0) _G(thor)->y = 0;
-		_G(thor)->dir = _G(thor_info).last_dir;
-		_G(thor)->last_dir = _G(thor_info).last_dir;
-		_G(thor)->health = _G(thor_info).last_health;
-		_G(thor)->num_moves = 1;
-		_G(thor)->vunerable = 60;
-		_G(thor)->show = 60;
-		_G(thor)->speed_count = 6;
-		load_new_thor();
-
-		if (!_G(music_flag))
-			_G(setup).music = 0;
-		if (!_G(sound_flag))
-			_G(setup).dig_sound = 0;
-		if (_G(setup).music == 1) {
-			if (GAME1 == 1 && _G(current_area) == 59) {
-//				if (flag)
-					music_play(5, 1);
-			} else {
-				//if (flag)
-				music_play(_G(level_type), 1);
-			}
-		} else {
-			_G(setup).music = 1;
-			music_pause();
-			_G(setup).music = 0;
-		}
-
-		_G(game_over) = _G(setup).game_over;
-		_G(slow_mode) = _G(setup).speed;
-
-		// Switch to game view
-		g_events->replaceView("Game", true);
-	}
+	if (s.isLoading())
+		savegameLoaded();
 
 	return Common::kNoError;
+}
+
+void GotEngine::savegameLoaded() {
+	int area = _G(setup).area;
+	if (area == 0)
+		area = 1;
+
+	g_vars->setArea(area);
+
+	_G(current_area) = _G(thor_info).last_screen;
+
+	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
+	_G(thor)->y = ((_G(thor_info).last_icon / 20) * 16) - 1;
+	if (_G(thor)->x < 1) _G(thor)->x = 1;
+	if (_G(thor)->y < 0) _G(thor)->y = 0;
+	_G(thor)->dir = _G(thor_info).last_dir;
+	_G(thor)->last_dir = _G(thor_info).last_dir;
+	_G(thor)->health = _G(thor_info).last_health;
+	_G(thor)->num_moves = 1;
+	_G(thor)->vunerable = 60;
+	_G(thor)->show = 60;
+	_G(thor)->speed_count = 6;
+	load_new_thor();
+
+	if (!_G(music_flag))
+		_G(setup).music = 0;
+	if (!_G(sound_flag))
+		_G(setup).dig_sound = 0;
+	if (_G(setup).music == 1) {
+		if (GAME1 == 1 && _G(current_area) == 59) {
+//				if (flag)
+				music_play(5, 1);
+		} else {
+			//if (flag)
+			music_play(_G(level_type), 1);
+		}
+	} else {
+		_G(setup).music = 1;
+		music_pause();
+		_G(setup).music = 0;
+	}
+
+	_G(game_over) = _G(setup).game_over;
+	_G(slow_mode) = _G(setup).speed;
+
+	// Trigger a "Thor died" action, which displays the loaded scene
+	g_events->replaceView("Game", true);
+	g_events->send(GameMessage("THOR_DIES"));
 }
 
 bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {

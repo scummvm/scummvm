@@ -30,6 +30,10 @@
 namespace Got {
 namespace Views {
 
+#define SPIN_INTERVAL 4
+#define SPIN_COUNT 20
+#define DEATH_THRESHOLD (SPIN_COUNT * SPIN_INTERVAL)
+
 GameContent::GameContent() : View("GameContent") {
 	_surface.create(320, 192);
 }
@@ -45,7 +49,7 @@ void GameContent::draw() {
 
 	drawBackground(s);
 	drawObjects(s);
-	drawEnemies(s);
+	drawActors(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
 	if (_G(gameMode) == MODE_THUNDER) {
@@ -89,14 +93,14 @@ void GameContent::draw() {
 }
 
 bool GameContent::msgGame(const GameMessage &msg) {
-	if (msg._name == "SHOW_LEVEL") {
-		show_level(msg._value);
-		return true;
-	} else if (msg._name == "HIDE_ACTORS") {
+	if (msg._name == "HIDE_ACTORS") {
 		// Hide all actors and immediately redraw the screen
 		for (int i = 0; i < MAX_ACTORS; i++)
 			_G(actor)[i].show = 0;
 		draw();
+		return true;
+	} else if (msg._name == "THOR_DIES") {
+		thorDies();
 		return true;
 	}
 
@@ -106,12 +110,28 @@ bool GameContent::msgGame(const GameMessage &msg) {
 bool GameContent::tick() {
 	checkThunderShake();
 
-	if (_G(gameMode) == MODE_NORMAL) {
+	switch (_G(gameMode)) {
+	case MODE_NORMAL:
 		checkSwitchFlag();
 		checkForItem();
 		moveActors();
 		use_item();
 		updateActors();
+		break;
+
+	case MODE_THOR_DIES:
+		if (_deathCtr < DEATH_THRESHOLD) {
+			spinThor();
+		} else if (_deathCtr < DEATH_THRESHOLD + 60) {
+			_G(thor)->used = 0;
+			++_deathCtr;
+		} else {
+			thorDead();
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	checkForAreaChange();
@@ -150,7 +170,7 @@ void GameContent::drawObjects(GfxSurface &s) {
 	}
 }
 
-void GameContent::drawEnemies(GfxSurface &s) {
+void GameContent::drawActors(GfxSurface &s) {
 	ACTOR *actor_ptr = &_G(actor)[MAX_ACTORS - 1];
 	ACTOR *actor2_storage = nullptr;
 
@@ -176,6 +196,9 @@ void GameContent::drawEnemies(GfxSurface &s) {
 				actor2_storage = actor_ptr;
 		} while (actor_num == (MAX_ACTORS - 3));
 	}
+
+	if (_G(gameMode) == MODE_THOR_DIES && _deathCtr >= DEATH_THRESHOLD)
+		s.blitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
 }
 
 void GameContent::checkThunderShake() {
@@ -375,6 +398,87 @@ void GameContent::areaChanged() {
 	_G(last_setup) = _G(setup);
 
 	music_play(_G(level_type), 0);
+}
+
+void GameContent::thorDies() {
+	// Stop any actors on-screen from moving
+	for (int li = 0; li < MAX_ACTORS; li++)
+		_G(actor)[li].show = 0;
+	_G(actor)[2].used = 0;
+
+	// Set the state for showing death animation
+	_G(gameMode) = MODE_THOR_DIES;
+	_deathCtr = 0;
+	_G(shield_on) = false;
+
+	play_sound(DEAD, 1);
+}
+
+void GameContent::spinThor() {
+	static const byte DIRS[] = { 0,2,1,3 };
+
+	_G(thor)->dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+	_G(thor)->last_dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+
+	++_deathCtr;
+}
+
+void GameContent::thorDead() {
+	int li = _G(thor_info).item;
+	int ln = _G(thor_info).inventory;
+
+	_G(new_level) = _G(thor_info).last_screen;
+	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
+	_G(thor)->y = ((_G(thor_info).last_icon / 20) * 16) - 1;
+	if (_G(thor)->x < 1) _G(thor)->x = 1;
+	if (_G(thor)->y < 0) _G(thor)->y = 0;
+	_G(thor)->last_x[0] = _G(thor)->x;
+	_G(thor)->last_x[1] = _G(thor)->x;
+	_G(thor)->last_y[0] = _G(thor)->y;
+	_G(thor)->last_y[1] = _G(thor)->y;
+	_G(thor)->dir = _G(thor_info).last_dir;
+	_G(thor)->last_dir = _G(thor_info).last_dir;
+	_G(thor)->health = _G(thor_info).last_health;
+	_G(thor_info).magic = _G(thor_info).last_magic;
+	_G(thor_info).jewels = _G(thor_info).last_jewels;
+	_G(thor_info).keys = _G(thor_info).last_keys;
+	_G(thor_info).score = _G(thor_info).last_score;
+	_G(thor_info).object = _G(thor_info).last_object;
+	_G(thor_info).object_name = _G(thor_info).last_object_name;
+
+	if (ln == _G(thor_info).last_inventory) {
+		_G(thor_info).item = li;
+	} else {
+		_G(thor_info).item = _G(thor_info).last_item;
+		_G(thor_info).inventory = _G(thor_info).last_inventory;
+	}
+
+	_G(setup) = _G(last_setup);
+
+	_G(thor)->num_moves = 1;
+	_G(thor)->vunerable = 60;
+	_G(thor)->show = 60;
+	_G(hourglass_flag) = 0;
+	_G(apple_flag) = 0;
+	_G(bomb_flag) = 0;
+	_G(thunder_flag) = 0;
+	_G(lightning_used) = 0;
+	_G(tornado_used) = 0;
+	_G(shield_on) = 0;
+	music_resume();
+	_G(actor)[1].used = 0;
+	_G(actor)[2].used = 0;
+	_G(thor)->speed_count = 6;
+	_G(thor)->used = 1;
+
+	// Load saved data for new level back into scrn
+	_G(scrn).load(_G(sd_data) + (_G(new_level) * 512));
+
+	_G(gameMode) = MODE_NORMAL;
+	_deathCtr = 0;
+
+	show_level(_G(new_level));
+	set_thor_vars();
 }
 
 } // namespace Views

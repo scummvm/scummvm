@@ -46,6 +46,9 @@ class GotEngine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+	void savegameLoaded();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;

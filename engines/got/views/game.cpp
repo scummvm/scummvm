@@ -90,6 +90,13 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_SELECT:
 		select_item();
 		return true;
+
+	case KEYBIND_THOR_DIES:
+		_content.send(GameMessage("THOR_DIES"));
+		return true;
+
+	default:
+		break;
 	}
 
 	return false;
