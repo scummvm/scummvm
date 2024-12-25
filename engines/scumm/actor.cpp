@@ -375,7 +375,7 @@ bool Actor_v0::walkBoxQueuePrepare() {
 				// Its not, start hunting through this boxes immediate connections
 				byte* boxm = _vm->getBoxConnectionBase(_walkboxQueue[_walkboxQueueIndex - 1]);
 
-				// Attempt to find one, which we havn't already used
+				// Attempt to find one, which we haven't already used
 				for (; *boxm != kInvalidBox; ++boxm) {
 					if (walkBoxQueueFind(*boxm) != true)
 						break;
