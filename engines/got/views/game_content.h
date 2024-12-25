@@ -30,13 +30,19 @@ namespace Views {
 
 class GameContent : public View {
 	enum Mode {
-		MODE_NORMAL = 0, MODE_ROOM_CHANGE = 1, MODE_THUNDER = 2,
+		MODE_NORMAL = 0, MODE_AREA_CHANGE = 1, MODE_THUNDER = 2,
 		MODE_THOR_DIES = 3
+	};
+	enum TransitionDir {
+		DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
 	};
 private:
 	Mode _mode = MODE_NORMAL;
-	Common::Point _shakeDelta;
-
+	GfxSurface _surface;
+	Common::Point _moveDelta;
+	TransitionDir _transitionDir = DIR_LEFT;
+	int _transitionPos = 0;
+	
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
 	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
@@ -45,9 +51,11 @@ private:
 	void checkForItem();
 	void moveActors();
 	void updateActors();
+	void checkForAreaChange();
+	void areaChanged();
 
 public:
-	GameContent() : View("GameContent") {}
+	GameContent();
 	virtual ~GameContent() {}
 
 	void draw() override;
