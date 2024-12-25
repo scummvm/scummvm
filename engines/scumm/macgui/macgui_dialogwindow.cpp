@@ -136,7 +136,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 		uint32 macBlack = _gui->_macBlack;
 
 		if (macWhite != _white || macBlack != _black) {
-			for (int y = 0; y < 19; y++) {
+			for (int y = 0; y < 20; y++) {
 				for (int x = 0; x < realScreen->w; x++) {
 					uint32 color = realScreen->getPixel(x, y);
 					if (color == macWhite)
