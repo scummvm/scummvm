@@ -55,6 +55,11 @@ enum Key {
 	key_select = KEYBIND_SELECT
 };
 
+enum GameMode {
+	MODE_NORMAL = 0, MODE_AREA_CHANGE = 1, MODE_THUNDER = 2,
+	MODE_THOR_DIES = 3
+};
+
 class Vars {
 public:
 	Vars();
@@ -73,6 +78,7 @@ public:
 	SdData _sd_data;
 	Sound _sound;
 	Scripts _scripts;
+	GameMode _gameMode = MODE_NORMAL;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
