@@ -24,6 +24,8 @@
 #include "common/macresman.h"
 
 #include "engines/engine.h"
+#include "engines/metaengine.h"
+#include "engines/savestate.h"
 
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
@@ -508,6 +510,64 @@ void MacV6Gui::runAboutDialog() {
 	token.clear();
 }
 
+void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRect, int saveSlot) {
+	if (_vm->_game.id == GID_MANIAC)
+		return;
+
+	if (saveSlot < 0)
+		return;
+
+	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->_targetName.c_str(), saveSlot);
+
+	const Graphics::Surface *thumbnail = desc.getThumbnail();
+	Graphics::Surface drawArea = window->innerSurface()->getSubArea(thumbnailRect);
+
+	Common::HashMap<uint32, byte> paletteMap;
+
+	int diff = thumbnail->h - thumbnailRect.height();
+
+	int yMin = diff / 2;
+	int yMax = thumbnail->h - (diff / 2);
+
+	assert(thumbnailRect.width() == thumbnail->w);
+	assert(thumbnailRect.height() == yMax - yMin);
+
+	// We don't know in advance how many colors the thumbnail is going to
+	// use. Reduce the image to a smaller palette.
+	//
+	// FIXME: THIS IS SO BROKEN IT'S NOT EVEN FUNNY!
+
+	int numColors = 0;
+
+	for (int y = yMin; y < yMax; y++) {
+		for (int x = 0; x < thumbnail->w; x++) {
+			uint32 color = thumbnail->getPixel(x, y) & 0xC0E0C0;
+
+			if (!paletteMap.contains(color))
+				paletteMap[color] = numColors++;
+		}
+	}
+
+	Graphics::Palette palette(numColors);
+
+	for (auto &k : paletteMap) {
+		int r = (k._key >> 16) & 0xFF;
+		int g = (k._key >> 8) & 0xFF;
+		int b = k._key & 0xFF;
+		palette.set(k._value, r, g, b);
+	}
+
+	for (int y = 0; y < drawArea.h; y++) {
+		for (int x = 0; x < drawArea.w; x++) {
+			byte color = paletteMap[thumbnail->getPixel(x, y + yMin) & 0xC0E0C0];
+			drawArea.setPixel(x, y, color);
+		}
+	}
+
+	_system->getPaletteManager()->setPalette(palette);
+	window->markRectAsDirty(thumbnailRect);
+}
+
 bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 	// Widgets:
 	//
@@ -534,7 +594,6 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 2);
 	MacButton *buttonDesktop = (MacButton *)window->getWidget(kWidgetButton, 3);
 
-
 	window->setDefaultWidget(buttonSave);
 	buttonEject->setEnabled(false);
 	buttonDesktop->setEnabled(false);
@@ -543,6 +602,8 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 	int slotIds[100];
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
+
+	Common::Rect thumbnailRect(12, 32, 172, 132);
 
 	MacListBox *listBox;
 
@@ -554,8 +615,11 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 		listBox = window->addListBox(Common::Rect(184, 31, 402, 161), savegameNames, true);
 		drawFakePathList(window, Common::Rect(184, 8, 402, 27), _gameName.c_str());
 		drawFakeDriveLabel(window, Common::Rect(412, 10, 509, 26), "ScummVM");
-		window->innerSurface()->frameRect(Common::Rect(11, 31, 173, 133), getBlack());
+		window->innerSurface()->frameRect(Common::Rect(thumbnailRect.left - 1, thumbnailRect.top - 1, thumbnailRect.right + 1, thumbnailRect.bottom + 1), getBlack());
 	}
+
+	int saveSlot = listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+	updateThumbnail(window, thumbnailRect, saveSlot);
 
 	while (!_vm->shouldQuit()) {
 		MacDialogEvent event;
@@ -573,6 +637,13 @@ bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
 					return false;
 				}
 
+				break;
+
+			case kDialogValueChange:
+				if (event.widget == listBox) {
+					saveSlot = listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+					updateThumbnail(window, thumbnailRect, saveSlot);
+				}
 				break;
 
 			default:
