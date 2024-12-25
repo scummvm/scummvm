@@ -537,7 +537,7 @@ bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 
 	switch (inVal) {
 	case U6OP_SLEEP: // 0x9e
-		// Note: It's usually unecessary to wait for the effect, as it
+		// Note: It's usually unnecessary to wait for the effect, as it
 		// pauses input and the user can't continue the conversation until
 		// the effect is complete.
 		new SleepEffect(5); // sleep until sunrise
@@ -739,7 +739,7 @@ bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 	case U6OP_ENDANSWER: // 0xee
 		break; // (frame only)
 	case U6OP_KEYWORDS: // 0xef (text:keywords)
-		if (answer_mode != ANSWER_DONE) { // havn't already answered
+		if (answer_mode != ANSWER_DONE) { // haven't already answered
 			answer_mode = ANSWER_NO;
 			if (check_keywords(get_text(), converse->get_input()))
 				answer_mode = ANSWER_YES;

@@ -1880,7 +1880,7 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 	return 0xff;
 }
 
-/* CSM Key Controll */
+/* CSM Key Control */
 INLINE void CSMKeyControll(OPL_CH *CH)
 {
 	FM_KEYON (&CH->SLOT[SLOT1], 4U);

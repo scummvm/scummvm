@@ -122,7 +122,7 @@ bool RenderSurface::EndPainting() {
 //
 // void RenderSurface::GetSurfaceDims(Rect &r)
 //
-// Desc: Get the Surface Dimentions (and logical origin)
+// Desc: Get the Surface Dimensions (and logical origin)
 // r: Rect object to fill
 //
 void RenderSurface::GetSurfaceDims(Rect &r) const {
