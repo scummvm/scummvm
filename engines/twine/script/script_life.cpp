@@ -1450,7 +1450,7 @@ int32 ScriptLife::lSET_MAGIC_LEVEL(TwinEEngine *engine, LifeScriptContext &ctx) 
 }
 
 /**
- * Substract the magic points. (Parameter = Points Value)
+ * Subtract the magic points. (Parameter = Points Value)
  * @note Opcode @c 0x3C
  */
 int32 ScriptLife::lSUB_MAGIC_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -1475,7 +1475,7 @@ int32 ScriptLife::lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ct
 }
 
 /**
- * Substract the life points. (Parameter = Actor Index, Parameter = Points Value)
+ * Subtract the life points. (Parameter = Actor Index, Parameter = Points Value)
  * @note Opcode @c 0x3E
  */
 int32 ScriptLife::lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -1673,7 +1673,7 @@ int32 ScriptLife::lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Substract the to fuel value the value passed as parameter. (Parameter = Fuel Amount)
+ * Subtract the to fuel value the value passed as parameter. (Parameter = Fuel Amount)
  * @note Opcode @c 0x4B
  */
 int32 ScriptLife::lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
