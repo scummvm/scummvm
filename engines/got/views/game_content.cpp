@@ -45,7 +45,7 @@ void GameContent::draw() {
 
 	drawBackground(s);
 	drawObjects(s);
-	drawEnemies(s, &_G(actor)[MAX_ACTORS - 1]);
+	drawEnemies(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
 	if (_mode == MODE_THUNDER) {
@@ -150,8 +150,8 @@ void GameContent::drawObjects(GfxSurface &s) {
 	}
 }
 
-void GameContent::drawEnemies(GfxSurface &s, ACTOR *lastActor) {
-	ACTOR *actor_ptr = lastActor;
+void GameContent::drawEnemies(GfxSurface &s) {
+	ACTOR *actor_ptr = &_G(actor)[MAX_ACTORS - 1];
 	ACTOR *actor2_storage = nullptr;
 
 	for (int actor_num = 0; actor_num <= MAX_ACTORS; ) {
@@ -289,9 +289,17 @@ void GameContent::checkForAreaChange() {
 	} else if (_G(new_level) != _G(current_level)) {
 		// Area transition beginning
 		_G(thor)->show = 0;
+		_G(thor)->used = 0;
 		_G(hammer)->used = 0;
 		_G(tornado_used) = 0;
 
+		// Draws the old area without Thor, and then save a copy of it.
+		// This will be used to scroll old area off-screen as new area scrolls in
+		draw();
+		_surface.copyFrom(getSurface());
+
+		// Set up new level
+		_G(thor)->used = 1;
 		show_level(_G(new_level));
 
 		if (_G(warp_flag))
@@ -317,7 +325,6 @@ void GameContent::checkForAreaChange() {
 			music_pause();
 
 		_transitionPos = 0;
-		_surface.copyFrom(getSurface());
 
 		switch (_G(new_level) - _G(current_level)) {
 		case 0:
