@@ -30,9 +30,13 @@
 namespace Got {
 namespace Views {
 
+GameContent::GameContent() : View("GameContent") {
+	_surface.create(320, 192);
+}
+
 void GameContent::draw() {
 	GfxSurface s;
-	if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
+	if (_mode == MODE_THUNDER || _mode == MODE_AREA_CHANGE) {
 		s.create(320, 192);
 	} else {
 		s = getSurface();
@@ -44,9 +48,43 @@ void GameContent::draw() {
 	drawEnemies(s, &_G(actor)[MAX_ACTORS - 1]);
 
 	// If we're shaking the screen, render the content with the shake X/Y
-	if (_shakeDelta.x != 0 || _shakeDelta.y != 0) {
+	if (_mode == MODE_THUNDER) {
 		GfxSurface win = getSurface();
-		win.blitFrom(s, _shakeDelta);
+		win.clear();
+		win.blitFrom(s, _moveDelta);
+	} else if (_mode == MODE_AREA_CHANGE) {
+		// Draw parts of the new scene along with parts of the old one
+		// as it's scrolled off-screen
+		GfxSurface win = getSurface();
+
+		switch (_transitionDir) {
+		case DIR_LEFT:
+			win.blitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),
+				Common::Point(0, 0));
+			win.blitFrom(_surface, Common::Rect(0, 0, 320 - _transitionPos, 192),
+				Common::Point(_transitionPos, 0));
+			break;
+		case DIR_RIGHT:
+			win.blitFrom(_surface, Common::Rect(_transitionPos, 0, 320, 192),
+				Common::Point(0, 0));
+			win.blitFrom(s, Common::Rect(0, 0, _transitionPos, 192),
+				Common::Point(320 - _transitionPos, 0));
+			break;
+		case DIR_UP:
+			win.blitFrom(s, Common::Rect(0, 192 - _transitionPos, 320, 192),
+				Common::Point(0, 0));
+			win.blitFrom(_surface, Common::Rect(0, 0, 320, 192 - _transitionPos),
+				Common::Point(0, _transitionPos));
+			break;
+		case DIR_DOWN:
+			win.blitFrom(_surface, Common::Rect(0, _transitionPos, 320, 192),
+				Common::Point(0, 0));
+			win.blitFrom(s, Common::Rect(0, 0, 320, _transitionPos),
+				Common::Point(0, 192 - _transitionPos));
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -67,12 +105,17 @@ bool GameContent::msgGame(const GameMessage &msg) {
 
 bool GameContent::tick() {
 	checkThunderShake();
-	checkSwitchFlag();
-	checkForItem();
-	moveActors();
-	use_item();
 
-	updateActors();
+	if (_mode == MODE_NORMAL) {
+		checkSwitchFlag();
+		checkForItem();
+		moveActors();
+		use_item();
+		updateActors();
+	}
+
+	checkForAreaChange();
+
 	return false;
 }
 
@@ -144,8 +187,8 @@ void GameContent::checkThunderShake() {
 		static const int8 DELTA_Y[4] = { 0, 0, -1, 1 };
 		int delta = g_events->getRandomNumber(3);
 
-		_shakeDelta.x = DELTA_X[delta];
-		_shakeDelta.y = DELTA_Y[delta];
+		_moveDelta.x = DELTA_X[delta];
+		_moveDelta.y = DELTA_Y[delta];
 
 		_G(thunder_flag)--;
 		if ((_G(thunder_flag) < MAX_ACTORS) && _G(thunder_flag) > 2) {
@@ -157,7 +200,7 @@ void GameContent::checkThunderShake() {
 
 		if (!_G(thunder_flag)) {
 			_mode = MODE_NORMAL;
-			_shakeDelta = Common::Point(0, 0);
+			_moveDelta = Common::Point(0, 0);
 		}
 
 		redraw();
@@ -218,6 +261,113 @@ void GameContent::updateActors() {
 		if (!actor->used && actor->dead > 0)
 			actor->dead--;
 	}
+}
+
+void GameContent::checkForAreaChange() {
+	if (_mode == MODE_AREA_CHANGE) {
+		// Area transition is already in progress
+		switch (_transitionDir) {
+		case DIR_LEFT:
+		case DIR_RIGHT:
+			_transitionPos += 32;
+			if (_transitionPos == 320)
+				_mode = MODE_NORMAL;
+			break;
+		case DIR_UP:
+		case DIR_DOWN:
+			_transitionPos += 16;
+			if (_transitionPos == 192)
+				_mode = MODE_NORMAL;
+			break;
+		default:
+			break;
+		}
+
+		if (_mode == MODE_NORMAL)
+			areaChanged();
+
+	} else if (_G(new_level) != _G(current_level)) {
+		// Area transition beginning
+		_G(thor)->show = 0;
+		_G(hammer)->used = 0;
+		_G(tornado_used) = 0;
+
+		show_level(_G(new_level));
+
+		if (_G(warp_flag))
+			_G(current_level) = _G(new_level) - 5;   // Force phase
+
+		_G(warp_flag) = 0;
+		if (_G(warp_scroll)) {
+			_G(warp_scroll) = 0;
+			if (_G(thor)->dir == 0)
+				_G(current_level) = _G(new_level) + 10;
+			else if (_G(thor)->dir == 1)
+				_G(current_level) = _G(new_level) - 10;
+			else if (_G(thor)->dir == 2)
+				_G(current_level) = _G(new_level) + 1;
+			else if (_G(thor)->dir == 3)
+				_G(current_level) = _G(new_level) - 1;
+		}
+
+		if (!_G(setup).scroll_flag)
+			_G(current_level) = _G(new_level); // Force no scroll
+
+		if (_G(music_current) != _G(level_type))
+			music_pause();
+
+		_transitionPos = 0;
+		_surface.copyFrom(getSurface());
+
+		switch (_G(new_level) - _G(current_level)) {
+		case 0:
+			// Nothing to do
+			areaChanged();
+			break;
+		case -1:
+			_mode = MODE_AREA_CHANGE;
+			_transitionDir = DIR_LEFT;
+			break;
+		case 1:
+			_mode = MODE_AREA_CHANGE;
+			_transitionDir = DIR_RIGHT;
+			break;
+		case -10:
+			_mode = MODE_AREA_CHANGE;
+			_transitionDir = DIR_UP;
+			break;
+		case 10:
+			_mode = MODE_AREA_CHANGE;
+			_transitionDir = DIR_DOWN;
+			break;
+		default:
+			// TODO: Original had weird as hell random delay calculation.
+			// Not sure that it's really necessary
+			areaChanged();
+			break;
+		}
+	} 
+}
+
+void GameContent::areaChanged() {
+	_G(current_level) = _G(new_level);
+
+	_G(thor_info).last_health = _G(thor)->health;
+	_G(thor_info).last_magic = _G(thor_info).magic;
+	_G(thor_info).last_jewels = _G(thor_info).jewels;
+	_G(thor_info).last_keys = _G(thor_info).keys;
+	_G(thor_info).last_score = _G(thor_info).score;
+	_G(thor_info).last_item = _G(thor_info).item;
+	_G(thor_info).last_screen = _G(current_level);
+	_G(thor_info).last_icon = ((_G(thor)->x + 8) / 16) + (((_G(thor)->y + 14) / 16) * 20);
+	_G(thor_info).last_dir = _G(thor)->dir;
+	_G(thor_info).last_inventory = _G(thor_info).inventory;
+	_G(thor_info).last_object = _G(thor_info).object;
+	_G(thor_info).last_object_name = _G(thor_info).object_name;
+
+	_G(last_setup) = _G(setup);
+
+	music_play(_G(level_type), 0);
 }
 
 } // namespace Views
