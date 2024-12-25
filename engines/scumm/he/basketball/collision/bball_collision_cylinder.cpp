@@ -620,7 +620,7 @@ bool CCollisionCylinder::nudgeObject(const CCollisionBox &targetObject, U32Dista
 		return true;
 	}
 
-	// Only do caluclations for the x and y dimensions, as we will handle z seperately...
+	// Only do calculations for the x and y dimensions, as we will handle z separately...
 	for (int i = X_INDEX; i <= Y_INDEX; ++i) {
 		EDimension dim = (EDimension)i;
 
