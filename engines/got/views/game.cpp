@@ -22,6 +22,7 @@
 #include "got/views/game.h"
 #include "got/game/back.h"
 #include "got/game/init.h"
+#include "got/game/move.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
 
@@ -82,6 +83,10 @@ bool Game::msgAction(const ActionMessage &msg) {
 		return false;
 
 	switch (msg._action) {
+	case KEYBIND_FIRE:
+		thor_shoots();
+		break;
+
 	case KEYBIND_SELECT:
 		select_item();
 		return true;

@@ -41,6 +41,7 @@ private:
 	const char *_content = nullptr;
 	int _contentLength = 0;
 	int _woopCtr = 0;
+	int _contentCtr = 0;
 	WaitResponse _waitForResponse = WAIT_NONE;
 
 	/**
