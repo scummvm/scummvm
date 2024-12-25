@@ -165,7 +165,7 @@ void Room137::daemon() {
 	}
 
 	if (!digi_play_state(2) && _flag1 && imath_ranged_rand(1, 3000) == 235) {
-		// Ocassional actions. *VERY* occasional actions
+		// Occasional actions. *VERY* occasional actions
 		if (_flag2 && inv_object_in_scene("keys", 138)) {
 			digi_play("137_022", 2, 100);
 			_flag2 = false;
