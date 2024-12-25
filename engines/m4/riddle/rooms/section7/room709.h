@@ -56,10 +56,10 @@ private:
 	bool _incenseBurnerActiveFl = false;
 	bool _pullCenterFl = false;
 	bool _pullLeftFl = false;
-	int32 _pullNearFl = 0;
-	int32 _pullRightFl = 0;
+	bool _pullNearFl = false;
+	bool _pullRightFl = false;
 
-	int32 _mazeCurrIndex = 0;
+	int32 _mazeCurrentIndex = 0;
 
 	int32 _709NearDoorLiteSeries = 0;
 	int32 _709rpro1Series = 0;

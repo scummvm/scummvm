@@ -53,7 +53,7 @@ void Room709::preload() {
 }
 
 void Room709::syncGame(Common::Serializer &s) {
-	s.syncAsSint32LE(_mazeCurrIndex);
+	s.syncAsSint32LE(_mazeCurrentIndex);
 }
 
 void Room709::init() {
@@ -62,9 +62,9 @@ void Room709::init() {
 	digi_preload("950_s42");
 
 	_pullLeftFl = false;
-	_pullRightFl = 0;
+	_pullRightFl = false;
 	_pullCenterFl = false;
-	_pullNearFl = 0;
+	_pullNearFl = false;
 
 	_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
 	_709rpro1Series = series_load("709RPRO1", -1, nullptr);
@@ -486,19 +486,19 @@ void Room709::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		digi_preload("950_s41", -1);
-		if (_mazeCurrIndex == 97 && inv_object_is_here("CHISEL")) {
+		if (_mazeCurrentIndex == 97 && inv_object_is_here("CHISEL")) {
 			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}
 
-		if (_mazeCurrIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
+		if (_mazeCurrentIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
 			_incenseBurnerActiveFl = true;
 			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
 		}
 
-		if (_mazeCurrIndex == 82) {
+		if (_mazeCurrentIndex == 82) {
 			_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 			sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 10, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
 			_pullLeftFl = true;
@@ -508,7 +508,7 @@ void Room709::init() {
 
 	case 706:
 		digi_preload("950_s41", -1);
-		_mazeCurrIndex = 82;
+		_mazeCurrentIndex = 82;
 		_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 		sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 10, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
 		_pullLeftFl = true;
@@ -519,14 +519,14 @@ void Room709::init() {
 		break;
 
 	case 710:
-		_mazeCurrIndex = 39;
+		_mazeCurrentIndex = 39;
 		ws_demand_location(_G(my_walker), 320, 400);
 		ws_demand_facing(_G(my_walker), 1);
 
 		break;
 
 	default:
-		_mazeCurrIndex = 82;
+		_mazeCurrentIndex = 82;
 		digi_preload("950_s41", -1);
 
 		break;
@@ -541,7 +541,7 @@ void Room709::pre_parser() {
 	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close", "RopeS", "RopeL", "RopeR", "RopeB");
 
 	if (player_said("Right")) {
-		if (_maze709Arr[_mazeCurrIndex]._rightActive == 0 || _pullRightFl == 0 || lookFl || talkFl || gearFl) {
+		if (_maze709Arr[_mazeCurrentIndex]._rightActive == 0 || !_pullRightFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -549,13 +549,13 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Left")) {
-		if (_maze709Arr[_mazeCurrIndex]._leftActive == 0 || !_pullLeftFl || lookFl || talkFl || gearFl) {
+		if (_maze709Arr[_mazeCurrentIndex]._leftActive == 0 || !_pullLeftFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
 		}
 
-		if (_mazeCurrIndex == 82) {
+		if (_mazeCurrentIndex == 82) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -563,7 +563,7 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Straight")) {
-		if (_maze709Arr[_mazeCurrIndex]._straightActive == 0 || !_pullCenterFl || lookFl || talkFl || gearFl) {
+		if (_maze709Arr[_mazeCurrentIndex]._straightActive == 0 || !_pullCenterFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -571,7 +571,7 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Back")) {
-		if (_maze709Arr[_mazeCurrIndex]._backActive == 0 || _pullNearFl == 0 || lookFl || talkFl || gearFl) {
+		if (_maze709Arr[_mazeCurrentIndex]._backActive == 0 || !_pullNearFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -630,10 +630,10 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrIndex]._rightActive != 0 && _pullRightFl == 0) {
+			if (_maze709Arr[_mazeCurrentIndex]._rightActive != 0 && !_pullRightFl) {
 				_ripPullMach03 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach03, _mazeRightDoorLiteSeries, 1, 10, 3, _mazeRightDoorLiteSeries, 10, 10, 0);
-				_pullRightFl = 1;
+				_pullRightFl = true;
 			} else {
 				kernel_timing_trigger(5, 3, nullptr);
 			}
@@ -676,7 +676,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrIndex]._leftActive != 0 && !_pullLeftFl) {
+			if (_maze709Arr[_mazeCurrentIndex]._leftActive != 0 && !_pullLeftFl) {
 				_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, 3, _mazeLeftDoorLiteSeries, 10, 10, 0);
 				_pullLeftFl = true;
@@ -722,7 +722,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrIndex]._straightActive != 0 && !_pullCenterFl) {
+			if (_maze709Arr[_mazeCurrentIndex]._straightActive != 0 && !_pullCenterFl) {
 				_ripPullMach04 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach04, _mazeCenterDoorLiteSeries, 1, 10, 3, _mazeCenterDoorLiteSeries, 10, 10, 0);
 				_pullCenterFl = true;
@@ -769,10 +769,10 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrIndex]._backActive != 0 && _pullNearFl == 0) {
+			if (_maze709Arr[_mazeCurrentIndex]._backActive != 0 && !_pullNearFl) {
 				_ripPullMach05 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach05, _709NearDoorLiteSeries, 1, 10, 3, _709NearDoorLiteSeries, 10, 10, 0);
-				_pullNearFl = 1;
+				_pullNearFl = true;
 			} else {
 				kernel_timing_trigger(5, 3, nullptr);
 			}
@@ -794,7 +794,7 @@ void Room709::parser() {
 	} // esi && player_said("rope    ")
 
 	else if (player_said("Right")) {
-		if (_maze709Arr[_mazeCurrIndex]._rightActive == 0 || _pullRightFl == 0) {
+		if (_maze709Arr[_mazeCurrentIndex]._rightActive == 0 || !_pullRightFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -819,8 +819,8 @@ void Room709::parser() {
 	} // player_said("Right")
 
 	else if (player_said("Left")) {
-		if (_maze709Arr[_mazeCurrIndex]._leftActive == 0 || !_pullLeftFl) {
-			if (_mazeCurrIndex == 82) {
+		if (_maze709Arr[_mazeCurrentIndex]._leftActive == 0 || !_pullLeftFl) {
+			if (_mazeCurrentIndex == 82) {
 				switch (_G(kernel).trigger) {
 				case -1:
 					ws_walk(_G(my_walker), 182, 292, nullptr, 2, 9, true);
@@ -864,7 +864,7 @@ void Room709::parser() {
 	} // player_said("Left")
 
 	else if (player_said("Straight")) {
-		if (_maze709Arr[_mazeCurrIndex]._straightActive == 0 || !_pullCenterFl) {
+		if (_maze709Arr[_mazeCurrentIndex]._straightActive == 0 || !_pullCenterFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -888,7 +888,7 @@ void Room709::parser() {
 	} // player_said("Straight")
 
 	else if (player_said("Back")) {
-		if (_maze709Arr[_mazeCurrIndex]._backActive == 0 || _pullNearFl == 0) {
+		if (_maze709Arr[_mazeCurrentIndex]._backActive == 0 || !_pullNearFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -1000,7 +1000,7 @@ void Room709::daemon() {
 		break;
 
 	case 11:
-		if (_mazeCurrIndex == 97) {
+		if (_mazeCurrentIndex == 97) {
 			inv_give_to_player("CHISEL");
 			terminateMachine(_709ChiselMach);
 			_chiselActiveFl = false;
@@ -1009,7 +1009,7 @@ void Room709::daemon() {
 			digi_play("709R03", 1, 255, 12, -1);
 		}
 
-		if (_mazeCurrIndex == 22) {
+		if (_mazeCurrentIndex == 22) {
 			inv_give_to_player("INCENSE BURNER");
 			terminateMachine(_709IncenseHolderMach);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
@@ -1039,13 +1039,13 @@ void Room709::daemon() {
 	case 20: // related to player_said("left")
 		ws_demand_location(_G(my_walker), 410, 300);
 		ws_demand_facing(_G(my_walker), 9);
-		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._leftIndex;
+		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._leftIndex;
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
-		if (_mazeCurrIndex == 97 && inv_object_is_here("CHISEL")) {
+		if (_mazeCurrentIndex == 97 && inv_object_is_here("CHISEL")) {
 			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
@@ -1056,15 +1056,15 @@ void Room709::daemon() {
 			terminateMachine(_709IncenseHolderMach);
 		}
 
-		if (_mazeCurrIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
+		if (_mazeCurrentIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
 			_incenseBurnerActiveFl = true;
 			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
 		}
 
-		if (_pullRightFl == 1) {
+		if (_pullRightFl) {
 			terminateMachine(_ripPullMach03);
-			_pullRightFl = 0;
+			_pullRightFl = false;
 		}
 
 		if (_pullLeftFl) {
@@ -1077,12 +1077,12 @@ void Room709::daemon() {
 			_pullCenterFl = false;
 		}
 
-		if (_pullNearFl == 1) {
+		if (_pullNearFl) {
 			terminateMachine(_ripPullMach05);
-			_pullNearFl = 0;
+			_pullNearFl = false;
 		}
 
-		if (_mazeCurrIndex == 82) {
+		if (_mazeCurrentIndex == 82) {
 			_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 			sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
 			_pullLeftFl = true;
@@ -1099,13 +1099,13 @@ void Room709::daemon() {
 	case 30:
 		ws_demand_location(_G(my_walker), 230, 300);
 		ws_demand_facing(_G(my_walker), 3);
-		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._rightIndex;
+		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._rightIndex;
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
-		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
+		if (_mazeCurrentIndex == 97 && inv_object_is_here("Chisel")) {
 			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0,0,0,100,3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
@@ -1116,15 +1116,15 @@ void Room709::daemon() {
 			terminateMachine(_709IncenseHolderMach);
 		}
 
-		if (_mazeCurrIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
+		if (_mazeCurrentIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
 			_incenseBurnerActiveFl = true;
 			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
 		}
 
-		if (_pullRightFl == 1) {
+		if (_pullRightFl) {
 			terminateMachine(_ripPullMach03);
-			_pullRightFl = 0;
+			_pullRightFl = false;
 		}
 
 		if (_pullLeftFl) {
@@ -1137,9 +1137,9 @@ void Room709::daemon() {
 			_pullCenterFl = false;
 		}
 
-		if (_pullNearFl == 1) {
+		if (_pullNearFl) {
 			terminateMachine(_ripPullMach05);
-			_pullNearFl = 0;
+			_pullNearFl = false;
 		}
 
 		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
@@ -1154,13 +1154,13 @@ void Room709::daemon() {
 	case 40:
 		ws_demand_location(_G(my_walker), 320, 400);
 		ws_demand_facing(_G(my_walker), 1);
-		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._straightIndex;
+		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._straightIndex;
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
-		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
+		if (_mazeCurrentIndex == 97 && inv_object_is_here("Chisel")) {
 			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
@@ -1171,15 +1171,15 @@ void Room709::daemon() {
 			terminateMachine(_709IncenseHolderMach);
 		}
 
-		if (_mazeCurrIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
+		if (_mazeCurrentIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
 			_incenseBurnerActiveFl = true;
 			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
 		}
 
-		if (_pullRightFl == 1) {
+		if (_pullRightFl) {
 			terminateMachine(_ripPullMach03);
-			_pullRightFl = 0;
+			_pullRightFl = false;
 		}
 
 		if (_pullLeftFl) {
@@ -1192,9 +1192,9 @@ void Room709::daemon() {
 			_pullCenterFl = false;
 		}
 
-		if (_pullNearFl == 1) {
+		if (_pullNearFl) {
 			terminateMachine(_ripPullMach05);
-			_pullNearFl = 0;
+			_pullNearFl = false;
 		}
 
 		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
@@ -1209,9 +1209,9 @@ void Room709::daemon() {
 	case 50:
 		ws_demand_location(_G(my_walker), 320, 280);
 		ws_demand_facing(_G(my_walker), 5);
-		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._backIndex;
+		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._backIndex;
 
-		if (_mazeCurrIndex == 50) {
+		if (_mazeCurrentIndex == 50) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s41", 3, 255, -1, -1);
 			RemoveSystemHotkey(KEY_CLEAR);
@@ -1224,7 +1224,7 @@ void Room709::daemon() {
 			terminateMachine(_709ChiselMach);
 		}
 
-		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
+		if (_mazeCurrentIndex == 97 && inv_object_is_here("Chisel")) {
 			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
@@ -1235,15 +1235,15 @@ void Room709::daemon() {
 			terminateMachine(_709IncenseHolderMach);
 		}
 
-		if (_mazeCurrIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
+		if (_mazeCurrentIndex == 22 && inv_object_is_here("INCENSE BURNER")) {
 			_incenseBurnerActiveFl = true;
 			_709IncenseHolderMach = series_place_sprite("709 INCENSE HOLDER", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", true);
 		}
 
-		if (_pullRightFl == 1) {
+		if (_pullRightFl) {
 			terminateMachine(_ripPullMach03);
-			_pullRightFl = 0;
+			_pullRightFl = false;
 		}
 
 		if (_pullLeftFl) {
@@ -1256,9 +1256,9 @@ void Room709::daemon() {
 			_pullCenterFl = false;
 		}
 
-		if (_pullNearFl == 1) {
+		if (_pullNearFl) {
 			terminateMachine(_ripPullMach05);
-			_pullNearFl = 0;
+			_pullNearFl = false;
 		}
 
 		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
