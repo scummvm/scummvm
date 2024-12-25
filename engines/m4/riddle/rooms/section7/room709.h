@@ -53,9 +53,9 @@ public:
 
 private:
 	bool _chiselActiveFl = false;
-	int32 _incenseBurnerActiveFl = 0;
-	int32 _pullCenterFl = 0;
-	int32 _pullLeftFl = 0;
+	bool _incenseBurnerActiveFl = false;
+	bool _pullCenterFl = false;
+	bool _pullLeftFl = false;
 	int32 _pullNearFl = 0;
 	int32 _pullRightFl = 0;
 
