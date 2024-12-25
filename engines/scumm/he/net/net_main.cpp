@@ -1529,7 +1529,7 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 				warning("NETWORK: Got individual message for %d, but we don't know this person!  Ignoring...", toparam);
 				return;
 			}
-			debugC(DEBUG_NETWORK, "NETWORK: Transfering message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
+			debugC(DEBUG_NETWORK, "NETWORK: Transferring message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
 			Common::String str = Common::JSON::stringify(json);
 			_sessionHost->send(str.c_str(), _userIdToPeerIndex[toparam], 0, reliable);
 		}
