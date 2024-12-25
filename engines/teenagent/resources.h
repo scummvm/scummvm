@@ -228,7 +228,7 @@ const uint16 dsAddr_oopsMsg = 0x3afd; // "Oops"
 const uint16 dsAddr_foundFoodMsg = 0x3b04; // "People leave food in unbelievable places"
 // Come Here Message : 0x3b2f to 0x3b58
 const uint16 dsAddr_comeHereMsg = 0x3b2f; // "Come here, I've got something for you"
-// Cant Catch Message : 0x3b59 to 0x3b6b
+// Can't Catch Message : 0x3b59 to 0x3b6b
 const uint16 dsAddr_cantCatchMsg = 0x3b59; // "I can't catch it!"
 // Trapped Mouse Message : 0x3b6c to 0x3b82
 const uint16 dsAddr_trappedMouseMsg = 0x3b6c; // "The mouse is trapped!"
@@ -566,7 +566,7 @@ const uint16 dsAddr_mikeScentTestMsg = 0x5138; // "Mike, let's get on with the s
 const uint16 dsAddr_mikeViewTestMsg = 0x5161; // "Mike, run the view test"
 // Cutscene Message #0 : 0x517b to 0x51a6
 const uint16 dsAddr_cutsceneMsg0 = 0x517b; // "A secret diary of ..."
-// Cant Hide Message : 0x51a7 to 0x51ba
+// Can't Hide Message : 0x51a7 to 0x51ba
 const uint16 dsAddr_cantHideMsg = 0x51a7; // "I can't hide here!"
 // John Outside Message : 0x51bb to 0x51e6
 const uint16 dsAddr_johnOutsideMsg = 0x51bb; // "There's John Noty outside! I can't go out!"
