@@ -3153,7 +3153,7 @@ void _game_session::Restart_player() {
 
 	var_num = CGameObject::GetVariable(ob, "state");
 	if (var_num == -1)
-		Fatal_error("Restart_player cant fetch state");
+		Fatal_error("Restart_player can't fetch state");
 	CGameObject::SetIntegerVariable(ob, var_num, 0); // alive
 
 	var_num = CGameObject::GetVariable(ob, "hits");
