@@ -1167,7 +1167,7 @@ void Room205::daemon() {
 	case 547:
 		ws_hide_walker(_kuangWalker205Mach);
 		_kuangsShadow2Mach = series_show("KUANGS SHADOW 2", 3840, 16, -1, -1, 0, 52, 394, 254);
-		_kuangTalkerMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3584, 0, triggerMachineByHashCallback, "kuang talker");
+		_kuangTalkerMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3584, false, triggerMachineByHashCallback, "kuang talker");
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 5, 1);
 		sendWSMessage_1a0000(_kuangTalkerMach, 11);
 		digi_play("205K03", 1, 255, 548, -1);
@@ -1345,7 +1345,7 @@ void Room205::daemon() {
 	case 567:
 		terminateMachine(_205all0Mach);
 		series_unload(_205all4Series);
-		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, 0, triggerMachineByHashCallback, "rip talker");
+		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _205all0Mach, _205rtlk2Series, 1, 14, -1, _205rtlk2Series, 4, 14, 4);
 		digi_play("205r06", 1, 255, 568, -1);
 

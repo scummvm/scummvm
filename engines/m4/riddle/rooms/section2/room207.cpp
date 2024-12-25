@@ -326,7 +326,7 @@ void Room207::parser() {
 		ws_hide_walker(_G(my_walker));
 		_ripHeadDownTalkOffTd33Series = series_load("rip head down talk off td33", -1, nullptr);
 		_ripTrekArmsXPos3Series = series_load("rip trek arms x pos3", -1, nullptr);
-		_ripInConvMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1024, 0, triggerMachineByHashCallback, "rip in conv");
+		_ripInConvMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1024, false, triggerMachineByHashCallback, "rip in conv");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		_fieldC6 = false;
 		_fieldC2 = 1;
@@ -1436,7 +1436,7 @@ void Room207::daemon() {
 
 		case 11:
 			terminateMachine(_ppSquatMach);
-			_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
+			_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
 			sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 			_G(kernel).trigger_mode = KT_PARSE;
 			kernel_timing_trigger(1, 4, nullptr);
@@ -1447,7 +1447,7 @@ void Room207::daemon() {
 
 		case 12:
 			terminateMachine(_ppSquatMach);
-			_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
+			_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
 			if (inv_object_is_here("REBUS AMULET"))
 				_rebusAmuletMach = series_show_sprite("rebus amulet", 0, 3840);
 
@@ -1552,7 +1552,7 @@ void Room207::daemon() {
 					_peasantMode = 14;
 				} else if (_peasantShould == 16) {
 					terminateMachine(_ppSquatMach);
-					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
+					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
 					sendWSMessage_10000(1, _ppSquatMach, _peskyBegLoopSeries, 1, 15, 110, _peskyBegLoopSeries, 15, 15, 0);
 					_peasantMode = 16;
 				} else if (_peasantShould <= 0) {
@@ -1628,7 +1628,7 @@ void Room207::daemon() {
 
 	case 105:
 		terminateMachine(_ppSquatMach);
-		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
+		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
 		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 		_peasantMode = 0;
 

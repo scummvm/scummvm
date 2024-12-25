@@ -85,9 +85,9 @@ void Room203::init() {
 			_peasantSeries = series_load("pesky peasant reach for helmet");
 			_peasantSeriesShadow = series_load("shadow pp reach for helmet");
 
-			_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, 0,
+			_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, false,
 				triggerMachineByHashCallback, "pesky peasant");
-			_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, 0,
+			_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, false,
 				triggerMachineByHashCallback, "pesky peasant SHADOW");
 			sendWSMessage_10000(1, _peasant, _peasantSeries, 23, 36, 121,
 				_peasantSeries, 36, 23, 2);
@@ -203,10 +203,10 @@ void Room203::init() {
 			_peasantLayer = 0x800;
 			_peasantScale = 75;
 
-			_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, 0,
+			_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, false,
 				triggerMachineByHashCallback, "pp");
 			_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
-				_peasantX, _peasantY - 53, _peasantScale, _peasantLayer, 0,
+				_peasantX, _peasantY - 53, _peasantScale, _peasantLayer, false,
 				triggerMachineByHashCallback, "pp");
 
 			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 17, 354,
@@ -220,7 +220,7 @@ void Room203::init() {
 			_officialShould = 2010;
 
 			_officialStander = series_load("official stander");
-			_official = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, 0,
+			_official = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, false,
 				triggerMachineByHashCallback, "of");
 			sendWSMessage_10000(1, _official, _officialStander, 1, 1, 356,
 				_officialStander, 1, 1, 0);
@@ -523,7 +523,7 @@ void Room203::daemon() {
 		_ripPointsAtHelmet = series_load("rip points at helmet");
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "rip kneel");
 		sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 42, _ripKneeling, 31, 31, 0);
 		break;
@@ -587,7 +587,7 @@ void Room203::daemon() {
 		_oldLadyNoHelmet = series_load("old lady feeding no helmet");
 		ws_hide_walker();
 		_ripKneeling = series_load("rip kneels down to old lady");
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "rip kneel");
 		sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 62, _ripKneeling, 31, 31, 0);
 		break;
@@ -619,7 +619,7 @@ void Room203::daemon() {
 		break;
 
 	case 69:
-		_stream1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_stream1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "POPUP OL & lover");
 		_oldLadyPhotoPopup = series_load("old woman photo pop-up");
 		sendWSMessage_10000(1, _stream1, _oldLadyPhotoPopup, 1, 5, -1,
@@ -684,11 +684,11 @@ void Room203::daemon() {
 		break;
 
 	case 79:
-		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "ol");
 		sendWSMessage_10000(1, _oldLady, _oldLadyNoHelmet, 1, 1, -1,
 			_oldLadyNoHelmet, 1, 1, 0);
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "rip kneel");
 		sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 1, 1, -1,
 			_ripKneelingTalk, 1, 1, 0);
@@ -710,7 +710,7 @@ void Room203::daemon() {
 
 	case 82:
 		terminateMachineAndNull(_ripley);
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "rip kneel");
 		_ripKneeling = series_load("rip kneels down to old lady");
 		sendWSMessage_10000(1, _ripley, _ripKneeling, 31, 1, 84, _ripKneeling, 1, 1, 0);
@@ -741,7 +741,7 @@ void Room203::daemon() {
 		_peasantRocksShadow = series_load("shadow pesky rock loop");
 		_ripClimbsAndBacksDown = series_load("rip climbs and backs down");
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, 0, 100, 0x100, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, 0, 100, 0x100, false,
 			triggerMachineByHashCallback, "rip climbs");
 		sendWSMessage_10000(1, _ripley, _ripClimbsAndBacksDown, 1, 75, 96,
 			_ripClimbsAndBacksDown, 75, 75, 0);
@@ -751,9 +751,9 @@ void Room203::daemon() {
 	case 91:
 		terminateMachineAndNull(_peasant);
 		terminateMachineAndNull(_peasantShadow);
-		_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, 0,
+		_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
 			triggerMachineByHashCallback, "pesky peasant yells thief");
-		_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, 0,
+		_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
 			triggerMachineByHashCallback, "SHADOW pp yells thief");
 		sendWSMessage_10000(1, _peasant, _peskyYellsThief, 1, 19, 94,
 			_peskyYellsThief, 19, 19, 0);
@@ -1828,10 +1828,10 @@ void Room203::daemon() {
 				player_update_info();
 				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-					0x100, 0, triggerMachineByHashCallback, "rip talks official");
+					0x100, false, triggerMachineByHashCallback, "rip talks official");
 				_ripsh1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-					0x100, 0, triggerMachineByHashCallback, "rip talks official SHADOW");
+					0x100, false, triggerMachineByHashCallback, "rip talks official SHADOW");
 				sendWSMessage_10000(1, _ripley, _ripHandTalk, 1, 16, -1, _ripHandTalk, 1, 1, 0);
 				sendWSMessage_10000(1, _ripsh1, _shadow3, 1, 1, -1, _shadow3, 1, 1, 0);
 
@@ -2052,7 +2052,7 @@ void Room203::daemon() {
 				_ripKneeling = series_load("rip kneels down to old lady");
 				_ripKneelingTalk = series_load("rip kneeling talks to old lady");
 
-				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x400, 0,
+				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x400, false,
 					triggerMachineByHashCallback, "rip in conv");
 				sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 150, _ripKneeling, 31, 31, 0);
 				_ripleyShould = 1112;
@@ -2178,10 +2178,10 @@ void Room203::daemon() {
 				player_update_info();
 				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-					0x100, 0, triggerMachineByHashCallback, "rip talks official");
+					0x100, false, triggerMachineByHashCallback, "rip talks official");
 				_ripsh1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-					0x100, 0, triggerMachineByHashCallback, "rip talks official SHADOW");
+					0x100, false, triggerMachineByHashCallback, "rip talks official SHADOW");
 				sendWSMessage_10000(1, _ripley, _ripTalker, 1, 1, -1, _ripTalker, 1, 1, 0);
 				sendWSMessage_10000(1, _ripsh1, _shadow3, 1, 1, 150, _shadow3, 1, 1, 0);
 				_ripleyShould = 1211;
@@ -2454,10 +2454,10 @@ void Room203::daemon() {
 		_peasantLayer = 0x800;
 		_peasantScale = 75;
 
-		_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, 0,
+		_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
 			triggerMachineByHashCallback, "pesky peasant");
 		_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
-			_peasantX, _peasantY - 53, _peasantScale, _peasantLayer, 0,
+			_peasantX, _peasantY - 53, _peasantScale, _peasantLayer, false,
 			triggerMachineByHashCallback, "pesky peasant shadow");
 		sendWSMessage_10000(1, _peasantShadow, _peasantRocksShadow, 1, 1, -1,
 			_peasantRocksShadow, 1, 1, 0);
@@ -2500,7 +2500,7 @@ void Room203::daemon() {
 
 	case 9005:
 		sendWSMessage_10000(_g1, -30, 350, 9, -1, 1);
-		_sg = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+		_sg = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, false,
 			triggerMachineByHashCallback, "sg");
 		sendWSMessage_10000(1, _sg, _203sg01, 1, 1, -1, _203sg01, 1, 1, 0);
 		setGlobals1(_ripHeadTurn, 6, 9, 9, 9);
@@ -2795,7 +2795,7 @@ void Room203::parser() {
 		_ripHandsBehBack = series_load("rip trek hands beh back pos1");
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
-			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, false,
 			triggerMachineByHashCallback, "rip in conv");
 		_ripleyMode = 1001;
 		_ripleyShould = 1010;
@@ -3032,7 +3032,7 @@ void Room203::parser() {
 			hotspot_set_active("SOLDIER'S HELMET ", true);
 			series_load("one frame helmet");
 			_ripTossesHelmet = series_load("rip tosses helmet");
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 960, -53, 100, 0x100, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 960, -53, 100, 0x100, false,
 				triggerMachineByHashCallback, "rip throws helmet");
 			sendWSMessage_10000(1, _ripley, _ripTossesHelmet, 1, 33, 2, _ripTossesHelmet, 33, 33, 0);
 			break;
@@ -3215,7 +3215,7 @@ void Room203::setupPeasantHotspot(int mode) {
 
 void Room203::setupGk() {
 	_gkFrame = series_load("gk single frame");
-	_gk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x800, 0,
+	_gk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x800, false,
 		triggerMachineByHashCallback, "gk single frame");
 	_gkMode = _gkShould = 3000;
 	sendWSMessage_10000(1, _gk, _gkFrame, 1, 1, -1, _gkFrame, 1, 1, 0);
@@ -3230,14 +3230,14 @@ void Room203::setupOldLady() {
 		_oldLadyNoHelmet = series_load("old lady feeding no helmet");
 		_oldLadyMode = 5569;
 		_oldLadyShould = 5200;
-		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "ol");
 		sendWSMessage_10000(1, _oldLady, _oldLadyNoHelmet, 1, 1, -1,
 			_oldLadyNoHelmet, 1, 1, 0);
 
 	} else {
 		_oldLadyFeedingBirds = series_load("old lady feeding birds");
-		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+		_oldLady = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, false,
 			triggerMachineByHashCallback, "ol");
 		_oldLadyMode = 5666;
 		_oldLadyShould = 5100;
@@ -3249,9 +3249,9 @@ void Room203::setupOldLady() {
 void Room203::setupPigeons() {
 	_pigeonsSeries1 = series_load("pigeon series of flcs 1");
 	_pigeonsSeries3 = series_load("pigeon series of flcs 3");
-	_pigeons1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1045, 373, 85, 0, 0,
+	_pigeons1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1045, 373, 85, 0, false,
 		triggerMachineByHashCallback, "pig1");
-	_pigeons3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1065, 370, 85, 1, 0,
+	_pigeons3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1065, 370, 85, 1, false,
 		triggerMachineByHashCallback, "pig3");
 
 	kernel_trigger_dispatchx(kernel_trigger_create(392));
@@ -3261,9 +3261,9 @@ void Room203::setupOfficial() {
 	_officialMode = 2001;
 	_officialShould = 2010;
 	_officialStander = series_load("official stander");
-	_official = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, 0,
+	_official = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, false,
 		triggerMachineByHashCallback, "of");
-	_officialShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, 0,
+	_officialShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1436, 362, 85, 0xf00, false,
 		triggerMachineByHashCallback, "ofSH");
 	sendWSMessage_10000(1, _official, _officialStander, 1, 1, -1,
 		_officialStander, 1, 1, 0);

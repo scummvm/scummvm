@@ -56,6 +56,9 @@ private:
 
 	int32 _dword1A189C = 0;
 
+	bool _ripMachineFlag = false;
+	bool _meiMachineFlag = false;
+
 	int32 _field4 = 0;
 	int32 _field10 = 0;
 	int32 _field14 = 0;
@@ -69,7 +72,6 @@ private:
 	int32 _field40 = 0;
 	int32 _field44_triggerNum = 0;
 	int32 _field48_triggerNum = 0;
-	int32 _field68 = 0;
 	int32 _ripBangsBongSeries = 0;
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
@@ -79,8 +81,7 @@ private:
 	int32 _fieldD0 = 0;
 	int32 _fieldD4 = 0;
 	int32 _fieldD8_facing = 0;
-	int32 _fieldDC = 0;
-	int32 _fieldE0 = 0;
+	int32 _fieldE0_x = 0;
 	int32 _fieldE4_walkerDestX = 0;
 	int32 _fieldEC = 0;
 	int32 _fieldF0 = 0;

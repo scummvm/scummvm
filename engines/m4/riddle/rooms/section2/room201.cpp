@@ -104,11 +104,11 @@ void Room201::init() {
 	digi_play_loop("950_s02", 3, 50);
 
 	if (_flag1) {
-		_mei1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
+		_mei1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, false,
 			triggerMachineByHashCallback, "mc");
 		sendWSMessage(1, _mei1, _series4, 1, 1, -1, _series4, 1, 1, 0);
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage(1, _ripley, _series2, 1, 21, -1, _series2, 21, 21, 0);
 		kernel_timing_trigger(10, 100);
@@ -122,7 +122,7 @@ void Room201::init() {
 				_meiHandHip = series_load("MEI TREK HAND ON HIP POS4");
 				_meiTalker = series_load("MEI TREK TALKER POS4");
 				_meiWalk = series_load("MEI CHEN TREK WALK POS4");
-				_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 200, 238, 73, 0x900, 0,
+				_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 200, 238, 73, 0x900, false,
 					triggerMachineByHashCallback, "MC");
 				series_place_sprite("candleman shadow4", 0, 200, 238, 73, 0xf00);
 				sendWSMessage(1, _mei2, _meiHandHip, 22, 22, 2000, _meiHandHip, 22, 22, 0);
@@ -481,7 +481,7 @@ void Room201::daemon() {
 		break;
 
 	case 507:
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "201 guy behind desk 1");
 		_agentMode = 9;
 		_agentShould = 8;
@@ -491,7 +491,7 @@ void Room201::daemon() {
 		break;
 
 	case 509:
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "201 guy behind desk 2");
 		sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
 		_agentMode = 0;
@@ -692,7 +692,7 @@ void Room201::daemon() {
 		ws_get_walker_info(_mei0, &_G(player_info).x, &_G(player_info).y,
 			&_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
 		_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y,
-			_G(player_info).scale, 0x900, 0, triggerMachineByHashCallback, "Mei Chen other states machine");
+			_G(player_info).scale, 0x900, false, triggerMachineByHashCallback, "Mei Chen other states machine");
 		series_place_sprite("candleman shadow4", 0, _G(player_info).x, _G(player_info).y,
 			_G(player_info).scale, 0xf00);
 		sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
@@ -1773,7 +1773,7 @@ void Room201::animateRipley() {
 	player_update_info();
 	ws_hide_walker();
 	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-		_G(player_info).depth, 0, triggerMachineByHashCallback,
+		_G(player_info).depth, false, triggerMachineByHashCallback,
 		"Rip Delta Machine State");
 	sendWSMessage_10000(1, _ripley, _series7, 1, 1, 4010, _series7, 1, 1, 0);
 	_shadow3 = series_place_sprite("SAFARI SHADOW 3", 0,
