@@ -588,7 +588,7 @@ public:
 		return *(&x + i - 1);
 	}
 
-	// Convertion to int ///////
+	// Conversion to int ///////
 	inline int xi() const {
 		return round(x);
 	}
