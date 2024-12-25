@@ -94,6 +94,8 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod metho
 			int r = _data[3 * i + 0] - cr;
 			int g = _data[3 * i + 1] - cg;
 			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
 
 			uint32 distWeighted = 3 * r * r + 5 * g * g + 2 * b * b;
 			if (distWeighted < min) {
@@ -104,11 +106,13 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod metho
 		break;
 	case kColorDistanceRedmean:
 		for (uint i = 0; i < _size; ++i) {
-			int rmean = (_data[3 * i + 0] + cr) / 2;
 			int r = _data[3 * i + 0] - cr;
 			int g = _data[3 * i + 1] - cg;
 			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
 
+			int rmean = (_data[3 * i + 0] + cr) / 2;
 			uint32 distSquared = (((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8);
 			if (distSquared < min) {
 				bestColor = i;
