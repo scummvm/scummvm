@@ -324,7 +324,7 @@ void SliceAnimations::updatePagesList(Page &page, bool newPage) {
 	}
 	_lastUsedPage = &page;
 
-	// Don't cleanup everytime, only when allocating new pages
+	// Don't cleanup every time, only when allocating new pages
 	if (newPage) {
 		cleanupOutdatedPages();
 	}
