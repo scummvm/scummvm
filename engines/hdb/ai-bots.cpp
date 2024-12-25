@@ -555,7 +555,7 @@ void aiRightBotAction(AIEntity *e, int mx, int my) {
 //
 //	PUSHBOT : Very simple, this guy goes forward and pushes anything in his
 //		path all the way until it can't go any further.  Then, he turns 180
-//		degress and comes back until he can't go any further.  Then... he
+//		degrees and comes back until he can't go any further.  Then... he
 //		turns 180 degrees and does it all over again!
 //
 //-------------------------------------------------------------------
