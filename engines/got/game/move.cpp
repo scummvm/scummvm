@@ -65,7 +65,7 @@ int reverse_direction(ACTOR *actr) {
 	return 1;
 }
 
-void thor_shoots(void) {
+void thor_shoots() {
 	if ((_G(hammer)->used != 1) && (!_G(hammer)->dead) && (!_G(thor)->shot_cnt)) {
 		play_sound(SWISH, 0);
 		_G(thor)->shot_cnt = 20;

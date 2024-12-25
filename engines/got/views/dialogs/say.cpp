@@ -64,7 +64,6 @@ void Say::draw() {
 	Dialog::draw();
 	GfxSurface s = getSurface();
 
-	s.blitFrom((*_pic)[_picIndex], Common::Point(120, 17));
 	if (_item)
 		s.blitFrom(_G(objects)[_item], Common::Point(160, 17));
 
@@ -109,6 +108,8 @@ void Say::draw() {
 		x += 8;
 	}
 
+	s.blitFrom((*_pic)[_picIndex], Common::Point(120, 17));
+
 	if (_waitForResponse == WAIT_MORE)
 		s.print(Common::Point(184, 86), "More...", 15);
 }
@@ -146,7 +147,8 @@ bool Say::msgAction(const ActionMessage &msg) {
 }
 
 bool Say::tick() {
-	if (_waitForResponse == WAIT_NONE) {
+	if (_waitForResponse == WAIT_NONE && ++_contentCtr > 3) {
+		_contentCtr = 0;
 		const char *contentEnd = _content + ++_contentLength;
 
 		if (*contentEnd == '~' && Common::isXDigit(*(contentEnd + 1)))
@@ -160,8 +162,9 @@ bool Say::tick() {
 			_picIndex = 0;
 		}
 
-		if (_type && ++_woopCtr > 5) {
+		if (_type) {
 			play_sound(WOOP, 1);
+			_woopCtr = 0;
 		}
 
 		redraw();

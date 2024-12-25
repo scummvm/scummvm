@@ -600,11 +600,6 @@ int movement_zero(ACTOR *actr) {       //player control
 
 	set_thor_vars();
 
-	if (_G(key_flag)[key_fire])
-		thor_shoots();
-	if (_G(key_flag)[key_select])
-		select_item();
-
 	if ((_G(hammer)->used) && (_G(hammer)->move == 5)) {
 		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2),
 			_G(hammer)->x, _G(hammer)->y, _G(hammer)->x + 13, _G(hammer)->y + 13)) {
