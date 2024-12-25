@@ -980,7 +980,7 @@ void ScriptExecutor::FuncC8E4() {
 	
 	uint32 characterID = Func9F4D_32() - 0x400;
 	GameObject *obj = GameObjects::GetObjectByIndex(characterID);
-	obj->useOverloadAnimation = true;
+	obj->useOverloadAnimation = false;
 }
 
 void ScriptExecutor::FuncB6BE_actual() {
@@ -2029,10 +2029,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// and it seems to write the same data just to a different address relative
 			// to the object
 			// Note: This seems to adjust the direction the character is facing
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
+			uint16 characterID = Func9F4D_16() - 0x400;
+			// TODO: Not sure if this is actually the orientation or if we need to set it
+			uint16 orientation = Func9F4D_16();
+			GameObject *object = GameObjects::GetObjectByIndex(characterID);
+			object->Orientation = orientation;
+			object->useOverloadAnimation = true;
 		} else if (opcode1 == 0x28) {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
