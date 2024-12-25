@@ -29,7 +29,7 @@ static int8    *MemoryPool = nullptr;
 static uint32   MemoryPoolPointer = 0;
 static uint32   MaxAllocatedMem = 0;
 
-// Memory Managment
+// Memory Management
 // Only linear (non dynamic) stack allocations
 
 
