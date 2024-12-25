@@ -93,8 +93,8 @@ static const GfxDriverInfo _gfxDriverInfos[] = {
 	{ Common::kRenderDefault, Common::kPlatformWindows, SCI_VERSION_1_1, SCI_VERSION_1_1, GID_KQ6, Common::UNK_LANG, kEnable, INITPROCS1(WindowsGfx256Colors), 1 },
 	{ Common::kRenderDefault, Common::kPlatformDOS, SCI_VERSION_1_1, SCI_VERSION_1_1, GID_KQ6, Common::UNK_LANG, kEnable, INITPROCS1(WindowsGfx256Colors), 1 },
 	{ Common::kRenderDefault, Common::kPlatformUnknown, SCI_VERSION_0_EARLY, SCI_VERSION_1_1, GID_ALL, Common::KO_KOR, kUnused, INITPROCS1(UpscaledGfx), 0 },
-	{ Common::kRenderDefault, Common::kPlatformUnknown, SCI_VERSION_0_EARLY, SCI_VERSION_1_EGA_ONLY, GID_ALL, Common::UNK_LANG, kUnused, INITPROCS1(GfxDefault), 0 },
-	{ Common::kRenderDefault, Common::kPlatformUnknown, SCI_VERSION_1_EARLY, SCI_VERSION_1_1, GID_ALL, Common::UNK_LANG, kUnused, INITPROCS1(GfxDefault), 1 }
+	{ Common::kRenderDefault, Common::kPlatformUnknown, SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE, GID_ALL, Common::UNK_LANG, kUnused, INITPROCS1(GfxDefault), 0 },
+	{ Common::kRenderDefault, Common::kPlatformUnknown, SCI_VERSION_01, SCI_VERSION_1_1, GID_ALL, Common::UNK_LANG, kUnused, INITPROCS1(GfxDefault), 1 }
 };
 
 #undef INITPROCS1
