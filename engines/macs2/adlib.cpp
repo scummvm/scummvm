@@ -604,46 +604,29 @@ void Adlib::Func294E() {
 			// eax:edx = eax:edx * ebx:ecx
 			// TODO: Check actual possible range of result
 			uint64 product = bpp6 * (bp4 - bp2);
+			// Right shift done by 0D7A proc
+			product = product >> 0x7;
+			// TODO: Check if we can ever overrun
+			bp2 = bp2 + product;
+		} else {
+			// l0017_29EB:
+			if (bpp8 > 0) {
+				// l0017_29F1:
+				bp6 = bpp8 - 1;	// TODO: xor ah, ah
+			} else {
+				// l0017_29FC:#
+				bp6 = 0;
+			}
+			// l0017_2A01:
+			// TODO: Continue here
+			
 		}
-		// TODO: Do we hit the label?
-		// l0017_29EB:
 	}
 	// TODO:
 	// l0017_2A4F:
 	
-	/*
+/*
 
-	// TODO: Implement
-	// This code performs a right shift of a 32-bit value (formed by the combination of dx and ax) by cl bits. The result of the shift is stored in ax, and the original upper 16 bits (dx) are also shifted and updated
-
-	
-	mov	cx,7h
-	xor	bx,bx
-	call	far 00CDh:0D7Ah
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	xor	dx,dx
-	add	ax,cx
-	adc	dx,bx
-	;; #note_on_data: This could be where we set the data
-	mov	[bp-2h],ax
-	jmp	2A4Fh ;; 29E9
-
-l0017_29EB:
-	cmp	byte ptr [bp+8h],0h
-	jbe	29FCh
-
-l0017_29F1:
-	mov	al,[bp+8h]
-	xor	ah,ah
-	dec	ax
-	mov	[bp-6h],ax
-	jmp	2A01h
-
-l0017_29FC:
-	xor	ax,ax
-	mov	[bp-6h],ax
 
 l0017_2A01:
 	mov	di,[bp-6h]

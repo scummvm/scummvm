@@ -1506,12 +1506,12 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
 	int blobIndex = GameObject->Orientation - 1;
-	if (GameObject->testOverloadAnimation > -1) {
-		blobIndex = GameObject->testOverloadAnimation;
+	
+		
 		// TODO: Figure out how the game realizes that this animation
 		// (the tiger at the start in orientation 15d) is not mirrored
 		// TODO: FIgure out where we got the glitch with the chicken from
-	} else if (isAnimationMirrored() && GameObject->Index != 0x9 && GameObject->Index != 0x6) {
+	if (isAnimationMirrored() && GameObject->Index != 0x9 && GameObject->Index != 0x6) {
 		blobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
 		// blobIndex = GameObject->Orientation - 1 -
 	}
@@ -1578,14 +1578,16 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	testReader.readStream->seek(6, SEEK_CUR
 	*/
 
+	Common::Array<uint8> &blob = GameObject->useOverloadAnimation ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
+	if (GameObject->useOverloadAnimation)
 	// Update pass
-	BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex], true, 2);
+	BackgroundAnimationBlob::Func1480(blob, true, 2);
 	// Retrieval pass
-	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex],false, 0x0);
+	uint16 offset = BackgroundAnimationBlob::Func1480(blob, false, 0x0);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(GameObject->Blobs[blobIndex].data(), GameObject->Blobs[blobIndex].size());
+	Common::MemoryReadStream stream(blob.data(), blob.size());
 	stream.seek(offset);
 	result->ReadFromStream(&stream);
 	return result;
