@@ -24,8 +24,9 @@
 namespace Got {
 
 void SETUP::sync(Common::Serializer &s) {
-	// Write out the flags
-	s.syncBytes((byte *)this, 16);
+	// Sync the flags bit-fields
+	assert(((byte *)&value - (byte *)this) == 8);
+	s.syncBytes((byte *)this, 8);
 
 	s.syncBytes(value, 16);
 	s.syncAsByte(junk);

@@ -37,10 +37,11 @@ private:
 	Common::Point _moveDelta;
 	TransitionDir _transitionDir = DIR_LEFT;
 	int _transitionPos = 0;
-	
+	int _deathCtr = 0;
+
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
-	void drawEnemies(GfxSurface &s);
+	void drawActors(GfxSurface &s);
 	void checkThunderShake();
 	void checkSwitchFlag();
 	void checkForItem();
@@ -48,6 +49,9 @@ private:
 	void updateActors();
 	void checkForAreaChange();
 	void areaChanged();
+	void thorDies();
+	void spinThor();
+	void thorDead();
 
 public:
 	GameContent();
