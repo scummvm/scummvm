@@ -90,7 +90,7 @@ private:
 	 * @param src The file to move
 	 * @param dst The path where the file is to be moved.
 	 *
-	 * @returns Wether the renaming succeeded or not.
+	 * @returns Whether the renaming succeeded or not.
 	 */
 	bool moveFile(const Common::String &src, const Common::String &dst);
 };
