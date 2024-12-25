@@ -146,7 +146,7 @@ void HypnoEngine::runCutscene(Cutscene *a) {
 }
 
 bool HypnoEngine::runGlobal(Global *a) {
-	debugC(1, kHypnoDebugScene, "Runing global with command '%s' and variable '%s'", a->command.c_str(), a->variable.c_str());
+	debugC(1, kHypnoDebugScene, "Running global with command '%s' and variable '%s'", a->command.c_str(), a->variable.c_str());
 	if (a->command == "TURNON")
 		_sceneState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
