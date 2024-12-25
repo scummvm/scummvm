@@ -21,9 +21,6 @@ MODULE_OBJS := \
 	codecs/codec.o \
 	codecs/hlz.o \
 	codecs/hnm.o \
-	codecs/indeo3.o \
-	codecs/indeo4.o \
-	codecs/indeo5.o \
 	codecs/jyv1.o \
 	codecs/mjpeg.o \
 	codecs/msrle.o \
@@ -34,15 +31,22 @@ MODULE_OBJS := \
 	codecs/smc.o \
 	codecs/svq1.o \
 	codecs/truemotion1.o \
-	codecs/xan.o \
-	codecs/indeo/indeo.o \
-	codecs/indeo/indeo_dsp.o \
-	codecs/indeo/mem.o \
-	codecs/indeo/vlc.o
+	codecs/xan.o
 
 ifdef USE_MPEG2
 MODULE_OBJS += \
 	codecs/mpeg.o
+endif
+
+ifdef USE_INDEO
+MODULE_OBJS += \
+	codecs/indeo3.o \
+	codecs/indeo4.o \
+	codecs/indeo5.o \
+	codecs/indeo/indeo.o \
+	codecs/indeo/indeo_dsp.o \
+	codecs/indeo/mem.o \
+	codecs/indeo/vlc.o
 endif
 
 # Include common rules

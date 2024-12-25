@@ -290,6 +290,7 @@ _need_memalign=yes
 _have_x86=no
 _have_amd64=no
 _imgui=yes
+_indeo=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -314,6 +315,7 @@ add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
 add_component imgui "ImGui" "_imgui" "USE_IMGUI"
+add_component indeo "indeo" "_indeo" "USE_INDEO"
 add_component lua "lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
