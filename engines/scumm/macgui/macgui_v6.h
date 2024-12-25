@@ -61,6 +61,8 @@ public:
 	void resetAfterLoad() override;
 	void update(int delta) override {}
 
+	void updateThumbnail(MacDialogWindow *window, Common::Rect thimbnailRect, int saveSlot);
+
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 

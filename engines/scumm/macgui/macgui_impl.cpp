@@ -961,11 +961,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 				palette.set(k._value, r, g, b);
 			}
 
-			for (int i = 0; i < 256; i++) {
-				byte r, g, b;
-				palette.get(i, r, g, b);
-			}
-
 			_windowManager->passPalette(palette.data(), 256);
 
 			for (int i = 0; i < 256; i++) {
