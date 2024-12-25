@@ -690,7 +690,7 @@ namespace Sword1 {
 #define CZECH145				 0x03050042
 #define CZECH146				 0x03050043
 	// 68 entities in TXTs, ??? in datafiles.
-	// portugese
+	// portuguese
 #define PORT0					 0x03060000
 #define PORT1					 0x03060001
 #define PORT2					 0x03060002
