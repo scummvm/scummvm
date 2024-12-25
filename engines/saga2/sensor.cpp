@@ -434,7 +434,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 			continue;
 
 		//  This extra test is a HACK to ensure that the center actor
-		//  will be able to sense a protagonist even if the protaganist
+		//  will be able to sense a protagonist even if the protagonist
 		//  is invisible.
 		if (!objIsActor || getObject() != getCenterActor()) {
 			if (!(senseFlags & kActorSeeInvis)
