@@ -83,11 +83,13 @@ bool Palette::contains(const Palette& p) const {
 	return p._size <= _size && !memcmp(_data, p._data, p._size * 3);
 }
 
-byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
+byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod method) const {
 	uint bestColor = 0;
 	uint32 min = 0xFFFFFFFF;
 
-	if (useNaiveAlg) {
+	switch (method)
+	{
+	case kColorDistanceNaive:
 		for (uint i = 0; i < _size; i++) {
 			int r = _data[3 * i + 0] - cr;
 			int g = _data[3 * i + 1] - cg;
@@ -99,7 +101,8 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
 				min = distWeighted;
 			}
 		}
-	} else {
+		break;
+	case kColorDistanceRedmean:
 		for (uint i = 0; i < _size; ++i) {
 			int rmean = (_data[3 * i + 0] + cr) / 2;
 			int r = _data[3 * i + 0] - cr;
@@ -112,6 +115,9 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
 				min = distSquared;
 			}
 		}
+		break;
+	default:
+		break;
 	}
 
 	return bestColor;
@@ -164,7 +170,7 @@ bool PaletteLookup::setPalette(const byte *palette, uint len)  {
 	return true;
 }
 
-byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
+byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod method) {
 	if (_paletteSize == 0) {
 		warning("PaletteLookup::findBestColor(): Palette was not set");
 		return 0;
@@ -175,13 +181,13 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 	if (_colorHash.contains(color))
 		return _colorHash[color];
 
-	uint bestColor = _palette.findBestColor(cr, cg, cb, useNaiveAlg);
+	uint bestColor = _palette.findBestColor(cr, cg, cb, method);
 	_colorHash[color] = bestColor;
 
 	return bestColor;
 }
 
-uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
+uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, ColorDistanceMethod method) {
 	if (len <= _paletteSize && memcmp(_palette.data(), srcPalette, len * 3) == 0)
 		return nullptr;
 
@@ -191,7 +197,7 @@ uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaive
 		byte g = *srcPalette++;
 		byte b = *srcPalette++;
 
-		map[i] = findBestColor(r, g, b, useNaiveAlg);
+		map[i] = findBestColor(r, g, b, method);
 	}
 	return map;
 }

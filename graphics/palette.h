@@ -26,6 +26,11 @@
 
 namespace Graphics {
 
+enum ColorDistanceMethod {
+	kColorDistanceNaive,	///< Weighted red 30%, green 50%, blue 20%
+	kColorDistanceRedmean,	///< Common low-cost approximation
+};
+
 /**
  * Constants available for use in paletted code
  */
@@ -114,11 +119,11 @@ public:
 	/**
 	 * Finds the index of the closest color from the palette.
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method           the method used to determine the closest color
 	 *
 	 * @return the palette index
 	 */
-	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false) const;
+	byte findBestColor(byte r, byte g, byte b, ColorDistanceMethod method = kColorDistanceRedmean) const;
 
 	void clear();
 
@@ -176,11 +181,11 @@ public:
 	 * @brief This method returns closest color from the palette
 	 *        and it uses cache for faster lookups
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method           the method used to determine the closest color
 	 *
 	 * @return the palette index
 	 */
-	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false);
+	byte findBestColor(byte r, byte g, byte b, ColorDistanceMethod method = kColorDistanceRedmean);
 
 	/**
 	 * @brief This method creates a map from the given palette
@@ -188,11 +193,11 @@ public:
 	 *
 	 * @param palette   the palette data, in interleaved RGB format
 	 * @param len       the number of palette entries to be read
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method    the method used to determine the closest color
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
-	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
+	uint32 *createMap(const byte *srcPalette, uint len, ColorDistanceMethod method = kColorDistanceRedmean);
 
 private:
 	Palette _palette;
