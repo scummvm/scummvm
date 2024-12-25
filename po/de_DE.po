@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-24 11:18+0000\n"
-"PO-Revision-Date: 2024-12-07 08:41+0000\n"
+"PO-Revision-Date: 2024-12-25 09:48+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7618,10 +7618,8 @@ msgid "Change Command"
 msgstr "Befehl anpassen"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Timer aktiviert"
+msgstr "Zeit vorlaufen lassen"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -7863,10 +7861,8 @@ msgid "Rotate down"
 msgstr "Nach unten drehen"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "Rückwärts drehen"
+msgstr "Zurück drehen"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
@@ -10481,14 +10477,6 @@ msgstr ""
 "Patch nur herunter, Sie werden von da aus selbst fortfahren müssen)\n"
 
 #: engines/sci/sci.cpp:532
-#, fuzzy
-#| msgid ""
-#| "GK2 has a fan made subtitles, available thanks to the good persons at "
-#| "SierraHelp.\n"
-#| "\n"
-#| "Installation:\n"
-#| "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-#| "GK2Subtitles.zip\n"
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -11514,14 +11502,12 @@ msgstr ""
 "Aktiviert den Demo-/Kiosk-Modus in der Verkaufsversion von Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:794
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "CD-Ton verwenden"
+msgstr "Remastered-Ton verwenden"
 
 #: engines/scumm/metaengine.cpp:795
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Verwende die Remastered-Versionen der Sprachausgabe und Sound-Effekte."
 
 #: engines/scumm/metaengine.cpp:897
 msgid "Down Left"
