@@ -29,19 +29,19 @@ namespace Riddle {
 namespace Rooms {
 
 struct Maze709Struc {
-	int32 _field_0;
-	int32 _field_4;
-	int32 _field_8;
-	int32 _field_C;
-	int32 _field_10;
-	int32 _field_14;
-	int32 _field_18;
-	int32 _field_1C;
+	int32 _leftActive;
+	int32 _rightActive;
+	int32 _straightActive;
+	int32 _backActive;
+	int32 _leftIndex;
+	int32 _rightIndex;
+	int32 _straightIndex;
+	int32 _backIndex;
 };
 
 class Room709 : public Room {
 public:
-	Room709() : Room() {}
+	Room709();
 	~Room709() override {}
 
 	void preload() override;
@@ -49,24 +49,24 @@ public:
 	void pre_parser() override;
 	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
 
 private:
-	int32 _field44 = 0;
-	int32 _field48 = 0;
-	int32 _field74 = 0;
-	int32 _field78 = 0;
-	int32 _field7C = 0;
-	int32 _field70 = 0;
-	int32 _field80_save = 0;
-	int32 _field84 = 0;
-	int32 _field88 = 0;
+	int32 _chiselActiveFl = 0;
+	int32 _incenseBurnerActiveFl = 0;
+	int32 _pullRightFl = 0;
+	int32 _pullCenterFl = 0;
+	int32 _pullNearFl = 0;
+	int32 _pullLeftFl = 0;
+	int32 _btnFlag = 0;
 
+	int32 _mazeCurrIndex = 0;
+	
 	int32 _709NearDoorLiteSeries = 0;
 	int32 _709rpro1Series = 0;
 	int32 _709rpro2Series = 0;
 	int32 _709rpro3Series = 0;
 	int32 _709rpro4Series = 0;
-	int32 _btnFlag = 0;
 	int32 _mazeCenterDoorLiteSeries = 0;
 	int32 _mazeLeftDoorLiteSeries = 0;
 	int32 _mazeRightDoorLiteSeries = 0;
@@ -88,6 +88,7 @@ private:
 
 	Maze709Struc _maze709Arr[99];
 
+	void resetMaze();
 	static void clearPressed(void *, void *);
 };
 
