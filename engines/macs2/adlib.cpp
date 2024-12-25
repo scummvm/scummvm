@@ -597,6 +597,13 @@ void Adlib::Func294E() {
 				// l0017_2996:
 				bp6 = 0x7F;
 			}
+			// l0017_299B:
+			dx = gArray9F[bp6];
+			bp4 = (gArray11F[bp6] << 0x8) + dx;
+			// Multiplication using 00CDh:0C97h
+			// eax:edx = eax:edx * ebx:ecx
+			// TODO: Check actual possible range of result
+			uint64 product = bpp6 * (bp4 - bp2);
 		}
 		// TODO: Do we hit the label?
 		// l0017_29EB:
@@ -606,20 +613,10 @@ void Adlib::Func294E() {
 	
 	/*
 
+	// TODO: Implement
+	// This code performs a right shift of a 32-bit value (formed by the combination of dx and ax) by cl bits. The result of the shift is stored in ax, and the original upper 16 bits (dx) are also shifted and updated
 
-l0017_299B:
-	dx = gArray9F[bp6];
-	bp4 = (gArray11F[bp6] << 0x8) + dx;
-	// TODO: Implement the multiplication here
-	mov	al,[bp+6h]
-	xor	ah,ah
-	xor	dx,dx
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-4h]
-	sub	ax,[bp-2h]
-	xor	dx,dx
-	call	far 00CDh:0C97h
+	
 	mov	cx,7h
 	xor	bx,bx
 	call	far 00CDh:0D7Ah
