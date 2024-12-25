@@ -535,13 +535,19 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRe
 	// We don't know in advance how many colors the thumbnail is going to
 	// use. Reduce the image to a smaller palette.
 	//
-	// FIXME: THIS IS SO BROKEN IT'S NOT EVEN FUNNY!
+	// FIXME: This is a very stupid method. We should be able to do a lot
+	// better than this.
 
 	int numColors = 0;
 
 	for (int y = yMin; y < yMax; y++) {
 		for (int x = 0; x < thumbnail->w; x++) {
-			uint32 color = thumbnail->getPixel(x, y) & 0xC0E0C0;
+			uint32 color = thumbnail->getPixel(x, y);
+
+			byte r, g, b;
+			thumbnail->format.colorToRGB(color, r, g, b);
+
+			color = ((r << 16) | (g << 8) | b) & 0xC0E0C0;
 
 			if (!paletteMap.contains(color))
 				paletteMap[color] = numColors++;
@@ -559,8 +565,13 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRe
 
 	for (int y = 0; y < drawArea.h; y++) {
 		for (int x = 0; x < drawArea.w; x++) {
-			byte color = paletteMap[thumbnail->getPixel(x, y + yMin) & 0xC0E0C0];
-			drawArea.setPixel(x, y, color);
+			uint32 color = thumbnail->getPixel(x, y + yMin);
+			byte r, g, b;
+			thumbnail->format.colorToRGB(color, r, g, b);
+
+			color = ((r << 16) | (g << 8) | b) & 0xC0E0C0;
+
+			drawArea.setPixel(x, y, paletteMap[color]);
 		}
 	}
 
