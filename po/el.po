@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-12-24 11:18+0000\n"
-"PO-Revision-Date: 2024-12-11 12:38+0000\n"
+"PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -11668,14 +11668,12 @@ msgstr ""
 "πλήρη έκδοση του Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:794
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Χρήση ήχου CD"
+msgstr "Χρήση remastered ήχου"
 
 #: engines/scumm/metaengine.cpp:795
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Χρησιμοποιεί τις remastered ομιλίες και ηχητικά εφέ."
 
 #: engines/scumm/metaengine.cpp:897
 msgid "Down Left"
