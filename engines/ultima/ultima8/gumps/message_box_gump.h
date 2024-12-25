@@ -35,7 +35,7 @@ namespace Ultima8 {
 
 /**
  * A modal message box (for errors, etc)
- * In Crusader, this should be used for things like the "Targetting reticle [in]active." message
+ * In Crusader, this should be used for things like the "Targeting reticle [in]active." message
  */
 class MessageBoxGump : public ModalGump {
 	Std::string _title;
