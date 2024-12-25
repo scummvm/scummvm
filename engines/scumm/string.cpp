@@ -1114,6 +1114,10 @@ void ScummEngine::displayDialog() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
+	if ((_game.features & GF_DOUBLEFINE_PAK) && _game.id == GID_MONKEY && _sound->useRemasteredAudio()) {
+		_sound->talkSound(_currentScriptOffsetSavedForSpeechMI, 0, DIGI_SND_MODE_TALKIE);
+	}
+
 	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 

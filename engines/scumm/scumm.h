@@ -883,6 +883,7 @@ protected:
 	int _numTalkies = 0;
 	int _numUnk = 0;
 	int _HEHeapSize = 0;
+
 public:
 	int _numLocalScripts = 60, _numImages = 0, _numRooms = 0, _numScripts = 0, _numSounds = 0;	// Used by HE games
 	int _numCostumes = 0;	// FIXME - should be protected, used by Actor::remapActorPalette
@@ -899,6 +900,11 @@ public:
 	byte _NESBaseTiles = 0;
 
 	int _NESStartStrip = 0;
+
+	/* MI SE injected speech */
+	int16 _currentScriptSavedForSpeechMI = 0;
+	int16 _currentScriptOffsetSavedForSpeechMI = 0;
+	int16 _currentSpeechIndexMI = 0;
 
 protected:
 	int _curPalIndex = 0;

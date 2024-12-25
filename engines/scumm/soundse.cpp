@@ -357,8 +357,12 @@ void SoundSE::initAudioMappingMI() {
 		//	  entry.localScriptOffset, entry.messageIndex, entry.isEgoTalking, entry.wait,
 		//	  entry.textEnglish.c_str(), entry.speechFile.c_str());
 
-		uint32 offset = ((entry.room + entry.script) << 16) | (entry.localScriptOffset & 0xFFFF);
-		_audioNameToOriginalOffsetMap[entry.speechFile] = offset;
+		_audioNameToOriginalOffsetMap[entry.speechFile] = getAudioOffsetForMI(
+			entry.room,
+			entry.script,
+			entry.localScriptOffset,
+			entry.messageIndex
+		);
 
 		_audioEntriesMI.push_back(entry);
 	} while (!f->eos());
@@ -446,10 +450,23 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
 	uint32 offsetToCheck = offset;
 
-	if (_vm->_game.id == GID_TENTACLE) {
+	switch (_vm->_game.id) {
+	case GID_MONKEY:
+		if (_vm->_currentScriptSavedForSpeechMI < 0)
+			return -1;
+
+		offsetToCheck = getAudioOffsetForMI(
+			_vm->_currentRoom,
+			_vm->_currentScriptSavedForSpeechMI,
+			offset,
+			_vm->_currentSpeechIndexMI
+		);
+		break;
+	case GID_TENTACLE:
 		// Some of the remastered sound offsets are off compared to the
 		// ones from the classic version, so we chop off the last 2 digits
 		offsetToCheck = offset & 0xFFFFFF00;
+		break;
 	}
 
 	if (_offsetToIndex.contains(offsetToCheck))
@@ -512,6 +529,10 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	);
 
 	return createSoundStream(subStream, audioEntry);
+}
+
+uint32 SoundSE::getAudioOffsetForMI(uint16 room, uint16 script, uint16 localScriptOffset, uint16 messageIndex) {
+	return ((room + script + messageIndex) << 16) | (localScriptOffset & 0xFFFF);
 }
 
 } // End of namespace Scumm

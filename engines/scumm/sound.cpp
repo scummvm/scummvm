@@ -609,20 +609,26 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			}
 		}
 		return;
-#if 0
-	} else if ((_vm->_game.features & GF_DOUBLEFINE_PAK) && (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2)) {
+	} else if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && (_vm->_game.features & GF_DOUBLEFINE_PAK) && _useRemasteredAudio) {
 		// MI1 and MI2 SE
 		if (_soundSE && !_soundsPaused && _mixer->isReady()) {
 			Audio::AudioStream *input = _soundSE->getAudioStream(
 				offset,
 				mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech);
 
-			if (input)
-				_mixer->playStream((mode == DIGI_SND_MODE_SFX) ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, handle, input, id);
+			_digiSndMode |= mode;
+
+			if (input) {
+				if (mode == DIGI_SND_MODE_SFX)
+					_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, input, id);
+				else
+					_mixer->playStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
+			}
+
+			_vm->_currentSpeechIndexMI++;
 		}
 
 		return;
-#endif
 	} else {
 		// This has been verified for INDY4, DOTT and SAM
 		if (_vm->_voiceMode == 2 && _vm->_game.version <= 6)

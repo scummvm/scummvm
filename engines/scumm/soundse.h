@@ -56,6 +56,7 @@ public:
 
 	Audio::SeekableAudioStream *getXWBTrack(int track);
 	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
+	uint32 getAudioOffsetForMI(uint16 room, uint16 script, uint16 localScriptOffset, uint16 messageIndex);
 
 private:
 	enum AudioCodec {

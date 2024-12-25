@@ -150,6 +150,8 @@ public:
 
 	void updateMusicTimer();
 
+	bool useRemasteredAudio() const { return _useRemasteredAudio; }
+
 	// TODO: Duplicate this in Sound as well?
 	bool isRolandLoom() const { return _soundCD->isRolandLoom(); }
 
