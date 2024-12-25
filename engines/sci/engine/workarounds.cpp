@@ -299,7 +299,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FANMADE,        -1,   997,  0,         "TheMenuBar", "handleEvent",                  nullptr,   507,   507, { WORKAROUND_FAKE,   1 } }, // Betrayed Alliance 1.3 when selecting Notes from menu. Uninitialized variable must be > 0
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game, all temps - 0+1 - bug #5232
+	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // Gun practice mini-game, all temps - 0+1 - bug #5232
 	{ GID_GK1,            -1, 64950, -1,            "Feature", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
 	{ GID_GK1,            -1, 64937, -1,         "GKControls", "dispatchEvent",                nullptr,     6,     6, { WORKAROUND_FAKE,   0 } }, // when using keyboard navigation (tab) in the game settings and hitting 'enter' when over a slider
 	{ GID_GK1,            -1, 64994, -1,               "Game", "save",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when saving in Mac version
