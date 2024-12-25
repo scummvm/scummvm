@@ -1586,7 +1586,7 @@ void ScummEngine::fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette
 
 uint32 ScummEngine::findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b) {
 	_pl.setPalette(palette, paletteLength);
-	return (uint32)_pl.findBestColor(r, g, b, true);
+	return (uint32)_pl.findBestColor(r, g, b, Graphics::kColorDistanceNaive);
 }
 
 void ScummEngine::applyGrayscaleToPaletteRange(int min, int max) {
