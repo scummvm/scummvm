@@ -102,6 +102,11 @@ bool GameContent::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "THOR_DIES") {
 		thorDies();
 		return true;
+	} else if (msg._name == "SAVEGAME_LOADED") {
+		// Savegame loading uses the same ending part of the Thor death
+		// sequence to set up the loaded area in the default state
+		thorDead();
+		return true;
 	}
 
 	return false;

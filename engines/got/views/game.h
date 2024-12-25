@@ -33,14 +33,11 @@ class Game : public View {
 private:
 	GameContent _content;
 	GameStatus _status;
-	bool _firstTime = true;
 
 public:
 	Game();
 	virtual ~Game() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
