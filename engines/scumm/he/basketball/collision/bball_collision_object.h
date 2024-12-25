@@ -145,7 +145,7 @@ public:
 	U32FltVector3D _velocity;
 
 	float _collisionEfficiency; // A multiplier (range 0 to 1) that represents
-								// the percentage of velocity (perpindicular with
+								// the percentage of velocity (perpendicular with
 								// the collision) that a target object retains
 								// when it collides with this object
 
