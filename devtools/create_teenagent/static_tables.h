@@ -13652,6 +13652,7 @@ const static char* dialog_82[] = {
 	DISPLAY_MESSAGE,
 	"No police...",
 	DISPLAY_MESSAGE,
+	// FIXME: Spelling incorrect. noone should be no one. Fixing changes game data and thus may cause issues
 	"Noone will hear their screams...",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -13782,6 +13783,7 @@ const static char* dialog_88[] = {
 	NEW_LINE,
 	"and pick up the banknote.",
 	DISPLAY_MESSAGE,
+	// FIXME: Spelling incorrect. noone should be no one. Fixing changes game data and thus may cause issues
 	"Noone has to know...",
 	DISPLAY_MESSAGE,
 	"Good bye, my friend.",
