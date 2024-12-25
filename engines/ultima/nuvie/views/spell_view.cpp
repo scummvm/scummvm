@@ -516,8 +516,9 @@ void SpellView::close_look() {
 
 void SpellView::show_spell_description() {
 	if (get_selected_index() != -1) {
-		uint8 index = (level - 1) * 16 + get_selected_index();
-		Game::get_game()->get_magic()->show_spell_description(index);
+		sint16 index = get_selected_spell();
+		if (index < 256 && index > -1)
+			Game::get_game()->get_magic()->show_spell_description((uint8)index);
 	}
 	close_look();
 }
