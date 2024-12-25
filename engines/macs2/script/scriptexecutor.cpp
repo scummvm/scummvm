@@ -977,10 +977,10 @@ void ScriptExecutor::FuncC991() {
 }
 
 void ScriptExecutor::FuncC8E4() {
-	// TODO: Throwaway reads here for mocking
-	uint16 throwaway1;
-	uint16 throwaway2;
-	Func9F4D(throwaway1, throwaway2);
+	
+	uint32 characterID = Func9F4D_32() - 0x400;
+	GameObject *obj = GameObjects::GetObjectByIndex(characterID);
+	obj->useOverloadAnimation = true;
 }
 
 void ScriptExecutor::FuncB6BE_actual() {
@@ -2016,8 +2016,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint8 animationID = ReadByte();
 			Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
 			GameObject *object = GameObjects::GetObjectByIndex(id);
+			object->overloadAnimation = blob;
+			object->useOverloadAnimation = false;
 			// object->Blobs.push_back(blob);
-			object->Blobs[animationID - 1] = blob;
+			// object->Blobs[animationID - 1] = blob;
 			//GameObjects::GetObjectByIndex(id)->testOverloadAnimation = object->Blobs.size() - 1;
 		} else if (opcode1 == 0x27) {
 			// TODO: Implement 0037h:0C858h
