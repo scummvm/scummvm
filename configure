@@ -1880,7 +1880,7 @@ sailfish)
 	docdir='/usr/share/org.scummvm.scummvm/doc/scummvm'
 	# Use static libraries on Sailfish. Sailfish limits our
 	# ability to link with libraries from other packages. And if we ship
-	# dynamic library but always load it and noone else uses it, then we're
+	# dynamic library but always load it and no one else uses it, then we're
 	# no better off than using static libraries. Additionally shipping
 	# libraries is a hassle.
 	if [ -n "$JPEG_PREFIX" ]; then

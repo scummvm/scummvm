@@ -769,7 +769,7 @@ static void OPLCloseTable(void) {
 	free(ENV_CURVE);
 }
 
-/* CSM Key Controll */
+/* CSM Key Control */
 inline void CSMKeyControll(OPL_CH *CH) {
 	OPL_SLOT *slot1 = &CH->SLOT[SLOT1];
 	OPL_SLOT *slot2 = &CH->SLOT[SLOT2];

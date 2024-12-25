@@ -321,6 +321,7 @@ static const char *const kEoB1ValidateArmorStringDOSEnglish[1] = {
 static const StringListProvider kEoB1ValidateArmorStringDOSEnglishProvider = { ARRAYSIZE(kEoB1ValidateArmorStringDOSEnglish), kEoB1ValidateArmorStringDOSEnglish };
 
 static const char *const kEoB1ValidateNoDropStringDOSEnglish[1] = {
+	// FIXME: Spelling incorrect. cant should be can't. Fixing changes game data and thus may cause issues
 	"You cant put that item there.\r"
 };
 

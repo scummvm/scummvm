@@ -1167,6 +1167,7 @@ const char *_text[NUM_LANGS][NUM_TEXT] = {
 	// 205
 	"YOU...PIANIST...!!!!",
 	"BEAUTIFUL NIGHT",
+	// FIXME: Spelling incorrect. cant should be can't. Fixing changes game data and thus may cause issues
 	"AND IT'S NOT EVEN COLD OR ANYTHING, BY THE WAY, CANT YOU PLAY A DIFFERENT SONG?",
 	"ALL RIGHT, I'LL JUST LET YOU GO ON PLAYING",
 	"WELL THEN",

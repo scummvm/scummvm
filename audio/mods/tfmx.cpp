@@ -880,7 +880,7 @@ const int8 *Tfmx::loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &
 
 	const int32 sampleSize = sampleStream.size();
 	if (sampleSize < 4) {
-		warning("Tfmx: Cant load Samplefile");
+		warning("Tfmx: Can't load Samplefile");
 		return nullptr;
 	}
 

@@ -522,6 +522,7 @@ public:
 			   "077";
 	}
 
+	// FIXME: Spelling incorrect. Withdrawl should be Withdrawal. Fixing changes game data and thus may cause issues
 	const char **DEPOSIT_WITHDRAWL() {
 		static const char *_depositWithdrawl[] = { "Deposit", "Withdrawl" };
 		return _depositWithdrawl;
@@ -781,6 +782,7 @@ public:
 			"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Average", "Good",
 				"Very Good", "High", "Very High", "Great", "Super", "Amazing", "Incredible",
 				"Gigantic", "Fantastic", "Astoundig", "Astonishing", "Monumental", "Tremendous",
+				// FIXME: Spelling incorrect. Collosal should be Colossal. Fixing changes game data and thus may cause issues
 				"Collosal", "Awesome", "Awe Inspiring", "Ultimate"
 		};
 		return _ratingText;
