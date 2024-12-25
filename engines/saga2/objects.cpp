@@ -495,7 +495,7 @@ void GameObject::remove() {             // removes from old list
 		GameObject  *obj;
 
 		if (*headPtr == Nothing)
-			error("Inconsistant Object Chain! ('%s#%d' not on parent %s#%d chain)",
+			error("Inconsistent Object Chain! ('%s#%d' not on parent %s#%d chain)",
 			             objName(), id, objectAddress(_data.parentID)->objName(), _data.parentID);
 
 		obj = objectAddress(*headPtr);
@@ -1146,7 +1146,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 void GameObject::moveRandom(const TilePoint &minLoc, const TilePoint &maxLoc) {
 	//We Should Also Send Flags For Conditional Movements
 	//One Consideration Is Whether We Should Get One Random Location
-	//And Poke Around That Location If We Cant Go There Or Try Another
+	//And Poke Around That Location If We Can't Go There Or Try Another
 	//Random Location ???
 
 	TilePoint newLoc;

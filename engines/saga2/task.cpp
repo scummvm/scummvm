@@ -176,7 +176,7 @@ void TaskStackList::read(Common::InSaveFile *in) {
 		TaskStackID id;
 		TaskStack *ts;
 
-		//  Retreive the TaskStack's id number
+		//  Retrieve the TaskStack's id number
 		id = in->readSint16LE();
 		debugC(3, kDebugSaveload, "Loading Task Stack %d", id);
 
@@ -483,7 +483,7 @@ void TaskList::read(Common::InSaveFile *in) {
 	for (int i = 0; i < taskCount; i++) {
 		TaskID id;
 
-		//  Retreive the Task's id number
+		//  Retrieve the Task's id number
 		id = in->readSint16LE();
 		debugC(3, kDebugSaveload, "Loading Task %d (%d)", i, id);
 
