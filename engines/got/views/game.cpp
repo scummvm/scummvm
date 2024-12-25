@@ -54,6 +54,9 @@ void Game::draw() {
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
+	if (_G(gameMode) != MODE_NORMAL)
+		return false;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_F1:
 		odin_speaks(2008, -1);
@@ -75,6 +78,9 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
+	if (_G(gameMode) != MODE_NORMAL)
+		return false;
+
 	switch (msg._action) {
 	case KEYBIND_SELECT:
 		select_item();

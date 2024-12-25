@@ -36,7 +36,7 @@ GameContent::GameContent() : View("GameContent") {
 
 void GameContent::draw() {
 	GfxSurface s;
-	if (_mode == MODE_THUNDER || _mode == MODE_AREA_CHANGE) {
+	if (_G(gameMode) == MODE_THUNDER || _G(gameMode) == MODE_AREA_CHANGE) {
 		s.create(320, 192);
 	} else {
 		s = getSurface();
@@ -48,11 +48,11 @@ void GameContent::draw() {
 	drawEnemies(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
-	if (_mode == MODE_THUNDER) {
+	if (_G(gameMode) == MODE_THUNDER) {
 		GfxSurface win = getSurface();
 		win.clear();
 		win.blitFrom(s, _moveDelta);
-	} else if (_mode == MODE_AREA_CHANGE) {
+	} else if (_G(gameMode) == MODE_AREA_CHANGE) {
 		// Draw parts of the new scene along with parts of the old one
 		// as it's scrolled off-screen
 		GfxSurface win = getSurface();
@@ -106,7 +106,7 @@ bool GameContent::msgGame(const GameMessage &msg) {
 bool GameContent::tick() {
 	checkThunderShake();
 
-	if (_mode == MODE_NORMAL) {
+	if (_G(gameMode) == MODE_NORMAL) {
 		checkSwitchFlag();
 		checkForItem();
 		moveActors();
@@ -180,7 +180,7 @@ void GameContent::drawEnemies(GfxSurface &s) {
 
 void GameContent::checkThunderShake() {
 	if (_G(thunder_flag)) {
-		_mode = MODE_THUNDER;
+		_G(gameMode) = MODE_THUNDER;
 
 		// Introduce a random screen shake by rendering screen 1 pixel offset randomly
 		static const int8 DELTA_X[4] = { -1, 1, 0, 0 };
@@ -199,7 +199,7 @@ void GameContent::checkThunderShake() {
 		}
 
 		if (!_G(thunder_flag)) {
-			_mode = MODE_NORMAL;
+			_G(gameMode) = MODE_NORMAL;
 			_moveDelta = Common::Point(0, 0);
 		}
 
@@ -264,26 +264,26 @@ void GameContent::updateActors() {
 }
 
 void GameContent::checkForAreaChange() {
-	if (_mode == MODE_AREA_CHANGE) {
+	if (_G(gameMode) == MODE_AREA_CHANGE) {
 		// Area transition is already in progress
 		switch (_transitionDir) {
 		case DIR_LEFT:
 		case DIR_RIGHT:
 			_transitionPos += 32;
 			if (_transitionPos == 320)
-				_mode = MODE_NORMAL;
+				_G(gameMode) = MODE_NORMAL;
 			break;
 		case DIR_UP:
 		case DIR_DOWN:
 			_transitionPos += 16;
 			if (_transitionPos == 192)
-				_mode = MODE_NORMAL;
+				_G(gameMode) = MODE_NORMAL;
 			break;
 		default:
 			break;
 		}
 
-		if (_mode == MODE_NORMAL)
+		if (_G(gameMode) == MODE_NORMAL)
 			areaChanged();
 
 	} else if (_G(new_level) != _G(current_level)) {
@@ -332,19 +332,19 @@ void GameContent::checkForAreaChange() {
 			areaChanged();
 			break;
 		case -1:
-			_mode = MODE_AREA_CHANGE;
+			_G(gameMode) = MODE_AREA_CHANGE;
 			_transitionDir = DIR_LEFT;
 			break;
 		case 1:
-			_mode = MODE_AREA_CHANGE;
+			_G(gameMode) = MODE_AREA_CHANGE;
 			_transitionDir = DIR_RIGHT;
 			break;
 		case -10:
-			_mode = MODE_AREA_CHANGE;
+			_G(gameMode) = MODE_AREA_CHANGE;
 			_transitionDir = DIR_UP;
 			break;
 		case 10:
-			_mode = MODE_AREA_CHANGE;
+			_G(gameMode) = MODE_AREA_CHANGE;
 			_transitionDir = DIR_DOWN;
 			break;
 		default:

@@ -824,7 +824,6 @@ int Scripts::cmd_sound() {
 
 int Scripts::cmd_settile() {
 	int screen, pos, tile;
-	LEVEL *lvl;
 
 	if (!calc_value()) return 5;
 	buff_ptr++;

@@ -157,10 +157,8 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 			_G(shield_on))
 		return false;
 
-	// TODO: Consider if there is a cleaner way to do this. Maybe have a
-	// global flag or a message sent to the views 
-	Views::GameContent *content = (Views::GameContent *)findView("GameContent");
-	return content && content->canSaveLoad();
+	// Only allow if not in the middle of area transition, dying, etc.
+	return _G(gameMode) == MODE_NORMAL;
 }
 
 } // End of namespace Got

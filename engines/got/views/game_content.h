@@ -29,15 +29,10 @@ namespace Got {
 namespace Views {
 
 class GameContent : public View {
-	enum Mode {
-		MODE_NORMAL = 0, MODE_AREA_CHANGE = 1, MODE_THUNDER = 2,
-		MODE_THOR_DIES = 3
-	};
 	enum TransitionDir {
 		DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
 	};
 private:
-	Mode _mode = MODE_NORMAL;
 	GfxSurface _surface;
 	Common::Point _moveDelta;
 	TransitionDir _transitionDir = DIR_LEFT;
@@ -61,10 +56,6 @@ public:
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;
-
-	bool canSaveLoad() const {
-		return _mode == MODE_NORMAL;
-	}
 };
 
 } // namespace Views
