@@ -312,7 +312,7 @@ public:
 // bool select_obj(Obj *obj = nullptr, Actor *actor = nullptr);
 // bool select_obj(sint16 rel_x, sint16 rel_y);
 // There is no "select_text", as Events polls MsgScroll for new input.
-// Similiarly, a "select_key" is unnecessary. The following method
+// Similarly, a "select_key" is unnecessary. The following method
 // starts sending all keyboard input to 'caller'. (with the CB_DATA_READY message)
 	void key_redirect(CallBack *caller, void *user_data);
 	void cancel_key_redirect();
