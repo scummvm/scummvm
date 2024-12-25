@@ -45,7 +45,7 @@ private:
 	
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
-	void drawEnemies(GfxSurface &s, ACTOR *lastActor);
+	void drawEnemies(GfxSurface &s);
 	void checkThunderShake();
 	void checkSwitchFlag();
 	void checkForItem();
