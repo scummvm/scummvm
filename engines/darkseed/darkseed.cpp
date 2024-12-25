@@ -1032,7 +1032,7 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 	}
 	_printedcomeheredawson = false;
 	_objectVar.setObjectRunningCode(53, 0);
-	_objectVar[56] = 0; // evil sargent anim spriteNumber
+	_objectVar[56] = 0; // evil sergeant anim spriteNumber
 	_objectVar.setObjectRunningCode(72, 0);
 	for (int i = 31; i < 34; i++) {
 		if (_objectVar.getMoveObjectRoom(i) == 99) {
@@ -1293,7 +1293,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					} else if (_animation->_otherNspAnimationType_maybe == 43 || _animation->_otherNspAnimationType_maybe == 44) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
-					} else if (_animation->_otherNspAnimationType_maybe == 62) { // sargent approaches jail cell.
+					} else if (_animation->_otherNspAnimationType_maybe == 62) { // sergeant approaches jail cell.
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 45 || _animation->_otherNspAnimationType_maybe == 46) { // pull lever
@@ -2329,7 +2329,7 @@ void DarkseedEngine::runObjects() {
 		_objectVar.setObjectRunningCode(72, 2);
 		_console->printTosText(933);
 	}
-	// jail sargent
+	// jail sergeant
 	if (_room->_roomNumber == 30 && (_objectVar.getObjectRunningCode(53) == 1 || _objectVar.getObjectRunningCode(53) == 2)
 			  && (_animation->_otherNspAnimationType_maybe != 40 || !_animation->_isPlayingAnimation_maybe)) {
 		if (_objectVar.getObjectRunningCode(53) == 1) {
