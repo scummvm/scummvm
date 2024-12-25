@@ -36,19 +36,6 @@ Game::Game() : View("Game") {
 	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
 }
 
-bool Game::msgFocus(const FocusMessage &msg) {
-	if (_firstTime) {
-		initialize();
-		_firstTime = false;
-	}
-
-	return true;
-}
-
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	return true;
-}
-
 void Game::draw() {
 	GfxSurface s = getSurface();
 	s.clear();

@@ -29,6 +29,7 @@
 #include "got/got.h"
 #include "got/detection.h"
 #include "got/console.h"
+#include "got/game/init.h"
 #include "got/gfx/image.h"
 #include "got/utils/res_archive.h"
 #include "got/views/game_content.h"
@@ -70,6 +71,9 @@ Common::Error GotEngine::run() {
 	// Initialize resources and variables
 	resInit();
 	_vars.load();
+
+	// General initialization
+	initialize();
 
 	runGame();
 
@@ -150,9 +154,9 @@ void GotEngine::savegameLoaded() {
 	_G(game_over) = _G(setup).game_over;
 	_G(slow_mode) = _G(setup).speed;
 
-	// Trigger a "Thor died" action, which displays the loaded scene
+	// Notify the game view that a savegame has been loaded
 	g_events->replaceView("Game", true);
-	g_events->send(GameMessage("THOR_DIES"));
+	g_events->send(GameMessage("SAVEGAME_LOADED"));
 }
 
 bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
