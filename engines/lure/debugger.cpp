@@ -119,7 +119,7 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	debugPrintf("Available rooms are:\n");
 	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData const &room = **i;
-		// Explictly note the second drawbridge room as "Alt"
+		// Explicitly note the second drawbridge room as "Alt"
 		if (room.roomNumber == 49) {
 			strings.getString(47, buffer);
 			Common::strcat_s(buffer, " (alt)");

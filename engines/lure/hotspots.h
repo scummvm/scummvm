@@ -267,7 +267,7 @@ private:
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
 
-	// Auxillaries
+	// Auxiliaries
 	void doLookAction(HotspotData *hotspot, Action action);
 public:
 	Hotspot(HotspotData *res);
