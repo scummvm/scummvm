@@ -81,7 +81,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 	RouteBarrier *bar;
 	PXreal pdist, dist;
 	uint32 j;
-	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
+	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degrees
 	PXfloat diff;
 	int32 ignoreThis;
 
@@ -422,7 +422,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal newx, PXreal newz, PXreal /* oldx */, PXreal /* oldz */, PXreal bar_close, int32 *ignoreThis) {
 	PXfloat delta;
 	PXfloat delta2;
-	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
+	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degrees
 	PXreal pdist, dist;
 	PXreal ignore_bar_close = IGNORE_BARRIER_CLOSE;
 
