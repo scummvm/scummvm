@@ -261,8 +261,8 @@ struct DrawNode {
 struct DebugChannel {
 
 enum Type {
-	kScript,
-	kEngine
+	kScript = 1 << 0,
+	kEngine = 1 << 1
 };
 
 };
