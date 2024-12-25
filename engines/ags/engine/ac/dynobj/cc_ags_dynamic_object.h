@@ -29,7 +29,7 @@
 // byte buffer.
 //
 // AGSCCDynamicObject, extends CCBasicObject: parent for built-in dynamic
-// object managers; provides simplier serialization methods working with
+// object managers; provides simpler serialization methods working with
 // streams instead of a raw memory buffer.
 //
 // AGSCCStaticObject, extends CCBasicObject: a formal stub, intended as

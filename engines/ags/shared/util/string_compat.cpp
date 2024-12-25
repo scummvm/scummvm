@@ -73,7 +73,7 @@ int ags_strncpy_s(char *dest, size_t dest_sz, const char *src, size_t count) {
 	for (; *psrc && (psrc != src_end); ++psrc, ++pdst)
 		*pdst = *psrc;
 	*pdst = 0; // ensure null terminator
-	assert((*psrc == 0) || ((psrc - src) == (int)count)); // assert that no *unintended* truncation occured
+	assert((*psrc == 0) || ((psrc - src) == (int)count)); // assert that no *unintended* truncation occurred
 	if ((*psrc != 0) && ((psrc - src) < (int)count))
 		return AL_ERANGE; // not enough dest buffer - error
 	return 0; // success

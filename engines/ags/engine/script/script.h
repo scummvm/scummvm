@@ -76,11 +76,11 @@ void    run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun
 // Runs the ObjectEvent using an old interaction callback type of 'evnt' index,
 // or alternatively of 'chkAny' index, if previous does not exist;
 // 'isInv' tells if this is a inventory event (it has a slightly different handling for that)
-// Returns 0 normally, or -1 telling of a game state change (eg. a room change occured).
+// Returns 0 normally, or -1 telling of a game state change (eg. a room change occurred).
 int     run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evnt, int chkAny = -1, bool isInv = false);
 // Runs the ObjectEvent using a script callback of 'evnt' index,
 // or alternatively of 'chkAny' index, if previous does not exist
-// Returns 0 normally, or -1 telling of a game state change (eg. a room change occured).
+// Returns 0 normally, or -1 telling of a game state change (eg. a room change occurred).
 int     run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint, int evnt, int chkAny = -1);
 int     run_interaction_commandlist(const ObjectEvent &obj_evt, InteractionCommandList *nicl, int *timesrun, int *cmdsrun);
 void    run_unhandled_event(const ObjectEvent &obj_evt, int evnt);

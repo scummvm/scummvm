@@ -128,7 +128,7 @@ public:
 // StreamSection does NOT own the base stream, and closing
 // a "stream section" does NOT close the base stream.
 // Base stream must stay in memory for as long as there are
-// "stream sections" refering it.
+// "stream sections" referring it.
 class DataStreamSection : public DataStream {
 public:
 	// Constructs a StreamSection over a base stream,
