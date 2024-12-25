@@ -70,6 +70,7 @@ static const TranscribedSound painSounds2[] = {
 
 static const TranscribedSound guardSpeeches[] = {
 	{"T3220wA0", _hs("Do you think we were going to let you just walk into Troy?")},
+	// FIXME: Spelling incorrect. noone should be no one. Fixing changes game data and thus may cause issues
 	{"T3220wB0", _hs("So sorry, noone is allowed in. So beat it")},
 	{"T3220wC0", _hs("Hey, Troy is closed to all visitors. Take a hike")}
 };
