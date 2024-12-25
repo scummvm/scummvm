@@ -28,7 +28,7 @@
 namespace Titanic {
 
 /**
- * Extremly simple fixed size queue class.
+ * Extremely simple fixed size queue class.
  */
 template<class T, uint MAX_SIZE = 10>
 class FixedQueue {
