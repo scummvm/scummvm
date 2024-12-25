@@ -1888,7 +1888,7 @@ int parent_of(int parent_, int child, int restricted) {
 		} else  if (!(object[index]->attributes & LOCATION)
 		            && ((object[index]->attributes & CLOSED && object[index]->attributes & CONTAINER)
 		                || object[index]->attributes & CONCEALING)) {
-			/* THE CHILDS PARENT IS CLOSED OR CONCEALING - CANT BE SEEN */
+			/* THE CHILDS PARENT IS CLOSED OR CONCEALING - CAN'T BE SEEN */
 			//printf("--- parent_ %s is closed\n", object[index]->label);
 			return (FALSE);
 		} else if (restricted && object[index]->MASS < HEAVY && index != parent_) {
