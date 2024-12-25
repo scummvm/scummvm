@@ -2184,7 +2184,7 @@ int16 scriptActorAcceptDamage(int16 *args) {
 }
 
 //-----------------------------------------------------------------------
-//	Ressurect
+//	Resurrect
 //		void "c" imNotQuiteDead( void );
 
 int16 scriptActorImNotQuiteDead(int16 *args) {
