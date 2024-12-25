@@ -1149,7 +1149,7 @@ void Script::varAddValueMax(Context &c, const Opcode &cmd) {
 }
 
 void Script::varSubValueMin(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Substract value %d from var %d with min value %d",
+	debugC(kDebugScript, "Opcode %d: Subtract value %d from var %d with min value %d",
 	       cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 value = _vm->_state->getVar(cmd.args[1]);
@@ -1233,7 +1233,7 @@ void Script::varAddVarValue(Context &c, const Opcode &cmd) {
 }
 
 void Script::varSubValue(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Substract value %d to var %d", cmd.op, cmd.args[0], cmd.args[1]);
+	debugC(kDebugScript, "Opcode %d: Subtract value %d to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 value = _vm->_state->getVar(cmd.args[1]);
 	value -= cmd.args[0];
@@ -1241,7 +1241,7 @@ void Script::varSubValue(Context &c, const Opcode &cmd) {
 }
 
 void Script::varSubVarValue(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Substract var %d value to var %d", cmd.op, cmd.args[0], cmd.args[1]);
+	debugC(kDebugScript, "Opcode %d: Subtract var %d value to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 value = _vm->_state->getVar(cmd.args[1]);
 	value -= _vm->_state->getVar(cmd.args[0]);
