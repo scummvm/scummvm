@@ -139,7 +139,41 @@ void Room710::parser() {
 }
 
 void Room710::daemon() {
-	// TODO Not Implemented yet
+	switch (_G(kernel).trigger) {
+	case 30:
+		digi_play("710_s02", 2, 200, -1, -1);
+		sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 82, 63, 31, _710Rpld2Series, 63, 63, 0);
+
+		break;
+
+	case 31:
+		digi_play("710_s02", 2, 200, -1, -1);
+		sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 62, 43, 32, _710Rpld2Series, 43, 43, 0);
+
+		break;
+
+	case 32:
+		digi_play("710_s02", 2, 200, -1, -1);
+		sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 42, 28, 33, _710Rpld2Series, 28, 28, 0);
+
+		break;
+
+	case 33:
+		sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 27, 1, 34, _710Rpld2Series, 1, 1, 0);
+		break;
+
+	case 34:
+		terminateMachine(_ripContraptionMach);
+		ws_unhide_walker(_G(my_walker));
+		player_set_commands_allowed(true);
+		_ripContraptionMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, false, triggerMachineByHashCallback, "rip contraption machine");
+
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 } // namespace Rooms
