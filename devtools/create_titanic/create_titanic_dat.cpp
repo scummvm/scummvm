@@ -303,6 +303,7 @@ static const CommonPhrase BELLBOT_COMMON_PHRASES_EN[] = {
 	{ "no help", 0x30D6F, 0x6D, 0 },
 	{ "sorry", 0x30D76, 0x6D, 0 },
 	{ "not mean that", 0x30D76, 0x6D, 0 },
+	// FIXME: Spelling incorrect. didnt should be didn't. Fixing changes game data and thus may cause issues
 	{ "didnt mean that", 0x30D76, 0x6D, 0 },
 	{ "apologise", 0x30D76, 0x6D, 0 },
 	{ "play golf", 0x313B6, 0x00, 0 },
