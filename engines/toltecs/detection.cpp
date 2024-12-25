@@ -43,6 +43,7 @@ static const PlainGameDescriptor toltecsGames[] = {
 class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection<Toltecs::ToltecsGameDescription> {
 public:
 	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, toltecsGames) {
+		_flags = kADFlagMatchFullPaths;
 	}
 
 	const char *getName() const override {
