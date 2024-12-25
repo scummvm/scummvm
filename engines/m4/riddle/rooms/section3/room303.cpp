@@ -1130,9 +1130,9 @@ void Room303::daemon() {
 		}
 
 		if (_G(MouseState).ButtonState) {
-			_btnFlag = true;
-		} else if (_btnFlag) {
-			_btnFlag = false;
+			_G(room303_btnFlag) = true;
+		} else if (_G(room303_btnFlag)) {
+			_G(room303_btnFlag) = false;
 
 			disable_player_commands_and_fade_init(55);
 		}

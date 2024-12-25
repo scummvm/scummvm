@@ -83,7 +83,7 @@ void Room709::init() {
 
 	resetMaze();
 
-	_chiselActiveFl = 0;
+	_chiselActiveFl = false;
 	_incenseBurnerActiveFl = 0;
 
 	hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
@@ -477,13 +477,17 @@ void Room709::init() {
 	_maze709Arr[98]._straightIndex = 87;
 	_maze709Arr[98]._rightActive = 1;
 	_maze709Arr[98]._rightIndex = 99;
-	_btnFlag = 1;
-
+	
+	_G(room303_btnFlag) = true;
+	_G(global301) = 88;
+	_G(flag1) = 1;
+	_G(204_dword1A1898) = 98;
+	
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		digi_preload("950_s41", -1);
 		if (_mazeCurrIndex == 97 && inv_object_is_here("CHISEL")) {
-			_chiselActiveFl = 1;
+			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}
@@ -999,7 +1003,7 @@ void Room709::daemon() {
 		if (_mazeCurrIndex == 97) {
 			inv_give_to_player("CHISEL");
 			terminateMachine(_709ChiselMach);
-			_chiselActiveFl = 0;
+			_chiselActiveFl = false;
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			kernel_examine_inventory_object("PING CHISEL", _G(master_palette), 5, 1, 163, 203, -1, nullptr, -1);
 			digi_play("709R03", 1, 255, 12, -1);
@@ -1036,13 +1040,13 @@ void Room709::daemon() {
 		ws_demand_location(_G(my_walker), 410, 300);
 		ws_demand_facing(_G(my_walker), 9);
 		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._leftIndex;
-		if (_chiselActiveFl == 1) {
+		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
 		if (_mazeCurrIndex == 97 && inv_object_is_here("CHISEL")) {
-			_chiselActiveFl = 1;
+			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}
@@ -1096,13 +1100,13 @@ void Room709::daemon() {
 		ws_demand_location(_G(my_walker), 230, 300);
 		ws_demand_facing(_G(my_walker), 3);
 		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._rightIndex;
-		if (_chiselActiveFl == 1) {
+		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
 		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
-			_chiselActiveFl = 1;
+			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0,0,0,100,3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}
@@ -1151,13 +1155,13 @@ void Room709::daemon() {
 		ws_demand_location(_G(my_walker), 320, 400);
 		ws_demand_facing(_G(my_walker), 1);
 		_mazeCurrIndex = _maze709Arr[_mazeCurrIndex]._straightIndex;
-		if (_chiselActiveFl == 1) {
+		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
 		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
-			_chiselActiveFl = 1;
+			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}
@@ -1215,13 +1219,13 @@ void Room709::daemon() {
 			_G(game).new_room = 710;
 		}
 
-		if (_chiselActiveFl == 1) {
+		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
 		}
 
 		if (_mazeCurrIndex == 97 && inv_object_is_here("Chisel")) {
-			_chiselActiveFl = 1;
+			_chiselActiveFl = true;
 			_709ChiselMach = series_place_sprite("709 CHISEL", 0, 0, 0, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", true);
 		}

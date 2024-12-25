@@ -79,7 +79,6 @@ private:
 	int _suitTalk1 = 0;
 
 	int _ctr1 = 0;
-	bool _btnFlag = false;
 
 	static void escapePressed(void *, void *);
 

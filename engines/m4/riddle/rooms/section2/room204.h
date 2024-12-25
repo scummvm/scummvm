@@ -55,7 +55,6 @@ private:
 	void setWalkerDestX();
 
 	int32 _dword1A189C = 0;
-	int32 _dword1A1898 = 0;
 
 	int32 _field4 = 0;
 	int32 _field10 = 0;

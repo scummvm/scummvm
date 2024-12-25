@@ -52,16 +52,15 @@ public:
 	void syncGame(Common::Serializer &s) override;
 
 private:
-	int32 _chiselActiveFl = 0;
+	bool _chiselActiveFl = false;
 	int32 _incenseBurnerActiveFl = 0;
-	int32 _pullRightFl = 0;
 	int32 _pullCenterFl = 0;
-	int32 _pullNearFl = 0;
 	int32 _pullLeftFl = 0;
-	int32 _btnFlag = 0;
+	int32 _pullNearFl = 0;
+	int32 _pullRightFl = 0;
 
 	int32 _mazeCurrIndex = 0;
-	
+
 	int32 _709NearDoorLiteSeries = 0;
 	int32 _709rpro1Series = 0;
 	int32 _709rpro2Series = 0;
@@ -73,12 +72,12 @@ private:
 	int32 _ripTrekHeadTurnPos1Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 
+	machine *_709ChiselMach = nullptr;
 	machine *_709IncenseHolderMach = nullptr;
 	machine *_709rpro5Mach = nullptr;
 	machine *_709rpro6Mach = nullptr;
 	machine *_709rpro7Mach = nullptr;
 	machine *_709rpro8Mach = nullptr;
-	machine *_709ChiselMach = nullptr;
 	machine *_ripPullMach = nullptr;
 	machine *_ripPullMach02 = nullptr;
 	machine *_ripPullMach03 = nullptr;

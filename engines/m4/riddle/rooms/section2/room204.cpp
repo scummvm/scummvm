@@ -330,11 +330,11 @@ void Room204::parser() {
 				break;
 
 			case 3:
-				if (_dword1A1898 >= 1) {
-					_dword1A1898 = 0;
+				if (_G(204_dword1A1898) >= 1) {
+					_G(204_dword1A1898) = 0;
 					sendWSMessage_150000(_mcMach, 4);
 				} else {
-					++_dword1A1898;
+					++_G(204_dword1A1898);
 				}
 
 				break;
@@ -971,10 +971,10 @@ void Room204::parser() {
 			break;
 
 		case 8:
-			if (_dword1A1898 < 1) {
-				++_dword1A1898;
+			if (_G(204_dword1A1898) < 1) {
+				++_G(204_dword1A1898);
 			} else {
-				_dword1A1898 = 0;
+				_G(204_dword1A1898) = 0;
 				sendWSMessage_150000(_mcMach, 9);
 			}
 
@@ -2894,7 +2894,6 @@ void Room204::daemon() {
 
 void Room204::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_dword1A189C);
-	s.syncAsSint32LE(_dword1A1898);
 }
 
 void Room204::initWalkerSeries() {

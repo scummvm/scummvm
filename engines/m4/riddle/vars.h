@@ -51,7 +51,9 @@ public:
 	Riddle::GUI::Interface _interface;
 	bool _menuSystemInitialized = false;
 	int _global301 = 0;
+	bool _room303_btnFlag = false;
 	int _flag1 = 0;
+	int _204_dword1A1898 = 0;
 	bool _kittyScreaming = false;
 	bool _spleenSpraying = false;
 	Common::String _string1;
