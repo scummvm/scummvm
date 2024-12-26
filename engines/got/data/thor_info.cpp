@@ -46,9 +46,9 @@ void THOR_INFO::sync(Common::Serializer &s) {
 	s.syncAsUint32LE(last_score);
 
 	s.syncAsByte(object);
-	s.syncAsUint32LE(ptr);
+	s.syncAsUint16LE(ptr);
 	s.syncAsByte(last_object);
-	s.syncAsUint32LE(ptr);
+	s.syncAsUint16LE(ptr);
 
 	s.syncAsByte(armor);
 	s.syncBytes(future, 65);

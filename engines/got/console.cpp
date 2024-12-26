@@ -33,6 +33,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("sound", WRAP_METHOD(Console, cmdSound));
 	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
+	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 	registerCmd("magic", WRAP_METHOD(Console, cmdMagic));
 }
 
@@ -62,21 +63,55 @@ bool Console::cmdMusic(int argc, const char **argv) {
 }
 
 bool Console::cmdLoad(int argc, const char **argv) {
-	if (argc == 2) {
-		Common::SeekableReadStream *f;
-		if ((f = g_system->getSavefileManager()->openForLoading(argv[1])) == nullptr) {
-			debugPrintf("Could not open savegame\n");
-			return true;
-		} else {
-			f->skip(32); // Skip the 32 bytes title
+	static const char *FILENAMES[3] = {
+		"savegam1.got", "savegam1.gt2", "savegam1.gt3"
+	};
+	Common::String filename = FILENAMES[_G(area) - 1];
+	if (argc == 2)
+		filename = argv[1];
 
-			g_engine->loadGameStream(f);
-			delete f;
-			return false;
-		}
+	Common::InSaveFile *f;
+	if ((f = g_system->getSavefileManager()->openForLoading(filename)) == nullptr) {
+		debugPrintf("Could not open %s\n", filename.c_str());
+		return true;
+	} else {
+		f->skip(32); // Skip the 32 bytes title
+
+		Common::Serializer s(f, nullptr);
+		g_engine->syncGame(s);
+		delete f;
+		return false;
+	}
+}
+
+bool Console::cmdSave(int argc, const char **argv) {
+	static const char *FILENAMES[3] = {
+		"savegam1.got", "savegam1.gt2", "savegam1.gt3"
+	};
+	Common::String filename = FILENAMES[_G(area) - 1];
+	if (argc == 2)
+		filename = argv[1];
+
+	Common::OutSaveFile *f;
+	if ((f = g_system->getSavefileManager()->openForSaving(filename, false)) == nullptr) {
+		debugPrintf("Could not create %s\n", filename.c_str());
+
+	} else {
+		// Write out dummy person name
+		char title[32];
+		Common::fill(title, title + 32, 0);
+		Common::strcpy_s(title, "ScummVM");
+
+		f->write(title, 32);
+
+		Common::Serializer s(nullptr, f);
+		g_engine->syncGame(s);
+
+		delete f;
+
+		debugPrintf("Created %s\n", filename.c_str());
 	}
 
-	debugPrintf("load <original savegame name>\n");
 	return true;
 }
 
