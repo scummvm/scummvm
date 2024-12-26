@@ -54,14 +54,17 @@ private:
 	int32 _ripPullsRopeForLaderSeries = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
 
-	machine *_ripContraptionMach = nullptr;
-	machine *_ripReacherMach = nullptr;
 	machine *_710Rpld4Mach = nullptr;
 	machine *_710Rpld5Mach = nullptr;
 	machine *_710Rprs1Mach = nullptr;
 	machine *_710Rprs2Mach = nullptr;
 	machine *_710Rprs3Mach = nullptr;
 	machine *_710Rprs4Mach = nullptr;
+	machine *_ripContraptionMach = nullptr;
+	machine *_ripContractionMach02 = nullptr;
+	machine *_ripPullsKeyropeMach = nullptr;
+	machine *_ripReacherMach = nullptr;
+	machine *_safariShadow1Mach = nullptr;
 };
 
 } // namespace Rooms
