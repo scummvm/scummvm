@@ -37,6 +37,7 @@ extern const char *item_name[];
  * GameContent view takes care of the scene rendering.
 */
 extern void show_level(int new_level);
+extern void show_level_done();
 extern void odin_speaks(int index, int item);
 extern int switch_icons();
 extern int rotate_arrows();

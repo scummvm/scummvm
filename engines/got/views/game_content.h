@@ -29,13 +29,9 @@ namespace Got {
 namespace Views {
 
 class GameContent : public View {
-	enum TransitionDir {
-		DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
-	};
 private:
 	GfxSurface _surface;
 	Common::Point _moveDelta;
-	TransitionDir _transitionDir = DIR_LEFT;
 	int _transitionPos = 0;
 	int _deathCtr = 0;
 

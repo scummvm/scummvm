@@ -30,6 +30,7 @@
 #include "got/detection.h"
 #include "got/console.h"
 #include "got/game/init.h"
+#include "got/game/main.h"
 #include "got/gfx/image.h"
 #include "got/utils/res_archive.h"
 #include "got/views/game_content.h"
@@ -154,9 +155,8 @@ void GotEngine::savegameLoaded() {
 	_G(game_over) = _G(setup).game_over;
 	_G(slow_mode) = _G(setup).speed;
 
-	// Notify the game view that a savegame has been loaded
 	g_events->replaceView("Game", true);
-	g_events->send(GameMessage("SAVEGAME_LOADED"));
+	setup_load();
 }
 
 bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {

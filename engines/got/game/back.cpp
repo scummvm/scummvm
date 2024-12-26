@@ -77,8 +77,8 @@ void show_level(int new_level) {
 
 	if (_G(warp_flag))
 		_G(current_level) = new_level - 5;   //force phase
-
 	_G(warp_flag) = 0;
+
 	if (_G(warp_scroll)) {
 		_G(warp_scroll) = 0;
 		if (_G(thor)->dir == 0)
@@ -97,60 +97,55 @@ void show_level(int new_level) {
 	if (_G(music_current) != _G(level_type))
 		_G(sound).music_pause();
 
-#ifdef TODO
-	switch (new_level - _G(current_level)) {
+	switch (_G(new_level) - _G(current_level)) {
 	case 0:
-		xshowpage(draw_page);
-		xcopyd2d(0, 0, 320, 192, 0, 0, draw_page, display_page, 320, 320);
+		// Nothing to do
+		show_level_done();
+		break;
+	case -1:
+		_G(gameMode) = MODE_AREA_CHANGE;
+		_G(transitionDir) = DIR_LEFT;
 		break;
 	case 1:
-	{
-		scroll_level_right(); break;
-	}
-	case 10:
-	{
-		scroll_level_down(); break;
-	}
-	case -1:
-	{
-		scroll_level_left(); break;
-	}
+		_G(gameMode) = MODE_AREA_CHANGE;
+		_G(transitionDir) = DIR_RIGHT;
+		break;
 	case -10:
-	{
-		scroll_level_up(); break;
-	}
+		_G(gameMode) = MODE_AREA_CHANGE;
+		_G(transitionDir) = DIR_UP;
+		break;
+	case 10:
+		_G(gameMode) = MODE_AREA_CHANGE;
+		_G(transitionDir) = DIR_DOWN;
+		break;
 	default:
-		phase_level();
+		// TODO: Original had weird as hell random delay calculation.
+		// Not sure that it's really necessary
+		show_level_done();
+		break;
 	}
-	build_screen(PAGE2);
-	show_objects(new_level, PAGE2);
+}
 
-	_G(current_level) = new_level;
-	thor_info.last_health = _G(thor)->health;
-	thor_info.last_magic = thor_info.magic;
-	thor_info.last_jewels = thor_info.jewels;
-	thor_info.last_keys = thor_info.keys;
-	thor_info.last_score = thor_info.score;
-	thor_info.last_item = thor_info.item;
-	thor_info.last_screen = _G(current_level);
-	thor_info.last_icon = ((_G(thor)->x + 8) / 16) + (((_G(thor)->y + 14) / 16) * 20);
-	thor_info.last_dir = _G(thor)->dir;
-	thor_info.last_inventory = thor_info.inventory;
-	thor_info.last_object = thor_info.object;
-	thor_info.last_object_name = thor_info.object_name;
+
+void show_level_done() {
+	_G(current_level) = _G(new_level);
+
+	_G(thor_info).last_health = _G(thor)->health;
+	_G(thor_info).last_magic = _G(thor_info).magic;
+	_G(thor_info).last_jewels = _G(thor_info).jewels;
+	_G(thor_info).last_keys = _G(thor_info).keys;
+	_G(thor_info).last_score = _G(thor_info).score;
+	_G(thor_info).last_item = _G(thor_info).item;
+	_G(thor_info).last_screen = _G(current_level);
+	_G(thor_info).last_icon = ((_G(thor)->x + 8) / 16) + (((_G(thor)->y + 14) / 16) * 20);
+	_G(thor_info).last_dir = _G(thor)->dir;
+	_G(thor_info).last_inventory = _G(thor_info).inventory;
+	_G(thor_info).last_object = _G(thor_info).object;
+	_G(thor_info).last_object_name = _G(thor_info).object_name;
 
 	_G(last_setup) = _G(setup);
 
-	f = 1;
-	if (GAME1 && new_level == BOSS_LEVEL1) {
-		if (!_G(setup).boss_dead[0]) {
-			if (!auto_load) boss_level1();
-			f = 0;
-		}
-	}
-	if (startup) f = 0;
-	if (f) music_play(_G(level_type), 0);
-#endif
+	music_play(_G(level_type), 0);
 }
 
 void odin_speaks(int index, int item) {

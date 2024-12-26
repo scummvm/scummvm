@@ -61,7 +61,7 @@ void GameContent::draw() {
 		// as it's scrolled off-screen
 		GfxSurface win = getSurface();
 
-		switch (_transitionDir) {
+		switch (_G(transitionDir)) {
 		case DIR_LEFT:
 			win.blitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),
 				Common::Point(0, 0));
@@ -101,11 +101,6 @@ bool GameContent::msgGame(const GameMessage &msg) {
 		return true;
 	} else if (msg._name == "THOR_DIES") {
 		thorDies();
-		return true;
-	} else if (msg._name == "SAVEGAME_LOADED") {
-		// Savegame loading uses the same ending part of the Thor death
-		// sequence to set up the loaded area in the default state
-		thorDead();
 		return true;
 	}
 
@@ -294,7 +289,7 @@ void GameContent::updateActors() {
 void GameContent::checkForAreaChange() {
 	if (_G(gameMode) == MODE_AREA_CHANGE) {
 		// Area transition is already in progress
-		switch (_transitionDir) {
+		switch (_G(transitionDir)) {
 		case DIR_LEFT:
 		case DIR_RIGHT:
 			_transitionPos += 32;
@@ -311,8 +306,10 @@ void GameContent::checkForAreaChange() {
 			break;
 		}
 
-		if (_G(gameMode) == MODE_NORMAL)
-			areaChanged();
+		if (_G(gameMode) == MODE_NORMAL) {
+			_transitionPos = 0;
+			show_level_done();
+		}
 
 	} else if (_G(new_level) != _G(current_level)) {
 		// Area transition beginning
@@ -329,80 +326,7 @@ void GameContent::checkForAreaChange() {
 		// Set up new level
 		_G(thor)->used = 1;
 		show_level(_G(new_level));
-
-		if (_G(warp_flag))
-			_G(current_level) = _G(new_level) - 5;   // Force phase
-
-		_G(warp_flag) = 0;
-		if (_G(warp_scroll)) {
-			_G(warp_scroll) = 0;
-			if (_G(thor)->dir == 0)
-				_G(current_level) = _G(new_level) + 10;
-			else if (_G(thor)->dir == 1)
-				_G(current_level) = _G(new_level) - 10;
-			else if (_G(thor)->dir == 2)
-				_G(current_level) = _G(new_level) + 1;
-			else if (_G(thor)->dir == 3)
-				_G(current_level) = _G(new_level) - 1;
-		}
-
-		if (!_G(setup).scroll_flag)
-			_G(current_level) = _G(new_level); // Force no scroll
-
-		if (_G(music_current) != _G(level_type))
-			music_pause();
-
-		_transitionPos = 0;
-
-		switch (_G(new_level) - _G(current_level)) {
-		case 0:
-			// Nothing to do
-			areaChanged();
-			break;
-		case -1:
-			_G(gameMode) = MODE_AREA_CHANGE;
-			_transitionDir = DIR_LEFT;
-			break;
-		case 1:
-			_G(gameMode) = MODE_AREA_CHANGE;
-			_transitionDir = DIR_RIGHT;
-			break;
-		case -10:
-			_G(gameMode) = MODE_AREA_CHANGE;
-			_transitionDir = DIR_UP;
-			break;
-		case 10:
-			_G(gameMode) = MODE_AREA_CHANGE;
-			_transitionDir = DIR_DOWN;
-			break;
-		default:
-			// TODO: Original had weird as hell random delay calculation.
-			// Not sure that it's really necessary
-			areaChanged();
-			break;
-		}
 	} 
-}
-
-void GameContent::areaChanged() {
-	_G(current_level) = _G(new_level);
-
-	_G(thor_info).last_health = _G(thor)->health;
-	_G(thor_info).last_magic = _G(thor_info).magic;
-	_G(thor_info).last_jewels = _G(thor_info).jewels;
-	_G(thor_info).last_keys = _G(thor_info).keys;
-	_G(thor_info).last_score = _G(thor_info).score;
-	_G(thor_info).last_item = _G(thor_info).item;
-	_G(thor_info).last_screen = _G(current_level);
-	_G(thor_info).last_icon = ((_G(thor)->x + 8) / 16) + (((_G(thor)->y + 14) / 16) * 20);
-	_G(thor_info).last_dir = _G(thor)->dir;
-	_G(thor_info).last_inventory = _G(thor_info).inventory;
-	_G(thor_info).last_object = _G(thor_info).object;
-	_G(thor_info).last_object_name = _G(thor_info).object_name;
-
-	_G(last_setup) = _G(setup);
-
-	music_play(_G(level_type), 0);
 }
 
 void GameContent::thorDies() {
