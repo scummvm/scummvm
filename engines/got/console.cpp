@@ -28,6 +28,10 @@
 
 namespace Got {
 
+static const char *SAVE_FILENAMES[3] = {
+	"savegam1.got", "savegam1.gt2", "savegam1.gt3"
+};
+
 Console::Console() : GUI::Debugger() {
 	registerCmd("view",   WRAP_METHOD(Console, cmdView));
 	registerCmd("sound", WRAP_METHOD(Console, cmdSound));
@@ -63,10 +67,7 @@ bool Console::cmdMusic(int argc, const char **argv) {
 }
 
 bool Console::cmdLoad(int argc, const char **argv) {
-	static const char *FILENAMES[3] = {
-		"savegam1.got", "savegam1.gt2", "savegam1.gt3"
-	};
-	Common::String filename = FILENAMES[_G(area) - 1];
+	Common::String filename = SAVE_FILENAMES[_G(area) - 1];
 	if (argc == 2)
 		filename = argv[1];
 
@@ -85,10 +86,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 }
 
 bool Console::cmdSave(int argc, const char **argv) {
-	static const char *FILENAMES[3] = {
-		"savegam1.got", "savegam1.gt2", "savegam1.gt3"
-	};
-	Common::String filename = FILENAMES[_G(area) - 1];
+	Common::String filename = SAVE_FILENAMES[_G(area) - 1];
 	if (argc == 2)
 		filename = argv[1];
 
