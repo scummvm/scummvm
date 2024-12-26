@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	codecs/cinepak.o \
 	codecs/codec.o \
 	codecs/hlz.o \
-	codecs/hnm.o \
 	codecs/jyv1.o \
 	codecs/mjpeg.o \
 	codecs/msrle.o \
@@ -47,6 +46,11 @@ MODULE_OBJS += \
 	codecs/indeo/indeo_dsp.o \
 	codecs/indeo/mem.o \
 	codecs/indeo/vlc.o
+endif
+
+ifdef USE_HNM
+MODULE_OBJS += \
+	codecs/hnm.o
 endif
 
 # Include common rules
