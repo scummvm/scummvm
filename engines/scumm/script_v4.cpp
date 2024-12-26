@@ -541,7 +541,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			// to the game reaching towards a non-existent string, and crashing as a consequence.
 			result = 6;
 		} else
-			result = (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) ? 8 : 7; // Save file does not exist
+			result = 7; // Save file does not exist
 		}
 
 		break;
