@@ -34,7 +34,7 @@ class Say : public Dialog {
 		WAIT_NONE, WAIT_MORE, WAIT_DONE
 	};
 private:
-	Gfx::Pics *_pic = nullptr;
+	Gfx::Pics _speakerIcon;
 	int _item = 0;
 	int _type = 0;
 	int _picIndex = 0;
@@ -53,7 +53,7 @@ public:
 	Say();
 	virtual ~Say() {}
 
-	static void show(int item, Gfx::Pics *pic, int type);
+	static void show(int item, const Gfx::Pics &speakerIcon, int type);
 
 	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;

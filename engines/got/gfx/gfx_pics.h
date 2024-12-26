@@ -59,7 +59,7 @@ public:
 class Pics : public GfxPics {
 private:
 	Common::String _resName;
-	int _blockSize;
+	int _blockSize = -1;
 
 public:
 	Pics(const Common::String &resName, int blockSize = -1,
@@ -68,6 +68,7 @@ public:
 		if (immediateLoad)
 			load();
 	}
+	Pics() {}
 
 	void load() {
 		GfxPics::load(_resName, _blockSize);

@@ -149,7 +149,7 @@ void show_level_done() {
 }
 
 void odin_speaks(int index, int item) {
-	execute_script((long)index, &_G(odin));
+	execute_script((long)index, _G(odin));
 
 	if (!_G(thor)->health) {
 		_G(thor)->show = 0;
@@ -298,7 +298,6 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 	Common::String str;
 	int v;
 	long lind;
-	Gfx::Pics *pic;
 
 	if (actr->type != 4)
 		return 0;
@@ -306,20 +305,18 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 	if (v < 1 || v>20)
 		return 0;
 
-	str = Common::String::format("FACE%d", v);
-
-	Gfx::Pics pics(str, -1, false);
-	if (Common::File::exists(Common::Path(str))) {
-		pics.load();
-		pic = &pics;
-	} else {
-		pic = &_G(odin);
-	}
-
 	lind = (long)_G(current_level);
 	lind = lind * 1000;
 	lind += (long)actr->actor_num;
-	execute_script(lind, pic);
+
+	str = Common::String::format("FACE%d", v);
+	if (Common::File::exists(Common::Path(str))) {
+		Gfx::Pics pics(str, 262);
+		execute_script(lind, pics);
+	} else {
+		execute_script(lind, _G(odin));
+	}
+
 	if (!_G(thor)->health) {
 		_G(thor)->show = 0;
 		_G(exit_flag) = 2;

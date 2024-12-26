@@ -32,10 +32,10 @@ Say::Say() : Dialog("Say") {
 	setBounds(Common::Rect(32, 48, 288, 160));
 }
 
-void Say::show(int item, Gfx::Pics *pic, int type) {
+void Say::show(int item, const Gfx::Pics &speakerIcon, int type) {
 	Say *view = (Say *)g_events->findView("Say");
 	view->_item = item;
-	view->_pic = pic;
+	view->_speakerIcon = speakerIcon;
 	view->_type = type;
 	view->addView();
 }
@@ -108,7 +108,7 @@ void Say::draw() {
 		x += 8;
 	}
 
-	s.blitFrom((*_pic)[_picIndex], Common::Point(120, 17));
+	s.blitFrom(_speakerIcon[_picIndex], Common::Point(120, 17));
 
 	if (_waitForResponse == WAIT_MORE)
 		s.print(Common::Point(184, 86), "More...", 15);
