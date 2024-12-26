@@ -510,7 +510,19 @@ void MacV6Gui::runAboutDialog() {
 	token.clear();
 }
 
-void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRect, int saveSlot) {
+struct colorInfo {
+	uint32 color;
+	uint16 count;
+};
+
+static int compareColorInfo(const void *p1, const void *p2) {
+	int c1 = ((const colorInfo *)p1)->count;
+	int c2 = ((const colorInfo *)p2)->count;
+
+	return c2 - c1;
+}
+
+void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect drawArea, int saveSlot) {
 	if (_vm->_game.id == GID_MANIAC)
 		return;
 
@@ -520,25 +532,30 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRe
 	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->_targetName.c_str(), saveSlot);
 
 	const Graphics::Surface *thumbnail = desc.getThumbnail();
-	Graphics::Surface drawArea = window->innerSurface()->getSubArea(thumbnailRect);
 
-	Common::HashMap<uint32, byte> paletteMap;
+	Common::HashMap<uint32, uint16> paletteMap;
 
-	int diff = thumbnail->h - thumbnailRect.height();
+	int diff = thumbnail->h - drawArea.height();
 
 	int yMin = diff / 2;
 	int yMax = thumbnail->h - (diff / 2);
 
-	assert(thumbnailRect.width() == thumbnail->w);
-	assert(thumbnailRect.height() == yMax - yMin);
+	assert(drawArea.width() == thumbnail->w);
+	assert(drawArea.height() == yMax - yMin);
+
+	Common::Rect thumbnailRect(0, yMin, drawArea.width(), yMax);
 
 	// We don't know in advance how many colors the thumbnail is going to
 	// use. Reduce the image to a smaller palette.
 	//
-	// FIXME: This is a very stupid method. We should be able to do a lot
-	// better than this.
-
-	int numColors = 0;
+	// I'm not going to do any fancy color quantization here. Maybe if one
+	// is added to the ScummVM common code, but not just for this.
+	//
+	// The thumbnail is asserted to be 160x100 pixels. We know it started
+	// out with at most 256 colors, and that any further colors were added
+	// when scaling it down, and are presumably close to the original ones.
+	// Even in the most pathological case, there will never be more than
+	// 16,000 distinct colors.
 
 	for (int y = yMin; y < yMax; y++) {
 		for (int x = 0; x < thumbnail->w; x++) {
@@ -547,36 +564,49 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect thumbnailRe
 			byte r, g, b;
 			thumbnail->format.colorToRGB(color, r, g, b);
 
-			color = ((r << 16) | (g << 8) | b) & 0xC0E0C0;
+			// If the color wasn't 565 before, make it so
+			color = ((r << 16) | (g << 8) | b) & 0xF8FCF8;
 
-			if (!paletteMap.contains(color))
-				paletteMap[color] = numColors++;
+			paletteMap[color]++;
 		}
 	}
 
-	Graphics::Palette palette(numColors);
+	colorInfo *colors = new colorInfo[paletteMap.size()];
+	int count = 0;
 
 	for (auto &k : paletteMap) {
-		int r = (k._key >> 16) & 0xFF;
-		int g = (k._key >> 8) & 0xFF;
-		int b = k._key & 0xFF;
-		palette.set(k._value, r, g, b);
+		colors[count].color = k._key;
+		colors[count].count = k._value;
+		count++;
 	}
 
-	for (int y = 0; y < drawArea.h; y++) {
-		for (int x = 0; x < drawArea.w; x++) {
-			uint32 color = thumbnail->getPixel(x, y + yMin);
-			byte r, g, b;
-			thumbnail->format.colorToRGB(color, r, g, b);
+	qsort(colors, count, sizeof(colorInfo), compareColorInfo);
 
-			color = ((r << 16) | (g << 8) | b) & 0xC0E0C0;
+	// Pick the - at most - 246 most popular colors. Note that we do not
+	// gamma correct them. They presumably already were when the thumbnail
+	// was created.
 
-			drawArea.setPixel(x, y, paletteMap[color]);
-		}
+	int numColors = MIN(count, 246);
+	Graphics::Palette palette(numColors);
+
+	for (int i = 0; i < numColors; i++) {
+		int r = ((colors[i].color) >> 16) & 0xFF;
+		int g = ((colors[i].color) >> 8) & 0xFF;
+		int b = (colors[i].color) & 0xFF;
+
+		palette.set(i, r, g, b);
 	}
 
+	delete[] colors;
 	_system->getPaletteManager()->setPalette(palette);
-	window->markRectAsDirty(thumbnailRect);
+
+	Graphics::Surface *palettedThumbnail = thumbnail->convertTo(window->innerSurface()->format, nullptr, 0, palette.data(), palette.size());
+
+	window->innerSurface()->copyRectToSurface(*palettedThumbnail, drawArea.left, drawArea.top, thumbnailRect);
+	window->markRectAsDirty(drawArea);
+
+	palettedThumbnail->free();
+	delete palettedThumbnail;
 }
 
 bool MacV6Gui::runOpenDialog(int &saveSlotToHandle) {
