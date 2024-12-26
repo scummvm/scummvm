@@ -93,13 +93,7 @@ void GameContent::draw() {
 }
 
 bool GameContent::msgGame(const GameMessage &msg) {
-	if (msg._name == "HIDE_ACTORS") {
-		// Hide all actors and immediately redraw the screen
-		for (int i = 0; i < MAX_ACTORS; i++)
-			_G(actor)[i].show = 0;
-		draw();
-		return true;
-	} else if (msg._name == "THOR_DIES") {
+	if (msg._name == "THOR_DIES") {
 		thorDies();
 		return true;
 	}

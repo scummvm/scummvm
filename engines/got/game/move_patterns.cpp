@@ -856,7 +856,7 @@ int special_movement_three(ACTOR *actr) {  //yellow globe
 	lind = (long)_G(current_level);
 	lind = lind * 1000;
 	lind += (long)actr->actor_num;
-	execute_script(lind, &_G(odin));
+	execute_script(lind, _G(odin));
 
 	return 0;
 }

@@ -45,7 +45,7 @@ private:
 	char  *buff_end = nullptr;	   // pointer to end of buffer
 	char  *buffer = nullptr;       // buffer space (alloc'ed)
 	long  scr_index = 0;
-	Gfx::Pics *scr_pic = nullptr;
+	Gfx::Pics scr_pic;
 	long  lvalue = 0;
 	long  ltemp = 0;
 	char  temps[255] = {};
@@ -104,7 +104,7 @@ public:
 	Scripts();
 	~Scripts();
 
-	void execute_script(long index, Gfx::Pics *pic);
+	void execute_script(long index, const Gfx::Pics &speakerIcon);
 
 	void pause() {
 		_paused = true;
@@ -117,7 +117,7 @@ public:
 	void setAskResponse(int option);
 };
 
-extern void execute_script(long index, Gfx::Pics *pic);
+extern void execute_script(long index, const Gfx::Pics &speakerIcon);
 
 } // namespace Got
 
