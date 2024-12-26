@@ -64,17 +64,7 @@ MODULE_OBJS := \
 	softsynth/appleiigs.o \
 	softsynth/fluidsynth.o \
 	softsynth/eas.o \
-	softsynth/pcspk.o \
-	soundfont/rawfile.o \
-	soundfont/rifffile.o \
-	soundfont/sf2file.o \
-	soundfont/synthfile.o \
-	soundfont/vgmcoll.o \
-	soundfont/vgminstrset.o \
-	soundfont/vgmitem.o \
-	soundfont/vgmsamp.o \
-	soundfont/vab/psxspu.o \
-	soundfont/vab/vab.o
+	softsynth/pcspk.o
 
 ifndef DISABLE_NUKED_OPL
 MODULE_OBJS += \
@@ -122,6 +112,20 @@ endif
 ifdef USE_RETROWAVE
 MODULE_OBJS += \
 	rwopl3.o
+endif
+
+ifdef USE_VGMTRANS_AUDIO
+MODULE_OBJS += \
+	soundfont/rawfile.o \
+	soundfont/rifffile.o \
+	soundfont/sf2file.o \
+	soundfont/synthfile.o \
+	soundfont/vgmcoll.o \
+	soundfont/vgminstrset.o \
+	soundfont/vgmitem.o \
+	soundfont/vgmsamp.o \
+	soundfont/vab/psxspu.o \
+	soundfont/vab/vab.o
 endif
 
 # Include common rules

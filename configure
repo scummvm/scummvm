@@ -294,6 +294,7 @@ _indeo=auto
 _hnm=auto
 _fmtowns_pc98_audio=auto
 _sid_audio=auto
+_vgmtrans_audio=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -327,6 +328,7 @@ add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
 add_component mt32emu "Integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
+add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
 
 # The following list of features cannot be declared as components
 # because they are used in the common code:
