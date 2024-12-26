@@ -315,13 +315,13 @@ add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
-add_component hnm "hnm" "_hnm" "USE_HNM"
-add_component imgui "ImGui" "_imgui" "USE_IMGUI"
-add_component indeo "indeo" "_indeo" "USE_INDEO"
-add_component lua "lua" "_lua" "USE_LUA"
+add_component hnm "HNM" "_hnm" "USE_HNM"
+add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
+add_component indeo "Indeo" "_indeo" "USE_INDEO"
+add_component lua "Lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
-add_component mt32emu "mt32emu" "_mt32emu" "USE_MT32EMU"
+add_component mt32emu "integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 
 # The following list of features cannot be declared as components
