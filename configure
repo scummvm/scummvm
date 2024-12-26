@@ -295,6 +295,7 @@ _hnm=auto
 _fmtowns_pc98_audio=auto
 _sid_audio=auto
 _vgmtrans_audio=auto
+_midi=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -325,7 +326,7 @@ add_component indeo "Indeo" "_indeo" "USE_INDEO"
 add_component lua "Lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
-add_component mt32emu "Integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
+add_component midi "MIDI synthesis" "_midi" "USE_MIDI"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
@@ -4175,7 +4176,6 @@ append_var MODULES "backends/platform/$_backend"
 #
 echo "Checking for unused components..."
 awk -f "$_srcdir/engines.awk" -v _pass=pass1 < /dev/null
-echo "...check complete"
 
 . ./engines.awk.out
 
@@ -4183,7 +4183,20 @@ for f in $_features_disabled; do
     set_var $(get_var _feature_${f}_settings) "no"
 done
 
+# Special cases for pseudo-components
+if test "$_midi" = no ; then
+	_mt32emu=no
+	_fluidsynth=no
+	_fluidlite=no
+	_timidity=no
+	_sonivox=no
+
+	echo "   Disabling mt32emu, fluidsynth, fluidlite, timidity and sonivox because MIDI is unused by enabled engines"
+fi
+
 rm -f engines.awk.out
+
+echo "...check complete"
 
 #
 # Check for pkg-config
@@ -5032,6 +5045,11 @@ echo "$_detection_features_static"
 define_in_config_if_yes "$_detection_features_full" "DETECTION_FULL"
 echo_n "Checking if building detection features for all engines... "
 echo "$_detection_features_full"
+
+#
+# Check whether integrated MT-32 emulator support is requested
+#
+define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 #
 # Check whether Nuked OPL emulator support is disabled
