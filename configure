@@ -296,6 +296,7 @@ _fmtowns_pc98_audio=auto
 _sid_audio=auto
 _vgmtrans_audio=auto
 _midi=auto
+_universaltracker=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -330,6 +331,7 @@ add_component midi "MIDI synthesis" "_midi" "USE_MIDI"
 add_component mpc "MPC" "_libmpcdec" "USE_MPCDEC"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
+add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
 
 # The following list of features cannot be declared as components
@@ -4193,6 +4195,13 @@ if test "$_midi" = no ; then
 	_sonivox=no
 
 	echo "   Disabling mt32emu, fluidsynth, fluidlite, timidity and sonivox because MIDI is unused by enabled engines"
+fi
+
+if test "$_universaltracker" = no ; then
+	_libmikmod=no
+	_libopenmpt=no
+
+	echo "   Disabling MikMod and OpenMPT because Universal Tracker playback is unused by enabled engines"
 fi
 
 rm -f engines.awk.out
