@@ -168,6 +168,9 @@ public:
 
 	bool GetPathfindingOverride(uint16 index, uint16& result);
 	void SetPathfindingOverride(uint16 index, uint16 overrideValue);
+
+	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
+	uint8 GetPathfindingOverride2(uint16 index);
 	void RemovePathfindingOverride(uint16 index);
 
 	// fn0037_0E8C proc
