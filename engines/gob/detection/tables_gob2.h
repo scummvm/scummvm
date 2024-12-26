@@ -113,7 +113,7 @@
 { // Supplied by goodoldgeorg in bug report #4163
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1("intro.stk", "c47faf1d406504e6ffe63243610bb1f4"),
 		IT_ITA,
 		kPlatformDOS,
@@ -566,7 +566,7 @@
 { // Supplied by bgk in bug report #3161
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1s("intro.stk", "4b13c02d1069b86bcfec80f4e474b98b", 554680),
 		FR_FRA,
 		kPlatformAtariST,
