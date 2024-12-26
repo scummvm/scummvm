@@ -36,7 +36,6 @@ MODULE_OBJS := \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
 	decoders/mp3.o \
-	decoders/mpc.o \
 	decoders/qdm2.o \
 	decoders/quicktime.o \
 	decoders/raw.o \
@@ -91,6 +90,11 @@ MODULE_OBJS += \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \
 	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
 	softsynth/fmtowns_pc98/towns_pc98_plugins.o
+endif
+
+ifdef USE_MPCDEC
+MODULE_OBJS += \
+	decoders/mpc.o
 endif
 
 ifdef USE_MT32EMU
