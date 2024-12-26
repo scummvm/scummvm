@@ -101,4 +101,9 @@ void ACTOR::loadFixed(Common::SeekableReadStream *src) {
 	src->read(future1, 4);
 }
 
+void ACTOR::loadFixed(const byte *src) {
+	Common::MemoryReadStream stream(src, 40);
+	loadFixed(&stream);
+}
+
 } // namespace Got

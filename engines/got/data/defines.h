@@ -115,6 +115,7 @@ struct ACTOR {                      // Size=256
 	byte future2[25] = {};
 
 	void loadFixed(Common::SeekableReadStream *src);
+	void loadFixed(const byte *src);
 
 	int getPos() const {
 		return ((x + 7) / 16) + (((y + 8) / 16) * 20);
