@@ -36,11 +36,6 @@ Game::Game() : View("Game") {
 	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
 }
 
-void Game::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-}
-
 bool Game::msgKeypress(const KeypressMessage &msg) {
 	if (_G(gameMode) != MODE_NORMAL)
 		return false;
@@ -80,6 +75,10 @@ bool Game::msgAction(const ActionMessage &msg) {
 
 	case KEYBIND_THOR_DIES:
 		_content.send(GameMessage("THOR_DIES"));
+		return true;
+
+	case KEYBIND_ESCAPE:
+		addView("OptionsMenu");
 		return true;
 
 	default:
