@@ -66,7 +66,7 @@ void Room204::init() {
 
 	_courtyardGongSeries = series_load("COURTYARD GONG", -1, nullptr);
 	_malletSpriteSeries = series_load("MALLET SPRITE", -1, nullptr);
-	_ripMachineFlag = 0;
+	_ripMachineFlag = false;
 	_field44_triggerNum = -1;
 	_field48_triggerNum = -1;
 	_fieldC4 = -1;
@@ -224,10 +224,11 @@ void Room204::pre_parser() {
 }
 
 void Room204::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool takeFl = player_said("take");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool gearFl = player_said("gear");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool gearFl = player_said("gear");
+
 	bool moveAndLookFl = false;
 
 	if (player_said("conv204a")) {
@@ -1623,7 +1624,7 @@ void Room204::daemon() {
 				break;
 
 			case 15: {
-				int32 rnd = imath_ranged_rand(6, 12);
+				const int32 rnd = imath_ranged_rand(6, 12);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 571, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 0);
 				}
 
@@ -1649,7 +1650,7 @@ void Room204::daemon() {
 				break;
 
 			case 19: {
-				int32 rnd = imath_ranged_rand(1, 5);
+				const int32 rnd = imath_ranged_rand(1, 5);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, rnd, rnd, 571, _ripTrekTalkerPos3Series, rnd, rnd, 0);
 				}
 
@@ -1716,7 +1717,7 @@ void Room204::daemon() {
 				break;
 
 			case 20: {
-				int32 rnd = imath_ranged_rand(8, 10);
+				const int32 rnd = imath_ranged_rand(8, 10);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, rnd, rnd, 571, _ripTrekHandTalkPos3Series, rnd, rnd, 0);
 				}
 				break;
@@ -2208,7 +2209,7 @@ void Room204::daemon() {
 			break;
 
 		case 2: {
-			int32 rnd = imath_ranged_rand(1, 2);
+			const int32 rnd = imath_ranged_rand(1, 2);
 			sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, 1, rnd, 603, _priestWalkerSeries, rnd, rnd, 0);
 			}
 
@@ -2221,9 +2222,9 @@ void Room204::daemon() {
 		break;
 
 	case 605:
-		_field168 = 0;
-		_field170 = 0;
-		_field174 = 0;
+		_checkNode10Fl = false;
+		_checkNode10NegWhoEntry1Fl = false;
+		_checkNode11NegWhoEntry0Fl = false;
 
 		_G(kernel).trigger_mode = KT_PARSE;
 
@@ -2234,15 +2235,15 @@ void Room204::daemon() {
 		break;
 
 	case 606:
-		if (_field164 == 1) {
+		if (_checkNode20Fl) {
 			player_set_commands_allowed(false);
 			kernel_timing_trigger(1, 714, nullptr);
 
-			_field164 = 0;
+			_checkNode20Fl = false;
 			_G(flags)[V056] = 1;
-		} else if (_field168 == 1) {
+		} else if (_checkNode10Fl) {
 			player_set_commands_allowed(false);
-			_field168 = 0;
+			_checkNode10Fl = false;
 			kernel_timing_trigger(1, 660, nullptr);
 		} else {
 			kernel_timing_trigger(1, 607, nullptr);
@@ -2564,12 +2565,12 @@ void Room204::daemon() {
 		break;
 
 	case 665:
-		digi_play((_field170 == 1) ? "204M26" : "204M27", 1, 255, 666, -1);
+		digi_play(_checkNode10NegWhoEntry1Fl ? "204M26" : "204M27", 1, 255, 666, -1);
 		break;
 
 	case 666:
 		_field10 = 20;
-		digi_play((_field170 == 1) ? "204R48" : "204R49", 1, 255, 667, -1);
+		digi_play(_checkNode10NegWhoEntry1Fl ? "204R48" : "204R49", 1, 255, 667, -1);
 
 		break;
 
@@ -2915,8 +2916,7 @@ void Room204::addMovingMeiHotspot() {
 }
 
 void Room204::deleteMalletHotspot() {
-	HotSpotRec *spot = nullptr;
-	for (spot = _G(currentSceneDef).hotspots; spot != nullptr; spot = spot->next) {
+	for (HotSpotRec *spot = _G(currentSceneDef).hotspots; spot != nullptr; spot = spot->next) {
 		if (scumm_stricmp(spot->vocab, "MALLET")) {
 			_G(currentSceneDef).hotspots = hotspot_delete_record(_G(currentSceneDef).hotspots, spot);
 			break;
@@ -3006,9 +3006,9 @@ void Room204::conv204a() {
 	const int32 who = conv_whos_talking();
 
 	if (node == 20)
-		_field164 = 1;
+		_checkNode20Fl = true;
 	else if (node == 10 || node == 11)
-		_field168 = 1;
+		_checkNode10Fl = true;
 
 	if (_G(kernel).trigger == 1) {
 		if (who == 1) {
@@ -3016,10 +3016,10 @@ void Room204::conv204a() {
 		} else if (who <= 0) {
 			_field134 = 1;
 			if (node == 10 && entry == 1)
-				_field170 = 1;
+				_checkNode10NegWhoEntry1Fl = true;
 
 			if (node == 11 && entry == 0)
-				_field174 = 1;
+				_checkNode11NegWhoEntry0Fl = true;
 		}
 
 		conv_resume(conv_get_handle());

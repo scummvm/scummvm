@@ -56,6 +56,10 @@ private:
 
 	int32 _dword1A189C = 0;
 
+	bool _checkNode10Fl = false;
+	bool _checkNode10NegWhoEntry1Fl = false;
+	bool _checkNode11NegWhoEntry0Fl = false;
+	bool _checkNode20Fl = false;
 	bool _ripMachineFlag = false;
 	bool _meiMachineFlag = false;
 
@@ -105,11 +109,7 @@ private:
 	int32 _field13C_triggerNum = 0;
 	int32 _field140 = 0;
 	int32 _field144_triggerNum = 0;
-	int32 _field164 = 0;
-	int32 _field168 = 0;
 	int32 _field16C = 0;
-	int32 _field170 = 0;
-	int32 _field174 = 0;
 	int32 _field180 = 0;
 	int32 _field184 = 0;
 	int32 _field188 = 0;
