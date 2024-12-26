@@ -129,8 +129,7 @@ int load_standard_actors() {
 
 	load_actor(0, 108);   // Load tornado
 
-	Common::MemoryReadStream mi((const byte *)_G(tmp_buff) + 5120, 40);
-	_G(magic_item)[0].loadFixed(&mi);
+	_G(magic_item)[0].loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[0]);
 
 	setup_actor(&_G(magic_item)[0], 20, 0, 0, 0);
@@ -138,8 +137,7 @@ int load_standard_actors() {
 
 	load_actor(0, 1099);   // Load shield
 
-	mi.seek(0);
-	_G(magic_item)[1].loadFixed(&mi);
+	_G(magic_item)[1].loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[1]);
 
 	setup_actor(&_G(magic_item)[1], 20, 0, 0, 0);
@@ -149,7 +147,7 @@ int load_standard_actors() {
 	_G(magic_ami) = _G(ami_buff);
 	_G(magic_mask_buff) = _G(mask_buff);
 
-	make_actor_surface(&_G(magic_item)[0]);  // To fool next lines
+	make_actor_surface(&_G(magic_item)[0]);
 
 	_G(enemy_mb) = _G(mask_buff);
 	_G(enemy_ami) = _G(ami_buff);
