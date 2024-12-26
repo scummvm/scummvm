@@ -152,7 +152,7 @@
 { // Supplied by SiRoCs in bug report #3949
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "d3b72938fbbc8159198088811f9e6d19", 160382),
 		ES_ESP,
 		kPlatformDOS,
