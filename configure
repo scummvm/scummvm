@@ -292,6 +292,7 @@ _have_amd64=no
 _imgui=yes
 _indeo=auto
 _hnm=auto
+_fmtowns_pc98_audio=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -315,6 +316,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
+add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
 add_component indeo "Indeo" "_indeo" "USE_INDEO"

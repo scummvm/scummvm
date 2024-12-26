@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine sci "SCI" yes "sci32" "SCI 0-1.1 games" "" "mt32emu"
+add_engine sci "SCI" yes "sci32" "SCI 0-1.1 games" "" "mt32emu fmtowns_pc98_audio"
 add_engine sci32 "SCI32 games" yes "" "" "highres"

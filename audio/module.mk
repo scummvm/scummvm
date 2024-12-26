@@ -61,14 +61,6 @@ MODULE_OBJS := \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
-	softsynth/fmtowns_pc98/pc98_audio.o \
-	softsynth/fmtowns_pc98/pcm_common.o \
-	softsynth/fmtowns_pc98/sega_audio.o \
-	softsynth/fmtowns_pc98/towns_audio.o \
-	softsynth/fmtowns_pc98/towns_euphony.o \
-	softsynth/fmtowns_pc98/towns_pc98_driver.o \
-	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
-	softsynth/fmtowns_pc98/towns_pc98_plugins.o \
 	softsynth/appleiigs.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
@@ -100,6 +92,18 @@ endif
 ifdef USE_ALSA
 MODULE_OBJS += \
 	alsa_opl.o
+endif
+
+ifdef USE_FMTOWNS_PC98_AUDIO
+MODULE_OBJS += \
+	softsynth/fmtowns_pc98/pc98_audio.o \
+	softsynth/fmtowns_pc98/pcm_common.o \
+	softsynth/fmtowns_pc98/sega_audio.o \
+	softsynth/fmtowns_pc98/towns_audio.o \
+	softsynth/fmtowns_pc98/towns_euphony.o \
+	softsynth/fmtowns_pc98/towns_pc98_driver.o \
+	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
+	softsynth/fmtowns_pc98/towns_pc98_plugins.o
 endif
 
 ifdef ENABLE_OPL2LPT
