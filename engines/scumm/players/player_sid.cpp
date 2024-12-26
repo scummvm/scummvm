@@ -19,12 +19,12 @@
  *
  */
 
-#ifndef DISABLE_SID
-
 #include "engines/engine.h"
 #include "scumm/players/player_sid.h"
 #include "scumm/scumm.h"
 #include "audio/mixer.h"
+
+#ifdef USE_SID_AUDIO
 
 namespace Scumm {
 
@@ -1381,4 +1381,4 @@ int Player_SID::getMusicTimer() {
 
 } // End of namespace Scumm
 
-#endif
+#endif // USE_SID_AUDIO

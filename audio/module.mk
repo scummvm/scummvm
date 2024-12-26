@@ -66,8 +66,6 @@ MODULE_OBJS := \
 	softsynth/mt32.o \
 	softsynth/eas.o \
 	softsynth/pcspk.o \
-	softsynth/sid.o \
-	softsynth/wave6581.o \
 	soundfont/rawfile.o \
 	soundfont/rifffile.o \
 	soundfont/sf2file.o \
@@ -104,6 +102,12 @@ MODULE_OBJS += \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \
 	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
 	softsynth/fmtowns_pc98/towns_pc98_plugins.o
+endif
+
+ifdef USE_SID_AUDIO
+MODULE_OBJS += \
+	softsynth/sid.o \
+	softsynth/wave6581.o
 endif
 
 ifdef ENABLE_OPL2LPT

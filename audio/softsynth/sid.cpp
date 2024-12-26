@@ -24,12 +24,12 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
-#ifndef DISABLE_SID
-
 #include "common/translation.h"
 
 #include "audio/softsynth/sid.h"
 #include "audio/null.h"
+
+#ifdef USE_SID_AUDIO
 
 namespace Resid {
 
@@ -1454,4 +1454,4 @@ MusicDevices C64MusicPlugin::getDevices() const {
 	REGISTER_PLUGIN_STATIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
 //#endif
 
-#endif
+#endif // USE_SID_AUDIO

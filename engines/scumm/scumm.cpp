@@ -975,7 +975,7 @@ Common::Error ScummEngine::init() {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms");
 	}
-	
+
 	if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && (_game.features & GF_DOUBLEFINE_PAK)) {
 		// This is for the DoubleFine SE versions of Monkey Island 1 and 2
 		SearchMan.addSubDirectoryMatching(gameDataDir, "audio");
@@ -2306,7 +2306,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
 		_musicEngine = new Player_AppleII(this, _mixer);
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
-#ifndef DISABLE_SID
+#ifdef USE_SID_AUDIO
 		_musicEngine = new Player_SID(this, _mixer);
 #endif
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {

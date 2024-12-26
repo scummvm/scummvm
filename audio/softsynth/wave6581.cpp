@@ -24,9 +24,9 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
-#ifndef DISABLE_SID
-
 #include "audio/softsynth/sid.h"
+
+#ifdef USE_SID_AUDIO
 
 namespace Resid {
 
@@ -2091,4 +2091,4 @@ const data8 WaveformGenerator::wave6581_PST[] = {
 };
 
 }
-#endif
+#endif // USE_SID_AUDIO

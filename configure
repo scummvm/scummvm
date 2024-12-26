@@ -293,6 +293,7 @@ _imgui=yes
 _indeo=auto
 _hnm=auto
 _fmtowns_pc98_audio=auto
+_sid_audio=auto
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -324,6 +325,7 @@ add_component lua "Lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
 add_component mt32emu "integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
+add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 
 # The following list of features cannot be declared as components
@@ -3344,11 +3346,11 @@ EOF
 		append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var DEFINES "-DDISABLE_FANCY_THEMES"
 		append_var DEFINES "-DDISABLE_NES_APU"
-		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'N64 = 1'
 		_detection_features_full=no
 		_nuked_opl=no
+		_sid_audio=no
 		;;
 	openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
@@ -4030,10 +4032,10 @@ case $_backend in
 	atari)
 		define_in_config_if_yes yes "ATARI"
 		append_var DEFINES "-DDISABLE_LAUNCHERDISPLAY_GRID"
-		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DDISABLE_NES_APU"
 		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lgem"
+		_sid_audio=no
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
