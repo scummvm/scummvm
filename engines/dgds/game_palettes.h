@@ -61,6 +61,8 @@ public:
 
 	uint getCurPalNum() const { return _curPalNum; }
 
+	const DgdsPal &getCurPal() const { return _curPal; }
+
 private:
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;

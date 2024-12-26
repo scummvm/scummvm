@@ -335,6 +335,7 @@ public:
 	void updateHotAreasFromDynamicRects();
 	void setDynamicSceneRect(int16 num, int16 x, int16 y, int16 width, int16 height);
 	void setSceneNum(int16 num) { _num = num; }
+	void drawDebugHotAreas(Graphics::ManagedSurface *dst) const;
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);

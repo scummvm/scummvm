@@ -89,7 +89,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
 	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false),
-	_gameId(GID_INVALID), _thisFrameMs(0), _lastGlobalFade(-1), _lastGlobalFadedPal(0) {
+	_gameId(GID_INVALID), _thisFrameMs(0), _lastGlobalFade(-1), _lastGlobalFadedPal(0),
+	_debugShowHotAreas(false) {
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
@@ -728,6 +729,9 @@ Common::Error DgdsEngine::run() {
 				_clock.draw(_compositionBuffer);
 
 			bool haveActiveDialog = _scene->checkDialogActive();
+
+			if (_debugShowHotAreas)
+				_scene->drawDebugHotAreas(&_compositionBuffer);
 
 			if (getGameId() == GID_WILLY) {
 				_scene->drawVisibleHeads(&_compositionBuffer);

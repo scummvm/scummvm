@@ -37,6 +37,7 @@
 #include "dgds/globals.h"
 #include "dgds/inventory.h"
 #include "dgds/debug_util.h"
+#include "dgds/game_palettes.h"
 
 namespace Dgds {
 
@@ -739,8 +740,15 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	ResourceManager *resourceManager = engine->getResourceManager();
 	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
-	if (!dlgFile)
-		error("Dialog file %s not found", filename.c_str());
+	if (!dlgFile) {
+		//
+		// This happens for example if debug mode clicks have been enabled in
+		// Willy Beamish, as the debug dialogs were not included in the retail
+		// version.
+		//
+		warning("Dialog file %s not found", filename.c_str());
+		return nullptr;
+	}
 
 	DgdsChunkReader chunk(dlgFile);
 	Decompressor *decompressor = engine->getDecompressor();
@@ -1523,14 +1531,14 @@ void SDSScene::updateHotAreasFromDynamicRects() {
 
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	for (auto &item : DgdsEngine::getInstance()->getGDSScene()->getGameItems()) {
-		if (item._inSceneNum == _num && checkConditions(item.enableConditions)
-			&& _isInRect(pt, item._rect)) {
+		if (item._inSceneNum == _num && _isInRect(pt, item._rect)
+			&& checkConditions(item.enableConditions)) {
 			return &item;
 		}
 	}
 
 	for (auto &area : _hotAreaList) {
-		if (checkConditions(area.enableConditions) && _isInRect(pt, area._rect)) {
+		if (_isInRect(pt, area._rect) && checkConditions(area.enableConditions)) {
 			return &area;
 		}
 	}
@@ -1647,6 +1655,22 @@ void SDSScene::activateChoice() {
 	_shouldClearDlg = true;
 }
 
+void SDSScene::drawDebugHotAreas(Graphics::ManagedSurface *dst) const {
+	const DgdsPal &pal = DgdsEngine::getInstance()->getGamePals()->getCurPal();
+	byte redish = pal.findBestColor(0xff, 0, 0);
+	byte greenish = pal.findBestColor(0, 0xff, 0);
+
+	for (const auto &area : _hotAreaList) {
+		bool enabled = checkConditions(area.enableConditions);
+		uint32 color = enabled ? greenish : redish;
+		g_system->getPaletteManager();
+		const Common::Rect &r = area._rect.toCommonRect();
+		dst->drawLine(r.left, r.top, r.right, r.top, color);
+		dst->drawLine(r.left, r.top, r.left, r.bottom, color);
+		dst->drawLine(r.left, r.bottom, r.right, r.bottom, color);
+		dst->drawLine(r.right, r.top, r.right, r.bottom, color);
+	}
+}
 
 GDSScene::GDSScene() : _defaultMouseCursor(0), _defaultMouseCursor2(0), _invIconNum(0), _invIconMouseCursor(0), _defaultOtherMouseCursor(0) {
 }

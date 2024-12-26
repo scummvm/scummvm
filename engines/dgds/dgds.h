@@ -182,6 +182,8 @@ private:
 	int16 _lastGlobalFade; // Only used in Willy Beamish
 	uint _lastGlobalFadedPal;
 
+	bool _debugShowHotAreas;
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
@@ -270,6 +272,9 @@ public:
 
 	void enableKeymapper();
 	void disableKeymapper();
+
+	void setDebugShowHotAreas(bool enable) { _debugShowHotAreas = enable; }
+	bool getDebugShowHotAreas() const { return _debugShowHotAreas; }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);
