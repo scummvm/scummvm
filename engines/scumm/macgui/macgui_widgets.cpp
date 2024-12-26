@@ -1657,14 +1657,12 @@ bool MacGuiImpl::MacListBox::handleKeyDown(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
-// Drop down widget
+// Pop-up menu widget
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
 	_black = _window->_gui->getBlack();
 	_white = _window->_gui->getWhite();
-
-	_bounds.bottom--;
 
 	_popUpBounds.left = _bounds.left + _textWidth;
 	_popUpBounds.right = _bounds.right;
@@ -1710,7 +1708,7 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 	Graphics::Surface *s = _window->innerSurface();
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
-	s->fillRect(Common::Rect(_bounds.left, _bounds.top + 1, _bounds.left + _textWidth, _bounds.bottom - 2), bg);
+	s->fillRect(Common::Rect(_bounds.left, _bounds.top + 1, _bounds.left + _textWidth, _bounds.bottom - 3), bg);
 	font->drawString(s, _text, _bounds.left, _bounds.top + 1, _textWidth, fg, Graphics::kTextAlignLeft, 4);
 
 	if (focused) {
@@ -1744,7 +1742,7 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 			textRect.translate(0, 16);
 		}
 	} else {
-		Common::Rect r(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 1);
+		Common::Rect r(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 2);
 
 		s->fillRect(r, _white);
 		s->frameRect(r, _black);
@@ -1779,7 +1777,7 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 
 void MacGuiImpl::MacPopUpMenu::handleMouseDown(Common::Event &event) {
 	_popUpBounds.top = _bounds.top - 16 * _value;
-	_popUpBounds.bottom = _bounds.bottom + 16 * (_texts.size() - _value - 1);
+	_popUpBounds.bottom = _bounds.bottom - 1 + 16 * (_texts.size() - _value - 1);
 
 	Graphics::Surface background = _window->innerSurface()->getSubArea(_popUpBounds);
 
