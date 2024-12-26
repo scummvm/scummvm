@@ -53,6 +53,8 @@ MODULE_OBJS = \
 	views/dialogs/say.o \
 	views/dialogs/select_game.o \
 	views/dialogs/select_item.o \
+	views/dialogs/select_scroll.o \
+	views/dialogs/select_slow.o \
 	views/dialogs/set_sound.o
 
 # This module can be built as a plugin

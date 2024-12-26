@@ -19,29 +19,36 @@
  *
  */
 
-#include "got/views/dialogs/select_game.h"
+#include "got/views/dialogs/select_slow.h"
 #include "got/got.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Part 1: Serpent Surprise!",
-	"Part 2: Non-stick Nognir",
-	"Part 3: Lookin' for Loki",
+static const char *OPTIONS[] = { 
+	"On  (slow computer)",
+	"Off (fast computer)",
 	nullptr
 };
 
-SelectGame::SelectGame() : SelectOption("SelectGame", "Play Which Game?", OPTIONS) {
+SelectSlow::SelectSlow() : SelectOption("SelectSlow", "Fast Mode", OPTIONS) {
 }
 
-void SelectGame::selected() {
-	// Select the game area to start from
-	g_vars->setArea(_selectedItem + 1);
+void SelectSlow::selected() {
+	switch (_selectedItem) {
+	case 0:
+		_G(slow_mode) = 1;
+		break;
+	case 1:
+		_G(slow_mode) = 0;
+		break;
+	default:
+		break;
+	}
 
-	// Switch to the story view for the selected game area
-	replaceView("Story", true, true);
+	// Next select scrolling
+	addView("SelectScroll");
 }
 
 } // namespace Dialogs

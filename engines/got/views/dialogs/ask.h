@@ -36,6 +36,7 @@ public:
 	static void show(const Common::String &title,
 		const Common::StringArray &options);
 	void closed() override;
+	void selected() override;
 };
 
 } // namespace Dialogs

@@ -19,29 +19,24 @@
  *
  */
 
-#include "got/views/dialogs/select_game.h"
+#include "got/views/dialogs/select_scroll.h"
 #include "got/got.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Part 1: Serpent Surprise!",
-	"Part 2: Non-stick Nognir",
-	"Part 3: Lookin' for Loki",
-	nullptr
-};
-
-SelectGame::SelectGame() : SelectOption("SelectGame", "Play Which Game?", OPTIONS) {
+SelectScroll::SelectScroll() : SelectOption("SelectScroll", "Scroll Between Screens?", YES_NO) {
 }
 
-void SelectGame::selected() {
-	// Select the game area to start from
-	g_vars->setArea(_selectedItem + 1);
+bool SelectScroll::msgFocus(const FocusMessage &msg) {
+	_selectedItem = 1 - _G(setup).scroll_flag;
+	return true;
+}
 
-	// Switch to the story view for the selected game area
-	replaceView("Story", true, true);
+void SelectScroll::selected() {
+	_G(setup).scroll_flag = (_selectedItem == 0) ? 1 : 0;
+	_G(last_setup) = _G(setup);
 }
 
 } // namespace Dialogs

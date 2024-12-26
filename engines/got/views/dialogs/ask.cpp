@@ -36,6 +36,10 @@ void Ask::show(const Common::String &title, const Common::StringArray &options) 
 }
 
 void Ask::closed() {
+	_G(scripts).setAskResponse(0);
+}
+
+void Ask::selected() {
 	_G(scripts).setAskResponse(_selectedItem + 1);
 }
 

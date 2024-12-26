@@ -20,6 +20,7 @@
  */
 
 #include "got/views/dialogs/options_menu.h"
+#include "got/game/back.h"
 #include "got/gfx/palette.h"
 #include "got/utils/file.h"
 #include "got/vars.h"
@@ -39,10 +40,31 @@ OptionsMenu::OptionsMenu() : SelectOption("OptionsMenu", "Options Menu", OPTIONS
 void OptionsMenu::selected() {
 	switch (_selectedItem) {
 	case 0:
-		replaceView("SetSound");
+		addView("SetSound");
+		break;
+	case 1:
+		// skill level
+		break;
+	case 2:
+		close();
+		g_engine->saveGameDialog();
+		break;
+	case 3:
+		close();
+		g_engine->loadGameDialog();
+		break;
+	case 4:
+		g_events->send(GameMessage("THOR_DIES"));
+		break;
+	case 5:
+		addView("SelectSlow");
+		break;
+	case 6:
+		// Help
+		odin_speaks(2008, -1);
 		break;
 	case 7:
-		replaceView("QuitGame");
+		addView("QuitGame");
 		break;
 	default:
 		break;

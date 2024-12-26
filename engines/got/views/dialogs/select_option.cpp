@@ -46,6 +46,7 @@ SelectOption::SelectOption(const Common::String &name) : Dialog(name) {
 void SelectOption::setContent(const Common::String &title,
 		const Common::StringArray &options) {
 	_title = title;
+	_options = options;
 
 	// Calculate the bounds for the dialog
 	int w, h, x1, y1, x2, y2;
@@ -117,13 +118,24 @@ bool SelectOption::msgAction(const ActionMessage &msg) {
 
 	case KEYBIND_ESCAPE:
 		_selectedItem = -1;
+		close();
 		closed();
+		break;
 
 	default:
 		break;
 	}
 
 	return true;
+}
+
+bool SelectOption::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_RETURN) {
+		_smackCtr = 1;
+		return true;
+	}
+
+	return false;
 }
 
 bool SelectOption::tick() {
@@ -137,6 +149,7 @@ bool SelectOption::tick() {
 			play_sound(CLANG, 1);
 		if (_smackCtr == 6) {
 			_smackCtr = 0;
+			close();
 			selected();
 		}	
 	}

@@ -33,6 +33,8 @@
 #include "got/views/dialogs/quit_game.h"
 #include "got/views/dialogs/say.h"
 #include "got/views/dialogs/select_game.h"
+#include "got/views/dialogs/select_scroll.h"
+#include "got/views/dialogs/select_slow.h"
 #include "got/views/dialogs/select_item.h"
 #include "got/views/dialogs/set_sound.h"
 
@@ -53,6 +55,8 @@ struct Views {
 	Dialogs::Say _say;
 	Dialogs::SelectGame _selectGame;
 	Dialogs::SelectItem _selectItem;
+	Dialogs::SelectScroll _selectScroll;
+	Dialogs::SelectSlow _selectSlow;
 	Dialogs::SetSound _setSound;
 };
 
