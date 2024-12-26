@@ -319,7 +319,7 @@ public:
 		int16 oldVal = get();
 		if (val != oldVal) {
 			val = CLIP(val, (int16)0, (int16)10);
-			warning("TODO: Implement set function for willy global 0x02 val %d.", val);
+			error("TODO: Implement set function for willy global 0x02 val %d.", val);
 			return RWI16Global::set(val);
 		}
 		return oldVal;
@@ -329,12 +329,13 @@ public:
 
 WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
 	_unk2(4), _unk3(0), _invDrawTimeSkipButtons(0), _hideMouseCursor(0), _unk74(0), _unk75(300),
-	_palFade(255), _droppedItemNum(0), _unk79(0), _unk80(0), _unk81(3), _unk82(1) {
+	_palFade(255), _droppedItemNum(0), _characterStance(0), _characterPos(0), _unk81(3),
+	_unk82(1) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
-	_globals.push_back(new RWI16Global(0x52, &_unk82));
-	_globals.push_back(new RWI16Global(0x51, &_unk81));
-	_globals.push_back(new RWI16Global(0x50, &_unk80));
-	_globals.push_back(new RWI16Global(0x4F, &_unk79));
+	_globals.push_back(new RWI16Global(0x52, &_unk82)); // Maybe text speed?
+	_globals.push_back(new RWI16Global(0x51, &_unk81)); // Maybe difficulty?
+	_globals.push_back(new RWI16Global(0x50, &_characterPos)); // ads variable 0 - character position?
+	_globals.push_back(new RWI16Global(0x4F, &_characterStance)); // ads varaible 1 - character stance?
 	_globals.push_back(new RWI16Global(0x4E, &_droppedItemNum));
 	_globals.push_back(new RWI16Global(0x4D, &_palFade));
 	_globals.push_back(new PaletteFadeGlobal(0x4C, &_palFade));
@@ -356,8 +357,8 @@ Common::Error WillyGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_unk75);
 	s.syncAsSint16LE(_palFade);
 	s.syncAsSint16LE(_droppedItemNum);
-	s.syncAsSint16LE(_unk79);
-	s.syncAsSint16LE(_unk80);
+	s.syncAsSint16LE(_characterStance);
+	s.syncAsSint16LE(_characterPos);
 	s.syncAsSint16LE(_unk81);
 	s.syncAsSint16LE(_unk82);
 

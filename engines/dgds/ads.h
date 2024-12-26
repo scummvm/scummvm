@@ -37,7 +37,6 @@ public:
 		for (int i = 0; i < ARRAYSIZE(_segments); i++)
 			_segments[i] = -1;
 
-		ARRAYCLEAR(_adsVariable);
 		ARRAYCLEAR(_countdown);
 		ARRAYCLEAR(_charWhile);
 	}
@@ -57,7 +56,6 @@ public:
 	bool _hitTTMOp0110;
 	bool _hitBranchOp;
 	int16 _runningSegmentIdx;
-	int16 _adsVariable[2];
 
 	Common::Error syncState(Common::Serializer &s);
 };

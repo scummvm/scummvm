@@ -20,6 +20,7 @@
  */
 
 #include "dgds/ads.h"
+#include "dgds/globals.h"
 
 namespace Dgds {
 
@@ -187,7 +188,7 @@ void ADSInterpreter::findUsedSequencesForSegment(int idx) {
 						}
 					}
 					if (!already_added) {
-						debug(10, "ADS seg no %d (idx %d) uses seq %d %d", segno, idx, envno, seqno);
+						debug(10, "ADS seg no %d (idx %d) uses env %d seq %d", segno, idx, envno, seqno);
 						_adsData->_usedSeqs[idx].push_back(seq);
 					}
 				}
@@ -344,6 +345,8 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 
 	assert(seq || (code & 0xFF) >= 0x80);
 
+	Globals *globals = DgdsEngine::getInstance()->getGameGlobals();
+
 	switch (code) {
 	case 0x1010: // WHILE paused
 	case 0x1310: // IF paused, 2 params
@@ -390,24 +393,29 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		debugN(10, "ADS 0x%04x: if detail >= %d", code, arg);
 		return true;
 		//return ((int)DgdsEngine::getInstance()->getDetailLevel() >= arg);
-	case 0x13A0: // IF _adsVariable[0] <=
+	//
+	// NOTE: The globals for the following ops use the numbers from Willy
+	// Beamish (0x4F, 0x50).  If these ops are used in any of the other newer
+	// games (Quarky or Johnny Castaway) they may need updating.
+	//
+	case 0x13A0: // IF some_ads_variable[0] <=
 		debugN(10, "ADS 0x%04x: if adsVariable[0] <= %d", code, arg);
-		return _adsData->_adsVariable[0] <= arg;
+		return globals->getGlobal(0x50) <= arg;
 	case 0x13A1: // IF some_ads_variable[1] <=
 		debugN(10, "ADS 0x%04x: if adsVariable[1] <= %d", code, arg);
-		return _adsData->_adsVariable[1] <= arg;
+		return globals->getGlobal(0x4F) <= arg;
 	case 0x13B0: // IF some_ads_variable[0] >
 		debugN(10, "ADS 0x%04x: if adsVariable[0] > %d", code, arg);
-		return _adsData->_adsVariable[0] > arg;
+		return globals->getGlobal(0x50) > arg;
 	case 0x13B1: // IF some_ads_variable[1] >
 		debugN(10, "ADS 0x%04x: if adsVariable[1] > %d", code, arg);
-		return _adsData->_adsVariable[1] > arg;
+		return globals->getGlobal(0x4F) > arg;
 	case 0x13C0: // IF some_ads_variable[0] ==
 		debugN(10, "ADS 0x%04x: if adsVariable[0] == %d", code, arg);
-		return _adsData->_adsVariable[0] == arg;
+		return globals->getGlobal(0x50) == arg;
 	case 0x13C1: // IF some_ads_variable[1] ==
 		debugN(10, "ADS 0x%04x: if adsVariable[1] == %d", code, arg);
-		return _adsData->_adsVariable[1] == arg;
+		return globals->getGlobal(0x4F) == arg;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}
@@ -786,21 +794,56 @@ int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
 	int idx = getArrIndexOfSegNum(segnum);
 	if (idx < 0)
 		return 0;
-	if (!(_adsData->_state[idx] & 4)) {
-		for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
-			if (!seq)
-				return 0;
-			if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
-				return 1;
+
+	// Slightly different implementation after Dragon.
+	// Finished is also a "stopped" state in HoC+
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
+		if (!(_adsData->_state[idx] & 4)) {
+			for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
+				if (!seq)
+					error("getStateForSceneOp: used seq for seg %d should not be null", segnum);
+				if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
+					return 1;
+			}
+			return 0;
 		}
-		return 0;
+	} else if (DgdsEngine::getInstance()->getGameId() == GID_HOC) {
+		int state = (_adsData->_state[idx] & 0xfff7);
+		if (state != 4 && state != 1) {
+			for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
+				if (!seq)
+					error("getStateForSceneOp: used seq for seg %d should not be null", segnum);
+				if (seq->_runFlag != kRunTypeStopped && seq->_runFlag != kRunTypeFinished && !seq->_selfLoop)
+					return 1;
+			}
+			return 0;
+		}
+	} else { // WILLY+
+		int state = (_adsData->_state[idx] & 0xfff7);
+		if (state != 4 && state != 1) {
+			for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
+				if (!seq)
+					error("getStateForSceneOp: used seq for seg %d should not be null", segnum);
+				//
+				// TODO: This last check is a bit of a guess to make Willy Beamish work correctly.
+				// It seems to need sequences to return false from this function even when they
+				// are delayed.  Eg, outside the house (HE.ADS, scene 10), seq 20 (willy scratching
+				// his leg) runs and repeats randomly every 400 to 900 frames, but the door hot area
+				// is not active if that script is "running".
+				//
+				if (seq->_runFlag != kRunTypeStopped && seq->_runFlag != kRunTypeFinished && !seq->_selfLoop && seq->_timeNext <= DgdsEngine::getInstance()->getThisFrameMs())
+					return 1;
+			}
+			return 0;
+		}
 	}
+
 	return 1;
 }
 
 
 int ADSInterpreter::getArrIndexOfSegNum(uint16 segnum) {
-	int32 startoff = _adsData->scr->pos();
+	const int32 startoff = _adsData->scr->pos();
 	int result = -1;
 	for (int i = 0; i < _adsData->_maxSegments; i++) {
 		_adsData->scr->seek(_adsData->_segments[i]);

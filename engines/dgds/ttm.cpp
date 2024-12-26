@@ -1048,13 +1048,13 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 					seq._drawColFG, plotClippedPoint, &clipSurf);
 		break;
 	}
-	case 0xb000:
+	case 0xb000: // INIT CREDITS SCRLL
 		if (seq._executed) // this is a one-shot op
 			break;
 		env._creditScrollMeasure = doOpInitCreditScroll(env._scriptShapes[seq._currentBmpId].get());
 		env._creditScrollYOffset = 0;
 		break;
-	case 0xb010: {
+	case 0xb010: { // DRAW CREDITS SCROLL
 		const Image *img = env._scriptShapes[seq._currentBmpId].get();
 		if (img && img->isLoaded()) {
 			bool finished = doOpCreditsScroll(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,

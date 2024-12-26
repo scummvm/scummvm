@@ -215,8 +215,8 @@ private:
 	int16 _unk75;
 	int16 _palFade;
 	int16 _droppedItemNum;
-	int16 _unk79;
-	int16 _unk80;
+	int16 _characterStance;
+	int16 _characterPos;
 	int16 _unk81;
 	int16 _unk82;
 
