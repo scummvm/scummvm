@@ -103,7 +103,7 @@ MODULE_OBJS += \
 	softsynth/fmtowns_pc98/towns_pc98_plugins.o
 endif
 
-ifdef USE_MT32
+ifdef USE_MT32EMU
 MODULE_OBJS += \
 	softsynth/mt32.o
 endif
