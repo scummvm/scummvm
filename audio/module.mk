@@ -63,7 +63,6 @@ MODULE_OBJS := \
 	softsynth/opl/mame.o \
 	softsynth/appleiigs.o \
 	softsynth/fluidsynth.o \
-	softsynth/mt32.o \
 	softsynth/eas.o \
 	softsynth/pcspk.o \
 	soundfont/rawfile.o \
@@ -102,6 +101,11 @@ MODULE_OBJS += \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \
 	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
 	softsynth/fmtowns_pc98/towns_pc98_plugins.o
+endif
+
+ifdef USE_MT32
+MODULE_OBJS += \
+	softsynth/mt32.o
 endif
 
 ifdef USE_SID_AUDIO

@@ -324,7 +324,7 @@ add_component indeo "Indeo" "_indeo" "USE_INDEO"
 add_component lua "Lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
-add_component mt32emu "integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
+add_component mt32emu "Integrated MT-32 emulator" "_mt32emu" "USE_MT32EMU"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 
