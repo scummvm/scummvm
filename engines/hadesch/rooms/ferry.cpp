@@ -287,6 +287,7 @@ static const struct {
 	{ "V9250tD0", { "V9250aD0", _hs("Charon must sit next to smoking beings") } },
 	{ "V9260tA0", { "V9260nA0", _hs("Charon can't have any monsters at the head of the boat") } },
 	{ "V9260tB0", { "V9260nB0", _hs("No animals at the head of the boat") } }, // 5
+	// FIXME: Spelling incorrect. wont should be won't. Fixing changes game data and thus may cause issues
 	{ "V9260tC0", { "V9260nC0", _hs("Charon wont sit next to two-headed beings") } },
 	{ "V9260tD0", { "V9260nD0", _hs("Charon won't sit next to flat beings") } },
 	{ "V9260tE0", { "V9260nE0", _hs("Charon won't sit next to horned beings") } },
