@@ -157,7 +157,7 @@ void thor_damaged(ACTOR *actr) {
 
 void actor_destroyed(ACTOR *actr) {
 	int x, y, x1, y1, r, n, t;
-	int pge = 0;
+	int pge = _G(pge);
 
 	if (actr->actor_num > 2) {
 		x = actr->last_x[pge ^ 1];

@@ -116,13 +116,13 @@ int load_standard_actors() {
 	make_actor_surface(&_G(actor)[1]);
 
 	load_actor(0, 106);   // Load sparkle
-	memcpy(&_G(sparkle), (_G(tmp_buff) + 5120), 40);
+	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(sparkle), 20, 0, 100, 100);
 	_G(sparkle).used = 0;
 	make_actor_surface(&_G(sparkle));
 
 	load_actor(0, 107);   // Load explosion
-	memcpy(&_G(explosion), (_G(tmp_buff) + 5120), 40);
+	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(explosion), 21, 0, 100, 100);
 	_G(explosion).used = 0;
 	make_actor_surface(&_G(explosion));
