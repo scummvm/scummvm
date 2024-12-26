@@ -19,35 +19,34 @@
  *
  */
 
-#include "got/views/dialogs/quit_game.h"
+#include "got/views/dialogs/save_game.h"
 #include "got/got.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr
-};
-
-QuitGame::QuitGame() : SelectOption("QuitGame", "Quit Game?", OPTIONS) {
+SaveGame::SaveGame() : SelectOption("SaveGame", "Save Game?", YES_NO) {
 }
 
-void QuitGame::selected() {
-	switch (_selectedItem) {
-	case 0:
-		break;
-	case 1:
-		// Prompt for saving game before returning to title
-		send("SaveGame", GameMessage("TITLE"));
-		break;
-	case 2:
-		// Prompt for saving game before quitting
-		send("SaveGame", GameMessage("QUIT"));
-		break;
-	default:
-		break;
+bool SaveGame::msgGame(const GameMessage &msg) {
+	if (msg._name == "TITLE" || msg._name == "QUIT") {
+		_isQuit = msg._name == "QUIT";
+		open();
+		return true;
 	}
+
+	return false;
+}
+
+void SaveGame::selected() {
+	if (_selectedItem == 0)
+		g_engine->saveGameDialog();
+
+	if (_isQuit)
+		g_engine->quitGame();
+	else
+		replaceView("Title", true, true);
 }
 
 } // namespace Dialogs

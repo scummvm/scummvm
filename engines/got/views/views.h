@@ -31,6 +31,7 @@
 #include "got/views/dialogs/options_menu.h"
 #include "got/views/dialogs/quit.h"
 #include "got/views/dialogs/quit_game.h"
+#include "got/views/dialogs/save_game.h"
 #include "got/views/dialogs/say.h"
 #include "got/views/dialogs/select_game.h"
 #include "got/views/dialogs/select_scroll.h"
@@ -52,6 +53,7 @@ struct Views {
 	Dialogs::OptionsMenu _optionsMenu;
 	Dialogs::Quit _quit;
 	Dialogs::QuitGame _quitGame;
+	Dialogs::SaveGame _saveGame;
 	Dialogs::Say _say;
 	Dialogs::SelectGame _selectGame;
 	Dialogs::SelectItem _selectItem;
