@@ -19,37 +19,30 @@
  *
  */
 
-#include "got/views/dialogs/quit_game.h"
-#include "got/got.h"
+#ifndef GOT_VIEWS_DIALOGS_SAVE_GAME_H
+#define GOT_VIEWS_DIALOGS_SAVE_GAME_H
+
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-	"Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr
-};
+class SaveGame : public SelectOption {
+private:
+	bool _isQuit = false;
 
-QuitGame::QuitGame() : SelectOption("QuitGame", "Quit Game?", OPTIONS) {
-}
-
-void QuitGame::selected() {
-	switch (_selectedItem) {
-	case 0:
-		break;
-	case 1:
-		// Prompt for saving game before returning to title
-		send("SaveGame", GameMessage("TITLE"));
-		break;
-	case 2:
-		// Prompt for saving game before quitting
-		send("SaveGame", GameMessage("QUIT"));
-		break;
-	default:
-		break;
+public:
+	SaveGame();
+	virtual ~SaveGame() {
 	}
-}
+
+	bool msgGame(const GameMessage &msg) override;
+	void selected() override;
+};
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif
