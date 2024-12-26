@@ -1188,11 +1188,7 @@ const Feature s_features[] = {
 	{              "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
 	{                 "3d",                              "", false, true,  "3D rendering" },
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
-	{              "imgui",                     "USE_IMGUI", false, true,  "Dear ImGui based debugger" },
-	{                "lua",                       "USE_LUA", false, true,  "Lua" },
-	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
 	{               "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
 	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
@@ -1243,6 +1239,35 @@ const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
 const char *s_msvc_config_names[] = {"arm64", "Win32", "x64"};
 // clang-format on
 } // End of anonymous namespace
+
+// An array of buffers for the features
+// created out of the components (which use char pointers)
+std::list<std::string> s_stash_features;
+FeatureList::iterator addDynamicFeature(FeatureList &features, const std::string &name, const std::string &description, const std::string &define) {
+	// Add a new entry in our stash and fill it
+	s_stash_features.push_back(std::string());
+	std::string &buffer = s_stash_features.back();
+
+	buffer += name;
+	buffer += '\0';
+	buffer += define;
+	buffer += '\0';
+	buffer += description;
+
+	// Starting from now the buffer must be read-only
+
+	const char *ptr = buffer.c_str();
+	Feature feature = {
+		ptr,
+		ptr + name.size() + 1,
+		false,
+		true,
+		ptr + name.size() + define.size() + 2
+	};
+
+	features.push_back(feature);
+	return --features.end();
+}
 
 std::string getMSVCArchName(MSVC_Architecture arch) {
 	return s_msvc_arch_names[arch];
@@ -1307,7 +1332,8 @@ ComponentList getAllComponents(const std::string &srcDir, FeatureList &features)
 
 		FeatureList::iterator itr = std::find(features.begin(), features.end(), name);
 		if (itr == features.end()) {
-			error("Missing matching feature for component " + name);
+			// Create a new feature on the fly
+			itr = addDynamicFeature(features, name, description, define);
 		}
 
 		Component comp = { name, define, *itr, description, false };
