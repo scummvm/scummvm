@@ -113,7 +113,7 @@ protected:
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
 
-	static Common::Path getSoundFontPath();
+	static Common::Path getSoundFontPath(bool *exists = nullptr);
 
 	int open() override;
 	void close() override;
@@ -280,13 +280,18 @@ static long SoundFontMemLoader_tell(void *handle) {
 
 #endif // USE_FLUIDLITE
 
-Common::Path MidiDriver_FluidSynth::getSoundFontPath() {
+Common::Path MidiDriver_FluidSynth::getSoundFontPath(bool *exists) {
 	Common::Path path = ConfMan.getPath("soundfont");
-	if (path.empty())
+	if (path.empty()) {
+		if (exists)
+			*exists = false;
 		return path;
+	}
 
 	Common::FSNode fileNode(path);
 	if (fileNode.exists()) {
+		if (exists)
+			*exists = true;
 		// Return the full system path to the soundfont
 		return Common::Path(g_system->getFilesystemFactory()->getSystemFullPath(path.toString(Common::Path::kNativeSeparator)), Common::Path::kNativeSeparator);
 	}
@@ -296,8 +301,11 @@ Common::Path MidiDriver_FluidSynth::getSoundFontPath() {
 		Common::FSNode dirNode(ConfMan.getPath("soundfontpath"));
 		if (dirNode.exists() && dirNode.isDirectory()) {
 			fileNode = dirNode.getChild(path.baseName());
-			if (fileNode.exists())
+			if (fileNode.exists()) {
+				if (exists)
+					*exists = true;
 				return fileNode.getPath();
+			}
 		}
 	}
 
@@ -309,10 +317,15 @@ Common::Path MidiDriver_FluidSynth::getSoundFontPath() {
 		if (!dir)
 			continue;
 		fileNode = dir->getFSNode().getChild(file.arcMember->getPathInArchive().toString(Common::Path::kNativeSeparator));
-		if (fileNode.exists())
+		if (fileNode.exists()) {
+			if (exists)
+				*exists = true;
 			return fileNode.getPath();
+		}
 	}
 
+	if (exists)
+		*exists = false;
 	return path;
 }
 
@@ -608,11 +621,9 @@ bool FluidSynthMusicPlugin::checkDevice(MidiDriver::DeviceHandle, int flags, boo
 		return true;
 #endif
 
-	Common::Path sfPath = MidiDriver_FluidSynth::getSoundFontPath();
-	if (sfPath.empty())
-		return false;
-
-	return Common::FSNode(sfPath).exists();
+	bool exists = false;
+	Common::Path sfPath = MidiDriver_FluidSynth::getSoundFontPath(&exists);
+	return !sfPath.empty() && exists;
 }
 
 Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
