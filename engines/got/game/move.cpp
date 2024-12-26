@@ -169,9 +169,9 @@ void actor_destroyed(ACTOR *actr) {
 		t = actr->type;
 
 		if (actr->func_num == 255)
-			*actr = _G(explosion);
+			actr->copyFixedAndPics(_G(explosion));
 		else
-			*actr = _G(sparkle);
+			actr->copyFixedAndPics(_G(sparkle));
 
 		actr->type = t;
 		actr->actor_num = n;
