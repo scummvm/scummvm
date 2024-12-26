@@ -60,6 +60,11 @@ enum GameMode {
 	MODE_THOR_DIES = 3
 };
 
+enum TransitionDir {
+	DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
+};
+
+
 class Vars {
 public:
 	Vars();
@@ -79,6 +84,7 @@ public:
 	Sound _sound;
 	Scripts _scripts;
 	GameMode _gameMode = MODE_NORMAL;
+	TransitionDir _transitionDir = DIR_LEFT;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
