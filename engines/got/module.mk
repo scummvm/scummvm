@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	sound.o \
 	vars.o \
+	data/actor.o \
 	data/level.o \
 	data/sd_data.o \
 	data/setup.o \
