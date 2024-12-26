@@ -60,13 +60,13 @@ enum SceneOpCode {
 	kSceneOpFreeTalkData = 26, 	// args: tds num to free
 
 	// Dragon-specific opcodes
-	kSceneOpPasscode = 100,			// args: none.
-	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
-	kSceneOpOpenGameOverMenu = 102,	// args: none.
+	kSceneOpPasscode = 100,				// args: none.
+	kSceneOpMeanwhile = 101,			// args: none. Clears screen and displays "meanwhile".
+	kSceneOpOpenGameOverMenu = 102,		// args: none.
 	kSceneOpTiredDialog = 103,			// args: none. Something about "boy am I tired"?
 	kSceneOpArcadeTick = 104,			// args: none. Called in arcade post-tick.
-	kSceneOpDrawDragonCountdown1 = 105,			// args: none. Draw special countdown number at 141, 56
-	kSceneOpDrawDragonCountdown2 = 106,			// args: none. Draw some number at 250, 42
+	kSceneOpDrawDragonCountdown1 = 105,	// args: none. Draw special countdown number at 141, 56
+	kSceneOpDrawDragonCountdown2 = 106,	// args: none. Draw some number at 250, 42
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
 	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 

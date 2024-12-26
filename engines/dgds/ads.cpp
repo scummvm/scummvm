@@ -375,7 +375,7 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 	case 0x1070: // WHILE RUNNING
 	case 0x1370: // IF_RUNNING, 2 params
 		debugN(10, "ADS 0x%04x: %s running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
+		return seq->_runFlag == kRunTypeKeepGoing || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
 	case 0x1080:
 	case 0x1090:
 		warning("Unimplemented IF/WHILE operation 0x%x", code);
@@ -607,7 +607,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 		_currentTTMSeq = seq;
 		if (runCount == 0) {
-			seq->_runFlag = kRunType1;
+			seq->_runFlag = kRunTypeKeepGoing;
 		} else if (runCount < 0) {
 			// Negative run count sets the cut time
 			seq->_timeCut = DgdsEngine::getInstance()->getThisFrameMs() + (-runCount * MS_PER_FRAME);
@@ -873,7 +873,7 @@ bool ADSInterpreter::run() {
 		seq->_lastFrame = -1;
 		int sflag = seq->_scriptFlag;
 		TTMRunType rflag = seq->_runFlag;
-		if (sflag == 6 || (rflag != kRunType1 && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunTypePaused)) {
+		if (sflag == 6 || (rflag != kRunTypeKeepGoing && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunTypePaused)) {
 			if (sflag != 6 && sflag != 5 && rflag == kRunTypeFinished) {
 				seq->_runFlag = kRunTypeStopped;
 			}

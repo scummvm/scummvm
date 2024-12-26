@@ -72,7 +72,7 @@ public:
 
 enum TTMRunType {
 	kRunTypeStopped = 0,
-	kRunType1 = 1,
+	kRunTypeKeepGoing = 1,
 	kRunTypeMulti = 2,
 	kRunTypeTimeLimited = 3,
 	kRunTypeFinished = 4,
