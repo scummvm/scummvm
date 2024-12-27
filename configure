@@ -2913,7 +2913,7 @@ case $_host_os in
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"
-		if test "$_debug_build" = no; then
+		if test "$_optimizations" = "yes"; then
 			_optimization_level=-Os
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
