@@ -36,7 +36,7 @@
 
 #include "video/coktel_decoder.h"
 
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 #include "image/codecs/indeo3.h"
 #endif
 
@@ -1869,7 +1869,7 @@ void VMDDecoder::setXY(uint16 x, uint16 y) {
 }
 
 bool VMDDecoder::openExternalCodec() {
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 	delete _codec;
 #endif
 
@@ -1877,12 +1877,12 @@ bool VMDDecoder::openExternalCodec() {
 
 	if (_externalCodec) {
 		if (_videoCodec == kVideoCodecIndeo3) {
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 			_isPaletted = false;
 
 			_codec = new Image::Indeo3Decoder(_width, _height, g_system->getScreenFormat().bpp());
 #else
-			warning("VMDDecoder::openExternalCodec(): Indeo codecs are not compiled");
+			warning("VMDDecoder::openExternalCodec(): Indeo 3 codec is not compiled");
 			return false;
 #endif
 
@@ -2246,7 +2246,7 @@ void VMDDecoder::close() {
 	delete[] _videoBuffer[1];
 	delete[] _videoBuffer[2];
 
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 	delete _codec;
 #endif
 
@@ -2454,7 +2454,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 	if (!getRenderRects(rect, realRect, fakeRect))
 		return false;
 
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 	if (_externalCodec) {
 		if (!_codec)
 			return false;
@@ -2837,7 +2837,7 @@ uint32 VMDDecoder::getFlags() const {
 }
 
 Graphics::PixelFormat VMDDecoder::getPixelFormat() const {
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 	if (_externalCodec) {
 		if (_codec)
 			return _codec->getPixelFormat();

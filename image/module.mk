@@ -37,9 +37,13 @@ MODULE_OBJS += \
 	codecs/mpeg.o
 endif
 
-ifdef USE_INDEO
+ifdef USE_INDEO3
 MODULE_OBJS += \
-	codecs/indeo3.o \
+	codecs/indeo3.o
+endif
+
+ifdef USE_INDEO45
+MODULE_OBJS += \
 	codecs/indeo4.o \
 	codecs/indeo5.o \
 	codecs/indeo/indeo.o \

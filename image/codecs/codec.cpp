@@ -29,8 +29,10 @@
 #include "image/codecs/cdtoons.h"
 #include "image/codecs/cinepak.h"
 
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 #include "image/codecs/indeo3.h"
+#endif
+#ifdef USE_INDEO45
 #include "image/codecs/indeo4.h"
 #include "image/codecs/indeo5.h"
 #endif
@@ -225,25 +227,25 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 		return new CinepakDecoder(bitsPerPixel);
 
 	case MKTAG('I','V','3','2'):
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 		return new Indeo3Decoder(width, height, bitsPerPixel);
 #else
-		warning("createBitmapCodec(): Indeo codecs are not compiled");
+		warning("createBitmapCodec(): Indeo 3 codec is not compiled");
 		return 0;
 #endif
 	case MKTAG('I', 'V', '4', '1'):
 	case MKTAG('I', 'V', '4', '2'):
-#ifdef USE_INDEO
+#ifdef USE_INDEO45
 		return new Indeo4Decoder(width, height, bitsPerPixel);
 #else
-		warning("createBitmapCodec(): Indeo codecs are not compiled");
+		warning("createBitmapCodec(): Indeo 4 & 5 codecs are not compiled");
 		return 0;
 #endif
 	case MKTAG('I', 'V', '5', '0'):
-#ifdef USE_INDEO
+#ifdef USE_INDEO45
 		return new Indeo5Decoder(width, height, bitsPerPixel);
 #else
-		warning("createBitmapCodec(): Indeo codecs are not compiled");
+		warning("createBitmapCodec(): Indeo 4 & 5 codecs are not compiled");
 		return 0;
 #endif
 
@@ -302,11 +304,11 @@ Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel)
 		// Used my L-Zone-mac (Director game)
 		return new BitmapRawDecoder(width, height, bitsPerPixel, true, true);
 	case MKTAG('I','V','3','2'):
-#ifdef USE_INDEO
+#ifdef USE_INDEO3
 		// Indeo 3: Used by Team Xtreme: Operation Weather Disaster (Spanish)
 		return new Indeo3Decoder(width, height, bitsPerPixel);
 #else
-		warning("createQuickTimeCodec(): Indeo codecs are not compiled");
+		warning("createQuickTimeCodec(): Indeo 3 codec is not compiled");
 		return 0;
 #endif
 	default:
