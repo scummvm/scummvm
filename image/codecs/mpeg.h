@@ -19,13 +19,13 @@
  *
  */
 
-#ifdef USE_MPEG2
-
 #ifndef IMAGE_CODECS_MPEG_H
 #define IMAGE_CODECS_MPEG_H
 
 #include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
+
+#ifdef USE_MPEG2
 
 typedef struct mpeg2dec_s mpeg2dec_t;
 typedef struct mpeg2_info_s mpeg2_info_t;

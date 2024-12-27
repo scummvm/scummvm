@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	coktel_decoder.o \
 	dxa_decoder.o \
 	flic_decoder.o \
-	mpegps_decoder.o \
 	mve_decoder.o \
 	paco_decoder.o \
 	psx_decoder.o \
@@ -23,6 +22,11 @@ endif
 ifdef USE_HNM
 MODULE_OBJS += \
 	hnm_decoder.o
+endif
+
+ifdef USE_MPEG2
+MODULE_OBJS += \
+	mpegps_decoder.o
 endif
 
 ifdef USE_THEORADEC
