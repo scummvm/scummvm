@@ -65,7 +65,7 @@
 	{
 		"gob1",
 		"VGA",
-		AD_ENTRY1("intro.stk", "26a9118c0770fa5ac93a9626761600b2"),
+		AD_ENTRY1s("intro.stk", "26a9118c0770fa5ac93a9626761600b2", 233466),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -103,7 +103,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -116,7 +116,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -129,7 +129,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -142,7 +142,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -155,7 +155,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -305,7 +305,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		EN_ANY,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
@@ -318,7 +318,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		DE_DEU,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
@@ -331,7 +331,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		FR_FRA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
@@ -344,7 +344,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		IT_ITA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
@@ -357,7 +357,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		ES_ESP,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
