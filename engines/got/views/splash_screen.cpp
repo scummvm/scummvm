@@ -20,6 +20,7 @@
  */
 
 #include "got/views/splash_screen.h"
+#include "got/gfx/palette.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -27,7 +28,14 @@ namespace Views {
 
 void SplashScreen::draw() {
 	GfxSurface s = getSurface();
-	s.print(Common::Point(10, 10), "Splash screen", 255);
+	s.clear();
+	s.blitFrom(_G(gfx)[92], Common::Point(0, 24));
+}
+
+bool SplashScreen::msgFocus(const FocusMessage &msg) {
+	Gfx::Palette63 pal = _G(gfx)[91];
+	Gfx::xsetpal(pal);
+	return true;
 }
 
 bool SplashScreen::tick() {

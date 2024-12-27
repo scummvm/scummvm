@@ -32,6 +32,7 @@ public:
 	SplashScreen() : View("SplashScreen") {}
 	virtual ~SplashScreen() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

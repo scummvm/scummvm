@@ -25,6 +25,7 @@
 #include "got/got.h"
 #include "got/gfx/palette.h"
 #include "got/views/views.h"
+#include "got/views/game.h"
 
 namespace Got {
 
@@ -86,7 +87,13 @@ void Events::runGame() {
 		// Rotate the palette
 		if (++palCycleCtr == 2) {
 			palCycleCtr = 0;
-			rotatePalette();
+
+			bool gameVisible = false;
+			for (uint i = 0; i < _views.size() && !gameVisible; ++i)
+				gameVisible = _views[i]->_name == "Game";
+
+			if (gameVisible)
+				rotatePalette();
 		}
 
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {

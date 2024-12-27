@@ -24,6 +24,7 @@
 
 #include "common/stream.h"
 #include "graphics/managed_surface.h"
+#include "got/gfx/palette.h"
 
 namespace Got {
 namespace Gfx {
@@ -60,6 +61,11 @@ public:
 	 * Provides a managed surface wrapper for raw data
 	 */
 	operator const Graphics::ManagedSurface() const;
+
+	/**
+	 * Provides a data pointer, used for getting palette chunks
+	 */
+	operator const Gfx::Palette63() const;
 };
 
 /**
