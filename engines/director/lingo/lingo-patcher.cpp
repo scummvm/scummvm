@@ -360,7 +360,8 @@ on togCh\r\
 end\r\
 ";
 
-/* AMBER: Journeys Beyond has a check to ensure that the CD and hard disk data are on
+/*
+ * AMBER: Journeys Beyond has a check to ensure that the CD and hard disk data are on
  * different drive letters. ScummVM will pretend that every drive letter contains the
  * game contents, so we need to hotpatch the CD detection routine to return D:.
  */
@@ -378,6 +379,34 @@ const char *const frankensteinSwapFix = " \
 on exitFrame \r\
   go(1, \"FRANKIE\\FRANKIE.DIR\")\r\
 end \r\
+";
+
+/*
+ * Pink Gear Collection has a check to ensure that the CD and hard disk data are on
+* different drive letters by checking if "PINKPINK.TXT" is the first file in the
+* "PG_WORLD\PINKCD" folder. Later, it iterates over every drive letter to find the CD
+* using the same method. Removing this check as ScummVM will pretend that every drive
+* letter contains the game contents.
+*/
+const char *const pinkGearDriveDetectionFix1 = " \
+on startMovie\r\
+  global oricolor, projname, mtype\r\
+  cursor(200)\r\
+  set oricolor to the colorDepth\r\
+  set projname to the pathName\r\
+  if oricolor <> 8 then\r\
+    sound fadeIn 1, 1 * 60\r\
+    puppetSound(\"BAMEN11k\")\r\
+    go(\"noH2\")\r\
+  else\r\
+    set mtype to 2\r\
+    go(\"01\")\r\
+  end if\r\
+";
+
+const char *const pinkGearDriveDetectionFix2 = " \
+on exitFrame\r\
+  go(1, \"C:\\PG_WORLD\\A_IN01\")\r\
 ";
 
 struct ScriptHandlerPatch {
@@ -406,6 +435,8 @@ struct ScriptHandlerPatch {
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{"frankenstein", nullptr, kPlatformWindows, "FRANKIE.EXE", kScoreScript, 21, DEFAULT_CAST_LIB, &frankensteinSwapFix},
+	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix1},
+	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix2},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
