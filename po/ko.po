@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:18+0000\n"
+"POT-Creation-Date: 2024-12-27 08:16+0000\n"
 "PO-Revision-Date: 2024-12-22 11:00+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3911,7 +3911,7 @@ msgstr "애플 II GS 에뮬레이터 (구현되지 않음)"
 msgid "Creative Music System emulator"
 msgstr "크레이티브 뮤직 시스템 에뮬레이터"
 
-#: audio/softsynth/fluidsynth.cpp:338
+#: audio/softsynth/fluidsynth.cpp:351
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
@@ -3919,7 +3919,7 @@ msgstr ""
 "FluidSynth에는 '사운드폰트' 설정이 필요합니다. ScummVM GUI의 미디 탭에서 지정"
 "해 주세요. 음악은 꺼져 있습니다."
 
-#: audio/softsynth/fluidsynth.cpp:485
+#: audio/softsynth/fluidsynth.cpp:498
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
