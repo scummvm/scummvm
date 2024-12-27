@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-27 08:16+0000\n"
+"POT-Creation-Date: 2024-12-27 20:12+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -316,7 +316,7 @@ msgstr "Egy másik tároló jelenleg már mûködik. Meg akarod szakítani?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4167
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Igen"
@@ -329,7 +329,7 @@ msgstr "Igen"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4167
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Nem"
@@ -358,10 +358,10 @@ msgstr "A JSON kód tartalma hibás."
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1299
-#: engines/scumm/scumm.cpp:1333 engines/scumm/scumm.cpp:1353
-#: engines/scumm/scumm.cpp:1749 engines/scumm/scumm.cpp:2239
-#: engines/scumm/scumm.cpp:2255 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1303
+#: engines/scumm/scumm.cpp:1337 engines/scumm/scumm.cpp:1357
+#: engines/scumm/scumm.cpp:1753 engines/scumm/scumm.cpp:2243
+#: engines/scumm/scumm.cpp:2259 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -6066,7 +6066,7 @@ msgstr "Visszaállítás"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "A játék gyors töltése vagy mentése nem támogatott ezen a helyen"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3122
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3126
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6077,7 +6077,7 @@ msgstr ""
 "\n"
 "%s fájlból"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3109
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3113
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6088,7 +6088,7 @@ msgstr ""
 "\n"
 "%s fájlba"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3142
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3146
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10531,7 +10531,7 @@ msgid "Your Name:"
 msgstr "A Neved:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4173
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4177
 msgid "Host"
 msgstr "Gazda"
 
@@ -10541,7 +10541,7 @@ msgid "Querying games..."
 msgstr "Játékok lekérdezése..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4173
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4177
 msgid "Join"
 msgstr "Csatlakozás"
 
@@ -11516,16 +11516,16 @@ msgstr ""
 "A képarány korrekciója úgy érhető el, hogy a 'motor' fül alatt a felbontást "
 "320x200-ra vágja."
 
-#: engines/scumm/scumm.cpp:1251
+#: engines/scumm/scumm.cpp:1255
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1278
+#: engines/scumm/scumm.cpp:1282
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1298
+#: engines/scumm/scumm.cpp:1302
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
@@ -11537,7 +11537,7 @@ msgstr ""
 "Nem található a 'Monkey Island' Macintosh futtató állomány, hogy \n"
 "beolvassa a hangszereket. Zene le lessz tiltva."
 
-#: engines/scumm/scumm.cpp:1331
+#: engines/scumm/scumm.cpp:1335
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
@@ -11550,7 +11550,7 @@ msgstr ""
 "Nem található az 'Indy' Macintosh futtató állomány. Nagyfelbontású fontok\n"
 "tiltva lesznek."
 
-#: engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:1355
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
@@ -11563,17 +11563,17 @@ msgstr ""
 "Nem található az 'Indy' Macintosh futtató állomány. Nagyfelbontású fontok\n"
 "tiltva lesznek."
 
-#: engines/scumm/scumm.cpp:1362
+#: engines/scumm/scumm.cpp:1366
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1365
+#: engines/scumm/scumm.cpp:1369
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1746
+#: engines/scumm/scumm.cpp:1750
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -11583,7 +11583,7 @@ msgstr ""
 "a tömörítés már nem támogatott ebben a játékban, a hang le lesz tiltva.\n"
 "Kérlek, másold a játékot tömörítés nélkül az eredeti adathordozóról."
 
-#: engines/scumm/scumm.cpp:2237
+#: engines/scumm/scumm.cpp:2241
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11592,7 +11592,7 @@ msgstr ""
 "Native MIDI támogatáshoz kell a Roland Upgrade a LucasArts-tól,\n"
 "a %s hiányzik. AdLib-ot használok helyette."
 
-#: engines/scumm/scumm.cpp:2253
+#: engines/scumm/scumm.cpp:2257
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11600,7 +11600,7 @@ msgstr ""
 "A Monkey Island 1 e bizonyos verziójáról ismert, hogy hiányzik néhány\n"
 "szükséges erőforrás az MT-32-höz. AdLib használata helyette."
 
-#: engines/scumm/scumm.cpp:4061
+#: engines/scumm/scumm.cpp:4065
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11610,7 +11610,7 @@ msgstr ""
 "fájljainak, a 'Maniac' mappában kell lenni a Tentacle játékmappáján belül, "
 "és a játékot így adja hozzá a ScummVM a listához."
 
-#: engines/scumm/scumm.cpp:4173
+#: engines/scumm/scumm.cpp:4177
 msgid "Would you like to host or join a network play session?"
 msgstr "Szeretnél hálózati játékmenetet szervezni vagy csatlakozni?"
 
