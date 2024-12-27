@@ -19,6 +19,10 @@
  *
  */
 
+#include "common/scummsys.h"	// for USE_HNM
+
+#ifdef USE_HNM
+
 #ifndef VIDEO_HNM_DECODER_H
 #define VIDEO_HNM_DECODER_H
 
@@ -229,5 +233,7 @@ private:
 };
 
 } // End of namespace Video
+
+#endif
 
 #endif
