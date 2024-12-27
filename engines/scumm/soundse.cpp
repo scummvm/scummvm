@@ -82,6 +82,9 @@ void SoundSE::initSoundFiles() {
 	default:
 		error("initSoundFiles: unhandled game");
 	}
+
+	// Clear the original offset map, as we no longer need it
+	_audioNameToOriginalOffsetMap.clear();
 }
 
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
@@ -364,7 +367,7 @@ void SoundSE::initAudioMappingMI() {
 			entry.messageIndex
 		);
 
-		_audioEntriesMI.push_back(entry);
+		//_audioEntriesMI.push_back(entry);
 	} while (!f->eos());
 
 	f->close();

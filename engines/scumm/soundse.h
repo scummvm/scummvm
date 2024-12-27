@@ -118,8 +118,8 @@ private:
 		Common::String speechFile; // 32 bytes
 	};
 
-	typedef Common::Array<AudioEntryMI> AudioIndexMI;
-	AudioIndexMI _audioEntriesMI;
+	//typedef Common::Array<AudioEntryMI> AudioIndexMI;
+	//AudioIndexMI _audioEntriesMI;
 
 	int32 getSoundIndexFromOffset(uint32 offset);
 
