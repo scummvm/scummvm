@@ -36,10 +36,13 @@ MODULE_OBJS = \
 	utils/file.o \
 	utils/res_archive.o \
 	views/view.o \
+	views/credits.o \
 	views/game.o \
 	views/game_content.o \
 	views/game_status.o \
+	views/opening.o \
 	views/part_title.o \
+	views/splash_screen.o \
 	views/story.o \
 	views/title.o \
 	views/dialogs/dialog.o \

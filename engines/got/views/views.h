@@ -22,8 +22,11 @@
 #ifndef GOT_VIEWS_H
 #define GOT_VIEWS_H
 
+#include "got/views/credits.h"
 #include "got/views/game.h"
+#include "got/views/opening.h"
 #include "got/views/part_title.h"
+#include "got/views/splash_screen.h"
 #include "got/views/story.h"
 #include "got/views/title.h"
 #include "got/views/dialogs/ask.h"
@@ -44,8 +47,11 @@ namespace Got {
 namespace Views {
 
 struct Views {
+	Credits _credits;
 	Game _game;
+	Opening _opening;
 	PartTitle _partTitle;
+	SplashScreen _splashScreen;
 	Story _story;
 	Title _title;
 
