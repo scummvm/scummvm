@@ -147,7 +147,7 @@ bool Say::msgAction(const ActionMessage &msg) {
 }
 
 bool Say::tick() {
-	if (_waitForResponse == WAIT_NONE && ++_contentCtr > 3) {
+	if (_waitForResponse == WAIT_NONE && ++_contentCtr > 1) {
 		_contentCtr = 0;
 		const char *contentEnd = _content + ++_contentLength;
 
