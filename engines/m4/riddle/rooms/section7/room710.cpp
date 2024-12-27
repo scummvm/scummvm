@@ -135,17 +135,17 @@ void Room710::pre_parser() {
 }
 
 void Room710::parser() {
-	bool ecx = player_said_any("look", "look at");
-	bool edi = player_said_any("talk", "talk to", "take");
-	bool esi = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to", "take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (edi && player_said("LADDER")) {
+	if (talkFl && player_said("LADDER")) {
 		digi_play("710R09", 1, 255, -1, -1);
-	} else if (edi && player_said("LADDER ")) {
+	} else if (talkFl && player_said("LADDER ")) {
 		digi_play(_field1C ? "710R09" : "710R10", 1, 255, -1, -1);
-	} else if (edi && player_said("ROPE")) {
+	} else if (talkFl && player_said("ROPE")) {
 		digi_play("710R08", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("LADDER", "LADDER ")) {
+	} else if (lookFl && player_said_any("LADDER", "LADDER ")) {
 		player_set_commands_allowed(false);
 
 		if (_field1C) {
@@ -170,11 +170,11 @@ void Room710::parser() {
 		player_set_commands_allowed(true);
 	} // ecx && player_said_any("LADDER", "LADDER ")
 
-	else if (ecx && player_said("Rope")) {
+	else if (lookFl && player_said("Rope")) {
 		player_set_commands_allowed(false);
 		digi_play("710R04", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (ecx && player_said("Mooring") && _field1C) {
+	} else if (lookFl && player_said("Mooring") && _field1C) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -193,19 +193,19 @@ void Room710::parser() {
 		}
 	} // ecx && player_said("Mooring") && _field1C
 
-	else if (ecx && player_said("MOORING")) {
+	else if (lookFl && player_said("MOORING")) {
 		player_set_commands_allowed(false);
 		digi_play("710R05", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (ecx && player_said("MACHINERY")) {
+	} else if (lookFl && player_said("MACHINERY")) {
 		player_set_commands_allowed(false);
 		digi_play("710R06", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (ecx && player_said(" ")) {
+	} else if (lookFl && player_said(" ")) {
 		player_set_commands_allowed(false);
 		digi_play(_field1C ? "710R20" : "710R01", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (esi && player_said("Rope")) {
+	} else if (gearFl && player_said("Rope")) {
 		if (_G(flags[V223])) {
 			switch (_G(kernel).trigger) {
 			case -1:
@@ -332,9 +332,9 @@ void Room710::parser() {
 		}
 	} // esi && player_said("Rope")
 
-	else if (ecx && player_said_any("rope  ", "rope   ", "rope    ", "rope     "))
+	else if (lookFl && player_said_any("rope  ", "rope   ", "rope    ", "rope     "))
 		digi_play("com110", 1, 255, -1, 997);
-	else if (esi && player_said("rope   ")) {
+	else if (gearFl && player_said("rope   ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -379,7 +379,7 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope   ")
 
-	else if (esi && player_said("rope     ")) {
+	else if (gearFl && player_said("rope     ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -413,7 +413,7 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope     ")
 
-	else if (esi && player_said("rope  ")) {
+	else if (gearFl && player_said("rope  ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -447,7 +447,7 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope  ")
 
-	else if (esi && player_said("rope    ")) {
+	else if (gearFl && player_said("rope    ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -481,7 +481,7 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope    ")
 
-	else if (esi && player_said("LADDER") && _field1C) {
+	else if (gearFl && player_said("LADDER") && _field1C) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -548,7 +548,7 @@ void Room710::parser() {
 
 	else if (player_said("nowhere")) {
 		digi_play("708R01", 1, 255, -1, -1);
-	} else if (edi && player_said("MACHINERY")) {
+	} else if (talkFl && player_said("MACHINERY")) {
 		digi_play("710R11", 1, 255, -1, -1);
 	} else if (player_said("journal")) {
 		digi_play("710R18", 1, 255, -1, -1);
