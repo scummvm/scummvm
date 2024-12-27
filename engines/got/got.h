@@ -102,6 +102,8 @@ public:
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	void syncSoundSettings() override;
 };
 
 extern GotEngine *g_engine;

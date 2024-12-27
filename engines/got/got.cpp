@@ -75,6 +75,7 @@ Common::Error GotEngine::run() {
 
 	// General initialization
 	initialize();
+	syncSoundSettings();
 
 	runGame();
 
@@ -167,6 +168,17 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 
 	// Only allow if not in the middle of area transition, dying, etc.
 	return _G(gameMode) == MODE_NORMAL;
+}
+
+void GotEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	bool allSoundIsMuted = ConfMan.getBool("mute");
+
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType,
+		ConfMan.getBool("sfx_mute") || allSoundIsMuted);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType,
+		ConfMan.getBool("music_mute") || allSoundIsMuted);
 }
 
 } // End of namespace Got

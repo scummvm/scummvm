@@ -58,7 +58,7 @@ void Sound::play_sound(int index, bool priority_override) {
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
 		_soundData + _digiSounds[index].offset, _digiSounds[index].length);
 	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED);
-	g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType,
+	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType,
 		&_soundHandle, audioStream);
 }
 

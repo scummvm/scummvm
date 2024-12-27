@@ -34,6 +34,7 @@ public:
 	virtual ~SetSound() {
 	}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void selected() override;
 };
 
