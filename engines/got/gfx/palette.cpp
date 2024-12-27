@@ -34,6 +34,12 @@ namespace Gfx {
 
 static byte saved_palette[PALETTE_SIZE];
 
+Palette63::Palette63(const byte *pal) {
+	for (uint i = 0; i < PALETTE_SIZE; ++i)
+		_pal[i] = pal[i] << 2;
+}
+
+
 void load_palette() {
 	if (res_read("PALETTE", saved_palette) < 0)
 		error("Cannot Read PALETTE");

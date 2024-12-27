@@ -27,6 +27,16 @@
 namespace Got {
 namespace Gfx {
 
+struct Palette63 {
+	byte _pal[PALETTE_SIZE] = {};
+	Palette63() {}
+	Palette63(const byte *pal);
+
+	operator const byte *() const {
+		return _pal;
+	}
+};
+
 extern void load_palette();
 extern void set_screen_pal();
 extern void xsetpal(byte color, byte R, byte G, byte B);

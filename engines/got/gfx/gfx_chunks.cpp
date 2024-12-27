@@ -73,6 +73,11 @@ GraphicChunk::operator const Graphics::ManagedSurface() const {
 	return s;
 }
 
+GraphicChunk::operator const Gfx::Palette63() const {
+	return Gfx::Palette63(_data);
+}
+
+
 
 void GfxChunks::load() {
 	// Get stream to access images
