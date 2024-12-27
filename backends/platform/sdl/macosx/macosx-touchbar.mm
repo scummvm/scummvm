@@ -52,7 +52,7 @@ NSButton *tbButton;
 		[tbButton setAction:@selector(actionKey:)];
 		[tbButton setTarget:self];
 
-		[self setButton:nullptr];
+		[self setButton:nil];
 	}
 	return self;
 }
@@ -76,7 +76,7 @@ NSButton *tbButton;
 }
 
 - (void)setButton : (const char *)title {
-	NSString *ns_title = nullptr;
+	NSString *ns_title = nil;
 	if (title) {
 		ns_title = [NSString stringWithUTF8String:title];
 	} else {
@@ -98,7 +98,7 @@ NSButton *tbButton;
 
 @end
 
-static ScummVMlTouchbarDelegate *g_tb_delegate = nullptr;
+static ScummVMlTouchbarDelegate *g_tb_delegate = nil;
 
 void macOSTouchbarUpdate(const char *message) {
 	[g_tb_delegate setButton:message];
