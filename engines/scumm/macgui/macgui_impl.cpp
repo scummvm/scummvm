@@ -39,6 +39,12 @@
 
 namespace Scumm {
 
+static void activateMenuCallback(void *ref) {
+	MacGuiImpl *gui = (MacGuiImpl *)ref;
+
+	gui->onMenuOpen();
+}
+
 // ===========================================================================
 // Base class for Macintosh game user interface. Handles menus, fonts, image
 // loading, etc.
@@ -195,6 +201,7 @@ bool MacGuiImpl::initialize() {
 	_windowManager = new Graphics::MacWindowManager(menuMode);
 	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, _vm->_useMacScreenCorrectHeight ? 480 : 400);
+	_windowManager->setEngineActivateMenuCallback(this, activateMenuCallback);
 
 	if (_vm->isUsingOriginalGUI()) {
 		_windowManager->setMenuHotzone(Common::Rect(640, 23));
@@ -476,13 +483,8 @@ void MacGuiImpl::updateWindowManager() {
 	if (saveMenu)
 		saveMenu->enabled = canSave;
 
-	if (_windowManager->isMenuActive()) {
-		if (!_menuIsActive)
-			onMenuOpen();
-	} else {
-		if (_menuIsActive)
-			onMenuClose();
-	}
+	if (!_windowManager->isMenuActive() && _menuIsActive)
+		onMenuClose();
 
 	if (_vm->_game.version > 3 && _vm->_game.version < 6) {
 		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
@@ -568,16 +570,20 @@ void MacGuiImpl::updateWindowManager() {
 }
 
 void MacGuiImpl::onMenuOpen() {
-	_menuIsActive = true;
-	_cursorWasVisible = CursorMan.showMouse(true);
-	_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	if (!_menuIsActive) {
+		_menuIsActive = true;
+		_cursorWasVisible = CursorMan.showMouse(true);
+		_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	}
 }
 
 void MacGuiImpl::onMenuClose() {
-	_menuIsActive = false;
-	if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
-		_windowManager->popCursor();
-	CursorMan.showMouse(_cursorWasVisible);
+	if (_menuIsActive) {
+		_menuIsActive = false;
+		if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
+			_windowManager->popCursor();
+		CursorMan.showMouse(_cursorWasVisible);
+	}
 }
 
 // ---------------------------------------------------------------------------

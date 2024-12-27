@@ -130,6 +130,9 @@ public:
 		kWidgetPopUpMenu
 	};
 
+	virtual void onMenuOpen();
+	virtual void onMenuClose();
+
 protected:
 	ScummEngine *_vm = nullptr;
 	OSystem *_system = nullptr;
@@ -217,8 +220,6 @@ protected:
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	virtual bool handleMenu(int id, Common::String &name);
-	virtual void onMenuOpen();
-	virtual void onMenuClose();
 
 	// For older games, there is no problem with displaying the Mac GUI and
 	// the game at the same time. For newer, there is.
