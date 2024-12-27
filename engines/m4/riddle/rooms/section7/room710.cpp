@@ -48,7 +48,7 @@ void Room710::init() {
 	digi_preload("710_s02", -1);
 	digi_preload("710_s01", -1);
 
-	_field4C = 0;
+	_centerDoorPullAnimationFl = false;
 
 	_ripContraptionMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "rip contraption machine");
 	_ripReacherMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1792, false, triggerMachineByHashCallback, "rip reacher machine");
@@ -61,11 +61,11 @@ void Room710::init() {
 	case KERNEL_RESTORING_GAME:
 		digi_preload("950_s41", -1);
 		if (_G(flags[V223])) {
-			_field1C = 1;
+			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
 		} else {
-			_field1C = 0;
+			_ladderActiveFl = false;
 			_710Rpld4Mach = series_place_sprite("710rpld3", 0, 0, -53, 100, 3840);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Ladder", false);
@@ -77,11 +77,11 @@ void Room710::init() {
 		ws_demand_facing(_G(my_walker), 5);
 
 		if (_G(flags[V223])) {
-			_field1C = 1;
+			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
 		} else {
-			_field1C = 0;
+			_ladderActiveFl = false;
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Ladder", false);
 			_710Rpld4Mach = series_place_sprite("710rpld3", 0, 0, -53, 100, 3840);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
@@ -99,7 +99,7 @@ void Room710::init() {
 		_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 		_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 4095);
 
-		_field1C = 1;
+		_ladderActiveFl = true;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "Ladder", true);
 		sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 86, 83, 30, _710Rpld2Series, 83, 83, 0);
 
@@ -111,11 +111,11 @@ void Room710::init() {
 		ws_demand_facing(_G(my_walker), 4);
 
 		if (_G(flags[V223])) {
-			_field1C = 1;
+			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 4095);
 		} else {
-			_field1C = 0;
+			_ladderActiveFl = false;
 			_710Rpld4Mach = series_place_sprite("710rpld3", 0, 0, -53, 100, 3840);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 4095);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Ladder", false);
@@ -142,13 +142,13 @@ void Room710::parser() {
 	if (talkFl && player_said("LADDER")) {
 		digi_play("710R09", 1, 255, -1, -1);
 	} else if (talkFl && player_said("LADDER ")) {
-		digi_play(_field1C ? "710R09" : "710R10", 1, 255, -1, -1);
+		digi_play(_ladderActiveFl ? "710R09" : "710R10", 1, 255, -1, -1);
 	} else if (talkFl && player_said("ROPE")) {
 		digi_play("710R08", 1, 255, -1, -1);
 	} else if (lookFl && player_said_any("LADDER", "LADDER ")) {
 		player_set_commands_allowed(false);
 
-		if (_field1C) {
+		if (_ladderActiveFl) {
 			digi_play("710R21", 1, 255, -1, -1);
 		} else if (_G(flags[V030] == 0)) {
 			digi_play("710R02", 1, 255, -1, -1);
@@ -174,7 +174,7 @@ void Room710::parser() {
 		player_set_commands_allowed(false);
 		digi_play("710R04", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (lookFl && player_said("Mooring") && _field1C) {
+	} else if (lookFl && player_said("Mooring") && _ladderActiveFl) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -191,7 +191,7 @@ void Room710::parser() {
 		default:
 			break;
 		}
-	} // ecx && player_said("Mooring") && _field1C
+	} // ecx && player_said("Mooring") && _ladderActiveFl
 
 	else if (lookFl && player_said("MOORING")) {
 		player_set_commands_allowed(false);
@@ -203,7 +203,7 @@ void Room710::parser() {
 		player_set_commands_allowed(true);
 	} else if (lookFl && player_said(" ")) {
 		player_set_commands_allowed(false);
-		digi_play(_field1C ? "710R20" : "710R01", 1, 255, -1, -1);
+		digi_play(_ladderActiveFl ? "710R20" : "710R01", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
 	} else if (gearFl && player_said("Rope")) {
 		if (_G(flags[V223])) {
@@ -227,7 +227,7 @@ void Room710::parser() {
 
 			case 2:
 				hotspot_set_active(_G(currentSceneDef).hotspots, "Ladder", false);
-				_field1C = 0;
+				_ladderActiveFl = false;
 
 				terminateMachine(_710Rpld4Mach);
 				terminateMachine(_710Rpld5Mach);
@@ -267,7 +267,7 @@ void Room710::parser() {
 				break;
 			}
 		} else {
-			_field1C = 1;
+			_ladderActiveFl = true;
 
 			switch (_G(kernel).trigger) {
 			case -1:
@@ -354,12 +354,12 @@ void Room710::parser() {
 			break;
 
 		case 2:
-			if (_field4C)
+			if (_centerDoorPullAnimationFl)
 				kernel_timing_trigger(5, 3, nullptr);
 			else {
 				_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3845, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach, _mazeCentreDoorLiteSeries, 1, 10, 3, _mazeCentreDoorLiteSeries, 10, 10, 0);
-				_field4C = 1;
+				_centerDoorPullAnimationFl = true;
 			}
 
 			break;
@@ -481,7 +481,7 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope    ")
 
-	else if (gearFl && player_said("LADDER") && _field1C) {
+	else if (gearFl && player_said("LADDER") && _ladderActiveFl) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -519,10 +519,10 @@ void Room710::parser() {
 		default:
 			break;
 		}
-	} // esi && player_said("LADDER") && _field1C
+	} // esi && player_said("LADDER") && _ladderActiveFl
 
 	else if (player_said("rm709")) {
-		if (_field4C == 0)
+		if (!_centerDoorPullAnimationFl)
 			digi_play("708R01", 1, 255, -1, -1);
 		else {
 			switch (_G(kernel).trigger) {

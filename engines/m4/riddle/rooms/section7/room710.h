@@ -40,8 +40,8 @@ public:
 	void daemon() override;
 
 private:
-	int32 _field1C = 0;
-	int32 _field4C = 0;
+	bool _centerDoorPullAnimationFl = false;
+	bool _ladderActiveFl = false;
 
 	int32 _710Rpld2Series = 0;
 	int32 _710Rpld3Series = 0;
