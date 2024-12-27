@@ -321,6 +321,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
+add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
@@ -4380,11 +4381,6 @@ EOF
 			;;
 	esac
 fi
-
-#
-# Check whether ENet networking support is requested
-#
-define_in_config_if_yes "$_enet" 'USE_ENET'
 
 #
 # Check and set additional stuff needed for ENet.
