@@ -75,7 +75,7 @@
 	{
 		"gob3",
 		"v1.00",
-		AD_ENTRY1("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7"),
+		AD_ENTRY1s("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7", 159444),
 		EN_USA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
