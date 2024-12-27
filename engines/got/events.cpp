@@ -65,7 +65,7 @@ void Events::runGame() {
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
 
-	addView("Game");
+	addView("SplashScreen");
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
