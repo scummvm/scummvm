@@ -388,7 +388,7 @@ end \r\
 * using the same method. Removing this check as ScummVM will pretend that every drive
 * letter contains the game contents.
 */
-const char *const pinkgearDriveDetectionFix1 = " \
+const char *const pinkGearDriveDetectionFix1 = " \
 on startMovie\r\
   global oricolor, projname, mtype\r\
   cursor(200)\r\
@@ -404,7 +404,7 @@ on startMovie\r\
   end if\r\
 ";
 
-const char *const pinkgearDriveDetectionFix2 = " \
+const char *const pinkGearDriveDetectionFix2 = " \
 on exitFrame\r\
   go(1, \"C:\\PG_WORLD\\A_IN01\")\r\
 ";
@@ -435,8 +435,8 @@ struct ScriptHandlerPatch {
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{"frankenstein", nullptr, kPlatformWindows, "FRANKIE.EXE", kScoreScript, 21, DEFAULT_CAST_LIB, &frankensteinSwapFix},
-	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkgearDriveDetectionFix1},
-	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkgearDriveDetectionFix2},
+	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix1},
+	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix2},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
