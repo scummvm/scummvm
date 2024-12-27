@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-24 11:18+0000\n"
+"POT-Creation-Date: 2024-12-27 08:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3669,13 +3669,13 @@ msgstr ""
 msgid "Creative Music System emulator"
 msgstr ""
 
-#: audio/softsynth/fluidsynth.cpp:338
+#: audio/softsynth/fluidsynth.cpp:351
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
 
-#: audio/softsynth/fluidsynth.cpp:485
+#: audio/softsynth/fluidsynth.cpp:498
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
