@@ -300,3 +300,6 @@ dists/emscripten/emsdk-*
 #Ignore Atari/FreeMiNT files
 scummvm.gtp
 scummvm.ttp
+
+#Ignore Python generated files
+__pycache__/
