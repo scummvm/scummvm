@@ -19,29 +19,27 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "got/views/dialogs/set_sound.h"
-#include "got/got.h"
+#ifndef GOT_VIEWS_DIALOGS_SET_MUSIC_H
+#define GOT_VIEWS_DIALOGS_SET_MUSIC_H
+
+#include "got/views/dialogs/select_option.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-SetSound::SetSound() : SelectOption("SetSound", "Set Sound", ON_OFF) {
-}
+class SetMusic : public SelectOption {
+public:
+	SetMusic();
+	virtual ~SetMusic() {
+	}
 
-bool SetSound::msgFocus(const FocusMessage &msg) {
-	_selectedItem = ConfMan.getBool("sfx_mute") ? 1 : 0;
-	return true;
-}
-
-void SetSound::selected() {
-	ConfMan.setBool("sfx_mute", _selectedItem == 1);
-	ConfMan.flushToDisk();
-	g_engine->syncSoundSettings();
-	addView("SetMusic");
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	void selected() override;
+};
 
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
+
+#endif

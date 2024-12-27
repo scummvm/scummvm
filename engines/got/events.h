@@ -30,7 +30,7 @@
 
 namespace Got {
 
-#define FRAME_RATE 20
+#define FRAME_RATE 50
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
 using Gfx::GfxSurface;

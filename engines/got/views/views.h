@@ -37,6 +37,7 @@
 #include "got/views/dialogs/select_scroll.h"
 #include "got/views/dialogs/select_slow.h"
 #include "got/views/dialogs/select_item.h"
+#include "got/views/dialogs/set_music.h"
 #include "got/views/dialogs/set_sound.h"
 
 namespace Got {
@@ -59,6 +60,7 @@ struct Views {
 	Dialogs::SelectItem _selectItem;
 	Dialogs::SelectScroll _selectScroll;
 	Dialogs::SelectSlow _selectSlow;
+	Dialogs::SetMusic _setMusic;
 	Dialogs::SetSound _setSound;
 };
 
