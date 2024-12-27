@@ -114,7 +114,7 @@
 	{
 		"gob2",
 		"v1.02",
-		AD_ENTRY1("intro.stk", "c47faf1d406504e6ffe63243610bb1f4"),
+		AD_ENTRY1s("intro.stk", "c47faf1d406504e6ffe63243610bb1f4", 828799),
 		IT_ITA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -156,7 +156,7 @@
 	{
 		"gob2",
 		"CD v1.000",
-		AD_ENTRY1("intro.stk", "9de5fbb41cf97182109e5fecc9d90347"),
+		AD_ENTRY1s("intro.stk", "9de5fbb41cf97182109e5fecc9d90347", 4328864),
 		EN_USA,
 		kPlatformDOS,
 		ADGF_CD,
