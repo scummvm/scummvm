@@ -86,17 +86,20 @@ uint16 RncDecoder::crcBlock(const uint8 *block, uint32 size) {
 }
 
 uint16 RncDecoder::inputBits(uint8 amount) {
-	uint16 newBitBuffh = _bitBuffh;
-	uint16 newBitBuffl = _bitBuffl;
+	// Although we are manipulating 16 bits values, use 32 bits variables
+	// This avoids triggering UB when shifting an amount of 0 or 16.
+	uint32 newBitBuffh = _bitBuffh;
+	uint32 newBitBuffl = _bitBuffl;
 	int16 newBitCount = _bitCount;
-	uint16 remBits, returnVal;
+	uint32 remBits;
+	uint16 returnVal;
 
 	returnVal = ((1 << amount) - 1) & newBitBuffl;
 	newBitCount -= amount;
 
 	if (newBitCount < 0) {
 		newBitCount += amount;
-		remBits = (newBitBuffh << (16 - newBitCount));
+		remBits = (newBitBuffh << (16 - newBitCount)) & 0xffff;
 		newBitBuffh >>= newBitCount;
 		newBitBuffl >>= newBitCount;
 		newBitBuffl |= remBits;
@@ -114,7 +117,7 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
-	remBits = (newBitBuffh << (16 - amount));
+	remBits = (newBitBuffh << (16 - amount)) & 0xffff;
 	_bitBuffh = newBitBuffh >> amount;
 	_bitBuffl = (newBitBuffl >> amount) | remBits;
 	_bitCount = (uint8)newBitCount;
