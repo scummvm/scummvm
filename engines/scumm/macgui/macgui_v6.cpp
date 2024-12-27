@@ -392,7 +392,7 @@ void MacV6Gui::runAboutDialog() {
 			bounds.top = 5;
 			bounds.right = 523;
 			bounds.bottom = 384;
-		} else if (_vm->_game.id == GID_DIG) {
+		} else if (_vm->_game.id == GID_DIG || _vm->_game.id == GID_FT) {
 			bounds.left = 121;
 			bounds.top = 15;
 			bounds.right = 519;
