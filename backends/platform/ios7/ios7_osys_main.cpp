@@ -457,7 +457,8 @@ void iOS7_main(int argc, char **argv) {
 	//OSystem_iOS7::migrateApp();
 
 	Common::String logFilePath = iOS7_getDocumentsDir() + "/scummvm.log";
-	FILE *logFile = fopen(logFilePath.c_str(), "a");
+	// Only log to file when not attached to debugger console
+	FILE *logFile = isatty(STDERR_FILENO) != 1 ? fopen(logFilePath.c_str(), "a") : nullptr;
 	if (logFile != nullptr) {
 		// We check for log file size; if it's too big, we rewrite it.
 		// This happens only upon app launch
