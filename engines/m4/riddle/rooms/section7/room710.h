@@ -62,6 +62,8 @@ private:
 	machine *_710Rprs4Mach = nullptr;
 	machine *_ripContraptionMach = nullptr;
 	machine *_ripContractionMach02 = nullptr;
+	machine *_ripPullMach = nullptr;
+	machine *_ripPullMach02 = nullptr;
 	machine *_ripPullsKeyropeMach = nullptr;
 	machine *_ripReacherMach = nullptr;
 	machine *_safariShadow1Mach = nullptr;
