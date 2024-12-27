@@ -497,7 +497,7 @@
 { // Supplied by fac76 in bug report #3608
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
 		EN_GRB,
 		kPlatformAmiga,
