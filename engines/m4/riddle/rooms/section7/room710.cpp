@@ -386,7 +386,7 @@ void Room710::parser() {
 			terminateMachine(_710Rprs1Mach);
 			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 512, false, triggerMachineByHashCallback, "rip pull machine");
 			player_update_info(_G(my_walker), &_G(player_info));
-			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			ws_hide_walker(_G(my_walker));
 			sendWSMessage_10000(1, _ripPullMach02, _710Rpro1Series, 1, 15, 1, _710Rpro1Series, 15, 15, 0);
 
@@ -413,8 +413,147 @@ void Room710::parser() {
 		}
 	} // esi && player_said("rope     ")
 
+	else if (esi && player_said("rope  ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_710Rprs2Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _710Rpro2Series, 1, 16, 1, _710Rpro2Series, 16, 16, 0);
 
-	// TODO Not implemented yet
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _710Rpro2Series, 16, 38, 3, _710Rpro2Series, 1, 1, 0);
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_710Rprs2Mach = series_place_sprite("710RPRS2", 0, 0, -53, 100, 2053);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("rope  ")
+
+	else if (esi && player_said("rope    ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			terminateMachine(_710Rprs4Mach);
+			_ripPullMach02 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 512, false, triggerMachineByHashCallback, "rip pull machine");
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripPullMach02, _710Rpro4Series, 1, 17, 1, _710Rpro4Series, 17, 17, 0);
+
+			break;
+
+		case 1:
+			digi_play("950_s42", 2, 255, -1, -1);
+			sendWSMessage_10000(1, _ripPullMach02, _710Rpro4Series, 17, 38, 3, _710Rpro4Series, 1, 1, 0);
+
+			break;
+
+		case 3:
+			terminateMachine(_ripPullMach02);
+			_710Rprs4Mach = series_place_sprite("710RPRS4", 0, 0, -53, 100, 1029);
+			terminateMachine(_safariShadow1Mach);
+			ws_unhide_walker(_G(my_walker));
+
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("rope    ")
+
+	else if (esi && player_said("LADDER") && _field1C) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker(_G(my_walker));
+			sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 1, 25, 1, _710Rpld2Series, 25, 25, 0);
+
+			break;
+
+		case 1:
+			sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 26, 40, 2, _710Rpld2Series, 40, 40, 0);
+			digi_play("710_s02", 2, 255, -1, -1);
+
+			break;
+
+		case 2:
+			sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 41, 60, 3, _710Rpld2Series, 60, 60, 0);
+			digi_play("710_s02", 2, 255, -1, -1);
+
+			break;
+
+		case 3:
+			sendWSMessage_10000(1, _ripContraptionMach, _710Rpld2Series, 61, 80, -1, _710Rpld2Series, 80, 86, 0);
+			digi_play("710_s02", 2, 255, -1, -1);
+			disable_player_commands_and_fade_init(5);
+
+			break;
+
+		case 5:
+			midi_stop();
+			player_set_commands_allowed(true);
+			_G(game).new_room = 711;
+
+			break;
+
+		default:
+			break;
+		}
+	} // esi && player_said("LADDER") && _field1C
+
+	else if (player_said("rm709")) {
+		if (_field4C == 0)
+			digi_play("708R01", 1, 255, -1, -1);
+		else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(2);
+
+				break;
+
+			case 2:
+				player_set_commands_allowed(true);
+				adv_kill_digi_between_rooms(false);
+				midi_stop();
+				_G(game).new_room = 709;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // player_said("rm709")
+
+	else if (player_said("nowhere")) {
+		digi_play("708R01", 1, 255, -1, -1);
+	} else if (edi && player_said("MACHINERY")) {
+		digi_play("710R11", 1, 255, -1, -1);
+	} else if (player_said("journal")) {
+		digi_play("710R18", 1, 255, -1, -1);
+	} else
+		return;
 
 	_G(player).command_ready = false;
 }
