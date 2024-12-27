@@ -382,7 +382,7 @@ end \r\
 ";
 
 /*
-* Pink Gear Collection has a check to ensure that the CD and hard disk data are on
+ * Pink Gear Collection has a check to ensure that the CD and hard disk data are on
 * different drive letters by checking if "PINKPINK.TXT" is the first file in the
 * "PG_WORLD\PINKCD" folder. Later, it iterates over every drive letter to find the CD
 * using the same method. Removing this check as ScummVM will pretend that every drive
