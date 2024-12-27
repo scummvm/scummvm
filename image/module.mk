@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	ani.o \
 	bmp.o \
 	cel_3do.o \
-	gif.o \
 	icocur.o \
 	iff.o \
 	jpeg.o \
@@ -31,6 +30,11 @@ MODULE_OBJS := \
 	codecs/svq1.o \
 	codecs/truemotion1.o \
 	codecs/xan.o
+
+ifdef USE_GIF
+MODULE_OBJS += \
+	gif.o
+endif
 
 ifdef USE_MPEG2
 MODULE_OBJS += \

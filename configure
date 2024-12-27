@@ -308,7 +308,6 @@ add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature freetype2 "FreeType2" "_freetype2"
-add_feature gif "GIF" "_gif"
 add_feature highres "high resolution" "_highres"
 add_feature jpeg "JPEG" "_jpeg"
 add_feature mad "MAD" "_mad"
@@ -322,6 +321,7 @@ add_feature test_cxx11 "Test C++11" "_test_cxx11"
 # Components are features which may be disabled if unused by the engines
 add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
+add_component gif "GIF" "_gif" "USE_GIF"
 add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
 add_component indeo3 "Indeo 3" "_indeo3" "USE_INDEO3"
@@ -5435,7 +5435,6 @@ if test "$_gif" = yes ; then
 	append_var LIBS "$GIF_LIBS"
 	append_var INCLUDES "$GIF_CFLAGS"
 fi
-define_in_config_if_yes "$_gif" 'USE_GIF'
 echo "$_gif"
 
 #
