@@ -649,11 +649,11 @@
 	0, 0, 0
 },
 {
-	{
+	{ // dated 8/1/93
 		"gob1",
-		"Interactive Demo",
+		"Interactive Demo (v2.0)",
 		AD_ENTRY1s("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb", 280044),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
