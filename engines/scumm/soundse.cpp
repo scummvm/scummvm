@@ -342,21 +342,25 @@ void SoundSE::initAudioMappingMI() {
 
 	do {
 		AudioEntryMI entry;
-		entry.unk1 = f->readUint16LE();
-		entry.unk2 = f->readUint16LE();
+		entry.hash = f->readUint32LE();
 		entry.room = f->readUint16LE();
 		entry.script = f->readUint16LE();
 		entry.localScriptOffset = f->readUint16LE();
 		entry.messageIndex = f->readUint16LE();
 		entry.isEgoTalking = f->readUint16LE();
 		entry.wait = f->readUint16LE();
+
 		entry.textEnglish = f->readString(0, 256);
-		f->skip(256 * 4); // skip the rest of the text
-		entry.speechFile = f->readString(0, 32);
+		entry.textFrench  = f->readString(0, 256);
+		entry.textItalian = f->readString(0, 256);
+		entry.textGerman  = f->readString(0, 256);
+		entry.textSpanish = f->readString(0, 256);
+
+		entry.speechFile  = f->readString(0, 32);
 		entry.speechFile.toLowercase();
 
-		//debug("unk1 %d, unk2 %d, room %d, script %d, localScriptOffset: %d, messageIndex %d, isEgoTalking: %d, wait: %d, textEnglish '%s', speechFile '%s'",
-		//	  entry.unk1, entry.unk2, entry.room, entry.script,
+		//debug("hash %d, room %d, script %d, localScriptOffset: %d, messageIndex %d, isEgoTalking: %d, wait: %d, textEnglish '%s', speechFile '%s'",
+		//	  entry.hash, entry.room, entry.script,
 		//	  entry.localScriptOffset, entry.messageIndex, entry.isEgoTalking, entry.wait,
 		//	  entry.textEnglish.c_str(), entry.speechFile.c_str());
 
@@ -534,7 +538,7 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	return createSoundStream(subStream, audioEntry);
 }
 
-uint32 SoundSE::getAudioOffsetForMI(uint16 room, uint16 script, uint16 localScriptOffset, uint16 messageIndex) {
+uint32 SoundSE::getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex) {
 	return ((room + script + messageIndex) << 16) | (localScriptOffset & 0xFFFF);
 }
 

@@ -56,7 +56,7 @@ public:
 
 	Audio::SeekableAudioStream *getXWBTrack(int track);
 	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
-	uint32 getAudioOffsetForMI(uint16 room, uint16 script, uint16 localScriptOffset, uint16 messageIndex);
+	uint32 getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex);
 
 private:
 	enum AudioCodec {
@@ -102,8 +102,7 @@ private:
 
 	// Used in MI1 + MI2
 	struct AudioEntryMI {
-		uint16 unk1;
-		uint16 unk2;
+		uint32 hash;
 		uint16 room;
 		uint16 script;
 		uint16 localScriptOffset;
@@ -111,11 +110,11 @@ private:
 		uint16 isEgoTalking;        // 1 if ego is talking, 0 otherwise
 		uint16 wait;                // wait time in ms
 		Common::String textEnglish; // 256 bytes, English text
-		// 256 bytes, French text
-		// 256 bytes, Italian text
-		// 256 bytes, German text
-		// 256 bytes, Spanish text
-		Common::String speechFile; // 32 bytes
+		Common::String textFrench;  // 256 bytes, French text
+		Common::String textItalian; // 256 bytes, Italian text
+		Common::String textGerman;  // 256 bytes, German text
+		Common::String textSpanish; // 256 bytes, Spanish text
+		Common::String speechFile;  // 32 bytes
 	};
 
 	//typedef Common::Array<AudioEntryMI> AudioIndexMI;
