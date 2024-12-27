@@ -67,6 +67,11 @@ private:
 	// TODO: Replace by more proper task implementation later
 	Character *objectToPickUp = nullptr;
 
+	// Simple timer to keep track of how long we play the picking up animation
+	float pickupAnimationEndTime= -1.0f;
+
+	uint8 previousOrientation;
+
 	// Handle when the character has moved into a non-walkable area, push them out if
 	// they did and return true, return false otherwise
 	bool HandleWalkability(Character *c);

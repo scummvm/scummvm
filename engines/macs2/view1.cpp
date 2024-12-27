@@ -1673,6 +1673,23 @@ void Character::RegisterWaitForMovementFinishedEvent() {
 
 void Character::Update() {
 	if (!IsLerping && !IsFollowingPath) {
+		if (pickupAnimationEndTime > 0.0f && pickupAnimationEndTime < g_engine->currentMillis) {
+			// Finish picking up
+			GameObject->Orientation = previousOrientation;
+			pickupAnimationEndTime = -1.0f;
+			View1 *currentView = (View1 *)g_engine->findView("View1");
+			int index = currentView->GetCharacterArrayIndex(objectToPickUp);
+			currentView->inventoryItems.push_back(objectToPickUp->GameObject);
+			currentView->characters.remove_at(index);
+			// Give it to the protagonist
+			objectToPickUp->GameObject->SceneIndex = 1;
+			objectToPickUp = nullptr;
+			// From here on the interacted object should become 0
+			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
+			return;
+		}
+
+
 		// We might have gotten the 0x11 command after we stopped moving
 		// TODO: Check if the code handles this similarly
 		// TODO: Consider which run function to use
@@ -1703,16 +1720,13 @@ void Character::Update() {
 
 		// Check if we need to pick something up
 		if (objectToPickUp != nullptr) {
-
-			View1 *currentView = (View1 *)g_engine->findView("View1");
-			int index = currentView->GetCharacterArrayIndex(objectToPickUp);
-			currentView->inventoryItems.push_back(objectToPickUp->GameObject);
-			currentView->characters.remove_at(index);
-			// Give it to the protagonist
-			objectToPickUp->GameObject->SceneIndex = 1;
-			objectToPickUp = nullptr;
-			// From here on the interacted object should become 0
-			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
+			// Start the timer
+			pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
+			// TODO: Actual implementation lives somewhere around
+			// l0037_E81B
+			previousOrientation = GameObject->Orientation;
+			GameObject->Orientation = 0x11;
+			return;
 		}
 
 
