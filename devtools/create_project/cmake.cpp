@@ -63,7 +63,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("enet").WinLibraries("winmm ws2_32"),
 		LibraryProps("retrowave", "retrowave").Libraries("retrowave"),
 		LibraryProps("a52", "a52").Libraries("a52"),
-		LibraryProps("mpdec", "mpcdec").Libraries("mpcdec")
+		LibraryProps("mpc", "mpcdec").Libraries("mpcdec")
 	};
 
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {

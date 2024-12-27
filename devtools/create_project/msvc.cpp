@@ -77,7 +77,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{   "discord", "discord-rpc.lib",           nullptr,           nullptr                                           },
 		{ "retrowave", "RetroWave.lib",             nullptr,           nullptr                                           },
 		{       "a52", "a52.lib",                   nullptr,           nullptr                                           },
-		{    "mpcdec", "libmpcdec.lib",             "libmpcdec_d.lib", nullptr                                           },
+		{       "mpc", "libmpcdec.lib",             "libmpcdec_d.lib", nullptr                                           },
 		// Feature flags with library dependencies
 		{   "updates", "WinSparkle.lib",            nullptr,           nullptr                                           },
 		{       "tts", nullptr,                     nullptr,           "sapi.lib"                                        },

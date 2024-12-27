@@ -1177,7 +1177,7 @@ const Feature s_features[] = {
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 	{ "retrowave",   "USE_RETROWAVE", true, false, "RetroWave OPL3 support" },
 	{       "a52",         "USE_A52", true, false, "ATSC A/52 support" },
-	{    "mpcdec",      "USE_MPCDEC", true, false, "Musepack support" },
+	{       "mpc",      "USE_MPCDEC", true, false, "Musepack support" },
 
 	// Feature flags
 	{               "bink",                      "USE_BINK", false, true,  "Bink video support" },
