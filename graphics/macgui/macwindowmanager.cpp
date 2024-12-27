@@ -446,6 +446,9 @@ void MacWindowManager::activateMenu() {
 		activateScreenCopy();
 	}
 
+	if (_activateMenuCallback != nullptr)
+		_activateMenuCallback(_engineAM);
+
 	_menu->setVisible(true);
 }
 
@@ -1442,6 +1445,11 @@ void MacWindowManager::setEngine(Engine *engine) {
 void MacWindowManager::setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *)) {
 	_engineR = engine;
 	_redrawEngineCallback = redrawCallback;
+}
+
+void MacWindowManager::setEngineActivateMenuCallback(void *engine, void (*activateMenuCallback)(void *)) {
+	_engineAM = engine;
+	_activateMenuCallback = activateMenuCallback;
 }
 
 void MacWindowManager::printWMMode(int debuglevel) {
