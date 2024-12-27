@@ -343,6 +343,7 @@ public:
 
 	void setEngine(Engine *engine);
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
+	void setEngineActivateMenuCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
 	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
@@ -462,6 +463,8 @@ private:
 	Engine *_engineP;
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
+	void *_engineAM;
+	void (*_activateMenuCallback)(void *engine);
 
 	MacCursorType _tempType = kMacCursorArrow;
 	Common::Stack<MacCursorType> _cursorTypeStack;
