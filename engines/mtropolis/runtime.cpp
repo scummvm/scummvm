@@ -3844,8 +3844,8 @@ CORO_BEGIN_DEFINITION(Structural::StructuralConsumeCommandCoroutine)
 
 			CORO_RETURN;
 		CORO_ELSE_IF(Event(EventIDs::kPause, 0).respondsTo(params->msg->getEvent()))
-			if (params->self->_paused) {
-				params->self->_paused = false;
+			if (!params->self->_paused) {
+				params->self->_paused = true;
 				params->self->onPauseStateChanged();
 			}
 
