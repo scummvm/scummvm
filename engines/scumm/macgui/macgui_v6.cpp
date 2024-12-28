@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 
+#include "audio/mixer.h"
+
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 #include "engines/savestate.h"
@@ -805,6 +807,13 @@ bool MacV6Gui::runOptionsDialog() {
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
 	MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
 
+	MacImageSlider *sliderMusicVolume = nullptr;
+	MacImageSlider *effectVolumeSlider = nullptr;
+	MacImageSlider *voiceVolumeSlider = nullptr;
+	MacImageSlider *sliderTextSpeed = nullptr;
+
+	MacCheckbox *spoolMusicCheckbox = nullptr;
+
 	MacPopUpMenu *interactionPopUp = nullptr;
 	MacPopUpMenu *videoQualityPopUp = nullptr;
 
@@ -819,9 +828,6 @@ bool MacV6Gui::runOptionsDialog() {
 	} else {
 		videoQualityPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
 	}
-
-	if (interactionPopUp)
-		interactionPopUp->setValue(2);
 
 	// Note: The video quality menu contains an additional "Graphics
 	// Smoothing" entry. I don't know why it doesn't show up in the
@@ -840,29 +846,70 @@ bool MacV6Gui::runOptionsDialog() {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
 
-		addSlider(window, 152, 63, 147, 17);
-		addSlider(window, 152, 87, 147, 17);
-		addSlider(window, 151, 177, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
+		voiceVolumeSlider = addSlider(window, 152, 87, 147, 17);
+		sliderTextSpeed = addSlider(window, 151, 177, 147, 9);
 	} else if (_vm->_game.id == GID_MANIAC) {
-		addSlider(window, 152, 41, 147, 17);
-		addSlider(window, 152, 72, 147, 10, 5);
+		sliderMusicVolume = addSlider(window, 152, 41, 147, 17);
+		sliderTextSpeed = addSlider(window, 152, 72, 147, 10, 5);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
 
-		addSlider(window, 152, 63, 147, 17);
-		addSlider(window, 152, 87, 147, 17);
-		addSlider(window, 152, 111, 147, 17);
-		addSlider(window, 152, 203, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
+		effectVolumeSlider = addSlider(window, 152, 87, 147, 17);
+		voiceVolumeSlider = addSlider(window, 152, 111, 147, 17);
+		sliderTextSpeed = addSlider(window, 152, 203, 147, 9);
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
 
-		addSlider(window, 152, 63, 147, 17);
-		addSlider(window, 152, 87, 147, 17);
-		addSlider(window, 152, 111, 147, 17);
-		addSlider(window, 152, 231, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
+		effectVolumeSlider = addSlider(window, 152, 87, 147, 17);
+		voiceVolumeSlider = addSlider(window, 152, 111, 147, 17);
+		sliderTextSpeed = addSlider(window, 152, 231, 147, 9);
+
+		spoolMusicCheckbox = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 	}
+
+	if (interactionPopUp) {
+		switch (_vm->_voiceMode) {
+		case 0: // Voice Only
+			interactionPopUp->setValue(1);
+			break;
+		case 1: // Voice And Text
+			interactionPopUp->setValue(2);
+			break;
+		case 2: // Text Only
+			interactionPopUp->setValue(0);
+			break;
+		default:
+			warning("MacGuiImpl::MacV6Gui::runOptionsDialog(): Invalid voice mode %d", _vm->_voiceMode);
+			break;
+		}
+	}
+
+	int musicVolume = 0;
+	int effectVolume = 0;
+	int voiceVolume = 0;
+
+	if (sliderMusicVolume) {
+		musicVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
+		sliderMusicVolume->setValue(musicVolume);
+	}
+
+	if (effectVolumeSlider) {
+		effectVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16;
+		effectVolumeSlider->setValue(effectVolume);
+	}
+
+	if (voiceVolumeSlider) {
+		voiceVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 16;
+		voiceVolumeSlider->setValue(voiceVolume);
+	}
+
+	if (sliderTextSpeed)
+		sliderTextSpeed->setValue(_vm->_defaultTextSpeed);
 
 	while (!_vm->shouldQuit()) {
 		MacDialogEvent event;
@@ -877,6 +924,18 @@ bool MacV6Gui::runOptionsDialog() {
 					delete window;
 					return false;
 				} else if (event.widget == buttonDefaults) {
+					if (sliderMusicVolume)
+						sliderMusicVolume->setValue(16);
+					if (effectVolumeSlider)
+						effectVolumeSlider->setValue(12);
+					if (voiceVolumeSlider)
+						voiceVolumeSlider->setValue(16);
+					if (interactionPopUp)
+						interactionPopUp->setValue(1);
+					if (sliderTextSpeed)
+						sliderTextSpeed->setValue(4);
+					if (spoolMusicCheckbox)
+						spoolMusicCheckbox->setValue(1);
 				}
 
 				break;

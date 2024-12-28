@@ -512,6 +512,8 @@ public:
 		void getFocus() override {}
 		void loseFocus() override {}
 
+		int getMinValue() const { return _minValue; }
+		int getMaxValue() const { return _maxValue; }
 		void setValue(int value) override;
 
 		void addStop(int pos, int value) {
@@ -582,6 +584,8 @@ public:
 			_background(background->getImage()), _handle(handle), _minX(minX), _maxX(maxX) {}
 		MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue);
 		~MacImageSlider();
+
+		void setValue(int value) override;
 
 		bool findWidget(int x, int y) const override;
 		void draw(bool drawFocused = false) override;
