@@ -54,19 +54,19 @@ void Room711::pre_parser() {
 }
 
 void Room711::parser() {
-	bool ecx = player_said_any("look", "look at");
-	bool esi = player_said_any("talk", "talk to", "take");
-	bool edi = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to", "take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (ecx && player_said("Window")) {
+	if (lookFl && player_said("Window")) {
 		digi_play("711R04", 1, 255, -1, -1);
-	} else if (ecx && player_said("Ladder")) {
+	} else if (lookFl && player_said("Ladder")) {
 		digi_play("711R05", 1, 255, -1, -1);
-	} else if (ecx && player_said("Sikkimese Book")) {
+	} else if (lookFl && player_said("Sikkimese Book")) {
 		digi_play("711R02", 1, 255, -1, -1);
-	} else if (ecx && player_said("Gold Icon")) {
+	} else if (lookFl && player_said("Gold Icon")) {
 		digi_play("711R18", 1, 255, -1, -1);
-	} else if ((ecx || player_said("JOURNAL")) && player_said("Master Lu's Book")) {
+	} else if ((lookFl || player_said("JOURNAL")) && player_said("Master Lu's Book")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			if (_G(flags[V286]))
@@ -114,17 +114,17 @@ void Room711::parser() {
 		}
 	} // (ecx || player_said("JOURNAL")) && player_said("Master Lu's Book")
 
-	else if (ecx && player_said(" ")) {
+	else if (lookFl && player_said(" ")) {
 		digi_play("711R01", 1, 255, -1, -1);
-	} else if (esi && player_said("Sikkimese Book")) {
+	} else if (talkFl && player_said("Sikkimese Book")) {
 		digi_play("711R07", 1, 255, -1, -1);
-	} else if (esi && player_said("Master Lu's Book")) {
+	} else if (talkFl && player_said("Master Lu's Book")) {
 		digi_play("711R06", 1, 255, -1, -1);
-	} else if (esi && player_said("Ladder")) {
+	} else if (talkFl && player_said("Ladder")) {
 		digi_play("711R08", 1, 255, -1, -1);
-	} else if (esi && player_said("Gold Icon")) {
+	} else if (talkFl && player_said("Gold Icon")) {
 		digi_play("711R19", 1, 255, -1, -1);
-	} else if (edi && player_said("Ladder")) {
+	} else if (gearFl && player_said("Ladder")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
