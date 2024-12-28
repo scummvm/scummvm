@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-27 20:12+0000\n"
+"POT-Creation-Date: 2024-12-28 11:13+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -11490,7 +11490,7 @@ msgstr "Fegyver váltása"
 msgid "Win the bike fight cheat"
 msgstr "Nyerd meg a kerékpáros harci csalást"
 
-#: engines/scumm/saveload.cpp:1958
+#: engines/scumm/saveload.cpp:1960
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "

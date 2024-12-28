@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-27 20:12+0000\n"
+"POT-Creation-Date: 2024-12-28 11:13+0000\n"
 "PO-Revision-Date: 2024-12-06 09:18+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -11255,7 +11255,7 @@ msgstr "武器を切り替え"
 msgid "Win the bike fight cheat"
 msgstr "バイク戦闘を省略"
 
-#: engines/scumm/saveload.cpp:1958
+#: engines/scumm/saveload.cpp:1960
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
