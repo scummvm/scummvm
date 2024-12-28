@@ -29,7 +29,9 @@
 
 namespace Scumm {
 
+#ifdef ENABLE_SCUMM
 class ScummEngine;
+#endif
 
 class BaseScummFile : public Common::SeekableReadStream {
 protected:
@@ -60,6 +62,8 @@ public:
 #endif
 };
 
+#ifdef ENABLE_SCUMM
+
 class ScummFile : public BaseScummFile {
 protected:
 	int64	_subFileStart;
@@ -84,6 +88,8 @@ public:
 	bool seek(int64 offs, int whence = SEEK_SET) override;
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
+
+#endif
 
 class ScummDiskImage : public BaseScummFile {
 private:
@@ -139,6 +145,8 @@ struct SteamIndexFile {
 	int32 len;
 };
 
+#ifdef ENABLE_SCUMM
+
 class ScummSteamFile : public ScummFile {
 private:
 	const SteamIndexFile &_indexFile;
@@ -171,6 +179,8 @@ public:
 	PAKFile *getPAKFileIndex(Common::String fileName);
 	void setPAKFileIndex(Common::String fileName, const PAKFile &pakFile);
 };
+
+#endif
 
 } // End of namespace Scumm
 
