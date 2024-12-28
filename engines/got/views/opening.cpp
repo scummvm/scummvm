@@ -35,7 +35,6 @@ void Opening::draw() {
 bool Opening::msgFocus(const FocusMessage &msg) {
 	const byte *src;
 	byte *dest;
-	int i;
 
 	Gfx::Palette63 pal = _G(gfx)[35];
 	Gfx::xsetpal(pal);
@@ -45,11 +44,25 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 		src = _G(gfx)[36 + chunkNum]._data;
 		dest = (byte *)_surface.getBasePtr(chunkNum, 0);
 
-		for (i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
+		for (int i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
 			*dest = *src;
 	}
 
 	return true;
+}
+
+void Opening::drawTitle() {
+	const byte *src;
+	byte *dest;
+
+	src = _G(gfx)[40]._data;
+
+	for (int pane = 0; pane < 4; ++pane) {
+		dest = (byte *)_surface.getBasePtr(pane, 0);
+
+		for (int i = 0; i < (320 * 80 / 4); ++i, ++src, dest += 4)
+			*dest = *src;
+	}
 }
 
 bool Opening::msgUnfocus(const UnfocusMessage &msg) {
@@ -57,8 +70,25 @@ bool Opening::msgUnfocus(const UnfocusMessage &msg) {
 	return true;
 }
 
+bool Opening::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		fadeOut();
+		replaceView("Title", true);
+		return true;
+	}
+
+	return false;
+}
+
 bool Opening::tick() {
-	redraw();
+	++_frameCtr;
+
+	if (_frameCtr == 20) {
+		drawTitle();
+		redraw();
+		play_sound(_G(gfx)[104]);
+	}
+
 	return true;
 }
 

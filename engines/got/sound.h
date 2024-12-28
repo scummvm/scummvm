@@ -24,6 +24,7 @@
 
 #include "audio/mixer.h"
 #include "got/data/defines.h"
+#include "got/gfx/gfx_chunks.h"
 
 namespace Got {
 
@@ -70,6 +71,7 @@ public:
 	void load();
 
 	void play_sound(int index, bool priority_override);
+	void play_sound(const Gfx::GraphicChunk &src);
 	bool sound_playing() const;
 
 	void music_play(int num, bool override) {
@@ -83,6 +85,7 @@ public:
 };
 
 extern void play_sound(int index, bool priority_override);
+extern void play_sound(const Gfx::GraphicChunk &src);
 extern bool sound_playing();
 extern void music_play(int num, bool override);
 extern void music_play(const char *name, bool override);

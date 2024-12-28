@@ -23,6 +23,7 @@
 #define GOT_VIEWS_VIEW_H
 
 #include "got/events.h"
+#include "got/gfx/gfx_chunks.h"
 
 namespace Got {
 namespace Views {
@@ -54,6 +55,7 @@ private:
 
 protected:
 	void play_sound(int index, bool priority_override);
+	void play_sound(const Gfx::GraphicChunk &src);
 
 	void music_play(int num, bool override);
 	void music_play(const char *name, bool override);

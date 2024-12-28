@@ -30,6 +30,9 @@ namespace Views {
 class Opening : public View {
 private:
 	Graphics::ManagedSurface _surface;
+	int _frameCtr = 0;
+
+	void drawTitle();
 
 public:
 	Opening() : View("Opening") {}
@@ -37,6 +40,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };
