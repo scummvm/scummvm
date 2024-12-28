@@ -69,6 +69,7 @@ static const byte ChinaSliderColors[] = {
 
 static const byte WillyBackgroundColor = 16;
 static const byte WillyButtonColor = 20;
+static const byte WillyHeaderTxtColor = 0;
 
 static const byte MenuBackgroundColors[] {
 	0x71, 0x71, 0x71, 0x71, 0x71, 0x7B, 0x71, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
@@ -1050,8 +1051,11 @@ void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const C
 	drawCorners(dst, cornerOffset, _rect.x, _rect.y, _rect.width, _rect.height);
 	if (gameId == GID_DRAGON)
 		drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header, DragonHeaderTxtColor, true, DragonHeaderTopColor, DragonHeaderBottomColor);
-	else
+	else if (gameId == GID_HOC)
 		drawHeader(dst, _rect.x, _rect.y + 4, _rect.width, 4, header, ChinaHeaderTxtColor, true, ChinaHeaderTopColor, ChinaHeaderBottomColor);
+	else { // WILLY
+		drawHeader(dst, _rect.x, _rect.y + 4, _rect.width, 4, header, WillyHeaderTxtColor, false, 0, 0);
+	}
 }
 
 /*static*/
