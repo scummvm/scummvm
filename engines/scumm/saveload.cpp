@@ -311,6 +311,8 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 		delete saveFile;
 	}
 
+	delete heapSaveFile;
+
 	if (saveFailed)
 		debug(1, "State save as '%s' FAILED", fileName.c_str());
 	else
