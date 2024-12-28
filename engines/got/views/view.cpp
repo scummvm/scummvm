@@ -85,6 +85,10 @@ void View::play_sound(int index, bool priority_override) {
 	_G(sound).play_sound(index, priority_override);
 }
 
+void View::play_sound(const Gfx::GraphicChunk &src) {
+	_G(sound).play_sound(src);
+}
+
 void View::music_play(int num, bool override) {
 	_G(sound).music_play(num, override);
 }

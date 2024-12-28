@@ -37,6 +37,7 @@ public:
 	Title() : View("Title") {}
 	virtual ~Title() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

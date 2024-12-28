@@ -34,13 +34,19 @@ void Title::draw() {
 	}
 }
 
-bool Title::tick() {
-	if (isFocused()) {
+bool Title::msgFocus(const FocusMessage &msg) {
+	if (msg._priorView->getName() == "Opening") {
 		// When the title screen is shown, show the main menu
 		draw();
+		Gfx::load_palette();
+		fadeIn();
 		addView("MainMenu");
 	}
 
+	return true;
+}
+
+bool Title::tick() {
 	return true;
 }
 

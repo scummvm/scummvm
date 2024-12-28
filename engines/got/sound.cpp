@@ -57,7 +57,21 @@ void Sound::play_sound(int index, bool priority_override) {
 	// Play the new sound
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
 		_soundData + _digiSounds[index].offset, _digiSounds[index].length);
-	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED);
+	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES);
+	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType,
+		&_soundHandle, audioStream);
+}
+
+void Sound::play_sound(const Gfx::GraphicChunk &src) {
+	if (sound_playing())
+		g_engine->_mixer->stopHandle(_soundHandle);
+
+	// Play the new sound
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
+		src._data, src._uncompressedSize);
+	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES);
 	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType,
 		&_soundHandle, audioStream);
 }
@@ -208,6 +222,11 @@ const char *Sound::getMusicName(int num) const {
 void play_sound(int index, bool priority_override) {
 	_G(sound).play_sound(index, priority_override);
 }
+
+void play_sound(const Gfx::GraphicChunk &src) {
+	_G(sound).play_sound(src);
+}
+
 
 bool sound_playing() {
 	return _G(sound).sound_playing();

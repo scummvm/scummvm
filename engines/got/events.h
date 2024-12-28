@@ -182,6 +182,13 @@ public:
 	}
 
 	/**
+	 * Gets a view's name
+	 */
+	const Common::String &getName() const {
+		return _name;
+	}
+
+	/**
 	 * Returns a surface for drawing the element
 	 */
 	Gfx::GfxSurface getSurface(bool innerBounds = false) const;

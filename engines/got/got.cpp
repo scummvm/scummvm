@@ -47,6 +47,7 @@ GotEngine::GotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 }
 
 GotEngine::~GotEngine() {
+	_mixer->stopAll();
 }
 
 uint32 GotEngine::getFeatures() const {

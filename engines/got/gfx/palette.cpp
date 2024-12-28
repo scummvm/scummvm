@@ -111,6 +111,10 @@ void fade_in(const byte *pal) {
 	if (pal)
 		Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
 
+	// Start with a black palette
+	Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
+	xsetpal(tempPal);
+
 	for (int step = 1; step <= FADE_STEPS; ++step) {
 		// Set each palette RGB proportionately
 		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
