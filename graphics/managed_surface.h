@@ -756,6 +756,14 @@ public:
 	}
 
 	/**
+	 * Draw a rectangle with rounded corners.
+	 */
+	void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled) {
+		_innerSurface.drawRoundRect(rect, arc, color, filled);
+		addDirtyRect(rect);
+	}
+
+	/**
 	 * Draw a horizontal line.
 	 */
 	void hLine(int x, int y, int x2, uint32 color) {

@@ -95,6 +95,20 @@ void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, 
 		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
+void Surface::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else
+		error("Surface::drawRoundRect: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
 // see graphics/blit/blit-atari.cpp
 #ifndef ATARI
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
