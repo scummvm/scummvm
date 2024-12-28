@@ -286,7 +286,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+		AD_ENTRY1s("intro.stk", "bd679eafde2084d8011f247e51b5a805", 197532),
 		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -299,7 +299,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+		AD_ENTRY1s("intro.stk", "bd679eafde2084d8011f247e51b5a805", 197532),
 		DE_DEU,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
