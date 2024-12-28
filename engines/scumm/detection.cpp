@@ -36,7 +36,6 @@
 #include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
-#include "scumm/scumm.h"
 
 #pragma mark -
 #pragma mark --- Detection code ---
