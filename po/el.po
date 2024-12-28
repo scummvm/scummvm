@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-28 11:13+0000\n"
+"POT-Creation-Date: 2024-12-28 15:50+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3593,8 +3593,8 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:859
-#: engines/groovie/script.cpp:2250 engines/groovie/script.cpp:2277
-#: engines/groovie/script.cpp:2318 engines/hugo/file.cpp:297
+#: engines/groovie/script.cpp:2253 engines/groovie/script.cpp:2280
+#: engines/groovie/script.cpp:2321 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
@@ -3613,8 +3613,8 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:854
-#: engines/groovie/script.cpp:859 engines/groovie/script.cpp:2250
-#: engines/groovie/script.cpp:2277 engines/groovie/script.cpp:2318
+#: engines/groovie/script.cpp:859 engines/groovie/script.cpp:2253
+#: engines/groovie/script.cpp:2280 engines/groovie/script.cpp:2321
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
@@ -6455,8 +6455,8 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει απόθή�
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:836
-#: engines/groovie/script.cpp:871 engines/groovie/script.cpp:2237
-#: engines/groovie/script.cpp:2264 engines/groovie/script.cpp:2334
+#: engines/groovie/script.cpp:871 engines/groovie/script.cpp:2240
+#: engines/groovie/script.cpp:2267 engines/groovie/script.cpp:2337
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
@@ -6475,8 +6475,8 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:836
 #: engines/groovie/script.cpp:854 engines/groovie/script.cpp:871
-#: engines/groovie/script.cpp:2237 engines/groovie/script.cpp:2264
-#: engines/groovie/script.cpp:2334 engines/hugo/file.cpp:399
+#: engines/groovie/script.cpp:2240 engines/groovie/script.cpp:2267
+#: engines/groovie/script.cpp:2337 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
