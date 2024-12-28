@@ -46,19 +46,19 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 }
 
 Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
-	// Is this a raw vob file? (TLC DVD)
-	if (resInfo.gjd >= 1000) {
-		Common::Path filename = Common::Path(Common::String::format("VOB%u.VOB", resInfo.offset));
-		if (!Common::File::exists(filename)) {
-			return nullptr;
-		}
-		Common::File *vobFile = new Common::File();
-		vobFile->open(filename);
-		return new Common::SeekableSubReadStream(vobFile, 0, vobFile->size(), DisposeAfterUse::YES);
-	}
-
 	// Do we know the name of the required GJD?
 	if (resInfo.gjd >= _gjds.size()) {
+		// Is this a raw vob file? (TLC DVD)
+		if (resInfo.gjd >= 1000) {
+			Common::Path filename = Common::Path(Common::String::format("VOB%u.VOB", resInfo.offset));
+			if (!Common::File::exists(filename)) {
+				return nullptr;
+			}
+			Common::File *vobFile = new Common::File();
+			vobFile->open(filename);
+			return vobFile;
+		}
+
 		error("Groovie::Resource: Unknown GJD %d", resInfo.gjd);
 		return nullptr;
 	}
@@ -94,6 +94,10 @@ Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
 
 Common::String ResMan::getGjdName(const ResInfo &resInfo) {
 	if (resInfo.gjd >= _gjds.size()) {
+		if (resInfo.gjd >= 1000) {
+			return Common::String::format("VOB%u.VOB", resInfo.offset);
+		}
+
 		error("Groovie::Resource: Unknown GJD %d", resInfo.gjd);
 	}
 
