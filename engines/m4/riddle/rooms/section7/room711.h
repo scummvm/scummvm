@@ -41,6 +41,7 @@ public:
 
 private:
 	int32 _711Rp01Series = 0;
+	int32 _ripSketchingSeries = 0;
 };
 
 } // namespace Rooms
