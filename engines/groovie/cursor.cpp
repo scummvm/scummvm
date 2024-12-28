@@ -270,19 +270,19 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 
 	uint16 tmp16;
 	int loop2count = file.readUint16LE();
-	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
+	debugC(5, kDebugCursor, "loop2count?: %d", loop2count);
 	for (int l = 0; l < loop2count; l++) {
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
+		debugC(5, kDebugCursor, "loop2a: %d", tmp16);	// Index frame can merge to/from?
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2b: %d\n", tmp16);	// Number of frames?
+		debugC(5, kDebugCursor, "loop2b: %d", tmp16);	// Number of frames?
 	}
 
 	file.read(pal, 0x20 * 3);
 
 	for (int f = 0; f < _numFrames; f++) {
 		uint32 tmp32 = file.readUint32LE();
-		debugC(5, kDebugCursor, "loop3: %d\n", tmp32);
+		debugC(5, kDebugCursor, "loop3: %d", tmp32);
 
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
