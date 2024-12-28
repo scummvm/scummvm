@@ -79,7 +79,7 @@ private:
 	Video::Subtitles _subtitles;
 
 protected:
-	void waitFrame();
+	virtual void waitFrame();
 };
 
 } // End of Groovie namespace
