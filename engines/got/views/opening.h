@@ -31,6 +31,7 @@ class Opening : public View {
 private:
 	Graphics::ManagedSurface _surface;
 	int _frameCtr = 0;
+	int _shakeX = 0;
 
 	void drawTitle();
 

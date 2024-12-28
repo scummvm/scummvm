@@ -20,6 +20,7 @@
  */
 
 #include "got/views/opening.h"
+#include "got/got.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -29,7 +30,15 @@ int ctr = 0;
 
 void Opening::draw() {
 	GfxSurface s = getSurface();
-	s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), Common::Rect(0, 0, 320, 240));
+
+	if (_shakeX == 0) {
+		s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), Common::Rect(0, 0, 320, 240));
+	} else {
+		s.clear();
+		Common::Rect destRect(0, 0, 320, 240);
+		destRect.translate(_shakeX, 0);
+		s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), destRect);
+	}
 }
 
 bool Opening::msgFocus(const FocusMessage &msg) {
@@ -87,6 +96,16 @@ bool Opening::tick() {
 		drawTitle();
 		redraw();
 		play_sound(_G(gfx)[104]);
+	} else if (_frameCtr < 40) {
+		if ((_frameCtr % 4) == 0) {
+			_shakeX = g_engine->getRandomNumber(19) - 10;
+			redraw();
+		}
+	} else if (_frameCtr == 41) {
+		_shakeX = 0;
+		redraw();
+	} else if (_frameCtr == 150) {
+		replaceView("Credits", true, true);
 	}
 
 	return true;
