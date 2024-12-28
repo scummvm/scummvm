@@ -237,10 +237,10 @@ void Room806::init() {
 }
 
 void Room806::pre_parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool walkFl = player_said("walk to");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool walkFl = player_said("walk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said_any(" ", "WALL", "URN")) {
 		_G(player).need_to_walk = false;
@@ -319,10 +319,10 @@ void Room806::pre_parser() {
 }
 
 void Room806::parser() {
-	bool lookFl = player_said("look at");
-	bool walkFl = player_said("walk to");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said("gear");
+	const bool lookFl = player_said("look at");
+	const bool walkFl = player_said("walk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said("gear");
 
 	if (lookFl && player_said_any(" ", "   "))
 		digi_play("806r04", 1, 255, -1, -1);

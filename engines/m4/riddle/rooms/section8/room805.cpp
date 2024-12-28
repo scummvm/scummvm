@@ -439,11 +439,11 @@ void Room805::init() {
 }
 
 void Room805::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool takeFl = player_said("take");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool gearFl = player_said("gear");
-	bool goFl = player_said("go");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool gearFl = player_said("gear");
+	const bool goFl = player_said("go");
 
 	if (lookFl && player_said(" "))
 		parserSub1("805R01", 1, 255, 1, -1);
