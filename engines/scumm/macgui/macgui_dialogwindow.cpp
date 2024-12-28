@@ -781,7 +781,13 @@ void MacGuiImpl::MacDialogWindow::updateCursor() {
 	}
 }
 
-MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type, int nr) const {
+MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(uint nr) const {
+	if (nr < _widgets.size())
+		return _widgets[nr];
+	return nullptr;
+}
+
+MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type, uint nr) const {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->getType() == type) {
 			if (nr == 0)

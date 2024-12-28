@@ -404,6 +404,12 @@ void MacV6Gui::runAboutDialog() {
 
 		window->setDefaultWidget(buttonOk);
 
+		for (uint i = 0; i < window->getNumWidgets(); i++) {
+			MacWidget *widget = window->getWidget(i);
+			if (widget->getType() == kWidgetStaticText)
+				((MacStaticText *)widget)->setWordWrap(true);
+		}
+
 		while (!_vm->shouldQuit()) {
 			MacDialogEvent event;
 

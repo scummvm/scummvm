@@ -735,7 +735,10 @@ public:
 		void delayAndUpdate();
 		void updateCursor();
 
-		MacWidget *getWidget(MacWidgetType type, int nr = 0) const;
+		uint getNumWidgets() const { return _widgets.size(); }
+
+		MacWidget *getWidget(uint nr) const;
+		MacWidget *getWidget(MacWidgetType type, uint nr = 0) const;
 
 		void setDefaultWidget(MacWidget *widget) { _defaultWidget = widget; }
 		MacWidget *getDefaultWidget() const { return _defaultWidget; }
