@@ -43,7 +43,7 @@ extern void xsetpal(byte color, byte R, byte G, byte B);
 extern void xsetpal(const byte *pal);
 extern void xgetpal(byte *pal, int num_colrs, int start_index);
 extern void fade_out();
-extern void fade_in();
+extern void fade_in(const byte *pal = nullptr);
 
 } // namespace Gfx
 } // namespace Got

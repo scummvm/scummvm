@@ -32,20 +32,17 @@ namespace Views {
 
 void SplashScreen::draw() {
 	if (_frameCtr == -1) {
-	_frameCtr = 0;
-	GfxSurface s = getSurface();
+		_frameCtr = 0;
+		GfxSurface s = getSurface();
 
-	// Display background. The rest of the logo animation will be
-	// done in the frame routines called from tick
-	s.clear();
-	s.blitFrom(_G(gfx)[92], Common::Point(0, 24));
+		// Display background. The rest of the logo animation will be
+		// done in the frame routines called from tick
+		s.clear();
+		s.blitFrom(_G(gfx)[92], Common::Point(0, 24));
 	}
 }
 
 bool SplashScreen::msgFocus(const FocusMessage &msg) {
-	Gfx::Palette63 pal = _G(gfx)[91];
-	Gfx::xsetpal(pal);
-
 	auto chunk = _G(gfx)[93];
 	int frameCount = READ_LE_UINT16(chunk._data);
 	assert(frameCount == SPLASH_FRAME_COUNT);
@@ -55,25 +52,34 @@ bool SplashScreen::msgFocus(const FocusMessage &msg) {
 	_frameCtr = -1;
 	_delayCtr = 0;
 
+	// This is the first screen shown, so start with black, and fade it in
+	byte blackPal[PALETTE_SIZE];
+	Common::fill(blackPal, blackPal + PALETTE_SIZE, 0);
+	Gfx::xsetpal(blackPal);
+
+	draw();
+	Gfx::Palette63 pal = _G(gfx)[91];
+	Gfx::fade_in(pal);
+
 	return true;
 }
 
 bool SplashScreen::tick() {
 	if (++_delayCtr == SPLASH_FRAME_INTERVAL) {
-	_delayCtr = 0;
+		_delayCtr = 0;
 
-	if (++_frameCtr < SPLASH_FRAME_COUNT) {
-		GfxSurface s = getSurface();
-		byte *dest = (byte *)s.getBasePtr(0, 24);
-		executeFrame(_chunkPtr, dest);
-		s.markAllDirty();
+		if (++_frameCtr < SPLASH_FRAME_COUNT) {
+			GfxSurface s = getSurface();
+			byte *dest = (byte *)s.getBasePtr(0, 24);
+			executeFrame(_chunkPtr, dest);
+			s.markAllDirty();
 
-		_chunkPtr += READ_LE_UINT32(_chunkSize);
-		_chunkSize += 4;
-	} else if (_frameCtr == (SPLASH_FRAME_COUNT + 50)) {
-		// Switch to the opening screen showing the game name
-		replaceView("Opening", true, true);
-	}
+			_chunkPtr += READ_LE_UINT32(_chunkSize);
+			_chunkSize += 4;
+		} else if (_frameCtr == (SPLASH_FRAME_COUNT + 50)) {
+			// Switch to the opening screen showing the game name
+			replaceView("Opening", true, true);
+		}
 	}
 
 	return true;

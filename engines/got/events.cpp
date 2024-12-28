@@ -62,10 +62,11 @@ void Events::runGame() {
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
+	if (saveSlot != -1) {
 		g_engine->loadGameState(saveSlot);
-
-	addView("SplashScreen");
+	} else {
+		addView("SplashScreen");
+	}
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {

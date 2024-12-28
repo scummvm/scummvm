@@ -101,12 +101,15 @@ void fade_out() {
 	}
 }
 
-void fade_in() {
+void fade_in(const byte *pal) {
 	byte tempPal[PALETTE_SIZE];
 	const byte *srcP;
 	byte *destP;
 	int count;
 	Common::Event evt;
+
+	if (pal)
+		Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
 
 	for (int step = 1; step <= FADE_STEPS; ++step) {
 		// Set each palette RGB proportionately
