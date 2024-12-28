@@ -26,20 +26,54 @@
 
 namespace Graphics {
 
+class Primitives {
+public:
+	virtual ~Primitives() {}
+
+	virtual void drawPoint(int x, int y, uint32 color, void *data) = 0;
+
+	virtual void drawLine(int x0, int y0, int x1, int y1, uint32 color, void *data);
+	virtual void drawHLine(int x1, int x2, int y, uint32 color, void *data);
+	virtual void drawVLine(int x, int y1, int y2, uint32 color, void *data);
+	virtual void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void *data);
+	virtual void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, void *data);
+	virtual void drawFilledRect(const Common::Rect &rect, uint32 color, void *data);
+	virtual void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data);
+	virtual void drawRect(const Common::Rect &rect, uint32 color, void *data);
+	virtual void drawRect1(const Common::Rect &rect, uint32 color, void *data);
+	virtual void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void *data);
+	virtual void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void *data);
+	virtual void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data);
+	virtual void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void *data);
+};
+
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawHLine(int x1, int x2, int y, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawFilledRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawFilledRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
+WARN_DEPRECATED("Use a subclass of Graphics::Primitives")
 void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 
 } // End of namespace Graphics
