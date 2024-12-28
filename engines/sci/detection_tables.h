@@ -2135,7 +2135,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
-	// King's Quest 5 - German DOS Floppy EGA (5.25" disks)
+	// King's Quest 5 - German DOS Floppy EGA (5.25" 640k disks)
 	// Game version 0.000.121 from about box, 1.000 from VERSION file
 	// SCI interpreter version 1.000.575
 	{"kq5", "EGA", {
@@ -2151,6 +2151,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.008", 0, "c9fd8d08ecc9d1e94d792416d48e71ac", 609913},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// King's Quest 5 - German DOS EGA (5.25" 1.2M disks)
+	// Supplied by ns394 in bug report #15636
+	{"kq5", "EGA", {
+		{"resource.map", 0, "b7f88d338f165437709b5f9878fe27b3", 7998},
+		{"resource.000", 0, "1a82e9253c727fef5c8ed655d1a42486", 471539},
+		{"resource.001", 0, "326c1b81779fddd84a990e74f8fb4e27", 1193566},
+		{"resource.002", 0, "c734b48f9cf3d18370cf09778904ed10", 317970},
+		{"resource.003", 0, "646f6f84c0ed677e0c77fd145f04ce3e", 1110748},
+		{"resource.004", 0, "b08822ecdbf6d926dc24291614134f97", 1209355},
+		{"resource.005", 0, "28b41e5ffd872ceec011a832c89aff23", 912051},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
 
 	// King's Quest 5 - German DOS Floppy VGA (supplied by markcoolio in bug report #4290, also includes english language)
 	// SCI interpreter version 1.000.060
@@ -3525,6 +3538,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 993408},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// Larry 5 - German DOS EGA (3.5" 720k disks)
+	// Supplied by ns394 in bug report #15634
+	{"lsl5", "EGA", {
+		{"resource.map", 0, "d0dbfd29402def6adce3052433979275", 6603},
+		{"resource.000", 0, "4c00c14b8181ad47076a51d86097d97e", 313454},
+		{"resource.001", 0, "1d631b16ffba2484fcb41af8f0016010", 445473},
+		{"resource.002", 0, "c2cb2dec12e26f6243bc1b78e4e84940", 636986},
+		{"resource.003", 0, "f8e876302a3aba5bcaab5c51db6b6532", 723502},
+		{"resource.004", 0, "16f4d8fb1b526125edaca4fc6cbb7530", 548747},
+		{"resource.005", 0, "6043b2cc23d663e6a01b25bd0e4de55e", 581585},
+		{"resource.006", 0, "f6046a8445422f17d40b1b10ab21ebf3", 593549},
+		{"resource.007", 0, "640ee65595d40372ef95462f2c1ae28a", 619199},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
 
 	// Larry 5 - French DOS (provided by richiefs in bug report #4214)
 	// Executable scanning reports "1.lsl5.019"
@@ -5972,6 +6000,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dfb023e4e2a1e7a00fa18f9ede72a91b", 924059},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// Space Quest 4 - German DOS EGA (5.25" 1.2M disks)
+	// Supplied by ns394 in bug report #15635
+	{"sq4", "EGA", {
+		{"resource.map", 0, "8fa159f2c25e7bafbbefc9d998b6e90f", 5571},
+		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 249229},
+		{"resource.001", 0, "a836bd3bc9574f2371f8b6f74a082313", 995949},
+		{"resource.002", 0, "bba9d6e685809fb7e482c9b33c1cac3f", 1140960},
+		{"resource.003", 0, "5b541ef2feb38b999cc331b5e4b6df8a", 1092315},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
 
 	// Space Quest 4 - Italian DOS Floppy (from glorifindel, also includes english language)
 	// SCI interpreter version 1.000.200 (just a guess)
