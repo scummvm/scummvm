@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-28 15:50+0000\n"
+"POT-Creation-Date: 2024-12-28 17:53+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -10271,13 +10271,13 @@ msgstr "Casio CT-460 / CSM-1"
 msgid "Game does not contain menu resources"
 msgstr "Gra nie zawiera zasobów menu"
 
-#: engines/sci/detection_tables.h:4697
+#: engines/sci/detection_tables.h:4725
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 "Niniejsza wersja demonstracyjna wykorzystuje niezaimplementowaną wersję "
 "filmów o Robotach"
 
-#: engines/sci/detection_tables.h:4752
+#: engines/sci/detection_tables.h:4780
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Wykryto niekompletną grę. Należy skopiować dane ze wszystkich płyt CD."
 

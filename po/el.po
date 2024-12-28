@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-28 15:50+0000\n"
+"POT-Creation-Date: 2024-12-28 17:53+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -10502,13 +10502,13 @@ msgstr "Casio CT-460 / CSM-1"
 msgid "Game does not contain menu resources"
 msgstr "Το παιχνίδι δεν περιέχει πόρους για μενού"
 
-#: engines/sci/detection_tables.h:4697
+#: engines/sci/detection_tables.h:4725
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 "Το demo αυτό χρησιμοποιεί μια έκδοση των βίντεο Robot που δεν έχει "
 "υλοποιηθει ακόμα"
 
-#: engines/sci/detection_tables.h:4752
+#: engines/sci/detection_tables.h:4780
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Εντοπίστηκε ελλιπές παιχνίδι. Χρειάζεται να αντιγράψετε τα δεδομένα από όλα "
