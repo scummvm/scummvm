@@ -848,7 +848,8 @@ void MacGuiImpl::MacImage::draw(bool drawFocused) {
 // ---------------------------------------------------------------------------
 
 void MacGuiImpl::MacSliderBase::setValue(int value) {
-	_value = CLIP(value, _minValue, _maxValue);
+	int newValue = CLIP(value, _minValue, _maxValue);
+	MacWidget::setValue(newValue);
 	_handlePos = calculatePosFromValue();
 }
 
@@ -1313,6 +1314,14 @@ MacGuiImpl::MacImageSlider::~MacImageSlider() {
 		_background->free();
 		delete _background;
 	}
+}
+
+void MacGuiImpl::MacImageSlider::setValue(int value) {
+	int newValue = CLIP(value, _minValue, _maxValue);
+	MacWidget::setValue(newValue);
+	eraseHandle();
+	_handlePos = calculatePosFromValue();
+	drawHandle();
 }
 
 bool MacGuiImpl::MacImageSlider::findWidget(int x, int y) const {
