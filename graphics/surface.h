@@ -405,7 +405,7 @@ public:
 	 * @param y1     The y coordinate of the end point.
 	 * @param color  Color of the line.
 	 *
-	 * @note This is just a wrapper around Graphics::drawLine.
+	 * @note This is just a wrapper around Graphics::Primitives.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 
@@ -420,7 +420,7 @@ public:
 	 * @param penY   Height of the pen (thickness in the y direction).
 	 * @param color  Color of the line.
 	 *
-	 * @note This is just a wrapper around Graphics::drawThickLine.
+	 * @note This is just a wrapper around Graphics::Primitives.
 	 *
 	 * @note The x/y coordinates of the start and end points are the upper leftmost part of the pen.
 	 */
