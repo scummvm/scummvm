@@ -250,7 +250,7 @@ private:
 
 	Graphics::PixelFormat _format;
 
-	void decodeFrame(byte *pal, byte *data, byte *dest);
+	void decodeFrame(byte *pal, byte *data, byte *dest, uint32 size);
 };
 
 Cursor_v2::Cursor_v2(Common::File &file) {
@@ -286,7 +286,7 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
-		decodeFrame(pal, data, _img + (f * _width * _height * 4));
+		decodeFrame(pal, data, _img + (f * _width * _height * 4), tmp32);
 
 		delete[] data;
 	}
@@ -298,7 +298,7 @@ Cursor_v2::~Cursor_v2() {
 	delete[] _img;
 }
 
-void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
+void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest, uint32 size) {
 	// Scratch memory
 	byte *tmp = new byte[_width * _height * 4]();
 	byte *ptr = tmp;
@@ -314,14 +314,23 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	// Start frame decoding
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
+			if (!size) {
+				debugC(1, kDebugCursor, "Cursor_v2::decodeFrame(): Frame underflow");
+				delete[] tmp;
+				return;
+			}
+
 			// If both counters are empty
 			if (ctrA == 0 && ctrB == 0) {
 				if (*data & 0x80) {
 					ctrA = (*data++ & 0x7F) + 1;
+					size--;
 				} else {
 					ctrB = *data++ + 1;
 					alpha = alphaDecoded[(*data & 0xE0) >> 5];
 					palIdx = *data++ & 0x1F;
+
+					size -= 2;
 				}
 			}
 
@@ -329,6 +338,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 				// Block type A - chunk of non-continuous pixels
 				palIdx = *data & 0x1F;
 				alpha = alphaDecoded[(*data++ & 0xE0) >> 5];
+				size--;
 
 				r = *(pal + palIdx);
 				g = *(pal + palIdx + 0x20);
