@@ -29,7 +29,7 @@ int ctr = 0;
 
 void Opening::draw() {
 	GfxSurface s = getSurface();
-	s.blitFrom(_surface, Common::Rect(0, 0, 320, 200), Common::Point(0, 0));
+	s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), Common::Rect(0, 0, 320, 240));
 }
 
 bool Opening::msgFocus(const FocusMessage &msg) {
@@ -40,15 +40,12 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 	Gfx::Palette63 pal = _G(gfx)[35];
 	Gfx::xsetpal(pal);
 
-	// TODO: Better understand the plane format. A proper screen seems to
-	// be okay if I use the resulting 0,0 to 320,200 of the surface
-	_surface.create(640, 400);
+	_surface.create(320, 400);
 	for (int chunkNum = 0; chunkNum < 4; ++chunkNum) {
-		auto g = _G(gfx)[36 + chunkNum];
 		src = _G(gfx)[36 + chunkNum]._data;
 		dest = (byte *)_surface.getBasePtr(chunkNum, 0);
 
-		for (i = 0; i < (640 * 400 / 4); ++i, ++src, dest += 4)
+		for (i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
 			*dest = *src;
 	}
 
