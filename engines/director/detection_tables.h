@@ -1112,6 +1112,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "keroncuel",			"ウルトラリゾート ケロンキュール" },											// Ultra Resort Keroncuel
 	{ "kidsbox",			"Kids Box" },										// キッズボックス
 	{ "kishido",			"棋士道" },											// Art of Shogi (Go)
+	{ "krillplace",			"クリルプレイス" }, // Krill Place
 	{ "lzone",				"L-ZONE" },
 	{ "macaroni",			"マカロニほうれん荘 Interactive" },					// Romaji title in manual is Macaroni Hourensou
 	{ "magicgambo",			"Magic Gambo" },
@@ -4803,6 +4804,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("klondikegold", "", "KLONDIKE.EXE", "58a1d6965e1bc2a3281d1060e09f8d19", 908685,
 								 "DREDGE.DIR",   "9b20cdc5ce0dffe165a495f94bb1b450", 4916524, 404),
+
+	WINGAME1_l("krillplace", "", "KRILLWIN.EXE", "t:611ca6aa9a9c523ed24dcc6432fa63d8", 1766279, Common::JA_JPN, 404),
 
 	MACGAME1("korkydragons", "", "Dragons!",	 "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 486726, 404),
 	WINGAME1("korkydragons", "", "DRAGONS!.EXE", "t:4d35a9f14ea5b012e552cd6b3a7e7452", 698833, 404),
