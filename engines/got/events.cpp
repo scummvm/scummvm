@@ -60,14 +60,17 @@ void Events::runGame() {
 	_screen = new Graphics::Screen();
 	Views::Views views;	// Loads all views in the structure
 
-	// Run the game
+	// Set up the initial game view
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1) {
-		g_engine->loadGameState(saveSlot);
-	} else {
-		addView("SplashScreen");
+		if (g_engine->loadGameState(saveSlot).getCode() != Common::kNoError)
+			saveSlot = -1;
 	}
+	if (saveSlot == -1)
+//		addView("SplashScreen");
+		addView("Opening");
 
+	// Main game loop
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {

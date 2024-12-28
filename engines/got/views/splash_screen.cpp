@@ -64,6 +64,11 @@ bool SplashScreen::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+bool SplashScreen::msgUnfocus(const UnfocusMessage &msg) {
+	fadeOut();
+	return true;
+}
+
 bool SplashScreen::tick() {
 	if (++_delayCtr == SPLASH_FRAME_INTERVAL) {
 		_delayCtr = 0;
