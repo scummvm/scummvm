@@ -25,9 +25,21 @@
 namespace Got {
 namespace Views {
 
+bool Credits::msgFocus(const FocusMessage &msg) {
+	draw();
+	Gfx::Palette63 pal = _G(gfx)[41];
+	fadeIn(pal);
+
+	return true;
+}
+
 void Credits::draw() {
 	GfxSurface s = getSurface();
-	s.print(Common::Point(10, 10), "Credits", 255);
+
+	// Draw scroll background
+	Graphics::ManagedSurface bg = _G(gfx)[42];
+	s.clear(*(byte *)bg.getPixels());
+	s.blitFrom(bg, Common::Point(0, 24));
 }
 
 bool Credits::tick() {
