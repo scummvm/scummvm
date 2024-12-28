@@ -127,7 +127,7 @@
 	{
 		"gob2",
 		"v1.02",
-		AD_ENTRY1("intro.stk", "cd3e1df8b273636ee32e34b7064f50e8"),
+		AD_ENTRY1s("intro.stk", "cd3e1df8b273636ee32e34b7064f50e8", 874488),
 		RU_RUS,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
