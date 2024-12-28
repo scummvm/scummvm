@@ -28,10 +28,15 @@ namespace Got {
 namespace Views {
 
 class Opening : public View {
+private:
+	Graphics::ManagedSurface _surface;
+
 public:
 	Opening() : View("Opening") {}
 	virtual ~Opening() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };
