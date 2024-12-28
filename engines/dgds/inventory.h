@@ -60,7 +60,7 @@ public:
 	static const byte HOC_CHARACTER_QUALS[];
 private:
 	GameItem *itemUnderMouse(const Common::Point &pt);
-	bool isItemInInventory(GameItem &item);
+	bool isItemInInventory(const GameItem &item);
 
 	uint16 _openedFromSceneNum;
 
