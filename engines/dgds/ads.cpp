@@ -132,11 +132,6 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	return true;
 }
 
-static const uint16 ADS_SEQ_OPCODES[] = {
-	0x2000, 0x2005, 0x2010, 0x2015, 0x4000, 0x4010, 0x1330,
-	0x1340, 0x1360, 0x1370, 0x1320, 0x1310, 0x1350
-};
-
 bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, Common::SharedPtr<TTMSeq> seq) {
 	if (seq->_timeInterval != 0) {
 		uint32 now = DgdsEngine::getInstance()->getThisFrameMs();
@@ -163,16 +158,31 @@ bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, Common::SharedP
 	return true;
 }
 
+static const uint16 ADS_USED_SEQ_OPCODES[] = {
+	0x2000, 0x2005, 0x2010, 0x2015, 0x4000, 0x4010, 0x1330,
+	0x1340, 0x1360, 0x1370, 0x1320, 0x1310, 0x1350
+};
+
 void ADSInterpreter::findUsedSequencesForSegment(int idx) {
 	_adsData->_usedSeqs[idx].clear();
 	int64 startoff = _adsData->scr->pos();
 	uint16 opcode = 0;
 	// Skip the segment number.
 	int16 segno = _adsData->scr->readUint16LE();
+
+	DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
+	//
+	// HoC and Dragon call a sequence "used" if there is any dependency on
+	// the sequence (reordering, if conditions), but to simplify the use of
+	// getStateForSceneOp, later games only call it "used" if it is directly
+	// started.
+	//
+	int n_ops_to_check = (gameId == GID_DRAGON || gameId == GID_HOC) ? ARRAYSIZE(ADS_USED_SEQ_OPCODES) : 2;
 	while (opcode != 0xffff && _adsData->scr->pos() < _adsData->scr->size()) {
 		opcode = _adsData->scr->readUint16LE();
-		for (uint16 o : ADS_SEQ_OPCODES) {
-			if (opcode == o) {
+		for (int i = 0; i < n_ops_to_check; i++) {
+			uint16 op = ADS_USED_SEQ_OPCODES[i];
+			if (opcode == op) {
 				int16 envno = _adsData->scr->readSint16LE();
 				int16 seqno = _adsData->scr->readSint16LE();
 				Common::SharedPtr<TTMSeq> seq = findTTMSeq(envno, seqno);
@@ -807,31 +817,13 @@ int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
 			}
 			return 0;
 		}
-	} else if (DgdsEngine::getInstance()->getGameId() == GID_HOC) {
+	} else {
 		int state = (_adsData->_state[idx] & 0xfff7);
 		if (state != 4 && state != 1) {
 			for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
 				if (!seq)
 					error("getStateForSceneOp: used seq for seg %d should not be null", segnum);
 				if (seq->_runFlag != kRunTypeStopped && seq->_runFlag != kRunTypeFinished && !seq->_selfLoop)
-					return 1;
-			}
-			return 0;
-		}
-	} else { // WILLY+
-		int state = (_adsData->_state[idx] & 0xfff7);
-		if (state != 4 && state != 1) {
-			for (const Common::SharedPtr<TTMSeq> &seq: _adsData->_usedSeqs[idx]) {
-				if (!seq)
-					error("getStateForSceneOp: used seq for seg %d should not be null", segnum);
-				//
-				// TODO: This last check is a bit of a guess to make Willy Beamish work correctly.
-				// It seems to need sequences to return false from this function even when they
-				// are delayed.  Eg, outside the house (HE.ADS, scene 10), seq 20 (willy scratching
-				// his leg) runs and repeats randomly every 400 to 900 frames, but the door hot area
-				// is not active if that script is "running".
-				//
-				if (seq->_runFlag != kRunTypeStopped && seq->_runFlag != kRunTypeFinished && !seq->_selfLoop && seq->_timeNext <= DgdsEngine::getInstance()->getThisFrameMs())
 					return 1;
 			}
 			return 0;
@@ -1007,7 +999,6 @@ void ADSInterpreter::setGotoTarget(int32 target) {
 }
 
 int ADSInterpreter::numArgs(uint16 opcode) const {
-	// TODO: This list is from DRAGON, there may be more entries in newer games.
 	switch (opcode) {
 	case 0x1080:
 	case 0x1090:

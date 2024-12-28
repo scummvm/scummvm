@@ -41,7 +41,7 @@ public:
 	byte yval;
 	bool flag;
 
-	Common::String dump();
+	Common::String dump() const;
 };
 
 

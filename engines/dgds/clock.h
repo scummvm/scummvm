@@ -64,7 +64,7 @@ public:
 
 	Common::Error syncState(Common::Serializer &s);
 
-	Common::String dump();
+	Common::String dump() const;
 
 private:
 	uint32 _lastPlayTime;

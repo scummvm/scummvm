@@ -583,16 +583,21 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		//
 		// This appears in the credits, intro sequence, and the
-		// "meanwhile" event with the factory in DRAGON.  It
-		// should reload the background image to clear any previous 0020
-		// event, and then save the current FG over it.
+		// "meanwhile" event with the factory in DRAGON.  It should
+		// copy the front buffer to the stored buffer, then the stored
+		// buffer to the background?
+		//
 		// Credits   - (no scr loaded) Store large image on black bg after loading and before txt scroll
 		// Intro     - (no scr loaded) After each screen change, draw and save the new comic frame as bg
 		//			   on "aaaaah" scene, called after only drawing the AAAH and calling store area
 		// Meanwhile - (scr loaded) Save the foreground people onto the background before walk animation
 		//
-		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
+		if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
+			_vm->getStoredAreaBuffer().blitFrom(_vm->_compositionBuffer);
+		} else {
+			_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
+		}
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
@@ -951,10 +956,10 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		Drawing::emptyCircle(ivals[0] + xr, ivals[1] + yr, xr, yr, &_vm->_compositionBuffer, seq._drawColFG);
 		break;
 	}
-	case 0xa500: // DRAW SPRITE: x,y,tile-id,bmp-id:int [-n,+n]
+	case 0xa500: // DRAW SPRITE: x,y,frameno,bmpno:int [-n,+n]
 	case 0xa510: // DRAW SPRITE FLIP V x,y:int
 	case 0xa520: // DRAW SPRITE FLIP H: x,y:int
-	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
+	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n] (CHINA+)
 		int frameno;
 		int bmpNo;
 		int dstWidth = 0;
@@ -1009,7 +1014,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 						Common::Point(r.left, r.top));
 		break;
 	}
-	case 0xa700: { // DRAW SCROLL x,y,w,h??
+	case 0xa700: { // DRAW SCROLL x,y,w,h
 		if (!env._scrollShape) {
 			warning("Trying to draw scroll with no scrollshape loaded");
 		} else {
@@ -1024,7 +1029,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		f.fill();
 		break;
 	}
-	case 0xaf10: { // DRAW EMPTY POLY
+	case 0xaf10: { // DRAW EMPTY POLY [pts]
 		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
 		for (uint i = 1; i < pts.size(); i++) {
 			const Common::Point &p1 = pts[i - 1];
@@ -1036,7 +1041,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 				plotClippedPoint, &clipSurf);
 		break;
 	}
-	case 0xaf20: { // DRAW FILLED POLY
+	case 0xaf20: { // DRAW FILLED POLY [pts]
 		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
 		Common::Array<int> xvals(pts.size());
 		Common::Array<int> yvals(pts.size());
@@ -1054,7 +1059,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env._creditScrollMeasure = doOpInitCreditScroll(env._scriptShapes[seq._currentBmpId].get());
 		env._creditScrollYOffset = 0;
 		break;
-	case 0xb010: { // DRAW CREDITS SCROLL
+	case 0xb010: { // DRAW CREDITS SCROLL ygap,ystep
 		const Image *img = env._scriptShapes[seq._currentBmpId].get();
 		if (img && img->isLoaded()) {
 			bool finished = doOpCreditsScroll(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,
@@ -1093,6 +1098,8 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xc050: {	// PLAY SAMPLE: int: i
+		if (seq._executed) // this is a one-shot op
+			break;
 		_vm->_soundPlayer->playMusicOrSFX(ivals[0]);
 		break;
 	}

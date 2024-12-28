@@ -381,7 +381,7 @@ bool SceneOp::runBeamishOp() const {
 	if (_opCode & kSceneOpHasConditionalOpsFlag) {
 		uint16 opcode = _opCode & ~kSceneOpHasConditionalOpsFlag;
 		for (const ConditionalSceneOp &cop : engine->getScene()->getConditionalOps()) {
-			if (cop._opCode == opcode && engine->getScene()->checkConditions(cop._conditionList)) {
+			if (cop._opCode == opcode && SceneConditions::check(cop._conditionList)) {
 				if (!Scene::runOps(cop._opList))
 					return true;
 			}

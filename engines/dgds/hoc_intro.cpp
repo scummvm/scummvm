@@ -134,7 +134,7 @@ void HocIntro::end() {
 	_noMaskImg.reset();
 
 	globals->setIntroState(0);
-	static_cast<HocGlobals *>(engine->getGameGlobals())->setNativeGameState(0);
+	globals->setNativeGameState(0);
 }
 
 void HocIntro::doCopy(int16 x1, int16 y1, int16 x2, int16 y2) {

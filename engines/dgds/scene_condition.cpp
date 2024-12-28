@@ -20,6 +20,9 @@
  */
 
 #include "dgds/scene_condition.h"
+#include "dgds/dgds.h"
+#include "dgds/ads.h"
+#include "dgds/scene.h"
 
 namespace Dgds {
 
@@ -53,6 +56,70 @@ Common::String _sceneConditionStr(SceneCondition cflag) {
 
 	return ret;
 }
+
+/*static*/
+bool SceneConditions::check(const Common::Array<SceneConditions> &conds) {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+
+	uint cnum = 0;
+	while (cnum < conds.size()) {
+		const SceneConditions &c = conds[cnum];
+		int16 refval = c.getVal();
+		int16 checkval = -1;
+		SceneCondition cflag = c.getCond();
+		// Hit an "or" here means the last result was true.
+		if (cflag & kSceneCondOr)
+			return true;
+
+		if (cflag & kSceneCondSceneState) {
+			refval = 1;
+			checkval = engine->adsInterpreter()->getStateForSceneOp(c.getNum());
+			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
+			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
+				refval = 0;
+			cflag = kSceneCondEqual;
+		} else if (cflag & kSceneCondNeedItemQuality || cflag & kSceneCondNeedItemSceneNum) {
+			const Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
+			for (const auto &item : items) {
+				if (item._num == c.getNum()) {
+					if (cflag & kSceneCondNeedItemSceneNum)
+						checkval = item._inSceneNum;
+					else // cflag & kSceneCondNeedItemQuality
+						checkval = item._quality;
+					break;
+				}
+			}
+		} else {
+			checkval = engine->getGDSScene()->getGlobal(c.getNum());
+			if (!(cflag & kSceneCondAbsVal))
+				refval = engine->getGDSScene()->getGlobal((uint16)refval);
+		}
+
+		bool result = false;
+		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality));
+		if (cflag == kSceneCondNone)
+			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
+		if ((cflag & kSceneCondLessThan) && checkval < refval)
+			result = true;
+		if ((cflag & kSceneCondEqual) && checkval == refval)
+			result = true;
+		if (cflag & kSceneCondNegate)
+			result = !result;
+
+		debug(11, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
+
+		if (!result) {
+			// Skip just past the next or, or to the end.
+			while (cnum < conds.size() && !(conds[cnum].getCond() & kSceneCondOr))
+				cnum++;
+			if (cnum >= conds.size())
+				return false;
+		}
+		cnum++;
+	}
+	return true;
+}
+
 
 Common::String SceneConditions::dump(const Common::String &indent) const {
 	return Common::String::format("%sSceneCondition<flg 0x%02x(%s) num %d val %d>", indent.c_str(),

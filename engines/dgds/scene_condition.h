@@ -24,6 +24,7 @@
 
 #include "common/types.h"
 #include "common/str.h"
+#include "common/array.h"
 
 namespace Dgds {
 
@@ -43,6 +44,8 @@ class SceneConditions {
 public:
 	SceneConditions(uint16 num, SceneCondition cond, int16 val) : _num(num), _flags(cond), _val(val) {}
 	Common::String dump(const Common::String &indent) const;
+
+	static bool check(const Common::Array<SceneConditions> &conds);
 
 	uint16 getNum() const { return _num; }
 	SceneCondition getCond() const { return _flags; }

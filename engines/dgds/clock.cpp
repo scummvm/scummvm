@@ -173,7 +173,7 @@ void Clock::update(bool gameRunning) {
 		addGameTime(mins_to_add);
 }
 
-Common::String Clock::dump() {
+Common::String Clock::dump() const {
 	return Common::String::format("days %d hours %d mins %d", _days, _mins, _hours);
 }
 

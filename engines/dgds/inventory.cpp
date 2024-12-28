@@ -277,7 +277,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	const Common::Rect drawMask(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	int offset = _itemOffset;
 	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
-	for (auto & item: items) {
+	for (auto &item: items) {
 		if (!isItemInInventory(item))
 			continue;
 

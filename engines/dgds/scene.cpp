@@ -481,7 +481,7 @@ bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */
 	bool sceneChanged = false;
 	int16 startSceneNum = engine->getScene()->getNum();
 	for (const SceneOp &op : ops) {
-		if (!checkConditions(op._conditionList))
+		if (!SceneConditions::check(op._conditionList))
 			continue;
 		debug(10, "Exec %s", op.dump("").c_str());
 		if (addMinuites) {
@@ -505,74 +505,12 @@ bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */
 	return startSceneNum == endSceneNum;
 }
 
-/*static*/
-bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-
-	uint cnum = 0;
-	while (cnum < conds.size()) {
-		const SceneConditions &c = conds[cnum];
-		int16 refval = c.getVal();
-		int16 checkval = -1;
-		SceneCondition cflag = c.getCond();
-		// Hit an "or" here means the last result was true.
-		if (cflag & kSceneCondOr)
-			return true;
-
-		if (cflag & kSceneCondSceneState) {
-			refval = 1;
-			checkval = engine->adsInterpreter()->getStateForSceneOp(c.getNum());
-			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
-			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
-				refval = 0;
-			cflag = kSceneCondEqual;
-		} else if (cflag & kSceneCondNeedItemQuality || cflag & kSceneCondNeedItemSceneNum) {
-			const Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
-			for (const auto &item : items) {
-				if (item._num == c.getNum()) {
-					if (cflag & kSceneCondNeedItemSceneNum)
-						checkval = item._inSceneNum;
-					else // cflag & kSceneCondNeedItemQuality
-						checkval = item._quality;
-					break;
-				}
-			}
-		} else {
-			checkval = engine->getGDSScene()->getGlobal(c.getNum());
-			if (!(cflag & kSceneCondAbsVal))
-				refval = engine->getGDSScene()->getGlobal((uint16)refval);
-		}
-
-		bool result = false;
-		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality));
-		if (cflag == kSceneCondNone)
-			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
-		if ((cflag & kSceneCondLessThan) && checkval < refval)
-			result = true;
-		if ((cflag & kSceneCondEqual) && checkval == refval)
-			result = true;
-		if (cflag & kSceneCondNegate)
-			result = !result;
-
-		debug(11, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
-
-		if (!result) {
-			// Skip just past the next or, or to the end.
-			while (cnum < conds.size() && !(conds[cnum].getCond() & kSceneCondOr))
-				cnum++;
-			if (cnum >= conds.size())
-				return false;
-		}
-		cnum++;
-	}
-	return true;
-}
-
 
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false), _field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false),
+	_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -715,7 +653,7 @@ void SDSScene::checkTriggers() {
 			continue;
 		}
 
-		if (!checkConditions(trigger.conditionList))
+		if (!SceneConditions::check(trigger.conditionList))
 			continue;
 
 		trigger._enabled = false;
@@ -1232,7 +1170,12 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	int16 cursorNum = (!dlg && area) ? area->_cursorNum : 0;
+	int16 cursorNum = 0;
+	if (!dlg) {
+		if (area)
+			cursorNum = area->_cursorNum;
+	}
+
 	if (_dragItem) {
 		if (area && area->_objInteractionRectNum == 1) {
 			// drag over Willy Beamish
@@ -1283,7 +1226,7 @@ static bool _isInRect(const Common::Point &pt, const DgdsRect rect) {
 			&& rect.y <= pt.y && (rect.y + rect.height) > pt.y;
 }
 
-static const ObjectInteraction * _findInteraction(const Common::Array<ObjectInteraction> &interList, int16 droppedNum, uint16 targetNum) {
+static const ObjectInteraction *_findInteraction(const Common::Array<ObjectInteraction> &interList, int16 droppedNum, uint16 targetNum) {
 	for (const auto &i : interList) {
 		if (i.matches(droppedNum, targetNum)) {
 			return &i;
@@ -1294,6 +1237,7 @@ static const ObjectInteraction * _findInteraction(const Common::Array<ObjectInte
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
 	_lbuttonDown = false;
+
 	if (_ignoreMouseUp) {
 		debug(9, "Ignoring mouseup at %d,%d as it was used to clear a dialog", pt.x, pt.y);
 		_ignoreMouseUp = false;
@@ -1394,7 +1338,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		}
 	}
 
-	SDSScene *scene = engine->getScene();
+	const SDSScene *scene = engine->getScene();
 	for (const auto &area : _hotAreaList) {
 		if (!_isInRect(pt, area._rect))
 			continue;
@@ -1532,13 +1476,13 @@ void SDSScene::updateHotAreasFromDynamicRects() {
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	for (auto &item : DgdsEngine::getInstance()->getGDSScene()->getGameItems()) {
 		if (item._inSceneNum == _num && _isInRect(pt, item._rect)
-			&& checkConditions(item.enableConditions)) {
+			&& SceneConditions::check(item.enableConditions)) {
 			return &item;
 		}
 	}
 
 	for (auto &area : _hotAreaList) {
-		if (_isInRect(pt, area._rect) && checkConditions(area.enableConditions)) {
+		if (_isInRect(pt, area._rect) && SceneConditions::check(area.enableConditions)) {
 			return &area;
 		}
 	}
@@ -1661,7 +1605,7 @@ void SDSScene::drawDebugHotAreas(Graphics::ManagedSurface *dst) const {
 	byte greenish = pal.findBestColor(0, 0xff, 0);
 
 	for (const auto &area : _hotAreaList) {
-		bool enabled = checkConditions(area.enableConditions);
+		bool enabled = SceneConditions::check(area.enableConditions);
 		uint32 color = enabled ? greenish : redish;
 		g_system->getPaletteManager();
 		const Common::Rect &r = area._rect.toCommonRect();

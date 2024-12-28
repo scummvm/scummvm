@@ -180,8 +180,6 @@ public:
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
 
 	// These are all static as they are potentially run over scene changes.
-	static bool checkConditions(const Common::Array<SceneConditions> &cond);
-
 	static void segmentStateOps(const Common::Array<uint16> &args);
 	static void setItemAttrOp(const Common::Array<uint16> &args);
 	static void setDragItemOp(const Common::Array<uint16> &args);
@@ -233,8 +231,8 @@ public:
 	Common::Array<GameItem> &getGameItems() { return _gameItems; }
 	int countItemsInInventory() const;
 
-	const Common::Array<ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
-	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+	const Common::Array<ObjectInteraction> &getObjInteractions1() const { return _objInteractions1; }
+	const Common::Array<ObjectInteraction> &getObjInteractions2() const { return _objInteractions2; }
 
 	Common::Error syncState(Common::Serializer &s) override;
 	void initIconSizes();
@@ -301,8 +299,8 @@ public:
 	GameItem *getDragItem() { return _dragItem; }
 	void setDragItem(GameItem *item) { _dragItem = item; }
 
-	const Common::Array<ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
-	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+	const Common::Array<ObjectInteraction> &getObjInteractions1() const { return _objInteractions1; }
+	const Common::Array<ObjectInteraction> &getObjInteractions2() const { return _objInteractions2; }
 
 	bool hasVisibleDialog();
 	bool hasVisibleOrOpeningDialog() const;

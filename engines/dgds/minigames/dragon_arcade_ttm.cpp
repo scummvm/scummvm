@@ -28,7 +28,7 @@
 
 namespace Dgds {
 
-Common::String ArcadeFloor::dump() {
+Common::String ArcadeFloor::dump() const {
 	return Common::String::format("ArcadeFloor<x:%d-%d y:%d flg:%d>",
 				x, x + width, yval, flag);
 }
