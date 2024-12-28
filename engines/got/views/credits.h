@@ -32,6 +32,7 @@ public:
 	Credits() : View("Credits") {}
 	virtual ~Credits() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

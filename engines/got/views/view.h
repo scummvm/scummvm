@@ -65,7 +65,7 @@ protected:
 	bool music_is_on() const;
 
 	void fadeOut();
-	void fadeIn();
+	void fadeIn(const byte *pal = nullptr);
 
 public:
 	View(const Common::String &name, UIElement *uiParent) :

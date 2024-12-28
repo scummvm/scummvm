@@ -68,7 +68,7 @@ void Events::runGame() {
 	}
 	if (saveSlot == -1)
 //		addView("SplashScreen");
-		addView("Opening");
+		addView("Credits");
 
 	// Main game loop
 	Common::Event e;

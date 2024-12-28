@@ -105,6 +105,7 @@ bool Opening::tick() {
 		_shakeX = 0;
 		redraw();
 	} else if (_frameCtr == 150) {
+		fadeOut();
 		replaceView("Credits", true, true);
 	}
 

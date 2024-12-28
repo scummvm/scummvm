@@ -117,8 +117,8 @@ void View::fadeOut() {
 	Gfx::fade_out();
 }
 
-void View::fadeIn() {
-	Gfx::fade_in();
+void View::fadeIn(const byte *pal) {
+	Gfx::fade_in(pal);
 }
 
 } // namespace Views
