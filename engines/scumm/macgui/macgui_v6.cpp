@@ -808,14 +808,14 @@ bool MacV6Gui::runOptionsDialog() {
 	MacButton *buttonDefaults = (MacButton *)window->getWidget(kWidgetButton, 2);
 
 	MacImageSlider *sliderMusicVolume = nullptr;
-	MacImageSlider *effectVolumeSlider = nullptr;
-	MacImageSlider *voiceVolumeSlider = nullptr;
+	MacImageSlider *sliderEffectVolume = nullptr;
+	MacImageSlider *sliderVoiceVolume = nullptr;
 	MacImageSlider *sliderTextSpeed = nullptr;
 
-	MacCheckbox *spoolMusicCheckbox = nullptr;
+	MacCheckbox *checkboxSpoolMusic = nullptr;
 
-	MacPopUpMenu *interactionPopUp = nullptr;
-	MacPopUpMenu *videoQualityPopUp = nullptr;
+	MacPopUpMenu *popUpInteraction = nullptr;
+	MacPopUpMenu *popUpVideoQuality = nullptr;
 
 	if (_vm->_game.id != GID_MANIAC) {
 		window->addSubstitution("");
@@ -823,10 +823,10 @@ bool MacV6Gui::runOptionsDialog() {
 		window->addSubstitution("");
 		window->addSubstitution(_gameName);
 
-		interactionPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
-		videoQualityPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 1);
+		popUpInteraction = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
+		popUpVideoQuality = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 1);
 	} else {
-		videoQualityPopUp = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
+		popUpVideoQuality = (MacPopUpMenu *)window->getWidget(kWidgetPopUpMenu, 0);
 	}
 
 	// Note: The video quality menu contains an additional "Graphics
@@ -834,8 +834,8 @@ bool MacV6Gui::runOptionsDialog() {
 	// original, but as long as we disabled the pop-up that's not a
 	// problem. My future self can thank me later.
 
-	videoQualityPopUp->setValue(1);
-	videoQualityPopUp->setEnabled(false);
+	popUpVideoQuality->setValue(1);
+	popUpVideoQuality->setEnabled(false);
 
 	window->setDefaultWidget(buttonOk);
 
@@ -847,7 +847,7 @@ bool MacV6Gui::runOptionsDialog() {
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
 
 		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		voiceVolumeSlider = addSlider(window, 152, 87, 147, 17);
+		sliderVoiceVolume = addSlider(window, 152, 87, 147, 17);
 		sliderTextSpeed = addSlider(window, 151, 177, 147, 9);
 	} else if (_vm->_game.id == GID_MANIAC) {
 		sliderMusicVolume = addSlider(window, 152, 41, 147, 17);
@@ -857,31 +857,31 @@ bool MacV6Gui::runOptionsDialog() {
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
 
 		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		effectVolumeSlider = addSlider(window, 152, 87, 147, 17);
-		voiceVolumeSlider = addSlider(window, 152, 111, 147, 17);
+		sliderEffectVolume = addSlider(window, 152, 87, 147, 17);
+		sliderVoiceVolume = addSlider(window, 152, 111, 147, 17);
 		sliderTextSpeed = addSlider(window, 152, 203, 147, 9);
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
 
 		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		effectVolumeSlider = addSlider(window, 152, 87, 147, 17);
-		voiceVolumeSlider = addSlider(window, 152, 111, 147, 17);
+		sliderEffectVolume = addSlider(window, 152, 87, 147, 17);
+		sliderVoiceVolume = addSlider(window, 152, 111, 147, 17);
 		sliderTextSpeed = addSlider(window, 152, 231, 147, 9);
 
-		spoolMusicCheckbox = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
+		checkboxSpoolMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 	}
 
-	if (interactionPopUp) {
+	if (popUpInteraction) {
 		switch (_vm->_voiceMode) {
 		case 0: // Voice Only
-			interactionPopUp->setValue(1);
+			popUpInteraction->setValue(1);
 			break;
 		case 1: // Voice And Text
-			interactionPopUp->setValue(2);
+			popUpInteraction->setValue(2);
 			break;
 		case 2: // Text Only
-			interactionPopUp->setValue(0);
+			popUpInteraction->setValue(0);
 			break;
 		default:
 			warning("MacGuiImpl::MacV6Gui::runOptionsDialog(): Invalid voice mode %d", _vm->_voiceMode);
@@ -892,20 +892,31 @@ bool MacV6Gui::runOptionsDialog() {
 	int musicVolume = 0;
 	int effectVolume = 0;
 	int voiceVolume = 0;
+	int spoolMusic = 1;
 
 	if (sliderMusicVolume) {
 		musicVolume = ConfMan.getInt("music_volume") / 16;
 		sliderMusicVolume->setValue(musicVolume);
 	}
 
-	if (effectVolumeSlider) {
+	if (sliderEffectVolume) {
 		effectVolume = ConfMan.getInt("sfx_volume") / 16;
-		effectVolumeSlider->setValue(effectVolume);
+		sliderEffectVolume->setValue(effectVolume);
 	}
 
-	if (voiceVolumeSlider) {
+	if (sliderVoiceVolume) {
 		voiceVolume = ConfMan.getInt("speech_volume") / 16;
-		voiceVolumeSlider->setValue(voiceVolume);
+		sliderVoiceVolume->setValue(voiceVolume);
+	}
+
+	if (checkboxSpoolMusic) {
+#if 0
+		spoolMusic = ConfMan.getBool("music_mute") ? 0 : 1;
+		checkboxSpoolMusic->setValue(spoolMusic);
+#else
+		checkboxSpoolMusic->setValue(spoolMusic);
+		checkboxSpoolMusic->setEnabled(false);
+#endif
 	}
 
 	if (sliderTextSpeed)
@@ -926,16 +937,16 @@ bool MacV6Gui::runOptionsDialog() {
 				} else if (event.widget == buttonDefaults) {
 					if (sliderMusicVolume)
 						sliderMusicVolume->setValue(16);
-					if (effectVolumeSlider)
-						effectVolumeSlider->setValue(12);
-					if (voiceVolumeSlider)
-						voiceVolumeSlider->setValue(16);
-					if (interactionPopUp)
-						interactionPopUp->setValue(1);
+					if (sliderEffectVolume)
+						sliderEffectVolume->setValue(12);
+					if (sliderVoiceVolume)
+						sliderVoiceVolume->setValue(16);
+					if (popUpInteraction)
+						popUpInteraction->setValue(1);
 					if (sliderTextSpeed)
 						sliderTextSpeed->setValue(4);
-					if (spoolMusicCheckbox)
-						spoolMusicCheckbox->setValue(1);
+					if (checkboxSpoolMusic)
+						checkboxSpoolMusic->setValue(1);
 				}
 
 				break;
