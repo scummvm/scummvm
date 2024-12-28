@@ -196,7 +196,10 @@ uint16 ROQPlayer::loadInternal() {
 #ifdef USE_MPEG2
 	if (blockHeader.type == 0) {
 		_videoDecoder = new Video::MPEGPSDecoder();
+		_videoDecoder->setSoundType(Audio::Mixer::kSFXSoundType);
 		_videoDecoder->loadStream(_file);
+
+		_videoDecoder->start();
 
 		_isFileHandled = true;
 		return 24;
