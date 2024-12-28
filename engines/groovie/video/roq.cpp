@@ -473,6 +473,9 @@ bool ROQPlayer::playFrameInternal() {
 
 #ifdef USE_MPEG2
 	if (_videoDecoder) {
+		if (!_videoDecoder->needsUpdate())
+			return false;	// Video has not yet ended
+
 		const Graphics::Surface *srcSurf = _videoDecoder->decodeNextFrame();
 		_currBuf->free();
 		delete _currBuf;
