@@ -477,8 +477,10 @@ bool ROQPlayer::playFrameInternal() {
 		_currBuf->free();
 		delete _currBuf;
 		_currBuf = new Graphics::Surface();
-		_currBuf->copyFrom(*srcSurf);
-		buildShowBuf();
+		if (srcSurf) {
+			_currBuf->copyFrom(*srcSurf);
+			buildShowBuf();
+		}
 		return _videoDecoder->endOfVideo();
 	}
 #endif
