@@ -97,7 +97,7 @@ const int BASE_FLAGS = ADGF_NO_FLAGS;
 	GROOVIEGAME("tlc", extra, f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_CD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
 
 #define TLCDVDENTRY(f1, x1, s1, f2, x2, s2, language, platform) \
-	GROOVIEGAME("tlc", MetaEngineDetection::GAME_NOT_IMPLEMENTED, f1, x1, s1, f2, x2, s2, language, platform, ADGF_UNSUPPORTED | ADGF_DVD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
+	GROOVIEGAME("tlc", MetaEngineDetection::GAME_NOT_IMPLEMENTED, f1, x1, s1, f2, x2, s2, language, platform, ADGF_DVD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
 
 #define TLCDEMOENTRY(f1, x1, s1, f2, x2, s2, language, platform, flags) \
 	GROOVIEGAME("tlc", "Demo", f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_DEMO, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD), kGroovieTLC)
@@ -125,7 +125,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The 7th Guest DOS Russian (Akella)
 	T7GENTRY("", "script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
 					"intro.gjd", nullptr, 31711554, RU_RUS, kPlatformDOS, BASE_FLAGS),
-	
+
 	// The 7th Guest iOS English
 	T7GNOMIDIENTRY("", "script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
 						"SeventhGuest", nullptr, AD_NO_SIZE, EN_ANY, kPlatformIOS, BASE_FLAGS, GAMEOPTION_ORIGINAL_SAVELOAD GAMEOPTION_EASIER_AI),
@@ -179,7 +179,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 /*==== The Making of The 11th Hour ====*/
 	// all are in english even if they came packaged with alternate language versions of the game
 	// I removed the hash check for now so they all match with a single entry since the language field is useless here
-	
+
 	// The Making of The 11th Hour DOS/Windows
 	T11HMAKINGOFENTRY("makingof.grv", nullptr, 994, "zmakd2a.gjd", nullptr, AD_NO_SIZE, EN_ANY, kPlatformWindows),
 
