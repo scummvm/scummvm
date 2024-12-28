@@ -894,17 +894,17 @@ bool MacV6Gui::runOptionsDialog() {
 	int voiceVolume = 0;
 
 	if (sliderMusicVolume) {
-		musicVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
+		musicVolume = ConfMan.getInt("music_volume") / 16;
 		sliderMusicVolume->setValue(musicVolume);
 	}
 
 	if (effectVolumeSlider) {
-		effectVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16;
+		effectVolume = ConfMan.getInt("sfx_volume") / 16;
 		effectVolumeSlider->setValue(effectVolume);
 	}
 
 	if (voiceVolumeSlider) {
-		voiceVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 16;
+		voiceVolume = ConfMan.getInt("speech_volume") / 16;
 		voiceVolumeSlider->setValue(voiceVolume);
 	}
 
