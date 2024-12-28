@@ -967,19 +967,6 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 }
 
 template <typename T>
-static void drawPixelPlain(int x, int y, int color, void *data) {
-	ManagedSurface *surface = (ManagedSurface *)data;
-
-	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-		*((T *)surface->getBasePtr(x, y)) = (T)color;
-}
-
-template <typename T>
-static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
-	drawRoundRect(rect, arc, color, true, drawPixelPlain<T>, surface);
-}
-
-template <typename T>
 static void drawMenuPattern(ManagedSurface &srcSurf, ManagedSurface &destSurf, const byte *pattern, int x, int y, int width, uint32 colorKey) {
 	// I am lazy to extend drawString() with plotProc as a parameter, so
 	// fake it here
@@ -1045,12 +1032,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	// Fill in the corners with black
 	_screen.fillRect(r, _wm->_colorBlack);
-
-	if (_wm->_pixelformat.bytesPerPixel == 1) {
-		drawFilledRoundRect<byte>(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
-	} else {
-		drawFilledRoundRect<uint32>(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
-	}
+	_screen.drawRoundRect(r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite, true);
 
 	r.top = 7;
 	_screen.fillRect(r, _wm->_colorWhite);

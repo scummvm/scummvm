@@ -427,6 +427,18 @@ public:
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color);
 
 	/**
+	 * Draw a rectangle with rounded corners.
+	 *
+	 * @param r      The rectangle to draw.
+	 * @param arc    The radius of each corner.
+	 * @param color  Color of the rectangle.
+	 * @param filled Whether the rectangle should be filled in.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled);
+
+	/**
 	 * Draw a horizontal line.
 	 *
 	 * @param x      The start x coordinate of the line.
