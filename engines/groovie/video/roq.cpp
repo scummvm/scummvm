@@ -197,10 +197,14 @@ uint16 ROQPlayer::loadInternal() {
 	if (blockHeader.type == 0) {
 		_videoDecoder = new Video::MPEGPSDecoder();
 		_videoDecoder->loadStream(_file);
+
+		_isFileHandled = true;
 		return 24;
 	}
+
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
+	_isFileHandled = false;
 #endif
 
 	if (blockHeader.type != 0x1084) {

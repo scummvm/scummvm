@@ -936,7 +936,9 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 		// Close the previous video file
 		if (_videoFile) {
 			_videoRef = uint32(-1);
-			delete _videoFile;
+
+			if (!_vm->_videoPlayer->isFileHandled())
+				delete _videoFile;
 		}
 
 		if (fileref == uint32(-1))
@@ -1037,7 +1039,8 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// The video has ended, or it was being looped and the audio has ended.
 
 			// Close the file
-			delete _videoFile;
+			if (!_vm->_videoPlayer->isFileHandled())
+				delete _videoFile;
 			_videoFile = nullptr;
 			_videoRef = uint32(-1);
 

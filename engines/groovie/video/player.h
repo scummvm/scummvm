@@ -52,6 +52,8 @@ public:
 	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
 	void unloadSubtitles();
 
+	virtual bool isFileHandled() { return false; }
+
 protected:
 	// To be implemented by subclasses
 	virtual uint16 loadInternal() = 0;
