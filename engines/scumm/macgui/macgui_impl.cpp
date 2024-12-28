@@ -952,6 +952,9 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 					}
 				}
 
+				if (len & 1)
+					res->skip(1);
+
 				delete imageRes;
 			}
 
