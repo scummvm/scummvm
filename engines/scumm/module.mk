@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialogs.o \
 	file.o \
+	file_engine.o \
 	file_nes.o \
 	gfx_gui.o \
 	gfx_mac.o \
