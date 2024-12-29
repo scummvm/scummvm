@@ -111,6 +111,7 @@ bool GameContent::tick() {
 		moveActors();
 		use_item();
 		updateActors();
+		checkForCheats();
 		break;
 
 	case MODE_THOR_DIES:
@@ -402,6 +403,15 @@ void GameContent::thorDead() {
 
 	show_level(_G(new_level));
 	set_thor_vars();
+}
+
+void GameContent::checkForCheats() {
+	if (_G(cheats).freezeHealth)
+		_G(thor)->health = 150;
+	if (_G(cheats).freezeMagic)
+		_G(thor_info).magic = 150;
+	if (_G(cheats).freezeJewels)
+		_G(thor_info).jewels = 999;
 }
 
 } // namespace Views

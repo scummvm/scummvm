@@ -64,6 +64,11 @@ enum TransitionDir {
 	DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
 };
 
+struct Cheats {
+	bool freezeHealth = false;
+	bool freezeMagic = false;
+	bool freezeJewels = false;
+};
 
 class Vars {
 public:
@@ -86,6 +91,7 @@ public:
 	Scripts _scripts;
 	GameMode _gameMode = MODE_NORMAL;
 	TransitionDir _transitionDir = DIR_LEFT;
+	Cheats _cheats;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
