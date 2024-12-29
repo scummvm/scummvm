@@ -57,6 +57,8 @@ protected:
 	Insane *_insane;
 
 public:
+	void syncSoundSettings() override;
+
 	SmushMixer *_smixer;
 	SmushPlayer *_splayer;
 
