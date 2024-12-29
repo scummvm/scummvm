@@ -78,6 +78,8 @@ protected:
 
 	MacGuiImpl::MacImageSlider *addSlider(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings = 4);
 
+	void setVolume(int type, int volume);
+
 	void runAboutDialog() override;
 	bool runOpenDialog(int &saveSlotToHandle) override;
 	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
