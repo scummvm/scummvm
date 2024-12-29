@@ -618,8 +618,9 @@ void Adlib::Func294E() {
 				bp6 = 0;
 			}
 			// l0017_2A01:
-			// TODO: Continue here
 			
+			bp4 = gArray11F[bp6] << 0x8 + gArray9F[bp6];
+			// TODO: Continue here
 		}
 	}
 	// TODO:
@@ -629,16 +630,7 @@ void Adlib::Func294E() {
 
 
 l0017_2A01:
-	mov	di,[bp-6h]
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	di,[bp-6h]
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-4h],ax
+	
 	mov	al,[bp+6h]
 	xor	ah,ah
 	xor	dx,dx
