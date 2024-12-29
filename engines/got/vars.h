@@ -212,9 +212,7 @@ public:
 	int _current_level = 23;
 	int _new_level = 0;
 	int _new_level_tile = 0, _current_area = 0;
-	uint _latch_mem = 0;
 	byte *_enemy_mb = nullptr;
-	uint _enemy_lm = 0;
 	byte *_enemy_ami = nullptr;
 	char _sd_header[128] = {};
 	char _play_speed = 0;
