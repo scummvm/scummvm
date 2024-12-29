@@ -888,107 +888,108 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 
 	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
 		res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
+		if (!res)
+			return nullptr;
 
-		if (res) {
-			saveScreen();
+		saveScreen();
 
-			// Collect the palettes from all the icons and pictures
-			// in the dialog, and combine them into a single palette
-			// that they will all be remapped to use. This is
-			// probably not what the original did, as the colors
-			// become slightly different. Maybe the original just
-			// picked one of the palettes, and then used the
-			// closest available colors for the rest?
-			//
-			// That might explain why some of them have seemingly
-			// larger palettes than necessary, but why not use the
-			// exact colors when we can?
+		// Collect the palettes from all the icons and pictures in the
+		// dialog, and combine them into a single palette that they
+		// will all be remapped to use. This is probably not what the
+		// original did, as the colors become slightly different. Maybe
+		// the original just picked one of the palettes, and then used
+		// the closest available colors for the rest?
+		//
+		// That might explain why some of them have seemingly larger
+		// palettes than necessary, but why not use the exact colors
+		// when we can?
 
-			Common::HashMap<uint32, byte> paletteMap;
-			int numWindowColors = 0;
+		Common::HashMap<uint32, byte> paletteMap;
+		int numWindowColors = 0;
 
-			// Additional colors for hard-coded elements
-			paletteMap[0xCDCDCD] = numWindowColors++;
+		// Additional colors for hard-coded elements
+		paletteMap[0xCDCDCD] = numWindowColors++;
 
-			int numItems = res->readUint16BE() + 1;
+		int numItems = res->readUint16BE() + 1;
 
-			for (int i = 0; i < numItems; i++) {
-				res->skip(12);
-				int type = res->readByte();
-				int len = res->readByte();
+		for (int i = 0; i < numItems; i++) {
+			res->skip(12);
+			int type = res->readByte();
+			int len = res->readByte();
 
-				Image::PICTDecoder pictDecoder;
-				Image::CicnDecoder iconDecoder;
+			Image::PICTDecoder pictDecoder;
+			Image::CicnDecoder iconDecoder;
 
-				const byte *palette = nullptr;
-				int paletteColorCount = 0;
+			const byte *palette = nullptr;
+			int paletteColorCount = 0;
 
-				Common::SeekableReadStream *imageRes = nullptr;
-				Image::ImageDecoder *decoder = nullptr;
+			Common::SeekableReadStream *imageRes = nullptr;
+			Image::ImageDecoder *decoder = nullptr;
 
-				switch (type & 0x7F) {
-				case 32:
-					imageRes = resource.getResource(MKTAG('c', 'i', 'c', 'n'), res->readUint16BE());
-					decoder = &iconDecoder;
-					break;
+			switch (type & 0x7F) {
+			case 32:
+				imageRes = resource.getResource(MKTAG('c', 'i', 'c', 'n'), res->readUint16BE());
+				decoder = &iconDecoder;
+				break;
 
-				case 64:
-					imageRes = resource.getResource(MKTAG('P', 'I', 'C', 'T'), res->readUint16BE());
-					decoder = &pictDecoder;
-					break;
+			case 64:
+				imageRes = resource.getResource(MKTAG('P', 'I', 'C', 'T'), res->readUint16BE());
+				decoder = &pictDecoder;
+				break;
 
-				default:
-					res->skip(len);
-					break;
+			default:
+				res->skip(len);
+				break;
+			}
+
+			if (imageRes && decoder->loadStream(*imageRes)) {
+				palette = decoder->getPalette();
+				paletteColorCount = decoder->getPaletteColorCount();
+				for (int j = 0; j < paletteColorCount; j++) {
+					uint32 color = (palette[3 * j] << 16) | (palette[3 * j + 1] << 8) | palette[3 * j + 2];
+					if (!paletteMap.contains(color))
+						paletteMap[color] = numWindowColors++;
 				}
-
-				if (imageRes && decoder->loadStream(*imageRes)) {
-					palette = decoder->getPalette();
-					paletteColorCount = decoder->getPaletteColorCount();
-					for (int j = 0; j < paletteColorCount; j++) {
-						uint32 color = (palette[3 * j] << 16) | (palette[3 * j + 1] << 8) | palette[3 * j + 2];
-						if (!paletteMap.contains(color))
-							paletteMap[color] = numWindowColors++;
-					}
-				}
-
-				if (len & 1)
-					res->skip(1);
-
-				delete imageRes;
 			}
 
-			delete res;
+			if (len & 1)
+				res->skip(1);
 
-			Graphics::Palette palette(256);
-			setMacGuiColors(palette);
-
-			for (auto &k : paletteMap) {
-				int r = (k._key >> 16) & 0xFF;
-				int g = (k._key >> 8) & 0xFF;
-				int b = k._key & 0xFF;
-				palette.set(k._value, r, g, b);
-			}
-
-			_windowManager->passPalette(palette.data(), 256);
-
-			for (int i = 0; i < 256; i++) {
-				byte r, g, b;
-
-				palette.get(i, r, g, b);
-				r = _vm->_macGammaCorrectionLookUp[r];
-				g = _vm->_macGammaCorrectionLookUp[g];
-				b = _vm->_macGammaCorrectionLookUp[b];
-				palette.set(i, r, g, b);
-			}
-
-			_system->getPaletteManager()->setPalette(palette);
+			delete imageRes;
 		}
+
+		delete res;
+
+		Graphics::Palette palette(256);
+		setMacGuiColors(palette);
+
+		for (auto &k : paletteMap) {
+			int r = (k._key >> 16) & 0xFF;
+			int g = (k._key >> 8) & 0xFF;
+			int b = k._key & 0xFF;
+			palette.set(k._value, r, g, b);
+		}
+
+		_windowManager->passPalette(palette.data(), 256);
+
+		for (int i = 0; i < 256; i++) {
+			byte r, g, b;
+
+			palette.get(i, r, g, b);
+			r = _vm->_macGammaCorrectionLookUp[r];
+			g = _vm->_macGammaCorrectionLookUp[g];
+			b = _vm->_macGammaCorrectionLookUp[b];
+			palette.set(i, r, g, b);
+		}
+
+		_system->getPaletteManager()->setPalette(palette);
 	}
 
-	MacDialogWindow *window = createWindow(bounds);
-
 	res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
+	if (!res)
+		return nullptr;
+
+	MacDialogWindow *window = createWindow(bounds);
 
 	if (res) {
 		int numItems = res->readUint16BE() + 1;
