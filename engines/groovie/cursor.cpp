@@ -316,8 +316,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest, uint32 size) {
 		for (int x = 0; x < _width; x++) {
 			if (!size) {
 				debugC(1, kDebugCursor, "Cursor_v2::decodeFrame(): Frame underflow");
-				delete[] tmp;
-				return;
+				break;
 			}
 
 			// If both counters are empty
@@ -363,6 +362,9 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest, uint32 size) {
 			}
 			ptr += 4;
 		}
+
+		if (!size)
+			break;
 	}
 
 	// Convert to screen format
