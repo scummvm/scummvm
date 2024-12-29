@@ -1304,7 +1304,7 @@ void ImageElement::render(Window *window) {
 			if (transColor == 0)
 				transColor = optimized->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
-			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor, false, 0, alpha);
+			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor, false, alpha);
 		} else if (inkMode == VisualElementRenderProperties::kInkModeDefault || inkMode == VisualElementRenderProperties::kInkModeCopy) {
 			if (alpha != 255) {
 				warning("Alpha fade was applied to a default or copy image, this isn't supported yet");
