@@ -47,6 +47,25 @@ enum SoundSEType {
 class SoundSE {
 
 protected:
+	// Used in MI1 + MI2
+	struct AudioEntryMI {
+		uint32 hash;
+		uint16 room;
+		uint16 script;
+		uint16 localScriptOffset;
+		uint16 messageIndex;        // message index, used in messages split with wait()
+		uint16 isEgoTalking;        // 1 if ego is talking, 0 otherwise
+		uint16 wait;                // wait time in ms
+		Common::String textEnglish; // 256 bytes, English text
+		Common::String textFrench;  // 256 bytes, French text
+		Common::String textItalian; // 256 bytes, Italian text
+		Common::String textGerman;  // 256 bytes, German text
+		Common::String textSpanish; // 256 bytes, Spanish text
+		Common::String speechFile;  // 32 bytes
+
+		int32 hashFourCharString; // Hash calculated on a four char string, from disasm
+	};
+
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
@@ -57,6 +76,22 @@ public:
 	Audio::SeekableAudioStream *getXWBTrack(int track);
 	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
 	uint32 getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex);
+
+	void handleRemasteredSpeech(const char *msgString,
+								const char *speechFilenameSubstitution,
+								uint16 roomNumber,
+								uint16 actorTalking,
+								uint16 scriptNum,
+								uint16 scriptOffset,
+								uint16 numWaits);
+
+	AudioEntryMI *getAppropriateSpeechCue(const char *msgString,
+										  const char *speechFilenameSubstitution,
+										  uint16 roomNumber,
+										  uint16 actorTalking,
+										  uint16 scriptNum,
+										  uint16 scriptOffset,
+										  uint16 numWaits);
 
 private:
 	enum AudioCodec {
@@ -100,25 +135,8 @@ private:
 	AudioIndex _sfxEntries;
 	Common::String _sfxFilename;
 
-	// Used in MI1 + MI2
-	struct AudioEntryMI {
-		uint32 hash;
-		uint16 room;
-		uint16 script;
-		uint16 localScriptOffset;
-		uint16 messageIndex;        // message index, used in messages split with wait()
-		uint16 isEgoTalking;        // 1 if ego is talking, 0 otherwise
-		uint16 wait;                // wait time in ms
-		Common::String textEnglish; // 256 bytes, English text
-		Common::String textFrench;  // 256 bytes, French text
-		Common::String textItalian; // 256 bytes, Italian text
-		Common::String textGerman;  // 256 bytes, German text
-		Common::String textSpanish; // 256 bytes, Spanish text
-		Common::String speechFile;  // 32 bytes
-	};
-
-	//typedef Common::Array<AudioEntryMI> AudioIndexMI;
-	//AudioIndexMI _audioEntriesMI;
+	typedef Common::Array<AudioEntryMI> AudioIndexMI;
+	AudioIndexMI _audioEntriesMI;
 
 	int32 getSoundIndexFromOffset(uint32 offset);
 

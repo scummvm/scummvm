@@ -151,6 +151,7 @@ public:
 	void updateMusicTimer();
 
 	bool useRemasteredAudio() const { return _useRemasteredAudio; }
+	void startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 currentScriptNum, uint16 currentScriptOffset, uint16 numWaits);
 
 	// TODO: Duplicate this in Sound as well?
 	bool isRolandLoom() const { return _soundCD->isRolandLoom(); }

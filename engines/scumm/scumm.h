@@ -1647,6 +1647,7 @@ protected:
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	virtual void drawSentence() {}
 	virtual void displayDialog();
+	int countNumberOfWaits(); // For SE speech support, from disasm
 	bool newLine();
 	void drawString(int a, const byte *msg);
 	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;

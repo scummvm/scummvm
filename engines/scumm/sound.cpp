@@ -2192,4 +2192,11 @@ void Sound::updateMusicTimer() {
 	}
 }
 
+void Sound::startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 currentScriptNum, uint16 currentScriptOffset, uint16 numWaits) {
+	// Crudely adapted from the disasm of MI1SE...
+	// TODO: Apply the various speech-line substitutions performed per-game
+
+	_soundSE->handleRemasteredSpeech(msgString, nullptr, roomNumber, actorTalking, currentScriptNum, currentScriptOffset, numWaits);
+}
+
 } // End of namespace Scumm

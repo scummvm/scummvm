@@ -333,12 +333,123 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 #undef GET_FSB5_OFFSET
 #undef WARN_AND_RETURN_FSB
 
+static int32 calculateStringHash(const char *input) {
+	int32 hash = 0;
+	int32 multiplier = 0x1EDD;
+
+	for (const char *i = input; *i != '\0'; i++) {
+		char current = *i;
+
+		// Convert lowercase to uppercase...
+		if (current >= 'a' && current <= 'z') {
+			current -= 32;
+		}
+
+		// Process alphanumeric characters only...
+		if ((current >= '0' && current <= '9') ||
+			(current >= 'A' && current <= 'Z')) {
+			multiplier++;
+			hash ^= multiplier * current;
+		}
+	}
+
+	return hash;
+}
+
+static int32 calculate4CharStringHash(const char *str) {
+	int32 hash;
+	int charCount;
+	const char *i;
+	char current;
+
+	hash = 0;
+	charCount = 0;
+
+	// Process until the string terminator or 4 valid characters are found...
+	for (i = str; *i; ++i) {
+		if (charCount >= 4)
+			break;
+
+		current = *i;
+
+		if ((current >= 'A' && current <= 'Z') || (current >= 'a' && current <= 'z')) {
+			// Take the lower nibble of the char and incorporate it into the hash...
+			hash = (16 * hash) | current & 0xF;
+			++charCount;
+		}
+	}
+
+	return hash;
+}
+
+static int32 calculateStringSimilarity(const char *str1, const char *str2) {
+	// This function is responsible for calculating a similarity score between
+	// the two input strings; the closer the score is to zero, the closer the
+	// two strings are. Taken from disasm.
+
+	int str1Len = strlen(str1);
+	int str2Len = strlen(str2);
+	int totalPenalty = 0;
+	int lastMatchOffset = 0;
+
+	// Return 0 if first string is empty...
+	if (str1Len <= 0)
+		return 0;
+
+	// Scan through first string with a sliding window...
+	for (int windowPos = 3; windowPos - 3 < str1Len; windowPos++) {
+		char currentChar = str1[windowPos - 3];
+
+		// Check if the current character is alphanumeric...
+		if ((currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z') ||
+			(currentChar >= '0' && currentChar <= '9')) {
+
+			// Normalize character to 5-bit value (so that it's case insensitive)
+			char normalizedChar = currentChar & 0x1F;
+			int penalty = 9; // Default penalty
+
+			// Calculate the search window bounds in the second string...
+			int searchStart = (windowPos - 6 <= 0) ? 0 : windowPos - 6;
+			int searchEnd = windowPos;
+
+			// Look for matching character in second string...
+			if (searchStart <= searchEnd) {
+				while (searchStart < str2Len) {
+					if ((str2[searchStart] & 0x1F) == normalizedChar) {
+						int positionDiff = windowPos - searchStart - 3;
+
+						// If character found at same relative position as last match...
+						if (lastMatchOffset == positionDiff) {
+							penalty = 0; // No penalty for consistent positioning!
+						} else {
+							// Penalty based on square of position difference!
+							penalty = positionDiff * positionDiff;
+							lastMatchOffset = positionDiff;
+						}
+
+						break;
+					}
+
+					if (++searchStart > searchEnd)
+						break;
+				}
+			}
+
+			totalPenalty -= penalty; // Subtract penalty from total score...
+		}
+	}
+
+	return totalPenalty;
+}
+
 void SoundSE::initAudioMappingMI() {
 	Common::File *f = new Common::File();
 	if (!f->open(Common::Path("speech.info"))) {
 		delete f;
 		return;
 	}
+
+	_audioEntriesMI.clear();
 
 	do {
 		AudioEntryMI entry;
@@ -357,7 +468,9 @@ void SoundSE::initAudioMappingMI() {
 		entry.textSpanish = f->readString(0, 256);
 
 		entry.speechFile  = f->readString(0, 32);
-		entry.speechFile.toLowercase();
+		//entry.speechFile.toLowercase();
+
+		entry.hashFourCharString = calculate4CharStringHash(entry.textEnglish.c_str()); // From disasm
 
 		//debug("hash %d, room %d, script %d, localScriptOffset: %d, messageIndex %d, isEgoTalking: %d, wait: %d, textEnglish '%s', speechFile '%s'",
 		//	  entry.hash, entry.room, entry.script,
@@ -371,7 +484,7 @@ void SoundSE::initAudioMappingMI() {
 			entry.messageIndex
 		);
 
-		//_audioEntriesMI.push_back(entry);
+		_audioEntriesMI.emplace_back(entry);
 	} while (!f->eos());
 
 	f->close();
@@ -482,6 +595,71 @@ int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
 		return -1;
 }
 
+SoundSE::AudioEntryMI *SoundSE::getAppropriateSpeechCue(const char *msgString, const char *speechFilenameSubstitution,
+											   uint16 roomNumber, uint16 actorTalking, uint16 scriptNum, uint16 scriptOffset, uint16 numWaits) {
+	uint32 hash;
+	AudioEntryMI *curAudioEntry;
+	uint16 script;
+	int32 currentScore;
+	int32 bestScore;
+	int bestScoreIdx;
+	uint32 tmpHash;
+
+	hash = calculateStringHash(msgString);
+
+	tmpHash = hash;
+	if (!hash)
+		return nullptr;
+
+	bestScore = 0x40000000; // This is the score that we have to minimize...
+	bestScoreIdx = -1;
+
+	if (_audioEntriesMI.empty())
+		return nullptr;
+
+	for (uint curEntryIdx = 0; curEntryIdx < _audioEntriesMI.size(); curEntryIdx++) {
+		curAudioEntry = &_audioEntriesMI[curEntryIdx];
+
+		if (curAudioEntry->hash == hash &&
+			curAudioEntry->messageIndex == numWaits &&
+			calculate4CharStringHash(msgString) == curAudioEntry->hashFourCharString) {
+
+			currentScore = ABS(scriptOffset - curAudioEntry->localScriptOffset - 7);
+			if (curAudioEntry->room == roomNumber) {
+				script = curAudioEntry->script;
+				if (script && script != scriptNum)
+					currentScore = 10000;
+			} else {
+				currentScore += 10000;
+			}
+
+			currentScore -= 10 * calculateStringSimilarity(curAudioEntry->textEnglish.c_str(), msgString);
+
+			if (actorTalking == 255) {
+				if (curAudioEntry->isEgoTalking == 1)
+					currentScore += 2000;
+			} else if ((actorTalking == 1) != curAudioEntry->isEgoTalking) {
+				currentScore += 20000;
+			}
+
+			if (speechFilenameSubstitution &&
+				scumm_strnicmp(curAudioEntry->speechFile.c_str(), speechFilenameSubstitution, strlen(speechFilenameSubstitution))) {
+				currentScore += 100000;
+			}
+			if (currentScore < bestScore) {
+				bestScore = currentScore;
+				bestScoreIdx = (int)curEntryIdx;
+			}
+		}
+
+		hash = tmpHash;
+	}
+	if (bestScoreIdx == -1)
+		return nullptr;
+	else
+		return &_audioEntriesMI[bestScoreIdx];
+}
+
 Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	Common::SeekableReadStream *stream;
 	Common::String audioFileName;
@@ -540,6 +718,103 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 
 uint32 SoundSE::getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex) {
 	return ((room + script + messageIndex) << 16) | (localScriptOffset & 0xFFFF);
+}
+
+Common::String calculateCurrentString(const char *msgString) {
+	char currentChar;
+	bool shouldContinue = true;
+	char messageBuffer[512];
+	char *outMsgBuffer = messageBuffer;
+
+	memset(messageBuffer, 0, sizeof(messageBuffer));
+
+	currentChar = *msgString;
+
+	// Handle empty string case
+	if (msgString[0] == '\0') {
+		messageBuffer[0] = 0;
+		// TODO: This case sets a variable msgType equal to 1,
+		// it's not clear where this is used in the executable...
+	} else {
+		// Process each character to find the control codes...
+		while (shouldContinue && *msgString) {
+			currentChar = *msgString;
+
+			// If there are no control codes...
+			if (currentChar != (char)0xFF && currentChar != (char)0xFE) {
+				// Handle normal characters...
+				switch (currentChar) {
+				case '\r':
+					*outMsgBuffer = '\n';
+					outMsgBuffer++;
+					msgString++;
+					break;
+
+				case '@':
+				case 8: // "Verb next line" marker...
+					msgString++;
+					break;
+
+				default: // Normal character, copy it over...
+					*outMsgBuffer = *msgString;
+					outMsgBuffer++;
+					msgString++;
+					break;
+				}
+			} else {
+				// Handle special character sequences
+				msgString++;
+				currentChar = *msgString;
+
+				switch (currentChar) {
+				case 1: // "Next line" marker
+					*outMsgBuffer = '\n';
+					outMsgBuffer++;
+					msgString++;
+					break;
+
+				case 2: // "No crlf" marker
+					shouldContinue = false;
+					// TODO: This case sets a variable msgType equal to 2,
+					// it's not clear where this is used in the executable...
+					*outMsgBuffer = '\0';
+					break;
+
+				case 3: // "Wait" marker
+					*outMsgBuffer = '\0';
+					// TODO: This case sets a variable msgType equal to 1,
+					// it's not clear where this is used in the executable...
+					shouldContinue = false;
+					break;
+
+				default:
+					break; // Do nothing
+				}
+			}
+		}
+
+		// Handle end of string if we haven't already
+		if (shouldContinue) {
+			*outMsgBuffer = '\0';
+			// TODO: This case sets a variable msgType equal to 1,
+			// it's not clear where this is used in the executable...
+		}
+	}
+
+	Common::String result(messageBuffer);
+
+	return result;
+}
+
+void SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechFilenameSubstitution,
+								     uint16 roomNumber, uint16 actorTalking, uint16 scriptNum, uint16 scriptOffset, uint16 numWaits) {
+
+	// Get the string without the various control codes and special characters...
+	Common::String currentString = calculateCurrentString(msgString);
+	AudioEntryMI *entry = getAppropriateSpeechCue(currentString.c_str(), speechFilenameSubstitution, roomNumber, actorTalking, scriptNum, scriptOffset, numWaits);
+	if (entry)
+		debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
+
 }
 
 } // End of namespace Scumm
