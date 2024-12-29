@@ -48,6 +48,7 @@ private:
 	void thorDies();
 	void spinThor();
 	void thorDead();
+	void checkForCheats();
 
 public:
 	GameContent();

@@ -39,6 +39,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 	registerCmd("magic", WRAP_METHOD(Console, cmdMagic));
+	registerCmd("freeze", WRAP_METHOD(Console, cmdFreeze));
 }
 
 Console::~Console() {
@@ -108,6 +109,26 @@ bool Console::cmdMagic(int argc, const char **argv) {
 	_G(thor_info).magic = (argc == 2) ? CLIP(atoi(argv[1]), 0, 150): 150;
 	
 	return false;
+}
+
+bool Console::cmdFreeze(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("freeze ['health', 'magic', 'gems']\n");
+	} else if (!strcmp(argv[1], "health")) {
+		_G(cheats).freezeHealth = !_G(cheats).freezeHealth;
+		debugPrintf("Health is %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+	} else if (!strcmp(argv[1], "magic")) {
+		debugPrintf("Magic is %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+	} else if (!strcmp(argv[1], "jewels")) {
+		_G(cheats).freezeJewels = !_G(cheats).freezeJewels;
+		debugPrintf("Jewels are %s\n", _G(cheats).freezeJewels ? "frozen" : "unfrozen");
+	} else if (!strcmp(argv[1], "all")) {
+		_G(cheats).freezeHealth = _G(cheats).freezeMagic =
+			_G(cheats).freezeJewels = !_G(cheats).freezeHealth;
+		debugPrintf("All are %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+	}
+
+	return true;
 }
 
 } // namespace Got
