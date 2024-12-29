@@ -55,19 +55,43 @@ void BaseSurface::writeFancyString(const Common::String &str, const Common::Poin
 }
 
 void BaseSurface::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
+		bool flipped, int scaleVal) {
 	Common::Point drawPt(pt.x + src.sDrawXOffset(scaleVal), pt.y + src.sDrawYOffset(scaleVal));
-	SHtransBlitFrom(src._frame, drawPt, flipped, overrideColor, scaleVal);
+	SHtransBlitFrom(src._frame, drawPt, flipped, scaleVal);
 }
 
 void BaseSurface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
+		bool flipped, int scaleVal) {
 	Common::Rect srcRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w * SCALE_THRESHOLD / scaleVal,
 		pt.y + src.h * SCALE_THRESHOLD / scaleVal);
 
 	Graphics::Screen::transBlitFrom(src, srcRect, destRect, IS_3DO ? 0 : TRANSPARENCY,
-		flipped, overrideColor);
+		flipped);
+}
+
+void BaseSurface::SHoverrideBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		int overrideColor) {
+	Common::Point drawPt(pt.x + src.sDrawXOffset(SCALE_THRESHOLD), pt.y + src.sDrawYOffset(SCALE_THRESHOLD));
+	SHoverrideBlitFrom(src._frame, drawPt, overrideColor);
+}
+
+void BaseSurface::SHoverrideBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		int overrideColor) {
+	Common::Rect srcRect(0, 0, src.w, src.h);
+	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
+	clip(srcRect, destRect);
+
+	const uint32 transColor = IS_3DO ? 0 : TRANSPARENCY;
+
+	for (uint y = 0; y < destRect.height(); y++) {
+		for (uint x = 0; x < destRect.width(); x++) {
+			const uint8 srcVal = src.getPixel(srcRect.left + x, srcRect.top + y);
+			if (srcVal == transColor)
+				continue;
+			setPixel(destRect.left + x, destRect.top + y, overrideColor);
+		}
+	}
 }
 
 void BaseSurface::SHbitmapBlitFrom(const byte *src, int widthSrc, int heightSrc, int pitchSrc, const Common::Point &pt,

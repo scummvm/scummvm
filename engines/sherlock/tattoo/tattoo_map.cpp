@@ -405,7 +405,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 			screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
-		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, 0, scaleVal);
+		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, scaleVal);
 
 		screen.slamRect(oldBounds);
 		screen.slamArea(pt.x, pt.y, picSize.x, picSize.y);
