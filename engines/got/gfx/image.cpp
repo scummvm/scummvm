@@ -92,7 +92,7 @@ int load_standard_actors() {
 	_G(ami_buff) = _G(abuff);
 
 	load_actor(0, 100 + _G(thor_info).armor);   // Load Thor
-	memcpy(&_G(actor)[0], (_G(tmp_buff) + 5120), 40);
+	_G(actor)[0].loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor)[0], 0, 0, 100, 100);
 	_G(thor) = &_G(actor)[0];
 
@@ -106,7 +106,7 @@ int load_standard_actors() {
 	_G(thor_y2) = _G(thor)->y + 14;
 
 	load_actor(0, 103 + _G(thor_info).armor);   // Load hammer
-	memcpy(&_G(actor)[1], (_G(tmp_buff) + 5120), 40);
+	_G(actor)[1].loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor)[1], 1, 0, 100, 100);
 	_G(actor)[1].used = 0;
 	_G(hammer) = &_G(actor)[1];
@@ -255,9 +255,9 @@ int actor_visible(int invis_num) {
 	for (i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn).actor_invis[i] == invis_num) {
 			if (_G(etype)[i] >= 0 && !_G(actor)[i + 3].used) {
-				memcpy(&_G(actor)[i + 3], &_G(enemy)[_G(etype)[i]], sizeof(ACTOR));
+				_G(actor)[i + 3] = _G(enemy)[_G(etype)[i]];
+
 				d = _G(scrn).actor_dir[i];
-				//       _G(scrn).actor_type[i] &= 0x3f;
 				setup_actor(&_G(actor)[i + 3], i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
 					(_G(scrn).actor_loc[i] / 20) * 16);
 				_G(actor)[i + 3].init_dir = _G(scrn).actor_dir[i];
