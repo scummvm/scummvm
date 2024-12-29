@@ -650,9 +650,9 @@ bool ScalpelEngine::scrollCredits() {
 
 		// Write the text appropriate for the next frame
 		if (idx < 400)
-			_screen->SHtransBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false);
 		if (idx > 200)
-			_screen->SHtransBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
 		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->width(), 10));

@@ -79,13 +79,25 @@ public:
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	virtual void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		bool flipped = false, int scaleVal = SCALE_THRESHOLD);
 
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	virtual void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		bool flipped = false, int scaleVal = SCALE_THRESHOLD);
+
+	/**
+	 * Draws an image frame at a given position within this surface with transparency
+	 */
+	virtual void SHoverrideBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		int overrideColor);
+
+	/**
+	 * Draws an image frame at a given position within this surface with transparency
+	 */
+	virtual void SHoverrideBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		int overrideColor);
 
 	/**
 	 * Fill a given area of the surface with a given color

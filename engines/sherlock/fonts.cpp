@@ -318,7 +318,11 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 
 		if (curChar < _charCount) {
 			ImageFrame &frame = (*_font)[curChar];
-			surface->SHtransBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]), false, overrideColor);
+			if (overrideColor) {
+				surface->SHoverrideBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]), overrideColor);
+			} else {
+				surface->SHtransBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]));
+			}
 			charPos.x += frame._frame.w + 1;
 		} else {
 			warning("Invalid character encountered - %d", (int)curChar);
