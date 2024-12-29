@@ -2413,43 +2413,6 @@ void ScummEngine::syncSoundSettings() {
 	if (!_setupIsComplete)
 		return;
 
-	if (isUsingOriginalGUI() && _game.version > 6) {
-		int guiTextStatus = 0;
-		if (ConfMan.getBool("speech_mute")) {
-			guiTextStatus = 2;
-		} else if (ConfMan.getBool("subtitles")) {
-			guiTextStatus = 1;
-		}
-
-		// Mainly used by COMI
-		ConfMan.setInt("original_gui_text_status", guiTextStatus);
-		_voiceMode = guiTextStatus;
-
-		if (VAR_VOICE_MODE != 0xFF)
-			VAR(VAR_VOICE_MODE) = _voiceMode;
-
-		if (ConfMan.hasKey("original_gui_text_speed", _targetName)) {
-			// If the value has been changed from the GMM, sync it...
-			if (getTalkSpeed() != ConfMan.getInt("original_gui_text_speed")) {
-				ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
-			}
-
-			_defaultTextSpeed = ConfMan.getInt("original_gui_text_speed");
-
-			if (VAR_CHARINC != 0xFF)
-				VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
-		}
-
-#ifdef ENABLE_SCUMM_7_8
-		if (_game.version >= 7 && _imuseDigital) {
-			_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
-			_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
-			_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
-		}
-#endif
-		return;
-	}
-
 	Engine::syncSoundSettings();
 
 	// Sync the engine with the config manager
@@ -2491,6 +2454,49 @@ void ScummEngine::syncSoundSettings() {
 		_scummVars[632] = ConfMan.getBool("subtitles");
 	}
 
+}
+
+void ScummEngine_v7::syncSoundSettings() {
+	if (!_setupIsComplete)
+		return;
+
+	if (!isUsingOriginalGUI()) {
+		ScummEngine::syncSoundSettings();
+		return;
+	}
+
+	int guiTextStatus = 0;
+	if (ConfMan.getBool("speech_mute")) {
+		guiTextStatus = 2;
+	} else if (ConfMan.getBool("subtitles")) {
+		guiTextStatus = 1;
+	}
+
+	// Mainly used by COMI
+	ConfMan.setInt("original_gui_text_status", guiTextStatus);
+	_voiceMode = guiTextStatus;
+
+	if (VAR_VOICE_MODE != 0xFF)
+		VAR(VAR_VOICE_MODE) = _voiceMode;
+
+	if (ConfMan.hasKey("original_gui_text_speed", _targetName)) {
+		// If the value has been changed from the GMM, sync it...
+		if (getTalkSpeed() != ConfMan.getInt("original_gui_text_speed")) {
+			ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
+		}
+
+		_defaultTextSpeed = ConfMan.getInt("original_gui_text_speed");
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
+	}
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.version >= 7 && _imuseDigital) {
+		_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
+		_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
+		_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
+	}
+#endif
 }
 
 void ScummEngine::setTalkSpeed(int talkspeed) {
