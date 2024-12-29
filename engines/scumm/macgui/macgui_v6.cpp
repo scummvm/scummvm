@@ -37,6 +37,7 @@
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
 #include "scumm/file.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_v6.h"
 
@@ -54,10 +55,12 @@ MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiIm
 		_gameName = "Day of the Tentacle";
 	else if (_vm->_game.id == GID_SAMNMAX)
 		_gameName = "Sam & Max";
+#ifdef ENABLE_SCUMM_7_8
 	else if (_vm->_game.id == GID_DIG)
 		_gameName = "The Dig";
 	else if (_vm->_game.id == GID_FT)
 		_gameName = "Full Throttle";
+#endif
 	else if (_vm->_game.id == GID_MANIAC)
 		_gameName = "Maniac Mansion";
 	else
@@ -401,11 +404,13 @@ void MacV6Gui::runAboutDialog() {
 			bounds.top = 5;
 			bounds.right = 523;
 			bounds.bottom = 384;
+#ifdef ENABLE_SCUMM_7_8
 		} else if (_vm->_game.id == GID_DIG || _vm->_game.id == GID_FT) {
 			bounds.left = 121;
 			bounds.top = 15;
 			bounds.right = 519;
 			bounds.bottom = 364;
+#endif
 		}
 
 		MacDialogWindow *window = createDialog(136, bounds);
@@ -799,6 +804,44 @@ bool MacV6Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 	return false;
 }
 
+void MacV6Gui::setVolume(int type, int volume) {
+	const char *keys[] = {
+		"music_volume",
+		"sfx_volume",
+		"speech_volume"
+	};
+
+	const Audio::Mixer::SoundType soundTypes[] = {
+		Audio::Mixer::kMusicSoundType,
+		Audio::Mixer::kSFXSoundType,
+		Audio::Mixer::kSpeechSoundType
+	};
+
+	volume = CLIP(16 * volume, 0, 256);
+
+	if (_vm->_game.version >= 7) {
+#ifdef ENABLE_SCUMM_7_8
+		int dimuseVolume = CLIP(8 * volume, 0, 127);
+
+		switch (type) {
+		case 0:
+			_vm->_imuseDigital->diMUSESetMusicGroupVol(dimuseVolume);
+			break;
+		case 1:
+			_vm->_imuseDigital->diMUSESetSFXGroupVol(dimuseVolume);
+			break;
+		case 2:
+			_vm->_imuseDigital->diMUSESetVoiceGroupVol(dimuseVolume);
+			break;
+		}
+#endif
+	} else {
+		_vm->_mixer->setVolumeForSoundType(soundTypes[type], volume);
+	}
+
+	ConfMan.setInt(keys[type], volume);
+}
+
 bool MacV6Gui::runOptionsDialog() {
 	// There are too many different variations to list all widgets here.
 	// The important thing that they share are that the first three buttons
@@ -819,7 +862,9 @@ bool MacV6Gui::runOptionsDialog() {
 	MacImageSlider *sliderVoiceVolume = nullptr;
 	MacImageSlider *sliderTextSpeed = nullptr;
 
+#ifdef ENABLE_SCUMM_7_8
 	MacCheckbox *checkboxSpoolMusic = nullptr;
+#endif
 
 	MacPopUpMenu *popUpInteraction = nullptr;
 	MacPopUpMenu *popUpVideoQuality = nullptr;
@@ -867,6 +912,7 @@ bool MacV6Gui::runOptionsDialog() {
 		sliderEffectVolume = addSlider(window, 152, 87, 147, 17);
 		sliderVoiceVolume = addSlider(window, 152, 111, 147, 17);
 		sliderTextSpeed = addSlider(window, 152, 203, 147, 9);
+#ifdef ENABLE_SCUMM_7_8
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
@@ -877,7 +923,9 @@ bool MacV6Gui::runOptionsDialog() {
 		sliderTextSpeed = addSlider(window, 152, 231, 147, 9);
 
 		checkboxSpoolMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
-	}
+#endif
+	} else
+		error("MacV6Gui::runOptionsDialog: Unknown game");
 
 	if (popUpInteraction) {
 		switch (_vm->_voiceMode) {
@@ -899,12 +947,13 @@ bool MacV6Gui::runOptionsDialog() {
 	int musicVolume = 0;
 	int effectVolume = 0;
 	int voiceVolume = 0;
-	int spoolMusic = 1;
 
-	if (sliderMusicVolume) {
-		musicVolume = ConfMan.getInt("music_volume") / 16;
-		sliderMusicVolume->setValue(musicVolume);
-	}
+	// There is always a music volume slider. The rest are not guaranteed.
+	// If there is a voice volume slider but no effect volume slider, the
+	// voice volume slider cover both.
+
+	musicVolume = ConfMan.getInt("music_volume") / 16;
+	sliderMusicVolume->setValue(musicVolume);
 
 	if (sliderEffectVolume) {
 		effectVolume = ConfMan.getInt("sfx_volume") / 16;
@@ -916,15 +965,10 @@ bool MacV6Gui::runOptionsDialog() {
 		sliderVoiceVolume->setValue(voiceVolume);
 	}
 
-	if (checkboxSpoolMusic) {
-#if 0
-		spoolMusic = ConfMan.getBool("music_mute") ? 0 : 1;
-		checkboxSpoolMusic->setValue(spoolMusic);
-#else
-		checkboxSpoolMusic->setValue(spoolMusic);
-		checkboxSpoolMusic->setEnabled(false);
+#ifdef ENABLE_SCUMM_7_8
+	if (checkboxSpoolMusic)
+		checkboxSpoolMusic->setValue(_vm->_spooledMusicIsToBeEnabled);
 #endif
-	}
 
 	if (sliderTextSpeed)
 		sliderTextSpeed->setValue(_vm->_defaultTextSpeed);
@@ -936,6 +980,56 @@ bool MacV6Gui::runOptionsDialog() {
 			switch (event.type) {
 			case kDialogClick:
 				if (event.widget == buttonOk) {
+					musicVolume = sliderMusicVolume->getValue();
+
+					if (_vm->_game.id == GID_MANIAC) {
+						effectVolume = musicVolume;
+					} else if (_vm->_game.id == GID_TENTACLE) {
+						musicVolume = sliderMusicVolume->getValue();
+						voiceVolume = sliderVoiceVolume->getValue();
+						effectVolume = voiceVolume;
+					} else {
+						musicVolume = sliderMusicVolume->getValue();
+						effectVolume = sliderEffectVolume->getValue();
+						voiceVolume = sliderVoiceVolume->getValue();
+					}
+
+					setVolume(0, musicVolume);
+					setVolume(1, effectVolume);
+
+					if (sliderVoiceVolume) {
+						voiceVolume = sliderVoiceVolume->getValue();
+						setVolume(2, voiceVolume);
+					}
+
+					// FIXME: DOS versions use 0-9, Mac versions... 0-8? 1-9?
+					_vm->_defaultTextSpeed = sliderTextSpeed->getValue();
+					ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+					_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+
+#ifdef ENABLE_SCUMM_7_8
+					if (checkboxSpoolMusic) {
+						bool spoolMusic = (checkboxSpoolMusic->getValue() != 0);
+
+						_vm->_spooledMusicIsToBeEnabled = spoolMusic;
+
+						if (_vm->_imuseDigital) {
+							if (spoolMusic) {
+								_vm->_imuseDigital->diMUSEEnableSpooledMusic();
+							} else {
+								_vm->_imuseDigital->diMUSEDisableSpooledMusic();
+							}
+						}
+					}
+#endif
+
+					// TODO: Save "interact using"
+
+					ConfMan.flushToDisk();
+
+					if (_vm->_game.version < 7)
+						_vm->syncSoundSettings();
+
 					delete window;
 					return true;
 				} else if (event.widget == buttonCancel) {
