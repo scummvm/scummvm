@@ -690,7 +690,6 @@ void Script::savegame(uint slot, const Common::String &name) {
 	for (uint i = 0; i < name_len; i++) {
 		newchar = name.size() > i ? name[i] + 0x30 : ' ';
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
-			cacheName += '\0';
 			break;
 		} else if (newchar == 0x2E) { // '.', generated when space is pressed
 			cacheName += ' ';
@@ -1626,10 +1625,14 @@ void Script::o_savegame() {
 
 	Common::String name;
 	for (int i = 0; i < 27; i++) {
-		if (i < 19)
+		if (i < 19) {
+			if (_variables[i] == 0)
+				break;
+
 			name += _variables[i];
-		else
+		} else {
 			name += '\0' - 0x30;
+		}
 	}
 	savegame(slot, name);
 }
