@@ -44,6 +44,10 @@ void SelectGame::selected() {
 	replaceView("Story", true, true);
 }
 
+void SelectGame::closed() {
+	addView("MainMenu");
+}
+
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got

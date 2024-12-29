@@ -35,7 +35,7 @@ void Quit::selected() {
 		g_engine->quitGame();
 		break;
 	case 1:
-		replaceView("Title", true);
+		addView("MainMenu");
 		break;
 	default:
 		break;
@@ -43,7 +43,7 @@ void Quit::selected() {
 }
 
 void Quit::closed() {
-	replaceView("Title", true);
+	addView("MainMenu");
 }
 
 } // namespace Dialogs

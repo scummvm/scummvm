@@ -19,30 +19,34 @@
  *
  */
 
-#ifndef GOT_VIEWS_TITLE_H
-#define GOT_VIEWS_TITLE_H
-
-#include "graphics/managed_surface.h"
-#include "got/views/view.h"
+#include "got/views/title_background.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
-/**
- * This view provides the green background for the
- * main menu and other dialogs on the title screen
- */
-class Title : public View {
-public:
-	Title() : View("Title") {}
-	virtual ~Title() {}
+bool TitleBackground::msgGame(const GameMessage &msg) {
+	if (msg._name == "MAIN_MENU") {
+		addView();
+		draw();
+		Gfx::load_palette();
+		fadeIn();
 
-	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-};
+		addView("MainMenu");
+		return true;
+	}
+
+	return false;
+}
+
+void TitleBackground::draw() {
+	GfxSurface s = getSurface();
+
+	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
+		for (int yp = 0; yp < 240; yp += 32)
+			s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
+	}
+}
 
 } // namespace Views
 } // namespace Got
-
-#endif

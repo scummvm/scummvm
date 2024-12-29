@@ -28,7 +28,7 @@
 #include "got/views/part_title.h"
 #include "got/views/splash_screen.h"
 #include "got/views/story.h"
-#include "got/views/title.h"
+#include "got/views/title_background.h"
 #include "got/views/dialogs/ask.h"
 #include "got/views/dialogs/main_menu.h"
 #include "got/views/dialogs/options_menu.h"
@@ -53,7 +53,7 @@ struct Views {
 	PartTitle _partTitle;
 	SplashScreen _splashScreen;
 	Story _story;
-	Title _title;
+	TitleBackground _titleBackground;
 
 	Dialogs::Ask _ask;
 	Dialogs::MainMenu _mainMenu;
