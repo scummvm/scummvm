@@ -371,7 +371,7 @@ public:
 		uint32 _fg;
 		uint32 _bg;
 		Graphics::TextAlign _alignment = Graphics::kTextAlignLeft;
-		bool _wordWrap = false;
+		bool _wordWrap = true;
 
 	public:
 		MacStaticText(
