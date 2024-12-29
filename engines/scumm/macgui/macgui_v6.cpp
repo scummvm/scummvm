@@ -1024,12 +1024,25 @@ bool MacV6Gui::runOptionsDialog() {
 					}
 #endif
 
-					// TODO: Save "interact using"
+					if (popUpInteraction) {
+						switch (popUpInteraction->getValue()) {
+						case 0: // Text Only
+							ConfMan.setBool("subtitles", true);
+							ConfMan.setBool("speech_mute", true);
+							break;
+						case 1: // Voice Only
+							ConfMan.setBool("subtitles", false);
+							ConfMan.setBool("speech_mute", false);
+							break;
+						case 2: // Text & Voice
+							ConfMan.setBool("subtitles", true);
+							ConfMan.setBool("speech_mute", false);
+							break;
+						}
+					}
 
 					ConfMan.flushToDisk();
-
-					if (_vm->_game.version < 7)
-						_vm->syncSoundSettings();
+					_vm->syncSoundSettings();
 
 					delete window;
 					return true;
