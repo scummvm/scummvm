@@ -39,6 +39,7 @@ public:
 	virtual ~Credits() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

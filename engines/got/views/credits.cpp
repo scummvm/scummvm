@@ -124,5 +124,15 @@ bool Credits::tick() {
 	return true;
 }
 
+bool Credits::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		fadeOut();
+		replaceView("Title", true);
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace Got
