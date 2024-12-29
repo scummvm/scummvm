@@ -28,8 +28,20 @@
 
 namespace Got {
 
-void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
+// Get the transparency color by seeing which corner pixels are used more.
+// TODO: There's probably a cleaner way to do this, but I really can't
+// understand the original's convoluted creation of masks. By all accounts,
+// xdisplay_actors doesn't seem to do transparency at all
+static byte getTransparentColor(const Graphics::ManagedSurface &src) {
+	assert(src.w == 16 && src.h == 16);
+	byte tl = *(const byte *)src.getBasePtr(0, 0);
+	byte tr = *(const byte *)src.getBasePtr(15, 0);
+	byte br = *(const byte *)src.getBasePtr(15, 15);
 
+	return (tr == br) ? tr : tl;
+}
+
+void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 	actr->next = 0;                    // Next frame to be shown
 	actr->frame_count = actr->frame_speed;
 	actr->dir = dir;                   // Direction of travel
@@ -79,9 +91,7 @@ void make_actor_surface(ACTOR *actr) {
 				s.create(16, 16);
 			const byte *src = &_G(tmp_buff)[256 * ((d * 4) + f)];
 			Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
-
-			// Use the top-left corner pixel as the transparency color
-			s.setTransparentColor(*src);
+			s.setTransparentColor(getTransparentColor(s));
 		}
 	}
 }
@@ -239,9 +249,7 @@ int load_enemy(int type) {
 						&_G(tmp_buff)[4096 + (256 * ((d * 4) + f))] :
 						&_G(tmp_buff)[4096 + (256 * ((f * 4) + d))];
 					Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
-
-					// Use the top-left corner pixel as the transparency color
-					s.setTransparentColor(*src);
+					s.setTransparentColor(getTransparentColor(s));
 				}
 			}
 		}
