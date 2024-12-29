@@ -102,8 +102,8 @@ protected:
 	 * Inner method for copying another surface into this one at a given destination position.
 	 */
 	void transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
-		const Common::Rect &destRect, uint32 transColor, bool flipped, uint32 overrideColor,
-		uint32 srcAlpha, const Palette *srcPalette, const Palette *dstPalette,
+		const Common::Rect &destRect, uint32 transColor, bool flipped, uint32 srcAlpha,
+		const Palette *srcPalette, const Palette *dstPalette,
 		const Surface *mask, bool maskOnly);
 public:
 	/**
@@ -409,13 +409,11 @@ public:
 	 * @param src			Source surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, uint32 transColor = 0, bool flipped = false,
-		uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
+		uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -424,13 +422,11 @@ public:
 	 * @param destPos		Destination position to draw the surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -462,13 +458,11 @@ public:
 	 * @param destPos		Destination position to draw the surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Specifies whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff, const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -490,15 +484,13 @@ public:
 	 *						then @p srcRect, allowing for arbitrary scaling of the image.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param mask			Optional parameter with mask definition.
 	 * @param maskOnly		Optional parameter for using mask over @p transColor.
 	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff,
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff,
 		const Surface *mask = nullptr, bool maskOnly = false, const Palette *srcPalette = nullptr);
 
 	/**
@@ -507,12 +499,10 @@ public:
 	 * @param src			Source surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const ManagedSurface &src, uint32 transColor = 0, bool flipped = false,
-		uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -521,12 +511,10 @@ public:
 	 * @param destPos		Destination position to draw the surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -546,12 +534,10 @@ public:
 	 * @param destPos		Destination position to draw the surface.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -562,14 +548,12 @@ public:
 	 *						then @p srcRect, allowing for arbitrary scaling of the image.
 	 * @param transColor	Transparency color to ignore copying of.
 	 * @param flipped		Whether to horizontally flip the image.
-	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
-	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param mask			Optional parameter with mask definition.
 	 * @param maskOnly		Optional parameter for using mask over @p transColor.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff,
+		uint32 transColor = 0, bool flipped = false, uint32 srcAlpha = 0xff,
 		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**

@@ -132,7 +132,7 @@ void LibretroGraphics::realUpdateScreen(void) {
 
 	if (_cursorVisible && _cursor.w && _cursor.h) {
 		Common::Point topLeft(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled);
-		_screen.transBlitFrom(_cursor, Common::Rect(_cursor.w, _cursor.h), Common::Rect(topLeft, topLeft + Common::Point(_cursorWidthScaled, _cursorHeightScaled)),  _cursorKeyColor, false, 0, 0xff, nullptr, false,  _cursorPaletteEnabled ? &_cursorPalette : &_gamePalette);
+		_screen.transBlitFrom(_cursor, Common::Rect(_cursor.w, _cursor.h), Common::Rect(topLeft, topLeft + Common::Point(_cursorWidthScaled, _cursorHeightScaled)),  _cursorKeyColor, false, 0xff, nullptr, false,  _cursorPaletteEnabled ? &_cursorPalette : &_gamePalette);
 	}
 	_screenUpdatePending = false;
 }
