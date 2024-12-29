@@ -1239,42 +1239,46 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	int skipped = 0;
 
 	for (;;) {
-		uint32 now, elapsed;
 		bool skipFrame = false;
 
-		if (_insanity) {
-			// Seeking makes a mess of trying to sync the audio to
-			// the sound. Sync to time instead.
-			now = _vm->_system->getMillis() - _pauseTime;
-			elapsed = now - _startTime;
-		} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
-			// Compressed SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(*_compressedFileSoundHandle);
-		} else if (_vm->_mixer->isSoundHandleActive(*_IACTchannel)) {
-			// Curse of Monkey Island SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(*_IACTchannel);
-		} else {
-			// For other SMUSH files, we don't necessarily have any
-			// one channel to sync against, so we have to use
-			// elapsed real time.
-			now = _vm->_system->getMillis() - _pauseTime;
-			elapsed = now - _startTime;
+		if (!_paused) {
+			uint32 now, elapsed;
+
+			if (_insanity) {
+				// Seeking makes a mess of trying to sync the audio to
+				// the sound. Sync to time instead.
+				now = _vm->_system->getMillis() - _pauseTime;
+				elapsed = now - _startTime;
+			} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
+				// Compressed SMUSH files.
+				elapsed = _vm->_mixer->getSoundElapsedTime(*_compressedFileSoundHandle);
+			} else if (_vm->_mixer->isSoundHandleActive(*_IACTchannel)) {
+				// Curse of Monkey Island SMUSH files.
+				elapsed = _vm->_mixer->getSoundElapsedTime(*_IACTchannel);
+			} else {
+				// For other SMUSH files, we don't necessarily have any
+				// one channel to sync against, so we have to use
+				// elapsed real time.
+				now = _vm->_system->getMillis() - _pauseTime;
+				elapsed = now - _startTime;
+			}
+
+			if (elapsed >= ((_frame - _startFrame) * 1000) / _speed) {
+				if (elapsed >= ((_frame + 1) * 1000) / _speed)
+					skipFrame = true;
+				else
+					skipFrame = false;
+				timerCallback();
+			}
+
+			_vm->scummLoop_handleSound();
+
+			if (_warpNeeded) {
+				_vm->_system->warpMouse(_vm->_macScreen ? _warpX * 2 : _warpX, _vm->_macScreen ? (_warpY * 2 + 2 * _vm->_macScreenDrawOffset) : _warpY);
+				_warpNeeded = false;
+			}
 		}
 
-		if (elapsed >= ((_frame - _startFrame) * 1000) / _speed) {
-			if (elapsed >= ((_frame + 1) * 1000) / _speed)
-				skipFrame = true;
-			else
-				skipFrame = false;
-			timerCallback();
-		}
-
-		_vm->scummLoop_handleSound();
-
-		if (_warpNeeded) {
-			_vm->_system->warpMouse(_vm->_macScreen ? _warpX * 2 : _warpX, _vm->_macScreen ? (_warpY * 2 + 2 * _vm->_macScreenDrawOffset) : _warpY);
-			_warpNeeded = false;
-		}
 		_vm->parseEvents();
 		_vm->processInput();
 		if (_palDirtyMax >= _palDirtyMin) {
@@ -1331,8 +1335,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			break;
 		}
 
-		if (_vm->_macGui)
+		if (_vm->_macGui) {
 			_vm->_macGui->updateWindowManager();
+			_vm->_system->updateScreen();
+		}
 
 		_vm->_system->delayMillis(10);
 	}
