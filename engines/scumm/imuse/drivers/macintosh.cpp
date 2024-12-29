@@ -1294,7 +1294,7 @@ namespace Scumm {
 using namespace IMSMacintosh;
 
 IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixer, byte gameID) : MidiDriver(), _isOpen(false), _device(nullptr), _imsParts(nullptr), _channels(nullptr),
-	_numParts(32), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0), _sfxVolume(0), _version(-1) {
+	_numParts(32), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0xFFFFFFFF), _sfxVolume(0xFFFFFFFF), _version(-1) {
 
 	switch (gameID) {
 	case GID_TENTACLE:
