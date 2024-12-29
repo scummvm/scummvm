@@ -83,7 +83,7 @@ bool SplashScreen::tick() {
 			_chunkSize += 4;
 		} else if (_frameCtr == (SPLASH_FRAME_COUNT + 50)) {
 			// Switch to the opening screen showing the game name
-			replaceView("Opening", true, true);
+			replaceView("Opening", true);
 		}
 	}
 

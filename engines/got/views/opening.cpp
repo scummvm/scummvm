@@ -45,9 +45,6 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 	const byte *src;
 	byte *dest;
 
-	Gfx::Palette63 pal = _G(gfx)[35];
-	fadeIn(pal);
-
 	_surface.create(320, 400);
 	for (int chunkNum = 0; chunkNum < 4; ++chunkNum) {
 		src = _G(gfx)[36 + chunkNum]._data;
@@ -56,6 +53,11 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 		for (int i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
 			*dest = *src;
 	}
+
+	// Fade in the screen
+	Gfx::Palette63 pal = _G(gfx)[35];
+	draw();
+	fadeIn(pal);
 
 	return true;
 }
@@ -106,7 +108,7 @@ bool Opening::tick() {
 		redraw();
 	} else if (_frameCtr == 150) {
 		fadeOut();
-		replaceView("Credits", true, true);
+		replaceView("Credits", true);
 	}
 
 	return true;
