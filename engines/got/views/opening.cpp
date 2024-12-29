@@ -46,7 +46,7 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 	byte *dest;
 
 	Gfx::Palette63 pal = _G(gfx)[35];
-	Gfx::xsetpal(pal);
+	fadeIn(pal);
 
 	_surface.create(320, 400);
 	for (int chunkNum = 0; chunkNum < 4; ++chunkNum) {

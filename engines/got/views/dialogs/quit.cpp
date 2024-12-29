@@ -42,6 +42,10 @@ void Quit::selected() {
 	}
 }
 
+void Quit::closed() {
+	replaceView("Title", true);
+}
+
 } // namespace Dialogs
 } // namespace Views
 } // namespace Got
