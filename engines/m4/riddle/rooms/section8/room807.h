@@ -33,8 +33,29 @@ public:
 	Room807() : Room() {}
 	~Room807() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _field34 = 0;
+	int32 _field38 = 0;
+
+	int32 _mctd82aSeries = 0;
+	int32 _ripLooksAroundInAweSeries = 0;
+	int32 _ripLowReachPos1Series = 0;
+	int32 _ripPos3LookAroundSeries = 0;
+	int32 _ripTalkerPos5Series = 0;
+	int32 _ripTrekHiReach2HndSeries = 0;
+
+	machine *_807BeamMach = nullptr;
+	machine *_807Crnk2Mach = nullptr;
+	machine *_807DoorMach = nullptr;
+	machine *_807PostMach = nullptr;
+	machine *_mcTrekMach = nullptr;
+	machine *_safariShadowMach = nullptr;
 };
 
 } // namespace Rooms
