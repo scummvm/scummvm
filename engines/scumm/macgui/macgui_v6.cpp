@@ -1114,6 +1114,10 @@ bool MacV6Gui::runRestartDialog() {
 	int dialogId = (_vm->_game.id == GID_MANIAC) ? 193 : 137;
 	MacDialogWindow *window = createDialog(dialogId);
 
+	// If there is no dialog, just restart without asking.
+	if (!window)
+		return true;
+
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
 	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
