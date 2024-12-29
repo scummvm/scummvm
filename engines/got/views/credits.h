@@ -28,6 +28,12 @@ namespace Got {
 namespace Views {
 
 class Credits : public View {
+private:
+	int _delayCtr = 0;
+	int _frameCtr = 0;
+
+	void drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y);
+
 public:
 	Credits() : View("Credits") {}
 	virtual ~Credits() {}
