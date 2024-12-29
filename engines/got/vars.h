@@ -73,6 +73,7 @@ public:
 	void load();
 	void setArea(int areaNum);
 
+	Common::String _playerName = "ScummVM";
 	Gfx::GfxChunks _gfx;
 	Gfx::BgPics _bgPics;
 	Gfx::Font _font;
