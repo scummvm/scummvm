@@ -160,7 +160,8 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 203:
-		debug("Resume");
+		// Resume is supposed to simply close the Mac menu, and that
+		// happens automatically when selecting any menu item.
 		return true;
 
 	case 204:	// Restart
