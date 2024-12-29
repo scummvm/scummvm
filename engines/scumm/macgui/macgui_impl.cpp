@@ -1273,9 +1273,6 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
-	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
-
-	textWidget->setWordWrap(true);
 
 	window->setDefaultWidget(buttonOk);
 	window->addSubstitution(text);

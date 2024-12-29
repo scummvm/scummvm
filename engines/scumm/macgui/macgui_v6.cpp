@@ -420,12 +420,6 @@ void MacV6Gui::runAboutDialog() {
 
 		window->setDefaultWidget(buttonOk);
 
-		for (uint i = 0; i < window->getNumWidgets(); i++) {
-			MacWidget *widget = window->getWidget(i);
-			if (widget->getType() == kWidgetStaticText)
-				((MacStaticText *)widget)->setWordWrap(true);
-		}
-
 		while (!_vm->shouldQuit()) {
 			MacDialogEvent event;
 
@@ -1079,9 +1073,6 @@ bool MacV6Gui::runQuitDialog() {
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
-	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
-
-	textWidget->setWordWrap(true);
 
 	window->setDefaultWidget(buttonOk);
 
@@ -1124,9 +1115,6 @@ bool MacV6Gui::runRestartDialog() {
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
-	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
-
-	textWidget->setWordWrap(true);
 
 	window->setDefaultWidget(buttonOk);
 
