@@ -620,38 +620,27 @@ void Adlib::Func294E() {
 			// l0017_2A01:
 			
 			bp4 = gArray11F[bp6] << 0x8 + gArray9F[bp6];
-			// TODO: Continue here
+			// Multiplication using 00CDh:0C97h
+			// eax:edx = eax:edx * ebx:ecx
+			// TODO: Check actual possible range of result
+			uint64 product = bpp6 * (bp2 - bp4);
+			// Right shift done by 0D7A proc
+			// Result is in ax:dx
+			product = product >> 0x7;
+			// TODO: Check ranges
+			bp2 = bp2 - product;
+			
+	
 		}
 	}
-	// TODO:
 	// l0017_2A4F:
+	// TODO: Continue here
 	
 /*
 
 
-l0017_2A01:
-	
-	mov	al,[bp+6h]
-	xor	ah,ah
-	xor	dx,dx
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	sub	ax,[bp-4h]
-	xor	dx,dx
-	;; #note_on_timing: Maybe these have timing purposes, but disregard for now
-	call	far 00CDh:0C97h
-	mov	cx,7h
-	xor	bx,bx
-	call	far 00CDh:0D7Ah
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	xor	dx,dx
-	sub	ax,cx
-	sbb	dx,bx
-	;; #note_on_data: This could be where we set the data
-	mov	[bp-2h],ax ;; 2A4C - need to print ax
+
+
 
 l0017_2A4F:
 	;; This part is a note on, see the OR with 200h 
