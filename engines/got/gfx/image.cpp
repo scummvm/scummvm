@@ -224,28 +224,32 @@ int load_enemy(int type) {
 	make_actor_surface(&_G(enemy)[e]);
 	_G(enemy_type)[e] = type;
 	_G(enemy)[e].shot_type = 0;
-#ifdef TODO
+
 	if (_G(enemy)[e].shots_allowed) {
 		_G(enemy)[e].shot_type = e + 1;
-		enm = (ACTOR *)(_G(tmp_buff) + 5160);
-		memcpy(&_G(shot)[e], enm, sizeof(ACTOR_NFO));
 
-		for (d = 0; d < _G(shot)[e].directions; d++) {
-			for (f = 0; f < _G(shot)[e].frames; f++) {
-				if (_G(shot)[e].directions < _G(shot)[e].frames)
-					make_mask(&_G(shot)[e].pic[d][f], _G(latch_mem),
-						&_G(tmp_buff)[4096 + (256 * ((d * 4) + f))], 16, 16);
-				else
-					make_mask(&_G(shot)[e].pic[f][d], _G(latch_mem),
-						&_G(tmp_buff)[4096 + (256 * ((f * 4) + d))], 16, 16);
+		// Set up shot info
+		_G(shot)[e].loadFixed(_G(tmp_buff) + 5160);
 
-				_G(latch_mem) += 144;
-				if (_G(latch_mem) > 65421u)
-					error("Too Many Actor Frames");
+		// Loop to set up graphics
+		for (int d = 0; d < _G(shot)[e].directions; d++) {
+			for (int f = 0; f < _G(shot)[e].frames; f++) {
+				if (_G(shot)[e].directions < _G(shot)[e].frames) {
+					Graphics::ManagedSurface &s = _G(shot)[e].pic[d][f];
+					if (s.empty())
+						s.create(16, 16);
+					const byte *src = (_G(shot)[e].directions < _G(shot)[e].frames) ?
+						&_G(tmp_buff)[4096 + (256 * ((d * 4) + f))] :
+						&_G(tmp_buff)[4096 + (256 * ((f * 4) + d))];
+					Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
+
+					// Use the top-left corner pixel as the transparency color
+					s.setTransparentColor(*src);
+				}
 			}
 		}
 	}
-#endif
+
 	return e;
 }
 
