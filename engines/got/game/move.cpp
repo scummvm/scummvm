@@ -200,7 +200,8 @@ int _actor_shoots(ACTOR *actr, int dir) {
 	for (i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
 		if ((!_G(actor)[i].used) && (!_G(actor)[i].dead)) {
 			act = &_G(actor)[i];
-			memcpy(act, &_G(shot)[t], sizeof(ACTOR));
+			*act = _G(shot)[t];
+
 			if (actr->size_y < act->size_y) cy = actr->y - ((act->size_y - actr->size_y) / 2);
 			else cy = actr->y + ((actr->size_y - act->size_y) / 2);
 			if (actr->size_x < act->size_x) cx = actr->x - ((act->size_x - actr->size_x) / 2);

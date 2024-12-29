@@ -371,7 +371,8 @@ int use_tornado(int flag) {
 				_G(magic_cnt) = 0;
 				add_magic(-10);
 				setup_magic_item(0);
-				memcpy(&_G(actor)[2], &_G(magic_item)[0], sizeof(ACTOR));
+				_G(actor)[2] = _G(magic_item)[0];
+
 				setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
 				_G(actor)[2].last_dir = _G(thor)->dir;
 				_G(actor)[2].move = 16;
