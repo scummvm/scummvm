@@ -35,10 +35,20 @@ void Title::draw() {
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {
+	if (msg._priorView->getName() == "MainMenu")
+		return true;
+
 	// When the title screen is shown, show the main menu
-	draw();
-	Gfx::load_palette();
-	fadeIn();
+	if (msg._priorView->getName() == "Opening" ||
+			msg._priorView->getName() == "Credits") {
+		draw();
+		Gfx::load_palette();
+		fadeIn();
+	} else {
+		Gfx::load_palette();
+	}
+
+	// Add in the menu on top of this view
 	addView("MainMenu");
 
 	return true;

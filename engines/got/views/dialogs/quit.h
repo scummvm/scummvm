@@ -35,6 +35,7 @@ public:
 	}
 
 	void selected() override;
+	void closed() override;
 };
 
 } // namespace Dialogs

@@ -40,8 +40,7 @@ void MainMenu::closed() {
 void MainMenu::selected() {
 	switch (_selectedItem) {
 	case 0:
-		// FIXME: Dummy test of fading code
-		replaceView("QuitGame", true, true);
+		addView("SelectGame");
 		break;
 
 	case 4:
