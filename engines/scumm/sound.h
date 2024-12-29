@@ -103,6 +103,8 @@ protected:
 	SoundSE *_soundSE = nullptr;
 	bool _useRemasteredAudio = false;
 
+	int32 _currentMISpeechIndex = -1;
+
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 

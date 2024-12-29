@@ -77,7 +77,7 @@ public:
 	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
 	uint32 getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex);
 
-	void handleRemasteredSpeech(const char *msgString,
+	int32 handleRemasteredSpeech(const char *msgString,
 								const char *speechFilenameSubstitution,
 								uint16 roomNumber,
 								uint16 actorTalking,
@@ -125,8 +125,10 @@ private:
 
 	typedef Common::Array<AudioEntry> AudioIndex;
 	typedef Common::HashMap<uint32, uint32> OffsetToIndexMap;
+	typedef Common::HashMap<Common::String, int32> NameToIndexMap;
 
 	OffsetToIndexMap _offsetToIndex;
+	NameToIndexMap _nameToIndex;
 
 	AudioIndex _musicEntries;
 	Common::String _musicFilename;

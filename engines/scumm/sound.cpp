@@ -613,7 +613,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 		// MI1 and MI2 SE
 		if (_soundSE && !_soundsPaused && _mixer->isReady()) {
 			Audio::AudioStream *input = _soundSE->getAudioStream(
-				offset,
+				_currentMISpeechIndex,
 				mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech);
 
 			_digiSndMode |= mode;
@@ -2196,7 +2196,12 @@ void Sound::startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint
 	// Crudely adapted from the disasm of MI1SE...
 	// TODO: Apply the various speech-line substitutions performed per-game
 
-	_soundSE->handleRemasteredSpeech(msgString, nullptr, roomNumber, actorTalking, currentScriptNum, currentScriptOffset, numWaits);
+	int32 soundIndex = _soundSE->handleRemasteredSpeech(msgString, nullptr, roomNumber, actorTalking, currentScriptNum, currentScriptOffset, numWaits);
+
+	if (soundIndex >= 0) {
+		_currentMISpeechIndex = soundIndex;
+		talkSound(0, 0, DIGI_SND_MODE_TALKIE);
+	}
 }
 
 } // End of namespace Scumm
