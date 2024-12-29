@@ -44,7 +44,7 @@ MODULE_OBJS = \
 	views/part_title.o \
 	views/splash_screen.o \
 	views/story.o \
-	views/title.o \
+	views/title_background.o \
 	views/dialogs/dialog.o \
 	views/dialogs/select_option.o \
 	views/dialogs/ask.o \

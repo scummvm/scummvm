@@ -82,7 +82,7 @@ bool Opening::msgUnfocus(const UnfocusMessage &msg) {
 bool Opening::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		fadeOut();
-		replaceView("Title", true);
+		send("TitleBackground", GameMessage("MAIN_MENU"));
 		return true;
 	}
 

@@ -114,7 +114,7 @@ bool Credits::tick() {
 			// TODO: The original switched to show the top high scores
 			// briefly, and then switches to the demo
 			fadeOut();
-			replaceView("Title", true);
+			send("TitleBackground", GameMessage("MAIN_MENU"));
 		} else {
 			++_frameCtr;
 			redraw();
@@ -127,7 +127,7 @@ bool Credits::tick() {
 bool Credits::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		fadeOut();
-		replaceView("Title", true);
+		send("TitleBackground", GameMessage("MAIN_MENU"));
 		return true;
 	}
 
