@@ -2428,6 +2428,18 @@ void ScummEngine::syncSoundSettings() {
 			soundVolumeMusic = soundVolumeSfx = 0;
 	}
 
+	_soundEnabled = ((ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute")) ? 0 : 2) | ((ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute")) ? 0 : 1);
+
+	if (_game.version >= 6 && _game.platform == Common::kPlatformMacintosh) {
+		if (_game.version == 6) {
+			if (!(_soundEnabled & 2))
+				soundVolumeMusic = 0;
+		} else {
+			_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !(_soundEnabled & 2));
+		}
+		_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !(_soundEnabled & 1));
+	}
+
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
 		_musicEngine->setSfxVolume(soundVolumeSfx);

@@ -541,8 +541,8 @@ void MacGuiImpl::updateWindowManager() {
 
 		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
 
-		menu->getSubMenuItem(soundMenu, 0)->checked = false; // Music
-		menu->getSubMenuItem(soundMenu, 1)->checked = false; // Effects
+		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
+		menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
 		menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
 		menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
 		menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice

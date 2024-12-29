@@ -121,6 +121,7 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	updateWindowManager();
 
 	int saveSlotToHandle = -1;
+	bool syncSoundSettings = false;
 	Common::String savegameName;
 
 	// The Dig and Full Throttle don't have a Restart menu entry
@@ -188,11 +189,15 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 500:	// Music
-		debug("Music");
+		_vm->_soundEnabled ^= 2;
+		ConfMan.setBool("music_mute", !(_vm->_soundEnabled & 2));
+		syncSoundSettings = true;
 		break;
 
 	case 501:	// Effects
-		debug("Effects");
+		_vm->_soundEnabled ^= 1;
+		ConfMan.setBool("sfx_mute", !(_vm->_soundEnabled & 1));
+		syncSoundSettings = true;
 		break;
 
 	case 502:	// Toggle Text & Voice
@@ -214,37 +219,39 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 
 		default:
 			warning("Invalid voice mode %d", _vm->_voiceMode);
-			return  true;
+			return true;
 		}
 
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
+		syncSoundSettings = true;
+		break;
 
 	case 503:	// Text Only
 		ConfMan.setBool("subtitles", true);
 		ConfMan.setBool("speech_mute", true);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
+		syncSoundSettings = true;
+		break;
 
 	case 504:	// Voice Only
 		ConfMan.setBool("subtitles", false);
 		ConfMan.setBool("speech_mute", false);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
+		syncSoundSettings = true;
+		break;
 
 	case 505:	// Text & Voice
 		ConfMan.setBool("subtitles", true);
 		ConfMan.setBool("speech_mute", false);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
+		syncSoundSettings = true;
+		break;
 
 	default:
 		warning("Unknown menu command: %d", id);
 		break;
+	}
+
+	if (syncSoundSettings) {
+		ConfMan.flushToDisk();
+		_vm->syncSoundSettings();
+		return true;
 	}
 
 	return false;
