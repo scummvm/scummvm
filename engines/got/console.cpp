@@ -76,8 +76,6 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		debugPrintf("Could not open %s\n", filename.c_str());
 		return true;
 	} else {
-		f->skip(32); // Skip the 32 bytes title
-
 		Common::Serializer s(f, nullptr);
 		g_engine->syncGame(s);
 		delete f;
@@ -95,13 +93,6 @@ bool Console::cmdSave(int argc, const char **argv) {
 		debugPrintf("Could not create %s\n", filename.c_str());
 
 	} else {
-		// Write out dummy person name
-		char title[32];
-		Common::fill(title, title + 32, 0);
-		Common::strcpy_s(title, "ScummVM");
-
-		f->write(title, 32);
-
 		Common::Serializer s(nullptr, f);
 		g_engine->syncGame(s);
 

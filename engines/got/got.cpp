@@ -104,6 +104,13 @@ Common::Error GotEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 
 Common::Error GotEngine::syncGame(Common::Serializer &s) {
+	char title[32];
+	Common::fill(title, title + 32, 0);
+	Common::strcpy_s(title, _G(playerName).c_str());
+	s.syncBytes((byte *)title, 32);
+	if (s.isLoading())
+		_G(playerName) = title;
+
 	_G(setup).sync(s);
 	_G(thor_info).sync(s);
 	_G(sd_data).sync(s);
