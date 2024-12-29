@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-28 17:53+0000\n"
+"POT-Creation-Date: 2024-12-29 12:48+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3592,9 +3592,9 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:859
-#: engines/groovie/script.cpp:2253 engines/groovie/script.cpp:2280
-#: engines/groovie/script.cpp:2321 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:858
+#: engines/groovie/script.cpp:2256 engines/groovie/script.cpp:2283
+#: engines/groovie/script.cpp:2324 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
@@ -3612,9 +3612,9 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:854
-#: engines/groovie/script.cpp:859 engines/groovie/script.cpp:2253
-#: engines/groovie/script.cpp:2280 engines/groovie/script.cpp:2321
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:853
+#: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2256
+#: engines/groovie/script.cpp:2283 engines/groovie/script.cpp:2324
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
@@ -6454,9 +6454,9 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει απόθή�
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:836
-#: engines/groovie/script.cpp:871 engines/groovie/script.cpp:2240
-#: engines/groovie/script.cpp:2267 engines/groovie/script.cpp:2337
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
+#: engines/groovie/script.cpp:870 engines/groovie/script.cpp:2243
+#: engines/groovie/script.cpp:2270 engines/groovie/script.cpp:2340
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
@@ -6473,10 +6473,10 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:836
-#: engines/groovie/script.cpp:854 engines/groovie/script.cpp:871
-#: engines/groovie/script.cpp:2240 engines/groovie/script.cpp:2267
-#: engines/groovie/script.cpp:2337 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
+#: engines/groovie/script.cpp:853 engines/groovie/script.cpp:870
+#: engines/groovie/script.cpp:2243 engines/groovie/script.cpp:2270
+#: engines/groovie/script.cpp:2340 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
@@ -8460,7 +8460,7 @@ msgstr "Κατειλημμένο"
 msgid "Failed to save game"
 msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
 
-#: engines/groovie/script.cpp:854 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:853 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι;"
 
