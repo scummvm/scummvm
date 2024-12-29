@@ -375,6 +375,7 @@ void ROQPlayer::buildShowBuf() {
 	if (_screen->h != 480) {
 		screenOffset = 80;
 	}
+	debugC(1, kDebugVideo, "scr: %d x %d screenOffset: %d  orig: %d, %d scale: %d %d", _screen->w, _screen->h, screenOffset, _origX, _origY, _scaleX, _scaleY);
 
 	if (_alpha) {
 		redrawRestoreArea(screenOffset, false);
