@@ -76,7 +76,7 @@ protected:
 
 	void drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int x1, int x2);
 
-	MacGuiImpl::MacImageSlider *addSlider(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings = 4);
+	MacGuiImpl::MacImageSlider *addSlider(MacDialogWindow *window, int x, int y, int width, int minValue, int maxValue, int primaryMarkings = 4);
 
 	void setVolume(int type, int volume);
 
