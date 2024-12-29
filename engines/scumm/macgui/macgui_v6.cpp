@@ -357,7 +357,9 @@ void MacV6Gui::drawDottedFrame(MacDialogWindow *window, Common::Rect bounds, int
 	}
 }
 
-MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, int y, int width, int numMarkings, int primaryMarkings) {
+MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, int y, int width, int minValue, int maxValue, int primaryMarkings) {
+	int numMarkings = (maxValue - minValue) + 1;
+
 	Graphics::Surface *s = window->innerSurface();
 
 	uint32 gray = _windowManager->findBestColor(0xCD, 0xCD, 0xCD);
@@ -384,7 +386,7 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 	MacImageSlider *slider = window->addImageSlider(Common::Rect(x - 6, y - 4, x + width + 7, y + 16), handle, true, 0, width - 1, 0, numMarkings - 1);
 
 	for (int i = 0; i < numMarkings; i++)
-		slider->addStop(positions[i], i);
+		slider->addStop(positions[i], minValue + i);
 
 	slider->setSnapWhileDragging(true);
 	slider->setValue(0);
@@ -901,29 +903,29 @@ bool MacV6Gui::runOptionsDialog() {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 113), 21, 137);
 		drawDottedFrame(window, Common::Rect(11, 130, 336, 203), 20, 168);
 
-		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		sliderVoiceVolume = addSlider(window, 152, 87, 147, 17);
-		sliderTextSpeed = addSlider(window, 151, 177, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 0, 16);
+		sliderVoiceVolume = addSlider(window, 152, 87, 147, 0, 16);
+		sliderTextSpeed = addSlider(window, 151, 177, 147, 1, 9);
 	} else if (_vm->_game.id == GID_MANIAC) {
-		sliderMusicVolume = addSlider(window, 152, 41, 147, 17);
-		sliderTextSpeed = addSlider(window, 152, 72, 147, 10, 5);
+		sliderMusicVolume = addSlider(window, 152, 41, 147, 0, 16);
+		sliderTextSpeed = addSlider(window, 152, 72, 147, 0, 9, 5);
 	} else if (_vm->_game.id == GID_SAMNMAX || _vm->_game.id == GID_DIG) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 136), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 156, 337, 229), 20, 168);
 
-		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		sliderEffectVolume = addSlider(window, 152, 87, 147, 17);
-		sliderVoiceVolume = addSlider(window, 152, 111, 147, 17);
-		sliderTextSpeed = addSlider(window, 152, 203, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 0, 16);
+		sliderEffectVolume = addSlider(window, 152, 87, 147, 0, 16);
+		sliderVoiceVolume = addSlider(window, 152, 111, 147, 0, 16);
+		sliderTextSpeed = addSlider(window, 152, 203, 147, 1, 9);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_vm->_game.id == GID_FT) {
 		drawDottedFrame(window, Common::Rect(12, 41, 337, 164), 21, 137);
 		drawDottedFrame(window, Common::Rect(12, 184, 337, 257), 20, 168);
 
-		sliderMusicVolume = addSlider(window, 152, 63, 147, 17);
-		sliderEffectVolume = addSlider(window, 152, 87, 147, 17);
-		sliderVoiceVolume = addSlider(window, 152, 111, 147, 17);
-		sliderTextSpeed = addSlider(window, 152, 231, 147, 9);
+		sliderMusicVolume = addSlider(window, 152, 63, 147, 0, 16);
+		sliderEffectVolume = addSlider(window, 152, 87, 147, 0, 16);
+		sliderVoiceVolume = addSlider(window, 152, 111, 147, 0, 16);
+		sliderTextSpeed = addSlider(window, 152, 231, 147, 1, 9);
 
 		checkboxSpoolMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 #endif
@@ -1005,7 +1007,9 @@ bool MacV6Gui::runOptionsDialog() {
 						setVolume(2, voiceVolume);
 					}
 
-					// FIXME: DOS versions use 0-9, Mac versions... 0-8? 1-9?
+					// The DOS version uses 0-9. Apparently the Mac version
+					// uses 1-9 instead, except for Maniac Mansion.
+
 					_vm->_defaultTextSpeed = sliderTextSpeed->getValue();
 					ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
 					_vm->setTalkSpeed(_vm->_defaultTextSpeed);
@@ -1048,7 +1052,7 @@ bool MacV6Gui::runOptionsDialog() {
 					if (popUpInteraction)
 						popUpInteraction->setValue(1);
 					if (sliderTextSpeed)
-						sliderTextSpeed->setValue(4);
+						sliderTextSpeed->setValue((_vm->_game.id == GID_MANIAC) ? 4 : 5);
 #ifdef ENABLE_SCUMM_7_8
 					if (checkboxSpoolMusic)
 						checkboxSpoolMusic->setValue(1);
