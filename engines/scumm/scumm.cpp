@@ -2507,7 +2507,7 @@ void ScummEngine_v7::syncSoundSettings() {
 			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 	}
 
-	if (_game.version >= 7 && _imuseDigital) {
+	if (_imuseDigital) {
 		_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
 		_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
 		_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
