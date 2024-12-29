@@ -87,7 +87,6 @@ void make_actor_surface(ACTOR *actr) {
 }
 
 int load_standard_actors() {
-	_G(latch_mem) = 50160u;
 	_G(mask_buff) = _G(mask_buff_start);
 	_G(ami_buff) = _G(abuff);
 
@@ -151,7 +150,6 @@ int load_standard_actors() {
 
 	_G(enemy_mb) = _G(mask_buff);
 	_G(enemy_ami) = _G(ami_buff);
-	_G(enemy_lm) = _G(latch_mem);
 
 	return 1;
 }
@@ -164,7 +162,6 @@ void show_enemies() {
 	for (i = 0; i < MAX_ENEMIES; i++)
 		_G(enemy_type)[i] = 0;
 
-	_G(latch_mem) = _G(enemy_lm);
 	_G(mask_buff) = _G(enemy_mb);
 	_G(ami_buff) = _G(enemy_ami);
 
