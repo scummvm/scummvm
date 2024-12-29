@@ -572,6 +572,7 @@ void Adlib::Func294E() {
 	
 	uint8 bpp8;
 	uint16 bpp6;
+	uint16 bppA;
 	uint16 bp4;
 	uint8 bp6;
 	/*
@@ -634,30 +635,19 @@ void Adlib::Func294E() {
 		}
 	}
 	// l0017_2A4F:
-	// TODO: Continue here
 	
-/*
+	// TODO: Original code is making sure that only 8 bit are pushed
+	// for the second argument using AND FFh - check if ranges matter here
+	Func2792(bppA + 0xA0, bp2);
+	// TODO: Continue here
+	/*
 
 
 
 
 
 l0017_2A4F:
-	;; This part is a note on, see the OR with 200h 
-	;; #note_on_timing: Following up where the info when to execute this comes from
-	;; #note_on_data: Using this to find out where the data comes from
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	add	ax,0A0h
-	push	ax
-	;; #note_on_data: Our data lives in [bp-02]. It is a 16 bit value including both bytes
-	;; necessary for frequency and note-on event data
-	mov	ax,[bp-2h]
-	and	ax,0FFh
-	push	ax
-	;; This writes a frequency for the following note-on event
-	;; First pushed is the register, second is the note data
-	call	far 0017h:2792h
+	
 	mov	al,[bp+0Ah]
 	xor	ah,ah
 	add	ax,0B0h
