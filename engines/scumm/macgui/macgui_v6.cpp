@@ -817,7 +817,10 @@ void MacV6Gui::setVolume(int type, int volume) {
 		Audio::Mixer::kSpeechSoundType
 	};
 
-	volume = CLIP(16 * volume, 0, 256);
+	// Input volume comes from the options dialog slider. It's 0-16.
+	// The regular mixer uses 0-256 while Digital iMUSE uses 0-127.
+
+	int mixerVolume = CLIP(16 * volume, 0, 256);
 
 	if (_vm->_game.version >= 7) {
 #ifdef ENABLE_SCUMM_7_8
@@ -836,10 +839,10 @@ void MacV6Gui::setVolume(int type, int volume) {
 		}
 #endif
 	} else {
-		_vm->_mixer->setVolumeForSoundType(soundTypes[type], volume);
+		_vm->_mixer->setVolumeForSoundType(soundTypes[type], mixerVolume);
 	}
 
-	ConfMan.setInt(keys[type], volume);
+	ConfMan.setInt(keys[type], mixerVolume);
 }
 
 bool MacV6Gui::runOptionsDialog() {
