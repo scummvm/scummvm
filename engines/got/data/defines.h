@@ -35,45 +35,6 @@ namespace Got {
 #define REPEAT(a) for(rep=0;rep<a;rep++)
 #define IN_RANGE(v,l,h) (v>=l && v<=h)
 
-struct ACTOR_NFO {				//size=40
-	byte move = 0;                  //movement pattern (0=none)
-	byte width = 0;                 //physical width
-	byte height = 0;                //physical height
-	byte directions = 0;            //1,2 or 4 (1=uni-directional)
-	byte frames = 0;                //# frames per direction
-	byte frame_speed = 0;           //# cycles between frame changes
-	byte frame_sequence[4] = {};    //sequence
-	byte speed = 0;                 //move every Nth cycle
-	byte size_x = 0;                //non-physical padding on X coor
-	byte size_y = 0;                //non-phsyical padding on Y coor
-	byte strength = 0;              //hit strength
-	byte health = 0;                //
-	byte num_moves = 0;             //# of moves every <speed> cycles
-	byte shot_type = 0;             //actor # of shot
-	byte shot_pattern = 0;          //func number to decide to shoot
-	byte shots_allowed = 0;         //# shots allowed on screen
-	byte solid = 0;                 //1=solid (not ghost,etc)
-	byte flying = 0;                //
-	byte rating = 0;                //rnd(100) < rating = jewel
-	byte type = 0;                  //actor (0=thor,1=hammer,2=enemy,3=shot)
-	byte name[9] = {};              //actors name
-	byte func_num = 0;              //special function when thor touches
-	byte func_pass = 0;             //value to pass to func
-	byte future1[6] = {};
-};
-
-struct ACTOR_DATA {                 //5200
-	byte pic[16][256] = {};         //4096
-	byte shot[4][256] = {};         //1024
-	ACTOR_NFO actor_info = {};      //40
-	ACTOR_NFO shot_info = {};       //40
-};
-
-struct PIC_HEADER {
-	byte width = 0;
-	byte height = 0;
-};
-
 struct HEADER {
 	long offset = 0;
 	long length = 0;
@@ -88,11 +49,6 @@ struct HEADER {
 // Defines
 
 #define PAGES 0u
-//#define PAGE0 3840u
-//#define PAGE1 19200u
-//#define PAGE2 34560u
-//#define PAGE3 49920u
-
 #define PAGE0 3840u
 #define PAGE1 19280u
 #define PAGE2 34720u
