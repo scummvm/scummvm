@@ -1046,8 +1046,10 @@ bool MacV6Gui::runOptionsDialog() {
 						popUpInteraction->setValue(1);
 					if (sliderTextSpeed)
 						sliderTextSpeed->setValue(4);
+#ifdef ENABLE_SCUMM_7_8
 					if (checkboxSpoolMusic)
 						checkboxSpoolMusic->setValue(1);
+#endif
 				}
 
 				break;

@@ -2468,6 +2468,7 @@ void ScummEngine::syncSoundSettings() {
 
 }
 
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::syncSoundSettings() {
 	if (!_setupIsComplete)
 		return;
@@ -2502,14 +2503,13 @@ void ScummEngine_v7::syncSoundSettings() {
 			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 	}
 
-#ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7 && _imuseDigital) {
 		_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
 		_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
 		_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
 	}
-#endif
 }
+#endif
 
 void ScummEngine::setTalkSpeed(int talkspeed) {
 	ConfMan.setInt("talkspeed", (talkspeed * 255 + 9 / 2) / 9);
