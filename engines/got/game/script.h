@@ -29,6 +29,10 @@ namespace Got {
 
 typedef void (*ScriptEndFn)();
 
+enum ScriptPause {
+	SCRIPT_READY, SCRIPT_PAUSED, SCRIPT_RESUMING
+};
+
 class Scripts {
 private:
 	ScriptEndFn _endFn = nullptr;
@@ -52,7 +56,7 @@ private:
 	long  _lValue = 0;
 	long  _lTemp = 0;
 	char  _tempS[255] = {};
-	bool _paused = false;
+	ScriptPause _paused = SCRIPT_READY;
 	int _askVar = -1;
 
 private:
@@ -111,14 +115,19 @@ public:
 		ScriptEndFn endFn = nullptr);
 
 	void pause() {
-		_paused = true;
+		_paused = SCRIPT_PAUSED;
 	}
 	void resume() {
-		_paused = false;
-		scriptLoop();
+		_paused = SCRIPT_RESUMING;
 	}
 
 	void setAskResponse(int option);
+	void runIfResuming() {
+		if (_paused == SCRIPT_RESUMING) {
+			_paused = SCRIPT_READY;
+			scriptLoop();
+		}
+	}
 };
 
 extern void execute_script(long index, const Gfx::Pics &speakerIcon,

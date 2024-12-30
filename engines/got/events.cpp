@@ -126,6 +126,9 @@ void Events::nextFrame() {
 		}
 	}
 
+	// Check if any script needs resuming
+	_G(scripts).runIfResuming();
+
 	// Do tick action to the views to handle gameplay logic
 	tick();
 
