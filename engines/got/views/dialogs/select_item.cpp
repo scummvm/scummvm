@@ -97,17 +97,6 @@ bool SelectItem::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool SelectItem::msgKeypress(const KeypressMessage &msg) {
-	if (_G(thor_info).inventory == 0 ||
-			msg.keycode == Common::KEYCODE_SPACE ||
-			msg.keycode == Common::KEYCODE_RETURN) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
 bool SelectItem::msgAction(const ActionMessage &msg) {
 	int b;
 
