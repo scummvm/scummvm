@@ -120,15 +120,9 @@ public:
 	virtual const Graphics::Surface *getMask() const { return 0; }
 
 	/**
-	 * Query whether the decoded image has a palette.
+	 * Query whether the decoded image has a mask.
 	 */
-	virtual bool hasMask() const { return getMaskRowBytes() != 0 && getMaskHeight() != 0; }
-
-	/** Return the number of bytes per row in the mask */
-	virtual uint16 getMaskRowBytes() const { return 0; }
-
-	/** Return the height of the mask */
-	virtual uint16 getMaskHeight() const { return 0; }
+	virtual bool hasMask() const { return getMask() != 0; }
 };
 /** @} */
 } // End of namespace Image
