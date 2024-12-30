@@ -458,6 +458,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 	int id = -1;
 	int size = 0;
 	Common::ScopedPtr<ScummFile> file;
+	uint32 origOffset = offset;
 
 	if (_vm->_game.id == GID_CMI || (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO))) {
 		// COMI (full & demo), DIG (full)
@@ -762,7 +763,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 
 			if (!input && _soundSE && _useRemasteredAudio) {
 				input = _soundSE->getAudioStream(
-					offset,
+					origOffset,
 					mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech
 				);
 			}

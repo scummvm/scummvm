@@ -323,7 +323,7 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 			continue;
 		}
 
-		const uint32 origOffset = _audioNameToOriginalOffsetMap[name] & 0xFFFFFF00;
+		const uint32 origOffset = _audioNameToOriginalOffsetMap[name];
 		_offsetToIndex[origOffset] = i;
 		//debug("indexFSBFile: %s -> offset %d, index %d", name.c_str(), origOffset, i);
 	}
@@ -508,7 +508,7 @@ void SoundSE::initAudioMapping() {
 		if (_vm->_game.id == GID_FT)
 			f->skip(4); // unknown flag
 
-		_audioNameToOriginalOffsetMap[name] = origOffset + 10;
+		_audioNameToOriginalOffsetMap[name] = origOffset;
 	} while (!f->eos());
 
 	f->close();
@@ -570,17 +570,11 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 }
 
 int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
-	uint32 offsetToCheck = offset;
-
 	if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) {
 		return offset;
 	} else if (_vm->_game.id == GID_TENTACLE) {
-		// Some of the remastered sound offsets are off compared to the
-		// ones from the classic version, so we chop off the last 2 digits
-		offsetToCheck = offset & 0xFFFFFF00;
-
-		if (_offsetToIndex.contains(offsetToCheck))
-			return _offsetToIndex[offsetToCheck];
+		if (_offsetToIndex.contains(offset))
+			return _offsetToIndex[offset];
 		else
 			return -1;
 	}
