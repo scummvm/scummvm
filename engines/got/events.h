@@ -365,8 +365,7 @@ public:
 	 * Returns the first view in the stack
 	 */
 	UIElement *firstView() const {
-		assert(!_views.empty());
-		return _views[0];
+		return _views.empty() ? nullptr : _views[0];
 	}
 
 	/**
