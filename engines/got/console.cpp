@@ -40,6 +40,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 	registerCmd("magic", WRAP_METHOD(Console, cmdMagic));
 	registerCmd("freeze", WRAP_METHOD(Console, cmdFreeze));
+	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
 }
 
 Console::~Console() {
@@ -129,6 +130,17 @@ bool Console::cmdFreeze(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdLevel(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("level <num>\n");
+		return true;
+	} else {
+		_G(new_level) = atoi(argv[1]);
+		_G(warp_flag) = true;
+		return false;
+	}
 }
 
 } // namespace Got
