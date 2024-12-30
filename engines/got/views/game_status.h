@@ -29,6 +29,9 @@ namespace Views {
 
 class GameStatus : public View {
 private:
+	int _scoreCountdown = 0;
+	Common::String _endMessage;
+
 	void displayHealth(GfxSurface &s);
 	void displayMagic(GfxSurface &s);
 	void displayJewels(GfxSurface &s);
@@ -41,6 +44,8 @@ public:
 	virtual ~GameStatus() {}
 
 	void draw() override;
+	bool msgGame(const GameMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace Views

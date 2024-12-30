@@ -20,12 +20,14 @@
  */
 
 #include "got/views/game_status.h"
+#include "got/game/status.h"
 #include "got/vars.h"
 
 namespace Got {
 namespace Views {
 
 #define STAT_COLOR 206
+#define SCORE_INTERVAL 5
 
 void GameStatus::draw() {
 	GfxSurface s = getSurface();
@@ -103,6 +105,34 @@ void GameStatus::displayItem(GfxSurface &s) {
 		else
 			s.blitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(280, 8));
 	}
+}
+
+bool GameStatus::msgGame(const GameMessage &msg) {
+	if (msg._name == "FILL_SCORE") {
+		_G(gameMode) = MODE_ADD_SCORE;
+		_scoreCountdown = msg._value * SCORE_INTERVAL;
+		_endMessage = msg._stringValue;
+		return true;
+	}
+
+	return false;
+}
+
+bool GameStatus::tick() {
+	if (_scoreCountdown > 0) {
+		if ((_scoreCountdown % SCORE_INTERVAL) == 0) {
+			_G(sound).play_sound(WOOP, 1);
+			add_score(1000);
+		}
+
+		if (--_scoreCountdown == 0) {
+			_G(gameMode) = MODE_NORMAL;
+			if (!_endMessage.empty())
+				g_events->send(GameMessage(_endMessage));
+		}
+	}
+
+	return false;
 }
 
 } // namespace Views

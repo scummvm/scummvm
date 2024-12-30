@@ -56,17 +56,11 @@ void fill_magic() {
 	add_magic(150);
 }
 
-void fill_score(int num) {
-#ifndef TODO
-	error("TODO: fill_score");
-#else
-	while (num) {
-		num--;
-		_G(sound).play_sound(WOOP, 1);
-		add_score(1000);
-		g_events->delay(8);
-	}
-#endif
+void fill_score(int num, const char *endMessage) {
+	GameMessage msg("FILL_SCORE");
+	msg._stringValue = endMessage;
+	msg._value = num;
+	g_events->send(msg);
 }
 
 void score_for_inv() {
@@ -92,6 +86,8 @@ void score_for_inv() {
 		add_score(10);
 		pause(8);
 	}
+#else
+	error("TODO: score_for_inv");
 #endif
 }
 

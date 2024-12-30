@@ -34,6 +34,7 @@ extern int boss_dead1();
 extern void closing_sequence1();
 extern void closing_sequence1_2();
 extern void closing_sequence1_3();
+extern void closing_sequence1_4();
 
 } // namespace Got
 
