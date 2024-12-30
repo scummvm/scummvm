@@ -151,7 +151,7 @@ bool Say::tick() {
 		_contentCtr = 0;
 		const char *contentEnd = _content + ++_contentLength;
 
-		if (*contentEnd == '~' && Common::isXDigit(*(contentEnd + 1)))
+		if (*(contentEnd - 1) == '~' && Common::isXDigit(*contentEnd))
 			++_contentLength;
 
 		if (!*contentEnd) {
