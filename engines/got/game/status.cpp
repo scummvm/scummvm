@@ -41,7 +41,7 @@ void add_health(int num) {
 	_G(thor)->health = CLIP(_G(thor)->health + num, 0, 150);
 
 	if (_G(thor)->health < 1)
-		g_events->replaceView("ThorDies");
+		g_events->send(GameMessage("THOR_DIES"));
 }
 
 void add_keys(int num) {
