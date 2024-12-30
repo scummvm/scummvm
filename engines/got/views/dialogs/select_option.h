@@ -61,7 +61,6 @@ public:
 		return true;
 	}
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

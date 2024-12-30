@@ -129,15 +129,6 @@ bool SelectOption::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-bool SelectOption::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
-		_smackCtr = 1;
-		return true;
-	}
-
-	return false;
-}
-
 bool SelectOption::tick() {
 	if (++_hammerFrame == 4)
 		_hammerFrame = 0;
