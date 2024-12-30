@@ -302,7 +302,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 
 		// calculate draw offset for the image
 		int drawX = imgAreaX + x + (xstep - item._rect.width) / 2;
-		int drawY = imgAreaY + y +  (ystep - item._rect.height) / 2;
+		int drawY = imgAreaY + y + (ystep - item._rect.height) / 2;
 
 		icons->drawBitmap(item._iconNum, drawX, drawY, drawMask, surf);
 
@@ -310,7 +310,9 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 		item._rect.y = drawY;
 
 		x += xstep;
-		if (x >= _itemArea->_width) {
+
+		// Willy Beamish area is 270 and step is 54, so hack the width slightly.
+		if (x >= _itemArea->_width - 2) {
 			x = 0;
 			y += ystep;
 		}
