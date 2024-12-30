@@ -183,8 +183,8 @@ void GameContent::drawActors(GfxSurface &s) {
 	for (int actor_num = 0; actor_num <= MAX_ACTORS; ) {
 		// Check for blinking flag
 		if (actor_ptr->used && !(actor_ptr->show & 2)) {
-			actor_ptr->last_x[0] = actor_ptr->x;
-			actor_ptr->last_y[0] = actor_ptr->y;
+			actor_ptr->last_x[_G(pge)] = actor_ptr->x;
+			actor_ptr->last_y[_G(pge)] = actor_ptr->y;
 
 			const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->dir]
 				[actor_ptr->frame_sequence[actor_ptr->next]];
