@@ -273,12 +273,17 @@ private:
 	int actionToKeyFlag(int action) const;
 	void rotatePalette();
 
-protected:
 	/**
 	 * Process an event
 	 */
 	void processEvent(Common::Event &ev);
 
+	/**
+	 * Process a demo event
+	 */
+	void processDemoEvent(byte ev);
+
+protected:
 	/**
 	 * Returns true if the game should quit
 	 */
