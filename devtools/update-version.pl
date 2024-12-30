@@ -49,6 +49,9 @@ my @subs_files = qw(
 	dists/riscos/!Boot,feb
 	dists/amigaos/md2ag.rexx
 	backends/platform/psp/README.PSP
+	backends/platform/atari/build-release.sh
+	backends/platform/atari/build-release030.sh
+	backends/platform/atari/readme.txt
 	);
 
 my %subs = (
