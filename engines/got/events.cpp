@@ -114,6 +114,7 @@ void Events::nextFrame() {
 	_G(rand2) = getRandomNumber(99);
 	_G(pge) = _G(pge) ^ 1;
 	_G(shot_ok) = true;
+	_G(magic_cnt)++;
 
 	// In demo mode, handle the next key
 	if (_G(demo) && _G(gameMode) == MODE_NORMAL) {

@@ -94,6 +94,7 @@ public:
 	TransitionDir _transitionDir = DIR_LEFT;
 	Cheats _cheats;
 	Common::Queue<byte> _demoKeys;
+	bool _useItemFlag = false;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
