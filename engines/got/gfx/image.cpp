@@ -28,17 +28,16 @@
 
 namespace Got {
 
-// Get the transparency color by seeing which corner pixels are used more.
-// TODO: There's probably a cleaner way to do this, but I really can't
-// understand the original's convoluted creation of masks. By all accounts,
-// xdisplay_actors doesn't seem to do transparency at all
-static byte getTransparentColor(const Graphics::ManagedSurface &src) {
-	assert(src.w == 16 && src.h == 16);
-	byte tl = *(const byte *)src.getBasePtr(0, 0);
-	byte tr = *(const byte *)src.getBasePtr(15, 0);
-	byte br = *(const byte *)src.getBasePtr(15, 15);
+static void createSurface(Graphics::ManagedSurface &s, const byte *src) {
+	s.create(16, 16);
 
-	return (tr == br) ? tr : tl;
+	// Both 0 and 15 are transparent colors, so as we load the
+	// surface, standard on a single color
+	byte *dest = (byte *)s.getPixels();
+	for (int i = 0; i < 16 * 16; ++i, ++src, ++dest)
+		*dest = (*src == 15) ? 0 : *src;
+
+	s.setTransparentColor(0);
 }
 
 void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
@@ -87,11 +86,8 @@ void make_actor_surface(ACTOR *actr) {
 	for (d = 0; d < actr->directions; d++) {
 		for (f = 0; f < actr->frames; f++) {
 			Graphics::ManagedSurface &s = actr->pic[d][f];
-			if (s.empty())
-				s.create(16, 16);
 			const byte *src = &_G(tmp_buff)[256 * ((d * 4) + f)];
-			Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
-			s.setTransparentColor(getTransparentColor(s));
+			createSurface(s, src);
 		}
 	}
 }
@@ -243,13 +239,10 @@ int load_enemy(int type) {
 			for (int f = 0; f < _G(shot)[e].frames; f++) {
 				if (_G(shot)[e].directions < _G(shot)[e].frames) {
 					Graphics::ManagedSurface &s = _G(shot)[e].pic[d][f];
-					if (s.empty())
-						s.create(16, 16);
 					const byte *src = (_G(shot)[e].directions < _G(shot)[e].frames) ?
 						&_G(tmp_buff)[4096 + (256 * ((d * 4) + f))] :
 						&_G(tmp_buff)[4096 + (256 * ((f * 4) + d))];
-					Common::copy(src, src + 16 * 16, (byte *)s.getPixels());
-					s.setTransparentColor(getTransparentColor(s));
+					createSurface(s, src);
 				}
 			}
 		}
