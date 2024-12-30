@@ -93,6 +93,13 @@ protected:
 		bool transparentColorSet, uint transparentColor);
 
 	/**
+	 * Inner method for blitting with a transparent mask.
+	 */
+	void maskBlitFromInner(const Surface &src, const Surface &mask,
+		const Common::Rect &srcRect, const Common::Point &destPos,
+		const Palette *srcPalette);
+
+	/**
 	 * Inner method for blitting.
 	 */
 	void blitFromInner(const Surface &src, const Common::Rect &srcRect,
@@ -358,6 +365,38 @@ public:
 	 */
 	void simpleBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos);
+
+	/**
+	 * Copy another surface into this one using a transparency mask.
+	 */
+	void maskBlitFrom(const Surface &src, const Surface &mask, const Palette *srcPalette = nullptr);
+
+	/**
+	 * Copy another surface into this one at a given destination position using a transparency mask.
+	 */
+	void maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos, const Palette *srcPalette = nullptr);
+
+	/**
+	 * Copy another surface into this one at a given destination position using a transparency mask.
+	 */
+	void maskBlitFrom(const Surface &src, const Surface &mask, const Common::Rect &srcRect,
+		const Common::Point &destPos, const Palette *srcPalette = nullptr);
+
+	/**
+	 * Copy another surface into this one using a transparency mask.
+	 */
+	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask);
+
+	/**
+	 * Copy another surface into this one at a given destination position using a transparency mask.
+	 */
+	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos);
+
+	/**
+	 * Copy another surface into this one at a given destination position using a transparency mask.
+	 */
+	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask,
+		const Common::Rect &srcRect, const Common::Point &destPos);
 
 	/**
 	 * Copy another surface into this one.
