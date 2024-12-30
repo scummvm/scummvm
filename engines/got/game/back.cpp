@@ -119,9 +119,8 @@ void show_level(int new_level) {
 		_G(transitionDir) = DIR_DOWN;
 		break;
 	default:
-		// TODO: Original had weird as hell random delay calculation.
-		// Not sure that it's really necessary
-		show_level_done();
+		_G(gameMode) = MODE_AREA_CHANGE;
+		_G(transitionDir) = DIR_PHASED;
 		break;
 	}
 }

@@ -86,6 +86,17 @@ void GameContent::draw() {
 			win.blitFrom(s, Common::Rect(0, 0, 320, _transitionPos),
 				Common::Point(0, 192 - _transitionPos));
 			break;
+		case DIR_PHASED:
+			win.blitFrom(_surface);		// Copy old surface
+
+			// Copy the randomly chosen blocks over from new scene
+			for (int i = 0; i < 240; ++i) {
+				int x = (i * 16) % 320;
+				int y = ((i * 16) / 320) * 16;
+				if (_phased[i])
+					win.blitFrom(s, Common::Rect(x, y, x + 16, y + 16), Common::Point(x, y));
+			}
+			break;
 		default:
 			break;
 		}
@@ -297,6 +308,26 @@ void GameContent::checkForAreaChange() {
 			if (_transitionPos == 192)
 				_G(gameMode) = MODE_NORMAL;
 			break;
+		case DIR_PHASED:
+			_transitionPos += 10;
+			if (_transitionPos == 240) {
+				_G(gameMode) = MODE_NORMAL;
+				Common::fill(_phased, _phased + 240, false);
+			} else {
+				// The screen is subdivided into 240 16x16 blocks. Picks ones
+				// randomly to copy over from the new screen
+				for (int i = 0; i < 10; ++i) {
+					for (;;) {
+						int idx = g_events->getRandomNumber(239);
+						if (!_phased[idx]) {
+							_phased[idx] = true;
+							break;
+						}
+					}
+				}
+			}
+			break;
+
 		default:
 			break;
 		}
