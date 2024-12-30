@@ -431,6 +431,68 @@ void ManagedSurface::simpleBlitFromInner(const Surface &src, const Common::Rect 
 	addDirtyRect(dstRectC);
 }
 
+void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Palette *srcPalette) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
+}
+
+void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos, const Palette *srcPalette) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos, srcPalette);
+}
+
+void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Common::Rect &srcRect,
+		const Common::Point &destPos, const Palette *srcPalette) {
+	maskBlitFromInner(src, mask, srcRect, destPos, srcPalette);
+}
+
+void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0));
+}
+
+void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos);
+}
+
+void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask,
+		const Common::Rect &srcRect, const Common::Point &destPos) {
+	maskBlitFromInner(src._innerSurface, mask._innerSurface, srcRect, destPos, src._palette);
+}
+
+void ManagedSurface::maskBlitFromInner(const Surface &src, const Surface &mask,
+		const Common::Rect &srcRect, const Common::Point &destPos,
+		const Palette *srcPalette) {
+
+	if (mask.w != src.w || mask.h != src.h)
+		error("Surface::maskBlitFrom: mask dimensions do not match src");
+
+	Common::Rect srcRectC = srcRect;
+	Common::Rect dstRectC = srcRect;
+
+	dstRectC.moveTo(destPos.x, destPos.y);
+	clip(srcRectC, dstRectC);
+
+	const byte *srcPtr = (const byte *)src.getBasePtr(srcRectC.left, srcRectC.top);
+	const byte *maskPtr = (const byte *)mask.getBasePtr(srcRectC.left, srcRectC.top);
+	byte *dstPtr = (byte *)getBasePtr(dstRectC.left, dstRectC.top);
+
+	if (format == src.format) {
+		maskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+			format.bytesPerPixel);
+	} else if (src.format.isCLUT8()) {
+		assert(srcPalette);
+		assert(!format.isCLUT8());
+
+		uint32 map[256];
+		convertPaletteToMap(map, srcPalette->data(), srcPalette->size(), format);
+		crossMaskBlitMap(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+			format.bytesPerPixel, map);
+	} else {
+		crossMaskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+			format, src.format);
+	}
+
+	addDirtyRect(dstRectC);
+}
+
 void ManagedSurface::blitFrom(const Surface &src, const Palette *srcPalette) {
 	blitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
 }
