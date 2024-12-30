@@ -44,6 +44,7 @@ private:
 	void checkForItem();
 	void moveActors();
 	void updateActors();
+	void checkForBossDead();
 	void checkForAreaChange();
 	void areaChanged();
 	void thorDies();

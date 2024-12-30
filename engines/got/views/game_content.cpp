@@ -21,6 +21,7 @@
 
 #include "got/views/game_content.h"
 #include "got/game/back.h"
+#include "got/game/boss1.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/object.h"
@@ -122,6 +123,7 @@ bool GameContent::tick() {
 		moveActors();
 		use_item();
 		updateActors();
+		checkForBossDead();
 		checkForCheats();
 		break;
 
@@ -289,6 +291,30 @@ void GameContent::updateActors() {
 
 		if (!actor->used && actor->dead > 0)
 			actor->dead--;
+	}
+}
+
+void GameContent::checkForBossDead() {
+	int loop;
+
+	if (_G(boss_dead)) {
+		for (loop = 3; loop < 7; loop++) {
+			if (_G(actor)[loop].used)
+				break;
+		}
+
+		if (loop == 7) {
+			_G(boss_dead) = false;
+
+			//xerase_actors(actor, display_page);
+			//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], display_page);
+			_G(exit_flag) = 0;
+
+			if (_G(boss_active) == 1) {
+				closing_sequence1();
+				_G(boss_active) = 0;
+			}
+		}
 	}
 }
 

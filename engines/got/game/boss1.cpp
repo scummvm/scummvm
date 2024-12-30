@@ -20,16 +20,18 @@
  */
 
 #include "got/game/boss1.h"
+#include "got/game/back.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/panel.h"
+#include "got/game/status.h"
+#include "got/gfx/image.h"
 #include "got/vars.h"
 #include "got/events.h"
 #include "got/sound.h"
 
 namespace Got {
 
-// boss - snake
 int boss1_movement(ACTOR *actr) {
 	int d, x1, y1, f;
 
@@ -256,25 +258,23 @@ int boss_dead1(void) {
 }
 
 void closing_sequence1() {
-#ifdef TODO
-	LEVEL far *lvl;
-	int rep;
-
 	music_play(4, 1);
-	odin_speaks(1001, 13);
-	thor_info.armor = 1;
+	odin_speaks(1001, 13, "CLOSING1_2");
+}
+
+void closing_sequence1_2() {
+	_G(thor_info).armor = 1;
 	load_new_thor();
 	_G(thor)->dir = 1;
 	_G(thor)->next = 0;
-	xerase_actors(actor, display_page);
-	xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], display_page);
 	fill_score(20);
 	score_for_inv();
 
 	fill_health();
 	fill_magic();
 	odin_speaks(1002, 0);
-
+#ifdef TODO
+	int rep;
 	REPEAT(16) scrn.actor_type[rep] = 0;
 	_G(boss_dead) = 0;
 	_G(setup)._G(boss_dead)[0] = 1;
@@ -292,9 +292,6 @@ void closing_sequence1() {
 	lvl = (LEVEL far *) (sd_data + (59 * 512));
 	lvl->icon[6][18] = 148;
 	lvl->icon[6][19] = 202;
-	exit_flag = 0;
-#else
-	error("closing_sequence1");
 #endif
 }
 

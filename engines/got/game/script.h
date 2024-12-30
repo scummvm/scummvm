@@ -27,8 +27,11 @@
 
 namespace Got {
 
+typedef void (*ScriptEndFn)();
+
 class Scripts {
 private:
+	ScriptEndFn _endFn = nullptr;
 	long  num_var[26] = {};        // numeric variables
 	char  str_var[26][81] = {};    // string vars
 	char  line_label[32][9] = {};  // line label look up table
@@ -104,7 +107,8 @@ public:
 	Scripts();
 	~Scripts();
 
-	void execute_script(long index, const Gfx::Pics &speakerIcon);
+	void execute_script(long index, const Gfx::Pics &speakerIcon,
+		ScriptEndFn endFn = nullptr);
 
 	void pause() {
 		_paused = true;
@@ -117,7 +121,8 @@ public:
 	void setAskResponse(int option);
 };
 
-extern void execute_script(long index, const Gfx::Pics &speakerIcon);
+extern void execute_script(long index, const Gfx::Pics &speakerIcon,
+	ScriptEndFn endFn = nullptr);
 
 } // namespace Got
 
