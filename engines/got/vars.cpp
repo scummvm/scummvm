@@ -110,4 +110,8 @@ void Vars::setArea(int areaNum) {
 	}
 }
 
+void Vars::clearKeyFlags() {
+	Common::fill(_key_flag, _key_flag + 100, 0);
+}
+
 } // namespace Got

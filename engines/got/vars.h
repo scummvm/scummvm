@@ -78,6 +78,7 @@ public:
 
 	void load();
 	void setArea(int areaNum);
+	void clearKeyFlags();
 
 	Common::String _playerName = "ScummVM";
 	Gfx::GfxChunks _gfx;
