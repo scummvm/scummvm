@@ -445,7 +445,9 @@ int TrollEngine::drawRoom(char *menu) {
 	_system->updateScreen();
 
 	int n = 0;
-	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 39);
+	menu[0] = ' '; // leading space
+	menu[1] = '\0';
+	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 38);
 
 	for (int i = 0; i < 3; i++) {
 		if (_roomDescs[_roomPicture - 1].options[i]) {
@@ -550,8 +552,6 @@ void TrollEngine::gameLoop() {
 	memset(_inventory, 0, sizeof(_inventory));
 
 	while (!done && !shouldQuit()) {
-		*menu = 0;
-
 		currentOption = 0;
 
 		numberOfOptions = drawRoom(menu);
