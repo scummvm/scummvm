@@ -42,6 +42,8 @@ const char *item_name[] = {
 	"Amulet of Protection","Thunder Power"
 };
 
+static const char *odinEndMessage;
+
 void show_level(int new_level) {
 	int save_d;
 
@@ -147,13 +149,24 @@ void show_level_done() {
 	music_play(_G(level_type), 0);
 }
 
-void odin_speaks(int index, int item) {
-	execute_script((long)index, _G(odin));
-
+static void odin_speaks_end() {
+	// In case Thor is now dead, flag as such
 	if (!_G(thor)->health) {
 		_G(thor)->show = 0;
 		_G(exit_flag) = 2;
 	}
+
+	// If there's an end message, pass it on to the view hierarchy.
+	// This is used in cases like the game end where multiple
+	// odin_speaks are done in sequence
+	if (odinEndMessage)
+		g_events->send(GameMessage(odinEndMessage));
+}
+
+void odin_speaks(int index, int item, const char *endMessage) {
+	odinEndMessage = endMessage;
+
+	execute_script((long)index, _G(odin), odin_speaks_end);
 }
 
 

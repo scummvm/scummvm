@@ -26,11 +26,14 @@
 
 namespace Got {
 
+// boss 1 - Snake (Jormangund )
 extern int boss1_movement(ACTOR *actr);
 extern void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num);
 extern void boss_level1();
 extern int boss_dead1();
 extern void closing_sequence1();
+extern void closing_sequence1_2();
+extern void closing_sequence1_3();
 
 } // namespace Got
 

@@ -93,8 +93,9 @@ Scripts::ScrFunction Scripts::scr_func[5] = {
 
 Scripts *g_scripts;
 
-void execute_script(long index, const Gfx::Pics &speakerIcon) {
-	g_scripts->execute_script(index, speakerIcon);
+void execute_script(long index, const Gfx::Pics &speakerIcon,
+		ScriptEndFn endFn) {
+	g_scripts->execute_script(index, speakerIcon, endFn);
 }
 
 Scripts::Scripts() {
@@ -105,11 +106,13 @@ Scripts::~Scripts() {
 	g_scripts = nullptr;
 }
 
-void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon) {
+void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon,
+		ScriptEndFn endFn) {
 	// Firstly disable any on-screen actors
 	for (int i = 0; i < MAX_ACTORS; i++)
 		_G(actor)[i].show = 0;
 
+	_endFn = endFn;
 	scr_index = index;
 	scr_pic = speakerIcon;
 
@@ -180,6 +183,9 @@ void Scripts::script_exit() {
 		free(buffer);
 		buffer = nullptr;
 	}
+
+	if (_endFn)
+		_endFn();
 }
 
 int Scripts::skip_colon() {

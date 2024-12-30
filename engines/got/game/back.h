@@ -38,7 +38,7 @@ extern const char *item_name[];
 */
 extern void show_level(int new_level);
 extern void show_level_done();
-extern void odin_speaks(int index, int item);
+extern void odin_speaks(int index, int item, const char *endMessage = nullptr);
 extern int switch_icons();
 extern int rotate_arrows();
 extern void kill_enemies(int iy, int ix);
