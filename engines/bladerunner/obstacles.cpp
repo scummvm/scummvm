@@ -112,7 +112,7 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 	float nearestIntersectionDistance = 0.0f;
 
 	for (int i = 0; i != polyB->verticeCount; ++i) {
-		LineSegment lineB;
+		LineSegment lineB; // An edge of the secondary polygon
 		lineB.start = polyB->vertices[i];
 		lineB.end   = polyB->vertices[(i+1) % polyB->verticeCount];
 
@@ -121,20 +121,32 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 		Vector2 newIntersectionPoint;
 
 		if (lineLineIntersection(lineA, lineB, &newIntersectionPoint)) {
+			// NOTE: An edge type (eg lineAType) is set by its start point vertex type.
+			// The end point of the edge is the next vertex of the polygon going clock-wise.
 			if ((lineAType == TOP_RIGHT    && lineBType == TOP_LEFT)
 			 || (lineAType == BOTTOM_RIGHT && lineBType == TOP_RIGHT)
 			 || (lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT)
 			 || (lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT)
 			) {
+				// NOTE: pathLengthSinceLastIntersection is part of pathfinding fix 2
 				if ( (pathLengthSinceLastIntersection > 2)
-					|| ( (!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)))
-					&& (newIntersectionPoint != *intersectionPoint) )) {
+				     || ( (!(WITHIN_TOLERANCE(lineB.end.x, newIntersectionPoint.x) && WITHIN_TOLERANCE(lineB.end.y, newIntersectionPoint.y)))
+				          && (newIntersectionPoint != *intersectionPoint) )) {
 					float newIntersectionDistance = getLength(lineA.start.x, lineA.start.y, newIntersectionPoint.x, newIntersectionPoint.y);
+					// NOTE: We only want the *nearest* intersection point to the start of the line A
+					// We don't want the intersection point to be the end point of the line B (from secondary polygon),
+					// because in that case, switching to Polygon B (to make it primary) we'd get an "edge"
+					// from the intersection point to the end point of the line B (which was a vertex of Polygon B)
+					// which would result to an edge with the same start and end point, and thus duplicate vertices in the merged polygon.
+					//
+					// We do keep 0 length segments here from lineA start to the intersection point
+					// (which can happen when the polygons touch edges or corners)
+					// but those will be handled in the calling function.
 					if (!hasIntersection || newIntersectionDistance < nearestIntersectionDistance) {
 						hasIntersection = true;
 						nearestIntersectionDistance = newIntersectionDistance;
 						*intersectionPoint = newIntersectionPoint;
-						*intersectionIndex = i;
+						*intersectionIndex = i; // the index of the vertex for the start of the lineB edge (of Polygon B which will become primary)
 					}
 				}
 			}
@@ -146,10 +158,10 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 
 /*
  * Polygons vertices are defined in clock-wise order
- * starting at the top-most, right-most corner.
+ * starting at the top-most, left-most corner (eg. here B0).
  *
- * When merging two polygons, we start at the top-most, right-most vertex.
- * The polygon with this vertex starts is the primary polygon.
+ * When merging two polygons, we start at the top-most, left-most vertex.
+ * The polygon with this vertex starts as the primary polygon.
  * We follow the edges until we find an intersection with the secondary polygon,
  * in which case we switch primary and secondary and continue following the new edges.
  *
@@ -202,6 +214,9 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		polyLine.end    = polyPrimary->vertices[(vertIndex + 1) % polyPrimary->verticeCount];
 
 		// TODO(madmoose): How does this work when adding a new intersection point?
+		// The intersection point "inherits" the vertex type of the now-primary
+		// (which was "secondary" before the intersection swap) polygon's vertex,
+		// which was the start of the edge that intersected with the former-primary (now secondary) polygon.
 		polyPrimaryType = polyPrimary->vertexType[vertIndex];
 
 		if (flagAddVertexToVertexList) {
@@ -225,7 +240,19 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 
 		if (linePolygonIntersection(polyLine, polyPrimaryType, polySecondary, &intersectionPoint, &polySecondaryIntersectionIndex, pathLengthSinceLastIntersection)) {
 			if (WITHIN_TOLERANCE(intersectionPoint.x, polyLine.start.x) && WITHIN_TOLERANCE(intersectionPoint.y, polyLine.start.y)) {
+				// The start of the edge of the primary polygon is (very close to) the intersection point.
+				// This eg. does occur in RC02 (Set 16, Scene 79, chapter 1) (intersection point (x: -16.000000, y: 108303.968750))
+
+				// The code here ensures we keep the intersection point in the merged polygon (polyMerged)
+				// but *remove* the vertex that was the start of the edge (belonging to the primary polygon)
+				// However, unless the intersection point is exactly the same as the start of the line segment from the primary polygon,
+				// (which seems to practically be the case)
+				// this can *potentially* lead to slanted (so not strictly vertical or horizontal) lines in the merged polygon.
+				// TODO: Is there a case where we end up with slanted edges in the merged polygon?
 				flagAddVertexToVertexList = false;
+				// TODO: We don't check here for polyMerged.verticeCount > 0 before decrementing it,
+				//       and this practically seems to not be an issue, but shouldn't we include this check just to be safe?
+				//
 				// TODO(madmoose): How would this work?
 				--(polyMerged.verticeCount);
 			} else {
@@ -451,6 +478,7 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 	}
 
 	if (--recursionLevel > 1) {
+		// NOTE: Basically this allows at most 1 level of recursion
 		return false;
 	}
 
@@ -801,7 +829,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 						}
 
 						int polygonVertexType =  polygon->vertexType[polygonVertexIdx];
-						if ((polygonVertexType == TOP_LEFT     && intersection.y < path[pathVertexIdx].y)
+						if ((polygonVertexType == TOP_LEFT    && intersection.y < path[pathVertexIdx].y)
 						|| (polygonVertexType == TOP_RIGHT    && intersection.x > path[pathVertexIdx].x)
 						|| (polygonVertexType == BOTTOM_RIGHT && intersection.y > path[pathVertexIdx].y)
 						|| (polygonVertexType == BOTTOM_LEFT  && intersection.x < path[pathVertexIdx].x)
@@ -929,6 +957,7 @@ void Obstacles::load(SaveFileReadStream &f) {
 	_pathSize = f.readInt();
 }
 
+// This is used when debugger is set to draw obstacles
 void Obstacles::draw() {
 	float y = _vm->_playerActor->getY();
 
@@ -956,7 +985,7 @@ void Obstacles::draw() {
 		}
 	}
 
-	// draw actor's box
+	// draw actor's box - only for the player (McCoy)
 	{
 		Vector3 playerPos = _vm->_playerActor->getXYZ();
 		Vector3 p0 = _vm->_view->calculateScreenPosition(playerPos + Vector3(-12.0f, 0.0f, -12.0f));
