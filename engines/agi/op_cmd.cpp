@@ -2299,6 +2299,22 @@ void cmdNewRoomVV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(13, 1);
 }
 
+void cmdSetBit(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	uint16 bit = parameter[0];
+	uint16 varNr = parameter[1];
+
+	byte varVal = vm->getVar(varNr);
+	vm->setVar(varNr, varVal | (1 << bit));
+}
+
+void cmdClearBit(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	uint16 bit = parameter[0];
+	uint16 varNr = parameter[1];
+
+	byte varVal = vm->getVar(varNr);
+	vm->setVar(varNr, varVal & ~(1 << bit));
+}
+
 // The AGI256 interpreter modified opcode 170 to load 256 color pictures
 void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// Load the picture. Similar to void cmdLoadPic.

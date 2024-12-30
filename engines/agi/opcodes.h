@@ -225,6 +225,8 @@ void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSpeed(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetItemView(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCallV1(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdSetBit(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdClearBit(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdUnknown(AgiGame *state, AgiEngine *vm, uint8 *p);
 
 void condEqual(AgiGame *state, AgiEngine *vm, uint8 *p);
