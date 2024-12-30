@@ -76,7 +76,8 @@ Common::Error GotEngine::run() {
 	_vars.load();
 
 	// General initialization
-	initialize();
+	if (_G(demo))
+		initialize_game();
 	syncSoundSettings();
 
 	runGame();
@@ -128,6 +129,8 @@ void GotEngine::savegameLoaded() {
 		area = 1;
 
 	g_vars->setArea(area);
+	if (firstView()->getName() != "Game")
+		initialize_game();
 
 	_G(current_area) = _G(thor_info).last_screen;
 

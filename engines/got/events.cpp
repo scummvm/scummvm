@@ -77,7 +77,7 @@ void Events::runGame() {
 					e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_views.clear();
 				break;
-			} else {
+			} else if (!_G(demo)) {
 				processEvent(e);
 			}
 		}

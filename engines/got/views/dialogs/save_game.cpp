@@ -46,7 +46,7 @@ void SaveGame::selected() {
 	if (_isQuit)
 		g_engine->quitGame();
 	else
-		replaceView("Title", true, true);
+		replaceView("TitleBackground", true, true);
 }
 
 } // namespace Dialogs

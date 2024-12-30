@@ -20,6 +20,8 @@
  */
 
 #include "got/views/dialogs/main_menu.h"
+#include "got/game/init.h"
+#include "got/vars.h"
 
 namespace Got {
 namespace Views {
@@ -40,7 +42,14 @@ void MainMenu::closed() {
 void MainMenu::selected() {
 	switch (_selectedItem) {
 	case 0:
+		_G(demo) = false;
 		addView("SelectGame");
+		break;
+
+	case 3:
+		_G(demo) = true;
+		initialize_game();
+		replaceView("Game", true, true);
 		break;
 
 	case 4:
