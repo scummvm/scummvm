@@ -807,7 +807,7 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 // Image widget
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, MacImageMask *mask, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
+MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, Graphics::Surface *mask, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
 	_image = surface;
 	_mask = mask;
 }
@@ -818,7 +818,7 @@ MacGuiImpl::MacImage::~MacImage() {
 		delete _image;
 	}
 	if (_mask) {
-		delete[] _mask->data;
+		_mask->free();
 		delete _mask;
 	}
 }

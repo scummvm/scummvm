@@ -449,34 +449,17 @@ public:
 		void handleMouseMove(Common::Event &event) override;
 	};
 
-	struct MacImageMask {
-		uint16 w;
-		uint16 h;
-		uint16 rowBytes;
-		byte *data;
-
-		bool isMasked(int x, int y) const {
-			if (x < 0 || x >= w || y < 0 || y >= h)
-				return false;
-			return (data[y * rowBytes + x / 8] & (0x80 >> (x % 8))) == 0;
-		}
-	};
-
 	class MacImage : public MacWidget {
 	private:
 		Graphics::Surface *_image = nullptr;
-		uint16 _maskRowBytes = 0;
-		uint16 _maskHeight = 0;
-		const MacImageMask *_mask = nullptr;
+		Graphics::Surface *_mask = nullptr;
 
 	public:
-		MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, MacImageMask *mask, bool enabled);
+		MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, Graphics::Surface *mask, bool enabled);
 		~MacImage();
 
 		Graphics::Surface *getImage() const { return _image; }
-		const MacImageMask *getMask() const { return _mask; }
-		uint16 getMaskRowBytes() const { return _maskRowBytes; }
-		uint16 getMaskHeight() const { return _maskHeight; }
+		Graphics::Surface *getMask() const { return _mask; }
 
 		void draw(bool drawFocused = false) override;
 	};
@@ -826,7 +809,7 @@ public:
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 
-	Graphics::Surface *loadIcon(int id, MacImageMask **mask);
+	bool loadIcon(int id, Graphics::Surface **icon, Graphics::Surface **mask);
 	Graphics::Surface *loadPict(int id);
 
 	virtual bool isVerbGuiActive() const { return false; }

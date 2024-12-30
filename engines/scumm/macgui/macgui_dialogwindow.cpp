@@ -269,10 +269,15 @@ MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect b
 }
 
 MacGuiImpl::MacImage *MacGuiImpl::MacDialogWindow::addIcon(int x, int y, int id, bool enabled) {
-	MacImageMask *mask;
-	Graphics::Surface *icon = _gui->loadIcon(id, &mask);
-	MacGuiImpl::MacImage *image = new MacImage(this, Common::Rect(x, y, x + icon->w, y + icon->h), icon, mask, false);
-	addWidget(image, kWidgetIcon);
+	Graphics::Surface *icon = nullptr;
+	Graphics::Surface *mask = nullptr;
+	MacGuiImpl::MacImage *image = nullptr;
+
+	if (_gui->loadIcon(id, &icon, &mask)) {
+		image = new MacImage(this, Common::Rect(x, y, x + icon->w, y + icon->h), icon, mask, false);
+		addWidget(image, kWidgetIcon);
+	}
+
 	return image;
 }
 
@@ -801,12 +806,12 @@ MacGuiImpl::MacWidget *MacGuiImpl::MacDialogWindow::getWidget(MacWidgetType type
 
 void MacGuiImpl::MacDialogWindow::drawSprite(const MacImage *image, int x, int y) {
 	const Graphics::Surface *surface = image->getImage();
-	const MacImageMask *mask = image->getMask();
+	const Graphics::Surface *mask = image->getMask();
 
 	if (mask) {
 		for (int y1 = 0; y1 < mask->h; y1++) {
 			for (int x1 = 0; x1 < mask->w; x1++) {
-				if (!mask->isMasked(x1, y1))
+				if (mask->getPixel(x1, y1) == 255)
 					_innerSurface.setPixel(x + x1, y + y1, surface->getPixel(x1, y1));
 			}
 		}
