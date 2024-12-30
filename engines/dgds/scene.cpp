@@ -693,6 +693,8 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 
 	bool result = false;
 
+	uint prevSize = _dialogs.size();
+
 	while (chunk.readNextHeader(EX_DDS, filename)) {
 		if (chunk.isContainer()) {
 			continue;
@@ -716,6 +718,12 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 	}
 
 	delete dlgFile;
+
+	if (_dialogs.size() != prevSize) {
+		debug(10, "Read %d dialogs from DDS %s:", _dialogs.size() - prevSize, filename.c_str());
+		for (uint i = prevSize; i < _dialogs.size(); i++)
+			debug(10, "%s", _dialogs[i].dump("").c_str());
+	}
 
 	if (!result)
 		return nullptr;
