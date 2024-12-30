@@ -955,7 +955,7 @@ void MTIMolassesHandler::release() {
 }
 
 void MTIMolassesHandler::renderPostEffect(Graphics::ManagedSurface &surface) const {
-	surface.transBlitFrom(_surf, Common::Point(0, 0), _mask);
+	surface.maskBlitFrom(_surf, _mask);
 }
 
 class MTIMolassesFullscreenHooks : public StructuralHooks {
