@@ -112,8 +112,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	uint32 neededSleep = g_sci->_speedThrottleDelay; // 30 ms (kSpeedThrottleDefaultDelay)
 
-	// WORKAROUNDS for scripts that are polling too quickly in scenes that
-	// are not animating much
+	// WORKAROUNDS for scripts that require specific speed throttling behavior
 	switch (g_sci->getGameId()) {
 	case GID_CASTLEBRAIN:
 		// In Castle of Dr. Brain, memory color matching puzzle in the first
@@ -137,6 +136,40 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		if (s->currentRoomNumber() == 27) {
 			s->_throttleTrigger = true;
 			neededSleep = 60;
+		}
+		break;
+	case GID_SQ5:
+		switch (s->currentRoomNumber()) {
+		case 104:
+			// Introduction: star field. Requires extra speed throttling to achieve
+			// comet animations and intended timing. Comets and fast stars move at
+			// unthrottled speed, but the comet's animation cycle speed is based on
+			// clock time and unsynchronized with movement. On a 386/33, the comets
+			// animate and become streaks, but even a 486/50 is too fast for this.
+			// The comets move so fast that they reach their destination before they
+			// can animate beyond their initial 1x1 pixel cel. Bug #15622
+			s->_throttleTrigger = true;
+			neededSleep = 90;
+			break;
+		case 110: {
+			// Introduction: exiting the simulator. Requires extra speed throttling to
+			// achieve intended timing. All actors in this room have unthrottled speed.
+			// This may have been to compensate for the interpreter lag when animating
+			// so many actors. Without that lag, and the CPU this scene was timed for,
+			// everything moves and animates too fast. However, we must not apply extra
+			// throttling to the second half of this scene, or else ego will walk slowly.
+			// The original interpreter did not lag here, because it removed the earlier
+			// actors from the cast. We detect this by querying the cast size. Bug #15610
+			const reg_t cast = s->variables[VAR_GLOBAL][kGlobalVarCast];
+			const uint16 castSize = readSelectorValue(s->_segMan, cast, SELECTOR(size));
+			if (castSize != 5) { // only throttle before ego begins walking
+				s->_throttleTrigger = true;
+				neededSleep = 90;
+			}
+			break;
+		}
+		default:
+			break;
 		}
 		break;
 
