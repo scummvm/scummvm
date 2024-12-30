@@ -32,14 +32,7 @@
 
 namespace Got {
 
-int setup_level() {
-	_G(bgPics).setArea(_G(area));
-	_G(sd_data).setArea(_G(area));
-
-	return 1;
-}
-
-int setup_player() {
+void setup_player() {
 	memset(&_G(thor_info), 0, sizeof(_G(thor_info)));
 	_G(thor_info).inventory = 0;
 	if (_G(area) > 1) _G(thor_info).inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
@@ -62,28 +55,14 @@ int setup_player() {
 	_G(thor_info).last_icon = (6 * 20) + 8;
 	_G(thor_info).last_screen = 23;
 	_G(thor)->dir = 1;
-
-	return 1;
 }
 
-void initialize() {
+void initialize_game() {
 	load_standard_actors();
-	if (!setup_player())
-		error("setup_player failed");
-	if (!setup_level())
-		error("setup_level failed");
+	setup_player();
 
-	// Handle loading demo key
-	if (_G(rdemo)) {
-		Common::File f;
-		if (f.open("demo.got"))
-			f.read(_G(demo_key), DEMO_LEN);
-	}
-
-	if (_G(record))
-		Common::fill(_G(demo_key), _G(demo_key) + DEMO_LEN, 0);
-
-	if (_G(demo) || _G(record)) {
+	if (_G(demo)) {
+		g_vars->setArea(1);
 		_G(thor)->health = 100;
 		_G(thor_info).magic = 100;
 		_G(thor_info).jewels = 463;
@@ -92,6 +71,12 @@ void initialize() {
 		_G(thor_info).inventory = 1 + 2;
 		_G(current_level) = 54;
 		_G(thor_info).item = 2;
+
+		File f("DEMO");
+		_G(demoKeys).clear();
+		for (int i = 0; i < DEMO_LEN; ++i)
+			_G(demoKeys).push(f.readByte());
+
 	}
 
 	_G(thor)->speed_count = 6;
@@ -130,8 +115,9 @@ void initialize() {
 	_G(auto_load) = 0;
 
 	_G(startup) = false;
-	if (_G(record))
-		memset(_G(demo_key), 0, DEMO_LEN);
+}
+
+void deinitialize_game() {
 }
 
 int setup_boss(int num) {

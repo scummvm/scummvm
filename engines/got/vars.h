@@ -23,6 +23,7 @@
 #define GOT_VARS_H
 
 #include "common/events.h"
+#include "common/queue.h"
 #include "graphics/screen.h"
 #include "got/data/defines.h"
 #include "got/data/sd_data.h"
@@ -92,6 +93,7 @@ public:
 	GameMode _gameMode = MODE_NORMAL;
 	TransitionDir _transitionDir = DIR_LEFT;
 	Cheats _cheats;
+	Common::Queue<byte> _demoKeys;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -192,9 +194,7 @@ public:
 	int  _boss_active = 0;
 	int8 _story_flag = 1;
 	int8 *_scr = nullptr;
-	char _demo_key[DEMO_LEN] = {};
-	int  _demo_cnt = 0;
-	bool _demo = false, _record = false;
+	bool _demo = false;
 	int8 _demo_enable = 1;
 	int  _rnd_index = 0;
 	int  _rnd_array[100] = {};

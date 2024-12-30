@@ -57,20 +57,6 @@ void Vars::load() {
 		_rdemo = ConfMan.getBool("rdemo");
 	}
 
-	if (_demo || _record) {
-		if (_record)
-			_demo = 0;
-
-		_area = 1;
-		_setup.area = 1;
-		_cash1_inform = 1;
-		_cash2_inform = 1;
-		_door_inform = 1;
-		_magic_inform = 1;
-		_carry_inform = 1;
-		_story_flag = 0;
-	}
-
 	if (_current_level != 23)
 		_story_flag = 0;
 
@@ -88,7 +74,6 @@ void Vars::load() {
 	_mask_buff_start = _mask_buff;
  
 	res_read("RANDOM", _rnd_array);
-	res_read("DEMO", _demo_key);
 
 	Gfx::load_palette();
 }
