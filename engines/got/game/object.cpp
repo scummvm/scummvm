@@ -227,13 +227,16 @@ int use_apple(int flag) {
 			_G(magic_cnt) = 0;
 			add_magic(-2);
 			add_health(1);
-			if (!sound_playing()) play_sound(ANGEL, 0);
+			if (!sound_playing())
+				play_sound(ANGEL, 0);
 		}
 		_G(apple_flag) = 1;
 		return 1;
+
 	} else {
 		_G(apple_flag) = 0;
-		if (flag) not_enough_magic();
+		if (flag)
+			not_enough_magic();
 	}
 	return 0;
 }
@@ -410,7 +413,6 @@ int use_object(int flag) {
 }
 
 void use_item() {
-	static int flag = 0;
 	int kf, ret = 0, mf;
 
 	kf = _G(key_flag)[key_magic];
@@ -446,11 +448,14 @@ void use_item() {
 
 	}
 	if (kf) {
-		if ((!ret) && (!flag)) {
-			if (mf) play_sound(BRAAPP, 0);
-			flag = 1;
+		if ((!ret) && (!_G(useItemFlag))) {
+			if (mf)
+				play_sound(BRAAPP, 0);
+			_G(useItemFlag) = true;
 		}
-	} else flag = 0;
+	} else {
+		_G(useItemFlag) = false;
+	}
 }
 
 void place_pixel(int dir, int num) {
@@ -579,8 +584,9 @@ void throw_lightning() {
 }
 
 void not_enough_magic() {
-	if (!_G(magic_inform)) odin_speaks(2006, 0);
-	//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], draw_page);
+	if (!_G(magic_inform))
+		odin_speaks(2006, 0);
+
 	_G(magic_inform) = 1;
 }
 

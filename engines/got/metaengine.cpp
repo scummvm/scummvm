@@ -103,8 +103,6 @@ Common::Array<Common::Keymap *> GotMetaEngine::initKeymaps(const char *target) c
 			act->addDefaultInputMapping(r->_joy);
 		if (r->_action == Got::KEYBIND_SELECT)
 			act->addDefaultInputMapping("RETURN");
-		if (r->_action == Got::KEYBIND_MAGIC)
-			act->allowKbdRepeats();
 
 		keyMap->addAction(act);
 	}
