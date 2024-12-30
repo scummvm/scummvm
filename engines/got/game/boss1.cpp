@@ -267,20 +267,25 @@ void closing_sequence1_2() {
 	load_new_thor();
 	_G(thor)->dir = 1;
 	_G(thor)->next = 0;
-	fill_score(20);
+	fill_score(20, "CLOSING1_3");
+}
+
+void closing_sequence1_3() {
 	score_for_inv();
 
 	fill_health();
 	fill_magic();
-	odin_speaks(1002, 0);
-#ifdef TODO
+	odin_speaks(1002, 0, "CLOSING1_4");
+}
+
+void closing_sequence1_4() {
 	int rep;
-	REPEAT(16) scrn.actor_type[rep] = 0;
+	REPEAT(16) _G(scrn).actor_type[rep] = 0;
 	_G(boss_dead) = 0;
-	_G(setup)._G(boss_dead)[0] = 1;
-	game_over = 1;
+	_G(setup).boss_dead[0] = 1;
+	_G(game_over) = 1;
 	_G(boss_active) = 0;
-	scrn.type = 4;
+	_G(scrn).type = 4;
 	show_level(BOSS_LEVEL1);
 
 	play_sound(ANGEL, 1);
@@ -289,10 +294,11 @@ void closing_sequence1_2() {
 	actor_visible(1);
 	actor_visible(2);
 
-	lvl = (LEVEL far *) (sd_data + (59 * 512));
-	lvl->icon[6][18] = 148;
-	lvl->icon[6][19] = 202;
-#endif
+	LEVEL lvl;
+	lvl.load(_G(sd_data) + (59 * 512));
+	lvl.icon[6][18] = 148;
+	lvl.icon[6][19] = 202;
+	lvl.save(_G(sd_data) + (59 * 512));
 }
 
 } // namespace Got

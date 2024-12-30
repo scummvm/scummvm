@@ -104,14 +104,21 @@ void GameContent::draw() {
 	}
 }
 
+#define MSG(STR, METHOD) else if (msg._name == STR) { METHOD(); return true; }
+
 bool GameContent::msgGame(const GameMessage &msg) {
 	if (msg._name == "THOR_DIES") {
 		thorDies();
 		return true;
 	}
+	MSG("CLOSING1_2", closing_sequence1_2)
+	MSG("CLOSING1_3", closing_sequence1_3)
+	MSG("CLOSING1_4", closing_sequence1_4)
 
 	return false;
 }
+
+#undef MSG
 
 bool GameContent::tick() {
 	checkThunderShake();
