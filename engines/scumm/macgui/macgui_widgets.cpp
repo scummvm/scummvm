@@ -1350,6 +1350,9 @@ void MacGuiImpl::MacImageSlider::draw(bool drawFocused) {
 }
 
 void MacGuiImpl::MacImageSlider::eraseHandle() {
+	if (_handlePos == -1)
+		return;
+
 	Common::Rect r = _handle->getBounds();
 	int y = r.top - _bounds.top;
 	int w = r.width();
