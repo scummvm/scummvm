@@ -20,6 +20,8 @@
  */
 
 #include "m4/riddle/rooms/section8/room807.h"
+
+#include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
@@ -181,7 +183,29 @@ void Room807::init() {
 }
 
 void Room807::pre_parser() {
-	// TODO Not yet implemented
+	if (_G(flags[V274]) || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807)) {
+		if (player_said("gear", "stone block")) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		} else if (player_said("look at", "corridor")) {
+			_G(player).walk_x = 285;
+			_G(player).walk_y = 319;
+		} else if (player_said("go", "south") || player_said("go", "north")) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		}
+	} else if (player_said("talk to", "mei chen") || player_said("wooden post", "crank")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	} else {
+		intr_cancel_sentence();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_trigger_dispatchx(kernel_trigger_create(7));
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
 }
 
 void Room807::parser() {
@@ -189,6 +213,122 @@ void Room807::parser() {
 }
 
 void Room807::daemon() {
+	switch (_G(kernel.trigger)) {
+	case 0:
+		ws_unhide_walker(_G(my_walker));
+		_807DoorMach = series_show("807door", 4095, 0, -1, -1, 0, 100, 0, 0);
+		_G(flags[V274]) = 1;
+		hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "north", false);
+		ws_walk(_mcTrekMach, 560, 400, nullptr, 1, 11, true);
+
+		break;
+
+	case 1:
+		digi_play("807m01", 1, 255, 2, -1);
+		break;
+
+	case 2:
+		digi_play("807r01", 1, 255, 5, -1);
+		break;
+
+	case 3:
+		digi_stop(2);
+		digi_unload("950_s33");
+		digi_play("807_s01", 2, 255, 4, -1);
+
+		break;
+
+	case 4:
+		digi_unload("807_s01");
+		break;
+
+	case 5:
+		player_set_commands_allowed(true);
+		if (_G(flags[V276]) == 0) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "mei chen", true);
+			kernel_timing_trigger(imath_ranged_rand(1200, 1800), 13, nullptr);
+		}
+
+		break;
+
+	case 6:
+		kernel_timing_trigger(600, 7, "thunk!");
+		break;
+
+	case 7:
+		if ((_G(flags[V274]) == 0) && !inv_object_in_scene("wooden beam", 807) && !inv_object_in_scene("wooden post", 807)) {
+			if (_field34)
+				kernel_timing_trigger(60, 7, "thunk!");
+			else {
+				player_set_commands_allowed(false);
+				_G(flags[V274]) = 1;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "north", false);
+
+				terminateMachine(_807Crnk2Mach);
+
+				series_play("807rp04", 256, 2, 8, 5, 0, 100, 0, 0, 0, -1);
+
+				terminateMachine(_807DoorMach);
+
+				series_play("807close", 4095, 0, 10, 0, 0, 100, 0, 0, 0, -1);
+				digi_play("807_s04", 2, 255, -1, -1);
+
+				_field38 = 0;
+			}
+		}
+
+		break;
+
+	case 8:
+		terminateMachine(_safariShadowMach);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_location(_G(my_walker), 476, 318);
+		ws_demand_facing(_G(my_walker), 11);
+
+		break;
+
+	case 10:
+		player_set_commands_allowed(true);
+		digi_play("807_s04a", 2, 255, -1, -1);
+		_807DoorMach = series_show("807door", 4095, 0, -1, -1, 0, 100, 0, 0);
+		_807Crnk2Mach = series_show("807crnk2", 4095, 0, -1, -1, 9, 100, 0, 0);
+
+		break;
+
+	case 11:
+		_G(flags[V274]) = 1;
+		disable_player_commands_and_fade_init(12);
+
+		break;
+
+	case 12:
+		_field38 = 1;
+		_G(flags[V274]) = 0;
+		other_save_game_for_resurrection();
+		_G(game).new_section = 4;
+		_G(game).new_room = 413;
+
+		break;
+
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+	case 18:
+	case 19:
+	case 20:
+	case 21:
+	default:
+		break;
+	}
+
 	// TODO Not yet implemented
 }
 
