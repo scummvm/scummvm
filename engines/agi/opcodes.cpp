@@ -148,8 +148,8 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "load.view",          "n",        &cmdLoadView },         // 5D
 	{ "...",                "",         &cmdUnknown },          // 5E unused in KQ2 or BC
 	{ "...",                "",         &cmdUnknown },          // 5F BC script 102 when attempting to fill flask
-	{ "setbit",             "nv",       &cmdUnknown },          // 60
-	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit, unused in KQ2 or BC
+	{ "set.bit",            "nv",       &cmdSetBit },           // 60 BC
+	{ "clear.bit",          "nv",       &cmdClearBit },         // 61
 	{ "set.upper.left",     "nn",       &cmdSetUpperLeft }      // 62 BC Apple II
 };
 
