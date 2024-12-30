@@ -82,7 +82,7 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 	}
 	debugC(1, TwinE::kDebugResources, "Load image: %i", image.image.index);
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
-	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0xff, nullptr, true);
+	target.blitFrom(src, src.getBounds(), target.getBounds());
 	const Graphics::Palette *pal = &_ptrPal;
 	if (image.palette.index != -1) {
 		loadCustomPalette(image.palette);
@@ -133,7 +133,7 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::Path &fi
 		delete source;
 	} else {
 		engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
-		target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0xff, nullptr, true);
+		target.blitFrom(*src, rect, target.getBounds());
 	}
 	if (engine->delaySkip(1000 * seconds)) {
 		return true;
