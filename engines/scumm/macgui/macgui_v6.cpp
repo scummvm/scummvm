@@ -384,13 +384,13 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 	}
 
 	MacImage *handle = window->addIcon(x - 6, y - 4, 300, true);
-	MacImageSlider *slider = window->addImageSlider(Common::Rect(x - 6, y - 4, x + width + 7, y + 16), handle, true, 0, width - 1, 0, numMarkings - 1);
+	MacImageSlider *slider = window->addImageSlider(Common::Rect(x - 6, y - 4, x + width + 7, y + 16), handle, true, 0, width - 1, minValue, maxValue);
 
 	for (int i = 0; i < numMarkings; i++)
 		slider->addStop(positions[i], minValue + i);
 
 	slider->setSnapWhileDragging(true);
-	slider->setValue(0);
+	slider->setValue(minValue);
 
 	delete[] positions;
 	return slider;
