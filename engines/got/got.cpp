@@ -168,10 +168,18 @@ void GotEngine::savegameLoaded() {
 	setup_load();
 }
 
+bool GotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (_G(key_flag)[key_magic])
+		return false;
+
+	// Only allow if not in the middle of area transition, dying, etc.
+	return _G(gameMode) == MODE_NORMAL;
+}
+
 bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (_G(key_flag)[key_magic] || _G(tornado_used) || _G(lightning_used) ||
 			_G(thunder_flag) || _G(hourglass_flag) || _G(thor)->num_moves > 1 ||
-			_G(shield_on))
+			_G(shield_on) || _G(game_over))
 		return false;
 
 	// Only allow if not in the middle of area transition, dying, etc.
