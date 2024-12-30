@@ -36,6 +36,7 @@ private:
 	bool cmdSave(int argc, const char **argv);
 	bool cmdMagic(int argc, const char **argv);
 	bool cmdFreeze(int argc, const char **argv);
+	bool cmdLevel(int argc, const char **argv);
 
 public:
 	Console();
