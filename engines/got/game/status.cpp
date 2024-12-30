@@ -58,9 +58,10 @@ void fill_magic() {
 
 void fill_score(int num, const char *endMessage) {
 	GameMessage msg("FILL_SCORE");
-	msg._stringValue = endMessage;
+	if (endMessage)
+		msg._stringValue = endMessage;
 	msg._value = num;
-	g_events->send(msg);
+	g_events->send("GameStatus", msg);
 }
 
 void score_for_inv() {
