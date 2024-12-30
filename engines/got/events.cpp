@@ -115,6 +115,16 @@ void Events::nextFrame() {
 	_G(pge) = _G(pge) ^ 1;
 	_G(shot_ok) = true;
 
+	// In demo mode, handle the next key
+	if (_G(demo) && _G(gameMode) == MODE_NORMAL) {
+		if (_G(demoKeys).empty()) {
+			_views.clear();
+			return;
+		} else {
+			processDemoEvent(_G(demoKeys).pop());
+		}
+	}
+
 	// Do tick action to the views to handle gameplay logic
 	tick();
 
@@ -198,6 +208,45 @@ void Events::processEvent(Common::Event &ev) {
 	default:
 		break;
 	}
+}
+
+void Events::processDemoEvent(byte ev) {
+	bool flag = ev & 0x80;
+	ev &= 0x7f;
+
+	int action = -1;
+	switch (ev) {
+	case 0:
+		return;
+	case 72:
+		ev = key_up;
+		action = KEYBIND_UP;
+		break;
+	case 80:
+		ev = key_down;
+		break;
+	case 75:
+		ev = key_left;
+		break;
+	case 77:
+		ev = key_right;
+		break;
+	case 56:
+		ev = key_fire;
+		action = KEYBIND_FIRE;
+		break;
+	case 29:
+		ev = key_magic;
+		action = KEYBIND_MAGIC;
+		break;
+	default:
+		break;
+	}
+
+	_G(key_flag)[ev] = flag;
+
+	if (flag && action != -1)
+		msgAction(ActionMessage(action));
 }
 
 int Events::actionToKeyFlag(int action) const {
