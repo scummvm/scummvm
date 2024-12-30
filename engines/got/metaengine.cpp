@@ -57,7 +57,7 @@ static const KeybindingRecord GAME_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
-	{ KEYBIND_FIRE, "FIRE", _s("Magic"), "LALT", "JOY_A" },
+	{ KEYBIND_FIRE, "FIRE", _s("Fire"), "LALT", "JOY_A" },
 	{ KEYBIND_MAGIC, "MAGIC", _s("Magic"), "LCTRL", "JOY_B" },
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "JOY_X" },
 	// I18N: ESC key
@@ -103,6 +103,8 @@ Common::Array<Common::Keymap *> GotMetaEngine::initKeymaps(const char *target) c
 			act->addDefaultInputMapping(r->_joy);
 		if (r->_action == Got::KEYBIND_SELECT)
 			act->addDefaultInputMapping("RETURN");
+		if (r->_action == Got::KEYBIND_MAGIC)
+			act->allowKbdRepeats();
 
 		keyMap->addAction(act);
 	}
