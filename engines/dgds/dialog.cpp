@@ -165,9 +165,15 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 
 	Common::String title;
 	Common::String txt;
+
+	//
+	// Colon has to be followed by the first CR to be used as a heading
+	//
 	uint32 colonpos = _str.find(':');
 	uint32 crpos = _str.find('\r');
-	if (colonpos != Common::String::npos && (crpos == Common::String::npos || crpos > colonpos)) {
+	bool haveColon = colonpos != Common::String::npos;
+	bool haveCR = crpos != Common::String::npos;
+	if (haveColon && haveCR && crpos == colonpos + 1) {
 		title = _str.substr(0, colonpos);
 		txt = _str.substr(colonpos + 1);
 		// Most have a CR after the colon? trim it to remove a blank line.

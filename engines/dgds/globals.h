@@ -207,7 +207,7 @@ public:
 
 private:
 	// Willy-specific globals
-	int16 _unk2;
+	int16 _trouble;
 	int16 _unk3;
 	int16 _invDrawTimeSkipButtons;
 	int16 _hideMouseCursor;

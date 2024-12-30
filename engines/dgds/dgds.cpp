@@ -788,6 +788,7 @@ Common::Error DgdsEngine::run() {
 			frameCount++;
 			_skipNextFrame = false;
 		}
+
 		const uint32 thisFrameEndMillis = g_system->getMillis();
 		const uint32 elapsedMillis = thisFrameEndMillis - startMillis;
 		const uint32 targetMillis = (frameCount * 1000 / 30);

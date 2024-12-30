@@ -23,6 +23,8 @@
 #include "dgds/dgds.h"
 #include "dgds/scene.h"
 #include "dgds/game_palettes.h"
+#include "dgds/sound.h"
+#include "dgds/includes.h"
 
 namespace Dgds {
 
@@ -312,14 +314,49 @@ public:
 	}
 };
 
-class WillyDrawGlobal : public RWI16Global {
+class WillyTroubleGlobal : public RWI16Global {
 public:
-	WillyDrawGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
+	WillyTroubleGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
 	int16 set(int16 val) override {
 		int16 oldVal = get();
 		if (val != oldVal) {
+			// Draw the trouble meter changing.
+			DgdsEngine *engine = DgdsEngine::getInstance();
 			val = CLIP(val, (int16)0, (int16)10);
-			error("TODO: Implement set function for willy global 0x02 val %d.", val);
+			Image img(engine->getResourceManager(), engine->getDecompressor());
+			img.loadBitmap("METER.BMP");
+			uint16 soundNum = (oldVal < val) ? 0x386 : 0x387;
+			engine->_soundPlayer->playSFX(soundNum);
+			Graphics::ManagedSurface &compBuf = engine->_compositionBuffer;
+			const Common::Rect screenRect(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+			int16 sign = val > oldVal ? 1 : -1;
+			int16 prevBarSize = oldVal * 8;
+			int16 newBarSize = val * 8;
+
+			// Animate the trouble bar going up or down
+			compBuf.fillRect(Common::Rect(Common::Point(0x80, 0x8a), 0x47, 3), 16);
+
+			for (int sz = prevBarSize; sz != newBarSize; sz += sign) {
+				RequestData::drawCorners(&compBuf, 0, 0x71, 0x25, 0x5e, 0x7e);
+				compBuf.fillRect(Common::Rect(Common::Point(0x80, 0x3a), 0x47, 0x50), 0);
+				if (sz)
+					compBuf.fillRect(Common::Rect(Common::Point(0x80, 0x8a - sz), 0x47, sz), 0x22);
+				img.drawBitmap(0, 0x80, 0x29, screenRect, compBuf);
+
+				//
+				// TODO: Timing is a bit hackily approximate here.
+				// Measure real game timing more accurately.  Also probably
+				// should pump messages to make the mouse responsive.
+				//
+				g_system->copyRectToScreen(compBuf.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				g_system->updateScreen();
+				g_system->delayMillis(100);
+			}
+
+			g_system->delayMillis(900);
+
+			engine->_soundPlayer->stopSfxByNum(soundNum);
 			return RWI16Global::set(val);
 		}
 		return oldVal;
@@ -328,7 +365,7 @@ public:
 
 
 WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
-	_unk2(4), _unk3(0), _invDrawTimeSkipButtons(0), _hideMouseCursor(0), _unk74(0), _unk75(300),
+	_trouble(4), _unk3(0), _invDrawTimeSkipButtons(0), _hideMouseCursor(0), _unk74(0), _unk75(300),
 	_palFade(255), _droppedItemNum(0), _characterStance(0), _characterPos(0), _unk81(3),
 	_unk82(1) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
@@ -344,12 +381,12 @@ WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
 	_globals.push_back(new RWI16Global(0x05, &_hideMouseCursor));
 	_globals.push_back(new RWI16Global(0x04, &_invDrawTimeSkipButtons));
 	_globals.push_back(new RWI16Global(0x03, &_unk3));
-	_globals.push_back(new WillyDrawGlobal(0x02, &_unk2));
+	_globals.push_back(new WillyTroubleGlobal(0x02, &_trouble));
 }
 
 Common::Error WillyGlobals::syncState(Common::Serializer &s) {
 	Globals::syncState(s);
-	s.syncAsSint16LE(_unk2);
+	s.syncAsSint16LE(_trouble);
 	s.syncAsSint16LE(_unk3);
 	s.syncAsSint16LE(_invDrawTimeSkipButtons);
 	s.syncAsSint16LE(_hideMouseCursor);
