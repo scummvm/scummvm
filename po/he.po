@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-29 12:48+0000\n"
+"POT-Creation-Date: 2024-12-30 17:38+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -563,7 +563,7 @@ msgid "GFX"
 msgstr "תצוגה"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
-#: backends/graphics/atari/atari-graphics.cpp:1003
+#: backends/graphics/atari/atari-graphics.cpp:1033
 #: backends/graphics/sdl/sdl-graphics.cpp:485
 msgid "Graphics"
 msgstr "תצוגה"
@@ -4009,7 +4009,7 @@ msgstr "הוספת תיקיה חדשה"
 msgid "Choose a new folder"
 msgstr "בחירת תיקיה חדשה"
 
-#: backends/graphics/atari/atari-graphics.cpp:1007
+#: backends/graphics/atari/atari-graphics.cpp:1037
 #: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle aspect ratio correction"
 msgstr "מיתוג תיקון יחס ממדים"

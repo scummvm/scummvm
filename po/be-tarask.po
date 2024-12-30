@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-29 12:48+0000\n"
+"POT-Creation-Date: 2024-12-30 17:38+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -597,7 +597,7 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
-#: backends/graphics/atari/atari-graphics.cpp:1003
+#: backends/graphics/atari/atari-graphics.cpp:1033
 #: backends/graphics/sdl/sdl-graphics.cpp:485
 msgid "Graphics"
 msgstr "Графіка"
@@ -4085,7 +4085,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Выбярыце файл для ладаваньня"
 
-#: backends/graphics/atari/atari-graphics.cpp:1007
+#: backends/graphics/atari/atari-graphics.cpp:1037
 #: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle aspect ratio correction"
 msgstr "Пералучэньне карэкцыі прапорцыяў экрану"
