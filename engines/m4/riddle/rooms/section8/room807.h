@@ -22,15 +22,15 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM807_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM807_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room807 : public Room {
+class Room807 : public Section8Room {
 public:
-	Room807() : Room() {}
+	Room807() : Section8Room() {}
 	~Room807() override {}
 
 	void preload() override;
@@ -40,6 +40,10 @@ public:
 	void daemon() override;
 
 private:
+	int32 _807newFacing = 0;
+	int32 _dword1A194C = 0;
+	int32 _dword1A1954 = 0;
+
 	int32 _field34 = 0;
 	int32 _field38 = 0;
 

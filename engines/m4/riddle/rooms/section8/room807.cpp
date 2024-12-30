@@ -209,6 +209,13 @@ void Room807::pre_parser() {
 }
 
 void Room807::parser() {
+	_G(player).command_ready = false;
+
+	if (_G(kernel).trigger == 747) {
+		player_set_commands_allowed(true);
+		_field34 = 0;
+		return;
+	}
 	// TODO Not yet implemented
 }
 
@@ -317,19 +324,180 @@ void Room807::daemon() {
 		break;
 
 	case 13:
+		if (player_commands_allowed() && checkStrings() && (_G(flags[V274]) != 0 || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807))) {
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			switch (imath_ranged_rand(1, 4)) {
+			case 1:
+				digi_play("950_s15", 2, 255, 14, -1);
+				break;
+
+			case 2:
+				digi_play("950_s16", 2, 255, 14, -1);
+				break;
+
+			case 3:
+				digi_play("950_s17", 2, 255, 14, -1);
+				break;
+
+			case 4:
+			default:
+				digi_play("950_s18", 2, 255, 14, -1);
+				break;
+
+			}
+
+		} else {
+			kernel_timing_trigger(60, 13, nullptr);
+		}
+
+
+		break;
+
 	case 14:
+		player_update_info(_G(my_walker), &_G(player_info));
+		switch (_G(player_info).facing) {
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 15, 3, true);
+			_807newFacing = 3;
+
+			break;
+
+		case 5:
+			kernel_timing_trigger(30, 15, "phantom reaction");
+			_807newFacing = 5;
+
+			break;
+
+		case 7:
+			kernel_timing_trigger(30, 15, "phantom reaction");
+			_807newFacing = 7;
+
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 15, 9, true);
+			_807newFacing = 9;
+
+			break;
+
+		default:
+			break;
+		}
+
+
+		break;
+
 	case 15:
+		_dword1A194C = 0;
+		_dword1A1954 = imath_ranged_rand(1, 4);
+		switch (_dword1A1954) {
+		case 1:
+			digi_play("COM052", 1, 255, 16, 997);
+			break;
+
+		case 2:
+			digi_play("COM054", 1, 255, 16, 997);
+			break;
+
+		case 3:
+			digi_play("COM056", 1, 255, 16, 997);
+			break;
+
+		case 4:
+			digi_play("COM057", 1, 255, 16, 997);
+			break;
+
+		default:
+			break;
+		}
+
+		setGlobals3(_mctd82aSeries, 1, 22);
+		subD7916(_mcTrekMach, 18);
+		switch (_807newFacing) {
+		case 3:
+		case 9:
+			setGlobals3(_ripPos3LookAroundSeries, 1, 20);
+			break;
+
+		default:
+			setGlobals3(_ripLooksAroundInAweSeries, 1, 14);
+			break;
+		}
+
+		subD7916(_G(my_walker), 17);
+
+		break;
+
 	case 16:
+		switch (_dword1A1954) {
+		case 1:
+			digi_play("COM053", 1, 255, -1, 997);
+			break;
+
+		case 2:
+			digi_play("COM055", 1, 255, -1, 997);
+			break;
+
+		case 4:
+			digi_play("COM058", 1, 255, -1, 997);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 17:
+		kernel_timing_trigger(imath_ranged_rand(90, 120), 19, nullptr);
+		break;
+
 	case 18:
+		kernel_timing_trigger(imath_ranged_rand(90, 120), 20, nullptr);
+		break;
+
 	case 19:
+		switch (_807newFacing) {
+		case 3:
+		case 9:
+			setGlobals3(_ripPos3LookAroundSeries, 19, 1);
+			break;
+
+		default:
+			setGlobals3(_ripLooksAroundInAweSeries, 13, 1);
+			break;
+		}
+
+		subD7916(_G(my_walker), 21);
+
+		break;
+
 	case 20:
+		setGlobals3(_mctd82aSeries, 22, 1);
+		subD7916(_mcTrekMach, 21);
+
+		break;
+
 	case 21:
+		++_dword1A194C;
+		if (_dword1A194C == 2) {
+			player_set_commands_allowed(true);
+			ws_demand_facing(_G(my_walker), _807newFacing);
+			kernel_timing_trigger(imath_ranged_rand(7200, 14400), 13, nullptr);
+		}
+
+		break;
+
 	default:
 		break;
 	}
-
-	// TODO Not yet implemented
 }
 
 } // namespace Rooms
