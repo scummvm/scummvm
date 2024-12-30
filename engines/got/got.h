@@ -102,6 +102,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 };
 
 extern GotEngine *g_engine;

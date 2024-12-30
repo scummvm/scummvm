@@ -182,9 +182,6 @@ bool GotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		return false;
 	}
 
-	if (_G(key_flag)[key_magic])
-		return false;
-
 	// Only allow if not in the middle of area transition, dying, etc.
 	return _G(gameMode) == MODE_NORMAL;
 }
@@ -199,7 +196,7 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!firstView() || firstView()->getName() != "Game")
 		return false;
 
-	if (_G(key_flag)[key_magic] || _G(tornado_used) || _G(lightning_used) ||
+	if (_G(tornado_used) || _G(lightning_used) ||
 			_G(thunder_flag) || _G(hourglass_flag) || _G(thor)->num_moves > 1 ||
 			_G(shield_on) || _G(game_over))
 		return false;
@@ -217,6 +214,11 @@ void GotEngine::syncSoundSettings() {
 		ConfMan.getBool("sfx_mute") || allSoundIsMuted);
 	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType,
 		ConfMan.getBool("music_mute") || allSoundIsMuted);
+}
+
+void GotEngine::pauseEngineIntern(bool pause) {
+	g_vars->clearKeyFlags();
+	Engine::pauseEngineIntern(pause);
 }
 
 } // End of namespace Got
