@@ -114,6 +114,12 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 		_G(playerName) = title;
 
 	_G(setup).sync(s);
+
+	// For savegames loaded directly from the ScummVM launcher,
+	// take care of initializing game defaults before rest of loading
+	if (s.isLoading() && (!firstView() || firstView()->getName() != "Game"))
+		initialize_game();
+
 	_G(thor_info).sync(s);
 	_G(sd_data).sync(s);
 
@@ -129,8 +135,6 @@ void GotEngine::savegameLoaded() {
 		area = 1;
 
 	g_vars->setArea(area);
-	if (firstView()->getName() != "Game")
-		initialize_game();
 
 	_G(current_area) = _G(thor_info).last_screen;
 
@@ -192,7 +196,7 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	}
 
 	// Don't allowing saving when not in-game
-	if (firstView()->getName() != "Game")
+	if (!firstView() || firstView()->getName() != "Game")
 		return false;
 
 	if (_G(key_flag)[key_magic] || _G(tornado_used) || _G(lightning_used) ||
