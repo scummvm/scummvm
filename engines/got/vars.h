@@ -52,7 +52,7 @@ enum Key {
 	key_left = KEYBIND_LEFT,
 	key_right = KEYBIND_RIGHT,
 	key_fire = KEYBIND_FIRE, 
-	key_magic = KEYBIND_ESCAPE,
+	key_magic = KEYBIND_MAGIC,
 	key_select = KEYBIND_SELECT
 };
 

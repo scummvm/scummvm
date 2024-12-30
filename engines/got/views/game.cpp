@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/init.h"
 #include "got/game/move.h"
+#include "got/game/object.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
 
