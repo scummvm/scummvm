@@ -61,7 +61,7 @@ enum GameMode {
 };
 
 enum TransitionDir {
-	DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN
+	DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN, DIR_PHASED
 };
 
 struct Cheats {

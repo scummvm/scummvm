@@ -34,6 +34,7 @@ private:
 	Common::Point _moveDelta;
 	int _transitionPos = 0;
 	int _deathCtr = 0;
+	bool _phased[240] = {};
 
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
