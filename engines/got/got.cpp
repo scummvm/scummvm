@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "got/got.h"
@@ -169,6 +170,11 @@ void GotEngine::savegameLoaded() {
 }
 
 bool GotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (_G(demo)) {
+		*msg = _("Savegames are not available in demo mode");
+		return false;
+	}
+
 	if (_G(key_flag)[key_magic])
 		return false;
 
@@ -177,6 +183,15 @@ bool GotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (_G(demo)) {
+		*msg = _("Savegames are not available in demo mode");
+		return false;
+	}
+
+	// Don't allowing saving when not in-game
+	if (firstView()->getName() != "Game")
+		return false;
+
 	if (_G(key_flag)[key_magic] || _G(tornado_used) || _G(lightning_used) ||
 			_G(thunder_flag) || _G(hourglass_flag) || _G(thor)->num_moves > 1 ||
 			_G(shield_on) || _G(game_over))

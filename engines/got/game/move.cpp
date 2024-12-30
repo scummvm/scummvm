@@ -25,6 +25,7 @@
 #include "got/game/shot_movement.h"
 #include "got/game/shot_pattern.h"
 #include "got/game/status.h"
+#include "got/events.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -143,14 +144,13 @@ void thor_damaged(ACTOR *actr) {
 			_G(thor)->vunerable = 40;
 			_G(thor)->show = 0;
 			_G(thor)->health = 0;
-			//display_health();
 			_G(exit_flag) = 2;
+			g_events->send(GameMessage("THOR_DIES"));
 		} else if (damage) {
 			_G(thor)->vunerable = 40;
 			_G(sound).play_sound(OW, 0);
 			_G(thor)->show = 10;
 			_G(thor)->health -= damage;
-			//display_health();
 		}
 	}
 }

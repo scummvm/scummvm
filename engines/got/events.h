@@ -305,6 +305,8 @@ public:
 	Events();
 	virtual ~Events();
 
+	virtual bool isDemo() const = 0;
+
 	/**
 	 * Main game loop
 	 */
@@ -352,6 +354,14 @@ public:
 	UIElement *priorView() const {
 		return _views.size() < 2 ? nullptr :
 			_views[_views.size() - 2];
+	}
+
+	/**
+	 * Returns the first view in the stack
+	 */
+	UIElement *firstView() const {
+		assert(!_views.empty());
+		return _views[0];
 	}
 
 	/**
