@@ -32,26 +32,26 @@ typedef void (*ScriptEndFn)();
 class Scripts {
 private:
 	ScriptEndFn _endFn = nullptr;
-	long  num_var[26] = {};        // numeric variables
-	char  str_var[26][81] = {};    // string vars
-	char  line_label[32][9] = {};  // line label look up table
-	char  *line_ptr[32] = {};      // line label pointers
-	char  *new_ptr = nullptr;
-	int   num_labels = 0;          // number of labels
-	char  *gosub_stack[32] = {};   // stack for GOSUB return addresses
-	int   gosub_ptr = 0;           // GOSUB stack pointer
-	char  *for_stack[10] = {};     // FOR stack
-	long  for_val[10] = {};        // current FOR value
-	int8  for_var[10] = {};        // ending FOR value (target var)
-	int8  for_ptr = 0;	           // FOR stack pointer
-	char  *buff_ptr = nullptr;     // pointer to current command
-	char  *buff_end = nullptr;	   // pointer to end of buffer
-	char  *buffer = nullptr;       // buffer space (alloc'ed)
-	long  scr_index = 0;
-	Gfx::Pics scr_pic;
-	long  lvalue = 0;
-	long  ltemp = 0;
-	char  temps[255] = {};
+	long  _numVar[26] = {};        // numeric variables
+	char  _strVar[26][81] = {};    // string vars
+	char  _lineLabel[32][9] = {};  // line label look up table
+	char  *_linePtr[32] = {};      // line label pointers
+	char  *_newPtr = nullptr;
+	int   _numLabels = 0;          // number of labels
+	char  *_gosubStack[32] = {};   // stack for GOSUB return addresses
+	int   _gosubPtr = 0;           // GOSUB stack pointer
+	char  *_forStack[10] = {};     // FOR stack
+	long  _forVal[10] = {};        // current FOR value
+	int8  _forVar[10] = {};        // ending FOR value (target var)
+	int8  _forPtr = 0;	           // FOR stack pointer
+	char  *_buffPtr = nullptr;     // pointer to current command
+	char  *_buffEnd = nullptr;	   // pointer to end of buffer
+	char  *_buffer = nullptr;      // buffer space (alloc'ed)
+	long  _scrIndex = 0;
+	Gfx::Pics _scrPic;
+	long  _lValue = 0;
+	long  _lTemp = 0;
+	char  _tempS[255] = {};
 	bool _paused = false;
 	int _askVar = -1;
 

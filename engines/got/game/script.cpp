@@ -113,11 +113,11 @@ void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon,
 		_G(actor)[i].show = 0;
 
 	_endFn = endFn;
-	scr_index = index;
-	scr_pic = speakerIcon;
+	_scrIndex = index;
+	_scrPic = speakerIcon;
 
-	Common::fill(num_var, num_var + 26, 0);
-	Common::fill((char *)str_var, (char *)str_var + 81 * 26, 0);
+	Common::fill(_numVar, _numVar + 26, 0);
+	Common::fill((char *)_strVar, (char *)_strVar + 81 * 26, 0);
 	runScript();
 }
 
@@ -125,15 +125,15 @@ void Scripts::runScript(bool firstTime) {
 	int i;
 
 	// Clear line label buffer, line ptrs, and the gosub stack
-	Common::fill((char *)line_label, (char *)line_label + 32 * 9, 0);
-	Common::fill(line_ptr, line_ptr + 32, (char *)nullptr);
-	Common::fill(gosub_stack, gosub_stack + 32, (char *)nullptr);
-	gosub_ptr = 0;
+	Common::fill((char *)_lineLabel, (char *)_lineLabel + 32 * 9, 0);
+	Common::fill(_linePtr, _linePtr + 32, (char *)nullptr);
+	Common::fill(_gosubStack, _gosubStack + 32, (char *)nullptr);
+	_gosubPtr = 0;
 
-	Common::fill(for_var, for_var + 11, 0);
-	Common::fill(for_val, for_val + 11, 0);
-	Common::fill(for_stack, for_stack + 11, (char *)nullptr);
-	for_ptr = 0;
+	Common::fill(_forVar, _forVar + 11, 0);
+	Common::fill(_forVal, _forVal + 11, 0);
+	Common::fill(_forStack, _forStack + 11, (char *)nullptr);
+	_forPtr = 0;
 
 	i = read_script_file();
 	if (i != 0) {
@@ -145,7 +145,7 @@ void Scripts::runScript(bool firstTime) {
 	if (firstTime)
 		script_entry();
 
-	buff_ptr = buffer;
+	_buffPtr = _buffer;
 	scriptLoop();
 }
 
@@ -163,8 +163,8 @@ void Scripts::scriptLoop() {
 		} else if (ret > 0) {
 			ret = exec_command(ret);
 			if (ret == -100) {         // RUN command
-				if (buffer)
-					free(buffer);
+				if (_buffer)
+					free(_buffer);
 
 				runScript(false);
 				return;
@@ -179,9 +179,9 @@ void Scripts::scriptLoop() {
 }
 
 void Scripts::script_exit() {
-	if (buffer) {
-		free(buffer);
-		buffer = nullptr;
+	if (_buffer) {
+		free(_buffer);
+		_buffer = nullptr;
 	}
 
 	if (_endFn)
@@ -189,9 +189,9 @@ void Scripts::script_exit() {
 }
 
 int Scripts::skip_colon() {
-	while (*buff_ptr == 0 || *buff_ptr == ':') {
-		buff_ptr++;
-		if (buff_ptr > buff_end) return 0;
+	while (*_buffPtr == 0 || *_buffPtr == ':') {
+		_buffPtr++;
+		if (_buffPtr > _buffEnd) return 0;
 	}
 
 	return 1;
@@ -208,31 +208,31 @@ int Scripts::get_command() {
 			break;           // Lookup command
 
 		len = strlen(SCR_COMMAND[i]);
-		if (!strncmp(buff_ptr, SCR_COMMAND[i], len)) {
-			buff_ptr += len;
+		if (!strncmp(_buffPtr, SCR_COMMAND[i], len)) {
+			_buffPtr += len;
 			return i;
 		}
 
 		i++;
 	}
 
-	if (Common::isAlpha(*buff_ptr)) {
-		if (*(buff_ptr + 1) == '=') {           // Num var assignment
-			i = (*buff_ptr) - 65;
-			buff_ptr += 2;
+	if (Common::isAlpha(*_buffPtr)) {
+		if (*(_buffPtr + 1) == '=') {           // Num var assignment
+			i = (*_buffPtr) - 65;
+			_buffPtr += 2;
 			ret = calc_value();
 			if (!ret) return -2;
 			else {
-				num_var[i] = lvalue; return 0;
+				_numVar[i] = _lValue; return 0;
 			}
-		} else if (*(buff_ptr + 1) == '$' && *(buff_ptr + 2) == '=') {
-			i = (*buff_ptr) - 65;
-			buff_ptr += 3;
+		} else if (*(_buffPtr + 1) == '$' && *(_buffPtr + 2) == '=') {
+			i = (*_buffPtr) - 65;
+			_buffPtr += 3;
 			ret = calc_string(0);                 // String var assignment
 			if (ret == 0) return -2;
 			else if (ret == -1) return -3;
-			if (strlen(temps) > 80) return -3;
-			Common::strcpy_s(str_var[i], temps);
+			if (strlen(_tempS) > 80) return -3;
+			Common::strcpy_s(_strVar[i], _tempS);
 			return 0;
 		}
 	}
@@ -250,57 +250,57 @@ int Scripts::calc_string(int mode) {
 	if (!skip_colon()) return 0;
 
 strloop:
-	if (*buff_ptr == '"') {
+	if (*_buffPtr == '"') {
 		get_str();
-		if (strlen(varstr) + strlen(temps) < 255)
-			Common::strcat_s(varstr, temps);
+		if (strlen(varstr) + strlen(_tempS) < 255)
+			Common::strcat_s(varstr, _tempS);
 		goto nextstr;
 	}
-	if (Common::isAlpha(*buff_ptr)) {
-		if (*(buff_ptr + 1) == '$') {
-			varnum = (*buff_ptr) - 65;
-			if (strlen(varstr) + strlen(str_var[varnum]) < 255)
-				Common::strcat_s(varstr, str_var[varnum]);
-			buff_ptr += 2;
+	if (Common::isAlpha(*_buffPtr)) {
+		if (*(_buffPtr + 1) == '$') {
+			varnum = (*_buffPtr) - 65;
+			if (strlen(varstr) + strlen(_strVar[varnum]) < 255)
+				Common::strcat_s(varstr, _strVar[varnum]);
+			_buffPtr += 2;
 			goto nextstr;
 		}
 	}
 	return 0;
 
 nextstr:
-	if (*buff_ptr == 0 || *buff_ptr == 58) {
-		buff_ptr++;
+	if (*_buffPtr == 0 || *_buffPtr == 58) {
+		_buffPtr++;
 		goto strdone;
 	}
-	if (*buff_ptr == ',' && mode == 1) goto strdone;
+	if (*_buffPtr == ',' && mode == 1) goto strdone;
 
-	if (*buff_ptr == '+') {
-		buff_ptr++;
+	if (*_buffPtr == '+') {
+		_buffPtr++;
 		goto strloop;
 	}
 	return 0;
 
 strdone:
 	if (strlen(varstr) > 255) return -1;
-	Common::strcpy_s(temps, (char *) varstr);
+	Common::strcpy_s(_tempS, (char *) varstr);
 	return 1;
 }
 
 void Scripts::get_str() {
 	int t;
 
-	buff_ptr++;
+	_buffPtr++;
 	t = 0;
 
 	while (1) {
-		if (*buff_ptr == '"' || *buff_ptr == 0) {
-			temps[t] = 0;
-			if (*buff_ptr == '"') buff_ptr++;
+		if (*_buffPtr == '"' || *_buffPtr == 0) {
+			_tempS[t] = 0;
+			if (*_buffPtr == '"') _buffPtr++;
 			return;
 		}
 
-		temps[t++] = *buff_ptr;
-		buff_ptr++;
+		_tempS[t++] = *_buffPtr;
+		_buffPtr++;
 	}
 }
 
@@ -316,20 +316,20 @@ int Scripts::calc_value() {
 		if (!get_next_val()) return 0;
 		switch (exptype) {
 		case 0:
-			tmpval2 = tmpval2 * ltemp;
+			tmpval2 = tmpval2 * _lTemp;
 			break;
 		case 1:
-			tmpval2 = tmpval2 + ltemp;
+			tmpval2 = tmpval2 + _lTemp;
 			break;
 		case 2:
-			tmpval2 = tmpval2 - ltemp;
+			tmpval2 = tmpval2 - _lTemp;
 			break;
 		case 3:
-			if (ltemp != 0) tmpval2 = tmpval2 / ltemp;
+			if (_lTemp != 0) tmpval2 = tmpval2 / _lTemp;
 			break;
 		}
 
-		ch = *buff_ptr;
+		ch = *_buffPtr;
 		switch (ch) {
 		case 42:
 			exptype = 0;                       /* multiply */
@@ -344,11 +344,11 @@ int Scripts::calc_value() {
 			exptype = 3;                       /* divide */
 			break;
 		default:
-			lvalue = tmpval2;
+			_lValue = tmpval2;
 			return 1;
 		}
 
-		buff_ptr++;
+		_buffPtr++;
 	}
 }
 
@@ -357,13 +357,13 @@ int Scripts::get_next_val() {
 	char tmpstr[25];
 	int t;
 
-	ch = *buff_ptr;
+	ch = *_buffPtr;
 	if (ch == 0 || ch == ':') return 0;
 	if (ch == 64) return get_internal_variable();
 
 	if (Common::isAlpha(ch)) {
-		buff_ptr++;
-		ltemp = num_var[ch - 65];
+		_buffPtr++;
+		_lTemp = _numVar[ch - 65];
 		return 1;
 	}
 
@@ -371,15 +371,15 @@ int Scripts::get_next_val() {
 	if (strchr("0123456789-", ch)) {
 		tmpstr[0] = ch;
 		t++;
-		buff_ptr++;
-		while (strchr("0123456789", *buff_ptr) && *buff_ptr != 0) {
-			tmpstr[t] = *buff_ptr;
-			buff_ptr++;
+		_buffPtr++;
+		while (strchr("0123456789", *_buffPtr) && *_buffPtr != 0) {
+			tmpstr[t] = *_buffPtr;
+			_buffPtr++;
 			t++;
 		}
 		tmpstr[t] = 0;
 		if (t > 10) return 0;
-		ltemp = atol(tmpstr);
+		_lTemp = atol(tmpstr);
 		return 1;
 	}
 
@@ -395,30 +395,30 @@ int Scripts::get_internal_variable() {
 	while (1) {
 		if (!INTERNAL_VARIABLE[i]) return 0;         // Lookup internal variable
 		len = strlen(INTERNAL_VARIABLE[i]);
-		if (!strncmp(buff_ptr, INTERNAL_VARIABLE[i], len)) {
-			buff_ptr += len;
+		if (!strncmp(_buffPtr, INTERNAL_VARIABLE[i], len)) {
+			_buffPtr += len;
 			break;
 		}
 		i++;
 	}
 	switch (i) {
 	case 0:
-		ltemp = _G(thor_info).jewels;
+		_lTemp = _G(thor_info).jewels;
 		break;
 	case 1:
-		ltemp = _G(thor)->health;
+		_lTemp = _G(thor)->health;
 		break;
 	case 2:
-		ltemp = _G(thor_info).magic;
+		_lTemp = _G(thor_info).magic;
 		break;
 	case 3:
-		ltemp = _G(thor_info).score;
+		_lTemp = _G(thor_info).score;
 		break;
 	case 4:
-		ltemp = _G(current_level);
+		_lTemp = _G(current_level);
 		break;
 	case 5:
-		ltemp = _G(thor_info).keys;
+		_lTemp = _G(thor_info).keys;
 		break;
 	case 6:
 	case 7:
@@ -436,12 +436,12 @@ int Scripts::get_internal_variable() {
 	case 19:
 	case 20:
 	case 21:
-		ltemp = (long)(i - 5l);
+		_lTemp = (long)(i - 5l);
 		break;
 	case 22:
 		if (!calc_value())
 			return 0;
-		i = (int)lvalue;
+		i = (int)_lValue;
 		if (i < 1 || i>64)
 			return 0;
 
@@ -450,19 +450,19 @@ int Scripts::get_internal_variable() {
 		b = 1;
 		b = b << (i % 8);
 		if (*sp & b)
-			ltemp = 1;
+			_lTemp = 1;
 		else
-			ltemp = 0;
+			_lTemp = 0;
 		break;
 	case 23:
-		if (_G(thor_info).inventory & 64) ltemp = _G(thor_info).object;
-		else ltemp = 0;
+		if (_G(thor_info).inventory & 64) _lTemp = _G(thor_info).object;
+		else _lTemp = 0;
 		break;
 	case 24:
-		ltemp = _G(scrn).icon[(_G(thor)->y + 8) / 16][(_G(thor)->x + 7) / 16];
+		_lTemp = _G(scrn).icon[(_G(thor)->y + 8) / 16][(_G(thor)->x + 7) / 16];
 		break;
 	case 25:
-		ltemp = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
+		_lTemp = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
 		break;
 	default:
 		return 0;
@@ -501,12 +501,12 @@ int Scripts::read_script_file() {
 	Common::String str;
 	char tmps[255];
 
-	buffer = (char *)malloc(SCR_BUFF_SIZE);
-	if (!buffer) {
+	_buffer = (char *)malloc(SCR_BUFF_SIZE);
+	if (!_buffer) {
 		ret = 1; goto done;
 	};
-	buff_ptr = buffer;
-	Common::fill(buffer, buffer + SCR_BUFF_SIZE, 0);
+	_buffPtr = _buffer;
+	Common::fill(_buffer, _buffer + SCR_BUFF_SIZE, 0);
 
 	sbuff = (char *)malloc(25000l);
 	if (!sbuff) {
@@ -519,7 +519,7 @@ int Scripts::read_script_file() {
 		ret = 6; goto done;
 	}
 
-	str = Common::String::format("|%ld", scr_index);
+	str = Common::String::format("|%ld", _scrIndex);
 	Common::strcpy_s(temp_buff, str.c_str());
 
 	while (1) {
@@ -530,12 +530,12 @@ int Scripts::read_script_file() {
 		}
 		if (!strcmp(tmps, temp_buff)) break;
 	}
-	num_labels = 0;
+	_numLabels = 0;
 	while (1) {
 		cnt = get_line(sb, (char *)tmps);
 		if (!strcmp(tmps, "|STOP")) {
-			if (buff_ptr != buffer) {
-				buff_end = buff_ptr; ret = 0; goto done;
+			if (_buffPtr != _buffer) {
+				_buffEnd = _buffPtr; ret = 0; goto done;
 			}
 			ret = 2;
 			goto done;
@@ -543,8 +543,8 @@ int Scripts::read_script_file() {
 		sb += cnt;
 		len = strlen(tmps);
 		if (len < 2) {
-			*buff_ptr = 0;
-			buff_ptr++;
+			*_buffPtr = 0;
+			_buffPtr++;
 			continue;
 		}
 		quote_flag = 0;
@@ -569,20 +569,20 @@ int Scripts::read_script_file() {
 		len = strlen(temp_buff);
 		if (len < 10 && temp_buff[len - 1] == ':') {       //line label
 			temp_buff[len - 1] = 0;
-			line_ptr[num_labels] = buff_ptr;
-			Common::strcpy_s(line_label[num_labels++], (char *) temp_buff);
-			if (num_labels > 31) {
+			_linePtr[_numLabels] = _buffPtr;
+			Common::strcpy_s(_lineLabel[_numLabels++], (char *) temp_buff);
+			if (_numLabels > 31) {
 				ret = 3; goto done;
 			}
-			*buff_ptr = 0;
-			buff_ptr++;
+			*_buffPtr = 0;
+			_buffPtr++;
 			continue;
 		}
 
-		Common::strcpy_s(buff_ptr, SCR_BUFF_SIZE, temp_buff);
-		buff_ptr += strlen(temp_buff);
-		*buff_ptr = 0;
-		buff_ptr++;
+		Common::strcpy_s(_buffPtr, SCR_BUFF_SIZE, temp_buff);
+		_buffPtr += strlen(temp_buff);
+		*_buffPtr = 0;
+		_buffPtr++;
 	}
 
 done:
@@ -597,11 +597,11 @@ void Scripts::script_error(int err_num) {
 	char *tb;
 
 	line_num = 1;
-	tb = buffer;
+	tb = _buffer;
 
 	while (1) {
 		if (*tb == 0) line_num++;
-		if (tb >= buff_ptr) break;
+		if (tb >= _buffPtr) break;
 		tb++;
 	}
 
@@ -616,16 +616,16 @@ int Scripts::cmd_goto() {
 	char s[255];
 	char *p;
 
-	Common::strcpy_s(s, buff_ptr);
+	Common::strcpy_s(s, _buffPtr);
 	p = strchr(s, ':');
 	if (p) *p = 0;
 
-	for (i = 0; i < num_labels; i++) {
+	for (i = 0; i < _numLabels; i++) {
 		len = strlen(s);
 		if (len == 0) break;
-		if (!strcmp(s, line_label[i])) {
-			new_ptr = line_ptr[i];
-			buff_ptr += len;
+		if (!strcmp(s, _lineLabel[i])) {
+			_newPtr = _linePtr[i];
+			_buffPtr += len;
 			return 0;
 		}
 	}
@@ -637,19 +637,19 @@ int Scripts::cmd_if() {
 	char exptype, ch;
 
 	if (!calc_value()) return 5;
-	tmpval1 = lvalue;
-	exptype = *buff_ptr;
-	buff_ptr++;
+	tmpval1 = _lValue;
+	exptype = *_buffPtr;
+	_buffPtr++;
 
-	ch = *buff_ptr;
+	ch = *_buffPtr;
 	if (ch == 60 || ch == 61 || ch == 62) {
-		if (exptype == *buff_ptr) return 5;
-		exptype += *buff_ptr;
-		buff_ptr++;
+		if (exptype == *_buffPtr) return 5;
+		exptype += *_buffPtr;
+		_buffPtr++;
 	}
 	if (!calc_value()) return 5;
-	tmpval2 = lvalue;
-	buff_ptr += 4;
+	tmpval2 = _lValue;
+	_buffPtr += 4;
 	switch (exptype) {
 	case 60:                              /* less than */
 		if (tmpval1 < tmpval2) goto iftrue;
@@ -674,10 +674,10 @@ int Scripts::cmd_if() {
 	}
 
 iffalse:
-	while (*buff_ptr != 0) buff_ptr++;
-	while (*buff_ptr == 0) buff_ptr++;
+	while (*_buffPtr != 0) _buffPtr++;
+	while (*_buffPtr == 0) _buffPtr++;
 
-	if (!strncmp(buff_ptr, "ELSE", 4)) buff_ptr += 4;
+	if (!strncmp(_buffPtr, "ELSE", 4)) _buffPtr += 4;
 
 iftrue:
 	return 0;
@@ -685,8 +685,8 @@ iftrue:
 
 int Scripts::cmd_run() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	scr_index = lvalue;
+	_buffPtr++;
+	_scrIndex = _lValue;
 	return -100;
 }
 
@@ -694,39 +694,39 @@ int Scripts::cmd_addjewels() {
 	if (!calc_value())
 		return 5;
 
-	buff_ptr++;
+	_buffPtr++;
 
-	add_jewels(lvalue);
+	add_jewels(_lValue);
 	return 0;
 }
 
 int Scripts::cmd_addhealth() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	add_health((int)lvalue);
+	_buffPtr++;
+	add_health((int)_lValue);
 	return 0;
 }
 
 int Scripts::cmd_addmagic() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	add_magic((int)lvalue);
+	_buffPtr++;
+	add_magic((int)_lValue);
 	return 0;
 }
 
 int Scripts::cmd_addkeys() {
 
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	add_keys((int)lvalue);
+	_buffPtr++;
+	add_keys((int)_lValue);
 	return 0;
 }
 
 int Scripts::cmd_addscore() {
 
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	add_score((int)lvalue);
+	_buffPtr++;
+	add_score((int)_lValue);
 	return 0;
 }
 
@@ -736,8 +736,8 @@ int Scripts::cmd_say(int mode, int type) {
 
 	if (mode) {
 		if (!calc_value()) return 5;
-		buff_ptr++;
-		obj = (int)lvalue;
+		_buffPtr++;
+		obj = (int)_lValue;
 		if (obj < 0 || obj>32) return 6;
 		if (obj) obj += 10;
 	} else obj = 0;
@@ -746,15 +746,15 @@ int Scripts::cmd_say(int mode, int type) {
 	p = (char *)_G(tmp_buff);
 
 	while (calc_string(0)) {
-		Common::strcpy_s(p, TMP_SIZE, temps);
-		p += strlen(temps);
+		Common::strcpy_s(p, TMP_SIZE, _tempS);
+		p += strlen(_tempS);
 		*(p) = 10;
 		p++;
 	}
 	*(p - 1) = 0;
 
 	pause();
-	Views::Dialogs::Say::show(obj, scr_pic, type);
+	Views::Dialogs::Say::show(obj, _scrPic, type);
 
 	return 0;
 }
@@ -770,11 +770,11 @@ int Scripts::cmd_ask() {
 	if (!skip_colon())
 		return 5;
 
-	if (Common::isAlpha(*buff_ptr)) {
-		v = *buff_ptr - 65;
-		buff_ptr++;
-		if (*buff_ptr != ',') return 5;
-		buff_ptr++;
+	if (Common::isAlpha(*_buffPtr)) {
+		v = *_buffPtr - 65;
+		_buffPtr++;
+		if (*_buffPtr != ',') return 5;
+		_buffPtr++;
 	} else {
 		return 5;
 	}
@@ -782,16 +782,16 @@ int Scripts::cmd_ask() {
 	if (!calc_string(1))
 		return 5;
 
-	strncpy(title, temps, 41);
+	strncpy(title, _tempS, 41);
 	title[40] = 0;
 
-	if (*buff_ptr == ',') {
-		buff_ptr++;
+	if (*_buffPtr == ',') {
+		_buffPtr++;
 		if (!calc_value())
 			return 5;
 
-		buff_ptr++;
-		p = lvalue;
+		_buffPtr++;
+		p = _lValue;
 	} else {
 		return 5;
 	}
@@ -799,7 +799,7 @@ int Scripts::cmd_ask() {
 	_askVar = v;
 
 	while (calc_string(0)) {
-		Common::strcpy_s(opt, temps);
+		Common::strcpy_s(opt, _tempS);
 		opts.push_back(opt);
 
 		if (opts.size() > 9)
@@ -817,15 +817,15 @@ int Scripts::cmd_ask() {
 }
 
 void Scripts::setAskResponse(int option) {
-	num_var[_askVar] = option;
+	_numVar[_askVar] = option;
 	resume();
 }
 
 int Scripts::cmd_sound() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	if (lvalue < 1 || lvalue>16) return 6;
-	play_sound((int)lvalue - 1, 1);
+	_buffPtr++;
+	if (_lValue < 1 || _lValue>16) return 6;
+	play_sound((int)_lValue - 1, 1);
 	return 0;
 }
 
@@ -833,13 +833,13 @@ int Scripts::cmd_settile() {
 	int screen, pos, tile;
 
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	screen = (int)lvalue;
+	_buffPtr++;
+	screen = (int)_lValue;
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	pos = (int)lvalue;
+	_buffPtr++;
+	pos = (int)_lValue;
 	if (!calc_value()) return 5;
-	tile = (int)lvalue;
+	tile = (int)_lValue;
 	if (screen < 0 || screen>119) return 6;
 	if (pos < 0 || pos>239) return 6;
 	if (tile < 0 || tile>230) return 6;
@@ -860,7 +860,7 @@ int Scripts::cmd_itemgive() {
 
 	if (!calc_value()) return 5;
 	buff_ptr++;
-	i = (int)lvalue;
+	i = (int)_lValue;
 	if (i < 1 || i > 15) return 6;
 
 	_G(thor_info).inventory |= 64;
@@ -886,7 +886,7 @@ int Scripts::cmd_setflag() {
 
 	if (!calc_value())
 		return 5;
-	i = (int)lvalue;
+	i = (int)_lValue;
 	if (i < 1 || i>64)
 		return 6;
 
@@ -902,56 +902,56 @@ int Scripts::cmd_ltoa() {
 	int sv;
 
 	if (!calc_value()) return 5;
-	buff_ptr++;
+	_buffPtr++;
 
-	if (Common::isAlpha(*buff_ptr)) {
-		if (*(buff_ptr + 1) == '$') {
-			sv = (*buff_ptr) - 65;
-			buff_ptr += 2;
+	if (Common::isAlpha(*_buffPtr)) {
+		if (*(_buffPtr + 1) == '$') {
+			sv = (*_buffPtr) - 65;
+			_buffPtr += 2;
 		} else return 5;
 	} else return 5;
 
-	Common::String str = Common::String::format("%ld", lvalue);
-	Common::strcpy_s(str_var[sv], str.c_str());
+	Common::String str = Common::String::format("%ld", _lValue);
+	Common::strcpy_s(_strVar[sv], str.c_str());
 	return 0;
 }
 
 int Scripts::cmd_pause() {
 	if (!calc_value())
 		return 5;
-	buff_ptr++;
-	if (lvalue < 1 || lvalue>65535l)
+	_buffPtr++;
+	if (_lValue < 1 || _lValue>65535l)
 		return 6;
 
-	Got::pause((int)lvalue);
+	Got::pause((int)_lValue);
 	return 0;
 }
 
 int Scripts::cmd_visible() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	if (lvalue < 1 || lvalue>16) return 6;
+	_buffPtr++;
+	if (_lValue < 1 || _lValue>16) return 6;
 
-	actor_visible((int)lvalue);
+	actor_visible((int)_lValue);
 	return 0;
 }
 
 int Scripts::cmd_random() {
 	int v, r;
 
-	if (Common::isAlpha(*buff_ptr)) {
-		v = *buff_ptr - 65;
-		buff_ptr++;
-		if (*buff_ptr != ',') return 5;
-		buff_ptr++;
+	if (Common::isAlpha(*_buffPtr)) {
+		v = *_buffPtr - 65;
+		_buffPtr++;
+		if (*_buffPtr != ',') return 5;
+		_buffPtr++;
 	} else return 5;
 
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	r = (int)lvalue;
+	_buffPtr++;
+	r = (int)_lValue;
 	if (r < 1 || r>1000) return 6;
 
-	num_var[v] = g_events->getRandomNumber(r - 1);
+	_numVar[v] = g_events->getRandomNumber(r - 1);
 	return 0;
 }
 
@@ -974,8 +974,8 @@ void Scripts::scr_func2() {
 	int r;
 
 	r = g_events->getRandomNumber(5);
-	Common::strcpy_s(str_var[0], 81, OFFENSE[r]);
-	Common::strcpy_s(str_var[1], 81, REASON[r]);
+	Common::strcpy_s(_strVar[0], 81, OFFENSE[r]);
+	Common::strcpy_s(_strVar[1], 81, REASON[r]);
 }
 
 void Scripts::scr_func3() {
@@ -999,7 +999,7 @@ void Scripts::scr_func3() {
 #endif
 		return;
 	}
-	num_var[0] = 1;
+	_numVar[0] = 1;
 	play_sound(WOOP, 1);
 	if (_G(current_level) == 106 && p == 69) {
 		place_tile(x, y, 220);
@@ -1049,11 +1049,11 @@ void Scripts::scr_func5() {
 
 int Scripts::cmd_exec() {
 	if (!calc_value()) return 5;
-	buff_ptr++;
-	if (lvalue < 1 || lvalue>10)
+	_buffPtr++;
+	if (_lValue < 1 || _lValue>10)
 		return 6;
 
-	(this->*scr_func[lvalue - 1])();
+	(this->*scr_func[_lValue - 1])();
 	return 0;
 }
 
@@ -1067,62 +1067,62 @@ int Scripts::exec_command(int num) {
 		return 0;
 	case 2:                          // goto
 		ret = cmd_goto();
-		if (!ret) buff_ptr = new_ptr;
+		if (!ret) _buffPtr = _newPtr;
 		break;
 	case 3:                          // gosub
 		ret = cmd_goto();
 		if (!ret) {
-			gosub_ptr++;
-			if (gosub_ptr > 31) {
+			_gosubPtr++;
+			if (_gosubPtr > 31) {
 				ret = 10; break;
 			}
-			gosub_stack[gosub_ptr] = buff_ptr;
-			buff_ptr = new_ptr;
+			_gosubStack[_gosubPtr] = _buffPtr;
+			_buffPtr = _newPtr;
 		}
 		break;
 	case 4:                         //return
-		if (!gosub_ptr) {
+		if (!_gosubPtr) {
 			ret = 9; break;
 		}
-		buff_ptr = gosub_stack[gosub_ptr--];
+		_buffPtr = _gosubStack[_gosubPtr--];
 		break;
 	case 5:                         //for
-		for_ptr++;
-		if (for_ptr > 10) {
+		_forPtr++;
+		if (_forPtr > 10) {
 			ret = 10; break;
 		}
-		ch = *buff_ptr;
+		ch = *_buffPtr;
 		if (!Common::isAlpha(ch)) {
 			ret = 5; break;
 		}
 		ch -= 65;
-		for_var[for_ptr] = ch;
-		buff_ptr += 2;
+		_forVar[_forPtr] = ch;
+		_buffPtr += 2;
 		if (!calc_value()) {
 			ret = 5; break;
 		}
-		num_var[for_var[for_ptr]] = lvalue;
-		buff_ptr += 2;
+		_numVar[_forVar[_forPtr]] = _lValue;
+		_buffPtr += 2;
 		if (!calc_value()) {
 			ret = 5; break;
 		}
-		for_val[for_ptr] = lvalue;
-		for_stack[for_ptr] = buff_ptr;
+		_forVal[_forPtr] = _lValue;
+		_forStack[_forPtr] = _buffPtr;
 		break;
 	case 6:                         //next
-		if (!for_ptr) {
+		if (!_forPtr) {
 			ret = 11; break;
 		}
-		num_var[for_var[for_ptr]] = num_var[for_var[for_ptr]] + 1;
-		if (num_var[for_var[for_ptr]] <= for_val[for_ptr])
-			buff_ptr = for_stack[for_ptr];
-		else for_ptr--;
+		_numVar[_forVar[_forPtr]] = _numVar[_forVar[_forPtr]] + 1;
+		if (_numVar[_forVar[_forPtr]] <= _forVal[_forPtr])
+			_buffPtr = _forStack[_forPtr];
+		else _forPtr--;
 		break;
 	case 7:                         // if
 		ret = cmd_if();
 		break;
 	case 8:                         // else
-		while (*buff_ptr != 0) buff_ptr++;
+		while (*_buffPtr != 0) _buffPtr++;
 		break;
 	case 9:                         // run
 		ret = cmd_run();
