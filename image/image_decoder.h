@@ -117,7 +117,7 @@ public:
 	/**
 	 * Get the mask data for the decoded image.
 	 */
-	virtual const byte *getMask() const { return 0; }
+	virtual const Graphics::Surface *getMask() const { return 0; }
 
 	/**
 	 * Query whether the decoded image has a palette.

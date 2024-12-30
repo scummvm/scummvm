@@ -34,8 +34,6 @@ CicnDecoder::CicnDecoder() {
 	_palette = nullptr;
 	_paletteColorCount = 0;
 	_mask = nullptr;
-	_maskRowBytes = 0;
-	_maskHeight = 0;
 }
 
 CicnDecoder::~CicnDecoder() {
@@ -53,10 +51,11 @@ void CicnDecoder::destroy() {
 	_palette = nullptr;
 	_paletteColorCount = 0;
 
-	delete[] _mask;
-	_mask = nullptr;
-	_maskRowBytes = 0;
-	_maskHeight = 0;
+	if (_mask) {
+		_mask->free();
+		delete _mask;
+		_mask = nullptr;
+	}
 }
 
 
@@ -68,11 +67,11 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Mask header
 	stream.skip(4);
-	_maskRowBytes = stream.readUint16BE();
+	uint16 maskRowBytes = stream.readUint16BE();
 	stream.readUint16BE(); // top
 	stream.readUint16BE(); // left
-	_maskHeight = stream.readUint16BE(); // bottom
-	stream.readUint16BE(); // right
+	uint16 maskHeight = stream.readUint16BE(); // bottom
+	uint16 maskWidth = stream.readUint16BE(); // right
 
 	// Bitmap header
 	stream.skip(4);
@@ -85,9 +84,23 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// Mask and bitmap data
 	stream.skip(4);
 
-	if (_maskRowBytes && _maskHeight) {
-		_mask = new byte[_maskRowBytes * _maskHeight];
-		stream.read(_mask, _maskRowBytes * _maskHeight);
+	if (maskRowBytes && maskHeight) {
+		_mask = new Graphics::Surface();
+		_mask->create(maskWidth, maskHeight, Graphics::PixelFormat::createFormatCLUT8());
+
+		byte *mask = new byte[maskRowBytes * maskHeight];
+		stream.read(mask, maskRowBytes * maskHeight);
+
+		for (uint y = 0; y < maskHeight; y++) {
+			for (uint x = 0; x < maskWidth; x++) {
+				if ((mask[y * maskRowBytes + x / 8] & (0x80 >> (x % 8))) == 0)
+					_mask->setPixel(x, y, 0);
+				else
+					_mask->setPixel(x, y, 255);
+			}
+		}
+
+		delete[] mask;
 	}
 	stream.skip(bitmapRowBytes * bitmapHeight);
 

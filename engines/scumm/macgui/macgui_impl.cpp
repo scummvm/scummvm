@@ -712,7 +712,8 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 // Icon loader
 // ---------------------------------------------------------------------------
 
-Graphics::Surface *MacGuiImpl::loadIcon(int id, MacImageMask **mask) {
+bool MacGuiImpl::loadIcon(int id, Graphics::Surface **icon, Graphics::Surface **mask) {
+	bool result = false;
 	Common::MacResManager resource;
 
 	resource.open(_resourceFile);
@@ -720,30 +721,25 @@ Graphics::Surface *MacGuiImpl::loadIcon(int id, MacImageMask **mask) {
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('c', 'i', 'c', 'n'), id);
 
 	Image::CicnDecoder iconDecoder;
-	Graphics::Surface *s = nullptr;
+
+	*icon = nullptr;
+	*mask = nullptr;
 
 	if (res && iconDecoder.loadStream(*res)) {
-		const Graphics::Surface *surface = iconDecoder.getSurface();
+		result = true;
+		const Graphics::Surface *s1 = iconDecoder.getSurface();
+		const Graphics::Surface *s2 = iconDecoder.getMask();
 		const byte *palette = iconDecoder.getPalette();
 
-		if (iconDecoder.hasMask()) {
-			*mask = new MacImageMask();
-			uint maskSize = iconDecoder.getMaskRowBytes() * iconDecoder.getMaskHeight();
-			(*mask)->w = surface->w;
-			(*mask)->h = iconDecoder.getMaskHeight();
-			(*mask)->rowBytes = iconDecoder.getMaskRowBytes();
-
-			(*mask)->data = new byte[maskSize];
-			memcpy((*mask)->data, iconDecoder.getMask(), maskSize);
-		}
-
-		s = createRemappedSurface(surface, palette, iconDecoder.getPaletteColorCount());
+		*icon = createRemappedSurface(s1, palette, iconDecoder.getPaletteColorCount());
+		*mask = new Graphics::Surface();
+		(*mask)->copyFrom(*s2);
 	}
 
 	delete res;
 	resource.close();
 
-	return s;
+	return result;
 }
 
 // ---------------------------------------------------------------------------
