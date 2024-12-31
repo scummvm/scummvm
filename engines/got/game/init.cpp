@@ -90,24 +90,6 @@ void initialize_game() {
 
 	show_level(_G(current_level));
 
-	if (_G(auto_load)) {
-		if (load_game(0)) {
-			setup_load();
-		}
-		_G(auto_load) = 0;
-		if (GAME1 && _G(current_area) == 59 && !_G(setup).game_over) {
-			_G(auto_load) = 1;
-#ifdef TODO
-			fade_in();
-			boss_level1();
-#else
-			error("TODO: boss_level1");
-#endif
-		}
-	} else if (!_G(cheat)) {
-//		key_flag[ESC] = 1;
-	}
-
 	if (!_G(auto_load)) {
 //		fade_in();
 		_G(sound).music_play(_G(level_type), 1);

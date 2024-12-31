@@ -40,10 +40,12 @@ private:
 	int  _pixelY[8][25] = {};
 	byte _pixelP[8][25] = {};
 	byte _pixelC[8] = {};
+	int _pauseCtr = 0;
 
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
 	void drawActors(GfxSurface &s);
+	void drawBoss1Health(GfxSurface &s);
 	void drawLightning(GfxSurface &s);
 	void placePixel(GfxSurface &s, int dir, int num);
 	void checkThunderShake();
