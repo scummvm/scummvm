@@ -229,8 +229,8 @@ int check_move0(int x, int y, ACTOR *actr) {
 	else x2 = (x + 10) >> 4;
 	y2 = (y + 15) >> 4;
 
-	// check for solid or fly over
-	if ((_G(cheat) + _G(key_flag)[_ONE]) < 2) {
+	// Check for cheat flying mode
+	if (!actr->flying) {
 		icn1 = _G(scrn).icon[y1][x1];
 		icn2 = _G(scrn).icon[y2][x1];
 		icn3 = _G(scrn).icon[y1][x2];
