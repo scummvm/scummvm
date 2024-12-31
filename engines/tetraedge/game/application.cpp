@@ -60,12 +60,35 @@ _permanentHelp(true), _musicOn(true) {
 
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;
-	core->fileFlagSystemSetFlag("platform", "MacOSX");
+	const char *platform = "";
+	switch (g_engine->getGamePlatform()) {
+	case Common::Platform::kPlatformAndroid:
+		platform = "Android";
+		core->fileFlagSystemSetFlag("pad", "padDisabled");
+		break;
+	case Common::Platform::kPlatformMacintosh:
+		platform = "MacOSX";
+		break;
+	case Common::Platform::kPlatformIOS:
+		platform = "iPhone";
+		break;
+	case Common::Platform::kPlatformNintendoSwitch:
+		platform = "NX";
+		core->fileFlagSystemSetFlag("pad", "padDisabled");
+		break;
+	case Common::Platform::kPlatformPS3:
+		platform = "PS3";
+		break;
+	default:
+		error("Unsupported platform");
+	}
+	core->fileFlagSystemSetFlag("platform", platform);
 	//
 	// WORKAROUND: Syberia 2 A5_ValDomaine/54000/Logic54000.lua
 	// checks a typo of this flag..
 	//
-	core->fileFlagSystemSetFlag("plateform", "MacOSX");
+	core->fileFlagSystemSetFlag("plateform", platform);
+
 	core->fileFlagSystemSetFlag("part", "Full");
 	if (g_engine->isGameDemo())
 		core->fileFlagSystemSetFlag("distributor", "Freemium");
