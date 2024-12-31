@@ -567,7 +567,7 @@ int Scripts::read_script_file() {
 		temp_buff[p] = 0;
 
 		len = strlen(temp_buff);
-		if (len < 10 && temp_buff[len - 1] == ':') {       //line label
+		if (len > 0 && len < 10 && temp_buff[len - 1] == ':') {       //line label
 			temp_buff[len - 1] = 0;
 			_linePtr[_numLabels] = _buffPtr;
 			Common::strcpy_s(_lineLabel[_numLabels++], (char *) temp_buff);
