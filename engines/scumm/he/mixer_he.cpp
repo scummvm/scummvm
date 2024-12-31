@@ -607,13 +607,14 @@ bool HEMixer::mixerStartChannel(
 
 			// Fade-in to avoid possible sound popping...
 			byte *dataTmp = data;
-            // Do fade-in only if there's enough samples to do so
+
+            // Do the fade-in only if there's enough samples to do so...
 			if (!is3DOMusic && samplesSize >= rampUpSampleCount) {
 				for (int i = 0; i < rampUpSampleCount; i++) {
 					*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
 					dataTmp++;
 				}
-			} else if(samplesSize >= rampUpSampleCount) {
+			} else if (samplesSize >= rampUpSampleCount) {
 				// We can't just ramp volume as done above, we have to take
 				// into account the fact that 3DO music is 8-bit -> signed <-
 				for (int i = 0; i < rampUpSampleCount; i++) {
