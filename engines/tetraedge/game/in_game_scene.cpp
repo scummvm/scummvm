@@ -115,7 +115,8 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Path
 		// Note: game checks paths here but seems to just use the original?
 		markerSprite->setName(markerName);
 		markerSprite->setAnchor(TeVector3f32(anchorX, anchorY, 0.0f));
-		markerSprite->load(imgPath);
+		if (!markerSprite->load(imgPath) && imgPath.baseName().hasSuffix(".anim"))
+			markerSprite->load(imgPath.append("cached"));
 		markerSprite->setSizeType(TeILayout::RELATIVE_TO_PARENT);
 		markerSprite->setPositionType(TeILayout::RELATIVE_TO_PARENT);
 		TeVector3f32 newPos;
