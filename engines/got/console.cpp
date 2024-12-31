@@ -119,7 +119,8 @@ bool Console::cmdFreeze(int argc, const char **argv) {
 		_G(cheats).freezeHealth = !_G(cheats).freezeHealth;
 		debugPrintf("Health is %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
 	} else if (!strcmp(argv[1], "magic")) {
-		debugPrintf("Magic is %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+		_G(cheats).freezeMagic = !_G(cheats).freezeMagic;
+		debugPrintf("Magic is %s\n", _G(cheats).freezeMagic ? "frozen" : "unfrozen");
 	} else if (!strcmp(argv[1], "jewels")) {
 		_G(cheats).freezeJewels = !_G(cheats).freezeJewels;
 		debugPrintf("Jewels are %s\n", _G(cheats).freezeJewels ? "frozen" : "unfrozen");
