@@ -68,6 +68,8 @@ enum MenuId {
 	kMenuArcadeFrustrated = 47,
 	kMenuSkipPlayIntro = 50,
 	kMenuSkipArcade = 52,
+	kMenuWillyHelp = 54,
+	kMenuWillyCredits = 56,
 };
 
 class Menu {
@@ -88,29 +90,37 @@ public:
 	void hideMenu() { _curMenu = kMenuNone; }
 
 	void setRequestData(const REQFileData &data);
+	void readRESData(const char *fname);
 	void prevChoice();
 	void nextChoice();
 	void activateChoice();
+	void onTick();
 
 private:
 	Gadget *getClickedMenuItem(const Common::Point &mouseClick);
 	void drawMenuText(Graphics::ManagedSurface &dst);
+	void drawCreditsText(Graphics::ManagedSurface &dst);
 	void toggleGadget(int16 gadgetId, bool enable);
 	void configureGadget(MenuId menu, Gadget *gadget);
 	bool updateOptionsGadget(Gadget *gadget);
 	void handleClick(const Common::Point &mouse);
 	void handleClickOptionsMenu(const Common::Point &mouse);
 	void handleClickSkipPlayIntroMenu(const Common::Point &mouse);
+	void loadCredits();
 
 	void putMouseOnSelectedItem();
 	Gadget *getSelectedItem();
 
 	Common::HashMap<int, RequestData> _menuRequests;
 
+	Common::Array<Common::Array<Common::String>> _helpStrings;
+	Common::Array<Common::String> _credits;
+
 	SliderGadget *_dragGadget;
 	Common::Point _dragStartPt;
 	int _selectedItem;
 	int _numSelectable;
+	int _creditsOffset;
 };
 
 } // End of namespace Dgds

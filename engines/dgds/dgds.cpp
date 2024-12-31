@@ -220,7 +220,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_gdsScene->runChangeSceneOps();
 
 	if (!_scene->getDragItem()) {
-		int16 cursorNum = (getGameId() == GID_WILLY) ? -2 : -1;
+		int16 cursorNum = (getGameId() == GID_WILLY) ? kDgdsMouseWait : kDgdsMouseGameDefault;
 		setMouseCursor(cursorNum);
 	}
 
@@ -258,10 +258,12 @@ bool DgdsEngine::changeScene(int sceneNum) {
 }
 
 void DgdsEngine::setMouseCursor(int num) {
-	if (num == -1)
+	if (num == kDgdsMouseGameDefault)
 		num = _gdsScene->getDefaultMouseCursor();
-	else if (num == -2)
+	else if (num == kDgdsMouseWait)
 		num = _gdsScene->getDefaultMouseCursor2();
+	else if (num == kDgdsMouseLook)
+		num = _gdsScene->getOtherDefaultMouseCursor();
 
 	if (!_icons || num >= _icons->loadedFrameCount())
 		return;
@@ -439,6 +441,8 @@ void DgdsEngine::loadGameFiles() {
 
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
+		if (!_isDemo)
+			_menu->readRESData("WVCR.RES");
 
 		break;
 	case GID_QUARKY:
@@ -477,7 +481,7 @@ void DgdsEngine::loadGameFiles() {
 	_gdsScene->runStartGameOps();
 	loadIcons();
 	_gdsScene->initIconSizes();
-	setMouseCursor(_gdsScene->getDefaultMouseCursor());
+	setMouseCursor(kDgdsMouseGameDefault);
 
 	_inventory->setRequestData(invRequestData);
 	_menu->setRequestData(vcrRequestData);
@@ -613,7 +617,7 @@ Common::Error DgdsEngine::run() {
 				_menu->setScreenBuffer();
 				// force mouse on
 				CursorMan.showMouse(true);
-				setMouseCursor(_gdsScene->getDefaultMouseCursor());
+				setMouseCursor(kDgdsMouseGameDefault);
 				_menu->drawMenu(_menuToTrigger);
 			} else {
 				_menu->hideMenu();
@@ -636,6 +640,7 @@ Common::Error DgdsEngine::run() {
 				default:
 					break;
 			}
+			_menu->onTick();
 			_clock.update(false);
 		} else {
 			debug(10, "****  Starting frame %d time %d ****", frameCount, _thisFrameMs);

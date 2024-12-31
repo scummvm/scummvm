@@ -51,6 +51,9 @@ enum MenuButtonIds {
 	kMainMenuWillySoundsOnOff = 115,
 	kMainMenuWillyMusicOnOff = 116,
 
+	kMenuWillyCreditsDone = 176,
+	kMenuWillyHelpDone = 174,
+
 	kMenuMainPlay = 120,
 	kMenuMainControls = 20,
 	kMenuMainOptions = 121,
@@ -137,7 +140,7 @@ enum MenuButtonIds {
 	kMenuTankTrainPlayArcade = 154,
 };
 
-Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0) {
+Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0), _creditsOffset(0) {
 	_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -149,6 +152,42 @@ void Menu::setRequestData(const REQFileData &data) {
 	for (auto &req : data._requests) {
 		_menuRequests[req._fileNum] = req;
 	}
+}
+
+void Menu::readRESData(const char *fname) {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	Common::SeekableReadStream *s = engine->getResourceManager()->getResource(fname);
+
+	if (!s)
+		error("Couldn't open RES file for menu help %s", fname);
+
+	_helpStrings.clear();
+	Common::Array<Common::String> message;
+	while (!s->eos() && !s->err()) {
+		Common::String str = s->readLine();
+		if (str == "!" || s->eos()) {
+			_helpStrings.push_back(message);
+			message.clear();
+		} else {
+			message.push_back(str);
+		}
+	}
+
+	delete s;
+}
+
+void Menu::loadCredits() {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	Common::SeekableReadStream *s = engine->getResourceManager()->getResource("CREDITS.RES");
+
+	if (!s)
+		error("Couldn't open CREDITS.RES");
+
+	_credits.clear();
+	while (!s->eos() && !s->err()) {
+		_credits.push_back(s->readLine());
+	}
+	_creditsOffset = 0;
 }
 
 void Menu::setScreenBuffer() {
@@ -238,6 +277,11 @@ void Menu::configureGadget(MenuId menu, Gadget *gadget) {
 	}
 }
 
+void Menu::onTick() {
+	if (_curMenu == kMenuWillyCredits)
+		drawMenu(kMenuWillyCredits);
+}
+
 void Menu::drawMenu(MenuId menu) {
 	bool firstDraw = (_curMenu != menu);
 	_curMenu = menu;
@@ -269,6 +313,9 @@ void Menu::drawMenu(MenuId menu) {
 	}
 
 	drawMenuText(managed);
+
+	if (_curMenu == kMenuWillyCredits)
+		drawCreditsText(managed);
 
 	// Can't use transparent blit here as the font is often color 0.
 	screen->copyRectToSurface(*managed.surfacePtr(), 0, 0, Common::Rect(screen->w, screen->h));
@@ -327,6 +374,45 @@ void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 		font->drawString(dst.surfacePtr(), textItem._txt, parentX + textItem._x, parentY + textItem._y, w, 0);
 		pos++;
 	}
+}
+
+static byte _creditsColor(int y) {
+	if (y < 31 || y > 86)
+		return 17; // Cyan
+	else if (y < 32 || y > 85)
+		return 18; // Slightly darker cyan
+	else if (y < 33 || y > 84)
+		return 19; // Darker cyan
+	else if (y < 34 || y > 83)
+		return 30; // Grey
+	return 0; // Black.
+}
+
+void Menu::drawCreditsText(Graphics::ManagedSurface &dst) {
+	const DgdsFont *font = RequestData::getMenuFont();
+	const int lineHeight = font->getFontHeight();
+
+	DgdsRect dlgRect = _menuRequests[_curMenu]._rect;
+
+	const int dlgWidth = dlgRect.width;
+
+	const int yMin = 30;
+	const int yMax = 87;
+	for (uint i = 0; i < _credits.size(); i++) {
+		int dstY = i * lineHeight + yMax - _creditsOffset / 4;
+		if (dstY > yMax)
+			break;
+		if (dstY > yMin) {
+			int lineW = font->getStringWidth(_credits[i]);
+			int xoff = dlgRect.x + (dlgWidth - lineW) / 2;
+			font->drawString(dst.surfacePtr(), _credits[i], xoff, dlgRect.y + dstY, dlgRect.width, _creditsColor(dstY));
+		}
+	}
+
+	_creditsOffset++;
+
+	if ((uint)_creditsOffset / 4 > lineHeight * (_credits.size() + 1) + (yMax - yMin))
+		_creditsOffset = 0;
 }
 
 Gadget *Menu::getClickedMenuItem(const Common::Point &mouseClick) {
@@ -447,6 +533,10 @@ void Menu::handleClick(const Common::Point &mouse) {
 	//case kMenuMouseCalibrationPlay:
 		hideMenu();
 		if (engine->getGameId() == GID_WILLY && clickedMenuItem == kMainMenuWillyHelp) {
+			// TODO: Based on some variable this should instead:
+			//drawMenu(kMenuWillyHelp); // with the first message from WVCR.RES
+			// The OnLine help system
+			// is not available now.
 			engine->changeScene(80);
 		} else {
 			CursorMan.showMouse(false);
@@ -458,10 +548,12 @@ void Menu::handleClick(const Common::Point &mouse) {
 	case kMenuMainOptions:
 		drawMenu(kMenuOptions);
 		break;
-	case kMenuMainCalibrate:
+	case kMenuMainCalibrate: // same as credits button in Willy Beamish
 		if (engine->getGameId() == GID_WILLY) {
 			debug("TODO: Implement willy beamish credits");
 			hideMenu();
+			loadCredits();
+			drawMenu(kMenuWillyCredits);
 		} else {
 			debug("Ignoring calibration request");
 		}
@@ -633,6 +725,9 @@ void Menu::handleClick(const Common::Point &mouse) {
 		_toggleSoundType(Audio::Mixer::kMusicSoundType);
 		updateOptionsGadget(gadget);
 		break;
+	case kMenuWillyCreditsDone:
+	case kMenuWillyHelpDone:
+		hideMenu();
 	default:
 		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;

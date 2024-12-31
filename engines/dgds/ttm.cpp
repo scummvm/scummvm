@@ -826,12 +826,16 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 				g_system->delayMillis(5);
 			}
 		}
-		// Clear all the buffers
-		_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		if (ivals[1] == 256) {
+			// Clear the background only if we faded everything??
+			_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		}
+		// Other buffers are always cleared.
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		// reset to previous palette.
-		_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], 0);
+		// Reset to previous palette - except in Willy Beamish?
+		if (_vm->getGameId() != GID_WILLY)
+			_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], 0);
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.

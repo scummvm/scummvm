@@ -96,6 +96,12 @@ enum DgdsKeyEvent {
 	kDgdsKeyActivate,
 };
 
+enum DgdsMouseCursor {
+	kDgdsMouseGameDefault = -1,
+	kDgdsMouseWait = -2,
+	kDgdsMouseLook = -3,
+};
+
 // TODO: Enable keymapper for dragon arcade sequences
 /*
 enum DragonArcadeKeyEvent {

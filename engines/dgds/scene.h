@@ -341,6 +341,7 @@ protected:
 private:
 	Dialog *getVisibleDialog();
 	bool readTalkData(Common::SeekableReadStream *s, TalkData &dst);
+	void rightButtonAction(const Common::Point &pt);
 
 	int _num;
 	Common::Array<SceneOp> _enterSceneOps;
@@ -368,6 +369,7 @@ private:
 	bool _ignoreMouseUp;
 	bool _lbuttonDown;
 	bool _rbuttonDown;
+	bool _isLookMode;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;

@@ -334,7 +334,7 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 			close();
 		}
 	} else {
-		engine->setMouseCursor(engine->getGDSScene()->getDefaultMouseCursor());
+		engine->setMouseCursor(kDgdsMouseGameDefault);
 	}
 }
 
@@ -415,7 +415,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 
 	GDSScene *gds = engine->getGDSScene();
 
-	engine->setMouseCursor(gds->getDefaultMouseCursor());
+	engine->setMouseCursor(kDgdsMouseGameDefault);
 
 	int itemsPerPage = (_itemArea->_width / _itemArea->_xStep) * (_itemArea->_height / _itemArea->_yStep);
 	if (_exitButton->containsPoint(pt)) {

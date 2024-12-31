@@ -657,7 +657,7 @@ void ChinaTrain::init() { // aka arcadeInit
 	drawFrame();
 
 	// ensure mouse cursor is on
-	engine->setMouseCursor(-1);
+	engine->setMouseCursor(kDgdsMouseGameDefault);
 
 	engine->setMenuToTrigger(kMenuSkipArcade);
 

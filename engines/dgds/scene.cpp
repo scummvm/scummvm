@@ -510,7 +510,7 @@ bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
 SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false),
-	_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false) {
+_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false), _isLookMode(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1178,10 +1178,10 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	int16 cursorNum = 0;
+	int16 cursorNum = _isLookMode ? kDgdsMouseLook : kDgdsMouseGameDefault;
 	if (!dlg) {
 		if (area)
-			cursorNum = area->_cursorNum;
+			cursorNum = _isLookMode ? area->_cursorNum2 : area->_cursorNum;
 	}
 
 	if (_dragItem) {
@@ -1254,6 +1254,11 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 
 	if (_dragItem) {
 		onDragFinish(pt);
+		return;
+	}
+
+	if (_isLookMode) {
+		rightButtonAction(pt);
 		return;
 	}
 
@@ -1386,7 +1391,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		}
 	}
 
-	engine->setMouseCursor(gdsScene->getDefaultMouseCursor());
+	engine->setMouseCursor(kDgdsMouseGameDefault);
 	_dragItem = nullptr;
 }
 
@@ -1404,9 +1409,18 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 		return;
 	}
 
-	// Update the cursor..
-	mouseMoved(pt);
+	if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
+		// Willy toggles between look/act mode on right click
+		_isLookMode = !_isLookMode;
+		mouseMoved(pt);
+	} else {
+		// Other games do right-button action straight away.
+		mouseMoved(pt);
+		rightButtonAction(pt);
+	}
+}
 
+void SDSScene::rightButtonAction(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
