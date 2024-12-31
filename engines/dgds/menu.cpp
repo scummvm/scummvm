@@ -481,8 +481,9 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		if (_curMenu == kMenuOptions)
 			isToggle = updateOptionsGadget(gadget);
 		drawMenu(_curMenu);
-		g_system->delayMillis(500);
+		g_system->delayMillis(300);
 		gadget->toggle(true);
+		isToggle = true;
 	}
 
 	if (_curMenu == kMenuOptions)

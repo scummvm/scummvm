@@ -24,6 +24,8 @@
 #include "common/file.h"
 #include "common/rect.h"
 
+#include "audio/mixer.h"
+
 #include "graphics/surface.h"
 
 #include "dgds/dgds.h"
@@ -546,12 +548,16 @@ void ButtonGadget::drawWillyBmpButtons(Graphics::ManagedSurface *dst) const {
 	case 114: // HELP (questionmark icon)
 		drawCenteredBmpIcon(dst, kWillyQuestionMark);
 		break;
-	case 115: // SFX (bam icon)
-		drawCenteredBmpIcon(dst, kWillyBam);
+	case 115: { // SFX (bam icon)
+		bool sfxOff = DgdsEngine::getInstance()->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
+		drawCenteredBmpIcon(dst, sfxOff ? kWillyNoBam : kWillyBam);
 		break;
-	case 116: // MUSIC (musical note icon)
-		drawCenteredBmpIcon(dst, kWillyMusicNote);
+	}
+	case 116: { // MUSIC (musical note icon)
+		bool musicOff = DgdsEngine::getInstance()->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
+		drawCenteredBmpIcon(dst, musicOff ? kWillyNoMusicNote : kWillyMusicNote);
 		break;
+	}
 	case 120: // HELP (questionmark and text icon)
 		drawCenteredBmpIcon(dst, kWillyHelpText);
 		break;
