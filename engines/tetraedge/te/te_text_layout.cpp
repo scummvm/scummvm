@@ -87,7 +87,13 @@ void TeTextLayout::setText(const Common::String &val) {
 			break;
 		const Common::String *replacement = loc->text(replaced.substr(bstart + 2, bend - bstart - 2));
 		if (replacement) {
-			replaced.replace(bstart, bend - bstart + 1, *replacement);
+			/* Workaround: Syberia 2 on Switch has strings
+			   <Forward> and <Backwards> via replacement
+			   in xml embed in lua. Escape < and >. */
+			Common::String escaped = *replacement;
+			Common::replace(escaped, "<", "&lt;");
+			Common::replace(escaped, ">", "&gt;");
+			replaced.replace(bstart, bend - bstart + 1, escaped);
 		}
 		bstart = replaced.find("$(", bstart + 1);
 	}
