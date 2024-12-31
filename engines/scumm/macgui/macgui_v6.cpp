@@ -527,18 +527,6 @@ void MacV6Gui::runAboutDialog() {
 	token.clear();
 }
 
-struct colorInfo {
-	uint32 color;
-	uint16 count;
-};
-
-static int compareColorInfo(const void *p1, const void *p2) {
-	int c1 = ((const colorInfo *)p1)->count;
-	int c2 = ((const colorInfo *)p2)->count;
-
-	return c2 - c1;
-}
-
 void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect drawArea, int saveSlot) {
 	if (_vm->_game.id == GID_MANIAC)
 		return;
@@ -563,16 +551,10 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect drawArea, i
 	Common::Rect thumbnailRect(0, yMin, drawArea.width(), yMax);
 
 	// We don't know in advance how many colors the thumbnail is going to
-	// use. Reduce the image to a smaller palette.
-	//
-	// I'm not going to do any fancy color quantization here. Maybe if one
-	// is added to the ScummVM common code, but not just for this.
-	//
-	// The thumbnail is asserted to be 160x100 pixels. We know it started
-	// out with at most 256 colors, and that any further colors were added
-	// when scaling it down, and are presumably close to the original ones.
-	// Even in the most pathological case, there will never be more than
-	// 16,000 distinct colors.
+	// use. Reduce the image to a smaller palette. We reserve 10 colors for
+	// the Mac GUI itself.
+
+	ColorQuantizer quantizer(245);
 
 	for (int y = yMin; y < yMax; y++) {
 		for (int x = 0; x < thumbnail->w; x++) {
@@ -581,43 +563,17 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect drawArea, i
 			byte r, g, b;
 			thumbnail->format.colorToRGB(color, r, g, b);
 
-			// If the color wasn't 565 before, make it so
-			color = ((r << 16) | (g << 8) | b) & 0xF8FCF8;
-
-			paletteMap[color]++;
+			quantizer.addColor(r, g, b);
 		}
 	}
 
-	colorInfo *colors = new colorInfo[paletteMap.size()];
-	int count = 0;
+	Graphics::Palette *palette = quantizer.getPalette();
+	_system->getPaletteManager()->setPalette(*palette);
+	delete palette;
 
-	for (auto &k : paletteMap) {
-		colors[count].color = k._key;
-		colors[count].count = k._value;
-		count++;
-	}
+	Graphics::Palette fullPalette = _system->getPaletteManager()->grabPalette(0, 256);
 
-	qsort(colors, count, sizeof(colorInfo), compareColorInfo);
-
-	// Pick the - at most - 246 most popular colors. Note that we do not
-	// gamma correct them. They presumably already were when the thumbnail
-	// was created.
-
-	int numColors = MIN(count, 246);
-	Graphics::Palette palette(numColors);
-
-	for (int i = 0; i < numColors; i++) {
-		int r = ((colors[i].color) >> 16) & 0xFF;
-		int g = ((colors[i].color) >> 8) & 0xFF;
-		int b = (colors[i].color) & 0xFF;
-
-		palette.set(i, r, g, b);
-	}
-
-	delete[] colors;
-	_system->getPaletteManager()->setPalette(palette);
-
-	Graphics::Surface *palettedThumbnail = thumbnail->convertTo(window->innerSurface()->format, nullptr, 0, palette.data(), palette.size());
+	Graphics::Surface *palettedThumbnail = thumbnail->convertTo(window->innerSurface()->format, nullptr, 0, fullPalette.data(), fullPalette.size());
 
 	window->innerSurface()->copyRectToSurface(*palettedThumbnail, drawArea.left, drawArea.top, thumbnailRect);
 	window->markRectAsDirty(drawArea);
