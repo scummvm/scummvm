@@ -20,6 +20,7 @@
  */
 
 #include "got/data/thor_info.h"
+#include "got/game/back.h"
 
 namespace Got {
 
@@ -52,6 +53,11 @@ void THOR_INFO::sync(Common::Serializer &s) {
 
 	s.syncAsByte(armor);
 	s.syncBytes(future, 65);
+
+	if (s.isLoading()) {
+		object_name = (object == 0) ? nullptr : OBJECT_NAMES[object - 1];
+		last_object_name = (last_object == 0) ? nullptr : OBJECT_NAMES[last_object - 1];
+	}
 }
 
 } // namespace Got

@@ -123,7 +123,7 @@ void pick_up_object(int p) {
 		_G(thor_info).item = 7;
 		_G(thor_info).object = _G(object_map)[p] - 11;
 		display_item();
-		_G(thor_info).object_name = object_names[_G(thor_info).object - 1];
+		_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
 		odin_speaks((_G(object_map)[p] - 12) + 501, _G(object_map)[p] - 1);
 		break;
 	case 27:
