@@ -218,6 +218,8 @@ void GotEngine::syncSoundSettings() {
 
 void GotEngine::pauseEngineIntern(bool pause) {
 	g_vars->clearKeyFlags();
+	if (_G(gameMode) == MODE_LIGHTNING)
+		_G(gameMode) = MODE_NORMAL;
 
 	Engine::pauseEngineIntern(pause);
 }
