@@ -216,6 +216,185 @@ void Room807::parser() {
 		_field34 = 0;
 		return;
 	}
+
+	int opCode = -1;
+
+	if (player_said_any("look", "look at"))
+		opCode = 1;
+	else if (player_said_any("gear", "use"))
+		opCode = 0;
+	else if (player_said("take"))
+		opCode = 2;
+	else if (player_said("talk to"))
+		opCode = 3;
+	else if (player_said_any("walk to", "spleen"))
+		opCode = 4;
+	else if (player_said("go"))
+		opCode = 5;
+	else if (player_said("crank"))
+		opCode = 8;
+	else if (player_said("wooden beam"))
+		opCode = 6;
+	else if (player_said("wooden post"))
+		opCode = 7;
+	else if (player_said("journal"))
+		opCode = 9;
+	else if (player_said("conv807a"))
+		opCode = 10;
+
+
+	switch (opCode) {
+	case 0:
+		if (player_said("stone block") && _G(flags[V276]) == 0) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(_G(my_walker), 305, 305, nullptr, 10, 1, true);
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				setGlobals3(_ripLowReachPos1Series, 1, 24);
+				subD7916(_G(my_walker), 20);
+
+				break;
+
+			case 20:
+				kernel_timing_trigger(30, 30, "rip attempts stone block lift");
+				break;
+
+			case 30:
+				digi_play("807m02", 1, 255, 40, -1);
+				break;
+
+			case 40:
+				digi_play("807r14", 1, 255, -1, -1);
+				setGlobals3(_ripLowReachPos1Series, 24, 1);
+				subD7916(_G(my_walker), 50);
+
+				break;
+
+			case 50:
+				player_set_commands_allowed(true);
+				ws_demand_facing(_G(my_walker), 1);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("crank") && inv_object_in_scene("crank", 807)) {
+			if (!_G(flags[V274])) {
+				digi_play("com078", 1, 255, -1, 997);
+			} else if (inv_object_in_scene("wooden post", 807)) {
+				digi_play("807r23a", 1, 255, -1, -1);
+			} else {
+				switch (_G(kernel).trigger) {
+				case -1:
+					ws_walk(_G(my_walker), 476, 318, nullptr, 10, 11, true);
+					break;
+
+				case 10:
+					player_set_commands_allowed(false);
+					ws_hide_walker(_G(my_walker));
+					series_play("807rp04", 256, 0, 13, 5, 0, 100, 0, 0, 0, -1);
+					player_update_info(_G(my_walker), &_G(player_info));
+					_safariShadowMach = series_place_sprite(*SAFARI_SHADOWS, 0, 476, 318, _G(player_info).scale, 257);
+
+					break;
+
+				case 13:
+					terminateMachine(_807Crnk2Mach);
+					_807Crnk2Mach = series_play("807rp05", 256, 16, 20, 10, 4, 100, 0, 0, 0, -1);
+					terminateMachine(_807DoorMach);
+					digi_preload("807_s03");
+					series_stream("807open", 20, 495, 15);
+					digi_play_loop("807_s03", 2, 255, -1, -1);
+
+					break;
+
+				case 15:
+					_807DoorMach = series_show("807kart", 4095, 0, -1, -1, 0, 100, 0, 0);
+					digi_stop(2);
+					digi_unload("807_s03");
+
+					break;
+
+				case 20:
+					player_set_commands_allowed(true);
+					_G(flags[V274]) = 0;
+					_field38 = 1;
+					hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", false);
+					hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", true);
+					hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", true);
+					hotspot_set_active(_G(currentSceneDef).hotspots, "north", true);
+
+					_G(kernel).trigger_mode = KT_DAEMON;
+					kernel_trigger_dispatchx(kernel_trigger_create(6));
+					_G(kernel).trigger_mode = KT_PARSE;
+
+					break;
+
+				default:
+					break;
+
+				}
+			}
+		} else {
+			player_set_commands_allowed(true);
+		}
+
+		break;
+
+	case 1:
+		if (player_said(" ")) {
+			digi_play("807r02", 1, 255, -1, -1);
+		} else if (player_said_any("stone block", "doorway")) {
+			digi_play("807r03", 1, 255, -1, -1);
+		} else if (player_said("slot")) {
+			digi_play("807r05", 1, 255, -1, -1);
+		} else if (player_said_any("chariot", "chariot ")) {
+			digi_play("807r06", 1, 255, -1, -1);
+		} else if (player_said("lit urn")) {
+			digi_play("com060", 1, 255, -1, 997);
+		} else if (player_said("unlit urn")) {
+			digi_play("com061", 1, 255, -1, 997);
+		} else if (player_said("corridor")) {
+			digi_play("807r09", 1, 255, -1, -1);
+		} else if (player_said("wooden beam") && inv_object_in_scene("wooden beam", 807)) {
+			digi_play("807r11", 1, 255, -1, 997);
+		} else if (player_said("wooden post") && inv_object_in_scene("wooden post", 807)) {
+			if (inv_object_in_scene("crank", 807) && _G(flags[V274]) == 0) {
+				digi_play("807r10", 1, 255, -1, -1);
+			} else {
+				digi_play("com021", 1, 255, -1, 997);
+			}
+		} else if (player_said("crank") && inv_object_in_scene("crank", 807)) {
+			digi_play("807r12", 1, 255, -1, -1);
+		} else if (player_said("mei chen")) {
+			digi_play("807r13", 1, 255, -1, -1);
+		} else
+			_G(player).command_ready = true;
+
+		break;
+
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	default:
+		if (player_said("mei chen"))
+			digi_play("com017", 1, 255, -1, 997);
+		else
+			player_set_commands_allowed(true);
+
+		break;
+	}
+
 	// TODO Not yet implemented
 }
 
