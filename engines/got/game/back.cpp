@@ -30,13 +30,13 @@
 
 namespace Got {
 
-const char *object_names[] = {
+const char *OBJECT_NAMES[] = {
 	"Shrub","Child's Doll","UNUSED","FUTURE",
 	"FUTURE","FUTURE","FUTURE","FUTURE","FUTURE",
 	"FUTURE","FUTURE","FUTURE","FUTURE","FUTURE",
 	"FUTURE"
 };
-const char *item_name[] = {
+const char *ITEM_NAMES[] = {
 	"Enchanted Apple","Lightning Power",
 	"Winged Boots","Wind Power",
 	"Amulet of Protection","Thunder Power"

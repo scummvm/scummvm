@@ -26,8 +26,8 @@
 
 namespace Got {
 
-extern const char *object_names[];
-extern const char *item_name[];
+extern const char *OBJECT_NAMES[];
+extern const char *ITEM_NAMES[];
 
 
 /**
