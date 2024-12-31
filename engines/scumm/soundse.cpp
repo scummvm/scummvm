@@ -376,7 +376,7 @@ static int32 calculate4CharStringHash(const char *str) {
 
 		if ((current >= 'A' && current <= 'Z') || (current >= 'a' && current <= 'z')) {
 			// Take the lower nibble of the char and incorporate it into the hash...
-			hash = (16 * hash) | current & 0xF;
+			hash = (16 * hash) | (current & 0xF);
 			++charCount;
 		}
 	}
