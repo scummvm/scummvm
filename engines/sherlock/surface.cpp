@@ -84,8 +84,8 @@ void BaseSurface::SHoverrideBlitFrom(const Graphics::Surface &src, const Common:
 
 	const uint32 transColor = IS_3DO ? 0 : TRANSPARENCY;
 
-	for (uint y = 0; y < destRect.height(); y++) {
-		for (uint x = 0; x < destRect.width(); x++) {
+	for (int y = 0; y < destRect.height(); y++) {
+		for (int x = 0; x < destRect.width(); x++) {
 			const uint8 srcVal = src.getPixel(srcRect.left + x, srcRect.top + y);
 			if (srcVal == transColor)
 				continue;
