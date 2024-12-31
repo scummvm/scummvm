@@ -41,6 +41,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("magic", WRAP_METHOD(Console, cmdMagic));
 	registerCmd("freeze", WRAP_METHOD(Console, cmdFreeze));
 	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
+	registerCmd("flying", WRAP_METHOD(Console, cmdFlying));
 }
 
 Console::~Console() {
@@ -142,6 +143,12 @@ bool Console::cmdLevel(int argc, const char **argv) {
 		_G(warp_flag) = true;
 		return false;
 	}
+}
+
+bool Console::cmdFlying(int argc, const char **argv) {
+	_G(thor)->flying = !_G(thor)->flying;
+	debugPrintf("Flying is %s\n", _G(thor)->flying ? "on" : "off");
+	return true;
 }
 
 } // namespace Got
