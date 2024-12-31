@@ -90,7 +90,9 @@ void GenericArchiveMember::listChildren(ArchiveMemberList &childList, const char
 }
 
 bool Archive::isPathDirectory(const Path &path) const {
-	return false;
+	prepareMaps();
+	Common::Path pathNorm = path.normalize();
+	return _directoryMap.contains(pathNorm) || _fileMap.contains(pathNorm);
 }
 
 int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
@@ -174,6 +176,60 @@ Common::Error Archive::dumpArchive(const Path &destPath) {
 
 char Archive::getPathSeparator() const {
 	return '/';
+}
+
+bool Archive::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
+	list.clear();
+	prepareMaps();
+	Common::Path pathNorm = path.normalize();
+	if (!_fileMap.contains(pathNorm) && !_directoryMap.contains(pathNorm))
+		return false;
+	if (mode == kListDirectoriesOnly || mode == kListAll)
+		for (SubfileSet::iterator its = _directoryMap[pathNorm].begin(); its != _directoryMap[pathNorm].end(); its++)
+		  if (hidden || its->_key.firstChar() != '.')
+				list.push_back(its->_key);
+	if (mode == kListFilesOnly || mode == kListAll)
+		for (SubfileSet::iterator its = _fileMap[pathNorm].begin(); its != _fileMap[pathNorm].end(); its++)
+			if (hidden || its->_key.firstChar() != '.')
+				list.push_back(its->_key);
+	return true;
+}
+
+void Archive::prepareMaps() const {
+	if (_mapsAreReady)
+		return;
+
+	/* In order to avoid call-loop we need to set this variable before calling isDirectory on any members as the
+	   default implementation uses maps.
+	 */
+	_mapsAreReady = true;
+
+	ArchiveMemberList list;
+	listMembers(list);
+
+	for (ArchiveMemberList::iterator it = list.begin(); it != list.end(); it++) {
+		Common::Path cur = (*it)->getPathInArchive().normalize();
+		if (!(*it)->isDirectory()) {
+			Common::Path parent = cur.getParent().normalize();
+			Common::String fname = cur.baseName();
+			_fileMap[parent][fname] = true;
+			cur = parent;
+		}
+
+		while (!cur.empty()) {
+			Common::Path parent = cur.getParent().normalize();
+			Common::String dname = cur.baseName();
+			_directoryMap[parent][dname] = true;
+			cur = parent;
+		}
+	}
+
+	for (AllfileMap::iterator itd = _directoryMap.begin();
+	     itd != _directoryMap.end(); itd++) {
+		for (SubfileSet::iterator its = itd->_value.begin(); its != itd->_value.end(); its++) {
+			_fileMap[itd->_key].erase(its->_key);
+		}
+	}
 }
 
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
@@ -449,6 +505,21 @@ bool SearchSet::isPathDirectory(const Path &path) const {
 	}
 
 	return false;
+}
+
+bool SearchSet::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
+	bool hasAny = false;
+	ArchiveNodeList::const_iterator it = _list.begin();
+	list.clear();
+	for (; it != _list.end(); ++it) {
+		Common::Array<Common::String> tmpList;
+		if (it->_arc->getChildren(path, tmpList, mode, hidden)) {
+			list.push_back(tmpList);
+			hasAny = true;
+		}
+	}
+
+	return hasAny;
 }
 
 int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {

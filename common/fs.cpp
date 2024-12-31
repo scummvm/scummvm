@@ -450,6 +450,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 				}
 				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : name);
 				_subDirCache[name] = *it;
+				_dirMapCache[prefix].push_back(it->getRealName());
 			}
 		} else {
 			if (_fileCache.contains(name)) {
@@ -457,8 +458,10 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 					warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'",
 					        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 				}
-			} else
+			} else {
 				_fileCache[name] = *it;
+				_fileMapCache[prefix].push_back(it->getRealName());
+			}
 		}
 	}
 
@@ -469,6 +472,38 @@ void FSDirectory::ensureCached() const  {
 		return;
 	cacheDirectoryRecursive(_node, _depth, _prefix);
 	_cached = true;
+}
+
+bool FSDirectory::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
+	if (!_node.isDirectory())
+		return 0;
+
+	// Cache dir data
+	ensureCached();
+
+	Common::Path pathNormalized = path.normalize();
+
+	int matches = 0;
+
+	if (mode == kListDirectoriesOnly || mode == kListAll) {
+		for (Array<String>::const_iterator it = _dirMapCache[pathNormalized].begin(); it != _dirMapCache[pathNormalized].end(); ++it) {
+			if (hidden || it->firstChar() != '.') {
+				list.push_back(*it);
+				matches++;
+			}
+		}
+	}
+
+	if (mode == kListFilesOnly || mode == kListAll) {
+		for (Array<String>::const_iterator it = _fileMapCache[pathNormalized].begin(); it != _fileMapCache[pathNormalized].end(); ++it) {
+			if (hidden || it->firstChar() != '.') {
+				list.push_back(*it);
+				matches++;
+			}
+		}
+	}
+
+	return matches;
 }
 
 int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
