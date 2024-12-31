@@ -378,6 +378,58 @@ void Room807::parser() {
 		break;
 
 	case 2:
+		if (player_said("wooden post")) {
+			// TODO not implemented yet
+		} else if (player_said("crank")) {
+			// TODO not implemented yet
+		} else if (player_said("wooden beam")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_in_scene("wooden beam", 807)) {
+					if (inv_object_in_scene("wooden post", 807)) {
+						player_set_commands_allowed(false);
+						setGlobals3(_ripTrekHiReach2HndSeries, 1, 13);
+						subD7916(_G(my_walker), 10);
+					} else {
+						digi_play("807r26", 1, 255, -1, -1);
+					}
+				} else {
+					_G(player).command_ready = true;
+				}
+
+				break;
+
+			case 10:
+				inv_give_to_player("WOODEN BEAM");
+				kernel_examine_inventory_object("PING WOODEN BEAM", _G(master_palette), 5, 1, 170, 135, 15, nullptr, -1);
+
+				break;
+
+			case 15:
+				terminateMachine(_807PostMach);
+				setGlobals3(_ripTrekHiReach2HndSeries, 13, 1);
+				subD7916(_G(my_walker), 20);
+
+				break;
+
+			case 20:
+				player_set_commands_allowed(true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "wooden beam", false);
+				ws_demand_facing(_G(my_walker), 11);
+
+				break;
+
+			default:
+				break;
+
+			}
+		} else if (player_said_any("chariot", "chariot ")) {
+			digi_play("807r27", 1, 255, -1, -1);
+		} else
+			_G(player).command_ready = true;
+
+		break;
+
 	case 3:
 	case 4:
 	case 5:
