@@ -1032,23 +1032,23 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the highlights
 	// TODO: Check if positions are really correct
 	// Top side
-	/*  DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
 
 	// Left side
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x5, s);
 
 	// Bottom highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - width + 1), size.x - 1 + width, 0x5, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1 + width, size.y - 1), size.x - 1 + width, 0x5, s);
 
 	// Right side
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1 - width, 1 + width), size.y - 1 - width, 0x5, s);
-	*/
+	
 	// Shadow parts, from top in clockwise order
 	// TODO: Adjust pos and sizes
-	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x6, s);
+	/* DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x6, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x6, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x6, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x6, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x6, s); */
 
 
 
