@@ -172,6 +172,7 @@ private:
 	}
 
 	void reduceTree() {
+		// TODO: Figure out why we change _leafLevel like this
 		while (!_reduceList[_leafLevel - 1])
 			_leafLevel--;
 
@@ -258,7 +259,9 @@ public:
 			insert(&((*node)->child[getChildIndex(r, g, b, level)]), r, g, b, level + 1);
 		}
 
-		if (_numLeaves > _maxLeaves)
+		// Usually one reduction would be enough, but it's possible
+		// that the reduction will not actually remove any leaves.
+		while (_numLeaves > _maxLeaves)
 			reduceTree();
 	}
 
