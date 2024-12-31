@@ -26,6 +26,9 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+// For the color quantizer
+#include "common/stack.h"
+
 namespace Scumm {
 
 class MacGuiImpl;
@@ -86,6 +89,209 @@ protected:
 	bool runOptionsDialog() override;
 	bool runQuitDialog() override;
 	bool runRestartDialog() override;
+};
+
+// This code is heavily based on "Color Quantization using Octrees" by Dean
+// Clark, published in - I think - the January 1996 issue of Dr. Dobb's Journal.
+//
+// FIXME: The intention is that this should be moved to common code, but we keep
+// it here for now to avoid conflicts.
+
+#define kOctreeDepth 6
+
+struct OctreeNode {
+	byte level;
+	bool isLeaf;
+	uint32 numPixels;
+	uint32 sumRed;
+	uint32 sumGreen;
+	uint32 sumBlue;
+	OctreeNode *child[8];
+	OctreeNode *nextNode;
+};
+
+class Octree {
+private:
+	uint _leafLevel = kOctreeDepth - 1;
+
+	OctreeNode *_root = nullptr;
+	uint _numLeaves = 0;
+	uint _maxLeaves = 0;
+
+	OctreeNode *_reduceList[kOctreeDepth - 1];
+	Common::Stack<OctreeNode *> _nodePool;
+
+	OctreeNode *allocateNode(byte level) {
+		OctreeNode *node;
+
+		if (!_nodePool.empty())
+			node = _nodePool.pop();
+		else
+			node = new OctreeNode();
+
+		if (level == _leafLevel) {
+			node->isLeaf = true;
+			_numLeaves++;
+		} else
+			node->isLeaf = false;
+
+		node->level = level;
+		node->numPixels = 0;
+		node->sumRed = 0;
+		node->sumGreen = 0;
+		node->sumBlue = 0;
+		node->nextNode = nullptr;
+
+		for (int i = 0; i < 8; i++)
+			node->child[i] = nullptr;
+
+		return node;
+	}
+
+	void releaseNode(OctreeNode *node) {
+		_nodePool.push(node);
+	}
+
+	void deleteNodeRecursively(OctreeNode *node) {
+		if (!node)
+			return;
+
+		for (int i = 0; i < 8; i++)
+			deleteNodeRecursively(node->child[i]);
+
+		delete node;
+	}
+
+	int getChildIndex(byte r, byte g, byte b, byte level) {
+		byte bit = (0x80 >> level);
+		byte rbit = (r & bit) >> (5 - level);
+		byte gbit = (g & bit) >> (6 - level);
+		byte bbit = (b & bit) >> (7 - level);
+
+		return rbit | gbit | bbit;
+	}
+
+	void reduceTree() {
+		while (!_reduceList[_leafLevel - 1])
+			_leafLevel--;
+
+		OctreeNode *node = _reduceList[_leafLevel - 1];
+		_reduceList[_leafLevel - 1] = _reduceList[_leafLevel - 1]->nextNode;
+
+		uint32 sumRed = 0;
+		uint32 sumGreen = 0;
+		uint32 sumBlue = 0;
+
+		byte numChildren = 0;
+
+		for (int i = 0; i < 8; i++) {
+			OctreeNode *child = node->child[i];
+
+			if (child) {
+				numChildren++;
+				sumRed += child->sumRed;
+				sumGreen += child->sumGreen;
+				sumBlue += child->sumBlue;
+				node->numPixels += child->numPixels;
+				releaseNode(child);
+				node->child[i] = nullptr;
+			}
+		}
+
+		node->isLeaf = true;
+		node->sumRed = sumRed;
+		node->sumGreen = sumGreen;
+		node->sumBlue = sumBlue;
+
+		_numLeaves -= (numChildren - 1);
+	}
+
+	Graphics::Palette *_palette;
+	uint _colorIndex;
+
+	void getPalette(OctreeNode *node) {
+		if (node->isLeaf) {
+			byte r = node->sumRed / node->numPixels;
+			byte g = node->sumGreen / node->numPixels;
+			byte b = node->sumBlue / node->numPixels;
+			_palette->set(_colorIndex, r, g, b);
+			_colorIndex++;
+		} else {
+			for (uint i = 0; i < 8; i++) {
+				if (node->child[i])
+					getPalette(node->child[i]);
+			}
+		}
+	}
+
+public:
+	Octree(int maxLeaves) : _maxLeaves(maxLeaves) {
+		for (uint i = 0; i < kOctreeDepth; i++)
+			_reduceList[i] = nullptr;
+	}
+
+	~Octree() {
+		while (!_nodePool.empty())
+			delete _nodePool.pop();
+		deleteNodeRecursively(_root);
+	}
+
+	void insert(byte r, byte g, byte b) {
+		insert(&_root, r, g, b, 0);
+	}
+
+	void insert(OctreeNode **node, byte r, byte g, byte b, uint level) {
+		if (*node == nullptr) {
+			*node = allocateNode(level);
+			if (level != _leafLevel) {
+				(*node)->nextNode = _reduceList[level];
+				_reduceList[level] = *node;
+			}
+		}
+
+		if ((*node)->isLeaf) {
+			(*node)->numPixels++;
+			(*node)->sumRed += r;
+			(*node)->sumGreen += g;
+			(*node)->sumBlue += b;
+		} else {
+			insert(&((*node)->child[getChildIndex(r, g, b, level)]), r, g, b, level + 1);
+		}
+
+		if (_numLeaves > _maxLeaves)
+			reduceTree();
+	}
+
+	Graphics::Palette *getPalette() {
+		_palette = new Graphics::Palette(_maxLeaves);
+		_colorIndex = 0;
+
+		getPalette(_root);
+
+		return _palette;
+	}
+};
+
+class ColorQuantizer {
+private:
+	Octree *_octree = nullptr;
+
+public:
+	ColorQuantizer(int maxColors) {
+		_octree = new Octree(maxColors);
+	}
+
+	~ColorQuantizer() {
+		delete _octree;
+	}
+
+	void addColor(byte r, byte g, byte b) {
+		_octree->insert(r, g, b);
+	}
+
+	Graphics::Palette *getPalette() {
+		return _octree->getPalette();
+	}
 };
 
 } // End of namespace Scumm
