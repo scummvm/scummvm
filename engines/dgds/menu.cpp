@@ -729,6 +729,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 	case kMenuWillyCreditsDone:
 	case kMenuWillyHelpDone:
 		hideMenu();
+		break;
 	default:
 		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;
