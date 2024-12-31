@@ -60,14 +60,14 @@ private:
 
 
 Globals::Globals(Clock &clock) :
-_lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
+_lastOpcode1SceneChangeNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
 _gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
 _gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
 _sceneOpcode15ToScene(0) {
 	_globals.push_back(clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(clock.getGameTicksUpGlobal(0x64));
 	_globals.push_back(clock.getGameTicksDownGlobal(0x63));
-	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
+	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChangeNum));
 	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
 	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));
 	_globals.push_back(clock.getDaysGlobal(0x5F));
@@ -123,7 +123,7 @@ int16 Globals::setGlobal(uint16 num, int16 val) {
 }
 
 Common::Error Globals::syncState(Common::Serializer &s) {
-	s.syncAsSint16LE(_lastOpcode1SceneChageNum);
+	s.syncAsSint16LE(_lastOpcode1SceneChangeNum);
 	s.syncAsSint16LE(_sceneOp12SceneNum);
 	s.syncAsSint16LE(_currentSelectedItem);
 	s.syncAsSint16LE(_gameMinsToAddOnLClick);

@@ -96,12 +96,13 @@ public:
 	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
 	int16 getGameIsInteractiveGlobal() { return _gameIsInteractiveGlobal; }
 
-	void setLastSceneNum(int16 num) { _lastOpcode1SceneChageNum = num; }
+	void setLastSceneNum(int16 num) { _lastOpcode1SceneChangeNum = num; }
+	int16 getLastSceneNum() const { return _lastOpcode1SceneChangeNum; }
 
 protected:
 
 	// these ones seem to be common between games
-	int16 _lastOpcode1SceneChageNum;
+	int16 _lastOpcode1SceneChangeNum;
 	int16 _sceneOp12SceneNum;
 	int16 _currentSelectedItem;
 	int16 _gameMinsToAddOnLClick;

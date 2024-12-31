@@ -47,7 +47,7 @@ enum MenuButtonIds {
 	kMainMenuWillyLoad = 111,
 	kMainMenuWillyRestart = 112,
 	kMainMenuWillyQuit = 113,
-	kMainMenuWillyHelp = 114,
+	kMainMenuWillyHelp = 120,
 	kMainMenuWillySoundsOnOff = 115,
 	kMainMenuWillyMusicOnOff = 116,
 
@@ -230,6 +230,11 @@ void Menu::configureGadget(MenuId menu, Gadget *gadget) {
 		}
 	} else if (menu == kMenuOptions) {
 		updateOptionsGadget(gadget);
+	} else if (menu == kMenuMain && engine->getGameId() == GID_WILLY) {
+		// HACK: Enable this button which for some reason is disabled
+		// by default in data?
+		if (gadget->_gadgetNo == kMainMenuWillyHelp)
+			toggleGadget(kMainMenuWillyHelp, true);
 	}
 }
 
@@ -405,6 +410,26 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 }
 
+
+static void _toggleSoundType(Audio::Mixer::SoundType soundType) {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	Audio::Mixer *mixer = engine->_mixer;
+	const char *typeStr = (soundType == Audio::Mixer::kMusicSoundType) ? "music" : "sfx";
+	if (!mixer->isSoundTypeMuted(soundType)) {
+		mixer->muteSoundType(soundType, true);
+		warning("TODO: Sync volume and pause %s", typeStr);
+		//midiPlayer->syncVolume();
+		//if (soundType == Audio::Mixer::kMusicSoundType)
+		//	engine->_soundPlayer->pauseMusic();
+	} else {
+		mixer->muteSoundType(soundType, false);
+		warning("TODO: Sync volume and resume %s", typeStr);
+		//midiPlayer->syncVolume();
+		//if (soundType == Audio::Mixer::kMusicSoundType)
+		//	engine->_soundPlayer->resumeMusic();
+	}
+}
+
 void Menu::handleClick(const Common::Point &mouse) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	int currentScene = engine->getScene()->getNum();
@@ -421,7 +446,11 @@ void Menu::handleClick(const Common::Point &mouse) {
 	//case kMenuCalibratePlayHoC:
 	//case kMenuMouseCalibrationPlay:
 		hideMenu();
-		CursorMan.showMouse(false);
+		if (engine->getGameId() == GID_WILLY && clickedMenuItem == kMainMenuWillyHelp) {
+			engine->changeScene(80);
+		} else {
+			CursorMan.showMouse(false);
+		}
 		break;
 	case kMenuMainControls:
 		drawMenu(kMenuControls);
@@ -430,6 +459,13 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(kMenuOptions);
 		break;
 	case kMenuMainCalibrate:
+		if (engine->getGameId() == GID_WILLY) {
+			debug("TODO: Implement willy beamish credits");
+			hideMenu();
+		} else {
+			debug("Ignoring calibration request");
+		}
+		break;
 	//case kMenuJoystickCalibrationOK:
 	//case kMenuMouseCalibrationCalibrate: // NOTE: same ID as kMenuIntroJumpToGame (for HOC)
 	case kMenuIntroJumpToGame:
@@ -444,9 +480,12 @@ void Menu::handleClick(const Common::Point &mouse) {
 			drawMenu(_curMenu);
 		}
 		break;
-	case kMenuMainFiles:
+	case kMenuMainFiles: // Same ID as Play in Willy Beamish
 	//case kMenuSaveCancel:
-		drawMenu(kMenuFiles);
+		if (engine->getGameId() == GID_WILLY)
+			hideMenu();
+		else
+			drawMenu(kMenuFiles);
 		break;
 	case kMenuMainQuit:
 		drawMenu(kMenuReallyQuit);
@@ -586,6 +625,14 @@ void Menu::handleClick(const Common::Point &mouse) {
 			drawMenu(kMenuSaveBeforeArcade);
 		}
 		break;
+	case kMainMenuWillySoundsOnOff:
+		_toggleSoundType(Audio::Mixer::kSFXSoundType);
+		updateOptionsGadget(gadget);
+		break;
+	case kMainMenuWillyMusicOnOff:
+		_toggleSoundType(Audio::Mixer::kMusicSoundType);
+		updateOptionsGadget(gadget);
+		break;
 	default:
 		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;
@@ -593,11 +640,8 @@ void Menu::handleClick(const Common::Point &mouse) {
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
-	DgdsEngine *engine = DgdsEngine::getInstance();
-	Audio::Mixer *mixer = engine->_mixer;
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
-	Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType;
 
 	switch (clickedMenuItem) {
 	case kMenuOptionsJoystickOnOff:
@@ -610,23 +654,13 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 	case kMenuOptionsSoundsOnOffDE:
 	case kMenuOptionsSoundsOnOffHoC:
 	case kMainMenuWillySoundsOnOff:
-		soundType = Audio::Mixer::kSFXSoundType;
-		// fall through
+		_toggleSoundType(Audio::Mixer::kSFXSoundType);
+		updateOptionsGadget(gadget);
+		break;
 	case kMenuOptionsMusicOnOff:
 	case kMenuOptionsMusicOnOffHoC:
 	case kMainMenuWillyMusicOnOff:
-		if (!mixer->isSoundTypeMuted(soundType)) {
-			mixer->muteSoundType(soundType, true);
-			warning("TODO: Sync volume and pause music");
-			//midiPlayer->syncVolume();
-			//engine->_soundPlayer->pauseMusic();
-		} else {
-			mixer->muteSoundType(soundType, false);
-			warning("TODO: Sync volume and resume music");
-			//midiPlayer->syncVolume();
-			//engine->_soundPlayer->resumeMusic();
-		}
-
+		_toggleSoundType(Audio::Mixer::kMusicSoundType);
 		updateOptionsGadget(gadget);
 		break;
 	default:
