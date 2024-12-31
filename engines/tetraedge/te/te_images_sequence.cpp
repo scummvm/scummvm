@@ -42,7 +42,7 @@ TeImagesSequence::~TeImagesSequence() {
 
 /*static*/
 bool TeImagesSequence::matchExtension(const Common::String &extn) {
-	return extn == "anim";
+	return extn == "anim" || extn == "animcached";
 }
 
 static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right) {
