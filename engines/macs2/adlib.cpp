@@ -567,12 +567,7 @@ void Adlib::Func2839() {
 	// TODO: Refactor, this code is unnecessarily cumbersome
 }
 
-void Adlib::Func294E() {
-	// TODO: As argument
-	
-	uint8 bpp8;
-	uint16 bpp6;
-	uint16 bppA;
+void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 	uint16 bp4;
 	uint8 bp6;
 	/*
@@ -640,26 +635,7 @@ void Adlib::Func294E() {
 	// for the second argument using AND FFh - check if ranges matter here
 	Func2792(bppA + 0xA0, bp2);
 	// TODO: Continue here
-	/*
-
-
-
-
-
-l0017_2A4F:
-	
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	add	ax,0B0h
-	push	ax
-	mov	ax,[bp-2h]
-	shr	ax,8h
-	or	ax,20h
-	push	ax
-	;; This writes a note-on event
-	call	far 0017h:2792h
-	leave
-	retf	6h*/
+	Func2792(bppA + 0xB0, (bp2 >> 0x8) | 0x20);
 }
 
 void Adlib::OnTimer() {
@@ -964,7 +940,9 @@ void Adlib::OnTimer() {
 									// value which is not used in g2779 above.
 									Func2792(gArray8d[bp8] + 0x40,
 											 result & 0xC0 + bp2);
-
+									// TODO: Do we need to do something about
+									// the upper 8 bits?
+									gArray226F[bp3] = 0;
 									
 									// TODO: Continue from here
 									/* mov al, [bp - 3h]
@@ -991,6 +969,7 @@ void Adlib::OnTimer() {
 									;; #note_on_data: This is the call for the note-on, we're looking for the second-
 									;; to-last pushed argument
 									call	far 0017h:294Eh*/
+									// Func294E();
 									
 
 									
