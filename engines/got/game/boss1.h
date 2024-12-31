@@ -26,7 +26,7 @@
 
 namespace Got {
 
-// boss 1 - Snake (Jormangund )
+// boss 1 - Snake (Jormangund)
 extern int boss1_movement(ACTOR *actr);
 extern void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num);
 extern void boss_level1();

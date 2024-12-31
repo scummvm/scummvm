@@ -20,7 +20,6 @@ MODULE_OBJS = \
 	game/move.o \
 	game/move_patterns.o \
 	game/object.o \
-	game/panel.o \
 	game/script.o \
 	game/shot_movement.o \
 	game/shot_pattern.o \

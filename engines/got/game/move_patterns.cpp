@@ -24,7 +24,7 @@
 #include "got/game/boss1.h"
 #include "got/game/move.h"
 #include "got/game/object.h"
-#include "got/game/panel.h"
+#include "got/gfx/panel.h"
 #include "got/game/script.h"
 #include "got/game/special_tile.h"
 #include "got/events.h"

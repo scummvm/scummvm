@@ -22,7 +22,7 @@
 #include "got/game/object.h"
 #include "got/game/back.h"
 #include "got/game/move.h"
-#include "got/game/panel.h"
+#include "got/gfx/panel.h"
 #include "got/game/status.h"
 #include "got/data/flags.h"
 #include "got/gfx/image.h"

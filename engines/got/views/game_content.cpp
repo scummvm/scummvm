@@ -52,6 +52,9 @@ void GameContent::draw() {
 	drawObjects(s);
 	drawActors(s);
 
+	if (_G(current_level) == BOSS_LEVEL1)
+		drawBoss1Health(s);
+
 	// If we're shaking the screen, render the content with the shake X/Y
 	if (_G(gameMode) == MODE_THUNDER) {
 		GfxSurface win = getSurface();
@@ -110,10 +113,12 @@ void GameContent::draw() {
 #define MSG(STR, METHOD) else if (msg._name == STR) { METHOD(); return true; }
 
 bool GameContent::msgGame(const GameMessage &msg) {
-	if (msg._name == "THROW_LIGHTNING") {
-		throwLightning();
+	if (msg._name == "BOSS_PAUSE") {
+		_G(gameMode) = MODE_PAUSE;
+		_pauseCtr = msg._value;
 		return true;
 	}
+	MSG("THROW_LIGHTNING", throwLightning)
 	MSG("THOR_DIES", thorDies)
 	MSG("CLOSING1_2", closing_sequence1_2)
 	MSG("CLOSING1_3", closing_sequence1_3)
@@ -153,6 +158,11 @@ bool GameContent::tick() {
 		if (--_lightningCtr == 0) {
 			lightningCountdownDone();
 		}
+		break;
+
+	case MODE_PAUSE:
+		if (--_pauseCtr == 0)
+			_G(gameMode) = MODE_NORMAL;
 		break;
 
 	default:
@@ -224,6 +234,27 @@ void GameContent::drawActors(GfxSurface &s) {
 
 	if (_G(gameMode) == MODE_THOR_DIES && _deathCtr >= DEATH_THRESHOLD)
 		s.blitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
+}
+
+void GameContent::drawBoss1Health(GfxSurface &s) {
+	int rep, i, c;
+
+	int health = _G(actor)[3].health;
+
+	s.fillRect(Common::Rect(304, 2, 317, 81), 0);
+	s.fillRect(Common::Rect(305, 3, 316, 80), 28);
+	s.fillRect(Common::Rect(306, 4, 315, 79), 26);
+	s.fillRect(Common::Rect(307, 5, 314, 78), 24);
+
+	for (i = 10; i > 0; i--) {
+		if (i * 10 > health)
+			c = 0;
+		else
+			c = 32;
+
+		s.fillRect(Common::Rect(308, 7 + (7 * (10 - i)),
+			313, 13 + (7 * (10 - i))), c);
+	}
 }
 
 void GameContent::checkThunderShake() {

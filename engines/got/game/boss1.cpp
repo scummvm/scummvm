@@ -21,11 +21,12 @@
 
 #include "got/game/boss1.h"
 #include "got/game/back.h"
+#include "got/game/init.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
-#include "got/game/panel.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
+#include "got/gfx/panel.h"
 #include "got/vars.h"
 #include "got/events.h"
 #include "got/sound.h"
@@ -206,17 +207,12 @@ void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 }
 
 void boss_level1() {
-#ifdef TODO
 	setup_boss(1);
 	_G(boss_active) = 1;
-	boss_status(-1);
 	music_pause();
 	play_sound(BOSS11, 1);
-	pause(120);
+	g_events->send("Game", GameMessage("PAUSE", 40));
 	music_play(5, 1);
-#else
-	error("boss_level1");
-#endif
 }
 
 int boss_dead1(void) {
@@ -252,8 +248,10 @@ int boss_dead1(void) {
 		play_sound(EXPLODE, 1);
 		_G(boss_dead)++;
 		for (rep = 7; rep < MAX_ACTORS; rep++)
-			if (_G(actor)[rep].used) actor_destroyed(&_G(actor)[rep]);
+			if (_G(actor)[rep].used)
+				actor_destroyed(&_G(actor)[rep]);
 	}
+
 	return _G(actor)[3].last_dir;
 }
 

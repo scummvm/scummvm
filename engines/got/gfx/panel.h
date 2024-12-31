@@ -19,13 +19,23 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "got/game/panel.h"
+#ifndef GOT_GAME_PANEL_H
+#define GOT_GAME_PANEL_H
+
+#include "got/data/defines.h"
 
 namespace Got {
 
-void boss_status(int health) {
-	error("TODO: boss_status");
-}
+extern void boss_status(int health);
+
+// Dummy functions for displaying on-screen elements
+// that are now handled by the GameContent and GameStatus views
+inline void display_item() {}
+inline void display_health() {}
+inline void display_magic() {}
+inline void d_restore() {}
+inline void boss_status(int health) {}
 
 } // namespace Got
+
+#endif

@@ -21,10 +21,11 @@
 
 #include "common/file.h"
 #include "got/game/back.h"
+#include "got/game/boss1.h"
 #include "got/game/move.h"
-#include "got/game/panel.h"
 #include "got/game/script.h"
 #include "got/gfx/image.h"
+#include "got/gfx/panel.h"
 #include "got/events.h"
 #include "got/vars.h"
 
@@ -146,7 +147,18 @@ void show_level_done() {
 
 	_G(last_setup) = _G(setup);
 
-	music_play(_G(level_type), 0);
+	bool f = true;
+	if (GAME1 && _G(new_level) == BOSS_LEVEL1) {
+		if (!_G(setup).boss_dead[0]) {
+			if (!_G(auto_load))
+				boss_level1();
+			f = false;
+		}
+	}
+	if (_G(startup))
+		f = false;
+	if (f)
+		music_play(_G(level_type), 0);
 }
 
 static void odin_speaks_end() {
