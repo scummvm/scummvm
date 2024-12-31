@@ -218,6 +218,7 @@ void GotEngine::syncSoundSettings() {
 
 void GotEngine::pauseEngineIntern(bool pause) {
 	g_vars->clearKeyFlags();
+
 	Engine::pauseEngineIntern(pause);
 }
 

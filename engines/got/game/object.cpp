@@ -31,7 +31,6 @@
 
 namespace Got {
 
-void throw_lightning();
 void not_enough_magic();
 void cannot_carry_more();
 
@@ -357,7 +356,7 @@ int use_lightning(int flag) {
 	if (flag) {
 		if (_G(thor_info).magic > 14) {
 			add_magic(-15);
-			throw_lightning();
+			g_events->send("Game", GameMessage("THROW_LIGHTNING"));
 		} else {
 			not_enough_magic();
 			return 0;
@@ -456,131 +455,6 @@ void use_item() {
 	} else {
 		_G(useItemFlag) = false;
 	}
-}
-
-void place_pixel(int dir, int num) {
-#ifdef TODO
-	switch (dir) {
-	case 0:
-		_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] - 1;
-		_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] +
-			(1 - (g_events->getRandomNumber(2)));
-		break;
-	case 1:
-		if (g_events->getRandomNumber(1)) {
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + 1;
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
-		} else {
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] - 1;
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
-		}
-		break;
-	case 2:
-		_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + 1;
-		_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
-		break;
-	case 3:
-		if (g_events->getRandomNumber(1)) {
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + 1;
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
-		} else {
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + 1;
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
-		}
-		break;
-	case 4:
-		_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + 1;
-		_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
-		break;
-	case 5:
-		if (g_events->getRandomNumber(1)) {
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] - 1;
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
-		} else {
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + 1;
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
-		}
-		break;
-	case 6:
-		_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] - 1;
-		_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
-		break;
-	case 7:
-		if (g_events->getRandomNumber(1)) {
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] - 1;
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
-		} else {
-			_G(pixel_y)[dir][num] = _G(pixel_y)[dir][num - 1] - 1;
-			_G(pixel_x)[dir][num] = _G(pixel_x)[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
-		}
-		break;
-	default:
-		return;
-	}
-	if (point_within(_G(pixel_x)[dir][num], _G(pixel_y)[dir][num], 0, 0, 319, 191)) {
-		_G(pixel_p)[dir][num] = xpoint(_G(pixel_x)[dir][num], _G(pixel_y)[dir][num], draw_page);
-		xpset(_G(pixel_x)[dir][num], _G(pixel_y)[dir][num], draw_page, _G(pixel_c)[dir]);
-	}
-#else
-	error("TODO: place_pixel");
-#endif
-}
-
-void replace_pixel(int dir, int num) {
-#ifdef TODO
-	if (point_within(_G(pixel_x)[dir][num], _G(pixel_y)[dir][num], 0, 0, 319, 191)) {
-		xpset(_G(pixel_x)[dir][num], _G(pixel_y)[dir][num], draw_page, _G(pixel_p)[dir][num]);
-	}
-#else
-	error("TODO: replace_pixel");
-#endif
-}
-
-void throw_lightning() {
-#ifdef TODO
-	int i, r, loop, x, y, ax, ay;
-
-	for (i = 0; i < MAX_ACTORS; i++) _G(actor)[i].show = 0;
-
-	xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], draw_page);
-	xshowpage(draw_page);
-	play_sound(ELECTRIC, 1);
-	for (loop = 0; loop < 10; loop++) {
-		for (i = 0; i < 8; i++) {
-			_G(pixel_x)[i][0] = _G(thor)->x + 7;
-			_G(pixel_y)[i][0] = _G(thor)->y + 7;
-			_G(pixel_c)[i] = 14 + g_events->getRandomNumber(1);
-		}
-		for (r = 0; r < 8; r++) {
-			for (i = 1; i < 25; i++) {
-				place_pixel(r, i);
-			}
-		}
-		timer_cnt = 0;
-		while (timer_cnt < 3);
-		for (r = 7; r >= 0; r--) {
-			for (i = 1; i < 25; i++) {
-				replace_pixel(r, i);
-			}
-		}
-		timer_cnt = 0;
-		while (timer_cnt < 3);
-	}
-	x = _G(thor)->x + 7;
-	y = _G(thor)->y + 7;
-	for (i = 3; i < MAX_ACTORS; i++) {
-		if (!_G(actor)[i].used) continue;
-		ax = _G(actor)[i].x + (_G(actor)[i].size_x / 2);
-		ay = _G(actor)[i].y + (_G(actor)[i].size_y / 2);
-		if ((abs(ax - x) < 30) && (abs(ay - y) < 30)) {
-			_G(actor)[i].magic_hit = 1;
-			_G(actor)[i].vunerable = 0;
-			actor_damaged(&_G(actor)[i], 254);
-		}
-	}
-#else
-	error("TODO: throw lightning");
-#endif
 }
 
 void not_enough_magic() {

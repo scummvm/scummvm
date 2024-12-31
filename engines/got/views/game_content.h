@@ -35,10 +35,17 @@ private:
 	int _transitionPos = 0;
 	int _deathCtr = 0;
 	bool _phased[240] = {};
+	int _lightningCtr = 0;
+	int  _pixelX[8][25] = {};
+	int  _pixelY[8][25] = {};
+	byte _pixelP[8][25] = {};
+	byte _pixelC[8] = {};
 
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
 	void drawActors(GfxSurface &s);
+	void drawLightning(GfxSurface &s);
+	void placePixel(GfxSurface &s, int dir, int num);
 	void checkThunderShake();
 	void checkSwitchFlag();
 	void checkForItem();
@@ -51,6 +58,8 @@ private:
 	void spinThor();
 	void thorDead();
 	void checkForCheats();
+	void throwLightning();
+	void lightningCountdownDone();
 
 public:
 	GameContent();
