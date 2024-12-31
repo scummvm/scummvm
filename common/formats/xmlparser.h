@@ -185,7 +185,7 @@ public:
 	 */
 	bool loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable = DisposeAfterUse::NO);
 
-	bool loadStream(SeekableReadStream *stream);
+	bool loadStream(SeekableReadStream *stream, const String &name = "File Stream");
 
 	void close();
 
