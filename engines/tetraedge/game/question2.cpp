@@ -108,7 +108,7 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 	float xpos;
 	blayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->setPositionType(RELATIVE_TO_PARENT);
-	if (!path.baseName().contains("Cal_FIN.lua")) {
+	if (!path.baseName().contains("Cal_FIN.lua") && !path.baseName().contains("Cal_FIN.data")) {
 		blayout->setSize(TeVector3f32(0.45f, 0.065f, 1.0f));
 		xpos = 0.3f;
 	} else {

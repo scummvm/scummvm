@@ -400,7 +400,7 @@ bool Application::run() {
 		if (_finishedGame) {
 			game->leave(false);
 			_mainMenu.enter();
-			if (Common::File::exists("finalURL.lua")) {
+			if (Common::File::exists("finalURL.lua") || Common::File::exists("finalURL.data")) {
 				TeLuaGUI finalGui;
 				finalGui.load("finalURL.lua");
 				/*TeVariant finalVal =*/ finalGui.value("finalURL");

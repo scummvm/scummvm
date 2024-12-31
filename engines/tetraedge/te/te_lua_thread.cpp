@@ -161,8 +161,14 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 	}
 }
 
-void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileName) {
+void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNameIn) {
 	char *fixline;
+
+	Common::String fileName(fileNameIn);
+
+	if (fileName.hasSuffix(".data")) {
+		fileName = fileName.substr(0, fileName.size() - 5) + ".lua";
+	}
 
 	//
 	// WORKAROUND: Some script files have rogue ";" lines in them with nothing
