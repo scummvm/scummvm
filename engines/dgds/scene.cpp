@@ -1672,7 +1672,7 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 
 	uint16 num = file->readUint16LE();
 	// Find matching game item and load its values
-	while (num) {
+	while (num && !file->eos()) {
 		bool found = false;
 		for (GameItem &item : _gameItems) {
 			if (item._num == num) {
@@ -1693,57 +1693,111 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 	}
 	initIconSizes();
 
-	num = file->readUint16LE();
-	while (num) {
-		uint16 scene = file->readUint16LE();
-		int16 val = file->readSint16LE();
-		bool found = false;
-		for (PerSceneGlobal &glob : _perSceneGlobals) {
-			if (glob.matches(num, scene)) {
-				glob._val = val;
-				found = true;
-				break;
-			}
-		}
-		if (!found)
-			error("Reset file references unknown global %d", num);
-		num = file->readUint16LE();
-	}
-
-	/*uint32 unk = */ file->readUint32LE();
-
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Common::Array<Global *> &globs = engine->getGameGlobals()->getAllGlobals();
 
-	if (globs.size() > 50)
-		error("Too many globals to load from RST file");
+	if (engine->getGameId() == GID_DRAGON || engine->getGameId() == GID_HOC) {
+		num = file->readUint16LE();
+		while (num && !file->eos()) {
+			uint16 scene = file->readUint16LE();
+			int16 val = file->readSint16LE();
+			bool found = false;
+			for (PerSceneGlobal &glob : _perSceneGlobals) {
+				if (glob.matches(num, scene)) {
+					glob._val = val;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				error("Reset file references unknown scene global %d", num);
+			num = file->readUint16LE();
+		}
 
-	int g = 0;
-	for (Global *glob : globs) {
-		int16 val = file->readUint16LE();
-		glob->setRaw(val);
-		g++;
-	}
+		/*uint32 unk = */ file->readUint32LE();
 
-	// Always 50 int16s worth of globals in the file, skip any unused.
-	if (g < 50)
-		file->skip(2 * (50 - g));
+		if (globs.size() > 50)
+			error("Too many globals to load from RST file");
 
-	uint16 triggers[100];
-	for (int i = 0; i < ARRAYSIZE(triggers); i++) {
-		triggers[i] = file->readUint16LE();
-	}
+		int g = 0;
+		for (Global *glob : globs) {
+			int16 val = file->readUint16LE();
+			glob->setRaw(val);
+			g++;
+		}
+		// Always 50 int16s worth of globals in the file, skip any unused.
+		if (g < 50)
+			file->skip(2 * (50 - g));
 
-	engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-	// TODO: FIXME: What should this scene num be? For now hacked to work with Dragon.
-	engine->changeScene(3);
-	SDSScene *scene = engine->getScene();
-	int t = 0;
-	num = triggers[t++];
-	while (num) {
-		uint16 val = triggers[t++];
-		scene->enableTrigger(0, num, (bool)val);
+		uint16 triggers[100];
+		for (int i = 0; i < ARRAYSIZE(triggers); i++) {
+			triggers[i] = file->readUint16LE();
+		}
+
+		engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		// TODO: FIXME: What should this scene num be? For now hacked to work with Dragon.
+		engine->changeScene(3);
+		SDSScene *scene = engine->getScene();
+		int t = 0;
 		num = triggers[t++];
+		while (num) {
+			uint16 val = triggers[t++];
+			scene->enableTrigger(0, num, (bool)val);
+			num = triggers[t++];
+		}
+	} else {
+		// Willy Beamish stores the globals differently
+		num = file->readUint16LE();
+		while (num && !file->eos()) {
+			int16 val = file->readSint16LE();
+			bool found = false;
+			for (PerSceneGlobal &glob : _perSceneGlobals) {
+				if (glob.numMatches(num)) {
+					glob._val = val;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				error("Reset file references unknown scene global %d", num);
+			num = file->readUint16LE();
+		}
+
+		/*uint32 unk = */ file->readUint32LE();
+
+		num = file->readUint16LE();
+		while (num && !file->eos()) {
+			bool found = false;
+			int16 val = file->readUint16LE();
+			for (Global *glob : globs) {
+				if (glob->getNum() == num) {
+					glob->setRaw(val);
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				error("Reset file references unknown game global %d", num);
+			num = file->readUint16LE();
+		}
+
+		//
+		// TODO: What is this block of data?  In practice there is only one of them
+		//
+		while (!file->eos()) {
+			num = file->readUint16LE();
+			if (!num)
+				break;
+			/*int16 val1 = */ file->readUint16LE();
+			/*int16 val2 = */ file->readUint16LE();
+			/*int16 val3 = */ file->readUint16LE();
+		}
+
+		/*uint16 soundBankNum = */ file->readUint16LE();
+
+		engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		// TODO: FIXME: What should this scene num be?
+		engine->changeScene(3);
 	}
 
 	return true;
