@@ -239,9 +239,11 @@ int load_enemy(int type) {
 			for (int f = 0; f < _G(shot)[e].frames; f++) {
 				if (_G(shot)[e].directions < _G(shot)[e].frames) {
 					Graphics::ManagedSurface &s = _G(shot)[e].pic[d][f];
-					const byte *src = (_G(shot)[e].directions < _G(shot)[e].frames) ?
-						&_G(tmp_buff)[4096 + (256 * ((d * 4) + f))] :
-						&_G(tmp_buff)[4096 + (256 * ((f * 4) + d))];
+					const byte *src = &_G(tmp_buff)[4096 + (256 * ((d * 4) + f))];
+					createSurface(s, src);
+				} else {
+					Graphics::ManagedSurface &s = _G(shot)[e].pic[f][d];
+					const byte *src = &_G(tmp_buff)[4096 + (256 * ((f * 4) + d))];
 					createSurface(s, src);
 				}
 			}
