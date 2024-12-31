@@ -46,11 +46,9 @@ void OptionsMenu::selected() {
 		// skill level
 		break;
 	case 2:
-		close();
 		g_engine->saveGameDialog();
 		break;
 	case 3:
-		close();
 		g_engine->loadGameDialog();
 		break;
 	case 4:
