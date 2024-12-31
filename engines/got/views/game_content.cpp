@@ -57,6 +57,9 @@ void GameContent::draw() {
 		GfxSurface win = getSurface();
 		win.clear();
 		win.blitFrom(s, _moveDelta);
+	} else if (_G(gameMode) == MODE_LIGHTNING) {
+		drawLightning(s);
+
 	} else if (_G(gameMode) == MODE_AREA_CHANGE) {
 		// Draw parts of the new scene along with parts of the old one
 		// as it's scrolled off-screen
@@ -107,10 +110,11 @@ void GameContent::draw() {
 #define MSG(STR, METHOD) else if (msg._name == STR) { METHOD(); return true; }
 
 bool GameContent::msgGame(const GameMessage &msg) {
-	if (msg._name == "THOR_DIES") {
-		thorDies();
+	if (msg._name == "THROW_LIGHTNING") {
+		throwLightning();
 		return true;
 	}
+	MSG("THOR_DIES", thorDies)
 	MSG("CLOSING1_2", closing_sequence1_2)
 	MSG("CLOSING1_3", closing_sequence1_3)
 	MSG("CLOSING1_4", closing_sequence1_4)
@@ -142,6 +146,12 @@ bool GameContent::tick() {
 			++_deathCtr;
 		} else {
 			thorDead();
+		}
+		break;
+
+	case MODE_LIGHTNING:
+		if (--_lightningCtr == 0) {
+			lightningCountdownDone();
 		}
 		break;
 
@@ -476,6 +486,119 @@ void GameContent::checkForCheats() {
 		_G(thor_info).magic = 150;
 	if (_G(cheats).freezeJewels)
 		_G(thor_info).jewels = 999;
+}
+
+
+void GameContent::placePixel(GfxSurface &s, int dir, int num) {
+	switch (dir) {
+	case 0:
+		_pixelY[dir][num] = _pixelY[dir][num - 1] - 1;
+		_pixelX[dir][num] = _pixelX[dir][num - 1] +
+			(1 - (g_events->getRandomNumber(2)));
+		break;
+	case 1:
+		if (g_events->getRandomNumber(1)) {
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + 1;
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
+		} else {
+			_pixelY[dir][num] = _pixelY[dir][num - 1] - 1;
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
+		}
+		break;
+	case 2:
+		_pixelX[dir][num] = _pixelX[dir][num - 1] + 1;
+		_pixelY[dir][num] = _pixelY[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
+		break;
+	case 3:
+		if (g_events->getRandomNumber(1)) {
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + 1;
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
+		} else {
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + 1;
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
+		}
+		break;
+	case 4:
+		_pixelY[dir][num] = _pixelY[dir][num - 1] + 1;
+		_pixelX[dir][num] = _pixelX[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
+		break;
+	case 5:
+		if (g_events->getRandomNumber(1)) {
+			_pixelX[dir][num] = _pixelX[dir][num - 1] - 1;
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + (1 - (g_events->getRandomNumber(1)));
+		} else {
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + 1;
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
+		}
+		break;
+	case 6:
+		_pixelX[dir][num] = _pixelX[dir][num - 1] - 1;
+		_pixelY[dir][num] = _pixelY[dir][num - 1] + (1 - (g_events->getRandomNumber(2)));
+		break;
+	case 7:
+		if (g_events->getRandomNumber(1)) {
+			_pixelX[dir][num] = _pixelX[dir][num - 1] - 1;
+			_pixelY[dir][num] = _pixelY[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
+		} else {
+			_pixelY[dir][num] = _pixelY[dir][num - 1] - 1;
+			_pixelX[dir][num] = _pixelX[dir][num - 1] + (0 - (g_events->getRandomNumber(1)));
+		}
+		break;
+	default:
+		return;
+	}
+
+	if (point_within(_pixelX[dir][num], _pixelY[dir][num], 0, 0, 319, 191)) {
+		byte *pixel = (byte *)s.getBasePtr(_pixelX[dir][num],
+			_pixelY[dir][num]);
+		*pixel = _pixelC[dir];
+	}
+}
+
+void GameContent::throwLightning() {
+	_G(gameMode) = MODE_LIGHTNING;
+	_lightningCtr = 20;
+
+	for (int i = 0; i < MAX_ACTORS; i++)
+		_G(actor)[i].show = 0;
+
+	play_sound(ELECTRIC, 1);
+}
+
+void GameContent::drawLightning(GfxSurface &s) {
+	for (int i = 0; i < 8; i++) {
+		_pixelX[i][0] = _G(thor)->x + 7;
+		_pixelY[i][0] = _G(thor)->y + 7;
+		_pixelC[i] = 14 + g_events->getRandomNumber(1);
+	}
+
+	for (int r = 0; r < 8; r++) {
+		for (int i = 1; i < 25; i++) {
+			placePixel(s, r, i);
+		}
+	}
+}
+
+void GameContent::lightningCountdownDone() {
+	int x, y, i, ax, ay;
+	_G(gameMode) = MODE_NORMAL;
+
+	x = _G(thor)->x + 7;
+	y = _G(thor)->y + 7;
+
+	for (i = 3; i < MAX_ACTORS; i++) {
+		if (!_G(actor)[i].used)
+			continue;
+
+		ax = _G(actor)[i].x + (_G(actor)[i].size_x / 2);
+		ay = _G(actor)[i].y + (_G(actor)[i].size_y / 2);
+
+		if ((ABS(ax - x) < 30) && (ABS(ay - y) < 30)) {
+			_G(actor)[i].magic_hit = 1;
+			_G(actor)[i].vunerable = 0;
+			actor_damaged(&_G(actor)[i], 254);
+		}
+	}
 }
 
 } // namespace Views

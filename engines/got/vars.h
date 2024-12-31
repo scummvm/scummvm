@@ -58,7 +58,7 @@ enum Key {
 
 enum GameMode {
 	MODE_NORMAL, MODE_AREA_CHANGE, MODE_THUNDER,
-	MODE_THOR_DIES, MODE_ADD_SCORE
+	MODE_THOR_DIES, MODE_ADD_SCORE, MODE_LIGHTNING
 };
 
 enum TransitionDir {
@@ -223,10 +223,6 @@ public:
 	byte *_ami_store1 = nullptr, *_ami_store2 = nullptr;
 	byte *_mask_store1 = nullptr, *_mask_store2 = nullptr;
 	bool _thor_special_flag = false;
-	int  _pixel_x[8][25] = {};
-	int  _pixel_y[8][25] = {};
-	byte _pixel_p[8][25] = {};
-	byte _pixel_c[8] = {};
 };
 
 #define _G(X) (g_vars->_##X)
