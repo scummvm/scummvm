@@ -19,7 +19,7 @@
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2024 The ScummVM Team</string>
+	<string>Copyright 2001-2025 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>ScummVMDockTilePlugIn</string>
 </dict>

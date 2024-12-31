@@ -9,7 +9,7 @@ import xml.sax.saxutils
 
 METAINFO_OUTPUT_FILE = 'dists/org.scummvm.scummvm.metainfo.xml'
 METAINFO_XML_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2020-2024 The ScummVM Team -->
+<!-- Copyright 2020-2025 The ScummVM Team -->
 <component type="desktop-application">
   <id>org.scummvm.scummvm</id>
   <metadata_license>CC0-1.0</metadata_license>
