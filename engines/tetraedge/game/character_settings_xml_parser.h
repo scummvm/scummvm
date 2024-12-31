@@ -88,6 +88,9 @@ public:
 				XML_KEY(body)
 					XML_PROP(name, true)
 				KEY_END()
+				XML_KEY(rippleTexture)
+					XML_PROP(path, true)
+				KEY_END()
 			KEY_END()
 		KEY_END()
 	} PARSER_END()
@@ -112,6 +115,7 @@ public:
 	bool parserCallback_mouth(ParserNode *node);
 	bool parserCallback_body(ParserNode *node);
 	bool parserCallback_invertNormals(ParserNode *node);
+	bool parserCallback_rippleTexture(ParserNode *node);
 
 	bool textCallback(const Common::String &val) override;
 	bool handleUnknownKey(ParserNode *node) override;
