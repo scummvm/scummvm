@@ -76,6 +76,153 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO2(GAMEOPTION_CORRECT_MOVIE_ASPECT, GAMEOPTION_RESTORE_SCENES)
 	},
 
+	// Nintendo Switch, from Syberia1-3 cartridge
+	{
+		"syberia",
+	        nullptr,
+		AD_ENTRY1s("InGame.lua", "acaf61504a12aebf3862648e04cf29aa", 3920),
+		Common::UNK_LANG,
+		Common::kPlatformNintendoSwitch,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY2s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "InGame.lua", "a7df110fe816cb342574150c6f992964", 4654),
+		Common::UNK_LANG,
+		Common::kPlatformNintendoSwitch,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// Android v1.0.5
+	{
+		"syberia",
+		"Extracted",
+		AD_ENTRY1s("InGame.lua", "12ee6a8eade070b905136cd4cdfc3726", 4471),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	{
+		"syberia",
+		nullptr,
+		AD_ENTRY1s("main.12.com.microids.syberia.obb", "b82f9295c4bafe4af58450cbacfd261e", 1000659045),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// Buka release v1.0.3
+	{
+		"syberia",
+		"Extracted",
+		AD_ENTRY1s("InGame.lua", "6577b0151ca4532e94a63a91c22a17c1", 2646),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia",
+		nullptr,
+		AD_ENTRY1s("main.2.ru.buka.syberia1.obb", "7af875e74acfceee5d9b78c705da212e", 771058907),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// v1.0.1
+	{
+		"syberia",
+		nullptr,
+		AD_ENTRY1s("main.5.com.microids.syberia.obb", "6a39b40edca885bb9508ec09675c1923", 1389534445),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia",
+		"Extracted",
+		AD_ENTRY1s("InGame.lua", "8698770015e103725db60a65f3e21657", 2478),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	{
+		"syberia",
+	        nullptr,
+		AD_ENTRY1s("InGame.data", "5cb78f2c8aac837fe53596ecfe921b38", 2195),
+		Common::UNK_LANG,
+		Common::kPlatformPS3,
+		ADGF_UNSUPPORTED,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// v1.0.2 Buka release
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY1s("main.2.ru.buka.syberia2.obb", "e9d8516610d33f375a3f6800232e3224", 1038859725),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia2",
+		"Extracted",
+		AD_ENTRY2s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "filelist.bin", "eb189789a74286c5023e102ec1c44fd4", 2099822),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// v1.0.1 Android release
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY1s("main.4.com.microids.syberia2.obb", "d8aa60562ffad83d3bcaa7b611fc4299", 1473221971),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia2",
+		"Extracted",
+		AD_ENTRY2s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "filelist.bin", "dc40f150ee291a30e0bc6cd8a0127aab", 2100007),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// v1.0.0 iOS release
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY2s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "Info.plist", nullptr, (uint32_t)-1),
+		Common::UNK_LANG,
+		Common::kPlatformIOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+
 	// GOG release
 	{
 		"syberia2",
@@ -95,6 +242,16 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::UNK_LANG,
 		Common::kPlatformIOS,
 		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY1s("Debug.data", "d5cfcba9b725e746df39109e7e1b0564", 7024),
+		Common::UNK_LANG,
+		Common::kPlatformPS3,
+		ADGF_UNSUPPORTED,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
