@@ -214,7 +214,7 @@ private:
 	int _options[IDI_TRO_NUM_OPTIONS];
 	Item _items[IDI_TRO_MAX_TREASURE];
 	int _roomConnects[IDI_TRO_NUM_OPTIONS];
-	int _nonTrollRooms[IDO_TRO_NONTROLLROOMS];
+	int _nonTrollRooms[IDI_TRO_NUM_NONTROLL];
 
 	int _tunes[6];
 };

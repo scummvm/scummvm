@@ -698,7 +698,7 @@ void TrollEngine::fillOffsets() {
 		_items[i].name[15] = 0;
 	}
 
-	for (i = 0; i < IDO_TRO_NONTROLLROOMS; i++)
+	for (i = 0; i < IDI_TRO_NUM_NONTROLL; i++)
 		_nonTrollRooms[i] = _gameData[IDO_TRO_NONTROLLROOMS + i];
 
 	_tunes[0] = 0x3BFD;
