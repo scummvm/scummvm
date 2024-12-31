@@ -335,7 +335,7 @@ public:
 			int16 newBarSize = val * 8;
 
 			// Animate the trouble bar going up or down
-			compBuf.fillRect(Common::Rect(Common::Point(0x80, 0x8a), 0x47, 3), 16);
+			compBuf.fillRect(Common::Rect(Common::Point(0x80, 0x96), 0x47, 4), 16);
 
 			for (int sz = prevBarSize; sz != newBarSize; sz += sign) {
 				RequestData::drawCorners(&compBuf, 0, 0x71, 0x25, 0x5e, 0x7e);
