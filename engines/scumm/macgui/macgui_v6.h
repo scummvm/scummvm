@@ -162,15 +162,6 @@ private:
 		delete node;
 	}
 
-	int getChildIndex(byte r, byte g, byte b, byte level) {
-		byte bit = (0x80 >> level);
-		byte rbit = (r & bit) >> (5 - level);
-		byte gbit = (g & bit) >> (6 - level);
-		byte bbit = (b & bit) >> (7 - level);
-
-		return rbit | gbit | bbit;
-	}
-
 	void reduceTree() {
 		// TODO: Figure out why we change _leafLevel like this
 		while (!_reduceList[_leafLevel - 1])
@@ -256,7 +247,13 @@ public:
 			(*node)->sumGreen += g;
 			(*node)->sumBlue += b;
 		} else {
-			insert(&((*node)->child[getChildIndex(r, g, b, level)]), r, g, b, level + 1);
+			byte bit = (0x80 >> level);
+			byte rbit = (r & bit) >> (5 - level);
+			byte gbit = (g & bit) >> (6 - level);
+			byte bbit = (b & bit) >> (7 - level);
+			int idx = rbit | gbit | bbit;
+
+			insert(&((*node)->child[idx]), r, g, b, level + 1);
 		}
 
 		// Usually one reduction would be enough, but it's possible
