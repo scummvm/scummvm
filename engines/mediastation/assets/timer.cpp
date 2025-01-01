@@ -94,10 +94,6 @@ void Timer::process() {
 
 	uint currentTime = g_system->getMillis();
 	uint movieTime = currentTime - _startTime;
-	//if (movieTime > _duration) {
-	// We are done processing the timer.
-	//    _isPlaying = false;
-	//}
 	debugC(7, kDebugScript, "** Timer %d: ON TIME Event Handlers **", _header->_id);
 	for (EventHandler *timeEvent : _header->_timeHandlers) {
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
@@ -112,17 +108,6 @@ void Timer::process() {
 	}
 	debugC(7, kDebugScript, "** Timer %d: End ON TIME Event Handlers **", _header->_id);
 	_lastProcessedTime = currentTime - _startTime;
-
-	// This has to be at the end becuase the duration of the timer is the
-	// longest time event there is in the timer. And of course it will be called
-	// some amount of time after this time value.
-	// if (movieTime > _duration) {
-	//     // We are done processing the timer.
-	//     _isPlaying = false;
-	//     _startTime = 0;
-	//     _lastProcessedTime = 0;
-	//     debugC(5, kDebugScript, "Timer::timePlay(): Reached end of timer");
-	// }
 }
 
 } // End of namespace MediaStation
