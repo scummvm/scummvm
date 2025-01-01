@@ -144,16 +144,15 @@ void Dialog::drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Commo
 
 void Dialog::drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Common::String &title) {
 	// TODO: This needs updating.
-	_state->_loc = DgdsRect(_rect.x + 12, _rect.y + 10, _rect.width - 24, _rect.height - 20);
+	_state->_loc = DgdsRect(_rect.x + 11, _rect.y + 10, _rect.width - 22, _rect.height - 20);
 	if (title.empty()) {
 		dst->fillRect(Common::Rect(Common::Point(_rect.x + 2, _rect.y + 2), _rect.width - 4, _rect.height - 4), 0);
 		RequestData::drawCorners(dst, 54, _rect.x, _rect.y, _rect.width, _rect.height);
 	} else {
 		dst->fillRect(Common::Rect(Common::Point(_rect.x + 2, _rect.y + 2), _rect.width - 4, _rect.height - 4), 0);
 		RequestData::drawCorners(dst, 46, _rect.x, _rect.y, _rect.width, _rect.height);
-		// TODO: Maybe should measure the font?
-		_state->_loc.y += 11;
-		_state->_loc.height -= 11;
+		_state->_loc.y += 15;
+		_state->_loc.height -= 15;
 		RequestData::drawHeader(dst, _rect.x, _rect.y + 5, _rect.width, 2, title, _fontColor, false, 0, 0);
 	}
 }
@@ -685,9 +684,11 @@ Common::String Dialog::dump(const Common::String &indent) const {
 			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d:%d talkdata %d:%d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _selectionBgCol, _selectonFontCol, _fontSize,
 			_flags, _frameType, _time, _nextDialogFileNum, _nextDialogDlgNum, _talkDataNum, _talkDataHeadNum);
-	str += indent + "state=" + (_state ? _state->dump("") : "null");
-	str += "\n";
-	str += DebugUtil::dumpStructList(indent, "actions", _action);
+	str += indent + " state=" + (_state ? _state->dump("") : "null");
+	if (_action.size()) {
+		str += "\n";
+		str += DebugUtil::dumpStructList(indent, "actions", _action);
+	}
 	str += "\n";
 	str += indent + "  str='" + _str + "'>";
 	return str;
