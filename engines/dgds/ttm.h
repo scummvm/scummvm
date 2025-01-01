@@ -82,7 +82,8 @@ enum TTMRunType {
 
 // Note: this object needs to be safely copy-able - ADS opcodes 0x4000 and 0x4010 require it.
 struct TTMSeq {
-	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _lastFrame(0), _timeCut(0) {
+	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _lastFrame(0), _timeCut(0),
+		_currentBmpId(0), _currentGetPutId(0) {
 		// Other members are initialized in the reset function.
 		reset();
 	}

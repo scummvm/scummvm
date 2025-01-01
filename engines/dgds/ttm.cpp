@@ -826,16 +826,23 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 				g_system->delayMillis(5);
 			}
 		}
-		if (ivals[1] == 256) {
-			// Clear the background only if we faded everything??
+
+		// Logic here is different in Dragon + HOC.  They clear all buffers after fade
+		if (_vm->getGameId() == GID_DRAGON || _vm->getGameId() == GID_HOC) {
+			_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		} else {
+			// In Willy Beamish, copy comp->screen and comp->back
+			g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			g_system->updateScreen();
+			_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
 		}
-		// Other buffers are always cleared.
+		// Stored area is cleared in all games.
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		// Reset to previous palette - except in Willy Beamish?
-		if (_vm->getGameId() != GID_WILLY)
-			_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], 0);
+
+		// Reset to previous palette.
+		_vm->getGamePals()->setPalette();
+
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
@@ -844,10 +851,10 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
 		} else {
-			for (int i = SCREEN_WIDTH; i > 0; i -= ivals[3]) {
+			for (int i = 320; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				if (i == SCREEN_WIDTH) {
+				if (i == 320) {
 					// update screen first to make the initial fade-in work
 					g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				}
