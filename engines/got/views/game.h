@@ -38,6 +38,7 @@ public:
 	Game();
 	virtual ~Game() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool tick() override;

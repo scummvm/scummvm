@@ -38,6 +38,11 @@ Game::Game() : View("Game") {
 	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
 }
 
+bool Game::msgFocus(const FocusMessage &msg) {
+	Gfx::load_palette();
+	return View::msgFocus(msg);
+}
+
 bool Game::msgKeypress(const KeypressMessage &msg) {
 	if (_G(gameMode) != MODE_NORMAL)
 		return false;
