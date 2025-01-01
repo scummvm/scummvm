@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-30 22:26+0000\n"
+"POT-Creation-Date: 2025-01-01 12:41+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -331,7 +331,7 @@ msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "نعم"
@@ -344,7 +344,7 @@ msgstr "نعم"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "لا"
@@ -375,10 +375,9 @@ msgstr ""
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1303
-#: engines/scumm/scumm.cpp:1337 engines/scumm/scumm.cpp:1357
-#: engines/scumm/scumm.cpp:1753 engines/scumm/scumm.cpp:2243
-#: engines/scumm/scumm.cpp:2259 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1328
+#: engines/scumm/scumm.cpp:1732 engines/scumm/scumm.cpp:2222
+#: engines/scumm/scumm.cpp:2238 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -6085,7 +6084,7 @@ msgstr "استرجع"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "لا يتم دعم التحميل السريع أو حفظ اللعبة في هذا الموقع"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3126
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3123
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6096,7 +6095,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3113
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3110
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6107,7 +6106,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3146
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3143
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10504,7 +10503,7 @@ msgid "Your Name:"
 msgstr "الأسم:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4177
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4174
 msgid "Host"
 msgstr "يستضيف"
 
@@ -10514,7 +10513,7 @@ msgid "Querying games..."
 msgstr "جاري الاستعلام عن الألعاب ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4177
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4174
 msgid "Join"
 msgstr "ينضم"
 
@@ -11483,64 +11482,40 @@ msgstr ""
 "يمكن تحقيق تصحيح نسبة العرض إلى الارتفاع عن طريق خفض الدقة إلى 200 ×300 ، "
 "تحت علامة تبويب \"المحرك\"."
 
-#: engines/scumm/scumm.cpp:1255
-msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#: engines/scumm/scumm.cpp:1320
+#, c-format
+msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1282
+#: engines/scumm/scumm.cpp:1324
+#, c-format
 msgid ""
-"This game requires the 'Loom' Macintosh executable for its music and fonts."
+"This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1302
-#, fuzzy
+#: engines/scumm/scumm.cpp:1328
+#, fuzzy, c-format
 #| msgid ""
 #| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 #| "instruments from. Music will be disabled."
 msgid ""
-"Could not find the 'Monkey Island' Macintosh executable to read resources\n"
-"and instruments from. Music and Mac GUI will be disabled."
+"Could not find the '%s' Macintosh executable to read resources from. Music "
+"and Mac GUI will be disabled"
 msgstr ""
 "تعذر العثور على ملف Macintosh القابل للتنفيذ \"Monkey Island\" لقراءة ملف\n"
 "أدوات من. سيتم تعطيل الموسيقى."
 
-#: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
-msgid ""
-"Could not find the 'Fate of Atlantis' Macintosh executable.\n"
-"Mac GUI will not be shown."
-msgstr ""
-"تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية الدقة\n"
-"يتم تعطيل."
-
-#: engines/scumm/scumm.cpp:1355
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
-msgid ""
-"Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
-"Mac GUI will not be shown."
-msgstr ""
-"تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية الدقة\n"
-"يتم تعطيل."
-
-#: engines/scumm/scumm.cpp:1366
+#: engines/scumm/scumm.cpp:1345
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1348
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1750
+#: engines/scumm/scumm.cpp:1729
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -11550,7 +11525,7 @@ msgstr ""
 "لم يعد الضغط مدعومًا لهذه اللعبة ، وسيتم تعطيل الصوت.\n"
 "يرجى نسخ اللعبة من الوسائط الأصلية دون ضغط."
 
-#: engines/scumm/scumm.cpp:2241
+#: engines/scumm/scumm.cpp:2220
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11559,7 +11534,7 @@ msgstr ""
 "يتطلب دعم MIDI الأصلي ترقية Roland من LucasArts ،\n"
 "لكن%s مفقود. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:2257
+#: engines/scumm/scumm.cpp:2236
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11567,7 +11542,7 @@ msgstr ""
 "من المعروف أن هذه النسخة الخاصة من Monkey Island 1 تفتقد بعضًا منها\n"
 "الموارد المطلوبة ل MT-32. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:4065
+#: engines/scumm/scumm.cpp:4062
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11577,7 +11552,7 @@ msgstr ""
 "اللعبة الخاصة ب Maniac Mansion في دليل \"Maniac\" داخل دليل لعبة Tentacle ، "
 "ويجب إضافة اللعبة إلى ScummVM."
 
-#: engines/scumm/scumm.cpp:4177
+#: engines/scumm/scumm.cpp:4174
 msgid "Would you like to host or join a network play session?"
 msgstr "هل ترغب في استضافة أو الانضمام إلى جلسة لعب على الشبكة؟"
 
@@ -13775,6 +13750,32 @@ msgstr ""
 "أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
 "مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
 "و FreeSerif على التوالي."
+
+#, fuzzy
+#~| msgid ""
+#~| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
+#~| "will\n"
+#~| "be disabled."
+#~ msgid ""
+#~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
+#~ "Mac GUI will not be shown."
+#~ msgstr ""
+#~ "تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية "
+#~ "الدقة\n"
+#~ "يتم تعطيل."
+
+#, fuzzy
+#~| msgid ""
+#~| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
+#~| "will\n"
+#~| "be disabled."
+#~ msgid ""
+#~ "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
+#~ "Mac GUI will not be shown."
+#~ msgstr ""
+#~ "تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية "
+#~ "الدقة\n"
+#~ "يتم تعطيل."
 
 #, fuzzy
 #~| msgid ""

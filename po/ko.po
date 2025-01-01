@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-12-30 22:26+0000\n"
+"POT-Creation-Date: 2025-01-01 12:41+0000\n"
 "PO-Revision-Date: 2024-12-22 11:00+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -315,7 +315,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "예"
@@ -328,7 +328,7 @@ msgstr "예"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4171
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "아니오"
@@ -357,10 +357,9 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1303
-#: engines/scumm/scumm.cpp:1337 engines/scumm/scumm.cpp:1357
-#: engines/scumm/scumm.cpp:1753 engines/scumm/scumm.cpp:2243
-#: engines/scumm/scumm.cpp:2259 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1328
+#: engines/scumm/scumm.cpp:1732 engines/scumm/scumm.cpp:2222
+#: engines/scumm/scumm.cpp:2238 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -6237,7 +6236,7 @@ msgstr "복원"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "이 위치에서는 빠른 게임 불러오기 또는 저장이 지원되지 않음"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3126
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3123
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6248,7 +6247,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3113
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3110
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6259,7 +6258,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3146
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3143
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10303,7 +10302,7 @@ msgid "Your Name:"
 msgstr "사용자 이름:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4177
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4174
 msgid "Host"
 msgstr "호스트"
 
@@ -10313,7 +10312,7 @@ msgid "Querying games..."
 msgstr "게임 쿼리 중..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4177
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4174
 msgid "Join"
 msgstr "참여"
 
@@ -11264,52 +11263,47 @@ msgstr ""
 "320x240으로 화면비 교정을 허용하지 않습니다.\n"
 "화면비 교정은 '엔진' 탭에서 해상도를 320x200으로 잘라내어 달성할 수 있습니다."
 
-#: engines/scumm/scumm.cpp:1255
-msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#: engines/scumm/scumm.cpp:1320
+#, fuzzy, c-format
+#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
 "이 게임의 글꼴을 설치하려면 '인디아나 존스' 매킨토시 실행 파일이 필요합니다."
 
-#: engines/scumm/scumm.cpp:1282
+#: engines/scumm/scumm.cpp:1324
+#, fuzzy, c-format
+#| msgid ""
+#| "This game requires the 'Loom' Macintosh executable for its music and "
+#| "fonts."
 msgid ""
-"This game requires the 'Loom' Macintosh executable for its music and fonts."
+"This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
 "이 게임의 음악과 글꼴을 사용하려면 '룸' 매킨토시 실행 파일이 필요합니다."
 
-#: engines/scumm/scumm.cpp:1302
+#: engines/scumm/scumm.cpp:1328
+#, fuzzy, c-format
+#| msgid ""
+#| "Could not find the 'Monkey Island' Macintosh executable to read "
+#| "resources\n"
+#| "and instruments from. Music and Mac GUI will be disabled."
 msgid ""
-"Could not find the 'Monkey Island' Macintosh executable to read resources\n"
-"and instruments from. Music and Mac GUI will be disabled."
+"Could not find the '%s' Macintosh executable to read resources from. Music "
+"and Mac GUI will be disabled"
 msgstr ""
 "리소스와 악기를 읽을 수 있는 '원숭이 섬' 매킨토시 실행 파일을 찾을 수 없고 \n"
 "음악 및 맥 GUI가 비활성화됩니다."
 
-#: engines/scumm/scumm.cpp:1335
-msgid ""
-"Could not find the 'Fate of Atlantis' Macintosh executable.\n"
-"Mac GUI will not be shown."
-msgstr ""
-"'인디아나 존스 : 아틀란티스의 운명' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
-"맥 GUI가 표시되지 않습니다."
-
-#: engines/scumm/scumm.cpp:1355
-msgid ""
-"Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
-"Mac GUI will not be shown."
-msgstr ""
-"'원숭이 섬 2 : 르척의 복수' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
-"맥 GUI가 표시되지 않습니다."
-
-#: engines/scumm/scumm.cpp:1366
+#: engines/scumm/scumm.cpp:1345
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr "매킨토시 리소스 파일 %s을(를) 열 수 없음"
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1348
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr "매킨토시 리소스 파일 %s에서 리소스 포크를 찾을 수 없음"
 
-#: engines/scumm/scumm.cpp:1750
+#: engines/scumm/scumm.cpp:1729
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -11319,7 +11313,7 @@ msgstr ""
 "압축은 이 게임에서 더 이상 지원되지 않으므로 오디오가 비활성화됩니다.\n"
 "게임을 압축하지 않고 원본 미디어에서 복사하세요."
 
-#: engines/scumm/scumm.cpp:2241
+#: engines/scumm/scumm.cpp:2220
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11328,7 +11322,7 @@ msgstr ""
 "실기 미디 지원에는 루카스아츠의 롤랜드 업그레이드가 필요하지만,\n"
 "%s가 없습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:2257
+#: engines/scumm/scumm.cpp:2236
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11336,7 +11330,7 @@ msgstr ""
 "이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
 "빠진 것으로 알려져 있습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:4065
+#: engines/scumm/scumm.cpp:4062
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11346,7 +11340,7 @@ msgstr ""
 "게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, 게임"
 "을 ScummVM에 추가해야 합니다."
 
-#: engines/scumm/scumm.cpp:4177
+#: engines/scumm/scumm.cpp:4174
 msgid "Would you like to host or join a network play session?"
 msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습니까?"
 
@@ -13398,6 +13392,21 @@ msgstr ""
 "합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 있습니"
 "다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
 "LiberationSerif 또는 FreeMono, FreeSans, FreeSerif가 필요합니다."
+
+#~ msgid ""
+#~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
+#~ "Mac GUI will not be shown."
+#~ msgstr ""
+#~ "'인디아나 존스 : 아틀란티스의 운명' 매킨토시 실행 파일을 찾을 수 없습니"
+#~ "다.\n"
+#~ "맥 GUI가 표시되지 않습니다."
+
+#~ msgid ""
+#~ "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
+#~ "Mac GUI will not be shown."
+#~ msgstr ""
+#~ "'원숭이 섬 2 : 르척의 복수' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
+#~ "맥 GUI가 표시되지 않습니다."
 
 #~ msgid ""
 #~ "Allow the game to use the in-engine graphical interface and the original "
