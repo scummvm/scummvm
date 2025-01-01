@@ -1178,8 +1178,11 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	int16 cursorNum = _isLookMode ? kDgdsMouseLook : kDgdsMouseGameDefault;
+	int16 cursorNum = kDgdsMouseGameDefault;
 	if (!dlg) {
+		// Update mouse cursor if no dialog visible
+		if (_isLookMode)
+			cursorNum = kDgdsMouseLook;
 		if (area)
 			cursorNum = _isLookMode ? area->_cursorNum2 : area->_cursorNum;
 	}
@@ -1209,6 +1212,10 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 		_ignoreMouseUp = true;
 		return;
 	}
+
+	// Don't start drag in look mode.
+	if (_isLookMode)
+		return;
 
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
