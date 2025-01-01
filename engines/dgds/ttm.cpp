@@ -574,7 +574,7 @@ void TTMInterpreter::doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &
 }
 
 
-bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
+void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
 	switch (op) {
 	case 0x0000: // FINISH:	void
 		break;
@@ -594,6 +594,7 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		//
 		if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
 			_vm->getStoredAreaBuffer().blitFrom(_vm->_compositionBuffer);
+			_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		} else {
 			_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
@@ -711,8 +712,8 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_vm->_soundPlayer->stopSfxByNum(ivals[0]);
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
-		seq._drawColFG = static_cast<byte>(ivals[0]);
-		seq._drawColBG = static_cast<byte>(ivals[1]);
+		seq._drawColFG = static_cast<byte>(ivals[0]); // aka Line Color
+		seq._drawColBG = static_cast<byte>(ivals[1]); // aka Fill Color
 		break;
 	case 0x2020: { // SET RANDOM SLEEP: min,max: int (eg, 60,300)
 		if (seq._executed) // this is a one-shot op.
@@ -912,12 +913,15 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
+		// Draw fill first
 		Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		r.grow(-1);
 		r.clip(seq._drawWin);
-		_vm->_compositionBuffer.fillRect(r, seq._drawColFG);
-		break;
+		_vm->_compositionBuffer.fillRect(r, seq._drawColBG);
+		// FALL THROUGH to draw the border
 	}
 	case 0xa110: { // DRAW EMPTY RECT  x1,y1,x2,y2:int
+		// FIXME: These lines should be clipped by seq._drawWin
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
 		_vm->_compositionBuffer.drawLine(r.left, r.top, r.right, r.top, seq._drawColFG);
 		_vm->_compositionBuffer.drawLine(r.left, r.bottom, r.right, r.bottom, seq._drawColFG);
@@ -956,12 +960,14 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 
 	case 0xa400: { // DRAW FILLED CIRCLE
+		// FIXME: This should honor seq._drawWin
 		int16 xr = ivals[2] / 2;
 		int16 yr = ivals[3] / 2;
 		Drawing::filledCircle(ivals[0] + xr, ivals[1] + yr, xr, yr, &_vm->_compositionBuffer, seq._drawColFG, seq._drawColBG);
 		break;
 	}
 	case 0xa420: { // DRAW EMPTY CIRCLE
+		// FIXME: This should honor seq._drawWin
 		int16 xr = ivals[2] / 2;
 		int16 yr = ivals[3] / 2;
 		Drawing::emptyCircle(ivals[0] + xr, ivals[1] + yr, xr, yr, &_vm->_compositionBuffer, seq._drawColFG);
@@ -1243,7 +1249,6 @@ bool TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 					ttmOpName(op), sval.c_str());
 		break;
 	}
-	return true;
 }
 
 Common::String TTMInterpreter::readTTMStringVal(Common::SeekableReadStream *scr) {
@@ -1312,9 +1317,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		}
 		debug(10, " (%s)", ttmOpName(op));
 
-		bool opResult = handleOperation(env, seq, op, count, ivals, sval, pts);
-		if (!opResult)
-			break;
+		handleOperation(env, seq, op, count, ivals, sval, pts);
 	}
 
 	return true;

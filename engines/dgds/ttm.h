@@ -130,7 +130,7 @@ public:
 	static Common::String readTTMStringVal(Common::SeekableReadStream *scr);
 
 protected:
-	bool handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts);
+	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts);
 	int32 findGOTOTarget(const TTMEnviro &env, const TTMSeq &seq, int16 frame);
 	void doWipeOp(uint16 code, const TTMEnviro &env, const TTMSeq &seq, const Common::Rect &r);
 	int16 doOpInitCreditScroll(const Image *img);
