@@ -132,6 +132,11 @@ void AndroidSAFFilesystemNode::initJNI() {
 	_JNIinit = true;
 }
 
+void AndroidSAFFilesystemNode::GlobalRef::Deleter::operator()(_jobject *obj) {
+			JNIEnv *env = JNI::getEnv();
+			env->DeleteGlobalRef((jobject)obj);
+}
+
 AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::String &path) {
 	if (!path.hasPrefix(SAF_MOUNT_POINT)) {
 		// Not a SAF mount point
@@ -174,7 +179,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 	}
 
 	if (node) {
-		AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+		AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 
 		env->DeleteLocalRef(node);
 		env->DeleteLocalRef(safTree);
@@ -219,7 +224,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 	}
 
 	if (node) {
-		AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(safTree, node);
+		AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 		env->DeleteLocalRef(node);
 		env->DeleteLocalRef(safTree);
 
@@ -244,7 +249,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree
 		return nullptr;
 	}
 
-	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 
 	env->DeleteLocalRef(node);
 	env->DeleteLocalRef(safTree);
@@ -252,27 +257,27 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree
 	return ret;
 }
 
-AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safNode) :
+AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safNode) :
 	_flags(0), _safParent(nullptr) {
 
 	JNIEnv *env = JNI::getEnv();
 
-	_safTree = env->NewGlobalRef(safTree);
-	assert(_safTree);
+	_safTree = safTree;
+	assert(_safTree != nullptr);
 	_safNode = env->NewGlobalRef(safNode);
 	assert(_safNode);
 
 	cacheData();
 }
 
-AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safParent,
+AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safParent,
         const Common::String &path, const Common::String &name) :
 	_safNode(nullptr), _flags(0), _safParent(nullptr) {
 
 	JNIEnv *env = JNI::getEnv();
+	_safTree = safTree;
+	assert(_safTree != nullptr);
 
-	_safTree = env->NewGlobalRef(safTree);
-	assert(_safTree);
 	_safParent = env->NewGlobalRef(safParent);
 	assert(_safParent);
 
@@ -287,8 +292,8 @@ AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const AndroidSAFFilesystemNod
 
 	JNIEnv *env = JNI::getEnv();
 
-	_safTree = env->NewGlobalRef(node._safTree);
-	assert(_safTree);
+	_safTree = node._safTree;
+	assert(_safTree != nullptr);
 
 	if (node._safNode) {
 		_safNode = env->NewGlobalRef(node._safNode);
@@ -308,7 +313,6 @@ AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const AndroidSAFFilesystemNod
 AndroidSAFFilesystemNode::~AndroidSAFFilesystemNode() {
 	JNIEnv *env = JNI::getEnv();
 
-	env->DeleteGlobalRef(_safTree);
 	env->DeleteGlobalRef(_safNode);
 	env->DeleteGlobalRef(_safParent);
 }
