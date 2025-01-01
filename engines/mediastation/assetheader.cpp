@@ -32,7 +32,7 @@ AssetHeader::AssetHeader(Chunk &chunk) {
 	// TODO: Cast to an asset type.
 	_type = AssetType(Datum(chunk).u.i);
 	_id = Datum(chunk).u.i;
-	debugC(4, kDebugLoading, "AssetHeader::AssetHeader(): _type = 0x%x, _id = 0x%x (@0x%llx)", _type, _id, chunk.pos());
+	debugC(4, kDebugLoading, "AssetHeader::AssetHeader(): _type = 0x%x, _id = 0x%x (@0x%llx)", _type, _id, static_cast<long long int>(chunk.pos()));
 
 	AssetHeader::SectionType sectionType = getSectionType(chunk);
 	bool moreSectionsToRead = (AssetHeader::SectionType::EMPTY != sectionType);
@@ -53,7 +53,7 @@ AssetHeader::~AssetHeader() {
 }
 
 void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk) {
-	debugC(5, kDebugLoading, "AssetHeader::AssetHeader(): sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
+	debugC(5, kDebugLoading, "AssetHeader::AssetHeader(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 	switch (sectionType) {
 	case AssetHeader::SectionType::EMPTY: {
 		break;
@@ -250,7 +250,7 @@ void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk
 	}
 
 	default: {
-		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", sectionType, chunk.pos());
+		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		break;
 	}
 	}

@@ -56,7 +56,7 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize) {
 		if (pos() > _dataEndOffset) {
 			uint overrun = pos() - _dataEndOffset;
-			error("Attempted to read 0x%x bytes at a location 0x%x bytes past end of chunk (@0x%llx)", dataSize, overrun, pos());
+			error("Attempted to read 0x%x bytes at a location 0x%x bytes past end of chunk (@0x%llx)", dataSize, overrun, static_cast<long long int>(pos()));
 		} else {
 			return _input->read(dataPtr, dataSize);
 		}
@@ -76,10 +76,10 @@ public:
 
 		if (pos() < _dataStartOffset) {
 			uint overrun = _dataStartOffset - offset;
-			error("Attempted to seek 0x%x bytes before start of chunk (@0x%llx)", overrun, pos());
+			error("Attempted to seek 0x%x bytes before start of chunk (@0x%llx)", overrun, static_cast<long long int>(pos()));
 		} else if (pos() > _dataEndOffset) {
 			uint overrun = offset - _dataEndOffset;
-			error("Attempted to seek 0x%x bytes past end of chunk (@0x%llx)", overrun, pos());
+			error("Attempted to seek 0x%x bytes past end of chunk (@0x%llx)", overrun, static_cast<long long int>(pos()));
 		}
 		return true;
 	}

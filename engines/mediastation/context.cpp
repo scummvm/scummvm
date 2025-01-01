@@ -101,17 +101,17 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	// READ THE PALETTE.
 	bool moreSectionsToRead = (chunk.id == MKTAG('i', 'g', 'o', 'd'));
 	if (!moreSectionsToRead) {
-		warning("Context::readNewStyleHeaderSections(): Got no header sections (@0x%llx)", chunk.pos());
+		warning("Context::readNewStyleHeaderSections(): Got no header sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	}
 
 	while (moreSectionsToRead) {
 		// VERIFY THIS CHUNK IS A HEADER.
 		// TODO: What are the situations when it's not?
 		uint16 sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
-		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
+		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
-			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), chunk.pos());
+			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), static_cast<long long int>(chunk.pos()));
 		}
 
 		// READ THIS HEADER SECTION.
@@ -119,12 +119,12 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 		if (subfile.atEnd()) {
 			break;
 		} else {
-			debugC(5, kDebugLoading, "\nContext::readNewStyleHeaderSections(): Getting next chunk (@0x%llx)", chunk.pos());
+			debugC(5, kDebugLoading, "\nContext::readNewStyleHeaderSections(): Getting next chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
 			chunk = subfile.nextChunk();
 			moreSectionsToRead = (chunk.id == MKTAG('i', 'g', 'o', 'd'));
 		}
 	}
-	debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): Finished reading sections (@0x%llx)", chunk.pos());
+	debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): Finished reading sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
 void Context::readAssetInFirstSubfile(Chunk &chunk) {
@@ -137,9 +137,9 @@ void Context::readAssetInFirstSubfile(Chunk &chunk) {
 	// TODO: Make sure this is not an asset link.
 	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk.id);
 	if (asset == nullptr) {
-		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, chunk.pos());
+		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, static_cast<long long int>(chunk.pos()));
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), chunk.pos());
+	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), static_cast<long long int>(chunk.pos()));
 	asset->readChunk(chunk);
 }
 
@@ -147,19 +147,19 @@ void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 	Chunk chunk = subfile.nextChunk();
 	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk.id);
 	if (asset == nullptr) {
-		error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, chunk.pos());
+		error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, static_cast<long long int>(chunk.pos()));
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), chunk.pos());
+	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), static_cast<long long int>(chunk.pos()));
 	asset->readSubfile(subfile, chunk);
 }
 
 bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 	uint16 sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
-	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
+	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 	switch ((SectionType)sectionType) {
 	case SectionType::PARAMETERS: {
 		if (_parameters != nullptr) {
-			error("Context::readHeaderSection(): Got multiple parameters (@0x%llx)", chunk.pos());
+			error("Context::readHeaderSection(): Got multiple parameters (@0x%llx)", static_cast<long long int>(chunk.pos()));
 		}
 		_parameters = new ContextParameters(chunk);
 		break;
@@ -172,7 +172,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 
 	case SectionType::PALETTE: {
 		if (_palette != nullptr) {
-			error("Context::readHeaderSection(): Got multiple palettes (@0x%llx)", chunk.pos());
+			error("Context::readHeaderSection(): Got multiple palettes (@0x%llx)", static_cast<long long int>(chunk.pos()));
 		}
 		// TODO: Avoid the copying here!
 		const uint PALETTE_ENTRIES = 256;
@@ -235,7 +235,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			break;
 
 		default:
-			error("Context::readHeaderSection(): No class for asset type 0x%x (@0x%llx)", header->_type, chunk.pos());
+			error("Context::readHeaderSection(): No class for asset type 0x%x (@0x%llx)", header->_type, static_cast<long long int>(chunk.pos()));
 		}
 
 		if (g_engine->_assets.contains(header->_id)) {
@@ -283,7 +283,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 	}
 
 	default: {
-		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", sectionType, chunk.pos());
+		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 	}
 	}
 
