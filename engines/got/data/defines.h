@@ -164,17 +164,12 @@ enum {
 
 #define NUM_OBJECTS 32
 
-#define APPLE_MAGIC     1
-#define HOURGLASS_MAGIC 2
-#define LIGHTNING_MAGIC 4
-
-#define BOOTS_MAGIC    8
-#define BOMB_MAGIC     16
-#define WIND_MAGIC     32
-
-#define QUESTION_MAGIC 64
-#define SHIELD_MAGIC   128
-#define THUNDER_MAGIC  256
+#define APPLE_MAGIC      1
+#define LIGHTNING_MAGIC  2
+#define BOOTS_MAGIC      4
+#define WIND_MAGIC       8
+#define SHIELD_MAGIC    16
+#define THUNDER_MAGIC   32
 
 #define BOSS_LEVEL1  59
 #define BOSS_LEVEL21 200
