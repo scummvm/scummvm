@@ -29,6 +29,7 @@
 #include "engines/metaengine.h"
 #include "engines/savestate.h"
 
+#include "graphics/color_quantizer.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -554,7 +555,7 @@ void MacV6Gui::updateThumbnail(MacDialogWindow *window, Common::Rect drawArea, i
 	// use. Reduce the image to a smaller palette. We reserve 10 colors for
 	// the Mac GUI itself.
 
-	ColorQuantizer quantizer(245);
+	Graphics::ColorQuantizer quantizer(245);
 
 	for (int y = yMin; y < yMax; y++) {
 		for (int x = 0; x < thumbnail->w; x++) {
