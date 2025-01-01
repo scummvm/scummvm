@@ -670,7 +670,7 @@ Common::Error DgdsEngine::run() {
 			//
 			//_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			if (!_inventory->isOpen() || _inventory->isZoomVisible())
+			if (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY))
 				_adsInterp->run();
 
 			if (mouseEvent != Common::EVENT_INVALID) {
