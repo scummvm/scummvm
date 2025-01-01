@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-01 12:41+0000\n"
-"PO-Revision-Date: 2024-12-23 16:18+0000\n"
+"PO-Revision-Date: 2025-01-01 21:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11581,36 +11581,28 @@ msgstr ""
 "disponible en la pestaña Motor."
 
 #: engines/scumm/scumm.cpp:1320
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Este juego necesita el ejecutable para Macintosh «Indy» para poder utilizar "
+"Este juego necesita el ejecutable para Macintosh «%s» para poder utilizar "
 "sus tipografías."
 
 #: engines/scumm/scumm.cpp:1324
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Este juego necesita el ejecutable para Macintosh «Loom» para poder utilizar "
-"su música y tipografías."
+"Este juego necesita el ejecutable para Macintosh «%s» para poder utilizar su "
+"música y tipografías."
 
 #: engines/scumm/scumm.cpp:1328
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. Music "
 "and Mac GUI will be disabled"
 msgstr ""
-"No se ha encontrado el ejecutable de Macintosh de Monkey Island\n"
-"para obtener recursos e instrumentos. Se han desactivado la música\n"
+"No se ha encontrado el ejecutable de Macintosh de «%s»\n"
+"para obtener recursos. Se han desactivado la música\n"
 "y la interfaz estilo Mac."
 
 #: engines/scumm/scumm.cpp:1345
