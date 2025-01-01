@@ -602,8 +602,9 @@ int layoutPositionLinearAnimationBindings(lua_State *L) {
 			} else if (!strcmp(s, "endValue")) {
 				static const TeVector3f32 defaultEnd(0.0f, 0.0f, 0.0f);
 				anim->_endVal = TeLuaToTeVector3f32(L, -1, defaultEnd);
-			} else if (!strcmp(s, "layout")) {
+			} else if (!strcmp(s, "layout") || !strcmp(s, "pausable")) {
 				// skip.
+				// TODO: What should we do with "pausable" attribute?
 			} else if (!strcmp(s, "curve")) {
 				const Common::Array<float> curve = TeLuaToFloatArray(L, -1);
 				anim->setCurve(curve);
