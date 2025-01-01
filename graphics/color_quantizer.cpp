@@ -28,9 +28,6 @@ namespace Graphics {
 
 // This code is heavily based on "Color Quantization using Octrees" by Dean
 // Clark, published in - I think - the January 1996 issue of Dr. Dobb's Journal.
-//
-// FIXME: The intention is that this should be moved to common code, but we keep
-// it here for now to avoid conflicts.
 
 #define kOctreeDepth 6
 
