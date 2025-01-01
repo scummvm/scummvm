@@ -225,13 +225,16 @@ private:
 		// There are several possible approaches to picking the node to
 		// reduce. Picking the one with the largest number of pixels
 		// may leave more color for fine details. Picking the one with
-		// the smallest may will sacrifice detail, but may preserve
-		// subtle gradations in large areas. This picks the first one,
-		// i.e. the most recently inserted one, so it's pretty random.
+		// the smallest number may sacrifice detail, but preserve subtle
+		// gradations in large areas. This just picks the first one,
+		// i.e. the most recently inserted one, so it's pretty random
+		// which may be good on average.
 		//
-		// On the contrary, it stated that "any new colors whose path
-		// through the tree take them through [a node that was turned
-		// into a leaf] now stop here".
+		// Once a subtree has been pruned, it will no longer grow back.
+		// It seems to me it should be possible to allow it to, but the
+		// article doesn't mention it. On the contrary, it states that
+		// "any new colors whose path through the tree take them
+		// through [a node that was turned into a leaf] now stop here".
 
 		OctreeNode *node = _reduceList[level];
 		_reduceList[level] = _reduceList[level]->nextNode;
