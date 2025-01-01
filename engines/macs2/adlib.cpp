@@ -944,12 +944,13 @@ void Adlib::OnTimer() {
 									// the upper 8 bits?
 									gArray226F[bp3] = 0;
 									Func294E(bp8, bp4, gArray226F[bp3]);
-									// TODO: Continue from here
+									
 								}
+								// TODO: Figure out the logic here, I think
+								// I got lost with jumps
+								// l0017_1E91:
+								// jmp 2095h
 							}
-							
-
-								
 						}
 						// TODO: Should be 1CF2
 						// TODO: Check if this is an else or just an if
@@ -958,6 +959,35 @@ void Adlib::OnTimer() {
 
 					}
 					// TODO: Should be 1E94h
+					// l0017_1E94:
+					
+					// TODO: These pushes are not arguments for 19BE
+					// push	word ptr [224Ah]
+					// push word ptr[2248h]
+					// TODO: xor ah, ah
+					bp10 = Func19BE(gArray225F[bp3] << 0x4);
+					// TODO: Continue from here
+					/*
+					
+					mov	al,[bp-3h]
+					xor	ah,ah
+					mov	di,ax
+					mov	al,[di+225Fh]
+					xor	ah,ah
+					shl	ax,4h
+					push	ax
+					call	far 0017h:19BEh
+					mov	[bp-10h],ax
+					mov	[bp-0Eh],dx
+					mov	al,[bp-3h]
+					xor	ah,ah
+					sub	ax,0Bh
+					mov	di,ax
+					mov	al,[di+57h]
+					xor	ah,ah
+					mov	[bp-8h],ax
+					cmp	byte ptr [bp-3h],0Bh
+					jnz	1F12h*/
 
 					
 				}
