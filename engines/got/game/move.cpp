@@ -133,7 +133,11 @@ void thor_damaged(ACTOR *actr) {
 	int damage;
 
 	actr->hit_thor = 1;
-//	if (cheat) if (key_flag[_FOUR]) return;
+
+	// If we're invincible, ignore any damage
+	if (_G(cheats).freezeHealth)
+		return;
+
 	damage = actr->strength;
 	if (damage != 255) {
 		if (!_G(setup).skill) damage /= 2;
