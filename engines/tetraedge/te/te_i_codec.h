@@ -36,7 +36,7 @@ public:
 	TeICodec() {};
 
 	virtual ~TeICodec() {};
-	virtual bool load(const Common::Path &path) = 0;
+	virtual bool load(const TetraedgeFSNode &node) = 0;
 	virtual uint width() = 0;
 	virtual uint height() = 0;
 	virtual int nbFrames() = 0;

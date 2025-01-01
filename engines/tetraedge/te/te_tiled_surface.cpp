@@ -60,12 +60,12 @@ byte TeTiledSurface::isLoaded() {
 	return _tiledTexture && _tiledTexture->isLoaded();
 }
 
-bool TeTiledSurface::load(const Common::Path &path) {
+bool TeTiledSurface::load(const TetraedgeFSNode &node) {
 	unload();
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	if (_loadedPath.empty())
-		_loadedPath = path;
+		_loadedPath = node.getPath();
 
 	Common::Path ttPath(_loadedPath.append(".tt"));
 	TeIntrusivePtr<TeTiledTexture> texture;
@@ -76,13 +76,13 @@ bool TeTiledSurface::load(const Common::Path &path) {
 
 	if (!texture) {
 		TeCore *core = g_engine->getCore();
-		_codec = core->createVideoCodec(Common::Path(_loadedPath));
+		_codec = core->createVideoCodec(node);
 		if (!_codec)
 			return false;
 
 		texture = new TeTiledTexture();
 
-		if (_codec->load(path)) {
+		if (_codec->load(node)) {
 			texture->setAccessName(ttPath);
 			resmgr->addResource(texture.get());
 			_imgFormat = _codec->imageFormat();

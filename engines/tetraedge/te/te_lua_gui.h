@@ -78,6 +78,7 @@ public:
 	TeSpriteLayout *spriteLayoutChecked(const Common::String &name);
 
 	bool load(const Common::Path &subPath);
+	bool load(const TetraedgeFSNode &node);
 	void unload();
 
 	TeVariant value(const Common::String &key);

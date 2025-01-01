@@ -181,22 +181,22 @@ int TeModelAnimation::lastFrame() const {
 }
 
 bool TeModelAnimation::load(const Common::Path &path) {
-	Common::Path foundFile = g_engine->getCore()->findFile(path);
-	Common::File modelFile;
-	if (!modelFile.open(foundFile)) {
-		warning("[TeModel::load] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode foundFile = g_engine->getCore()->findFile(path);
+	Common::ScopedPtr<Common::SeekableReadStream> modelFile(foundFile.createReadStream());
+	if (!modelFile) {
+		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
 		return false;
 	}
 	bool retval;
-	if (Te3DObject2::loadAndCheckFourCC(modelFile, "TEZ0")) {
-		Common::SeekableReadStream *zlibStream = TeModel::tryLoadZlibStream(modelFile);
+	if (Te3DObject2::loadAndCheckFourCC(*modelFile, "TEZ0")) {
+		Common::SeekableReadStream *zlibStream = TeModel::tryLoadZlibStream(*modelFile);
 		if (!zlibStream)
 			return false;
 		retval = load(*zlibStream);
 		delete zlibStream;
 	} else {
-		modelFile.seek(0);
-		retval = load(modelFile);
+		modelFile->seek(0);
+		retval = load(*modelFile);
 	}
 	_loadedPath = path;
 	return retval;

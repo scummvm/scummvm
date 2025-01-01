@@ -206,9 +206,9 @@ Billboard *InGameScene::billboard(const Common::String &name) {
 }
 
 bool InGameScene::changeBackground(const Common::Path &name) {
-	Common::Path path = g_engine->getCore()->findFile(name);
-	if (Common::File::exists(path)) {
-		_bgGui.spriteLayoutChecked("root")->load(path);
+	TetraedgeFSNode node = g_engine->getCore()->findFile(name);
+	if (node.isReadable()) {
+		_bgGui.spriteLayoutChecked("root")->load(name);
 		if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
 			_bgGui.spriteLayoutChecked("root")->play();
 		return true;
@@ -666,7 +666,7 @@ TeVector2f32 InGameScene::layerSize() {
 	return TeVector2f32(sz.x(), sz.y());
 }
 
-bool InGameScene::load(const Common::Path &scenePath) {
+bool InGameScene::load(const TetraedgeFSNode &sceneNode) {
 	// Syberia 1 has loadActZones function contents inline.
 	loadActZones();
 
@@ -680,38 +680,38 @@ bool InGameScene::load(const Common::Path &scenePath) {
 	_shadowLightNo = -1;
 
 	TeCore *core = g_engine->getCore();
-	const Common::Path lightsPath = core->findFile(getLightsFileName());
-	if (Common::File::exists(lightsPath))
-		loadLights(lightsPath);
+	const TetraedgeFSNode lightsNode(core->findFile(getLightsFileName()));
+	if (lightsNode.isReadable())
+		loadLights(lightsNode);
 
-	if (!Common::File::exists(scenePath))
+	if (!sceneNode.exists())
 		return false;
 
 	close();
-	_loadedPath = scenePath.getParent();
-	Common::File scenefile;
-	if (!scenefile.open(scenePath))
+	_loadedPath = sceneNode.getPath();
+	Common::ScopedPtr<Common::SeekableReadStream> scenefile(sceneNode.createReadStream());
+	if (!scenefile)
 		return false;
 
-	uint32 ncameras = scenefile.readUint32LE();
+	uint32 ncameras = scenefile->readUint32LE();
 	if (ncameras > 1024)
 		error("Improbable number of cameras %d", ncameras);
 	for (uint i = 0; i < ncameras; i++) {
 		TeIntrusivePtr<TeCamera> cam = new TeCamera();
-		deserializeCam(scenefile, cam);
+		deserializeCam(*scenefile, cam);
 		cameras().push_back(cam);
 	}
 
-	uint32 nobjects = scenefile.readUint32LE();
+	uint32 nobjects = scenefile->readUint32LE();
 	if (nobjects > 1024)
 		error("Improbable number of objects %d", nobjects);
 	for (uint i = 0; i < nobjects; i++) {
 		TeIntrusivePtr<TeModel> model = new TeModel();
-		const Common::String modelname = Te3DObject2::deserializeString(scenefile);
+		const Common::String modelname = Te3DObject2::deserializeString(*scenefile);
 		model->setName(modelname);
-		const Common::String objname = Te3DObject2::deserializeString(scenefile);
+		const Common::String objname = Te3DObject2::deserializeString(*scenefile);
 		TePickMesh2 *pickmesh = new TePickMesh2();
-		deserializeModel(scenefile, model, pickmesh);
+		deserializeModel(*scenefile, model, pickmesh);
 		if (modelname.contains("Clic")) {
 			//debug("Loaded clickMesh %s", modelname.c_str());
 			_hitObjects.push_back(model);
@@ -737,39 +737,39 @@ bool InGameScene::load(const Common::Path &scenePath) {
 		}
 	}
 
-	uint32 nfreemovezones = scenefile.readUint32LE();
+	uint32 nfreemovezones = scenefile->readUint32LE();
 	if (nfreemovezones > 1024)
 		error("Improbable number of free move zones %d", nfreemovezones);
 	for (uint i = 0; i < nfreemovezones; i++) {
 		TeFreeMoveZone *zone = new TeFreeMoveZone();
-		TeFreeMoveZone::deserialize(scenefile, *zone, &_blockers, &_rectBlockers, &_actZones);
+		TeFreeMoveZone::deserialize(*scenefile, *zone, &_blockers, &_rectBlockers, &_actZones);
 		_freeMoveZones.push_back(zone);
 		zone->setVisible(false);
 	}
 
-	uint32 ncurves = scenefile.readUint32LE();
+	uint32 ncurves = scenefile->readUint32LE();
 	if (ncurves > 1024)
 		error("Improbable number of curves %d", ncurves);
 	for (uint i = 0; i < ncurves; i++) {
 		TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
-		TeBezierCurve::deserialize(scenefile, *curve);
+		TeBezierCurve::deserialize(*scenefile, *curve);
 		curve->setVisible(true);
 		_bezierCurves.push_back(curve);
 	}
 
-	uint32 ndummies = scenefile.readUint32LE();
+	uint32 ndummies = scenefile->readUint32LE();
 	if (ndummies > 1024)
 		error("Improbable number of dummies %d", ndummies);
 	for (uint i = 0; i < ndummies; i++) {
 		InGameScene::Dummy dummy;
 		TeVector3f32 vec;
 		TeQuaternion rot;
-		dummy._name = Te3DObject2::deserializeString(scenefile);
-		TeVector3f32::deserialize(scenefile, vec);
+		dummy._name = Te3DObject2::deserializeString(*scenefile);
+		TeVector3f32::deserialize(*scenefile, vec);
 		dummy._position = vec;
-		TeQuaternion::deserialize(scenefile, rot);
+		TeQuaternion::deserialize(*scenefile, rot);
 		dummy._rotation = rot;
-		TeVector3f32::deserialize(scenefile, vec);
+		TeVector3f32::deserialize(*scenefile, vec);
 		dummy._scale = vec;
 		_dummies.push_back(dummy);
 	}
@@ -806,7 +806,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 
 	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")
 												.appendInPlace(scene).appendInPlace(".xml");
-	Common::Path path = g_engine->getCore()->findFile(xmlpath);
+	TetraedgeFSNode node = g_engine->getCore()->findFile(xmlpath);
 	InGameSceneXmlParser parser(this);
 	parser.setAllowText();
 
@@ -817,13 +817,13 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		// in Syberia 2 has an embedded comment, which is invalid XML.
 		// Patch the contents of the file before loading.
 		//
-		Common::File xmlFile;
-		if (!xmlFile.open(path))
-			error("InGameScene::loadXml: Can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
-		const int64 bufsize = xmlFile.size();
+		Common::ScopedPtr<Common::SeekableReadStream> xmlFile(node.createReadStream());
+		if (!xmlFile)
+			error("InGameScene::loadXml: Can't open %s", node.toString().c_str());
+		const int64 bufsize = xmlFile->size();
 		char *buf = new char[bufsize+1];
 		buf[bufsize] = '\0';
-		xmlFile.read(buf, bufsize);
+		xmlFile->read(buf, bufsize);
 		fixedbuf = Common::String(buf);
 		delete [] buf;
 		size_t offset = fixedbuf.find("<!-- <rippleMask");
@@ -838,12 +838,12 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		parser.loadBuffer((const byte *)fixedbuf.c_str(), bufsize);
 	} else {
 		// Regular loading.
-		if (!parser.loadFile(path))
-			error("InGameScene::loadXml: Can't load %s", path.toString(Common::Path::kNativeSeparator).c_str());
+		if (!node.loadXML(parser))
+			error("InGameScene::loadXml: Can't load %s", node.toString().c_str());
 	}
 
 	if (!parser.parse())
-		error("InGameScene::loadXml: Can't parse %s", path.toString(Common::Path::kNativeSeparator).c_str());
+		error("InGameScene::loadXml: Can't parse %s", node.toString().c_str());
 
 	// loadFlamme and loadSnowCustom are handled by the above.
 
@@ -856,16 +856,17 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_shadowLightNo = -1;
 
 	TeCore *core = g_engine->getCore();
-	const Common::Path lightsPath = core->findFile(getLightsFileName());
-	if (Common::File::exists(lightsPath))
-		loadLights(lightsPath);
+	const TetraedgeFSNode lightsNode(core->findFile(getLightsFileName()));
+	if (lightsNode.isReadable())
+		loadLights(lightsNode);
 
-	Common::Path pxmlpath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace("particles.xml"));
-	if (Common::File::exists(pxmlpath)) {
+	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
+	TetraedgeFSNode pnode = g_engine->getCore()->findFile(pxmlpath);
+	if (pnode.isReadable()) {
 		ParticleXmlParser pparser;
 		pparser._scene = this;
-		if (!pparser.loadFile(pxmlpath))
-			error("InGameScene::loadXml: Can't load %s", pxmlpath.toString(Common::Path::kNativeSeparator).c_str());
+		if (!pnode.loadXML(pparser))
+			error("InGameScene::loadXml: Can't load %s", pnode.toString().c_str());
 		if (!pparser.parse())
 			error("InGameScene::loadXml: Can't parse %s", pxmlpath.toString(Common::Path::kNativeSeparator).c_str());
 	}
@@ -945,13 +946,13 @@ bool InGameScene::loadFreeMoveZone(const Common::String &name, TeVector2f32 &gri
 	return true;
 }
 
-bool InGameScene::loadLights(const Common::Path &path) {
+bool InGameScene::loadLights(const TetraedgeFSNode &node) {
 	SceneLightsXmlParser parser(&_lights);
 
-	if (!parser.loadFile(path))
-		error("InGameScene::loadLights: Can't load %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!node.loadXML(parser))
+		error("InGameScene::loadLights: Can't load %s", node.toString().c_str());
 	if (!parser.parse())
-		error("InGameScene::loadLights: Can't parse %s", path.toString(Common::Path::kNativeSeparator).c_str());
+		error("InGameScene::loadLights: Can't parse %s", node.toString().c_str());
 
 	_shadowColor = parser.getShadowColor();
 	_shadowLightNo = parser.getShadowLightNo();
@@ -989,8 +990,8 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	return true;
 }
 
-void InGameScene::loadMarkers(const Common::Path &path) {
-	_markerGui.load(path);
+void InGameScene::loadMarkers(const TetraedgeFSNode &node) {
+	_markerGui.load(node);
 	TeLayout *bg = _bgGui.layoutChecked("background");
 	TeSpriteLayout *root = Game::findSpriteLayoutByName(bg, "root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -1080,13 +1081,13 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 
 bool InGameScene::loadCurve(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
-	const Common::Path path = core->findFile(_sceneFileNameBase().joinInPlace(name).appendInPlace(".bin"));
-	if (!Common::File::exists(path)) {
-		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode node = core->findFile(_sceneFileNameBase().joinInPlace(name).appendInPlace(".bin"));
+	if (!node.isReadable()) {
+		warning("[InGameScene::loadCurve] Can't open file : %s.", node.toString().c_str());
 		return false;
 	}
 	TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
-	curve->loadBin(path);
+	curve->loadBin(node);
 	_bezierCurves.push_back(curve);
 	return true;
 }
@@ -1094,25 +1095,24 @@ bool InGameScene::loadCurve(const Common::String &name) {
 bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	const Common::Path pdat = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	const Common::Path ptex = _sceneFileNameBase(zone, scene).joinInPlace(texture);
-	Common::Path datPath = g_engine->getCore()->findFile(pdat);
-	Common::Path texPath = g_engine->getCore()->findFile(ptex);
-	if (!Common::File::exists(datPath)) {
-		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode datNode = g_engine->getCore()->findFile(pdat);
+	TetraedgeFSNode texNode = g_engine->getCore()->findFile(ptex);
+	if (!datNode.isReadable()) {
+		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString('/').c_str());
 		return false;
 	}
 
-	Common::File file;
-	file.open(datPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(datNode.createReadStream());
 
 	TeModel *model = new TeModel();
 	model->setMeshCount(1);
-	model->setName(datPath.baseName());
+	model->setName(datNode.getPath().baseName());
 
 	// Read position/rotation/scale.
-	model->deserialize(file, *model);
+	model->deserialize(*file, *model);
 
-	uint32 verts = file.readUint32LE();
-	uint32 tricount = file.readUint32LE();
+	uint32 verts = file->readUint32LE();
+	uint32 tricount = file->readUint32LE();
 	if (verts > 100000 || tricount > 10000)
 		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
 
@@ -1121,25 +1121,25 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 
 	for (uint i = 0; i < verts; i++) {
 		TeVector3f32 vec;
-		TeVector3f32::deserialize(file, vec);
+		TeVector3f32::deserialize(*file, vec);
 		mesh->setVertex(i, vec);
 		mesh->setNormal(i, TeVector3f32(0, 0, 1));
 	}
 	for (uint i = 0; i < verts; i++) {
 		TeVector2f32 vec2;
-		TeVector2f32::deserialize(file, vec2);
+		TeVector2f32::deserialize(*file, vec2);
 		vec2.setY(1.0 - vec2.getY());
 		mesh->setTextureUV(i, vec2);
 	}
 
 	for (uint i = 0; i < tricount * 3; i++)
-		mesh->setIndex(i, file.readUint16LE());
+		mesh->setIndex(i, file->readUint16LE());
 
-	file.close();
+	file.reset();
 
-	if (Common::File::exists(texPath)) {
+	if (texNode.exists()) {
 		TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
-		tex->load2(texPath, false);
+		tex->load2(texNode, false);
 		mesh->defaultMaterial(tex);
 	} else if (texture.size()) {
 		warning("loadDynamicLightBloc: Failed to load texture %s", texture.c_str());
@@ -1152,20 +1152,20 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 }
 
 bool InGameScene::loadLight(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
-	if (!Common::File::exists(datPath)) {
-		warning("[InGameScene::loadLight] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
+	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	TetraedgeFSNode datnode = g_engine->getCore()->findFile(datpath);
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadLight] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	Common::File file;
-	file.open(datPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(datnode.createReadStream());
 	SceneLight light;
 	light._name = name;
-	TeVector3f32::deserialize(file, light._v1);
-	TeVector3f32::deserialize(file, light._v2);
-	light._color.deserialize(file);
-	light._f = file.readFloatLE();
+	TeVector3f32::deserialize(*file, light._v1);
+	TeVector3f32::deserialize(*file, light._v2);
+	light._color.deserialize(*file);
+	light._f = file->readFloatLE();
 
 	_sceneLights.push_back(light);
 	return true;
@@ -1173,24 +1173,23 @@ bool InGameScene::loadLight(const Common::String &name, const Common::String &zo
 
 bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	TeCore *core = g_engine->getCore();
-	Common::Path datPath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
-	Common::Path texPath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(texture));
-	if (!Common::File::exists(datPath)) {
-		warning("[InGameScene::loadMask] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode texnode = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(texture));
+	TetraedgeFSNode datnode = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadMask] Can't open file : %s.", datnode.toString().c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
 	model->setMeshCount(1);
 	model->setName(name);
 
-	Common::File file;
-	file.open(datPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(datnode.createReadStream());
 
 	// Load position, rotation, size.
-	Te3DObject2::deserialize(file, *model, false);
+	Te3DObject2::deserialize(*file, *model, false);
 
-	uint32 verts = file.readUint32LE();
-	uint32 tricount = file.readUint32LE();
+	uint32 verts = file->readUint32LE();
+	uint32 tricount = file->readUint32LE();
 	if (verts > 100000 || tricount > 10000)
 		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
 
@@ -1199,7 +1198,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 
 	for (uint i = 0; i < verts; i++) {
 		TeVector3f32 vec;
-		TeVector3f32::deserialize(file, vec);
+		TeVector3f32::deserialize(*file, vec);
 		mesh->setVertex(i, vec);
 		mesh->setNormal(i, TeVector3f32(0, 0, 1));
 		if (_maskAlpha) {
@@ -1209,20 +1208,19 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 
 	for (uint i = 0; i < verts; i++) {
 		TeVector2f32 vec2;
-		TeVector2f32::deserialize(file, vec2);
+		TeVector2f32::deserialize(*file, vec2);
 		vec2.setY(1.0 - vec2.getY());
 		mesh->setTextureUV(i, vec2);
 	}
 
 	// For some reason this one has the indexes in reverse order :(
 	for (uint i = 0; i < tricount * 3; i += 3) {
-		mesh->setIndex(i + 2, file.readUint16LE());
-		mesh->setIndex(i + 1, file.readUint16LE());
-		mesh->setIndex(i, file.readUint16LE());
+		mesh->setIndex(i + 2, file->readUint16LE());
+		mesh->setIndex(i + 1, file->readUint16LE());
+		mesh->setIndex(i, file->readUint16LE());
 	}
 
-	file.close();
-	Common::Path texnode = core->findFile(texPath);
+	file.reset();
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::load2(texnode, !_maskAlpha);
 
 	if (tex) {
@@ -1260,23 +1258,22 @@ bool InGameScene::loadShadowMask(const Common::String &name, const Common::Strin
 }
 
 bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
-	if (!Common::File::exists(datPath)) {
-		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode datnode = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datnode.toString().c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
 	model->setMeshCount(1);
 	model->setName(name);
 
-	Common::File file;
-	file.open(datPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(datnode.createReadStream());
 
 	// Load position, rotation, size.
-	Te3DObject2::deserialize(file, *model, false);
+	Te3DObject2::deserialize(*file, *model, false);
 
-	uint32 verts = file.readUint32LE();
-	uint32 tricount = file.readUint32LE();
+	uint32 verts = file->readUint32LE();
+	uint32 tricount = file->readUint32LE();
 	if (verts > 100000 || tricount > 10000)
 		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
 
@@ -1285,42 +1282,41 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 
 	for (uint i = 0; i < verts; i++) {
 		TeVector3f32 vec;
-		TeVector3f32::deserialize(file, vec);
+		TeVector3f32::deserialize(*file, vec);
 		mesh->setVertex(i, vec);
 		mesh->setNormal(i, TeVector3f32(0, 0, 1));
 	}
 
 	// Indexes in reverse order :(
 	for (uint i = 0; i < tricount * 3; i += 3) {
-		mesh->setIndex(i + 2, file.readUint16LE());
-		mesh->setIndex(i + 1, file.readUint16LE());
-		mesh->setIndex(i, file.readUint16LE());
+		mesh->setIndex(i + 2, file->readUint16LE());
+		mesh->setIndex(i + 1, file->readUint16LE());
+		mesh->setIndex(i, file->readUint16LE());
 	}
 
-	file.close();
+	file.reset();
 
 	_shadowReceivingObjects.push_back(model);
 	return true;
 }
 
 bool InGameScene::loadZBufferObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
-	if (!Common::File::exists(datPath)) {
-		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode datnode = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datnode.toString().c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
 	model->setMeshCount(1);
 	model->setName(name);
 
-	Common::File file;
-	file.open(datPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(datnode.createReadStream());
 
 	// Load position, rotation, size.
-	Te3DObject2::deserialize(file, *model, false);
+	Te3DObject2::deserialize(*file, *model, false);
 
-	uint32 verts = file.readUint32LE();
-	uint32 tricount = file.readUint32LE();
+	uint32 verts = file->readUint32LE();
+	uint32 tricount = file->readUint32LE();
 	if (verts > 100000 || tricount > 10000)
 		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
 
@@ -1329,14 +1325,14 @@ bool InGameScene::loadZBufferObject(const Common::String &name, const Common::St
 
 	for (uint i = 0; i < verts; i++) {
 		TeVector3f32 vec;
-		TeVector3f32::deserialize(file, vec);
+		TeVector3f32::deserialize(*file, vec);
 		mesh->setVertex(i, vec);
 		mesh->setNormal(i, TeVector3f32(0, 0, 1));
 		mesh->setColor(i, TeColor(128, 0, 255, 128));
 	}
 
 	for (uint i = 0; i < tricount * 3; i++) {
-		mesh->setIndex(i, file.readUint16LE());
+		mesh->setIndex(i, file->readUint16LE());
 	}
 
 	_zoneModels.push_back(model);
@@ -1398,9 +1394,9 @@ void InGameScene::loadBlockers() {
 	}
 }
 
-void InGameScene::loadBackground(const Common::Path &path) {
+void InGameScene::loadBackground(const TetraedgeFSNode &node) {
 	_youkiManager.reset();
-	_bgGui.load(path);
+	_bgGui.load(node);
 	TeLayout *bg = _bgGui.layout("background");
 	TeLayout *root = _bgGui.layout("root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -1434,8 +1430,8 @@ bool InGameScene::loadBillboard(const Common::String &name) {
 	}
 }
 
-void InGameScene::loadInteractions(const Common::Path &path) {
-	_hitObjectGui.load(path);
+void InGameScene::loadInteractions(const TetraedgeFSNode &node) {
+	_hitObjectGui.load(node);
 	TeLayout *bgbackground = _bgGui.layoutChecked("background");
 	Game *game = g_engine->getGame();
 	TeSpriteLayout *root = game->findSpriteLayoutByName(bgbackground, "root");

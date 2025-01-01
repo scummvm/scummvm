@@ -45,30 +45,26 @@ bool TeImagesSequence::matchExtension(const Common::String &extn) {
 	return extn == "anim" || extn == "animcached";
 }
 
-static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right) {
+static bool compareNodes(const TetraedgeFSNode &left, const TetraedgeFSNode &right) {
 	return left.getPath().toString('/') < right.getPath().toString('/');
 }
 
-bool TeImagesSequence::load(const Common::Path &directory) {
-	Common::FSNode dir = g_engine->getCore()->getFSNode(directory);
-
-	const Common::String path = directory.toString('/');
+bool TeImagesSequence::load(const TetraedgeFSNode &dir) {
 	if (!dir.isDirectory()) {
-		warning("TeImagesSequence::load:: not a directory %s", directory.toString(Common::Path::kNativeSeparator).c_str());
+		warning("TeImagesSequence::load:: not a directory %s", dir.toString().c_str());
 		return false;
 	}
 
-	Common::FSList children;
+	TetraedgeFSList children;
 	if (!dir.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
-		warning("TeImagesSequence::load:: couldn't get children of %s", directory.toString(Common::Path::kNativeSeparator).c_str());
+		warning("TeImagesSequence::load:: couldn't get children of %s", dir.toString().c_str());
 		return false;
 	}
 
 	Common::sort(children.begin(), children.end(), compareNodes);
-	if (!SearchMan.hasArchive(path))
-		SearchMan.addDirectory(path, directory);
+	dir.maybeAddToSearchMan();
 
-	for (Common::FSNode &child : children) {
+	for (TetraedgeFSNode &child : children) {
 		const Common::String fileName = child.getName();
 
 		if (fileName.size() <= 10 || fileName.substr(fileName.size() - 7) != "fps.png")
@@ -84,7 +80,7 @@ bool TeImagesSequence::load(const Common::Path &directory) {
 
 		Common::SeekableReadStream *stream = child.createReadStream();
 		if (!stream) {
-			warning("TeImagesSequence::load can't open %s", child.getPath().toString(Common::Path::kNativeSeparator).c_str());
+			warning("TeImagesSequence::load can't open %s", child.toString().c_str());
 			continue;
 		}
 
@@ -93,7 +89,7 @@ bool TeImagesSequence::load(const Common::Path &directory) {
 		if (!_width || (_width < 100 && _height < 100)) {
 			Image::PNGDecoder png;
 			if (!png.loadStream(*stream)) {
-				warning("Image sequence failed to load png %s", child.getPath().toString(Common::Path::kNativeSeparator).c_str());
+				warning("Image sequence failed to load png %s", child.toString().c_str());
 				delete stream;
 				return false;
 			}

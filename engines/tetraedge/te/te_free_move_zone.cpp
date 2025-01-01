@@ -182,26 +182,31 @@ void TeFreeMoveZone::buildAStar() {
 }
 
 bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &size) {
-	Common::Path aStarPath = g_engine->getCore()->findFile(path);
-	Common::File file;
-	if (!file.open(aStarPath)) {
-		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
+	TetraedgeFSNode node = g_engine->getCore()->findFile(path);
+	Common::ScopedPtr<Common::SeekableReadStream> file;
+	if (!node.isReadable()) {
+		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString().c_str());
+		return false;
+	}
+	file.reset(node.createReadStream());
+	if (!file) {
+		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString().c_str());
 		return false;
 	}
 	TeVector2s32 readSize;
-	readSize.deserialize(file, readSize);
+	readSize.deserialize(*file, readSize);
 	if (size != readSize) {
 		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
-	uint32 bytes = file.readUint32LE();
+	uint32 bytes = file->readUint32LE();
 	if (bytes > 100000)
 		error("Improbable size %d for compressed astar data", bytes);
 
 	unsigned long decompBytes = size._x * size._y;
 	byte *buf = new byte[bytes];
 	byte *outBuf = new byte[decompBytes];
-	file.read(buf, bytes);
+	file->read(buf, bytes);
 	bool result = Common::inflateZlib(outBuf, &decompBytes, buf, bytes);
 	delete [] buf;
 	if (result) {
@@ -608,15 +613,14 @@ TeActZone *TeFreeMoveZone::isInZone(const TeVector3f32 &pt) {
 bool TeFreeMoveZone::loadBin(const Common::Path &path, const Common::Array<TeBlocker> *blockers,
 		const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
 		const TeVector2f32 &gridSize) {
-	Common::Path binPath = g_engine->getCore()->findFile(path);
-	if (!Common::File::exists(binPath)) {
-		warning("[TeFreeMoveZone::loadBin] Can't open file : %s.", binPath.baseName().c_str());
+	TetraedgeFSNode node = g_engine->getCore()->findFile(path);
+	if (!node.isReadable()) {
+		warning("[TeFreeMoveZone::loadBin] Can't open file : %s.", node.getName().c_str());
 		return false;
 	}
 	_aszGridPath = path.append(".aszgrid");
-	Common::File file;
-	file.open(binPath);
-	return loadBin(file, blockers, rectblockers, actzones, gridSize);
+	Common::ScopedPtr<Common::SeekableReadStream> file(node.createReadStream());
+	return loadBin(*file, blockers, rectblockers, actzones, gridSize);
 }
 
 bool TeFreeMoveZone::loadBin(Common::ReadStream &stream, const Common::Array<TeBlocker> *blockers,

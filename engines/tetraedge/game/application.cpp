@@ -191,10 +191,10 @@ void Application::create() {
 
 	// Try alternate langs..
 	int i = 0;
-	Common::Path textFilePath;
+	TetraedgeFSNode textFileNode;
 	while (i < ARRAYSIZE(allLangs)) {
-		textFilePath = core->findFile(textsPath.join(core->language() + ".xml"));
-		if (Common::File::exists(textFilePath))
+		textFileNode = core->findFile(textsPath.join(core->language() + ".xml"));
+		if (textFileNode.exists())
 			break;
 		core->language(allLangs[i]);
 		i++;
@@ -203,7 +203,7 @@ void Application::create() {
 		error("Couldn't find texts/[lang].xml for any language.");
 	}
 
-	_loc.load(textFilePath);
+	_loc.load(textFileNode);
 	core->addLoc(&_loc);
 
 	if (!g_engine->gameIsAmerzone()) {

@@ -29,6 +29,7 @@
 
 #include "tetraedge/te/te_resource.h"
 #include "tetraedge/te/te_signal.h"
+#include "tetraedge/tetraedge.h"
 
 namespace Tetraedge {
 
@@ -74,7 +75,7 @@ public:
 
 private:
 	Common::Path _rawPath; // Plain name of file requested
-	Common::Path _filePath; // file after finding it
+	TetraedgeFSNode _fileNode; // file after finding it
 	Common::String _channelName;
 
 	bool _repeat;

@@ -47,7 +47,7 @@ public:
 	Common::String currentCameraName() const;
 
 	virtual void draw();
-	virtual bool load(const Common::Path &path) { return false; };
+	virtual bool load(const TetraedgeFSNode &node) { return false; };
 
 	void removeModel(const Common::String &mname);
 	void setCurrentCamera(const Common::String &cname);

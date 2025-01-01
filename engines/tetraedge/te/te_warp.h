@@ -43,7 +43,7 @@ public:
 		int _loadedTexCount;
 		// Note: dropped "minblock" param from original as it's only
 		// ever set to 0
-		void loadTextures(const TeFrustum &frustum, Common::File &file, const Common::String &fileType);
+		void loadTextures(const TeFrustum &frustum, Common::SeekableReadStream &file, const Common::String &fileType);
 		void unloadTextures();
 	};
 
@@ -125,7 +125,7 @@ private:
 	bool onMouseLeftDown(const Common::Point &pt);
 	bool onMarkerValidated(const Common::String &name);
 
-	Common::File _file;
+	Common::ScopedPtr<Common::SeekableReadStream> _file;
 	Common::Path _warpPath;
 	TeCamera _camera;
 	bool _markersActive;

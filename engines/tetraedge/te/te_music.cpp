@@ -60,12 +60,11 @@ void TeMusic::pause() {
 bool TeMusic::play() {
 	if (isPlaying())
 		return true;
-	if (!Common::File::exists(_filePath))
+	if (!_fileNode.exists())
 		return false;
 
-	Common::File *streamfile = new Common::File();
-	if (!streamfile->open(_filePath)) {
-		delete streamfile;
+	Common::SeekableReadStream *streamfile = _fileNode.createReadStream();
+	if (!streamfile) {
 		return false;
 	}
 	Audio::AudioStream *stream = Audio::makeVorbisStream(streamfile, DisposeAfterUse::YES);
@@ -82,7 +81,7 @@ bool TeMusic::play() {
 		soundType = Audio::Mixer::kMusicSoundType;
 	}
 
-	//debug("playing %s on channel %s at vol %d", _fileNode.getPath().c_str(), _channelName.c_str(), vol);
+	//debug("playing %s on channel %s at vol %d", _fileNode.toString().c_str(), _channelName.c_str(), vol);
 	mixer->playStream(soundType, &_sndHandle, stream, -1, vol);
 	_sndHandleValid = true;
 	_isPaused = false;
@@ -191,7 +190,7 @@ void TeMusic::setFilePath(const Common::Path &name) {
 	_rawPath = name;
 	TeCore *core = g_engine->getCore();
 	// Note: original search logic here abstracted away in our version..
-	_filePath = core->findFile(name);
+	_fileNode = core->findFile(name);
 }
 
 void TeMusic::update() {

@@ -101,11 +101,11 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 	error("TODO: Implement TeImage::isExtensionSupported");
 }
 
-bool TeImage::load(const Common::Path &path) {
+bool TeImage::load(const TetraedgeFSNode &node) {
 	TeCore *core = g_engine->getCore();
-	TeICodec *codec = core->createVideoCodec(path);
-	if (!Common::File::exists(path) || !codec->load(path)) {
-		warning("TeImage::load: Failed to load %s.", path.toString(Common::Path::kNativeSeparator).c_str());
+	TeICodec *codec = core->createVideoCodec(node);
+	if (!node.exists() || !codec->load(node)) {
+		warning("TeImage::load: Failed to load %s.", node.toString().c_str());
 		delete codec;
 		return false;
 	}
@@ -114,7 +114,7 @@ bool TeImage::load(const Common::Path &path) {
 	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
-		error("TeImage::load: Failed to update from %s.", path.toString(Common::Path::kNativeSeparator).c_str());
+		error("TeImage::load: Failed to update from %s.", node.toString().c_str());
 	}
 	delete codec;
 	return true;

@@ -26,6 +26,7 @@
 #include "common/fs.h"
 
 #include "tetraedge/te/te_i_loc.h"
+#include "tetraedge/tetraedge.h"
 
 namespace Tetraedge {
 
@@ -33,7 +34,7 @@ class LocFile : public TeILoc {
 public:
 	LocFile();
 
-	void load(const Common::Path &path);
+	void load(const TetraedgeFSNode &fsnode);
 	const Common::String *value(const Common::String &key) const;
 
 };
