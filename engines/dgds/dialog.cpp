@@ -182,8 +182,12 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		txt = _str;
 	}
 
-	// Special case for HoC to update the Shekel count in their description.
-	// This is how the original game does it too.
+	//
+	// Special case for HoC to update the Shekel count in their description
+	// and Willy Beamish update dollars
+	//
+	// This is how the original games do it too.
+	//
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (_fileNum == 0x5d && _num == 0x32 && engine->getGameId() == GID_HOC) {
 		int16 shekels = engine->getGDSScene()->getGlobal(44);
@@ -191,6 +195,12 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		uint32 offset = txt.find("###");
 		if (offset != Common::String::npos)
 			txt.replace(offset, 3, numstr);
+	} else if (_fileNum == 67 && _num == 9 && engine->getGameId() == GID_WILLY) {
+		int16 cents = engine->getGDSScene()->getGlobal(3);
+		const Common::String numstr = Common::String::format("%3d.%02d", cents / 100, cents % 100);
+		uint32 offset = txt.find("###.##");
+		if (offset != Common::String::npos)
+			txt.replace(offset, 6, numstr);
 	}
 
 	if (stage == kDlgDrawStageBackground) {
@@ -245,8 +255,8 @@ void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		}
 
 		xradius = (yradius * 5) / 4;
-		const int16 circlesAcross = usablex / xradius - 1;
-		const int16 circlesDown = usabley / yradius - 1;
+		const int16 circlesAcross = MAX(1, usablex / xradius - 1);
+		const int16 circlesDown = MAX(1, usabley / yradius - 1);
 
 		uint16 x = _rect.x + xradius;
 		uint16 y = _rect.y + yradius;

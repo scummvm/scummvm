@@ -209,7 +209,7 @@ public:
 private:
 	// Willy-specific globals
 	int16 _trouble;
-	int16 _unk3;
+	int16 _money;
 	int16 _invDrawTimeSkipButtons;
 	int16 _hideMouseCursor;
 	int16 _unk74;

@@ -365,7 +365,7 @@ public:
 
 
 WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
-	_trouble(4), _unk3(0), _invDrawTimeSkipButtons(0), _hideMouseCursor(0), _unk74(0), _unk75(300),
+	_trouble(4), _money(0), _invDrawTimeSkipButtons(0), _hideMouseCursor(0), _unk74(0), _unk75(300),
 	_palFade(255), _droppedItemNum(0), _characterStance(0), _characterPos(0), _unk81(3),
 	_unk82(1) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
@@ -380,14 +380,14 @@ WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
 	_globals.push_back(new RWI16Global(0x4A, &_unk74));
 	_globals.push_back(new RWI16Global(0x05, &_hideMouseCursor));
 	_globals.push_back(new RWI16Global(0x04, &_invDrawTimeSkipButtons));
-	_globals.push_back(new RWI16Global(0x03, &_unk3));
+	_globals.push_back(new RWI16Global(0x03, &_money));
 	_globals.push_back(new WillyTroubleGlobal(0x02, &_trouble));
 }
 
 Common::Error WillyGlobals::syncState(Common::Serializer &s) {
 	Globals::syncState(s);
 	s.syncAsSint16LE(_trouble);
-	s.syncAsSint16LE(_unk3);
+	s.syncAsSint16LE(_money);
 	s.syncAsSint16LE(_invDrawTimeSkipButtons);
 	s.syncAsSint16LE(_hideMouseCursor);
 	s.syncAsSint16LE(_unk74);
