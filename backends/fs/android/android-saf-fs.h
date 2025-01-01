@@ -25,6 +25,7 @@
 #include <jni.h>
 
 #include "backends/fs/abstract-fs.h"
+#include "common/ptr.h"
 
 #include "backends/fs/android/android-fs.h"
 
@@ -35,6 +36,35 @@
  */
 class AndroidSAFFilesystemNode final : public AbstractFSNode, public AndroidFSNode {
 protected:
+	/**
+	 * A class managing a global reference.
+	 *
+	 * This handles the reference management and avoids duplicating them in JNI.
+	 */
+	class GlobalRef final : public Common::SharedPtr<_jobject> {
+		struct Deleter {
+			void operator()(_jobject *obj);
+		};
+	public:
+		GlobalRef() : Common::SharedPtr<_jobject>() {}
+		GlobalRef(const GlobalRef &ref) : Common::SharedPtr<_jobject>(ref) {}
+		GlobalRef(JNIEnv *env, jobject jobj) : Common::SharedPtr<_jobject>(jobj ? env->NewGlobalRef(jobj) : nullptr, Deleter()) {
+			// Make sure NewGlobalRef succeeded
+			assert((jobj == nullptr) == (get() == nullptr));
+		}
+		GlobalRef &operator=(const GlobalRef &r) {
+			Common::SharedPtr<_jobject>::reset(r);
+			return *this;
+		}
+
+		operator jobject() {
+			return Common::SharedPtr<_jobject>::get();
+		}
+		operator jobject() const {
+			return Common::SharedPtr<_jobject>::get();
+		}
+	};
+
 	// SAFFSTree
 	static jmethodID _MID_getTreeId;
 	static jmethodID _MID_pathToNode;
@@ -63,7 +93,7 @@ protected:
 	static const int WRITABLE  = 2;
 	static const int READABLE  = 4;
 
-	jobject _safTree;
+	GlobalRef _safTree;
 	// When null, node doesn't exist yet
 	// In this case _path is the parent path, _newName the node name and _safParent the parent SAF object
 	jobject _safNode;
@@ -82,7 +112,7 @@ protected:
 	 * @param safTree SAF root in Java side
 	 * @param safNode SAF node in Java side
 	 */
-	AndroidSAFFilesystemNode(jobject safTree, jobject safNode);
+	AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safNode);
 
 public:
 	static const char SAF_MOUNT_POINT[];
@@ -151,7 +181,7 @@ protected:
 	 * @param path Parent path
 	 * @param name Item name
 	 */
-	AndroidSAFFilesystemNode(jobject safTree, jobject safParent,
+	AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safParent,
 	                         const Common::String &path, const Common::String &name);
 
 	void cacheData();
