@@ -35,8 +35,10 @@ namespace Got {
 void setup_player() {
 	memset(&_G(thor_info), 0, sizeof(_G(thor_info)));
 	_G(thor_info).inventory = 0;
-	if (_G(area) > 1) _G(thor_info).inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
-	if (_G(area) > 2) _G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
+	if (_G(area) > 1)
+		_G(thor_info).inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
+	if (_G(area) > 2)
+		_G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
 
 	_G(thor)->health = 150;
 	_G(thor_info).magic = 0;

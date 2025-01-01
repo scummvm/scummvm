@@ -346,7 +346,7 @@ void GameContent::moveActors() {
 	for (int i = 0; i < MAX_ACTORS; i++) {
 		if (_G(actor)[i].used) {
 			if (_G(hourglass_flag))
-				if ((i > 2) && (!_G(pge)) && (!(_G(actor)[i].magic_hurts & HOURGLASS_MAGIC)))
+				if ((i > 2) && (!_G(pge)) && (!(_G(actor)[i].magic_hurts & LIGHTNING_MAGIC)))
 					continue;
 
 			_G(actor)[i].move_count = _G(actor)[i].num_moves;
