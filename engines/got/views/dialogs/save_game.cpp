@@ -43,10 +43,12 @@ void SaveGame::selected() {
 	if (_selectedItem == 0)
 		g_engine->saveGameDialog();
 
-	if (_isQuit)
+	if (_isQuit) {
 		g_engine->quitGame();
-	else
-		replaceView("TitleBackground", true, true);
+	} else {
+		fadeOut();
+		send("TitleBackground", GameMessage("MAIN_MENU"));
+	}
 }
 
 } // namespace Dialogs
