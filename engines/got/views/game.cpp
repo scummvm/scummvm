@@ -26,6 +26,7 @@
 #include "got/game/object.h"
 #include "got/metaengine.h"
 #include "got/vars.h"
+#include "got/game/boss1.h"
 
 namespace Got {
 namespace Views {
@@ -45,6 +46,12 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_F1:
 		odin_speaks(2008, -1);
 		return true;
+
+	case Common::KEYCODE_f:
+		// Hack used for testing end-game sequence
+		if (_G(current_level) == BOSS_LEVEL1)
+			closing_sequence1();
+		break;
 
 	case Common::KEYCODE_s:
 		g_engine->saveGameDialog();

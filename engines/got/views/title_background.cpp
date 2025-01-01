@@ -27,7 +27,7 @@ namespace Views {
 
 bool TitleBackground::msgGame(const GameMessage &msg) {
 	if (msg._name == "MAIN_MENU") {
-		addView();
+		replaceView("TitleBackground", true);
 		draw();
 		Gfx::load_palette();
 		fadeIn();
