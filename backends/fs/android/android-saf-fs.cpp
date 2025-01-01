@@ -85,15 +85,20 @@ void AndroidSAFFilesystemNode::initJNI() {
 
 	JNIEnv *env = JNI::getEnv();
 
+	// We can't call error here as the backend is not built yet
 #define FIND_METHOD(prefix, name, signature) do {                           \
     _MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);      \
-        if (_MID_ ## prefix ## name == 0)                                   \
-            error("Can't find method ID " #name);                           \
+        if (_MID_ ## prefix ## name == 0) {                                 \
+            LOGE("Can't find method ID " #name);                            \
+            abort();                                                        \
+        }                                                                   \
     } while (0)
 #define FIND_FIELD(prefix, name, signature) do {                            \
     _FID_ ## prefix ## name = env->GetFieldID(cls, #name, signature);       \
-        if (_FID_ ## prefix ## name == 0)                                   \
-            error("Can't find field ID " #name);                            \
+        if (_FID_ ## prefix ## name == 0) {                                 \
+            LOGE("Can't find field ID " #name);                             \
+            abort();                                                        \
+        }                                                                   \
     } while (0)
 #define SAFFSNodeSig "Lorg/scummvm/scummvm/SAFFSTree$SAFFSNode;"
 
