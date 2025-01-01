@@ -181,14 +181,14 @@ public:
 	bool isObjectBlocking(const Common::String &name);
 	TeVector2f32 layerSize();
 
-	virtual bool load(const Common::Path &path) override;
-	void loadBackground(const Common::Path &node);
+	virtual bool load(const TetraedgeFSNode &node) override;
+	void loadBackground(const TetraedgeFSNode &node);
 	bool loadBillboard(const Common::String &name);
 	void loadBlockers();
 	bool loadCharacter(const Common::String &name);
-	void loadInteractions(const Common::Path &path);
-	bool loadLights(const Common::Path &path);
-	void loadMarkers(const Common::Path &path);
+	void loadInteractions(const TetraedgeFSNode &node);
+	bool loadLights(const TetraedgeFSNode &node);
+	void loadMarkers(const TetraedgeFSNode &node);
 	bool loadObject(const Common::String &oname);
 	bool loadObjectMaterials(const Common::String &name);
 	bool loadObjectMaterials(const Common::Path &path, const Common::String &name);

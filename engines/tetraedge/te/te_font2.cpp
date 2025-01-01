@@ -42,42 +42,46 @@ bool TeFont2::load(const Common::Path &path) {
 		return true; // already open
 
 	TeCore *core = g_engine->getCore();
-	Common::Path fontPath = core->findFile(path);
+	TetraedgeFSNode node = core->findFile(path);
+	return load(node);
+}
+
+bool TeFont2::load(const TetraedgeFSNode &node) {
+	const Common::Path path = node.getPath();
 
 	unload();
 	setAccessName(path);
 	_loadedPath = path;
 
-	if (!Common::File::exists(fontPath)) {
-		warning("TeFont2::load: Can't read from %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!node.exists()) {
+		warning("TeFont2::load: Can't read from %s", node.toString().c_str());
 		return false;
 	}
 
-	Common::File file;
-	file.open(fontPath);
+	Common::ScopedPtr<Common::SeekableReadStream> file(node.createReadStream());
 
-	if (!Te3DObject2::loadAndCheckFourCC(file, "TESF")) {
-		warning("TeFont2::load: Invalid magic in %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!Te3DObject2::loadAndCheckFourCC(*file, "TESF")) {
+		warning("TeFont2::load: Invalid magic in %s", node.toString().c_str());
 		return false;
 	}
 
-	_numChars = file.readUint32LE();
+	_numChars = file->readUint32LE();
 	if (_numChars > 65535)
 		error("TeFont2::load: improbable number of char points %d", _numChars);
-	TeVector2s32::deserialize(file, _somePt);
-	TeVector3f32::deserialize(file, _someVec);
-	_hasKernData = (file.readByte() != 0);
+	TeVector2s32::deserialize(*file, _somePt);
+	TeVector3f32::deserialize(*file, _someVec);
+	_hasKernData = (file->readByte() != 0);
 	if (_hasKernData) {
-		uint32 numKernData = file.readUint32LE();
+		uint32 numKernData = file->readUint32LE();
 		if (numKernData > 10000)
 			error("TeFont2::load: improbable number of kerning points %d", numKernData);
 		for (uint32 i = 0; i < numKernData; i++) {
 			KernChars kc;
 			TeVector3f32 vec;
-			kc._c1 = file.readUint32LE();
-			kc._c2 = file.readUint32LE();
-			vec.x() = file.readFloatLE();
-			vec.y() = file.readFloatLE();
+			kc._c1 = file->readUint32LE();
+			kc._c2 = file->readUint32LE();
+			vec.x() = file->readFloatLE();
+			vec.y() = file->readFloatLE();
 			_kernData[kc] = vec;
 			//debug("KernChars: '%c'-'%c' (%.2f, %.2f)", (char)kc._c1, (char)kc._c2, vec.x(), vec.y());
 		}
@@ -85,19 +89,19 @@ bool TeFont2::load(const Common::Path &path) {
 
 	for (uint32 i = 0; i < _numChars; i++) {
 		GlyphData2 g;
-		g._xSz = file.readFloatLE();
-		g._ySz = file.readFloatLE();
+		g._xSz = file->readFloatLE();
+		g._ySz = file->readFloatLE();
 		_maxHeight = MAX(_maxHeight, g._ySz);
-		g._xOff = file.readFloatLE();
-		g._yOff = file.readFloatLE();
-		g._xAdvance = file.readFloatLE();
+		g._xOff = file->readFloatLE();
+		g._yOff = file->readFloatLE();
+		g._xAdvance = file->readFloatLE();
 		// TODO: What are these other floats?
 		for (uint j = 0; j < 3; j++)
-			g._floats[j] = file.readFloatLE();
-		g._vec.x() = file.readFloatLE();
-		g._vec.y() = file.readFloatLE();
+			g._floats[j] = file->readFloatLE();
+		g._vec.x() = file->readFloatLE();
+		g._vec.y() = file->readFloatLE();
 		_glyphs.push_back(g);
-		uint32 charNo = file.readUint32LE();
+		uint32 charNo = file->readUint32LE();
 		_uintArray.push_back(charNo);
 		/*
 		if (i >= 35 && i <= 127)
@@ -107,8 +111,8 @@ bool TeFont2::load(const Common::Path &path) {
 		*/
 	}
 
-	if (!_texture.load(file, "png")) {
-		warning("Invalid png data in %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!_texture.load(*file, "png")) {
+		warning("Invalid png data in %s", node.toString().c_str());
 		return false;
 	}
 

@@ -36,7 +36,7 @@ public:
 	TePng(const Common::String &extn);
 	virtual ~TePng();
 
-	virtual bool load(const Common::Path &path) override;
+	virtual bool load(const TetraedgeFSNode &node) override;
 	virtual bool load(Common::SeekableReadStream &stream) override;
 
 	TeImage::Format imageFormat() override;

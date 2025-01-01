@@ -31,25 +31,26 @@ namespace Tetraedge {
 LocFile::LocFile() {
 }
 
-void LocFile::load(const Common::Path &path) {
+void LocFile::load(const TetraedgeFSNode &fsnode) {
 	TeNameValXmlParser parser;
 	const Common::String xmlHeader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	Common::File locFile;
-	if (!locFile.open(path))
-		error("LocFile::load: failed to open %s.", path.baseName().c_str());
+	Common::ScopedPtr<Common::SeekableReadStream> locFile(fsnode.createReadStream());
+	const Common::String path = fsnode.getName();
+	if (!locFile)
+		error("LocFile::load: failed to open %s.", path.c_str());
 
-	int64 fileLen = locFile.size();
+	int64 fileLen = locFile->size();
 	char *buf = new char[fileLen + 1];
 	buf[fileLen] = '\0';
-	locFile.read(buf, fileLen);
+	locFile->read(buf, fileLen);
 	const Common::String xmlContents = xmlHeader + buf;
 	delete [] buf;
-	locFile.close();
+	locFile.reset();
 	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
-		error("LocFile::load: failed to load %s.", path.baseName().c_str());
+		error("LocFile::load: failed to load %s.", path.c_str());
 
 	if (!parser.parse())
-		error("LocFile::load: failed to parse %s.", path.baseName().c_str());
+		error("LocFile::load: failed to parse %s.", path.c_str());
 
 	_map = parser.getMap();
 }

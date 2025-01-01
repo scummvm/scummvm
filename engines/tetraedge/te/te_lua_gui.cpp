@@ -179,9 +179,12 @@ TeSpriteLayout *TeLuaGUI::spriteLayoutChecked(const Common::String &name) {
 
 bool TeLuaGUI::load(const Common::Path &subPath) {
 	TeCore *core = g_engine->getCore();
+	return load(core->findFile(subPath));
+}
 
+bool TeLuaGUI::load(const TetraedgeFSNode &node) {
 	unload();
-	_scriptPath = core->findFile(subPath);
+	_scriptPath = node.getPath();
 	// Not the same as original, we abstract the search logic a bit.
 	_luaContext.setGlobal("Pixel", 0);
 	_luaContext.setGlobal("Percent", 1);
@@ -210,7 +213,7 @@ bool TeLuaGUI::load(const Common::Path &subPath) {
 	_luaContext.registerCFunction("TeVideoLayout", spriteLayoutBindings);
 	_luaContext.setInRegistry("__TeLuaGUIThis", this);
 	_luaScript.attachToContext(&_luaContext);
-	_luaScript.load(_scriptPath);
+	_luaScript.load(node);
 	_luaScript.execute();
 	_luaScript.unload();
 	_loaded = true;

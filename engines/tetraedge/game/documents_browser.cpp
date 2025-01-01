@@ -123,16 +123,15 @@ void DocumentsBrowser::loadZoomed() {
 }
 
 void DocumentsBrowser::loadXMLFile(const Common::Path &path) {
-	Common::Path xmlPath = g_engine->getCore()->findFile(path);
-	Common::File xmlfile;
-	xmlfile.open(xmlPath);
-	int64 fileLen = xmlfile.size();
+	TetraedgeFSNode node = g_engine->getCore()->findFile(path);
+	Common::ScopedPtr<Common::SeekableReadStream> xmlfile(node.createReadStream());
+	int64 fileLen = xmlfile->size();
 	char *buf = new char[fileLen + 1];
 	buf[fileLen] = '\0';
-	xmlfile.read(buf, fileLen);
+	xmlfile->read(buf, fileLen);
 	const Common::String xmlContents = Common::String::format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><document>%s</document>", buf);
 	delete [] buf;
-	xmlfile.close();
+	xmlfile.reset();
 
 	DocumentsBrowserXmlParser parser;
 	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
@@ -306,10 +305,12 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	TeCore *core = g_engine->getCore();
 	const char *pathPattern = g_engine->gameIsAmerzone() ? "DocumentsBrowser/Documents/%s_zoomed_%d" : "DocumentsBrowser/Documents/Documents/%s_zoomed_%d";
 	const Common::Path docPathBase(Common::String::format(pathPattern, docName.c_str(), (int)startPage));
-	Common::Path docPath = core->findFile(docPathBase.append(".png"));
-	if (!Common::File::exists(docPath)) {
-		docPath = core->findFile(docPathBase.append(".jpg"));
-		if (!Common::File::exists(docPath)) {
+	Common::Path docPath = docPathBase.append(".png");
+	TetraedgeFSNode docNode = core->findFile(docPath);
+	if (!docNode.exists()) {
+		docPath = docPathBase.append(".jpg");
+		docNode = core->findFile(docPath);
+		if (!docNode.exists()) {
 			// Probably the end of the doc
 			if (startPage == 0)
 				warning("Can't find first page of doc named %s", docName.c_str());
@@ -323,9 +324,9 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	sprite->load(docPath);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 
-	Common::Path luaPath = core->findFile(docPathBase.append(".lua"));
-	if (Common::File::exists(luaPath)) {
-		_zoomedDocGui.load(luaPath);
+	TetraedgeFSNode luaNode = core->findFile(docPathBase.append(".lua"));
+	if (luaNode.exists()) {
+		_zoomedDocGui.load(luaNode);
 		sprite->addChild(_zoomedDocGui.layoutChecked("root"));
 
 		TeButtonLayout *btn;

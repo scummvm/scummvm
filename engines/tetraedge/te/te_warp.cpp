@@ -42,7 +42,7 @@ TeWarp::TeWarp() : _visible1(false), _loaded(false), _preloaded(false),
 TeWarp::~TeWarp() {
 	_markerValidatedSignal.clear();
 	unload();
-	_file.close();
+	_file.reset();
 }
 
 void TeWarp::activeMarkers(bool active) {
@@ -243,41 +243,41 @@ void TeWarp::load(const Common::Path &path, bool flag) {
 		error("Empty TeWarp path!");
 
 	TeCore *core = g_engine->getCore();
-	Common::Path warpPath = core->findFile(_warpPath);
-	if (!Common::File::exists(warpPath)) {
+	TetraedgeFSNode node = core->findFile(_warpPath);
+	if (!node.isReadable()) {
 		error("Couldn't find TeWarp path data '%s'", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	if (_preloaded)
 		error("TODO: Support preloading in TeWarp::load");
-	_file.open(warpPath);
+	_file.reset(node.createReadStream());
 	char header[7];
 	header[6] = '\0';
-	_file.read(header, 6);
+	_file->read(header, 6);
 	if (Common::String(header) != "TeWarp")
-		error("Invalid header in warp data %s", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
-	uint32 globalTexDataOffset = _file.readUint32LE();
-	_texEncodingType = _file.readPascalString();
-	_xCount = _file.readUint32LE();
-	_yCount = _file.readUint32LE();
-	uint32 numAnims = _file.readUint32LE();
-	_someXVal = _file.readUint32LE();
-	_someYVal = _file.readUint32LE();
-	_someMeshX = _file.readUint32LE();
-	_someMeshY = _file.readUint32LE();
+		error("Invalid header in warp data %s", _warpPath.toString().c_str());
+	uint32 globalTexDataOffset = _file->readUint32LE();
+	_texEncodingType = _file->readPascalString();
+	_xCount = _file->readUint32LE();
+	_yCount = _file->readUint32LE();
+	uint32 numAnims = _file->readUint32LE();
+	_someXVal = _file->readUint32LE();
+	_someYVal = _file->readUint32LE();
+	_someMeshX = _file->readUint32LE();
+	_someMeshY = _file->readUint32LE();
 	if (_xCount > 1000 || _yCount > 1000 || numAnims > 1000)
 		error("Improbable values in TeWarp data xCount %d yCount %d numAnims %d", _xCount, _yCount, numAnims);
 	_warpBlocs.resize(_xCount * _yCount * 6);
 	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
-		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
+		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file->readByte());
 		// TODO: This is strange, surely we only need to set the offset and create the bloc
 		// once but the code seems to do it xCount * yCount times..
 		for (uint j = 0; j < _xCount * _yCount; j++) {
-			uint xoff = _file.readUint16LE();
-			uint yoff = _file.readUint16LE();
+			uint xoff = _file->readUint16LE();
+			uint yoff = _file->readUint16LE();
 			if (xoff > 1000 || yoff > 1000)
 				error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
-			uint32 blocTexOffset = _file.readUint32LE();
+			uint32 blocTexOffset = _file->readUint32LE();
 			_warpBlocs[i].setTextureFileOffset(globalTexDataOffset + blocTexOffset);
 			_warpBlocs[i].create(face, _xCount, _yCount, TeVector2s32(xoff, yoff));
 		}
@@ -286,45 +286,45 @@ void TeWarp::load(const Common::Path &path, bool flag) {
 	_putAnimData.reserve(numAnims);
 	for (uint i = 0; i < numAnims; i++) {
 		char aname[5];
-		_file.read(aname, 4);
+		_file->read(aname, 4);
 		aname[4] = '\0';
 		_loadedAnimData[i]._name = aname;
-		uint numFrames = _file.readUint32LE();
+		uint numFrames = _file->readUint32LE();
 		if (numFrames > 1000)
 			error("TeWarp::load: Improbable frame count %d", numFrames);
-		byte numSomething = _file.readByte();
+		byte numSomething = _file->readByte();
 		_loadedAnimData[i]._frameDatas.resize(numFrames);
 		for (uint j = 0; j < numFrames; j++) {
 			FrameData &frameData = _loadedAnimData[i]._frameDatas[j];
 			frameData._loadedTexCount = 0;
 			Common::Array<TeWarpBloc> warpBlocs;
 			for (uint k = 0; k < numSomething; k++) {
-				uint blocCount = _file.readUint32LE();
+				uint blocCount = _file->readUint32LE();
 				if (blocCount > 1000)
 					error("TeWarp::load: Improbable bloc count %d", blocCount);
 				if (blocCount) {
-					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
+					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file->readByte());
 					warpBlocs.resize(blocCount);
 					for (auto &warpBloc : warpBlocs) {
-						uint xoff = _file.readUint16LE();
-						uint yoff = _file.readUint16LE();
+						uint xoff = _file->readUint16LE();
+						uint yoff = _file->readUint16LE();
 						if (xoff > 10000 || yoff > 10000)
 							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
-						uint32 texDataOff = _file.readUint32LE();
+						uint32 texDataOff = _file->readUint32LE();
 						warpBloc.setTextureFileOffset(globalTexDataOffset + texDataOff);
 						warpBloc.create(face, _someXVal, _someYVal, TeVector2s32(xoff, yoff));
 						if (flag)
 							warpBloc.color(TeColor(255, 0, 0, 255));
 					}
-					uint meshSize = _file.readUint32LE();
+					uint meshSize = _file->readUint32LE();
 					if (meshSize > 1000)
 						error("TeWarp::load: Improbable meshSize %d", meshSize);
 					TePickMesh tmpMesh;
 					tmpMesh.setName(aname);
 					tmpMesh.nbTriangles(meshSize * 2);
 					for (uint m = 0; m < meshSize; m++) {
-						uint xoff = _file.readUint16LE();
-						uint yoff = _file.readUint16LE();
+						uint xoff = _file->readUint16LE();
+						uint yoff = _file->readUint16LE();
 						if (xoff > 10000 || yoff > 10000)
 							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
 						addQuadToPickMesh(tmpMesh, m * 2, face, TeVector2s32(xoff, yoff), _someMeshX, _someMeshY);
@@ -413,12 +413,12 @@ void TeWarp::putObject(const Common::String &name, bool enable) {
 }
 
 void TeWarp::update() {
-	if (!_visible1 || !_file.isOpen())
+	if (!_visible1 || !_file)
 		return;
 	//Application *app = g_engine->getApplication();
 	_frustum.update(_camera);
 	for (auto &bloc : _warpBlocs) {
-		bloc.loadTexture(_file, _texEncodingType);
+		bloc.loadTexture(*_file, _texEncodingType);
 	}
 
 	for (auto &anim : _loadedAnimData) {
@@ -441,7 +441,7 @@ void TeWarp::update() {
 				anim._frameDatas[lastFrame]._loadedTexCount = 0;
 			}
 		}
-		anim._frameDatas[anim._curFrameNo].loadTextures(_frustum, _file, _texEncodingType);
+		anim._frameDatas[anim._curFrameNo].loadTextures(_frustum, *_file, _texEncodingType);
 	}
 }
 
@@ -664,7 +664,7 @@ void TeWarp::updateCamera(const TeVector3f32 &screen) {
 	_camera.projectionMatrix();
 }
 
-void TeWarp::FrameData::loadTextures(const TeFrustum &frustum, Common::File &file, const Common::String &fileType) {
+void TeWarp::FrameData::loadTextures(const TeFrustum &frustum, Common::SeekableReadStream &file, const Common::String &fileType) {
 	for (auto &b : _warpBlocs) {
 		if (!b.isLoaded() && (frustum.isTriangleInside(b.vertex(0), b.vertex(1), b.vertex(3))
 				|| frustum.isTriangleInside(b.vertex(1), b.vertex(2), b.vertex(3)))) {

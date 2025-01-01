@@ -37,7 +37,7 @@ void TeLuaScript::attachToContext(TeLuaContext *context) {
 
 void TeLuaScript::execute() {
 	if (_luaContext) {
-		//debug("TeLuaScript::execute %s", _scriptNode.getPath().c_str());
+		//debug("TeLuaScript::execute %s", _scriptNode.toString().c_str());
 		lua_State *state = _luaContext->luaState();
 		if (state) {
 			TeLuaThread *thread = TeLuaThread::create(_luaContext);
@@ -50,7 +50,7 @@ void TeLuaScript::execute() {
 
 void TeLuaScript::execute(const Common::String &fname) {
 	if (_luaContext) {
-		//debug("TeLuaScript::execute %s %s", _scriptNode.getPath().c_str(), fname.c_str());
+		//debug("TeLuaScript::execute %s %s", _scriptNode.toString().c_str(), fname.c_str());
 		TeLuaThread *thread = TeLuaThread::create(_luaContext);
 		thread->execute(fname);
 		thread->release();
@@ -59,7 +59,7 @@ void TeLuaScript::execute(const Common::String &fname) {
 
 void TeLuaScript::execute(const Common::String &fname, const TeVariant &p1) {
 	if (_luaContext) {
-		//debug("TeLuaScript::execute %s %s(%s)", _scriptNode.getPath().c_str(), fname.c_str(), p1.toString().c_str());
+		//debug("TeLuaScript::execute %s %s(%s)", _scriptNode.toString().c_str(), fname.c_str(), p1.toString().c_str());
 		TeLuaThread *thread = TeLuaThread::create(_luaContext);
 		thread->execute(fname, p1);
 		thread->release();
@@ -82,13 +82,13 @@ void TeLuaScript::execute(const Common::String &fname, const TeVariant &p1, cons
 	}
 }
 
-void TeLuaScript::load(const Common::Path &node) {
+void TeLuaScript::load(const TetraedgeFSNode &node) {
 	_started = false;
 	_scriptNode = node;
 }
 
 void TeLuaScript::unload() {
-	_scriptNode = Common::Path();
+	_scriptNode = TetraedgeFSNode();
 	_started = false;
 }
 

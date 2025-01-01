@@ -97,10 +97,10 @@ void TeMaterial::deserialize(Common::SeekableReadStream &stream, TeMaterial &mat
 
 	if (nameStr.size()) {
 		TeCore *core = g_engine->getCore();
-		Common::Path matPath = core->findFile(texPath.join(nameStr));
+		TetraedgeFSNode matPath = core->findFile(Common::Path(texPath).join(nameStr));
 		material._texture = Te3DTexture::load2(matPath, false);
 		if (!material._texture)
-			warning("failed to load texture %s (texpath %s)", nameStr.c_str(), matPath.toString(Common::Path::kNativeSeparator).c_str());
+			warning("failed to load texture %s (texpath %s)", nameStr.c_str(), matPath.toString().c_str());
 	}
 
 	material._ambientColor.deserialize(stream);

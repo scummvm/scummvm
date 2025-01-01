@@ -40,9 +40,9 @@ void SplashScreens::enter()	{
 		_entered = true;
 		_splashNo = 0;
 		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
-		Common::Path path = g_engine->getCore()->findFile(scriptStr);
-		if (Common::File::exists(path)) {
-			load(path);
+		TetraedgeFSNode node = g_engine->getCore()->findFile(scriptStr);
+		if (node.exists()) {
+			load(node);
 			Application *app = g_engine->getApplication();
 			TeLayout *splash = layoutChecked("splash");
 
@@ -72,11 +72,11 @@ bool SplashScreens::onAlarm() {
 		return true;
 	}
 
-	Common::Path path = g_engine->getCore()->findFile(scriptName);
-	if (!Common::File::exists(path)) {
+	TetraedgeFSNode node = g_engine->getCore()->findFile(scriptName);
+	if (!node.exists()) {
 		onQuitSplash();
 	} else {
-		load(path);
+		load(node);
 
 		TeButtonLayout *splash = buttonLayoutChecked("splash");
 		splash->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);

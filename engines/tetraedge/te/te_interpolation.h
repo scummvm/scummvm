@@ -26,6 +26,8 @@
 #include "common/stream.h"
 #include "common/fs.h"
 
+#include "tetraedge/tetraedge.h"
+
 namespace Tetraedge {
 
 class TeInterpolation {
@@ -33,7 +35,7 @@ public:
 	TeInterpolation();
 
 	void load(Common::ReadStream &stream);
-	void load(Common::Path &path);
+	void load(TetraedgeFSNode &node);
 
 	// Note: this function is not in the original but simplifies
 	// the code for TeCurveAnim2 a lot.

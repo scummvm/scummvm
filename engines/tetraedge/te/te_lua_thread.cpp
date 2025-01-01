@@ -260,10 +260,10 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 	}
 }
 
-void TeLuaThread::executeFile(const Common::Path &node) {
-	Common::File scriptFile;
-	if (!scriptFile.open(node)) {
-		warning("TeLuaThread::executeFile: File %s can't be opened", node.baseName().c_str());
+void TeLuaThread::executeFile(const TetraedgeFSNode &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> scriptFile(node.createReadStream());
+	if (!scriptFile) {
+		warning("TeLuaThread::executeFile: File %s can't be opened", node.getName().c_str());
 		return;
 	}
 
@@ -271,15 +271,15 @@ void TeLuaThread::executeFile(const Common::Path &node) {
 	debug("TeLuaThread::executeFile: %s", node.getName().c_str());
 #endif
 
-	int64 fileLen = scriptFile.size();
+	int64 fileLen = scriptFile->size();
 	char *buf = new char[fileLen + 1];
-	scriptFile.read(buf, fileLen);
+	scriptFile->read(buf, fileLen);
 	buf[fileLen] = 0;
-	scriptFile.close();
+	scriptFile.reset();
 
-	applyScriptWorkarounds(buf, node.baseName());
+	applyScriptWorkarounds(buf, node.getPath().baseName());
 
-	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.toString(Common::Path::kNativeSeparator).c_str());
+	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.toString().c_str());
 	if (_lastResumeResult) {
 		const char *msg = lua_tostring(_luaThread, -1);
 		warning("TeLuaThread::executeFile: %s", msg);

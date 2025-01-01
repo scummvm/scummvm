@@ -60,7 +60,8 @@ public:
 	}
 
 	template<class T>
-	TeIntrusivePtr<T> getResource(const Common::Path &path) {
+	TeIntrusivePtr<T> getResource(const TetraedgeFSNode &node) {
+		Common::Path path = node.getPath();
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {
 				return TeIntrusivePtr<T>(dynamic_cast<T *>(resource.get()));
@@ -70,9 +71,9 @@ public:
 		TeIntrusivePtr<T> retval = new T();
 
 		if (retval.get()) {
-			if (!Common::File::exists(path))
-				warning("getResource: asked to fetch unreadable resource %s", path.toString(Common::Path::kNativeSeparator).c_str());
-			retval->load(path);
+			if (!node.isReadable())
+				warning("getResource: asked to fetch unreadable resource %s", node.toString().c_str());
+			retval->load(node);
 			addResource(retval.get());
 		}
 		return retval;

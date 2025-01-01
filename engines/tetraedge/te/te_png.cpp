@@ -44,8 +44,8 @@ bool TePng::matchExtension(const Common::String &extn) {
 	return extn == "png" || extn == "png#anim";
 }
 
-bool TePng::load(const Common::Path &path) {
-	if (!TeScummvmCodec::load(path))
+bool TePng::load(const TetraedgeFSNode &node) {
+	if (!TeScummvmCodec::load(node))
 		return false;
 
 	_height = _loadedSurface->h / _nbFrames;

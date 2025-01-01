@@ -38,7 +38,7 @@ void Document::load(const Common::String &name) {
 	addChild(_gui.layoutChecked("object"));
 	setName(name);
 	const Common::Path sprPath = spritePath();
-	_gui.spriteLayoutChecked("upLayout")->load(g_engine->getCore()->findFile(sprPath));
+	_gui.spriteLayoutChecked("upLayout")->load(sprPath);
 	_gui.buttonLayoutChecked("object")->onMouseClickValidated().add(this, &Document::onButtonDown);
 	TeITextLayout *txtLayout = _gui.textLayout("text");
 	if (!txtLayout)

@@ -41,6 +41,7 @@
 #include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_input_mgr.h"
 #include "tetraedge/te/te_particle.h"
+#include "tetraedge/obb_archive.h"
 
 namespace Tetraedge {
 
@@ -62,6 +63,8 @@ TetraedgeEngine::~TetraedgeEngine() {
 	delete _soundManager;
 	delete _resourceManager;
 	delete _inputMgr;
+	for (Common::Array<Common::Archive *>::iterator it = _rootArchives.begin(); it != _rootArchives.end(); it++)
+		delete *it;
 	Object3D::cleanup();
 	Character::cleanup();
 	TeAnimation::cleanup();
@@ -207,8 +210,19 @@ void TetraedgeEngine::closeGameDialogs() {
 
 void TetraedgeEngine::configureSearchPaths() {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	if (_gameDescription->platform != Common::kPlatformIOS)
+	if (_gameDescription->platform == Common::kPlatformMacintosh) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 6);
+		_rootArchives.push_back(new Common::FSDirectory(gameDataDir.getChild("Resources"), 10));
+	} else
+		_rootArchives.push_back(new Common::FSDirectory(gameDataDir, 10));
+
+	if (_gameDescription->platform == Common::Platform::kPlatformAndroid
+	    && strlen(_gameDescription->filesDescriptions[0].fileName) > 4
+	    && scumm_stricmp(_gameDescription->filesDescriptions[0].fileName + strlen(_gameDescription->filesDescriptions[0].fileName) - 4, ".obb") == 0) {
+		ObbArchive *obb = ObbArchive::open(_gameDescription->filesDescriptions[0].fileName);
+		_rootArchives.push_back(obb);
+		SearchMan.add("obbarchive", obb, 0, false);
+	}
 }
 
 int TetraedgeEngine::getDefaultScreenWidth() const {

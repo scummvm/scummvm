@@ -26,6 +26,7 @@
 
 #include "tetraedge/te/te_3d_object2.h"
 #include "tetraedge/te/te_references_counter.h"
+#include "tetraedge/tetraedge.h"
 
 namespace Tetraedge {
 
@@ -50,7 +51,7 @@ public:
 
 	static void serialize(Common::WriteStream &stream, const TeBezierCurve &curve);
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
-	void loadBin(const Common::Path &path);
+	void loadBin(TetraedgeFSNode &node);
 
 	const Common::Array<TeVector3f32> &controlPoints() { return _controlPoints; }
 	uint numIterations() const { return _numIterations; }

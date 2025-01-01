@@ -208,29 +208,28 @@ void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve
 	}
 }
 
-void TeBezierCurve::loadBin(const Common::Path &path) {
-	Common::File file;
-	file.open(path);
-	Common::String fname = path.baseName();
+void TeBezierCurve::loadBin(TetraedgeFSNode &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> file(node.createReadStream());
+	Common::String fname = node.getPath().baseName();
 	if (fname.size() < 4)
 		error("TeBezierCurve::loadBin fname %s is too short", fname.c_str());
 	setName(fname.substr(0, fname.size() - 4));
 
 	// Load position / rotation / size
-	Te3DObject2::deserialize(file, *this, false);
+	Te3DObject2::deserialize(*file, *this, false);
 	// Then it resets them?
 	setPosition(TeVector3f32());
 	setRotation(TeQuaternion());
 	setSize(TeVector3f32(1, 1, 1));
 
 	_lengthNeedsUpdate = true;
-	uint32 npoints = file.readUint32LE();
+	uint32 npoints = file->readUint32LE();
 	if (npoints > 1000000)
 		error("TeBezierCurve::loadBin improbable number of control ponts %d", npoints);
 
 	for (uint i = 0; i < npoints; i++) {
 		TeVector3f32 vec;
-		TeVector3f32::deserialize(file, vec);
+		TeVector3f32::deserialize(*file, vec);
 		_controlPoints.push_back(vec);
 	}
 }
