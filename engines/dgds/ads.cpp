@@ -90,9 +90,13 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	dgds.parse(_adsData, detailfile);
 
 	for (const auto &file : _adsData->_scriptNames) {
+		// Environments are numbered based on this list, so extend the list even if there
+		// is no file to load.  Eg, Willy Beamish TVO.ADS uses env 5 but only loads 4
+		// files (and has 1 empty name)
+		_adsData->_scriptEnvs.resize(_adsData->_scriptEnvs.size() + 1);
 		if (file.empty())
 			continue;
-		_adsData->_scriptEnvs.resize(_adsData->_scriptEnvs.size() + 1);
+
 		debug(1, "   load TTM %s to env %d", file.c_str(), _adsData->_scriptEnvs.size());
 		TTMEnviro &data = _adsData->_scriptEnvs.back();
 		data._enviro = _adsData->_scriptEnvs.size();
@@ -353,42 +357,40 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
 
-	assert(seq || (code & 0xFF) >= 0x80);
-
 	Globals *globals = DgdsEngine::getInstance()->getGameGlobals();
 
 	switch (code) {
 	case 0x1010: // WHILE paused
 	case 0x1310: // IF paused, 2 params
 		debugN(10, "ADS 0x%04x: %s paused env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunTypePaused;
+		return seq && seq->_runFlag == kRunTypePaused;
 	case 0x1020: // WHILE not paused
 	case 0x1320: // IF not paused, 2 params
 		debugN(10, "ADS 0x%04x: %s not paused env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag != kRunTypePaused;
+		return !seq || seq->_runFlag != kRunTypePaused;
 	case 0x1030: // WHILE NOT PLAYED
 	case 0x1330: // IF_NOT_PLAYED, 2 params
 		debugN(10, "ADS 0x%04x: %s not played env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return !seq->_runPlayed;
+		return !seq || !seq->_runPlayed;
 	case 0x1040: // WHILE PLAYED
 	case 0x1340: // IF_PLAYED, 2 params
 		debugN(10, "ADS 0x%04x: %s played env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runPlayed;
+		return seq && seq->_runPlayed;
 	case 0x1050: // WHILE FINISHED
 	case 0x1350: // IF_FINISHED, 2 params
 		debugN(10, "ADS 0x%04x: %s finished env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunTypeFinished;
+		return seq && seq->_runFlag == kRunTypeFinished;
 	case 0x1060: // WHILE NOT RUNNING
 	case 0x1360: { // IF_NOT_RUNNING, 2 params
 		debugN(10, "ADS 0x%04x: %s not running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		// Dragon only checks kRunTypeStopped, HoC onward also check for kRunTypeFinished
 		bool isDragon = _vm->getGameId() == GID_DRAGON;
-		return seq->_runFlag == kRunTypeStopped || (!isDragon && seq->_runFlag == kRunTypeFinished);
+		return !seq || seq->_runFlag == kRunTypeStopped || (!isDragon && seq->_runFlag == kRunTypeFinished);
 	}
 	case 0x1070: // WHILE RUNNING
 	case 0x1370: // IF_RUNNING, 2 params
 		debugN(10, "ADS 0x%04x: %s running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunTypeKeepGoing || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
+		return seq && (seq->_runFlag == kRunTypeKeepGoing || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited);
 	case 0x1080:
 	case 0x1090:
 		warning("Unimplemented IF/WHILE operation 0x%x", code);
@@ -447,8 +449,11 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 			seq = findTTMSeq(enviro, seqnum);
 			env = findTTMEnviro(enviro);
 			if (!seq) {
-				warning("ADS if op referenced non-existent env %d seq %d", enviro, seqnum);
-				return false;
+				warning("ADS if op 0x%04x referenced non-existent env %d seq %d", code, enviro, seqnum);
+				// Dragon always returns false for this.  Others return result
+				// based on opcode - eg, "if stopped" is true for non-existent sequence.
+				if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
+					return false;
 			}
 		} else {
 			// We load this into "enviro" but it's just the parameter of the op.
@@ -601,9 +606,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug(10, "ADS 0x%04x: hit branch op endwhile", code);
 		_adsData->_hitBranchOp = true;
 		return false;
-
 	case 0x2000:
-	case 0x2005: { // ADD sequence
+	case 0x2005: { // ADD sequence, set run count
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		int16 runCount = scr->readSint16LE();
@@ -611,6 +615,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 		Common::SharedPtr<TTMSeq> seq = findTTMSeq(enviro, seqnum);
 		TTMEnviro *env = findTTMEnviro(enviro);
+
+		// Set this even if null, check for null below.
+		_currentTTMSeq = seq;
+
 		if (!seq || !env) {
 			// This happens in Willy Beamish FDD scene 24
 			warning("ADS op %04x invalid env + seq requested %d %d", code, enviro, seqnum);
@@ -623,7 +631,6 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		if (code == 0x2000)
 			seq->_currentFrame = seq->_startFrame;
 
-		_currentTTMSeq = seq;
 		if (runCount == 0) {
 			seq->_runFlag = kRunTypeKeepGoing;
 		} else if (runCount < 0) {
