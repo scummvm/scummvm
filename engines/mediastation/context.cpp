@@ -297,7 +297,7 @@ void Context::play() {
 	if (_screenAsset == nullptr) {
 		error("Context::play(): No entry script exists for this context, cannot play it");
 	}
-	EventHandler *entryHandler = nullptr; //_screenAsset->_eventHandlers.getVal(uint32(EventHandler::Type::Entry));
+	//EventHandler *entryHandler = nullptr; //_screenAsset->_eventHandlers.getVal(uint32(EventHandler::Type::Entry));
 	// So how can we actually execute this script?
 
 	// FIND AND EXECUTE THE EXIT SCRIPT.

@@ -30,7 +30,7 @@ namespace MediaStation {
 Variable::Variable(Chunk &chunk) {
 	id = Datum(chunk, DatumType::UINT16_1).u.i;
 	type = Variable::Type(Datum(chunk, DatumType::UINT8).u.i);
-	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", id, type, chunk.pos());
+	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", id, type, static_cast<long long int>(chunk.pos()));
 	switch ((Type)type) {
 	case Type::COLLECTION: {
 		uint totalItems = Datum(chunk).u.i;

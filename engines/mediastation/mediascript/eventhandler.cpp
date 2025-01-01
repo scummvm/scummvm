@@ -26,14 +26,14 @@ namespace MediaStation {
 
 EventHandler::EventHandler(Chunk &chunk) {
 	_type = (EventHandler::Type)(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", _type, chunk.pos());
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", _type, static_cast<long long int>(chunk.pos()));
 	_argumentType = (EventHandler::ArgumentType)(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", _argumentType, chunk.pos());
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", _argumentType, static_cast<long long int>(chunk.pos()));
 	_argumentValue = Datum(chunk);
 
 	if (_argumentType != EventHandler::ArgumentType::Null) {
 		uint lengthInBytes = Datum(chunk, DatumType::UINT32_1).u.i;
-		debugC(5, kDebugLoading, "EventHandler::EventHandler(): Null argument type, length = 0x%x (@0x%llx)", lengthInBytes, chunk.pos());
+		debugC(5, kDebugLoading, "EventHandler::EventHandler(): Null argument type, length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	}
 
 	_code = new CodeChunk(chunk);

@@ -67,7 +67,7 @@ void Path::timePlay() {
 	}
 	debugC(5, kDebugScript, "Path::timePlay(): Path playback started");
 	uint totalSteps = (_header->_duration * _header->_stepRate) / 1000;
-	uint stepDurationInMilliseconds = 1000 / _header->_stepRate;
+	//uint stepDurationInMilliseconds = 1000 / _header->_stepRate;
 
 	// RUN THE START EVENT HANDLER.
 	EventHandler *startEventHandler = nullptr; // TODO: Haven't seen a path start event in the wild yet, don't know its ID.

@@ -32,7 +32,7 @@ namespace MediaStation {
 
 CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) : _args(nullptr) {
 	uint lengthInBytes = Datum(chunk, DatumType::UINT32_1).u.i;
-	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, chunk.pos());
+	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	_bytecode = chunk.readStream(lengthInBytes);
 }
 
@@ -295,13 +295,13 @@ Operand CodeChunk::callBuiltInFunction(uint32 id, Common::Array<Operand> &args) 
 		// TODO: Discover and handle the different ways
 		// effectTransition can be called.
 		case 1: {
-			uint dollarSignVariable = args[0].getInteger();
+			//uint dollarSignVariable = args[0].getInteger();
 			break;
 		}
 
 		case 3: {
-			uint dollarSignVariable = args[0].getInteger();
-			double percentComplete = args[1].getDouble();
+			//uint dollarSignVariable = args[0].getInteger();
+			//double percentComplete = args[1].getDouble();
 
 			// TODO: Verify that this is a palette!
 			Asset *asset = args[2].getAsset();

@@ -30,7 +30,7 @@ Subfile::Subfile() : _stream(nullptr) {}
 
 Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 	// VERIFY FILE SIGNATURE.
-	debugC(5, kDebugLoading, "\n*** Subfile::Subfile(): Got new subfile (@0x%llx) ***", _stream->pos());
+	debugC(5, kDebugLoading, "\n*** Subfile::Subfile(): Got new subfile (@0x%llx) ***", static_cast<long long int>(_stream->pos()));
 	rootChunk = nextChunk();
 	if (rootChunk.id != MKTAG('R', 'I', 'F', 'F'))
 		// TODO: These need to be interpreted as ASCII.

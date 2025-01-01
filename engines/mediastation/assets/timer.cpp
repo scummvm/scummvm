@@ -93,7 +93,7 @@ void Timer::process() {
 	}
 
 	uint currentTime = g_system->getMillis();
-	uint movieTime = currentTime - _startTime;
+	//uint movieTime = currentTime - _startTime;
 	debugC(7, kDebugScript, "** Timer %d: ON TIME Event Handlers **", _header->_id);
 	for (EventHandler *timeEvent : _header->_timeHandlers) {
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;

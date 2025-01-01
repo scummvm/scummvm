@@ -31,7 +31,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 	fileNumber = Datum(chunk, DatumType::UINT16_1).u.i;
 	uint sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
 	while ((SectionType)sectionType != SectionType::EMPTY) {
-		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
+		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		switch ((SectionType)sectionType) {
 		case SectionType::NAME: {
 			uint repeatedFileNumber = Datum(chunk, DatumType::UINT16_1).u.i;
@@ -40,7 +40,8 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 			}
 			contextName = Datum(chunk, DatumType::STRING).u.string;
 			// TODO: This is likely just an end flag.
-			uint unk1 = Datum(chunk, DatumType::UINT16_1).u.i;
+			/*uint unk1 =*/ Datum(chunk, DatumType::UINT16_1).u.i;
+			break;
 		}
 
 		case SectionType::FILE_NUMBER: {

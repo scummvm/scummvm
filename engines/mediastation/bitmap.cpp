@@ -26,7 +26,7 @@
 namespace MediaStation {
 
 BitmapHeader::BitmapHeader(Chunk &chunk) {
-	uint header_size_in_bytes = Datum(chunk, DatumType::UINT16_1).u.i;
+	/*uint header_size_in_bytes =*/ Datum(chunk, DatumType::UINT16_1).u.i;
 	dimensions = Datum(chunk).u.point;
 	compression_type = BitmapHeader::CompressionType(Datum(chunk, DatumType::UINT16_1).u.i);
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compression_type);
