@@ -46,8 +46,6 @@ void setup_player() {
 	_G(thor_info).last_item = 0;
 	_G(thor_info).object = 0;
 	_G(thor_info).object_name = nullptr;
-	_G(thor)->x = 152;
-	_G(thor)->y = 96;
 	_G(thor)->last_x[0] = _G(thor)->x;
 	_G(thor)->last_x[1] = _G(thor)->x;
 	_G(thor)->last_y[0] = _G(thor)->y;
@@ -55,6 +53,23 @@ void setup_player() {
 	_G(thor_info).last_icon = (6 * 20) + 8;
 	_G(thor_info).last_screen = 23;
 	_G(thor)->dir = 1;
+
+	switch (_G(area)) {
+	case 1:
+		_G(thor)->x = 152;
+		_G(thor)->y = 96;
+		break;
+	case 2:
+		_G(thor)->x = 32;
+		_G(thor)->y = 32;
+		break;
+	case 3:
+		_G(thor)->x = 272;
+		_G(thor)->y = 80;
+		break;
+	default:
+		break;
+	}
 }
 
 void initialize_game() {
