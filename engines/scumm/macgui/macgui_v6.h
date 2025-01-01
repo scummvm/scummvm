@@ -110,6 +110,19 @@ struct OctreeNode {
 	OctreeNode *nextNode;
 };
 
+// An octree is a tree where each node has up to eight children. Colors are
+// inserted into it by looking at the bits of the R, G, and B components one
+// bit at a time, starting at the most significant bit. These three bits form
+// a value from 0 to 7, indicating which child node to enter.
+//
+// This means that adjacent leaves in the tree will represent colors that are
+// close together. Once the tree has more leaves than we want, we take all
+// leaves under one node, combine them, and make their parent a new leaf with
+// their average color. The old leaves are then discarded.
+//
+// The depth of the tree is the number of bits we look at. Technically this
+// would be eight, but six should be enough.
+
 class Octree {
 private:
 	uint _leafLevel = kOctreeDepth - 1;
@@ -162,13 +175,69 @@ private:
 		delete node;
 	}
 
-	void reduceTree() {
-		// TODO: Figure out why we change _leafLevel like this
-		while (!_reduceList[_leafLevel - 1])
-			_leafLevel--;
+	void insert(OctreeNode **node, byte r, byte g, byte b, uint level) {
+		if (*node == nullptr) {
+			*node = allocateNode(level);
+			if (level != _leafLevel) {
+				(*node)->nextNode = _reduceList[level];
+				_reduceList[level] = *node;
+			}
+		}
 
-		OctreeNode *node = _reduceList[_leafLevel - 1];
-		_reduceList[_leafLevel - 1] = _reduceList[_leafLevel - 1]->nextNode;
+		// Once we encounter a leaf, add the color there. This is not
+		// necessarily at the bottom of the tree, so I guess it would
+		// not be out of the question to transform the leaf into a
+		// regular node. But I saw no mention of this in the article.
+
+		if ((*node)->isLeaf) {
+			(*node)->numPixels++;
+			(*node)->sumRed += r;
+			(*node)->sumGreen += g;
+			(*node)->sumBlue += b;
+		} else {
+			byte bit = (0x80 >> level);
+			byte rbit = (r & bit) >> (5 - level);
+			byte gbit = (g & bit) >> (6 - level);
+			byte bbit = (b & bit) >> (7 - level);
+			int idx = rbit | gbit | bbit;
+
+			insert(&((*node)->child[idx]), r, g, b, level + 1);
+		}
+
+		// Usually one reduction would be enough, but it's possible
+		// that the reduction will not actually remove any leaves.
+
+		while (_numLeaves > _maxLeaves)
+			reduceTree();
+	}
+
+	void reduceTree() {
+		// In the original article, once a reduce list has been emptied
+		// the leaf level was decreased, meaning that the tree could
+		// never again grow beyond that height. I don't understand why,
+		// so I have made this a local variable instead.
+
+		int level = _leafLevel - 1;
+
+		while (!_reduceList[level])
+			level--;
+
+		// There are several possible approaches to picking the node to
+		// reduce. Picking the one with the largest number of pixels
+		// may leave more color for fine details. Picking the one with
+		// the smallest may will sacrifice detail, but may preserve
+		// subtle gradations in large areas. This picks the first one,
+		// i.e. the most recently inserted one, so it's pretty random.
+		//
+		// On the contrary, it stated that "any new colors whose path
+		// through the tree take them through [a node that was turned
+		// into a leaf] now stop here".
+
+		OctreeNode *node = _reduceList[level];
+		_reduceList[level] = _reduceList[level]->nextNode;
+
+		// Combine all the leaves into their parent, and make the
+		// parent a leaf.
 
 		uint32 sumRed = 0;
 		uint32 sumGreen = 0;
@@ -230,36 +299,6 @@ public:
 
 	void insert(byte r, byte g, byte b) {
 		insert(&_root, r, g, b, 0);
-	}
-
-	void insert(OctreeNode **node, byte r, byte g, byte b, uint level) {
-		if (*node == nullptr) {
-			*node = allocateNode(level);
-			if (level != _leafLevel) {
-				(*node)->nextNode = _reduceList[level];
-				_reduceList[level] = *node;
-			}
-		}
-
-		if ((*node)->isLeaf) {
-			(*node)->numPixels++;
-			(*node)->sumRed += r;
-			(*node)->sumGreen += g;
-			(*node)->sumBlue += b;
-		} else {
-			byte bit = (0x80 >> level);
-			byte rbit = (r & bit) >> (5 - level);
-			byte gbit = (g & bit) >> (6 - level);
-			byte bbit = (b & bit) >> (7 - level);
-			int idx = rbit | gbit | bbit;
-
-			insert(&((*node)->child[idx]), r, g, b, level + 1);
-		}
-
-		// Usually one reduction would be enough, but it's possible
-		// that the reduction will not actually remove any leaves.
-		while (_numLeaves > _maxLeaves)
-			reduceTree();
 	}
 
 	Graphics::Palette *getPalette() {
