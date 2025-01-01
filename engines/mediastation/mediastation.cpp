@@ -145,7 +145,7 @@ Common::Error MediaStationEngine::run() {
 		});
 		for (auto it = _assetsPlaying.begin(); it != _assetsPlaying.end();) {
 			(*it)->process();
-			if (!(*it)->isPlaying()) {
+			if (!(*it)->isActive()) {
 				it = _assetsPlaying.erase(it);
 			} else {
 				++it;

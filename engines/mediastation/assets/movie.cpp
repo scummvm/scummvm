@@ -186,13 +186,13 @@ void Movie::timePlay() {
 	debugC(5, kDebugScript, "Called Movie::timePlay()");
 	// TODO: Play movies one chunk at a time, which more directly approximates
 	// the original's reading from the CD one chunk at a time.
-	if (_isPlaying) {
+	if (_isActive) {
 		error("Movie::play(): Attempted to play a movie that is already playing");
 		return;
 	}
 
 	// SET ANIMATION VARIABLES.
-	_isPlaying = true;
+	_isActive = true;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
 	g_engine->addPlayingAsset(this);
@@ -229,7 +229,7 @@ void Movie::timePlay() {
 
 void Movie::timeStop() {
 	// RESET ANIMATION VARIABLES.
-	_isPlaying = false;
+	_isActive = false;
 	_startTime = 0;
 	_lastProcessedTime = 0;
 
@@ -249,7 +249,7 @@ void Movie::process() {
 }
 
 void Movie::processTimeEventHandlers() {
-	if (!_isPlaying) {
+	if (!_isActive) {
 		warning("Movie::processTimeEventHandlers(): Attempted to process time event handlers while movie is not playing");
 		return;
 	}
@@ -278,7 +278,7 @@ bool Movie::drawNextFrame() {
 	debugC(5, kDebugGraphics, "GRAPHICS (Movie %d): Starting blitting (movie time: %d)", _header->_id, movieTime);
 	bool donePlaying = movieTime > _duration;
 	if (donePlaying) {
-		_isPlaying = false;
+		_isActive = false;
 		_startTime = 0;
 		_lastProcessedTime = 0;
 

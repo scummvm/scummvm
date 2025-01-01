@@ -48,8 +48,8 @@ public:
 	// Called to have the asset do any processing, like drawing new frames,
 	// handling time-based event handlers, and such. Some assets don't have any
 	// processing to do.
-	virtual bool isPlaying() const {
-		return _isPlaying;
+	virtual bool isActive() const {
+		return _isActive;
 	}
 
 	// These are not pure virtual so if an asset doesnʻt read any chunks or
@@ -65,7 +65,7 @@ public:
 
 protected:
 	AssetHeader *_header = nullptr;
-	bool _isPlaying = false;
+	bool _isActive = false;
 	uint _startTime = 0;
 	uint _lastProcessedTime = 0;
 	// TODO: Rename this to indicate the time is in milliseconds.

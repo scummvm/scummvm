@@ -47,13 +47,13 @@ Operand Timer::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 }
 
 void Timer::timePlay() {
-	if (_isPlaying) {
+	if (_isActive) {
 		warning("Timer::timePlay(): Attempted to play a timer that is already playing");
 		//return;
 	}
 
 	// SET TIMER VARIABLES.
-	_isPlaying = true;
+	_isActive = true;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
 	g_engine->addPlayingAsset(this);
@@ -76,18 +76,18 @@ void Timer::timePlay() {
 }
 
 void Timer::timeStop() {
-	if (!_isPlaying) {
+	if (!_isActive) {
 		warning("Timer::stop(): Attempted to stop a timer that is not playing");
 		return;
 	}
 
-	_isPlaying = false;
+	_isActive = false;
 	_startTime = 0;
 	_lastProcessedTime = 0;
 }
 
 void Timer::process() {
-	if (!_isPlaying) {
+	if (!_isActive) {
 		error("Timer::processTimeEventHandlers(): Attempted to process time event handlers while not playing");
 		return;
 	}

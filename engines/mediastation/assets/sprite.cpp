@@ -98,7 +98,7 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 
 void Sprite::spatialShow() {
 	debugC(5, kDebugScript, "Called Sprite::spatialShow");
-	_isPlaying = true;
+	_isActive = true;
 	g_engine->addPlayingAsset(this);
 
 	// Persist the first frame.
@@ -114,7 +114,7 @@ void Sprite::spatialShow() {
 
 void Sprite::timePlay() {
 	debugC(5, kDebugScript, "Called Sprite::timePlay");
-	_isPlaying = true;
+	_isActive = true;
 	_persistFrame = nullptr;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
@@ -137,7 +137,7 @@ void Sprite::timePlay() {
 
 void Sprite::movieReset() {
 	debugC(5, kDebugScript, "Called Sprite::movieReset");
-	_isPlaying = true;
+	_isActive = true;
 	// We do NOT reset the persisting frame, because it should keep showing!
 	_startTime = 0;
 	_currentFrameIndex = 0;
@@ -199,7 +199,7 @@ void Sprite::drawNextFrame() {
 		// Sprites always keep their last frame showing until they are hidden
 		// with spatialHide.
 		_persistFrame = _frames[_currentFrameIndex - 1];
-		_isPlaying = true;
+		_isActive = true;
 
 		// But otherwise, the sprite's params should be reset.
 		_startTime = 0;
