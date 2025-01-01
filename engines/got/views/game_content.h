@@ -41,6 +41,7 @@ private:
 	byte _pixelP[8][25] = {};
 	byte _pixelC[8] = {};
 	int _pauseCtr = 0;
+	int _closingStateCtr = 0;
 
 	void drawBackground(GfxSurface &s);
 	void drawObjects(GfxSurface &s);
@@ -62,6 +63,7 @@ private:
 	void checkForCheats();
 	void throwLightning();
 	void lightningCountdownDone();
+	void closingSequence();
 
 public:
 	GameContent();

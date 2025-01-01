@@ -25,6 +25,7 @@
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/object.h"
+#include "got/game/status.h"
 #include "got/gfx/image.h"
 #include "got/vars.h"
 
@@ -117,12 +118,14 @@ bool GameContent::msgGame(const GameMessage &msg) {
 		_G(gameMode) = MODE_PAUSE;
 		_pauseCtr = msg._value;
 		return true;
+	} else if (msg._name == "SCORE_INV") {
+		_G(gameMode) = MODE_SCORE_INV;
+		_pauseCtr = 0;
+		return true;
 	}
 	MSG("THROW_LIGHTNING", throwLightning)
 	MSG("THOR_DIES", thorDies)
-	MSG("CLOSING1_2", closing_sequence1_2)
-	MSG("CLOSING1_3", closing_sequence1_3)
-	MSG("CLOSING1_4", closing_sequence1_4)
+	MSG("CLOSING", closingSequence)
 
 	return false;
 }
@@ -163,6 +166,36 @@ bool GameContent::tick() {
 	case MODE_PAUSE:
 		if (--_pauseCtr == 0)
 			_G(gameMode) = MODE_NORMAL;
+		break;
+
+	case MODE_SCORE_INV:
+		if (--_pauseCtr <= 0) {
+			_pauseCtr = 5;
+
+			if (_G(thor)->health > 0) {
+				_G(thor)->health--;
+				play_sound(WOOP, 1);
+				add_health(-1);
+				add_score(10);
+
+			} else if (_G(thor_info).magic > 0) {
+				_G(thor_info).magic--;
+				play_sound(WOOP, 1);
+				add_magic(-1);
+				add_score(10);
+
+			} else if (_G(thor_info).jewels) {
+				_G(thor_info).jewels--;
+				play_sound(WOOP, 1);
+				add_jewels(-1);
+				add_score(10);
+
+			} else {
+				_G(gameMode) = MODE_NORMAL;
+				_pauseCtr = 0;
+				send(GameMessage("CLOSING"));
+			}
+		}
 		break;
 
 	default:
@@ -237,7 +270,7 @@ void GameContent::drawActors(GfxSurface &s) {
 }
 
 void GameContent::drawBoss1Health(GfxSurface &s) {
-	int rep, i, c;
+	int i, c;
 
 	int health = _G(actor)[3].health;
 
@@ -323,7 +356,7 @@ void GameContent::moveActors() {
 			if (i == 0)
 				set_thor_vars();
 
-			if (_G(new_level) != _G(current_level))
+			if (_G(new_level) != _G(current_level))				
 				return;
 		}
 	}
@@ -412,6 +445,14 @@ void GameContent::checkForAreaChange() {
 		}
 
 	} else if (_G(new_level) != _G(current_level)) {
+		// Check for leaving level after defeating end boss
+		if (_G(current_level) == BOSS_LEVEL1) {
+			// TODO: Implement high score view original had, and show it
+			fadeOut();
+			send("TitleBackground", GameMessage("MAIN_MENU"));
+			return;
+		}
+
 		// Area transition beginning
 		_G(thor)->show = 0;
 		_G(thor)->used = 0;
@@ -430,6 +471,9 @@ void GameContent::checkForAreaChange() {
 }
 
 void GameContent::thorDies() {
+	if (_G(gameMode) == MODE_SCORE_INV)
+		return;
+
 	// Stop any actors on-screen from moving
 	for (int li = 0; li < MAX_ACTORS; li++)
 		_G(actor)[li].show = 0;
@@ -629,6 +673,31 @@ void GameContent::lightningCountdownDone() {
 			_G(actor)[i].vunerable = 0;
 			actor_damaged(&_G(actor)[i], 254);
 		}
+	}
+}
+
+void GameContent::closingSequence() {
+	switch (++_closingStateCtr) {
+	case 1:
+		// Convert health/magic/jewels to score
+		_G(gameMode) = MODE_SCORE_INV;
+		break;
+
+	case 2:
+		closing_sequence1_2();
+		break;
+
+	case 3:
+		closing_sequence1_3();
+		break;
+
+	case 4:
+		_closingStateCtr = 0;
+		closing_sequence1_4();
+		break;
+
+	default:
+		break;
 	}
 }
 
