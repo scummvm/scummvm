@@ -491,7 +491,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	else if (_curMenu == kMenuSkipPlayIntro)
 		handleClickSkipPlayIntroMenu(mouse);
 	else
-		handleClick(mouse);
+		isToggle &= handleClick(mouse);
 
 	if (isToggle)
 		drawMenu(_curMenu);
@@ -517,7 +517,7 @@ static void _toggleSoundType(Audio::Mixer::SoundType soundType) {
 	}
 }
 
-void Menu::handleClick(const Common::Point &mouse) {
+bool Menu::handleClick(const Common::Point &mouse) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	int currentScene = engine->getScene()->getNum();
 	Gadget *gadget = getClickedMenuItem(mouse);
@@ -608,10 +608,12 @@ void Menu::handleClick(const Common::Point &mouse) {
 	case kMenuGameOverRestore:
 	case kMenuIntroRestore:
 	case kMainMenuWillyLoad:
-		if (g_engine->loadGameDialog())
+		if (g_engine->loadGameDialog()) {
 			hideMenu();
-		else
+			return false;
+		} else {
 			drawMenu(_curMenu);
+		}
 		break;
 	case kMenuFilesRestart:
 	case kMainMenuWillyRestart:
@@ -638,10 +640,12 @@ void Menu::handleClick(const Common::Point &mouse) {
 	//	break;
 	case kMenuQuitYes:
 		g_engine->quitGame();
-		break;
+		return false;
 	case kMenuRestartYes:
+		hideMenu();
 		engine->restartGame();
-		break;
+		// don't draw the button coming back up.
+		return false;
 	case kMenuGameOverQuit:
 	case kMainMenuWillyQuit:
 		drawMenu(kMenuReallyQuit);
@@ -734,6 +738,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;
 	}
+	return true;
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
