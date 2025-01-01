@@ -347,10 +347,10 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 	if (_itemArea->containsPoint(pt)) {
 		const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
 		const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
-		const int numacross = _itemArea->_width / _itemArea->_xStep;
+		const int numAcross = _itemArea->_width / _itemArea->_xStep;
 		const int itemrow = (pt.y - imgAreaY) / _itemArea->_yStep;
 		const int itemcol = (pt.x - imgAreaX) / _itemArea->_xStep;
-		int itemnum = numacross * itemrow + itemcol;
+		int itemnum = numAcross * itemrow + itemcol + _itemOffset;
 
 		for (auto &item: items) {
 			if (!isItemInInventory(item))
