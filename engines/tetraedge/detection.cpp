@@ -58,9 +58,6 @@ DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &
 	// game language. All games support multiple languages.  Only Syberia 1
 	// supports RU.
 	for (const Common::Language *language = getGameLanguages(); *language != Common::UNK_LANG; language++) {
-		// "ru" only present on syberia 1
-		if (game.gameId != "syberia" && *language == Common::RU_RUS)
-			continue;
 		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
 	}
 
