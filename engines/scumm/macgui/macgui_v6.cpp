@@ -194,14 +194,16 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 500:	// Music
-		_vm->_soundEnabled ^= 2;
+		_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 2;
 		ConfMan.setBool("music_mute", !(_vm->_soundEnabled & 2));
+		ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
 		syncSoundSettings = true;
 		break;
 
 	case 501:	// Effects
-		_vm->_soundEnabled ^= 1;
+		_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 1;
 		ConfMan.setBool("sfx_mute", !(_vm->_soundEnabled & 1));
+		ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
 		syncSoundSettings = true;
 		break;
 

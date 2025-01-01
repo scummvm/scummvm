@@ -2423,18 +2423,11 @@ void ScummEngine::syncSoundSettings() {
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 
-	bool mute = false;
-
-	if (ConfMan.hasKey("mute")) {
-		mute = ConfMan.getBool("mute");
-
-		if (mute)
-			soundVolumeMusic = soundVolumeSfx = 0;
-	}
-
-	_soundEnabled = ((ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute")) ? 0 : 2) | ((ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute")) ? 0 : 1);
+	bool mute = (ConfMan.hasKey("mute") && ConfMan.getBool("mute"));
 
 	if (_game.version >= 6 && _game.platform == Common::kPlatformMacintosh) {
+		_soundEnabled = mute ? 8 : ((ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") && _soundEnabled != 8) ? 0 : 2) | ((ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") && _soundEnabled != 8) ? 0 : 1);
+
 		if (_game.version == 6) {
 			if (!(_soundEnabled & 2))
 				soundVolumeMusic = 0;
@@ -2442,6 +2435,8 @@ void ScummEngine::syncSoundSettings() {
 			_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !(_soundEnabled & 2));
 		}
 		_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !(_soundEnabled & 1));
+	} else if (mute) {
+		soundVolumeMusic = soundVolumeSfx = 0;
 	}
 
 	if (_musicEngine) {
