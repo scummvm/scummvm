@@ -80,9 +80,16 @@ protected:
 	 * by subclasses, so it invokes the non-static function callbackHandler()
 	 */
 	static void sdlCallback(void *this_, byte *samples, int len);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	static void sdl3Callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount);
+#endif
 
 	bool _isSubsystemInitialized;
 	bool _isAudioOpen;
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_AudioStream *_stream = nullptr;
+#endif
 };
 
 #endif
