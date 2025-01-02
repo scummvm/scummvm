@@ -75,7 +75,6 @@ public:
 
 	Audio::SeekableAudioStream *getXWBTrack(int track);
 	Audio::AudioStream *getAudioStream(uint32 offset, SoundSEType type);
-	uint32 getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex);
 
 	int32 handleRemasteredSpeech(const char *msgString,
 								const char *speechFilenameSubstitution,
@@ -121,13 +120,13 @@ private:
 		Common::String name;
 	};
 
-	Common::HashMap<Common::String, uint32> _audioNameToOriginalOffsetMap;
-
 	typedef Common::Array<AudioEntry> AudioIndex;
 	typedef Common::HashMap<uint32, uint32> OffsetToIndexMap;
 	typedef Common::HashMap<Common::String, int32> NameToIndexMap;
+	typedef Common::HashMap<Common::String, uint32> NameToOffsetMap;
 
-	OffsetToIndexMap _offsetToIndex;
+	OffsetToIndexMap _offsetToIndexDOTTAndFT;
+	NameToOffsetMap _nameToOffsetDOTTAndFT;
 	NameToIndexMap _nameToIndex;
 
 	AudioIndex _musicEntries;
@@ -143,11 +142,16 @@ private:
 	int32 getSoundIndexFromOffset(uint32 offset);
 
 	void initAudioMappingMI();
-	void initAudioMapping();
+	void initAudioMappingDOTTAndFT();
 	void initSoundFiles();
+
+	// Index XWB audio files - used in MI1SE and MI2SE
 	void indexXWBFile(const Common::String &filename, AudioIndex *audioIndex);
-	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry);
+
+	// Index FSB audio files - used in DOTT and FT
 	void indexFSBFile(const Common::String &filename, AudioIndex *audioIndex);
+
+	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry);
 };
 
 

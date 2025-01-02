@@ -58,7 +58,7 @@ void SoundSE::initSoundFiles() {
 		// TODO: iMUSEClient_Commentary.fsb
 		break;
 	case GID_TENTACLE:
-		initAudioMapping();
+		initAudioMappingDOTTAndFT();
 		_musicFilename = "iMUSEClient_Music.fsb";
 		indexFSBFile(_musicFilename, &_musicEntries);
 		_sfxFilename = "iMUSEClient_SFX.fsb";
@@ -66,9 +66,12 @@ void SoundSE::initSoundFiles() {
 		_speechFilename = "iMUSEClient_VO.fsb";
 		indexFSBFile(_speechFilename, &_speechEntries);
 		// TODO: iMUSEClient_Commentary.fsb
+
+		// Clear the original offset map, as we no longer need it
+		_nameToOffsetDOTTAndFT.clear();
 		break;
 	case GID_FT:
-		initAudioMapping();
+		initAudioMappingDOTTAndFT();
 		_musicFilename = "iMUSEClient_Music.fsb";
 		indexFSBFile(_musicFilename, &_musicEntries);
 		_sfxFilename = "iMUSEClient_SFX_INMEMORY.fsb";
@@ -78,13 +81,13 @@ void SoundSE::initSoundFiles() {
 		// TODO: iMUSEClient_SFX_STREAMING.fsb
 		// TODO: iMUSEClient_UI.fsb
 		// TODO: iMUSEClient_Commentary.fsb
+
+		// Clear the original offset map, as we no longer need it
+		_nameToOffsetDOTTAndFT.clear();
 		break;
 	default:
 		error("initSoundFiles: unhandled game");
 	}
-
-	// Clear the original offset map, as we no longer need it
-	_audioNameToOriginalOffsetMap.clear();
 }
 
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
@@ -181,23 +184,18 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 		audioIndex->push_back(entry);
 	}
 
-	f->seek(segments[kXWBSegmentEntryNames].offset);
+	const uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
+
+	if (!nameOffset)
+		WARN_AND_RETURN_XWB("XWB file does not contain audio file names")
+
+	f->seek(nameOffset);
 
 	for (uint32 i = 0; i < entryCount; i++) {
 		Common::String name = f->readString(0, 64);
 		name.toLowercase();
 
 		(*audioIndex)[i].name = name;
-
-		if (!_audioNameToOriginalOffsetMap.contains(name)) {
-			// warning("indexXWBFile: name %s not found in speech.info", name.c_str());
-			_nameToIndex[name] = i;
-			continue;
-		}
-		
-		const uint32 origOffset = _audioNameToOriginalOffsetMap[name];
-		_offsetToIndex[origOffset] = i;
-		// debug("indexXWBFile: %s -> offset %d, index %d", name.c_str(), origOffset, i);
 		_nameToIndex[name] = i;
 	}
 
@@ -318,13 +316,13 @@ void SoundSE::indexFSBFile(const Common::String &filename, AudioIndex *audioInde
 
 		(*audioIndex)[i].name = name;
 
-		if (!_audioNameToOriginalOffsetMap.contains(name)) {
+		if (!_nameToOffsetDOTTAndFT.contains(name)) {
 			//warning("indexFSBFile: name %s not found in audiomapping.info", name.c_str());
 			continue;
 		}
 
-		const uint32 origOffset = _audioNameToOriginalOffsetMap[name];
-		_offsetToIndex[origOffset] = i;
+		const uint32 origOffset = _nameToOffsetDOTTAndFT[name];
+		_offsetToIndexDOTTAndFT[origOffset] = i;
 		//debug("indexFSBFile: %s -> offset %d, index %d", name.c_str(), origOffset, i);
 	}
 
@@ -479,13 +477,6 @@ void SoundSE::initAudioMappingMI() {
 		//	  entry.localScriptOffset, entry.messageIndex, entry.isEgoTalking, entry.wait,
 		//	  entry.textEnglish.c_str(), entry.speechFile.c_str());
 
-		_audioNameToOriginalOffsetMap[entry.speechFile] = getAudioOffsetForMI(
-			entry.room,
-			entry.script,
-			entry.localScriptOffset,
-			entry.messageIndex
-		);
-
 		_audioEntriesMI.emplace_back(entry);
 	} while (!f->eos());
 
@@ -493,7 +484,7 @@ void SoundSE::initAudioMappingMI() {
 	delete f;
 }
 
-void SoundSE::initAudioMapping() {
+void SoundSE::initAudioMappingDOTTAndFT() {
 	ScummPAKFile *f = new ScummPAKFile(_vm);
 	_vm->openFile(*f, Common::Path("audiomapping.info"));
 
@@ -508,7 +499,7 @@ void SoundSE::initAudioMapping() {
 		if (_vm->_game.id == GID_FT)
 			f->skip(4); // unknown flag
 
-		_audioNameToOriginalOffsetMap[name] = origOffset;
+		_nameToOffsetDOTTAndFT[name] = origOffset;
 	} while (!f->eos());
 
 	f->close();
@@ -573,8 +564,8 @@ int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
 	if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) {
 		return offset;
 	} else if (_vm->_game.id == GID_TENTACLE) {
-		if (_offsetToIndex.contains(offset))
-			return _offsetToIndex[offset];
+		if (_offsetToIndexDOTTAndFT.contains(offset))
+			return _offsetToIndexDOTTAndFT[offset];
 		else
 			return -1;
 	}
@@ -703,10 +694,6 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	return createSoundStream(subStream, audioEntry);
 }
 
-uint32 SoundSE::getAudioOffsetForMI(int32 room, int32 script, int32 localScriptOffset, int32 messageIndex) {
-	return ((room + script + messageIndex) << 16) | (localScriptOffset & 0xFFFF);
-}
-
 Common::String calculateCurrentString(const char *msgString) {
 	char currentChar;
 	bool shouldContinue = true;
@@ -798,10 +785,17 @@ int32 SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechF
 
 	// Get the string without the various control codes and special characters...
 	Common::String currentString = calculateCurrentString(msgString);
-	AudioEntryMI *entry = getAppropriateSpeechCue(currentString.c_str(), speechFilenameSubstitution, roomNumber, actorTalking, scriptNum, scriptOffset, numWaits);
-	if (entry) {
-		debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
+	const AudioEntryMI *entry = getAppropriateSpeechCue(
+		currentString.c_str(),
+		speechFilenameSubstitution,
+		roomNumber, actorTalking,
+		scriptNum,
+		scriptOffset,
+		numWaits
+	);
 
+	if (entry) {
+		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
 		return _nameToIndex[entry->speechFile];
 	}
 
