@@ -379,9 +379,118 @@ void Room807::parser() {
 
 	case 2:
 		if (player_said("wooden post")) {
-			// TODO not implemented yet
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_in_scene("wooden post", 807)) {
+					player_set_commands_allowed(false);
+					ws_hide_walker(_G(my_walker));
+					player_update_info(_G(my_walker), &_G(player_info));
+					_safariShadowMach = series_place_sprite(*SAFARI_SHADOWS, 0, 476, 318, _G(player_info).scale, 257);
+					series_play("807rp06", 256, 2, 5, 5, 0, 100, 0, 0, 21, 39);
+					hotspot_set_active(_G(currentSceneDef).hotspots, "wooden post", false);
+				} else {
+					_G(player).command_ready = true;
+				}
+
+				break;
+
+			case 5:
+				if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden beam", 807)) {
+					inv_give_to_player("wooden post");
+					kernel_examine_inventory_object("PING WOODEN POST", _G(master_palette), 5, 1, 400, 245, 13, nullptr, -1);
+					terminateMachine(_807BeamMach);
+					series_play("807rp06", 256, 2, 10, 5, 0, 100, 0, 0, 0, 20);
+					_G(flags[V274]) = 1;
+				} else {
+					inv_give_to_player("wooden post");
+					kernel_examine_inventory_object("PING WOODEN POST", _G(master_palette), 5, 1, 400, 245, -1, nullptr, -1);
+					terminateMachine(_807BeamMach);
+					series_play("807rp06", 256, 2, 20, 5, 0, 100, 0, 0, 0, 20);
+				}
+
+				break;
+
+			case 10:
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+				terminateMachine(_safariShadowMach);
+
+				break;
+
+			case 13:
+				terminateMachine(_807Crnk2Mach);
+				terminateMachine(_807DoorMach);
+				series_play("807close", 4095, 0, 15, 0, 0, 100, 0, 0, 0, -1);
+				digi_play("807_s04", 2, 255, -1, -1);
+
+				break;
+
+			case 15:
+				digi_play("807_s04a", 2, 255, -1, -1);
+				player_set_commands_allowed(true);
+				_807DoorMach = series_show("807door", 4095, 0, -1, -1, 0, 100, 0, 0);
+				_807Crnk2Mach = series_show("807crnk2", 4095, 0, -1, -1, 9, 100, 0, 0);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "north", false);
+
+				break;
+
+			case 20:
+				player_set_commands_allowed(true);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+				terminateMachine(_safariShadowMach);
+
+				break;
+
+			default:
+				break;
+			}
 		} else if (player_said("crank")) {
-			// TODO not implemented yet
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_in_scene("crank", 807)) {
+					if (inv_object_in_scene("wooden post", 807) && _G(flags[V274]) == 0) {
+						digi_play("807r23", 1, 255, -1, -1);
+					} else {
+						player_set_commands_allowed(false);
+						ws_hide_walker(_G(my_walker));
+						terminateMachine(_807Crnk2Mach);
+						_807Crnk2Mach = series_play("807rp04", 256, 16, 10, 5, 0, 100, 0, 0, 0, -1);
+						player_update_info(_G(my_walker), &_G(player_info));
+						_safariShadowMach = series_place_sprite(*SAFARI_SHADOWS, 0, 476, 318, _G(player_info).scale, 257);
+					}
+				} else {
+					_G(player).command_ready = true;
+				}
+
+				break;
+
+			case 10:
+				inv_give_to_player("CRANK");
+				kernel_examine_inventory_object("PING CRANK", _G(master_palette), 5, 1, 400, 245, 20, nullptr, -1);
+
+				break;
+
+			case 20:
+				terminateMachine(_807Crnk2Mach);
+				_807Crnk2Mach = series_play("807rp04", 256, 2, 30, 5, 0, 100, 0, 0, 0, -1);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				terminateMachine(_safariShadowMach);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+
+			default:
+				break;
+			}
 		} else if (player_said("wooden beam")) {
 			switch (_G(kernel).trigger) {
 			case -1:
