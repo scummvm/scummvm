@@ -274,26 +274,12 @@ int actor_visible(int invis_num) {
 }
 
 void setup_magic_item(int item) {
-#ifdef TODO
 	int i;
-	byte *ami;
-	byte *mb;
-
-
-	mb = _G(mask_buff);
-	_G(mask_buff) = _G(magic_mask_buff);
-
-	ami = _G(ami_buff);
-	_G(ami_buff) = _G(magic_ami);
 
 	for (i = 0; i < 4; i++) {
-		make_mask(&_G(magic_item)[item].pic[i / 4][i % 4], 55200u + (144 * i), &_G(magic_pic)[item][256 * i], 16, 16);
+		createSurface(_G(magic_item)[item].pic[i / 4][i % 4],
+			&_G(magic_pic)[item][256 * i]);
 	}
-	_G(ami_buff) = ami;
-	_G(mask_buff) = mb;
-#else
-	error("TODO: setup_magic_item");
-#endif
 }
 
 void load_new_thor() {
