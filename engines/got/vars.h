@@ -143,10 +143,6 @@ public:
 	byte *_tmp_buff = nullptr;
 	int _reps = 0;
 
-	byte *_mask_buff = nullptr;
-	byte *_mask_buff_start = nullptr;
-	byte _abuff[AMI_LEN] = {};
-	byte *_ami_buff = nullptr;
 	ACTOR _actor[MAX_ACTORS] = {};   //current actors
 	ACTOR _enemy[MAX_ENEMIES] = {};  //current enemies
 	ACTOR _shot[MAX_ENEMIES] = {};   //current shots
@@ -215,14 +211,8 @@ public:
 	int _current_level = 23;
 	int _new_level = 0;
 	int _new_level_tile = 0, _current_area = 0;
-	byte *_enemy_mb = nullptr;
-	byte *_enemy_ami = nullptr;
 	char _sd_header[128] = {};
 	char _play_speed = 0;
-	byte *_magic_ami = nullptr;
-	byte *_magic_mask_buff = nullptr;
-	byte *_ami_store1 = nullptr, *_ami_store2 = nullptr;
-	byte *_mask_store1 = nullptr, *_mask_store2 = nullptr;
 	bool _thor_special_flag = false;
 };
 

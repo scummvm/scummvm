@@ -93,16 +93,11 @@ void make_actor_surface(ACTOR *actr) {
 }
 
 int load_standard_actors() {
-	_G(mask_buff) = _G(mask_buff_start);
-	_G(ami_buff) = _G(abuff);
-
 	load_actor(0, 100 + _G(thor_info).armor);   // Load Thor
 	_G(actor)[0].loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor)[0], 0, 0, 100, 100);
 	_G(thor) = &_G(actor)[0];
 
-	_G(ami_store1) = _G(ami_buff);
-	_G(mask_store1) = _G(mask_buff);
 	make_actor_surface(&_G(actor)[0]);
 
 	_G(thor_x1) = _G(thor)->x + 2;
@@ -116,8 +111,6 @@ int load_standard_actors() {
 	_G(actor)[1].used = 0;
 	_G(hammer) = &_G(actor)[1];
 
-	_G(ami_store2) = _G(ami_buff);
-	_G(mask_store2) = _G(mask_buff);
 	make_actor_surface(&_G(actor)[1]);
 
 	load_actor(0, 106);   // Load sparkle
@@ -149,13 +142,8 @@ int load_standard_actors() {
 	_G(magic_item)[1].used = 0;
 
 	_G(actor)[2].used = 0;
-	_G(magic_ami) = _G(ami_buff);
-	_G(magic_mask_buff) = _G(mask_buff);
 
 	make_actor_surface(&_G(magic_item)[0]);
-
-	_G(enemy_mb) = _G(mask_buff);
-	_G(enemy_ami) = _G(ami_buff);
 
 	return 1;
 }
@@ -167,9 +155,6 @@ void show_enemies() {
 		_G(actor)[i].used = 0;
 	for (i = 0; i < MAX_ENEMIES; i++)
 		_G(enemy_type)[i] = 0;
-
-	_G(mask_buff) = _G(enemy_mb);
-	_G(ami_buff) = _G(enemy_ami);
 
 	for (i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn).actor_type[i] > 0) {
@@ -283,22 +268,9 @@ void setup_magic_item(int item) {
 }
 
 void load_new_thor() {
-	byte *ami;
-	byte *mb;
+	load_actor(0, 100 + _G(thor_info).armor);   // Load Thor
 
-	mb = _G(mask_buff);
-	ami = _G(ami_buff);
-
-	_G(mask_buff) = _G(mask_store1);
-	_G(ami_buff) = _G(ami_store1);
-
-	load_actor(0, 100 + _G(thor_info).armor);   // Load thor
-
-	// TODO: Confirm if this is an okay replacement for original mask code
 	make_actor_surface(&_G(actor)[0]);
-
-	_G(ami_buff) = ami;
-	_G(mask_buff) = mb;
 }
 
 } // namespace Got
