@@ -171,7 +171,9 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	debug(1, "CHANGE SCENE %d -> %d (clock %s)", _scene->getNum(), sceneNum, _clock.dump().c_str());
 
-	if (sceneNum == _scene->getNum()) {
+	// Willy Beamish relies on this resetting the scene when picking up the
+	// coin in the fountain (scene 56)
+	if (sceneNum == _scene->getNum() && getGameId() != GID_WILLY) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
 		return false;
 	}

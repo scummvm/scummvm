@@ -502,7 +502,7 @@ bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */
 	// need to stop as pointers are no longer valid.
 	//
 	int16 endSceneNum = engine->getScene()->getNum();
-	return startSceneNum == endSceneNum;
+	return (startSceneNum == endSceneNum) && !sceneChanged;
 }
 
 
