@@ -88,6 +88,7 @@ Vars::~Vars() {
 void Vars::setArea(int areaNum) {
 	if (areaNum != _area) {
 		_area = areaNum;
+		_setup.area = areaNum;
 		_sd_data.setArea(areaNum);
 		_bgPics.setArea(areaNum);
 
