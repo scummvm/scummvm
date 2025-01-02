@@ -213,7 +213,7 @@ GfxDriver *SCI0_CGABWDriver_create(int rgbRendering, ...) {
 	static const uint32 monochromeColors[] = { 0xffbf66, 0x66ff66, 0xffffff };
 	va_list args;
 	va_start(args, rgbRendering);
-	int config = CLIP<int>(va_arg(args, int), 0, ARRAYSIZE(monochromeColors));
+	int config = CLIP<int>(va_arg(args, int), 0, ARRAYSIZE(monochromeColors) - 1);
 	va_end(args);
 
 	return new SCI0_CGABWDriver(monochromeColors[config], rgbRendering != 0);
