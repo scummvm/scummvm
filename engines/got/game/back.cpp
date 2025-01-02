@@ -263,9 +263,10 @@ void kill_enemies(int iy, int ix) {
 	return;
 
 dead:
-	_G(thor)->health = 0;
-	//display_health();
-	_G(exit_flag) = 2;
+	if (!_G(cheats).freezeHealth) {
+		_G(thor)->health = 0;
+		g_events->send(GameMessage("THOR_DIES"));
+	}
 }
 
 void remove_objects(int y, int x) {
