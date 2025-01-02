@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-01 12:41+0000\n"
-"PO-Revision-Date: 2023-12-08 17:19+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2025-01-02 16:18+0000\n"
+"Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -16,23 +16,23 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Magyar\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh Hang"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr "(készült %s fordító %s)"
+msgstr "(összeállítva %s dátummal, %s segítségével)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
-msgstr "Lefordított összetevõk:"
+msgstr "Összeállított funkciók:"
 
 #: gui/about.cpp:118
 msgid "not supported"
@@ -40,11 +40,11 @@ msgstr "nem támogatott"
 
 #: gui/about.cpp:118
 msgid "disabled"
-msgstr "letiltva"
+msgstr "kikapcsolva"
 
 #: gui/about.cpp:118
 msgid "enabled"
-msgstr "engedélyezve"
+msgstr "bekapcsolva"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
@@ -65,29 +65,29 @@ msgstr "Támogatott játékmotorok:"
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
 #: engines/twp/metaengine.cpp:179
 msgid "Close"
-msgstr "Bezár"
+msgstr "Bezárás"
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
 msgid "Show hidden files"
-msgstr "Rejtett fájlok látszanak"
+msgstr "Rejtett fájlok megjelenítése"
 
 #: gui/browser.cpp:74
 msgid "Show files marked with the hidden attribute"
-msgstr "Rejtett attribútumu fájlok megjelenítése"
+msgstr "Rejtett attribútumú fájlok megjelenítése"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr "Feljebb"
+msgstr "Fentebb lépés"
 
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr "Vissza az elõzõ könyvtárszintre"
+msgstr "Vissza az előző könyvtárszintre"
 
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Feljebb"
+msgstr "Fentebb lépés"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
@@ -129,7 +129,7 @@ msgstr "Mégse"
 #: backends/dialogs/macosx/macosx-dialogs.mm:144
 #: backends/dialogs/win32/win32-dialogs.cpp:136
 msgid "Choose"
-msgstr "Választ"
+msgstr "Kiválaszt"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
@@ -141,11 +141,11 @@ msgstr "Gyors mód"
 
 #: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
-msgstr "Manuális mód"
+msgstr "Kézi mód"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr "Megkér hogy futtasd a helyi Webszervert"
+msgstr "Megkéri a helyi Webszerver futtatására"
 
 #: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
@@ -189,12 +189,12 @@ msgstr "Gyors mód: 2. lépés"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr "Most nyisd meg a hivatkozást a böngésződben:"
+msgstr "Most nyissa meg a hivatkozást a böngészőjében:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
-msgstr "URL megnyitása"
+msgstr "Hivatkozás megnyitása"
 
 #: gui/cloudconnectionwizard.cpp:270
 msgid ""
@@ -202,7 +202,7 @@ msgid ""
 "and warn you should there be any errors."
 msgstr ""
 "Az adatokat automatikusan továbbítja a ScummVM-nek,\n"
-"és figyelmezteti Önt, ha bármi hiba történt."
+"és figyelmezteti Önt hiba esetén."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
@@ -214,19 +214,19 @@ msgstr "Gyors mód: Sikeres"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr "A felhőtárhelyed csatlakoztatva lett!"
+msgstr "A felhőtárhelye csatlakoztatva lett!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr "Befejez"
+msgstr "Befejezés"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr "Manuális Mód: 1. lépés"
+msgstr "Kézi Mód: 1. lépés"
 
 #: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
-msgstr "Nyisd meg a linket a böngésződben:"
+msgstr "Nyissa meg a hivatkozást a böngészőben:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -236,20 +236,20 @@ msgid ""
 msgstr ""
 "Ha nem sikerül átadni a JSON kódot a ScummVM-nek,\n"
 "megtalálja az oldal Hibaelhárítás részében,\n"
-"és lépjen a következő lépésre itt."
+"és térjen át itt a következő lépésre."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr "Manuális Mód: 2. lépés"
+msgstr "Kézi Mód: 2. lépés"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr "Másold ide a JSON kódot a böngészőből, és nyomd a Továbbot:"
+msgstr "Másolja ide a JSON kódot a böngészőből, és nyomjon a Tovább gombra:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
 #: gui/gui-manager.cpp:273
 msgid "Paste"
-msgstr "Beilleszt"
+msgstr "Beillesztés"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
