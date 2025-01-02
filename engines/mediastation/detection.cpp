@@ -43,8 +43,23 @@ const DebugChannelDef MediaStationMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
+// Most Media Station titles follow this file structure from the root directory
+// of the CD-ROM:
+// - [TITLE].EXE (main game executable, name vares based on game)
+// - DATA/ (subdirectory that holds actual game data including bytecode)
+//   - 100.CXT
+//   - ... other CXTs, varies per title
+static const char *const directoryGlobs[] = {
+	"DATA", // For most titles
+	"program", // For D.W. the Picky Eater
+	"PZDATA", // For Puzzle Castle demo
+	nullptr
+};
+
 MediaStationMetaEngineDetection::MediaStationMetaEngineDetection() : AdvancedMetaEngineDetection(
 	    MediaStation::gameDescriptions, MediaStation::mediastationGames) {
+	_maxScanDepth = 3;
+	_directoryGlobs = directoryGlobs;
 }
 
 REGISTER_PLUGIN_STATIC(MEDIASTATION_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MediaStationMetaEngineDetection);
