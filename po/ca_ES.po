@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-02 17:01+0000\n"
-"PO-Revision-Date: 2024-12-22 05:18+0000\n"
+"PO-Revision-Date: 2025-01-03 00:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -10686,10 +10686,8 @@ msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:794
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Utilitza l'àudio del CD"
+msgstr "Utilitza àudio remasteritzat"
 
 #: engines/scumm/metaengine.cpp:795
 msgid "Use the remastered speech and sound effects."
