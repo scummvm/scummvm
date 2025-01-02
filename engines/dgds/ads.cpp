@@ -179,7 +179,7 @@ void ADSInterpreter::findUsedSequencesForSegment(int idx) {
 	// HoC and Dragon call a sequence "used" if there is any dependency on
 	// the sequence (reordering, if conditions), but to simplify the use of
 	// getStateForSceneOp, later games only call it "used" if it is directly
-	// started.
+	// started (0x2000 or 0x2005).
 	//
 	int n_ops_to_check = (gameId == GID_DRAGON || gameId == GID_HOC) ? ARRAYSIZE(ADS_USED_SEQ_OPCODES) : 2;
 	while (opcode != 0xffff && _adsData->scr->pos() < _adsData->scr->size()) {
@@ -246,8 +246,9 @@ bool ADSInterpreter::skipSceneLogicBranch() {
 		} else if (op == 0 || op == 0xffff) {
 			// end of segment
 			return false;
-		} else if ((op & 0xff0f) == 0x1300) {
-			// A nested IF (0x13x0) block. Skip to endif ignoring else.
+		} else if ((op & 0xff00) == 0x1300) {
+			// A nested IF (0x13xx) block. Skip to endif ignoring else.
+			scr->skip(numArgs(op) * 2);
 			result = skipToEndIf();
 		} else {
 			scr->skip(numArgs(op) * 2);
@@ -270,16 +271,25 @@ bool ADSInterpreter::skipToElseOrEndif() {
 }
 
 bool ADSInterpreter::skipToEndIf() {
+	// This is similar to skipSceneLogicBranch, but it does not stop for ELSE,
+	// only ENDIF.
+	// This is used to skip nested IF blocks inside another skipped block.
 	Common::SeekableReadStream *scr = _adsData->scr;
 	while (scr->pos() < scr->size()) {
 		uint16 op = scr->readUint16LE();
 		// don't rewind - the calls to this should always return after the last op.
-		if (op == 0x1510) // ENDIF
+		if (op == 0x1510) { // ENDIF
 			return true;
-		else if (op == 0 || op == 0xffff)
+		} else if (op == 0 || op == 0xffff) {
 			return false;
-
-		scr->skip(numArgs(op) * 2);
+		} else if ((op & 0xff00) == 0x1300) {
+			// A nested IF (0x13xx) block. Skip to endif ignoring else.
+			scr->skip(numArgs(op) * 2);
+			if (!skipToEndIf())
+				return false;
+		} else {
+			scr->skip(numArgs(op) * 2);
+		}
 	}
 	return false;
 }
@@ -595,7 +605,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return handleLogicOp(code, scr);
 	case 0x1500: // ELSE / Skip to end-if, 0 params
 		debug(10, "ADS 0x%04x: else (skip to end if)", code);
-		skipToElseOrEndif();
+		skipToEndIf();
 		_adsData->_hitBranchOp = true;
 		return true;
 	case 0x1510: // END IF 0 params
