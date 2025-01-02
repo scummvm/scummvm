@@ -70,8 +70,6 @@ void Vars::load() {
 	_setup.skill = 1;
 
 	_tmp_buff = new byte[TMP_SIZE];
-	_mask_buff = new byte[15300];
-	_mask_buff_start = _mask_buff;
  
 	res_read("RANDOM", _rnd_array);
 
@@ -82,7 +80,6 @@ Vars::~Vars() {
 	g_vars = nullptr;
 
 	delete[] _tmp_buff;
-	delete[] _mask_buff;
 }
 
 void Vars::setArea(int areaNum) {
