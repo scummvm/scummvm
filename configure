@@ -5756,6 +5756,10 @@ if test "$_libcurl" != "no"; then
 			darwin*)
 				LIBCURL_LIBS=`$_libcurlconfig --libs`
 			;;
+			mingw*)
+				# Needed for select (used in socket.cpp), when curl is linked dynamically
+				append_var LIBCURL_LIBS "-lws2_32"
+				;;
 			psp2*)
 				append_var LIBCURL_LIBS "-lssl -lcrypto"
 			;;
