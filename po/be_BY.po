@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-01 12:41+0000\n"
+"POT-Creation-Date: 2025-01-02 16:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -332,7 +332,7 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4163
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Так"
@@ -345,7 +345,7 @@ msgstr "Так"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4163
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Не"
@@ -6037,7 +6037,7 @@ msgstr "Узнавіць"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3123
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3118
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6048,7 +6048,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3110
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3105
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6059,7 +6059,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3143
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3138
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10430,7 +10430,7 @@ msgid "Your Name:"
 msgstr "Назва:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4169
 msgid "Host"
 msgstr ""
 
@@ -10442,7 +10442,7 @@ msgid "Querying games..."
 msgstr "Захоўваю гульню..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4169
 msgid "Join"
 msgstr ""
 
@@ -11426,7 +11426,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:4062
+#: engines/scumm/scumm.cpp:4057
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11437,7 +11437,7 @@ msgstr ""
 "унутры дырэкторыі гульні Tentacle і сама гульня павінна быць дададзена ў "
 "ScummVM."
 
-#: engines/scumm/scumm.cpp:4174
+#: engines/scumm/scumm.cpp:4169
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Ці вы хочаце захаваць або загрузіць гульню?"

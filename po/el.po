@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-01 12:41+0000\n"
+"POT-Creation-Date: 2025-01-02 16:39+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -318,7 +318,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4163
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Ναι"
@@ -331,7 +331,7 @@ msgstr "Ναι"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4163
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Όχι"
@@ -6494,7 +6494,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3123
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3118
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6505,7 +6505,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3110
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3105
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6516,7 +6516,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3143
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3138
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10737,7 +10737,7 @@ msgid "Your Name:"
 msgstr "Το Όνομά σας:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4169
 msgid "Host"
 msgstr "Φιλοξενία"
 
@@ -10747,7 +10747,7 @@ msgid "Querying games..."
 msgstr "Αναζήτηση παιχνιδιών..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4169
 msgid "Join"
 msgstr "Συμμετοχή"
 
@@ -11811,7 +11811,7 @@ msgstr ""
 "απαραίτητα\n"
 "δεδομένα για την υποστήριξη του MT-32. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:4062
+#: engines/scumm/scumm.cpp:4057
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11822,7 +11822,7 @@ msgstr ""
 "φάκελο 'Maniac' μέσα στο φάκελο παιχνιδιού του Tentacle, και το παιχνίδι "
 "πρέπει να προστεθεί στο ScummVM."
 
-#: engines/scumm/scumm.cpp:4174
+#: engines/scumm/scumm.cpp:4169
 msgid "Would you like to host or join a network play session?"
 msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετε σε online συνεδρία παιχνιδιού;"
 
