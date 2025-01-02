@@ -405,7 +405,7 @@ void MacV6Gui::runAboutDialog() {
 		// It would be nice if we could figure these out automatically
 		Common::Rect bounds(117, 5, 523, 384);
 
-		if (_vm->_game.id == GID_SAMNMAX) {
+		if (_vm->_game.id == GID_TENTACLE || _vm->_game.id == GID_SAMNMAX) {
 			bounds.left = 117;
 			bounds.top = 5;
 			bounds.right = 523;
