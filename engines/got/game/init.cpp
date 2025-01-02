@@ -41,7 +41,7 @@ void setup_player() {
 		_G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
 
 	_G(thor)->health = 150;
-	_G(thor_info).magic = 0;
+	_G(thor_info).magic = _G(area) > 1 ? 150 : 0;
 	_G(thor_info).jewels = 0;
 	_G(thor_info).score = 0;
 	_G(thor_info).keys = 0;
