@@ -53,7 +53,7 @@ void GameContent::draw() {
 	drawObjects(s);
 	drawActors(s);
 
-	if (_G(current_level) == BOSS_LEVEL1)
+	if (GAME1 && _G(current_level) == BOSS_LEVEL1)
 		drawBoss1Health(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
@@ -446,7 +446,7 @@ void GameContent::checkForAreaChange() {
 
 	} else if (_G(new_level) != _G(current_level)) {
 		// Check for leaving level after defeating end boss
-		if (_G(current_level) == BOSS_LEVEL1) {
+		if (GAME1 && _G(current_level) == BOSS_LEVEL1) {
 			// TODO: Implement high score view original had, and show it
 			fadeOut();
 			send("TitleBackground", GameMessage("MAIN_MENU"));
