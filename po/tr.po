@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-02 16:39+0000\n"
+"POT-Creation-Date: 2025-01-02 16:43+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -314,8 +314,8 @@ msgstr "Başka depolama alanı şu anda çalışıyor. Engellemek ister misiniz?
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
-#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -328,8 +328,8 @@ msgstr "Evet"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:474
-#: gui/launcher.cpp:526 gui/options.cpp:3528 gui/options.cpp:3911
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -353,7 +353,7 @@ msgstr "JSON kod içerikleri hatalı."
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:582 gui/launcher.cpp:586 gui/massadd.cpp:90
+#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:586 engines/engine.cpp:609
@@ -459,7 +459,7 @@ msgid ""
 "files with it?"
 msgstr "Bağlantınız kısıtlı gibi görünüyor. Yine de indirmek istiyor musun?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM belirtilen klasörü açamadı!"
 
@@ -560,7 +560,7 @@ msgstr "Simge paketleri"
 msgid "shader packs"
 msgstr "gölgelendirici paketleri"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:737
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
 msgid "Pick the game:"
 msgstr "Oyunu seç:"
 
@@ -1324,7 +1324,7 @@ msgstr ""
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:922
+#: gui/launcher.cpp:234 gui/launcher.cpp:898
 msgid "Group:"
 msgstr ""
 
@@ -1423,12 +1423,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Toplu Ekleme..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:892 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Oyun listesinde ara"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:913 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Arama:"
@@ -1452,123 +1452,123 @@ msgstr ""
 "Gerçekten toplu oyun tanıma özelliğini çalıştırmak istediğinden emin misin? "
 "Bu potansiyel olarak çok büyük sayıda oyun ekleyecektir."
 
-#: gui/launcher.cpp:474
+#: gui/launcher.cpp:450
 msgid "Do you really want to remove this game configuration?"
 msgstr "Bu oyun konfigürasyonunu kaldırmak istediğinizden emin misiniz?"
 
-#: gui/launcher.cpp:525
+#: gui/launcher.cpp:501
 msgid "Do you want to load saved game?"
 msgstr "Kaydedilmiş oyunu yüklemek istiyor musunuz?"
 
-#: gui/launcher.cpp:582
+#: gui/launcher.cpp:558
 msgid "This game does not support loading games from the launcher."
 msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:562
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı!"
 
-#: gui/launcher.cpp:689 gui/launcher.cpp:713
+#: gui/launcher.cpp:665 gui/launcher.cpp:689
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
 
-#: gui/launcher.cpp:710
+#: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM belirlenen klasörde bir oyun bulamadı!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:731
+#: gui/launcher.cpp:707
 #, fuzzy
 msgid "Unknown variant"
 msgstr "Bilinmeyen varyant"
 
-#: gui/launcher.cpp:962 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Liste görünümü"
 
-#: gui/launcher.cpp:963 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Matris görünümü"
 
-#: gui/launcher.cpp:1127
+#: gui/launcher.cpp:1103
 msgid "~S~tart"
 msgstr "~B~aşlat"
 
-#: gui/launcher.cpp:1127
+#: gui/launcher.cpp:1103
 msgid "Start selected game"
 msgstr "Seçilen oyunu başlatın"
 
-#: gui/launcher.cpp:1130
+#: gui/launcher.cpp:1106
 msgid "~L~oad..."
 msgstr "~Y~ükle..."
 
-#: gui/launcher.cpp:1130
+#: gui/launcher.cpp:1106
 msgid "Load saved game for selected game"
 msgstr "Seçilmiş oyun icin kaydedilmiş oyunu yükle"
 
-#: gui/launcher.cpp:1132
+#: gui/launcher.cpp:1108
 msgid "Record..."
 msgstr "Kayıt..."
 
-#: gui/launcher.cpp:1138
+#: gui/launcher.cpp:1114
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "A~y~arlar..."
 
-#: gui/launcher.cpp:1138
+#: gui/launcher.cpp:1114
 msgid "Change game options"
 msgstr "Oyun seçeneklerini değiştirme"
 
-#: gui/launcher.cpp:1138
+#: gui/launcher.cpp:1114
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "A~y~arlar..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1236 gui/launcher.cpp:1432
+#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Bilinmeyen varyant"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1253 gui/launcher.cpp:1449
+#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Bilinmeyen Yazar"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1270 gui/launcher.cpp:1466
+#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1284 gui/launcher.cpp:1480
+#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1298 gui/launcher.cpp:1494
+#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1315 gui/launcher.cpp:1511
+#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "Bilinmeyen hata"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1518 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr ""
 
-#: gui/launcher.cpp:1673
+#: gui/launcher.cpp:1649
 msgid "Icons per row:"
 msgstr ""
 
@@ -2713,7 +2713,7 @@ msgstr "Kayıt"
 msgid "Playback"
 msgstr "Oynatma"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:294
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -2911,11 +2911,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Değeri sil"
 
-#: gui/widgets/grid.cpp:286
+#: gui/widgets/grid.cpp:285
 msgid "Play"
 msgstr ""
 
-#: gui/widgets/grid.cpp:289
+#: gui/widgets/grid.cpp:288
 #, fuzzy
 msgid "Saves"
 msgstr "Kaydet"
