@@ -19,46 +19,28 @@
  *
  */
 
-#ifndef DARKSEED_CONSOLE_H
-#define DARKSEED_CONSOLE_H
+#ifndef DARKSEED_BIG5FONT_H
+#define DARKSEED_BIG5FONT_H
 
+#include "graphics/font.h"
 #include "graphics/big5.h"
-#include "darkseed/gamefont.h"
-#include "darkseed/sound.h"
-#include "darkseed/tostext.h"
-#include "darkseed/langtext.h"
+#include "graphics/surface.h"
 
 namespace Darkseed {
 
-class Console  {
+class Big5Font : public Graphics::Font {
 private:
-	TosText *_tosText;
-	Graphics::Font *_font;
-	bool _isBig5 = false;
-	Sound *_sound;
-
-	Common::StringArray _text;
-	int _startIdx = 0;
-	bool _redrawRequired = false;
-	int _numLines = 4;
+	Graphics::Big5Font _big5;
 
 public:
-	Console(TosText *tostext, Sound *sound);
+	Big5Font();
 
-	void printTosText(int tosIndex);
-	void addTextLine(const Common::String &text);
-	void addToCurrentLine(const Common::String &text);
-
-	void addI18NText(const I18nText &text);
-
-	void draw(bool forceRedraw = false);
-	void drawStringAt(int x, int y, const Common::String &text) const;
-
-private:
-	void addLine(const Common::String &line);
-	void big5WordWrap(const Common::String &str, int maxWidth, Common::StringArray &lines);
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 };
 
-} // End of namespace Darkseed
+} // namespace Darkseed
 
-#endif // DARKSEED_CONSOLE_H
+#endif // DARKSEED_BIG5FONT_H

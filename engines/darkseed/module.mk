@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	adlib_worx.o \
 	animation.o \
 	anm.o \
+	big5font.o \
 	console.o \
 	cursor.o \
 	cutscene.o \

@@ -25,15 +25,12 @@
 namespace Darkseed {
 extern DarkseedEngine *g_engine;
 
-Darkseed::GameFont::GameFont() {
-}
-
-bool GameFont::load() {
+GameFont::GameFont() {
 	if (_letters.load("tosfont.nsp")) {
 		_maxWidth = _letters.getMaxSpriteWidth() + 1;
-		return true;
+	} else {
+		error("Error loading tosfont.nsp");
 	}
-    return false;
 }
 
 const Sprite *GameFont::getCharacterSprite(char c) const {

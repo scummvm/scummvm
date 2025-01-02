@@ -35,7 +35,6 @@ private:
 
 public:
 	GameFont();
-	bool load();
 
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;
