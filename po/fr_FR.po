@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-01 12:41+0000\n"
-"PO-Revision-Date: 2024-12-23 16:18+0000\n"
+"PO-Revision-Date: 2025-01-02 16:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11609,38 +11609,27 @@ msgstr ""
 "à 320x200, sous l'onglet \"moteur\"."
 
 #: engines/scumm/scumm.cpp:1320
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Ce jeu a besoin de l'exécutable 'Indy' Macintosh pour ses polices de "
-"caractères."
+"Ce jeu nécessite l'exécutable Macintosh '%s' pour ses polices de caractères."
 
 #: engines/scumm/scumm.cpp:1324
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Ce jeu a besoin de l'exécutable 'Loom' Macintosh pour sa musique et ses "
-"polices de caractères."
+"Ce jeu nécessite l'exécutable Macintosh '%s' pour sa musique et ses polices "
+"de caractères."
 
 #: engines/scumm/scumm.cpp:1328
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. Music "
 "and Mac GUI will be disabled"
 msgstr ""
-"Impossible de trouver l'exécutable Macintosh de 'Monkey Island' à partir "
-"duquel lire les ressources\n"
-"et les instruments. La musique et l'interface graphique Mac seront "
-"désactivées."
+"Impossible de trouver l'exécutable Macintosh '%s' à partir duquel lire les "
+"ressources. La musique et l'interface graphique Mac seront désactivées"
 
 #: engines/scumm/scumm.cpp:1345
 #, c-format
