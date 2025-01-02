@@ -549,13 +549,13 @@ else if (value == 0x0d) {
 	out2 = 0;
 	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
-	// l0037_A120:
-	} else if (value >= 0xE && value <= 0x22) {
-		// l0037_A12A:
-		out1 = value - 0x0D;
-		out2 = 0;
-		return;
-	}
+// l0037_A120:
+} else if (value >= 0xE && value <= 0x22) {
+	// l0037_A12A:
+	out1 = value - 0x0D;
+	out2 = 0;
+	return;
+}
 	/*
 l0037_A13B:
 	cmp	ax,23h
@@ -2043,8 +2043,19 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Not sure if this is actually the orientation or if we need to set it
 			uint16 orientation = Func9F4D_16();
 			GameObject *object = GameObjects::GetObjectByIndex(characterID);
-			object->Orientation = orientation;
-			object->useOverloadAnimation = true;
+			// TODO: While opening the kid's room low drawer, we get issues this opcode with
+			// Orientation 21, but all it seems to do is stop the animation, and the character
+			// returns to the previous orientation.
+			// TODO: Hardcoding the detection for this case
+			if (orientation == 0x15) {
+				// TODO: Testing out if this can be used as a stop for the animation
+				// TODO: Hard-coding for now, should check where this is actually set
+				object->Orientation = 0x9;
+				object->useOverloadAnimation = false;
+			} else {
+				object->Orientation = orientation;
+				object->useOverloadAnimation = true;
+			}
 		} else if (opcode1 == 0x28) {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
