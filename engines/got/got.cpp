@@ -32,6 +32,7 @@
 #include "got/console.h"
 #include "got/game/init.h"
 #include "got/game/main.h"
+#include "got/game/move.h"
 #include "got/gfx/image.h"
 #include "got/utils/res_archive.h"
 #include "got/views/game_content.h"
@@ -220,6 +221,16 @@ void GotEngine::pauseEngineIntern(bool pause) {
 	g_vars->clearKeyFlags();
 	if (_G(gameMode) == MODE_LIGHTNING)
 		_G(gameMode) = MODE_NORMAL;
+
+	if (_G(tornado_used)) {
+		_G(tornado_used) = false;
+		actor_destroyed(&_G(actor)[2]);
+	}
+
+	_G(lightning_used) = false;
+	_G(thunder_flag) = false;
+	_G(hourglass_flag) = false;
+	_G(shield_on) = false;
 
 	Engine::pauseEngineIntern(pause);
 }
