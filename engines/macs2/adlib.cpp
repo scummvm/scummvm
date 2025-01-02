@@ -965,29 +965,18 @@ void Adlib::OnTimer() {
 					// push	word ptr [224Ah]
 					// push word ptr[2248h]
 					// TODO: xor ah, ah
+					// Note: Original code returns a pointer via ax:dx, we just save the offset here so far
+					// Original code saves results to bp10 and bp0E
 					bp10 = Func19BE(gArray225F[bp3] << 0x4);
-					// TODO: Continue from here
-					/*
+					// TODO: Several xor ah,ahs in here
+					uint8 bp8 = gArray57[bp3 - 0xB];
+					if (bp3 == 0xB) {
+						// TODO: Continue from here
+
+					}
+					// TODO: This should be 1F12
 					
-					mov	al,[bp-3h]
-					xor	ah,ah
-					mov	di,ax
-					mov	al,[di+225Fh]
-					xor	ah,ah
-					shl	ax,4h
-					push	ax
-					call	far 0017h:19BEh
-					mov	[bp-10h],ax
-					mov	[bp-0Eh],dx
-					mov	al,[bp-3h]
-					xor	ah,ah
-					sub	ax,0Bh
-					mov	di,ax
-					mov	al,[di+57h]
-					xor	ah,ah
-					mov	[bp-8h],ax
-					cmp	byte ptr [bp-3h],0Bh
-					jnz	1F12h*/
+					
 
 					
 				}
