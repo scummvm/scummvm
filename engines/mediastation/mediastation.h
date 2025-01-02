@@ -46,6 +46,19 @@ namespace MediaStation {
 
 struct MediaStationGameDescription;
 
+// Most Media Station titles follow this file structure from the root directory
+// of the CD-ROM:
+// - [TITLE].EXE (main game executable, name vares based on game)
+// - DATA/ (subdirectory that holds actual game data including bytecode)
+//   - 100.CXT
+//   - ... other CXTs, varies per title
+static const char *const directoryGlobs[] = {
+	"DATA", // For most titles
+	"program", // For D.W. the Picky Eater
+	"PZDATA", // For Puzzle Castle demo
+	nullptr
+};
+
 class MediaStationEngine : public Engine {
 public:
 	MediaStationEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -79,6 +92,7 @@ protected:
 
 private:
 	Common::Event e;
+	Common::FSNode _gameDataDir;
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Boot *_boot = nullptr;

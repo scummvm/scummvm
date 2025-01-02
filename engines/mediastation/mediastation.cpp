@@ -45,6 +45,13 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 	_randomSource("MediaStation") {
 	g_engine = this;
 	_mixer = g_system->getMixer();
+
+	_gameDataDir = Common::FSNode(ConfMan.getPath("path"));
+	SearchMan.addDirectory(_gameDataDir, 0, 3);
+	for (uint i = 0; MediaStation::directoryGlobs[i]; i++) {
+		Common::String directoryGlob = directoryGlobs[i];
+		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
+	}
 }
 
 MediaStationEngine::~MediaStationEngine() {
