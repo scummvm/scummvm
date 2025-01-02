@@ -122,7 +122,6 @@ public:
 	void handleOtherEvent(const Common::Event &evt) override;
 	bool doGameDetection(const Common::Path &path);
 	Common::String getGameConfig(int item, Common::String key);
-	bool canLoadSavegames(int item) const;
 protected:
 	EditTextWidget  *_searchWidget;
 #ifndef DISABLE_FANCY_THEMES
