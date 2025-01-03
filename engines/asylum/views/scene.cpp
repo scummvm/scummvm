@@ -69,6 +69,9 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_musicVolume = 0;
 	_frameCounter = 0;
 
+	_keyState = 0;
+	_rightButtonDown = false;
+
 	_savedScreen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	_debugShowVersion = false;
