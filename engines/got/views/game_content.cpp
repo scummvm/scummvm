@@ -220,20 +220,14 @@ void GameContent::drawBackground(GfxSurface &s) {
 }
 
 void GameContent::drawObjects(GfxSurface &s) {
-	int i, p;
+	for (int y = 0; y < TILES_Y; ++y) {
+		for (int x = 0; x < TILES_X; ++x) {
+			int p = (y * TILES_X) + x;
 
-	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
-	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
-
-	for (i = 0; i < OBJECTS_COUNT; i++) {
-		if (_G(scrn).static_obj[i]) {
-			s.blitFrom(_G(objects)[_G(scrn).static_obj[i] - 1],
-				Common::Point(_G(scrn).static_x[i] * TILE_SIZE,
-					_G(scrn).static_y[i] * TILE_SIZE));
-
-			p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
-			_G(object_index)[p] = i;
-			_G(object_map)[p] = _G(scrn).static_obj[i];
+			if (_G(object_index)[p]) {
+				s.blitFrom(_G(objects)[_G(object_map)[p] - 1],
+					Common::Point(x * TILE_SIZE, y * TILE_SIZE));
+			}
 		}
 	}
 }

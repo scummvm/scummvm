@@ -34,6 +34,21 @@ namespace Got {
 void not_enough_magic();
 void cannot_carry_more();
 
+void show_objects() {
+	int i, p;
+
+	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
+	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
+
+	for (i = 0; i < OBJECTS_COUNT; i++) {
+		if (_G(scrn).static_obj[i]) {
+			p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
+			_G(object_index)[p] = i;
+			_G(object_map)[p] = _G(scrn).static_obj[i];
+		}
+	}
+}
+
 void pick_up_object(int p) {
 	int r, x, y, s;
 
