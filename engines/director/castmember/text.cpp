@@ -742,6 +742,12 @@ RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStre
 	_type = kCastRTE;
 }
 
+RTECastMember::RTECastMember(Cast *cast, uint16 castId,  RTECastMember &source)
+		: TextCastMember(cast, castId, source) {
+
+	_type = kCastRTE;
+}
+
 void RTECastMember::load() {
 	if (_loaded)
 		return;

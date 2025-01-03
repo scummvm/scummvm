@@ -277,6 +277,9 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	case kCastText:
 		target = (CastMember *)(new TextCastMember(this, targetId, *(TextCastMember *)source));
 		break;
+	case kCastRTE:
+		target = (CastMember *)(new RTECastMember(this, targetId, *(RTECastMember *)source));
+		break;
 	case kCastTransition:
 		target = (CastMember *)(new TransitionCastMember(this, targetId, *(TransitionCastMember *)source));
 		break;

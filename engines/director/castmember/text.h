@@ -102,6 +102,7 @@ private:
 class RTECastMember : public TextCastMember {
 public:
 	RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	RTECastMember(Cast *cast, uint16 castId, RTECastMember &source);
 
 	void loadChunks();
 	void load() override;
