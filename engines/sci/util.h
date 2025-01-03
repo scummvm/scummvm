@@ -254,7 +254,7 @@ class SciSpan : public SciSpanImpl<ValueType, SciSpan> {
 public:
 	COMMON_SPAN_TYPEDEFS;
 
-	inline SciSpan() : super_type() {}
+	inline SciSpan() = default;
 
 	inline SciSpan(const pointer data_,
 				   const size_type size_,
