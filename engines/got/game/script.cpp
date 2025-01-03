@@ -984,34 +984,29 @@ void Scripts::scr_func3() {
 	p = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
 	y = p / 20;
 	x = p % 20;
+
 	if (y < 0 || x < 0 || y>11 || x>19) {
 		play_sound(BRAAPP, 1);
-#if 0
-		while (_G(key_flag)[key_magic])
-			rotate_pal();
-#endif
+		_G(key_flag)[key_magic] = false;
 		return;
 	}
 	if (_G(scrn).icon[y][x] < 174 || _G(scrn).icon[y][x]>178) {
 		play_sound(BRAAPP, 1);
-#if 0
-		while (_G(key_flag)[key_magic]) rotate_pal();
-#endif
+		_G(key_flag)[key_magic] = false;
 		return;
 	}
+
 	_numVar[0] = 1;
 	play_sound(WOOP, 1);
 	if (_G(current_level) == 106 && p == 69) {
 		place_tile(x, y, 220);
-#if 0
-		while (_G(key_flag)[key_magic]) rotate_pal();
-#endif
+		_G(key_flag)[key_magic] = false;
 		return;
 	}
-#if 0
-	while (_G(key_flag)[key_magic]) rotate_pal();
-#endif
+
+	_G(key_flag)[key_magic] = false;
 	place_tile(x, y, 191);
+
 	if ((g_events->getRandomNumber(99)) < 25 ||
 		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
 		if (!_G(object_map)[p] && _G(scrn).icon[y][x] >= 140) {  // nothing there and solid
@@ -1020,17 +1015,8 @@ void Scripts::scr_func3() {
 				o = 20;
 
 			_G(object_map)[p] = o;
-			_G(object_index)[p] = 31;  //actor is 3-15
-			x = (p % 20) * 16;
-			y = (p / 20) * 16;
-#ifdef TODO
-			xfput(x, y, PAGE2, (char *) objects[o - 1]);
-			xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, draw_page, 320, 320);
-			xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, display_page, 320, 320);
-			pause(30);
-#else
-			error("TODO: display/wait");
-#endif
+			_G(object_index)[p] = 31;  // actor is 3-15
+			//pause(30);
 		}
 	}
 }

@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/boss1.h"
 #include "got/game/move.h"
+#include "got/game/object.h"
 #include "got/game/script.h"
 #include "got/gfx/image.h"
 #include "got/gfx/panel.h"
@@ -68,10 +69,8 @@ void show_level(int new_level) {
 	_G(level_type) = _G(scrn).type;
 
 	_G(thor)->next = 0;
-	//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], PAGE2);
 
-	//build_screen(draw_page);
-	//show_objects(new_level, draw_page);
+	show_objects();
 	show_enemies();
 
 	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154) _G(thor)->dir = 0;
