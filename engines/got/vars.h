@@ -160,7 +160,8 @@ public:
 	ACTOR _explosion;
 	ACTOR _sparkle;
 	THOR_INFO _thor_info;
-	int _boss_dead = 0;
+	bool _boss_dead = false;
+	bool _endgame = false;
 
 	int _warp_flag = 0;
 

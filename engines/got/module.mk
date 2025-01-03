@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	data/setup.o \
 	data/thor_info.o \
 	game/boss1.o \
+	game/boss2.o \
 	game/back.o \
 	game/init.o \
 	game/main.o \

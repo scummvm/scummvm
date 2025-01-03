@@ -19,21 +19,21 @@
  *
  */
 
-#ifndef GOT_GAME_BOSS1_H
-#define GOT_GAME_BOSS1_H
+#ifndef GOT_GAME_BOSS2_H
+#define GOT_GAME_BOSS2_H
 
 #include "got/data/defines.h"
 
 namespace Got {
 
-// Boss 1 - Snake (Jormangund)
-extern int boss1_movement(ACTOR *actr);
-extern void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num);
-extern void boss_level1();
-extern void closing_sequence1();
-extern void closing_sequence1_2();
-extern void closing_sequence1_3();
-extern void closing_sequence1_4();
+// Boss 2 - Skull (Nognir)
+extern int boss2_movement(ACTOR *actr);
+extern void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num);
+extern void boss_level2();
+extern void closing_sequence2();
+extern void closing_sequence2_2();
+extern void closing_sequence2_3();
+extern void closing_sequence2_4();
 
 } // namespace Got
 

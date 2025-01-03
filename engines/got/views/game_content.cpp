@@ -22,6 +22,7 @@
 #include "got/views/game_content.h"
 #include "got/game/back.h"
 #include "got/game/boss1.h"
+#include "got/game/boss2.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/object.h"
@@ -115,7 +116,7 @@ void GameContent::draw() {
 #define MSG(STR, METHOD) else if (msg._name == STR) { METHOD(); return true; }
 
 bool GameContent::msgGame(const GameMessage &msg) {
-	if (msg._name == "BOSS_PAUSE") {
+	if (msg._name == "PAUSE") {
 		_G(gameMode) = MODE_PAUSE;
 		_pauseCtr = msg._value;
 		return true;
@@ -672,6 +673,8 @@ void GameContent::lightningCountdownDone() {
 }
 
 void GameContent::closingSequence() {
+	const int area = _G(area);
+
 	switch (++_closingStateCtr) {
 	case 1:
 		// Convert health/magic/jewels to score
@@ -679,16 +682,44 @@ void GameContent::closingSequence() {
 		break;
 
 	case 2:
-		closing_sequence1_2();
+		switch (area) {
+		case 1:
+			closing_sequence1_2();
+			break;
+		case 2:
+			closing_sequence2_2();
+			break;
+		default:
+			break;
+		}
 		break;
 
 	case 3:
-		closing_sequence1_3();
+		switch (area) {
+		case 1:
+			closing_sequence1_3();
+			break;
+		case 2:
+			closing_sequence2_3();
+			break;
+		default:
+			break;
+		}
 		break;
 
 	case 4:
 		_closingStateCtr = 0;
-		closing_sequence1_4();
+
+		switch (area) {
+		case 1:
+			closing_sequence1_4();
+			break;
+		case 2:
+			closing_sequence2_4();
+			break;
+		default:
+			break;
+		}
 		break;
 
 	default:
