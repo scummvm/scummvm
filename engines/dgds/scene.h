@@ -369,7 +369,9 @@ private:
 	bool _ignoreMouseUp;
 	bool _lbuttonDown;
 	bool _rbuttonDown;
-	bool _isLookMode;
+
+	/// Only changes in beamish - toggle between use (0), look (1) and target (2)
+	int16 _lookMode;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;

@@ -510,7 +510,7 @@ bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
 SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false),
-_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false), _isLookMode(false) {
+_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false), _lookMode(0) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1180,12 +1180,15 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 
 	int16 cursorNum = kDgdsMouseGameDefault;
 	if (!dlg) {
-		// Update mouse cursor if no dialog visible
-		if (_isLookMode)
+		// Update mouse cursor if no dialog visible.
+		// If lookMode is target (2) then activeItem will change it below.
+		if (_lookMode)
 			cursorNum = kDgdsMouseLook;
 		if (area)
-			cursorNum = _isLookMode ? area->_cursorNum2 : area->_cursorNum;
+			cursorNum = _lookMode ? area->_cursorNum2 : area->_cursorNum;
 	}
+
+	GameItem *activeItem = engine->getGDSScene()->getActiveItem();
 
 	if (_dragItem) {
 		if (area && area->_objInteractionRectNum == 1) {
@@ -1195,9 +1198,10 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 		}
 
 		cursorNum = _dragItem->_iconNum;
-	} else if (_rbuttonDown) {
-		GameItem *activeItem = engine->getGDSScene()->getActiveItem();
-		if (activeItem)
+	} else if (activeItem) {
+		// In HOC or Dragon you need to hold down right button to get the
+		// target cursor.  In Willy Beamish it is look mode 2 (target)
+		if (_rbuttonDown || _lookMode == 2)
 			cursorNum = activeItem->_altCursor;
 	}
 
@@ -1213,8 +1217,8 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 		return;
 	}
 
-	// Don't start drag in look mode.
-	if (_isLookMode)
+	// Don't start drag in look/target mode.
+	if (_lookMode)
 		return;
 
 	HotArea *area = findAreaUnderMouse(pt);
@@ -1252,6 +1256,7 @@ static const ObjectInteraction *_findInteraction(const Common::Array<ObjectInter
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
 	_lbuttonDown = false;
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (_ignoreMouseUp) {
 		debug(9, "Ignoring mouseup at %d,%d as it was used to clear a dialog", pt.x, pt.y);
@@ -1264,7 +1269,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		return;
 	}
 
-	if (_isLookMode) {
+	if (_lookMode == 1) {
 		rightButtonAction(pt);
 		return;
 	}
@@ -1276,7 +1281,6 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	debug(9, "Mouse LUp on area %d (%d,%d,%d,%d) cursor %d cursor2 %d", area->_num, area->_rect.x, area->_rect.y,
 		  area->_rect.width, area->_rect.height, area->_cursorNum, area->_cursorNum2);
 
-	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (!_rbuttonDown)
 		engine->setMouseCursor(area->_cursorNum);
 
@@ -1296,26 +1300,24 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		if (haveInvBtn)
 			addInvButtonToHotAreaList();
 	} else {
-		if (_rbuttonDown) {
+		const GameItem *activeItem = engine->getGDSScene()->getActiveItem();
+		if (activeItem && (_rbuttonDown || _lookMode == 2)) {
 			debug(1, " --> exec both-button click ops for area %d", area->_num);
 			// A both-button-click event, find the interaction list.
-			const GameItem *activeItem = engine->getGDSScene()->getActiveItem();
-			if (activeItem) {
-				if (!runOps(activeItem->onBothButtonsOps))
-					return;
+			if (!runOps(activeItem->onBothButtonsOps))
+				return;
 
-				const GameItem *destItem = dynamic_cast<const GameItem *>(area);
-				const ObjectInteraction *i;
-				if (destItem) {
-					i =_findInteraction(gds->getObjInteractions2(), activeItem->_num, area->_num);
-				} else {
-					i = _findInteraction(_objInteractions2, activeItem->_num, area->_num);
-				}
-				if (i) {
-					debug(1, " --> exec %d both-click ops for item combo %d", i->opList.size(), activeItem->_num);
-					if (!runOps(i->opList, engine->getGameGlobals()->getGameMinsToAddOnObjInteraction()))
-						return;
-				}
+			const GameItem *destItem = dynamic_cast<const GameItem *>(area);
+			const ObjectInteraction *i;
+			if (destItem) {
+				i =_findInteraction(gds->getObjInteractions2(), activeItem->_num, area->_num);
+			} else {
+				i = _findInteraction(_objInteractions2, activeItem->_num, area->_num);
+			}
+			if (i) {
+				debug(1, " --> exec %d both-click ops for item combo %d", i->opList.size(), activeItem->_num);
+				if (!runOps(i->opList, engine->getGameGlobals()->getGameMinsToAddOnObjInteraction()))
+					return;
 			}
 		} else {
 			debug(1, " --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
@@ -1416,9 +1418,16 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 		return;
 	}
 
-	if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
-		// Willy toggles between look/act mode on right click
-		_isLookMode = !_isLookMode;
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	if (engine->getGameId() == GID_WILLY) {
+		// Willy toggles between look/act/target mode on right click
+		if (engine->getGDSScene()->getActiveItem()) {
+			_lookMode++;
+			if (_lookMode > 2)
+				_lookMode = 0;
+		} else {
+			_lookMode = !_lookMode;
+		}
 		mouseMoved(pt);
 	} else {
 		// Other games do right-button action straight away.
