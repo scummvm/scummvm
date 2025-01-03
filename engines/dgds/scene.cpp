@@ -1339,9 +1339,12 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Globals *globals = engine->getGameGlobals();
 	GDSScene *gdsScene = engine->getGDSScene();
+	int16 dropSceneNum = _num;
 
 	if (engine->getGameId() == GID_WILLY) {
 		static_cast<WillyGlobals *>(globals)->setDroppedItemNum(dragItem->_num);
+		if (engine->getInventory()->isOpen())
+			dropSceneNum = 2;
 	}
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
@@ -1349,7 +1352,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	// TODO: Both these loops are very similar.. there should be a cleaner way.
 
 	for (const auto &item : gdsScene->getGameItems()) {
-		if (item._inSceneNum == _num && _isInRect(pt, item._rect)) {
+		if (item._inSceneNum == dropSceneNum && _isInRect(pt, item._rect)) {
 			debug(1, "Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
 			const ObjectInteraction *i = _findInteraction(gdsScene->getObjInteractions1(), dragItem->_num, item._num);
 			if (i) {
