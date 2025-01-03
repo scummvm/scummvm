@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-02 17:01+0000\n"
-"PO-Revision-Date: 2025-01-02 16:18+0000\n"
+"PO-Revision-Date: 2025-01-03 08:03+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -270,7 +270,7 @@ msgstr "Kód betöltése fájlból"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr "Manuális Mód: Valami hiba történt"
+msgstr "Kézi Mód: Hiba lépett fel"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
@@ -279,11 +279,11 @@ msgstr "Felhőtárhely nem volt csatlakoztatva."
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
-"Győződj meg, hogy a JSON kódot megfelelően másoltad, majd próbáld újra."
+"Győződjön meg, hogy megfelelően másolta a JSON kódot, majd próbáld újra."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr "Ha ez nem működik, próbáld újra az elejétől."
+msgstr "Ha ez sem működik, próbálja újra az elejétől."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
@@ -291,7 +291,7 @@ msgstr "Hibaüzenet: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr "Manuális Mód: Sikeres"
+msgstr "Kézi Mód: Sikeres"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
@@ -301,7 +301,7 @@ msgstr "Vissza"
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
 #: gui/saveload-dialog.cpp:840 engines/crab/input/input.cpp:181
 msgid "Next"
-msgstr "Következõ"
+msgstr "Következő"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
