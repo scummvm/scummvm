@@ -156,7 +156,7 @@ void Clock::update(bool gameRunning) {
 	_gameTicksUp = playTimeNow / MILLIS_PER_TIMER_TICK;
 
 	// Is there any reason to make this variable anything other than negative the other one??
-	// There seems to be no other way to set them as the are RO globals.
+	// There seems to be no other way to set them as they are RO globals.
 	_gameTicksDown = -_gameTicksUp;
 
 	uint32 lastLastPlayTime = _lastPlayTime;
