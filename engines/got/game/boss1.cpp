@@ -33,11 +33,13 @@
 
 namespace Got {
 
+static int boss1_dead();
+
 int boss1_movement(ACTOR *actr) {
 	int d, x1, y1, f;
 
 	if (_G(boss_dead))
-		return boss_dead1();
+		return boss1_dead();
 
 	d = actr->last_dir;
 	if (actr->edge_counter) {
@@ -215,7 +217,7 @@ void boss_level1() {
 	music_play(5, 1);
 }
 
-int boss_dead1(void) {
+static int boss1_dead() {
 	int rep, n, x, y, r, x1, y1;
 
 	_G(hourglass_flag) = 0;

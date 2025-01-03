@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "got/game/back.h"
 #include "got/game/boss1.h"
+#include "got/game/boss2.h"
 #include "got/game/move.h"
 #include "got/game/object.h"
 #include "got/game/script.h"
@@ -154,6 +155,14 @@ void show_level_done() {
 			f = false;
 		}
 	}
+	if (GAME2 && _G(new_level) == BOSS_LEVEL2) {
+		if (!_G(setup).boss_dead[1]) {
+			if (!_G(auto_load))
+				boss_level2();
+			f = false;
+		}
+	}
+
 	if (_G(startup))
 		f = false;
 	if (f)

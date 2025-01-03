@@ -22,6 +22,7 @@
 #include "got/game/move_patterns.h"
 #include "got/game/back.h"
 #include "got/game/boss1.h"
+#include "got/game/boss2.h"
 #include "got/game/move.h"
 #include "got/game/object.h"
 #include "got/gfx/panel.h"
@@ -146,6 +147,7 @@ int special_movement_seven(ACTOR *actr);
 int special_movement_eight(ACTOR *actr);
 int special_movement_nine(ACTOR *actr);
 int special_movement_ten(ACTOR *actr);
+int special_movement_eleven(ACTOR *actr);
 
 int (*special_movement_func[])(ACTOR *actr) = {
 	NULL,
@@ -158,11 +160,12 @@ int (*special_movement_func[])(ACTOR *actr) = {
 	special_movement_seven,
 	special_movement_eight,
 	special_movement_nine,
-	special_movement_ten
+	special_movement_ten,
+	special_movement_eleven
 };
 
 
-// check thor move
+// Check Thor move
 int check_move0(int x, int y, ACTOR *actr) {
 	int x1, x2, y1, y2;
 	int x3, x4, y3, y4;
@@ -325,7 +328,8 @@ int check_move0(int x, int y, ACTOR *actr) {
 	return 1;
 }
 
-int check_move1(int x, int y, ACTOR *actr) {   //check hammer move
+// Check hammer move
+int check_move1(int x, int y, ACTOR *actr) {   
 	int  x1, x2, y1, y2, i;
 	int  x3, y3, x4, y4;
 	int  icn, f;
@@ -377,13 +381,20 @@ int check_move1(int x, int y, ACTOR *actr) {   //check hammer move
 
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
 			if (_G(boss_active)) {
-				switch (_G(boss_active)) {
+				switch (_G(area)) {
 				case 1:
 					check_boss1_hit(act, x1, y1, x2, y2, i);
 					break;
+				case 2:
+					check_boss2_hit(act, x1, y1, x2, y2, i);
+					break;
+				default:
+					error("TODO: area 3");
+					break;
 				}
 			} else {
-				if (act->solid == 2 && (actr->move == 16 || actr->move == 17)) return 0;
+				if (act->solid == 2 && (actr->move == 16 || actr->move == 17))
+					return 0;
 				actor_damaged(act, actr->strength);
 			}
 			f++;
@@ -395,7 +406,8 @@ int check_move1(int x, int y, ACTOR *actr) {   //check hammer move
 	return 1;
 }
 
-int check_move2(int x, int y, ACTOR *actr) {   //check enemy move
+// Check enemy move
+int check_move2(int x, int y, ACTOR *actr) {
 	int x1, x2, y1, y2, i;
 	int x3, y3, x4, y4;
 	int icn;
@@ -469,7 +481,8 @@ int check_move2(int x, int y, ACTOR *actr) {   //check enemy move
 	return 1;
 }
 
-int check_move3(int x, int y, ACTOR *actr) {   //check enemy shot move
+// Check enemy shot move
+int check_move3(int x, int y, ACTOR *actr) {
 	int x1, x2, y1, y2;
 	int x3, x4, y3, y4, i;
 	byte icn1, icn2, icn3, icn4;
@@ -530,8 +543,8 @@ int check_move3(int x, int y, ACTOR *actr) {   //check enemy shot move
 	return 1;
 }
 
-int check_move4(int x, int y, ACTOR *actr) {   //flying enemies
-
+// Flying enemies
+int check_move4(int x, int y, ACTOR *actr) {
 	if (x<0 || x>(319 - actr->size_x) || y < 0 || y>175) return 0;
 	if (overlap(x, y, x + actr->size_x - 1, y + actr->size_y - 1,
 		_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
@@ -606,7 +619,8 @@ int  check_thor_move(int x, int y, ACTOR *actr) {
 	return 0;
 }
 
-int movement_zero(ACTOR *actr) {       //player control
+// Player control
+int movement_zero(ACTOR *actr) {
 	int d, x, y, od;
 	d = actr->dir;
 	od = d;
@@ -791,7 +805,8 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 
 //*==========================================================================
 
-int special_movement_one(ACTOR *actr) {   //block
+// Block
+int special_movement_one(ACTOR *actr) {
 	int d, x1, y1, sd;
 
 	if (_G(diag_flag)) return 0;
@@ -836,7 +851,8 @@ int special_movement_one(ACTOR *actr) {   //block
 	return 1;
 }
 
-int special_movement_two(ACTOR *actr) {   //angle
+// Angle
+int special_movement_two(ACTOR *actr) {
 	int x1, y1, x2, y2, i;
 	int x3, y3, x4, y4;
 	ACTOR *act;
@@ -874,10 +890,12 @@ int special_movement_two(ACTOR *actr) {   //angle
 	return 1;
 }
 
-int special_movement_three(ACTOR *actr) {  //yellow globe
+// Yellow globe
+int special_movement_three(ACTOR *actr) {
 	long lind;
 
-	if (_G(thunder_flag)) return 0;
+	if (_G(thunder_flag))
+		return 0;
 
 	lind = (long)_G(current_level);
 	lind = lind * 1000;
@@ -887,18 +905,17 @@ int special_movement_three(ACTOR *actr) {  //yellow globe
 	return 0;
 }
 
-int special_movement_four(ACTOR *actr) {   //peg switch
-
+// Peg switch
+int special_movement_four(ACTOR *actr) {
 	if (actr->shot_cnt != 0) return 0;
 	actr->shot_cnt = 30;
 	actr = actr;
 	_G(switch_flag) = 1;
 	return 0;
 }
-void kill_enemies(int ix, int iy);
-void remove_objects(int iy, int ix);
 
-int special_movement_five(ACTOR *actr) {    //boulder roll
+// Boulder roll
+int special_movement_five(ACTOR *actr) {
 	int d;
 
 	d = _G(thor)->dir;
@@ -930,13 +947,11 @@ int special_movement_five(ACTOR *actr) {    //boulder roll
 }
 
 int special_movement_six(ACTOR *actr) {
-
 	thor_damaged(actr);
 	return 0;
 }
 
 int special_movement_seven(ACTOR *actr) {
-
 	if (actr->shot_cnt != 0) return 0;
 	actr->shot_cnt = 30;
 	actr = actr;
@@ -945,7 +960,6 @@ int special_movement_seven(ACTOR *actr) {
 }
 
 int special_movement_eight(ACTOR *actr) {
-
 	if (_G(thor)->dir < 2 || _G(diag_flag)) return 0;
 	actr->last_dir = _G(thor)->dir;
 	actr->move = 14;
@@ -953,7 +967,6 @@ int special_movement_eight(ACTOR *actr) {
 }
 
 int special_movement_nine(ACTOR *actr) {
-
 	if (_G(thor)->dir > 1 || _G(diag_flag)) return 0;
 	actr->last_dir = _G(thor)->dir;
 	actr->move = 14;
@@ -961,26 +974,50 @@ int special_movement_nine(ACTOR *actr) {
 }
 
 int special_movement_ten(ACTOR *actr) {
+	byte &actor_ctr = GAME1 ? actr->temp6 : actr->talk_counter;
 
-	if (actr->temp6) {
-		actr->temp6--;
+	if (actor_ctr) {
+		actor_ctr--;
 		return 0;
 	}
-	if (_G(thunder_flag)) return 0;
-	if (!actr->temp6) {
-		actr->temp6 = 10;
+
+	if (_G(thunder_flag))
+		return 0;
+
+	if (!actor_ctr) {
+		actor_ctr = 10;
 		actor_speaks(actr, 0 - actr->pass_value, 0);
 	}
+
 	return 0;
 }
 
-int movement_one(ACTOR *actr) {    //no movement - frame cycle
+// Red guard
+int special_movement_eleven(ACTOR *actr) {
+	int t;
 
+	if (actr->talk_counter) {
+		actr->talk_counter--;
+		return 0;
+	}
+
+	t = actr->type;
+	actr->type = 4;
+	actor_speaks(actr, 0, 0);
+	actr->type = t;
+	actr->talk_counter = 10;
+
+	return 0;
+}
+
+// No movement - frame cycle
+int movement_one(ACTOR *actr) {
 	next_frame(actr);
 	return actr->dir;
 }
 
-int movement_two(ACTOR *actr) {     //hammer only
+// Hammer only
+int movement_two(ACTOR *actr) {
 	int d, x1, y1;
 
 	d = actr->last_dir;
@@ -1020,7 +1057,8 @@ int movement_two(ACTOR *actr) {     //hammer only
 	return d;
 }
 
-int movement_three(ACTOR *actr) {         //walk-bump-random turn
+// Walk-bump-random turn
+int movement_three(ACTOR *actr) {
 	int d, x1, y1;
 
 	d = actr->last_dir;
@@ -1059,7 +1097,8 @@ int movement_three(ACTOR *actr) {         //walk-bump-random turn
 	return d;
 }
 
-int movement_four(ACTOR *actr) {         //simple tracking
+// Simple tracking
+int movement_four(ACTOR *actr) {
 	int d, x1, y1, f;
 
 	d = actr->last_dir;
@@ -1198,8 +1237,8 @@ int movement_five(ACTOR *actr) {
 	return d;
 }
 
-int movement_six(ACTOR *actr) {   //explosion only
-
+// Explosion only
+int movement_six(ACTOR *actr) {
 	if (actr->num_shots > 0) {
 		actr->next++;
 		if (actr->next > 2) {
@@ -1210,16 +1249,18 @@ int movement_six(ACTOR *actr) {   //explosion only
 	} else {
 		actr->dead = 2;
 		actr->used = 0;
-		if (!_G(boss_dead)) if (actr->type == 2)
-			drop_object(actr);
+		if (!_G(boss_dead) && !_G(endgame))
+			if (actr->type == 2)
+				drop_object(actr);
 
 	}
+
 	next_frame(actr);
 	return 0;
 }
 
-int movement_seven(ACTOR *actr) {         //walk-bump-random turn (pause also)
-
+// Walk-bump-random turn (pause also)
+int movement_seven(ACTOR *actr) {
 	if (actr->next == 0 && actr->frame_count == actr->frame_speed) {
 		actr->speed_count = 12;
 		actr->last_dir = g_events->getRandomNumber(3);
@@ -1227,8 +1268,8 @@ int movement_seven(ACTOR *actr) {         //walk-bump-random turn (pause also)
 	return movement_three(actr);
 }
 
-int movement_eight(ACTOR *actr) {         //follow thor
-
+// Follow thor
+int movement_eight(ACTOR *actr) {
 	if (_G(thor)->x > 0) actr->x = _G(thor)->x - 1;
 	else actr->x = _G(thor)->x;
 	actr->y = _G(thor)->y;
@@ -1236,7 +1277,8 @@ int movement_eight(ACTOR *actr) {         //follow thor
 	return 0;
 }
 
-int movement_nine(ACTOR *actr) {         //4-way straight (random length) change
+// 4-way straight (random length) change
+int movement_nine(ACTOR *actr) {
 	int d, x1, y1, f;
 
 	d = actr->last_dir;
@@ -1276,7 +1318,8 @@ int movement_nine(ACTOR *actr) {         //4-way straight (random length) change
 	return d;
 }
 
-int movement_ten(ACTOR *actr) {         //vert straight (random length) change
+// Vert straight (random length) change
+int movement_ten(ACTOR *actr) {
 	int d, x1, y1, f;
 
 	d = actr->last_dir;
@@ -1320,7 +1363,8 @@ int movement_ten(ACTOR *actr) {         //vert straight (random length) change
 	return d;
 }
 
-int movement_eleven(ACTOR *actr) {         //horz only (bats)
+// Horz only (bats)
+int movement_eleven(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1358,7 +1402,8 @@ int movement_eleven(ACTOR *actr) {         //horz only (bats)
 	return d;
 }
 
-int movement_twelve(ACTOR *actr) {         //horz straight until bump
+// Horz straight until bump
+int movement_twelve(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1381,7 +1426,8 @@ int movement_twelve(ACTOR *actr) {         //horz straight until bump
 	return d;
 }
 
-int movement_thirteen(ACTOR *actr) {         //pause-seek (mushroom)
+// Pause-seek (mushroom)
+int movement_thirteen(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1406,7 +1452,8 @@ int movement_thirteen(ACTOR *actr) {         //pause-seek (mushroom)
 	return d;
 }
 
-int movement_fourteen(ACTOR *actr) {         //move-bump-stop (boulder)
+// Move-bump-stop (boulder)
+int movement_fourteen(ACTOR *actr) {
 	int d, x1, y1;
 
 	d = actr->last_dir;
@@ -1450,12 +1497,13 @@ int movement_fourteen(ACTOR *actr) {         //move-bump-stop (boulder)
 	return d;
 }
 
-int movement_fifteen(ACTOR *actr) {    //no movement - no frame cycle
-
+// No movement - no frame cycle
+int movement_fifteen(ACTOR *actr) {
 	return actr->dir;
 }
 
-int movement_sixteen(ACTOR *actr) {     //tornado 1
+// Tornado 1
+int movement_sixteen(ACTOR *actr) {
 	int d, x1, y1;
 
 	d = actr->last_dir;
@@ -1487,7 +1535,8 @@ int movement_sixteen(ACTOR *actr) {     //tornado 1
 	return d;
 }
 
-int movement_seventeen(ACTOR *actr) {         //tornado 2
+// Tornado 2
+int movement_seventeen(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1524,7 +1573,8 @@ int movement_seventeen(ACTOR *actr) {         //tornado 2
 	return d;
 }
 
-int movement_eighteen(ACTOR *actr) {    //no movement - frame cycle
+// No movement - frame cycle
+int movement_eighteen(ACTOR *actr) {
 	int d;
 
 	if (actr->temp5) {
@@ -1565,22 +1615,26 @@ int movement_eighteen(ACTOR *actr) {    //no movement - frame cycle
 	return d;
 }
 
-int movement_nineteen(ACTOR *actr) {    //no movement - frame cycle
-
+// No movement - frame cycle
+int movement_nineteen(ACTOR *actr) {
 	return movement_seven(actr);
 }
 
-int movement_twenty(ACTOR *actr) {    //boss - snake
+int movement_twenty(ACTOR *actr) {
+	if (GAME1)
+		// Boss - snake
+		return boss1_movement(actr);
 
-	return boss1_movement(actr);
+	return movement_one(actr);
 }
 
-int movement_twentyone(ACTOR *actr) {    //no movement - frame cycle
-
+// No movement - frame cycle
+int movement_twentyone(ACTOR *actr) {
 	return movement_three(actr);
 }
 
-int movement_twentytwo(ACTOR *actr) {    //spear
+// Spear
+int movement_twentytwo(ACTOR *actr) {    
 	int d;
 
 	d = actr->last_dir;
@@ -1663,7 +1717,8 @@ redo:
 	return d;
 }
 
-int movement_twentythree(ACTOR *actr) {    //spinball counter-clockwise
+// Spinball counter-clockwise
+int movement_twentythree(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1754,7 +1809,8 @@ int movement_twentythree(ACTOR *actr) {    //spinball counter-clockwise
 	return d;
 }
 
-int movement_twentyfour(ACTOR *actr) {    //spinball  clockwise
+// Spinball  clockwise
+int movement_twentyfour(ACTOR *actr) {
 	int d;
 
 	d = actr->last_dir;
@@ -1845,7 +1901,8 @@ int movement_twentyfour(ACTOR *actr) {    //spinball  clockwise
 	return d;
 }
 
-int movement_twentyfive(ACTOR *actr) {         //acid puddle
+// Acid puddle
+int movement_twentyfive(ACTOR *actr) {
 	int i, ret;
 
 	if (actr->temp2) {
@@ -1868,12 +1925,16 @@ int movement_twentyfive(ACTOR *actr) {         //acid puddle
 	return movement_three(actr);
 }
 
-int movement_twentysix(ACTOR *actr) {         //
+int movement_twentysix(ACTOR *actr) {
+	if (GAME2)
+		return boss2_movement(actr);
 
 	return movement_one(actr);
 }
 
-int movement_twentyseven(ACTOR *actr) {         //
+int movement_twentyseven(ACTOR *actr) {
+	if (GAME2)
+		return boss2_movement(actr);
 
 	return movement_one(actr);
 }
