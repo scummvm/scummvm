@@ -36,6 +36,13 @@ namespace Drawing {
 	void filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol);
 	void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol);
 
+	/**
+	 * A non-filled rectangle but don't draw outside clipWin.
+	 *
+	 * Applies regular rect rounding rules and draws lines at right-1 and bottom-1, so that
+	 * clipRect == rect will draw a complete rectangle
+	 */
+	void rectClipped(const Common::Rect &rect, const Common::Rect &clipWin, Graphics::ManagedSurface *dst, byte color);
 }
 
 } // end namespace Dgds

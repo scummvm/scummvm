@@ -43,6 +43,20 @@ void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, by
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, drawPixel, dst);
 }
 
+void rectClipped(const Common::Rect &r, const Common::Rect &clip, Graphics::ManagedSurface *dst, byte color) {
+	if (r.top >= clip.top && r.top < clip.bottom)
+		dst->hLine(MAX(r.left, clip.left), r.top, MIN(r.right - 1, clip.right - 1), color);
+
+	if (r.bottom - 1 >= clip.top && r.bottom - 1 < clip.bottom)
+		dst->hLine(MAX(r.left, clip.left), r.bottom - 1, MIN(r.right - 1, clip.right - 1), color);
+
+	if (r.left >= clip.left && r.left < clip.right)
+		dst->vLine(r.left, MAX(r.top, clip.top), MIN(r.bottom - 1, clip.bottom - 1), color);
+
+	if (r.right - 1 >= clip.left && r.right - 1 < clip.right)
+		dst->vLine(r.right - 1, MAX(r.top, clip.top), MIN(r.bottom - 1, clip.bottom - 1), color);
+}
+
 }
 
 } // end namespace Dgds

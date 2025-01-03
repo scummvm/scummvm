@@ -921,12 +921,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// FALL THROUGH to draw the border
 	}
 	case 0xa110: { // DRAW EMPTY RECT  x1,y1,x2,y2:int
-		// FIXME: These lines should be clipped by seq._drawWin
-		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
-		_vm->_compositionBuffer.drawLine(r.left, r.top, r.right, r.top, seq._drawColFG);
-		_vm->_compositionBuffer.drawLine(r.left, r.bottom, r.right, r.bottom, seq._drawColFG);
-		_vm->_compositionBuffer.drawLine(r.left, r.top, r.left, r.bottom, seq._drawColFG);
-		_vm->_compositionBuffer.drawLine(r.right, r.top, r.right, r.bottom, seq._drawColFG);
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		Drawing::rectClipped(r, seq._drawWin, &_vm->_compositionBuffer, seq._drawColFG);
 		break;
 	}
 	case 0xa200: // 0xa2n0 DRAW STRING n: x,y,w,h:int - draw the nth string from the string table
