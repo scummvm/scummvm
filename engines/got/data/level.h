@@ -29,6 +29,9 @@ namespace Got {
 #define OBJECTS_COUNT 30
 
 struct LEVEL {                    // size=512
+private:
+	void sync(Common::Serializer &s);
+public:
 	byte icon[12][20] = {};       // 0   grid of icons
 	byte bg_color = 0;            // 240 background color
 	byte type = 0;                // 241 music
@@ -48,11 +51,15 @@ struct LEVEL {                    // size=512
 	byte actor_dir[16] = {};      // initial dir
 	byte future[3] = {};          // 473
 
-	void sync(Common::Serializer &s);
-	void load(Common::SeekableReadStream *src);
-	void save(Common::WriteStream * dest);
-	void load(const byte *src);
-	void save(byte *dest);
+	/**
+	 * Loads level data from the global sd_data for the given level
+	 */
+	void load(int level);
+
+	/**
+	 * Saves the level data to the global sd_data 
+	 */
+	void save(int level);
 };
 
 } // namespace Got

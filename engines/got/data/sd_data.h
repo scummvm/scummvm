@@ -32,9 +32,6 @@ private:
 	byte *_data;
 	int _area = 1;
 
-	byte *getLevelAddr(int level) const {
-		return _data + level * 512;
-	}
 public:
 	SdData();
 	~SdData();
@@ -46,14 +43,9 @@ public:
 	void setArea(int area);
 
 	void sync(Common::Serializer &s);
-	void load(int level, LEVEL *dest);
-	void save(int level, LEVEL *src);
 
-	operator const byte *() const {
-		return _data;
-	}
-	operator byte *() {
-		return _data;
+	byte *operator[](int level) const {
+		return _data + level * 512;
 	}
 };
 

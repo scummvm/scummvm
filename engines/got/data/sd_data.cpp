@@ -51,16 +51,4 @@ void SdData::sync(Common::Serializer &s) {
 	s.syncBytes(_data, SD_DATA_SIZE);
 }
 
-void SdData::load(int level, LEVEL *dest) {
-	byte *addr = getLevelAddr(level);
-	Common::MemoryReadStream inStream(addr, 512);
-	dest->load(&inStream);
-}
-
-void SdData::save(int level, LEVEL *src) {
-	byte *addr = getLevelAddr(level);
-	Common::MemoryWriteStream outStream(addr, 512);
-	src->save(&outStream);
-}
-
 } // namespace Got

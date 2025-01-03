@@ -545,7 +545,7 @@ void GameContent::thorDead() {
 	_G(thor)->used = 1;
 
 	// Load saved data for new level back into scrn
-	_G(scrn).load(_G(sd_data) + (_G(new_level) * 512));
+	_G(scrn).load(_G(new_level));
 
 	_G(gameMode) = MODE_NORMAL;
 	_deathCtr = 0;
