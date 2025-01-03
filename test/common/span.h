@@ -14,7 +14,7 @@ class SpanTestSuite : public CxxTest::TestSuite {
 	class SiblingSpanImpl : public Common::SpanImpl<ValueType, Derived> {
 		typedef Common::SpanImpl<ValueType, Derived> super_type;
 	public:
-		COMMON_SPAN_TYPEDEFS
+		COMMON_SPAN_TYPEDEFS;
 		SiblingSpanImpl() : super_type() {}
 		SiblingSpanImpl(pointer data_, size_type size_) : super_type(data_, size_) {}
 	};
@@ -23,7 +23,7 @@ class SpanTestSuite : public CxxTest::TestSuite {
 	class SiblingSpan : public SiblingSpanImpl<ValueType, SiblingSpan> {
 		typedef SiblingSpanImpl<ValueType, ::SpanTestSuite::SiblingSpan> super_type;
 	public:
-		COMMON_SPAN_TYPEDEFS
+		COMMON_SPAN_TYPEDEFS;
 		SiblingSpan() : super_type() {}
 		SiblingSpan(pointer data_, size_type size_) : super_type(data_, size_) {}
 	};
@@ -32,7 +32,7 @@ class SpanTestSuite : public CxxTest::TestSuite {
 	class SubSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
 		typedef Common::NamedSpanImpl<ValueType, Derived> super_type;
 	public:
-		COMMON_SPAN_TYPEDEFS
+		COMMON_SPAN_TYPEDEFS;
 		SubSpanImpl() : super_type() {}
 		SubSpanImpl(pointer data_,
 					size_type size_,
@@ -48,7 +48,7 @@ class SpanTestSuite : public CxxTest::TestSuite {
 	class SubSpan : public SubSpanImpl<ValueType, SubSpan> {
 		typedef SubSpanImpl<ValueType, ::SpanTestSuite::SubSpan> super_type;
 	public:
-		COMMON_SPAN_TYPEDEFS
+		COMMON_SPAN_TYPEDEFS;
 		SubSpan() : super_type() {}
 		SubSpan(pointer data_,
 				size_type size_,

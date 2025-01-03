@@ -252,7 +252,7 @@ class SciSpan : public SciSpanImpl<ValueType, SciSpan> {
 	typedef SciSpanImpl<ValueType, ::Sci::SciSpan> super_type;
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
 	inline SciSpan() : super_type() {}
 
