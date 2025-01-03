@@ -672,6 +672,8 @@ Common::Error DgdsEngine::run() {
 			//
 			//_scene->drawActiveDialogBgs(&_compositionBuffer);
 
+			_dumpFrame(_compositionBuffer, "comp-before-ads");
+
 			if (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY))
 				_adsInterp->run();
 
