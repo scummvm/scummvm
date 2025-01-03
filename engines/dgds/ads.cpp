@@ -630,7 +630,6 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_currentTTMSeq = seq;
 
 		if (!seq || !env) {
-			// This happens in Willy Beamish FDD scene 24
 			warning("ADS op %04x invalid env + seq requested %d %d", code, enviro, seqnum);
 			break;
 		}
@@ -638,8 +637,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug(10, "ADS 0x%04x: add scene - env %d seq %d (%s) runCount %d prop %d", code,
 					enviro, seqnum, env->_tags.getValOrDefault(seqnum).c_str(), runCount, unk);
 
-		if (code == 0x2000)
+		if (code == 0x2000) {
+			//
+			// HACKY WORKAROUND? If we change the frame here we should also reset
+			// the `executed` flag surely?  Without this, the cola vendor disappears
+			// after you buy cola from him in Willy Beamish scene 31 (park).
+			//
+			if (seq->_currentFrame != seq->_startFrame && _vm->getGameId() == GID_WILLY)
+				seq->_executed = false;
 			seq->_currentFrame = seq->_startFrame;
+		}
 
 		if (runCount == 0) {
 			seq->_runFlag = kRunTypeKeepGoing;
@@ -875,7 +882,7 @@ bool ADSInterpreter::run() {
 		int16 flag = _adsData->_state[idx] & 0xfff7;
 		for (auto seq : _adsData->_usedSeqs[idx]) {
 			if (flag == 3) {
-				debug(10, "ADS: Segment idx %d, Reset seq %d", idx, seq->_seqNum);
+				debug(10, "ADS: Segment idx %d, Reset env %d seq %d", idx, seq->_enviro, seq->_seqNum);
 				seq->reset();
 			} else {
 				if (flag != seq->_scriptFlag) {
