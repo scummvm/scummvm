@@ -116,10 +116,18 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 
 	_G(setup).sync(s);
 
-	// For savegames loaded directly from the ScummVM launcher,
-	// take care of initializing game defaults before rest of loading
-	if (s.isLoading() && (!firstView() || firstView()->getName() != "Game"))
-		initialize_game();
+	if (s.isLoading()) {
+		// For savegames loaded directly from the ScummVM launcher,
+		// take care of initializing game defaults before rest of loading
+		if (!firstView() || firstView()->getName() != "Game")
+			initialize_game();
+
+		int area = _G(setup).area;
+		if (area == 0)
+			area = 1;
+
+		g_vars->setArea(area);
+	}
 
 	_G(thor_info).sync(s);
 	_G(sd_data).sync(s);
@@ -131,12 +139,6 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 }
 
 void GotEngine::savegameLoaded() {
-	int area = _G(setup).area;
-	if (area == 0)
-		area = 1;
-
-	g_vars->setArea(area);
-
 	_G(current_area) = _G(thor_info).last_screen;
 
 	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
