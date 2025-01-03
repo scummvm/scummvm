@@ -224,7 +224,7 @@ void GameContent::drawObjects(GfxSurface &s) {
 		for (int x = 0; x < TILES_X; ++x) {
 			int p = (y * TILES_X) + x;
 
-			if (_G(object_index)[p]) {
+			if (_G(object_map)[p]) {
 				s.blitFrom(_G(objects)[_G(object_map)[p] - 1],
 					Common::Point(x * TILE_SIZE, y * TILE_SIZE));
 			}
