@@ -42,6 +42,11 @@ int special_tile_thor(int x, int y, int icon) {
 	case 203:
 		return 0;
 	case 204:
+		if (GAME2) {
+			if (!_G(setup).f19)
+				_G(slip_flag) = true;
+			return 1;
+		}
 		return 0;
 	case 205:
 		if (!_G(diag) && _G(thor)->dir != 1)

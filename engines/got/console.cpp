@@ -136,7 +136,7 @@ bool Console::cmdFreeze(int argc, const char **argv) {
 
 bool Console::cmdLevel(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("level <num>\n");
+		debugPrintf("Current level = %d\n", _G(current_level));
 		return true;
 	} else {
 		_G(new_level) = atoi(argv[1]);

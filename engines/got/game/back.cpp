@@ -52,6 +52,7 @@ void show_level(int new_level) {
 	if (!_G(shield_on))
 		_G(actor)[2].used = 0;
 	_G(bomb_flag) = 0;
+	_G(slipping) = false;
 
 	save_d = _G(thor)->dir;
 	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
