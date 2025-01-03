@@ -171,9 +171,9 @@ enum {
 #define SHIELD_MAGIC    16
 #define THUNDER_MAGIC   32
 
-#define BOSS_LEVEL1  59
-#define BOSS_LEVEL21 200
-#define BOSS_LEVEL22 118
+#define BOSS_LEVEL1 59
+#define BOSS_LEVEL2 60
+#define BOSS_LEVEL3 999
 
 //#define DEBUG 1
 //#define IDE 1

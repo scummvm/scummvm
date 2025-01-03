@@ -53,8 +53,9 @@ void GameContent::draw() {
 	drawObjects(s);
 	drawActors(s);
 
-	if (GAME1 && _G(current_level) == BOSS_LEVEL1)
-		drawBoss1Health(s);
+	if ((GAME1 && _G(current_level) == BOSS_LEVEL1) ||
+		(GAME2 && _G(current_level) == BOSS_LEVEL2))
+		drawBossHealth(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
 	if (_G(gameMode) == MODE_THUNDER) {
@@ -263,7 +264,7 @@ void GameContent::drawActors(GfxSurface &s) {
 		s.blitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
 }
 
-void GameContent::drawBoss1Health(GfxSurface &s) {
+void GameContent::drawBossHealth(GfxSurface &s) {
 	int i, c;
 
 	int health = _G(actor)[3].health;
