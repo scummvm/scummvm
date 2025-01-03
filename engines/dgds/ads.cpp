@@ -271,9 +271,13 @@ bool ADSInterpreter::skipToElseOrEndif() {
 }
 
 bool ADSInterpreter::skipToEndIf() {
+	//
 	// This is similar to skipSceneLogicBranch, but it does not stop for ELSE,
-	// only ENDIF.
-	// This is used to skip nested IF blocks inside another skipped block.
+	// only ENDIF.  It's used to skip nested IF blocks inside another skipped
+	// block.
+	// It should be called with the pointer at the op after the IF, which can
+	// also be AND or OR ops.
+	//
 	Common::SeekableReadStream *scr = _adsData->scr;
 	while (scr->pos() < scr->size()) {
 		uint16 op = scr->readUint16LE();
@@ -282,6 +286,14 @@ bool ADSInterpreter::skipToEndIf() {
 			return true;
 		} else if (op == 0 || op == 0xffff) {
 			return false;
+		} else if (op == 0x1420 || op == 0x1430) {
+			// AND or OR. Skip the IF that follows like a nested block
+			// (this should work even for multiple AND/OR conditions)
+			uint16 op2 = scr->readUint16LE();
+			if ((op2 & 0xff00) != 0x1300)
+				error("AND/OR ADS op not followed by another IF (got 0x%04x)", op2);
+			scr->skip(numArgs(op) * 2);
+			return skipToEndIf();
 		} else if ((op & 0xff00) == 0x1300) {
 			// A nested IF (0x13xx) block. Skip to endif ignoring else.
 			scr->skip(numArgs(op) * 2);
@@ -1085,8 +1097,12 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 		for (uint32 i = 0; i < numTexts; i++) {
 			Common::String txtName;
 			s.syncString(txtName);
-			load(txtName);
-			scriptNames.push_back(txtName);
+			// We save all the names, but we only actually need to reload one script -
+			// the most recent one.  Do that at the end of this function.
+			if (s.getVersion() < 3) {
+				load(txtName);
+				scriptNames.push_back(txtName);
+			}
 		}
 	} else {
 		for (const auto &node : _adsTexts) {
@@ -1110,6 +1126,12 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 	}
 
 	s.syncString(activeScript);
+
+	if (s.getVersion() >= 3 && !activeScript.empty()) {
+		load(activeScript);
+		scriptNames.push_back(activeScript);
+	}
+
 	assert(activeScript.empty() || _adsTexts.contains(activeScript));
 	_adsData = activeScript.empty() ? nullptr : &_adsTexts[activeScript];
 
