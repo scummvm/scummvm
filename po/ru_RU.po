@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-02 17:01+0000\n"
-"PO-Revision-Date: 2024-12-29 00:23+0000\n"
+"PO-Revision-Date: 2025-01-03 15:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -11445,35 +11445,27 @@ msgstr ""
 "до 320x200 на вкладке «Движок»."
 
 #: engines/scumm/scumm.cpp:1321
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Для шрифтов для этой игры требуется исполняемый файл Indy для Macintosh."
+"Для шрифтов для этой игры требуется исполняемый файл '%s' для Macintosh."
 
 #: engines/scumm/scumm.cpp:1325
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Для этой игры требуется исполняемый файл Loom для Macintosh, содержащий "
+"Для этой игры требуется исполняемый файл '%s' для Macintosh, содержащий "
 "музыку и шрифты."
 
 #: engines/scumm/scumm.cpp:1329
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. Music "
 "and Mac GUI will be disabled"
 msgstr ""
-"Не удалось найти исполнимый файл 'Monkey Island' Macintosh, чтобы прочитать\n"
-"ресурсы и данные об инструментах. Музыка и Mac GUI будут выключены."
+"Не удалось найти исполнимый файл '%s' Macintosh, чтобы прочитать ресурсы. "
+"Музыка и Mac GUI будут выключены"
 
 #: engines/scumm/scumm.cpp:1346
 #, c-format
