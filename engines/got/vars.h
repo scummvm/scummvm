@@ -97,6 +97,9 @@ public:
 	Cheats _cheats;
 	Common::Queue<byte> _demoKeys;
 	bool _useItemFlag = false;
+	bool _slip_flag = false;
+	bool _slipping = false;
+	int _slip_cnt = 0;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;

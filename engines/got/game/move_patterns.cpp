@@ -229,6 +229,8 @@ int check_move0(int x, int y, ACTOR *actr) {
 	else x2 = (x + 10) >> 4;
 	y2 = (y + 15) >> 4;
 
+	_G(slip_flag) = 0;
+
 	// Check for cheat flying mode
 	if (!actr->flying) {
 		icn1 = _G(scrn).icon[y1][x1];
@@ -268,6 +270,17 @@ int check_move0(int x, int y, ACTOR *actr) {
 		}
 		if (icn4 > TILE_SPECIAL) if (!special_tile_thor(y2, x2, icn4)) return 0;
 	}
+
+	if (!_G(slip_flag)) {
+		_G(slipping) = 0;
+		_G(slip_cnt) = 0;
+	}
+	if (_G(slip_flag) && !_G(slipping))
+		_G(slip_cnt)++;
+	if (_G(slip_cnt) > 8)
+		_G(slipping) = 1;
+	_G(slip_flag) = 0;
+
 
 	x1 = x + 1;
 	y1 = y + 8;
@@ -610,6 +623,19 @@ int movement_zero(ACTOR *actr) {       //player control
 	y = actr->y;
 	_G(diag_flag) = 0;
 	if (actr->move_counter) actr->move_counter--;
+
+	if (_G(slipping)) {
+		if (_G(slip_cnt) == 8) play_sound(FALL, 1);
+		y += 2;
+		_G(slip_cnt)--;
+		if (!_G(slip_cnt))
+			_G(slipping) = false;
+
+		check_thor_move(x, y, actr);
+		_G(thor)->speed_count = 4;
+		return d;
+	}
+
 	if (_G(key_flag)[key_up] && _G(key_flag)[key_left]) {
 		d = 2;
 		actr->dir = d;
