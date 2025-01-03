@@ -847,9 +847,9 @@ int Scripts::cmd_settile() {
 		place_tile(pos % 20, pos / 20, tile);
 	} else {
 		LEVEL tmp;
-		tmp.load(_G(sd_data) + (screen * 512));
+		tmp.load(screen);
 		tmp.icon[pos / 20][pos % 20] = tile;
-		tmp.save(_G(sd_data) + (screen * 512));
+		tmp.save(screen);
 	}
 	return 0;
 }

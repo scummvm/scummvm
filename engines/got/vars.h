@@ -136,7 +136,6 @@ public:
 	int8 _area = 1;
 
 	LEVEL _scrn;
-	byte *_scrnp = nullptr;
 
 	SETUP _setup;
 	SETUP _last_setup;

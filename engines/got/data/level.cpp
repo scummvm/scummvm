@@ -22,6 +22,7 @@
 #include "common/algorithm.h"
 #include "common/memstream.h"
 #include "got/data/defines.h"
+#include "got/vars.h"
 
 namespace Got {
 
@@ -53,24 +54,16 @@ void LEVEL::sync(Common::Serializer &s) {
 	s.syncBytes(future, 3);
 }
 
-void LEVEL::load(Common::SeekableReadStream *src) {
-	Common::Serializer s(src, nullptr);
+void LEVEL::load(int level) {
+	Common::MemoryReadStream src(_G(sd_data)[level], 512);
+	Common::Serializer s(&src, nullptr);
 	sync(s);
 }
 
-void LEVEL::save(Common::WriteStream *dest) {
-	Common::Serializer s(nullptr, dest);
+void LEVEL::save(int level) {
+	Common::MemoryWriteStream dest(_G(sd_data)[level], 512);
+	Common::Serializer s(nullptr, &dest);
 	sync(s);
-}
-
-void LEVEL::load(const byte *src) {
-	Common::MemoryReadStream stream(src, 512);
-	load(&stream);
-}
-
-void LEVEL::save(byte *dest) {
-	Common::MemoryWriteStream stream(dest, 512);
-	save(&stream);
 }
 
 } // namespace Got

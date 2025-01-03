@@ -61,10 +61,9 @@ void show_level(int new_level) {
 	// This doesn't make sense, because that would put the ending in the middle of static_y.
 	// Plus, it follows with an entire copy of scrn into sd_data anyway, so the first
 	// move seems entirely redundant.
-	_G(sd_data).save(_G(current_level), &_G(scrn));
-	_G(sd_data).load(_G(new_level), &_G(scrn));
+	_G(scrn).save(_G(current_level));
+	_G(scrn).load(_G(new_level));
 
-	_G(scrnp) = (byte *)&_G(scrn);
 	_G(level_type) = _G(scrn).type;
 
 	_G(thor)->next = 0;

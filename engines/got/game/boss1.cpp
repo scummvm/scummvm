@@ -291,10 +291,10 @@ void closing_sequence1_4() {
 	actor_visible(2);
 
 	LEVEL lvl;
-	lvl.load(_G(sd_data) + (59 * 512));
+	lvl.load(59);
 	lvl.icon[6][18] = 148;
 	lvl.icon[6][19] = 202;
-	lvl.save(_G(sd_data) + (59 * 512));
+	lvl.save(59);
 }
 
 } // namespace Got

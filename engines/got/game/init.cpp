@@ -98,13 +98,9 @@ void initialize_game() {
 
 	_G(thor)->speed_count = 6;
 
-	_G(new_level) = _G(current_level);
-
 	// Load level data
-	Common::MemoryReadStream levelStream(
-		_G(sd_data) + _G(new_level) * 512, 512);
-	_G(scrn).load(&levelStream);
-
+	_G(new_level) = _G(current_level);
+	_G(scrn).load(_G(current_level));
 	show_level(_G(current_level));
 
 	if (!_G(auto_load)) {

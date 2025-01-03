@@ -61,8 +61,7 @@ void setup_load() {
 	_G(actor)[2].used = 0;
 	_G(thor)->speed_count = 6;
 
-	Common::MemoryReadStream stream(_G(sd_data) + (_G(new_level) * 512), 512);
-	_G(scrn).load(&stream);
+	_G(scrn).load(_G(new_level));
 
 	_G(current_level) = _G(new_level);
 	show_level(_G(new_level));
