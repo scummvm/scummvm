@@ -194,12 +194,7 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	}
 
 	// Don't allowing saving when not in-game
-	if (!firstView() || firstView()->getName() != "Game")
-		return false;
-
-	if (_G(tornado_used) || _G(lightning_used) ||
-			_G(thunder_flag) || _G(hourglass_flag) || _G(thor)->num_moves > 1 ||
-			_G(shield_on) || _G(game_over))
+	if (!firstView() || firstView()->getName() != "Game" || _G(game_over))
 		return false;
 
 	// Only allow if not in the middle of area transition, dying, etc.
