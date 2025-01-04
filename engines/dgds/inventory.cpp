@@ -427,7 +427,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 			if (isItemInInventory(item))
 				numInvItems++;
 		}
-		if (_itemOffset < numInvItems)
+		if (_itemOffset < numInvItems && _itemOffset + itemsPerPage <= numInvItems)
 			_itemOffset += itemsPerPage;
 	} else if (_prevPageBtn->containsPoint(pt) && _prevPageBtn->isVisible()) {
 		if (_itemOffset > 0)
