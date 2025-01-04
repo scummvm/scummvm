@@ -971,7 +971,33 @@ void Adlib::OnTimer() {
 					// TODO: Several xor ah,ahs in here
 					uint8 bp8 = gArray57[bp3 - 0xB];
 					if (bp3 == 0xB) {
-						// TODO: Continue from here
+						//l0017_1ED1:
+						//  TODO: Continue from here
+						/*
+						push	word ptr [224Ah]
+						push	word ptr [2248h]
+						mov	al,[bp-3h]
+						xor	ah,ah
+						mov	di,ax
+						mov	al,[di+225Fh]
+						xor	ah,ah
+						shl	ax,4h
+						push	ax
+						call	far 0017h:19BEh
+						mov	[bp-14h],ax
+						mov	[bp-12h],dx
+						mov	al,[bp-3h]
+						xor	ah,ah
+						sub	ax,0Bh
+						mov	di,ax
+						mov	al,[di+5Ch]
+						push	ax
+						push	word ptr [bp-12h]
+						push	word ptr [bp-14h]
+						call	far 0017h:2839h
+						jmp	1FA9h
+							*/
+						
 
 					}
 					// TODO: This should be 1F12
