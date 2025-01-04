@@ -173,7 +173,8 @@ enum {
 
 #define BOSS_LEVEL1 59
 #define BOSS_LEVEL2 60
-#define BOSS_LEVEL3 999
+#define BOSS_LEVEL3 95
+#define ENDING_SCREEN 106
 
 //#define DEBUG 1
 //#define IDE 1

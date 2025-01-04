@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/boss1.h"
 #include "got/game/boss2.h"
+#include "got/game/boss3.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/object.h"
@@ -55,7 +56,8 @@ void GameContent::draw() {
 	drawActors(s);
 
 	if ((GAME1 && _G(current_level) == BOSS_LEVEL1) ||
-		(GAME2 && _G(current_level) == BOSS_LEVEL2))
+		(GAME2 && _G(current_level) == BOSS_LEVEL2) ||
+		(GAME3 && _G(current_level) == BOSS_LEVEL3))
 		drawBossHealth(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
@@ -147,6 +149,9 @@ bool GameContent::tick() {
 		updateActors();
 		checkForBossDead();
 		checkForCheats();
+
+		if (_G(endgame))
+			endgame_movement();
 		break;
 
 	case MODE_THOR_DIES:
@@ -173,7 +178,7 @@ bool GameContent::tick() {
 
 	case MODE_SCORE_INV:
 		if (--_pauseCtr <= 0) {
-			_pauseCtr = 5;
+			_pauseCtr = 2;
 
 			if (_G(thor)->health > 0) {
 				_G(thor)->health--;
@@ -206,6 +211,14 @@ bool GameContent::tick() {
 	}
 
 	checkForAreaChange();
+
+	// Check for end of game area
+	// TODO: Show high score table rather than going straight to main menu
+	if (_G(end_tile)) {
+		_G(end_tile) = false;
+		Gfx::fade_out();
+		g_events->send("TitleBackground", GameMessage("MAIN_MENU"));
+	}
 
 	return false;
 }
@@ -384,12 +397,23 @@ void GameContent::checkForBossDead() {
 		if (loop == 7) {
 			_G(boss_dead) = false;
 
-			//xerase_actors(actor, display_page);
-			//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], display_page);
 			_G(exit_flag) = 0;
 
-			if (_G(boss_active) == 1) {
-				closing_sequence1();
+			if (_G(boss_active)) {
+				switch (_G(area)) {
+				case 1:
+					closing_sequence1();
+					break;
+				case 2:
+					closing_sequence2();
+					break;
+				case 3:
+					closing_sequence3();
+					break;
+				default:
+					break;
+				}
+
 				_G(boss_active) = 0;
 			}
 		}
@@ -682,6 +706,9 @@ void GameContent::closingSequence() {
 		case 2:
 			closing_sequence2_2();
 			break;
+		case 3:
+			closing_sequence3_2();
+			break;
 		default:
 			break;
 		}
@@ -694,6 +721,9 @@ void GameContent::closingSequence() {
 			break;
 		case 2:
 			closing_sequence2_3();
+			break;
+		case 3:
+			closing_sequence3_3();
 			break;
 		default:
 			break;

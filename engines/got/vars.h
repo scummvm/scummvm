@@ -219,6 +219,7 @@ public:
 	char _sd_header[128] = {};
 	char _play_speed = 0;
 	bool _thor_special_flag = false;
+	byte _exprow = 0;
 };
 
 #define _G(X) (g_vars->_##X)

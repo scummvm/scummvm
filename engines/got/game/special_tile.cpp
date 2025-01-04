@@ -51,14 +51,9 @@ int special_tile_thor(int x, int y, int icon) {
 			return 0;
 		}
 
-		if (_G(thor)->x > 300 && g_events->focusedView()->getName() == "Game") {
+		if (_G(thor)->x > 300)
 			// Ending bridge
 			_G(end_tile) = 1;
-
-			// TODO: Show high score table rather than going straight to main menu
-			Gfx::fade_out();
-			g_events->send("TitleBackground", GameMessage("MAIN_MENU"));
-		}
 		return 1;
 	case 203:
 		if (!GAME1) {
@@ -120,6 +115,9 @@ int special_tile_thor(int x, int y, int icon) {
 				play_sound(THUNDER, 1);
 				_G(setup).f22 = 1;
 			}
+		} else {
+			// Game 3
+			return 0;
 		}
 		return 1;
 	case 212:
