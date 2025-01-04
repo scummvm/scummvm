@@ -224,6 +224,8 @@ public:
 	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
 	void SetInventorySource(GameObject *newInventorySource);
 
+	bool IsInventorySourceProtagonist() const;
+
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
 	GameObject *inventorySource;
@@ -268,6 +270,9 @@ public:
 	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite& sprite, Graphics::ManagedSurface &s);
 	void DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
 	void DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite& sprite, Graphics::ManagedSurface &s);
+
+	// The definitive version that can do everything
+	void DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface & s);
 
 	void DrawCharacters(Graphics::ManagedSurface &s);
 

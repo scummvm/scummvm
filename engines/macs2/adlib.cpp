@@ -21,8 +21,8 @@
 
 #include "adlib.h"
 #include "audio/fmopl.h"
-#include <common/memstream.h>
 #include "common/debug.h"
+#include <common/memstream.h>
 
 namespace Macs2 {
 
@@ -194,8 +194,8 @@ l0017_2730:
 
 	inc	word ptr [bp-4h]
 	*/
-// l0017_2751:
-// l0017_2754:
+	// l0017_2751:
+	// l0017_2754:
 	// Reset all register to 0
 	for (int i = 2; i < 256; i++) {
 		Func2792(i, 0);
@@ -249,7 +249,7 @@ l0017_251E:
 	jmp	2648h
 */
 	// TODO: There is some conditional code around this one
-// l0017_2527:
+	// l0017_2527:
 	// Waveform select of register 1
 	Func2792(0x1, 0x20);
 	// TODO: Figure out this call
@@ -276,7 +276,7 @@ l0017_251E:
 	*/
 	// rite to BD, Amplitude Modulation Depth / Vibrato Depth / Rhythm - all reset
 	Func2792(0xBD, 0);
-	/* 
+	/*
 	xor	ax,ax
 	mov	[223Eh],ax
 	mov	[2240h],ax
@@ -378,7 +378,7 @@ l0017_2648:
 }
 
 void Adlib::Func2839() {
-	
+
 	// TODO: We are doing some loading of values in bp-1 and bp-2 from some central data, skipping this
 	// and hardcoding for now
 	/*
@@ -548,7 +548,7 @@ void Adlib::Func2839() {
 	push	ax
 	call	far 0017h:2792h */
 	// TODO: This is a parameter
-	
+
 	uint16 bp0A = 0x100;
 	bp0A += 0xC0;
 	data->seek(di + 10, SEEK_SET);
@@ -608,13 +608,13 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 			// l0017_29EB:
 			if (bpp8 > 0) {
 				// l0017_29F1:
-				bp6 = bpp8 - 1;	// TODO: xor ah, ah
+				bp6 = bpp8 - 1; // TODO: xor ah, ah
 			} else {
 				// l0017_29FC:#
 				bp6 = 0;
 			}
 			// l0017_2A01:
-			
+
 			bp4 = gArray11F[bp6] << 0x8 + gArray9F[bp6];
 			// Multiplication using 00CDh:0C97h
 			// eax:edx = eax:edx * ebx:ecx
@@ -625,12 +625,10 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 			product = product >> 0x7;
 			// TODO: Check ranges
 			bp2 = bp2 - product;
-			
-	
 		}
 	}
 	// l0017_2A4F:
-	
+
 	// TODO: Original code is making sure that only 8 bit are pushed
 	// for the second argument using AND FFh - check if ranges matter here
 	Func2792(bppA + 0xA0, bp2);
@@ -720,14 +718,14 @@ void Adlib::OnTimer() {
 			// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
 			uint16 bp12;
 			uint8 bp5 = peekByteAt(bp10);
-			
+
 			if ((bp6 & 0x0F) == 0x90) {
 				// l0017_1BA1:
 				if (bp5 != 0) {
 					// l0017_1BAA:
 					data->seek(Func19BE(2), SEEK_SET);
 					g225A += 2;
-					
+
 					if (g2291 == 0x09 || bp3 < 0x0B) {
 						// l0017_1BE4:
 						// TODO: Is this the first usage?
@@ -752,9 +750,9 @@ void Adlib::OnTimer() {
 											break;
 										}
 									}
-								}	
+								}
 							}
-						// TODO: Check if there is a better exit condition
+							// TODO: Check if there is a better exit condition
 						} while (true);
 						// l0017_1C1A:
 						// TODO: Not sure about removal of AH bits in the original
@@ -803,7 +801,7 @@ void Adlib::OnTimer() {
 									// upper 8
 									gArray2288[bp8] = gArray225F[bp3];
 									// TODO: Access an array via bp-3h
-									
+
 									// TODO: Move an offset in global 2248 forward based on
 									// the struct
 									// TODO: Pushes
@@ -854,13 +852,13 @@ void Adlib::OnTimer() {
 									// TODO: Set result back
 									// mov	[bp-14h],ax
 									// mov[bp - 12h], dx
-									
-									temp = g225E; // TODO: xor	ah,ah
+
+									temp = g225E;         // TODO: xor	ah,ah
 									uint8 temp2 = temp; // bx = ax
 									// TODO: Read from [bp-14h] - using temp for al
 									// les	di,[bp-14h]
 									// mov al, es : [di]
-									temp &= 0x3F; // TODO: xor	ah,ah
+									temp &= 0x3F;         // TODO: xor	ah,ah
 									uint8 temp3 = temp; // dx = ax
 									temp = 0x3F;
 									// TODO: Not sure if these should be 16 bit values
@@ -869,7 +867,7 @@ void Adlib::OnTimer() {
 									temp = bp1; // TODO: xor	ah,ah
 									// TODO: Should these be 16 bit?
 									temp = temp * temp3;
-									
+
 									// TODO: cwd
 									uint16 tempCX = 0x3F;
 									temp /= tempCX;
@@ -929,8 +927,7 @@ void Adlib::OnTimer() {
 									// TODO: Confirm that these are indeed identical
 									uint8 arg1 = gArray96[bp8] + 0x40;
 									uint8 arg2 = gArray96[bp8] + 0x40;
-									
-									
+
 									uint8 result = Func2779(arg2);
 									Func2792(arg1, (result & 0xC0) + bp1);
 									result = Func2779(
@@ -944,7 +941,6 @@ void Adlib::OnTimer() {
 									// the upper 8 bits?
 									gArray226F[bp3] = 0;
 									Func294E(bp8, bp4, gArray226F[bp3]);
-									
 								}
 								// TODO: Figure out the logic here, I think
 								// I got lost with jumps
@@ -954,13 +950,10 @@ void Adlib::OnTimer() {
 						}
 						// TODO: Should be 1CF2
 						// TODO: Check if this is an else or just an if
-
-
-
 					}
 					// TODO: Should be 1E94h
 					// l0017_1E94:
-					
+
 					// TODO: These pushes are not arguments for 19BE
 					// push	word ptr [224Ah]
 					// push word ptr[2248h]
@@ -971,21 +964,16 @@ void Adlib::OnTimer() {
 					// TODO: Several xor ah,ahs in here
 					uint8 bp8 = gArray57[bp3 - 0xB];
 					if (bp3 == 0xB) {
-						//l0017_1ED1:
-						//  TODO: Continue from here
+						// l0017_1ED1:
+						// TODO: These pushes are not arguments for 19BE
+						// push	word ptr [224Ah]
+						// push word ptr[2248h]
+						// TODO: Some xor ah,ah in here
+						uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
+						// Func2839()
+						//   TODO: Continue from here
 						/*
-						push	word ptr [224Ah]
-						push	word ptr [2248h]
-						mov	al,[bp-3h]
-						xor	ah,ah
-						mov	di,ax
-						mov	al,[di+225Fh]
-						xor	ah,ah
-						shl	ax,4h
-						push	ax
-						call	far 0017h:19BEh
-						mov	[bp-14h],ax
-						mov	[bp-12h],dx
+						
 						mov	al,[bp-3h]
 						xor	ah,ah
 						sub	ax,0Bh
@@ -997,32 +985,15 @@ void Adlib::OnTimer() {
 						call	far 0017h:2839h
 						jmp	1FA9h
 							*/
-						
-
 					}
 					// TODO: This should be 1F12
-					
-					
-
-					
 				}
 				// TODO: This must be 2097h
-
-
-				
 			}
 			// TODO: This must be 209Bh
-
-		
-			
 		}
-
-
-		
 	}
 	// TODO: This needs to be l0017_2425
-	
-	
 }
 
 uint16 Adlib::Func19BE(uint8 offset) {
@@ -1048,21 +1019,21 @@ void Adlib::Func1A03() {
 	// l0017_1A0F:
 	do {
 
-	bp1 = data->readByte();
-	// Go back to allow 19BE below to handle it properly
-	data->seek(-1, SEEK_CUR);
+		bp1 = data->readByte();
+		// Go back to allow 19BE below to handle it properly
+		data->seek(-1, SEEK_CUR);
 
-	uint32 timer = _nextEventTimer;
-	// TODO: Not sure what this does in practice
-	timer << 7;
-	_nextEventTimer = timer;
-	_nextEventTimer += bp1;
-	// TODO: Check if this can also change the segment address
-	uint16 newPos = Func19BE(1);
-	data->seek(newPos, SEEK_SET);
-	// TODO: Not yet implemented
-	// add	word ptr [225Ah],1h
-	// adc word ptr[225Ch], 0h
+		uint32 timer = _nextEventTimer;
+		// TODO: Not sure what this does in practice
+		timer << 7;
+		_nextEventTimer = timer;
+		_nextEventTimer += bp1;
+		// TODO: Check if this can also change the segment address
+		uint16 newPos = Func19BE(1);
+		data->seek(newPos, SEEK_SET);
+		// TODO: Not yet implemented
+		// add	word ptr [225Ah],1h
+		// adc word ptr[225Ch], 0h
 	} while ((bp1 & 0x80) != 0);
 }
 
@@ -1084,7 +1055,7 @@ void Adlib::Init() {
 	_opl = OPL::Config::create();
 	int status = _opl->init();
 
-	#define CALLBACKS_PER_SECOND 10
+#define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
 	// Hardcoded test to see if I got the logic right
@@ -1131,7 +1102,6 @@ void Adlib::Init() {
 	Func2792r(0x98, 0xa0);
 	Func2792r(0x29, 0xb0);
 
-
 	// Hardcoded test below TODO Implement properly
 	// Trying to hardcode the delta
 	/*  Func2792(0xb0, 0x00);
@@ -1143,9 +1113,6 @@ void Adlib::Init() {
 	Func2792(0xa0, 0x98);
 	Func2792(0xb0, 0x29);
 	_opl->writeReg(0xB0, 0x31); */
-		
-
-
 }
 
 void Adlib::Deinit() {
