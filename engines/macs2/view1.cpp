@@ -40,6 +40,9 @@ void View1::SetInventorySource(GameObject *newInventorySource) {
 		}
 	}
 }
+bool View1::IsInventorySourceProtagonist() const {
+	return inventorySource->Index == 1;
+}
 void View1::TransferInventoryItem(GameObject *item, GameObject *targetContainer) {
 	int index = FindInventoryItem(item);
 	inventoryItems.remove_at(index);
@@ -578,6 +581,14 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 			SetInventorySource(GameObjects::instance().GetProtagonistObject());
 		}
 		_isShowingInventory = !_isShowingInventory;
+		// If we closed an external inventory, we need to continue where we left
+		// to have the chance to do closing of containers etc.
+		if (!_isShowingInventory && !IsInventorySourceProtagonist()) {
+			// TODO: This would probably need to capture the state of the script executor better,
+			// e.g. by capturing which script we were running etc.
+			g_engine->_scriptExecutor->SetCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
+			g_engine->RunScriptExecutor();
+		}
 	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
@@ -937,6 +948,66 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 
 void View1::DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
 	DrawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite.Data.data(), s);
+}
+
+void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s) {
+	const uint16 &x = pos.x;
+	const uint16 &y = pos.y;
+	const uint16& width = sprite.Width;
+	const uint16& height = sprite.Height;
+	const Common::Array<uint8> data = sprite.Data;
+	int xScaling = 0;
+	int yScaling = 0;
+
+	int currentTargetX = 0;
+	int currentTargetY = 0;
+
+	// Outer loop: Advance over lines
+	// Inner loop: Advance over rows
+	for (int currentSourceY = 0; currentSourceY < height; currentSourceY++) {
+		currentTargetX = 0;
+		xScaling = 0;
+		for (int currentSourceX = 0; currentSourceX < width; currentSourceX++) {
+			int actualX = mirrored ? width - currentSourceX : currentSourceX;
+			uint8 val = data[currentSourceY * width + actualX];
+			if (val != 0) {
+				uint16 finalX = x + currentTargetX;
+				uint16 finalY = y + currentTargetY;
+				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
+					// Check for depth
+					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
+					// TODO: Check which relation has to hold
+					if (!useDepth || bgDepth < depth) {
+						s.setPixel(finalX, finalY, val);
+					}
+				}
+			}
+			xScaling += 0x64;
+			currentTargetX++;
+			do {
+				// Handle x scaling
+				if (xScaling <= scaling) {
+					// This means we repeat a pixel
+					currentSourceX--;
+					break;
+				}
+				xScaling -= scaling;
+				currentSourceX++;
+			} while (currentSourceX < width);
+		}
+		yScaling += 0x64;
+		currentTargetY++;
+		do {
+			// Handle y scaling
+			if (yScaling <= scaling) {
+				// This means we repeat a row
+				currentSourceY--;
+				break;
+			}
+			yScaling -= scaling;
+			currentSourceY++;
+		} while (currentSourceY < height);
+	}
 }
 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {

@@ -2071,6 +2071,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			currentView->SetInventorySource(GameObjects::instance().Objects[objectID - 1]);
 			currentView->_isShowingInventory = true;
+			secondaryInventoryLocation = _stream->pos();
 		} else if (opcode1 == 0x2A) {
 			// TODO: Not sure what this is about, current hypothesis is that this is loading object
 			// data for an object not yet added to the scene
@@ -2229,6 +2230,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
 		_stream = stream;
+	}
+
+	void ScriptExecutor::SetCurrentSceneScriptAt(uint32 offset) {
+		SetScript(Scenes::instance().CurrentSceneScript);
+		_stream->seek(offset, SEEK_SET);
 	}
 
 	void ScriptExecutor::tick() {
