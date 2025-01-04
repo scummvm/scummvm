@@ -26,11 +26,11 @@
 namespace MediaStation {
 
 BitmapHeader::BitmapHeader(Chunk &chunk) {
-	uint header_size_in_bytes = Datum(chunk, kDatumTypeUint16_1).u.i;
-	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", header_size_in_bytes);
+	uint headerSizeInBytes = Datum(chunk, kDatumTypeUint16_1).u.i;
+	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", headerSizeInBytes);
 	dimensions = Datum(chunk).u.point;
-	compression_type = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
-	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compression_type);
+	compressionType = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
+	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compressionType);
 	// TODO: Figure out what this is.
 	// This has something to do with the width of the bitmap but is always
 	// a few pixels off from the width. And in rare cases it seems to be
@@ -44,7 +44,7 @@ BitmapHeader::~BitmapHeader() {
 }
 
 bool BitmapHeader::isCompressed() {
-	return (compression_type != kUncompressedBitmap1) && (compression_type != kUncompressedBitmap2);
+	return (compressionType != kUncompressedBitmap1) && (compressionType != kUncompressedBitmap2);
 }
 
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
@@ -82,54 +82,54 @@ uint16 Bitmap::height() {
 
 void Bitmap::decompress(Chunk &chunk) {
 	// GET THE COMPRESSED DATA.
-	uint compressed_image_data_size_in_bytes = chunk.bytesRemaining();
-	char *compressed_image_start = new char[compressed_image_data_size_in_bytes];
-	char *compressed_image = compressed_image_start;
-	chunk.read(compressed_image, compressed_image_data_size_in_bytes);
+	uint compressedImageDataSizeInBytes = chunk.bytesRemaining();
+	char *compressedImageStart = new char[compressedImageDataSizeInBytes];
+	char *compressedImage = compressedImageStart;
+	chunk.read(compressedImage, compressedImageDataSizeInBytes);
 
 	// MAKE SURE WE READ PAST THE FIRST 2 BYTES.
-	char *compressed_image_data_start = compressed_image;
-	if ((*compressed_image++ == 0) && (*compressed_image++ == 0)) {
+	char *compressedImageDataStart = compressedImage;
+	if ((*compressedImage++ == 0) && (*compressedImage++ == 0)) {
 		// This condition is empty, we just put it first since this is the expected case
 		// and the negated logic would be not as readable.
 	} else {
-		compressed_image = compressed_image_data_start;
+		compressedImage = compressedImageDataStart;
 	}
-	char *compressed_image_data_end = compressed_image + compressed_image_data_size_in_bytes;
+	char *compressedImageDataEnd = compressedImage + compressedImageDataSizeInBytes;
 
 	// GET THE DECOMPRESSED PIXELS BUFFER.
 	// Media Station has 8 bits per pixel, so the decompression buffer is
 	// simple.
 	// TODO: Do we have to set the pixels ourselves?
-	char *decompressed_image = (char *)surface.getPixels();
+	char *decompressedImage = (char *)surface.getPixels();
 
 	// DECOMPRESS THE RLE-COMPRESSED BITMAP STREAM.
 	// TODO: Comemnted out becuase transparency runs not supported yet,
 	// and there were compiler warnings about these variables not being used.
-	// bool transparency_run_ever_read = false;
-	// size_t transparency_run_top_y_coordinate = 0;
-	// size_t transparency_run_left_x_coordinate = 0;
-	bool image_fully_read = false;
-	size_t current_y_coordinate = 0;
-	while (current_y_coordinate < height()) {
-		size_t current_x_coordinate = 0;
-		bool reading_transparency_run = false;
+	// bool transparencyRunEverRead = false;
+	// size_t transparencyRunTopYCoordinate = 0;
+	// size_t transparencyRunLeftXCoordinate = 0;
+	bool imageFullyRead = false;
+	size_t currentYCoordinate = 0;
+	while (currentYCoordinate < height()) {
+		size_t currentXCoordinate = 0;
+		bool readingTransparencyRun = false;
 		while (true) {
-			uint8_t operation = *compressed_image++;
+			uint8_t operation = *compressedImage++;
 			if (operation == 0x00) {
 				// ENTER CONTROL MODE.
-				operation = *compressed_image++;
+				operation = *compressedImage++;
 				if (operation == 0x00) {
 					// MARK THE END OF THE LINE.
 					// Also check if the image is finished being read.
-					if (compressed_image >= compressed_image_data_end) {
-						image_fully_read = true;
+					if (compressedImage >= compressedImageDataEnd) {
+						imageFullyRead = true;
 					}
 					break;
 				} else if (operation == 0x01) {
 					// MARK THE END OF THE IMAGE.
 					// TODO: When is this actually used?
-					image_fully_read = true;
+					imageFullyRead = true;
 					break;
 				} else if (operation == 0x02) {
 					// MARK THE START OF A KEYFRAME TRANSPARENCY REGION.
@@ -145,10 +145,10 @@ void Bitmap::decompress(Chunk &chunk) {
 					// TODO: Comemnted out becuase transparency runs not
 					// supported yet, and there were compiler warnings about
 					// these variables being set but not used.
-					// reading_transparency_run = true;
-					// transparency_run_top_y_coordinate = current_y_coordinate;
-					// transparency_run_left_x_coordinate = current_x_coordinate;
-					// transparency_run_ever_read = true;
+					// readingTransparencyRun = true;
+					// transparencyRunTopYCoordinate = currentYCoordinate;
+					// transparencyRunLeftXCoordinate = currentXCoordinate;
+					// transparencyRunEverRead = true;
 				} else if (operation == 0x03) {
 					// ADJUST THE PIXEL POSITION.
 					// This permits jumping to a different part of the same row without
@@ -158,62 +158,62 @@ void Bitmap::decompress(Chunk &chunk) {
 					// So to skip 10 pixels using this approach, you would encode 00 03 0a 00.
 					// But to "skip" 10 pixels by encoding them as blank (0xff), you would encode 0a ff.
 					// What gives? I'm not sure.
-					uint8_t x_change = *compressed_image++;
-					current_x_coordinate += x_change;
-					uint8_t y_change = *compressed_image++;
-					current_y_coordinate += y_change;
+					uint8_t x_change = *compressedImage++;
+					currentXCoordinate += x_change;
+					uint8_t y_change = *compressedImage++;
+					currentYCoordinate += y_change;
 				} else if (operation >= 0x04) {
 					// READ A RUN OF UNCOMPRESSED PIXELS.
-					size_t y_offset = current_y_coordinate * width();
-					size_t run_starting_offset = y_offset + current_x_coordinate;
-					char *run_starting_pointer = decompressed_image + run_starting_offset;
-					uint8_t run_length = operation;
-					memcpy(run_starting_pointer, compressed_image, run_length);
-					compressed_image += operation;
-					current_x_coordinate += operation;
+					size_t yOffset = currentYCoordinate * width();
+					size_t runStartingOffset = yOffset + currentXCoordinate;
+					char *runStartingPointer = decompressedImage + runStartingOffset;
+					uint8_t runLength = operation;
+					memcpy(runStartingPointer, compressedImage, runLength);
+					compressedImage += operation;
+					currentXCoordinate += operation;
 
-					if (((uintptr_t)compressed_image) % 2 == 1) {
-						compressed_image++;
+					if (((uintptr_t)compressedImage) % 2 == 1) {
+						compressedImage++;
 					}
 				}
 			} else {
 				// READ A RUN OF LENGTH ENCODED PIXELS.
-				size_t y_offset = current_y_coordinate * width();
-				size_t run_starting_offset = y_offset + current_x_coordinate;
-				char *run_starting_pointer = decompressed_image + run_starting_offset;
-				uint8_t color_index_to_repeat = *compressed_image++;
-				uint8_t repetition_count = operation;
-				memset(run_starting_pointer, color_index_to_repeat, repetition_count);
-				current_x_coordinate += repetition_count;
+				size_t yOffset = currentYCoordinate * width();
+				size_t runStartingOffset = yOffset + currentXCoordinate;
+				char *runStartingPointer = decompressedImage + runStartingOffset;
+				uint8_t colorIndexToRepeat = *compressedImage++;
+				uint8_t repetitionCount = operation;
+				memset(runStartingPointer, colorIndexToRepeat, repetitionCount);
+				currentXCoordinate += repetitionCount;
 
-				if (reading_transparency_run) {
+				if (readingTransparencyRun) {
 					// TODO: This code is comemnted out becuase the engine
 					// doesn't support the keyframes/transparency regions on
 					// movies yet. However, only some movies have this to start with.
 
 					// GET THE TRANSPARENCY RUN STARTING OFFSET.
-					// size_t transparency_run_y_offset = transparency_run_top_y_coordinate * width();
-					// size_t transparency_run_start_offset = transparency_run_y_offset + transparency_run_left_x_coordinate;
-					// size_t transparency_run_ending_offset = y_offset + current_x_coordinate;
-					// size_t transparency_run_length = transparency_run_ending_offset - transparency_run_start_offset;
-					// char *transparency_run_src_pointer = keyframe_image + run_starting_offset;
-					// char *transparency_run_dest_pointer = decompressed_image + run_starting_offset;
+					// size_t transparencyRunYOffset = transparencyRunTopYCoordinate * width();
+					// size_t transparencyRunStartOffset = transparencyRunYOffset + transparencyRunLeftXCoordinate;
+					// size_t transparencyRunEndingOffset = yOffset + currentXCoordinate;
+					// size_t transparency_run_length = transparencyRunEndingOffset - transparencyRunStartOffset;
+					// char *transparencyRunSrcPointer = keyframe_image + runStartingOffset;
+					// char *transparencyRunDestPointer = decompressedImage + runStartingOffset;
 
 					// COPY THE TRANSPARENT AREA FROM THE KEYFRAME.
 					// The "interior" of transparency regions is always encoded by a single run of
 					// pixels, usually 0x00 (white).
-					// memcpy(transparency_run_dest_pointer, transparency_run_src_pointer, transparency_run_length);
-					reading_transparency_run = false;
+					// memcpy(transparencyRunDestPointer, transparencyRunSrcPointer, transparency_run_length);
+					readingTransparencyRun = false;
 				}
 			}
 		}
 
-		current_y_coordinate++;
-		if (image_fully_read) {
+		currentYCoordinate++;
+		if (imageFullyRead) {
 			break;
 		}
 	}
-	delete[] compressed_image_start;
+	delete[] compressedImageStart;
 }
 
 }

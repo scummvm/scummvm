@@ -44,7 +44,7 @@ public:
 	bool isCompressed();
 
 	Common::Point *dimensions = nullptr;
-	BitmapCompressionType compression_type;
+	BitmapCompressionType compressionType;
 	uint unk2;
 };
 
