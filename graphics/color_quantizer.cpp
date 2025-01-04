@@ -222,7 +222,7 @@ private:
 
 public:
 	Octree(int maxLeaves) : _maxLeaves(maxLeaves) {
-		for (uint i = 0; i < kOctreeDepth; i++)
+		for (uint i = 0; i < kOctreeDepth - 1; i++)
 			_reduceList[i] = nullptr;
 	}
 
