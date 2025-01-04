@@ -45,7 +45,7 @@ public:
 
 	void load();
 	void save();
-	void add(int area, const Common::String &name, int total);
+	void add(int area, const Common::String &name, uint total);
 };
 
 } // namespace Got

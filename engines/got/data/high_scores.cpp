@@ -93,22 +93,25 @@ static int sortScores(const HighScore &hs1, const HighScore &hs2) {
 		return 0;
 }
 
-void HighScores::add(int area, const Common::String &name, int total) {
-	// Make a temporary copy of the area scores and add the new one
-	Common::Array<HighScore> temp;
-	for (int i = 0; i < HIGH_SCORES_PER_AREA; ++i)
-		temp.push_back(_scores[area - 1][i]);
+void HighScores::add(int area, const Common::String &name, uint total) {
+	// Find the index for the new score in the list
+	uint newIndex;
+	for (newIndex = 0; newIndex < HIGH_SCORES_PER_AREA &&
+		total < _scores[area - 1][newIndex]._total; ++newIndex) {
+	}
+	if (newIndex == HIGH_SCORES_PER_AREA)
+		// Lower than all current scores, so ignore it
+		return;
 
-	temp.push_back(HighScore());
-	Common::strcpy_s(temp.back()._name, name.c_str());
-	temp.back()._total = total;
+	// Shift any lower scores to make space
+	for (int i = HIGH_SCORES_PER_AREA - 1; i > newIndex; --i)
+		_scores[area - 1][i] = _scores[area - 1][i - 1];
 
-	// Sort the scores by descending total
-	Common::sort(temp.begin(), temp.end(), sortScores);
-
-	// Copy all but the lowest resulting score back into table
-	for (int i = 0; i < HIGH_SCORES_PER_AREA; ++i)
-		_scores[area - 1][i] = temp[i];
+	// Insert in new score
+	HighScore &hs = _scores[area - 1][newIndex];
+	Common::fill(hs._name, hs._name + 32, 0);
+	Common::strcpy_s(hs._name, name.c_str());
+	hs._total = total;
 
 	// Save the resulting table
 	save();
