@@ -573,14 +573,18 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	}
 
 	for (uint i = 0; i < lines.size(); i++) {
+		// Draw every line unhighlighted then highlight bits as needed
 		font->drawString(dst, lines[i], x, ystart + i * h, xwidth, fontcol, align);
 		if (highlightStart < lineOffs[i + 1] && highlightEnd > lineOffs[i]) {
-			// highlight on this line
-			// TODO: What if it's only a partial line??
-			font->drawString(dst, lines[i], x, ystart + i * h, xwidth, _selectonFontCol, align);
+			// Highlight on this line. Redraw whatever part is highlighted.
+			int lineLen = (int)lines[i].size();
+			int lineHighlightStart = MAX(highlightStart - lineOffs[i], 0);
+			int lineHighlightEnd = MIN(highlightEnd - lineOffs[i], lineLen);
+			int highlightXOff = lineHighlightStart ? font->getStringWidth(lines[i].substr(0, lineHighlightStart)) : 0;
+			Common::String highlightString = lines[i].substr(lineHighlightStart, lineHighlightEnd - lineHighlightStart);
+			font->drawString(dst, highlightString, x + highlightXOff, ystart + i * h, xwidth, _selectonFontCol, align);
 		}
 	}
-
 }
 
 void Dialog::setFlag(DialogFlags flg) {
