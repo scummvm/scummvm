@@ -272,7 +272,9 @@ int check_move0(int x, int y, ACTOR *actr) {
 			if (!special_tile_thor(y1, x2, icn3)) return 0;
 			icn4 = _G(scrn).icon[y2][x2];
 		}
-		if (icn4 > TILE_SPECIAL) if (!special_tile_thor(y2, x2, icn4)) return 0;
+		if (icn4 > TILE_SPECIAL) {
+			if (!special_tile_thor(y2, x2, icn4)) return 0;
+		}
 	}
 
 	if (!_G(slip_flag)) {

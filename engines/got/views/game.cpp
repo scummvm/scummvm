@@ -28,6 +28,7 @@
 #include "got/vars.h"
 #include "got/game/boss1.h"
 #include "got/game/boss2.h"
+#include "got/game/boss3.h"
 
 namespace Got {
 namespace Views {
@@ -54,11 +55,21 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 		return true;
 
 	case Common::KEYCODE_f:
-		// Hack used for testing end-game sequence
-		if (GAME1 && _G(current_level) == BOSS_LEVEL1)
-			closing_sequence1();
-		else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
-			closing_sequence2();
+		if (gDebugLevel > 0) {
+			// Hack used for testing end-game sequence
+			if (GAME1 && _G(current_level) == BOSS_LEVEL1)
+				closing_sequence1();
+			else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
+				closing_sequence2();
+			else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
+				closing_sequence3();
+		}
+		break;
+
+	case Common::KEYCODE_e:
+		if (gDebugLevel > 0 && GAME3)
+			// Launch endgame screen
+			closing_sequence3_3();
 		break;
 
 	case Common::KEYCODE_s:

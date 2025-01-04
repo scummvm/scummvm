@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/boss1.h"
 #include "got/game/boss2.h"
+#include "got/game/boss3.h"
 #include "got/game/move.h"
 #include "got/game/object.h"
 #include "got/game/script.h"
@@ -160,6 +161,19 @@ void show_level_done() {
 			if (!_G(auto_load))
 				boss_level2();
 			f = false;
+		}
+	}
+	if (GAME3) {
+		if (_G(new_level) == BOSS_LEVEL3) {
+			if (!_G(setup).boss_dead[2]) {
+				if (!_G(auto_load))
+					boss_level3();
+				f = 0;
+			}
+		}
+		if (_G(current_level) == ENDING_SCREEN) {
+			ending_screen();
+			f = 0;
 		}
 	}
 

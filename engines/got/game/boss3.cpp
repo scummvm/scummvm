@@ -35,18 +35,17 @@ namespace Got {
 
 #define LFC 10
 
-int  boss_mode;
-int  num_pods, num_pods1;
-byte pod_speed;
-byte exp[4][8] = {
+static int  boss_mode;
+static int  num_pods, num_pods1;
+static byte pod_speed;
+static const byte exp[4][8] = {
 			{126,127,128,129,130,131,132,133},
 			{146,147,148,149,150,151,152,153},
 			{166,167,168,169,170,171,172,173},
 			{186,187,188,189,190,191,192,193} };
 
-byte expf[4][8];
-byte exprow;
-byte expcnt;
+static byte expf[4][8];
+static byte expcnt;
 
 static int boss_die();
 static void check_boss_hit();
@@ -72,7 +71,7 @@ static void set_boss(ACTOR *actr) {
 	_G(actor)[6].y = actr->y + 16;
 }
 
-// Boss - loki-2
+// Boss - Loki-2
 static int boss_movement_one(ACTOR *actr) {
 	int rx, ry, i, numPods = 0;
 
@@ -522,37 +521,33 @@ void closing_sequence3_3() {
 	_G(exit_flag) = 0;
 	music_pause();
 
-	Gfx::fade_out();
-	_G(new_level) = 106;
+	_G(new_level) = ENDING_SCREEN;
 	_G(thor)->x = 152;
 	_G(thor)->y = 160;
 	_G(thor)->dir = 1;
-	//_G(game_is_over) = 1;
 }
 
 void ending_screen() {
-#ifdef TODO
 	int i;
 
-	for (i = 3; i < MAX_ACTORS; i++) _G(actor)[i].move = 1;
-	fade_in();
+	for (i = 3; i < MAX_ACTORS; i++)
+		_G(actor)[i].move = 1;
 	music_play(6, 1);
 	_G(timer_cnt) = 0;
-	while (_G(timer_cnt) < 180) rotate_pal();
+
 	memset(expf, 0, 32);
 	_G(endgame) = 1;
-	exprow = 0;
+
+	_G(exprow) = 0;
 	expcnt = 0;
-	memcpy(&_G(actor)[34], &explosion, sizeof(ACTOR));
+
+	_G(actor)[34] = _G(explosion);
 	_G(actor)[34].used = 0;
 	_G(actor)[34].speed = 2;
 	_G(actor)[34].speed_count = _G(actor)[34].speed;
-	_G(actor)[34].num_shots = 3;  //used to reverse explosion
+	_G(actor)[34].num_shots = 3;  // Used to reverse explosion
 	_G(actor)[34].vunerable = 255;
 	_G(actor)[34].i2 = 6;
-#else
-	error("TODO: ending_screen");
-#endif
 }
 
 // Explode
@@ -595,7 +590,8 @@ int endgame_one() {
 int endgame_movement() {
 	int x, y, r;
 
-	if (!_G(endgame)) return 0;
+	if (!_G(endgame))
+		return 0;
 	if (expcnt > 3) {
 		endgame_one();
 		return 0;
@@ -608,13 +604,13 @@ int endgame_movement() {
 	play_sound(EXPLODE, 1);
 
 	r = _G(rand1) % 8;
-	while (expf[exprow][r]) {
+	while (expf[_G(exprow)][r]) {
 		r++;
 		if (r > 7) r = 0;
 	}
-	expf[exprow][r] = 1;
-	x = (exp[exprow][r] % 20) * 16;
-	y = (exp[exprow][r] / 20) * 16;
+	expf[_G(exprow)][r] = 1;
+	x = (exp[_G(exprow)][r] % 20) * 16;
+	y = (exp[_G(exprow)][r] / 20) * 16;
 	_G(actor)[34].x = x;
 	_G(actor)[34].y = y;
 	_G(actor)[34].used = 1;
@@ -627,24 +623,13 @@ int endgame_movement() {
 	_G(endgame)++;
 	if (_G(endgame) > 8) {
 		_G(endgame) = 1;
-		exprow++;
+		_G(exprow)++;
 		expcnt++;
 		if (expcnt > 3) {
 			memset(expf, 0, 32);
 		}
-#if TODO
-		xget(96, (2 + (exprow - 1)) * 16, 224, (6 + (exprow - 1)) * 16, PAGE0, lzss_buff, 0);
-		xfarput(96, (3 + (exprow - 1)) * 16, PAGE0, lzss_buff);
-		xfarput(96, (3 + (exprow - 1)) * 16, PAGE1, lzss_buff);
-		xfarput(96, (3 + (exprow - 1)) * 16, PAGE2, lzss_buff);
-		xget(96, 16, 224, 32, PAGE0, lzss_buff, 0);
-		xfarput(96, (2 + (exprow - 1)) * 16, PAGE0, lzss_buff);
-		xfarput(96, (2 + (exprow - 1)) * 16, PAGE1, lzss_buff);
-		xfarput(96, (2 + (exprow - 1)) * 16, PAGE2, lzss_buff);
-#else
-		error("TODO: endgame_movement");
-#endif
 	}
+
 	return 1;
 }
 
