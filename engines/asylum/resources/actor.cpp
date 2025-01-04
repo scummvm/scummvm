@@ -3656,7 +3656,15 @@ ActorDirection Actor::getAngle(const Common::Point &vec1, const Common::Point &v
 
 	int32 dirAngle = -1;
 
-	if (diffX) {
+	// NOTE The extra condition: diffY < 0x800000
+	// is added to avoid a crash that manifests in optimized builds
+	// (for a couple of platforms/toolchains).
+	// Multiplying the diffY value (when it's >= 0x800000) by 256
+	// produces a value that is too large to fit in a 32-bit signed int.
+	// diffY becomes > 0x80000000 when eg. vec2.y <= 112 ,
+	// which happens when the cursor moves to the top part of the screen
+	// in the in-game menu (given that vec1 is Common::Point(320, 240)).
+	if (diffX && diffY < 0x800000) {
 		uint32 index = (uint32)((diffY * 256) / diffX);
 
 		if (index < 256)
