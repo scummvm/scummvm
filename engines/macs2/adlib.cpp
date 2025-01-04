@@ -377,7 +377,7 @@ l0017_2648:
 	*/
 }
 
-void Adlib::Func2839() {
+void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 
 	// TODO: We are doing some loading of values in bp-1 and bp-2 from some central data, skipping this
 	// and hardcoding for now
@@ -812,15 +812,10 @@ void Adlib::OnTimer() {
 									// before the calculation
 
 									// TODO: Not sure if I have the resurn value of Func19BE completely
+									// TODO: Stay consistent which of the locals we use to save
+									// the return value
 									bp12 = Func19BE(gArray2288[bp8] << 0x4);
-									// TODO: Args for 2839:
-									/*
-									mov	al,[bp-8h]
-									push	ax
-									push	word ptr [bp-12h]
-									push	word ptr [bp-14h]
-									call	far 0017h:2839h */
-									Func2839();
+									Func2839(bp8, bp12);
 								}
 								// l0017_1CF2:
 								if (g2291 == bp8) {
@@ -970,19 +965,11 @@ void Adlib::OnTimer() {
 						// push word ptr[2248h]
 						// TODO: Some xor ah,ah in here
 						uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
-						// Func2839()
+
+						// TODO: xor ah,ah
+						Func2839(gArray5C[bp3 - 0xB], bp14);
 						//   TODO: Continue from here
 						/*
-						
-						mov	al,[bp-3h]
-						xor	ah,ah
-						sub	ax,0Bh
-						mov	di,ax
-						mov	al,[di+5Ch]
-						push	ax
-						push	word ptr [bp-12h]
-						push	word ptr [bp-14h]
-						call	far 0017h:2839h
 						jmp	1FA9h
 							*/
 					}
@@ -1080,7 +1067,8 @@ void Adlib::Init() {
 	Func2686();
 	Func24FD();
 	// TODO: Consider adding the caller
-	Func2839();
+	// TODO: Add proper arguments here
+	Func2839(0, 0);
 
 	// TODO: More hardcoded:
 	// TODO: I think this was not actual code from the game but from the example I found!

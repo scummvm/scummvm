@@ -65,7 +65,9 @@ namespace Macs2 {
 		}
 		
 		// TODO: Consider adding the caller
-		void Func2839();
+		// TODO: Mocked input parameters so far, should be an 8 bit value
+		// and a pointer into memory
+		void Func2839(uint8 bpp0A, uint32 bpp06);
 
 		void Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA);
 
@@ -74,6 +76,9 @@ namespace Macs2 {
 
 		// Array accesed as [di + 57]
 		Common::Array<uint8> gArray57;
+
+		// Array accessed as [di + 5C]
+		Common::Array<uint8> gArray5C;
 
 		// Array accesed as [di + 96]
 		Common::Array<uint8> gArray96;
