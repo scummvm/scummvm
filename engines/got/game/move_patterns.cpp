@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/boss1.h"
 #include "got/game/boss2.h"
+#include "got/game/boss3.h"
 #include "got/game/move.h"
 #include "got/game/object.h"
 #include "got/gfx/panel.h"
@@ -380,7 +381,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 		y4 = act->y + act->size_y - 1;
 
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
-			if (_G(boss_active)) {
+			if (_G(boss_active) && !GAME3) {
 				switch (_G(area)) {
 				case 1:
 					check_boss1_hit(act, x1, y1, x2, y2, i);
@@ -389,7 +390,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 					check_boss2_hit(act, x1, y1, x2, y2, i);
 					break;
 				default:
-					error("TODO: area 3");
+					// Area 3 boss Loki isn't checked here
 					break;
 				}
 			} else {
@@ -1928,6 +1929,8 @@ int movement_twentyfive(ACTOR *actr) {
 int movement_twentysix(ACTOR *actr) {
 	if (GAME2)
 		return boss2_movement(actr);
+	if (GAME3)
+		return boss3_movement(actr);
 
 	return movement_one(actr);
 }

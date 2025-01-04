@@ -154,6 +154,8 @@ void GotEngine::savegameLoaded() {
 	_G(thor)->speed_count = 6;
 	load_new_thor();
 
+	g_vars->resetEndgameFlags();
+
 	if (!_G(music_flag))
 		_G(setup).music = 0;
 	if (!_G(sound_flag))

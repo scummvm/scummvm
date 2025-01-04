@@ -108,11 +108,8 @@ void initialize_game() {
 		_G(sound).music_play(_G(level_type), 1);
 	}
 
-	_G(auto_load) = false;
+	g_vars->resetEndgameFlags();
 	_G(startup) = false;
-	_G(end_tile) = false;
-	_G(boss_dead) = false;
-	_G(game_over) = false;
 }
 
 void deinitialize_game() {
