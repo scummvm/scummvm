@@ -3640,20 +3640,24 @@ void Actor::setVolume() {
 //////////////////////////////////////////////////////////////////////////
 
 ActorDirection Actor::getAngle(const Common::Point &vec1, const Common::Point &vec2) {
-	int32 diffX = (vec2.x << 16) - (vec1.x << 16);
-	int32 diffY = (vec1.y << 16) - (vec2.y << 16);
-	int32 adjust = 0;
+	uint32 diffX, diffY;
+	byte adjust = 0;
 
-	if (diffX < 0) {
-		adjust = 2;
-		diffX = -diffX;
+	if (vec1.x > vec2.x) {
+		adjust |= 2;
+		diffX = (vec1.x - vec2.x) << 16;
+	} else {
+		diffX = (vec2.x - vec1.x) << 16;
 	}
 
-	if (diffY < 0) {
+	if (vec2.y > vec1.y) {
 		adjust |= 1;
-		diffY = -diffY;
+		diffY = (vec2.y - vec1.y) << 16;
+	} else {
+		diffY = (vec1.y - vec2.y) << 16;
 	}
 
+	// dirAngle will be initially calculated as a value between 0 and 90, ie. in [0, 90]
 	int32 dirAngle = -1;
 
 	if (diffX) {
@@ -3671,19 +3675,25 @@ ActorDirection Actor::getAngle(const Common::Point &vec1, const Common::Point &v
 		dirAngle = 90;
 	}
 
+	// The adjust variable value is used to properly calculate the dirAngle within the [0, 360] range
+	// value: 0 is first quadrant, 2 is second quadrant, 3 is third quadrant, 1 is fourth quadrant
 	switch (adjust) {
 	default:
+		// first quadrant
 		break;
 
 	case 1:
+		// fourth quadrant
 		dirAngle = 360 - dirAngle;
 		break;
 
 	case 2:
+		// second quadrant
 		dirAngle = 180 - dirAngle;
 		break;
 
 	case 3:
+		// third quadrant
 		dirAngle += 180;
 		break;
 	}
@@ -3693,38 +3703,22 @@ ActorDirection Actor::getAngle(const Common::Point &vec1, const Common::Point &v
 
 	ActorDirection dir;
 
-	if (dirAngle < 157 || dirAngle >= 202) {
-		if (dirAngle < 112 || dirAngle >= 157) {
-			if (dirAngle < 67 || dirAngle >= 112) {
-				if (dirAngle < 22 || dirAngle >= 67) {
-					if ((dirAngle < 0 || dirAngle >= 22) && (dirAngle < 337 || dirAngle > 359)) {
-						if (dirAngle < 292 || dirAngle >= 337) {
-							if (dirAngle < 247 || dirAngle >= 292) {
-								if (dirAngle < 202 || dirAngle >= 247) {
-									error("[Actor::direction] got a bad direction angle: %d!", dirAngle);
-								} else {
-									dir = kDirectionSW;
-								}
-							} else {
-								dir = kDirectionS;
-							}
-						} else {
-							dir = kDirectionSE;
-						}
-					} else {
-						dir = kDirectionE;
-					}
-				} else {
-					dir = kDirectionNE;
-				}
-			} else {
-				dir = kDirectionN;
-			}
-		} else {
-			dir = kDirectionNW;
-		}
-	} else {
+	if (dirAngle < 22 || dirAngle >= 337) {
+		dir = kDirectionE;
+	} else if (dirAngle < 67) {
+		dir = kDirectionNE;
+	} else if (dirAngle < 112) {
+		dir = kDirectionN;
+	} else if (dirAngle < 157) {
+		dir = kDirectionNW;
+	} else if (dirAngle < 202) {
 		dir = kDirectionW;
+	} else if (dirAngle < 247) {
+		dir = kDirectionSW;
+	} else if (dirAngle < 292) {
+		dir = kDirectionS;
+	} else {
+		dir = kDirectionSE;
 	}
 
 	return dir;
