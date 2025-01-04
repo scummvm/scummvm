@@ -57,6 +57,7 @@ private:
 	machine *_807BeamMach = nullptr;
 	machine *_807Crnk2Mach = nullptr;
 	machine *_807DoorMach = nullptr;
+	machine *_807Mc01Mach = nullptr;
 	machine *_807PostMach = nullptr;
 	machine *_mcTrekMach = nullptr;
 	machine *_safariShadowMach = nullptr;

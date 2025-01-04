@@ -701,10 +701,218 @@ void Room807::parser() {
 		break;
 
 	case 6:
+		if (player_said("stone block")) {
+			digi_play("807r22", 1, 255, -1, -1);
+		} else if (player_said("corridor")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				inv_move_object("wooden beam", 807);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "wooden beam", true);
+				ws_hide_walker(_G(my_walker));
+				series_play("807rp02", 4095, 0, 5, 5, 0, 100, 0, 0, 0, 24);
+
+				break;
+
+			case 5:
+				series_play("807rp02", 4095, 0, 10, 5, 0, 100, 0, 0, 25, -1);
+				digi_play("807_s06", 2, 255, -1, -1);
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+				_807PostMach = series_show("807post", 4095, 0, -1, -1, 0, 100, 0, 0);
+
+				break;
+
+			default:
+				break;
+
+			}
+		} else if (player_said("mei chen")) {
+			digi_play("com017", 1, 255, -1, 997);
+		} else
+			_G(player).command_ready = true;
+
+		break;
+
 	case 7:
+		if ((player_said("crank") && inv_object_in_scene("crank", 807)) || player_said("slot")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				inv_move_object("wooden post", 807);
+				_field38 = 0;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "wooden post", true);
+				if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden beam", 807)) {
+					terminateMachine(_807Crnk2Mach);
+					_807Crnk2Mach = series_show("807crnk2", 4095, 0, -1, -1, 9, 100, 0, 0);
+					series_load("807rp06", -1, nullptr);
+					series_play("807rp04", 256, 2, 10, 5, 0, 100, 0, 0, 0, -1);
+				} else {
+					ws_hide_walker(_G(my_walker));
+					series_play("807rp06", 256, 0, 15, 5, 0, 100, 0, 0, 0, 20);
+					player_update_info(_G(my_walker), &_G(player_info));
+					_safariShadowMach = series_place_sprite(*SAFARI_SHADOWS, 0, 476, 318, _G(player_info).scale, 257);
+				}
+
+				break;
+
+			case 10:
+				series_play("807rp06", 256, 0, 15, 5, 0, 100, 0, 0, 0, 20);
+				break;
+
+			case 15:
+				series_play("807rp06", 256, 0, 20, 5, 0, 100, 0, 0, 21, 30);
+				digi_play("807_s05", 2, 255, -1, -1);
+				_807BeamMach = series_show("807beam", 4095, 0, -1, -1, 0, 100, 0, 0);
+
+				break;
+
+			case 20:
+				player_set_commands_allowed(true);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+				terminateMachine(_safariShadowMach);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("mei chen")) {
+			digi_play("com017", 1, 255, -1, 997);
+		} else
+			_G(player).command_ready = true;
+
+		break;
+
 	case 8:
+		if (player_said("slot")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(_G(my_walker), 476, 318, 0, 10, 11, true);
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				_807Crnk2Mach = series_play("807rp04", 256, 16, 20, 5, 0, 100, 0, 0, 0, -1);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_safariShadowMach = series_place_sprite(*SAFARI_SHADOWS, 0, 476, 318, _G(player_info).scale, 257);
+				inv_move_object("CRANK", 807);
+
+				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+
+				break;
+
+			case 20:
+				kernel_timing_trigger(20, 30, "rip places crank");
+				digi_play("807_s02", 2, 255, -1, -1);
+
+				break;
+
+			case 30:
+				terminateMachine(_807Crnk2Mach);
+				_807Crnk2Mach = series_play("807rp04", 256, 2, 40, 5, 0, 100, 0, 0, 0, -1);
+
+				break;
+
+			case 40:
+				player_set_commands_allowed(true);
+				terminateMachine(_safariShadowMach);
+				_807Crnk2Mach = series_show("807crnk2", 4095, 0, -1, -1, 9, 100, 0, 0);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 11);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("mei chen")) {
+			digi_play("807r24", 1, 255, -1, -1);
+		} else
+			_G(player).command_ready = true;
+
+		break;
+
 	case 9:
+		digi_play("com042", 1, 255, -1, 997);
+		break;
+
 	case 10:
+		switch (_G(kernel).trigger) {
+		case -1: {
+			const char *conv = conv_sound_to_play();
+			if (conv)
+				digi_play(conv, 1, 255, 10, -1);
+			else
+				conv_resume(conv_get_handle());
+
+			}
+
+			break;
+
+		case 10:
+			if (conv_current_node() != 0) {
+				conv_resume(conv_get_handle());
+			} else {
+				if (conv_current_entry() != 0) {
+					conv_resume(conv_get_handle());
+				} else if (conv_whos_talking() == 1) {
+					ws_walk(_mcTrekMach, 476, 318, nullptr, 20, 11, true);
+				}
+			}
+
+			break;
+
+		case 20:
+			ws_hide_walker(_mcTrekMach);
+			_807Mc01Mach = series_play("807mc01", 0, 16, -1, 5, 0, 100, 0, 0, 0, 5);
+			terminateMachine(_807Crnk2Mach);
+			series_play("807rp04", 256, 2, 25, 5, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 25:
+			terminateMachine(_safariShadowMach);
+			ws_unhide_walker(_G(my_walker));
+			ws_walk(_G(my_walker), 320, 294, nullptr, 30, 1, true);
+			terminateMachine(_807Mc01Mach);
+			_807Mc01Mach = series_play("807mc01", 0, 16, 27, 5, 0, 100, 0, 0, 6, 10);
+
+			break;
+
+		case 27:
+			terminateMachine(_807Mc01Mach);
+			_807Mc01Mach = series_play("807mc01", 0, 16, -1, 5, 0, 100, 0, 0, 11, 21);
+			conv_resume(conv_get_handle());
+
+			break;
+
+		case 30:
+			terminateMachine(_807Mc01Mach);
+			_807Mc01Mach = series_play("807mc01", 0, 16, -1, 5, 0, 100, 0, 0, 22, 41);
+			ws_hide_walker(_807Mc01Mach);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			series_play("807rp03", 4095, 16, 11, 5, 0, 100, 0, 0, 0, -1);
+			_G(kernel).trigger_mode = KT_PARSE;
+			digi_play("807_s04", 2, 255, -1, -1);
+			conv_resume(conv_get_handle());
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	default:
 		if (player_said("mei chen"))
 			digi_play("com017", 1, 255, -1, 997);
@@ -713,8 +921,6 @@ void Room807::parser() {
 
 		break;
 	}
-
-	// TODO Not yet implemented
 }
 
 void Room807::daemon() {
