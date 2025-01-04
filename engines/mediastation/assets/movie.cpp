@@ -31,7 +31,7 @@ namespace MediaStation {
 
 MovieFrameHeader::MovieFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
 	_index = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "MovieFrameHeader::MovieFrameHeader(): _index = 0x%x (@0x%llx)", _index, chunk.pos());
+	debugC(5, kDebugLoading, "MovieFrameHeader::MovieFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
 	_keyframeEndInMilliseconds = Datum(chunk).u.i;
 }
 
@@ -58,7 +58,7 @@ MovieFrameFooter::MovieFrameFooter(Chunk &chunk) {
 		_index = Datum(chunk).u.i;
 		_unk8 = Datum(chunk).u.i;
 		_unk9 = Datum(chunk).u.i;
-		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = 0x%x, _endInMilliseconds = 0x%x, _left = 0x%x, _top = 0x%x, _index = 0x%x (@0x%llx)", _startInMilliseconds, _endInMilliseconds, _left, _top, _index, chunk.pos());
+		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = 0x%x, _endInMilliseconds = 0x%x, _left = 0x%x, _top = 0x%x, _index = 0x%x (@0x%llx)", _startInMilliseconds, _endInMilliseconds, _left, _top, _index, static_cast<long long int>(chunk.pos()));
 		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _unk4 = 0x%x, _unk5 = 0x%x, _unk6 = 0x%x, _unk7 = 0x%x, _unk8 = 0x%x, _unk9 = 0x%x", _unk4, _zIndex, _unk6, _unk7, _unk8, _unk9);
 	}
 }
@@ -345,39 +345,39 @@ void Movie::readChunk(Chunk &chunk) {
 void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	// READ THE METADATA FOR THE WHOLE MOVIE.
 	uint expectedRootSectionType = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", expectedRootSectionType, chunk.pos());
+	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", expectedRootSectionType, static_cast<long long int>(chunk.pos()));
 	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
 		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
 	}
 	uint chunkCount = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): chunkCount = 0x%x (@0x%llx)", chunkCount, chunk.pos());
+	debugC(5, kDebugLoading, "Movie::readSubfile(): chunkCount = 0x%x (@0x%llx)", chunkCount, static_cast<long long int>(chunk.pos()));
 
 	uint dataStartOffset = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): dataStartOffset = 0x%x (@0x%llx)", dataStartOffset, chunk.pos());
+	debugC(5, kDebugLoading, "Movie::readSubfile(): dataStartOffset = 0x%x (@0x%llx)", dataStartOffset, static_cast<long long int>(chunk.pos()));
 
 	Common::Array<uint> chunkLengths;
 	for (uint i = 0; i < chunkCount; i++) {
 		uint chunkLength = Datum(chunk).u.i;
-		debugC(5, kDebugLoading, "Movie::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, chunk.pos());
+		debugC(5, kDebugLoading, "Movie::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, static_cast<long long int>(chunk.pos()));
 		chunkLengths.push_back(chunkLength);
 	}
 
 	// RAD THE INTERLEAVED AUDIO AND ANIMATION DATA.
 	for (uint i = 0; i < chunkCount; i++) {
-		debugC(5, kDebugLoading, "\nMovie::readSubfile(): Reading frameset %d of %d in subfile (@0x%llx)", i, chunkCount, chunk.pos());
+		debugC(5, kDebugLoading, "\nMovie::readSubfile(): Reading frameset %d of %d in subfile (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		chunk = subfile.nextChunk();
 
 		// READ ALL THE FRAMES IN THIS CHUNK.
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, chunk.pos());
+		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAnimationChunk = (chunk.id == _header->_animationChunkReference);
 		if (!isAnimationChunk) {
-			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, chunk.pos());
+			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 		MovieFrameHeader *header = nullptr;
 		MovieFrame *frame = nullptr;
 		while (isAnimationChunk) {
 			uint sectionType = Datum(chunk).u.i;
-			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
+			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 			switch (MovieSectionType(sectionType)) {
 			case kMovieFrameSection: {
 				header = new MovieFrameHeader(chunk);
@@ -404,7 +404,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			}
 
 			default: {
-				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", sectionType, chunk.pos());
+				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 			}
 			}
 
@@ -414,7 +414,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		}
 
 		// READ THE AUDIO.
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, chunk.pos());
+		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAudioChunk = (chunk.id = _header->_audioChunkReference);
 		if (isAudioChunk) {
 			byte *buffer = (byte *)malloc(chunk.length);
@@ -440,19 +440,19 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			_audioStreams.push_back(stream);
 			chunk = subfile.nextChunk();
 		} else {
-			debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, chunk.pos());
+			debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 
 		// READ THE FOOTER FOR THIS SUBFILE.
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, chunk.pos());
+		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isHeaderChunk = (chunk.id == _header->_chunkReference);
 		if (isHeaderChunk) {
 			if (chunk.length != 0x04) {
-				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk.length, chunk.pos());
+				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk.length, static_cast<long long int>(chunk.pos()));
 			}
 			chunk.skip(chunk.length);
 		} else {
-			error("Movie::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), chunk.pos());
+			error("Movie::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), static_cast<long long int>(chunk.pos()));
 		}
 	}
 
