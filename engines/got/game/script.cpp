@@ -855,23 +855,21 @@ int Scripts::cmd_settile() {
 }
 
 int Scripts::cmd_itemgive() {
-#ifdef TODO
 	int i;
 
-	if (!calc_value()) return 5;
-	buff_ptr++;
+	if (!calc_value())
+		return 5;
+
+	_buffPtr++;
 	i = (int)_lValue;
 	if (i < 1 || i > 15) return 6;
 
 	_G(thor_info).inventory |= 64;
 	_G(thor_info).item = 7;
 	_G(thor_info).object = i;
-	display_item();
-	_G(thor_info).object_name = object_names[_G(thor_info).object - 1];
+	_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
+
 	return 0;
-#else
-	error("TODO: cmd_itemgive");
-#endif
 }
 
 int Scripts::cmd_itemtake() {
