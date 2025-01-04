@@ -640,8 +640,8 @@ void Room807::parser() {
 			switch (_G(kernel).trigger) {
 			case -1: {
 				player_update_info(_G(my_walker), &_G(player_info));
-				const int32 destX = CLIP(_G(player_info).x, 247, 400);
-				const int32 destY = MAX(_G(player_info).y, 342);
+				const int32 destX = CLIP(_G(player_info).x, (int32)247, (int32)400);
+				const int32 destY = MAX(_G(player_info).y, (int32)342);
 
 				if (_G(flags[V276]) == 0 && _G(flags[V275]) == 0) {
 					_G(flags[V275]) = 1;
