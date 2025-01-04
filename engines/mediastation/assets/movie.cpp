@@ -345,7 +345,7 @@ void Movie::readChunk(Chunk &chunk) {
 void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	// READ THE METADATA FOR THE WHOLE MOVIE.
 	uint expectedRootSectionType = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", expectedRootSectionType, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
 	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
 		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
 	}
@@ -377,7 +377,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		MovieFrame *frame = nullptr;
 		while (isAnimationChunk) {
 			uint sectionType = Datum(chunk).u.i;
-			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			switch (MovieSectionType(sectionType)) {
 			case kMovieFrameSection: {
 				header = new MovieFrameHeader(chunk);
@@ -404,7 +404,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			}
 
 			default: {
-				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			}
 			}
 

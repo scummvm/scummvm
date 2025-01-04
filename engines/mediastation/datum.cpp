@@ -45,7 +45,7 @@ Datum::Datum(Common::SeekableReadStream &chunk, DatumType expectedType) {
 }
 
 void Datum::readWithType(Common::SeekableReadStream &chunk) {
-	debugC(9, kDebugLoading, "Datum::Datum(): Type 0x%x (@0x%llx)", t, static_cast<long long int>(chunk.pos()));
+	debugC(9, kDebugLoading, "Datum::Datum(): Type 0x%x (@0x%llx)", static_cast<uint>(t), static_cast<long long int>(chunk.pos()));
 	if (kDatumTypeUint8 == t) {
 		u.i = chunk.readByte();
 
@@ -97,7 +97,7 @@ void Datum::readWithType(Common::SeekableReadStream &chunk) {
 		u.chunkRef = chunk.readUint32BE();
 
 	} else {
-		error("Unknown datum type: 0x%x (@0x%llx)", t, static_cast<long long int>(chunk.pos()));
+		error("Unknown datum type: 0x%x (@0x%llx)", static_cast<uint>(t), static_cast<long long int>(chunk.pos()));
 	}
 }
 

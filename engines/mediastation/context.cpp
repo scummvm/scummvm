@@ -108,7 +108,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 		// VERIFY THIS CHUNK IS A HEADER.
 		// TODO: What are the situations when it's not?
 		uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
-		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
 			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
@@ -139,7 +139,7 @@ void Context::readAssetInFirstSubfile(Chunk &chunk) {
 	if (asset == nullptr) {
 		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), asset->type(), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(asset->type()), static_cast<long long int>(chunk.pos()));
 	asset->readChunk(chunk);
 }
 
@@ -155,7 +155,7 @@ void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 
 bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 	uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
-	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	switch (sectionType) {
 	case kContextParametersSection: {
 		if (_parameters != nullptr) {
@@ -290,7 +290,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 	}
 
 	default: {
-		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	}
 	}
 

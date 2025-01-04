@@ -31,7 +31,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
 	_fileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
 	uint sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
 	while (sectionType != kContextParametersEmptySection) {
-		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		switch (sectionType) {
 		case kContextParametersName: {
 			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
@@ -77,7 +77,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
 		}
 
 		default: {
-			error("ContextParameters::ContextParameters(): Unknown section type 0x%x", sectionType);
+			error("ContextParameters::ContextParameters(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 		}
 		}
 		sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;

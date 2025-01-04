@@ -29,11 +29,11 @@ Asset::~Asset() {
 }
 
 void Asset::readChunk(Chunk &chunk) {
-	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", _header->_type);
+	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
 }
 
 void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", _header->_type);
+	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
 }
 
 AssetType Asset::type() const {

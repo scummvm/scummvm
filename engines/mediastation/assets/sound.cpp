@@ -54,7 +54,7 @@ void Sound::process() {
 
 void Sound::readChunk(Chunk &chunk) {
 	// TODO: Can we read the chunk directly into the audio stream?
-	debugC(5, kDebugLoading, "Sound::readChunk(): (encoding = 0x%x) Reading audio chunk (@0x%llx)", (uint)_encoding, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "Sound::readChunk(): (encoding = 0x%x) Reading audio chunk (@0x%llx)", static_cast<uint>(_encoding), static_cast<long long int>(chunk.pos()));
 	byte *buffer = (byte *)malloc(chunk._length);
 	chunk.read((void *)buffer, chunk._length);
 

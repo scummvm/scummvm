@@ -26,9 +26,9 @@ namespace MediaStation {
 
 EventHandler::EventHandler(Chunk &chunk) {
 	_type = static_cast<EventType>(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", _type, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	_argumentType = static_cast<EventHandlerArgumentType>(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", _argumentType, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", static_cast<uint>(_argumentType), static_cast<long long int>(chunk.pos()));
 	_argumentValue = Datum(chunk);
 
 	if (_argumentType != kNullEventHandlerArgument) {
@@ -44,23 +44,23 @@ Operand EventHandler::execute(uint assetId) {
 	// a better way to handle that.
 	switch (_argumentType) {
 	case kNullEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (no argument) **********", assetId, (uint)_type);
+		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (no argument) **********", assetId, static_cast<uint>(_type));
 		break;
 	}
 
 	case kAsciiCodeEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (ASCII code = %d) **********", assetId, (uint)_type, _argumentValue.u.i);
+		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (ASCII code = %d) **********", assetId, static_cast<uint>(_type), _argumentValue.u.i);
 		break;
 	}
 
 	case kContextEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (context = %d) **********", assetId, (uint)_type, _argumentValue.u.i);
+		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (context = %d) **********", assetId, static_cast<uint>(_type), _argumentValue.u.i);
 		break;
 	}
 
 	case kTimeEventHandlerArgument:
 	case kUnk1EventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (time = %f) **********", assetId, (uint)_type, _argumentValue.u.f);
+		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (time = %f) **********", assetId, static_cast<uint>(_type), _argumentValue.u.f);
 		break;
 	}
 	}

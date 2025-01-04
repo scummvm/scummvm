@@ -32,7 +32,7 @@ AssetHeader::AssetHeader(Chunk &chunk) {
 	// TODO: Cast to an asset type.
 	_type = AssetType(Datum(chunk).u.i);
 	_id = Datum(chunk).u.i;
-	debugC(4, kDebugLoading, "AssetHeader::AssetHeader(): _type = 0x%x, _id = 0x%x (@0x%llx)", _type, _id, static_cast<long long int>(chunk.pos()));
+	debugC(4, kDebugLoading, "AssetHeader::AssetHeader(): _type = 0x%x, _id = 0x%x (@0x%llx)", static_cast<uint>(_type), _id, static_cast<long long int>(chunk.pos()));
 
 	AssetHeaderSectionType sectionType = getSectionType(chunk);
 	bool moreSectionsToRead = (kAssetHeaderEmptySection != sectionType);

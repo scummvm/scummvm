@@ -30,7 +30,7 @@ namespace MediaStation {
 Variable::Variable(Chunk &chunk) {
 	_id = Datum(chunk, kDatumTypeUint16_1).u.i;
 	_type = VariableType(Datum(chunk, kDatumTypeUint8).u.i);
-	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", _id, _type, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", _id, static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch ((VariableType)_type) {
 	case kVariableTypeCollection: {
 		uint totalItems = Datum(chunk).u.i;
@@ -76,7 +76,7 @@ Variable::Variable(Chunk &chunk) {
 	}
 
 	default: {
-		warning("Variable::Variable(): Got unknown variable value type 0x%x", _type);
+		warning("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
 		_value.datum = new Datum(chunk);
 	}
 	}

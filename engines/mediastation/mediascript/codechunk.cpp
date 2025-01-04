@@ -59,7 +59,7 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	InstructionType instructionType = InstructionType(Datum(*_bytecode).u.i);
-	debugC(8, kDebugScript, " instructionType = %d", (uint)instructionType);
+	debugC(8, kDebugScript, " instructionType = %d", static_cast<uint>(instructionType));
 	switch (instructionType) {
 	case kInstructionTypeEmpty: {
 		return Operand();
@@ -67,14 +67,14 @@ Operand CodeChunk::executeNextStatement() {
 
 	case kInstructionTypeFunctionCall: {
 		Opcode opcode = Opcode(Datum(*_bytecode).u.i);
-		debugC(8, kDebugScript, "  *** Opcode %d ***", (uint)opcode);
+		debugC(8, kDebugScript, "  *** Opcode %d ***", static_cast<uint>(opcode));
 		switch (opcode) {
 		case kOpcodeAssignVariable: {
 			uint32 id = Datum(*_bytecode).u.i;
 			VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
 			Operand newValue = executeNextStatement();
 			// TODO: Print the new variable value for easier debugging.
-			debugC(5, kDebugScript, "SCRIPT: [ %d (scope: %d) ] = [ ? (showing value assigned to var not implemented yet) ]", (uint)scope, id);
+			debugC(5, kDebugScript, "SCRIPT: [ %d (scope: %d) ] = [ ? (showing value assigned to var not implemented yet) ]", static_cast<uint>(scope), id);
 			putVariable(id, scope, newValue);
 			return Operand();
 		}
@@ -106,7 +106,7 @@ Operand CodeChunk::executeNextStatement() {
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Operand selfObject = executeNextStatement();
 			if (selfObject.getType() != kOperandTypeAssetId) {
-				error("CodeChunk::executeNextStatement(): (Opcode::CallMethod) Attempt to call method on operand that is not an asset (type 0x%x)", selfObject.getType());
+				error("CodeChunk::executeNextStatement(): (Opcode::CallMethod) Attempt to call method on operand that is not an asset (type 0x%x)", static_cast<uint>(selfObject.getType()));
 			}
 			Common::Array<Operand> args;
 			for (uint i = 0; i < parameterCount; i++) {
@@ -150,7 +150,7 @@ Operand CodeChunk::executeNextStatement() {
 
 	case (kInstructionTypeOperand): {
 		OperandType operandType = OperandType(Datum(*_bytecode).u.i);
-		debugC(8, kDebugScript, "  *** Operand %d ***", (uint)operandType);
+		debugC(8, kDebugScript, "  *** Operand %d ***", static_cast<uint>(operandType));
 		Operand operand(operandType);
 		switch (operandType) {
 		// TODO: Add clearer debugging printouts for these.
@@ -191,7 +191,7 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	default: {
-		error("CodeChunk::getNextStatement(): Got unknown instruction type 0x%x", instructionType);
+		error("CodeChunk::getNextStatement(): Got unknown instruction type 0x%x", static_cast<uint>(instructionType));
 	}
 	}
 }

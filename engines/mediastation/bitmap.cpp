@@ -30,7 +30,7 @@ BitmapHeader::BitmapHeader(Chunk &chunk) {
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", headerSizeInBytes);
 	_dimensions = Datum(chunk).u.point;
 	_compressionType = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
-	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", _compressionType);
+	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", static_cast<uint>(_compressionType));
 	// TODO: Figure out what this is.
 	// This has something to do with the width of the bitmap but is always
 	// a few pixels off from the width. And in rare cases it seems to be

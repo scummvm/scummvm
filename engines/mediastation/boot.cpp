@@ -68,7 +68,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		if (kContextDeclarationFileNumber1 == sectionType) {
 			_fileNumber = Datum(chunk).u.i;
 		} else {
-			error("ContextDeclaration(): Expected section type FILE_NUMBER_1, got 0x%x", sectionType);
+			error("ContextDeclaration(): Expected section type FILE_NUMBER_1, got 0x%x", static_cast<uint>(sectionType));
 		}
 		// I don't know why the file number is always repeated.
 		// Is it just for data integrity, or is there some other reason?
@@ -79,7 +79,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", _fileNumber, repeatedFileNumber);
 			} 	
 		} else {
-			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", sectionType);
+			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", static_cast<uint>(sectionType));
 		}
 
 		// READ THE CONTEXT NAME.
@@ -100,7 +100,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	} else if (kContextDeclarationEmptySection == sectionType) {
 		_isLast = true;
 	} else {
-		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", sectionType);
+		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 	}
 }
 
@@ -133,7 +133,7 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 	if (kUnknownDeclarationUnk1 == sectionType) {
 		_unk = Datum(chunk, kDatumTypeUint16_1).u.i;
 	} else {
-		error("UnknownDeclaration(): Expected section type UNK_1, got 0x%x", sectionType);
+		error("UnknownDeclaration(): Expected section type UNK_1, got 0x%x", static_cast<uint>(sectionType));
 	}
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk2 == sectionType) {
@@ -142,7 +142,7 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 			warning("UnknownDeclaration(): Expected unknown values to match, but 0x%x != 0x%x", _unk, repeatedUnk);
 		}
 	} else {
-		error("UnknownDeclaration(): Expected section type UNK_2, got 0x%x", sectionType);
+		error("UnknownDeclaration(): Expected section type UNK_2, got 0x%x", static_cast<uint>(sectionType));
 	}
 }
 
@@ -170,7 +170,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	if (kFileDeclarationFileId == sectionType) {
 		_id = Datum(chunk, kDatumTypeUint16_1).u.i;
 	} else {
-		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", sectionType);
+		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
 	// READ THE INTENDED LOCATION OF THE FILE.
@@ -180,7 +180,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 		// TODO: Verify we actually read a valid enum member.
 		_intendedLocation = static_cast<IntendedFileLocation>(datum.u.i);
 	} else {
-		error("FileDeclaration(): Expected section type FILE_NAME_AND_TYPE, got 0x%x", sectionType);
+		error("FileDeclaration(): Expected section type FILE_NAME_AND_TYPE, got 0x%x", static_cast<uint>(sectionType));
 	}
 
 	// READ THE CASE-INSENSITIVE FILENAME.
@@ -219,7 +219,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	if (kSubfileDeclarationAssetId == sectionType) {
 		_assetId = Datum(chunk, kDatumTypeUint16_1).u.i;
 	} else {
-		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", sectionType);
+		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
 	// READ THE FILE ID.
@@ -227,7 +227,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	if (kSubfileDeclarationFileId == sectionType) {
 		_fileId = Datum(chunk, kDatumTypeUint16_1).u.i;
 	} else {
-		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", sectionType);
+		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
 	// READ THE START OFFSET IN THE GIVEN FILE.
@@ -236,7 +236,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	if (kSubfileDeclarationStartOffset == sectionType) {
 		_startOffsetInFile = Datum(chunk, kDatumTypeUint32_1).u.i;
 	} else {
-		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", sectionType);
+		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", static_cast<uint>(sectionType));
 	}
 }
 
@@ -284,7 +284,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 	BootSectionType sectionType = getSectionType(chunk);
 	bool notLastSection = (kBootLastSection != sectionType);
 	while (notLastSection) {
-		debugC(5, kDebugLoading, "Boot::Boot(): sectionType = 0x%x", sectionType);
+		debugC(5, kDebugLoading, "Boot::Boot(): sectionType = 0x%x", static_cast<uint>(sectionType));
 		switch (sectionType) {
 		case kBootVersionInformation: {
 			_gameTitle = Datum(chunk, kDatumTypeString).u.string;
@@ -320,7 +320,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 				EngineResourceDeclaration *resourceDeclaration = new EngineResourceDeclaration(resourceName, resourceId);
 				_engineResourceDeclarations.setVal(resourceId, resourceDeclaration);
 			} else {
-				error("Boot::Boot(): Got section type 0x%x when expecting ENGINE_RESOURCE_ID", sectionType);
+				error("Boot::Boot(): Got section type 0x%x when expecting ENGINE_RESOURCE_ID", static_cast<uint>(sectionType));
 			}
 			break;
 		}
@@ -400,7 +400,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 		}
 
 		default: {
-			warning("Boot::Boot(): Unknown section type 0x%x", sectionType);
+			warning("Boot::Boot(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 			break;
 		}
 		}
