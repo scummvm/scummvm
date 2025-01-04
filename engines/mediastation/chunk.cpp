@@ -26,12 +26,12 @@ namespace MediaStation {
 
 Chunk::Chunk(Common::SeekableReadStream *stream) : _input(stream), _dataStartOffset(0), _dataEndOffset(0) {
 	// READ THE HEADER.
-	id = _input->readUint32BE();
-	length = _input->readUint32LE();
+	_id = _input->readUint32BE();
+	_length = _input->readUint32LE();
 	_dataStartOffset = pos();
-	_dataEndOffset = _dataStartOffset + length;
-	debugC(5, kDebugLoading, "Chunk::Chunk(): Got chunk with ID \"%s\" and size 0x%x", tag2str(id), length);
-	if (length == 0) {
+	_dataEndOffset = _dataStartOffset + _length;
+	debugC(5, kDebugLoading, "Chunk::Chunk(): Got chunk with ID \"%s\" and size 0x%x", tag2str(_id), _length);
+	if (_length == 0) {
 		error("Encountered a zero-length chunk. This usually indicates corrupted data - maybe a CD-ROM read error.");
 	}
 }

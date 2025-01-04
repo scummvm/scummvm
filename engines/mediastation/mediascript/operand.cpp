@@ -35,7 +35,7 @@ void Operand::putInteger(int i) {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		_u.variable->value.i = i;
+		_u.variable->_value.i = i;
 		break;
 	}
 
@@ -54,7 +54,7 @@ int Operand::getInteger() {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		return _u.variable->value.i;
+		return _u.variable->_value.i;
 	}
 
 	default: {
@@ -73,7 +73,7 @@ void Operand::putDouble(double d) {
 
 	case kOperandTypeVariableDeclaration: {
 		// TODO: Add assertion.
-		_u.variable->value.d = d;
+		_u.variable->_value.d = d;
 		break;
 	}
 
@@ -92,7 +92,7 @@ double Operand::getDouble() {
 
 	case kOperandTypeVariableDeclaration: {
 		// TODO: Add assertion that this is the proper type.
-		return _u.variable->value.d;
+		return _u.variable->_value.d;
 	}
 
 	default: {
@@ -109,8 +109,8 @@ void Operand::putString(Common::String *string) {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		assert(_u.variable->type == kVariableTypeString);
-		_u.variable->value.string = string;
+		assert(_u.variable->_type == kVariableTypeString);
+		_u.variable->_value.string = string;
 		break;
 	}
 
@@ -127,8 +127,8 @@ Common::String *Operand::getString() {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		assert(_u.variable->type == kVariableTypeString);
-		return _u.variable->value.string;
+		assert(_u.variable->_type == kVariableTypeString);
+		return _u.variable->_value.string;
 	}
 
 	default: {
@@ -195,8 +195,8 @@ void Operand::putAsset(uint32 assetId) {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		assert(_u.variable->type == kVariableTypeAssetId);
-		_u.variable->value.assetId = assetId;
+		assert(_u.variable->_type == kVariableTypeAssetId);
+		_u.variable->_value.assetId = assetId;
 		break;
 	}
 
@@ -217,8 +217,8 @@ Asset *Operand::getAsset() {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		assert(_u.variable->type == kVariableTypeAssetId);
-		return g_engine->_assets.getVal(_u.variable->value.assetId);
+		assert(_u.variable->_type == kVariableTypeAssetId);
+		return g_engine->_assets.getVal(_u.variable->_value.assetId);
 	}
 
 	default: {
@@ -234,8 +234,8 @@ uint32 Operand::getAssetId() {
 	}
 
 	case kOperandTypeVariableDeclaration: {
-		assert(_u.variable->type == kVariableTypeAssetId);
-		return _u.variable->value.assetId;
+		assert(_u.variable->_type == kVariableTypeAssetId);
+		return _u.variable->_value.assetId;
 	}
 
 	default: {

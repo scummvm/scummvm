@@ -52,7 +52,7 @@ Context::Context(const Common::Path &path) :
 		readNewStyleHeaderSections(subfile, chunk);
 	}
 	// Then, read any asset data.
-	chunk = subfile.currentChunk;
+	chunk = subfile._currentChunk;
 	while (!subfile.atEnd()) {
 		readAssetInFirstSubfile(chunk);
 		if (!subfile.atEnd()) {
@@ -61,7 +61,7 @@ Context::Context(const Common::Path &path) :
 	}
 
 	// Then, assets in the rest of the subfiles.
-	for (uint i = 1; i < subfile_count; i++) {
+	for (uint i = 1; i < _subfileCount; i++) {
 		subfile = Subfile(_stream);
 		readAssetFromLaterSubfile(subfile);
 	}
@@ -83,13 +83,13 @@ bool Context::readPreamble() {
 	}
 	_stream->skip(2); // 0x00 0x00
 
-	unk1 = _stream->readUint32LE();
-	debugC(5, kDebugLoading, "Context::openFile(): unk1 = 0x%x", unk1);
+	_unk1 = _stream->readUint32LE();
+	debugC(5, kDebugLoading, "Context::openFile(): _unk1 = 0x%x", _unk1);
 
-	subfile_count = _stream->readUint32LE();
+	_subfileCount = _stream->readUint32LE();
 	// The total size of this file, including this header.
 	// (Basically the true file size shown on the filesystem.)
-	file_size = _stream->readUint32LE();
+	_fileSize = _stream->readUint32LE();
 	return true;
 }
 
@@ -99,7 +99,7 @@ void Context::readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 
 void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	// READ THE PALETTE.
-	bool moreSectionsToRead = (chunk.id == MKTAG('i', 'g', 'o', 'd'));
+	bool moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
 	if (!moreSectionsToRead) {
 		warning("Context::readNewStyleHeaderSections(): Got no header sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	}
@@ -111,7 +111,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
-			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), static_cast<long long int>(chunk.pos()));
+			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 
 		// READ THIS HEADER SECTION.
@@ -121,35 +121,35 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 		} else {
 			debugC(5, kDebugLoading, "\nContext::readNewStyleHeaderSections(): Getting next chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
 			chunk = subfile.nextChunk();
-			moreSectionsToRead = (chunk.id == MKTAG('i', 'g', 'o', 'd'));
+			moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
 		}
 	}
 	debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): Finished reading sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
 void Context::readAssetInFirstSubfile(Chunk &chunk) {
-	if (chunk.id == MKTAG('i', 'g', 'o', 'd')) {
+	if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
 		warning("Context::readAssetInFirstSubfile(): Skippping \"igod\" asset link chunk");
 		chunk.skip(chunk.bytesRemaining());
 		return;
 	}
 
 	// TODO: Make sure this is not an asset link.
-	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk.id);
+	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk._id);
 	if (asset == nullptr) {
-		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, static_cast<long long int>(chunk.pos()));
+		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), asset->type(), static_cast<long long int>(chunk.pos()));
 	asset->readChunk(chunk);
 }
 
 void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 	Chunk chunk = subfile.nextChunk();
-	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk.id);
+	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk._id);
 	if (asset == nullptr) {
-		error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk.id), chunk.id, static_cast<long long int>(chunk.pos()));
+		error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk.id), asset->type(), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), asset->type(), static_cast<long long int>(chunk.pos()));
 	asset->readSubfile(subfile, chunk);
 }
 

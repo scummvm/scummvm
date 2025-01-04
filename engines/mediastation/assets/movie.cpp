@@ -308,7 +308,7 @@ bool Movie::drawNextFrame() {
 		return a->zCoordinate() > b->zCoordinate();
 	});
 	for (MovieFrame *frame : framesToDraw) {
-		g_engine->_screen->transBlitFrom(frame->surface, Common::Point(frame->left(), frame->top()), 0, false);
+		g_engine->_screen->transBlitFrom(frame->_surface, Common::Point(frame->left(), frame->top()), 0, false);
 	}
 
 	uint blitEnd = g_system->getMillis() - _startTime;
@@ -369,7 +369,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 		// READ ALL THE FRAMES IN THIS CHUNK.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAnimationChunk = (chunk.id == _header->_animationChunkReference);
+		bool isAnimationChunk = (chunk._id == _header->_animationChunkReference);
 		if (!isAnimationChunk) {
 			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
@@ -410,19 +410,19 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 			// READ THE NEXT CHUNK.
 			chunk = subfile.nextChunk();
-			isAnimationChunk = (chunk.id == _header->_animationChunkReference);
+			isAnimationChunk = (chunk._id == _header->_animationChunkReference);
 		}
 
 		// READ THE AUDIO.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAudioChunk = (chunk.id = _header->_audioChunkReference);
+		bool isAudioChunk = (chunk._id = _header->_audioChunkReference);
 		if (isAudioChunk) {
-			byte *buffer = (byte *)malloc(chunk.length);
-			chunk.read((void *)buffer, chunk.length);
+			byte *buffer = (byte *)malloc(chunk._length);
+			chunk.read((void *)buffer, chunk._length);
 			Audio::SeekableAudioStream *stream = nullptr;
 			switch (_header->_soundEncoding) {
 			case SoundEncoding::PCM_S16LE_MONO_22050:
-				stream = Audio::makeRawStream(buffer, chunk.length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
+				stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
 				break;
 
 			case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
@@ -445,14 +445,14 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 		// READ THE FOOTER FOR THIS SUBFILE.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isHeaderChunk = (chunk.id == _header->_chunkReference);
+		bool isHeaderChunk = (chunk._id == _header->_chunkReference);
 		if (isHeaderChunk) {
-			if (chunk.length != 0x04) {
-				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk.length, static_cast<long long int>(chunk.pos()));
+			if (chunk._length != 0x04) {
+				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk._length, static_cast<long long int>(chunk.pos()));
 			}
-			chunk.skip(chunk.length);
+			chunk.skip(chunk._length);
 		} else {
-			error("Movie::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk.id), static_cast<long long int>(chunk.pos()));
+			error("Movie::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 	}
 

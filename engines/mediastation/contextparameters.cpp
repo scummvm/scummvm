@@ -27,18 +27,18 @@
 
 namespace MediaStation {
 
-ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
-	fileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
+	_fileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
 	uint sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
 	while (sectionType != kContextParametersEmptySection) {
 		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		switch (sectionType) {
 		case kContextParametersName: {
 			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
-			if (repeatedFileNumber != fileNumber) {
-				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, fileNumber);
+			if (repeatedFileNumber != _fileNumber) {
+				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 			}
-			contextName = Datum(chunk, kDatumTypeString).u.string;
+			_contextName = Datum(chunk, kDatumTypeString).u.string;
 			// TODO: This is likely just an end flag.
 			uint endingFlag = Datum(chunk, kDatumTypeUint16_1).u.i;
 			if (endingFlag != 0) {
@@ -54,18 +54,18 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 
 		case kContextParametersVariable: {
 			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
-			if (repeatedFileNumber != fileNumber) {
-				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, fileNumber);
+			if (repeatedFileNumber != _fileNumber) {
+				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 			}
 			// The trouble here is converting the variable to an operand.
 			// They are two totally separate types!
 			Variable *variable = new Variable(chunk);
 			Operand operand;
-			if (g_engine->_variables.contains(variable->id)) {
-				error("ContextParameters::ContextParameters(): Variable with ID 0x%x already exists", variable->id);
+			if (g_engine->_variables.contains(variable->_id)) {
+				error("ContextParameters::ContextParameters(): Variable with ID 0x%x already exists", variable->_id);
 			} else {
-				g_engine->_variables.setVal(variable->id, variable);
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d", variable->id);
+				g_engine->_variables.setVal(variable->_id, variable);
+				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d", variable->_id);
 			}
 			break;
 		}
@@ -85,8 +85,8 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 }
 
 ContextParameters::~ContextParameters() {
-	delete contextName;
-	contextName = nullptr;
+	delete _contextName;
+	_contextName = nullptr;
 
 	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
 		delete it->_value;

@@ -54,8 +54,8 @@ enum VariableType {
 
 class Variable {
 public:
-	uint32 id = 0;
-	VariableType type = kVariableTypeEmpty;
+	uint32 _id = 0;
+	VariableType _type = kVariableTypeEmpty;
 	union {
 		Datum *datum = nullptr;
 		Common::String *string;
@@ -64,7 +64,7 @@ public:
 		int i;
 		double d;
 		uint assetId;
-	} value;
+	} _value;
 
 	Variable();
 	Variable(Chunk &chunk);

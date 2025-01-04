@@ -29,9 +29,9 @@ namespace MediaStation {
 
 #pragma region VersionInfo
 VersionInfo::VersionInfo(Chunk &chunk) {
-	majorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
-	minorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
-	revision = Datum(chunk, kDatumTypeUint16_1).u.i;
+	_majorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
+	_minorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
+	_revision = Datum(chunk, kDatumTypeUint16_1).u.i;
 	string = Datum(chunk, kDatumTypeString).u.string;
 }
 
@@ -47,17 +47,17 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	// ENSURE WE HAVEN'T REACHED THE END OF THE DECLARATIONS.
 	ContextDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kContextDeclarationEmptySection == sectionType) {
-		isLast = true;
+		_isLast = true;
 		return;
 	} else {
 		// There may be more declarations in the stream.
-		isLast = false;
+		_isLast = false;
 	}
 
 	// READ THE FILE REFERENCES.
 	while (kContextDeclarationFileReference == sectionType) {
 		int fileReference = Datum(chunk).u.i;
-		fileReferences.push_back(fileReference);
+		_fileReferences.push_back(fileReference);
 		sectionType = getSectionType(chunk);
 	}
 
@@ -66,7 +66,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		// READ THE FILE NUMBER.
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationFileNumber1 == sectionType) {
-			fileNumber = Datum(chunk).u.i;
+			_fileNumber = Datum(chunk).u.i;
 		} else {
 			error("ContextDeclaration(): Expected section type FILE_NUMBER_1, got 0x%x", sectionType);
 		}
@@ -75,8 +75,8 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationFileNumber2 == sectionType) {
 			uint32 repeatedFileNumber = Datum(chunk).u.i;
-			if (repeatedFileNumber != fileNumber) {
-				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", fileNumber, repeatedFileNumber);
+			if (repeatedFileNumber != _fileNumber) {
+				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", _fileNumber, repeatedFileNumber);
 			} 	
 		} else {
 			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", sectionType);
@@ -91,14 +91,14 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		int rewindOffset = chunk.pos();
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationName == sectionType) {
-			contextName = Datum(chunk, kDatumTypeString).u.string;
+			_contextName = Datum(chunk, kDatumTypeString).u.string;
 		} else {
 			// THERE IS NO CONTEXT NAME.
 			// We have instead read into the next declaration, so let's undo that.
 			chunk.seek(rewindOffset);
 		}
 	} else if (kContextDeclarationEmptySection == sectionType) {
-		isLast = true;
+		_isLast = true;
 	} else {
 		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", sectionType);
 	}
@@ -111,8 +111,8 @@ ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
 }
 
 ContextDeclaration::~ContextDeclaration() {
-	delete contextName;
-	contextName = nullptr;
+	delete _contextName;
+	_contextName = nullptr;
 }
 #pragma endregion
 
@@ -292,7 +292,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 			uint32 unk = chunk.readUint16LE();
 			debugC(5, kDebugLoading, " - unk = 0x%x", unk);
 			_versionInfo = new VersionInfo(chunk);
-			debugC(5, kDebugLoading, " - versionInfo = %d.%d.%d (%s)", _versionInfo->majorVersion, _versionInfo->minorVersion, _versionInfo->revision, _versionInfo->string->c_str());
+			debugC(5, kDebugLoading, " - versionInfo = %d.%d.%d (%s)", _versionInfo->_majorVersion, _versionInfo->_minorVersion, _versionInfo->_revision, _versionInfo->string->c_str());
 			_sourceString = Datum(chunk, kDatumTypeString).u.string;
 			debugC(5, kDebugLoading, " - sourceString = %s", _sourceString->c_str());
 			break;
@@ -327,8 +327,8 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 
 		case kBootContextDeclaration: {
 			ContextDeclaration *contextDeclaration = new ContextDeclaration(chunk);
-			while (!contextDeclaration->isLast) {
-				_contextDeclarations.setVal(contextDeclaration->fileNumber, contextDeclaration);
+			while (!contextDeclaration->_isLast) {
+				_contextDeclarations.setVal(contextDeclaration->_fileNumber, contextDeclaration);
 				contextDeclaration = new ContextDeclaration(chunk);
 			}
 			break;
@@ -420,8 +420,8 @@ uint32 Boot::getRootContextId() {
 	// TODO: Is the ID of the root context actually stored somewhere so
 	// we don't need to find it ourselves? Maybe it is always the
 	for (auto &declaration : _contextDeclarations) {
-		if (declaration._value->fileReferences.empty()) {
-			return declaration._value->fileNumber;
+		if (declaration._value->_fileReferences.empty()) {
+			return declaration._value->_fileNumber;
 		}
 	}
 	return 0;

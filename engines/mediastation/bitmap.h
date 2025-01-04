@@ -43,8 +43,8 @@ public:
 
 	bool isCompressed();
 
-	Common::Point *dimensions = nullptr;
-	BitmapCompressionType compressionType;
+	Common::Point *_dimensions = nullptr;
+	BitmapCompressionType _compressionType;
 	uint unk2;
 };
 
@@ -57,7 +57,7 @@ public:
 
 	uint16 width();
 	uint16 height();
-	Graphics::ManagedSurface surface;
+	Graphics::ManagedSurface _surface;
 
 private:
 	void decompress(Chunk &chunk);

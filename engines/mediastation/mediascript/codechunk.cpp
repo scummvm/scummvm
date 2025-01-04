@@ -237,23 +237,23 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 		switch (value.getType()) {
 		case kOperandTypeLiteral1:
 		case kOperandTypeLiteral2: {
-			variable->value.i = value.getInteger();
+			variable->_value.i = value.getInteger();
 			break;
 		}
 
 		case kOperandTypeFloat1:
 		case kOperandTypeFloat2: {
-			variable->value.d = value.getDouble();
+			variable->_value.d = value.getDouble();
 			break;
 		}
 
 		case kOperandTypeString: {
-			variable->value.string = value.getString();
+			variable->_value.string = value.getString();
 			break;
 		}
 
 		case kOperandTypeAssetId: {
-			variable->value.assetId = value.getAssetId();
+			variable->_value.assetId = value.getAssetId();
 			break;
 		}
 

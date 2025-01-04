@@ -48,9 +48,9 @@ public:
 
 	bool readPreamble();
 
-	uint32 unk1;
-	uint32 subfile_count;
-	uint32 file_size;
+	uint32 _unk1;
+	uint32 _subfileCount;
+	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
 	ContextParameters *_parameters = nullptr;
 	AssetHeader *_screenAsset = nullptr;

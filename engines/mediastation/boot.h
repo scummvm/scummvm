@@ -37,9 +37,9 @@ public:
 
 	// The version number of this engine,
 	// in the form 4.0r8 (major . minor r revision).
-	uint32 majorVersion;
-	uint32 minorVersion;
-	uint32 revision;
+	uint32 _majorVersion;
+	uint32 _minorVersion;
+	uint32 _revision;
 
 	// A textual description of this engine.
 	// Example: "Title Compiler T4.0r8 built Feb 13 1998 10:16:52"
@@ -62,11 +62,11 @@ public:
 	ContextDeclaration(Chunk &chunk);
 	~ContextDeclaration();
 
-	Common::Array<uint32> fileReferences;
-	uint32 fileNumber;
-	Common::String *contextName;
+	Common::Array<uint32> _fileReferences;
+	uint32 _fileNumber;
+	Common::String *_contextName;
 	// Signal that there are no more declarations to read.
-	bool isLast;
+	bool _isLast;
 
 private:
 	ContextDeclarationSectionType getSectionType(Chunk &chunk);

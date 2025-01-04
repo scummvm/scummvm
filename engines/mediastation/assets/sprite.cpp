@@ -222,7 +222,7 @@ void Sprite::drawFrame(SpriteFrame *frame) {
 	uint frameLeft = frame->left() + _header->_boundingBox->left;
 	uint frameTop = frame->top() + _header->_boundingBox->top;
 	debugC(5, kDebugGraphics, "    Sprite frame %d (%d x %d) @ (%d, %d)", frame->index(), frame->width(), frame->height(), frameLeft, frameTop);
-	g_engine->_screen->transBlitFrom(frame->surface, Common::Point(frameLeft, frameTop), 0, false);
+	g_engine->_screen->transBlitFrom(frame->_surface, Common::Point(frameLeft, frameTop), 0, false);
 }
 
 } // End of namespace MediaStation

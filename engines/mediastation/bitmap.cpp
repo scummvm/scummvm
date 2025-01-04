@@ -28,9 +28,9 @@ namespace MediaStation {
 BitmapHeader::BitmapHeader(Chunk &chunk) {
 	uint headerSizeInBytes = Datum(chunk, kDatumTypeUint16_1).u.i;
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", headerSizeInBytes);
-	dimensions = Datum(chunk).u.point;
-	compressionType = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
-	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compressionType);
+	_dimensions = Datum(chunk).u.point;
+	_compressionType = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
+	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", _compressionType);
 	// TODO: Figure out what this is.
 	// This has something to do with the width of the bitmap but is always
 	// a few pixels off from the width. And in rare cases it seems to be
@@ -39,21 +39,21 @@ BitmapHeader::BitmapHeader(Chunk &chunk) {
 }
 
 BitmapHeader::~BitmapHeader() {
-	delete dimensions;
-	dimensions = nullptr;
+	delete _dimensions;
+	_dimensions = nullptr;
 }
 
 bool BitmapHeader::isCompressed() {
-	return (compressionType != kUncompressedBitmap1) && (compressionType != kUncompressedBitmap2);
+	return (_compressionType != kUncompressedBitmap1) && (_compressionType != kUncompressedBitmap2);
 }
 
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
 	_bitmapHeader(bitmapHeader) {
 	// The header must be constructed beforehand.
-	uint16 width = _bitmapHeader->dimensions->x;
-	uint16 height = _bitmapHeader->dimensions->y;
-	surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	uint8 *pixels = (uint8 *)surface.getPixels();
+	uint16 width = _bitmapHeader->_dimensions->x;
+	uint16 height = _bitmapHeader->_dimensions->y;
+	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	uint8 *pixels = (uint8 *)_surface.getPixels();
 	if (_bitmapHeader->isCompressed()) {
 		// DECOMPRESS THE IMAGE.
 		// chunk.skip(chunk.bytesRemaining());
@@ -73,11 +73,11 @@ Bitmap::~Bitmap() {
 }
 
 uint16 Bitmap::width() {
-	return _bitmapHeader->dimensions->x;
+	return _bitmapHeader->_dimensions->x;
 }
 
 uint16 Bitmap::height() {
-	return _bitmapHeader->dimensions->y;
+	return _bitmapHeader->_dimensions->y;
 }
 
 void Bitmap::decompress(Chunk &chunk) {
@@ -101,7 +101,7 @@ void Bitmap::decompress(Chunk &chunk) {
 	// Media Station has 8 bits per pixel, so the decompression buffer is
 	// simple.
 	// TODO: Do we have to set the pixels ourselves?
-	char *decompressedImage = (char *)surface.getPixels();
+	char *decompressedImage = (char *)_surface.getPixels();
 
 	// DECOMPRESS THE RLE-COMPRESSED BITMAP STREAM.
 	// TODO: Comemnted out becuase transparency runs not supported yet,

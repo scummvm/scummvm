@@ -44,8 +44,8 @@ public:
 	// This is not an internal file ID, but the number of the file
 	// as it appears in the filename. For instance, the context in
 	// "100.cxt" would have file number 100.
-	uint fileNumber;
-	Common::String *contextName;
+	uint _fileNumber;
+	Common::String *_contextName;
 	Common::HashMap<uint32, Function *> _functions;
 };
 
