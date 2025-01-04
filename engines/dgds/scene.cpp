@@ -578,6 +578,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 
 void SDSScene::unload() {
 	_num = 0;
+	_lookMode = 0;
 	_enterSceneOps.clear();
 	_leaveSceneOps.clear();
 	_preTickOps.clear();
