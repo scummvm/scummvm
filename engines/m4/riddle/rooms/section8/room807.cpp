@@ -540,8 +540,166 @@ void Room807::parser() {
 		break;
 
 	case 3:
+		if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden post", 807) && !inv_object_in_scene("wooden beam", 807)) {
+			_field34 = 1;
+			conv_load("conv807a", 10, 10, 747);
+			conv_play(conv_get_handle());
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					digi_play("com034", 1, 255, 10, 997);
+					break;
+
+				case 2:
+					digi_play("com035", 1, 255, 10, 997);
+					break;
+
+				case 3:
+					digi_play("com036", 1, 255, 10, 997);
+					break;
+
+				case 4:
+				default:
+					digi_play("com037", 1, 255, 10, 997);
+					break;
+				}
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				sendWSMessage_150000(_G(my_walker), -1);
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					digi_play("com038", 1, 255, -1, 997);
+					break;
+
+				case 2:
+					digi_play("com039", 1, 255, -1, 997);
+					break;
+
+				case 3:
+					digi_play("com040", 1, 255, -1, 997);
+					break;
+
+				case 4:
+				default:
+					digi_play("com041", 1, 255, -1, 997);
+					break;
+
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
 	case 4:
+		// No implementation
+		break;
+
 	case 5:
+		if (player_said("north")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(_G(my_walker), 325, 275, nullptr, 10, 2, false);
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				ws_walk(_G(my_walker), 305, 190, nullptr, -1, 2, true);
+				if (_G(flags[V276]) == 0) {
+					ws_walk(_mcTrekMach, 305, 190, nullptr, -1, -1, true);
+				}
+
+				disable_player_commands_and_fade_init(20);
+
+				break;
+
+			case 20:
+				_G(game).new_room = 808;
+				adv_kill_digi_between_rooms(false);
+				digi_preload("950_s29", -1);
+				digi_play_loop("950_s29", 3, 255, -1, -1);
+
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1: {
+				player_update_info(_G(my_walker), &_G(player_info));
+				const int32 destX = CLIP(_G(player_info).x, 247, 400);
+				const int32 destY = MAX(_G(player_info).y, 342);
+
+				if (_G(flags[V276]) == 0 && _G(flags[V275]) == 0) {
+					_G(flags[V275]) = 1;
+					ws_walk(_G(my_walker), destX, destY, nullptr, 10, -1, true);
+				} else {
+					ws_walk(_G(my_walker), destX, destY, nullptr, 35, -1, false);
+				}
+
+				}
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				digi_play("807m10", 1, 255, 20, -1);
+				ws_turn_to_face(_G(my_walker), 5, -1);
+
+				break;
+
+			case 20:
+				digi_play_loop("807r25", 1, 255, 30, -1);
+				setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+
+				break;
+
+			case 30:
+				sendWSMessage_150000(_G(my_walker), -1);
+				ws_walk(_mcTrekMach, 320, 560, nullptr, -1, -1, true);
+				ws_walk(_G(my_walker), 320, 560, nullptr, -1, -1, true);
+				disable_player_commands_and_fade_init(40);
+
+				break;
+
+			case 35:
+				if (_G(flags[V276]) == 0) {
+					ws_walk(_mcTrekMach, 320, 560, nullptr, -1, -1, true);
+				}
+
+				ws_walk(_G(my_walker), 320, 560, nullptr, -1, -1, true);
+				disable_player_commands_and_fade_init(40);
+
+				break;
+
+			case 40:
+				_G(game).new_room = 806;
+				adv_kill_digi_between_rooms(false);
+				digi_preload("950_s29", -1);
+				digi_play_loop("950_s29", 2, 255, -1, -1);
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
 	case 6:
 	case 7:
 	case 8:
