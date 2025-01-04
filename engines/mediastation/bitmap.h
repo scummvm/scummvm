@@ -19,13 +19,13 @@
  *
  */
 
+#ifndef MEDIASTATION_BITMAP_H
+#define MEDIASTATION_BITMAP_H
+
 #include "graphics/managed_surface.h"
 
 #include "mediastation/chunk.h"
 #include "mediastation/assetheader.h"
-
-#ifndef MEDIASTATION_BITMAP_H
-#define MEDIASTATION_BITMAP_H
 
 namespace MediaStation {
 

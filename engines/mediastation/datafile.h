@@ -19,10 +19,10 @@
  *
  */
 
-#include "common/file.h"
-
 #ifndef MEDIASTATION_DATAFILE_H
 #define MEDIASTATION_DATAFILE_H
+
+#include "common/file.h"
 
 namespace MediaStation {
 

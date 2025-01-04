@@ -19,11 +19,11 @@
  *
  */
 
-#include "mediastation/datafile.h"
-#include "mediastation/subfile.h"
-
 #ifndef MEDIASTATION_BOOT_H
 #define MEDIASTATION_BOOT_H
+
+#include "mediastation/datafile.h"
+#include "mediastation/subfile.h"
 
 namespace MediaStation {
 

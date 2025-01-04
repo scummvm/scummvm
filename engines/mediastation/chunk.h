@@ -19,10 +19,10 @@
  *
  */
 
-#include "common/file.h"
-
 #ifndef MEDIASTATION_CHUNK_H
 #define MEDIASTATION_CHUNK_H
+
+#include "common/file.h"
 
 namespace MediaStation {
 

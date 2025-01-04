@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef MEDIASTATION_IMAGE_H
+#define MEDIASTATION_IMAGE_H
+
 #include "graphics/managed_surface.h"
 
 #include "mediastation/asset.h"
@@ -27,9 +30,6 @@
 #include "mediastation/bitmap.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/operand.h"
-
-#ifndef MEDIASTATION_IMAGE_H
-#define MEDIASTATION_IMAGE_H
 
 namespace MediaStation {
 

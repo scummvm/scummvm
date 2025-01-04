@@ -19,13 +19,13 @@
  *
  */
 
+#ifndef MEDIASTATION_DATUM_H
+#define MEDIASTATION_DATUM_H
+
 #include "common/str.h"
 #include "common/rect.h"
 
 #include "mediastation/chunk.h"
-
-#ifndef MEDIASTATION_DATUM_H
-#define MEDIASTATION_DATUM_H
 
 namespace MediaStation {
 
