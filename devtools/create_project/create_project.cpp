@@ -1309,7 +1309,7 @@ ComponentList getAllComponents(const std::string &srcDir, FeatureList &features)
 
 		TokenList tokens = tokenize(line);
 
-		if (tokens.size() < 4)
+		if (tokens.size() < 5)
 			continue;
 
 		TokenList::const_iterator token = tokens.begin();
