@@ -226,10 +226,15 @@ void GotEngine::pauseEngineIntern(bool pause) {
 		actor_destroyed(&_G(actor)[2]);
 	}
 
+	if (_G(shield_on)) {
+		_G(actor)[2].dead = 2;
+		_G(actor)[2].used = 0;
+		_G(shield_on) = false;
+	}
+
 	_G(lightning_used) = false;
 	_G(thunder_flag) = false;
 	_G(hourglass_flag) = false;
-	_G(shield_on) = false;
 
 	Engine::pauseEngineIntern(pause);
 }

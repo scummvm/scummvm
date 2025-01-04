@@ -113,28 +113,30 @@ int load_standard_actors() {
 
 	make_actor_surface(&_G(actor)[1]);
 
-	load_actor(0, 106);   // Load sparkle
+	// Load sparkle
+	load_actor(0, 106);
 	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(sparkle), 20, 0, 100, 100);
 	_G(sparkle).used = 0;
 	make_actor_surface(&_G(sparkle));
 
-	load_actor(0, 107);   // Load explosion
+	// Load explosion
+	load_actor(0, 107);
 	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(explosion), 21, 0, 100, 100);
 	_G(explosion).used = 0;
 	make_actor_surface(&_G(explosion));
 
-	load_actor(0, 108);   // Load tornado
-
+	// Load tornado
+	load_actor(0, 108);
 	_G(magic_item)[0].loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[0]);
 
 	setup_actor(&_G(magic_item)[0], 20, 0, 0, 0);
 	_G(magic_item)[0].used = 0;
 
-	load_actor(0, 1099);   // Load shield
-
+	// Load shield
+	load_actor(0, 109);
 	_G(magic_item)[1].loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic)[1]);
 
