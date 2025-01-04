@@ -104,6 +104,8 @@ enum ProjectType {
 
 std::map<std::string, bool> isEngineEnabled;
 
+static void fixupFeatures(ProjectType projectType, BuildSetup &setup);
+
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
 	// Initialize random number generator for UUID creation
@@ -329,7 +331,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	// When building tests, disable some features
+	// When building tests, disable some features and all engines
 	if (setup.tests) {
 		setup.useStaticDetection = false;
 		setFeatureBuildState("mt32emu", setup.features, false);
@@ -345,46 +347,7 @@ int main(int argc, char *argv[]) {
 		setup.useStaticDetection = false;
 	}
 
-	// HACK: Vorbis and Tremor can not be enabled simultaneously
-	if (getFeatureBuildState("tremor", setup.features)) {
-		setFeatureBuildState("vorbis", setup.features, false);
-	}
-
-	// HACK: Fluidsynth and Fluidlite can not be enabled simultaneously
-	if (getFeatureBuildState("fluidlite", setup.features)) {
-		setFeatureBuildState("fluidsynth", setup.features, false);
-	}
-
-	// HACK: OpenMPT and Mikmod can not be enabled simultaneously
-	if (getFeatureBuildState("openmpt", setup.features)) {
-		setFeatureBuildState("mikmod", setup.features, false);
-	}
-
-	// HACK: These features depend on OpenGL
-	if (!getFeatureBuildState("opengl", setup.features)) {
-		setFeatureBuildState("opengl_game_classic", setup.features, false);
-		setFeatureBuildState("opengl_game_shaders", setup.features, false);
-	}
-
-	// HACK: Check IMGUI dependencies
-	if (!getFeatureBuildState("opengl", setup.features) ||
-		!getFeatureBuildState("freetype2", setup.features) ||
-		!setup.useSDL2) {
-		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2\n";
-		setFeatureBuildState("imgui", setup.features, false);
-	}
-	// HACK: IMGUI is not available on Xcode
-#ifdef ENABLE_XCODE
-	if (projectType == kProjectXcode) {
-		setFeatureBuildState("imgui", setup.features, false);
-	}
-#endif
-
-	// Calculate 3D feature state
-	setFeatureBuildState("3d", setup.features,
-			getFeatureBuildState("tinygl", setup.features) ||
-			getFeatureBuildState("opengl_game_classic", setup.features) ||
-			getFeatureBuildState("opengl_game_shaders", setup.features));
+	fixupFeatures(projectType, setup);
 
 	// Disable engines for which we are missing dependencies and mark components as needed
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
@@ -1286,6 +1249,55 @@ FeatureList getAllFeatures() {
 		features.push_back(s_features[i]);
 
 	return features;
+}
+
+/**
+ * Apply all the hardcoded logic for the features availability.
+ *
+ * This means disabling conflicting features, enabling meta-features, ...
+ */
+static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
+	// Vorbis and Tremor can not be enabled simultaneously
+	if (getFeatureBuildState("tremor", setup.features)) {
+		setFeatureBuildState("vorbis", setup.features, false);
+	}
+
+	// Fluidsynth and Fluidlite can not be enabled simultaneously
+	if (getFeatureBuildState("fluidlite", setup.features)) {
+		setFeatureBuildState("fluidsynth", setup.features, false);
+	}
+
+	// OpenMPT and Mikmod can not be enabled simultaneously
+	if (getFeatureBuildState("openmpt", setup.features)) {
+		setFeatureBuildState("mikmod", setup.features, false);
+	}
+
+	// These features depend on OpenGL
+	if (!getFeatureBuildState("opengl", setup.features)) {
+		setFeatureBuildState("opengl_game_classic", setup.features, false);
+		setFeatureBuildState("opengl_game_shaders", setup.features, false);
+	}
+
+	// Check IMGUI dependencies
+	if (!getFeatureBuildState("opengl", setup.features) ||
+		!getFeatureBuildState("freetype2", setup.features) ||
+		!setup.useSDL2) {
+		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2\n";
+		setFeatureBuildState("imgui", setup.features, false);
+	}
+	// IMGUI is not available on Xcode
+#ifdef ENABLE_XCODE
+	if (projectType == kProjectXcode) {
+		setFeatureBuildState("imgui", setup.features, false);
+	}
+#endif
+
+	// Calculate 3D feature state
+	setFeatureBuildState("3d", setup.features,
+			getFeatureBuildState("tinygl", setup.features) ||
+			getFeatureBuildState("opengl_game_classic", setup.features) ||
+			getFeatureBuildState("opengl_game_shaders", setup.features));
+
 }
 
 ComponentList getAllComponents(const std::string &srcDir, FeatureList &features) {
