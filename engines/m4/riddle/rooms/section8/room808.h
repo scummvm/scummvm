@@ -33,8 +33,31 @@ public:
 	Room808() : Room() {}
 	~Room808() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+
+private:
+	int32 _807Rp04Series = 0;
+	int32 _808McupSeries = 0;
+	int32 _808Rp01Series = 0;
+	int32 _808Rp02Series = 0;
+	int32 _808RpupSeries = 0;
+	int32 _mctd61Series = 0;
+	int32 _mctd82aSeries = 0;
+	int32 _ripLooksAroundInAweSeries = 0;
+	int32 _ripMedReach1HandPos2Series = 0;
+	int32 _ripPos3LookAroundSeries = 0;
+	int32 _ripTalkerPos5Series = 0;
+	int32 _rptmr15Series = 0;
+
+	machine *_808ChainMach = nullptr;
+	machine *_808HandleSpriteMach = nullptr;
+	machine *_808PosMach = nullptr;
+	machine *_mcTrekMach = nullptr;
 };
 
 } // namespace Rooms
