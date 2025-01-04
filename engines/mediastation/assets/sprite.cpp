@@ -29,7 +29,7 @@ namespace MediaStation {
 SpriteFrameHeader::SpriteFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
 	_index = Datum(chunk).u.i;
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _index = 0x%x (@0x%llx)", _index, chunk.pos());
-	_boundingBox = Datum(chunk, DatumType::POINT_2).u.point;
+	_boundingBox = Datum(chunk, kDatumTypePoint2).u.point;
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _boundingBox (@0x%llx)", chunk.pos());
 }
 
@@ -72,19 +72,19 @@ Sprite::~Sprite() {
 
 Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::spatialShow: {
+	case kSpatialShowMethod: {
 		assert(args.size() == 0);
 		spatialShow();
 		return Operand();
 	}
 
-	case BuiltInMethod::timePlay: {
+	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();
 		return Operand();
 	}
 
-	case BuiltInMethod::movieReset: {
+	case kMovieResetMethod: {
 		assert(args.size() == 0);
 		movieReset();
 		return Operand();
@@ -126,7 +126,7 @@ void Sprite::timePlay() {
 	}
 
 	// RUN THE MOVIE START EVENT HANDLER.
-	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(EventHandler::Type::MovieBegin);
+	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(kMovieBeginEvent);
 	if (startEvent != nullptr) {
 		debugC(5, kDebugScript, "Sprite::timePlay(): Executing start event handler");
 		startEvent->execute(_header->_id);
@@ -208,7 +208,7 @@ void Sprite::drawNextFrame() {
 		_nextFrameTime = 0;
 
 		// RUN THE SPRITE END EVENT HANDLER.
-		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(EventHandler::Type::MovieEnd);
+		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieEndEvent);
 		if (endEvent != nullptr) {
 			debugC(5, kDebugScript, "Sprite::drawNextFrame(): Executing end event handler");
 			endEvent->execute(_header->_id);

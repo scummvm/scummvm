@@ -26,15 +26,15 @@
 namespace MediaStation {
 
 BitmapHeader::BitmapHeader(Chunk &chunk) {
-	/*uint header_size_in_bytes =*/ Datum(chunk, DatumType::UINT16_1).u.i;
+	/*uint header_size_in_bytes =*/ Datum(chunk, kDatumTypeUint16_1).u.i;
 	dimensions = Datum(chunk).u.point;
-	compression_type = BitmapHeader::CompressionType(Datum(chunk, DatumType::UINT16_1).u.i);
+	compression_type = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compression_type);
 	// TODO: Figure out what this is.
 	// This has something to do with the width of the bitmap but is always
 	// a few pixels off from the width. And in rare cases it seems to be
 	// the true width!
-	unk2 = Datum(chunk, DatumType::UINT16_1).u.i;
+	unk2 = Datum(chunk, kDatumTypeUint16_1).u.i;
 }
 
 BitmapHeader::~BitmapHeader() {
@@ -43,8 +43,7 @@ BitmapHeader::~BitmapHeader() {
 }
 
 bool BitmapHeader::isCompressed() {
-	return (compression_type != BitmapHeader::CompressionType::UNCOMPRESSED) &&
-	       (compression_type != BitmapHeader::CompressionType::UNCOMPRESSED_2);
+	return (compression_type != kUncompressedBitmap1) && (compression_type != kUncompressedBitmap2);
 }
 
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :

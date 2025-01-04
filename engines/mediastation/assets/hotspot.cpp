@@ -25,13 +25,13 @@ namespace MediaStation {
 
 Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::mouseActivate: {
+	case kMouseActivateMethod: {
 		assert(args.empty());
 		warning("Hotspot::callMethod(): BuiltInFunction::mouseActivate is not implemented");
 		return Operand();
 	}
 
-	case BuiltInMethod::mouseDeactivate: {
+	case kMouseDeactivateMethod: {
 		assert(args.empty());
 		warning("Hotspot::callMethod(): BuiltInFunction::mouseDeactivate is not implemented");
 		return Operand();

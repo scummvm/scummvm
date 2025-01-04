@@ -25,7 +25,7 @@ namespace MediaStation {
 
 Operand Canvas::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::clearToPalette: {
+	case kClearToPaletteMethod: {
 		error("Canvas::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
 	}
 

@@ -25,14 +25,14 @@
 namespace MediaStation {
 
 EventHandler::EventHandler(Chunk &chunk) {
-	_type = (EventHandler::Type)(Datum(chunk).u.i);
+	_type = static_cast<EventType>(Datum(chunk).u.i);
 	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", _type, static_cast<long long int>(chunk.pos()));
-	_argumentType = (EventHandler::ArgumentType)(Datum(chunk).u.i);
+	_argumentType = static_cast<EventHandlerArgumentType>(Datum(chunk).u.i);
 	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", _argumentType, static_cast<long long int>(chunk.pos()));
 	_argumentValue = Datum(chunk);
 
-	if (_argumentType != EventHandler::ArgumentType::Null) {
-		uint lengthInBytes = Datum(chunk, DatumType::UINT32_1).u.i;
+	if (_argumentType != kNullEventHandlerArgument) {
+		uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
 		debugC(5, kDebugLoading, "EventHandler::EventHandler(): Null argument type, length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	}
 
@@ -43,23 +43,23 @@ Operand EventHandler::execute(uint assetId) {
 	// TODO: The assetId is only passed in for debug visibility, there should be
 	// a better way to handle that.
 	switch (_argumentType) {
-	case EventHandler::ArgumentType::Null: {
+	case kNullEventHandlerArgument: {
 		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (no argument) **********", assetId, (uint)_type);
 		break;
 	}
 
-	case EventHandler::ArgumentType::AsciiCode: {
+	case kAsciiCodeEventHandlerArgument: {
 		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (ASCII code = %d) **********", assetId, (uint)_type, _argumentValue.u.i);
 		break;
 	}
 
-	case EventHandler::ArgumentType::Context: {
+	case kContextEventHandlerArgument: {
 		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (context = %d) **********", assetId, (uint)_type, _argumentValue.u.i);
 		break;
 	}
 
-	case EventHandler::ArgumentType::Time:
-	case EventHandler::ArgumentType::Unk1: {
+	case kTimeEventHandlerArgument:
+	case kUnk1EventHandlerArgument: {
 		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (time = %f) **********", assetId, (uint)_type, _argumentValue.u.f);
 		break;
 	}

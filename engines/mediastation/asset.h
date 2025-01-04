@@ -28,10 +28,10 @@
 #include "mediastation/chunk.h"
 #include "mediastation/mediascript/builtins.h"
 #include "mediastation/mediascript/operand.h"
+#include "mediastation/assetheader.h"
 
 namespace MediaStation {
 
-enum class AssetType;
 class AssetHeader;
 
 class Asset {

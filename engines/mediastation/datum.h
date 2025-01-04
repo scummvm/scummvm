@@ -29,38 +29,38 @@
 
 namespace MediaStation {
 
-enum class DatumType {
-	// The INVALID type isn't a type we see in data files; it is just a
-	// default initialization value.
-	INVALID = 0x0000,
-
-	UINT8 = 0x0002,
-	// TODO: Understand why there are different (u)int16 type codes.
-	UINT16_1 = 0x0003,
-	UINT16_2 = 0x0013,
-	INT16_1 = 0x0006,
-	INT16_2 = 0x0010,
-	// TODO: Understand why there are two different uint32 type codes.
-	UINT32_1 = 0x0004,
-	UINT32_2 = 0x0007,
-	// TODO: Understand why there are two different float64 type codes.
-	FLOAT64_1 = 0x0011,
-	FLOAT64_2 = 0x0009,
-	STRING = 0x0012,
-	FILENAME = 0x000a,
-	POINT_1 = 0x000f,
-	POINT_2 = 0x000e,
-	BOUNDING_BOX = 0x000d,
-	POLYGON = 0x001d,
-	// These are other types.
-	PALETTE = 0x05aa,
-	REFERENCE = 0x001b
-};
-
 class Point;
 class BoundingBox;
 class Polygon;
 class Reference;
+
+enum DatumType {
+	// This type isn't a type we see in data files; it is just a
+	// default initialization value.
+	kDatumTypeInvalid = 0x0000,
+
+	kDatumTypeUint8 = 0x0002,
+	// TODO: Understand why there are different (u)int16 type codes.
+	kDatumTypeUint16_1 = 0x0003,
+	kDatumTypeUint16_2 = 0x0013,
+	kDatumTypeInt16_1 = 0x0006,
+	kDatumTypeInt16_2 = 0x0010,
+	// TODO: Understand why there are two different uint32 type codes.
+	kDatumTypeUint32_1 = 0x0004,
+	kDatumTypeUint32_2 = 0x0007,
+	// TODO: Understand why there are two different float64 type codes.
+	kDatumTypeFloat64_1 = 0x0011,
+	kDatumTypeFloat64_2 = 0x0009,
+	kDatumTypeString = 0x0012,
+	kDatumTypeFilename = 0x000a,
+	kDatumTypePoint1 = 0x000f,
+	kDatumTypePoint2 = 0x000e,
+	kDatumTypeBoundingBox = 0x000d,
+	kDatumTypePolygon = 0x001d,
+	// These are other types.
+	kDatumTypePalette = 0x05aa,
+	kDatumTypeReference = 0x001b
+};
 
 // It is the caller's responsibility to delete any heap items
 // that are created as part of a datum. The datum is really

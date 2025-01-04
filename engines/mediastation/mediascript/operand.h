@@ -31,32 +31,32 @@ namespace MediaStation {
 class Function;
 class Asset;
 
+enum OperandType {
+	kOperandTypeEmpty = 0, // a flag for C++ code, not real operand type.
+	// TODO: Figure out the difference between these two.
+	kOperandTypeLiteral1 = 151,
+	kOperandTypeLiteral2 = 153,
+	// TODO: Figure out the difference between these two.
+	kOperandTypeFloat1 = 152,
+	kOperandTypeFloat2 = 157,
+	kOperandTypeString = 154,
+	// TODO: This only seems to be used in effectTransition:
+	//  effectTransition ( $FadeToPalette )
+	// compiles to:
+	//  [219, 102, 1]
+	//  [155, 301]
+	kOperandTypeDollarSignVariable = 155,
+	kOperandTypeAssetId = 156,
+	kOperandTypeVariableDeclaration = 158,
+	kOperandTypeFunction = 160
+};
+
 class Operand {
 public:
-	enum class Type {
-		Empty = 0, // a flag for C++ code, not real operand type.
-		// TODO: Figure out the difference between these two.
-		Literal1 = 151,
-		Literal2 = 153,
-		// TODO: Figure out the difference between these two.
-		Float1 = 152,
-		Float2 = 157,
-		String = 154,
-		// TODO: This only seems to be used in effectTransition:
-		//  effectTransition ( $FadeToPalette )
-		// compiles to:
-		//  [219, 102, 1]
-		//  [155, 301]
-		DollarSignVariable = 155,
-		AssetId = 156,
-		VariableDeclaration = 158,
-		Function = 160
-	};
+	Operand() : _type(kOperandTypeEmpty) {}
+	Operand(OperandType type) : _type(type) {}
 
-	Operand() : _type(Operand::Type::Empty) {}
-	Operand(Operand::Type type) : _type(type) {}
-
-	Operand::Type getType() const {
+	OperandType getType() const {
 		return _type;
 	}
 
@@ -82,7 +82,7 @@ public:
 	Operand operator-(const Operand &other) const;
 
 private:
-	Operand::Type _type = Operand::Type::Empty;
+	OperandType _type = kOperandTypeEmpty;
 	union {
 		uint assetId = 0;
 		Common::String *string;

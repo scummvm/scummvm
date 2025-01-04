@@ -29,6 +29,18 @@
 
 namespace MediaStation {
 
+enum ContextSectionType {
+	kContextEmptySection = 0x0000,
+	kContextOldStyleSection = 0x000d,
+	kContextParametersSection = 0x000e,
+	kContextPaletteSection = 0x05aa,
+	kContextEndSection = 0x0010,
+	kContextAssetHeaderSection = 0x0011,
+	kContextPoohSection = 0x057a,
+	kContextAssetLinkSection = 0x0013,
+	kContextFunctionSection = 0x0031
+};
+
 class Context : Datafile {
 public:
 	Context(const Common::Path &path);
@@ -44,17 +56,6 @@ public:
 	AssetHeader *_screenAsset = nullptr;
 
 private:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		OLD_STYLE = 0x000d,
-		PARAMETERS = 0x000e,
-		PALETTE = 0x05aa,
-		END = 0x0010,
-		ASSET_HEADER = 0x0011,
-		POOH = 0x057a,
-		ASSET_LINK = 0x0013,
-		FUNCTION = 0x0031
-	};
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	bool readHeaderSection(Subfile &subfile, Chunk &chunk);

@@ -170,7 +170,7 @@ Movie::~Movie() {
 
 Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::timePlay: {
+	case kTimePlayMethod: {
 		assert(args.empty());
 		timePlay();
 		return Operand();
@@ -218,7 +218,7 @@ void Movie::timePlay() {
 	}
 
 	// RUN THE MOVIE START EVENT HANDLER.
-	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(EventHandler::Type::MovieBegin);
+	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(kMovieBeginEvent);
 	if (startEvent != nullptr) {
 		debugC(5, kDebugScript, "Movie::timePlay(): Executing movie start event handler");
 		startEvent->execute(_header->_id);
@@ -234,7 +234,7 @@ void Movie::timeStop() {
 	_lastProcessedTime = 0;
 
 	// RUN THE MOVIE STOPPED EVENT HANDLER.
-	EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(EventHandler::Type::MovieStopped);
+	EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieStoppedEvent);
 	if (endEvent != nullptr) {
 		debugC(5, kDebugScript, "Movie::play(): Executing movie stopped event handler");
 		endEvent->execute(_header->_id);
@@ -283,7 +283,7 @@ bool Movie::drawNextFrame() {
 		_lastProcessedTime = 0;
 
 		// Run the movie end event handler.
-		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(EventHandler::Type::MovieEnd);
+		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieEndEvent);
 		if (endEvent != nullptr) {
 			debugC(5, kDebugScript, "Movie::drawNextFrame(): Executing movie end event handler");
 			endEvent->execute(_header->_id);
@@ -320,8 +320,8 @@ bool Movie::drawNextFrame() {
 void Movie::readChunk(Chunk &chunk) {
 	// Individual chunks are "stills" and are stored in the first subfile.
 	uint sectionType = Datum(chunk).u.i;
-	switch ((SectionType)sectionType) {
-	case SectionType::FRAME: {
+	switch ((MovieSectionType)sectionType) {
+	case kMovieFrameSection: {
 		debugC(5, kDebugLoading, "Movie::readStill(): Reading frame");
 		MovieFrameHeader *header = new MovieFrameHeader(chunk);
 		MovieFrame *frame = new MovieFrame(chunk, header);
@@ -329,7 +329,7 @@ void Movie::readChunk(Chunk &chunk) {
 		break;
 	}
 
-	case SectionType::FOOTER: {
+	case kMovieFooterSection: {
 		debugC(5, kDebugLoading, "Movie::readStill(): Reading footer");
 		MovieFrameFooter *footer = new MovieFrameFooter(chunk);
 		_footers.push_back(footer);
@@ -346,7 +346,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	// READ THE METADATA FOR THE WHOLE MOVIE.
 	uint expectedRootSectionType = Datum(chunk).u.i;
 	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", expectedRootSectionType, chunk.pos());
-	if (Movie::SectionType::ROOT != (Movie::SectionType)expectedRootSectionType) {
+	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
 		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
 	}
 	uint chunkCount = Datum(chunk).u.i;
@@ -378,15 +378,15 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		while (isAnimationChunk) {
 			uint sectionType = Datum(chunk).u.i;
 			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", sectionType, chunk.pos());
-			switch (Movie::SectionType(sectionType)) {
-			case Movie::SectionType::FRAME: {
+			switch (MovieSectionType(sectionType)) {
+			case kMovieFrameSection: {
 				header = new MovieFrameHeader(chunk);
 				frame = new MovieFrame(chunk, header);
 				_frames.push_back(frame);
 				break;
 			}
 
-			case Movie::SectionType::FOOTER: {
+			case kMovieFooterSection: {
 				MovieFrameFooter *footer = new MovieFrameFooter(chunk);
 				// _footers.push_back(footer);
 				// TODO: This does NOT handle the case where there are
@@ -421,11 +421,11 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			chunk.read((void *)buffer, chunk.length);
 			Audio::SeekableAudioStream *stream = nullptr;
 			switch (_header->_soundEncoding) {
-			case AssetHeader::SoundEncoding::PCM_S16LE_MONO_22050:
+			case SoundEncoding::PCM_S16LE_MONO_22050:
 				stream = Audio::makeRawStream(buffer, chunk.length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
 				break;
 
-			case AssetHeader::SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
+			case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
 				// TODO: The interface here is different. We can't pass in the
 				// buffers directly. We have to make a stream first.
 				// stream = Audio::makeADPCMStream(buffer, chunk.length,

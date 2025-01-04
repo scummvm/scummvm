@@ -20,7 +20,6 @@
  */
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
 
 namespace MediaStation {
 

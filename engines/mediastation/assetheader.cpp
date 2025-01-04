@@ -34,12 +34,12 @@ AssetHeader::AssetHeader(Chunk &chunk) {
 	_id = Datum(chunk).u.i;
 	debugC(4, kDebugLoading, "AssetHeader::AssetHeader(): _type = 0x%x, _id = 0x%x (@0x%llx)", _type, _id, static_cast<long long int>(chunk.pos()));
 
-	AssetHeader::SectionType sectionType = getSectionType(chunk);
-	bool moreSectionsToRead = (AssetHeader::SectionType::EMPTY != sectionType);
+	AssetHeaderSectionType sectionType = getSectionType(chunk);
+	bool moreSectionsToRead = (kAssetHeaderEmptySection != sectionType);
 	while (moreSectionsToRead) {
 		readSection(sectionType, chunk);
 		sectionType = getSectionType(chunk);
-		moreSectionsToRead = (AssetHeader::SectionType::EMPTY != sectionType);
+		moreSectionsToRead = (kAssetHeaderEmptySection != sectionType);
 	}
 }
 
@@ -52,38 +52,39 @@ AssetHeader::~AssetHeader() {
 	delete _endPoint;
 }
 
-void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk) {
-	debugC(5, kDebugLoading, "AssetHeader::AssetHeader(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) {
+	debugC(5, kDebugLoading, "AssetHeader::AssetHeader(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	switch (sectionType) {
-	case AssetHeader::SectionType::EMPTY: {
+	case kAssetHeaderEmptySection: {
 		break;
 	}
 
-	case AssetHeader::SectionType::EVENT_HANDLER: {
+	case kAssetHeaderEventHandler: {
 		EventHandler *eventHandler = new EventHandler(chunk);
 		switch (eventHandler->_type) {
-		case EventHandler::Type::Time: {
+		case kTimerEvent: {
 			_timeHandlers.push_back(eventHandler);
 			break;
 		}
 
-		case EventHandler::Type::KeyDown: {
+		case kKeyDownEvent: {
 			_keyDownHandlers.push_back(eventHandler);
 			break;
 		}
 
-		case EventHandler::Type::Input: {
+		case kInputEvent: {
 			_inputHandlers.push_back(eventHandler);
 			break;
 		}
 
-		case EventHandler::Type::LoadComplete: {
+		case kLoadCompleteEvent: {
 			_loadCompleteHandlers.push_back(eventHandler);
 			break;
 		}
 
 		default: {
-			if (eventHandler->_argumentType != EventHandler::ArgumentType::Null && eventHandler->_argumentType != EventHandler::ArgumentType::Unk1) {
+			if (eventHandler->_argumentType != kNullEventHandlerArgument && \
+				eventHandler->_argumentType != kUnk1EventHandlerArgument) {
 				error("AssetHeader::readSection(): Event handler of type %d has a non-null argument type %d", eventHandler->_type, eventHandler->_argumentType);
 			}
 
@@ -98,12 +99,12 @@ void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk
 		break;
 	}
 
-	case AssetHeader::SectionType::STAGE_ID: {
+	case kAssetHeaderStageId: {
 		_stageId = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::ASSET_ID: {
+	case kAssetHeaderAssetId: {
 		// We already have this asset's ID, so we will just verify it is the same
 		// as the ID we have already read.
 		uint32 duplicateAssetId = Datum(chunk).u.i;
@@ -113,94 +114,94 @@ void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk
 		break;
 	}
 
-	case AssetHeader::SectionType::CHUNK_REFERENCE: {
+	case kAssetHeaderChunkReference: {
 		// These are references to the chunk(s) that hold the data for this asset.
 		// The references and the chunks have the following format "a501".
 		// There is no guarantee where these chunk(s) might actually be located:
 		//  - They might be in the same RIFF subfile as this header,
 		//  - They might be in a different RIFF subfile in the same CXT file,
 		//  - They might be in a different CXT file entirely.
-		_chunkReference = Datum(chunk, DatumType::REFERENCE).u.i;
+		_chunkReference = Datum(chunk, kDatumTypeReference).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::MOVIE_AUDIO_CHUNK_REFERENCE: {
-		_audioChunkReference = Datum(chunk, DatumType::REFERENCE).u.i;
+	case kAssetHeaderMovieAudioChunkReference: {
+		_audioChunkReference = Datum(chunk, kDatumTypeReference).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::MOVIE_ANIMATION_CHUNK_REFERENCE: {
-		_animationChunkReference = Datum(chunk, DatumType::REFERENCE).u.i;
+	case kAssetHeaderMovieAnimationChunkReference: {
+		_animationChunkReference = Datum(chunk, kDatumTypeReference).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::BOUNDING_BOX: {
-		_boundingBox = Datum(chunk, DatumType::BOUNDING_BOX).u.bbox;
+	case kAssetHeaderBoundingBox: {
+		_boundingBox = Datum(chunk, kDatumTypeBoundingBox).u.bbox;
 		break;
 	}
 
-	case AssetHeader::SectionType::MOUSE_ACTIVE_AREA: {
-		_mouseActiveArea = Datum(chunk, DatumType::POLYGON).u.polygon;
+	case kAssetHeaderMouseActiveArea: {
+		_mouseActiveArea = Datum(chunk, kDatumTypePolygon).u.polygon;
 		break;
 	}
 
-	case AssetHeader::SectionType::Z_INDEX: {
+	case kAssetHeaderZIndex: {
 		_zIndex = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::ASSET_REFERENCE: {
+	case kAssetHeaderAssetReference: {
 		_assetReference = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::STARTUP: {
+	case kAssetHeaderStartup: {
 		_startup = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::TRANSPARENCY: {
+	case kAssetHeaderTransparency: {
 		_transparency = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::HAS_OWN_SUBFILE: {
+	case kAssetHeaderHasOwnSubfile: {
 		_hasOwnSubfile = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::CURSOR_RESOURCE_ID: {
+	case kAssetHeaderCursorResourceId: {
 		_cursorResourceId = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::FRAME_RATE: {
+	case kAssetHeaderFrameRate: {
 		_frameRate = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::LOAD_TYPE: {
+	case kAssetHeaderLoadType: {
 		_loadType = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::SOUND_INFO: {
+	case kAssetHeaderSoundInfo: {
 		_totalChunks = Datum(chunk).u.i;
 		_rate = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::MOVIE_LOAD_TYPE: {
+	case kAssetHeaderMovieLoadType: {
 		_loadType = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::GET_OFFSTAGE_EVENTS: {
+	case kAssetHeaderGetOffstageEvents: {
 		_getOffstageEvents = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::PALETTE: {
+	case kAssetHeaderPalette: {
 		// TODO: Avoid the copying here!
 		const uint PALETTE_ENTRIES = 256;
 		const uint PALETTE_BYTES = PALETTE_ENTRIES * 3;
@@ -211,38 +212,38 @@ void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk
 		break;
 	}
 
-	case AssetHeader::SectionType::DISSOLVE_FACTOR: {
+	case kAssetHeaderDissolveFactor: {
 		_dissolveFactor = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::SOUND_ENCODING_1:
-	case AssetHeader::SectionType::SOUND_ENCODING_2: {
+	case kAssetHeaderSoundEncoding1:
+	case kAssetHeaderSoundEncoding2: {
 		_soundEncoding = SoundEncoding(Datum(chunk).u.i);
 		break;
 	}
 
-	case AssetHeader::SectionType::SPRITE_CHUNK_COUNT: {
+	case kAssetHeaderSpriteChunkCount: {
 		_chunkCount = Datum(chunk).u.i;
 		break;
 	}
 
-	case AssetHeader::SectionType::START_POINT: {
-		_startPoint = Datum(chunk, DatumType::POINT_2).u.point;
+	case kAssetHeaderStartPoint: {
+		_startPoint = Datum(chunk, kDatumTypePoint2).u.point;
 		break;
 	}
 
-	case AssetHeader::SectionType::END_POINT: {
-		_endPoint = Datum(chunk, DatumType::POINT_2).u.point;
+	case kAssetHeaderEndPoint: {
+		_endPoint = Datum(chunk, kDatumTypePoint2).u.point;
 		break;
 	}
 
-	case AssetHeader::SectionType::STEP_RATE: {
-		_stepRate = (uint32)(Datum(chunk, DatumType::FLOAT64_2).u.f);
+	case kAssetHeaderStepRate: {
+		_stepRate = (uint32)(Datum(chunk, kDatumTypeFloat64_2).u.f);
 		break;
 	}
 
-	case AssetHeader::SectionType::DURATION: {
+	case kAssetHeaderDuration: {
 		// These are stored in the file as fractional seconds,
 		// but we want milliseconds.
 		_duration = (uint32)(Datum(chunk).u.f * 1000);
@@ -250,15 +251,15 @@ void AssetHeader::readSection(AssetHeader::SectionType sectionType, Chunk& chunk
 	}
 
 	default: {
-		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
+		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		break;
 	}
 	}
 }
 
-AssetHeader::SectionType AssetHeader::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, DatumType::UINT16_1);
-	AssetHeader::SectionType sectionType = static_cast<AssetHeader::SectionType>(datum.u.i);
+AssetHeaderSectionType AssetHeader::getSectionType(Chunk &chunk) {
+	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	AssetHeaderSectionType sectionType = static_cast<AssetHeaderSectionType>(datum.u.i);
 	return sectionType;
 }
 

@@ -27,14 +27,14 @@ namespace MediaStation {
 
 void Operand::putInteger(int i) {
 	switch (_type) {
-	case Operand::Type::Literal1:
-	case Operand::Type::Literal2:
-	case Operand::Type::DollarSignVariable: {
+	case kOperandTypeLiteral1:
+	case kOperandTypeLiteral2:
+	case kOperandTypeDollarSignVariable: {
 		_u.i = i;
 		break;
 	}
 
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		_u.variable->value.i = i;
 		break;
 	}
@@ -47,13 +47,13 @@ void Operand::putInteger(int i) {
 
 int Operand::getInteger() {
 	switch (_type) {
-	case Operand::Type::Literal1:
-	case Operand::Type::Literal2:
-	case Operand::Type::DollarSignVariable: {
+	case kOperandTypeLiteral1:
+	case kOperandTypeLiteral2:
+	case kOperandTypeDollarSignVariable: {
 		return _u.i;
 	}
 
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		return _u.variable->value.i;
 	}
 
@@ -65,13 +65,13 @@ int Operand::getInteger() {
 
 void Operand::putDouble(double d) {
 	switch (_type) {
-	case Operand::Type::Float1:
-	case Operand::Type::Float2: {
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2: {
 		_u.d = d;
 		break;
 	}
 
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		// TODO: Add assertion.
 		_u.variable->value.d = d;
 		break;
@@ -85,12 +85,12 @@ void Operand::putDouble(double d) {
 
 double Operand::getDouble() {
 	switch (_type) {
-	case Operand::Type::Float1:
-	case Operand::Type::Float2: {
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2: {
 		return _u.d;
 	}
 
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		// TODO: Add assertion that this is the proper type.
 		return _u.variable->value.d;
 	}
@@ -103,13 +103,13 @@ double Operand::getDouble() {
 
 void Operand::putString(Common::String *string) {
 	switch (_type) {
-	case Operand::Type::String: {
+	case kOperandTypeString: {
 		_u.string = string;
 		break;
 	}
 
-	case Operand::Type::VariableDeclaration: {
-		assert(_u.variable->type == Variable::Type::STRING);
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->type == kVariableTypeString);
 		_u.variable->value.string = string;
 		break;
 	}
@@ -122,12 +122,12 @@ void Operand::putString(Common::String *string) {
 
 Common::String *Operand::getString() {
 	switch (_type) {
-	case Operand::Type::String: {
+	case kOperandTypeString: {
 		return _u.string;
 	}
 
-	case Operand::Type::VariableDeclaration: {
-		assert(_u.variable->type == Variable::Type::STRING);
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->type == kVariableTypeString);
 		return _u.variable->value.string;
 	}
 
@@ -139,7 +139,7 @@ Common::String *Operand::getString() {
 
 void Operand::putVariable(Variable *variable) {
 	switch (_type) {
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		_u.variable = variable;
 		break;
 	}
@@ -152,7 +152,7 @@ void Operand::putVariable(Variable *variable) {
 
 Variable *Operand::getVariable() {
 	switch (_type) {
-	case Operand::Type::VariableDeclaration: {
+	case kOperandTypeVariableDeclaration: {
 		return _u.variable;
 	}
 
@@ -164,7 +164,7 @@ Variable *Operand::getVariable() {
 
 void Operand::putFunction(Function *function) {
 	switch (_type) {
-	case Operand::Type::Function: {
+	case kOperandTypeFunction: {
 		_u.function = function;
 		break;
 	}
@@ -177,7 +177,7 @@ void Operand::putFunction(Function *function) {
 
 Function *Operand::getFunction() {
 	switch (_type) {
-	case Operand::Type::Function: {
+	case kOperandTypeFunction: {
 		return _u.function;
 	}
 
@@ -189,13 +189,13 @@ Function *Operand::getFunction() {
 
 void Operand::putAsset(uint32 assetId) {
 	switch (_type) {
-	case Operand::Type::AssetId: {
+	case kOperandTypeAssetId: {
 		_u.assetId = assetId;
 		break;
 	}
 
-	case Operand::Type::VariableDeclaration: {
-		assert(_u.variable->type == Variable::Type::ASSET_ID);
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->type == kVariableTypeAssetId);
 		_u.variable->value.assetId = assetId;
 		break;
 	}
@@ -208,7 +208,7 @@ void Operand::putAsset(uint32 assetId) {
 
 Asset *Operand::getAsset() {
 	switch (_type) {
-	case Operand::Type::AssetId: {
+	case kOperandTypeAssetId: {
 		if (_u.assetId == 0) {
 			return nullptr;
 		} else {
@@ -216,8 +216,8 @@ Asset *Operand::getAsset() {
 		}
 	}
 
-	case Operand::Type::VariableDeclaration: {
-		assert(_u.variable->type == Variable::Type::ASSET_ID);
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->type == kVariableTypeAssetId);
 		return g_engine->_assets.getVal(_u.variable->value.assetId);
 	}
 
@@ -229,12 +229,12 @@ Asset *Operand::getAsset() {
 
 uint32 Operand::getAssetId() {
 	switch (_type) {
-	case Operand::Type::AssetId: {
+	case kOperandTypeAssetId: {
 		return _u.assetId;
 	}
 
-	case Operand::Type::VariableDeclaration: {
-		assert(_u.variable->type == Variable::Type::ASSET_ID);
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->type == kVariableTypeAssetId);
 		return _u.variable->value.assetId;
 	}
 
@@ -246,11 +246,11 @@ uint32 Operand::getAssetId() {
 
 Operand Operand::operator-(const Operand &other) const {
 	Operand returnValue;
-	if (this->_type == Operand::Type::Literal1 && other._type == Operand::Type::Literal1) {
-		returnValue._type = Operand::Type::Literal1;
+	if (this->_type == kOperandTypeLiteral1 && other._type == kOperandTypeLiteral1) {
+		returnValue._type = kOperandTypeLiteral1;
 		returnValue._u.i = this->_u.i - other._u.i;
-	} else if (this->_type == Operand::Type::Float1 && other._type == Operand::Type::Float1) {
-		returnValue._type = Operand::Type::Float1;
+	} else if (this->_type == kOperandTypeFloat1 && other._type == kOperandTypeFloat1) {
+		returnValue._type = kOperandTypeFloat1;
 		returnValue._u.d = this->_u.d - other._u.d;
 	} else {
 		error("Operand::operator-(): Unsupported operand types %d and %d", this->_type, other._type);

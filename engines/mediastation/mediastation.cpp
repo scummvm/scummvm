@@ -124,7 +124,7 @@ Common::Error MediaStationEngine::run() {
 		setPaletteFromHeader(activeScreen->_screenAsset);
 
 		// PROCESS THE OPENING EVENT HANDLER.
-		EventHandler *entryEvent = activeScreen->_screenAsset->_eventHandlers.getValOrDefault(EventHandler::Type::Entry);
+		EventHandler *entryEvent = activeScreen->_screenAsset->_eventHandlers.getValOrDefault(MediaStation::kEntryEvent);
 		if (entryEvent != nullptr) {
 			debugC(5, kDebugScript, "Executing context entry event handler");
 			entryEvent->execute(activeScreen->_screenAsset->_id);

@@ -28,16 +28,15 @@
 
 namespace MediaStation {
 
-class ContextParameters {
-private:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		VARIABLE = 0x0014,
-		NAME = 0x0bb9,
-		FILE_NUMBER = 0x0011,
-		BYTECODE = 0x0017
-	};
+enum ContextParametersSectionType {
+	kContextParametersEmptySection = 0x0000,
+	kContextParametersVariable = 0x0014,
+	kContextParametersName = 0x0bb9,
+	kContextParametersFileNumber = 0x0011,
+	kContextParametersBytecode = 0x0017
+};
 
+class ContextParameters {
 public:
 	ContextParameters(Chunk &chunk);
 	~ContextParameters();

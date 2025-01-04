@@ -59,13 +59,13 @@ void Sound::readChunk(Chunk &chunk) {
 	chunk.read((void *)buffer, chunk.length);
 
 	switch (_encoding) {
-	case AssetHeader::SoundEncoding::PCM_S16LE_MONO_22050: {
+	case SoundEncoding::PCM_S16LE_MONO_22050: {
 		// Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer, chunk.length, Sound::RATE, Sound::FLAGS, DisposeAfterUse::NO);
 		//_streams.push_back(stream);
 		break;
 	}
 
-	case AssetHeader::SoundEncoding::IMA_ADPCM_S16LE_MONO_22050: {
+	case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050: {
 		// TODO: Support ADPCM decoding.
 		// Audio::SeekableAudioStream *stream = nullptr; // Audio::makeADPCMStream(buffer, chunk.length, DisposeAfterUse::NO, Audio::ADPCMType::kADPCMMSIma, Sound::RATE, 1, 4);
 		//_streams.push_back(stream);

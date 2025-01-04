@@ -31,7 +31,7 @@
 namespace MediaStation {
 
 CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) : _args(nullptr) {
-	uint lengthInBytes = Datum(chunk, DatumType::UINT32_1).u.i;
+	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
 	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	_bytecode = chunk.readStream(lengthInBytes);
 }
@@ -61,15 +61,15 @@ Operand CodeChunk::executeNextStatement() {
 	InstructionType instructionType = InstructionType(Datum(*_bytecode).u.i);
 	debugC(8, kDebugScript, " instructionType = %d", (uint)instructionType);
 	switch (instructionType) {
-	case InstructionType::EMPTY: {
+	case kInstructionTypeEmpty: {
 		return Operand();
 	}
 
-	case InstructionType::FUNCTION_CALL: {
+	case kInstructionTypeFunctionCall: {
 		Opcode opcode = Opcode(Datum(*_bytecode).u.i);
 		debugC(8, kDebugScript, "  *** Opcode %d ***", (uint)opcode);
 		switch (opcode) {
-		case Opcode::AssignVariable: {
+		case kOpcodeAssignVariable: {
 			uint32 id = Datum(*_bytecode).u.i;
 			VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
 			Operand newValue = executeNextStatement();
@@ -79,7 +79,7 @@ Operand CodeChunk::executeNextStatement() {
 			return Operand();
 		}
 
-		case Opcode::CallRoutine: {
+		case kOpcodeCallRoutine: {
 			uint functionId = Datum(*_bytecode).u.i;
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Common::Array<Operand> args;
@@ -101,11 +101,11 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
-		case Opcode::CallMethod: {
+		case kOpcodeCallMethod: {
 			uint32 methodId = Datum(*_bytecode).u.i;
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Operand selfObject = executeNextStatement();
-			if (selfObject.getType() != Operand::Type::AssetId) {
+			if (selfObject.getType() != kOperandTypeAssetId) {
 				error("CodeChunk::executeNextStatement(): (Opcode::CallMethod) Attempt to call method on operand that is not an asset (type 0x%x)", selfObject.getType());
 			}
 			Common::Array<Operand> args;
@@ -126,14 +126,14 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
-		case Opcode::DeclareVariables: {
+		case kOpcodeDeclareVariables: {
 			uint32 localVariableCount = Datum(*_bytecode).u.i;
 			debugC(5, kDebugScript, "   Declaring %d local variables", localVariableCount);
 			_locals.resize(localVariableCount);
 			return Operand();
 		}
 
-		case Opcode::Subtract: {
+		case kOpcodeSubtract: {
 			Operand value1 = executeNextStatement();
 			Operand value2 = executeNextStatement();
 
@@ -148,28 +148,28 @@ Operand CodeChunk::executeNextStatement() {
 		break;
 	}
 
-	case (InstructionType::OPERAND): {
-		Operand::Type operandType = Operand::Type(Datum(*_bytecode).u.i);
+	case (kInstructionTypeOperand): {
+		OperandType operandType = OperandType(Datum(*_bytecode).u.i);
 		debugC(8, kDebugScript, "  *** Operand %d ***", (uint)operandType);
 		Operand operand(operandType);
 		switch (operandType) {
 		// TODO: Add clearer debugging printouts for these.
-		case Operand::Type::AssetId: {
+		case kOperandTypeAssetId: {
 			uint32 assetId = Datum(*_bytecode).u.i;
 			operand.putAsset(assetId);
 			return operand;
 		}
 
-		case Operand::Type::Literal1:
-		case Operand::Type::Literal2:
-		case Operand::Type::DollarSignVariable: {
+		case kOperandTypeLiteral1:
+		case kOperandTypeLiteral2:
+		case kOperandTypeDollarSignVariable: {
 			int literal = Datum(*_bytecode).u.i;
 			operand.putInteger(literal);
 			return operand;
 		}
 
-		case Operand::Type::Float1:
-		case Operand::Type::Float2: {
+		case kOperandTypeFloat1:
+		case kOperandTypeFloat2: {
 			double d = Datum(*_bytecode).u.f;
 			operand.putDouble(d);
 			return operand;
@@ -182,7 +182,7 @@ Operand CodeChunk::executeNextStatement() {
 		break;
 	}
 
-	case (InstructionType::VARIABLE_REF): {
+	case (kInstructionTypeVariableRef): {
 		// TODO: Add debug printout for this.
 		uint32 id = Datum(*_bytecode).u.i;
 		VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
@@ -198,20 +198,20 @@ Operand CodeChunk::executeNextStatement() {
 
 Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	switch (scope) {
-	case VariableScope::Global: {
-		Operand returnValue(Operand::Type::VariableDeclaration);
+	case kVariableScopeGlobal: {
+		Operand returnValue(kOperandTypeVariableDeclaration);
 		Variable *variable = g_engine->_variables.getVal(id);
 		returnValue.putVariable(variable);
 		return returnValue;
 	}
 
-	case VariableScope::Local: {
+	case kVariableScopeLocal: {
 		uint index = id - 1;
 		return _locals.operator[](index);
 		break;
 	}
 
-	case VariableScope::Parameter: {
+	case kVariableScopeParameter: {
 		uint32 index = id - 1;
 		if (_args == nullptr) {
 			error("CodeChunk::getVariable(): Requested a parameter in a code chunk that has no parameters.");
@@ -228,36 +228,36 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 
 void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 	switch (scope) {
-	case VariableScope::Global: {
+	case kVariableScopeGlobal: {
 		Variable *variable = g_engine->_variables.getVal(id);
 		if (variable == nullptr) {
 			error("CodeChunk::putVariable(): Attempted to assign to a non-existent global variable %d", id);
 		}
 
 		switch (value.getType()) {
-		case Operand::Type::Literal1:
-		case Operand::Type::Literal2: {
+		case kOperandTypeLiteral1:
+		case kOperandTypeLiteral2: {
 			variable->value.i = value.getInteger();
 			break;
 		}
 
-		case Operand::Type::Float1:
-		case Operand::Type::Float2: {
+		case kOperandTypeFloat1:
+		case kOperandTypeFloat2: {
 			variable->value.d = value.getDouble();
 			break;
 		}
 
-		case Operand::Type::String: {
+		case kOperandTypeString: {
 			variable->value.string = value.getString();
 			break;
 		}
 
-		case Operand::Type::AssetId: {
+		case kOperandTypeAssetId: {
 			variable->value.assetId = value.getAssetId();
 			break;
 		}
 
-		case Operand::Type::VariableDeclaration: {
+		case kOperandTypeVariableDeclaration: {
 			// TODO: Will this cause a memory leak?
 			// variable = value.u.variable;
 			error("Assigning variable to another variable not supported yet");
@@ -271,13 +271,13 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 		break;
 	}
 
-	case VariableScope::Local: {
+	case kVariableScopeLocal: {
 		uint index = id - 1;
 		_locals[index] = value;
 		break;
 	}
 
-	case VariableScope::Parameter: {
+	case kVariableScopeParameter: {
 		error("CodeChunk::putVariable(): Attempted to assign to a parameter");
 		break;
 	}
@@ -290,7 +290,7 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 
 Operand CodeChunk::callBuiltInFunction(uint32 id, Common::Array<Operand> &args) {
 	switch ((BuiltInFunction)id) {
-	case BuiltInFunction::effectTransition: {
+	case kEffectTransitionFunction: {
 		switch (args.size()) {
 		// TODO: Discover and handle the different ways
 		// effectTransition can be called.

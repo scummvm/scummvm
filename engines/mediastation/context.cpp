@@ -107,7 +107,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	while (moreSectionsToRead) {
 		// VERIFY THIS CHUNK IS A HEADER.
 		// TODO: What are the situations when it's not?
-		uint16 sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
+		uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
 		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
@@ -154,10 +154,10 @@ void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 }
 
 bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
-	uint16 sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
+	uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
 	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
-	switch ((SectionType)sectionType) {
-	case SectionType::PARAMETERS: {
+	switch (sectionType) {
+	case kContextParametersSection: {
 		if (_parameters != nullptr) {
 			error("Context::readHeaderSection(): Got multiple parameters (@0x%llx)", static_cast<long long int>(chunk.pos()));
 		}
@@ -165,12 +165,12 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		break;
 	}
 
-	case SectionType::ASSET_LINK: {
+	case kContextAssetLinkSection: {
 		warning("Context::readHeaderSection(): ASSET_LINK not implemented yet");
 		break;
 	}
 
-	case SectionType::PALETTE: {
+	case kContextPaletteSection: {
 		if (_palette != nullptr) {
 			error("Context::readHeaderSection(): Got multiple palettes (@0x%llx)", static_cast<long long int>(chunk.pos()));
 		}
@@ -183,51 +183,51 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		delete[] buffer;
 		debugC(5, kDebugLoading, "Context::readHeaderSection(): Read palette");
 		// This is likely just an ending flag that we expect to be zero.
-		Datum(chunk, DatumType::UINT16_1).u.i;
+		Datum(chunk, kDatumTypeUint16_1).u.i;
 		break;
 	}
 
-	case SectionType::ASSET_HEADER: {
+	case kContextAssetHeaderSection: {
 		Asset *asset = nullptr;
 		AssetHeader *header = new AssetHeader(chunk);
 		switch (header->_type) {
-		case AssetType::IMAGE:
+		case kAssetTypeImage:
 			asset = new Image(header);
 			break;
 
-		case AssetType::MOVIE:
+		case kAssetTypeMovie:
 			asset = new Movie(header);
 			break;
 
-		case AssetType::SOUND:
+		case kAssetTypeSound:
 			asset = new Sound(header);
 			break;
 
-		case AssetType::PALETTE:
+		case kAssetTypePalette:
 			asset = new Palette(header);
 			break;
 
-		case AssetType::PATH:
+		case kAssetTypePath:
 			asset = new Path(header);
 			break;
 
-		case AssetType::TIMER:
+		case kAssetTypeTimer:
 			asset = new Timer(header);
 			break;
 
-		case AssetType::HOTSPOT:
+		case kAssetTypeHotspot:
 			asset = new Hotspot(header);
 			break;
 
-		case AssetType::SPRITE:
+		case kAssetTypeSprite:
 			asset = new Sprite(header);
 			break;
 
-		case AssetType::CANVAS:
+		case kAssetTypeCanvas:
 			asset = new Canvas(header);
 			break;
 
-		case AssetType::SCREEN:
+		case kAssetTypeScreen:
 			if (_screenAsset != nullptr) {
 				error("Context::readHeaderSection(): Got multiple screen assets in the same context");
 			}
@@ -258,7 +258,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		break;
 	}
 
-	case SectionType::FUNCTION: {
+	case kContextFunctionSection: {
 		Function *function = new Function(chunk);
 		g_engine->_functions.setVal(function->_id, function);
 		if (!g_engine->isFirstGenerationEngine()) {
@@ -267,17 +267,17 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		break;
 	}
 
-	case SectionType::END: {
+	case kContextEndSection: {
 		error("Context::readHeaderSection(): END Not implemented yet");
 		return false;
 	}
 
-	case SectionType::EMPTY: {
+	case kContextEmptySection: {
 		error("Context::readHeaderSection(): EMPTY Not implemented yet");
 		break;
 	}
 
-	case SectionType::POOH: {
+	case kContextPoohSection: {
 		error("Context::readHeaderSection(): POOH Not implemented yet");
 		break;
 	}
@@ -297,7 +297,7 @@ void Context::play() {
 	if (_screenAsset == nullptr) {
 		error("Context::play(): No entry script exists for this context, cannot play it");
 	}
-	//EventHandler *entryHandler = nullptr; //_screenAsset->_eventHandlers.getVal(uint32(EventHandler::Type::Entry));
+	//EventHandler *entryHandler = nullptr; //_screenAsset->_eventHandlers.getVal(uint32(EventType::Entry));
 	// So how can we actually execute this script?
 
 	// FIND AND EXECUTE THE EXIT SCRIPT.

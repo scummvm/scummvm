@@ -29,22 +29,22 @@
 
 namespace MediaStation {
 
+enum BitmapCompressionType {
+	kUncompressedBitmap1 = 0,
+	kRleCompressedBitmap = 1,
+	kUnk1CompressedBitmap = 6,
+	kUncompressedBitmap2 = 7,
+};
+
 class BitmapHeader {
 public:
-	enum class CompressionType {
-		UNCOMPRESSED = 0,
-		RLE_COMPRESSED = 1,
-		UNK1 = 6,
-		UNCOMPRESSED_2 = 7,
-	};
-
 	BitmapHeader(Chunk &chunk);
 	~BitmapHeader();
 
 	bool isCompressed();
 
 	Common::Point *dimensions = nullptr;
-	CompressionType compression_type;
+	BitmapCompressionType compression_type;
 	uint unk2;
 };
 

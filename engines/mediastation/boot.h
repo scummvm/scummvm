@@ -48,17 +48,17 @@ public:
 	Common::String *string;
 };
 
+enum ContextDeclarationSectionType {
+	kContextDeclarationEmptySection = 0x0000,
+	kContextDeclarationPlaceholder = 0x0003,
+	kContextDeclarationFileNumber1 = 0x0004,
+	kContextDeclarationFileNumber2 = 0x0005,
+	kContextDeclarationFileReference = 0x0006,
+	kContextDeclarationName = 0x0bb8
+};
+
 class ContextDeclaration {
 public:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		PLACEHOLDER = 0x0003,
-		FILE_NUMBER_1 = 0x0004,
-		FILE_NUMBER_2 = 0x0005,
-		FILE_REFERENCE = 0x0006,
-		CONTEXT_NAME = 0x0bb8
-	};
-
 	ContextDeclaration(Chunk &chunk);
 	~ContextDeclaration();
 
@@ -69,17 +69,17 @@ public:
 	bool isLast;
 
 private:
-	ContextDeclaration::SectionType getSectionType(Chunk &chunk);
+	ContextDeclarationSectionType getSectionType(Chunk &chunk);
+};
+
+enum UnknownDeclarationSectionType {
+	kUnknownDeclarationEmptySection = 0x0000,
+	kUnknownDeclarationUnk1 = 0x0009,
+	kUnknownDeclarationUnk2 = 0x0004
 };
 
 class UnknownDeclaration {
 public:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		UNK_1 = 0x0009,
-		UNK_2 = 0x0004
-	};
-
 	uint16 _unk;
 	// Signal that there are no more declarations to read.
 	bool _isLast;
@@ -87,51 +87,51 @@ public:
 	UnknownDeclaration(Chunk &chunk);
 
 private:
-	UnknownDeclaration::SectionType getSectionType(Chunk& chunk);
+	UnknownDeclarationSectionType getSectionType(Chunk& chunk);
+};
+
+enum FileDeclarationSectionType {
+	kFileDeclarationEmptySection = 0x0000,
+	kFileDeclarationFileId = 0x002b,
+	kFileDeclarationFileNameAndType = 0x002d
+};
+
+// Indicates where a file is intended to be stored.
+// NOTE: This might not be correct and this might be a more general "file type".
+enum IntendedFileLocation {
+    // Usually all files that have numbers remain on the CD-ROM.
+    kFileIntendedOnCdRom = 0x0007,
+    // These UNKs only appear in George Shrinks.
+    kFileIntendedForUnk1 = 0x0008,
+    kFileIntendedForUnk2 = 0x0009,
+    // Usually only INSTALL.CXT is copied to the hard disk.
+    kFileIntendedOnHardDisk = 0x000b
 };
 
 class FileDeclaration {
 public:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		FILE_ID = 0x002b,
-		FILE_NAME_AND_TYPE = 0x002d
-	};
-
-	// Indicates where this file is intended to be stored.
-	// NOTE: This might not be correct and this might be a more general "file type".
-	enum class IntendedLocation {
-		// Usually all files that have numbers remain on the CD-ROM.
-		CD_ROM = 0x0007,
-		// These UNKs only appear in George Shrinks.
-		UNK1 = 0x0008,
-		UNK2 = 0x0009,
-		// Usually only INSTALL.CXT is copied to the hard disk.
-		HARD_DISK = 0x000b
-	};
-
 	FileDeclaration(Chunk &chunk);
 	~FileDeclaration();
 
 	uint32 _id;
-	IntendedLocation _intendedLocation;
+	IntendedFileLocation _intendedLocation;
 	Common::String *_name;
 	// Signal that there are no more declarations to read.
 	bool _isLast;
 
 private:
-	FileDeclaration::SectionType getSectionType(Chunk &chunk);
+	FileDeclarationSectionType getSectionType(Chunk &chunk);
+};
+
+enum SubfileDeclarationSectionType {
+	kSubfileDeclarationEmptySection = 0x0000,
+	kSubfileDeclarationAssetId = 0x002a,
+	kSubfileDeclarationFileId = 0x002b,
+	kSubfileDeclarationStartOffset = 0x002c
 };
 
 class SubfileDeclaration {
 public:
-	enum class SectionType {
-		EMPTY = 0x0000,
-		ASSET_ID = 0x002a,
-		FILE_ID = 0x002b,
-		START_OFFSET = 0x002c
-	};
-
 	SubfileDeclaration(Chunk &chunk);
 
 	uint16 _assetId;
@@ -141,7 +141,7 @@ public:
 	bool _isLast;
 
 private:
-	SubfileDeclaration::SectionType getSectionType(Chunk &chunk);
+	SubfileDeclarationSectionType getSectionType(Chunk &chunk);
 };
 
 // Declares a cursor, which is stored as a cursor resource in the game executable.
@@ -164,32 +164,32 @@ public:
 	~EngineResourceDeclaration();
 };
 
+enum BootSectionType {
+	kBootLastSection = 0x0000,
+	kBootEmptySection = 0x002e,
+	kBootContextDeclaration = 0x0002,
+	kBootVersionInformation = 0x0190,
+	kBootUnk1 = 0x0191,
+	kBootUnk2 = 0x0192,
+	kBootUnk3 = 0x0193,
+	kBootEngineResource = 0x0bba,
+	kBootEngineResourceId = 0x0bbb,
+	kBootUnknownDeclaration = 0x0007,
+	kBootFileDeclaration = 0x000a,
+	kBootSubfileDeclaration = 0x000b,
+	kBootUnk5 = 0x000c,
+	kBootCursorDeclaration = 0x0015,
+	kBootEntryScreen = 0x002f,
+	kBootAllowMultipleSounds = 0x0035,
+	kBootAllowMultipleStreams = 0x0036,
+	kBootUnk4 = 0x057b
+};
+
 class Boot : Datafile {
 private:
-	enum class SectionType {
-		LAST = 0x0000,
-		EMPTY = 0x002e,
-		CONTEXT_DECLARATION = 0x0002,
-		VERSION_INFORMATION = 0x0190,
-		UNK1 = 0x0191,
-		UNK2 = 0x0192,
-		UNK3 = 0x0193,
-		ENGINE_RESOURCE = 0x0bba,
-		ENGINE_RESOURCE_ID = 0x0bbb,
-		UNKNOWN_DECLARATION = 0x0007,
-		FILE_DECLARATION = 0x000a,
-		SUBFILE_DECLARATION = 0x000b,
-		UNK5 = 0x000c,
-		CURSOR_DECLARATION = 0x0015,
-		ENTRY_SCREEN = 0x002f,
-		ALLOW_MULTIPLE_SOUNDS = 0x0035,
-		ALLOW_MULTIPLE_STREAMS = 0x0036,
-		UNK4 = 0x057b
-	};
-
 	Subfile subfile;
 
-	Boot::SectionType getSectionType(Chunk &chunk);
+	BootSectionType getSectionType(Chunk &chunk);
 
 public:
 	Common::String *_gameTitle = nullptr;

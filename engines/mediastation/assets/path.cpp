@@ -30,22 +30,22 @@ Path::~Path() {
 
 Operand Path::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::timePlay: {
+	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();
 		return Operand();
 	}
 
-	case BuiltInMethod::setDuration: {
+	case kSetDurationMethod: {
 		assert(args.size() == 1);
 		uint durationInMilliseconds = (uint)(args[0].getDouble() * 1000);
 		setDuration(durationInMilliseconds);
 		return Operand();
 	}
 
-	case BuiltInMethod::percentComplete: {
+	case kPercentCompleteMethod: {
 		assert(args.size() == 0);
-		Operand returnValue(Operand::Type::Float1);
+		Operand returnValue(kOperandTypeFloat1);
 		returnValue.putDouble(percentComplete());
 		return returnValue;
 	}
@@ -79,7 +79,7 @@ void Path::timePlay() {
 	}
 
 	// STEP THE PATH.
-	EventHandler *pathStepHandler = _header->_eventHandlers[EventHandler::Type::Step];
+	EventHandler *pathStepHandler = _header->_eventHandlers[kStepEvent];
 	for (uint i = 0; i < totalSteps; i++) {
 		_percentComplete = (double)(i + 1) / totalSteps;
 		debugC(5, kDebugScript, "Path::timePlay(): Step %d of %d", i, totalSteps);
@@ -97,7 +97,7 @@ void Path::timePlay() {
 	}
 
 	// RUN THE END EVENT HANDLER.
-	EventHandler *endEventHandler = _header->_eventHandlers[EventHandler::Type::PathEnd];
+	EventHandler *endEventHandler = _header->_eventHandlers[kPathEndEvent];
 	if (endEventHandler != nullptr) {
 		debugC(5, kDebugScript, "Path::timePlay(): Running PathEnd event handler");
 		endEventHandler->execute(_header->_id);

@@ -31,50 +31,50 @@
 
 namespace MediaStation {
 
-enum class InstructionType {
-	EMPTY = 0x0000,
-	FUNCTION_CALL = 0x0067,
-	OPERAND = 0x0066,
-	VARIABLE_REF = 0x0065
+enum InstructionType {
+	kInstructionTypeEmpty = 0x0000,
+	kInstructionTypeFunctionCall = 0x0067,
+	kInstructionTypeOperand = 0x0066,
+	kInstructionTypeVariableRef = 0x0065
 };
 
-enum class Opcode {
-	IfElse = 202,
-	AssignVariable = 203,
-	Or = 204,
-	And = 206,
-	Equals = 207,
-	NotEquals = 208,
-	LessThan = 209,
-	GreaterThan = 210,
-	LessThanOrEqualTo = 211,
-	GreaterThanOrEqualTo = 212,
-	Add = 213,
-	Subtract = 214,
-	Multiply = 215,
-	Divide = 216,
-	Modulo = 217,
-	Unk2 = 218, // TODO: Likely something with ## constants like ##DOWN?
-	CallRoutine = 219,
+enum Opcode {
+	kOpcodeIfElse = 202,
+	kOpcodeAssignVariable = 203,
+	kOpcodeOr = 204,
+	kOpcodeAnd = 206,
+	kOpcodeEquals = 207,
+	kOpcodeNotEquals = 208,
+	kOpcodeLessThan = 209,
+	kOpcodeGreaterThan = 210,
+	kOpcodeLessThanOrEqualTo = 211,
+	kOpcodeGreaterThanOrEqualTo = 212,
+	kOpcodeAdd = 213,
+	kOpcodeSubtract = 214,
+	kOpcodeMultiply = 215,
+	kOpcodeDivide = 216,
+	kOpcodeModulo = 217,
+	kOpcodeUnk2 = 218, // TODO: Likely something with ## constants like ##DOWN?
+	kOpcodeCallRoutine = 219,
 	// Method calls are like routine calls, but they have an implicit "self"
 	// parameter that is always the first. For example:
 	//  @self . mouseActivate ( TRUE ) ;
-	CallMethod = 220,
+	kOpcodeCallMethod = 220,
 	// This seems to appear at the start of a function to declare the number of
 	// local variables used in the function. It seems to be the `Declare`
 	// keyword. In the observed examples, the number of variables to create is
 	// given, then the next instructions are variable assignments for that number
 	// of variables.
-	DeclareVariables = 221,
-	While = 224,
-	Return = 222,
-	Unk1 = 223
+	kOpcodeDeclareVariables = 221,
+	kOpcodeWhile = 224,
+	kOpcodeReturn = 222,
+	kOpcodeUnk1 = 223
 };
 
-enum class VariableScope {
-	Local = 1,
-	Parameter = 2,
-	Global = 4
+enum VariableScope {
+	kVariableScopeLocal = 1,
+	kVariableScopeParameter = 2,
+	kVariableScopeGlobal = 4
 };
 
 class CodeChunk {

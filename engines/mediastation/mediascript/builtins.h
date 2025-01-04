@@ -24,94 +24,94 @@
 
 namespace MediaStation {
 
-enum class BuiltInFunction {
+enum BuiltInFunction {
 	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
-	effectTransition = 12, // PARAMS: 1
-	drawing = 37, // PARAMS: 5
+	kEffectTransitionFunction = 12, // PARAMS: 1
+	kDrawingFunction = 37, // PARAMS: 5
 	// TODO: Figure out if TimeOfDay = 101 is consistent across titles.
-	DebugPrint = 180, // PARAMS: 1+
+	kDebugPrintFunction = 180, // PARAMS: 1+
 	// TODO: Figure out code for DebugPrint.
 	// TODO: Figure out code for Quit.
 };
 
-enum class BuiltInMethod {
+enum BuiltInMethod {
 	// TODO: What object types does CursorSet apply to?
 	// Currently it's only in var_7be1_cursor_currentTool in
 	// IBM/Crayola.
-	cursorSet = 200, // PARAMS: 0
-	spatialHide = 203, // PARAMS: 1
-	spatialMoveTo = 204, // PARAMS: 2
-	spatialZMoveTo = 216, // PARAMS: 1
-	spatialShow = 202, // PARAMS: 1
-	timePlay = 206, // PARAMS: 1
-	timeStop = 207, // PARAMS: 0
-	isPlaying = 372, // PARAMS: 0
-	setDissolveFactor = 241, // PARAMS: 1
+	kCursorSetMethod = 200, // PARAMS: 0
+	kSpatialHideMethod = 203, // PARAMS: 1
+	kSpatialMoveToMethod = 204, // PARAMS: 2
+	kSpatialZMoveToMethod = 216, // PARAMS: 1
+	kSpatialShowMethod = 202, // PARAMS: 1
+	kTimePlayMethod = 206, // PARAMS: 1
+	kTimeStopMethod = 207, // PARAMS: 0
+	kIsPlayingMethod = 372, // PARAMS: 0
+	kSetDissolveFactorMethod = 241, // PARAMS: 1
 
 	// HOTSPOT METHODS.
-	mouseActivate = 210, // PARAMS: 1
-	mouseDeactivate = 211, // PARAMS: 0
-	xPosition = 233, // PARAMS: 0
-	yPosiion = 234, // PARAMS: 0
-	TriggerAbsXPosition = 321, // PARAMS: 0
-	TriggerAbsYPosition = 322, // PARAMS: 0
-	isActive = 371, // PARAMS: 0
+	kMouseActivateMethod = 210, // PARAMS: 1
+	kMouseDeactivateMethod = 211, // PARAMS: 0
+	kXPositionMethod = 233, // PARAMS: 0
+	kYPositionMethod = 234, // PARAMS: 0
+	kTriggerAbsXPositionMethod = 321, // PARAMS: 0
+	kTriggerAbsYPositionMethod = 322, // PARAMS: 0
+	kIsActiveMethod = 371, // PARAMS: 0
 
 	// IMAGE METHODS.
-	Width = 235, // PARAMS: 0
-	Height = 236, // PARAMS: 0
-	isVisible = 269,
+	kWidthMethod = 235, // PARAMS: 0
+	kHeightMethod = 236, // PARAMS: 0
+	kIsVisibleMethod = 269,
 
 	// SPRITE METHODS.
-	movieReset = 219, // PARAMS: 0
+	kMovieResetMethod = 219, // PARAMS: 0
 
 	// STAGE METHODS.
-	setWorldSpaceExtent = 363, // PARAMS: 2
-	setBounds = 287, // PARAMS: 4
+	kSetWorldSpaceExtentMethod = 363, // PARAMS: 2
+	kSetBoundsMethod = 287, // PARAMS: 4
 
 	// CAMERA METHODS.
-	stopPan = 350, // PARAMS: 0
-	viewportMoveTo = 352, // PARAMS: 2
-	yViewportPosition = 357, // PARAMS: 0
-	panTo = 370, // PARAMS: 4
+	kStopPanMethod = 350, // PARAMS: 0
+	kViewportMoveToMethod = 352, // PARAMS: 2
+	kYViewportPositionMethod = 357, // PARAMS: 0
+	kPanToMethod = 370, // PARAMS: 4
 
 	// CANVAS METHODS.
-	clearToPalette = 379, // PARAMS: 1
+	kClearToPaletteMethod = 379, // PARAMS: 1
 
 	// DOCUMENT METHODS.
-	loadContext = 374, // PARAMS: 1
-	releaseContext = 375, // PARAMS: 1
-	branchToScreen = 201, // PARAMS: 1
-	isLoaded = 376, // PARAMS: 1
+	kLoadContextMethod = 374, // PARAMS: 1
+	kReleaseContextMethod = 375, // PARAMS: 1
+	kBranchToScreenMethod = 201, // PARAMS: 1
+	kIsLoadedMethod = 376, // PARAMS: 1
 
 	// PATH METHODS.
-	setDuration = 262, // PARAMS: 1
-	percentComplete = 263,
+	kSetDurationMethod = 262, // PARAMS: 1
+	kPercentCompleteMethod = 263,
 
 	// TEXT METHODS.
-	text = 290,
-	setText = 291,
-	setMaximumTextLength = 293, // PARAM: 1
+	kTextMethod = 290,
+	kSetTextMethod = 291,
+	kSetMaximumTextLengthMethod = 293, // PARAM: 1
 
 	// COLLECTION METHODS.
 	// These aren't assets but arrays used in Media Script.
-	isEmpty = 254, // PARAMS: 0
-	empty = 252, // PARAMS: 0
-	append = 247, // PARAMS: 1+
-	getAt = 253, // PARAMS: 1
-	count = 249, // PARAMS: 0
+	kIsEmptyMethod = 254, // PARAMS: 0
+	kEmptyMethod = 252, // PARAMS: 0
+	kAppendMethod = 247, // PARAMS: 1+
+	kGetAtMethod = 253, // PARAMS: 1
+	kCountMethod = 249, // PARAMS: 0
 	// Looks like this lets you call a method on all the items in a collection.
 	// Examples look like : var_7be1_collect_shapes.send(spatialHide);
-	send = 257, // PARAMS: 1+. Looks like the first param is the function,
-	// and the next params are any arguments you want to send.
+	kSendMethod = 257, // PARAMS: 1+. Looks like the first param is the function,
 	// Seeking seems to be finding the index where a certain item is.
-	seek = 256, // PARAMS: 1
-	sort = 266, // PARAMS: 0
-	deleteAt = 258, // PARAMS: 1
+	// and the next params are any arguments you want to send.
+	kSeekMethod = 256, // PARAMS: 1
+	kSortMethod = 266, // PARAMS: 0
+	kDeleteAtMethod = 258, // PARAMS: 1
 
 	// PRINTER METHODS.
-	openLens = 346, // PARAMS: 0
-	closeLens = 347, // PARAMS: 0
+	kOpenLensMethod = 346, // PARAMS: 0
+	kCloseLensMethod = 347, // PARAMS: 0
 };
 
 } // End of namespace MediaStation

@@ -27,78 +27,77 @@
 
 #include "mediastation/datafile.h"
 #include "mediastation/datum.h"
-
 #include "mediastation/mediascript/codechunk.h"
 
 namespace MediaStation {
 
+enum EventType {
+    // TIMER EVENTS.
+    kTimerEvent = 5,
+
+    // HOTSPOT EVENTS.
+    kMouseDownEvent = 6,
+    kMouseUpEvent = 7,
+    kMouseMovedEvent = 8,
+    kMouseEnteredEvent = 9,
+    kMouseExitedEvent = 10,
+    kKeyDownEvent = 13, // PARAMS: 1 - ASCII code.
+
+    // SOUND EVENTS.
+    kSoundEndEvent = 14,
+    kSoundAbortEvent = 19,
+    kSoundFailureEvent = 20,
+    kSoundStoppedEvent = 29,
+    kSoundBeginEvent = 30,
+
+    // MOVIE EVENTS.
+    kMovieEndEvent = 15,
+    kMovieAbortEvent = 21,
+    kMovieFailureEvent = 22,
+    kMovieStoppedEvent = 31,
+    kMovieBeginEvent = 32,
+
+    //SPRITE EVENTS.
+    // Just "MovieEnd" in source.
+    kSpriteMovieEndEvent = 23,
+
+    // SCREEN EVENTS.
+    kEntryEvent = 17,
+    kExitEvent = 27,
+
+    // CONTEXT EVENTS.
+    kLoadCompleteEvent = 44, // PARAMS: 1 - Context ID
+
+    // TEXT EVENTS.
+    kInputEvent = 37,
+    kErrorEvent = 38,
+
+    // CAMERA EVENTS.
+    kPanAbortEvent = 43,
+    kPanEndEvent = 42,
+
+    // PATH EVENTS.
+    kStepEvent = 28,
+    kPathStoppedEvent = 33,
+    kPathEndEvent = 16
+};
+
+enum EventHandlerArgumentType {
+    kNullEventHandlerArgument = 0,
+    kAsciiCodeEventHandlerArgument = 1, // TODO: Why is this datum type a float?
+    kTimeEventHandlerArgument = 3,
+    kUnk1EventHandlerArgument = 4, // Appars to happen with MovieStart?
+    kContextEventHandlerArgument = 5
+};
+
 class EventHandler {
 public:
-	enum class Type {
-		// TIMER EVENTS.
-		Time = 5,
-
-		// HOTSPOT EVENTS.
-		MouseDown = 6,
-		MouseUp = 7,
-		MouseMoved = 8,
-		MouseEntered = 9,
-		MouseExited = 10,
-		KeyDown = 13, // PARAMS: 1 - ASCII code.
-
-		// SOUND EVENTS.
-		SoundEnd = 14,
-		SoundAbort = 19,
-		SoundFailure = 20,
-		SoundStopped = 29,
-		SoundBegin = 30,
-
-		// MOVIE EVENTS.
-		MovieEnd = 15,
-		MovieAbort = 21,
-		MovieFailure = 22,
-		MovieStopped = 31,
-		MovieBegin = 32,
-
-		//SPRITE EVENTS.
-		// Just "MovieEnd" in source.
-		SpriteMovieEnd = 23,
-
-		// SCREEN EVENTS.
-		Entry = 17,
-		Exit = 27,
-
-		// CONTEXT EVENTS.
-		LoadComplete = 44, // PARAMS: 1 - Context ID
-
-		// TEXT EVENTS.
-		Input = 37,
-		Error = 38,
-
-		// CAMERA EVENTS.
-		PanAbort = 43,
-		PanEnd = 42,
-
-		// PATH EVENTS.
-		Step = 28,
-		PathStopped = 33,
-		PathEnd = 16
-	};
-
-	enum class ArgumentType {
-		Null = 0,
-		AsciiCode = 1, // TODO: Why is this datum type a float?
-		Time = 3,
-		Unk1 = 4, // Appars to happen with MovieStart?
-		Context = 5
-	};
-
 	EventHandler(Chunk &chunk);
 	~EventHandler();
 
 	Operand execute(uint assetId);
-	EventHandler::Type _type;
-	EventHandler::ArgumentType _argumentType;
+	EventType _type;
+	EventHandlerArgumentType _argumentType;
 	Datum _argumentValue;
 
 private:

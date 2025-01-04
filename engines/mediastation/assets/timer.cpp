@@ -28,13 +28,13 @@ namespace MediaStation {
 
 Operand Timer::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	case BuiltInMethod::timePlay: {
+	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();
 		return Operand();
 	}
 
-	case BuiltInMethod::timeStop: {
+	case kTimeStopMethod: {
 		assert(args.size() == 0);
 		timeStop();
 		return Operand();

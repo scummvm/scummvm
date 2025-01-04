@@ -56,7 +56,7 @@ public:
 	static const byte FLAGS = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
 private:
-	AssetHeader::SoundEncoding _encoding;
+	SoundEncoding _encoding;
 	byte *_samples = nullptr;
 };
 

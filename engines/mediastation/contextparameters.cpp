@@ -28,29 +28,29 @@
 namespace MediaStation {
 
 ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
-	fileNumber = Datum(chunk, DatumType::UINT16_1).u.i;
-	uint sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
-	while ((SectionType)sectionType != SectionType::EMPTY) {
+	fileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+	uint sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
+	while (sectionType != kContextParametersEmptySection) {
 		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", sectionType, static_cast<long long int>(chunk.pos()));
-		switch ((SectionType)sectionType) {
-		case SectionType::NAME: {
-			uint repeatedFileNumber = Datum(chunk, DatumType::UINT16_1).u.i;
+		switch (sectionType) {
+		case kContextParametersName: {
+			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
 			if (repeatedFileNumber != fileNumber) {
 				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, fileNumber);
 			}
-			contextName = Datum(chunk, DatumType::STRING).u.string;
+			contextName = Datum(chunk, kDatumTypeString).u.string;
 			// TODO: This is likely just an end flag.
-			/*uint unk1 =*/ Datum(chunk, DatumType::UINT16_1).u.i;
+			/*uint unk1 =*/ Datum(chunk, kDatumTypeUint16_1).u.i;
 			break;
 		}
 
-		case SectionType::FILE_NUMBER: {
+		case kContextParametersFileNumber: {
 			error("ContextParameters::ContextParameters(): Section type FILE_NUMBER not implemented yet");
 			break;
 		}
 
-		case SectionType::VARIABLE: {
-			uint repeatedFileNumber = Datum(chunk, DatumType::UINT16_1).u.i;
+		case kContextParametersVariable: {
+			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
 			if (repeatedFileNumber != fileNumber) {
 				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, fileNumber);
 			}
@@ -67,7 +67,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 			break;
 		}
 
-		case SectionType::BYTECODE: {
+		case kContextParametersBytecode: {
 			Function *function = new Function(chunk);
 			_functions.setVal(function->_id, function);
 			break;
@@ -77,7 +77,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 			error("ContextParameters::ContextParameters(): Unknown section type 0x%x", sectionType);
 		}
 		}
-		sectionType = Datum(chunk, DatumType::UINT16_1).u.i;
+		sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
 	}
 }
 
