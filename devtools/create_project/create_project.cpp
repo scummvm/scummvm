@@ -105,6 +105,7 @@ enum ProjectType {
 std::map<std::string, bool> isEngineEnabled;
 
 static void fixupFeatures(ProjectType projectType, BuildSetup &setup);
+static void fixupComponents(BuildSetup &setup);
 
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
@@ -397,6 +398,9 @@ int main(int argc, char *argv[]) {
 
 	// Disable unused features / components
 	disableComponents(setup.components);
+
+	// Handle hard-coded component logic
+	fixupComponents(setup);
 
 	// Print status
 	cout << "Enabled engines:\n\n";
@@ -1365,6 +1369,37 @@ void disableComponents(const ComponentList &components) {
 			std::cout << "Feature " << i->feature.description << " is disabled as unused by enabled engines\n";
 		}
 	}
+	if (disabled) {
+		std::cout << "\n";
+	}
+}
+
+/**
+ * Apply all the hardcoded logic for the meta-components.
+ *
+ * This means disabling features not needed because their matching meta-component
+ * is not needed either
+ */
+static void fixupComponents(BuildSetup &setup) {
+	bool disabled = false;
+
+	// No MIDI, disable all MIDI implementations
+	if (!getFeatureBuildState("midi", setup.features)) {
+		disabled = true;
+		std::cout << "Disabling mt32emu, fluidsynth and fluidlite because MIDI is unused by enabled engines\n";
+		setFeatureBuildState("mt32emu",    setup.features, false);
+		setFeatureBuildState("fluidsynth", setup.features, false);
+		setFeatureBuildState("fluidlite",  setup.features, false);
+	}
+
+	// Not any tracker, disable all tracker implementations
+	if (!getFeatureBuildState("universaltracker", setup.features)) {
+		disabled = true;
+		std::cout << "Disabling MikMod and OpenMPT because Universal Tracker playback is unused by enabled engines\n";
+		setFeatureBuildState("mikmod",  setup.features, false);
+		setFeatureBuildState("openmpt", setup.features, false);
+	}
+
 	if (disabled) {
 		std::cout << "\n";
 	}
