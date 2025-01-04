@@ -32,6 +32,7 @@
 #include "got/sound.h"
 
 namespace Got {
+
 static const byte exp[] = {
 	 61, 62, 65, 66, 69, 70, 73, 74, 77, 78,
 	 81, 82, 85, 86, 89, 90, 93, 94, 97, 98,

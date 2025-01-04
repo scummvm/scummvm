@@ -112,4 +112,12 @@ void Vars::clearKeyFlags() {
 	Common::fill(_key_flag, _key_flag + 100, 0);
 }
 
+void Vars::resetEndgameFlags() {
+	_auto_load = false;
+	_end_tile = false;
+	_boss_dead = false;
+	_game_over = false;
+	_boss_intro1 = _boss_intro2 = false;
+}
+
 } // namespace Got

@@ -80,6 +80,7 @@ public:
 	void load();
 	void setArea(int areaNum);
 	void clearKeyFlags();
+	void resetEndgameFlags();
 
 	Common::String _playerName = "ScummVM";
 	Gfx::GfxChunks _gfx;
@@ -100,6 +101,7 @@ public:
 	bool _slip_flag = false;
 	bool _slipping = false;
 	int _slip_cnt = 0;
+	bool _boss_intro1 = false, _boss_intro2 = false;
 
 	uint _page[3] = { PAGE0,PAGE1,PAGE2 };
 	uint _display_page = 0, _draw_page = 0;
@@ -161,7 +163,7 @@ public:
 	ACTOR _sparkle;
 	THOR_INFO _thor_info;
 	bool _boss_dead = false;
-	bool _endgame = false;
+	byte _endgame = 0;
 
 	int _warp_flag = 0;
 
