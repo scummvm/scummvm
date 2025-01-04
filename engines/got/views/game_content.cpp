@@ -139,6 +139,7 @@ bool GameContent::tick() {
 
 	switch (_G(gameMode)) {
 	case MODE_NORMAL:
+	case MODE_THUNDER:
 		checkSwitchFlag();
 		checkForItem();
 		moveActors();
