@@ -239,4 +239,8 @@ void GotEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 }
 
+Common::String GotEngine::getHighScoresSaveName() const {
+	return Common::String::format("%s-scores.dat", _targetName.c_str());
+}
+
 } // End of namespace Got

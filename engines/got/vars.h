@@ -26,6 +26,7 @@
 #include "common/queue.h"
 #include "graphics/screen.h"
 #include "got/data/defines.h"
+#include "got/data/high_scores.h"
 #include "got/data/sd_data.h"
 #include "got/game/script.h"
 #include "got/gfx/font.h"
@@ -90,6 +91,7 @@ public:
 	Gfx::Pics _objects;
 	Gfx::Pics _odin;
 	Gfx::Pics _status;
+	HighScores _highScores;
 	SdData _sd_data;
 	Sound _sound;
 	Scripts _scripts;

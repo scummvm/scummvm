@@ -103,6 +103,8 @@ public:
 
 	void syncSoundSettings() override;
 	void pauseEngineIntern(bool pause) override;
+
+	Common::String getHighScoresSaveName() const;
 };
 
 extern GotEngine *g_engine;

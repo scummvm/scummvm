@@ -48,6 +48,7 @@ void Vars::load() {
 	_sd_data.load();
 	_sound.load();
 	_status.load();
+	_highScores.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
 	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");

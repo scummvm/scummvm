@@ -217,6 +217,7 @@ bool GameContent::tick() {
 	if (_G(end_tile)) {
 		_G(end_tile) = false;
 		Gfx::fade_out();
+		_G(highScores).add(_G(area), _G(playerName), _G(thor_info).score);
 		g_events->send("TitleBackground", GameMessage("MAIN_MENU"));
 	}
 
