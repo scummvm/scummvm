@@ -45,7 +45,7 @@ bool Game::msgFocus(const FocusMessage &msg) {
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
-	if (_G(gameMode) != MODE_NORMAL)
+	if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
 		return false;
 
 	switch (msg.keycode) {
@@ -77,7 +77,7 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
-	if (_G(gameMode) != MODE_NORMAL)
+	if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
 		return false;
 
 	switch (msg._action) {
