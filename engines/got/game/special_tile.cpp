@@ -23,6 +23,7 @@
 #include "got/game/back.h"
 #include "got/game/object.h"
 #include "got/gfx/image.h"
+#include "got/events.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -50,8 +51,14 @@ int special_tile_thor(int x, int y, int icon) {
 			return 0;
 		}
 
-		if (_G(thor)->x > 300)
-			_G(end_tile) = 1;     // Ending bridge
+		if (_G(thor)->x > 300 && g_events->focusedView()->getName() == "Game") {
+			// Ending bridge
+			_G(end_tile) = 1;
+
+			// TODO: Show high score table rather than going straight to main menu
+			Gfx::fade_out();
+			g_events->send("TitleBackground", GameMessage("MAIN_MENU"));
+		}
 		return 1;
 	case 203:
 		if (!GAME1) {

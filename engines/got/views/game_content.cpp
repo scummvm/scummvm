@@ -441,14 +441,6 @@ void GameContent::checkForAreaChange() {
 		}
 
 	} else if (_G(new_level) != _G(current_level)) {
-		// Check for leaving level after defeating end boss
-		if (GAME1 && _G(current_level) == BOSS_LEVEL1) {
-			// TODO: Implement high score view original had, and show it
-			fadeOut();
-			send("TitleBackground", GameMessage("MAIN_MENU"));
-			return;
-		}
-
 		// Area transition beginning
 		_G(thor)->show = 0;
 		_G(thor)->used = 0;
