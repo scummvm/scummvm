@@ -180,6 +180,8 @@ class GameObject;
 			// We use this to keep track of whether we have read all bytes we should have read
 			uint32 expectedEndLocation;
 
+			
+
 			void FuncA3D2();
 			void FuncA37A();
 
@@ -233,9 +235,12 @@ class GameObject;
 			
 
 			public:
+			// This is where a secondary inventory was last opened,
+			// when it is closed, we need to execute from here
+			uint32 secondaryInventoryLocation;
 
-				// Implements a lookup in the "areas" map
-				uint16 Func101D(uint16 x, uint16 y);
+			// Implements a lookup in the "areas" map
+			uint16 Func101D(uint16 x, uint16 y);
 
 			// Determines if we actually look something up when looking up 9F4D FF 27
 			// in the obstacles/pathfinding map
@@ -280,6 +285,8 @@ class GameObject;
 			void Run(bool firstRun = false);
 
 			void SetScript(Common::MemoryReadStream *stream);
+
+			void SetCurrentSceneScriptAt(uint32 offset);
 
 			void tick();
 
