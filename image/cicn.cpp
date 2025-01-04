@@ -79,7 +79,7 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.readUint16BE(); // top
 	stream.readUint16BE(); // left
 	uint16 bitmapHeight = stream.readUint16BE(); // bottom
-	stream.readUint16BE(); // right
+	uint16 bitmapWidth = stream.readUint16BE(); // right
 
 	// Mask and bitmap data
 	stream.skip(4);
@@ -122,12 +122,22 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_surface = new Graphics::Surface();
 	_surface->create(pixMap.bounds.width(), pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 
-	if (pixMap.pixelSize == 2) {
+	if (pixMap.pixelSize == 1) {
 		byte *buf = new byte[pixMap.rowBytes];
 		for (int y = 0; y < pixMap.bounds.height(); y++) {
 			stream.read(buf, pixMap.rowBytes);
-			for (int x = 0; x < pixMap.bounds.width(); x += 4) {
-				for (int i = 0; i < 4 && x + i < pixMap.bounds.width(); i++) {
+			for (int x = 0; x < bitmapWidth; x += 8) {
+				for (int i = 0; i < 8 && x + i < bitmapWidth; i++) {
+					_surface->setPixel(x + i, y, (buf[x / 8] >> (7 - i)) & 0x01);
+				}
+			}
+		}
+	} else if (pixMap.pixelSize == 2) {
+		byte *buf = new byte[pixMap.rowBytes];
+		for (int y = 0; y < bitmapHeight; y++) {
+			stream.read(buf, pixMap.rowBytes);
+			for (int x = 0; x < bitmapWidth; x += 4) {
+				for (int i = 0; i < 4 && x + i < bitmapWidth; i++) {
 					_surface->setPixel(x + i, y, (buf[x / 4] >> (6 - 2 * i)) & 0x03);
 				}
 			}
@@ -135,17 +145,21 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 		delete[] buf;
 	} else if (pixMap.pixelSize == 4) {
 		byte *buf = new byte[pixMap.rowBytes];
-		for (int y = 0; y < pixMap.bounds.height(); y++) {
+		for (int y = 0; y < bitmapHeight; y++) {
 			stream.read(buf, pixMap.rowBytes);
-			for (int x = 0; x < pixMap.bounds.width(); x += 2) {
-				for (int i = 0; i < 2 && x + i < pixMap.bounds.width(); i++) {
+			for (int x = 0; x < bitmapWidth; x += 2) {
+				for (int i = 0; i < 2 && x + i < bitmapWidth; i++) {
 					_surface->setPixel(x + i, y, (buf[x / 2] >> (4 - 4 * i)) & 0x0F);
 				}
 			}
 		}
 		delete[] buf;
 	} else if (pixMap.pixelSize == 8) {
-		stream.read(_surface->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
+		byte *buf = new byte[pixMap.rowBytes];
+		for (int y = 0; y < bitmapHeight; y++) {
+			stream.read(buf, pixMap.rowBytes);
+			memcpy(_surface->getBasePtr(0, y), buf, bitmapWidth);
+		}
 	} else {
 		error("CicnDecoder::loadStream(): Invalid pixel size %d", pixMap.pixelSize);
 	}
