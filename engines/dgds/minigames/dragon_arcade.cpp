@@ -138,7 +138,7 @@ bool DragonArcade::doTickUpdate() {
 	drawHealthBars();
 
 	// Original has delay here to reduce the arcade speed to 15 FPS.
-	DgdsEngine::getInstance()->setSkipNextFrame();
+	//DgdsEngine::getInstance()->setSkipNextFrame();
 
 	_nTickUpdates++;
 

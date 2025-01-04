@@ -90,7 +90,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
 	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false),
 	_gameId(GID_INVALID), _thisFrameMs(0), _lastGlobalFade(-1), _lastGlobalFadedPal(0),
-	_debugShowHotAreas(false) {
+	_debugShowHotAreas(false), _lastMouseEvent(Common::EVENT_INVALID) {
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
@@ -516,6 +516,86 @@ static void _dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
 }
 
 
+void DgdsEngine::pumpMessages() {
+	Common::Event ev;
+	while (_eventMan->pollEvent(ev)) {
+		if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			switch ((DgdsKeyEvent)ev.customType) {
+			case kDgdsKeyToggleMenu:
+				_menuToTrigger = kMenuMain;
+				break;
+			case kDgdsKeySave:
+				saveGameDialog();
+				break;
+			case kDgdsKeyLoad:
+				loadGameDialog();
+				break;
+			case kDgdsKeyToggleClock:
+				_clock.toggleVisibleUser();
+				break;
+			case kDgdsKeyNextChoice:
+				if (_menu->menuShown())
+					_menu->nextChoice();
+				else if (_scene->hasVisibleDialog())
+					_scene->nextChoice();
+				break;
+			case kDgdsKeyPrevChoice:
+				if (_menu->menuShown())
+					_menu->prevChoice();
+				else if (_scene->hasVisibleDialog())
+					_scene->prevChoice();
+				break;
+			case kDgdsKeyNextItem:
+				warning("TODO: Implement kDgdsKeyNextItem");
+				break;
+			case kDgdsKeyPrevItem:
+				warning("TODO: Implement kDgdsKeyPrevItem");
+				break;
+			case kDgdsKeyPickUp:
+				if (_menu->menuShown())
+					_menu->activateChoice();
+				else if (_scene->hasVisibleDialog())
+					_scene->activateChoice();
+				else
+					warning("TODO: Implement kDgdsKeyPickUp");
+				break;
+			case kDgdsKeyLook:
+				if (_menu->menuShown())
+					_menu->activateChoice();
+				else if (_scene->hasVisibleDialog())
+					_scene->activateChoice();
+				else
+					warning("TODO: Implement kDgdsKeyLook");
+				break;
+			case kDgdsKeyActivate:
+				warning("TODO: Implement kDgdsKeyActivate");
+				break;
+			default:
+				break;
+			}
+		} else if (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP
+				|| ev.type == Common::EVENT_RBUTTONDOWN || ev.type == Common::EVENT_RBUTTONUP
+				|| ev.type == Common::EVENT_MOUSEMOVE) {
+			_lastMouseEvent = ev.type;
+			_lastMouse = ev.mouse;
+			// We can keep going if there were multiple moves or a move then a button, but
+			// stop if there was a button event to process it now.
+			if (_lastMouseEvent != Common::EVENT_MOUSEMOVE)
+				return;
+		} else if (ev.type == Common::EVENT_KEYDOWN) {
+			if (_dragonArcade)
+				_dragonArcade->onKeyDown(ev.kbd);
+			if (_chinaTrain)
+				_chinaTrain->onKeyDown(ev.kbd);
+		} else if (ev.type == Common::EVENT_KEYUP) {
+			if (_dragonArcade)
+				_dragonArcade->onKeyUp(ev.kbd);
+			if (_chinaTrain)
+				_chinaTrain->onKeyUp(ev.kbd);
+		}
+	}
+}
+
 Common::Error DgdsEngine::run() {
 	syncSoundSettings();
 	_isLoading = true;
@@ -527,9 +607,6 @@ Common::Error DgdsEngine::run() {
 	if (saveSlot != -1)
 		loadGameState(saveSlot);
 
-	Common::EventManager *eventMan = g_system->getEventManager();
-	Common::Event ev;
-
 	_isLoading = false;
 
 	uint32 startMillis = g_system->getMillis();
@@ -538,79 +615,8 @@ Common::Error DgdsEngine::run() {
 	while (!shouldQuit()) {
 		_thisFrameMs = getTotalPlayTime();
 
-		Common::EventType mouseEvent = Common::EVENT_INVALID;
-		while (eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
-				switch ((DgdsKeyEvent)ev.customType) {
-				case kDgdsKeyToggleMenu:
-					_menuToTrigger = kMenuMain;
-					break;
-				case kDgdsKeySave:
-					saveGameDialog();
-					break;
-				case kDgdsKeyLoad:
-					loadGameDialog();
-					break;
-				case kDgdsKeyToggleClock:
-					_clock.toggleVisibleUser();
-					break;
-				case kDgdsKeyNextChoice:
-					if (_menu->menuShown())
-						_menu->nextChoice();
-					else if (_scene->hasVisibleDialog())
-						_scene->nextChoice();
-					break;
-				case kDgdsKeyPrevChoice:
-					if (_menu->menuShown())
-						_menu->prevChoice();
-					else if (_scene->hasVisibleDialog())
-						_scene->prevChoice();
-					break;
-				case kDgdsKeyNextItem:
-					warning("TODO: Implement kDgdsKeyNextItem");
-					break;
-				case kDgdsKeyPrevItem:
-					warning("TODO: Implement kDgdsKeyPrevItem");
-					break;
-				case kDgdsKeyPickUp:
-					if (_menu->menuShown())
-						_menu->activateChoice();
-					else if (_scene->hasVisibleDialog())
-						_scene->activateChoice();
-					else
-						warning("TODO: Implement kDgdsKeyPickUp");
-					break;
-				case kDgdsKeyLook:
-					if (_menu->menuShown())
-						_menu->activateChoice();
-					else if (_scene->hasVisibleDialog())
-						_scene->activateChoice();
-					else
-						warning("TODO: Implement kDgdsKeyLook");
-					break;
-				case kDgdsKeyActivate:
-					warning("TODO: Implement kDgdsKeyActivate");
-					break;
-				default:
-					break;
-				}
-			} else if (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP
-					|| ev.type == Common::EVENT_RBUTTONDOWN || ev.type == Common::EVENT_RBUTTONUP
-					|| ev.type == Common::EVENT_MOUSEMOVE) {
-				mouseEvent = ev.type;
-				_lastMouse = ev.mouse;
-			} else if (ev.type == Common::EVENT_KEYDOWN) {
-				if (_dragonArcade)
-					_dragonArcade->onKeyDown(ev.kbd);
-				if (_chinaTrain)
-					_chinaTrain->onKeyDown(ev.kbd);
-			} else if (ev.type == Common::EVENT_KEYUP) {
-				if (_dragonArcade)
-					_dragonArcade->onKeyUp(ev.kbd);
-				if (_chinaTrain)
-					_chinaTrain->onKeyUp(ev.kbd);
-			}
-		}
+		if (_lastMouseEvent == Common::EVENT_INVALID)
+			pumpMessages();
 
 		if (_menuToTrigger != kMenuNone) {
 			if (_inventory->isOpen()) {
@@ -629,7 +635,7 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (_menu->menuShown()) {
-			switch (mouseEvent) {
+			switch (_lastMouseEvent) {
 				case Common::EVENT_LBUTTONUP:
 					_menu->onMouseLUp(_lastMouse);
 					break;
@@ -677,44 +683,42 @@ Common::Error DgdsEngine::run() {
 			if (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY))
 				_adsInterp->run();
 
-			if (mouseEvent != Common::EVENT_INVALID) {
-				if (_inventory->isOpen()) {
-					switch (mouseEvent) {
-					case Common::EVENT_MOUSEMOVE:
-						_inventory->mouseMoved(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONDOWN:
-						_inventory->mouseLDown(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONUP:
-						_inventory->mouseLUp(_lastMouse);
-						break;
-					case Common::EVENT_RBUTTONUP:
-						_inventory->mouseRUp(_lastMouse);
-						break;
-					default:
-						break;
-					}
-				} else {
-					switch (mouseEvent) {
-					case Common::EVENT_MOUSEMOVE:
-						_scene->mouseMoved(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONDOWN:
-						_scene->mouseLDown(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONUP:
-						_scene->mouseLUp(_lastMouse);
-						break;
-					case Common::EVENT_RBUTTONDOWN:
-						_scene->mouseRDown(_lastMouse);
-						break;
-					case Common::EVENT_RBUTTONUP:
-						_scene->mouseRUp(_lastMouse);
-						break;
-					default:
-						break;
-					}
+			if (_inventory->isOpen()) {
+				switch (_lastMouseEvent) {
+				case Common::EVENT_MOUSEMOVE:
+					_inventory->mouseMoved(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_inventory->mouseLDown(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					_inventory->mouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONUP:
+					_inventory->mouseRUp(_lastMouse);
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (_lastMouseEvent) {
+				case Common::EVENT_MOUSEMOVE:
+					_scene->mouseMoved(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_scene->mouseLDown(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					_scene->mouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONDOWN:
+					_scene->mouseRDown(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONUP:
+					_scene->mouseRUp(_lastMouse);
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -762,6 +766,9 @@ Common::Error DgdsEngine::run() {
 			_justChangedScene2 = false;
 		}
 
+		// Mouse event is now handled.
+		_lastMouseEvent = Common::EVENT_INVALID;
+
 		// Willy Beamish dims the palette of the screen while dialogs are active
 		if (getGameId() == GID_WILLY) {
 			WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
@@ -791,19 +798,42 @@ Common::Error DgdsEngine::run() {
 
 		g_system->updateScreen();
 
-		// Limit to 30 FPS
+		//
+		// Limit frame rate to 15 FPS
+		//
+		// Most game events are based on timed delays using eg TTM op 0x1020,
+		// but some game events are based on frames - eg the chef turning
+		// around in Willy Beamish kitchen (scene 46) uses global 190 to count
+		// down frames before the chef turns around.  If they don't match, it's
+		// impossible to complete the needed actions (timed on ms) before the
+		// chef moves (timed on frames).
+		//
+		static const int framesPerSecond = 15;
+
 		frameCount++;
 		if (_skipNextFrame) {
 			frameCount++;
 			_skipNextFrame = false;
 		}
 
-		const uint32 thisFrameEndMillis = g_system->getMillis();
-		const uint32 elapsedMillis = thisFrameEndMillis - startMillis;
-		const uint32 targetMillis = (frameCount * 1000 / 30);
+		uint32 thisFrameEndMillis = g_system->getMillis();
+		uint32 elapsedMillis = thisFrameEndMillis - startMillis;
+		const uint32 targetMillis = (frameCount * 1000 / framesPerSecond);
 		if (targetMillis > elapsedMillis) {
-			// too fast, delay
-			g_system->delayMillis(targetMillis - elapsedMillis);
+			//
+			// Too fast, delay.
+			//
+			// Pump messages and update the screen - moves will be accumulated and the
+			// last one will be processed in the next frame.  This way the mouse moves
+			// at 60+ FPS even though the game is only 15 FPS.
+			//
+			while (targetMillis > elapsedMillis) {
+				if (_lastMouseEvent == Common::EVENT_INVALID || _lastMouseEvent == Common::EVENT_MOUSEMOVE)
+					pumpMessages();
+				g_system->updateScreen();
+				g_system->delayMillis(5);
+				elapsedMillis = g_system->getMillis() - startMillis;
+			}
 		} else if (targetMillis < elapsedMillis) {
 			// too slow.. adjust expectations? :)
 			startMillis = thisFrameEndMillis;

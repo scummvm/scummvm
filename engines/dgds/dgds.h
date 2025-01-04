@@ -170,6 +170,7 @@ private:
 
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.
+	Common::EventType _lastMouseEvent; // a pending mouse event to process.
 	int _currentCursor;
 	Common::Point _currentCursorHot;
 
@@ -292,6 +293,7 @@ private:
 	void init(bool restarting);
 	void loadGameFiles();
 	void loadRestartFile();
+	void pumpMessages();
 };
 
 } // End of namespace Dgds

@@ -146,9 +146,10 @@ void Clock::draw(Graphics::ManagedSurface &surf) {
 	font->drawString(&surf, clockStr, _drawPos.left + 3, _drawPos.top + 3, _drawPos.width(), 0);
 }
 
-// TODO: This is approximate, work out the exact conversion factor here for better game accuracy.
+// Confirmed by timing the clock tick up in the inventory of Dragon and Willy Beamish
+// - 5 game minutes are exactly 25 real time seconds.
 static const int MILLIS_PER_GAME_MIN = 5000;
-static const int MILLIS_PER_TIMER_TICK = 60;
+static const int MILLIS_PER_TIMER_TICK = 60; // ~16.667 ticks per second.
 
 void Clock::update(bool gameRunning) {
 	uint32 playTimeNow = DgdsEngine::getInstance()->getThisFrameMs();

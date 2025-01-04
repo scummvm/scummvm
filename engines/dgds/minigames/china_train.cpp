@@ -685,7 +685,7 @@ int16 ChinaTrain::tick() { // aka arcadeLoop
 		drawFrame();
 
 		// Original has delay here to reduce the arcade speed to 15 FPS.
-		DgdsEngine::getInstance()->setSkipNextFrame();
+		//DgdsEngine::getInstance()->setSkipNextFrame();
 
 		return 1;
 	}
