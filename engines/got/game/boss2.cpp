@@ -33,7 +33,7 @@
 
 namespace Got {
 
-static const byte exp[] = {
+static const byte EXPLOSION[] = {
 	 61, 62, 65, 66, 69, 70, 73, 74, 77, 78,
 	 81, 82, 85, 86, 89, 90, 93, 94, 97, 98,
 	101,102,105,106,109,110,113,114,117,118,
@@ -273,8 +273,8 @@ static int boss2a_movement(ACTOR *actr) {
 		if (r > 59) r = 0;
 	}
 	expf[r] = 1;
-	x = (exp[r] % 20) * 16;
-	y = (exp[r] / 20) * 16;
+	x = (EXPLOSION[r] % 20) * 16;
+	y = (EXPLOSION[r] / 20) * 16;
 	_G(actor)[an].x = x;
 	_G(actor)[an].y = y;
 

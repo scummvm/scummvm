@@ -38,13 +38,13 @@ namespace Got {
 static int  boss_mode;
 static int  num_pods, num_pods1;
 static byte pod_speed;
-static const byte exp[4][8] = {
+static const byte EXPLOSION[4][8] = {
 			{126,127,128,129,130,131,132,133},
 			{146,147,148,149,150,151,152,153},
 			{166,167,168,169,170,171,172,173},
 			{186,187,188,189,190,191,192,193} };
 
-static byte expf[4][8];
+static bool expf[4][8];
 static byte expcnt;
 
 static int boss_die();
@@ -177,7 +177,9 @@ static int boss_movement_one(ACTOR *actr) {
 				_G(actor)[_G(actor)[4].shot_actor].x = actr->x + 8;
 				_G(actor)[_G(actor)[4].shot_actor].y = actr->y + 16;
 				_G(actor)[_G(actor)[4].shot_actor].temp5 = 0;
-				for (i = 0; i < numPods; i++) memcpy(&_G(actor)[20 + i], &_G(actor)[19], 256);
+				for (i = 0; i < numPods; i++)
+					_G(actor)[20 + i] = _G(actor)[19];
+
 				num_pods1 = numPods;
 				actr->temp1 = 0;
 			}
@@ -535,7 +537,7 @@ void ending_screen() {
 	music_play(6, 1);
 	_G(timer_cnt) = 0;
 
-	memset(expf, 0, 32);
+	memset(expf, 0, 4 * 8);
 	_G(endgame) = 1;
 
 	_G(exprow) = 0;
@@ -568,8 +570,8 @@ int endgame_one() {
 		if (r > 31) r = 0;
 	}
 	expf[r / 8][r % 8] = 1;
-	x = (exp[r / 8][r % 8] % 20) * 16;
-	y = (exp[r / 8][r % 8] / 20) * 16;
+	x = (EXPLOSION[r / 8][r % 8] % 20) * 16;
+	y = (EXPLOSION[r / 8][r % 8] / 20) * 16;
 	_G(actor)[34].x = x;
 	_G(actor)[34].y = y;
 	_G(actor)[34].used = 1;
@@ -609,8 +611,8 @@ int endgame_movement() {
 		if (r > 7) r = 0;
 	}
 	expf[_G(exprow)][r] = 1;
-	x = (exp[_G(exprow)][r] % 20) * 16;
-	y = (exp[_G(exprow)][r] / 20) * 16;
+	x = (EXPLOSION[_G(exprow)][r] % 20) * 16;
+	y = (EXPLOSION[_G(exprow)][r] / 20) * 16;
 	_G(actor)[34].x = x;
 	_G(actor)[34].y = y;
 	_G(actor)[34].used = 1;
