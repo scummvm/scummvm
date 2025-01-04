@@ -138,6 +138,20 @@ void thor_damaged(ACTOR *actr) {
 	if (_G(cheats).freezeHealth)
 		return;
 
+	if (GAME3 && actr->func_num == 11) {
+		if (actr->talk_counter) {
+			actr->talk_counter--;
+			return;
+		}
+
+		int t = actr->type;
+		actr->type = 4;
+		actor_speaks(actr, 0, 0);
+		actr->type = t;
+		actr->talk_counter = 30;
+		return;
+	}
+
 	damage = actr->strength;
 	if (damage != 255) {
 		if (!_G(setup).skill) damage /= 2;

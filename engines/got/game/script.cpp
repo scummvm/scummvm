@@ -957,7 +957,7 @@ int Scripts::cmd_random() {
 
 void Scripts::scr_func1() {
 	play_sound(FALL, 1);
-	if (_G(key_flag)[_FOUR]) return;
+
 	_G(new_level) = 109;
 	_G(new_level_tile) = 215;
 	_G(thor)->x = (_G(new_level_tile) % 20) * 16;
