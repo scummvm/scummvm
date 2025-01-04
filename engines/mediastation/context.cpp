@@ -183,7 +183,10 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		delete[] buffer;
 		debugC(5, kDebugLoading, "Context::readHeaderSection(): Read palette");
 		// This is likely just an ending flag that we expect to be zero.
-		Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint endingFlag = Datum(chunk, kDatumTypeUint16_1).u.i;
+		if (endingFlag != 0) {
+			warning("Context::readHeaderSection(): Got non-zero ending flag 0x%x", endingFlag);
+		}
 		break;
 	}
 
@@ -254,7 +257,8 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			g_engine->_assetsByChunkReference.setVal(header->_animationChunkReference, asset);
 		}
 		// TODO: This datum only appears sometimes.
-		Datum(chunk).u.i;
+		uint unk2 = Datum(chunk).u.i;
+		debugC(5, kDebugLoading, "Context::readHeaderSection(): Got unknown value at end of asset header section 0x%x", unk2);
 		break;
 	}
 
@@ -262,7 +266,10 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		Function *function = new Function(chunk);
 		g_engine->_functions.setVal(function->_id, function);
 		if (!g_engine->isFirstGenerationEngine()) {
-			Datum(chunk).u.i; // Should be zero.
+			uint endingFlag = Datum(chunk).u.i;
+			if (endingFlag != 0) {
+				warning("Context::readHeaderSection(): Got non-zero ending flag 0x%x in function section", endingFlag);
+			}
 		}
 		break;
 	}

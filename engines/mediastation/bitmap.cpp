@@ -26,7 +26,8 @@
 namespace MediaStation {
 
 BitmapHeader::BitmapHeader(Chunk &chunk) {
-	/*uint header_size_in_bytes =*/ Datum(chunk, kDatumTypeUint16_1).u.i;
+	uint header_size_in_bytes = Datum(chunk, kDatumTypeUint16_1).u.i;
+	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", header_size_in_bytes);
 	dimensions = Datum(chunk).u.point;
 	compression_type = BitmapCompressionType(Datum(chunk, kDatumTypeUint16_1).u.i);
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", compression_type);
@@ -103,9 +104,11 @@ void Bitmap::decompress(Chunk &chunk) {
 	char *decompressed_image = (char *)surface.getPixels();
 
 	// DECOMPRESS THE RLE-COMPRESSED BITMAP STREAM.
-	bool transparency_run_ever_read = false;
-	size_t transparency_run_top_y_coordinate = 0;
-	size_t transparency_run_left_x_coordinate = 0;
+	// TODO: Comemnted out becuase transparency runs not supported yet,
+	// and there were compiler warnings about these variables not being used.
+	// bool transparency_run_ever_read = false;
+	// size_t transparency_run_top_y_coordinate = 0;
+	// size_t transparency_run_left_x_coordinate = 0;
 	bool image_fully_read = false;
 	size_t current_y_coordinate = 0;
 	while (current_y_coordinate < height()) {
@@ -138,10 +141,14 @@ void Bitmap::decompress(Chunk &chunk) {
 					// observed to have transparency regions, and these intraframes have them so the keyframe
 					// can extend outside the boundary of the intraframe and
 					// still be removed.
-					reading_transparency_run = true;
-					transparency_run_top_y_coordinate = current_y_coordinate;
-					transparency_run_left_x_coordinate = current_x_coordinate;
-					transparency_run_ever_read = true;
+					//
+					// TODO: Comemnted out becuase transparency runs not
+					// supported yet, and there were compiler warnings about
+					// these variables being set but not used.
+					// reading_transparency_run = true;
+					// transparency_run_top_y_coordinate = current_y_coordinate;
+					// transparency_run_left_x_coordinate = current_x_coordinate;
+					// transparency_run_ever_read = true;
 				} else if (operation == 0x03) {
 					// ADJUST THE PIXEL POSITION.
 					// This permits jumping to a different part of the same row without
@@ -180,11 +187,15 @@ void Bitmap::decompress(Chunk &chunk) {
 				current_x_coordinate += repetition_count;
 
 				if (reading_transparency_run) {
+					// TODO: This code is comemnted out becuase the engine
+					// doesn't support the keyframes/transparency regions on
+					// movies yet. However, only some movies have this to start with.
+
 					// GET THE TRANSPARENCY RUN STARTING OFFSET.
-					size_t transparency_run_y_offset = transparency_run_top_y_coordinate * width();
-					size_t transparency_run_start_offset = transparency_run_y_offset + transparency_run_left_x_coordinate;
-					size_t transparency_run_ending_offset = y_offset + current_x_coordinate;
-					size_t transparency_run_length = transparency_run_ending_offset - transparency_run_start_offset;
+					// size_t transparency_run_y_offset = transparency_run_top_y_coordinate * width();
+					// size_t transparency_run_start_offset = transparency_run_y_offset + transparency_run_left_x_coordinate;
+					// size_t transparency_run_ending_offset = y_offset + current_x_coordinate;
+					// size_t transparency_run_length = transparency_run_ending_offset - transparency_run_start_offset;
 					// char *transparency_run_src_pointer = keyframe_image + run_starting_offset;
 					// char *transparency_run_dest_pointer = decompressed_image + run_starting_offset;
 

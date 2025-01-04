@@ -40,7 +40,10 @@ ContextParameters::ContextParameters(Chunk &chunk) : contextName(nullptr) {
 			}
 			contextName = Datum(chunk, kDatumTypeString).u.string;
 			// TODO: This is likely just an end flag.
-			/*uint unk1 =*/ Datum(chunk, kDatumTypeUint16_1).u.i;
+			uint endingFlag = Datum(chunk, kDatumTypeUint16_1).u.i;
+			if (endingFlag != 0) {
+				warning("ContextParameters::ContextParameters(): Got non-zero ending flag 0x%x", endingFlag);
+			}
 			break;
 		}
 
