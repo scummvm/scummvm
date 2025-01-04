@@ -34,6 +34,7 @@
  * Gahan Wilson's Ultimate Haunted House
  * Momi no Ki no Shita de: The Day of St. Claus
  * Virtual Nightclub
+ * Great Adventures by Fisher-Price: Pirate Ship
  *
  **************************************************/
 
@@ -104,9 +105,15 @@ III    mGetMessage           --Get mouse/key messages from the application messa
 
 namespace Director {
 
-const char *const MovUtilsXObj::xlibName = "MovUtils";
+const char *const MovUtilsXObj::xlibNames[] = {
+	"MovUtils",
+	"MovieUtilities",
+	nullptr
+};
 const XlibFileDesc MovUtilsXObj::fileNames[] = {
 	{ "MOVUTILS",	nullptr },
+	{ "MovieUtilities",	nullptr },
+	{ "movieutl", nullptr },
 	{ nullptr,		nullptr },
 };
 
@@ -177,14 +184,17 @@ MovUtilsXObject::MovUtilsXObject(ObjectType ObjectType) :Object<MovUtilsXObject>
 void MovUtilsXObj::open(ObjectType type, const Common::Path &path) {
     MovUtilsXObject::initMethods(xlibMethods);
     MovUtilsXObject *xobj = new MovUtilsXObject(type);
-    g_lingo->exposeXObject(xlibName, xobj);
+	for (uint i = 0; xlibNames[i]; i++) {
+		g_lingo->exposeXObject(xlibNames[i], xobj);
+	}
     g_lingo->initBuiltIns(xlibBuiltins);
 }
 
 void MovUtilsXObj::close(ObjectType type) {
     MovUtilsXObject::cleanupMethods();
-    g_lingo->_globalvars[xlibName] = Datum();
-
+	for (uint i = 0; xlibNames[i]; i++) {
+		g_lingo->_globalvars[xlibNames[i]] = Datum();
+	}
 }
 
 void MovUtilsXObj::m_new(int nargs) {

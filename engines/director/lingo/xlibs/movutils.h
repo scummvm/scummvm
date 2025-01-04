@@ -31,7 +31,7 @@ public:
 
 namespace MovUtilsXObj {
 
-extern const char *const xlibName;
+extern const char *const xlibNames[];
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
