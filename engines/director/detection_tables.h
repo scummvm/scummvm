@@ -171,7 +171,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fpbagarage",			"Fisher-Price Big Action Garage" },
 	{ "fpdollhouse",		"Fisher-Price Time to Play: Grand Dollhouse" },
 	{ "fpgacastle2",		"Great Adventures by Fisher-Price: Castle (1998)" },
-	{ "fpgapirates",		"Great Adventures by Fisher-Price: Pirates" },
+	{ "fpgapirates",		"Great Adventures by Fisher-Price: Pirate Ship" },	// Demo says "Pirates"
 	{ "fpgawestern",		"Great Adventures by Fisher-Price: Wild Western Town" },
 	{ "fplit",				"Fisher-Price Learning in Toyland" },
 	{ "fplpairport",		"Fisher-Price Little People: Discovery Airport" },
@@ -4193,6 +4193,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"YP1.DIR",   "86dca2337cbbd2612fc92bd5d0805d85", 4509574, 404),
 
 	// ©1996 Davidson & Associates, Inc.
+	// Full game is Director 5
 	MACDEMO1("fpgapirates", "Preview v1.0", "Pirates Preview (Power Mac)", "ccf864a8dc6e9d0d26eb73b4683e634b", 63276, 404),
 	WINDEMO1("fpgapirates", "Preview v1.0", "FPPSTART.EXE", "t:824388aeb958eda1a5691a1d6667a410", 792405, 404),
 
@@ -6700,6 +6701,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("fplit", "", "PIR32BIT/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437,
 						  "FILES/BLOCKS.DIR",	  "d:74388b29ce10d83bbad48c664d87eab3", 7363670, 500),
 	MACDEMO1("fplit", "Demo", "Toyland Preview", "9fbd2e99a6a23933083ba0934e4a7d01", 705417, 500),
+
+	WINGAME1("fpgapirates", "1996", "PIR32BIT/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437, 500),
+	// Same EXE, different location
+	WINGAME2("fpgapirates", "1999", "INSTALL/EXE/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437,
+									"PIRFILES/open.Dir", "t:0c0b3490b9fba141bf0fad8a735f145a", 1142930, 500),
+	MACGAME1("fpgapirates", "1999", "Fisher-Price Pirate Ship", "r:9fbd2e99a6a23933083ba0934e4a7d01", 705417, 500),
 
 	WINDEMO1t("fpready", "Demo", "FPRFS32.EXE", "b976d39fa7f7cf18a05149b5593f43e0", 2901579, 501),
 
