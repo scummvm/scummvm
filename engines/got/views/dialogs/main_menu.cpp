@@ -28,10 +28,15 @@ namespace Views {
 namespace Dialogs {
 
 static const char *OPTIONS[] = {
-	"Play Game", "High Scores", "Credits", "Demo", "Quit", nullptr
+	"Play Game", "Load Game", "High Scores", "Credits", "Demo", "Quit", nullptr
 };
 
 MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu", OPTIONS) {
+}
+
+bool MainMenu::msgFocus(const FocusMessage &msg) {
+	g_vars->resetEndgameFlags();
+	return SelectOption::msgFocus(msg);
 }
 
 void MainMenu::closed() {
@@ -46,13 +51,22 @@ void MainMenu::selected() {
 		addView("SelectGame");
 		break;
 
+	case 1:
+		if (!g_engine->loadGameDialog())
+			addView("SelectGame");
+		break;
+
 	case 3:
+		addView("Credits");
+		break;
+
+	case 4:
 		_G(demo) = true;
 		initialize_game();
 		replaceView("Game", true, true);
 		break;
 
-	case 4:
+	case 5:
 		addView("Quit");
 		break;
 

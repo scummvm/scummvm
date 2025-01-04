@@ -34,6 +34,7 @@ public:
 	virtual ~MainMenu() {
 	}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void closed() override;
 	void selected() override;
 };
