@@ -42,6 +42,11 @@ namespace Common {
 
 namespace Mohawk {
 
+// Engine Debug Flags
+enum {
+	kDebugCode = (1 << 0)
+};
+
 #define LBKEY_MOD_CTRL 1
 #define LBKEY_MOD_ALT 2
 #define LBKEY_MOD_SHIFT 4
