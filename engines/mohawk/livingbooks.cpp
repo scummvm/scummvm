@@ -132,6 +132,8 @@ LBPage::~LBPage() {
 }
 
 MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+	DebugMan.addDebugChannel(kDebugCode, "Code", "Track Script Execution");
+
 	_needsUpdate = false;
 	_needsRedraw = false;
 	_screenWidth = _screenHeight = 0;
