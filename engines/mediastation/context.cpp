@@ -238,7 +238,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			break;
 
 		default:
-			error("Context::readHeaderSection(): No class for asset type 0x%x (@0x%llx)", header->_type, static_cast<long long int>(chunk.pos()));
+			error("Context::readHeaderSection(): No class for asset type 0x%x (@0x%llx)", static_cast<uint>(header->_type), static_cast<long long int>(chunk.pos()));
 		}
 
 		if (g_engine->_assets.contains(header->_id)) {
