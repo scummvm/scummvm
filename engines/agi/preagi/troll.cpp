@@ -137,19 +137,13 @@ void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 	}
 
 	// draw the frame picture
-	_picture->setPictureFlags(kPicFNone);
+	_picture->setStopOnF3(false);
+	_picture->setTrollMode(false);
 	_picture->decodePictureFromBuffer(_gameData + IDO_TRO_FRAMEPIC, 4096, clr, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
 	// draw the picture
-	int flags = 0;
-	if (!f3IsCont) {
-		// stop on opcode F3
-		flags |= kPicFf3Stop;
-	}
-	if (troll) {
-		flags |= kPicFTrollMode;
-	}
-	_picture->setPictureFlags(flags);
+	_picture->setStopOnF3(!f3IsCont);
+	_picture->setTrollMode(troll);
 	_picture->decodePictureFromBuffer(_gameData + _pictureOffsets[iPic], 4096, false, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 
 	_picture->showPicture(0, 0, IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);

@@ -56,7 +56,7 @@ void PictureMgr_Troll::drawPicture() {
 			_scrOn = true;
 			break;
 		case 0xf3:
-			if (_flags & kPicFf3Stop)
+			if (_stopOnF3)
 				return;
 			break;
 		case 0xf8:
@@ -74,8 +74,6 @@ void PictureMgr_Troll::drawPicture() {
 			draw_LineAbsolute();
 			break;
 		case 0xfe:
-			draw_SetColor();
-			_scrOn = true;
 			draw_Fill();
 			break;
 		case 0xff: // end of data
@@ -85,6 +83,86 @@ void PictureMgr_Troll::drawPicture() {
 			break;
 		}
 	}
+}
+
+/**
+ * Flood fills from a series of start positions.
+ *
+ * Troll's Tale contains two separate flood fill implementations to handle the
+ * special case of drawing the Troll. The game sets a global before drawing to
+ * to activate Troll mode. We implement this by overriding this method and
+ * the check method.
+ */
+void PictureMgr_Troll::draw_Fill() {
+	draw_SetColor();
+	_scrOn = true;
+
+	byte x, y;
+	if (_scrColor == 15) { // white
+		// White flood fills are only allowed when drawing the Troll, otherwise they
+		// are completely ignored. Several room pictures contain white flood fills.
+		while (getNextCoordinates(x, y)) {
+			if (_trollMode) {
+				PictureMgr::draw_Fill(x, y);
+			}
+		}
+	} else {
+		// When not drawing the Troll, do a regular flood fill.
+		// When drawing the Troll, first fill with white, and then fill normally.
+		byte fillColor = _scrColor;
+		while (getNextCoordinates(x, y)) {
+			if (_trollMode) {
+				_scrColor = 15; // white
+				PictureMgr::draw_Fill(x, y);
+				_scrColor = fillColor;
+			}
+			PictureMgr::draw_Fill(x, y);
+		}
+	}
+}
+
+/**
+ * Checks if flood fill is allowed at a position.
+ *
+ * Troll's Tale contains two separate flood fill implementations to handle the
+ * special case of drawing the Troll. The game sets a global before drawing to
+ * to activate Troll mode.
+ *
+ * The Troll is a large picture with flood fills that is drawn over many busy
+ * room pictures, and always in the same location. This is a problem because the
+ * picture format is only meant to fill white areas. Sierra handled this by
+ * reserving a color for the Troll's lines (11, light blue) and implementing a
+ * second set of routines that fill white and treat the Troll's color as a
+ * boundary, and sometimes white as well. When drawing the Troll, a non-white
+ * fill is preceded by a special white fill to clear the area. This does not
+ * work well if there are existing white pixels, and rooms do have these.
+ * The Troll has incomplete fills in these rooms, but this is original behavior.
+ * In some rooms, such as those with white checkered floors, the results are
+ * so bad that Sierra added them to the list of rooms the Troll never visits.
+ *
+ * We implement Troll mode without a second flood fill algorithm; instead we
+ * override the check method, and our AGI algorithm in the base class provides
+ * the context so we know which of the two color checks to use.
+ */
+bool PictureMgr_Troll::draw_FillCheck(int16 x, int16 y, bool horizontalCheck) {
+	if (_trollMode && _scrColor == 15) {
+		if (!getGraphicsCoordinates(x, y)) {
+			return false;
+		}
+
+		byte screenColor = _gfx->getColor(x, y);
+
+		// when filling white during troll mode...
+		if (horizontalCheck) {
+			// horizontal checks only stop on troll line color
+			return (screenColor != 11);
+		} else {
+			// all other checks stop on troll line color or white
+			return (screenColor != 11) && (screenColor != 15);
+		}
+	}
+	
+	return PictureMgr::draw_FillCheck(x, y, horizontalCheck);
 }
 
 } // End of namespace Agi
