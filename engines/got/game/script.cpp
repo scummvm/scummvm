@@ -389,8 +389,6 @@ int Scripts::get_next_val() {
 
 int Scripts::get_internal_variable() {
     int i, len;
-    char b;
-    byte *sp;
 
     i = 0;
     while (1) {
@@ -446,14 +444,7 @@ int Scripts::get_internal_variable() {
         if (i < 1 || i>64)
             return 0;
 
-        sp = (byte *)&_G(setup);
-        sp += (i / 8);
-        b = 1;
-        b = b << (i % 8);
-        if (*sp & b)
-            _lTemp = 1;
-        else
-            _lTemp = 0;
+		_lTemp = _G(setup)._flags[i - 1] ? 1 : 0;
         break;
     case 23:
         if (_G(thor_info).inventory & 64) _lTemp = _G(thor_info).object;
@@ -887,20 +878,16 @@ int Scripts::cmd_itemtake() {
 
 int Scripts::cmd_setflag() {
     int i;
-    char b;
-    byte *sp;
 
     if (!calc_value())
         return 5;
-    i = (int)_lValue;
+
+	i = (int)_lValue;
     if (i < 1 || i>64)
         return 6;
 
-    sp = (byte *)&_G(setup);
-    sp += (i / 8);
-    b = 1;
-    b = b << (i % 8);
-    *sp |= b;
+	_G(setup)._flags[i - 1] = true;
+
     return 0;
 }
 

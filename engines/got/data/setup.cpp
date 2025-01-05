@@ -19,14 +19,35 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "got/data/setup.h"
 
 namespace Got {
 
+SetupFlags &SetupFlags::operator=(const Got::SetupFlags &src) {
+	Common::copy(src._flags, src._flags + 8, _flags);
+	return *this;
+}
+
+void SetupFlags::sync(Common::Serializer &s) {
+	byte flags[8] = {};
+	int i;
+
+	if (s.isSaving()) {
+		for (i = 0; i < 64; ++i)
+			if (_flags[i])
+				flags[i / 8] = flags[i / 8] | (1 << (i % 8));
+		s.syncBytes(flags, 8);
+	} else {
+		s.syncBytes(flags, 8);
+		for (i = 0; i < 64; ++i)
+			_flags[i] = (flags[i / 8] & (1 << (i % 8))) != 0;
+	}
+}
+
 void SETUP::sync(Common::Serializer &s) {
     // Sync the flags bit-fields
-    assert(((byte *)&value - (byte *)this) == 8);
-    s.syncBytes((byte *)this, 8);
+	SetupFlags::sync(s);
 
     s.syncBytes(value, 16);
     s.syncAsByte(junk);
