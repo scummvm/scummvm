@@ -156,6 +156,8 @@ struct Item {
 	char name[16];
 };
 
+class PictureMgr_Troll;
+
 class TrollEngine : public PreAgiEngine {
 public:
 	TrollEngine(OSystem *syst, const AGIGameDescription *gameDesc);
@@ -164,7 +166,7 @@ public:
 	Common::Error go() override;
 
 private:
-	PictureMgr *_picture;
+	PictureMgr_Troll *_picture;
 
 	int _roomPicture;
 	int _treasuresLeft;

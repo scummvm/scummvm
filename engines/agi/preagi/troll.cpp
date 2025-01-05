@@ -20,6 +20,7 @@
  */
 
 #include "agi/preagi/preagi.h"
+#include "agi/preagi/picture_troll.h"
 #include "agi/preagi/troll.h"
 #include "agi/graphics.h"
 
@@ -715,8 +716,7 @@ void TrollEngine::fillOffsets() {
 // Init
 
 void TrollEngine::init() {
-	_picture = new PictureMgr(this, _gfx);
-	_picture->setPictureVersion(AGIPIC_V15);
+	_picture = new PictureMgr_Troll(this, _gfx);
 	//SetScreenPar(320, 200, (char *)ibm_fontdata);
 
 	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,
