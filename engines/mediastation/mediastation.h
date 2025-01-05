@@ -97,6 +97,7 @@ private:
 	Common::RandomSource _randomSource;
 	Boot *_boot = nullptr;
 	Common::Array<Asset *> _assetsPlaying;
+	Context *_root = nullptr;
 
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);

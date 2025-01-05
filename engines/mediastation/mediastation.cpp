@@ -78,6 +78,9 @@ MediaStationEngine::~MediaStationEngine() {
 		delete it->_value;
 	}
 	_variables.clear();
+
+	delete _root;
+	_root = nullptr;
 }
 
 uint32 MediaStationEngine::getFeatures() const {
@@ -113,7 +116,7 @@ Common::Error MediaStationEngine::run() {
 	//Context *root = nullptr;
 	uint32 rootContextId = _boot->getRootContextId();
 	if (rootContextId != 0) {
-		/*root =*/ loadContext(rootContextId);
+		_root = loadContext(rootContextId);
 	} else {
 		warning("MediaStation::run(): Title has no root context");
 	}
