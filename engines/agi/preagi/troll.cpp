@@ -447,13 +447,14 @@ int TrollEngine::drawRoom(char *menu) {
 	int n = 0;
 	menu[0] = ' '; // leading space
 	menu[1] = '\0';
-	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 38);
+	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 39);
 
 	for (int i = 0; i < 3; i++) {
 		if (_roomDescs[_roomPicture - 1].options[i]) {
-			strncat(menu, Common::String::format("\n  %d.", i + 1).c_str(), 5);
+			strncat(menu, Common::String::format("  %d.", i + 1).c_str(), 4);
 
 			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i] - 1], 35);
+			strncat(menu, " ", 1);
 
 			n = i + 1;
 		}
