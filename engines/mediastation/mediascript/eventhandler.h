@@ -22,9 +22,6 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_EVENTHANDLER_H
 #define MEDIASTATION_MEDIASCRIPT_EVENTHANDLER_H
 
-#include "common/hashmap.h"
-#include "common/func.h"
-
 #include "mediastation/datafile.h"
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/codechunk.h"

@@ -29,11 +29,6 @@
 
 namespace MediaStation {
 
-class Point;
-class BoundingBox;
-class Polygon;
-class Reference;
-
 enum DatumType {
 	// This type isn't a type we see in data files; it is just a
 	// default initialization value.

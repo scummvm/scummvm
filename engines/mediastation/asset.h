@@ -23,7 +23,6 @@
 #define MEDIASTATION_ASSET_H
 
 #include "common/keyboard.h"
-#include "common/func.h"
 
 #include "mediastation/subfile.h"
 #include "mediastation/chunk.h"

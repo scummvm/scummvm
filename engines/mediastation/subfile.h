@@ -22,8 +22,6 @@
 #ifndef MEDIASTATION_SUBFILE_H
 #define MEDIASTATION_SUBFILE_H
 
-#include "common/file.h"
-
 #include "mediastation/chunk.h"
 
 namespace MediaStation {
