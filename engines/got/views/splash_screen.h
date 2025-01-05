@@ -31,6 +31,7 @@ class SplashScreen : public View {
 private:
     const byte *_chunkSize = nullptr;
     const byte *_chunkPtr = nullptr;
+	int _frameCount = 0;
     int _delayCtr = 0, _frameCtr = 0;
 
     void executeFrame(const byte *src, byte *dest);
