@@ -45,7 +45,6 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 
 	_minCommand = 0xf0;
 
-	_pictureVersion = AGIPIC_V2;
 	_width = 0;
 	_height = 0;
 
@@ -310,6 +309,8 @@ void PictureMgr::plotBrush() {
 ** Draw AGI picture
 **************************************************************************/
 void PictureMgr::drawPicture() {
+	debugC(kDebugLevelPictures, "Drawing picture %d", _resourceNr);
+
 	_dataOffset = 0;
 	_dataOffsetNibble = false;
 	_patCode = 0;
@@ -318,68 +319,6 @@ void PictureMgr::drawPicture() {
 	_scrOn = false;
 	_scrColor = 15;
 	_priColor = 4;
-
-	switch (_pictureVersion) {
-	case AGIPIC_V15:
-		drawPictureV15();
-		break;
-	case AGIPIC_V2:
-		drawPictureV2();
-		break;
-	default:
-		break;
-	}
-}
-
-void PictureMgr::drawPictureV15() {
-	debugC(kDebugLevelPictures, "Drawing V1.5 picture");
-
-	while (_dataOffset < _dataSize) {
-		byte curByte = getNextByte();
-
-		switch (curByte) {
-		case 0xf0:
-			// happens in all Troll's Tale pictures
-			// TODO: figure out what it was meant for
-			break;
-		case 0xf1:
-			draw_SetColor();
-			_scrOn = true;
-			break;
-		case 0xf3:
-			if (_flags & kPicFf3Stop)
-				return;
-			break;
-		case 0xf8:
-			yCorner(true);
-			break;
-		case 0xf9:
-			xCorner(true);
-			break;
-		case 0xfa:
-			// TODO: is this really correct?
-			draw_LineAbsolute();
-			break;
-		case 0xfb:
-			// TODO: is this really correct?
-			draw_LineAbsolute();
-			break;
-		case 0xfe:
-			draw_SetColor();
-			_scrOn = true;
-			draw_Fill();
-			break;
-		case 0xff: // end of data
-			return;
-		default:
-			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
-			break;
-		}
-	}
-}
-
-void PictureMgr::drawPictureV2() {
-	debugC(kDebugLevelPictures, "Drawing V2/V3 picture");
 
 	// AGIv3 nibble parameters are indicated by a flag in the picture's directory entry
 	bool nibbleMode = (_vm->_game.dirPic[_resourceNr].flags & RES_PICTURE_V3_NIBBLE_PARM) != 0;
@@ -434,7 +373,7 @@ void PictureMgr::drawPictureV2() {
 		case 0xff: // end of data
 			return;
 		default:
-			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
+			warning("Unknown picture opcode %02x at %04x", curByte, _dataOffset - 1);
 			break;
 		}
 	}
@@ -818,11 +757,6 @@ void PictureMgr::showPictureWithTransition() {
 	}
 
 	_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
-}
-
-void PictureMgr::setPictureVersion(AgiPictureVersion version) {
-	_pictureVersion = version;
-	_minCommand = 0xf0;
 }
 
 } // End of namespace Agi
