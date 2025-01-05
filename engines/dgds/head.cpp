@@ -164,6 +164,10 @@ bool TalkData::hasVisibleHead() const {
 
 //////
 
+Conversation::~Conversation() {
+	unload();
+}
+
 void Conversation::unload() {
 	if (_sound) {
 		_sound->stop();
@@ -171,6 +175,8 @@ void Conversation::unload() {
 	}
 	_img.reset();
 	_ttmScript.reset();
+	if (_ttmEnv._soundRaw)
+		_ttmEnv._soundRaw->stop();
 	_ttmEnv = TTMEnviro();
 }
 
@@ -196,6 +202,8 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub) {
 
 	if (!resourceManager->hasResource(fname))
 		return;
+
+	debug(10, "CDS: Load CDS resource %s", fname.c_str());
 
 	_sound.reset(new SoundRaw(resourceManager, decompressor));
 	_sound->load(fname);
@@ -228,7 +236,7 @@ void Conversation::runScript() {
 	_ttmEnv._yOff = _drawRect.y;
 
 	for (auto seq : _ttmSeqs) {
-		if (seq->_seqNum == _ttmEnv._cdsSeqNum) {
+		if (seq->_seqNum == _ttmEnv._cdsSeqNum && seq->_currentFrame < (int)_ttmEnv._frameOffsets.size()) {
 			debug(10, "CDS: Running TTM sequence %d frame %d", seq->_seqNum, seq->_currentFrame);
 			_ttmEnv.scr->seek(_ttmEnv._frameOffsets[seq->_currentFrame]);
 

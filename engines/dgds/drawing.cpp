@@ -44,6 +44,11 @@ void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, by
 }
 
 void rectClipped(const Common::Rect &r, const Common::Rect &clip, Graphics::ManagedSurface *dst, byte color) {
+	Common::Rect clippedR(r);
+	clippedR.clip(clip);
+	if (clippedR.isEmpty())
+		return;
+
 	if (r.top >= clip.top && r.top < clip.bottom)
 		dst->hLine(MAX(r.left, clip.left), r.top, MIN(r.right - 1, clip.right - 1), color);
 

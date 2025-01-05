@@ -109,6 +109,7 @@ public:
 class Conversation {
 public:
 	Conversation() : _nextExec(0) {}
+	~Conversation();
 
 	void unload();
 	void runScript();

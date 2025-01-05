@@ -62,9 +62,9 @@ void GamePalettes::reset() {
 int GamePalettes::loadPalette(const Common::String &filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream) {
-		// Happens in the Amiga version of Dragon
+		// Happens in the Amiga version of Dragon and CDS scripts
 		warning("Couldn't load palette resource %s", filename.c_str());
-		return 0;
+		return _curPalNum;
 	}
 
 	_palettes.resize(_palettes.size() + 1);

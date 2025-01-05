@@ -680,6 +680,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		seq._currentPalId = ivals[0];
 		if (seq._executed) // this is a mostly on-shot op.
 			break;
+		if (env._cdsSeqNum >= 0) // don't change global pal for CDS scripts.
+			break;
 		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
 		break;
 	case 0x1070: // SELECT FONT  i:int
@@ -792,15 +794,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		break;
 	}
-	case 0x3200:
+	case 0x3200: // CDS FIND GOTO TARGET frameno
 		env._cdsSeqNum = findGOTOTarget(env, seq, ivals[0]);
 		break;
-	case 0x3300:
+	case 0x3300: // CDS GOSUB
 		if (!env._cdsJumped && env._frameOffsets[env._cdsSeqNum] != seq._currentFrame) {
 			env._cdsJumped = true;
 			int64 prevPos = env.scr->pos();
+			env._xOff += ivals[0];
+			env._yOff += ivals[1];
 			env.scr->seek(env._frameOffsets[env._cdsSeqNum]);
 			run(env, seq);
+			env._xOff -= ivals[0];
+			env._yOff -= ivals[1];
 			env.scr->seek(prevPos);
 			env._cdsJumped = false;
 		}
@@ -1125,6 +1131,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xc210: {  // LOAD RAW SFX filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
+		// Stop existing raw sound before we deallocate it.
+		if (env._soundRaw)
+			env._soundRaw->stop();
 		if (_vm->getResourceManager()->hasResource(sval)) {
 			SoundRaw *snd = new SoundRaw(_vm->getResourceManager(), _vm->getDecompressor());
 			snd->load(sval);
