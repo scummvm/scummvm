@@ -18,7 +18,9 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -26,6 +28,23 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class SAFFSTree {
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public interface IOBusyListener {
+		public void onIOBusy(float ratio);
+	}
+
+	private static class IOTime {
+		long start;
+		long end;
+		long duration;
+	}
+	// Declare us as busy when I/O waits took more than 90% in 2 secs
+	private static final long IO_BUSINESS_TIMESPAN = 2000;
+	private static final long IO_BUSINESS_THRESHOLD = 1800;
+
+	private static ConcurrentLinkedQueue<IOTime> _lastIOs;
+	private static IOBusyListener _listener;
+
 	private static HashMap<String, SAFFSTree> _trees;
 
 	// This map will store the references of all our objects used
@@ -34,6 +53,51 @@ public class SAFFSTree {
 	private static ConcurrentHashMap<Long, SAFFSNode> _nodes;
 	// This atomic variable will generate unique identifiers for our objects
 	private static AtomicLong _idCounter;
+
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public static void setIOBusyListener(IOBusyListener l) {
+		if (_lastIOs == null) {
+			_lastIOs = new ConcurrentLinkedQueue<>();
+		}
+		_listener = l;
+	}
+
+	private static void reportIO(long start, long end) {
+		if (_listener == null) {
+			return;
+		}
+
+		// Register this new query
+		IOTime entry = new IOTime();
+		entry.start = start;
+		entry.end = end;
+		entry.duration = end - start;
+		_lastIOs.add(entry);
+
+		long deadline = end - IO_BUSINESS_TIMESPAN;
+		long duration = 0;
+
+		// Remove outdated entries and compute the time spent in I/Os
+		Iterator<IOTime> it = _lastIOs.iterator();
+		while (it.hasNext()) {
+			entry = it.next();
+			//Log.d(ScummVM.LOG_TAG, "ENTRY <" + Long.toString(entry.start) + " " + Long.toString(entry.end) + " " + Long.toString(entry.duration) + ">");
+			if (entry.end <= deadline) {
+				// entry is too old
+				it.remove();
+			} else if (entry.start < deadline) {
+				// This entry crossed the deadline
+				duration += entry.end - deadline;
+			} else {
+				duration += entry.duration;
+			}
+		}
+		//Log.d(ScummVM.LOG_TAG, "SUM: " + Long.toString(duration) + " DEADLINE WAS: " + Long.toString(deadline));
+
+		if (duration >= IO_BUSINESS_THRESHOLD && _listener != null) {
+			_listener.onIOBusy((float)duration / IO_BUSINESS_TIMESPAN);
+		}
+	}
 
 	public static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
@@ -304,6 +368,9 @@ public class SAFFSTree {
 		HashMap<String, SoftReference<SAFFSNode>> newChildren = new HashMap<>();
 
 		Cursor c = null;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			c = resolver.query(searchUri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE,
@@ -340,6 +407,9 @@ public class SAFFSTree {
 			if (c != null) {
 				c.close();
 			}
+
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 
 		return results;
@@ -451,20 +521,31 @@ public class SAFFSTree {
 
 		if ((node._flags & SAFFSNode.REMOVABLE) != 0) {
 			final Uri parentUri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._parent._documentId);
+
+			long startIO = System.currentTimeMillis();
+
 			try {
 				if (!DocumentsContract.removeDocument(resolver, uri, parentUri)) {
 					return false;
 				}
 			} catch(FileNotFoundException e) {
 				return false;
+			} finally {
+				long endIO = System.currentTimeMillis();
+				reportIO(startIO, endIO);
 			}
 		} else if ((node._flags & SAFFSNode.DELETABLE) != 0) {
+			long startIO = System.currentTimeMillis();
+
 			try {
 				if (!DocumentsContract.deleteDocument(resolver, uri)) {
 					return false;
 				}
 			} catch(FileNotFoundException e) {
 				return false;
+			} finally {
+				long endIO = System.currentTimeMillis();
+				reportIO(startIO, endIO);
 			}
 		} else {
 			return false;
@@ -513,10 +594,15 @@ public class SAFFSTree {
 			}
 		}
 
+		long startIO = System.currentTimeMillis();
+
 		try {
 			newDocUri = DocumentsContract.createDocument(resolver, parentUri, mimeType, name);
 		} catch(FileNotFoundException e) {
 			return null;
+		} finally {
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 		if (newDocUri == null) {
 			return null;
@@ -556,10 +642,16 @@ public class SAFFSTree {
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
 		ParcelFileDescriptor pfd;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			pfd = resolver.openFileDescriptor(uri, mode);
 		} catch(FileNotFoundException e) {
 			return null;
+		} finally {
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 
 		return pfd;
@@ -578,6 +670,9 @@ public class SAFFSTree {
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
 		Cursor c = null;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			c = resolver.query(uri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
@@ -601,6 +696,9 @@ public class SAFFSTree {
 				} catch (Exception e) {
 				}
 			}
+
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 		// We should never end up here...
 		return null;
