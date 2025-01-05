@@ -62,7 +62,6 @@ private:
 
 	void readAssetInFirstSubfile(Chunk &chunk);
 	void readAssetFromLaterSubfile(Subfile &subfile);
-	void play();
 };
 
 } // End of namespace MediaStation

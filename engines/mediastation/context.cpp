@@ -297,17 +297,4 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 	return true;
 }
 
-void Context::play() {
-	// FIND AND EXECUTE THE ENTRY SCRIPT.
-	// The entry script is stored in the asset with the same ID as the context.
-	// It's the asset that has a SCREEN asset type.
-	if (_screenAsset == nullptr) {
-		error("Context::play(): No entry script exists for this context, cannot play it");
-	}
-	//EventHandler *entryHandler = nullptr; //_screenAsset->_eventHandlers.getVal(uint32(EventType::Entry));
-	// So how can we actually execute this script?
-
-	// FIND AND EXECUTE THE EXIT SCRIPT.
-}
-
 } // End of namespace MediaStation
