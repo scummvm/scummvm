@@ -43,6 +43,16 @@
 			android:src="@drawable/ic_action_menu"
 			android:visibility="gone"
 			tools:visibility="visible" />
+
+		<org.scummvm.scummvm.LedView
+			android:id="@+id/io_led"
+			android:layout_width="10dp"
+			android:layout_height="wrap_content"
+			android:layout_row="1"
+			android:layout_column="0"
+			android:layout_columnSpan="2"
+			android:layout_gravity="right|top"
+			app:state="false" />
 	</GridLayout>
 
 </FrameLayout>

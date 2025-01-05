@@ -117,6 +117,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private GridLayout _buttonLayout = null;
 	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
+	private LedView _ioLed = null;
 	private int _layoutOrientation;
 
 	public View _screenKeyboard = null;
@@ -531,6 +532,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			params = (GridLayout.LayoutParams)_toggleTouchModeKeyboardBtnIcon.getLayoutParams();
 			params.rowSpec = GridLayout.spec(1);
 			params.columnSpec = GridLayout.spec(1);
+			params = (GridLayout.LayoutParams)_ioLed.getLayoutParams();
+			params.rowSpec = GridLayout.spec(0, 2, GridLayout.TOP);
+			params.columnSpec = GridLayout.spec(0, GridLayout.RIGHT);
 		} else {
 			GridLayout.LayoutParams params;
 			params = (GridLayout.LayoutParams)_openMenuBtnIcon.getLayoutParams();
@@ -539,6 +543,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			params = (GridLayout.LayoutParams)_toggleTouchModeKeyboardBtnIcon.getLayoutParams();
 			params.rowSpec = GridLayout.spec(0);
 			params.columnSpec = GridLayout.spec(0);
+			params = (GridLayout.LayoutParams)_ioLed.getLayoutParams();
+			params.rowSpec = GridLayout.spec(1, GridLayout.TOP);
+			params.columnSpec = GridLayout.spec(0, 2, GridLayout.RIGHT);
 		}
 		_buttonLayout.requestLayout();
 	}
@@ -932,6 +939,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_buttonLayout = findViewById(R.id.button_layout);
 		_openMenuBtnIcon = findViewById(R.id.open_menu_button);
 		_toggleTouchModeKeyboardBtnIcon = findViewById(R.id.toggle_touch_button);
+		_ioLed = findViewById(R.id.io_led);
 
 		// Hide by default all buttons, they will be shown when native code will start
 		showToggleOnScreenBtnIcons(0);
@@ -1042,6 +1050,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (_mouseHelper != null) {
 			_main_surface.setOnHoverListener(_mouseHelper);
 		}
+
+		SAFFSTree.setIOBusyListener(new SAFFSTree.IOBusyListener() {
+			@Override
+			public void onIOBusy(float ratio) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						_ioLed.blinkOnce();
+					}
+				});
+			}
+		});
 
 		_scummvm_thread = new Thread(null, _scummvm, "ScummVM", 8388608); // 8MB
 		_scummvm_thread.start();
@@ -1158,6 +1178,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		Log.d(ScummVM.LOG_TAG, "onDestroy");
 
 		super.onDestroy();
+
+		SAFFSTree.setIOBusyListener(null);
 
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
