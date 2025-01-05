@@ -29,6 +29,16 @@ public:
 	PictureMgr_Troll(AgiBase *agi, GfxMgr *gfx);
 
 	void drawPicture() override;
+	
+	void draw_Fill() override;
+	bool draw_FillCheck(int16 x, int16 y, bool horizontalCheck) override;
+
+	void setStopOnF3(bool stopOnF3) { _stopOnF3 = stopOnF3; }
+	void setTrollMode(bool trollMode) { _trollMode = trollMode; }
+
+private:
+	bool _stopOnF3;
+	bool _trollMode;
 };
 
 } // End of namespace Agi

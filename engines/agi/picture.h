@@ -42,19 +42,10 @@ struct AgiPicture {
 	AgiPicture() { reset(); }
 };
 
-enum AgiPictureFlags {
-	kPicFNone      = (1 << 0),
-	kPicFf3Stop    = (1 << 1), // Troll, certain pictures
-	kPicFTrollMode = (1 << 2)  // Troll, drawing the Troll
-};
-
 class AgiBase;
 class GfxMgr;
 
 class PictureMgr {
-	AgiBase *_vm;
-	GfxMgr *_gfx;
-
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
 	virtual ~PictureMgr() { }
@@ -95,17 +86,18 @@ protected:
 	void draw_LineShort();
 	void draw_LineAbsolute();
 
-	bool draw_FillCheck(int16 x, int16 y);
+	virtual bool draw_FillCheck(int16 x, int16 y, bool horizontalCheck);
 	virtual void draw_Fill(int16 x, int16 y);
-	void draw_Fill();
+	virtual void draw_Fill();
 
 public:
 	void showPicture(int16 x = 0, int16 y = 0, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void showPictureWithTransition();
 
-	void setPictureFlags(int flags) { _flags = flags; }
-
 protected:
+	AgiBase *_vm;
+	GfxMgr *_gfx;
+
 	int16  _resourceNr;
 	uint8 *_data;
 	uint32 _dataSize;
@@ -123,8 +115,6 @@ protected:
 
 	int16 _width;
 	int16 _height;
-
-	int _flags;
 };
 
 } // End of namespace Agi

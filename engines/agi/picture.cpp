@@ -47,8 +47,6 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 
 	_width = 0;
 	_height = 0;
-
-	_flags = 0;
 }
 
 void PictureMgr::putVirtPixel(int16 x, int16 y) {
@@ -608,19 +606,19 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 	while (!stack.empty()) {
 		Common::Point p = stack.pop();
 
-		if (!draw_FillCheck(p.x, p.y))
+		if (!draw_FillCheck(p.x, p.y, false))
 			continue;
 
 		// Scan for left border
 		uint c;
-		for (c = p.x - 1; draw_FillCheck(c, p.y); c--)
+		for (c = p.x - 1; draw_FillCheck(c, p.y, true); c--)
 			;
 
 		bool newspanUp = true;
 		bool newspanDown = true;
-		for (c++; draw_FillCheck(c, p.y); c++) {
+		for (c++; draw_FillCheck(c, p.y, true); c++) {
 			putVirtPixel(c, p.y);
-			if (draw_FillCheck(c, p.y - 1)) {
+			if (draw_FillCheck(c, p.y - 1, false)) {
 				if (newspanUp) {
 					stack.push(Common::Point(c, p.y - 1));
 					newspanUp = false;
@@ -629,7 +627,7 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 				newspanUp = true;
 			}
 
-			if (draw_FillCheck(c, p.y + 1)) {
+			if (draw_FillCheck(c, p.y + 1, false)) {
 				if (newspanDown) {
 					stack.push(Common::Point(c, p.y + 1));
 					newspanDown = false;
@@ -641,16 +639,13 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 	}
 }
 
-bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
+bool PictureMgr::draw_FillCheck(int16 x, int16 y, bool horizontalCheck) {
 	if (!getGraphicsCoordinates(x, y)) {
 		return false;
 	}
 
 	byte screenColor = _gfx->getColor(x, y);
 	byte screenPriority = _gfx->getPriority(x, y);
-
-	if (_flags & kPicFTrollMode)
-		return ((screenColor != 11) && (screenColor != _scrColor));
 
 	if (!_priOn && _scrOn && _scrColor != 15)
 		return (screenColor == 15);
