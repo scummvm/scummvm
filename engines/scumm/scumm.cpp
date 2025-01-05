@@ -1326,7 +1326,8 @@ Common::Error ScummEngine::init() {
 				}
 
 				GUI::MessageDialog dialog(Common::U32String::format(
-	_("Could not find the '%s' Macintosh executable to read resources from. Music and Mac GUI will be disabled"), gameName), _("OK"));
+					_("Could not find the '%s' Macintosh executable to read resources from. %s will be disabled."),
+						gameName, (_game.id == GID_INDY4 || _game.id == GID_MONKEY2 || _game.version > 6) ? _s("The Mac GUI") : _s("The music and the Mac GUI")), _("OK"));
 				dialog.runModal();
 			} else if (isUsingOriginalGUI() || _game.id == GID_INDY3 || _game.id == GID_LOOM) {
 				// FIXME: THIS IS A TEMPORARY WORKAROUND!
