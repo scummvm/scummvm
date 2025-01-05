@@ -84,18 +84,9 @@ void HighScores::save() {
 	delete sf;
 }
 
-static int sortScores(const HighScore &hs1, const HighScore &hs2) {
-	if (hs1._total < hs2._total)
-		return -1;
-	else if (hs1._total > hs2._total)
-		return 1;
-	else
-		return 0;
-}
-
 void HighScores::add(int area, const Common::String &name, uint total) {
 	// Find the index for the new score in the list
-	uint newIndex;
+	int newIndex;
 	for (newIndex = 0; newIndex < HIGH_SCORES_PER_AREA &&
 		total < _scores[area - 1][newIndex]._total; ++newIndex) {
 	}
