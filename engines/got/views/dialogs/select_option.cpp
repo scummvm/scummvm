@@ -84,10 +84,10 @@ void SelectOption::draw() {
     if (_smackCtr > 0) {
         // Selecting an item
         int xp = 8 + 2 * (_smackCtr < 3 ? (_smackCtr + 1) : (6 - _smackCtr));
-        s.blitFrom(_G(hampic)[0], Common::Point(xp, 24 + (_selectedItem * 16)));
+        s.simpleBlitFrom(_G(hampic)[0], Common::Point(xp, 24 + (_selectedItem * 16)));
     } else {
         // Normal animated cursor
-        s.blitFrom(_G(hampic)[_hammerFrame],
+        s.simpleBlitFrom(_G(hampic)[_hammerFrame],
                    Common::Point(8, 24 + (_selectedItem * 16)));
     }
 }

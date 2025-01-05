@@ -64,7 +64,7 @@ void GameContent::draw() {
     if (_G(gameMode) == MODE_THUNDER) {
         GfxSurface win = getSurface();
         win.clear();
-        win.blitFrom(s, _moveDelta);
+        win.simpleBlitFrom(s, _moveDelta);
     } else if (_G(gameMode) == MODE_LIGHTNING) {
         drawLightning(s);
 
@@ -75,38 +75,38 @@ void GameContent::draw() {
 
         switch (_G(transitionDir)) {
         case DIR_LEFT:
-            win.blitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),
+            win.simpleBlitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),
                          Common::Point(0, 0));
-            win.blitFrom(_surface, Common::Rect(0, 0, 320 - _transitionPos, 192),
+            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320 - _transitionPos, 192),
                          Common::Point(_transitionPos, 0));
             break;
         case DIR_RIGHT:
-            win.blitFrom(_surface, Common::Rect(_transitionPos, 0, 320, 192),
+            win.simpleBlitFrom(_surface, Common::Rect(_transitionPos, 0, 320, 192),
                          Common::Point(0, 0));
-            win.blitFrom(s, Common::Rect(0, 0, _transitionPos, 192),
+            win.simpleBlitFrom(s, Common::Rect(0, 0, _transitionPos, 192),
                          Common::Point(320 - _transitionPos, 0));
             break;
         case DIR_UP:
-            win.blitFrom(s, Common::Rect(0, 192 - _transitionPos, 320, 192),
+            win.simpleBlitFrom(s, Common::Rect(0, 192 - _transitionPos, 320, 192),
                          Common::Point(0, 0));
-            win.blitFrom(_surface, Common::Rect(0, 0, 320, 192 - _transitionPos),
+            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320, 192 - _transitionPos),
                          Common::Point(0, _transitionPos));
             break;
         case DIR_DOWN:
-            win.blitFrom(_surface, Common::Rect(0, _transitionPos, 320, 192),
+            win.simpleBlitFrom(_surface, Common::Rect(0, _transitionPos, 320, 192),
                          Common::Point(0, 0));
-            win.blitFrom(s, Common::Rect(0, 0, 320, _transitionPos),
+            win.simpleBlitFrom(s, Common::Rect(0, 0, 320, _transitionPos),
                          Common::Point(0, 192 - _transitionPos));
             break;
         case DIR_PHASED:
-            win.blitFrom(_surface);		// Copy old surface
+            win.simpleBlitFrom(_surface);		// Copy old surface
 
             // Copy the randomly chosen blocks over from new scene
             for (int i = 0; i < 240; ++i) {
                 int x = (i * 16) % 320;
                 int y = ((i * 16) / 320) * 16;
                 if (_phased[i])
-                    win.blitFrom(s, Common::Rect(x, y, x + 16, y + 16), Common::Point(x, y));
+                    win.simpleBlitFrom(s, Common::Rect(x, y, x + 16, y + 16), Common::Point(x, y));
             }
             break;
         default:
@@ -230,8 +230,8 @@ void GameContent::drawBackground(GfxSurface &s) {
         for (int x = 0; x < TILES_X; x++) {
             if (_G(scrn).icon[y][x] != 0) {
                 const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
-                s.blitFrom(_G(bgPics)[_G(scrn).bg_color], pt);
-                s.blitFrom(_G(bgPics)[_G(scrn).icon[y][x]], pt);
+                s.simpleBlitFrom(_G(bgPics)[_G(scrn).bg_color], pt);
+                s.simpleBlitFrom(_G(bgPics)[_G(scrn).icon[y][x]], pt);
             }
         }
     }
@@ -243,7 +243,7 @@ void GameContent::drawObjects(GfxSurface &s) {
             int p = (y * TILES_X) + x;
 
             if (_G(object_map)[p]) {
-                s.blitFrom(_G(objects)[_G(object_map)[p] - 1],
+                s.simpleBlitFrom(_G(objects)[_G(object_map)[p] - 1],
                            Common::Point(x * TILE_SIZE, y * TILE_SIZE));
             }
         }
@@ -262,7 +262,7 @@ void GameContent::drawActors(GfxSurface &s) {
 
             const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->dir]
                                                     [actor_ptr->frame_sequence[actor_ptr->next]];
-            s.blitFrom(frame, Common::Point(actor_ptr->x, actor_ptr->y));
+            s.simpleBlitFrom(frame, Common::Point(actor_ptr->x, actor_ptr->y));
         }
 
         // Move to the next actor
@@ -278,7 +278,7 @@ void GameContent::drawActors(GfxSurface &s) {
     }
 
     if (_G(gameMode) == MODE_THOR_DIES && _deathCtr >= DEATH_THRESHOLD)
-        s.blitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
+        s.simpleBlitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
 }
 
 void GameContent::drawBossHealth(GfxSurface &s) {

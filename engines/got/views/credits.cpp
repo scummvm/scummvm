@@ -47,7 +47,7 @@ void Credits::draw() {
     // Draw scroll background
     Graphics::ManagedSurface bg = _G(gfx)[42];
     s.clear(*(byte *)bg.getPixels());
-    s.blitFrom(bg, Common::Point(0, 24));
+    s.simpleBlitFrom(bg, Common::Point(0, 24));
 
     int creditNum = _frameCtr / CREDIT_TIME;
     int subNum = _frameCtr % CREDIT_TIME;

@@ -39,21 +39,21 @@ void Dialog::draw() {
     assert((s.w % 16) == 0 && (s.h % 16) == 0);
 
     // Draw four corners
-    s.blitFrom(_G(bgPics)[192], Common::Point(0, 0));
-    s.blitFrom(_G(bgPics)[193], Common::Point(_bounds.width() - 16, 0));
-    s.blitFrom(_G(bgPics)[194], Common::Point(0, _bounds.height() - 16));
-    s.blitFrom(_G(bgPics)[195], Common::Point(_bounds.width() - 16, _bounds.height() - 16));
+    s.simpleBlitFrom(_G(bgPics)[192], Common::Point(0, 0));
+    s.simpleBlitFrom(_G(bgPics)[193], Common::Point(_bounds.width() - 16, 0));
+    s.simpleBlitFrom(_G(bgPics)[194], Common::Point(0, _bounds.height() - 16));
+    s.simpleBlitFrom(_G(bgPics)[195], Common::Point(_bounds.width() - 16, _bounds.height() - 16));
 
     // Draw top/bottom horizontal lines
     for (int x = 16; x < _bounds.width() - 16; x += 16) {
-        s.blitFrom(_G(bgPics)[196], Common::Point(x, 0));
-        s.blitFrom(_G(bgPics)[197], Common::Point(x, _bounds.height() - 16));
+        s.simpleBlitFrom(_G(bgPics)[196], Common::Point(x, 0));
+        s.simpleBlitFrom(_G(bgPics)[197], Common::Point(x, _bounds.height() - 16));
     }
 
     // Draw left/right vertical lines
     for (int y = 16; y < _bounds.height() - 16; y += 16) {
-        s.blitFrom(_G(bgPics)[198], Common::Point(0, y));
-        s.blitFrom(_G(bgPics)[199], Common::Point(_bounds.width() - 16, y));
+        s.simpleBlitFrom(_G(bgPics)[198], Common::Point(0, y));
+        s.simpleBlitFrom(_G(bgPics)[199], Common::Point(_bounds.width() - 16, y));
     }
 }
 

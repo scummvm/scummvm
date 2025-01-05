@@ -37,7 +37,7 @@ void SplashScreen::draw() {
         // Display background. The rest of the logo animation will be
         // done in the frame routines called from tick
         s.clear();
-        s.blitFrom(_G(gfx)[92], Common::Point(0, 24));
+        s.simpleBlitFrom(_G(gfx)[92], Common::Point(0, 24));
     }
 }
 
