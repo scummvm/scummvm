@@ -305,6 +305,8 @@ public:
 	void debugCurRoom();
 
 private:
+	PictureMgr *_picture;
+
 	WTP_SAVE_GAME _gameStateWinnie;
 	int _room;
 	int _mist;
