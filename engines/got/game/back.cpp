@@ -76,11 +76,10 @@ void show_level(int new_level) {
 	show_enemies();
 
 	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154) _G(thor)->dir = 0;
-	//xdisplay_actors(&_G(actor)[MAX_ACTORS - 1], draw_page);
 	_G(thor)->dir = save_d;
 
 	if (_G(warp_flag))
-		_G(current_level) = new_level - 5;   //force phase
+		_G(current_level) = new_level - 5;   // Force phase
 	_G(warp_flag) = 0;
 
 	if (_G(warp_scroll)) {
@@ -96,7 +95,7 @@ void show_level(int new_level) {
 	}
 
 	if (!_G(setup).scroll_flag)
-		_G(current_level) = new_level; //force no scroll
+		_G(current_level) = new_level; // Force no scroll
 
 	if (_G(music_current) != _G(level_type))
 		_G(sound).music_pause();
@@ -297,36 +296,18 @@ void remove_objects(int y, int x) {
 	p = (y * 20) + x;
 
 	if (_G(object_map)[p] > 0) {
-#if 0
-		ix = x * 16;
-		iy = y * 16;
-		xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-		xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).icon[y][x] * 262)));
-		xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
-#endif
 		_G(object_map)[p] = 0;
 		_G(object_index)[p] = 0;
 	}
 }
 
 void place_tile(int x, int y, int tile) {
-#if 0
-	int ix, iy;
-
-	ix = x * 16;
-	iy = y * 16;
-
-	xfput(ix, iy, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	xfput(ix, iy, PAGE2, (char far *) (bg_pics + (tile * 262)));
-	xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, draw_page, 320, 320);
-	xcopyd2d(ix, iy, ix + 16, iy + 16, ix, iy, PAGE2, display_page, 320, 320);
-#endif
 	_G(scrn).icon[y][x] = tile;
 	remove_objects(y, x);
 }
 
 int bgtile(int x, int y) {
-	if (x < 0 || x>319 || y < 0 || y>191) return 0;  //303 , 175
+	if (x < 0 || x>319 || y < 0 || y>191) return 0;
 
 	x = (x + 1) >> 4;
 	y = (y + 1) >> 4;

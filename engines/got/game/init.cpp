@@ -104,7 +104,6 @@ void initialize_game() {
 	show_level(_G(current_level));
 
 	if (!_G(auto_load)) {
-//		fade_in();
 		_G(sound).music_play(_G(level_type), 1);
 	}
 

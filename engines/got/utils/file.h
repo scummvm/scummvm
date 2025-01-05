@@ -28,18 +28,11 @@
 namespace Got {
 
 extern long file_size(const char *path);
-extern unsigned int read_file(const char *filename, const char *buff,
-	long offset, unsigned int amount, int key);
 
 extern bool load_actor(int, int num);
-extern bool load_picture(int index, char *buff);
 extern void setup_filenames(int level);
 extern bool  load_speech(int index);
 extern long file_size(const char *path);
-extern void *get_file(const char *filename, int key);
-extern void save_game();
-extern bool load_game(int flag);
-extern void help();
 extern long res_read(const Common::String &name, void *buff,
 	bool failAllowed = false);
 extern void *res_falloc_read(const Common::String &name);

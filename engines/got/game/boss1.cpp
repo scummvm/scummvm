@@ -83,7 +83,7 @@ int boss1_movement(ACTOR *actr) {
 		actr->num_moves = _G(setup).skill + 2;
 		goto done1;
 	}
-	if (actr->temp2) {          //retreating
+	if (actr->temp2) {          // Retreating
 		if (actr->x < 256) {
 			d = 3;
 			actr->x += 2;

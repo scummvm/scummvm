@@ -78,10 +78,6 @@ int boss2_movement(ACTOR *actr) {
 	}
 	d = actr->last_dir;
 
-	//if(overlap(actr->x+2,actr->y+8,actr->x+30,actr->y+30,
-	//          _G(thor)->x,_G(thor)->y+4,_G(thor)->x+15,_G(thor)->y+15))
-	//  thor_damaged(actr);
-
 	x = actr->x;
 
 	f = 0;
@@ -117,7 +113,7 @@ int boss2_movement(ACTOR *actr) {
 		if (x == 48 || x == 112 || x == 176 || x == 240) {
 			drop_flag = true;
 			_G(actor)[3].temp6 = 40;
-			//    actr->next=3;
+
 			actor_always_shoots(actr, 1);
 			play_sound(FALL, 0);
 			_G(actor)[actr->shot_actor].x = actr->x + 12;
@@ -158,12 +154,9 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 		_G(actor)[3].health -= 10;
 		if (_G(actor)[3].health == 50) {
 			play_sound(BOSS12, 1);
-#if 0
-			timer_cnt = 0;
-			while (timer_cnt < 120);
-#else
+
 			g_events->send("Game", GameMessage("PAUSE", 40));
-#endif
+
 			_G(actor)[3].i1 = 1;
 			_G(actor)[3].i2 = 0;
 			memset(expf, 0, 60);
@@ -278,11 +271,6 @@ static int boss2a_movement(ACTOR *actr) {
 	_G(actor)[an].x = x;
 	_G(actor)[an].y = y;
 
-#if 0
-	xfput(x, y, display_page, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	xfput(x, y, draw_page, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	xfput(x, y, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-#endif
 	_G(scrn).icon[y / 16][x / 16] = _G(scrn).bg_color;
 
 	_G(actor)[3].i2++;

@@ -64,32 +64,4 @@ void fill_score(int num, const char *endMessage) {
 	g_events->send("GameStatus", msg);
 }
 
-void score_for_inv() {
-#ifdef TODO
-	while (_G(thor)->health) {
-		_G(thor)->health--;
-		play_sound(WOOP, 1);
-		add_health(-1);
-		add_score(10);
-		pause(8);
-	}
-	while (_G(thor_info).magic) {
-		_G(thor_info).magic--;
-		play_sound(WOOP, 1);
-		add_magic(-1);
-		add_score(10);
-		pause(8);
-	}
-	while (_G(thor_info).jewels) {
-		_G(thor_info).jewels--;
-		play_sound(WOOP, 1);
-		add_jewels(-1);
-		add_score(10);
-		pause(8);
-	}
-#else
-	error("TODO: score_for_inv");
-#endif
-}
-
 } // namespace Got
