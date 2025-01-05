@@ -287,7 +287,7 @@ bool Movie::drawNextFrame() {
 		return a->zCoordinate() > b->zCoordinate();
 	});
 	for (MovieFrame *frame : framesToDraw) {
-		g_engine->_screen->transBlitFrom(frame->_surface, Common::Point(frame->left(), frame->top()), 0, false);
+		g_engine->_screen->simpleBlitFrom(frame->_surface, Common::Point(frame->left(), frame->top()));
 	}
 
 	uint blitEnd = g_system->getMillis() - _startTime;
