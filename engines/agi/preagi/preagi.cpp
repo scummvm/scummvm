@@ -46,7 +46,6 @@ void PreAgiEngine::initialize() {
 
 	_font = new GfxFont(this);
 	_gfx = new GfxMgr(this, _font);
-	_picture = new PictureMgr(this, _gfx);
 
 	_font->init();
 
@@ -78,7 +77,6 @@ PreAgiEngine::~PreAgiEngine() {
 	delete _speakerStream;
 	delete _speakerHandle;
 
-	delete _picture;
 	delete _gfx;
 	delete _font;
 }

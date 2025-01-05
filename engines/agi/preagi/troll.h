@@ -164,6 +164,8 @@ public:
 	Common::Error go() override;
 
 private:
+	PictureMgr *_picture;
+
 	int _roomPicture;
 	int _treasuresLeft;
 	int _currentRoom;
