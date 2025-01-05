@@ -86,9 +86,9 @@ void ACTOR::copyFixedAndPics(const ACTOR &src) {
     Common::copy(src.future1, src.future1 + 4, future1);
 
     // Copy all the surfaces for all the directions over
-    for (int d = 0; d < DIRECTION_COUNT; ++d)
-        for (int f = 0; f < FRAME_COUNT; ++f)
-            pic[d][f] = src.pic[d][f];
+	for (int d = 0; d < DIRECTION_COUNT; ++d)
+		for (int f = 0; f < FRAME_COUNT; ++f)
+			pic[d][f].copyFrom(src.pic[d][f]);
 }
 
 } // namespace Got
