@@ -112,6 +112,15 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 				if (!mask || (msk && (*msk++)))
 					*src = _wm->inverter(*src);
 		}
+	} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+		for (int i = 0; i < srcRect.height(); i++) {
+			uint16 *src = (uint16 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
+
+			for (int j = 0; j < srcRect.width(); j++, src++)
+				if (!mask || (msk && (*msk++)))
+					*src = _wm->inverter(*src);
+		}
 	} else {
 
 		for (int i = 0; i < srcRect.height(); i++) {

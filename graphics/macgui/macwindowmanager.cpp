@@ -193,9 +193,10 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_hilitingWidget = false;
 
-	if (mode & kWMMode32bpp)
-		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	else
+	if (mode & kWMModeTrueColor) {
+		// TODO: Use the overlay format instead of the first screen format
+		_pixelformat = g_system->getSupportedFormats().front();
+	} else
 		_pixelformat = PixelFormat::createFormatCLUT8();
 
 	if (patterns) {
@@ -830,6 +831,8 @@ void macDrawInvertPixel(int x, int y, int color, void *data) {
 MacDrawPixPtr MacWindowManager::getDrawPixel() {
 	if (_pixelformat.bytesPerPixel == 1)
 		return &macDrawPixel<byte *>;
+	else if (_pixelformat.bytesPerPixel == 2)
+		return &macDrawPixel<uint16 *>;
 	else
 		return &macDrawPixel<uint32 *>;
 }
@@ -878,6 +881,8 @@ void MacWindowManager::drawDesktop() {
 					if (color > 0) {
 						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
 					}
+				} else if (_pixelformat.bytesPerPixel == 2) {
+					*((uint16 *)_desktop->getBasePtr(i, j)) = color;
 				} else {
 					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
 				}
@@ -1389,7 +1394,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 }
 
 uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
-	if (_pixelformat.bytesPerPixel == 4)
+	if (_pixelformat.bytesPerPixel != 1)
 		return _pixelformat.RGBToColor(cr, cg, cb);
 
 	return _paletteLookup.findBestColor(cr, cg, cb);
@@ -1397,6 +1402,11 @@ uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 
 template <>
 void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, byte &b) {
+	_pixelformat.colorToRGB(color, r, g, b);
+}
+
+template<>
+void MacWindowManager::decomposeColor<uint16>(uint32 color, byte &r, byte &g, byte &b) {
 	_pixelformat.colorToRGB(color, r, g, b);
 }
 
@@ -1408,7 +1418,7 @@ void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte
 }
 
 uint32 MacWindowManager::findBestColor(uint32 color) {
-	if (_pixelformat.bytesPerPixel == 4)
+	if (_pixelformat.bytesPerPixel != 1)
 		return color;
 
 	byte r, g, b;
@@ -1483,10 +1493,10 @@ void MacWindowManager::printWMMode(int debuglevel) {
 	if (_mode & kWMModeButtonDialogStyle)
 		out += " kWMModeButtonDialogStyle";
 
-	if (_mode & kWMMode32bpp)
-		out += " kWMMode32bpp";
+	if (_mode & kWMModeTrueColor)
+		out += " kWMModeTrueColor";
 	else
-		out += " !kWMMode32bpp";
+		out += " !kWMModeTrueColor";
 
 	if (_mode & kWMNoScummVMWallpaper)
 		out += " kWMNoScummVMWallpaper";
