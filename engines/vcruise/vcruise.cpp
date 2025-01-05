@@ -82,8 +82,6 @@ void VCruiseEngine::handleMidiTimer() {
 }
 
 Common::Error VCruiseEngine::run() {
-	Common::List<Graphics::PixelFormat> pixelFormats = _system->getSupportedFormats();
-
 #if !defined(USE_JPEG)
 	if (_gameDescription->desc.flags & VCRUISE_GF_NEED_JPEG) {
 		return Common::Error(Common::kUnknownError, _s("This game requires JPEG support, which was not compiled in."));
@@ -136,19 +134,6 @@ Common::Error VCruiseEngine::run() {
 
 	syncSoundSettings();
 
-	const Graphics::PixelFormat *fmt16_565 = nullptr;
-	const Graphics::PixelFormat *fmt16_555 = nullptr;
-	const Graphics::PixelFormat *fmt32 = nullptr;
-
-	for (const Graphics::PixelFormat &fmt : pixelFormats) {
-		if (fmt32 == nullptr && fmt.bytesPerPixel == 4 && fmt.rBits() == 8 && fmt.gBits() == 8 && fmt.bBits() == 8)
-			fmt32 = &fmt;
-		if (fmt16_555 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 5 && fmt.bBits() == 5)
-			fmt16_555 = &fmt;
-		if (fmt16_565 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 6 && fmt.bBits() == 5)
-			fmt16_565 = &fmt;
-	}
-
 	// Figure out screen layout
 	Common::Point size;
 
@@ -199,14 +184,10 @@ Common::Error VCruiseEngine::run() {
 		_trayRect = Common::Rect(trayTL.x, trayTL.y, trayTL.x + traySize.x, trayTL.y + traySize.y);
 	}
 
-	if (fmt32)
-		initGraphics(size.x, size.y, fmt32);
-	else if (fmt16_565)
-		initGraphics(size.x, size.y, fmt16_565);
-	else if (fmt16_555)
-		initGraphics(size.x, size.y, fmt16_555);
-	else
-		error("Unable to find a suitable graphics format");
+	// TODO: Optionally support CLUT8 for AD 2044
+	initGraphics(size.x, size.y, nullptr);
+	if (_system->getScreenFormat().isCLUT8())
+		return Common::kUnsupportedColorMode;
 
 	_system->fillScreen(0);
 
