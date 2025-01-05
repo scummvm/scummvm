@@ -34,5 +34,9 @@ void GfxSurface::printChar(uint32 chr, int x, int y, uint32 color) {
     _G(font).drawChar(this, chr, x, y, color);
 }
 
+void GfxSurface::rawPrintChar(uint32 chr, int x, int y, uint32 color) {
+	_G(font).rawDrawChar(surfacePtr(), chr, x, y, color);
+}
+
 } // namespace Gfx
 } // namespace Got
