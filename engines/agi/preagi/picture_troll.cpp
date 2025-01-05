@@ -26,6 +26,26 @@
 #include "agi/preagi/picture_troll.h"
 
 namespace Agi {
+	
+// PictureMgr_Troll decodes and draws Troll's Tale picture resources.
+//
+// Troll's Tale supports lines and flood fills. There is no priority screen.
+//
+// There are two unique picture features:
+//
+// 1. The F3 opcode can dynamically act as a no-op or terminator (FF).
+//    This allows pictures to have an optional set of instructions for
+//	  drawing or hiding a room's object or the king's crown.
+//
+// 2. A custom flood fill technique is used for drawing the Troll over
+//    room pictures. Normally, flood fill requires an empty (white) area.
+//
+// One quirk is that the xCorner and yCorner instructions contain a redundant
+// coordinate, even though it is ignored because it is derived from the others.
+//
+// Each room picture depends on the game first drawing a frame within the entire
+// picture area. This is not decorative; the flood fill routines rely on this
+// border because they do not do boundary test, and pictures are drawn for it.
 
 PictureMgr_Troll::PictureMgr_Troll(AgiBase *agi, GfxMgr *gfx) :
 	PictureMgr(agi, gfx) {
@@ -47,30 +67,24 @@ void PictureMgr_Troll::drawPicture() {
 		byte curByte = getNextByte();
 
 		switch (curByte) {
-		case 0xf0:
-			// happens in all Troll's Tale pictures
-			// TODO: figure out what it was meant for
-			break;
+		case 0xf0: // F0 is in all Troll's Tale pictures, but it is a no-op.
+			break; // Confirmed in disassembly of opcode table.
 		case 0xf1:
 			draw_SetColor();
 			_scrOn = true;
 			break;
-		case 0xf3:
+		case 0xf3: // F3 would impersonate opcode F0 (no-op) or FF (terminator)
 			if (_stopOnF3)
 				return;
 			break;
 		case 0xf8:
-			yCorner(true);
+			yCorner(true); // skip extra (redundant) coordinates when parsing
 			break;
 		case 0xf9:
-			xCorner(true);
+			xCorner(true); // skip extra (redundant) coordinates when parsing
 			break;
-		case 0xfa:
-			// TODO: is this really correct?
-			draw_LineAbsolute();
-			break;
-		case 0xfb:
-			// TODO: is this really correct?
+		case 0xfa: // FA and FB are both used, but they are the same.
+		case 0xfb: // Confirmed in disassembly of opcode table.
 			draw_LineAbsolute();
 			break;
 		case 0xfe:
