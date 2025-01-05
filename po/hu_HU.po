@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 18:11+0000\n"
+"POT-Creation-Date: 2025-01-05 23:03+0000\n"
 "PO-Revision-Date: 2025-01-03 13:43+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7428,6 +7428,12 @@ msgstr "Játék Vége"
 #: engines/cryomni3d/metaengine.cpp:143
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 támogatás nincs lefordítva"
+
+#: engines/darkseed/darkseed.cpp:66
+#, fuzzy
+#| msgid "Unable to locate the '%s' engine data file."
+msgid "Unable to locate the darkseed.dat engine data file."
+msgstr "Nem található a(z) '%s' motorhoz adat fájl."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
