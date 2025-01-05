@@ -41,6 +41,8 @@ public:
 
 
 private:
+	int32 room808_subDC554(machine *machine, int32 walk_x, int32 walk_y);
+
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
 	int32 _808Rp01Series = 0;
@@ -59,6 +61,7 @@ private:
 	machine *_808PosMach = nullptr;
 	machine *_mcTrekMach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle

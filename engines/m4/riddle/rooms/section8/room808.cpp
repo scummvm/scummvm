@@ -165,12 +165,118 @@ void Room808::init() {
 }
 
 void Room808::pre_parser() {
+	if (inv_player_has(_G(player).noun)) {
+		return;
+	}
+
+	int32 opCode = -1;
+
+	if (player_said_any("look", "look at"))
+		opCode = 1;
+	else if (player_said_any("gear", "use"))
+		opCode = 0;
+	else if (player_said("take"))
+		opCode = 2;
+	else if (player_said("talk to"))
+		opCode = 3;
+	else if (player_said("go"))
+		opCode = 5;
+	else if (player_said("crank"))
+		opCode = 6;
+	else if (player_said("journal"))
+		opCode = 11;
+
+	bool doneFl = true;
+
+	switch (opCode) {
+	case 0:
+		if (player_said_any("wheel", "wheel ", "wheel  ", "wheel   ")) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		} else
+			doneFl = false;
+
+		break;
+
+	case 1:
+		if (player_said("slot") && _G(flags[V097]) == 0) {
+			_G(player).walk_x = 202;
+			_G(player).walk_y = 179;
+			_G(player).walk_facing = 2;
+		} else if (player_said_any("mei chen", "east") || scumm_stricmp(_G(player).noun, "wheel") || scumm_stricmp(_G(player).noun, "bridge")) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		} else
+			doneFl = false;
+
+		break;
+	case 5:
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		break;
+
+	case 11:
+		// Nothing
+		break;
+
+	default:
+		doneFl = false;
+	}
+
+
+	if (doneFl || _G(flags[V100]))
+		return;
+
+	if (!room808_subDC554(_G(my_walker), _G(player).walk_x, _G(player).walk_y))
+		return;
+
+	player_update_info(_G(my_walker), &_G(player_info));
+	const bool check1Fl = intr_PathCrossesLine(_G(player_info).x, _G(player_info).y, _G(my_walker)->walkPath, 242, 139, 295, 149);
+	const bool check2Fl = intr_PathCrossesLine(_G(player_info).x, _G(player_info).y, _G(my_walker)->walkPath, 170, 158, 223, 168);
+
+	DisposePath(_G(my_walker)->walkPath);
+	_G(my_walker)->walkPath = nullptr;
+
+	if (!check1Fl && !check2Fl)
+		return;
+
+	if (_G(flags[V094]) != 0 && _G(flags[V094]) != 4) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && (_G(flags[V094]) == 0 || _G(flags[V100]) == 0)) {
+		intr_cancel_sentence();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		if (_G(flags[V096]) == 0) {
+			ws_walk(_G(my_walker), 185, 165, nullptr, 6, 2, true);
+		} else {
+			ws_walk(_G(my_walker), 192, 163, nullptr, 10, 2, true);
+		}
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags[V094]) == 4 && check1Fl) {
+		intr_cancel_sentence();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		ws_walk(_G(my_walker), 274, 142, nullptr, 8, 2, true);
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
+
 }
 
 void Room808::parser() {
+	// TODO Not implemented yet
 }
 
 void Room808::daemon() {
+	// TODO Not implemented yet
+}
+
+int32 Room808::room808_subDC554(machine *machine, int32 walk_x, int32 walk_y) {
+	// TODO Not implemented yet
+	return 0;
 }
 
 } // namespace Rooms
