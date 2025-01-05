@@ -28,7 +28,6 @@ namespace Got {
 namespace Views {
 
 #define SPLASH_FRAME_INTERVAL 2
-#define SPLASH_FRAME_COUNT 36
 
 void SplashScreen::draw() {
     if (_frameCtr == -1) {
@@ -44,11 +43,9 @@ void SplashScreen::draw() {
 
 bool SplashScreen::msgFocus(const FocusMessage &msg) {
     auto chunk = _G(gfx)[93];
-    int frameCount = READ_LE_UINT16(chunk._data);
-    warning("frameCount: %d", frameCount);
-    assert(frameCount == SPLASH_FRAME_COUNT);
+    _frameCount = READ_LE_UINT16(chunk._data);
     _chunkSize = chunk._data + 2;
-    _chunkPtr = chunk._data + 2 + SPLASH_FRAME_COUNT * 4;
+    _chunkPtr = chunk._data + 2 + _frameCount * 4;
 
     _frameCtr = -1;
     _delayCtr = 0;
@@ -74,7 +71,7 @@ bool SplashScreen::tick() {
     if (++_delayCtr == SPLASH_FRAME_INTERVAL) {
         _delayCtr = 0;
 
-        if (++_frameCtr < SPLASH_FRAME_COUNT) {
+        if (++_frameCtr < _frameCount) {
             GfxSurface s = getSurface();
             byte *dest = (byte *)s.getBasePtr(0, 24);
             executeFrame(_chunkPtr, dest);
@@ -82,7 +79,7 @@ bool SplashScreen::tick() {
 
             _chunkPtr += READ_LE_UINT32(_chunkSize);
             _chunkSize += 4;
-        } else if (_frameCtr == (SPLASH_FRAME_COUNT + 50)) {
+        } else if (_frameCtr == (_frameCount + 50)) {
             // Switch to the opening screen showing the game name
             replaceView("Opening", true);
         }
