@@ -40,7 +40,7 @@ AssetType Asset::type() const {
 	return _header->_type;
 }
 
-uint Asset::zIndex() const {
+int Asset::zIndex() const {
 	return _header->_zIndex;
 }
 

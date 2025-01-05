@@ -136,7 +136,7 @@ public:
 	ChunkReference _animationChunkReference = 0;
 	Common::Rect *_boundingBox = nullptr;
 	Common::Array<Common::Point *> *_mouseActiveArea = nullptr;
-	uint32 _zIndex = 0;
+	int _zIndex = 0;
 	uint32 _assetReference = 0;
 	uint32 _startup = 0;
 	bool _transparency = false;

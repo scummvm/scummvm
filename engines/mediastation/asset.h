@@ -58,7 +58,7 @@ public:
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
 	AssetType type() const;
-	uint zIndex() const;
+	int zIndex() const;
 	AssetHeader *getHeader() const {
 		return _header;
 	}
