@@ -53,6 +53,7 @@ Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
 	uint16 width = _bitmapHeader->_dimensions->x;
 	uint16 height = _bitmapHeader->_dimensions->y;
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.setTransparentColor(0);
 	uint8 *pixels = (uint8 *)_surface.getPixels();
 	if (_bitmapHeader->isCompressed()) {
 		// DECOMPRESS THE IMAGE.
