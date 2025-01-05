@@ -80,6 +80,34 @@ MacV6Gui::~MacV6Gui() {
 	delete[] _backupPalette;
 }
 
+bool MacV6Gui::initialize() {
+	if (!MacGuiImpl::initialize())
+		return false;
+
+	// We can't use the name of the menus here, because there are
+	// non-English versions. Let's hope the menu positions are always the
+	// same, at least!
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
+
+	menu->getSubMenuItem(videoMenu, 0)->enabled = false; // Small
+	menu->getSubMenuItem(videoMenu, 1)->enabled = false; // Interlaced
+
+	if (_vm->_game.id == GID_MANIAC) {
+		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
+
+		menu->getSubMenuItem(soundMenu, 0)->enabled = false; // Music
+		menu->getSubMenuItem(soundMenu, 1)->enabled = false; // Effects
+		menu->getSubMenuItem(soundMenu, 3)->enabled = false; // Toggle Text & Voice
+		menu->getSubMenuItem(soundMenu, 5)->enabled = false; // Text Only
+		menu->getSubMenuItem(soundMenu, 6)->enabled = false; // Voice Only
+		menu->getSubMenuItem(soundMenu, 7)->enabled = false; // Text & Voice
+	}
+
+	return true;
+}
+
 bool MacV6Gui::readStrings() {
 	_strsStrings.clear();
 	_strsStrings.reserve(128);
@@ -190,7 +218,8 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 403:	// Graphics Smoothing
-		_vm->mac_toggleSmoothing();
+		if (_vm->_game.id != GID_MANIAC)
+			_vm->mac_toggleSmoothing();
 		return true;
 
 	case 500:	// Music

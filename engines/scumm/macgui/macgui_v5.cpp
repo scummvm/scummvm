@@ -46,6 +46,27 @@ namespace Scumm {
 MacV5Gui::MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
 }
 
+bool MacV5Gui::initialize() {
+	if (!MacGuiImpl::initialize())
+		return false;
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+
+	menu->getSubMenuItem(gameMenu, 5)->enabled = false; // Fix color map
+
+	Graphics::MacMenuItem *windowMenu = menu->getMenuItem(3);
+
+	menu->getSubMenuItem(windowMenu, 0)->enabled = false; // Hide Desktop
+	menu->getSubMenuItem(windowMenu, 1)->enabled = false; // Hide Menubar
+	menu->getSubMenuItem(windowMenu, 3)->enabled = false; // Tiny
+	menu->getSubMenuItem(windowMenu, 4)->enabled = false; // Medium
+	menu->getSubMenuItem(windowMenu, 5)->enabled = false; // Large
+
+	return true;
+}
+
 const Graphics::Font *MacV5Gui::getFontByScummId(int32 id) {
 	// V5 games do not use CharsetRendererMac
 	return nullptr;

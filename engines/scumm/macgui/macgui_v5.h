@@ -35,6 +35,8 @@ public:
 	MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV5Gui() {}
 
+	bool initialize() override;
+
 	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
 	int getNumColors() const override { return 256; }
 

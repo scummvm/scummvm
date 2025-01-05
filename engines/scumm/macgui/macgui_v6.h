@@ -43,6 +43,7 @@ public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV6Gui();
 
+	bool initialize() override;
 	bool readStrings() override;
 
 	const Common::String name() const override { return _gameName; }

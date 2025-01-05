@@ -115,6 +115,8 @@ bool MacGuiImpl::handleEvent(Common::Event event) {
 	// The situation we're trying to avoid here is the user opening e.g.
 	// the save dialog using keyboard shortcuts while the game is paused.
 
+	// TODO: We need something for Maniac Mansion here
+
 	if (_bannerWindow || _vm->_messageBannerActive)
 		return false;
 
@@ -488,19 +490,6 @@ void MacGuiImpl::updateWindowManager() {
 
 	if (_vm->_game.version > 3 && _vm->_game.version < 6) {
 		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
-		Graphics::MacMenuItem *hideDesktopMenu = menu->getSubMenuItem(windowMenu, 0);
-		Graphics::MacMenuItem *hideBarMenu = menu->getSubMenuItem(windowMenu, 1);
-
-		hideDesktopMenu->enabled = false;
-		hideBarMenu->enabled = false;
-
-		// "Fix color map"
-		menu->getSubMenuItem(gameMenu, 5)->enabled = false;
-
-		// Window mode
-		menu->getSubMenuItem(windowMenu, 3)->enabled = false;
-		menu->getSubMenuItem(windowMenu, 4)->enabled = false;
-		menu->getSubMenuItem(windowMenu, 5)->enabled = false;
 
 		if (menu->numberOfMenuItems(windowMenu) >= 8)
 			menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
@@ -534,10 +523,10 @@ void MacGuiImpl::updateWindowManager() {
 
 		Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
 
-		menu->getSubMenuItem(videoMenu, 0)->enabled = false;
-		menu->getSubMenuItem(videoMenu, 1)->enabled = false;
 		menu->getSubMenuItem(videoMenu, 2)->checked = true;
-		menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
+
+		if (_vm->_game.id != GID_MANIAC)
+			menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
 
 		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
 
