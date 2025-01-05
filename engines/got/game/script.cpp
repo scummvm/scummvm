@@ -552,7 +552,7 @@ int Scripts::read_script_file() {
 		for (i = 0; i < len; i++) {
 			ch = tmps[i];
 			if (ch == 34) quote_flag ^= 1;
-			else if (ch == 13 || ch == 10) {  //check for CR
+			else if (ch == 13 || ch == 10) {  // Check for CR
 				temp_buff[p] = 0;
 				break;
 			} else if ((ch == 39 || ch == 96) && !quote_flag) {
@@ -606,7 +606,7 @@ void Scripts::script_error(int err_num) {
 	}
 
 	if (err_num > ERROR_MAX)
-		err_num = 5;       // unknown=syntax
+		err_num = 5;       // Unknown=syntax
 
 	warning("%s in Line #%d", SCR_ERROR[err_num], line_num);
 }
@@ -1014,7 +1014,6 @@ void Scripts::scr_func3() {
 
 			_G(object_map)[p] = o;
 			_G(object_index)[p] = 31;  // actor is 3-15
-			//pause(30);
 		}
 	}
 }
@@ -1064,13 +1063,13 @@ int Scripts::exec_command(int num) {
 			_buffPtr = _newPtr;
 		}
 		break;
-	case 4:                         //return
+	case 4:                         // return
 		if (!_gosubPtr) {
 			ret = 9; break;
 		}
 		_buffPtr = _gosubStack[_gosubPtr--];
 		break;
-	case 5:                         //for
+	case 5:                         // for
 		_forPtr++;
 		if (_forPtr > 10) {
 			ret = 10; break;
@@ -1093,7 +1092,7 @@ int Scripts::exec_command(int num) {
 		_forVal[_forPtr] = _lValue;
 		_forStack[_forPtr] = _buffPtr;
 		break;
-	case 6:                         //next
+	case 6:                         // next
 		if (!_forPtr) {
 			ret = 11; break;
 		}

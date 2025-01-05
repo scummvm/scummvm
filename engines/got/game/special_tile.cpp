@@ -152,7 +152,7 @@ int special_tile_thor(int x, int y, int icon) {
 	case 218:
 	case 219:
 		f = 1;
-	case 220:     //hole tiles
+	case 220:     // Hole tiles
 	case 221:
 	case 222:
 	case 223:
@@ -235,19 +235,13 @@ int special_tile(ACTOR *actr, int x, int y, int icon) {
 void erase_door(int x, int y) {
 	play_sound(DOOR, 0);
 	_G(scrn).icon[y][x] = _G(scrn).bg_color;
-
-	//x = x << 4;
-	//y = y << 4;
-	//xfput(x, y, PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	//xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, draw_page, 320, 320);
-	//xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, display_page, 320, 320);
 }
 
 int open_door1(int y, int x) {
 	if (_G(thor_info).keys > 0) {
 		erase_door(x, y);
 		_G(thor_info).keys--;
-		//display_keys();
+
 		return 1;
 	} else {
 		if (!_G(door_inform)) {
@@ -263,7 +257,7 @@ int cash_door1(int y, int x, int amount) {
 	if (_G(thor_info).jewels >= amount) {
 		erase_door(x, y);
 		_G(thor_info).jewels -= amount;
-		//display_jewels();
+
 		return 1;
 	} else {
 		if (amount == 10 && !_G(cash1_inform)) {

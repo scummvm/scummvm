@@ -34,7 +34,6 @@ extern void add_keys(int num);
 extern void fill_health();
 extern void fill_magic();
 extern void fill_score(int num, const char *endMessage = nullptr);
-extern void score_for_inv();
 
 } // namespace Got
 

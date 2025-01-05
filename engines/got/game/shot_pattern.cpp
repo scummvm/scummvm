@@ -157,7 +157,7 @@ int shot_pattern_five(ACTOR *actr) {
 			actr->shots_allowed = 3 + _G(setup).skill;
 			actor_shoots(actr, 2);
 			play_sound(BOSS12, 0);
-			//     num=actr->creator;
+
 			num = actr->shot_actor;
 			actr->shot_cnt = 50;
 			_G(actor)[num].temp3 = 120;

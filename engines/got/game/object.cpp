@@ -53,35 +53,35 @@ void pick_up_object(int p) {
 	int r, x, y, s;
 
 	switch (_G(object_map)[p]) {
-	case 1:           //red jewel
+	case 1:           // Red jewel
 		if (_G(thor_info).jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
 		add_jewels(10);
 		break;
-	case 2:           //blue jewel
+	case 2:           // Blue jewel
 		if (_G(thor_info).jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
 		add_jewels(1);
 		break;
-	case 3:           //red potion
+	case 3:           // Red potion
 		if (_G(thor_info).magic >= 150) {
 			cannot_carry_more();
 			return;
 		}
 		add_magic(10);
 		break;
-	case 4:           //blue potion
+	case 4:           // Blue potion
 		if (_G(thor_info).magic >= 150) {
 			cannot_carry_more();
 			return;
 		}
 		add_magic(3);
 		break;
-	case 5:          //good apple
+	case 5:          // Good apple
 		if (_G(thor)->health >= 150) {
 			cannot_carry_more();
 			return;
@@ -90,26 +90,25 @@ void pick_up_object(int p) {
 		s = 1;
 		add_health(5);
 		break;
-	case 6:           //bad apple
+	case 6:           // Bad apple
 		play_sound(OW, 0);
 		s = 1;
 		add_health(-10);
 		break;
-	case 7:           //key (reset on exit)
-		//           if(_G(scrn).reset) r=0;
+	case 7:           // Key (reset on exit)
 		add_keys(1);
 		break;
-	case 8:          //treasure
+	case 8:           // Treasure
 		if (_G(thor_info).jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
 		add_jewels(50);
 		break;
-	case 9:          //trophy
+	case 9:          // Trophy
 		add_score(100);
 		break;
-	case 10:         //crown
+	case 10:         // Crown
 		add_score(1000);
 		break;
 	case 12:
@@ -171,10 +170,6 @@ void pick_up_object(int p) {
 	_G(oy) = y * 16;
 	_G(of) = 1;
 
-	//xfput(_G(ox), _G(oy), PAGE2, (char far *) (bg_pics + (_G(scrn).bg_color * 262)));
-	//xfput(_G(ox), _G(oy), PAGE2, (char far *) (bg_pics + (_G(scrn).icon[y][x] * 262)));
-	//xcopyd2d(_G(ox), _G(oy), _G(ox) + 16, _G(oy) + 16, _G(ox), _G(oy), PAGE2, draw_page, 320, 320);
-
 	r = 1;
 	s = 0;
 	if (!s)
@@ -182,7 +177,7 @@ void pick_up_object(int p) {
 	_G(object_map)[p] = 0;
 
 	if (r) {
-		// reset so it doesn't reappear on reentry to screen
+		// Reset so it doesn't reappear on reentry to screen
 		if (_G(object_index)[p] < 30)
 			_G(scrn).static_obj[_G(object_index)[p]] = 0;
 		_G(object_index)[p] = 0;
@@ -195,14 +190,22 @@ int drop_object(ACTOR *actr) {
 	rnd1 = g_events->getRandomNumber(99);
 	rnd2 = g_events->getRandomNumber(99);
 
-	if (rnd1 < 25) o = 5;      //apple
-	else if (rnd1 & 1) {    //jewels
-		if (rnd2 < 10) o = 1;      //red
-		else o = 2;           //blue
-	} else {                 //potion
-		if (rnd2 < 10) o = 3;    //red
-		else o = 4;           //blue
+	if (rnd1 < 25)
+		o = 5;      // Apple
+	else if (rnd1 & 1) {
+		// Jewels
+		if (rnd2 < 10)
+			o = 1;      // Red
+		else
+			o = 2;      // Blue
+	} else {
+		// Potion
+		if (rnd2 < 10)
+			o = 3;      // Red
+		else
+			o = 4;      // Blue
 	}
+
 	_drop_obj(actr, o);
 	return 1;
 }
@@ -214,13 +217,7 @@ int _drop_obj(ACTOR *actr, int o) {
 	if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
 		_G(object_map)[p] = o;
 		_G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
-#if 0
-		x = (p % 20) * 16;
-		y = (p / 20) * 16;
-		xfput(x, y, PAGE2, (char far *) objects[o - 1]);
-		xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, draw_page, 320, 320);
-		xcopyd2d(x, y, x + 16, y + 16, x, y, PAGE2, display_page, 320, 320);
-#endif
+
 		return 1;
 	}
 
@@ -370,7 +367,6 @@ int use_shield(int flag) {
 }
 
 int use_lightning(int flag) {
-
 	if (flag) {
 		if (_G(thor_info).magic > 14) {
 			add_magic(-15);
@@ -384,7 +380,6 @@ int use_lightning(int flag) {
 }
 
 int use_tornado(int flag) {
-
 	if (flag) {
 		if (_G(thor_info).magic > 10) {
 			if (!_G(tornado_used) && !_G(actor)[2].dead && _G(magic_cnt) > 20) {

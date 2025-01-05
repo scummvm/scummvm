@@ -105,7 +105,7 @@ void actor_damaged(ACTOR *actr, int damage) {
 		if (damage >= actr->health) {
 			if (actr->type != 4) {
 				add_score(actr->init_health * 10);
-//				display_score();
+
 			} else {
 				kill_good_guy();
 			}
@@ -259,8 +259,6 @@ int _actor_shoots(ACTOR *actr, int dir) {
 }
 
 void actor_always_shoots(ACTOR *actr, int dir) {
-
-
 	_actor_shoots(actr, dir);
 }
 

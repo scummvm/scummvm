@@ -64,35 +64,35 @@ int movement_eight(ACTOR *actr);
 int movement_nine(ACTOR *actr);
 int movement_ten(ACTOR *actr);
 int movement_eleven(ACTOR *actr);
-int movement_twelve(ACTOR *actr);         // horz straight until bump
-int movement_thirteen(ACTOR *actr);       // pause-seek (mushroom)
-int movement_fourteen(ACTOR *actr);       // move-bump-stop (boulder)
-int movement_fifteen(ACTOR *actr);        // no move, no frame cycle
-int movement_sixteen(ACTOR *actr);        // tornado 1
-int movement_seventeen(ACTOR *actr);      // tornado 2
-int movement_eighteen(ACTOR *actr);       // random-seek-bite-run
-int movement_nineteen(ACTOR *actr);       // tornado 2
-int movement_twenty(ACTOR *actr);         // tornado 2
-int movement_twentyone(ACTOR *actr);      // eyeball
-int movement_twentytwo(ACTOR *actr);      // spear
-int movement_twentythree(ACTOR *actr);    // spinball cw
-int movement_twentyfour(ACTOR *actr);     // spinball ccw
+int movement_twelve(ACTOR *actr);         // Horz straight until bump
+int movement_thirteen(ACTOR *actr);       // Pause-seek (mushroom)
+int movement_fourteen(ACTOR *actr);       // Move-bump-stop (boulder)
+int movement_fifteen(ACTOR *actr);        // No move, no frame cycle
+int movement_sixteen(ACTOR *actr);        // Tornado 1
+int movement_seventeen(ACTOR *actr);      // Tornado 2
+int movement_eighteen(ACTOR *actr);       // Random-seek-bite-run
+int movement_nineteen(ACTOR *actr);       // Tornado 2
+int movement_twenty(ACTOR *actr);         // Tornado 2
+int movement_twentyone(ACTOR *actr);      // Eyeball
+int movement_twentytwo(ACTOR *actr);      // Spear
+int movement_twentythree(ACTOR *actr);    // Spinball cw
+int movement_twentyfour(ACTOR *actr);     // Spinball ccw
 int movement_twentyfive(ACTOR *actr);     //
 int movement_twentysix(ACTOR *actr);      //
 int movement_twentyseven(ACTOR *actr);    //
-int movement_twentyeight(ACTOR *actr);    // tree boss
-int movement_twentynine(ACTOR *actr);     // horz or vert (pass_val)
-int movement_thirty(ACTOR *actr);         // vert straight
-int movement_thirtyone(ACTOR *actr);      // drop (stalagtite)
-int movement_thirtytwo(ACTOR *actr);      // bomb 1
-int movement_thirtythree(ACTOR *actr);    // bomb 2
-int movement_thirtyfour(ACTOR *actr);     // gun (4-dir)
-int movement_thirtyfive(ACTOR *actr);     // gun (4-dir)
-int movement_thirtysix(ACTOR *actr);      // acid drop
+int movement_twentyeight(ACTOR *actr);    // Tree boss
+int movement_twentynine(ACTOR *actr);     // Horz or vert (pass_val)
+int movement_thirty(ACTOR *actr);         // Vert straight
+int movement_thirtyone(ACTOR *actr);      // Drop (stalagtite)
+int movement_thirtytwo(ACTOR *actr);      // Bomb 1
+int movement_thirtythree(ACTOR *actr);    // Bomb 2
+int movement_thirtyfour(ACTOR *actr);     // Gun (4-dir)
+int movement_thirtyfive(ACTOR *actr);     // Gun (4-dir)
+int movement_thirtysix(ACTOR *actr);      // Acid drop
 int movement_thirtyseven(ACTOR *actr);    // 4-way rnd,rnd len
-int movement_thirtyeight(ACTOR *actr);    // timed darting
-int movement_thirtynine(ACTOR *actr);     // troll 1
-int movement_forty(ACTOR *actr);          // troll 2
+int movement_thirtyeight(ACTOR *actr);    // Timed darting
+int movement_thirtynine(ACTOR *actr);     // Troll 1
+int movement_forty(ACTOR *actr);          // Troll 2
 
 int (*const movement_func[]) (ACTOR *actr) = {
 	movement_zero,
@@ -295,7 +295,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 	y2 = y + 15;
 
 	_G(thor_special_flag) = 0;
-	for (i = 3; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (act->solid & 128) continue;
 		if (!act->used) continue;
@@ -306,7 +306,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 		x4 = act->x + act->size_x - 1;
 		y4 = act->y + act->size_y - 1;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
-			if (act->func_num > 0) { //255=explosion
+			if (act->func_num > 0) { // 255=explosion
 				if (act->func_num == 255) return 0;
 				act->temp1 = x;
 				act->temp2 = y;
@@ -347,7 +347,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 	x2 = (x + 10) >> 4;
 	y2 = (y + 10) >> 4;
 
-	//check for solid or fly over
+	// Check for solid or fly over
 	icn = TILE_FLY;
 	if (actr->flying) icn = TILE_SOLID;
 
@@ -371,10 +371,10 @@ int check_move1(int x, int y, ACTOR *actr) {
 	y2 = y + 10;
 
 	f = 0;
-	for (i = 3; i < MAX_ACTORS; i++) {       //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (!act->used) continue;
-		if (act->type == 3) continue;  //continue
+		if (act->type == 3) continue;
 		x3 = act->x;
 		if ((ABS(x3 - x1)) > 16) continue;
 		y3 = act->y;
@@ -428,7 +428,7 @@ int check_move2(int x, int y, ACTOR *actr) {
 	x2 = ((x + actr->size_x) - 1) >> 4;
 	y2 = ((y + actr->size_y) - 1) >> 4;
 
-	//check for solid or fly over
+	// Check for solid or fly over
 
 	icn = TILE_FLY;
 	if (actr->flying) icn = TILE_SOLID;
@@ -450,12 +450,12 @@ int check_move2(int x, int y, ACTOR *actr) {
 	x2 = (x + actr->size_x) - 1;
 	y2 = (y + actr->size_y) - 1;
 
-	for (i = 0; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 0; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (act->actor_num == actr->actor_num) continue;
 		if (act->actor_num == 1) continue;
 		if (!act->used) continue;
-		if (act->type == 3) continue;   //shot
+		if (act->type == 3) continue;   // Shot
 		if (i == 0) {
 			if (overlap(x1, y1, x2, y2, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
 				thor_damaged(actr);
@@ -500,7 +500,7 @@ int check_move3(int x, int y, ACTOR *actr) {
 	x2 = ((x + actr->size_x) - 1) >> 4;
 	y2 = ((y + actr->size_y) - 1) >> 4;
 
-	//check for solid or fly over
+	// Check for solid or fly over
 
 	icn = TILE_FLY;
 	if (actr->flying) icn = TILE_SOLID;
@@ -516,7 +516,7 @@ int check_move3(int x, int y, ACTOR *actr) {
 	if (icn3 > TILE_SPECIAL) if (!special_tile(actr, y1, x2, icn3)) return 0;
 	if (icn4 > TILE_SPECIAL) if (!special_tile(actr, y2, x2, icn4)) return 0;
 
-	//check for solid or fly over
+	// Check for solid or fly over
 	x1 = x + 1;
 	y1 = y + 1;
 	x2 = (x + actr->size_x) - 1;
@@ -526,12 +526,12 @@ int check_move3(int x, int y, ACTOR *actr) {
 		thor_damaged(actr);
 		return 0;
 	}
-	for (i = 3; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		if (i == actr->actor_num) continue;
 		act = &_G(actor)[i];
 		if (!act->used) continue;
 		if (act->solid < 2) continue;
-		if (act->type == 3) continue;   //shot
+		if (act->type == 3) continue;   // Shot
 		if (act->actor_num == actr->creator) continue;
 		x3 = act->x;
 		if ((ABS(x3 - x1)) > 16) continue;
@@ -754,7 +754,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 	x2 = (x + 15) >> 4;
 	y2 = (y + 15) >> 4;
 
-	//check for solid or fly over
+	// Check for solid or fly over
 
 	icn = TILE_FLY;
 	if (actr->flying) icn = TILE_SOLID;
@@ -775,7 +775,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 	x2 = (x + 15);
 	y2 = (y + 15);
 
-	for (i = 3; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (act->actor_num == actr->actor_num) continue;
 		if (!act->used) continue;
@@ -788,11 +788,11 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 		y4 = act->y + 15;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) return 0;
 	}
-	for (i = 3; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (act->actor_num == actr->actor_num) continue;
 		if (!act->used) continue;
-		if (act->type == 3) continue;   //shot
+		if (act->type == 3) continue;   // Shot
 		x3 = act->x;
 		if ((ABS(x3 - x1)) > 16) continue;
 		y3 = act->y;
@@ -860,12 +860,12 @@ int special_movement_two(ACTOR *actr) {
 	int x3, y3, x4, y4;
 	ACTOR *act;
 
-	x1 = actr->temp1;       //calc thor pos
+	x1 = actr->temp1;       // Calc thor pos
 	y1 = actr->temp2;
 	x2 = x1 + 13;
 	y2 = y1 + 14;
 
-	for (i = 3; i < MAX_ACTORS; i++) {   //max_actors
+	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor)[i];
 		if (actr->actor_num == act->actor_num) continue;
 		if (!act->used) continue;
@@ -1913,7 +1913,6 @@ int movement_twentyfive(ACTOR *actr) {
 		return movement_one(actr);
 	}
 	if (!actr->temp1) {
-		//  actr->temp2=12;
 		actr->last_dir = g_events->getRandomNumber(3);
 		i = 4;
 		while (i--) {
@@ -1956,7 +1955,8 @@ void set_thor_vars() {
 	_G(thor_y2) = _G(thor)->y + 15;
 }
 
-int movement_twentyeight(ACTOR *actr) {         //fish
+// Fish
+int movement_twentyeight(ACTOR *actr) {
 	int d, x1, y1, ret;
 
 	d = actr->last_dir;
@@ -1987,7 +1987,6 @@ int movement_twentyeight(ACTOR *actr) {         //fish
 					actr->frame_speed = 4;
 					actr->i1 = g_events->getRandomNumber(60, 159);
 				}
-				//      else actr->solid=1;
 			}
 		}
 		goto done;
@@ -2036,12 +2035,14 @@ done:
 	return d;
 }
 
-int movement_twentynine(ACTOR *actr) {  //horz or vert (pass_val)
+// Horz or vert (pass_val)
+int movement_twentynine(ACTOR *actr) {
 	if (!actr->pass_value) return movement_thirty(actr);
 	else return movement_twelve(actr);
 }
 
-int movement_thirty(ACTOR *actr) {         //vert straight
+// Vert straight
+int movement_thirty(ACTOR *actr) {
 	int d, x1, y1;
 
 	d = actr->last_dir;
@@ -2064,7 +2065,8 @@ int movement_thirty(ACTOR *actr) {         //vert straight
 	return d;
 }
 
-int movement_thirtyone(ACTOR *actr) {         //drop (stalagtite)
+// Drop (stalagtite)
+int movement_thirtyone(ACTOR *actr) {
 	int d, x1, y1, cx, cy, ty, i;
 
 	d = actr->last_dir;
@@ -2094,32 +2096,32 @@ done:
 	return d;
 }
 
-int movement_thirtytwo(ACTOR *actr) {      //unused
-
+// Unused
+int movement_thirtytwo(ACTOR *actr) {
 	actr = actr;
 	return 0;
 }
 
-int movement_thirtythree(ACTOR *actr) {    //unused
-
+// Unused
+int movement_thirtythree(ACTOR *actr) {
 	actr = actr;
 	return 0;
 }
 
-int movement_thirtyfour(ACTOR *actr) {    //unused
-
+// Unused
+int movement_thirtyfour(ACTOR *actr) {
 	actr = actr;
 	return 0;
 }
 
-int movement_thirtyfive(ACTOR *actr) {    //gun (single)
-
+// Gun (single)
+int movement_thirtyfive(ACTOR *actr) {
 	actr->next = actr->last_dir;
 	return actr->dir;
 }
 
-int movement_thirtysix(ACTOR *actr) {    //acid drop
-
+// Acid drop
+int movement_thirtysix(ACTOR *actr) {
 	actr->speed = actr->pass_value;
 	next_frame(actr);
 	if (actr->next == 0 && actr->frame_count == actr->frame_speed) {
@@ -2129,7 +2131,7 @@ int movement_thirtysix(ACTOR *actr) {    //acid drop
 	return 0;
 }
 
-//4-way straight (random length) change
+// 4-way straight (random length) change
 int movement_thirtyseven(ACTOR *actr) {
 	int d, x1, y1, f;
 
@@ -2170,7 +2172,7 @@ int movement_thirtyseven(ACTOR *actr) {
 	return d;
 }
 
-//timed darting
+// Timed darting
 #define TIMER     actr->i1
 #define INIT_DIR  actr->temp1
 #define OTHER_DIR actr->temp2
@@ -2184,7 +2186,6 @@ int movement_thirtyeight(ACTOR *actr) {
 	d = actr->last_dir;
 	x1 = actr->x;
 	y1 = actr->y;
-
 
 	if (!FLAG) {
 		FLAG = 1;
@@ -2260,8 +2261,8 @@ done:
 	return d;
 }
 
-int movement_thirtynine(ACTOR *actr) {    //troll 1
-
+// Troll 1
+int movement_thirtynine(ACTOR *actr) {
 	if (_G(setup).skill == 0) {
 		actr->speed = 3; actr->num_moves = 1;
 	} else if (_G(setup).skill == 1) {
@@ -2269,7 +2270,6 @@ int movement_thirtynine(ACTOR *actr) {    //troll 1
 	} else if (_G(setup).skill == 2) {
 		actr->speed = 1; actr->num_moves = 1;
 	}
-
 
 	if (actr->pass_value < 5) return movement_forty(actr);
 	if (actr->pass_value == 10) {
@@ -2298,7 +2298,8 @@ int movement_thirtynine(ACTOR *actr) {    //troll 1
 	return actr->dir;
 }
 
-int movement_forty(ACTOR *actr) {    //troll 2
+// Troll 2
+int movement_forty(ACTOR *actr) {
 	int x1, x2, a, d, f;
 
 	if (overlap(actr->x + 1, actr->y + 1, actr->x + actr->size_x + 3,
