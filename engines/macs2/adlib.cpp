@@ -968,12 +968,72 @@ void Adlib::OnTimer() {
 
 						// TODO: xor ah,ah
 						Func2839(gArray5C[bp3 - 0xB], bp14);
-						//   TODO: Continue from here
+						
+					} else {
+						//l0017_1F12:
+						// TODO: Not sure if the way of using [bp-10h] is working 
+						Func2792(bp8 + 0x20, peekByteAt(bp10));
+						// TODO: Really need to rework 19BE implementation
+						// TODO: Actual call and arguments for 19BE
 						/*
-						jmp	1FA9h
+						mov	ax,[bp-8h]
+						add	ax,40h
+						push	ax
+						push	word ptr [bp-0Eh]
+						push	word ptr [bp-10h]
+						push	2h
+						call	far 0017h:19BEh
+						*/
+						uint16 r19BE = Func19BE(bp8 + 0x40);
+						// TODO: We should call 2792, but an argument seems to be missing - figure this one
+						// out and fix functions around it
+						//    TODO: Continue from here
+						/*
+						mov	di,ax
+						mov	es,dx
+						mov	al,es:[di]
+						push	ax
+						call	far 0017h:2792h
+						mov	ax,[bp-8h]
+						add	ax,60h
+						push	ax
+						push	word ptr [bp-0Eh]
+						push	word ptr [bp-10h]
+						push	4h
+						call	far 0017h:19BEh
+						mov	di,ax
+						mov	es,dx
+						mov	al,es:[di]
+						push	ax
+						call	far 0017h:2792h
+						mov	ax,[bp-8h]
+						add	ax,80h
+						push	ax
+						push	word ptr [bp-0Eh]
+						push	word ptr [bp-10h]
+						push	6h
+						call	far 0017h:19BEh
+						mov	di,ax
+						mov	es,dx
+						mov	al,es:[di]
+						push	ax
+						call	far 0017h:2792h
+						mov	ax,[bp-8h]
+						add	ax,0E0h
+						push	ax
+						push	word ptr [bp-0Eh]
+						push	word ptr [bp-10h]
+						push	8h
+						call	far 0017h:19BEh
+						mov	di,ax
+						mov	es,dx
+						mov	al,es:[di]
+						push	ax
+						call	far 0017h:2792h
 							*/
+
 					}
-					// TODO: This should be 1F12
+					// l0017_1FA9:
 				}
 				// TODO: This must be 2097h
 			}
