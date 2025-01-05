@@ -72,22 +72,23 @@ void Font::drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-    const Graphics::ManagedSurface &glyph = _font[chr];
+	// Character drawing is done twice in the original:
+	// first at y + 1 with color 0, then at y with the given color
+	rawDrawChar(dst, chr, x, y + 1, 0);
+	rawDrawChar(dst, chr, x, y, color);
+}
 
-    // Character drawing is done twice in the original:
-    // first at y + 1 with color 0, then at y with the given color
-    for (int pass = 0; pass < 2; ++pass) {
-        int col = (pass == 0) ? 0 : color;
+void Font::rawDrawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	const Graphics::ManagedSurface &glyph = _font[chr];
 
-        for (int yp = 0; yp < glyph.h; ++yp) {
-            int startY = y + yp + (pass == 0 ? 1 : 0);
-            const byte *srcP = (const byte *)glyph.getBasePtr(0, yp);
-            byte *destP = (byte *)dst->getBasePtr(x, startY);
+    for (int yp = 0; yp < glyph.h; ++yp) {
+        int startY = y + yp;
+        const byte *srcP = (const byte *)glyph.getBasePtr(0, yp);
+        byte *destP = (byte *)dst->getBasePtr(x, startY);
 
-            for (int xp = 0; xp < glyph.w; ++xp, ++srcP, ++destP) {
-                if (*srcP)
-                    *destP = col;
-            }
+        for (int xp = 0; xp < glyph.w; ++xp, ++srcP, ++destP) {
+            if (*srcP)
+                *destP = color;
         }
     }
 }

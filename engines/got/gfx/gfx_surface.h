@@ -40,6 +40,7 @@ public:
      */
     void print(const Common::Point &pos, const Common::String &text, int color);
     void printChar(uint32 chr, int x, int y, uint32 color);
+	void rawPrintChar(uint32 chr, int x, int y, uint32 color);
 };
 
 } // namespace Gfx

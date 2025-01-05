@@ -32,9 +32,6 @@ bool Story::msgFocus(const FocusMessage &msg) {
     res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
 
     res_read("STORYPAL", _G(pbuff));
-    _G(pbuff)[2] = 0;
-    _G(pbuff)[1] = 0;
-    _G(pbuff)[0] = 0;
 
     for (int i = 0; i < PALETTE_SIZE; ++i)
         _G(pbuff)[i] = ((int)_G(pbuff)[i] * 255 + 31) / 63;
@@ -76,15 +73,15 @@ bool Story::msgFocus(const FocusMessage &msg) {
             s[3] = 0;
             color = atoi(s);
         } else if (*p != '\r') {
-            _surface.printChar(*p, x - 1, y - 1, 255);
-            _surface.printChar(*p, x + 1, y + 1, 255);
-            _surface.printChar(*p, x - 1, y + 1, 255);
-            _surface.printChar(*p, x + 1, y - 1, 255);
-            _surface.printChar(*p, x, y - 1, 255);
-            _surface.printChar(*p, x, y + 1, 255);
-            _surface.printChar(*p, x - 1, y, 255);
-            _surface.printChar(*p, x + 1, y, 255);
-            _surface.printChar(*p, x, y, color);
+            _surface.rawPrintChar(*p, x - 1, y - 1, 255);
+            _surface.rawPrintChar(*p, x + 1, y + 1, 255);
+            _surface.rawPrintChar(*p, x - 1, y + 1, 255);
+            _surface.rawPrintChar(*p, x + 1, y - 1, 255);
+            _surface.rawPrintChar(*p, x, y - 1, 255);
+            _surface.rawPrintChar(*p, x, y + 1, 255);
+            _surface.rawPrintChar(*p, x - 1, y, 255);
+            _surface.rawPrintChar(*p, x + 1, y, 255);
+			_surface.rawPrintChar(*p, x, y, color);
             x += 8;
         }
 
