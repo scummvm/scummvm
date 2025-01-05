@@ -188,8 +188,9 @@ struct Rect {
 	 */
 	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
 
-	int16 width() const { return right - left; }  /*!< Return the width of a rectangle. */
-	int16 height() const { return bottom - top; } /*!< Return the height of a rectangle. */
+	Common::Point origin() const { return Common::Point(left, top); } /*!< Return the origin of a rectangle. */
+	int16 width() const { return right - left; }                      /*!< Return the width of a rectangle. */
+	int16 height() const { return bottom - top; }                     /*!< Return the height of a rectangle. */
 
 	void setWidth(int16 aWidth) {   /*!< Set the width to @p aWidth value. */
 		right = left + aWidth;
