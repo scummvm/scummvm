@@ -968,7 +968,7 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 		currentTargetX = 0;
 		xScaling = 0;
 		for (int currentSourceX = 0; currentSourceX < width; currentSourceX++) {
-			int actualX = mirrored ? width - currentSourceX : currentSourceX;
+			int actualX = mirrored ? width - currentSourceX - 1 : currentSourceX;
 			uint8 val = data[currentSourceY * width + actualX];
 			if (val != 0) {
 				uint16 finalX = x + currentTargetX;
@@ -1039,7 +1039,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// Adjust the position based on the scale
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
-		DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
+		DrawSpriteSuperAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s); 
+
 
 		Common::String number = Common::String::format("%u", scalingFactor);
 		// number = Common::String::format("%u", scalingFactor);
