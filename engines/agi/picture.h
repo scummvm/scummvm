@@ -77,7 +77,7 @@ public:
 
 protected:
 	virtual void drawPicture();
-	void drawPictureAGI256();
+	void drawPicture_AGI256();
 
 	void draw_SetColor();
 	void draw_SetPriority();
