@@ -677,6 +677,7 @@ struct MSA_GAME {
 };
 
 class PreAgiEngine;
+class PictureMgr_Mickey_Winnie;
 
 class MickeyEngine : public PreAgiEngine {
 public:
@@ -692,7 +693,7 @@ public:
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
 protected:
-	PictureMgr *_picture;
+	PictureMgr_Mickey_Winnie *_picture;
 
 	MSA_GAME _gameStateMickey;
 	bool _clickToMove;

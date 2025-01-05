@@ -26,6 +26,7 @@
 #include "graphics/cursorman.h"
 
 #include "agi/preagi/preagi.h"
+#include "agi/preagi/picture_mickey_winnie.h"
 #include "agi/preagi/mickey.h"
 #include "agi/graphics.h"
 
@@ -2226,7 +2227,7 @@ MickeyEngine::~MickeyEngine() {
 }
 
 void MickeyEngine::init() {
-	_picture = new PictureMgr(this, _gfx);
+	_picture = new PictureMgr_Mickey_Winnie(this, _gfx);
 
 	uint8 buffer[512];
 
@@ -2278,8 +2279,6 @@ void MickeyEngine::init() {
 #endif
 
 	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
-
-	_picture->setPictureVersion(AGIPIC_PREAGI);
 }
 
 Common::Error MickeyEngine::go() {

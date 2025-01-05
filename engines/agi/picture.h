@@ -43,9 +43,7 @@ struct AgiPicture {
 };
 
 enum AgiPictureVersion {
-	AGIPIC_C64,     // Winnie (Apple II, C64, CoCo)
 	AGIPIC_V15,     // Troll (DOS)
-	AGIPIC_PREAGI,  // Winnie (DOS, Amiga), Mickey (DOS)
 	AGIPIC_V2       // AGIv2, AGIv3
 };
 
@@ -64,35 +62,34 @@ class PictureMgr {
 
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
+	virtual ~PictureMgr() { }
 
 	int16 getResourceNr() const { return _resourceNr; };
 
-private:
-	void putVirtPixel(int x, int y);
+protected:
+	void putVirtPixel(int16 x, int16 y);
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
-	void plotPattern(int x, int y);
-	void plotBrush();
-	void plotPattern_PreAGI(byte x, byte y);
-	void plotBrush_PreAGI();
+	virtual void plotPattern(byte x, byte y);
+	virtual void plotBrush();
 
 	byte getNextByte();
 	bool getNextParamByte(byte &b);
 	byte getNextNibble();
 
-	bool getNextXCoordinate(byte &x);
-	bool getNextYCoordinate(byte &y);
+	virtual bool getNextXCoordinate(byte &x);
+	virtual bool getNextYCoordinate(byte &y);
 	bool getNextCoordinates(byte &x, byte &y);
+
+	virtual bool getGraphicsCoordinates(int16 &x, int16 &y);
 
 public:
 	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 
-private:
-	void drawPicture();
-	void drawPictureC64();
+protected:
+	virtual void drawPicture();
 	void drawPictureV15();
-	void drawPicturePreAGI();
 	void drawPictureV2();
 	void drawPictureAGI256();
 
@@ -106,7 +103,7 @@ private:
 	void draw_LineAbsolute();
 
 	bool draw_FillCheck(int16 x, int16 y);
-	void draw_Fill(int16 x, int16 y);
+	virtual void draw_Fill(int16 x, int16 y);
 	void draw_Fill();
 
 public:
@@ -117,15 +114,7 @@ public:
 
 	void setPictureFlags(int flags) { _flags = flags; }
 
-	void setOffset(int offX, int offY) {
-		_xOffset = offX;
-		_yOffset = offY;
-	}
-
-	void setMaxStep(int maxStep) { _maxStep = maxStep; }
-	int getMaxStep() const { return _maxStep; }
-
-private:
+protected:
 	int16  _resourceNr;
 	uint8 *_data;
 	uint32 _dataSize;
@@ -144,11 +133,8 @@ private:
 	AgiPictureVersion _pictureVersion;
 	int16 _width;
 	int16 _height;
-	int16 _xOffset;
-	int16 _yOffset;
 
 	int _flags;
-	int _maxStep; // Max opcodes to draw, zero for all. Used by preagi (Mickey)
 };
 
 } // End of namespace Agi
