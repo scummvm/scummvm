@@ -673,7 +673,7 @@ void PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, 
 	_height = height;
 
 	if (clearScreen) {
-		_gfx->clear(15, 4); // white, priority 4
+		_gfx->clear(15, getInitialPriorityColor()); // white, priority 4 or 1
 	}
 
 	if (!agi256) {
@@ -704,7 +704,7 @@ void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearSc
 	_height = height;
 
 	if (clearScreen) {
-		_gfx->clear(15, 4); // white, priority 4
+		_gfx->clear(15, getInitialPriorityColor()); // white, priority 4 or 1
 	}
 
 	drawPicture();
