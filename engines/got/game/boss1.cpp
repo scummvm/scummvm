@@ -248,7 +248,7 @@ static int boss1_dead() {
             _G(actor)[3 + rep].speed_count = _G(actor)[3 + rep].speed;
         }
         play_sound(EXPLODE, 1);
-        _G(boss_dead)++;
+        _G(boss_dead) = true;;
         for (rep = 7; rep < MAX_ACTORS; rep++)
             if (_G(actor)[rep].used)
                 actor_destroyed(&_G(actor)[rep]);
