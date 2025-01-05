@@ -213,12 +213,13 @@ bool GameContent::tick() {
 	checkForAreaChange();
 
 	// Check for end of game area
-	// TODO: Show high score table rather than going straight to main menu
 	if (_G(end_tile)) {
 		_G(end_tile) = false;
 		Gfx::fade_out();
+
+		// Add name to high scores list if necessary, and then show it
 		_G(highScores).add(_G(area), _G(playerName), _G(thor_info).score);
-		g_events->send("TitleBackground", GameMessage("MAIN_MENU"));
+		g_events->send("HighScores", GameMessage("HIGH_SCORES", _G(area)));
 	}
 
 	return false;

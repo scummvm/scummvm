@@ -30,6 +30,7 @@
 #include "got/views/story.h"
 #include "got/views/title_background.h"
 #include "got/views/dialogs/ask.h"
+#include "got/views/dialogs/high_scores.h"
 #include "got/views/dialogs/main_menu.h"
 #include "got/views/dialogs/options_menu.h"
 #include "got/views/dialogs/quit.h"
@@ -56,6 +57,7 @@ struct Views {
 	TitleBackground _titleBackground;
 
 	Dialogs::Ask _ask;
+	Dialogs::HighScores _highScores;
 	Dialogs::MainMenu _mainMenu;
 	Dialogs::OptionsMenu _optionsMenu;
 	Dialogs::Quit _quit;

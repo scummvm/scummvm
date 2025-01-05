@@ -19,24 +19,35 @@
  *
  */
 
-#ifndef GOT_VIEWS_DIALOGS_DIALOG_H
-#define GOT_VIEWS_DIALOGS_DIALOG_H
+#ifndef GOT_VIEWS_DIALOGS_HIGH_SCORES_H
+#define GOT_VIEWS_DIALOGS_HIGH_SCORES_H
 
 #include "graphics/managed_surface.h"
-#include "got/views/view.h"
+#include "got/views/dialogs/dialog.h"
 
 namespace Got {
 namespace Views {
 namespace Dialogs {
 
-class Dialog : public View {
+class HighScores : public Dialog {
+private:
+	int _currentArea = 0;
+	bool _showAll = false;
+	int _timeoutCtr = 0;
+
+	void goToMainMenu();
+	void goToNextArea();
+
 public:
-	Dialog(const Common::String &name) : View(name) {
-	}
-	virtual ~Dialog() {
+	HighScores();
+	virtual ~HighScores() {
 	}
 
 	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace Dialogs
