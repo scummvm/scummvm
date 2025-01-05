@@ -53,6 +53,8 @@ public:
 	int16 getResourceNr() const { return _resourceNr; };
 
 protected:
+	virtual byte getInitialPriorityColor() const { return 4; }
+
 	void putVirtPixel(int16 x, int16 y);
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
@@ -82,7 +84,7 @@ protected:
 	void draw_SetNibbleColor();
 	void draw_SetNibblePriority();
 
-	void draw_Line(int16 x1, int16 y1, int16 x2, int16 y2);
+	virtual void draw_Line(int16 x1, int16 y1, int16 x2, int16 y2);
 	void draw_LineShort();
 	void draw_LineAbsolute();
 
