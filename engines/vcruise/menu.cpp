@@ -78,12 +78,12 @@ protected:
 
 	struct Button {
 		Button();
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled);
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled);
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
+		Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled);
+		Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
+		Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled);
+		Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
 
-		Graphics::Surface *_graphic;
+		Graphics::ManagedSurface *_graphic;
 		Common::Rect _graphicRect;
 		Common::Rect _screenRect;
 		Common::Rect _interactiveRect;
@@ -95,9 +95,9 @@ protected:
 
 	struct Slider {
 		Slider();
-		Slider(Graphics::Surface *graphic, const Common::Rect &baseRect, int value, int maxValue);
+		Slider(Graphics::ManagedSurface *graphic, const Common::Rect &baseRect, int value, int maxValue);
 
-		Graphics::Surface *_graphic;
+		Graphics::ManagedSurface *_graphic;
 		Common::Rect _baseRect;
 		int _value;
 		int _maxValue;
@@ -519,7 +519,7 @@ ReahMenuBarPage::ReahMenuBarPage(uint page, bool isSchizm) : ReahSchizmMenuPage(
 }
 
 void ReahMenuBarPage::start() {
-	Graphics::Surface *graphic = _menuInterface->getUIGraphic(4);
+	Graphics::ManagedSurface *graphic = _menuInterface->getUIGraphic(4);
 
 	bool menuButtonsEnabled[5] = {true, true, true, true, true};
 
@@ -539,7 +539,7 @@ void ReahMenuBarPage::start() {
 		}
 	}
 
-	Graphics::Surface *returnButtonGraphic = _menuInterface->getUIGraphic(9);
+	Graphics::ManagedSurface *returnButtonGraphic = _menuInterface->getUIGraphic(9);
 	if (returnButtonGraphic) {
 		Common::String states[4];
 		for (int i = 0; i < 4; i++)
@@ -554,10 +554,10 @@ void ReahMenuBarPage::start() {
 		_buttons.push_back(Button(returnButtonGraphic, Common::Rect(0, 0, 112, 44), screenRect, interactiveRect, Common::Point(0, 44), true, states));
 	}
 
-	Graphics::Surface *lowerBarGraphic = _menuInterface->getUIGraphic(8);
+	Graphics::ManagedSurface *lowerBarGraphic = _menuInterface->getUIGraphic(8);
 
 	if (lowerBarGraphic) {
-		_menuInterface->getMenuSurface()->blitFrom(*lowerBarGraphic, Common::Point(0, 392));
+		_menuInterface->getMenuSurface()->simpleBlitFrom(*lowerBarGraphic, Common::Point(0, 392));
 		_menuInterface->commitRect(Common::Rect(0, 392, 640, 480));
 	}
 
@@ -627,7 +627,7 @@ void ReahSchizmMenuPage::drawButtonFromListInState(const Common::Array<Button> &
 	graphicRect.translate(button._stateOffset.x * state, button._stateOffset.y * state);
 
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
-	menuSurf->blitFrom(*button._graphic, graphicRect, button._screenRect);
+	menuSurf->simpleBlitFrom(*button._graphic, graphicRect, button._screenRect.origin());
 
 	_menuInterface->drawLabel(menuSurf, button._buttonStates[state], button._screenRect);
 
@@ -637,21 +637,21 @@ void ReahSchizmMenuPage::drawButtonFromListInState(const Common::Array<Button> &
 ReahSchizmMenuPage::Button::Button() : _graphic(nullptr), _enabled(true) {
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled)
+ReahSchizmMenuPage::Button::Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled)
 	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _interactiveRect(interactiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4])
+ReahSchizmMenuPage::Button::Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4])
 	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _interactiveRect(interactiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 	for (int i = 0; i < 4; i++)
 		this->_buttonStates[i] = states[i];
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled)
+ReahSchizmMenuPage::Button::Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled)
 	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenAndInteractiveRect), _interactiveRect(screenAndInteractiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String(&states)[4])
+ReahSchizmMenuPage::Button::Button(Graphics::ManagedSurface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String(&states)[4])
 	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenAndInteractiveRect), _interactiveRect(screenAndInteractiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 	for (int i = 0; i < 4; i++)
 		this->_buttonStates[i] = states[i];
@@ -661,7 +661,7 @@ ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rec
 ReahSchizmMenuPage::Slider::Slider() : _graphic(nullptr), _value(0), _maxValue(1) {
 }
 
-ReahSchizmMenuPage::Slider::Slider(Graphics::Surface *graphic, const Common::Rect &baseRect, int value, int maxValue)
+ReahSchizmMenuPage::Slider::Slider(Graphics::ManagedSurface *graphic, const Common::Rect &baseRect, int value, int maxValue)
 	: _graphic(graphic), _baseRect(baseRect), _value(value), _maxValue(maxValue) {
 	assert(_value >= 0 && _value <= maxValue);
 }
@@ -672,10 +672,10 @@ ReahHelpMenuPage::ReahHelpMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButt
 void ReahHelpMenuPage::addPageContents() {
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
 
-	Graphics::Surface *helpBG = _menuInterface->getUIGraphic(12);
+	Graphics::ManagedSurface *helpBG = _menuInterface->getUIGraphic(12);
 
 	if (helpBG) {
-		menuSurf->blitFrom(*helpBG, Common::Point(0, 44));
+		menuSurf->simpleBlitFrom(*helpBG, Common::Point(0, 44));
 		_menuInterface->commitRect(Common::Rect(0, 44, helpBG->w, 44 + helpBG->h));
 	}
 
@@ -705,9 +705,9 @@ ReahSoundMenuPage::ReahSoundMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarBu
 }
 
 void ReahSoundMenuPage::addPageContents() {
-	Graphics::Surface *soundBG = _menuInterface->getUIGraphic(16);
+	Graphics::ManagedSurface *soundBG = _menuInterface->getUIGraphic(16);
 	if (soundBG) {
-		_menuInterface->getMenuSurface()->blitFrom(*soundBG, Common::Point(0, 44));
+		_menuInterface->getMenuSurface()->simpleBlitFrom(*soundBG, Common::Point(0, 44));
 		_menuInterface->commitRect(Common::Rect(0, 44, soundBG->w, 44 + soundBG->h));
 	}
 
@@ -726,7 +726,7 @@ void ReahSoundMenuPage::addPageContents() {
 	_musicChecked = !musicMute;
 	_subtitleChecked = ConfMan.getBool("subtitles");
 
-	Graphics::Surface *soundGraphics = _menuInterface->getUIGraphic(17);
+	Graphics::ManagedSurface *soundGraphics = _menuInterface->getUIGraphic(17);
 	if (soundGraphics) {
 		Common::Point checkboxSize = _isSchizm ? Common::Point(200, 44) : Common::Point(112, 44);
 
@@ -768,6 +768,10 @@ void ReahSoundMenuPage::addPageContents() {
 
 		int sliderGraphicLeftX = (_isSchizm ? 800 : 224);
 
+		assert(!srcFormat.isCLUT8());
+		assert(!dstFormat.isCLUT8());
+
+		// TODO: Use a mask instead of an alpha channel?
 		for (int y = 0; y < sliderSize.y; y++) {
 			for (int x = 0; x < sliderSize.x; x++) {
 				uint32 maskColor = soundGraphics->getPixel(sliderGraphicLeftX + x, y + 60);
@@ -795,8 +799,8 @@ void ReahSoundMenuPage::addPageContents() {
 		int soundSliderY = (_isSchizm ? kSchizmSoundSliderY : kReahSoundSliderY);
 		int musicSliderY = (_isSchizm ? kSchizmMusicSliderY : kReahMusicSliderY);
 
-		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(sliderScreenLeftX, soundSliderY, sliderScreenLeftX + 40, soundSliderY + 60), sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
-		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(sliderScreenLeftX, musicSliderY, sliderScreenLeftX + 40, musicSliderY + 60), musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
+		_sliders.push_back(Slider(_sliderKeyGraphic.get(), Common::Rect(sliderScreenLeftX, soundSliderY, sliderScreenLeftX + 40, soundSliderY + 60), sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
+		_sliders.push_back(Slider(_sliderKeyGraphic.get(), Common::Rect(sliderScreenLeftX, musicSliderY, sliderScreenLeftX + 40, musicSliderY + 60), musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
 	}
 }
 
@@ -839,7 +843,7 @@ void ReahSoundMenuPage::onSettingsChanged() {
 }
 
 void ReahSoundMenuPage::eraseSlider(uint sliderIndex) const {
-	Graphics::Surface *soundBG = _menuInterface->getUIGraphic(16);
+	Graphics::ManagedSurface *soundBG = _menuInterface->getUIGraphic(16);
 
 	if (soundBG) {
 		Common::Rect sliderRect = _sliders[sliderIndex]._baseRect;
@@ -848,7 +852,7 @@ void ReahSoundMenuPage::eraseSlider(uint sliderIndex) const {
 		Common::Rect backgroundSourceRect = sliderRect;
 		backgroundSourceRect.translate(0, -44);
 
-		_menuInterface->getMenuSurface()->blitFrom(*soundBG, backgroundSourceRect, Common::Point(sliderRect.left, sliderRect.top));
+		_menuInterface->getMenuSurface()->simpleBlitFrom(*soundBG, backgroundSourceRect, Common::Point(sliderRect.left, sliderRect.top));
 		_menuInterface->commitRect(sliderRect);
 	}
 }
@@ -910,7 +914,7 @@ void ReahQuitMenuPage::addPageContents() {
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
 	menuSurf->fillRect(Common::Rect(0, 44, 640, 392), menuSurf->format.RGBToColor(0, 0, 0));
 
-	Graphics::Surface *borderGraphic = _menuInterface->getUIGraphic(10);
+	Graphics::ManagedSurface *borderGraphic = _menuInterface->getUIGraphic(10);
 
 	if (borderGraphic) {
 		Graphics::PixelFormat borderGraphicFmt = borderGraphic->format;
@@ -918,6 +922,9 @@ void ReahQuitMenuPage::addPageContents() {
 		byte r = 0;
 		byte g = 0;
 		byte b = 0;
+
+		assert(!menuSurf->format.isCLUT8());
+		assert(!borderGraphic->format.isCLUT8());
 
 		const int xOffsets[2] = {0, 640 - 16};
 
@@ -941,17 +948,17 @@ void ReahQuitMenuPage::addPageContents() {
 		}
 	}
 
-	Graphics::Surface *windowGraphic = _menuInterface->getUIGraphic(13);
+	Graphics::ManagedSurface *windowGraphic = _menuInterface->getUIGraphic(13);
 
 	if (windowGraphic)
-		menuSurf->blitFrom(*windowGraphic, Common::Point(82, 114));
+		menuSurf->simpleBlitFrom(*windowGraphic, Common::Point(82, 114));
 
-	Graphics::Surface *textGraphic = _menuInterface->getUIGraphic(14);
+	Graphics::ManagedSurface *textGraphic = _menuInterface->getUIGraphic(14);
 
 	if (textGraphic)
-		menuSurf->blitFrom(*textGraphic, Common::Rect(0, 72, textGraphic->w, textGraphic->h), Common::Point(82, 174));
+		menuSurf->simpleBlitFrom(*textGraphic, Common::Rect(0, 72, textGraphic->w, textGraphic->h), Common::Point(82, 174));
 
-	Graphics::Surface *buttonsGraphic = _menuInterface->getUIGraphic(15);
+	Graphics::ManagedSurface *buttonsGraphic = _menuInterface->getUIGraphic(15);
 
 	if (buttonsGraphic) {
 		int noButtonY = _isSchizm ? 246 : 248;
@@ -997,7 +1004,7 @@ ReahPauseMenuPage::ReahPauseMenuPage(bool isSchizm) : ReahMenuBarPage(static_cas
 }
 
 void ReahPauseMenuPage::addPageContents() {
-	Graphics::Surface *pauseGraphic = _menuInterface->getUIGraphic(20);
+	Graphics::ManagedSurface *pauseGraphic = _menuInterface->getUIGraphic(20);
 
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
 
@@ -1006,7 +1013,7 @@ void ReahPauseMenuPage::addPageContents() {
 	menuSurf->fillRect(Common::Rect(0, 44, 640, 392), blackColor);
 
 	if (pauseGraphic)
-		menuSurf->blitFrom(*pauseGraphic, Common::Point(164, 186));
+		menuSurf->simpleBlitFrom(*pauseGraphic, Common::Point(164, 186));
 
 	if (_isSchizm) {
 		Common::Rect labelRect1 = Common::Rect(164, 192, 476, 216);
@@ -1031,17 +1038,17 @@ ReahSchizmMainMenuPage::ReahSchizmMainMenuPage(bool isSchizm) : ReahSchizmMenuPa
 }
 
 void ReahSchizmMainMenuPage::start() {
-	Graphics::Surface *bgGraphic = _menuInterface->getUIGraphic(0);
+	Graphics::ManagedSurface *bgGraphic = _menuInterface->getUIGraphic(0);
 
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
 
 	if (bgGraphic) {
-		menuSurf->blitFrom(*bgGraphic, Common::Point(0, 0));
+		menuSurf->simpleBlitFrom(*bgGraphic, Common::Point(0, 0));
 	}
 
 	_menuInterface->commitRect(Common::Rect(0, 0, 640, 480));
 
-	Graphics::Surface *buttonGraphic = _menuInterface->getUIGraphic(1);
+	Graphics::ManagedSurface *buttonGraphic = _menuInterface->getUIGraphic(1);
 
 	Common::Point buttonSize;
 
