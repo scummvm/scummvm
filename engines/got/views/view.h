@@ -41,47 +41,47 @@ namespace Views {
  */
 class View : public UIElement {
 private:
-	UIElement *_focusedElement = nullptr;
+    UIElement *_focusedElement = nullptr;
 
-	/**
-	 * Checks if a control is entered or left
-	 */
-	void checkFocusedControl(const Common::Point &mousePos);
+    /**
+     * Checks if a control is entered or left
+     */
+    void checkFocusedControl(const Common::Point &mousePos);
 
-	/**
-	 * Check for an element at the given position
-	 */
-	UIElement *getElementAtPos(const Common::Point &pos) const;
+    /**
+     * Check for an element at the given position
+     */
+    UIElement *getElementAtPos(const Common::Point &pos) const;
 
 protected:
-	void play_sound(int index, bool priority_override);
-	void play_sound(const Gfx::GraphicChunk &src);
+    void play_sound(int index, bool priority_override);
+    void play_sound(const Gfx::GraphicChunk &src);
 
-	void music_play(int num, bool override);
-	void music_play(const char *name, bool override);
-	void music_pause();
-	void music_resume();
-	void music_stop();
-	bool music_is_on() const;
+    void music_play(int num, bool override);
+    void music_play(const char *name, bool override);
+    void music_pause();
+    void music_resume();
+    void music_stop();
+    bool music_is_on() const;
 
-	void fadeOut();
-	void fadeIn(const byte *pal = nullptr);
+    void fadeOut();
+    void fadeIn(const byte *pal = nullptr);
 
 public:
-	View(const Common::String &name, UIElement *uiParent) :
-		UIElement(name, uiParent) {
-	}
-	View(const Common::String &name) :
-		UIElement(name) {
-	}
-	virtual ~View() {
-	}
+    View(const Common::String &name, UIElement *uiParent) :
+        UIElement(name, uiParent) {
+    }
+    View(const Common::String &name) :
+        UIElement(name) {
+    }
+    virtual ~View() {
+    }
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgMouseMove(const MouseMoveMessage &msg) override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
-	bool msgMouseUp(const MouseUpMessage &msg) override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgUnfocus(const UnfocusMessage &msg) override;
+    bool msgMouseMove(const MouseMoveMessage &msg) override;
+    bool msgMouseDown(const MouseDownMessage &msg) override;
+    bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace Views

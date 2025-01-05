@@ -24,23 +24,23 @@
 namespace Got {
 
 void SETUP::sync(Common::Serializer &s) {
-	// Sync the flags bit-fields
-	assert(((byte *)&value - (byte *)this) == 8);
-	s.syncBytes((byte *)this, 8);
+    // Sync the flags bit-fields
+    assert(((byte *)&value - (byte *)this) == 8);
+    s.syncBytes((byte *)this, 8);
 
-	s.syncBytes(value, 16);
-	s.syncAsByte(junk);
-	s.syncAsByte(game);
-	s.syncAsByte(area);
-	s.syncAsByte(pc_sound);
-	s.syncAsByte(dig_sound);
-	s.syncAsByte(music);
-	s.syncAsByte(speed);
-	s.syncAsByte(scroll_flag);
-	s.syncBytes(boss_dead, 3);
-	s.syncAsByte(skill);
-	s.syncAsByte(game_over);
-	s.syncBytes(future, 19);
+    s.syncBytes(value, 16);
+    s.syncAsByte(junk);
+    s.syncAsByte(game);
+    s.syncAsByte(area);
+    s.syncAsByte(pc_sound);
+    s.syncAsByte(dig_sound);
+    s.syncAsByte(music);
+    s.syncAsByte(speed);
+    s.syncAsByte(scroll_flag);
+    s.syncBytes(boss_dead, 3);
+    s.syncAsByte(skill);
+    s.syncAsByte(game_over);
+    s.syncBytes(future, 19);
 }
 
 } // namespace Got

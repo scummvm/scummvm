@@ -27,43 +27,43 @@ namespace Got {
 namespace Views {
 
 void PartTitle::draw() {
-	GfxSurface s = getSurface();
-	s.clear();
-	s.print(Common::Point(13 * 8, 13 * 8), "God of Thunder", 14);
+    GfxSurface s = getSurface();
+    s.clear();
+    s.print(Common::Point(13 * 8, 13 * 8), "God of Thunder", 14);
 
-	switch (_G(area)) {
-	case 1:
-		s.print(Common::Point(8 * 8, 15 * 8), "Part I: Serpent Surprise", 32);
-		break;
-	case 2:
-		s.print(Common::Point(7 * 8, 15 * 8), "Part II: Non-Stick Nognir", 32);
-		break;
-	case 3:
-		s.print(Common::Point(7 * 8, 15 * 8), "Part III: Lookin' for Loki", 32);
-		break;
-	default:
-		break;
-	}
+    switch (_G(area)) {
+    case 1:
+        s.print(Common::Point(8 * 8, 15 * 8), "Part I: Serpent Surprise", 32);
+        break;
+    case 2:
+        s.print(Common::Point(7 * 8, 15 * 8), "Part II: Non-Stick Nognir", 32);
+        break;
+    case 3:
+        s.print(Common::Point(7 * 8, 15 * 8), "Part III: Lookin' for Loki", 32);
+        break;
+    default:
+        break;
+    }
 }
 
 bool PartTitle::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE)
-		done();
+    if (msg._action == KEYBIND_ESCAPE)
+        done();
 
-	return true;
+    return true;
 }
 
 bool PartTitle::tick() {
-	if (++_timeoutCtr == 40) {
-		_timeoutCtr = 0;
-		done();
-	}
+    if (++_timeoutCtr == 40) {
+        _timeoutCtr = 0;
+        done();
+    }
 
-	return true;
+    return true;
 }
 
 void PartTitle::done() {
-	replaceView("Game", true, true);
+    replaceView("Game", true, true);
 }
 
 } // namespace Views

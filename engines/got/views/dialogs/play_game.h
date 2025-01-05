@@ -31,15 +31,15 @@ namespace Dialogs {
 
 class PlayGame : public Dialog {
 public:
-	PlayGame() : Dialog("PlayGame") {
-	}
-	virtual ~PlayGame() {
-	}
+    PlayGame() : Dialog("PlayGame") {
+    }
+    virtual ~PlayGame() {
+    }
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    void draw() override;
+    bool tick() override;
 };
 
 } // namespace Dialogs

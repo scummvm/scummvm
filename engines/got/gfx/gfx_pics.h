@@ -40,39 +40,39 @@ extern void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &
 
 class GfxPics : public Common::Array<Graphics::ManagedSurface> {
 public:
-	void load(const Common::String &name, int blockSize);
+    void load(const Common::String &name, int blockSize);
 };
 
 class BgPics : public GfxPics {
 private:
-	int _area = 1;
+    int _area = 1;
 
 public:
-	void load();
+    void load();
 
-	bool getArea() const {
-		return _area;
-	}
-	void setArea(int area);
+    bool getArea() const {
+        return _area;
+    }
+    void setArea(int area);
 };
 
 class Pics : public GfxPics {
 private:
-	Common::String _resName;
-	int _blockSize = -1;
+    Common::String _resName;
+    int _blockSize = -1;
 
 public:
-	Pics(const Common::String &resName, int blockSize = -1,
-			bool immediateLoad = true) :
-			_resName(resName), _blockSize(blockSize) {
-		if (immediateLoad)
-			load();
-	}
-	Pics() {}
+    Pics(const Common::String &resName, int blockSize = -1,
+         bool immediateLoad = true) :
+        _resName(resName), _blockSize(blockSize) {
+        if (immediateLoad)
+            load();
+    }
+    Pics() {}
 
-	void load() {
-		GfxPics::load(_resName, _blockSize);
-	}
+    void load() {
+        GfxPics::load(_resName, _blockSize);
+    }
 };
 
 } // namespace Gfx

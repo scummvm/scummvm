@@ -28,121 +28,121 @@ namespace Got {
 static const char *gotres = "GOTRES.00";
 
 bool File::open(const Common::Path &filename) {
-	if (!Common::File::open(filename))
-		error("Could not open - %s", filename.baseName().c_str());
-	return true;
+    if (!Common::File::open(filename))
+        error("Could not open - %s", filename.baseName().c_str());
+    return true;
 }
 
 
 long file_size(char *path) {
-	Common::File f;
-	return f.open(Common::Path(path)) ? f.size() : -1;
+    Common::File f;
+    return f.open(Common::Path(path)) ? f.size() : -1;
 }
 
 bool load_actor(int /*file*/, int num) {
-	Common::String fname = Common::String::format("ACTOR%d", num);
+    Common::String fname = Common::String::format("ACTOR%d", num);
 
-	if (res_read(fname, _G(tmp_buff), true) < 0)
-		return false;
+    if (res_read(fname, _G(tmp_buff), true) < 0)
+        return false;
 
-	//file = file;
-	return true;
+    //file = file;
+    return true;
 }
 
 bool load_speech(int index) {
-	int  cnt;
-	char *p;
-	char *pm;
-	char *sp;
-	char tmps[5];
+    int  cnt;
+    char *p;
+    char *pm;
+    char *sp;
+    char tmps[5];
 
-	Common::String fname = Common::String::format("SPEAK%d", _G(area));
+    Common::String fname = Common::String::format("SPEAK%d", _G(area));
 
-	sp = new char[30000];
-	if (!sp)
-		return false;
+    sp = new char[30000];
+    if (!sp)
+        return false;
 
-	if (res_read(fname, sp) < 0) {
-		delete[] sp;
-		return 0;
-	}
+    if (res_read(fname, sp) < 0) {
+        delete[] sp;
+        return 0;
+    }
 
-	p = sp;
+    p = sp;
 
-	cnt = 0;
-	for (;;) {
-		if (*p == ':') {
-			p++;
-			cnt++;
-			strncpy(tmps, p, 4);
-			tmps[4] = '\0';
+    cnt = 0;
+    for (;;) {
+        if (*p == ':') {
+            p++;
+            cnt++;
+            strncpy(tmps, p, 4);
+            tmps[4] = '\0';
 
-			if (atoi(tmps) == index) {
-				break;
-			}
-		}
+            if (atoi(tmps) == index) {
+                break;
+            }
+        }
 
-		p++;
-		cnt++;
-	}
+        p++;
+        cnt++;
+    }
 
-	while (*p != 10)
-		p++;
-	p++;
+    while (*p != 10)
+        p++;
+    p++;
 
-	pm = p;
-	cnt = 0;
+    pm = p;
+    cnt = 0;
 
-	for (;;) {
-		if (*p == 13)
-			*p = 32;
-		if (*p == ':') {
-			if ((*(p + 1) == 'E') && (*(p + 2) == 'N') && (*(p + 3) == 'D')) break;
-		}
+    for (;;) {
+        if (*p == 13)
+            *p = 32;
+        if (*p == ':') {
+            if ((*(p + 1) == 'E') && (*(p + 2) == 'N') && (*(p + 3) == 'D')) break;
+        }
 
-		p++;
-		cnt++;
+        p++;
+        cnt++;
 
-		if (cnt > 5799) {
-			delete[] sp;
-			return false;
-		}
-	}
+        if (cnt > 5799) {
+            delete[] sp;
+            return false;
+        }
+    }
 
-	if (*(p - 1) == 10)
-		*(p - 1) = 0;
-	*p = 0;
+    if (*(p - 1) == 10)
+        *(p - 1) = 0;
+    *p = 0;
 
-	Common::copy(pm, pm + cnt, _G(tmp_buff));
-	_G(tmp_buff)[cnt] = 0;
+    Common::copy(pm, pm + cnt, _G(tmp_buff));
+    _G(tmp_buff)[cnt] = 0;
 
-	delete[] sp;
-	return true;
+    delete[] sp;
+    return true;
 }
 
 void setup_filenames(int level) {
 }
 
 long res_read(const Common::String &name, void *buff, bool failAllowed) {
-	Common::File f;
-	if (f.open(Common::Path(name))) {
-		return f.read(buff, f.size());
-	} else {
-		if (!failAllowed)
-			error("Could not load - %s", name.c_str());
-		return -1;
-	}
+    Common::File f;
+    if (f.open(Common::Path(name))) {
+        return f.read(buff, f.size());
+    } else {
+        if (!failAllowed)
+            error("Could not load - %s", name.c_str());
+        return -1;
+    }
 }
 
 void *res_falloc_read(const Common::String &name) {
-	Common::File f;
-	if (f.open(Common::Path(name))) {
-		byte *result = (byte *)malloc(f.size());
-		f.read(result, f.size());
-		return result;
-	} else {
-		return nullptr;
-	}
+    Common::File f;
+    if (f.open(Common::Path(name))) {
+        byte *result = (byte *)malloc(f.size());
+        f.read(result, f.size());
+        return result;
+    } else {
+        return nullptr;
+    }
 }
 
 } // End of namespace Got

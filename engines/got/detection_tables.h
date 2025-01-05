@@ -22,22 +22,22 @@
 namespace Got {
 
 const PlainGameDescriptor gotGames[] = {
-	{ "got", "God of Thunder" },
-	{ 0, 0 }
+    { "got", "God of Thunder" },
+    { 0, 0 }
 };
 
 const ADGameDescription gameDescriptions[] = {
-	{
-		"got",
-		nullptr,
-		AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOSPEECH)
-	},
+    {
+        "got",
+        nullptr,
+        AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
+        Common::EN_ANY,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOSPEECH)
+    },
 
-	AD_TABLE_END_MARKER
+    AD_TABLE_END_MARKER
 };
 
 } // End of namespace Got

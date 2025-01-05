@@ -28,66 +28,66 @@ namespace Got {
 namespace Gfx {
 
 void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf) {
-	surf.setTransparentColor(0);
+    surf.setTransparentColor(0);
 
-	// It's split into 4 panes per 4 pixels, so we need
-	// to juggle the pixels into their correct order
-	for (int plane = 0; plane < 4; ++plane) {
-		for (int y = 0; y < surf.h; ++y) {
-			byte *dest = (byte *)surf.getBasePtr(plane, y);
+    // It's split into 4 panes per 4 pixels, so we need
+    // to juggle the pixels into their correct order
+    for (int plane = 0; plane < 4; ++plane) {
+        for (int y = 0; y < surf.h; ++y) {
+            byte *dest = (byte *)surf.getBasePtr(plane, y);
 
-			for (int x = 0; x < (surf.w / 4); ++x, dest += 4, ++src) {
-				// For some reason, both '0' and '15' are both hard-coded
-				// as transparent colors in the graphics drawing. Simplify
-				// this for ScummVM by changing all 15's to 0
-				*dest = (*src == 15) ? 0 : *src;
-			}
-		}
-	}
+            for (int x = 0; x < (surf.w / 4); ++x, dest += 4, ++src) {
+                // For some reason, both '0' and '15' are both hard-coded
+                // as transparent colors in the graphics drawing. Simplify
+                // this for ScummVM by changing all 15's to 0
+                *dest = (*src == 15) ? 0 : *src;
+            }
+        }
+    }
 }
 
 
 void GfxPics::load(const Common::String &name, int blockSize) {
-	File f(name);
+    File f(name);
 
-	// Set up array of images
-	clear();
-	if (blockSize == -1) {
-		// Only a single image
-		resize(1);
-		blockSize = f.size();
-	} else {
-		resize(f.size() / blockSize);
-	}
+    // Set up array of images
+    clear();
+    if (blockSize == -1) {
+        // Only a single image
+        resize(1);
+        blockSize = f.size();
+    } else {
+        resize(f.size() / blockSize);
+    }
 
-	byte *buff = new byte[blockSize];
+    byte *buff = new byte[blockSize];
 
-	for (uint idx = 0; idx < size(); ++idx) {
-		int w = f.readUint16LE() * 4;
-		int h = f.readUint16LE();
-		f.skip(2);	// Unused transparent color. It's always 15
-		f.read(buff, blockSize - 6);
+    for (uint idx = 0; idx < size(); ++idx) {
+        int w = f.readUint16LE() * 4;
+        int h = f.readUint16LE();
+        f.skip(2);	// Unused transparent color. It's always 15
+        f.read(buff, blockSize - 6);
 
-		Graphics::ManagedSurface &s = (*this)[idx];
-		s.create(w, h);
+        Graphics::ManagedSurface &s = (*this)[idx];
+        s.create(w, h);
 
-		convertPaneDataToSurface(buff, s);
-	}
+        convertPaneDataToSurface(buff, s);
+    }
 
-	delete[] buff;
+    delete[] buff;
 }
 
 
 void BgPics::setArea(int area) {
-	if (area != _area) {
-		_area = area;
-		load();
-	}
+    if (area != _area) {
+        _area = area;
+        load();
+    }
 }
 
 void BgPics::load() {
-	Common::String fname = Common::String::format("BPICS%d", _area);
-	GfxPics::load(fname, 262);
+    Common::String fname = Common::String::format("BPICS%d", _area);
+    GfxPics::load(fname, 262);
 }
 
 } // namespace Gfx

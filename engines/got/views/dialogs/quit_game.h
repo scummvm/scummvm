@@ -30,11 +30,11 @@ namespace Dialogs {
 
 class QuitGame : public SelectOption {
 public:
-	QuitGame();
-	virtual ~QuitGame() {
-	}
+    QuitGame();
+    virtual ~QuitGame() {
+    }
 
-	void selected() override;
+    void selected() override;
 };
 
 } // namespace Dialogs

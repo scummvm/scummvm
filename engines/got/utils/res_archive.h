@@ -27,71 +27,71 @@
 namespace Got {
 
 struct ResHeader {
-	Common::String _name;
-	uint32 _offset = 0;
-	uint32 _size = 0;
-	uint32 _originalSize = 0;
-	int _key = 0;
+    Common::String _name;
+    uint32 _offset = 0;
+    uint32 _size = 0;
+    uint32 _originalSize = 0;
+    int _key = 0;
 
-	void load(Common::SeekableReadStream *src);
+    void load(Common::SeekableReadStream *src);
 };
 
 #define RES_MAX_ENTRIES 256  // Max # of elements
 #define RES_HEADER_ENTRY_SIZE 23	// Size of a single header entry
 class ResArchive : public Common::Archive {
 private:
-	Common::Array<ResHeader> _headers;
+    Common::Array<ResHeader> _headers;
 
-	/**
-	 * Decrypts a passed buffer
-	 * @param buf	Pointer to buffer
-	 * @param len	Buffer size
-	 * @param key	Starting key to use for decryption
-	 */
-	void decrypt(byte *buf, size_t len, byte key) const;
+    /**
+     * Decrypts a passed buffer
+     * @param buf	Pointer to buffer
+     * @param len	Buffer size
+     * @param key	Starting key to use for decryption
+     */
+    void decrypt(byte *buf, size_t len, byte key) const;
 
-	/**
-	 * Decodes a passed buffer
-	 */
-	void lzssDecompress(const byte *src, byte *dest) const;
+    /**
+     * Decodes a passed buffer
+     */
+    void lzssDecompress(const byte *src, byte *dest) const;
 
-	/**
-	 * Returns the index of a header for a given filename
-	*/
-	int indexOf(const Common::String &name) const;
+    /**
+     * Returns the index of a header for a given filename
+    */
+    int indexOf(const Common::String &name) const;
 
 public:
-	/**
-	 * Constructor
-	 */
-	ResArchive();
+    /**
+     * Constructor
+     */
+    ResArchive();
 
-	/**
-	 * Check if a member with the given name is present in the Archive.
-	 * Patterns are not allowed, as this is meant to be a quick File::exists()
-	 * replacement.
-	 */
-	bool hasFile(const Common::Path &path) const override;
+    /**
+     * Check if a member with the given name is present in the Archive.
+     * Patterns are not allowed, as this is meant to be a quick File::exists()
+     * replacement.
+     */
+    bool hasFile(const Common::Path &path) const override;
 
-	/**
-	 * Add all members of the Archive to list.
-	 * Must only append to list, and not remove elements from it.
-	 *
-	 * @return the number of names added to list
-	 */
-	int listMembers(Common::ArchiveMemberList &list) const override;
+    /**
+     * Add all members of the Archive to list.
+     * Must only append to list, and not remove elements from it.
+     *
+     * @return the number of names added to list
+     */
+    int listMembers(Common::ArchiveMemberList &list) const override;
 
-	/**
-	 * Returns a ArchiveMember representation of the given file.
-	 */
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+    /**
+     * Returns a ArchiveMember representation of the given file.
+     */
+    const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 
-	/**
-	 * Create a stream bound to a member with the specified name in the
-	 * archive. If no member with this name exists, 0 is returned.
-	 * @return the newly created input stream
-	 */
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+    /**
+     * Create a stream bound to a member with the specified name in the
+     * archive. If no member with this name exists, 0 is returned.
+     * @return the newly created input stream
+     */
+    Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 extern void resInit();

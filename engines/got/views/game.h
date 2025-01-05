@@ -31,17 +31,17 @@ namespace Views {
 
 class Game : public View {
 private:
-	GameContent _content;
-	GameStatus _status;
+    GameContent _content;
+    GameStatus _status;
 
 public:
-	Game();
-	virtual ~Game() {}
+    Game();
+    virtual ~Game() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool tick() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgKeypress(const KeypressMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    bool tick() override;
 };
 
 } // namespace Views

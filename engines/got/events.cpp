@@ -34,482 +34,482 @@ Events *g_events;
 // Index and RGB63 values used for palette animation
 // like water effects and gems sparkling
 static const uint16 PAL_CLR1[] = {
-	0xf300, 0x003b, 0xf000, 0x003b, 0xf100, 0x003b, 0xf200, 0x003b
+    0xf300, 0x003b, 0xf000, 0x003b, 0xf100, 0x003b, 0xf200, 0x003b
 };
 static const uint16 PAL_SET1[] = {
-	0xf027, 0x273f, 0xf127, 0x273f, 0xf227, 0x273f, 0xf327, 0x273f
+    0xf027, 0x273f, 0xf127, 0x273f, 0xf227, 0x273f, 0xf327, 0x273f
 };
 static const uint16 PAL_CLR2[] = {
-	0xf73b, 0x0000, 0xf43b, 0x0000, 0xf53b, 0x0000, 0xf63b, 0x0000
+    0xf73b, 0x0000, 0xf43b, 0x0000, 0xf53b, 0x0000, 0xf63b, 0x0000
 };
 static const uint16 PAL_SET2[] = {
-	0xf43f, 0x2727, 0xf53f, 0x2727, 0xf63f, 0x2727, 0xf73f, 0x2727
+    0xf43f, 0x2727, 0xf53f, 0x2727, 0xf63f, 0x2727, 0xf73f, 0x2727
 };
 
 Events::Events() : UIElement("Root", nullptr) {
-	g_events = this;
+    g_events = this;
 }
 
 Events::~Events() {
-	g_events = nullptr;
+    g_events = nullptr;
 }
 
 void Events::runGame() {
-	uint currTime, nextFrameTime = 0;
-	int palCycleCtr = 0;
-	_screen = new Graphics::Screen();
-	Views::Views views;	// Loads all views in the structure
+    uint currTime, nextFrameTime = 0;
+    int palCycleCtr = 0;
+    _screen = new Graphics::Screen();
+    Views::Views views;	// Loads all views in the structure
 
-	// Set up the initial game view
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1) {
-		if (g_engine->loadGameState(saveSlot).getCode() != Common::kNoError)
-			saveSlot = -1;
-	}
-	if (saveSlot == -1)
-		addView(isDemo() ? "Game" : "SplashScreen");
+    // Set up the initial game view
+    int saveSlot = ConfMan.getInt("save_slot");
+    if (saveSlot != -1) {
+        if (g_engine->loadGameState(saveSlot).getCode() != Common::kNoError)
+            saveSlot = -1;
+    }
+    if (saveSlot == -1)
+        addView(isDemo() ? "Game" : "SplashScreen");
 
-	// Main game loop
-	Common::Event e;
-	while (!_views.empty() && !shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_QUIT ||
-					e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-				_views.clear();
-				break;
-			} else if (!_G(demo)) {
-				processEvent(e);
-			}
-		}
+    // Main game loop
+    Common::Event e;
+    while (!_views.empty() && !shouldQuit()) {
+        while (g_system->getEventManager()->pollEvent(e)) {
+            if (e.type == Common::EVENT_QUIT ||
+                    e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+                _views.clear();
+                break;
+            } else if (!_G(demo)) {
+                processEvent(e);
+            }
+        }
 
-		if (_views.empty())
-			break;
+        if (_views.empty())
+            break;
 
-		g_system->delayMillis(10);
+        g_system->delayMillis(10);
 
-		// Rotate the palette
-		if (++palCycleCtr == 2) {
-			palCycleCtr = 0;
+        // Rotate the palette
+        if (++palCycleCtr == 2) {
+            palCycleCtr = 0;
 
-			bool gameVisible = false;
-			for (uint i = 0; i < _views.size() && !gameVisible; ++i)
-				gameVisible = _views[i]->_name == "Game";
+            bool gameVisible = false;
+            for (uint i = 0; i < _views.size() && !gameVisible; ++i)
+                gameVisible = _views[i]->_name == "Game";
 
-			if (gameVisible)
-				rotatePalette();
-		}
+            if (gameVisible)
+                rotatePalette();
+        }
 
-		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
-			nextFrameTime = currTime + FRAME_DELAY;
-			nextFrame();
-		}
-	}
+        if ((currTime = g_system->getMillis()) >= nextFrameTime) {
+            nextFrameTime = currTime + FRAME_DELAY;
+            nextFrame();
+        }
+    }
 
-	delete _screen;
+    delete _screen;
 }
 
 void Events::nextFrame() {
-	// Update state variables
-	_G(rand1) = getRandomNumber(99);
-	_G(rand2) = getRandomNumber(99);
-	_G(pge) = _G(pge) ^ 1;
-	_G(shot_ok) = true;
-	_G(magic_cnt)++;
+    // Update state variables
+    _G(rand1) = getRandomNumber(99);
+    _G(rand2) = getRandomNumber(99);
+    _G(pge) = _G(pge) ^ 1;
+    _G(shot_ok) = true;
+    _G(magic_cnt)++;
 
-	// In demo mode, handle the next key
-	if (_G(demo) && _G(gameMode) == MODE_NORMAL) {
-		if (_G(demoKeys).empty()) {
-			_views.clear();
-			return;
-		} else {
-			processDemoEvent(_G(demoKeys).pop());
-		}
-	}
+    // In demo mode, handle the next key
+    if (_G(demo) && _G(gameMode) == MODE_NORMAL) {
+        if (_G(demoKeys).empty()) {
+            _views.clear();
+            return;
+        } else {
+            processDemoEvent(_G(demoKeys).pop());
+        }
+    }
 
-	// Check if any script needs resuming
-	_G(scripts).runIfResuming();
+    // Check if any script needs resuming
+    _G(scripts).runIfResuming();
 
-	// Do tick action to the views to handle gameplay logic
-	tick();
+    // Do tick action to the views to handle gameplay logic
+    tick();
 
-	// Draw the current view's elements as needed, and update screen
-	drawElements();
-	_screen->update();
+    // Draw the current view's elements as needed, and update screen
+    drawElements();
+    _screen->update();
 }
 
 #define LOOP_THRESHOLD 5
 
 void Events::rotatePalette() {
-	const uint16 *entry;
-	++_palLoop;
+    const uint16 *entry;
+    ++_palLoop;
 
-	if (_palLoop > LOOP_THRESHOLD) {
-		_palLoop = 0;
-	} else {
-		switch (_palLoop) {
-		case LOOP_THRESHOLD - 4:
-			entry = &PAL_CLR2[_palCnt2];
-			break;
-		case LOOP_THRESHOLD - 3:
-			entry = &PAL_SET2[_palCnt2];
+    if (_palLoop > LOOP_THRESHOLD) {
+        _palLoop = 0;
+    } else {
+        switch (_palLoop) {
+        case LOOP_THRESHOLD - 4:
+            entry = &PAL_CLR2[_palCnt2];
+            break;
+        case LOOP_THRESHOLD - 3:
+            entry = &PAL_SET2[_palCnt2];
 
-			_palCnt2 += 2;
-			if (_palCnt2 >= 8)
-				_palCnt2 = 0;
-			break;
-		case LOOP_THRESHOLD - 2:
-			entry = &PAL_CLR1[_palCnt1];
-			break;
-		case LOOP_THRESHOLD - 1:
-			entry = &PAL_SET1[_palCnt1];
+            _palCnt2 += 2;
+            if (_palCnt2 >= 8)
+                _palCnt2 = 0;
+            break;
+        case LOOP_THRESHOLD - 2:
+            entry = &PAL_CLR1[_palCnt1];
+            break;
+        case LOOP_THRESHOLD - 1:
+            entry = &PAL_SET1[_palCnt1];
 
-			_palCnt1 += 2;
-			if (_palCnt1 >= 8)
-				_palCnt1 = 0;
-			break;
-		default:
-			return;
-		}
+            _palCnt1 += 2;
+            if (_palCnt1 >= 8)
+                _palCnt1 = 0;
+            break;
+        default:
+            return;
+        }
 
-		Gfx::xsetpal(entry[0] >> 8, (entry[0] & 0xff) << 2,
-			(entry[1] >> 8) << 2, (entry[1] & 0xff) << 2);
-	}
+        Gfx::xsetpal(entry[0] >> 8, (entry[0] & 0xff) << 2,
+                     (entry[1] >> 8) << 2, (entry[1] & 0xff) << 2);
+    }
 }
 
 void Events::processEvent(Common::Event &ev) {
-	switch (ev.type) {
-	case Common::EVENT_KEYDOWN:
-		if (ev.kbd.keycode < 100)
-			_G(key_flag)[ev.kbd.keycode] = true;
+    switch (ev.type) {
+    case Common::EVENT_KEYDOWN:
+        if (ev.kbd.keycode < 100)
+            _G(key_flag)[ev.kbd.keycode] = true;
 
-		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
-			msgKeypress(KeypressMessage(ev.kbd));
-		break;
-	case Common::EVENT_KEYUP:
-		if (ev.kbd.keycode < 100)
-			_G(key_flag)[ev.kbd.keycode] = false;
-		break;
-	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		_G(key_flag)[actionToKeyFlag(ev.customType)] = true;
-		msgAction(ActionMessage(ev.customType));
-		break;
-	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-		_G(key_flag)[actionToKeyFlag(ev.customType)] = false;
-		break;
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-		msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
-		break;
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MBUTTONUP:
-		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
-		break;
-	case Common::EVENT_MOUSEMOVE:
-		msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
-		break;
-	default:
-		break;
-	}
+        if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
+            msgKeypress(KeypressMessage(ev.kbd));
+        break;
+    case Common::EVENT_KEYUP:
+        if (ev.kbd.keycode < 100)
+            _G(key_flag)[ev.kbd.keycode] = false;
+        break;
+    case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+        _G(key_flag)[actionToKeyFlag(ev.customType)] = true;
+        msgAction(ActionMessage(ev.customType));
+        break;
+    case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+        _G(key_flag)[actionToKeyFlag(ev.customType)] = false;
+        break;
+    case Common::EVENT_LBUTTONDOWN:
+    case Common::EVENT_RBUTTONDOWN:
+    case Common::EVENT_MBUTTONDOWN:
+        msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
+        break;
+    case Common::EVENT_LBUTTONUP:
+    case Common::EVENT_RBUTTONUP:
+    case Common::EVENT_MBUTTONUP:
+        msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
+        break;
+    case Common::EVENT_MOUSEMOVE:
+        msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
+        break;
+    default:
+        break;
+    }
 }
 
 void Events::processDemoEvent(byte ev) {
-	bool flag = ev & 0x80;
-	ev &= 0x7f;
+    bool flag = ev & 0x80;
+    ev &= 0x7f;
 
-	int action = -1;
-	switch (ev) {
-	case 0:
-		return;
-	case 72:
-		ev = key_up;
-		action = KEYBIND_UP;
-		break;
-	case 80:
-		ev = key_down;
-		break;
-	case 75:
-		ev = key_left;
-		break;
-	case 77:
-		ev = key_right;
-		break;
-	case 56:
-		ev = key_fire;
-		action = KEYBIND_FIRE;
-		break;
-	case 29:
-		ev = key_magic;
-		action = KEYBIND_MAGIC;
-		break;
-	default:
-		break;
-	}
+    int action = -1;
+    switch (ev) {
+    case 0:
+        return;
+    case 72:
+        ev = key_up;
+        action = KEYBIND_UP;
+        break;
+    case 80:
+        ev = key_down;
+        break;
+    case 75:
+        ev = key_left;
+        break;
+    case 77:
+        ev = key_right;
+        break;
+    case 56:
+        ev = key_fire;
+        action = KEYBIND_FIRE;
+        break;
+    case 29:
+        ev = key_magic;
+        action = KEYBIND_MAGIC;
+        break;
+    default:
+        break;
+    }
 
-	_G(key_flag)[ev] = flag;
+    _G(key_flag)[ev] = flag;
 
-	if (flag && action != -1)
-		msgAction(ActionMessage(action));
+    if (flag && action != -1)
+        msgAction(ActionMessage(action));
 }
 
 int Events::actionToKeyFlag(int action) const {
-	return (action == KEYBIND_ESCAPE) ? Common::KEYCODE_ESCAPE :
-		(int)action;
+    return (action == KEYBIND_ESCAPE) ? Common::KEYCODE_ESCAPE :
+           (int)action;
 }
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
-	assert(ui);
-	UIElement *priorView = focusedView();
+    assert(ui);
+    UIElement *priorView = focusedView();
 
-	if (fadeOutIn)
-		Gfx::fade_out();
+    if (fadeOutIn)
+        Gfx::fade_out();
 
-	if (replaceAllViews) {
-		clearViews();
+    if (replaceAllViews) {
+        clearViews();
 
-	} else if (!_views.empty()) {
-		priorView->msgUnfocus(UnfocusMessage());
-		_views.pop();
-	}
+    } else if (!_views.empty()) {
+        priorView->msgUnfocus(UnfocusMessage());
+        _views.pop();
+    }
 
-	// Redraw any prior views to erase the removed view
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
-	}
+    // Redraw any prior views to erase the removed view
+    for (uint i = 0; i < _views.size(); ++i) {
+        _views[i]->redraw();
+        _views[i]->draw();
+    }
 
-	// Add the new view
-	_views.push(ui);
+    // Add the new view
+    _views.push(ui);
 
-	ui->redraw();
-	ui->msgFocus(FocusMessage(priorView));
-	ui->draw();
+    ui->redraw();
+    ui->msgFocus(FocusMessage(priorView));
+    ui->draw();
 
-	if (fadeOutIn)
-		Gfx::fade_in();
+    if (fadeOutIn)
+        Gfx::fade_in();
 }
 
 void Events::replaceView(const Common::String &name, bool replaceAllViews, bool fadeOutIn) {
-	replaceView(findView(name), replaceAllViews, fadeOutIn);
+    replaceView(findView(name), replaceAllViews, fadeOutIn);
 }
 
 void Events::addView(UIElement *ui) {
-	assert(ui);
-	UIElement *priorView = focusedView();
+    assert(ui);
+    UIElement *priorView = focusedView();
 
-	if (!_views.empty())
-		priorView->msgUnfocus(UnfocusMessage());
+    if (!_views.empty())
+        priorView->msgUnfocus(UnfocusMessage());
 
-	_views.push(ui);
-	ui->redraw();
-	ui->msgFocus(FocusMessage(priorView));
+    _views.push(ui);
+    ui->redraw();
+    ui->msgFocus(FocusMessage(priorView));
 }
 
 void Events::addView(const Common::String &name) {
-	addView(findView(name));
+    addView(findView(name));
 }
 
 void Events::popView() {
-	UIElement *priorView = focusedView();
-	priorView->msgUnfocus(UnfocusMessage());
-	_views.pop();
+    UIElement *priorView = focusedView();
+    priorView->msgUnfocus(UnfocusMessage());
+    _views.pop();
 
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
-	}
+    for (uint i = 0; i < _views.size(); ++i) {
+        _views[i]->redraw();
+        _views[i]->draw();
+    }
 
-	if (!_views.empty()) {
-		UIElement *view = focusedView();
-		view->msgFocus(FocusMessage(priorView));
-		view->redraw();
-		view->draw();
-	}
+    if (!_views.empty()) {
+        UIElement *view = focusedView();
+        view->msgFocus(FocusMessage(priorView));
+        view->redraw();
+        view->draw();
+    }
 }
 
 void Events::redrawViews() {
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
-	}
+    for (uint i = 0; i < _views.size(); ++i) {
+        _views[i]->redraw();
+        _views[i]->draw();
+    }
 }
 
 bool Events::isPresent(const Common::String &name) const {
-	for (uint i = 0; i < _views.size(); ++i) {
-		if (_views[i]->_name == name)
-			return true;
-	}
+    for (uint i = 0; i < _views.size(); ++i) {
+        if (_views[i]->_name == name)
+            return true;
+    }
 
-	return false;
+    return false;
 }
 
 void Events::clearViews() {
-	if (!_views.empty())
-		focusedView()->msgUnfocus(UnfocusMessage());
+    if (!_views.empty())
+        focusedView()->msgUnfocus(UnfocusMessage());
 
-	_views.clear();
+    _views.clear();
 }
 
 void Events::addKeypress(const Common::KeyCode kc) {
-	Common::KeyState ks;
-	ks.keycode = kc;
-	if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)
-		ks.ascii = kc;
+    Common::KeyState ks;
+    ks.keycode = kc;
+    if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)
+        ks.ascii = kc;
 
-	focusedView()->msgKeypress(KeypressMessage(ks));
+    focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
-		_bounds(0, 0, 320, 240),
-		_innerBounds(innerBounds),
-		left(_bounds.left), top(_bounds.top),
-		right(_bounds.right), bottom(_bounds.bottom) {
+    _bounds(0, 0, 320, 240),
+    _innerBounds(innerBounds),
+    left(_bounds.left), top(_bounds.top),
+    right(_bounds.right), bottom(_bounds.bottom) {
 }
 
 Bounds &Bounds::operator=(const Common::Rect &r) {
-	_bounds = r;
-	_innerBounds = r;
-	_innerBounds.grow(-_borderSize);
-	return *this;
+    _bounds = r;
+    _innerBounds = r;
+    _innerBounds.grow(-_borderSize);
+    return *this;
 }
 
 void Bounds::setBorderSize(size_t borderSize) {
-	_borderSize = borderSize;
-	_innerBounds = *this;
-	_innerBounds.grow(-_borderSize);
+    _borderSize = borderSize;
+    _innerBounds = *this;
+    _innerBounds.grow(-_borderSize);
 }
 
 /*------------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name) :
-		_name(name), _parent(g_engine), _bounds(_innerBounds) {
-	g_engine->_children.push_back(this);
+    _name(name), _parent(g_engine), _bounds(_innerBounds) {
+    g_engine->_children.push_back(this);
 }
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
-		_name(name), _parent(uiParent),
-		_bounds(_innerBounds) {
-	if (_parent)
-		_parent->_children.push_back(this);
+    _name(name), _parent(uiParent),
+    _bounds(_innerBounds) {
+    if (_parent)
+        _parent->_children.push_back(this);
 }
 
 void UIElement::redraw() {
-	_needsRedraw = true;
+    _needsRedraw = true;
 
-	for (size_t i = 0; i < _children.size(); ++i)
-		_children[i]->redraw();
+    for (size_t i = 0; i < _children.size(); ++i)
+        _children[i]->redraw();
 }
 
 void UIElement::drawElements() {
-	if (_needsRedraw) {
-		draw();
-		_needsRedraw = false;
-	}
+    if (_needsRedraw) {
+        draw();
+        _needsRedraw = false;
+    }
 
-	for (size_t i = 0; i < _children.size(); ++i)
-		_children[i]->drawElements();
+    for (size_t i = 0; i < _children.size(); ++i)
+        _children[i]->drawElements();
 }
 
 UIElement *UIElement::findViewGlobally(const Common::String &name) {
-	return g_events->findView(name);
+    return g_events->findView(name);
 }
 
 void UIElement::focus() {
-	g_events->replaceView(this);
+    g_events->replaceView(this);
 }
 
 void UIElement::close() {
-	assert(g_events->focusedView() == this);
-	g_events->popView();
+    assert(g_events->focusedView() == this);
+    g_events->popView();
 }
 
 bool UIElement::isFocused() const {
-	return g_events->focusedView() == this;
+    return g_events->focusedView() == this;
 }
 
 void UIElement::clearSurface() {
-	GfxSurface s = getSurface();
-	s.fillRect(Common::Rect(s.w, s.h), 0);
+    GfxSurface s = getSurface();
+    s.fillRect(Common::Rect(s.w, s.h), 0);
 }
 
 void UIElement::draw() {
-	for (size_t i = 0; i < _children.size(); ++i) {
-		_children[i]->draw();
-	}
+    for (size_t i = 0; i < _children.size(); ++i) {
+        _children[i]->draw();
+    }
 }
 
 bool UIElement::tick() {
-	if (_timeoutCtr && --_timeoutCtr == 0) {
-		timeout();
-	}
+    if (_timeoutCtr && --_timeoutCtr == 0) {
+        timeout();
+    }
 
-	for (size_t i = 0; i < _children.size(); ++i) {
-		if (_children[i]->tick())
-			return true;
-	}
+    for (size_t i = 0; i < _children.size(); ++i) {
+        if (_children[i]->tick())
+            return true;
+    }
 
-	return false;
+    return false;
 }
 
 UIElement *UIElement::findView(const Common::String &name) {
-	if (_name.equalsIgnoreCase(name))
-		return this;
+    if (_name.equalsIgnoreCase(name))
+        return this;
 
-	UIElement *result;
-	for (size_t i = 0; i < _children.size(); ++i) {
-		if ((result = _children[i]->findView(name)) != nullptr)
-			return result;
-	}
+    UIElement *result;
+    for (size_t i = 0; i < _children.size(); ++i) {
+        if ((result = _children[i]->findView(name)) != nullptr)
+            return result;
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 void UIElement::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
-	g_events->replaceView(ui, replaceAllViews, fadeOutIn);
+    g_events->replaceView(ui, replaceAllViews, fadeOutIn);
 }
 
 void UIElement::replaceView(const Common::String &name, bool replaceAllViews, bool fadeOutIn) {
-	g_events->replaceView(name, replaceAllViews, fadeOutIn);
+    g_events->replaceView(name, replaceAllViews, fadeOutIn);
 }
 
 void UIElement::addView(UIElement *ui) {
-	g_events->addView(ui);
+    g_events->addView(ui);
 }
 
 void UIElement::addView(const Common::String &name) {
-	g_events->addView(name);
+    g_events->addView(name);
 }
 
 void UIElement::addView() {
-	g_events->addView(this);
+    g_events->addView(this);
 }
 
 GfxSurface UIElement::getSurface(bool innerBounds) const {
-	return GfxSurface(*g_events->getScreen(),
-		innerBounds ? _innerBounds : _bounds);
+    return GfxSurface(*g_events->getScreen(),
+                      innerBounds ? _innerBounds : _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
+    return g_engine->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 }
 
 int UIElement::getRandomNumber(int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber);
+    return g_engine->getRandomNumber(maxNumber);
 }
 
 void UIElement::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * FRAME_RATE;
+    _timeoutCtr = seconds * FRAME_RATE;
 }
 
 void UIElement::delayFrames(uint frames) {
-	_timeoutCtr = frames;
+    _timeoutCtr = frames;
 }
 
 void UIElement::timeout() {
-	redraw();
+    redraw();
 }
 
 } // namespace Got

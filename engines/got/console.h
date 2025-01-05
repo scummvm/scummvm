@@ -29,19 +29,19 @@ namespace Got {
 
 class Console : public GUI::Debugger {
 private:
-	bool cmdView(int argc, const char **argv);
-	bool cmdSound(int argc, const char **argv);
-	bool cmdMusic(int argc, const char **argv);
-	bool cmdLoad(int argc, const char **argv);
-	bool cmdSave(int argc, const char **argv);
-	bool cmdMagic(int argc, const char **argv);
-	bool cmdFreeze(int argc, const char **argv);
-	bool cmdLevel(int argc, const char **argv);
-	bool cmdFlying(int argc, const char **argv);
+    bool cmdView(int argc, const char **argv);
+    bool cmdSound(int argc, const char **argv);
+    bool cmdMusic(int argc, const char **argv);
+    bool cmdLoad(int argc, const char **argv);
+    bool cmdSave(int argc, const char **argv);
+    bool cmdMagic(int argc, const char **argv);
+    bool cmdFreeze(int argc, const char **argv);
+    bool cmdLevel(int argc, const char **argv);
+    bool cmdFlying(int argc, const char **argv);
 
 public:
-	Console();
-	~Console() override;
+    Console();
+    ~Console() override;
 };
 
 } // End of namespace Got

@@ -30,20 +30,20 @@ Quit::Quit() : SelectOption("Quit", "Quit Game?", YES_NO) {
 }
 
 void Quit::selected() {
-	switch (_selectedItem) {
-	case 0:
-		g_engine->quitGame();
-		break;
-	case 1:
-		addView("MainMenu");
-		break;
-	default:
-		break;
-	}
+    switch (_selectedItem) {
+    case 0:
+        g_engine->quitGame();
+        break;
+    case 1:
+        addView("MainMenu");
+        break;
+    default:
+        break;
+    }
 }
 
 void Quit::closed() {
-	addView("MainMenu");
+    addView("MainMenu");
 }
 
 } // namespace Dialogs

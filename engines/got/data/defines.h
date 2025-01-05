@@ -36,13 +36,13 @@ namespace Got {
 #define IN_RANGE(v,l,h) (v>=l && v<=h)
 
 struct HEADER {
-	long offset = 0;
-	long length = 0;
+    long offset = 0;
+    long length = 0;
 
-	void load(Common::SeekableReadStream *src) {
-		offset = src->readUint32LE();
-		length = src->readUint32LE();
-	}
+    void load(Common::SeekableReadStream *src) {
+        offset = src->readUint32LE();
+        length = src->readUint32LE();
+    }
 };
 
 //==========================================================================
@@ -97,63 +97,63 @@ struct HEADER {
 
 #define sc_Index 0x3C4
 enum {
-	sc_Reset,
-	sc_Clock,
-	sc_MapMask,
-	sc_CharMap,
-	sc_MemMode
+    sc_Reset,
+    sc_Clock,
+    sc_MapMask,
+    sc_CharMap,
+    sc_MemMode
 };
 
 #define crtc_Index 0x3D4
 
 enum {
-	crtc_H_Total,
-	crtc_H_DispEnd,
-	crtc_H_Blank,
-	crtc_H_EndBlank,
-	crtc_H_Retrace,
-	crtc_H_EndRetrace,
-	crtc_V_Total,
-	crtc_OverFlow,
-	crtc_RowScan,
-	crtc_MaxScanLine,
-	crtc_CursorStart,
-	crtc_CursorEnd,
-	crtc_StartHigh,
-	crtc_StartLow,
-	crtc_CursorHigh,
-	crtc_CursorLow,
-	crtc_V_Retrace,
-	crtc_V_EndRetrace,
-	crtc_V_DispEnd,
-	crtc_Offset,
-	crtc_Underline,
-	crtc_V_Blank,
-	crtc_V_EndBlank,
-	crtc_Mode,
-	crtc_LineCompare
+    crtc_H_Total,
+    crtc_H_DispEnd,
+    crtc_H_Blank,
+    crtc_H_EndBlank,
+    crtc_H_Retrace,
+    crtc_H_EndRetrace,
+    crtc_V_Total,
+    crtc_OverFlow,
+    crtc_RowScan,
+    crtc_MaxScanLine,
+    crtc_CursorStart,
+    crtc_CursorEnd,
+    crtc_StartHigh,
+    crtc_StartLow,
+    crtc_CursorHigh,
+    crtc_CursorLow,
+    crtc_V_Retrace,
+    crtc_V_EndRetrace,
+    crtc_V_DispEnd,
+    crtc_Offset,
+    crtc_Underline,
+    crtc_V_Blank,
+    crtc_V_EndBlank,
+    crtc_Mode,
+    crtc_LineCompare
 };
 
 #define gc_Index 0x3CE
 enum {
-	gc_SetReset,
-	gc_EnableSetReset,
-	gc_ColorCompare,
-	gc_DataRotate,
-	gc_ReadMap,
-	gc_Mode,
-	gc_Misc,
-	gc_ColorDontCare,
-	gc_BitMask
+    gc_SetReset,
+    gc_EnableSetReset,
+    gc_ColorCompare,
+    gc_DataRotate,
+    gc_ReadMap,
+    gc_Mode,
+    gc_Misc,
+    gc_ColorDontCare,
+    gc_BitMask
 };
 
 #define atr_Index 0x3c0
 enum {
-	atr_Mode = 16,
-	atr_Overscan,
-	atr_ColorPlaneEnable,
-	atr_PelPan,
-	atr_ColorSelect
+    atr_Mode = 16,
+    atr_Overscan,
+    atr_ColorPlaneEnable,
+    atr_PelPan,
+    atr_ColorSelect
 };
 #define	status_Reg1 0x3da
 

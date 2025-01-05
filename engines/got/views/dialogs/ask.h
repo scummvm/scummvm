@@ -30,13 +30,13 @@ namespace Dialogs {
 
 class Ask : public SelectOption {
 public:
-	Ask();
-	virtual ~Ask() {}
+    Ask();
+    virtual ~Ask() {}
 
-	static void show(const Common::String &title,
-		const Common::StringArray &options);
-	void closed() override;
-	void selected() override;
+    static void show(const Common::String &title,
+                     const Common::StringArray &options);
+    void closed() override;
+    void selected() override;
 };
 
 } // namespace Dialogs

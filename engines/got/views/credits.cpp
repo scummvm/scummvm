@@ -31,104 +31,104 @@ namespace Views {
 #define CREDIT_TIME (FADE_FRAMES * 2 + DISPLAY_TIME)
 
 bool Credits::msgFocus(const FocusMessage &msg) {
-	_delayCtr = 0;
-	_frameCtr = 0;
+    _delayCtr = 0;
+    _frameCtr = 0;
 
-	draw();
-	Gfx::Palette63 pal = _G(gfx)[41];
-	fadeIn(pal);
+    draw();
+    Gfx::Palette63 pal = _G(gfx)[41];
+    fadeIn(pal);
 
-	return true;
+    return true;
 }
 
 void Credits::draw() {
-	GfxSurface s = getSurface();
+    GfxSurface s = getSurface();
 
-	// Draw scroll background
-	Graphics::ManagedSurface bg = _G(gfx)[42];
-	s.clear(*(byte *)bg.getPixels());
-	s.blitFrom(bg, Common::Point(0, 24));
+    // Draw scroll background
+    Graphics::ManagedSurface bg = _G(gfx)[42];
+    s.clear(*(byte *)bg.getPixels());
+    s.blitFrom(bg, Common::Point(0, 24));
 
-	int creditNum = _frameCtr / CREDIT_TIME;
-	int subNum = _frameCtr % CREDIT_TIME;
+    int creditNum = _frameCtr / CREDIT_TIME;
+    int subNum = _frameCtr % CREDIT_TIME;
 
-	if (subNum >= (FADE_FRAMES + DISPLAY_TIME)) {
-		subNum = (FADE_FRAMES - 1) - (subNum - (FADE_FRAMES + DISPLAY_TIME));
-	} else if (subNum >= FADE_FRAMES) {
-		subNum = FADE_FRAMES - 1;
-	}
+    if (subNum >= (FADE_FRAMES + DISPLAY_TIME)) {
+        subNum = (FADE_FRAMES - 1) - (subNum - (FADE_FRAMES + DISPLAY_TIME));
+    } else if (subNum >= FADE_FRAMES) {
+        subNum = FADE_FRAMES - 1;
+    }
 
-	if (creditNum < CREDITS_COUNT) {
-		int gfxNum1 = 43 + creditNum;
-		int gfxNum2 = 67 + creditNum;
-		int gfxNum3 = 52 + subNum;
-		int gfxNum4 = 76 + subNum;
+    if (creditNum < CREDITS_COUNT) {
+        int gfxNum1 = 43 + creditNum;
+        int gfxNum2 = 67 + creditNum;
+        int gfxNum3 = 52 + subNum;
+        int gfxNum4 = 76 + subNum;
 
-		drawCredit(s, gfxNum1, gfxNum3, 16, 40 + 24);
-		drawCredit(s, gfxNum2, gfxNum4, 16, 40 + 24);
-	}
+        drawCredit(s, gfxNum1, gfxNum3, 16, 40 + 24);
+        drawCredit(s, gfxNum2, gfxNum4, 16, 40 + 24);
+    }
 
-	s.markAllDirty();
+    s.markAllDirty();
 }
 
 void Credits::drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y) {
-	const Gfx::GraphicChunk &data = _G(gfx)[gfxNum1];
-	const Gfx::GraphicChunk &lookup = _G(gfx)[gfxNum2];
-	const byte *lines = data._data;
-	const byte *lineData = data._data + 2 * data._height;
-	byte *dest;
-	byte count;
+    const Gfx::GraphicChunk &data = _G(gfx)[gfxNum1];
+    const Gfx::GraphicChunk &lookup = _G(gfx)[gfxNum2];
+    const byte *lines = data._data;
+    const byte *lineData = data._data + 2 * data._height;
+    byte *dest;
+    byte count;
 
-	assert(x >= 0 && (x + data._width) <= 320);
-	assert(y >= 0 && (y + data._height) <= 200);
+    assert(x >= 0 && (x + data._width) <= 320);
+    assert(y >= 0 && (y + data._height) <= 200);
 
-	for (int yCtr = 0; yCtr < data._height; ++yCtr) {
-		dest = (byte *)s.getBasePtr(x, y + yCtr);
-		uint16 lineParts = READ_LE_UINT16(lines);
-		lines += 2;
+    for (int yCtr = 0; yCtr < data._height; ++yCtr) {
+        dest = (byte *)s.getBasePtr(x, y + yCtr);
+        uint16 lineParts = READ_LE_UINT16(lines);
+        lines += 2;
 
-		if (lineParts == 0)
-			// Nothing on line, move to next
-			continue;
+        if (lineParts == 0)
+            // Nothing on line, move to next
+            continue;
 
-		for (; lineParts > 0; --lineParts) {
-			count = *lineData++;
+        for (; lineParts > 0; --lineParts) {
+            count = *lineData++;
 
-			if (count & 0x80) {
-				// Shade a range of pixels using lookup table
-				count &= 0x7f;
-				for (int i = 0; i < count; ++i, ++dest)
-					*dest = lookup._data[*dest];
-			} else {
-				dest += count;
-			}
-		}
-	}
+            if (count & 0x80) {
+                // Shade a range of pixels using lookup table
+                count &= 0x7f;
+                for (int i = 0; i < count; ++i, ++dest)
+                    *dest = lookup._data[*dest];
+            } else {
+                dest += count;
+            }
+        }
+    }
 }
 
 bool Credits::tick() {
-	if (++_delayCtr >= 3) {
-		_delayCtr = 0;
+    if (++_delayCtr >= 3) {
+        _delayCtr = 0;
 
-		if (_frameCtr == (CREDIT_TIME * CREDITS_COUNT) + 10) {
-			replaceView("HighScores", true, true);
-		} else {
-			++_frameCtr;
-			redraw();
-		}
-	}
+        if (_frameCtr == (CREDIT_TIME * CREDITS_COUNT) + 10) {
+            replaceView("HighScores", true, true);
+        } else {
+            ++_frameCtr;
+            redraw();
+        }
+    }
 
-	return true;
+    return true;
 }
 
 bool Credits::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		fadeOut();
-		send("TitleBackground", GameMessage("MAIN_MENU"));
-		return true;
-	}
+    if (msg._action == KEYBIND_ESCAPE) {
+        fadeOut();
+        send("TitleBackground", GameMessage("MAIN_MENU"));
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 } // namespace Views

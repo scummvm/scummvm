@@ -34,11 +34,11 @@ namespace Views {
  */
 class TitleBackground : public View {
 public:
-	TitleBackground() : View("TitleBackground") {}
-	virtual ~TitleBackground() {}
+    TitleBackground() : View("TitleBackground") {}
+    virtual ~TitleBackground() {}
 
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+    bool msgGame(const GameMessage &msg) override;
+    void draw() override;
 };
 
 } // namespace Views

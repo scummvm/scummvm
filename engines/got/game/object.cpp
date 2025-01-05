@@ -35,459 +35,460 @@ void not_enough_magic();
 void cannot_carry_more();
 
 void show_objects() {
-	int i, p;
+    int i, p;
 
-	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
-	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
+    Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
+    Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
 
-	for (i = 0; i < OBJECTS_COUNT; i++) {
-		if (_G(scrn).static_obj[i]) {
-			p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
-			_G(object_index)[p] = i;
-			_G(object_map)[p] = _G(scrn).static_obj[i];
-		}
-	}
+    for (i = 0; i < OBJECTS_COUNT; i++) {
+        if (_G(scrn).static_obj[i]) {
+            p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
+            _G(object_index)[p] = i;
+            _G(object_map)[p] = _G(scrn).static_obj[i];
+        }
+    }
 }
 
 void pick_up_object(int p) {
-	int r, x, y, s;
+    int r, x, y, s;
 
-	switch (_G(object_map)[p]) {
-	case 1:           // Red jewel
-		if (_G(thor_info).jewels >= 999) {
-			cannot_carry_more();
-			return;
-		}
-		add_jewels(10);
-		break;
-	case 2:           // Blue jewel
-		if (_G(thor_info).jewels >= 999) {
-			cannot_carry_more();
-			return;
-		}
-		add_jewels(1);
-		break;
-	case 3:           // Red potion
-		if (_G(thor_info).magic >= 150) {
-			cannot_carry_more();
-			return;
-		}
-		add_magic(10);
-		break;
-	case 4:           // Blue potion
-		if (_G(thor_info).magic >= 150) {
-			cannot_carry_more();
-			return;
-		}
-		add_magic(3);
-		break;
-	case 5:          // Good apple
-		if (_G(thor)->health >= 150) {
-			cannot_carry_more();
-			return;
-		}
-		play_sound(GULP, 0);
-		s = 1;
-		add_health(5);
-		break;
-	case 6:           // Bad apple
-		play_sound(OW, 0);
-		s = 1;
-		add_health(-10);
-		break;
-	case 7:           // Key (reset on exit)
-		add_keys(1);
-		break;
-	case 8:           // Treasure
-		if (_G(thor_info).jewels >= 999) {
-			cannot_carry_more();
-			return;
-		}
-		add_jewels(50);
-		break;
-	case 9:          // Trophy
-		add_score(100);
-		break;
-	case 10:         // Crown
-		add_score(1000);
-		break;
-	case 12:
-	case 13:
-	case 14:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
-	case 19:
-	case 20:
-	case 21:
-	case 22:
-	case 23:
-	case 24:
-	case 25:
-	case 26:
-		if (_G(object_map)[p] == 13 && HERMIT_HAS_DOLL) return;
-		_G(thor)->num_moves = 1;
-		_G(hammer)->num_moves = 2;
-		_G(actor)[2].used = 0;
-		_G(shield_on) = 0;
-		_G(tornado_used) = 0;
-		_G(thor_info).inventory |= 64;
-		_G(thor_info).item = 7;
-		_G(thor_info).object = _G(object_map)[p] - 11;
-		display_item();
-		_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
-		odin_speaks((_G(object_map)[p] - 12) + 501, _G(object_map)[p] - 1);
-		break;
-	case 27:
-	case 28:
-	case 29:
-	case 30:
-	case 31:
-	case 32:
-		_G(hourglass_flag) = 0;
-		_G(thunder_flag) = 0;
-		_G(shield_on) = 0;
-		_G(lightning_used) = 0;
-		_G(tornado_used) = 0;
-		_G(hammer)->num_moves = 2;
-		_G(thor)->num_moves = 1;
-		_G(actor)[2].used = 0;
-		s = 1 << (_G(object_map)[p] - 27);
-		_G(thor_info).inventory |= s;
-		odin_speaks((_G(object_map)[p] - 27) + 516, _G(object_map)[p] - 1);
-		s = 1;
-		_G(thor_info).item = _G(object_map)[p] - 26;
-		display_item();
-		add_magic(150);
-		fill_score(5);
-		break;
-	}
-	x = p % 20;
-	y = p / 20;
+    switch (_G(object_map)[p]) {
+    case 1:           // Red jewel
+        if (_G(thor_info).jewels >= 999) {
+            cannot_carry_more();
+            return;
+        }
+        add_jewels(10);
+        break;
+    case 2:           // Blue jewel
+        if (_G(thor_info).jewels >= 999) {
+            cannot_carry_more();
+            return;
+        }
+        add_jewels(1);
+        break;
+    case 3:           // Red potion
+        if (_G(thor_info).magic >= 150) {
+            cannot_carry_more();
+            return;
+        }
+        add_magic(10);
+        break;
+    case 4:           // Blue potion
+        if (_G(thor_info).magic >= 150) {
+            cannot_carry_more();
+            return;
+        }
+        add_magic(3);
+        break;
+    case 5:          // Good apple
+        if (_G(thor)->health >= 150) {
+            cannot_carry_more();
+            return;
+        }
+        play_sound(GULP, 0);
+        s = 1;
+        add_health(5);
+        break;
+    case 6:           // Bad apple
+        play_sound(OW, 0);
+        s = 1;
+        add_health(-10);
+        break;
+    case 7:           // Key (reset on exit)
+        add_keys(1);
+        break;
+    case 8:           // Treasure
+        if (_G(thor_info).jewels >= 999) {
+            cannot_carry_more();
+            return;
+        }
+        add_jewels(50);
+        break;
+    case 9:          // Trophy
+        add_score(100);
+        break;
+    case 10:         // Crown
+        add_score(1000);
+        break;
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+        if (_G(object_map)[p] == 13 && HERMIT_HAS_DOLL) return;
+        _G(thor)->num_moves = 1;
+        _G(hammer)->num_moves = 2;
+        _G(actor)[2].used = 0;
+        _G(shield_on) = 0;
+        _G(tornado_used) = 0;
+        _G(thor_info).inventory |= 64;
+        _G(thor_info).item = 7;
+        _G(thor_info).object = _G(object_map)[p] - 11;
+        display_item();
+        _G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
+        odin_speaks((_G(object_map)[p] - 12) + 501, _G(object_map)[p] - 1);
+        break;
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+        _G(hourglass_flag) = 0;
+        _G(thunder_flag) = 0;
+        _G(shield_on) = 0;
+        _G(lightning_used) = 0;
+        _G(tornado_used) = 0;
+        _G(hammer)->num_moves = 2;
+        _G(thor)->num_moves = 1;
+        _G(actor)[2].used = 0;
+        s = 1 << (_G(object_map)[p] - 27);
+        _G(thor_info).inventory |= s;
+        odin_speaks((_G(object_map)[p] - 27) + 516, _G(object_map)[p] - 1);
+        s = 1;
+        _G(thor_info).item = _G(object_map)[p] - 26;
+        display_item();
+        add_magic(150);
+        fill_score(5);
+        break;
+    }
+    x = p % 20;
+    y = p / 20;
 
-	_G(ox) = x * 16;
-	_G(oy) = y * 16;
-	_G(of) = 1;
+    _G(ox) = x * 16;
+    _G(oy) = y * 16;
+    _G(of) = 1;
 
-	r = 1;
-	s = 0;
-	if (!s)
-		play_sound(YAH, 0);
-	_G(object_map)[p] = 0;
+    r = 1;
+    s = 0;
+    if (!s)
+        play_sound(YAH, 0);
+    _G(object_map)[p] = 0;
 
-	if (r) {
-		// Reset so it doesn't reappear on reentry to screen
-		if (_G(object_index)[p] < 30)
-			_G(scrn).static_obj[_G(object_index)[p]] = 0;
-		_G(object_index)[p] = 0;
-	}
+    if (r) {
+        // Reset so it doesn't reappear on reentry to screen
+        if (_G(object_index)[p] < 30)
+            _G(scrn).static_obj[_G(object_index)[p]] = 0;
+        _G(object_index)[p] = 0;
+    }
 }
 
 int drop_object(ACTOR *actr) {
-	int o, rnd1, rnd2;
+    int o, rnd1, rnd2;
 
-	rnd1 = g_events->getRandomNumber(99);
-	rnd2 = g_events->getRandomNumber(99);
+    rnd1 = g_events->getRandomNumber(99);
+    rnd2 = g_events->getRandomNumber(99);
 
-	if (rnd1 < 25)
-		o = 5;      // Apple
-	else if (rnd1 & 1) {
-		// Jewels
-		if (rnd2 < 10)
-			o = 1;      // Red
-		else
-			o = 2;      // Blue
-	} else {
-		// Potion
-		if (rnd2 < 10)
-			o = 3;      // Red
-		else
-			o = 4;      // Blue
-	}
+    if (rnd1 < 25)
+        o = 5;      // Apple
+    else if (rnd1 & 1) {
+        // Jewels
+        if (rnd2 < 10)
+            o = 1;      // Red
+        else
+            o = 2;      // Blue
+    } else {
+        // Potion
+        if (rnd2 < 10)
+            o = 3;      // Red
+        else
+            o = 4;      // Blue
+    }
 
-	_drop_obj(actr, o);
-	return 1;
+    _drop_obj(actr, o);
+    return 1;
 }
 
 int _drop_obj(ACTOR *actr, int o) {
-	int p;
+    int p;
 
-	p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
-	if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
-		_G(object_map)[p] = o;
-		_G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
+    p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
+    if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
+        _G(object_map)[p] = o;
+        _G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
 
-		return 1;
-	}
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int use_apple(int flag) {
-	if (_G(thor)->health == 150)
-		return 0;
+    if (_G(thor)->health == 150)
+        return 0;
 
-	if (flag && _G(thor_info).magic > 0) {
-		if (!_G(apple_flag)) {
-			_G(magic_cnt) = 0;
-			add_magic(-2);
-			add_health(1);
-			play_sound(ANGEL, 0);
-		} else if (_G(magic_cnt) > 8) {
-			_G(magic_cnt) = 0;
-			add_magic(-2);
-			add_health(1);
-			if (!sound_playing())
-				play_sound(ANGEL, 0);
-		}
-		_G(apple_flag) = 1;
-		return 1;
+    if (flag && _G(thor_info).magic > 0) {
+        if (!_G(apple_flag)) {
+            _G(magic_cnt) = 0;
+            add_magic(-2);
+            add_health(1);
+            play_sound(ANGEL, 0);
+        } else if (_G(magic_cnt) > 8) {
+            _G(magic_cnt) = 0;
+            add_magic(-2);
+            add_health(1);
+            if (!sound_playing())
+                play_sound(ANGEL, 0);
+        }
+        _G(apple_flag) = 1;
+        return 1;
 
-	} else {
-		_G(apple_flag) = 0;
-		if (flag)
-			not_enough_magic();
-	}
-	return 0;
+    } else {
+        _G(apple_flag) = 0;
+        if (flag)
+            not_enough_magic();
+    }
+    return 0;
 }
 
 int use_thunder(int flag) {
 
-	if (flag && _G(thor_info).magic > 29) {
-		if (!_G(thunder_flag)) {
-			add_magic(-30);
-			play_sound(THUNDER, 0);
-			_G(thunder_flag) = 60;
-		}
-		return 1;
-	} else if (flag && !_G(thunder_flag)) not_enough_magic();
+    if (flag && _G(thor_info).magic > 29) {
+        if (!_G(thunder_flag)) {
+            add_magic(-30);
+            play_sound(THUNDER, 0);
+            _G(thunder_flag) = 60;
+        }
+        return 1;
+    } else if (flag && !_G(thunder_flag)) not_enough_magic();
 
-	if (_G(thunder_flag)) return 1;
-	return 0;
+    if (_G(thunder_flag)) return 1;
+    return 0;
 }
 
 int use_hourglass(int flag) {
-	int hour_time[] = { 0,60,120,180,240,300,360,420,480,
-					 510,540,570,600,630,660,690 };
+    int hour_time[] = { 0,60,120,180,240,300,360,420,480,
+                        510,540,570,600,630,660,690
+                      };
 
-	if (_G(hourglass_flag)) {
-		if ((int)_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
-			_G(hourglass_flag)++;
-			if (_G(hourglass_flag) == 16) {
-				_G(hourglass_flag) = 0;
-				music_resume();
-			}
-			play_sound(WOOP, 1);
-		}
-		return 1;
-	}
+    if (_G(hourglass_flag)) {
+        if ((int)_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
+            _G(hourglass_flag)++;
+            if (_G(hourglass_flag) == 16) {
+                _G(hourglass_flag) = 0;
+                music_resume();
+            }
+            play_sound(WOOP, 1);
+        }
+        return 1;
+    }
 
-	if (flag && _G(thor_info).magic > 29) {
-		if (!_G(hourglass_flag)) {
-			_G(magic_cnt) = 0;
-			add_magic(-30);
-			music_pause();
-			play_sound(WOOP, 1);
-			_G(hourglass_flag) = 1;
-			return 1;
-		}
-	} else {
-		_G(hourglass_flag) = 0;
-		if (flag) not_enough_magic();
-	}
-	return 0;
+    if (flag && _G(thor_info).magic > 29) {
+        if (!_G(hourglass_flag)) {
+            _G(magic_cnt) = 0;
+            add_magic(-30);
+            music_pause();
+            play_sound(WOOP, 1);
+            _G(hourglass_flag) = 1;
+            return 1;
+        }
+    } else {
+        _G(hourglass_flag) = 0;
+        if (flag) not_enough_magic();
+    }
+    return 0;
 }
 
 int use_boots(int flag) {
 
-	if (flag) {
-		if (_G(thor_info).magic > 0) {
-			if (_G(thor)->num_moves == 1) {
-				_G(magic_cnt) = 0;
-				add_magic(-1);
-			} else if (_G(magic_cnt) > 8) {
-				_G(magic_cnt) = 0;
-				add_magic(-1);
-			}
-			_G(thor)->num_moves = 2;
-			_G(hammer)->num_moves = 3;
-			return 1;
-		} else {
-			not_enough_magic();
-			_G(thor)->num_moves = 1;
-			_G(hammer)->num_moves = 2;
-		}
-	} else {
-		_G(thor)->num_moves = 1;
-		_G(hammer)->num_moves = 2;
-	}
-	return 0;
+    if (flag) {
+        if (_G(thor_info).magic > 0) {
+            if (_G(thor)->num_moves == 1) {
+                _G(magic_cnt) = 0;
+                add_magic(-1);
+            } else if (_G(magic_cnt) > 8) {
+                _G(magic_cnt) = 0;
+                add_magic(-1);
+            }
+            _G(thor)->num_moves = 2;
+            _G(hammer)->num_moves = 3;
+            return 1;
+        } else {
+            not_enough_magic();
+            _G(thor)->num_moves = 1;
+            _G(hammer)->num_moves = 2;
+        }
+    } else {
+        _G(thor)->num_moves = 1;
+        _G(hammer)->num_moves = 2;
+    }
+    return 0;
 }
 
 int use_shield(int flag) {
-	bool f = false;
+    bool f = false;
 
-	if (flag) {
-		if (_G(thor_info).magic) {
-			if (!_G(shield_on)) {
-				_G(magic_cnt) = 0;
-				add_magic(-1);
-				setup_magic_item(1);
+    if (flag) {
+        if (_G(thor_info).magic) {
+            if (!_G(shield_on)) {
+                _G(magic_cnt) = 0;
+                add_magic(-1);
+                setup_magic_item(1);
 
-				_G(actor)[2] = _G(magic_item)[1];
-				setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
-				_G(actor)[2].speed_count = 1;
-				_G(actor)[2].speed = 1;
-				_G(shield_on) = true;
-			} else if (_G(magic_cnt) > 8) {
-				_G(magic_cnt) = 0;
-				add_magic(-1);
-			}
+                _G(actor)[2] = _G(magic_item)[1];
+                setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
+                _G(actor)[2].speed_count = 1;
+                _G(actor)[2].speed = 1;
+                _G(shield_on) = true;
+            } else if (_G(magic_cnt) > 8) {
+                _G(magic_cnt) = 0;
+                add_magic(-1);
+            }
 
-			return 1;
+            return 1;
 
-		} else {
-			f = true;
-			not_enough_magic();
-		}
-	} else {
-		f = true;
-	}
+        } else {
+            f = true;
+            not_enough_magic();
+        }
+    } else {
+        f = true;
+    }
 
-	if (f) {
-		if (_G(shield_on)) {
-			_G(actor)[2].dead = 2;
-			_G(actor)[2].used = 0;
-			_G(shield_on) = false;
-		}
-	}
+    if (f) {
+        if (_G(shield_on)) {
+            _G(actor)[2].dead = 2;
+            _G(actor)[2].used = 0;
+            _G(shield_on) = false;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int use_lightning(int flag) {
-	if (flag) {
-		if (_G(thor_info).magic > 14) {
-			add_magic(-15);
-			g_events->send("Game", GameMessage("THROW_LIGHTNING"));
-		} else {
-			not_enough_magic();
-			return 0;
-		}
-	}
-	return 1;
+    if (flag) {
+        if (_G(thor_info).magic > 14) {
+            add_magic(-15);
+            g_events->send("Game", GameMessage("THROW_LIGHTNING"));
+        } else {
+            not_enough_magic();
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int use_tornado(int flag) {
-	if (flag) {
-		if (_G(thor_info).magic > 10) {
-			if (!_G(tornado_used) && !_G(actor)[2].dead && _G(magic_cnt) > 20) {
-				_G(magic_cnt) = 0;
-				add_magic(-10);
-				setup_magic_item(0);
-				_G(actor)[2] = _G(magic_item)[0];
+    if (flag) {
+        if (_G(thor_info).magic > 10) {
+            if (!_G(tornado_used) && !_G(actor)[2].dead && _G(magic_cnt) > 20) {
+                _G(magic_cnt) = 0;
+                add_magic(-10);
+                setup_magic_item(0);
+                _G(actor)[2] = _G(magic_item)[0];
 
-				setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
-				_G(actor)[2].last_dir = _G(thor)->dir;
-				_G(actor)[2].move = 16;
-				_G(tornado_used) = 1;
-				play_sound(WIND, 0);
-			}
-		} else if (_G(tornado_used) == 0) {
-			not_enough_magic();
-			return 0;
-		}
-		if (_G(magic_cnt) > 8) {
-			if (_G(tornado_used)) {
-				_G(magic_cnt) = 0;
-				add_magic(-1);
-			}
-		}
-		if (_G(thor_info).magic < 1) {
-			actor_destroyed(&_G(actor)[2]);
-			_G(tornado_used) = 0;
-			not_enough_magic();
-			return 0;
-		}
-		return 1;
-	}
-	return 0;
+                setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
+                _G(actor)[2].last_dir = _G(thor)->dir;
+                _G(actor)[2].move = 16;
+                _G(tornado_used) = 1;
+                play_sound(WIND, 0);
+            }
+        } else if (_G(tornado_used) == 0) {
+            not_enough_magic();
+            return 0;
+        }
+        if (_G(magic_cnt) > 8) {
+            if (_G(tornado_used)) {
+                _G(magic_cnt) = 0;
+                add_magic(-1);
+            }
+        }
+        if (_G(thor_info).magic < 1) {
+            actor_destroyed(&_G(actor)[2]);
+            _G(tornado_used) = 0;
+            not_enough_magic();
+            return 0;
+        }
+        return 1;
+    }
+    return 0;
 }
 
 int use_object(int flag) {
-	if (!flag) return 0;
-	if (!(_G(thor_info).inventory & 64))
-		return 0;
+    if (!flag) return 0;
+    if (!(_G(thor_info).inventory & 64))
+        return 0;
 
-	odin_speaks((_G(thor_info).object - 1) + 5501, _G(thor_info).object - 1);
-	return 1;
+    odin_speaks((_G(thor_info).object - 1) + 5501, _G(thor_info).object - 1);
+    return 1;
 }
 
 void use_item() {
-	int kf, ret = 0, mf;
+    int kf, ret = 0, mf;
 
-	kf = _G(key_flag)[key_magic];
+    kf = _G(key_flag)[key_magic];
 
-	if (!kf && _G(tornado_used)) {
-		actor_destroyed(&_G(actor)[2]);
-		_G(tornado_used) = 0;
-	}
+    if (!kf && _G(tornado_used)) {
+        actor_destroyed(&_G(actor)[2]);
+        _G(tornado_used) = 0;
+    }
 
-	mf = _G(magic_inform);
-	switch (_G(thor_info).item) {
-	case 1:
-		ret = use_apple(kf);
-		break;
-	case 2:
-		ret = use_lightning(kf);
-		break;
-	case 3:
-		ret = use_boots(kf);
-		break;
-	case 4:
-		ret = use_tornado(kf);
-		break;
-	case 5:
-		ret = use_shield(kf);
-		break;
-	case 6:
-		ret = use_thunder(kf);
-		break;
-	case 7:
-		ret = use_object(kf);
-		break;
+    mf = _G(magic_inform);
+    switch (_G(thor_info).item) {
+    case 1:
+        ret = use_apple(kf);
+        break;
+    case 2:
+        ret = use_lightning(kf);
+        break;
+    case 3:
+        ret = use_boots(kf);
+        break;
+    case 4:
+        ret = use_tornado(kf);
+        break;
+    case 5:
+        ret = use_shield(kf);
+        break;
+    case 6:
+        ret = use_thunder(kf);
+        break;
+    case 7:
+        ret = use_object(kf);
+        break;
 
-	}
-	if (kf) {
-		if ((!ret) && (!_G(useItemFlag))) {
-			if (mf)
-				play_sound(BRAAPP, 0);
-			_G(useItemFlag) = true;
-		}
-	} else {
-		_G(useItemFlag) = false;
-	}
+    }
+    if (kf) {
+        if ((!ret) && (!_G(useItemFlag))) {
+            if (mf)
+                play_sound(BRAAPP, 0);
+            _G(useItemFlag) = true;
+        }
+    } else {
+        _G(useItemFlag) = false;
+    }
 }
 
 void not_enough_magic() {
-	if (!_G(magic_inform))
-		odin_speaks(2006, 0);
+    if (!_G(magic_inform))
+        odin_speaks(2006, 0);
 
-	_G(magic_inform) = 1;
+    _G(magic_inform) = 1;
 }
 
 void cannot_carry_more() {
-	if (!_G(carry_inform))
-		odin_speaks(2007, 0);
-	_G(carry_inform) = 1;
+    if (!_G(carry_inform))
+        odin_speaks(2007, 0);
+    _G(carry_inform) = 1;
 }
 
 void delete_object() {
 
-	_G(thor_info).inventory &= 0xbf;
-	_G(thor_info).item = 1;
-	display_item();
+    _G(thor_info).inventory &= 0xbf;
+    _G(thor_info).item = 1;
+    display_item();
 }
 
 } // namespace Got

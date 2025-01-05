@@ -31,23 +31,23 @@ namespace Dialogs {
 
 class HighScores : public Dialog {
 private:
-	int _currentArea = 0;
-	bool _showAll = false;
-	int _timeoutCtr = 0;
+    int _currentArea = 0;
+    bool _showAll = false;
+    int _timeoutCtr = 0;
 
-	void goToMainMenu();
-	void goToNextArea();
+    void goToMainMenu();
+    void goToNextArea();
 
 public:
-	HighScores();
-	virtual ~HighScores() {
-	}
+    HighScores();
+    virtual ~HighScores() {
+    }
 
-	void draw() override;
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	bool tick() override;
+    void draw() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    bool msgGame(const GameMessage &msg) override;
+    bool tick() override;
 };
 
 } // namespace Dialogs

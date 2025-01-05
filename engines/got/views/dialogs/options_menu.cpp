@@ -30,43 +30,43 @@ namespace Views {
 namespace Dialogs {
 
 static const char *OPTIONS[] = {
-	"Sound/Music", "Skill Level", "Save Game", "Load Game",
-		"Die", "Turbo Mode", "Help", "Quit", nullptr
+    "Sound/Music", "Skill Level", "Save Game", "Load Game",
+    "Die", "Turbo Mode", "Help", "Quit", nullptr
 };
 
 OptionsMenu::OptionsMenu() : SelectOption("OptionsMenu", "Options Menu", OPTIONS) {
 }
 
 void OptionsMenu::selected() {
-	switch (_selectedItem) {
-	case 0:
-		addView("SetSound");
-		break;
-	case 1:
-		// skill level
-		break;
-	case 2:
-		g_engine->saveGameDialog();
-		break;
-	case 3:
-		g_engine->loadGameDialog();
-		break;
-	case 4:
-		g_events->send(GameMessage("THOR_DIES"));
-		break;
-	case 5:
-		addView("SelectSlow");
-		break;
-	case 6:
-		// Help
-		odin_speaks(2008, -1);
-		break;
-	case 7:
-		addView("QuitGame");
-		break;
-	default:
-		break;
-	}
+    switch (_selectedItem) {
+    case 0:
+        addView("SetSound");
+        break;
+    case 1:
+        // skill level
+        break;
+    case 2:
+        g_engine->saveGameDialog();
+        break;
+    case 3:
+        g_engine->loadGameDialog();
+        break;
+    case 4:
+        g_events->send(GameMessage("THOR_DIES"));
+        break;
+    case 5:
+        addView("SelectSlow");
+        break;
+    case 6:
+        // Help
+        odin_speaks(2008, -1);
+        break;
+    case 7:
+        addView("QuitGame");
+        break;
+    default:
+        break;
+    }
 }
 
 } // namespace Dialogs

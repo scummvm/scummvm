@@ -29,23 +29,23 @@ namespace Got {
 #define HIGH_SCORES_PER_AREA 7
 
 struct HighScore {
-	uint16 _unused;
-	uint32 _total;
-	char _name[32];
+    uint16 _unused;
+    uint32 _total;
+    char _name[32];
 
-	void sync(Common::Serializer &s);
+    void sync(Common::Serializer &s);
 };
 
 struct HighScores {
 private:
-	void sync(Common::Serializer &s);
+    void sync(Common::Serializer &s);
 
 public:
-	HighScore _scores[3][HIGH_SCORES_PER_AREA];
+    HighScore _scores[3][HIGH_SCORES_PER_AREA];
 
-	void load();
-	void save();
-	void add(int area, const Common::String &name, uint total);
+    void load();
+    void save();
+    void add(int area, const Common::String &name, uint total);
 };
 
 } // namespace Got

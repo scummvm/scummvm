@@ -35,37 +35,37 @@ enum CompressMode { UNCOMPRESSED = 0, LZSS = 1, RLE = 2 };
 
 struct GraphicChunk  {
 private:
-	Common::Array<byte> _decompressedData;
+    Common::Array<byte> _decompressedData;
 
 public:
-	int _compressMode = UNCOMPRESSED;
-	uint32 _offset = 0;
-	uint16 _uncompressedSize = 0;
-	uint16 _compressedSize = 0;
-	uint16 _width = 0;
-	uint16 _height = 0;
+    int _compressMode = UNCOMPRESSED;
+    uint32 _offset = 0;
+    uint16 _uncompressedSize = 0;
+    uint16 _compressedSize = 0;
+    uint16 _width = 0;
+    uint16 _height = 0;
 
-	const byte *_data = nullptr;
+    const byte *_data = nullptr;
 
-	/**
-	 * Load the overall info for a chunk
-	 */
-	void load(Common::SeekableReadStream *src, const byte *data);
+    /**
+     * Load the overall info for a chunk
+     */
+    void load(Common::SeekableReadStream *src, const byte *data);
 
-	/**
-	 * Handles any decompression necessary for the entry
-	 */
-	void enable();
+    /**
+     * Handles any decompression necessary for the entry
+     */
+    void enable();
 
-	/**
-	 * Provides a managed surface wrapper for raw data
-	 */
-	operator const Graphics::ManagedSurface() const;
+    /**
+     * Provides a managed surface wrapper for raw data
+     */
+    operator const Graphics::ManagedSurface() const;
 
-	/**
-	 * Provides a data pointer, used for getting palette chunks
-	 */
-	operator const Gfx::Palette63() const;
+    /**
+     * Provides a data pointer, used for getting palette chunks
+     */
+    operator const Gfx::Palette63() const;
 };
 
 /**
@@ -77,28 +77,28 @@ public:
  */
 class GfxChunks {
 private:
-	Common::Array<GraphicChunk> _chunks;
-	byte *_data = nullptr;
+    Common::Array<GraphicChunk> _chunks;
+    byte *_data = nullptr;
 
-	/**
-	 * Opens the graphics for access
-	 */
-	Common::SeekableReadStream *getStream() const;
+    /**
+     * Opens the graphics for access
+     */
+    Common::SeekableReadStream *getStream() const;
 
 public:
-	~GfxChunks() {
-		delete[] _data;
-	}
+    ~GfxChunks() {
+        delete[] _data;
+    }
 
-	/**
-	 * Loads the graphic data
-	 */
-	void load();
+    /**
+     * Loads the graphic data
+     */
+    void load();
 
-	/**
-	 * Access a chunk
-	 */
-	GraphicChunk &operator[](uint idx);
+    /**
+     * Access a chunk
+     */
+    GraphicChunk &operator[](uint idx);
 };
 
 } // namespace Gfx
