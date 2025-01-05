@@ -406,9 +406,6 @@ void PictureMgr::drawPicture() {
 	case AGIPIC_C64:
 		drawPictureC64();
 		break;
-	case AGIPIC_V1:
-		drawPictureV1();
-		break;
 	case AGIPIC_V15:
 		drawPictureV15();
 		break;
@@ -458,48 +455,6 @@ void PictureMgr::drawPictureC64() {
 			break;
 		case 0xe6:  // plot brush
 			plotBrush_PreAGI();
-			break;
-		case 0xff: // end of data
-			return;
-		default:
-			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
-			break;
-		}
-	}
-}
-
-void PictureMgr::drawPictureV1() {
-	debugC(kDebugLevelPictures, "Drawing V1 picture");
-
-	while (_dataOffset < _dataSize) {
-		byte curByte = getNextByte();
-
-		switch (curByte) {
-		case 0xf1:
-			draw_SetColor();
-			_scrOn = true;
-			_priOn = false;
-			break;
-		case 0xf3:
-			draw_SetColor();
-			_scrOn = true;
-			draw_SetPriority();
-			_priOn = true;
-			break;
-		case 0xfa:
-			_scrOn = false;
-			_priOn = true;
-			draw_LineAbsolute();
-			_scrOn = true;
-			_priOn = false;
-			break;
-		case 0xfb:
-			draw_LineShort();
-			break;
-		case 0xfc:
-			draw_SetColor();
-			draw_SetPriority();
-			draw_Fill();
 			break;
 		case 0xff: // end of data
 			return;
