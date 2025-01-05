@@ -83,6 +83,15 @@ void GfxChunks::load() {
 	// Get stream to access images
 	Common::SeekableReadStream *f = getStream();
 
+#if 0
+	Common::DumpFile df;
+	if (df.open("got.gfx")) {
+		df.writeStream(f);
+		f->seek(0);
+	}
+	df.close();
+#endif
+
 	// Keep a copy in memory for decoding images as needed
 	_data = new byte[f->size()];
 	f->read(_data, f->size());
@@ -113,7 +122,7 @@ GraphicChunk &GfxChunks::operator[](uint idx) {
 Common::SeekableReadStream *GfxChunks::getStream() const {
 	// Check for stand-alone graphics file
 	Common::File *f = new Common::File;
-	if (f->open("graphics.got"))
+	if (f->open("got.gfx"))
 		return f;
 	delete f;
 
