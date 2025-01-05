@@ -314,8 +314,8 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 	int tileH = _frames[0]->h;
 	byte *dst = (byte *)dstSurf.getBasePtr(0, 0);
 
-	int nXTiles = (width + tileW - 1) / tileW;
-	int nYTiles = (height + tileH - 1) / tileH;
+	int nXTiles = MIN((width + tileW - 1) / tileW, (int)_matrixX);
+	int nYTiles = MIN((height + tileH - 1) / tileH, (int)_matrixY);
 
 	for (int yTile = 0; yTile < nYTiles; yTile++) {
 		int tileDstY = y + yTile * tileH;
@@ -323,6 +323,9 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 		if (tileRowIndex < 0)
 			tileRowIndex += _matrixY;
 		assert(tileRowIndex >= 0 && tileRowIndex < _matrixY);
+
+		if (tileDstY >= drawWin.bottom)
+			continue;
 
 		for (int xTile = 0; xTile < nXTiles; xTile++) {
 			int tileDstX = x + xTile * tileW;
