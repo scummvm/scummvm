@@ -31,15 +31,15 @@ SetSound::SetSound() : SelectOption("SetSound", "Set Sound", ON_OFF) {
 }
 
 bool SetSound::msgFocus(const FocusMessage &msg) {
-	_selectedItem = ConfMan.getBool("sfx_mute") ? 1 : 0;
-	return true;
+    _selectedItem = ConfMan.getBool("sfx_mute") ? 1 : 0;
+    return true;
 }
 
 void SetSound::selected() {
-	ConfMan.setBool("sfx_mute", _selectedItem == 1);
-	ConfMan.flushToDisk();
-	g_engine->syncSoundSettings();
-	addView("SetMusic");
+    ConfMan.setBool("sfx_mute", _selectedItem == 1);
+    ConfMan.flushToDisk();
+    g_engine->syncSoundSettings();
+    addView("SetMusic");
 }
 
 } // namespace Dialogs

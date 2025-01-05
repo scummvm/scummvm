@@ -29,21 +29,21 @@ namespace Views {
 
 class Opening : public View {
 private:
-	Graphics::ManagedSurface _surface;
-	int _frameCtr = 0;
-	int _shakeX = 0;
+    Graphics::ManagedSurface _surface;
+    int _frameCtr = 0;
+    int _shakeX = 0;
 
-	void drawTitle();
+    void drawTitle();
 
 public:
-	Opening() : View("Opening") {}
-	virtual ~Opening() {}
+    Opening() : View("Opening") {}
+    virtual ~Opening() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgUnfocus(const UnfocusMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    void draw() override;
+    bool tick() override;
 };
 
 } // namespace Views

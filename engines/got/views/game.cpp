@@ -34,95 +34,95 @@ namespace Got {
 namespace Views {
 
 Game::Game() : View("Game") {
-	_children.push_back(&_content);
-	_children.push_back(&_status);
-	_content.setBounds(Common::Rect(0, 0, 320, 240 - 48));
-	_status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
+    _children.push_back(&_content);
+    _children.push_back(&_status);
+    _content.setBounds(Common::Rect(0, 0, 320, 240 - 48));
+    _status.setBounds(Common::Rect(0, 240 - 48, 320, 240));
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
-	Gfx::load_palette();
-	return View::msgFocus(msg);
+    Gfx::load_palette();
+    return View::msgFocus(msg);
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
-	if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
-		return false;
+    if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
+        return false;
 
-	switch (msg.keycode) {
-	case Common::KEYCODE_F1:
-		odin_speaks(2008, -1);
-		return true;
+    switch (msg.keycode) {
+    case Common::KEYCODE_F1:
+        odin_speaks(2008, -1);
+        return true;
 
-	case Common::KEYCODE_f:
-		if (gDebugLevel > 0) {
-			// Hack used for testing end-game sequence
-			if (GAME1 && _G(current_level) == BOSS_LEVEL1)
-				closing_sequence1();
-			else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
-				closing_sequence2();
-			else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
-				closing_sequence3();
-		}
-		break;
+    case Common::KEYCODE_f:
+        if (gDebugLevel > 0) {
+            // Hack used for testing end-game sequence
+            if (GAME1 && _G(current_level) == BOSS_LEVEL1)
+                closing_sequence1();
+            else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
+                closing_sequence2();
+            else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
+                closing_sequence3();
+        }
+        break;
 
-	case Common::KEYCODE_e:
-		if (gDebugLevel > 0 && GAME3)
-			// Launch endgame screen
-			closing_sequence3_3();
-		break;
+    case Common::KEYCODE_e:
+        if (gDebugLevel > 0 && GAME3)
+            // Launch endgame screen
+            closing_sequence3_3();
+        break;
 
-	case Common::KEYCODE_s:
-		g_engine->saveGameDialog();
-		break;
+    case Common::KEYCODE_s:
+        g_engine->saveGameDialog();
+        break;
 
-	case Common::KEYCODE_l:
-		g_engine->loadGameDialog();
-		break;
+    case Common::KEYCODE_l:
+        g_engine->loadGameDialog();
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	return false;
+    return false;
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
-	if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
-		return false;
+    if (_G(gameMode) != MODE_NORMAL && _G(gameMode) != MODE_THUNDER)
+        return false;
 
-	switch (msg._action) {
-	case KEYBIND_FIRE:
-		thor_shoots();
-		break;
+    switch (msg._action) {
+    case KEYBIND_FIRE:
+        thor_shoots();
+        break;
 
-	case KEYBIND_SELECT:
-		select_item();
-		return true;
+    case KEYBIND_SELECT:
+        select_item();
+        return true;
 
-	case KEYBIND_THOR_DIES:
-		_content.send(GameMessage("THOR_DIES"));
-		return true;
+    case KEYBIND_THOR_DIES:
+        _content.send(GameMessage("THOR_DIES"));
+        return true;
 
-	case KEYBIND_ESCAPE:
-		addView("OptionsMenu");
-		return true;
+    case KEYBIND_ESCAPE:
+        addView("OptionsMenu");
+        return true;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	return false;
+    return false;
 }
 
 bool Game::tick() {
-	// There are many things in original game code that can trigger
-	// changes on screen, and for simplicity they each no longer have
-	// the code that partially updates the screen. Due to this,
-	// we set to redraw the screen every frame in case of updates
-	redraw();
+    // There are many things in original game code that can trigger
+    // changes on screen, and for simplicity they each no longer have
+    // the code that partially updates the screen. Due to this,
+    // we set to redraw the screen every frame in case of updates
+    redraw();
 
-	return View::tick();
+    return View::tick();
 }
 
 } // namespace Views

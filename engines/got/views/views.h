@@ -48,28 +48,28 @@ namespace Got {
 namespace Views {
 
 struct Views {
-	Credits _credits;
-	Game _game;
-	Opening _opening;
-	PartTitle _partTitle;
-	SplashScreen _splashScreen;
-	Story _story;
-	TitleBackground _titleBackground;
+    Credits _credits;
+    Game _game;
+    Opening _opening;
+    PartTitle _partTitle;
+    SplashScreen _splashScreen;
+    Story _story;
+    TitleBackground _titleBackground;
 
-	Dialogs::Ask _ask;
-	Dialogs::HighScores _highScores;
-	Dialogs::MainMenu _mainMenu;
-	Dialogs::OptionsMenu _optionsMenu;
-	Dialogs::Quit _quit;
-	Dialogs::QuitGame _quitGame;
-	Dialogs::SaveGame _saveGame;
-	Dialogs::Say _say;
-	Dialogs::SelectGame _selectGame;
-	Dialogs::SelectItem _selectItem;
-	Dialogs::SelectScroll _selectScroll;
-	Dialogs::SelectSlow _selectSlow;
-	Dialogs::SetMusic _setMusic;
-	Dialogs::SetSound _setSound;
+    Dialogs::Ask _ask;
+    Dialogs::HighScores _highScores;
+    Dialogs::MainMenu _mainMenu;
+    Dialogs::OptionsMenu _optionsMenu;
+    Dialogs::Quit _quit;
+    Dialogs::QuitGame _quitGame;
+    Dialogs::SaveGame _saveGame;
+    Dialogs::Say _say;
+    Dialogs::SelectGame _selectGame;
+    Dialogs::SelectItem _selectItem;
+    Dialogs::SelectScroll _selectScroll;
+    Dialogs::SelectSlow _selectSlow;
+    Dialogs::SetMusic _setMusic;
+    Dialogs::SetSound _setSound;
 };
 
 } // namespace Views

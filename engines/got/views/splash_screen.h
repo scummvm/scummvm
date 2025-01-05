@@ -29,20 +29,20 @@ namespace Views {
 
 class SplashScreen : public View {
 private:
-	const byte *_chunkSize = nullptr;
-	const byte *_chunkPtr = nullptr;
-	int _delayCtr = 0, _frameCtr = 0;
+    const byte *_chunkSize = nullptr;
+    const byte *_chunkPtr = nullptr;
+    int _delayCtr = 0, _frameCtr = 0;
 
-	void executeFrame(const byte *src, byte *dest);
+    void executeFrame(const byte *src, byte *dest);
 
 public:
-	SplashScreen() : View("SplashScreen") {}
-	virtual ~SplashScreen() {}
+    SplashScreen() : View("SplashScreen") {}
+    virtual ~SplashScreen() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgUnfocus(const UnfocusMessage &msg) override;
+    void draw() override;
+    bool tick() override;
 };
 
 } // namespace Views

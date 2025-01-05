@@ -29,133 +29,133 @@ namespace Got {
 namespace Views {
 
 bool Story::msgFocus(const FocusMessage &msg) {
-	res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
+    res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
 
-	res_read("STORYPAL", _G(pbuff));
-	_G(pbuff)[2] = 0;
-	_G(pbuff)[1] = 0;
-	_G(pbuff)[0] = 0;
+    res_read("STORYPAL", _G(pbuff));
+    _G(pbuff)[2] = 0;
+    _G(pbuff)[1] = 0;
+    _G(pbuff)[0] = 0;
 
-	for (int i = 0; i < 768; ++i)
-		_G(pbuff)[i] = (_G(pbuff)[i] * 255 + 31) / 63;
-	Gfx::xsetpal(_G(pbuff));
+    for (int i = 0; i < 768; ++i)
+        _G(pbuff)[i] = (_G(pbuff)[i] * 255 + 31) / 63;
+    Gfx::xsetpal(_G(pbuff));
 
-	// Create story image and load in it's fragments
-	_surface.create(320, 240 * 2);
+    // Create story image and load in it's fragments
+    _surface.create(320, 240 * 2);
 
-	for (int i = 0; i < 12; i++) {
-		Gfx::Pics pics(Common::String::format("OPENP%d", i + 1));
-		pics.load();
+    for (int i = 0; i < 12; i++) {
+        Gfx::Pics pics(Common::String::format("OPENP%d", i + 1));
+        pics.load();
 
-		_surface.blitFrom(pics[0], Common::Point(0, i * 40));
-	}
+        _surface.blitFrom(pics[0], Common::Point(0, i * 40));
+    }
 
-	// Set up the story text
-	int i = 0;
-	int x = 8, y = 2;
-	byte color = 72;
-	char s[21];
+    // Set up the story text
+    int i = 0;
+    int x = 8, y = 2;
+    byte color = 72;
+    char s[21];
 
-	const char *p = (const char *)_G(tmp_buff);
+    const char *p = (const char *)_G(tmp_buff);
 
-	while (i < 46) {
-		if (*p == '\n') {
-			x = 8;
-			y += 10;
-			i++;
+    while (i < 46) {
+        if (*p == '\n') {
+            x = 8;
+            y += 10;
+            i++;
 
-			if (i == 23) {
-				// Move to start of of "second page" of the surface
-				y = 240 + 2;
-			}
-		} else if (*p == '/' && *(p + 4) == '/') {
-			p++;
-			s[0] = *p++;
-			s[1] = *p++;
-			s[2] = *p++;
-			s[3] = 0;
-			color = atoi(s);
-		} else if (*p != '\r') {
-			_surface.printChar(*p, x - 1, y - 1, 255);
-			_surface.printChar(*p, x + 1, y + 1, 255);
-			_surface.printChar(*p, x - 1, y + 1, 255);
-			_surface.printChar(*p, x + 1, y - 1, 255);
-			_surface.printChar(*p, x, y - 1, 255);
-			_surface.printChar(*p, x, y + 1, 255);
-			_surface.printChar(*p, x - 1, y, 255);
-			_surface.printChar(*p, x + 1, y, 255);
-			_surface.printChar(*p, x, y, color);
-			x += 8;
-		}
+            if (i == 23) {
+                // Move to start of of "second page" of the surface
+                y = 240 + 2;
+            }
+        } else if (*p == '/' && *(p + 4) == '/') {
+            p++;
+            s[0] = *p++;
+            s[1] = *p++;
+            s[2] = *p++;
+            s[3] = 0;
+            color = atoi(s);
+        } else if (*p != '\r') {
+            _surface.printChar(*p, x - 1, y - 1, 255);
+            _surface.printChar(*p, x + 1, y + 1, 255);
+            _surface.printChar(*p, x - 1, y + 1, 255);
+            _surface.printChar(*p, x + 1, y - 1, 255);
+            _surface.printChar(*p, x, y - 1, 255);
+            _surface.printChar(*p, x, y + 1, 255);
+            _surface.printChar(*p, x - 1, y, 255);
+            _surface.printChar(*p, x + 1, y, 255);
+            _surface.printChar(*p, x, y, color);
+            x += 8;
+        }
 
-		p++;
-	}
+        p++;
+    }
 
-	// Final two glyphs
-	Gfx::Pics glyphs("STORYPIC", 262);
-	_surface.blitFrom(glyphs[0], Common::Point(146, 64));
-	if (_G(area) == 1)
-		_surface.blitFrom(glyphs[1], Common::Point(24, 88 + 240));
+    // Final two glyphs
+    Gfx::Pics glyphs("STORYPIC", 262);
+    _surface.blitFrom(glyphs[0], Common::Point(146, 64));
+    if (_G(area) == 1)
+        _surface.blitFrom(glyphs[1], Common::Point(24, 88 + 240));
 
-	// Play the opening music
-	music_play("OPENSONG", 1);
+    // Play the opening music
+    music_play("OPENSONG", 1);
 
-	return true;
+    return true;
 }
 
 bool Story::msgUnfocus(const UnfocusMessage &msg) {
-	_surface.clear();
-	music_pause();
+    _surface.clear();
+    music_pause();
 
-	return true;
+    return true;
 }
 
 void Story::draw() {
-	GfxSurface s = getSurface();
+    GfxSurface s = getSurface();
 
-	// Draw the currently visible part of the surface
-	s.blitFrom(_surface, Common::Rect(0, _yp, 320, _yp + 240),
-		Common::Point(0, 0));
+    // Draw the currently visible part of the surface
+    s.blitFrom(_surface, Common::Rect(0, _yp, 320, _yp + 240),
+               Common::Point(0, 0));
 }
 
 bool Story::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE || _yp == 240)
-		done();
-	else if (!_scrolling)
-		_scrolling = true;
-	else
-		_yp = 240;
+    if (msg._action == KEYBIND_ESCAPE || _yp == 240)
+        done();
+    else if (!_scrolling)
+        _scrolling = true;
+    else
+        _yp = 240;
 
-	return true;
+    return true;
 }
 
 bool Story::msgKeypress(const KeypressMessage &msg) {
-	if (_yp == 240)
-		done();
-	else if (!_scrolling)
-		_scrolling = true;
-	else
-		_yp = 240;
+    if (_yp == 240)
+        done();
+    else if (!_scrolling)
+        _scrolling = true;
+    else
+        _yp = 240;
 
-	return true;
+    return true;
 }
 
 bool Story::tick() {
-	if (_scrolling && _yp < 240) {
-		_yp += 4;
-		redraw();
-	}
+    if (_scrolling && _yp < 240) {
+        _yp += 4;
+        redraw();
+    }
 
-	return true;
+    return true;
 }
 
 void Story::done() {
-	music_stop();
+    music_stop();
 
-	fadeOut();
-	Gfx::load_palette();
-	replaceView("PartTitle");
-	fadeIn();
+    fadeOut();
+    Gfx::load_palette();
+    replaceView("PartTitle");
+    fadeIn();
 }
 
 } // namespace Views

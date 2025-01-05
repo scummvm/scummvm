@@ -30,16 +30,16 @@
 #include "got/detection_tables.h"
 
 const DebugChannelDef GotMetaEngineDetection::debugFlagList[] = {
-	{ Got::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Got::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Got::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Got::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Got::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
+    { Got::kDebugGraphics, "Graphics", "Graphics debug level" },
+    { Got::kDebugPath, "Path", "Pathfinding debug level" },
+    { Got::kDebugFilePath, "FilePath", "File path debug level" },
+    { Got::kDebugScan, "Scan", "Scan for unrecognised games" },
+    { Got::kDebugScript, "Script", "Enable debug script dump" },
+    DEBUG_CHANNEL_END
 };
 
 GotMetaEngineDetection::GotMetaEngineDetection() : AdvancedMetaEngineDetection(
-	Got::gameDescriptions, Got::gotGames) {
+        Got::gameDescriptions, Got::gotGames) {
 }
 
 REGISTER_PLUGIN_STATIC(GOT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GotMetaEngineDetection);

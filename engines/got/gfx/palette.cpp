@@ -35,105 +35,105 @@ namespace Gfx {
 static byte saved_palette[PALETTE_SIZE];
 
 Palette63::Palette63(const byte *pal) {
-	for (uint i = 0; i < PALETTE_SIZE; ++i)
-		_pal[i] = pal[i] << 2;
+    for (uint i = 0; i < PALETTE_SIZE; ++i)
+        _pal[i] = pal[i] << 2;
 }
 
 
 void load_palette() {
-	if (res_read("PALETTE", saved_palette) < 0)
-		error("Cannot Read PALETTE");
+    if (res_read("PALETTE", saved_palette) < 0)
+        error("Cannot Read PALETTE");
 
-	g_system->getPaletteManager()->setPalette(saved_palette, 0, 256);
+    g_system->getPaletteManager()->setPalette(saved_palette, 0, 256);
 }
 
 void set_screen_pal() {
-	byte pal[3];
+    byte pal[3];
 
-	xgetpal(pal, 1, _G(scrn).pal_colors[0]);
-	xsetpal(251, pal[0], pal[1], pal[2]);
-	xgetpal(pal, 1, _G(scrn).pal_colors[1]);
-	xsetpal(252, pal[0], pal[1], pal[2]);
-	xgetpal(pal, 1, _G(scrn).pal_colors[2]);
-	xsetpal(253, pal[0], pal[1], pal[2]);
+    xgetpal(pal, 1, _G(scrn).pal_colors[0]);
+    xsetpal(251, pal[0], pal[1], pal[2]);
+    xgetpal(pal, 1, _G(scrn).pal_colors[1]);
+    xsetpal(252, pal[0], pal[1], pal[2]);
+    xgetpal(pal, 1, _G(scrn).pal_colors[2]);
+    xsetpal(253, pal[0], pal[1], pal[2]);
 }
 
 void xsetpal(byte color, byte R, byte G, byte B) {
-	byte rgb[3] = { R, G, B };
-	g_system->getPaletteManager()->setPalette(rgb, color, 1);
+    byte rgb[3] = { R, G, B };
+    g_system->getPaletteManager()->setPalette(rgb, color, 1);
 }
 
 void xsetpal(const byte *pal) {
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+    g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
 }
 
 void xgetpal(byte *pal, int num_colrs, int start_index) {
-	g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
+    g_system->getPaletteManager()->grabPalette(pal, start_index, num_colrs);
 }
 
 void fade_out() {
-	byte tempPal[PALETTE_SIZE];
-	const byte *srcP;
-	byte *destP;
-	int count;
-	Common::Event evt;
+    byte tempPal[PALETTE_SIZE];
+    const byte *srcP;
+    byte *destP;
+    int count;
+    Common::Event evt;
 
-	xgetpal(saved_palette, PALETTE_COUNT, 0);
+    xgetpal(saved_palette, PALETTE_COUNT, 0);
 
-	for (int step = FADE_STEPS - 1; step >= 0; --step) {
-		// Set each palette RGB proportionately
-		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
-				count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
-			*destP = *srcP * step / FADE_STEPS;
-		}
+    for (int step = FADE_STEPS - 1; step >= 0; --step) {
+        // Set each palette RGB proportionately
+        for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
+                count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+            *destP = *srcP * step / FADE_STEPS;
+        }
 
-		// Set new palette
-		xsetpal(tempPal);
+        // Set new palette
+        xsetpal(tempPal);
 
-		// Use up any pending events and update the screen
-		while (g_system->getEventManager()->pollEvent(evt)) {
-			if (evt.type == Common::EVENT_QUIT)
-				return;
-		}
+        // Use up any pending events and update the screen
+        while (g_system->getEventManager()->pollEvent(evt)) {
+            if (evt.type == Common::EVENT_QUIT)
+                return;
+        }
 
-		g_events->getScreen()->update();
-		g_system->delayMillis(10);
-	}
+        g_events->getScreen()->update();
+        g_system->delayMillis(10);
+    }
 }
 
 void fade_in(const byte *pal) {
-	byte tempPal[PALETTE_SIZE];
-	const byte *srcP;
-	byte *destP;
-	int count;
-	Common::Event evt;
+    byte tempPal[PALETTE_SIZE];
+    const byte *srcP;
+    byte *destP;
+    int count;
+    Common::Event evt;
 
-	if (pal)
-		Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
+    if (pal)
+        Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
 
-	// Start with a black palette
-	Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
-	xsetpal(tempPal);
+    // Start with a black palette
+    Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
+    xsetpal(tempPal);
 
-	for (int step = 1; step <= FADE_STEPS; ++step) {
-		// Set each palette RGB proportionately
-		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
-			count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
-			*destP = *srcP * step / FADE_STEPS;
-		}
+    for (int step = 1; step <= FADE_STEPS; ++step) {
+        // Set each palette RGB proportionately
+        for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
+                count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+            *destP = *srcP * step / FADE_STEPS;
+        }
 
-		// Set new palette
-		xsetpal(tempPal);
+        // Set new palette
+        xsetpal(tempPal);
 
-		// Use up any pending events and update the screen
-		while (g_system->getEventManager()->pollEvent(evt)) {
-			if (evt.type == Common::EVENT_QUIT)
-				return;
-		}
+        // Use up any pending events and update the screen
+        while (g_system->getEventManager()->pollEvent(evt)) {
+            if (evt.type == Common::EVENT_QUIT)
+                return;
+        }
 
-		g_events->getScreen()->update();
-		g_system->delayMillis(10);
-	}
+        g_events->getScreen()->update();
+        g_system->delayMillis(10);
+    }
 }
 
 } // namespace Gfx

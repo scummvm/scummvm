@@ -29,135 +29,135 @@ namespace Dialogs {
 #define _HRZSP 24
 
 static const char *ITEM_NAMES[] = {
-	"Enchanted Apple", "Lightning Power", "Winged Boots",
-	"Wind Power", "Amulet of Protection","Thunder Power"
+    "Enchanted Apple", "Lightning Power", "Winged Boots",
+    "Wind Power", "Amulet of Protection","Thunder Power"
 };
 
 SelectItem::SelectItem() : Dialog("SelectItem") {
-	setBounds(Common::Rect(56, 48, 264, 160));
+    setBounds(Common::Rect(56, 48, 264, 160));
 }
 
 void SelectItem::draw() {
-	int b;
-	const char *objn;
+    int b;
+    const char *objn;
 
-	Dialog::draw();
-	GfxSurface s = getSurface();
+    Dialog::draw();
+    GfxSurface s = getSurface();
 
-	if (_G(thor_info).inventory == 0) {
-		s.print(Common::Point(44, 52), "No Items Found", 14);
-		return;
-	}
+    if (_G(thor_info).inventory == 0) {
+        s.print(Common::Point(44, 52), "No Items Found", 14);
+        return;
+    }
 
-	b = 1;
-	for (int l = 0; l < 7; l++, b = b << 1) {
-		if (_G(thor_info).inventory & b) {
-			if (l < 6)
-				s.blitFrom(_G(objects)[l + 26],
-					Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
-			else
-				s.blitFrom(_G(objects)[_G(thor_info).object + 10],
-					Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
-		}
-	}
+    b = 1;
+    for (int l = 0; l < 7; l++, b = b << 1) {
+        if (_G(thor_info).inventory & b) {
+            if (l < 6)
+                s.blitFrom(_G(objects)[l + 26],
+                           Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
+            else
+                s.blitFrom(_G(objects)[_G(thor_info).object + 10],
+                           Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
+        }
+    }
 
-	if (_selectedItem < 6)
-		objn = ITEM_NAMES[_selectedItem];
-	else
-		objn = _G(thor_info).object_name;
+    if (_selectedItem < 6)
+        objn = ITEM_NAMES[_selectedItem];
+    else
+        objn = _G(thor_info).object_name;
 
-	s.print(Common::Point((s.w - (strlen(objn) * 8)) / 2, 66), objn, 12);
-	s.frameRect(Common::Rect(26 + (_selectedItem * _HRZSP), 22,
-		43 + (_selectedItem * _HRZSP), 42), 15);
+    s.print(Common::Point((s.w - (strlen(objn) * 8)) / 2, 66), objn, 12);
+    s.frameRect(Common::Rect(26 + (_selectedItem * _HRZSP), 22,
+                             43 + (_selectedItem * _HRZSP), 42), 15);
 }
 
 bool SelectItem::msgFocus(const FocusMessage &msg) {
-	int b;
+    int b;
 
-	if (_G(thor_info).inventory == 0) {
-		_selectedItem = -1;
-	} else {
-		_selectedItem = _G(thor_info).item - 1;
-		if (_selectedItem < 1)
-			_selectedItem = 0;
+    if (_G(thor_info).inventory == 0) {
+        _selectedItem = -1;
+    } else {
+        _selectedItem = _G(thor_info).item - 1;
+        if (_selectedItem < 1)
+            _selectedItem = 0;
 
-		b = 1 << _selectedItem;
-		for (;;) {
-			if (_G(thor_info).inventory & b)
-				break;
-			if (_selectedItem < 7)
-				_selectedItem++;
-			else
-				_selectedItem = 0;
+        b = 1 << _selectedItem;
+        for (;;) {
+            if (_G(thor_info).inventory & b)
+                break;
+            if (_selectedItem < 7)
+                _selectedItem++;
+            else
+                _selectedItem = 0;
 
-			b = 1 << _selectedItem;
-		}
-	}
+            b = 1 << _selectedItem;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 bool SelectItem::msgAction(const ActionMessage &msg) {
-	int b;
+    int b;
 
-	if (_G(thor_info).inventory == 0) {
-		close();
-		return true;
-	}
+    if (_G(thor_info).inventory == 0) {
+        close();
+        return true;
+    }
 
-	switch (msg._action) {
-	case KEYBIND_ESCAPE:
-		close();
-		break;
+    switch (msg._action) {
+    case KEYBIND_ESCAPE:
+        close();
+        break;
 
-	case KEYBIND_SELECT:
-	case KEYBIND_FIRE:
-	case KEYBIND_MAGIC:
-		selectItem();
-		break;
+    case KEYBIND_SELECT:
+    case KEYBIND_FIRE:
+    case KEYBIND_MAGIC:
+        selectItem();
+        break;
 
-	case KEYBIND_LEFT:
-		for (;;) {
-			if (_selectedItem > 0)
-				_selectedItem--;
-			else
-				_selectedItem = 8;
+    case KEYBIND_LEFT:
+        for (;;) {
+            if (_selectedItem > 0)
+                _selectedItem--;
+            else
+                _selectedItem = 8;
 
-			b = 1 << _selectedItem;
-			if (_G(thor_info).inventory & b)
-				break;
-		}
+            b = 1 << _selectedItem;
+            if (_G(thor_info).inventory & b)
+                break;
+        }
 
-		play_sound(WOOP, 1);
-		redraw();
-		break;
+        play_sound(WOOP, 1);
+        redraw();
+        break;
 
-	case KEYBIND_RIGHT:
-		while (1) {
-			if (_selectedItem < 9)
-				_selectedItem++;
-			else
-				_selectedItem = 0;
+    case KEYBIND_RIGHT:
+        while (1) {
+            if (_selectedItem < 9)
+                _selectedItem++;
+            else
+                _selectedItem = 0;
 
-			b = 1 << _selectedItem;
-			if (_G(thor_info).inventory & b)
-				break;
-		}
+            b = 1 << _selectedItem;
+            if (_G(thor_info).inventory & b)
+                break;
+        }
 
-		play_sound(WOOP, 1);
-		redraw();
-		break;
+        play_sound(WOOP, 1);
+        redraw();
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	return true;
+    return true;
 }
 
 void SelectItem::selectItem() {
-	_G(thor_info).item = _selectedItem + 1;
-	close();
+    _G(thor_info).item = _selectedItem + 1;
+    close();
 }
 
 } // namespace Dialogs

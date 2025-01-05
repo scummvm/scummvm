@@ -28,45 +28,45 @@ namespace Views {
 namespace Dialogs {
 
 void PlayGame::draw() {
-	Dialog::draw();
+    Dialog::draw();
 #ifdef TODO
-	// Write the title
-	GfxSurface s = getSurface(true);
-	int titleStart = (s.w - _title.size() * 8) / 2;
+    // Write the title
+    GfxSurface s = getSurface(true);
+    int titleStart = (s.w - _title.size() * 8) / 2;
 
-	s.print(Common::Point(titleStart, 4), _title, 54);
+    s.print(Common::Point(titleStart, 4), _title, 54);
 #endif
 }
 
 bool PlayGame::msgAction(const ActionMessage &msg) {
-	// Don't allow further actions if selection is in progress
+    // Don't allow further actions if selection is in progress
 
-	switch (msg._action) {
-	case KEYBIND_UP:
-		play_sound(WOOP,1);		
-		break;
+    switch (msg._action) {
+    case KEYBIND_UP:
+        play_sound(WOOP,1);
+        break;
 
-	case KEYBIND_DOWN:
-		play_sound(WOOP, 1);
-		break;
+    case KEYBIND_DOWN:
+        play_sound(WOOP, 1);
+        break;
 
-	case KEYBIND_SELECT:
-	case KEYBIND_FIRE:
-	case KEYBIND_MAGIC:
-		break;
+    case KEYBIND_SELECT:
+    case KEYBIND_FIRE:
+    case KEYBIND_MAGIC:
+        break;
 
-	case KEYBIND_ESCAPE:
-		close();
+    case KEYBIND_ESCAPE:
+        close();
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	return true;
+    return true;
 }
 
 bool PlayGame::tick() {
-	return true;
+    return true;
 }
 
 } // namespace Dialogs

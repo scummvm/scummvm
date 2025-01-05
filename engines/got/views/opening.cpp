@@ -29,89 +29,89 @@ namespace Views {
 int ctr = 0;
 
 void Opening::draw() {
-	GfxSurface s = getSurface();
+    GfxSurface s = getSurface();
 
-	if (_shakeX == 0) {
-		s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), Common::Rect(0, 0, 320, 240));
-	} else {
-		s.clear();
-		Common::Rect destRect(0, 0, 320, 240);
-		destRect.translate(_shakeX, 0);
-		s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), destRect);
-	}
+    if (_shakeX == 0) {
+        s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), Common::Rect(0, 0, 320, 240));
+    } else {
+        s.clear();
+        Common::Rect destRect(0, 0, 320, 240);
+        destRect.translate(_shakeX, 0);
+        s.blitFrom(_surface, Common::Rect(0, 0, 320, 400), destRect);
+    }
 }
 
 bool Opening::msgFocus(const FocusMessage &msg) {
-	const byte *src;
-	byte *dest;
+    const byte *src;
+    byte *dest;
 
-	_surface.create(320, 400);
-	for (int chunkNum = 0; chunkNum < 4; ++chunkNum) {
-		src = _G(gfx)[36 + chunkNum]._data;
-		dest = (byte *)_surface.getBasePtr(chunkNum, 0);
+    _surface.create(320, 400);
+    for (int chunkNum = 0; chunkNum < 4; ++chunkNum) {
+        src = _G(gfx)[36 + chunkNum]._data;
+        dest = (byte *)_surface.getBasePtr(chunkNum, 0);
 
-		for (int i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
-			*dest = *src;
-	}
+        for (int i = 0; i < (320 * 400 / 4); ++i, ++src, dest += 4)
+            *dest = *src;
+    }
 
-	// Fade in the screen
-	Gfx::Palette63 pal = _G(gfx)[35];
-	draw();
-	fadeIn(pal);
+    // Fade in the screen
+    Gfx::Palette63 pal = _G(gfx)[35];
+    draw();
+    fadeIn(pal);
 
-	return true;
+    return true;
 }
 
 void Opening::drawTitle() {
-	const byte *src;
-	byte *dest;
+    const byte *src;
+    byte *dest;
 
-	src = _G(gfx)[40]._data;
+    src = _G(gfx)[40]._data;
 
-	for (int pane = 0; pane < 4; ++pane) {
-		dest = (byte *)_surface.getBasePtr(pane, 0);
+    for (int pane = 0; pane < 4; ++pane) {
+        dest = (byte *)_surface.getBasePtr(pane, 0);
 
-		for (int i = 0; i < (320 * 80 / 4); ++i, ++src, dest += 4)
-			*dest = *src;
-	}
+        for (int i = 0; i < (320 * 80 / 4); ++i, ++src, dest += 4)
+            *dest = *src;
+    }
 }
 
 bool Opening::msgUnfocus(const UnfocusMessage &msg) {
-	_surface.clear();
-	return true;
+    _surface.clear();
+    return true;
 }
 
 bool Opening::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		fadeOut();
-		send("TitleBackground", GameMessage("MAIN_MENU"));
-		return true;
-	}
+    if (msg._action == KEYBIND_ESCAPE) {
+        fadeOut();
+        send("TitleBackground", GameMessage("MAIN_MENU"));
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool Opening::tick() {
-	++_frameCtr;
+    ++_frameCtr;
 
-	if (_frameCtr == 20) {
-		drawTitle();
-		redraw();
-		play_sound(_G(gfx)[104]);
-	} else if (_frameCtr < 40) {
-		if ((_frameCtr % 4) == 0) {
-			_shakeX = g_engine->getRandomNumber(19) - 10;
-			redraw();
-		}
-	} else if (_frameCtr == 41) {
-		_shakeX = 0;
-		redraw();
-	} else if (_frameCtr == 150) {
-		fadeOut();
-		replaceView("Credits", true);
-	}
+    if (_frameCtr == 20) {
+        drawTitle();
+        redraw();
+        play_sound(_G(gfx)[104]);
+    } else if (_frameCtr < 40) {
+        if ((_frameCtr % 4) == 0) {
+            _shakeX = g_engine->getRandomNumber(19) - 10;
+            redraw();
+        }
+    } else if (_frameCtr == 41) {
+        _shakeX = 0;
+        redraw();
+    } else if (_frameCtr == 150) {
+        fadeOut();
+        replaceView("Credits", true);
+    }
 
-	return true;
+    return true;
 }
 
 } // namespace Views

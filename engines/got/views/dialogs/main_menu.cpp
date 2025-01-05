@@ -28,55 +28,55 @@ namespace Views {
 namespace Dialogs {
 
 static const char *OPTIONS[] = {
-	"Play Game", "Load Game", "High Scores", "Credits", "Demo", "Quit", nullptr
+    "Play Game", "Load Game", "High Scores", "Credits", "Demo", "Quit", nullptr
 };
 
 MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu", OPTIONS) {
 }
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
-	g_vars->resetEndgameFlags();
-	return SelectOption::msgFocus(msg);
+    g_vars->resetEndgameFlags();
+    return SelectOption::msgFocus(msg);
 }
 
 void MainMenu::closed() {
-	_selectedItem = 4; // Quit game
-	selected();
+    _selectedItem = 4; // Quit game
+    selected();
 }
 
 void MainMenu::selected() {
-	switch (_selectedItem) {
-	case 0:
-		_G(demo) = false;
-		addView("SelectGame");
-		break;
+    switch (_selectedItem) {
+    case 0:
+        _G(demo) = false;
+        addView("SelectGame");
+        break;
 
-	case 1:
-		if (!g_engine->loadGameDialog())
-			addView("SelectGame");
-		break;
+    case 1:
+        if (!g_engine->loadGameDialog())
+            addView("SelectGame");
+        break;
 
-	case 2:
-		replaceView("HighScores", true, true);
-		break;
+    case 2:
+        replaceView("HighScores", true, true);
+        break;
 
-	case 3:
-		addView("Credits");
-		break;
+    case 3:
+        addView("Credits");
+        break;
 
-	case 4:
-		_G(demo) = true;
-		initialize_game();
-		replaceView("Game", true, true);
-		break;
+    case 4:
+        _G(demo) = true;
+        initialize_game();
+        replaceView("Game", true, true);
+        break;
 
-	case 5:
-		addView("Quit");
-		break;
+    case 5:
+        addView("Quit");
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 }
 
 } // namespace Dialogs

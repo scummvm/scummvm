@@ -28,26 +28,26 @@ namespace Views {
 namespace Dialogs {
 
 static const char *OPTIONS[] = {
-	"Part 1: Serpent Surprise!",
-	"Part 2: Non-stick Nognir",
-	"Part 3: Lookin' for Loki",
-	nullptr
+    "Part 1: Serpent Surprise!",
+    "Part 2: Non-stick Nognir",
+    "Part 3: Lookin' for Loki",
+    nullptr
 };
 
 SelectGame::SelectGame() : SelectOption("SelectGame", "Play Which Game?", OPTIONS) {
 }
 
 void SelectGame::selected() {
-	// Select the game area to start from
-	g_vars->setArea(_selectedItem + 1);
+    // Select the game area to start from
+    g_vars->setArea(_selectedItem + 1);
 
-	// Switch to the story view for the selected game area
-	initialize_game();
-	replaceView("Story", true, true);
+    // Switch to the story view for the selected game area
+    initialize_game();
+    replaceView("Story", true, true);
 }
 
 void SelectGame::closed() {
-	addView("MainMenu");
+    addView("MainMenu");
 }
 
 } // namespace Dialogs

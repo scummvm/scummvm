@@ -31,10 +31,10 @@ namespace Dialogs {
 
 class Dialog : public View {
 public:
-	Dialog(const Common::String &name);
-	virtual ~Dialog() {}
+    Dialog(const Common::String &name);
+    virtual ~Dialog() {}
 
-	void draw() override;
+    void draw() override;
 };
 
 } // namespace Dialogs

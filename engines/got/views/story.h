@@ -30,22 +30,22 @@ namespace Views {
 
 class Story : public View {
 private:
-	Gfx::GfxSurface _surface;
-	int _yp = 0;
-	bool _scrolling = false;
+    Gfx::GfxSurface _surface;
+    int _yp = 0;
+    bool _scrolling = false;
 
-	void done();
+    void done();
 
 public:
-	Story() : View("Story") {}
-	virtual ~Story() {}
+    Story() : View("Story") {}
+    virtual ~Story() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
-	bool tick() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgUnfocus(const UnfocusMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    bool msgKeypress(const KeypressMessage &msg) override;
+    void draw() override;
+    bool tick() override;
 };
 
 } // namespace Views

@@ -30,12 +30,12 @@ namespace Dialogs {
 
 class SetSound : public SelectOption {
 public:
-	SetSound();
-	virtual ~SetSound() {
-	}
+    SetSound();
+    virtual ~SetSound() {
+    }
 
-	bool msgFocus(const FocusMessage &msg) override;
-	void selected() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    void selected() override;
 };
 
 } // namespace Dialogs

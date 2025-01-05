@@ -44,67 +44,67 @@ struct GotGameDescription;
 
 class GotEngine : public Engine, public Events {
 private:
-	const ADGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
+    const ADGameDescription *_gameDescription;
+    Common::RandomSource _randomSource;
 
-	void savegameLoaded();
+    void savegameLoaded();
 
 protected:
-	// Engine APIs
-	Common::Error run() override;
+    // Engine APIs
+    Common::Error run() override;
 
-	/**
-	 * Returns true if the game should quit
-	 */
-	bool shouldQuit() const override {
-		return Engine::shouldQuit();
-	}
-
-public:
-	Vars _vars;
+    /**
+     * Returns true if the game should quit
+     */
+    bool shouldQuit() const override {
+        return Engine::shouldQuit();
+    }
 
 public:
-	GotEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~GotEngine() override;
+    Vars _vars;
 
-	uint32 getFeatures() const;
-	bool isDemo() const;
+public:
+    GotEngine(OSystem *syst, const ADGameDescription *gameDesc);
+    ~GotEngine() override;
 
-	/**
-	 * Returns the game Id
-	 */
-	Common::String getGameId() const;
+    uint32 getFeatures() const;
+    bool isDemo() const;
 
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
+    /**
+     * Returns the game Id
+     */
+    Common::String getGameId() const;
 
-	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
-	};
+    /**
+     * Gets a random number
+     */
+    uint32 getRandomNumber(uint maxNum) {
+        return _randomSource.getRandomNumber(maxNum);
+    }
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+    bool hasFeature(EngineFeature f) const override {
+        return
+            (f == kSupportsLoadingDuringRuntime) ||
+            (f == kSupportsSavingDuringRuntime) ||
+            (f == kSupportsReturnToLauncher);
+    };
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
+    bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+    bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+    /**
+     * Uses a serializer to allow implementing savegame
+     * loading and saving using a single method
+     */
+    Common::Error syncGame(Common::Serializer &s);
 
-	void syncSoundSettings() override;
-	void pauseEngineIntern(bool pause) override;
+    Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+    Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
-	Common::String getHighScoresSaveName() const;
+    void syncSoundSettings() override;
+    void pauseEngineIntern(bool pause) override;
+
+    Common::String getHighScoresSaveName() const;
 };
 
 extern GotEngine *g_engine;

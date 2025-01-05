@@ -29,162 +29,162 @@ namespace Dialogs {
 #define _HRZSP 24
 
 Say::Say() : Dialog("Say") {
-	setBounds(Common::Rect(32, 48, 288, 160));
+    setBounds(Common::Rect(32, 48, 288, 160));
 }
 
 void Say::show(int item, const Gfx::Pics &speakerIcon, int type) {
-	Say *view = (Say *)g_events->findView("Say");
-	view->_item = item;
-	view->_speakerIcon = speakerIcon;
-	view->_type = type;
-	view->addView();
+    Say *view = (Say *)g_events->findView("Say");
+    view->_item = item;
+    view->_speakerIcon = speakerIcon;
+    view->_type = type;
+    view->addView();
 }
 
 bool Say::msgFocus(const FocusMessage &msg) {
-	if (!_type)
-		play_sound(WOOP, 1);
+    if (!_type)
+        play_sound(WOOP, 1);
 
-	_content = (const char *)_G(tmp_buff);
-	_contentLength = 0;
-	_waitForResponse = WAIT_NONE;
-	_woopCtr = 0;
-	_picIndex = 0;
+    _content = (const char *)_G(tmp_buff);
+    _contentLength = 0;
+    _waitForResponse = WAIT_NONE;
+    _woopCtr = 0;
+    _picIndex = 0;
 
-	return true;
+    return true;
 }
 
 bool Say::msgUnfocus(const UnfocusMessage &msg) {
-	// Since the Ask dialog is shown by scripts, closing the view
-	// starts the calling script running again
-	_G(scripts).resume();
-	return true;
+    // Since the Ask dialog is shown by scripts, closing the view
+    // starts the calling script running again
+    _G(scripts).resume();
+    return true;
 }
 
 void Say::draw() {
-	Dialog::draw();
-	GfxSurface s = getSurface();
+    Dialog::draw();
+    GfxSurface s = getSurface();
 
-	if (_item)
-		s.blitFrom(_G(objects)[_item], Common::Point(160, 17));
+    if (_item)
+        s.blitFrom(_G(objects)[_item], Common::Point(160, 17));
 
-	const char *p = _content;
-	const char *endP = _content + _contentLength;
-	int color = 14;
-	int x = 20, lc = 0;
-	int ch;
+    const char *p = _content;
+    const char *endP = _content + _contentLength;
+    int color = 14;
+    int x = 20, lc = 0;
+    int ch;
 
-	while (p < endP) {
-		if (*p == '~' && Common::isXDigit(*(p + 1))) {
-			p++;
-			ch = *p;
-			p++;
-			if (Common::isDigit(ch))
-				ch -= '0';
-			else
-				ch = toupper(ch) - 'A' + 10;
+    while (p < endP) {
+        if (*p == '~' && Common::isXDigit(*(p + 1))) {
+            p++;
+            ch = *p;
+            p++;
+            if (Common::isDigit(ch))
+                ch -= '0';
+            else
+                ch = toupper(ch) - 'A' + 10;
 
-			color = Gfx::DIALOG_COLOR[ch];
-			continue;
-		}
+            color = Gfx::DIALOG_COLOR[ch];
+            continue;
+        }
 
-		if (*p == '\n') {
-			x = 20;
-			lc++;
-			if (lc > 4) {
-				// Got a full text to display
-				if (_waitForResponse == WAIT_NONE)
-					_waitForResponse = WAIT_MORE;
-				_picIndex = 1;
-				break;
-			}
+        if (*p == '\n') {
+            x = 20;
+            lc++;
+            if (lc > 4) {
+                // Got a full text to display
+                if (_waitForResponse == WAIT_NONE)
+                    _waitForResponse = WAIT_MORE;
+                _picIndex = 1;
+                break;
+            }
 
-			p++;
-			continue;
-		}
+            p++;
+            continue;
+        }
 
-		s.printChar(*p, x, 35 + (lc * 10), color);
+        s.printChar(*p, x, 35 + (lc * 10), color);
 
-		p++;
-		x += 8;
-	}
+        p++;
+        x += 8;
+    }
 
-	s.blitFrom(_speakerIcon[_picIndex], Common::Point(120, 17));
+    s.blitFrom(_speakerIcon[_picIndex], Common::Point(120, 17));
 
-	if (_waitForResponse == WAIT_MORE)
-		s.print(Common::Point(184, 86), "More...", 15);
+    if (_waitForResponse == WAIT_MORE)
+        s.print(Common::Point(184, 86), "More...", 15);
 }
 
 bool Say::msgKeypress(const KeypressMessage &msg) {
-	if (_waitForResponse == WAIT_DONE) {
-		close();
-	} else if (_waitForResponse == WAIT_MORE) {
-		_waitForResponse = WAIT_NONE;
-		_content = _content + _contentLength;
-		_contentLength = 0;
-		redraw();
-	} else {
-		showEntirePage();
-		redraw();
-	}
+    if (_waitForResponse == WAIT_DONE) {
+        close();
+    } else if (_waitForResponse == WAIT_MORE) {
+        _waitForResponse = WAIT_NONE;
+        _content = _content + _contentLength;
+        _contentLength = 0;
+        redraw();
+    } else {
+        showEntirePage();
+        redraw();
+    }
 
-	return false;
+    return false;
 }
 
 bool Say::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE || _waitForResponse == WAIT_DONE) {
-		close();
-	} else if (_waitForResponse == WAIT_MORE) {
-		_waitForResponse = WAIT_NONE;
-		_content = _content + _contentLength;
-		_contentLength = 0;
-		redraw();
-	} else {
-		showEntirePage();
-		redraw();
-	}
+    if (msg._action == KEYBIND_ESCAPE || _waitForResponse == WAIT_DONE) {
+        close();
+    } else if (_waitForResponse == WAIT_MORE) {
+        _waitForResponse = WAIT_NONE;
+        _content = _content + _contentLength;
+        _contentLength = 0;
+        redraw();
+    } else {
+        showEntirePage();
+        redraw();
+    }
 
-	return true;
+    return true;
 }
 
 bool Say::tick() {
-	if (_waitForResponse == WAIT_NONE && ++_contentCtr > 1) {
-		_contentCtr = 0;
-		const char *contentEnd = _content + ++_contentLength;
+    if (_waitForResponse == WAIT_NONE && ++_contentCtr > 1) {
+        _contentCtr = 0;
+        const char *contentEnd = _content + ++_contentLength;
 
-		if (*(contentEnd - 1) == '~' && Common::isXDigit(*contentEnd))
-			++_contentLength;
+        if (*(contentEnd - 1) == '~' && Common::isXDigit(*contentEnd))
+            ++_contentLength;
 
-		if (!*contentEnd) {
-			// Reached end of text to display
-			_waitForResponse = WAIT_DONE;
-			_picIndex = 1;
-		} else if (++_picIndex > 3) {
-			_picIndex = 0;
-		}
+        if (!*contentEnd) {
+            // Reached end of text to display
+            _waitForResponse = WAIT_DONE;
+            _picIndex = 1;
+        } else if (++_picIndex > 3) {
+            _picIndex = 0;
+        }
 
-		if (_type) {
-			play_sound(WOOP, 1);
-			_woopCtr = 0;
-		}
+        if (_type) {
+            play_sound(WOOP, 1);
+            _woopCtr = 0;
+        }
 
-		redraw();
-	}
+        redraw();
+    }
 
-	return true;
+    return true;
 }
 
 void Say::showEntirePage() {
-	int lc = 0;
-	char c;
+    int lc = 0;
+    char c;
 
-	for (_contentLength = 0; (c = *(_content + _contentLength)) != 0; ++_contentLength) {
-		if (c == '~' && Common::isXDigit(*(_content + _contentLength + 1)))
-			++_contentLength;
-		else if (c == '\n') {
-			if (++lc > 4)
-				break;
-		}
-	}
+    for (_contentLength = 0; (c = *(_content + _contentLength)) != 0; ++_contentLength) {
+        if (c == '~' && Common::isXDigit(*(_content + _contentLength + 1)))
+            ++_contentLength;
+        else if (c == '\n') {
+            if (++lc > 4)
+                break;
+        }
+    }
 }
 
 

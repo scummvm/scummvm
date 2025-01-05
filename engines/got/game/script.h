@@ -30,108 +30,108 @@ namespace Got {
 typedef void (*ScriptEndFn)();
 
 enum ScriptPause {
-	SCRIPT_READY, SCRIPT_PAUSED, SCRIPT_RESUMING
+    SCRIPT_READY, SCRIPT_PAUSED, SCRIPT_RESUMING
 };
 
 class Scripts {
 private:
-	ScriptEndFn _endFn = nullptr;
-	long  _numVar[26] = {};        // numeric variables
-	char  _strVar[26][81] = {};    // string vars
-	char  _lineLabel[32][9] = {};  // line label look up table
-	char  *_linePtr[32] = {};      // line label pointers
-	char  *_newPtr = nullptr;
-	int   _numLabels = 0;          // number of labels
-	char  *_gosubStack[32] = {};   // stack for GOSUB return addresses
-	int   _gosubPtr = 0;           // GOSUB stack pointer
-	char  *_forStack[10] = {};     // FOR stack
-	long  _forVal[10] = {};        // current FOR value
-	int8  _forVar[10] = {};        // ending FOR value (target var)
-	int8  _forPtr = 0;	           // FOR stack pointer
-	char  *_buffPtr = nullptr;     // pointer to current command
-	char  *_buffEnd = nullptr;	   // pointer to end of buffer
-	char  *_buffer = nullptr;      // buffer space (alloc'ed)
-	long  _scrIndex = 0;
-	Gfx::Pics _scrPic;
-	long  _lValue = 0;
-	long  _lTemp = 0;
-	char  _tempS[255] = {};
-	ScriptPause _paused = SCRIPT_READY;
-	int _askVar = -1;
+    ScriptEndFn _endFn = nullptr;
+    long  _numVar[26] = {};        // numeric variables
+    char  _strVar[26][81] = {};    // string vars
+    char  _lineLabel[32][9] = {};  // line label look up table
+    char  *_linePtr[32] = {};      // line label pointers
+    char  *_newPtr = nullptr;
+    int   _numLabels = 0;          // number of labels
+    char  *_gosubStack[32] = {};   // stack for GOSUB return addresses
+    int   _gosubPtr = 0;           // GOSUB stack pointer
+    char  *_forStack[10] = {};     // FOR stack
+    long  _forVal[10] = {};        // current FOR value
+    int8  _forVar[10] = {};        // ending FOR value (target var)
+    int8  _forPtr = 0;	           // FOR stack pointer
+    char  *_buffPtr = nullptr;     // pointer to current command
+    char  *_buffEnd = nullptr;	   // pointer to end of buffer
+    char  *_buffer = nullptr;      // buffer space (alloc'ed)
+    long  _scrIndex = 0;
+    Gfx::Pics _scrPic;
+    long  _lValue = 0;
+    long  _lTemp = 0;
+    char  _tempS[255] = {};
+    ScriptPause _paused = SCRIPT_READY;
+    int _askVar = -1;
 
 private:
-	int  read_script_file();
-	void script_error(int err_num);
-	int  get_command();
-	int  skip_colon();
-	int  calc_value();
-	int  get_next_val();
-	int  calc_string(int mode);
-	void get_str();
-	int  get_internal_variable();
-	int  exec_command(int num);
-	int get_line(char *src, char *dst);
-	void script_entry() {}
-	void script_exit();
+    int  read_script_file();
+    void script_error(int err_num);
+    int  get_command();
+    int  skip_colon();
+    int  calc_value();
+    int  get_next_val();
+    int  calc_string(int mode);
+    void get_str();
+    int  get_internal_variable();
+    int  exec_command(int num);
+    int get_line(char *src, char *dst);
+    void script_entry() {}
+    void script_exit();
 
-	int cmd_goto();
-	int cmd_if();
-	int cmd_run();
-	int cmd_addjewels();
-	int cmd_addhealth();
-	int cmd_addmagic();
-	int cmd_addkeys();
-	int cmd_addscore();
-	int cmd_say(int mode, int type);
-	int cmd_ask();
-	int cmd_sound();
-	int cmd_settile();
-	int cmd_itemgive();
-	int cmd_itemtake();
-	int cmd_setflag();
-	int cmd_ltoa();
-	int cmd_pause();
-	int cmd_visible();
-	int cmd_random();
-	int cmd_exec();
+    int cmd_goto();
+    int cmd_if();
+    int cmd_run();
+    int cmd_addjewels();
+    int cmd_addhealth();
+    int cmd_addmagic();
+    int cmd_addkeys();
+    int cmd_addscore();
+    int cmd_say(int mode, int type);
+    int cmd_ask();
+    int cmd_sound();
+    int cmd_settile();
+    int cmd_itemgive();
+    int cmd_itemtake();
+    int cmd_setflag();
+    int cmd_ltoa();
+    int cmd_pause();
+    int cmd_visible();
+    int cmd_random();
+    int cmd_exec();
 
-	void scr_func1();
-	void scr_func2();
-	void scr_func3();
-	void scr_func4();
-	void scr_func5();
+    void scr_func1();
+    void scr_func2();
+    void scr_func3();
+    void scr_func4();
+    void scr_func5();
 
-	typedef void (Scripts:: *ScrFunction)();
-	static ScrFunction scr_func[5];
+    typedef void (Scripts:: *ScrFunction)();
+    static ScrFunction scr_func[5];
 
-	void runScript(bool firstTime = true);
-	void scriptLoop();
+    void runScript(bool firstTime = true);
+    void scriptLoop();
 
 public:
-	Scripts();
-	~Scripts();
+    Scripts();
+    ~Scripts();
 
-	void execute_script(long index, const Gfx::Pics &speakerIcon,
-		ScriptEndFn endFn = nullptr);
+    void execute_script(long index, const Gfx::Pics &speakerIcon,
+                        ScriptEndFn endFn = nullptr);
 
-	void pause() {
-		_paused = SCRIPT_PAUSED;
-	}
-	void resume() {
-		_paused = SCRIPT_RESUMING;
-	}
+    void pause() {
+        _paused = SCRIPT_PAUSED;
+    }
+    void resume() {
+        _paused = SCRIPT_RESUMING;
+    }
 
-	void setAskResponse(int option);
-	void runIfResuming() {
-		if (_paused == SCRIPT_RESUMING) {
-			_paused = SCRIPT_READY;
-			scriptLoop();
-		}
-	}
+    void setAskResponse(int option);
+    void runIfResuming() {
+        if (_paused == SCRIPT_RESUMING) {
+            _paused = SCRIPT_READY;
+            scriptLoop();
+        }
+    }
 };
 
 extern void execute_script(long index, const Gfx::Pics &speakerIcon,
-	ScriptEndFn endFn = nullptr);
+                           ScriptEndFn endFn = nullptr);
 
 } // namespace Got
 

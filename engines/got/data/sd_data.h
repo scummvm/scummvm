@@ -29,24 +29,24 @@ namespace Got {
 
 class SdData {
 private:
-	byte *_data;
-	int _area = 1;
+    byte *_data;
+    int _area = 1;
 
 public:
-	SdData();
-	~SdData();
-	void load();
+    SdData();
+    ~SdData();
+    void load();
 
-	bool getArea() const {
-		return _area;
-	}
-	void setArea(int area);
+    bool getArea() const {
+        return _area;
+    }
+    void setArea(int area);
 
-	void sync(Common::Serializer &s);
+    void sync(Common::Serializer &s);
 
-	byte *operator[](int level) const {
-		return _data + level * 512;
-	}
+    byte *operator[](int level) const {
+        return _data + level * 512;
+    }
 };
 
 } // namespace Got

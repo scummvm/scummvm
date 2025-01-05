@@ -27,11 +27,11 @@
 namespace Got {
 
 enum GotDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
+    kDebugGraphics = 1,
+    kDebugPath,
+    kDebugScan,
+    kDebugFilePath,
+    kDebugScript,
 };
 
 extern const PlainGameDescriptor gotGames[];
@@ -43,27 +43,27 @@ extern const ADGameDescription gameDescriptions[];
 } // End of namespace Got
 
 class GotMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
+    static const DebugChannelDef debugFlagList[];
 
 public:
-	GotMetaEngineDetection();
-	~GotMetaEngineDetection() override {}
+    GotMetaEngineDetection();
+    ~GotMetaEngineDetection() override {}
 
-	const char *getName() const override {
-		return "got";
-	}
+    const char *getName() const override {
+        return "got";
+    }
 
-	const char *getEngineName() const override {
-		return "Got";
-	}
+    const char *getEngineName() const override {
+        return "Got";
+    }
 
-	const char *getOriginalCopyright() const override {
-		return "Got (C)";
-	}
+    const char *getOriginalCopyright() const override {
+        return "Got (C)";
+    }
 
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
+    const DebugChannelDef *getDebugChannels() const override {
+        return debugFlagList;
+    }
 };
 
 #endif // GOT_DETECTION_H

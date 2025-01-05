@@ -30,37 +30,37 @@ namespace Views {
 namespace Dialogs {
 
 class Say : public Dialog {
-	enum WaitResponse {
-		WAIT_NONE, WAIT_MORE, WAIT_DONE
-	};
+    enum WaitResponse {
+        WAIT_NONE, WAIT_MORE, WAIT_DONE
+    };
 private:
-	Gfx::Pics _speakerIcon;
-	int _item = 0;
-	int _type = 0;
-	int _picIndex = 0;
-	const char *_content = nullptr;
-	int _contentLength = 0;
-	int _woopCtr = 0;
-	int _contentCtr = 0;
-	WaitResponse _waitForResponse = WAIT_NONE;
+    Gfx::Pics _speakerIcon;
+    int _item = 0;
+    int _type = 0;
+    int _picIndex = 0;
+    const char *_content = nullptr;
+    int _contentLength = 0;
+    int _woopCtr = 0;
+    int _contentCtr = 0;
+    WaitResponse _waitForResponse = WAIT_NONE;
 
-	/**
-	 * Advance to showing the entirety of the current page
-	 */
-	void showEntirePage();
+    /**
+     * Advance to showing the entirety of the current page
+     */
+    void showEntirePage();
 
 public:
-	Say();
-	virtual ~Say() {}
+    Say();
+    virtual ~Say() {}
 
-	static void show(int item, const Gfx::Pics &speakerIcon, int type);
+    static void show(int item, const Gfx::Pics &speakerIcon, int type);
 
-	void draw() override;
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool tick() override;
+    void draw() override;
+    bool msgFocus(const FocusMessage &msg) override;
+    bool msgUnfocus(const UnfocusMessage &msg) override;
+    bool msgKeypress(const KeypressMessage &msg) override;
+    bool msgAction(const ActionMessage &msg) override;
+    bool tick() override;
 };
 
 } // namespace Dialogs
