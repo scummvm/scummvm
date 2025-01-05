@@ -16,6 +16,9 @@ endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_LIST += dists/engine-data/drascula.dat
 endif
+ifdef ENABLE_GOT
+DIST_FILES_LIST += dists/engine-data/got.gfx
+endif
 ifdef ENABLE_HADESCH
 DIST_FILES_LIST += dists/engine-data/hadesch_translations.dat
 endif

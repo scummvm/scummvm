@@ -45,6 +45,9 @@ This file contains set of free CJK fonts (or other big ones), used in our GUI an
 some engines. This file is intended to be big, thus, not suitable for ports with
 memory constraints.
 
+got.gfx:
+This is a set of graphics for the title screen and main menu that were embedded in the executable.
+
 grim-patch.lab:
 This file contains set of script patches for Grim Fandango game.
 
