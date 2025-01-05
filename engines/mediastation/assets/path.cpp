@@ -69,43 +69,20 @@ void Path::timePlay() {
 	uint totalSteps = (_header->_duration * _header->_stepRate) / 1000;
 	//uint stepDurationInMilliseconds = 1000 / _header->_stepRate;
 
-	// RUN THE START EVENT HANDLER.
-	EventHandler *startEventHandler = nullptr; // TODO: Haven't seen a path start event in the wild yet, don't know its ID.
-	if (startEventHandler != nullptr) {
-		debugC(5, kDebugScript, "Path::timePlay(): Running PathStart event handler");
-		startEventHandler->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "Path::timePlay(): No PathStart event handler");
-	}
+	// TODO: Run the path start event. Haven't seen one the wild yet, don't know its ID.
+	debugC(5, kDebugScript, "Path::timePlay(): No PathStart event handler");
 
 	// STEP THE PATH.
-	EventHandler *pathStepHandler = _header->_eventHandlers[kStepEvent];
 	for (uint i = 0; i < totalSteps; i++) {
 		_percentComplete = (double)(i + 1) / totalSteps;
 		debugC(5, kDebugScript, "Path::timePlay(): Step %d of %d", i, totalSteps);
 		// TODO: Actually step the path. It seems they mostly just use this for
 		// palette animation in the On Step event handler, so nothing is actually drawn on the screen now.
 
-		// RUN THE ON STEP EVENT HANDLER.
-		// TODO: Is this supposed to come after or before we step the path?
-		if (pathStepHandler != nullptr) {
-			debugC(5, kDebugScript, "Path::timePlay(): Running PathStep event handler");
-			pathStepHandler->execute(_header->_id);
-		} else {
-			debugC(5, kDebugScript, "Path::timePlay(): No PathStep event handler");
-		}
+		runEventHandlerIfExists(kStepEvent);
 	}
 
-	// RUN THE END EVENT HANDLER.
-	EventHandler *endEventHandler = _header->_eventHandlers[kPathEndEvent];
-	if (endEventHandler != nullptr) {
-		debugC(5, kDebugScript, "Path::timePlay(): Running PathEnd event handler");
-		endEventHandler->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "Path::timePlay(): No PathEnd event handler");
-	}
-
-	// CLEAN UP.
+	runEventHandlerIfExists(kPathEndEvent);
 	_percentComplete = 0;
 }
 

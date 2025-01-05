@@ -19,6 +19,7 @@
  *
  */
 
+#include "mediastation/debugchannels.h"
 #include "mediastation/asset.h"
 
 namespace MediaStation {
@@ -42,6 +43,26 @@ AssetType Asset::type() const {
 
 int Asset::zIndex() const {
 	return _header->_zIndex;
+}
+
+void Asset::runEventHandlerIfExists(EventType eventType) {
+	EventHandler *eventHandler = _header->_eventHandlers.getValOrDefault(eventType);
+	if (eventHandler != nullptr) {
+		debugC(5, kDebugScript, "Executing handler for event type %d on asset %d", static_cast<uint>(eventType), _header->_id);
+		eventHandler->execute(_header->_id);
+	} else {
+		debugC(5, kDebugScript, "No event handler for event type %d on asset %d", static_cast<uint>(eventType), _header->_id);
+	}
+}
+
+void Asset::runKeyDownEventHandlerIfExists(Common::KeyState keyState) {
+	EventHandler *keyDownEvent = _header->_keyDownHandlers.getValOrDefault(keyState.ascii);
+	if (keyDownEvent != nullptr) {
+		debugC(5, kDebugScript, "Executing keydown event handler for ASCII code %d on asset %d", keyState.ascii, _header->_id);
+		keyDownEvent->execute(_header->_id);
+	} else {
+		debugC(5, kDebugScript, "No keydown event handler for ASCII code %d on asset %d", keyState.ascii, _header->_id);
+	}
 }
 
 } // End of namespace MediaStation

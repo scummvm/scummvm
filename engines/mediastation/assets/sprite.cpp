@@ -125,14 +125,7 @@ void Sprite::timePlay() {
 		_header->_frameRate = 10;
 	}
 
-	// RUN THE MOVIE START EVENT HANDLER.
-	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(kMovieBeginEvent);
-	if (startEvent != nullptr) {
-		debugC(5, kDebugScript, "Sprite::timePlay(): Executing start event handler");
-		startEvent->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "Sprite::timePlay(): No start event handler");
-	}
+	runEventHandlerIfExists(kMovieBeginEvent);
 }
 
 void Sprite::movieReset() {
@@ -207,14 +200,7 @@ void Sprite::drawNextFrame() {
 		_currentFrameIndex = 0;
 		_nextFrameTime = 0;
 
-		// RUN THE SPRITE END EVENT HANDLER.
-		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieEndEvent);
-		if (endEvent != nullptr) {
-			debugC(5, kDebugScript, "Sprite::drawNextFrame(): Executing end event handler");
-			endEvent->execute(_header->_id);
-		} else {
-			debugC(5, kDebugScript, "Sprite::drawNextFrame(): No end event handler");
-		}
+		runEventHandlerIfExists(kSpriteMovieEndEvent);
 	}
 }
 

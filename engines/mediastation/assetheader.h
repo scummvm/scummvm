@@ -166,7 +166,7 @@ public:
 	// EVENT HANDLER FIELDS.
 	Common::HashMap<uint, EventHandler *> _eventHandlers;
 	Common::Array<EventHandler *> _timeHandlers;
-	Common::Array<EventHandler *> _keyDownHandlers;
+	Common::HashMap<uint, EventHandler *> _keyDownHandlers;
 	Common::Array<EventHandler *> _inputHandlers;
 	Common::Array<EventHandler *> _loadCompleteHandlers;
 

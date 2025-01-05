@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_ASSET_H
 #define MEDIASTATION_ASSET_H
 
+#include "common/keyboard.h"
 #include "common/func.h"
 
 #include "mediastation/subfile.h"
@@ -56,6 +57,9 @@ public:
 	// subfiles it doesnʻt need to just implement these with an error message.
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
+
+	void runEventHandlerIfExists(EventType eventType);
+	void runKeyDownEventHandlerIfExists(Common::KeyState keyState);
 
 	AssetType type() const;
 	int zIndex() const;

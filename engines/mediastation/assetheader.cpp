@@ -68,7 +68,14 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		}
 
 		case kKeyDownEvent: {
-			_keyDownHandlers.push_back(eventHandler);
+			if (eventHandler->_argumentType != kAsciiCodeEventHandlerArgument) {
+				error("Keydown event handler doesn't have correct argument type");
+			}
+			if (eventHandler->_argumentValue.t != kDatumTypeFloat64_2) {
+				error("Keydown event handler doesn't have correct argument value type");
+			}
+			uint asciiCode = static_cast<uint>(eventHandler->_argumentValue.u.f);
+			_keyDownHandlers.setVal(asciiCode, eventHandler);
 			break;
 		}
 

@@ -217,14 +217,7 @@ void Movie::timePlay() {
 		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, audio, -1, Audio::Mixer::kMaxChannelVolume);
 	}
 
-	// RUN THE MOVIE START EVENT HANDLER.
-	EventHandler *startEvent = _header->_eventHandlers.getValOrDefault(kMovieBeginEvent);
-	if (startEvent != nullptr) {
-		debugC(5, kDebugScript, "Movie::timePlay(): Executing movie start event handler");
-		startEvent->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "Movie::timePlay(): No movie start event handler");
-	}
+	runEventHandlerIfExists(kMovieBeginEvent);
 }
 
 void Movie::timeStop() {
@@ -233,14 +226,7 @@ void Movie::timeStop() {
 	_startTime = 0;
 	_lastProcessedTime = 0;
 
-	// RUN THE MOVIE STOPPED EVENT HANDLER.
-	EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieStoppedEvent);
-	if (endEvent != nullptr) {
-		debugC(5, kDebugScript, "Movie::play(): Executing movie stopped event handler");
-		endEvent->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "Movie::timePlay(): No movie stopped event handler");
-	}
+	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
 void Movie::process() {
@@ -282,14 +268,7 @@ bool Movie::drawNextFrame() {
 		_startTime = 0;
 		_lastProcessedTime = 0;
 
-		// Run the movie end event handler.
-		EventHandler *endEvent = _header->_eventHandlers.getValOrDefault(kMovieEndEvent);
-		if (endEvent != nullptr) {
-			debugC(5, kDebugScript, "Movie::drawNextFrame(): Executing movie end event handler");
-			endEvent->execute(_header->_id);
-		} else {
-			debugC(5, kDebugScript, "Movie::drawNextFrame(): No movie end event handler");
-		}
+		runEventHandlerIfExists(kMovieEndEvent);
 		return false;
 	}
 
