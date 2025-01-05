@@ -67,7 +67,7 @@ public:
 	} _value;
 
 	Variable();
-	Variable(Chunk &chunk);
+	Variable(Chunk &chunk, bool readId = true);
 	~Variable();
 };
 
