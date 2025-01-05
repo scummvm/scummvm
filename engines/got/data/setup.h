@@ -26,89 +26,79 @@
 
 namespace Got {
 
-struct SETUP {
-    SETUP() :
-        f00(0), f01(0), f02(0), f03(0), f04(0), f05(0), f06(0), f07(0), f08(0), f09(0),
-        f10(0), f11(0), f12(0), f13(0), f14(0), f15(0), f16(0), f17(0), f18(0), f19(0),
-        f20(0), f21(0), f22(0), f23(0), f24(0), f25(0), f26(0), f27(0), f28(0), f29(0),
-        f30(0), f31(0), f32(0), f33(0), f34(0), f35(0), f36(0), f37(0), f38(0), f39(0),
-        f40(0), f41(0), f42(0), f43(0), f44(0), f45(0), f46(0), f47(0), f48(0), f49(0),
-        f50(0), f51(0), f52(0), f53(0), f54(0), f55(0), f56(0), f57(0), f58(0), f59(0),
-        f60(0), f61(0), f62(0), f63(0) {
-    }
+struct SetupFlags {
+	bool _flags[64] = {};
+	bool &f00 = _flags[0];
+	bool &f01 = _flags[1];
+	bool &f02 = _flags[2];
+	bool &f03 = _flags[3];
+	bool &f04 = _flags[4];
+	bool &f05 = _flags[5];
+	bool &f06 = _flags[6];
+	bool &f07 = _flags[7];
+	bool &f08 = _flags[8];
+	bool &f09 = _flags[9];
+	bool &f10 = _flags[10];
+	bool &f11 = _flags[11];
+	bool &f12 = _flags[12];
+	bool &f13 = _flags[13];
+	bool &f14 = _flags[14];
+	bool &f15 = _flags[15];
+	bool &f16 = _flags[16];
+	bool &f17 = _flags[17];
+	bool &f18 = _flags[18];
+	bool &f19 = _flags[19];
+	bool &f20 = _flags[20];
+	bool &f21 = _flags[21];
+	bool &f22 = _flags[22];
+	bool &f23 = _flags[23];
+	bool &f24 = _flags[24];
+	bool &f25 = _flags[25];
+	bool &f26 = _flags[26];
+	bool &f27 = _flags[27];
+	bool &f28 = _flags[28];
+	bool &f29 = _flags[29];
+	bool &f30 = _flags[30];
+	bool &f31 = _flags[31];
+	bool &f32 = _flags[32];
+	bool &f33 = _flags[33];
+	bool &f34 = _flags[34];
+	bool &f35 = _flags[35];
+	bool &f36 = _flags[36];
+	bool &f37 = _flags[37];
+	bool &f38 = _flags[38];
+	bool &f39 = _flags[39];
+	bool &f40 = _flags[40];
+	bool &f41 = _flags[41];
+	bool &f42 = _flags[42];
+	bool &f43 = _flags[43];
+	bool &f44 = _flags[44];
+	bool &f45 = _flags[45];
+	bool &f46 = _flags[46];
+	bool &f47 = _flags[47];
+	bool &f48 = _flags[48];
+	bool &f49 = _flags[49];
+	bool &f50 = _flags[50];
+	bool &f51 = _flags[51];
+	bool &f52 = _flags[52];
+	bool &f53 = _flags[53];
+	bool &f54 = _flags[54];
+	bool &f55 = _flags[55];
+	bool &f56 = _flags[56];
+	bool &f57 = _flags[57];
+	bool &f58 = _flags[58];
+	bool &f59 = _flags[59];
+	bool &f60 = _flags[60];
+	bool &f61 = _flags[61];
+	bool &f62 = _flags[62];
+	bool &f63 = _flags[63];
 
-    unsigned int  f00 : 1;
-    unsigned int  f01 : 1;
-    unsigned int  f02 : 1;
-    unsigned int  f03 : 1;
-    unsigned int  f04 : 1;
-    unsigned int  f05 : 1;
-    unsigned int  f06 : 1;
-    unsigned int  f07 : 1;
+	SetupFlags() {}
+	void sync(Common::Serializer &s);
+	SetupFlags &operator=(const Got::SetupFlags &src);
+};
 
-    unsigned int  f08 : 1;
-    unsigned int  f09 : 1;
-    unsigned int  f10 : 1;
-    unsigned int  f11 : 1;
-    unsigned int  f12 : 1;
-    unsigned int  f13 : 1;
-    unsigned int  f14 : 1;
-    unsigned int  f15 : 1;
-
-    unsigned int  f16 : 1;
-    unsigned int  f17 : 1;
-    unsigned int  f18 : 1;
-    unsigned int  f19 : 1;
-    unsigned int  f20 : 1;
-    unsigned int  f21 : 1;
-    unsigned int  f22 : 1;
-    unsigned int  f23 : 1;
-
-    unsigned int  f24 : 1;
-    unsigned int  f25 : 1;
-    unsigned int  f26 : 1;
-    unsigned int  f27 : 1;
-    unsigned int  f28 : 1;
-    unsigned int  f29 : 1;
-    unsigned int  f30 : 1;
-    unsigned int  f31 : 1;
-
-    unsigned int  f32 : 1;
-    unsigned int  f33 : 1;
-    unsigned int  f34 : 1;
-    unsigned int  f35 : 1;
-    unsigned int  f36 : 1;
-    unsigned int  f37 : 1;
-    unsigned int  f38 : 1;
-    unsigned int  f39 : 1;
-
-    unsigned int  f40 : 1;
-    unsigned int  f41 : 1;
-    unsigned int  f42 : 1;
-    unsigned int  f43 : 1;
-    unsigned int  f44 : 1;
-    unsigned int  f45 : 1;
-    unsigned int  f46 : 1;
-    unsigned int  f47 : 1;
-
-    unsigned int  f48 : 1;
-    unsigned int  f49 : 1;
-    unsigned int  f50 : 1;
-    unsigned int  f51 : 1;
-    unsigned int  f52 : 1;
-    unsigned int  f53 : 1;
-    unsigned int  f54 : 1;
-    unsigned int  f55 : 1;
-
-    unsigned int  f56 : 1;
-    unsigned int  f57 : 1;
-    unsigned int  f58 : 1;
-    unsigned int  f59 : 1;
-    unsigned int  f60 : 1;
-    unsigned int  f61 : 1;
-    unsigned int  f62 : 1;
-    unsigned int  f63 : 1;
-
+struct SETUP : public SetupFlags {
     byte value[16] = {};
     byte junk = 0;
     byte game = 0;
