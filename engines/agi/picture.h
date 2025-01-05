@@ -42,11 +42,6 @@ struct AgiPicture {
 	AgiPicture() { reset(); }
 };
 
-enum AgiPictureVersion {
-	AGIPIC_V15,     // Troll (DOS)
-	AGIPIC_V2       // AGIv2, AGIv3
-};
-
 enum AgiPictureFlags {
 	kPicFNone      = (1 << 0),
 	kPicFf3Stop    = (1 << 1), // Troll, certain pictures
@@ -89,8 +84,6 @@ public:
 
 protected:
 	virtual void drawPicture();
-	void drawPictureV15();
-	void drawPictureV2();
 	void drawPictureAGI256();
 
 	void draw_SetColor();
@@ -110,8 +103,6 @@ public:
 	void showPicture(int16 x = 0, int16 y = 0, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void showPictureWithTransition();
 
-	void setPictureVersion(AgiPictureVersion version);
-
 	void setPictureFlags(int flags) { _flags = flags; }
 
 protected:
@@ -130,7 +121,6 @@ protected:
 
 	uint8 _minCommand;
 
-	AgiPictureVersion _pictureVersion;
 	int16 _width;
 	int16 _height;
 
