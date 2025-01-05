@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/picture.h"
@@ -26,6 +26,42 @@
 #include "agi/preagi/picture_mickey_winnie.h"
 
 namespace Agi {
+
+// PictureMgr_Mickey_Winnie decodes and draws picture resources in Mickey's
+// Space Adventure (DOS) and Winnie the Pooh (DOS/Amiga/A2/C64/CoCo).
+//
+// Mickey and Winnie DOS/Amiga use the same format. The picture code in
+// their executables appears to be the same.
+//
+// The A2/C64/CoCo versions of Winnie use a completely different format, but
+// they do support the same features. These games start in ScummVM but they
+// don't really work yet. TODO: display the right colors, figure out the line
+// differences, support these versions.
+//
+// Both formats support lines, flood fills, and patterns. No priority screen.
+//
+// Unique features to these formats:
+//
+// 1. Pictures can be drawn on top of others at arbitrary locations. Used to
+//    draw items in rooms, and to draw room pictures with a buffer on each side
+//    in DOS/Amiga. The pictures don't fill the screen width because they were
+//    designed for the Apple II.
+//
+// 2. Mickey's crystals animate. Most of the work is done in MickeyEngine;
+//    this class just allows the engine to set a maximum number of picture
+//    instructions to execute. Unclear if this is same effect as the original.
+//
+// 3. The pattern opcode draws solid circles in up to 17 sizes.
+//
+// Mickey features animating spaceship lights, but the engine handles that.
+// The lights are a picture whose instructions are modified before drawing.
+//
+// TODO: There are extremely minor inaccuracies in several Winnie pictures.
+// The F1 opcode's effects are not fully understood, and it creates subtle
+// discrepancies. It may be related to dithering. However, so few pictures
+// contain F3, and even fewer are effected by ignoring it or not, and only
+// by a few pixels, that it doesn't matter except for completeness.
+// See: picture 34 door handles (Rabbit's kitchen)
 
 PictureMgr_Mickey_Winnie::PictureMgr_Mickey_Winnie(AgiBase *agi, GfxMgr *gfx) :
 	PictureMgr(agi, gfx) {
@@ -160,6 +196,11 @@ void PictureMgr_Mickey_Winnie::drawPicture_A2_C64_CoCo() {
 	}
 }
 
+/**
+ * plotBrush (PreAGI)
+ *
+ * Plots the given brush pattern. All brushes are solid circles.
+ */
 void PictureMgr_Mickey_Winnie::plotBrush() {
 	_patCode = getNextByte();
 	if (_patCode > 12) {
@@ -175,6 +216,11 @@ void PictureMgr_Mickey_Winnie::plotBrush() {
 	}
 }
 
+/**
+ * plotPattern
+ *
+ * Draws a solid circle. Size is determined by the pattern code.
+ */
 void PictureMgr_Mickey_Winnie::plotPattern(byte x, byte y) {
 	// PreAGI patterns are 13 solid circles
 	static const byte circleData[] = {
@@ -278,11 +324,20 @@ bool PictureMgr_Mickey_Winnie::getNextYCoordinate(byte &y) {
 	return true;
 }
 
+/**
+ * Validates picture coordinates and translates them to GfxMgr coordinates.
+ *
+ * This function applies the current picture object and validates that the
+ * graphics coordinates are within GfxMgr's boundaries. Validation is necessary
+ * because Winnie places tall objects at the bottom of the screen in several
+ * rooms, and GfxMgr does not validate coordinates.
+ */
 bool PictureMgr_Mickey_Winnie::getGraphicsCoordinates(int16 &x, int16 &y) {
+	// validate that the coordinates are within the picture's boundaries
 	if (!PictureMgr::getGraphicsCoordinates(x, y)) {
 		return false;
 	}
-	
+
 	x += _xOffset;
 	y += _yOffset;
 
