@@ -56,6 +56,10 @@ void MainMenu::selected() {
 			addView("SelectGame");
 		break;
 
+	case 2:
+		replaceView("HighScores", true, true);
+		break;
+
 	case 3:
 		addView("Credits");
 		break;

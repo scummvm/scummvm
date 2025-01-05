@@ -111,10 +111,7 @@ bool Credits::tick() {
 		_delayCtr = 0;
 
 		if (_frameCtr == (CREDIT_TIME * CREDITS_COUNT) + 10) {
-			// TODO: The original switched to show the top high scores
-			// briefly, and then switches to the demo
-			fadeOut();
-			send("TitleBackground", GameMessage("MAIN_MENU"));
+			replaceView("HighScores", true, true);
 		} else {
 			++_frameCtr;
 			redraw();
