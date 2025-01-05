@@ -44,7 +44,7 @@ void TitleBackground::draw() {
 
     for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
         for (int yp = 0; yp < 240; yp += 32)
-            s.blitFrom(_G(gfx)[26], Common::Point(xp, yp));
+            s.simpleBlitFrom(_G(gfx)[26], Common::Point(xp, yp));
     }
 }
 

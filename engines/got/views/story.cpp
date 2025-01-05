@@ -47,7 +47,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
         Gfx::Pics pics(Common::String::format("OPENP%d", i + 1));
         pics.load();
 
-        _surface.blitFrom(pics[0], Common::Point(0, i * 40));
+        _surface.simpleBlitFrom(pics[0], Common::Point(0, i * 40));
     }
 
     // Set up the story text
@@ -93,9 +93,9 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
     // Final two glyphs
     Gfx::Pics glyphs("STORYPIC", 262);
-    _surface.blitFrom(glyphs[0], Common::Point(146, 64));
+    _surface.simpleBlitFrom(glyphs[0], Common::Point(146, 64));
     if (_G(area) == 1)
-        _surface.blitFrom(glyphs[1], Common::Point(24, 88 + 240));
+        _surface.simpleBlitFrom(glyphs[1], Common::Point(24, 88 + 240));
 
     // Play the opening music
     music_play("OPENSONG", 1);
@@ -114,7 +114,7 @@ void Story::draw() {
     GfxSurface s = getSurface();
 
     // Draw the currently visible part of the surface
-    s.blitFrom(_surface, Common::Rect(0, _yp, 320, _yp + 240),
+    s.simpleBlitFrom(_surface, Common::Rect(0, _yp, 320, _yp + 240),
                Common::Point(0, 0));
 }
 

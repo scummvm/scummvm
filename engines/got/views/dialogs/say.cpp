@@ -65,7 +65,7 @@ void Say::draw() {
     GfxSurface s = getSurface();
 
     if (_item)
-        s.blitFrom(_G(objects)[_item], Common::Point(160, 17));
+        s.simpleBlitFrom(_G(objects)[_item], Common::Point(160, 17));
 
     const char *p = _content;
     const char *endP = _content + _contentLength;
@@ -108,7 +108,7 @@ void Say::draw() {
         x += 8;
     }
 
-    s.blitFrom(_speakerIcon[_picIndex], Common::Point(120, 17));
+    s.simpleBlitFrom(_speakerIcon[_picIndex], Common::Point(120, 17));
 
     if (_waitForResponse == WAIT_MORE)
         s.print(Common::Point(184, 86), "More...", 15);

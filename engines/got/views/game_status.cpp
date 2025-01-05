@@ -34,7 +34,7 @@ void GameStatus::draw() {
 
     // Draw the status background
     const Graphics::ManagedSurface &status = _G(status)[0];
-    s.blitFrom(status);
+    s.simpleBlitFrom(status);
 
     // Draw the elements
     displayHealth(s);
@@ -101,9 +101,9 @@ void GameStatus::displayItem(GfxSurface &s) {
 
     if (_G(thor_info).item) {
         if (_G(thor_info).item == 7)
-            s.blitFrom(_G(objects)[_G(thor_info).object + 10], Common::Point(280, 8));
+            s.simpleBlitFrom(_G(objects)[_G(thor_info).object + 10], Common::Point(280, 8));
         else
-            s.blitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(280, 8));
+            s.simpleBlitFrom(_G(objects)[_G(thor_info).item + 25], Common::Point(280, 8));
     }
 }
 

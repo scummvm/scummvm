@@ -53,10 +53,10 @@ void SelectItem::draw() {
     for (int l = 0; l < 7; l++, b = b << 1) {
         if (_G(thor_info).inventory & b) {
             if (l < 6)
-                s.blitFrom(_G(objects)[l + 26],
+                s.simpleBlitFrom(_G(objects)[l + 26],
                            Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
             else
-                s.blitFrom(_G(objects)[_G(thor_info).object + 10],
+                s.simpleBlitFrom(_G(objects)[_G(thor_info).object + 10],
                            Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
         }
     }
