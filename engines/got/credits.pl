@@ -1,3 +1,3 @@
 begin_section("Got");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Paul Gilbert", "dreammaster", "");
 end_section();
