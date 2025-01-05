@@ -231,7 +231,7 @@ static int boss2_die() {
         }
 
         play_sound(EXPLODE, 1);
-        _G(boss_dead)++;
+        _G(boss_dead) = true;;
     }
 
     return _G(actor)[3].last_dir;
