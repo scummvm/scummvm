@@ -71,8 +71,6 @@ protected:
 	~PreAgiEngine() override;
 	int getGameId() const { return _gameId; }
 
-	PictureMgr *_picture;
-
 	void clearImageStack() override {}
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	                          int16 p4, int16 p5, int16 p6, int16 p7) override {}

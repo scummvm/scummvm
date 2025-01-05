@@ -31,9 +31,11 @@
 namespace Agi {
 
 TrollEngine::TrollEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_picture = nullptr;
 }
 
 TrollEngine::~TrollEngine() {
+	delete _picture;
 }
 
 // User Interface
@@ -713,6 +715,7 @@ void TrollEngine::fillOffsets() {
 // Init
 
 void TrollEngine::init() {
+	_picture = new PictureMgr(this, _gfx);
 	_picture->setPictureVersion(AGIPIC_V15);
 	//SetScreenPar(320, 200, (char *)ibm_fontdata);
 

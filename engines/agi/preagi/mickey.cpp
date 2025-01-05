@@ -2215,15 +2215,19 @@ void MickeyEngine::debugGotoRoom(int room) {
 }
 
 MickeyEngine::MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_picture = nullptr;
 	_isGameOver = false;
 	setDebugger(new MickeyConsole(this));
 }
 
 MickeyEngine::~MickeyEngine() {
+	delete _picture;
 	//_console deleted by Engine
 }
 
 void MickeyEngine::init() {
+	_picture = new PictureMgr(this, _gfx);
+
 	uint8 buffer[512];
 
 	// clear game struct

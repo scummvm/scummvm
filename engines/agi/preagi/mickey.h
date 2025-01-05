@@ -692,6 +692,8 @@ public:
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
 protected:
+	PictureMgr *_picture;
+
 	MSA_GAME _gameStateMickey;
 	bool _clickToMove;
 	bool _isGameOver;

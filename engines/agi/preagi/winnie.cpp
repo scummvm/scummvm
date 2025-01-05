@@ -1468,13 +1468,17 @@ void WinnieEngine::debugCurRoom() {
 }
 
 WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_picture = nullptr;
 	setDebugger(new WinnieConsole(this));
 }
 
 WinnieEngine::~WinnieEngine() {
+	delete _picture;
 }
 
 void WinnieEngine::init() {
+	_picture = new PictureMgr(this, _gfx);
+
 	// Initialize sound
 
 	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_PCJR))) {
