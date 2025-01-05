@@ -1337,7 +1337,10 @@ Common::Error ScummEngine::init() {
 				_macGui = new MacGui(this, macResourceFile);
 			}
 
-			if (_game.id == GID_INDY3 || _game.id == GID_LOOM)
+			// Maniac Mansion doesn't use the text surface, but it's easier to
+			// pretend that it does.
+
+			if (_game.id == GID_INDY3 || _game.id == GID_LOOM || _game.id == GID_MANIAC)
 				_textSurfaceMultiplier = 2;
 		}
 
@@ -1373,7 +1376,7 @@ Common::Error ScummEngine::init() {
 		int screenWidth = _screenWidth;
 		int screenHeight = _screenHeight;
 
-		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version >= 3 && _game.heversion == 0) {
+		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
 			screenWidth *= 2;
 			screenHeight *= 2;
 			screenHeight += 2 * 2 * _macScreenDrawOffset;

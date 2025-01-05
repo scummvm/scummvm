@@ -628,7 +628,6 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
  * specified by top/bottom coordinate in the virtual screen.
  */
 void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
-
 	// Short-circuit if nothing has to be drawn
 	if (bottom <= top || top >= vs->h)
 		return;
@@ -660,7 +659,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0 || height <= 0)
 		return;
 
-	if (_macScreen && _game.version == 3) {
+	if (_macScreen && _game.version <= 3) {
 		mac_drawStripToScreen(vs, top, x, y, width, height);
 		return;
 	}

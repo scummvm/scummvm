@@ -527,7 +527,7 @@ void MacGuiImpl::updateWindowManager() {
 				break;
 			}
 		}
-	} else if (_vm->_game.version >= 6) {
+	} else if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
 		// We can't use the name of the menus here, because there are
 		// non-English versions. Let's hope the menu positions are
 		// always the same, at least!
@@ -549,6 +549,7 @@ void MacGuiImpl::updateWindowManager() {
 
 		switch (_vm->_voiceMode) {
 		case 0:	// Voice Only
+
 			menu->getSubMenuItem(soundMenu, 6)->checked = true;
 			break;
 		case 1: // Voice and Text
@@ -833,7 +834,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 
 	// Default dialog sizes for dialogs without a DITL resource.
 
-	if (_vm->_game.version < 6) {
+	if (_vm->_game.version < 6 && _vm->_game.id != GID_MANIAC) {
 		bounds.top = 0;
 		bounds.left = 0;
 		bounds.bottom = 86;

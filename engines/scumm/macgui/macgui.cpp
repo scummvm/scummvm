@@ -48,6 +48,7 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 		break;
 
 	case GID_TENTACLE:
+	case GID_MANIAC:
 	case GID_SAMNMAX:
 	case GID_DIG:
 	case GID_FT:
