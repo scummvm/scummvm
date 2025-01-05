@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/video_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:layerType="none">
+
+	<org.scummvm.scummvm.EditableSurfaceView
+		android:id="@+id/main_surface"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:focusable="true"
+		android:focusableInTouchMode="true"
+		android:layerType="none" />
+
+	<GridLayout
+		android:id="@+id/button_layout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="right|top"
+		android:layout_marginTop="5dp"
+		android:layout_marginRight="5dp"
+		android:orientation="horizontal">
+
+		<ImageView
+			android:id="@+id/toggle_touch_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_row="0"
+			android:layout_column="0"
+			android:src="@drawable/ic_action_mouse" />
+
+		<ImageView
+			android:id="@+id/open_menu_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_row="0"
+			android:layout_column="1"
+			android:src="@drawable/ic_action_menu"
+			android:visibility="gone"
+			tools:visibility="visible" />
+	</GridLayout>
+
+</FrameLayout>
