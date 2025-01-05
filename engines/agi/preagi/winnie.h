@@ -293,6 +293,7 @@ struct WTP_SAVE_GAME {
 };
 
 class PreAgiEngine;
+class PictureMgr_Mickey_Winnie;
 
 class WinnieEngine : public PreAgiEngine {
 public:
@@ -305,7 +306,7 @@ public:
 	void debugCurRoom();
 
 private:
-	PictureMgr *_picture;
+	PictureMgr_Mickey_Winnie *_picture;
 
 	WTP_SAVE_GAME _gameStateWinnie;
 	int _room;

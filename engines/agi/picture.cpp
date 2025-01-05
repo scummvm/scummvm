@@ -48,23 +48,12 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_pictureVersion = AGIPIC_V2;
 	_width = 0;
 	_height = 0;
-	_xOffset = 0;
-	_yOffset = 0;
 
 	_flags = 0;
-	_maxStep = 0;
 }
 
-void PictureMgr::putVirtPixel(int x, int y) {
-	if (x < 0 || y < 0 || x >= _width || y >= _height)
-		return;
-
-	x += _xOffset;
-	y += _yOffset;
-
-	// validate coordinate after applying preagi offset.
-	// winnie objects go past the bottom of the screen.
-	if (x >= SCRIPT_WIDTH || y >= SCRIPT_HEIGHT) {
+void PictureMgr::putVirtPixel(int16 x, int16 y) {
+	if (!getGraphicsCoordinates(x, y)) {
 		return;
 	}
 
@@ -107,35 +96,19 @@ byte PictureMgr::getNextNibble() {
 }
 
 bool PictureMgr::getNextXCoordinate(byte &x) {
-	if (!(getNextParamByte(x))) {
-		return false;
-	}
-
-	if (_pictureVersion == AGIPIC_PREAGI) {
-		if (x >= _width) {
-			debugC(kDebugLevelPictures, "preagi: clipping x from %d to %d", x, _width - 1);
-			x = _width - 1; // 139
-		}
-	}
-	return true;
+	return getNextParamByte(x);
 }
 
 bool PictureMgr::getNextYCoordinate(byte &y) {
-	if (!(getNextParamByte(y))) {
-		return false;
-	}
-
-	if (_pictureVersion == AGIPIC_PREAGI) {
-		if (y > _height) {
-			debugC(kDebugLevelPictures, "preagi: clipping y from %d to %d", y, _height);
-			y = _height; // 159
-		}
-	}
-	return true;
+	return getNextParamByte(y);
 }
 
 bool PictureMgr::getNextCoordinates(byte &x, byte &y) {
 	return getNextXCoordinate(x) && getNextYCoordinate(y);
+}
+
+bool PictureMgr::getGraphicsCoordinates(int16 &x, int16 &y) {
+	return (0 <= x && x < _width && 0 <= y && y < _height);
 }
 
 /**************************************************************************
@@ -215,7 +188,7 @@ void PictureMgr::yCorner(bool skipOtherCoords) {
 ** Draws pixels, circles, squares, or splatter brush patterns depending
 ** on the pattern code.
 **************************************************************************/
-void PictureMgr::plotPattern(int x, int y) {
+void PictureMgr::plotPattern(byte x, byte y) {
 	static const uint16 binary_list[] = {
 		0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100,
 		0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1
@@ -333,62 +306,6 @@ void PictureMgr::plotBrush() {
 	}
 }
 
-void PictureMgr::plotBrush_PreAGI() {
-	_patCode = getNextByte();
-	if (_patCode > 12) {
-		_patCode = 12;
-	}
-
-	for (;;) {
-		byte x, y;
-		if (!getNextCoordinates(x, y))
-			break;
-
-		plotPattern_PreAGI(x, y);
-	}
-}
-
-void PictureMgr::plotPattern_PreAGI(byte x, byte y) {
-	// PreAGI patterns are 13 solid circles
-	static const byte circleData[] = {
-		0x00,
-		0x01, 0x01,
-		0x01, 0x02, 0x02,
-		0x01, 0x02, 0x03, 0x03,
-		0x02, 0x03, 0x04, 0x04, 0x04,
-		0x02, 0x03, 0x04, 0x05, 0x05, 0x05,
-		0x02, 0x04, 0x05, 0x05, 0x06, 0x06, 0x06,
-		0x02, 0x04, 0x05, 0x06, 0x06, 0x07, 0x07, 0x07,
-		0x02, 0x04, 0x06, 0x06, 0x07, 0x07, 0x08, 0x08, 0x08,
-		0x03, 0x05, 0x06, 0x07, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09,
-		0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x09, 0x0a, 0x0a, 0x0a, 0x0a,
-		0x03, 0x05, 0x07, 0x08, 0x09, 0x09, 0x0a, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b,
-		0x03, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0a, 0x0b, 0x0b, 0x0c, 0x0c, 0x0c, 0x0c
-	};
-
-	int circleDataIndex = (_patCode * (_patCode + 1)) / 2;
-
-	// draw the circle by drawing its vertical lines two at a time, starting at the
-	// left and right edges and working inwards. circles have odd widths, so the
-	// final iteration draws the middle line twice.
-	for (int i = _patCode; i >= 0; i--) {
-		const byte height = circleData[circleDataIndex++];
-		int16 x1, y1, x2, y2;
-
-		// left vertical line
-		x1 = x - i;
-		x2 = x1;
-		y1 = y - height;
-		y2 = y + height;
-		draw_Line(x1, y1, x2, y2);
-
-		// right vertical line
-		x1 = x + i;
-		x2 = x1;
-		draw_Line(x1, y1, x2, y2);
-	}
-}
-
 /**************************************************************************
 ** Draw AGI picture
 **************************************************************************/
@@ -403,65 +320,14 @@ void PictureMgr::drawPicture() {
 	_priColor = 4;
 
 	switch (_pictureVersion) {
-	case AGIPIC_C64:
-		drawPictureC64();
-		break;
 	case AGIPIC_V15:
 		drawPictureV15();
-		break;
-	case AGIPIC_PREAGI:
-		drawPicturePreAGI();
 		break;
 	case AGIPIC_V2:
 		drawPictureV2();
 		break;
 	default:
 		break;
-	}
-}
-
-void PictureMgr::drawPictureC64() {
-	debugC(kDebugLevelPictures, "Drawing Apple II / C64 / CoCo picture");
-
-	_scrColor = 0;
-
-	while (_dataOffset < _dataSize) {
-		byte curByte = getNextByte();
-
-		if ((curByte >= 0xF0) && (curByte <= 0xFE)) {
-			_scrColor = curByte & 0x0F;
-			continue;
-		}
-
-		switch (curByte) {
-		case 0xe0:  // x-corner
-			xCorner();
-			break;
-		case 0xe1:  // y-corner
-			yCorner();
-			break;
-		case 0xe2:  // dynamic draw lines
-			draw_LineShort();
-			break;
-		case 0xe3:  // absolute draw lines
-			draw_LineAbsolute();
-			break;
-		case 0xe4:  // fill
-			draw_SetColor();
-			draw_Fill();
-			break;
-		case 0xe5:  // enable screen drawing
-			_scrOn = true;
-			break;
-		case 0xe6:  // plot brush
-			plotBrush_PreAGI();
-			break;
-		case 0xff: // end of data
-			return;
-		default:
-			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
-			break;
-		}
 	}
 }
 
@@ -508,61 +374,6 @@ void PictureMgr::drawPictureV15() {
 		default:
 			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
 			break;
-		}
-	}
-}
-
-void PictureMgr::drawPicturePreAGI() {
-	debugC(kDebugLevelPictures, "Drawing PreAGI picture");
-
-	int step = 0;
-	while (_dataOffset < _dataSize) {
-		byte curByte = getNextByte();
-
-		switch (curByte) {
-		case 0xf0:
-			draw_SetColor();
-			_scrOn = true;
-			break;
-		case 0xf1:
-			_scrOn = false;
-			break;
-		case 0xf4:
-			yCorner();
-			break;
-		case 0xf5:
-			xCorner();
-			break;
-		case 0xf6:
-			draw_LineAbsolute();
-			break;
-		case 0xf7:
-			draw_LineShort();
-			break;
-		case 0xf8: {
-			// The screen-on flag does not prevent PreAGI flood fills.
-			// Winnie picture 7 (Roo) contains F1 before several fills.
-			byte prevScrOn = _scrOn;
-			_scrOn = true;
-			draw_Fill();
-			_scrOn = prevScrOn;
-			break;
-		}
-		case 0xf9:
-			plotBrush_PreAGI();
-			break;
-		case 0xff: // end of data
-			return;
-		default:
-			warning("Unknown picture opcode (%x) at (%x)", curByte, _dataOffset - 1);
-			break;
-		}
-
-		// Limit drawing to the optional maximum number of opcodes.
-		// Used by Mickey for crystal animation.
-		step++;
-		if (step == _maxStep) {
-			return;
 		}
 	}
 }
@@ -842,19 +653,6 @@ void PictureMgr::draw_Fill() {
 	byte x, y;
 
 	while (getNextCoordinates(x, y)) {
-		// PreAGI: getNextCoordinates clips to (139, 159), and then
-		// flood fill checks if y >= 159 and decrements to 158.
-		// The flood fill check is not in in Apple II/C64/CoCo
-		// versions of Winnie, as can be seen by the table edge
-		// being a different color than Winnie's shirt in the first
-		// room, but the same color in DOS/Amiga (picture 28).
-		if (_pictureVersion == AGIPIC_PREAGI) {
-			if (y >= _height) { // 159
-				debugC(kDebugLevelPictures, "preagi: fill clipping y from %d to %d", y, _height - 1);
-				y = _height - 1; // 158
-			}
-		}
-
 		draw_Fill(x, y);
 	}
 }
@@ -905,15 +703,7 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 }
 
 bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height)
-		return false;
-
-	x += _xOffset;
-	y += _yOffset;
-
-	// validate coordinate after applying preagi offset.
-	// winnie objects go past the bottom of the screen.
-	if (x >= SCRIPT_WIDTH || y >= SCRIPT_HEIGHT) {
+	if (!getGraphicsCoordinates(x, y)) {
 		return false;
 	}
 
@@ -1032,11 +822,7 @@ void PictureMgr::showPictureWithTransition() {
 
 void PictureMgr::setPictureVersion(AgiPictureVersion version) {
 	_pictureVersion = version;
-
-	if (version == AGIPIC_C64)
-		_minCommand = 0xe0;
-	else
-		_minCommand = 0xf0;
+	_minCommand = 0xf0;
 }
 
 } // End of namespace Agi

@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	words.o \
 	preagi/preagi.o \
 	preagi/mickey.o \
+	preagi/picture_mickey_winnie.o \
 	preagi/troll.o \
 	preagi/winnie.o
 
