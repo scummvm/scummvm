@@ -1037,7 +1037,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xaf00: { // FLOOD FILL x,y
-		Graphics::FloodFill f(_vm->_compositionBuffer.surfacePtr(), 0, seq._drawColFG);
+		Graphics::Surface *surf = _vm->_compositionBuffer.surfacePtr();
+		byte oldCol = surf->getPixel(ivals[0], ivals[1]);
+		Graphics::FloodFill f(surf, oldCol, seq._drawColFG);
 		f.addSeed(ivals[0], ivals[1]);
 		f.fill();
 		break;
