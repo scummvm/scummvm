@@ -36,9 +36,9 @@ bool Story::msgFocus(const FocusMessage &msg) {
     _G(pbuff)[1] = 0;
     _G(pbuff)[0] = 0;
 
-    for (int i = 0; i < 768; ++i)
-        _G(pbuff)[i] = (_G(pbuff)[i] * 255 + 31) / 63;
-    Gfx::xsetpal(_G(pbuff));
+    for (int i = 0; i < PALETTE_SIZE; ++i)
+        _G(pbuff)[i] = ((int)_G(pbuff)[i] * 255 + 31) / 63;
+    Gfx::set_palette(_G(pbuff));
 
     // Create story image and load in it's fragments
     _surface.create(320, 240 * 2);
@@ -93,12 +93,19 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
     // Final two glyphs
     Gfx::Pics glyphs("STORYPIC", 262);
-    _surface.simpleBlitFrom(glyphs[0], Common::Point(146, 64));
-    if (_G(area) == 1)
-        _surface.simpleBlitFrom(glyphs[1], Common::Point(24, 88 + 240));
+
+	if (_G(area) == 1) {
+		_surface.simpleBlitFrom(glyphs[0], Common::Point(146, 64));
+		_surface.simpleBlitFrom(glyphs[1], Common::Point(24, 88 + 240));
+	} else {
+		_surface.simpleBlitFrom(glyphs[0], Common::Point(146, 16));
+	}
 
     // Play the opening music
     music_play("OPENSONG", 1);
+
+	_yp = 0;
+	_scrolling = false;
 
     return true;
 }
