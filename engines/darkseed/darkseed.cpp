@@ -24,6 +24,8 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/compression/unzip.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "darkseed/darkseed.h"
 #include "darkseed/console.h"
@@ -57,6 +59,15 @@ Common::String DarkseedEngine::getGameId() const {
 }
 
 Common::Error DarkseedEngine::run() {
+	// Initialise engine data for the game
+	if (getLanguage() == Common::ZH_ANY) { // currently only the Chinese version requires external bundled data.
+		Common::Archive *archive = Common::makeZipArchive("darkseed.dat");
+		if (!archive) {
+			GUIErrorMessage(_("Unable to locate the darkseed.dat engine data file."));
+			return Common::kPathDoesNotExist;
+		}
+		SearchMan.add("darkseed.dat", archive);
+	}
 	initGraphics(640, 350);
 	_canSaveGame = false;
 	_sound = new Sound(_mixer);

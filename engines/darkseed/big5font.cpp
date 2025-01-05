@@ -25,13 +25,12 @@
 namespace Darkseed {
 
 Big5Font::Big5Font() {
-	Common::File tosFile;
-	if (!tosFile.open("tos.exe")) { // TODO handle packed tos.exe
-		error("Error: failed to open tos.exe");
+	Common::File fontData;
+	if (!fontData.open("big5font_game.dat")) {
+		error("Error: failed to open big5font_game.dat");
 	}
-	tosFile.seek(0x2701);
-	_big5.loadPrefixedRaw(tosFile, 15);
-	tosFile.close();
+	_big5.loadPrefixedRaw(fontData, 15);
+	fontData.close();
 }
 
 int Big5Font::getFontHeight() const {
