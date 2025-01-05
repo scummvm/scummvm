@@ -55,14 +55,14 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --msvc
+create_project ..\.. --enable-all-engines --msvc --enable-fluidlite
 goto done
 
 :stable
 echo.
 echo Creating normal project files, with only the stable engines enabled
 echo.
-create_project ..\.. --msvc
+create_project ..\.. --msvc --enable-fluidlite
 goto done
 
 :tools
