@@ -180,12 +180,6 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
                     actor_destroyed(&_G(actor)[rep]);
         }
     }
-    x1 = x1;
-    y1 = y1;
-    x2 = x2;
-    y2 = y2;
-    actr = actr;
-    act_num = act_num;
 }
 
 void boss_level2() {
