@@ -79,7 +79,7 @@ public:
 	void init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
-	void fillScreen(uint32 color);
+	void fillScreen();
 	void updateVideo();
 	void setPointerState(int value);
 	void drawPointer();
@@ -101,7 +101,7 @@ public:
 	Picture *loadPic(const char *picName);
 	Tile *loadTile(const char *tileName);
 	Tile *loadIcon(const char *tileName);
-	void setPixel(int x, int y, uint16 color);
+	void setPixel(int x, int y, uint32 color);
 
 	Tile *getTile(int index);
 	void cacheTileSequence(int index, int count);
@@ -186,12 +186,12 @@ private:
 
 	struct {
 		int x, y, speed;
-		uint16 color;
+		uint32 color;
 	} _stars3D[kNum3DStars];
 
 	struct {
 		double x, y, speed;
-		uint16 color;
+		uint32 color;
 	} _stars3DSlow[kNum3DStars];
 
 	int _tileSkyStars; // Index of sky_stars tile

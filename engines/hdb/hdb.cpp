@@ -58,7 +58,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 		_progressY = _screenHeight - 64;
 	}
 
-	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_dataFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
 
 	_fileMan = nullptr;
@@ -866,7 +866,7 @@ void HDBGame::checkProgress() {
 
 void HDBGame::drawLoadingScreen() {
 	if (g_hdb->isPPC())
-		_gfx->fillScreen(0);
+		_gfx->fillScreen();
 	else
 		_loadingScreenGfx->draw(0, 0);
 }
@@ -922,12 +922,16 @@ void HDBGame::setInMapName(const char *name) {
 
 Common::Error HDBGame::run() {
 
+	// Initializes Graphics
+	initGraphics(_screenWidth, _screenHeight, nullptr);
+	_screenFormat = _system->getScreenFormat();
+
+	if (_screenFormat.isCLUT8())
+		return Common::kUnsupportedColorMode;
+
 	// Initialize System
 	if (!_systemInit)
 		init();
-
-	// Initializes Graphics
-	initGraphics(_screenWidth, _screenHeight, &_format);
 
 	start();
 
