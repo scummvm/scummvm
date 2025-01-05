@@ -64,7 +64,7 @@ public class SAFFSTree {
 		return _trees.get(name);
 	}
 
-	@RequiresApi(api = 0)
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static void clearCaches() {
 		if (_trees == null) {
 			return;
