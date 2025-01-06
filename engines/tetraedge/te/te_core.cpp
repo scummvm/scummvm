@@ -207,22 +207,29 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path, bool quiet) const {
 	activeFlags.erase("SD");
 	activeFlags["HD"] = true;
 
-	for (uint dirNode = 0; dirNode < dirNodes.size(); dirNode++) {
-		Common::Array<TetraedgeFSNode> foundFiles;
-		_findFileRecursively(dirNodes[dirNode], activeFlags, fname, foundFiles, 5);
-		if (foundFiles.empty())
-			continue;
-		TetraedgeFSNode best = foundFiles[0];
-		int bestDepth = best.getDepth();
-		for (uint i = 1; i < foundFiles.size(); i++) {
-			int depth = foundFiles[i].getDepth();
-			if (depth > bestDepth) {
-				bestDepth = depth;
-				best = foundFiles[i];
+	for (int attempt = 0; attempt < 2; attempt++) {
+		if (attempt == 1)
+			activeFlags["en"] = true;
+		for (uint dirNode = 0; dirNode < dirNodes.size(); dirNode++) {
+			Common::Array<TetraedgeFSNode> foundFiles;
+			_findFileRecursively(dirNodes[dirNode], activeFlags, fname, foundFiles, 5);
+			if (foundFiles.empty())
+				continue;
+			TetraedgeFSNode best = foundFiles[0];
+			int bestDepth = best.getDepth();
+			for (uint i = 1; i < foundFiles.size(); i++) {
+				int depth = foundFiles[i].getDepth();
+				if (depth > bestDepth) {
+					bestDepth = depth;
+					best = foundFiles[i];
+				}
 			}
-		}
 
-		return best;
+			if (attempt == 1 && !quiet)
+				debug("TeCore::findFile Falled back to English for %s", path.toString().c_str());
+
+			return best;
+		}
 	}
 
 	// Didn't find it at all..
