@@ -91,4 +91,61 @@ void ACTOR::copyFixedAndPics(const ACTOR &src) {
 			pic[d][f].copyFrom(src.pic[d][f]);
 }
 
+ACTOR &ACTOR::operator=(const ACTOR &src) {
+	// First copy the fixed portion and the pics
+	copyFixedAndPics(src);
+
+	// Copy temporary fields
+	frame_count = src.frame_count;
+	dir = src.dir;
+	last_dir = src.last_dir;
+	x = src.x;
+	y = src.y;
+	center = src.center;
+	Common::copy(src.last_x, src.last_x + 2, last_x);
+	Common::copy(src.last_y, src.last_y + 2, last_y);
+	used = src.used;
+	next = src.next;
+	speed_count = src.speed_count;
+	vunerable = src.vunerable;
+	shot_cnt = src.shot_cnt;
+	num_shots = src.num_shots;
+	creator = src.creator;
+	pause = src.pause;
+	actor_num = src.actor_num;
+	move_count = src.move_count;
+	dead = src.dead;
+	toggle = src.toggle;
+	center_x = src.center_x;
+	center_y = src.center_y;
+	show = src.show;
+	temp1 = src.temp1;
+	temp2 = src.temp2;
+	counter = src.counter;
+	move_counter = src.move_counter;
+	edge_counter = src.edge_counter;
+	temp3 = src.temp3;
+	temp4 = src.temp4;
+	temp5 = src.temp5;
+	hit_thor = src.hit_thor;
+	rand = src.rand;
+	init_dir = src.init_dir;
+	pass_value = src.pass_value;
+	shot_actor = src.shot_actor;
+	magic_hit = src.magic_hit;
+	temp6 = src.temp6;
+	i1 = src.i1;
+	i2 = src.i2;
+	i3 = src.i3;
+	i4 = src.i4;
+	i5 = src.i5;
+	i6 = src.i6;
+	init_health = src.init_health;
+	talk_counter = src.talk_counter;
+	etype = src.etype;
+	Common::copy(src.future2, src.future2 + 25, future2);
+
+	return *this;
+}
+
 } // namespace Got

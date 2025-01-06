@@ -114,6 +114,8 @@ struct ACTOR {                      // Size=256
      */
     void copyFixedAndPics(const ACTOR &src);
 
+	ACTOR &operator=(const ACTOR &src);
+
     int getPos() const {
         return ((x + 7) / 16) + (((y + 8) / 16) * 20);
     }
