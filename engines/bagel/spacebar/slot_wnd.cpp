@@ -268,13 +268,13 @@ ErrorCode  SBarSlotWnd::attach() {
 	_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
 	_pBkgSnd->play();
 
-	CBofCursor::show();
+	CBagCursor::showSystemCursor();
 
 	return _errCode;
 }
 
 ErrorCode SBarSlotWnd::detach() {
-	CBofCursor::hide();
+	CBagCursor::hideSystemCursor();
 
 	// Put any credits left in machine back into you credit chip.
 	if (_nBet > 0) {
@@ -854,7 +854,7 @@ const char *BuildSlotDir(const char *pszFile) {
 	static char szBuf[MAX_DIRPATH];
 
 	// Where Slot assets
-	Common::sprintf_s(szBuf, "%s%s%s", BGCB_DIR, PATH_DELIMETER, pszFile);
+	Common::sprintf_s(szBuf, "%s%s", BGCB_DIR, pszFile);
 
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
 	fixPathName(sSlotDir);

@@ -34,34 +34,79 @@
 namespace Graphics {
 
 template<typename T>
-static void plotPoint(int x, int y, int color, void *data) {
-	Surface *s = (Surface *)data;
-	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		T *ptr = (T *)s->getBasePtr(x, y);
-		*ptr = (T)color;
+class SurfacePrimitives final : public Primitives {
+public:
+        void drawPoint(int x, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
+			T *ptr = (T *)s->getBasePtr(x, y);
+			*ptr = (T)color;
+		}
 	}
-}
+
+        void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->hLine(x1, y, x2, color);
+	}
+
+        void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->vLine(x, y1, y2, color);
+	}
+
+	void drawFilledRect(const Common::Rect &rect, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(rect, color);
+	}
+
+	void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) override {
+		Common::Rect r(rect.left, rect.top, rect.right + 1, rect.bottom + 1);
+
+		Surface *s = (Surface *)data;
+		s->fillRect(r, color);
+	}
+};
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-	if (format.bytesPerPixel == 1)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<byte>, this);
-	else if (format.bytesPerPixel == 2)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint16>, this);
-	else if (format.bytesPerPixel == 4)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint32>, this);
-	else
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else
 		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
 void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
-	if (format.bytesPerPixel == 1)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<byte>, this);
-	else if (format.bytesPerPixel == 2)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint16>, this);
-	else if (format.bytesPerPixel == 4)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint32>, this);
-	else
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else
 		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
+void Surface::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else
+		error("Surface::drawRoundRect: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
 // see graphics/blit/blit-atari.cpp

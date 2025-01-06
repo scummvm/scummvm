@@ -20,9 +20,12 @@
  */
 
 #include "m4/riddle/rooms/section8/room808.h"
+
+#include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
+#include "m4/wscript/wst_regs.h"
 
 namespace M4 {
 namespace Riddle {
@@ -231,7 +234,7 @@ void Room808::pre_parser() {
 	if (doneFl || _G(flags[V100]))
 		return;
 
-	if (!room808_subDC554(_G(my_walker), _G(player).walk_x, _G(player).walk_y))
+	if (!getWalkPath(_G(my_walker), _G(player).walk_x, _G(player).walk_y))
 		return;
 
 	player_update_info(_G(my_walker), &_G(player_info));
@@ -274,9 +277,37 @@ void Room808::daemon() {
 	// TODO Not implemented yet
 }
 
-int32 Room808::room808_subDC554(machine *machine, int32 walk_x, int32 walk_y) {
-	// TODO Not implemented yet
-	return 0;
+bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
+	if (machine == nullptr || machine->myAnim8 == nullptr) {
+		error_show(FL, 514, "ws_walk");
+	}
+
+	const int32 currPos_x = machine->myAnim8->myRegs[IDX_X] >> 16;
+	const int32 currPos_y = machine->myAnim8->myRegs[IDX_Y] >> 16;
+	Buffer* currBuffer = _G(screenCodeBuff)->get_buffer();
+
+	const int32 currNode = AddRailNode(currPos_x, currPos_y, currBuffer, true);
+
+	if (currNode < 0) {
+		error_show(FL, 520, "Walker's curr posn: %ld %ld", currPos_x, currPos_y);
+	}
+
+	const int32 destNode = AddRailNode(walk_x, walk_y, currBuffer, true);
+
+	if (destNode < 0) {
+		error_show(FL, 520, "Trying to walk to: %ld %ld", walk_x, walk_y);
+	}
+
+	if (machine->walkPath)
+		DisposePath(machine->walkPath);
+
+	bool retVal = GetShortestPath(currNode, destNode, &machine->walkPath);
+
+	RemoveRailNode(currNode, currBuffer, true);
+	RemoveRailNode(destNode, currBuffer, true);
+	_G(screenCodeBuff)->release();
+
+	return retVal;
 }
 
 } // namespace Rooms

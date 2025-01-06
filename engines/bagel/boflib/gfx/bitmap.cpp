@@ -174,7 +174,7 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		Image::BitmapDecoder decoder;
 		Common::SeekableReadStream *rs = *pFile;
 		if (!rs || !decoder.loadStream(*rs))
-			error("Could not load bitmap");
+			error("Could not load bitmap %s", pszFileName);
 
 		// Load up the decoded bitmap
 		_bitmap.copyFrom(*decoder.getSurface());

@@ -24,6 +24,9 @@ This file contains all strings and some file names depending only on platform/lo
 Some filenames depend on the edition, these are handled by game flags in engine code.
 Those informations were stored in the original executables.
 
+darkseed.dat:
+This file contains essential game data used by the Darkseed engine.
+
 drascula.dat:
 This file contains essential game data used by the Drascula engine.
 

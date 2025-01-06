@@ -27,9 +27,11 @@
 
 namespace MediaStation {
 
-Variable::Variable(Chunk &chunk) {
-	_id = Datum(chunk, kDatumTypeUint16_1).u.i;
-	_type = VariableType(Datum(chunk, kDatumTypeUint8).u.i);
+Variable::Variable(Chunk &chunk, bool readId) {
+	if (readId) {
+		_id = Datum(chunk).u.i;
+	}
+	_type = VariableType(Datum(chunk).u.i);
 	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", _id, static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch ((VariableType)_type) {
 	case kVariableTypeCollection: {
@@ -37,7 +39,7 @@ Variable::Variable(Chunk &chunk) {
 		_value.collection = new Common::Array<Variable *>;
 		for (uint i = 0; i < totalItems; i++) {
 			debugC(7, kDebugLoading, "Variable::Variable(): COLLECTION: Value %d of %d", i, totalItems);
-			Variable *variableDeclaration = new Variable(chunk);
+			Variable *variableDeclaration = new Variable(chunk, readId = false);
 			_value.collection->push_back(variableDeclaration);
 		}
 		break;

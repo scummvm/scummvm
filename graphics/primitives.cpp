@@ -25,7 +25,7 @@
 
 namespace Graphics {
 
-void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawLine(int x0, int y0, int x1, int y1, uint32 color, void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
 	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
 
@@ -45,9 +45,9 @@ void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int
 	const int y_step = (y0 < y1) ? 1 : -1;
 
 	if (steep)
-		(*plotProc)(y, x, color, data);
+		drawPoint(y, x, color, data);
 	else
-		(*plotProc)(x, y, color, data);
+		drawPoint(x, y, color, data);
 
 	while (x != x1) {
 		x += x_step;
@@ -57,34 +57,34 @@ void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int
 			err -= delta_x;
 		}
 		if (steep)
-			(*plotProc)(y, x, color, data);
+			drawPoint(y, x, color, data);
 		else
-			(*plotProc)(x, y, color, data);
+			drawPoint(x, y, color, data);
 	}
 }
 
-void drawHLine(int x1, int x2, int y, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawHLine(int x1, int x2, int y, uint32 color, void *data) {
 	if (x1 > x2)
 		SWAP(x1, x2);
 
 	for (int x = x1; x <= x2; x++)
-		(*plotProc)(x, y, color, data);
+		drawPoint(x, y, color, data);
 }
 
-void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawVLine(int x, int y1, int y2, uint32 color, void *data) {
 	if (y1 > y2)
 		SWAP(y1, y2);
 
 	for (int y = y1; y <= y2; y++)
-		(*plotProc)(x, y, color, data);
+		drawPoint(x, y, color, data);
 }
 
-void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void *data) {
 	assert(penX > 0 && penY > 0);
 
 	// Shortcut
 	if (penX == 1 && penY == 1) {
-		drawLine(x0, y0, x1, y1, color, plotProc, data);
+		drawLine(x0, y0, x1, y1, color, data);
 		return;
 	}
 
@@ -93,12 +93,12 @@ void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 co
 	// multiple times.
 	for (int x = 0; x < penX; x++)
 		for (int y = 0; y < penY; y++)
-			drawLine(x0 + x, y0 + y, x1 + x, y1 + y, color, plotProc, data);
+			drawLine(x0 + x, y0 + y, x1 + x, y1 + y, color, data);
 }
 
 /* Bresenham as presented in Foley & Van Dam */
 /* Code is based on GD lib http://libgd.github.io/ */
-void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, void *data) {
 	int incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
 	int wid;
 	int w, wstart;
@@ -109,12 +109,12 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 	if (dx == 0) {
 		int xn = x1 - thick / 2;
 		Common::Rect r(xn, MIN(y1, y2), xn + thick - 1, MAX(y1, y2));
-		drawFilledRect1(r, color, plotProc, data);
+		drawFilledRect1(r, color, data);
 		return;
 	} else if (dy == 0) {
 		int yn = y1 - thick / 2;
 		Common::Rect r(MIN(x1, x2), yn, MAX(x1, x2), yn + thick - 1);
-		drawFilledRect1(r, color, plotProc, data);
+		drawFilledRect1(r, color, data);
 		return;
 	}
 
@@ -148,7 +148,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 		/* Set up line thickness */
 		wstart = y - wid / 2;
 		for (w = wstart; w < wstart + wid; w++)
-			(*plotProc)(x, w, color, data);
+			drawPoint(x, w, color, data);
 
 		if (((y2 - y1) * ydirflag) > 0) {
 			while (x < xend) {
@@ -161,7 +161,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 				}
 				wstart = y - wid / 2;
 				for (w = wstart; w < wstart + wid; w++)
-					(*plotProc)(x, w, color, data);
+					drawPoint(x, w, color, data);
 			}
 		} else {
 			while (x < xend) {
@@ -174,7 +174,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 				}
 				wstart = y - wid / 2;
 				for (w = wstart; w < wstart + wid; w++)
-					(*plotProc)(x, w, color, data);
+					drawPoint(x, w, color, data);
 			}
 		}
 	} else {
@@ -206,7 +206,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 		/* Set up line thickness */
 		wstart = x - wid / 2;
 		for (w = wstart; w < wstart + wid; w++)
-			(*plotProc)(w, y, color, data);
+			drawPoint(w, y, color, data);
 
 		if (((x2 - x1) * xdirflag) > 0) {
 			while (y < yend) {
@@ -219,7 +219,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 				}
 				wstart = x - wid / 2;
 				for (w = wstart; w < wstart + wid; w++)
-					(*plotProc)(w, y, color, data);
+					drawPoint(w, y, color, data);
 			}
 		} else {
 			while (y < yend) {
@@ -232,50 +232,50 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, voi
 				}
 				wstart = x - wid / 2;
 				for (w = wstart; w < wstart + wid; w++)
-					(*plotProc)(w, y, color, data);
+					drawPoint(w, y, color, data);
 			}
 		}
 	}
 }
 
-void drawFilledRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawFilledRect(const Common::Rect &rect, uint32 color, void *data) {
 	for (int y = rect.top; y < rect.bottom; y++)
-		drawHLine(rect.left, rect.right - 1, y, color, plotProc, data);
+		drawHLine(rect.left, rect.right - 1, y, color, data);
 }
 
 /**
  * @brief Draws filled rectangle _with_ right and bottom edges
  */
-void drawFilledRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) {
 	for (int y = rect.top; y <= rect.bottom; y++)
-		drawHLine(rect.left, rect.right, y, color, plotProc, data);
+		drawHLine(rect.left, rect.right, y, color, data);
 }
 
-void drawRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
-	drawHLine(rect.left, rect.right - 1, rect.top, color, plotProc, data);
-	drawHLine(rect.left, rect.right - 1, rect.bottom - 1, color, plotProc, data);
-	drawVLine(rect.left, rect.top, rect.bottom - 1, color, plotProc, data);
-	drawVLine(rect.right - 1, rect.top, rect.bottom - 1, color, plotProc, data);
+void Primitives::drawRect(const Common::Rect &rect, uint32 color, void *data) {
+	drawHLine(rect.left, rect.right - 1, rect.top, color, data);
+	drawHLine(rect.left, rect.right - 1, rect.bottom - 1, color, data);
+	drawVLine(rect.left, rect.top, rect.bottom - 1, color, data);
+	drawVLine(rect.right - 1, rect.top, rect.bottom - 1, color, data);
 }
 
 /**
  * @brief Draws rectangle outline _with_ right and bottom edges
  */
-void drawRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
-	drawHLine(rect.left + 1, rect.right - 1, rect.top, color, plotProc, data);
-	drawHLine(rect.left + 1, rect.right - 1, rect.bottom, color, plotProc, data);
-	drawVLine(rect.left, rect.top, rect.bottom, color, plotProc, data);
-	drawVLine(rect.right, rect.top, rect.bottom, color, plotProc, data);
+void Primitives::drawRect1(const Common::Rect &rect, uint32 color, void *data) {
+	drawHLine(rect.left + 1, rect.right - 1, rect.top, color, data);
+	drawHLine(rect.left + 1, rect.right - 1, rect.bottom, color, data);
+	drawVLine(rect.left, rect.top, rect.bottom, color, data);
+	drawVLine(rect.right, rect.top, rect.bottom, color, data);
 }
 
-void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void *data) {
 	Common::Rect r(rect.left, rect.top, rect.right - 1, rect.bottom - 1);
 
-	drawRoundRect1(r, arc, color, filled, plotProc, data);
+	drawRoundRect1(r, arc, color, filled, data);
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void *data) {
 	if (rect.height() < rect.width()) {
 		int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
 		int dy = rect.height() - arc * 2;
@@ -287,13 +287,13 @@ void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled
 
 		do {
 			if (filled) {
-				drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, plotProc, data);
-				drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, plotProc, data);
+				drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, data);
+				drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, data);
 			} else {
-				(*plotProc)(rect.left  + x + r, rect.top    - y + r - stop, color, data);
-				(*plotProc)(rect.right - x - r, rect.top    - y + r - stop, color, data);
-				(*plotProc)(rect.left  + x + r, rect.bottom + y - r + stop, color, data);
-				(*plotProc)(rect.right - x - r, rect.bottom + y - r + stop, color, data);
+				drawPoint(rect.left  + x + r, rect.top    - y + r - stop, color, data);
+				drawPoint(rect.right - x - r, rect.top    - y + r - stop, color, data);
+				drawPoint(rect.left  + x + r, rect.bottom + y - r + stop, color, data);
+				drawPoint(rect.right - x - r, rect.bottom + y - r + stop, color, data);
 
 				lastx = x;
 				lasty = y;
@@ -309,16 +309,16 @@ void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled
 			x = lastx;
 			y = lasty;
 
-			drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, plotProc, data);
-			drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, plotProc, data);
+			drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, data);
+			drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, data);
 		}
 
 		for (int i = 1; i < dy; i++) {
 			if (filled) {
-				drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
+				drawHLine(rect.left, rect.right, rect.top + r + i, color, data);
 			} else {
-				(*plotProc)(rect.left,  rect.top + r + i, color, data);
-				(*plotProc)(rect.right, rect.top + r + i, color, data);
+				drawPoint(rect.left,  rect.top + r + i, color, data);
+				drawPoint(rect.right, rect.top + r + i, color, data);
 			}
 		}
 	} else {
@@ -332,13 +332,13 @@ void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled
 
 		do {
 			if (filled) {
-				drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
-				drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
+				drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, data);
+				drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, data);
 			} else {
-				(*plotProc)(rect.left  - x + r - stop, rect.top    + y + r, color, data);
-				(*plotProc)(rect.left  - x + r - stop, rect.bottom - y - r, color, data);
-				(*plotProc)(rect.right + x - r + stop, rect.top    + y + r, color, data);
-				(*plotProc)(rect.right + x - r + stop, rect.bottom - y - r, color, data);
+				drawPoint(rect.left  - x + r - stop, rect.top    + y + r, color, data);
+				drawPoint(rect.left  - x + r - stop, rect.bottom - y - r, color, data);
+				drawPoint(rect.right + x - r + stop, rect.top    + y + r, color, data);
+				drawPoint(rect.right + x - r + stop, rect.bottom - y - r, color, data);
 
 				lastx = x;
 				lasty = y;
@@ -354,16 +354,16 @@ void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled
 		if (!filled) {
 			x = lastx;
 			y = lasty;
-			drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
-			drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
+			drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, data);
+			drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, data);
 		}
 
 		for (int i = 1; i < dx; i++) {
 			if (filled) {
-				drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
+				drawVLine(rect.left + r + i, rect.top, rect.bottom, color, data);
 			} else {
-				(*plotProc)(rect.left + r + i, rect.top,    color, data);
-				(*plotProc)(rect.left + r + i, rect.bottom, color, data);
+				drawPoint(rect.left + r + i, rect.top,    color, data);
+				drawPoint(rect.left + r + i, rect.bottom, color, data);
 			}
 		}
 	}
@@ -371,7 +371,7 @@ void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled
 
 // Based on public-domain code by Darel Rex Finley, 2007
 // http://alienryderflex.com/polygon_fill/
-void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data) {
 	int *nodeX = (int *)calloc(npoints, sizeof(int));
 	int i, j;
 
@@ -400,7 +400,7 @@ void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Comm
 				nodeX[i] = MAX<int16>(nodeX[i], bbox.left);
 				nodeX[i + 1] = MIN<int16>(nodeX[i + 1], bbox.right);
 
-				drawHLine(nodeX[i], nodeX[i + 1], pixelY, color, plotProc, data);
+				drawHLine(nodeX[i], nodeX[i + 1], pixelY, color, data);
 			}
 		}
 	}
@@ -409,7 +409,7 @@ void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Comm
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void Primitives::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void *data) {
 	int a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
 	long dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
 	long err = dx + dy + b1 * a * a, e2; /* error of 1.step */
@@ -421,13 +421,13 @@ void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void
 
 	do {
 		if (filled) {
-			drawHLine(x0, x1, y0, color, plotProc, data);
-			drawHLine(x0, x1, y1, color, plotProc, data);
+			drawHLine(x0, x1, y0, color, data);
+			drawHLine(x0, x1, y1, color, data);
 		} else {
-			(*plotProc)(x1, y0, color, data); /*   I. Quadrant */
-			(*plotProc)(x0, y0, color, data); /*  II. Quadrant */
-			(*plotProc)(x0, y1, color, data); /* III. Quadrant */
-			(*plotProc)(x1, y1, color, data); /*  IV. Quadrant */
+			drawPoint(x1, y0, color, data); /*   I. Quadrant */
+			drawPoint(x0, y0, color, data); /*  II. Quadrant */
+			drawPoint(x0, y1, color, data); /* III. Quadrant */
+			drawPoint(x1, y1, color, data); /*  IV. Quadrant */
 		}
 		e2 = 2*err;
 		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
@@ -436,19 +436,98 @@ void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void
 
 	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
 		if (filled) {
-			drawHLine(x0 - 1, x0 - 1, y0, color, plotProc, data); /* -> finish tip of ellipse */
-			drawHLine(x1 + 1, x1 + 1, y0, color, plotProc, data);
-			drawHLine(x0 - 1, x0 - 1, y1, color, plotProc, data);
-			drawHLine(x1 + 1, x1 + 1, y1, color, plotProc, data);
+			drawHLine(x0 - 1, x0 - 1, y0, color, data); /* -> finish tip of ellipse */
+			drawHLine(x1 + 1, x1 + 1, y0, color, data);
+			drawHLine(x0 - 1, x0 - 1, y1, color, data);
+			drawHLine(x1 + 1, x1 + 1, y1, color, data);
 		} else {
-			(*plotProc)(x0 - 1, y0, color, data); /* -> finish tip of ellipse */
-			(*plotProc)(x1 + 1, y0, color, data);
-			(*plotProc)(x0 - 1, y1, color, data);
-			(*plotProc)(x1 + 1, y1, color, data);
+			drawPoint(x0 - 1, y0, color, data); /* -> finish tip of ellipse */
+			drawPoint(x1 + 1, y0, color, data);
+			drawPoint(x0 - 1, y1, color, data);
+			drawPoint(x1 + 1, y1, color, data);
 		}
 		y0++;
 		y1--;
 	}
+}
+
+class DeprecatedPrimitives final : public Primitives {
+public:
+	constexpr DeprecatedPrimitives(void (*plotProc)(int, int, int, void *)) : _plotProc(plotProc) {}
+
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		_plotProc(x, y, color, data);
+	}
+
+private:
+	void (*_plotProc)(int, int, int, void *);
+};
+
+void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawLine(x0, y0, x1, y1, color, data);
+}
+
+void drawHLine(int x1, int x2, int y, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawHLine(x1, x2, y, color, data);
+}
+
+void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawVLine(x, y1, y2, color, data);
+}
+
+void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, data);
+}
+
+void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color,
+								void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawThickLine2(x1, y1, x2, y2, thick, color, data);
+}
+
+void drawFilledRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawFilledRect(rect, color, data);
+}
+
+void drawFilledRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawFilledRect1(rect, color, data);
+}
+
+void drawRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawRect(rect, color, data);
+}
+
+void drawRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawRect1(rect, color, data);
+}
+
+void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawRoundRect(rect, arc, color, filled, data);
+}
+
+void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawRoundRect1(rect, arc, color, filled, data);
+}
+
+void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color,
+								void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, data);
+}
+
+void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+	DeprecatedPrimitives primitives(plotProc);
+	primitives.drawEllipse(x0, y0, x1, y1, color, filled, data);
 }
 
 } // End of namespace Graphics

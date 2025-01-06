@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 18:11+0000\n"
+"POT-Creation-Date: 2025-01-05 23:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6802,6 +6802,10 @@ msgstr ""
 
 #: engines/cryomni3d/metaengine.cpp:143
 msgid "Versailles 1685 support is not compiled in"
+msgstr ""
+
+#: engines/darkseed/darkseed.cpp:66
+msgid "Unable to locate the darkseed.dat engine data file."
 msgstr ""
 
 #. I18N: Perform action on object where cursor points

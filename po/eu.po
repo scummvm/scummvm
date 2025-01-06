@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 18:11+0000\n"
+"POT-Creation-Date: 2025-01-05 23:03+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -7387,6 +7387,11 @@ msgstr " (Jokoa)"
 #, fuzzy
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Ezaugarri erantsiak:"
+
+#: engines/darkseed/darkseed.cpp:66
+#, fuzzy
+msgid "Unable to locate the darkseed.dat engine data file."
+msgstr "Ezin izan da fitxategia ezabatu."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136

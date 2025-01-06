@@ -144,6 +144,9 @@ void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 		hotspotY = 3;
 		animate = 0;
 	}
+
+	delete curs;
+	resource.close();
 }
 
 bool MacV5Gui::handleMenu(int id, Common::String &name) {

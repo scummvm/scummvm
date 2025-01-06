@@ -896,6 +896,13 @@ void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int patter
 		s->setPixel(x, y, window->_gui->getBlack());
 }
 
+void MacGuiImpl::MacDialogWindow::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *)) {
+	// FIXME: This is a deprecated method, but we should replace it with
+	// something that matches QuickDraw's rounded rects instead.
+
+	Graphics::drawRoundRect(rect, arc, color, filled, plotProc, this);
+}
+
 void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines, bool inverse) {
 	if (!lines)
 		return;
@@ -991,8 +998,8 @@ void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *li
 		bg = _white;
 	}
 
-	Graphics::drawRoundRect(r, arc, bg, true, plotPixel, this);
-	Graphics::drawRoundRect(r, arc, fg, false, plotPixel, this);
+	drawRoundRect(r, arc, bg, true, plotPixel);
+	drawRoundRect(r, arc, fg, false, plotPixel);
 	markRectAsDirty(r);
 
 	drawTexts(r, lines, inverse);

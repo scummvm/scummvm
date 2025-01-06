@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 18:11+0000\n"
+"POT-Creation-Date: 2025-01-05 23:03+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -7355,6 +7355,12 @@ msgstr "Выйсці з гульні"
 #, fuzzy
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Уключаныя ў зборку опцыі:"
+
+#: engines/darkseed/darkseed.cpp:66
+#, fuzzy
+#| msgid "Unable to locate the '%s' engine data file."
+msgid "Unable to locate the darkseed.dat engine data file."
+msgstr "Не атрымалася знайсці файл рухавічка %s."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136

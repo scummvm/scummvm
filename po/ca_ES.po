@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 18:11+0000\n"
+"POT-Creation-Date: 2025-01-05 23:03+0000\n"
 "PO-Revision-Date: 2025-01-03 00:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7133,6 +7133,12 @@ msgstr "Surt del joc"
 #: engines/cryomni3d/metaengine.cpp:143
 msgid "Versailles 1685 support is not compiled in"
 msgstr "No s'ha compilat el suport per a Versalles 1685"
+
+#: engines/darkseed/darkseed.cpp:66
+#, fuzzy
+#| msgid "Unable to locate the '%s' engine data file."
+msgid "Unable to locate the darkseed.dat engine data file."
+msgstr "No s'ha pogut localitzar el fitxer de dades del motor '%s'."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
