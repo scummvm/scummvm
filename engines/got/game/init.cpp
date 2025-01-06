@@ -94,6 +94,11 @@ void initialize_game() {
         for (int i = 0; i < DEMO_LEN; ++i)
             _G(demoKeys).push(f.readByte());
 
+		// Drop the first six bytes off. This comprises of
+		// the "part I" display in the original, and ScummVM
+		// doesn't do demo key processing until the game view
+		for (int i = 0; i < 6; ++i)
+			_G(demoKeys).pop();
     }
 
     _G(thor)->speed_count = 6;
