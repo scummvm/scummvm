@@ -19,10 +19,38 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "got/data/thor_info.h"
 #include "got/game/back.h"
 
 namespace Got {
+
+void THOR_INFO::clear() {
+	magic = 0;
+	keys = 0;
+	jewels = 0;
+	last_area = 0;
+	last_screen = 0;
+	last_icon = 0;
+	last_dir = 0;
+	inventory = 0;
+	item = 0;
+	last_health = 0;
+	last_magic = 0;
+	last_jewels = 0;
+	last_keys = 0;
+	last_item = 0;
+	last_inventory = 0;
+	level = 0;
+	score = 0;
+	last_score = 0;
+	object = 0;
+	object_name = nullptr;
+	last_object = 0;
+	last_object_name = nullptr;
+	armor = 0;
+	Common::fill(future, future + 65, 0);
+}
 
 void THOR_INFO::sync(Common::Serializer &s) {
     uint32 ptr = 0;

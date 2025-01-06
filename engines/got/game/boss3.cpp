@@ -36,7 +36,7 @@ namespace Got {
 #define LFC 10
 
 static int  boss_mode;
-static int  num_pods, num_pods1;
+static int  num_pods1;
 static byte pod_speed;
 static const byte EXPLOSION[4][8] = {
     {126,127,128,129,130,131,132,133},
