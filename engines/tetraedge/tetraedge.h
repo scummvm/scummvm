@@ -124,6 +124,8 @@ public:
 
 	Common::Platform getGamePlatform() const;
 
+	bool isUtf8Release() const;
+
 	bool isGameDemo() const;
 
 	/**

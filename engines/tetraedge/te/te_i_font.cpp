@@ -51,6 +51,8 @@ TeIFont::GlyphData TeIFont::glyph(uint pxSize, uint charcode) {
 
 Common::CodePage TeIFont::codePage() const {
 	Common::String lang = g_engine->getCore()->language();
+	if (g_engine->isUtf8Release())
+		return Common::CodePage::kUtf8;
 	if (lang == "ru")
 		return Common::kISO8859_5;
 	if (g_engine->getGamePlatform() == Common::Platform::kPlatformAndroid)

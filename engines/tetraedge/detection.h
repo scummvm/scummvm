@@ -34,6 +34,10 @@ enum TetraedgeDebugChannels {
 	kDebugScript   = 1 << 4
 };
 
+enum GameFeatures {
+	GF_UTF8        = 1 << 0,
+};
+
 extern const PlainGameDescriptor GAME_NAMES[];
 
 extern const ADGameDescription GAME_DESCRIPTIONS[];
