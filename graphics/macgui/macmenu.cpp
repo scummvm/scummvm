@@ -970,7 +970,6 @@ template <typename T>
 static void drawMenuPattern(ManagedSurface &srcSurf, ManagedSurface &destSurf, const byte *pattern, int x, int y, int width, uint32 colorKey) {
 	// I am lazy to extend drawString() with plotProc as a parameter, so
 	// fake it here
-
 	for (int ii = 0; ii < srcSurf.h; ii++) {
 		const T *src = (const T *)srcSurf.getBasePtr(0, ii);
 		T *dst = (T *)destSurf.getBasePtr(x, y + ii);
@@ -1066,16 +1065,33 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		int x = _align == kTextAlignRight ? -kMenuLeftMargin : kMenuLeftMargin;
 		x += it->bbox.left;
 
+		ManagedSurface *s = &_screen;
+		int tx = x, ty = y;
+
+		if (!it->enabled) {
+			s = &_tempSurface;
+			tx = 0;
+			ty = 0;
+			_tempSurface.clear(_wm->_colorGreen);
+		}
+
 		if (it->unicode) {
 			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
 			Common::UnicodeBiDiText utxt(it->unicodeText);
 
-			_font->drawString(&_screen, utxt.visual, x, y, it->bbox.width(), color, _align, 0, true);
-			underlineAccelerator(&_screen, _font, utxt, x + accOff, y, it->shortcutPos, color);
+			_font->drawString(s, utxt.visual, tx, ty, it->bbox.width(), color, _align, 0, true);
+			underlineAccelerator(s, _font, utxt, tx + accOff, ty, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
+			font->drawString(s, it->text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
+		}
 
-			font->drawString(&_screen, it->text, x, y, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
+		if (!it->enabled) {
+			if (_wm->_pixelformat.bytesPerPixel == 1) {
+				drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+			} else {
+				drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+			}
 		}
 	}
 
@@ -1101,6 +1117,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 	if (r->width() == 0 || r->height() == 0)
 		return;
+
+	bool menuEnabled = _items[_activeItem]->enabled;
 
 	_screen.fillRect(*r, _wm->_colorWhite);
 	_screen.frameRect(*r, _wm->_colorBlack);
@@ -1152,7 +1170,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		}
 
 		int color = _wm->_colorBlack;
-		if (i == menu->highlight && (!text.empty() || !unicodeText.empty()) && menu->items[i]->enabled) {
+		if (i == menu->highlight && (!text.empty() || !unicodeText.empty()) && menuEnabled && menu->items[i]->enabled) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
@@ -1163,7 +1181,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			ManagedSurface *s = &_screen;
 			int tx = x, ty = y;
 
-			if (!menu->items[i]->enabled) {
+			if (!menuEnabled || !menu->items[i]->enabled) {
 				s = &_tempSurface;
 				tx = 0;
 				ty = 0;
@@ -1199,7 +1217,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			if (menu->items[i]->submenu != nullptr)
 				drawSubMenuArrow(s, arrowX, ty, color);
 
-			if (!menu->items[i]->enabled) {
+			if (!menuEnabled || !menu->items[i]->enabled) {
 				if (_wm->_pixelformat.bytesPerPixel == 1) {
 					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else {
@@ -1551,7 +1569,7 @@ bool MacMenu::mouseRelease(int x, int y) {
 		return false;
 
 	bool haveCallBack = false;
-	if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
+	if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->enabled && _menustack.back()->items[_activeSubItem]->enabled) {
 		// no action if item has submenu
 		if (_menustack.back()->items[_activeSubItem]->submenu) {
 			return false;
