@@ -194,6 +194,34 @@ constexpr I18nText kI18N_YouHideTheObjectUnderThePillowText = {
 	"DU VERSTECKST %s UNTER DEM KISSEN."
 };
 
+constexpr I18nText kI18N_DontPutTheObjectInTheTrunkText = {
+	"Don't put the %s in the trunk, you'll forget it.",
+	"NO PONGAS %s EN EL BAUL, TE OLVIDARAS.",
+	"NE METTEZ PAS %s DANS LE COFFRE, VOUS L'OUBLIEREZ.",
+	"WENN DU %s IN DEN TRUHE LEGST, VERGISST DU ES." // TODO check this is correct.
+};
+
+constexpr I18nText kI18N_TheCarWontStartWithTheText = {
+	"The car won't start with the %s.",
+	"EL COCHE NO SE PONDRA EN MARCHA CON %s.",
+	"LA VOITURE NE DEMARRERA PAS AVEC %s.",
+	"DAS AUTO SPRINGT NICHT AN MIT %s."
+};
+
+constexpr I18nText kI18N_IfYouPutTheObjectInTheTrunkText = {
+	"If you put the %s in the trunk, you'll forget it.",
+	"SI PONES %s EN EL BAUL, TE OLVIDARAS.",
+	"SI VOUS METTEZ %s DANS LE COFFRE, VOUS L'OUBLIEREZ.",
+	"WENN DU %s IN DEN TRUHE LEGST, VERGISST DU ES."
+};
+
+constexpr I18nText kI18N_TheObjectIsYoursYouHaventLostItText = {
+	"The %s is yours, you haven't lost it.",
+	"%s ES TUYA, NO LA HASA PERDIDO.",
+	"%s EST A VOUS, VOUS NE L'AVEZ PAS PERDUE.",
+	"%s GEHOERT DIR, DU HAST ES NICHT VERLOREN."
+};
+
 constexpr I18nText kI18N_blankText = {
 	"",
 	"",

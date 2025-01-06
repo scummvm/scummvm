@@ -1594,25 +1594,25 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	case 986:
 		_console->addTextLine(
 			Common::String::format(
-				"Don't put the %s in the trunk, you'll forget it.",
+				getI18NText(kI18N_DontPutTheObjectInTheTrunkText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 987:
 		_console->addTextLine(
 			Common::String::format(
-				"The car won't start with the %s.",
+				getI18NText(kI18N_TheCarWontStartWithTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 988:
 		_console->addTextLine(
 			Common::String::format(
-				"If you put the %s in the trunk, you'll forget it.",
+				getI18NText(kI18N_IfYouPutTheObjectInTheTrunkText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 989:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s is yours, you haven't lost it.",
+				getI18NText(kI18N_TheObjectIsYoursYouHaventLostItText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 990:
