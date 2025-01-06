@@ -30,8 +30,12 @@ namespace Dialogs {
 static const char *OPTIONS[] = {
     "Play Game", "Load Game", "High Scores", "Credits", "Demo", "Quit", nullptr
 };
+static const char *OPTIONS_NO_DEMO[] = {
+	"Play Game", "Load Game", "High Scores", "Credits", "Quit", nullptr
+};
 
-MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu", OPTIONS) {
+MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu",
+	gDebugLevel > 0 ? OPTIONS : OPTIONS_NO_DEMO) {
 }
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
@@ -65,9 +69,13 @@ void MainMenu::selected() {
         break;
 
     case 4:
-        _G(demo) = true;
-        initialize_game();
-        replaceView("Game", true, true);
+		if (gDebugLevel > 0) {
+			_G(demo) = true;
+			initialize_game();
+			replaceView("PartTitle", true, true);
+		} else {
+			addView("Quit");
+		}
         break;
 
     case 5:

@@ -196,7 +196,7 @@ void Events::processEvent(Common::Event &ev) {
 		if (!_G(demo)) {
 			_G(key_flag)[actionToKeyFlag(ev.customType)] = true;
 			msgAction(ActionMessage(ev.customType));
-		} else {
+		} else if (ev.customType == KEYBIND_ESCAPE) {
 			// The Escape action will return to main menu from demo
 			_G(demo) = false;
 			send("TitleBackground", GameMessage("MAIN_MENU"));
