@@ -33,12 +33,6 @@ bool File::open(const Common::Path &filename) {
     return true;
 }
 
-
-long file_size(char *path) {
-    Common::File f;
-    return f.open(Common::Path(path)) ? f.size() : -1;
-}
-
 bool load_actor(int /*file*/, int num) {
     Common::String fname = Common::String::format("ACTOR%d", num);
 

@@ -27,12 +27,9 @@
 
 namespace Got {
 
-extern long file_size(const char *path);
-
 extern bool load_actor(int, int num);
 extern void setup_filenames(int level);
 extern bool  load_speech(int index);
-extern long file_size(const char *path);
 extern long res_read(const Common::String &name, void *buff,
                      bool failAllowed = false);
 extern void *res_falloc_read(const Common::String &name);
