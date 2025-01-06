@@ -59,7 +59,7 @@ namespace Agi {
 // TODO: There are extremely minor inaccuracies in several Winnie pictures.
 // The F1 opcode's effects are not fully understood, and it creates subtle
 // discrepancies. It may be related to dithering. However, so few pictures
-// contain F3, and even fewer are effected by ignoring it or not, and only
+// contain F3, and even fewer are affected by ignoring it or not, and only
 // by a few pixels, that it doesn't matter except for completeness.
 // See: picture 34 door handles (Rabbit's kitchen)
 
@@ -293,7 +293,7 @@ bool PictureMgr_Mickey_Winnie::getNextXCoordinate(byte &x) {
 		return false;
 	}
 
-	if (_isDosOrAmiga) { // TODO: is this check in A2/C64/CoCo?
+	if (_isDosOrAmiga) {
 		if (x >= _width) { // 140
 			debugC(kDebugLevelPictures, "clipping %c from %d to %d", 'x', x, _width - 1);
 			x = _width - 1; // 139
@@ -313,7 +313,7 @@ bool PictureMgr_Mickey_Winnie::getNextYCoordinate(byte &y) {
 		return false;
 	}
 
-	if (_isDosOrAmiga) { // TODO: is this check in A2/C64/CoCo?
+	if (_isDosOrAmiga) {
 		// note that this is a different clip than for the x coordinate
 		if (y > _height) { // 159
 			debugC(kDebugLevelPictures, "clipping %c from %d to %d", 'y', y, _height);
