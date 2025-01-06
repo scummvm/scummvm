@@ -93,6 +93,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
 	_wmMode = 0;
+	_primitives = nullptr;
 
 	_wmWidth = 1024;
 	_wmHeight = 768;
@@ -158,6 +159,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _lingo;
 	delete _wm;
 	delete _surface;
+	delete _primitives;
 
 	for (auto &it : _allSeenResFiles) {
 		delete it._value;
