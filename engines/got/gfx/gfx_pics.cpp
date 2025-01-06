@@ -47,6 +47,17 @@ void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf) {
 }
 
 
+void GfxPics::clear() {
+	delete[] _array;
+	_array = nullptr;
+}
+
+void GfxPics::resize(uint newSize) {
+	assert(!_array);	// Don't support multiple resizes
+	_array = new Graphics::ManagedSurface[newSize];
+	_size = newSize;
+}
+
 void GfxPics::load(const Common::String &name, int blockSize) {
     File f(name);
 
