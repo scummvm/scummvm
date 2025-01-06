@@ -115,7 +115,6 @@ void Vars::clearKeyFlags() {
 
 void Vars::resetEndgameFlags() {
     _gameMode = MODE_NORMAL;
-    _demo = false;
     _auto_load = false;
     _end_tile = false;
     _boss_dead = false;
