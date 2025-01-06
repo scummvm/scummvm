@@ -976,17 +976,16 @@ void Adlib::OnTimer() {
 						// TODO: Really need to rework 19BE implementation
 						// TODO: Actual call and arguments for 19BE
 						/*
-						mov	ax,[bp-8h]
-						add	ax,40h
-						push	ax
 						push	word ptr [bp-0Eh]
 						push	word ptr [bp-10h]
 						push	2h
 						call	far 0017h:19BEh
 						*/
-						uint16 r19BE = Func19BE(bp8 + 0x40);
-						// TODO: We should call 2792, but an argument seems to be missing - figure this one
-						// out and fix functions around it
+						uint16 r19BE = Func19BE(2);
+						// TODO: For some reason, the argument for 2729 is pushed before
+						// the call to 19BE above
+						// 						
+						// Func2792(bp8 + 0x40);
 						//    TODO: Continue from here
 						/*
 						mov	di,ax
@@ -1058,6 +1057,22 @@ uint16 Adlib::Func19BE(uint8 offset) {
 uint16 Adlib::Func19BE_TODO(uint8 offset) {
 	return uint16();
 }
+
+Common::MemorySeekableReadWriteStream Adlib::Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta) {
+	Common::MemorySeekableReadWriteStream result = inStream;
+	uint16 pos = inStream.pos();
+	if (seekDelta > 0xF8) {
+		// l0017_19D8:
+		// TODO: Confirm that this works as expected and if it is every used in
+		// the actual game
+		pos &= 0xF;
+	}
+	// l0017_19EA
+	pos += seekDelta;
+	result.seek(pos, SEEK_SET);
+	return result;
+}
+
 
 void Adlib::Func1A03() {
 
