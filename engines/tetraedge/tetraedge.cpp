@@ -149,6 +149,10 @@ Common::Platform TetraedgeEngine::getGamePlatform() const {
 	return _gameDescription->platform;
 }
 
+bool TetraedgeEngine::isUtf8Release() const {
+	return !!(_gameDescription->flags & GF_UTF8);
+}
+
 bool TetraedgeEngine::isGameDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }

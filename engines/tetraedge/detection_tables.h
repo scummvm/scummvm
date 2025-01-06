@@ -80,7 +80,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	{
 		"syberia",
 	        nullptr,
-		AD_ENTRY1s("InGame.lua", "acaf61504a12aebf3862648e04cf29aa", 3920),
+		AD_ENTRY2s("InGame.lua", "acaf61504a12aebf3862648e04cf29aa", 3920,
+			   "texts/de.xml", "14681ac50bbfa50427058d2793b415eb", (uint32_t)-1),
 		Common::UNK_LANG,
 		Common::kPlatformNintendoSwitch,
 		ADGF_NO_FLAGS,
@@ -89,11 +90,47 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	{
 		"syberia2",
 		nullptr,
-		AD_ENTRY2s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
-			   "InGame.lua", "a7df110fe816cb342574150c6f992964", 4654),
+		AD_ENTRY3s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "InGame.lua", "a7df110fe816cb342574150c6f992964", 4654,
+			   "texts/de.xml", "dabad822a917b1f87de8f09eadc3ec85", (uint32_t)-1),
 		Common::UNK_LANG,
 		Common::kPlatformNintendoSwitch,
 		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// Nintendo Switch, from Syberia1+2 Online bundle, v0
+	{
+		"syberia",
+	        nullptr,
+		AD_ENTRY2s("InGame.lua", "ca319e6f014d04baaf1e77f13f89b44f", 4271,
+			   "texts/de.xml", "14681ac50bbfa50427058d2793b415eb", (uint32_t)-1),
+		Common::UNK_LANG,
+		Common::kPlatformNintendoSwitch,
+		ADGF_NO_FLAGS,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// Nintendo Switch, from Syberia1+2 Online bundle, v196608
+	{
+		"syberia",
+	        nullptr,
+		AD_ENTRY2s("InGame.lua", "ca319e6f014d04baaf1e77f13f89b44f", 4271,
+			   "texts/de.xml", "17d7a875e81a7761d2b30698bd947c15", (uint32_t)-1),
+		Common::UNK_LANG,
+		Common::kPlatformNintendoSwitch,
+		ADGF_NO_FLAGS | GF_UTF8,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY3s("Debug.lua", "a2ea493892e96bea64013819195c081e", 7024,
+			   "InGame.lua", "7d7fdb9005675618220e7cd8962c6482", 4745,
+			   "texts/de.xml", "78ed3567b3621459229f39c03132e5bb", (uint32_t)-1),
+		Common::UNK_LANG,
+		Common::kPlatformNintendoSwitch,
+		ADGF_NO_FLAGS | GF_UTF8,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
