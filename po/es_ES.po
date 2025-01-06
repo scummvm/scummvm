@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-05 23:03+0000\n"
-"PO-Revision-Date: 2025-01-01 21:18+0000\n"
+"PO-Revision-Date: 2025-01-06 13:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7633,10 +7633,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "No se ha incluido el soporte para Versailles 1685."
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "No se puede localizar el archivo de datos del motor '%s'."
+msgstr "No se puede localizar el archivo de datos darkseed.dat del motor."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -11602,25 +11600,22 @@ msgstr ""
 "música y tipografías."
 
 #: engines/scumm/scumm.cpp:1329
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the '%s' Macintosh executable to read resources from. "
-#| "Music and Mac GUI will be disabled"
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
 "No se ha encontrado el ejecutable de Macintosh de «%s»\n"
-"para obtener recursos. Se han desactivado la música\n"
-"y la interfaz estilo Mac."
+"para obtener recursos. Se desactivará lo siguiente:\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:1330
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Interfaz estilo Mac"
 
 #: engines/scumm/scumm.cpp:1330
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Interfaz y músicas estilo Mac"
 
 #: engines/scumm/scumm.cpp:1350
 #, c-format
