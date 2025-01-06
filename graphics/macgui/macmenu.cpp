@@ -1186,6 +1186,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				tx = 0;
 				ty = 0;
 				accelX -= x;
+				arrowX -= x;
 
 				_tempSurface.clear(_wm->_colorGreen);
 			}
