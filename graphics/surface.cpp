@@ -46,7 +46,7 @@ public:
 
         void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->hLine(x1, x2, y, color);
+		s->hLine(x1, y, x2, color);
 	}
 
         void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
