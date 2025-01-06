@@ -266,7 +266,14 @@ void DirectorEngine::draw() {
 }
 
 template <typename T>
-void inkDrawPixel(int x, int y, int src, void *data) {
+class InkPrimitives final : public Graphics::Primitives {
+public:
+	constexpr InkPrimitives() {}
+	void drawPoint(int x, int y, uint32 src, void *data) override;
+};
+
+template <typename T>
+void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 	Graphics::MacWindowManager *wm = p->d->_wm;
 
@@ -291,7 +298,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 			for (y = y1; y < y2; y++)
 				for (x = x1; x < x2; x++)
 					if (x >= 0 && x < p->ms->pd->surface->w && y >= 0 && y < p->ms->pd->surface->h) {
-						inkDrawPixel<T>(x, y, src, data);
+						drawPoint(x, y, src, data);
 					}
 
 			p->ms->pd->thickness = prevThickness;
@@ -485,11 +492,15 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	}
 }
 
-Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
-	if (_pixelformat.bytesPerPixel == 1)
-		return &inkDrawPixel<byte>;
-	else
-		return &inkDrawPixel<uint32>;
+Graphics::Primitives *DirectorEngine::getInkPrimitives() {
+	if (!_primitives) {
+		if (_pixelformat.bytesPerPixel == 1)
+			_primitives = new InkPrimitives<byte>();
+		else
+			_primitives = new InkPrimitives<uint32>();
+	}
+
+	return _primitives;
 }
 
 uint32 DirectorEngine::getColorBlack() {
@@ -619,10 +630,12 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 	strokeRect.moveTo(srcRect.left, srcRect.top);
 	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, ms->lineSize, ms->backColor);
 
+	Graphics::Primitives *primitives = g_director->getInkPrimitives();
+
 	switch (ms->spriteType) {
 	case kRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawFilledRect1(fillAreaRect, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawFilledRect1(fillAreaRect, ms->foreColor, this);
 		// fall through
 	case kOutlinedRectangleSprite:
 		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
@@ -633,11 +646,11 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRect1(strokeRect, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawRect1(strokeRect, ms->foreColor, this);
 		break;
 	case kRoundedRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawRoundRect1(fillAreaRect, 12, ms->foreColor, true, d->getInkDrawPixel(), this);
+		primitives->drawRoundRect1(fillAreaRect, 12, ms->foreColor, true, this);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
 		if (ms->lineSize <= 0)
@@ -647,11 +660,11 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRoundRect1(strokeRect, 12, ms->foreColor, false, d->getInkDrawPixel(), this);
+		primitives->drawRoundRect1(strokeRect, 12, ms->foreColor, false, this);
 		break;
 	case kOvalSprite:
 		ms->pd = &plotFill;
-		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, ms->foreColor, true, d->getInkDrawPixel(), this);
+		primitives->drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, ms->foreColor, true, this);
 		// fall through
 	case kOutlinedOvalSprite:
 		if (ms->lineSize <= 0)
@@ -661,15 +674,15 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, d->getInkDrawPixel(), this);
+		primitives->drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, this);
 		break;
 	case kLineTopBottomSprite:
 		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, this);
 		break;
 	case kLineBottomTopSprite:
 		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, ms->foreColor, this);
 		break;
 	default:
 		warning("DirectorPlotData::inkBlitShape: Expected shape type but got type %d", ms->spriteType);
@@ -710,6 +723,8 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	// format as the window manager. Most of the time this is
 	// the job of BitmapCastMember::createWidget.
 
+	Graphics::Primitives *primitives = g_director->getInkPrimitives();
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		srcPoint.x = abs(srcRect.left - destRect.left);
@@ -723,10 +738,10 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 
 			if (!mask || (msk && (*msk++))) {
 				if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				} else {
-					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				}
 			}

@@ -1104,6 +1104,8 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 	pd.destRect = clipRect;
 	pd.dst = _composeSurface;
 
+	Graphics::Primitives *primitives = g_director->getInkPrimitives();
+
 	for (uint16 i = 1; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
 
@@ -1124,10 +1126,10 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 				r.moveTo(t.xStepSize * (i - s), t.yStepSize * (i - s));
 			}
 
-			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
-			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
-			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
-			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
+			primitives->drawLine(r.left,  r.top,    r.right, r.top,    _wm->_colorBlack, &pd);
+			primitives->drawLine(r.right, r.top,    r.right, r.bottom, _wm->_colorBlack, &pd);
+			primitives->drawLine(r.left,  r.bottom, r.right, r.bottom, _wm->_colorBlack, &pd);
+			primitives->drawLine(r.left,  r.top,    r.left,  r.bottom, _wm->_colorBlack, &pd);
 		}
 
 		r.setHeight(t.yStepSize * i * 2);

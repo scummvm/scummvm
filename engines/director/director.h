@@ -37,6 +37,7 @@ class SeekableReadStreamEndian;
 }
 
 namespace Graphics {
+class Primitives;
 class MacWindowManager;
 struct MacPlotData;
 struct WinCursorGroup;
@@ -210,7 +211,7 @@ public:
 	void setCursor(DirectorCursor type);
 	void draw();
 
-	Graphics::MacDrawPixPtr getInkDrawPixel();
+	Graphics::Primitives *getInkPrimitives();
 	uint32 getColorBlack();
 	uint32 getColorWhite();
 
@@ -312,6 +313,7 @@ private:
 	PaletteV4 _loaded4Palette;
 
 	Graphics::ManagedSurface *_surface;
+	Graphics::Primitives *_primitives;
 
 	StartOptions _options;
 
