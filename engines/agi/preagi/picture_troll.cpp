@@ -35,7 +35,7 @@ namespace Agi {
 //
 // 1. The F3 opcode can dynamically act as a no-op or terminator (FF).
 //    This allows pictures to have an optional set of instructions for
-//	  drawing or hiding a room's object or the king's crown.
+//    drawing or hiding a room's object or the king's crown.
 //
 // 2. A custom flood fill technique is used for drawing the Troll over
 //    room pictures. Normally, flood fill requires an empty (white) area.
