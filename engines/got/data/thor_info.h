@@ -52,6 +52,7 @@ struct THOR_INFO {
     byte armor = 0;
     byte future[65] = {};
 
+	void clear();
     void sync(Common::Serializer &s);
 };
 
