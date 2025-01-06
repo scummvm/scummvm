@@ -359,8 +359,10 @@ int Scripts::get_next_val() {
     int t;
 
     ch = *_buffPtr;
-    if (ch == 0 || ch == ':') return 0;
-    if (ch == 64) return get_internal_variable();
+    if (ch == 0 || ch == ':')
+		return 0;
+    if (ch == 64)
+		return get_internal_variable();
 
     if (Common::isAlpha(ch)) {
         _buffPtr++;
@@ -524,7 +526,8 @@ int Scripts::read_script_file() {
             ret = 2;
             goto done;
         }
-        if (!strcmp(tmps, temp_buff)) break;
+        if (!strcmp(tmps, temp_buff))
+			break;
     }
     _numLabels = 0;
     while (1) {
@@ -600,7 +603,8 @@ void Scripts::script_error(int err_num) {
 
     while (1) {
         if (*tb == 0) line_num++;
-        if (tb >= _buffPtr) break;
+        if (tb >= _buffPtr)
+			break;
         tb++;
     }
 
@@ -621,7 +625,8 @@ int Scripts::cmd_goto() {
 
     for (i = 0; i < _numLabels; i++) {
         len = strlen(s);
-        if (len == 0) break;
+        if (len == 0)
+			break;
         if (!strcmp(s, _lineLabel[i])) {
             _newPtr = _linePtr[i];
             _buffPtr += len;
@@ -635,21 +640,26 @@ int Scripts::cmd_if() {
     long tmpval1, tmpval2;
     char exptype, ch;
 
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     tmpval1 = _lValue;
     exptype = *_buffPtr;
     _buffPtr++;
 
     ch = *_buffPtr;
     if (ch == 60 || ch == 61 || ch == 62) {
-        if (exptype == *_buffPtr) return 5;
+        if (exptype == *_buffPtr)
+			return 5;
         exptype += *_buffPtr;
         _buffPtr++;
     }
-    if (!calc_value()) return 5;
-    tmpval2 = _lValue;
+    if (!calc_value())
+		return 5;
+
+	tmpval2 = _lValue;
     _buffPtr += 4;
-    switch (exptype) {
+
+	switch (exptype) {
     case 60:                              /* less than */
         if (tmpval1 < tmpval2) goto iftrue;
         goto iffalse;
@@ -676,14 +686,17 @@ iffalse:
     while (*_buffPtr != 0) _buffPtr++;
     while (*_buffPtr == 0) _buffPtr++;
 
-    if (!strncmp(_buffPtr, "ELSE", 4)) _buffPtr += 4;
+    if (!strncmp(_buffPtr, "ELSE", 4))
+		_buffPtr += 4;
 
 iftrue:
     return 0;
 }
 
 int Scripts::cmd_run() {
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
+
     _buffPtr++;
     _scrIndex = _lValue;
     return -100;
@@ -700,30 +713,36 @@ int Scripts::cmd_addjewels() {
 }
 
 int Scripts::cmd_addhealth() {
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
+
     _buffPtr++;
     add_health((int)_lValue);
     return 0;
 }
 
 int Scripts::cmd_addmagic() {
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
+
     _buffPtr++;
     add_magic((int)_lValue);
     return 0;
 }
 
 int Scripts::cmd_addkeys() {
+    if (!calc_value())
+		return 5;
 
-    if (!calc_value()) return 5;
     _buffPtr++;
     add_keys((int)_lValue);
     return 0;
 }
 
 int Scripts::cmd_addscore() {
+    if (!calc_value())
+		return 5;
 
-    if (!calc_value()) return 5;
     _buffPtr++;
     add_score((int)_lValue);
     return 0;
@@ -734,10 +753,12 @@ int Scripts::cmd_say(int mode, int type) {
     int obj;
 
     if (mode) {
-        if (!calc_value()) return 5;
+        if (!calc_value())
+			return 5;
         _buffPtr++;
         obj = (int)_lValue;
-        if (obj < 0 || obj>32) return 6;
+        if (obj < 0 || obj>32)
+			return 6;
         if (obj) obj += 10;
     } else obj = 0;
 
@@ -821,7 +842,9 @@ void Scripts::setAskResponse(int option) {
 }
 
 int Scripts::cmd_sound() {
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
+
     _buffPtr++;
     if (_lValue < 1 || _lValue>16) return 6;
     play_sound((int)_lValue - 1, 1);
@@ -831,18 +854,26 @@ int Scripts::cmd_sound() {
 int Scripts::cmd_settile() {
     int screen, pos, tile;
 
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     _buffPtr++;
     screen = (int)_lValue;
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     _buffPtr++;
     pos = (int)_lValue;
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     tile = (int)_lValue;
-    if (screen < 0 || screen>119) return 6;
-    if (pos < 0 || pos>239) return 6;
-    if (tile < 0 || tile>230) return 6;
-    if (screen == _G(current_level)) {
+
+	if (screen < 0 || screen > 119)
+		return 6;
+    if (pos < 0 || pos > 239)
+		return 6;
+    if (tile < 0 || tile > 230)
+		return 6;
+
+	if (screen == _G(current_level)) {
         place_tile(pos % 20, pos / 20, tile);
     } else {
         LEVEL tmp;
@@ -861,7 +892,8 @@ int Scripts::cmd_itemgive() {
 
     _buffPtr++;
     i = (int)_lValue;
-    if (i < 1 || i > 15) return 6;
+    if (i < 1 || i > 15)
+		return 6;
 
     _G(thor_info).inventory |= 64;
     _G(thor_info).item = 7;
@@ -877,36 +909,41 @@ int Scripts::cmd_itemtake() {
 }
 
 int Scripts::cmd_setflag() {
-    int i;
+	int i;
 
-    if (!calc_value())
-        return 5;
+	if (!calc_value())
+		return 5;
 
 	i = (int)_lValue;
-    if (i < 1 || i>64)
-        return 6;
+	if (i < 1 || i>64)
+		return 6;
 
 	_G(setup)._flags[i - 1] = true;
 
-    return 0;
+	return 0;
 }
 
 int Scripts::cmd_ltoa() {
-    int sv;
+	int sv;
 
-    if (!calc_value()) return 5;
-    _buffPtr++;
+	if (!calc_value())
+		return 5;
+	_buffPtr++;
 
-    if (Common::isAlpha(*_buffPtr)) {
-        if (*(_buffPtr + 1) == '$') {
-            sv = (*_buffPtr) - 65;
-            _buffPtr += 2;
-        } else return 5;
-    } else return 5;
+	if (Common::isAlpha(*_buffPtr)) {
+		if (*(_buffPtr + 1) == '$') {
+			sv = (*_buffPtr) - 65;
+			_buffPtr += 2;
+		} else {
+			return 5;
+		}
+	} else {
+		return 5;
+	}
 
-    Common::String str = Common::String::format("%ld", _lValue);
-    Common::strcpy_s(_strVar[sv], str.c_str());
-    return 0;
+	Common::String str = Common::String::format("%ld", _lValue);
+	Common::strcpy_s(_strVar[sv], str.c_str());
+	return 0;
 }
 
 int Scripts::cmd_pause() {
@@ -935,14 +972,19 @@ int Scripts::cmd_random() {
     if (Common::isAlpha(*_buffPtr)) {
         v = *_buffPtr - 65;
         _buffPtr++;
-        if (*_buffPtr != ',') return 5;
+        if (*_buffPtr != ',')
+			return 5;
         _buffPtr++;
-    } else return 5;
+	} else {
+		return 5;
+	}
 
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     _buffPtr++;
     r = (int)_lValue;
-    if (r < 1 || r>1000) return 6;
+    if (r < 1 || r>1000)
+		return 6;
 
     _numVar[v] = g_events->getRandomNumber(r - 1);
     return 0;
@@ -1026,7 +1068,8 @@ void Scripts::scr_func5() {
 }
 
 int Scripts::cmd_exec() {
-    if (!calc_value()) return 5;
+    if (!calc_value())
+		return 5;
     _buffPtr++;
     if (_lValue < 1 || _lValue>10)
         return 6;
@@ -1173,10 +1216,12 @@ int Scripts::exec_command(int num) {
     default:
         ret = 5;
     }
-    if (ret > 0) {
+
+	if (ret > 0) {
         script_error(ret);
         return 0;
     }
+
     return 1;
 }
 
