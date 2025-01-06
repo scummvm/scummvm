@@ -50,6 +50,8 @@ namespace Macs2 {
 		// TODO: Function should take a pointer to data
 		uint16 Func19BE_TODO(uint8 offset);
 
+		Common::MemorySeekableReadWriteStream Func19BE_2(Common::MemorySeekableReadWriteStream& inStream, uint8 seekDelta);
+
 		// TODO: Maybe need to add the caller
 		void Func24FD();
 
