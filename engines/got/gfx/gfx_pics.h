@@ -38,9 +38,28 @@ namespace Gfx {
 extern void convertPaneDataToSurface(const byte *src, Graphics::ManagedSurface &surf);
 
 
-class GfxPics : public Common::Array<Graphics::ManagedSurface> {
+class GfxPics {
+private:
+	Graphics::ManagedSurface *_array = nullptr;
+	size_t _size = 0;
+
+protected:
+
 public:
+	~GfxPics() {
+		clear();
+	}	
+
+	void clear();
+	void resize(uint newSize);
     void load(const Common::String &name, int blockSize);
+
+	Graphics::ManagedSurface &operator[](uint idx) {
+		return _array[idx];
+	}
+	size_t size() const {
+		return _size;
+	}
 };
 
 class BgPics : public GfxPics {
