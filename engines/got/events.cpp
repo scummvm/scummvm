@@ -77,9 +77,9 @@ void Events::runGame() {
                     e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
                 _views.clear();
                 break;
-            } else if (!_G(demo)) {
-                processEvent(e);
-            }
+			} else {
+				processEvent(e);
+			}
         }
 
         if (_views.empty())
@@ -117,7 +117,7 @@ void Events::nextFrame() {
     _G(magic_cnt)++;
 
     // In demo mode, handle the next key
-    if (_G(demo)) {
+    if (_G(demo) && focusedView()->getName() == "Game") {
         if (_G(demoKeys).empty()) {
 			_G(demo) = false;
 			send("TitleBackground", GameMessage("MAIN_MENU"));
@@ -180,35 +180,47 @@ void Events::rotatePalette() {
 void Events::processEvent(Common::Event &ev) {
     switch (ev.type) {
     case Common::EVENT_KEYDOWN:
-        if (ev.kbd.keycode < 100)
-            _G(key_flag)[ev.kbd.keycode] = true;
+		if (!_G(demo)) {
+			if (ev.kbd.keycode < 100)
+				_G(key_flag)[ev.kbd.keycode] = true;
 
-        if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
-            msgKeypress(KeypressMessage(ev.kbd));
+			if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
+				msgKeypress(KeypressMessage(ev.kbd));
+		}
         break;
     case Common::EVENT_KEYUP:
-        if (ev.kbd.keycode < 100)
+        if (!_G(demo) && ev.kbd.keycode < 100)
             _G(key_flag)[ev.kbd.keycode] = false;
         break;
     case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-        _G(key_flag)[actionToKeyFlag(ev.customType)] = true;
-        msgAction(ActionMessage(ev.customType));
+		if (!_G(demo)) {
+			_G(key_flag)[actionToKeyFlag(ev.customType)] = true;
+			msgAction(ActionMessage(ev.customType));
+		} else {
+			// The Escape action will return to main menu from demo
+			_G(demo) = false;
+			send("TitleBackground", GameMessage("MAIN_MENU"));
+		}
         break;
     case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-        _G(key_flag)[actionToKeyFlag(ev.customType)] = false;
+		if (!_G(demo))
+			_G(key_flag)[actionToKeyFlag(ev.customType)] = false;
         break;
     case Common::EVENT_LBUTTONDOWN:
     case Common::EVENT_RBUTTONDOWN:
     case Common::EVENT_MBUTTONDOWN:
-        msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
+		if (!_G(demo))
+			msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
         break;
     case Common::EVENT_LBUTTONUP:
     case Common::EVENT_RBUTTONUP:
     case Common::EVENT_MBUTTONUP:
-        msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
+		if (!_G(demo))
+			msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
         break;
     case Common::EVENT_MOUSEMOVE:
-        msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
+		if (!_G(demo))
+			msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
         break;
     default:
         break;
@@ -216,13 +228,14 @@ void Events::processEvent(Common::Event &ev) {
 }
 
 void Events::processDemoEvent(byte ev) {
+	if (!ev)
+		return;
+
     bool flag = ev & 0x80;
     ev &= 0x7f;
 
     int action = -1;
     switch (ev) {
-    case 0:
-        return;
     case 72:
         ev = key_up;
         action = KEYBIND_UP;
@@ -244,6 +257,10 @@ void Events::processDemoEvent(byte ev) {
         ev = key_magic;
         action = KEYBIND_MAGIC;
         break;
+	case 39:
+		ev = key_select;
+		action = KEYBIND_SELECT;
+		break;
     default:
         break;
     }
