@@ -148,7 +148,7 @@ void Primitives::drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint3
 		/* Set up line thickness */
 		wstart = y - wid / 2;
 		for (w = wstart; w < wstart + wid; w++)
-			drawPoint(x, y, color, data);
+			drawPoint(x, w, color, data);
 
 		if (((y2 - y1) * ydirflag) > 0) {
 			while (x < xend) {
