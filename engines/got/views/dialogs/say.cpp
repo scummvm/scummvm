@@ -26,8 +26,6 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
-#define _HRZSP 24
-
 Say::Say() : Dialog("Say") {
     setBounds(Common::Rect(32, 48, 288, 160));
 }

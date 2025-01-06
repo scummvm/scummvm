@@ -45,7 +45,7 @@ void Credits::draw() {
     GfxSurface s = getSurface();
 
     // Draw scroll background
-    Graphics::ManagedSurface bg = _G(gfx)[42];
+    const Graphics::ManagedSurface &bg = _G(gfx)[42];
     s.clear(*(byte *)bg.getPixels());
     s.simpleBlitFrom(bg, Common::Point(0, 24));
 
