@@ -27,14 +27,9 @@
 
 namespace Got {
 
-static const HighScore DEFAULTS[HIGH_SCORES_PER_AREA] = {
-    { 0, 10000, "Ron Davis" },
-    { 0,  9000, "Gary Sirois" },
-    { 0,  8000, "Adam Pedersen" },
-    { 0,  7000, "Jason Blochowiak" },
-    { 0,  6000, "Roy Davis" },
-    { 0,  5000, "Wayne Timmerman" },
-    { 0,  4000, "Dan Linton" }
+static const char *DEFAULT_NAMES[HIGH_SCORES_PER_AREA] = {
+	"Ron Davis", "Gary Sirois", "Adam Pedersen", "Jason Blochowiak",
+	"Roy Davis", "Wayne Timmerman", "Dan Linton"
 };
 
 void HighScore::sync(Common::Serializer &s) {
@@ -66,9 +61,10 @@ void HighScores::load() {
         sync(s);
     } else {
         // Generate new data
-        for (int area = 0; area < 3; ++area)
-            for (int num = 0; num < HIGH_SCORES_PER_AREA; ++num)
-                _scores[area][num] = DEFAULTS[num];
+		for (int area = 0; area < 3; ++area)
+			for (int num = 0; num < HIGH_SCORES_PER_AREA; ++num)
+				_scores[area][num] = HighScore(DEFAULT_NAMES[num],
+					10000 - (num * 1000));
     }
 }
 

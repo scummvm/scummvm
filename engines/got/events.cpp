@@ -117,10 +117,11 @@ void Events::nextFrame() {
     _G(magic_cnt)++;
 
     // In demo mode, handle the next key
-    if (_G(demo) && _G(gameMode) == MODE_NORMAL) {
+    if (_G(demo)) {
         if (_G(demoKeys).empty()) {
-            _views.clear();
-            return;
+			_G(demo) = false;
+			send("TitleBackground", GameMessage("MAIN_MENU"));
+			return;
         } else {
             processDemoEvent(_G(demoKeys).pop());
         }

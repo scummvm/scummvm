@@ -65,9 +65,9 @@ void MainMenu::selected() {
         break;
 
     case 4:
-        _G(demo) = true;
         initialize_game();
-        replaceView("Game", true, true);
+		_G(demo) = true;
+		replaceView("Game", true, true);
         break;
 
     case 5:
