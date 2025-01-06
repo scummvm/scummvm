@@ -729,12 +729,16 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			if (info.basic.param1 == kSetSignalLoop) {
 				_loopTick = _position._playTick;
 				// kSetSignalLoop (127) is not passed on to scripts, except in SCI_VERSION_0_EARLY.
-				// We also pass it to all versions of KQ4 because the scripts expect this. Sierra didn't
-				// update them when they changed the driver behavior. Introduction script 222 waits
-				// on signal 127 in sound 106 to start the game, causing later versions to wait forever.
+				// We also pass it to all versions of KQ4 when playing the introduction sound,
+				// because the KQ4 scripts expect it, and Sierra did not update the scripts when
+				// they changed the driver behavior. Script 222 waits on signal 127 in sound 106
+				// to start the game, causing later versions to wait forever.
 				// Now the introduction correctly ends when the music does in all versions.
-				if (_soundVersion > SCI_VERSION_0_EARLY && g_sci->getGameId() != GID_KQ4) {
-					return true;
+				// We must only apply this to sound 106, because Amiga adds signal 127 to others.
+				if (_soundVersion > SCI_VERSION_0_EARLY) {
+					if (!(g_sci->getGameId() == GID_KQ4 && _pSnd->resourceId == 106)) {
+						return true;
+					}
 				}
 			}
 
