@@ -451,7 +451,8 @@ int TrollEngine::drawRoom(char *menu) {
 			strncat(menu, Common::String::format("  %d.", i + 1).c_str(), 4);
 
 			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i] - 1], 35);
-			strncat(menu, " ", 1);
+			menu[(i + 2) * 40 - 1] = ' ';
+			menu[(i + 2) * 40] = '\0';
 
 			n = i + 1;
 		}
