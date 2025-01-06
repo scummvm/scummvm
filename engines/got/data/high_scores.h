@@ -29,10 +29,14 @@ namespace Got {
 #define HIGH_SCORES_PER_AREA 7
 
 struct HighScore {
-    uint16 _unused;
-    uint32 _total;
-    char _name[32];
+    uint16 _unused = 0;
+    uint32 _total = 0;
+	char _name[32] = {};
 
+	HighScore() {}
+	HighScore(const char *name, uint32 total) : _total(total) {
+		Common::strcpy_s(_name, name);
+	}
     void sync(Common::Serializer &s);
 };
 
