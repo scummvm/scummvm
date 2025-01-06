@@ -44,6 +44,7 @@ private:
 
 public:
 	Console(TosText *tostext, Sound *sound);
+	~Console();
 
 	void printTosText(int tosIndex);
 	void addTextLine(const Common::String &text);
