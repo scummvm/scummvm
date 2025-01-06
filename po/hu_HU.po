@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-05 23:03+0000\n"
-"PO-Revision-Date: 2025-01-06 13:18+0000\n"
+"PO-Revision-Date: 2025-01-06 16:24+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1219,7 +1219,6 @@ msgid "Cloud"
 msgstr "Felhő"
 
 #: gui/helpdialog.cpp:71
-#, fuzzy
 msgid ""
 "## Connecting a cloud service - Quick mode\n"
 "\n"
@@ -1272,56 +1271,59 @@ msgid ""
 msgstr ""
 "## Csatlakozás egy felhő szolgáltatóhoz - Gyors mód\n"
 "\n"
-"1. Az indítópultból válassza ki a From the Launcher, select **Global "
-"Options** and then select the **Cloud** tab.\n"
+"1. Az indítópultból válassza ki az **Átfogó Opciók** aztán válassza a "
+"**Felhő** fület.\n"
 "\n"
-"2. Select your preferred cloud storage service from the **Active storage** "
-"dropdown, then select **Connect**.\n"
+"2. Válassza ki a kívánt felhő szolgáltatót az **Aktív tároló** legördülő "
+"menüből, majd válassza a **Csatlakozás**-t.\n"
 "\n"
-"\t  ![Select cloud service](choose_storage.png \"Select cloud service\""
+"\t  ![Felhő szolgáltató kiválasztása](choose_storage.png \"Felhő szolgáltató "
+"kiválasztása\"){w=70%}\n"
+"\n"
+"3. **Gyors mód** választása.\n"
+"\n"
+"\t  ![Gyors mód](quick_mode.png \"Gyors mód\"){w=70%}\n"
+"\n"
+"4. Válassza a **Szerver futtatása** majd a **Következő**-t \n"
+"\n"
+"\t  ![Szerver futtatása](run_server.png \"Szerver futtatása\"){w=70%}\n"
+"\n"
+"  ![Következő lépés](server_next.png \"Következő lépés\"){w=70%}\n"
+"\n"
+"5. Hivatkozás megnyitása.\n"
+"\n"
+"\t  ![Hivatkozás megnyitása](open_link.png \"Hivatkozás megnyitása\"){w=70%}"
+"\n"
+"\n"
+"6. A megnyíló ablakban válassza a kívánt felhő szolgáltatót. \n"
+"\n"
+"\t  ![Felhő szolgáltató kiválasztása](cloud_browser.png \"Felhő szolgáltató "
+"kiválasztása\"){w=70%}\n"
+"\n"
+"7. Bejelentkezés a kívánt felhőbe. Befejezés után lépjen vissza a ScummVM-be."
+"\n"
+"\n"
+"8. A sikeres oldalon nyomjon a **Befejezés** gombra. \n"
+"\n"
+"\t  ![Siker](cloud_success.png \"Siker\"){w=70%}\n"
+"9. A Felhő fülön válassza a **Tárhely bekapcsolása** opciót.\n"
+"\n"
+"\t  ![Tárhely bekapcsolása](enable_storage.png \"Tárhely bekapcsolása\""
 "){w=70%}\n"
 "\n"
-"3. Select **Quick mode**.\n"
+"10. Kész is van! Használja a felhőt funkciót a mentések vagy játék fájlok "
+"szinkronizálásához az eszközei között.\n"
 "\n"
-"\t  ![Quick mode](quick_mode.png \"Quick mode\"){w=70%}\n"
-"\n"
-"4. Select **Run server** and then select **Next** \n"
-"\n"
-"\t  ![Run server](run_server.png \"Run server\"){w=70%}\n"
-"\n"
-"  ![Next step](server_next.png \"Next step\"){w=70%}\n"
-"\n"
-"5. Open the link.\n"
-"\n"
-"\t  ![Open the link](open_link.png \"Open the link\"){w=70%}\n"
-"\n"
-"6. In the browser window that opens, select the cloud service to connect. \n"
-"\n"
-"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
-"service\"){w=70%}\n"
-"\n"
-"7. Sign in to the chosen cloud service. Once completed, return to ScummVM.\n"
-"\n"
-"8. On the success screen, select **Finish** to exit. \n"
-"\n"
-"\t  ![Success](cloud_success.png \"Success\"){w=70%}\n"
-"9. Back on the main Cloud tab, select **Enable storage**.\n"
-"\n"
-"\t  ![Enable storage](enable_storage.png \"Enable storage\"){w=70%}\n"
-"\n"
-"10. You're ready to go! Use the cloud functionality to sync saved games or "
-"game files between your devices.\n"
-"\n"
-"\t  ![Cloud functionality](cloud_functions.png \"Cloud functionality\""
+"\t  ![Felhő funkcionalitás](cloud_functions.png \"Felhő funkcionalitás\""
 "){w=70%}\n"
 "\n"
-"   For more information, including how to use the manual connection wizard, "
-"see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
-"connect_cloud.html) "
+"   További információért, többek között a manuális kapcsolat varázslóról, "
+"keresse fel a [Felhő dokumentációnkat](https://docs.scummvm.org/en/latest/"
+"use_scummvm/connect_cloud.html) "
 
 #: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:843
 msgid "Prev"
-msgstr "Elõzõ"
+msgstr "Előző"
 
 #: gui/imagealbum-dialog.cpp:129
 msgid "Save Image..."
@@ -1330,7 +1332,7 @@ msgstr "Kép mentése..."
 #: gui/imagealbum-dialog.cpp:263
 #, c-format
 msgid "%u of %u"
-msgstr "%u a %u ból"
+msgstr "%u a %u-ból"
 
 #: gui/imagealbum-dialog.cpp:376
 msgid "Save Image"
@@ -1346,7 +1348,7 @@ msgstr "Egyik sem"
 #: gui/launcher.cpp:108
 msgctxt "group"
 msgid "First letter"
-msgstr "Kezdőbetü"
+msgstr "Kezdőbetű"
 
 #: gui/launcher.cpp:108
 msgctxt "group"
@@ -1403,7 +1405,7 @@ msgstr "Válassz feltételeket a csoportosításhoz"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Kattintson ide a Segítségért"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1421,21 +1423,21 @@ msgstr "Névjegy"
 
 #: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
 msgid "About ScummVM"
-msgstr "ScummVM névjegy"
+msgstr "ScummVM névjegye"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:273
 msgid "Global ~O~ptions..."
-msgstr "Globális ~O~pciók..."
+msgstr "Átfogó ~O~pciók..."
 
 #: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
-msgstr "Globális ScummVM opciók cseréje"
+msgstr "Átfogó ScummVM opciók változtatása"
 
 #: gui/launcher.cpp:273
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "Globális ~O~pc..."
+msgstr "Átfogó ~O~pc..."
 
 #: gui/launcher.cpp:277
 msgid "Download Games"
@@ -1443,12 +1445,12 @@ msgstr "Játékok letöltése"
 
 #: gui/launcher.cpp:277
 msgid "Download freeware games for ScummVM"
-msgstr "Ingyenes játékok letöltése ScummVM-hez"
+msgstr "Freeware játékok letöltése ScummVM-hez"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:284
 msgid "~A~dd Game..."
-msgstr "Játék hozzáadás..."
+msgstr "Játék hozzá~a~dás..."
 
 #: gui/launcher.cpp:284
 msgid "Add games to the list"
@@ -1457,32 +1459,32 @@ msgstr "Játékok hozzáadása a listához"
 #: gui/launcher.cpp:284
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "Játék hozzáadás..."
+msgstr "Játék hozzá~a~dás..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 #: gui/launcher.cpp:288
 msgid "~R~emove Game"
-msgstr "Játék törlése"
+msgstr "Játék tö~r~lése"
 
 #: gui/launcher.cpp:288
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Törli a játék nevét a listáról. A játékfájlok megmaradnak"
+msgstr "Törli a játékot a listáról. A játékfájlok megmaradnak"
 
 #: gui/launcher.cpp:288
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "Játék törlése"
+msgstr "Játék tö~r~lése"
 
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:291
 msgid "Mass Add..."
-msgstr "Masszív mód..."
+msgstr "Tömeges hozzáadás..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
 #: gui/launcher.cpp:294
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Masszív mód..."
+msgstr "Tömeges hozzáadás..."
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
@@ -1499,36 +1501,36 @@ msgstr "Keresés:"
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
-msgstr "Játék betöltése:"
+msgstr "Mentés betöltése:"
 
 #: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "Ez a mappa nem használható még, éppen letöltés van folyamatban!"
+msgstr "Ez a mappa még nem áll rendelkezésre, folyamatban van a letöltés ide!"
 
 #: gui/launcher.cpp:420
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Biztos hogy futtatod a Masszív játékdetektort? Ez potenciálisan sok játékot "
-"hozzáad a listához."
+"Biztosan futtatni akarja a tömeges játék felismerőt? Ez akár jelentős számú "
+"játékot is jelenthet."
 
 #: gui/launcher.cpp:450
 msgid "Do you really want to remove this game configuration?"
-msgstr "Biztosan törölni akarod ezt a játékkonfigurációt?"
+msgstr "Biztosan törölni akarja ezt a játék konfigurációt?"
 
 #: gui/launcher.cpp:501
 msgid "Do you want to load saved game?"
-msgstr "Akarod hogy betöltésem a játékállást?"
+msgstr "Be akarja tölteni a játék mentést?"
 
 #: gui/launcher.cpp:558
 msgid "This game does not support loading games from the launcher."
-msgstr "Ez a játék nem támogatja a játékállás betöltést az indítóból."
+msgstr "Ez a játék nem támogatja az indítóból történő mentés betöltést."
 
 #: gui/launcher.cpp:562
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"ScummVM nem talált olyan játékmotort ami a választott játékot támogatja!"
+"A ScummVM nem talált olyan motort a kijelölt játékhoz, amely tudná futtatni!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
 #, fuzzy
