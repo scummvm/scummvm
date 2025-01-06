@@ -114,11 +114,11 @@ void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
 	const byte *chr = msg;
 	warning("Sending SysEx Message");
 
-	Bconout(3, '0xF0');
+	Bconout(3, 0xF0);
 	for (; length; --length, ++chr) {
 		Bconout(3,((unsigned char) *chr & 0x7F));
 	}
-	Bconout(3, '0xF7');
+	Bconout(3, 0xF7);
 }
 
 // Plugin interface
