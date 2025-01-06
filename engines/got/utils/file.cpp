@@ -25,8 +25,6 @@
 
 namespace Got {
 
-static const char *gotres = "GOTRES.00";
-
 bool File::open(const Common::Path &filename) {
     if (!Common::File::open(filename))
         error("Could not open - %s", filename.baseName().c_str());

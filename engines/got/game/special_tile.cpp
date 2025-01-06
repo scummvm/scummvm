@@ -151,8 +151,10 @@ int special_tile_thor(int x, int y, int icon) {
         return 0;
     case 218:
     case 219:
+		// Hole tiles
         f = 1;
-    case 220:     // Hole tiles
+		// fall through
+    case 220:
     case 221:
     case 222:
     case 223:
@@ -162,6 +164,7 @@ int special_tile_thor(int x, int y, int icon) {
     case 227:
     case 228:
     case 229:
+		// Hole tiles
         cx = (_G(thor_x1) + 7) / 16;
         cy = (_G(thor_real_y1) + 8) / 16;
         if (_G(scrn).icon[cy][cx] == icon) {

@@ -74,7 +74,7 @@ void GameStatus::displayJewels(GfxSurface &s) {
 }
 
 void GameStatus::displayScore(GfxSurface &s) {
-    Common::String str = Common::String::format("%d", _G(thor_info).score);
+    Common::String str = Common::String::format("%ld", _G(thor_info).score);
     int x = 276 - (str.size() * 8);
 
     s.fillRect(Common::Rect(223, 32, 279, 42), STAT_COLOR);

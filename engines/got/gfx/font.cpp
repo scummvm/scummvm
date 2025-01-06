@@ -61,7 +61,7 @@ void Font::drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
             } else {
                 ch = toupper(ch) - 55;
             }
-            color = DIALOG_COLOR[ch];
+            color = DIALOG_COLOR[(byte)ch];
             continue;
         }
         if (ch > 31 && ch < 127)
