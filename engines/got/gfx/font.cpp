@@ -47,11 +47,9 @@ void Font::load() {
 void Font::drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
                       const Common::String &text, int color) {
     char ch;
-    char str[4];
     const char *string = text.c_str();
     Common::Point pt = pos;
 
-    str[3] = 0;
     while (*string) {
         ch = *string++;
         if (ch == '~' && Common::isXDigit(*string)) {
