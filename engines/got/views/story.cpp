@@ -28,6 +28,8 @@
 namespace Got {
 namespace Views {
 
+#define MAX_Y 236
+
 bool Story::msgFocus(const FocusMessage &msg) {
     res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
 
@@ -123,18 +125,18 @@ void Story::draw() {
 }
 
 bool Story::msgAction(const ActionMessage &msg) {
-    if (msg._action == KEYBIND_ESCAPE || _yp == 240)
+    if (msg._action == KEYBIND_ESCAPE || _yp == MAX_Y)
         done();
     else if (!_scrolling)
         _scrolling = true;
     else
-        _yp = 240;
+        _yp = MAX_Y;
 
     return true;
 }
 
 bool Story::msgKeypress(const KeypressMessage &msg) {
-    if (_yp == 240)
+    if (_yp == MAX_Y)
         done();
     else if (!_scrolling)
         _scrolling = true;
@@ -145,8 +147,8 @@ bool Story::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Story::tick() {
-    if (_scrolling && _yp < 240) {
-        _yp += 4;
+    if (_scrolling && _yp < MAX_Y) {
+        _yp = MIN(_yp + 4, MAX_Y);
         redraw();
     }
 
