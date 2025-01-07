@@ -801,7 +801,7 @@ int32 SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechF
 		numWaits
 	);
 
-	if (entryIndex > 0 && entryIndex <= _audioEntriesMI.size()) {
+	if (entryIndex >= 0 && entryIndex < _audioEntriesMI.size()) {
 		const AudioEntryMI *entry = &_audioEntriesMI[entryIndex];
 		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
 		return _nameToIndex[entry->speechFile];
