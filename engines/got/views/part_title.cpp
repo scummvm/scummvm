@@ -54,7 +54,7 @@ bool PartTitle::msgAction(const ActionMessage &msg) {
 }
 
 bool PartTitle::tick() {
-    if (++_timeoutCtr == 40) {
+    if (++_timeoutCtr == 80) {
         _timeoutCtr = 0;
         done();
     }
