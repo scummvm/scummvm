@@ -35,13 +35,13 @@ enum {
 };
 
 MenuManager::MenuManager(ZVision *engine, const Common::Rect menuArea, const MenuParams params) :
-	_engine{engine},
-  _params{params},
-	menuBarFlag{0xFFFF},
-	_menuArea{menuArea},
-  menuOrigin{menuArea.left,menuArea.top},
-  menuTriggerArea{menuOrigin,_menuArea.width(),_params.triggerHeight},
-  mainScroller{params.activePos, params.idlePos, params.period} {
+	_engine(engine),
+  _params(params),
+	menuBarFlag(0xFFFF),
+	_menuArea(menuArea),
+  menuOrigin(menuArea.left,menuArea.top),
+  menuTriggerArea(menuOrigin,_menuArea.width(),_params.triggerHeight),
+  mainScroller(params.activePos, params.idlePos, params.period) {
 	
 	enableFlags.set_size(6);
   for(int8 i = 0; i < 4; i++) {
@@ -52,7 +52,7 @@ MenuManager::MenuManager(ZVision *engine, const Common::Rect menuArea, const Men
 	}
 	for (int i = 0; i < 4; i++)
     buttonAnim[i] = new LinearScroller(_params.activeFrame,_params.idleFrame,_params.buttonPeriod);
-	menuFocus.push_back(kFocusNone);
+	setFocus(kFocusNone); //Ensure focus list is initialised
 	mainArea = Common::Rect(_params.wMain,hMainMenu);
 	mainArea.moveTo(menuOrigin+mainScroller.Pos);
 }
@@ -204,29 +204,18 @@ void MenuManager::redrawMain() {
   clean = false;
 }
 
+
 void MenuManager::setFocus(int8 currentFocus) {
-  if(menuFocus.front() != currentFocus) {
-    Common::Array<int8> _menuFocus;
-    while(menuFocus.size() > 0) {
-      if(menuFocus.back() != currentFocus)
-        _menuFocus.push_back(menuFocus.back());
-      menuFocus.pop_back();
-    }
-    menuFocus.push_back(currentFocus);
-    while(_menuFocus.size() > 0) {
-      menuFocus.push_back(_menuFocus.back());
-      _menuFocus.pop_back();
-    }
-  }
+  menuFocus.set(currentFocus);
   assert(menuFocus.size() <= 4);
 }
 
 MenuZGI::MenuZGI(ZVision *engine, const Common::Rect menuArea) :
 	MenuManager(engine, menuArea, zgiParams),
-	itemsScroller{Common::Point(0,0), Common::Point(wSideMenuTab-wSideMenu,0), 1000},
-	magicScroller{Common::Point(-wSideMenu,0), Common::Point(-wSideMenuTab,0), 1000},
-	itemsOrigin{menuArea.left, menuArea.top},
-	magicOrigin{menuArea.right, menuArea.top} {
+	itemsScroller(Common::Point(0,0), Common::Point(wSideMenuTab-wSideMenu,0), 1000),
+	magicScroller(Common::Point(-wSideMenu,0), Common::Point(-wSideMenuTab,0), 1000),
+	itemsOrigin(menuArea.left, menuArea.top),
+	magicOrigin(menuArea.right, menuArea.top) {
 
   magicArea = Common::Rect(magicOrigin + magicScroller.Pos, wSideMenu, hSideMenu);
   itemsArea = Common::Rect(itemsOrigin + itemsScroller.Pos, wSideMenu, hSideMenu);
