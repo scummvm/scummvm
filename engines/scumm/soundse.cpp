@@ -183,21 +183,18 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 		audioIndex->push_back(entry);
 	}
 
-	uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
-	uint32 nameLen = 64;
-
-#if 0
 	if (_vm->_game.id == GID_MONKEY2) {
 		f->close();
+		delete f;
 
 		// The audio file names of Monkey Island 2 SE are placed in a separate file
-		// TODO: These are read in the wrong order
-		f->open(Common::Path("speechcues.xsb"));
-		f->skip(42);
-		nameOffset = f->readUint32LE();
-		nameLen = Common::String::npos;
+		if (_speechFilename.equalsIgnoreCase("Speech.xwb"))
+			indexMI2SpeechFiles(entryCount);
+
+		return;
 	}
-#endif
+
+	const uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
 
 	if (!nameOffset)
 		WARN_AND_RETURN_XWB("XWB file does not contain audio file names")
@@ -205,7 +202,7 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 	f->seek(nameOffset);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		Common::String name = f->readString(0, nameLen);
+		Common::String name = f->readString(0, 64);
 		name.toLowercase();
 
 		(*audioIndex)[i].name = name;
@@ -217,6 +214,40 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 }
 
 #undef WARN_AND_RETURN_XWB
+
+void SoundSE::indexMI2SpeechFiles(uint32 entryCount) {
+	Common::List<uint16> speechIndices;
+
+	Common::File *f = new Common::File();
+	f->open(Common::Path("speechcues.xsb"));
+
+	f->skip(42);
+	const uint32 nameOffset = f->readUint32LE();
+	f->skip(24);
+	const uint32 entriesOffset = f->readUint32LE();
+
+	f->seek(entriesOffset);
+
+	for (uint32 i = 0; i < entryCount; i++) {
+		f->skip(9);
+		const uint16 speechIndex = f->readUint16LE();
+		speechIndices.push_back(speechIndex);
+		f->skip(8);
+	}
+
+	f->seek(nameOffset);
+
+	for (auto &index : speechIndices) {
+		Common::String name = f->readString(0);
+		name.toLowercase();
+
+		_speechEntries[index].name = name;
+		_nameToIndex[name] = index;
+	}
+
+	f->close();
+	delete f;
+}
 
 #define WARN_AND_RETURN_FSB(message)          \
 	{                                         \
