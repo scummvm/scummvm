@@ -1237,7 +1237,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		y += _menuDropdownItemHeight;
 	}
 
-	if (recursive && menu->highlight != -1 && menu->items[menu->highlight]->submenu != nullptr)
+	if (recursive && menu->highlight != -1 && _items[_activeItem]->enabled && menu->items[menu->highlight]->enabled && menu->items[menu->highlight]->submenu != nullptr)
 		renderSubmenu(menu->items[menu->highlight]->submenu, false);
 
 	if (_wm->_mode & kWMModalMenuMode) {
@@ -1337,7 +1337,7 @@ static void scrollCallback(void *data) {
 }
 
 bool MacMenu::mouseClick(int x, int y) {
-	if (!_isModal &&_bbox.contains(x, y)) {
+	if (!_isModal && _bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++) {
 			if (_items[i]->bbox.contains(x, y)) {
 				if ((uint)_activeItem == i)
@@ -1383,7 +1383,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 		if (numSubItem != _activeSubItem) {
 			if (_wm->_mode & kWMModalMenuMode) {
-				if (_activeSubItem == -1 || menu->items[_activeSubItem]->submenu != nullptr)
+				if (_activeSubItem == -1 || (_items[_activeItem]->enabled && menu->items[_activeSubItem]->enabled && menu->items[_activeSubItem]->submenu != nullptr))
 					g_system->copyRectToScreen(_wm->_screenCopy->getPixels(), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 			}
 
@@ -1435,9 +1435,11 @@ bool MacMenu::mouseClick(int x, int y) {
 		}
 	}
 
-	if (_activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->submenu != nullptr) {
-		if (_menustack.back()->items[_activeSubItem]->submenu->bbox.contains(x, y)) {
-			_menustack.push_back(_menustack.back()->items[_activeSubItem]->submenu);
+	if (_activeSubItem != -1 && _items[_activeItem]->enabled) {
+		Graphics::MacMenuItem *subitem = _menustack.back()->items[_activeSubItem];
+
+		if (subitem->submenu != nullptr && subitem->enabled && subitem->submenu->bbox.contains(x, y)) {
+			_menustack.push_back(subitem->submenu);
 
 			_activeSubItem = 0;
 			_contentIsDirty = true;
