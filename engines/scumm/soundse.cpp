@@ -107,7 +107,7 @@ void SoundSE::initSoundFiles() {
 }
 
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
-	if (track < 0 || track >= _musicEntries.size())
+	if (track < 0 || track >= (int)_musicEntries.size())
 		return nullptr;
 
 	Common::File *cdAudioFile = new Common::File();
@@ -258,7 +258,7 @@ void SoundSE::indexXSBFile(const Common::String &filename, AudioIndex *audioInde
 		Common::String name = f->readString(0);
 		name.toLowercase();
 
-		if (index >= 0 && index < (*audioIndex).size()) {
+		if (/*index >= 0 && */index < (*audioIndex).size()) {
 			(*audioIndex)[index].name = name;
 			_nameToIndex[name] = index;
 		}
@@ -853,7 +853,7 @@ int32 SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechF
 		numWaits
 	);
 
-	if (entryIndex >= 0 && entryIndex < _audioEntriesMI.size()) {
+	if (entryIndex >= 0 && entryIndex < (int32)_audioEntriesMI.size()) {
 		const AudioEntryMI *entry = &_audioEntriesMI[entryIndex];
 		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
 		return _nameToIndex[entry->speechFile];
