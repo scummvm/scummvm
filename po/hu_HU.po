@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-05 23:03+0000\n"
-"PO-Revision-Date: 2025-01-06 16:24+0000\n"
+"PO-Revision-Date: 2025-01-07 19:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1533,16 +1533,12 @@ msgstr ""
 "A ScummVM nem talált olyan motort a kijelölt játékhoz, amely tudná futtatni!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Hozzáadta ezt a könyvtárat a SAF-hez? Nyomja meg a felül található súgó [?] "
-"gombot a részletes útmutatásért"
+"Adott írás jogot a ScummVM számára ehhez a mappához? Nyomja meg fent a "
+"Segítség gombot [?] további részletekért"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1563,7 +1559,7 @@ msgstr "Rács nézet"
 
 #: gui/launcher.cpp:1103
 msgid "~S~tart"
-msgstr "Indítás"
+msgstr "Indítá~s~"
 
 #: gui/launcher.cpp:1103
 msgid "Start selected game"
@@ -1571,11 +1567,11 @@ msgstr "A választott játék indítása"
 
 #: gui/launcher.cpp:1106
 msgid "~L~oad..."
-msgstr "~B~etölt..."
+msgstr "Betö~l~t..."
 
 #: gui/launcher.cpp:1106
 msgid "Load saved game for selected game"
-msgstr "Kimentett játékállás betöltése"
+msgstr "Mentett játék betöltése kiválasztott játéknál"
 
 #: gui/launcher.cpp:1108
 msgid "Record..."
@@ -1587,12 +1583,12 @@ msgstr "Játék Opciók..."
 
 #: gui/launcher.cpp:1114
 msgid "Change game options"
-msgstr "Játék beállítások megváltoztatása"
+msgstr "Játék opciók megváltoztatása"
 
 #: gui/launcher.cpp:1114
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~G~Játék Opc..."
+msgstr "Játék Opc..."
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1212 gui/launcher.cpp:1408
@@ -1609,7 +1605,7 @@ msgstr "Ismeretlen Kiadó"
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1246 gui/launcher.cpp:1442
 msgid "No Series"
-msgstr "Nem Sorozat"
+msgstr "Nincs Sorozat"
 
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1260 gui/launcher.cpp:1456
@@ -1633,7 +1629,7 @@ msgstr "Mind"
 
 #: gui/launcher.cpp:1649
 msgid "Icons per row:"
-msgstr "Ikonok soronként:"
+msgstr "Soronkénti ikonok:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1646,7 +1642,7 @@ msgstr "Vizsgálat kész!"
 #: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "%d új játékot találtam, %d elõzõleg hozzáadott játék kihagyva..."
+msgstr "%d új felismert játék, %d korábban hozzáadott játék mellőzése."
 
 #: gui/massadd.cpp:290
 #, c-format
