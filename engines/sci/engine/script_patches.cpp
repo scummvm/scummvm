@@ -107,6 +107,7 @@ static const char *const selectorNameTable[] = {
 	"type",         // system selector
 	"client",       // system selector
 	"state",        // system selector
+	"illegalBits",  // system selector
 	"localize",     // Freddy Pharkas
 	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
@@ -250,6 +251,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_type,
 	SELECTOR_client,
 	SELECTOR_state,
+	SELECTOR_illegalBits,
 	SELECTOR_localize,
 	SELECTOR_roomFlags,
 	SELECTOR_put,
@@ -5338,6 +5340,53 @@ static const SciScriptPatcherEntry jonesSignatures[] = {
 // ===========================================================================
 // King's Quest 1
 
+// When swimming for too long in the cave pool beneath the well, the drowning
+//  script can get stuck and not display the death message. This occurs when ego
+//  is at certain x positions, such as 71. When sinking, the drowning script
+//  sets ego:illegalBits to 0 so that ego will fall without interference from
+//  priority lines. rm52:doit reverts this by setting ego:illegalBits to $8000
+//  because it thinks ego is swimming, causing ego to get stuck on a priority
+//  line when too far left. The script detects swimming by testing ego's view,
+//  but this is incomplete because view 6 also contains ego's drowning loops.
+//
+// We fix this by not setting ego:illegalBits to $8000 when the drowning script
+//  is running. The separate script for drowning while swimming underwater is
+//  unaffected, because it sets a timer to trigger its death message.
+//
+// Applies to: All versions
+// Responsible method: rm52:doit
+// Fixes bug: #15667
+static const uint16 kq1SignatureDrowning[] = {
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa drowning
+	SIG_ADDTOOFFSET(+61),
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x000d),           // bnt 000d
+	0x39, SIG_SELECTOR8(illegalBits),   // pushi illegalBits
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x8000),           // pushi 8000
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego illegalBits: $8000 ]
+	0x32, SIG_UINT16(0x0008),           // jmp 0008
+	0x39, SIG_SELECTOR8(illegalBits),   // pushi illegalBits
+	0x78,                               // push1
+	0x76,                               // push0 [ illegalBits: 0 ]
+	SIG_END
+};
+
+static const uint16 kq1PatchDrowning[] = {
+	PATCH_ADDTOOFFSET(+64),
+	0x72, PATCH_GETORIGINALUINT16ADJUST(1, -64), // lofsa drowning
+	0x67, 0x08,                         // pTos script
+	0x1c,                               // ne?  [ acc = 1 if not drowning, else 0 ]
+	0x36,                               // push
+	0x35, 0x0f,                         // ldi 0f
+	0x0e,                               // shl  [ acc = $8000 if not drowning, else 0 ]
+	0x33, 0x04,                         // jmp 04
+	PATCH_ADDTOOFFSET(+7),
+	0x36,                               // push [ illegalBits = $8000 or 0 ]
+	PATCH_END
+};
+
 // In the demo, the leprechaun dance runs awkwardly fast on modern computers.
 //  The demo script increases the speed from the default (5 or 6) to fastest (1)
 //  for this scene only. This appears to be an attempt to speed up the dance and
@@ -5366,6 +5415,7 @@ static const uint16 kq1PatchDemoDanceSpeed[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry kq1Signatures[] = {
+	{  true,    52, "drowning",                                    1, kq1SignatureDrowning,             kq1PatchDrowning },
 	{  true,    77, "demo: dance speed",                           1, kq1SignatureDemoDanceSpeed,       kq1PatchDemoDanceSpeed },
 	{  true,    99, "demo: disable speed test",                    1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
 	{  true,   777, "disable speed test",                          1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
