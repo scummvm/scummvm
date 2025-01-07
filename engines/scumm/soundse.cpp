@@ -50,12 +50,13 @@ void SoundSE::initSoundFiles() {
 		_musicFilename = "MusicOriginal.xwb";
 		//_musicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
 		indexXWBFile(_musicFilename, &_musicEntries);
-		_sfxFilename = "SFXOriginal.xwb";
+		//_sfxFilename = "SFXOriginal.xwb";
 		//_sfxFilename = "SFXNew.xwb";	// TODO: allow toggle between original and new SFX
-		indexXWBFile(_sfxFilename, &_sfxEntries);
+		//indexXWBFile(_sfxFilename, &_sfxEntries);
 		_speechFilename = "Speech.xwb";
 		indexXWBFile(_speechFilename, &_speechEntries);
-		// TODO: iMUSEClient_Commentary.fsb
+		// TODO: ambience.xwb
+		// TODO: roomsfx.xwb
 		break;
 	case GID_TENTACLE:
 		initAudioMappingDOTTAndFT();
@@ -91,10 +92,8 @@ void SoundSE::initSoundFiles() {
 }
 
 Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
-	// TODO: Enable once WMA audio is implemented.
-	// Also, some of the PCM music tracks are not playing correctly
-	// (e.g. the act 1 track)
-	return nullptr;
+	if (track < 0 || track >= _musicEntries.size())
+		return nullptr;
 
 	Common::File *cdAudioFile = new Common::File();
 
@@ -105,14 +104,14 @@ Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 
 	AudioEntry entry = _musicEntries[track];
 
-	auto subStream = new Common::SeekableSubReadStream(
+	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(
 		cdAudioFile,
 		entry.offset,
 		entry.offset + entry.length,
 		DisposeAfterUse::YES
 	);
 
-	return createSoundStream(subStream, entry);
+	return createSoundStream(subStream, entry, DisposeAfterUse::YES);
 }
 
 #define WARN_AND_RETURN_XWB(message)          \
@@ -184,7 +183,21 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 		audioIndex->push_back(entry);
 	}
 
-	const uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
+	uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
+	uint32 nameLen = 64;
+
+#if 0
+	if (_vm->_game.id == GID_MONKEY2) {
+		f->close();
+
+		// The audio file names of Monkey Island 2 SE are placed in a separate file
+		// TODO: These are read in the wrong order
+		f->open(Common::Path("speechcues.xsb"));
+		f->skip(42);
+		nameOffset = f->readUint32LE();
+		nameLen = Common::String::npos;
+	}
+#endif
 
 	if (!nameOffset)
 		WARN_AND_RETURN_XWB("XWB file does not contain audio file names")
@@ -192,7 +205,7 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 	f->seek(nameOffset);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		Common::String name = f->readString(0, 64);
+		Common::String name = f->readString(0, nameLen);
 		name.toLowercase();
 
 		(*audioIndex)[i].name = name;
@@ -506,7 +519,7 @@ void SoundSE::initAudioMappingDOTTAndFT() {
 	delete f;
 }
 
-Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry) {
+Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry, DisposeAfterUse::Flag disposeAfterUse) {
 	switch (entry.codec) {
 	case kXWBCodecPCM: {
 		byte flags = Audio::FLAG_LITTLE_ENDIAN;
@@ -514,7 +527,7 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 			flags |= Audio::FLAG_16BITS;
 		if (entry.channels == 2)
 			flags |= Audio::FLAG_STEREO;
-		return Audio::makeRawStream(stream, entry.rate, flags, DisposeAfterUse::YES);
+		return Audio::makeRawStream(stream, entry.rate, flags, disposeAfterUse);
 	}
 	case kXWBCodecXMA:
 		// Unused in MI1SE and MI2SE
@@ -523,7 +536,7 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 		const uint32 blockAlign = (entry.align + 22) * entry.channels;
 		return Audio::makeADPCMStream(
 			stream,
-			DisposeAfterUse::YES,
+			disposeAfterUse,
 			entry.length,
 			Audio::kADPCMMS,
 			entry.rate,
@@ -548,7 +561,7 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 #ifdef USE_MAD
 		return Audio::makeMP3Stream(
 			stream,
-			DisposeAfterUse::YES
+			disposeAfterUse
 		);
 #else
 		warning("createSoundStream: MP3 codec is not built in");
@@ -573,27 +586,27 @@ int32 SoundSE::getSoundIndexFromOffset(uint32 offset) {
 	return -1;
 }
 
-SoundSE::AudioEntryMI *SoundSE::getAppropriateSpeechCue(const char *msgString, const char *speechFilenameSubstitution,
+int32 SoundSE::getAppropriateSpeechCue(const char *msgString, const char *speechFilenameSubstitution,
 											   uint16 roomNumber, uint16 actorTalking, uint16 scriptNum, uint16 scriptOffset, uint16 numWaits) {
 	uint32 hash;
 	AudioEntryMI *curAudioEntry;
 	uint16 script;
 	int32 currentScore;
 	int32 bestScore;
-	int bestScoreIdx;
+	int32 bestScoreIdx;
 	uint32 tmpHash;
 
 	hash = calculateStringHash(msgString);
 
 	tmpHash = hash;
 	if (!hash)
-		return nullptr;
+		return -1;
 
 	bestScore = 0x40000000; // This is the score that we have to minimize...
 	bestScoreIdx = -1;
 
 	if (_audioEntriesMI.empty())
-		return nullptr;
+		return -1;
 
 	for (uint curEntryIdx = 0; curEntryIdx < _audioEntriesMI.size(); curEntryIdx++) {
 		curAudioEntry = &_audioEntriesMI[curEntryIdx];
@@ -626,45 +639,40 @@ SoundSE::AudioEntryMI *SoundSE::getAppropriateSpeechCue(const char *msgString, c
 			}
 			if (currentScore < bestScore) {
 				bestScore = currentScore;
-				bestScoreIdx = (int)curEntryIdx;
+				bestScoreIdx = (int32)curEntryIdx;
 			}
 		}
 
 		hash = tmpHash;
 	}
-	if (bestScoreIdx == -1)
-		return nullptr;
-	else
-		return &_audioEntriesMI[bestScoreIdx];
+
+	return bestScoreIdx;
 }
 
 Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	Common::SeekableReadStream *stream;
 	Common::String audioFileName;
-	AudioIndex &audioEntries = _musicEntries;
-	int32 soundIndex = 0;
-
-	switch (type) {
-	case kSoundSETypeMusic:
-		audioFileName = _musicFilename;
-		audioEntries = _musicEntries;
-		soundIndex = getSoundIndexFromOffset(offset);
-		break;
-	case kSoundSETypeSpeech:
-		audioFileName = _speechFilename;
-		audioEntries = _speechEntries;
-		soundIndex = getSoundIndexFromOffset(offset);
-		break;
-	case kSoundSETypeSFX:
-		audioFileName = _sfxFilename;
-		audioEntries = _sfxEntries;
-		soundIndex = getSoundIndexFromOffset(offset);
-		break;
-	}
+	AudioEntry audioEntry = {};
+	int32 soundIndex = getSoundIndexFromOffset(offset);
 
 	if (soundIndex == -1) {
 		warning("getAudioStream: sound index not found for offset %d", offset);
 		return nullptr;
+	}
+
+	switch (type) {
+	case kSoundSETypeMusic:
+		audioFileName = _musicFilename;
+		audioEntry = _musicEntries[soundIndex];
+		break;
+	case kSoundSETypeSpeech:
+		audioFileName = _speechFilename;
+		audioEntry = _speechEntries[soundIndex];
+		break;
+	case kSoundSETypeSFX:
+		audioFileName = _sfxFilename;
+		audioEntry = _sfxEntries[soundIndex];
+		break;
 	}
 
 	if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) {
@@ -683,7 +691,6 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 		}
 	}
 
-	AudioEntry audioEntry = audioEntries[soundIndex];
 	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(
 		stream,
 		audioEntry.offset,
@@ -691,7 +698,7 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 		DisposeAfterUse::YES
 	);
 
-	return createSoundStream(subStream, audioEntry);
+	return createSoundStream(subStream, audioEntry, DisposeAfterUse::YES);
 }
 
 Common::String calculateCurrentString(const char *msgString) {
@@ -781,20 +788,21 @@ Common::String calculateCurrentString(const char *msgString) {
 }
 
 int32 SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechFilenameSubstitution,
-								     uint16 roomNumber, uint16 actorTalking, uint16 scriptNum, uint16 scriptOffset, uint16 numWaits) {
+								     uint16 roomNumber, uint16 actorTalking, uint16 numWaits) {
 
 	// Get the string without the various control codes and special characters...
 	Common::String currentString = calculateCurrentString(msgString);
-	const AudioEntryMI *entry = getAppropriateSpeechCue(
+	const int32 entryIndex = getAppropriateSpeechCue(
 		currentString.c_str(),
 		speechFilenameSubstitution,
 		roomNumber, actorTalking,
-		scriptNum,
-		scriptOffset,
+		(uint16)_currentScriptSavedForSpeechMI,
+		(uint16)_currentScriptOffsetSavedForSpeechMI,
 		numWaits
 	);
 
-	if (entry) {
+	if (entryIndex > 0 && entryIndex <= _audioEntriesMI.size()) {
+		const AudioEntryMI *entry = &_audioEntriesMI[entryIndex];
 		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
 		return _nameToIndex[entry->speechFile];
 	}

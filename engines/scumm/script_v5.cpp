@@ -1944,12 +1944,13 @@ void ScummEngine_v5::o5_pickupObject() {
 
 // Inject the speech from the SE version in the classic one, for MI1SE.
 void ScummEngine_v5::injectMISESpeech() {
-	if (_game.id == GID_MONKEY && (_game.features & GF_DOUBLEFINE_PAK) && _sound->useRemasteredAudio()) {
-		_currentScriptSavedForSpeechMI = vm.slot[_currentScript].number;
+	if (_sound->shouldInjectMISEAudio()) {
+		int32 currentScript = vm.slot[_currentScript].number;
+		int32 currentScriptOffset;
 		uint16 localScriptOffset;
 
-		if (_currentScriptSavedForSpeechMI >= _numGlobalScripts) {
-			int16 localScriptNumber = _currentScriptSavedForSpeechMI - _numGlobalScripts;
+		if (currentScript >= _numGlobalScripts) {
+			int16 localScriptNumber = currentScript - _numGlobalScripts;
 			if (localScriptNumber > 56)
 				localScriptOffset = 0;
 			else
@@ -1958,8 +1959,8 @@ void ScummEngine_v5::injectMISESpeech() {
 			localScriptOffset = 8;
 		}
 
-		_currentScriptOffsetSavedForSpeechMI = vm.slot[_currentScript].offs - localScriptOffset;
-		_currentSpeechIndexMI = 0;
+		currentScriptOffset = vm.slot[_currentScript].offs - localScriptOffset;
+		_sound->setupMISEAudioParams(currentScript, currentScriptOffset);
 	}
 }
 

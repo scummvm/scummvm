@@ -103,8 +103,6 @@ protected:
 	SoundSE *_soundSE = nullptr;
 	bool _useRemasteredAudio = false;
 
-	int32 _currentMISpeechIndex = -1;
-
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 
@@ -152,8 +150,8 @@ public:
 
 	void updateMusicTimer();
 
-	bool useRemasteredAudio() const { return _useRemasteredAudio; }
-	void startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 currentScriptNum, uint16 currentScriptOffset, uint16 numWaits);
+	bool shouldInjectMISEAudio() const;
+	void startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 numWaits);
 
 	// TODO: Duplicate this in Sound as well?
 	bool isRolandLoom() const { return _soundCD->isRolandLoom(); }
@@ -171,6 +169,10 @@ public:
 	int getCurrentCDSound() const { return _soundCD->getCurrentCDSound(); }
 	void restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
 		_soundCD->restoreCDAudioAfterLoad(info);
+	}
+
+	void setupMISEAudioParams(int32 scriptNum, int32 scriptOffset) {
+		_soundSE->setupMISEAudioParams(scriptNum, scriptOffset);
 	}
 
 protected:

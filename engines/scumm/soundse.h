@@ -80,17 +80,20 @@ public:
 								const char *speechFilenameSubstitution,
 								uint16 roomNumber,
 								uint16 actorTalking,
-								uint16 scriptNum,
-								uint16 scriptOffset,
 								uint16 numWaits);
 
-	AudioEntryMI *getAppropriateSpeechCue(const char *msgString,
+	int32 getAppropriateSpeechCue(const char *msgString,
 										  const char *speechFilenameSubstitution,
 										  uint16 roomNumber,
 										  uint16 actorTalking,
 										  uint16 scriptNum,
 										  uint16 scriptOffset,
 										  uint16 numWaits);
+
+	void setupMISEAudioParams(int32 scriptNum, int32 scriptOffset) {
+		_currentScriptSavedForSpeechMI = scriptNum;
+		_currentScriptOffsetSavedForSpeechMI = scriptOffset;
+	}
 
 private:
 	enum AudioCodec {
@@ -139,6 +142,10 @@ private:
 	typedef Common::Array<AudioEntryMI> AudioIndexMI;
 	AudioIndexMI _audioEntriesMI;
 
+	/* MI SE injected speech */
+	int32 _currentScriptSavedForSpeechMI = 0;
+	int32 _currentScriptOffsetSavedForSpeechMI = 0;
+
 	int32 getSoundIndexFromOffset(uint32 offset);
 
 	void initAudioMappingMI();
@@ -151,7 +158,7 @@ private:
 	// Index FSB audio files - used in DOTT and FT
 	void indexFSBFile(const Common::String &filename, AudioIndex *audioIndex);
 
-	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry);
+	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry, DisposeAfterUse::Flag disposeAfterUse);
 };
 
 

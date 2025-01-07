@@ -610,11 +610,11 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			}
 		}
 		return;
-	} else if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && (_vm->_game.features & GF_DOUBLEFINE_PAK) && _useRemasteredAudio) {
+	} else if (shouldInjectMISEAudio()) {
 		// MI1 and MI2 SE
 		if (_soundSE && !_soundsPaused && _mixer->isReady()) {
 			Audio::AudioStream *input = _soundSE->getAudioStream(
-				_currentMISpeechIndex,
+				offset,
 				mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech);
 
 			_digiSndMode |= mode;
@@ -625,8 +625,6 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 				else
 					_mixer->playStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
 			}
-
-			_vm->_currentSpeechIndexMI++;
 		}
 
 		return;
@@ -761,6 +759,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbd4 && _vm->enhancementEnabled(kEnhGameBreakingBugFixes))
 				input = checkForBrokenIndy4Sample(file.release(), offset);
 
+			// Play remastered audio for DOTT
 			if (!input && _soundSE && _useRemasteredAudio) {
 				input = _soundSE->getAudioStream(
 					origOffset,
@@ -2193,16 +2192,27 @@ void Sound::updateMusicTimer() {
 	}
 }
 
-void Sound::startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 currentScriptNum, uint16 currentScriptOffset, uint16 numWaits) {
+void Sound::startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 numWaits) {
 	// Crudely adapted from the disasm of MI1SE...
 	// TODO: Apply the various speech-line substitutions performed per-game
 
-	int32 soundIndex = _soundSE->handleRemasteredSpeech(msgString, nullptr, roomNumber, actorTalking, currentScriptNum, currentScriptOffset, numWaits);
+	int32 soundIndex = _soundSE->handleRemasteredSpeech(
+		msgString,
+		nullptr,
+		roomNumber,
+		actorTalking,
+		numWaits
+	);
 
 	if (soundIndex >= 0) {
-		_currentMISpeechIndex = soundIndex;
-		talkSound(0, 0, DIGI_SND_MODE_TALKIE);
+		talkSound(soundIndex, 0, DIGI_SND_MODE_TALKIE);
 	}
+}
+
+bool Sound::shouldInjectMISEAudio() const {
+	return (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) &&
+		   (_vm->_game.features & GF_DOUBLEFINE_PAK) &&
+		   _useRemasteredAudio;
 }
 
 } // End of namespace Scumm

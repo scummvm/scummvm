@@ -887,11 +887,6 @@ public:
 
 	int _NESStartStrip = 0;
 
-	/* MI SE injected speech */
-	int32 _currentScriptSavedForSpeechMI = 0;
-	int32 _currentScriptOffsetSavedForSpeechMI = 0;
-	int32 _currentSpeechIndexMI = 0;
-
 protected:
 	int _curPalIndex = 0;
 

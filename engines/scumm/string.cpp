@@ -1114,7 +1114,7 @@ void ScummEngine::displayDialog() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
-	if ((_game.features & GF_DOUBLEFINE_PAK) && (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _sound->useRemasteredAudio()) {
+	if (_sound->shouldInjectMISEAudio()) {
 		int numberOfWaits = countNumberOfWaits();
 		int32 currentActor = VAR_TALK_ACTOR != 0xFF ? VAR(VAR_TALK_ACTOR) : 0;
 
@@ -1123,8 +1123,6 @@ void ScummEngine::displayDialog() {
 			(const char *)&_charsetBuffer[_charsetBufPos],
 			(uint16)_currentRoom,
 			(uint16)currentActor,
-			(uint16)_currentScriptSavedForSpeechMI,
-			(uint16)_currentScriptOffsetSavedForSpeechMI,
 			(uint16)numberOfWaits);
 	}
 
