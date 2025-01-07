@@ -29,7 +29,8 @@
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/scripting/scroller.h"
+#include "zvision/common/scroller.h"
+#include "zvision/common/focus_list.h"
 
 namespace ZVision {
 
@@ -131,7 +132,7 @@ protected:
 	Common::Rect menuHotspots[4];
   int8 mainFrames[4]; //Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
   Scroller mainScroller;
-	Common::Array<int8> menuFocus; //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
+	FocusList<int8> menuFocus;  //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
 	bool clean = false; //Whether or not to blank
   LinearScroller* buttonAnim[4];
 };
