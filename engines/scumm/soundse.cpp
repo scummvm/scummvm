@@ -45,7 +45,6 @@ SoundSE::SoundSE(ScummEngine *parent, Audio::Mixer *mixer)
 void SoundSE::initSoundFiles() {
 	switch (_vm->_game.id) {
 	case GID_MONKEY:
-	case GID_MONKEY2:
 		initAudioMappingMI();
 		_musicFilename = "MusicOriginal.xwb";
 		//_musicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
@@ -57,6 +56,22 @@ void SoundSE::initSoundFiles() {
 		indexXWBFile(_speechFilename, &_speechEntries);
 		// TODO: ambience.xwb
 		// TODO: roomsfx.xwb
+		break;
+	case GID_MONKEY2:
+		initAudioMappingMI();
+		_musicFilename = "MusicOriginal.xwb";
+		//_musicFilename = "MusicNew.xwb";	// TODO: allow toggle between original and new music
+		indexXWBFile(_musicFilename, &_musicEntries);
+		indexXSBFile("musiccuesoriginal.xsb", &_musicEntries);
+		//_sfxFilename = "SFXOriginal.xwb";
+		//_sfxFilename = "SFXNew.xwb";	// TODO: allow toggle between original and new SFX
+		// indexXWBFile(_sfxFilename, &_sfxEntries);
+		_speechFilename = "Speech.xwb";
+		indexXWBFile(_speechFilename, &_speechEntries);
+		indexXSBFile("speechcues.xsb", &_speechEntries);
+		// TODO: ambience.xwb
+		// TODO: commentary.xwb
+		// TODO: patch.xwb
 		break;
 	case GID_TENTACLE:
 		initAudioMappingDOTTAndFT();
@@ -183,30 +198,18 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 		audioIndex->push_back(entry);
 	}
 
-	if (_vm->_game.id == GID_MONKEY2) {
-		f->close();
-		delete f;
-
-		// The audio file names of Monkey Island 2 SE are placed in a separate file
-		if (_speechFilename.equalsIgnoreCase("Speech.xwb"))
-			indexMI2SpeechFiles(entryCount);
-
-		return;
-	}
-
 	const uint32 nameOffset = segments[kXWBSegmentEntryNames].offset;
 
-	if (!nameOffset)
-		WARN_AND_RETURN_XWB("XWB file does not contain audio file names")
+	if (nameOffset) {
+		f->seek(nameOffset);
 
-	f->seek(nameOffset);
+		for (uint32 i = 0; i < entryCount; i++) {
+			Common::String name = f->readString(0, 64);
+			name.toLowercase();
 
-	for (uint32 i = 0; i < entryCount; i++) {
-		Common::String name = f->readString(0, 64);
-		name.toLowercase();
-
-		(*audioIndex)[i].name = name;
-		_nameToIndex[name] = i;
+			(*audioIndex)[i].name = name;
+			_nameToIndex[name] = i;
+		}
 	}
 
 	f->close();
@@ -215,13 +218,27 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 
 #undef WARN_AND_RETURN_XWB
 
-void SoundSE::indexMI2SpeechFiles(uint32 entryCount) {
+#define WARN_AND_RETURN_XSB(message)          \
+	{                                         \
+		warning("indexMI2SpeechFiles: %s", message); \
+		f->close();                           \
+		delete f;                             \
+		return;                               \
+	}
+
+void SoundSE::indexXSBFile(const Common::String &filename, AudioIndex *audioIndex) {
 	Common::List<uint16> speechIndices;
 
 	Common::File *f = new Common::File();
-	f->open(Common::Path("speechcues.xsb"));
+	f->open(Common::Path(filename));
 
-	f->skip(42);
+	const uint32 magic = f->readUint32BE();
+	if (magic != MKTAG('S', 'D', 'B', 'K'))
+		WARN_AND_RETURN_XSB("Invalid XSB file")
+
+	f->skip(15);
+	const uint32 entryCount = f->readUint32LE();
+	f->skip(19);
 	const uint32 nameOffset = f->readUint32LE();
 	f->skip(24);
 	const uint32 entriesOffset = f->readUint32LE();
@@ -241,13 +258,17 @@ void SoundSE::indexMI2SpeechFiles(uint32 entryCount) {
 		Common::String name = f->readString(0);
 		name.toLowercase();
 
-		_speechEntries[index].name = name;
-		_nameToIndex[name] = index;
+		if (index >= 0 && index < (*audioIndex).size()) {
+			(*audioIndex)[index].name = name;
+			_nameToIndex[name] = index;
+		}
 	}
 
 	f->close();
 	delete f;
 }
+
+#undef WARN_AND_RETURN_XSB
 
 #define WARN_AND_RETURN_FSB(message)          \
 	{                                         \

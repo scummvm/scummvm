@@ -154,7 +154,7 @@ private:
 
 	// Index XWB audio files - used in MI1SE and MI2SE
 	void indexXWBFile(const Common::String &filename, AudioIndex *audioIndex);
-	void indexMI2SpeechFiles(uint32 entryCount);
+	void indexXSBFile(const Common::String &filename, AudioIndex *audioIndex);
 
 	// Index FSB audio files - used in DOTT and FT
 	void indexFSBFile(const Common::String &filename, AudioIndex *audioIndex);
