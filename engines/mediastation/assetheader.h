@@ -144,7 +144,6 @@ public:
 	uint32 _cursorResourceId = 0;
 	uint32 _frameRate = 10; // This is the default for sprites, which are the only ones that use this field.
 	uint32 _loadType = 0;
-	uint32 _totalChunks = 0;
 	uint32 _rate = 0;
 	bool _editable = 0;
 	Graphics::Palette *_palette = nullptr;

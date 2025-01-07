@@ -193,7 +193,7 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 	}
 
 	case kAssetHeaderSoundInfo: {
-		_totalChunks = Datum(chunk).u.i;
+		_chunkCount = Datum(chunk).u.i;
 		_rate = Datum(chunk).u.i;
 		break;
 	}
