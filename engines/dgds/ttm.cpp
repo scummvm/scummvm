@@ -924,8 +924,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		r.grow(-1);
 		r.clip(seq._drawWin);
 		_vm->_compositionBuffer.fillRect(r, seq._drawColBG);
-		// FALL THROUGH to draw the border
 	}
+	// then to draw the border, we (drum roll)...
+	// FALL THROUGH
 	case 0xa110: { // DRAW EMPTY RECT  x1,y1,x2,y2:int
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		Drawing::rectClipped(r, seq._drawWin, &_vm->_compositionBuffer, seq._drawColFG);
