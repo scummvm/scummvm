@@ -86,8 +86,8 @@ public:
 
 private:
 	Operand executeNextStatement();
-	Operand callBuiltInFunction(uint32 id, Common::Array<Operand> &args);
-	Operand callBuiltInMethod(uint32 id, Operand self, Common::Array<Operand> &args);
+	Operand callBuiltInFunction(BuiltInFunction id, Common::Array<Operand> &args);
+	Operand callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args);
 	Operand getVariable(uint32 id, VariableScope scope);
 	void putVariable(uint32 id, VariableScope scope, Operand value);
 

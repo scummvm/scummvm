@@ -94,15 +94,16 @@ Operand CodeChunk::executeNextStatement() {
 			Operand returnValue;
 			Function *function = g_engine->_functions.getValOrDefault(functionId);
 			if (function != nullptr) {
+				// This is a title-defined function.
 				returnValue = function->execute(args);
 			} else {
-				returnValue = callBuiltInFunction(functionId, args);
+				returnValue = callBuiltInFunction(static_cast<BuiltInFunction>(functionId), args);
 			}
 			return returnValue;
 		}
 
 		case kOpcodeCallMethod: {
-			uint32 methodId = Datum(*_bytecode).u.i;
+			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Operand selfObject = executeNextStatement();
 			if (selfObject.getType() != kOperandTypeAssetId) {
@@ -288,8 +289,8 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 	}
 }
 
-Operand CodeChunk::callBuiltInFunction(uint32 id, Common::Array<Operand> &args) {
-	switch ((BuiltInFunction)id) {
+Operand CodeChunk::callBuiltInFunction(BuiltInFunction id, Common::Array<Operand> &args) {
+	switch (id) {
 	case kEffectTransitionFunction: {
 		switch (args.size()) {
 		// TODO: Discover and handle the different ways
@@ -325,20 +326,20 @@ Operand CodeChunk::callBuiltInFunction(uint32 id, Common::Array<Operand> &args) 
 	}
 }
 
-Operand CodeChunk::callBuiltInMethod(uint32 id, Operand self, Common::Array<Operand> &args) {
+Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args) {
 	if (self.getAssetId() == 1) {
 		// This is a "document" method that we need to handle specially.
 		// The document (@doc) accepts engine-level methods like changing the
 		// active screen.
 		// HACK: This is so we don't have to implement a separate document class
 		// just to house these methods. Rather, we just call in the engine.
-		Operand returnValue = g_engine->callMethod((BuiltInMethod)id, args);
+		Operand returnValue = g_engine->callMethod(method, args);
 		return returnValue;
 	} else {
 		// This is a regular asset that we can process directly.
 		Asset *selfAsset = self.getAsset();
 		assert(selfAsset != nullptr);
-		Operand returnValue = selfAsset->callMethod((BuiltInMethod)id, args);
+		Operand returnValue = selfAsset->callMethod(method, args);
 		return returnValue;
 	}
 }
