@@ -1341,7 +1341,7 @@ Common::Error ScummEngine::init() {
 			// Maniac Mansion doesn't use the text surface, but it's easier to
 			// pretend that it does.
 
-			if (_game.id == GID_INDY3 || _game.id == GID_LOOM || _game.id == GID_MANIAC)
+			if (_game.id == GID_INDY3 || _game.id == GID_LOOM || (_game.id == GID_MANIAC && _macGui))
 				_textSurfaceMultiplier = 2;
 		}
 
