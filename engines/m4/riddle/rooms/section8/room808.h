@@ -41,9 +41,9 @@ public:
 
 
 private:
-	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
-	void room808_sub1(int i, int i1);
 	void addMcHotspot(int32 val1);
+	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
+	void setBridgeHotspots(int val1, bool activeFl);
 
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
@@ -62,6 +62,7 @@ private:
 	machine *_808ChainMach = nullptr;
 	machine *_808HandleSpriteMach = nullptr;
 	machine *_808PosMach = nullptr;
+	machine *_808RipFallShovelNearSideMach = nullptr;
 	machine *_mcTrekMach = nullptr;
 };
 

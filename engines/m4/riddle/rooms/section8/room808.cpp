@@ -277,12 +277,12 @@ void Room808::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		player_set_commands_allowed(true);
-		room808_sub1(0, 0);
-		room808_sub1(1, 0);
-		room808_sub1(2, 0);
-		room808_sub1(3, 0);
-		room808_sub1(4, 0);
-		room808_sub1(_G(flags[V094]), 1);
+		setBridgeHotspots(0, false);
+		setBridgeHotspots(1, false);
+		setBridgeHotspots(2, false);
+		setBridgeHotspots(3, false);
+		setBridgeHotspots(4, false);
+		setBridgeHotspots(_G(flags[V094]), true);
 		addMcHotspot(_G(flags[V097]));
 
 		if (_G(flags[V097]) == 0) {
@@ -292,15 +292,85 @@ void Room808::daemon() {
 		}
 
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 18);
-		
+
 		break;
-		
+
 	case 2:
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_location(_G(my_walker), 18, 216);
+		ws_demand_facing(_G(my_walker), 2);
+		DisposePath(_G(my_walker)->walkPath);
+		_G(my_walker)->walkPath = CreateCustomPath(29, 209, 67, 209, 112, 195, -1);
+		ws_custom_walk(_G(my_walker), 2, -1, true);
+		series_unload(_808McupSeries);
+		series_play("808mcup", 0, 0, 3, 5, 0, 100, 0, 0, 0, -1);
+
+		break;
+
 	case 3:
+		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 18, 216, 2, Walker::player_walker_callback, "mc_trek");
+		DisposePath(_mcTrekMach->walkPath);
+		_mcTrekMach->walkPath = CreateCustomPath(31, 211, 66, 215, 112, 238, -1);
+		ws_custom_walk(_mcTrekMach, 2, 1, true);
+		series_unload(_808McupSeries);
+
+		break;
+
 	case 4:
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_location(_G(my_walker), 18, 216);
+		ws_demand_facing(_G(my_walker), 2);
+		DisposePath(_G(my_walker)->walkPath);
+		_G(my_walker)->walkPath = CreateCustomPath(29, 209, 67, 209, 112, 195, -1);
+		ws_custom_walk(_G(my_walker), 2, 1, true);
+
+		break;
+
 	case 6:
+		player_set_commands_allowed(false);
+		ws_hide_walker(_G(my_walker));
+		terminateMachine(_808PosMach);
+		_G(flags[V096]) = 1;
+
+		if (inv_object_in_scene("farmer's shovel", 808)) {
+			series_play("808 RIP TEST BRIDGESHOVEL FAR", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
+		} else if (_G(flags[V094]) == 4) {
+			series_play("808test3", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
+		} else {
+			series_play("808 RIP TEST BRIDGE", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
+		}
+
+		break;
+
 	case 7:
+		player_set_commands_allowed(true);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_facing(_G(my_walker), 2);
+
+		if (inv_object_in_scene("farmer's shovel", 808)) {
+			_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 0, 100, 0, 0);
+		} else if (_G(flags[V094]) == 4) {
+			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 4, 100, 0, 0);
+		} else {
+			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 0, 100, 0, 0);
+		}
+
+
+		break;
+
 	case 8:
+		player_set_commands_allowed(false);
+		ws_hide_walker(_G(my_walker));
+		terminateMachine(_808PosMach);
+		digi_preload("808_s04", -1);
+		digi_preload("808_s02", -1);
+		digi_preload("28_02n01", 807);
+		_808RipFallShovelNearSideMach = series_stream("808 RIP FALLSHOVEL NEAR SIDE ", 5, 0, -1);
+		series_stream_break_on_frame(_808RipFallShovelNearSideMach, 5, 15);
+		digi_play("808_s04", 3, 255, -1, -1);
+
+		break;
+
 	case 9:
 	case 10:
 	case 11:
@@ -321,7 +391,7 @@ void Room808::daemon() {
 	case 26:
 	case 966:
 	case 967:
-		
+
 	default:
 		break;
 	}
@@ -361,8 +431,115 @@ bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
 	return retVal;
 }
 
-void Room808::room808_sub1(int i, int i1) {
-	//TODO Not implemented yet
+void Room808::setBridgeHotspots(int val1, bool activeFl) {
+	switch (val1) {
+	case 0:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge", activeFl);
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL", false);
+		else
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL", true);
+
+		if (inv_object_in_scene("crank", 808) || _G(flags[V098]) != 0) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		} else {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+		}
+
+		break;
+
+	case 1:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL ", false);
+		else
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL ", true);
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+
+		break;
+
+	case 2:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel  ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge  ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL  ", false);
+		else
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL  ", true);
+
+		if (inv_object_in_scene("crank", 808) || _G(flags[V098]) != 0) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		} else {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+		}
+
+		break;
+
+	case 3:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel   ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge   ", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", activeFl);
+
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", false);
+		else
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", true);
+
+		if (inv_object_in_scene("crank", 808) || _G(flags[V098]) != 0) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		} else {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+		}
+
+		break;
+
+	case 4:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel", activeFl);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge", activeFl);
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL    ", false);
+		else
+			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL    ", true);
+
+		if (inv_object_in_scene("crank", 808) || _G(flags[V098]) != 0) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		} else {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+		}
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room808::addMcHotspot(int32 val1) {
