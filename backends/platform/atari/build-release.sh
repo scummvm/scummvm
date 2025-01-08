@@ -50,6 +50,8 @@ rm -rf dist-generic
 make dist-generic
 
 # create symbol file and strip
+rm dist-generic/scummvm/scummvm.ttp
+cp -a scummvm.ttp dist-generic/scummvm/scummvm.ttp
 ${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
 ${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
 
