@@ -28,9 +28,7 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
-#ifdef USE_GIF
 #include <gif_lib.h>
-#endif
 
 namespace Image {
 
@@ -41,17 +39,14 @@ GIFDecoder::~GIFDecoder() {
 	destroy();
 }
 
-#ifdef USE_GIF
 static int gifReadFromStream(GifFileType *gif, GifByteType *bytes, int size) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)gif->UserData;
 	return stream->read(bytes, size);
 }
-#endif
 
 bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
-#ifdef USE_GIF
 	int error = 0;
 	GifFileType *gif = DGifOpen(&stream, gifReadFromStream, &error);
 	if (!gif) {
@@ -125,9 +120,6 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	DGifCloseFile(gif, 0);
 	return true;
-#else
-	return false;
-#endif
 }
 
 void GIFDecoder::destroy() {
