@@ -22,15 +22,15 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM808_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM808_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room808 : public Room {
+class Room808 : public Section8Room {
 public:
-	Room808() : Room() {}
+	Room808() : Section8Room() {}
 	~Room808() override {}
 
 	void preload() override;
@@ -42,6 +42,8 @@ public:
 
 private:
 	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
+	void room808_sub1(int i, int i1);
+	void addMcHotspot(int32 val1);
 
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
@@ -50,6 +52,7 @@ private:
 	int32 _808RpupSeries = 0;
 	int32 _mctd61Series = 0;
 	int32 _mctd82aSeries = 0;
+	int32 _meiChienHandsBehindBackSeries = 0;
 	int32 _ripLooksAroundInAweSeries = 0;
 	int32 _ripMedReach1HandPos2Series = 0;
 	int32 _ripPos3LookAroundSeries = 0;

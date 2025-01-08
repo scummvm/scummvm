@@ -274,6 +274,57 @@ void Room808::parser() {
 }
 
 void Room808::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(true);
+		room808_sub1(0, 0);
+		room808_sub1(1, 0);
+		room808_sub1(2, 0);
+		room808_sub1(3, 0);
+		room808_sub1(4, 0);
+		room808_sub1(_G(flags[V094]), 1);
+		addMcHotspot(_G(flags[V097]));
+
+		if (_G(flags[V097]) == 0) {
+			_meiChienHandsBehindBackSeries = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
+			setGlobals3(_meiChienHandsBehindBackSeries, 1, 17);
+			subD7916(_mcTrekMach, -1);
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 18);
+		
+		break;
+		
+	case 2:
+	case 3:
+	case 4:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+	case 18:
+	case 19:
+	case 20:
+	case 21:
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+	case 26:
+	case 966:
+	case 967:
+		
+	default:
+		break;
+	}
 	// TODO Not implemented yet
 }
 
@@ -308,6 +359,51 @@ bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
 	_G(screenCodeBuff)->release();
 
 	return retVal;
+}
+
+void Room808::room808_sub1(int i, int i1) {
+	//TODO Not implemented yet
+}
+
+void Room808::addMcHotspot(int32 val1) {
+	for (HotSpotRec* curr = _G(currentSceneDef).hotspots; curr != nullptr; curr = curr->next) {
+		if (scumm_stricmp(curr->vocab, "MEI CHEN")) {
+			hotspot_delete_record(_G(currentSceneDef).hotspots, curr);
+			break;
+		}
+	}
+
+	HotSpotRec *newHotspot;
+	switch (val1) {
+	case 0:
+		newHotspot = hotspot_new(100, 170, 124, 241);
+		hotspot_newVerb(newHotspot, "TALK TO");
+		hotspot_newVocab(newHotspot, "MEI CHEN");
+
+		newHotspot->cursor_number = 7;
+		newHotspot->feet_x = 128;
+		newHotspot->feet_y = 221;
+		newHotspot->facing = 7;
+
+		break;
+
+	case 1:
+		newHotspot = hotspot_new(336, 74, 352, 117);
+		hotspot_newVerb(newHotspot, "TALK TO");
+		hotspot_newVocab(newHotspot, "MEI CHEN");
+
+		newHotspot->cursor_number = 7;
+		newHotspot->feet_x = 32767;
+		newHotspot->feet_y = 32767;
+		newHotspot->facing = 0;
+
+		break;
+
+	default:
+		error("addMcHotspot - unexpected value");
+	}
+
+	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, newHotspot, true);
 }
 
 } // namespace Rooms
