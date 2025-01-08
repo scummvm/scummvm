@@ -162,10 +162,10 @@ Variable *Operand::getVariable() {
 	}
 }
 
-void Operand::putFunction(Function *function) {
+void Operand::putFunction(uint functionId) {
 	switch (_type) {
 	case kOperandTypeFunction: {
-		_u.function = function;
+		_u.functionId = functionId;
 		break;
 	}
 
@@ -175,10 +175,10 @@ void Operand::putFunction(Function *function) {
 	}
 }
 
-Function *Operand::getFunction() {
+uint Operand::getFunctionId() {
 	switch (_type) {
 	case kOperandTypeFunction: {
-		return _u.function;
+		return _u.functionId;
 	}
 
 	default: {

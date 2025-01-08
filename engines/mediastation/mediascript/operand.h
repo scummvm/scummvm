@@ -72,8 +72,8 @@ public:
 	void putVariable(Variable *variable);
 	Variable *getVariable();
 
-	void putFunction(Function *function);
-	Function *getFunction();
+	void putFunction(uint functionId);
+	uint getFunctionId();
 
 	void putAsset(uint32 assetId);
 	Asset *getAsset();
@@ -85,9 +85,9 @@ private:
 	OperandType _type = kOperandTypeEmpty;
 	union {
 		uint assetId = 0;
+		uint functionId;
 		Common::String *string;
 		Variable *variable;
-		Function *function;
 		int i;
 		double d;
 	} _u;

@@ -150,7 +150,7 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	case (kInstructionTypeOperand): {
-		OperandType operandType = OperandType(Datum(*_bytecode).u.i);
+		OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
 		debugC(8, kDebugScript, "  *** Operand %d ***", static_cast<uint>(operandType));
 		Operand operand(operandType);
 		switch (operandType) {
@@ -173,6 +173,12 @@ Operand CodeChunk::executeNextStatement() {
 		case kOperandTypeFloat2: {
 			double d = Datum(*_bytecode).u.f;
 			operand.putDouble(d);
+			return operand;
+		}
+
+		case kOperandTypeFunction: {
+			uint functionId = Datum(*_bytecode).u.i;
+			operand.putFunction(functionId);
 			return operand;
 		}
 
