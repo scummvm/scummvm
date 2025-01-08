@@ -76,10 +76,12 @@ public:
 	void setPalette(Asset *palette);
 	void addPlayingAsset(Asset *assetToAdd);
 
+    Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args);
 	Common::HashMap<uint, Asset *> _assets;
 	Common::HashMap<uint, Function *> _functions;
 	Common::HashMap<uint32, Variable *> _variables;
 	Common::HashMap<uint, Asset *> _assetsByChunkReference;
+	Context *_currentContext = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	Audio::Mixer *_mixer = nullptr;
 
@@ -101,6 +103,7 @@ private:
 
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);
+	void branchToScreen(uint32 contextId);
 };
 
 extern MediaStationEngine *g_engine;

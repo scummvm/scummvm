@@ -326,10 +326,21 @@ Operand CodeChunk::callBuiltInFunction(uint32 id, Common::Array<Operand> &args) 
 }
 
 Operand CodeChunk::callBuiltInMethod(uint32 id, Operand self, Common::Array<Operand> &args) {
-	Asset *selfAsset = self.getAsset();
-	assert(selfAsset != nullptr);
-	Operand returnValue = selfAsset->callMethod((BuiltInMethod)id, args);
-	return returnValue;
+	if (self.getAssetId() == 1) {
+		// This is a "document" method that we need to handle specially.
+		// The document (@doc) accepts engine-level methods like changing the
+		// active screen.
+		// HACK: This is so we don't have to implement a separate document class
+		// just to house these methods. Rather, we just call in the engine.
+		Operand returnValue = g_engine->callMethod((BuiltInMethod)id, args);
+		return returnValue;
+	} else {
+		// This is a regular asset that we can process directly.
+		Asset *selfAsset = self.getAsset();
+		assert(selfAsset != nullptr);
+		Operand returnValue = selfAsset->callMethod((BuiltInMethod)id, args);
+		return returnValue;
+	}
 }
 
 CodeChunk::~CodeChunk() {

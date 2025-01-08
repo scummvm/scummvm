@@ -121,21 +121,7 @@ Common::Error MediaStationEngine::run() {
 		warning("MediaStation::run(): Title has no root context");
 	}
 
-	Context *activeScreen = loadContext(_boot->_entryContextId);
-	if (activeScreen->_screenAsset != nullptr) {
-		// GET THE PALETTE.
-		setPaletteFromHeader(activeScreen->_screenAsset);
-
-		// PROCESS THE OPENING EVENT HANDLER.
-		EventHandler *entryEvent = activeScreen->_screenAsset->_eventHandlers.getValOrDefault(MediaStation::kEntryEvent);
-		if (entryEvent != nullptr) {
-			debugC(5, kDebugScript, "Executing context entry event handler");
-			entryEvent->execute(activeScreen->_screenAsset->_id);
-		} else {
-			debugC(5, kDebugScript, "No context entry event handler");
-		}
-	}
-
+	branchToScreen(_boot->_entryContextId);
 	while (true) {
 		processEvents();
 		if (shouldQuit()) {
@@ -263,6 +249,39 @@ void MediaStationEngine::addPlayingAsset(Asset *assetToAdd) {
 		}
 	}
 	g_engine->_assetsPlaying.push_back(assetToAdd);
+}
+
+Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
+	switch (methodId) {
+		case kBranchToScreenMethod: {
+			assert(args.size() == 1);
+			uint32 contextId = args[0].getAssetId();
+			branchToScreen(contextId);
+			return Operand();
+		}
+
+		default: {
+			error("MediaStationEngine::callMethod(): Got unimplemented method ID %d", static_cast<uint>(methodId));
+		}
+	}
+}
+
+void MediaStationEngine::branchToScreen(uint32 contextId) {
+	Context *context = loadContext(contextId);
+	if (context->_screenAsset != nullptr) {
+		setPaletteFromHeader(context->_screenAsset);
+		
+		// TODO: Make the screen an asset just like everything else so we can
+		// run event handlers with runEventHandlerIfExists.
+		EventHandler *entryEvent = context->_screenAsset->_eventHandlers.getValOrDefault(MediaStation::kEntryEvent);
+		if (entryEvent != nullptr) {
+			debugC(5, kDebugScript, "Executing context entry event handler");
+			entryEvent->execute(context->_screenAsset->_id);
+		} else {
+			debugC(5, kDebugScript, "No context entry event handler");
+		}
+	}
+	_currentContext = context;
 }
 
 } // End of namespace MediaStation
