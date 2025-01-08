@@ -2196,7 +2196,7 @@ void Sound::startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint
 	// Crudely adapted from the disasm of MI1SE...
 	// TODO: Apply the various speech-line substitutions performed per-game
 
-	int32 soundIndex = _soundSE->handleRemasteredSpeech(
+	int32 soundIndex = _soundSE->handleMISESpeech(
 		msgString,
 		nullptr,
 		roomNumber,

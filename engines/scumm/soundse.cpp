@@ -106,29 +106,6 @@ void SoundSE::initSoundFiles() {
 	}
 }
 
-Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
-	if (track < 0 || track >= (int)_musicEntries.size())
-		return nullptr;
-
-	Common::File *cdAudioFile = new Common::File();
-
-	if (!cdAudioFile->open(Common::Path(_musicFilename))) {
-		delete cdAudioFile;
-		return nullptr;
-	}
-
-	AudioEntry entry = _musicEntries[track];
-
-	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(
-		cdAudioFile,
-		entry.offset,
-		entry.offset + entry.length,
-		DisposeAfterUse::YES
-	);
-
-	return createSoundStream(subStream, entry, DisposeAfterUse::YES);
-}
-
 #define WARN_AND_RETURN_XWB(message)          \
 	{                                         \
 		warning("indexXWBFile: %s", message); \
@@ -140,7 +117,7 @@ Audio::SeekableAudioStream *SoundSE::getXWBTrack(int track) {
 void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioIndex) {
 	// This implementation is based off unxwb: https://github.com/mariodon/unxwb/
 	// as well as xwbdump: https://raw.githubusercontent.com/wiki/Microsoft/DirectXTK/xwbdump.cpp
-	// Only the parts that apply to the Doublefine releases of
+	// Only the parts that apply to the Special Editions of
 	// MI1 and MI2 have been implemented.
 
 	struct SegmentData {
@@ -220,7 +197,7 @@ void SoundSE::indexXWBFile(const Common::String &filename, AudioIndex *audioInde
 
 #define WARN_AND_RETURN_XSB(message)          \
 	{                                         \
-		warning("indexMI2SpeechFiles: %s", message); \
+		warning("indexXSBFile: %s", message); \
 		f->close();                           \
 		delete f;                             \
 		return;                               \
@@ -701,11 +678,11 @@ int32 SoundSE::getAppropriateSpeechCue(const char *msgString, const char *speech
 	return bestScoreIdx;
 }
 
-Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
+Audio::SeekableAudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 	Common::SeekableReadStream *stream;
 	Common::String audioFileName;
 	AudioEntry audioEntry = {};
-	int32 soundIndex = getSoundIndexFromOffset(offset);
+	int32 soundIndex = (type != kSoundSETypeCDAudio) ? getSoundIndexFromOffset(offset) : (int32)offset;
 
 	if (soundIndex == -1) {
 		warning("getAudioStream: sound index not found for offset %d", offset);
@@ -714,6 +691,7 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 
 	switch (type) {
 	case kSoundSETypeMusic:
+	case kSoundSETypeCDAudio:
 		audioFileName = _musicFilename;
 		audioEntry = _musicEntries[soundIndex];
 		break;
@@ -750,7 +728,7 @@ Audio::AudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
 		DisposeAfterUse::YES
 	);
 
-	return createSoundStream(subStream, audioEntry, DisposeAfterUse::YES);
+	return createSoundStream(subStream, audioEntry);
 }
 
 Common::String calculateCurrentString(const char *msgString) {
@@ -839,7 +817,7 @@ Common::String calculateCurrentString(const char *msgString) {
 	return result;
 }
 
-int32 SoundSE::handleRemasteredSpeech(const char *msgString, const char *speechFilenameSubstitution,
+int32 SoundSE::handleMISESpeech(const char *msgString, const char *speechFilenameSubstitution,
 								     uint16 roomNumber, uint16 actorTalking, uint16 numWaits) {
 
 	// Get the string without the various control codes and special characters...

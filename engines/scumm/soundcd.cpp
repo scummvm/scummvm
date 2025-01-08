@@ -149,7 +149,7 @@ void SoundCD::playCDTrackInternal(int track, int numLoops, int startFrame, int d
 		if (_vm->_game.id == GID_LOOM) {
 			stream = makeCDDAStream("CDDA.SOU", DisposeAfterUse::YES);
 		} else if (_soundSE) {
-			stream = _soundSE->getXWBTrack(track);
+			stream = _soundSE->getAudioStream(track, kSoundSETypeCDAudio);
 		}
 
 		if (!stream)
