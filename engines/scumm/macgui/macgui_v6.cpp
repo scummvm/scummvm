@@ -429,6 +429,15 @@ MacGuiImpl::MacImageSlider *MacV6Gui::addSlider(MacDialogWindow *window, int x, 
 }
 
 void MacV6Gui::runAboutDialog() {
+	// While there is a menu item for a Maniac Mansion credits screen, it
+	// doesn't do anything.
+	//
+	// "I was probably exhausted from hand-placing all the letters on the
+	// DOTT credits screen to make one for Maniac." -- Aaron Giles,
+	// December 30, 2024.
+	if (_vm->_game.id == GID_MANIAC)
+		return;
+
 	if (_vm->_game.features & GF_DEMO) {
 		// HACK: Use the largest bounds as default for unknown demos
 		// It would be nice if we could figure these out automatically
