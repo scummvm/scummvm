@@ -49,7 +49,9 @@ Operand EventHandler::execute(uint assetId) {
 	}
 
 	case kAsciiCodeEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (ASCII code = %d) **********", assetId, static_cast<uint>(_type), _argumentValue.u.i);
+		// Not sure why the ASCII code isn't just stored as an integer, but it's not.
+		uint asciiCode = static_cast<uint>(_argumentValue.u.f);
+		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %d) (ASCII code = %d) **********", assetId, static_cast<uint>(_type), asciiCode);
 		break;
 	}
 
