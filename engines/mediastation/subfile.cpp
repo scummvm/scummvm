@@ -34,7 +34,7 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 	_rootChunk = nextChunk();
 	if (_rootChunk._id != MKTAG('R', 'I', 'F', 'F'))
 		// TODO: These need to be interpreted as ASCII.
-		error("Subfile::Subfile(): Expected \"RIFF\" chunk, got %s", tag2str(_rootChunk._id));
+		error("Subfile::Subfile(): Expected \"RIFF\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_stream->skip(4); // IMTS
 
 	// READ RATE CHUNK.
@@ -43,7 +43,7 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 	// TODO: Figure out what this actually is.
 	Chunk rateChunk = nextChunk();
 	if (rateChunk._id != MKTAG('r', 'a', 't', 'e'))
-		error("Subfile::Subfile(): Expected \"rate\" chunk, got %s", tag2str(_rootChunk._id));
+		error("Subfile::Subfile(): Expected \"rate\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_rate = _stream->readUint32LE();
 
 	// READ PAST LIST CHUNK.
@@ -51,7 +51,7 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 
 	// QUEUE UP THE FIRST DATA CHUNK.
 	if (_stream->readUint32BE() != MKTAG('d', 'a', 't', 'a'))
-		error("Subfile::Subfile(): Expected \"data\" as first bytes of subfile, got %s", tag2str(rateChunk._id));
+		error("Subfile::Subfile(): Expected \"data\" as first bytes of subfile, got %s @0x%llx)", tag2str(rateChunk._id), static_cast<long long int>(_stream->pos()));
 }
 
 Chunk Subfile::nextChunk() {
