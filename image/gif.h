@@ -24,6 +24,8 @@
 
 #include "image/image_decoder.h"
 
+#ifdef USE_GIF
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -68,5 +70,7 @@ private:
 
 /** @} */
 } // End of namespace Image
+
+#endif // USE_GIF
 
 #endif

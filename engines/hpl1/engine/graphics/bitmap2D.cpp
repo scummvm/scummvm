@@ -59,8 +59,10 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type, const Graphics:
 		_decoder.reset(loadImage(filepath, new Image::TGADecoder));
 	else if (type == "jpg" || type == "jpeg")
 		_decoder.reset(loadImage(filepath, setupJPEGDecoder(new Image::JPEGDecoder)));
+#ifdef USE_GIF
 	else if (type == "gif")
 		_decoder.reset(loadImage(filepath, new Image::GIFDecoder));
+#endif
 	else
 		error("trying to load unsupported image format %s", type.c_str());
 	_width = _decoder->getSurface()->w;
