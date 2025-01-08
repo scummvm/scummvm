@@ -89,7 +89,9 @@ private:
 	void scaleFla2x();
 	void drawNextFrameFla();
 
+#ifdef USE_GIF
 	void prepareGIF(int index);
+#endif
 	void playGIFMovie(const char *flaName);
 
 	bool playSmkMovie(const char *name, int index);

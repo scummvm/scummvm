@@ -296,6 +296,7 @@ void Movies::drawNextFrameFla() {
 
 Movies::Movies(TwinEEngine *engine) : _engine(engine) {}
 
+#ifdef USE_GIF
 void Movies::prepareGIF(int index) {
 	Image::GIFDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(Resources::HQR_FLAGIF_FILE, index);
@@ -318,8 +319,10 @@ void Movies::prepareGIF(int index) {
 	_engine->delaySkip(5000);
 	_engine->setPalette(_engine->_screens->_ptrPal);
 }
+#endif
 
 void Movies::playGIFMovie(const char *flaName) {
+#ifdef USE_GIF
 	if (!Common::File::exists(Resources::HQR_FLAGIF_FILE)) {
 		warning("%s file doesn't exist", Resources::HQR_FLAGIF_FILE);
 		return;
@@ -365,6 +368,9 @@ void Movies::playGIFMovie(const char *flaName) {
 	} else {
 		warning("unknown gif image: %s", name.c_str());
 	}
+#else
+	warning("No GIF support compiled in");
+#endif
 }
 
 bool Movies::playMovie(const char *name) { // PlayAnimFla
