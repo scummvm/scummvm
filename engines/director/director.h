@@ -238,7 +238,7 @@ public:
 	bool pollEvent(Common::Event &event);
 	bool processEvents(bool captureClick = false, bool skipWindowManager = false);
 	void processEventQUIT();
-	uint32 getMacTicks();
+	int getMacTicks();
 	Common::Array<Common::Event> _injectedEvents;
 
 	// game-quirks.cpp
