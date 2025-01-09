@@ -87,7 +87,7 @@ protected:
 	machine *_ripPushMach = nullptr;
 
 	int32 subCE498(int32 val1);
-	void subD7916(machine *machine, int32 trigger);
+	void sendWSMessage_3840000(machine *machine, int32 trigger);
 	int32 subCE52E(int32 val1);
 	void moveScreen(int32 dx, int32 dy);
 	void getSeriesName(int32 val1, bool true_or_False);

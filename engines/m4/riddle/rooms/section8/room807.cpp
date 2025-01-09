@@ -254,7 +254,7 @@ void Room807::parser() {
 			case 10:
 				player_set_commands_allowed(false);
 				setGlobals3(_ripLowReachPos1Series, 1, 24);
-				subD7916(_G(my_walker), 20);
+				sendWSMessage_3840000(_G(my_walker), 20);
 
 				break;
 
@@ -269,7 +269,7 @@ void Room807::parser() {
 			case 40:
 				digi_play("807r14", 1, 255, -1, -1);
 				setGlobals3(_ripLowReachPos1Series, 24, 1);
-				subD7916(_G(my_walker), 50);
+				sendWSMessage_3840000(_G(my_walker), 50);
 
 				break;
 
@@ -498,7 +498,7 @@ void Room807::parser() {
 					if (inv_object_in_scene("wooden post", 807)) {
 						player_set_commands_allowed(false);
 						setGlobals3(_ripTrekHiReach2HndSeries, 1, 13);
-						subD7916(_G(my_walker), 10);
+						sendWSMessage_3840000(_G(my_walker), 10);
 					} else {
 						digi_play("807r26", 1, 255, -1, -1);
 					}
@@ -517,7 +517,7 @@ void Room807::parser() {
 			case 15:
 				terminateMachine(_807PostMach);
 				setGlobals3(_ripTrekHiReach2HndSeries, 13, 1);
-				subD7916(_G(my_walker), 20);
+				sendWSMessage_3840000(_G(my_walker), 20);
 
 				break;
 
@@ -1123,7 +1123,7 @@ void Room807::daemon() {
 		}
 
 		setGlobals3(_mctd82aSeries, 1, 22);
-		subD7916(_mcTrekMach, 18);
+		sendWSMessage_3840000(_mcTrekMach, 18);
 		switch (_807newFacing) {
 		case 3:
 		case 9:
@@ -1135,7 +1135,7 @@ void Room807::daemon() {
 			break;
 		}
 
-		subD7916(_G(my_walker), 17);
+		sendWSMessage_3840000(_G(my_walker), 17);
 
 		break;
 
@@ -1179,13 +1179,13 @@ void Room807::daemon() {
 			break;
 		}
 
-		subD7916(_G(my_walker), 21);
+		sendWSMessage_3840000(_G(my_walker), 21);
 
 		break;
 
 	case 20:
 		setGlobals3(_mctd82aSeries, 22, 1);
-		subD7916(_mcTrekMach, 21);
+		sendWSMessage_3840000(_mcTrekMach, 21);
 
 		break;
 

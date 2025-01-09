@@ -64,7 +64,8 @@ enum {
 	ACTION_31 = 31,
 	ACTION_32 = 32,
 	ACTION_33 = 33,
-	ACTION_666 = 666
+	ACTION_666 = 666,
+	ACTION_900 = 900
 };
 
 // A message request

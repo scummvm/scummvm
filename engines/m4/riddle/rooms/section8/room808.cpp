@@ -21,6 +21,8 @@
 
 #include "m4/riddle/rooms/section8/room808.h"
 
+
+#include "m4/adv_r/other.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
@@ -288,7 +290,7 @@ void Room808::daemon() {
 		if (_G(flags[V097]) == 0) {
 			_meiChienHandsBehindBackSeries = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
 			setGlobals3(_meiChienHandsBehindBackSeries, 1, 17);
-			subD7916(_mcTrekMach, -1);
+			sendWSMessage_3840000(_mcTrekMach, -1);
 		}
 
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 18);
@@ -362,6 +364,7 @@ void Room808::daemon() {
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
 		terminateMachine(_808PosMach);
+
 		digi_preload("808_s04", -1);
 		digi_preload("808_s02", -1);
 		digi_preload("28_02n01", 807);
@@ -372,14 +375,112 @@ void Room808::daemon() {
 		break;
 
 	case 9:
+		disable_player_commands_and_fade_init(12);
+		break;
+
 	case 10:
+		player_set_commands_allowed(false);
+		ws_hide_walker(_G(my_walker));
+		terminateMachine(_808PosMach);
+
+		digi_preload("808_s04", -1);
+		digi_preload("808_s02", -1);
+		digi_preload("28_02n01", 807);
+
+		if (inv_object_in_scene("farmer's shovel", 808)) {
+			_808RipFallShovelNearSideMach = series_stream("808 RIP FALL WSHOVEL FAR SIDE", 5, 0, -1);
+			series_stream_break_on_frame(_808RipFallShovelNearSideMach, 5, 13);
+		} else {
+			_808RipFallShovelNearSideMach = series_stream("808 RIP FALLS", 5, 0, -1);
+			series_stream_break_on_frame(_808RipFallShovelNearSideMach, 5, 14);
+		}
+
+		digi_play("808_s04", 3, 255, -1, -1);
+
+		break;
+
 	case 11:
+		if (inv_object_in_scene("farmer's shovel", 808)) {
+			series_show("808pos2", 0, 0, -1, -1, 4, 100, 0, 0);
+		}
+
+		disable_player_commands_and_fade_init(12);
+
+		break;
+
 	case 12:
+		if (_G(spleenSpraying)) {
+			kernel_timing_trigger(200, 966, nullptr);
+		} else {
+			ws_unhide_walker(_G(my_walker));
+			ws_demand_location(_G(my_walker), 202, 179);
+			ws_demand_facing(_G(my_walker), 2);
+			other_save_game_for_resurrection();
+
+			_G(game).new_section = 4;
+			_G(game).new_room = 413;
+		}
+
+		break;
+
 	case 13:
+		series_stream_break_on_frame(_808RipFallShovelNearSideMach, 21, 11);
+		digi_play("808_s02", 2, 255, -1, -1);
+
+		if (_G(flags[V097] == 0)) {
+			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			sendWSMessage_3840000(_mcTrekMach, 16);
+		} else {
+			ws_hide_walker(_mcTrekMach);
+			series_play("808mc99", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		}
+
+		kernel_timing_trigger(45, 17, nullptr);
+
+		break;
+
 	case 14:
+		series_stream_break_on_frame(_808RipFallShovelNearSideMach, 24, 11);
+		digi_play("808_s02", 2, 255, -1, -1);
+
+		if (_G(flags[V097] == 0)) {
+			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			sendWSMessage_3840000(_mcTrekMach, 16);
+		} else {
+			ws_hide_walker(_mcTrekMach);
+			series_play("808mc99", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		}
+
+		kernel_timing_trigger(45, 17, nullptr);
+
+
+		break;
+
 	case 15:
+		series_stream_break_on_frame(_808RipFallShovelNearSideMach, 24, 9);
+		digi_play("808_s02", 2, 255, -1, -1);
+
+		if (_G(flags[V097] == 0)) {
+			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			sendWSMessage_3840000(_mcTrekMach, 16);
+		} else {
+			ws_demand_location(_mcTrekMach, -1000, -1000);
+			ws_hide_walker(_mcTrekMach);
+			series_play("808mc99", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		}
+
+		kernel_timing_trigger(45, 17, nullptr);
+
+		break;
+
 	case 16:
+		series_play("808mc98", 0, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		break;
+
 	case 17:
+		digi_play("28_02n01", 1, 255, -1, 807);
+		break;
+
 	case 18:
 	case 19:
 	case 20:

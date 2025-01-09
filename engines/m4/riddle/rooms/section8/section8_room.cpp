@@ -47,13 +47,13 @@ int32 Section8Room::subCE498(int32 val1) {
 	return -1;
 }
 
-void Section8Room::subD7916(machine *machine, int32 trigger) {
+void Section8Room::sendWSMessage_3840000(machine *machine, int32 trigger) {
 	int32 num = trigger;
 	if (trigger == 0)
 		num = -1;
 
 	_G(globals)[GLB_TEMP_4] = kernel_trigger_create(num);
-	sendWSMessage(0x3840000, 0, machine, 0, nullptr, 1);
+	sendWSMessage(ACTION_900 << 16, 0, machine, 0, nullptr, 1);
 }
 
 int32 Section8Room::subCE52E(int32 val1) {
@@ -400,7 +400,7 @@ void Section8Room::parser() {
 				_savedPlayerInfoFacing = _G(player_info).facing;
 				_rptldSerie = series_load("rptld1a", -1, nullptr);
 				setGlobals3(_rptldSerie, 1, 6);
-				subD7916(_G(my_walker), 10);
+				sendWSMessage_3840000(_G(my_walker), 10);
 
 				break;
 
@@ -414,7 +414,7 @@ void Section8Room::parser() {
 
 			case 20:
 				setGlobals3(_rptldSerie, 6, 1);
-				subD7916(_G(my_walker), 30);
+				sendWSMessage_3840000(_G(my_walker), 30);
 				break;
 
 			case 30:
@@ -512,7 +512,7 @@ void Section8Room::parser() {
 					player_set_commands_allowed(false);
 					_ripTrekLowReach = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
 					setGlobals3(_ripTrekLowReach, 1, 16);
-					subD7916(_G(my_walker), 10);
+					sendWSMessage_3840000(_G(my_walker), 10);
 				} else
 					_G(player).command_ready = true;
 
@@ -527,7 +527,7 @@ void Section8Room::parser() {
 			case 20:
 				terminateMachine(_844postMach);
 				setGlobals3(_ripTrekLowReach, 16, 1);
-				subD7916(_G(my_walker), 30);
+				sendWSMessage_3840000(_G(my_walker), 30);
 				digi_play("844r22", 1, 255, -1, -1);
 
 				break;
@@ -638,7 +638,7 @@ void Section8Room::parser() {
 			player_set_commands_allowed(false);
 			if (_G(flags)[V276] == 0) {
 				setGlobals3(_meiHandsBehindBack, 17, 1);
-				subD7916(_mcTrekMach, -1);
+				sendWSMessage_3840000(_mcTrekMach, -1);
 			}
 			disable_player_commands_and_fade_init(20);
 
@@ -685,7 +685,7 @@ void Section8Room::daemon() {
 			series_unload(S8_SHADOW_DIRS1[4]);
 			_meiHandsBehindBack = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
 			setGlobals3(_meiHandsBehindBack, 1, 17);
-			subD7916(_mcTrekMach, 4);
+			sendWSMessage_3840000(_mcTrekMach, 4);
 			_guessHotspotName = Common::String("MEI CHEN      ");
 			_unkArray[_unkArrayIndex] = 0;
 			kernel_timing_trigger(imath_ranged_rand(1200, 1800), 5, nullptr);
@@ -725,7 +725,7 @@ void Section8Room::daemon() {
 		series_unload(S8_SHADOW_DIRS2[2]);
 		_meiHandsBehindBack = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
 		setGlobals3(_meiHandsBehindBack, 1, 17);
-		subD7916(_mcTrekMach, 4);
+		sendWSMessage_3840000(_mcTrekMach, 4);
 		break;
 
 	case 4:
@@ -793,7 +793,7 @@ void Section8Room::daemon() {
 		series_unload(_meiHandsBehindBack);
 		_mctdSerie = series_load("mctd82a", -1, nullptr);
 		setGlobals3(_mctdSerie, 1, 22);
-		subD7916(_mcTrekMach, 11);
+		sendWSMessage_3840000(_mcTrekMach, 11);
 		if (_guessFacing == 3 || _guessFacing == 9) {
 			_ripLooksAround = series_load("RIP POS 3 LOOK AROUND", -1, nullptr);
 			setGlobals3(_ripLooksAround, 1, 20);
@@ -802,7 +802,7 @@ void Section8Room::daemon() {
 			setGlobals3(_ripLooksAround, 1, 14);
 		}
 
-		subD7916(_G(my_walker), 10);
+		sendWSMessage_3840000(_G(my_walker), 10);
 		_case7RandVal = imath_ranged_rand(1, 4);
 		switch (_case7RandVal) {
 		case 1:
@@ -860,12 +860,12 @@ void Section8Room::daemon() {
 			setGlobals3(_ripLooksAround, 13, 1);
 		}
 
-		subD7916(_G(my_walker), 14);
+		sendWSMessage_3840000(_G(my_walker), 14);
 		break;
 
 	case 13:
 		setGlobals3(_mctdSerie, 22, 1);
-		subD7916(_mcTrekMach, 14);
+		sendWSMessage_3840000(_mcTrekMach, 14);
 		break;
 
 	case 14:
@@ -877,7 +877,7 @@ void Section8Room::daemon() {
 			series_unload(_mctdSerie);
 			_meiHandsBehindBack = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
 			setGlobals3(_mctdSerie, 17, 17);
-			subD7916(_mcTrekMach, -1);
+			sendWSMessage_3840000(_mcTrekMach, -1);
 			kernel_timing_trigger(imath_ranged_rand(7200, 14400), 5, nullptr);
 		}
 		break;
