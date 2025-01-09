@@ -1896,6 +1896,10 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 		break;
 	case INT:
 	case FLOAT:
+		if (g_director->getVersion() >= 500 && memberID.asInt() > 0x20000) {
+			// Composite ID
+			return CastMemberID().fromMultiplex(memberID.asInt());
+		}
 		if (castLib.asInt() == 0) {
 			// When specifying 0 as the castlib, D5 will assume this
 			// means the default (i.e. first) cast library. It will not

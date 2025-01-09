@@ -423,6 +423,14 @@ struct CastMemberID {
 	Common::String asString() const;
 
 	uint hash() const { return ((castLib & 0xffff) << 16) + (member & 0xffff); }
+
+	CastMemberID fromMultiplex(int multiplexID) {
+		return CastMemberID(multiplexID % 0x20000, 1 + (multiplexID / 0x20000));
+	}
+
+	int toMultiplex() {
+		return member + 0x20000 * (castLib - 1);
+	}
 };
 
 enum CompareResult {

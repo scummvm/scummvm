@@ -176,8 +176,14 @@ Datum CastMember::getField(int field) {
 			d = Datum(castInfo->name);
 		break;
 	case kTheMemberNum:
-	case kTheNumber:
 		d = _castId;
+		break;
+	case kTheNumber:
+		if (g_director->getVersion() >= 500) {
+			d = CastMemberID(_castId, _cast->_castLibID).toMultiplex();
+		} else {
+			d = _castId;
+		}
 		break;
 	case kTheRect:
 		// not sure get the initial rect would be fine to castmember

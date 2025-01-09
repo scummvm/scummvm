@@ -720,7 +720,8 @@ void Cast::loadCast() {
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
-		if ((r = _castArchive->getFirstResource(MKTAG('L', 'c', 't', 'x'), _libResourceId)) != nullptr) {
+		// Even for multiple casts, ID is 1024
+		if ((r = _castArchive->getFirstResource(MKTAG('L', 'c', 't', 'x'), 1024)) != nullptr) {
 			loadLingoContext(*r);
 			delete r;
 		}
