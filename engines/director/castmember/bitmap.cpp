@@ -779,7 +779,7 @@ Datum BitmapCastMember::getField(int field) {
 	case kThePalette:
 		// D5 and below return an integer for this field
 		if (_clut.castLib > 0) {
-			d = Datum(_clut.member + 0x20000 * (_clut.castLib - 1));
+			d = Datum(_clut.toMultiplex());
 		} else {
 			d = Datum(_clut.member);
 		}
@@ -822,7 +822,7 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 				if (id > 0) {
 					// For palette IDs, D5 and above use multiples of 0x20000 to denote
 					// the castLib in the integer representation
-					newClut = CastMemberID(id % 0x20000, 1 + (id / 0x20000));
+					newClut = CastMemberID().fromMultiplex(id);
 				} else if (id < 0) {
 					// Negative integer refers to one of the builtin palettes
 					newClut = CastMemberID(id, -1);

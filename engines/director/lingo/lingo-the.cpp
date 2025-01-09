@@ -451,7 +451,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getCastLibsNum();
 		break;
 	case kTheCastMembers:
-		d = getMembersNum();
+		{
+			uint16 castLibID = 0;
+			if (g_director->getVersion() >= 500) {
+				LB::b_castLib(1);
+				castLibID = (uint16)g_lingo->pop().u.i;
+			}
+			d = getMembersNum(castLibID);
+		}
 		break;
 	case kTheCenterStage:
 		d = g_director->_centerStage;
@@ -1315,15 +1322,13 @@ int Lingo::getCastLibsNum() {
 	return _vm->getCurrentMovie()->getCasts()->size();
 }
 
-int Lingo::getMembersNum() {
+int Lingo::getMembersNum(uint16 castLibID) {
 	Movie *movie = _vm->getCurrentMovie();
-	int castLib = 0;
-	if (g_director->getVersion() >= 500) {
-		LB::b_castLib(1);
-		castLib = g_lingo->pop().u.i;
+	Cast *cast = movie->getCast(CastMemberID(0, castLibID));
+	if (cast) {
+		return MAX(cast->getCastMaxID(), (movie->_sharedCast ? movie->_sharedCast->getCastMaxID() : 0));
 	}
-	Cast *cast = movie->getCast(CastMemberID(0, castLib));
-	return (MAX(cast->getCastMaxID(), (movie->_sharedCast ? movie->_sharedCast->getCastMaxID() : 0)));
+	return 0;
 }
 
 int Lingo::getXtrasNum() {
@@ -1392,6 +1397,14 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = sprite->_castId;
 		break;
 	case kTheCastNum:
+		if (g_director->getVersion() >= 500) {
+			// For the castNum, D5 will multiplex the castLib ID into the result.
+			// the memberNum will just give you the member ID.
+			d = sprite->_castId.toMultiplex();
+		} else {
+			d = sprite->_castId.member;
+		}
+		break;
 	case kTheMemberNum:
 		d = sprite->_castId.member;
 		break;
@@ -1581,9 +1594,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheMemberNum:
 		{
 			CastMemberID castId = d.asMemberID();
-			// Setting the cast ID as a number will preserve whatever is in castLib
-			if (d.isNumeric() && (sprite->_castId.castLib != 0)) {
-				castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
+			if (g_director->getVersion() < 500 || field == kTheMemberNum) {
+				// Setting the cast ID as a number will preserve whatever is in castLib
+				if (d.isNumeric() && (sprite->_castId.castLib != 0)) {
+					castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
+				}
 			}
 			CastMember *castMember = movie->getCastMember(castId);
 
@@ -1839,7 +1854,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			d = 0;
 		} else if (field == kTheNumber) {
 			d = -1;
-		} else if (id.member <= getMembersNum()) {
+		} else if (id.member <= getMembersNum(id.castLib)) {
 			// If a cast member with the ID doesn't exist,
 			// but the ID isn't greater than the biggest cast member ID,
 			// Lingo will not crash, and instead return a VOID.
@@ -2136,7 +2151,11 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 					d = Datum(Common::Point(0, 0));
 					break;
 				case kTheNumber:
-					d = Datum(id.member);
+					if (g_director->getVersion() >= 500) {
+						d = Datum(id.toMultiplex());
+					} else {
+						d = Datum(id.member);
+					}
 					break;
 				default:
 					emptyAllowed = false;
@@ -2144,7 +2163,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 				}
 			}
 
-			if (id.member <= getMembersNum()) {
+			if (id.member <= getMembersNum(id.castLib)) {
 				// Cast member ID is within range (i.e. less than max)
 				// In real Director, accessing -any- of the properties will
 				// be allowed, but return garbage.
