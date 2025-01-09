@@ -410,7 +410,8 @@ using Common::UNK_LANG;
 static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "V1 Demo" },
-	{ "maniac", "dott.exe", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file
+	{ "maniac", "dott.exe", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Windows version)
+	{ "maniac", "dott", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Mac version)
 	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64" },   // ... and maniac2.d64
 	{ "maniac", "maniac1.dsk", kGenUnchanged, UNK_LANG, Common::kPlatformApple2GS, "Apple II" },   // ... and maniac2.dsk
 	{ "maniac", "maniacdemo.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64 Demo" },

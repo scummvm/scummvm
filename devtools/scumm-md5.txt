@@ -73,7 +73,8 @@ maniac	Maniac Mansion
 	be83e882b44f2767bc08d4f766ebc347	-1	de	Atari	V2	V2	-	Joachim Eberhard
 	15240c59d3681ed53f714f8d925cb2d6	-1	es	Atari	V2	V2	-	VooD
 	624cdb93654667c869d204a64af7e57f	1988	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
-	ff678e9ef8e4af2a37ca8658833c795a	1988	en	DOS	SE	SE	-	Filippos Karapetis
+	ff678e9ef8e4af2a37ca8658833c795a	-1  	en	DOS	SE	SE	-	Filippos Karapetis
+	fb70a129635f91988e394738376bcb36	-1  	en	DOS	SE	SE	-	Filippos Karapetis
 	b250d0f9cc83f80ced56fe11a4fb057c	1988	en	DOS	V2	V2	alt?	Andrea Petrucci, Fingolfin
 	114acdc2659a273c220f86ee9edb24c1	-1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
 	99a3699f80b8f776efae592b44b9b991	1988	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
@@ -361,6 +362,7 @@ tentacle	Day of the Tentacle
 	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	1.6	Fingolfin
 	64d07dec2bf0789c4f2a7b656cf5bb83	2731584777	en	DOS	SE	SE	Filippos Karapetis
 	7ff69e4905f3c30f3a86ab8fb8cfe34b	2731425417	en	DOS	SE	SE	Filippos Karapetis
+	66f01ce69b6007b415a9475585a7ec1f	2729086579	en	DOS	SE	SE	Filippos Karapetis
 	8aa05d3cdb0e795436043f0546af2da2	7932	fr	All?	-	CD	-	Andrea Petrucci
 	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
@@ -409,6 +411,7 @@ ft	Full Throttle
 	09820417db26687bb7fe0c83cc4c553b	19697	en	All?	-	Version A	-	Fingolfin
 	60ba818dc3bede86d40357e3913f8505	19697	en	All?	-	Version B	-	sev, Fingolfin
 	3ad7672a6c4d190f0a08ea524f711dd6	5465581773	en	DOS	SE	SE	SE	Filippos Karapetis
+	c9694a19b19092d7494c586c72b7c046	5468384784	en	DOS	SE	SE	SE	Filippos Karapetis
 	4bedb49943df95a9c900a5a82ccbe9de	19752	fr	All?	-	-	-	cyx
 	8bdb0bf87b5e303dd35693afb9351215	-1	de	All?	-	-	-	dhewg
 	55518cd73cf9c6d23ea29c51ee06bdfe	-1	it	All?	-	-	-	delfino
