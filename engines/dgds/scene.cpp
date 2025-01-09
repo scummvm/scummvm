@@ -592,7 +592,7 @@ void SDSScene::unload() {
 	_triggers.clear();
 	_talkData.clear();
 	_dynamicRects.clear();
-	_conversation.unload();
+	_conversation.unloadData();
 	_conditionalOps.clear();
 	_sceneDialogFlags = kDlgFlagNone;
 }
@@ -856,13 +856,16 @@ bool SDSScene::loadTalkData(uint16 num) {
 }
 
 
-void SDSScene::freeTalkData(uint16 num) {
+bool SDSScene::freeTalkData(uint16 num) {
+	bool result = false;
 	for (int i = 0; i < (int)_talkData.size(); i++) {
 		if (_talkData[i]._num == num) {
 			_talkData.remove_at(i);
 			i--;
+			result = true;
 		}
 	}
+	return result;
 }
 
 void SDSScene::updateVisibleTalkers() {
@@ -875,7 +878,10 @@ void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
 	for (const auto &tds : _talkData) {
 		tds.drawVisibleHeads(dst);
 	}
-	_conversation.runScript();
+
+	if (_conversation.isForDlg(getVisibleDialog())) {
+		_conversation.runScript();
+	}
 }
 
 bool SDSScene::hasVisibleHead() const {
@@ -887,8 +893,10 @@ bool SDSScene::hasVisibleHead() const {
 }
 
 
-void SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
+bool SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
 	updateVisibleTalkers();
+
+	_conversation._drawRect = DgdsRect();
 	if (loadTalkData(talknum)) {
 		for (auto &data : _talkData) {
 			if (data._num != talknum)
@@ -905,7 +913,9 @@ void SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
 			}
 			break;
 		}
+		return true;
 	}
+	return false;
 }
 
 
@@ -964,11 +974,12 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 			dialog.setFlag(kDlgFlagOpening);
 
 			// For beamish
+			bool haveHeadData = false;
 			if (dialog._talkDataHeadNum) {
-				loadTalkDataAndSetFlags(dialog._talkDataNum, dialog._talkDataHeadNum);
+				haveHeadData = loadTalkDataAndSetFlags(dialog._talkDataNum, dialog._talkDataHeadNum);
 			}
 
-			_conversation.loadData(fileNum, dlgNum, -1);
+			_conversation.loadData(fileNum, dlgNum, -1, haveHeadData);
 
 			// hide time gets set the first time it's drawn.
 			if (_dlgWithFlagLo8IsClosing && dialog.hasFlag(kDlgFlagLo8)) {
@@ -1008,6 +1019,13 @@ bool SDSScene::checkDialogActive() {
 		if ((dlg._state->_hideTime == 0) && dlg._action.size() < 2)
 			no_options = true;
 
+		// If voice acting in Willy Beamish is finished, clear the dialog
+		// unless we are waiting for a choice.
+		if (dlg._action.size() < 2 && (_conversation.isForDlg(&dlg) && _conversation.isFinished())) {
+			finished = true;
+			_conversation.clear();
+		}
+
 		if ((!finished && !no_options) || dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40)) {
 			if (!finished && dlg._action.size() > 1 && !dlg.hasFlag(kDlgFlagHiFinished)) {
 				DialogAction *action = dlg.pickAction(false, clearDlgFlag);
@@ -1022,19 +1040,18 @@ bool SDSScene::checkDialogActive() {
 			_dlgWithFlagLo8IsClosing = dlg.hasFlag(kDlgFlagLo8);
 
 			// For Willy Beamish
+			bool haveHeadData = false;
 			if (dlg._talkDataNum) {
-				freeTalkData(dlg._talkDataNum);
+				haveHeadData = freeTalkData(dlg._talkDataNum);
 			}
 
 			DialogAction *action = dlg.pickAction(true, clearDlgFlag);
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
-					// TODO: We can load selected item voice acting here, but it generally
-					// immediately starts another dialog or changes scene, so the sound
-					// doesn't end up playing.
-					// Need to work out how to correctly delay until the sound finishes?
-					_conversation.loadData(dlg._fileNum, dlg._num, action->num);
+					// Play the response voice acting script.
+					_conversation.loadData(dlg._fileNum, dlg._num, action->num, haveHeadData);
+					_conversation.runScript();
 
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;
@@ -1061,8 +1078,8 @@ bool SDSScene::checkDialogActive() {
 				dlg.setFlag(kDlgFlagHiFinished);
 				showDialog(dlg._nextDialogFileNum, dlg._nextDialogDlgNum);
 			} else {
-				// No next dialog clear CDS data
-				_conversation.unload();
+				// No next dialog .. clear CDS data?
+				//_conversation.unloadData();
 			}
 		}
 		if (dlg.hasFlag(kDlgFlagVisible)) {
@@ -1217,6 +1234,8 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 		_ignoreMouseUp = true;
 		return;
 	}
+
+	_ignoreMouseUp = false;
 
 	// Don't start drag in look/target mode.
 	if (_lookMode)

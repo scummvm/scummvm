@@ -38,7 +38,7 @@ namespace Dgds {
 
 class Image;
 class SoundRaw;
-
+class Dialog;
 
 class TalkDataHeadFrame {
 public:
@@ -105,23 +105,75 @@ public:
 	bool hasVisibleHead() const;
 };
 
-/** CDS data from Willy Beamish talkie */
+
+/**
+ * A TTM interpreter with customized opcode handling for the TTM bit of
+ * CDS files (Willy Beamish CD version conversation data)
+ */
+class CDSTTMInterpreter : public TTMInterpreter {
+public:
+	CDSTTMInterpreter(DgdsEngine *vm);
+
+	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }
+
+protected:
+	virtual void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) override;
+
+	Graphics::ManagedSurface _storedAreaBuffer;
+};
+
+class CDSTTMEnviro : public TTMEnviro {
+public:
+	CDSTTMEnviro() : _cdsPlayedSound(false), _cdsFrame(-1), _cdsJumped(false), _cdsDelay(0),
+	_cdsDidStoreArea(false), TTMEnviro()
+	{}
+
+	bool _cdsPlayedSound;
+	int16 _cdsFrame; // The GOTO target to use in the CDS script (Willy Beamish talkie)
+	int16 _cdsDelay;
+	bool _cdsJumped;
+	bool _cdsDidStoreArea;
+	DgdsRect _storedAreaRect;
+};
+
+/** CDS data from Willy Beamish CD version talkie */
 class Conversation {
 public:
-	Conversation() : _nextExec(0) {}
+	Conversation() : _nextExecMs(0), _runTempFrame(0), _tempFrameNum(0), _stopScript(false), _loadState(0), _dlgNum(-1), _dlgFileNum(-1), _subNum(-1), _finished(false), _haveHeadData(false) {}
 	~Conversation();
 
-	void unload();
+	void unloadData();
 	void runScript();
-	void loadData(uint16 num, uint16 num2, int16 sub);
+	void loadData(uint16 num, uint16 num2, int16 sub, bool haveHeadData);
+	bool isForDlg(const Dialog *dlg) const;
+	bool isFinished() const { return _finished; }
+	void clear();
 
-	Common::SharedPtr<SoundRaw> _sound;
-	Common::SharedPtr<Image> _img;
-	Common::SharedPtr<TTMInterpreter> _ttmScript;
-	Common::Array<Common::SharedPtr<TTMSeq>> _ttmSeqs;
-	TTMEnviro _ttmEnv;
-	uint32 _nextExec;
 	DgdsRect _drawRect;
+
+private:
+	Common::SharedPtr<CDSTTMInterpreter> _ttmScript;
+	Common::Array<Common::SharedPtr<TTMSeq>> _ttmSeqs;
+	CDSTTMEnviro _ttmEnv;
+	uint32 _nextExecMs;
+
+	bool runScriptFrame(int16 frameNum);
+	void checkAndRunScript();
+	void incrementFrame();
+	bool isScriptRunning();
+	void pumpMessages();
+
+	int16 _runTempFrame;
+	int16 _tempFrameNum;
+
+	uint32 _thisFrameMs;
+	bool _stopScript;
+	int16 _loadState;
+	int16 _dlgNum;
+	int16 _dlgFileNum;
+	int16 _subNum;
+	bool _finished;
+	bool _haveHeadData;
 };
 
 

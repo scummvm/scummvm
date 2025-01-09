@@ -132,7 +132,8 @@ bool TTMInterpreter::load(const Common::String &filename, TTMEnviro &scriptData)
 void TTMInterpreter::unload() {
 }
 
-static const char *ttmOpName(uint16 op) {
+/*static*/
+const char *TTMInterpreter::ttmOpName(uint16 op) {
 	switch (op) {
 	case 0x0000: return "FINISH";
 	case 0x0020: return "SAVE(free?) BACKGROUND";
@@ -493,7 +494,7 @@ void TTMInterpreter::doWipeOp(uint16 code, const TTMEnviro &env, const TTMSeq &s
 }
 
 
-int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
+int16 TTMInterpreter::doInitCreditScrollOp(const Image *img) {
 	assert(img);
 	int16 maxWidth = 0;
 	for (int i = 0; i < img->loadedFrameCount(); i++)
@@ -501,7 +502,7 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
 	return maxWidth;
 }
 
- bool TTMInterpreter::doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect) {
+ bool TTMInterpreter::doCreditsScrollOp(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect) {
 	int nframes = img->loadedFrameCount();
 	bool scrollFinished = true;
 	int y = SCREEN_HEIGHT - ymax;
@@ -573,6 +574,99 @@ void TTMInterpreter::doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &
 	}
 }
 
+/// Handle 0xa5xx draw ops
+void TTMInterpreter::doDrawSpriteOp(const TTMEnviro &env, const TTMSeq &seq, uint16 op, byte count, const int16 *ivals, int16 xoff, int16 yoff) {
+	int frameno;
+	int bmpNo;
+	int dstWidth = 0;
+	int dstHeight = 0;
+	if (count == 6) {
+		frameno = ivals[2];
+		bmpNo = ivals[3];
+		dstWidth = ivals[4];
+		dstHeight = ivals[5];
+	} else if (count == 4) {
+		frameno = ivals[2];
+		bmpNo = ivals[3];
+	} else {
+		frameno = seq._brushNum;
+		bmpNo = seq._currentBmpId;
+	}
+
+	ImageFlipMode flipMode = kImageFlipNone;
+	if (op == 0xa510)
+		flipMode = kImageFlipV;
+	else if (op == 0xa520)
+		flipMode = kImageFlipH;
+	else if (op == 0xa530)
+		flipMode = kImageFlipHV;
+
+	Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
+	if (img) {
+		int x = ivals[0] + xoff;
+		int y = ivals[1] + yoff;
+		// Use env offset if we are in gosub
+		if (_stackDepth > 0) {
+			x += env._xOff;
+			y += env._yOff;
+		}
+		img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
+	} else {
+		warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
+	}
+}
+
+void TTMInterpreter::doFadeOutOp(int16 colorno, int16 ncolors, int16 targetcol, int16 speed) {
+	if (speed == 0) {
+		_vm->getGamePals()->clearPalette();
+	} else {
+		// The original tight-loops here with 640 steps and i/10 as the fade level..
+		// bring that down a bit to use less cpu.
+		// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
+
+		// TODO: this is a pretty bad way to do it - should pump messages in this loop?
+		for (int i = 0; i < 320; i += speed) {
+			int fade = MIN(i / 5, 63);
+			_vm->getGamePals()->setFade(colorno, ncolors, targetcol, fade * 4);
+			g_system->updateScreen();
+			g_system->delayMillis(5);
+		}
+	}
+
+	// Logic here is different in Dragon + HOC.  They clear all buffers after fade
+	if (_vm->getGameId() == GID_DRAGON || _vm->getGameId() == GID_HOC) {
+		_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	} else {
+		// In Willy Beamish, copy comp->screen and comp->back
+		g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		g_system->updateScreen();
+		_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
+	}
+	// Stored area is cleared in all games.
+	_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
+	// Reset to previous palette.
+	_vm->getGamePals()->setPalette();
+}
+
+void TTMInterpreter::doFadeInOp(int16 colorno, int16 ncolors, int16 targetcol, int16 speed) {
+	if (speed == 0) {
+		_vm->getGamePals()->setPalette();
+	} else {
+		for (int i = 320; i > 0; i -= speed) {
+			int fade = MAX(0, MIN(i / 5, 63));
+			_vm->getGamePals()->setFade(colorno, ncolors, targetcol, fade * 4);
+			if (i == 320) {
+				// update screen first to make the initial fade-in work
+				g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(5);
+		}
+	}
+}
+
 
 void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
 	switch (op) {
@@ -634,10 +728,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	case 0x0110: // PURGE void
 		// only set if not running from CDS script
-		if (env._cdsSeqNum < 0)
-			_vm->adsInterpreter()->setHitTTMOp0110();
-		else
-			env._cdsSeqNum++;
+		_vm->adsInterpreter()->setHitTTMOp0110();
 		break;
 	case 0x0220: // STOP CURRENT MUSIC
 		if (seq._executed) // this is a one-shot op
@@ -661,12 +752,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
 		int delayMillis = (int)round(ivals[0] * MS_PER_FRAME);
-		// Slight HACK - if we are running from CDS (Willy Beamish conversation) script,
-		// set that delay, otherwise set ADS interpreter delay.
-		if (env._cdsSeqNum >= 0)
-			env._cdsDelay = delayMillis;
-		else
-			_vm->adsInterpreter()->setScriptDelay(delayMillis);
+		_vm->adsInterpreter()->setScriptDelay(delayMillis);
 		break;
 	}
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
@@ -679,8 +765,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x1060: // SELECT PAL:  id:int [0]
 		seq._currentPalId = ivals[0];
 		if (seq._executed) // this is a mostly on-shot op.
-			break;
-		if (env._cdsSeqNum >= 0) // don't change global pal for CDS scripts.
 			break;
 		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
 		break;
@@ -794,23 +878,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		break;
 	}
-	case 0x3200: // CDS FIND GOTO TARGET frameno
-		env._cdsSeqNum = findGOTOTarget(env, seq, ivals[0]);
-		break;
-	case 0x3300: // CDS GOSUB
-		if (!env._cdsJumped && env._frameOffsets[env._cdsSeqNum] != seq._currentFrame) {
-			env._cdsJumped = true;
-			int64 prevPos = env.scr->pos();
-			env._xOff += ivals[0];
-			env._yOff += ivals[1];
-			env.scr->seek(env._frameOffsets[env._cdsSeqNum]);
-			run(env, seq);
-			env._xOff -= ivals[0];
-			env._yOff -= ivals[1];
-			env.scr->seek(prevPos);
-			env._cdsJumped = false;
-		}
-		break;
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2] + 1, ivals[3] + 1);
@@ -818,65 +885,18 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x4110: // FADE OUT:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
 			break;
-		if (ivals[3] == 0) {
-			_vm->getGamePals()->clearPalette();
-		} else {
-			// The original tight-loops here with 640 steps and i/10 as the fade level..
-			// bring that down a bit to use less cpu.
-			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
-
-			// TODO: this is a pretty bad way to do it - should pump messages in this loop?
-			for (int i = 0; i < 320; i += ivals[3]) {
-				int fade = MIN(i / 5, 63);
-				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				g_system->updateScreen();
-				g_system->delayMillis(5);
-			}
-		}
-
-		// Logic here is different in Dragon + HOC.  They clear all buffers after fade
-		if (_vm->getGameId() == GID_DRAGON || _vm->getGameId() == GID_HOC) {
-			_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-			_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		} else {
-			// In Willy Beamish, copy comp->screen and comp->back
-			g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			g_system->updateScreen();
-			_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
-		}
-		// Stored area is cleared in all games.
-		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-
-		// Reset to previous palette.
-		_vm->getGamePals()->setPalette();
-
+		doFadeOutOp(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
 			break;
-
-		if (ivals[3] == 0) {
-			_vm->getGamePals()->setPalette();
-		} else {
-			for (int i = 320; i > 0; i -= ivals[3]) {
-				int fade = MAX(0, MIN(i / 5, 63));
-				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				if (i == 320) {
-					// update screen first to make the initial fade-in work
-					g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-				}
-				g_system->updateScreen();
-				g_system->delayMillis(5);
-			}
-		}
+		doFadeInOp(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	}
 	case 0x4200: { // STORE AREA: x,y,w,h:int [0..n]  ; makes this area of foreground persist in the next frames.
 		if (seq._executed) // this is a one-shot op
 			break;
 		Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		if (env._cdsSeqNum >= 0)
-			rect.translate(env._xOff, env._yOff);
 		_vm->getStoredAreaBuffer().blitFrom(_vm->_compositionBuffer, rect, rect);
 		break;
 	}
@@ -979,47 +999,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xa500: // DRAW SPRITE: x,y,frameno,bmpno:int [-n,+n]
 	case 0xa510: // DRAW SPRITE FLIP V x,y:int
 	case 0xa520: // DRAW SPRITE FLIP H: x,y:int
-	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n] (CHINA+)
-		int frameno;
-		int bmpNo;
-		int dstWidth = 0;
-		int dstHeight = 0;
-		if (count == 6) {
-			frameno = ivals[2];
-			bmpNo = ivals[3];
-			dstWidth = ivals[4];
-			dstHeight = ivals[5];
-		} else if (count == 4) {
-			frameno = ivals[2];
-			bmpNo = ivals[3];
-		} else {
-			frameno = seq._brushNum;
-			bmpNo = seq._currentBmpId;
-		}
-
-		ImageFlipMode flipMode = kImageFlipNone;
-		if (op == 0xa510)
-			flipMode = kImageFlipV;
-		else if (op == 0xa520)
-			flipMode = kImageFlipH;
-		else if (op == 0xa530)
-			flipMode = kImageFlipHV;
-
-		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
-		if (img) {
-			int x = ivals[0];
-			int y = ivals[1];
-			// Use env offset if we are in gosub *or* running from CDS
-			if (_stackDepth > 0 || env._cdsSeqNum >= 0) {
-				x += env._xOff;
-				y += env._yOff;
-			}
-			img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
-		} else {
-			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
-		}
+	case 0xa530: // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n] (CHINA+)
+		doDrawSpriteOp(env, seq, op, count, ivals);
 		break;
-	}
 	case 0xa600: { // DRAW GETPUT: i:int
 		if (seq._executed) // this is a one-shot op.
 			break;
@@ -1078,13 +1060,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xb000: // INIT CREDITS SCRLL
 		if (seq._executed) // this is a one-shot op
 			break;
-		env._creditScrollMeasure = doOpInitCreditScroll(env._scriptShapes[seq._currentBmpId].get());
+		env._creditScrollMeasure = doInitCreditScrollOp(env._scriptShapes[seq._currentBmpId].get());
 		env._creditScrollYOffset = 0;
 		break;
 	case 0xb010: { // DRAW CREDITS SCROLL ygap,ystep
 		const Image *img = env._scriptShapes[seq._currentBmpId].get();
 		if (img && img->isLoaded()) {
-			bool finished = doOpCreditsScroll(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,
+			bool finished = doCreditsScrollOp(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,
 							ivals[2], env._creditScrollMeasure, seq._drawWin);
 			env._creditScrollYOffset += ivals[1];
 			if (finished)
@@ -1140,8 +1122,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			snd->load(sval);
 			env._soundRaw.reset(snd);
 		} else {
-			// This happens in Willy Beamish talkie CDS files.
-			debug("TTM 0xC210: Skip loading RAW %s, not found.", sval.c_str());
+			warning("TTM 0xC210: Skip loading RAW %s, not found.", sval.c_str());
 		}
 		break;
 	}
@@ -1162,22 +1143,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		}
 		break;
 	}
-	case 0xc250: {	// SYNC RAW SFX
-		uint16 hi = (uint16)ivals[1];
-		uint16 lo = (uint16)ivals[0];
-		uint32 offset = ((uint32)hi << 16) + lo;
-		debug("TODO: 0xC250 Sync raw sfx?? offset %d", offset);
-		/*if (env._soundRaw->playedOffset() < offset) {
-			// Not played to this point yet.
-			env.scr->seek(-6, SEEK_CUR);
-			return false;
-		}*/
-		break;
-	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
-			break;
-		if (env._cdsSeqNum >= 0) // don't run from CDS scripts?
 			break;
 		Image tmp(_vm->getResourceManager(), _vm->getDecompressor());
 		tmp.drawScreen(sval, _vm->getBackgroundBuffer());

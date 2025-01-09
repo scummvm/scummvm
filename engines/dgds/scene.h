@@ -313,9 +313,9 @@ public:
 	Dialog *loadDialogData(uint16 num);
 	void freeDialogData(uint16 num);
 	bool loadTalkData(uint16 num);
-	void freeTalkData(uint16 num);
+	bool freeTalkData(uint16 num);
 	void updateVisibleTalkers();
-	void loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
+	bool loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
 	void drawVisibleHeads(Graphics::ManagedSurface *dst);
 	bool hasVisibleHead() const;
 
@@ -334,6 +334,8 @@ public:
 	void setDynamicSceneRect(int16 num, int16 x, int16 y, int16 width, int16 height);
 	void setSceneNum(int16 num) { _num = num; }
 	void drawDebugHotAreas(Graphics::ManagedSurface *dst) const;
+	void setIgnoreMouseUp() { _ignoreMouseUp = true; }
+	void setShouldClearDlg() { _shouldClearDlg = true; }
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);

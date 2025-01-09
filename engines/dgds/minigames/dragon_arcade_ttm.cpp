@@ -220,11 +220,9 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			debug(1, "Floor: %s", data.dump().c_str());
 			_floorData.push_back(data);
 		} else {
-			const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
-			compBuffer.drawLine(r.left, r.top, r.right, r.top, _drawColFG);
-			compBuffer.drawLine(r.left, r.bottom, r.right, r.bottom, _drawColFG);
-			compBuffer.drawLine(r.left, r.top, r.left, r.bottom, _drawColFG);
-			compBuffer.drawLine(r.right, r.top, r.right, r.bottom, _drawColFG);
+			const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+			const Common::Rect drawWin(SCREEN_WIDTH, SCREEN_HEIGHT);
+			Drawing::rectClipped(r, drawWin, &compBuffer, _drawColFG);
 		}
 		break;
 	case 0xA404: { // DRAW FILLED CIRCLE

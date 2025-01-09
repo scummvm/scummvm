@@ -499,7 +499,8 @@ void DgdsEngine::loadRestartFile() {
 	_gdsScene->loadRestart(_rstFileName, _resource, _decompressor);
 }
 
-static void _dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
+/*static*/ void
+DgdsEngine::dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
 #ifdef DUMP_FRAME_DATA
 	/* For debugging, dump the frame contents.. */
 	Common::DumpFile outf;
@@ -596,6 +597,28 @@ void DgdsEngine::pumpMessages() {
 	}
 }
 
+void DgdsEngine::dimPalForWillyDialog(bool force) {
+	WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
+	int16 fade = globals->getPalFade();
+	fade = CLIP(fade, (int16)0, (int16)255);
+
+	// TODO: Same constants are in globals.cpp
+	static const int FADE_STARTCOL = 0x40;
+	static const int FADE_NUMCOLS = 0xC0;
+
+	if (force || _scene->hasVisibleHead() ) {
+		fade = 0x80;
+	} else {
+		fade = 0;
+	}
+
+	if (_lastGlobalFade != fade || _lastGlobalFadedPal != _gamePals->getCurPalNum()) {
+		_gamePals->setFade(FADE_STARTCOL, FADE_NUMCOLS, 0, fade);
+		_lastGlobalFade = fade;
+		_lastGlobalFadedPal = _gamePals->getCurPalNum();
+	}
+}
+
 Common::Error DgdsEngine::run() {
 	syncSoundSettings();
 	_isLoading = true;
@@ -678,7 +701,7 @@ Common::Error DgdsEngine::run() {
 			//
 			//_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			_dumpFrame(_compositionBuffer, "comp-before-ads");
+			dumpFrame(_compositionBuffer, "comp-before-ads");
 
 			if (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY))
 				_adsInterp->run();
@@ -729,9 +752,9 @@ Common::Error DgdsEngine::run() {
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 
-			_dumpFrame(_backgroundBuffer, "back");
-			_dumpFrame(_storedAreaBuffer, "stor");
-			_dumpFrame(_compositionBuffer, "comp");
+			dumpFrame(_backgroundBuffer, "back");
+			dumpFrame(_storedAreaBuffer, "stor");
+			dumpFrame(_compositionBuffer, "comp");
 
 			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_compositionBuffer);
@@ -747,15 +770,17 @@ Common::Error DgdsEngine::run() {
 				_scene->drawDebugHotAreas(&_compositionBuffer);
 
 			if (getGameId() == GID_WILLY) {
-				_scene->drawVisibleHeads(&_compositionBuffer);
+				if (!justChangedScene1())
+					_scene->drawVisibleHeads(&_compositionBuffer);
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
 				_scene->updateHotAreasFromDynamicRects();
 			} else {
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
-				_scene->drawVisibleHeads(&_compositionBuffer);
+				if (!justChangedScene1())
+					_scene->drawVisibleHeads(&_compositionBuffer);
 			}
 
-			_dumpFrame(_compositionBuffer, "comp-with-dlg");
+			dumpFrame(_compositionBuffer, "comp-with-dlg");
 
 			bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
 			_clock.update(gameRunning);
@@ -769,29 +794,12 @@ Common::Error DgdsEngine::run() {
 		// Mouse event is now handled.
 		_lastMouseEvent = Common::EVENT_INVALID;
 
-		// Willy Beamish dims the palette of the screen while dialogs are active
 		if (getGameId() == GID_WILLY) {
-			WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
-			int16 fade = globals->getPalFade();
-			fade = CLIP(fade, (int16)0, (int16)255);
-
-			// TODO: Same constants are in globals.cpp
-			static const int FADE_STARTCOL = 0x40;
-			static const int FADE_NUMCOLS = 0xC0;
-
-			if (_scene->hasVisibleHead()) {
-				fade = 0x80;
-			} else {
-				fade = 0;
-			}
-
-			if (_lastGlobalFade != fade || _lastGlobalFadedPal != _gamePals->getCurPalNum()) {
-				_gamePals->setFade(FADE_STARTCOL, FADE_NUMCOLS, 0, fade);
-				_lastGlobalFade = fade;
-				_lastGlobalFadedPal = _gamePals->getCurPalNum();
-			}
+			// Willy Beamish dims the palette of the screen while dialogs are active
+			dimPalForWillyDialog(false);
 
 			// TODO: When should we show the cursor again?
+			WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
 			if (globals->isHideMouseCursor() && !_menu->menuShown())
 				CursorMan.showMouse(false);
 		}
