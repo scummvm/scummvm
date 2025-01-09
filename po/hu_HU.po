@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-05 23:03+0000\n"
-"PO-Revision-Date: 2025-01-07 19:18+0000\n"
+"PO-Revision-Date: 2025-01-09 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -32,7 +32,7 @@ msgstr "(összeállítva %s dátummal, %s segítségével)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
-msgstr "Összeállított funkciók:"
+msgstr "Fordítói funkciók:"
 
 #: gui/about.cpp:118
 msgid "not supported"
@@ -1647,16 +1647,16 @@ msgstr "%d új felismert játék, %d korábban hozzáadott játék mellőzése."
 #: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "%d Mappa átvizsgálva..."
+msgstr "%d mappa átvizsgálva..."
 
 #: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "%d új játékot találtam, %d elõzõleg hozzáadott játék kihagyva..."
+msgstr "%d új felismert játék, %d korábban hozzáadott játék mellőzése ..."
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
-msgstr "Állj"
+msgstr "Leállít"
 
 #: gui/onscreendialog.cpp:100
 msgid "Edit record description"
@@ -1664,7 +1664,7 @@ msgstr "Felvétel leírás szerkesztése"
 
 #: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
-msgstr "Átvált játékra"
+msgstr "Átváltás játékra"
 
 #: gui/onscreendialog.cpp:104
 msgid "Fast replay"
@@ -1692,61 +1692,53 @@ msgstr "Minden 30 percben"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:156
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Nagyon nagy"
+msgstr "200% - Extrém nagy"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:158
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Nagyon nagy"
+msgstr "175% - Nagyon nagy"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Nagyobb"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:162
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Nagy"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:164
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Közepes"
+msgstr "100% - Közepes"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Kicsi"
+msgstr "75% - Kicsi"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Kicsi"
+msgstr "50% - Kisebb"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:170
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Kicsi"
+msgstr "25% - Legkisebb"
 
 #: gui/options.cpp:857
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Néhány grafikus opció változtatása sikertelen:"
+msgstr "Nem került alkalmazásra néhány grafikai opció változtatás:"
 
 #: gui/options.cpp:869
 msgid "the video mode could not be changed"
@@ -1754,27 +1746,27 @@ msgstr "a videó mód nem változtatható meg"
 
 #: gui/options.cpp:882
 msgid "the stretch mode could not be changed"
-msgstr "a szakaszos üzemmód nem változtatható meg"
+msgstr "a széthúzott mód nem változtatható meg"
 
 #: gui/options.cpp:888
 msgid "the aspect ratio setting could not be changed"
-msgstr "a képméretarány beállítások nem változtak"
+msgstr "a képméretarány beállítás nem változtatható meg"
 
 #: gui/options.cpp:894
 msgid "the fullscreen setting could not be changed"
-msgstr "a teljesképernyõs beállítás nem változott"
+msgstr "a teljesképernyős beállítás nem változtatható meg"
 
 #: gui/options.cpp:900
 msgid "the filtering setting could not be changed"
-msgstr "a szûrési beállítást nem lehet megváltoztatni"
+msgstr "a szűrési beállítás nem változtatható meg"
 
 #: gui/options.cpp:906
 msgid "the vsync setting could not be changed"
-msgstr "a vsync beállítás nem módosítható"
+msgstr "a vsync beállítás nem változtatható meg"
 
 #: gui/options.cpp:920
 msgid "the shader could not be changed"
-msgstr "a shader nem változtatható"
+msgstr "a shader nem változtatható meg"
 
 #: gui/options.cpp:1448
 msgid "Touchpad mouse mode"
@@ -1786,7 +1778,7 @@ msgstr "Mutató Sebesség:"
 
 #: gui/options.cpp:1453 gui/options.cpp:1455 gui/options.cpp:1456
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr "Billentyûzet/joystick egérmutató vezérlés sebessége"
+msgstr "Billentyűzet/joystick vezérelt mutató sebessége"
 
 #: gui/options.cpp:1455
 msgctxt "lowres"
@@ -1809,24 +1801,24 @@ msgstr "Joy Holtzóna:"
 #: gui/options.cpp:1564
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr "%d rejtett eredmény maradt"
+msgstr "%d rejtett teljesítmény maradt"
 
 #: gui/options.cpp:1569
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr "Feloldott teljesítmény: %d/%d"
+msgstr "Megszerzett teljesítmény: %d/%d"
 
 #: gui/options.cpp:1615
 msgid "Graphics mode:"
-msgstr "Grafikus mód:"
+msgstr "Grafikai mód:"
 
 #: gui/options.cpp:1631
 msgid "Render mode:"
-msgstr "Kirajzolás mód:"
+msgstr "Render mód:"
 
 #: gui/options.cpp:1631 gui/options.cpp:1634
 msgid "Special dithering modes supported by some games"
-msgstr "Néhány játék támogatja a speciális árnyalási módokat"
+msgstr "Néhány játék támogatja a speciális dithering módokat"
 
 #: gui/options.cpp:1647
 msgid "Stretch mode:"
@@ -1837,10 +1829,8 @@ msgid "Scaler:"
 msgstr "Méretező:"
 
 #: gui/options.cpp:1678
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Kirajzolás mód:"
+msgstr "Forgatás mód:"
 
 #: gui/options.cpp:1692
 msgid "Shader:"
@@ -1854,7 +1844,7 @@ msgstr ""
 #: gui/options.cpp:1694
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Shader Mappa:"
+msgstr "Shader Elérési út:"
 
 #: gui/options.cpp:1695
 msgctxt "shader"
@@ -1867,11 +1857,11 @@ msgstr "Shaderek letöltése"
 
 #: gui/options.cpp:1700
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Nézd meg a scummvm.org webhelyen a shader csomagok frissítéseit"
+msgstr "Látogasson el a scummvm.org oldalra a shader csomag frissítésekért"
 
 #: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:476
 msgid "Fullscreen mode"
-msgstr "Teljesképernyõs mód"
+msgstr "Teljesképernyős mód"
 
 #: gui/options.cpp:1709
 msgid "V-Sync"
@@ -1882,41 +1872,41 @@ msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"Várj amíg a függőleges szinkron frissíti a képernyőt a megszakadás "
-"megelőzéséért"
+"Várja meg míg a függőleges szinkron frissíti a képernyőt a képtörés "
+"elkerüléséért"
 
 #: gui/options.cpp:1714
 msgid "Game 3D Renderer:"
-msgstr "3D játék Renderelõ:"
+msgstr "3D játék Renderelő:"
 
 #: gui/options.cpp:1716
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Játék 3D Renderelő:"
+msgstr "3D játék Renderelő:"
 
 #: gui/options.cpp:1733
 msgid "3D Anti-aliasing:"
-msgstr "3D Élsimított:"
+msgstr "3D Élsimítás:"
 
 #: gui/options.cpp:1737 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
-msgstr "Letiltva"
+msgstr "Kikapcsolva"
 
 #: gui/options.cpp:1745
 msgid "Filter graphics"
-msgstr "Grafika szûrése"
+msgstr "Grafika filterezése"
 
 #: gui/options.cpp:1745
 msgid "Use linear filtering when scaling graphics"
-msgstr "Lineáris szûrés használata a grafika átméretezésénél"
+msgstr "Lineáris filterezés használata a grafika átméretezésénél"
 
 #: gui/options.cpp:1749
 msgid "Aspect ratio correction"
-msgstr "Képméretarány korrekció"
+msgstr "Képarány korrekció"
 
 #: gui/options.cpp:1749
 msgid "Correct aspect ratio for games"
-msgstr "A játékok megfelelő képaránya"
+msgstr "A játék megfelelő képaránya"
 
 #: gui/options.cpp:1766
 msgid "Preferred device:"
@@ -1924,15 +1914,15 @@ msgstr "Preferált eszköz:"
 
 #: gui/options.cpp:1766
 msgid "Music device:"
-msgstr "Zeneeszköz:"
+msgstr "Zene eszköz:"
 
 #: gui/options.cpp:1766 gui/options.cpp:1768
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Elsõdleges hangeszköz vagy hang emulátor beállítások"
+msgstr "Preferált hang eszköz vagy hang emulátor beállítása"
 
 #: gui/options.cpp:1766 gui/options.cpp:1768 gui/options.cpp:1769
 msgid "Specifies output sound device or sound card emulator"
-msgstr "Hangeszköz vagy hangkártya emulátor beállítások"
+msgstr "Hangeszköz vagy hangkártya emulátor kiválasztása"
 
 #: gui/options.cpp:1768
 msgctxt "lowres"
@@ -1942,7 +1932,7 @@ msgstr "Preferált eszk.:"
 #: gui/options.cpp:1768
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Zeneeszköz:"
+msgstr "Zene eszköz:"
 
 #: gui/options.cpp:1795
 msgid "AdLib emulator:"
@@ -1950,7 +1940,7 @@ msgstr "AdLib emulátor:"
 
 #: gui/options.cpp:1795 gui/options.cpp:1798
 msgid "AdLib is used for music in many games"
-msgstr "AdLib meghajtót sok játék használja zenéhez"
+msgstr "Sok játékban zenéjénél használt az AdLib"
 
 #: gui/options.cpp:1811
 msgid "GM device:"
@@ -1958,15 +1948,15 @@ msgstr "GM eszköz:"
 
 #: gui/options.cpp:1811
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Alapértelmezett hangeszköz General MIDI kimenethez"
+msgstr "Alapértelmezett hangeszköz kiválasztása General MIDI kimenethez"
 
 #: gui/options.cpp:1822
 msgid "Don't use General MIDI music"
-msgstr "Ne használj General MIDI zenét"
+msgstr "Ne használjon General MIDI zenét"
 
 #: gui/options.cpp:1833 gui/options.cpp:1902
 msgid "Use first available device"
-msgstr "Elsõ elérhetõ eszköz használata"
+msgstr "Első elérhető eszköz használata"
 
 #: gui/options.cpp:1845
 msgid "SoundFont:"
@@ -1975,7 +1965,7 @@ msgstr "SoundFont:"
 #: gui/options.cpp:1845 gui/options.cpp:1847 gui/options.cpp:1855
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"Néhány hangkárya, FluidSynth és Timidyti támogatja a SoundFont betöltését"
+"Néhány hangkártya, a FluidSynth és TiMidity támogatja a SoundFont betöltését"
 
 #: gui/options.cpp:1847
 msgctxt "lowres"
@@ -1993,11 +1983,11 @@ msgstr "Vegyes AdLib/MIDI mód"
 
 #: gui/options.cpp:1860
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "MIDI és AdLib hanggenerátorok használata"
+msgstr "Használja a MIDI és AdLib hang generálást egyszerre"
 
 #: gui/options.cpp:1863
 msgid "MIDI gain:"
-msgstr "MIDI erõsítés:"
+msgstr "MIDI erősítés:"
 
 #: gui/options.cpp:1873
 msgid "MT-32 Device:"
@@ -2005,24 +1995,26 @@ msgstr "MT-32 Eszköz:"
 
 #: gui/options.cpp:1873
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr "Roland MT-32/LAPC1/CM32l/CM64 alapértelmezett hangeszközök beállítása"
+msgstr ""
+"Alapértelmezett hangeszköz beállítása Roland MT-32/LAPC1/CM32l/CM64 "
+"kimenethez"
 
 #: gui/options.cpp:1878
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Roland MT-32 Hardver (GM emuláció tiltva)"
+msgstr "Hardveres Roland MT-32 (GM emuláció kikapcsolása)"
 
 #: gui/options.cpp:1878 gui/options.cpp:1880
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Jelöld be, ha hardveres Roland-Kompatibilis hangeszköz van csatlakoztatva a "
-"gépedhez és használni akarod"
+"Jelölje be, ha hardveres Roland kompatibilis hang eszközt csatlakoztatott a "
+"számítógépéhez"
 
 #: gui/options.cpp:1880
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "Roland MT-32 Hardver (GM emuláció nincs)"
+msgstr "Hardveres Roland MT-32 (nincs GM emuláció)"
 
 #: gui/options.cpp:1883
 msgid "Roland GS device (enable MT-32 mappings)"
@@ -10192,12 +10184,13 @@ msgstr "Hiba a játék erőforrások betöltésekor."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr "EGA színmoduláció átugrása (Színes háttereknél)"
+msgstr "EGA dithering művelet átugrása (teljes színskálás háttér)"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Színmoduláció átugrása EGA játékoknál, grafikák teljes színben láthatók"
+"Dithering művelet átugrása EGA játékok esetében, grafika teljes színskálán "
+"jelenik meg"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
