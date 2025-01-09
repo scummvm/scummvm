@@ -1054,7 +1054,7 @@ Common::Error ScummEngine::init() {
 	// Note: All of these can also occur in 'extracted' form, in which case they
 	// are treated like any other SCUMM game.
 	if (_filenamePattern.genMethod == kGenUnchanged) {
-		if (_game.platform == Common::kPlatformDOS && (_game.features & GF_DOUBLEFINE_PAK)) {
+		if (_game.features & GF_DOUBLEFINE_PAK) {
 			// Container files used in remastered/SE versions
 			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
 			if (_game.id == GID_MANIAC)
