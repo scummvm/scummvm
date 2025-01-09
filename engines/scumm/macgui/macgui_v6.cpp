@@ -89,20 +89,17 @@ bool MacV6Gui::initialize() {
 	// same, at least!
 
 	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *editMenu = menu->getMenuItem(2);
 	Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
+
+	editMenu->enabled = false;
 
 	menu->getSubMenuItem(videoMenu, 0)->enabled = false; // Small
 	menu->getSubMenuItem(videoMenu, 1)->enabled = false; // Interlaced
 
 	if (_vm->_game.id == GID_MANIAC) {
 		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
-
-		menu->getSubMenuItem(soundMenu, 0)->enabled = false; // Music
-		menu->getSubMenuItem(soundMenu, 1)->enabled = false; // Effects
-		menu->getSubMenuItem(soundMenu, 3)->enabled = false; // Toggle Text & Voice
-		menu->getSubMenuItem(soundMenu, 5)->enabled = false; // Text Only
-		menu->getSubMenuItem(soundMenu, 6)->enabled = false; // Voice Only
-		menu->getSubMenuItem(soundMenu, 7)->enabled = false; // Text & Voice
+		soundMenu->enabled = false;
 	}
 
 	return true;
