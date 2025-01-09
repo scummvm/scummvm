@@ -1055,6 +1055,10 @@ Common::Error ScummEngine::init() {
 	// are treated like any other SCUMM game.
 	if (_filenamePattern.genMethod == kGenUnchanged) {
 		if (_game.features & GF_DOUBLEFINE_PAK) {
+			// Extra directories needed for the Mac SE/Remaster versions
+			SearchMan.addSubDirectoryMatching(gameDataDir, "Contents");
+			SearchMan.addSubDirectoryMatching(gameDataDir, "Contents/MacOS");
+			SearchMan.addSubDirectoryMatching(gameDataDir, "Contents/Resources");
 			// Container files used in remastered/SE versions
 			_containerFile = _filenamePattern.pattern; // needs to be set before instantiating ScummPAKFile
 			if (_game.id == GID_MANIAC)

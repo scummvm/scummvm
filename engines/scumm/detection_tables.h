@@ -48,6 +48,7 @@ static const char *const directoryGlobs[] = {
 	"rooms *",  // Mac version of indy3/loom
 	"Contents", // Mac Steam versions
 	"MacOS",    // Mac Steam versions
+	"Resources", // Mac SE/Remastered versions
 	0
 };
 
