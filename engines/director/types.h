@@ -192,17 +192,18 @@ enum InkType {
 	kInkTypeDark
 };
 
+// ID matches up to the fake cast member ID used by EventScript
 enum LEvent {
-	kEventPrepareMovie,
+	kEventPrepareMovie, // 0
 	kEventStartMovie,
 	kEventStepMovie,
 	kEventStopMovie,
 
-	kEventNew,
+	kEventNew, // 4
 	kEventBeginSprite,
 	kEventEndSprite,
 
-	kEventNone,
+	kEventNone, // 7
 	kEventGeneric,
 	kEventEnterFrame,
 	kEventPrepareFrame,
@@ -211,14 +212,14 @@ enum LEvent {
 	kEventExitFrame,
 	kEventTimeout,
 
-	kEventActivateWindow,
+	kEventActivateWindow, // 15
 	kEventDeactivateWindow,
 	kEventMoveWindow,
 	kEventResizeWindow,
 	kEventOpenWindow,
 	kEventCloseWindow,
 
-	kEventKeyUp,
+	kEventKeyUp, // 21
 	kEventKeyDown,
 	kEventMouseUp,
 	kEventMouseDown,
@@ -229,9 +230,9 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStartUp,
+	kEventStartUp, // 31
 
-	kEventMenuCallback
+	kEventMenuCallback // 32
 };
 
 enum TransitionType {

@@ -182,8 +182,8 @@ public:
 
 	uint16 _currentHiliteChannelId;
 
-	uint _lastTimeOut;
-	uint _timeOutLength;
+	int _lastTimeOut;
+	int _timeOutLength;
 	bool _timeOutKeyDown;
 	bool _timeOutMouse;
 	bool _timeOutPlay;
