@@ -221,7 +221,7 @@ private:
 
 			bool handleEvent(Common::Event &event) override;
 			bool handleMouseHeld(Common::Point &pressed, Common::Point &held) override;
-			void timeOut();
+			void timeOut() override;
 
 			void draw() override;
 		};
@@ -245,7 +245,7 @@ private:
 			void reset() override;
 
 			bool handleEvent(Common::Event &event) override;
-			void timeOut();
+			void timeOut() override;
 
 			void draw() override;
 		};

@@ -347,7 +347,7 @@ public:
 
 		void draw(bool drawFocused = false) override;
 
-		bool handleMouseUp(Common::Event &event) { return true; }
+		bool handleMouseUp(Common::Event &event) override { return true; }
 	};
 
 	class MacCheckbox : public MacWidget {
