@@ -5959,9 +5959,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("ubt", "", "BTDEMO.EXE", "dbe72b7dc91c72db5b4597857aecf5c6", 696813, 404),
 
 	// YOBI.EXE is a projector for lower performance systems
-	WINGAME1_l("ukiuki1", "",	  "TENNGU.EXE", "f0bbb9938a7cb899b6fc93ef7f3e8150", 747145, Common::JA_JPN, 404),
+	WINGAME1_l("ukiuki1", "",	  "TENNGU.EXE", "t:2bfc6908e01ec3e743189daa7578d30a", 747145, Common::JA_JPN, 404),
 	WINDEMO2_l("ukiuki1", "Demo", "S.EXE",		"09430e02b3540e623d0b400792958901", 747145,
 								  "LOGO.DIR",	"b6d341c63fbea25898fc310981413c28", 1053528, Common::JA_JPN, 404),
+	MACGAME1_l("ukiuki1", "",     "xn--u9j393jyrduwqoth", "r:bcd3c718db258701496b3c5bcb827ef2", 488662, Common::JA_JPN, 404),
 	WINGAME1("ukiukibgv", "",	  "BGV",		"4dc07ac998272bb4027a9979f5b6c3b6", 1097649, 404),
 	{
 		{
