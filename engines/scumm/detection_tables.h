@@ -161,7 +161,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"maniac", "NES",        0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES, GUIO5(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
 	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO9(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDERAMIGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},
 	{"maniac", "V2 Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformDOS, GUIO7(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDERAMIGA, GAMEOPTION_ORIGINALGUI)},
-	{"maniac", "SE",         0, GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, GF_DOUBLEFINE_PAK, Common::kPlatformDOS, GUIO9(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDERAMIGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},
+	{"maniac", "Remastered", 0, GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, GF_DOUBLEFINE_PAK, Common::kPlatformDOS, GUIO9(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDERAMIGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},
 
 	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO9(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGABW, GUIO_RENDERCGACOMP, GUIO_RENDERCGA, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},
 	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO8(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDERAMIGA, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},
@@ -215,14 +215,14 @@ static const GameSettings gameVariantsTable[] = {
 	{"atlantis", "FM-TOWNS", 0, GID_INDY4,    5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO6(GUIO_MIDITOWNS, GUIO_MIDIADLIB, GUIO_MIDIMT32, GAMEOPTION_TRIM_FMTOWNS_TO_200_PIXELS, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
 
 	{"tentacle", "", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO3(GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
-	{"tentacle", "SE", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY | GF_DOUBLEFINE_PAK, UNK, GUIO4(GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_USE_REMASTERED_AUDIO)},
+	{"tentacle", "Remastered", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY | GF_DOUBLEFINE_PAK, UNK, GUIO4(GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_USE_REMASTERED_AUDIO)},
 	{"tentacle", "Floppy", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO4(GUIO_NOSPEECH, GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
 
 	{"samnmax",  "", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO3(GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
 	{"samnmax",  "Floppy", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO4(GUIO_NOSPEECH, GUIO_RENDEREGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI)},
 
 	{"ft",   "", 0, GID_FT,  7, 0, MDT_NONE, 0, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO)},
-	{"ft",   "SE", 0, GID_FT,  7, 0, MDT_NONE, GF_DOUBLEFINE_PAK, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO)},
+	{"ft",   "Remastered", 0, GID_FT,  7, 0, MDT_NONE, GF_DOUBLEFINE_PAK, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO)},
 	{"ft",   "Demo", 0, GID_FT,  7, 0, MDT_NONE, GF_DEMO, UNK, GUIO3(GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO)},
 
 	{"dig",  "", 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO)},
@@ -410,8 +410,8 @@ using Common::UNK_LANG;
 static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "V1 Demo" },
-	{ "maniac", "dott.exe", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Windows version)
-	{ "maniac", "dott", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Mac version)
+	{ "maniac", "dott.exe", kGenUnchanged, UNK_LANG, UNK, "Remastered" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Windows version)
+	{ "maniac", "dott", kGenUnchanged, UNK_LANG, UNK, "Remastered" },	// Classic version within the remastered one. We don't really need this file, but it has to be different from DOTT's tenta.cle file (Mac version)
 	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64" },   // ... and maniac2.d64
 	{ "maniac", "maniac1.dsk", kGenUnchanged, UNK_LANG, Common::kPlatformApple2GS, "Apple II" },   // ... and maniac2.dsk
 	{ "maniac", "maniacdemo.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64 Demo" },
@@ -462,7 +462,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "atlantis", "atlantis.%03d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 
 	{ "tentacle", "tentacle.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "tentacle", "tenta.cle", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one
+	{ "tentacle", "tenta.cle", kGenUnchanged, UNK_LANG, UNK, "Remastered" },	// Classic version within the remastered one
 	{ "tentacle", "dottdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "tentacle", "Day of the Tentacle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "tentacle", "Day of the Tentacle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -485,7 +485,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 
 	{ "ft", "ft.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "ft", "full.data", kGenUnchanged, UNK_LANG, UNK, "SE" },	// Classic version within the remastered one
+	{ "ft", "full.data", kGenUnchanged, UNK_LANG, UNK, "Remastered" },	// Classic version within the remastered one
 	{ "ft", "ft.%03d", kGenDiskNum, UNK_LANG, UNK, "Demo" },    // Used by PC version of Full Throttle demo
 	{ "ft", "ftdemo.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" },
 	{ "ft", "Full Throttle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
