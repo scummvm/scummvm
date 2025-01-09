@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-05 23:03+0000\n"
-"PO-Revision-Date: 2024-12-22 19:18+0000\n"
+"PO-Revision-Date: 2025-01-09 16:18+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7608,10 +7608,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Il supporto per Versailles 1685 non è stato incluso nella compilazione"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "File dati del motore '%s' non trovato."
+msgstr "File dati del motore darkseed.dat non trovato."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -11560,46 +11558,35 @@ msgstr ""
 "verticale\" presente nella scheda \"motore\"."
 
 #: engines/scumm/scumm.cpp:1321
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Questo gioco richiede l'eseguibile Macintosh 'Indy', per caricare i "
-"caratteri."
+"Questo gioco richiede l'eseguibile Macintosh '%s', per caricare i caratteri."
 
 #: engines/scumm/scumm.cpp:1325
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Questo gioco richiede l'eseguibile Macintosh 'Loom', per caricare la musica "
-"e caratteri."
+"Questo gioco richiede l'eseguibile Macintosh '%s', per caricare la musica e "
+"caratteri."
 
 #: engines/scumm/scumm.cpp:1329
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
-"L'eseguibile Macintosh di 'Monkey Island', necessario per caricare risorse "
-"e\n"
-"strumenti, non è stato trovato. La musica e l'interfaccia utente Mac "
-"verranno disabilitati."
+"L'eseguibile Macintosh '%s', necessario per caricare le risorse, non è stato "
+"trovato. Verranno disabilitati: %s."
 
 #: engines/scumm/scumm.cpp:1330
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Interfaccia grafica Mac"
 
 #: engines/scumm/scumm.cpp:1330
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Musica e interfaccia grafica Macintosh"
 
 #: engines/scumm/scumm.cpp:1350
 #, c-format
