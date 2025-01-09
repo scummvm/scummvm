@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-05 23:03+0000\n"
+"POT-Creation-Date: 2025-01-09 21:25+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -314,7 +314,7 @@ msgstr "另一存储正工作中。您要中断它吗？"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4172
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "是"
@@ -327,7 +327,7 @@ msgstr "是"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4168
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4172
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "否"
@@ -356,9 +356,9 @@ msgstr "JSON 代码内容有误。"
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1330
-#: engines/scumm/scumm.cpp:1737 engines/scumm/scumm.cpp:2227
-#: engines/scumm/scumm.cpp:2243 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1334
+#: engines/scumm/scumm.cpp:1741 engines/scumm/scumm.cpp:2231
+#: engines/scumm/scumm.cpp:2247 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -6132,7 +6132,7 @@ msgstr "恢复"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "此位置不支持快速存档或读档"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3123
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3127
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6143,7 +6143,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3110
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3114
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6154,7 +6154,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3143
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3147
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10139,7 +10139,7 @@ msgid "Your Name:"
 msgstr "你的名字："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4178
 msgid "Host"
 msgstr "主机"
 
@@ -10149,7 +10149,7 @@ msgid "Querying games..."
 msgstr "读取游戏中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4174
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4178
 msgid "Join"
 msgstr "加入"
 
@@ -11084,13 +11084,13 @@ msgstr ""
 "正。\n"
 "可以通过在“引擎”标签页下将分辨率缩减为 320x200 实现宽高比矫正。"
 
-#: engines/scumm/scumm.cpp:1321
+#: engines/scumm/scumm.cpp:1325
 #, fuzzy, c-format
 #| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr "此游戏需要“Indy”Macintosh 可执行文件提供字体。"
 
-#: engines/scumm/scumm.cpp:1325
+#: engines/scumm/scumm.cpp:1329
 #, fuzzy, c-format
 #| msgid ""
 #| "This game requires the 'Loom' Macintosh executable for its music and "
@@ -11099,7 +11099,7 @@ msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr "此游戏需要“Loom”Macintosh 可执行文件提供音乐与字体。"
 
-#: engines/scumm/scumm.cpp:1329
+#: engines/scumm/scumm.cpp:1333
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find the 'Monkey Island' Macintosh executable to read "
@@ -11112,25 +11112,25 @@ msgstr ""
 "找不到用于读取资源与乐器的“Monkey Island”\n"
 "Macintosh 可执行文件。音乐与 Mac 图形界面将被禁用。"
 
-#: engines/scumm/scumm.cpp:1330
+#: engines/scumm/scumm.cpp:1334
 msgid "The Mac GUI"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1330
+#: engines/scumm/scumm.cpp:1334
 msgid "The music and the Mac GUI"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1350
+#: engines/scumm/scumm.cpp:1354
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr "无法打开 Macintosh 资源文件 %s"
 
-#: engines/scumm/scumm.cpp:1353
+#: engines/scumm/scumm.cpp:1357
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr "在 Macintosh 资源文件 %s 中找不到资源分支"
 
-#: engines/scumm/scumm.cpp:1734
+#: engines/scumm/scumm.cpp:1738
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -11140,7 +11140,7 @@ msgstr ""
 "此游戏不再支持 *.BUN/*.SOU 压缩，将会禁用音频。\n"
 "请从原始媒介复制未经压缩的游戏。"
 
-#: engines/scumm/scumm.cpp:2225
+#: engines/scumm/scumm.cpp:2229
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11149,7 +11149,7 @@ msgstr ""
 "原生 MIDI 支持需要 LucasArts 提供的 Roland Upgrade，\n"
 "但缺失 %s。将转而使用 AdLib。"
 
-#: engines/scumm/scumm.cpp:2241
+#: engines/scumm/scumm.cpp:2245
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11157,7 +11157,7 @@ msgstr ""
 "已知此版本的 Monkey Island 1 缺失\n"
 "MT-32 所需的一些资源。将转而使用 AdLib。"
 
-#: engines/scumm/scumm.cpp:4062
+#: engines/scumm/scumm.cpp:4066
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11166,7 +11166,7 @@ msgstr ""
 "Maniac Mansion 此时通常会启动。但要启动，Maniac Mansion 的游戏文件必须放在 "
 "Tentacle 游戏目录下的“Maniac”目录中，同时游戏必须添加到 ScummVM 中。"
 
-#: engines/scumm/scumm.cpp:4174
+#: engines/scumm/scumm.cpp:4178
 msgid "Would you like to host or join a network play session?"
 msgstr "你想启动还是加入网络游玩会话？"
 
