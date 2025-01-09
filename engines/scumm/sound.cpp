@@ -84,7 +84,10 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 
 	_talkChannelHandle = new Audio::SoundHandle();
 
-	if (_vm->_game.features & GF_DOUBLEFINE_PAK)
+	// Initialize the SE sound engine for all doublefine packed games,
+	// except for Maniac Mansion (within DOTT), which doesn't have
+	// associated SE resources in the PAK file.
+	if (_vm->_game.features & GF_DOUBLEFINE_PAK && _vm->_game.id != GID_MANIAC)
 		_soundSE = new SoundSE(_vm, _mixer);
 	_soundCD = new SoundCD(_vm, _mixer, _soundSE, useReplacementAudioTracks);
 
