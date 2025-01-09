@@ -34,6 +34,7 @@
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
@@ -41,6 +42,7 @@
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_v6.h"
+#include "scumm/verbs.h"
 
 namespace Scumm {
 
@@ -161,6 +163,12 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	// handled trivially.
 	if (id == 0)
 		return true;
+
+	if (_vm->_game.id == GID_MANIAC && (id == 200 || id == 201)) {
+		_vm->VAR(_vm->VAR_KEYPRESS) = 5;
+		_vm->runInputScript(kKeyClickArea, 319, 1);
+		return true;
+	}
 
 	// This is how we keep the menu bar visible.
 	Graphics::MacMenu *menu = _windowManager->getMenu();

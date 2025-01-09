@@ -75,14 +75,15 @@ public:
 	void update(int delta) override;
 	bool handleEvent(Common::Event event) override;
 
+	bool runOpenDialog(int &saveSlotToHandle) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
+
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
 	bool handleMenu(int id, Common::String &name) override;
 
 	void runAboutDialog() override;
-	bool runOpenDialog(int &saveSlotToHandle) override;
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
 	bool runOptionsDialog() override;
 	bool runIqPointsDialog();
 

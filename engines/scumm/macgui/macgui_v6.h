@@ -55,6 +55,9 @@ public:
 
 	bool handleEvent(Common::Event event) override;
 
+	bool runOpenDialog(int &saveSlotToHandle) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
+
 	const Graphics::Font *getFontByScummId(int32 id) override;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) override;
@@ -82,8 +85,6 @@ protected:
 	void setVolume(int type, int volume);
 
 	void runAboutDialog() override;
-	bool runOpenDialog(int &saveSlotToHandle) override;
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
 	bool runOptionsDialog() override;
 	bool runQuitDialog() override;
 	bool runRestartDialog() override;

@@ -227,8 +227,6 @@ protected:
 	virtual void restoreScreen() {}
 
 	virtual void runAboutDialog() = 0;
-	virtual bool runOpenDialog(int &saveSlotToHandle);
-	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName);
 	virtual bool runOptionsDialog() = 0;
 	void prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size);
 
@@ -821,6 +819,8 @@ public:
 
 	virtual bool runQuitDialog();
 	virtual bool runRestartDialog();
+	virtual bool runOpenDialog(int &saveSlotToHandle);
+	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName);
 
 	virtual void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) = 0;
 
