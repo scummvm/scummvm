@@ -123,7 +123,7 @@ bool CurlSocket::connect(const Common::String &url) {
 
 size_t CurlSocket::send(const char *data, int len) {
 	if (!_socket)
-		return -1;
+		return (size_t)-1;
 
 	size_t nsent_total = 0, left = len;
 	CURLcode res = CURLE_AGAIN;
