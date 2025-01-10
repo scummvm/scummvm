@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-09 21:25+0000\n"
-"PO-Revision-Date: 2024-12-22 11:00+0000\n"
+"PO-Revision-Date: 2025-01-10 17:02+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7445,10 +7445,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 지원이 컴파일 되지 않음"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
+msgstr "darkseed.dat 엔진 데이터 파일을 찾을 수 없습니다."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -11270,42 +11268,31 @@ msgstr ""
 "화면비 교정은 '엔진' 탭에서 해상도를 320x200으로 잘라내어 달성할 수 있습니다."
 
 #: engines/scumm/scumm.cpp:1325
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
-msgstr ""
-"이 게임의 글꼴을 설치하려면 '인디아나 존스' 매킨토시 실행 파일이 필요합니다."
+msgstr "이 게임의 글꼴을 사용하려면 '%s' 매킨토시 실행 파일이 필요합니다."
 
 #: engines/scumm/scumm.cpp:1329
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
-msgstr ""
-"이 게임의 음악과 글꼴을 사용하려면 '룸' 매킨토시 실행 파일이 필요합니다."
+msgstr "이 게임은 음악과 글꼴을 사용하려면 '%s' 매킨토시 실행 파일이 필요합니다."
 
 #: engines/scumm/scumm.cpp:1333
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
-msgstr ""
-"리소스와 악기를 읽을 수 있는 '원숭이 섬' 매킨토시 실행 파일을 찾을 수 없고 \n"
-"음악 및 맥 GUI가 비활성화됩니다."
+msgstr "리소스를 읽기 위한 매킨토시 실행 파일 '%s'를 찾을 수 없습니다. %s는 "
+"비활성화됩니다."
 
 #: engines/scumm/scumm.cpp:1334
 msgid "The Mac GUI"
-msgstr ""
+msgstr "맥 GUI"
 
 #: engines/scumm/scumm.cpp:1334
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "음악과 맥 GUI"
 
 #: engines/scumm/scumm.cpp:1354
 #, c-format
