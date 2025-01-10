@@ -482,21 +482,185 @@ void Room808::daemon() {
 		break;
 
 	case 18:
+		if (_G(flags[V097] != 0))
+			break;
+
+		if (!player_commands_allowed() || !checkStrings()) {
+			kernel_timing_trigger(60, 18, nullptr);
+		} else {
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			switch (imath_ranged_rand(1, 4)) {
+			case 1:
+				digi_play("950_s15", 2, 255, 19, -1);
+				break;
+
+			case 2:
+				digi_play("950_s16", 2, 255, 19, -1);
+				break;
+
+			case 3:
+				digi_play("950_s17", 2, 255, 19, -1);
+				break;
+
+			case 4:
+			default:
+				digi_play("950_s18", 2, 255, 19, -1);
+				break;
+			}
+		}
+
+		break;
+
 	case 19:
+		player_update_info(_G(my_walker), &_G(player_info));
+		switch (_G(player_info).facing) {
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 20, 3, true);
+			_dword1A195C_facing = 3;
+
+			break;
+
+		case 5:
+			kernel_timing_trigger(30, 20, "phantom reaction");
+			_dword1A195C_facing = 5;
+
+			break;
+
+		case 7:
+			kernel_timing_trigger(30, 20, "phantom reaction");
+			_dword1A195C_facing = 7;
+
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 20, 9, true);
+			_dword1A195C_facing = 9;
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 20:
+		_dword1A1958 = 0;
+		_dword1A1960_rand4 = imath_ranged_rand(1, 4);
+
+		switch(_dword1A1960_rand4) {
+		case 1:
+			digi_play("COM052", 1, 255, 21, 997);
+			break;
+
+		case 2:
+			digi_play("COM054", 1, 255, 21, 997);
+			break;
+
+		case 3:
+			digi_play("COM056", 1, 255, 21, 997);
+			break;
+
+		case 4:
+			digi_play("COM057", 1, 255, 21, 997);
+			break;
+
+		default:
+			break;
+		}
+
+		setGlobals3(_mctd82aSeries, 1, 22);
+		sendWSMessage_3840000(_mcTrekMach, 23);
+
+		if (_dword1A195C_facing == 3 || _dword1A195C_facing == 9) {
+			setGlobals3(_ripPos3LookAroundSeries, 1, 20);
+		} else {
+			setGlobals3(_ripLooksAroundInAweSeries, 1, 14);
+		}
+
+		sendWSMessage_3840000(_G(my_walker), 22);
+
+		break;
+
 	case 21:
+		switch (_dword1A1960_rand4) {
+		case 1:
+			digi_play("COM053", 1, 255, -1, 997);
+			break;
+
+		case 2:
+			digi_play("COM055", 1, 255, -1, 997);
+			break;
+
+		case 4:
+			digi_play("COM058", 1, 255, -1, 997);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 22:
+		kernel_timing_trigger(imath_ranged_rand(90, 120), 24, nullptr);
+		break;
+
 	case 23:
+		kernel_timing_trigger(imath_ranged_rand(90, 120), 25, nullptr);
+		break;
+
 	case 24:
+
+
+		if (_dword1A195C_facing == 3 || _dword1A195C_facing == 9) {
+			setGlobals3(_ripPos3LookAroundSeries, 19, 1);
+		} else {
+			setGlobals3(_ripLooksAroundInAweSeries, 13, 1);
+		}
+
+		sendWSMessage_3840000(_G(my_walker), 26);
+
+		break;
+
 	case 25:
+		setGlobals3(_mctd82aSeries, 22, 1);
+		sendWSMessage_3840000(_mcTrekMach, 26);
+		break;
+
 	case 26:
+		++_dword1A1958;
+		if (_dword1A1958 == 2) {
+			player_set_commands_allowed(true);
+			ws_demand_facing(_G(my_walker), _dword1A195C_facing);
+			kernel_timing_trigger(imath_ranged_rand(7200, 14400), 19, nullptr);
+		}
+
+		break;
+
 	case 966:
+		digi_play("950_s53", 2, 255, 967, -1);
+		break;
+
 	case 967:
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_location(_G(my_walker), 202, 179);
+		ws_demand_facing(_G(my_walker), 2);
+		other_save_game_for_resurrection();
+		_G(game).section_id = 4;
+		_G(game).new_room = 413;
+
+		break;
 
 	default:
 		break;
 	}
-	// TODO Not implemented yet
 }
 
 bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {

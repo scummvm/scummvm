@@ -45,6 +45,10 @@ private:
 	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
 	void setBridgeHotspots(int val1, bool activeFl);
 
+	int32 _dword1A195C_facing = 0;
+	int32 _dword1A1958 = 0;
+	int32 _dword1A1960_rand4 = 0;
+
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
 	int32 _808Rp01Series = 0;
