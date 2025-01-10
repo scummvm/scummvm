@@ -55,7 +55,7 @@
 #endif
 
 /** Template method to return the absolute value of @p x. */
-template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : -x; }
+template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : 0 - (T)x; } // 0 - (T)x is used instead of -x to silence MSVC C4146
 
 /** Template method to return the smallest of its parameters. */
 template<typename T> inline T MIN(T a, T b)	{ return (a < b) ? a : b; }
