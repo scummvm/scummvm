@@ -698,18 +698,25 @@ int32 SoundSE::getAppropriateSpeechCue(const char *msgString, const char *speech
 	return bestScoreIdx;
 }
 
-Audio::SeekableAudioStream *SoundSE::getAudioStream(uint32 offset, SoundSEType type) {
-	AudioIndex *audioIndex = getAudioEntries(type);
-	AudioEntry audioEntry = {};
+Audio::SeekableAudioStream *SoundSE::getAudioStreamFromOffset(uint32 offset, SoundSEType type) {
+	int32 index = getSoundIndexFromOffset(offset);
 
-	int32 soundIndex = (type != kSoundSETypeCDAudio) ? getSoundIndexFromOffset(offset) : (int32)offset;
-
-	if (soundIndex == -1) {
-		warning("getAudioStream: sound index not found for offset %d", offset);
+	if (index < 0) {
+		warning("getAudioStreamFromOffset: sound index not found for offset %d", offset);
 		return nullptr;
 	}
 
-	audioEntry = (*audioIndex)[soundIndex];
+	return getAudioStreamFromIndex(index, type);
+}
+
+Audio::SeekableAudioStream *SoundSE::getAudioStreamFromIndex(int32 index, SoundSEType type) {
+	AudioIndex *audioIndex = getAudioEntries(type);
+	AudioEntry audioEntry = {};
+
+	if (index < 0)
+		return nullptr;
+
+	audioEntry = (*audioIndex)[index];
 
 	Common::SeekableReadStream *f = getAudioFile(type);
 	if (!f)

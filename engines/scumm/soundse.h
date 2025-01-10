@@ -53,7 +53,8 @@ public:
 	SoundSE(ScummEngine *parent, Audio::Mixer *mixer);
 	~SoundSE() = default;
 
-	Audio::SeekableAudioStream *getAudioStream(uint32 offset, SoundSEType type);
+	Audio::SeekableAudioStream *getAudioStreamFromIndex(int32 index, SoundSEType type);
+	Audio::SeekableAudioStream *getAudioStreamFromOffset(uint32 offset, SoundSEType type);
 
 	int32 handleMISESpeech(const char *msgString,
 								const char *speechFilenameSubstitution,

@@ -189,6 +189,12 @@ void Sound::triggerSound(int soundID) {
 	if (_soundCD->triggerCDSound(soundID))
 		return;
 
+	if (shouldInjectMISEAudio()) {
+		stream = _soundSE->getAudioStreamFromIndex(soundID, kSoundSETypeSFX);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID);
+		return;
+	}
+
 	debugC(DEBUG_SOUND, "triggerSound #%d", soundID);
 
 	ptr = _vm->getResourceAddress(rtSound, soundID);
@@ -616,7 +622,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 	} else if (shouldInjectMISEAudio()) {
 		// MI1 and MI2 SE
 		if (_soundSE && !_soundsPaused && _mixer->isReady()) {
-			Audio::AudioStream *input = _soundSE->getAudioStream(
+			Audio::AudioStream *input = _soundSE->getAudioStreamFromOffset(
 				offset,
 				mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech);
 
@@ -764,7 +770,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 
 			// Play remastered audio for DOTT
 			if (!input && _soundSE && _useRemasteredAudio) {
-				input = _soundSE->getAudioStream(
+				input = _soundSE->getAudioStreamFromOffset(
 					origOffset,
 					mode == DIGI_SND_MODE_SFX ? kSoundSETypeSFX : kSoundSETypeSpeech
 				);
