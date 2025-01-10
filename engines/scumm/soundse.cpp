@@ -190,10 +190,13 @@ void SoundSE::indexSpeechXSBFile() {
 	f->seek(entriesOffset);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		f->skip(9);
+		uint16 entryTag = f->readUint16LE();
+		bool isSpeech = (entryTag == 0x0410);
+		f->skip(7);
 		const uint16 speechIndex = f->readUint16LE();
 		speechIndices.push_back(speechIndex);
-		f->skip(8);
+		//debug("indexSpeechXSBFile: speech cue %d -> index %d, offset %d", i, speechIndex, f->pos());
+		f->skip(isSpeech ? 8 : 1);
 	}
 
 	f->seek(nameOffset);
@@ -205,6 +208,7 @@ void SoundSE::indexSpeechXSBFile() {
 		if (index < (*audioIndex).size()) {
 			(*audioIndex)[index].name = name;
 			_nameToIndex[name] = index;
+			//debug("indexSpeechXSBFile: %s -> index %d", name.c_str(), index);
 		}
 	}
 
@@ -713,7 +717,7 @@ Audio::SeekableAudioStream *SoundSE::getAudioStreamFromIndex(int32 index, SoundS
 	AudioIndex *audioIndex = getAudioEntries(type);
 	AudioEntry audioEntry = {};
 
-	if (index < 0)
+	if (index < 0 || index >= (int32)(*audioIndex).size())
 		return nullptr;
 
 	audioEntry = (*audioIndex)[index];
