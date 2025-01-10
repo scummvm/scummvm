@@ -97,7 +97,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	//
 	if (_filename.hasSuffix(".tga")) {
 		_paletteTga = new byte[_paletteCount * 3];
-		for (uint32 i = 0; i < _paletteCount * 3; i += 3) {
+		for (uint32 i = 0; i < _paletteCount * 3u; i += 3u) {
 			_paletteTga[i + 0] = _palette[i + 2];
 			_paletteTga[i + 1] = _palette[i + 1];
 			_paletteTga[i + 2] = _palette[i + 0];
