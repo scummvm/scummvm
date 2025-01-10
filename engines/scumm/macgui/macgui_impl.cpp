@@ -350,6 +350,20 @@ void MacGuiImpl::addMenu(Graphics::MacMenu *menu, int menuId) {
 	resource.close();
 }
 
+void MacGuiImpl::updateMenus() {
+	// We can't use the name of the menus here, because there are
+	// non-English versions. Let's hope the menu positions are always the
+	// same, at least!
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
+
+	loadMenu->enabled = _vm->canLoadGameStateCurrently();
+	saveMenu->enabled = _vm->canSaveGameStateCurrently();
+}
+
 bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 	// This menu item (e.g. a menu separator) has no action, so it's
 	// handled trivially.
@@ -439,114 +453,10 @@ void MacGuiImpl::updateWindowManager() {
 	if (!menu)
 		return;
 
-	bool saveCondition = true;
-	bool loadCondition = true;
-
-	if (_vm->_game.id == GID_INDY3) {
-		// Taken from Mac disasm...
-		// The VAR(94) part tells us whether the copy protection has
-		// failed or not, while the VAR(58) part uses bitmasks to enable
-		// or disable saving and loading during normal gameplay.
-		saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
-		loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
-	} else if (_vm->_game.id == GID_LOOM) {
-		// TODO: Complete LOOM with the rest of the proper code from disasm,
-		// for now we only have the copy protection code and a best guess in place...
-		//
-		// Details:
-		// VAR(221) & 0x4000:           Copy protection bit (the only thing I could confirm from the disasm)
-		// VAR(VAR_VERB_SCRIPT) == 5:   Best guess... it prevents saving/loading from e.g. difficulty selection screen
-		// _userPut > 0:                Best guess... it prevents saving/loading during cutscenes
-
-		saveCondition = loadCondition =
-			!(_vm->VAR(221) & 0x4000) &&
-			(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
-			(_vm->_userPut > 0);
-	} else {
-		saveCondition = true;
-		loadCondition = true;
-	}
-
-	bool canLoad = _vm->canLoadGameStateCurrently() && loadCondition;
-	bool canSave = _vm->canSaveGameStateCurrently() && saveCondition;
-
-	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
-	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
-	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
-
-	if (loadMenu)
-		loadMenu->enabled = canLoad;
-
-	if (saveMenu)
-		saveMenu->enabled = canSave;
+	updateMenus();
 
 	if (!_windowManager->isMenuActive() && _menuIsActive)
 		onMenuClose();
-
-	if (_vm->_game.version > 3 && _vm->_game.version < 6) {
-		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
-
-		if (menu->numberOfMenuItems(windowMenu) >= 8)
-			menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
-
-		Graphics::MacMenuItem *speechMenu = menu->getMenuItem("Speech");
-
-		if (speechMenu) {
-			menu->getSubMenuItem(speechMenu, 0)->checked = false; // Voice Only
-			menu->getSubMenuItem(speechMenu, 1)->checked = false; // Text Only
-			menu->getSubMenuItem(speechMenu, 2)->checked = false; // Voice and Text
-
-			switch (_vm->_voiceMode) {
-			case 0: // Voice Only
-				menu->getSubMenuItem(speechMenu, 0)->checked = true;
-				break;
-			case 1: // Voice and Text
-				menu->getSubMenuItem(speechMenu, 2)->checked = true;
-				break;
-			case 2: // Text Only
-				menu->getSubMenuItem(speechMenu, 1)->checked = true;
-				break;
-			default:
-				warning("MacGuiImpl::updateWindowManager(): Invalid voice mode %d", _vm->_voiceMode);
-				break;
-			}
-		}
-	} else if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
-		// We can't use the name of the menus here, because there are
-		// non-English versions. Let's hope the menu positions are
-		// always the same, at least!
-
-		Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
-
-		menu->getSubMenuItem(videoMenu, 2)->checked = true;
-
-		if (_vm->_game.id != GID_MANIAC)
-			menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
-
-		Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
-
-		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
-		menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
-		menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
-		menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
-		menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice
-
-		switch (_vm->_voiceMode) {
-		case 0:	// Voice Only
-
-			menu->getSubMenuItem(soundMenu, 6)->checked = true;
-			break;
-		case 1: // Voice and Text
-			menu->getSubMenuItem(soundMenu, 7)->checked = true;
-			break;
-		case 2:	// Text Only
-			menu->getSubMenuItem(soundMenu, 5)->checked = true;
-			break;
-		default:
-			warning("MacGuiImpl::updateWindowManager(): Invalid voice mode %d", _vm->_voiceMode);
-			break;
-		}
-	}
 
 	if (menu->isVisible())
 		updatePalette();

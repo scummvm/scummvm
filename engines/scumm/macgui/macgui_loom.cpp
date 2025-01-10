@@ -130,6 +130,31 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 	resource.close();
 }
 
+void MacLoomGui::updateMenus() {
+	bool saveCondition, loadCondition;
+
+	// TODO: Complete LOOM with the rest of the proper code from disasm,
+	// for now we only have the copy protection code and a best guess in place...
+	//
+	// Details:
+	// VAR(221) & 0x4000:           Copy protection bit (the only thing I could confirm from the disasm)
+	// VAR(VAR_VERB_SCRIPT) == 5:   Best guess... it prevents saving/loading from e.g. difficulty selection screen
+	// _userPut > 0:                Best guess... it prevents saving/loading during cutscenes
+
+	saveCondition = loadCondition =
+		!(_vm->VAR(221) & 0x4000) &&
+		(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
+		(_vm->_userPut > 0);
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
+
+	loadMenu->enabled = _vm->canLoadGameStateCurrently() && loadCondition;
+	saveMenu->enabled = _vm->canSaveGameStateCurrently() && saveCondition;
+}
+
 bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	if (MacGuiImpl::handleMenu(id, name))
 		return true;

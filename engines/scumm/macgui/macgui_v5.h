@@ -52,6 +52,7 @@ public:
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
+	void updateMenus() override;
 	bool handleMenu(int id, Common::String &name) override;
 
 	void runAboutDialog() override;

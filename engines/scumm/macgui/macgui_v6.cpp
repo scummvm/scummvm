@@ -153,6 +153,41 @@ void MacV6Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 	hotspotY = 1;
 }
 
+void MacV6Gui::updateMenus() {
+	MacGuiImpl::updateMenus();
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
+
+	menu->getSubMenuItem(videoMenu, 2)->checked = true;
+
+	if (_vm->_game.id != GID_MANIAC)
+		menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
+
+	Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
+
+	menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
+	menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
+	menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
+	menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
+	menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice
+
+	switch (_vm->_voiceMode) {
+	case 0:	// Voice Only
+		menu->getSubMenuItem(soundMenu, 6)->checked = true;
+		break;
+	case 1: // Voice and Text
+		menu->getSubMenuItem(soundMenu, 7)->checked = true;
+		break;
+	case 2:	// Text Only
+		menu->getSubMenuItem(soundMenu, 5)->checked = true;
+		break;
+	default:
+		warning("MacV6Gui::updateMenus(): Invalid voice mode %d", _vm->_voiceMode);
+		break;
+	}
+}
+
 bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	// Don't call the original method. The menus are too different.
 	// TODO: Separate the common code into its own method?

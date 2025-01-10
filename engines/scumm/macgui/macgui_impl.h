@@ -807,6 +807,7 @@ public:
 	static void menuCallback(int id, Common::String &name, void *data);
 	virtual bool initialize();
 	void updateWindowManager();
+	virtual void updateMenus();
 
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;

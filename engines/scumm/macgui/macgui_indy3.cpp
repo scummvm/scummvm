@@ -1079,6 +1079,23 @@ void MacIndy3Gui::printCharToTextArea(int chr, int x, int y, int color) {
 	font->drawChar(&_textArea, chr, x + 5, y + 11, color);
 }
 
+void MacIndy3Gui::updateMenus() {
+	// Taken from Mac disasm...
+	// The VAR(94) part tells us whether the copy protection has
+	// failed or not, while the VAR(58) part uses bitmasks to enable
+	// or disable saving and loading during normal gameplay.
+	bool saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
+	bool loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
+
+	loadMenu->enabled = _vm->canLoadGameStateCurrently() && loadCondition;
+	saveMenu->enabled = _vm->canSaveGameStateCurrently() && saveCondition;
+}
+
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	if (MacGuiImpl::handleMenu(id, name))
 		return true;

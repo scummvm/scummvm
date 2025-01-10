@@ -149,6 +149,39 @@ void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 	resource.close();
 }
 
+void MacV5Gui::updateMenus() {
+	MacGuiImpl::updateMenus();
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
+
+	if (menu->numberOfMenuItems(windowMenu) >= 8)
+		menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
+
+	Graphics::MacMenuItem *speechMenu = menu->getMenuItem("Speech");
+
+	if (speechMenu) {
+		menu->getSubMenuItem(speechMenu, 0)->checked = false; // Voice Only
+		menu->getSubMenuItem(speechMenu, 1)->checked = false; // Text Only
+		menu->getSubMenuItem(speechMenu, 2)->checked = false; // Voice and Text
+
+		switch (_vm->_voiceMode) {
+		case 0: // Voice Only
+			menu->getSubMenuItem(speechMenu, 0)->checked = true;
+			break;
+		case 1: // Voice and Text
+			menu->getSubMenuItem(speechMenu, 2)->checked = true;
+			break;
+		case 2: // Text Only
+			menu->getSubMenuItem(speechMenu, 1)->checked = true;
+			break;
+		default:
+			warning("MacV5Gui::updateMenus(): Invalid voice mode %d", _vm->_voiceMode);
+			break;
+		}
+	}
+}
+
 bool MacV5Gui::handleMenu(int id, Common::String &name) {
 	if (MacGuiImpl::handleMenu(id, name))
 		return true;
