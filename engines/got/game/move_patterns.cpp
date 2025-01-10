@@ -38,10 +38,6 @@ namespace Got {
 #define TILE_FLY     140
 #define TILE_SPECIAL 200
 
-static const int bomb_x[] = { 0,-16,32,-32,32,-16,-16, 32,-16 };
-static const int bomb_y[] = { 0,-16,16,  0,16,-32, 32,-32, 32 };
-static const int8 rotate_pat[] = { 0,3,1,2 };
-
 extern int (*dialog_func[]) (ACTOR *actr);
 
 int check_special_move1(int x, int y, ACTOR *actr);
@@ -916,7 +912,7 @@ int special_movement_three(ACTOR *actr) {
 int special_movement_four(ACTOR *actr) {
     if (actr->shot_cnt != 0) return 0;
     actr->shot_cnt = 30;
-    actr = actr;
+
     _G(switch_flag) = 1;
     return 0;
 }
@@ -961,7 +957,7 @@ int special_movement_six(ACTOR *actr) {
 int special_movement_seven(ACTOR *actr) {
     if (actr->shot_cnt != 0) return 0;
     actr->shot_cnt = 30;
-    actr = actr;
+
     _G(switch_flag) = 2;
     return 0;
 }
@@ -2106,19 +2102,16 @@ done:
 
 // Unused
 int movement_thirtytwo(ACTOR *actr) {
-    actr = actr;
     return 0;
 }
 
 // Unused
 int movement_thirtythree(ACTOR *actr) {
-    actr = actr;
     return 0;
 }
 
 // Unused
 int movement_thirtyfour(ACTOR *actr) {
-    actr = actr;
     return 0;
 }
 
