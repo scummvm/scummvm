@@ -190,30 +190,6 @@ void MacV6Gui::updateMenus() {
 
 bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	// Don't call the original method. The menus are too different.
-	// TODO: Separate the common code into its own method?
-
-	// This menu item (e.g. a menu separator) has no action, so it's
-	// handled trivially.
-	if (id == 0)
-		return true;
-
-	// This is how we keep the menu bar visible.
-	Graphics::MacMenu *menu = _windowManager->getMenu();
-
-	// If the menu is opened through a shortcut key, force it to activate
-	// to avoid screen corruption. In that case, we also force the menu to
-	// close afterwards, or the game will stay paused. Which is
-	// particularly bad during a restart.
-
-	if (!menu->_active) {
-		_windowManager->activateMenu();
-		_forceMenuClosed = true;
-	}
-
-	menu->closeMenu();
-	menu->setActive(true);
-	menu->setVisible(true);
-	updateWindowManager();
 
 	int saveSlotToHandle = -1;
 	bool syncSoundSettings = false;

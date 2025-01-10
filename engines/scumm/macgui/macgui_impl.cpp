@@ -172,12 +172,35 @@ MacGuiImpl::DelayStatus MacGuiImpl::delay(uint32 ms) {
 void MacGuiImpl::menuCallback(int id, Common::String &name, void *data) {
 	MacGuiImpl *gui = (MacGuiImpl *)data;
 
+	// This menu item (e.g. a menu separator) has no action, so it can be
+	// immediately ignored.
+	if (id == 0)
+		return;
+
+	Graphics::MacMenu *menu = gui->_windowManager->getMenu();
+	bool forceMenuClosed = false;
+
+	// If the menu is opened through a shortcut key, force it to activate
+	// to avoid screen corruption. In that case, we also force the menu to
+	// close afterwards, or the game will stay paused. Which is
+	// particularly bad during a restart.
+
+	if (!menu->_active) {
+		gui->_windowManager->activateMenu();
+		forceMenuClosed = true;
+	}
+
+	// This is how we keep the menu bar visible.
+
+	menu->closeMenu();
+	menu->setActive(true);
+	menu->setVisible(true);
+	gui->updateWindowManager();
+
 	gui->handleMenu(id, name);
 
-	if (gui->_forceMenuClosed) {
-		gui->_windowManager->getMenu()->closeMenu();
-		gui->_forceMenuClosed = false;
-	}
+	if (forceMenuClosed)
+		menu->closeMenu();
 }
 
 bool MacGuiImpl::initialize() {
@@ -365,29 +388,6 @@ void MacGuiImpl::updateMenus() {
 }
 
 bool MacGuiImpl::handleMenu(int id, Common::String &name) {
-	// This menu item (e.g. a menu separator) has no action, so it's
-	// handled trivially.
-	if (id == 0)
-		return true;
-
-	// This is how we keep the menu bar visible.
-	Graphics::MacMenu *menu = _windowManager->getMenu();
-
-	// If the menu is opened through a shortcut key, force it to activate
-	// to avoid screen corruption. In that case, we also force the menu to
-	// close afterwards, or the game will stay paused. Which is
-	// particularly bad during a restart.
-
-	if (!menu->_active) {
-		_windowManager->activateMenu();
-		_forceMenuClosed = true;
-	}
-
-	menu->closeMenu();
-	menu->setActive(true);
-	menu->setVisible(true);
-	updateWindowManager();
-
 	int saveSlotToHandle = -1;
 	Common::String savegameName;
 
@@ -424,7 +424,7 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 
 	case 203:	// Pause
 		if (!_vm->_messageBannerActive) {
-			menu->closeMenu();
+			_windowManager->getMenu()->closeMenu();
 
 			if (_vm->_game.version == 3)
 				_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);

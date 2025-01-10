@@ -781,7 +781,6 @@ public:
 	virtual ~MacGuiImpl();
 
 	Graphics::MacWindowManager *_windowManager = nullptr;
-	bool _forceMenuClosed = false;
 
 	virtual int getNumColors() const = 0;
 
