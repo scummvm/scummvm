@@ -439,11 +439,6 @@ void MacGuiImpl::updateWindowManager() {
 	if (!menu)
 		return;
 
-	// We want the arrow cursor for menus. Note that the menu triggers even
-	// when the mouse is invisible, which may or may not be a bug. But the
-	// original did allow you to open the menu with Alt even when the
-	// cursor was visible, so for now it's a feature.
-
 	bool saveCondition = true;
 	bool loadCondition = true;
 
@@ -560,6 +555,11 @@ void MacGuiImpl::updateWindowManager() {
 }
 
 void MacGuiImpl::onMenuOpen() {
+	// We want the arrow cursor for menus. Note that the menu triggers even
+	// when the mouse is invisible, which may or may not be a bug. But the
+	// original did allow you to open the menu with Alt even when the
+	// cursor was visible, so for now it's a feature.
+
 	if (!_menuIsActive) {
 		_menuIsActive = true;
 		_cursorWasVisible = CursorMan.showMouse(true);
