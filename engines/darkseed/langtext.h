@@ -285,6 +285,41 @@ constexpr I18nText kI18N_youDontWantToLeaveTheObjectUnderTheBedText = {
 	"DU WILLST %s NICHT UNTER DEM BETT LASSEN."
 };
 
+constexpr I18nText kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText = {
+	"Using the %s on the %s doesn't make any sense, it must be your headaches!",
+	"UTILIZAR %s EN %s NO TIENE SENTIDO, TE PRODUCIRA DOLOR DE CABEZA",
+	"POURQUOI UTILISER %s SUR %s PRENEZ DONC DE L'ASPIRINE!",
+	"GEBRAUCHEN VON %s AUF %s MACHT KEINEN SINN, DAS MUSS AN DEINEN KOPFSCHMERZEN LIEGEN!"
+};
+
+constexpr I18nText kI18N_genResponse1_theObjectWillDoNothingToTheText = {
+	"The %s will do nothing to the %s.",
+	"%s NO TIENE NADA QUE VER CON %s.",
+	"%s NE FERONT RIEN A %s.",
+	"%s HAT NICHTS ZU TUN MIT %s"
+};
+
+constexpr I18nText kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText = {
+	"The %s doesn't have any effect on the %s.",
+	"%s NO LE CAUSARA EFECTO A %s.",
+	"%s N'AURA AUCUN EFFET SUR %s.",
+	"%s BEWIRKT NICHTS MIT %s."
+};
+
+constexpr I18nText kI18N_genResponse3_theObjectHasNothingToDoWithTheText = {
+	"The %s has nothing to do with %s.",
+	"%s NO TIENE NADA QUE VER CON %s.",
+	"%s N'A AUCUN RAPPORT AVEC %s.",
+	"%s HAT NICHTS ZU TUN MIT %s."
+};
+
+constexpr I18nText kI18N_genResponse4_areYouFeelingAlrightText = {
+	"Are you feeling alright?",
+	"TE ENCUENTRAS BIEN?",
+	"VOUS ETES SUR QUE CA VA BIEN?",
+	"FUEHLST DU DICH GUT?"
+};
+
 constexpr I18nText kI18N_blankText = {
 	"",
 	"",

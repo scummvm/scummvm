@@ -1674,7 +1674,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 		case 0:
 			_console->addTextLine(
 				Common::String::format(
-					"Using the %s on the %s doesn't make any sense, it must be your headaches!",
+					getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
 				)
@@ -1683,7 +1683,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 		case 1:
 			_console->addTextLine(
 				Common::String::format(
-					"The %s will do nothing to the %s.",
+					getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
 				)
@@ -1692,7 +1692,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 		case 2:
 			_console->addTextLine(
 				Common::String::format(
-					"The %s doesn't have any effect on the %s.",
+					getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
 				)
@@ -1701,14 +1701,14 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 		case 3:
 			_console->addTextLine(
 				Common::String::format(
-					"The %s has nothing to do with %s.",
+					getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
 				)
 			);
 			break;
 		case 4:
-			_console->addTextLine("Are you feeling alright?");
+			_console->addTextLine(getI18NText(kI18N_genResponse4_areYouFeelingAlrightText));
 			break;
 		default:
 			error("Unhandled _genericResponseCounter value");
