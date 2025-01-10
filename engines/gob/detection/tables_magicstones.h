@@ -37,9 +37,9 @@
 	{ // Added by Strangerke in 2009
 
 		"magicstones",
-		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // A la poursuite du dragon de feu (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY2s("ed4.stk", "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882,
-			   		"ed4cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
+           		   "ed4_cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
@@ -52,7 +52,7 @@
 // -- German: Das Zauberland der Zaubersteine --
 
 {
-	{
+	{ // Supplied by codengine
 
 		"magicstones",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Die Suche nach dem Feuerdrachen (Engine: DEV7 version 1.2.0.0)
