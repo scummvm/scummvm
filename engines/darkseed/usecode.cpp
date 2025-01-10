@@ -1618,55 +1618,55 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	case 990:
 		_console->addTextLine(
 			Common::String::format(
-				"Not a good place to hide the %s.",
+				getI18NText(kI18N_notAGoodPlaceToHideTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 991:
 		_console->addTextLine(
 			Common::String::format(
-				"You try to put the %s inside, but the door won't open",
+				getI18NText(kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 992:
 		_console->addTextLine(
 			Common::String::format(
-				"The kitchen is no place to keep the %s.",
+				getI18NText(kI18N_theKitchenIsNoPlaceToKeepTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 993:
 		_console->addTextLine(
 			Common::String::format(
-				"You'll forget the %s here.",
+				getI18NText(kI18N_youllForgetTheObjectHereText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 994:
 		_console->addTextLine(
 			Common::String::format(
-				"You'd rather have the %s with you.",
+				getI18NText(kI18N_youdRatherHaveTheObjectWithYouText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 995:
 		_console->addTextLine(
 			Common::String::format(
-				"The %s has no effect.",
+				getI18NText(kI18N_theObjectHasNoEffectText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 996:
 		_console->addTextLine(
 			Common::String::format(
-				"This is not a good place for the %s.",
+				getI18NText(kI18N_thisIsNotAGoodPlaceForTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 997:
 		_console->addTextLine(
 			Common::String::format(
-				"You see a reflection of the %s.",
+				getI18NText(kI18N_youSeeAReflectionOfTheText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 998:
 		_console->addTextLine(
 			Common::String::format(
-				"You don't want to leave the %s under the bed.",
+				getI18NText(kI18N_youDontWantToLeaveTheObjectUnderTheBedText),
 				_objectVar.getObjectName(useObjNum)));
 		break;
 	case 999:

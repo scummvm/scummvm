@@ -222,6 +222,69 @@ constexpr I18nText kI18N_TheObjectIsYoursYouHaventLostItText = {
 	"%s GEHOERT DIR, DU HAST ES NICHT VERLOREN."
 };
 
+constexpr I18nText kI18N_notAGoodPlaceToHideTheText = {
+	"Not a good place to hide the %s.",
+	"NO ES UN BUEN SITIO PARA OCULTAR %S.",
+	"VOUS NE POURREZ PAS CACHER %S.",
+	"KEIN GUTES VERSTECK FUER %S."
+};
+
+constexpr I18nText kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText = {
+	"You try to put the %s inside, but the door won't open",
+	"INTENTAS PONER %s DENTRO, PERO LA PUERTA NO SE ABRIRA.",
+	"VOUS ESSAYEZ DE METTRE %s A L'INTERIEUR, MAIS LA PORTE NE S'OUVRIRA PAS.",
+	"DU VERSUCHST, %s HINEINZUSTELLEN, ABER DIE TUER OEFFNET SICH NICHT."
+};
+
+constexpr I18nText kI18N_theKitchenIsNoPlaceToKeepTheText = {
+	"The kitchen is no place to keep the %s.",
+	"LA COCINA NO ES LUGAR PARA GUARDAR %s.",
+	"LA CUISINE NE CONVIENT PAS A %s.",
+	"DIE KUECHE IST KEIN PLATZ FUER %s."
+};
+
+constexpr I18nText kI18N_youllForgetTheObjectHereText = {
+	"You'll forget the %s here.",
+	"OLIVIDARAS %s AQUI.",
+	"VOUS OUBLIEREZ %s ICI.",
+	"DU WIRST NOCH %s HIER VERGESSEN."
+};
+
+constexpr I18nText kI18N_youdRatherHaveTheObjectWithYouText = {
+	"You'd rather have the %s with you.",
+	"SERIA MEJOR TENER %s CONTIGO.",
+	"IL VAUDRAIT MIEUX AVOIR %s SUR VOUS.",
+	"DU HAETTEST LIEBER %s BEI DIR."
+};
+
+constexpr I18nText kI18N_theObjectHasNoEffectText = {
+	"The %s has no effect.",
+	"%s NO TIENE EFECTO.",
+	"%s N'A AUCUN EFFET.",
+	"%s BEWIRKT NICHTS."
+};
+
+constexpr I18nText kI18N_thisIsNotAGoodPlaceForTheText = {
+	"This is not a good place for the %s.",
+	"NO ES UN BUEN SITIO PARA %s.",
+	"CE N'EST PAS UN BON ENDROIT POUR %s.",
+	"DAS IST KEIN GUTER PLATZ FUER %s."
+};
+
+constexpr I18nText kI18N_youSeeAReflectionOfTheText = {
+	"You see a reflection of the %s.",
+	"VES UN REFLEJO DE %s.",
+	"VOUS VOYEZ UN REFLET REPRESENTANT %s.",
+	"DU SIEHST EIN SPIEGELBILD VON %s."
+};
+
+constexpr I18nText kI18N_youDontWantToLeaveTheObjectUnderTheBedText = {
+	"You don't want to leave the %s under the bed.",
+	"NO QUIERES DEJAR %s DEBAJO DE LA CAMA.",
+	"POURQUOI LAISSERIEZ-VOUS %s SOUS LE LIT?",
+	"DU WILLST %s NICHT UNTER DEM BETT LASSEN."
+};
+
 constexpr I18nText kI18N_blankText = {
 	"",
 	"",
