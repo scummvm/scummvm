@@ -53,13 +53,13 @@
 #include <stdio.h>      // sprintf, scanf
 #include <stdint.h>     // uint8_t, etc.
 
-#ifdef _MSC_VER
-#define _PRISizeT   "I"
-#define ImSnprintf  _snprintf
-#else
+//#ifdef _MSC_VER
+//#define _PRISizeT   "I"
+//#define ImSnprintf  _snprintf
+//#else
 #define _PRISizeT   "z"
 #define ImSnprintf  snprintf
-#endif
+//#endif
 
 #ifdef _MSC_VER
 #pragma warning (push)
