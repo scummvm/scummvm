@@ -351,8 +351,6 @@ int actor_speaks(ACTOR *actr, int index, int item) {
     }
 
     d_restore();
-    index = index;
-    item = item;
 
     return 1;
 }

@@ -49,7 +49,6 @@ int (*const shot_pattern_func[])(ACTOR *actr) = {
 
 // No shooting
 int shot_pattern_none(ACTOR *actr) {
-    actr = actr;
     return 0;
 }
 
@@ -195,7 +194,6 @@ int shot_pattern_six(ACTOR *actr) {
 
 // none
 int shot_pattern_seven(ACTOR *actr) {
-    actr = actr;
     return 0;
 }
 
