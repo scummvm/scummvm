@@ -224,7 +224,8 @@ void Sound::triggerSound(int soundID) {
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (_vm->_game.platform != Common::kPlatformFMTowns
-	         && _vm->_game.platform != Common::kPlatformMacintosh && soundTag == MKTAG('S', 'B', 'L', ' ')) {
+	         && _vm->_game.platform != Common::kPlatformMacintosh
+	         && soundTag == MKTAG('S','B','L',' ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		if (shouldInjectMISEAudio()) {
@@ -301,7 +302,7 @@ void Sound::triggerSound(int soundID) {
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID);
-	} else if (_vm->_game.platform != Common::kPlatformFMTowns && soundTag == MKTAG('S', 'O', 'U', 'N')) {
+	} else if (_vm->_game.platform != Common::kPlatformFMTowns && soundTag == MKTAG('S','O','U','N')) {
 		if (_vm->_game.version != 3)
 			ptr += 2;
 
@@ -338,12 +339,12 @@ void Sound::triggerSound(int soundID) {
 			// Rather it seems that starting a new music is supposed to
 			// automatically stop the old song.
 			if (_vm->_imuse) {
-				if (soundTag != MKTAG('A', 'S', 'F', 'X'))
+				if (soundTag != MKTAG('A','S','F','X'))
 					_vm->_imuse->stopAllSounds();
 			}
 		}
 
-		if (shouldInjectMISEAudio() && soundTag == MKTAG('S', 'P', 'K', ' ')) {
+		if (shouldInjectMISEAudio() && soundTag == MKTAG('S','P','K',' ')) {
 			stream = _soundSE->getAudioStreamFromIndex(soundID, kSoundSETypeSFX);
 			if (stream)
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID);
