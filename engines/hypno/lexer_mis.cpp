@@ -314,7 +314,12 @@ typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
-/* Limits of integral types. */
+// The macros below are not used by the flex skeleton code and
+// cause duplicate definitions with MSVC. A fix was checked into
+// flex in 2018, but has not been released (https://github.com/westes/flex/pull/309).
+// Removing these manually until flex 2.6.5 is released.
+/*
+// Limits of integral types.
 #ifndef INT8_MIN
 #define INT8_MIN               (-128)
 #endif
@@ -342,6 +347,7 @@ typedef unsigned int flex_uint32_t;
 #ifndef UINT32_MAX
 #define UINT32_MAX             (4294967295U)
 #endif
+*/
 
 #ifndef SIZE_MAX
 #define SIZE_MAX               (~(size_t)0)
