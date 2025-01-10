@@ -67,6 +67,8 @@ public:
 
 	bool runQuitDialog();
 	bool runRestartDialog();
+	bool runOpenDialog(int &saveSlotToHandle);
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName);
 
 	// Indiana Jones and the Last Crusade
 	bool isVerbGuiActive() const;

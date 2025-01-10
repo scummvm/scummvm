@@ -20,6 +20,7 @@
  */
 
 #include "scumm/scumm_v4.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/object.h"
 
 namespace Scumm {
@@ -473,6 +474,14 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			}
 		}
 
+		if (_game.id == GID_MANIAC && _macGui && _currentRoom == saveRoom) {
+			int loadSlot;
+
+			if (!_macGui->runOpenDialog(loadSlot) || loadSlot < 0)
+				return;
+			slot = loadSlot;
+		}
+
 		if (loadState(slot, false))
 			result = 3; // Success
 		else
@@ -496,7 +505,20 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		_lastLoadedRoom = -1;
 		if (_game.version <= 3) {
 			char name[32];
-			if (_game.version <= 2) {
+			if (_game.id == GID_MANIAC && _macGui && _currentRoom == saveRoom) {
+				int saveSlot;
+				bool ok;
+
+				beginTextInput();
+				ok = _macGui->runSaveDialog(saveSlot, dummyName);
+				endTextInput();
+
+				if (!ok || saveSlot < 0)
+					return;
+
+				slot = saveSlot;
+				Common::strlcpy(name, dummyName.c_str(), sizeof(name));
+			} else if (_game.version <= 2) {
 				// V2 and below use a hardcoded name for savestates
 				Common::sprintf_s(name, "Game %c", 'A' + slot - 1);
 			} else {

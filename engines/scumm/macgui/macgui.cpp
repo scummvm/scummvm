@@ -125,6 +125,14 @@ bool MacGui::runRestartDialog() {
 	return _impl->runRestartDialog();
 }
 
+bool MacGui::runOpenDialog(int &saveSlotToUse) {
+	return _impl->runOpenDialog(saveSlotToUse);
+}
+
+bool MacGui::runSaveDialog(int &saveSlotToUse, Common::String &saveName) {
+	return _impl->runSaveDialog(saveSlotToUse, saveName);
+}
+
 void MacGui::runDraftsInventory() {
 	((MacLoomGui *)_impl)->runDraftsInventory();
 }
