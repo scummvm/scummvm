@@ -142,6 +142,25 @@ Operand CodeChunk::executeNextStatement() {
 			return value;
 		}
 
+		case kOpcodeIfElse: {
+			Operand condition = executeNextStatement();
+			CodeChunk ifBlock(*_bytecode);
+			CodeChunk elseBlock(*_bytecode);
+			// Doesn't seem like there is a real bool type for values,
+			// ao just get an integer.
+			if (condition.getInteger()) {
+				// TODO: If locals are modified in here, they won't be
+				// propagated up since it's its own code chunk.
+				ifBlock.execute();
+			} else {
+				elseBlock.execute();
+			}
+
+			// If blocks themselves shouldn't return anything.
+			return Operand();
+		}
+
+
 		default: {
 			error("CodeChunk::getNextStatement(): Got unknown opcode 0x%x (%d)", opcode, opcode);
 		}
