@@ -26,12 +26,54 @@
 
 namespace Darkseed {
 
-void drawSoundMenuItem() {
-	g_engine->_screen->fillRect({{117, 136}, 55, 11}, 0);
+constexpr I18nMenuText kMenu_load = {
+	{127, 62, "Load"},
+	{118, 62, "CARGAR"},
+	{114, 62, "CHARGER"},
+	{127, 62, "LADEN"}
+};
+
+constexpr I18nMenuText kMenu_silent = {
+	{123, 136, "Silent"},
+	{115, 136, "SIN SON"},
+	{114, 136, "SILENCE"},
+	{127, 136, "RUHE"}
+};
+
+constexpr I18nMenuText kMenu_sounds = {
+	{117, 136, "Sounds"},
+	{118, 136, "SONIDO"},
+	{114, 136, "SONS"},
+	{127, 136, "SOUND"}
+};
+
+constexpr I18nMenuText kMenu_save = {
+	{127, 99, "Save"},
+	{118, 99, "GRABAR"},
+	{114, 99, "SAUVER"},
+	{127, 99, "SICHERN"}
+};
+
+constexpr I18nMenuText kMenu_resume = {
+	{118, 173, "Resume"},
+	{120, 173, "SEQUIR"},
+	{110, 173, "CONTINUER"},
+	{127, 173, "MEHR"}
+};
+
+constexpr I18nMenuText kMenu_quit = {
+	{129, 210, "Quit"},
+	{125, 210, "SALIR"},
+	{110, 210, "QUITTER"},
+	{127, 210, "AUSGANG"}
+};
+
+void Menu::drawSoundMenuItem() {
+	g_engine->_screen->fillRect({{115, 136}, 61, 11}, 0);
 	if (g_engine->_sound->isMuted()) {
-		g_engine->_console->drawStringAt(123, 136, "Silent");
+		drawMenuItem(kMenu_silent);
 	} else {
-		g_engine->_console->drawStringAt(117, 136, "Sounds");
+		drawMenuItem(kMenu_sounds);
 	}
 }
 
@@ -45,11 +87,11 @@ void Menu::loadMenu() {
 	g_engine->drawFullscreenPic();
 	g_engine->_console->draw(true);
 
-	g_engine->_console->drawStringAt(127, 62, "Load");
-	g_engine->_console->drawStringAt(127, 99, "Save");
+	drawMenuItem(kMenu_load);
+	drawMenuItem(kMenu_save);
 	drawSoundMenuItem();
-	g_engine->_console->drawStringAt(118, 173, "Resume");
-	g_engine->_console->drawStringAt(129, 210, "Quit");
+	drawMenuItem(kMenu_resume);
+	drawMenuItem(kMenu_quit);
 
 	g_engine->_screen->makeAllDirty();
 	g_engine->_screen->update();
@@ -138,6 +180,15 @@ void Menu::loadMenu() {
 
 	g_engine->removeFullscreenPic();
 	_open = false;
+}
+
+void Menu::drawMenuItem(const I18nMenuText &menuText) {
+	switch (g_engine->getLanguage()) {
+	case Common::ES_ESP : g_engine->_console->drawStringAt(menuText.es.x, menuText.es.y, menuText.es.text); break;
+	case Common::FR_FRA : g_engine->_console->drawStringAt(menuText.fr.x, menuText.fr.y, menuText.fr.text); break;
+	case Common::DE_DEU : g_engine->_console->drawStringAt(menuText.de.x, menuText.de.y, menuText.de.text); break;
+	default: g_engine->_console->drawStringAt(menuText.en.x, menuText.en.y, menuText.en.text); break;
+	}
 }
 
 } // End of namespace Darkseed
