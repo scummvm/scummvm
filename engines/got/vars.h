@@ -127,8 +127,6 @@ public:
 
     uint _timer_cnt = 0, _vbl_cnt = 0, _magic_cnt = 0, _extra_cnt = 0;
 
-    //union REGS in, out = 0;
-    //struct SREGS seg = 0;
     int _ox = 0, _oy = 0, _of = 0;
     byte _object_map[TILES_COUNT] = {};
     byte _object_index[TILES_COUNT] = {};
@@ -213,7 +211,7 @@ public:
     int8 _auto_load = 0;
     int8 _ide_run = 0, _fast_exit = 0, _nojoy = 0, _gr = 0, _xdos = 0;
     int8 _main_loop = 0;
-    int8 _end_tile = 0;
+    bool _end_tile = false;
     byte _pbuff[PALETTE_SIZE] = {};
     int _current_level = 23;
     int _new_level = 0;

@@ -229,7 +229,7 @@ int check_move0(int x, int y, ACTOR *actr) {
     else x2 = (x + 10) >> 4;
     y2 = (y + 15) >> 4;
 
-    _G(slip_flag) = 0;
+    _G(slip_flag) = false;
 
     // Check for cheat flying mode
     if (!actr->flying) {
@@ -278,14 +278,14 @@ int check_move0(int x, int y, ACTOR *actr) {
     }
 
     if (!_G(slip_flag)) {
-        _G(slipping) = 0;
+        _G(slipping) = false;
         _G(slip_cnt) = 0;
     }
     if (_G(slip_flag) && !_G(slipping))
         _G(slip_cnt)++;
     if (_G(slip_cnt) > 8)
-        _G(slipping) = 1;
-    _G(slip_flag) = 0;
+        _G(slipping) = true;
+    _G(slip_flag) = false;
 
 
     x1 = x + 1;
@@ -294,7 +294,7 @@ int check_move0(int x, int y, ACTOR *actr) {
     else x2 = x + 12;
     y2 = y + 15;
 
-    _G(thor_special_flag) = 0;
+    _G(thor_special_flag) = false;
     for (i = 3; i < MAX_ACTORS; i++) {
         act = &_G(actor)[i];
         if (act->solid & 128) continue;
@@ -310,10 +310,10 @@ int check_move0(int x, int y, ACTOR *actr) {
                 if (act->func_num == 255) return 0;
                 act->temp1 = x;
                 act->temp2 = y;
-                _G(thor_special_flag) = 1;
+                _G(thor_special_flag) = true;
                 return special_movement_func[act->func_num](act);
             } else {
-                _G(thor_special_flag) = 0;
+                _G(thor_special_flag) = false;
                 thor_damaged(act);
                 if (act->solid < 2) {
                     if (!act->vunerable && (!(act->type & 1)))
@@ -407,7 +407,9 @@ int check_move1(int x, int y, ACTOR *actr) {
             f++;
         }
     }
-    if (f && actr->move == 2) return 0;
+    if (f && actr->move == 2)
+		return 0;
+	
     actr->x = x;
     actr->y = y;
     return 1;
@@ -442,7 +444,8 @@ int check_move2(int x, int y, ACTOR *actr) {
     icn2 = _G(scrn).icon[y2][x1];
     icn3 = _G(scrn).icon[y1][x2];
     icn4 = _G(scrn).icon[y2][x2];
-    if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) return 0;
+    if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
+		return 0;
 
     if (icn1 > TILE_SPECIAL) if (!special_tile(actr, y1, x1, icn1)) return 0;
     if (icn2 > TILE_SPECIAL) if (!special_tile(actr, y2, x1, icn2)) return 0;
@@ -456,10 +459,15 @@ int check_move2(int x, int y, ACTOR *actr) {
 
     for (i = 0; i < MAX_ACTORS; i++) {
         act = &_G(actor)[i];
-        if (act->actor_num == actr->actor_num) continue;
-        if (act->actor_num == 1) continue;
-        if (!act->used) continue;
-        if (act->type == 3) continue;   // Shot
+        if (act->actor_num == actr->actor_num)
+			continue;
+        if (act->actor_num == 1)
+			continue;
+        if (!act->used)
+			continue;
+        if (act->type == 3)
+			continue;   // Shot
+    	
         if (i == 0) {
             if (overlap(x1, y1, x2, y2, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
                 thor_damaged(actr);
@@ -467,9 +475,13 @@ int check_move2(int x, int y, ACTOR *actr) {
             }
         } else {
             x3 = act->x;
-            if ((ABS(x3 - x1)) > 16) continue;
+            if ((ABS(x3 - x1)) > 16)
+				continue;
+        	
             y3 = act->y;
-            if ((ABS(y3 - y1)) > 16) continue;
+            if ((ABS(y3 - y1)) > 16)
+				continue;
+        	
             x4 = act->x + act->size_x;
             y4 = act->y + act->size_y;
             if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
@@ -497,7 +509,8 @@ int check_move3(int x, int y, ACTOR *actr) {
 
     int icn;
 
-    if (x<0 || x>(319 - actr->size_x) || y < 0 || y>175) return 0;
+    if (x<0 || x>(319 - actr->size_x) || y < 0 || y>175)
+		return 0;
 
     x1 = (x + 1) >> 4;
     y1 = (y + (actr->size_y / 2)) >> 4;
@@ -507,13 +520,15 @@ int check_move3(int x, int y, ACTOR *actr) {
     // Check for solid or fly over
 
     icn = TILE_FLY;
-    if (actr->flying) icn = TILE_SOLID;
+    if (actr->flying)
+		icn = TILE_SOLID;
 
     icn1 = _G(scrn).icon[y1][x1];
     icn2 = _G(scrn).icon[y2][x1];
     icn3 = _G(scrn).icon[y1][x2];
     icn4 = _G(scrn).icon[y2][x2];
-    if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) return 0;
+    if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
+		return 0;
 
     if (icn1 > TILE_SPECIAL) if (!special_tile(actr, y1, x1, icn1)) return 0;
     if (icn2 > TILE_SPECIAL) if (!special_tile(actr, y2, x1, icn2)) return 0;
@@ -531,19 +546,32 @@ int check_move3(int x, int y, ACTOR *actr) {
         return 0;
     }
     for (i = 3; i < MAX_ACTORS; i++) {
-        if (i == actr->actor_num) continue;
+        if (i == actr->actor_num)
+			continue;
+    	
         act = &_G(actor)[i];
-        if (!act->used) continue;
-        if (act->solid < 2) continue;
-        if (act->type == 3) continue;   // Shot
-        if (act->actor_num == actr->creator) continue;
+    	
+        if (!act->used)
+			continue;
+        if (act->solid < 2)
+			continue;
+        if (act->type == 3)
+			continue;   // Shot
+        if (act->actor_num == actr->creator)
+			continue;
+    	
         x3 = act->x;
-        if ((ABS(x3 - x1)) > 16) continue;
+        if ((ABS(x3 - x1)) > 16)
+			continue;
+    	
         y3 = act->y;
-        if ((ABS(y3 - y1)) > 16) continue;
+        if ((ABS(y3 - y1)) > 16)
+			continue;
+    	
         x4 = x3 + 15;
         y4 = y3 + 15;
-        if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) return 0;
+        if (overlap(x1, y1, x2, y2, x3, y3, x4, y4))
+			return 0;
     }
     actr->x = x;
     actr->y = y;
@@ -571,6 +599,7 @@ int  check_thor_move(int x, int y, ACTOR *actr) {
         return 1;
     if (_G(diag_flag) || _G(thor_special_flag))
         return 0;
+	
     if ((_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4)) > 1)
         return 0;
 
@@ -642,7 +671,7 @@ int movement_zero(ACTOR *actr) {
     }
     x = actr->x;
     y = actr->y;
-    _G(diag_flag) = 0;
+    _G(diag_flag) = false;
     if (actr->move_counter) actr->move_counter--;
 
     if (_G(slipping)) {
@@ -663,7 +692,7 @@ int movement_zero(ACTOR *actr) {
         d = 2;
         actr->dir = d;
         _G(diag) = 1;
-        _G(diag_flag) = 1;
+        _G(diag_flag) = true;
         if (check_thor_move(x - 2, y - 2, actr)) {
             next_frame(actr);
             return d;
@@ -672,7 +701,7 @@ int movement_zero(ACTOR *actr) {
         d = 3;
         actr->dir = d;
         _G(diag) = 2;
-        _G(diag_flag) = 1;
+        _G(diag_flag) = true;
         if (check_thor_move(x + 2, y - 2, actr)) {
             next_frame(actr);
             return d;
@@ -681,7 +710,7 @@ int movement_zero(ACTOR *actr) {
         d = 2;
         actr->dir = d;
         _G(diag) = 4;
-        _G(diag_flag) = 1;
+        _G(diag_flag) = true;
         if (check_thor_move(x - 2, y + 2, actr)) {
             next_frame(actr);
             return d;
@@ -690,7 +719,7 @@ int movement_zero(ACTOR *actr) {
         d = 3;
         actr->dir = d;
         _G(diag) = 3;
-        _G(diag_flag) = 1;
+        _G(diag_flag) = true;
         if (check_thor_move(x + 2, y + 2, actr)) {
             next_frame(actr);
             return d;
@@ -818,7 +847,9 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 int special_movement_one(ACTOR *actr) {
     int d, x1, y1, sd;
 
-    if (_G(diag_flag)) return 0;
+    if (_G(diag_flag))
+		return 0;
+	
     d = _G(thor)->dir;
     x1 = actr->x;
     y1 = actr->y;
@@ -961,7 +992,9 @@ int special_movement_six(ACTOR *actr) {
 }
 
 int special_movement_seven(ACTOR *actr) {
-    if (actr->shot_cnt != 0) return 0;
+    if (actr->shot_cnt != 0)
+		return 0;
+	
     actr->shot_cnt = 30;
 
     _G(switch_flag) = 2;
@@ -969,14 +1002,18 @@ int special_movement_seven(ACTOR *actr) {
 }
 
 int special_movement_eight(ACTOR *actr) {
-    if (_G(thor)->dir < 2 || _G(diag_flag)) return 0;
+    if (_G(thor)->dir < 2 || _G(diag_flag))
+		return 0;
+	
     actr->last_dir = _G(thor)->dir;
     actr->move = 14;
     return 0;
 }
 
 int special_movement_nine(ACTOR *actr) {
-    if (_G(thor)->dir > 1 || _G(diag_flag)) return 0;
+    if (_G(thor)->dir > 1 || _G(diag_flag))
+		return 0;
+	
     actr->last_dir = _G(thor)->dir;
     actr->move = 14;
     return 0;
@@ -1003,14 +1040,12 @@ int special_movement_ten(ACTOR *actr) {
 
 // Red guard
 int special_movement_eleven(ACTOR *actr) {
-    int t;
-
-    if (actr->talk_counter) {
+	if (actr->talk_counter) {
         actr->talk_counter--;
         return 0;
     }
 
-    t = actr->type;
+    int t = actr->type;
     actr->type = 4;
     actor_speaks(actr, 0, 0);
     actr->type = t;

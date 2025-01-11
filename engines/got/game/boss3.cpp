@@ -404,7 +404,7 @@ static void check_boss_hit() {
             }
 
             if (_G(actor)[3].health == 0) {
-                _G(boss_dead) = 1;
+                _G(boss_dead) = true;
                 for (rep = 7; rep < MAX_ACTORS; rep++)
                     if (_G(actor)[rep].used)
                         actor_destroyed(&_G(actor)[rep]);
@@ -461,7 +461,7 @@ void boss_level3() {
 }
 
 static int boss_die() {
-	if (_G(boss_dead) == 1) {
+	if (_G(boss_dead)) {
         for(int rep = 0; rep < 4; rep++) {
             int x1 = _G(actor)[3 + rep].last_x[_G(pge)];
             int y1 = _G(actor)[3 + rep].last_y[_G(pge)];
