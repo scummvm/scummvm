@@ -79,7 +79,7 @@ Variable::Variable(Chunk &chunk, bool readId) {
 	}
 
 	default: {
-		warning("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
+		error("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
 		_value.datum = new Datum(chunk);
 	}
 	}
