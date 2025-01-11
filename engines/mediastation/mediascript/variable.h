@@ -71,6 +71,8 @@ public:
 
 	Variable();
 	Variable(Chunk &chunk, bool readId = true);
+
+	Operand getValue();
 	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
 	~Variable();
 };

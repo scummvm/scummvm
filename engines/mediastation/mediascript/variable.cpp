@@ -114,6 +114,51 @@ Variable::~Variable() {
 	}
 }
 
+Operand Variable::getValue() {	
+	switch (_type) {
+	case kVariableTypeEmpty: {
+		error("Variable::getValue(): Attempt to get value from an empty variable");
+	}
+
+	case kVariableTypeCollection: {
+		// TODO: Determine if any scripts actually try to do this.
+		error("Variable::getValue(): Returning a collection is not implemented");
+		break;
+	}
+
+	case kVariableTypeString: {
+		Operand returnValue(kOperandTypeString);
+		returnValue.putString(_value.string);
+		return returnValue;
+	}
+
+	case kVariableTypeAssetId: {
+		Operand returnValue(kOperandTypeAssetId);
+		returnValue.putAsset(_value.assetId);
+		return returnValue;
+	}
+
+	case kVariableTypeBoolean: {
+		// TODO: Is this value type correct?
+		// Shouldn't matter too much, though, since it's still an integer type.
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_value.b);
+		return returnValue;
+	}
+
+	case kVariableTypeLiteral: {
+		// Shouldn't matter too much, though, since it's still an integer type.
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_value.datum->u.i);
+		return returnValue;
+	}
+
+	default: {
+		error("Variable::getValue(): Attempt to get value from unknown variable type 0x%x", static_cast<uint>(_type));
+	}
+	}
+}
+
 Operand Variable::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
 	switch (_type) {
 	case kVariableTypeAssetId: {
