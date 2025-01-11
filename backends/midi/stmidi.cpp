@@ -85,14 +85,14 @@ void MidiDriver_STMIDI::send(uint32 b) {
 	case 0xA0:	// Polyphonic Key Pressure
 	case 0xB0:	// Controller
 	case 0xE0:	// Pitch Bend
-		Bconout(3, status_byte);
-		Bconout(3, first_byte);
-		Bconout(3, second_byte);
+		Bconout(DEV_MIDI, status_byte);
+		Bconout(DEV_MIDI, first_byte);
+		Bconout(DEV_MIDI, second_byte);
 		break;
 	case 0xC0:	// Program Change
 	case 0xD0:	// Aftertouch
-		Bconout(3, status_byte);
-		Bconout(3, first_byte);
+		Bconout(DEV_MIDI, status_byte);
+		Bconout(DEV_MIDI, first_byte);
 		break;
 	default:
 		fprintf(stderr, "Unknown : %08x\n", (int)b);
@@ -101,24 +101,13 @@ void MidiDriver_STMIDI::send(uint32 b) {
 }
 
 void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
-	// FIXME: LordHoto doesn't know if this will still work
-	// when sending 264 byte sysEx data, as needed by KYRA,
-	// feel free to revert it to 254 again if needed.
-	if (length > 264) {
-		warning ("Cannot send SysEx block - data too large");
-		return;
-	}
-
 	midiDriverCommonSysEx(msg, length);
 
-	const byte *chr = msg;
-	warning("Sending SysEx Message");
+	warning("Sending SysEx Message (%d bytes)", length);
 
-	Bconout(3, 0xF0);
-	for (; length; --length, ++chr) {
-		Bconout(3,((unsigned char) *chr & 0x7F));
-	}
-	Bconout(3, 0xF7);
+	Bconout(DEV_MIDI, 0xF0);
+	Midiws(length-1, msg);
+	Bconout(DEV_MIDI, 0xF7);
 }
 
 // Plugin interface
