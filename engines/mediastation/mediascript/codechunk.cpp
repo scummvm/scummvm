@@ -59,7 +59,7 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	InstructionType instructionType = InstructionType(Datum(*_bytecode).u.i);
-	debugC(8, kDebugScript, " instructionType = %d", static_cast<uint>(instructionType));
+	debugC(9, kDebugScript, " instructionType = %d", static_cast<uint>(instructionType));
 	switch (instructionType) {
 	case kInstructionTypeEmpty: {
 		return Operand();
@@ -191,12 +191,12 @@ Operand CodeChunk::executeNextStatement() {
 
 	case kInstructionTypeOperand: {
 		OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
-		debugC(8, kDebugScript, "  *** Operand %d ***", static_cast<uint>(operandType));
 		Operand operand(operandType);
 		switch (operandType) {
 		// TODO: Add clearer debugging printouts for these.
 		case kOperandTypeAssetId: {
 			uint32 assetId = Datum(*_bytecode).u.i;
+			debugC(8, kDebugScript, "  Asset ID: %d", assetId);
 			operand.putAsset(assetId);
 			return operand;
 		}
@@ -205,6 +205,7 @@ Operand CodeChunk::executeNextStatement() {
 		case kOperandTypeLiteral2:
 		case kOperandTypeDollarSignVariable: {
 			int literal = Datum(*_bytecode).u.i;
+			debugC(8, kDebugScript, "  Literal: %d", literal);
 			operand.putInteger(literal);
 			return operand;
 		}
@@ -212,12 +213,14 @@ Operand CodeChunk::executeNextStatement() {
 		case kOperandTypeFloat1:
 		case kOperandTypeFloat2: {
 			double d = Datum(*_bytecode).u.f;
+			debugC(8, kDebugScript, "  Float: %f", d);
 			operand.putDouble(d);
 			return operand;
 		}
 
 		case kOperandTypeFunction: {
 			uint functionId = Datum(*_bytecode).u.i;
+			debugC(8, kDebugScript, "  Function ID: %d", functionId);
 			operand.putFunction(functionId);
 			return operand;
 		}
@@ -230,6 +233,7 @@ Operand CodeChunk::executeNextStatement() {
 			_bytecode->read(buffer, size);
 			buffer[size] = '\0';
 			Common::String *string = new Common::String(buffer);
+			debugC(8, kDebugScript, "  String: %s", string->c_str());
 			operand.putString(string);
 			delete[] buffer;
 			return operand;
