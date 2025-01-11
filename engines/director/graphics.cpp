@@ -314,7 +314,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 			// Get the pixel that macDrawPixel will give us, but store it to apply the
 			// ink later
 			tmpDst = *dst;
-			(wm->getDrawPixel())(x, y, src, p->ms->pd);
+			wm->getDrawPrimitives().drawPoint(x, y, src, p->ms->pd);
 			src = *dst;
 
 			*dst = tmpDst;
