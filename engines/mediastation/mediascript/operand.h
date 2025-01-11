@@ -28,7 +28,6 @@
 
 namespace MediaStation {
 
-class Function;
 class Asset;
 
 enum OperandType {
