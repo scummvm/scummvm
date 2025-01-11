@@ -103,26 +103,19 @@ Operand CodeChunk::executeNextStatement() {
 		}
 
 		case kOpcodeCallMethod: {
+			// In Media Station, all methods seem be built-in - there don't
+			// seem to be custom objects or methods individual titles can
+			// define. Functions, however, CAN be title-defined. 
+			// But here, we're only looking for built-in methods.
 			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Operand selfObject = executeNextStatement();
-			if (selfObject.getType() != kOperandTypeAssetId) {
-				error("CodeChunk::executeNextStatement(): (Opcode::CallMethod) Attempt to call method on operand that is not an asset (type 0x%x)", static_cast<uint>(selfObject.getType()));
-			}
 			Common::Array<Operand> args;
 			for (uint i = 0; i < parameterCount; i++) {
 				debugC(8, kDebugScript, "   -- Argument %d of %d --", (i + 1), parameterCount);
 				Operand arg = executeNextStatement();
 				args.push_back(arg);
 			}
-
-			// Call the method.
-			// TODO: Resolve asset IDs to names in this decompilation so
-			// itʻe easier to read.
-			debugC(5, kDebugScript, "SCRIPT: @[ %d ].[ %d ]()", selfObject.getAssetId(), methodId);
-			// TODO: Where do we get the method from? And can we define
-			// our own methods? Or are only the built-in methods
-			// supported?
 			Operand returnValue = callBuiltInMethod(methodId, selfObject, args);
 			return returnValue;
 		}
@@ -353,20 +346,36 @@ Operand CodeChunk::callBuiltInFunction(BuiltInFunction id, Common::Array<Operand
 }
 
 Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args) {
-	if (self.getAssetId() == 1) {
-		// This is a "document" method that we need to handle specially.
-		// The document (@doc) accepts engine-level methods like changing the
-		// active screen.
-		// HACK: This is so we don't have to implement a separate document class
-		// just to house these methods. Rather, we just call in the engine.
-		Operand returnValue = g_engine->callMethod(method, args);
+	switch (self.getType()) {
+	case kOperandTypeAssetId: {
+		if (self.getAssetId() == 1) {
+			// This is a "document" method that we need to handle specially.
+			// The document (@doc) accepts engine-level methods like changing the
+			// active screen.
+			// HACK: This is so we don't have to implement a separate document class
+			// just to house these methods. Rather, we just call in the engine.
+			debugC(5, kDebugScript, "SCRIPT: @doc.[ %d ]()", method);
+			Operand returnValue = g_engine->callMethod(method, args);
+			return returnValue;
+		} else {
+			// This is a regular asset that we can process directly.
+			Asset *selfAsset = self.getAsset();
+			assert(selfAsset != nullptr);
+			Operand returnValue = selfAsset->callMethod(method, args);
+			return returnValue;
+		}
+	}
+
+	case kOperandTypeVariableDeclaration: {
+		Variable *variable = self.getVariable();
+		Operand returnValue = variable->callMethod(method, args);
 		return returnValue;
-	} else {
-		// This is a regular asset that we can process directly.
-		Asset *selfAsset = self.getAsset();
-		assert(selfAsset != nullptr);
-		Operand returnValue = selfAsset->callMethod(method, args);
-		return returnValue;
+		break;
+	}
+
+	default:
+		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type 0x%x", (uint)self.getType());
+		break;
 	}
 }
 

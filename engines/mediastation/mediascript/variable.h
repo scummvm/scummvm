@@ -25,8 +25,11 @@
 #include "mediastation/chunk.h"
 #include "mediastation/datafile.h"
 #include "mediastation/datum.h"
+#include "mediastation/mediascript/builtins.h"
 
 namespace MediaStation {
+
+class Operand;
 
 enum VariableType {
 	// This is an invalid type used for initialization only.
@@ -68,6 +71,7 @@ public:
 
 	Variable();
 	Variable(Chunk &chunk, bool readId = true);
+	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
 	~Variable();
 };
 
