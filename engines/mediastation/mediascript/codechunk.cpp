@@ -142,6 +142,13 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
+		case kOpcodeUnk2: {
+			// TODO: Figure out what else must be done with this opcode.
+			Operand value = executeNextStatement();
+			warning("CodeChunk::executeNextStatement(): Opcode kOpcodeUnk2 isn't fully implemented");
+			return value;
+		}
+
 		default: {
 			error("CodeChunk::getNextStatement(): Got unknown opcode 0x%x (%d)", opcode, opcode);
 		}
