@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	assets/timer.o \
 	assets/canvas.o \
 	assets/screen.o \
+	assets/font.o \
 	mediascript/eventhandler.o \
 	mediascript/codechunk.o \
 	mediascript/function.o \
