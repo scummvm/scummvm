@@ -36,12 +36,12 @@ namespace Got {
 static int boss1_dead();
 
 int boss1_movement(ACTOR *actr) {
-    int d, x1, y1, f;
+    int x1, y1, f;
 
     if (_G(boss_dead))
         return boss1_dead();
 
-    d = actr->last_dir;
+    int d = actr->last_dir;
     if (actr->edge_counter) {
         actr->edge_counter--;
         goto done;
@@ -130,7 +130,8 @@ int boss1_movement(ACTOR *actr) {
             x1 = _G(actor)[5].x;
             y1 = _G(actor)[5].y;
             y1 += 2;
-            if (!check_move2(x1, y1, &_G(actor)[5])) f = 1;
+            if (!check_move2(x1, y1, &_G(actor)[5]))
+				f = 1;
             else {
                 actr->x = _G(actor)[5].x;
                 actr->y = _G(actor)[5].y - 16;
@@ -150,11 +151,13 @@ int boss1_movement(ACTOR *actr) {
     }
 
 done:
-    if (d > 1) d -= 2;
+    if (d > 1)
+		d -= 2;
 
 done0:
     next_frame(actr);
-    if (actr->next == 3) actr->next = 0;
+    if (actr->next == 3)
+		actr->next = 0;
 
 done1:
     actr->last_dir = d;
@@ -219,17 +222,17 @@ void boss_level1() {
 }
 
 static int boss1_dead() {
-    int rep, n, x, y, r, x1, y1;
-
     _G(hourglass_flag) = 0;
-    if (_G(boss_dead) == 1) {
-        for (rep = 0; rep < 4; rep++) {
-            x1 = _G(actor)[3 + rep].last_x[_G(pge)];
-            y1 = _G(actor)[3 + rep].last_y[_G(pge)];
-            x = _G(actor)[3 + rep].x;
-            y = _G(actor)[3 + rep].y;
-            n = _G(actor)[3 + rep].actor_num;
-            r = _G(actor)[3 + rep].rating;
+    if (_G(boss_dead)) {
+		int rep;
+    	
+		for (rep = 0; rep < 4; rep++) {
+            int x1 = _G(actor)[3 + rep].last_x[_G(pge)];
+            int y1 = _G(actor)[3 + rep].last_y[_G(pge)];
+            int x = _G(actor)[3 + rep].x;
+            int y = _G(actor)[3 + rep].y;
+            int n = _G(actor)[3 + rep].actor_num;
+            int r = _G(actor)[3 + rep].rating;
 
             _G(actor)[3 + rep] = _G(explosion);
             _G(actor)[3 + rep].actor_num = n;

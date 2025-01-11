@@ -22,15 +22,12 @@
 #ifndef GOT_GAME_INIT_H
 #define GOT_GAME_INIT_H
 
-#include "got/data/defines.h"
-
 namespace Got {
 
 /**
  * Handles in-game initialization the first time
  */
 extern void initialize_game();
-extern void deinitialize_game();
 extern int setup_boss(int num);
 
 } // namespace Got
