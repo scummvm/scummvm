@@ -120,15 +120,14 @@ void deinitialize_game() {
 }
 
 int setup_boss(int num) {
-    int rep;
-    Common::String ress, prefix;
+	Common::String ress, prefix;
     Common::File f;
 
     if (_G(boss_loaded) == num)
         return 1;
 
     if (_G(boss_loaded)) {
-        REPEAT(3) {
+        for(int rep = 0; rep < 3; rep++) {
             if (_G(boss_sound)[rep])
                 free(_G(boss_sound)[rep]);
             if (_G(boss_pcsound)[rep])

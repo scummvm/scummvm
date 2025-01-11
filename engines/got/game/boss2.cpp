@@ -333,7 +333,7 @@ static int boss2b_movement(ACTOR *actr) {
 
         su[hx] = 1;
         _G(actor)[an].next = g_events->getRandomNumber(3);
-        REPEAT(num_spikes) {
+        for(rep = 0; rep < num_spikes; rep++) {
             while (1) {
                 hx = g_events->getRandomNumber(17);
                 if (!su[hx]) break;
