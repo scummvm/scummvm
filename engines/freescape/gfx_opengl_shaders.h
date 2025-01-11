@@ -62,7 +62,9 @@ public:
 	OpenGL::Shader *_bitmapShader;
 	GLuint _triangleVBO;
 	GLuint _bitmapVBO;
-	int _variableStippleArray[64];
+
+	int _defaultShaderStippleArray[128];
+	int _variableStippleArray[128];
 
 	virtual void init() override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;

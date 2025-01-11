@@ -95,6 +95,10 @@ void OpenGLShaderRenderer::init() {
 	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
+	// populate default stipple data for shader rendering
+	for(int i = 0; i < 128; i++)
+		_defaultShaderStippleArray[i] = _defaultStippleArray[i];
+
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
@@ -449,38 +453,33 @@ void OpenGLShaderRenderer::polygonOffset(bool enabled) {
 }
 
 void OpenGLShaderRenderer::setStippleData(byte *data) {
-	_triangleShader->use();
 	if (!data)
-		return;
+		data = _defaultStippleArray;
 
-	int stippleData[128];
-
-	for (int i = 0; i < 128; i++) {
-		stippleData[i] = 0;
-		stippleData[i] = data[i];
-	}
-	_triangleShader->setUniform("stipple", 128, (const int*)&stippleData);
+	for (int i = 0; i < 128; i++)
+		_variableStippleArray[i] = data[i];
 }
 
 void OpenGLShaderRenderer::useStipple(bool enabled) {
 	_triangleShader->use();
+	_triangleShader->setUniform("useStipple", enabled);
+
 	if (enabled) {
 		GLfloat factor = 0;
 		glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(factor - 1.0f, -1.0f);
+		glPolygonOffset(factor - 0.5f, -1.0f);
 		if (_renderMode == Common::kRenderZX    ||
 			_renderMode == Common::kRenderCPC   ||
 			_renderMode == Common::kRenderCGA   ||
 			_renderMode == Common::kRenderHercG)
-			setStippleData((byte *)_variableStippleArray);
+			_triangleShader->setUniform("stipple", 128, _variableStippleArray);
 		else
-			setStippleData(_defaultStippleArray);
+			_triangleShader->setUniform("stipple", 128, _defaultShaderStippleArray);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
-	_triangleShader->setUniform("useStipple", enabled);
 }
 
 void OpenGLShaderRenderer::useColor(uint8 r, uint8 g, uint8 b) {
