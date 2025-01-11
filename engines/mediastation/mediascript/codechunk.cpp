@@ -368,6 +368,14 @@ Operand CodeChunk::callBuiltInFunction(BuiltInFunction id, Common::Array<Operand
 		break;
 	}
 
+	case kDrawingFunction: {
+		// Not entirely sure what this function does, but it seems like a way to
+		// call into some drawing functions built into the IBM/Crayola executable.
+		warning("CodeChunk::callBuiltInFunction(): Built-in drawing function not implemented");
+		return Operand();
+		break;
+	}
+
 	default: {
 		error("CodeChunk::callBuiltInFunction(): Got unknown built-in function ID %d", id);
 	}
