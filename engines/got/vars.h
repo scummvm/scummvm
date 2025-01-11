@@ -34,6 +34,9 @@
 #include "got/gfx/gfx_pics.h"
 #include "got/metaengine.h"
 #include "got/sound.h"
+#include "got/data/level.h"
+#include "got/data/setup.h"
+#include "got/data/thor_info.h"
 
 namespace Got {
 
@@ -113,8 +116,7 @@ public:
     bool _diag_flag = false;
     bool _slow_mode = false, _startup = true;
     bool _shot_ok = false;
-    int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0,
-                                                  _thor_real_y1 = 0;
+    int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0, _thor_real_y1 = 0;
     int _thor_pos = 0;
     int _max_shot = 0;
 
@@ -123,8 +125,7 @@ public:
     int _ox = 0, _oy = 0, _of = 0;
     byte _object_map[TILES_COUNT] = {};
     byte _object_index[TILES_COUNT] = {};
-    int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0,
-                                           _thor_icon4 = 0;
+    int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0, _thor_icon4 = 0;
     int8 _level_type = 0;
     int8 _music_current = -1;
     int8 _boss_loaded = 0;
@@ -200,10 +201,10 @@ public:
     int _current_level = 23;
     int _new_level = 0;
     int _new_level_tile = 0, _current_area = 0;
-    char _sd_header[128] = {};
-    char _play_speed = 0;
-    bool _thor_special_flag = false;
-    byte _exprow = 0;
+	char _sd_header[128] = {};
+	char _play_speed = 0;
+	bool _thor_special_flag = false;
+	byte _exprow = 0;
 };
 
 #define _G(X) (g_vars->_##X)

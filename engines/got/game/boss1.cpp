@@ -223,7 +223,7 @@ static int boss1_dead() {
 
     _G(hourglass_flag) = 0;
     if (_G(boss_dead) == 1) {
-        REPEAT(4) {
+        for (rep = 0; rep < 4; rep++) {
             x1 = _G(actor)[3 + rep].last_x[_G(pge)];
             y1 = _G(actor)[3 + rep].last_y[_G(pge)];
             x = _G(actor)[3 + rep].x;
