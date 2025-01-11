@@ -85,7 +85,7 @@ void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
 	uint32 expectedChunkId = chunk._id;
 
 	readChunk(chunk);
-	for (uint i = 0; i < totalChunks; i++) {
+	for (uint i = 1; i < totalChunks; i++) {
 		chunk = subfile.nextChunk();
 		if (chunk._id != expectedChunkId) {
 			// TODO: Make this show the chunk IDs as strings, not numbers.
