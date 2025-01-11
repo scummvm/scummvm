@@ -1118,7 +1118,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	bool menuEnabled = _items[_activeItem]->enabled;
+	bool topMenuEnabled = _activeItem == -1 || _items[_activeItem]->enabled;
 
 	_screen.fillRect(*r, _wm->_colorWhite);
 	_screen.frameRect(*r, _wm->_colorBlack);
@@ -1170,7 +1170,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		}
 
 		int color = _wm->_colorBlack;
-		if (i == menu->highlight && (!text.empty() || !unicodeText.empty()) && menuEnabled && menu->items[i]->enabled) {
+		if (i == menu->highlight && (!text.empty() || !unicodeText.empty()) && topMenuEnabled && menu->items[i]->enabled) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
@@ -1181,7 +1181,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			ManagedSurface *s = &_screen;
 			int tx = x, ty = y;
 
-			if (!menuEnabled || !menu->items[i]->enabled) {
+			if (!topMenuEnabled || !menu->items[i]->enabled) {
 				s = &_tempSurface;
 				tx = 0;
 				ty = 0;
@@ -1218,7 +1218,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			if (menu->items[i]->submenu != nullptr)
 				drawSubMenuArrow(s, arrowX, ty, color);
 
-			if (!menuEnabled || !menu->items[i]->enabled) {
+			if (!topMenuEnabled || !menu->items[i]->enabled) {
 				if (_wm->_pixelformat.bytesPerPixel == 1) {
 					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else {
@@ -1237,7 +1237,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		y += _menuDropdownItemHeight;
 	}
 
-	if (recursive && menu->highlight != -1 && _items[_activeItem]->enabled && menu->items[menu->highlight]->enabled && menu->items[menu->highlight]->submenu != nullptr)
+	if (recursive && topMenuEnabled && menu->highlight != -1 && menu->items[menu->highlight]->enabled && menu->items[menu->highlight]->submenu != nullptr)
 		renderSubmenu(menu->items[menu->highlight]->submenu, false);
 
 	if (_wm->_mode & kWMModalMenuMode) {
@@ -1374,6 +1374,8 @@ bool MacMenu::mouseClick(int x, int y) {
 	if (!_active)
 		return false;
 
+	bool topMenuEnabled = _activeItem == -1 || _items[_activeItem]->enabled;
+
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *menu = _menustack.back();
 		int numSubItem = menu->ytoItem(y, _menuDropdownItemHeight);
@@ -1383,7 +1385,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 		if (numSubItem != _activeSubItem) {
 			if (_wm->_mode & kWMModalMenuMode) {
-				if (_activeSubItem == -1 || (_items[_activeItem]->enabled && menu->items[_activeSubItem]->enabled && menu->items[_activeSubItem]->submenu != nullptr))
+				if (_activeSubItem == -1 || (topMenuEnabled && menu->items[_activeSubItem]->enabled && menu->items[_activeSubItem]->submenu != nullptr))
 					g_system->copyRectToScreen(_wm->_screenCopy->getPixels(), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 			}
 
@@ -1435,7 +1437,7 @@ bool MacMenu::mouseClick(int x, int y) {
 		}
 	}
 
-	if (_activeSubItem != -1 && _items[_activeItem]->enabled) {
+	if (topMenuEnabled && _activeSubItem != -1) {
 		Graphics::MacMenuItem *subitem = _menustack.back()->items[_activeSubItem];
 
 		if (subitem->submenu != nullptr && subitem->enabled && subitem->submenu->bbox.contains(x, y)) {
