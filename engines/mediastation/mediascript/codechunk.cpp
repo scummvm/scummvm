@@ -295,6 +295,11 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 		}
 
 		switch (value.getType()) {
+		case kOperandTypeEmpty: {
+			error("CodeChunk::putVariable(): Cannot assign an empty operand to a variable");
+			break;
+		}
+
 		case kOperandTypeLiteral1:
 		case kOperandTypeLiteral2: {
 			variable->_value.i = value.getInteger();
