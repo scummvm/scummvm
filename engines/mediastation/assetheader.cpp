@@ -257,6 +257,17 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		break;
 	}
 
+	case kAssetHeaderX: {
+		_x = Datum(chunk).u.i;
+		break;
+	}
+
+	case kAssetHeaderY: {
+		_y = Datum(chunk).u.i;
+		break;
+	}
+
+
 	default: {
 		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		break;
