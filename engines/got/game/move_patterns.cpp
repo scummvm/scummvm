@@ -1091,8 +1091,8 @@ int movement_two(ACTOR *actr) {
         if (actr->actor_num == 2) {
             actr->used = 0;
             actr->dead = 2;
-            _G(lightning_used) = 0;
-            _G(tornado_used) = 0;
+            _G(lightning_used) = false;
+            _G(tornado_used) = false;
         }
     }
     next_frame(actr);

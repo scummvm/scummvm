@@ -49,15 +49,13 @@ const char *ITEM_NAMES[] = {
 static const char *odinEndMessage;
 
 void show_level(int new_level) {
-    int save_d;
-
-    _G(boss_active) = 0;
+	_G(boss_active) = false;
     if (!_G(shield_on))
         _G(actor)[2].used = 0;
-    _G(bomb_flag) = 0;
+    _G(bomb_flag) = false;
     _G(slipping) = false;
 
-    save_d = _G(thor)->dir;
+    int save_d = _G(thor)->dir;
     if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
         _G(thor)->dir = 0;
 
@@ -80,10 +78,10 @@ void show_level(int new_level) {
 
     if (_G(warp_flag))
         _G(current_level) = new_level - 5;   // Force phase
-    _G(warp_flag) = 0;
+    _G(warp_flag) = false;
 
     if (_G(warp_scroll)) {
-        _G(warp_scroll) = 0;
+        _G(warp_scroll) = false;
         if (_G(thor)->dir == 0)
             _G(current_level) = new_level + 10;
         else if (_G(thor)->dir == 1)
@@ -179,7 +177,7 @@ void show_level_done() {
     if (_G(startup))
         f = false;
     if (f)
-        music_play(_G(level_type), 0);
+        music_play(_G(level_type), false);
 }
 
 static void odin_speaks_end() {

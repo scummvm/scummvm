@@ -416,7 +416,7 @@ void GameContent::checkForBossDead() {
                     break;
                 }
 
-                _G(boss_active) = 0;
+                _G(boss_active) = false;
             }
         }
     }
@@ -472,7 +472,7 @@ void GameContent::checkForAreaChange() {
         _G(thor)->show = 0;
         _G(thor)->used = 0;
         _G(hammer)->used = 0;
-        _G(tornado_used) = 0;
+        _G(tornado_used) = false;
 
         // Draws the old area without Thor, and then save a copy of it.
         // This will be used to scroll old area off-screen as new area scrolls in
@@ -547,12 +547,12 @@ void GameContent::thorDead() {
     _G(thor)->vunerable = 60;
     _G(thor)->show = 60;
     _G(hourglass_flag) = 0;
-    _G(apple_flag) = 0;
-    _G(bomb_flag) = 0;
+    _G(apple_flag) = false;
+    _G(bomb_flag) = false;
     _G(thunder_flag) = 0;
-    _G(lightning_used) = 0;
-    _G(tornado_used) = 0;
-    _G(shield_on) = 0;
+    _G(lightning_used) = false;
+    _G(tornado_used) = false;
+    _G(shield_on) = false;
     music_resume();
     _G(actor)[1].used = 0;
     _G(actor)[2].used = 0;

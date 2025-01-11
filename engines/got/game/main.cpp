@@ -51,12 +51,12 @@ void setup_load() {
     _G(thor)->vunerable = 60;
     _G(thor)->show = 60;
     _G(hourglass_flag) = 0;
-    _G(apple_flag) = 0;
-    _G(bomb_flag) = 0;
+    _G(apple_flag) = false;
+    _G(bomb_flag) = false;
     _G(thunder_flag) = 0;
-    _G(lightning_used) = 0;
-    _G(tornado_used) = 0;
-    _G(shield_on) = 0;
+    _G(lightning_used) = false;
+    _G(tornado_used) = false;
+    _G(shield_on) = false;
     _G(actor)[1].used = 0;
     _G(actor)[2].used = 0;
     _G(thor)->speed_count = 6;

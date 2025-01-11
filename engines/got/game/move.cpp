@@ -87,7 +87,7 @@ void thor_shoots() {
 int kill_good_guy(void) {
     if (!_G(killgg_inform) && !_G(thunder_flag)) {
         odin_speaks(2010, 0);
-        _G(killgg_inform) = 1;
+        _G(killgg_inform) = true;
     }
 
     add_score(-1000);
@@ -251,7 +251,7 @@ int _actor_shoots(ACTOR *actr, int dir) {
             actr->shot_actor = i;
             actr->num_shots++;
             actr->shot_cnt = 20;
-            _G(shot_ok) = 0;
+            _G(shot_ok) = false;
             return 1;
         }
     }

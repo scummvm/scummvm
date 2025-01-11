@@ -163,10 +163,10 @@ void GotEngine::savegameLoaded() {
     if (_G(setup).music == 1) {
         if (GAME1 == 1 && _G(current_area) == 59) {
 //				if (flag)
-            music_play(5, 1);
+            music_play(5, true);
         } else {
             //if (flag)
-            music_play(_G(level_type), 1);
+            music_play(_G(level_type), true);
         }
     } else {
         _G(setup).music = 1;
@@ -174,7 +174,7 @@ void GotEngine::savegameLoaded() {
         _G(setup).music = 0;
     }
 
-    _G(game_over) = _G(setup).game_over;
+    _G(game_over) = _G(setup).game_over != 0;
     _G(slow_mode) = _G(setup).speed;
 
     g_events->replaceView("Game", true);
@@ -233,8 +233,8 @@ void GotEngine::pauseEngineIntern(bool pause) {
     }
 
     _G(lightning_used) = false;
-    _G(thunder_flag) = false;
-    _G(hourglass_flag) = false;
+    _G(thunder_flag) = 0;
+    _G(hourglass_flag) = 0;
 
     Engine::pauseEngineIntern(pause);
 }
