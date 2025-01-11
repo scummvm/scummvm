@@ -179,6 +179,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_engineR = nullptr;
 	_redrawEngineCallback = nullptr;
 	_screenCopyPauseToken = nullptr;
+	_activateMenuCallback = nullptr;
 
 	_colorBlack = kColorBlack;
 	_colorGray80 = kColorGray80;
