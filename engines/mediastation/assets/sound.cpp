@@ -81,9 +81,6 @@ void Sound::readChunk(Chunk &chunk) {
 }
 
 void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
-	//if (_streams.size() != 0) {
-	//    warning("Sound::readSubfile(): Some audio has already been read.");
-	//}
 	uint32 totalChunks = _header->_chunkCount;
 	uint32 expectedChunkId = chunk._id;
 
