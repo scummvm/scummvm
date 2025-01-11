@@ -59,7 +59,7 @@ void Vars::load() {
     }
 
     if (_current_level != 23)
-        _story_flag = 0;
+        _story_flag = false;
 
     _setup.music = _music_flag;
     _setup.dig_sound = _sound_flag;

@@ -184,7 +184,7 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 
 void boss_level2() {
     setup_boss(2);
-    _G(boss_active) = 1;
+    _G(boss_active) = true;
     boss_status(-1);
     music_pause();
     play_sound(BOSS11, true);
@@ -194,16 +194,16 @@ void boss_level2() {
     Common::fill(su, su + 18, 0);
 
     g_events->send("Game", GameMessage("PAUSE", 40));
-    music_play(7, 1);
+    music_play(7, true);
 }
 
 static int boss2_die() {
-    int rep, n, x, y, r, x1, y1;
+    int n, x, y, r, x1, y1;
 
     _G(hourglass_flag) = 0;
     _G(thunder_flag) = 0;
     if (_G(boss_dead) == 1) {
-        REPEAT(4) {
+        for (int rep = 0; rep < 4; rep++) {
             x1 = _G(actor)[3 + rep].last_x[_G(pge)];
             y1 = _G(actor)[3 + rep].last_y[_G(pge)];
             x = _G(actor)[3 + rep].x;
@@ -354,7 +354,7 @@ done:
 }
 
 void closing_sequence2() {
-    music_play(6, 1);
+    music_play(6, true);
     odin_speaks(1001, 0, "CLOSING");
 }
 
@@ -375,16 +375,17 @@ void closing_sequence2_3() {
 
 void closing_sequence2_4() {
     LEVEL lvl;
-    int rep;
 
-    REPEAT(16) _G(scrn).actor_type[rep] = 0;
-    _G(boss_dead) = 0;
+    for (int rep = 0; rep < 16; rep++)
+		_G(scrn).actor_type[rep] = 0;
+	
+    _G(boss_dead) = false;
     _G(setup).boss_dead[1] = 1;
-    _G(game_over) = 1;
-    _G(boss_active) = 0;
+    _G(game_over) = true;
+    _G(boss_active) = false;
     _G(scrn).type = 6;
-    //	_G(game_is_over) = 1;
-    show_level(BOSS_LEVEL2);
+
+	show_level(BOSS_LEVEL2);
 
     play_sound(ANGEL, true);
     place_tile(18, 10, 152);

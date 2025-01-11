@@ -173,14 +173,14 @@ int special_tile_thor(int x, int y, int icon) {
 				play_sound(FALL, false);
         	
             _G(new_level) = _G(scrn).new_level[icon - 220 + (f * 6)];
-            _G(warp_scroll) = 0;
+            _G(warp_scroll) = false;
             if (_G(new_level) > 119) {
-                _G(warp_scroll) = 1;
+                _G(warp_scroll) = true;
                 _G(new_level) -= 128;
             }
 
             _G(new_level_tile) = _G(scrn).new_level_loc[icon - 220 + (f * 6)];
-            _G(warp_flag) = 1;
+            _G(warp_flag) = true;
 
             if (_G(warp_scroll)) {
                 if (_G(thor)->dir == 0) _G(thor)->y = 175;
@@ -251,7 +251,7 @@ int open_door1(int y, int x) {
     } else {
         if (!_G(door_inform)) {
             odin_speaks(2003, 0);
-            _G(door_inform) = 1;
+            _G(door_inform) = true;
         }
     }
 
@@ -267,11 +267,11 @@ int cash_door1(int y, int x, int amount) {
     } else {
         if (amount == 10 && !_G(cash1_inform)) {
             odin_speaks(2005, 0);
-            _G(cash1_inform) = 1;
+            _G(cash1_inform) = true;
         }
         if (amount == 100 && !_G(cash2_inform)) {
             odin_speaks(2004, 0);
-            _G(cash2_inform) = 1;
+            _G(cash2_inform) = true;
         }
     }
 

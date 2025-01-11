@@ -379,8 +379,10 @@ static void check_boss_hit() {
     int rep;
 
     if (_G(actor)[3].solid & 128) {
-        for (rep = 3; rep < 7; rep++) _G(actor)[rep].magic_hit = 0;
-        return;
+        for (rep = 3; rep < 7; rep++)
+			_G(actor)[rep].magic_hit = 0;
+
+    	return;
     }
     if (_G(actor)[3].magic_hit || _G(actor)[4].magic_hit ||
             _G(actor)[5].magic_hit || _G(actor)[6].magic_hit) {
@@ -405,10 +407,11 @@ static void check_boss_hit() {
 
             if (_G(actor)[3].health == 0) {
                 _G(boss_dead) = true;
-                for (rep = 7; rep < MAX_ACTORS; rep++)
+				for (rep = 7; rep < MAX_ACTORS; rep++) {
                     if (_G(actor)[rep].used)
                         actor_destroyed(&_G(actor)[rep]);
-            }
+				}
+			}
 
             if (_G(actor)[3].health == 50) {
                 boss_change_mode();
@@ -440,7 +443,7 @@ static void boss_change_mode() {
 
 void boss_level3() {
     setup_boss(3);
-    _G(boss_active) = 1;
+    _G(boss_active) = true;
     boss_status(-1);
     music_pause();
     play_sound(BOSS11, true);
@@ -455,7 +458,7 @@ void boss_level3() {
         _G(boss_intro1) = true;
     }
 
-    music_play(7, 1);
+    music_play(7, true);
     _G(apple_drop) = 0;
     boss_mode = 1;
 }
@@ -497,7 +500,7 @@ static int boss_die() {
 }
 
 void closing_sequence3() {
-    music_play(6, 1);
+    music_play(6, true);
     odin_speaks(1001, 0, "CLOSING");
 }
 
@@ -514,8 +517,8 @@ void closing_sequence3_3() {
 	
     _G(boss_dead) = false;
     _G(setup).boss_dead[2] = 1;
-    _G(game_over) = 1;
-    _G(boss_active) = 0;
+    _G(game_over) = true;
+    _G(boss_active) = false;
     _G(scrn).type = 6;
     show_level(BOSS_LEVEL3);
 
@@ -531,7 +534,7 @@ void closing_sequence3_3() {
 void ending_screen() {
 	for (int i = 3; i < MAX_ACTORS; i++)
         _G(actor)[i].move = 1;
-    music_play(6, 1);
+    music_play(6, true);
     _G(timer_cnt) = 0;
 
     memset(expf, 0, 4 * 8);

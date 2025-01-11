@@ -177,14 +177,13 @@ done1:
     _G(actor)[5].num_moves = actr->num_moves;
     _G(actor)[6].num_moves = actr->num_moves;
 
-    if (actr->directions == 1) return 0;
+    if (actr->directions == 1)
+		return 0;
     return d;
 }
 
 void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
-    int rep;
-
-    if (actr->move == 15 && act_num == 4) {
+	if (actr->move == 15 && act_num == 4) {
         if ((!_G(actor)[3].vunerable) && (_G(actor)[3].next != 3) &&
                 overlap(x1, y1, x2, y2, actr->x + 6, actr->y + 4, actr->x + 14, actr->y + 20)) {
             actor_damaged(&_G(actor)[3], _G(hammer)->strength);
@@ -199,24 +198,24 @@ void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
             play_sound(BOSS13, true);
             _G(actor)[3].next = 1;
 
-            for (rep = 4; rep < 7; rep++) {
+            for (int rep = 4; rep < 7; rep++) {
                 _G(actor)[rep].next = 1;
                 _G(actor)[rep].speed_count = 50;
             }
 
             if (_G(actor)[3].health == 0)
-                _G(boss_dead) = 1;
+                _G(boss_dead) = true;
         }
     }
 }
 
 void boss_level1() {
     setup_boss(1);
-    _G(boss_active) = 1;
+    _G(boss_active) = true;
     music_pause();
     play_sound(BOSS11, true);
     g_events->send("Game", GameMessage("PAUSE", 40));
-    music_play(5, 1);
+    music_play(5, true);
 }
 
 static int boss1_dead() {
@@ -260,8 +259,8 @@ static int boss1_dead() {
 }
 
 void closing_sequence1() {
-    _G(game_over) = 1;
-    music_play(4, 1);
+    _G(game_over) = true;
+    music_play(4, true);
     odin_speaks(1001, 13, "CLOSING");
 }
 
@@ -280,13 +279,12 @@ void closing_sequence1_3() {
 }
 
 void closing_sequence1_4() {
-    int rep;
-	for (rep = 0; rep < 16; rep++)
+	for (int rep = 0; rep < 16; rep++)
 		_G(scrn).actor_type[rep] = 0;
 	
-    _G(boss_dead) = 0;
+    _G(boss_dead) = false;
     _G(setup).boss_dead[0] = 1;
-    _G(boss_active) = 0;
+    _G(boss_active) = false;
     _G(scrn).type = 4;
     show_level(BOSS_LEVEL1);
 

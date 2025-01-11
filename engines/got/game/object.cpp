@@ -35,14 +35,12 @@ void not_enough_magic();
 void cannot_carry_more();
 
 void show_objects() {
-    int i, p;
-
-    Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
+	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
     Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
 
-    for (i = 0; i < OBJECTS_COUNT; i++) {
+    for (int i = 0; i < OBJECTS_COUNT; i++) {
         if (_G(scrn).static_obj[i]) {
-            p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
+            int p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
             _G(object_index)[p] = i;
             _G(object_map)[p] = _G(scrn).static_obj[i];
         }
@@ -130,8 +128,8 @@ void pick_up_object(int p) {
         _G(thor)->num_moves = 1;
         _G(hammer)->num_moves = 2;
         _G(actor)[2].used = 0;
-        _G(shield_on) = 0;
-        _G(tornado_used) = 0;
+        _G(shield_on) = false;
+        _G(tornado_used) = false;
         _G(thor_info).inventory |= 64;
         _G(thor_info).item = 7;
         _G(thor_info).object = _G(object_map)[p] - 11;
@@ -147,9 +145,9 @@ void pick_up_object(int p) {
     case 32:
         _G(hourglass_flag) = 0;
         _G(thunder_flag) = 0;
-        _G(shield_on) = 0;
-        _G(lightning_used) = 0;
-        _G(tornado_used) = 0;
+        _G(shield_on) = false;
+        _G(lightning_used) = false;
+        _G(tornado_used) = false;
         _G(hammer)->num_moves = 2;
         _G(thor)->num_moves = 1;
         _G(actor)[2].used = 0;
@@ -185,10 +183,10 @@ void pick_up_object(int p) {
 }
 
 int drop_object(ACTOR *actr) {
-    int o, rnd1, rnd2;
+    int o;
 
-    rnd1 = g_events->getRandomNumber(99);
-    rnd2 = g_events->getRandomNumber(99);
+    int rnd1 = g_events->getRandomNumber(99);
+    int rnd2 = g_events->getRandomNumber(99);
 
     if (rnd1 < 25)
         o = 5;      // Apple
@@ -211,9 +209,7 @@ int drop_object(ACTOR *actr) {
 }
 
 int _drop_obj(ACTOR *actr, int o) {
-    int p;
-
-    p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
+	int p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
     if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
         _G(object_map)[p] = o;
         _G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
@@ -241,15 +237,16 @@ int use_apple(int flag) {
             if (!sound_playing())
                 play_sound(ANGEL, false);
         }
-        _G(apple_flag) = 1;
-        return 1;
+		_G(apple_flag) = true;
+		return 1;
 
-    } else {
-        _G(apple_flag) = 0;
-        if (flag)
-            not_enough_magic();
     }
-    return 0;
+
+	_G(apple_flag) = false;
+	if (flag)
+		not_enough_magic();
+
+	return 0;
 }
 
 int use_thunder(int flag) {
@@ -261,9 +258,13 @@ int use_thunder(int flag) {
             _G(thunder_flag) = 60;
         }
         return 1;
-    } else if (flag && !_G(thunder_flag)) not_enough_magic();
+    }
 
-    if (_G(thunder_flag)) return 1;
+	if (flag && !_G(thunder_flag))
+		not_enough_magic();
+
+    if (_G(thunder_flag))
+		return 1;
     return 0;
 }
 
@@ -392,10 +393,10 @@ int use_tornado(int flag) {
                 setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
                 _G(actor)[2].last_dir = _G(thor)->dir;
                 _G(actor)[2].move = 16;
-                _G(tornado_used) = 1;
+                _G(tornado_used) = true;
                 play_sound(WIND, false);
             }
-        } else if (_G(tornado_used) == 0) {
+        } else if (!_G(tornado_used)) {
             not_enough_magic();
             return 0;
         }
@@ -407,7 +408,7 @@ int use_tornado(int flag) {
         }
         if (_G(thor_info).magic < 1) {
             actor_destroyed(&_G(actor)[2]);
-            _G(tornado_used) = 0;
+            _G(tornado_used) = false;
             not_enough_magic();
             return 0;
         }
@@ -426,16 +427,16 @@ int use_object(int flag) {
 }
 
 void use_item() {
-    int kf, ret = 0, mf;
+    int ret = 0;
 
-    kf = _G(key_flag)[key_magic];
+    int kf = _G(key_flag)[key_magic];
 
     if (!kf && _G(tornado_used)) {
         actor_destroyed(&_G(actor)[2]);
-        _G(tornado_used) = 0;
+        _G(tornado_used) = false;
     }
 
-    mf = _G(magic_inform);
+    bool mf = _G(magic_inform);
     switch (_G(thor_info).item) {
     case 1:
         ret = use_apple(kf);
@@ -475,13 +476,13 @@ void not_enough_magic() {
     if (!_G(magic_inform))
         odin_speaks(2006, 0);
 
-    _G(magic_inform) = 1;
+    _G(magic_inform) = true;
 }
 
 void cannot_carry_more() {
     if (!_G(carry_inform))
         odin_speaks(2007, 0);
-    _G(carry_inform) = 1;
+    _G(carry_inform) = true;
 }
 
 void delete_object() {
