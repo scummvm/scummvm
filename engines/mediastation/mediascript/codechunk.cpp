@@ -149,7 +149,7 @@ Operand CodeChunk::executeNextStatement() {
 		break;
 	}
 
-	case (kInstructionTypeOperand): {
+	case kInstructionTypeOperand: {
 		OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
 		debugC(8, kDebugScript, "  *** Operand %d ***", static_cast<uint>(operandType));
 		Operand operand(operandType);
@@ -189,7 +189,7 @@ Operand CodeChunk::executeNextStatement() {
 		break;
 	}
 
-	case (kInstructionTypeVariableRef): {
+	case kInstructionTypeVariableRef: {
 		// TODO: Add debug printout for this.
 		uint32 id = Datum(*_bytecode).u.i;
 		VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
