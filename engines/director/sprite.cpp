@@ -157,19 +157,21 @@ void Sprite::createQDMatte() {
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
 	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, 1, g_director->_wm->_colorBlack);
 
+	Graphics::Primitives &primitives = g_director->_wm->getDrawPrimitives();
+
 	// it's the same for filled and outlined qd shape when we are using floodfill, so we use filled rect directly since it won't be affected by line size.
 	switch (_spriteType) {
 	case kOutlinedRectangleSprite:
 	case kRectangleSprite:
-		Graphics::drawFilledRect1(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
+		primitives.drawFilledRect1(fillAreaRect, g_director->_wm->_colorBlack, &plotFill);
 		break;
 	case kOutlinedRoundedRectangleSprite:
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect1(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		primitives.drawRoundRect1(fillAreaRect, 12, g_director->_wm->_colorBlack, true, &plotFill);
 		break;
 	case kOutlinedOvalSprite:
 	case kOvalSprite:
-		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		primitives.drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, g_director->_wm->_colorBlack, true, &plotFill);
 		break;
 	case kLineBottomTopSprite:
 	case kLineTopBottomSprite:

@@ -176,7 +176,8 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 	Common::Rect rr(rx1, ry1, rx2, ry2);
 
 	MacPlotData pd(g, nullptr,  &wm->getPatterns(), 1, 0, 0, 1, wm->_colorWhite, true);
-	Graphics::drawFilledRect1(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
+	Primitives &primitives = wm->getDrawInvertPrimitives();
+	primitives.drawFilledRect1(rr, wm->_colorWhite, &pd);
 
 	// after drawing, we set the _scrollSize negative, to indicate no more drawing is needed
 	// if win95 mode is enabled, then we keep on drawing the scrollbar
