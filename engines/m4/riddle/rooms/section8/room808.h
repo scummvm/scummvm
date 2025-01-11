@@ -44,10 +44,12 @@ private:
 	void addMcHotspot(int32 val1);
 	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
 	void setBridgeHotspots(int val1, bool activeFl);
+	void room808_sub1();
 
 	int32 _dword1A195C_facing = 0;
 	int32 _dword1A1958 = 0;
 	int32 _dword1A1960_rand4 = 0;
+	int32 _dword1A1964_facing = 0;
 
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
@@ -68,8 +70,11 @@ private:
 	machine *_808PosMach = nullptr;
 	machine *_808RipFallShovelNearSideMach = nullptr;
 	machine *_mcTrekMach = nullptr;
-};
 
+	const char *_posMachName = nullptr;
+	int32 _posMachFrameNum = 0;
+	int32 _posMachIndex = 0;
+};
 
 } // namespace Rooms
 } // namespace Riddle

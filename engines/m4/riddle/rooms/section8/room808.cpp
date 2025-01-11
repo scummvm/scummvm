@@ -33,6 +33,11 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *SAFARI_SHADOWS_2[6] = {
+	"", "safari shadow 1", "safari shadow 2", "safari shadow 3", "safari shadow 4", "safari shadow 5"
+};
+
+
 void Room808::preload() {
 	_G(player).walker_type = WALKER_ALT;
 	_G(player).shadow_type = SHADOW_ALT;
@@ -272,7 +277,238 @@ void Room808::pre_parser() {
 }
 
 void Room808::parser() {
+	_G(player).command_ready = false;
+
+	if (_G(kernel).trigger == 747)
+		return;
+
+	if (inv_player_has(_G(player).noun) && _G(kernel).trigger == -1) {
+		_G(player).command_ready = true;
+		return;
+	}
+
+	int32 opCode = -1;
+	if (player_said_any("look", "look at", "no walk"))
+		opCode = 1;
+	else if (player_said_any("gear", "use"))
+		opCode = 0;
+	else if (player_said("take"))
+		opCode = 2;
+	else if (player_said("talk to"))
+		opCode = 3;
+	else if (player_said_any("walk to", "spleen"))
+		opCode = 4;
+	else if (player_said("go"))
+		opCode = 5;
+	else if (player_said("crank"))
+		opCode = 6;
+	else if (player_said("FARMER'S SHOVEL"))
+		opCode = 7;
+	else if (player_said("wooden post"))
+		opCode = 8;
+	else if (player_said("wooden beam"))
+		opCode = 9;
+	else if (player_said("journal"))
+		opCode = 11;
+	else if (player_said("conv808a"))
+		opCode = 10;
+
+	switch (opCode) {
+	case 0:
+		if (player_said("chain")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_808ChainMach);
+				series_play("808rp03", 256, 0, 5, 5, 0, 100, 0, 0, 0, 25);
+
+				break;
+
+			case 5:
+				_808RipFallShovelNearSideMach = series_play("808rp03", 256, 16, 10, 5, 0, 100, 0, 0, 26, -1);
+				digi_play("808_s05", 2, 255, -1, -1);
+
+				break;
+
+			case 10:
+				kernel_timing_trigger(60, 20, "gong pause");
+				digi_play("808_s05a", 2, 255, -1, -1);
+
+				break;
+
+			case 20:
+				terminateMachine(_808RipFallShovelNearSideMach);
+				series_play("808rp03", 256, 2, 30, 5, 0, 100, 0, 0, 0, -1);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				digi_play("808r19", 1, 255, -1, -1);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 10);
+				_808ChainMach = series_plain_play("808chain", 1, 0, 100, 0, 0, -1, true);
+
+				break;
+
+			default:
+				break;
+
+			}
+		} else if (player_said("wheel") && _G(flags[V100])) {
+			switch (_G(kernel).trigger) {
+			case -1: {
+				bool walkCheck = true;
+				if (getWalkPath(_G(my_walker), 185, 156)) {
+					player_update_info(_G(my_walker), &_G(player_info));
+					walkCheck = intr_PathCrossesLine(_G(player_info).x, _G(player_info).y, _G(my_walker)->walkPath, 242, 139, 295, 149);
+				}
+
+				if (walkCheck)
+					ws_turn_to_face(_G(my_walker), 8, 5);
+				else
+					ws_walk(_G(my_walker), 169, 171, nullptr, 10, 2, true);
+
+				}
+
+				break;
+
+			case 5:
+				digi_play("com077", 1, 255, -1, 997);
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_808PosMach);
+				_808PosMach = series_play("808spn01", 1281, 16, 20, 5, 0, 100, 0, 0, 0, 13);
+
+				break;
+
+			case 20:
+				kernel_timing_trigger(60, 30, nullptr);
+				break;
+
+			case 30:
+				terminateMachine(_808PosMach);
+				series_play("808spn01", 0, 2, 40, 5, 0, 100, 0, 0, 0, 13);
+				digi_play("com078", 1, 255, -1, 997);
+
+				break;
+
+			case 40:
+				player_set_commands_allowed(true);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 2);
+				_808PosMach = series_show_sprite("808pos1", 0, 32767);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said_any("wheel", "wheel ", "wheel  ", "wheel   ")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V095])) {
+					_dword1A1964_facing = 1;
+					ws_walk(_G(my_walker), 157, 166, nullptr, 5, 1, true);
+				} else {
+					_dword1A1964_facing = 2;
+					ws_walk(_G(my_walker), 169, 171, nullptr, 5, 2, true);
+				}
+
+				break;
+
+			case 5:
+				player_set_commands_allowed(false);
+				setBridgeHotspots(_G(flags[V094]), false);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_808PosMach);
+				room808_sub1();
+				_808PosMach = series_stream(_posMachName, 5, 1281, 10);
+				series_stream_break_on_frame(_808PosMach, 7, _posMachFrameNum);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_808RipFallShovelNearSideMach = series_place_sprite(SAFARI_SHADOWS_2[_G(player_info).facing], 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1282);
+
+				break;
+
+			case 7:
+				digi_play("808_s04", 2, 255, -1, -1);
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				setBridgeHotspots(_G(flags[V094]), true);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), _dword1A1964_facing);
+
+				_808PosMach = series_show(inv_object_in_scene("FARMER'S SHOVEL", 808) ? "808pos2" : "808pos1", 1281, 0, -1, -1, _posMachIndex, 100, 0, 0);
+
+				terminateMachine(_808RipFallShovelNearSideMach);
+
+				break;
+
+			default:
+				break;
+
+			}
+		} else if (player_said("crank") && inv_object_in_scene("crank", 808) && _G(flags[V100])) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				setGlobals3(_ripMedReach1HandPos2Series, 1, 17);
+				sendWSMessage_3840000(_G(my_walker), 10);
+
+				break;
+
+			case 10:
+				kernel_timing_trigger(120, 20, nullptr);
+				break;
+
+			case 20:
+				setGlobals3(_ripMedReach1HandPos2Series, 17, 1);
+				sendWSMessage_3840000(_G(my_walker), 30);
+				digi_play("808r32", 1, 255, -1, -1);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				ws_demand_facing(_G(my_walker), 10);
+
+				break;
+
+			default:
+				break;
+
+			}
+		}
+
+		break;
+
+	case 1:
+	case 2:
+	case 3:
+		break;
+
+	case 4:
+		return;
+
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	default:
+		break;
+	}
+
 	// TODO Not implemented yet
+	_G(player).command_ready = true;
 }
 
 void Room808::daemon() {
@@ -356,7 +592,6 @@ void Room808::daemon() {
 		} else {
 			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 0, 100, 0, 0);
 		}
-
 
 		break;
 
@@ -846,6 +1081,10 @@ void Room808::addMcHotspot(int32 val1) {
 	}
 
 	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, newHotspot, true);
+}
+
+void Room808::room808_sub1() {
+	// TODO Not implemented yet
 }
 
 } // namespace Rooms
