@@ -45,7 +45,7 @@ AssetHeader::AssetHeader(Chunk &chunk) {
 
 AssetHeader::~AssetHeader() {
 	delete _boundingBox;
-	delete _mouseActiveArea;
+	_mouseActiveArea.clear();
 	delete _palette;
 	delete _name;
 	delete _startPoint;
@@ -149,7 +149,11 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 	}
 
 	case kAssetHeaderMouseActiveArea: {
-		_mouseActiveArea = Datum(chunk, kDatumTypePolygon).u.polygon;
+		uint16 total_points = Datum(chunk, kDatumTypeUint16_1).u.i;
+		for (int i = 0; i < total_points; i++) {
+			Common::Point *point = Datum(chunk, kDatumTypePoint2).u.point;
+			_mouseActiveArea.push_back(point);
+		}
 		break;
 	}
 

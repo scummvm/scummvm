@@ -168,7 +168,7 @@ public:
 	ChunkReference _audioChunkReference = 0;
 	ChunkReference _animationChunkReference = 0;
 	Common::Rect *_boundingBox = nullptr;
-	Common::Array<Common::Point *> *_mouseActiveArea = nullptr;
+	Common::Array<Common::Point *> _mouseActiveArea;
 	int _zIndex = 0;
 	uint32 _assetReference = 0;
 	uint32 _startup = 0;
