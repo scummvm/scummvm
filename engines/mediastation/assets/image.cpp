@@ -19,6 +19,7 @@
  *
  */
 
+#include "mediastation/mediastation.h"
 #include "mediastation/assets/image.h"
 
 namespace MediaStation {
@@ -30,10 +31,16 @@ Image::~Image() {
 
 Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	// TODO: Add methods here.
+	case kSpatialShowMethod: {
+		assert(args.empty());
+		_isActive = true;
+		g_engine->addPlayingAsset(this);
+		return Operand();
+		break;
+	}
 
 	default: {
-		error("Got unimplemented method ID %d", methodId);
+		error("Image::callMethod(): Got unimplemented method ID %d", methodId);
 	}
 	}
 }
