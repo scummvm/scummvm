@@ -88,15 +88,11 @@ bool GotMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 Common::Array<Common::Keymap *> GotMetaEngine::initKeymaps(const char *target) const {
     Common::KeymapArray keymapArray;
-    Common::Keymap *keyMap;
-    Common::Action *act;
-
-    keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
-                                "got", _s("Game Keys"));
+    Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "got", _s("Game Keys"));
     keymapArray.push_back(keyMap);
 
     for (const Got::KeybindingRecord *r = Got::GAME_KEYS; r->_id; ++r) {
-        act = new Common::Action(r->_id, _(r->_desc));
+	    Common::Action *act = new Common::Action(r->_id, _(r->_desc));
         act->setCustomEngineActionEvent(r->_action);
         act->addDefaultInputMapping(r->_key);
         if (r->_joy)

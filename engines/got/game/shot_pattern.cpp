@@ -148,16 +148,14 @@ int shot_pattern_four(ACTOR *actr) {
 
 // Boss - snake
 int shot_pattern_five(ACTOR *actr) {
-    int num;
-
-    if (_G(rand1) < 15) {
+	if (_G(rand1) < 15) {
         if ((actr->temp1 == 0) && (actr->temp2 == 0)) {
             actr->y += 16;
             actr->shots_allowed = 3 + _G(setup).skill;
             actor_shoots(actr, 2);
-            play_sound(BOSS12, 0);
+            play_sound(BOSS12, false);
 
-            num = actr->shot_actor;
+            int num = actr->shot_actor;
             actr->shot_cnt = 50;
             _G(actor)[num].temp3 = 120;
             _G(actor)[num].temp4 = 5 + (_G(rand2) % 17);
@@ -172,9 +170,7 @@ int shot_pattern_five(ACTOR *actr) {
 
 // 4 surrounding squares
 int shot_pattern_six(ACTOR *actr) {
-    int pos;
-
-    pos = ((actr->x) / 16) + (((actr->y) / 16) * 20);
+	int pos = ((actr->x) / 16) + (((actr->y) / 16) * 20);
 
     if (_G(thor_pos) == pos - 20)
         actor_shoots(actr, 0);

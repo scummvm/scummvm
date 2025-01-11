@@ -102,7 +102,7 @@ static int boss_movement_one(ACTOR *actr) {
         _G(actor)[4].solid |= 128;
         _G(actor)[5].solid |= 128;
         _G(actor)[6].solid |= 128;
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         goto done;
     }
     if (actr->i6) {
@@ -139,7 +139,7 @@ static int boss_movement_one(ACTOR *actr) {
         actr->frame_count = LFC;
         actr->temp4 = 40;
         actr->temp3 = 0;
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         goto done1;
     }
 
@@ -364,7 +364,7 @@ new_dir:
     _G(actor)[actr->shot_actor].temp1 = g_events->getRandomNumber(90, 189);
     _G(actor)[actr->shot_actor].temp5 = 30;
     _G(actor)[actr->shot_actor].speed = 2;
-    play_sound(BOSS12, 1);
+    play_sound(BOSS12, true);
 
 new_dir1:
     actr->temp5 = _G(rand1) % 8;
@@ -395,7 +395,7 @@ static void check_boss_hit() {
 
             boss_status(_G(actor)[3].health);
             _G(actor)[3].vunerable = 50;
-            play_sound(BOSS13, 1);
+            play_sound(BOSS13, true);
 
             for (rep = 4; rep < 7; rep++) {
                 _G(actor)[rep].magic_hit = 0;
@@ -443,7 +443,7 @@ void boss_level3() {
     _G(boss_active) = 1;
     boss_status(-1);
     music_pause();
-    play_sound(BOSS11, 1);
+    play_sound(BOSS11, true);
     _G(timer_cnt) = 0;
 
     g_events->send("Game", GameMessage("PAUSE", 40));
@@ -461,16 +461,14 @@ void boss_level3() {
 }
 
 static int boss_die() {
-    int rep, n, x, y, r, x1, y1;
-
-    if (_G(boss_dead) == 1) {
-        REPEAT(4) {
-            x1 = _G(actor)[3 + rep].last_x[_G(pge)];
-            y1 = _G(actor)[3 + rep].last_y[_G(pge)];
-            x = _G(actor)[3 + rep].x;
-            y = _G(actor)[3 + rep].y;
-            n = _G(actor)[3 + rep].actor_num;
-            r = _G(actor)[3 + rep].rating;
+	if (_G(boss_dead) == 1) {
+        for(int rep = 0; rep < 4; rep++) {
+            int x1 = _G(actor)[3 + rep].last_x[_G(pge)];
+            int y1 = _G(actor)[3 + rep].last_y[_G(pge)];
+            int x = _G(actor)[3 + rep].x;
+            int y = _G(actor)[3 + rep].y;
+            int n = _G(actor)[3 + rep].actor_num;
+            int r = _G(actor)[3 + rep].rating;
 
             _G(actor)[3 + rep] = _G(explosion);
 
@@ -491,7 +489,7 @@ static int boss_die() {
             _G(actor)[3 + rep].speed_count = _G(actor)[3 + rep].speed;
         }
 
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         _G(boss_dead) = true;;
     }
 
@@ -508,13 +506,13 @@ void closing_sequence3_2() {
 }
 
 void closing_sequence3_3() {
-    int rep;
-
-    fill_health();
+	fill_health();
     fill_magic();
 
-    REPEAT(16) _G(scrn).actor_type[rep] = 0;
-    _G(boss_dead) = 0;
+    for (int rep = 0; rep < 16; rep++)
+		_G(scrn).actor_type[rep] = 0;
+	
+    _G(boss_dead) = false;
     _G(setup).boss_dead[2] = 1;
     _G(game_over) = 1;
     _G(boss_active) = 0;
@@ -531,9 +529,7 @@ void closing_sequence3_3() {
 }
 
 void ending_screen() {
-    int i;
-
-    for (i = 3; i < MAX_ACTORS; i++)
+	for (int i = 3; i < MAX_ACTORS; i++)
         _G(actor)[i].move = 1;
     music_play(6, 1);
     _G(timer_cnt) = 0;
@@ -555,24 +551,22 @@ void ending_screen() {
 
 // Explode
 int endgame_one() {
-    int x, y, r;
-
-    if (_G(actor)[34].i2) {
+	if (_G(actor)[34].i2) {
         _G(actor)[34].i2--;
         return 0;
     }
 
     _G(actor)[34].i2 = 6;
-    play_sound(EXPLODE, 1);
+    play_sound(EXPLODE, true);
 
-    r = _G(rand1) % 32;
+    int r = _G(rand1) % 32;
     while (expf[r / 8][r % 8]) {
         r++;
         if (r > 31) r = 0;
     }
     expf[r / 8][r % 8] = 1;
-    x = (EXPLOSION[r / 8][r % 8] % 20) * 16;
-    y = (EXPLOSION[r / 8][r % 8] / 20) * 16;
+    int x = (EXPLOSION[r / 8][r % 8] % 20) * 16;
+    int y = (EXPLOSION[r / 8][r % 8] / 20) * 16;
     _G(actor)[34].x = x;
     _G(actor)[34].y = y;
     _G(actor)[34].used = 1;
@@ -591,9 +585,7 @@ int endgame_one() {
 
 // Explode
 int endgame_movement() {
-    int x, y, r;
-
-    if (!_G(endgame))
+	if (!_G(endgame))
         return 0;
     if (expcnt > 3) {
         endgame_one();
@@ -604,16 +596,16 @@ int endgame_movement() {
         return 0;
     }
     _G(actor)[34].i2 = 6;
-    play_sound(EXPLODE, 1);
+    play_sound(EXPLODE, true);
 
-    r = _G(rand1) % 8;
+    int r = _G(rand1) % 8;
     while (expf[_G(exprow)][r]) {
         r++;
         if (r > 7) r = 0;
     }
     expf[_G(exprow)][r] = 1;
-    x = (EXPLOSION[_G(exprow)][r] % 20) * 16;
-    y = (EXPLOSION[_G(exprow)][r] / 20) * 16;
+    int x = (EXPLOSION[_G(exprow)][r] % 20) * 16;
+    int y = (EXPLOSION[_G(exprow)][r] / 20) * 16;
     _G(actor)[34].x = x;
     _G(actor)[34].y = y;
     _G(actor)[34].used = 1;

@@ -146,15 +146,13 @@ void Sound::music_play(const char *name, bool override) {
         int hdrCount = file.readUint16LE();
         file.skip((hdrCount - 1) * 2);
 
-        int pause, duration, freq;
-
         while (!file.eos()) {
-            pause = file.readByte();
+            int pause = file.readByte();
             if (pause & 0x80)
                 pause = ((pause & 0x7f) << 8) | file.readByte();
 
-            freq = file.readByte();
-            duration = file.readByte();
+            int freq = file.readByte();
+            int duration = file.readByte();
             if (freq == 0 && duration == 0) {
                 debug(1, "End of song");
                 break;

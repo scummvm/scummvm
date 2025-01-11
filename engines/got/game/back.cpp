@@ -167,12 +167,12 @@ void show_level_done() {
             if (!_G(setup).boss_dead[2]) {
                 if (!_G(auto_load))
                     boss_level3();
-                f = 0;
+                f = false;
             }
         }
         if (_G(current_level) == ENDING_SCREEN) {
             ending_screen();
-            f = 0;
+            f = false;
         }
     }
 
@@ -204,12 +204,12 @@ void odin_speaks(int index, int item, const char *endMessage) {
 
 
 int switch_icons() {
-    int x, y, ix, iy;
+    int ix, iy;
 
-    play_sound(WOOP, 0);
+    play_sound(WOOP, false);
 
-    for (y = 0; y < 12; y++) {
-        for (x = 0; x < 20; x++) {
+    for (int y = 0; y < 12; y++) {
+        for (int x = 0; x < 20; x++) {
             ix = x * 16;
             iy = y * 16;
             if (_G(scrn).icon[y][x] == 93) {
@@ -233,7 +233,7 @@ int switch_icons() {
 int rotate_arrows() {
     int x, y;
 
-    play_sound(WOOP, 0);
+    play_sound(WOOP, false);
 
     for (y = 0; y < 12; y++) {
         for (x = 0; x < 20; x++) {

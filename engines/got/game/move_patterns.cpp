@@ -316,7 +316,9 @@ int check_move0(int x, int y, ACTOR *actr) {
                 _G(thor_special_flag) = 0;
                 thor_damaged(act);
                 if (act->solid < 2) {
-                    if (!act->vunerable && (!(act->type & 1))) play_sound(PUNCH1, 0);
+                    if (!act->vunerable && (!(act->type & 1)))
+						play_sound(PUNCH1, false);
+                	
                     if (!_G(hammer)->used && _G(key_flag)[key_fire])
                         actor_damaged(act, _G(hammer)->strength);
                     else
@@ -356,7 +358,9 @@ int check_move1(int x, int y, ACTOR *actr) {
     icn3 = _G(scrn).icon[y1][x2];
     icn4 = _G(scrn).icon[y2][x2];
     if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) {
-        if (actr->actor_num == 1 && actr->move == 2) play_sound(CLANG, 0);
+        if (actr->actor_num == 1 && actr->move == 2)
+			play_sound(CLANG, false);
+    	
         return 0;
     }
 
@@ -642,7 +646,9 @@ int movement_zero(ACTOR *actr) {
     if (actr->move_counter) actr->move_counter--;
 
     if (_G(slipping)) {
-        if (_G(slip_cnt) == 8) play_sound(FALL, 1);
+        if (_G(slip_cnt) == 8)
+			play_sound(FALL, true);
+    	
         y += 2;
         _G(slip_cnt)--;
         if (!_G(slip_cnt))
@@ -879,13 +885,13 @@ int special_movement_two(ACTOR *actr) {
     }
     if (!actr->func_pass) {
         if (_G(thor)->health < 150) {
-            if (!sound_playing()) play_sound(ANGEL, 0);
+            if (!sound_playing()) play_sound(ANGEL, false);
             _G(thor)->health += 1;
             display_health();
         }
     } else {
         if (_G(thor_info).magic < 150) {
-            if (!sound_playing()) play_sound(ANGEL, 0);
+            if (!sound_playing()) play_sound(ANGEL, false);
             _G(thor_info).magic += 1;
             display_magic();
         }
@@ -1250,15 +1256,17 @@ int movement_six(ACTOR *actr) {
         actr->next++;
         if (actr->next > 2) {
             actr->next = 0;
-            if (_G(boss_dead)) play_sound(EXPLODE, 0);
+            if (_G(boss_dead))
+				play_sound(EXPLODE, false);
         }
         actr->num_shots--;
     } else {
         actr->dead = 2;
         actr->used = 0;
-        if (!_G(boss_dead) && !_G(endgame))
+		if (!_G(boss_dead) && !_G(endgame)) {
             if (actr->type == 2)
                 drop_object(actr);
+		}
 
     }
 

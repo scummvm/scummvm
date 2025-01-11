@@ -847,7 +847,7 @@ int Scripts::cmd_sound() {
 
     _buffPtr++;
     if (_lValue < 1 || _lValue>16) return 6;
-    play_sound((int)_lValue - 1, 1);
+    play_sound((int)_lValue - 1, true);
     return 0;
 }
 
@@ -991,7 +991,7 @@ int Scripts::cmd_random() {
 }
 
 void Scripts::scr_func1() {
-    play_sound(FALL, 1);
+    play_sound(FALL, true);
 
     _G(new_level) = 109;
     _G(new_level_tile) = 215;
@@ -1021,18 +1021,18 @@ void Scripts::scr_func3() {
     x = p % 20;
 
     if (y < 0 || x < 0 || y>11 || x>19) {
-        play_sound(BRAAPP, 1);
+        play_sound(BRAAPP, true);
         _G(key_flag)[key_magic] = false;
         return;
     }
     if (_G(scrn).icon[y][x] < 174 || _G(scrn).icon[y][x]>178) {
-        play_sound(BRAAPP, 1);
+        play_sound(BRAAPP, true);
         _G(key_flag)[key_magic] = false;
         return;
     }
 
     _numVar[0] = 1;
-    play_sound(WOOP, 1);
+    play_sound(WOOP, true);
     if (_G(current_level) == 106 && p == 69) {
         place_tile(x, y, 220);
         _G(key_flag)[key_magic] = false;

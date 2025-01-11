@@ -112,7 +112,7 @@ int special_tile_thor(int x, int y, int icon) {
                 actor_visible(5);
                 Common::fill(_G(scrn).actor_invis, _G(scrn).actor_invis + 16, 0);
                 _G(thunder_flag) = 60;
-                play_sound(THUNDER, 1);
+                play_sound(THUNDER, true);
                 _G(setup).f22 = 1;
             }
         } else {
@@ -132,7 +132,7 @@ int special_tile_thor(int x, int y, int icon) {
             cy = (_G(thor_real_y1) + 8) / 16;
             if (_G(scrn).icon[cy][cx] == icon) {
                 _G(thor)->vunerable = STAMINA;
-                play_sound(WOOP, 0);
+                play_sound(WOOP, false);
 
                 int nt = _G(scrn).new_level_loc[icon - 214];
                 int display_page = _G(pge);
@@ -169,7 +169,9 @@ int special_tile_thor(int x, int y, int icon) {
         cy = (_G(thor_real_y1) + 8) / 16;
         if (_G(scrn).icon[cy][cx] == icon) {
             _G(thor)->vunerable = STAMINA;
-            if (icon < 224 && icon>219) play_sound(FALL, 0);
+            if (icon < 224 && icon>219)
+				play_sound(FALL, false);
+        	
             _G(new_level) = _G(scrn).new_level[icon - 220 + (f * 6)];
             _G(warp_scroll) = 0;
             if (_G(new_level) > 119) {
@@ -236,7 +238,7 @@ int special_tile(ACTOR *actr, int x, int y, int icon) {
 }
 
 void erase_door(int x, int y) {
-    play_sound(DOOR, 0);
+    play_sound(DOOR, false);
     _G(scrn).icon[y][x] = _G(scrn).bg_color;
 }
 
