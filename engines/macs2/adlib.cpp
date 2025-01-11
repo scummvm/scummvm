@@ -615,7 +615,7 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 			}
 			// l0017_2A01:
 
-			bp4 = gArray11F[bp6] << 0x8 + gArray9F[bp6];
+			bp4 = (gArray11F[bp6] << 0x8) + gArray9F[bp6];
 			// Multiplication using 00CDh:0C97h
 			// eax:edx = eax:edx * ebx:ecx
 			// TODO: Check actual possible range of result
@@ -632,7 +632,6 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 	// TODO: Original code is making sure that only 8 bit are pushed
 	// for the second argument using AND FFh - check if ranges matter here
 	Func2792(bppA + 0xA0, bp2);
-	// TODO: Continue here
 	Func2792(bppA + 0xB0, (bp2 >> 0x8) | 0x20);
 }
 
@@ -981,18 +980,16 @@ void Adlib::OnTimer() {
 						push	2h
 						call	far 0017h:19BEh
 						*/
-						uint16 r19BE = Func19BE(2);
+						// TODO: Need to start applying these
+						Common::MemorySeekableReadWriteStream streamBP0E(nullptr, 0);
+						Common::MemorySeekableReadWriteStream r19BE = Func19BE_2(streamBP0E, 2);
 						// TODO: For some reason, the argument for 2729 is pushed before
 						// the call to 19BE above
 						// 						
-						// Func2792(bp8 + 0x40);
+						Func2792(bp8 + 0x40, r19BE.readByte());
 						//    TODO: Continue from here
 						/*
-						mov	di,ax
-						mov	es,dx
-						mov	al,es:[di]
-						push	ax
-						call	far 0017h:2792h
+						
 						mov	ax,[bp-8h]
 						add	ax,60h
 						push	ax
@@ -1059,6 +1056,7 @@ uint16 Adlib::Func19BE_TODO(uint8 offset) {
 }
 
 Common::MemorySeekableReadWriteStream Adlib::Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta) {
+	// TODO: If this will work depends on how the constructor works here
 	Common::MemorySeekableReadWriteStream result = inStream;
 	uint16 pos = inStream.pos();
 	if (seekDelta > 0xF8) {
