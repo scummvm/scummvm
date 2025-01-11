@@ -122,6 +122,8 @@ void Sprite::timePlay() {
 	g_engine->addPlayingAsset(this);
 
 	if (_header->_frameRate == 0) {
+		// It seems that the frame rate is 10 if it's not set in the asset
+		// header, or even if it's set to zero.
 		_header->_frameRate = 10;
 	}
 
