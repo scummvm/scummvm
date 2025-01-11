@@ -30,7 +30,7 @@ namespace MediaStation {
 
 class Hotspot : public Asset {
 public:
-	Hotspot(AssetHeader *header) : Asset(header) {};
+	Hotspot(AssetHeader *header);
 	virtual ~Hotspot() override = default;
 
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;

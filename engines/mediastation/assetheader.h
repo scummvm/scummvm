@@ -69,6 +69,11 @@ enum AssetType {
 	kAssetTypeFunction = 0x0069 // FUN
 };
 
+enum AssetStartupType {
+	kAssetStartupInactive = 0,
+	kAssetStartupActive = 1
+};
+
 enum AssetHeaderSectionType {
 	kAssetHeaderEmptySection = 0x0000,
 	kAssetHeaderSoundEncoding1 = 0x0001,

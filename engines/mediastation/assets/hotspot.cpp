@@ -23,6 +23,12 @@
 
 namespace MediaStation {
 
+Hotspot::Hotspot(AssetHeader *header) : Asset(header) {
+	if (header->_startup == kAssetStartupActive) {
+		_isActive = true;
+	}
+}
+
 Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
 	case kMouseActivateMethod: {
