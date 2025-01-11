@@ -174,17 +174,16 @@ void thor_damaged(ACTOR *actr) {
 }
 
 void actor_destroyed(ACTOR *actr) {
-    int x, y, x1, y1, r, n, t;
-    int pge = _G(pge);
-
     if (actr->actor_num > 2) {
-        x = actr->last_x[pge ^ 1];
-        y = actr->last_y[pge ^ 1];
-        x1 = actr->last_x[pge];
-        y1 = actr->last_y[pge];
-        r = actr->rating;
-        n = actr->actor_num;
-        t = actr->type;
+		int pge = _G(pge);
+
+		int x = actr->last_x[pge ^ 1];
+        int y = actr->last_y[pge ^ 1];
+        int x1 = actr->last_x[pge];
+        int y1 = actr->last_y[pge];
+        int r = actr->rating;
+        int n = actr->actor_num;
+        int t = actr->type;
 
         if (actr->func_num == 255)
             actr->copyFixedAndPics(_G(explosion));
@@ -211,27 +210,38 @@ void actor_destroyed(ACTOR *actr) {
 }
 
 int _actor_shoots(ACTOR *actr, int dir) {
-    int t, i, cx, cy;
+    int cx, cy;
     ACTOR *act;
 
-    t = actr->shot_type - 1;
-    for (i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
+    int t = actr->shot_type - 1;
+    for (int i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
         if ((!_G(actor)[i].used) && (!_G(actor)[i].dead)) {
             act = &_G(actor)[i];
             *act = _G(shot)[t];
 
-            if (actr->size_y < act->size_y) cy = actr->y - ((act->size_y - actr->size_y) / 2);
-            else cy = actr->y + ((actr->size_y - act->size_y) / 2);
-            if (actr->size_x < act->size_x) cx = actr->x - ((act->size_x - actr->size_x) / 2);
-            else cx = actr->x + ((actr->size_x - act->size_x) / 2);
-            if (cy > 174) cy = 174;
-            if (cx > 304) cx = 304;
+            if (actr->size_y < act->size_y)
+				cy = actr->y - ((act->size_y - actr->size_y) / 2);
+            else
+				cy = actr->y + ((actr->size_y - act->size_y) / 2);
+        	
+            if (actr->size_x < act->size_x)
+				cx = actr->x - ((act->size_x - actr->size_x) / 2);
+            else
+				cx = actr->x + ((actr->size_x - act->size_x) / 2);
+        	
+            if (cy > 174)
+				cy = 174;
+        	
+            if (cx > 304)
+				cx = 304;
+        	
             act->x = cx;
             act->y = cy;
             act->last_dir = dir;
             act->next = 0;
             act->dir = dir;
-            if (act->directions == 1) act->dir = 0;
+            if (act->directions == 1)
+				act->dir = 0;
             else if (act->directions == 4 && act->frames == 1) {
                 act->next = dir;
                 act->dir = 0;
@@ -263,35 +273,44 @@ void actor_always_shoots(ACTOR *actr, int dir) {
 }
 
 int actor_shoots(ACTOR *actr, int dir) {
-    int i, cx, cy, tx, ty;
-    int icn;
+    int i;
 
-    cx = (actr->x + (actr->size_x / 2)) >> 4;
-    cy = ((actr->y + actr->size_y) - 2) >> 4;
+    int cx = (actr->x + (actr->size_x / 2)) >> 4;
+    int cy = ((actr->y + actr->size_y) - 2) >> 4;
 
-    tx = _G(thor)->center_x;
-    ty = _G(thor)->center_y;
+    int tx = _G(thor)->center_x;
+    int ty = _G(thor)->center_y;
 
-    icn = 140;
-    if (_G(shot)[actr->shot_type - 1].flying == 1) icn = 80;
+    int icn = 140;
+	
+    if (_G(shot)[actr->shot_type - 1].flying == 1)
+		icn = 80;
 
     switch (dir) {
     case 0:
-        for (i = ty + 1; i <= cy; i++)
-            if (_G(scrn).icon[i][cx] < icn) return 0;
-        break;
+		for (i = ty + 1; i <= cy; i++) {
+            if (_G(scrn).icon[i][cx] < icn)
+				return 0;
+		}
+		break;
     case 1:
-        for (i = cy; i <= ty; i++)
-            if (_G(scrn).icon[i][cx] < icn) return 0;
-        break;
+		for (i = cy; i <= ty; i++) {
+            if (_G(scrn).icon[i][cx] < icn)
+				return 0;
+		}
+		break;
     case 2:
-        for (i = tx; i < cx; i++)
-            if (_G(scrn).icon[cy][i] < icn) return 0;
-        break;
+		for (i = tx; i < cx; i++) {
+            if (_G(scrn).icon[cy][i] < icn)
+				return 0;
+		}
+		break;
     case 3:
-        for (i = cx; i < tx; i++)
-            if (_G(scrn).icon[cy][i] < icn) return 0;
-        break;
+		for (i = cx; i < tx; i++) {
+            if (_G(scrn).icon[cy][i] < icn)
+				return 0;
+		}
+		break;
     }
     return _actor_shoots(actr, dir);
 }
@@ -299,9 +318,12 @@ int actor_shoots(ACTOR *actr, int dir) {
 void move_actor(ACTOR *actr) {
     int i;
 
-    if (actr->vunerable != 0) actr->vunerable--;
-    if (actr->shot_cnt != 0) actr->shot_cnt--;
-    if (actr->show != 0) actr->show--;
+    if (actr->vunerable != 0)
+		actr->vunerable--;
+    if (actr->shot_cnt != 0)
+		actr->shot_cnt--;
+    if (actr->show != 0)
+		actr->show--;
 
     if (!actr->shot_cnt && _G(shot_ok)) {
         if (actr->shots_allowed) {
@@ -313,23 +335,30 @@ void move_actor(ACTOR *actr) {
 
     actr->speed_count--;
     if (actr->speed_count <= 0) {
-        if (!actr->move_counter) actr->speed_count = actr->speed;
-        else actr->speed_count = (actr->speed << 1);
-        if (actr->type == 3) i = shot_movement_func[actr->move](actr);
-        else i = movement_func[actr->move](actr);
-        if (actr->directions == 2) i &= 1;
-        if (i != actr->dir) actr->dir = i;
+        if (!actr->move_counter)
+			actr->speed_count = actr->speed;
+        else
+			actr->speed_count = (actr->speed << 1);
+        if (actr->type == 3)
+			i = shot_movement_func[actr->move](actr);
+        else
+			i = movement_func[actr->move](actr);
+        if (actr->directions == 2)
+			i &= 1;
+        if (i != actr->dir)
+			actr->dir = i;
 
         if (actr->move == 0 && _G(current_level) != _G(new_level) && _G(shield_on)) {
             _G(actor)[2].x = actr->x - 2;
-            if (_G(actor)[2].x < 0) _G(actor)[2].x = 0;
+            if (_G(actor)[2].x < 0)
+				_G(actor)[2].x = 0;
             _G(actor)[2].y = actr->y;
             _G(actor)[2].last_x[0] = _G(actor)[2].x;
             _G(actor)[2].last_x[1] = _G(actor)[2].x;
             _G(actor)[2].last_y[0] = _G(actor)[2].y;
             _G(actor)[2].last_y[1] = _G(actor)[2].y;
         }
-    } else i = actr->dir;
+    }
 
     actr->x &= 0xfffe;
 }

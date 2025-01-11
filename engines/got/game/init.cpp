@@ -116,13 +116,7 @@ void initialize_game() {
     _G(startup) = false;
 }
 
-void deinitialize_game() {
-}
-
 int setup_boss(int num) {
-	Common::String ress, prefix;
-    Common::File f;
-
     if (_G(boss_loaded) == num)
         return 1;
 
@@ -135,7 +129,7 @@ int setup_boss(int num) {
         }
     }
 
-    ress = Common::String::format("BOSSV%d1", num);
+    Common::String ress = Common::String::format("BOSSV%d1", num);
     _G(boss_sound)[0] = (byte *)res_falloc_read(ress);
     if (!_G(boss_sound)[0]) return 0;
     _G(dig_sound)[NUM_SOUNDS - 3] = _G(boss_sound)[0];
@@ -150,7 +144,7 @@ int setup_boss(int num) {
     if (!_G(boss_sound)[2]) return 0;
     _G(dig_sound)[NUM_SOUNDS - 1] = _G(boss_sound)[2];
 
-    prefix = (num == 2) ? "BOSSP1" : Common::String::format("BOSSP%d", num);
+    Common::String prefix = (num == 2) ? "BOSSP1" : Common::String::format("BOSSP%d", num);
     ress = prefix + "1";
     _G(boss_pcsound)[0] = (byte *)res_falloc_read(ress);
     if (!_G(boss_pcsound)[0]) return 0;
@@ -159,7 +153,8 @@ int setup_boss(int num) {
     _G(pc_sound)[NUM_SOUNDS - 3][0] = 0;
     _G(pc_sound)[NUM_SOUNDS - 3][1] = 0;
 
-    if (!f.open(Common::Path(ress)))
+	Common::File f;
+	if (!f.open(Common::Path(ress)))
         return 0;
     _G(pcsound_length)[NUM_SOUNDS - 3] = f.size();
     f.close();

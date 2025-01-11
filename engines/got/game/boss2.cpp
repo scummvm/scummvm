@@ -23,7 +23,6 @@
 #include "got/game/back.h"
 #include "got/game/init.h"
 #include "got/game/move.h"
-#include "got/game/move_patterns.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
 #include "got/gfx/panel.h"
@@ -53,9 +52,7 @@ static int boss2_die();
 static void boss_set(int d, int x, int y);
 
 int boss2_movement(ACTOR *actr) {
-    int d, f, x;
-
-    switch (_G(setup).skill) {
+	switch (_G(setup).skill) {
     case 0:
         num_skulls = 3;
         num_spikes = 5;
@@ -73,39 +70,54 @@ int boss2_movement(ACTOR *actr) {
         return boss2_die();
 
     if (actr->i1) {
-        if (actr->i1 == 1) return boss2a_movement(actr);
-        else return boss2b_movement(actr);
+        if (actr->i1 == 1)
+			return boss2a_movement(actr);
+
+		return boss2b_movement(actr);
     }
-    d = actr->last_dir;
+	
+    int d = actr->last_dir;
+    int x = actr->x;
+	
+    if (actr->temp6)
+		actr->temp6--;
 
-    x = actr->x;
+	if (!actr->temp6) {
+		bool f = false;
+		drop_flag = false;
+		
+        if (actr->temp5)
+			actr->temp5--;
 
-    f = 0;
-    if (actr->temp6) actr->temp6--;
-    if (!actr->temp6) {
-        drop_flag = false;
-        if (actr->temp5) actr->temp5--;
-        if (!actr->temp5) f = 1;
-        else {
+		if (!actr->temp5)
+			f = true;
+		else {
             if (d == 2) {
-                if (x > 18) actr->x -= 2;
-                else f = 1;
+                if (x > 18)
+					actr->x -= 2;
+                else
+					f = true;
             } else if (d == 3) {
-                if (x < 272) actr->x += 2;
-                else f = 1;
+                if (x < 272)
+					actr->x += 2;
+                else
+					f = true;
             }
         }
         if (f) {
             actr->temp5 = _G(rand1) + 60;
-            if (d == 2) d = 3;
-            else d = 2;
+            if (d == 2)
+				d = 3;
+            else
+				d = 2;
         }
     }
 
     actr->frame_count--;
     if (actr->frame_count <= 0) {
         actr->next++;
-        if (actr->next > 2) actr->next = 0;
+        if (actr->next > 2)
+			actr->next = 0;
         actr->frame_count = actr->frame_speed;
     }
     x = actr->x;
@@ -126,7 +138,9 @@ int boss2_movement(ACTOR *actr) {
 
     boss_set(d, x, actr->y);
 
-    if (actr->directions == 1) return 0;
+    if (actr->directions == 1)
+		return 0;
+
     return d;
 }
 
@@ -147,10 +161,10 @@ static void boss_set(int d, int x, int y) {
 }
 
 void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
-    int rep;
-
     if ((!_G(actor)[3].vunerable)) {
-        actor_damaged(&_G(actor)[3], _G(hammer)->strength);
+		int rep;
+
+		actor_damaged(&_G(actor)[3], _G(hammer)->strength);
         _G(actor)[3].health -= 10;
         if (_G(actor)[3].health == 50) {
             play_sound(BOSS12, 1);
@@ -174,11 +188,12 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
             _G(actor)[rep].speed_count = 50;
         }
         if (_G(actor)[3].health == 0) {
-            _G(boss_dead) = 1;
-            for (rep = 7; rep < MAX_ACTORS; rep++)
+            _G(boss_dead) = true;
+			for (rep = 7; rep < MAX_ACTORS; rep++) {
                 if (_G(actor)[rep].used)
                     actor_destroyed(&_G(actor)[rep]);
-        }
+			}
+		}
     }
 }
 
@@ -198,18 +213,16 @@ void boss_level2() {
 }
 
 static int boss2_die() {
-    int n, x, y, r, x1, y1;
-
-    _G(hourglass_flag) = 0;
+	_G(hourglass_flag) = 0;
     _G(thunder_flag) = 0;
-    if (_G(boss_dead) == 1) {
+    if (_G(boss_dead)) {
         for (int rep = 0; rep < 4; rep++) {
-            x1 = _G(actor)[3 + rep].last_x[_G(pge)];
-            y1 = _G(actor)[3 + rep].last_y[_G(pge)];
-            x = _G(actor)[3 + rep].x;
-            y = _G(actor)[3 + rep].y;
-            n = _G(actor)[3 + rep].actor_num;
-            r = _G(actor)[3 + rep].rating;
+            int x1 = _G(actor)[3 + rep].last_x[_G(pge)];
+            int y1 = _G(actor)[3 + rep].last_y[_G(pge)];
+            int x = _G(actor)[3 + rep].x;
+            int y = _G(actor)[3 + rep].y;
+            int n = _G(actor)[3 + rep].actor_num;
+            int r = _G(actor)[3 + rep].rating;
 
             _G(actor)[3 + rep] = _G(explosion);
 
@@ -239,29 +252,29 @@ static int boss2_die() {
 
 // Boss - skull (explode)
 static int boss2a_movement(ACTOR *actr) {
-    int an, x, y, r;
-
-    next_frame(actr);
+	next_frame(actr);
     _G(actor)[4].next = actr->next;
     _G(actor)[5].next = actr->next;
     _G(actor)[6].next = actr->next;
     actr->vunerable = 20;
-    if (actr->num_shots) return 0;
-    if (_G(actor)[5].num_shots) return 0;
+    if (actr->num_shots)
+		return 0;
+    if (_G(actor)[5].num_shots)
+		return 0;
 
     play_sound(EXPLODE, true);
     actor_always_shoots(&_G(actor)[5], 0);
-    an = _G(actor)[5].shot_actor;
+    int an = _G(actor)[5].shot_actor;
     _G(actor)[an].move = 9;
 
-    r = _G(rand1) % 60;
+    int r = _G(rand1) % 60;
     while (expf[r]) {
         r++;
         if (r > 59) r = 0;
     }
     expf[r] = 1;
-    x = (EXPLOSION[r] % 20) * 16;
-    y = (EXPLOSION[r] / 20) * 16;
+    int x = (EXPLOSION[r] % 20) * 16;
+    int y = (EXPLOSION[r] / 20) * 16;
     _G(actor)[an].x = x;
     _G(actor)[an].y = y;
 
@@ -279,17 +292,17 @@ static int boss2a_movement(ACTOR *actr) {
 
 // Boss - skull - shake
 static int boss2b_movement(ACTOR *actr) {
-    int rep, an, hx, hy, d;
+    int rep, an, hx;
 
     if (_G(hammer)->used && _G(hammer)->move != 5) {
         hx = _G(hammer)->x;
-        hy = _G(hammer)->y;
+        int hy = _G(hammer)->y;
         for (rep = 7; rep < 15; rep++) {
             if (!_G(actor)[rep].used) continue;
             if (overlap(hx + 1, hy + 1, hx + 10, hy + 10, _G(actor)[rep].x, _G(actor)[rep].y,
                         _G(actor)[rep].x + _G(actor)[rep].size_x - 1, _G(actor)[rep].y + _G(actor)[rep].size_y - 1)) {
                 _G(hammer)->move = 5;
-                d = reverse_direction(_G(hammer));
+                int d = reverse_direction(_G(hammer));
                 _G(hammer)->dir = d;
                 break;
             }
@@ -322,7 +335,6 @@ static int boss2b_movement(ACTOR *actr) {
         actr->i4 = 50;
         play_sound(EXPLODE, true);
         actr->i2 = 0;
-        hx = _G(thor)->x;
 
         Common::fill(su, su + 18, 0);
         actor_always_shoots(&_G(actor)[4], 1);
