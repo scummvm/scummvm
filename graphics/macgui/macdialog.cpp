@@ -99,8 +99,10 @@ const Graphics::Font *MacDialog::getDialogFont() {
 }
 
 void MacDialog::paint() {
+	Primitives &primitives = _wm->getDrawPrimitives();
+
 	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
-	drawFilledRect1(_bbox, kColorWhite, _wm->getDrawPixel(), &pd);
+	primitives.drawFilledRect1(_bbox, kColorWhite, &pd);
 	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
@@ -121,7 +123,7 @@ void MacDialog::paint() {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 							button->bounds.right - 5, button->bounds.bottom - 5);
 
-			drawFilledRect1(bb, kColorBlack, _wm->getDrawPixel(), &pd);
+			primitives.drawFilledRect1(bb, kColorBlack, &pd);
 
 			color = kColorWhite;
 		}
@@ -141,11 +143,13 @@ void MacDialog::paint() {
 }
 
 void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
+	Primitives &primitives = _wm->getDrawPrimitives();
+
 	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0) {
 			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);
-			drawRect1(r, kColorBlack, _wm->getDrawPixel(), &pd);
+			primitives.drawRect1(r, kColorBlack, &pd);
 		}
 }
 
