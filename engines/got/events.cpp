@@ -25,7 +25,6 @@
 #include "got/got.h"
 #include "got/gfx/palette.h"
 #include "got/views/views.h"
-#include "got/views/game.h"
 
 namespace Got {
 
@@ -141,13 +140,13 @@ void Events::nextFrame() {
 #define LOOP_THRESHOLD 5
 
 void Events::rotatePalette() {
-    const uint16 *entry;
     ++_palLoop;
 
     if (_palLoop > LOOP_THRESHOLD) {
         _palLoop = 0;
     } else {
-        switch (_palLoop) {
+		const uint16 *entry;
+		switch (_palLoop) {
         case LOOP_THRESHOLD - 4:
             entry = &PAL_CLR2[_palCnt2];
             break;
@@ -476,9 +475,9 @@ UIElement *UIElement::findView(const Common::String &name) {
     if (_name.equalsIgnoreCase(name))
         return this;
 
-    UIElement *result;
     for (size_t i = 0; i < _children.size(); ++i) {
-        if ((result = _children[i]->findView(name)) != nullptr)
+		UIElement *result = _children[i]->findView(name);
+		if (result != nullptr)
             return result;
     }
 

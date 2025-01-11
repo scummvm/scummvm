@@ -115,7 +115,7 @@ int boss2_movement(ACTOR *actr) {
             _G(actor)[3].temp6 = 40;
 
             actor_always_shoots(actr, 1);
-            play_sound(FALL, 0);
+            play_sound(FALL, false);
             _G(actor)[actr->shot_actor].x = actr->x + 12;
             _G(actor)[actr->shot_actor].y = actr->y + 32;
             _G(actor)[actr->shot_actor].temp2 = 0;
@@ -164,7 +164,7 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
                 if (_G(actor)[rep].used)
                     actor_destroyed(&_G(actor)[rep]);
             _G(actor)[3].num_shots = 0;
-        } else play_sound(BOSS13, 1);
+        } else play_sound(BOSS13, true);
         _G(actor)[3].speed_count = 75;
         boss_status(_G(actor)[3].health);
         _G(actor)[3].vunerable = 75;
@@ -187,7 +187,7 @@ void boss_level2() {
     _G(boss_active) = 1;
     boss_status(-1);
     music_pause();
-    play_sound(BOSS11, 1);
+    play_sound(BOSS11, true);
     _G(timer_cnt) = 0;
 
     drop_flag = false;
@@ -230,7 +230,7 @@ static int boss2_die() {
             _G(actor)[3 + rep].speed_count = _G(actor)[3 + rep].speed;
         }
 
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         _G(boss_dead) = true;;
     }
 
@@ -249,7 +249,7 @@ static int boss2a_movement(ACTOR *actr) {
     if (actr->num_shots) return 0;
     if (_G(actor)[5].num_shots) return 0;
 
-    play_sound(EXPLODE, 1);
+    play_sound(EXPLODE, true);
     actor_always_shoots(&_G(actor)[5], 0);
     an = _G(actor)[5].shot_actor;
     _G(actor)[an].move = 9;
@@ -320,7 +320,7 @@ static int boss2b_movement(ACTOR *actr) {
     if (actr->x < 20 || actr->x>270) {
         _G(thunder_flag) = 100;
         actr->i4 = 50;
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         actr->i2 = 0;
         hx = _G(thor)->x;
 
@@ -386,7 +386,7 @@ void closing_sequence2_4() {
     //	_G(game_is_over) = 1;
     show_level(BOSS_LEVEL2);
 
-    play_sound(ANGEL, 1);
+    play_sound(ANGEL, true);
     place_tile(18, 10, 152);
     place_tile(19, 10, 202);
     actor_visible(1);

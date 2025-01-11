@@ -86,12 +86,12 @@ void pick_up_object(int p) {
             cannot_carry_more();
             return;
         }
-        play_sound(GULP, 0);
+        play_sound(GULP, false);
         s = 1;
         add_health(5);
         break;
     case 6:           // Bad apple
-        play_sound(OW, 0);
+        play_sound(OW, false);
         s = 1;
         add_health(-10);
         break;
@@ -173,7 +173,7 @@ void pick_up_object(int p) {
     r = 1;
     s = 0;
     if (!s)
-        play_sound(YAH, 0);
+        play_sound(YAH, false);
     _G(object_map)[p] = 0;
 
     if (r) {
@@ -233,13 +233,13 @@ int use_apple(int flag) {
             _G(magic_cnt) = 0;
             add_magic(-2);
             add_health(1);
-            play_sound(ANGEL, 0);
+            play_sound(ANGEL, false);
         } else if (_G(magic_cnt) > 8) {
             _G(magic_cnt) = 0;
             add_magic(-2);
             add_health(1);
             if (!sound_playing())
-                play_sound(ANGEL, 0);
+                play_sound(ANGEL, false);
         }
         _G(apple_flag) = 1;
         return 1;
@@ -257,7 +257,7 @@ int use_thunder(int flag) {
     if (flag && _G(thor_info).magic > 29) {
         if (!_G(thunder_flag)) {
             add_magic(-30);
-            play_sound(THUNDER, 0);
+            play_sound(THUNDER, false);
             _G(thunder_flag) = 60;
         }
         return 1;
@@ -279,7 +279,7 @@ int use_hourglass(int flag) {
                 _G(hourglass_flag) = 0;
                 music_resume();
             }
-            play_sound(WOOP, 1);
+            play_sound(WOOP, true);
         }
         return 1;
     }
@@ -289,7 +289,7 @@ int use_hourglass(int flag) {
             _G(magic_cnt) = 0;
             add_magic(-30);
             music_pause();
-            play_sound(WOOP, 1);
+            play_sound(WOOP, true);
             _G(hourglass_flag) = 1;
             return 1;
         }
@@ -393,7 +393,7 @@ int use_tornado(int flag) {
                 _G(actor)[2].last_dir = _G(thor)->dir;
                 _G(actor)[2].move = 16;
                 _G(tornado_used) = 1;
-                play_sound(WIND, 0);
+                play_sound(WIND, false);
             }
         } else if (_G(tornado_used) == 0) {
             not_enough_magic();
@@ -463,7 +463,7 @@ void use_item() {
     if (kf) {
         if ((!ret) && (!_G(useItemFlag))) {
             if (mf)
-                play_sound(BRAAPP, 0);
+                play_sound(BRAAPP, false);
             _G(useItemFlag) = true;
         }
     } else {

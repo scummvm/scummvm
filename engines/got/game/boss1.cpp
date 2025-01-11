@@ -55,7 +55,9 @@ int boss1_movement(ACTOR *actr) {
     }
     if (actr->temp3) {  //start striking
         actr->temp3--;
-        if (!actr->temp3) play_sound(BOSS11, 0);
+        if (!actr->temp3)
+			play_sound(BOSS11, false);
+    	
         if (_G(hourglass_flag))
             actr->num_moves = 3;
         else
@@ -194,7 +196,7 @@ void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
             _G(actor)[3].speed_count = 50;
             boss_status(_G(actor)[3].health);
             _G(actor)[3].vunerable = 100;
-            play_sound(BOSS13, 1);
+            play_sound(BOSS13, true);
             _G(actor)[3].next = 1;
 
             for (rep = 4; rep < 7; rep++) {
@@ -212,7 +214,7 @@ void boss_level1() {
     setup_boss(1);
     _G(boss_active) = 1;
     music_pause();
-    play_sound(BOSS11, 1);
+    play_sound(BOSS11, true);
     g_events->send("Game", GameMessage("PAUSE", 40));
     music_play(5, 1);
 }
@@ -247,7 +249,7 @@ static int boss1_dead() {
             _G(actor)[3 + rep].num_shots = (10 - _G(actor)[3 + rep].speed) * 10;
             _G(actor)[3 + rep].speed_count = _G(actor)[3 + rep].speed;
         }
-        play_sound(EXPLODE, 1);
+        play_sound(EXPLODE, true);
         _G(boss_dead) = true;;
         for (rep = 7; rep < MAX_ACTORS; rep++)
             if (_G(actor)[rep].used)
@@ -279,14 +281,16 @@ void closing_sequence1_3() {
 
 void closing_sequence1_4() {
     int rep;
-    REPEAT(16) _G(scrn).actor_type[rep] = 0;
+	for (rep = 0; rep < 16; rep++)
+		_G(scrn).actor_type[rep] = 0;
+	
     _G(boss_dead) = 0;
     _G(setup).boss_dead[0] = 1;
     _G(boss_active) = 0;
     _G(scrn).type = 4;
     show_level(BOSS_LEVEL1);
 
-    play_sound(ANGEL, 1);
+    play_sound(ANGEL, true);
     place_tile(18, 6, 148);
     place_tile(19, 6, 202);
     actor_visible(1);
