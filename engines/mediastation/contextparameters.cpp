@@ -57,8 +57,6 @@ ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
 			if (repeatedFileNumber != _fileNumber) {
 				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 			}
-			// The trouble here is converting the variable to an operand.
-			// They are two totally separate types!
 			Variable *variable = new Variable(chunk);
 			Operand operand;
 			if (g_engine->_variables.contains(variable->_id)) {
