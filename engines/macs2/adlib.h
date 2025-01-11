@@ -27,6 +27,7 @@
 
 namespace Common {
 class MemoryReadStream;
+class MemorySeekableReadWriteStream;
 }
 
 namespace OPL {
