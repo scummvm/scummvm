@@ -35,6 +35,20 @@ Operand Text::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
         error("Text::callMethod(): getText() method not implemented yet");
     }
 
+    case kSpatialShowMethod: {
+        assert(args.empty());
+        _isActive = true;
+        warning("Text::callMethod(): spatialShow method not implemented yet");
+        return Operand();
+    }
+
+    case kSpatialHideMethod: {
+        assert(args.empty());
+        _isActive = false;
+        warning("Text::callMethod(): spatialHide method not implemented yet");
+        return Operand();
+    }
+
     default: {
         error("Got unimplemented method ID %d", methodId);
     }
