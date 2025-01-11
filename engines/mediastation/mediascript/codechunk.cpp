@@ -189,6 +189,19 @@ Operand CodeChunk::executeNextStatement() {
 			return operand;
 		}
 
+		case kOperandTypeString: {
+			// This is indeed a raw string anot not a string wrapped in a datum!
+			// TODO: This copies the string. Can we read it directly from the chunk?
+			int size = Datum(*_bytecode, kDatumTypeUint16_1).u.i;
+			char *buffer = new char[size + 1];
+			_bytecode->read(buffer, size);
+			buffer[size] = '\0';
+			Common::String *string = new Common::String(buffer);
+			operand.putString(string);
+			delete[] buffer;
+			return operand;
+		}
+
 		default: {
 			error("CodeChunk::getNextStatement(): Got unknown operand type 0x%d", operandType);
 		}
