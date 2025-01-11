@@ -153,7 +153,9 @@ void Scripts::scriptLoop() {
     int ret;
 
     while (!_paused) {
-        if (_G(cheat) && _G(key_flag)[_B]) break;
+        if (_G(cheat) && _G(key_flag)[_B])
+			break;
+    	
         ret = get_command();
         if (ret == -1)
             break;       // Ignore NO END error

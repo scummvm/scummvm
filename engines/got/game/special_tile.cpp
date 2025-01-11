@@ -53,7 +53,7 @@ int special_tile_thor(int x, int y, int icon) {
 
         if (_G(thor)->x > 300)
             // Ending bridge
-            _G(end_tile) = 1;
+            _G(end_tile) = true;
         return 1;
     case 203:
         if (!GAME1) {
@@ -75,7 +75,7 @@ int special_tile_thor(int x, int y, int icon) {
             return 1;
         } else if (GAME3) {
             if (_G(thor)->x < 4)
-                _G(end_tile) = 1;
+                _G(end_tile) = true;
             return 1;
         }
         return 0;
