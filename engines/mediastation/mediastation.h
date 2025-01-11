@@ -104,6 +104,7 @@ private:
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);
 	void branchToScreen(uint32 contextId);
+	Asset *findAssetToAcceptMouseEvents(Common::Point point);
 };
 
 extern MediaStationEngine *g_engine;

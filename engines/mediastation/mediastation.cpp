@@ -171,10 +171,23 @@ void MediaStationEngine::processEvents() {
 		}
 
 		case Common::EVENT_KEYDOWN: {
+			// TODO: Reading the current mouse position for hotspots might not
+			// be right, need to verify.
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			Asset *hotspot = findAssetToAcceptMouseEvents(mousePos);
+			if (hotspot != nullptr) {
+				debugC(1, kDebugEvents, "EVENT_KEYDOWN (%d): Sent to hotspot %d", e.kbd.ascii, hotspot->getHeader()->_id);
+				hotspot->runKeyDownEventHandlerIfExists(e.kbd);
+			}
 			break;
 		}
 
 		case Common::EVENT_LBUTTONDOWN: {
+			Asset *hotspot = findAssetToAcceptMouseEvents(e.mouse);
+			if (hotspot != nullptr) {
+				debugC(1, kDebugEvents, "EVENT_LBUTTONDOWN (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+				hotspot->runEventHandlerIfExists(kMouseDownEvent);
+			}
 			break;
 		}
 
@@ -282,6 +295,38 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 		}
 	}
 	_currentContext = context;
+}
+
+Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
+	Asset *intersectingAsset = nullptr;
+	// The z-indices seem to be reversed, so the highest z-index number is
+	// actually the lowest asset.
+	int lowestZIndex = INT_MAX;
+
+	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
+		Asset *asset = it->_value;
+		// TODO: Currently only hotspots are found, but other asset types can
+		// likely get mouse events too.
+		if (asset->type() == kAssetTypeHotspot) {
+			Common::Rect *boundingBox = asset->getHeader()->_boundingBox;
+			if (boundingBox == nullptr) {
+				error("Hotspot %d has no bounding box", asset->getHeader()->_id);
+			}
+
+			if (!asset->isActive()) {
+				continue;
+			}
+
+			if (boundingBox->contains(point)) {
+				if (asset->zIndex() < lowestZIndex) {
+					lowestZIndex = asset->zIndex();
+					intersectingAsset = asset;
+				}
+			}
+		}
+	}
+
+	return intersectingAsset;
 }
 
 } // End of namespace MediaStation
