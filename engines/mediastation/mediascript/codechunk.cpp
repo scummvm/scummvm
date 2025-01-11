@@ -160,6 +160,16 @@ Operand CodeChunk::executeNextStatement() {
 			return Operand();
 		}
 
+		case kOpcodeEquals: {
+			Operand value1 = executeNextStatement();
+			Operand value2 = executeNextStatement();
+
+			// TODO: Confirm this is the correct value type?
+			Operand returnValue(kOperandTypeLiteral1);
+			bool equal = (value1 == value2);
+			returnValue.putInteger(static_cast<uint>(equal));
+			return returnValue;
+		}
 
 		default: {
 			error("CodeChunk::getNextStatement(): Got unknown opcode 0x%x (%d)", opcode, opcode);

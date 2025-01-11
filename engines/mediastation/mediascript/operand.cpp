@@ -244,6 +244,39 @@ uint32 Operand::getAssetId() {
 	}
 }
 
+Operand Operand::getLiteralValue() {
+	// This function dereferences any variable to get the actual
+	// "direct" value (a literal asset ID or otherwise).
+	if (_type == kOperandTypeVariableDeclaration) {
+		return _u.variable->getValue();
+	} else {
+		return *this;
+	}
+}
+
+bool Operand::operator==(Operand &other) {
+	Operand lhs = getLiteralValue();
+	Operand rhs = getLiteralValue();
+	// TODO: Maybe some better type checking here. If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error. But better might be checking
+	// both before we try getting values to report a more descriptive error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		return lhs.getInteger() == rhs.getInteger();
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		return lhs.getDouble() == rhs.getDouble();
+
+	case kOperandTypeString:
+		return *lhs.getString() == *rhs.getString();
+
+	default:
+		error("Operand::operator==(): Unsupported operand types %d and %d", static_cast<uint>(lhs.getType()), static_cast<uint>(rhs.getType()));
+	}
+}
+
 Operand Operand::operator-(const Operand &other) const {
 	Operand returnValue;
 	if (this->_type == kOperandTypeLiteral1 && other._type == kOperandTypeLiteral1) {

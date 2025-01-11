@@ -78,6 +78,9 @@ public:
 	Asset *getAsset();
 	uint32 getAssetId();
 
+	Operand getLiteralValue();
+
+	bool operator==(Operand &other);
 	Operand operator-(const Operand &other) const;
 
 private:
