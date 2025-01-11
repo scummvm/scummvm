@@ -53,6 +53,8 @@ public:
 	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
 	ContextParameters *_parameters = nullptr;
+	// TODO: Eliminate this screenAsset because the screen that this context
+	// represents is now an asset in itself.
 	AssetHeader *_screenAsset = nullptr;
 
 private:

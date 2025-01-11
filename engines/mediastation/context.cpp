@@ -34,6 +34,7 @@
 #include "mediastation/assets/sprite.h"
 #include "mediastation/assets/hotspot.h"
 #include "mediastation/assets/timer.h"
+#include "mediastation/assets/screen.h"
 
 namespace MediaStation {
 
@@ -231,9 +232,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			break;
 
 		case kAssetTypeScreen:
-			if (_screenAsset != nullptr) {
-				error("Context::readHeaderSection(): Got multiple screen assets in the same context");
-			}
+			asset = new Screen(header);
 			_screenAsset = header;
 			break;
 

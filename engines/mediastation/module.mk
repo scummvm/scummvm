@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	assets/hotspot.o \
 	assets/timer.o \
 	assets/canvas.o \
+	assets/screen.o \
 	mediascript/eventhandler.o \
 	mediascript/codechunk.o \
 	mediascript/function.o \
