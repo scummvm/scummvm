@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	assets/canvas.o \
 	assets/screen.o \
 	assets/font.o \
+	assets/text.o \
 	mediascript/eventhandler.o \
 	mediascript/codechunk.o \
 	mediascript/function.o \

@@ -36,6 +36,7 @@
 #include "mediastation/assets/timer.h"
 #include "mediastation/assets/screen.h"
 #include "mediastation/assets/font.h"
+#include "mediastation/assets/text.h"
 
 namespace MediaStation {
 
@@ -239,6 +240,10 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 
 		case kAssetTypeFont: 
 			asset = new Font(header);
+			break;
+
+		case kAssetTypeText:
+			asset = new Text(header);
 			break;
 
 		default:

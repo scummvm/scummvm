@@ -50,6 +50,7 @@ AssetHeader::~AssetHeader() {
 	delete _name;
 	delete _startPoint;
 	delete _endPoint;
+	delete _text;
 }
 
 void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) {
@@ -267,6 +268,43 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		break;
 	}
 
+	case kAssetHeaderEditable: {
+		_editable = Datum(chunk).u.i;
+		break;
+	}
+
+	case kAssetHeaderFontId: {
+		_fontAssetId = Datum(chunk).u.i;
+		break;
+	}
+
+	case kAssetHeaderTextMaxLength: {
+		_maxTextLength = Datum(chunk).u.i;
+		break;
+	}
+
+	case kAssetHeaderInitialText: {
+		_text = Datum(chunk).u.string;
+		break;
+	}
+
+	case kAssetHeaderTextJustification: {
+		_justification = static_cast<TextJustification>(Datum(chunk).u.i);
+		break;
+	}
+
+	case kAssetHeaderTextPosition: {
+		_position = static_cast<TextPosition>(Datum(chunk).u.i);
+		break;
+	}
+
+	case kAssetHeaderTextCharacterClass: {
+		CharacterClass characterClass;
+		characterClass.firstAsciiCode = Datum(chunk).u.i;
+		characterClass.lastAsciiCode = Datum(chunk).u.i;
+		_acceptedInput.push_back(characterClass);
+		break;
+	}
 
 	default: {
 		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));

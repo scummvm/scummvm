@@ -119,6 +119,34 @@ enum AssetHeaderSectionType {
 	kAssetHeaderCylindricalX = 0x0772,
 	kAssetHeaderCylindricalY = 0x0773,
 	kAssetHeaderAssetName = 0x0bb8,
+
+	// TEXT FIELDS.
+	kAssetHeaderEditable = 0x03eb,
+	kAssetHeaderFontId = 0x0258,
+	kAssetHeaderInitialText = 0x0259,
+	kAssetHeaderTextMaxLength = 0x25a,
+	kAssetHeaderTextJustification = 0x025b,
+	kAssetHeaderTextPosition = 0x25f,
+	kAssetHeaderTextUnk1 = 0x262,
+	kAssetHeaderTextUnk2 = 0x263,
+	kAssetHeaderTextCharacterClass = 0x0266
+};
+
+enum TextJustification {
+    kTextJustificationLeft = 0x25c,
+    kTextJustificationRight = 0x25d,
+    kTextJustificationCenter = 0x25e
+};
+
+enum TextPosition {
+    kTextPositionMiddle = 0x25e,
+    kTextPositionTop = 0x260,
+    kTextPositionBotom = 0x261
+};
+
+struct CharacterClass {
+    uint firstAsciiCode = 0;
+    uint lastAsciiCode = 0;
 };
 
 enum SoundEncoding {
@@ -173,6 +201,14 @@ public:
 	Common::HashMap<uint, EventHandler *> _keyDownHandlers;
 	Common::Array<EventHandler *> _inputHandlers;
 	Common::Array<EventHandler *> _loadCompleteHandlers;
+
+	// TEXT FIELDS.
+    Common::String *_text = nullptr;
+    uint _maxTextLength = 0;
+    uint _fontAssetId = 0;
+    TextJustification _justification;
+    TextPosition _position;
+    Common::Array<CharacterClass> _acceptedInput;
 
 private:
 	void readSection(AssetHeaderSectionType sectionType, Chunk &chunk);
