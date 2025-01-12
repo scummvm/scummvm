@@ -22,6 +22,10 @@
 #ifndef MEDIASTATION_CONTEXT_H
 #define MEDIASTATION_CONTEXT_H
 
+#include "graphics/palette.h"
+#include "common/path.h"
+#include "common/hashmap.h"
+
 #include "mediastation/datafile.h"
 #include "mediastation/contextparameters.h"
 #include "mediastation/assetheader.h"

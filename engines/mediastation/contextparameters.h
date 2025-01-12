@@ -22,7 +22,10 @@
 #ifndef MEDIASTATION_CONTEXTPARAMETERS_H
 #define MEDIASTATION_CONTEXTPARAMETERS_H
 
-#include "mediastation/mediastation.h"
+#include "common/str.h"
+#include "common/hashmap.h"
+
+#include "mediastation/chunk.h"
 #include "mediastation/mediascript/variable.h"
 #include "mediastation/mediascript/function.h"
 

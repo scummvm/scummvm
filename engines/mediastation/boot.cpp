@@ -21,8 +21,6 @@
 
 #include "mediastation/boot.h"
 #include "mediastation/datum.h"
-#include "mediastation/subfile.h"
-#include "mediastation/chunk.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {

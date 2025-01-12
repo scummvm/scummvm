@@ -23,7 +23,9 @@
 #define MEDIASTATION_DATUM_H
 
 #include "common/str.h"
+#include "common/array.h"
 #include "common/rect.h"
+#include "common/stream.h"
 
 #include "mediastation/chunk.h"
 

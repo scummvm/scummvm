@@ -22,8 +22,12 @@
 #ifndef MEDIASTATION_SPRITE_H
 #define MEDIASTATION_SPRITE_H
 
+#include "common/rect.h"
+#include "common/array.h"
+
 #include "mediastation/asset.h"
 #include "mediastation/assetheader.h"
+#include "mediastation/chunk.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/operand.h"
 #include "mediastation/mediascript/builtins.h"

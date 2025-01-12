@@ -22,7 +22,8 @@
 #ifndef MEDIASTATION_DATAFILE_H
 #define MEDIASTATION_DATAFILE_H
 
-#include "common/file.h"
+#include "common/path.h"
+#include "common/stream.h"
 
 namespace MediaStation {
 

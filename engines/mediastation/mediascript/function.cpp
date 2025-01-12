@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/array.h"
-
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"

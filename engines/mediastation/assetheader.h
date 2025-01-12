@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_ASSET_HEADER_H
 #define MEDIASTATION_ASSET_HEADER_H
 
+#include "common/str.h"
+#include "common/rect.h"
 #include "common/hashmap.h"
 #include "graphics/palette.h"
 

@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_CHUNK_H
 #define MEDIASTATION_CHUNK_H
 
+#include "common/stream.h"
 #include "common/file.h"
 
 namespace MediaStation {

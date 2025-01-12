@@ -22,8 +22,14 @@
 #ifndef MEDIASTATION_BOOT_H
 #define MEDIASTATION_BOOT_H
 
-#include "mediastation/datafile.h"
+#include "common/path.h"
+#include "common/str.h"
+#include "common/array.h"
+#include "common/hashmap.h"
+
 #include "mediastation/subfile.h"
+#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 
 namespace MediaStation {
 

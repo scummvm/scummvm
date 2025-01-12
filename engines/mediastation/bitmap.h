@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_BITMAP_H
 #define MEDIASTATION_BITMAP_H
 
+#include "common/rect.h"
 #include "graphics/managed_surface.h"
 
 #include "mediastation/chunk.h"

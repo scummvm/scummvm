@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_SUBFILE_H
 #define MEDIASTATION_SUBFILE_H
 
+#include "common/stream.h"
+
 #include "mediastation/chunk.h"
 
 namespace MediaStation {

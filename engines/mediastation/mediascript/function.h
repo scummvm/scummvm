@@ -22,7 +22,9 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_FUNCTION_H
 #define MEDIASTATION_MEDIASCRIPT_FUNCTION_H
 
-#include "mediastation/datafile.h"
+#include "common/array.h"
+
+#include "mediastation/chunk.h"
 #include "mediastation/mediascript/codechunk.h"
 
 namespace MediaStation {

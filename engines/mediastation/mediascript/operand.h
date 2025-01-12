@@ -22,7 +22,7 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_OPERAND_H
 #define MEDIASTATION_MEDIASCRIPT_OPERAND_H
 
-#include "common/array.h"
+#include "common/str.h"
 
 #include "mediastation/mediascript/builtins.h"
 #include "mediastation/mediascript/variable.h"

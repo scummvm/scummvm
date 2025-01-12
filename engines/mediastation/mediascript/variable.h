@@ -22,8 +22,10 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
 #define MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
 
+#include "common/str.h"
+#include "common/array.h"
+
 #include "mediastation/chunk.h"
-#include "mediastation/datafile.h"
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/builtins.h"
 

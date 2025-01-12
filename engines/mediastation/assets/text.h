@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_TEXT_H
 #define MEDIASTATION_TEXT_H
 
+#include "common/str.h"
+
 #include "mediastation/asset.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/operand.h"

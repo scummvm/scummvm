@@ -22,8 +22,11 @@
 #ifndef MEDIASTATION_MOVIE_H
 #define MEDIASTATION_MOVIE_H
 
+#include "common/array.h"
 #include "audio/audiostream.h"
 
+#include "mediastation/subfile.h"
+#include "mediastation/chunk.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/builtins.h"
