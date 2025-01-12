@@ -245,10 +245,12 @@ void Screen::plotPoint(int x, int y, uint8 color) {
 	}
 }
 
-static void plot(int x, int y, int color, void *data) {
-	Screen *screen = (Screen *)data;
-	screen->plotPoint(x, y, (uint8) color);
-}
+class ScreenPrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		Screen *screen = (Screen *)data;
+		screen->plotPoint(x, y, (uint8) color);
+	}
+};
 
 /**
  * Draws a line from one point to another. This is only used for debugging.
@@ -260,7 +262,7 @@ static void plot(int x, int y, int color, void *data) {
  */
 
 void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 color) {
-	Graphics::drawLine(x0, y0, x1, y1, color, &plot, this);
+	ScreenPrimitives().drawLine(x0, y0, x1, y1, color, this);
 }
 
 /**
