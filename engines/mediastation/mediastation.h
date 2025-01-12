@@ -76,12 +76,13 @@ public:
 	void setPalette(Asset *palette);
 	void addPlayingAsset(Asset *assetToAdd);
 
+	Asset *getAssetById(uint assetId);
+	Asset *getAssetByChunkReference(uint chunkReference);
+	Function *getFunctionById(uint functionId);
+
     Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args);
-	Common::HashMap<uint, Asset *> _assets;
-	Common::HashMap<uint, Function *> _functions;
 	Common::HashMap<uint32, Variable *> _variables;
-	Common::HashMap<uint, Asset *> _assetsByChunkReference;
-	Context *_currentContext = nullptr;
+
 	Graphics::Screen *_screen = nullptr;
 	Audio::Mixer *_mixer = nullptr;
 
@@ -99,7 +100,7 @@ private:
 	Common::RandomSource _randomSource;
 	Boot *_boot = nullptr;
 	Common::Array<Asset *> _assetsPlaying;
-	Context *_root = nullptr;
+	Common::HashMap<uint, Context *> _loadedContexts;
 
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);

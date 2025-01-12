@@ -212,13 +212,13 @@ Asset *Operand::getAsset() {
 		if (_u.assetId == 0) {
 			return nullptr;
 		} else {
-			return g_engine->_assets.getVal(_u.assetId);
+			return g_engine->getAssetById(_u.assetId);
 		}
 	}
 
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeAssetId);
-		return g_engine->_assets.getVal(_u.variable->_value.assetId);
+		return g_engine->getAssetById(_u.variable->_value.assetId);
 	}
 
 	default: {

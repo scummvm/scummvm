@@ -57,7 +57,15 @@ public:
 	// represents is now an asset in itself.
 	AssetHeader *_screenAsset = nullptr;
 
+	Asset *getAssetById(uint assetId);
+	Asset *getAssetByChunkReference(uint chunkReference);
+	Function *getFunctionById(uint functionId);
+
 private:
+	Common::HashMap<uint, Asset *> _assets;
+	Common::HashMap<uint, Function *> _functions;
+	Common::HashMap<uint, Asset *> _assetsByChunkReference;
+
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	bool readHeaderSection(Subfile &subfile, Chunk &chunk);

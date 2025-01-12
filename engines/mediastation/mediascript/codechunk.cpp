@@ -92,7 +92,7 @@ Operand CodeChunk::executeNextStatement() {
 			// Call the routine.
 			debugC(5, kDebugScript, "SCRIPT: [ %d ]( %d args )", functionId, parameterCount);
 			Operand returnValue;
-			Function *function = g_engine->_functions.getValOrDefault(functionId);
+			Function *function = g_engine->getFunctionById(functionId);
 			if (function != nullptr) {
 				// This is a title-defined function.
 				returnValue = function->execute(args);

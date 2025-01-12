@@ -77,6 +77,19 @@ Context::~Context() {
 	_parameters = nullptr;
 }
 
+Asset *Context::getAssetById(uint assetId) {
+	return _assets.getValOrDefault(assetId);
+}
+
+Asset *Context::getAssetByChunkReference(uint chunkReference) {
+	return _assetsByChunkReference.getValOrDefault(chunkReference);
+}
+
+
+Function *Context::getFunctionById(uint functionId) {
+	return _functions.getValOrDefault(functionId);
+}
+
 bool Context::readPreamble() {
 	uint16 signature = _stream->readUint16LE();
 	if (signature != 0x4949) { // "II"
@@ -138,9 +151,14 @@ void Context::readAssetInFirstSubfile(Chunk &chunk) {
 	}
 
 	// TODO: Make sure this is not an asset link.
-	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk._id);
+	Asset *asset = getAssetByChunkReference(chunk._id);
 	if (asset == nullptr) {
-		error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+		// We should only need to look in the global scope when there is an
+		// install cache (INSTALL.CXT).
+		asset = g_engine->getAssetByChunkReference(chunk._id);
+		if (asset == nullptr) {
+			error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+		}
 	}
 	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(asset->type()), static_cast<long long int>(chunk.pos()));
 	asset->readChunk(chunk);
@@ -148,9 +166,14 @@ void Context::readAssetInFirstSubfile(Chunk &chunk) {
 
 void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 	Chunk chunk = subfile.nextChunk();
-	Asset *asset = g_engine->_assetsByChunkReference.getValOrDefault(chunk._id);
+	Asset *asset = getAssetByChunkReference(chunk._id);
 	if (asset == nullptr) {
-		error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+		// We should only need to look in the global scope when there is an
+		// install cache (INSTALL.CXT).
+		asset = g_engine->getAssetByChunkReference(chunk._id);
+		if (asset == nullptr) {
+			error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+		}
 	}
 	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), asset->type(), static_cast<long long int>(chunk.pos()));
 	asset->readSubfile(subfile, chunk);
@@ -250,20 +273,20 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			error("Context::readHeaderSection(): No class for asset type 0x%x (@0x%llx)", static_cast<uint>(header->_type), static_cast<long long int>(chunk.pos()));
 		}
 
-		if (g_engine->_assets.contains(header->_id)) {
+		if (g_engine->getAssetById(header->_id)) {
 			error("Context::readHeaderSection(): Asset with ID 0x%d was already defined in this title", header->_id);
 		}
-		g_engine->_assets.setVal(header->_id, asset);
+		_assets.setVal(header->_id, asset);
 		if (header->_chunkReference != 0) {
 			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing asset with chunk ID \"%s\" (0x%x)", tag2str(header->_chunkReference), header->_chunkReference);
-			g_engine->_assetsByChunkReference.setVal(header->_chunkReference, asset);
+			_assetsByChunkReference.setVal(header->_chunkReference, asset);
 		}
 		// TODO: Store the movie chunk references better.
 		if (header->_audioChunkReference != 0) {
-			g_engine->_assetsByChunkReference.setVal(header->_audioChunkReference, asset);
+			_assetsByChunkReference.setVal(header->_audioChunkReference, asset);
 		}
 		if (header->_animationChunkReference != 0) {
-			g_engine->_assetsByChunkReference.setVal(header->_animationChunkReference, asset);
+			_assetsByChunkReference.setVal(header->_animationChunkReference, asset);
 		}
 		// TODO: This datum only appears sometimes.
 		uint unk2 = Datum(chunk).u.i;
@@ -273,7 +296,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 
 	case kContextFunctionSection: {
 		Function *function = new Function(chunk);
-		g_engine->_functions.setVal(function->_id, function);
+		_functions.setVal(function->_id, function);
 		if (!g_engine->isFirstGenerationEngine()) {
 			uint endingFlag = Datum(chunk).u.i;
 			if (endingFlag != 0) {

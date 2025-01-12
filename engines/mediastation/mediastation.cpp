@@ -63,24 +63,45 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _boot;
 	_boot = nullptr;
 
-	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
 		delete it->_value;
 	}
-	_assets.clear();
-	_assetsByChunkReference.clear();
-
-	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
-		delete it->_value;
-	}
-	_functions.clear();
+	_loadedContexts.clear();
 
 	for (auto it = _variables.begin(); it != _variables.end(); ++it) {
 		delete it->_value;
 	}
 	_variables.clear();
+}
 
-	delete _root;
-	_root = nullptr;
+Asset *MediaStationEngine::getAssetById(uint assetId) {
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
+		Asset *asset = it->_value->getAssetById(assetId);
+		if (asset != nullptr) {
+			return asset;
+		}
+	}
+	return nullptr;
+}
+
+Asset *MediaStationEngine::getAssetByChunkReference(uint chunkReference) {
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
+		Asset *asset = it->_value->getAssetByChunkReference(chunkReference);
+		if (asset != nullptr) {
+			return asset;
+		}
+	}
+	return nullptr;
+}
+
+Function *MediaStationEngine::getFunctionById(uint functionId) {
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
+		Function *function = it->_value->getFunctionById(functionId);
+		if (function != nullptr) {
+			return function;
+		}
+	}
+	return nullptr;
 }
 
 uint32 MediaStationEngine::getFeatures() const {
@@ -116,7 +137,7 @@ Common::Error MediaStationEngine::run() {
 	//Context *root = nullptr;
 	uint32 rootContextId = _boot->getRootContextId();
 	if (rootContextId != 0) {
-		_root = loadContext(rootContextId);
+		loadContext(rootContextId);
 	} else {
 		warning("MediaStation::run(): Title has no root context");
 	}
@@ -210,6 +231,11 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		error("Cannot load contexts before BOOT.STM is read");
 	}
 
+	if (_loadedContexts.contains(contextId)) {
+		warning("MediaStationEngine::loadContext(): Context 0x%x already loaded, returning existing context", contextId);
+		return _loadedContexts.getVal(contextId);
+	}
+
 	// GET THE FILE ID.
 	SubfileDeclaration *subfileDeclaration = _boot->_subfileDeclarations.getValOrDefault(contextId);
 	if (subfileDeclaration == nullptr) {
@@ -234,8 +260,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	// LOAD THE CONTEXT.
 	Common::Path entryCxtFilepath = Common::Path(*fileName);
 	Context *context = new Context(entryCxtFilepath);
-
-	// SET THE VARIABLES.
+	_loadedContexts.setVal(contextId, context);
 	return context;
 }
 
@@ -294,7 +319,6 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 			debugC(5, kDebugScript, "No context entry event handler");
 		}
 	}
-	_currentContext = context;
 }
 
 Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
@@ -303,8 +327,7 @@ Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
 	// actually the lowest asset.
 	int lowestZIndex = INT_MAX;
 
-	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
-		Asset *asset = it->_value;
+	for (Asset *asset : _assetsPlaying) {
 		// TODO: Currently only hotspots are found, but other asset types can
 		// likely get mouse events too.
 		if (asset->type() == kAssetTypeHotspot) {
@@ -325,7 +348,6 @@ Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
 			}
 		}
 	}
-
 	return intersectingAsset;
 }
 
