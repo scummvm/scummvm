@@ -889,7 +889,7 @@ int32 SoundSE::handleMISESpeech(const char *msgString, const char *speechFilenam
 	if (entryIndex >= 0 && entryIndex < (int32)_audioEntriesMI.size()) {
 		const AudioEntryMI *entry = &_audioEntriesMI[entryIndex];
 		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
-		return _nameToIndex[entry->speechFile];
+		return _nameToIndex.contains(entry->speechFile) ? _nameToIndex[entry->speechFile] : -1;
 	}
 
 	return -1;
