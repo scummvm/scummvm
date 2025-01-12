@@ -37,15 +37,15 @@ public:
 
 	// The version number of this engine,
 	// in the form 4.0r8 (major . minor r revision).
-	uint32 _majorVersion;
-	uint32 _minorVersion;
-	uint32 _revision;
+	uint32 _majorVersion = 0;
+	uint32 _minorVersion = 0;
+	uint32 _revision = 0;
 
 	// A textual description of this engine.
 	// Example: "Title Compiler T4.0r8 built Feb 13 1998 10:16:52"
 	//           ^^^^^^^^^^^^^^  ^^^^^
 	//           | Engine name   | Version number
-	Common::String *string;
+	Common::String *string = nullptr;
 };
 
 enum ContextDeclarationSectionType {
@@ -63,10 +63,10 @@ public:
 	~ContextDeclaration();
 
 	Common::Array<uint32> _fileReferences;
-	uint32 _fileNumber;
-	Common::String *_contextName;
+	uint32 _fileNumber = 0;
+	Common::String *_contextName = nullptr;
 	// Signal that there are no more declarations to read.
-	bool _isLast;
+	bool _isLast = false;
 
 private:
 	ContextDeclarationSectionType getSectionType(Chunk &chunk);
@@ -80,9 +80,9 @@ enum UnknownDeclarationSectionType {
 
 class UnknownDeclaration {
 public:
-	uint16 _unk;
+	uint16 _unk = 0;
 	// Signal that there are no more declarations to read.
-	bool _isLast;
+	bool _isLast = false;
 
 	UnknownDeclaration(Chunk &chunk);
 
@@ -113,11 +113,11 @@ public:
 	FileDeclaration(Chunk &chunk);
 	~FileDeclaration();
 
-	uint32 _id;
+	uint32 _id = 0;
 	IntendedFileLocation _intendedLocation;
-	Common::String *_name;
+	Common::String *_name = nullptr;
 	// Signal that there are no more declarations to read.
-	bool _isLast;
+	bool _isLast = false;
 
 private:
 	FileDeclarationSectionType getSectionType(Chunk &chunk);
@@ -134,11 +134,11 @@ class SubfileDeclaration {
 public:
 	SubfileDeclaration(Chunk &chunk);
 
-	uint16 _assetId;
-	uint16 _fileId;
-	uint32 _startOffsetInFile;
+	uint16 _assetId = 0;
+	uint16 _fileId = 0;
+	uint32 _startOffsetInFile = 0;
 	// Signal that there are no more context declarations to read.
-	bool _isLast;
+	bool _isLast = false;
 
 private:
 	SubfileDeclarationSectionType getSectionType(Chunk &chunk);
@@ -150,15 +150,15 @@ public:
 	CursorDeclaration(Chunk &chunk);
 	~CursorDeclaration();
 
-	uint16 _id;
-	uint16 _unk;
-	Common::String *_name;
+	uint16 _id = 0;
+	uint16 _unk = 0;
+	Common::String *_name = nullptr;
 };
 
 class EngineResourceDeclaration {
 public:
-	Common::String *_resourceName;
-	int _resourceId;
+	Common::String *_resourceName = nullptr;
+	int _resourceId = 0;
 
 	EngineResourceDeclaration(Common::String *resourceName, int resourceId);
 	~EngineResourceDeclaration();

@@ -34,28 +34,28 @@ class MovieFrameHeader : public BitmapHeader {
 public:
 	MovieFrameHeader(Chunk &chunk);
 
-	uint _index;
-	uint _keyframeEndInMilliseconds;
+	uint _index = 0;
+	uint _keyframeEndInMilliseconds = 0;
 };
 
 class MovieFrameFooter {
 public:
 	MovieFrameFooter(Chunk &chunk);
 
-	uint _unk1;
-	uint _unk2;
-	uint _startInMilliseconds;
-	uint _endInMilliseconds;
-	uint _left;
-	uint _top;
-	uint _unk3;
-	uint _unk4;
-	uint _zIndex; // TODO: This is still unconfirmed but seems likely.
-	uint _unk6;
-	uint _unk7;
-	uint _unk8;
-	uint _unk9;
-	uint _index;
+	uint _unk1 = 0;
+	uint _unk2 = 0;
+	uint _startInMilliseconds = 0;
+	uint _endInMilliseconds = 0;
+	uint _left = 0;
+	uint _top = 0;
+	uint _unk3 = 0;
+	uint _unk4 = 0;
+	uint _zIndex = 0; // TODO: This is still unconfirmed but seems likely.
+	uint _unk6 = 0;
+	uint _unk7 = 0;
+	uint _unk8 = 0;
+	uint _unk9 = 0;
+	uint _index = 0;
 };
 
 class MovieFrame : public Bitmap {
@@ -76,11 +76,11 @@ public:
 	// that could be confusing.
 	uint32 zCoordinate();
 
-	bool _showing;
+	bool _showing = false;
 
 private:
-	MovieFrameHeader *_bitmapHeader;
-	MovieFrameFooter *_footer;
+	MovieFrameHeader *_bitmapHeader = nullptr;
+	MovieFrameFooter *_footer = nullptr;
 };
 
 enum MovieSectionType {
