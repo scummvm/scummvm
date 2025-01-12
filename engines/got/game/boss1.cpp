@@ -257,10 +257,11 @@ static int boss1_dead() {
 		}
 		play_sound(EXPLODE, true);
 		_G(boss_dead) = true;
-		;
-		for (rep = 7; rep < MAX_ACTORS; rep++)
+
+		for (rep = 7; rep < MAX_ACTORS; rep++) {
 			if (_G(actor[rep]).used)
 				actor_destroyed(&_G(actor[rep]));
+		}
 	}
 
 	return _G(actor[3]).last_dir;
