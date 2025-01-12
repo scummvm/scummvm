@@ -63,7 +63,6 @@ struct PlotData {
 		surface(s), patterns(p), fillType(f), thickness(t), design(d) {}
 };
 
-void drawPixel(int x, int y, int color, void *data);
 void drawPixelPlain(int x, int y, int color, void *data);
 
 Design::Design(Common::SeekableReadStream *data) {
@@ -205,107 +204,114 @@ void Design::adjustBounds(int16 x, int16 y) {
 	_bounds->bottom = MAX(y, _bounds->bottom);
 }
 
-void drawPixel(int x, int y, int color, void *data) {
-	PlotData *p = (PlotData *)data;
+class PlotDataPrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		PlotData *p = (PlotData *)data;
 
-	if (p->fillType > p->patterns->size())
-		return;
-
-	if (p->design && p->design->isBoundsCalculation()) {
-		if (x < 0 || y < 0)
+		if (p->fillType > p->patterns->size())
 			return;
+
+		if (p->design && p->design->isBoundsCalculation()) {
+			if (x < 0 || y < 0)
+				return;
+			if (p->thickness == 1) {
+				p->design->adjustBounds(x, y);
+			} else {
+				int x1 = x;
+				int x2 = x1 + p->thickness;
+				int y1 = y;
+				int y2 = y1 + p->thickness;
+
+				for (y = y1; y < y2; y++)
+					for (x = x1; x < x2; x++)
+						p->design->adjustBounds(x, y);
+			}
+
+			return;
+		}
+
+		const byte *pat = p->patterns->operator[](p->fillType - 1);
+
 		if (p->thickness == 1) {
-			p->design->adjustBounds(x, y);
+			if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+				uint xu = (uint)x; // for letting compiler optimize it
+				uint yu = (uint)y;
+
+				*((byte *)p->surface->getBasePtr(xu, yu)) =
+					(pat[yu % 8] & (1 << (7 - xu % 8))) ?
+						color : kColorWhite;
+			}
 		} else {
-			int x1 = x;
+			int x1 = x - p->thickness / 2;
 			int x2 = x1 + p->thickness;
-			int y1 = y;
+			int y1 = y - p->thickness / 2;
 			int y2 = y1 + p->thickness;
 
 			for (y = y1; y < y2; y++)
 				for (x = x1; x < x2; x++)
-					p->design->adjustBounds(x, y);
+					if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+						uint xu = (uint)x; // for letting compiler optimize it
+						uint yu = (uint)y;
+						*((byte *)p->surface->getBasePtr(xu, yu)) =
+							(pat[yu % 8] & (1 << (7 - xu % 8))) ?
+								color : kColorWhite;
+					}
 		}
-
-		return;
 	}
+};
 
-	const byte *pat = p->patterns->operator[](p->fillType - 1);
+class PlotDataCirclePrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		PlotData *p = (PlotData *)data;
 
-	if (p->thickness == 1) {
-		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-			uint xu = (uint)x; // for letting compiler optimize it
-			uint yu = (uint)y;
-
-			*((byte *)p->surface->getBasePtr(xu, yu)) =
-				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-					color : kColorWhite;
-		}
-	} else {
-		int x1 = x - p->thickness / 2;
-		int x2 = x1 + p->thickness;
-		int y1 = y - p->thickness / 2;
-		int y2 = y1 + p->thickness;
-
-		for (y = y1; y < y2; y++)
-			for (x = x1; x < x2; x++)
-				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-					uint xu = (uint)x; // for letting compiler optimize it
-					uint yu = (uint)y;
-					*((byte *)p->surface->getBasePtr(xu, yu)) =
-						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-							color : kColorWhite;
-				}
-	}
-}
-
-void drawPixelCircle(int x, int y, int color, void *data) {
-	PlotData *p = (PlotData *)data;
-
-	if (p->fillType > p->patterns->size())
-		return;
-
-	if (p->design && p->design->isBoundsCalculation()) {
-		if (x < 0 || y < 0)
+		if (p->fillType > p->patterns->size())
 			return;
+
+		if (p->design && p->design->isBoundsCalculation()) {
+			if (x < 0 || y < 0)
+				return;
+			if (p->thickness == 1) {
+				p->design->adjustBounds(x, y);
+			} else {
+				int x1 = x;
+				int x2 = x1 + p->thickness;
+				int y1 = y;
+				int y2 = y1 + p->thickness;
+
+				for (y = y1; y < y2; y++)
+					for (x = x1; x < x2; x++)
+						p->design->adjustBounds(x, y);
+			}
+
+			return;
+		}
+
+		const byte *pat = p->patterns->operator[](p->fillType - 1);
+
+		// Draw circle when thickness is > 1, put a pixel otherwise
 		if (p->thickness == 1) {
-			p->design->adjustBounds(x, y);
+			if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+				uint xu = (uint)x; // for letting compiler optimize it
+				uint yu = (uint)y;
+
+				*((byte *)p->surface->getBasePtr(xu, yu)) =
+					(pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
+			}
 		} else {
-			int x1 = x;
+			int x1 = x - p->thickness / 2;
 			int x2 = x1 + p->thickness;
-			int y1 = y;
+			int y1 = y - p->thickness / 2;
 			int y2 = y1 + p->thickness;
 
-			for (y = y1; y < y2; y++)
-				for (x = x1; x < x2; x++)
-					p->design->adjustBounds(x, y);
-		}
+			PlotData pd(p->surface, p->patterns, p->fillType, 1, p->design);
 
-		return;
+			subprimitives.drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, true, &pd);
+		}
 	}
 
-	const byte *pat = p->patterns->operator[](p->fillType - 1);
-
-	// Draw circle when thickness is > 1, put a pixel otherwise
-	if (p->thickness == 1) {
-		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-			uint xu = (uint)x; // for letting compiler optimize it
-			uint yu = (uint)y;
-
-			*((byte *)p->surface->getBasePtr(xu, yu)) =
-				(pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
-		}
-	} else {
-		int x1 = x - p->thickness / 2;
-		int x2 = x1 + p->thickness;
-		int y1 = y - p->thickness / 2;
-		int y2 = y1 + p->thickness;
-
-		PlotData pd(p->surface, p->patterns, p->fillType, 1, p->design);
-
-		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, true, drawPixel, &pd);
-	}
-}
+private:
+	PlotDataPrimitives subprimitives;
+};
 
 void drawPixelPlain(int x, int y, int color, void *data) {
 	PlotData *p = (PlotData *)data;
@@ -348,9 +354,10 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 
 	Common::Rect r(x1, y1, x2, y2);
 	PlotData pd(surface, &patterns, fillType, 1, this);
+	PlotDataPrimitives primitives;
 
 	if (fillType <= patterns.size())
-		Graphics::drawFilledRect1(r, kColorBlack, drawPixel, &pd);
+		primitives.drawFilledRect1(r, kColorBlack, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
@@ -363,10 +370,10 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
-		Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
+		primitives.drawLine(x1, y1, x2, y1, kColorBlack, &pd);
+		primitives.drawLine(x2, y1, x2, y2, kColorBlack, &pd);
+		primitives.drawLine(x2, y2, x1, y2, kColorBlack, &pd);
+		primitives.drawLine(x1, y2, x1, y1, kColorBlack, &pd);
 	}
 }
 
@@ -400,15 +407,16 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 
 	Common::Rect r(x1, y1, x2, y2);
 	PlotData pd(surface, &patterns, fillType, 1, this);
+	PlotDataPrimitives primitives;
 
 	if (fillType <= patterns.size())
-		Graphics::drawRoundRect1(r, arc / 2, kColorBlack, true, drawPixel, &pd);
+		primitives.drawRoundRect1(r, arc / 2, kColorBlack, true, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawRoundRect1(r, arc / 2 - 1, kColorBlack, false, drawPixel, &pd);
+		primitives.drawRoundRect1(r, arc / 2 - 1, kColorBlack, false, &pd);
 }
 
 void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
@@ -487,16 +495,17 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	}
 
 	PlotData pd(surface, &patterns, fillType, 1, this);
+	PlotDataPrimitives primitives;
 
 	if (fillType <= patterns.size()) {
-		Graphics::drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
+		primitives.drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, &pd);
 	}
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		for (int i = 1; i < npoints; i++)
-			Graphics::drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack, drawPixel, &pd);
+			primitives.drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack, &pd);
 	}
 
 	free(xpoints);
@@ -510,6 +519,7 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 	PlotData pd(surface, &patterns, fillType, 1, this);
+	PlotDataPrimitives primitives;
 
 	if (_surface) {
 		if (!_maskImage) {
@@ -520,7 +530,7 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (fillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, true, drawPixel, &pd);
+		PlotDataPrimitives().drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, true, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
@@ -533,7 +543,7 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, false, drawPixelCircle, &pd);
+		PlotDataCirclePrimitives().drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, false, &pd);
 }
 
 void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in) {
@@ -640,43 +650,35 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	tmp.free();
 }
 
-void Design::drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
-	drawRect(surface, rect.left, rect.top, rect.right, rect.bottom, thickness, color, patterns, fillType);
+void Design::drawRect(Graphics::ManagedSurface *surface, const Common::Rect &rect, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
+	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
+	PlotDataPrimitives().drawRect1(rect, kColorBlack, &pd);
 }
 
 void Design::drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
-	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
-
-	Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
-	Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);
-	Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
-	Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
+	drawRect(surface, Common::Rect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2), MAX(y1, y2)),
+			thickness, color, patterns, fillType);
 }
 
 
 void Design::drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);
-
-	for (int y = rect.top; y <= rect.bottom; y++)
-		Graphics::drawHLine(rect.left, rect.right, y, color, drawPixel, &pd);
+	PlotDataPrimitives().drawFilledRect1(rect, color, &pd);
 }
 
 void Design::drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);
-
-	Graphics::drawRoundRect1(rect, arc, color, true, drawPixel, &pd);
+	PlotDataPrimitives().drawRoundRect1(rect, arc, color, true, &pd);
 }
 
 void Design::drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
-
-	Graphics::drawHLine(x1, x2, y, color, drawPixel, &pd);
+	PlotDataPrimitives().drawHLine(x1, x2, y, color, &pd);
 }
 
 void Design::drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
-
-	Graphics::drawVLine(x, y1, y2, color, drawPixel, &pd);
+	PlotDataPrimitives().drawVLine(x, y1, y2, color, &pd);
 }
 
 } // End of namespace Wage
