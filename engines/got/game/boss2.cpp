@@ -179,14 +179,17 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 			_G(actor[3]).num_shots = 0;
 		} else
 			play_sound(BOSS13, true);
+		
 		_G(actor[3]).speed_count = 75;
 		boss_status(_G(actor[3]).health);
 		_G(actor[3]).vunerable = 75;
 		_G(actor[3]).next = 1;
+		
 		for (rep = 4; rep < 7; rep++) {
 			_G(actor[rep]).next = 1;
 			_G(actor[rep]).speed_count = 50;
 		}
+		
 		if (_G(actor[3]).health == 0) {
 			_G(boss_dead) = true;
 			for (rep = 7; rep < MAX_ACTORS; rep++) {
@@ -257,9 +260,8 @@ static int boss2a_movement(ACTOR *actr) {
 	_G(actor[5]).next = actr->next;
 	_G(actor[6]).next = actr->next;
 	actr->vunerable = 20;
-	if (actr->num_shots)
-		return 0;
-	if (_G(actor[5]).num_shots)
+	
+	if (actr->num_shots || _G(actor[5]).num_shots)
 		return 0;
 
 	play_sound(EXPLODE, true);
@@ -301,6 +303,7 @@ static int boss2b_movement(ACTOR *actr) {
 		for (rep = 7; rep < 15; rep++) {
 			if (!_G(actor[rep]).used)
 				continue;
+			
 			if (overlap(hx + 1, hy + 1, hx + 10, hy + 10, _G(actor[rep]).x, _G(actor[rep]).y,
 						_G(actor[rep]).x + _G(actor[rep]).size_x - 1, _G(actor[rep]).y + _G(actor[rep]).size_y - 1)) {
 				_G(hammer)->move = 5;
@@ -395,8 +398,6 @@ void closing_sequence2_3() {
 }
 
 void closing_sequence2_4() {
-	LEVEL lvl;
-
 	for (int rep = 0; rep < 16; rep++)
 		_G(scrn).actor_type[rep] = 0;
 
@@ -418,6 +419,7 @@ void closing_sequence2_4() {
 	_G(actor[8]).x = 304;
 	_G(actor[8]).y = 160;
 
+	LEVEL lvl;
 	lvl.load(BOSS_LEVEL2);
 	lvl.icon[6][18] = 152;
 	lvl.icon[6][19] = 202;
