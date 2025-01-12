@@ -339,9 +339,9 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		if (p->oneBitImage) {
 			// One-bit images have a slightly different rendering algorithm for BackgndTrans.
 			// Foreground colour is used, and background colour is ignored.
-			*dst = (src == (int)p->colorBlack) ? p->foreColor : *dst;
+			*dst = (src == p->colorBlack) ? p->foreColor : *dst;
 		} else {
-			*dst = (src == (int)p->backColor) ? *dst : src;
+			*dst = (src == p->backColor) ? *dst : src;
 		}
 		break;
 	case kInkTypeMatte:
@@ -354,7 +354,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	case kInkTypeCopy: {
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = src == 0xff ? p->foreColor : (src == 0x00 ? p->backColor : *dst);
+				*dst = (src == 0xff) ? p->foreColor : ((src == 0x00) ? p->backColor : *dst);
 			} else {
 				// TODO: Improve the efficiency of this composition
 				byte rSrc, gSrc, bSrc;
@@ -379,7 +379,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	case kInkTypeNotCopy:
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = src == 0xff ? p->backColor : (src == 0x00 ? p->foreColor : src);
+				*dst = (src == 0xff) ? p->backColor : ((src == 0x00) ? p->foreColor : src);
 			} else {
 				// TODO: Improve the efficiency of this composition
 				byte rSrc, gSrc, bSrc;
@@ -406,7 +406,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		break;
 	case kInkTypeTransparent:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorBlack ? p->foreColor : *dst;
+			*dst = (src == p->colorBlack) ? p->foreColor : *dst;
 		} else {
 			// OR dst palette index with src.
 			// Originally designed for 1-bit mode to make white pixels
@@ -416,7 +416,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		break;
 	case kInkTypeNotTrans:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorWhite ? p->foreColor : *dst;
+			*dst = (src == p->colorWhite) ? p->foreColor : *dst;
 		} else {
 			// OR dst palette index with the inverse of src.
 			*dst = *dst | ~src;
@@ -435,7 +435,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		break;
 	case kInkTypeGhost:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
+			*dst = (src == p->colorBlack) ? p->backColor : *dst;
 		} else {
 			// AND dst palette index with the inverse of src.
 			// Originally designed for 1-bit mode so that
@@ -446,7 +446,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		break;
 	case kInkTypeNotGhost:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorWhite ? p->backColor : *dst;
+			*dst = (src == p->colorWhite) ? p->backColor : *dst;
 		} else {
 			// AND dst palette index with src.
 			*dst = *dst & src;
