@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Dark Seed.
+   - Added support for God of Thunder.
 
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
