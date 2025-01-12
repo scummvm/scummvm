@@ -191,7 +191,7 @@ void SoundSE::indexXWBFile(SoundSEType type) {
 				//   TODO: Process and patch music entries, once we start using
 				//   the SE audio files for music.
 				const int32 originalAudioIndex = _nameToIndex[name];
-				if (originalAudioIndex < _speechEntries.size() && _speechEntries[originalAudioIndex].name == name) {
+				if (originalAudioIndex < (int32)_speechEntries.size() && _speechEntries[originalAudioIndex].name == name) {
 					_speechEntries[originalAudioIndex].isPatched = true;
 					_nameToIndexPatched[name] = i;
 				}
@@ -293,14 +293,14 @@ void SoundSE::indexFSBFile(SoundSEType type) {
 	for (uint32 i = 0; i < sampleCount; i++) {
 		const uint32 origOffset = f->readUint32LE();
 		f->skip(4); // samples, used in XMA
-		uint32 type = origOffset & ((1 << 7) - 1);
+		uint32 sampleType = origOffset & ((1 << 7) - 1);
 		const uint32 fileOffset = nameOffset + nameSize + GET_FSB5_OFFSET(origOffset);
 		uint32 size;
 
 		// Meta data, skip it
-		while (type & 1) {
+		while (sampleType & 1) {
 			const uint32 t = f->readUint32LE();
-			type = t & 1;
+			sampleType = t & 1;
 			const uint32 metaDataSize = (t & 0xffffff) >> 1;
 			f->skip(metaDataSize);
 		}
@@ -565,6 +565,9 @@ Common::String SoundSE::getAudioFilename(SoundSEType type) {
 			return "iMUSEClient_VO.fsb";
 		else if (isFT)
 			return "iMUSEClient_SPEECH.fsb";
+		else
+			error("getAudioFilename: unknown game type in SoundSEType %d", type);
+		break;
 	case kSoundSETypeSFX:
 		if (isMonkey)
 			return "SFXOriginal.xwb";
@@ -572,6 +575,9 @@ Common::String SoundSE::getAudioFilename(SoundSEType type) {
 			return "iMUSEClient_SFX.fsb";
 		else if (isFT)
 			return "iMUSEClient_SFX_INMEMORY.fsb";
+		else
+			error("getAudioFilename: unknown game type in SoundSEType %d", type);
+		break;
 	case kSoundSETypeAmbience:
 		return "Ambience.xwb";
 	case kSoundSETypeCommentary:
@@ -580,6 +586,7 @@ Common::String SoundSE::getAudioFilename(SoundSEType type) {
 		return "patch.xwb";
 	default:
 		error("getAudioFilename: unknown SoundSEType %d", type);
+		break;
 	}
 }
 
