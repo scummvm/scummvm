@@ -726,6 +726,22 @@ public:
 	}
 
 	/**
+	 * Draw a filled polygon.
+	 */
+	void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color) {
+		_innerSurface.drawPolygonScan(polyX, polyY, npoints, bbox, color);
+		addDirtyRect(bbox);
+	}
+
+	/**
+	 * Draw an ellipse.
+	 */
+	void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled) {
+		_innerSurface.drawEllipse(x0, y0, x1, y1, color, filled);
+		addDirtyRect(Common::Rect(MIN(x0, x1), MIN(y0, y1), MAX(x0, x1 + 1), MAX(y0, y1 + 1)));
+	}
+
+	/**
 	 * Draw a horizontal line.
 	 */
 	void hLine(int x, int y, int x2, uint32 color) {
