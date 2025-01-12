@@ -293,7 +293,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 
     _G(thor_special_flag) = false;
     for (int i = 3; i < MAX_ACTORS; i++) {
-        ACTOR *act = &_G(actor)[i];
+        ACTOR *act = &_G(actor[i]);
         if (act->solid & 128)
 			continue;
         if (!act->used)
@@ -321,7 +321,7 @@ int check_move0(int x, int y, ACTOR *actr) {
                     if (!act->vunerable && (!(act->type & 1)))
 						play_sound(PUNCH1, false);
                 	
-                    if (!_G(hammer)->used && _G(key_flag)[key_fire])
+                    if (!_G(hammer)->used && _G(key_flag[key_fire]))
                         actor_damaged(act, _G(hammer)->strength);
                     else
                         actor_damaged(act, _G(thor)->strength);
@@ -378,7 +378,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 
     f = 0;
     for (i = 3; i < MAX_ACTORS; i++) {
-        act = &_G(actor)[i];
+        act = &_G(actor[i]);
         if (!act->used) continue;
         if (act->type == 3) continue;
         x3 = act->x;
@@ -460,7 +460,7 @@ int check_move2(int x, int y, ACTOR *actr) {
     y2 = (y + actr->size_y) - 1;
 
     for (i = 0; i < MAX_ACTORS; i++) {
-        act = &_G(actor)[i];
+        act = &_G(actor[i]);
         if (act->actor_num == actr->actor_num)
 			continue;
         if (act->actor_num == 1)
@@ -548,7 +548,7 @@ int check_move3(int x, int y, ACTOR *actr) {
         if (i == actr->actor_num)
 			continue;
     	
-        ACTOR *act = &_G(actor)[i];
+        ACTOR *act = &_G(actor[i]);
     	
         if (!act->used)
 			continue;
@@ -692,7 +692,7 @@ int movement_zero(ACTOR *actr) {
         return d;
     }
 
-    if (_G(key_flag)[key_up] && _G(key_flag)[key_left]) {
+    if (_G(key_flag[key_up]) && _G(key_flag[key_left])) {
         d = 2;
         actr->dir = d;
         _G(diag) = 1;
@@ -701,7 +701,7 @@ int movement_zero(ACTOR *actr) {
             next_frame(actr);
             return d;
         }
-    } else if (_G(key_flag)[key_up] && _G(key_flag)[key_right]) {
+    } else if (_G(key_flag[key_up]) && _G(key_flag[key_right])) {
         d = 3;
         actr->dir = d;
         _G(diag) = 2;
@@ -710,7 +710,7 @@ int movement_zero(ACTOR *actr) {
             next_frame(actr);
             return d;
         }
-    } else if (_G(key_flag)[key_down] && _G(key_flag)[key_left]) {
+    } else if (_G(key_flag[key_down]) && _G(key_flag[key_left])) {
         d = 2;
         actr->dir = d;
         _G(diag) = 4;
@@ -719,7 +719,7 @@ int movement_zero(ACTOR *actr) {
             next_frame(actr);
             return d;
         }
-    } else if (_G(key_flag)[key_down] && _G(key_flag)[key_right]) {
+    } else if (_G(key_flag[key_down]) && _G(key_flag[key_right])) {
         d = 3;
         actr->dir = d;
         _G(diag) = 3;
@@ -730,8 +730,8 @@ int movement_zero(ACTOR *actr) {
         }
     }
     _G(diag) = 0;
-    if (_G(key_flag)[key_right]) {
-        if (!_G(key_flag)[key_left]) {
+    if (_G(key_flag[key_right])) {
+        if (!_G(key_flag[key_left])) {
             d = 3;
             actr->dir = d;
             if (check_thor_move(x + 2, y, actr)) {
@@ -740,8 +740,8 @@ int movement_zero(ACTOR *actr) {
             }
         }
     }
-    if (_G(key_flag)[key_left]) {
-        if (!_G(key_flag)[key_right]) {
+    if (_G(key_flag[key_left])) {
+        if (!_G(key_flag[key_right])) {
             d = 2;
             actr->dir = d;
             if (check_thor_move(x - 2, y, actr)) {
@@ -750,8 +750,8 @@ int movement_zero(ACTOR *actr) {
             }
         }
     }
-    if (_G(key_flag)[key_down]) {
-        if (!_G(key_flag)[key_up]) {
+    if (_G(key_flag[key_down])) {
+        if (!_G(key_flag[key_up])) {
             d = 1;
             actr->dir = d;
             if (check_thor_move(x, y + 2, actr)) {
@@ -760,8 +760,8 @@ int movement_zero(ACTOR *actr) {
             }
         }
     }
-    if (_G(key_flag)[key_up]) {
-        if (!_G(key_flag)[key_down]) {
+    if (_G(key_flag[key_up])) {
+        if (!_G(key_flag[key_down])) {
             d = 0;
             actr->dir = d;
             if (check_thor_move(x, y - 2, actr)) {
@@ -820,7 +820,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
     y2 = (y + 15);
 
     for (i = 3; i < MAX_ACTORS; i++) {
-        act = &_G(actor)[i];
+        act = &_G(actor[i]);
         if (act->actor_num == actr->actor_num)
 			continue;
         if (!act->used)
@@ -839,7 +839,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 			return 0;
     }
     for (i = 3; i < MAX_ACTORS; i++) {
-        act = &_G(actor)[i];
+        act = &_G(actor[i]);
         if (act->actor_num == actr->actor_num)
 			continue;
         if (!act->used)
@@ -917,7 +917,7 @@ int special_movement_two(ACTOR *actr) {
     int y2 = y1 + 14;
 
     for (int i = 3; i < MAX_ACTORS; i++) {
-        ACTOR *act = &_G(actor)[i];
+        ACTOR *act = &_G(actor[i]);
         if (actr->actor_num == act->actor_num)
 			continue;
         if (!act->used)
@@ -2202,7 +2202,7 @@ int movement_thirtysix(ACTOR *actr) {
     next_frame(actr);
     if (actr->next == 0 && actr->frame_count == actr->frame_speed) {
         actor_always_shoots(actr, 1);
-        _G(actor)[actr->shot_actor].x -= 2;
+        _G(actor[actr->shot_actor]).x -= 2;
     }
     return 0;
 }
@@ -2366,15 +2366,15 @@ int movement_thirtynine(ACTOR *actr) {
         actr->i1--;
         actr->x -= 2;
         check_move2(actr->x, actr->y, actr);
-        _G(actor)[4].x -= 2;
-        _G(actor)[5].x -= 2;
-        _G(actor)[6].x -= 2;
+        _G(actor[4]).x -= 2;
+        _G(actor[5]).x -= 2;
+        _G(actor[6]).x -= 2;
     }
     next_frame(actr);
     if (actr->next == 3) actr->next = 0;
-    _G(actor)[4].next = _G(actor)[3].next;
-    _G(actor)[5].next = 0;
-    _G(actor)[6].next = 0;
+    _G(actor[4]).next = _G(actor[3]).next;
+    _G(actor[5]).next = 0;
+    _G(actor[6]).next = 0;
     return actr->dir;
 }
 
@@ -2389,46 +2389,46 @@ int movement_forty(ACTOR *actr) {
     }
     a = 5 + (actr->pass_value * 4);
     x1 = actr->x;
-    x2 = _G(actor)[a + 1].x;
+    x2 = _G(actor[a + 1]).x;
     d = actr->last_dir;
 
     if (actr->last_dir == 2) {
         f = 1;
         if (bgtile(x1 - 2, actr->y) >= TILE_SOLID) {
-            _G(actor)[a].x -= 2;
-            _G(actor)[a - 1].x -= 2;
-            _G(actor)[a - 2].x -= 2;
-            _G(actor)[a + 1].x -= 2;
+            _G(actor[a].x) -= 2;
+            _G(actor[a - 1]).x -= 2;
+            _G(actor[a - 2]).x -= 2;
+            _G(actor[a + 1]).x -= 2;
         } else f = 0;
         if (!f)
             d = 3;
     } else {
         f = 1;
-        if (bgtile(_G(actor)[a + 1].x + 14, _G(actor)[a + 1].y) >= TILE_SOLID) {
-            _G(actor)[a].x += 2;
-            _G(actor)[a - 1].x += 2;
-            _G(actor)[a - 2].x += 2;
-            _G(actor)[a + 1].x += 2;
+        if (bgtile(_G(actor[a + 1]).x + 14, _G(actor[a + 1]).y) >= TILE_SOLID) {
+            _G(actor[a]).x += 2;
+            _G(actor[a - 1]).x += 2;
+            _G(actor[a - 2]).x += 2;
+            _G(actor[a + 1]).x += 2;
         } else f = 0;
         if (!f) d = 2;
     }
     if (!f) {
         actr->x = x1;
-        _G(actor)[a + 1].x = x2;
+        _G(actor[a + 1]).x = x2;
     }
 
     if (actr->next == 3 && !actr->num_shots && actr->frame_count == actr->frame_speed) {
         actor_always_shoots(actr, 1);
-        _G(actor)[actr->shot_actor].x += 6;
+        _G(actor[actr->shot_actor]).x += 6;
     }
 
     next_frame(actr);
-    _G(actor)[a - 2].next = actr->next;
-    _G(actor)[a - 1].next = actr->next;
-    _G(actor)[a + 1].next = actr->next;
-    _G(actor)[a - 2].last_dir = d;
-    _G(actor)[a - 1].last_dir = d;
-    _G(actor)[a + 1].last_dir = d;
+    _G(actor[a - 2]).next = actr->next;
+    _G(actor[a - 1]).next = actr->next;
+    _G(actor[a + 1]).next = actr->next;
+    _G(actor[a - 2]).last_dir = d;
+    _G(actor[a - 1]).last_dir = d;
+    _G(actor[a + 1]).last_dir = d;
     actr->last_dir = d;
     if (actr->directions == 1) return 0;
     return d;
