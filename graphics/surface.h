@@ -439,6 +439,33 @@ public:
 	void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled);
 
 	/**
+	 * Draw a filled polygon.
+	 *
+	 * @param polyX   The X coordinates of the points.
+	 * @param polyY   The Y coordinates of the points.
+	 * @param npoints The number of points in the polygon.
+	 * @param bbox    The bounding box of the polygon.
+	 * @param color   Color of the polygon.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color);
+
+	/**
+	 * Draw an ellipse.
+	 *
+	 * @param x0     The x coordinate of the start corner.
+	 * @param y0     The y coordinate of the start corner.
+	 * @param x1     The x coordinate of the end corner.
+	 * @param y1     The y coordinate of the end corner.
+	 * @param color  Color of the ellipse.
+	 * @param filled Whether the ellipse should be filled in.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled);
+
+	/**
 	 * Draw a horizontal line.
 	 *
 	 * @param x      The start x coordinate of the line.
