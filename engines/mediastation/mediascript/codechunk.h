@@ -31,52 +31,6 @@
 
 namespace MediaStation {
 
-enum InstructionType {
-	kInstructionTypeEmpty = 0x0000,
-	kInstructionTypeFunctionCall = 0x0067,
-	kInstructionTypeOperand = 0x0066,
-	kInstructionTypeVariableRef = 0x0065
-};
-
-enum Opcode {
-	kOpcodeIfElse = 202,
-	kOpcodeAssignVariable = 203,
-	kOpcodeOr = 204,
-	kOpcodeAnd = 206,
-	kOpcodeEquals = 207,
-	kOpcodeNotEquals = 208,
-	kOpcodeLessThan = 209,
-	kOpcodeGreaterThan = 210,
-	kOpcodeLessThanOrEqualTo = 211,
-	kOpcodeGreaterThanOrEqualTo = 212,
-	kOpcodeAdd = 213,
-	kOpcodeSubtract = 214,
-	kOpcodeMultiply = 215,
-	kOpcodeDivide = 216,
-	kOpcodeModulo = 217,
-	kOpcodeUnk2 = 218, // TODO: Likely something with ## constants like ##DOWN?
-	kOpcodeCallRoutine = 219,
-	// Method calls are like routine calls, but they have an implicit "self"
-	// parameter that is always the first. For example:
-	//  @self . mouseActivate ( TRUE ) ;
-	kOpcodeCallMethod = 220,
-	// This seems to appear at the start of a function to declare the number of
-	// local variables used in the function. It seems to be the `Declare`
-	// keyword. In the observed examples, the number of variables to create is
-	// given, then the next instructions are variable assignments for that number
-	// of variables.
-	kOpcodeDeclareVariables = 221,
-	kOpcodeWhile = 224,
-	kOpcodeReturn = 222,
-	kOpcodeUnk1 = 223
-};
-
-enum VariableScope {
-	kVariableScopeLocal = 1,
-	kVariableScopeParameter = 2,
-	kVariableScopeGlobal = 4
-};
-
 class CodeChunk {
 public:
 	CodeChunk(Common::SeekableReadStream &chunk);

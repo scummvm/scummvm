@@ -35,6 +35,7 @@
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
 #include "mediastation/assets/movie.h"
+#include "mediastation/mediascript/builtins.h"
 
 namespace MediaStation {
 

@@ -24,31 +24,12 @@
 
 #include "common/array.h"
 
+#include "mediastation/mediascript/builtins.h"
 #include "mediastation/mediascript/variable.h"
 
 namespace MediaStation {
 
 class Asset;
-
-enum OperandType {
-	kOperandTypeEmpty = 0, // a flag for C++ code, not real operand type.
-	// TODO: Figure out the difference between these two.
-	kOperandTypeLiteral1 = 151,
-	kOperandTypeLiteral2 = 153,
-	// TODO: Figure out the difference between these two.
-	kOperandTypeFloat1 = 152,
-	kOperandTypeFloat2 = 157,
-	kOperandTypeString = 154,
-	// TODO: This only seems to be used in effectTransition:
-	//  effectTransition ( $FadeToPalette )
-	// compiles to:
-	//  [219, 102, 1]
-	//  [155, 301]
-	kOperandTypeDollarSignVariable = 155,
-	kOperandTypeAssetId = 156,
-	kOperandTypeVariableDeclaration = 158,
-	kOperandTypeFunction = 160
-};
 
 class Operand {
 public:

@@ -30,6 +30,7 @@
 #include "mediastation/bitmap.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/builtins.h"
 
 namespace MediaStation {
 

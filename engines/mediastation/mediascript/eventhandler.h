@@ -25,67 +25,9 @@
 #include "mediastation/datafile.h"
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/codechunk.h"
+#include "mediastation/mediascript/builtins.h"
 
 namespace MediaStation {
-
-enum EventType {
-    // TIMER EVENTS.
-    kTimerEvent = 5,
-
-    // HOTSPOT EVENTS.
-    kMouseDownEvent = 6,
-    kMouseUpEvent = 7,
-    kMouseMovedEvent = 8,
-    kMouseEnteredEvent = 9,
-    kMouseExitedEvent = 10,
-    kKeyDownEvent = 13, // PARAMS: 1 - ASCII code.
-
-    // SOUND EVENTS.
-    kSoundEndEvent = 14,
-    kSoundAbortEvent = 19,
-    kSoundFailureEvent = 20,
-    kSoundStoppedEvent = 29,
-    kSoundBeginEvent = 30,
-
-    // MOVIE EVENTS.
-    kMovieEndEvent = 15,
-    kMovieAbortEvent = 21,
-    kMovieFailureEvent = 22,
-    kMovieStoppedEvent = 31,
-    kMovieBeginEvent = 32,
-
-    //SPRITE EVENTS.
-    // Just "MovieEnd" in source.
-    kSpriteMovieEndEvent = 23,
-
-    // SCREEN EVENTS.
-    kEntryEvent = 17,
-    kExitEvent = 27,
-
-    // CONTEXT EVENTS.
-    kLoadCompleteEvent = 44, // PARAMS: 1 - Context ID
-
-    // TEXT EVENTS.
-    kInputEvent = 37,
-    kErrorEvent = 38,
-
-    // CAMERA EVENTS.
-    kPanAbortEvent = 43,
-    kPanEndEvent = 42,
-
-    // PATH EVENTS.
-    kStepEvent = 28,
-    kPathStoppedEvent = 33,
-    kPathEndEvent = 16
-};
-
-enum EventHandlerArgumentType {
-    kNullEventHandlerArgument = 0,
-    kAsciiCodeEventHandlerArgument = 1, // TODO: Why is this datum type a float?
-    kTimeEventHandlerArgument = 3,
-    kUnk1EventHandlerArgument = 4, // Appars to happen with MovieStart?
-    kContextEventHandlerArgument = 5
-};
 
 class EventHandler {
 public:
