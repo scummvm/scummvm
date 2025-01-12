@@ -54,8 +54,15 @@ void SoundSE::initSoundFiles() {
 
 		if (_vm->_game.id == GID_MONKEY2) {
 			indexXWBFile(kSoundSETypeCommentary);
-			// TODO: indexXWBFile for patch.xwb
+			// We need the speechcues.xsb file for MI2's speech,
+			// since the file names, which are used to match the
+			// speech cues with the audio files, are stored in there.
 			indexSpeechXSBFile();
+
+			// Patch audio files. Since this relies on file names,
+			// it needs to be called after the file names are defined
+			// from the speech cues above.
+			indexXWBFile(kSoundSETypePatch);
 		}
 		break;
 
@@ -142,6 +149,7 @@ void SoundSE::indexXWBFile(SoundSEType type) {
 		entry.rate = (format >> (2 + 3)) & ((1 << 18) - 1);
 		entry.align = (format >> (2 + 3 + 18)) & ((1 << 8) - 1);
 		entry.bits = (format >> (2 + 3 + 18 + 8)) & ((1 << 1) - 1);
+		entry.isPatched = false;
 
 		audioIndex->push_back(entry);
 	}
@@ -155,8 +163,39 @@ void SoundSE::indexXWBFile(SoundSEType type) {
 			Common::String name = f->readString(0, 64);
 			name.toLowercase();
 
-			(*audioIndex)[i].name = name;
-			_nameToIndex[name] = i;
+			if (type != kSoundSETypePatch) {
+				(*audioIndex)[i].name = name;
+				_nameToIndex[name] = i;
+			} else {
+				// Patch audio resources for MI2
+				// Note: We assume that patch XWB files always contain file names
+
+				// In Monkey Island 2, there's a gag with a phone operator from
+				// the LucasArts help line, Chester, who responds to a call from
+				// a phone located inside the Dinky Island jungle (room 155, boot
+				// param 996). In the classic version, Chester was female, but was
+				// replaced by a male operator in the Special Edition. The original
+				// audio files for Chester are "chf_97_*, and the new audio files
+				// are che_97_*. We patch the female voice for Chester's sound files
+				// here.
+				if (name.hasPrefix("chf_97_jungleb_")) {
+					name.setChar('e', 2);
+				}
+
+				// Note: The original patch also contained the following entries:
+				// - Fixes for audio sync during the skeleton dance / dream
+				//   sequence (boot param 675). These are not needed for the
+				//   classic version, and only apply to the Special Edition.
+				// - Missing music files for Dinky Jungle. We don't use these
+				//   yet, so we don't patch them.
+				//   TODO: Process and patch music entries, once we start using
+				//   the SE audio files for music.
+				const int32 originalAudioIndex = _nameToIndex[name];
+				if (originalAudioIndex < _speechEntries.size() && _speechEntries[originalAudioIndex].name == name) {
+					_speechEntries[originalAudioIndex].isPatched = true;
+					_nameToIndexPatched[name] = i;
+				}
+			}
 		}
 	}
 
@@ -290,6 +329,7 @@ void SoundSE::indexFSBFile(SoundSEType type) {
 		entry.codec = kFSBCodecMP3;
 		entry.align = 0;
 		entry.bits = 16;
+		entry.isPatched = false;
 
 		audioIndex->push_back(entry);
 	}
@@ -536,6 +576,8 @@ Common::String SoundSE::getAudioFilename(SoundSEType type) {
 		return "Ambience.xwb";
 	case kSoundSETypeCommentary:
 		return isMonkey ? "commentary.xwb" : "iMUSEClient_Commentary.fsb";
+	case kSoundSETypePatch:
+		return "patch.xwb";
 	default:
 		error("getAudioFilename: unknown SoundSEType %d", type);
 	}
@@ -579,6 +621,8 @@ SoundSE::AudioIndex *SoundSE::getAudioEntries(SoundSEType type) {
 		return &_ambienceEntries;
 	case kSoundSETypeCommentary:
 		return &_commentaryEntries;
+	case kSoundSETypePatch:
+		return &_patchEntries;
 	default:
 		error("getAudioEntries: unknown SoundSEType %d", type);
 	}
@@ -721,6 +765,14 @@ Audio::SeekableAudioStream *SoundSE::getAudioStreamFromIndex(int32 index, SoundS
 		return nullptr;
 
 	audioEntry = (*audioIndex)[index];
+
+	// Load patched audio files, if present
+	if (audioEntry.isPatched && _nameToIndexPatched.contains(audioEntry.name)) {
+		int32 patchedEntry = _nameToIndexPatched[audioEntry.name];
+		type = kSoundSETypePatch;
+		audioIndex = getAudioEntries(type);
+		audioEntry = (*audioIndex)[patchedEntry];
+	}
 
 	Common::SeekableReadStream *f = getAudioFile(type);
 	if (!f)

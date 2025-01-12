@@ -44,7 +44,8 @@ enum SoundSEType {
 	kSoundSETypeSpeech,
 	kSoundSETypeSFX,
 	kSoundSETypeAmbience,
-	kSoundSETypeCommentary
+	kSoundSETypeCommentary,
+	kSoundSETypePatch
 };
 
 class SoundSE {
@@ -112,6 +113,7 @@ private:
 		uint16 align;
 		byte bits;
 		Common::String name;
+		bool isPatched;
 	};
 
 	ScummEngine *_vm;
@@ -125,12 +127,14 @@ private:
 	OffsetToIndexMap _offsetToIndexDOTTAndFT;
 	NameToOffsetMap _nameToOffsetDOTTAndFT;
 	NameToIndexMap _nameToIndex;
+	NameToIndexMap _nameToIndexPatched;
 
 	AudioIndex _musicEntries;
 	AudioIndex _speechEntries;
 	AudioIndex _sfxEntries;
 	AudioIndex _ambienceEntries;
 	AudioIndex _commentaryEntries;
+	AudioIndex _patchEntries;
 
 	typedef Common::Array<AudioEntryMI> AudioIndexMI;
 	AudioIndexMI _audioEntriesMI;
