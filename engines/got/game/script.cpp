@@ -26,7 +26,6 @@
 #include "got/game/object.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
-#include "got/gfx/panel.h"
 #include "got/utils/file.h"
 #include "got/views/dialogs/ask.h"
 #include "got/views/dialogs/say.h"
@@ -45,7 +44,7 @@ static const char *SCR_COMMAND[] = {
     "ADDSCORE", "SAY", "ASK", "SOUND", "PLACETILE",
     "ITEMGIVE", "ITEMTAKE", "ITEMSAY", "SETFLAG", "LTOA",
     "PAUSE", "TEXT", "EXEC", "VISIBLE", "RANDOM",
-    NULL
+    nullptr
 };
 
 static const char *INTERNAL_VARIABLE[] = {
@@ -56,7 +55,7 @@ static const char *INTERNAL_VARIABLE[] = {
     "@DEAD", "@BRAAPP", "@WIND", "@PUNCH", "@CLANG",
     "@EXPLODE", "@FLAG", "@ITEM", "@THORTILE",
     "@THORPOS",
-    NULL
+    nullptr
 };
 
 static const char *SCR_ERROR[] = {
@@ -65,7 +64,7 @@ static const char *SCR_ERROR[] = {
     "Syntax", "Out of Range", "Undefined Label",
     "RETURN Without GOSUB", "Nesting",
     "NEXT Without FOR",
-    NULL
+    nullptr
 };
 
 static const char *OFFENSE[] = {
@@ -106,11 +105,10 @@ Scripts::~Scripts() {
     g_scripts = nullptr;
 }
 
-void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon,
-                             ScriptEndFn endFn) {
+void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon, ScriptEndFn endFn) {
     // Firstly disable any on-screen actors
     for (int i = 0; i < MAX_ACTORS; i++)
-        _G(actor)[i].show = 0;
+        _G(actor[i]).show = 0;
 
     _endFn = endFn;
     _scrIndex = index;
@@ -122,9 +120,7 @@ void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon,
 }
 
 void Scripts::runScript(bool firstTime) {
-    int i;
-
-    // Clear line label buffer, line ptrs, and the gosub stack
+	// Clear line label buffer, line ptrs, and the gosub stack
     Common::fill((char *)_lineLabel, (char *)_lineLabel + 32 * 9, 0);
     Common::fill(_linePtr, _linePtr + 32, (char *)nullptr);
     Common::fill(_gosubStack, _gosubStack + 32, (char *)nullptr);
@@ -135,7 +131,7 @@ void Scripts::runScript(bool firstTime) {
     Common::fill(_forStack, _forStack + 11, (char *)nullptr);
     _forPtr = 0;
 
-    i = read_script_file();
+    int i = read_script_file();
     if (i != 0) {
         script_error(i);
         script_exit();
@@ -150,19 +146,20 @@ void Scripts::runScript(bool firstTime) {
 }
 
 void Scripts::scriptLoop() {
-    int ret;
-
-    while (!_paused) {
-        if (_G(cheat) && _G(key_flag)[_B])
+	while (!_paused) {
+        if (_G(cheat) && _G(key_flag[_B]))
 			break;
     	
-        ret = get_command();
+        int ret = get_command();
         if (ret == -1)
             break;       // Ignore NO END error
-        else if (ret == -2) {
+
+		if (ret == -2) {
             script_error(5);       // Syntax error
             break;
-        } else if (ret > 0) {
+        }
+
+    	if (ret > 0) {
             ret = exec_command(ret);
             if (ret == -100) {         // RUN command
                 if (_buffer)
@@ -200,16 +197,14 @@ int Scripts::skip_colon() {
 }
 
 int Scripts::get_command() {
-    int ret, i, len;
-
     if (!skip_colon()) return -1;
 
-    i = 0;
+    int i = 0;
     while (1) {
         if (!SCR_COMMAND[i])
             break;           // Lookup command
 
-        len = strlen(SCR_COMMAND[i]);
+        int len = strlen(SCR_COMMAND[i]);
         if (!strncmp(_buffPtr, SCR_COMMAND[i], len)) {
             _buffPtr += len;
             return i;
@@ -219,22 +214,28 @@ int Scripts::get_command() {
     }
 
     if (Common::isAlpha(*_buffPtr)) {
-        if (*(_buffPtr + 1) == '=') {           // Num var assignment
+		int ret;
+		if (*(_buffPtr + 1) == '=') { // Num var assignment
             i = (*_buffPtr) - 65;
             _buffPtr += 2;
             ret = calc_value();
-            if (!ret) return -2;
-            else {
-                _numVar[i] = _lValue;
-                return 0;
-            }
-        } else if (*(_buffPtr + 1) == '$' && *(_buffPtr + 2) == '=') {
+            if (!ret)
+				return -2;
+
+			_numVar[i] = _lValue;
+            return 0;
+        }
+
+    	if (*(_buffPtr + 1) == '$' && *(_buffPtr + 2) == '=') {
             i = (*_buffPtr) - 65;
             _buffPtr += 3;
             ret = calc_string(0);                 // String var assignment
             if (ret == 0) return -2;
-            else if (ret == -1) return -3;
+
+			if (ret == -1) return -3;
+    		
             if (strlen(_tempS) > 80) return -3;
+    		
             Common::strcpy_s(_strVar[i], _tempS);
             return 0;
         }
@@ -290,10 +291,8 @@ strdone:
 }
 
 void Scripts::get_str() {
-    int t;
-
-    _buffPtr++;
-    t = 0;
+	_buffPtr++;
+    int t = 0;
 
     while (1) {
         if (*_buffPtr == '"' || *_buffPtr == 0) {
@@ -308,12 +307,9 @@ void Scripts::get_str() {
 }
 
 int Scripts::calc_value() {
-    long tmpval2;
-    char exptype;
-    char ch;
 
-    tmpval2 = 0;
-    exptype = 1;
+	long tmpval2 = 0;
+    char exptype = 1;
 
     while (1) {
         if (!get_next_val()) return 0;
@@ -332,7 +328,7 @@ int Scripts::calc_value() {
             break;
         }
 
-        ch = *_buffPtr;
+        char ch = *_buffPtr;
         switch (ch) {
         case 42:
             exptype = 0;                       /* multiply */
@@ -356,11 +352,9 @@ int Scripts::calc_value() {
 }
 
 int Scripts::get_next_val() {
-    char ch;
-    char tmpstr[25];
-    int t;
+	char tmpstr[25];
 
-    ch = *_buffPtr;
+	char ch = *_buffPtr;
     if (ch == 0 || ch == ':')
 		return 0;
     if (ch == 64)
@@ -372,7 +366,7 @@ int Scripts::get_next_val() {
         return 1;
     }
 
-    t = 0;
+    int t = 0;
     if (strchr("0123456789-", ch)) {
         tmpstr[0] = ch;
         t++;
@@ -392,12 +386,10 @@ int Scripts::get_next_val() {
 }
 
 int Scripts::get_internal_variable() {
-    int i, len;
-
-    i = 0;
+	int i = 0;
     while (1) {
         if (!INTERNAL_VARIABLE[i]) return 0;         // Lookup internal variable
-        len = strlen(INTERNAL_VARIABLE[i]);
+        int len = strlen(INTERNAL_VARIABLE[i]);
         if (!strncmp(_buffPtr, INTERNAL_VARIABLE[i], len)) {
             _buffPtr += len;
             break;
@@ -468,9 +460,7 @@ int Scripts::get_internal_variable() {
 }
 
 int Scripts::get_line(char *src, char *dst) {
-    int cnt;
-
-    cnt = 0;
+	int cnt = 0;
     while (*src != 13) {
         if (*src != 10) {
             *dst = *src;
@@ -1024,12 +1014,12 @@ void Scripts::scr_func3() {
 
     if (y < 0 || x < 0 || y>11 || x>19) {
         play_sound(BRAAPP, true);
-        _G(key_flag)[key_magic] = false;
+        _G(key_flag[key_magic]) = false;
         return;
     }
     if (_G(scrn).icon[y][x] < 174 || _G(scrn).icon[y][x]>178) {
         play_sound(BRAAPP, true);
-        _G(key_flag)[key_magic] = false;
+        _G(key_flag[key_magic]) = false;
         return;
     }
 
@@ -1037,22 +1027,22 @@ void Scripts::scr_func3() {
     play_sound(WOOP, true);
     if (_G(current_level) == 106 && p == 69) {
         place_tile(x, y, 220);
-        _G(key_flag)[key_magic] = false;
+        _G(key_flag[key_magic]) = false;
         return;
     }
 
-    _G(key_flag)[key_magic] = false;
+    _G(key_flag[key_magic]) = false;
     place_tile(x, y, 191);
 
     if ((g_events->getRandomNumber(99)) < 25 ||
             (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
-        if (!_G(object_map)[p] && _G(scrn).icon[y][x] >= 140) {  // nothing there and solid
+        if (!_G(object_map[p]) && _G(scrn).icon[y][x] >= 140) {  // nothing there and solid
             o = g_events->getRandomNumber(1, 5);
             if (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
                 o = 20;
 
-            _G(object_map)[p] = o;
-            _G(object_index)[p] = 31;  // actor is 3-15
+            _G(object_map[p]) = o;
+            _G(object_index[p]) = 31;  // actor is 3-15
         }
     }
 }
@@ -1066,7 +1056,7 @@ void Scripts::scr_func5() {
     _G(scrn).actor_loc[1] -= 2;
     _G(scrn).actor_loc[2] -= 2;
     _G(scrn).actor_loc[3] -= 2;
-    _G(actor)[3].i1 = 16;
+    _G(actor[3]).i1 = 16;
 }
 
 int Scripts::cmd_exec() {

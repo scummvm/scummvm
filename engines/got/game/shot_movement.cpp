@@ -82,8 +82,8 @@ int shot_movement_none(ACTOR *actr) {
     actr->temp3--;
     if (!actr->temp3) {
         actor_destroyed(actr);
-        if (_G(actor)[actr->creator].num_shots)
-            _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots)
+            _G(actor[actr->creator]).num_shots--;
     }
 
     next_shot_frame(actr);
@@ -94,9 +94,9 @@ int shot_movement_none(ACTOR *actr) {
 }
 
 int shot_movement_one(ACTOR *actr) {
-    int d, x1 = 0, y1 = 0;
+    int x1 = 0, y1 = 0;
 
-    d = actr->last_dir;
+    int d = actr->last_dir;
 
     switch (d) {
     case 0:
@@ -119,7 +119,7 @@ int shot_movement_one(ACTOR *actr) {
 
     if (!check_move3(x1, y1, actr)) {
         actor_destroyed(actr);
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
     } else {
         next_shot_frame(actr);
         actr->last_dir = d;
@@ -134,9 +134,9 @@ int shot_movement_one(ACTOR *actr) {
 }
 
 int shot_movement_two(ACTOR *actr) {
-    int d, x1 = 0, y1 = 0;
+    int x1 = 0, y1 = 0;
 
-    d = actr->last_dir;
+    int d = actr->last_dir;
 
     switch (d) {
     case 0:
@@ -158,7 +158,7 @@ int shot_movement_two(ACTOR *actr) {
     }
     if (!check_move4(x1, y1, actr)) {
         actor_destroyed(actr);
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
     } else {
         next_shot_frame(actr);
         actr->last_dir = d;
@@ -170,11 +170,9 @@ int shot_movement_two(ACTOR *actr) {
 
 // Serpent fire
 int shot_movement_three(ACTOR *actr) {
-    int d;
-
-    d = actr->last_dir;
+	int d = actr->last_dir;
+	
     actr->x -= 2;
-
     actr->temp3--;
     actr->temp4--;
 
@@ -192,7 +190,7 @@ int shot_movement_three(ACTOR *actr) {
     }
     if (!actr->temp3) {
         actor_destroyed(actr);
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
     } else {
         next_shot_frame(actr);
         actr->last_dir = d;
@@ -209,7 +207,7 @@ int shot_movement_four(ACTOR *actr) {
         actr->temp1--;
         if (!actr->temp1) {
             actor_destroyed(actr);
-            _G(apple_drop)++;
+            _G(apple_drop++);
             if (_G(apple_drop) == 4) {
                 if (_drop_obj(actr, 5)) _G(apple_drop) = 0;
                 else _G(apple_drop) = 3;
@@ -332,7 +330,7 @@ int shot_movement_six(ACTOR *actr) {
     actr->temp1--;
     if (!actr->temp1) {
         actor_destroyed(actr);
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
     } else next_shot_frame(actr);
     if (actr->directions == 1) return 0;
     return actr->last_dir;
@@ -425,7 +423,7 @@ int shot_movement_eight(ACTOR *actr) {
     if (y > 164) y = 164;
     //   8       311
     if (x<1 || x>(319 - actr->size_x)) {
-        if (!actr->dead) if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (!actr->dead) if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
         actor_destroyed(actr);
     }
     if (overlap(actr->x, actr->y, actr->x + actr->size_x, actr->y + actr->size_y,
@@ -444,7 +442,7 @@ int shot_movement_eight(ACTOR *actr) {
 int shot_movement_nine(ACTOR *actr) {
     actr->next++;
     if (actr->next == 3) {
-        _G(actor)[actr->creator].num_shots--;
+        _G(actor[actr->creator]).num_shots--;
         actor_destroyed(actr);
         return 0;
     }
@@ -465,7 +463,7 @@ int shot_movement_ten(ACTOR *actr) {
         f = 1;
     }
     if ((actr->y > 160) || f) {
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
         actor_destroyed(actr);
     }
 
@@ -538,7 +536,7 @@ int shot_movement_eleven(ACTOR *actr) {
     }
 
     if (!check_move3(x1, y1, actr)) {
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
         actor_destroyed(actr);
     } else next_frame(actr);
 
@@ -626,9 +624,9 @@ int shot_movement_thirteen(ACTOR *actr) {
     }
     if (actr->temp4) actr->temp4--;
     if (!actr->temp4) {
-        if (_G(actor)[actr->creator].num_shots) _G(actor)[actr->creator].num_shots--;
+        if (_G(actor[actr->creator]).num_shots) _G(actor[actr->creator]).num_shots--;
         actor_destroyed(actr);
-        _G(apple_drop)++;
+        _G(apple_drop++);
         if (_G(apple_drop) > 4) {
             if (_drop_obj(actr, 5)) _G(apple_drop) = 0;
             else _G(apple_drop) = 4;
