@@ -207,8 +207,6 @@ int shot_movement_three(ACTOR *actr) {
 
 // Wraith balls
 int shot_movement_four(ACTOR *actr) {
-	int x1, y1, xd, yd, d;
-
 	if (actr->temp1) {
 		actr->temp1--;
 		if (!actr->temp1) {
@@ -231,10 +229,11 @@ int shot_movement_four(ACTOR *actr) {
 		return 0;
 	}
 
-	x1 = actr->x;
-	y1 = actr->y;
-	xd = yd = 0;
-	d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
+	int yd = 0;
+	int xd = 0;
+	int d = actr->last_dir;
 
 	if ((x1 > (_G(thor_x1)) + 1))
 		xd = -2;
@@ -271,16 +270,15 @@ int shot_movement_four(ACTOR *actr) {
 				return 0;
 			return d;
 		}
-	} else {
-		if (xd == 0 && yd == 2)
-			d = 1;
-		else if (xd == 0 && yd == -2)
-			d = 0;
-		else if (xd == 2 && yd == 0)
-			d = 3;
-		else if (xd == -2 && yd == 0)
-			d = 2;
-	}
+	} else if (xd == 0 && yd == 2)
+		d = 1;
+	else if (xd == 0 && yd == -2)
+		d = 0;
+	else if (xd == 2 && yd == 0)
+		d = 3;
+	else if (xd == -2 && yd == 0)
+		d = 2;
+
 	x1 = actr->x;
 	y1 = actr->y;
 	actr->toggle ^= 1;
@@ -505,9 +503,7 @@ int shot_movement_nine(ACTOR *actr) {
 
 // Skull - stalagtites
 int shot_movement_ten(ACTOR *actr) {
-	int f;
-
-	f = 0;
+	int f = 0;
 	actr->y += 2;
 
 	if (overlap(actr->x, actr->y, actr->x + actr->size_x, actr->y + actr->size_y,
@@ -565,10 +561,8 @@ void calc_angle(int x1, int y1, int x2, int y2, ACTOR *actr) {
 
 // Angle throw
 int shot_movement_eleven(ACTOR *actr) {
-	int x1, y1;
-
-	x1 = actr->x;
-	y1 = actr->y;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	if (!actr->temp1) {
 		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
@@ -605,10 +599,8 @@ int shot_movement_eleven(ACTOR *actr) {
 
 // Angle throw Loki
 int shot_movement_twelve(ACTOR *actr) {
-	int x1, y1;
-
-	x1 = actr->x;
-	y1 = actr->y;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	if (!actr->temp5) {
 		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
@@ -658,10 +650,8 @@ int shot_movement_twelve(ACTOR *actr) {
 
 // Angle throw Loki-2
 int shot_movement_thirteen(ACTOR *actr) {
-	int x1, y1;
-
-	x1 = actr->x;
-	y1 = actr->y;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	if (!actr->temp5) {
 		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
