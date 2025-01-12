@@ -118,6 +118,7 @@ struct TTMSeq {
 class TTMInterpreter {
 public:
 	TTMInterpreter(DgdsEngine *vm);
+	virtual ~TTMInterpreter() {};
 
 	bool load(const Common::String &filename, TTMEnviro &env);
 	void unload();
