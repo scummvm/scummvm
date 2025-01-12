@@ -60,6 +60,8 @@ public:
 	size_t size() const {
 		return _size;
 	}
+
+	GfxPics &operator=(const GfxPics &src);
 };
 
 class BgPics : public GfxPics {

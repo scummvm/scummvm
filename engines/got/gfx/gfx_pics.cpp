@@ -88,6 +88,16 @@ void GfxPics::load(const Common::String &name, int blockSize) {
     delete[] buff;
 }
 
+GfxPics &GfxPics::operator=(const GfxPics &src) {
+	clear();
+	resize(src._size);
+
+	for (int i = 0; i < _size; ++i)
+		_array[i].copyFrom(src._array[i]);
+
+	return *this;
+}
+
 
 void BgPics::setArea(int area) {
     if (area != _area) {
