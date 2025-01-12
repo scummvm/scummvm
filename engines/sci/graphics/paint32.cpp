@@ -83,7 +83,7 @@ void GfxPaint32::kernelDeleteLine(const reg_t screenItemObject, const reg_t plan
 	g_sci->_gfxFrameout->deleteScreenItem(*screenItem, *plane);
 }
 
-void GfxPaint32::plotter(int x, int y, int color, void *data) {
+void GfxPaint32::Primitives::drawPoint(int x, int y, uint32 color, void *data) {
 	LineProperties &properties = *static_cast<LineProperties *>(data);
 	byte *pixels = properties.bitmap->getPixels();
 
@@ -178,10 +178,11 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 		properties.lastAddress = properties.horizontal ? x1 : y1;
 	}
 
+	Primitives primitives;
 	if (thickness <= 1) {
-		Graphics::drawLine(x1, y1, x2, y2, color, plotter, &properties);
+		primitives.drawLine(x1, y1, x2, y2, color, &properties);
 	} else {
-		Graphics::drawThickLine2(x1, y1, x2, y2, thickness, color, plotter, &properties);
+		primitives.drawThickLine2(x1, y1, x2, y2, thickness, color, &properties);
 	}
 
 	return bitmapId;
