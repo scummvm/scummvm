@@ -858,49 +858,51 @@ void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, in
 	}
 }
 
-void MacGuiImpl::MacDialogWindow::plotPixel(int x, int y, int color, void *data) {
-	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
-	Graphics::Surface *s = window->innerSurface();
-	s->setPixel(x, y, color);
-}
-
 // I don't know if the original actually used two different plot functions, one
 // to fill and one to darken (used to draw over the text screens). It's such a
 // subtle effect that I suspect it was just doing some different magic, maybe
 // with XOR, but I couldn't get that to work by eye only.
 
-void MacGuiImpl::MacDialogWindow::plotPattern(int x, int y, int pattern, void *data) {
-	const uint16 patterns[] = {
-		0x0000, 0x2828, 0xA5A5, 0xD7D7,
-		0xFFFF,	0xD7D7, 0xA5A5, 0x2828
-	};
+class PatternPrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 pattern, void *data) override {
+		const uint16 patterns[] = {
+			0x0000, 0x2828, 0xA5A5, 0xD7D7,
+			0xFFFF,	0xD7D7, 0xA5A5, 0x2828
+		};
 
-	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
-	Graphics::Surface *s = window->innerSurface();
-	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-	if (patterns[pattern] & bit)
-		s->setPixel(x, y, window->_gui->getBlack());
-	else
-		s->setPixel(x, y, window->_gui->getWhite());
-}
+		MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
+		Graphics::Surface *s = window->innerSurface();
+		int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+		if (patterns[pattern] & bit)
+			s->setPixel(x, y, window->_gui->getBlack());
+		else
+			s->setPixel(x, y, window->_gui->getWhite());
+	}
+};
 
-void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
-	const uint16 patterns[] = {
-		0x0000, 0x2828, 0xA5A5, 0xD7D7, 0xFFFF
-	};
+class PatternDarkenOnlyPrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 pattern, void *data) override {
+		const uint16 patterns[] = {
+			0x0000, 0x2828, 0xA5A5, 0xD7D7, 0xFFFF
+		};
 
-	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
-	Graphics::Surface *s = window->innerSurface();
-	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-	if (patterns[pattern] & bit)
-		s->setPixel(x, y, window->_gui->getBlack());
-}
+		MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
+		Graphics::Surface *s = window->innerSurface();
+		int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+		if (patterns[pattern] & bit)
+			s->setPixel(x, y, window->_gui->getBlack());
+	}
+};
 
-void MacGuiImpl::MacDialogWindow::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *)) {
+void MacGuiImpl::MacDialogWindow::drawPatternRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, bool darkenOnly) {
 	// FIXME: This is a deprecated method, but we should replace it with
 	// something that matches QuickDraw's rounded rects instead.
 
-	Graphics::drawRoundRect(rect, arc, color, filled, plotProc, this);
+	if (darkenOnly) {
+		PatternDarkenOnlyPrimitives().drawRoundRect(rect, arc, color, filled, this);
+	} else {
+		PatternPrimitives().drawRoundRect(rect, arc, color, filled, this);
+	}
 }
 
 void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines, bool inverse) {
@@ -998,8 +1000,8 @@ void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *li
 		bg = _white;
 	}
 
-	drawRoundRect(r, arc, bg, true, plotPixel);
-	drawRoundRect(r, arc, fg, false, plotPixel);
+	innerSurface()->drawRoundRect(r, arc, bg, true);
+	innerSurface()->drawRoundRect(r, arc, fg, false);
 	markRectAsDirty(r);
 
 	drawTexts(r, lines, inverse);

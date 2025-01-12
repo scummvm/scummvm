@@ -762,11 +762,7 @@ public:
 		void markRectAsDirty(Common::Rect r);
 		void update(bool fullRedraw = false);
 
-		static void plotPixel(int x, int y, int color, void *data);
-		static void plotPattern(int x, int y, int pattern, void *data);
-		static void plotPatternDarkenOnly(int x, int y, int pattern, void *data);
-
-		void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *));
+		void drawPatternRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, bool darkenOnly);
 
 		void drawDottedHLine(int x0, int y, int x1);
 		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
