@@ -176,9 +176,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 			actr->move_count = 0;
 			set_thor_vars();
 			return 1;
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
+	
 	if (x > 306) {
 		if (_G(current_level) < 119) {
 			_G(new_level) = _G(current_level) + 1;
@@ -189,9 +191,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 			actr->move_count = 0;
 			set_thor_vars();
 			return 1;
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
+	
 	if (y < 0) {
 		if (_G(current_level) > 9) {
 			_G(new_level) = _G(current_level) - 10;
@@ -202,9 +206,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 			actr->move_count = 0;
 			set_thor_vars();
 			return 1;
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
+	
 	if (y > 175) {
 		if (_G(current_level) < 110) {
 			_G(new_level) = _G(current_level) + 10;
@@ -215,9 +221,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 			actr->move_count = 0;
 			set_thor_vars();
 			return 1;
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
+	
 	int x1 = (x + 1) >> 4;
 	int y1 = (y + 8) >> 4;
 	int x2 = (_G(thor)->dir > 1) ? (x + 12) >> 4 : (x + 10) >> 4;
@@ -237,18 +245,22 @@ int check_move0(int x, int y, ACTOR *actr) {
 			_G(thor_icon1) = 1;
 			ti = 1;
 		}
+		
 		if (icn2 < TILE_FLY) {
 			_G(thor_icon2) = 1;
 			ti = 1;
 		}
+		
 		if (icn3 < TILE_FLY) {
 			_G(thor_icon3) = 1;
 			ti = 1;
 		}
+		
 		if (icn4 < TILE_FLY) {
 			_G(thor_icon4) = 1;
 			ti = 1;
 		}
+		
 		if (ti)
 			return 0;
 
@@ -259,55 +271,59 @@ int check_move0(int x, int y, ACTOR *actr) {
 			icn3 = _G(scrn).icon[y1][x2];
 			icn4 = _G(scrn).icon[y2][x2];
 		}
+
 		if (icn2 > TILE_SPECIAL) {
 			if (!special_tile_thor(y2, x1, icn2))
 				return 0;
 			icn3 = _G(scrn).icon[y1][x2];
 			icn4 = _G(scrn).icon[y2][x2];
 		}
+
 		if (icn3 > TILE_SPECIAL) {
 			if (!special_tile_thor(y1, x2, icn3))
 				return 0;
 			icn4 = _G(scrn).icon[y2][x2];
 		}
-		if (icn4 > TILE_SPECIAL) {
-			if (!special_tile_thor(y2, x2, icn4))
-				return 0;
-		}
+
+		if (icn4 > TILE_SPECIAL && !special_tile_thor(y2, x2, icn4))
+			return 0;
 	}
 
 	if (!_G(slip_flag)) {
 		_G(slipping) = false;
 		_G(slip_cnt) = 0;
 	}
+	
 	if (_G(slip_flag) && !_G(slipping))
 		_G(slip_cnt++);
+	
 	if (_G(slip_cnt) > 8)
 		_G(slipping) = true;
+	
 	_G(slip_flag) = false;
 
 	x1 = x + 1;
 	y1 = y + 8;
+	
 	if (_G(thor)->dir > 1)
 		x2 = x + 12;
 	else
-		x2 = x + 12;
+		x2 = x + 12; // CHECKME : in check_move0() it's 10
+	
 	y2 = y + 15;
 
 	_G(thor_special_flag) = false;
 	for (int i = 3; i < MAX_ACTORS; i++) {
 		ACTOR *act = &_G(actor[i]);
-		if (act->solid & 128)
-			continue;
-		if (!act->used)
+		if ((act->solid & 128) || !act->used)
 			continue;
 
 		int x3 = act->x + 1;
-		if ((ABS(x3 - x1)) > 16)
-			continue;
 		int y3 = act->y + 1;
-		if ((ABS(y3 - y1)) > 16)
+		
+		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
+		
 		int x4 = act->x + act->size_x - 1;
 		int y4 = act->y + act->size_y - 1;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
@@ -317,19 +333,20 @@ int check_move0(int x, int y, ACTOR *actr) {
 				act->temp1 = x;
 				act->temp2 = y;
 				_G(thor_special_flag) = true;
+				
 				return special_movement_func[act->func_num](act);
-			} else {
-				_G(thor_special_flag) = false;
-				thor_damaged(act);
-				if (act->solid < 2) {
-					if (!act->vunerable && (!(act->type & 1)))
-						play_sound(PUNCH1, false);
+			}
 
-					if (!_G(hammer)->used && _G(key_flag[key_fire]))
-						actor_damaged(act, _G(hammer)->strength);
-					else
-						actor_damaged(act, _G(thor)->strength);
-				}
+			_G(thor_special_flag) = false;
+			thor_damaged(act);
+			if (act->solid < 2) {
+				if (!act->vunerable && (!(act->type & 1)))
+					play_sound(PUNCH1, false);
+
+				if (!_G(hammer)->used && _G(key_flag[key_fire]))
+					actor_damaged(act, _G(hammer)->strength);
+				else
+					actor_damaged(act, _G(thor)->strength);
 			}
 			return 1;
 		}
@@ -341,30 +358,23 @@ int check_move0(int x, int y, ACTOR *actr) {
 
 // Check hammer move
 int check_move1(int x, int y, ACTOR *actr) {
-	int x1, x2, y1, y2, i;
-	int x3, y3, x4, y4;
-	int icn, f;
-	byte icn1, icn2, icn3, icn4;
-
-	ACTOR *act;
-
 	if (x < 0 || x > 306 || y < 0 || y > 177)
 		return 0;
 
-	x1 = (x + 1) >> 4;
-	y1 = (y + 6) >> 4;
-	x2 = (x + 10) >> 4;
-	y2 = (y + 10) >> 4;
+	int x1 = (x + 1) >> 4;
+	int y1 = (y + 6) >> 4;
+	int x2 = (x + 10) >> 4;
+	int y2 = (y + 10) >> 4;
 
 	// Check for solid or fly over
-	icn = TILE_FLY;
+	int icn = TILE_FLY;
 	if (actr->flying)
 		icn = TILE_SOLID;
 
-	icn1 = _G(scrn).icon[y1][x1];
-	icn2 = _G(scrn).icon[y2][x1];
-	icn3 = _G(scrn).icon[y1][x2];
-	icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn).icon[y1][x1];
+	byte icn2 = _G(scrn).icon[y2][x1];
+	byte icn3 = _G(scrn).icon[y1][x2];
+	byte icn4 = _G(scrn).icon[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) {
 		if (actr->actor_num == 1 && actr->move == 2)
 			play_sound(CLANG, false);
@@ -372,39 +382,37 @@ int check_move1(int x, int y, ACTOR *actr) {
 		return 0;
 	}
 
-	if (icn1 > TILE_SPECIAL)
-		if (!special_tile(actr, y1, x1, icn1))
-			return 0;
-	if (icn2 > TILE_SPECIAL)
-		if (!special_tile(actr, y2, x1, icn2))
-			return 0;
-	if (icn3 > TILE_SPECIAL)
-		if (!special_tile(actr, y1, x2, icn3))
-			return 0;
-	if (icn4 > TILE_SPECIAL)
-		if (!special_tile(actr, y2, x2, icn4))
-			return 0;
+	if (icn1 > TILE_SPECIAL && !special_tile(actr, y1, x1, icn1))
+		return 0;
+
+	if (icn2 > TILE_SPECIAL && !special_tile(actr, y2, x1, icn2))
+		return 0;
+
+	if (icn3 > TILE_SPECIAL && !special_tile(actr, y1, x2, icn3))
+		return 0;
+
+	if (icn4 > TILE_SPECIAL && !special_tile(actr, y2, x2, icn4))
+		return 0;
 
 	x1 = x + 1;
 	y1 = y + 1;
 	x2 = x + 10;
 	y2 = y + 10;
 
-	f = 0;
-	for (i = 3; i < MAX_ACTORS; i++) {
-		act = &_G(actor[i]);
-		if (!act->used)
+	int f = 0;
+	for (int i = 3; i < MAX_ACTORS; i++) {
+		ACTOR *act = &_G(actor[i]);
+		if (!act->used || act->type == 3)
 			continue;
-		if (act->type == 3)
+		
+		int x3 = act->x;
+		int y3 = act->y;
+
+		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
-		x3 = act->x;
-		if ((ABS(x3 - x1)) > 16)
-			continue;
-		y3 = act->y;
-		if ((ABS(y3 - y1)) > 16)
-			continue;
-		x4 = act->x + act->size_x - 1;
-		y4 = act->y + act->size_y - 1;
+		
+		int x4 = act->x + act->size_x - 1;
+		int y4 = act->y + act->size_y - 1;
 
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
 			if (_G(boss_active) && !GAME3) {
@@ -437,37 +445,32 @@ int check_move1(int x, int y, ACTOR *actr) {
 
 // Check enemy move
 int check_move2(int x, int y, ACTOR *actr) {
-	int x1, x2, y1, y2, i;
-	int x3, y3, x4, y4;
-	int icn;
-	byte icn1, icn2, icn3, icn4;
-
-	ACTOR *act;
-
 	if (actr->actor_num < 3)
 		return check_move1(x, y, actr);
 
 	if (x < 0 || x > (319 - actr->size_x) || y < 0 || y > 175)
 		return 0;
 
-	x1 = (x + 1) >> 4;
+	int x1 = (x + 1) >> 4;
+	int y1;
 	if (!actr->func_num)
 		y1 = (y + (actr->size_y / 2)) >> 4;
 	else
 		y1 = (y + 1) >> 4;
-	x2 = ((x + actr->size_x) - 1) >> 4;
-	y2 = ((y + actr->size_y) - 1) >> 4;
+
+	int x2 = ((x + actr->size_x) - 1) >> 4;
+	int y2 = ((y + actr->size_y) - 1) >> 4;
 
 	// Check for solid or fly over
 
-	icn = TILE_FLY;
+	int icn = TILE_FLY;
 	if (actr->flying)
 		icn = TILE_SOLID;
 
-	icn1 = _G(scrn).icon[y1][x1];
-	icn2 = _G(scrn).icon[y2][x1];
-	icn3 = _G(scrn).icon[y1][x2];
-	icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn).icon[y1][x1];
+	byte icn2 = _G(scrn).icon[y2][x1];
+	byte icn3 = _G(scrn).icon[y1][x2];
+	byte icn4 = _G(scrn).icon[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
@@ -489,13 +492,9 @@ int check_move2(int x, int y, ACTOR *actr) {
 	x2 = (x + actr->size_x) - 1;
 	y2 = (y + actr->size_y) - 1;
 
-	for (i = 0; i < MAX_ACTORS; i++) {
-		act = &_G(actor[i]);
-		if (act->actor_num == actr->actor_num)
-			continue;
-		if (act->actor_num == 1)
-			continue;
-		if (!act->used)
+	for (int i = 0; i < MAX_ACTORS; i++) {
+		ACTOR *act = &_G(actor[i]);
+		if (act->actor_num == actr->actor_num || act->actor_num == 1 || !act->used)
 			continue;
 		if (act->type == 3)
 			continue; // Shot
@@ -506,16 +505,14 @@ int check_move2(int x, int y, ACTOR *actr) {
 				return 0;
 			}
 		} else {
-			x3 = act->x;
-			if ((ABS(x3 - x1)) > 16)
+			int x3 = act->x;
+			int y3 = act->y;
+			
+			if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 				continue;
 
-			y3 = act->y;
-			if ((ABS(y3 - y1)) > 16)
-				continue;
-
-			x4 = act->x + act->size_x;
-			y4 = act->y + act->size_y;
+			int x4 = act->x + act->size_x;
+			int y4 = act->y + act->size_y;
 			if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
 				if (actr->move == 38) {
 					if (act->func_num == 4)
@@ -590,11 +587,9 @@ int check_move3(int x, int y, ACTOR *actr) {
 			continue;
 
 		int x3 = act->x;
-		if ((ABS(x3 - x1)) > 16)
-			continue;
-
 		int y3 = act->y;
-		if ((ABS(y3 - y1)) > 16)
+
+		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
 
 		int x4 = x3 + 15;
@@ -631,7 +626,7 @@ int check_thor_move(int x, int y, ACTOR *actr) {
 	if (_G(diag_flag) || _G(thor_special_flag))
 		return 0;
 
-	if ((_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4)) > 1)
+	if (_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4) > 1)
 		return 0;
 
 	switch (actr->dir) {
@@ -692,20 +687,19 @@ int check_thor_move(int x, int y, ACTOR *actr) {
 
 // Player control
 int movement_zero(ACTOR *actr) {
-	int x, y;
 	int d = actr->dir;
 	int od = d;
 
 	set_thor_vars();
 
-	if ((_G(hammer)->used) && (_G(hammer)->move == 5)) {
+	if (_G(hammer)->used && _G(hammer)->move == 5) {
 		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2),
 					_G(hammer)->x, _G(hammer)->y, _G(hammer)->x + 13, _G(hammer)->y + 13)) {
 			actor_destroyed(_G(hammer));
 		}
 	}
-	x = actr->x;
-	y = actr->y;
+	int x = actr->x;
+	int y = actr->y;
 	_G(diag_flag) = false;
 	if (actr->move_counter)
 		actr->move_counter--;
@@ -987,7 +981,6 @@ int special_movement_two(ACTOR *actr) {
 
 // Yellow globe
 int special_movement_three(ACTOR *actr) {
-
 	if (_G(thunder_flag))
 		return 0;
 
@@ -1202,7 +1195,6 @@ int movement_three(ACTOR *actr) {
 
 // Simple tracking
 int movement_four(ACTOR *actr) {
-
 	int d = actr->last_dir;
 
 	int x1 = actr->x;
@@ -1421,13 +1413,11 @@ int movement_eight(ACTOR *actr) {
 
 // 4-way straight (random length) change
 int movement_nine(ACTOR *actr) {
-	int d, x1, y1, f;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
-
-	f = 0;
+	int f = 0;
 	if (actr->counter) {
 		actr->counter--;
 		switch (d) {
@@ -1468,13 +1458,11 @@ int movement_nine(ACTOR *actr) {
 
 // Vert straight (random length) change
 int movement_ten(ACTOR *actr) {
-	int d, x1, y1, f;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
-
-	f = 0;
+	int f = 0;
 	if (actr->counter) {
 		if (actr->pass_value != 1)
 			actr->counter--;
@@ -1520,9 +1508,7 @@ int movement_ten(ACTOR *actr) {
 
 // Horz only (bats)
 int movement_eleven(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 
 	switch (d) {
 	case 0:
@@ -1568,9 +1554,7 @@ int movement_eleven(ACTOR *actr) {
 
 // Horz straight until bump
 int movement_twelve(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 
 	switch (d) {
 	case 0:
@@ -1595,9 +1579,7 @@ int movement_twelve(ACTOR *actr) {
 
 // Pause-seek (mushroom)
 int movement_thirteen(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 
 	if (actr->counter == 0 && actr->pause == 0) {
 		actr->pause = 60;
@@ -1623,12 +1605,10 @@ int movement_thirteen(ACTOR *actr) {
 
 // Move-bump-stop (boulder)
 int movement_fourteen(ACTOR *actr) {
-	int d, x1, y1;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 	actr->dir = d;
-	x1 = actr->x;
-	y1 = actr->y;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	switch (d) {
 	case 0:
@@ -1674,11 +1654,9 @@ int movement_fifteen(ACTOR *actr) {
 
 // Tornado 1
 int movement_sixteen(ACTOR *actr) {
-	int d, x1, y1;
-
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	switch (d) {
 	case 0:
@@ -1708,9 +1686,7 @@ int movement_sixteen(ACTOR *actr) {
 
 // Tornado 2
 int movement_seventeen(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 
 	switch (d) {
 	case 0:
@@ -1816,9 +1792,7 @@ int movement_twentyone(ACTOR *actr) {
 
 // Spear
 int movement_twentytwo(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 	if (actr->directions == 1)
 		d = 0;
 
@@ -1908,9 +1882,7 @@ redo:
 
 // Spinball counter-clockwise
 int movement_twentythree(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 	next_frame(actr);
 	if (actr->pass_value & 2)
 		actr->num_moves = 2;
@@ -2006,9 +1978,7 @@ int movement_twentythree(ACTOR *actr) {
 
 // Spinball  clockwise
 int movement_twentyfour(ACTOR *actr) {
-	int d;
-
-	d = actr->last_dir;
+	int d = actr->last_dir;
 	next_frame(actr);
 	if (actr->pass_value & 2)
 		actr->num_moves = 2;
@@ -2104,17 +2074,15 @@ int movement_twentyfour(ACTOR *actr) {
 
 // Acid puddle
 int movement_twentyfive(ACTOR *actr) {
-	int i, ret;
-
 	if (actr->temp2) {
 		actr->temp2--;
 		return movement_one(actr);
 	}
 	if (!actr->temp1) {
 		actr->last_dir = g_events->getRandomNumber(3);
-		i = 4;
+		int i = 4;
 		while (i--) {
-			ret = movement_three(actr);
+			int ret = movement_three(actr);
 			if (ret)
 				return ret;
 			actr->last_dir++;
@@ -2150,19 +2118,18 @@ void set_thor_vars() {
 	if (_G(thor)->dir > 1)
 		_G(thor_x2) = (_G(thor)->x + 12);
 	else
-		_G(thor_x2) = (_G(thor)->x + 12);
+		_G(thor_x2) = (_G(thor)->x + 12); // CHECKME : in check_move0() it's 10
 
 	_G(thor_y2) = _G(thor)->y + 15;
 }
 
 // Fish
 int movement_twentyeight(ACTOR *actr) {
-	int d, x1, y1, ret;
-
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
-
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
+	int ret;
+	
 	if (actr->i1)
 		actr->i1--;
 	else {
@@ -2206,6 +2173,7 @@ int movement_twentyeight(ACTOR *actr) {
 		x1 += 2;
 		break;
 	}
+	
 	ret = bgtile(x1, y1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
@@ -2246,17 +2214,15 @@ done:
 int movement_twentynine(ACTOR *actr) {
 	if (!actr->pass_value)
 		return movement_thirty(actr);
-	else
-		return movement_twelve(actr);
+
+	return movement_twelve(actr);
 }
 
 // Vert straight
 int movement_thirty(ACTOR *actr) {
-	int d, x1, y1;
-
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	switch (d) {
 	case 0:
@@ -2278,29 +2244,23 @@ int movement_thirty(ACTOR *actr) {
 
 // Drop (stalagtite)
 int movement_thirtyone(ACTOR *actr) {
-	int d, x1, y1, cx, cy, ty, i;
-
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	if (actr->temp1) {
 		y1 += 2;
 		if (!check_move2(x1, y1, actr))
 			actor_destroyed(actr);
-	} else {
-		if (_G(thor_y1) > y1) {
-			if (ABS(x1 - _G(thor_x1)) < 16) {
-				cx = (actr->x + (actr->size_x / 2)) >> 4;
-				cy = ((actr->y + actr->size_y) - 2) >> 4;
-				ty = _G(thor)->center_y;
-				for (i = cy; i <= ty; i++)
-					if (_G(scrn).icon[i][cx] < TILE_SOLID)
-						goto done;
-				actr->num_moves = actr->pass_value + 1;
-				actr->temp1 = 1;
-			}
-		}
+	} else if (_G(thor_y1) > y1 && ABS(x1 - _G(thor_x1)) < 16) {
+		int cx = (actr->x + (actr->size_x / 2)) >> 4;
+		int cy = ((actr->y + actr->size_y) - 2) >> 4;
+		int ty = _G(thor)->center_y;
+		for (int i = cy; i <= ty; i++)
+			if (_G(scrn).icon[i][cx] < TILE_SOLID)
+				goto done;
+		actr->num_moves = actr->pass_value + 1;
+		actr->temp1 = 1;
 	}
 
 done:
@@ -2345,13 +2305,11 @@ int movement_thirtysix(ACTOR *actr) {
 
 // 4-way straight (random length) change
 int movement_thirtyseven(ACTOR *actr) {
-	int d, x1, y1, f;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
-
-	f = 0;
+	int f = 0;
 	if (actr->counter) {
 		actr->counter--;
 		switch (d) {
@@ -2399,11 +2357,9 @@ int movement_thirtyseven(ACTOR *actr) {
 #define OY actr->i3
 #define CNT actr->i4
 int movement_thirtyeight(ACTOR *actr) {
-	int d, x1, y1;
-
-	d = actr->last_dir;
-	x1 = actr->x;
-	y1 = actr->y;
+	int d = actr->last_dir;
+	int x1 = actr->x;
+	int y1 = actr->y;
 
 	if (!FLAG) {
 		FLAG = 1;
@@ -2529,20 +2485,18 @@ int movement_thirtynine(ACTOR *actr) {
 
 // Troll 2
 int movement_forty(ACTOR *actr) {
-	int x1, x2, a, d, f;
-
 	if (overlap(actr->x + 1, actr->y + 1, actr->x + actr->size_x + 3,
 				actr->y + actr->size_y - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
 		actr->strength = 150;
 		thor_damaged(actr);
 	}
-	a = 5 + (actr->pass_value * 4);
-	x1 = actr->x;
-	x2 = _G(actor[a + 1]).x;
-	d = actr->last_dir;
+	int a = 5 + (actr->pass_value * 4);
+	int x1 = actr->x;
+	int x2 = _G(actor[a + 1]).x;
+	int d = actr->last_dir;
 
+	int f = 1;
 	if (actr->last_dir == 2) {
-		f = 1;
 		if (bgtile(x1 - 2, actr->y) >= TILE_SOLID) {
 			_G(actor[a].x) -= 2;
 			_G(actor[a - 1]).x -= 2;
@@ -2553,7 +2507,6 @@ int movement_forty(ACTOR *actr) {
 		if (!f)
 			d = 3;
 	} else {
-		f = 1;
 		if (bgtile(_G(actor[a + 1]).x + 14, _G(actor[a + 1]).y) >= TILE_SOLID) {
 			_G(actor[a]).x += 2;
 			_G(actor[a - 1]).x += 2;

@@ -140,8 +140,6 @@ void actor_damaged(ACTOR *actr, int damage) {
 }
 
 void thor_damaged(ACTOR *actr) {
-	int damage;
-
 	actr->hit_thor = 1;
 
 	// If we're invincible, ignore any damage
@@ -162,7 +160,7 @@ void thor_damaged(ACTOR *actr) {
 		return;
 	}
 
-	damage = actr->strength;
+	int damage = actr->strength;
 	if (damage != 255) {
 		if (!_G(setup).skill)
 			damage /= 2;
@@ -222,14 +220,12 @@ void actor_destroyed(ACTOR *actr) {
 }
 
 int _actor_shoots(ACTOR *actr, int dir) {
-	int cx, cy;
-	ACTOR *act;
-
 	int t = actr->shot_type - 1;
 	for (int i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
 		if ((!_G(actor[i]).used) && (!_G(actor[i]).dead)) {
-			act = &_G(actor[i]);
+			ACTOR *act = &_G(actor[i]);
 			*act = _G(shot[t]);
+			int cx, cy;
 
 			if (actr->size_y < act->size_y)
 				cy = actr->y - ((act->size_y - actr->size_y) / 2);
@@ -328,8 +324,6 @@ int actor_shoots(ACTOR *actr, int dir) {
 }
 
 void move_actor(ACTOR *actr) {
-	int i;
-
 	if (actr->vunerable != 0)
 		actr->vunerable--;
 	if (actr->shot_cnt != 0)
@@ -351,12 +345,17 @@ void move_actor(ACTOR *actr) {
 			actr->speed_count = actr->speed;
 		else
 			actr->speed_count = (actr->speed << 1);
+		
+		int i;
+
 		if (actr->type == 3)
 			i = shot_movement_func[actr->move](actr);
 		else
 			i = movement_func[actr->move](actr);
+		
 		if (actr->directions == 2)
 			i &= 1;
+		
 		if (i != actr->dir)
 			actr->dir = i;
 
