@@ -22,8 +22,6 @@
 #ifndef GOT_GAME_MAIN_H
 #define GOT_GAME_MAIN_H
 
-#include "got/data/defines.h"
-
 namespace Got {
 
 extern void setup_load();

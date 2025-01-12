@@ -57,8 +57,8 @@ void setup_load() {
     _G(lightning_used) = false;
     _G(tornado_used) = false;
     _G(shield_on) = false;
-    _G(actor)[1].used = 0;
-    _G(actor)[2].used = 0;
+    _G(actor[1]).used = 0;
+    _G(actor[2]).used = 0;
     _G(thor)->speed_count = 6;
 
     _G(scrn).load(_G(new_level));
