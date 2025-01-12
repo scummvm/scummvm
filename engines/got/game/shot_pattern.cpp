@@ -157,9 +157,9 @@ int shot_pattern_five(ACTOR *actr) {
 
             int num = actr->shot_actor;
             actr->shot_cnt = 50;
-            _G(actor)[num].temp3 = 120;
-            _G(actor)[num].temp4 = 5 + (_G(rand2) % 17);
-            _G(actor)[num].temp5 = _G(actor)[num].temp4;
+            _G(actor[num]).temp3 = 120;
+            _G(actor[num]).temp4 = 5 + (_G(rand2) % 17);
+            _G(actor[num]).temp5 = _G(actor[num]).temp4;
             actr->y -= 16;
             return 1;
         }

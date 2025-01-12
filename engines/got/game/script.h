@@ -34,6 +34,28 @@ enum ScriptPause {
 };
 
 class Scripts {
+public:
+	Scripts();
+	~Scripts();
+
+	void execute_script(long index, const Gfx::Pics &speakerIcon,
+						ScriptEndFn endFn = nullptr);
+
+	void pause() {
+		_paused = SCRIPT_PAUSED;
+	}
+	void resume() {
+		_paused = SCRIPT_RESUMING;
+	}
+
+	void setAskResponse(int option);
+	void runIfResuming() {
+		if (_paused == SCRIPT_RESUMING) {
+			_paused = SCRIPT_READY;
+			scriptLoop();
+		}
+	}
+
 private:
     ScriptEndFn _endFn = nullptr;
     long  _numVar[26] = {};        // numeric variables
@@ -107,27 +129,6 @@ private:
     void runScript(bool firstTime = true);
     void scriptLoop();
 
-public:
-    Scripts();
-    ~Scripts();
-
-    void execute_script(long index, const Gfx::Pics &speakerIcon,
-                        ScriptEndFn endFn = nullptr);
-
-    void pause() {
-        _paused = SCRIPT_PAUSED;
-    }
-    void resume() {
-        _paused = SCRIPT_RESUMING;
-    }
-
-    void setAskResponse(int option);
-    void runIfResuming() {
-        if (_paused == SCRIPT_RESUMING) {
-            _paused = SCRIPT_READY;
-            scriptLoop();
-        }
-    }
 };
 
 extern void execute_script(long index, const Gfx::Pics &speakerIcon,
