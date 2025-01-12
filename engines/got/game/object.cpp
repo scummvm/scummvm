@@ -41,8 +41,8 @@ void show_objects() {
     for (int i = 0; i < OBJECTS_COUNT; i++) {
         if (_G(scrn).static_obj[i]) {
             int p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
-            _G(object_index)[p] = i;
-            _G(object_map)[p] = _G(scrn).static_obj[i];
+            _G(object_index[p]) = i;
+            _G(object_map[p]) = _G(scrn).static_obj[i];
         }
     }
 }
@@ -50,7 +50,7 @@ void show_objects() {
 void pick_up_object(int p) {
     int r, x, y, s;
 
-    switch (_G(object_map)[p]) {
+    switch (_G(object_map[p])) {
     case 1:           // Red jewel
         if (_G(thor_info).jewels >= 999) {
             cannot_carry_more();
@@ -124,18 +124,18 @@ void pick_up_object(int p) {
     case 24:
     case 25:
     case 26:
-        if (_G(object_map)[p] == 13 && HERMIT_HAS_DOLL) return;
+        if (_G(object_map[p]) == 13 && HERMIT_HAS_DOLL) return;
         _G(thor)->num_moves = 1;
         _G(hammer)->num_moves = 2;
-        _G(actor)[2].used = 0;
+        _G(actor[2]).used = 0;
         _G(shield_on) = false;
         _G(tornado_used) = false;
         _G(thor_info).inventory |= 64;
         _G(thor_info).item = 7;
-        _G(thor_info).object = _G(object_map)[p] - 11;
+        _G(thor_info).object = _G(object_map[p]) - 11;
         display_item();
         _G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
-        odin_speaks((_G(object_map)[p] - 12) + 501, _G(object_map)[p] - 1);
+        odin_speaks((_G(object_map[p]) - 12) + 501, _G(object_map[p]) - 1);
         break;
     case 27:
     case 28:
@@ -150,12 +150,12 @@ void pick_up_object(int p) {
         _G(tornado_used) = false;
         _G(hammer)->num_moves = 2;
         _G(thor)->num_moves = 1;
-        _G(actor)[2].used = 0;
-        s = 1 << (_G(object_map)[p] - 27);
+        _G(actor[2]).used = 0;
+        s = 1 << (_G(object_map[p]) - 27);
         _G(thor_info).inventory |= s;
-        odin_speaks((_G(object_map)[p] - 27) + 516, _G(object_map)[p] - 1);
+        odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
         s = 1;
-        _G(thor_info).item = _G(object_map)[p] - 26;
+        _G(thor_info).item = _G(object_map[p]) - 26;
         display_item();
         add_magic(150);
         fill_score(5);
@@ -172,13 +172,13 @@ void pick_up_object(int p) {
     s = 0;
     if (!s)
         play_sound(YAH, false);
-    _G(object_map)[p] = 0;
+    _G(object_map[p]) = 0;
 
     if (r) {
         // Reset so it doesn't reappear on reentry to screen
-        if (_G(object_index)[p] < 30)
-            _G(scrn).static_obj[_G(object_index)[p]] = 0;
-        _G(object_index)[p] = 0;
+        if (_G(object_index[p]) < 30)
+            _G(scrn).static_obj[_G(object_index[p])] = 0;
+        _G(object_index[p]) = 0;
     }
 }
 
@@ -210,9 +210,9 @@ int drop_object(ACTOR *actr) {
 
 int _drop_obj(ACTOR *actr, int o) {
 	int p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
-    if (!_G(object_map)[p] && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
-        _G(object_map)[p] = o;
-        _G(object_index)[p] = 27 + actr->actor_num;  //actor is 3-15
+    if (!_G(object_map[p]) && _G(scrn).icon[p / 20][p % 20] >= 140) {  //nothing there and solid
+        _G(object_map[p]) = o;
+        _G(object_index[p]) = 27 + actr->actor_num;  //actor is 3-15
 
         return 1;
     }
@@ -275,7 +275,7 @@ int use_hourglass(int flag) {
 
     if (_G(hourglass_flag)) {
         if ((int)_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
-            _G(hourglass_flag)++;
+            _G(hourglass_flag++);
             if (_G(hourglass_flag) == 16) {
                 _G(hourglass_flag) = 0;
                 music_resume();
@@ -337,10 +337,10 @@ int use_shield(int flag) {
                 add_magic(-1);
                 setup_magic_item(1);
 
-                _G(actor)[2] = _G(magic_item)[1];
-                setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
-                _G(actor)[2].speed_count = 1;
-                _G(actor)[2].speed = 1;
+                _G(actor[2]) = _G(magic_item[1]);
+                setup_actor(&_G(actor[2]), 2, 0, _G(thor)->x, _G(thor)->y);
+                _G(actor[2]).speed_count = 1;
+                _G(actor[2]).speed = 1;
                 _G(shield_on) = true;
             } else if (_G(magic_cnt) > 8) {
                 _G(magic_cnt) = 0;
@@ -359,8 +359,8 @@ int use_shield(int flag) {
 
     if (f) {
         if (_G(shield_on)) {
-            _G(actor)[2].dead = 2;
-            _G(actor)[2].used = 0;
+            _G(actor[2]).dead = 2;
+            _G(actor[2]).used = 0;
             _G(shield_on) = false;
         }
     }
@@ -384,15 +384,15 @@ int use_lightning(int flag) {
 int use_tornado(int flag) {
     if (flag) {
         if (_G(thor_info).magic > 10) {
-            if (!_G(tornado_used) && !_G(actor)[2].dead && _G(magic_cnt) > 20) {
+            if (!_G(tornado_used) && !_G(actor[2]).dead && _G(magic_cnt) > 20) {
                 _G(magic_cnt) = 0;
                 add_magic(-10);
                 setup_magic_item(0);
-                _G(actor)[2] = _G(magic_item)[0];
+                _G(actor[2]) = _G(magic_item[0]);
 
-                setup_actor(&_G(actor)[2], 2, 0, _G(thor)->x, _G(thor)->y);
-                _G(actor)[2].last_dir = _G(thor)->dir;
-                _G(actor)[2].move = 16;
+                setup_actor(&_G(actor[2]), 2, 0, _G(thor)->x, _G(thor)->y);
+                _G(actor[2]).last_dir = _G(thor)->dir;
+                _G(actor[2]).move = 16;
                 _G(tornado_used) = true;
                 play_sound(WIND, false);
             }
@@ -407,7 +407,7 @@ int use_tornado(int flag) {
             }
         }
         if (_G(thor_info).magic < 1) {
-            actor_destroyed(&_G(actor)[2]);
+            actor_destroyed(&_G(actor[2]));
             _G(tornado_used) = false;
             not_enough_magic();
             return 0;
@@ -429,10 +429,10 @@ int use_object(int flag) {
 void use_item() {
     int ret = 0;
 
-    int kf = _G(key_flag)[key_magic];
+    int kf = _G(key_flag[key_magic]);
 
     if (!kf && _G(tornado_used)) {
-        actor_destroyed(&_G(actor)[2]);
+        actor_destroyed(&_G(actor[2]));
         _G(tornado_used) = false;
     }
 
