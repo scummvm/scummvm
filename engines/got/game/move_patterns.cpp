@@ -38,15 +38,13 @@ namespace Got {
 #define TILE_FLY 140
 #define TILE_SPECIAL 200
 
-extern int (*dialog_func[])(ACTOR *actr);
-
 int check_special_move1(int x, int y, ACTOR *actr);
 
 int check_move0(int x, int y, ACTOR *actr);
 int check_move1(int x, int y, ACTOR *actr);
-int check_move2(int x, int y, ACTOR *actr);
-int check_move3(int x, int y, ACTOR *actr);
-int check_move4(int x, int y, ACTOR *actr);
+//int check_move2(int x, int y, ACTOR *actr);
+//int check_move3(int x, int y, ACTOR *actr);
+//int check_move4(int x, int y, ACTOR *actr);
 
 int movement_zero(ACTOR *actr);
 int movement_one(ACTOR *actr);
@@ -308,7 +306,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 	if (_G(thor)->dir > 1)
 		x2 = x + 12;
 	else
-		x2 = x + 12; // CHECKME : in check_move0() it's 10
+		x2 = x + 12; // FIXME : This causes a duplicate branch warning in GCC. Need to check as in check_move0() it's 10
 	
 	y2 = y + 15;
 
