@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-09 21:25+0000\n"
+"POT-Creation-Date: 2025-01-12 16:11+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -994,11 +994,11 @@ msgstr "互动"
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:117
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
-#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
-#: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:936 engines/twine/metaengine.cpp:430
-#: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
-#: engines/wintermute/keymapper_tables.h:1290
+#: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:121
+#: engines/grim/grim.cpp:481 engines/grim/grim.cpp:562 engines/icb/icb.cpp:68
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:936
+#: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
+#: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -1009,11 +1009,11 @@ msgstr "向上"
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
-#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
-#: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:903 engines/twine/metaengine.cpp:437
-#: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
-#: engines/wintermute/keymapper_tables.h:1296
+#: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:127
+#: engines/grim/grim.cpp:486 engines/grim/grim.cpp:567 engines/icb/icb.cpp:73
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:903
+#: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
+#: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -1023,11 +1023,12 @@ msgstr "向下"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
-#: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
-#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:916
-#: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
-#: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
+#: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:58
+#: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
+#: engines/grim/grim.cpp:572 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
+#: engines/scumm/metaengine.cpp:916 engines/twine/metaengine.cpp:452
+#: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
+#: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
 #: engines/wintermute/keymapper_tables.h:1908
@@ -1038,11 +1039,12 @@ msgstr "向左"
 
 #: gui/gui-manager.cpp:194 engines/metaengine.cpp:135
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
-#: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
-#: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:923
-#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
-#: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
+#: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:59
+#: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
+#: engines/grim/grim.cpp:577 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
+#: engines/scumm/metaengine.cpp:923 engines/twine/metaengine.cpp:444
+#: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
+#: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
 #: engines/wintermute/keymapper_tables.h:1914
@@ -4430,7 +4432,8 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
+#: engines/got/metaengine.cpp:62 engines/mm/mm1/metaengine.cpp:49
+#: engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
 msgstr ""
 
@@ -5567,11 +5570,11 @@ msgstr ""
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/darkseed/metaengine.cpp:36
 #: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:48
-#: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
-#: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:52
-#: engines/zvision/metaengine.cpp:46
+#: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:53
+#: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
+#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
+#: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr ""
 
@@ -5579,11 +5582,11 @@ msgstr ""
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/darkseed/metaengine.cpp:37
 #: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:49
-#: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
-#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:53
-#: engines/zvision/metaengine.cpp:47
+#: engines/got/metaengine.cpp:37 engines/groovie/metaengine.cpp:54
+#: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
+#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
+#: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 
@@ -6169,13 +6172,13 @@ msgstr "遊戲選項"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
-#: engines/freescape/movement.cpp:101 engines/hugo/metaengine.cpp:160
-#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
-#: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
-#: engines/twine/metaengine.cpp:388 engines/vcruise/metaengine.cpp:164
-#: engines/wintermute/keymapper_tables.h:60
+#: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:64
+#: engines/hugo/metaengine.cpp:160 engines/lure/metaengine.cpp:209
+#: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
+#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
+#: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
+#: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
+#: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr ""
 
@@ -6969,7 +6972,7 @@ msgstr ""
 msgid "Activate Inventory Object"
 msgstr ""
 
-#: engines/dgds/metaengine.cpp:86
+#: engines/dgds/metaengine.cpp:86 engines/got/metaengine.cpp:91
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game Keys"
@@ -7418,6 +7421,23 @@ msgstr ""
 msgid "Failed to delete file."
 msgstr ""
 
+#. I18N: Action in In Cold Blood
+#: engines/got/metaengine.cpp:60 engines/icb/icb.cpp:89
+msgid "Fire"
+msgstr ""
+
+#: engines/got/metaengine.cpp:61
+msgid "Magic"
+msgstr ""
+
+#: engines/got/metaengine.cpp:65
+msgid "Thor Dies"
+msgstr ""
+
+#: engines/got/got.cpp:186 engines/got/got.cpp:196
+msgid "Savegames are not available in demo mode"
+msgstr ""
+
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
 msgstr ""
@@ -7837,11 +7857,6 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
-
-#. I18N: Action in In Cold Blood
-#: engines/icb/icb.cpp:89
-msgid "Fire"
 msgstr ""
 
 #. I18N: Action in In Cold Blood
