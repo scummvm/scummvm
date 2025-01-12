@@ -20,7 +20,7 @@
  */
 
 #include "common/endian.h"
-#include "graphics/primitives.h"
+#include "graphics/surface.h"
 
 #include "touche/graphics.h"
 
@@ -129,34 +129,25 @@ void Graphics::fillRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, ui
 }
 
 void Graphics::drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color1, uint8 color2) {
+	::Graphics::Surface s;
+	s.init(x+w, y+h, dstPitch, dst, ::Graphics::PixelFormat::createFormatCLUT8());
 	const int x1 = x;
 	const int y1 = y;
 	const int x2 = x + w - 1;
 	const int y2 = y + h - 1;
-	drawLine(dst, dstPitch, x1, y1, x2, y1, color1);
-	drawLine(dst, dstPitch, x1, y1, x1, y2, color1);
-	drawLine(dst, dstPitch, x2, y1 + 1, x2, y2, color2);
-	drawLine(dst, dstPitch, x1 + 1, y2, x2, y2, color2);
-}
-
-struct drawLineHelperData {
-	uint8 *dst;
-	int width;
-};
-
-static void drawLineHelper(int x, int y, int c, void *data) {
-	drawLineHelperData *param = (drawLineHelperData *)data;
-	*(param->dst + y * param->width + x) = c;
+	s.hLine(x1, y1, x2, color1);
+	s.vLine(x1, y1, y2, color1);
+	s.vLine(x2, y1 + 1, y2, color2);
+	s.hLine(x1 + 1, y2, x2, color2);
 }
 
 void Graphics::drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color) {
 	assert(x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0);
 
-	drawLineHelperData d;
-	d.dst = dst;
-	d.width = dstPitch;
+	::Graphics::Surface s;
+	s.init(MAX(x1, x2) + 1, MAX(y1, y2) + 1, dstPitch, dst, ::Graphics::PixelFormat::createFormatCLUT8());
 
-	::Graphics::drawLine(x1, y1, x2, y2, color, drawLineHelper, &d);
+	s.drawLine(x1, y1, x2, y2, color);
 }
 
 void Graphics::copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags) {
