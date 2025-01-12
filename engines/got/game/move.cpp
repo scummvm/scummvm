@@ -215,9 +215,9 @@ int _actor_shoots(ACTOR *actr, int dir) {
 
     int t = actr->shot_type - 1;
     for (int i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
-        if ((!_G(actor)[i].used) && (!_G(actor)[i].dead)) {
-            act = &_G(actor)[i];
-            *act = _G(shot)[t];
+        if ((!_G(actor[i]).used) && (!_G(actor[i]).dead)) {
+            act = &_G(actor[i]);
+            *act = _G(shot[t]);
 
             if (actr->size_y < act->size_y)
 				cy = actr->y - ((act->size_y - actr->size_y) / 2);
@@ -283,7 +283,7 @@ int actor_shoots(ACTOR *actr, int dir) {
 
     int icn = 140;
 	
-    if (_G(shot)[actr->shot_type - 1].flying == 1)
+    if (_G(shot[actr->shot_type - 1]).flying == 1)
 		icn = 80;
 
     switch (dir) {
@@ -349,14 +349,14 @@ void move_actor(ACTOR *actr) {
 			actr->dir = i;
 
         if (actr->move == 0 && _G(current_level) != _G(new_level) && _G(shield_on)) {
-            _G(actor)[2].x = actr->x - 2;
-            if (_G(actor)[2].x < 0)
-				_G(actor)[2].x = 0;
-            _G(actor)[2].y = actr->y;
-            _G(actor)[2].last_x[0] = _G(actor)[2].x;
-            _G(actor)[2].last_x[1] = _G(actor)[2].x;
-            _G(actor)[2].last_y[0] = _G(actor)[2].y;
-            _G(actor)[2].last_y[1] = _G(actor)[2].y;
+            _G(actor[2]).x = actr->x - 2;
+            if (_G(actor[2]).x < 0)
+				_G(actor[2]).x = 0;
+            _G(actor[2]).y = actr->y;
+            _G(actor[2]).last_x[0] = _G(actor[2]).x;
+            _G(actor[2]).last_x[1] = _G(actor[2]).x;
+            _G(actor[2]).last_y[0] = _G(actor[2]).y;
+            _G(actor[2]).last_y[1] = _G(actor[2]).y;
         }
     }
 
