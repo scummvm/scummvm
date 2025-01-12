@@ -121,6 +121,17 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	}
 }
 
+template<typename T>
+class CSurfacePrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		CSurfaceArea *sa = (CSurfaceArea *)data;
+		if (x >= 0 && x < sa->_width && y >= 0 && y < sa->_height) {
+			T *ptr = (T *)sa->_surface->getBasePtr(x, y);
+			*ptr = (*ptr & sa->_colorMask) ^ sa->_color;
+		}
+	}
+};
+
 double CSurfaceArea::drawLine(const FPoint &pt1, const FPoint &pt2) {
 	if (pt1 == pt2)
 		return pt1._y;
@@ -194,20 +205,20 @@ double CSurfaceArea::drawLine(const FPoint &pt1, const FPoint &pt2) {
 	switch (_bpp) {
 	case 0:
 		if (_mode != SA_SOLID) {
-			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<byte>, this);
+			CSurfacePrimitives<byte>().drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, this);
 			return p1._y;
 		}
 		break;
 	case 1:
 	case 2:
 		if (_mode != SA_SOLID) {
-			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<uint16>, this);
+			CSurfacePrimitives<uint16>().drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, this);
 			return p1._y;
 		}
 		break;
 	case 4:
 		if (_mode != SA_SOLID) {
-			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<uint32>, this);
+			CSurfacePrimitives<uint32>().drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, this);
 			return p1._y;
 		}
 		break;
