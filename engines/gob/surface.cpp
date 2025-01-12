@@ -42,12 +42,33 @@
 
 namespace Gob {
 
-static void plotPixel(int x, int y, int color, void *data) {
-	Surface *dest = (Surface *)data;
+class SurfacePrimitives final : public Graphics::Primitives {
+public:
+        void drawPoint(int x, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->putPixel(x, y, color);
+	}
 
-	dest->putPixel(x, y, color);
-}
+        void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(x1, y, x2, y, color);
+	}
 
+        void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(x, y1, x, y2, color);
+	}
+
+	void drawFilledRect(const Common::Rect &rect, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(rect.left, rect.top, rect.right - 1, rect.bottom - 1, color);
+	}
+
+	void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(rect.left, rect.top, rect.right, rect.bottom, color);
+	}
+};
 
 Pixel::Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max) :
 	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
@@ -696,7 +717,7 @@ void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
 }
 
 void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
-	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, this);
+	SurfacePrimitives().drawLine(x0, y0, x1, y1, color, this);
 }
 
 void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color) {
