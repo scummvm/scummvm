@@ -310,7 +310,6 @@ void Scripts::get_str() {
 }
 
 int Scripts::calc_value() {
-
 	long tmpval2 = 0;
 	char exptype = 1;
 
@@ -489,12 +488,11 @@ int Scripts::get_line(char *src, char *dst) {
 int Scripts::read_script_file() {
 	char temp_buff[255];
 	char quote_flag;
-	int i, len, p, ret, cnt;
-	char ch;
-	char *sb;
-	char *sbuff = nullptr;
+	int len, p, ret, cnt;
 	Common::String str;
 	char tmps[255];
+	char *sbuff = nullptr;
+	char *sb;
 
 	_buffer = (char *)malloc(SCR_BUFF_SIZE);
 	if (!_buffer) {
@@ -505,11 +503,11 @@ int Scripts::read_script_file() {
 	Common::fill(_buffer, _buffer + SCR_BUFF_SIZE, 0);
 
 	sbuff = (char *)malloc(25000l);
+	sb = sbuff;
 	if (!sbuff) {
 		ret = 1;
 		goto done;
 	};
-	sb = sbuff;
 
 	str = Common::String::format("SPEAK%d", _G(area));
 	if (res_read(str.c_str(), sb) < 0) {
@@ -551,8 +549,8 @@ int Scripts::read_script_file() {
 		}
 		quote_flag = 0;
 		p = 0;
-		for (i = 0; i < len; i++) {
-			ch = tmps[i];
+		for (int i = 0; i < len; i++) {
+			char ch = tmps[i];
 			if (ch == 34)
 				quote_flag ^= 1;
 			else if (ch == 13 || ch == 10) { // Check for CR
@@ -598,11 +596,8 @@ done:
 }
 
 void Scripts::script_error(int err_num) {
-	int line_num;
-	char *tb;
-
-	line_num = 1;
-	tb = _buffer;
+	int line_num = 1;
+	char *tb = _buffer;
 
 	while (1) {
 		if (*tb == 0)
@@ -619,17 +614,15 @@ void Scripts::script_error(int err_num) {
 }
 
 int Scripts::cmd_goto() {
-	int i, len;
 	char s[255];
-	char *p;
 
 	Common::strcpy_s(s, _buffPtr);
-	p = strchr(s, ':');
+	char *p = strchr(s, ':');
 	if (p)
 		*p = 0;
 
-	for (i = 0; i < _numLabels; i++) {
-		len = strlen(s);
+	for (int i = 0; i < _numLabels; i++) {
+		int len = strlen(s);
 		if (len == 0)
 			break;
 		if (!strcmp(s, _lineLabel[i])) {
@@ -642,26 +635,25 @@ int Scripts::cmd_goto() {
 }
 
 int Scripts::cmd_if() {
-	long tmpval1, tmpval2;
-	char exptype, ch;
-
 	if (!calc_value())
 		return 5;
-	tmpval1 = _lValue;
-	exptype = *_buffPtr;
+	
+	long tmpval1 = _lValue;
+	char exptype = *_buffPtr;
 	_buffPtr++;
 
-	ch = *_buffPtr;
+	char ch = *_buffPtr;
 	if (ch == 60 || ch == 61 || ch == 62) {
 		if (exptype == *_buffPtr)
 			return 5;
+		
 		exptype += *_buffPtr;
 		_buffPtr++;
 	}
 	if (!calc_value())
 		return 5;
 
-	tmpval2 = _lValue;
+	long tmpval2 = _lValue;
 	_buffPtr += 4;
 
 	switch (exptype) {
@@ -762,8 +754,7 @@ int Scripts::cmd_addscore() {
 }
 
 int Scripts::cmd_say(int mode, int type) {
-	char *p;
-	int obj;
+	int obj = 0;
 
 	if (mode) {
 		if (!calc_value())
@@ -772,13 +763,13 @@ int Scripts::cmd_say(int mode, int type) {
 		obj = (int)_lValue;
 		if (obj < 0 || obj > 32)
 			return 6;
+		
 		if (obj)
 			obj += 10;
-	} else
-		obj = 0;
-
+	}
+	
 	Common::fill(_G(tmp_buff), _G(tmp_buff) + TMP_SIZE, 0);
-	p = (char *)_G(tmp_buff);
+	char *p = (char *)_G(tmp_buff);
 
 	while (calc_string(0)) {
 		Common::strcpy_s(p, TMP_SIZE, _tempS);
@@ -810,6 +801,7 @@ int Scripts::cmd_ask() {
 		_buffPtr++;
 		if (*_buffPtr != ',')
 			return 5;
+		
 		_buffPtr++;
 	} else {
 		return 5;
@@ -864,29 +856,33 @@ int Scripts::cmd_sound() {
 	_buffPtr++;
 	if (_lValue < 1 || _lValue > 16)
 		return 6;
+	
 	play_sound((int)_lValue - 1, true);
 	return 0;
 }
 
 int Scripts::cmd_settile() {
-	int screen, pos, tile;
-
 	if (!calc_value())
 		return 5;
+	
 	_buffPtr++;
-	screen = (int)_lValue;
+	int screen = (int)_lValue;
 	if (!calc_value())
 		return 5;
+	
 	_buffPtr++;
-	pos = (int)_lValue;
+	int pos = (int)_lValue;
 	if (!calc_value())
 		return 5;
-	tile = (int)_lValue;
+	
+	int tile = (int)_lValue;
 
 	if (screen < 0 || screen > 119)
 		return 6;
+	
 	if (pos < 0 || pos > 239)
 		return 6;
+	
 	if (tile < 0 || tile > 230)
 		return 6;
 
@@ -902,13 +898,11 @@ int Scripts::cmd_settile() {
 }
 
 int Scripts::cmd_itemgive() {
-	int i;
-
 	if (!calc_value())
 		return 5;
 
 	_buffPtr++;
-	i = (int)_lValue;
+	int i = (int)_lValue;
 	if (i < 1 || i > 15)
 		return 6;
 
@@ -926,12 +920,10 @@ int Scripts::cmd_itemtake() {
 }
 
 int Scripts::cmd_setflag() {
-	int i;
-
 	if (!calc_value())
 		return 5;
 
-	i = (int)_lValue;
+	int i = (int)_lValue;
 	if (i < 1 || i > 64)
 		return 6;
 
@@ -966,6 +958,7 @@ int Scripts::cmd_ltoa() {
 int Scripts::cmd_pause() {
 	if (!calc_value())
 		return 5;
+	
 	_buffPtr++;
 	if (_lValue < 1 || _lValue > 65535l)
 		return 6;
@@ -977,6 +970,7 @@ int Scripts::cmd_pause() {
 int Scripts::cmd_visible() {
 	if (!calc_value())
 		return 5;
+	
 	_buffPtr++;
 	if (_lValue < 1 || _lValue > 16)
 		return 6;
@@ -986,13 +980,14 @@ int Scripts::cmd_visible() {
 }
 
 int Scripts::cmd_random() {
-	int v, r;
+	int v;
 
 	if (Common::isAlpha(*_buffPtr)) {
 		v = *_buffPtr - 65;
 		_buffPtr++;
 		if (*_buffPtr != ',')
 			return 5;
+		
 		_buffPtr++;
 	} else {
 		return 5;
@@ -1001,7 +996,7 @@ int Scripts::cmd_random() {
 	if (!calc_value())
 		return 5;
 	_buffPtr++;
-	r = (int)_lValue;
+	int r = (int)_lValue;
 	if (r < 1 || r > 1000)
 		return 6;
 
@@ -1025,19 +1020,15 @@ void Scripts::scr_func1() {
 }
 
 void Scripts::scr_func2() {
-	int r;
-
-	r = g_events->getRandomNumber(5);
+	int r = g_events->getRandomNumber(5);
 	Common::strcpy_s(_strVar[0], 81, OFFENSE[r]);
 	Common::strcpy_s(_strVar[1], 81, REASON[r]);
 }
 
 void Scripts::scr_func3() {
-	int p, x, y, o;
-
-	p = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
-	y = p / 20;
-	x = p % 20;
+	int p = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
+	int y = p / 20;
+	int x = p % 20;
 
 	if (y < 0 || x < 0 || y > 11 || x > 19) {
 		play_sound(BRAAPP, true);
@@ -1064,7 +1055,7 @@ void Scripts::scr_func3() {
 	if ((g_events->getRandomNumber(99)) < 25 ||
 		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
 		if (!_G(object_map[p]) && _G(scrn).icon[y][x] >= 140) { // nothing there and solid
-			o = g_events->getRandomNumber(1, 5);
+			int o = g_events->getRandomNumber(1, 5);
 			if (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
 				o = 20;
 
@@ -1098,10 +1089,9 @@ int Scripts::cmd_exec() {
 }
 
 int Scripts::exec_command(int num) {
-	int ret;
 	char ch;
 
-	ret = 0;
+	int ret = 0;
 	switch (num) {
 	case 1: // end
 		return 0;

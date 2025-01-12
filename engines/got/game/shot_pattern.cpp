@@ -115,9 +115,7 @@ int shot_pattern_two(ACTOR *actr) {
 
 // Uni directional (backwards)
 int shot_pattern_three(ACTOR *actr) {
-	int ld;
-
-	ld = actr->last_dir;
+	int ld = actr->last_dir;
 	if (shot_pattern_one(actr)) {
 		actr->last_dir = reverse_direction(actr);
 		return 1;
@@ -153,21 +151,19 @@ int shot_pattern_four(ACTOR *actr) {
 
 // Boss - snake
 int shot_pattern_five(ACTOR *actr) {
-	if (_G(rand1) < 15) {
-		if ((actr->temp1 == 0) && (actr->temp2 == 0)) {
-			actr->y += 16;
-			actr->shots_allowed = 3 + _G(setup).skill;
-			actor_shoots(actr, 2);
-			play_sound(BOSS12, false);
+	if (_G(rand1) < 15 && (actr->temp1 == 0) && (actr->temp2 == 0)) {
+		actr->y += 16;
+		actr->shots_allowed = 3 + _G(setup).skill;
+		actor_shoots(actr, 2);
+		play_sound(BOSS12, false);
 
-			int num = actr->shot_actor;
-			actr->shot_cnt = 50;
-			_G(actor[num]).temp3 = 120;
-			_G(actor[num]).temp4 = 5 + (_G(rand2) % 17);
-			_G(actor[num]).temp5 = _G(actor[num]).temp4;
-			actr->y -= 16;
-			return 1;
-		}
+		int num = actr->shot_actor;
+		actr->shot_cnt = 50;
+		_G(actor[num]).temp3 = 120;
+		_G(actor[num]).temp4 = 5 + (_G(rand2) % 17);
+		_G(actor[num]).temp5 = _G(actor[num]).temp4;
+		actr->y -= 16;
+		return 1;
 	}
 
 	return 0;
@@ -207,14 +203,12 @@ int shot_pattern_eight(ACTOR *actr) {
 
 	if (actr->i1) {
 		actr->i1--;
-	} else {
-		if (_G(rand1) < 10) {
-			actr->i1 = _G(thor_x1);
-			actr->i2 = _G(thor_real_y1);
-			actr->i1 = actr->func_pass;
-			actor_shoots(actr, 0);
-			return 1;
-		}
+	} else if (_G(rand1) < 10) {
+		actr->i1 = _G(thor_x1);
+		actr->i2 = _G(thor_real_y1);
+		actr->i1 = actr->func_pass;
+		actor_shoots(actr, 0);
+		return 1;
 	}
 
 	return 0;
