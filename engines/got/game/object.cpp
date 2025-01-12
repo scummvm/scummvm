@@ -48,7 +48,7 @@ void show_objects() {
 }
 
 void pick_up_object(int p) {
-	int r, x, y, s;
+	int s; // CHECKME : Maybe it should be initialized to 0, and the assignment before the check should be remove
 
 	switch (_G(object_map[p])) {
 	case 1: // Red jewel
@@ -162,14 +162,14 @@ void pick_up_object(int p) {
 		fill_score(5);
 		break;
 	}
-	x = p % 20;
-	y = p / 20;
+	int x = p % 20;
+	int y = p / 20;
 
 	_G(ox) = x * 16;
 	_G(oy) = y * 16;
 	_G(of) = 1;
 
-	r = 1;
+	int r = 1;
 	s = 0;
 	if (!s)
 		play_sound(YAH, false);
@@ -302,7 +302,6 @@ int use_hourglass(int flag) {
 }
 
 int use_boots(int flag) {
-
 	if (flag) {
 		if (_G(thor_info).magic > 0) {
 			if (_G(thor)->num_moves == 1) {
