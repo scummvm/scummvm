@@ -27,33 +27,33 @@
 namespace Got {
 
 struct THOR_INFO {
-    byte magic = 0;
-    byte keys = 0;
-    int  jewels = 0;
-    byte last_area = 0;
-    byte last_screen = 0;
-    byte last_icon = 0;
-    byte last_dir = 0;
-    int  inventory = 0;
-    byte item = 0;         //currently selected item
-    byte last_health = 0;
-    byte last_magic = 0;
-    int  last_jewels = 0;
-    byte last_keys = 0;
-    byte last_item = 0;
-    int  last_inventory = 0;
-    byte level = 0;         //current level (1,2,3)
-    long score = 0;
-    long last_score = 0;
-    byte object = 0;
-    const char *object_name = nullptr;
-    byte last_object = 0;
-    const char *last_object_name = nullptr;
-    byte armor = 0;
-    byte future[65] = {};
+	byte magic = 0;
+	byte keys = 0;
+	int jewels = 0;
+	byte last_area = 0;
+	byte last_screen = 0;
+	byte last_icon = 0;
+	byte last_dir = 0;
+	int inventory = 0;
+	byte item = 0; //currently selected item
+	byte last_health = 0;
+	byte last_magic = 0;
+	int last_jewels = 0;
+	byte last_keys = 0;
+	byte last_item = 0;
+	int last_inventory = 0;
+	byte level = 0; //current level (1,2,3)
+	long score = 0;
+	long last_score = 0;
+	byte object = 0;
+	const char *object_name = nullptr;
+	byte last_object = 0;
+	const char *last_object_name = nullptr;
+	byte armor = 0;
+	byte future[65] = {};
 
 	void clear();
-    void sync(Common::Serializer &s);
+	void sync(Common::Serializer &s);
 };
 
 } // namespace Got

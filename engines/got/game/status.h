@@ -22,8 +22,6 @@
 #ifndef GOT_GAME_STATUS_H
 #define GOT_GAME_STATUS_H
 
-#include "got/data/defines.h"
-
 namespace Got {
 
 extern void add_jewels(int num);

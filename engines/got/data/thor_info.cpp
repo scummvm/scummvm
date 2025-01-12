@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "got/data/thor_info.h"
+#include "common/algorithm.h"
 #include "got/game/back.h"
 
 namespace Got {
@@ -53,39 +53,39 @@ void THOR_INFO::clear() {
 }
 
 void THOR_INFO::sync(Common::Serializer &s) {
-    uint32 ptr = 0;
+	uint32 ptr = 0;
 
-    s.syncAsByte(magic);
-    s.syncAsByte(keys);
-    s.syncAsSint16LE(jewels);
-    s.syncAsByte(last_area);
-    s.syncAsByte(last_screen);
-    s.syncAsByte(last_icon);
-    s.syncAsByte(last_dir);
-    s.syncAsSint16LE(inventory);
-    s.syncAsByte(item);
-    s.syncAsByte(last_health);
-    s.syncAsByte(last_magic);
-    s.syncAsSint16LE(last_jewels);
-    s.syncAsByte(last_keys);
-    s.syncAsByte(last_item);
-    s.syncAsSint16LE(last_inventory);
-    s.syncAsByte(level);
-    s.syncAsUint32LE(score);
-    s.syncAsUint32LE(last_score);
+	s.syncAsByte(magic);
+	s.syncAsByte(keys);
+	s.syncAsSint16LE(jewels);
+	s.syncAsByte(last_area);
+	s.syncAsByte(last_screen);
+	s.syncAsByte(last_icon);
+	s.syncAsByte(last_dir);
+	s.syncAsSint16LE(inventory);
+	s.syncAsByte(item);
+	s.syncAsByte(last_health);
+	s.syncAsByte(last_magic);
+	s.syncAsSint16LE(last_jewels);
+	s.syncAsByte(last_keys);
+	s.syncAsByte(last_item);
+	s.syncAsSint16LE(last_inventory);
+	s.syncAsByte(level);
+	s.syncAsUint32LE(score);
+	s.syncAsUint32LE(last_score);
 
-    s.syncAsByte(object);
-    s.syncAsUint16LE(ptr);
-    s.syncAsByte(last_object);
-    s.syncAsUint16LE(ptr);
+	s.syncAsByte(object);
+	s.syncAsUint16LE(ptr);
+	s.syncAsByte(last_object);
+	s.syncAsUint16LE(ptr);
 
-    s.syncAsByte(armor);
-    s.syncBytes(future, 65);
+	s.syncAsByte(armor);
+	s.syncBytes(future, 65);
 
-    if (s.isLoading()) {
-        object_name = (object == 0) ? nullptr : OBJECT_NAMES[object - 1];
-        last_object_name = (last_object == 0) ? nullptr : OBJECT_NAMES[last_object - 1];
-    }
+	if (s.isLoading()) {
+		object_name = (object == 0) ? nullptr : OBJECT_NAMES[object - 1];
+		last_object_name = (last_object == 0) ? nullptr : OBJECT_NAMES[last_object - 1];
+	}
 }
 
 } // namespace Got

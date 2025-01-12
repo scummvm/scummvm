@@ -26,7 +26,6 @@
 #include "common/serializer.h"
 #include "got/data/actor.h"
 
-
 namespace Got {
 
 struct HEADER {
@@ -42,7 +41,7 @@ struct HEADER {
 //==========================================================================
 // Defines
 
-#define MAX_ACTORS  35
+#define MAX_ACTORS 35
 #define MAX_ENEMIES 16
 #define STAMINA 20
 
@@ -50,16 +49,16 @@ struct HEADER {
 #define _B 48
 #define TMP_SIZE 5800
 
-#define GAME1 (_G(area)==1)
-#define GAME2 (_G(area)==2)
-#define GAME3 (_G(area)==3)
+#define GAME1 (_G(area) == 1)
+#define GAME2 (_G(area) == 2)
+#define GAME3 (_G(area) == 3)
 
-#define APPLE_MAGIC      1
-#define LIGHTNING_MAGIC  2
-#define BOOTS_MAGIC      4
-#define WIND_MAGIC       8
-#define SHIELD_MAGIC    16
-#define THUNDER_MAGIC   32
+#define APPLE_MAGIC 1
+#define LIGHTNING_MAGIC 2
+#define BOOTS_MAGIC 4
+#define WIND_MAGIC 8
+#define SHIELD_MAGIC 16
+#define THUNDER_MAGIC 32
 
 #define BOSS_LEVEL1 59
 #define BOSS_LEVEL2 60

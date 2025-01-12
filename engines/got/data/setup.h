@@ -99,21 +99,21 @@ struct SetupFlags {
 };
 
 struct SETUP : public SetupFlags {
-    byte value[16] = {};
-    byte junk = 0;
-    byte game = 0;
-    byte area = 0;          //1,2,3
-    byte pc_sound = 0;      //1=enabled
-    byte dig_sound = 0;     //1 & !pc_sound = enabled
-    byte music = 0;         //1=enabled
-    byte speed = 0;         //1=slow mode (for slower 286's)
-    byte scroll_flag = 0;   //unused
-    byte boss_dead[3] = {};
-    byte skill = 0;         //0=easy, 1=normal, 2=hard
-    byte game_over = 0;
-    byte future[19] = {};   //probably not needed
+	byte value[16] = {};
+	byte junk = 0;
+	byte game = 0;
+	byte area = 0;        //1,2,3
+	byte pc_sound = 0;    //1=enabled
+	byte dig_sound = 0;   //1 & !pc_sound = enabled
+	byte music = 0;       //1=enabled
+	byte speed = 0;       //1=slow mode (for slower 286's)
+	byte scroll_flag = 0; //unused
+	byte boss_dead[3] = {};
+	byte skill = 0;       //0=easy, 1=normal, 2=hard
+	byte game_over = 0;
+	byte future[19] = {}; //probably not needed
 
-    void sync(Common::Serializer &s);
+	void sync(Common::Serializer &s);
 };
 
 } // namespace Got

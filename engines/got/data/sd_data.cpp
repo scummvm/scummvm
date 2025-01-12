@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/memstream.h"
 #include "got/data/sd_data.h"
+#include "common/memstream.h"
 #include "got/utils/file.h"
 
 namespace Got {
@@ -28,27 +28,27 @@ namespace Got {
 #define SD_DATA_SIZE 61440
 
 SdData::SdData() {
-    _data = new byte[SD_DATA_SIZE];
+	_data = new byte[SD_DATA_SIZE];
 }
 
 SdData::~SdData() {
-    delete[] _data;
+	delete[] _data;
 }
 
 void SdData::load() {
-    Common::String fname = Common::String::format("SDAT%d", _area);
-    res_read(fname, _data);
+	Common::String fname = Common::String::format("SDAT%d", _area);
+	res_read(fname, _data);
 }
 
 void SdData::setArea(int area) {
-    if (area != _area) {
-        _area = area;
-        load();
-    }
+	if (area != _area) {
+		_area = area;
+		load();
+	}
 }
 
 void SdData::sync(Common::Serializer &s) {
-    s.syncBytes(_data, SD_DATA_SIZE);
+	s.syncBytes(_data, SD_DATA_SIZE);
 }
 
 } // namespace Got

@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "got/data/setup.h"
+#include "common/algorithm.h"
 
 namespace Got {
 
@@ -34,9 +34,10 @@ void SetupFlags::sync(Common::Serializer &s) {
 	int i;
 
 	if (s.isSaving()) {
-		for (i = 0; i < 64; ++i)
+		for (i = 0; i < 64; ++i) {
 			if (_flags[i])
 				flags[i / 8] = flags[i / 8] | (1 << (i % 8));
+		}
 		s.syncBytes(flags, 8);
 	} else {
 		s.syncBytes(flags, 8);
@@ -46,22 +47,22 @@ void SetupFlags::sync(Common::Serializer &s) {
 }
 
 void SETUP::sync(Common::Serializer &s) {
-    // Sync the flags bit-fields
+	// Sync the flags bit-fields
 	SetupFlags::sync(s);
 
-    s.syncBytes(value, 16);
-    s.syncAsByte(junk);
-    s.syncAsByte(game);
-    s.syncAsByte(area);
-    s.syncAsByte(pc_sound);
-    s.syncAsByte(dig_sound);
-    s.syncAsByte(music);
-    s.syncAsByte(speed);
-    s.syncAsByte(scroll_flag);
-    s.syncBytes(boss_dead, 3);
-    s.syncAsByte(skill);
-    s.syncAsByte(game_over);
-    s.syncBytes(future, 19);
+	s.syncBytes(value, 16);
+	s.syncAsByte(junk);
+	s.syncAsByte(game);
+	s.syncAsByte(area);
+	s.syncAsByte(pc_sound);
+	s.syncAsByte(dig_sound);
+	s.syncAsByte(music);
+	s.syncAsByte(speed);
+	s.syncAsByte(scroll_flag);
+	s.syncBytes(boss_dead, 3);
+	s.syncAsByte(skill);
+	s.syncAsByte(game_over);
+	s.syncBytes(future, 19);
 }
 
 } // namespace Got

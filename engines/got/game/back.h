@@ -29,7 +29,6 @@ namespace Got {
 extern const char *OBJECT_NAMES[];
 extern const char *ITEM_NAMES[];
 
-
 /**
  * Shows a new level
  * In the original this did some initial actors setup and rendering.
