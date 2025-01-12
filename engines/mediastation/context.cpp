@@ -193,6 +193,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 
 	case kContextAssetLinkSection: {
 		warning("Context::readHeaderSection(): ASSET_LINK not implemented yet");
+		chunk.skip(chunk.bytesRemaining());
 		break;
 	}
 
