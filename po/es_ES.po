@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-12 16:11+0000\n"
-"PO-Revision-Date: 2025-01-06 13:18+0000\n"
+"PO-Revision-Date: 2025-01-13 03:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8136,17 +8136,15 @@ msgstr "Disparar"
 
 #: engines/got/metaengine.cpp:61
 msgid "Magic"
-msgstr ""
+msgstr "Magia"
 
 #: engines/got/metaengine.cpp:65
 msgid "Thor Dies"
-msgstr ""
+msgstr "Muerte de Thor"
 
 #: engines/got/got.cpp:186 engines/got/got.cpp:196
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "No se puede guardar la partida en estos momentos"
+msgstr "No se puede guardar la partida en el modo demo"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
