@@ -27,7 +27,6 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
-#include "graphics/primitives.h"
 
 #include "dgds/dgds.h"
 #include "dgds/includes.h"
@@ -353,8 +352,8 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
 		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
 			Common::Rect drawRect(x, y, x + w, y + h);
-			Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, Drawing::drawPixel, dst);
-			Graphics::drawRoundRect(drawRect, midy, fillcolor, false, Drawing::drawPixel, dst);
+			dst->drawRoundRect(drawRect, midy, fillbgcolor, true);
+			dst->drawRoundRect(drawRect, midy, fillcolor, false);
 		}
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();

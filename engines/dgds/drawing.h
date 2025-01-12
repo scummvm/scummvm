@@ -30,9 +30,6 @@ namespace Dgds {
 
 namespace Drawing {
 
-	// A function that can be used as the callback for Graphics::Primitives functions.
-	void drawPixel(int x, int y, int color, void *data);
-
 	void filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol);
 	void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol);
 

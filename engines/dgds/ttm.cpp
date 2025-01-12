@@ -23,7 +23,6 @@
 #include "common/serializer.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/primitives.h"
 
 #include "dgds/ttm.h"
 #include "dgds/ads.h"
@@ -260,22 +259,6 @@ const char *TTMInterpreter::ttmOpName(uint16 op) {
 	case 0xcf10: return "SFX MASTER VOL";
 
 	default: return "UNKNOWN!!";
-	}
-}
-
-class ClipSurface {
-public:
-	ClipSurface(const Common::Rect &clipWin, Graphics::Surface *surf)
-		: _surf(surf), _clipWin(clipWin) { }
-	Graphics::Surface *_surf;
-	Common::Rect _clipWin;
-};
-
-static void plotClippedPoint(int x, int y, int color, void *data) {
-	ClipSurface *cs = (ClipSurface *)data;
-	if (cs->_clipWin.contains(x, y)) {
-		byte *ptr = (byte *)cs->_surf->getBasePtr(x, y);
-		*ptr = (byte)color;
 	}
 }
 
@@ -934,8 +917,12 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		doWipeOp(op, env, seq, Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]));
 		break;
 	case 0xa0a0: { // DRAW LINE  x1,y1,x2,y2:int
-		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
-		Graphics::drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG, plotClippedPoint, &clipSurf);
+		Graphics::Surface clipSurf(_vm->_compositionBuffer.getSubArea(seq._drawWin));
+		clipSurf.drawLine(
+			ivals[0] - seq._drawWin.left,
+			ivals[1] - seq._drawWin.top,
+			ivals[2] - seq._drawWin.left,
+			ivals[3] - seq._drawWin.top, seq._drawColFG);
 		break;
 	}
 	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
@@ -1034,27 +1021,36 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xaf10: { // DRAW EMPTY POLY [pts]
-		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
+		Graphics::Surface clipSurf(_vm->_compositionBuffer.getSubArea(seq._drawWin));
 		for (uint i = 1; i < pts.size(); i++) {
 			const Common::Point &p1 = pts[i - 1];
 			const Common::Point &p2 = pts[i];
-			Graphics::drawLine(p1.x, p1.y, p2.x, p2.y, seq._drawColFG, plotClippedPoint, &clipSurf);
+			clipSurf.drawLine(
+				p1.x - seq._drawWin.left,
+				p1.y - seq._drawWin.top,
+				p2.x - seq._drawWin.left,
+				p2.y - seq._drawWin.top, seq._drawColFG);
 		}
 		if (pts.size() > 2)
-			Graphics::drawLine(pts.back().x, pts.back().y, pts[0].x, pts[0].y, seq._drawColFG,
-				plotClippedPoint, &clipSurf);
+			clipSurf.drawLine(
+				pts.back().x - seq._drawWin.left,
+				pts.back().y - seq._drawWin.top,
+				pts[0].x - seq._drawWin.left,
+				pts[0].y - seq._drawWin.top, seq._drawColFG);
 		break;
 	}
 	case 0xaf20: { // DRAW FILLED POLY [pts]
-		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
+		Graphics::Surface clipSurf(_vm->_compositionBuffer.getSubArea(seq._drawWin));
 		Common::Array<int> xvals(pts.size());
 		Common::Array<int> yvals(pts.size());
 		for (uint i = 0; i < pts.size(); i++) {
-			xvals[i] = pts[i].x;
-			yvals[i] = pts[i].y;
+			xvals[i] = pts[i].x - seq._drawWin.left;
+			yvals[i] = pts[i].y - seq._drawWin.top;
 		}
-		Graphics::drawPolygonScan(xvals.data(), yvals.data(), pts.size(), seq._drawWin,
-					seq._drawColFG, plotClippedPoint, &clipSurf);
+		Common::Rect bbox(seq._drawWin);
+		bbox.moveTo(0, 0);
+		clipSurf.drawPolygonScan(xvals.data(), yvals.data(), pts.size(), bbox,
+					seq._drawColFG);
 		break;
 	}
 	case 0xb000: // INIT CREDITS SCRLL
