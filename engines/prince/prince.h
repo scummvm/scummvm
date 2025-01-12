@@ -380,7 +380,6 @@ public:
 	int32 _shadLineLen;
 	byte *_shadowLine;
 	void setShadowScale(int32 shadowScale);
-	static void plotShadowLinePoint(int x, int y, int color, void *data);
 
 	static const int16 kFPS = 15;
 	static const int32 kIntMax = 2147483647;

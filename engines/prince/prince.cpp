@@ -465,13 +465,6 @@ void PrinceEngine::setShadowScale(int32 shadowScale) {
 	}
 }
 
-void PrinceEngine::plotShadowLinePoint(int x, int y, int color, void *data) {
-	PrinceEngine *vm = (PrinceEngine *)data;
-	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
-	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
-	vm->_shadLineLen++;
-}
-
 bool PrinceEngine::playNextFLCFrame() {
 	if (!_flicPlayer.isVideoLoaded())
 		return false;
