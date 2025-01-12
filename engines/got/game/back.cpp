@@ -51,7 +51,7 @@ static const char *odinEndMessage;
 void show_level(int new_level) {
 	_G(boss_active) = false;
     if (!_G(shield_on))
-        _G(actor)[2].used = 0;
+        _G(actor[2]).used = 0;
     _G(bomb_flag) = false;
     _G(slipping) = false;
 
@@ -253,20 +253,20 @@ void kill_enemies(int iy, int ix) {
     int i, x1, y1, x2, y2;
 
     for (i = 3; i < MAX_ACTORS; i++) {
-        if (_G(actor)[i].used) {
-            x1 = _G(actor)[i].x;
-            y1 = _G(actor)[i].y + _G(actor)[i].size_y - 2;
-            x2 = (_G(actor)[i].x + _G(actor)[i].size_x);
-            y2 = _G(actor)[i].y + _G(actor)[i].size_y - 1;
+        if (_G(actor[i]).used) {
+            x1 = _G(actor[i]).x;
+            y1 = _G(actor[i]).y + _G(actor[i]).size_y - 2;
+            x2 = (_G(actor[i]).x + _G(actor[i]).size_x);
+            y2 = _G(actor[i]).y + _G(actor[i]).size_y - 1;
 
             if (point_within(x1, y1, ix, iy, ix + 15, iy + 15))
-                actor_destroyed(&_G(actor)[i]);
+                actor_destroyed(&_G(actor[i]));
             else if (point_within(x2, y1, ix, iy, ix + 15, iy + 15))
-                actor_destroyed(&_G(actor)[i]);
+                actor_destroyed(&_G(actor[i]));
             else if (point_within(x1, y2, ix, iy, ix + 15, iy + 15))
-                actor_destroyed(&_G(actor)[i]);
+                actor_destroyed(&_G(actor[i]));
             else if (point_within(x2, y2, ix, iy, ix + 15, iy + 15))
-                actor_destroyed(&_G(actor)[i]);
+                actor_destroyed(&_G(actor[i]));
         }
     }
 
@@ -289,13 +289,11 @@ dead:
 }
 
 void remove_objects(int y, int x) {
-    int p;
+	int p = (y * 20) + x;
 
-    p = (y * 20) + x;
-
-    if (_G(object_map)[p] > 0) {
-        _G(object_map)[p] = 0;
-        _G(object_index)[p] = 0;
+    if (_G(object_map[p]) > 0) {
+        _G(object_map[p]) = 0;
+        _G(object_index[p]) = 0;
     }
 }
 
