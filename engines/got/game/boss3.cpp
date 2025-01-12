@@ -26,7 +26,6 @@
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/status.h"
-#include "got/gfx/image.h"
 #include "got/gfx/panel.h"
 #include "got/sound.h"
 #include "got/vars.h"
@@ -120,7 +119,9 @@ static int boss_movement_one(ACTOR *actr) {
 	if (actr->temp3 > 1) {
 		actr->temp3--;
 		goto done1;
-	} else if (actr->temp3) {
+	}
+
+	if (actr->temp3) {
 		for (i = 0; i < num_pods1; i++)
 			if (_G(actor[19 + i]).used)
 				goto done1;
@@ -170,6 +171,7 @@ static int boss_movement_one(ACTOR *actr) {
 			actr->next = 3;
 			goto done1;
 		}
+		
 		if (!actr->temp5) {
 			if (_G(actor[4]).num_shots < _G(actor[4]).shots_allowed) {
 				actor_always_shoots(&_G(actor[4]), 0);
@@ -205,7 +207,7 @@ done1:
 
 // Boss - Loki-1
 int boss3_movement(ACTOR *actr) {
-	int d, x1, y1, f, ox, oy;
+	int x1, y1, ox, oy;
 
 	if (actr->temp2)
 		actr->temp2--;
@@ -231,10 +233,10 @@ int boss3_movement(ACTOR *actr) {
 		break;
 	}
 
-	d = actr->last_dir;
+	int d = actr->last_dir;
 	actr->temp3++;
 
-	f = 0;
+	int f = 0;
 	if (actr->temp4) {
 		actr->temp4--;
 		if (!actr->temp4) {
@@ -363,6 +365,7 @@ skip_move:
 new_dir:
 	if (actr->temp3 < 120)
 		goto new_dir1;
+	
 	_G(actor[3]).frame_speed = 8;
 	_G(actor[3]).next = 3;
 	_G(actor[4]).next = 3;
@@ -403,6 +406,7 @@ static void check_boss_hit() {
 				_G(actor[3]).health -= 50;
 			else
 				_G(actor[3]).health -= 10;
+			
 			_G(actor[3]).speed_count = 50;
 
 			boss_status(_G(actor[3]).health);
@@ -544,6 +548,7 @@ void closing_sequence3_3() {
 void ending_screen() {
 	for (int i = 3; i < MAX_ACTORS; i++)
 		_G(actor[i]).move = 1;
+	
 	music_play(6, true);
 	_G(timer_cnt) = 0;
 
