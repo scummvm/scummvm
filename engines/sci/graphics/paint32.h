@@ -22,6 +22,8 @@
 #ifndef SCI_GRAPHICS_PAINT32_H
 #define SCI_GRAPHICS_PAINT32_H
 
+#include "graphics/primitives.h"
+
 namespace Sci {
 class Plane;
 class SciBitmap;
@@ -61,7 +63,9 @@ private:
 		int lastAddress;
 	} LineProperties;
 
-	static void plotter(int x, int y, int color, void *data);
+	class Primitives : public Graphics::Primitives {
+		void drawPoint(int x, int y, uint32 color, void *data) override;
+	};
 
 	reg_t makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness, Common::Rect &outRect);
 };
