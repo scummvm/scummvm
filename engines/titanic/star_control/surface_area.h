@@ -34,14 +34,6 @@ enum SurfaceAreaMode {
 };
 
 class CSurfaceArea {
-	template<typename T>
-	static void plotPoint(int x, int y, int color, void *data) {
-		CSurfaceArea *sa = (CSurfaceArea *)data;
-		if (x >= 0 && x < sa->_width && y >= 0 && y < sa->_height) {
-			T *ptr = (T *)sa->_surface->getBasePtr(x, y);
-			*ptr = (*ptr & sa->_colorMask) ^ sa->_color;
-		}
-	}
 private:
 	/**
 	 * Initialize data for the class
