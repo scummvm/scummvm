@@ -78,6 +78,13 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		break;
 	}
 
+	case kVariableTypeUnk1: {
+		_value.i = Datum(chunk).u.i;
+		debugC(7, kDebugLoading, "Variable::Variable(): UNK1: %d", _value.i);
+		warning("Variable::Variable(): Got unknown variable value type 0x%x (0x%llx)", static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
+		break;
+	}
+
 	default: {
 		error("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
 		_value.datum = new Datum(chunk);
