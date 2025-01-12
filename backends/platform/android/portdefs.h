@@ -47,4 +47,14 @@ int rpl_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
 
 #define vsnprintf rpl_vsnprintf
 
+// Bionic libc up to Android 6/API 23 (excluded) is non-conformant with ANSI C.
+// It compares with integer character without casting it to unsigned char as required.
+// On AArch64, another (optimized) implementation is used which behaves properly.
+// If char is unsigned the problem does not exist.
+// strchr calls are also replaced by memchr calls when the compiler knows the haystack size.
+#if !defined(__CHAR_UNSIGNED__) && !defined(__aarch64__)
+#define memchr(s,c,n) memchr(s, (unsigned char)(c), n)
+#define strchr(s,c) strchr(s, (unsigned char)(c))
+#endif
+
 #endif // _PORTDEFS_H_
