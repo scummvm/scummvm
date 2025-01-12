@@ -26,12 +26,12 @@ namespace Got {
 namespace Gfx {
 
 void GfxSurface::print(const Common::Point &pos,
-                       const Common::String &text, int color) {
-    _G(font).drawString(this, pos, text, color);
+					   const Common::String &text, int color) {
+	_G(font).drawString(this, pos, text, color);
 }
 
 void GfxSurface::printChar(uint32 chr, int x, int y, uint32 color) {
-    _G(font).drawChar(this, chr, x, y, color);
+	_G(font).drawChar(this, chr, x, y, color);
 }
 
 void GfxSurface::rawPrintChar(uint32 chr, int x, int y, uint32 color) {

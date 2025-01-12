@@ -291,7 +291,7 @@ int actor_shoots(ACTOR *actr, int dir) {
 
 	int icn = 140;
 
-	if (_G(shot[actr->shot_type - 1]).flying == 1)
+	if (_G(shot[actr->shot_type - 1]).flying)
 		icn = 80;
 
 	switch (dir) {

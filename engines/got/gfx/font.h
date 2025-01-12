@@ -33,28 +33,28 @@ extern const byte DIALOG_COLOR[];
 
 class Font : public Graphics::Font {
 private:
-    Common::Array<Graphics::ManagedSurface> _font;
+	Common::Array<Graphics::ManagedSurface> _font;
 
 public:
-    void load();
+	void load();
 
-    int getFontHeight() const override {
-        return 9;
-    }
-    int getMaxCharWidth() const override {
-        return 8;
-    }
-    int getCharWidth(uint32 chr) const override {
-        return 8;
-    }
-    void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-    void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
-        Graphics::Font::drawChar(dst, chr, x, y, color);
-    }
+	int getFontHeight() const override {
+		return 9;
+	}
+	int getMaxCharWidth() const override {
+		return 8;
+	}
+	int getCharWidth(uint32 chr) const override {
+		return 8;
+	}
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
+		Graphics::Font::drawChar(dst, chr, x, y, color);
+	}
 	void rawDrawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
-    void drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
-                    const Common::String &text, int color);
+	void drawString(Graphics::ManagedSurface *src, const Common::Point &pos,
+					const Common::String &text, int color);
 };
 
 } // namespace Gfx
