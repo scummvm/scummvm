@@ -108,12 +108,14 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff, 0xff
 };
 
-void plotPoint(int x, int y, int color, void *data) {
-	byte *output = (byte *)data;
-	if (x >= 0 && x < 320 && y >= 0 && y < 200) {
-		output[y * 320 + x] = (byte)color;
+class FWPrimitives : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		byte *output = (byte *)data;
+		if (x >= 0 && x < 320 && y >= 0 && y < 200) {
+			output[y * 320 + x] = (byte)color;
+		}
 	}
-}
+};
 
 /**
  * Initialize renderer
@@ -1650,7 +1652,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		width = obj->frame;
 		height = obj->costume;
 		// Using Bresenham's algorithm, looks good enough for visual purposes in Operation Stealth
-		Graphics::drawLine(obj->x, obj->y, width, height, color, plotPoint, _backBuffer);
+		FWPrimitives().drawLine(obj->x, obj->y, width, height, color, _backBuffer);
 		break;
 
 	// something else
