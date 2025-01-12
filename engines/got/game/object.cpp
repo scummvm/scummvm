@@ -314,11 +314,12 @@ int use_boots(int flag) {
 			_G(thor)->num_moves = 2;
 			_G(hammer)->num_moves = 3;
 			return 1;
-		} else {
-			not_enough_magic();
-			_G(thor)->num_moves = 1;
-			_G(hammer)->num_moves = 2;
 		}
+
+		not_enough_magic();
+		_G(thor)->num_moves = 1;
+		_G(hammer)->num_moves = 2;
+
 	} else {
 		_G(thor)->num_moves = 1;
 		_G(hammer)->num_moves = 2;
@@ -348,10 +349,10 @@ int use_shield(int flag) {
 
 			return 1;
 
-		} else {
-			f = true;
-			not_enough_magic();
 		}
+
+		f = true;
+		not_enough_magic();
 	} else {
 		f = true;
 	}
