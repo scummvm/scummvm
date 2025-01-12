@@ -202,8 +202,8 @@ const ADGameDescription gameDescriptions[] = {
 		"101dalmatians",
 		nullptr,
 		AD_ENTRY2s(
-			"BOOT.STM", "50f30298bf700f357d98c4390f75cb7a", 10932,
-			"100.CXT", "8110f70f1d01d0f42cac9b1bb6d2de12", 4967390
+			"BOOT.STM", "ee6725a718cbce640d02acec2b84825f", 47970,
+			"100.CXT", "2df853283a3fd2d079b06bc27b50527f", 6784502
 		),	
 		Common::EN_USA,
 		Common::kPlatformWindows,
