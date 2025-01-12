@@ -504,7 +504,6 @@ static int boss_die() {
 
 		play_sound(EXPLODE, true);
 		_G(boss_dead) = true;
-		;
 	}
 
 	return _G(actor[3]).last_dir;
