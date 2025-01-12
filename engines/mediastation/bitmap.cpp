@@ -57,9 +57,12 @@ Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
 	uint8 *pixels = (uint8 *)_surface.getPixels();
 	if (_bitmapHeader->isCompressed()) {
 		// DECOMPRESS THE IMAGE.
-		// chunk.skip(chunk.bytesRemaining());
-		debugC(5, kDebugLoading, "Bitmap::Bitmap(): Decompressing bitmap");
+		debugC(5, kDebugLoading, "Bitmap::Bitmap(): Decompressing bitmap (@0x%llx)", static_cast<long long int>(chunk.pos()));
 		decompress(chunk);
+		debugC(5, kDebugLoading, "Bitmap::Bitmap(): Finished decompressing bitmap (@0x%llx) [%d remaining bytes]", static_cast<long long int>(chunk.pos()), chunk.bytesRemaining());
+		// TODO: Make sure there is nothing important in here. They are likely
+		// just zeroes.
+		chunk.skip(chunk.bytesRemaining());
 	} else {
 		// READ THE UNCOMPRESSED IMAGE DIRECTLY.
 		// TODO: Understand why we need to ignore these 2 bytes.
@@ -82,27 +85,23 @@ uint16 Bitmap::height() {
 }
 
 void Bitmap::decompress(Chunk &chunk) {
-	// GET THE COMPRESSED DATA.
-	uint compressedImageDataSizeInBytes = chunk.bytesRemaining();
-	char *compressedImageStart = new char[compressedImageDataSizeInBytes];
-	char *compressedImage = compressedImageStart;
-	chunk.read(compressedImage, compressedImageDataSizeInBytes);
-
 	// MAKE SURE WE READ PAST THE FIRST 2 BYTES.
-	char *compressedImageDataStart = compressedImage;
-	if ((*compressedImage++ == 0) && (*compressedImage++ == 0)) {
-		// This condition is empty, we just put it first since this is the expected case
-		// and the negated logic would be not as readable.
+	uint unk1 = chunk.readByte();
+	uint unk2 = chunk.readByte();
+	if ((unk1 == 0) && (unk2 == 0)) {
+		if (chunk.bytesRemaining() == 0) {
+			// Sometimes there are compressed images that actually have no
+			// contents! If we've hit this case, exit the decompression now.
+			return;
+		}
 	} else {
-		compressedImage = compressedImageDataStart;
+		chunk.seek(chunk.pos() - 2);
 	}
-	char *compressedImageDataEnd = compressedImage + compressedImageDataSizeInBytes;
 
 	// GET THE DECOMPRESSED PIXELS BUFFER.
 	// Media Station has 8 bits per pixel, so the decompression buffer is
 	// simple.
-	// TODO: Do we have to set the pixels ourselves?
-	char *decompressedImage = (char *)_surface.getPixels();
+	char *decompressedImage = static_cast<char *>(_surface.getPixels());
 
 	// DECOMPRESS THE RLE-COMPRESSED BITMAP STREAM.
 	// TODO: Comemnted out becuase transparency runs not supported yet,
@@ -116,14 +115,14 @@ void Bitmap::decompress(Chunk &chunk) {
 		size_t currentXCoordinate = 0;
 		bool readingTransparencyRun = false;
 		while (true) {
-			uint8_t operation = *compressedImage++;
+			byte operation = chunk.readByte();
 			if (operation == 0x00) {
 				// ENTER CONTROL MODE.
-				operation = *compressedImage++;
+				operation = chunk.readByte();
 				if (operation == 0x00) {
 					// MARK THE END OF THE LINE.
 					// Also check if the image is finished being read.
-					if (compressedImage >= compressedImageDataEnd) {
+					if (chunk.bytesRemaining() == 0) {
 						imageFullyRead = true;
 					}
 					break;
@@ -159,22 +158,25 @@ void Bitmap::decompress(Chunk &chunk) {
 					// So to skip 10 pixels using this approach, you would encode 00 03 0a 00.
 					// But to "skip" 10 pixels by encoding them as blank (0xff), you would encode 0a ff.
 					// What gives? I'm not sure.
-					uint8_t x_change = *compressedImage++;
+					byte x_change = chunk.readByte();
 					currentXCoordinate += x_change;
-					uint8_t y_change = *compressedImage++;
+					byte y_change = chunk.readByte();
 					currentYCoordinate += y_change;
 				} else if (operation >= 0x04) {
 					// READ A RUN OF UNCOMPRESSED PIXELS.
 					size_t yOffset = currentYCoordinate * width();
 					size_t runStartingOffset = yOffset + currentXCoordinate;
 					char *runStartingPointer = decompressedImage + runStartingOffset;
-					uint8_t runLength = operation;
-					memcpy(runStartingPointer, compressedImage, runLength);
-					compressedImage += operation;
-					currentXCoordinate += operation;
+					byte runLength = operation;
+					// TODO: Is there a better way to do this than just copying?
+					char *uncompressedPixels = new char[runLength];
+					chunk.read(uncompressedPixels, runLength);
+					memcpy(runStartingPointer, uncompressedPixels, runLength);
+					delete[] uncompressedPixels;
 
-					if (((uintptr_t)compressedImage) % 2 == 1) {
-						compressedImage++;
+					currentXCoordinate += operation;
+					if (chunk.pos() % 2 == 1) {
+						chunk.readByte();
 					}
 				}
 			} else {
@@ -182,8 +184,8 @@ void Bitmap::decompress(Chunk &chunk) {
 				size_t yOffset = currentYCoordinate * width();
 				size_t runStartingOffset = yOffset + currentXCoordinate;
 				char *runStartingPointer = decompressedImage + runStartingOffset;
-				uint8_t colorIndexToRepeat = *compressedImage++;
-				uint8_t repetitionCount = operation;
+				byte colorIndexToRepeat = chunk.readByte();
+				byte repetitionCount = operation;
 				memset(runStartingPointer, colorIndexToRepeat, repetitionCount);
 				currentXCoordinate += repetitionCount;
 
@@ -214,7 +216,6 @@ void Bitmap::decompress(Chunk &chunk) {
 			break;
 		}
 	}
-	delete[] compressedImageStart;
 }
 
 }
