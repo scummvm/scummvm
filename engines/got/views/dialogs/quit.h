@@ -30,12 +30,11 @@ namespace Dialogs {
 
 class Quit : public SelectOption {
 public:
-    Quit();
-    virtual ~Quit() {
-    }
+	Quit();
+	virtual ~Quit() {}
 
-    void selected() override;
-    void closed() override;
+	void selected() override;
+	void closed() override;
 };
 
 } // namespace Dialogs

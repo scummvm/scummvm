@@ -22,7 +22,6 @@
 #ifndef GOT_VIEWS_DIALOGS_DIALOG_H
 #define GOT_VIEWS_DIALOGS_DIALOG_H
 
-#include "graphics/managed_surface.h"
 #include "got/views/view.h"
 
 namespace Got {
@@ -31,10 +30,10 @@ namespace Dialogs {
 
 class Dialog : public View {
 public:
-    Dialog(const Common::String &name);
-    virtual ~Dialog() {}
+	Dialog(const Common::String &name);
+	virtual ~Dialog() {}
 
-    void draw() override;
+	void draw() override;
 };
 
 } // namespace Dialogs

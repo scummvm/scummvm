@@ -30,11 +30,10 @@ namespace Dialogs {
 
 class OptionsMenu : public SelectOption {
 public:
-    OptionsMenu();
-    virtual ~OptionsMenu() {
-    }
+	OptionsMenu();
+	virtual ~OptionsMenu() {}
 
-    void selected() override;
+	void selected() override;
 };
 
 } // namespace Dialogs

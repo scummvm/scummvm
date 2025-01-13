@@ -30,13 +30,12 @@ namespace Dialogs {
 
 class MainMenu : public SelectOption {
 public:
-    MainMenu();
-    virtual ~MainMenu() {
-    }
+	MainMenu();
+	virtual ~MainMenu() {}
 
-    bool msgFocus(const FocusMessage &msg) override;
-    void closed() override;
-    void selected() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	void closed() override;
+	void selected() override;
 };
 
 } // namespace Dialogs

@@ -30,17 +30,17 @@ Ask::Ask() : SelectOption("Ask") {
 }
 
 void Ask::show(const Common::String &title, const Common::StringArray &options) {
-    Ask *view = (Ask *)g_events->findView("Ask");
-    view->setContent(title, options);
-    view->addView();
+	Ask *view = (Ask *)g_events->findView("Ask");
+	view->setContent(title, options);
+	view->addView();
 }
 
 void Ask::closed() {
-    _G(scripts).setAskResponse(0);
+	_G(scripts).setAskResponse(0);
 }
 
 void Ask::selected() {
-    _G(scripts).setAskResponse(_selectedItem + 1);
+	_G(scripts).setAskResponse(_selectedItem + 1);
 }
 
 } // namespace Dialogs
