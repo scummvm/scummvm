@@ -56,7 +56,6 @@ private:
     void updateActors();
     void checkForBossDead();
     void checkForAreaChange();
-    void areaChanged();
     void thorDies();
     void spinThor();
     void thorDead();
