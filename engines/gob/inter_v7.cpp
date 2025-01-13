@@ -152,7 +152,8 @@ void Inter_v7::setupOpcodesFunc() {
 void Inter_v7::setupOpcodesGob() {
 	Inter_Playtoons::setupOpcodesGob();
 
-	OPCODEGOB(420, o7_oemToANSI);
+	OPCODEGOB(420, o7_ansiToOEM);
+	OPCODEGOB(421, o7_oemToANSI);
 	OPCODEGOB(513, o7_gob0x201);
 	OPCODEGOB(600, o7_getFreeDiskSpace);
 }
@@ -1871,9 +1872,32 @@ void Inter_v7::o7_writeData(OpFuncParams &params) {
 		warning("Attempted to write to file \"%s\"", file.c_str());
 }
 
+void Inter_v7::o7_ansiToOEM(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	char *str = GET_VAR_STR(varIndex);
+	Common::U32String u32String = Common::String(str).decode(Common::kWindows1252);
+	// Replace characters that do not exist in the target codepage with the closest match
+	for (int i = 0; i < u32String.size(); ++i) {
+		// Replace curly double quotes with straight double quotes
+		if (u32String[i] == 0x201C || u32String[i] == 0x201D || u32String[i] == 0x201E) {
+			u32String.setChar(0x22, i);
+		}
+
+		// Replace curly single quotes with straight single quotes
+		if (u32String[i] == 0x2018 || u32String[i] == 0x2019) {
+			u32String.setChar(0x27, i);
+		}
+	}
+
+	WRITE_VAR_STR(varIndex, u32String.encode(Common::kDos850).c_str());
+}
+
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	char *str = GET_VAR_STR(varIndex);
+	Common::String ansiString = Common::String(str).decode(Common::kDos850).encode(Common::kWindows1252);
+	WRITE_VAR_STR(varIndex, ansiString.c_str());
 }
 
 void Inter_v7::o7_gob0x201(OpGobParams &params) {
