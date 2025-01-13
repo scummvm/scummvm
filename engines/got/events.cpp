@@ -32,14 +32,10 @@ Events *g_events;
 
 // Index and RGB63 values used for palette animation
 // like water effects and gems sparkling
-static const uint16 PAL_CLR1[] = {
-	0xf300, 0x003b, 0xf000, 0x003b, 0xf100, 0x003b, 0xf200, 0x003b};
-static const uint16 PAL_SET1[] = {
-	0xf027, 0x273f, 0xf127, 0x273f, 0xf227, 0x273f, 0xf327, 0x273f};
-static const uint16 PAL_CLR2[] = {
-	0xf73b, 0x0000, 0xf43b, 0x0000, 0xf53b, 0x0000, 0xf63b, 0x0000};
-static const uint16 PAL_SET2[] = {
-	0xf43f, 0x2727, 0xf53f, 0x2727, 0xf63f, 0x2727, 0xf73f, 0x2727};
+static const uint16 PAL_CLR1[] = {0xf300, 0x003b, 0xf000, 0x003b, 0xf100, 0x003b, 0xf200, 0x003b};
+static const uint16 PAL_SET1[] = {0xf027, 0x273f, 0xf127, 0x273f, 0xf227, 0x273f, 0xf327, 0x273f};
+static const uint16 PAL_CLR2[] = {0xf73b, 0x0000, 0xf43b, 0x0000, 0xf53b, 0x0000, 0xf63b, 0x0000};
+static const uint16 PAL_SET2[] = {0xf43f, 0x2727, 0xf53f, 0x2727, 0xf63f, 0x2727, 0xf73f, 0x2727};
 
 Events::Events() : UIElement("Root", nullptr) {
 	g_events = this;
@@ -72,9 +68,9 @@ void Events::runGame() {
 				e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_views.clear();
 				break;
-			} else {
-				processEvent(e);
 			}
+
+			processEvent(e);
 		}
 
 		if (_views.empty())
@@ -109,8 +105,7 @@ void Events::nextFrame() {
 	_G(rand2) = getRandomNumber(99);
 	_G(pge) = _G(pge) ^ 1;
 	_G(shot_ok) = true;
-	_G(magic_cnt)
-	++;
+	_G(magic_cnt++);
 
 	// In demo mode, handle the next key
 	if (_G(demo) && focusedView()->getName() == "Game") {
@@ -400,8 +395,7 @@ UIElement::UIElement(const Common::String &name) : _name(name), _parent(g_engine
 	g_engine->_children.push_back(this);
 }
 
-UIElement::UIElement(const Common::String &name, UIElement *uiParent) : _name(name), _parent(uiParent),
-																		_bounds(_innerBounds) {
+UIElement::UIElement(const Common::String &name, UIElement *uiParent) : _name(name), _parent(uiParent), _bounds(_innerBounds) {
 	if (_parent)
 		_parent->_children.push_back(this);
 }

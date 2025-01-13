@@ -24,20 +24,20 @@
 namespace Got {
 
 MouseMessage::MouseMessage(Common::EventType type,
-                           const Common::Point &pos) : Message(), _pos(pos) {
-    switch (type) {
-    case Common::EVENT_RBUTTONDOWN:
-    case Common::EVENT_RBUTTONUP:
-        _button = MB_RIGHT;
-        break;
-    case Common::EVENT_MBUTTONDOWN:
-    case Common::EVENT_MBUTTONUP:
-        _button = MB_MIDDLE;
-        break;
-    default:
-        _button = MB_LEFT;
-        break;
-    }
+						   const Common::Point &pos) : Message(), _pos(pos) {
+	switch (type) {
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		_button = MB_RIGHT;
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
+		_button = MB_MIDDLE;
+		break;
+	default:
+		_button = MB_LEFT;
+		break;
+	}
 }
 
 } // namespace Got

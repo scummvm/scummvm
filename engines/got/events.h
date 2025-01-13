@@ -24,9 +24,9 @@
 
 #include "common/array.h"
 #include "common/stack.h"
-#include "graphics/screen.h"
-#include "got/messages.h"
 #include "got/gfx/gfx_surface.h"
+#include "got/messages.h"
+#include "graphics/screen.h"
 
 namespace Got {
 
@@ -43,230 +43,239 @@ class Events;
  */
 struct Bounds {
 private:
-    Common::Rect _bounds;
-    Common::Rect &_innerBounds;
-    int _borderSize = 0;
+	Common::Rect _bounds;
+	Common::Rect &_innerBounds;
+	int _borderSize = 0;
+
 public:
-    const int16 &left;
-    const int16 &top;
-    const int16 &right;
-    const int16 &bottom;
+	const int16 &left;
+	const int16 &top;
+	const int16 &right;
+	const int16 &bottom;
+
 public:
-    Bounds(Common::Rect &innerBounds);
-    operator const Common::Rect &() const {
-        return _bounds;
-    }
-    Bounds &operator=(const Common::Rect &r);
-    void setBorderSize(size_t borderSize);
-    size_t borderSize() const {
-        return _borderSize;
-    }
-    int16 width() const {
-        return _bounds.width();
-    }
-    int16 height() const {
-        return _bounds.height();
-    }
+	Bounds(Common::Rect &innerBounds);
+	operator const Common::Rect &() const {
+		return _bounds;
+	}
+	Bounds &operator=(const Common::Rect &r);
+	void setBorderSize(size_t borderSize);
+	size_t borderSize() const {
+		return _borderSize;
+	}
+	int16 width() const {
+		return _bounds.width();
+	}
+	int16 height() const {
+		return _bounds.height();
+	}
 };
 
 /**
  * User interface element
  */
 class UIElement {
-    friend class Events;
+	friend class Events;
+
 private:
-    int _timeoutCtr = 0;
+	int _timeoutCtr = 0;
+
 protected:
-    UIElement *_parent;
-    Common::Array<UIElement *> _children;
-    Common::Rect _innerBounds;
-    Bounds _bounds;
-    bool _needsRedraw = true;
-    Common::String _name;
+	UIElement *_parent;
+	Common::Array<UIElement *> _children;
+	Common::Rect _innerBounds;
+	Bounds _bounds;
+	bool _needsRedraw = true;
+	Common::String _name;
+
 protected:
-    /**
+	/**
      * Set a delay countdown in seconds, after which timeout() is called
      */
-    void delaySeconds(uint seconds);
+	void delaySeconds(uint seconds);
 
-    /**
+	/**
      * Set a delay countdown in frames, after which timeout() is called
      */
-    void delayFrames(uint frames);
+	void delayFrames(uint frames);
 
-    /**
+	/**
      * Returns true if a delay is active
      */
-    bool isDelayActive() const {
-        return _timeoutCtr != 0;
-    }
+	bool isDelayActive() const {
+		return _timeoutCtr != 0;
+	}
 
-    /**
+	/**
      * Cancels any active delay
      */
-    void cancelDelay() {
-        _timeoutCtr = 0;
-    }
+	void cancelDelay() {
+		_timeoutCtr = 0;
+	}
 
-    /**
+	/**
      * Called when an active timeout countdown expired
      */
-    virtual void timeout();
+	virtual void timeout();
 
 private:
-    /**
+	/**
      * Outer method for doing drawing
      *
      */
-    void drawElements();
+	void drawElements();
 
-    /**
+	/**
      * Finds a view globally
      */
-    static UIElement *findViewGlobally(const Common::String &name);
-public:
-    UIElement(const Common::String &name, UIElement *uiParent);
-    UIElement(const Common::String &name);
-    virtual ~UIElement() {}
+	static UIElement *findViewGlobally(const Common::String &name);
 
-    /**
+public:
+	UIElement(const Common::String &name, UIElement *uiParent);
+	UIElement(const Common::String &name);
+	virtual ~UIElement() {}
+
+	/**
      * Returns true if the elements needs to be redrawn
      */
-    bool needsRedraw() const {
-        return _needsRedraw;
-    }
+	bool needsRedraw() const {
+		return _needsRedraw;
+	}
 
-    /**
+	/**
      * Sets that the element needs to be redrawn
      */
-    void redraw();
+	void redraw();
 
-    /**
+	/**
      * Focuses the element as the current view
      */
-    void focus();
+	void focus();
 
-    /**
+	/**
      * Closes the current view. The view must have been added
      * via addView, so there's a remaining view afterwards
      */
-    virtual void close();
+	virtual void close();
 
-    /*
+	/*
      * Returns true if the view is focused
      */
-    bool isFocused() const;
+	bool isFocused() const;
 
-    /**
+	/**
      * Sets the focus to a new view
      */
-    void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
-    void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
 
-    /**
+	/**
      * Adds a focused view to the view stack without replacing current one
      */
-    void addView(UIElement *ui);
-    void addView(const Common::String &name);
-    void addView();
-    void open() {
-        addView();
-    }
+	void addView(UIElement *ui);
+	void addView(const Common::String &name);
+	void addView();
+	void open() {
+		addView();
+	}
 
-    /**
+	/**
      * Returns a random number
      */
-    int getRandomNumber(int minNumber, int maxNumber);
-    int getRandomNumber(int maxNumber);
+	int getRandomNumber(int minNumber, int maxNumber);
+	int getRandomNumber(int maxNumber);
 
-    /**
+	/**
      * Sets the element's bounds
      */
-    virtual void setBounds(const Common::Rect &r) {
-        _bounds = r;
-    }
+	virtual void setBounds(const Common::Rect &r) {
+		_bounds = r;
+	}
 
-    /**
+	/**
      * Gets the element's bounds
      */
-    Common::Rect getBounds() const {
-        return _bounds;
-    }
+	Common::Rect getBounds() const {
+		return _bounds;
+	}
 
-    /**
+	/**
      * Gets a view's name
      */
-    const Common::String &getName() const {
-        return _name;
-    }
+	const Common::String &getName() const {
+		return _name;
+	}
 
-    /**
+	/**
      * Returns a surface for drawing the element
      */
-    Gfx::GfxSurface getSurface(bool innerBounds = false) const;
+	Gfx::GfxSurface getSurface(bool innerBounds = false) const;
 
-    /**
+	/**
      * Clear the surface
      */
-    virtual void clearSurface();
+	virtual void clearSurface();
 
-    /**
+	/**
      * Draws the element
      */
-    virtual void draw();
+	virtual void draw();
 
-    /**
+	/**
      * Called for game frame ticks
      */
-    virtual bool tick();
+	virtual bool tick();
 
-    /**
+	/**
      * Find a view by name
      */
-    virtual UIElement *findView(const Common::String &name);
+	virtual UIElement *findView(const Common::String &name);
 
-    /**
+	/**
      * Handles events
      */
-    // Mouse move only has a minimal implementation for performance reasons
+	// Mouse move only has a minimal implementation for performance reasons
 protected:
-    virtual bool msgMouseMove(const MouseMoveMessage &msg) {
-        return false;
-    }
+	virtual bool msgMouseMove(const MouseMoveMessage &msg) {
+		return false;
+	}
+
 public:
-    bool send(const MouseMoveMessage &msg) {
-        return msgMouseMove(msg);
-    }
+	bool send(const MouseMoveMessage &msg) {
+		return msgMouseMove(msg);
+	}
 
-#define MESSAGE(NAME) \
-	protected: \
-		virtual bool msg##NAME(const NAME##Message &e) { \
-			for (Common::Array<UIElement *>::iterator it = _children.begin(); \
-					it != _children.end(); ++it) { \
-				if ((*it)->msg##NAME(e)) return true; \
-			} \
-			return false; \
-		} \
-	public: \
-		bool send(const Common::String &viewName, const NAME##Message &msg) { \
-			UIElement *view = UIElement::findViewGlobally(viewName); \
-			assert(view); \
-			return view->msg##NAME(msg); \
-		} \
-		bool send(const NAME##Message &msg) { \
-			return msg##NAME(msg); \
-		} \
+#define MESSAGE(NAME)                                                     \
+protected:                                                                \
+	virtual bool msg##NAME(const NAME##Message &e) {                      \
+		for (Common::Array<UIElement *>::iterator it = _children.begin(); \
+			 it != _children.end(); ++it) {                               \
+			if ((*it)->msg##NAME(e))                                      \
+				return true;                                              \
+		}                                                                 \
+		return false;                                                     \
+	}                                                                     \
+                                                                          \
+public:                                                                   \
+	bool send(const Common::String &viewName, const NAME##Message &msg) { \
+		UIElement *view = UIElement::findViewGlobally(viewName);          \
+		assert(view);                                                     \
+		return view->msg##NAME(msg);                                      \
+	}                                                                     \
+	bool send(const NAME##Message &msg) {                                 \
+		return msg##NAME(msg);                                            \
+	}
 
-    MESSAGE(Focus);
-    MESSAGE(Unfocus);
-    MESSAGE(MouseEnter);
-    MESSAGE(MouseLeave);
-    MESSAGE(Keypress);
-    MESSAGE(MouseDown);
-    MESSAGE(MouseUp);
-    MESSAGE(Action);
-    MESSAGE(Game);
-    MESSAGE(Value);
+	MESSAGE(Focus);
+	MESSAGE(Unfocus);
+	MESSAGE(MouseEnter);
+	MESSAGE(MouseLeave);
+	MESSAGE(Keypress);
+	MESSAGE(MouseDown);
+	MESSAGE(MouseUp);
+	MESSAGE(Action);
+	MESSAGE(Game);
+	MESSAGE(Value);
 #undef MESSAGE
 };
 
@@ -279,162 +288,161 @@ public:
  */
 class Events : public UIElement {
 private:
-    Graphics::Screen *_screen = nullptr;
-    Common::Stack<UIElement *> _views;
-    int _palLoop = 0;
-    int _palCnt1 = 0;
-    int _palCnt2 = 0;
+	Graphics::Screen *_screen = nullptr;
+	Common::Stack<UIElement *> _views;
+	int _palLoop = 0;
+	int _palCnt1 = 0;
+	int _palCnt2 = 0;
 
-    void nextFrame();
-    int actionToKeyFlag(int action) const;
-    void rotatePalette();
+	void nextFrame();
+	int actionToKeyFlag(int action) const;
+	void rotatePalette();
 
-    /**
+	/**
      * Process an event
      */
-    void processEvent(Common::Event &ev);
+	void processEvent(Common::Event &ev);
 
-    /**
+	/**
      * Process a demo event
      */
-    void processDemoEvent(byte ev);
+	void processDemoEvent(byte ev);
 
 protected:
-    /**
+	/**
      * Returns true if the game should quit
      */
-    virtual bool shouldQuit() const = 0;
+	virtual bool shouldQuit() const = 0;
 
-    /**
+	/**
      * Overrides events we want to only go to the focused view
      */
-#define MESSAGE(NAME) \
-		bool msg##NAME(const NAME##Message &e) override { \
-			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
-		}
-    MESSAGE(Action);
-    MESSAGE(Focus);
-    MESSAGE(Unfocus);
-    MESSAGE(MouseEnter);
-    MESSAGE(MouseLeave);
-    MESSAGE(Keypress);
-    MESSAGE(MouseDown);
-    MESSAGE(MouseUp);
-    MESSAGE(MouseMove);
+#define MESSAGE(NAME)                                                 \
+	bool msg##NAME(const NAME##Message &e) override {                 \
+		return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
+	}
+	MESSAGE(Action);
+	MESSAGE(Focus);
+	MESSAGE(Unfocus);
+	MESSAGE(MouseEnter);
+	MESSAGE(MouseLeave);
+	MESSAGE(Keypress);
+	MESSAGE(MouseDown);
+	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 #undef MESSAGE
 public:
-    Events();
-    virtual ~Events();
+	Events();
+	virtual ~Events();
 
-    virtual bool isDemo() const = 0;
+	virtual bool isDemo() const = 0;
 
-    /**
+	/**
      * Main game loop
      */
-    void runGame();
+	void runGame();
 
-    /**
+	/**
      * Sets the focus to a new view
      */
-    void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
-    void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
 
-    /**
+	/**
      * Adds a focused view to the view stack without replacing current one
      */
-    void addView(UIElement *ui);
-    void addView(const Common::String &name);
+	void addView(UIElement *ui);
+	void addView(const Common::String &name);
 
-    /**
+	/**
      * Clears the view list
      */
-    void clearViews();
+	void clearViews();
 
-    /**
+	/**
      * Pops a view from the view stack
      */
-    void popView();
+	void popView();
 
-    /**
+	/**
      * Redraws the views in order. This is used in rare cases
      * where a view draws outside it's defined area, and needs
      * to restore whether the background was before
      */
-    void redrawViews();
+	void redrawViews();
 
-    /**
+	/**
      * Returns the currently focused view, if any
      */
-    UIElement *focusedView() const {
-        return _views.empty() ? nullptr : _views.top();
-    }
+	UIElement *focusedView() const {
+		return _views.empty() ? nullptr : _views.top();
+	}
 
-    /**
+	/**
      * Returns the view prior to the current view, if any
      */
-    UIElement *priorView() const {
-        return _views.size() < 2 ? nullptr :
-               _views[_views.size() - 2];
-    }
+	UIElement *priorView() const {
+		return _views.size() < 2 ? nullptr : _views[_views.size() - 2];
+	}
 
-    /**
+	/**
      * Returns the first view in the stack
      */
-    UIElement *firstView() const {
-        return _views.empty() ? nullptr : _views[0];
-    }
+	UIElement *firstView() const {
+		return _views.empty() ? nullptr : _views[0];
+	}
 
-    /**
+	/**
      * Returns true if a view of a given name is present
      * at all in the visible view stack
      */
-    bool isPresent(const Common::String &name) const;
+	bool isPresent(const Common::String &name) const;
 
-    /**
+	/**
      * Returns true if combat is active
      */
-    bool isInCombat() const {
-        return isPresent("Combat");
-    }
+	bool isInCombat() const {
+		return isPresent("Combat");
+	}
 
-    /**
+	/**
      * Returns the underlying screen
      */
-    Graphics::Screen *getScreen() const {
-        return _screen;
-    }
+	Graphics::Screen *getScreen() const {
+		return _screen;
+	}
 
-    /**
+	/**
      * Draws the focused view
      */
-    void drawElements() {
-        if (!_views.empty())
-            focusedView()->drawElements();
-    }
+	void drawElements() {
+		if (!_views.empty())
+			focusedView()->drawElements();
+	}
 
-    /**
+	/**
      * Add a keypress to the event queue
      */
-    void addKeypress(const Common::KeyCode kc);
+	void addKeypress(const Common::KeyCode kc);
 
-    /**
+	/**
      * Events manager doesn't have any intrinsic drawing
      */
-    void draw() override {}
+	void draw() override {}
 
-    /**
+	/**
      * Called once every game frame
      */
-    bool tick() override {
-        return !_views.empty() ? focusedView()->tick() : false;
-    }
+	bool tick() override {
+		return !_views.empty() ? focusedView()->tick() : false;
+	}
 
-    /**
+	/**
      * Calling the close method for g_events closes the active view
      */
-    void close() override {
-        focusedView()->close();
-    }
+	void close() override {
+		focusedView()->close();
+	}
 };
 
 extern Events *g_events;

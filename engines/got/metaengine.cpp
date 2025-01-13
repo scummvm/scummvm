@@ -22,7 +22,6 @@
 #include "common/translation.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/standard-actions.h"
 #include "got/metaengine.h"
 #include "got/detection.h"
 #include "got/got.h"

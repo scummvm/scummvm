@@ -22,49 +22,48 @@
 namespace Got {
 
 const PlainGameDescriptor gotGames[] = {
-    { "got", "God of Thunder" },
-    { 0, 0 }
+	{"got", "God of Thunder"},
+	{nullptr, nullptr}
 };
 
 const ADGameDescription gameDescriptions[] = {
-    {
-        "got",
-        "v1.0:143",
-        AD_ENTRY1s("gotres.dat", "0fe859bcfd06772be0885bf510c2877d", 739732),
-        Common::EN_ANY,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE,
-        GUIO1(GUIO_NOSPEECH)
-    },
-    {
-        "got",
-        "v1.0:143 Shareware",
-        AD_ENTRY1s("gotres.dat", "c316221a3b9d12a838faef55fde2f34c", 482738),
-        Common::EN_ANY,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE | ADGF_DEMO,
-        GUIO1(GUIO_NOSPEECH)
-    },
-    {
-        "got",
-        "v1.1:144",
-        AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
-        Common::EN_ANY,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE,
-        GUIO1(GUIO_NOSPEECH)
-    },
-    {
-        "got",
-        "v1.1:144 Shareware",
-        AD_ENTRY1s("gotres.dat", "c443aa09450566ee32998c3ebb15cbaa", 485858),
-        Common::EN_ANY,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE | ADGF_DEMO,
-        GUIO1(GUIO_NOSPEECH)
-    },
+	{
+		"got",
+		 "v1.0:143",
+		 AD_ENTRY1s("gotres.dat", "0fe859bcfd06772be0885bf510c2877d", 739732),
+		 Common::EN_ANY,
+		 Common::kPlatformDOS,
+		 ADGF_UNSTABLE,
+		 GUIO1(GUIO_NOSPEECH)
+	},
+	{
+		"got",
+		 "v1.0:143 Shareware",
+		 AD_ENTRY1s("gotres.dat", "c316221a3b9d12a838faef55fde2f34c", 482738),
+		 Common::EN_ANY,
+		 Common::kPlatformDOS,
+		 ADGF_UNSTABLE | ADGF_DEMO,
+		 GUIO1(GUIO_NOSPEECH)
+	},
+	{
+		"got",
+		 "v1.1:144",
+		 AD_ENTRY1s("gotres.dat", "747ed508ffa3808156a4eb080e9859f8", 739710),
+		 Common::EN_ANY,
+		 Common::kPlatformDOS,
+		 ADGF_UNSTABLE,
+		 GUIO1(GUIO_NOSPEECH)
+	},
+	{
+		"got",
+		 "v1.1:144 Shareware",
+		 AD_ENTRY1s("gotres.dat", "c443aa09450566ee32998c3ebb15cbaa", 485858),
+		 Common::EN_ANY,
+		 Common::kPlatformDOS,
+		 ADGF_UNSTABLE | ADGF_DEMO,
+		 GUIO1(GUIO_NOSPEECH)
+	},
 
-    AD_TABLE_END_MARKER
-};
+	AD_TABLE_END_MARKER};
 
 } // End of namespace Got
