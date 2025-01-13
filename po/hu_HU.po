@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-12 16:11+0000\n"
-"PO-Revision-Date: 2025-01-10 17:02+0000\n"
+"PO-Revision-Date: 2025-01-13 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2303,21 +2303,21 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"A játék indításakor módosítja a ScummVM GUI nyelvét a játék nyelvére. Így ha "
-"egy játék a ScummVM mentési és betöltési párbeszédablakot használja, akkor "
-"ugyanaz lesz a nyelv, mint a játéké."
+"A játék indításakor módosítsa a ScummVM felhasználói felület nyelvét a játék "
+"nyelvére. Így ha egy játék a ScummVM mentési és betöltési párbeszédablakot "
+"használ, akkor ugyanaz lesz a nyelv, mint a játéké."
 
 #: gui/options.cpp:2721
 msgid "Use native system file browser"
-msgstr "Használjon natív rendszerfájl böngészõt"
+msgstr "Használjon natív rendszerfájl böngészőt"
 
 #: gui/options.cpp:2722
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"A ScummVM-é helyett az eredeti rendszer fájlböngészõjét használhatja egy "
-"fájl vagy könyvtár kiválasztásához."
+"A ScummVM-é helyett a rendszer fájlböngészőjét használhatja egy fájl vagy "
+"könyvtár kiválasztásához."
 
 #: gui/options.cpp:2729
 msgid "Download Icons"
@@ -2325,24 +2325,24 @@ msgstr "Ikonok Letöltése"
 
 #: gui/options.cpp:2729
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Az ikoncsomagok frissítéseit a scummvm.org webhelyen találja"
+msgstr "További ikoncsomag frissítésekért látogasson a scummvm.org oldalra"
 
 #: gui/options.cpp:2735
 msgid "Autosave:"
-msgstr "Automentés:"
+msgstr "Automata mentés:"
 
 #: gui/options.cpp:2737
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Automentés:"
+msgstr "Automata mentés:"
 
 #: gui/options.cpp:2748
 msgid "Random seed:"
-msgstr "Véletlen mag:"
+msgstr "Véletlenszerű szám:"
 
 #: gui/options.cpp:2748
 msgid "Seed for initializing all random number generators"
-msgstr "Mag az összes véletlenszám-generátor inicializálásához"
+msgstr "Kód az összes véletlenszám-generátor inicializálásához"
 
 #: gui/options.cpp:2756
 msgid "Debug level:"
@@ -2351,7 +2351,7 @@ msgstr "Hibakeresési szint:"
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2760 gui/options.cpp:2899
 msgid "None"
-msgstr "Semmi"
+msgstr "Nincs"
 
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2766
@@ -2360,27 +2360,25 @@ msgstr "11 (mind)"
 
 #: gui/options.cpp:2770
 msgid "Enable Discord integration"
-msgstr "Engedélyezze a Discord integrációt"
+msgstr "Discord integráció engedélyezése"
 
 #: gui/options.cpp:2771
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr ""
-"Információk megjelenítése a Discordon játszott játékokról, ha a Discord "
-"kliens fut."
+msgstr "Ha fut a Discord kliens, információkat jelenít meg a futó játékokról."
 
 #: gui/options.cpp:2781 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr "Frissítés ellenõrzés:"
+msgstr "Frissítés ellenőrzés:"
 
 #: gui/options.cpp:2781
 msgid "How often to check ScummVM updates"
-msgstr "Milyen gyakran ellenõrizze a ScummVM frissítéseket"
+msgstr "ScummVM frissítés ellenőrzésének gyakorisága"
 
 #: gui/options.cpp:2792
 msgid "Check now"
-msgstr "Ellenõrzés most"
+msgstr "Ellenőrzés most"
 
 #: gui/options.cpp:2800
 msgid "Active storage:"
@@ -2388,20 +2386,22 @@ msgstr "Aktív tároló:"
 
 #: gui/options.cpp:2800
 msgid "Active cloud storage"
-msgstr "Aktív felhõ tároló"
+msgstr "Aktív felhő tároló"
 
 #: gui/options.cpp:2809
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és engedélyezd:"
+"A tároló még nem engedélyezett. Ellenőrizze a felhasználónevet és "
+"engedélyezze:"
 
 #: gui/options.cpp:2811
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és engedélyezd:"
+"A tároló még nem engedélyezett. Ellenőrizze a felhasználónevet és "
+"engedélyezze:"
 
 #: gui/options.cpp:2812
 msgid "Enable storage"
@@ -2409,7 +2409,7 @@ msgstr "Tároló engedélyezése"
 
 #: gui/options.cpp:2812
 msgid "Confirm you want to use this account for this storage"
-msgstr "Erõsítsd meg, hogy ezt a fiókot akarod használni a tároláshoz"
+msgstr "Erősítse meg, hogy ezt a fiókot akarja használni a tároláshoz"
 
 #: gui/options.cpp:2814 backends/platform/wii/options.cpp:113
 msgid "Username:"
@@ -2425,15 +2425,15 @@ msgstr "<nincs>"
 
 #: gui/options.cpp:2817
 msgid "Used space:"
-msgstr "Használt hely:"
+msgstr "Felhasznált tárhely:"
 
 #: gui/options.cpp:2817
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "ScummVM mentésekhez használt hely ezen a tárolón"
+msgstr "ScummVM mentésekhez használt tárhely ezen a tárolón"
 
 #: gui/options.cpp:2820
 msgid "Last sync:"
-msgstr "Utolsó szink:"
+msgstr "Utolsó szinkronizáció:"
 
 #: gui/options.cpp:2820
 msgid "When was the last time saved games were synced with this storage"
@@ -2447,31 +2447,31 @@ msgstr "<soha>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
-"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
-"betöltésekor."
+"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés után és "
+"visszatöltéskor."
 
 #: gui/options.cpp:2825
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
-"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
-"betöltésekor."
+"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés után és "
+"visszatöltéskor."
 
 #: gui/options.cpp:2826
 msgid "Sync now"
-msgstr "Szink most"
+msgstr "Szinkronizálás most"
 
 #: gui/options.cpp:2826
 msgid "Start saved games sync"
-msgstr "Indítsd el a mentett játékok szinkronizálását"
+msgstr "Mentések szinkronizálásnak indítása"
 
 #: gui/options.cpp:2829
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
+msgstr "Játék fájlok letölthetőek a ScummVM felhő mappából:"
 
 #: gui/options.cpp:2831
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
+msgstr "Játék fájlok letölthetőek a ScummVM felhő mappából:"
 
 #: gui/options.cpp:2832
 msgid "Download game files"
@@ -2479,16 +2479,16 @@ msgstr "Játék fájlok letöltése"
 
 #: gui/options.cpp:2832
 msgid "Open downloads manager dialog"
-msgstr "Letöltéskezelõ párbeszédablak megnyitása"
+msgstr "Letöltéskezelő párbeszédablak megnyitása"
 
 #: gui/options.cpp:2835
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
+msgstr "A tároló fiók megváltoztatásához lépjen ki, majd újra lépjen be:"
 
 #: gui/options.cpp:2837
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
+msgstr "A tároló fiók megváltoztatásához lépjen ki, majd újra lépjen be:"
 
 #: gui/options.cpp:2838
 msgid "Disconnect"
@@ -2496,7 +2496,7 @@ msgstr "Szétkapcsolás"
 
 #: gui/options.cpp:2838
 msgid "Stop using this storage on this device"
-msgstr "Hagyd abba a tároló használatát ezen az eszközön"
+msgstr "Ne használja többet ezt a tárlót az eszközön"
 
 #: gui/options.cpp:2841
 msgctxt "lowres"
@@ -2513,7 +2513,7 @@ msgstr "Kapcsolódás"
 
 #: gui/options.cpp:2844
 msgid "Connect your cloud storage account"
-msgstr "Csatlakozás a felhõtároló fiókodhoz"
+msgstr "Csatlakoztassa felhő tároló fiókját"
 
 #: gui/options.cpp:2858
 msgctxt "lowres"
@@ -2523,7 +2523,7 @@ msgstr "/gyökér/ Útvonal:"
 #: gui/options.cpp:2858 gui/options.cpp:2860 gui/options.cpp:2861
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
-"Válaszd ki, melyik könyvtár jelenjen meg /gyökér/ néven a Fájlkezelõben"
+"Válassza ki, melyik könyvtár jelenjen meg /gyökér/ néven a Fájlkezelőben"
 
 #: gui/options.cpp:2860
 msgid "/root/ Path:"
@@ -2541,7 +2541,7 @@ msgstr "Port a kiszolgáló számára"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
+"Kiszolgáló futtatás a fájlok kezeléséhez böngészőn belül (azonos hálózatban)."
 
 #: gui/options.cpp:2872
 msgctxt "lowres"
@@ -2551,7 +2551,7 @@ msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 #: gui/options.cpp:2874
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
+"Kiszolgáló futtatás a fájlok kezeléséhez böngészőn belül (azonos hálózatban)."
 
 #: gui/options.cpp:2875
 msgid "Closing options dialog will stop the server."
@@ -2559,11 +2559,11 @@ msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
 #: gui/options.cpp:2886
 msgid "Use Text to speech"
-msgstr "Használd a Szövegbõl beszédet"
+msgstr "Használjon szövegfelolvasót"
 
 #: gui/options.cpp:2886
 msgid "Will read text in gui on mouse over."
-msgstr "Olvassa a szöveget gui-ban az egérrel."
+msgstr "Az egér alatt levő felhasználói felület szövegét felolvassa."
 
 #: gui/options.cpp:2967
 msgid "Ignore"
@@ -2571,7 +2571,7 @@ msgstr "Mellőz"
 
 #: gui/options.cpp:2968
 msgid "Disable autosave"
-msgstr "Automentés letiltás"
+msgstr "Automata mentés letiltás"
 
 #: gui/options.cpp:2969
 msgid ""
@@ -2594,7 +2594,7 @@ msgid ""
 "And more..."
 msgstr ""
 "\n"
-"És több..."
+"Továbbiak..."
 
 #: gui/options.cpp:2979 engines/engine.cpp:638
 msgid "Move"
@@ -2606,11 +2606,11 @@ msgstr "HIBA: Nem sikerült áthelyezni a következő mentett játékokat:\n"
 
 #: gui/options.cpp:3095
 msgid "Failed to change cloud storage!"
-msgstr "Felhõtároló csere nem sikerült!"
+msgstr "A felhőtároló cseréje nem sikerült!"
 
 #: gui/options.cpp:3098
 msgid "Another cloud storage is already active."
-msgstr "Egy másik felhõtároló már aktív."
+msgstr "Egy másik felhőtároló már aktív."
 
 #: gui/options.cpp:3214
 msgid "Theme does not support selected language!"
@@ -2618,7 +2618,7 @@ msgstr "A téma nem támogatja a választott nyelvet!"
 
 #: gui/options.cpp:3217
 msgid "Theme cannot be loaded!"
-msgstr "A témát nem lehet betölteni!"
+msgstr "A téma nem tölthető be!"
 
 #: gui/options.cpp:3220
 msgid ""
@@ -2626,68 +2626,68 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"A különbözõ beállítások visszaállítva."
+"Egyéb beállítások helyreállításra kerülnek."
 
 #: gui/options.cpp:3292
 msgid "Select directory for GUI themes"
-msgstr "GUI téma mappa kiválasztása"
+msgstr "GUI téma mappájának kiválasztása"
 
 #: gui/options.cpp:3302
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Válaszd ki a GUI bélyegképeinek könyvtárát"
+msgstr "Válassza ki a GUI indító bélyegképeinek könyvtárát"
 
 #: gui/options.cpp:3313
 msgid "Select directory for DLC downloads"
-msgstr "Válaszd ki a DLC-letöltések könyvtárát"
+msgstr "Válassza ki a DLC-letöltések könyvtárát"
 
 #: gui/options.cpp:3324
 msgid "Select directory for extra files"
-msgstr "Mappa választás az extra fájloknak"
+msgstr "Mappa választása extra fájloknak"
 
 #: gui/options.cpp:3335
 msgid "Select directory for plugins"
-msgstr "Plugin mappa kiválasztása"
+msgstr "Mappa kiválasztása plugin-ok számára"
 
 #: gui/options.cpp:3349
 msgid "Select directory for Files Manager /root/"
-msgstr "Válassz mappát a Fájlkezelõnek /gyökér/"
+msgstr "Válassza ki a fájlkezelő /gyökér/ mappáját"
 
 #: gui/options.cpp:3528
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Ez a tároló már aktív. Meg akarod szakítani?"
+msgstr "Ez a tároló már aktív. Meg akarja szakítani?"
 
 #: gui/options.cpp:3537
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Várj amíg a jelenlegi tároló befejezi és próbáld újra."
+msgstr "Várjon amíg a jelenlegi tárhely végez, és próbálkozzon újra."
 
 #: gui/options.cpp:3740 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr "<épp most>"
+msgstr "<éppen most>"
 
 #: gui/options.cpp:3885
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
-"A kérés nem sikerült.\n"
-"Ellenõrizd az internetkapcsolatot."
+"Sikertelen kérés.\n"
+"Ellenőrizze az internetkapcsolatát."
 
 #: gui/options.cpp:3909
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
-"Egy tesztminta megjelenítve.\n"
-"Megtartod ezeket a shader skaláris beállításokat?"
+"Meg kell hogy jelenjen a tesztminta.\n"
+"Megtartja ezeket a shader méretező beállításokat?"
 
 #: gui/options.cpp:3912
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr "Auto visszaállítás %d másodperc múlva"
+msgstr "Automatikus visszaállítás %d másodperc múlva"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
-msgstr "Írd be a szöveget"
+msgstr "Írja be a szöveget"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -2696,7 +2696,7 @@ msgstr "#  következõ"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
-msgstr "hozzáad"
+msgstr "hozzáadás"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
@@ -2709,7 +2709,7 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
 msgid "*  Pre"
-msgstr "*  Elõzõ"
+msgstr "*  Elő"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:600
@@ -2723,13 +2723,13 @@ msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:67
 msgid "Recorder or Playback Gameplay"
-msgstr "Játékmenet felvétel vagy lejátszás"
+msgstr "Játékmenet felvétel vagy visszajátszás"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
 #: dists/android.strings.xml.cpp:47 engines/engine.cpp:632
 msgid "Delete"
-msgstr "Töröl"
+msgstr "Törlés"
 
 #: gui/recorderdialog.cpp:74
 msgid "Record"
@@ -2741,12 +2741,12 @@ msgstr "Visszajátszás"
 
 #: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
 msgid "Edit"
-msgstr "Javít"
+msgstr "Szerkesztés"
 
 #: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
 #: gui/recorderdialog.cpp:308
 msgid "Author: "
-msgstr "Szerzõ: "
+msgstr "Szerző: "
 
 #: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
 #: gui/recorderdialog.cpp:309
@@ -2755,11 +2755,11 @@ msgstr "Megjegyzés: "
 
 #: gui/recorderdialog.cpp:211
 msgid "Do you really want to delete this record?"
-msgstr "Biztos hogy törölni akarod ezt a felvételt?"
+msgstr "Biztosan le akarja törölni ezt a felvételt?"
 
 #: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
-msgstr "Ismeretlen Szerzõ"
+msgstr "Ismeretlen Szerző"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
@@ -2767,11 +2767,11 @@ msgstr "ScummVM nem tud hozzáférni a mappához!"
 
 #: gui/saveload-dialog.cpp:56
 msgid "Downloading saves..."
-msgstr "Mentések letöltése ..."
+msgstr "Mentések letöltése..."
 
 #: gui/saveload-dialog.cpp:65
 msgid "Run in background"
-msgstr "Futás a háttérben"
+msgstr "Futtatás a háttérben"
 
 #: gui/saveload-dialog.cpp:126
 #, c-format
@@ -2780,29 +2780,27 @@ msgstr "%s (%s %S / %s %S, %s / %s fájl)"
 
 #: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:652
 msgid "No date saved"
-msgstr "Dátum nincs mentve"
+msgstr "Dátum nem került mentésre"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:653
 msgid "No time saved"
-msgstr "Idõ nincs mentve"
+msgstr "Idő nem került mentésre"
 
 #: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:654
 msgid "No playtime saved"
-msgstr "Játékidõ nincs mentve"
+msgstr "Játékidő nem került mentésre"
 
 #: gui/saveload-dialog.cpp:507 gui/saveload-dialog.cpp:775
 msgid "Untitled saved game"
-msgstr "Névtelen játékállás"
+msgstr "Névtelen játék mentés"
 
 #: gui/saveload-dialog.cpp:539
 msgid "Do you really want to delete this saved game?"
-msgstr "Biztos hogy törölni akarod ezt a játékállást?"
+msgstr "Biztosan törölni akarja ezt a játék mentést?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Hiba a mentésfájl írásakor\n"
+msgstr "Hiba a mentés törlése során"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -2810,11 +2808,11 @@ msgstr "Dátum: "
 
 #: gui/saveload-dialog.cpp:679 gui/saveload-dialog.cpp:1198
 msgid "Time: "
-msgstr "Idõ: "
+msgstr "Idő: "
 
 #: gui/saveload-dialog.cpp:685 gui/saveload-dialog.cpp:1206
 msgid "Playtime: "
-msgstr "Játékidõ: "
+msgstr "Játékidő: "
 
 #: gui/saveload-dialog.cpp:1052
 msgid "New Save"
@@ -2822,7 +2820,7 @@ msgstr "Új Mentés"
 
 #: gui/saveload-dialog.cpp:1052
 msgid "Create a new saved game"
-msgstr "Új játékmentés készítése"
+msgstr "Új játékmentés létrehozása"
 
 #: gui/saveload-dialog.cpp:1185
 msgid "Name: "
@@ -2831,24 +2829,25 @@ msgstr "Név: "
 #: gui/saveload-dialog.cpp:1263
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Adj meg egy leírást a %d slothoz:"
+msgstr "Adjon meg egy leírást a %d slothoz:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
 msgstr ""
-"Válaszd ki a shadert az alábbi listából (vagy válassz helyette egy fájlt)"
+"Válasszon ki egy shadert az alábbi listából (vagy válasszon helyette egy "
+"fájlt)"
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick file instead..."
-msgstr "Válassz inkább fájlt..."
+msgstr "Válasszon inkább fájlt..."
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick shader from file system"
-msgstr "Válassz shadert a fájlrendszerből"
+msgstr "Válassza ki a shadert a fájlok közül"
 
 #: gui/shaderbrowser-dialog.cpp:136
 msgid "Select shader"
-msgstr "Válassz Shadert"
+msgstr "Válasszon shadert"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -2865,15 +2864,15 @@ msgstr "GFX letiltva"
 
 #: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
-msgstr "Szabványos renderelõ"
+msgstr "Szabványos render"
 
 #: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1030
 msgid "Standard"
-msgstr "Átlagos"
+msgstr "Szabványos"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
-msgstr "Antialiased renderelõ"
+msgstr "Élsimított rederer"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
@@ -2881,11 +2880,11 @@ msgstr "Élsimított"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr "Add hozzá így is"
+msgstr "Hozzáadás mégis"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr "Másolás a vágólapra"
+msgstr "Másolás vágólapra"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
@@ -2896,21 +2895,21 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
-"Az alábbi gombra kattintva a szükséges játékinformációkat a vágólapra "
-"másolja."
+"Az alábbi gombra kattintva a szükséges játékinformációk a vágólapra "
+"másolódnak."
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr "A játékot közvetlenül a Bug Tracker-re is bejelentheti."
+msgstr "A játékot közvetlenül a Bug Tracker-be is bejelentheti."
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr "Minden szükséges információ a játékról a vágólapra másolva"
+msgstr "Minden szükséges információ a játékról a vágólapra került másolásra"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr "A játékinformációk másolása a vágólapra nem sikerült!"
+msgstr "Sikertelen a játékinformációk vágólapra másolása!"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2918,7 +2917,7 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"ScummVM már támogatja az automatikus frissítéseket\n"
+"ScummVM immáron támogatja az automatikus frissítéseket\n"
 "amely internethozzáférést igényel. Szeretné\n"
 "engedélyezni ezt a funkciót?"
 
@@ -2927,7 +2926,7 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
-"Ezt a beállítást késõbb módosíthatod az Egyéb lapon\n"
+"Ezt a beállítást később módosíthatja az Egyéb lapon\n"
 "az Opciók párbeszédablakban."
 
 #: gui/widget.cpp:456 gui/widget.cpp:458 gui/widget.cpp:463 gui/widget.cpp:465
@@ -2936,7 +2935,7 @@ msgstr "Érték törlése"
 
 #: gui/widgets/grid.cpp:285
 msgid "Play"
-msgstr "Játék"
+msgstr "Indítás"
 
 #: gui/widgets/grid.cpp:288
 msgid "Saves"
@@ -2944,7 +2943,7 @@ msgstr "Mentések"
 
 #: base/main.cpp:585
 msgid "Bad config file format. overwrite?"
-msgstr "Hibás konfigurációs fájlformátum. felülírjam?"
+msgstr "Hibás konfigurációs fájl formátum. Felülírható?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:634
