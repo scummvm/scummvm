@@ -28,7 +28,6 @@
 #include "got/game/move_patterns.h"
 #include "got/game/object.h"
 #include "got/game/status.h"
-#include "got/gfx/image.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -75,28 +74,20 @@ void GameContent::draw() {
 
         switch (_G(transitionDir)) {
         case DIR_LEFT:
-            win.simpleBlitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),
-                         Common::Point(0, 0));
-            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320 - _transitionPos, 192),
-                         Common::Point(_transitionPos, 0));
+            win.simpleBlitFrom(s, Common::Rect(320 - _transitionPos, 0, 320, 192),Common::Point(0, 0));
+            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320 - _transitionPos, 192),Common::Point(_transitionPos, 0));
             break;
         case DIR_RIGHT:
-            win.simpleBlitFrom(_surface, Common::Rect(_transitionPos, 0, 320, 192),
-                         Common::Point(0, 0));
-            win.simpleBlitFrom(s, Common::Rect(0, 0, _transitionPos, 192),
-                         Common::Point(320 - _transitionPos, 0));
+            win.simpleBlitFrom(_surface, Common::Rect(_transitionPos, 0, 320, 192),Common::Point(0, 0));
+            win.simpleBlitFrom(s, Common::Rect(0, 0, _transitionPos, 192),Common::Point(320 - _transitionPos, 0));
             break;
         case DIR_UP:
-            win.simpleBlitFrom(s, Common::Rect(0, 192 - _transitionPos, 320, 192),
-                         Common::Point(0, 0));
-            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320, 192 - _transitionPos),
-                         Common::Point(0, _transitionPos));
+            win.simpleBlitFrom(s, Common::Rect(0, 192 - _transitionPos, 320, 192),Common::Point(0, 0));
+            win.simpleBlitFrom(_surface, Common::Rect(0, 0, 320, 192 - _transitionPos),Common::Point(0, _transitionPos));
             break;
         case DIR_DOWN:
-            win.simpleBlitFrom(_surface, Common::Rect(0, _transitionPos, 320, 192),
-                         Common::Point(0, 0));
-            win.simpleBlitFrom(s, Common::Rect(0, 0, 320, _transitionPos),
-                         Common::Point(0, 192 - _transitionPos));
+            win.simpleBlitFrom(_surface, Common::Rect(0, _transitionPos, 320, 192),Common::Point(0, 0));
+            win.simpleBlitFrom(s, Common::Rect(0, 0, 320, _transitionPos),Common::Point(0, 192 - _transitionPos));
             break;
         case DIR_PHASED:
             win.simpleBlitFrom(_surface);		// Copy old surface
@@ -122,7 +113,9 @@ bool GameContent::msgGame(const GameMessage &msg) {
         _G(gameMode) = MODE_PAUSE;
         _pauseCtr = msg._value;
         return true;
-    } else if (msg._name == "SCORE_INV") {
+    }
+
+	if (msg._name == "SCORE_INV") {
         _G(gameMode) = MODE_SCORE_INV;
         _pauseCtr = 0;
         return true;
@@ -230,8 +223,9 @@ void GameContent::drawBackground(GfxSurface &s) {
         for (int x = 0; x < TILES_X; x++) {
             if (_G(scrn).icon[y][x] != 0) {
                 const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
-                s.simpleBlitFrom(_G(bgPics)[_G(scrn).bg_color], pt);
-                s.simpleBlitFrom(_G(bgPics)[_G(scrn).icon[y][x]], pt);
+				LEVEL screen = _G(scrn);
+                s.simpleBlitFrom(_G(bgPics[screen.bg_color]), pt);
+                s.simpleBlitFrom(_G(bgPics[screen.icon[y][x]]), pt);
             }
         }
     }
@@ -242,16 +236,16 @@ void GameContent::drawObjects(GfxSurface &s) {
         for (int x = 0; x < TILES_X; ++x) {
             int p = (y * TILES_X) + x;
 
-            if (_G(object_map)[p]) {
-                s.simpleBlitFrom(_G(objects)[_G(object_map)[p] - 1],
-                           Common::Point(x * TILE_SIZE, y * TILE_SIZE));
+        	byte currObjId = _G(object_map[p]);
+            if (currObjId) {
+                s.simpleBlitFrom(_G(objects[currObjId - 1]), Common::Point(x * TILE_SIZE, y * TILE_SIZE));
             }
         }
     }
 }
 
 void GameContent::drawActors(GfxSurface &s) {
-    ACTOR *actor_ptr = &_G(actor)[MAX_ACTORS - 1];
+    ACTOR *actor_ptr = &_G(actor[MAX_ACTORS - 1]);
     ACTOR *actor2_storage = nullptr;
 
     for (int actor_num = 0; actor_num <= MAX_ACTORS; ) {
@@ -260,8 +254,7 @@ void GameContent::drawActors(GfxSurface &s) {
             actor_ptr->last_x[_G(pge)] = actor_ptr->x;
             actor_ptr->last_y[_G(pge)] = actor_ptr->y;
 
-            const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->dir]
-                                                    [actor_ptr->frame_sequence[actor_ptr->next]];
+            const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->dir][actor_ptr->frame_sequence[actor_ptr->next]];
             s.simpleBlitFrom(frame, Common::Point(actor_ptr->x, actor_ptr->y));
         }
 
@@ -278,27 +271,26 @@ void GameContent::drawActors(GfxSurface &s) {
     }
 
     if (_G(gameMode) == MODE_THOR_DIES && _deathCtr >= DEATH_THRESHOLD)
-        s.simpleBlitFrom(_G(objects)[10], Common::Point(_G(thor)->x, _G(thor)->y));
+        s.simpleBlitFrom(_G(objects[10]), Common::Point(_G(thor)->x, _G(thor)->y));
 }
 
 void GameContent::drawBossHealth(GfxSurface &s) {
-    int i, c;
+    int c;
 
-    int health = _G(actor)[3].health;
+    int health = _G(actor[3]).health;
 
     s.fillRect(Common::Rect(304, 2, 317, 81), 0);
     s.fillRect(Common::Rect(305, 3, 316, 80), 28);
     s.fillRect(Common::Rect(306, 4, 315, 79), 26);
     s.fillRect(Common::Rect(307, 5, 314, 78), 24);
 
-    for (i = 10; i > 0; i--) {
+    for (int i = 10; i > 0; i--) {
         if (i * 10 > health)
             c = 0;
         else
             c = 32;
 
-        s.fillRect(Common::Rect(308, 7 + (7 * (10 - i)),
-                                313, 13 + (7 * (10 - i))), c);
+        s.fillRect(Common::Rect(308, 7 + (7 * (10 - i)), 313, 13 + (7 * (10 - i))), c);
     }
 }
 
@@ -316,9 +308,10 @@ void GameContent::checkThunderShake() {
 
         _G(thunder_flag)--;
         if ((_G(thunder_flag) < MAX_ACTORS) && _G(thunder_flag) > 2) {
-            if (_G(actor)[_G(thunder_flag)].used) {
-                _G(actor)[_G(thunder_flag)].vunerable = 0;
-                actor_damaged(&_G(actor)[_G(thunder_flag)], 20);
+			int thunderFl = _G(thunder_flag);
+			if (_G(actor[thunderFl]).used) {
+				_G(actor[thunderFl]).vunerable = 0;
+				actor_damaged(&_G(actor[thunderFl]), 20);
             }
         }
 
@@ -350,20 +343,20 @@ void GameContent::checkSwitchFlag() {
 
 void GameContent::checkForItem() {
     int thor_pos = _G(thor)->getPos();
-    if (_G(object_map)[thor_pos])
+    if (_G(object_map[thor_pos]))
         pick_up_object(thor_pos);
 }
 
 void GameContent::moveActors() {
     for (int i = 0; i < MAX_ACTORS; i++) {
-        if (_G(actor)[i].used) {
+        if (_G(actor[i]).used) {
             if (_G(hourglass_flag))
-                if ((i > 2) && (!_G(pge)) && (!(_G(actor)[i].magic_hurts & LIGHTNING_MAGIC)))
+                if ((i > 2) && (!_G(pge)) && (!(_G(actor[i]).magic_hurts & LIGHTNING_MAGIC)))
                     continue;
 
-            _G(actor)[i].move_count = _G(actor)[i].num_moves;
-            while (_G(actor)[i].move_count--)
-                move_actor(&_G(actor)[i]);
+            _G(actor[i]).move_count = _G(actor[i]).num_moves;
+            while (_G(actor[i]).move_count--)
+                move_actor(&_G(actor[i]));
 
             if (i == 0)
                 set_thor_vars();
@@ -380,7 +373,7 @@ void GameContent::moveActors() {
 
 void GameContent::updateActors() {
     for (int i = 0; i < MAX_ACTORS; ++i) {
-        ACTOR *actor = &_G(actor)[i];
+        ACTOR *actor = &_G(actor[i]);
 
         if (!actor->used && actor->dead > 0)
             actor->dead--;
@@ -392,7 +385,7 @@ void GameContent::checkForBossDead() {
 
     if (_G(boss_dead)) {
         for (loop = 3; loop < 7; loop++) {
-            if (_G(actor)[loop].used)
+            if (_G(actor[loop]).used)
                 break;
         }
 
@@ -491,8 +484,8 @@ void GameContent::thorDies() {
 
     // Stop any actors on-screen from moving
     for (int li = 0; li < MAX_ACTORS; li++)
-        _G(actor)[li].show = 0;
-    _G(actor)[2].used = 0;
+        _G(actor[li]).show = 0;
+    _G(actor[2]).used = 0;
 
     // Set the state for showing death animation
     _G(gameMode) = MODE_THOR_DIES;
@@ -554,8 +547,8 @@ void GameContent::thorDead() {
     _G(tornado_used) = false;
     _G(shield_on) = false;
     music_resume();
-    _G(actor)[1].used = 0;
-    _G(actor)[2].used = 0;
+    _G(actor[1]).used = 0;
+    _G(actor[2]).used = 0;
     _G(thor)->speed_count = 6;
     _G(thor)->used = 1;
 
@@ -650,7 +643,7 @@ void GameContent::throwLightning() {
     _lightningCtr = 20;
 
     for (int i = 0; i < MAX_ACTORS; i++)
-        _G(actor)[i].show = 0;
+        _G(actor[i]).show = 0;
 
     play_sound(ELECTRIC, 1);
 }
@@ -677,16 +670,16 @@ void GameContent::lightningCountdownDone() {
     y = _G(thor)->y + 7;
 
     for (i = 3; i < MAX_ACTORS; i++) {
-        if (!_G(actor)[i].used)
+        if (!_G(actor[i]).used)
             continue;
 
-        ax = _G(actor)[i].x + (_G(actor)[i].size_x / 2);
-        ay = _G(actor)[i].y + (_G(actor)[i].size_y / 2);
+        ax = _G(actor[i]).x + (_G(actor[i]).size_x / 2);
+        ay = _G(actor[i]).y + (_G(actor[i]).size_y / 2);
 
         if ((ABS(ax - x) < 30) && (ABS(ay - y) < 30)) {
-            _G(actor)[i].magic_hit = 1;
-            _G(actor)[i].vunerable = 0;
-            actor_damaged(&_G(actor)[i], 254);
+            _G(actor[i]).magic_hit = 1;
+            _G(actor[i]).vunerable = 0;
+            actor_damaged(&_G(actor[i]), 254);
         }
     }
 }
