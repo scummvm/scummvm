@@ -1078,11 +1078,8 @@ int special_movement_ten(ACTOR *actr) {
 	if (_G(thunder_flag))
 		return 0;
 
-	if (!actor_ctr) {
-		actor_ctr = 10;
-		actor_speaks(actr, 0 - actr->pass_value, 0);
-	}
-
+	actor_ctr = 10;
+	actor_speaks(actr, 0 - actr->pass_value, 0);
 	return 0;
 }
 
@@ -1093,10 +1090,10 @@ int special_movement_eleven(ACTOR *actr) {
 		return 0;
 	}
 
-	int t = actr->type;
+	const int oldType = actr->type;
 	actr->type = 4;
 	actor_speaks(actr, 0, 0);
-	actr->type = t;
+	actr->type = oldType;
 	actr->talk_counter = 10;
 
 	return 0;
@@ -1322,7 +1319,6 @@ int movement_five(ACTOR *actr) {
 				return d;
 			}
 		}
-		y1 = actr->y;
 	} else {
 		if (yd) {
 			y1 += yd;
@@ -2140,8 +2136,8 @@ int movement_twentyeight(ACTOR *actr) {
 				actr->temp3 = 1;
 			}
 		} else {
-			actr->frame_count--;
-			if (actr->frame_count <= 0) {
+			const int fcount = actr->frame_count - 1;
+			if (fcount <= 0) {
 				actr->next--;
 				actr->frame_count = actr->frame_speed;
 				if (!actr->next) {
@@ -2149,7 +2145,8 @@ int movement_twentyeight(ACTOR *actr) {
 					actr->frame_speed = 4;
 					actr->i1 = g_events->getRandomNumber(60, 159);
 				}
-			}
+			} else
+				actr->frame_count = fcount;
 		}
 		goto done;
 	}
