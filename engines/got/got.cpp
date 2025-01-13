@@ -65,7 +65,7 @@ Common::String GotEngine::getGameId() const {
 }
 
 Common::Error GotEngine::run() {
-    // Initialize 320x240 palleted graphics mode. Note that the original
+    // Initialize 320x240 paletted graphics mode. Note that the original
     // main menu/dialogs ran at 320x200, but the game ran at 320x240.
     initGraphics(320, 240);
 
@@ -162,10 +162,8 @@ void GotEngine::savegameLoaded() {
         _G(setup).dig_sound = 0;
     if (_G(setup).music == 1) {
         if (GAME1 == 1 && _G(current_area) == 59) {
-//				if (flag)
             music_play(5, true);
         } else {
-            //if (flag)
             music_play(_G(level_type), true);
         }
     } else {
@@ -175,7 +173,7 @@ void GotEngine::savegameLoaded() {
     }
 
     _G(game_over) = _G(setup).game_over != 0;
-    _G(slow_mode) = _G(setup).speed;
+    _G(slow_mode) = _G(setup).speed != 0;
 
     g_events->replaceView("Game", true);
     setup_load();

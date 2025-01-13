@@ -26,11 +26,7 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-    "On  (slow computer)",
-    "Off (fast computer)",
-    nullptr
-};
+static const char *OPTIONS[] = { "On  (slow computer)", "Off (fast computer)", nullptr };
 
 SelectSlow::SelectSlow() : SelectOption("SelectSlow", "Fast Mode", OPTIONS) {
 }
@@ -38,10 +34,10 @@ SelectSlow::SelectSlow() : SelectOption("SelectSlow", "Fast Mode", OPTIONS) {
 void SelectSlow::selected() {
     switch (_selectedItem) {
     case 0:
-        _G(slow_mode) = 1;
+        _G(slow_mode) = true;
         break;
     case 1:
-        _G(slow_mode) = 0;
+        _G(slow_mode) = false;
         break;
     default:
         break;
