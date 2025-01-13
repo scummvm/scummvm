@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-12 16:11+0000\n"
-"PO-Revision-Date: 2025-01-06 13:18+0000\n"
+"PO-Revision-Date: 2025-01-13 16:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6894,7 +6894,7 @@ msgstr "Conf. des touches Echap"
 #: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
 #: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
-msgstr "S'échapper"
+msgstr "Echap"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
@@ -8138,17 +8138,15 @@ msgstr "Tirer"
 
 #: engines/got/metaengine.cpp:61
 msgid "Magic"
-msgstr ""
+msgstr "Sortilège"
 
 #: engines/got/metaengine.cpp:65
 msgid "Thor Dies"
-msgstr ""
+msgstr "Thor meurt"
 
 #: engines/got/got.cpp:186 engines/got/got.cpp:196
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Sauvegarde actuellement non disponible"
+msgstr "Sauvegarde impossible en mode démo"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
