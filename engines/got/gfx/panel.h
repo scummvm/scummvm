@@ -22,8 +22,6 @@
 #ifndef GOT_GAME_PANEL_H
 #define GOT_GAME_PANEL_H
 
-#include "got/data/defines.h"
-
 namespace Got {
 
 extern void boss_status(int health);

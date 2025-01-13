@@ -241,22 +241,21 @@ int load_enemy(int type) {
 }
 
 int actor_visible(int invis_num) {
-	int i, d;
-
-	for (i = 0; i < MAX_ENEMIES; i++) {
+	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn).actor_invis[i] == invis_num) {
 			int etype = _G(etype[i]);
 			if (etype >= 0 && !_G(actor[i + 3]).used) {
 				_G(actor[i + 3]) = _G(enemy[etype]);
 
-				d = _G(scrn).actor_dir[i];
+				int d = _G(scrn).actor_dir[i];
 				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
 							(_G(scrn).actor_loc[i] / 20) * 16);
 				_G(actor[i + 3]).init_dir = _G(scrn).actor_dir[i];
 				_G(actor[i + 3]).pass_value = _G(scrn).actor_value[i];
 				return i;
-			} else
-				return -1;
+			}
+
+			return -1;
 		}
 	}
 	return -1;

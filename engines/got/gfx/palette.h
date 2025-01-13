@@ -28,13 +28,13 @@ namespace Got {
 namespace Gfx {
 
 struct Palette63 {
-    byte _pal[PALETTE_SIZE] = {};
-    Palette63() {}
-    Palette63(const byte *pal);
+	byte _pal[PALETTE_SIZE] = {};
+	Palette63() {}
+	Palette63(const byte *pal);
 
-    operator const byte *() const {
-        return _pal;
-    }
+	operator const byte *() const {
+		return _pal;
+	}
 };
 
 extern void load_palette();
