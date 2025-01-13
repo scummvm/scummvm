@@ -26,26 +26,26 @@ namespace Got {
 namespace Views {
 
 bool TitleBackground::msgGame(const GameMessage &msg) {
-    if (msg._name == "MAIN_MENU") {
-        replaceView("TitleBackground", true);
-        draw();
-        Gfx::load_palette();
-        fadeIn();
+	if (msg._name == "MAIN_MENU") {
+		replaceView("TitleBackground", true);
+		draw();
+		Gfx::load_palette();
+		fadeIn();
 
-        addView("MainMenu");
-        return true;
-    }
+		addView("MainMenu");
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 void TitleBackground::draw() {
-    GfxSurface s = getSurface();
+	GfxSurface s = getSurface();
 
-    for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
-        for (int yp = 0; yp < 240; yp += 32)
-            s.simpleBlitFrom(_G(gfx)[26], Common::Point(xp, yp));
-    }
+	for (int col = 0, xp = 0; col < 10; ++col, xp += 32) {
+		for (int yp = 0; yp < 240; yp += 32)
+			s.simpleBlitFrom(_G(gfx)[26], Common::Point(xp, yp));
+	}
 }
 
 } // namespace Views

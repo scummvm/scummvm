@@ -22,7 +22,6 @@
 #ifndef GOT_VIEWS_TITLE_BACKGROUND_H
 #define GOT_VIEWS_TITLE_BACKGROUND_H
 
-#include "graphics/managed_surface.h"
 #include "got/views/view.h"
 
 namespace Got {
@@ -34,11 +33,11 @@ namespace Views {
  */
 class TitleBackground : public View {
 public:
-    TitleBackground() : View("TitleBackground") {}
-    virtual ~TitleBackground() {}
+	TitleBackground() : View("TitleBackground") {}
+	virtual ~TitleBackground() {}
 
-    bool msgGame(const GameMessage &msg) override;
-    void draw() override;
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace Views

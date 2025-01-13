@@ -23,12 +23,6 @@
 #define GOT_VIEWS_H
 
 #include "got/views/credits.h"
-#include "got/views/game.h"
-#include "got/views/opening.h"
-#include "got/views/part_title.h"
-#include "got/views/splash_screen.h"
-#include "got/views/story.h"
-#include "got/views/title_background.h"
 #include "got/views/dialogs/ask.h"
 #include "got/views/dialogs/high_scores.h"
 #include "got/views/dialogs/main_menu.h"
@@ -38,38 +32,44 @@
 #include "got/views/dialogs/save_game.h"
 #include "got/views/dialogs/say.h"
 #include "got/views/dialogs/select_game.h"
+#include "got/views/dialogs/select_item.h"
 #include "got/views/dialogs/select_scroll.h"
 #include "got/views/dialogs/select_slow.h"
-#include "got/views/dialogs/select_item.h"
 #include "got/views/dialogs/set_music.h"
 #include "got/views/dialogs/set_sound.h"
+#include "got/views/game.h"
+#include "got/views/opening.h"
+#include "got/views/part_title.h"
+#include "got/views/splash_screen.h"
+#include "got/views/story.h"
+#include "got/views/title_background.h"
 
 namespace Got {
 namespace Views {
 
 struct Views {
-    Credits _credits;
-    Game _game;
-    Opening _opening;
-    PartTitle _partTitle;
-    SplashScreen _splashScreen;
-    Story _story;
-    TitleBackground _titleBackground;
+	Credits _credits;
+	Game _game;
+	Opening _opening;
+	PartTitle _partTitle;
+	SplashScreen _splashScreen;
+	Story _story;
+	TitleBackground _titleBackground;
 
-    Dialogs::Ask _ask;
-    Dialogs::HighScores _highScores;
-    Dialogs::MainMenu _mainMenu;
-    Dialogs::OptionsMenu _optionsMenu;
-    Dialogs::Quit _quit;
-    Dialogs::QuitGame _quitGame;
-    Dialogs::SaveGame _saveGame;
-    Dialogs::Say _say;
-    Dialogs::SelectGame _selectGame;
-    Dialogs::SelectItem _selectItem;
-    Dialogs::SelectScroll _selectScroll;
-    Dialogs::SelectSlow _selectSlow;
-    Dialogs::SetMusic _setMusic;
-    Dialogs::SetSound _setSound;
+	Dialogs::Ask _ask;
+	Dialogs::HighScores _highScores;
+	Dialogs::MainMenu _mainMenu;
+	Dialogs::OptionsMenu _optionsMenu;
+	Dialogs::Quit _quit;
+	Dialogs::QuitGame _quitGame;
+	Dialogs::SaveGame _saveGame;
+	Dialogs::Say _say;
+	Dialogs::SelectGame _selectGame;
+	Dialogs::SelectItem _selectItem;
+	Dialogs::SelectScroll _selectScroll;
+	Dialogs::SelectSlow _selectSlow;
+	Dialogs::SetMusic _setMusic;
+	Dialogs::SetSound _setSound;
 };
 
 } // namespace Views

@@ -29,17 +29,17 @@ namespace Views {
 
 class PartTitle : public View {
 private:
-    int _timeoutCtr = 0;
+	int _timeoutCtr = 0;
 
-    void done();
+	void done();
 
 public:
-    PartTitle() : View("PartTitle") {}
-    virtual ~PartTitle() {}
+	PartTitle() : View("PartTitle") {}
+	virtual ~PartTitle() {}
 
-    bool msgAction(const ActionMessage &msg) override;
-    void draw() override;
-    bool tick() override;
+	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views
