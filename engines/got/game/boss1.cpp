@@ -27,7 +27,6 @@
 #include "got/game/move_patterns.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
-#include "got/gfx/panel.h"
 #include "got/sound.h"
 #include "got/vars.h"
 
@@ -200,7 +199,6 @@ void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 				_G(actor[3]).health -= 10;
 
 			_G(actor[3]).speed_count = 50;
-			boss_status(_G(actor[3]).health);
 			_G(actor[3]).vunerable = 100;
 			play_sound(BOSS13, true);
 			_G(actor[3]).next = 1;

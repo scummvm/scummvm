@@ -26,7 +26,6 @@
 #include "got/game/move.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
-#include "got/gfx/panel.h"
 #include "got/sound.h"
 #include "got/vars.h"
 
@@ -173,15 +172,15 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 			_G(actor[3]).i1 = 1;
 			_G(actor[3]).i2 = 0;
 			memset(expf, 0, 60);
-			for (rep = 7; rep < MAX_ACTORS; rep++)
+			for (rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep]).used)
 					actor_destroyed(&_G(actor[rep]));
+			}
 			_G(actor[3]).num_shots = 0;
 		} else
 			play_sound(BOSS13, true);
 		
 		_G(actor[3]).speed_count = 75;
-		boss_status(_G(actor[3]).health);
 		_G(actor[3]).vunerable = 75;
 		_G(actor[3]).next = 1;
 		
@@ -203,7 +202,6 @@ void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
 void boss_level2() {
 	setup_boss(2);
 	_G(boss_active) = true;
-	boss_status(-1);
 	music_pause();
 	play_sound(BOSS11, true);
 	_G(timer_cnt) = 0;

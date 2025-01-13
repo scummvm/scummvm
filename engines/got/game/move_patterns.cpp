@@ -29,7 +29,6 @@
 #include "got/game/object.h"
 #include "got/game/script.h"
 #include "got/game/special_tile.h"
-#include "got/gfx/panel.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -964,16 +963,13 @@ int special_movement_two(ACTOR *actr) {
 			if (!sound_playing())
 				play_sound(ANGEL, false);
 			_G(thor)->health += 1;
-			display_health();
 		}
-	} else {
-		if (_G(thor_info).magic < 150) {
-			if (!sound_playing())
-				play_sound(ANGEL, false);
-			_G(thor_info).magic += 1;
-			display_magic();
-		}
+	} else if (_G(thor_info).magic < 150) {
+		if (!sound_playing())
+			play_sound(ANGEL, false);
+		_G(thor_info).magic += 1;
 	}
+
 	return 1;
 }
 

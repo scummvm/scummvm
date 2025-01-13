@@ -26,7 +26,6 @@
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/status.h"
-#include "got/gfx/panel.h"
 #include "got/sound.h"
 #include "got/vars.h"
 
@@ -397,8 +396,7 @@ static void check_boss_hit() {
 
 		return;
 	}
-	if (_G(actor[3]).magic_hit || _G(actor[4]).magic_hit ||
-		_G(actor[5]).magic_hit || _G(actor[6]).magic_hit) {
+	if (_G(actor[3]).magic_hit || _G(actor[4]).magic_hit || _G(actor[5]).magic_hit || _G(actor[6]).magic_hit) {
 		if (!_G(actor[3]).temp2) {
 			actor_damaged(&_G(actor[3]), 10);
 
@@ -409,7 +407,6 @@ static void check_boss_hit() {
 			
 			_G(actor[3]).speed_count = 50;
 
-			boss_status(_G(actor[3]).health);
 			_G(actor[3]).vunerable = 50;
 			play_sound(BOSS13, true);
 
@@ -449,7 +446,6 @@ static void boss_change_mode() {
 	if (!_G(boss_intro2)) {
 		Gfx::Pics loki("FACE18", 262);
 		execute_script(1003, loki);
-		d_restore();
 		_G(boss_intro2) = true;
 	}
 	boss_mode = 0;
@@ -458,7 +454,6 @@ static void boss_change_mode() {
 void boss_level3() {
 	setup_boss(3);
 	_G(boss_active) = true;
-	boss_status(-1);
 	music_pause();
 	play_sound(BOSS11, true);
 	_G(timer_cnt) = 0;
@@ -468,7 +463,6 @@ void boss_level3() {
 	if (!_G(boss_intro1)) {
 		Gfx::Pics loki("FACE18", 262);
 		execute_script(1002, loki);
-		d_restore();
 		_G(boss_intro1) = true;
 	}
 

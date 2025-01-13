@@ -26,7 +26,6 @@
 #include "got/game/move.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
-#include "got/gfx/panel.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -134,7 +133,6 @@ void pick_up_object(int p) {
 		_G(thor_info).inventory |= 64;
 		_G(thor_info).item = 7;
 		_G(thor_info).object = _G(object_map[p]) - 11;
-		display_item();
 		_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
 		odin_speaks((_G(object_map[p]) - 12) + 501, _G(object_map[p]) - 1);
 		break;
@@ -157,7 +155,6 @@ void pick_up_object(int p) {
 		odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
 		s = 1;
 		_G(thor_info).item = _G(object_map[p]) - 26;
-		display_item();
 		add_magic(150);
 		fill_score(5);
 		break;
@@ -489,7 +486,6 @@ void delete_object() {
 
 	_G(thor_info).inventory &= 0xbf;
 	_G(thor_info).item = 1;
-	display_item();
 }
 
 } // namespace Got

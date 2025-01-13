@@ -29,7 +29,6 @@
 #include "got/game/object.h"
 #include "got/game/script.h"
 #include "got/gfx/image.h"
-#include "got/gfx/panel.h"
 #include "got/vars.h"
 
 namespace Got {
@@ -347,8 +346,6 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 		_G(thor)->show = 0;
 		_G(exit_flag) = 2;
 	}
-
-	d_restore();
 
 	return 1;
 }
