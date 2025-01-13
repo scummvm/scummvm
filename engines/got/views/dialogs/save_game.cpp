@@ -30,25 +30,25 @@ SaveGame::SaveGame() : SelectOption("SaveGame", "Save Game?", YES_NO) {
 }
 
 bool SaveGame::msgGame(const GameMessage &msg) {
-    if (msg._name == "TITLE" || msg._name == "QUIT") {
-        _isQuit = msg._name == "QUIT";
-        open();
-        return true;
-    }
+	if (msg._name == "TITLE" || msg._name == "QUIT") {
+		_isQuit = msg._name == "QUIT";
+		open();
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 void SaveGame::selected() {
-    if (_selectedItem == 0)
-        g_engine->saveGameDialog();
+	if (_selectedItem == 0)
+		g_engine->saveGameDialog();
 
-    if (_isQuit) {
-        g_engine->quitGame();
-    } else {
-        fadeOut();
-        send("TitleBackground", GameMessage("MAIN_MENU"));
-    }
+	if (_isQuit) {
+		g_engine->quitGame();
+	} else {
+		fadeOut();
+		send("TitleBackground", GameMessage("MAIN_MENU"));
+	}
 }
 
 } // namespace Dialogs

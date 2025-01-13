@@ -26,28 +26,26 @@ namespace Got {
 namespace Views {
 namespace Dialogs {
 
-static const char *OPTIONS[] = {
-    "Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr
-};
+static const char *OPTIONS[] = { "Continue Game", "Quit to Opening Screen", "Quit to DOS", nullptr };
 
 QuitGame::QuitGame() : SelectOption("QuitGame", "Quit Game?", OPTIONS) {
 }
 
 void QuitGame::selected() {
-    switch (_selectedItem) {
-    case 0:
-        break;
-    case 1:
-        // Prompt for saving game before returning to title
-        send("SaveGame", GameMessage("TITLE"));
-        break;
-    case 2:
-        // Prompt for saving game before quitting
-        send("SaveGame", GameMessage("QUIT"));
-        break;
-    default:
-        break;
-    }
+	switch (_selectedItem) {
+	case 0:
+		break;
+	case 1:
+		// Prompt for saving game before returning to title
+		send("SaveGame", GameMessage("TITLE"));
+		break;
+	case 2:
+		// Prompt for saving game before quitting
+		send("SaveGame", GameMessage("QUIT"));
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Dialogs

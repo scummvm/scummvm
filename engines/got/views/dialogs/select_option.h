@@ -22,7 +22,6 @@
 #ifndef GOT_VIEWS_DIALOGS_SELECT_OPTION_H
 #define GOT_VIEWS_DIALOGS_SELECT_OPTION_H
 
-#include "graphics/managed_surface.h"
 #include "got/views/dialogs/dialog.h"
 
 namespace Got {
@@ -33,36 +32,30 @@ namespace Dialogs {
 extern const char *ON_OFF[];
 extern const char *YES_NO[];
 
-
 class SelectOption : public Dialog {
 private:
-    Common::String _title;
-    Common::StringArray _options;
-    int _hammerFrame = 0;
-    int _smackCtr = 0;
+	Common::String _title;
+	Common::StringArray _options;
+	int _hammerFrame = 0;
+	int _smackCtr = 0;
 
 protected:
-    int _selectedItem = 0;
+	int _selectedItem = 0;
 
-    void setContent(const Common::String &title,
-                    const Common::StringArray &options);
-    virtual void closed() {}
-    virtual void selected() {}
+	void setContent(const Common::String &title,
+					const Common::StringArray &options);
+	virtual void closed() {}
+	virtual void selected() {}
 
 public:
-    SelectOption(const Common::String &name, const char *title,
-                 const char *options[]);
-    SelectOption(const Common::String &name);
-    virtual ~SelectOption() {}
+	SelectOption(const Common::String &name, const char *title, const char *options[]);
+	SelectOption(const Common::String &name);
+	virtual ~SelectOption() {}
 
-    bool msgFocus(const FocusMessage &msg) override {
-        _selectedItem = 0;
-        _smackCtr = 0;
-        return true;
-    }
-    bool msgAction(const ActionMessage &msg) override;
-    void draw() override;
-    bool tick() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Dialogs

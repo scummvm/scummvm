@@ -30,17 +30,17 @@ namespace Dialogs {
 
 class SelectItem : public Dialog {
 private:
-    int _selectedItem;
+	int _selectedItem;
 
-    void selectItem();
+	void selectItem();
 
 public:
-    SelectItem();
-    virtual ~SelectItem() {}
+	SelectItem();
+	virtual ~SelectItem() {}
 
-    void draw() override;
-    bool msgFocus(const FocusMessage &msg) override;
-    bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Dialogs

@@ -30,12 +30,11 @@ namespace Dialogs {
 
 class SelectScroll : public SelectOption {
 public:
-    SelectScroll();
-    virtual ~SelectScroll() {
-    }
+	SelectScroll();
+	virtual ~SelectScroll() {}
 
-    bool msgFocus(const FocusMessage &msg) override;
-    void selected() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	void selected() override;
 };
 
 } // namespace Dialogs

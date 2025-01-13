@@ -30,11 +30,10 @@ namespace Dialogs {
 
 class SelectSlow : public SelectOption {
 public:
-    SelectSlow();
-    virtual ~SelectSlow() {
-    }
+	SelectSlow();
+	virtual ~SelectSlow() {}
 
-    void selected() override;
+	void selected() override;
 };
 
 } // namespace Dialogs

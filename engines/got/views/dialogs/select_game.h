@@ -30,12 +30,12 @@ namespace Dialogs {
 
 class SelectGame : public SelectOption {
 public:
-    SelectGame();
-    virtual ~SelectGame() {
-    }
+	SelectGame();
+	virtual ~SelectGame() {
+	}
 
-    void selected() override;
-    void closed() override;
+	void selected() override;
+	void closed() override;
 };
 
 } // namespace Dialogs

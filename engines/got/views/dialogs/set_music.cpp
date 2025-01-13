@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "got/views/dialogs/set_music.h"
+#include "common/config-manager.h"
 #include "got/got.h"
 
 namespace Got {
@@ -31,14 +31,14 @@ SetMusic::SetMusic() : SelectOption("SetMusic", "Set Music", ON_OFF) {
 }
 
 bool SetMusic::msgFocus(const FocusMessage &msg) {
-    _selectedItem = ConfMan.getBool("music_mute") ? 1 : 0;
-    return true;
+	_selectedItem = ConfMan.getBool("music_mute") ? 1 : 0;
+	return true;
 }
 
 void SetMusic::selected() {
-    ConfMan.setBool("music_mute", _selectedItem == 1);
-    ConfMan.flushToDisk();
-    g_engine->syncSoundSettings();
+	ConfMan.setBool("music_mute", _selectedItem == 1);
+	ConfMan.flushToDisk();
+	g_engine->syncSoundSettings();
 }
 
 } // namespace Dialogs

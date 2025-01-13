@@ -32,19 +32,19 @@ SelectSlow::SelectSlow() : SelectOption("SelectSlow", "Fast Mode", OPTIONS) {
 }
 
 void SelectSlow::selected() {
-    switch (_selectedItem) {
-    case 0:
-        _G(slow_mode) = true;
-        break;
-    case 1:
-        _G(slow_mode) = false;
-        break;
-    default:
-        break;
-    }
+	switch (_selectedItem) {
+	case 0:
+		_G(slow_mode) = true;
+		break;
+	case 1:
+		_G(slow_mode) = false;
+		break;
+	default:
+		break;
+	}
 
-    // Next select scrolling
-    addView("SelectScroll");
+	// Next select scrolling
+	addView("SelectScroll");
 }
 
 } // namespace Dialogs

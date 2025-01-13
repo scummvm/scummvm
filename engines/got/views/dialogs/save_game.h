@@ -30,15 +30,15 @@ namespace Dialogs {
 
 class SaveGame : public SelectOption {
 private:
-    bool _isQuit = false;
+	bool _isQuit = false;
 
 public:
-    SaveGame();
-    virtual ~SaveGame() {
-    }
+	SaveGame();
+	virtual ~SaveGame() {
+	}
 
-    bool msgGame(const GameMessage &msg) override;
-    void selected() override;
+	bool msgGame(const GameMessage &msg) override;
+	void selected() override;
 };
 
 } // namespace Dialogs
