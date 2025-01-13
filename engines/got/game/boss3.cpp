@@ -72,7 +72,8 @@ static void set_boss(ACTOR *actr) {
 // Boss - Loki-2
 static int boss_movement_one(ACTOR *actr) {
 	int rx, ry, i, numPods = 0;
-
+	int fcount;
+	
 	actr->num_moves = 2;
 	pod_speed = 2;
 
@@ -104,15 +105,17 @@ static int boss_movement_one(ACTOR *actr) {
 	}
 	if (actr->i6) {
 		// Fade out
-		actr->frame_count--;
-		if (actr->frame_count <= 0) {
+		fcount = actr->frame_count - 1;
+		if (fcount <= 0) {
 			actr->next++;
 			if (actr->next > 2) {
 				actr->i6 = 0;
 				actr->temp3 = 160;
 			}
 			actr->frame_count = 3;
-		}
+		} else
+			actr->frame_count = fcount;
+		
 		goto done1;
 	}
 	if (actr->temp3 > 1) {
@@ -144,8 +147,8 @@ static int boss_movement_one(ACTOR *actr) {
 
 	if (actr->temp4) {
 		// Fade in
-		actr->frame_count--;
-		if (actr->frame_count <= 0) {
+		fcount = actr->frame_count - 1;
+		if (fcount <= 0) {
 			actr->next--;
 			if (actr->next > 254) {
 				actr->next = 0;
@@ -159,7 +162,9 @@ static int boss_movement_one(ACTOR *actr) {
 			}
 
 			actr->frame_count = 3;
-		}
+		} else
+			actr->frame_count = fcount;
+		
 		goto done1;
 	}
 
@@ -192,13 +197,15 @@ static int boss_movement_one(ACTOR *actr) {
 	}
 
 done:
-	actr->frame_count--;
-	if (actr->frame_count <= 0) {
+	fcount = actr->frame_count - 1;
+	if (fcount <= 0) {
 		actr->next++;
 		if (actr->next > 2)
 			actr->next = 0;
 		actr->frame_count = LFC;
-	}
+	} else
+		actr->frame_count = fcount;
+	
 done1:
 	set_boss(actr);
 	return actr->dir;

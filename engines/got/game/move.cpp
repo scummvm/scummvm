@@ -31,16 +31,17 @@
 namespace Got {
 
 void next_frame(ACTOR *actr) {
-	actr->frame_count--;
+	const int fcount = actr->frame_count - 1;
 
-	if (actr->frame_count <= 0) {
+	if (fcount <= 0) {
 		actr->next++;
 
 		if (actr->next > 3)
 			actr->next = 0;
 
 		actr->frame_count = actr->frame_speed;
-	}
+	} else
+		actr->frame_count = fcount;
 }
 
 bool point_within(int x, int y, int x1, int y1, int x2, int y2) {
@@ -339,8 +340,8 @@ void move_actor(ACTOR *actr) {
 		}
 	}
 
-	actr->speed_count--;
-	if (actr->speed_count <= 0) {
+	const int scount = actr->speed_count -1;
+	if (scount <= 0) {
 		if (!actr->move_counter)
 			actr->speed_count = actr->speed;
 		else
@@ -369,7 +370,8 @@ void move_actor(ACTOR *actr) {
 			_G(actor[2]).last_y[0] = _G(actor[2]).y;
 			_G(actor[2]).last_y[1] = _G(actor[2]).y;
 		}
-	}
+	} else
+		actr->speed_count = scount;
 
 	actr->x &= 0xfffe;
 }
