@@ -29,19 +29,19 @@ namespace Views {
 
 class Credits : public View {
 private:
-    int _delayCtr = 0;
-    int _frameCtr = 0;
+	int _delayCtr = 0;
+	int _frameCtr = 0;
 
-    void drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y);
+	void drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y);
 
 public:
-    Credits() : View("Credits") {}
-    virtual ~Credits() {}
+	Credits() : View("Credits") {}
+	virtual ~Credits() {}
 
-    bool msgFocus(const FocusMessage &msg) override;
-    bool msgAction(const ActionMessage &msg) override;
-    void draw() override;
-    bool tick() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views

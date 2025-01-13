@@ -22,26 +22,26 @@
 #ifndef GOT_VIEWS_GAME_H
 #define GOT_VIEWS_GAME_H
 
-#include "got/views/view.h"
 #include "got/views/game_content.h"
 #include "got/views/game_status.h"
+#include "got/views/view.h"
 
 namespace Got {
 namespace Views {
 
 class Game : public View {
 private:
-    GameContent _content;
-    GameStatus _status;
+	GameContent _content;
+	GameStatus _status;
 
 public:
-    Game();
-    virtual ~Game() {}
+	Game();
+	virtual ~Game() {}
 
-    bool msgFocus(const FocusMessage &msg) override;
-    bool msgKeypress(const KeypressMessage &msg) override;
-    bool msgAction(const ActionMessage &msg) override;
-    bool tick() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace Views
