@@ -53,7 +53,6 @@ MODULE_OBJS = \
     views/dialogs/high_scores.o \
     views/dialogs/main_menu.o \
     views/dialogs/options_menu.o \
-    views/dialogs/play_game.o \
     views/dialogs/quit.o \
     views/dialogs/quit_game.o \
     views/dialogs/save_game.o \
