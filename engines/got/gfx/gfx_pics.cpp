@@ -91,7 +91,7 @@ GfxPics &GfxPics::operator=(const GfxPics &src) {
 	clear();
 	resize(src._size);
 
-	for (int i = 0; i < _size; ++i)
+	for (size_t i = 0; i < _size; ++i)
 		_array[i].copyFrom(src._array[i]);
 
 	return *this;
