@@ -20,7 +20,6 @@
  */
 
 #include "got/data/sd_data.h"
-#include "common/memstream.h"
 #include "got/utils/file.h"
 
 namespace Got {
