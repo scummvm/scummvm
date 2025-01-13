@@ -94,7 +94,7 @@ struct SetupFlags {
 	bool &f63 = _flags[63];
 
 	SetupFlags() {}
-	void sync(Common::Serializer &s);
+	virtual void sync(Common::Serializer &s);
 	SetupFlags &operator=(const Got::SetupFlags &src);
 };
 
@@ -113,7 +113,7 @@ struct SETUP : public SetupFlags {
 	byte game_over = 0;
 	byte future[19] = {}; //probably not needed
 
-	void sync(Common::Serializer &s);
+	void sync(Common::Serializer &s) override;
 };
 
 } // namespace Got

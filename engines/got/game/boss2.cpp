@@ -111,13 +111,16 @@ int boss2_movement(ACTOR *actr) {
 		}
 	}
 
-	actr->frame_count--;
-	if (actr->frame_count <= 0) {
+	const int count = actr->frame_count - 1;
+	
+	if (count <= 0) {
 		actr->next++;
 		if (actr->next > 2)
 			actr->next = 0;
 		actr->frame_count = actr->frame_speed;
-	}
+	} else
+		actr->frame_count = count;
+	
 	x = actr->x;
 	if (actr->num_shots < num_skulls && !drop_flag) {
 		if (x == 48 || x == 112 || x == 176 || x == 240) {

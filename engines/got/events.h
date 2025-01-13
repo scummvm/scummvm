@@ -123,7 +123,7 @@ private:
      * Outer method for doing drawing
      *
      */
-	void drawElements();
+	virtual void drawElements();
 
 	/**
      * Finds a view globally
@@ -166,14 +166,14 @@ public:
 	/**
      * Sets the focus to a new view
      */
-	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
-	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
+	virtual void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
+	virtual void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
 
 	/**
      * Adds a focused view to the view stack without replacing current one
      */
-	void addView(UIElement *ui);
-	void addView(const Common::String &name);
+	virtual void addView(UIElement *ui);
+	virtual void addView(const Common::String &name);
 	void addView();
 	void open() {
 		addView();
@@ -345,14 +345,14 @@ public:
 	/**
      * Sets the focus to a new view
      */
-	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false);
-	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false);
+	void replaceView(UIElement *ui, bool replaceAllViews = false, bool fadeOutIn = false) override;
+	void replaceView(const Common::String &name, bool replaceAllViews = false, bool fadeOutIn = false) override;
 
 	/**
      * Adds a focused view to the view stack without replacing current one
      */
-	void addView(UIElement *ui);
-	void addView(const Common::String &name);
+	void addView(UIElement *ui) override;
+	void addView(const Common::String &name) override;
 
 	/**
      * Clears the view list
@@ -415,10 +415,7 @@ public:
 	/**
      * Draws the focused view
      */
-	void drawElements() {
-		if (!_views.empty())
-			focusedView()->drawElements();
-	}
+	void drawElements() override;
 
 	/**
      * Add a keypress to the event queue

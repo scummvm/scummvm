@@ -303,7 +303,7 @@ void place_tile(int x, int y, int tile) {
 }
 
 int bgtile(int x, int y) {
-	if (x < 0 || x > 319 || y < 0 || y > 191)
+	if (x < 0 || x >= 319 || y < 0 || y >= 191)
 		return 0;
 
 	x = (x + 1) >> 4;

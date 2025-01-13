@@ -352,6 +352,11 @@ bool Events::isPresent(const Common::String &name) const {
 	return false;
 }
 
+void Events::drawElements() {
+	if (!_views.empty())
+		focusedView()->drawElements();
+}
+
 void Events::clearViews() {
 	if (!_views.empty())
 		focusedView()->msgUnfocus(UnfocusMessage());
