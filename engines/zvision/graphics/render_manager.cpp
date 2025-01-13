@@ -378,23 +378,22 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 	if (_workingArea.contains(point)) {
 		// Convert from screen space to working window space
 		Common::Point newPoint(point - _workingArea.origin());
-
-		RenderTable::RenderState state = _renderTable.getRenderState();
-		if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-			newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
-		}
-
-		if (state == RenderTable::PANORAMA) {
-			newPoint += (Common::Point(_backgroundOffset - _workingAreaCenter.x, 0));
-		} else if (state == RenderTable::TILT) {
-			newPoint += (Common::Point(0, _backgroundOffset - _workingAreaCenter.y));
-		}
-
+		switch(_renderTable.getRenderState()) {
+		  case RenderTable::PANORAMA:
+			  newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);		  
+			  newPoint += (Common::Point(_backgroundOffset - _workingAreaCenter.x, 0));
+			  break;
+		  case RenderTable::TILT:
+			  newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
+			  newPoint += (Common::Point(0, _backgroundOffset - _workingAreaCenter.y));
+			  break;
+		  default:
+		    break;
+	  }
 		if (_backgroundWidth)
 			newPoint.x %= _backgroundWidth;
 		if (_backgroundHeight)
 			newPoint.y %= _backgroundHeight;
-
 		if (newPoint.x < 0)
 			newPoint.x += _backgroundWidth;
 		if (newPoint.y < 0)
@@ -419,23 +418,26 @@ void RenderManager::setBackgroundImage(const Common::Path &fileName) {
 }
 
 void RenderManager::setBackgroundPosition(int offset) {
-	RenderTable::RenderState state = _renderTable.getRenderState();
-	if (state == RenderTable::TILT || state == RenderTable::PANORAMA)
-		if (_backgroundOffset != offset)
-			_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
-	_backgroundOffset = offset;
-	_engine->getScriptManager()->setStateValue(StateKey_ViewPos, offset);
+	switch(_renderTable.getRenderState()) {
+	  case RenderTable::PANORAMA :	
+	  case RenderTable::TILT :
+		  if (_backgroundOffset != offset)
+			  _backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
+		  break;
+	  default :
+	    break;
+	}
+ 	_backgroundOffset = offset;
+	_engine->getScriptManager()->setStateValue(StateKey_ViewPos, offset); 
 }
 
 uint32 RenderManager::getCurrentBackgroundOffset() {
-	RenderTable::RenderState state = _renderTable.getRenderState();
-
-	if (state == RenderTable::PANORAMA) {
-		return _backgroundOffset;
-	} else if (state == RenderTable::TILT) {
-		return _backgroundOffset;
-	} else {
-		return 0;
+	switch(_renderTable.getRenderState()) {
+	  case RenderTable::PANORAMA :
+	  case RenderTable::TILT :
+  		return _backgroundOffset;
+		default :
+		  return 0;
 	}
 }
 
@@ -448,12 +450,10 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 
 	for (int y = 0; y < tranposedSurface->h; ++y) {
 		int columnIndex = y * tranposedSurface->w;
-
 		for (int x = 0; x < tranposedSurface->w; ++x) {
 			dest[columnIndex + x] = source[x * surface->w + y];
 		}
 	}
-
 	return tranposedSurface;
 }
 
