@@ -27,7 +27,7 @@
 
 #include "mediastation/chunk.h"
 #include "mediastation/datum.h"
-#include "mediastation/mediascript/builtins.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 

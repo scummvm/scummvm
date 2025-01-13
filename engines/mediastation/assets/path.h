@@ -25,7 +25,7 @@
 #include "mediastation/assetheader.h"
 #include "mediastation/asset.h"
 #include "mediastation/mediascript/operand.h"
-#include "mediastation/mediascript/builtins.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 

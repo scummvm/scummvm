@@ -27,7 +27,7 @@
 
 #include "mediastation/mediascript/variable.h"
 #include "mediastation/mediascript/operand.h"
-#include "mediastation/mediascript/builtins.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
