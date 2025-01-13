@@ -22,6 +22,7 @@
 #ifndef GOT_UTILS_RES_ARCHIVE_H
 #define GOT_UTILS_RES_ARCHIVE_H
 
+#include "common/archive.h"
 #include "common/stream.h"
 
 namespace Got {

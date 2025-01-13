@@ -29,19 +29,19 @@ namespace Got {
 
 extern bool load_actor(int, int num);
 extern void setup_filenames(int level);
-extern bool  load_speech(int index);
+extern bool load_speech(int index);
 extern long res_read(const Common::String &name, void *buff,
-                     bool failAllowed = false);
+					 bool failAllowed = false);
 extern void *res_falloc_read(const Common::String &name);
 
 class File : public Common::File {
 public:
-    File() : Common::File() {}
-    File(const Common::String &filename) : Common::File() {
-        File::open(Common::Path(filename));
-    }
+	File() : Common::File() {}
+	File(const Common::String &filename) : Common::File() {
+		File::open(Common::Path(filename));
+	}
 
-    bool open(const Common::Path &filename) override;
+	bool open(const Common::Path &filename) override;
 };
 
 } // namespace Got

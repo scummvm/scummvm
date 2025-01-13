@@ -27,7 +27,7 @@
 namespace Got {
 
 /**
- * LXSS decompressor
+ * LZSS decompressor
  */
 void lzss_decompress(const byte *src, byte *dest, size_t destSize);
 
