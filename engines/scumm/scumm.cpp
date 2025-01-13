@@ -376,7 +376,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 		// FM-TOWNS V3 games originally use 320x240, and we have an option to trim to 200
-		if (!ConfMan.getBool("trim_fmtowns_to_200_pixels"))
+		// FIXME: Don't allow this for Loom yet, though; it used the extra 40 pixels for
+		// various things, and so this option currently causes various issues (see bugs
+		// #15666, #11290, and <https://forums.scummvm.org/viewtopic.php?p=97395#p97395>).
+		if (_game.id == GID_LOOM || !ConfMan.getBool("trim_fmtowns_to_200_pixels"))
 			_screenHeight = 240;
 	} else if (_game.version == 8 || _game.heversion >= 71) {
 		// COMI uses 640x480. Likewise starting from version 7.1, HE games use
