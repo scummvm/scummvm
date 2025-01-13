@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-13 20:32+0000\n"
+"POT-Creation-Date: 2025-01-13 21:39+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -994,7 +994,7 @@ msgstr "互动"
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:117
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
-#: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:121
+#: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:562 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:936
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
@@ -1009,7 +1009,7 @@ msgstr "向上"
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
-#: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:127
+#: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:567 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:903
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
@@ -1023,7 +1023,7 @@ msgstr "向下"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
-#: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:58
+#: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:572 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
 #: engines/scumm/metaengine.cpp:916 engines/twine/metaengine.cpp:452
@@ -1039,7 +1039,7 @@ msgstr "向左"
 
 #: gui/gui-manager.cpp:194 engines/metaengine.cpp:135
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
-#: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:59
+#: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:577 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
 #: engines/scumm/metaengine.cpp:923 engines/twine/metaengine.cpp:444
@@ -4580,7 +4580,7 @@ msgstr "Y"
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/got/metaengine.cpp:62 engines/mm/mm1/metaengine.cpp:49
+#: engines/got/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:49
 #: engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
 msgstr "Select"
@@ -5985,7 +5985,7 @@ msgstr ""
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/darkseed/metaengine.cpp:36
 #: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:48
-#: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:53
+#: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
@@ -5997,7 +5997,7 @@ msgstr "使用原始存档/读档屏幕"
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/darkseed/metaengine.cpp:37
 #: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:49
-#: engines/got/metaengine.cpp:37 engines/groovie/metaengine.cpp:54
+#: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
@@ -6597,7 +6597,7 @@ msgstr "Esc 按键绑定"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
-#: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:64
+#: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:63
 #: engines/hugo/metaengine.cpp:160 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
@@ -7377,7 +7377,7 @@ msgstr "捡起/操作"
 msgid "Activate Inventory Object"
 msgstr "激活物品栏物品"
 
-#: engines/dgds/metaengine.cpp:86 engines/got/metaengine.cpp:91
+#: engines/dgds/metaengine.cpp:86 engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr "游戏按键"
 
@@ -7808,15 +7808,15 @@ msgid "Failed to delete file."
 msgstr "文件删除失败。"
 
 #. I18N: Action in In Cold Blood
-#: engines/got/metaengine.cpp:60 engines/icb/icb.cpp:89
+#: engines/got/metaengine.cpp:59 engines/icb/icb.cpp:89
 msgid "Fire"
 msgstr "火"
 
-#: engines/got/metaengine.cpp:61
+#: engines/got/metaengine.cpp:60
 msgid "Magic"
 msgstr ""
 
-#: engines/got/metaengine.cpp:65
+#: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
 msgstr ""
 
