@@ -33,4 +33,13 @@ const char *getI18NText(const I18nText &text) {
 	}
 }
 
+const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18nTextWithPosition) {
+	switch (g_engine->getLanguage()) {
+	case Common::ES_ESP : return i18nTextWithPosition.es;
+	case Common::FR_FRA : return i18nTextWithPosition.fr;
+	case Common::DE_DEU : return i18nTextWithPosition.de;
+	default : return i18nTextWithPosition.en;
+	}
+}
+
 } // End of namespace Darkseed

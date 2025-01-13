@@ -24,19 +24,6 @@
 
 namespace Darkseed {
 
-struct menuText {
-	int x;
-	int y;
-	const char *text;
-};
-
-struct I18nMenuText {
-	const menuText en;
-	const menuText es;
-	const menuText fr;
-	const menuText de;
-};
-
 class Menu {
 private:
 	bool _open = false;
@@ -46,7 +33,6 @@ public:
 	void loadMenu();
 private:
 	void drawSoundMenuItem();
-	void drawMenuItem(const I18nMenuText &menuText);
 };
 
 } // namespace Darkseed

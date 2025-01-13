@@ -31,7 +31,21 @@ struct I18nText {
 	const char *de;
 };
 
+struct TextWithPosition {
+	int x;
+	int y;
+	const char *text;
+};
+
+struct I18NTextWithPosition {
+	const TextWithPosition en;
+	const TextWithPosition es;
+	const TextWithPosition fr;
+	const TextWithPosition de;
+};
+
 const char *getI18NText(const I18nText &text);
+const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18nTextWithPosition);
 
 constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"You see the car keys in the ignition.",

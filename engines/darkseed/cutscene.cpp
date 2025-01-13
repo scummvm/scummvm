@@ -21,6 +21,7 @@
 
 #include "darkseed/cutscene.h"
 #include "darkseed/darkseed.h"
+#include "darkseed/langtext.h"
 
 namespace Darkseed {
 
@@ -115,6 +116,7 @@ void Cutscene::update() {
 static constexpr int CREDITS_DELAY = 25;
 
 bool Cutscene::introScene() {
+	auto lang = g_engine->getLanguage();
 	switch (_movieStep) {
 	case 1:
 		g_engine->fadeOut();
@@ -130,7 +132,27 @@ bool Cutscene::introScene() {
 		if (_titleFont == nullptr) {
 			_titleFont = new TitleFont();
 		}
-		_titleFont->displayString(68, 160, "DEVELOPING NEW WAYS TO AMAZE");
+		if (lang == Common::FR_FRA || lang == Common::DE_DEU) {
+			displayTitleText({
+				{0, 0, ""},
+				{0, 0, ""},
+				{41, 145, "DEVELOPPE DE NOUVELLES METHODE"},
+				{68, 145, "DIE ENTWICKLUNG NEUER, SIE IN"}
+			});
+			displayTitleText({
+				{0, 0, ""},
+				{0, 0, ""},
+				{142, 175, "POUR VOUS SURPRENDRE"},
+				{60, 175, "ERSTAUNEN VERSETZENDER WEGE..."}
+			});
+		} else {
+			displayTitleText({
+				{68, 160, "DEVELOPING NEW WAYS TO AMAZE"},
+				{0, 160, "CREANDO NUEVAS FORMAS DE DIVERTIRSE"},
+				{0, 0, ""},
+				{0, 0, ""}
+			});
+		}
 		g_engine->fadeIn(_palette);
 	}
 	break;
@@ -167,7 +189,12 @@ bool Cutscene::introScene() {
 		break;
 	case 11:
 		g_engine->_screen->clear();
-		_titleFont->displayString(250, 160, "PRESENTS");
+		displayTitleText({
+			{250, 160, "PRESENTS"},
+			{250, 160, "PRESENTA"},
+			{250, 160, "PRESENTE"},
+			{232, 160, "PRAESENTIERT"}
+		});
 		g_engine->fadeIn(_palette);
 		break;
 	case 12:
@@ -277,10 +304,25 @@ bool Cutscene::introScene() {
 	case 28:
 		putHouse();
 		registTime();
-		_titleFont->displayString(155, 90, "EXECUTIVE PRODUCERS");
-		_titleFont->displayString(200, 130, "PATRICK KETCHUM");
-		_titleFont->displayString(236, 160, "ROLF KLUG");
-		_titleFont->displayString(236, 190, "JEAN KLUG");
+		if (lang == Common::DE_DEU) {
+			_titleFont->displayString(185, 80, "VERANTWORTLICHE");
+			_titleFont->displayString(218, 110, "PRODUZENTEN");
+
+			_titleFont->displayString(200, 150, "PATRICK KETCHUM");
+			_titleFont->displayString(236, 180, "ROLF KLUG");
+			_titleFont->displayString(236, 210, "JEAN KLUG");
+		} else {
+			displayTitleText({
+				{155, 90, "EXECUTIVE PRODUCERS"},
+				{137, 90, "PRODUCTORES EJECUTIVOS"},
+				{119, 90, "DIRECTEURS DE PRODUCTION"},
+				{0, 0, ""}
+			});
+
+			_titleFont->displayString(200, 130, "PATRICK KETCHUM");
+			_titleFont->displayString(236, 160, "ROLF KLUG");
+			_titleFont->displayString(236, 190, "JEAN KLUG");
+		}
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 29:
@@ -291,7 +333,12 @@ bool Cutscene::introScene() {
 	case 30:
 		putHouse();
 		registTime();
-		_titleFont->displayString(236, 95, "PRODUCERS");
+		displayTitleText({
+			{236, 95, "PRODUCERS"},
+			{218, 95, "PRODUCTORES"},
+			{218, 95, "PRODUCTEURS"},
+			{218, 95, "PRODUZENTEN"}
+		});
 		_titleFont->displayString(200, 135, "HARALD SEELEY");
 		_titleFont->displayString(218, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
@@ -304,7 +351,12 @@ bool Cutscene::introScene() {
 	case 32:
 		putHouse();
 		registTime();
-		_titleFont->displayString(245, 95, "DESIGNERS");
+		displayTitleText({
+			{245, 95, "DESIGNERS"},
+			{227, 95, "DISENADORES"},
+			{218, 95, "DESSINATEURS"},
+			{254, 95, "DESIGNER"}
+		});
 		_titleFont->displayString(209, 135, "MIKE CRANFORD");
 		_titleFont->displayString(227, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
@@ -317,7 +369,12 @@ bool Cutscene::introScene() {
 	case 34:
 		putHouse();
 		registTime();
-		_titleFont->displayString(227, 95, "PROGRAMMERS");
+		displayTitleText({
+			{227, 95, "PROGRAMMERS"},
+			{203, 95, "PROGRAMADORES"},
+			{218, 95, "PROGRAMMEURS"},
+			{206, 95, "PROGRAMMIERER"}
+		});
 		_titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
 		_titleFont->displayString(227, 165, "JOHN KRAUSE");
 		_titleFont->displayString(245, 195, "GARY VICK");
@@ -331,7 +388,12 @@ bool Cutscene::introScene() {
 	case 36:
 		putHouse();
 		registTime();
-		_titleFont->displayString(200, 100, "MUSICAL SCORE");
+		displayTitleText({
+			{200, 100, "MUSICAL SCORE"},
+			{206, 100, "BANDA SONORA"},
+			{200, 100, "THEME MUSICAL"},
+			{214, 100, "MUSIKSTUECKE"}
+		});
 		_titleFont->displayString(200, 140, "GREGORY ALPER");
 		g_engine->_screen->makeAllDirty();
 		break;
@@ -343,7 +405,12 @@ bool Cutscene::introScene() {
 	case 38:
 		putHouse();
 		registTime();
-		_titleFont->displayString(119, 100, "MUSIC AND SOUND EFFECTS");
+		displayTitleText({
+			{119, 100, "MUSIC AND SOUND EFFECTS"},
+			{89, 100, "MUSICA Y EFECTOS DE SONIDO"},
+			{92, 100, "MUSIQUE ET EFFETS SONORES"},
+			{128, 100, "MUSIK-UND SOUNDEFFEKTE"}
+		});
 		_titleFont->displayString(200, 140, "DAVID A. BEAN");
 		g_engine->_screen->makeAllDirty();
 		break;
@@ -355,8 +422,19 @@ bool Cutscene::introScene() {
 	case 40:
 		putHouse();
 		registTime();
-		_titleFont->displayString(218, 100, "ART DIRECTOR");
-		_titleFont->displayString(236, 140, "BRUMMBAER");
+		if (lang == Common::DE_DEU) {
+			_titleFont->displayString(239, 100, "KUNST-UND");
+			_titleFont->displayString(167, 130, "ASSISTENZ DER KUNST-UND");
+			_titleFont->displayString(236, 170, "BRUMMBAER");
+		} else {
+			displayTitleText({
+				{218, 100, "ART DIRECTOR"},
+				{176, 100, "DIRECTOR ARTISTICO"},
+				{146, 100, "DIRECTEUR ARTISTIQUE"},
+				{0, 100, ""}
+			});
+			_titleFont->displayString(236, 140, "BRUMMBAER");
+		}
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 41:
@@ -367,8 +445,24 @@ bool Cutscene::introScene() {
 	case 42:
 		putHouse();
 		registTime();
-		_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
-		_titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
+		if (lang == Common::EN_ANY) {
+			_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
+			_titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
+		} else {
+			displayTitleText({
+				{0, 0, ""},
+				{206, 100, "AYUDANTE DEL"},
+				{218, 100, "ASSISTANT DU"},
+				{119, 100, "ASSISTENZ DER KUNST-UND"}
+			});
+			displayTitleText({
+				{0, 0, ""},
+				{176, 130, "DIRECTOR ARTISTICO"},
+				{150, 130, "DIRECTEUR ARTISTIQUE"},
+				{167, 130, "ANIMATIONSDIREKTION"}
+			});
+			_titleFont->displayString(191, 170, "PAUL DRZEWIECKI");
+		}
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 43:
@@ -379,7 +473,12 @@ bool Cutscene::introScene() {
 	case 44:
 		putHouse();
 		registTime();
-		_titleFont->displayString(200, 100, "DARK WORLD ART");
+		displayTitleText({
+			{200, 100, "DARK WORLD ART"},
+			{104, 100, "GRAFICOS DEL MUNDO OSCURO"},
+			{137, 100, "L'ART DU MONDE OBSCUR"},
+			{188, 100, "DARK-WORLD-KUNST"}
+		});
 		_titleFont->displayString(245, 140, "H.R. GIGER");
 		g_engine->_screen->makeAllDirty();
 		break;
@@ -391,10 +490,24 @@ bool Cutscene::introScene() {
 	case 46:
 		putHouse();
 		registTime();
-		_titleFont->displayString(182, 90, "COMPUTER ARTISTS");
-		_titleFont->displayString(227, 130, "JULIA ULANO");
-		_titleFont->displayString(191, 160, "JOBY ROME-OTERO");
-		_titleFont->displayString(236, 190, "PAUL RYAN");
+		if (lang == Common::FR_FRA) {
+			_titleFont->displayString(182, 75, "LES ARTISTES SUR");
+			_titleFont->displayString(236, 105, "ORDINATEUR");
+
+			_titleFont->displayString(227, 145, "JULIA ULANO");
+			_titleFont->displayString(191, 175, "JOBY ROME-OTERO");
+			_titleFont->displayString(236, 205, "PAUL RYAN");
+		} else {
+			displayTitleText({
+				{182, 90, "COMPUTER ARTISTS"},
+				{242, 90, "GRAFISTAS"},
+				{0, 0, ""},
+				{107, 90, "COMPUTERGRAFIK-KUENSTLER"}
+			});
+			_titleFont->displayString(227, 130, "JULIA ULANO");
+			_titleFont->displayString(191, 160, "JOBY ROME-OTERO");
+			_titleFont->displayString(236, 190, "PAUL RYAN");
+		}
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 47:
@@ -405,7 +518,12 @@ bool Cutscene::introScene() {
 	case 48:
 		putHouse();
 		registTime();
-		_titleFont->displayString(236, 100, "GAME TEXT");
+		displayTitleText({
+			{236, 100, "GAME TEXT"},
+			{194, 100, "TEXTO DEL JUEGO"},
+			{173, 100, "LE TEXTE DU JEUX"},
+			{281, 100, "TEXTE"}
+		});
 		_titleFont->displayString(209, 140, "MICHEL HORVAT");
 		g_engine->_screen->makeAllDirty();
 		break;
@@ -519,9 +637,29 @@ bool Cutscene::embryoInsertedScene() {
 		if (_titleFont == nullptr) {
 			_titleFont = new TitleFont();
 		}
-		_titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
-		_titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
-		_titleFont->displayString(80, 210, "FIRST DAY IN HIS NEW HOUSE...");
+		switch (g_engine->getLanguage()) {
+		case Common::ES_ESP :
+			_titleFont->displayString(80, 130, "TRAS UNA HORRIBLE PESADILLA");
+			_titleFont->displayString(80, 170, "MIKE DAWSON SE DESPIERTA EL");
+			_titleFont->displayString(80, 210, "PRIMER DIA EN SU NUEVA CASA...");
+			break;
+		case Common::FR_FRA :
+			_titleFont->displayString(0, 110, "APRES UN CAUCHEMAAR EPOUVANTABLE");
+			_titleFont->displayString(0, 150, "MIKE DAWSON SE REVEILLE POUR SA");
+			_titleFont->displayString(0, 190, "PREMIERE JOURNEE DANS LA NOUVELLE");
+			_titleFont->displayString(0, 230, "MAISON...");
+			break;
+		case Common::DE_DEU :
+			_titleFont->displayString(44, 130, "NACH EINEM SCHRECKENERREGENDEN");
+			_titleFont->displayString(44, 170, "ALPTRAUM MIKE DAWSON ERWACHT AM");
+			_titleFont->displayString(44, 210, "ERSTEM TAG IN SEINEN NEUEM HAUS...");
+			break;
+		default :
+			_titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
+			_titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
+			_titleFont->displayString(80, 210, "FIRST DAY IN HIS NEW HOUSE...");
+			break;
+		}
 		g_engine->fadeIn(_palette);
 		break;
 	}
@@ -1169,6 +1307,11 @@ void Cutscene::runAnim(int direction) {
 void Cutscene::freeMorph() {
 	delete _morph;
 	_morph = nullptr;
+}
+
+void Cutscene::displayTitleText(const I18NTextWithPosition &text) {
+	const TextWithPosition &textWithPosition = getI18NTextWithPosition(text);
+	_titleFont->displayString(textWithPosition.x, textWithPosition.y, textWithPosition.text);
 }
 
 } // End of namespace Darkseed
