@@ -265,39 +265,6 @@ int use_thunder(int flag) {
 	return 0;
 }
 
-int use_hourglass(int flag) {
-	int hour_time[] = {0, 60, 120, 180, 240, 300, 360, 420, 480,
-					   510, 540, 570, 600, 630, 660, 690};
-
-	if (_G(hourglass_flag)) {
-		if ((int)_G(magic_cnt) > hour_time[_G(hourglass_flag)]) {
-			_G(hourglass_flag++);
-			if (_G(hourglass_flag) == 16) {
-				_G(hourglass_flag) = 0;
-				music_resume();
-			}
-			play_sound(WOOP, true);
-		}
-		return 1;
-	}
-
-	if (flag && _G(thor_info).magic > 29) {
-		if (!_G(hourglass_flag)) {
-			_G(magic_cnt) = 0;
-			add_magic(-30);
-			music_pause();
-			play_sound(WOOP, true);
-			_G(hourglass_flag) = 1;
-			return 1;
-		}
-	} else {
-		_G(hourglass_flag) = 0;
-		if (flag)
-			not_enough_magic();
-	}
-	return 0;
-}
-
 int use_boots(int flag) {
 	if (flag) {
 		if (_G(thor_info).magic > 0) {
