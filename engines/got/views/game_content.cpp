@@ -227,7 +227,7 @@ void GameContent::drawBackground(GfxSurface &s) {
 		for (int x = 0; x < TILES_X; x++) {
 			if (_G(scrn).icon[y][x] != 0) {
 				const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
-				LEVEL screen = _G(scrn);
+				const LEVEL &screen = _G(scrn);
 				s.simpleBlitFrom(_G(bgPics[screen.bg_color]), pt);
 				s.simpleBlitFrom(_G(bgPics[screen.icon[y][x]]), pt);
 			}
