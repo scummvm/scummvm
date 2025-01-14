@@ -120,9 +120,9 @@ void Scripts::runScript(bool firstTime) {
 	Common::fill(_gosubStack, _gosubStack + 32, (char *)nullptr);
 	_gosubPtr = 0;
 
-	Common::fill(_forVar, _forVar + 11, 0);
-	Common::fill(_forVal, _forVal + 11, 0);
-	Common::fill(_forStack, _forStack + 11, (char *)nullptr);
+	Common::fill(_forVar, _forVar + 10, 0);
+	Common::fill(_forVal, _forVal + 10, 0);
+	Common::fill(_forStack, _forStack + 10, (char *)nullptr);
 	_forPtr = 0;
 
 	int i = read_script_file();
@@ -480,7 +480,6 @@ int Scripts::get_line(char *src, char *dst) {
 
 	*dst = 0;
 	cnt++;
-	src++;
 
 	return cnt;
 }
@@ -1030,7 +1029,7 @@ void Scripts::scr_func3() {
 	int y = p / 20;
 	int x = p % 20;
 
-	if (y < 0 || x < 0 || y > 11 || x > 19) {
+	if (y < 0 || x < 0 || y > 11) {
 		play_sound(BRAAPP, true);
 		_G(key_flag[key_magic]) = false;
 		return;
