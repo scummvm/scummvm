@@ -1011,6 +1011,9 @@ Common::Error TwpEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	g_system->showMouse(false);
+	g_system->lockMouse(true);
+
 	_gfx.init();
 	_hud->init();
 
@@ -1322,6 +1325,9 @@ Common::Error TwpEngine::run() {
 #ifdef USE_IMGUI
 	_system->setImGuiCallbacks(ImGuiCallbacks());
 #endif
+
+	g_system->showMouse(true);
+	g_system->lockMouse(false);
 
 	return Common::kNoError;
 }
@@ -2110,6 +2116,9 @@ void TwpEngine::capture(Graphics::Surface &surface, int width, int height) {
 HSQUIRRELVM TwpEngine::getVm() { return _vm->get(); }
 
 int TwpEngine::runDialog(GUI::Dialog &dialog) {
+	g_system->showMouse(true);
+	g_system->lockMouse(false);
+
 	int result = Engine::runDialog(dialog);
 	updateSettingVars();
 	return result;
