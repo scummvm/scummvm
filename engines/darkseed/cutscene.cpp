@@ -257,9 +257,14 @@ bool Cutscene::introScene() {
 		}
 		break;
 	case 22:
-		_animation.load("art/t2.anm");
+		if (lang == Common::KO_KOR) {
+			_animation.load("art/ht2.anm");
+			_animCount = 45;
+		} else {
+			_animation.load("art/t2.anm");
+			_animCount = 50;
+		}
 		_animIdx = 0;
-		_animCount = 50;
 		runAnim();
 		break;
 	case 23:
@@ -279,7 +284,7 @@ bool Cutscene::introScene() {
 		versionImg.draw();
 		putHouse();
 		Img titleImg;
-		titleImg.load("art/title.img");
+		titleImg.load(lang == Common::KO_KOR ? "art/htitle.img" : "art/title.img");
 		titleImg.draw(1);
 		versionImg.load("art/version.img");
 		versionImg.draw();
@@ -445,7 +450,7 @@ bool Cutscene::introScene() {
 	case 42:
 		putHouse();
 		registTime();
-		if (lang == Common::EN_ANY) {
+		if (lang == Common::EN_ANY || lang == Common::KO_KOR) {
 			_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
 			_titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
 		} else {
@@ -531,8 +536,21 @@ bool Cutscene::introScene() {
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
+		if (lang == Common::KO_KOR) {
+			putHouse();
+			Img distrib;
+			distrib.load("art/distrib.img");
+			distrib.draw(1);
+			g_engine->_screen->makeAllDirty();
+			registTime();
+		}
 		break;
 	case 50:
+		if (lang == Common::KO_KOR) {
+			if (waitTime(CREDITS_DELAY * 2)) {
+				return true;
+			}
+		}
 		if (g_engine->_sound->isPlayingMusic()) {
 			if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
 				g_engine->zeroMouseButtons();
