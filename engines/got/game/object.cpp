@@ -84,12 +84,10 @@ void pick_up_object(int p) {
 			return;
 		}
 		play_sound(GULP, false);
-		s = 1;
 		add_health(5);
 		break;
 	case 6: // Bad apple
 		play_sound(OW, false);
-		s = 1;
 		add_health(-10);
 		break;
 	case 7: // Key (reset on exit)
