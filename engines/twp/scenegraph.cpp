@@ -246,7 +246,7 @@ void Node::draw(const Math::Matrix4 &parent) {
 }
 
 Math::Vector2d Node::getAbsPos() const {
-	return !_parent ? _pos : _parent->getAbsPos() + _pos;
+	return !_parent ? _pos : _parent->getAbsPos() + _pos + _offset;
 }
 
 Math::Matrix4 Node::getTrsf(const Math::Matrix4 &parentTrsf) {
