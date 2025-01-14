@@ -302,11 +302,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 	x1 = x + 1;
 	y1 = y + 8;
 	
-	if (_G(thor)->dir > 1)
-		x2 = x + 12;
-	else
-		x2 = x + 12; // FIXME : This causes a duplicate branch warning in GCC. Need to check as in check_move0() it's 10
-	
+	x2 = x + 12;	
 	y2 = y + 15;
 
 	_G(thor_special_flag) = false;
@@ -2104,12 +2100,10 @@ int movement_twentyseven(ACTOR *actr) {
 void set_thor_vars() {
 	_G(thor_x1) = _G(thor)->x + 1;
 	_G(thor_y1) = _G(thor)->y + 8;
-	_G(thor_real_y1) = _G(thor)->y;
-	if (_G(thor)->dir > 1)
-		_G(thor_x2) = (_G(thor)->x + 12);
-	else
-		_G(thor_x2) = (_G(thor)->x + 12); // CHECKME : in check_move0() it's 10
 
+	_G(thor_real_y1) = _G(thor)->y;
+
+	_G(thor_x2) = (_G(thor)->x + 12);
 	_G(thor_y2) = _G(thor)->y + 15;
 }
 
