@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-13 21:39+0000\n"
-"PO-Revision-Date: 2025-01-13 16:18+0000\n"
+"PO-Revision-Date: 2025-01-14 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2968,26 +2968,26 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
-"A ScummVM for Android új verziójában jelentős változtatásokat hajtottak "
-"végre a fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android "
-"operációs rendszer modern verzióinak támogatását.\n"
-"Ha úgy találja, hogy a meglévő hozzáadott játékai vagy egyéni elérési utak "
-"már nem működnek, kérjük, szerkessze ezeket az útvonalakat:\n"
-"   1. Az Indítóban lépjen a **Játékbeállítások > Útvonalak** elemre. "
-"Válassza a **Játék elérési út** vagy **Extra Path** lehetőséget.\n"
-"   2. A ScummVM fájlböngészőben válassza a **Go Up** lehetőséget, amíg el "
-"nem éri az **<Új mappa hozzáadása>** opciót tartalmazó gyökérmappát.\n"
-"   3. Koppintson duplán az **<Új mappa hozzáadása>** elemre. Az eszköz "
-"fájlböngészőjében keresse meg az összes játékmappát tartalmazó mappát. "
-"Például **SD-kártya > ScummVMgames**\n"
-"   4. Válassza a **Használja ezt a mappát**.\n"
-"   5. Válassza az **Engedélyezés** lehetőséget, hogy engedélyt adjon a "
-"ScummVM-nek a mappa elérésére.\n"
-"   6. A ScummVM fájlböngészőben koppintson duplán a hozzáadott mappában való "
-"böngészéshez. Válassza ki a játék fájljait tartalmazó mappát, majd "
-"koppintson a **Kiválasztás** elemre.\n"
+"Az Android-os ScummVM új verziójában jelentős fájl hozzáférési rendszer "
+"változások kerültek beiktatásra annak érdekébe, hogy támogassa a modern "
+"verziójú Android rendszereket is.\n"
+"Ha azt veszi észre, hogy a korábban hozzáadott játékok vagy egyéni elérési "
+"utak nem működnek, kérjük szerkessze át ennek megfelelően ezeket:\n"
+"  1. Az Indítóban lépjen be a **Játék Opciók > Elérési utak** vagy **Extra "
+"elérési utak** menük valamelyikébe. \n"
+"  2. A ScummVM fájlkezelőn belül nyomjon mindig a **Fel**-re, egészen addig "
+"amíg el nem éri a gyökeret, amely már csak **<Új mappa hozzáadása>** opciót "
+"tartalmaz.\n"
+"  3. Nyomjon duplán az **<Új mappa hozzáadása>** menüre, majd navigáljon a "
+"játékait tartalmazó mappába. Például **SD Kártya > ScummVMjatekok** \n"
+"  4. Válassza a **Mappa használata** menüt. \n"
+"  5. Válassza az **Engedélyez** menüt, hogy hozzáférést biztosítson a "
+"ScummVM számára a mappához. \n"
+"  6. A ScummVM fájlkezelőben használjon dupla érintést a hozzáadott mappák "
+"közötti böngészéshez. Válassza ki a játék fájljait tartalmazó mappát, majd "
+"nyomjon a **Kiválaszt** gombra. \n"
 "\n"
-"Ismételje meg az 1. és 6. lépést minden játéknál."
+"Ismételje meg mind a hat lépést az összes játéknál."
 
 #: base/main.cpp:652 base/main.cpp:677
 #: engines/director/lingo/lingo-builtins.cpp:1384
@@ -2999,7 +2999,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:654 base/main.cpp:679
 msgid "Read Later"
-msgstr "Később elolvas"
+msgstr "Elolvasás később"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:661
@@ -3022,24 +3022,24 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
-"A ScummVM for Android új verziójában jelentős változtatásokat hajtottak "
-"végre a fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android "
-"operációs rendszer modern verzióinak támogatását.\n"
-"Játék hozzáadása:\n"
+"Az Android-os ScummVM új verziójában jelentős fájl hozzáférési rendszer "
+"változások kerültek beiktatásra annak érdekébe, hogy támogassa a modern "
+"verziójú Android rendszereket is.\n"
+"Játék hozzáadása::\n"
 "\n"
-"   1. Válassza a **Játék hozzáadása...** lehetőséget az indítóban.\n"
-"   2. A ScummVM fájlböngészőben válassza a **Go Up** lehetőséget, amíg el "
-"nem éri az **<Új mappa hozzáadása>** opciót tartalmazó gyökérmappát.\n"
-"   3. Koppintson duplán az **<Új mappa hozzáadása>** elemre. Az eszköz "
-"fájlböngészőjében keresse meg az összes játékmappát tartalmazó mappát. "
-"Például **SD-kártya > ScummVMgames**\n"
-"   4. Válassza a **Használja ezt a mappát**.\n"
-"   5. Válassza az **Engedélyezés** lehetőséget, hogy engedélyt adjon a "
-"ScummVM-nek a mappa elérésére.\n"
-"   6. A ScummVM fájlböngészőben koppintson duplán a hozzáadott mappában való "
-"böngészéshez. Válassza ki a játék fájljait tartalmazó almappát, majd "
-"koppintson a **Kiválasztás** elemre.\n"
-"Ismételje meg az 1. és 6. lépést minden játéknál."
+"  1. Az Indítóban válassza a **Játék Hozzáadása...** gombot. \n"
+"  2. A ScummVM fájlkezelőn belül nyomjon mindig a **Fel**-re, egészen addig "
+"amíg el nem éri a gyökeret, amely már csak **<Új mappa hozzáadása>** opciót "
+"tartalmaz. \n"
+"  3. Nyomjon duplán az **<Új mappa hozzáadása>** menüre, majd navigáljon a "
+"játékait tartalmazó mappába. Például **SD Kártya > ScummVMjatekok** \n"
+"  4. Válassza a **Mappa használata** menüt. \n"
+"  5. Válassza az **Engedélyez** menüt, hogy hozzáférést biztosítson a "
+"ScummVM számára a mappához. \n"
+"  6. A ScummVM fájlkezelőben használjon dupla érintést a hozzáadott mappák "
+"közötti böngészéshez. Válassza ki a játék fájljait tartalmazó mappát, majd "
+"nyomjon a **Kiválaszt** gombra. \n"
+"Ismételje meg mind a hat lépést az összes játéknál."
 
 #: base/main.cpp:822
 msgid "Error running game:"
@@ -3052,12 +3052,12 @@ msgstr "Nem található olyan játékmotor ami a választott játékot támogatj
 #: common/engine_data.cpp:278 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr "Nem találhatók %s motor adatok"
+msgstr "Nem található %s motor adat"
 
 #: common/engine_data.cpp:296 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "Elavult motorinformációk. Elvárt %d.%d, helyett %d.%d létezik"
+msgstr "Elavult motoradat. Az elvárt %d.%d helyett %d.%d dátumú"
 
 #: common/error.cpp:37
 msgid "No error"
@@ -3069,7 +3069,7 @@ msgstr "Játék adat nem található"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr "Játék id nem támogatott"
+msgstr "Nem támogatott játék azonosító"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
@@ -3077,11 +3077,11 @@ msgstr "Nem támogatott színmód"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr "Audió eszköz inicializálása sikertelen"
+msgstr "Sikertelen hang eszköz inicializálás"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr "Olvasás hozzáfárés megtagadva"
+msgstr "Olvasás hozzáférés megtagadva"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
@@ -3089,15 +3089,15 @@ msgstr "Írás hozzáférés megtagadva"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr "Mappa nem létezik"
+msgstr "Elérési út nem létezik"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr "Mappa nem egy könyvtár"
+msgstr "Elérési út nem könyvtárra mutat"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr "Mappa nem egy fájl"
+msgstr "Elérési út nem fájlra mutat"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
@@ -3105,11 +3105,11 @@ msgstr "Fájl nem hozható létre"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr "A Beolvasott adat hibás"
+msgstr "Hiba az olvasás közben"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr "Kiírt adat hibás"
+msgstr "Hiba az írás közben"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
@@ -3146,10 +3146,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Szín)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 Szín)"
+msgstr "PC-9801 (8 Szín)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3158,19 +3156,15 @@ msgstr "Macintosh f/f"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA Szürke-árnyalatos"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 Szín)"
+msgstr "Windows (256 Szín)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 Szín)"
+msgstr "Windows (16 Szín)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3183,24 +3177,22 @@ msgid "Hercules Amber"
 msgstr "Hercules Sárga"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Ugrás a helyre"
+msgstr "Nincs forgatás"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Óra járással megfelelő"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 fok"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Óra járással ellentétes"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -3274,10 +3266,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (debug)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3296,18 +3286,12 @@ msgid "Quit"
 msgstr "Kilépés"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Konfigurációs fájl hiba"
+msgstr "Napló Fájl Hiba"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr ""
-"Nem lehet olvasni a ScummVM konfigurációs fájlt, vagy nem lehet újat "
-"létrehozni!"
+msgstr "Nem olvasható a ScummVM napló fájl, és nem is készíthető új!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3315,26 +3299,25 @@ msgstr "Konfigurációs fájl hiba"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
-"Nem lehet olvasni a ScummVM konfigurációs fájlt, vagy nem lehet újat "
-"létrehozni!"
+msgstr "Nem olvasható a ScummVM konfigurációs fájl, és nem is készíthető új!"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Save Path Error"
-msgstr "Mentési útvonal hiba"
+msgstr "Mentési Útvonal Hiba"
 
 #: dists/android.strings.xml.cpp:40
 msgid "Unable to create or access default save path!"
-msgstr "Nem lehet létrehozni vagy elérni az alapértelmezett mentési útvonalat!"
+msgstr ""
+"Nem lehet létrehozni vagy hozzáférni az alapértelmezett mentési útvonalat!"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Icons Path Error"
-msgstr "Ikon útvonal hiba"
+msgstr "Ikon Útvonal Hiba"
 
 #: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
-"Nem lehet létrehozni vagy elérni az alapértelmezett ikonokat és árnyékolók "
+"Nem lehet létrehozni vagy hozzáférni az alapértelmezett ikonok és shaderek "
 "elérési útját!"
 
 #: dists/android.strings.xml.cpp:43
@@ -3342,12 +3325,12 @@ msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
-"Nem érhető el a globálisan beállított mentési útvonal! Kérjük, állítsa "
-"vissza az alapértelmezett beállításokat a ScummVM beállítások közül"
+"Nem érhető el az átfogó mentési útvonal! Kérem térjen vissza az "
+"alapbeállításra a ScummVM Opciókban"
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
-msgstr "Virtuális billentyűzet váltása"
+msgstr "Virtuális billentyűzet bekapcsolása"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3363,7 +3346,7 @@ msgstr "Kész"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Mode change"
-msgstr "Mód csere"
+msgstr "Mód módosítás"
 
 #: dists/android.strings.xml.cpp:50
 msgid "Shift"
@@ -3383,50 +3366,46 @@ msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Kérem válassza ki a külső (fizikai) SD kártya *gyökérét*. A ScummVM-nek "
+"szüksége van erre, hogy hozzáférjen ehhez az elérési úthoz: "
 
 #: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
+"A ScummVM-hez tartozó Tárhely Hozzáférés Keretrendszer jogosultságok "
+"visszavonásra kerültek!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "a videó mód nem változtatható meg"
+msgstr "Nem elemezhető a konfigurációs fájl"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "2D játékokban"
+msgstr "Egy játék indítása"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Keresés a játéklistában"
+msgstr "Játék keresése"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Nincsenek játékok (még)\n"
+"Nyissa meg a ScummVM-et, és adja hozzá a játékait."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Játék Opciók"
+msgstr "Játék ikon"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Tárgycimke látható"
+msgstr "Parancsikon elnevezés"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Parancsikon ikonja"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
