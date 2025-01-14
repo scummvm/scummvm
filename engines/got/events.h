@@ -90,16 +90,6 @@ protected:
 
 protected:
 	/**
-     * Set a delay countdown in seconds, after which timeout() is called
-     */
-	void delaySeconds(uint seconds);
-
-	/**
-     * Set a delay countdown in frames, after which timeout() is called
-     */
-	void delayFrames(uint frames);
-
-	/**
      * Returns true if a delay is active
      */
 	bool isDelayActive() const {
@@ -148,20 +138,10 @@ public:
 	void redraw();
 
 	/**
-     * Focuses the element as the current view
-     */
-	void focus();
-
-	/**
      * Closes the current view. The view must have been added
      * via addView, so there's a remaining view afterwards
      */
 	virtual void close();
-
-	/*
-     * Returns true if the view is focused
-     */
-	bool isFocused() const;
 
 	/**
      * Sets the focus to a new view
@@ -210,11 +190,6 @@ public:
      * Returns a surface for drawing the element
      */
 	Gfx::GfxSurface getSurface(bool innerBounds = false) const;
-
-	/**
-     * Clear the surface
-     */
-	virtual void clearSurface();
 
 	/**
      * Draws the element
@@ -365,13 +340,6 @@ public:
 	void popView();
 
 	/**
-     * Redraws the views in order. This is used in rare cases
-     * where a view draws outside it's defined area, and needs
-     * to restore whether the background was before
-     */
-	void redrawViews();
-
-	/**
      * Returns the currently focused view, if any
      */
 	UIElement *focusedView() const {
@@ -416,11 +384,6 @@ public:
      * Draws the focused view
      */
 	void drawElements() override;
-
-	/**
-     * Add a keypress to the event queue
-     */
-	void addKeypress(const Common::KeyCode kc);
 
 	/**
      * Events manager doesn't have any intrinsic drawing

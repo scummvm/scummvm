@@ -268,7 +268,7 @@ int Events::actionToKeyFlag(int action) const {
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 	assert(ui);
-	UIElement *priorView = focusedView();
+	UIElement *oldView = focusedView();
 
 	if (fadeOutIn)
 		Gfx::fade_out();
@@ -277,7 +277,7 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 		clearViews();
 
 	} else if (!_views.empty()) {
-		priorView->msgUnfocus(UnfocusMessage());
+		oldView->msgUnfocus(UnfocusMessage());
 		_views.pop();
 	}
 
@@ -291,7 +291,7 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 	_views.push(ui);
 
 	ui->redraw();
-	ui->msgFocus(FocusMessage(priorView));
+	ui->msgFocus(FocusMessage(oldView));
 	ui->draw();
 
 	if (fadeOutIn)
@@ -304,14 +304,14 @@ void Events::replaceView(const Common::String &name, bool replaceAllViews, bool 
 
 void Events::addView(UIElement *ui) {
 	assert(ui);
-	UIElement *priorView = focusedView();
+	UIElement *oldView = focusedView();
 
 	if (!_views.empty())
-		priorView->msgUnfocus(UnfocusMessage());
+		oldView->msgUnfocus(UnfocusMessage());
 
 	_views.push(ui);
 	ui->redraw();
-	ui->msgFocus(FocusMessage(priorView));
+	ui->msgFocus(FocusMessage(oldView));
 }
 
 void Events::addView(const Common::String &name) {
@@ -319,8 +319,8 @@ void Events::addView(const Common::String &name) {
 }
 
 void Events::popView() {
-	UIElement *priorView = focusedView();
-	priorView->msgUnfocus(UnfocusMessage());
+	UIElement *oldView = focusedView();
+	oldView->msgUnfocus(UnfocusMessage());
 	_views.pop();
 
 	for (uint i = 0; i < _views.size(); ++i) {
@@ -330,16 +330,9 @@ void Events::popView() {
 
 	if (!_views.empty()) {
 		UIElement *view = focusedView();
-		view->msgFocus(FocusMessage(priorView));
+		view->msgFocus(FocusMessage(oldView));
 		view->redraw();
 		view->draw();
-	}
-}
-
-void Events::redrawViews() {
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
 	}
 }
 
@@ -362,15 +355,6 @@ void Events::clearViews() {
 		focusedView()->msgUnfocus(UnfocusMessage());
 
 	_views.clear();
-}
-
-void Events::addKeypress(const Common::KeyCode kc) {
-	Common::KeyState ks;
-	ks.keycode = kc;
-	if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)
-		ks.ascii = kc;
-
-	focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
 /*------------------------------------------------------------------------*/
@@ -426,22 +410,9 @@ UIElement *UIElement::findViewGlobally(const Common::String &name) {
 	return g_events->findView(name);
 }
 
-void UIElement::focus() {
-	g_events->replaceView(this);
-}
-
 void UIElement::close() {
 	assert(g_events->focusedView() == this);
 	g_events->popView();
-}
-
-bool UIElement::isFocused() const {
-	return g_events->focusedView() == this;
-}
-
-void UIElement::clearSurface() {
-	GfxSurface s = getSurface();
-	s.fillRect(Common::Rect(s.w, s.h), 0);
 }
 
 void UIElement::draw() {
@@ -507,14 +478,6 @@ int UIElement::getRandomNumber(int minNumber, int maxNumber) {
 
 int UIElement::getRandomNumber(int maxNumber) {
 	return g_engine->getRandomNumber(maxNumber);
-}
-
-void UIElement::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * FRAME_RATE;
-}
-
-void UIElement::delayFrames(uint frames) {
-	_timeoutCtr = frames;
 }
 
 void UIElement::timeout() {
