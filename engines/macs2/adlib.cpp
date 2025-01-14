@@ -987,21 +987,17 @@ void Adlib::OnTimer() {
 						// the call to 19BE above
 						// 						
 						Func2792(bp8 + 0x40, r19BE.readByte());
-						//    TODO: Continue from here
+						// TODO: Early pushed argument for 2792
 						/*
-						
 						mov	ax,[bp-8h]
 						add	ax,60h
 						push	ax
-						push	word ptr [bp-0Eh]
-						push	word ptr [bp-10h]
-						push	4h
-						call	far 0017h:19BEh
-						mov	di,ax
-						mov	es,dx
-						mov	al,es:[di]
-						push	ax
-						call	far 0017h:2792h
+						*/
+						//    TODO: Continue from here
+						Common::MemorySeekableReadWriteStream r19BE_2 = Func19BE_2(streamBP0E, 0x4);
+						Func2792(bp8 + 0x60, r19BE_2.readByte());
+						/*
+
 						mov	ax,[bp-8h]
 						add	ax,80h
 						push	ax
