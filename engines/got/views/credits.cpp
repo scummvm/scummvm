@@ -76,14 +76,12 @@ void Credits::drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y) 
 	const Gfx::GraphicChunk &lookup = _G(gfx[gfxNum2]);
 	const byte *lines = data._data;
 	const byte *lineData = data._data + 2 * data._height;
-	byte *dest;
-	byte count;
 
 	assert(x >= 0 && (x + data._width) <= 320);
 	assert(y >= 0 && (y + data._height) <= 200);
 
 	for (int yCtr = 0; yCtr < data._height; ++yCtr) {
-		dest = (byte *)s.getBasePtr(x, y + yCtr);
+		byte *dest = (byte *)s.getBasePtr(x, y + yCtr);
 		uint16 lineParts = READ_LE_UINT16(lines);
 		lines += 2;
 
@@ -92,7 +90,7 @@ void Credits::drawCredit(GfxSurface &s, int gfxNum1, int gfxNum2, int x, int y) 
 			continue;
 
 		for (; lineParts > 0; --lineParts) {
-			count = *lineData++;
+			byte count = *lineData++;
 
 			if (count & 0x80) {
 				// Shade a range of pixels using lookup table

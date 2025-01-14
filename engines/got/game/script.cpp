@@ -356,8 +356,6 @@ int Scripts::calc_value() {
 }
 
 int Scripts::get_next_val() {
-	char tmpstr[25];
-
 	char ch = *_buffPtr;
 	if (ch == 0 || ch == ':')
 		return 0;
@@ -370,11 +368,12 @@ int Scripts::get_next_val() {
 		return 1;
 	}
 
-	int t = 0;
 	if (strchr("0123456789-", ch)) {
-		tmpstr[0] = ch;
-		t++;
+		char tmpstr[25];
+		int t = 0;
+		tmpstr[t] = ch;
 		_buffPtr++;
+		t++;
 		while (strchr("0123456789", *_buffPtr) && *_buffPtr != 0) {
 			tmpstr[t] = *_buffPtr;
 			_buffPtr++;
@@ -786,7 +785,6 @@ int Scripts::cmd_say(int mode, int type) {
 
 int Scripts::cmd_ask() {
 	int v = 0;
-	uint p;
 	char title[41], opt[41];
 	Common::StringArray opts;
 
@@ -818,7 +816,6 @@ int Scripts::cmd_ask() {
 			return 5;
 
 		_buffPtr++;
-		p = _lValue;
 	} else {
 		return 5;
 	}
@@ -832,9 +829,6 @@ int Scripts::cmd_ask() {
 		if (opts.size() > 9)
 			return 3;
 	}
-
-	if (p > opts.size())
-		p = 0;
 
 	// Pause the script execution, and open up an ask window.
 	// Execution of the script will resume after a selection.

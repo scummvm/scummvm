@@ -385,9 +385,8 @@ void GameContent::updateActors() {
 }
 
 void GameContent::checkForBossDead() {
-	int loop;
-
 	if (_G(boss_dead)) {
+		int loop;
 		for (loop = 3; loop < 7; loop++) {
 			if (_G(actor[loop]).used)
 				break;
@@ -668,18 +667,17 @@ void GameContent::drawLightning(GfxSurface &s) {
 }
 
 void GameContent::lightningCountdownDone() {
-	int x, y, i, ax, ay;
 	_G(gameMode) = MODE_NORMAL;
 
-	x = _G(thor)->x + 7;
-	y = _G(thor)->y + 7;
+	int x = _G(thor)->x + 7;
+	int y = _G(thor)->y + 7;
 
-	for (i = 3; i < MAX_ACTORS; i++) {
+	for (int i = 3; i < MAX_ACTORS; i++) {
 		if (!_G(actor[i]).used)
 			continue;
 
-		ax = _G(actor[i]).x + (_G(actor[i]).size_x / 2);
-		ay = _G(actor[i]).y + (_G(actor[i]).size_y / 2);
+		int ax = _G(actor[i]).x + (_G(actor[i]).size_x / 2);
+		int ay = _G(actor[i]).y + (_G(actor[i]).size_y / 2);
 
 		if ((ABS(ax - x) < 30) && (ABS(ay - y) < 30)) {
 			_G(actor[i]).magic_hit = 1;

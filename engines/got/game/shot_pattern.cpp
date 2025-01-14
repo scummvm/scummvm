@@ -204,9 +204,8 @@ int shot_pattern_eight(ACTOR *actr) {
 	if (actr->i1) {
 		actr->i1--;
 	} else if (_G(rand1) < 10) {
-		actr->i1 = _G(thor_x1);
-		actr->i2 = _G(thor_real_y1);
 		actr->i1 = actr->func_pass;
+		actr->i2 = _G(thor_real_y1);
 		actor_shoots(actr, 0);
 		return 1;
 	}

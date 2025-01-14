@@ -64,15 +64,16 @@ void next_shot_frame(ACTOR *actr) {
 		actr->next = actr->last_dir;
 		actr->dir = 0;
 	} else {
-		actr->frame_count--;
+		const int fcount = actr->frame_count - 1;
 
-		if (actr->frame_count <= 0) {
+		if (fcount <= 0) {
 			actr->next++;
 			if (actr->next > 3)
 				actr->next = 0;
 
 			actr->frame_count = actr->frame_speed;
-		}
+		} else
+			actr->frame_count = fcount;
 	}
 }
 
@@ -313,7 +314,6 @@ int shot_movement_four(ACTOR *actr) {
 				return d;
 			}
 		}
-		y1 = actr->y;
 	} else {
 		if (yd) {
 			y1 += yd;
@@ -636,13 +636,16 @@ int shot_movement_twelve(ACTOR *actr) {
 		actr->x = x1;
 		actr->y = y1;
 	}
-	actr->frame_count--;
-	if (actr->frame_count <= 0) {
+
+	int fcount = actr->frame_count - 1;
+	if (fcount <= 0) {
 		actr->next++;
 		if (actr->next > 1)
 			actr->next = 0;
 		actr->frame_count = actr->frame_speed;
-	}
+	} else
+		actr->frame_count = fcount;
+	
 	if (actr->directions == 1)
 		return 0;
 	return actr->last_dir;
@@ -673,8 +676,10 @@ int shot_movement_thirteen(ACTOR *actr) {
 			CNT -= XD;
 		}
 	}
+
 	if (actr->temp4)
 		actr->temp4--;
+
 	if (!actr->temp4) {
 		if (_G(actor[actr->creator]).num_shots)
 			_G(actor[actr->creator]).num_shots--;
@@ -689,6 +694,7 @@ int shot_movement_thirteen(ACTOR *actr) {
 			_drop_obj(actr, 4);
 		return 0;
 	}
+
 	if (x1 < 16 || x1 > 287 || y1 < 16 || y1 > 159) {
 		if (x1 < 16 || x1 > 287)
 			XA = 0 - XA;
@@ -701,15 +707,19 @@ int shot_movement_thirteen(ACTOR *actr) {
 		actr->x = x1;
 		actr->y = y1;
 	}
-	actr->frame_count--;
-	if (actr->frame_count <= 0) {
+
+	int fcount = actr->frame_count - 1;
+	if (fcount <= 0) {
 		actr->next++;
 		if (actr->next > 3)
 			actr->next = 2;
 		actr->frame_count = actr->frame_speed;
-	}
+	} else
+		actr->frame_count = fcount;
+	
 	if (actr->directions == 1)
 		return 0;
+
 	return actr->last_dir;
 }
 

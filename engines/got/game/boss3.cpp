@@ -214,6 +214,8 @@ done1:
 // Boss - Loki-1
 int boss3_movement(ACTOR *actr) {
 	int x1, y1, ox, oy;
+	int fcount;
+
 
 	if (actr->temp2)
 		actr->temp2--;
@@ -354,13 +356,14 @@ int boss3_movement(ACTOR *actr) {
 		actr->y = oy + 2;
 		break;
 	}
-	actr->frame_count--;
-	if (actr->frame_count <= 0) {
+	fcount = actr->frame_count - 1;
+	if (fcount) {
 		actr->next++;
 		if (actr->next > 2)
 			actr->next = 0;
 		actr->frame_count = 30;
-	}
+	} else
+		actr->frame_count = fcount;
 
 skip_move:
 
