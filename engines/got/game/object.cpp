@@ -153,7 +153,6 @@ void pick_up_object(int p) {
 		s = 1 << (_G(object_map[p]) - 27);
 		_G(thor_info).inventory |= s;
 		odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
-		s = 1;
 		_G(thor_info).item = _G(object_map[p]) - 26;
 		add_magic(150);
 		fill_score(5);
@@ -166,18 +165,14 @@ void pick_up_object(int p) {
 	_G(oy) = y * 16;
 	_G(of) = 1;
 
-	int r = 1;
-	s = 0;
-	if (!s)
-		play_sound(YAH, false);
+	play_sound(YAH, false);
 	_G(object_map[p]) = 0;
 
-	if (r) {
-		// Reset so it doesn't reappear on reentry to screen
-		if (_G(object_index[p]) < 30)
-			_G(scrn).static_obj[_G(object_index[p])] = 0;
-		_G(object_index[p]) = 0;
-	}
+	// Reset so it doesn't reappear on reentry to screen
+	if (_G(object_index[p]) < 30)
+		_G(scrn).static_obj[_G(object_index[p])] = 0;
+	
+	_G(object_index[p]) = 0;
 }
 
 int drop_object(ACTOR *actr) {
