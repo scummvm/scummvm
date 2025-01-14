@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-13 21:39+0000\n"
-"PO-Revision-Date: 2025-01-10 17:02+0000\n"
+"PO-Revision-Date: 2025-01-14 16:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7936,17 +7936,15 @@ msgstr "발사"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "마법"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "토르가 죽음"
 
 #: engines/got/got.cpp:184 engines/got/got.cpp:194
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "현재는 게임을 저장할 수 없음"
+msgstr "데모 모드에서는 저장 게임을 사용할 수 없음"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
