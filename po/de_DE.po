@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-13 21:39+0000\n"
-"PO-Revision-Date: 2024-12-25 09:48+0000\n"
+"PO-Revision-Date: 2025-01-14 17:38+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7610,10 +7610,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Unterstützung für Versailles 1685 ist nicht eingebaut"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "Engine-Datendatei '%s' kann nicht gefunden werden."
+msgstr "Engine-Datendatei 'darkseed.dat' kann nicht gefunden werden."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -8105,17 +8103,15 @@ msgstr "Feuer"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Magie"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Thor stirbt"
 
 #: engines/got/got.cpp:184 engines/got/got.cpp:194
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Das Speichern des Spiels ist derzeit nicht möglich"
+msgstr "Das Speichern des Spiels ist im Demo-Modus nicht möglich"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -11594,44 +11590,34 @@ msgstr ""
 "die Auflösung auf 320x200 begrenzt wird."
 
 #: engines/scumm/scumm.cpp:1328
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Dieses Spiel benötigt die ausführbare 'Indy'-Datei der Macintosh-Version zur "
+"Dieses Spiel benötigt die '%s'-Datei der Macintosh-Version zur "
 "Schriftdarstellung."
 
 #: engines/scumm/scumm.cpp:1332
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Dieses Spiel benötigt die ausführbare 'Loom'-Datei der Macintosh-Version zur "
-"Schriftdarstellung."
+"Dieses Spiel benötigt die '%s'-Datei der Macintosh-Version zur "
+"Schriftdarstellung und für die Musikwiedergabe."
 
 #: engines/scumm/scumm.cpp:1336
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
-msgstr ""
-"Macintosh-Programmdatei von \"Monkey Island\" nicht\n"
-"gefunden. Musik und die Mac-Oberfläche werden abgeschaltet."
+msgstr "Macintosh-Programmdatei von '%s' nicht gefunden. %s wird deaktiviert."
 
 #: engines/scumm/scumm.cpp:1337
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Die Mac-Oberfläche"
 
 #: engines/scumm/scumm.cpp:1337
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Die Musik und die Mac-Oberfläche"
 
 #: engines/scumm/scumm.cpp:1357
 #, c-format
