@@ -94,6 +94,7 @@ struct SetupFlags {
 	bool &f63 = _flags[63];
 
 	SetupFlags() {}
+	virtual ~SetupFlags() {}
 	virtual void sync(Common::Serializer &s);
 	SetupFlags &operator=(const Got::SetupFlags &src);
 };
