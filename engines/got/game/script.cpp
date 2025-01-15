@@ -140,7 +140,7 @@ void Scripts::runScript(bool firstTime) {
 }
 
 void Scripts::scriptLoop() {
-	while (!_paused) {
+	while (_paused == SCRIPT_READY) {
 		if (_G(cheat) && _G(key_flag[_B]))
 			break;
 
@@ -167,7 +167,7 @@ void Scripts::scriptLoop() {
 		}
 	}
 
-	if (!_paused)
+	if (_paused == SCRIPT_READY)
 		script_exit();
 }
 
@@ -286,8 +286,7 @@ nextstr:
 	return 0;
 
 strdone:
-	if (strlen(varstr) > 255)
-		return -1;
+
 	Common::strcpy_s(_tempS, (char *)varstr);
 	return 1;
 }
@@ -468,6 +467,9 @@ int Scripts::get_internal_variable() {
 
 int Scripts::get_line(char *src, char *dst) {
 	int cnt = 0;
+	if (!src)
+		return cnt;
+	
 	while (*src != 13) {
 		if (*src != 10) {
 			*dst = *src;
@@ -1077,6 +1079,10 @@ int Scripts::cmd_exec() {
 	if (_lValue < 1 || _lValue > 10)
 		return 6;
 
+	if (_lValue > 5) {
+		error("cmd_exec - unhandled lValue %d", _lValue);
+	}
+	
 	(this->*scr_func[_lValue - 1])();
 	return 0;
 }
