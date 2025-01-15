@@ -30,6 +30,12 @@ class VideoDecoder;
 
 namespace Director {
 
+enum DigitalVideoType {
+	kDVQuickTime,
+	kDVVideoForWindows,
+	kDVUnknown = -1,
+};
+
 class DigitalVideoCastMember : public CastMember {
 public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
@@ -78,6 +84,7 @@ public:
 	bool _avimovie, _qtmovie;
 	bool _dirty;
 	FrameRateType _frameRateType;
+	DigitalVideoType _videoType;
 
 	uint16 _frameRate;
 	bool _getFirstFrame;

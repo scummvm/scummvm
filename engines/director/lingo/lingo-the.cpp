@@ -76,9 +76,12 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheFloatPrecision,	"floatPrecision",	false, 300, false },	//		D3 p
 	{ kTheFrame,			"frame",			false, 200, true },	// D2 f
 	{ kTheFrameLabel,		"frameLabel",		false, 400, false },	//			D4 p
-	{ kTheFrameScript,		"frameScript",		false, 400, false },	//			D4 p
 	{ kTheFramePalette,		"framePalette",		false, 400, false },	//			D4 p
-	{ kTheFrameTempo,		"frameTempo",		false, 400, true },	//			D4 f
+	{ kTheFrameScript,		"frameScript",		false, 400, false },	//			D4 p
+	{ kTheFrameSound1,		"frameSound1",		false, 500, false },	//				D5 p
+	{ kTheFrameSound2,		"frameSound2",		false, 500, false },	//				D5 p
+	{ kTheFrameTempo,		"frameTempo",		false, 400, false },	//			D4 p
+	{ kTheFrameTransition,	"frameTransition",	false, 500, false },	//				D5 p
 	{ kTheFreeBlock,		"freeBlock",		false, 200, true },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false, 200, true },	// D2 f
 	{ kTheFrontWindow,		"frontWindow",		false, 500, false },//					D5 p
@@ -129,6 +132,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kThePerFrameHook,		"perFrameHook",		false, 200, false },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false, 400, false },	//			D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false, 400, false },	//			D4 p
+	{ kThePlatform,			"platform",			false, 500, false },	//				D5 p
 	{ kThePi,				"pi",				false, 400, true },	//			D4 f
 	{ kTheQuickTimePresent,	"quickTimePresent",	false, 300, true },	//		D3.1 f
 	{ kTheRandomSeed,		"randomSeed",		false, 400, false },	//			D4 p
@@ -138,6 +142,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheRollOver,			"rollOver",			false, 500, true },	//					D5 f, undocumented
 	{ kTheRomanLingo,		"romanLingo",		false, 300, false },	//		D3.1 p
 	{ kTheRunMode, 			"runMode",			false, 500, false },//					D5 f, documented in D6
+	{ kTheScore,			"score",			false, 500, false },	//				D5 p
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 400, true },	//			D4 f
@@ -256,6 +261,16 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
+	{ kTheSprite,	"trackCount",	kTheTrackCount, 500 },//					D5 p
+	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//					D5 p
+	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//					D5 p
+	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//					D5 p
+	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//					D5 p
+	{ kTheSprite,	"trackPreviousSampleTime",	kTheTrackPreviousKeyTime, 500 },//					D5 p
+	{ kTheSprite,	"trackStartTime",	kTheTrackStartTime, 500 },//					D5 p
+	{ kTheSprite,	"trackStopTime",	kTheTrackStopTime, 500 },//					D5 p
+	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//					D5 p
+	{ kTheSprite,	"trackType",	kTheTrackType, 500 },//					D5 p
 	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
 
@@ -287,6 +302,7 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p
 
 	// TransitionCastMember fields
+	{ kTheCast,		"changeArea",	kTheChangeArea,	500 },//						D5 p
 	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//						D5 p
 	{ kTheCast,		"transitionType",kTheTransitionType,500 },//					D5 p
 
@@ -307,6 +323,7 @@ const TheEntityField fields[] = {
 	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
 	{ kTheField,	"scrollTop",	kTheScrollTop,  500 },//						D5 p
+	{ kTheField,	"wordWrap",		kTheWordWrap,	500 },//						D5 p
 
 	// Chunk fields
 	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
@@ -529,14 +546,23 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = STRING;
 		d.u.s = score->getFrameLabel(score->getCurrentFrameNum());
 		break;
-	case kTheFrameScript:
-		d = score->_currentFrame->_mainChannels.actionId.member;
-		break;
 	case kTheFramePalette:
-		d = score->getCurrentPalette();
+		d = score->getCurrentPalette().toMultiplex();
+		break;
+	case kTheFrameScript:
+		d = score->_currentFrame->_mainChannels.actionId.toMultiplex();
+		break;
+	case kTheFrameSound1:
+		d = score->_currentFrame->_mainChannels.sound1.toMultiplex();
+		break;
+	case kTheFrameSound2:
+		d = score->_currentFrame->_mainChannels.sound2.toMultiplex();
 		break;
 	case kTheFrameTempo:
 		d = score->_currentFrameRate;
+		break;
+	case kTheFrameTransition:
+		d = score->_currentFrame->_mainChannels.trans.toMultiplex();
 		break;
 	case kTheFreeBlock:
 	case kTheFreeBytes:
@@ -811,6 +837,25 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kThePerFrameHook:
 		d = _perFrameHook;
 		break;
+	case kThePlatform:  // D5
+		// ScummVM doesn't track different OS versions;
+		// for now let's assume every game from D5 onwards was
+		// x86-32 or PowerPC.
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
+			if (g_director->getVersion() >= 500) {
+				d = Datum("Windows,32");
+			} else {
+				d = Datum("Windows,16");
+			}
+		} else {
+			// Macintosh or pippin
+			if (g_director->getVersion() >= 500) {
+				d = Datum("Macintosh,PowerPC");
+			} else {
+				d = Datum("Macintosh,68k");
+			}
+		}
+		break;
 	case kThePreloadEventAbort:
 		d = g_lingo->_preLoadEventAbort;
 		break;
@@ -1063,16 +1108,26 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
 	case kTheFrameLabel:
+		// TODO: All of these frame properties are settable during a score recording session in D5+
 		setTheEntityReadOnly(kTheFrameLabel);
-		break;
-	case kTheFrameScript:
-		setTheEntityReadOnly(kTheFrameScript);
 		break;
 	case kTheFramePalette:
 		setTheEntityReadOnly(kTheFramePalette);
 		break;
+	case kTheFrameScript:
+		setTheEntityReadOnly(kTheFrameScript);
+		break;
+	case kTheFrameSound1:
+		setTheEntityReadOnly(kTheFrameSound1);
+		break;
+	case kTheFrameSound2:
+		setTheEntityReadOnly(kTheFrameSound2);
+		break;
 	case kTheFrameTempo:
-		setTheEntityReadOnly(kTheFramePalette);
+		setTheEntityReadOnly(kTheFrameTempo);
+		break;
+	case kTheFrameTransition:
+		setTheEntityReadOnly(kTheFrameTransition);
 		break;
 	case kTheFullColorPermit:
 		// No op in ScummVM. We always allow it
@@ -1154,6 +1209,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
+		break;
+	case kThePlatform:
+		setTheEntityReadOnly(kThePlatform);
 		break;
 	case kThePreloadEventAbort:
 		g_lingo->_preLoadEventAbort = bool(d.asInt());

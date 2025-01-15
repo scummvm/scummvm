@@ -52,6 +52,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_frameRate = (_vflags >> 24) & 0xff;
 
 	_frameRateType = kFrameRateDefault;
+	_videoType = kDVUnknown;
 	if (_vflags & 0x0800) {
 		_frameRateType = (FrameRateType)((_vflags & 0x3000) >> 12);
 	}
@@ -106,6 +107,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 	_qtmovie = source._qtmovie;
 	_dirty = source._dirty;
 	_frameRateType = source._frameRateType;
+	_videoType = source._videoType;
 
 	_frameRate = source._frameRate;
 	_getFirstFrame = source._getFirstFrame;
@@ -160,7 +162,11 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping");
 		    delete _video;
 		    _video = nullptr;
+		} else {
+			_videoType = kDVVideoForWindows;
 		}
+	} else {
+		_videoType = kDVQuickTime;
 	}
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
@@ -420,6 +426,7 @@ bool DigitalVideoCastMember::hasField(int field) {
 	case kTheCenter:
 	case kTheController:
 	case kTheCrop:
+	case kTheDigitalVideoType:
 	case kTheDirectToStage:
 	case kTheDuration:
 	case kTheFrameRate:
@@ -450,6 +457,15 @@ Datum DigitalVideoCastMember::getField(int field) {
 		break;
 	case kTheCrop:
 		d = _crop;
+		break;
+	case kTheDigitalVideoType:
+		if (_videoType == kDVVideoForWindows) {
+			d = Datum("videoForWindows");
+		} else {
+			// for unknown, just pretend QuickTime
+			d = Datum("quickTime");
+		}
+		d.type = SYMBOL;
 		break;
 	case kTheDirectToStage:
 		d = _directToStage;
@@ -495,6 +511,9 @@ bool DigitalVideoCastMember::setField(int field, const Datum &d) {
 	case kTheCrop:
 		_crop = (bool)d.asInt();
 		return true;
+	case kTheDigitalVideoType:
+		warning("DigitalVideoCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		return false;
 	case kTheDirectToStage:
 		_directToStage = (bool)d.asInt();
 		return true;
