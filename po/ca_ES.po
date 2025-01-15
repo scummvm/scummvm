@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-13 21:39+0000\n"
-"PO-Revision-Date: 2025-01-08 05:18+0000\n"
+"PO-Revision-Date: 2025-01-15 14:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -7626,10 +7626,8 @@ msgid "Thor Dies"
 msgstr ""
 
 #: engines/got/got.cpp:184 engines/got/got.cpp:194
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Actualment no es pot desar la partida"
+msgstr "Les partides desades no estan disponibles en mode de demostració"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
