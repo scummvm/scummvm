@@ -2473,7 +2473,6 @@ int movement_forty(ACTOR *actr) {
 	const int x1 = actr->x;
 	int d = actr->last_dir;
 
-	int f = 1;
 	if (actr->last_dir == 2) {
 		if (bgtile(x1 - 2, actr->y) >= TILE_SOLID) {
 			_G(actor[a].x) -= 2;
