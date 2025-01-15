@@ -538,15 +538,14 @@ void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 		tglClearColor(r / 255., g / 255., b / 255., 1.0);
 		tglClear(TGL_COLOR_BUFFER_BIT);
 	} else {
-		// Disable viewport
-		tglViewport(0, 0, g_system->getWidth(), g_system->getHeight());
+		// Create a viewport sized quad and color it
 		useColor(r, g, b);
 
 		tglMatrixMode(TGL_PROJECTION);
 		tglPushMatrix();
 		tglLoadIdentity();
 
-		tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+		tglOrtho(0, _viewport.width(), _viewport.height(), 0, 0, 1);
 		tglMatrixMode(TGL_MODELVIEW);
 		tglPushMatrix();
 		tglLoadIdentity();
@@ -555,13 +554,13 @@ void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 		tglDepthMask(TGL_FALSE);
 
 		tglEnableClientState(TGL_VERTEX_ARRAY);
-		copyToVertexArray(0, Math::Vector3d(_viewport.left, _viewport.top, 0));
-		copyToVertexArray(1, Math::Vector3d(_viewport.left, _viewport.bottom, 0));
-		copyToVertexArray(2, Math::Vector3d(_viewport.right, _viewport.bottom, 0));
+		copyToVertexArray(0, Math::Vector3d(0, 0, 0));
+		copyToVertexArray(1, Math::Vector3d(0, _viewport.height(), 0));
+		copyToVertexArray(2, Math::Vector3d(_viewport.width(), _viewport.height(), 0));
 
-		copyToVertexArray(3, Math::Vector3d(_viewport.left, _viewport.top, 0));
-		copyToVertexArray(4, Math::Vector3d(_viewport.right, _viewport.top, 0));
-		copyToVertexArray(5, Math::Vector3d(_viewport.right, _viewport.bottom, 0));
+		copyToVertexArray(3, Math::Vector3d(0, 0, 0));
+		copyToVertexArray(4, Math::Vector3d(_viewport.width(), 0, 0));
+		copyToVertexArray(5, Math::Vector3d(_viewport.width(), _viewport.height(), 0));
 
 		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
 		tglDrawArrays(TGL_TRIANGLES, 0, 6);
@@ -573,9 +572,6 @@ void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 		tglPopMatrix();
 		tglMatrixMode(TGL_PROJECTION);
 		tglPopMatrix();
-
-		// Restore viewport
-		tglViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
 	}
 }
 
