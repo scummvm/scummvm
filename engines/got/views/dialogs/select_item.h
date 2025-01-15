@@ -30,7 +30,7 @@ namespace Dialogs {
 
 class SelectItem : public Dialog {
 private:
-	int _selectedItem = -1;
+	int _selectedItem;
 
 	void selectItem();
 

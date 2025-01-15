@@ -34,6 +34,8 @@ static const char *ITEM_NAMES[] = {
 };
 
 SelectItem::SelectItem() : Dialog("SelectItem") {
+	_selectedItem = -1;
+	
 	setBounds(Common::Rect(56, 48, 264, 160));
 }
 

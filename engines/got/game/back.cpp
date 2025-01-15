@@ -52,7 +52,6 @@ void show_level(int new_level) {
 	_G(bomb_flag) = false;
 	_G(slipping) = false;
 
-	int save_d = _G(thor)->dir;
 	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
 		_G(thor)->dir = 0;
 
@@ -70,9 +69,10 @@ void show_level(int new_level) {
 	show_objects();
 	show_enemies();
 
+	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
+	// This behavior wasn't noticed during initial playthrough by Dreammaster - Warning has been added so it can be checked eventually.
 	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
-		_G(thor)->dir = 0;
-	_G(thor)->dir = save_d;
+		warning("show_level - Potential short move missing");
 
 	if (_G(warp_flag))
 		_G(current_level) = new_level - 5; // Force phase
@@ -198,14 +198,12 @@ void odin_speaks(int index, int item, const char *endMessage) {
 }
 
 int switch_icons() {
-	int ix, iy;
-
 	play_sound(WOOP, false);
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
-			ix = x * 16;
-			iy = y * 16;
+			int ix = x * 16;
+			int iy = y * 16;
 			if (_G(scrn).icon[y][x] == 93) {
 				place_tile(x, y, 144);
 			} else if (_G(scrn).icon[y][x] == 144) {
@@ -225,12 +223,10 @@ int switch_icons() {
 }
 
 int rotate_arrows() {
-	int x, y;
-
 	play_sound(WOOP, false);
 
-	for (y = 0; y < 12; y++) {
-		for (x = 0; x < 20; x++) {
+	for (int y = 0; y < 12; y++) {
+		for (int x = 0; x < 20; x++) {
 			if (_G(scrn).icon[y][x] == 205)
 				place_tile(x, y, 208);
 			else if (_G(scrn).icon[y][x] == 206)
@@ -246,9 +242,9 @@ int rotate_arrows() {
 }
 
 void kill_enemies(int iy, int ix) {
-	int i, x1, y1, x2, y2;
+	int x1, y1, x2, y2;
 
-	for (i = 3; i < MAX_ACTORS; i++) {
+	for (int i = 3; i < MAX_ACTORS; i++) {
 		if (_G(actor[i]).used) {
 			x1 = _G(actor[i]).x;
 			y1 = _G(actor[i]).y + _G(actor[i]).size_y - 2;
@@ -271,20 +267,11 @@ void kill_enemies(int iy, int ix) {
 	x2 = x1 + 13;
 	y2 = y1 + 5;
 
-	if (point_within(x1, y1, ix, iy, ix + 15, iy + 15))
-		goto dead;
-	if (point_within(x2, y1, ix, iy, ix + 15, iy + 15))
-		goto dead;
-	if (point_within(x1, y2, ix, iy, ix + 15, iy + 15))
-		goto dead;
-	if (point_within(x2, y2, ix, iy, ix + 15, iy + 15))
-		goto dead;
-	return;
-
-dead:
-	if (!_G(cheats).freezeHealth) {
-		_G(thor)->health = 0;
-		g_events->send(GameMessage("THOR_DIES"));
+	if (point_within(x1, y1, ix, iy, ix + 15, iy + 15) || point_within(x2, y1, ix, iy, ix + 15, iy + 15) || point_within(x1, y2, ix, iy, ix + 15, iy + 15) || point_within(x2, y2, ix, iy, ix + 15, iy + 15)) {
+		if (!_G(cheats).freezeHealth) {
+			_G(thor)->health = 0;
+			g_events->send(GameMessage("THOR_DIES"));
+		}
 	}
 }
 
@@ -320,21 +307,18 @@ void select_item() {
 }
 
 int actor_speaks(ACTOR *actr, int index, int item) {
-	Common::String str;
-	int v;
-	long lind;
-
 	if (actr->type != 4)
 		return 0;
-	v = atoi(actr->name);
+
+	int v = atoi(actr->name);
 	if (v < 1 || v > 20)
 		return 0;
 
-	lind = (long)_G(current_level);
+	long lind = (long)_G(current_level);
 	lind = lind * 1000;
 	lind += (long)actr->actor_num;
 
-	str = Common::String::format("FACE%d", v);
+	Common::String str = Common::String::format("FACE%d", v);
 	if (Common::File::exists(Common::Path(str))) {
 		Gfx::Pics pics(str, 262);
 		execute_script(lind, pics);
