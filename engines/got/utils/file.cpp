@@ -44,10 +44,7 @@ bool load_speech(int index) {
 	char tmps[5];
 
 	Common::String fname = Common::String::format("SPEAK%d", _G(area));
-
 	char *sp = new char[30000];
-	if (!sp)
-		return false;
 
 	if (res_read(fname, sp) < 0) {
 		delete[] sp;
