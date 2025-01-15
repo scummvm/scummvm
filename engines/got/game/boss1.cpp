@@ -45,6 +45,7 @@ int boss1_movement(ACTOR *actr) {
 		actr->edge_counter--;
 		goto done;
 	}
+
 	x1 = actr->x;
 	y1 = actr->y;
 
@@ -52,6 +53,7 @@ int boss1_movement(ACTOR *actr) {
 				_G(thor)->x, _G(thor)->y + 8, _G(thor)->x + 15, _G(thor)->y + 15)) {
 		thor_damaged(actr);
 	}
+
 	if (actr->temp3) { //start striking
 		actr->temp3--;
 		if (!actr->temp3)
@@ -84,6 +86,7 @@ int boss1_movement(ACTOR *actr) {
 		actr->num_moves = _G(setup).skill + 2;
 		goto done1;
 	}
+
 	if (actr->temp2) { // Retreating
 		if (actr->x < 256) {
 			d = 3;
@@ -98,13 +101,13 @@ int boss1_movement(ACTOR *actr) {
 
 		actr->temp2 = 0;
 	}
-	if (ABS((_G(thor_y1)) - (actr->y + 20)) < 8) {
-		if (!actr->temp1 && actr->x > _G(thor_x1)) {
-			actr->temp3 = 75;
-			actr->temp1 = 130;
-			actr->temp2 = 0;
-		}
+
+	if (actr->x > _G(thor_x1) && ABS((_G(thor_y1)) - (actr->y + 20)) < 8) {
+		actr->temp3 = 75;
+		actr->temp1 = 130;
+		actr->temp2 = 0;
 	}
+	
 	f = 0;
 	if (actr->counter) {
 		actr->counter--;
