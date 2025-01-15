@@ -71,23 +71,24 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		break;
 	}
 
-	case kVariableTypeLiteral: {
-		// Client code can worry about extracting the value.
-		_value.datum = new Datum(chunk);
-		debugC(7, kDebugLoading, "Variable::Variable(): LITERAL");
+	case kVariableTypeFloat: {
+		Datum datum = Datum(chunk);
+		if ((datum.t != kDatumTypeFloat64_1) && (datum.t != kDatumTypeFloat64_2)) {
+			error("Variable::Variable(): Got a non-float datum type 0x%x to put into a float variable", datum.t);
+		}
+		_value.d = datum.u.f;
+		debugC(7, kDebugLoading, "Variable::Variable(): FLOAT: %f", _value.d);
 		break;
 	}
 
-	case kVariableTypeUnk1: {
+	case kVariableTypeInt: {
 		_value.i = Datum(chunk).u.i;
-		debugC(7, kDebugLoading, "Variable::Variable(): UNK1: %d", _value.i);
-		warning("Variable::Variable(): Got unknown variable value type 0x%x (0x%llx)", static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
+		debugC(7, kDebugLoading, "Variable::Variable(): INT: %d", _value.i);
 		break;
 	}
 
 	default: {
 		error("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
-		_value.datum = new Datum(chunk);
 	}
 	}
 }
@@ -109,13 +110,7 @@ Variable::~Variable() {
 		break;
 	}
 
-	case kVariableTypeLiteral: {
-		delete _value.datum;
-		break;
-	}
-
 	default: {
-		delete _value.datum;
 		break;
 	}
 	}
@@ -153,10 +148,11 @@ Operand Variable::getValue() {
 		return returnValue;
 	}
 
-	case kVariableTypeLiteral: {
-		// Shouldn't matter too much, though, since it's still an integer type.
-		Operand returnValue(kOperandTypeLiteral1);
-		returnValue.putInteger(_value.datum->u.i);
+	case kVariableTypeFloat: {
+		// TODO: Is this value type correct?
+		// Shouldn't matter too much, though, since it's still a floating-point type.
+		Operand returnValue(kOperandTypeFloat1);
+		returnValue.putDouble(_value.d);
 		return returnValue;
 	}
 

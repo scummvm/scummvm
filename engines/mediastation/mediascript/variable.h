@@ -38,7 +38,6 @@ public:
 	uint32 _id = 0;
 	VariableType _type = kVariableTypeEmpty;
 	union {
-		Datum *datum = nullptr;
 		Common::String *string;
 		Common::Array<Variable *> *collection;
 		bool b;

@@ -248,9 +248,7 @@ enum VariableType {
 	kVariableTypeCollection = 0x0007,
 	kVariableTypeString = 0x0006,
 	kVariableTypeAssetId = 0x0005,
-	// These seem to be used in Dalmatians, but I don't know what they are
-	// used for.
-	kVariableTypeUnk1 = 0x0004,
+	kVariableTypeInt = 0x0004,
 	// These seem to be constants of some sort? This is what some of these
 	// IDs look like in PROFILE._ST:
 	//  - $downEar 10026
@@ -260,7 +258,7 @@ enum VariableType {
 	//  - var_6c14_NextEncouragementSound 316
 	kVariableTypeUnk2 = 0x0003,
 	kVariableTypeBoolean = 0x0002,
-	kVariableTypeLiteral = 0x0001
+	kVariableTypeFloat = 0x0001
 };
 
 } // End of namespace MediaStation
