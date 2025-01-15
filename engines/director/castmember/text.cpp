@@ -481,6 +481,7 @@ bool TextCastMember::hasField(int field) {
 		return true;
 	case kTheBorder:
 	case kTheScrollTop:
+	case kTheWordWrap:
 		return _type == kCastText;
 	case kTheButtonType:
 		return _type == kCastButton;
@@ -553,6 +554,8 @@ Datum TextCastMember::getField(int field) {
 			break;
 		}
 		break;
+	case kTheWordWrap:
+		return _type == kCastText;
 	default:
 		d = CastMember::getField(field);
 	}
