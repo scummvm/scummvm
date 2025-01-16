@@ -34,8 +34,7 @@ struct Message {};
 struct FocusMessage : public Message {
 	UIElement *_priorView = nullptr;
 	FocusMessage() : Message() {}
-	FocusMessage(UIElement *priorView) : Message(),
-										 _priorView(priorView) {}
+	FocusMessage(UIElement *priorView) : Message(), _priorView(priorView) {}
 };
 
 struct UnfocusMessage : public Message {};

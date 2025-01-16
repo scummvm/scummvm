@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/system.h"
-#include "common/util.h"
 #include "engines/engine.h"
 #include "got/events.h"
 #include "got/vars.h"

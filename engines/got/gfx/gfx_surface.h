@@ -29,10 +29,8 @@ namespace Gfx {
 
 class GfxSurface : public Graphics::ManagedSurface {
 public:
-	GfxSurface() : Graphics::ManagedSurface() {
-	}
-	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) : Graphics::ManagedSurface(surf, bounds) {
-	}
+	GfxSurface() : Graphics::ManagedSurface() {}
+	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) : Graphics::ManagedSurface(surf, bounds) {}
 
 	/**
      * Write some text to the surface

@@ -839,9 +839,24 @@ int Scripts::cmd_ask() {
 	return 0;
 }
 
+void Scripts::pause() {
+	_paused = SCRIPT_PAUSED;
+}
+
+void Scripts::resume() {
+	_paused = SCRIPT_RESUMING;
+}
+
 void Scripts::setAskResponse(int option) {
 	_numVar[_askVar] = option;
 	resume();
+}
+
+void Scripts::runIfResuming() {
+	if (_paused == SCRIPT_RESUMING) {
+		_paused = SCRIPT_READY;
+		scriptLoop();
+	}
 }
 
 int Scripts::cmd_sound() {
