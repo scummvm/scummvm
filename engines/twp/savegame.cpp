@@ -455,6 +455,8 @@ bool SaveGameManager::loadGame(Common::SeekableReadStream &stream) {
 		return false;
 	}
 	g_twp->_time = (float)gameTime;
+	// reset _nextHoldToMoveTime because it's based on time
+	g_twp->_nextHoldToMoveTime = 0.f;
 	g_twp->setTotalPlayTime(gameTime * 1000);
 	g_twp->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
 	if (SQ_FAILED(loadObjects(json["objects"]->asObject()))) {

@@ -566,11 +566,17 @@ void TwpEngine::update(float elapsed) {
 				if (_cursor.isLeftDown() || _cursor.isRightDown()) {
 					clickedAt(scrPos);
 				} else if (_cursor.leftDown || _cursor.rightDown) {
+					// when we keep holding button down, the actor should continue to walk to where the cursor is
 					if (_holdToMove && (_time > _nextHoldToMoveTime)) {
 						walkFast();
-						cancelSentence(_actor);
+						// don't change destination too often or it will be too slow
 						if (_actor->_room == _room && (distance(_actor->_node->getAbsPos(), roomPos) > 5)) {
-							Object::walk(_actor, roomPos);
+							// if a sentence is currently in execution, don't change the destination
+							if (_actor->_exec.enabled && _actor->_exec.noun1) {
+								Object::walk(_actor, _actor->_exec.noun1);
+							} else {
+								Object::walk(_actor, roomPos);
+							}
 						}
 						_nextHoldToMoveTime = _time + 0.250f;
 					}
