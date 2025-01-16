@@ -504,7 +504,7 @@ int Scripts::read_script_file() {
 
 	sbuff = (char *)malloc(25000l);
 	sb = sbuff;
-	if (!sbuff) {
+	if (!sb) {
 		ret = 1;
 		goto done;
 	};
