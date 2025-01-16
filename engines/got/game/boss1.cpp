@@ -35,8 +35,10 @@ namespace Got {
 static int boss1_dead();
 
 int boss1_movement(ACTOR *actr) {
-	int x1, y1, f;
+	int x1, y1;
 
+	bool f = false;
+	
 	if (_G(boss_dead))
 		return boss1_dead();
 
@@ -108,7 +110,6 @@ int boss1_movement(ACTOR *actr) {
 		actr->temp2 = 0;
 	}
 	
-	f = 0;
 	if (actr->counter) {
 		actr->counter--;
 		switch (d) {
@@ -119,7 +120,7 @@ int boss1_movement(ACTOR *actr) {
 			y1 += 2;
 
 			if (!check_move2(x1, y1, &_G(actor[5])))
-				f = 1;
+				f = true;
 			else {
 				actr->x = _G(actor[5]).x;
 				actr->y = _G(actor[5]).y - 16;
@@ -129,16 +130,16 @@ int boss1_movement(ACTOR *actr) {
 		case 2:
 			y1 -= 2;
 			if (!check_move2(x1, y1, actr))
-				f = 1;
+				f = true;
 			break;
 
 		default:
 			break;
 		}
 	} else
-		f = 1;
+		f = true;
 
-	if (f == 1) {
+	if (f) {
 		actr->counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(1);
 		actr->edge_counter = 20;

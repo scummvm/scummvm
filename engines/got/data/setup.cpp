@@ -31,17 +31,16 @@ SetupFlags &SetupFlags::operator=(const Got::SetupFlags &src) {
 
 void SetupFlags::sync(Common::Serializer &s) {
 	byte flags[8] = {};
-	int i;
 
 	if (s.isSaving()) {
-		for (i = 0; i < 64; ++i) {
+		for (int i = 0; i < 64; ++i) {
 			if (_flags[i])
 				flags[i / 8] = flags[i / 8] | (1 << (i % 8));
 		}
 		s.syncBytes(flags, 8);
 	} else {
 		s.syncBytes(flags, 8);
-		for (i = 0; i < 64; ++i)
+		for (int i = 0; i < 64; ++i)
 			_flags[i] = (flags[i / 8] & (1 << (i % 8))) != 0;
 	}
 }

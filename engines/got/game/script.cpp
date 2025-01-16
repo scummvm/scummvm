@@ -196,7 +196,7 @@ int Scripts::get_command() {
 		return -1;
 
 	int i = 0;
-	while (1) {
+	while (true) {
 		if (!SCR_COMMAND[i])
 			break; // Lookup command
 
@@ -390,7 +390,7 @@ int Scripts::get_next_val() {
 
 int Scripts::get_internal_variable() {
 	int i = 0;
-	while (1) {
+	while (true) {
 		if (!INTERNAL_VARIABLE[i])
 			return 0; // Lookup internal variable
 		int len = strlen(INTERNAL_VARIABLE[i]);

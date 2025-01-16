@@ -82,10 +82,9 @@ void HighScores::save() {
 void HighScores::add(int area, const Common::String &name, uint total) {
 	// Find the index for the new score in the list
 	int newIndex;
-	for (newIndex = 0; newIndex < HIGH_SCORES_PER_AREA &&
-					   total < _scores[area - 1][newIndex]._total;
-		 ++newIndex) {
+	for (newIndex = 0; newIndex < HIGH_SCORES_PER_AREA && total < _scores[area - 1][newIndex]._total; ++newIndex) {
 	}
+	
 	if (newIndex == HIGH_SCORES_PER_AREA)
 		// Lower than all current scores, so ignore it
 		return;
