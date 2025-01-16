@@ -969,7 +969,7 @@ void Adlib::OnTimer() {
 						Func2839(gArray5C[bp3 - 0xB], bp14);
 						
 					} else {
-						//l0017_1F12:
+						// l0017_1F12:
 						// TODO: Not sure if the way of using [bp-10h] is working 
 						Func2792(bp8 + 0x20, peekByteAt(bp10));
 						// TODO: Really need to rework 19BE implementation
@@ -987,45 +987,56 @@ void Adlib::OnTimer() {
 						// the call to 19BE above
 						// 						
 						Func2792(bp8 + 0x40, r19BE.readByte());
-						// TODO: Early pushed argument for 2792
-						/*
-						mov	ax,[bp-8h]
-						add	ax,60h
-						push	ax
-						*/
-						//    TODO: Continue from here
+						
 						Common::MemorySeekableReadWriteStream r19BE_2 = Func19BE_2(streamBP0E, 0x4);
 						Func2792(bp8 + 0x60, r19BE_2.readByte());
-						/*
 
-						mov	ax,[bp-8h]
-						add	ax,80h
-						push	ax
-						push	word ptr [bp-0Eh]
-						push	word ptr [bp-10h]
-						push	6h
-						call	far 0017h:19BEh
-						mov	di,ax
-						mov	es,dx
-						mov	al,es:[di]
-						push	ax
-						call	far 0017h:2792h
-						mov	ax,[bp-8h]
-						add	ax,0E0h
-						push	ax
-						push	word ptr [bp-0Eh]
-						push	word ptr [bp-10h]
-						push	8h
-						call	far 0017h:19BEh
-						mov	di,ax
-						mov	es,dx
-						mov	al,es:[di]
-						push	ax
-						call	far 0017h:2792h
-							*/
+						Common::MemorySeekableReadWriteStream r19BE_3 = Func19BE_2(streamBP0E, 0x6);
+						Func2792(bp8 + 0x80, r19BE_3.readByte());
 
+						Common::MemorySeekableReadWriteStream r19BE_4 = Func19BE_2(streamBP0E, 0x8);
+						Func2792(bp8 + 0xE0, r19BE_4.readByte());
 					}
 					// l0017_1FA9:
+					//    TODO: Continue from here
+					/*
+					push	word ptr [224Ah]
+	push	word ptr [2248h]
+	mov	al,[bp-3h]
+	xor	ah,ah
+	mov	di,ax
+	mov	al,[di+225Fh]
+	xor	ah,ah
+	shl	ax,4h
+	add	ax,3h
+	push	ax
+	call	far 0017h:19BEh
+	mov	[bp-10h],ax
+	mov	[bp-0Eh],dx
+	mov	al,[bp-5h]
+	xor	ah,ah
+	shr	ax,4h
+	mov	dx,ax
+	les	di,[bp-10h]
+	mov	al,es:[di]
+	and	al,3Fh
+	xor	ah,ah
+	shr	ax,4h
+	mov	di,ax
+	shl	di,3h
+	add	di,dx
+	mov	al,[di+37h]
+	mov	[bp-1h],al
+	mov	al,[225Eh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	al,[bp-1h]
+	xor	ah,ah
+	add	ax,dx
+	mov	[bp-1h],al
+	cmp	byte ptr [bp-1h],3Fh
+	jbe	2010h
+	*/
 				}
 				// TODO: This must be 2097h
 			}
