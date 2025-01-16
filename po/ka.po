@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-13 21:39+0000\n"
+"POT-Creation-Date: 2025-01-16 20:52+0000\n"
 "PO-Revision-Date: 2024-12-20 11:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -11519,7 +11519,7 @@ msgstr "შემდეგის გამოტოვება"
 msgid "Show hotspots"
 msgstr "ჰოტსპოტების ჩვენება"
 
-#: engines/twp/twp.cpp:824
+#: engines/twp/twp.cpp:830
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr ""
