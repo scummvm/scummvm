@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-13 21:39+0000\n"
-"PO-Revision-Date: 2025-01-14 16:18+0000\n"
+"PO-Revision-Date: 2025-01-16 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3410,7 +3410,7 @@ msgstr "Parancsikon ikonja"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr "Interpreter számos kalandjátékhoz és szerepjátékhoz"
+msgstr "Tolmács számos kalandjátékhoz és szerepjátékhoz"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:37
@@ -3421,11 +3421,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"A ScummVM egy olyan program, mely számos klasszikus grafikus point-and-click "
-"kalandjáték és szerepjáték futtatását teszi lehetővé, feltéve, hogy már "
-"rendelkeznek az adatfájljaikkal. Az okos rész ebben: A ScummVM csak "
-"kicseréli a játékkal szállított futtatható fájlokat, lehetővé téve számukra, "
-"hogy olyan rendszereken játsszák őket, amelyekre soha nem lettek tervezve!"
+"A ScummVM egy olyan program, mely számos klasszikus grafikus \"point-and-"
+"click\" kalandjáték és szerepjáték futtatását teszi lehetővé, és ehhez csak "
+"az adat fájlok szükségesek. Itt jön a képbe az okosság: A ScummVM csupán "
+"kicseréli a játék eredeti indító fájljait, lehetővé téve, hogy olyan "
+"rendszereken játsszák őket, amelyekre soha nem lettek tervezve!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:45
@@ -3435,10 +3435,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"Jelenleg a ScummVM egy hatalmas kalandkönyvtárat támogat, összesen több mint "
-"4000 játékkal. Támogatja számos legendás stúdió által kiadott klasszikust, "
-"mint például a LucasArts, a Sierra On-Line, a Revolution Software, a Cyan, "
-"Inc. és a Westwood Studios."
+"Jelenleg a ScummVM egy hatalmas kalandokkal teli könyvtárat támogat, "
+"összesen több mint 4000 játékkal. Támogatja számos legendás stúdió által "
+"kiadott klasszikust, mint például a LucasArts, a Sierra On-Line, a "
+"Revolution Software, a Cyan, Inc. és a Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:51
@@ -3448,8 +3448,8 @@ msgid ""
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
 "Az olyan úttörő címek mellett, mint a Monkey Island sorozat, a Broken Sword, "
-"a Myst, a Blade Runner és számtalan más játék, valóban homályos kalandokat "
-"és valóban rejtett drágaköveket találhat."
+"a Myst, a Blade Runner és a számtalan más játék mellett találhat alig ismert "
+"kalandjátékokat, esetlegesen megbúvó briliánsokat is."
 
 #: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
@@ -3466,11 +3466,11 @@ msgstr "Folytatás"
 
 #: engines/dialogs.cpp:70
 msgid "~L~oad"
-msgstr "~B~etöltés"
+msgstr "Betö~l~tés"
 
 #: engines/dialogs.cpp:71
 msgid "~S~ave"
-msgstr "Mentés"
+msgstr "Menté~s~"
 
 #: engines/dialogs.cpp:73
 msgid "~O~ptions"
@@ -3486,12 +3486,12 @@ msgstr "Névjegy"
 
 #: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
-msgstr "Visszatérés az indítóba"
+msgstr "Visszaté~r~és az indítóba"
 
 #: engines/dialogs.cpp:87 engines/dialogs.cpp:158
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "Visszatérés az indítóba"
+msgstr "Visszaté~r~és az indítóba"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
