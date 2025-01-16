@@ -7324,10 +7324,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("raveshuttle", "", "Raves/Rave Shuttle", "r:7b0837f93c5de519acdf1feea2a4ccf2",  705417, Common::DE_DEU, 500),
 	WINGAME1_l("raveshuttle", "", "RAVES/RAVES.EXE",	"t:b72156d440dc7ee42c6f238955cb2333", 1000911, Common::DE_DEU, 500),
 
-	// German variant of "Robinson Crusoe", published by Tivola
+	// Published by Tivola
 	// PC/Mac hybrid, but the Projector for the Mac version is embedded into an installer.
 	// The disc contains two versions in two Projector files. The "Standard Version" doesn't use the QTVR features,
 	// while the "Enhanced version" does.
+
+	MACGAME2("robinson", "Standard Version", "Robinson Standard",    "rt:bd1742321f9d7a09f823b8d5fb6f0245", 721305,
+							        		 "DATA/CHAP0.DXR",       "f:2a0daf076def486e3c3a7d17baaa1045", 1111434, 500),
+	MACGAME2("robinson", "Enhanced Version", "Robinson Deluxe",      "rt:bd1742321f9d7a09f823b8d5fb6f0245", 721305,
+											 "DATA/CHAP0.DXR",       "f:2a0daf076def486e3c3a7d17baaa1045", 1111434, 500),
+	WINGAME2("robinson", "Standard Version", "INSTALL/CRUSOE8.EXE",  "t:0f2182a591dff36ca9e7b3e2bdf7da5c", 1415006,
+											 "DATA/CHAP0.DXR",       "f:2a0daf076def486e3c3a7d17baaa1045", 1111434, 500),
+	WINGAME2("robinson", "Enhanced Version", "INSTALL/CRUSOE16.EXE", "t:b52694ebae5a672a48035e8ae4cc3584", 1414940,
+											 "DATA/CHAP0.DXR",       "f:2a0daf076def486e3c3a7d17baaa1045", 1111434, 500),
+	MACGAME2("robinson-makingof", "", "Making of",          "rt:9e6b9c364279c5670d49659ae3ae5487",  721305,
+							          "DATA/MOF.DXR",       "f:7e4f5e89332337f8c96fa46b4c1e02b9", 16437594, 501),
+	WINGAME2("robinson-makingof", "", "INSTALL/MAKING.EXE", "t:0e65eb964d9858fb5d491cc8f01bf10d", 17839173,
+									  "DATA/MOF.DXR",       "f:7e4f5e89332337f8c96fa46b4c1e02b9", 16437594, 501),
 	WINGAME2_l("robinson",          "Standard Version", "CRUSOE8.EXE", "t:98c98c109102a10f75bd05b76f49a009", 1398759,
 														"CHAP0.DXR",   "5bdff5b8f1eb8928f76fee5939798137",   1111290,  Common::DE_DEU, 500),
 	WINGAME2_l("robinson",          "Enhanced Version", "CRUSOE16.EXE","t:97c3d5d1472bab61962837b0bf820912", 1398987,
