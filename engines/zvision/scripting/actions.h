@@ -239,7 +239,7 @@ public:
 	bool execute() override;
 
 private:
-	int32 _pos;
+	int32 _pos; //Sound source position in panorama
 	uint32 _musicSlot;
 };
 
