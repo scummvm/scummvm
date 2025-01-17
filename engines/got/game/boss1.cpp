@@ -279,12 +279,12 @@ void closing_sequence1_3() {
 
 void closing_sequence1_4() {
 	for (int rep = 0; rep < 16; rep++)
-		_G(scrn).actor_type[rep] = 0;
+		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
 	_G(setup).boss_dead[0] = 1;
 	_G(boss_active) = false;
-	_G(scrn).type = 4;
+	_G(scrn)._music = 4;
 	show_level(BOSS_LEVEL1);
 
 	play_sound(ANGEL, true);
@@ -293,10 +293,10 @@ void closing_sequence1_4() {
 	actor_visible(1);
 	actor_visible(2);
 
-	LEVEL lvl;
+	Level lvl;
 	lvl.load(59);
-	lvl.icon[6][18] = 148;
-	lvl.icon[6][19] = 202;
+	lvl._iconGrid[6][18] = 148;
+	lvl._iconGrid[6][19] = 202;
 	lvl.save(59);
 }
 

@@ -49,11 +49,11 @@ void load_palette() {
 void set_screen_pal() {
 	byte pal[3];
 
-	xgetpal(pal, 1, _G(scrn).pal_colors[0]);
+	xgetpal(pal, 1, _G(scrn)._palColors[0]);
 	xsetpal(251, pal[0], pal[1], pal[2]);
-	xgetpal(pal, 1, _G(scrn).pal_colors[1]);
+	xgetpal(pal, 1, _G(scrn)._palColors[1]);
 	xsetpal(252, pal[0], pal[1], pal[2]);
-	xgetpal(pal, 1, _G(scrn).pal_colors[2]);
+	xgetpal(pal, 1, _G(scrn)._palColors[2]);
 	xsetpal(253, pal[0], pal[1], pal[2]);
 }
 

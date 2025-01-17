@@ -453,7 +453,7 @@ int Scripts::get_internal_variable() {
 			_lTemp = 0;
 		break;
 	case 24:
-		_lTemp = _G(scrn).icon[(_G(thor)->_y + 8) / 16][(_G(thor)->_x + 7) / 16];
+		_lTemp = _G(scrn)._iconGrid[(_G(thor)->_y + 8) / 16][(_G(thor)->_x + 7) / 16];
 		break;
 	case 25:
 		_lTemp = (((_G(thor)->_y + 8) / 16) * 20) + ((_G(thor)->_x + 7) / 16);
@@ -899,9 +899,9 @@ int Scripts::cmd_settile() {
 	if (screen == _G(current_level)) {
 		place_tile(pos % 20, pos / 20, tile);
 	} else {
-		LEVEL tmp;
+		Level tmp;
 		tmp.load(screen);
-		tmp.icon[pos / 20][pos % 20] = tile;
+		tmp._iconGrid[pos / 20][pos % 20] = tile;
 		tmp.save(screen);
 	}
 	return 0;
@@ -1045,7 +1045,7 @@ void Scripts::scr_func3() {
 		_G(key_flag[key_magic]) = false;
 		return;
 	}
-	if (_G(scrn).icon[y][x] < 174 || _G(scrn).icon[y][x] > 178) {
+	if (_G(scrn)._iconGrid[y][x] < 174 || _G(scrn)._iconGrid[y][x] > 178) {
 		play_sound(BRAAPP, true);
 		_G(key_flag[key_magic]) = false;
 		return;
@@ -1064,7 +1064,7 @@ void Scripts::scr_func3() {
 
 	if ((g_events->getRandomNumber(99)) < 25 ||
 		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
-		if (!_G(object_map[p]) && _G(scrn).icon[y][x] >= 140) { // nothing there and solid
+		if (!_G(object_map[p]) && _G(scrn)._iconGrid[y][x] >= 140) { // nothing there and solid
 			int o = g_events->getRandomNumber(1, 5);
 			if (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
 				o = 20;
@@ -1080,10 +1080,10 @@ void Scripts::scr_func4() {
 }
 
 void Scripts::scr_func5() {
-	_G(scrn).actor_loc[0] -= 2;
-	_G(scrn).actor_loc[1] -= 2;
-	_G(scrn).actor_loc[2] -= 2;
-	_G(scrn).actor_loc[3] -= 2;
+	_G(scrn)._actorLoc[0] -= 2;
+	_G(scrn)._actorLoc[1] -= 2;
+	_G(scrn)._actorLoc[2] -= 2;
+	_G(scrn)._actorLoc[3] -= 2;
 	_G(actor[3])._i1 = 16;
 }
 

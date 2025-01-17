@@ -135,14 +135,14 @@ public:
 	byte _object_map[TILES_COUNT] = {};
 	byte _object_index[TILES_COUNT] = {};
 	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0, _thor_icon4 = 0;
-	int8 _level_type = 0;
+	int8 _levelMusic = 0;
 	int8 _music_current = -1;
 	int8 _boss_loaded = 0;
 	int8 _apple_drop = 0;
 	bool _cheat = false;
 	int8 _area = 1;
 
-	LEVEL _scrn;
+	Level _scrn;
 
 	SETUP _setup;
 	SETUP _last_setup;

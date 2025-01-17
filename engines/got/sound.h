@@ -55,7 +55,7 @@ enum {
 class Sound {
 private:
 	byte *_soundData = nullptr;
-	HEADER _digiSounds[NUM_SOUNDS];
+	Header _digiSounds[NUM_SOUNDS];
 	Audio::SoundHandle _soundHandle;
 	int _currentPriority = 0;
 

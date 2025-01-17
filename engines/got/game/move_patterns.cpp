@@ -232,10 +232,10 @@ int check_move0(int x, int y, Actor *actr) {
 
 	// Check for cheat flying mode
 	if (!actr->_flying) {
-		byte icn1 = _G(scrn).icon[y1][x1];
-		byte icn2 = _G(scrn).icon[y2][x1];
-		byte icn3 = _G(scrn).icon[y1][x2];
-		byte icn4 = _G(scrn).icon[y2][x2];
+		byte icn1 = _G(scrn)._iconGrid[y1][x1];
+		byte icn2 = _G(scrn)._iconGrid[y2][x1];
+		byte icn3 = _G(scrn)._iconGrid[y1][x2];
+		byte icn4 = _G(scrn)._iconGrid[y2][x2];
 		int ti = 0;
 
 		if (icn1 < TILE_FLY) {
@@ -264,22 +264,22 @@ int check_move0(int x, int y, Actor *actr) {
 		if (icn1 > TILE_SPECIAL) {
 			if (!special_tile_thor(y1, x1, icn1))
 				return 0;
-			icn2 = _G(scrn).icon[y2][x1];
-			icn3 = _G(scrn).icon[y1][x2];
-			icn4 = _G(scrn).icon[y2][x2];
+			icn2 = _G(scrn)._iconGrid[y2][x1];
+			icn3 = _G(scrn)._iconGrid[y1][x2];
+			icn4 = _G(scrn)._iconGrid[y2][x2];
 		}
 
 		if (icn2 > TILE_SPECIAL) {
 			if (!special_tile_thor(y2, x1, icn2))
 				return 0;
-			icn3 = _G(scrn).icon[y1][x2];
-			icn4 = _G(scrn).icon[y2][x2];
+			icn3 = _G(scrn)._iconGrid[y1][x2];
+			icn4 = _G(scrn)._iconGrid[y2][x2];
 		}
 
 		if (icn3 > TILE_SPECIAL) {
 			if (!special_tile_thor(y1, x2, icn3))
 				return 0;
-			icn4 = _G(scrn).icon[y2][x2];
+			icn4 = _G(scrn)._iconGrid[y2][x2];
 		}
 
 		if (icn4 > TILE_SPECIAL && !special_tile_thor(y2, x2, icn4))
@@ -364,10 +364,10 @@ int check_move1(int x, int y, Actor *actr) {
 	if (actr->_flying)
 		icn = TILE_SOLID;
 
-	byte icn1 = _G(scrn).icon[y1][x1];
-	byte icn2 = _G(scrn).icon[y2][x1];
-	byte icn3 = _G(scrn).icon[y1][x2];
-	byte icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn)._iconGrid[y1][x1];
+	byte icn2 = _G(scrn)._iconGrid[y2][x1];
+	byte icn3 = _G(scrn)._iconGrid[y1][x2];
+	byte icn4 = _G(scrn)._iconGrid[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) {
 		if (actr->_actorNum == 1 && actr->_moveType == 2)
 			play_sound(CLANG, false);
@@ -460,10 +460,10 @@ int check_move2(int x, int y, Actor *actr) {
 	if (actr->_flying)
 		icn = TILE_SOLID;
 
-	byte icn1 = _G(scrn).icon[y1][x1];
-	byte icn2 = _G(scrn).icon[y2][x1];
-	byte icn3 = _G(scrn).icon[y1][x2];
-	byte icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn)._iconGrid[y1][x1];
+	byte icn2 = _G(scrn)._iconGrid[y2][x1];
+	byte icn3 = _G(scrn)._iconGrid[y1][x2];
+	byte icn4 = _G(scrn)._iconGrid[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
@@ -538,10 +538,10 @@ int check_move3(int x, int y, Actor *actr) {
 	if (actr->_flying)
 		icn = TILE_SOLID;
 
-	byte icn1 = _G(scrn).icon[y1][x1];
-	byte icn2 = _G(scrn).icon[y2][x1];
-	byte icn3 = _G(scrn).icon[y1][x2];
-	byte icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn)._iconGrid[y1][x1];
+	byte icn2 = _G(scrn)._iconGrid[y2][x1];
+	byte icn3 = _G(scrn)._iconGrid[y1][x2];
+	byte icn4 = _G(scrn)._iconGrid[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
@@ -818,10 +818,10 @@ int check_special_move1(int x, int y, Actor *actr) {
 	if (actr->_flying)
 		icn = TILE_SOLID;
 
-	byte icn1 = _G(scrn).icon[y1][x1];
-	byte icn2 = _G(scrn).icon[y2][x1];
-	byte icn3 = _G(scrn).icon[y1][x2];
-	byte icn4 = _G(scrn).icon[y2][x2];
+	byte icn1 = _G(scrn)._iconGrid[y1][x1];
+	byte icn2 = _G(scrn)._iconGrid[y2][x1];
+	byte icn3 = _G(scrn)._iconGrid[y1][x2];
+	byte icn4 = _G(scrn)._iconGrid[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
@@ -2236,7 +2236,7 @@ int movement_thirtyone(Actor *actr) {
 		int cy = ((actr->_y + actr->_sizeY) - 2) >> 4;
 		int ty = _G(thor)->_centerY;
 		for (int i = cy; i <= ty; i++)
-			if (_G(scrn).icon[i][cx] < TILE_SOLID)
+			if (_G(scrn)._iconGrid[i][cx] < TILE_SOLID)
 				goto done;
 		actr->_numMoves = actr->_passValue + 1;
 		actr->_temp1 = 1;

@@ -158,17 +158,17 @@ void show_enemies() {
 		_G(enemy_type[i]) = 0;
 
 	for (int i = 0; i < MAX_ENEMIES; i++) {
-		if (_G(scrn).actor_type[i] > 0) {
-			int r = load_enemy(_G(scrn).actor_type[i]);
+		if (_G(scrn)._actorType[i] > 0) {
+			int r = load_enemy(_G(scrn)._actorType[i]);
 			if (r >= 0) {
 				_G(actor[i + 3]) = _G(enemy[r]);
 
-				int d = _G(scrn).actor_dir[i];
+				int d = _G(scrn)._actorDir[i];
 
-				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
-							(_G(scrn).actor_loc[i] / 20) * 16);
-				_G(actor[i + 3])._initDir = _G(scrn).actor_dir[i];
-				_G(actor[i + 3])._passValue = _G(scrn).actor_value[i];
+				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
+							(_G(scrn)._actorLoc[i] / 20) * 16);
+				_G(actor[i + 3])._initDir = _G(scrn)._actorDir[i];
+				_G(actor[i + 3])._passValue = _G(scrn)._actorValue[i];
 
 				if (_G(actor[i + 3])._moveType == 23) {
 					// Spinball
@@ -176,7 +176,7 @@ void show_enemies() {
 						_G(actor[i + 3])._moveType = 24;
 				}
 
-				if (_G(scrn).actor_invis[i])
+				if (_G(scrn)._actorInvis[i])
 					_G(actor[i + 3])._active = false;
 			}
 
@@ -239,16 +239,16 @@ int load_enemy(int type) {
 
 int actor_visible(int invis_num) {
 	for (int i = 0; i < MAX_ENEMIES; i++) {
-		if (_G(scrn).actor_invis[i] == invis_num) {
+		if (_G(scrn)._actorInvis[i] == invis_num) {
 			int etype = _G(etype[i]);
 			if (etype >= 0 && !_G(actor[i + 3])._active) {
 				_G(actor[i + 3]) = _G(enemy[etype]);
 
-				int d = _G(scrn).actor_dir[i];
-				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
-							(_G(scrn).actor_loc[i] / 20) * 16);
-				_G(actor[i + 3])._initDir = _G(scrn).actor_dir[i];
-				_G(actor[i + 3])._passValue = _G(scrn).actor_value[i];
+				int d = _G(scrn)._actorDir[i];
+				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
+							(_G(scrn)._actorLoc[i] / 20) * 16);
+				_G(actor[i + 3])._initDir = _G(scrn)._actorDir[i];
+				_G(actor[i + 3])._passValue = _G(scrn)._actorValue[i];
 				return i;
 			}
 

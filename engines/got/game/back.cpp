@@ -52,17 +52,17 @@ void show_level(int new_level) {
 	_G(bomb_flag) = false;
 	_G(slipping) = false;
 
-	if (_G(scrn).icon[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
+	if (_G(scrn)._iconGrid[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
 		_G(thor)->_dir = 0;
 
 	// The original copied 130 bytes from _G(scrn).static_object onwards into sd_data.
-	// This doesn't make sense, because that would put the ending in the middle of static_y.
+	// This doesn't make sense, because that would put the ending in the middle of _staticY.
 	// Plus, it follows with an entire copy of scrn into sd_data anyway, so the first
 	// move seems entirely redundant.
 	_G(scrn).save(_G(current_level));
 	_G(scrn).load(_G(new_level));
 
-	_G(level_type) = _G(scrn).type;
+	_G(levelMusic) = _G(scrn)._music;
 
 	_G(thor)->_nextFrame = 0;
 
@@ -71,7 +71,7 @@ void show_level(int new_level) {
 
 	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
 	// This behavior wasn't noticed during initial playthrough by Dreammaster - Warning has been added so it can be checked eventually.
-	if (_G(scrn).icon[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
+	if (_G(scrn)._iconGrid[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
 		warning("show_level - Potential short move missing");
 
 	if (_G(warp_flag))
@@ -93,7 +93,7 @@ void show_level(int new_level) {
 	if (!_G(setup).scroll_flag)
 		_G(current_level) = new_level; // Force no scroll
 
-	if (_G(music_current) != _G(level_type))
+	if (_G(music_current) != _G(levelMusic))
 		_G(sound).music_pause();
 
 	switch (_G(new_level) - _G(current_level)) {
@@ -174,7 +174,7 @@ void show_level_done() {
 	if (_G(startup))
 		f = false;
 	if (f)
-		music_play(_G(level_type), false);
+		music_play(_G(levelMusic), false);
 }
 
 static void odin_speaks_end() {
@@ -204,15 +204,15 @@ int switch_icons() {
 		for (int x = 0; x < 20; x++) {
 			int ix = x * 16;
 			int iy = y * 16;
-			if (_G(scrn).icon[y][x] == 93) {
+			if (_G(scrn)._iconGrid[y][x] == 93) {
 				place_tile(x, y, 144);
-			} else if (_G(scrn).icon[y][x] == 144) {
+			} else if (_G(scrn)._iconGrid[y][x] == 144) {
 				place_tile(x, y, 93);
 				kill_enemies(iy, ix);
 			}
-			if (_G(scrn).icon[y][x] == 94) {
+			if (_G(scrn)._iconGrid[y][x] == 94) {
 				place_tile(x, y, 146);
-			} else if (_G(scrn).icon[y][x] == 146) {
+			} else if (_G(scrn)._iconGrid[y][x] == 146) {
 				place_tile(x, y, 94);
 				kill_enemies(iy, ix);
 			}
@@ -227,13 +227,13 @@ int rotate_arrows() {
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
-			if (_G(scrn).icon[y][x] == 205)
+			if (_G(scrn)._iconGrid[y][x] == 205)
 				place_tile(x, y, 208);
-			else if (_G(scrn).icon[y][x] == 206)
+			else if (_G(scrn)._iconGrid[y][x] == 206)
 				place_tile(x, y, 207);
-			else if (_G(scrn).icon[y][x] == 207)
+			else if (_G(scrn)._iconGrid[y][x] == 207)
 				place_tile(x, y, 205);
-			else if (_G(scrn).icon[y][x] == 208)
+			else if (_G(scrn)._iconGrid[y][x] == 208)
 				place_tile(x, y, 206);
 		}
 	}
@@ -285,7 +285,7 @@ void remove_objects(int y, int x) {
 }
 
 void place_tile(int x, int y, int tile) {
-	_G(scrn).icon[y][x] = tile;
+	_G(scrn)._iconGrid[y][x] = tile;
 	remove_objects(y, x);
 }
 
@@ -296,7 +296,7 @@ int bgtile(int x, int y) {
 	x = (x + 1) >> 4;
 	y = (y + 1) >> 4;
 
-	return _G(scrn).icon[y][x];
+	return _G(scrn)._iconGrid[y][x];
 }
 
 void select_item() {

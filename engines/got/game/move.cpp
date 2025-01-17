@@ -298,25 +298,25 @@ int actor_shoots(Actor *actr, int dir) {
 	switch (dir) {
 	case 0:
 		for (i = ty + 1; i <= cy; i++) {
-			if (_G(scrn).icon[i][cx] < icn)
+			if (_G(scrn)._iconGrid[i][cx] < icn)
 				return 0;
 		}
 		break;
 	case 1:
 		for (i = cy; i <= ty; i++) {
-			if (_G(scrn).icon[i][cx] < icn)
+			if (_G(scrn)._iconGrid[i][cx] < icn)
 				return 0;
 		}
 		break;
 	case 2:
 		for (i = tx; i < cx; i++) {
-			if (_G(scrn).icon[cy][i] < icn)
+			if (_G(scrn)._iconGrid[cy][i] < icn)
 				return 0;
 		}
 		break;
 	case 3:
 		for (i = cx; i < tx; i++) {
-			if (_G(scrn).icon[cy][i] < icn)
+			if (_G(scrn)._iconGrid[cy][i] < icn)
 				return 0;
 		}
 		break;

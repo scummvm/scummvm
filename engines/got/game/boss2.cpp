@@ -284,7 +284,7 @@ static int boss2a_movement(Actor *actr) {
 	_G(actor[an])._x = x;
 	_G(actor[an])._y = y;
 
-	_G(scrn).icon[y / 16][x / 16] = _G(scrn).bg_color;
+	_G(scrn)._iconGrid[y / 16][x / 16] = _G(scrn)._backgroundColor;
 
 	_G(actor[3])._i2++;
 	if (_G(actor[3])._i2 > 59) {
@@ -402,13 +402,13 @@ void closing_sequence2_3() {
 
 void closing_sequence2_4() {
 	for (int rep = 0; rep < 16; rep++)
-		_G(scrn).actor_type[rep] = 0;
+		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
 	_G(setup).boss_dead[1] = 1;
 	_G(game_over) = true;
 	_G(boss_active) = false;
-	_G(scrn).type = 6;
+	_G(scrn)._music = 6;
 
 	show_level(BOSS_LEVEL2);
 
@@ -422,10 +422,10 @@ void closing_sequence2_4() {
 	_G(actor[8])._x = 304;
 	_G(actor[8])._y = 160;
 
-	LEVEL lvl;
+	Level lvl;
 	lvl.load(BOSS_LEVEL2);
-	lvl.icon[6][18] = 152;
-	lvl.icon[6][19] = 202;
+	lvl._iconGrid[6][18] = 152;
+	lvl._iconGrid[6][19] = 202;
 	lvl.save(BOSS_LEVEL2);
 }
 

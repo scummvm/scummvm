@@ -531,13 +531,13 @@ void closing_sequence3_3() {
 	fill_magic();
 
 	for (int rep = 0; rep < 16; rep++)
-		_G(scrn).actor_type[rep] = 0;
+		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
 	_G(setup).boss_dead[2] = 1;
 	_G(game_over) = true;
 	_G(boss_active) = false;
-	_G(scrn).type = 6;
+	_G(scrn)._music = 6;
 	show_level(BOSS_LEVEL3);
 
 	_G(exit_flag) = 0;
@@ -596,7 +596,7 @@ int endgame_one() {
 	_G(actor[34])._nextFrame = 0;
 	_G(actor[34])._currNumShots = 3;
 
-	_G(scrn).icon[y / 16][x / 16] = _G(scrn).bg_color;
+	_G(scrn)._iconGrid[y / 16][x / 16] = _G(scrn)._backgroundColor;
 
 	_G(endgame++);
 	if (_G(endgame) > 32) {
@@ -636,8 +636,8 @@ int endgame_movement() {
 	_G(actor[34])._nextFrame = 0;
 	_G(actor[34])._currNumShots = 3;
 
-	_G(scrn).icon[y / 16][x / 16] = _G(scrn).bg_color;
-	_G(scrn).icon[(y / 16) - 4][x / 16] = _G(scrn).bg_color;
+	_G(scrn)._iconGrid[y / 16][x / 16] = _G(scrn)._backgroundColor;
+	_G(scrn)._iconGrid[(y / 16) - 4][x / 16] = _G(scrn)._backgroundColor;
 
 	_G(endgame++);
 	if (_G(endgame) > 8) {

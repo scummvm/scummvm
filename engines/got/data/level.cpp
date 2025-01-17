@@ -26,41 +26,41 @@
 
 namespace Got {
 
-void LEVEL::sync(Common::Serializer &s) {
+void Level::sync(Common::Serializer &s) {
 	for (int i = 0; i < 12; ++i)
-		s.syncBytes(icon[i], 20);
+		s.syncBytes(_iconGrid[i], 20);
 
-	s.syncAsByte(bg_color);
-	s.syncAsByte(type);
+	s.syncAsByte(_backgroundColor);
+	s.syncAsByte(_music);
 
-	s.syncBytes(actor_type, 16);
-	s.syncBytes(actor_loc, 16);
-	s.syncBytes(actor_value, 16);
-	s.syncBytes(pal_colors, 3);
-	s.syncBytes(actor_invis, 16);
-	s.syncBytes(extra, 13);
-	s.syncBytes(static_obj, 30);
+	s.syncBytes(_actorType, 16);
+	s.syncBytes(_actorLoc, 16);
+	s.syncBytes(_actorValue, 16);
+	s.syncBytes(_palColors, 3);
+	s.syncBytes(_actorInvis, 16);
+	s.syncBytes(_extra, 13);
+	s.syncBytes(_staticObject, 30);
 
 	for (int i = 0; i < 30; ++i)
-		s.syncAsSint16LE(static_x[i]);
+		s.syncAsSint16LE(_staticX[i]);
 	for (int i = 0; i < 30; ++i)
-		s.syncAsSint16LE(static_y[i]);
+		s.syncAsSint16LE(_staticY[i]);
 
-	s.syncBytes(new_level, 10);
-	s.syncBytes(new_level_loc, 10);
+	s.syncBytes(_newLevel, 10);
+	s.syncBytes(_newLevelLocation, 10);
 
-	s.syncAsByte(area);
-	s.syncBytes(actor_dir, 16);
-	s.syncBytes(future, 3);
+	s.syncAsByte(_area);
+	s.syncBytes(_actorDir, 16);
+	s.syncBytes(_filler, 3);
 }
 
-void LEVEL::load(int level) {
+void Level::load(int level) {
 	Common::MemoryReadStream src(_G(sd_data)[level], 512);
 	Common::Serializer s(&src, nullptr);
 	sync(s);
 }
 
-void LEVEL::save(int level) {
+void Level::save(int level) {
 	Common::MemoryWriteStream dest(_G(sd_data)[level], 512);
 	Common::Serializer s(nullptr, &dest);
 	sync(s);

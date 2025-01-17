@@ -38,10 +38,10 @@ void show_objects() {
 	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
 
 	for (int i = 0; i < OBJECTS_COUNT; i++) {
-		if (_G(scrn).static_obj[i]) {
-			int p = _G(scrn).static_x[i] + (_G(scrn).static_y[i] * TILES_X);
+		if (_G(scrn)._staticObject[i]) {
+			int p = _G(scrn)._staticX[i] + (_G(scrn)._staticY[i] * TILES_X);
 			_G(object_index[p]) = i;
-			_G(object_map[p]) = _G(scrn).static_obj[i];
+			_G(object_map[p]) = _G(scrn)._staticObject[i];
 		}
 	}
 }
@@ -168,7 +168,7 @@ void pick_up_object(int p) {
 
 	// Reset so it doesn't reappear on reentry to screen
 	if (_G(object_index[p]) < 30)
-		_G(scrn).static_obj[_G(object_index[p])] = 0;
+		_G(scrn)._staticObject[_G(object_index[p])] = 0;
 	
 	_G(object_index[p]) = 0;
 }
@@ -201,7 +201,7 @@ int drop_object(Actor *actr) {
 
 int _drop_obj(Actor *actr, int o) {
 	int p = (actr->_x + (actr->_sizeX / 2)) / 16 + (((actr->_y + (actr->_sizeY / 2)) / 16) * 20);
-	if (!_G(object_map[p]) && _G(scrn).icon[p / 20][p % 20] >= 140) { //nothing there and solid
+	if (!_G(object_map[p]) && _G(scrn)._iconGrid[p / 20][p % 20] >= 140) { //nothing there and solid
 		_G(object_map[p]) = o;
 		_G(object_index[p]) = 27 + actr->_actorNum; //actor is 3-15
 

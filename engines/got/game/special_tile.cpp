@@ -110,7 +110,7 @@ int special_tile_thor(int x, int y, int icon) {
 				actor_visible(3);
 				actor_visible(4);
 				actor_visible(5);
-				Common::fill(_G(scrn).actor_invis, _G(scrn).actor_invis + 16, 0);
+				Common::fill(_G(scrn)._actorInvis, _G(scrn)._actorInvis + 16, 0);
 				_G(thunder_flag) = 60;
 				play_sound(THUNDER, true);
 				_G(setup).f22 = 1;
@@ -130,11 +130,11 @@ int special_tile_thor(int x, int y, int icon) {
 		if ((GAME2 && icon == 217) || GAME3) {
 			cx = (_G(thor_x1) + 7) / 16;
 			cy = (_G(thor_real_y1) + 8) / 16;
-			if (_G(scrn).icon[cy][cx] == icon) {
+			if (_G(scrn)._iconGrid[cy][cx] == icon) {
 				_G(thor)->_vulnerableCountdown = STAMINA;
 				play_sound(WOOP, false);
 
-				int nt = _G(scrn).new_level_loc[icon - 214];
+				int nt = _G(scrn)._newLevelLocation[icon - 214];
 				int display_page = _G(pge);
 				int draw_page = _G(pge) ^ 1;
 
@@ -167,19 +167,19 @@ int special_tile_thor(int x, int y, int icon) {
 		// Hole tiles
 		cx = (_G(thor_x1) + 7) / 16;
 		cy = (_G(thor_real_y1) + 8) / 16;
-		if (_G(scrn).icon[cy][cx] == icon) {
+		if (_G(scrn)._iconGrid[cy][cx] == icon) {
 			_G(thor)->_vulnerableCountdown = STAMINA;
 			if (icon < 224 && icon > 219)
 				play_sound(FALL, false);
 
-			_G(new_level) = _G(scrn).new_level[icon - 220 + (f * 6)];
+			_G(new_level) = _G(scrn)._newLevel[icon - 220 + (f * 6)];
 			_G(warp_scroll) = false;
 			if (_G(new_level) > 119) {
 				_G(warp_scroll) = true;
 				_G(new_level) -= 128;
 			}
 
-			_G(new_level_tile) = _G(scrn).new_level_loc[icon - 220 + (f * 6)];
+			_G(new_level_tile) = _G(scrn)._newLevelLocation[icon - 220 + (f * 6)];
 			_G(warp_flag) = true;
 
 			if (_G(warp_scroll)) {
@@ -243,7 +243,7 @@ int special_tile(Actor *actr, int x, int y, int icon) {
 
 void erase_door(int x, int y) {
 	play_sound(DOOR, false);
-	_G(scrn).icon[y][x] = _G(scrn).bg_color;
+	_G(scrn)._iconGrid[y][x] = _G(scrn)._backgroundColor;
 }
 
 int open_door1(int y, int x) {

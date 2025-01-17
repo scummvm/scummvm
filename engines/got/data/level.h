@@ -28,30 +28,29 @@ namespace Got {
 
 #define OBJECTS_COUNT 30
 
-struct LEVEL { // size=512
+struct Level {
 private:
 	void sync(Common::Serializer &s);
 
 public:
-	byte icon[12][20] = {};    // 0   grid of icons
-	byte bg_color = 0;         // 240 background color
-	byte type = 0;             // 241 music
-	byte actor_type[16] = {};  // 242 type of enemies (12 max)
-	byte actor_loc[16] = {};   // 254 location of enemies
-	byte actor_value[16] = {}; // pass value
-	byte pal_colors[3] = {};   // change 251,253,254 to these three
-	byte actor_invis[16] = {};
-	byte extra[13] = {};
+	byte _iconGrid[12][20] = {};            // Grid of icons
+	byte _backgroundColor = 0;              // Background color
+	byte _music = 0;                        // Music
+	byte _actorType[16] = {};               // Type of enemies (12 max)
+	byte _actorLoc[16] = {};                // Location of enemies
+	byte _actorValue[16] = {};              // Pass value
+	byte _palColors[3] = {};                // Change 251,253,254 to these three
+	byte _actorInvis[16] = {};
+	byte _extra[13] = {};
 
-	byte static_obj[OBJECTS_COUNT] = {}; // 302 static objects (treasure, keys,etc)
-	int static_x[OBJECTS_COUNT] = {};    // 332 X coor of static objects
-	int static_y[OBJECTS_COUNT] = {};    // 392 Y coor of static objects
-	byte new_level[10] = {};             // 452 level jump for icon 200-204
-	byte new_level_loc[10] = {};         // 462 grid location to jump in to
-	byte area = 0;                       // 472 game area (1=forest,etc)
-	byte actor_dir[16] = {};             // initial _dir
-	byte future[3] = {};                 // 473
-
+	byte _staticObject[OBJECTS_COUNT] = {}; // Static objects (treasure, keys,etc)
+	int _staticX[OBJECTS_COUNT] = {};       // X coordinates of static objects
+	int _staticY[OBJECTS_COUNT] = {};       // Y coordinates of static objects
+	byte _newLevel[10] = {};                // Level jump for icon 200-204
+	byte _newLevelLocation[10] = {};        // Grid location to jump in to
+	byte _area = 0;                         // Game area (1=forest,etc)
+	byte _actorDir[16] = {};                // Initial _dir
+	byte _filler[3] = {};
 	/**
      * Loads level data from the global sd_data for the given level
      */

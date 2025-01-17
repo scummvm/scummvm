@@ -164,7 +164,7 @@ void GotEngine::savegameLoaded() {
 		if (GAME1 && _G(current_area) == 59) {
 			music_play(5, true);
 		} else {
-			music_play(_G(level_type), true);
+			music_play(_G(levelMusic), true);
 		}
 	} else {
 		_G(setup).music = 1;

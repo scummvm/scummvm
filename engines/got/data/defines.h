@@ -28,13 +28,13 @@
 
 namespace Got {
 
-struct HEADER {
-	long offset = 0;
-	long length = 0;
+struct Header {
+	long _offset = 0;
+	long _length = 0;
 
 	void load(Common::SeekableReadStream *src) {
-		offset = src->readUint32LE();
-		length = src->readUint32LE();
+		_offset = src->readUint32LE();
+		_length = src->readUint32LE();
 	}
 };
 

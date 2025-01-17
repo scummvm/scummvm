@@ -225,11 +225,11 @@ bool GameContent::tick() {
 void GameContent::drawBackground(GfxSurface &s) {
 	for (int y = 0; y < TILES_Y; y++) {
 		for (int x = 0; x < TILES_X; x++) {
-			if (_G(scrn).icon[y][x] != 0) {
+			if (_G(scrn)._iconGrid[y][x] != 0) {
 				const Common::Point pt(x * TILE_SIZE, y * TILE_SIZE);
-				const LEVEL &screen = _G(scrn);
-				s.simpleBlitFrom(_G(bgPics[screen.bg_color]), pt);
-				s.simpleBlitFrom(_G(bgPics[screen.icon[y][x]]), pt);
+				const Level &screen = _G(scrn);
+				s.simpleBlitFrom(_G(bgPics[screen._backgroundColor]), pt);
+				s.simpleBlitFrom(_G(bgPics[screen._iconGrid[y][x]]), pt);
 			}
 		}
 	}
