@@ -207,7 +207,7 @@ int special_tile_thor(int x, int y, int icon) {
 	return 0;
 }
 
-int special_tile(ACTOR *actr, int x, int y, int icon) {
+int special_tile(Actor *actr, int x, int y, int icon) {
 	switch (icon) {
 	case 201:
 	case 202:

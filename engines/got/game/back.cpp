@@ -306,7 +306,7 @@ void select_item() {
 	}
 }
 
-int actor_speaks(ACTOR *actr, int index, int item) {
+int actor_speaks(Actor *actr, int index, int item) {
 	if (actr->_type != 4)
 		return 0;
 

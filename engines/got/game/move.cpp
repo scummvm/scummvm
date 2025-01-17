@@ -30,7 +30,7 @@
 
 namespace Got {
 
-void next_frame(ACTOR *actr) {
+void next_frame(Actor *actr) {
 	const int fcount = actr->_frameCount - 1;
 
 	if (fcount <= 0) {
@@ -68,7 +68,7 @@ bool overlap(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
 	return false;
 }
 
-int reverse_direction(ACTOR *actr) {
+int reverse_direction(Actor *actr) {
 	if (actr->_dir == 1)
 		return 0;
 	if (actr->_dir == 2)
@@ -106,7 +106,7 @@ int kill_good_guy(void) {
 	return 0;
 }
 
-void actor_damaged(ACTOR *actr, int damage) {
+void actor_damaged(Actor *actr, int damage) {
 	if (!_G(setup).skill)
 		damage *= 2;
 	else if (_G(setup).skill == 2)
@@ -140,7 +140,7 @@ void actor_damaged(ACTOR *actr, int damage) {
 	}
 }
 
-void thor_damaged(ACTOR *actr) {
+void thor_damaged(Actor *actr) {
 	actr->_hitThor = 1;
 
 	// If we're invincible, ignore any damage
@@ -184,7 +184,7 @@ void thor_damaged(ACTOR *actr) {
 	}
 }
 
-void actor_destroyed(ACTOR *actr) {
+void actor_destroyed(Actor *actr) {
 	if (actr->_actorNum > 2) {
 		int pge = _G(pge);
 
@@ -220,11 +220,11 @@ void actor_destroyed(ACTOR *actr) {
 	}
 }
 
-int _actor_shoots(ACTOR *actr, int dir) {
+int _actor_shoots(Actor *actr, int dir) {
 	int t = actr->_shotType - 1;
 	for (int i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
 		if ((!_G(actor[i])._active) && (!_G(actor[i])._dead)) {
-			ACTOR *act = &_G(actor[i]);
+			Actor *act = &_G(actor[i]);
 			*act = _G(shot[t]);
 			int cx, cy;
 
@@ -277,11 +277,11 @@ int _actor_shoots(ACTOR *actr, int dir) {
 	return 0;
 }
 
-void actor_always_shoots(ACTOR *actr, int dir) {
+void actor_always_shoots(Actor *actr, int dir) {
 	_actor_shoots(actr, dir);
 }
 
-int actor_shoots(ACTOR *actr, int dir) {
+int actor_shoots(Actor *actr, int dir) {
 	int i;
 
 	int cx = (actr->_x + (actr->_sizeX / 2)) >> 4;
@@ -324,7 +324,7 @@ int actor_shoots(ACTOR *actr, int dir) {
 	return _actor_shoots(actr, dir);
 }
 
-void move_actor(ACTOR *actr) {
+void move_actor(Actor *actr) {
 	if (actr->_vulnerableCountdown != 0)
 		actr->_vulnerableCountdown--;
 	if (actr->_shotCountdown != 0)

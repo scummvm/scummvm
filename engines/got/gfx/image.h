@@ -28,8 +28,8 @@ namespace Got {
 
 //extern uint make_mask(MASK_IMAGE *new_image, uint page_start,
 //	byte *Image, int image_width, int image_height);
-extern void setup_actor(ACTOR *actr, char num, char dir, int x, int y);
-extern void make_actor_mask(ACTOR *actr);
+extern void setup_actor(Actor *actr, char num, char dir, int x, int y);
+extern void make_actor_mask(Actor *actr);
 extern int load_standard_actors();
 extern void show_enemies();
 extern int load_enemy(int type);

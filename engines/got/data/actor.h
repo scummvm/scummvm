@@ -30,8 +30,8 @@ namespace Got {
 #define DIRECTION_COUNT 4
 #define FRAME_COUNT 4
 
-struct ACTOR { // Size=256
-	// First part loaded from disk  (size=40)
+struct Actor {
+	// First part loaded from disk
 	byte _moveType = 0;           // Movement pattern (0=none)
 	byte _width = 0;              // Physical width
 	byte _height = 0;             // Physical height
@@ -56,7 +56,6 @@ struct ACTOR { // Size=256
 	byte _funcNum = 0;            // Special function when thor touches
 	byte _funcPass = 0;           // Value to pass to func
 	uint16 _magicHurts = 0;       // Bitwise magic hurts flags
-	byte _future1[4] = {};        // Padding
 
 	// The rest is dynamic   //size=216
 	// Direction/frame surfaces
@@ -104,7 +103,6 @@ struct ACTOR { // Size=256
 	byte _initHealth = 0;
 	byte _talkCounter = 0;
 	byte _eType = 0; // unused
-	byte _future2[25] = {}; // padding
 
 	void loadFixed(Common::SeekableReadStream *src);
 	void loadFixed(const byte *src);
@@ -112,9 +110,9 @@ struct ACTOR { // Size=256
 	/**
      * Copies the fixed portion and pics from a source actor.
      */
-	void copyFixedAndPics(const ACTOR &src);
+	void copyFixedAndPics(const Actor &src);
 
-	ACTOR &operator=(const ACTOR &src);
+	Actor &operator=(const Actor &src);
 
 	int getPos() const {
 		return ((_x + 7) / 16) + (((_y + 8) / 16) * 20);

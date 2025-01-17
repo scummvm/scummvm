@@ -25,7 +25,7 @@
 
 namespace Got {
 
-void ACTOR::loadFixed(Common::SeekableReadStream *src) {
+void Actor::loadFixed(Common::SeekableReadStream *src) {
 	_moveType = src->readByte();
 	_width = src->readByte();
 	_height = src->readByte();
@@ -50,15 +50,15 @@ void ACTOR::loadFixed(Common::SeekableReadStream *src) {
 	_funcNum = src->readByte();
 	_funcPass = src->readByte();
 	_magicHurts = src->readSint16LE();
-	src->read(_future1, 4);
+	src->skip(4);
 }
 
-void ACTOR::loadFixed(const byte *src) {
+void Actor::loadFixed(const byte *src) {
 	Common::MemoryReadStream stream(src, 40);
 	loadFixed(&stream);
 }
 
-void ACTOR::copyFixedAndPics(const ACTOR &src) {
+void Actor::copyFixedAndPics(const Actor &src) {
 	_moveType = src._moveType;
 	_width = src._width;
 	_height = src._height;
@@ -83,7 +83,6 @@ void ACTOR::copyFixedAndPics(const ACTOR &src) {
 	_funcNum = src._funcNum;
 	_funcPass = src._funcPass;
 	_magicHurts = src._magicHurts;
-	Common::copy(src._future1, src._future1 + 4, _future1);
 
 	// Copy all the surfaces for all the directions over
 	for (int d = 0; d < DIRECTION_COUNT; ++d) {
@@ -92,7 +91,7 @@ void ACTOR::copyFixedAndPics(const ACTOR &src) {
 	}
 }
 
-ACTOR &ACTOR::operator=(const ACTOR &src) {
+Actor &Actor::operator=(const Actor &src) {
 	// First copy the fixed portion and the pics
 	copyFixedAndPics(src);
 
@@ -144,7 +143,6 @@ ACTOR &ACTOR::operator=(const ACTOR &src) {
 	_initHealth = src._initHealth;
 	_talkCounter = src._talkCounter;
 	_eType = src._eType;
-	Common::copy(src._future2, src._future2 + 25, _future2);
 
 	return *this;
 }

@@ -28,8 +28,8 @@ namespace Got {
 
 extern void show_objects();
 extern void pick_up_object(int p);
-extern int drop_object(ACTOR *actr);
-extern int _drop_obj(ACTOR *actr, int o);
+extern int drop_object(Actor *actr);
+extern int _drop_obj(Actor *actr, int o);
 extern void delete_object();
 extern void use_item();
 

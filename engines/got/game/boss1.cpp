@@ -34,7 +34,7 @@ namespace Got {
 
 static int boss1_dead();
 
-int boss1_movement(ACTOR *actr) {
+int boss1_movement(Actor *actr) {
 	int x1, y1;
 
 	bool f = false;
@@ -180,7 +180,7 @@ done1:
 	return d;
 }
 
-void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
+void check_boss1_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
 	if (actr->_moveType == 15 && act_num == 4) {
 		if ((!_G(actor[3])._vulnerableCountdown) && (_G(actor[3])._nextFrame != 3) &&
 			overlap(x1, y1, x2, y2, actr->_x + 6, actr->_y + 4, actr->_x + 14, actr->_y + 20)) {

@@ -27,7 +27,7 @@
 namespace Got {
 
 // Boss 3 - Loki
-extern int boss3_movement(ACTOR *actr);
+extern int boss3_movement(Actor *actr);
 extern void boss_level3();
 extern void ending_screen();
 extern void closing_sequence3();

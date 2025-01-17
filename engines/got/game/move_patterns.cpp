@@ -37,57 +37,57 @@ namespace Got {
 #define TILE_FLY 140
 #define TILE_SPECIAL 200
 
-int check_special_move1(int x, int y, ACTOR *actr);
+int check_special_move1(int x, int y, Actor *actr);
 
-int check_move0(int x, int y, ACTOR *actr);
-int check_move1(int x, int y, ACTOR *actr);
-//int check_move2(int x, int y, ACTOR *actr);
-//int check_move3(int x, int y, ACTOR *actr);
-//int check_move4(int x, int y, ACTOR *actr);
+int check_move0(int x, int y, Actor *actr);
+int check_move1(int x, int y, Actor *actr);
+//int check_move2(int x, int y, Actor *actr);
+//int check_move3(int x, int y, Actor *actr);
+//int check_move4(int x, int y, Actor *actr);
 
-int movement_zero(ACTOR *actr);
-int movement_one(ACTOR *actr);
-int movement_two(ACTOR *actr);
-int movement_three(ACTOR *actr);
-int movement_four(ACTOR *actr);
-int movement_five(ACTOR *actr);
-int movement_six(ACTOR *actr);
-int movement_seven(ACTOR *actr);
-int movement_eight(ACTOR *actr);
-int movement_nine(ACTOR *actr);
-int movement_ten(ACTOR *actr);
-int movement_eleven(ACTOR *actr);
-int movement_twelve(ACTOR *actr);      // Horz straight until bump
-int movement_thirteen(ACTOR *actr);    // Pause-seek (mushroom)
-int movement_fourteen(ACTOR *actr);    // Move-bump-stop (boulder)
-int movement_fifteen(ACTOR *actr);     // No move, no frame cycle
-int movement_sixteen(ACTOR *actr);     // Tornado 1
-int movement_seventeen(ACTOR *actr);   // Tornado 2
-int movement_eighteen(ACTOR *actr);    // Random-seek-bite-run
-int movement_nineteen(ACTOR *actr);    // Tornado 2
-int movement_twenty(ACTOR *actr);      // Tornado 2
-int movement_twentyone(ACTOR *actr);   // Eyeball
-int movement_twentytwo(ACTOR *actr);   // Spear
-int movement_twentythree(ACTOR *actr); // Spinball cw
-int movement_twentyfour(ACTOR *actr);  // Spinball ccw
-int movement_twentyfive(ACTOR *actr);  //
-int movement_twentysix(ACTOR *actr);   //
-int movement_twentyseven(ACTOR *actr); //
-int movement_twentyeight(ACTOR *actr); // Tree boss
-int movement_twentynine(ACTOR *actr);  // Horz or vert (pass_val)
-int movement_thirty(ACTOR *actr);      // Vert straight
-int movement_thirtyone(ACTOR *actr);   // Drop (stalagtite)
-int movement_thirtytwo(ACTOR *actr);   // Bomb 1
-int movement_thirtythree(ACTOR *actr); // Bomb 2
-int movement_thirtyfour(ACTOR *actr);  // Gun (4-dir)
-int movement_thirtyfive(ACTOR *actr);  // Gun (4-dir)
-int movement_thirtysix(ACTOR *actr);   // Acid drop
-int movement_thirtyseven(ACTOR *actr); // 4-way rnd,rnd len
-int movement_thirtyeight(ACTOR *actr); // Timed darting
-int movement_thirtynine(ACTOR *actr);  // Troll 1
-int movement_forty(ACTOR *actr);       // Troll 2
+int movement_zero(Actor *actr);
+int movement_one(Actor *actr);
+int movement_two(Actor *actr);
+int movement_three(Actor *actr);
+int movement_four(Actor *actr);
+int movement_five(Actor *actr);
+int movement_six(Actor *actr);
+int movement_seven(Actor *actr);
+int movement_eight(Actor *actr);
+int movement_nine(Actor *actr);
+int movement_ten(Actor *actr);
+int movement_eleven(Actor *actr);
+int movement_twelve(Actor *actr);      // Horz straight until bump
+int movement_thirteen(Actor *actr);    // Pause-seek (mushroom)
+int movement_fourteen(Actor *actr);    // Move-bump-stop (boulder)
+int movement_fifteen(Actor *actr);     // No move, no frame cycle
+int movement_sixteen(Actor *actr);     // Tornado 1
+int movement_seventeen(Actor *actr);   // Tornado 2
+int movement_eighteen(Actor *actr);    // Random-seek-bite-run
+int movement_nineteen(Actor *actr);    // Tornado 2
+int movement_twenty(Actor *actr);      // Tornado 2
+int movement_twentyone(Actor *actr);   // Eyeball
+int movement_twentytwo(Actor *actr);   // Spear
+int movement_twentythree(Actor *actr); // Spinball cw
+int movement_twentyfour(Actor *actr);  // Spinball ccw
+int movement_twentyfive(Actor *actr);  //
+int movement_twentysix(Actor *actr);   //
+int movement_twentyseven(Actor *actr); //
+int movement_twentyeight(Actor *actr); // Tree boss
+int movement_twentynine(Actor *actr);  // Horz or vert (pass_val)
+int movement_thirty(Actor *actr);      // Vert straight
+int movement_thirtyone(Actor *actr);   // Drop (stalagtite)
+int movement_thirtytwo(Actor *actr);   // Bomb 1
+int movement_thirtythree(Actor *actr); // Bomb 2
+int movement_thirtyfour(Actor *actr);  // Gun (4-dir)
+int movement_thirtyfive(Actor *actr);  // Gun (4-dir)
+int movement_thirtysix(Actor *actr);   // Acid drop
+int movement_thirtyseven(Actor *actr); // 4-way rnd,rnd len
+int movement_thirtyeight(Actor *actr); // Timed darting
+int movement_thirtynine(Actor *actr);  // Troll 1
+int movement_forty(Actor *actr);       // Troll 2
 
-int (*const movement_func[])(ACTOR *actr) = {
+int (*const movement_func[])(Actor *actr) = {
 	movement_zero,
 	movement_one,
 	movement_two,
@@ -130,19 +130,19 @@ int (*const movement_func[])(ACTOR *actr) = {
 	movement_thirtynine,
 	movement_forty};
 
-int special_movement_one(ACTOR *actr);
-int special_movement_two(ACTOR *actr);
-int special_movement_three(ACTOR *actr);
-int special_movement_four(ACTOR *actr);
-int special_movement_five(ACTOR *actr);
-int special_movement_six(ACTOR *actr);
-int special_movement_seven(ACTOR *actr);
-int special_movement_eight(ACTOR *actr);
-int special_movement_nine(ACTOR *actr);
-int special_movement_ten(ACTOR *actr);
-int special_movement_eleven(ACTOR *actr);
+int special_movement_one(Actor *actr);
+int special_movement_two(Actor *actr);
+int special_movement_three(Actor *actr);
+int special_movement_four(Actor *actr);
+int special_movement_five(Actor *actr);
+int special_movement_six(Actor *actr);
+int special_movement_seven(Actor *actr);
+int special_movement_eight(Actor *actr);
+int special_movement_nine(Actor *actr);
+int special_movement_ten(Actor *actr);
+int special_movement_eleven(Actor *actr);
 
-int (*special_movement_func[])(ACTOR *actr) = {
+int (*special_movement_func[])(Actor *actr) = {
 	nullptr,
 	special_movement_one,
 	special_movement_two,
@@ -157,7 +157,7 @@ int (*special_movement_func[])(ACTOR *actr) = {
 	special_movement_eleven};
 
 // Check Thor move
-int check_move0(int x, int y, ACTOR *actr) {
+int check_move0(int x, int y, Actor *actr) {
 	_G(thor_icon1) = 0;
 	_G(thor_icon2) = 0;
 	_G(thor_icon3) = 0;
@@ -307,7 +307,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 
 	_G(thor_special_flag) = false;
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		ACTOR *act = &_G(actor[i]);
+		Actor *act = &_G(actor[i]);
 		if ((act->_solid & 128) || !act->_active)
 			continue;
 
@@ -350,7 +350,7 @@ int check_move0(int x, int y, ACTOR *actr) {
 }
 
 // Check hammer move
-int check_move1(int x, int y, ACTOR *actr) {
+int check_move1(int x, int y, Actor *actr) {
 	if (x < 0 || x > 306 || y < 0 || y > 177)
 		return 0;
 
@@ -394,7 +394,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 
 	int f = 0;
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		ACTOR *act = &_G(actor[i]);
+		Actor *act = &_G(actor[i]);
 		if (!act->_active || act->_type == 3)
 			continue;
 		
@@ -437,7 +437,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 }
 
 // Check enemy move
-int check_move2(int x, int y, ACTOR *actr) {
+int check_move2(int x, int y, Actor *actr) {
 	if (actr->_actorNum < 3)
 		return check_move1(x, y, actr);
 
@@ -486,7 +486,7 @@ int check_move2(int x, int y, ACTOR *actr) {
 	y2 = (y + actr->_sizeY) - 1;
 
 	for (int i = 0; i < MAX_ACTORS; i++) {
-		ACTOR *act = &_G(actor[i]);
+		Actor *act = &_G(actor[i]);
 		if (act->_actorNum == actr->_actorNum || act->_actorNum == 1 || !act->_active)
 			continue;
 		if (act->_type == 3)
@@ -523,7 +523,7 @@ int check_move2(int x, int y, ACTOR *actr) {
 }
 
 // Check enemy shot move
-int check_move3(int x, int y, ACTOR *actr) {
+int check_move3(int x, int y, Actor *actr) {
 	if (x < 0 || x > (319 - actr->_sizeX) || y < 0 || y > 175)
 		return 0;
 
@@ -568,7 +568,7 @@ int check_move3(int x, int y, ACTOR *actr) {
 		if (i == actr->_actorNum)
 			continue;
 
-		ACTOR *act = &_G(actor[i]);
+		Actor *act = &_G(actor[i]);
 
 		if (!act->_active)
 			continue;
@@ -596,7 +596,7 @@ int check_move3(int x, int y, ACTOR *actr) {
 }
 
 // Flying enemies
-int check_move4(int x, int y, ACTOR *actr) {
+int check_move4(int x, int y, Actor *actr) {
 	if (x < 0 || x > (319 - actr->_sizeX) || y < 0 || y > 175)
 		return 0;
 	if (overlap(x, y, x + actr->_sizeX - 1, y + actr->_sizeY - 1,
@@ -613,7 +613,7 @@ int check_move4(int x, int y, ACTOR *actr) {
 #define THOR_PAD1 2
 #define THOR_PAD2 4
 
-int check_thor_move(int x, int y, ACTOR *actr) {
+int check_thor_move(int x, int y, Actor *actr) {
 	if (check_move0(x, y, actr))
 		return 1;
 	if (_G(diag_flag) || _G(thor_special_flag))
@@ -679,7 +679,7 @@ int check_thor_move(int x, int y, ACTOR *actr) {
 }
 
 // Player control
-int movement_zero(ACTOR *actr) {
+int movement_zero(Actor *actr) {
 	int d = actr->_dir;
 	int od = d;
 
@@ -795,11 +795,11 @@ int movement_zero(ACTOR *actr) {
 	return d;
 }
 
-int check_special_move1(int x, int y, ACTOR *actr) {
+int check_special_move1(int x, int y, Actor *actr) {
 	int i;
 	int x3, y3, x4, y4;
 
-	ACTOR *act;
+	Actor *act;
 
 	if (actr->_actorNum < 3)
 		return check_move1(x, y, actr);
@@ -885,7 +885,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 //*==========================================================================
 
 // Block
-int special_movement_one(ACTOR *actr) {
+int special_movement_one(Actor *actr) {
 	if (_G(diag_flag))
 		return 0;
 
@@ -931,14 +931,14 @@ int special_movement_one(ACTOR *actr) {
 }
 
 // Angle
-int special_movement_two(ACTOR *actr) {
+int special_movement_two(Actor *actr) {
 	int x1 = actr->_temp1; // Calc thor pos
 	int y1 = actr->_temp2;
 	int x2 = x1 + 13;
 	int y2 = y1 + 14;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		ACTOR *act = &_G(actor[i]);
+		Actor *act = &_G(actor[i]);
 		if (actr->_actorNum == act->_actorNum)
 			continue;
 		if (!act->_active)
@@ -970,7 +970,7 @@ int special_movement_two(ACTOR *actr) {
 }
 
 // Yellow globe
-int special_movement_three(ACTOR *actr) {
+int special_movement_three(Actor *actr) {
 	if (_G(thunder_flag))
 		return 0;
 
@@ -983,7 +983,7 @@ int special_movement_three(ACTOR *actr) {
 }
 
 // Peg switch
-int special_movement_four(ACTOR *actr) {
+int special_movement_four(Actor *actr) {
 	if (actr->_shotCountdown != 0)
 		return 0;
 	actr->_shotCountdown = 30;
@@ -993,7 +993,7 @@ int special_movement_four(ACTOR *actr) {
 }
 
 // Boulder roll
-int special_movement_five(ACTOR *actr) {
+int special_movement_five(Actor *actr) {
 	int d = _G(thor)->_dir;
 
 	if (_G(diag_flag)) {
@@ -1030,12 +1030,12 @@ int special_movement_five(ACTOR *actr) {
 	return 0;
 }
 
-int special_movement_six(ACTOR *actr) {
+int special_movement_six(Actor *actr) {
 	thor_damaged(actr);
 	return 0;
 }
 
-int special_movement_seven(ACTOR *actr) {
+int special_movement_seven(Actor *actr) {
 	if (actr->_shotCountdown != 0)
 		return 0;
 
@@ -1045,7 +1045,7 @@ int special_movement_seven(ACTOR *actr) {
 	return 0;
 }
 
-int special_movement_eight(ACTOR *actr) {
+int special_movement_eight(Actor *actr) {
 	if (_G(thor)->_dir < 2 || _G(diag_flag))
 		return 0;
 
@@ -1054,7 +1054,7 @@ int special_movement_eight(ACTOR *actr) {
 	return 0;
 }
 
-int special_movement_nine(ACTOR *actr) {
+int special_movement_nine(Actor *actr) {
 	if (_G(thor)->_dir > 1 || _G(diag_flag))
 		return 0;
 
@@ -1063,7 +1063,7 @@ int special_movement_nine(ACTOR *actr) {
 	return 0;
 }
 
-int special_movement_ten(ACTOR *actr) {
+int special_movement_ten(Actor *actr) {
 	byte &actor_ctr = GAME1 ? actr->_temp6 : actr->_talkCounter;
 
 	if (actor_ctr) {
@@ -1080,7 +1080,7 @@ int special_movement_ten(ACTOR *actr) {
 }
 
 // Red guard
-int special_movement_eleven(ACTOR *actr) {
+int special_movement_eleven(Actor *actr) {
 	if (actr->_talkCounter) {
 		actr->_talkCounter--;
 		return 0;
@@ -1096,13 +1096,13 @@ int special_movement_eleven(ACTOR *actr) {
 }
 
 // No movement - frame cycle
-int movement_one(ACTOR *actr) {
+int movement_one(Actor *actr) {
 	next_frame(actr);
 	return actr->_dir;
 }
 
 // Hammer only
-int movement_two(ACTOR *actr) {
+int movement_two(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -1142,7 +1142,7 @@ int movement_two(ACTOR *actr) {
 }
 
 // Walk-bump-random turn
-int movement_three(ACTOR *actr) {
+int movement_three(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -1181,7 +1181,7 @@ int movement_three(ACTOR *actr) {
 }
 
 // Simple tracking
-int movement_four(ACTOR *actr) {
+int movement_four(Actor *actr) {
 	int d = actr->_lastDir;
 
 	int x1 = actr->_x;
@@ -1229,7 +1229,7 @@ int movement_four(ACTOR *actr) {
 	return d;
 }
 
-int movement_five(ACTOR *actr) {
+int movement_five(Actor *actr) {
 	int x1 = actr->_x;
 	int y1 = actr->_y;
 	int xd = 0;
@@ -1355,7 +1355,7 @@ int movement_five(ACTOR *actr) {
 }
 
 // Explosion only
-int movement_six(ACTOR *actr) {
+int movement_six(Actor *actr) {
 	if (actr->_currNumShots > 0) {
 		actr->_nextFrame++;
 		if (actr->_nextFrame > 2) {
@@ -1378,7 +1378,7 @@ int movement_six(ACTOR *actr) {
 }
 
 // Walk-bump-random turn (pause also)
-int movement_seven(ACTOR *actr) {
+int movement_seven(Actor *actr) {
 	if (actr->_nextFrame == 0 && actr->_frameCount == actr->_frameSpeed) {
 		actr->_moveCountdown = 12;
 		actr->_lastDir = g_events->getRandomNumber(3);
@@ -1387,7 +1387,7 @@ int movement_seven(ACTOR *actr) {
 }
 
 // Follow thor
-int movement_eight(ACTOR *actr) {
+int movement_eight(Actor *actr) {
 	if (_G(thor)->_x > 0)
 		actr->_x = _G(thor)->_x - 1;
 	else
@@ -1398,7 +1398,7 @@ int movement_eight(ACTOR *actr) {
 }
 
 // 4-way straight (random length) change
-int movement_nine(ACTOR *actr) {
+int movement_nine(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -1443,7 +1443,7 @@ int movement_nine(ACTOR *actr) {
 }
 
 // Vert straight (random length) change
-int movement_ten(ACTOR *actr) {
+int movement_ten(Actor *actr) {
 	int lastDir = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -1488,7 +1488,7 @@ int movement_ten(ACTOR *actr) {
 }
 
 // Horz only (bats)
-int movement_eleven(ACTOR *actr) {
+int movement_eleven(Actor *actr) {
 	int d = actr->_lastDir;
 
 	switch (d) {
@@ -1534,7 +1534,7 @@ int movement_eleven(ACTOR *actr) {
 }
 
 // Horz straight until bump
-int movement_twelve(ACTOR *actr) {
+int movement_twelve(Actor *actr) {
 	int d = actr->_lastDir;
 
 	switch (d) {
@@ -1559,7 +1559,7 @@ int movement_twelve(ACTOR *actr) {
 }
 
 // Pause-seek (mushroom)
-int movement_thirteen(ACTOR *actr) {
+int movement_thirteen(Actor *actr) {
 	int d = actr->_lastDir;
 
 	if (actr->_counter == 0 && actr->_unpauseCountdown == 0) {
@@ -1585,7 +1585,7 @@ int movement_thirteen(ACTOR *actr) {
 }
 
 // Move-bump-stop (boulder)
-int movement_fourteen(ACTOR *actr) {
+int movement_fourteen(Actor *actr) {
 	int d = actr->_lastDir;
 	actr->_dir = d;
 	int x1 = actr->_x;
@@ -1629,12 +1629,12 @@ int movement_fourteen(ACTOR *actr) {
 }
 
 // No movement - no frame cycle
-int movement_fifteen(ACTOR *actr) {
+int movement_fifteen(Actor *actr) {
 	return actr->_dir;
 }
 
 // Tornado 1
-int movement_sixteen(ACTOR *actr) {
+int movement_sixteen(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -1666,7 +1666,7 @@ int movement_sixteen(ACTOR *actr) {
 }
 
 // Tornado 2
-int movement_seventeen(ACTOR *actr) {
+int movement_seventeen(Actor *actr) {
 	int d = actr->_lastDir;
 
 	switch (d) {
@@ -1711,7 +1711,7 @@ int movement_seventeen(ACTOR *actr) {
 }
 
 // No movement - frame cycle
-int movement_eighteen(ACTOR *actr) {
+int movement_eighteen(Actor *actr) {
 	int d;
 
 	if (actr->_temp5) {
@@ -1754,11 +1754,11 @@ int movement_eighteen(ACTOR *actr) {
 }
 
 // No movement - frame cycle
-int movement_nineteen(ACTOR *actr) {
+int movement_nineteen(Actor *actr) {
 	return movement_seven(actr);
 }
 
-int movement_twenty(ACTOR *actr) {
+int movement_twenty(Actor *actr) {
 	if (GAME1)
 		// Boss - snake
 		return boss1_movement(actr);
@@ -1767,12 +1767,12 @@ int movement_twenty(ACTOR *actr) {
 }
 
 // No movement - frame cycle
-int movement_twentyone(ACTOR *actr) {
+int movement_twentyone(Actor *actr) {
 	return movement_three(actr);
 }
 
 // Spear
-int movement_twentytwo(ACTOR *actr) {
+int movement_twentytwo(Actor *actr) {
 	int d = actr->_lastDir;
 	if (actr->_directions == 1)
 		d = 0;
@@ -1862,7 +1862,7 @@ redo:
 }
 
 // Spinball counter-clockwise
-int movement_twentythree(ACTOR *actr) {
+int movement_twentythree(Actor *actr) {
 	int d = actr->_lastDir;
 	next_frame(actr);
 	if (actr->_passValue & 2)
@@ -1958,7 +1958,7 @@ int movement_twentythree(ACTOR *actr) {
 }
 
 // Spinball  clockwise
-int movement_twentyfour(ACTOR *actr) {
+int movement_twentyfour(Actor *actr) {
 	int d = actr->_lastDir;
 	next_frame(actr);
 	if (actr->_passValue & 2)
@@ -2054,7 +2054,7 @@ int movement_twentyfour(ACTOR *actr) {
 }
 
 // Acid puddle
-int movement_twentyfive(ACTOR *actr) {
+int movement_twentyfive(Actor *actr) {
 	if (actr->_temp2) {
 		actr->_temp2--;
 		return movement_one(actr);
@@ -2076,7 +2076,7 @@ int movement_twentyfive(ACTOR *actr) {
 	return movement_three(actr);
 }
 
-int movement_twentysix(ACTOR *actr) {
+int movement_twentysix(Actor *actr) {
 	if (GAME2)
 		return boss2_movement(actr);
 	if (GAME3)
@@ -2085,7 +2085,7 @@ int movement_twentysix(ACTOR *actr) {
 	return movement_one(actr);
 }
 
-int movement_twentyseven(ACTOR *actr) {
+int movement_twentyseven(Actor *actr) {
 	if (GAME2)
 		return boss2_movement(actr);
 
@@ -2102,7 +2102,7 @@ void set_thor_vars() {
 }
 
 // Fish
-int movement_twentyeight(ACTOR *actr) {
+int movement_twentyeight(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -2190,7 +2190,7 @@ done:
 }
 
 // Horz or vert (pass_val)
-int movement_twentynine(ACTOR *actr) {
+int movement_twentynine(Actor *actr) {
 	if (!actr->_passValue)
 		return movement_thirty(actr);
 
@@ -2198,7 +2198,7 @@ int movement_twentynine(ACTOR *actr) {
 }
 
 // Vert straight
-int movement_thirty(ACTOR *actr) {
+int movement_thirty(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -2222,7 +2222,7 @@ int movement_thirty(ACTOR *actr) {
 }
 
 // Drop (stalagtite)
-int movement_thirtyone(ACTOR *actr) {
+int movement_thirtyone(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -2251,28 +2251,28 @@ done:
 }
 
 // Unused
-int movement_thirtytwo(ACTOR *actr) {
+int movement_thirtytwo(Actor *actr) {
 	return 0;
 }
 
 // Unused
-int movement_thirtythree(ACTOR *actr) {
+int movement_thirtythree(Actor *actr) {
 	return 0;
 }
 
 // Unused
-int movement_thirtyfour(ACTOR *actr) {
+int movement_thirtyfour(Actor *actr) {
 	return 0;
 }
 
 // Gun (single)
-int movement_thirtyfive(ACTOR *actr) {
+int movement_thirtyfive(Actor *actr) {
 	actr->_nextFrame = actr->_lastDir;
 	return actr->_dir;
 }
 
 // Acid drop
-int movement_thirtysix(ACTOR *actr) {
+int movement_thirtysix(Actor *actr) {
 	actr->_speed = actr->_passValue;
 	next_frame(actr);
 	if (actr->_nextFrame == 0 && actr->_frameCount == actr->_frameSpeed) {
@@ -2283,7 +2283,7 @@ int movement_thirtysix(ACTOR *actr) {
 }
 
 // 4-way straight (random length) change
-int movement_thirtyseven(ACTOR *actr) {
+int movement_thirtyseven(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -2335,7 +2335,7 @@ int movement_thirtyseven(ACTOR *actr) {
 #define OX actr->_i2
 #define OY actr->_i3
 #define CNT actr->_i4
-int movement_thirtyeight(ACTOR *actr) {
+int movement_thirtyeight(Actor *actr) {
 	int d = actr->_lastDir;
 	int x1 = actr->_x;
 	int y1 = actr->_y;
@@ -2420,7 +2420,7 @@ done:
 }
 
 // Troll 1
-int movement_thirtynine(ACTOR *actr) {
+int movement_thirtynine(Actor *actr) {
 	if (_G(setup).skill == 0) {
 		actr->_speed = 3;
 		actr->_numMoves = 1;
@@ -2463,7 +2463,7 @@ int movement_thirtynine(ACTOR *actr) {
 }
 
 // Troll 2
-int movement_forty(ACTOR *actr) {
+int movement_forty(Actor *actr) {
 	if (overlap(actr->_x + 1, actr->_y + 1, actr->_x + actr->_sizeX + 3,
 				actr->_y + actr->_sizeY - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
 		actr->_hitStrength = 150;

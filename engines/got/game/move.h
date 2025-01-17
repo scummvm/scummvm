@@ -26,17 +26,17 @@
 
 namespace Got {
 
-extern void next_frame(ACTOR *actr);
+extern void next_frame(Actor *actr);
 extern bool point_within(int x, int y, int x1, int y1, int x2, int y2);
 extern bool overlap(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
-extern int  reverse_direction(ACTOR *actr);
+extern int  reverse_direction(Actor *actr);
 extern void thor_shoots();
-extern void thor_damaged(ACTOR *actr);
-extern void actor_destroyed(ACTOR *actr);
-extern int  actor_shoots(ACTOR *actr, int dir);
-extern void actor_always_shoots(ACTOR *actr, int dir);
-extern void actor_damaged(ACTOR *actr, int damage);
-extern void move_actor(ACTOR *actr);
+extern void thor_damaged(Actor *actr);
+extern void actor_destroyed(Actor *actr);
+extern int  actor_shoots(Actor *actr, int dir);
+extern void actor_always_shoots(Actor *actr, int dir);
+extern void actor_damaged(Actor *actr, int damage);
+extern void move_actor(Actor *actr);
 
 } // namespace Got
 

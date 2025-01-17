@@ -25,17 +25,17 @@
 
 namespace Got {
 
-int shot_pattern_none(ACTOR *actr);
-int shot_pattern_one(ACTOR *actr);
-int shot_pattern_two(ACTOR *actr);
-int shot_pattern_three(ACTOR *actr);
-int shot_pattern_four(ACTOR *actr);
-int shot_pattern_five(ACTOR *actr);
-int shot_pattern_six(ACTOR *actr);
-int shot_pattern_seven(ACTOR *actr);
-int shot_pattern_eight(ACTOR *actr);
+int shot_pattern_none(Actor *actr);
+int shot_pattern_one(Actor *actr);
+int shot_pattern_two(Actor *actr);
+int shot_pattern_three(Actor *actr);
+int shot_pattern_four(Actor *actr);
+int shot_pattern_five(Actor *actr);
+int shot_pattern_six(Actor *actr);
+int shot_pattern_seven(Actor *actr);
+int shot_pattern_eight(Actor *actr);
 
-int (*const shot_pattern_func[])(ACTOR *actr) = {
+int (*const shot_pattern_func[])(Actor *actr) = {
 	shot_pattern_none,
 	shot_pattern_one,
 	shot_pattern_two,
@@ -48,12 +48,12 @@ int (*const shot_pattern_func[])(ACTOR *actr) = {
 };
 
 // No shooting
-int shot_pattern_none(ACTOR *actr) {
+int shot_pattern_none(Actor *actr) {
 	return 0;
 }
 
 // Uni-directional seek
-int shot_pattern_one(ACTOR *actr) {
+int shot_pattern_one(Actor *actr) {
 	switch (actr->_lastDir) {
 	case 0:
 		if (ABS(_G(thor_x1) - actr->_x) < 8) {
@@ -93,7 +93,7 @@ int shot_pattern_one(ACTOR *actr) {
 }
 
 // Omni directional
-int shot_pattern_two(ACTOR *actr) {
+int shot_pattern_two(Actor *actr) {
 	if (ABS(_G(thor)->_x - actr->_x) < 8) {
 		if (_G(thor)->_y > actr->_y)
 			actor_shoots(actr, 1);
@@ -114,7 +114,7 @@ int shot_pattern_two(ACTOR *actr) {
 }
 
 // Uni directional (backwards)
-int shot_pattern_three(ACTOR *actr) {
+int shot_pattern_three(Actor *actr) {
 	int ld = actr->_lastDir;
 	if (shot_pattern_one(actr)) {
 		actr->_lastDir = reverse_direction(actr);
@@ -129,7 +129,7 @@ int shot_pattern_three(ACTOR *actr) {
 }
 
 // Omni-directional not solid shot
-int shot_pattern_four(ACTOR *actr) {
+int shot_pattern_four(Actor *actr) {
 	if (ABS(_G(thor)->_x - actr->_x) < 8) {
 		if (_G(thor)->_y > actr->_y)
 			actor_always_shoots(actr, 1);
@@ -150,7 +150,7 @@ int shot_pattern_four(ACTOR *actr) {
 }
 
 // Boss - snake
-int shot_pattern_five(ACTOR *actr) {
+int shot_pattern_five(Actor *actr) {
 	if (_G(rand1) < 15 && (actr->_temp1 == 0) && (actr->_temp2 == 0)) {
 		actr->_y += 16;
 		actr->_numShotsAllowed = 3 + _G(setup).skill;
@@ -170,7 +170,7 @@ int shot_pattern_five(ACTOR *actr) {
 }
 
 // 4 surrounding squares
-int shot_pattern_six(ACTOR *actr) {
+int shot_pattern_six(Actor *actr) {
 	int pos = ((actr->_x) / 16) + (((actr->_y) / 16) * 20);
 
 	if (_G(thor_pos) == pos - 20)
@@ -190,12 +190,12 @@ int shot_pattern_six(ACTOR *actr) {
 }
 
 // none
-int shot_pattern_seven(ACTOR *actr) {
+int shot_pattern_seven(Actor *actr) {
 	return 0;
 }
 
 // random
-int shot_pattern_eight(ACTOR *actr) {
+int shot_pattern_eight(Actor *actr) {
 	if (!actr->_i2) {
 		actr->_i1 = actr->_funcPass;
 		actr->_i2 = 1;

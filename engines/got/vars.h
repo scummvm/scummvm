@@ -148,20 +148,20 @@ public:
 	SETUP _last_setup;
 	byte *_tmp_buff = nullptr;
 
-	ACTOR _actor[MAX_ACTORS] = {};  //current actors
-	ACTOR _enemy[MAX_ENEMIES] = {}; //current enemies
-	ACTOR _shot[MAX_ENEMIES] = {};  //current shots
+	Actor _actor[MAX_ACTORS] = {};  //current actors
+	Actor _enemy[MAX_ENEMIES] = {}; //current enemies
+	Actor _shot[MAX_ENEMIES] = {};  //current shots
 	int8 _enemy_type[MAX_ENEMIES] = {};
 	int _etype[MAX_ENEMIES] = {};
 
-	ACTOR _magic_item[2] = {};
+	Actor _magic_item[2] = {};
 	byte _magic_pic[2][1024] = {};
 	bool _warp_scroll = false;
 
-	ACTOR *_thor = nullptr;
-	ACTOR *_hammer = nullptr;
-	ACTOR _explosion;
-	ACTOR _sparkle;
+	Actor *_thor = nullptr;
+	Actor *_hammer = nullptr;
+	Actor _explosion;
+	Actor _sparkle;
 	THOR_INFO _thor_info;
 	bool _boss_dead = false;
 	byte _endgame = 0;

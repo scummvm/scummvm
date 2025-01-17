@@ -173,7 +173,7 @@ void pick_up_object(int p) {
 	_G(object_index[p]) = 0;
 }
 
-int drop_object(ACTOR *actr) {
+int drop_object(Actor *actr) {
 	int o;
 
 	int rnd1 = g_events->getRandomNumber(99);
@@ -199,7 +199,7 @@ int drop_object(ACTOR *actr) {
 	return 1;
 }
 
-int _drop_obj(ACTOR *actr, int o) {
+int _drop_obj(Actor *actr, int o) {
 	int p = (actr->_x + (actr->_sizeX / 2)) / 16 + (((actr->_y + (actr->_sizeY / 2)) / 16) * 20);
 	if (!_G(object_map[p]) && _G(scrn).icon[p / 20][p % 20] >= 140) { //nothing there and solid
 		_G(object_map[p]) = o;

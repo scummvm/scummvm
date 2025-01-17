@@ -26,10 +26,10 @@
 
 namespace Got {
 
-extern int (*const movement_func[]) (ACTOR *actr);
-int check_move2(int x, int y, ACTOR *actr);
-int check_move3(int x, int y, ACTOR *actr);
-int check_move4(int x, int y, ACTOR *actr);
+extern int (*const movement_func[]) (Actor *actr);
+int check_move2(int x, int y, Actor *actr);
+int check_move3(int x, int y, Actor *actr);
+int check_move4(int x, int y, Actor *actr);
 void set_thor_vars();
 
 } // namespace Got

@@ -249,8 +249,8 @@ void GameContent::drawObjects(GfxSurface &s) {
 }
 
 void GameContent::drawActors(GfxSurface &s) {
-	ACTOR *actor_ptr = &_G(actor[MAX_ACTORS - 1]);
-	ACTOR *actor2_storage = nullptr;
+	Actor *actor_ptr = &_G(actor[MAX_ACTORS - 1]);
+	Actor *actor2_storage = nullptr;
 
 	for (int actor_num = 0; actor_num <= MAX_ACTORS;) {
 		// Check for blinking flag
@@ -377,7 +377,7 @@ void GameContent::moveActors() {
 
 void GameContent::updateActors() {
 	for (int i = 0; i < MAX_ACTORS; ++i) {
-		ACTOR *actor = &_G(actor[i]);
+		Actor *actor = &_G(actor[i]);
 
 		if (!actor->_active && actor->_dead > 0)
 			actor->_dead--;

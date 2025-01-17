@@ -28,22 +28,22 @@
 
 namespace Got {
 
-int shot_movement_none(ACTOR *actr);
-int shot_movement_one(ACTOR *actr);
-int shot_movement_two(ACTOR *actr);
-int shot_movement_three(ACTOR *actr);
-int shot_movement_four(ACTOR *actr);
-int shot_movement_five(ACTOR *actr);
-int shot_movement_six(ACTOR *actr);
-int shot_movement_seven(ACTOR *actr);
-int shot_movement_eight(ACTOR *actr);
-int shot_movement_nine(ACTOR *actr);
-int shot_movement_ten(ACTOR *actr);
-int shot_movement_eleven(ACTOR *actr);
-int shot_movement_twelve(ACTOR *actr);
-int shot_movement_thirteen(ACTOR *actr);
+int shot_movement_none(Actor *actr);
+int shot_movement_one(Actor *actr);
+int shot_movement_two(Actor *actr);
+int shot_movement_three(Actor *actr);
+int shot_movement_four(Actor *actr);
+int shot_movement_five(Actor *actr);
+int shot_movement_six(Actor *actr);
+int shot_movement_seven(Actor *actr);
+int shot_movement_eight(Actor *actr);
+int shot_movement_nine(Actor *actr);
+int shot_movement_ten(Actor *actr);
+int shot_movement_eleven(Actor *actr);
+int shot_movement_twelve(Actor *actr);
+int shot_movement_thirteen(Actor *actr);
 
-int (*const shot_movement_func[])(ACTOR *actr) = {
+int (*const shot_movement_func[])(Actor *actr) = {
 	shot_movement_none,
 	shot_movement_one,
 	shot_movement_two,
@@ -59,7 +59,7 @@ int (*const shot_movement_func[])(ACTOR *actr) = {
 	shot_movement_twelve,
 	shot_movement_thirteen};
 
-void next_shot_frame(ACTOR *actr) {
+void next_shot_frame(Actor *actr) {
 	if (actr->_directions == 4 && actr->_framesPerDirection == 1) {
 		actr->_nextFrame = actr->_lastDir;
 		actr->_dir = 0;
@@ -78,7 +78,7 @@ void next_shot_frame(ACTOR *actr) {
 }
 
 // Boss - snake
-int shot_movement_none(ACTOR *actr) {
+int shot_movement_none(Actor *actr) {
 	actr->_temp3--;
 	if (!actr->_temp3) {
 		actor_destroyed(actr);
@@ -93,7 +93,7 @@ int shot_movement_none(ACTOR *actr) {
 	return actr->_lastDir;
 }
 
-int shot_movement_one(ACTOR *actr) {
+int shot_movement_one(Actor *actr) {
 	int x1 = 0, y1 = 0;
 
 	int d = actr->_lastDir;
@@ -134,7 +134,7 @@ int shot_movement_one(ACTOR *actr) {
 	return d;
 }
 
-int shot_movement_two(ACTOR *actr) {
+int shot_movement_two(Actor *actr) {
 	int x1 = 0, y1 = 0;
 
 	int d = actr->_lastDir;
@@ -173,7 +173,7 @@ int shot_movement_two(ACTOR *actr) {
 }
 
 // Serpent fire
-int shot_movement_three(ACTOR *actr) {
+int shot_movement_three(Actor *actr) {
 	int d = actr->_lastDir;
 
 	actr->_x -= 2;
@@ -207,7 +207,7 @@ int shot_movement_three(ACTOR *actr) {
 }
 
 // Wraith balls
-int shot_movement_four(ACTOR *actr) {
+int shot_movement_four(Actor *actr) {
 	if (actr->_temp1) {
 		actr->_temp1--;
 		if (!actr->_temp1) {
@@ -354,7 +354,7 @@ int shot_movement_four(ACTOR *actr) {
 }
 
 // No move, frame cycle
-int shot_movement_five(ACTOR *actr) {
+int shot_movement_five(Actor *actr) {
 	next_shot_frame(actr);
 	if (actr->_directions == 1)
 		return 0;
@@ -362,7 +362,7 @@ int shot_movement_five(ACTOR *actr) {
 }
 
 // Wraith spots
-int shot_movement_six(ACTOR *actr) {
+int shot_movement_six(Actor *actr) {
 	actr->_temp1--;
 	if (!actr->_temp1) {
 		actor_destroyed(actr);
@@ -385,7 +385,7 @@ int shot_movement_six(ACTOR *actr) {
 #define IC 50
 
 // Skull drop
-int shot_movement_seven(ACTOR *actr) {
+int shot_movement_seven(Actor *actr) {
 	if (actr->_temp3) {
 		actr->_temp3--;
 		goto done;
@@ -425,7 +425,7 @@ done:
 }
 
 // Skull bounce
-int shot_movement_eight(ACTOR *actr) {
+int shot_movement_eight(Actor *actr) {
 	int x, y;
 
 	x = actr->_x;
@@ -489,7 +489,7 @@ int shot_movement_eight(ACTOR *actr) {
 }
 
 // Skull explode
-int shot_movement_nine(ACTOR *actr) {
+int shot_movement_nine(Actor *actr) {
 	actr->_nextFrame++;
 	if (actr->_nextFrame == 3) {
 		_G(actor[actr->_creator])._currNumShots--;
@@ -502,7 +502,7 @@ int shot_movement_nine(ACTOR *actr) {
 }
 
 // Skull - stalagtites
-int shot_movement_ten(ACTOR *actr) {
+int shot_movement_ten(Actor *actr) {
 	int f = 0;
 	actr->_y += 2;
 
@@ -529,7 +529,7 @@ int shot_movement_ten(ACTOR *actr) {
 #define DIR actr->_i5
 #define CNT actr->_i6
 
-void calc_angle(int x1, int y1, int x2, int y2, ACTOR *actr) {
+void calc_angle(int x1, int y1, int x2, int y2, Actor *actr) {
 	if (x1 < x2) {
 		XA = -2;
 		XD = x2 - x1;
@@ -560,7 +560,7 @@ void calc_angle(int x1, int y1, int x2, int y2, ACTOR *actr) {
 }
 
 // Angle throw
-int shot_movement_eleven(ACTOR *actr) {
+int shot_movement_eleven(Actor *actr) {
 	int x1 = actr->_x;
 	int y1 = actr->_y;
 
@@ -598,7 +598,7 @@ int shot_movement_eleven(ACTOR *actr) {
 }
 
 // Angle throw Loki
-int shot_movement_twelve(ACTOR *actr) {
+int shot_movement_twelve(Actor *actr) {
 	int x1 = actr->_x;
 	int y1 = actr->_y;
 
@@ -652,7 +652,7 @@ int shot_movement_twelve(ACTOR *actr) {
 }
 
 // Angle throw Loki-2
-int shot_movement_thirteen(ACTOR *actr) {
+int shot_movement_thirteen(Actor *actr) {
 	int x1 = actr->_x;
 	int y1 = actr->_y;
 

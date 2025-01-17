@@ -49,7 +49,7 @@ static int boss_die();
 static void check_boss_hit();
 static void boss_change_mode();
 
-static void set_boss(ACTOR *actr) {
+static void set_boss(Actor *actr) {
 	_G(actor[4])._nextFrame = actr->_nextFrame;
 	_G(actor[5])._nextFrame = actr->_nextFrame;
 	_G(actor[6])._nextFrame = actr->_nextFrame;
@@ -70,7 +70,7 @@ static void set_boss(ACTOR *actr) {
 }
 
 // Boss - Loki-2
-static int boss_movement_one(ACTOR *actr) {
+static int boss_movement_one(Actor *actr) {
 	int rx, ry, i, numPods = 0;
 	int fcount;
 	
@@ -212,7 +212,7 @@ done1:
 }
 
 // Boss - Loki-1
-int boss3_movement(ACTOR *actr) {
+int boss3_movement(Actor *actr) {
 	int x1, y1, ox, oy;
 	int fcount;
 

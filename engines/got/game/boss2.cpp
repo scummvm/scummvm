@@ -46,12 +46,12 @@ static byte num_spikes;
 static bool drop_flag;
 static byte su[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-static int boss2a_movement(ACTOR *actr);
-static int boss2b_movement(ACTOR *actr);
+static int boss2a_movement(Actor *actr);
+static int boss2b_movement(Actor *actr);
 static int boss2_die();
 static void boss_set(int d, int x, int y);
 
-int boss2_movement(ACTOR *actr) {
+int boss2_movement(Actor *actr) {
 	switch (_G(setup).skill) {
 	case 0:
 		num_skulls = 3;
@@ -163,7 +163,7 @@ static void boss_set(int d, int x, int y) {
 	_G(actor[6])._y = y + 16;
 }
 
-void check_boss2_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
+void check_boss2_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
 	if ((!_G(actor[3])._vulnerableCountdown)) {
 		int rep;
 
@@ -257,7 +257,7 @@ static int boss2_die() {
 }
 
 // Boss - skull (explode)
-static int boss2a_movement(ACTOR *actr) {
+static int boss2a_movement(Actor *actr) {
 	next_frame(actr);
 	_G(actor[4])._nextFrame = actr->_nextFrame;
 	_G(actor[5])._nextFrame = actr->_nextFrame;
@@ -297,7 +297,7 @@ static int boss2a_movement(ACTOR *actr) {
 }
 
 // Boss - skull - shake
-static int boss2b_movement(ACTOR *actr) {
+static int boss2b_movement(Actor *actr) {
 	int rep, an, hx;
 
 	if (_G(hammer)->_active && _G(hammer)->_moveType != 5) {

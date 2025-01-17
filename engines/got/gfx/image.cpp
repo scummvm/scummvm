@@ -40,7 +40,7 @@ static void createSurface(Graphics::ManagedSurface &s, const byte *src) {
 	s.setTransparentColor(0);
 }
 
-void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
+void setup_actor(Actor *actr, char num, char dir, int x, int y) {
 	actr->_nextFrame = 0; // Next frame to be shown
 	actr->_frameCount = actr->_frameSpeed;
 	actr->_dir = dir;      // Direction of travel
@@ -81,7 +81,7 @@ void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
 	actr->_initHealth = actr->_health;
 }
 
-void make_actor_surface(ACTOR *actr) {
+void make_actor_surface(Actor *actr) {
 	assert(actr->_directions <= 4 && actr->_framesPerDirection <= 4);
 	for (int d = 0; d < actr->_directions; d++) {
 		for (int f = 0; f < actr->_framesPerDirection; f++) {
