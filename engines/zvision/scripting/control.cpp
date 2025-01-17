@@ -63,11 +63,9 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 			sscanf(line.c_str(), "zeropoint(%u)", &point);
 			renderTable->setPanoramaZeroPoint(point);
 		}
-
 		line = stream.readLine();
 		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
-
 	renderTable->generateRenderTable();
 }
 
@@ -96,34 +94,26 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 				renderTable->setTiltReverse(true);
 			}
 		}
-
 		line = stream.readLine();
 		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
-
 	renderTable->generateRenderTable();
 }
 
 void Control::getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
 	const char *chrs = inputStr.c_str();
 	uint lbr;
-
 	for (lbr = 0; lbr < inputStr.size(); lbr++)
 		if (chrs[lbr] == '(')
 			break;
-
 	if (lbr >= inputStr.size())
 		return;
-
 	uint rbr;
-
 	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
 		if (chrs[rbr] == ')')
 			break;
-
 	if (rbr >= inputStr.size())
 		return;
-
 	parameter = Common::String(chrs, chrs + lbr);
 	values = Common::String(chrs + lbr + 1, chrs + rbr);
 }

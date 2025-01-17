@@ -133,9 +133,8 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 					quitGame();
 					break;
 				case kZVisionActionSkipCutscene:
-					if (skippable) {
+					if (skippable)
 						vid.stop();
-					}
 					break;
 				default:
 					break;

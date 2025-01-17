@@ -276,7 +276,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 
 	// criteriaList can be empty. Aka, the puzzle should be executed immediately
 	if (puzzle->criteriaList.empty() || criteriaMet) {
-		debug(2, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+		debug(3, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
@@ -578,7 +578,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 
 void ScriptManager::ChangeLocationReal(bool isLoading) {
 	assert(_nextLocation.world != 0);
-	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
+	debug(1, "\tChanging location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
 	const bool enteringMenu = (_nextLocation.world == 'g' && _nextLocation.room == 'j');
 	const bool leavingMenu = (_currentLocation.world == 'g' && _currentLocation.room == 'j');
@@ -596,7 +596,6 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 				_nextLocation.node = _currentLocation.node;
 				_nextLocation.view = _currentLocation.view;
 				_nextLocation.offset = _currentLocation.offset;
-
 				return;
 			} else {
 				_currentLocation.world = 'g';
@@ -607,9 +606,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 			}
 		}
 	}
-
 	_engine->setRenderDelay(2);
-
 	if (!leavingMenu) {
 		if (!isLoading && !enteringMenu) {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));

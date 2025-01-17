@@ -111,6 +111,7 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::S
 }
 
 bool ActionAttenuate::execute() {
+  debug(2,"Executing Action: Attenuate");
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
@@ -157,27 +158,27 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotKey, const Common::S
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
+  debug(2,"Created Action: CrossFade, slotKey %d", slotKey);
+  debug(2,"Crossfade script: %s", line.c_str());
 }
 
 bool ActionCrossfade::execute() {
+  debug(2,"Executing Action: CrossFade");
 	if (_keyOne) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_oneStartVolume >= 0)
 				mus->setVolume((_oneStartVolume * 255) / 100);
-
 			mus->setFade(_timeInMillis, (_oneEndVolume * 255) / 100);
 		}
 	}
-
 	if (_keyTwo) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyTwo);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_twoStartVolume >= 0)
 				mus->setVolume((_twoStartVolume * 255) / 100);
-
 			mus->setFade(_timeInMillis, (_twoEndVolume * 255) / 100);
 		}
 	}
@@ -306,6 +307,7 @@ ActionDistort::~ActionDistort() {
 }
 
 bool ActionDistort::execute() {
+  debug(2,"Executing Action: Distort");
 	if (_scriptManager->getSideFX(_distSlot))
 		return true;
 
@@ -473,34 +475,39 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// Type 4 actions are MIDI commands, not files. These are only used by
 	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
 	// as vr)
-	if (type == 4) {
-		_midi = true;
-		int note;
-		int prog;
-		sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
-		_volume = new ValueSlot(_scriptManager, volumeBuffer);
-		_note = note;
-		_prog = prog;
-	} else {
-		_midi = false;
-		_fileName = Common::String(fileNameBuffer);
-		_loop = loop == 1 ? true : false;
-		if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
-			// I thought I saw a case like this in Zork Nemesis, so
-			// let's guard against it.
-			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
-			Common::strcpy_s(volumeBuffer, "100");
-		}
-		_volume = new ValueSlot(_scriptManager, volumeBuffer);
-	}
-
+	switch(type) {
+    case 4: {
+		  _midi = true;
+		  int note;
+		  int prog;
+		  sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
+		  _volume = new ValueSlot(_scriptManager, volumeBuffer);
+		  _note = note;
+		  _prog = prog;
+		  break;
+	  }
+	  default: {
+		  _midi = false;
+		  _fileName = Common::String(fileNameBuffer);
+		  _loop = loop == 1 ? true : false;
+		  if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
+			  // I thought I saw a case like this in Zork Nemesis, so
+			  // let's guard against it.
+			  warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
+			  Common::strcpy_s(volumeBuffer, "100");
+		  }
+		  _volume = new ValueSlot(_scriptManager, volumeBuffer);
+		  break;
+	  }
+  }
 	// WORKAROUND for a script bug in Zork Nemesis, rooms mq70/mq80.
 	// Fixes an edge case where the player goes to the dark room with the grue
 	// without holding a torch, and then quickly runs away before the grue's
 	// sound effect finishes. Fixes script bug #6794.
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
-
+  //debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %14s", _slotKey, type, fileNameBuffer);
+  debug(2,"Music script: %s", line.c_str());
 }
 
 ActionMusic::~ActionMusic() {
@@ -510,23 +517,20 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
+  debug(2,"Executing Action: Music, slotKey %d", _slotKey);
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
 	}
-
 	uint volume = _volume->getValue();
-
 	if (_midi) {
 		_scriptManager->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
 	} else {
 		if (!_engine->getSearchManager()->hasFile(_fileName))
 			return true;
-
 		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
 		_scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume * 255 / 100));
 	}
-
 	return true;
 }
 
@@ -538,8 +542,8 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	ResultAction(engine, slotKey),
 	_pos(0),
 	_musicSlot(0) {
-
 	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
+  debug(2,"Created Action: PanTrack, musicSlot %u, pos %d", _musicSlot, _pos);
 }
 
 ActionPanTrack::~ActionPanTrack() {
@@ -547,11 +551,10 @@ ActionPanTrack::~ActionPanTrack() {
 }
 
 bool ActionPanTrack::execute() {
+  debug(2,"Executing Action: PanTrack, musicSlot %u, pos %d", _musicSlot, _pos);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
-
 	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
-
 	return true;
 }
 
@@ -572,7 +575,6 @@ bool ActionPreferences::execute() {
 		_engine->saveSettings();
 	else
 		_engine->loadSettings();
-
 	return true;
 }
 
@@ -622,16 +624,13 @@ bool ActionPreloadAnimation::execute() {
 ActionUnloadAnimation::ActionUnloadAnimation(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
-
 	sscanf(line.c_str(), "%u", &_key);
 }
 
 bool ActionUnloadAnimation::execute() {
 	AnimationEffect *nod = (AnimationEffect *)_scriptManager->getSideFX(_key);
-
 	if (nod && nod->getType() == ScriptingEffect::SCRIPTING_EFFECT_ANIM)
 		_scriptManager->deleteSideFx(_key);
-
 	return true;
 }
 
@@ -650,7 +649,6 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotKey, const C
 	_loopCount = 0;
 	_mask = 0;
 	_framerate = 0;
-
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
@@ -663,7 +661,6 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotKey, const C
 	// color 0, which is used as a mask in some images
 	if (_mask == 0)
 		_mask = -1;
-
 	_fileName = Common::String(fileName);
 
 	// WORKAROUND for bug #6769, location me1g.scr (the "Alchemical debacle"
@@ -680,16 +677,14 @@ ActionPlayAnimation::~ActionPlayAnimation() {
 
 bool ActionPlayAnimation::execute() {
 	AnimationEffect *nod = (AnimationEffect *)_scriptManager->getSideFX(_slotKey);
-
 	if (!nod) {
 		nod = new AnimationEffect(_engine, _slotKey, _fileName, _mask, _framerate);
 		_scriptManager->addSideFX(nod);
-	} else
+	} 
+	else
 		nod->stop();
-
 	if (nod)
 		nod->addPlayNode(_slotKey, _x, _y, _x2, _y2, _start, _end, _loopCount);
-
 	return true;
 }
 
@@ -707,7 +702,6 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 	_startFrame = 0;
 	_endFrame = 0;
 	_loopCount = 0;
-
 	sscanf(line.c_str(),
 	       "%u %u %u %u %u %u %u %u",
 	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
@@ -715,10 +709,8 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 
 bool ActionPlayPreloadAnimation::execute() {
 	AnimationEffect *nod = (AnimationEffect *)_scriptManager->getSideFX(_controlKey);
-
 	if (nod)
 		nod->addPlayNode(_slotKey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
-
 	return true;
 }
 
@@ -728,7 +720,6 @@ bool ActionPlayPreloadAnimation::execute() {
 
 bool ActionQuit::execute() {
 	_engine->quitGame();
-
 	return true;
 }
 
@@ -742,12 +733,9 @@ ActionRegion::ActionRegion(ZVision *engine, int32 slotKey, const Common::String 
 	_type = 0;
 	_unk1 = 0;
 	_unk2 = 0;
-
 	char art[64];
 	char custom[64];
-
 	int32 x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-
 	sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom);
 	_art = Common::String(art);
 	_custom = Common::String(custom);
@@ -759,9 +747,9 @@ ActionRegion::~ActionRegion() {
 }
 
 bool ActionRegion::execute() {
+  debug(2,"Executing Action: Region");
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
-
 	GraphicsEffect *effect = NULL;
 	switch (_type) {
 	case 0: {
@@ -794,7 +782,6 @@ bool ActionRegion::execute() {
 			_rect.setWidth(tempMask.w);
 		if (_rect.height() != tempMask.h)
 			_rect.setHeight(tempMask.h);
-
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
 		effect = new FogFx(_engine, _slotKey, _rect, _unk1, _map, buf);
 		tempMask.free();
@@ -803,12 +790,10 @@ bool ActionRegion::execute() {
 	default:
 		break;
 	}
-
 	if (effect) {
 		_scriptManager->addSideFX(new RegionNode(_engine, _slotKey, effect, _delay));
 		_engine->getRenderManager()->addEffect(effect);
 	}
-
 	return true;
 }
 
@@ -858,13 +843,11 @@ ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotKey, const Common::Str
 	ResultAction(engine, slotKey) {
 	_time = 0;
 	_toPos = 0;
-
 	sscanf(line.c_str(), "%d, %d", &_toPos, &_time);
 }
 
 bool ActionRotateTo::execute() {
 	_engine->getRenderManager()->rotateTo(_toPos, _time);
-
 	return true;
 }
 
@@ -876,13 +859,9 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotKey, c
 	ResultAction(engine, slotKey) {
 	_x = 0;
 	_y = 0;
-
 	char fileName[25];
-
 	sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &_backgroundColor);
-
 	_fileName = Common::String(fileName);
-
 	if (_backgroundColor > 65535) {
 		warning("Background color for ActionSetPartialScreen is bigger than a uint16");
 	}
@@ -890,7 +869,6 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotKey, c
 
 bool ActionSetPartialScreen::execute() {
 	RenderManager *renderManager = _engine->getRenderManager();
-
 	if (_engine->getGameId() == GID_NEMESIS) {
 		if (_backgroundColor)
 			renderManager->renderImageToBackground(_fileName, _x, _y, 0, 0);
@@ -904,7 +882,6 @@ bool ActionSetPartialScreen::execute() {
 		else
 			renderManager->renderImageToBackground(_fileName, _x, _y);
 	}
-
 	return true;
 }
 
@@ -916,13 +893,11 @@ ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotKey, const Common::S
 	ResultAction(engine, slotKey) {
 	char fileName[25];
 	sscanf(line.c_str(), "%24s", fileName);
-
 	_fileName = Common::String(fileName);
 }
 
 bool ActionSetScreen::execute() {
 	_engine->getRenderManager()->setBackgroundImage(_fileName);
-
 	return true;
 }
 
@@ -937,6 +912,7 @@ ActionStop::ActionStop(ZVision *engine, int32 slotKey, const Common::String &lin
 }
 
 bool ActionStop::execute() {
+  debug(2,"Executing Action: Stop");
 	_scriptManager->stopSideFx(_key);
 	return true;
 }
@@ -952,12 +928,9 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 	_y1 = 0;
 	_y2 = 0;
 	_flags = 0;
-
 	char fileName[25];
 	uint skipline = 0;    //skipline - render video with skip every second line, not skippable.
-
 	sscanf(line.c_str(), "%24s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
-
 	_fileName = Common::String(fileName);
 	_skippable = true;
 }
@@ -1005,7 +978,7 @@ bool ActionStreamVideo::execute() {
 	if (switchToHires) {
 		_engine->getRenderManager()->initialize(true);
     srcRect = Common::Rect(Common::Point(0,69),720, 344);
-		//ZGI hi-res video resolution = 720x480, with baked-in letterboxing around video at 720x344 resolution (at origin 0,69) conforming to playfield vertical resolution of 344
+		//ZGI hi-res video resolution = 720x480, with baked-in letterboxing around content at 720x344 (origin 0,69), interestingly conforming to playfield vertical resolution of 344
 		destRect = _engine->getRenderManager()->getWorkingArea(); //Game scripts only give destRect for normal resolution; we must manually override them for HD videos
 		destRect.moveTo(0,0);
 	}
@@ -1041,23 +1014,19 @@ bool ActionStreamVideo::execute() {
 ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_syncto = 0;
-
 	char fileName[25];
 	int notUsed = 0;
-
 	sscanf(line.c_str(), "%d %d %24s", &_syncto, &notUsed, fileName);
-
 	_fileName = Common::String(fileName);
 }
 
 bool ActionSyncSound::execute() {
+  debug(2,"Executing Action: SyncSound");
 	ScriptingEffect *fx = _scriptManager->getSideFX(_syncto);
 	if (!fx)
 		return true;
-
 	if (!(fx->getType() & ScriptingEffect::SCRIPTING_EFFECT_ANIM))
 		return true;
-
 	_scriptManager->addSideFX(new SyncSoundNode(_engine, _slotKey, _fileName, _syncto));
 	return true;
 }
