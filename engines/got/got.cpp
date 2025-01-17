@@ -226,7 +226,7 @@ void GotEngine::pauseEngineIntern(bool pause) {
 
 	if (_G(shield_on)) {
 		_G(actor[2])._dead = 2;
-		_G(actor[2])._active = 0;
+		_G(actor[2])._active = false;
 		_G(shield_on) = false;
 	}
 

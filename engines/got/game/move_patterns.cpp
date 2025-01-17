@@ -1128,7 +1128,7 @@ int movement_two(Actor *actr) {
 			_G(hammer)->_dir = d;
 		}
 		if (actr->_actorNum == 2) {
-			actr->_active = 0;
+			actr->_active = false;
 			actr->_dead = 2;
 			_G(lightning_used) = false;
 			_G(tornado_used) = false;
@@ -1366,7 +1366,7 @@ int movement_six(Actor *actr) {
 		actr->_currNumShots--;
 	} else {
 		actr->_dead = 2;
-		actr->_active = 0;
+		actr->_active = false;
 		if (!_G(boss_dead) && !_G(endgame)) {
 			if (actr->_type == 2)
 				drop_object(actr);
@@ -1726,7 +1726,7 @@ int movement_eighteen(Actor *actr) {
 			if (actr->_hitThor) {
 				actr->_temp5 = 50;
 				actr->_numMoves = 2;
-				actr->_hitThor = 0;
+				actr->_hitThor = false;
 				actr->_dir = d;
 				d = reverse_direction(actr);
 			}
@@ -1744,7 +1744,7 @@ int movement_eighteen(Actor *actr) {
 		if (actr->_hitThor) {
 			actr->_temp5 = 50;
 			actr->_numMoves = 2;
-			actr->_hitThor = 0;
+			actr->_hitThor = false;
 			actr->_dir = d;
 			d = reverse_direction(actr);
 		}

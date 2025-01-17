@@ -142,7 +142,6 @@ Actor &Actor::operator=(const Actor &src) {
 	_i6 = src._i6;
 	_initHealth = src._initHealth;
 	_talkCounter = src._talkCounter;
-	_eType = src._eType;
 
 	return *this;
 }

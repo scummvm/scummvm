@@ -79,10 +79,10 @@ int reverse_direction(Actor *actr) {
 }
 
 void thor_shoots() {
-	if ((_G(hammer)->_active != 1) && (!_G(hammer)->_dead) && (!_G(thor)->_shotCountdown)) {
+	if (!_G(hammer)->_active && (!_G(hammer)->_dead) && (!_G(thor)->_shotCountdown)) {
 		play_sound(SWISH, false);
 		_G(thor)->_shotCountdown = 20;
-		_G(hammer)->_active = 1;
+		_G(hammer)->_active = true;
 		_G(hammer)->_dir = _G(thor)->_dir;
 		_G(hammer)->_lastDir = _G(thor)->_dir;
 		_G(hammer)->_x = _G(thor)->_x;
@@ -141,7 +141,7 @@ void actor_damaged(Actor *actr, int damage) {
 }
 
 void thor_damaged(Actor *actr) {
-	actr->_hitThor = 1;
+	actr->_hitThor = true;
 
 	// If we're invincible, ignore any damage
 	if (_G(cheats).freezeHealth)
@@ -211,12 +211,12 @@ void actor_destroyed(Actor *actr) {
 		actr->_lastY[pge] = y1;
 		actr->_lastY[pge ^ 1] = y;
 		actr->_moveCountdown = actr->_speed;
-		actr->_active = 1;
+		actr->_active = true;
 		actr->_currNumShots = 3; // used to reverse explosion
 		actr->_vulnerableCountdown = 255;
 	} else {
 		actr->_dead = 2;
-		actr->_active = 0;
+		actr->_active = false;
 	}
 }
 
@@ -263,7 +263,7 @@ int _actor_shoots(Actor *actr, int dir) {
 			act->_lastX[1] = actr->_x;
 			act->_lastY[0] = cy;
 			act->_lastY[1] = cy;
-			act->_active = 1;
+			act->_active = true;
 			act->_creator = actr->_actorNum;
 			act->_moveCount = act->_numMoves;
 			act->_dead = 0;

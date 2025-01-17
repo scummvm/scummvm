@@ -26,7 +26,7 @@
 namespace Got {
 
 void setup_load() {
-	_G(thor)->_active = 1;
+	_G(thor)->_active = true;
 	_G(new_level) = _G(thor_info).last_screen;
 	_G(thor)->_x = (_G(thor_info).last_icon % 20) * 16;
 	_G(thor)->_y = ((_G(thor_info).last_icon / 20) * 16) - 1;
@@ -59,8 +59,8 @@ void setup_load() {
 	_G(lightning_used) = false;
 	_G(tornado_used) = false;
 	_G(shield_on) = false;
-	_G(actor[1])._active = 0;
-	_G(actor[2])._active = 0;
+	_G(actor[1])._active = false;
+	_G(actor[2])._active = false;
 	_G(thor)->_moveCountdown = 6;
 
 	_G(scrn).load(_G(new_level));

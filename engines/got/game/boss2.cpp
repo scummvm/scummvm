@@ -40,7 +40,7 @@ static const byte EXPLOSION[] = {
 	161, 162, 165, 166, 169, 170, 173, 174, 177, 178
 };
 
-static byte expf[60];
+static bool expf[60];
 static byte num_skulls; // Hehe
 static byte num_spikes;
 static bool drop_flag;
@@ -240,7 +240,7 @@ static int boss2_die() {
 			_G(actor[3 + rep])._lastX[_G(pge) ^ 1] = x;
 			_G(actor[3 + rep])._lastY[_G(pge)] = y1;
 			_G(actor[3 + rep])._lastY[_G(pge) ^ 1] = y;
-			_G(actor[3 + rep])._active = 1;
+			_G(actor[3 + rep])._active = true;
 			_G(actor[3 + rep])._vulnerableCountdown = 255;
 			_G(actor[3 + rep])._moveType = 6;
 			_G(actor[3 + rep])._nextFrame = rep;
@@ -278,7 +278,7 @@ static int boss2a_movement(Actor *actr) {
 		if (r > 59)
 			r = 0;
 	}
-	expf[r] = 1;
+	expf[r] = true;
 	int x = (EXPLOSION[r] % 20) * 16;
 	int y = (EXPLOSION[r] / 20) * 16;
 	_G(actor[an])._x = x;

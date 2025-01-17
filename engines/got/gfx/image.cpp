@@ -54,28 +54,28 @@ void setup_actor(Actor *actr, char num, char dir, int x, int y) {
 		actr->_nextFrame = dir;
 	}
 
-	actr->_x = x;         // Actual X coor
-	actr->_y = y;         // Actual Y coor
-	actr->_width = 16;    // Actual X coor
-	actr->_height = 16;   // Actual Y coor
-	actr->_center = 0;    // Center of object
-	actr->_lastX[0] = x; // Last X coor on each page
+	actr->_x = x;                         // Actual X coor
+	actr->_y = y;                         // Actual Y coor
+	actr->_width = 16;                    // Actual X coor
+	actr->_height = 16;                   // Actual Y coor
+	actr->_center = 0;                    // Center of object
+	actr->_lastX[0] = x;                  // Last X coor on each page
 	actr->_lastX[1] = x;
-	actr->_lastY[0] = y; // Last Y coor on each page
+	actr->_lastY[0] = y;                  // Last Y coor on each page
 	actr->_lastY[1] = y;
-	actr->_active = 1;            // 1=active, 0=not active
-	actr->_moveCountdown = 8;     // Count down to movement
+	actr->_active = true;                 // true=active, false=not active
+	actr->_moveCountdown = 8;             // Count down to movement
 	actr->_vulnerableCountdown = STAMINA; // Count down to vulnerability
-	actr->_shotCountdown = 20;       // Count down to another shot
-	actr->_currNumShots = 0;       // # of shots currently on screen
-	actr->_creator = 0;         // which actor # created this actor
-	actr->_unpauseCountdown = 0;           // Pause must be 0 to move
+	actr->_shotCountdown = 20;            // Count down to another shot
+	actr->_currNumShots = 0;              // # of shots currently on screen
+	actr->_creator = 0;                   // which actor # created this actor
+	actr->_unpauseCountdown = 0;          // Pause must be 0 to move
 	actr->_show = 0;
 	actr->_actorNum = num;
 	actr->_counter = 0;
 	actr->_moveCounter = 0;
 	actr->_edgeCounter = 20;
-	actr->_hitThor = 0;
+	actr->_hitThor = false;
 	actr->_rand = g_engine->getRandomNumber(99);
 	actr->_temp1 = 0;
 	actr->_initHealth = actr->_health;
@@ -108,7 +108,7 @@ int load_standard_actors() {
 	load_actor(0, 103 + _G(thor_info).armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor[1]), 1, 0, 100, 100);
-	_G(actor[1])._active = 0;
+	_G(actor[1])._active = false;
 	_G(hammer) = &_G(actor[1]);
 
 	make_actor_surface(&_G(actor[1]));
@@ -117,14 +117,14 @@ int load_standard_actors() {
 	load_actor(0, 106);
 	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(sparkle), 20, 0, 100, 100);
-	_G(sparkle)._active = 0;
+	_G(sparkle)._active = false;
 	make_actor_surface(&_G(sparkle));
 
 	// Load explosion
 	load_actor(0, 107);
 	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(explosion), 21, 0, 100, 100);
-	_G(explosion)._active = 0;
+	_G(explosion)._active = false;
 	make_actor_surface(&_G(explosion));
 
 	// Load tornado
@@ -133,7 +133,7 @@ int load_standard_actors() {
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[0]));
 
 	setup_actor(&_G(magic_item[0]), 20, 0, 0, 0);
-	_G(magic_item[0])._active = 0;
+	_G(magic_item[0])._active = false;
 
 	// Load shield
 	load_actor(0, 109);
@@ -141,9 +141,9 @@ int load_standard_actors() {
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[1]));
 
 	setup_actor(&_G(magic_item[1]), 20, 0, 0, 0);
-	_G(magic_item[1])._active = 0;
+	_G(magic_item[1])._active = false;
 
-	_G(actor[2])._active = 0;
+	_G(actor[2])._active = false;
 
 	make_actor_surface(&_G(magic_item[0]));
 
@@ -152,7 +152,7 @@ int load_standard_actors() {
 
 void show_enemies() {
 	for (int i = 3; i < MAX_ACTORS; i++)
-		_G(actor[i])._active = 0;
+		_G(actor[i])._active = false;
 
 	for (int i = 0; i < MAX_ENEMIES; i++)
 		_G(enemy_type[i]) = 0;
@@ -177,7 +177,7 @@ void show_enemies() {
 				}
 
 				if (_G(scrn).actor_invis[i])
-					_G(actor[i + 3])._active = 0;
+					_G(actor[i + 3])._active = false;
 			}
 
 			_G(etype[i]) = r;

@@ -48,7 +48,7 @@ static const char *odinEndMessage;
 void show_level(int new_level) {
 	_G(boss_active) = false;
 	if (!_G(shield_on))
-		_G(actor[2])._active = 0;
+		_G(actor[2])._active = false;
 	_G(bomb_flag) = false;
 	_G(slipping) = false;
 

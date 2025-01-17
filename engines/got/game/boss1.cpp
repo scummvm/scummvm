@@ -237,7 +237,7 @@ static int boss1_dead() {
 			_G(actor[3 + rep])._lastX[_G(pge) ^ 1] = x;
 			_G(actor[3 + rep])._lastY[_G(pge)] = y1;
 			_G(actor[3 + rep])._lastY[_G(pge) ^ 1] = y;
-			_G(actor[3 + rep])._active = 1;
+			_G(actor[3 + rep])._active = true;
 			_G(actor[3 + rep])._vulnerableCountdown = 255;
 			_G(actor[3 + rep])._moveType = 6;
 			_G(actor[3 + rep])._nextFrame = rep;

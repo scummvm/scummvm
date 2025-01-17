@@ -125,7 +125,7 @@ void pick_up_object(int p) {
 			return;
 		_G(thor)->_numMoves = 1;
 		_G(hammer)->_numMoves = 2;
-		_G(actor[2])._active = 0;
+		_G(actor[2])._active = false;
 		_G(shield_on) = false;
 		_G(tornado_used) = false;
 		_G(thor_info).inventory |= 64;
@@ -147,7 +147,7 @@ void pick_up_object(int p) {
 		_G(tornado_used) = false;
 		_G(hammer)->_numMoves = 2;
 		_G(thor)->_numMoves = 1;
-		_G(actor[2])._active = 0;
+		_G(actor[2])._active = false;
 		s = 1 << (_G(object_map[p]) - 27);
 		_G(thor_info).inventory |= s;
 		odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
@@ -310,7 +310,7 @@ int use_shield(int flag) {
 
 	if (_G(shield_on)) {
 		_G(actor[2])._dead = 2;
-		_G(actor[2])._active = 0;
+		_G(actor[2])._active = false;
 		_G(shield_on) = false;
 	}
 

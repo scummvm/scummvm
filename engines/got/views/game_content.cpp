@@ -155,7 +155,7 @@ bool GameContent::tick() {
 		if (_deathCtr < DEATH_THRESHOLD) {
 			spinThor();
 		} else if (_deathCtr < DEATH_THRESHOLD + 60) {
-			_G(thor)->_active = 0;
+			_G(thor)->_active = false;
 			++_deathCtr;
 		} else {
 			thorDead();
@@ -466,8 +466,8 @@ void GameContent::checkForAreaChange() {
 	} else if (_G(new_level) != _G(current_level)) {
 		// Area transition beginning
 		_G(thor)->_show = 0;
-		_G(thor)->_active = 0;
-		_G(hammer)->_active = 0;
+		_G(thor)->_active = false;
+		_G(hammer)->_active = false;
 		_G(tornado_used) = false;
 
 		// Draws the old area without Thor, and then save a copy of it.
@@ -476,7 +476,7 @@ void GameContent::checkForAreaChange() {
 		_surface.copyFrom(getSurface());
 
 		// Set up new level
-		_G(thor)->_active = 1;
+		_G(thor)->_active = true;
 		show_level(_G(new_level));
 	}
 }
@@ -488,7 +488,7 @@ void GameContent::thorDies() {
 	// Stop any actors on-screen from moving
 	for (int li = 0; li < MAX_ACTORS; li++)
 		_G(actor[li])._show = 0;
-	_G(actor[2])._active = 0;
+	_G(actor[2])._active = false;
 
 	// Set the state for showing death animation
 	_G(gameMode) = MODE_THOR_DIES;
@@ -552,10 +552,10 @@ void GameContent::thorDead() {
 	_G(tornado_used) = false;
 	_G(shield_on) = false;
 	music_resume();
-	_G(actor[1])._active = 0;
-	_G(actor[2])._active = 0;
+	_G(actor[1])._active = false;
+	_G(actor[2])._active = false;
 	_G(thor)->_moveCountdown = 6;
-	_G(thor)->_active = 1;
+	_G(thor)->_active = true;
 
 	// Load saved data for new level back into scrn
 	_G(scrn).load(_G(new_level));

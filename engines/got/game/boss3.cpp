@@ -501,7 +501,7 @@ static int boss_die() {
 			_G(actor[3 + rep])._lastX[_G(pge) ^ 1] = x;
 			_G(actor[3 + rep])._lastY[_G(pge)] = y1;
 			_G(actor[3 + rep])._lastY[_G(pge) ^ 1] = y;
-			_G(actor[3 + rep])._active = 1;
+			_G(actor[3 + rep])._active = true;
 			_G(actor[3 + rep])._vulnerableCountdown = 255;
 			_G(actor[3 + rep])._moveType = 6;
 			_G(actor[3 + rep])._nextFrame = rep;
@@ -563,7 +563,7 @@ void ending_screen() {
 	expcnt = 0;
 
 	_G(actor[34]) = _G(explosion);
-	_G(actor[34])._active = 0;
+	_G(actor[34])._active = false;
 	_G(actor[34])._speed = 2;
 	_G(actor[34])._moveCountdown = _G(actor[34])._speed;
 	_G(actor[34])._currNumShots = 3; // Used to reverse explosion
@@ -587,12 +587,12 @@ int endgame_one() {
 		if (r > 31)
 			r = 0;
 	}
-	expf[r / 8][r % 8] = 1;
+	expf[r / 8][r % 8] = true;
 	int x = (EXPLOSION[r / 8][r % 8] % 20) * 16;
 	int y = (EXPLOSION[r / 8][r % 8] / 20) * 16;
 	_G(actor[34])._x = x;
 	_G(actor[34])._y = y;
-	_G(actor[34])._active = 1;
+	_G(actor[34])._active = true;
 	_G(actor[34])._nextFrame = 0;
 	_G(actor[34])._currNumShots = 3;
 
@@ -600,7 +600,7 @@ int endgame_one() {
 
 	_G(endgame++);
 	if (_G(endgame) > 32) {
-		_G(actor[34])._active = 0;
+		_G(actor[34])._active = false;
 		_G(endgame) = 0;
 	}
 	return 1;
@@ -627,12 +627,12 @@ int endgame_movement() {
 		if (r > 7)
 			r = 0;
 	}
-	expf[_G(exprow)][r] = 1;
+	expf[_G(exprow)][r] = true;
 	int x = (EXPLOSION[_G(exprow)][r] % 20) * 16;
 	int y = (EXPLOSION[_G(exprow)][r] / 20) * 16;
 	_G(actor[34])._x = x;
 	_G(actor[34])._y = y;
-	_G(actor[34])._active = 1;
+	_G(actor[34])._active = true;
 	_G(actor[34])._nextFrame = 0;
 	_G(actor[34])._currNumShots = 3;
 
