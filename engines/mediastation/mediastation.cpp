@@ -258,6 +258,18 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 	Common::String *fileName = fileDeclaration->_name;
 
+	// Load any child contexts before we actually load this one. The child
+	// contexts must be unloaded explicitly later.
+	ContextDeclaration *contextDeclaration = _boot->_contextDeclarations.getValOrDefault(contextId);
+	for (uint32 childContextId : contextDeclaration->_fileReferences) {
+		// The root context is referred to by an ID of 0, regardless of what its
+		// actual ID is. The root context is already always loaded.
+		if (childContextId != 0) {
+			debugC(5, kDebugLoading, "MediaStationEngine::loadContext(): Loading child context %d", childContextId);
+			loadContext(childContextId);
+		}
+	}
+
 	// LOAD THE CONTEXT.
 	Common::Path entryCxtFilepath = Common::Path(*fileName);
 	Context *context = new Context(entryCxtFilepath);
