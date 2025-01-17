@@ -145,8 +145,8 @@ bool Console::cmdLevel(int argc, const char **argv) {
 }
 
 bool Console::cmdFlying(int argc, const char **argv) {
-	_G(thor)->flying = !_G(thor)->flying;
-	debugPrintf("Flying is %s\n", _G(thor)->flying ? "on" : "off");
+	_G(thor)->_flying = !_G(thor)->_flying;
+	debugPrintf("Flying is %s\n", _G(thor)->_flying ? "on" : "off");
 	return true;
 }
 

@@ -139,19 +139,19 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 void GotEngine::savegameLoaded() {
 	_G(current_area) = _G(thor_info).last_screen;
 
-	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
-	_G(thor)->y = ((_G(thor_info).last_icon / 20) * 16) - 1;
-	if (_G(thor)->x < 1)
-		_G(thor)->x = 1;
-	if (_G(thor)->y < 0)
-		_G(thor)->y = 0;
-	_G(thor)->dir = _G(thor_info).last_dir;
-	_G(thor)->last_dir = _G(thor_info).last_dir;
-	_G(thor)->health = _G(thor_info).last_health;
-	_G(thor)->num_moves = 1;
-	_G(thor)->vunerable = 60;
-	_G(thor)->show = 60;
-	_G(thor)->speed_count = 6;
+	_G(thor)->_x = (_G(thor_info).last_icon % 20) * 16;
+	_G(thor)->_y = ((_G(thor_info).last_icon / 20) * 16) - 1;
+	if (_G(thor)->_x < 1)
+		_G(thor)->_x = 1;
+	if (_G(thor)->_y < 0)
+		_G(thor)->_y = 0;
+	_G(thor)->_dir = _G(thor_info).last_dir;
+	_G(thor)->_lastDir = _G(thor_info).last_dir;
+	_G(thor)->_health = _G(thor_info).last_health;
+	_G(thor)->_numMoves = 1;
+	_G(thor)->_vulnerableCountdown = 60;
+	_G(thor)->_show = 60;
+	_G(thor)->_moveCountdown = 6;
 	load_new_thor();
 
 	g_vars->resetEndgameFlags();
@@ -225,8 +225,8 @@ void GotEngine::pauseEngineIntern(bool pause) {
 	}
 
 	if (_G(shield_on)) {
-		_G(actor[2]).dead = 2;
-		_G(actor[2]).used = 0;
+		_G(actor[2])._dead = 2;
+		_G(actor[2])._active = 0;
 		_G(shield_on) = false;
 	}
 

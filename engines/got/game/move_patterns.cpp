@@ -166,11 +166,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 	if (x < 0) {
 		if (_G(current_level) > 0) {
 			_G(new_level) = _G(current_level) - 1;
-			actr->x = 304;
-			actr->last_x[0] = 304;
-			actr->last_x[1] = 304;
-			actr->show = 0;
-			actr->move_count = 0;
+			actr->_x = 304;
+			actr->_lastX[0] = 304;
+			actr->_lastX[1] = 304;
+			actr->_show = 0;
+			actr->_moveCount = 0;
 			set_thor_vars();
 			return 1;
 		}
@@ -181,11 +181,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 	if (x > 306) {
 		if (_G(current_level) < 119) {
 			_G(new_level) = _G(current_level) + 1;
-			actr->x = 0;
-			actr->last_x[0] = 0;
-			actr->last_x[1] = 0;
-			actr->show = 0;
-			actr->move_count = 0;
+			actr->_x = 0;
+			actr->_lastX[0] = 0;
+			actr->_lastX[1] = 0;
+			actr->_show = 0;
+			actr->_moveCount = 0;
 			set_thor_vars();
 			return 1;
 		}
@@ -196,11 +196,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 	if (y < 0) {
 		if (_G(current_level) > 9) {
 			_G(new_level) = _G(current_level) - 10;
-			actr->y = 175;
-			actr->last_y[0] = 175;
-			actr->show = 0;
-			actr->last_y[1] = 175;
-			actr->move_count = 0;
+			actr->_y = 175;
+			actr->_lastY[0] = 175;
+			actr->_show = 0;
+			actr->_lastY[1] = 175;
+			actr->_moveCount = 0;
 			set_thor_vars();
 			return 1;
 		}
@@ -211,11 +211,11 @@ int check_move0(int x, int y, ACTOR *actr) {
 	if (y > 175) {
 		if (_G(current_level) < 110) {
 			_G(new_level) = _G(current_level) + 10;
-			actr->y = 0;
-			actr->last_y[0] = 0;
-			actr->last_y[1] = 0;
-			actr->show = 0;
-			actr->move_count = 0;
+			actr->_y = 0;
+			actr->_lastY[0] = 0;
+			actr->_lastY[1] = 0;
+			actr->_show = 0;
+			actr->_moveCount = 0;
 			set_thor_vars();
 			return 1;
 		}
@@ -225,13 +225,13 @@ int check_move0(int x, int y, ACTOR *actr) {
 	
 	int x1 = (x + 1) >> 4;
 	int y1 = (y + 8) >> 4;
-	int x2 = (_G(thor)->dir > 1) ? (x + 12) >> 4 : (x + 10) >> 4;
+	int x2 = (_G(thor)->_dir > 1) ? (x + 12) >> 4 : (x + 10) >> 4;
 	int y2 = (y + 15) >> 4;
 
 	_G(slip_flag) = false;
 
 	// Check for cheat flying mode
-	if (!actr->flying) {
+	if (!actr->_flying) {
 		byte icn1 = _G(scrn).icon[y1][x1];
 		byte icn2 = _G(scrn).icon[y2][x1];
 		byte icn3 = _G(scrn).icon[y1][x2];
@@ -308,44 +308,44 @@ int check_move0(int x, int y, ACTOR *actr) {
 	_G(thor_special_flag) = false;
 	for (int i = 3; i < MAX_ACTORS; i++) {
 		ACTOR *act = &_G(actor[i]);
-		if ((act->solid & 128) || !act->used)
+		if ((act->_solid & 128) || !act->_active)
 			continue;
 
-		int x3 = act->x + 1;
-		int y3 = act->y + 1;
+		int x3 = act->_x + 1;
+		int y3 = act->_y + 1;
 		
 		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
 		
-		int x4 = act->x + act->size_x - 1;
-		int y4 = act->y + act->size_y - 1;
+		int x4 = act->_x + act->_sizeX - 1;
+		int y4 = act->_y + act->_sizeY - 1;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
-			if (act->func_num > 0) { // 255=explosion
-				if (act->func_num == 255)
+			if (act->_funcNum > 0) { // 255=explosion
+				if (act->_funcNum == 255)
 					return 0;
-				act->temp1 = x;
-				act->temp2 = y;
+				act->_temp1 = x;
+				act->_temp2 = y;
 				_G(thor_special_flag) = true;
 				
-				return special_movement_func[act->func_num](act);
+				return special_movement_func[act->_funcNum](act);
 			}
 
 			_G(thor_special_flag) = false;
 			thor_damaged(act);
-			if (act->solid < 2) {
-				if (!act->vunerable && (!(act->type & 1)))
+			if (act->_solid < 2) {
+				if (!act->_vulnerableCountdown && (!(act->_type & 1)))
 					play_sound(PUNCH1, false);
 
-				if (!_G(hammer)->used && _G(key_flag[key_fire]))
-					actor_damaged(act, _G(hammer)->strength);
+				if (!_G(hammer)->_active && _G(key_flag[key_fire]))
+					actor_damaged(act, _G(hammer)->_hitStrength);
 				else
-					actor_damaged(act, _G(thor)->strength);
+					actor_damaged(act, _G(thor)->_hitStrength);
 			}
 			return 1;
 		}
 	}
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
@@ -361,7 +361,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 
 	// Check for solid or fly over
 	int icn = TILE_FLY;
-	if (actr->flying)
+	if (actr->_flying)
 		icn = TILE_SOLID;
 
 	byte icn1 = _G(scrn).icon[y1][x1];
@@ -369,7 +369,7 @@ int check_move1(int x, int y, ACTOR *actr) {
 	byte icn3 = _G(scrn).icon[y1][x2];
 	byte icn4 = _G(scrn).icon[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) {
-		if (actr->actor_num == 1 && actr->move == 2)
+		if (actr->_actorNum == 1 && actr->_moveType == 2)
 			play_sound(CLANG, false);
 
 		return 0;
@@ -395,17 +395,17 @@ int check_move1(int x, int y, ACTOR *actr) {
 	int f = 0;
 	for (int i = 3; i < MAX_ACTORS; i++) {
 		ACTOR *act = &_G(actor[i]);
-		if (!act->used || act->type == 3)
+		if (!act->_active || act->_type == 3)
 			continue;
 		
-		int x3 = act->x;
-		int y3 = act->y;
+		int x3 = act->_x;
+		int y3 = act->_y;
 
 		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
 		
-		int x4 = act->x + act->size_x - 1;
-		int y4 = act->y + act->size_y - 1;
+		int x4 = act->_x + act->_sizeX - 1;
+		int y4 = act->_y + act->_sizeY - 1;
 
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
 			if (_G(boss_active) && !GAME3) {
@@ -421,43 +421,43 @@ int check_move1(int x, int y, ACTOR *actr) {
 					break;
 				}
 			} else {
-				if (act->solid == 2 && (actr->move == 16 || actr->move == 17))
+				if (act->_solid == 2 && (actr->_moveType == 16 || actr->_moveType == 17))
 					return 0;
-				actor_damaged(act, actr->strength);
+				actor_damaged(act, actr->_hitStrength);
 			}
 			f++;
 		}
 	}
-	if (f && actr->move == 2)
+	if (f && actr->_moveType == 2)
 		return 0;
 
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
 // Check enemy move
 int check_move2(int x, int y, ACTOR *actr) {
-	if (actr->actor_num < 3)
+	if (actr->_actorNum < 3)
 		return check_move1(x, y, actr);
 
-	if (x < 0 || x > (319 - actr->size_x) || y < 0 || y > 175)
+	if (x < 0 || x > (319 - actr->_sizeX) || y < 0 || y > 175)
 		return 0;
 
 	int x1 = (x + 1) >> 4;
 	int y1;
-	if (!actr->func_num)
-		y1 = (y + (actr->size_y / 2)) >> 4;
+	if (!actr->_funcNum)
+		y1 = (y + (actr->_sizeY / 2)) >> 4;
 	else
 		y1 = (y + 1) >> 4;
 
-	int x2 = ((x + actr->size_x) - 1) >> 4;
-	int y2 = ((y + actr->size_y) - 1) >> 4;
+	int x2 = ((x + actr->_sizeX) - 1) >> 4;
+	int y2 = ((y + actr->_sizeY) - 1) >> 4;
 
 	// Check for solid or fly over
 
 	int icn = TILE_FLY;
-	if (actr->flying)
+	if (actr->_flying)
 		icn = TILE_SOLID;
 
 	byte icn1 = _G(scrn).icon[y1][x1];
@@ -482,14 +482,14 @@ int check_move2(int x, int y, ACTOR *actr) {
 
 	x1 = x + 1;
 	y1 = y + 1;
-	x2 = (x + actr->size_x) - 1;
-	y2 = (y + actr->size_y) - 1;
+	x2 = (x + actr->_sizeX) - 1;
+	y2 = (y + actr->_sizeY) - 1;
 
 	for (int i = 0; i < MAX_ACTORS; i++) {
 		ACTOR *act = &_G(actor[i]);
-		if (act->actor_num == actr->actor_num || act->actor_num == 1 || !act->used)
+		if (act->_actorNum == actr->_actorNum || act->_actorNum == 1 || !act->_active)
 			continue;
-		if (act->type == 3)
+		if (act->_type == 3)
 			continue; // Shot
 
 		if (i == 0) {
@@ -498,44 +498,44 @@ int check_move2(int x, int y, ACTOR *actr) {
 				return 0;
 			}
 		} else {
-			int x3 = act->x;
-			int y3 = act->y;
+			int x3 = act->_x;
+			int y3 = act->_y;
 			
 			if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 				continue;
 
-			int x4 = act->x + act->size_x;
-			int y4 = act->y + act->size_y;
+			int x4 = act->_x + act->_sizeX;
+			int y4 = act->_y + act->_sizeY;
 			if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
-				if (actr->move == 38) {
-					if (act->func_num == 4)
+				if (actr->_moveType == 38) {
+					if (act->_funcNum == 4)
 						_G(switch_flag) = 1;
-					else if (act->func_num == 7)
+					else if (act->_funcNum == 7)
 						_G(switch_flag) = 2;
 				}
 				return 0;
 			}
 		}
 	}
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
 // Check enemy shot move
 int check_move3(int x, int y, ACTOR *actr) {
-	if (x < 0 || x > (319 - actr->size_x) || y < 0 || y > 175)
+	if (x < 0 || x > (319 - actr->_sizeX) || y < 0 || y > 175)
 		return 0;
 
 	int x1 = (x + 1) >> 4;
-	int y1 = (y + (actr->size_y / 2)) >> 4;
-	int x2 = ((x + actr->size_x) - 1) >> 4;
-	int y2 = ((y + actr->size_y) - 1) >> 4;
+	int y1 = (y + (actr->_sizeY / 2)) >> 4;
+	int x2 = ((x + actr->_sizeX) - 1) >> 4;
+	int y2 = ((y + actr->_sizeY) - 1) >> 4;
 
 	// Check for solid or fly over
 
 	int icn = TILE_FLY;
-	if (actr->flying)
+	if (actr->_flying)
 		icn = TILE_SOLID;
 
 	byte icn1 = _G(scrn).icon[y1][x1];
@@ -557,30 +557,30 @@ int check_move3(int x, int y, ACTOR *actr) {
 	// Check for solid or fly over
 	x1 = x + 1;
 	y1 = y + 1;
-	x2 = (x + actr->size_x) - 1;
-	y2 = (y + actr->size_y) - 1;
+	x2 = (x + actr->_sizeX) - 1;
+	y2 = (y + actr->_sizeY) - 1;
 
 	if (overlap(x1, y1, x2, y2, _G(thor_x1), _G(thor_real_y1), _G(thor_x2), _G(thor_y2))) {
 		thor_damaged(actr);
 		return 0;
 	}
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		if (i == actr->actor_num)
+		if (i == actr->_actorNum)
 			continue;
 
 		ACTOR *act = &_G(actor[i]);
 
-		if (!act->used)
+		if (!act->_active)
 			continue;
-		if (act->solid < 2)
+		if (act->_solid < 2)
 			continue;
-		if (act->type == 3)
+		if (act->_type == 3)
 			continue; // Shot
-		if (act->actor_num == actr->creator)
+		if (act->_actorNum == actr->_creator)
 			continue;
 
-		int x3 = act->x;
-		int y3 = act->y;
+		int x3 = act->_x;
+		int y3 = act->_y;
 
 		if (ABS(x3 - x1) > 16 || ABS(y3 - y1) > 16)
 			continue;
@@ -590,23 +590,23 @@ int check_move3(int x, int y, ACTOR *actr) {
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4))
 			return 0;
 	}
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
 // Flying enemies
 int check_move4(int x, int y, ACTOR *actr) {
-	if (x < 0 || x > (319 - actr->size_x) || y < 0 || y > 175)
+	if (x < 0 || x > (319 - actr->_sizeX) || y < 0 || y > 175)
 		return 0;
-	if (overlap(x, y, x + actr->size_x - 1, y + actr->size_y - 1,
+	if (overlap(x, y, x + actr->_sizeX - 1, y + actr->_sizeY - 1,
 				_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
-		if (actr->type == 3)
+		if (actr->_type == 3)
 			thor_damaged(actr);
 		return 0;
 	}
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
@@ -622,38 +622,38 @@ int check_thor_move(int x, int y, ACTOR *actr) {
 	if (_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4) > 1)
 		return 0;
 
-	switch (actr->dir) {
+	switch (actr->_dir) {
 	case 0:
 		if (_G(thor_icon1)) {
-			actr->dir = 3;
+			actr->_dir = 3;
 			if (check_move0(x + THOR_PAD1, y + 2, actr)) {
-				actr->dir = 0;
+				actr->_dir = 0;
 				return 1;
 			}
 		} else if (_G(thor_icon3)) {
-			actr->dir = 2;
+			actr->_dir = 2;
 			if (check_move0(x - THOR_PAD1, y + 2, actr)) {
-				actr->dir = 0;
+				actr->_dir = 0;
 				return 1;
 			}
 		}
-		actr->dir = 0;
+		actr->_dir = 0;
 		break;
 	case 1:
 		if (_G(thor_icon2)) {
-			actr->dir = 3;
+			actr->_dir = 3;
 			if (check_move0(x + THOR_PAD1, y - 2, actr)) {
-				actr->dir = 1;
+				actr->_dir = 1;
 				return 1;
 			}
 		} else if (_G(thor_icon4)) {
-			actr->dir = 2;
+			actr->_dir = 2;
 			if (check_move0(x - THOR_PAD1, y - 2, actr)) {
-				actr->dir = 1;
+				actr->_dir = 1;
 				return 1;
 			}
 		}
-		actr->dir = 1;
+		actr->_dir = 1;
 		break;
 	case 2:
 		if (_G(thor_icon1)) {
@@ -680,22 +680,22 @@ int check_thor_move(int x, int y, ACTOR *actr) {
 
 // Player control
 int movement_zero(ACTOR *actr) {
-	int d = actr->dir;
+	int d = actr->_dir;
 	int od = d;
 
 	set_thor_vars();
 
-	if (_G(hammer)->used && _G(hammer)->move == 5) {
+	if (_G(hammer)->_active && _G(hammer)->_moveType == 5) {
 		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2),
-					_G(hammer)->x, _G(hammer)->y, _G(hammer)->x + 13, _G(hammer)->y + 13)) {
+					_G(hammer)->_x, _G(hammer)->_y, _G(hammer)->_x + 13, _G(hammer)->_y + 13)) {
 			actor_destroyed(_G(hammer));
 		}
 	}
-	int x = actr->x;
-	int y = actr->y;
+	int x = actr->_x;
+	int y = actr->_y;
 	_G(diag_flag) = false;
-	if (actr->move_counter)
-		actr->move_counter--;
+	if (actr->_moveCounter)
+		actr->_moveCounter--;
 
 	if (_G(slipping)) {
 		if (_G(slip_cnt) == 8)
@@ -707,13 +707,13 @@ int movement_zero(ACTOR *actr) {
 			_G(slipping) = false;
 
 		check_thor_move(x, y, actr);
-		_G(thor)->speed_count = 4;
+		_G(thor)->_moveCountdown = 4;
 		return d;
 	}
 
 	if (_G(key_flag[key_up]) && _G(key_flag[key_left])) {
 		d = 2;
-		actr->dir = d;
+		actr->_dir = d;
 		_G(diag) = 1;
 		_G(diag_flag) = true;
 		if (check_thor_move(x - 2, y - 2, actr)) {
@@ -722,7 +722,7 @@ int movement_zero(ACTOR *actr) {
 		}
 	} else if (_G(key_flag[key_up]) && _G(key_flag[key_right])) {
 		d = 3;
-		actr->dir = d;
+		actr->_dir = d;
 		_G(diag) = 2;
 		_G(diag_flag) = true;
 		if (check_thor_move(x + 2, y - 2, actr)) {
@@ -731,7 +731,7 @@ int movement_zero(ACTOR *actr) {
 		}
 	} else if (_G(key_flag[key_down]) && _G(key_flag[key_left])) {
 		d = 2;
-		actr->dir = d;
+		actr->_dir = d;
 		_G(diag) = 4;
 		_G(diag_flag) = true;
 		if (check_thor_move(x - 2, y + 2, actr)) {
@@ -740,7 +740,7 @@ int movement_zero(ACTOR *actr) {
 		}
 	} else if (_G(key_flag[key_down]) && _G(key_flag[key_right])) {
 		d = 3;
-		actr->dir = d;
+		actr->_dir = d;
 		_G(diag) = 3;
 		_G(diag_flag) = true;
 		if (check_thor_move(x + 2, y + 2, actr)) {
@@ -752,7 +752,7 @@ int movement_zero(ACTOR *actr) {
 	if (_G(key_flag[key_right])) {
 		if (!_G(key_flag[key_left])) {
 			d = 3;
-			actr->dir = d;
+			actr->_dir = d;
 			if (check_thor_move(x + 2, y, actr)) {
 				next_frame(actr);
 				return d;
@@ -762,7 +762,7 @@ int movement_zero(ACTOR *actr) {
 	if (_G(key_flag[key_left])) {
 		if (!_G(key_flag[key_right])) {
 			d = 2;
-			actr->dir = d;
+			actr->_dir = d;
 			if (check_thor_move(x - 2, y, actr)) {
 				next_frame(actr);
 				return d;
@@ -772,7 +772,7 @@ int movement_zero(ACTOR *actr) {
 	if (_G(key_flag[key_down])) {
 		if (!_G(key_flag[key_up])) {
 			d = 1;
-			actr->dir = d;
+			actr->_dir = d;
 			if (check_thor_move(x, y + 2, actr)) {
 				next_frame(actr);
 				return d;
@@ -782,16 +782,16 @@ int movement_zero(ACTOR *actr) {
 	if (_G(key_flag[key_up])) {
 		if (!_G(key_flag[key_down])) {
 			d = 0;
-			actr->dir = d;
+			actr->_dir = d;
 			if (check_thor_move(x, y - 2, actr)) {
 				next_frame(actr);
 				return d;
 			}
 		}
 	}
-	actr->move_counter = 5;
-	actr->next = 0;
-	actr->dir = od;
+	actr->_moveCounter = 5;
+	actr->_nextFrame = 0;
+	actr->_dir = od;
 	return d;
 }
 
@@ -801,7 +801,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 
 	ACTOR *act;
 
-	if (actr->actor_num < 3)
+	if (actr->_actorNum < 3)
 		return check_move1(x, y, actr);
 
 	if (x < 0 || x > 304 || y < 0 || y > 176)
@@ -815,7 +815,7 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 	// Check for solid or fly over
 
 	int icn = TILE_FLY;
-	if (actr->flying)
+	if (actr->_flying)
 		icn = TILE_SOLID;
 
 	byte icn1 = _G(scrn).icon[y1][x1];
@@ -841,44 +841,44 @@ int check_special_move1(int x, int y, ACTOR *actr) {
 
 	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor[i]);
-		if (act->actor_num == actr->actor_num)
+		if (act->_actorNum == actr->_actorNum)
 			continue;
-		if (!act->used)
+		if (!act->_active)
 			continue;
-		if (act->type == 3)
+		if (act->_type == 3)
 			continue; //shot
-		x3 = act->x;
+		x3 = act->_x;
 		if ((ABS(x3 - x1)) > 16)
 			continue;
-		y3 = act->y;
+		y3 = act->_y;
 		if ((ABS(y3 - y1)) > 16)
 			continue;
-		x4 = act->x + act->size_x;
-		y4 = act->y + 15;
+		x4 = act->_x + act->_sizeX;
+		y4 = act->_y + 15;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4))
 			return 0;
 	}
 	for (i = 3; i < MAX_ACTORS; i++) {
 		act = &_G(actor[i]);
-		if (act->actor_num == actr->actor_num)
+		if (act->_actorNum == actr->_actorNum)
 			continue;
-		if (!act->used)
+		if (!act->_active)
 			continue;
-		if (act->type == 3)
+		if (act->_type == 3)
 			continue; // Shot
-		x3 = act->x;
+		x3 = act->_x;
 		if ((ABS(x3 - x1)) > 16)
 			continue;
-		y3 = act->y;
+		y3 = act->_y;
 		if ((ABS(y3 - y1)) > 16)
 			continue;
-		x4 = act->x + act->size_x;
-		y4 = act->y + act->size_y;
+		x4 = act->_x + act->_sizeX;
+		y4 = act->_y + act->_sizeY;
 		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2), x3, y3, x4, y4))
 			return 0;
 	}
-	actr->x = x;
-	actr->y = y;
+	actr->_x = x;
+	actr->_y = y;
 	return 1;
 }
 
@@ -889,76 +889,76 @@ int special_movement_one(ACTOR *actr) {
 	if (_G(diag_flag))
 		return 0;
 
-	int d = _G(thor)->dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
-	int sd = actr->last_dir;
-	actr->last_dir = d;
+	int d = _G(thor)->_dir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
+	int sd = actr->_lastDir;
+	actr->_lastDir = d;
 
 	switch (d) {
 	case 0:
 		y1 -= 2;
 		if (!check_special_move1(x1, y1, actr)) {
-			actr->last_dir = sd;
+			actr->_lastDir = sd;
 			return 0;
 		}
 		break;
 	case 1:
 		y1 += 2;
 		if (!check_special_move1(x1, y1, actr)) {
-			actr->last_dir = sd;
+			actr->_lastDir = sd;
 			return 0;
 		}
 		break;
 	case 2:
 		x1 -= 2;
 		if (!check_special_move1(x1, y1, actr)) {
-			actr->last_dir = sd;
+			actr->_lastDir = sd;
 			return 0;
 		}
 		break;
 	case 3:
 		x1 += 2;
 		if (!check_special_move1(x1, y1, actr)) {
-			actr->last_dir = sd;
+			actr->_lastDir = sd;
 			return 0;
 		}
 		break;
 	}
 	next_frame(actr);
-	actr->last_dir = d;
+	actr->_lastDir = d;
 	return 1;
 }
 
 // Angle
 int special_movement_two(ACTOR *actr) {
-	int x1 = actr->temp1; // Calc thor pos
-	int y1 = actr->temp2;
+	int x1 = actr->_temp1; // Calc thor pos
+	int y1 = actr->_temp2;
 	int x2 = x1 + 13;
 	int y2 = y1 + 14;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
 		ACTOR *act = &_G(actor[i]);
-		if (actr->actor_num == act->actor_num)
+		if (actr->_actorNum == act->_actorNum)
 			continue;
-		if (!act->used)
+		if (!act->_active)
 			continue;
-		int x3 = act->x;
+		int x3 = act->_x;
 		if ((ABS(x3 - x1)) > 16)
 			continue;
-		int y3 = act->y;
+		int y3 = act->_y;
 		if ((ABS(y3 - y1)) > 16)
 			continue;
-		int x4 = act->x + act->size_x;
-		int y4 = act->y + act->size_y;
+		int x4 = act->_x + act->_sizeX;
+		int y4 = act->_y + act->_sizeY;
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4))
 			return 0;
 	}
-	if (!actr->func_pass) {
-		if (_G(thor)->health < 150) {
+	if (!actr->_funcPass) {
+		if (_G(thor)->_health < 150) {
 			if (!sound_playing())
 				play_sound(ANGEL, false);
-			_G(thor)->health += 1;
+			_G(thor)->_health += 1;
 		}
 	} else if (_G(thor_info).magic < 150) {
 		if (!sound_playing())
@@ -976,7 +976,7 @@ int special_movement_three(ACTOR *actr) {
 
 	long lind = (long)_G(current_level);
 	lind *= 1000;
-	lind += (long)actr->actor_num;
+	lind += (long)actr->_actorNum;
 	execute_script(lind, _G(odin));
 
 	return 0;
@@ -984,9 +984,9 @@ int special_movement_three(ACTOR *actr) {
 
 // Peg switch
 int special_movement_four(ACTOR *actr) {
-	if (actr->shot_cnt != 0)
+	if (actr->_shotCountdown != 0)
 		return 0;
-	actr->shot_cnt = 30;
+	actr->_shotCountdown = 30;
 
 	_G(switch_flag) = 1;
 	return 0;
@@ -994,30 +994,30 @@ int special_movement_four(ACTOR *actr) {
 
 // Boulder roll
 int special_movement_five(ACTOR *actr) {
-	int d = _G(thor)->dir;
+	int d = _G(thor)->_dir;
 
 	if (_G(diag_flag)) {
 		switch (_G(diag)) {
 		case 1:
-			if (_G(thor_x1) < (actr->x + 15))
+			if (_G(thor_x1) < (actr->_x + 15))
 				d = 0;
 			else
 				d = 2;
 			break;
 		case 2:
-			if (_G(thor_x2) < actr->x)
+			if (_G(thor_x2) < actr->_x)
 				d = 3;
 			else
 				d = 0;
 			break;
 		case 3:
-			if (_G(thor_x2) > (actr->x))
+			if (_G(thor_x2) > (actr->_x))
 				d = 1;
 			else
 				d = 3;
 			break;
 		case 4:
-			if (_G(thor_x1) > (actr->x + 15))
+			if (_G(thor_x1) > (actr->_x + 15))
 				d = 2;
 			else
 				d = 1;
@@ -1025,8 +1025,8 @@ int special_movement_five(ACTOR *actr) {
 		}
 	}
 
-	actr->last_dir = d;
-	actr->move = 14;
+	actr->_lastDir = d;
+	actr->_moveType = 14;
 	return 0;
 }
 
@@ -1036,35 +1036,35 @@ int special_movement_six(ACTOR *actr) {
 }
 
 int special_movement_seven(ACTOR *actr) {
-	if (actr->shot_cnt != 0)
+	if (actr->_shotCountdown != 0)
 		return 0;
 
-	actr->shot_cnt = 30;
+	actr->_shotCountdown = 30;
 
 	_G(switch_flag) = 2;
 	return 0;
 }
 
 int special_movement_eight(ACTOR *actr) {
-	if (_G(thor)->dir < 2 || _G(diag_flag))
+	if (_G(thor)->_dir < 2 || _G(diag_flag))
 		return 0;
 
-	actr->last_dir = _G(thor)->dir;
-	actr->move = 14;
+	actr->_lastDir = _G(thor)->_dir;
+	actr->_moveType = 14;
 	return 0;
 }
 
 int special_movement_nine(ACTOR *actr) {
-	if (_G(thor)->dir > 1 || _G(diag_flag))
+	if (_G(thor)->_dir > 1 || _G(diag_flag))
 		return 0;
 
-	actr->last_dir = _G(thor)->dir;
-	actr->move = 14;
+	actr->_lastDir = _G(thor)->_dir;
+	actr->_moveType = 14;
 	return 0;
 }
 
 int special_movement_ten(ACTOR *actr) {
-	byte &actor_ctr = GAME1 ? actr->temp6 : actr->talk_counter;
+	byte &actor_ctr = GAME1 ? actr->_temp6 : actr->_talkCounter;
 
 	if (actor_ctr) {
 		actor_ctr--;
@@ -1075,22 +1075,22 @@ int special_movement_ten(ACTOR *actr) {
 		return 0;
 
 	actor_ctr = 10;
-	actor_speaks(actr, 0 - actr->pass_value, 0);
+	actor_speaks(actr, 0 - actr->_passValue, 0);
 	return 0;
 }
 
 // Red guard
 int special_movement_eleven(ACTOR *actr) {
-	if (actr->talk_counter) {
-		actr->talk_counter--;
+	if (actr->_talkCounter) {
+		actr->_talkCounter--;
 		return 0;
 	}
 
-	const int oldType = actr->type;
-	actr->type = 4;
+	const int oldType = actr->_type;
+	actr->_type = 4;
 	actor_speaks(actr, 0, 0);
-	actr->type = oldType;
-	actr->talk_counter = 10;
+	actr->_type = oldType;
+	actr->_talkCounter = 10;
 
 	return 0;
 }
@@ -1098,14 +1098,14 @@ int special_movement_eleven(ACTOR *actr) {
 // No movement - frame cycle
 int movement_one(ACTOR *actr) {
 	next_frame(actr);
-	return actr->dir;
+	return actr->_dir;
 }
 
 // Hammer only
 int movement_two(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	switch (d) {
 	case 0:
@@ -1122,30 +1122,30 @@ int movement_two(ACTOR *actr) {
 		break;
 	}
 	if (!check_move2(x1, y1, actr)) {
-		if (actr->actor_num == 1) {
-			_G(hammer)->move = 5;
+		if (actr->_actorNum == 1) {
+			_G(hammer)->_moveType = 5;
 			d = reverse_direction(_G(hammer));
-			_G(hammer)->dir = d;
+			_G(hammer)->_dir = d;
 		}
-		if (actr->actor_num == 2) {
-			actr->used = 0;
-			actr->dead = 2;
+		if (actr->_actorNum == 2) {
+			actr->_active = 0;
+			actr->_dead = 2;
 			_G(lightning_used) = false;
 			_G(tornado_used) = false;
 		}
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Walk-bump-random turn
 int movement_three(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	switch (d) {
 	case 0:
@@ -1174,18 +1174,18 @@ int movement_three(ACTOR *actr) {
 		break;
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Simple tracking
 int movement_four(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	int f = 0;
 	if (x1 > _G(thor_x1) - 1) {
@@ -1218,30 +1218,30 @@ int movement_four(ACTOR *actr) {
 			f = 1;
 		}
 		if (f)
-			f = check_move2(actr->x, y1, actr);
+			f = check_move2(actr->_x, y1, actr);
 		if (!f)
-			check_move2(actr->x, actr->y, actr);
+			check_move2(actr->_x, actr->_y, actr);
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 int movement_five(ACTOR *actr) {
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 	int xd = 0;
 	int yd = 0;
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
-	if (x1 > (_G(thor)->x + 1))
+	if (x1 > (_G(thor)->_x + 1))
 		xd = -2; //+1
-	else if (x1 < (_G(thor)->x - 1))
+	else if (x1 < (_G(thor)->_x - 1))
 		xd = 2;
 
-	if (actr->actor_num == 1) {
+	if (actr->_actorNum == 1) {
 		if (y1 < (_G(thor_y1) - 6))
 			yd = 2;
 		else if (y1 > (_G(thor_y1) - 6))
@@ -1266,8 +1266,8 @@ int movement_five(ACTOR *actr) {
 		y1 += yd;
 		if (check_move2(x1, y1, actr)) {
 			next_frame(actr);
-			actr->last_dir = d;
-			if (actr->directions == 1)
+			actr->_lastDir = d;
+			if (actr->_directions == 1)
 				return 0;
 			return d;
 		}
@@ -1281,11 +1281,11 @@ int movement_five(ACTOR *actr) {
 		else if (xd == -2 && yd == 0)
 			d = 2;
 	}
-	x1 = actr->x;
-	y1 = actr->y;
-	actr->toggle ^= 1;
+	x1 = actr->_x;
+	y1 = actr->_y;
+	actr->_toggle ^= 1;
 
-	if (actr->toggle) {
+	if (actr->_toggle) {
 		if (xd) {
 			x1 += xd;
 			if (check_move2(x1, y1, actr)) {
@@ -1294,12 +1294,12 @@ int movement_five(ACTOR *actr) {
 				else
 					d = 2;
 				next_frame(actr);
-				actr->last_dir = d;
-				if (actr->directions == 1)
+				actr->_lastDir = d;
+				if (actr->_directions == 1)
 					return 0;
 				return d;
 			}
-			x1 = actr->x;
+			x1 = actr->_x;
 		}
 		if (yd) {
 			y1 += yd;
@@ -1309,8 +1309,8 @@ int movement_five(ACTOR *actr) {
 				else
 					d = 0;
 				next_frame(actr);
-				actr->last_dir = d;
-				if (actr->directions == 1)
+				actr->_lastDir = d;
+				if (actr->_directions == 1)
 					return 0;
 				return d;
 			}
@@ -1324,12 +1324,12 @@ int movement_five(ACTOR *actr) {
 				else
 					d = 0;
 				next_frame(actr);
-				actr->last_dir = d;
-				if (actr->directions == 1)
+				actr->_lastDir = d;
+				if (actr->_directions == 1)
 					return 0;
 				return d;
 			}
-			y1 = actr->y;
+			y1 = actr->_y;
 		}
 		if (xd) {
 			x1 += xd;
@@ -1339,36 +1339,36 @@ int movement_five(ACTOR *actr) {
 				else
 					d = 2;
 				next_frame(actr);
-				actr->last_dir = d;
-				if (actr->directions == 1)
+				actr->_lastDir = d;
+				if (actr->_directions == 1)
 					return 0;
 				return d;
 			}
 		}
 	}
-	check_move2(actr->x, actr->y, actr);
+	check_move2(actr->_x, actr->_y, actr);
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Explosion only
 int movement_six(ACTOR *actr) {
-	if (actr->num_shots > 0) {
-		actr->next++;
-		if (actr->next > 2) {
-			actr->next = 0;
+	if (actr->_currNumShots > 0) {
+		actr->_nextFrame++;
+		if (actr->_nextFrame > 2) {
+			actr->_nextFrame = 0;
 			if (_G(boss_dead))
 				play_sound(EXPLODE, false);
 		}
-		actr->num_shots--;
+		actr->_currNumShots--;
 	} else {
-		actr->dead = 2;
-		actr->used = 0;
+		actr->_dead = 2;
+		actr->_active = 0;
 		if (!_G(boss_dead) && !_G(endgame)) {
-			if (actr->type == 2)
+			if (actr->_type == 2)
 				drop_object(actr);
 		}
 	}
@@ -1379,33 +1379,33 @@ int movement_six(ACTOR *actr) {
 
 // Walk-bump-random turn (pause also)
 int movement_seven(ACTOR *actr) {
-	if (actr->next == 0 && actr->frame_count == actr->frame_speed) {
-		actr->speed_count = 12;
-		actr->last_dir = g_events->getRandomNumber(3);
+	if (actr->_nextFrame == 0 && actr->_frameCount == actr->_frameSpeed) {
+		actr->_moveCountdown = 12;
+		actr->_lastDir = g_events->getRandomNumber(3);
 	}
 	return movement_three(actr);
 }
 
 // Follow thor
 int movement_eight(ACTOR *actr) {
-	if (_G(thor)->x > 0)
-		actr->x = _G(thor)->x - 1;
+	if (_G(thor)->_x > 0)
+		actr->_x = _G(thor)->_x - 1;
 	else
-		actr->x = _G(thor)->x;
-	actr->y = _G(thor)->y;
+		actr->_x = _G(thor)->_x;
+	actr->_y = _G(thor)->_y;
 	next_frame(actr);
 	return 0;
 }
 
 // 4-way straight (random length) change
 int movement_nine(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	int f = 0;
-	if (actr->counter) {
-		actr->counter--;
+	if (actr->_counter) {
+		actr->_counter--;
 		switch (d) {
 		case 0:
 			y1 -= 2;
@@ -1432,26 +1432,26 @@ int movement_nine(ACTOR *actr) {
 		f = 1;
 
 	if (f == 1) {
-		actr->counter = g_events->getRandomNumber(10, 99);
+		actr->_counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(3);
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Vert straight (random length) change
 int movement_ten(ACTOR *actr) {
-	int lastDir = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int lastDir = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	bool setRandomDirFl = false;
-	if (actr->counter) {
-		if (actr->pass_value != 1)
-			actr->counter--;
+	if (actr->_counter) {
+		if (actr->_passValue != 1)
+			actr->_counter--;
 		switch (lastDir) {
 		case 0:
 		case 2:
@@ -1473,7 +1473,7 @@ int movement_ten(ACTOR *actr) {
 		setRandomDirFl = true;
 
 	if (setRandomDirFl) {
-		actr->counter = g_events->getRandomNumber(10, 99);
+		actr->_counter = g_events->getRandomNumber(10, 99);
 		lastDir = g_events->getRandomNumber(1);
 	}
 
@@ -1481,104 +1481,104 @@ int movement_ten(ACTOR *actr) {
 		lastDir -= 2;
 
 	next_frame(actr);
-	actr->last_dir = lastDir;
-	if (actr->directions == 1)
+	actr->_lastDir = lastDir;
+	if (actr->_directions == 1)
 		return 0;
 	return lastDir;
 }
 
 // Horz only (bats)
 int movement_eleven(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
 	switch (d) {
 	case 0:
-		if (check_move2(actr->x - 2, actr->y - 2, actr))
+		if (check_move2(actr->_x - 2, actr->_y - 2, actr))
 			break;
 		d = 1;
-		if (check_move2(actr->x - 2, actr->y + 2, actr))
+		if (check_move2(actr->_x - 2, actr->_y + 2, actr))
 			break;
 		d = 2;
 		break;
 	case 1:
-		if (check_move2(actr->x - 2, actr->y + 2, actr))
+		if (check_move2(actr->_x - 2, actr->_y + 2, actr))
 			break;
 		d = 0;
-		if (check_move2(actr->x - 2, actr->y - 2, actr))
+		if (check_move2(actr->_x - 2, actr->_y - 2, actr))
 			break;
 		d = 3;
 		break;
 	case 2:
-		if (check_move2(actr->x + 2, actr->y - 2, actr))
+		if (check_move2(actr->_x + 2, actr->_y - 2, actr))
 			break;
 		d = 3;
-		if (check_move2(actr->x + 2, actr->y + 2, actr))
+		if (check_move2(actr->_x + 2, actr->_y + 2, actr))
 			break;
 		d = 0;
 		break;
 	case 3:
-		if (check_move2(actr->x + 2, actr->y + 2, actr))
+		if (check_move2(actr->_x + 2, actr->_y + 2, actr))
 			break;
 		d = 2;
-		if (check_move2(actr->x + 2, actr->y - 2, actr))
+		if (check_move2(actr->_x + 2, actr->_y - 2, actr))
 			break;
 		d = 1;
 		break;
 	}
 
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Horz straight until bump
 int movement_twelve(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
 	switch (d) {
 	case 0:
 	case 2:
-		if (check_move2(actr->x - 2, actr->y, actr))
+		if (check_move2(actr->_x - 2, actr->_y, actr))
 			break;
 		d = 3;
 		break;
 	case 1:
 	case 3:
-		if (check_move2(actr->x + 2, actr->y, actr))
+		if (check_move2(actr->_x + 2, actr->_y, actr))
 			break;
 		d = 2;
 		break;
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Pause-seek (mushroom)
 int movement_thirteen(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
-	if (actr->counter == 0 && actr->pause == 0) {
-		actr->pause = 60;
+	if (actr->_counter == 0 && actr->_unpauseCountdown == 0) {
+		actr->_unpauseCountdown = 60;
 		return d;
 	}
-	if (actr->pause > 0) {
-		actr->pause--;
-		if (!actr->pause)
-			actr->counter = 60;
-		actr->vunerable = 5;
-		actr->strength = 0;
+	if (actr->_unpauseCountdown > 0) {
+		actr->_unpauseCountdown--;
+		if (!actr->_unpauseCountdown)
+			actr->_counter = 60;
+		actr->_vulnerableCountdown = 5;
+		actr->_hitStrength = 0;
 		return d;
 	}
-	if (actr->counter > 0) {
-		actr->counter--;
-		if (!actr->counter)
-			actr->pause = 60;
-		actr->strength = 10;
+	if (actr->_counter > 0) {
+		actr->_counter--;
+		if (!actr->_counter)
+			actr->_unpauseCountdown = 60;
+		actr->_hitStrength = 10;
 		return movement_five(actr);
 	}
 	return d;
@@ -1586,58 +1586,58 @@ int movement_thirteen(ACTOR *actr) {
 
 // Move-bump-stop (boulder)
 int movement_fourteen(ACTOR *actr) {
-	int d = actr->last_dir;
-	actr->dir = d;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	actr->_dir = d;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	switch (d) {
 	case 0:
 		y1 -= 2;
 		if (!check_move2(x1, y1, actr)) {
-			actr->move = 15;
+			actr->_moveType = 15;
 			return 0;
 		}
 		break;
 	case 1:
 		y1 += 2;
 		if (!check_move2(x1, y1, actr)) {
-			actr->move = 15;
+			actr->_moveType = 15;
 			return 0;
 		}
 		break;
 	case 2:
 		x1 -= 2;
 		if (!check_move2(x1, y1, actr)) {
-			actr->move = 15;
+			actr->_moveType = 15;
 			return 0;
 		}
 		break;
 	case 3:
 		x1 += 2;
 		if (!check_move2(x1, y1, actr)) {
-			actr->move = 15;
+			actr->_moveType = 15;
 			return 0;
 		}
 		break;
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // No movement - no frame cycle
 int movement_fifteen(ACTOR *actr) {
-	return actr->dir;
+	return actr->_dir;
 }
 
 // Tornado 1
 int movement_sixteen(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	switch (d) {
 	case 0:
@@ -1654,58 +1654,58 @@ int movement_sixteen(ACTOR *actr) {
 		break;
 	}
 	if (!check_move1(x1, y1, actr)) {
-		actr->move = 17;
+		actr->_moveType = 17;
 		d = g_events->getRandomNumber(3);
 	}
 
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Tornado 2
 int movement_seventeen(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 
 	switch (d) {
 	case 0:
-		if (check_move1(actr->x - 2, actr->y - 2, actr))
+		if (check_move1(actr->_x - 2, actr->_y - 2, actr))
 			break;
 		d = 1;
-		if (check_move1(actr->x - 2, actr->y + 2, actr))
+		if (check_move1(actr->_x - 2, actr->_y + 2, actr))
 			break;
 		d = 2;
 		break;
 	case 1:
-		if (check_move1(actr->x - 2, actr->y + 2, actr))
+		if (check_move1(actr->_x - 2, actr->_y + 2, actr))
 			break;
 		d = 0;
-		if (check_move1(actr->x - 2, actr->y - 2, actr))
+		if (check_move1(actr->_x - 2, actr->_y - 2, actr))
 			break;
 		d = 3;
 		break;
 	case 2:
-		if (check_move1(actr->x + 2, actr->y - 2, actr))
+		if (check_move1(actr->_x + 2, actr->_y - 2, actr))
 			break;
 		d = 3;
-		if (check_move1(actr->x + 2, actr->y + 2, actr))
+		if (check_move1(actr->_x + 2, actr->_y + 2, actr))
 			break;
 		d = 0;
 		break;
 	case 3:
-		if (check_move1(actr->x + 2, actr->y + 2, actr))
+		if (check_move1(actr->_x + 2, actr->_y + 2, actr))
 			break;
 		d = 2;
-		if (check_move1(actr->x + 2, actr->y - 2, actr))
+		if (check_move1(actr->_x + 2, actr->_y - 2, actr))
 			break;
 		d = 1;
 		break;
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
@@ -1714,38 +1714,38 @@ int movement_seventeen(ACTOR *actr) {
 int movement_eighteen(ACTOR *actr) {
 	int d;
 
-	if (actr->temp5) {
-		actr->temp5--;
-		if (!actr->temp5)
-			actr->num_moves = 1;
+	if (actr->_temp5) {
+		actr->_temp5--;
+		if (!actr->_temp5)
+			actr->_numMoves = 1;
 	}
-	if (actr->temp1) {
+	if (actr->_temp1) {
 		d = movement_five(actr);
-		actr->rand--;
-		if (actr->hit_thor || !actr->rand) {
-			if (actr->hit_thor) {
-				actr->temp5 = 50;
-				actr->num_moves = 2;
-				actr->hit_thor = 0;
-				actr->dir = d;
+		actr->_rand--;
+		if (actr->_hitThor || !actr->_rand) {
+			if (actr->_hitThor) {
+				actr->_temp5 = 50;
+				actr->_numMoves = 2;
+				actr->_hitThor = 0;
+				actr->_dir = d;
 				d = reverse_direction(actr);
 			}
-			actr->temp1 = 0;
-			actr->rand = g_events->getRandomNumber(50, 149);
+			actr->_temp1 = 0;
+			actr->_rand = g_events->getRandomNumber(50, 149);
 		}
 	} else {
 		d = movement_three(actr);
-		actr->rand--;
-		if (!actr->rand) {
-			actr->temp5 = 0;
-			actr->temp1 = 1;
-			actr->rand = g_events->getRandomNumber(50, 149);
+		actr->_rand--;
+		if (!actr->_rand) {
+			actr->_temp5 = 0;
+			actr->_temp1 = 1;
+			actr->_rand = g_events->getRandomNumber(50, 149);
 		}
-		if (actr->hit_thor) {
-			actr->temp5 = 50;
-			actr->num_moves = 2;
-			actr->hit_thor = 0;
-			actr->dir = d;
+		if (actr->_hitThor) {
+			actr->_temp5 = 50;
+			actr->_numMoves = 2;
+			actr->_hitThor = 0;
+			actr->_dir = d;
 			d = reverse_direction(actr);
 		}
 	}
@@ -1773,89 +1773,89 @@ int movement_twentyone(ACTOR *actr) {
 
 // Spear
 int movement_twentytwo(ACTOR *actr) {
-	int d = actr->last_dir;
-	if (actr->directions == 1)
+	int d = actr->_lastDir;
+	if (actr->_directions == 1)
 		d = 0;
 
 redo:
 
-	switch (actr->temp2) {
+	switch (actr->_temp2) {
 	case 0:
-		if (bgtile(actr->x, actr->y) >= TILE_SOLID)
-			actr->next = 1;
+		if (bgtile(actr->_x, actr->_y) >= TILE_SOLID)
+			actr->_nextFrame = 1;
 		else {
-			actr->temp2 = 6;
-			actr->temp1 = 1;
+			actr->_temp2 = 6;
+			actr->_temp1 = 1;
 			goto redo;
 		}
-		actr->temp2++;
+		actr->_temp2++;
 		break;
 	case 1:
-		actr->next = 2;
-		actr->temp2++;
+		actr->_nextFrame = 2;
+		actr->_temp2++;
 		break;
 	case 2:
-		actr->next = 3;
-		actr->strength = 255;
-		actr->temp2++;
-		actr->temp1 = 10;
+		actr->_nextFrame = 3;
+		actr->_hitStrength = 255;
+		actr->_temp2++;
+		actr->_temp1 = 10;
 		break;
 	case 3:
-		check_move2(actr->x, actr->y, actr);
-		actr->temp1--;
-		if (actr->temp1)
+		check_move2(actr->_x, actr->_y, actr);
+		actr->_temp1--;
+		if (actr->_temp1)
 			break;
-		actr->temp2++;
-		actr->next = 2;
+		actr->_temp2++;
+		actr->_nextFrame = 2;
 		break;
 	case 4:
-		actr->strength = 0;
-		actr->temp2++;
-		actr->next = 1;
+		actr->_hitStrength = 0;
+		actr->_temp2++;
+		actr->_nextFrame = 1;
 		break;
 	case 5:
-		actr->temp2++;
-		actr->next = 0;
-		actr->temp1 = 10;
+		actr->_temp2++;
+		actr->_nextFrame = 0;
+		actr->_temp1 = 10;
 		break;
 	case 6:
-		actr->temp1--;
-		if (actr->temp1)
+		actr->_temp1--;
+		if (actr->_temp1)
 			break;
-		actr->temp2 = 0;
-		actr->next = 0;
+		actr->_temp2 = 0;
+		actr->_nextFrame = 0;
 		switch (d) {
 		case 0:
-			actr->x += 16;
-			actr->y += 16;
+			actr->_x += 16;
+			actr->_y += 16;
 			d = 3;
-			if (bgtile(actr->x, actr->y) < TILE_SOLID)
+			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 1:
-			actr->x -= 16;
-			actr->y -= 16;
+			actr->_x -= 16;
+			actr->_y -= 16;
 			d = 2;
-			if (bgtile(actr->x, actr->y) < TILE_SOLID)
+			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 2:
-			actr->x += 16;
-			actr->y -= 16;
+			actr->_x += 16;
+			actr->_y -= 16;
 			d = 0;
-			if (bgtile(actr->x, actr->y) < TILE_SOLID)
+			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 3:
-			actr->x -= 16;
-			actr->y += 16;
+			actr->_x -= 16;
+			actr->_y += 16;
 			d = 1;
-			if (bgtile(actr->x, actr->y) < TILE_SOLID)
+			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		}
-		actr->dir = d;
-		actr->last_dir = d;
+		actr->_dir = d;
+		actr->_lastDir = d;
 		break;
 	}
 	return d;
@@ -1863,216 +1863,216 @@ redo:
 
 // Spinball counter-clockwise
 int movement_twentythree(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 	next_frame(actr);
-	if (actr->pass_value & 2)
-		actr->num_moves = 2;
+	if (actr->_passValue & 2)
+		actr->_numMoves = 2;
 
 	switch (d) {
 	case 0:
-		if (bgtile(actr->x - 2, actr->y) >= TILE_FLY &&
-			bgtile(actr->x - 2, actr->y + actr->size_y - 1) >= TILE_FLY) {
+		if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+			bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 2;
-			actr->x -= 2;
+			actr->_x -= 2;
 		} else {
-			if (bgtile(actr->x, actr->y - 2) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x - 1, actr->y - 2) < TILE_FLY) {
-				if (bgtile(actr->x + actr->size_x + 1, actr->y) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) >= TILE_FLY) {
+			if (bgtile(actr->_x, actr->_y - 2) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
+				if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 3;
-					actr->x += 2;
+					actr->_x += 2;
 				} else {
 					d = 1;
 					break;
 				}
 			} else
-				actr->y -= 2;
+				actr->_y -= 2;
 		}
 		break;
 	case 1:
-		if (bgtile(actr->x + actr->size_x + 1, actr->y) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) >= TILE_FLY) {
+		if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 3;
-			actr->x += 2;
+			actr->_x += 2;
 		} else {
-			if (bgtile(actr->x, actr->y + actr->size_y + 1) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) < TILE_FLY) {
-				if (bgtile(actr->x - 2, actr->y) >= TILE_FLY &&
-					bgtile(actr->x - 2, actr->y + actr->size_y - 1) >= TILE_FLY) {
+			if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
+				if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+					bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 2;
-					actr->x -= 2;
+					actr->_x -= 2;
 				} else {
 					d = 0;
 					break;
 				}
 			} else
-				actr->y += 2;
+				actr->_y += 2;
 		}
 		break;
 	case 2:
-		if (bgtile(actr->x, actr->y + actr->size_y + 1) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) >= TILE_FLY) {
+		if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 			d = 1;
-			actr->y += 2;
+			actr->_y += 2;
 		} else {
-			if (bgtile(actr->x - 2, actr->y) < TILE_FLY ||
-				bgtile(actr->x - 2, actr->y + actr->size_y - 1) < TILE_FLY) {
-				if (bgtile(actr->x, actr->y - 2) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x - 1, actr->y - 2) >= TILE_FLY) {
+			if (bgtile(actr->_x - 2, actr->_y) < TILE_FLY ||
+				bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 					d = 0;
-					actr->y -= 2;
+					actr->_y -= 2;
 				} else {
 					d = 3;
 					break;
 				}
 			} else
-				actr->x -= 2;
+				actr->_x -= 2;
 		}
 		break;
 	case 3:
-		if (bgtile(actr->x, actr->y - 2) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x - 1, actr->y - 2) >= TILE_FLY) {
+		if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 			d = 0;
-			actr->y -= 2;
+			actr->_y -= 2;
 		} else {
-			if (bgtile(actr->x + actr->size_x + 1, actr->y) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) < TILE_FLY) {
-				if (bgtile(actr->x, actr->y + actr->size_y + 1) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) >= TILE_FLY) {
+			if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 					d = 1;
-					actr->y += 2;
+					actr->_y += 2;
 				} else {
 					d = 2;
 					break;
 				}
 			} else
-				actr->x += 2;
+				actr->_x += 2;
 		}
 		break;
 	}
-	check_move2(actr->x, actr->y, actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	check_move2(actr->_x, actr->_y, actr);
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Spinball  clockwise
 int movement_twentyfour(ACTOR *actr) {
-	int d = actr->last_dir;
+	int d = actr->_lastDir;
 	next_frame(actr);
-	if (actr->pass_value & 2)
-		actr->num_moves = 2;
+	if (actr->_passValue & 2)
+		actr->_numMoves = 2;
 
 	switch (d) {
 	case 0:
-		if (bgtile(actr->x + actr->size_x + 1, actr->y) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) >= TILE_FLY) {
+		if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 3;
-			actr->x += 2;
+			actr->_x += 2;
 		} else {
-			if (bgtile(actr->x, actr->y - 2) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x - 1, actr->y - 2) < TILE_FLY) {
-				if (bgtile(actr->x - 2, actr->y) >= TILE_FLY &&
-					bgtile(actr->x - 2, actr->y + actr->size_y - 1) >= TILE_FLY) {
+			if (bgtile(actr->_x, actr->_y - 2) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
+				if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+					bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 2;
-					actr->x -= 2;
+					actr->_x -= 2;
 				} else {
 					d = 1;
 					break;
 				}
 			} else
-				actr->y -= 2;
+				actr->_y -= 2;
 		}
 		break;
 	case 1:
-		if (bgtile(actr->x - 2, actr->y) >= TILE_FLY &&
-			bgtile(actr->x - 2, actr->y + actr->size_y - 1) >= TILE_FLY) {
+		if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+			bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 2;
-			actr->x -= 2;
+			actr->_x -= 2;
 		} else {
-			if (bgtile(actr->x, actr->y + actr->size_y + 1) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) < TILE_FLY) {
-				if (bgtile(actr->x + actr->size_x + 1, actr->y) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) >= TILE_FLY) {
+			if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
+				if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 3;
-					actr->x += 2;
+					actr->_x += 2;
 				} else {
 					d = 0;
 					break;
 				}
 			} else
-				actr->y += 2;
+				actr->_y += 2;
 		}
 		break;
 	case 2:
-		if (bgtile(actr->x, actr->y - 2) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x - 1, actr->y - 2) >= TILE_FLY) {
+		if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 			d = 0;
-			actr->y -= 2;
+			actr->_y -= 2;
 		} else {
-			if (bgtile(actr->x - 2, actr->y) < TILE_FLY ||
-				bgtile(actr->x - 2, actr->y + actr->size_y - 1) < TILE_FLY) {
-				if (bgtile(actr->x, actr->y + actr->size_y + 1) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) >= TILE_FLY) {
+			if (bgtile(actr->_x - 2, actr->_y) < TILE_FLY ||
+				bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 					d = 1;
-					actr->y += 2;
+					actr->_y += 2;
 				} else {
 					d = 3;
 					break;
 				}
 			} else
-				actr->x -= 2;
+				actr->_x -= 2;
 		}
 		break;
 	case 3:
-		if (bgtile(actr->x, actr->y + actr->size_y + 1) >= TILE_FLY &&
-			bgtile(actr->x + actr->size_x - 1, actr->y + actr->size_y + 1) >= TILE_FLY) {
+		if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+			bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 			d = 1;
-			actr->y += 2;
+			actr->_y += 2;
 		} else {
-			if (bgtile(actr->x + actr->size_x + 1, actr->y) < TILE_FLY ||
-				bgtile(actr->x + actr->size_x + 1, actr->y + actr->size_y - 1) < TILE_FLY) {
-				if (bgtile(actr->x, actr->y - 2) >= TILE_FLY &&
-					bgtile(actr->x + actr->size_x - 1, actr->y - 2) >= TILE_FLY) {
+			if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
+				bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+					bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 					d = 0;
-					actr->y -= 2;
+					actr->_y -= 2;
 				} else {
 					d = 2;
 					break;
 				}
 			} else
-				actr->x += 2;
+				actr->_x += 2;
 		}
 		break;
 	}
-	check_move2(actr->x, actr->y, actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	check_move2(actr->_x, actr->_y, actr);
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Acid puddle
 int movement_twentyfive(ACTOR *actr) {
-	if (actr->temp2) {
-		actr->temp2--;
+	if (actr->_temp2) {
+		actr->_temp2--;
 		return movement_one(actr);
 	}
-	if (!actr->temp1) {
-		actr->last_dir = g_events->getRandomNumber(3);
+	if (!actr->_temp1) {
+		actr->_lastDir = g_events->getRandomNumber(3);
 		int i = 4;
 		while (i--) {
 			int ret = movement_three(actr);
 			if (ret)
 				return ret;
-			actr->last_dir++;
-			if (actr->last_dir > 3)
-				actr->last_dir = 0;
+			actr->_lastDir++;
+			if (actr->_lastDir > 3)
+				actr->_lastDir = 0;
 		}
-		actr->temp1 = 16;
+		actr->_temp1 = 16;
 	}
-	actr->temp1--;
+	actr->_temp1--;
 	return movement_three(actr);
 }
 
@@ -2093,52 +2093,52 @@ int movement_twentyseven(ACTOR *actr) {
 }
 
 void set_thor_vars() {
-	_G(thor_x1) = _G(thor)->x + 1;
-	_G(thor_y1) = _G(thor)->y + 8;
+	_G(thor_x1) = _G(thor)->_x + 1;
+	_G(thor_y1) = _G(thor)->_y + 8;
 
-	_G(thor_real_y1) = _G(thor)->y;
-	_G(thor_x2) = (_G(thor)->x + 12);
-	_G(thor_y2) = _G(thor)->y + 15;
+	_G(thor_real_y1) = _G(thor)->_y;
+	_G(thor_x2) = (_G(thor)->_x + 12);
+	_G(thor_y2) = _G(thor)->_y + 15;
 }
 
 // Fish
 int movement_twentyeight(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 	int ret;
 	
-	if (actr->i1)
-		actr->i1--;
+	if (actr->_i1)
+		actr->_i1--;
 	else {
-		if (!actr->temp3) {
-			if (!actr->next) {
-				actr->frame_count = 1;
-				actr->frame_speed = 4;
+		if (!actr->_temp3) {
+			if (!actr->_nextFrame) {
+				actr->_frameCount = 1;
+				actr->_frameSpeed = 4;
 			}
 
 			next_frame(actr);
-			if (actr->next == 3) {
-				if (actr->num_shots < actr->shots_allowed)
+			if (actr->_nextFrame == 3) {
+				if (actr->_currNumShots < actr->_numShotsAllowed)
 					actor_shoots(actr, 0);
-				actr->temp3 = 1;
+				actr->_temp3 = 1;
 			}
 		} else {
-			const int fcount = actr->frame_count - 1;
+			const int fcount = actr->_frameCount - 1;
 			if (fcount <= 0) {
-				actr->next--;
-				actr->frame_count = actr->frame_speed;
-				if (!actr->next) {
-					actr->temp3 = 0;
-					actr->frame_speed = 4;
-					actr->i1 = g_events->getRandomNumber(60, 159);
+				actr->_nextFrame--;
+				actr->_frameCount = actr->_frameSpeed;
+				if (!actr->_nextFrame) {
+					actr->_temp3 = 0;
+					actr->_frameSpeed = 4;
+					actr->_i1 = g_events->getRandomNumber(60, 159);
 				}
 			} else
-				actr->frame_count = fcount;
+				actr->_frameCount = fcount;
 		}
 		goto done;
 	}
-	switch (actr->temp2) {
+	switch (actr->_temp2) {
 	case 0:
 		y1 -= 2;
 		break;
@@ -2156,42 +2156,42 @@ int movement_twentyeight(ACTOR *actr) {
 	ret = bgtile(x1, y1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile((x1 + actr->size_x) - 1, y1);
+	ret = bgtile((x1 + actr->_sizeX) - 1, y1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile(x1, (y1 + actr->size_y) - 1);
+	ret = bgtile(x1, (y1 + actr->_sizeY) - 1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile((x1 + actr->size_x) - 1, (y1 + actr->size_y) - 1);
+	ret = bgtile((x1 + actr->_sizeX) - 1, (y1 + actr->_sizeY) - 1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
 
-	actr->x = x1;
-	actr->y = y1;
+	actr->_x = x1;
+	actr->_y = y1;
 
 	goto done;
 
 chg_dir:
-	actr->temp2 = _G(rand1) % 4;
+	actr->_temp2 = _G(rand1) % 4;
 
 done:
-	if (actr->next) {
-		x1 = actr->x;
-		y1 = actr->y;
-		actr->solid = 1;
+	if (actr->_nextFrame) {
+		x1 = actr->_x;
+		y1 = actr->_y;
+		actr->_solid = 1;
 		check_move2(x1, y1, actr);
-		actr->x = x1;
-		actr->y = y1;
+		actr->_x = x1;
+		actr->_y = y1;
 	} else
-		actr->solid = 2;
-	if (actr->directions == 1)
+		actr->_solid = 2;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Horz or vert (pass_val)
 int movement_twentynine(ACTOR *actr) {
-	if (!actr->pass_value)
+	if (!actr->_passValue)
 		return movement_thirty(actr);
 
 	return movement_twelve(actr);
@@ -2199,9 +2199,9 @@ int movement_twentynine(ACTOR *actr) {
 
 // Vert straight
 int movement_thirty(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	switch (d) {
 	case 0:
@@ -2215,37 +2215,37 @@ int movement_thirty(ACTOR *actr) {
 		d ^= 1;
 
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Drop (stalagtite)
 int movement_thirtyone(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
-	if (actr->temp1) {
+	if (actr->_temp1) {
 		y1 += 2;
 		if (!check_move2(x1, y1, actr))
 			actor_destroyed(actr);
 	} else if (_G(thor_y1) > y1 && ABS(x1 - _G(thor_x1)) < 16) {
-		int cx = (actr->x + (actr->size_x / 2)) >> 4;
-		int cy = ((actr->y + actr->size_y) - 2) >> 4;
-		int ty = _G(thor)->center_y;
+		int cx = (actr->_x + (actr->_sizeX / 2)) >> 4;
+		int cy = ((actr->_y + actr->_sizeY) - 2) >> 4;
+		int ty = _G(thor)->_centerY;
 		for (int i = cy; i <= ty; i++)
 			if (_G(scrn).icon[i][cx] < TILE_SOLID)
 				goto done;
-		actr->num_moves = actr->pass_value + 1;
-		actr->temp1 = 1;
+		actr->_numMoves = actr->_passValue + 1;
+		actr->_temp1 = 1;
 	}
 
 done:
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
@@ -2267,30 +2267,30 @@ int movement_thirtyfour(ACTOR *actr) {
 
 // Gun (single)
 int movement_thirtyfive(ACTOR *actr) {
-	actr->next = actr->last_dir;
-	return actr->dir;
+	actr->_nextFrame = actr->_lastDir;
+	return actr->_dir;
 }
 
 // Acid drop
 int movement_thirtysix(ACTOR *actr) {
-	actr->speed = actr->pass_value;
+	actr->_speed = actr->_passValue;
 	next_frame(actr);
-	if (actr->next == 0 && actr->frame_count == actr->frame_speed) {
+	if (actr->_nextFrame == 0 && actr->_frameCount == actr->_frameSpeed) {
 		actor_always_shoots(actr, 1);
-		_G(actor[actr->shot_actor]).x -= 2;
+		_G(actor[actr->_shotActor])._x -= 2;
 	}
 	return 0;
 }
 
 // 4-way straight (random length) change
 int movement_thirtyseven(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	int f = 0;
-	if (actr->counter) {
-		actr->counter--;
+	if (actr->_counter) {
+		actr->_counter--;
 		switch (d) {
 		case 0:
 			y1 -= 2;
@@ -2317,36 +2317,36 @@ int movement_thirtyseven(ACTOR *actr) {
 		f = 1;
 
 	if (f == 1) {
-		actr->counter = g_events->getRandomNumber(10, 99);
+		actr->_counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(3);
 	}
 	next_frame(actr);
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Timed darting
-#define TIMER actr->i1
-#define INIT_DIR actr->temp1
-#define OTHER_DIR actr->temp2
-#define FLAG actr->temp3
-#define OX actr->i2
-#define OY actr->i3
-#define CNT actr->i4
+#define TIMER actr->_i1
+#define INIT_DIR actr->_temp1
+#define OTHER_DIR actr->_temp2
+#define FLAG actr->_temp3
+#define OX actr->_i2
+#define OY actr->_i3
+#define CNT actr->_i4
 int movement_thirtyeight(ACTOR *actr) {
-	int d = actr->last_dir;
-	int x1 = actr->x;
-	int y1 = actr->y;
+	int d = actr->_lastDir;
+	int x1 = actr->_x;
+	int y1 = actr->_y;
 
 	if (!FLAG) {
 		FLAG = 1;
-		if (actr->pass_value)
-			TIMER = actr->pass_value * 15;
+		if (actr->_passValue)
+			TIMER = actr->_passValue * 15;
 		else
 			TIMER = g_events->getRandomNumber(5, 364);
-		INIT_DIR = actr->last_dir;
+		INIT_DIR = actr->_lastDir;
 		OX = x1;
 		OY = y1;
 		CNT = 0;
@@ -2390,10 +2390,10 @@ int movement_thirtyeight(ACTOR *actr) {
 		if (!check_move2(x1, y1, actr)) {
 			if (CNT) {
 				d = OTHER_DIR;
-				actr->last_dir = d;
+				actr->_lastDir = d;
 				FLAG = 2;
 			} else {
-				actr->next = 0;
+				actr->_nextFrame = 0;
 				FLAG = 0;
 				goto done;
 			}
@@ -2405,16 +2405,16 @@ int movement_thirtyeight(ACTOR *actr) {
 		if (x1 == OX && y1 == OY) {
 			FLAG = 0;
 			d = INIT_DIR;
-			actr->last_dir = d;
-			actr->next = 0;
+			actr->_lastDir = d;
+			actr->_nextFrame = 0;
 			goto done;
 		}
 	}
 	next_frame(actr);
 
 done:
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
@@ -2422,87 +2422,87 @@ done:
 // Troll 1
 int movement_thirtynine(ACTOR *actr) {
 	if (_G(setup).skill == 0) {
-		actr->speed = 3;
-		actr->num_moves = 1;
+		actr->_speed = 3;
+		actr->_numMoves = 1;
 	} else if (_G(setup).skill == 1) {
-		actr->speed = 2;
-		actr->num_moves = 1;
+		actr->_speed = 2;
+		actr->_numMoves = 1;
 	} else if (_G(setup).skill == 2) {
-		actr->speed = 1;
-		actr->num_moves = 1;
+		actr->_speed = 1;
+		actr->_numMoves = 1;
 	}
 
-	if (actr->pass_value < 5)
+	if (actr->_passValue < 5)
 		return movement_forty(actr);
-	if (actr->pass_value == 10) {
-		if (overlap(actr->x + 1, actr->y + 1, actr->x + actr->size_x - 1,
-					actr->y + actr->size_y - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
-			actr->strength = 255;
+	if (actr->_passValue == 10) {
+		if (overlap(actr->_x + 1, actr->_y + 1, actr->_x + actr->_sizeX - 1,
+					actr->_y + actr->_sizeY - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+			actr->_hitStrength = 255;
 			thor_damaged(actr);
 		}
-		return actr->dir;
+		return actr->_dir;
 	}
-	if (actr->actor_num != 3)
-		return actr->dir;
+	if (actr->_actorNum != 3)
+		return actr->_dir;
 
-	if (actr->i1) {
-		actr->i1--;
-		actr->x -= 2;
-		check_move2(actr->x, actr->y, actr);
-		_G(actor[4]).x -= 2;
-		_G(actor[5]).x -= 2;
-		_G(actor[6]).x -= 2;
+	if (actr->_i1) {
+		actr->_i1--;
+		actr->_x -= 2;
+		check_move2(actr->_x, actr->_y, actr);
+		_G(actor[4])._x -= 2;
+		_G(actor[5])._x -= 2;
+		_G(actor[6])._x -= 2;
 	}
 	next_frame(actr);
-	if (actr->next == 3)
-		actr->next = 0;
-	_G(actor[4]).next = _G(actor[3]).next;
-	_G(actor[5]).next = 0;
-	_G(actor[6]).next = 0;
-	return actr->dir;
+	if (actr->_nextFrame == 3)
+		actr->_nextFrame = 0;
+	_G(actor[4])._nextFrame = _G(actor[3])._nextFrame;
+	_G(actor[5])._nextFrame = 0;
+	_G(actor[6])._nextFrame = 0;
+	return actr->_dir;
 }
 
 // Troll 2
 int movement_forty(ACTOR *actr) {
-	if (overlap(actr->x + 1, actr->y + 1, actr->x + actr->size_x + 3,
-				actr->y + actr->size_y - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
-		actr->strength = 150;
+	if (overlap(actr->_x + 1, actr->_y + 1, actr->_x + actr->_sizeX + 3,
+				actr->_y + actr->_sizeY - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+		actr->_hitStrength = 150;
 		thor_damaged(actr);
 	}
-	int a = 5 + (actr->pass_value * 4);
-	const int x1 = actr->x;
-	int d = actr->last_dir;
+	int a = 5 + (actr->_passValue * 4);
+	const int x1 = actr->_x;
+	int d = actr->_lastDir;
 
-	if (actr->last_dir == 2) {
-		if (bgtile(x1 - 2, actr->y) >= TILE_SOLID) {
-			_G(actor[a].x) -= 2;
-			_G(actor[a - 1]).x -= 2;
-			_G(actor[a - 2]).x -= 2;
-			_G(actor[a + 1]).x -= 2;
+	if (actr->_lastDir == 2) {
+		if (bgtile(x1 - 2, actr->_y) >= TILE_SOLID) {
+			_G(actor[a]._x) -= 2;
+			_G(actor[a - 1])._x -= 2;
+			_G(actor[a - 2])._x -= 2;
+			_G(actor[a + 1])._x -= 2;
 		} else
 			d = 3;
-	} else if (bgtile(_G(actor[a + 1]).x + 14, _G(actor[a + 1]).y) >= TILE_SOLID) {
-		_G(actor[a]).x += 2;
-		_G(actor[a - 1]).x += 2;
-		_G(actor[a - 2]).x += 2;
-		_G(actor[a + 1]).x += 2;
+	} else if (bgtile(_G(actor[a + 1])._x + 14, _G(actor[a + 1])._y) >= TILE_SOLID) {
+		_G(actor[a])._x += 2;
+		_G(actor[a - 1])._x += 2;
+		_G(actor[a - 2])._x += 2;
+		_G(actor[a + 1])._x += 2;
 	} else
 		d = 2;
 
-	if (actr->next == 3 && !actr->num_shots && actr->frame_count == actr->frame_speed) {
+	if (actr->_nextFrame == 3 && !actr->_currNumShots && actr->_frameCount == actr->_frameSpeed) {
 		actor_always_shoots(actr, 1);
-		_G(actor[actr->shot_actor]).x += 6;
+		_G(actor[actr->_shotActor])._x += 6;
 	}
 
 	next_frame(actr);
-	_G(actor[a - 2]).next = actr->next;
-	_G(actor[a - 1]).next = actr->next;
-	_G(actor[a + 1]).next = actr->next;
-	_G(actor[a - 2]).last_dir = d;
-	_G(actor[a - 1]).last_dir = d;
-	_G(actor[a + 1]).last_dir = d;
-	actr->last_dir = d;
-	if (actr->directions == 1)
+	_G(actor[a - 2])._nextFrame = actr->_nextFrame;
+	_G(actor[a - 1])._nextFrame = actr->_nextFrame;
+	_G(actor[a + 1])._nextFrame = actr->_nextFrame;
+	_G(actor[a - 2])._lastDir = d;
+	_G(actor[a - 1])._lastDir = d;
+	_G(actor[a + 1])._lastDir = d;
+	actr->_lastDir = d;
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }

@@ -46,7 +46,7 @@ void GameStatus::draw() {
 }
 
 void GameStatus::displayHealth(GfxSurface &s) {
-	int b = 59 + _G(thor)->health;
+	int b = 59 + _G(thor)->_health;
 
 	s.fillRect(Common::Rect(59, 8, b, 12), 32);
 	s.fillRect(Common::Rect(b, 8, 209, 12), STAT_COLOR);

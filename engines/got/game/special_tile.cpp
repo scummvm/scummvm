@@ -51,7 +51,7 @@ int special_tile_thor(int x, int y, int icon) {
 			return 0;
 		}
 
-		if (_G(thor)->x > 300)
+		if (_G(thor)->_x > 300)
 			// Ending bridge
 			_G(end_tile) = true;
 		return 1;
@@ -74,25 +74,25 @@ int special_tile_thor(int x, int y, int icon) {
 				_G(slip_flag) = true;
 			return 1;
 		} else if (GAME3) {
-			if (_G(thor)->x < 4)
+			if (_G(thor)->_x < 4)
 				_G(end_tile) = true;
 			return 1;
 		}
 		return 0;
 	case 205:
-		if (!_G(diag) && _G(thor)->dir != 1)
+		if (!_G(diag) && _G(thor)->_dir != 1)
 			return 1;
 		break;
 	case 206:
-		if (!_G(diag) && _G(thor)->dir != 0)
+		if (!_G(diag) && _G(thor)->_dir != 0)
 			return 1;
 		break;
 	case 207:
-		if (!_G(diag) && _G(thor)->dir != 3)
+		if (!_G(diag) && _G(thor)->_dir != 3)
 			return 1;
 		break;
 	case 208:
-		if (!_G(diag) && _G(thor)->dir != 2)
+		if (!_G(diag) && _G(thor)->_dir != 2)
 			return 1;
 		break;
 	case 209:
@@ -104,7 +104,7 @@ int special_tile_thor(int x, int y, int icon) {
 			place_tile(y, x, 79);
 			_G(exit_flag) = 2;
 		} else if (GAME2) {
-			if (_G(thor)->dir == 0 && _G(setup).f29 && _G(setup).f21 && !_G(setup).f22) {
+			if (_G(thor)->_dir == 0 && _G(setup).f29 && _G(setup).f21 && !_G(setup).f22) {
 				actor_visible(1);
 				actor_visible(2);
 				actor_visible(3);
@@ -131,19 +131,19 @@ int special_tile_thor(int x, int y, int icon) {
 			cx = (_G(thor_x1) + 7) / 16;
 			cy = (_G(thor_real_y1) + 8) / 16;
 			if (_G(scrn).icon[cy][cx] == icon) {
-				_G(thor)->vunerable = STAMINA;
+				_G(thor)->_vulnerableCountdown = STAMINA;
 				play_sound(WOOP, false);
 
 				int nt = _G(scrn).new_level_loc[icon - 214];
 				int display_page = _G(pge);
 				int draw_page = _G(pge) ^ 1;
 
-				_G(thor)->last_x[display_page] = _G(thor)->x;
-				_G(thor)->last_y[display_page] = _G(thor)->y;
-				_G(thor)->x = (nt % 20) * 16;
-				_G(thor)->y = ((nt / 20) * 16) - 2;
-				_G(thor)->last_x[draw_page] = _G(thor)->x;
-				_G(thor)->last_y[draw_page] = _G(thor)->y;
+				_G(thor)->_lastX[display_page] = _G(thor)->_x;
+				_G(thor)->_lastY[display_page] = _G(thor)->_y;
+				_G(thor)->_x = (nt % 20) * 16;
+				_G(thor)->_y = ((nt / 20) * 16) - 2;
+				_G(thor)->_lastX[draw_page] = _G(thor)->_x;
+				_G(thor)->_lastY[draw_page] = _G(thor)->_y;
 				return 0;
 			}
 			return 1;
@@ -168,7 +168,7 @@ int special_tile_thor(int x, int y, int icon) {
 		cx = (_G(thor_x1) + 7) / 16;
 		cy = (_G(thor_real_y1) + 8) / 16;
 		if (_G(scrn).icon[cy][cx] == icon) {
-			_G(thor)->vunerable = STAMINA;
+			_G(thor)->_vulnerableCountdown = STAMINA;
 			if (icon < 224 && icon > 219)
 				play_sound(FALL, false);
 
@@ -183,22 +183,22 @@ int special_tile_thor(int x, int y, int icon) {
 			_G(warp_flag) = true;
 
 			if (_G(warp_scroll)) {
-				if (_G(thor)->dir == 0)
-					_G(thor)->y = 175;
-				else if (_G(thor)->dir == 1)
-					_G(thor)->y = 0;
-				else if (_G(thor)->dir == 2)
-					_G(thor)->x = 304;
-				else if (_G(thor)->dir == 3)
-					_G(thor)->x = 0;
+				if (_G(thor)->_dir == 0)
+					_G(thor)->_y = 175;
+				else if (_G(thor)->_dir == 1)
+					_G(thor)->_y = 0;
+				else if (_G(thor)->_dir == 2)
+					_G(thor)->_x = 304;
+				else if (_G(thor)->_dir == 3)
+					_G(thor)->_x = 0;
 			} else {
-				_G(thor)->x = (_G(new_level_tile) % 20) * 16;
-				_G(thor)->y = ((_G(new_level_tile) / 20) * 16) - 2;
+				_G(thor)->_x = (_G(new_level_tile) % 20) * 16;
+				_G(thor)->_y = ((_G(new_level_tile) / 20) * 16) - 2;
 			}
-			_G(thor)->last_x[0] = _G(thor)->x;
-			_G(thor)->last_x[1] = _G(thor)->x;
-			_G(thor)->last_y[0] = _G(thor)->y;
-			_G(thor)->last_y[1] = _G(thor)->y;
+			_G(thor)->_lastX[0] = _G(thor)->_x;
+			_G(thor)->_lastX[1] = _G(thor)->_x;
+			_G(thor)->_lastY[0] = _G(thor)->_y;
+			_G(thor)->_lastY[1] = _G(thor)->_y;
 			return 0;
 		}
 
@@ -231,7 +231,7 @@ int special_tile(ACTOR *actr, int x, int y, int icon) {
 	case 225:
 	case 226:
 	case 227:
-		if (!actr->flying)
+		if (!actr->_flying)
 			return 0;
 		return 1;
 	default:

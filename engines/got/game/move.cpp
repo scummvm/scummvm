@@ -31,17 +31,17 @@
 namespace Got {
 
 void next_frame(ACTOR *actr) {
-	const int fcount = actr->frame_count - 1;
+	const int fcount = actr->_frameCount - 1;
 
 	if (fcount <= 0) {
-		actr->next++;
+		actr->_nextFrame++;
 
-		if (actr->next > 3)
-			actr->next = 0;
+		if (actr->_nextFrame > 3)
+			actr->_nextFrame = 0;
 
-		actr->frame_count = actr->frame_speed;
+		actr->_frameCount = actr->_frameSpeed;
 	} else
-		actr->frame_count = fcount;
+		actr->_frameCount = fcount;
 }
 
 bool point_within(int x, int y, int x1, int y1, int x2, int y2) {
@@ -69,30 +69,30 @@ bool overlap(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
 }
 
 int reverse_direction(ACTOR *actr) {
-	if (actr->dir == 1)
+	if (actr->_dir == 1)
 		return 0;
-	if (actr->dir == 2)
+	if (actr->_dir == 2)
 		return 3;
-	if (actr->dir == 3)
+	if (actr->_dir == 3)
 		return 2;
 	return 1;
 }
 
 void thor_shoots() {
-	if ((_G(hammer)->used != 1) && (!_G(hammer)->dead) && (!_G(thor)->shot_cnt)) {
+	if ((_G(hammer)->_active != 1) && (!_G(hammer)->_dead) && (!_G(thor)->_shotCountdown)) {
 		play_sound(SWISH, false);
-		_G(thor)->shot_cnt = 20;
-		_G(hammer)->used = 1;
-		_G(hammer)->dir = _G(thor)->dir;
-		_G(hammer)->last_dir = _G(thor)->dir;
-		_G(hammer)->x = _G(thor)->x;
-		_G(hammer)->y = _G(thor)->y + 2;
-		_G(hammer)->move = 2;
-		_G(hammer)->next = 0;
-		_G(hammer)->last_x[0] = _G(hammer)->x;
-		_G(hammer)->last_x[1] = _G(hammer)->x;
-		_G(hammer)->last_y[0] = _G(hammer)->y;
-		_G(hammer)->last_y[1] = _G(hammer)->y;
+		_G(thor)->_shotCountdown = 20;
+		_G(hammer)->_active = 1;
+		_G(hammer)->_dir = _G(thor)->_dir;
+		_G(hammer)->_lastDir = _G(thor)->_dir;
+		_G(hammer)->_x = _G(thor)->_x;
+		_G(hammer)->_y = _G(thor)->_y + 2;
+		_G(hammer)->_moveType = 2;
+		_G(hammer)->_nextFrame = 0;
+		_G(hammer)->_lastX[0] = _G(hammer)->_x;
+		_G(hammer)->_lastX[1] = _G(hammer)->_x;
+		_G(hammer)->_lastY[0] = _G(hammer)->_y;
+		_G(hammer)->_lastY[1] = _G(hammer)->_y;
 	}
 }
 
@@ -112,11 +112,11 @@ void actor_damaged(ACTOR *actr, int damage) {
 	else if (_G(setup).skill == 2)
 		damage /= 2;
 
-	if (!actr->vunerable && actr->type != 3 && (actr->solid & 0x7f) != 2) {
-		actr->vunerable = STAMINA;
-		if (damage >= actr->health) {
-			if (actr->type != 4) {
-				add_score(actr->init_health * 10);
+	if (!actr->_vulnerableCountdown && actr->_type != 3 && (actr->_solid & 0x7f) != 2) {
+		actr->_vulnerableCountdown = STAMINA;
+		if (damage >= actr->_health) {
+			if (actr->_type != 4) {
+				add_score(actr->_initHealth * 10);
 
 			} else {
 				kill_good_guy();
@@ -124,119 +124,119 @@ void actor_damaged(ACTOR *actr, int damage) {
 
 			actor_destroyed(actr);
 		} else {
-			actr->show = 10;
-			actr->health -= damage;
-			actr->speed_count += 8;
+			actr->_show = 10;
+			actr->_health -= damage;
+			actr->_moveCountdown += 8;
 		}
-	} else if (!actr->vunerable) {
-		actr->vunerable = STAMINA;
+	} else if (!actr->_vulnerableCountdown) {
+		actr->_vulnerableCountdown = STAMINA;
 
-		if (actr->func_num == 4) {
+		if (actr->_funcNum == 4) {
 			switch_icons();
 		}
-		if (actr->func_num == 7) {
+		if (actr->_funcNum == 7) {
 			rotate_arrows();
 		}
 	}
 }
 
 void thor_damaged(ACTOR *actr) {
-	actr->hit_thor = 1;
+	actr->_hitThor = 1;
 
 	// If we're invincible, ignore any damage
 	if (_G(cheats).freezeHealth)
 		return;
 
-	if (GAME3 && actr->func_num == 11) {
-		if (actr->talk_counter) {
-			actr->talk_counter--;
+	if (GAME3 && actr->_funcNum == 11) {
+		if (actr->_talkCounter) {
+			actr->_talkCounter--;
 			return;
 		}
 
-		int t = actr->type;
-		actr->type = 4;
+		int t = actr->_type;
+		actr->_type = 4;
 		actor_speaks(actr, 0, 0);
-		actr->type = t;
-		actr->talk_counter = 30;
+		actr->_type = t;
+		actr->_talkCounter = 30;
 		return;
 	}
 
-	int damage = actr->strength;
+	int damage = actr->_hitStrength;
 	if (damage != 255) {
 		if (!_G(setup).skill)
 			damage /= 2;
 		else if (_G(setup).skill == 2)
 			damage *= 2;
 	}
-	if ((!_G(thor)->vunerable && !_G(shield_on)) || damage == 255) {
-		if (damage >= _G(thor)->health) {
-			_G(thor)->vunerable = 40;
-			_G(thor)->show = 0;
-			_G(thor)->health = 0;
+	if ((!_G(thor)->_vulnerableCountdown && !_G(shield_on)) || damage == 255) {
+		if (damage >= _G(thor)->_health) {
+			_G(thor)->_vulnerableCountdown = 40;
+			_G(thor)->_show = 0;
+			_G(thor)->_health = 0;
 			_G(exit_flag) = 2;
 			g_events->send(GameMessage("THOR_DIES"));
 		} else if (damage) {
-			_G(thor)->vunerable = 40;
+			_G(thor)->_vulnerableCountdown = 40;
 			_G(sound).play_sound(OW, 0);
-			_G(thor)->show = 10;
-			_G(thor)->health -= damage;
+			_G(thor)->_show = 10;
+			_G(thor)->_health -= damage;
 		}
 	}
 }
 
 void actor_destroyed(ACTOR *actr) {
-	if (actr->actor_num > 2) {
+	if (actr->_actorNum > 2) {
 		int pge = _G(pge);
 
-		int x = actr->last_x[pge ^ 1];
-		int y = actr->last_y[pge ^ 1];
-		int x1 = actr->last_x[pge];
-		int y1 = actr->last_y[pge];
-		int r = actr->rating;
-		int n = actr->actor_num;
-		int t = actr->type;
+		int x = actr->_lastX[pge ^ 1];
+		int y = actr->_lastY[pge ^ 1];
+		int x1 = actr->_lastX[pge];
+		int y1 = actr->_lastY[pge];
+		int r = actr->_dropRating;
+		int n = actr->_actorNum;
+		int t = actr->_type;
 
-		if (actr->func_num == 255)
+		if (actr->_funcNum == 255)
 			actr->copyFixedAndPics(_G(explosion));
 		else
 			actr->copyFixedAndPics(_G(sparkle));
 
-		actr->type = t;
-		actr->actor_num = n;
-		actr->rating = r;
-		actr->x = x;
-		actr->y = y;
-		actr->last_x[pge] = x1;
-		actr->last_x[pge ^ 1] = x;
-		actr->last_y[pge] = y1;
-		actr->last_y[pge ^ 1] = y;
-		actr->speed_count = actr->speed;
-		actr->used = 1;
-		actr->num_shots = 3; // used to reverse explosion
-		actr->vunerable = 255;
+		actr->_type = t;
+		actr->_actorNum = n;
+		actr->_dropRating = r;
+		actr->_x = x;
+		actr->_y = y;
+		actr->_lastX[pge] = x1;
+		actr->_lastX[pge ^ 1] = x;
+		actr->_lastY[pge] = y1;
+		actr->_lastY[pge ^ 1] = y;
+		actr->_moveCountdown = actr->_speed;
+		actr->_active = 1;
+		actr->_currNumShots = 3; // used to reverse explosion
+		actr->_vulnerableCountdown = 255;
 	} else {
-		actr->dead = 2;
-		actr->used = 0;
+		actr->_dead = 2;
+		actr->_active = 0;
 	}
 }
 
 int _actor_shoots(ACTOR *actr, int dir) {
-	int t = actr->shot_type - 1;
+	int t = actr->_shotType - 1;
 	for (int i = MAX_ENEMIES + 3; i < MAX_ACTORS; i++) {
-		if ((!_G(actor[i]).used) && (!_G(actor[i]).dead)) {
+		if ((!_G(actor[i])._active) && (!_G(actor[i])._dead)) {
 			ACTOR *act = &_G(actor[i]);
 			*act = _G(shot[t]);
 			int cx, cy;
 
-			if (actr->size_y < act->size_y)
-				cy = actr->y - ((act->size_y - actr->size_y) / 2);
+			if (actr->_sizeY < act->_sizeY)
+				cy = actr->_y - ((act->_sizeY - actr->_sizeY) / 2);
 			else
-				cy = actr->y + ((actr->size_y - act->size_y) / 2);
+				cy = actr->_y + ((actr->_sizeY - act->_sizeY) / 2);
 
-			if (actr->size_x < act->size_x)
-				cx = actr->x - ((act->size_x - actr->size_x) / 2);
+			if (actr->_sizeX < act->_sizeX)
+				cx = actr->_x - ((act->_sizeX - actr->_sizeX) / 2);
 			else
-				cx = actr->x + ((actr->size_x - act->size_x) / 2);
+				cx = actr->_x + ((actr->_sizeX - act->_sizeX) / 2);
 
 			if (cy > 174)
 				cy = 174;
@@ -244,32 +244,32 @@ int _actor_shoots(ACTOR *actr, int dir) {
 			if (cx > 304)
 				cx = 304;
 
-			act->x = cx;
-			act->y = cy;
-			act->last_dir = dir;
-			act->next = 0;
-			act->dir = dir;
-			if (act->directions == 1)
-				act->dir = 0;
-			else if (act->directions == 4 && act->frames == 1) {
-				act->next = dir;
-				act->dir = 0;
+			act->_x = cx;
+			act->_y = cy;
+			act->_lastDir = dir;
+			act->_nextFrame = 0;
+			act->_dir = dir;
+			if (act->_directions == 1)
+				act->_dir = 0;
+			else if (act->_directions == 4 && act->_framesPerDirection == 1) {
+				act->_nextFrame = dir;
+				act->_dir = 0;
 			}
-			act->frame_count = act->frame_speed;
-			act->speed_count = act->speed;
-			act->last_x[0] = cx;
-			act->last_x[1] = cx;
-			act->last_x[0] = actr->x;
-			act->last_x[1] = actr->x;
-			act->last_y[0] = cy;
-			act->last_y[1] = cy;
-			act->used = 1;
-			act->creator = actr->actor_num;
-			act->move_count = act->num_moves;
-			act->dead = 0;
-			actr->shot_actor = i;
-			actr->num_shots++;
-			actr->shot_cnt = 20;
+			act->_frameCount = act->_frameSpeed;
+			act->_moveCountdown = act->_speed;
+			act->_lastX[0] = cx;
+			act->_lastX[1] = cx;
+			act->_lastX[0] = actr->_x;
+			act->_lastX[1] = actr->_x;
+			act->_lastY[0] = cy;
+			act->_lastY[1] = cy;
+			act->_active = 1;
+			act->_creator = actr->_actorNum;
+			act->_moveCount = act->_numMoves;
+			act->_dead = 0;
+			actr->_shotActor = i;
+			actr->_currNumShots++;
+			actr->_shotCountdown = 20;
 			_G(shot_ok) = false;
 			return 1;
 		}
@@ -284,15 +284,15 @@ void actor_always_shoots(ACTOR *actr, int dir) {
 int actor_shoots(ACTOR *actr, int dir) {
 	int i;
 
-	int cx = (actr->x + (actr->size_x / 2)) >> 4;
-	int cy = ((actr->y + actr->size_y) - 2) >> 4;
+	int cx = (actr->_x + (actr->_sizeX / 2)) >> 4;
+	int cy = ((actr->_y + actr->_sizeY) - 2) >> 4;
 
-	int tx = _G(thor)->center_x;
-	int ty = _G(thor)->center_y;
+	int tx = _G(thor)->_centerX;
+	int ty = _G(thor)->_centerY;
 
 	int icn = 140;
 
-	if (_G(shot[actr->shot_type - 1]).flying)
+	if (_G(shot[actr->_shotType - 1])._flying)
 		icn = 80;
 
 	switch (dir) {
@@ -325,55 +325,55 @@ int actor_shoots(ACTOR *actr, int dir) {
 }
 
 void move_actor(ACTOR *actr) {
-	if (actr->vunerable != 0)
-		actr->vunerable--;
-	if (actr->shot_cnt != 0)
-		actr->shot_cnt--;
-	if (actr->show != 0)
-		actr->show--;
+	if (actr->_vulnerableCountdown != 0)
+		actr->_vulnerableCountdown--;
+	if (actr->_shotCountdown != 0)
+		actr->_shotCountdown--;
+	if (actr->_show != 0)
+		actr->_show--;
 
-	if (!actr->shot_cnt && _G(shot_ok)) {
-		if (actr->shots_allowed) {
-			if (actr->num_shots < actr->shots_allowed) {
-				shot_pattern_func[actr->shot_pattern](actr);
+	if (!actr->_shotCountdown && _G(shot_ok)) {
+		if (actr->_numShotsAllowed) {
+			if (actr->_currNumShots < actr->_numShotsAllowed) {
+				shot_pattern_func[actr->_shotPattern](actr);
 			}
 		}
 	}
 
-	const int scount = actr->speed_count -1;
+	const int scount = actr->_moveCountdown - 1;
 	if (scount <= 0) {
-		if (!actr->move_counter)
-			actr->speed_count = actr->speed;
+		if (!actr->_moveCounter)
+			actr->_moveCountdown = actr->_speed;
 		else
-			actr->speed_count = (actr->speed << 1);
+			actr->_moveCountdown = (actr->_speed << 1);
 		
 		int i;
 
-		if (actr->type == 3)
-			i = shot_movement_func[actr->move](actr);
+		if (actr->_type == 3)
+			i = shot_movement_func[actr->_moveType](actr);
 		else
-			i = movement_func[actr->move](actr);
+			i = movement_func[actr->_moveType](actr);
 		
-		if (actr->directions == 2)
+		if (actr->_directions == 2)
 			i &= 1;
 		
-		if (i != actr->dir)
-			actr->dir = i;
+		if (i != actr->_dir)
+			actr->_dir = i;
 
-		if (actr->move == 0 && _G(current_level) != _G(new_level) && _G(shield_on)) {
-			_G(actor[2]).x = actr->x - 2;
-			if (_G(actor[2]).x < 0)
-				_G(actor[2]).x = 0;
-			_G(actor[2]).y = actr->y;
-			_G(actor[2]).last_x[0] = _G(actor[2]).x;
-			_G(actor[2]).last_x[1] = _G(actor[2]).x;
-			_G(actor[2]).last_y[0] = _G(actor[2]).y;
-			_G(actor[2]).last_y[1] = _G(actor[2]).y;
+		if (actr->_moveType == 0 && _G(current_level) != _G(new_level) && _G(shield_on)) {
+			_G(actor[2])._x = actr->_x - 2;
+			if (_G(actor[2])._x < 0)
+				_G(actor[2])._x = 0;
+			_G(actor[2])._y = actr->_y;
+			_G(actor[2])._lastX[0] = _G(actor[2])._x;
+			_G(actor[2])._lastX[1] = _G(actor[2])._x;
+			_G(actor[2])._lastY[0] = _G(actor[2])._y;
+			_G(actor[2])._lastY[1] = _G(actor[2])._y;
 		}
 	} else
-		actr->speed_count = scount;
+		actr->_moveCountdown = scount;
 
-	actr->x &= 0xfffe;
+	actr->_x &= 0xfffe;
 }
 
 } // namespace Got

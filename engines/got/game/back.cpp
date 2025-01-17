@@ -48,12 +48,12 @@ static const char *odinEndMessage;
 void show_level(int new_level) {
 	_G(boss_active) = false;
 	if (!_G(shield_on))
-		_G(actor[2]).used = 0;
+		_G(actor[2])._active = 0;
 	_G(bomb_flag) = false;
 	_G(slipping) = false;
 
-	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
-		_G(thor)->dir = 0;
+	if (_G(scrn).icon[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
+		_G(thor)->_dir = 0;
 
 	// The original copied 130 bytes from _G(scrn).static_object onwards into sd_data.
 	// This doesn't make sense, because that would put the ending in the middle of static_y.
@@ -64,14 +64,14 @@ void show_level(int new_level) {
 
 	_G(level_type) = _G(scrn).type;
 
-	_G(thor)->next = 0;
+	_G(thor)->_nextFrame = 0;
 
 	show_objects();
 	show_enemies();
 
 	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
 	// This behavior wasn't noticed during initial playthrough by Dreammaster - Warning has been added so it can be checked eventually.
-	if (_G(scrn).icon[_G(thor)->center_y][_G(thor)->center_x] == 154)
+	if (_G(scrn).icon[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
 		warning("show_level - Potential short move missing");
 
 	if (_G(warp_flag))
@@ -80,13 +80,13 @@ void show_level(int new_level) {
 
 	if (_G(warp_scroll)) {
 		_G(warp_scroll) = false;
-		if (_G(thor)->dir == 0)
+		if (_G(thor)->_dir == 0)
 			_G(current_level) = new_level + 10;
-		else if (_G(thor)->dir == 1)
+		else if (_G(thor)->_dir == 1)
 			_G(current_level) = new_level - 10;
-		else if (_G(thor)->dir == 2)
+		else if (_G(thor)->_dir == 2)
 			_G(current_level) = new_level + 1;
-		else if (_G(thor)->dir == 3)
+		else if (_G(thor)->_dir == 3)
 			_G(current_level) = new_level - 1;
 	}
 
@@ -127,15 +127,15 @@ void show_level(int new_level) {
 void show_level_done() {
 	_G(current_level) = _G(new_level);
 
-	_G(thor_info).last_health = _G(thor)->health;
+	_G(thor_info).last_health = _G(thor)->_health;
 	_G(thor_info).last_magic = _G(thor_info).magic;
 	_G(thor_info).last_jewels = _G(thor_info).jewels;
 	_G(thor_info).last_keys = _G(thor_info).keys;
 	_G(thor_info).last_score = _G(thor_info).score;
 	_G(thor_info).last_item = _G(thor_info).item;
 	_G(thor_info).last_screen = _G(current_level);
-	_G(thor_info).last_icon = ((_G(thor)->x + 8) / 16) + (((_G(thor)->y + 14) / 16) * 20);
-	_G(thor_info).last_dir = _G(thor)->dir;
+	_G(thor_info).last_icon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
+	_G(thor_info).last_dir = _G(thor)->_dir;
 	_G(thor_info).last_inventory = _G(thor_info).inventory;
 	_G(thor_info).last_object = _G(thor_info).object;
 	_G(thor_info).last_object_name = _G(thor_info).object_name;
@@ -179,8 +179,8 @@ void show_level_done() {
 
 static void odin_speaks_end() {
 	// In case Thor is now dead, flag as such
-	if (!_G(thor)->health) {
-		_G(thor)->show = 0;
+	if (!_G(thor)->_health) {
+		_G(thor)->_show = 0;
 		_G(exit_flag) = 2;
 	}
 
@@ -245,11 +245,11 @@ void kill_enemies(int iy, int ix) {
 	int x1, y1, x2, y2;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		if (_G(actor[i]).used) {
-			x1 = _G(actor[i]).x;
-			y1 = _G(actor[i]).y + _G(actor[i]).size_y - 2;
-			x2 = (_G(actor[i]).x + _G(actor[i]).size_x);
-			y2 = _G(actor[i]).y + _G(actor[i]).size_y - 1;
+		if (_G(actor[i])._active) {
+			x1 = _G(actor[i])._x;
+			y1 = _G(actor[i])._y + _G(actor[i])._sizeY - 2;
+			x2 = (_G(actor[i])._x + _G(actor[i])._sizeX);
+			y2 = _G(actor[i])._y + _G(actor[i])._sizeY - 1;
 
 			if (point_within(x1, y1, ix, iy, ix + 15, iy + 15))
 				actor_destroyed(&_G(actor[i]));
@@ -262,14 +262,14 @@ void kill_enemies(int iy, int ix) {
 		}
 	}
 
-	x1 = _G(thor)->x;
-	y1 = _G(thor)->y + 11;
+	x1 = _G(thor)->_x;
+	y1 = _G(thor)->_y + 11;
 	x2 = x1 + 13;
 	y2 = y1 + 5;
 
 	if (point_within(x1, y1, ix, iy, ix + 15, iy + 15) || point_within(x2, y1, ix, iy, ix + 15, iy + 15) || point_within(x1, y2, ix, iy, ix + 15, iy + 15) || point_within(x2, y2, ix, iy, ix + 15, iy + 15)) {
 		if (!_G(cheats).freezeHealth) {
-			_G(thor)->health = 0;
+			_G(thor)->_health = 0;
 			g_events->send(GameMessage("THOR_DIES"));
 		}
 	}
@@ -307,16 +307,16 @@ void select_item() {
 }
 
 int actor_speaks(ACTOR *actr, int index, int item) {
-	if (actr->type != 4)
+	if (actr->_type != 4)
 		return 0;
 
-	int v = atoi(actr->name);
+	int v = atoi(actr->_name);
 	if (v < 1 || v > 20)
 		return 0;
 
 	long lind = (long)_G(current_level);
 	lind = lind * 1000;
-	lind += (long)actr->actor_num;
+	lind += (long)actr->_actorNum;
 
 	Common::String str = Common::String::format("FACE%d", v);
 	if (Common::File::exists(Common::Path(str))) {
@@ -326,8 +326,8 @@ int actor_speaks(ACTOR *actr, int index, int item) {
 		execute_script(lind, _G(odin));
 	}
 
-	if (!_G(thor)->health) {
-		_G(thor)->show = 0;
+	if (!_G(thor)->_health) {
+		_G(thor)->_show = 0;
 		_G(exit_flag) = 2;
 	}
 

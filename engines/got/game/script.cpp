@@ -102,7 +102,7 @@ Scripts::~Scripts() {
 void Scripts::execute_script(long index, const Gfx::Pics &speakerIcon, ScriptEndFn endFn) {
 	// Firstly disable any on-screen actors
 	for (int i = 0; i < MAX_ACTORS; i++)
-		_G(actor[i]).show = 0;
+		_G(actor[i])._show = 0;
 
 	_endFn = endFn;
 	_scrIndex = index;
@@ -405,7 +405,7 @@ int Scripts::get_internal_variable() {
 		_lTemp = _G(thor_info).jewels;
 		break;
 	case 1:
-		_lTemp = _G(thor)->health;
+		_lTemp = _G(thor)->_health;
 		break;
 	case 2:
 		_lTemp = _G(thor_info).magic;
@@ -453,10 +453,10 @@ int Scripts::get_internal_variable() {
 			_lTemp = 0;
 		break;
 	case 24:
-		_lTemp = _G(scrn).icon[(_G(thor)->y + 8) / 16][(_G(thor)->x + 7) / 16];
+		_lTemp = _G(scrn).icon[(_G(thor)->_y + 8) / 16][(_G(thor)->_x + 7) / 16];
 		break;
 	case 25:
-		_lTemp = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
+		_lTemp = (((_G(thor)->_y + 8) / 16) * 20) + ((_G(thor)->_x + 7) / 16);
 		break;
 	default:
 		return 0;
@@ -1019,14 +1019,14 @@ void Scripts::scr_func1() {
 
 	_G(new_level) = 109;
 	_G(new_level_tile) = 215;
-	_G(thor)->x = (_G(new_level_tile) % 20) * 16;
-	_G(thor)->y = ((_G(new_level_tile) / 20) * 16) - 2;
+	_G(thor)->_x = (_G(new_level_tile) % 20) * 16;
+	_G(thor)->_y = ((_G(new_level_tile) / 20) * 16) - 2;
 
-	_G(thor)->last_x[0] = _G(thor)->x;
-	_G(thor)->last_x[1] = _G(thor)->x;
-	_G(thor)->last_y[0] = _G(thor)->y;
-	_G(thor)->last_y[1] = _G(thor)->y;
-	_G(thor)->show = 2;
+	_G(thor)->_lastX[0] = _G(thor)->_x;
+	_G(thor)->_lastX[1] = _G(thor)->_x;
+	_G(thor)->_lastY[0] = _G(thor)->_y;
+	_G(thor)->_lastY[1] = _G(thor)->_y;
+	_G(thor)->_show = 2;
 }
 
 void Scripts::scr_func2() {
@@ -1036,7 +1036,7 @@ void Scripts::scr_func2() {
 }
 
 void Scripts::scr_func3() {
-	int p = (((_G(thor)->y + 8) / 16) * 20) + ((_G(thor)->x + 7) / 16);
+	int p = (((_G(thor)->_y + 8) / 16) * 20) + ((_G(thor)->_x + 7) / 16);
 	int y = p / 20;
 	int x = p % 20;
 
@@ -1084,7 +1084,7 @@ void Scripts::scr_func5() {
 	_G(scrn).actor_loc[1] -= 2;
 	_G(scrn).actor_loc[2] -= 2;
 	_G(scrn).actor_loc[3] -= 2;
-	_G(actor[3]).i1 = 16;
+	_G(actor[3])._i1 = 16;
 }
 
 int Scripts::cmd_exec() {

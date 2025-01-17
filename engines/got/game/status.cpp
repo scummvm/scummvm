@@ -38,9 +38,9 @@ void add_magic(int num) {
 }
 
 void add_health(int num) {
-	_G(thor)->health = CLIP(_G(thor)->health + num, 0, 150);
+	_G(thor)->_health = CLIP(_G(thor)->_health + num, 0, 150);
 
-	if (_G(thor)->health < 1)
+	if (_G(thor)->_health < 1)
 		g_events->send(GameMessage("THOR_DIES"));
 }
 

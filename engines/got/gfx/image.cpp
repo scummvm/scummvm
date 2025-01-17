@@ -41,50 +41,50 @@ static void createSurface(Graphics::ManagedSurface &s, const byte *src) {
 }
 
 void setup_actor(ACTOR *actr, char num, char dir, int x, int y) {
-	actr->next = 0; // Next frame to be shown
-	actr->frame_count = actr->frame_speed;
-	actr->dir = dir;      // Direction of travel
-	actr->last_dir = dir; // Last direction of travel
-	if (actr->directions == 1)
-		actr->dir = 0;
-	if (actr->directions == 2)
-		actr->dir &= 1;
-	if (actr->directions == 4 && actr->frames == 1) {
-		actr->dir = 0;
-		actr->next = dir;
+	actr->_nextFrame = 0; // Next frame to be shown
+	actr->_frameCount = actr->_frameSpeed;
+	actr->_dir = dir;      // Direction of travel
+	actr->_lastDir = dir; // Last direction of travel
+	if (actr->_directions == 1)
+		actr->_dir = 0;
+	if (actr->_directions == 2)
+		actr->_dir &= 1;
+	if (actr->_directions == 4 && actr->_framesPerDirection == 1) {
+		actr->_dir = 0;
+		actr->_nextFrame = dir;
 	}
 
-	actr->x = x;         // Actual X coor
-	actr->y = y;         // Actual Y coor
-	actr->width = 16;    // Actual X coor
-	actr->height = 16;   // Actual Y coor
-	actr->center = 0;    // Center of object
-	actr->last_x[0] = x; // Last X coor on each page
-	actr->last_x[1] = x;
-	actr->last_y[0] = y; // Last Y coor on each page
-	actr->last_y[1] = y;
-	actr->used = 1;            // 1=active, 0=not active
-	actr->speed_count = 8;     // Count down to movement
-	actr->vunerable = STAMINA; // Count down to vulnerability
-	actr->shot_cnt = 20;       // Count down to another shot
-	actr->num_shots = 0;       // # of shots currently on screen
-	actr->creator = 0;         // which actor # created this actor
-	actr->pause = 0;           // Pause must be 0 to move
-	actr->show = 0;
-	actr->actor_num = num;
-	actr->counter = 0;
-	actr->move_counter = 0;
-	actr->edge_counter = 20;
-	actr->hit_thor = 0;
-	actr->rand = g_engine->getRandomNumber(99);
-	actr->temp1 = 0;
-	actr->init_health = actr->health;
+	actr->_x = x;         // Actual X coor
+	actr->_y = y;         // Actual Y coor
+	actr->_width = 16;    // Actual X coor
+	actr->_height = 16;   // Actual Y coor
+	actr->_center = 0;    // Center of object
+	actr->_lastX[0] = x; // Last X coor on each page
+	actr->_lastX[1] = x;
+	actr->_lastY[0] = y; // Last Y coor on each page
+	actr->_lastY[1] = y;
+	actr->_active = 1;            // 1=active, 0=not active
+	actr->_moveCountdown = 8;     // Count down to movement
+	actr->_vulnerableCountdown = STAMINA; // Count down to vulnerability
+	actr->_shotCountdown = 20;       // Count down to another shot
+	actr->_currNumShots = 0;       // # of shots currently on screen
+	actr->_creator = 0;         // which actor # created this actor
+	actr->_unpauseCountdown = 0;           // Pause must be 0 to move
+	actr->_show = 0;
+	actr->_actorNum = num;
+	actr->_counter = 0;
+	actr->_moveCounter = 0;
+	actr->_edgeCounter = 20;
+	actr->_hitThor = 0;
+	actr->_rand = g_engine->getRandomNumber(99);
+	actr->_temp1 = 0;
+	actr->_initHealth = actr->_health;
 }
 
 void make_actor_surface(ACTOR *actr) {
-	assert(actr->directions <= 4 && actr->frames <= 4);
-	for (int d = 0; d < actr->directions; d++) {
-		for (int f = 0; f < actr->frames; f++) {
+	assert(actr->_directions <= 4 && actr->_framesPerDirection <= 4);
+	for (int d = 0; d < actr->_directions; d++) {
+		for (int f = 0; f < actr->_framesPerDirection; f++) {
 			Graphics::ManagedSurface &s = actr->pic[d][f];
 			const byte *src = &_G(tmp_buff[256 * ((d * 4) + f)]);
 			createSurface(s, src);
@@ -100,15 +100,15 @@ int load_standard_actors() {
 
 	make_actor_surface(&_G(actor[0]));
 
-	_G(thor_x1) = _G(thor)->x + 2;
-	_G(thor_y1) = _G(thor)->y + 2;
-	_G(thor_x2) = _G(thor)->x + 14;
-	_G(thor_y2) = _G(thor)->y + 14;
+	_G(thor_x1) = _G(thor)->_x + 2;
+	_G(thor_y1) = _G(thor)->_y + 2;
+	_G(thor_x2) = _G(thor)->_x + 14;
+	_G(thor_y2) = _G(thor)->_y + 14;
 
 	load_actor(0, 103 + _G(thor_info).armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor[1]), 1, 0, 100, 100);
-	_G(actor[1]).used = 0;
+	_G(actor[1])._active = 0;
 	_G(hammer) = &_G(actor[1]);
 
 	make_actor_surface(&_G(actor[1]));
@@ -117,14 +117,14 @@ int load_standard_actors() {
 	load_actor(0, 106);
 	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(sparkle), 20, 0, 100, 100);
-	_G(sparkle).used = 0;
+	_G(sparkle)._active = 0;
 	make_actor_surface(&_G(sparkle));
 
 	// Load explosion
 	load_actor(0, 107);
 	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(explosion), 21, 0, 100, 100);
-	_G(explosion).used = 0;
+	_G(explosion)._active = 0;
 	make_actor_surface(&_G(explosion));
 
 	// Load tornado
@@ -133,7 +133,7 @@ int load_standard_actors() {
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[0]));
 
 	setup_actor(&_G(magic_item[0]), 20, 0, 0, 0);
-	_G(magic_item[0]).used = 0;
+	_G(magic_item[0])._active = 0;
 
 	// Load shield
 	load_actor(0, 109);
@@ -141,9 +141,9 @@ int load_standard_actors() {
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[1]));
 
 	setup_actor(&_G(magic_item[1]), 20, 0, 0, 0);
-	_G(magic_item[1]).used = 0;
+	_G(magic_item[1])._active = 0;
 
-	_G(actor[2]).used = 0;
+	_G(actor[2])._active = 0;
 
 	make_actor_surface(&_G(magic_item[0]));
 
@@ -151,34 +151,33 @@ int load_standard_actors() {
 }
 
 void show_enemies() {
-	int i, d, r;
+	for (int i = 3; i < MAX_ACTORS; i++)
+		_G(actor[i])._active = 0;
 
-	for (i = 3; i < MAX_ACTORS; i++)
-		_G(actor[i]).used = 0;
-	for (i = 0; i < MAX_ENEMIES; i++)
+	for (int i = 0; i < MAX_ENEMIES; i++)
 		_G(enemy_type[i]) = 0;
 
-	for (i = 0; i < MAX_ENEMIES; i++) {
+	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn).actor_type[i] > 0) {
-			r = load_enemy(_G(scrn).actor_type[i]);
+			int r = load_enemy(_G(scrn).actor_type[i]);
 			if (r >= 0) {
 				_G(actor[i + 3]) = _G(enemy[r]);
 
-				d = _G(scrn).actor_dir[i];
+				int d = _G(scrn).actor_dir[i];
 
 				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
 							(_G(scrn).actor_loc[i] / 20) * 16);
-				_G(actor[i + 3]).init_dir = _G(scrn).actor_dir[i];
-				_G(actor[i + 3]).pass_value = _G(scrn).actor_value[i];
+				_G(actor[i + 3])._initDir = _G(scrn).actor_dir[i];
+				_G(actor[i + 3])._passValue = _G(scrn).actor_value[i];
 
-				if (_G(actor[i + 3]).move == 23) {
+				if (_G(actor[i + 3])._moveType == 23) {
 					// Spinball
-					if (_G(actor[i + 3]).pass_value & 1)
-						_G(actor[i + 3]).move = 24;
+					if (_G(actor[i + 3])._passValue & 1)
+						_G(actor[i + 3])._moveType = 24;
 				}
 
 				if (_G(scrn).actor_invis[i])
-					_G(actor[i + 3]).used = 0;
+					_G(actor[i + 3])._active = 0;
 			}
 
 			_G(etype[i]) = r;
@@ -187,9 +186,7 @@ void show_enemies() {
 }
 
 int load_enemy(int type) {
-	int i, e;
-
-	for (i = 0; i < MAX_ENEMIES; i++) {
+	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(enemy_type[i]) == type)
 			return i;
 	}
@@ -198,8 +195,8 @@ int load_enemy(int type) {
 		return -1;
 	}
 
-	e = -1;
-	for (i = 0; i < MAX_ENEMIES; i++) {
+	int e = -1;
+	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (!_G(enemy_type[i])) {
 			e = i;
 			break;
@@ -213,18 +210,18 @@ int load_enemy(int type) {
 
 	make_actor_surface(&_G(enemy[e]));
 	_G(enemy_type[e]) = type;
-	_G(enemy[e]).shot_type = 0;
+	_G(enemy[e])._shotType = 0;
 
-	if (_G(enemy[e]).shots_allowed) {
-		_G(enemy[e]).shot_type = e + 1;
+	if (_G(enemy[e])._numShotsAllowed) {
+		_G(enemy[e])._shotType = e + 1;
 
 		// Set up shot info
 		_G(shot[e]).loadFixed(_G(tmp_buff) + 5160);
 
 		// Loop to set up graphics
-		for (int d = 0; d < _G(shot[e]).directions; d++) {
-			for (int f = 0; f < _G(shot[e]).frames; f++) {
-				if (_G(shot[e]).directions < _G(shot[e]).frames) {
+		for (int d = 0; d < _G(shot[e])._directions; d++) {
+			for (int f = 0; f < _G(shot[e])._framesPerDirection; f++) {
+				if (_G(shot[e])._directions < _G(shot[e])._framesPerDirection) {
 					Graphics::ManagedSurface &s = _G(shot[e]).pic[d][f];
 					const byte *src = &_G(tmp_buff[4096 + (256 * ((d * 4) + f))]);
 					createSurface(s, src);
@@ -244,14 +241,14 @@ int actor_visible(int invis_num) {
 	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn).actor_invis[i] == invis_num) {
 			int etype = _G(etype[i]);
-			if (etype >= 0 && !_G(actor[i + 3]).used) {
+			if (etype >= 0 && !_G(actor[i + 3])._active) {
 				_G(actor[i + 3]) = _G(enemy[etype]);
 
 				int d = _G(scrn).actor_dir[i];
 				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn).actor_loc[i] % 20) * 16,
 							(_G(scrn).actor_loc[i] / 20) * 16);
-				_G(actor[i + 3]).init_dir = _G(scrn).actor_dir[i];
-				_G(actor[i + 3]).pass_value = _G(scrn).actor_value[i];
+				_G(actor[i + 3])._initDir = _G(scrn).actor_dir[i];
+				_G(actor[i + 3])._passValue = _G(scrn).actor_value[i];
 				return i;
 			}
 

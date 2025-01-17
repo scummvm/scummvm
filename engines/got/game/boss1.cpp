@@ -42,88 +42,88 @@ int boss1_movement(ACTOR *actr) {
 	if (_G(boss_dead))
 		return boss1_dead();
 
-	int d = actr->last_dir;
-	if (actr->edge_counter) {
-		actr->edge_counter--;
+	int d = actr->_lastDir;
+	if (actr->_edgeCounter) {
+		actr->_edgeCounter--;
 		goto done;
 	}
 
-	x1 = actr->x;
-	y1 = actr->y;
+	x1 = actr->_x;
+	y1 = actr->_y;
 
-	if (overlap(actr->x + 2, actr->y + 8, actr->x + 30, actr->y + 30,
-				_G(thor)->x, _G(thor)->y + 8, _G(thor)->x + 15, _G(thor)->y + 15)) {
+	if (overlap(actr->_x + 2, actr->_y + 8, actr->_x + 30, actr->_y + 30,
+				_G(thor)->_x, _G(thor)->_y + 8, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
 		thor_damaged(actr);
 	}
 
-	if (actr->temp3) { //start striking
-		actr->temp3--;
-		if (!actr->temp3)
+	if (actr->_temp3) { //start striking
+		actr->_temp3--;
+		if (!actr->_temp3)
 			play_sound(BOSS11, false);
 
 		if (_G(hourglass_flag))
-			actr->num_moves = 3;
+			actr->_numMoves = 3;
 		else
-			actr->num_moves = 6;
+			actr->_numMoves = 6;
 
 		goto done0;
 	}
 
 	// Strike
-	if (actr->temp1) {
-		actr->temp1--;
-		if (actr->x < (_G(thor_x1) + 12))
-			actr->temp1 = 0;
-		actr->temp2 = 1;
+	if (actr->_temp1) {
+		actr->_temp1--;
+		if (actr->_x < (_G(thor_x1) + 12))
+			actr->_temp1 = 0;
+		actr->_temp2 = 1;
 		d = 2;
-		actr->x -= 2;
+		actr->_x -= 2;
 
-		if (overlap(actr->x + 2, actr->y + 8, actr->x + 32, actr->y + 30,
-					_G(thor)->x, _G(thor)->y + 8, _G(thor)->x + 15, _G(thor)->y + 15)) {
-			actr->temp1 = 0;
+		if (overlap(actr->_x + 2, actr->_y + 8, actr->_x + 32, actr->_y + 30,
+					_G(thor)->_x, _G(thor)->_y + 8, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
+			actr->_temp1 = 0;
 			goto done1;
 		}
 
-		actr->next = 3;
-		actr->num_moves = _G(setup).skill + 2;
+		actr->_nextFrame = 3;
+		actr->_numMoves = _G(setup).skill + 2;
 		goto done1;
 	}
 
-	if (actr->temp2) { // Retreating
-		if (actr->x < 256) {
+	if (actr->_temp2) { // Retreating
+		if (actr->_x < 256) {
 			d = 3;
-			actr->x += 2;
-			if (overlap(actr->x + 2, actr->y + 8, actr->x + 32, actr->y + 30,
-						_G(thor)->x, _G(thor)->y + 8, _G(thor)->x + 15, _G(thor)->y + 15)) {
+			actr->_x += 2;
+			if (overlap(actr->_x + 2, actr->_y + 8, actr->_x + 32, actr->_y + 30,
+						_G(thor)->_x, _G(thor)->_y + 8, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
 				goto done1;
 			}
-			actr->num_moves = _G(setup).skill + 1;
+			actr->_numMoves = _G(setup).skill + 1;
 			goto done0;
 		}
 
-		actr->temp2 = 0;
+		actr->_temp2 = 0;
 	}
 
-	if (actr->x > _G(thor_x1) && ABS((_G(thor_y1)) - (actr->y + 20)) < 8) {
-		actr->temp3 = 75;
-		actr->temp1 = 130;
-		actr->temp2 = 0;
+	if (actr->_x > _G(thor_x1) && ABS((_G(thor_y1)) - (actr->_y + 20)) < 8) {
+		actr->_temp3 = 75;
+		actr->_temp1 = 130;
+		actr->_temp2 = 0;
 	}
 	
-	if (actr->counter) {
-		actr->counter--;
+	if (actr->_counter) {
+		actr->_counter--;
 		switch (d) {
 		case 1:
 		case 3:
-			x1 = _G(actor[5]).x;
-			y1 = _G(actor[5]).y;
+			x1 = _G(actor[5])._x;
+			y1 = _G(actor[5])._y;
 			y1 += 2;
 
 			if (!check_move2(x1, y1, &_G(actor[5])))
 				f = true;
 			else {
-				actr->x = _G(actor[5]).x;
-				actr->y = _G(actor[5]).y - 16;
+				actr->_x = _G(actor[5])._x;
+				actr->_y = _G(actor[5])._y - 16;
 			}
 			break;
 		case 0:
@@ -140,9 +140,9 @@ int boss1_movement(ACTOR *actr) {
 		f = true;
 
 	if (f) {
-		actr->counter = g_events->getRandomNumber(10, 99);
+		actr->_counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(1);
-		actr->edge_counter = 20;
+		actr->_edgeCounter = 20;
 	}
 
 done:
@@ -151,56 +151,56 @@ done:
 
 done0:
 	next_frame(actr);
-	if (actr->next == 3)
-		actr->next = 0;
+	if (actr->_nextFrame == 3)
+		actr->_nextFrame = 0;
 
 done1:
-	actr->last_dir = d;
+	actr->_lastDir = d;
 
-	_G(actor[4]).next = actr->next;
-	_G(actor[5]).next = actr->next;
-	_G(actor[6]).next = actr->next;
+	_G(actor[4])._nextFrame = actr->_nextFrame;
+	_G(actor[5])._nextFrame = actr->_nextFrame;
+	_G(actor[6])._nextFrame = actr->_nextFrame;
 
-	_G(actor[4]).last_dir = d;
-	_G(actor[5]).last_dir = d;
-	_G(actor[6]).last_dir = d;
+	_G(actor[4])._lastDir = d;
+	_G(actor[5])._lastDir = d;
+	_G(actor[6])._lastDir = d;
 
-	_G(actor[4]).x = actr->x + 16;
-	_G(actor[4]).y = actr->y;
-	_G(actor[5]).x = actr->x;
-	_G(actor[5]).y = actr->y + 16;
-	_G(actor[6]).x = actr->x + 16;
-	_G(actor[6]).y = actr->y + 16;
-	_G(actor[4]).num_moves = actr->num_moves;
-	_G(actor[5]).num_moves = actr->num_moves;
-	_G(actor[6]).num_moves = actr->num_moves;
+	_G(actor[4])._x = actr->_x + 16;
+	_G(actor[4])._y = actr->_y;
+	_G(actor[5])._x = actr->_x;
+	_G(actor[5])._y = actr->_y + 16;
+	_G(actor[6])._x = actr->_x + 16;
+	_G(actor[6])._y = actr->_y + 16;
+	_G(actor[4])._numMoves = actr->_numMoves;
+	_G(actor[5])._numMoves = actr->_numMoves;
+	_G(actor[6])._numMoves = actr->_numMoves;
 
-	if (actr->directions == 1)
+	if (actr->_directions == 1)
 		return 0;
 	return d;
 }
 
 void check_boss1_hit(ACTOR *actr, int x1, int y1, int x2, int y2, int act_num) {
-	if (actr->move == 15 && act_num == 4) {
-		if ((!_G(actor[3]).vunerable) && (_G(actor[3]).next != 3) &&
-			overlap(x1, y1, x2, y2, actr->x + 6, actr->y + 4, actr->x + 14, actr->y + 20)) {
-			actor_damaged(&_G(actor[3]), _G(hammer)->strength);
+	if (actr->_moveType == 15 && act_num == 4) {
+		if ((!_G(actor[3])._vulnerableCountdown) && (_G(actor[3])._nextFrame != 3) &&
+			overlap(x1, y1, x2, y2, actr->_x + 6, actr->_y + 4, actr->_x + 14, actr->_y + 20)) {
+			actor_damaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 			if (_G(cheat) && _G(key_flag[_Z]))
-				_G(actor[3]).health = 0;
+				_G(actor[3])._health = 0;
 			else
-				_G(actor[3]).health -= 10;
+				_G(actor[3])._health -= 10;
 
-			_G(actor[3]).speed_count = 50;
-			_G(actor[3]).vunerable = 100;
+			_G(actor[3])._moveCountdown = 50;
+			_G(actor[3])._vulnerableCountdown = 100;
 			play_sound(BOSS13, true);
-			_G(actor[3]).next = 1;
+			_G(actor[3])._nextFrame = 1;
 
 			for (int rep = 4; rep < 7; rep++) {
-				_G(actor[rep]).next = 1;
-				_G(actor[rep]).speed_count = 50;
+				_G(actor[rep])._nextFrame = 1;
+				_G(actor[rep])._moveCountdown = 50;
 			}
 
-			if (_G(actor[3]).health == 0)
+			if (_G(actor[3])._health == 0)
 				_G(boss_dead) = true;
 		}
 	}
@@ -221,40 +221,40 @@ static int boss1_dead() {
 		int rep;
 
 		for (rep = 0; rep < 4; rep++) {
-			int x1 = _G(actor[3 + rep]).last_x[_G(pge)];
-			int y1 = _G(actor[3 + rep]).last_y[_G(pge)];
-			int x = _G(actor[3 + rep]).x;
-			int y = _G(actor[3 + rep]).y;
-			int n = _G(actor[3 + rep]).actor_num;
-			int r = _G(actor[3 + rep]).rating;
+			int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
+			int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
+			int x = _G(actor[3 + rep])._x;
+			int y = _G(actor[3 + rep])._y;
+			int n = _G(actor[3 + rep])._actorNum;
+			int r = _G(actor[3 + rep])._dropRating;
 
 			_G(actor[3 + rep]) = _G(explosion);
-			_G(actor[3 + rep]).actor_num = n;
-			_G(actor[3 + rep]).rating = r;
-			_G(actor[3 + rep]).x = x;
-			_G(actor[3 + rep]).y = y;
-			_G(actor[3 + rep]).last_x[_G(pge)] = x1;
-			_G(actor[3 + rep]).last_x[_G(pge) ^ 1] = x;
-			_G(actor[3 + rep]).last_y[_G(pge)] = y1;
-			_G(actor[3 + rep]).last_y[_G(pge) ^ 1] = y;
-			_G(actor[3 + rep]).used = 1;
-			_G(actor[3 + rep]).vunerable = 255;
-			_G(actor[3 + rep]).move = 6;
-			_G(actor[3 + rep]).next = rep;
-			_G(actor[3 + rep]).speed = g_events->getRandomNumber(6, 8);
-			_G(actor[3 + rep]).num_shots = (10 - _G(actor[3 + rep]).speed) * 10;
-			_G(actor[3 + rep]).speed_count = _G(actor[3 + rep]).speed;
+			_G(actor[3 + rep])._actorNum = n;
+			_G(actor[3 + rep])._dropRating = r;
+			_G(actor[3 + rep])._x = x;
+			_G(actor[3 + rep])._y = y;
+			_G(actor[3 + rep])._lastX[_G(pge)] = x1;
+			_G(actor[3 + rep])._lastX[_G(pge) ^ 1] = x;
+			_G(actor[3 + rep])._lastY[_G(pge)] = y1;
+			_G(actor[3 + rep])._lastY[_G(pge) ^ 1] = y;
+			_G(actor[3 + rep])._active = 1;
+			_G(actor[3 + rep])._vulnerableCountdown = 255;
+			_G(actor[3 + rep])._moveType = 6;
+			_G(actor[3 + rep])._nextFrame = rep;
+			_G(actor[3 + rep])._speed = g_events->getRandomNumber(6, 8);
+			_G(actor[3 + rep])._currNumShots = (10 - _G(actor[3 + rep])._speed) * 10;
+			_G(actor[3 + rep])._moveCountdown = _G(actor[3 + rep])._speed;
 		}
 		play_sound(EXPLODE, true);
 		_G(boss_dead) = true;
 
 		for (rep = 7; rep < MAX_ACTORS; rep++) {
-			if (_G(actor[rep]).used)
+			if (_G(actor[rep])._active)
 				actor_destroyed(&_G(actor[rep]));
 		}
 	}
 
-	return _G(actor[3]).last_dir;
+	return _G(actor[3])._lastDir;
 }
 
 void closing_sequence1() {
@@ -266,8 +266,8 @@ void closing_sequence1() {
 void closing_sequence1_2() {
 	_G(thor_info).armor = 1;
 	load_new_thor();
-	_G(thor)->dir = 1;
-	_G(thor)->next = 0;
+	_G(thor)->_dir = 1;
+	_G(thor)->_nextFrame = 0;
 	fill_score(20, "CLOSING");
 }
 

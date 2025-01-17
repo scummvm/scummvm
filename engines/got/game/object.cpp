@@ -79,7 +79,7 @@ void pick_up_object(int p) {
 		add_magic(3);
 		break;
 	case 5: // Good apple
-		if (_G(thor)->health >= 150) {
+		if (_G(thor)->_health >= 150) {
 			cannot_carry_more();
 			return;
 		}
@@ -123,9 +123,9 @@ void pick_up_object(int p) {
 	case 26:
 		if (_G(object_map[p]) == 13 && HERMIT_HAS_DOLL)
 			return;
-		_G(thor)->num_moves = 1;
-		_G(hammer)->num_moves = 2;
-		_G(actor[2]).used = 0;
+		_G(thor)->_numMoves = 1;
+		_G(hammer)->_numMoves = 2;
+		_G(actor[2])._active = 0;
 		_G(shield_on) = false;
 		_G(tornado_used) = false;
 		_G(thor_info).inventory |= 64;
@@ -145,9 +145,9 @@ void pick_up_object(int p) {
 		_G(shield_on) = false;
 		_G(lightning_used) = false;
 		_G(tornado_used) = false;
-		_G(hammer)->num_moves = 2;
-		_G(thor)->num_moves = 1;
-		_G(actor[2]).used = 0;
+		_G(hammer)->_numMoves = 2;
+		_G(thor)->_numMoves = 1;
+		_G(actor[2])._active = 0;
 		s = 1 << (_G(object_map[p]) - 27);
 		_G(thor_info).inventory |= s;
 		odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
@@ -200,10 +200,10 @@ int drop_object(ACTOR *actr) {
 }
 
 int _drop_obj(ACTOR *actr, int o) {
-	int p = (actr->x + (actr->size_x / 2)) / 16 + (((actr->y + (actr->size_y / 2)) / 16) * 20);
+	int p = (actr->_x + (actr->_sizeX / 2)) / 16 + (((actr->_y + (actr->_sizeY / 2)) / 16) * 20);
 	if (!_G(object_map[p]) && _G(scrn).icon[p / 20][p % 20] >= 140) { //nothing there and solid
 		_G(object_map[p]) = o;
-		_G(object_index[p]) = 27 + actr->actor_num; //actor is 3-15
+		_G(object_index[p]) = 27 + actr->_actorNum; //actor is 3-15
 
 		return 1;
 	}
@@ -212,7 +212,7 @@ int _drop_obj(ACTOR *actr, int o) {
 }
 
 int use_apple(int flag) {
-	if (_G(thor)->health == 150)
+	if (_G(thor)->_health == 150)
 		return 0;
 
 	if (flag && _G(thor_info).magic > 0) {
@@ -261,25 +261,25 @@ int use_thunder(int flag) {
 int use_boots(int flag) {
 	if (flag) {
 		if (_G(thor_info).magic > 0) {
-			if (_G(thor)->num_moves == 1) {
+			if (_G(thor)->_numMoves == 1) {
 				_G(magic_cnt) = 0;
 				add_magic(-1);
 			} else if (_G(magic_cnt) > 8) {
 				_G(magic_cnt) = 0;
 				add_magic(-1);
 			}
-			_G(thor)->num_moves = 2;
-			_G(hammer)->num_moves = 3;
+			_G(thor)->_numMoves = 2;
+			_G(hammer)->_numMoves = 3;
 			return 1;
 		}
 
 		not_enough_magic();
-		_G(thor)->num_moves = 1;
-		_G(hammer)->num_moves = 2;
+		_G(thor)->_numMoves = 1;
+		_G(hammer)->_numMoves = 2;
 
 	} else {
-		_G(thor)->num_moves = 1;
-		_G(hammer)->num_moves = 2;
+		_G(thor)->_numMoves = 1;
+		_G(hammer)->_numMoves = 2;
 	}
 	return 0;
 }
@@ -293,9 +293,9 @@ int use_shield(int flag) {
 				setup_magic_item(1);
 
 				_G(actor[2]) = _G(magic_item[1]);
-				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->x, _G(thor)->y);
-				_G(actor[2]).speed_count = 1;
-				_G(actor[2]).speed = 1;
+				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
+				_G(actor[2])._moveCountdown = 1;
+				_G(actor[2])._speed = 1;
 				_G(shield_on) = true;
 			} else if (_G(magic_cnt) > 8) {
 				_G(magic_cnt) = 0;
@@ -309,8 +309,8 @@ int use_shield(int flag) {
 	}
 
 	if (_G(shield_on)) {
-		_G(actor[2]).dead = 2;
-		_G(actor[2]).used = 0;
+		_G(actor[2])._dead = 2;
+		_G(actor[2])._active = 0;
 		_G(shield_on) = false;
 	}
 
@@ -333,15 +333,15 @@ int use_lightning(int flag) {
 int use_tornado(int flag) {
 	if (flag) {
 		if (_G(thor_info).magic > 10) {
-			if (!_G(tornado_used) && !_G(actor[2]).dead && _G(magic_cnt) > 20) {
+			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magic_cnt) > 20) {
 				_G(magic_cnt) = 0;
 				add_magic(-10);
 				setup_magic_item(0);
 				_G(actor[2]) = _G(magic_item[0]);
 
-				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->x, _G(thor)->y);
-				_G(actor[2]).last_dir = _G(thor)->dir;
-				_G(actor[2]).move = 16;
+				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
+				_G(actor[2])._lastDir = _G(thor)->_dir;
+				_G(actor[2])._moveType = 16;
 				_G(tornado_used) = true;
 				play_sound(WIND, false);
 			}

@@ -49,7 +49,7 @@ public:
 	byte new_level[10] = {};             // 452 level jump for icon 200-204
 	byte new_level_loc[10] = {};         // 462 grid location to jump in to
 	byte area = 0;                       // 472 game area (1=forest,etc)
-	byte actor_dir[16] = {};             // initial dir
+	byte actor_dir[16] = {};             // initial _dir
 	byte future[3] = {};                 // 473
 
 	/**

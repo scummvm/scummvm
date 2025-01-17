@@ -155,7 +155,7 @@ bool GameContent::tick() {
 		if (_deathCtr < DEATH_THRESHOLD) {
 			spinThor();
 		} else if (_deathCtr < DEATH_THRESHOLD + 60) {
-			_G(thor)->used = 0;
+			_G(thor)->_active = 0;
 			++_deathCtr;
 		} else {
 			thorDead();
@@ -177,8 +177,8 @@ bool GameContent::tick() {
 		if (--_pauseCtr <= 0) {
 			_pauseCtr = 2;
 
-			if (_G(thor)->health > 0) {
-				_G(thor)->health--;
+			if (_G(thor)->_health > 0) {
+				_G(thor)->_health--;
 				play_sound(WOOP, 1);
 				add_health(-1);
 				add_score(10);
@@ -254,12 +254,12 @@ void GameContent::drawActors(GfxSurface &s) {
 
 	for (int actor_num = 0; actor_num <= MAX_ACTORS;) {
 		// Check for blinking flag
-		if (actor_ptr->used && !(actor_ptr->show & 2)) {
-			actor_ptr->last_x[_G(pge)] = actor_ptr->x;
-			actor_ptr->last_y[_G(pge)] = actor_ptr->y;
+		if (actor_ptr->_active && !(actor_ptr->_show & 2)) {
+			actor_ptr->_lastX[_G(pge)] = actor_ptr->_x;
+			actor_ptr->_lastY[_G(pge)] = actor_ptr->_y;
 
-			const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->dir][actor_ptr->frame_sequence[actor_ptr->next]];
-			s.simpleBlitFrom(frame, Common::Point(actor_ptr->x, actor_ptr->y));
+			const Graphics::ManagedSurface &frame = actor_ptr->pic[actor_ptr->_dir][actor_ptr->_frameSequence[actor_ptr->_nextFrame]];
+			s.simpleBlitFrom(frame, Common::Point(actor_ptr->_x, actor_ptr->_y));
 		}
 
 		// Move to the next actor
@@ -275,13 +275,13 @@ void GameContent::drawActors(GfxSurface &s) {
 	}
 
 	if (_G(gameMode) == MODE_THOR_DIES && _deathCtr >= DEATH_THRESHOLD)
-		s.simpleBlitFrom(_G(objects[10]), Common::Point(_G(thor)->x, _G(thor)->y));
+		s.simpleBlitFrom(_G(objects[10]), Common::Point(_G(thor)->_x, _G(thor)->_y));
 }
 
 void GameContent::drawBossHealth(GfxSurface &s) {
 	int c;
 
-	int health = _G(actor[3]).health;
+	int health = _G(actor[3])._health;
 
 	s.fillRect(Common::Rect(304, 2, 317, 81), 0);
 	s.fillRect(Common::Rect(305, 3, 316, 80), 28);
@@ -313,8 +313,8 @@ void GameContent::checkThunderShake() {
 		_G(thunder_flag--);
 		if ((_G(thunder_flag) < MAX_ACTORS) && _G(thunder_flag) > 2) {
 			int thunderFl = _G(thunder_flag);
-			if (_G(actor[thunderFl]).used) {
-				_G(actor[thunderFl]).vunerable = 0;
+			if (_G(actor[thunderFl])._active) {
+				_G(actor[thunderFl])._vulnerableCountdown = 0;
 				actor_damaged(&_G(actor[thunderFl]), 20);
 			}
 		}
@@ -353,13 +353,13 @@ void GameContent::checkForItem() {
 
 void GameContent::moveActors() {
 	for (int i = 0; i < MAX_ACTORS; i++) {
-		if (_G(actor[i]).used) {
+		if (_G(actor[i])._active) {
 			if (_G(hourglass_flag))
-				if ((i > 2) && (!_G(pge)) && (!(_G(actor[i]).magic_hurts & LIGHTNING_MAGIC)))
+				if ((i > 2) && (!_G(pge)) && (!(_G(actor[i])._magicHurts & LIGHTNING_MAGIC)))
 					continue;
 
-			_G(actor[i]).move_count = _G(actor[i]).num_moves;
-			while (_G(actor[i]).move_count--)
+			_G(actor[i])._moveCount = _G(actor[i])._numMoves;
+			while (_G(actor[i])._moveCount--)
 				move_actor(&_G(actor[i]));
 
 			if (i == 0)
@@ -371,16 +371,16 @@ void GameContent::moveActors() {
 	}
 
 	int thor_pos = _G(thor)->getPos();
-	_G(thor)->center_x = thor_pos % 20;
-	_G(thor)->center_y = thor_pos / 20;
+	_G(thor)->_centerX = thor_pos % 20;
+	_G(thor)->_centerY = thor_pos / 20;
 }
 
 void GameContent::updateActors() {
 	for (int i = 0; i < MAX_ACTORS; ++i) {
 		ACTOR *actor = &_G(actor[i]);
 
-		if (!actor->used && actor->dead > 0)
-			actor->dead--;
+		if (!actor->_active && actor->_dead > 0)
+			actor->_dead--;
 	}
 }
 
@@ -388,7 +388,7 @@ void GameContent::checkForBossDead() {
 	if (_G(boss_dead)) {
 		int loop;
 		for (loop = 3; loop < 7; loop++) {
-			if (_G(actor[loop]).used)
+			if (_G(actor[loop])._active)
 				break;
 		}
 
@@ -465,9 +465,9 @@ void GameContent::checkForAreaChange() {
 
 	} else if (_G(new_level) != _G(current_level)) {
 		// Area transition beginning
-		_G(thor)->show = 0;
-		_G(thor)->used = 0;
-		_G(hammer)->used = 0;
+		_G(thor)->_show = 0;
+		_G(thor)->_active = 0;
+		_G(hammer)->_active = 0;
 		_G(tornado_used) = false;
 
 		// Draws the old area without Thor, and then save a copy of it.
@@ -476,7 +476,7 @@ void GameContent::checkForAreaChange() {
 		_surface.copyFrom(getSurface());
 
 		// Set up new level
-		_G(thor)->used = 1;
+		_G(thor)->_active = 1;
 		show_level(_G(new_level));
 	}
 }
@@ -487,8 +487,8 @@ void GameContent::thorDies() {
 
 	// Stop any actors on-screen from moving
 	for (int li = 0; li < MAX_ACTORS; li++)
-		_G(actor[li]).show = 0;
-	_G(actor[2]).used = 0;
+		_G(actor[li])._show = 0;
+	_G(actor[2])._active = 0;
 
 	// Set the state for showing death animation
 	_G(gameMode) = MODE_THOR_DIES;
@@ -501,8 +501,8 @@ void GameContent::thorDies() {
 void GameContent::spinThor() {
 	static const byte DIRS[] = {0, 2, 1, 3};
 
-	_G(thor)->dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
-	_G(thor)->last_dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+	_G(thor)->_dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+	_G(thor)->_lastDir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
 
 	++_deathCtr;
 }
@@ -512,19 +512,19 @@ void GameContent::thorDead() {
 	int ln = _G(thor_info).inventory;
 
 	_G(new_level) = _G(thor_info).last_screen;
-	_G(thor)->x = (_G(thor_info).last_icon % 20) * 16;
-	_G(thor)->y = ((_G(thor_info).last_icon / 20) * 16) - 1;
-	if (_G(thor)->x < 1)
-		_G(thor)->x = 1;
-	if (_G(thor)->y < 0)
-		_G(thor)->y = 0;
-	_G(thor)->last_x[0] = _G(thor)->x;
-	_G(thor)->last_x[1] = _G(thor)->x;
-	_G(thor)->last_y[0] = _G(thor)->y;
-	_G(thor)->last_y[1] = _G(thor)->y;
-	_G(thor)->dir = _G(thor_info).last_dir;
-	_G(thor)->last_dir = _G(thor_info).last_dir;
-	_G(thor)->health = _G(thor_info).last_health;
+	_G(thor)->_x = (_G(thor_info).last_icon % 20) * 16;
+	_G(thor)->_y = ((_G(thor_info).last_icon / 20) * 16) - 1;
+	if (_G(thor)->_x < 1)
+		_G(thor)->_x = 1;
+	if (_G(thor)->_y < 0)
+		_G(thor)->_y = 0;
+	_G(thor)->_lastX[0] = _G(thor)->_x;
+	_G(thor)->_lastX[1] = _G(thor)->_x;
+	_G(thor)->_lastY[0] = _G(thor)->_y;
+	_G(thor)->_lastY[1] = _G(thor)->_y;
+	_G(thor)->_dir = _G(thor_info).last_dir;
+	_G(thor)->_lastDir = _G(thor_info).last_dir;
+	_G(thor)->_health = _G(thor_info).last_health;
 	_G(thor_info).magic = _G(thor_info).last_magic;
 	_G(thor_info).jewels = _G(thor_info).last_jewels;
 	_G(thor_info).keys = _G(thor_info).last_keys;
@@ -541,9 +541,9 @@ void GameContent::thorDead() {
 
 	_G(setup) = _G(last_setup);
 
-	_G(thor)->num_moves = 1;
-	_G(thor)->vunerable = 60;
-	_G(thor)->show = 60;
+	_G(thor)->_numMoves = 1;
+	_G(thor)->_vulnerableCountdown = 60;
+	_G(thor)->_show = 60;
 	_G(hourglass_flag) = 0;
 	_G(apple_flag) = false;
 	_G(bomb_flag) = false;
@@ -552,10 +552,10 @@ void GameContent::thorDead() {
 	_G(tornado_used) = false;
 	_G(shield_on) = false;
 	music_resume();
-	_G(actor[1]).used = 0;
-	_G(actor[2]).used = 0;
-	_G(thor)->speed_count = 6;
-	_G(thor)->used = 1;
+	_G(actor[1])._active = 0;
+	_G(actor[2])._active = 0;
+	_G(thor)->_moveCountdown = 6;
+	_G(thor)->_active = 1;
 
 	// Load saved data for new level back into scrn
 	_G(scrn).load(_G(new_level));
@@ -569,7 +569,7 @@ void GameContent::thorDead() {
 
 void GameContent::checkForCheats() {
 	if (_G(cheats).freezeHealth)
-		_G(thor)->health = 150;
+		_G(thor)->_health = 150;
 	if (_G(cheats).freezeMagic)
 		_G(thor_info).magic = 150;
 	if (_G(cheats).freezeJewels)
@@ -647,15 +647,15 @@ void GameContent::throwLightning() {
 	_lightningCtr = 20;
 
 	for (int i = 0; i < MAX_ACTORS; i++)
-		_G(actor[i]).show = 0;
+		_G(actor[i])._show = 0;
 
 	play_sound(ELECTRIC, 1);
 }
 
 void GameContent::drawLightning(GfxSurface &s) {
 	for (int i = 0; i < 8; i++) {
-		_pixelX[i][0] = _G(thor)->x + 7;
-		_pixelY[i][0] = _G(thor)->y + 7;
+		_pixelX[i][0] = _G(thor)->_x + 7;
+		_pixelY[i][0] = _G(thor)->_y + 7;
 		_pixelC[i] = 14 + g_events->getRandomNumber(1);
 	}
 
@@ -669,19 +669,19 @@ void GameContent::drawLightning(GfxSurface &s) {
 void GameContent::lightningCountdownDone() {
 	_G(gameMode) = MODE_NORMAL;
 
-	int x = _G(thor)->x + 7;
-	int y = _G(thor)->y + 7;
+	int x = _G(thor)->_x + 7;
+	int y = _G(thor)->_y + 7;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
-		if (!_G(actor[i]).used)
+		if (!_G(actor[i])._active)
 			continue;
 
-		int ax = _G(actor[i]).x + (_G(actor[i]).size_x / 2);
-		int ay = _G(actor[i]).y + (_G(actor[i]).size_y / 2);
+		int ax = _G(actor[i])._x + (_G(actor[i])._sizeX / 2);
+		int ay = _G(actor[i])._y + (_G(actor[i])._sizeY / 2);
 
 		if ((ABS(ax - x) < 30) && (ABS(ay - y) < 30)) {
-			_G(actor[i]).magic_hit = 1;
-			_G(actor[i]).vunerable = 0;
+			_G(actor[i])._magicHit = 1;
+			_G(actor[i])._vulnerableCountdown = 0;
 			actor_damaged(&_G(actor[i]), 254);
 		}
 	}
