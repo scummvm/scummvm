@@ -44,7 +44,7 @@ private:
 	 * This was taken from the Dark Seed executable and might have been
 	 * customized for the game.
 	 */
-	static AdLibIbkInstrumentDefinition WORX_INSTRUMENT_BANK[];
+	static const AdLibIbkInstrumentDefinition WORX_INSTRUMENT_BANK[];
 	/**
 	 * The OPL frequency (F-num) for each octave note.
 	 */
@@ -57,7 +57,10 @@ public:
 protected:
 	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
 	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
-	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+
+	// Writable pointers to the instrument definitions
+	OplInstrumentDefinition *_instrumentBankPtr;
 };
 
 } // namespace Darkseed

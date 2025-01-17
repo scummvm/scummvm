@@ -64,11 +64,15 @@ private:
 	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
 	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
 	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity,
-								  OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+								  const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 	void parseInstrumentData(const byte *instrumentData);
 
 	// True if rhythm notes for sources with type MUSIC should not be played.
 	bool _musicRhythmNotesDisabled;
+
+	// Writable pointers to the instrument definitions
+	OplInstrumentDefinition *_instrumentBankPtr;
+	OplInstrumentDefinition *_rhythmBankPtr;
 };
 
 MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType);

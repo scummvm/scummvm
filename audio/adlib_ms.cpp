@@ -23,12 +23,12 @@
 
 #include "common/debug.h"
 
-bool OplInstrumentOperatorDefinition::isEmpty() {
+bool OplInstrumentOperatorDefinition::isEmpty() const {
 	return freqMultMisc == 0 && level == 0 && decayAttack == 0 &&
 		   releaseSustain == 0 && waveformSelect == 0;
 }
 
-bool OplInstrumentDefinition::isEmpty() {
+bool OplInstrumentDefinition::isEmpty() const {
 	if (rhythmType != RHYTHM_TYPE_UNDEFINED) {
 		return operator0.isEmpty() &&
 			(rhythmType != RHYTHM_TYPE_BASS_DRUM || operator1.isEmpty());
@@ -40,7 +40,7 @@ bool OplInstrumentDefinition::isEmpty() {
 	}
 }
 
-uint8 OplInstrumentDefinition::getNumberOfOperators() {
+uint8 OplInstrumentDefinition::getNumberOfOperators() const {
 	if (rhythmType == RHYTHM_TYPE_UNDEFINED) {
 		return fourOperator ? 4 : 2;
 	} else {
@@ -50,7 +50,7 @@ uint8 OplInstrumentDefinition::getNumberOfOperators() {
 	}
 }
 
-OplInstrumentOperatorDefinition &OplInstrumentDefinition::getOperatorDefinition(uint8 operatorNum) {
+const OplInstrumentOperatorDefinition &OplInstrumentDefinition::getOperatorDefinition(uint8 operatorNum) const {
 	assert((!fourOperator && operatorNum < 2) || operatorNum < 4);
 
 	switch (operatorNum) {
@@ -68,7 +68,7 @@ OplInstrumentOperatorDefinition &OplInstrumentDefinition::getOperatorDefinition(
 	}
 }
 
-void AdLibBnkInstrumentOperatorDefinition::toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect) {
+void AdLibBnkInstrumentOperatorDefinition::toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect) const {
 	// Combine the separate fields of the BNK format into complete register values.
 	operatorDef.freqMultMisc = frequencyMultiplier | (keyScalingRate == 0 ? 0 : 0x10) |
 		(envelopeGainType == 0 ? 0 : 0x20) | (vibrato == 0 ? 0 : 0x40) | (amplitudeModulation == 0 ? 0 : 0x80);
@@ -78,7 +78,7 @@ void AdLibBnkInstrumentOperatorDefinition::toOplInstrumentOperatorDefinition(Opl
 	operatorDef.waveformSelect = waveformSelect;
 }
 
-void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) {
+void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const {
 	instrumentDef.fourOperator = false;
 
 	operator0.toOplInstrumentOperatorDefinition(instrumentDef.operator0, waveformSelect0);
@@ -93,7 +93,7 @@ void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefini
 	instrumentDef.rhythmType = RHYTHM_TYPE_UNDEFINED;
 }
 
-void AdLibIbkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) {
+void AdLibIbkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const {
 	instrumentDef.fourOperator = false;
 
 	instrumentDef.operator0.freqMultMisc = o0FreqMultMisc;
@@ -138,7 +138,7 @@ void AdLibIbkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefini
 }
 
 // These are the melodic instrument definitions used by the Win95 SB16 driver.
-OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_INSTRUMENT_BANK[128] = {
+const OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_INSTRUMENT_BANK[128] = {
 	// 0x00
 	{ false, { 0x01, 0x8F, 0xF2, 0xF4, 0x00 }, { 0x01, 0x06, 0xF2, 0xF7, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, 0x38, 0x00, 0x00, RHYTHM_TYPE_UNDEFINED },
 	{ false, { 0x01, 0x4B, 0xF2, 0xF4, 0x00 }, { 0x01, 0x00, 0xF2, 0xF7, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, 0x38, 0x00, 0x00, RHYTHM_TYPE_UNDEFINED },
@@ -286,7 +286,7 @@ OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_INSTRUMENT_BANK[128] =
 };
 
 // These are the rhythm instrument definitions used by the Win95 SB16 driver.
-OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_RHYTHM_BANK[62] = {
+const OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_RHYTHM_BANK[62] = {
 	// GS percussion start
 	// 0x1B
 	{ false, { 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00 }, 0x00, 0x00, 0x00, RHYTHM_TYPE_UNDEFINED },
@@ -1634,7 +1634,7 @@ int32 MidiDriver_ADLIB_Multisource::calculatePitchBend(uint8 channel, uint8 sour
 	return pitchBend;
 }
 
-uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	// Get the volume (level) for this operator from the instrument definition.
 	uint8 operatorDefVolume = instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
 
@@ -1667,7 +1667,7 @@ uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source,
 	return scaledVolume;
 }
 
-uint8 MidiDriver_ADLIB_Multisource::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_ADLIB_Multisource::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	uint8 unscaledVolume;
 	// Get the volume (level) for this operator from the instrument definition.
 	uint8 operatorVolume = instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
@@ -1704,7 +1704,7 @@ uint8 MidiDriver_ADLIB_Multisource::calculateUnscaledVolume(uint8 channel, uint8
 	return MIN((uint8)0x3F, unscaledVolume);
 }
 
-bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	// Determine if volume settings should be applied to this operator. Carrier
 	// operators in FM synthesis and all operators in additive synthesis need
 	// to have volume settings applied; modulator operators just use the

@@ -184,7 +184,7 @@ protected:
 	// Returns the number of semitones in bits 8+ and an 8 bit fraction of a
 	// semitone.
 	int32 calculatePitchBend(uint8 channel, uint8 source, uint16 oplFrequency) override;
-	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 
 	// Stores the instrument definitions set by sequencer meta events.
 	OplInstrumentDefinition _instrumentDefs[LURE_MAX_SOURCES][MIDI_CHANNEL_COUNT];

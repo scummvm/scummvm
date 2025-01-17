@@ -23,7 +23,7 @@
 
 namespace Darkseed {
 
-AdLibIbkInstrumentDefinition MidiDriver_Worx_AdLib::WORX_INSTRUMENT_BANK[128] = {
+const AdLibIbkInstrumentDefinition MidiDriver_Worx_AdLib::WORX_INSTRUMENT_BANK[128] = {
 	// 0x00
 	{ 0x01, 0x01, 0x4f, 0x12, 0xf1, 0xd3, 0x50, 0x7c, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00 },
 	{ 0x02, 0x01, 0x50, 0x12, 0xf1, 0xd2, 0x50, 0x76, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00 },
@@ -177,26 +177,26 @@ const uint16 MidiDriver_Worx_AdLib::OPL_NOTE_FREQUENCIES[12] = {
 MidiDriver_Worx_AdLib::MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int timerFrequency) :
 	MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
 
-	_instrumentBank = new OplInstrumentDefinition[128];
+	_instrumentBank = _instrumentBankPtr = new OplInstrumentDefinition[128];
 
 	for (int i = 0; i < 128; i++) {
-		WORX_INSTRUMENT_BANK[i].toOplInstrumentDefinition(_instrumentBank[i]);
+		WORX_INSTRUMENT_BANK[i].toOplInstrumentDefinition(_instrumentBankPtr[i]);
 
 		// The original code does not add the key scale level bits (bits 6 and 7)
 		// from the instrument definition to the level before it writes the 0x4x
 		// register value, so effectively, KSL is always disabled for operator 1.
 		// This is probably an oversight, but this behavior is implemented here
 		// by clearing the KSL bits of operator 1 in the instrument definition.
-		_instrumentBank[i].operator1.level &= 0x3F;
+		_instrumentBankPtr[i].operator1.level &= 0x3F;
 	}
-	 
+
 	_defaultChannelVolume = 0x7F;
 	_channel10Melodic = true;
 	_instrumentWriteMode = INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON;
 }
 
 MidiDriver_Worx_AdLib::~MidiDriver_Worx_AdLib() {
-	delete[] _instrumentBank;
+	delete[] _instrumentBankPtr;
 }
 
 uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
@@ -275,7 +275,7 @@ uint16 MidiDriver_Worx_AdLib::calculateFrequency(uint8 channel, uint8 source, ui
 	return oplFrequency | (block << 10);
 }
 
-uint8 MidiDriver_Worx_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_Worx_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	// Worx calculates volume by scaling the instrument operator volume by the
 	// channel volume. Note velocity is not used.
 	uint8 operatorVolume = 0x3F - (instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F);
