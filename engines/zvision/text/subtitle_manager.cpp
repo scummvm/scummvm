@@ -53,7 +53,7 @@ void SubtitleManager::process(int32 deltatime) {
 	//Update all subtitles' respective deletion timers
   for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 		if (it->_value->process(deltatime)) {
-      debug(2,"Deleting subtitle, subId=%d", it->_key);
+      debug(4,"Deleting subtitle, subId=%d", it->_key);
 			_subsFocus.remove(it->_key);			
 		  delete it->_value;
 			_subsList.erase(it);
@@ -62,18 +62,18 @@ void SubtitleManager::process(int32 deltatime) {
   }
 	if(_subsList.size() == 0)
 	  if(_subId != 0) {
-      debug(1,"Resetting subId to 0");
+      debug(4,"Resetting subId to 0");
 	    _subId = 0;
       _subsFocus.clear();
     }
 	if (redraw) {
-    debug(2,"Redrawing subtitles");
+    debug(4,"Redrawing subtitles");
 	  //Blank subtitle buffer
 	  _renderManager->clearTextSurface();
     //Render just the most recent subtitle
   	if(_subsFocus.size()) {
   	  uint16 curSub = _subsFocus.get();
-      debug(2,"Rendering subtitle %d", curSub);     
+      debug(4,"Rendering subtitle %d", curSub);     
       Subtitle *sub = _subsList[curSub];
 		  if (sub->lineId >= 0) { 
 			  Graphics::Surface textSurface;

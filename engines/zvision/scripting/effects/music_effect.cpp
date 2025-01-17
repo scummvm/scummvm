@@ -202,12 +202,9 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 			tmp = _position - curPos;
 		else
 			tmp = _position - curPos + _width;
-
 		int balance = 0;
-
 		if (tmp > _halfWidth)
 			tmp -= _width;
-
 		if (tmp > _quarterWidth) {
 			balance = 1;
 			tmp = _halfWidth - tmp;
@@ -218,9 +215,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 
 		// Originally it's value -90...90 but we use -127...127 and therefore 360 replaced by 508
 		mus->setBalance( (508 * tmp) / _width );
-
 		tmp = (360 * tmp) / _width;
-
 		int deltaVol = balance;
 
 		// This value sets how fast volume goes off than sound source back of you
@@ -231,12 +226,10 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 			if (scriptManager->getCurrentLocation() == "dc10")
 				volumeCorrection = 5;
 		}
-
 		if (deltaVol != 0)
 			deltaVol = (mus->getVolume() * volumeCorrection) * (90 - tmp * balance) / 90;
 		if (deltaVol > 255)
 			deltaVol = 255;
-
 		mus->setDeltaVolume(deltaVol);
 	}
 	return false;
