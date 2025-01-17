@@ -5,6 +5,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Neue Spiele:
    - Unterstützung für Dark Seed hinzugefügt.
+   - Unterstützung für God of Thunder hinzugefügt.
 
  Nuvie:
    - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
