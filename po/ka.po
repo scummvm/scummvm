@@ -18,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.7.2\n"
+"X-Language-name: Georgian\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"

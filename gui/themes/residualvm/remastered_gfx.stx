@@ -144,7 +144,8 @@
 				<!-- Add these in order of priority. First match is used -->
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Bold.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
@@ -154,7 +155,8 @@
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
@@ -164,7 +166,8 @@
 				file = 'helvb12.bdf'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Bold.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
@@ -174,7 +177,8 @@
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
@@ -184,7 +188,8 @@
 				file = 'helvb12.bdf'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
@@ -194,7 +199,8 @@
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
@@ -204,7 +210,8 @@
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
