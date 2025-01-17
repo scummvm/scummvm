@@ -49,12 +49,6 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		data->_int = 0;
 		dataType = kIntType;
 		break;
-	case TGL_ALIASED_LINE_WIDTH_RANGE:
-		error("gl_get_pname: TGL_ALIASED_LINE_WIDTH_RANGE option not implemented");
-		break;
-	case TGL_ALIASED_POINT_SIZE_RANGE:
-		error("gl_get_pname: TGL_ALIASED_POINT_SIZE_RANGE option not implemented");
-		break;
 	case TGL_ALPHA_BIAS:
 		// fall through
 	case TGL_RED_BIAS:
@@ -108,7 +102,7 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kFloatType;
 		break;
 	case TGL_ATTRIB_STACK_DEPTH:
-		error("gl_get_pname: TGL_ALIASED_POINT_SIZE_RANGE option not implemented");
+		error("gl_get_pname: TGL_ATTRIB_STACK_DEPTH option not implemented");
 		break;
 	case TGL_AUTO_NORMAL:
 		data->_int = 0;
@@ -389,9 +383,6 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		data->_float4[3] = ambient_light_model._v[3];
 		dataType = kFloat4Type;
 		break;
-	case TGL_LIGHT_MODEL_COLOR_CONTROL:
-		error("gl_get_pname: TGL_LIGHT_MODEL_COLOR_CONTROL option not implemented");
-		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:
 		data->_int = local_light_model;
 		dataType = kIntType;
@@ -495,11 +486,6 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		break;
 	case TGL_MAX_CLIP_PLANES:
 		error("gl_get_pname: TGL_MAX_CLIP_PLANES option not implemented");
-		break;
-	case TGL_MAX_ELEMENTS_INDICES:
-		// fall through
-	case TGL_MAX_ELEMENTS_VERTICES:
-		error("gl_get_pname: TGL_MAX_ELEMENTS_x option not implemented");
 		break;
 	case TGL_MAX_EVAL_ORDER:
 		error("gl_get_pname: TGL_MAX_EVAL_ORDER option not implemented");
@@ -739,8 +725,6 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 	case TGL_TEXTURE_BINDING_1D:
 		// fall through
 	case TGL_TEXTURE_BINDING_2D:
-		// fall through
-	case TGL_TEXTURE_BINDING_3D:
 		error("gl_get_pname: TGL_TEXTURE_BINDING_x option not implemented");
 		break;
 	case TGL_TEXTURE_COORD_ARRAY:
@@ -776,8 +760,6 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 	case TGL_UNPACK_LSB_FIRST:
 		// fall through
 	case TGL_UNPACK_ROW_LENGTH:
-		// fall through
-	case TGL_UNPACK_SKIP_IMAGES:
 		// fall through
 	case TGL_UNPACK_SKIP_PIXELS:
 		// fall through
