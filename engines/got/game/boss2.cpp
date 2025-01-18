@@ -41,71 +41,76 @@ static const byte EXPLOSION[] = {
 };
 
 static bool expf[60];
-static byte num_skulls; // Hehe
-static byte num_spikes;
-static bool drop_flag;
+static byte numSkulls;
+static byte numSpikes;
+static bool dropFlag;
 static byte su[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-static int boss2a_movement(Actor *actr);
-static int boss2b_movement(Actor *actr);
-static int boss2_die();
-static void boss_set(int d, int x, int y);
+static int boss2MovementExplode(Actor *actor);
+static int boss2MovementShake(Actor *actor);
+static int boss2Die();
+static void bossSet(byte d, int x, int y);
 
-int boss2_movement(Actor *actr) {
+int boss2Movement(Actor *actor) {
 	switch (_G(setup)._difficultyLevel) {
 	case 0:
-		num_skulls = 3;
-		num_spikes = 5;
+		numSkulls = 3;
+		numSpikes = 5;
 		break;
+
 	case 1:
-		num_skulls = 6;
-		num_spikes = 8;
+		numSkulls = 6;
+		numSpikes = 8;
 		break;
+
 	case 2:
-		num_skulls = 9;
-		num_spikes = 11;
+		numSkulls = 9;
+		numSpikes = 11;
+		break;
+
+	default:
 		break;
 	}
 	if (_G(boss_dead))
-		return boss2_die();
+		return boss2Die();
 
-	if (actr->_i1) {
-		if (actr->_i1 == 1)
-			return boss2a_movement(actr);
+	if (actor->_i1) {
+		if (actor->_i1 == 1)
+			return boss2MovementExplode(actor);
 
-		return boss2b_movement(actr);
+		return boss2MovementShake(actor);
 	}
 
-	int d = actr->_lastDir;
-	int x = actr->_x;
+	byte d = actor->_lastDir;
+	int x = actor->_x;
 
-	if (actr->_temp6)
-		actr->_temp6--;
+	if (actor->_temp6)
+		actor->_temp6--;
 
-	if (!actr->_temp6) {
+	if (!actor->_temp6) {
 		bool f = false;
-		drop_flag = false;
+		dropFlag = false;
 
-		if (actr->_temp5)
-			actr->_temp5--;
+		if (actor->_temp5)
+			actor->_temp5--;
 
-		if (!actr->_temp5)
+		if (!actor->_temp5)
 			f = true;
 		else {
 			if (d == 2) {
 				if (x > 18)
-					actr->_x -= 2;
+					actor->_x -= 2;
 				else
 					f = true;
 			} else if (d == 3) {
 				if (x < 272)
-					actr->_x += 2;
+					actor->_x += 2;
 				else
 					f = true;
 			}
 		}
 		if (f) {
-			actr->_temp5 = _G(rand1) + 60;
+			actor->_temp5 = _G(rand1) + 60;
 			if (d == 2)
 				d = 3;
 			else
@@ -113,41 +118,41 @@ int boss2_movement(Actor *actr) {
 		}
 	}
 
-	const int count = actr->_frameCount - 1;
+	const int count = actor->_frameCount - 1;
 	
 	if (count <= 0) {
-		actr->_nextFrame++;
-		if (actr->_nextFrame > 2)
-			actr->_nextFrame = 0;
-		actr->_frameCount = actr->_frameSpeed;
+		actor->_nextFrame++;
+		if (actor->_nextFrame > 2)
+			actor->_nextFrame = 0;
+		actor->_frameCount = actor->_frameSpeed;
 	} else
-		actr->_frameCount = count;
+		actor->_frameCount = count;
 	
-	x = actr->_x;
-	if (actr->_currNumShots < num_skulls && !drop_flag) {
+	x = actor->_x;
+	if (actor->_currNumShots < numSkulls && !dropFlag) {
 		if (x == 48 || x == 112 || x == 176 || x == 240) {
-			drop_flag = true;
+			dropFlag = true;
 			_G(actor[3])._temp6 = 40;
 
-			actor_always_shoots(actr, 1);
+			actor_always_shoots(actor, 1);
 			play_sound(FALL, false);
-			_G(actor[actr->_shotActor])._x = actr->_x + 12;
-			_G(actor[actr->_shotActor])._y = actr->_y + 32;
-			_G(actor[actr->_shotActor])._temp2 = 0;
-			_G(actor[actr->_shotActor])._temp3 = 4;
-			_G(actor[actr->_shotActor])._temp4 = 4;
+			_G(actor[actor->_shotActor])._x = actor->_x + 12;
+			_G(actor[actor->_shotActor])._y = actor->_y + 32;
+			_G(actor[actor->_shotActor])._temp2 = 0;
+			_G(actor[actor->_shotActor])._temp3 = 4;
+			_G(actor[actor->_shotActor])._temp4 = 4;
 		}
 	}
 
-	boss_set(d, x, actr->_y);
+	bossSet(d, x, actor->_y);
 
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
 
 	return d;
 }
 
-static void boss_set(int d, int x, int y) {
+static void bossSet(byte d, int x, int y) {
 	_G(actor[4])._nextFrame = _G(actor[3])._nextFrame;
 	_G(actor[5])._nextFrame = _G(actor[3])._nextFrame;
 	_G(actor[6])._nextFrame = _G(actor[3])._nextFrame;
@@ -163,10 +168,8 @@ static void boss_set(int d, int x, int y) {
 	_G(actor[6])._y = y + 16;
 }
 
-void check_boss2_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
+void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 	if ((!_G(actor[3])._vulnerableCountdown)) {
-		int rep;
-
 		actor_damaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 		_G(actor[3])._health -= 10;
 		if (_G(actor[3])._health == 50) {
@@ -177,7 +180,8 @@ void check_boss2_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
 			_G(actor[3])._i1 = 1;
 			_G(actor[3])._i2 = 0;
 			memset(expf, 0, 60);
-			for (rep = 7; rep < MAX_ACTORS; rep++) {
+
+			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
 					actor_destroyed(&_G(actor[rep]));
 			}
@@ -188,15 +192,15 @@ void check_boss2_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
 		_G(actor[3])._moveCountdown = 75;
 		_G(actor[3])._vulnerableCountdown = 75;
 		_G(actor[3])._nextFrame = 1;
-		
-		for (rep = 4; rep < 7; rep++) {
+
+		for (int rep = 4; rep < 7; rep++) {
 			_G(actor[rep])._nextFrame = 1;
 			_G(actor[rep])._moveCountdown = 50;
 		}
 		
 		if (_G(actor[3])._health == 0) {
 			_G(boss_dead) = true;
-			for (rep = 7; rep < MAX_ACTORS; rep++) {
+			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
 					actor_destroyed(&_G(actor[rep]));
 			}
@@ -204,21 +208,21 @@ void check_boss2_hit(Actor *actr, int x1, int y1, int x2, int y2, int act_num) {
 	}
 }
 
-void boss_level2() {
+void boss2SetupLevel() {
 	setup_boss(2);
 	_G(boss_active) = true;
 	music_pause();
 	play_sound(BOSS11, true);
 	_G(timer_cnt) = 0;
 
-	drop_flag = false;
+	dropFlag = false;
 	Common::fill(su, su + 18, 0);
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
 	music_play(7, true);
 }
 
-static int boss2_die() {
+static int boss2Die() {
 	_G(hourglass_flag) = 0;
 	_G(thunder_flag) = 0;
 	if (_G(boss_dead)) {
@@ -257,14 +261,14 @@ static int boss2_die() {
 }
 
 // Boss - skull (explode)
-static int boss2a_movement(Actor *actr) {
-	next_frame(actr);
-	_G(actor[4])._nextFrame = actr->_nextFrame;
-	_G(actor[5])._nextFrame = actr->_nextFrame;
-	_G(actor[6])._nextFrame = actr->_nextFrame;
-	actr->_vulnerableCountdown = 20;
+static int boss2MovementExplode(Actor *actor) {
+	next_frame(actor);
+	_G(actor[4])._nextFrame = actor->_nextFrame;
+	_G(actor[5])._nextFrame = actor->_nextFrame;
+	_G(actor[6])._nextFrame = actor->_nextFrame;
+	actor->_vulnerableCountdown = 20;
 	
-	if (actr->_currNumShots || _G(actor[5])._currNumShots)
+	if (actor->_currNumShots || _G(actor[5])._currNumShots)
 		return 0;
 
 	play_sound(EXPLODE, true);
@@ -297,7 +301,7 @@ static int boss2a_movement(Actor *actr) {
 }
 
 // Boss - skull - shake
-static int boss2b_movement(Actor *actr) {
+static int boss2MovementShake(Actor *actor) {
 	int rep, an, hx;
 
 	if (_G(hammer)->_active && _G(hammer)->_moveType != 5) {
@@ -316,39 +320,39 @@ static int boss2b_movement(Actor *actr) {
 			}
 		}
 	}
-	if (actr->_i4) {
-		actr->_i4--;
-		if (!actr->_i4)
+	if (actor->_i4) {
+		actor->_i4--;
+		if (!actor->_i4)
 			_G(thunder_flag) = 0;
 	}
-	if (!actr->_i2) {
-		if (actr->_x < 144)
-			actr->_x += 2;
-		else if (actr->_x > 144)
-			actr->_x -= 2;
+	if (!actor->_i2) {
+		if (actor->_x < 144)
+			actor->_x += 2;
+		else if (actor->_x > 144)
+			actor->_x -= 2;
 		else {
-			actr->_i2 = 1;
-			actr->_i3 = 0;
+			actor->_i2 = 1;
+			actor->_i3 = 0;
 		}
 		goto done;
 	}
 	if (_G(actor[4])._currNumShots)
 		goto done;
 
-	if (!actr->_i3) {
-		actr->_i3 = g_events->getRandomNumber(2, 3);
+	if (!actor->_i3) {
+		actor->_i3 = g_events->getRandomNumber(2, 3);
 	}
 
-	if (actr->_i3 == 2)
-		actr->_x -= 2;
+	if (actor->_i3 == 2)
+		actor->_x -= 2;
 	else
-		actr->_x += 2;
+		actor->_x += 2;
 
-	if (actr->_x < 20 || actr->_x > 270) {
+	if (actor->_x < 20 || actor->_x > 270) {
 		_G(thunder_flag) = 100;
-		actr->_i4 = 50;
+		actor->_i4 = 50;
 		play_sound(EXPLODE, true);
-		actr->_i2 = 0;
+		actor->_i2 = 0;
 
 		Common::fill(su, su + 18, 0);
 		actor_always_shoots(&_G(actor[4]), 1);
@@ -359,8 +363,8 @@ static int boss2b_movement(Actor *actr) {
 
 		su[hx] = 1;
 		_G(actor[an])._nextFrame = g_events->getRandomNumber(3);
-		for (rep = 0; rep < num_spikes; rep++) {
-			while (1) {
+		for (rep = 0; rep < numSpikes; rep++) {
+			while (true) {
 				hx = g_events->getRandomNumber(17);
 				if (!su[hx])
 					break;
@@ -375,17 +379,17 @@ static int boss2b_movement(Actor *actr) {
 	}
 
 done:
-	next_frame(actr);
-	boss_set(actr->_dir, actr->_x, actr->_y);
+	next_frame(actor);
+	bossSet(actor->_dir, actor->_x, actor->_y);
 	return 0;
 }
 
-void closing_sequence2() {
+void boss2ClosingSequence1() {
 	music_play(6, true);
 	odinSpeaks(1001, 0, "CLOSING");
 }
 
-void closing_sequence2_2() {
+void boss2ClosingSequence2() {
 	_G(thor_info)._armor = 10;
 	load_new_thor();
 	_G(thor)->_dir = 1;
@@ -394,13 +398,13 @@ void closing_sequence2_2() {
 	fill_score(20, "CLOSING");
 }
 
-void closing_sequence2_3() {
+void boss2ClosingSequence3() {
 	fill_health();
 	fill_magic();
 	odinSpeaks(1002, 0, "CLOSING");
 }
 
-void closing_sequence2_4() {
+void boss2ClosingSequence4() {
 	for (int rep = 0; rep < 16; rep++)
 		_G(scrn)._actorType[rep] = 0;
 

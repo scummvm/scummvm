@@ -411,10 +411,10 @@ int check_move1(int x, int y, Actor *actr) {
 			if (_G(boss_active) && !GAME3) {
 				switch (_G(area)) {
 				case 1:
-					check_boss1_hit(act, x1, y1, x2, y2, i);
+					boss1CheckHit(act, x1, y1, x2, y2, i);
 					break;
 				case 2:
-					check_boss2_hit(act, x1, y1, x2, y2, i);
+					boss2CheckHit(act, x1, y1, x2, y2, i);
 					break;
 				default:
 					// Area 3 boss Loki isn't checked here
@@ -1761,7 +1761,7 @@ int movement_nineteen(Actor *actr) {
 int movement_twenty(Actor *actr) {
 	if (GAME1)
 		// Boss - snake
-		return boss1_movement(actr);
+		return boss1Movement(actr);
 
 	return movement_one(actr);
 }
@@ -2078,7 +2078,7 @@ int movement_twentyfive(Actor *actr) {
 
 int movement_twentysix(Actor *actr) {
 	if (GAME2)
-		return boss2_movement(actr);
+		return boss2Movement(actr);
 	if (GAME3)
 		return boss3_movement(actr);
 
@@ -2087,7 +2087,7 @@ int movement_twentysix(Actor *actr) {
 
 int movement_twentyseven(Actor *actr) {
 	if (GAME2)
-		return boss2_movement(actr);
+		return boss2Movement(actr);
 
 	return movement_one(actr);
 }

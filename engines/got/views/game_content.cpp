@@ -400,10 +400,10 @@ void GameContent::checkForBossDead() {
 			if (_G(boss_active)) {
 				switch (_G(area)) {
 				case 1:
-					closing_sequence1();
+					boss1ClosingSequence1();
 					break;
 				case 2:
-					closing_sequence2();
+					boss2ClosingSequence1();
 					break;
 				case 3:
 					closing_sequence3();
@@ -699,10 +699,10 @@ void GameContent::closingSequence() {
 	case 2:
 		switch (area) {
 		case 1:
-			closing_sequence1_2();
+			boss1ClosingSequence2();
 			break;
 		case 2:
-			closing_sequence2_2();
+			boss2ClosingSequence2();
 			break;
 		case 3:
 			closing_sequence3_2();
@@ -715,10 +715,10 @@ void GameContent::closingSequence() {
 	case 3:
 		switch (area) {
 		case 1:
-			closing_sequence1_3();
+			boss1ClosingSequence3();
 			break;
 		case 2:
-			closing_sequence2_3();
+			boss2ClosingSequence3();
 			break;
 		case 3:
 			closing_sequence3_3();
@@ -733,10 +733,10 @@ void GameContent::closingSequence() {
 
 		switch (area) {
 		case 1:
-			closing_sequence1_4();
+			boss1ClosingSequence4();
 			break;
 		case 2:
-			closing_sequence2_4();
+			boss2ClosingSequence4();
 			break;
 		default:
 			break;

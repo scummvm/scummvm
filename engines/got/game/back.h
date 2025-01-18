@@ -45,7 +45,7 @@ extern void removeObjects(int y, int x);
 extern void placeTile(int x, int y, int tile);
 extern int backgroundTile(int x, int y);
 extern void selectItem();
-extern int actorSpeaks(Actor *actor, int index, int item);
+extern void actorSpeaks(const Actor *actor, int index, int item);
 
 } // namespace Got
 

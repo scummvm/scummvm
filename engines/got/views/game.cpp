@@ -56,9 +56,9 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 		if (gDebugLevel > 0) {
 			// Hack used for testing end-game sequence
 			if (GAME1 && _G(current_level) == BOSS_LEVEL1)
-				closing_sequence1();
+				boss1ClosingSequence1();
 			else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
-				closing_sequence2();
+				boss2ClosingSequence1();
 			else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
 				closing_sequence3();
 		}

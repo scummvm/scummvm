@@ -146,14 +146,14 @@ void showLevelDone() {
 	if (GAME1 && _G(new_level) == BOSS_LEVEL1) {
 		if (!_G(setup)._bossDead[0]) {
 			if (!_G(auto_load))
-				boss_level1();
+				boss1SetupLevel();
 			f = false;
 		}
 	}
 	if (GAME2 && _G(new_level) == BOSS_LEVEL2) {
 		if (!_G(setup)._bossDead[1]) {
 			if (!_G(auto_load))
-				boss_level2();
+				boss2SetupLevel();
 			f = false;
 		}
 	}
@@ -173,6 +173,7 @@ void showLevelDone() {
 
 	if (_G(startup))
 		f = false;
+
 	if (f)
 		music_play(_G(levelMusic), false);
 }
@@ -306,13 +307,13 @@ void selectItem() {
 	}
 }
 
-int actorSpeaks(Actor *actor, int index, int item) {
+void actorSpeaks(const Actor *actor, int index, int item) {
 	if (actor->_type != 4)
-		return 0;
+		return;
 
 	int v = atoi(actor->_name);
 	if (v < 1 || v > 20)
-		return 0;
+		return;
 
 	long lind = (long)_G(current_level);
 	lind = lind * 1000;
@@ -330,8 +331,6 @@ int actorSpeaks(Actor *actor, int index, int item) {
 		_G(thor)->_show = 0;
 		_G(exit_flag) = 2;
 	}
-
-	return 1;
 }
 
 } // namespace Got
