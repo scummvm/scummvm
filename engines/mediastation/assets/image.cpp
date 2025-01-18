@@ -39,6 +39,13 @@ Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		break;
 	}
 
+	case kSpatialHideMethod: {
+		assert(args.empty());
+		_isActive = false;
+		return Operand();
+		break;
+	}
+
 	default: {
 		error("Image::callMethod(): Got unimplemented method ID %d", methodId);
 	}
