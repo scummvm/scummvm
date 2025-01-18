@@ -40,7 +40,7 @@ void setup_player() {
 		_G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
 
 	_G(thor)->_health = 150;
-	_G(thor_info).magic = _G(area) > 1 ? 150 : 0;
+	_G(thor_info)._magic = _G(area) > 1 ? 150 : 0;
 	_G(thor_info).jewels = 0;
 	_G(thor_info).score = 0;
 	_G(thor_info).keys = 0;
@@ -80,7 +80,7 @@ void initialize_game() {
 	if (_G(demo)) {
 		g_vars->setArea(1);
 		_G(thor)->_health = 100;
-		_G(thor_info).magic = 100;
+		_G(thor_info)._magic = 100;
 		_G(thor_info).jewels = 463;
 		_G(thor_info).score = 12455;
 		_G(setup)._difficultyLevel = 0;

@@ -21,7 +21,6 @@
 
 #include "got/got.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -156,20 +155,19 @@ void GotEngine::savegameLoaded() {
 
 	g_vars->resetEndgameFlags();
 
-	if (!_G(music_flag))
-		_G(setup)._musicEnabled = 0;
-	if (!_G(sound_flag))
-		_G(setup)._digitalSound = 0;
-	if (_G(setup)._musicEnabled == 1) {
+	_G(setup)._musicEnabled = _G(music_flag);
+	_G(setup)._digitalSound = _G(sound_flag);
+
+	if (_G(setup)._musicEnabled) {
 		if (GAME1 && _G(current_area) == 59) {
 			music_play(5, true);
 		} else {
 			music_play(_G(levelMusic), true);
 		}
 	} else {
-		_G(setup)._musicEnabled = 1;
+		_G(setup)._musicEnabled = true;
 		music_pause();
-		_G(setup)._musicEnabled = 0;
+		_G(setup)._musicEnabled = false;
 	}
 
 	_G(game_over) = _G(setup)._gameOver != 0;

@@ -41,7 +41,7 @@ void setup_load() {
 	_G(thor)->_dir = _G(thor_info).last_dir;
 	_G(thor)->_lastDir = _G(thor_info).last_dir;
 	_G(thor)->_health = _G(thor_info).last_health;
-	_G(thor_info).magic = _G(thor_info).last_magic;
+	_G(thor_info)._magic = _G(thor_info).last_magic;
 	_G(thor_info).jewels = _G(thor_info).last_jewels;
 	_G(thor_info).keys = _G(thor_info).last_keys;
 	_G(thor_info).score = _G(thor_info).last_score;

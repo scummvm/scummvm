@@ -102,15 +102,15 @@ struct SetupFlags {
 struct Setup : public SetupFlags {
 	byte _value[16] = {};
 	byte _filler1 = 0;
-	byte _game = 0;
-	byte _areaNum = 0;        //1,2,3
-	byte _speakerSound = 0;    //1=enabled
-	byte _digitalSound = 0;   //1 & !_speakerSound = enabled
-	byte _musicEnabled = 0;       //1=enabled
-	byte _slowMode = 0;       //1=slow mode (for slower 286's)
-	byte _scrollFlag = 0; //unused
-	byte _bossDead[3] = {};
-	byte _difficultyLevel = 0;       //0=easy, 1=normal, 2=hard
+	byte _game = 0;             // Unused
+	byte _areaNum = 0;          // 1,2,3
+	bool _speakerSound = false; // always disabled
+	bool _digitalSound = false; // true = enabled
+	bool _musicEnabled = false; // true = enabled
+	bool _slowMode = false;     // true = slow mode (for slower 286's)
+	bool _scrollFlag = false;   // true = scroll when changing from	a room to the other
+	bool _bossDead[3] = {false, false, false};
+	byte _difficultyLevel = 0;  // 0=easy, 1=normal, 2=hard
 	byte _gameOver = 0;
 	byte _filler2[19] = {};
 	

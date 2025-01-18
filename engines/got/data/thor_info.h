@@ -27,7 +27,7 @@
 namespace Got {
 
 struct THOR_INFO {
-	byte magic = 0;
+	byte _magic = 0;
 	byte keys = 0;
 	int jewels = 0;
 	byte last_area = 0;

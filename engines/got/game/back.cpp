@@ -128,7 +128,7 @@ void show_level_done() {
 	_G(current_level) = _G(new_level);
 
 	_G(thor_info).last_health = _G(thor)->_health;
-	_G(thor_info).last_magic = _G(thor_info).magic;
+	_G(thor_info).last_magic = _G(thor_info)._magic;
 	_G(thor_info).last_jewels = _G(thor_info).jewels;
 	_G(thor_info).last_keys = _G(thor_info).keys;
 	_G(thor_info).last_score = _G(thor_info).score;

@@ -107,7 +107,7 @@ bool Console::cmdSave(int argc, const char **argv) {
 }
 
 bool Console::cmdMagic(int argc, const char **argv) {
-	_G(thor_info).magic = (argc == 2) ? CLIP(atoi(argv[1]), 0, 150) : 150;
+	_G(thor_info)._magic = (argc == 2) ? CLIP(atoi(argv[1]), 0, 150) : 150;
 
 	return false;
 }

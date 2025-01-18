@@ -184,7 +184,7 @@ public:
 	int _switch_flag = 0;
 
 	byte _res_file[16] = {};
-	bool _music_flag = false, _sound_flag = false, _pcsound_flag = false;
+	bool _music_flag = false, _sound_flag = false;
 	bool _cash1_inform = false;
 	bool _cash2_inform = false;
 	bool _door_inform = false;

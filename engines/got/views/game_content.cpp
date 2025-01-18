@@ -183,8 +183,8 @@ bool GameContent::tick() {
 				add_health(-1);
 				add_score(10);
 
-			} else if (_G(thor_info).magic > 0) {
-				_G(thor_info).magic--;
+			} else if (_G(thor_info)._magic > 0) {
+				_G(thor_info)._magic--;
 				play_sound(WOOP, 1);
 				add_magic(-1);
 				add_score(10);
@@ -525,7 +525,7 @@ void GameContent::thorDead() {
 	_G(thor)->_dir = _G(thor_info).last_dir;
 	_G(thor)->_lastDir = _G(thor_info).last_dir;
 	_G(thor)->_health = _G(thor_info).last_health;
-	_G(thor_info).magic = _G(thor_info).last_magic;
+	_G(thor_info)._magic = _G(thor_info).last_magic;
 	_G(thor_info).jewels = _G(thor_info).last_jewels;
 	_G(thor_info).keys = _G(thor_info).last_keys;
 	_G(thor_info).score = _G(thor_info).last_score;
@@ -571,7 +571,7 @@ void GameContent::checkForCheats() {
 	if (_G(cheats).freezeHealth)
 		_G(thor)->_health = 150;
 	if (_G(cheats).freezeMagic)
-		_G(thor_info).magic = 150;
+		_G(thor_info)._magic = 150;
 	if (_G(cheats).freezeJewels)
 		_G(thor_info).jewels = 999;
 }

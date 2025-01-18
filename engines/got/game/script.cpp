@@ -408,7 +408,7 @@ int Scripts::get_internal_variable() {
 		_lTemp = _G(thor)->_health;
 		break;
 	case 2:
-		_lTemp = _G(thor_info).magic;
+		_lTemp = _G(thor_info)._magic;
 		break;
 	case 3:
 		_lTemp = _G(thor_info).score;

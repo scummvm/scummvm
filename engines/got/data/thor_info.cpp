@@ -26,7 +26,7 @@
 namespace Got {
 
 void THOR_INFO::clear() {
-	magic = 0;
+	_magic = 0;
 	keys = 0;
 	jewels = 0;
 	last_area = 0;
@@ -55,7 +55,7 @@ void THOR_INFO::clear() {
 void THOR_INFO::sync(Common::Serializer &s) {
 	uint32 ptr = 0;
 
-	s.syncAsByte(magic);
+	s.syncAsByte(_magic);
 	s.syncAsByte(keys);
 	s.syncAsSint16LE(jewels);
 	s.syncAsByte(last_area);

@@ -34,7 +34,7 @@ void add_score(int num) {
 }
 
 void add_magic(int num) {
-	_G(thor_info).magic = CLIP(_G(thor_info).magic + num, 0, 150);
+	_G(thor_info)._magic = CLIP(_G(thor_info)._magic + num, 0, 150);
 }
 
 void add_health(int num) {

@@ -282,7 +282,7 @@ void closing_sequence1_4() {
 		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
-	_G(setup)._bossDead[0] = 1;
+	_G(setup)._bossDead[0] = true;
 	_G(boss_active) = false;
 	_G(scrn)._music = 4;
 	show_level(BOSS_LEVEL1);

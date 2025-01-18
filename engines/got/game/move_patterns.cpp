@@ -960,10 +960,10 @@ int special_movement_two(Actor *actr) {
 				play_sound(ANGEL, false);
 			_G(thor)->_health += 1;
 		}
-	} else if (_G(thor_info).magic < 150) {
+	} else if (_G(thor_info)._magic < 150) {
 		if (!sound_playing())
 			play_sound(ANGEL, false);
-		_G(thor_info).magic += 1;
+		_G(thor_info)._magic += 1;
 	}
 
 	return 1;

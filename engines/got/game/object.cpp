@@ -65,14 +65,14 @@ void pick_up_object(int p) {
 		add_jewels(1);
 		break;
 	case 3: // Red potion
-		if (_G(thor_info).magic >= 150) {
+		if (_G(thor_info)._magic >= 150) {
 			cannot_carry_more();
 			return;
 		}
 		add_magic(10);
 		break;
 	case 4: // Blue potion
-		if (_G(thor_info).magic >= 150) {
+		if (_G(thor_info)._magic >= 150) {
 			cannot_carry_more();
 			return;
 		}
@@ -215,7 +215,7 @@ int use_apple(int flag) {
 	if (_G(thor)->_health == 150)
 		return 0;
 
-	if (flag && _G(thor_info).magic > 0) {
+	if (flag && _G(thor_info)._magic > 0) {
 		if (!_G(apple_flag)) {
 			_G(magic_cnt) = 0;
 			add_magic(-2);
@@ -241,7 +241,7 @@ int use_apple(int flag) {
 
 int use_thunder(int flag) {
 
-	if (flag && _G(thor_info).magic > 29) {
+	if (flag && _G(thor_info)._magic > 29) {
 		if (!_G(thunder_flag)) {
 			add_magic(-30);
 			play_sound(THUNDER, false);
@@ -260,7 +260,7 @@ int use_thunder(int flag) {
 
 int use_boots(int flag) {
 	if (flag) {
-		if (_G(thor_info).magic > 0) {
+		if (_G(thor_info)._magic > 0) {
 			if (_G(thor)->_numMoves == 1) {
 				_G(magic_cnt) = 0;
 				add_magic(-1);
@@ -286,7 +286,7 @@ int use_boots(int flag) {
 
 int use_shield(int flag) {
 	if (flag) {
-		if (_G(thor_info).magic) {
+		if (_G(thor_info)._magic) {
 			if (!_G(shield_on)) {
 				_G(magic_cnt) = 0;
 				add_magic(-1);
@@ -319,7 +319,7 @@ int use_shield(int flag) {
 
 int use_lightning(int flag) {
 	if (flag) {
-		if (_G(thor_info).magic > 14) {
+		if (_G(thor_info)._magic > 14) {
 			add_magic(-15);
 			g_events->send("Game", GameMessage("THROW_LIGHTNING"));
 		} else {
@@ -332,7 +332,7 @@ int use_lightning(int flag) {
 
 int use_tornado(int flag) {
 	if (flag) {
-		if (_G(thor_info).magic > 10) {
+		if (_G(thor_info)._magic > 10) {
 			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magic_cnt) > 20) {
 				_G(magic_cnt) = 0;
 				add_magic(-10);
@@ -355,7 +355,7 @@ int use_tornado(int flag) {
 				add_magic(-1);
 			}
 		}
-		if (_G(thor_info).magic < 1) {
+		if (_G(thor_info)._magic < 1) {
 			actor_destroyed(&_G(actor[2]));
 			_G(tornado_used) = false;
 			not_enough_magic();

@@ -58,7 +58,8 @@ void Setup::sync(Common::Serializer &s) {
 	s.syncAsByte(_musicEnabled);
 	s.syncAsByte(_slowMode);
 	s.syncAsByte(_scrollFlag);
-	s.syncBytes(_bossDead, 3);
+	for (int i = 0; i < 3 ; ++i)
+		s.syncAsByte(_bossDead[i]);
 	s.syncAsByte(_difficultyLevel);
 	s.syncAsByte(_gameOver);
 	s.syncBytes(_filler2, 19);

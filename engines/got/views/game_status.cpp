@@ -53,7 +53,7 @@ void GameStatus::displayHealth(GfxSurface &s) {
 }
 
 void GameStatus::displayMagic(GfxSurface &s) {
-	int b = 59 + _G(thor_info).magic;
+	int b = 59 + _G(thor_info)._magic;
 
 	s.fillRect(Common::Rect(59, 20, b, 24), 96);
 	s.fillRect(Common::Rect(b, 20, 209, 24), STAT_COLOR);

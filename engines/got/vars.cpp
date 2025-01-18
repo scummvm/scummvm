@@ -50,7 +50,7 @@ void Vars::load() {
 	_highScores.load();
 
 	_music_flag = !ConfMan.getBool("music_mute");
-	_sound_flag = _pcsound_flag = !ConfMan.getBool("sfx_mute");
+	_sound_flag = !ConfMan.getBool("sfx_mute");
 
 	if (g_engine->isDemo()) {
 		_demo = _cheat = true;
@@ -62,9 +62,7 @@ void Vars::load() {
 
 	_setup._musicEnabled = _music_flag;
 	_setup._digitalSound = _sound_flag;
-	_setup._speakerSound = _pcsound_flag;
-	if (_sound_flag)
-		_setup._speakerSound = false;
+	_setup._speakerSound = false;
 	_setup._scrollFlag = true;
 	_setup._slowMode = _slow_mode ? 1 : 0;
 	_setup._difficultyLevel = 1;
