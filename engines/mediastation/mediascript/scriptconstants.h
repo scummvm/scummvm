@@ -49,9 +49,6 @@ enum Opcode {
 	kOpcodeModulo = 217,
 	kOpcodeUnk2 = 218, // TODO: Likely something with ## constants like ##DOWN?
 	kOpcodeCallRoutine = 219,
-	// Method calls are like routine calls, but they have an implicit "self"
-	// parameter that is always the first. For example:
-	//  @self . mouseActivate ( TRUE ) ;
 	kOpcodeCallMethod = 220,
 	// This seems to appear at the start of a function to declare the number of
 	// local variables used in the function. It seems to be the `Declare`
@@ -213,14 +210,19 @@ enum EventType {
 
 enum EventHandlerArgumentType {
     kNullEventHandlerArgument = 0,
-    kAsciiCodeEventHandlerArgument = 1, // TODO: Why is this datum type a float?
+    kAsciiCodeEventHandlerArgument = 1,
     kTimeEventHandlerArgument = 3,
-    kUnk1EventHandlerArgument = 4, // Appars to happen with MovieStart?
+	// TODO: This argument type Appears to happen with MovieStart
+	// and nowhere else. However, this event handler shouldn't even need an
+	// argument...
+    kUnk1EventHandlerArgument = 4, 
     kContextEventHandlerArgument = 5
 };
 
 enum OperandType {
-	kOperandTypeEmpty = 0, // a flag for C++ code, not real operand type.
+	// This is an invalid type used for initialization only.
+	kOperandTypeEmpty = 0,
+
 	// TODO: Figure out the difference between these two.
 	kOperandTypeLiteral1 = 151,
 	kOperandTypeLiteral2 = 153,
@@ -228,11 +230,8 @@ enum OperandType {
 	kOperandTypeFloat1 = 152,
 	kOperandTypeFloat2 = 157,
 	kOperandTypeString = 154,
-	// TODO: This only seems to be used in effectTransition:
-	//  effectTransition ( $FadeToPalette )
-	// compiles to:
-	//  [219, 102, 1]
-	//  [155, 301]
+	// TODO: This only seems to be used in effectTransition,
+	// as in effectTransition ( $FadeToPalette )
 	kOperandTypeDollarSignVariable = 155,
 	kOperandTypeAssetId = 156,
 	kOperandTypeVariableDeclaration = 158,
@@ -243,8 +242,6 @@ enum VariableType {
 	// This is an invalid type used for initialization only.
 	kVariableTypeEmpty = 0x0000,
 
-	// This is an "array", but the IMT sources
-	// use the term "collection".
 	kVariableTypeCollection = 0x0007,
 	kVariableTypeString = 0x0006,
 	kVariableTypeAssetId = 0x0005,
