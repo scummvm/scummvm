@@ -166,6 +166,9 @@ public:
 
 	Common::Array<PathfindingAreaOverride> PathfindingOverrides;
 
+	// This is the override list living at [5BD1]
+	Common::Array<uint16> HotspotOverrides;
+
 	bool GetPathfindingOverride(uint16 index, uint16& result);
 	void SetPathfindingOverride(uint16 index, uint16 overrideValue);
 

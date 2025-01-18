@@ -2139,10 +2139,23 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				
 				Func9F4D_Placeholder();
 		} else if (opcode1 == 0x34) {
-			// TODO: Unknown opcode so far
-			// TODO: What do 8XXh objects signify? Both return values are those
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			// Sets an entry in the [5BD1] list for hotspot lookup
+			// [bp-2h]
+			uint32 v1 = Func9F4D_32() - 0x800;
+			// [bp-4h]
+			uint32 v2 = Func9F4D_32() - 0x800;
+
+			if (v1 < 0x1 || v1 > 0x10 || v2 < 0x1 || v2 > 0x10) {
+				// Invalid data
+				continue;
+			}
+			if (v1 == v2) {
+				// l0037_CE92:
+				g_engine->HotspotOverrides[v1] = 0xFFFF;
+			} else {
+				// l0037_CEA5:
+				g_engine->HotspotOverrides[v1] = v2;
+			}
 		} else if (opcode1 == 0x35) {
 			// Object IDs
 			Func9F4D_Placeholder();
