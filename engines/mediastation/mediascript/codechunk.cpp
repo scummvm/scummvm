@@ -385,6 +385,12 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 			// just to house these methods. Rather, we just call in the engine.
 			Operand returnValue = g_engine->callMethod(method, args);
 			return returnValue;
+		} else if (self.getAssetId() == 0) {
+			// It seems to be valid to call a method on a null asset ID, in
+			// which case nothing happens. Still issue warning for traceability.
+			warning("CodeChunk::callBuiltInMethod(): Attempt to call method on a null asset ID");
+			return Operand();
+			break;
 		} else {
 			// This is a regular asset that we can process directly.
 			Asset *selfAsset = self.getAsset();
