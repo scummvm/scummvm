@@ -546,6 +546,11 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
 	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
+	// We have a fixed 0x10 number of entries
+	HotspotOverrides.resize(0x10);
+	for (int i = 0; i < HotspotOverrides.size(); i++) {
+		HotspotOverrides[i] = 0xFFFF;
+	}
 }
 
 Macs2Engine::~Macs2Engine() {
@@ -1124,6 +1129,10 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 		// TODO: To check if it's important that we clear the first half of the word
 		uint16 lookup = a[i-1];
 		if (lookup == firstLookup) {
+			// TODO: Not sure if this lookup is at the right position here
+			if (HotspotOverrides[i] != 0xFFFF) {
+				return 0x800 + HotspotOverrides [i];
+			}
 			// TODO: Add the 5BD1h lookup part
 			// This would check for a value other than FFh in that array
 			// If there is a different value, we use that, if not, we use the
