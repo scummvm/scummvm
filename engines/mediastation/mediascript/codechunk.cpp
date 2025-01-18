@@ -135,11 +135,9 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
-		case kOpcodeUnk2: {
-			// TODO: Figure out what else must be done with this opcode.
+		case kOpcodeNegate: {
 			Operand value = executeNextStatement();
-			warning("CodeChunk::executeNextStatement(): Opcode kOpcodeUnk2 isn't fully implemented");
-			return value;
+			return -value;
 		}
 
 		case kOpcodeIfElse: {

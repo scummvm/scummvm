@@ -48,7 +48,7 @@ enum Opcode {
 	kOpcodeMultiply = 215,
 	kOpcodeDivide = 216,
 	kOpcodeModulo = 217,
-	kOpcodeUnk2 = 218, // TODO: Likely something with ## constants like ##DOWN?
+	kOpcodeNegate = 218,
 	kOpcodeCallRoutine = 219,
 	kOpcodeCallMethod = 220,
 	// This seems to appear at the start of a function to declare the number of

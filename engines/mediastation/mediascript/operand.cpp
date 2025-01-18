@@ -310,4 +310,25 @@ Operand Operand::operator-(const Operand &other) const {
 	return returnValue;
 }
 
+Operand Operand::operator-() {
+	Operand literalValue = getLiteralValue();
+	Operand returnValue(literalValue.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (literalValue.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		returnValue.putInteger(-literalValue.getInteger());
+		return returnValue;
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		returnValue.putDouble(-literalValue.getDouble());
+		return returnValue;
+
+	default:
+		error("Operand::operator-(): Unsupported operand type %d", static_cast<uint>(literalValue.getType()));
+	}
+}
+
 } // End of namespace MediaStation

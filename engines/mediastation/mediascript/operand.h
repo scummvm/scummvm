@@ -63,7 +63,9 @@ public:
 
 	bool operator==(Operand &other);
 	bool operator>=(Operand &other);
+
 	Operand operator-(const Operand &other) const;
+	Operand operator-();
 
 private:
 	OperandType _type = kOperandTypeEmpty;

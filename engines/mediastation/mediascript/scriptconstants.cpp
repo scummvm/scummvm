@@ -70,8 +70,8 @@ const char *opcodeToStr(Opcode opcode) {
         return "/";
     case kOpcodeModulo:
         return "%";
-    case kOpcodeUnk2:
-        return "UNKNOWN (Unk2)";
+    case kOpcodeNegate:
+        return "-";
     case kOpcodeCallRoutine:
         return "CallRoutine";
     case kOpcodeCallMethod:
