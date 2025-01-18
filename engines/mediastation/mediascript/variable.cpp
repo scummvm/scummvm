@@ -210,11 +210,6 @@ void Variable::putValue(Operand value) {
 
 Operand Variable::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
 	switch (_type) {
-	case kVariableTypeAssetId: {
-		error("Variable::callMethod(): Calling method on an asset in a variable not implemented yet");
-		break;
-	}
-
 	case kVariableTypeCollection: {
 		// TODO: This is just a warning for now so we can get past the
 		// IBM/Crayola opening screen.

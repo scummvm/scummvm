@@ -375,7 +375,9 @@ Operand CodeChunk::callBuiltInFunction(BuiltInFunction id, Common::Array<Operand
 }
 
 Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args) {
-	switch (self.getType()) {
+	Operand literalSelf = self.getLiteralValue();
+	OperandType literalType = literalSelf.getType();
+	switch (literalType) {
 	case kOperandTypeAssetId: {
 		if (self.getAssetId() == 1) {
 			// This is a "document" method that we need to handle specially.
@@ -402,16 +404,9 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 		}
 	}
 
-	case kOperandTypeVariableDeclaration: {
-		Variable *variable = self.getVariable();
-		Operand returnValue = variable->callMethod(method, args);
-		return returnValue;
-		break;
-	}
-
 	default:
-		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)", operandTypeToStr(self.getType()), static_cast<uint>(self.getType()));
-		break;
+		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)", 
+			operandTypeToStr(literalType), static_cast<uint>(literalType));
 	}
 }
 
