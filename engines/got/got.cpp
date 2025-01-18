@@ -136,17 +136,17 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 }
 
 void GotEngine::savegameLoaded() {
-	_G(current_area) = _G(thor_info).last_screen;
+	_G(current_area) = _G(thor_info)._lastScreen;
 
-	_G(thor)->_x = (_G(thor_info).last_icon % 20) * 16;
-	_G(thor)->_y = ((_G(thor_info).last_icon / 20) * 16) - 1;
+	_G(thor)->_x = (_G(thor_info)._lastIcon % 20) * 16;
+	_G(thor)->_y = ((_G(thor_info)._lastIcon / 20) * 16) - 1;
 	if (_G(thor)->_x < 1)
 		_G(thor)->_x = 1;
 	if (_G(thor)->_y < 0)
 		_G(thor)->_y = 0;
-	_G(thor)->_dir = _G(thor_info).last_dir;
-	_G(thor)->_lastDir = _G(thor_info).last_dir;
-	_G(thor)->_health = _G(thor_info).last_health;
+	_G(thor)->_dir = _G(thor_info)._lastDir;
+	_G(thor)->_lastDir = _G(thor_info)._lastDir;
+	_G(thor)->_health = _G(thor_info)._lastHealth;
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;

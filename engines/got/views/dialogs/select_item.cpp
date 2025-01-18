@@ -43,18 +43,18 @@ void SelectItem::draw() {
 	Dialog::draw();
 	GfxSurface s = getSurface();
 
-	if (_G(thor_info).inventory == 0) {
+	if (_G(thor_info)._inventory == 0) {
 		s.print(Common::Point(44, 52), "No Items Found", 14);
 		return;
 	}
 
 	int b = 1;
 	for (int l = 0; l < 7; l++, b = b << 1) {
-		if (_G(thor_info).inventory & b) {
+		if (_G(thor_info)._inventory & b) {
 			if (l < 6)
 				s.simpleBlitFrom(_G(objects[l + 26]), Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
 			else {
-				int objId = _G(thor_info).object + 10;
+				int objId = _G(thor_info)._object + 10;
 				s.simpleBlitFrom(_G(objects[objId]), Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
 			}
 		}
@@ -64,7 +64,7 @@ void SelectItem::draw() {
 	if (_selectedItem < 6)
 		objName = ITEM_NAMES[_selectedItem];
 	else
-		objName = _G(thor_info).object_name;
+		objName = _G(thor_info)._objectName;
 
 	s.print(Common::Point((s.w - (strlen(objName) * 8)) / 2, 66), objName, 12);
 	s.frameRect(Common::Rect(26 + (_selectedItem * _HRZSP), 22,
@@ -73,16 +73,16 @@ void SelectItem::draw() {
 }
 
 bool SelectItem::msgFocus(const FocusMessage &msg) {
-	if (_G(thor_info).inventory == 0) {
+	if (_G(thor_info)._inventory == 0) {
 		_selectedItem = -1;
 	} else {
-		_selectedItem = _G(thor_info).item - 1;
+		_selectedItem = _G(thor_info)._selectedItem - 1;
 		if (_selectedItem < 1)
 			_selectedItem = 0;
 
 		int b = 1 << _selectedItem;
 		for (;;) {
-			if (_G(thor_info).inventory & b)
+			if (_G(thor_info)._inventory & b)
 				break;
 			if (_selectedItem < 7)
 				_selectedItem++;
@@ -99,7 +99,7 @@ bool SelectItem::msgFocus(const FocusMessage &msg) {
 bool SelectItem::msgAction(const ActionMessage &msg) {
 	int b;
 
-	if (_G(thor_info).inventory == 0) {
+	if (_G(thor_info)._inventory == 0) {
 		close();
 		return true;
 	}
@@ -123,7 +123,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				_selectedItem = 8;
 
 			b = 1 << _selectedItem;
-			if (_G(thor_info).inventory & b)
+			if (_G(thor_info)._inventory & b)
 				break;
 		}
 
@@ -139,7 +139,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				_selectedItem = 0;
 
 			b = 1 << _selectedItem;
-			if (_G(thor_info).inventory & b)
+			if (_G(thor_info)._inventory & b)
 				break;
 		}
 
@@ -155,7 +155,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 }
 
 void SelectItem::selectItem() {
-	_G(thor_info).item = _selectedItem + 1;
+	_G(thor_info)._selectedItem = _selectedItem + 1;
 	close();
 }
 

@@ -93,7 +93,7 @@ void make_actor_surface(Actor *actr) {
 }
 
 int load_standard_actors() {
-	load_actor(0, 100 + _G(thor_info).armor); // Load Thor
+	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
 	_G(actor[0]).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor[0]), 0, 0, 100, 100);
 	_G(thor) = &_G(actor[0]);
@@ -105,7 +105,7 @@ int load_standard_actors() {
 	_G(thor_x2) = _G(thor)->_x + 14;
 	_G(thor_y2) = _G(thor)->_y + 14;
 
-	load_actor(0, 103 + _G(thor_info).armor); // Load hammer
+	load_actor(0, 103 + _G(thor_info)._armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);
 	setup_actor(&_G(actor[1]), 1, 0, 100, 100);
 	_G(actor[1])._active = false;
@@ -265,7 +265,7 @@ void setup_magic_item(int item) {
 }
 
 void load_new_thor() {
-	load_actor(0, 100 + _G(thor_info).armor); // Load Thor
+	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
 
 	make_actor_surface(&_G(actor[0]));
 }

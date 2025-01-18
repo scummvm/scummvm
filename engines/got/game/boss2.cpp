@@ -382,11 +382,11 @@ done:
 
 void closing_sequence2() {
 	music_play(6, true);
-	odin_speaks(1001, 0, "CLOSING");
+	odinSpeaks(1001, 0, "CLOSING");
 }
 
 void closing_sequence2_2() {
-	_G(thor_info).armor = 10;
+	_G(thor_info)._armor = 10;
 	load_new_thor();
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;
@@ -397,7 +397,7 @@ void closing_sequence2_2() {
 void closing_sequence2_3() {
 	fill_health();
 	fill_magic();
-	odin_speaks(1002, 0, "CLOSING");
+	odinSpeaks(1002, 0, "CLOSING");
 }
 
 void closing_sequence2_4() {
@@ -410,11 +410,11 @@ void closing_sequence2_4() {
 	_G(boss_active) = false;
 	_G(scrn)._music = 6;
 
-	show_level(BOSS_LEVEL2);
+	showLevel(BOSS_LEVEL2);
 
 	play_sound(ANGEL, true);
-	place_tile(18, 10, 152);
-	place_tile(19, 10, 202);
+	placeTile(18, 10, 152);
+	placeTile(19, 10, 202);
 	actor_visible(1);
 	actor_visible(2);
 	_G(actor[7])._x = 288;

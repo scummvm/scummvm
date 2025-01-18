@@ -25,11 +25,11 @@
 #include "common/events.h"
 #include "common/queue.h"
 #include "got/data/defines.h"
-#include "got/data/high_scores.h"
+#include "got/data/highscores.h"
 #include "got/data/level.h"
 #include "got/data/sd_data.h"
 #include "got/data/setup.h"
-#include "got/data/thor_info.h"
+#include "got/data/thorinfo.h"
 #include "got/game/script.h"
 #include "got/gfx/font.h"
 #include "got/gfx/gfx_chunks.h"
@@ -162,7 +162,7 @@ public:
 	Actor *_hammer = nullptr;
 	Actor _explosion;
 	Actor _sparkle;
-	THOR_INFO _thor_info;
+	ThorInfo _thor_info;
 	bool _boss_dead = false;
 	byte _endgame = 0;
 

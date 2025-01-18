@@ -519,7 +519,7 @@ static int boss_die() {
 
 void closing_sequence3() {
 	music_play(6, true);
-	odin_speaks(1001, 0, "CLOSING");
+	odinSpeaks(1001, 0, "CLOSING");
 }
 
 void closing_sequence3_2() {
@@ -538,7 +538,7 @@ void closing_sequence3_3() {
 	_G(game_over) = true;
 	_G(boss_active) = false;
 	_G(scrn)._music = 6;
-	show_level(BOSS_LEVEL3);
+	showLevel(BOSS_LEVEL3);
 
 	_G(exit_flag) = 0;
 	music_pause();

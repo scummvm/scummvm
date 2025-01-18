@@ -35,17 +35,17 @@ extern const char *ITEM_NAMES[];
  * Now in ScummVM, it only does the setup portions, since the
  * GameContent view takes care of the scene rendering.
 */
-extern void show_level(int new_level);
-extern void show_level_done();
-extern void odin_speaks(int index, int item, const char *endMessage = nullptr);
-extern int switch_icons();
-extern int rotate_arrows();
-extern void kill_enemies(int iy, int ix);
-extern void remove_objects(int y, int x);
-extern void place_tile(int x, int y, int tile);
-extern int bgtile(int x, int y);
-extern void select_item();
-extern int actor_speaks(Actor *actr, int index, int item);
+extern void showLevel(int new_level);
+extern void showLevelDone();
+extern void odinSpeaks(int index, int item, const char *endMessage = nullptr);
+extern int switchIcons();
+extern int rotateArrows();
+extern void killEnemies(int iy, int ix);
+extern void removeObjects(int y, int x);
+extern void placeTile(int x, int y, int tile);
+extern int backgroundTile(int x, int y);
+extern void selectItem();
+extern int actorSpeaks(Actor *actor, int index, int item);
 
 } // namespace Got
 

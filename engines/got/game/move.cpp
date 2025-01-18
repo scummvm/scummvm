@@ -98,7 +98,7 @@ void thor_shoots() {
 
 int kill_good_guy(void) {
 	if (!_G(killgg_inform) && !_G(thunder_flag)) {
-		odin_speaks(2010, 0);
+		odinSpeaks(2010, 0);
 		_G(killgg_inform) = true;
 	}
 
@@ -132,10 +132,10 @@ void actor_damaged(Actor *actr, int damage) {
 		actr->_vulnerableCountdown = STAMINA;
 
 		if (actr->_funcNum == 4) {
-			switch_icons();
+			switchIcons();
 		}
 		if (actr->_funcNum == 7) {
-			rotate_arrows();
+			rotateArrows();
 		}
 	}
 }
@@ -155,7 +155,7 @@ void thor_damaged(Actor *actr) {
 
 		int t = actr->_type;
 		actr->_type = 4;
-		actor_speaks(actr, 0, 0);
+		actorSpeaks(actr, 0, 0);
 		actr->_type = t;
 		actr->_talkCounter = 30;
 		return;

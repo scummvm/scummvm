@@ -54,7 +54,7 @@ void OptionsMenu::selected() {
 		break;
 	case 6:
 		// Help
-		odin_speaks(2008, -1);
+		odinSpeaks(2008, -1);
 		break;
 	case 7:
 		addView("QuitGame");

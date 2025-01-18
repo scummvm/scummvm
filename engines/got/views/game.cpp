@@ -49,7 +49,7 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 
 	switch (msg.keycode) {
 	case Common::KEYCODE_F1:
-		odin_speaks(2008, -1);
+		odinSpeaks(2008, -1);
 		return true;
 
 	case Common::KEYCODE_f:
@@ -95,7 +95,7 @@ bool Game::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_SELECT:
-		select_item();
+		selectItem();
 		return true;
 
 	case KEYBIND_THOR_DIES:

@@ -1075,7 +1075,7 @@ int special_movement_ten(Actor *actr) {
 		return 0;
 
 	actor_ctr = 10;
-	actor_speaks(actr, 0 - actr->_passValue, 0);
+	actorSpeaks(actr, 0 - actr->_passValue, 0);
 	return 0;
 }
 
@@ -1088,7 +1088,7 @@ int special_movement_eleven(Actor *actr) {
 
 	const int oldType = actr->_type;
 	actr->_type = 4;
-	actor_speaks(actr, 0, 0);
+	actorSpeaks(actr, 0, 0);
 	actr->_type = oldType;
 	actr->_talkCounter = 10;
 
@@ -1781,7 +1781,7 @@ redo:
 
 	switch (actr->_temp2) {
 	case 0:
-		if (bgtile(actr->_x, actr->_y) >= TILE_SOLID)
+		if (backgroundTile(actr->_x, actr->_y) >= TILE_SOLID)
 			actr->_nextFrame = 1;
 		else {
 			actr->_temp2 = 6;
@@ -1829,28 +1829,28 @@ redo:
 			actr->_x += 16;
 			actr->_y += 16;
 			d = 3;
-			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
+			if (backgroundTile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 1:
 			actr->_x -= 16;
 			actr->_y -= 16;
 			d = 2;
-			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
+			if (backgroundTile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 2:
 			actr->_x += 16;
 			actr->_y -= 16;
 			d = 0;
-			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
+			if (backgroundTile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		case 3:
 			actr->_x -= 16;
 			actr->_y += 16;
 			d = 1;
-			if (bgtile(actr->_x, actr->_y) < TILE_SOLID)
+			if (backgroundTile(actr->_x, actr->_y) < TILE_SOLID)
 				goto redo;
 			break;
 		}
@@ -1870,15 +1870,15 @@ int movement_twentythree(Actor *actr) {
 
 	switch (d) {
 	case 0:
-		if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
-			bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+			backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 2;
 			actr->_x -= 2;
 		} else {
-			if (bgtile(actr->_x, actr->_y - 2) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
-				if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x, actr->_y - 2) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
+				if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 3;
 					actr->_x += 2;
 				} else {
@@ -1890,15 +1890,15 @@ int movement_twentythree(Actor *actr) {
 		}
 		break;
 	case 1:
-		if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 3;
 			actr->_x += 2;
 		} else {
-			if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
-				if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
-					bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+					backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 2;
 					actr->_x -= 2;
 				} else {
@@ -1910,15 +1910,15 @@ int movement_twentythree(Actor *actr) {
 		}
 		break;
 	case 2:
-		if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 			d = 1;
 			actr->_y += 2;
 		} else {
-			if (bgtile(actr->_x - 2, actr->_y) < TILE_FLY ||
-				bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
-				if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
+			if (backgroundTile(actr->_x - 2, actr->_y) < TILE_FLY ||
+				backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 					d = 0;
 					actr->_y -= 2;
 				} else {
@@ -1930,15 +1930,15 @@ int movement_twentythree(Actor *actr) {
 		}
 		break;
 	case 3:
-		if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
+		if (backgroundTile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 			d = 0;
 			actr->_y -= 2;
 		} else {
-			if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
-				if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 					d = 1;
 					actr->_y += 2;
 				} else {
@@ -1966,15 +1966,15 @@ int movement_twentyfour(Actor *actr) {
 
 	switch (d) {
 	case 0:
-		if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 3;
 			actr->_x += 2;
 		} else {
-			if (bgtile(actr->_x, actr->_y - 2) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
-				if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
-					bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x, actr->_y - 2) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) < TILE_FLY) {
+				if (backgroundTile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+					backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 2;
 					actr->_x -= 2;
 				} else {
@@ -1986,15 +1986,15 @@ int movement_twentyfour(Actor *actr) {
 		}
 		break;
 	case 1:
-		if (bgtile(actr->_x - 2, actr->_y) >= TILE_FLY &&
-			bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x - 2, actr->_y) >= TILE_FLY &&
+			backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 			d = 2;
 			actr->_x -= 2;
 		} else {
-			if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
-				if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) >= TILE_FLY) {
 					d = 3;
 					actr->_x += 2;
 				} else {
@@ -2006,15 +2006,15 @@ int movement_twentyfour(Actor *actr) {
 		}
 		break;
 	case 2:
-		if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
+		if (backgroundTile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 			d = 0;
 			actr->_y -= 2;
 		} else {
-			if (bgtile(actr->_x - 2, actr->_y) < TILE_FLY ||
-				bgtile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
-				if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
+			if (backgroundTile(actr->_x - 2, actr->_y) < TILE_FLY ||
+				backgroundTile(actr->_x - 2, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 					d = 1;
 					actr->_y += 2;
 				} else {
@@ -2026,15 +2026,15 @@ int movement_twentyfour(Actor *actr) {
 		}
 		break;
 	case 3:
-		if (bgtile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
-			bgtile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
+		if (backgroundTile(actr->_x, actr->_y + actr->_sizeY + 1) >= TILE_FLY &&
+			backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y + actr->_sizeY + 1) >= TILE_FLY) {
 			d = 1;
 			actr->_y += 2;
 		} else {
-			if (bgtile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
-				bgtile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
-				if (bgtile(actr->_x, actr->_y - 2) >= TILE_FLY &&
-					bgtile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
+			if (backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y) < TILE_FLY ||
+				backgroundTile(actr->_x + actr->_sizeX + 1, actr->_y + actr->_sizeY - 1) < TILE_FLY) {
+				if (backgroundTile(actr->_x, actr->_y - 2) >= TILE_FLY &&
+					backgroundTile(actr->_x + actr->_sizeX - 1, actr->_y - 2) >= TILE_FLY) {
 					d = 0;
 					actr->_y -= 2;
 				} else {
@@ -2153,16 +2153,16 @@ int movement_twentyeight(Actor *actr) {
 		break;
 	}
 	
-	ret = bgtile(x1, y1);
+	ret = backgroundTile(x1, y1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile((x1 + actr->_sizeX) - 1, y1);
+	ret = backgroundTile((x1 + actr->_sizeX) - 1, y1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile(x1, (y1 + actr->_sizeY) - 1);
+	ret = backgroundTile(x1, (y1 + actr->_sizeY) - 1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
-	ret = bgtile((x1 + actr->_sizeX) - 1, (y1 + actr->_sizeY) - 1);
+	ret = backgroundTile((x1 + actr->_sizeX) - 1, (y1 + actr->_sizeY) - 1);
 	if (ret != 100 && ret != 106 && ret != 110 && ret != 111 && ret != 113)
 		goto chg_dir;
 
@@ -2474,14 +2474,14 @@ int movement_forty(Actor *actr) {
 	int d = actr->_lastDir;
 
 	if (actr->_lastDir == 2) {
-		if (bgtile(x1 - 2, actr->_y) >= TILE_SOLID) {
+		if (backgroundTile(x1 - 2, actr->_y) >= TILE_SOLID) {
 			_G(actor[a]._x) -= 2;
 			_G(actor[a - 1])._x -= 2;
 			_G(actor[a - 2])._x -= 2;
 			_G(actor[a + 1])._x -= 2;
 		} else
 			d = 3;
-	} else if (bgtile(_G(actor[a + 1])._x + 14, _G(actor[a + 1])._y) >= TILE_SOLID) {
+	} else if (backgroundTile(_G(actor[a + 1])._x + 14, _G(actor[a + 1])._y) >= TILE_SOLID) {
 		_G(actor[a])._x += 2;
 		_G(actor[a - 1])._x += 2;
 		_G(actor[a - 2])._x += 2;

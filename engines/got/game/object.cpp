@@ -51,14 +51,14 @@ void pick_up_object(int p) {
 
 	switch (_G(object_map[p])) {
 	case 1: // Red jewel
-		if (_G(thor_info).jewels >= 999) {
+		if (_G(thor_info)._jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
 		add_jewels(10);
 		break;
 	case 2: // Blue jewel
-		if (_G(thor_info).jewels >= 999) {
+		if (_G(thor_info)._jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
@@ -94,7 +94,7 @@ void pick_up_object(int p) {
 		add_keys(1);
 		break;
 	case 8: // Treasure
-		if (_G(thor_info).jewels >= 999) {
+		if (_G(thor_info)._jewels >= 999) {
 			cannot_carry_more();
 			return;
 		}
@@ -128,11 +128,11 @@ void pick_up_object(int p) {
 		_G(actor[2])._active = false;
 		_G(shield_on) = false;
 		_G(tornado_used) = false;
-		_G(thor_info).inventory |= 64;
-		_G(thor_info).item = 7;
-		_G(thor_info).object = _G(object_map[p]) - 11;
-		_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
-		odin_speaks((_G(object_map[p]) - 12) + 501, _G(object_map[p]) - 1);
+		_G(thor_info)._inventory |= 64;
+		_G(thor_info)._selectedItem = 7;
+		_G(thor_info)._object = _G(object_map[p]) - 11;
+		_G(thor_info)._objectName = OBJECT_NAMES[_G(thor_info)._object - 1];
+		odinSpeaks((_G(object_map[p]) - 12) + 501, _G(object_map[p]) - 1);
 		break;
 	case 27:
 	case 28:
@@ -149,9 +149,9 @@ void pick_up_object(int p) {
 		_G(thor)->_numMoves = 1;
 		_G(actor[2])._active = false;
 		s = 1 << (_G(object_map[p]) - 27);
-		_G(thor_info).inventory |= s;
-		odin_speaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
-		_G(thor_info).item = _G(object_map[p]) - 26;
+		_G(thor_info)._inventory |= s;
+		odinSpeaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
+		_G(thor_info)._selectedItem = _G(object_map[p]) - 26;
 		add_magic(150);
 		fill_score(5);
 		break;
@@ -369,10 +369,10 @@ int use_tornado(int flag) {
 int use_object(int flag) {
 	if (!flag)
 		return 0;
-	if (!(_G(thor_info).inventory & 64))
+	if (!(_G(thor_info)._inventory & 64))
 		return 0;
 
-	odin_speaks((_G(thor_info).object - 1) + 5501, _G(thor_info).object - 1);
+	odinSpeaks((_G(thor_info)._object - 1) + 5501, _G(thor_info)._object - 1);
 	return 1;
 }
 
@@ -387,7 +387,7 @@ void use_item() {
 	}
 
 	bool mf = _G(magic_inform);
-	switch (_G(thor_info).item) {
+	switch (_G(thor_info)._selectedItem) {
 	case 1:
 		ret = use_apple(kf);
 		break;
@@ -423,21 +423,21 @@ void use_item() {
 
 void not_enough_magic() {
 	if (!_G(magic_inform))
-		odin_speaks(2006, 0);
+		odinSpeaks(2006, 0);
 
 	_G(magic_inform) = true;
 }
 
 void cannot_carry_more() {
 	if (!_G(carry_inform))
-		odin_speaks(2007, 0);
+		odinSpeaks(2007, 0);
 	_G(carry_inform) = true;
 }
 
 void delete_object() {
 
-	_G(thor_info).inventory &= 0xbf;
-	_G(thor_info).item = 1;
+	_G(thor_info)._inventory &= 0xbf;
+	_G(thor_info)._selectedItem = 1;
 }
 
 } // namespace Got

@@ -19,10 +19,10 @@
  *
  */
 
-#include "got/data/high_scores.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "got/data/highscores.h"
 #include "got/got.h"
 
 namespace Got {

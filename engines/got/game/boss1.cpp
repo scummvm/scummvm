@@ -260,11 +260,11 @@ static int boss1_dead() {
 void closing_sequence1() {
 	_G(game_over) = true;
 	music_play(4, true);
-	odin_speaks(1001, 13, "CLOSING");
+	odinSpeaks(1001, 13, "CLOSING");
 }
 
 void closing_sequence1_2() {
-	_G(thor_info).armor = 1;
+	_G(thor_info)._armor = 1;
 	load_new_thor();
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;
@@ -274,7 +274,7 @@ void closing_sequence1_2() {
 void closing_sequence1_3() {
 	fill_health();
 	fill_magic();
-	odin_speaks(1002, 0, "CLOSING");
+	odinSpeaks(1002, 0, "CLOSING");
 }
 
 void closing_sequence1_4() {
@@ -285,11 +285,11 @@ void closing_sequence1_4() {
 	_G(setup)._bossDead[0] = true;
 	_G(boss_active) = false;
 	_G(scrn)._music = 4;
-	show_level(BOSS_LEVEL1);
+	showLevel(BOSS_LEVEL1);
 
 	play_sound(ANGEL, true);
-	place_tile(18, 6, 148);
-	place_tile(19, 6, 202);
+	placeTile(18, 6, 148);
+	placeTile(19, 6, 202);
 	actor_visible(1);
 	actor_visible(2);
 

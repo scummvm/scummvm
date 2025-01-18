@@ -402,7 +402,7 @@ int Scripts::get_internal_variable() {
 	}
 	switch (i) {
 	case 0:
-		_lTemp = _G(thor_info).jewels;
+		_lTemp = _G(thor_info)._jewels;
 		break;
 	case 1:
 		_lTemp = _G(thor)->_health;
@@ -411,13 +411,13 @@ int Scripts::get_internal_variable() {
 		_lTemp = _G(thor_info)._magic;
 		break;
 	case 3:
-		_lTemp = _G(thor_info).score;
+		_lTemp = _G(thor_info)._score;
 		break;
 	case 4:
 		_lTemp = _G(current_level);
 		break;
 	case 5:
-		_lTemp = _G(thor_info).keys;
+		_lTemp = _G(thor_info)._keys;
 		break;
 	case 6:
 	case 7:
@@ -447,8 +447,8 @@ int Scripts::get_internal_variable() {
 		_lTemp = _G(setup)._flags[i - 1] ? 1 : 0;
 		break;
 	case 23:
-		if (_G(thor_info).inventory & 64)
-			_lTemp = _G(thor_info).object;
+		if (_G(thor_info)._inventory & 64)
+			_lTemp = _G(thor_info)._object;
 		else
 			_lTemp = 0;
 		break;
@@ -897,7 +897,7 @@ int Scripts::cmd_settile() {
 		return 6;
 
 	if (screen == _G(current_level)) {
-		place_tile(pos % 20, pos / 20, tile);
+		placeTile(pos % 20, pos / 20, tile);
 	} else {
 		Level tmp;
 		tmp.load(screen);
@@ -916,10 +916,10 @@ int Scripts::cmd_itemgive() {
 	if (i < 1 || i > 15)
 		return 6;
 
-	_G(thor_info).inventory |= 64;
-	_G(thor_info).item = 7;
-	_G(thor_info).object = i;
-	_G(thor_info).object_name = OBJECT_NAMES[_G(thor_info).object - 1];
+	_G(thor_info)._inventory |= 64;
+	_G(thor_info)._selectedItem = 7;
+	_G(thor_info)._object = i;
+	_G(thor_info)._objectName = OBJECT_NAMES[_G(thor_info)._object - 1];
 
 	return 0;
 }
@@ -1054,13 +1054,13 @@ void Scripts::scr_func3() {
 	_numVar[0] = 1;
 	play_sound(WOOP, true);
 	if (_G(current_level) == 106 && p == 69) {
-		place_tile(x, y, 220);
+		placeTile(x, y, 220);
 		_G(key_flag[key_magic]) = false;
 		return;
 	}
 
 	_G(key_flag[key_magic]) = false;
-	place_tile(x, y, 191);
+	placeTile(x, y, 191);
 
 	if ((g_events->getRandomNumber(99)) < 25 ||
 		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {

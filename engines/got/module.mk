@@ -9,11 +9,11 @@ MODULE_OBJS = \
 	sound.o \
 	vars.o \
 	data/actor.o \
-	data/high_scores.o \
+	data/highscores.o \
 	data/level.o \
 	data/sd_data.o \
 	data/setup.o \
-	data/thor_info.o \
+	data/thorinfo.o \
 	game/boss1.o \
 	game/boss2.o \
 	game/boss3.o \

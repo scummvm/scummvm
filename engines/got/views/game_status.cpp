@@ -60,7 +60,7 @@ void GameStatus::displayMagic(GfxSurface &s) {
 }
 
 void GameStatus::displayJewels(GfxSurface &s) {
-	Common::String str = Common::String::format("%d", _G(thor_info).jewels);
+	Common::String str = Common::String::format("%d", _G(thor_info)._jewels);
 	int x;
 	if (str.size() == 1)
 		x = 70;
@@ -74,7 +74,7 @@ void GameStatus::displayJewels(GfxSurface &s) {
 }
 
 void GameStatus::displayScore(GfxSurface &s) {
-	Common::String str = Common::String::format("%ld", _G(thor_info).score);
+	Common::String str = Common::String::format("%ld", _G(thor_info)._score);
 	int x = 276 - (str.size() * 8);
 
 	s.fillRect(Common::Rect(223, 32, 279, 42), STAT_COLOR);
@@ -82,7 +82,7 @@ void GameStatus::displayScore(GfxSurface &s) {
 }
 
 void GameStatus::displayKeys(GfxSurface &s) {
-	Common::String str = Common::String::format("%d", _G(thor_info).keys);
+	Common::String str = Common::String::format("%d", _G(thor_info)._keys);
 
 	int x;
 	if (str.size() == 1)
@@ -99,12 +99,12 @@ void GameStatus::displayKeys(GfxSurface &s) {
 void GameStatus::displayItem(GfxSurface &s) {
 	s.fillRect(Common::Rect(280, 8, 296, 24), STAT_COLOR);
 
-	THOR_INFO thorInfo = _G(thor_info);
-	if (thorInfo.item) {
-		if (thorInfo.item == 7)
-			s.simpleBlitFrom(_G(objects[thorInfo.object + 10]), Common::Point(280, 8));
+	ThorInfo thorInfo = _G(thor_info);
+	if (thorInfo._selectedItem) {
+		if (thorInfo._selectedItem == 7)
+			s.simpleBlitFrom(_G(objects[thorInfo._object + 10]), Common::Point(280, 8));
 		else
-			s.simpleBlitFrom(_G(objects[thorInfo.item + 25]), Common::Point(280, 8));
+			s.simpleBlitFrom(_G(objects[thorInfo._selectedItem + 25]), Common::Point(280, 8));
 	}
 }
 

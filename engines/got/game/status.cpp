@@ -26,11 +26,11 @@
 namespace Got {
 
 void add_jewels(int num) {
-	_G(thor_info).jewels = CLIP(_G(thor_info).jewels + num, 0, 999);
+	_G(thor_info)._jewels = CLIP(_G(thor_info)._jewels + num, 0, 999);
 }
 
 void add_score(int num) {
-	_G(thor_info).score = CLIP(_G(thor_info).score + num, 0l, 999999l);
+	_G(thor_info)._score = CLIP(_G(thor_info)._score + num, 0l, 999999l);
 }
 
 void add_magic(int num) {
@@ -45,7 +45,7 @@ void add_health(int num) {
 }
 
 void add_keys(int num) {
-	_G(thor_info).keys = CLIP(_G(thor_info).keys + num, 0, 99);
+	_G(thor_info)._keys = CLIP(_G(thor_info)._keys + num, 0, 99);
 }
 
 void fill_health() {

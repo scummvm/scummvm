@@ -45,7 +45,7 @@ const char *ITEM_NAMES[] = {
 
 static const char *odinEndMessage;
 
-void show_level(int new_level) {
+void showLevel(int new_level) {
 	_G(boss_active) = false;
 	if (!_G(shield_on))
 		_G(actor[2])._active = false;
@@ -72,7 +72,7 @@ void show_level(int new_level) {
 	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
 	// This behavior wasn't noticed during initial playthrough by Dreammaster - Warning has been added so it can be checked eventually.
 	if (_G(scrn)._iconGrid[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
-		warning("show_level - Potential short move missing");
+		warning("showLevel - Potential short move missing");
 
 	if (_G(warp_flag))
 		_G(current_level) = new_level - 5; // Force phase
@@ -99,7 +99,7 @@ void show_level(int new_level) {
 	switch (_G(new_level) - _G(current_level)) {
 	case 0:
 		// Nothing to do
-		show_level_done();
+		showLevelDone();
 		break;
 	case -1:
 		_G(gameMode) = MODE_AREA_CHANGE;
@@ -124,21 +124,21 @@ void show_level(int new_level) {
 	}
 }
 
-void show_level_done() {
+void showLevelDone() {
 	_G(current_level) = _G(new_level);
 
-	_G(thor_info).last_health = _G(thor)->_health;
-	_G(thor_info).last_magic = _G(thor_info)._magic;
-	_G(thor_info).last_jewels = _G(thor_info).jewels;
-	_G(thor_info).last_keys = _G(thor_info).keys;
-	_G(thor_info).last_score = _G(thor_info).score;
-	_G(thor_info).last_item = _G(thor_info).item;
-	_G(thor_info).last_screen = _G(current_level);
-	_G(thor_info).last_icon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
-	_G(thor_info).last_dir = _G(thor)->_dir;
-	_G(thor_info).last_inventory = _G(thor_info).inventory;
-	_G(thor_info).last_object = _G(thor_info).object;
-	_G(thor_info).last_object_name = _G(thor_info).object_name;
+	_G(thor_info)._lastHealth = _G(thor)->_health;
+	_G(thor_info)._lastMagic = _G(thor_info)._magic;
+	_G(thor_info)._lastJewels = _G(thor_info)._jewels;
+	_G(thor_info)._lastKeys = _G(thor_info)._keys;
+	_G(thor_info)._lastScore = _G(thor_info)._score;
+	_G(thor_info)._lastItem = _G(thor_info)._selectedItem;
+	_G(thor_info)._lastScreen = _G(current_level);
+	_G(thor_info)._lastIcon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
+	_G(thor_info)._lastDir = _G(thor)->_dir;
+	_G(thor_info)._lastInventory = _G(thor_info)._inventory;
+	_G(thor_info)._lastObject = _G(thor_info)._object;
+	_G(thor_info)._lastObjectName = _G(thor_info)._objectName;
 
 	_G(last_setup) = _G(setup);
 
@@ -186,18 +186,18 @@ static void odin_speaks_end() {
 
 	// If there's an end message, pass it on to the view hierarchy.
 	// This is used in cases like the game end where multiple
-	// odin_speaks are done in sequence
+	// odinSpeaks are done in sequence
 	if (odinEndMessage)
 		g_events->send(GameMessage(odinEndMessage));
 }
 
-void odin_speaks(int index, int item, const char *endMessage) {
+void odinSpeaks(int index, int item, const char *endMessage) {
 	odinEndMessage = endMessage;
 
 	execute_script((long)index, _G(odin), odin_speaks_end);
 }
 
-int switch_icons() {
+int switchIcons() {
 	play_sound(WOOP, false);
 
 	for (int y = 0; y < 12; y++) {
@@ -205,16 +205,16 @@ int switch_icons() {
 			int ix = x * 16;
 			int iy = y * 16;
 			if (_G(scrn)._iconGrid[y][x] == 93) {
-				place_tile(x, y, 144);
+				placeTile(x, y, 144);
 			} else if (_G(scrn)._iconGrid[y][x] == 144) {
-				place_tile(x, y, 93);
-				kill_enemies(iy, ix);
+				placeTile(x, y, 93);
+				killEnemies(iy, ix);
 			}
 			if (_G(scrn)._iconGrid[y][x] == 94) {
-				place_tile(x, y, 146);
+				placeTile(x, y, 146);
 			} else if (_G(scrn)._iconGrid[y][x] == 146) {
-				place_tile(x, y, 94);
-				kill_enemies(iy, ix);
+				placeTile(x, y, 94);
+				killEnemies(iy, ix);
 			}
 		}
 	}
@@ -222,26 +222,26 @@ int switch_icons() {
 	return 0;
 }
 
-int rotate_arrows() {
+int rotateArrows() {
 	play_sound(WOOP, false);
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
 			if (_G(scrn)._iconGrid[y][x] == 205)
-				place_tile(x, y, 208);
+				placeTile(x, y, 208);
 			else if (_G(scrn)._iconGrid[y][x] == 206)
-				place_tile(x, y, 207);
+				placeTile(x, y, 207);
 			else if (_G(scrn)._iconGrid[y][x] == 207)
-				place_tile(x, y, 205);
+				placeTile(x, y, 205);
 			else if (_G(scrn)._iconGrid[y][x] == 208)
-				place_tile(x, y, 206);
+				placeTile(x, y, 206);
 		}
 	}
 
 	return 0;
 }
 
-void kill_enemies(int iy, int ix) {
+void killEnemies(int iy, int ix) {
 	int x1, y1, x2, y2;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
@@ -275,7 +275,7 @@ void kill_enemies(int iy, int ix) {
 	}
 }
 
-void remove_objects(int y, int x) {
+void removeObjects(int y, int x) {
 	int p = (y * 20) + x;
 
 	if (_G(object_map[p]) > 0) {
@@ -284,12 +284,12 @@ void remove_objects(int y, int x) {
 	}
 }
 
-void place_tile(int x, int y, int tile) {
+void placeTile(int x, int y, int tile) {
 	_G(scrn)._iconGrid[y][x] = tile;
-	remove_objects(y, x);
+	removeObjects(y, x);
 }
 
-int bgtile(int x, int y) {
+int backgroundTile(int x, int y) {
 	if (x < 0 || x >= 319 || y < 0 || y >= 191)
 		return 0;
 
@@ -299,24 +299,24 @@ int bgtile(int x, int y) {
 	return _G(scrn)._iconGrid[y][x];
 }
 
-void select_item() {
+void selectItem() {
 	// Only allow opening the dialog if something isn't currently going on
 	if (g_engine->canSaveAutosaveCurrently()) {
 		g_events->addView("SelectItem");
 	}
 }
 
-int actor_speaks(Actor *actr, int index, int item) {
-	if (actr->_type != 4)
+int actorSpeaks(Actor *actor, int index, int item) {
+	if (actor->_type != 4)
 		return 0;
 
-	int v = atoi(actr->_name);
+	int v = atoi(actor->_name);
 	if (v < 1 || v > 20)
 		return 0;
 
 	long lind = (long)_G(current_level);
 	lind = lind * 1000;
-	lind += (long)actr->_actorNum;
+	lind += (long)actor->_actorNum;
 
 	Common::String str = Common::String::format("FACE%d", v);
 	if (Common::File::exists(Common::Path(str))) {

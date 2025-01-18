@@ -26,31 +26,31 @@
 
 namespace Got {
 
-struct THOR_INFO {
+struct ThorInfo {
 	byte _magic = 0;
-	byte keys = 0;
-	int jewels = 0;
-	byte last_area = 0;
-	byte last_screen = 0;
-	byte last_icon = 0;
-	byte last_dir = 0;
-	int inventory = 0;
-	byte item = 0; //currently selected item
-	byte last_health = 0;
-	byte last_magic = 0;
-	int last_jewels = 0;
-	byte last_keys = 0;
-	byte last_item = 0;
-	int last_inventory = 0;
-	byte level = 0; //current level (1,2,3)
-	long score = 0;
-	long last_score = 0;
-	byte object = 0;
-	const char *object_name = nullptr;
-	byte last_object = 0;
-	const char *last_object_name = nullptr;
-	byte armor = 0;
-	byte future[65] = {};
+	byte _keys = 0;
+	int _jewels = 0;
+	byte _lastArea = 0;
+	byte _lastScreen = 0;
+	byte _lastIcon = 0;
+	byte _lastDir = 0;
+	int _inventory = 0;
+	byte _selectedItem = 0; //currently selected item
+	byte _lastHealth = 0;
+	byte _lastMagic = 0;
+	int _lastJewels = 0;
+	byte _lastKeys = 0;
+	byte _lastItem = 0;
+	int _lastInventory = 0;
+	byte _level = 0; //current level (1,2,3)
+	long _score = 0;
+	long _lastScore = 0;
+	byte _object = 0;
+	const char *_objectName = nullptr;
+	byte _lastObject = 0;
+	const char *_lastObjectName = nullptr;
+	byte _armor = 0;
+	byte _filler[65] = {};
 
 	void clear();
 	void sync(Common::Serializer &s);

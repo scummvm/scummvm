@@ -33,26 +33,26 @@ namespace Got {
 
 void setup_player() {
 	_G(thor_info).clear();
-	_G(thor_info).inventory = 0;
+	_G(thor_info)._inventory = 0;
 	if (_G(area) > 1)
-		_G(thor_info).inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
+		_G(thor_info)._inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
 	if (_G(area) > 2)
-		_G(thor_info).inventory |= BOOTS_MAGIC + WIND_MAGIC;
+		_G(thor_info)._inventory |= BOOTS_MAGIC + WIND_MAGIC;
 
 	_G(thor)->_health = 150;
 	_G(thor_info)._magic = _G(area) > 1 ? 150 : 0;
-	_G(thor_info).jewels = 0;
-	_G(thor_info).score = 0;
-	_G(thor_info).keys = 0;
-	_G(thor_info).last_item = 0;
-	_G(thor_info).object = 0;
-	_G(thor_info).object_name = nullptr;
+	_G(thor_info)._jewels = 0;
+	_G(thor_info)._score = 0;
+	_G(thor_info)._keys = 0;
+	_G(thor_info)._lastItem = 0;
+	_G(thor_info)._object = 0;
+	_G(thor_info)._objectName = nullptr;
 	_G(thor)->_lastX[0] = _G(thor)->_x;
 	_G(thor)->_lastX[1] = _G(thor)->_x;
 	_G(thor)->_lastY[0] = _G(thor)->_y;
 	_G(thor)->_lastY[1] = _G(thor)->_y;
-	_G(thor_info).last_icon = (6 * 20) + 8;
-	_G(thor_info).last_screen = 23;
+	_G(thor_info)._lastIcon = (6 * 20) + 8;
+	_G(thor_info)._lastScreen = 23;
 	_G(thor)->_dir = 1;
 
 	switch (_G(area)) {
@@ -81,12 +81,12 @@ void initialize_game() {
 		g_vars->setArea(1);
 		_G(thor)->_health = 100;
 		_G(thor_info)._magic = 100;
-		_G(thor_info).jewels = 463;
-		_G(thor_info).score = 12455;
+		_G(thor_info)._jewels = 463;
+		_G(thor_info)._score = 12455;
 		_G(setup)._difficultyLevel = 0;
-		_G(thor_info).inventory = 1 + 2;
+		_G(thor_info)._inventory = 1 + 2;
 		_G(current_level) = 54;
-		_G(thor_info).item = 2;
+		_G(thor_info)._selectedItem = 2;
 
 		File f("DEMO");
 		_G(demoKeys).clear();
@@ -105,7 +105,7 @@ void initialize_game() {
 	// Load level data
 	_G(new_level) = _G(current_level);
 	_G(scrn).load(_G(current_level));
-	show_level(_G(current_level));
+	showLevel(_G(current_level));
 
 	if (!_G(auto_load)) {
 		_G(sound).music_play(_G(levelMusic), 1);
