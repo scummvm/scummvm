@@ -285,6 +285,9 @@ bool Operand::operator==(Operand &other) {
 	case kOperandTypeString:
 		return *lhs.getString() == *rhs.getString();
 
+	case kOperandTypeAssetId:
+		return lhs.getAssetId() == rhs.getAssetId();
+
 	default:
 		error("Operand::operator==(): Unsupported operand types %d and %d", static_cast<uint>(lhs.getType()), static_cast<uint>(rhs.getType()));
 	}
