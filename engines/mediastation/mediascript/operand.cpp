@@ -269,7 +269,7 @@ Operand Operand::getLiteralValue() {
 
 bool Operand::operator==(Operand &other) {
 	Operand lhs = getLiteralValue();
-	Operand rhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
 	// TODO: Maybe some better type checking here. If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error. But better might be checking
 	// both before we try getting values to report a more descriptive error.
@@ -295,7 +295,7 @@ bool Operand::operator==(Operand &other) {
 
 bool Operand::operator>=(Operand &other) {
 	Operand lhs = getLiteralValue();
-	Operand rhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
