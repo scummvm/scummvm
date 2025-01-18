@@ -7843,8 +7843,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("blinkymagician", "", "MAGI32.EXE", "t:af3f0ff154ca525fc42ff0c9a4f1f1a5", 1514279, 650),
 
-	MACGAME1("blinkyprint", "", "Print & Play", "r:63e8b9f6744efefbb8a004a2b76e2b1d",  115776, 600),
-	WINGAME1("blinkyprint", "", "PRINTPLA.EXE", "t:6a2fe0b06c7c9cf15736237c06aa300e", 1516941, 600),
+	// See bug #15693
+	// The user has been harrassing the team for months by flooding with the requests.
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSUPPORTED
+	MACGAME1("blinkyprint", "Game will never be supported", "Print & Play", "r:63e8b9f6744efefbb8a004a2b76e2b1d",  115776, 600),
+	WINGAME1("blinkyprint", "Game will never be supported", "PRINTPLA.EXE", "t:6a2fe0b06c7c9cf15736237c06aa300e", 1516941, 600),
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
 
 	// Japanese release, "Zlurp", is part of the Digitalogue Future Artist Series
 	MACGAME1_l("boitearire", "", "Zlurp", "e402b347a9cf682d2154c70cfefdbf26", 115776, Common::JA_JPN, 601),
