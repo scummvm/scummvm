@@ -777,14 +777,14 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_DRAWLINE:
 		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, _frontColor);
+		    _spriteRight, _spriteBottom, getColor(_frontColor));
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_INVALIDATE:
 		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
-				_destSpriteY, _spriteRight, _frontColor);
+				_destSpriteY, _spriteRight, getColor(_frontColor));
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
 				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
