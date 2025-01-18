@@ -1095,7 +1095,7 @@ int Scripts::cmd_exec() {
 		return 6;
 
 	if (_lValue > 5) {
-		error("cmd_exec - unhandled lValue %d", _lValue);
+		error("cmd_exec - unhandled lValue %ld", _lValue);
 	}
 	
 	(this->*scr_func[_lValue - 1])();
