@@ -130,6 +130,18 @@ Operand CodeChunk::executeNextStatement() {
 			return Operand();
 		}
 
+		case kOpcodeOr: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue(kOperandTypeLiteral1);
+			bool logicalOr = (value1 || value2);
+			returnValue.putInteger(static_cast<uint>(logicalOr));
+			return returnValue;
+		}
+
 		case kOpcodeSubtract: {
 			debugCN(5, kDebugScript, "\n    lhs: ");
 			Operand value1 = executeNextStatement();
