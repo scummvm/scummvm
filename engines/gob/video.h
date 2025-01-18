@@ -53,7 +53,7 @@ public:
 	void drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 	                uint32 color1, uint32 color2, bool transp) const;
 
-	void drawString(const Common::String &str, int16 x, int16 y, int16 color1, int16 color2,
+	void drawString(const Common::String &str, int16 x, int16 y, uint32 color1, uint32 color2,
 	                bool transp, Surface &dest) const;
 
 private:

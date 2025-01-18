@@ -155,20 +155,20 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		case 1:
 			_spritesArray[_destSurface]->fillRect(destSpriteX,
 					_destSpriteY, _destSpriteX + 1,
-					_destSpriteY + 1, _frontColor);
+					_destSpriteY + 1, getColor(_frontColor));
 			break;
 		case 2:
 			_spritesArray[_destSurface]->fillRect(destSpriteX - 1,
 					_destSpriteY - 1, _destSpriteX + 1,
-					_destSpriteY + 1, _frontColor);
+					_destSpriteY + 1, getColor(_frontColor));
 			break;
 		case 3:
 			_spritesArray[_destSurface]->fillRect(destSpriteX - 1,
 					_destSpriteY - 1, _destSpriteX + 2,
-					_destSpriteY + 2, _frontColor);
+					_destSpriteY + 2, getColor(_frontColor));
 			break;
 		default:
-			_spritesArray[_destSurface]->putPixel(_destSpriteX, _destSpriteY, _frontColor);
+			_spritesArray[_destSurface]->putPixel(_destSpriteX, _destSpriteY, getColor(_frontColor));
 			break;
 		}
 		dirtiedRect(_destSurface, _destSpriteX - (_pattern / 2),
@@ -188,8 +188,8 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 												  _destSpriteY,
 												  _destSpriteX + _spriteRight - 1,
 												  _destSpriteY + _spriteBottom - 1,
-												  _backColor & 0xFF,
-												  (_backColor >> 8) & 0xFF);
+												  getColor(_backColor & 0xFF),
+												  getColor((_backColor >> 8) & 0xFF));
 
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 						_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
@@ -198,7 +198,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		case 2: {
 			Common::Rect dirtyRect = _spritesArray[_destSurface]->fillAreaAtPoint(destSpriteX,
 																				  _destSpriteY,
-																				  _backColor);
+																				  getColor(_backColor));
 			dirtiedRect(_destSurface, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 			break ;
 		}
@@ -229,18 +229,18 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if ((_needAdjust != 2) && (_needAdjust < 10)) {
 			warning ("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw multiple lines");
 				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 				_spritesArray[_destSurface]->drawLine(_destSpriteX + 1, _destSpriteY,
-					_spriteRight + 1, _spriteBottom, _frontColor);
+					_spriteRight + 1, _spriteBottom, getColor(_frontColor));
 				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY + 1,
-					_spriteRight, _spriteBottom + 1, _frontColor);
+					_spriteRight, _spriteBottom + 1, getColor(_frontColor));
 				_spritesArray[_destSurface]->drawLine(_destSpriteX + 1, _destSpriteY + 1,
-					_spriteRight + 1, _spriteBottom + 1, _frontColor);
+					_spriteRight + 1, _spriteBottom + 1, getColor(_frontColor));
 		} else {
 			switch (_pattern & 0xFF) {
 			case 0:
 				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 
 				break;
 			default:
@@ -251,7 +251,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 								_destSpriteY  - (_pattern / 2) + j,
 								_spriteRight  - (_pattern / 2) + i,
 								_spriteBottom - (_pattern / 2) + j,
-								_frontColor);
+								getColor(_frontColor));
 				break;
 			}
 		}
@@ -263,7 +263,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 
 	case DRAW_INVALIDATE:
 		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
-												_destSpriteY, _spriteRight, _frontColor, _pattern & 0xFF);
+												_destSpriteY, _spriteRight, getColor(_frontColor), _pattern & 0xFF);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
 				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
@@ -305,17 +305,17 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						font->drawLetter(*_spritesArray[_destSurface], READ_LE_UINT16(dataBuf),
-								_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
+								_destSpriteX, _destSpriteY, getColor(_frontColor), getColor(_backColor), _transparency);
 					}
 				} else {
-					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, *_spritesArray[_destSurface]);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
+							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
 					font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
-							_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
+							_destSpriteX, _destSpriteY, getColor(_frontColor), getColor(_backColor), _transparency);
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
@@ -345,28 +345,28 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	case DRAW_DRAWBAR:
 		if ((_needAdjust != 2) && (_needAdjust < 10)){
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _spriteBottom - 1,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-					_destSpriteX + 1, _spriteBottom, _frontColor);
+					_destSpriteX + 1, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->fillRect(_spriteRight - 1, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY + 1, _frontColor);
+					_spriteRight, _destSpriteY + 1, getColor(_frontColor));
 		} else {
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _spriteBottom,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_destSpriteX, _spriteBottom, _frontColor);
+					_destSpriteX, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->drawLine(_spriteRight, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+					_spriteRight, _spriteBottom, getColor(_frontColor));
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY, _frontColor);
+					_spriteRight, _destSpriteY, getColor(_frontColor));
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -377,7 +377,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if (_backColor != -1) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
-			    _backColor);
+			    getColor(_backColor));
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
