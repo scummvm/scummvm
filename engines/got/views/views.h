@@ -37,6 +37,7 @@
 #include "got/views/dialogs/select_slow.h"
 #include "got/views/dialogs/set_music.h"
 #include "got/views/dialogs/set_sound.h"
+#include "got/views/dialogs/skill_level.h"
 #include "got/views/game.h"
 #include "got/views/opening.h"
 #include "got/views/part_title.h"
@@ -70,6 +71,7 @@ struct Views {
 	Dialogs::SelectSlow _selectSlow;
 	Dialogs::SetMusic _setMusic;
 	Dialogs::SetSound _setSound;
+	Dialogs::SkillLevel _skillLevel;
 };
 
 } // namespace Views

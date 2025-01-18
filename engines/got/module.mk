@@ -62,7 +62,8 @@ MODULE_OBJS = \
     views/dialogs/select_scroll.o \
     views/dialogs/select_slow.o \
     views/dialogs/set_music.o \
-    views/dialogs/set_sound.o
+    views/dialogs/set_sound.o \
+	views/dialogs/skill_level.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOT), DYNAMIC_PLUGIN)
