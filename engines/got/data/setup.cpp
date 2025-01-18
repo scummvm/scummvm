@@ -45,23 +45,23 @@ void SetupFlags::sync(Common::Serializer &s) {
 	}
 }
 
-void SETUP::sync(Common::Serializer &s) {
+void Setup::sync(Common::Serializer &s) {
 	// Sync the flags bit-fields
 	SetupFlags::sync(s);
 
-	s.syncBytes(value, 16);
-	s.syncAsByte(junk);
-	s.syncAsByte(game);
-	s.syncAsByte(area);
-	s.syncAsByte(pc_sound);
-	s.syncAsByte(dig_sound);
-	s.syncAsByte(music);
-	s.syncAsByte(speed);
-	s.syncAsByte(scroll_flag);
-	s.syncBytes(boss_dead, 3);
-	s.syncAsByte(skill);
-	s.syncAsByte(game_over);
-	s.syncBytes(future, 19);
+	s.syncBytes(_value, 16);
+	s.syncAsByte(_filler1);
+	s.syncAsByte(_game);
+	s.syncAsByte(_areaNum);
+	s.syncAsByte(_speakerSound);
+	s.syncAsByte(_digitalSound);
+	s.syncAsByte(_musicEnabled);
+	s.syncAsByte(_slowMode);
+	s.syncAsByte(_scrollFlag);
+	s.syncBytes(_bossDead, 3);
+	s.syncAsByte(_difficultyLevel);
+	s.syncAsByte(_gameOver);
+	s.syncBytes(_filler2, 19);
 }
 
 } // namespace Got

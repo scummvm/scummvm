@@ -38,7 +38,7 @@ void OptionsMenu::selected() {
 		addView("SetSound");
 		break;
 	case 1:
-		// skill level
+		// skill level (difficulty level)
 		break;
 	case 2:
 		g_engine->saveGameDialog();

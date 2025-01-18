@@ -85,7 +85,7 @@ int boss1_movement(Actor *actr) {
 		}
 
 		actr->_nextFrame = 3;
-		actr->_numMoves = _G(setup).skill + 2;
+		actr->_numMoves = _G(setup)._difficultyLevel + 2;
 		goto done1;
 	}
 
@@ -97,7 +97,7 @@ int boss1_movement(Actor *actr) {
 						_G(thor)->_x, _G(thor)->_y + 8, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
 				goto done1;
 			}
-			actr->_numMoves = _G(setup).skill + 1;
+			actr->_numMoves = _G(setup)._difficultyLevel + 1;
 			goto done0;
 		}
 
@@ -282,7 +282,7 @@ void closing_sequence1_4() {
 		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
-	_G(setup).boss_dead[0] = 1;
+	_G(setup)._bossDead[0] = 1;
 	_G(boss_active) = false;
 	_G(scrn)._music = 4;
 	show_level(BOSS_LEVEL1);

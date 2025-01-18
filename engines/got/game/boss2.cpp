@@ -52,7 +52,7 @@ static int boss2_die();
 static void boss_set(int d, int x, int y);
 
 int boss2_movement(Actor *actr) {
-	switch (_G(setup).skill) {
+	switch (_G(setup)._difficultyLevel) {
 	case 0:
 		num_skulls = 3;
 		num_spikes = 5;
@@ -405,7 +405,7 @@ void closing_sequence2_4() {
 		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
-	_G(setup).boss_dead[1] = 1;
+	_G(setup)._bossDead[1] = 1;
 	_G(game_over) = true;
 	_G(boss_active) = false;
 	_G(scrn)._music = 6;

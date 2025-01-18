@@ -153,7 +153,7 @@ int shot_pattern_four(Actor *actr) {
 int shot_pattern_five(Actor *actr) {
 	if (_G(rand1) < 15 && (actr->_temp1 == 0) && (actr->_temp2 == 0)) {
 		actr->_y += 16;
-		actr->_numShotsAllowed = 3 + _G(setup).skill;
+		actr->_numShotsAllowed = 3 + _G(setup)._difficultyLevel;
 		actor_shoots(actr, 2);
 		play_sound(BOSS12, false);
 

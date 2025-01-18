@@ -2421,13 +2421,13 @@ done:
 
 // Troll 1
 int movement_thirtynine(Actor *actr) {
-	if (_G(setup).skill == 0) {
+	if (_G(setup)._difficultyLevel == 0) {
 		actr->_speed = 3;
 		actr->_numMoves = 1;
-	} else if (_G(setup).skill == 1) {
+	} else if (_G(setup)._difficultyLevel == 1) {
 		actr->_speed = 2;
 		actr->_numMoves = 1;
-	} else if (_G(setup).skill == 2) {
+	} else if (_G(setup)._difficultyLevel == 2) {
 		actr->_speed = 1;
 		actr->_numMoves = 1;
 	}

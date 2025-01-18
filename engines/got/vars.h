@@ -144,8 +144,8 @@ public:
 
 	Level _scrn;
 
-	SETUP _setup;
-	SETUP _last_setup;
+	Setup _setup;
+	Setup _last_setup;
 	byte *_tmp_buff = nullptr;
 
 	Actor _actor[MAX_ACTORS] = {};  //current actors

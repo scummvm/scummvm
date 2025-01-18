@@ -120,7 +120,7 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 		if (!firstView() || firstView()->getName() != "Game")
 			initialize_game();
 
-		int area = _G(setup).area;
+		int area = _G(setup)._areaNum;
 		if (area == 0)
 			area = 1;
 
@@ -157,23 +157,23 @@ void GotEngine::savegameLoaded() {
 	g_vars->resetEndgameFlags();
 
 	if (!_G(music_flag))
-		_G(setup).music = 0;
+		_G(setup)._musicEnabled = 0;
 	if (!_G(sound_flag))
-		_G(setup).dig_sound = 0;
-	if (_G(setup).music == 1) {
+		_G(setup)._digitalSound = 0;
+	if (_G(setup)._musicEnabled == 1) {
 		if (GAME1 && _G(current_area) == 59) {
 			music_play(5, true);
 		} else {
 			music_play(_G(levelMusic), true);
 		}
 	} else {
-		_G(setup).music = 1;
+		_G(setup)._musicEnabled = 1;
 		music_pause();
-		_G(setup).music = 0;
+		_G(setup)._musicEnabled = 0;
 	}
 
-	_G(game_over) = _G(setup).game_over != 0;
-	_G(slow_mode) = _G(setup).speed != 0;
+	_G(game_over) = _G(setup)._gameOver != 0;
+	_G(slow_mode) = _G(setup)._slowMode != 0;
 
 	g_events->replaceView("Game", true);
 	setup_load();

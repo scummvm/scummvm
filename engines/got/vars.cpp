@@ -60,14 +60,14 @@ void Vars::load() {
 	if (_current_level != 23)
 		_story_flag = false;
 
-	_setup.music = _music_flag;
-	_setup.dig_sound = _sound_flag;
-	_setup.pc_sound = _pcsound_flag;
+	_setup._musicEnabled = _music_flag;
+	_setup._digitalSound = _sound_flag;
+	_setup._speakerSound = _pcsound_flag;
 	if (_sound_flag)
-		_setup.pc_sound = false;
-	_setup.scroll_flag = true;
-	_setup.speed = _slow_mode ? 1 : 0;
-	_setup.skill = 1;
+		_setup._speakerSound = false;
+	_setup._scrollFlag = true;
+	_setup._slowMode = _slow_mode ? 1 : 0;
+	_setup._difficultyLevel = 1;
 
 	_tmp_buff = new byte[TMP_SIZE];
 
@@ -85,7 +85,7 @@ Vars::~Vars() {
 void Vars::setArea(int areaNum) {
 	if (areaNum != _area) {
 		_area = areaNum;
-		_setup.area = areaNum;
+		_setup._areaNum = areaNum;
 		_sd_data.setArea(areaNum);
 		_bgPics.setArea(areaNum);
 

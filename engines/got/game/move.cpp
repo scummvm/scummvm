@@ -107,9 +107,9 @@ int kill_good_guy(void) {
 }
 
 void actor_damaged(Actor *actr, int damage) {
-	if (!_G(setup).skill)
+	if (!_G(setup)._difficultyLevel)
 		damage *= 2;
-	else if (_G(setup).skill == 2)
+	else if (_G(setup)._difficultyLevel == 2)
 		damage /= 2;
 
 	if (!actr->_vulnerableCountdown && actr->_type != 3 && (actr->_solid & 0x7f) != 2) {
@@ -163,9 +163,9 @@ void thor_damaged(Actor *actr) {
 
 	int damage = actr->_hitStrength;
 	if (damage != 255) {
-		if (!_G(setup).skill)
+		if (!_G(setup)._difficultyLevel)
 			damage /= 2;
-		else if (_G(setup).skill == 2)
+		else if (_G(setup)._difficultyLevel == 2)
 			damage *= 2;
 	}
 	if ((!_G(thor)->_vulnerableCountdown && !_G(shield_on)) || damage == 255) {

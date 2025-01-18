@@ -90,7 +90,7 @@ void show_level(int new_level) {
 			_G(current_level) = new_level - 1;
 	}
 
-	if (!_G(setup).scroll_flag)
+	if (!_G(setup)._scrollFlag)
 		_G(current_level) = new_level; // Force no scroll
 
 	if (_G(music_current) != _G(levelMusic))
@@ -144,14 +144,14 @@ void show_level_done() {
 
 	bool f = true;
 	if (GAME1 && _G(new_level) == BOSS_LEVEL1) {
-		if (!_G(setup).boss_dead[0]) {
+		if (!_G(setup)._bossDead[0]) {
 			if (!_G(auto_load))
 				boss_level1();
 			f = false;
 		}
 	}
 	if (GAME2 && _G(new_level) == BOSS_LEVEL2) {
-		if (!_G(setup).boss_dead[1]) {
+		if (!_G(setup)._bossDead[1]) {
 			if (!_G(auto_load))
 				boss_level2();
 			f = false;
@@ -159,7 +159,7 @@ void show_level_done() {
 	}
 	if (GAME3) {
 		if (_G(new_level) == BOSS_LEVEL3) {
-			if (!_G(setup).boss_dead[2]) {
+			if (!_G(setup)._bossDead[2]) {
 				if (!_G(auto_load))
 					boss_level3();
 				f = false;

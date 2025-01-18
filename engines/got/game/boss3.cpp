@@ -77,7 +77,7 @@ static int boss_movement_one(Actor *actr) {
 	actr->_numMoves = 2;
 	pod_speed = 2;
 
-	switch (_G(setup).skill) {
+	switch (_G(setup)._difficultyLevel) {
 	case 0:
 		numPods = 3;
 		break;
@@ -226,7 +226,7 @@ int boss3_movement(Actor *actr) {
 	if (!boss_mode)
 		return boss_movement_one(actr);
 	num_pods1 = 10;
-	switch (_G(setup).skill) {
+	switch (_G(setup)._difficultyLevel) {
 	case 0:
 		actr->_numMoves = 3;
 		actr->_speed = 2;
@@ -534,7 +534,7 @@ void closing_sequence3_3() {
 		_G(scrn)._actorType[rep] = 0;
 
 	_G(boss_dead) = false;
-	_G(setup).boss_dead[2] = 1;
+	_G(setup)._bossDead[2] = 1;
 	_G(game_over) = true;
 	_G(boss_active) = false;
 	_G(scrn)._music = 6;

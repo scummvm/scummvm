@@ -83,7 +83,7 @@ void initialize_game() {
 		_G(thor_info).magic = 100;
 		_G(thor_info).jewels = 463;
 		_G(thor_info).score = 12455;
-		_G(setup).skill = 0;
+		_G(setup)._difficultyLevel = 0;
 		_G(thor_info).inventory = 1 + 2;
 		_G(current_level) = 54;
 		_G(thor_info).item = 2;

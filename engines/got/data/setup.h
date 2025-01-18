@@ -99,21 +99,21 @@ struct SetupFlags {
 	SetupFlags &operator=(const Got::SetupFlags &src);
 };
 
-struct SETUP : public SetupFlags {
-	byte value[16] = {};
-	byte junk = 0;
-	byte game = 0;
-	byte area = 0;        //1,2,3
-	byte pc_sound = 0;    //1=enabled
-	byte dig_sound = 0;   //1 & !pc_sound = enabled
-	byte music = 0;       //1=enabled
-	byte speed = 0;       //1=slow mode (for slower 286's)
-	byte scroll_flag = 0; //unused
-	byte boss_dead[3] = {};
-	byte skill = 0;       //0=easy, 1=normal, 2=hard
-	byte game_over = 0;
-	byte future[19] = {}; //probably not needed
-
+struct Setup : public SetupFlags {
+	byte _value[16] = {};
+	byte _filler1 = 0;
+	byte _game = 0;
+	byte _areaNum = 0;        //1,2,3
+	byte _speakerSound = 0;    //1=enabled
+	byte _digitalSound = 0;   //1 & !_speakerSound = enabled
+	byte _musicEnabled = 0;       //1=enabled
+	byte _slowMode = 0;       //1=slow mode (for slower 286's)
+	byte _scrollFlag = 0; //unused
+	byte _bossDead[3] = {};
+	byte _difficultyLevel = 0;       //0=easy, 1=normal, 2=hard
+	byte _gameOver = 0;
+	byte _filler2[19] = {};
+	
 	void sync(Common::Serializer &s) override;
 };
 

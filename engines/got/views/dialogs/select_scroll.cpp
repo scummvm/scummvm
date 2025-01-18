@@ -30,12 +30,12 @@ SelectScroll::SelectScroll() : SelectOption("SelectScroll", "Scroll Between Scre
 }
 
 bool SelectScroll::msgFocus(const FocusMessage &msg) {
-	_selectedItem = 1 - _G(setup).scroll_flag;
+	_selectedItem = 1 - _G(setup)._scrollFlag;
 	return true;
 }
 
 void SelectScroll::selected() {
-	_G(setup).scroll_flag = (_selectedItem == 0) ? 1 : 0;
+	_G(setup)._scrollFlag = (_selectedItem == 0) ? 1 : 0;
 	_G(last_setup) = _G(setup);
 }
 
