@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	mediascript/function.o \
 	mediascript/variable.o \
 	mediascript/operand.o \
+	mediascript/scriptconstants.o \
 	subfile.o \
 	boot.o \
 	datum.o \

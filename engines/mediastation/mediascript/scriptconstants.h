@@ -30,6 +30,7 @@ enum InstructionType {
 	kInstructionTypeOperand = 0x0066,
 	kInstructionTypeVariableRef = 0x0065
 };
+const char *instructionTypeToStr(InstructionType type);
 
 enum Opcode {
 	kOpcodeIfElse = 202,
@@ -60,12 +61,14 @@ enum Opcode {
 	kOpcodeReturn = 222,
 	kOpcodeUnk1 = 223
 };
+const char *opcodeToStr(Opcode opcode);
 
 enum VariableScope {
 	kVariableScopeLocal = 1,
 	kVariableScopeParameter = 2,
 	kVariableScopeGlobal = 4
 };
+const char *variableScopeToStr(VariableScope scope);
 
 enum BuiltInFunction {
 	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
@@ -76,6 +79,7 @@ enum BuiltInFunction {
 	// TODO: Figure out code for DebugPrint.
 	// TODO: Figure out code for Quit.
 };
+const char *builtInFunctionToStr(BuiltInFunction function);
 
 enum BuiltInMethod {
 	// TODO: What object types does CursorSet apply to?
@@ -156,6 +160,7 @@ enum BuiltInMethod {
 	kOpenLensMethod = 346, // PARAMS: 0
 	kCloseLensMethod = 347, // PARAMS: 0
 };
+const char *builtInMethodToStr(BuiltInMethod method);
 
 enum EventType {
     // TIMER EVENTS.
@@ -207,6 +212,7 @@ enum EventType {
     kPathStoppedEvent = 33,
     kPathEndEvent = 16
 };
+const char *eventTypeToStr(EventType type);
 
 enum EventHandlerArgumentType {
     kNullEventHandlerArgument = 0,
@@ -218,6 +224,7 @@ enum EventHandlerArgumentType {
     kUnk1EventHandlerArgument = 4, 
     kContextEventHandlerArgument = 5
 };
+const char *eventHandlerArgumentTypeToStr(EventHandlerArgumentType type);
 
 enum OperandType {
 	// This is an invalid type used for initialization only.
@@ -237,6 +244,7 @@ enum OperandType {
 	kOperandTypeVariableDeclaration = 158,
 	kOperandTypeFunction = 160
 };
+const char *operandTypeToStr(OperandType type);
 
 enum VariableType {
 	// This is an invalid type used for initialization only.
@@ -257,6 +265,7 @@ enum VariableType {
 	kVariableTypeBoolean = 0x0002,
 	kVariableTypeFloat = 0x0001
 };
+const char *variableTypeToStr(VariableType type);
 
 } // End of namespace MediaStation
 
