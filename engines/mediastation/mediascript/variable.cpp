@@ -163,6 +163,51 @@ Operand Variable::getValue() {
 	}
 }
 
+void Variable::putValue(Operand value) {
+	switch (value.getType()) {
+	case kOperandTypeEmpty: {
+		error("Variable::putValue(): Assigning an empty operand to a variable not supported");
+	}
+
+	case kOperandTypeLiteral1:
+	case kOperandTypeLiteral2:
+	case kOperandTypeDollarSignVariable: {
+		_type = kVariableTypeInt;
+		_value.i = value.getInteger();
+		break;
+	}
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2: {
+		_type = kVariableTypeFloat;
+		_value.d = value.getDouble();
+		break;
+	}
+
+	case kOperandTypeString: {
+		_type = kVariableTypeString;
+		_value.string = value.getString();
+		break;
+	}
+
+	case kOperandTypeAssetId: {
+		_type = kVariableTypeAssetId;
+		_value.assetId = value.getAssetId();
+		break;
+	}
+
+	case kOperandTypeVariableDeclaration: {
+		putValue(value.getLiteralValue());
+		break;
+	}
+
+	default: {
+		error("Variable::putValue(): Assigning an unknown operand type %s (%d) to a variable not supported",
+			operandTypeToStr(value.getType()), static_cast<uint>(value.getType()));
+	}
+	}
+}
+
 Operand Variable::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
 	switch (_type) {
 	case kVariableTypeAssetId: {

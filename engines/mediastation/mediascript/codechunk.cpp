@@ -308,46 +308,7 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 		if (variable == nullptr) {
 			error("CodeChunk::putVariable(): Attempted to assign to a non-existent global variable %d", id);
 		}
-
-		switch (value.getType()) {
-		case kOperandTypeEmpty: {
-			error("CodeChunk::putVariable(): Cannot assign an empty operand to a variable");
-			break;
-		}
-
-		case kOperandTypeLiteral1:
-		case kOperandTypeLiteral2: {
-			variable->_value.i = value.getInteger();
-			break;
-		}
-
-		case kOperandTypeFloat1:
-		case kOperandTypeFloat2: {
-			variable->_value.d = value.getDouble();
-			break;
-		}
-
-		case kOperandTypeString: {
-			variable->_value.string = value.getString();
-			break;
-		}
-
-		case kOperandTypeAssetId: {
-			variable->_value.assetId = value.getAssetId();
-			break;
-		}
-
-		case kOperandTypeVariableDeclaration: {
-			// TODO: Will this cause a memory leak?
-			// variable = value.u.variable;
-			error("Assigning variable to another variable not supported yet");
-			break;
-		}
-
-		default: {
-			error("CodeChunk::putVariable(): Cannot put operand type 0x%x into variable", (uint)value.getType());
-		}
-		}
+		variable->putValue(value);
 		break;
 	}
 

@@ -50,6 +50,7 @@ public:
 	Variable(Chunk &chunk, bool readId = true);
 
 	Operand getValue();
+	void putValue(Operand value);
 	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
 	~Variable();
 };
