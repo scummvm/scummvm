@@ -40,7 +40,6 @@ Operand CodeChunk::execute(Common::Array<Operand> *args) {
 	_args = args;
 	Operand returnValue;
 	while (_bytecode->pos() < _bytecode->size()) {
-		debugC(8, kDebugScript, "-------- Statement --------");
 		returnValue = executeNextStatement();
 	}
 
@@ -59,7 +58,7 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	InstructionType instructionType = InstructionType(Datum(*_bytecode).u.i);
-	debugC(9, kDebugScript, " instructionType = %d", static_cast<uint>(instructionType));
+	debugCN(5, kDebugScript, "(%s) ", instructionTypeToStr(instructionType));
 	switch (instructionType) {
 	case kInstructionTypeEmpty: {
 		return Operand();
@@ -67,14 +66,15 @@ Operand CodeChunk::executeNextStatement() {
 
 	case kInstructionTypeFunctionCall: {
 		Opcode opcode = Opcode(Datum(*_bytecode).u.i);
-		debugC(8, kDebugScript, "  *** Opcode %d ***", static_cast<uint>(opcode));
+		debugCN(5, kDebugScript, "%s ", opcodeToStr(opcode));
 		switch (opcode) {
 		case kOpcodeAssignVariable: {
 			uint32 id = Datum(*_bytecode).u.i;
 			VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
+			debugC(5, kDebugScript, "%d (%s) ", id, variableScopeToStr(scope));
+			debugCN(5, kDebugScript, "  Value: ");
 			Operand newValue = executeNextStatement();
-			// TODO: Print the new variable value for easier debugging.
-			debugC(5, kDebugScript, "SCRIPT: [ %d (scope: %d) ] = [ ? (showing value assigned to var not implemented yet) ]", static_cast<uint>(scope), id);
+
 			putVariable(id, scope, newValue);
 			return Operand();
 		}
@@ -83,21 +83,22 @@ Operand CodeChunk::executeNextStatement() {
 			uint functionId = Datum(*_bytecode).u.i;
 			uint32 parameterCount = Datum(*_bytecode).u.i;
 			Common::Array<Operand> args;
+			debugC(5, kDebugScript, "%d (%d params)", functionId, parameterCount);
 			for (uint i = 0; i < parameterCount; i++) {
-				debugC(8, kDebugScript, "   -- Argument %d of %d --", (i + 1), parameterCount);
+				debugCN(5, kDebugScript, "  Param %d: ", i);
 				Operand arg = executeNextStatement();
 				args.push_back(arg);
 			}
 
-			// Call the routine.
-			debugC(5, kDebugScript, "SCRIPT: [ %d ]( %d args )", functionId, parameterCount);
 			Operand returnValue;
 			Function *function = g_engine->getFunctionById(functionId);
 			if (function != nullptr) {
 				// This is a title-defined function.
 				returnValue = function->execute(args);
 			} else {
-				returnValue = callBuiltInFunction(static_cast<BuiltInFunction>(functionId), args);
+				BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
+				debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
+				returnValue = callBuiltInFunction(builtInFunctionId, args);
 			}
 			return returnValue;
 		}
@@ -109,10 +110,12 @@ Operand CodeChunk::executeNextStatement() {
 			// But here, we're only looking for built-in methods.
 			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 			uint32 parameterCount = Datum(*_bytecode).u.i;
+			debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(methodId), parameterCount);
+			debugCN(5, kDebugScript, "  Self: ");
 			Operand selfObject = executeNextStatement();
 			Common::Array<Operand> args;
 			for (uint i = 0; i < parameterCount; i++) {
-				debugC(8, kDebugScript, "   -- Argument %d of %d --", (i + 1), parameterCount);
+				debugCN(5, kDebugScript, "  Param %d: ", i);
 				Operand arg = executeNextStatement();
 				args.push_back(arg);
 			}
@@ -122,13 +125,15 @@ Operand CodeChunk::executeNextStatement() {
 
 		case kOpcodeDeclareVariables: {
 			uint32 localVariableCount = Datum(*_bytecode).u.i;
-			debugC(5, kDebugScript, "   Declaring %d local variables", localVariableCount);
+			debugC(5, kDebugScript, "%d", localVariableCount);
 			_locals.resize(localVariableCount);
 			return Operand();
 		}
 
 		case kOpcodeSubtract: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
 			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
 			Operand returnValue = value1 - value2;
@@ -137,11 +142,15 @@ Operand CodeChunk::executeNextStatement() {
 
 		case kOpcodeNegate: {
 			Operand value = executeNextStatement();
+			debugCN(5, kDebugScript, "    value: ");
+
 			return -value;
 		}
 
 		case kOpcodeIfElse: {
+			debugCN(5, kDebugScript, "\n    condition: ");
 			Operand condition = executeNextStatement();
+
 			CodeChunk ifBlock(*_bytecode);
 			CodeChunk elseBlock(*_bytecode);
 			// Doesn't seem like there is a real bool type for values,
@@ -159,7 +168,9 @@ Operand CodeChunk::executeNextStatement() {
 		}
 
 		case kOpcodeEquals: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
 			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
 			// TODO: Confirm this is the correct value type?
@@ -170,7 +181,9 @@ Operand CodeChunk::executeNextStatement() {
 		}
 
 		case kOpcodeGreaterThanOrEqualTo: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
 			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
 			// TODO: Confirm this is the correct value type?
@@ -181,7 +194,7 @@ Operand CodeChunk::executeNextStatement() {
 		}
 
 		default: {
-			error("CodeChunk::getNextStatement(): Got unknown opcode 0x%x (%d)", opcode, opcode);
+			error("CodeChunk::getNextStatement(): Got unknown opcode %s (%d)", opcodeToStr(opcode), static_cast<uint>(opcode));
 		}
 		}
 		break;
@@ -189,12 +202,12 @@ Operand CodeChunk::executeNextStatement() {
 
 	case kInstructionTypeOperand: {
 		OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
+		debugCN(5, kDebugScript, "%s ", operandTypeToStr(operandType));
 		Operand operand(operandType);
 		switch (operandType) {
-		// TODO: Add clearer debugging printouts for these.
 		case kOperandTypeAssetId: {
 			uint32 assetId = Datum(*_bytecode).u.i;
-			debugC(8, kDebugScript, "  Asset ID: %d", assetId);
+			debugC(5, kDebugScript, "%d ", assetId);
 			operand.putAsset(assetId);
 			return operand;
 		}
@@ -203,7 +216,7 @@ Operand CodeChunk::executeNextStatement() {
 		case kOperandTypeLiteral2:
 		case kOperandTypeDollarSignVariable: {
 			int literal = Datum(*_bytecode).u.i;
-			debugC(8, kDebugScript, "  Literal: %d", literal);
+			debugC(5, kDebugScript, "%d ", literal);
 			operand.putInteger(literal);
 			return operand;
 		}
@@ -211,14 +224,14 @@ Operand CodeChunk::executeNextStatement() {
 		case kOperandTypeFloat1:
 		case kOperandTypeFloat2: {
 			double d = Datum(*_bytecode).u.f;
-			debugC(8, kDebugScript, "  Float: %f", d);
+			debugC(5, kDebugScript, "%f ", d);
 			operand.putDouble(d);
 			return operand;
 		}
 
 		case kOperandTypeFunction: {
 			uint functionId = Datum(*_bytecode).u.i;
-			debugC(8, kDebugScript, "  Function ID: %d", functionId);
+			debugC(5, kDebugScript, "%d ", functionId);
 			operand.putFunction(functionId);
 			return operand;
 		}
@@ -231,29 +244,29 @@ Operand CodeChunk::executeNextStatement() {
 			_bytecode->read(buffer, size);
 			buffer[size] = '\0';
 			Common::String *string = new Common::String(buffer);
-			debugC(8, kDebugScript, "  String: %s", string->c_str());
+			debugC(5, kDebugScript, "%s ", string->c_str());
 			operand.putString(string);
 			delete[] buffer;
 			return operand;
 		}
 
 		default: {
-			error("CodeChunk::getNextStatement(): Got unknown operand type 0x%d", operandType);
+			error("CodeChunk::getNextStatement(): Got unknown operand type %s (%d)", operandTypeToStr(operandType), static_cast<uint>(operandType));
 		}
 		}
 		break;
 	}
 
 	case kInstructionTypeVariableRef: {
-		// TODO: Add debug printout for this.
 		uint32 id = Datum(*_bytecode).u.i;
 		VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
+		debugC(5, kDebugScript, "Variable %d (%s)", id, variableScopeToStr(scope));
 		Operand variable = getVariable(id, scope);
 		return variable;
 	}
 
 	default: {
-		error("CodeChunk::getNextStatement(): Got unknown instruction type 0x%x", static_cast<uint>(instructionType));
+		error("CodeChunk::getNextStatement(): Got unknown instruction type %s (%d)", instructionTypeToStr(instructionType), static_cast<uint>(instructionType));
 	}
 	}
 }
@@ -283,7 +296,7 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	}
 
 	default: {
-		error("CodeChunk::getVariable(): Got unknown variable scope %d", (uint)scope);
+		error("CodeChunk::getVariable(): Got unknown variable scope %s (%d)", variableScopeToStr(scope), static_cast<uint>(scope));
 	}
 	}
 }
@@ -350,7 +363,7 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 	}
 
 	default: {
-		error("VariableAssignment::evaluate(): Got unknown variable scope 0x%x", (uint)scope);
+		error("CodeChunk::getVariable(): Got unknown variable scope %s (%d)", variableScopeToStr(scope), static_cast<uint>(scope));
 	}
 	}
 }
@@ -409,7 +422,6 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 			// active screen.
 			// HACK: This is so we don't have to implement a separate document class
 			// just to house these methods. Rather, we just call in the engine.
-			debugC(5, kDebugScript, "SCRIPT: @doc.[ %d ]()", method);
 			Operand returnValue = g_engine->callMethod(method, args);
 			return returnValue;
 		} else {
@@ -429,7 +441,7 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 	}
 
 	default:
-		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type 0x%x", (uint)self.getType());
+		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)", operandTypeToStr(self.getType()), static_cast<uint>(self.getType()));
 		break;
 	}
 }

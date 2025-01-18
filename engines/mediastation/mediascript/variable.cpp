@@ -33,13 +33,14 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		_id = Datum(chunk).u.i;
 	}
 	_type = VariableType(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type 0x%x (@0x%llx)", _id, static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type %s (%d) (@0x%llx)", 
+		_id, variableTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch ((VariableType)_type) {
 	case kVariableTypeCollection: {
 		uint totalItems = Datum(chunk).u.i;
 		_value.collection = new Common::Array<Variable *>;
 		for (uint i = 0; i < totalItems; i++) {
-			debugC(7, kDebugLoading, "Variable::Variable(): COLLECTION: Value %d of %d", i, totalItems);
+			debugC(7, kDebugLoading, "Variable::Variable(): %s: Value %d of %d", variableTypeToStr(_type), i, totalItems);
 			Variable *variableDeclaration = new Variable(chunk, readId = false);
 			_value.collection->push_back(variableDeclaration);
 		}
@@ -54,19 +55,19 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		buffer[size] = '\0';
 		_value.string = new Common::String(buffer);
 		delete[] buffer;
-		debugC(7, kDebugLoading, "Variable::Variable(): STRING: %s", _value.string->c_str());
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %s", variableTypeToStr(_type), _value.string->c_str());
 		break;
 	}
 
 	case kVariableTypeAssetId: {
 		_value.assetId = Datum(chunk, kDatumTypeUint16_1).u.i;
-		debugC(7, kDebugLoading, "Variable::Variable(): ASSET ID: %d", _value.assetId);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", variableTypeToStr(_type), _value.assetId);
 		break;
 	}
 
 	case kVariableTypeBoolean: {
 		uint rawValue = Datum(chunk, kDatumTypeUint8).u.i;
-		debugC(7, kDebugLoading, " Variable::Variable(): BOOL: %d", rawValue);
+		debugC(7, kDebugLoading, " Variable::Variable(): %s: %d", variableTypeToStr(_type), rawValue);
 		_value.b = (rawValue == 1);
 		break;
 	}
@@ -77,18 +78,18 @@ Variable::Variable(Chunk &chunk, bool readId) {
 			error("Variable::Variable(): Got a non-float datum type 0x%x to put into a float variable", datum.t);
 		}
 		_value.d = datum.u.f;
-		debugC(7, kDebugLoading, "Variable::Variable(): FLOAT: %f", _value.d);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %f", variableTypeToStr(_type), _value.d);
 		break;
 	}
 
 	case kVariableTypeInt: {
 		_value.i = Datum(chunk).u.i;
-		debugC(7, kDebugLoading, "Variable::Variable(): INT: %d", _value.i);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", variableTypeToStr(_type), _value.i);
 		break;
 	}
 
 	default: {
-		error("Variable::Variable(): Got unknown variable value type 0x%x", static_cast<uint>(_type));
+		error("Variable::Variable(): Got unknown variable value type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
 }
@@ -157,7 +158,7 @@ Operand Variable::getValue() {
 	}
 
 	default: {
-		error("Variable::getValue(): Attempt to get value from unknown variable type 0x%x", static_cast<uint>(_type));
+		error("Variable::getValue(): Attempt to get value from unknown variable type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
 }
@@ -178,7 +179,7 @@ Operand Variable::callMethod(BuiltInMethod method, Common::Array<Operand> &args)
 	}
 
 	default: {
-		error("Variable::callMethod(): Calling method on unknown variable type 0x%x", static_cast<uint>(_type));
+		error("Variable::callMethod(): Calling method on unknown variable type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
 }
