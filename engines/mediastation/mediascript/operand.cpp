@@ -257,7 +257,7 @@ uint32 Operand::getAssetId() {
 	}
 }
 
-Operand Operand::getLiteralValue() {
+Operand Operand::getLiteralValue() const {
 	// This function dereferences any variable to get the actual
 	// "direct" value (a literal asset ID or otherwise).
 	if (_type == kOperandTypeVariableDeclaration) {
@@ -267,7 +267,7 @@ Operand Operand::getLiteralValue() {
 	}
 }
 
-bool Operand::operator==(Operand &other) {
+bool Operand::operator==(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();
 	// TODO: Maybe some better type checking here. If the types being compared end up being incompatible, the respective get
@@ -293,7 +293,7 @@ bool Operand::operator==(Operand &other) {
 	}
 }
 
-bool Operand::operator>=(Operand &other) {
+bool Operand::operator>=(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();
 	// If the types being compared end up being incompatible, the respective get
@@ -326,7 +326,7 @@ Operand Operand::operator-(const Operand &other) const {
 	return returnValue;
 }
 
-Operand Operand::operator-() {
+Operand Operand::operator-() const {
 	Operand literalValue = getLiteralValue();
 	Operand returnValue(literalValue.getType());
 	// If the types being compared end up being incompatible, the respective get
