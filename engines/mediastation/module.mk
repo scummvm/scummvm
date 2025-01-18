@@ -1,36 +1,36 @@
 MODULE := engines/mediastation
 
 MODULE_OBJS = \
-	mediastation.o \
 	asset.o \
 	assetheader.o \
+	assets/canvas.o \
+	assets/font.o \
+	assets/hotspot.o \
+	assets/image.o \
+	assets/movie.o \
+	assets/palette.o \
+	assets/path.o \
+	assets/screen.o \
+	assets/sound.o \
+	assets/sprite.o \
+	assets/text.o \
+	assets/timer.o \
+	bitmap.o \
+	boot.o \
 	chunk.o \
 	context.o \
 	contextparameters.o \
-	bitmap.o \
-	assets/image.o \
-	assets/palette.o \
-	assets/sound.o \
-	assets/movie.o \
-	assets/sprite.o \
-	assets/path.o \
-	assets/hotspot.o \
-	assets/timer.o \
-	assets/canvas.o \
-	assets/screen.o \
-	assets/font.o \
-	assets/text.o \
-	mediascript/eventhandler.o \
+	datafile.o \
+	datum.o \
 	mediascript/codechunk.o \
+	mediascript/eventhandler.o \
 	mediascript/function.o \
-	mediascript/variable.o \
 	mediascript/operand.o \
 	mediascript/scriptconstants.o \
-	subfile.o \
-	boot.o \
-	datum.o \
-	datafile.o \
-	metaengine.o
+	mediascript/variable.o \
+	mediastation.o \
+	metaengine.o \
+	subfile.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MEDIASTATION), DYNAMIC_PLUGIN)
