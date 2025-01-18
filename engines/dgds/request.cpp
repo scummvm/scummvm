@@ -45,24 +45,36 @@ static const byte DragonSliderColors[] = {
 	0x7B, 0x4D, 0xF4, 0x54, 0xDF, 0x74, 0x58
 };
 
+static const byte DragonEGAButtonColors[] = {
+	0x7, 0x8, 0x7, 0x0, 0xF, 0x7, 0xC, 0x4, 0x0, 0xF, 0xF, 0xC, 0x4
+};
+
+static const byte DragonEGASliderColors[] {
+	0x7, 0xF, 0x8, 0x7, 0x0, 0x7, 0x7
+};
+
 static const byte DragonHeaderTxtColor = 0;
 static const byte DragonHeaderTopColor = 0;
 static const byte DragonHeaderBottomColor = 15;
-static const byte DragonFallbackColors[] = {
-	0x7, 0x7, 0x8, 0x7, 0x0, 0xF, 0x7, 0xC,
-	0x4, 0x0, 0xF, 0xF, 0xC, 0x4, 0x7, 0xF,
-	0x8, 0x7, 0x0, 0x7, 0x7
-};
+static const byte DragonBackgroundColor = 7;
 
 static const byte ChinaBackgroundColor = 23;
 static const byte ChinaHeaderTxtColor = 25;
 static const byte ChinaHeaderTopColor = 16;
 static const byte ChinaHeaderBottomColor = 20;
 static const byte ChinaButtonColorsOn[] = {
-	0x10, 0x11, 0x10, 0x10, 0x10, 0x06, 0x14, 0x1A,
+	0x10, 0x11, 0x10, 0x10, 0x10, 0x06, 0x14, 0x1A
 };
 static const byte ChinaButtonColorsOff[] = {
-	0x10, 0x14, 0x06, 0x18, 0x10, 0x11, 0x14, 0x13,
+	0x10, 0x14, 0x06, 0x18, 0x10, 0x11, 0x14, 0x13
+};
+
+static const byte ChinaEGAButtonColorsOn[] = {
+	8, 15, 14, 14, 14, 6, 0, 8
+};
+
+static const byte ChinaEGAButtonColorsOff[] = {
+	6, 0, 8, 6, 14, 7, 0, 0
 };
 
 static const byte ChinaSliderColors[] = {
@@ -356,25 +368,27 @@ byte ButtonGadget::drawDragonBg(Graphics::ManagedSurface *dst, bool enabled) con
 	int16 x2 = right - 1;
 	int16 bottom = (y + _height) - 1;
 
-	byte fill = DragonButtonColors[0];
-	dst->drawLine(x, y, x2, y, fill);
-	dst->drawLine(x + 2, y + 2, right - 3, y + 2, fill);
-	dst->drawLine(x + 1, bottom - 2, x + 1, bottom - 2, fill);
-	dst->drawLine(right - 2, bottom - 2, right - 2, bottom - 2, fill);
-	dst->drawLine(x + 1, bottom - 1, right - 2, bottom - 1, fill);
+	const byte *colors = DgdsEngine::getInstance()->isEGA() ? DragonEGAButtonColors : DragonButtonColors;
 
-	fill = DragonButtonColors[1];
-	dst->drawLine(x, y + 1, x, bottom, fill);
-	dst->drawLine(x2, y + 1, x2, bottom, fill);
-	dst->drawLine(x + 2, y + 3, x + 2, bottom - 2, fill);
-	dst->drawLine(right - 3, y + 3, right - 3, bottom - 2, fill);
-	dst->drawLine(x + 3,bottom - 2, right - 4, bottom - 2, fill);
+	byte fill = colors[0];
+	dst->hLine(x, y, x2, fill);
+	dst->hLine(x + 2, y + 2, right - 3, fill);
+	dst->hLine(x + 1, bottom - 2, x + 1, fill);
+	dst->hLine(right - 2, bottom - 2, right - 2, fill);
+	dst->hLine(x + 1, bottom - 1, right - 2, fill);
 
-	fill = DragonButtonColors[2];
-	dst->drawLine(x + 1, y + 2, x + 1, bottom - 3, fill);
-	dst->drawLine(right - 2, y + 2, right - 2, bottom - 3, fill);
-	dst->drawLine(x + 1, bottom, right - 2, bottom, DragonButtonColors[3]);
-	dst->drawLine(x + 1, y + 1, right - 2, y + 1, DragonButtonColors[4]);
+	fill = colors[1];
+	dst->vLine(x, y + 1,  bottom, fill);
+	dst->vLine(x2, y + 1, bottom, fill);
+	dst->vLine(x + 2, y + 3, bottom - 2, fill);
+	dst->vLine(right - 3, y + 3, bottom - 2, fill);
+	dst->hLine(x + 3,bottom - 2, right - 4, fill);
+
+	fill = colors[2];
+	dst->vLine(x + 1, y + 2, bottom - 3, fill);
+	dst->vLine(right - 2, y + 2, bottom - 3, fill);
+	dst->hLine(x + 1, bottom, right - 2, colors[3]);
+	dst->hLine(x + 1, y + 1, right - 2, colors[4]);
 
 	int colOffset;
 	if (enabled) {
@@ -383,14 +397,14 @@ byte ButtonGadget::drawDragonBg(Graphics::ManagedSurface *dst, bool enabled) con
 		colOffset = 9;
 	}
 
-	dst->drawLine(x + 3, y + 3, right - 4, y + 3, DragonButtonColors[colOffset + 1]);
+	dst->hLine(x + 3, y + 3, right - 4, colors[colOffset + 1]);
 
 	// TODO: This is done with a different call in the game.. is there some reason for that?
-	dst->fillRect(Common::Rect(x + 3, y + 4, x + 3 + _width - 6, y + 4 + _height - 8), DragonButtonColors[colOffset + 2]);
+	dst->fillRect(Common::Rect(x + 3, y + 4, x + 3 + _width - 6, y + 4 + _height - 8), colors[colOffset + 2]);
 
-	dst->drawLine(x + 3, bottom - 3, right - 4, bottom - 3, DragonButtonColors[colOffset + 3]);
+	dst->hLine(x + 3, bottom - 3, right - 4, colors[colOffset + 3]);
 
-	return DragonButtonColors[colOffset];
+	return colors[colOffset];
 }
 
 byte ButtonGadget::drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) const {
@@ -400,14 +414,16 @@ byte ButtonGadget::drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) cons
 	int16 y = pt.y;
 	int16 y2 = y + _height - 1;
 	int cnum = 0;
-	const byte *colors = (enabled ? ChinaButtonColorsOn : ChinaButtonColorsOff);
+	const byte *colors = DgdsEngine::getInstance()->isEGA() ?
+			(enabled ? ChinaEGAButtonColorsOn : ChinaEGAButtonColorsOff) :
+			(enabled ? ChinaButtonColorsOn : ChinaButtonColorsOff);
 
 	for (int i = 0; i < 7; i++) {
 		byte drawCol = colors[cnum];
 		cnum++;
 		if (i < 3) {
-			dst->drawLine(x + i + 1, y + i, x2 - i, y + i, drawCol);
-			dst->drawLine(x2 - i, y + i + 1, x2 - i, y2 - i, drawCol);
+			dst->hLine(x + i + 1, y + i, x2 - i, drawCol);
+			dst->vLine(x2 - i, y + i + 1, y2 - i, drawCol);
 		} else if (i < 4) {
 			int16 rheight, rwidth;
 			if (_height + -6 < 3)
@@ -423,8 +439,8 @@ byte ButtonGadget::drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) cons
 			dst->fillRect(Common::Rect(Common::Point(x + 3, y + 3), rwidth, rheight), drawCol);
 		} else {
 			int16 x2_ = 6 - i;
-			dst->drawLine(x + x2_, y + x2_, x + x2_, y2 - x2_, drawCol);
-			dst->drawLine(x + x2_, y2 - x2_, (x2 - x2_) + -1, y2 - x2_, drawCol);
+			dst->vLine(x + x2_, y + x2_, y2 - x2_, drawCol);
+			dst->hLine(x + x2_, y2 - x2_, (x2 - x2_) + -1, drawCol);
 		}
 	}
 	return colors[7];
@@ -645,19 +661,22 @@ void SliderGadget::drawDragonBg(Graphics::ManagedSurface *dst) const {
 	int16 y2 = (y + _height) - 1;
 
 	int16 y1 = y - 1;
-	dst->drawLine(x - 2, y - 1, x - 2, y2, DragonSliderColors[0]);
-	dst->drawLine(x - 1, y1, x - 1, y2, DragonSliderColors[1]);
-	dst->drawLine(x, y2, x2 - 1, y2, DragonSliderColors[1]);
-	dst->drawLine(x, y1, x2, y1, DragonSliderColors[2]);
-	dst->drawLine(x2, y1, x2, y2, DragonSliderColors[2]);
-	dst->drawLine(x2 + 1, y1, x2 + 1, y2, DragonSliderColors[3]);
-	dst->drawLine(x, y, x2 - 1, y, DragonSliderColors[4]);
-	dst->drawLine(x2 - 1, y + 1, x2 - 1, (y + _height) - 2, DragonSliderColors[4]);
+
+	static const byte *colors = DgdsEngine::getInstance()->isEGA() ? DragonEGASliderColors : DragonSliderColors;
+
+	dst->vLine(x - 2, y - 1, y2, colors[0]);
+	dst->vLine(x - 1, y1, y2, colors[1]);
+	dst->hLine(x, y2, x2 - 1, colors[1]);
+	dst->hLine(x, y1, x2, colors[2]);
+	dst->vLine(x2, y1, y2, colors[2]);
+	dst->vLine(x2 + 1, y1, y2, colors[3]);
+	dst->hLine(x, y, x2 - 1, colors[4]);
+	dst->vLine(x2 - 1, y + 1, (y + _height) - 2, colors[4]);
 	// This is not exactly what happens in the original, but gets the same result
 	Common::Rect fillrect = Common::Rect(x, y + 1, x + _width - 1, y + _height - 1);
-	dst->fillRect(fillrect, DragonSliderColors[5]);
+	dst->fillRect(fillrect, colors[5]);
 	fillrect.grow(-1);
-	dst->fillRect(fillrect, DragonSliderColors[6]);
+	dst->fillRect(fillrect, colors[6]);
 }
 
 void SliderGadget::drawChinaBg(Graphics::ManagedSurface *dst) const {
@@ -667,32 +686,32 @@ void SliderGadget::drawChinaBg(Graphics::ManagedSurface *dst) const {
 	int16 x2 = x + _width + 2;
 
 	// left 1st
-    dst->drawLine(x - 2, y - 1, x - 2, y2 + 1, ChinaSliderColors[0]);
+    dst->vLine(x - 2, y - 1, y2 + 1, ChinaSliderColors[0]);
     // left 2nd
-    dst->drawLine(x - 1, y, x - 1, y2, ChinaSliderColors[1]);
+    dst->vLine(x - 1, y, y2, ChinaSliderColors[1]);
     // left 3rd
-	dst->drawLine(x, y + 1, x, y2 - 1, ChinaSliderColors[2]);
+	dst->vLine(x, y + 1, y2 - 1, ChinaSliderColors[2]);
 
 	// top 1st
-	dst->drawLine(x - 1, y - 1, x2, y - 1, ChinaSliderColors[2]);
+	dst->hLine(x - 1, y - 1, x2,ChinaSliderColors[2]);
 	// top 2nd
-	dst->drawLine(x, y, x2 - 1, y, ChinaSliderColors[0]);
+	dst->hLine(x, y, x2 - 1,  ChinaSliderColors[0]);
 	// top 3rd
-	dst->drawLine(x + 1, y + 1, x2 - 2, y + 1, ChinaSliderColors[3]);
+	dst->hLine(x + 1, y + 1, x2 - 2, ChinaSliderColors[3]);
 
 	// right 1st
-	dst->drawLine(x2 - 1, y + 1, x2 - 1, y2 - 1, ChinaSliderColors[3]);
+	dst->vLine(x2 - 1, y + 1, y2 - 1, ChinaSliderColors[3]);
 	// right 2nd
-	dst->drawLine(x2, y, x2, y2, ChinaSliderColors[0]);
+	dst->vLine(x2, y, y2, ChinaSliderColors[0]);
 	// right 3rd
-	dst->drawLine(x2 + 1, y - 1, x2 + 1, y2 + 1, ChinaSliderColors[2]);
+	dst->vLine(x2 + 1, y - 1, y2 + 1, ChinaSliderColors[2]);
 
 	// bottom 1st
-	dst->drawLine(x + 1, y2 - 1, x2 - 2, y2 - 1, ChinaSliderColors[2]);
+	dst->hLine(x + 1, y2 - 1, x2 - 2, ChinaSliderColors[2]);
 	// bottom 2nd
-	dst->drawLine(x, y2, x2 - 1, y2, ChinaSliderColors[1]);
+	dst->hLine(x, y2, x2 - 1, ChinaSliderColors[1]);
 	// bottom 3rd
-	dst->drawLine(x - 1, y2 + 1, x2, y2 + 1, ChinaSliderColors[0]);
+	dst->hLine(x - 1, y2 + 1, x2, ChinaSliderColors[0]);
 
 	Common::Rect fillrect = Common::Rect(x + 1, y + 2, x2 - 1, y2 - 1);
 	dst->fillRect(fillrect, ChinaSliderColors[4]);
@@ -986,10 +1005,10 @@ void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, in
 
 		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
 		if (drawBox) {
-			dst->drawLine(hleft - 3, htop, hright, htop, boxTopColor);
-			dst->drawLine(hright, htop + 1, hright, hbottom, boxTopColor);
-			dst->drawLine(hleft - 3, htop + 1, hleft - 3, hbottom, boxBottomColor);
-			dst->drawLine(hleft - 2, hbottom, hleft + hwidth + 2, hbottom, boxBottomColor);
+			dst->hLine(hleft - 3, htop, hright, boxTopColor);
+			dst->vLine(hright, htop + 1, hbottom, boxTopColor);
+			dst->vLine(hleft - 3, htop + 1, hbottom, boxBottomColor);
+			dst->hLine(hleft - 2, hbottom, hleft + hwidth + 2, boxBottomColor);
 		}
 	}
 }
@@ -1090,7 +1109,7 @@ void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16
 				coloffset = ARRAYSIZE(MenuBackgroundColors) - 1;
 		}
 	} else {
-		byte bgCol = DragonFallbackColors[0];
+		byte bgCol = DragonBackgroundColor;
 		if (engine->getGameId() == GID_HOC)
 			bgCol = ChinaBackgroundColor;
 		else if (engine->getGameId() == GID_WILLY)
