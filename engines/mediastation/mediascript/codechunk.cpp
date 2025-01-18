@@ -388,7 +388,9 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 		} else {
 			// This is a regular asset that we can process directly.
 			Asset *selfAsset = self.getAsset();
-			assert(selfAsset != nullptr);
+			if (selfAsset == nullptr) {
+				error("CodeChunk::callBuiltInMethod(): Attempt to call method on asset ID %d, which isn't loaded", self.getAssetId());
+			}
 			Operand returnValue = selfAsset->callMethod(method, args);
 			return returnValue;
 		}
