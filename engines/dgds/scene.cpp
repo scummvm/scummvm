@@ -1428,18 +1428,20 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 }
 
 void SDSScene::mouseRDown(const Common::Point &pt) {
+	Dialog *dlg = getVisibleDialog();
+	if (dlg) {
+		// also allow right-click to clear dialogs
+		_shouldClearDlg = true;
+		return;
+	}
 	_rbuttonDown = true;
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
-	_rbuttonDown = false;
-	Dialog *dlg = getVisibleDialog();
-	if (dlg) {
-		// HACK: Check for dialog action selection! for now, just close
-		// it here to make game playable.
-		dlg->clear();
+	if (!_rbuttonDown)
 		return;
-	}
+
+	_rbuttonDown = false;
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (engine->getGameId() == GID_WILLY) {
