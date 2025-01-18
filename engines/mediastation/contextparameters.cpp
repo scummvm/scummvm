@@ -63,7 +63,7 @@ ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
 				error("ContextParameters::ContextParameters(): Variable with ID 0x%x already exists", variable->_id);
 			} else {
 				g_engine->_variables.setVal(variable->_id, variable);
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d", variable->_id);
+				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d (type: %s)", variable->_id, variableTypeToStr(variable->_type));
 			}
 			break;
 		}

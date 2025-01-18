@@ -26,11 +26,14 @@ namespace MediaStation {
 
 EventHandler::EventHandler(Chunk &chunk) {
 	_type = static_cast<EventType>(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type 0x%x (@0x%llx)", static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
-	_argumentType = static_cast<EventHandlerArgumentType>(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type 0x%x (@0x%llx)", static_cast<uint>(_argumentType), static_cast<long long int>(chunk.pos()));
-	_argumentValue = Datum(chunk);
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type %s (%d) (@0x%llx)", 
+		eventTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 
+	_argumentType = static_cast<EventHandlerArgumentType>(Datum(chunk).u.i);
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type %s (%d) (@0x%llx)",
+		eventHandlerArgumentTypeToStr(_argumentType), static_cast<uint>(_argumentType), static_cast<long long int>(chunk.pos()));
+
+	_argumentValue = Datum(chunk);
 	if (_argumentType != kNullEventHandlerArgument) {
 		uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
 		debugC(5, kDebugLoading, "EventHandler::EventHandler(): Null argument type, length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
