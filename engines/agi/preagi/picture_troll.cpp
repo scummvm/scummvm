@@ -49,6 +49,8 @@ namespace Agi {
 
 PictureMgr_Troll::PictureMgr_Troll(AgiBase *agi, GfxMgr *gfx) :
 	PictureMgr(agi, gfx) {
+	_stopOnF3 = false;
+	_trollMode = false;
 }
 
 void PictureMgr_Troll::drawPicture() {
