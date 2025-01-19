@@ -54,9 +54,9 @@ public:
 	uint _unk3 = 0;
 	uint _unk4 = 0;
 	uint _zIndex = 0; // TODO: This is still unconfirmed but seems likely.
-	uint _unk6 = 0;
-	uint _unk7 = 0;
-	uint _unk8 = 0;
+	uint _diffBetweenKeyframeAndFrameX = 0;
+	uint _diffBetweenKeyframeAndFrameY = 0;
+	uint _keyframeIndex = 0;
 	uint _unk9 = 0;
 	uint _index = 0;
 };

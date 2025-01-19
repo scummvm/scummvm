@@ -53,13 +53,21 @@ MovieFrameFooter::MovieFrameFooter(Chunk &chunk) {
 		_left = Datum(chunk).u.i;
 		_top = Datum(chunk).u.i;
 		_zIndex = Datum(chunk).u.i;
-		_unk6 = Datum(chunk).u.i;
-		_unk7 = Datum(chunk).u.i;
+		// This represents the difference between the left coordinate of the
+		// keyframe (if applicable) and the left coordinate of this frame. Zero
+		// if there is no keyframe.
+		_diffBetweenKeyframeAndFrameX = Datum(chunk).u.i;
+		// This represents the difference between the top coordinate of the
+		// keyframe (if applicable) and the top coordinate of this frame. Zero
+		// if there is no keyframe.
+		_diffBetweenKeyframeAndFrameY = Datum(chunk).u.i;
 		_index = Datum(chunk).u.i;
-		_unk8 = Datum(chunk).u.i;
+		_keyframeIndex = Datum(chunk).u.i;
 		_unk9 = Datum(chunk).u.i;
-		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = 0x%x, _endInMilliseconds = 0x%x, _left = 0x%x, _top = 0x%x, _index = 0x%x (@0x%llx)", _startInMilliseconds, _endInMilliseconds, _left, _top, _index, static_cast<long long int>(chunk.pos()));
-		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _unk4 = 0x%x, _unk5 = 0x%x, _unk6 = 0x%x, _unk7 = 0x%x, _unk8 = 0x%x, _unk9 = 0x%x", _unk4, _zIndex, _unk6, _unk7, _unk8, _unk9);
+		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = %d, _endInMilliseconds = %d, _left = %d, _top = %d, _index = %d, _keyframeIndex = %d (@0x%llx)", 
+			_startInMilliseconds, _endInMilliseconds, _left, _top, _index, _keyframeIndex, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _zIndex = %d, _diffBetweenKeyframeAndFrameX = %d, _diffBetweenKeyframeAndFrameY = %d, _unk4 = %d, _unk9 = %d",
+			_zIndex, _diffBetweenKeyframeAndFrameX, _diffBetweenKeyframeAndFrameY, _unk4,_unk9);
 	}
 }
 
