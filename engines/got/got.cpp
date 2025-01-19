@@ -76,7 +76,7 @@ Common::Error GotEngine::run() {
 
 	// General initialization
 	if (_G(demo))
-		initialize_game();
+		initGame();
 	syncSoundSettings();
 
 	runGame();
@@ -117,7 +117,7 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 		// For savegames loaded directly from the ScummVM launcher,
 		// take care of initializing game defaults before rest of loading
 		if (!firstView() || firstView()->getName() != "Game")
-			initialize_game();
+			initGame();
 
 		int area = _G(setup)._areaNum;
 		if (area == 0)
@@ -174,7 +174,7 @@ void GotEngine::savegameLoaded() {
 	_G(slow_mode) = _G(setup)._slowMode != 0;
 
 	g_events->replaceView("Game", true);
-	setup_load();
+	setupLoad();
 }
 
 bool GotEngine::canLoadGameStateCurrently(Common::U32String *msg) {

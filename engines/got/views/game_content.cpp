@@ -148,7 +148,7 @@ bool GameContent::tick() {
 		checkForCheats();
 
 		if (_G(endgame))
-			endgame_movement();
+			endGameMovement();
 		break;
 
 	case MODE_THOR_DIES:
@@ -406,7 +406,7 @@ void GameContent::checkForBossDead() {
 					boss2ClosingSequence1();
 					break;
 				case 3:
-					closing_sequence3();
+					boss3ClosingSequence1();
 					break;
 				default:
 					break;
@@ -705,7 +705,7 @@ void GameContent::closingSequence() {
 			boss2ClosingSequence2();
 			break;
 		case 3:
-			closing_sequence3_2();
+			boss3ClosingSequence2();
 			break;
 		default:
 			break;
@@ -721,7 +721,7 @@ void GameContent::closingSequence() {
 			boss2ClosingSequence3();
 			break;
 		case 3:
-			closing_sequence3_3();
+			boss3ClosingSequence3();
 			break;
 		default:
 			break;

@@ -60,14 +60,14 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 			else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
 				boss2ClosingSequence1();
 			else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
-				closing_sequence3();
+				boss3ClosingSequence1();
 		}
 		break;
 
 	case Common::KEYCODE_e:
 		if (gDebugLevel > 0 && GAME3)
 			// Launch endgame screen
-			closing_sequence3_3();
+			boss3ClosingSequence3();
 		break;
 
 	case Common::KEYCODE_s:

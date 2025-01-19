@@ -26,7 +26,7 @@
 
 namespace Got {
 
-extern void next_frame(Actor *actr);
+extern void nextFrame(Actor *actr);
 extern bool point_within(int x, int y, int x1, int y1, int x2, int y2);
 extern bool overlap(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 extern int  reverse_direction(Actor *actr);

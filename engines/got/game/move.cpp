@@ -30,7 +30,7 @@
 
 namespace Got {
 
-void next_frame(Actor *actr) {
+void nextFrame(Actor *actr) {
 	const int fcount = actr->_frameCount - 1;
 
 	if (fcount <= 0) {

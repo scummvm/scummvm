@@ -717,7 +717,7 @@ int movement_zero(Actor *actr) {
 		_G(diag) = 1;
 		_G(diag_flag) = true;
 		if (check_thor_move(x - 2, y - 2, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			return d;
 		}
 	} else if (_G(key_flag[key_up]) && _G(key_flag[key_right])) {
@@ -726,7 +726,7 @@ int movement_zero(Actor *actr) {
 		_G(diag) = 2;
 		_G(diag_flag) = true;
 		if (check_thor_move(x + 2, y - 2, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			return d;
 		}
 	} else if (_G(key_flag[key_down]) && _G(key_flag[key_left])) {
@@ -735,7 +735,7 @@ int movement_zero(Actor *actr) {
 		_G(diag) = 4;
 		_G(diag_flag) = true;
 		if (check_thor_move(x - 2, y + 2, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			return d;
 		}
 	} else if (_G(key_flag[key_down]) && _G(key_flag[key_right])) {
@@ -744,7 +744,7 @@ int movement_zero(Actor *actr) {
 		_G(diag) = 3;
 		_G(diag_flag) = true;
 		if (check_thor_move(x + 2, y + 2, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			return d;
 		}
 	}
@@ -754,7 +754,7 @@ int movement_zero(Actor *actr) {
 			d = 3;
 			actr->_dir = d;
 			if (check_thor_move(x + 2, y, actr)) {
-				next_frame(actr);
+				nextFrame(actr);
 				return d;
 			}
 		}
@@ -764,7 +764,7 @@ int movement_zero(Actor *actr) {
 			d = 2;
 			actr->_dir = d;
 			if (check_thor_move(x - 2, y, actr)) {
-				next_frame(actr);
+				nextFrame(actr);
 				return d;
 			}
 		}
@@ -774,7 +774,7 @@ int movement_zero(Actor *actr) {
 			d = 1;
 			actr->_dir = d;
 			if (check_thor_move(x, y + 2, actr)) {
-				next_frame(actr);
+				nextFrame(actr);
 				return d;
 			}
 		}
@@ -784,7 +784,7 @@ int movement_zero(Actor *actr) {
 			d = 0;
 			actr->_dir = d;
 			if (check_thor_move(x, y - 2, actr)) {
-				next_frame(actr);
+				nextFrame(actr);
 				return d;
 			}
 		}
@@ -925,7 +925,7 @@ int special_movement_one(Actor *actr) {
 		}
 		break;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	return 1;
 }
@@ -1097,7 +1097,7 @@ int special_movement_eleven(Actor *actr) {
 
 // No movement - frame cycle
 int movement_one(Actor *actr) {
-	next_frame(actr);
+	nextFrame(actr);
 	return actr->_dir;
 }
 
@@ -1134,7 +1134,7 @@ int movement_two(Actor *actr) {
 			_G(tornado_used) = false;
 		}
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1173,7 +1173,7 @@ int movement_three(Actor *actr) {
 		}
 		break;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1222,7 +1222,7 @@ int movement_four(Actor *actr) {
 		if (!f)
 			check_move2(actr->_x, actr->_y, actr);
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1265,7 +1265,7 @@ int movement_five(Actor *actr) {
 		x1 += xd;
 		y1 += yd;
 		if (check_move2(x1, y1, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			actr->_lastDir = d;
 			if (actr->_directions == 1)
 				return 0;
@@ -1293,7 +1293,7 @@ int movement_five(Actor *actr) {
 					d = 3;
 				else
 					d = 2;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -1308,7 +1308,7 @@ int movement_five(Actor *actr) {
 					d = 1;
 				else
 					d = 0;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -1323,7 +1323,7 @@ int movement_five(Actor *actr) {
 					d = 1;
 				else
 					d = 0;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -1338,7 +1338,7 @@ int movement_five(Actor *actr) {
 					d = 3;
 				else
 					d = 2;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -1347,7 +1347,7 @@ int movement_five(Actor *actr) {
 		}
 	}
 	check_move2(actr->_x, actr->_y, actr);
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1373,7 +1373,7 @@ int movement_six(Actor *actr) {
 		}
 	}
 
-	next_frame(actr);
+	nextFrame(actr);
 	return 0;
 }
 
@@ -1393,7 +1393,7 @@ int movement_eight(Actor *actr) {
 	else
 		actr->_x = _G(thor)->_x;
 	actr->_y = _G(thor)->_y;
-	next_frame(actr);
+	nextFrame(actr);
 	return 0;
 }
 
@@ -1435,7 +1435,7 @@ int movement_nine(Actor *actr) {
 		actr->_counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(3);
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1480,7 +1480,7 @@ int movement_ten(Actor *actr) {
 	if (lastDir > 1)
 		lastDir -= 2;
 
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = lastDir;
 	if (actr->_directions == 1)
 		return 0;
@@ -1526,7 +1526,7 @@ int movement_eleven(Actor *actr) {
 		break;
 	}
 
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1551,7 +1551,7 @@ int movement_twelve(Actor *actr) {
 		d = 2;
 		break;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1621,7 +1621,7 @@ int movement_fourteen(Actor *actr) {
 		}
 		break;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1658,7 +1658,7 @@ int movement_sixteen(Actor *actr) {
 		d = g_events->getRandomNumber(3);
 	}
 
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1703,7 +1703,7 @@ int movement_seventeen(Actor *actr) {
 		d = 1;
 		break;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -1749,7 +1749,7 @@ int movement_eighteen(Actor *actr) {
 			d = reverse_direction(actr);
 		}
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	return d;
 }
 
@@ -1864,7 +1864,7 @@ redo:
 // Spinball counter-clockwise
 int movement_twentythree(Actor *actr) {
 	int d = actr->_lastDir;
-	next_frame(actr);
+	nextFrame(actr);
 	if (actr->_passValue & 2)
 		actr->_numMoves = 2;
 
@@ -1960,7 +1960,7 @@ int movement_twentythree(Actor *actr) {
 // Spinball  clockwise
 int movement_twentyfour(Actor *actr) {
 	int d = actr->_lastDir;
-	next_frame(actr);
+	nextFrame(actr);
 	if (actr->_passValue & 2)
 		actr->_numMoves = 2;
 
@@ -2080,7 +2080,7 @@ int movement_twentysix(Actor *actr) {
 	if (GAME2)
 		return boss2Movement(actr);
 	if (GAME3)
-		return boss3_movement(actr);
+		return boss3Movement(actr);
 
 	return movement_one(actr);
 }
@@ -2117,7 +2117,7 @@ int movement_twentyeight(Actor *actr) {
 				actr->_frameSpeed = 4;
 			}
 
-			next_frame(actr);
+			nextFrame(actr);
 			if (actr->_nextFrame == 3) {
 				if (actr->_currNumShots < actr->_numShotsAllowed)
 					actor_shoots(actr, 0);
@@ -2214,7 +2214,7 @@ int movement_thirty(Actor *actr) {
 	if (!check_move2(x1, y1, actr))
 		d ^= 1;
 
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -2243,7 +2243,7 @@ int movement_thirtyone(Actor *actr) {
 	}
 
 done:
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -2274,7 +2274,7 @@ int movement_thirtyfive(Actor *actr) {
 // Acid drop
 int movement_thirtysix(Actor *actr) {
 	actr->_speed = actr->_passValue;
-	next_frame(actr);
+	nextFrame(actr);
 	if (actr->_nextFrame == 0 && actr->_frameCount == actr->_frameSpeed) {
 		actor_always_shoots(actr, 1);
 		_G(actor[actr->_shotActor])._x -= 2;
@@ -2320,7 +2320,7 @@ int movement_thirtyseven(Actor *actr) {
 		actr->_counter = g_events->getRandomNumber(10, 99);
 		d = g_events->getRandomNumber(3);
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -2410,7 +2410,7 @@ int movement_thirtyeight(Actor *actr) {
 			goto done;
 		}
 	}
-	next_frame(actr);
+	nextFrame(actr);
 
 done:
 	actr->_lastDir = d;
@@ -2453,7 +2453,7 @@ int movement_thirtynine(Actor *actr) {
 		_G(actor[5])._x -= 2;
 		_G(actor[6])._x -= 2;
 	}
-	next_frame(actr);
+	nextFrame(actr);
 	if (actr->_nextFrame == 3)
 		actr->_nextFrame = 0;
 	_G(actor[4])._nextFrame = _G(actor[3])._nextFrame;
@@ -2494,7 +2494,7 @@ int movement_forty(Actor *actr) {
 		_G(actor[actr->_shotActor])._x += 6;
 	}
 
-	next_frame(actr);
+	nextFrame(actr);
 	_G(actor[a - 2])._nextFrame = actr->_nextFrame;
 	_G(actor[a - 1])._nextFrame = actr->_nextFrame;
 	_G(actor[a + 1])._nextFrame = actr->_nextFrame;

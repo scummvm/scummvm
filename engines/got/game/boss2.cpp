@@ -209,7 +209,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 }
 
 void boss2SetupLevel() {
-	setup_boss(2);
+	setupBoss(2);
 	_G(boss_active) = true;
 	music_pause();
 	play_sound(BOSS11, true);
@@ -262,7 +262,7 @@ static int boss2Die() {
 
 // Boss - skull (explode)
 static int boss2MovementExplode(Actor *actor) {
-	next_frame(actor);
+	nextFrame(actor);
 	_G(actor[4])._nextFrame = actor->_nextFrame;
 	_G(actor[5])._nextFrame = actor->_nextFrame;
 	_G(actor[6])._nextFrame = actor->_nextFrame;
@@ -379,7 +379,7 @@ static int boss2MovementShake(Actor *actor) {
 	}
 
 done:
-	next_frame(actor);
+	nextFrame(actor);
 	bossSet(actor->_dir, actor->_x, actor->_y);
 	return 0;
 }

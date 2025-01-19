@@ -161,12 +161,12 @@ void showLevelDone() {
 		if (_G(new_level) == BOSS_LEVEL3) {
 			if (!_G(setup)._bossDead[2]) {
 				if (!_G(auto_load))
-					boss_level3();
+					boss3SetupLevel();
 				f = false;
 			}
 		}
 		if (_G(current_level) == ENDING_SCREEN) {
-			ending_screen();
+			endingScreen();
 			f = false;
 		}
 	}

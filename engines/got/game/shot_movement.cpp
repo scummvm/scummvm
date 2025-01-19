@@ -265,7 +265,7 @@ int shot_movement_four(Actor *actr) {
 		x1 += xd;
 		y1 += yd;
 		if (check_move3(x1, y1, actr)) {
-			next_frame(actr);
+			nextFrame(actr);
 			actr->_lastDir = d;
 			if (actr->_directions == 1)
 				return 0;
@@ -292,7 +292,7 @@ int shot_movement_four(Actor *actr) {
 					d = 3;
 				else
 					d = 2;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -307,7 +307,7 @@ int shot_movement_four(Actor *actr) {
 					d = 1;
 				else
 					d = 0;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -322,7 +322,7 @@ int shot_movement_four(Actor *actr) {
 					d = 1;
 				else
 					d = 0;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -337,7 +337,7 @@ int shot_movement_four(Actor *actr) {
 					d = 3;
 				else
 					d = 2;
-				next_frame(actr);
+				nextFrame(actr);
 				actr->_lastDir = d;
 				if (actr->_directions == 1)
 					return 0;
@@ -346,7 +346,7 @@ int shot_movement_four(Actor *actr) {
 		}
 	}
 	check_move3(actr->_x, actr->_y, actr);
-	next_frame(actr);
+	nextFrame(actr);
 	actr->_lastDir = d;
 	if (actr->_directions == 1)
 		return 0;
@@ -590,7 +590,7 @@ int shot_movement_eleven(Actor *actr) {
 			_G(actor[actr->_creator])._currNumShots--;
 		actor_destroyed(actr);
 	} else
-		next_frame(actr);
+		nextFrame(actr);
 
 	if (actr->_directions == 1)
 		return 0;

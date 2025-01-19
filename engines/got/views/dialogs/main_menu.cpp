@@ -67,7 +67,7 @@ void MainMenu::selected() {
 	case 4:
 		if (gDebugLevel > 0) {
 			_G(demo) = true;
-			initialize_game();
+			initGame();
 			replaceView("PartTitle", true, true);
 		} else {
 			addView("Quit");

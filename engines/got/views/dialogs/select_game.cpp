@@ -42,7 +42,7 @@ void SelectGame::selected() {
 	g_vars->setArea(_selectedItem + 1);
 
 	// Switch to the story view for the selected game area
-	initialize_game();
+	initGame();
 	replaceView("Story", true, true);
 }
 

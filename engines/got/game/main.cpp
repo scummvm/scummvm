@@ -25,7 +25,7 @@
 
 namespace Got {
 
-void setup_load() {
+void setupLoad() {
 	_G(thor)->_active = true;
 	_G(new_level) = _G(thor_info)._lastScreen;
 	_G(thor)->_x = (_G(thor_info)._lastIcon % 20) * 16;

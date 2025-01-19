@@ -148,7 +148,7 @@ done:
 		d -= 2;
 
 done0:
-	next_frame(actor);
+	nextFrame(actor);
 	if (actor->_nextFrame == 3)
 		actor->_nextFrame = 0;
 
@@ -205,7 +205,7 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 }
 
 void boss1SetupLevel() {
-	setup_boss(1);
+	setupBoss(1);
 	_G(boss_active) = true;
 	music_pause();
 	play_sound(BOSS11, true);
