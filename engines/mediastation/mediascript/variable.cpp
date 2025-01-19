@@ -96,12 +96,10 @@ Variable::Variable(Chunk &chunk, bool readId) {
 
 Variable::~Variable() {
 	switch (_type) {
-	case kVariableTypeAssetId:
-	case kVariableTypeBoolean: {
-		break;
-	}
-
 	case kVariableTypeCollection: {
+		for (Variable *variable : *(_value.collection)) {
+			delete variable;
+		}
 		delete _value.collection;
 		break;
 	}

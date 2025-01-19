@@ -67,6 +67,9 @@ uint32 SpriteFrame::index() {
 }
 
 Sprite::~Sprite() {
+	for (SpriteFrame *frame : _frames) {
+		delete frame;
+	}
 	_frames.clear();
 }
 

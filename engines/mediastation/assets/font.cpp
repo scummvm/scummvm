@@ -31,6 +31,9 @@ FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapH
 }
 
 Font::~Font() {
+    for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
+        delete it->_value;
+    }
     _glyphs.clear();
 }
 

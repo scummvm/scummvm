@@ -161,15 +161,21 @@ MovieFrame::~MovieFrame() {
 }
 
 Movie::~Movie() {
-	for (MovieFrame *frame : _stills) {
-		delete frame;
-	}
-	_stills.clear();
 	for (MovieFrame *frame : _frames) {
 		delete frame;
 	}
 	_frames.clear();
+
+	for (MovieFrame *still : _stills) {
+		delete still;
+	}
+	_stills.clear();
+
+	for (Audio::SeekableAudioStream *stream : _audioStreams) {
+		delete stream;
+	}
 	_audioStreams.clear();
+
 	for (MovieFrameFooter *footer : _footers) {
 		delete footer;
 	}
@@ -218,7 +224,7 @@ void Movie::timePlay() {
 	if (!_audioStreams.empty()) {
 		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
 		for (Audio::SeekableAudioStream *stream : _audioStreams) {
-			audio->queueAudioStream(stream);
+			audio->queueAudioStream(stream, DisposeAfterUse::NO);
 		}
 		// Then play the audio!
 		Audio::SoundHandle handle;
@@ -409,7 +415,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			Audio::SeekableAudioStream *stream = nullptr;
 			switch (_header->_soundEncoding) {
 			case SoundEncoding::PCM_S16LE_MONO_22050:
-				stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
+				stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 				break;
 
 			case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
