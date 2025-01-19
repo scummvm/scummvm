@@ -698,6 +698,8 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 
 	uint prevSize = _dialogs.size();
 
+	Common::String fileVersion;
+	Common::String fileId;
 	while (chunk.readNextHeader(EX_DDS, filename)) {
 		if (chunk.isContainer()) {
 			continue;
@@ -710,8 +712,8 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 			uint32 magic = stream->readUint32LE();
 			if (magic != _magic)
 				error("Dialog file magic mismatch %08x vs scene %08x", magic, _magic);
-			Common::String fileVersion = stream->readString();
-			Common::String fileId = stream->readString();
+			fileVersion = stream->readString();
+			fileId = stream->readString();
 			// slight hack, set file version while loading
 			Common::String oldVer = _version;
 			_version = fileVersion;
@@ -723,7 +725,8 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 	delete dlgFile;
 
 	if (_dialogs.size() != prevSize) {
-		debug(10, "Read %d dialogs from DDS %s:", _dialogs.size() - prevSize, filename.c_str());
+		debug(10, "Read %d dialogs from DDS %s (ver %s id '%s'):", _dialogs.size() - prevSize,
+			filename.c_str(), fileVersion.c_str(), fileId.c_str());
 		for (uint i = prevSize; i < _dialogs.size(); i++)
 			debug(10, "%s", _dialogs[i].dump("").c_str());
 	}
