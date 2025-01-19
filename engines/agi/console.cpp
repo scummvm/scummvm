@@ -27,6 +27,8 @@
 #include "agi/preagi/mickey.h"
 #include "agi/preagi/winnie.h"
 
+#include "common/file.h"
+
 namespace Agi {
 
 Console::Console(AgiEngine *vm) : GUI::Debugger() {
@@ -54,6 +56,7 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	registerCmd("vmvars",          WRAP_METHOD(Console, Cmd_VmVars));
 	registerCmd("vmflags",         WRAP_METHOD(Console, Cmd_VmFlags));
 	registerCmd("disableautosave", WRAP_METHOD(Console, Cmd_DisableAutomaticSave));
+	registerCmd("diskdump",        WRAP_METHOD(Console, Cmd_DiskDump));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -603,6 +606,80 @@ bool Console::Cmd_DisableAutomaticSave(int argc, const char **argv) {
 	_vm->_game.automaticSave = false;
 
 	debugPrintf("Automatic saving DISABLED!\n");
+	return true;
+}
+
+bool Console::Cmd_DiskDump(int argc, const char **argv) {
+	static const char *resTypes[4] = { "logic", "picture", "view", "sound" };
+
+	if (!(argc == 3 || (argc == 2 && strcmp(argv[1], "*") == 0))) {
+		debugPrintf("Dumps the specified resource to disk as a file\n");
+		debugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
+		debugPrintf("       <resource type> may be logic, picture, view, sound, or '*' for all resources\n");
+		debugPrintf("       <resource number> may be '*' to dump all resources of given type\n");
+		return true;
+	}
+
+	int resType = -1; // -1 == all
+	if (strcmp(argv[1], "*") != 0) {
+		for (int i = 0; i < ARRAYSIZE(resTypes); i++) {
+			if (scumm_stricmp(argv[1], resTypes[i]) == 0) {
+				resType = i;
+				break;
+			}
+		}
+		if (resType == -1) {
+			debugPrintf("Resource type '%s' is not valid\n", argv[1]);
+			return true;
+		}
+	}
+
+	int resNr = -1; // -1 == all
+	if (argc >= 3 && strcmp(argv[2], "*") != 0) {
+		if (!parseInteger(argv[2], resNr)) {
+			return true;
+		}
+		if (!(0 <= resNr && resNr < MAX_DIRECTORY_ENTRIES)) {
+			debugPrintf("Invalid resource number: %d\n", resNr);
+			return true;
+		}
+	}
+
+	AgiDir *resDirs[4] = { _vm->_game.dirLogic, _vm->_game.dirPic, _vm->_game.dirView, _vm->_game.dirSound };
+	for (int t = 0; t < ARRAYSIZE(resDirs); t++) {
+		if (resType != -1 && resType != t) {
+			continue;
+		}
+
+		AgiDir *resDir = resDirs[t];
+		for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+			if (resNr != -1 && resNr != i) {
+				continue;
+			}
+
+			if (resDir[i].offset == _EMPTY) {
+				if (resNr != -1) {
+					debugPrintf("Resource does not exist: %s.%03d\n", resTypes[t], i);
+				}
+				continue;
+			}
+
+			Common::String fileName = Common::String::format("%s.%03d", resTypes[t], i);
+			byte *resData = _vm->_loader->loadVolumeResource(&resDir[i]);
+			if (resData != nullptr) {
+				Common::DumpFile file;
+				if (file.open(Common::Path(fileName))) {
+					file.write(resData, resDir[i].len);
+					debugPrintf("%s has been dumped to disk\n", fileName.c_str());
+				} else {
+					debugPrintf("Error dumping %s to disk\n", fileName.c_str());
+				}
+				free(resData);
+			} else {
+				debugPrintf("Error dumping %s to disk\n", fileName.c_str());
+			}
+		}
+	}
 	return true;
 }
 

@@ -66,6 +66,7 @@ private:
 	bool Cmd_VmVars(int argc, const char **argv);
 	bool Cmd_VmFlags(int argc, const char **argv);
 	bool Cmd_DisableAutomaticSave(int argc, const char **argv);
+	bool Cmd_DiskDump(int argc, const char **argv);
 
 	bool parseInteger(const char *argument, int &result);
 
