@@ -701,6 +701,9 @@ protected:
 	void setupOpcodesFunc() override;
 	void setupOpcodesGob() override;
 
+	Common::String ansiToOEM(Common::String string);
+	Common::String oemToANSI(Common::String string);
+
 	void o7_draw0x0C();
 	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
@@ -783,6 +786,7 @@ protected:
 
 	void o7_ansiToOEM(OpGobParams &params);
 	void o7_oemToANSI(OpGobParams &params);
+	void o7_setDBStringEncoding(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
 	void o7_getFreeDiskSpace(OpGobParams &params);
 
