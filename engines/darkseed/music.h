@@ -22,6 +22,7 @@
 #ifndef DARKSEED_MUSIC_H
 #define DARKSEED_MUSIC_H
 
+#include "darkseed/adlib_dsf.h"
 #include "darkseed/adlib_worx.h"
 
 #include "audio/mididrv_ms.h"
@@ -38,23 +39,30 @@ protected:
 
 	Common::Mutex _mutex;
 	MidiDriver_Multisource *_driver;
+	MidiDriver_DarkSeedFloppy_AdLib *_floppyAdLibDriver;
 
 	MidiParser *_parser;
 	byte *_musicData;
+	byte *_tosInstrumentBankData;
+	bool _tosInstrumentBankLoaded;
+	bool _useFloppyMusic;
 
 	bool _paused;
 
 	static void onTimer(void *data);
 
 public:
-	MusicPlayer(DarkseedEngine *vm);
+	MusicPlayer(DarkseedEngine *vm, bool useFloppyMusic);
 	~MusicPlayer();
 
 	int open();
 
-	void load(Common::SeekableReadStream *in, int32 size = -1);
+	void load(Common::SeekableReadStream *in, int32 size = -1, bool sfx = false);
+	void loadTosInstrumentBankData(Common::SeekableReadStream *in, int32 size = -1);
+	void loadTosInstrumentBank();
+	void loadInstrumentBank(Common::SeekableReadStream *in, int32 size = -1);
 
-	void play(bool loop = false);
+	void play(uint8 priority = 0xFF, bool loop = false);
 	void setLoop(bool loop);
 	bool isPlaying();
 	void stop();

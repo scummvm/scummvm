@@ -343,6 +343,22 @@ public:
 		INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON
 	};
 
+	enum RhythmInstrumentMode {
+		/**
+		 * If rhythm mode is active, any note played on the MIDI rhythm channel 
+		 * 10 will be played as an OPL rhythm note. The instrument returned by
+		 * determineInstrument is expected to be a rhythm instrument.
+		 */
+		RHYTHM_INSTRUMENT_MODE_CHANNEL_10,
+		/**
+		 * If rhythm mode is active, any note for which determineInstrument
+		 * returns a rhythm instrument will be played as an OPL rhythm note.
+		 * This will disable the behavior of MIDI channel 10 as the rhythm
+		 * channel entirely and treat it as a melodic channel.
+		 */
+		RHYTHM_INSTRUMENT_MODE_RHYTHM_TYPE
+	};
+
 	/**
 	 * The available modes for the OPL note select setting.
 	 */
@@ -1207,11 +1223,15 @@ protected:
 	ChannelAllocationMode _allocationMode;
 	// Controls when the instrument definitions are written.
 	InstrumentWriteMode _instrumentWriteMode;
+	// In instrument write mode First Note On or Program Change, this flag controls if the Cx register,
+	// which is shared between rhythm mode instrument definitions (except bass drum), is rewritten
+	// before each note on.
+	bool _rhythmModeRewriteSharedRegister;
 	// Controls response to rhythm note off events when rhythm mode is active.
 	bool _rhythmModeIgnoreNoteOffs;
-	// Controls whether MIDI channel 10 is treated as the rhythm channel or as
-	// a melodic channel.
-	bool _channel10Melodic;
+	// Controls how rhythm notes are played in OPL rhythm mode and whether MIDI
+	// channel 10 is treated as the rhythm channel or as a melodic channel.
+	RhythmInstrumentMode _rhythmInstrumentMode;
 
 	// The default MIDI channel volume (set when opening the driver).
 	uint8 _defaultChannelVolume;

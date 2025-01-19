@@ -21,32 +21,39 @@
 
 #include "darkseed/music.h"
 #include "darkseed/darkseed.h"
+#include "darkseed/midiparser_sbr.h"
 
 namespace Darkseed {
 
-MusicPlayer::MusicPlayer(DarkseedEngine* vm) :
+MusicPlayer::MusicPlayer(DarkseedEngine* vm, bool useFloppyMusic) :
 	_vm(vm),
 	_driver(nullptr),
+	_floppyAdLibDriver(nullptr),
 	_paused(false),
 	_deviceType(MT_NULL),
 	_parser(nullptr),
-	_musicData(nullptr) {
+	_musicData(nullptr),
+	_tosInstrumentBankData(nullptr),
+	_tosInstrumentBankLoaded(false),
+	_useFloppyMusic(useFloppyMusic) {
 }
 
 MusicPlayer::~MusicPlayer() {
 	stop();
-	if (_driver) {
+	if (_driver != nullptr) {
 		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 	}
 
 	Common::StackLock lock(_mutex);
 
-	if (_parser)
+	if (_parser != nullptr)
 		delete _parser;
-	if (_musicData)
+	if (_musicData != nullptr)
 		delete[] _musicData;
-	if (_driver) {
+	if (_tosInstrumentBankData != nullptr)
+		delete[] _tosInstrumentBankData;
+	if (_driver != nullptr) {
 		delete _driver;
 		_driver = nullptr;
 	}
@@ -59,9 +66,20 @@ int MusicPlayer::open() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
 	_deviceType = MidiDriver::getMusicType(dev);
 
-	if (!_vm->isCdVersion()) {
-		// TODO Initialize driver and parser for floppy version
-		_driver = new MidiDriver_NULL_Multisource();
+	if (_useFloppyMusic) {
+		switch (_deviceType) {
+			case MT_ADLIB:
+				_floppyAdLibDriver = new MidiDriver_DarkSeedFloppy_AdLib(OPL::Config::kOpl2);
+				_driver = _floppyAdLibDriver;
+				break;
+			case MT_PCSPK:
+				// TODO Implement PC speaker driver
+			default:
+				_driver = new MidiDriver_NULL_Multisource();
+				break;
+		}
+
+		_parser = new MidiParser_SBR(0);
 	} else {
 		switch (_deviceType) {
 			case MT_ADLIB:
@@ -157,7 +175,7 @@ void MusicPlayer::setLoop(bool loop) {
 		_parser->property(MidiParser::mpAutoLoop, loop);
 }
 
-void MusicPlayer::load(Common::SeekableReadStream *in, int32 size) {
+void MusicPlayer::load(Common::SeekableReadStream *in, int32 size, bool sfx) {
 	Common::StackLock lock(_mutex);
 
 	if (!_parser)
@@ -189,13 +207,67 @@ void MusicPlayer::load(Common::SeekableReadStream *in, int32 size) {
 	_parser->loadMusic(_musicData, size);
 }
 
-void MusicPlayer::play(bool loop) {
+void MusicPlayer::loadTosInstrumentBankData(Common::SeekableReadStream* in, int32 size) {
+	if (size != 4096) {
+		warning("MusicPlayer::loadTosInstrumentBankData - Specified instrument bank has unexpected size %d", size);
+		return;
+	}
+
+	if (_tosInstrumentBankData != nullptr)
+		delete[] _tosInstrumentBankData;
+
+	_tosInstrumentBankData = new byte[size];
+	in->read(_tosInstrumentBankData, size);
+}
+
+void MusicPlayer::loadTosInstrumentBank() {
+	if (_floppyAdLibDriver == nullptr) {
+		warning("MusicPlayer::loadTosInstrumentBank - Driver does not support instrument banks");
+		return;
+	}
+	if (_tosInstrumentBankData == nullptr) {
+		warning("MusicPlayer::loadTosInstrumentBank - TOS instrument bank data has not been loaded");
+		return;
+	}
+
+	if (!_tosInstrumentBankLoaded) {
+		if (isPlaying())
+			stop();
+		_floppyAdLibDriver->loadInstrumentBank(_tosInstrumentBankData);
+		_tosInstrumentBankLoaded = true;
+	}
+}
+
+void MusicPlayer::loadInstrumentBank(Common::SeekableReadStream *in, int32 size) {
+	if (_floppyAdLibDriver == nullptr) {
+		warning("MusicPlayer::loadInstrumentBank - Driver does not support instrument banks");
+		return;
+	}
+	if (size != 4096) {
+		warning("MusicPlayer::loadInstrumentBank - Specified instrument bank has unexpected size %d", size);
+		return;
+	}
+
+	byte *instrumentBankData = new byte[size];
+	in->read(instrumentBankData, size);
+
+	if (isPlaying())
+		stop();
+	_floppyAdLibDriver->loadInstrumentBank(instrumentBankData);
+	_tosInstrumentBankLoaded = false;
+}
+
+void MusicPlayer::play(uint8 priority, bool loop) {
 	Common::StackLock lock(_mutex);
 
 	if (!_parser)
 		return;
 
-	_parser->property(MidiParser::mpAutoLoop, loop);
+	if (!_useFloppyMusic)
+		_parser->property(MidiParser::mpAutoLoop, loop);
+	if (_floppyAdLibDriver != nullptr)
+		_floppyAdLibDriver->setSourcePriority(0, priority);
+
 	_parser->startPlaying();
 }
 

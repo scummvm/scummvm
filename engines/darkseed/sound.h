@@ -63,6 +63,7 @@ class Sound {
 	Audio::SoundHandle _sfxHandle;
 	MusicPlayer *_musicPlayer;
 	Common::Array<uint8> _didSpeech;
+	bool _useFloppyMusic;
 
 public:
 	explicit Sound(Audio::Mixer *mixer);
@@ -81,7 +82,7 @@ public:
 	void resetSpeech();
 	void playMusic(MusicId musicId, bool loop = true);
 	void playMusic(StartMusicId musicId);
-	void playMusic(Common::String const &filename, bool loop = false);
+	void playMusic(Common::String const &filename, Common::String const *instrBankFilename = nullptr, uint8 priority = 0xFF, bool loop = false);
 	void stopMusic();
 	void playSfx(uint8 sfxId, int unk1, int unk2);
 	void stopSfx();

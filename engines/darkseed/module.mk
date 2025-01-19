@@ -1,6 +1,7 @@
 MODULE := engines/darkseed
 
 MODULE_OBJS = \
+	adlib_dsf.o \
 	adlib_worx.o \
 	animation.o \
 	anm.o \
@@ -18,6 +19,7 @@ MODULE_OBJS = \
 	langtext.o \
 	menu.o \
 	metaengine.o \
+	midiparser_sbr.o \
 	morph.o \
 	music.o \
 	nsp.o \
