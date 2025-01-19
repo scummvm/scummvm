@@ -23,6 +23,7 @@ namespace Dgds {
 
 enum DgdsADGFFlags {
 	ADGF_DGDS_EGA = 1,
+	ADGF_DGDS_ALT_DIALOG_COLORS = 2,
 };
 
 static const ADGameDescription gameDescriptions[] = {
@@ -250,7 +251,11 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	//
 	// Adventures of Willy Beamish Demo from Joystick Magazine 1995 September disk
+	// Interactive demo with different dialog rendering which needs some hard-coded
+	// color differences
+	//
 	{
 		"beamish",
 		0,
@@ -261,7 +266,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_UNSTABLE | ADGF_DEMO | ADGF_DGDS_ALT_DIALOG_COLORS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -398,7 +403,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 

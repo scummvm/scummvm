@@ -88,13 +88,14 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
-	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false),
+	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _isAltDlgColors(false),
 	_gameId(GID_INVALID), _thisFrameMs(0), _lastGlobalFade(-1), _lastGlobalFadedPal(0),
 	_debugShowHotAreas(false), _lastMouseEvent(Common::EVENT_INVALID) {
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
 	_isEGA = (gameDesc->flags & ADGF_DGDS_EGA);
+	_isAltDlgColors = (gameDesc->flags & ADGF_DGDS_ALT_DIALOG_COLORS);
 
 	if (!strcmp(gameDesc->gameId, "rise")) {
 		_gameId = GID_DRAGON;
@@ -819,10 +820,6 @@ Common::Error DgdsEngine::run() {
 		static const int framesPerSecond = 15;
 
 		frameCount++;
-		if (_skipNextFrame) {
-			frameCount++;
-			_skipNextFrame = false;
-		}
 
 		uint32 thisFrameEndMillis = g_system->getMillis();
 		uint32 elapsedMillis = thisFrameEndMillis - startMillis;

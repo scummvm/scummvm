@@ -183,8 +183,8 @@ private:
 
 	bool _isDemo;
 	bool _isEGA;
+	bool _isAltDlgColors;
 	bool _flipMode;
-	bool _skipNextFrame;
 	uint32 _thisFrameMs;
 	int16 _lastGlobalFade; // Only used in Willy Beamish
 	uint _lastGlobalFadedPal;
@@ -269,13 +269,14 @@ public:
 	ChinaTrain *getChinaTrain() { return _chinaTrain; }
 	ChinaTank *getChinaTank() { return _chinaTank; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
-	void setSkipNextFrame() { _skipNextFrame = true; }
 	uint32 getThisFrameMs() const { return _thisFrameMs; }
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }
 
 	bool isEGA() const { return _isEGA; }
+	bool isDemo() const { return _isDemo; }
+	bool isAltDlgColors() const { return _isAltDlgColors; }
 
 	void enableKeymapper();
 	void disableKeymapper();

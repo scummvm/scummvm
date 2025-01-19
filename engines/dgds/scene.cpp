@@ -59,7 +59,7 @@ Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = HotArea::dump(indent + "  ");
 
 	Common::String str = Common::String::format(
-			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags %d quality %d",
+			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags 0x%x quality %d",
 			indent.c_str(), super.c_str(), indent.c_str(), _altCursor,
 			_iconNum, _inSceneNum, _flags, _quality);
 	str += DebugUtil::dumpStructList(indent, "onDragFinishedOps", onDragFinishedOps);
@@ -411,6 +411,8 @@ void Scene::setDragItemOp(const Common::Array<uint16> &args) {
 
 		bool inScene = (item._inSceneNum == engine->getScene()->getNum());
 		engine->getScene()->setDragItem(&item);
+		if (item._inSceneNum == 2)
+			item._flags |= kItemStateWasInInv;
 		if (!inScene)
 			item._inSceneNum = engine->getScene()->getNum(); // else do some redraw??
 
@@ -510,7 +512,7 @@ bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
 SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false),
-_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false), _lookMode(0) {
+_field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false), _lookMode(0), _lbuttonDownWithDrag(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1209,7 +1211,7 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 	GameItem *activeItem = engine->getGDSScene()->getActiveItem();
 
 	if (_dragItem) {
-		if (area && area->_objInteractionRectNum == 1) {
+		if (area && area->_objInteractionRectNum == 1 && !(_dragItem->_flags & kItemStateWasInInv)) {
 			// drag over Willy Beamish
 			engine->getInventory()->open();
 			return;
@@ -1233,8 +1235,13 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 		_shouldClearDlg = true;
 		_ignoreMouseUp = true;
 		return;
+	} else if (_dragItem) {
+		// Nothing to do if we have a drag item, will be handled on mouseup.
+		_lbuttonDownWithDrag = true;
+		return;
 	}
 
+	_lbuttonDownWithDrag = false;
 	_ignoreMouseUp = false;
 
 	// Don't start drag in look/target mode.
@@ -1255,6 +1262,8 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	GameItem *item = dynamic_cast<GameItem *>(area);
 	if (item) {
 		_dragItem = item;
+		if (item->_inSceneNum == 2)
+			item->_flags |= kItemStateWasInInv;
 		if (item->_iconNum)
 			engine->setMouseCursor(item->_iconNum);
 	}
@@ -1284,8 +1293,16 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		return;
 	}
 
+	//
+	// HoC and Dragon drop as soon as the mouse is released.
+	// Willy keeps dragging the item until another click.
+	//
 	if (_dragItem) {
-		onDragFinish(pt);
+		if (engine->getGameId() != GID_WILLY || _lbuttonDownWithDrag) {
+			_dragItem->_flags &= ~kItemStateWasInInv;
+			onDragFinish(pt);
+			_lbuttonDownWithDrag = false;
+		}
 		return;
 	}
 
@@ -1340,7 +1357,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 					return;
 			}
 		} else {
-			debug(1, " --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
+			debug(1, " --> exec %d L click ops for area %d", area->onLClickOps.size(), area->_num);
 			int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
 			runOps(area->onLClickOps, addmins);
 		}
@@ -1369,8 +1386,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
 
-	// TODO: Both these loops are very similar.. there should be a cleaner way.
-
+	// Check for dropping on an object
 	for (const auto &item : gdsScene->getGameItems()) {
 		if (item._inSceneNum == dropSceneNum && _isInRect(pt, item._rect)) {
 			debug(1, "Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
@@ -1383,6 +1399,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		}
 	}
 
+	// Check for dropping on an area
 	const SDSScene *scene = engine->getScene();
 	for (const auto &area : _hotAreaList) {
 		if (!_isInRect(pt, area._rect))
@@ -2031,7 +2048,7 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 	const int maxx = SCREEN_WIDTH - (icons->width(2) + 10);
 	for (auto &item : _gameItems) {
 		if (item._inSceneNum == currentScene && &item != engine->getScene()->getDragItem()) {
-			if (!(item._flags & 1)) {
+			if (!(item._flags & kItemStateDragging)) {
 				// Dropped item.
 				// Update the rect for the icon - Note: original doesn't do this,
 				// but then the napent icon is offset??

@@ -227,7 +227,7 @@ bool SceneOp::runCommonOp() const {
 	case kSceneOpAddFlagToDragItem: {
 		GameItem *item = engine->getScene()->getDragItem();
 		if (item) {
-			item->_flags |= 1;
+			item->_flags |= kItemStateDragging;
 			// TODO: Use hot x/y or just position?
 			Common::Point lastMouse = engine->getLastMouseMinusHot();
 			item->_rect.x = lastMouse.x;

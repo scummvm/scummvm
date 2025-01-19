@@ -238,7 +238,7 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	if (engine->getGameId() == GID_HOC)
+	if (engine->getGameId() == GID_HOC || !_invClock)
 		return;
 
 	const DgdsFont *font = RequestData::getMenuFont();
@@ -396,6 +396,7 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 			_highlightItemNo = underMouse->_num;
 			engine->getScene()->runOps(underMouse->onLDownOps);
 			engine->getScene()->setDragItem(underMouse);
+			underMouse->_flags |= kItemStateWasInInv;
 			if (underMouse->_iconNum)
 				engine->setMouseCursor(underMouse->_iconNum);
 		}

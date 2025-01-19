@@ -71,6 +71,11 @@ public:
 };
 
 
+enum GameItemState {
+	kItemStateDragging = 1,
+	kItemStateWasInInv = 0x10000,
+};
+
 class GameItem : public HotArea {
 public:
 	Common::Array<SceneOp> onDragFinishedOps;
@@ -80,7 +85,7 @@ public:
 
 	// mutable values
 	uint16 _inSceneNum;
-	uint16 _flags;
+	uint32 _flags;
 	uint16 _quality;
 
 	Common::String dump(const Common::String &indent) const override;
@@ -371,6 +376,7 @@ private:
 	bool _ignoreMouseUp;
 	bool _lbuttonDown;
 	bool _rbuttonDown;
+	bool _lbuttonDownWithDrag;
 
 	/// Only changes in beamish - toggle between use (0), look (1) and target (2)
 	int16 _lookMode;
