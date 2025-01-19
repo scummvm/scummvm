@@ -134,7 +134,7 @@ int boss2Movement(Actor *actor) {
 			dropFlag = true;
 			_G(actor[3])._temp6 = 40;
 
-			actor_always_shoots(actor, 1);
+			actorAlwaysShoots(actor, 1);
 			play_sound(FALL, false);
 			_G(actor[actor->_shotActor])._x = actor->_x + 12;
 			_G(actor[actor->_shotActor])._y = actor->_y + 32;
@@ -170,10 +170,10 @@ static void bossSet(byte d, int x, int y) {
 
 void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 	if ((!_G(actor[3])._vulnerableCountdown)) {
-		actor_damaged(&_G(actor[3]), _G(hammer)->_hitStrength);
+		actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 		_G(actor[3])._health -= 10;
 		if (_G(actor[3])._health == 50) {
-			play_sound(BOSS12, 1);
+			play_sound(BOSS12, true);
 
 			g_events->send("Game", GameMessage("PAUSE", 40));
 
@@ -183,7 +183,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 
 			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
-					actor_destroyed(&_G(actor[rep]));
+					actorDestroyed(&_G(actor[rep]));
 			}
 			_G(actor[3])._currNumShots = 0;
 		} else
@@ -202,7 +202,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 			_G(boss_dead) = true;
 			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
-					actor_destroyed(&_G(actor[rep]));
+					actorDestroyed(&_G(actor[rep]));
 			}
 		}
 	}
@@ -227,12 +227,12 @@ static int boss2Die() {
 	_G(thunder_flag) = 0;
 	if (_G(boss_dead)) {
 		for (int rep = 0; rep < 4; rep++) {
-			int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
-			int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
-			int x = _G(actor[3 + rep])._x;
-			int y = _G(actor[3 + rep])._y;
-			int n = _G(actor[3 + rep])._actorNum;
-			int r = _G(actor[3 + rep])._dropRating;
+			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
+			const int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
+			const int x = _G(actor[3 + rep])._x;
+			const int y = _G(actor[3 + rep])._y;
+			const int n = _G(actor[3 + rep])._actorNum;
+			const int r = _G(actor[3 + rep])._dropRating;
 
 			_G(actor[3 + rep]) = _G(explosion);
 
@@ -272,8 +272,8 @@ static int boss2MovementExplode(Actor *actor) {
 		return 0;
 
 	play_sound(EXPLODE, true);
-	actor_always_shoots(&_G(actor[5]), 0);
-	int an = _G(actor[5])._shotActor;
+	actorAlwaysShoots(&_G(actor[5]), 0);
+	const int an = _G(actor[5])._shotActor;
 	_G(actor[an])._moveType = 9;
 
 	int r = _G(rand1) % 60;
@@ -283,8 +283,8 @@ static int boss2MovementExplode(Actor *actor) {
 			r = 0;
 	}
 	expf[r] = true;
-	int x = (EXPLOSION[r] % 20) * 16;
-	int y = (EXPLOSION[r] / 20) * 16;
+	const int x = (EXPLOSION[r] % 20) * 16;
+	const int y = (EXPLOSION[r] / 20) * 16;
 	_G(actor[an])._x = x;
 	_G(actor[an])._y = y;
 
@@ -306,7 +306,7 @@ static int boss2MovementShake(Actor *actor) {
 
 	if (_G(hammer)->_active && _G(hammer)->_moveType != 5) {
 		hx = _G(hammer)->_x;
-		int hy = _G(hammer)->_y;
+		const int hy = _G(hammer)->_y;
 		for (rep = 7; rep < 15; rep++) {
 			if (!_G(actor[rep])._active)
 				continue;
@@ -314,8 +314,7 @@ static int boss2MovementShake(Actor *actor) {
 			if (overlap(hx + 1, hy + 1, hx + 10, hy + 10, _G(actor[rep])._x, _G(actor[rep])._y,
 						_G(actor[rep])._x + _G(actor[rep])._sizeX - 1, _G(actor[rep])._y + _G(actor[rep])._sizeY - 1)) {
 				_G(hammer)->_moveType = 5;
-				int d = reverse_direction(_G(hammer));
-				_G(hammer)->_dir = d;
+				_G(hammer)->_dir = reverseDirection(_G(hammer));
 				break;
 			}
 		}
@@ -355,7 +354,7 @@ static int boss2MovementShake(Actor *actor) {
 		actor->_i2 = 0;
 
 		Common::fill(su, su + 18, 0);
-		actor_always_shoots(&_G(actor[4]), 1);
+		actorAlwaysShoots(&_G(actor[4]), 1);
 		an = _G(actor[4])._shotActor;
 		hx = (_G(thor)->_x / 16);
 		_G(actor[an])._x = _G(thor)->_x; //hx*16;
@@ -370,7 +369,7 @@ static int boss2MovementShake(Actor *actor) {
 					break;
 			}
 			su[hx] = 1;
-			actor_always_shoots(&_G(actor[4]), 1);
+			actorAlwaysShoots(&_G(actor[4]), 1);
 			an = _G(actor[4])._shotActor;
 			_G(actor[an])._nextFrame = g_events->getRandomNumber(3);
 			_G(actor[an])._x = 16 + hx * 16;

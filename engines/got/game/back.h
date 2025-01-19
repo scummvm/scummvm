@@ -35,7 +35,7 @@ extern const char *ITEM_NAMES[];
  * Now in ScummVM, it only does the setup portions, since the
  * GameContent view takes care of the scene rendering.
 */
-extern void showLevel(int new_level);
+extern void showLevel(int newLevel);
 extern void showLevelDone();
 extern void odinSpeaks(int index, int item, const char *endMessage = nullptr);
 extern int switchIcons();

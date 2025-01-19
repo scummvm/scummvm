@@ -51,7 +51,7 @@ int boss1Movement(Actor *actor) {
 
 	if (overlap(actor->_x + 2, actor->_y + 8, actor->_x + 30, actor->_y + 30,
 				_G(thor)->_x, _G(thor)->_y + 8, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
-		thor_damaged(actor);
+		thorDamaged(actor);
 	}
 
 	if (actor->_temp3) { //start striking
@@ -117,7 +117,7 @@ int boss1Movement(Actor *actor) {
 			y1 = _G(actor[5])._y;
 			y1 += 2;
 
-			if (!check_move2(x1, y1, &_G(actor[5])))
+			if (!checkMove2(x1, y1, &_G(actor[5])))
 				f = true;
 			else {
 				actor->_x = _G(actor[5])._x;
@@ -127,7 +127,7 @@ int boss1Movement(Actor *actor) {
 		case 0:
 		case 2:
 			y1 -= 2;
-			if (!check_move2(x1, y1, actor))
+			if (!checkMove2(x1, y1, actor))
 				f = true;
 			break;
 
@@ -182,7 +182,7 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 	if (actor->_moveType == 15 && act_num == 4) {
 		if ((!_G(actor[3])._vulnerableCountdown) && (_G(actor[3])._nextFrame != 3) &&
 			overlap(x1, y1, x2, y2, actor->_x + 6, actor->_y + 4, actor->_x + 14, actor->_y + 20)) {
-			actor_damaged(&_G(actor[3]), _G(hammer)->_hitStrength);
+			actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 			if (_G(cheat) && _G(key_flag[_Z]))
 				_G(actor[3])._health = 0;
 			else
@@ -217,12 +217,12 @@ static int boss1_dead() {
 	_G(hourglass_flag) = 0;
 	if (_G(boss_dead)) {
 		for (int rep = 0; rep < 4; rep++) {
-			int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
-			int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
-			int x = _G(actor[3 + rep])._x;
-			int y = _G(actor[3 + rep])._y;
-			int n = _G(actor[3 + rep])._actorNum;
-			int r = _G(actor[3 + rep])._dropRating;
+			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
+			const int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
+			const int x = _G(actor[3 + rep])._x;
+			const int y = _G(actor[3 + rep])._y;
+			const int n = _G(actor[3 + rep])._actorNum;
+			const int r = _G(actor[3 + rep])._dropRating;
 
 			_G(actor[3 + rep]) = _G(explosion);
 			_G(actor[3 + rep])._actorNum = n;
@@ -246,7 +246,7 @@ static int boss1_dead() {
 
 		for (int rep = 7; rep < MAX_ACTORS; rep++) {
 			if (_G(actor[rep])._active)
-				actor_destroyed(&_G(actor[rep]));
+				actorDestroyed(&_G(actor[rep]));
 		}
 	}
 

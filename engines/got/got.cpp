@@ -219,7 +219,7 @@ void GotEngine::pauseEngineIntern(bool pause) {
 
 	if (_G(tornado_used)) {
 		_G(tornado_used) = false;
-		actor_destroyed(&_G(actor[2]));
+		actorDestroyed(&_G(actor[2]));
 	}
 
 	if (_G(shield_on)) {

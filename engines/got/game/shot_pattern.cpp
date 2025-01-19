@@ -58,7 +58,7 @@ int shot_pattern_one(Actor *actr) {
 	case 0:
 		if (ABS(_G(thor_x1) - actr->_x) < 8) {
 			if (actr->_y > _G(thor_real_y1)) { //r
-				if (actor_shoots(actr, 0))
+				if (actorShoots(actr, 0))
 					return 1;
 			}
 		}
@@ -66,7 +66,7 @@ int shot_pattern_one(Actor *actr) {
 	case 1:
 		if (ABS(_G(thor_x1) - actr->_x) < 8) {
 			if (actr->_y < _G(thor_real_y1)) { //r
-				if (actor_shoots(actr, 1))
+				if (actorShoots(actr, 1))
 					return 1;
 			}
 		}
@@ -74,7 +74,7 @@ int shot_pattern_one(Actor *actr) {
 	case 2:
 		if (ABS(_G(thor_real_y1) - actr->_y) < 8) { //r
 			if (actr->_x > _G(thor_x1)) {
-				if (actor_shoots(actr, 2))
+				if (actorShoots(actr, 2))
 					return 1;
 			}
 		}
@@ -82,7 +82,7 @@ int shot_pattern_one(Actor *actr) {
 	case 3:
 		if (ABS(_G(thor_real_y1) - actr->_y) < 8) { //r
 			if (actr->_x < _G(thor_x1)) {
-				if (actor_shoots(actr, 3))
+				if (actorShoots(actr, 3))
 					return 1;
 			}
 		}
@@ -96,16 +96,16 @@ int shot_pattern_one(Actor *actr) {
 int shot_pattern_two(Actor *actr) {
 	if (ABS(_G(thor)->_x - actr->_x) < 8) {
 		if (_G(thor)->_y > actr->_y)
-			actor_shoots(actr, 1);
+			actorShoots(actr, 1);
 		else if (_G(thor)->_y < actr->_y)
-			actor_shoots(actr, 0);
+			actorShoots(actr, 0);
 		else
 			return 0;
 	} else if (ABS(_G(thor)->_y - actr->_y) < 8) {
 		if (_G(thor)->_x > actr->_x)
-			actor_shoots(actr, 3);
+			actorShoots(actr, 3);
 		else if (_G(thor)->_x < actr->_x)
-			actor_shoots(actr, 2);
+			actorShoots(actr, 2);
 	} else {
 		return 0;
 	}
@@ -117,11 +117,11 @@ int shot_pattern_two(Actor *actr) {
 int shot_pattern_three(Actor *actr) {
 	int ld = actr->_lastDir;
 	if (shot_pattern_one(actr)) {
-		actr->_lastDir = reverse_direction(actr);
+		actr->_lastDir = reverseDirection(actr);
 		return 1;
 	}
 
-	actr->_lastDir = reverse_direction(actr);
+	actr->_lastDir = reverseDirection(actr);
 	shot_pattern_one(actr);
 	actr->_lastDir = ld;
 
@@ -132,16 +132,16 @@ int shot_pattern_three(Actor *actr) {
 int shot_pattern_four(Actor *actr) {
 	if (ABS(_G(thor)->_x - actr->_x) < 8) {
 		if (_G(thor)->_y > actr->_y)
-			actor_always_shoots(actr, 1);
+			actorAlwaysShoots(actr, 1);
 		else if (_G(thor)->_y < actr->_y)
-			actor_always_shoots(actr, 0);
+			actorAlwaysShoots(actr, 0);
 		else
 			return 0;
 	} else if (ABS(_G(thor)->_y - actr->_y) < 8) {
 		if (_G(thor)->_x > actr->_x)
-			actor_always_shoots(actr, 3);
+			actorAlwaysShoots(actr, 3);
 		else if (_G(thor)->_x < actr->_x)
-			actor_always_shoots(actr, 2);
+			actorAlwaysShoots(actr, 2);
 	} else {
 		return 0;
 	}
@@ -154,7 +154,7 @@ int shot_pattern_five(Actor *actr) {
 	if (_G(rand1) < 15 && (actr->_temp1 == 0) && (actr->_temp2 == 0)) {
 		actr->_y += 16;
 		actr->_numShotsAllowed = 3 + _G(setup)._difficultyLevel;
-		actor_shoots(actr, 2);
+		actorShoots(actr, 2);
 		play_sound(BOSS12, false);
 
 		int num = actr->_shotActor;
@@ -174,13 +174,13 @@ int shot_pattern_six(Actor *actr) {
 	int pos = ((actr->_x) / 16) + (((actr->_y) / 16) * 20);
 
 	if (_G(thor_pos) == pos - 20)
-		actor_shoots(actr, 0);
+		actorShoots(actr, 0);
 	else if (_G(thor_pos) == pos + 20)
-		actor_shoots(actr, 1);
+		actorShoots(actr, 1);
 	else if (_G(thor_pos) == pos - 1)
-		actor_shoots(actr, 2);
+		actorShoots(actr, 2);
 	else if (_G(thor_pos) == pos + 1)
-		actor_shoots(actr, 3);
+		actorShoots(actr, 3);
 	else
 		return 0;
 
@@ -206,7 +206,7 @@ int shot_pattern_eight(Actor *actr) {
 	} else if (_G(rand1) < 10) {
 		actr->_i1 = actr->_funcPass;
 		actr->_i2 = _G(thor_real_y1);
-		actor_shoots(actr, 0);
+		actorShoots(actr, 0);
 		return 1;
 	}
 

@@ -19,11 +19,11 @@
  *
  */
 
-#include "common/stream.h"
-#include "graphics/managed_surface.h"
-
 #ifndef GOT_DATA_ACTOR_H
 #define GOT_DATA_ACTOR_H
+
+#include "common/stream.h"
+#include "graphics/managed_surface.h"
 
 namespace Got {
 
@@ -35,7 +35,7 @@ struct Actor {
 	byte _moveType = 0;           // Movement pattern (0=none)
 	byte _width = 0;              // Physical width
 	byte _height = 0;             // Physical height
-	byte _directions = 0;         // 1,2 or 4 (1=uni-directional)
+	byte _directions = 0;         // 1, 2 or 4 (1=uni-directional)
 	byte _framesPerDirection = 0; // # frames per direction
 	byte _frameSpeed = 0;         // # cycles between frame changes
 	byte _frameSequence[4] = {};  // Sequence
@@ -51,7 +51,7 @@ struct Actor {
 	byte _solid = 0;              // 1=solid (not ghost,etc)
 	bool _flying = false;         //
 	byte _dropRating = 0;         // rnd(100) < _dropRating = jewel
-	byte _type = 0;               // Actor (0=thor,1=hammer,2=enemy,3=shot)
+	byte _type = 0;               // Actor (0 = thor, 1 = hammer, 2 = enemy, 3 = shot)
 	char _name[9] = {};           // Actors name
 	byte _funcNum = 0;            // Special function when thor touches
 	byte _funcPass = 0;           // Value to pass to func

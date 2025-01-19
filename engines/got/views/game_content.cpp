@@ -315,7 +315,7 @@ void GameContent::checkThunderShake() {
 			int thunderFl = _G(thunder_flag);
 			if (_G(actor[thunderFl])._active) {
 				_G(actor[thunderFl])._vulnerableCountdown = 0;
-				actor_damaged(&_G(actor[thunderFl]), 20);
+				actorDamaged(&_G(actor[thunderFl]), 20);
 			}
 		}
 
@@ -360,10 +360,10 @@ void GameContent::moveActors() {
 
 			_G(actor[i])._moveCount = _G(actor[i])._numMoves;
 			while (_G(actor[i])._moveCount--)
-				move_actor(&_G(actor[i]));
+				moveActor(&_G(actor[i]));
 
 			if (i == 0)
-				set_thor_vars();
+				setThorVars();
 
 			if (_G(new_level) != _G(current_level))
 				return;
@@ -564,7 +564,7 @@ void GameContent::thorDead() {
 	_deathCtr = 0;
 
 	showLevel(_G(new_level));
-	set_thor_vars();
+	setThorVars();
 }
 
 void GameContent::checkForCheats() {
@@ -635,7 +635,7 @@ void GameContent::placePixel(GfxSurface &s, int dir, int num) {
 		return;
 	}
 
-	if (point_within(_pixelX[dir][num], _pixelY[dir][num], 0, 0, 319, 191)) {
+	if (pointWithin(_pixelX[dir][num], _pixelY[dir][num], 0, 0, 319, 191)) {
 		byte *pixel = (byte *)s.getBasePtr(_pixelX[dir][num],
 										   _pixelY[dir][num]);
 		*pixel = _pixelC[dir];
@@ -682,7 +682,7 @@ void GameContent::lightningCountdownDone() {
 		if ((ABS(ax - x) < 30) && (ABS(ay - y) < 30)) {
 			_G(actor[i])._magicHit = 1;
 			_G(actor[i])._vulnerableCountdown = 0;
-			actor_damaged(&_G(actor[i]), 254);
+			actorDamaged(&_G(actor[i]), 254);
 		}
 	}
 }

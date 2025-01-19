@@ -45,7 +45,7 @@ const char *ITEM_NAMES[] = {
 
 static const char *odinEndMessage;
 
-void showLevel(int new_level) {
+void showLevel(const int newLevel) {
 	_G(boss_active) = false;
 	if (!_G(shield_on))
 		_G(actor[2])._active = false;
@@ -75,23 +75,23 @@ void showLevel(int new_level) {
 		warning("showLevel - Potential short move missing");
 
 	if (_G(warp_flag))
-		_G(current_level) = new_level - 5; // Force phase
+		_G(current_level) = newLevel - 5; // Force phase
 	_G(warp_flag) = false;
 
 	if (_G(warp_scroll)) {
 		_G(warp_scroll) = false;
 		if (_G(thor)->_dir == 0)
-			_G(current_level) = new_level + 10;
+			_G(current_level) = newLevel + 10;
 		else if (_G(thor)->_dir == 1)
-			_G(current_level) = new_level - 10;
+			_G(current_level) = newLevel - 10;
 		else if (_G(thor)->_dir == 2)
-			_G(current_level) = new_level + 1;
+			_G(current_level) = newLevel + 1;
 		else if (_G(thor)->_dir == 3)
-			_G(current_level) = new_level - 1;
+			_G(current_level) = newLevel - 1;
 	}
 
 	if (!_G(setup)._scrollFlag)
-		_G(current_level) = new_level; // Force no scroll
+		_G(current_level) = newLevel; // Force no scroll
 
 	if (_G(music_current) != _G(levelMusic))
 		_G(sound).music_pause();
@@ -192,7 +192,7 @@ static void odin_speaks_end() {
 		g_events->send(GameMessage(odinEndMessage));
 }
 
-void odinSpeaks(int index, int item, const char *endMessage) {
+void odinSpeaks(const int index, int item, const char *endMessage) {
 	odinEndMessage = endMessage;
 
 	execute_script((long)index, _G(odin), odin_speaks_end);
@@ -203,14 +203,15 @@ int switchIcons() {
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
-			int ix = x * 16;
-			int iy = y * 16;
+			const int ix = x * 16;
+			const int iy = y * 16;
 			if (_G(scrn)._iconGrid[y][x] == 93) {
 				placeTile(x, y, 144);
 			} else if (_G(scrn)._iconGrid[y][x] == 144) {
 				placeTile(x, y, 93);
 				killEnemies(iy, ix);
 			}
+			
 			if (_G(scrn)._iconGrid[y][x] == 94) {
 				placeTile(x, y, 146);
 			} else if (_G(scrn)._iconGrid[y][x] == 146) {
@@ -242,7 +243,7 @@ int rotateArrows() {
 	return 0;
 }
 
-void killEnemies(int iy, int ix) {
+void killEnemies(const int iy, const int ix) {
 	int x1, y1, x2, y2;
 
 	for (int i = 3; i < MAX_ACTORS; i++) {
@@ -252,14 +253,14 @@ void killEnemies(int iy, int ix) {
 			x2 = (_G(actor[i])._x + _G(actor[i])._sizeX);
 			y2 = _G(actor[i])._y + _G(actor[i])._sizeY - 1;
 
-			if (point_within(x1, y1, ix, iy, ix + 15, iy + 15))
-				actor_destroyed(&_G(actor[i]));
-			else if (point_within(x2, y1, ix, iy, ix + 15, iy + 15))
-				actor_destroyed(&_G(actor[i]));
-			else if (point_within(x1, y2, ix, iy, ix + 15, iy + 15))
-				actor_destroyed(&_G(actor[i]));
-			else if (point_within(x2, y2, ix, iy, ix + 15, iy + 15))
-				actor_destroyed(&_G(actor[i]));
+			if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15))
+				actorDestroyed(&_G(actor[i]));
+			else if (pointWithin(x2, y1, ix, iy, ix + 15, iy + 15))
+				actorDestroyed(&_G(actor[i]));
+			else if (pointWithin(x1, y2, ix, iy, ix + 15, iy + 15))
+				actorDestroyed(&_G(actor[i]));
+			else if (pointWithin(x2, y2, ix, iy, ix + 15, iy + 15))
+				actorDestroyed(&_G(actor[i]));
 		}
 	}
 
@@ -268,7 +269,7 @@ void killEnemies(int iy, int ix) {
 	x2 = x1 + 13;
 	y2 = y1 + 5;
 
-	if (point_within(x1, y1, ix, iy, ix + 15, iy + 15) || point_within(x2, y1, ix, iy, ix + 15, iy + 15) || point_within(x1, y2, ix, iy, ix + 15, iy + 15) || point_within(x2, y2, ix, iy, ix + 15, iy + 15)) {
+	if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x1, y2, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y2, ix, iy, ix + 15, iy + 15)) {
 		if (!_G(cheats).freezeHealth) {
 			_G(thor)->_health = 0;
 			g_events->send(GameMessage("THOR_DIES"));
@@ -276,8 +277,8 @@ void killEnemies(int iy, int ix) {
 	}
 }
 
-void removeObjects(int y, int x) {
-	int p = (y * 20) + x;
+void removeObjects(const int y, const int x) {
+	const int p = (y * 20) + x;
 
 	if (_G(object_map[p]) > 0) {
 		_G(object_map[p]) = 0;
@@ -285,7 +286,7 @@ void removeObjects(int y, int x) {
 	}
 }
 
-void placeTile(int x, int y, int tile) {
+void placeTile(const int x, const int y, const int tile) {
 	_G(scrn)._iconGrid[y][x] = tile;
 	removeObjects(y, x);
 }

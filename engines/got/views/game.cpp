@@ -91,7 +91,7 @@ bool Game::msgAction(const ActionMessage &msg) {
 
 	switch (msg._action) {
 	case KEYBIND_FIRE:
-		thor_shoots();
+		thorShoots();
 		break;
 
 	case KEYBIND_SELECT:

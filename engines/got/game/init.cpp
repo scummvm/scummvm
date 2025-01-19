@@ -108,14 +108,14 @@ void initGame() {
 	showLevel(_G(current_level));
 
 	if (!_G(auto_load)) {
-		_G(sound).music_play(_G(levelMusic), 1);
+		_G(sound).music_play(_G(levelMusic), true);
 	}
 
 	g_vars->resetEndgameFlags();
 	_G(startup) = false;
 }
 
-int setupBoss(int num) {
+int setupBoss(const int num) {
 	if (_G(boss_loaded) == num)
 		return 1;
 

@@ -356,7 +356,7 @@ int use_tornado(int flag) {
 			}
 		}
 		if (_G(thor_info)._magic < 1) {
-			actor_destroyed(&_G(actor[2]));
+			actorDestroyed(&_G(actor[2]));
 			_G(tornado_used) = false;
 			not_enough_magic();
 			return 0;
@@ -382,7 +382,7 @@ void use_item() {
 	int kf = _G(key_flag[key_magic]);
 
 	if (!kf && _G(tornado_used)) {
-		actor_destroyed(&_G(actor[2]));
+		actorDestroyed(&_G(actor[2]));
 		_G(tornado_used) = false;
 	}
 
