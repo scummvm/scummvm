@@ -43,6 +43,8 @@ public:
 	~TranslationDatabases();
 
 	void setLanguage(Common::Language language);
+	void setEncodingIsOEM(bool encodingIsOEM) { _encodingIsOEM = encodingIsOEM; }
+	bool encodingIsOEM() const { return _encodingIsOEM; }
 
 	bool open(const Common::String &id, const Common::Path &file);
 	bool close(const Common::String &id);
@@ -56,6 +58,7 @@ private:
 	DBMap _databases;
 
 	Common::String _language;
+	bool _encodingIsOEM = true;
 
 	int findField(const dBase &db, const Common::String &field, dBase::Type type) const;
 	bool buildMap(const dBase &db, Common::StringMap &map) const;

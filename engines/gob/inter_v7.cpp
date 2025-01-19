@@ -154,6 +154,7 @@ void Inter_v7::setupOpcodesGob() {
 
 	OPCODEGOB(420, o7_ansiToOEM);
 	OPCODEGOB(421, o7_oemToANSI);
+	OPCODEGOB(512, o7_setDBStringEncoding);
 	OPCODEGOB(513, o7_gob0x201);
 	OPCODEGOB(600, o7_getFreeDiskSpace);
 }
@@ -1021,8 +1022,13 @@ void Inter_v7::o7_getINIValue() {
 	Common::String key     = _vm->_game->_script->evalString();
 	Common::String def     = _vm->_game->_script->evalString();
 
+	section = oemToANSI(section);
+	key     = oemToANSI(key);
+
 	Common::String value;
 	_inis.getValue(value, file, section, key, def);
+
+	value = ansiToOEM(value);
 
 	storeString(value.c_str());
 	debugC(5, kDebugGameFlow, "o7_getINIValue: %s: [%s] %s = %s", file.c_str(), section.c_str(), key.c_str(), value.c_str());
@@ -1034,6 +1040,10 @@ void Inter_v7::o7_setINIValue() {
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String key     = _vm->_game->_script->evalString();
 	Common::String value   = _vm->_game->_script->evalString();
+
+	section = oemToANSI(section);
+	key     = oemToANSI(key);
+	value   = oemToANSI(value);
 
 	bool success = _inis.setValue(file, section, key, value);
 	WRITE_VAR(27, success ? 1 : 0);
@@ -1316,6 +1326,8 @@ void Inter_v7::o7_getDBString() {
 		return;
 	}
 
+	if (_translationDatabases.encodingIsOEM())
+		result = oemToANSI(result);
 	storeString(result.c_str());
 	WRITE_VAR(27, 1); // Success
 }
@@ -1872,12 +1884,10 @@ void Inter_v7::o7_writeData(OpFuncParams &params) {
 		warning("Attempted to write to file \"%s\"", file.c_str());
 }
 
-void Inter_v7::o7_ansiToOEM(OpGobParams &params) {
-	uint16 varIndex = _vm->_game->_script->readUint16();
-	char *str = GET_VAR_STR(varIndex);
-	Common::U32String u32String = Common::String(str).decode(Common::kWindows1252);
+Common::String Inter_v7::ansiToOEM(Common::String string) {
+	Common::U32String u32String = string.decode(Common::kWindows1252);
 	// Replace characters that do not exist in the target codepage with the closest match
-	for (int i = 0; i < u32String.size(); ++i) {
+	for (int i = 0; i < (int) u32String.size(); ++i) {
 		// Replace curly double quotes with straight double quotes
 		if (u32String[i] == 0x201C || u32String[i] == 0x201D || u32String[i] == 0x201E) {
 			u32String.setChar(0x22, i);
@@ -1889,15 +1899,41 @@ void Inter_v7::o7_ansiToOEM(OpGobParams &params) {
 		}
 	}
 
-	WRITE_VAR_STR(varIndex, u32String.encode(Common::kDos850).c_str());
+	return u32String.encode(Common::kDos850);
+}
+
+
+Common::String Inter_v7::oemToANSI(Common::String string) {
+	return string.decode(Common::kDos850).encode(Common::kWindows1252);
+}
+
+void Inter_v7::o7_ansiToOEM(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	char *str = GET_VAR_STR(varIndex);
+	Common::String oemString = ansiToOEM(Common::String(str));
+	WRITE_VAR_STR(varIndex, oemString.c_str());
 }
 
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {
 	uint16 varIndex = _vm->_game->_script->readUint16();
 	char *str = GET_VAR_STR(varIndex);
-	Common::String ansiString = Common::String(str).decode(Common::kDos850).encode(Common::kWindows1252);
+	Common::String ansiString = oemToANSI(Common::String(str));
 	WRITE_VAR_STR(varIndex, ansiString.c_str());
+}
+
+void Inter_v7::o7_setDBStringEncoding(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	int mode = READ_VAR_UINT32(varIndex);
+	switch (mode) {
+	case 0:
+	case 1:
+		_translationDatabases.setEncodingIsOEM(mode);
+		break;
+	default:
+		warning("o7_setDBStringEncoding: invalid mode %d", mode);
+		break;
+	}
 }
 
 void Inter_v7::o7_gob0x201(OpGobParams &params) {
