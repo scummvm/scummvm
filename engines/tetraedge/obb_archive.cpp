@@ -108,8 +108,10 @@ Common::SeekableReadStream *ObbArchive::createReadStreamForMember(const Common::
 	FileDescriptor desc = _files.getVal(translated);
 
 	Common::File *f = new Common::File();
-	if (!f->open(_obbName))
+	if (!f->open(_obbName)) {
+		delete f;
 		return nullptr;
+	}
 
 	return new Common::SeekableSubReadStream(f, desc._fileOffset, desc._fileOffset + desc._fileSize, DisposeAfterUse::YES);
 }
