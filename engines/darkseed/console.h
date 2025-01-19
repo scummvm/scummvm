@@ -41,6 +41,7 @@ private:
 	int _startIdx = 0;
 	bool _redrawRequired = false;
 	int _numLines = 4;
+	int _lineHeight = 11;
 
 public:
 	Console(TosText *tostext, Sound *sound);

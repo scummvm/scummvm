@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "darkseed/big5font.h"
+#include "darkseed/kofont.h"
 #include "darkseed/console.h"
 #include "darkseed/darkseed.h"
 
@@ -29,14 +30,24 @@ namespace Darkseed {
 static constexpr Common::Rect consoleArea = {{0x70, 279}, 416, 49};
 
 Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sound) {
-	if (g_engine->getLanguage() == Common::ZH_ANY) {
+	switch (g_engine->getLanguage()) {
+	case Common::ZH_ANY :
 		_font = new Big5Font();
+		_lineHeight = 17;
+		_numLines = 3;
 		_isBig5 = true;
-	} else {
+		break;
+	case Common::KO_KOR :
+		_font = new KoFont();
+		_lineHeight = 18;
+		_numLines = 3;
+		break;
+	default:
 		_font = new GameFont();
+		_lineHeight = 11;
+		_numLines = 4;
+		break;
 	}
-
-	_numLines = _isBig5 ? 3 : 4;
 
 	_text.resize(10);
 }
@@ -89,7 +100,7 @@ void Console::draw(bool forceRedraw) {
 	int y = 0x139;
 	for (int i = 0; i < _numLines && curIdx != _startIdx && !_text[curIdx].empty(); i++) {
 		drawStringAt(0x70, y, _text[curIdx]);
-		y -= _isBig5 ? 17 : 11;
+		y -= _lineHeight;
 		curIdx = curIdx == 0 ? _text.size() - 1 : curIdx - 1;
 	}
 	_redrawRequired = false;
@@ -107,6 +118,21 @@ void Console::drawStringAt(const int x, const int y, const Common::String &text)
 				uint16 point = (curChar << 8) | nextChar;
 				_font->drawChar(g_engine->_screen, point, charPos.x, charPos.y, 0);
 				charPos.x += (int16)_font->getCharWidth(point) + 1;
+			}
+		}
+	} else if (g_engine->getLanguage() == Common::KO_KOR) {
+		Common::Point charPos = {(int16)x, (int16)y};
+		for (const char *curCharPtr = text.c_str(); *curCharPtr; ++curCharPtr) {
+			byte curChar = *curCharPtr;
+			uint16 point = 0;
+			if ((curChar & 0x80)) {
+				curCharPtr++;
+				byte nextChar = *curCharPtr;
+				point = (curChar << 8) | nextChar;
+				_font->drawChar(g_engine->_screen, point, charPos.x, charPos.y, 0);
+				charPos.x += (int16)_font->getCharWidth(point) + 1;
+			} else if (curChar == ' ') {
+				charPos.x += 17;
 			}
 		}
 	} else {

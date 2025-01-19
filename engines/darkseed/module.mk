@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	gamefont.o \
 	img.o \
 	inventory.o \
+	kofont.o \
 	langtext.o \
 	menu.o \
 	metaengine.o \
