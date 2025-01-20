@@ -578,17 +578,17 @@ bool BaseFontTT::initFont() {
 	// Handle Bold atleast for the fallback-case.
 	// TODO: Handle italic. (Needs a test-case)
 	if (_isBold) {
-		fallbackFilename = "FreeSansBold.ttf";
+		fallbackFilename = "LiberationSans-Bold.ttf";
 	} else {
-		fallbackFilename = "FreeSans.ttf";
+		fallbackFilename = "LiberationSans-Regular.ttf";
 	}
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile, true, false);
 	if (!file) {
 		if (Common::String(_fontFile) != "arial.ttf") {
-			warning("%s has no replacement font yet, using FreeSans for now (if available)", _fontFile);
+			warning("%s has no replacement font yet, using %s for now (if available)", _fontFile, fallbackFilename);
 		}
-		// Fallback1: Try to find FreeSans.ttf
+		// Fallback1: Try to find the LiberationSans font
 		file = SearchMan.createReadStreamForMember(fallbackFilename);
 	}
 
@@ -602,19 +602,11 @@ bool BaseFontTT::initFont() {
 		_deletableFont = Graphics::loadTTFFontFromArchive(fallbackFilename, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 	}
-
-	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:
-	if (!_font) {
-		// Really not desirable, as we will get a font with dpi-72 then
-		Common::String fontName = Common::String::format("%s-%s@%d", fallbackFilename, "ASCII", _fontHeight);
-		warning("Looking for %s", fontName.c_str());
-		_font = FontMan.getFontByName(fontName);
-	}
 #else
 	warning("BaseFontTT::InitFont - FreeType2-support not compiled in, TTF-fonts will not be loaded");
 #endif // USE_FREETYPE2
 
-	// Fallback4: Just use the Big GUI-font. (REALLY undesirable)
+	// Fallback3: Just use the Big GUI-font. (REALLY undesirable)
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
