@@ -527,7 +527,7 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
 	}
 
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {
@@ -543,7 +543,7 @@ void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {
 	}
 
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {

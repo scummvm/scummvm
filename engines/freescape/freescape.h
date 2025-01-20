@@ -112,6 +112,10 @@ enum {
 	kFreescapeDebugGroup = 1 << 5,
 };
 
+enum {
+	kFreescapeDefaultVolume = 192,
+};
+
 enum GameStateControl {
 	kFreescapeGameStateStart,
 	kFreescapeGameStatePlaying,

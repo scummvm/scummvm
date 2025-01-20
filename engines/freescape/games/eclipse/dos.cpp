@@ -250,7 +250,7 @@ void EclipseEngine::playSoundFx(int index, bool sync) {
 	byte *data = _soundsFx[index]->data;
 
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(data, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream, -1, kFreescapeDefaultVolume / 10);
 }
 
 
