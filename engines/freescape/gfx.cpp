@@ -283,15 +283,6 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return false;
 
 	assert (_renderMode == Common::kRenderCGA);
-	if (index <= 4) { // Solid colors
-		stipple = nullptr;
-		readFromPalette(index - 1, r1, g1, b1);
-		r2 = r1;
-		g2 = g1;
-		b2 = b1;
-		return true;
-	}
-
 	stipple = (byte *)_stipples[index - 1];
 	byte pair = _colorPair[index - 1];
 	byte c1 = pair & 0xf;
