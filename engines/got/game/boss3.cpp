@@ -465,7 +465,7 @@ static void boss3CheckHit() {
 static void bossChangeMode() {
 	if (!_G(boss_intro2)) {
 		Gfx::Pics loki("FACE18", 262);
-		execute_script(1003, loki);
+		executeScript(1003, loki);
 		_G(boss_intro2) = true;
 	}
 	
@@ -483,7 +483,7 @@ void boss3SetupLevel() {
 
 	if (!_G(boss_intro1)) {
 		Gfx::Pics loki("FACE18", 262);
-		execute_script(1002, loki);
+		executeScript(1002, loki);
 		_G(boss_intro1) = true;
 	}
 

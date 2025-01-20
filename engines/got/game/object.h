@@ -26,12 +26,12 @@
 
 namespace Got {
 
-extern void show_objects();
-extern void pick_up_object(int p);
-extern int drop_object(Actor *actr);
-extern int _drop_obj(Actor *actr, int o);
-extern void delete_object();
-extern void use_item();
+extern void showObjects();
+extern void pickUpObject(int p);
+extern void dropRandomObject(Actor *actor);
+extern bool dropObject(Actor *actor, int objId);
+extern void deleteObject();
+extern void useItem();
 
 } // namespace Got
 

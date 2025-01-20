@@ -214,12 +214,12 @@ int shot_movement_four(Actor *actr) {
 			actorDestroyed(actr);
 			_G(apple_drop++);
 			if (_G(apple_drop) == 4) {
-				if (_drop_obj(actr, 5))
+				if (dropObject(actr, 5))
 					_G(apple_drop) = 0;
 				else
 					_G(apple_drop) = 3;
 			} else
-				_drop_obj(actr, 3);
+				dropObject(actr, 3);
 			return 0;
 		}
 	}
@@ -686,12 +686,12 @@ int shot_movement_thirteen(Actor *actr) {
 		actorDestroyed(actr);
 		_G(apple_drop++);
 		if (_G(apple_drop) > 4) {
-			if (_drop_obj(actr, 5))
+			if (dropObject(actr, 5))
 				_G(apple_drop) = 0;
 			else
 				_G(apple_drop) = 4;
 		} else
-			_drop_obj(actr, 4);
+			dropObject(actr, 4);
 		return 0;
 	}
 

@@ -142,7 +142,7 @@ bool GameContent::tick() {
 		checkSwitchFlag();
 		checkForItem();
 		moveActors();
-		use_item();
+		useItem();
 		updateActors();
 		checkForBossDead();
 		checkForCheats();
@@ -348,7 +348,7 @@ void GameContent::checkSwitchFlag() {
 void GameContent::checkForItem() {
 	int thor_pos = _G(thor)->getPos();
 	if (_G(object_map[thor_pos]))
-		pick_up_object(thor_pos);
+		pickUpObject(thor_pos);
 }
 
 void GameContent::moveActors() {

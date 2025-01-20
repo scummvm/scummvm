@@ -38,7 +38,7 @@ public:
 	Scripts();
 	~Scripts();
 
-	void execute_script(long index, const Gfx::Pics &speakerIcon, ScriptEndFn endFn = nullptr);
+	void executeScript(long index, const Gfx::Pics &speakerIcon, ScriptEndFn endFn = nullptr);
 	void pause();
 	void resume();
 	void setAskResponse(int option);
@@ -70,35 +70,35 @@ private:
     int _askVar = -1;
 
 private:
-    int  read_script_file();
-    void script_error(int err_num);
-    int  get_command();
-    int  skip_colon();
-    int  calc_value();
-    int  get_next_val();
-    int  calc_string(int mode);
-    void get_str();
-    int  get_internal_variable();
+    int  readScriptFile();
+    void scriptError(int err_num);
+    int  getCommand();
+    int  skipColon();
+    int  calcValue();
+    int  getNextValue();
+    int  calcString(int mode);
+    void getStr();
+    int  getInternalVariable();
     int  exec_command(int num);
-    int get_line(char *src, char *dst);
-    void script_entry() {}
-    void script_exit();
+    int getLine(char *src, char *dst);
+    void scriptEntry() {}
+    void scriptExit();
 
     int cmd_goto();
     int cmd_if();
     int cmd_run();
-    int cmd_addjewels();
-    int cmd_addhealth();
-    int cmd_addmagic();
-    int cmd_addkeys();
-    int cmd_addscore();
+    int cmd_addJewels();
+    int cmd_addHealth();
+    int cmd_addMagic();
+    int cmd_addKeys();
+    int cmd_addScore();
     int cmd_say(int mode, int type);
     int cmd_ask();
     int cmd_sound();
-    int cmd_settile();
-    int cmd_itemgive();
-    int cmd_itemtake();
-    int cmd_setflag();
+    int cmd_setTile();
+    int cmd_itemGive();
+    int cmd_itemTake();
+    int cmd_setFlag();
     int cmd_ltoa();
     int cmd_pause();
     int cmd_visible();
@@ -119,7 +119,7 @@ private:
 
 };
 
-extern void execute_script(long index, const Gfx::Pics &speakerIcon,
+extern void executeScript(long index, const Gfx::Pics &speakerIcon,
                            ScriptEndFn endFn = nullptr);
 
 } // namespace Got

@@ -44,7 +44,7 @@ int special_tile_thor(int x, int y, int icon) {
 			if (_G(thor_info)._inventory & 64) {
 				if (_G(thor_info)._object == 4) {
 					erase_door(y, x);
-					delete_object();
+					deleteObject();
 					return 1;
 				}
 			}
@@ -59,7 +59,7 @@ int special_tile_thor(int x, int y, int icon) {
 		if (!GAME1) {
 			if ((_G(thor_info)._inventory & 64) && _G(thor_info)._object == 5) {
 				odinSpeaks(2012, 0);
-				delete_object();
+				deleteObject();
 				_G(setup).f10 = 1;
 			} else if (!_G(setup).f10) {
 				odinSpeaks(2011, 0);

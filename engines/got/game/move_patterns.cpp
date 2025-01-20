@@ -986,7 +986,7 @@ int specialMovementThree(Actor *actor) {
 	long lind = (long)_G(current_level);
 	lind *= 1000;
 	lind += (long)actor->_actorNum;
-	execute_script(lind, _G(odin));
+	executeScript(lind, _G(odin));
 
 	return 0;
 }
@@ -1393,7 +1393,7 @@ int movementSix(Actor *actor) {
 		actor->_active = false;
 		if (!_G(boss_dead) && !_G(endgame)) {
 			if (actor->_type == 2)
-				drop_object(actor);
+				dropRandomObject(actor);
 		}
 	}
 

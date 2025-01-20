@@ -66,7 +66,7 @@ void showLevel(const int newLevel) {
 
 	_G(thor)->_nextFrame = 0;
 
-	show_objects();
+	showObjects();
 	show_enemies();
 
 	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
@@ -195,7 +195,7 @@ static void odin_speaks_end() {
 void odinSpeaks(const int index, int item, const char *endMessage) {
 	odinEndMessage = endMessage;
 
-	execute_script((long)index, _G(odin), odin_speaks_end);
+	executeScript((long)index, _G(odin), odin_speaks_end);
 }
 
 int switchIcons() {
@@ -312,7 +312,7 @@ void actorSpeaks(const Actor *actor, int index, int item) {
 	if (actor->_type != 4)
 		return;
 
-	int v = atoi(actor->_name);
+	const int v = atoi(actor->_name);
 	if (v < 1 || v > 20)
 		return;
 
@@ -320,12 +320,12 @@ void actorSpeaks(const Actor *actor, int index, int item) {
 	lind = lind * 1000;
 	lind += (long)actor->_actorNum;
 
-	Common::String str = Common::String::format("FACE%d", v);
+	const Common::String str = Common::String::format("FACE%d", v);
 	if (Common::File::exists(Common::Path(str))) {
 		Gfx::Pics pics(str, 262);
-		execute_script(lind, pics);
+		executeScript(lind, pics);
 	} else {
-		execute_script(lind, _G(odin));
+		executeScript(lind, _G(odin));
 	}
 
 	if (!_G(thor)->_health) {
