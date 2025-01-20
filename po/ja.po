@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-18 17:21+0000\n"
-"PO-Revision-Date: 2024-12-06 09:18+0000\n"
+"PO-Revision-Date: 2025-01-20 18:57+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7120,10 +7120,8 @@ msgid "Exit Sony intro screen"
 msgstr "SONYイントロ画面を終了"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "行の終端を選択"
+msgstr "オプション選択/ゲーム内でクリック"
 
 #: engines/cine/metaengine.cpp:290
 msgid "Open action menu / Close menu"
@@ -7327,10 +7325,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685のサポートはコンパイルされていません"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "%sエンジンのデータファイルが見つかりません。"
+msgstr "データファイルdarkseed.datが見つかりません。"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -7343,10 +7339,8 @@ msgid "Change Command"
 msgstr "コマンドを変更"
 
 #: engines/darkseed/metaengine.cpp:76
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "タイマー"
+msgstr "時間経過"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -7373,10 +7367,8 @@ msgid "Previous object"
 msgstr "前のオブジェクト"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "前の行動"
+msgstr "拾う/操作"
 
 #: engines/dgds/metaengine.cpp:83
 #, fuzzy
@@ -7517,10 +7509,8 @@ msgid "Automatic drilling"
 msgstr "自動穿孔"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
-msgstr "Drillerで任意の場所に穴を開けられるようにします"
+msgstr "Drillerで任意の場所の掘削を成功させます"
 
 #: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
@@ -7600,33 +7590,25 @@ msgid "Rotate down"
 msgstr "回す"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "後退"
+msgstr "引き返す"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
-msgstr "モード変更"
+msgstr "モードを変更"
 
 #: engines/freescape/movement.cpp:106
 msgid "Info Menu"
 msgstr "インフォ"
 
 #: engines/freescape/games/castle/castle.cpp:236
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "シェーダーを選択"
+msgstr "Princeを選択"
 
 #: engines/freescape/games/castle/castle.cpp:241
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "シェーダーを選択"
+msgstr "Princessを選択"
 
 #: engines/freescape/games/castle/castle.cpp:268
 #: engines/freescape/games/dark/dark.cpp:204
@@ -7660,7 +7642,7 @@ msgstr "走る"
 
 #: engines/freescape/games/castle/castle.cpp:294
 msgid "Crawl"
-msgstr ""
+msgstr "這う"
 
 #: engines/freescape/games/castle/castle.cpp:300
 #: engines/freescape/games/eclipse/eclipse.cpp:259
