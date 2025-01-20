@@ -340,7 +340,7 @@ void moveActor(Actor *actor) {
 	if (!actor->_shotCountdown && _G(shot_ok)) {
 		if (actor->_numShotsAllowed) {
 			if (actor->_currNumShots < actor->_numShotsAllowed) {
-				shot_pattern_func[actor->_shotPattern](actor);
+				shotPatternFunc[actor->_shotPattern](actor);
 			}
 		}
 	}
@@ -355,7 +355,7 @@ void moveActor(Actor *actor) {
 		int i;
 
 		if (actor->_type == 3)
-			i = shot_movement_func[actor->_moveType](actor);
+			i = shotMovementFunc[actor->_moveType](actor);
 		else
 			i = _movementFunc[actor->_moveType](actor);
 		

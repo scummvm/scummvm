@@ -26,7 +26,7 @@
 
 namespace Got {
 
-extern int (*const shot_pattern_func[])(Actor *actr);
+extern int (*const shotPatternFunc[])(Actor *actr);
 
 } // namespace Got
 

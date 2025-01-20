@@ -28,220 +28,233 @@
 
 namespace Got {
 
-int shot_movement_none(Actor *actr);
-int shot_movement_one(Actor *actr);
-int shot_movement_two(Actor *actr);
-int shot_movement_three(Actor *actr);
-int shot_movement_four(Actor *actr);
-int shot_movement_five(Actor *actr);
-int shot_movement_six(Actor *actr);
-int shot_movement_seven(Actor *actr);
-int shot_movement_eight(Actor *actr);
-int shot_movement_nine(Actor *actr);
-int shot_movement_ten(Actor *actr);
-int shot_movement_eleven(Actor *actr);
-int shot_movement_twelve(Actor *actr);
-int shot_movement_thirteen(Actor *actr);
+int shotMovementNone(Actor *actor);
+int shotMovementOne(Actor *actor);
+int shotMovementTwo(Actor *actor);
+int shotMovementThree(Actor *actor);
+int shotMovementFour(Actor *actor);
+int shotMovementFive(Actor *actor);
+int shotMovementSix(Actor *actor);
+int shotMovementSeven(Actor *actor);
+int shotMovementEight(Actor *actor);
+int shotMovementNine(Actor *actor);
+int shotMovementTen(Actor *actor);
+int shotMovementEleven(Actor *actor);
+int shotMovementTwelve(Actor *actor);
+int shotMovementThirteen(Actor *actor);
 
-int (*const shot_movement_func[])(Actor *actr) = {
-	shot_movement_none,
-	shot_movement_one,
-	shot_movement_two,
-	shot_movement_three,
-	shot_movement_four,
-	shot_movement_five,
-	shot_movement_six,
-	shot_movement_seven,
-	shot_movement_eight,
-	shot_movement_nine,
-	shot_movement_ten,
-	shot_movement_eleven,
-	shot_movement_twelve,
-	shot_movement_thirteen};
+int (*const shotMovementFunc[])(Actor *actor) = {
+	shotMovementNone,
+	shotMovementOne,
+	shotMovementTwo,
+	shotMovementThree,
+	shotMovementFour,
+	shotMovementFive,
+	shotMovementSix,
+	shotMovementSeven,
+	shotMovementEight,
+	shotMovementNine,
+	shotMovementTen,
+	shotMovementEleven,
+	shotMovementTwelve,
+	shotMovementThirteen
+};
 
-void next_shot_frame(Actor *actr) {
-	if (actr->_directions == 4 && actr->_framesPerDirection == 1) {
-		actr->_nextFrame = actr->_lastDir;
-		actr->_dir = 0;
+void next_shot_frame(Actor *actor) {
+	if (actor->_directions == 4 && actor->_framesPerDirection == 1) {
+		actor->_nextFrame = actor->_lastDir;
+		actor->_dir = 0;
 	} else {
-		const int fcount = actr->_frameCount - 1;
+		const int fcount = actor->_frameCount - 1;
 
 		if (fcount <= 0) {
-			actr->_nextFrame++;
-			if (actr->_nextFrame > 3)
-				actr->_nextFrame = 0;
+			actor->_nextFrame++;
+			if (actor->_nextFrame > 3)
+				actor->_nextFrame = 0;
 
-			actr->_frameCount = actr->_frameSpeed;
+			actor->_frameCount = actor->_frameSpeed;
 		} else
-			actr->_frameCount = fcount;
+			actor->_frameCount = fcount;
 	}
 }
 
 // Boss - snake
-int shot_movement_none(Actor *actr) {
-	actr->_temp3--;
-	if (!actr->_temp3) {
-		actorDestroyed(actr);
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
+int shotMovementNone(Actor *actor) {
+	actor->_temp3--;
+	if (!actor->_temp3) {
+		actorDestroyed(actor);
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
 	}
 
-	next_shot_frame(actr);
-	if (actr->_directions == 1)
+	next_shot_frame(actor);
+	if (actor->_directions == 1)
 		return 0;
 
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
-int shot_movement_one(Actor *actr) {
+int shotMovementOne(Actor *actor) {
 	int x1 = 0, y1 = 0;
 
-	int d = actr->_lastDir;
+	const int d = actor->_lastDir;
 
 	switch (d) {
 	case 0:
-		x1 = actr->_x;
-		y1 = actr->_y - 2;
+		x1 = actor->_x;
+		y1 = actor->_y - 2;
 		break;
+		
 	case 1:
-		x1 = actr->_x;
-		y1 = actr->_y + 2;
+		x1 = actor->_x;
+		y1 = actor->_y + 2;
 		break;
+		
 	case 2:
-		x1 = actr->_x - 2;
-		y1 = actr->_y;
+		x1 = actor->_x - 2;
+		y1 = actor->_y;
 		break;
+		
 	case 3:
-		x1 = actr->_x + 2;
-		y1 = actr->_y;
+		x1 = actor->_x + 2;
+		y1 = actor->_y;
+		break;
+		
+	default:
 		break;
 	}
 
-	if (!checkMove3(x1, y1, actr)) {
-		actorDestroyed(actr);
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
+	if (!checkMove3(x1, y1, actor)) {
+		actorDestroyed(actor);
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
 	} else {
-		next_shot_frame(actr);
-		actr->_lastDir = d;
+		next_shot_frame(actor);
+		actor->_lastDir = d;
 	}
 
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
-	if (actr->_directions == 4 && actr->_framesPerDirection == 1)
+	if (actor->_directions == 4 && actor->_framesPerDirection == 1)
 		return 0;
 
 	return d;
 }
 
-int shot_movement_two(Actor *actr) {
+int shotMovementTwo(Actor *actor) {
 	int x1 = 0, y1 = 0;
 
-	int d = actr->_lastDir;
+	const int d = actor->_lastDir;
 
 	switch (d) {
 	case 0:
-		x1 = actr->_x;
-		y1 = actr->_y - 2;
+		x1 = actor->_x;
+		y1 = actor->_y - 2;
 		break;
+		
 	case 1:
-		x1 = actr->_x;
-		y1 = actr->_y + 2;
+		x1 = actor->_x;
+		y1 = actor->_y + 2;
 		break;
+		
 	case 2:
-		x1 = actr->_x - 2;
-		y1 = actr->_y;
+		x1 = actor->_x - 2;
+		y1 = actor->_y;
 		break;
+		
 	case 3:
-		x1 = actr->_x + 2;
-		y1 = actr->_y;
+		x1 = actor->_x + 2;
+		y1 = actor->_y;
+		break;
+		
+	default:
 		break;
 	}
-	if (!checkMove4(x1, y1, actr)) {
-		actorDestroyed(actr);
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
+	if (!checkMove4(x1, y1, actor)) {
+		actorDestroyed(actor);
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
 	} else {
-		next_shot_frame(actr);
-		actr->_lastDir = d;
+		next_shot_frame(actor);
+		actor->_lastDir = d;
 	}
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
-	if (actr->_directions == 4 && actr->_framesPerDirection == 1)
+	if (actor->_directions == 4 && actor->_framesPerDirection == 1)
 		return 0;
 	return d;
 }
 
 // Serpent fire
-int shot_movement_three(Actor *actr) {
-	int d = actr->_lastDir;
+int shotMovementThree(Actor *actor) {
+	const int d = actor->_lastDir;
 
-	actr->_x -= 2;
-	actr->_temp3--;
-	actr->_temp4--;
+	actor->_x -= 2;
+	actor->_temp3--;
+	actor->_temp4--;
 
 	if (overlap(_G(thor_x1) - 1, _G(thor_y1) - 1, _G(thor_x2) + 1, _G(thor_y2) + 1,
-				actr->_x, actr->_y, actr->_x + 15, actr->_y + 15)) {
-		actr->_moveType = 0;
-		actr->_speed = 6;
-		thorDamaged(actr);
-		actr->_x += 2;
+				actor->_x, actor->_y, actor->_x + 15, actor->_y + 15)) {
+		actor->_moveType = 0;
+		actor->_speed = 6;
+		thorDamaged(actor);
+		actor->_x += 2;
 	}
-	if (!actr->_temp4) {
-		actr->_temp4 = actr->_temp5;
-		actr->_speed++;
-		if (actr->_speed > 6)
-			actr->_moveType = 0;
+	if (!actor->_temp4) {
+		actor->_temp4 = actor->_temp5;
+		actor->_speed++;
+		if (actor->_speed > 6)
+			actor->_moveType = 0;
 	}
-	if (!actr->_temp3) {
-		actorDestroyed(actr);
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
+	if (!actor->_temp3) {
+		actorDestroyed(actor);
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
 	} else {
-		next_shot_frame(actr);
-		actr->_lastDir = d;
+		next_shot_frame(actor);
+		actor->_lastDir = d;
 	}
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
 	return d;
 }
 
 // Wraith balls
-int shot_movement_four(Actor *actr) {
-	if (actr->_temp1) {
-		actr->_temp1--;
-		if (!actr->_temp1) {
-			actorDestroyed(actr);
+int shotMovementFour(Actor *actor) {
+	if (actor->_temp1) {
+		actor->_temp1--;
+		if (!actor->_temp1) {
+			actorDestroyed(actor);
 			_G(apple_drop++);
 			if (_G(apple_drop) == 4) {
-				if (dropObject(actr, 5))
+				if (dropObject(actor, 5))
 					_G(apple_drop) = 0;
 				else
 					_G(apple_drop) = 3;
 			} else
-				dropObject(actr, 3);
+				dropObject(actor, 3);
 			return 0;
 		}
 	}
 	if (overlap(_G(thor)->_x - 1, _G(thor)->_y - 1, _G(thor_x2) + 1, _G(thor_y2) + 1,
-				actr->_x, actr->_y, actr->_x + 15, actr->_y + 15)) {
-		thorDamaged(actr);
-		actorDestroyed(actr);
+				actor->_x, actor->_y, actor->_x + 15, actor->_y + 15)) {
+		thorDamaged(actor);
+		actorDestroyed(actor);
 		return 0;
 	}
 
-	int x1 = actr->_x;
-	int y1 = actr->_y;
+	int x1 = actor->_x;
+	int y1 = actor->_y;
 	int yd = 0;
 	int xd = 0;
-	int d = actr->_lastDir;
+	int d = actor->_lastDir;
 
 	if ((x1 > (_G(thor_x1)) + 1))
 		xd = -2;
 	else if ((x1 < (_G(thor_x1)) - 1))
 		xd = 2;
 
-	if (actr->_actorNum == 1) {
+	if (actor->_actorNum == 1) {
 		if (y1 < (_G(thor_y1) - 6))
 			yd = 2;
 		else if (y1 > (_G(thor_y1) - 6))
@@ -254,20 +267,17 @@ int shot_movement_four(Actor *actr) {
 	}
 
 	if (xd && yd) {
-		if (xd == -2 && yd == -2)
+		if (xd == -2 && ABS(yd) == 2)
 			d = 2;
-		else if (xd == -2 && yd == 2)
-			d = 2;
-		else if (xd == 2 && yd == -2)
+		else if (xd == 2 && ABS(yd) == 2)
 			d = 3;
-		else if (xd == 2 && yd == 2)
-			d = 3;
+		
 		x1 += xd;
 		y1 += yd;
-		if (checkMove3(x1, y1, actr)) {
-			nextFrame(actr);
-			actr->_lastDir = d;
-			if (actr->_directions == 1)
+		if (checkMove3(x1, y1, actor)) {
+			nextFrame(actor);
+			actor->_lastDir = d;
+			if (actor->_directions == 1)
 				return 0;
 			return d;
 		}
@@ -280,36 +290,36 @@ int shot_movement_four(Actor *actr) {
 	else if (xd == -2 && yd == 0)
 		d = 2;
 
-	x1 = actr->_x;
-	y1 = actr->_y;
-	actr->_toggle ^= 1;
+	x1 = actor->_x;
+	y1 = actor->_y;
+	actor->_toggle ^= 1;
 
-	if (actr->_toggle) {
+	if (actor->_toggle) {
 		if (xd) {
 			x1 += xd;
-			if (checkMove3(x1, y1, actr)) {
+			if (checkMove3(x1, y1, actor)) {
 				if (xd > 0)
 					d = 3;
 				else
 					d = 2;
-				nextFrame(actr);
-				actr->_lastDir = d;
-				if (actr->_directions == 1)
+				nextFrame(actor);
+				actor->_lastDir = d;
+				if (actor->_directions == 1)
 					return 0;
 				return d;
 			}
-			x1 = actr->_x;
+			x1 = actor->_x;
 		}
 		if (yd) {
 			y1 += yd;
-			if (checkMove3(x1, y1, actr)) {
+			if (checkMove3(x1, y1, actor)) {
 				if (yd > 0)
 					d = 1;
 				else
 					d = 0;
-				nextFrame(actr);
-				actr->_lastDir = d;
-				if (actr->_directions == 1)
+				nextFrame(actor);
+				actor->_lastDir = d;
+				if (actor->_directions == 1)
 					return 0;
 				return d;
 			}
@@ -317,119 +327,117 @@ int shot_movement_four(Actor *actr) {
 	} else {
 		if (yd) {
 			y1 += yd;
-			if (checkMove3(x1, y1, actr)) {
+			if (checkMove3(x1, y1, actor)) {
 				if (yd > 0)
 					d = 1;
 				else
 					d = 0;
-				nextFrame(actr);
-				actr->_lastDir = d;
-				if (actr->_directions == 1)
+				nextFrame(actor);
+				actor->_lastDir = d;
+				if (actor->_directions == 1)
 					return 0;
 				return d;
 			}
-			y1 = actr->_y;
+			y1 = actor->_y;
 		}
 		if (xd) {
 			x1 += xd;
-			if (checkMove3(x1, y1, actr)) {
+			if (checkMove3(x1, y1, actor)) {
 				if (xd > 0)
 					d = 3;
 				else
 					d = 2;
-				nextFrame(actr);
-				actr->_lastDir = d;
-				if (actr->_directions == 1)
+				nextFrame(actor);
+				actor->_lastDir = d;
+				if (actor->_directions == 1)
 					return 0;
 				return d;
 			}
 		}
 	}
-	checkMove3(actr->_x, actr->_y, actr);
-	nextFrame(actr);
-	actr->_lastDir = d;
-	if (actr->_directions == 1)
+	checkMove3(actor->_x, actor->_y, actor);
+	nextFrame(actor);
+	actor->_lastDir = d;
+	if (actor->_directions == 1)
 		return 0;
 	return d;
 }
 
 // No move, frame cycle
-int shot_movement_five(Actor *actr) {
-	next_shot_frame(actr);
-	if (actr->_directions == 1)
+int shotMovementFive(Actor *actor) {
+	next_shot_frame(actor);
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Wraith spots
-int shot_movement_six(Actor *actr) {
-	actr->_temp1--;
-	if (!actr->_temp1) {
-		actorDestroyed(actr);
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
+int shotMovementSix(Actor *actor) {
+	actor->_temp1--;
+	if (!actor->_temp1) {
+		actorDestroyed(actor);
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
 	} else
-		next_shot_frame(actr);
-	if (actr->_directions == 1)
+		next_shot_frame(actor);
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
-#define YV actr->_i1
-#define YC actr->_i2
-#define BC actr->_i3
-#define YD actr->_i4
-#define XD actr->_i5
-#define XC actr->_i6
+#define YV actor->_i1
+#define YC actor->_i2
+#define BC actor->_i3
+#define YD actor->_i4
+#define XD actor->_i5
+#define XC actor->_i6
 #define IV 100
 #define IC 50
 
 // Skull drop
-int shot_movement_seven(Actor *actr) {
-	if (actr->_temp3) {
-		actr->_temp3--;
+int shotMovementSeven(Actor *actor) {
+	if (actor->_temp3) {
+		actor->_temp3--;
 		goto done;
 	}
-	if (overlap(actr->_x, actr->_y, actr->_x + actr->_sizeX, actr->_y + actr->_sizeY,
+	if (overlap(actor->_x, actor->_y, actor->_x + actor->_sizeX, actor->_y + actor->_sizeY,
 				_G(thor)->_x, _G(thor)->_y + 4, _G(thor)->_x + 15, _G(thor)->_y + 15))
-		thorDamaged(actr);
+		thorDamaged(actor);
 
-	actr->_temp2++;
-	if (actr->_temp2 > 2) {
-		if (actr->_temp4)
-			actr->_temp4--;
-		actr->_temp2 = 0;
+	actor->_temp2++;
+	if (actor->_temp2 > 2) {
+		if (actor->_temp4)
+			actor->_temp4--;
+		actor->_temp2 = 0;
 	}
-	actr->_temp3 = actr->_temp4;
+	actor->_temp3 = actor->_temp4;
 
-	actr->_y += 2;
-	if (actr->_y > 160 - 36) {
-		actr->_x += (4 - g_events->getRandomNumber(8));
-		actr->_moveType = 8;
+	actor->_y += 2;
+	if (actor->_y > 160 - 36) {
+		actor->_x += (4 - g_events->getRandomNumber(8));
+		actor->_moveType = 8;
 		YV = IV;
 		YC = 0;
 		BC = IC;
 		YD = 0;
 		XC = 3;
-		if (actr->_x < 150)
+		if (actor->_x < 150)
 			XD = 1;
 		else
 			XD = 0;
 	}
 
 done:
-	next_shot_frame(actr);
-	if (actr->_directions == 1)
+	next_shot_frame(actor);
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Skull bounce
-int shot_movement_eight(Actor *actr) {
-	int x, y;
-
-	x = actr->_x;
-	y = actr->_y;
+int shotMovementEight(Actor *actor) {
+	int x = actor->_x;
+	int y = actor->_y;
 
 	XC--;
 	if (!XC) {
@@ -469,52 +477,52 @@ int shot_movement_eight(Actor *actr) {
 	if (y > 164)
 		y = 164;
 	//   8       311
-	if (x < 1 || x > (319 - actr->_sizeX)) {
-		if (!actr->_dead)
-			if (_G(actor[actr->_creator])._currNumShots)
-				_G(actor[actr->_creator])._currNumShots--;
-		actorDestroyed(actr);
+	if (x < 1 || x > (319 - actor->_sizeX)) {
+		if (!actor->_dead)
+			if (_G(actor[actor->_creator])._currNumShots)
+				_G(actor[actor->_creator])._currNumShots--;
+		actorDestroyed(actor);
 	}
-	if (overlap(actr->_x, actr->_y, actr->_x + actr->_sizeX, actr->_y + actr->_sizeY,
+	if (overlap(actor->_x, actor->_y, actor->_x + actor->_sizeX, actor->_y + actor->_sizeY,
 				_G(thor)->_x, _G(thor)->_y + 4, _G(thor)->_x + 15, _G(thor)->_y + 15))
-		thorDamaged(actr);
-	actr->_x = x;
-	actr->_y = y;
+		thorDamaged(actor);
+	actor->_x = x;
+	actor->_y = y;
 
 	//done:
-	next_shot_frame(actr);
-	if (actr->_directions == 1)
+	next_shot_frame(actor);
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Skull explode
-int shot_movement_nine(Actor *actr) {
-	actr->_nextFrame++;
-	if (actr->_nextFrame == 3) {
-		_G(actor[actr->_creator])._currNumShots--;
-		actorDestroyed(actr);
+int shotMovementNine(Actor *actor) {
+	actor->_nextFrame++;
+	if (actor->_nextFrame == 3) {
+		_G(actor[actor->_creator])._currNumShots--;
+		actorDestroyed(actor);
 		return 0;
 	}
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Skull - stalagtites
-int shot_movement_ten(Actor *actr) {
-	int f = 0;
-	actr->_y += 2;
+int shotMovementTen(Actor *actor) {
+	bool check = false;
+	actor->_y += 2;
 
-	if (overlap(actr->_x, actr->_y, actr->_x + actr->_sizeX, actr->_y + actr->_sizeY,
+	if (overlap(actor->_x, actor->_y, actor->_x + actor->_sizeX, actor->_y + actor->_sizeY,
 				_G(thor)->_x, _G(thor)->_y + 4, _G(thor)->_x + 15, _G(thor)->_y + 15)) {
-		thorDamaged(actr);
-		f = 1;
+		thorDamaged(actor);
+		check = true;
 	}
-	if ((actr->_y > 160) || f) {
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
-		actorDestroyed(actr);
+	if (actor->_y > 160 || check) {
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
+		actorDestroyed(actor);
 	}
 
 	return 0;
@@ -522,14 +530,14 @@ int shot_movement_ten(Actor *actr) {
 
 #undef YD
 #undef XD
-#define YA actr->_i1
-#define XA actr->_i2
-#define YD actr->_i3
-#define XD actr->_i4
-#define DIR actr->_i5
-#define CNT actr->_i6
+#define YA actor->_i1
+#define XA actor->_i2
+#define YD actor->_i3
+#define XD actor->_i4
+#define DIR actor->_i5
+#define CNT actor->_i6
 
-void calc_angle(int x1, int y1, int x2, int y2, Actor *actr) {
+void calc_angle(const int x1, const int y1, const int x2, const int y2, Actor *actor) {
 	if (x1 < x2) {
 		XA = -2;
 		XD = x2 - x1;
@@ -560,13 +568,13 @@ void calc_angle(int x1, int y1, int x2, int y2, Actor *actr) {
 }
 
 // Angle throw
-int shot_movement_eleven(Actor *actr) {
-	int x1 = actr->_x;
-	int y1 = actr->_y;
+int shotMovementEleven(Actor *actor) {
+	int x1 = actor->_x;
+	int y1 = actor->_y;
 
-	if (!actr->_temp1) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
-		actr->_temp1 = 1;
+	if (!actor->_temp1) {
+		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		actor->_temp1 = 1;
 	}
 
 	if (DIR) {
@@ -585,26 +593,26 @@ int shot_movement_eleven(Actor *actr) {
 		}
 	}
 
-	if (!checkMove3(x1, y1, actr)) {
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
-		actorDestroyed(actr);
+	if (!checkMove3(x1, y1, actor)) {
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
+		actorDestroyed(actor);
 	} else
-		nextFrame(actr);
+		nextFrame(actor);
 
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Angle throw Loki
-int shot_movement_twelve(Actor *actr) {
-	int x1 = actr->_x;
-	int y1 = actr->_y;
+int shotMovementTwelve(Actor *actor) {
+	int x1 = actor->_x;
+	int y1 = actor->_y;
 
-	if (!actr->_temp5) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
-		actr->_temp5 = 1;
+	if (!actor->_temp5) {
+		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		actor->_temp5 = 1;
 	}
 
 	if (DIR) {
@@ -625,40 +633,40 @@ int shot_movement_twelve(Actor *actr) {
 
 	if (x1 < 16 || x1 > 287 || y1 < 16 || y1 > 159) {
 		calc_angle(g_events->getRandomNumber(319),
-				   g_events->getRandomNumber(191), x1, y1, actr);
-		actr->_moveType = 13;
-		actr->_temp4 = 240;
-		actr->_nextFrame = 2;
+				   g_events->getRandomNumber(191), x1, y1, actor);
+		actor->_moveType = 13;
+		actor->_temp4 = 240;
+		actor->_nextFrame = 2;
 	} else {
 		if (overlap(x1 + 2, y1 + 2, x1 + 14, y1 + 14, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
-			thorDamaged(actr);
+			thorDamaged(actor);
 		}
-		actr->_x = x1;
-		actr->_y = y1;
+		actor->_x = x1;
+		actor->_y = y1;
 	}
 
-	int fcount = actr->_frameCount - 1;
+	const int fcount = actor->_frameCount - 1;
 	if (fcount <= 0) {
-		actr->_nextFrame++;
-		if (actr->_nextFrame > 1)
-			actr->_nextFrame = 0;
-		actr->_frameCount = actr->_frameSpeed;
+		actor->_nextFrame++;
+		if (actor->_nextFrame > 1)
+			actor->_nextFrame = 0;
+		actor->_frameCount = actor->_frameSpeed;
 	} else
-		actr->_frameCount = fcount;
+		actor->_frameCount = fcount;
 	
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 // Angle throw Loki-2
-int shot_movement_thirteen(Actor *actr) {
-	int x1 = actr->_x;
-	int y1 = actr->_y;
+int shotMovementThirteen(Actor *actor) {
+	int x1 = actor->_x;
+	int y1 = actor->_y;
 
-	if (!actr->_temp5) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actr);
-		actr->_temp5 = 1;
+	if (!actor->_temp5) {
+		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		actor->_temp5 = 1;
 	}
 
 	if (DIR) {
@@ -677,21 +685,21 @@ int shot_movement_thirteen(Actor *actr) {
 		}
 	}
 
-	if (actr->_temp4)
-		actr->_temp4--;
+	if (actor->_temp4)
+		actor->_temp4--;
 
-	if (!actr->_temp4) {
-		if (_G(actor[actr->_creator])._currNumShots)
-			_G(actor[actr->_creator])._currNumShots--;
-		actorDestroyed(actr);
+	if (!actor->_temp4) {
+		if (_G(actor[actor->_creator])._currNumShots)
+			_G(actor[actor->_creator])._currNumShots--;
+		actorDestroyed(actor);
 		_G(apple_drop++);
 		if (_G(apple_drop) > 4) {
-			if (dropObject(actr, 5))
+			if (dropObject(actor, 5))
 				_G(apple_drop) = 0;
 			else
 				_G(apple_drop) = 4;
 		} else
-			dropObject(actr, 4);
+			dropObject(actor, 4);
 		return 0;
 	}
 
@@ -702,25 +710,25 @@ int shot_movement_thirteen(Actor *actr) {
 			YA = 0 - YA;
 	} else {
 		if (overlap(x1 + 4, y1 + 4, x1 + 12, y1 + 12, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
-			thorDamaged(actr);
+			thorDamaged(actor);
 		}
-		actr->_x = x1;
-		actr->_y = y1;
+		actor->_x = x1;
+		actor->_y = y1;
 	}
 
-	int fcount = actr->_frameCount - 1;
+	const int fcount = actor->_frameCount - 1;
 	if (fcount <= 0) {
-		actr->_nextFrame++;
-		if (actr->_nextFrame > 3)
-			actr->_nextFrame = 2;
-		actr->_frameCount = actr->_frameSpeed;
+		actor->_nextFrame++;
+		if (actor->_nextFrame > 3)
+			actor->_nextFrame = 2;
+		actor->_frameCount = actor->_frameSpeed;
 	} else
-		actr->_frameCount = fcount;
+		actor->_frameCount = fcount;
 	
-	if (actr->_directions == 1)
+	if (actor->_directions == 1)
 		return 0;
 
-	return actr->_lastDir;
+	return actor->_lastDir;
 }
 
 } // namespace Got

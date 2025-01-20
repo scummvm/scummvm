@@ -259,7 +259,7 @@ int checkMove0(const int x, const int y, Actor *actor) {
 			return 0;
 
 		if (icn1 > TILE_SPECIAL) {
-			if (!special_tile_thor(y1, x1, icn1))
+			if (!specialTileThor(y1, x1, icn1))
 				return 0;
 			icn2 = _G(scrn)._iconGrid[y2][x1];
 			icn3 = _G(scrn)._iconGrid[y1][x2];
@@ -267,19 +267,19 @@ int checkMove0(const int x, const int y, Actor *actor) {
 		}
 
 		if (icn2 > TILE_SPECIAL) {
-			if (!special_tile_thor(y2, x1, icn2))
+			if (!specialTileThor(y2, x1, icn2))
 				return 0;
 			icn3 = _G(scrn)._iconGrid[y1][x2];
 			icn4 = _G(scrn)._iconGrid[y2][x2];
 		}
 
 		if (icn3 > TILE_SPECIAL) {
-			if (!special_tile_thor(y1, x2, icn3))
+			if (!specialTileThor(y1, x2, icn3))
 				return 0;
 			icn4 = _G(scrn)._iconGrid[y2][x2];
 		}
 
-		if (icn4 > TILE_SPECIAL && !special_tile_thor(y2, x2, icn4))
+		if (icn4 > TILE_SPECIAL && !specialTileThor(y2, x2, icn4))
 			return 0;
 	}
 
@@ -372,16 +372,16 @@ int checkMove1(const int x, const int y, Actor *actor) {
 		return 0;
 	}
 
-	if (icn1 > TILE_SPECIAL && !special_tile(actor, y1, x1, icn1))
+	if (icn1 > TILE_SPECIAL && !specialTile(actor, y1, x1, icn1))
 		return 0;
 
-	if (icn2 > TILE_SPECIAL && !special_tile(actor, y2, x1, icn2))
+	if (icn2 > TILE_SPECIAL && !specialTile(actor, y2, x1, icn2))
 		return 0;
 
-	if (icn3 > TILE_SPECIAL && !special_tile(actor, y1, x2, icn3))
+	if (icn3 > TILE_SPECIAL && !specialTile(actor, y1, x2, icn3))
 		return 0;
 
-	if (icn4 > TILE_SPECIAL && !special_tile(actor, y2, x2, icn4))
+	if (icn4 > TILE_SPECIAL && !specialTile(actor, y2, x2, icn4))
 		return 0;
 
 	x1 = x + 1;
@@ -465,16 +465,16 @@ int checkMove2(const int x, const int y, Actor *actor) {
 		return 0;
 
 	if (icn1 > TILE_SPECIAL)
-		if (!special_tile(actor, y1, x1, icn1))
+		if (!specialTile(actor, y1, x1, icn1))
 			return 0;
 	if (icn2 > TILE_SPECIAL)
-		if (!special_tile(actor, y2, x1, icn2))
+		if (!specialTile(actor, y2, x1, icn2))
 			return 0;
 	if (icn3 > TILE_SPECIAL)
-		if (!special_tile(actor, y1, x2, icn3))
+		if (!specialTile(actor, y1, x2, icn3))
 			return 0;
 	if (icn4 > TILE_SPECIAL)
-		if (!special_tile(actor, y2, x2, icn4))
+		if (!specialTile(actor, y2, x2, icn4))
 			return 0;
 
 	x1 = x + 1;
@@ -542,13 +542,13 @@ int checkMove3(const int x, const int y, Actor *actor) {
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
-	if (icn1 > TILE_SPECIAL && !special_tile(actor, y1, x1, icn1))
+	if (icn1 > TILE_SPECIAL && !specialTile(actor, y1, x1, icn1))
 		return 0;
-	if (icn2 > TILE_SPECIAL && !special_tile(actor, y2, x1, icn2))
+	if (icn2 > TILE_SPECIAL && !specialTile(actor, y2, x1, icn2))
 		return 0;
-	if (icn3 > TILE_SPECIAL && !special_tile(actor, y1, x2, icn3))
+	if (icn3 > TILE_SPECIAL && !specialTile(actor, y1, x2, icn3))
 		return 0;
-	if (icn4 > TILE_SPECIAL && !special_tile(actor, y2, x2, icn4))
+	if (icn4 > TILE_SPECIAL && !specialTile(actor, y2, x2, icn4))
 		return 0;
 
 	// Check for solid or fly over
@@ -828,13 +828,13 @@ int checkSpecialMove1(const int x, const int y, Actor *actor) {
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn)
 		return 0;
 
-	if (icn1 > TILE_SPECIAL && !special_tile(actor, y1, x1, icn1))
+	if (icn1 > TILE_SPECIAL && !specialTile(actor, y1, x1, icn1))
 		return 0;
-	if (icn2 > TILE_SPECIAL && !special_tile(actor, y2, x1, icn2))
+	if (icn2 > TILE_SPECIAL && !specialTile(actor, y2, x1, icn2))
 		return 0;
-	if (icn3 > TILE_SPECIAL && !special_tile(actor, y1, x2, icn3))
+	if (icn3 > TILE_SPECIAL && !specialTile(actor, y1, x2, icn3))
 		return 0;
-	if (icn4 > TILE_SPECIAL && !special_tile(actor, y2, x2, icn4))
+	if (icn4 > TILE_SPECIAL && !specialTile(actor, y2, x2, icn4))
 		return 0;
 
 	x1 = x;
