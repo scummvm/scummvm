@@ -165,7 +165,7 @@ void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
@@ -320,23 +320,24 @@ void Inter_Fascination::oFascin_setWinSize() {
 }
 
 void Inter_Fascination::oFascin_closeWin() {
-	int16 id;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
-	_vm->_draw->activeWin(id);
-	_vm->_draw->closeWin(id);
+	_vm->_draw->activeWin((int16) id);
+	_vm->_draw->closeWin((int16) id);
 }
 
 void Inter_Fascination::oFascin_activeWin() {
-	int16 id;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
-	_vm->_draw->activeWin(id);
+	_vm->_draw->activeWin((int16) id);
 }
 
 void Inter_Fascination::oFascin_openWin() {
-	int16 retVal, id;
+	int16 retVal;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
-	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
+	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin((int16) id));
 }
 
 void Inter_Fascination::oFascin_initCursorAnim() {
@@ -347,15 +348,15 @@ void Inter_Fascination::oFascin_initCursorAnim() {
 }
 
 void Inter_Fascination::oFascin_setRenderFlags() {
-	int16 expr;
+	int32 expr;
 	_vm->_game->_script->evalExpr(&expr);
-	_vm->_draw->_renderFlags = expr;
+	_vm->_draw->_renderFlags = (int16) expr;
 }
 
 void Inter_Fascination::oFascin_setWinFlags() {
-	int16 expr;
+	int32 expr;
 	_vm->_game->_script->evalExpr(&expr);
-	_vm->_global->_curWinId = expr;
+	_vm->_global->_curWinId = (int16) expr;
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {
