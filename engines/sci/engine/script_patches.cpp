@@ -9160,9 +9160,49 @@ static const uint16 larry1PatchBuyApple[] = {
 	PATCH_END
 };
 
+// When entering the casino from certain angles and speeds, ego can get stuck in
+//  hands-off mode when the doors close. This bug also occurs in the original.
+//  The sToCasino script sets hands-off mode, moves ego, closes the doors, and
+//  then waits on ego and the doors, but the doors are control obstacles that
+//  can interrupt ego's motion and prevent the script from completing.
+//
+// We fix this by clearing ego:illegalBits when sToCasino enters hands-off mode
+//  so that ego ignores the door obstacles. On the final state (2) we restore
+//  ego:illegalBits to $8000 before changing rooms.
+//
+// Applies to: All versions
+// Responsible method: sToCasino:changeState
+// Fixes bug: #15701
+static const uint16 larry1SignatureCasinoDoors[] = {
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ end of switch ]
+	0x3c,                              // dup
+	0x35, SIG_MAGICDWORD, 0x01,        // ldi 01 [ state 1 ]
+	0x1a,                              // eq?
+	0x30, SIG_UINT16(0x0005),          // bnt 0005
+	0x35, 0x00,                        // ldi 00
+	0x32,                              // jmp [ end of switch ]
+	SIG_ADDTOOFFSET(+9),
+	0x38, SIG_SELECTOR16(newRoom),     // pushi newRoom
+	SIG_END
+};
+
+static const uint16 larry1PatchCasinoDoors[] = {
+	0x32, PATCH_UINT16(0x0000),        // jmp 0000 [ fall through ]
+	0x3c,                              // dup
+	0x35, 0x0e,                        // ldi 0e
+	0x0e,                              // shl
+	0x39, PATCH_SELECTOR8(illegalBits),// pushi illegalBits
+	0x78,                              // push1
+	0x36,                              // push
+	0x81, 0x00,                        // lag 00
+	0x4a, 0x06,                        // send 06 [ ego illegalBits: (state << 14) ]
+	PATCH_END
+};
+
 //          script, description,                                signature                       patch
 static const SciScriptPatcherEntry larry1Signatures[] = {
 	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple,        larry1PatchBuyApple },
+	{  true,   300, "casino doors",                          1, larry1SignatureCasinoDoors,     larry1PatchCasinoDoors },
 	{  true,   350, "elevator polygon size",                 1, larry1SignatureElevatorPolygon, larry1PatchElevatorPolygon },
 	{  true,   803, "disable speed test",                    1, sci01SpeedTestLocalSignature,   sci01SpeedTestLocalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
