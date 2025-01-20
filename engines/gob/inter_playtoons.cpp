@@ -355,7 +355,7 @@ void Inter_Playtoons::oPlaytoons_loadMultObject() {
 }
 
 void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
-	int16 objIndex;
+	int32 objIndex;
 	uint16 readVar[4];
 	uint16 types[4];
 	Mult::Mult_AnimData animData;

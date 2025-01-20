@@ -427,12 +427,12 @@ void Inter_v1::o1_freeAnim() {
 }
 
 void Inter_v1::o1_updateAnim() {
-	int16 deltaX;
-	int16 deltaY;
-	int16 flags;
-	int16 frame;
-	int16 layer;
-	int16 animation;
+	int32 deltaX;
+	int32 deltaY;
+	int32 flags;
+	int32 frame;
+	int32 layer;
+	int32 animation;
 
 	_vm->_game->_script->evalExpr(&deltaX);
 	_vm->_game->_script->evalExpr(&deltaY);
@@ -440,8 +440,8 @@ void Inter_v1::o1_updateAnim() {
 	_vm->_game->_script->evalExpr(&layer);
 	_vm->_game->_script->evalExpr(&frame);
 	flags = _vm->_game->_script->readInt16();
-	_vm->_scenery->updateAnim(layer, frame, animation, flags,
-			deltaX, deltaY, 1);
+	_vm->_scenery->updateAnim((int16) layer, (int16) frame, (int16) animation, (int16) flags,
+							  (int16) deltaX, (int16) deltaY, 1);
 }
 
 void Inter_v1::o1_initMult() {
@@ -548,8 +548,8 @@ void Inter_v1::o1_animate() {
 }
 
 void Inter_v1::o1_loadMultObject() {
-	int16 val;
-	int16 objIndex;
+	int32 val;
+	int32 objIndex;
 	byte *multData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
@@ -571,8 +571,8 @@ void Inter_v1::o1_loadMultObject() {
 }
 
 void Inter_v1::o1_getAnimLayerInfo() {
-	int16 anim;
-	int16 layer;
+	int32 anim;
+	int32 layer;
 	uint16 varDX, varDY;
 	uint16 varUnk0;
 	uint16 varFrames;
@@ -590,7 +590,7 @@ void Inter_v1::o1_getAnimLayerInfo() {
 }
 
 void Inter_v1::o1_getObjAnimSize() {
-	int16 objIndex;
+	int32 objIndex;
 
 	_vm->_game->_script->evalExpr(&objIndex);
 
@@ -633,17 +633,23 @@ void Inter_v1::o1_freeStatic() {
 }
 
 void Inter_v1::o1_renderStatic() {
-	int16 layer;
-	int16 index;
+	int32 layer;
+	int32 index;
 
 	_vm->_game->_script->evalExpr(&index);
 	_vm->_game->_script->evalExpr(&layer);
-	_vm->_scenery->renderStatic(index, layer);
+	_vm->_scenery->renderStatic((int16) index, (int16) layer);
 }
 
 void Inter_v1::o1_loadCurLayer() {
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStatic);
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStaticLayer);
+	int32 curStatic;
+	int32 curStaticLayer;
+	_vm->_game->_script->evalExpr(&curStatic);
+	_vm->_game->_script->evalExpr(&curStaticLayer);
+
+	_vm->_scenery->_curStatic = (int16) curStatic;
+	_vm->_scenery->_curStaticLayer = (int16) curStaticLayer;
+
 }
 
 void Inter_v1::o1_playCDTrack() {
@@ -976,7 +982,7 @@ void Inter_v1::o1_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
 	uint16 dest = _vm->_game->_script->readVarIndex();
 
-	int16 result;
+	int32 result;
 	int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 	switch (destType) {

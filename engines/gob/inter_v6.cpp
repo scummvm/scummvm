@@ -265,7 +265,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	uint16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
 
 	if (size != 0) {
-		int16 src;
+		int32 src;
 
 		_vm->_game->_script->push();
 
@@ -332,7 +332,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	}
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {

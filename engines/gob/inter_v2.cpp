@@ -616,12 +616,12 @@ void Inter_v2::o2_pushVars() {
 			_varStack.pushData(*_variables, varOff, _vm->_global->_inter_animDataSize * 4);
 
 		} else {
-			int16 value;
+			int32 value;
 
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			_varStack.pushInt((uint32)value);
+			_varStack.pushInt(value);
 		}
 	}
 }
@@ -1050,7 +1050,7 @@ void Inter_v2::o2_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {

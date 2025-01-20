@@ -287,7 +287,7 @@ void Script::skipExpr(char stopToken) {
 	_expression->skipExpr(stopToken);
 }
 
-char Script::evalExpr(int16 *pRes) {
+char Script::evalExpr(int32 *pRes) {
 	byte type;
 
 	_expression->printExpr(99);
