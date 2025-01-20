@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-18 17:21+0000\n"
-"PO-Revision-Date: 2025-01-15 14:18+0000\n"
+"PO-Revision-Date: 2025-01-20 18:57+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -11766,7 +11766,7 @@ msgstr ""
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Bromes molestes"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -11783,27 +11783,27 @@ msgstr "Controls:"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Inverteix els colors del verb"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Fonts retro"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Verbs retro"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Sentència clàssica"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "Ransome *unbeeped* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
 msgid "Select highlighted verb"
@@ -11819,7 +11819,7 @@ msgstr "Ves al següent objecte"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Selecciona un verb/element a l'esquerra"
 
 #: engines/twp/metaengine.cpp:159
 msgid "Select verb/item Right"
@@ -11827,11 +11827,11 @@ msgstr "Selecciona verb/element a la dreta"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Selecciona un verb/element amunt"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Selecciona un verb/element avall"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
@@ -11896,11 +11896,11 @@ msgstr "Mostra punts d'interès"
 #: engines/twp/twp.cpp:830
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "Heu seleccionat Ransome *unbeeped* (DLC) però el DLC no s'ha detectat!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Habilita l'omissió de fotogrames"
 
 #: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
@@ -12026,6 +12026,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Falta el fitxer de vídeo d'introducció del joc Crusader - comproveu que els "
+"directoris FLICS i SOUND s'han copiat del CD.  Hi ha més instruccions a la "
+"wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/ultima/ultima8/games/u8_game.cpp:108
 msgid ""
@@ -12036,6 +12039,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Falta un fitxer requerit\n"
+"\n"
+"L'inici d'una partida requereix el fitxer SAVEGAME/U8SAVE.000\n"
+"d'una instal·lació original.\n"
+"\n"
+"Si us plau, comproveu que heu copiat tots els fitxers correctament."
 
 #: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
