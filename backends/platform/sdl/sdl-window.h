@@ -78,6 +78,7 @@ public:
 	 */
 	void iconifyWindow();
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	/**
 	 * Query platform specific SDL window manager information.
 	 *
@@ -85,6 +86,7 @@ public:
 	 * for accessing it in a version safe manner.
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
+#endif
 
 	/*
 	 * Retrieve the current desktop resolution.
@@ -109,7 +111,11 @@ public:
 	virtual float getDpiScalingFactor() const;
 
 	bool mouseIsGrabbed() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (_window) {
+			return SDL_GetWindowMouseGrab(_window);
+		}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
 			return SDL_GetWindowGrab(_window) == SDL_TRUE;
 		}
@@ -118,7 +124,9 @@ public:
 	}
 
 	bool mouseIsLocked() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		return SDL_GetWindowRelativeMouseMode(_window);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		return SDL_GetRelativeMouseMode() == SDL_TRUE;
 #else
 		return _inputLockState;

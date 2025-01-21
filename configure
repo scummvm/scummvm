@@ -258,7 +258,7 @@ _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
 _pkgconfig=pkg-config
-_sdlconfig=sdl2-config
+ _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _libmikmodconfig=libmikmod-config
 _freetypeconfig=freetype-config
@@ -4227,21 +4227,31 @@ fi
 # Setup SDL specifics for SDL based backends
 #
 if test "$_sdl" = auto ; then
-	find_sdlconfig
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists sdl3; then
+		_sdlconfig="pkg-config sdl3"
+		_sdlversion=`$_sdlconfig --modversion`
+		cat > $TMPC << EOF
+#include "SDL3/SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
+	else
+		find_sdlconfig
+		_sdlversion=`$_sdlconfig --version`
+		cat > $TMPC << EOF
+#include "SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
+	fi
+
 	append_var SDL_CFLAGS "`$_sdlconfig --cflags | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
 	if test "$_static_build" = yes ; then
 		append_var SDL_LIBS "`$_sdlconfig --static-libs`"
 	else
 		append_var SDL_LIBS "`$_sdlconfig --libs`"
 	fi
-	_sdlversion=`$_sdlconfig --version`
 
 	echocheck "SDL"
 	_sdl=no
-	cat > $TMPC << EOF
-#include "SDL.h"
-int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
-EOF
 	cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS && _sdl=yes
 	echo "$_sdl"
 	if test "$_sdl" = no ; then
@@ -4256,6 +4266,11 @@ if test "$_sdl" = yes ; then
 	append_var INCLUDES "$SDL_CFLAGS"
 	append_var LIBS "$SDL_LIBS"
 	case $_sdlversion in
+		3.*.*)
+			append_var DEFINES "-DUSE_SDL3"
+			add_line_to_config_mk "USE_SDL3 = 1"
+			_sdlMajorVersionNumber=3
+			;;
 		2.*.*)
 			append_var DEFINES "-DUSE_SDL2"
 			add_line_to_config_mk "USE_SDL2 = 1"
@@ -4276,13 +4291,25 @@ fi
 # of SDL-net or SDL2-net that does not require SDL or SDL2 respectively
 #
 if test "$_sdlnet" = auto ; then
+	# If SDL3 was detected, then test for SDL3_net exclusively
 	# If SDL2 was detected, then test for SDL2_net exclusively
 	# If SDL was detected, then test for SDL_net exclusively
-	# If neither SDL nor SDL2 detected, then test for both (SDL2_net success takes priority)
+	# If neither SDL nor SDL2 detected nor SDL3 detected, then test for both (SDL3_net success takes priority)
+	set_var SDL3_NET_LIBS   "$SDL_NET_LIBS"
+	set_var SDL3_NET_CFLAGS "$SDL_NET_CFLAGS"
 	set_var SDL2_NET_LIBS   "$SDL_NET_LIBS"
 	set_var SDL2_NET_CFLAGS "$SDL_NET_CFLAGS"
 	set_var SDL1_NET_LIBS   "$SDL_NET_LIBS"
 	set_var SDL1_NET_CFLAGS "$SDL_NET_CFLAGS"
+
+	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 3; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL3_net; then
+			append_var SDL3_NET_LIBS "`$_pkgconfig --libs SDL3_net`"
+			append_var SDL3_NET_CFLAGS "`$_pkgconfig --cflags SDL3_net | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
+		else
+			append_var SDL3_NET_LIBS "-lSDL3_net"
+		fi
+	fi
 
 	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 2; then
 		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL2_net; then
@@ -4305,26 +4332,39 @@ if test "$_sdlnet" = auto ; then
 	# Check for SDL_Net
 	echocheck "SDL_Net"
 	_sdlnet=no
+
 	cat > $TMPC << EOF
-#include "SDL_net.h"
+#include "SDL3/SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
 
-	cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
+	cc_check $SDL3_NET_LIBS $LIBS $INCLUDES $SDL3_NET_CFLAGS && _sdlnet=yes
 	if test "$_sdlnet" = yes ; then
 		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
 		set_var SDL_NET_CFLAGS "$SDL2_NET_CFLAGS"
 		add_line_to_config_mk "SDL_NET_MAJOR = 2"
 	else
 		cat > $TMPC << EOF
+#include "SDL3/SDL_net.h"
+int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
+EOF
+
+		cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
+		if test "$_sdlnet" = yes ; then
+			set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
+			set_var SDL_NET_CFLAGS "$SDL2_NET_CFLAGS"
+			add_line_to_config_mk "SDL_NET_MAJOR = 2"
+		else
+			cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
-		if test "$_sdlnet" = yes ; then
-			set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
-			set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
-			add_line_to_config_mk "SDL_NET_MAJOR = 1"
+			cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
+			if test "$_sdlnet" = yes ; then
+				set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
+				set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
+				add_line_to_config_mk "SDL_NET_MAJOR = 1"
+			fi
 		fi
 	fi
 
@@ -6819,7 +6859,26 @@ if test "$_imgui" != no ; then
 	if test "$_freetype2" = yes ; then
 		case $_backend in
 			sdl | sailfish)
-				if test "$_sdlMajorVersionNumber" -ge 2 ; then
+				if test "$_sdlMajorVersionNumber" -ge 3 ; then
+					cat > $TMPC << EOF
+#include <SDL3/SDL.h>
+#if !SDL_VERSION_ATLEAST(3,0,0)
+#error Missing SDL_RenderGeometryRaw() function
+#endif
+int main(int argc, char *argv[]) { return 0; }
+EOF
+					if cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS; then
+						define_in_config_if_yes yes 'USE_IMGUI_SDLRENDERER3'
+						_imgui=yes
+						echo "yes"
+					elif test "$_opengl" = yes; then
+						_imgui=yes
+						echo "yes"
+					else
+						_imgui=no
+						echo "no (requires OpenGL or recent SDL)"
+					fi
+				elif test "$_sdlMajorVersionNumber" -ge 2 ; then
 					cat > $TMPC << EOF
 #include "SDL.h"
 #if !SDL_VERSION_ATLEAST(2,0,18)

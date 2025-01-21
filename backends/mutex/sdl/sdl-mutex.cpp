@@ -34,11 +34,29 @@ public:
 	SdlMutexInternal() { _mutex = SDL_CreateMutex(); }
 	~SdlMutexInternal() override { SDL_DestroyMutex(_mutex); }
 
-	bool lock() override { return (SDL_mutexP(_mutex) == 0); }
-	bool unlock() override { return (SDL_mutexV(_mutex) == 0); }
+	bool lock() override {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_LockMutex(_mutex);
+		return true;
+#else
+		return (SDL_mutexP(_mutex) == 0);
+#endif
+	}
+	bool unlock() override {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_UnlockMutex(_mutex);
+		return true;
+#else
+		return (SDL_mutexV(_mutex) == 0);
+#endif
+	}
 
 private:
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Mutex *_mutex;
+#else
 	SDL_mutex *_mutex;
+#endif
 };
 
 Common::MutexInternal *createSdlMutexInternal() {
