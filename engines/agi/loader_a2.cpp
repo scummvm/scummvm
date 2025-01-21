@@ -21,6 +21,7 @@
 
 #include "agi/agi.h"
 #include "agi/disk_image.h"
+#include "agi/loader.h"
 #include "agi/words.h"
 
 #include "common/config-manager.h"
@@ -354,7 +355,7 @@ int AgiLoader_A2::loadDirs() {
 	return success ? errOK : errBadResource;
 }
 
-A2DirVersion AgiLoader_A2::detectDirVersion(Common::SeekableReadStream &stream) {
+A2DirVersion AgiLoader_A2::detectDirVersion(Common::SeekableReadStream &stream) const {
 	// A2 DIR format:
 	//         old      new
 	// volume  4 bits   5 bits
@@ -366,7 +367,7 @@ A2DirVersion AgiLoader_A2::detectDirVersion(Common::SeekableReadStream &stream) 
 	// It must exist in the new format, but can't exist in the old.
 	// In the new format it's the first resource in volume 1.
 	// In the old format it would be track 128, which is invalid.
-	AgiDir *dirs[4] = { &_logDir, &_picDir, &_viewDir, &_soundDir };
+	const AgiDir *dirs[4] = { &_logDir, &_picDir, &_viewDir, &_soundDir };
 	for (int d = 0; d < 4; d++) {
 		stream.seek(dirs[d]->offset);
 		uint16 dirEntryCount = MIN<uint32>(dirs[d]->len / 3, MAX_DIRECTORY_ENTRIES);
