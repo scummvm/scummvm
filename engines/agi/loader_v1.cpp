@@ -24,7 +24,6 @@
 #include "agi/loader.h"
 #include "agi/words.h"
 
-#include "common/config-manager.h"
 #include "common/fs.h"
 
 namespace Agi {
@@ -50,32 +49,11 @@ namespace Agi {
 // AgiMetaEngineDetection also scans for usable disk images. It finds the LOGDIR
 // file inside disk one, hashes LOGDIR, and matches against the detection table.
 
-typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
-
 void AgiLoader_v1::init() {
-	// get all files in game directory
-	Common::FSList allFiles;
-	Common::FSNode dir(ConfMan.getPath("path"));
-	if (!dir.getChildren(allFiles, Common::FSNode::kListFilesOnly)) {
-		warning("AgiLoader_v1: invalid game path: %s", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
-		return;
-	}
-
-	// build array of files with pc disk image extensions
+	// build sorted array of files with image extensions
 	Common::Array<Common::Path> imageFiles;
 	FileMap fileMap;
-	for (const Common::FSNode &file : allFiles) {
-		for (int i = 0; i < ARRAYSIZE(pcDiskImageExtensions); i++) {
-			if (file.getName().hasSuffixIgnoreCase(pcDiskImageExtensions[i])) {
-				Common::Path path = file.getPath();
-				imageFiles.push_back(path);
-				fileMap[path] = file;
-			}
-		}
-	}
-
-	// sort potential image files by name
-	Common::sort(imageFiles.begin(), imageFiles.end());
+	getPotentialDiskImages(pcDiskImageExtensions, ARRAYSIZE(pcDiskImageExtensions), imageFiles, fileMap);
 
 	// find disk one by reading potential images until successful
 	uint diskOneIndex;

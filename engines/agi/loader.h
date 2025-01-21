@@ -58,6 +58,13 @@ public:
 
 protected:
 	AgiEngine *_vm;
+
+	typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
+	static void getPotentialDiskImages(
+		const char * const *imageExtensions,
+		size_t imageExtensionCount,
+		Common::Array<Common::Path> &imageFiles,
+		FileMap &fileMap);
 };
 
 struct AgiDiskVolume {
