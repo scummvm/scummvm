@@ -42,6 +42,7 @@
 #include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"
+#include "agi/loader.h"
 #include "agi/sprite.h"
 #include "agi/text.h"
 #include "agi/keyboard.h"

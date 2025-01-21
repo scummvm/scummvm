@@ -21,6 +21,7 @@
 
 #include "agi/agi.h"
 #include "agi/disk_image.h"
+#include "agi/loader.h"
 #include "agi/words.h"
 
 #include "common/config-manager.h"
