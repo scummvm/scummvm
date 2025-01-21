@@ -19,7 +19,6 @@
  *
  */
 
-#include "graphics/primitives.h"
 #include "graphics/managed_surface.h"
 #include "dgds/drawing.h"
 
@@ -27,20 +26,13 @@ namespace Dgds {
 
 namespace Drawing {
 
-void drawPixel(int x, int y, int color, void *data) {
-	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
-
-	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
-}
-
 void filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol) {
-	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, bgcol, true, drawPixel, dst);
-	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, drawPixel, dst);
+	dst->drawEllipse(x - xr, y - yr, x + xr, y + yr, bgcol, true);
+	dst->drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false);
 }
 
 void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol) {
-	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, drawPixel, dst);
+	dst->drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false);
 }
 
 void rectClipped(const Common::Rect &r, const Common::Rect &clip, Graphics::ManagedSurface *dst, byte color) {

@@ -328,7 +328,7 @@ void MacLoomGui::runAboutDialog() {
 			if (pattern > 4)
 				darkenOnly = false;
 
-			window->drawRoundRect(r, 7, pattern, true, darkenOnly ? MacDialogWindow::plotPatternDarkenOnly : MacDialogWindow::plotPattern);
+			window->drawPatternRoundRect(r, 7, pattern, true, darkenOnly);
 
 			if (!fastForward)
 				window->markRectAsDirty(r);

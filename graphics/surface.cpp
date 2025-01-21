@@ -109,6 +109,34 @@ void Surface::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, boo
 		error("Surface::drawRoundRect: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
+void Surface::drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else
+		error("Surface::drawPolygonScan: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
+void Surface::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else
+		error("Surface::drawEllipse: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
 // see graphics/blit/blit-atari.cpp
 #ifndef ATARI
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
