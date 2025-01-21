@@ -150,7 +150,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 					tmp.size = (int32)testFile.size();
 					tmp.md5 = computeStreamMD5AsString(testFile, _md5Bytes);
 				} else {
-					tmp.size = -1;
+					tmp.size = (uint)-1;
 				}
 
 				filesSizeMD5[fname] = tmp;

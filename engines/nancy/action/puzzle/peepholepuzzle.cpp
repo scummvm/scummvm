@@ -166,14 +166,14 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 	if (_pressedButton != -1 && _pressStart != 0) {
 		uint32 curTime = g_nancy->getTotalPlayTime();
 		uint pixelsToMove = 0;
-		if (curTime - _pressStart >= 1000 / _pixelsToScroll) {
+		if (curTime - _pressStart >= 1000u / _pixelsToScroll) {
 			pixelsToMove = (curTime - _pressStart) / (1000 / _pixelsToScroll);
 		}
 
 		switch (_pressedButton) {
 		case 0 :
 			// Up
-			_currentSrc.translate(0, -pixelsToMove);
+			_currentSrc.translate(0, -static_cast<int>(pixelsToMove));
 			if (_currentSrc.top < _innerBounds.top) {
 				_currentSrc.translate(0, _innerBounds.top - _currentSrc.top);
 			}
@@ -187,7 +187,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 			break;
 		case 2 :
 			// Left
-			_currentSrc.translate(-pixelsToMove, 0);
+			_currentSrc.translate(-static_cast<int>(pixelsToMove), 0);
 			if (_currentSrc.left < _innerBounds.left) {
 				_currentSrc.translate(_innerBounds.left - _currentSrc.left, 0);
 			}

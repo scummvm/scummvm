@@ -149,7 +149,7 @@ struct BlockNode : Node {
 	uint32 endPos;
 	CaseLabelNode *currentCaseLabel;
 
-	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos(-1), currentCaseLabel(nullptr) {}
+	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos((uint32)-1), currentCaseLabel(nullptr) {}
 	void addChild(Common::SharedPtr<Node> child);
 	virtual void accept(NodeVisitor &visitor) const override;
 };
