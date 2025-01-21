@@ -160,6 +160,7 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 			stream.read(buf, pixMap.rowBytes);
 			memcpy(_surface->getBasePtr(0, y), buf, bitmapWidth);
 		}
+		delete[] buf;
 	} else {
 		error("CicnDecoder::loadStream(): Invalid pixel size %d", pixMap.pixelSize);
 	}
