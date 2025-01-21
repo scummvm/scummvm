@@ -174,6 +174,24 @@ public:
 	int loadWords() override;
 };
 
+class GalLoader : public AgiLoader {
+public:
+	GalLoader(AgiEngine *vm) : AgiLoader(vm) {}
+
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
+
+private:
+	Common::String _imageFile;
+	int _dirOffset;
+
+	static bool isDirectory(Common::SeekableReadStream &stream, uint32 dirOffset);
+	static uint32 readDirectoryEntry(Common::SeekableReadStream &stream, uint32 *sectorCount);
+};
+
 } // End of namespace Agi
 
 #endif /* AGI_LOADER_H */

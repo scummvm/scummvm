@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/debug.h"
@@ -129,6 +128,8 @@ private:
 	static Common::String getLogDirHashFromA2DiskImage(Common::SeekableReadStream &stream);
 
 	static Common::String getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position);
+	
+	static Common::String getGalDirHashFromDiskImage(Common::SeekableReadStream &stream);
 };
 
 ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -359,9 +360,10 @@ void AgiMetaEngineDetection::getPotentialDiskImages(
 }
 
 /**
- * Detects a PC Booter game by searching for 360k floppy images, reading LOGDIR,
- * hashing LOGDIR, and comparing to DOS GType_V1 entries in the detection table.
- * See AgiLoader_v1 in loader_v1.cpp for more details.
+ * Detects a PC Booter game by searching for 360k floppy images, reading LOGDIR
+ * or GAL's directory, hashing, and comparing to DOS GType_V1 and GType_GAL
+ * entries in the detection table.
+ * See AgiLoader_v1 and GalLoader for more details.
  */
 ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allFiles, uint32 skipADFlags) {
 	// build array of files with pc disk image extensions
@@ -378,6 +380,8 @@ ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allF
 		// attempt to locate and hash logdir using both possible inidir disk locations
 		Common::String logdirHash1 = getLogDirHashFromPcDiskImageV1(*stream);
 		Common::String logdirHash2 = getLogDirHashFromPcDiskImageV2001(*stream);
+		// attempt to locate and hash GAL directory 
+		Common::String galDirHash = getGalDirHashFromDiskImage(*stream);
 		delete stream;
 
 		if (!logdirHash1.empty()) {
@@ -386,19 +390,28 @@ ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allF
 		if (!logdirHash2.empty()) {
 			debug(3, "pc disk logdir hash: %s, %s", logdirHash2.c_str(), imageFile.baseName().c_str());
 		}
+		if (!galDirHash.empty()) {
+			debug(3, "pc disk gal dir hash: %s, %s", galDirHash.c_str(), imageFile.baseName().c_str());
+		}
 
-		// if logdir hash found then compare against hashes of DOS GType_V1 entries
-		if (!logdirHash1.empty() || !logdirHash2.empty()) {
+		// if hash found then compare against hashes of DOS GType_V1 entries
+		if (!logdirHash1.empty() || !logdirHash2.empty() || !galDirHash.empty()) {
 			for (const AGIGameDescription *game = gameDescriptions; game->desc.gameId != nullptr; game++) {
-				if (game->desc.platform == Common::kPlatformDOS && game->gameType == GType_V1 && !(game->desc.flags & skipADFlags)) {
+				if (game->desc.platform == Common::kPlatformDOS &&
+				    (game->gameType == GType_V1 || game->gameType == GType_GAL) &&
+				    !(game->desc.flags & skipADFlags)) {
+
 					const ADGameFileDescription *file;
 					for (file = game->desc.filesDescriptions; file->fileName != nullptr; file++) {
-						// select the logdir hash to use by the game's interpreter version
-						Common::String &logdirHash = (game->version < 0x2001) ? logdirHash1 : logdirHash2;
-						if (file->md5 != nullptr && !logdirHash.empty() && file->md5 == logdirHash) {
+						// select the hash hash to use
+						Common::String &hash = (game->gameType == GType_V1) ?
+						                       ((game->version < 0x2001) ? logdirHash1 : logdirHash2) :
+						                       galDirHash;
+
+						if (file->md5 != nullptr && !hash.empty() && file->md5 == hash) {
 							debug(3, "disk image match: %s, %s, %s", game->desc.gameId, game->desc.extra, imageFile.baseName().c_str());
 
-							// logdir hash match found
+							// hash match found
 							ADDetectedGame detectedGame(&game->desc);
 							FileProperties fileProps;
 							fileProps.md5 = file->md5;
@@ -577,6 +590,44 @@ Common::String AgiMetaEngineDetection::getLogDirHashFromDiskImage(Common::Seekab
 	}
 
 	return Common::computeStreamMD5AsString(stream, logDirSize);
+}
+
+Common::String AgiMetaEngineDetection::getGalDirHashFromDiskImage(Common::SeekableReadStream &stream) {
+	static const uint16 dirPositions[] = { GAL_DIR_POSITION_PCJR, GAL_DIR_POSITION_PC };
+	for (int i = 0; i < 2; i++) {
+		stream.seek(dirPositions[i]);
+		
+		// read logic 0 position
+		byte b0 = stream.readByte();
+		byte b1 = stream.readByte();
+		byte b2 = stream.readByte();
+		byte b3 = stream.readByte();
+		uint16 offset = ((b1 & 0x80) << 1) | b0;
+		uint16 sector = ((b2 & 0x03) << 8) | b3;
+		uint32 logicPosition = (sector * 512) + offset;
+		
+		// read logic 0 header, calculate length
+		stream.seek(logicPosition);
+		uint32 logicSize = 8;
+		for (int j = 0; j < 4; j++) {
+			logicSize += stream.readUint16LE();
+		}
+		if (stream.eos()) {
+			continue;
+		}
+		
+		// confirm that logic ends in terminator
+		stream.seek(logicPosition + logicSize -1);
+		byte logicTerminator = stream.readByte();
+		if (stream.eos() || logicTerminator != 0xff) {
+			continue;
+		}
+		
+		// hash the directory
+		stream.seek(dirPositions[i]);
+		return Common::computeStreamMD5AsString(stream, GAL_DIR_SIZE);
+	}
+	return "";
 }
 
 } // end of namespace Agi

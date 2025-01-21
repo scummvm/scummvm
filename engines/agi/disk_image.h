@@ -98,6 +98,17 @@ static const char * const a2DiskImageExtensions[] = { ".do", ".dsk", ".img", ".n
 #define A2_BC_DISK_COUNT                 5
 #define A2_BC_VOLUME_COUNT               9
 
+// GAL disk image values and helpers for GalLoader and AgiMetaEngineDetection
+
+#define GAL_LOGIC_COUNT                  84
+#define GAL_PICTURE_COUNT                84
+#define GAL_VIEW_COUNT                   110
+#define GAL_SOUND_COUNT                  10
+
+#define GAL_DIR_POSITION_PCJR            0x0500
+#define GAL_DIR_POSITION_PC              0x1400
+#define GAL_DIR_SIZE                     948
+
 Common::SeekableReadStream *openPCDiskImage(const Common::Path &path, const Common::FSNode &node);
 Common::SeekableReadStream *openA2DiskImage(const Common::Path &path, const Common::FSNode &node, bool loadAllTracks = true);
 
