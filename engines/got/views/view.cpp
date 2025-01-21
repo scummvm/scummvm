@@ -113,11 +113,11 @@ bool View::music_is_on() const {
 }
 
 void View::fadeOut() {
-	Gfx::fade_out();
+	Gfx::fadeOut();
 }
 
 void View::fadeIn(const byte *pal) {
-	Gfx::fade_in(pal);
+	Gfx::fadeIn(pal);
 }
 
 } // namespace Views

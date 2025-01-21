@@ -22,7 +22,6 @@
 #ifndef GOT_GFX_GFX_PICS_H
 #define GOT_GFX_GFX_PICS_H
 
-#include "common/array.h"
 #include "graphics/managed_surface.h"
 
 namespace Got {

@@ -107,11 +107,11 @@ int specialTileThor(const int x, const int y, const int icon) {
 			_G(exit_flag) = 2;
 		} else if (GAME2) {
 			if (_G(thor)->_dir == 0 && _G(setup).f29 && _G(setup).f21 && !_G(setup).f22) {
-				actor_visible(1);
-				actor_visible(2);
-				actor_visible(3);
-				actor_visible(4);
-				actor_visible(5);
+				actorVisible(1);
+				actorVisible(2);
+				actorVisible(3);
+				actorVisible(4);
+				actorVisible(5);
 				Common::fill(_G(scrn)._actorInvis, _G(scrn)._actorInvis + 16, 0);
 				_G(thunder_flag) = 60;
 				play_sound(THUNDER, true);

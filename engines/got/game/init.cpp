@@ -74,7 +74,7 @@ void setupPlayer() {
 }
 
 void initGame() {
-	load_standard_actors();
+	loadStandardActors();
 	setupPlayer();
 
 	if (_G(demo)) {

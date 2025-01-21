@@ -992,7 +992,7 @@ int Scripts::cmd_visible() {
 	if (_lValue < 1 || _lValue > 16)
 		return 6;
 
-	actor_visible((int)_lValue);
+	actorVisible((int)_lValue);
 	return 0;
 }
 

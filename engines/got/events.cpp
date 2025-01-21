@@ -163,7 +163,7 @@ void Events::rotatePalette() {
 			return;
 		}
 
-		Gfx::xsetpal(entry[0] >> 8, (entry[0] & 0xff) << 2,
+		Gfx::xSetPal(entry[0] >> 8, (entry[0] & 0xff) << 2,
 					 (entry[1] >> 8) << 2, (entry[1] & 0xff) << 2);
 	}
 }
@@ -271,7 +271,7 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 	UIElement *oldView = focusedView();
 
 	if (fadeOutIn)
-		Gfx::fade_out();
+		Gfx::fadeOut();
 
 	if (replaceAllViews) {
 		clearViews();
@@ -295,7 +295,7 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews, bool fadeOutIn) {
 	ui->draw();
 
 	if (fadeOutIn)
-		Gfx::fade_in();
+		Gfx::fadeIn();
 }
 
 void Events::replaceView(const Common::String &name, bool replaceAllViews, bool fadeOutIn) {

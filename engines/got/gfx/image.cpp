@@ -40,62 +40,62 @@ static void createSurface(Graphics::ManagedSurface &s, const byte *src) {
 	s.setTransparentColor(0);
 }
 
-void setup_actor(Actor *actr, char num, char dir, int x, int y) {
-	actr->_nextFrame = 0; // Next frame to be shown
-	actr->_frameCount = actr->_frameSpeed;
-	actr->_dir = dir;      // Direction of travel
-	actr->_lastDir = dir; // Last direction of travel
-	if (actr->_directions == 1)
-		actr->_dir = 0;
-	if (actr->_directions == 2)
-		actr->_dir &= 1;
-	if (actr->_directions == 4 && actr->_framesPerDirection == 1) {
-		actr->_dir = 0;
-		actr->_nextFrame = dir;
+void setupActor(Actor *actor, const char num, const char dir, const int x, const int y) {
+	actor->_nextFrame = 0; // Next frame to be shown
+	actor->_frameCount = actor->_frameSpeed;
+	actor->_dir = dir;      // Direction of travel
+	actor->_lastDir = dir; // Last direction of travel
+	if (actor->_directions == 1)
+		actor->_dir = 0;
+	if (actor->_directions == 2)
+		actor->_dir &= 1;
+	if (actor->_directions == 4 && actor->_framesPerDirection == 1) {
+		actor->_dir = 0;
+		actor->_nextFrame = dir;
 	}
 
-	actr->_x = x;                         // Actual X coor
-	actr->_y = y;                         // Actual Y coor
-	actr->_width = 16;                    // Actual X coor
-	actr->_height = 16;                   // Actual Y coor
-	actr->_center = 0;                    // Center of object
-	actr->_lastX[0] = x;                  // Last X coor on each page
-	actr->_lastX[1] = x;
-	actr->_lastY[0] = y;                  // Last Y coor on each page
-	actr->_lastY[1] = y;
-	actr->_active = true;                 // true=active, false=not active
-	actr->_moveCountdown = 8;             // Count down to movement
-	actr->_vulnerableCountdown = STAMINA; // Count down to vulnerability
-	actr->_shotCountdown = 20;            // Count down to another shot
-	actr->_currNumShots = 0;              // # of shots currently on screen
-	actr->_creator = 0;                   // which actor # created this actor
-	actr->_unpauseCountdown = 0;          // Pause must be 0 to move
-	actr->_show = 0;
-	actr->_actorNum = num;
-	actr->_counter = 0;
-	actr->_moveCounter = 0;
-	actr->_edgeCounter = 20;
-	actr->_hitThor = false;
-	actr->_rand = g_engine->getRandomNumber(99);
-	actr->_temp1 = 0;
-	actr->_initHealth = actr->_health;
+	actor->_x = x;                         // Actual X coordinates
+	actor->_y = y;                         // Actual Y coordinates
+	actor->_width = 16;                    // Actual X coordinates
+	actor->_height = 16;                   // Actual Y coordinates
+	actor->_center = 0;                    // Center of object
+	actor->_lastX[0] = x;                  // Last X coordinates on each page
+	actor->_lastX[1] = x;
+	actor->_lastY[0] = y;                  // Last Y coordinates on each page
+	actor->_lastY[1] = y;
+	actor->_active = true;                 // true=active, false=not active
+	actor->_moveCountdown = 8;             // Count down to movement
+	actor->_vulnerableCountdown = STAMINA; // Count down to vulnerability
+	actor->_shotCountdown = 20;            // Count down to another shot
+	actor->_currNumShots = 0;              // # of shots currently on screen
+	actor->_creator = 0;                   // which actor # created this actor
+	actor->_unpauseCountdown = 0;          // Pause must be 0 to move
+	actor->_show = 0;
+	actor->_actorNum = num;
+	actor->_counter = 0;
+	actor->_moveCounter = 0;
+	actor->_edgeCounter = 20;
+	actor->_hitThor = false;
+	actor->_rand = g_engine->getRandomNumber(99);
+	actor->_temp1 = 0;
+	actor->_initHealth = actor->_health;
 }
 
-void make_actor_surface(Actor *actr) {
-	assert(actr->_directions <= 4 && actr->_framesPerDirection <= 4);
-	for (int d = 0; d < actr->_directions; d++) {
-		for (int f = 0; f < actr->_framesPerDirection; f++) {
-			Graphics::ManagedSurface &s = actr->pic[d][f];
+void make_actor_surface(Actor *actor) {
+	assert(actor->_directions <= 4 && actor->_framesPerDirection <= 4);
+	for (int d = 0; d < actor->_directions; d++) {
+		for (int f = 0; f < actor->_framesPerDirection; f++) {
+			Graphics::ManagedSurface &s = actor->pic[d][f];
 			const byte *src = &_G(tmp_buff[256 * ((d * 4) + f)]);
 			createSurface(s, src);
 		}
 	}
 }
 
-int load_standard_actors() {
+int loadStandardActors() {
 	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
 	_G(actor[0]).loadFixed(_G(tmp_buff) + 5120);
-	setup_actor(&_G(actor[0]), 0, 0, 100, 100);
+	setupActor(&_G(actor[0]), 0, 0, 100, 100);
 	_G(thor) = &_G(actor[0]);
 
 	make_actor_surface(&_G(actor[0]));
@@ -107,7 +107,7 @@ int load_standard_actors() {
 
 	load_actor(0, 103 + _G(thor_info)._armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);
-	setup_actor(&_G(actor[1]), 1, 0, 100, 100);
+	setupActor(&_G(actor[1]), 1, 0, 100, 100);
 	_G(actor[1])._active = false;
 	_G(hammer) = &_G(actor[1]);
 
@@ -116,14 +116,14 @@ int load_standard_actors() {
 	// Load sparkle
 	load_actor(0, 106);
 	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
-	setup_actor(&_G(sparkle), 20, 0, 100, 100);
+	setupActor(&_G(sparkle), 20, 0, 100, 100);
 	_G(sparkle)._active = false;
 	make_actor_surface(&_G(sparkle));
 
 	// Load explosion
 	load_actor(0, 107);
 	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
-	setup_actor(&_G(explosion), 21, 0, 100, 100);
+	setupActor(&_G(explosion), 21, 0, 100, 100);
 	_G(explosion)._active = false;
 	make_actor_surface(&_G(explosion));
 
@@ -132,7 +132,7 @@ int load_standard_actors() {
 	_G(magic_item[0]).loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[0]));
 
-	setup_actor(&_G(magic_item[0]), 20, 0, 0, 0);
+	setupActor(&_G(magic_item[0]), 20, 0, 0, 0);
 	_G(magic_item[0])._active = false;
 
 	// Load shield
@@ -140,7 +140,7 @@ int load_standard_actors() {
 	_G(magic_item[1]).loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[1]));
 
-	setup_actor(&_G(magic_item[1]), 20, 0, 0, 0);
+	setupActor(&_G(magic_item[1]), 20, 0, 0, 0);
 	_G(magic_item[1])._active = false;
 
 	_G(actor[2])._active = false;
@@ -150,7 +150,7 @@ int load_standard_actors() {
 	return 1;
 }
 
-void show_enemies() {
+void showEnemies() {
 	for (int i = 3; i < MAX_ACTORS; i++)
 		_G(actor[i])._active = false;
 
@@ -159,13 +159,13 @@ void show_enemies() {
 
 	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(scrn)._actorType[i] > 0) {
-			int r = load_enemy(_G(scrn)._actorType[i]);
-			if (r >= 0) {
-				_G(actor[i + 3]) = _G(enemy[r]);
+			const int id = loadEnemy(_G(scrn)._actorType[i]);
+			if (id >= 0) {
+				_G(actor[i + 3]) = _G(enemy[id]);
 
-				int d = _G(scrn)._actorDir[i];
+				const int d = _G(scrn)._actorDir[i];
 
-				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
+				setupActor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
 							(_G(scrn)._actorLoc[i] / 20) * 16);
 				_G(actor[i + 3])._initDir = _G(scrn)._actorDir[i];
 				_G(actor[i + 3])._passValue = _G(scrn)._actorValue[i];
@@ -180,12 +180,12 @@ void show_enemies() {
 					_G(actor[i + 3])._active = false;
 			}
 
-			_G(etype[i]) = r;
+			_G(etype[i]) = id;
 		}
 	}
 }
 
-int load_enemy(int type) {
+int loadEnemy(const int type) {
 	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (_G(enemy_type[i]) == type)
 			return i;
@@ -237,15 +237,15 @@ int load_enemy(int type) {
 	return e;
 }
 
-int actor_visible(int invis_num) {
+int actorVisible(const int invisNum) {
 	for (int i = 0; i < MAX_ENEMIES; i++) {
-		if (_G(scrn)._actorInvis[i] == invis_num) {
-			int etype = _G(etype[i]);
+		if (_G(scrn)._actorInvis[i] == invisNum) {
+			const int etype = _G(etype[i]);
 			if (etype >= 0 && !_G(actor[i + 3])._active) {
 				_G(actor[i + 3]) = _G(enemy[etype]);
 
 				int d = _G(scrn)._actorDir[i];
-				setup_actor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
+				setupActor(&_G(actor[i + 3]), i + 3, d, (_G(scrn)._actorLoc[i] % 20) * 16,
 							(_G(scrn)._actorLoc[i] / 20) * 16);
 				_G(actor[i + 3])._initDir = _G(scrn)._actorDir[i];
 				_G(actor[i + 3])._passValue = _G(scrn)._actorValue[i];
@@ -258,13 +258,13 @@ int actor_visible(int invis_num) {
 	return -1;
 }
 
-void setup_magic_item(int item) {
+void setupMagicItem(const int item) {
 	for (int i = 0; i < 4; i++) {
 		createSurface(_G(magic_item[item]).pic[i / 4][i % 4], &_G(magic_pic[item][256 * i]));
 	}
 }
 
-void load_new_thor() {
+void loadNewThor() {
 	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
 
 	make_actor_surface(&_G(actor[0]));

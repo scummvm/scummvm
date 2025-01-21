@@ -131,9 +131,9 @@ Common::SeekableReadStream *GfxChunks::getStream() const {
 	if (fExe.readUint16BE() != MKTAG16('M', 'Z'))
 		error("Invalid exe header");
 
-	int lastPageSize = fExe.readUint16LE();
-	int totalPages = fExe.readUint16LE();
-	int offset = lastPageSize ? ((totalPages - 1) << 9) + lastPageSize : totalPages << 9;
+	const int lastPageSize = fExe.readUint16LE();
+	const int totalPages = fExe.readUint16LE();
+	const int offset = lastPageSize ? ((totalPages - 1) << 9) + lastPageSize : totalPages << 9;
 
 	fExe.seek(offset);
 	if (fExe.readUint16BE() != MKTAG16(0xe2, 0x4a))

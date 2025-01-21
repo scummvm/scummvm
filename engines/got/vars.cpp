@@ -71,7 +71,7 @@ void Vars::load() {
 
 	res_read("RANDOM", _rnd_array);
 
-	Gfx::load_palette();
+	Gfx::loadPalette();
 }
 
 Vars::~Vars() {

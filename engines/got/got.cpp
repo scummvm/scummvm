@@ -151,7 +151,7 @@ void GotEngine::savegameLoaded() {
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
 	_G(thor)->_moveCountdown = 6;
-	load_new_thor();
+	loadNewThor();
 
 	g_vars->resetEndgameFlags();
 

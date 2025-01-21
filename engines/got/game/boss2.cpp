@@ -390,7 +390,7 @@ void boss2ClosingSequence1() {
 
 void boss2ClosingSequence2() {
 	_G(thor_info)._armor = 10;
-	load_new_thor();
+	loadNewThor();
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;
 
@@ -418,8 +418,8 @@ void boss2ClosingSequence4() {
 	play_sound(ANGEL, true);
 	placeTile(18, 10, 152);
 	placeTile(19, 10, 202);
-	actor_visible(1);
-	actor_visible(2);
+	actorVisible(1);
+	actorVisible(2);
 	_G(actor[7])._x = 288;
 	_G(actor[7])._y = 160;
 	_G(actor[8])._x = 304;

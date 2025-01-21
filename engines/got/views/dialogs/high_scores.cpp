@@ -77,7 +77,7 @@ bool HighScores::msgFocus(const FocusMessage &msg) {
 	_showAll = true;
 	_timeoutCtr = TIMEOUT;
 
-	Gfx::load_palette();
+	Gfx::loadPalette();
 	return true;
 }
 

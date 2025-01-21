@@ -29,7 +29,7 @@ bool TitleBackground::msgGame(const GameMessage &msg) {
 	if (msg._name == "MAIN_MENU") {
 		replaceView("TitleBackground", true);
 		draw();
-		Gfx::load_palette();
+		Gfx::loadPalette();
 		fadeIn();
 
 		addView("MainMenu");

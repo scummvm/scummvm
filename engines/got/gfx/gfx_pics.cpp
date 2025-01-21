@@ -21,7 +21,6 @@
 
 #include "got/gfx/gfx_pics.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 #include "got/utils/file.h"
 
 namespace Got {
@@ -105,8 +104,8 @@ void BgPics::setArea(int area) {
 }
 
 void BgPics::load() {
-	Common::String fname = Common::String::format("BPICS%d", _area);
-	GfxPics::load(fname, 262);
+	const Common::String name = Common::String::format("BPICS%d", _area);
+	GfxPics::load(name, 262);
 }
 
 } // namespace Gfx

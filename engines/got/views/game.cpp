@@ -39,7 +39,7 @@ Game::Game() : View("Game") {
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
-	Gfx::load_palette();
+	Gfx::loadPalette();
 	return View::msgFocus(msg);
 }
 

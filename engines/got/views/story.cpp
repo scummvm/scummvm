@@ -37,7 +37,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		_G(pbuff[i]) = ((int)_G(pbuff[i]) * 255 + 31) / 63;
-	Gfx::set_palette(_G(pbuff));
+	Gfx::setPalette(_G(pbuff));
 
 	// Create story image and load in it's fragments
 	_surface.create(320, 240 * 2);
@@ -159,7 +159,7 @@ void Story::done() {
 	music_stop();
 
 	fadeOut();
-	Gfx::load_palette();
+	Gfx::loadPalette();
 	replaceView("PartTitle");
 	fadeIn();
 }

@@ -67,18 +67,18 @@ void Font::drawString(Graphics::ManagedSurface *src, const Common::Point &pos, c
 	}
 }
 
-void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void Font::drawChar(Graphics::Surface *dst, const uint32 chr, const int x, const int y, const uint32 color) const {
 	// Character drawing is done twice in the original:
 	// first at y + 1 with color 0, then at y with the given color
 	rawDrawChar(dst, chr, x, y + 1, 0);
 	rawDrawChar(dst, chr, x, y, color);
 }
 
-void Font::rawDrawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void Font::rawDrawChar(Graphics::Surface *dst, const uint32 chr, const int x, const int y, const uint32 color) const {
 	const Graphics::ManagedSurface &glyph = _font[chr];
 
 	for (int yp = 0; yp < glyph.h; ++yp) {
-		int startY = y + yp;
+		const int startY = y + yp;
 		const byte *srcP = (const byte *)glyph.getBasePtr(0, yp);
 		byte *destP = (byte *)dst->getBasePtr(x, startY);
 

@@ -291,10 +291,10 @@ bool useShield(int flag) {
 			if (!_G(shield_on)) {
 				_G(magic_cnt) = 0;
 				addMagic(-1);
-				setup_magic_item(1);
+				setupMagicItem(1);
 
 				_G(actor[2]) = _G(magic_item[1]);
-				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
+				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._moveCountdown = 1;
 				_G(actor[2])._speed = 1;
 				_G(shield_on) = true;
@@ -337,10 +337,10 @@ bool useTornado(int flag) {
 			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magic_cnt) > 20) {
 				_G(magic_cnt) = 0;
 				addMagic(-10);
-				setup_magic_item(0);
+				setupMagicItem(0);
 				_G(actor[2]) = _G(magic_item[0]);
 
-				setup_actor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
+				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._lastDir = _G(thor)->_dir;
 				_G(actor[2])._moveType = 16;
 				_G(tornado_used) = true;

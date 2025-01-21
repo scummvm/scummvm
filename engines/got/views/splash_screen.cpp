@@ -53,11 +53,11 @@ bool SplashScreen::msgFocus(const FocusMessage &msg) {
 	// This is the first screen shown, so start with black, and fade it in
 	byte blackPal[PALETTE_SIZE];
 	Common::fill(blackPal, blackPal + PALETTE_SIZE, 0);
-	Gfx::xsetpal(blackPal);
+	Gfx::xSetPal(blackPal);
 
 	draw();
 	Gfx::Palette63 pal = _G(gfx[91]);
-	Gfx::fade_in(pal);
+	Gfx::fadeIn(pal);
 
 	return true;
 }

@@ -261,7 +261,7 @@ void boss1ClosingSequence1() {
 
 void boss1ClosingSequence2() {
 	_G(thor_info)._armor = 1;
-	load_new_thor();
+	loadNewThor();
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;
 	fillScore(20, "CLOSING");
@@ -286,8 +286,8 @@ void boss1ClosingSequence4() {
 	play_sound(ANGEL, true);
 	placeTile(18, 6, 148);
 	placeTile(19, 6, 202);
-	actor_visible(1);
-	actor_visible(2);
+	actorVisible(1);
+	actorVisible(2);
 
 	Level lvl;
 	lvl.load(59);

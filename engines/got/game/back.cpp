@@ -67,7 +67,7 @@ void showLevel(const int newLevel) {
 	_G(thor)->_nextFrame = 0;
 
 	showObjects();
-	show_enemies();
+	showEnemies();
 
 	// The original was probably shortly displaying Thor in direction 0 before switching back to its prior position.
 	// This behavior wasn't noticed during initial playthrough by Dreammaster - Warning has been added so it can be checked eventually.

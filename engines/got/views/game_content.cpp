@@ -212,7 +212,7 @@ bool GameContent::tick() {
 	// Check for end of game area
 	if (_G(end_tile)) {
 		_G(end_tile) = false;
-		Gfx::fade_out();
+		Gfx::fadeOut();
 
 		// Add name to high scores list if necessary, and then show it
 		_G(highScores).add(_G(area), _G(playerName), _G(thor_info)._score);
