@@ -868,14 +868,16 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 
 		_windowManager->passPalette(palette.data(), 256);
 
-		for (int i = 0; i < 256; i++) {
-			byte r, g, b;
+		if (_vm->_useGammaCorrection) {
+			for (int i = 0; i < 256; i++) {
+				byte r, g, b;
 
-			palette.get(i, r, g, b);
-			r = _vm->_macGammaCorrectionLookUp[r];
-			g = _vm->_macGammaCorrectionLookUp[g];
-			b = _vm->_macGammaCorrectionLookUp[b];
-			palette.set(i, r, g, b);
+				palette.get(i, r, g, b);
+				r = _vm->_macGammaCorrectionLookUp[r];
+				g = _vm->_macGammaCorrectionLookUp[g];
+				b = _vm->_macGammaCorrectionLookUp[b];
+				palette.set(i, r, g, b);
+			}
 		}
 
 		_system->getPaletteManager()->setPalette(palette);

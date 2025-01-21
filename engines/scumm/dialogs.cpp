@@ -1183,6 +1183,13 @@ GUI::CheckboxWidget *ScummOptionsContainerWidget::createOriginalGUICheckbox(GuiO
 	);
 }
 
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createGammaCorrectionCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable gamma correction"),
+		_("Brighten the graphics to simulate a Macintosh monitor.")
+	);
+}
+
 GUI::CheckboxWidget *ScummOptionsContainerWidget::createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name) {
 	return new GUI::CheckboxWidget(boss, name,
 		_("Enable copy protection"),
@@ -1207,9 +1214,7 @@ void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slid
 // SCUMM game settings
 
 ScummGameOptionsWidget::ScummGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		ScummOptionsContainerWidget(boss, name, "ScummGameOptionsDialog", domain),
-		_options(options), _smoothScrollCheckbox(nullptr),
-		_semiSmoothScrollCheckbox(nullptr) {
+		ScummOptionsContainerWidget(boss, name, "ScummGameOptionsDialog", domain), _options(options) {
 	for (uint i = 0; i < _options.size(); i++) {
 		GUI::CheckboxWidget *checkbox = nullptr;
 		if (strcmp(_options[i].configOption, "enhancements") == 0) {
@@ -1387,7 +1392,7 @@ void LoomEgaGameOptionsWidget::updateOvertureTicksValue() {
 
 // Options for various Mac games
 MacGameOptionsWidget::MacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId, const Common::String &extra) :
-	ScummOptionsContainerWidget(boss, name, "MacGameOptionsWidget", domain), _sndQualitySlider(nullptr), _sndQualityValue(nullptr), _enableOriginalGUICheckbox(nullptr), _enableCopyProtectionCheckbox(nullptr), _quality(0) {
+	ScummOptionsContainerWidget(boss, name, "MacGameOptionsWidget", domain) {
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MacGameOptionsWidget.SndQualityLabel", _("Music Quality:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
@@ -1402,6 +1407,7 @@ MacGameOptionsWidget::MacGameOptionsWidget(GuiObject *boss, const Common::String
 	updateQualitySlider();
 	createEnhancementsWidget(widgetsBoss(), "MacGameOptionsWidget");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableOriginalGUI");
+	_enableGammaCorrectionCheckbox = createGammaCorrectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableGammaCorrection");
 
 	if (gameId == GID_MONKEY || gameId == GID_MONKEY2 || (gameId == GID_INDY4 && extra == "Floppy"))
 		_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableCopyProtection");
@@ -1425,6 +1431,7 @@ void MacGameOptionsWidget::load() {
 	_sndQualitySlider->setValue(_quality);
 	updateQualitySlider();
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+	_enableGammaCorrectionCheckbox->setState(ConfMan.getBool("gamma_correction", _domain));
 
 	if (_enableCopyProtectionCheckbox)
 		_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
@@ -1434,6 +1441,7 @@ bool MacGameOptionsWidget::save() {
 	bool res = ScummOptionsContainerWidget::save();
 	ConfMan.setInt("mac_snd_quality", _quality, _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+	ConfMan.setBool("gamma_correction", _enableGammaCorrectionCheckbox->getState(), _domain);
 
 	if (_enableCopyProtectionCheckbox)
 		ConfMan.setBool("copy_protection", _enableCopyProtectionCheckbox->getState(), _domain);
@@ -1447,7 +1455,8 @@ void MacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox");
+				.addWidget("EnableOriginalGUI", "Checkbox")
+				.addWidget("EnableGammaCorrection", "Checkbox");
 
 	if (_enableCopyProtectionCheckbox)
 		layouts.addWidget("EnableCopyProtection", "Checkbox");

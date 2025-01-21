@@ -1614,6 +1614,8 @@ public:
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier = 0;
 
+	bool _useGammaCorrection = true;
+
 	Graphics::Surface *_macScreen = nullptr;
 	MacGui *_macGui = nullptr;
 	bool _useMacGraphicsSmoothing = true;
