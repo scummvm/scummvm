@@ -107,7 +107,7 @@ const Common::ArchiveMemberPtr ResArchive::getMember(const Common::Path &path) c
 
 Common::SeekableReadStream *ResArchive::createReadStreamForMember(const Common::Path &path) const {
 	// Get the index of the header entry for this file
-	int hdrIndex = indexOf(path.baseName());
+	const int hdrIndex = indexOf(path.baseName());
 	if (hdrIndex == -1)
 		return nullptr;
 
@@ -137,11 +137,11 @@ Common::SeekableReadStream *ResArchive::createReadStreamForMember(const Common::
 }
 
 void ResArchive::lzssDecompress(const byte *src, byte *dest) const {
-	uint16 size = READ_LE_UINT16(src);
+	const uint16 size = READ_LE_UINT16(src);
 	assert(READ_LE_UINT16(src + 2) == 1);
 	src += 4;
 
-	lzss_decompress(src, dest, size);
+	decompressLzss(src, dest, size);
 }
 
 } // namespace Got

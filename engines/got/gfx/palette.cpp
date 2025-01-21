@@ -40,7 +40,7 @@ Palette63::Palette63(const byte *pal) {
 }
 
 void loadPalette() {
-	if (res_read("PALETTE", saved_palette) < 0)
+	if (resourceRead("PALETTE", saved_palette) < 0)
 		error("Cannot Read PALETTE");
 
 	g_system->getPaletteManager()->setPalette(saved_palette, 0, 256);

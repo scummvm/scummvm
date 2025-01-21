@@ -179,19 +179,19 @@ bool GameContent::tick() {
 
 			if (_G(thor)->_health > 0) {
 				_G(thor)->_health--;
-				play_sound(WOOP, 1);
+				play_sound(WOOP, true);
 				addHealth(-1);
 				addScore(10);
 
 			} else if (_G(thor_info)._magic > 0) {
 				_G(thor_info)._magic--;
-				play_sound(WOOP, 1);
+				play_sound(WOOP, true);
 				addMagic(-1);
 				addScore(10);
 
 			} else if (_G(thor_info)._jewels) {
 				_G(thor_info)._jewels--;
-				play_sound(WOOP, 1);
+				play_sound(WOOP, true);
 				addJewels(-1);
 				addScore(10);
 
@@ -495,7 +495,7 @@ void GameContent::thorDies() {
 	_deathCtr = 0;
 	_G(shield_on) = false;
 
-	play_sound(DEAD, 1);
+	play_sound(DEAD, true);
 }
 
 void GameContent::spinThor() {
@@ -649,7 +649,7 @@ void GameContent::throwLightning() {
 	for (int i = 0; i < MAX_ACTORS; i++)
 		_G(actor[i])._show = 0;
 
-	play_sound(ELECTRIC, 1);
+	play_sound(ELECTRIC, true);
 }
 
 void GameContent::drawLightning(GfxSurface &s) {

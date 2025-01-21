@@ -48,10 +48,7 @@ void SelectOption::setContent(const Common::String &title,
 	_title = title;
 	_options = options;
 
-	// Calculate the bounds for the dialog
-	int w, h, x1, y1, x2, y2;
-
-	w = title.size();
+	int w = title.size();
 	for (uint i = 0; i < _options.size(); ++i)
 		w = MAX(w, (int)_options[i].size());
 
@@ -59,11 +56,11 @@ void SelectOption::setContent(const Common::String &title,
 		w++;
 	w = (w * 8) + 32;
 
-	h = (_options.size() * 16) + 32;
-	x1 = (320 - w) / 2;
-	x2 = (x1 + w);
-	y1 = (192 - h) / 2;
-	y2 = (y1 + h);
+	const int h = (_options.size() * 16) + 32;
+	const int x1 = (320 - w) / 2;
+	const int x2 = (x1 + w);
+	const int y1 = (192 - h) / 2;
+	const int y2 = (y1 + h);
 
 	_bounds = Common::Rect(x1 - 16, y1 - 16, x2 + 16, y2 + 16);
 }
@@ -73,7 +70,7 @@ void SelectOption::draw() {
 
 	// Write the title
 	GfxSurface s = getSurface(true);
-	int titleStart = (s.w - _title.size() * 8) / 2;
+	const int titleStart = (s.w - _title.size() * 8) / 2;
 	s.print(Common::Point(titleStart, 4), _title, 54);
 
 	// Write the options
@@ -83,7 +80,7 @@ void SelectOption::draw() {
 	// Draw selection pointer
 	if (_smackCtr > 0) {
 		// Selecting an item
-		int xp = 8 + 2 * (_smackCtr < 3 ? (_smackCtr + 1) : (6 - _smackCtr));
+		const int xp = 8 + 2 * (_smackCtr < 3 ? (_smackCtr + 1) : (6 - _smackCtr));
 		s.simpleBlitFrom(_G(hampic[0]), Common::Point(xp, 24 + (_selectedItem * 16)));
 	} else {
 		// Normal animated cursor
@@ -104,13 +101,13 @@ bool SelectOption::msgAction(const ActionMessage &msg) {
 
 	switch (msg._action) {
 	case KEYBIND_UP:
-		play_sound(WOOP, 1);
+		play_sound(WOOP, true);
 		if (--_selectedItem < 0)
 			_selectedItem = (int)_options.size() - 1;
 		break;
 
 	case KEYBIND_DOWN:
-		play_sound(WOOP, 1);
+		play_sound(WOOP, true);
 		if (++_selectedItem >= (int)_options.size())
 			_selectedItem = 0;
 		break;
@@ -142,7 +139,7 @@ bool SelectOption::tick() {
 	if (_smackCtr != 0) {
 		++_smackCtr;
 		if (_smackCtr == 3)
-			play_sound(CLANG, 1);
+			play_sound(CLANG, true);
 		if (_smackCtr == 6) {
 			_smackCtr = 0;
 			close();

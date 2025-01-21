@@ -54,7 +54,7 @@ void SelectItem::draw() {
 			if (l < 6)
 				s.simpleBlitFrom(_G(objects[l + 26]), Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
 			else {
-				int objId = _G(thor_info)._object + 10;
+				const int objId = _G(thor_info)._object + 10;
 				s.simpleBlitFrom(_G(objects[objId]), Common::Point(82 - 56 + (l * _HRZSP), 72 - 48));
 			}
 		}
@@ -127,7 +127,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				break;
 		}
 
-		play_sound(WOOP, 1);
+		play_sound(WOOP, true);
 		redraw();
 		break;
 
@@ -143,7 +143,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				break;
 		}
 
-		play_sound(WOOP, 1);
+		play_sound(WOOP, true);
 		redraw();
 		break;
 

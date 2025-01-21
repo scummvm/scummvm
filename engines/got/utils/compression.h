@@ -29,12 +29,12 @@ namespace Got {
 /**
  * LZSS decompressor
  */
-void lzss_decompress(const byte *src, byte *dest, size_t destSize);
+void decompressLzss(const byte *src, byte *dest, size_t destSize);
 
 /**
  * RLE decoding
  */
-void rle_decompress(const byte *src, byte *dest, size_t destSize);
+void decompressRle(const byte *src, byte *dest, size_t destSize);
 
 } // namespace Got
 

@@ -53,17 +53,15 @@ void HighScores::draw() {
 	for (int area = 2; area <= _currentArea; ++area)
 		title += 'I';
 
-	int titleStart = (s.w - title.size() * 8) / 2;
+	const int titleStart = (s.w - title.size() * 8) / 2;
 	s.print(Common::Point(titleStart, 4), title, 54);
 
 	for (int i = 0; i < 7; ++i) {
 		const HighScore &hs = _G(highScores)._scores[_currentArea - 1][i];
 
 		// Draw frames for name and score
-		s.frameRect(Common::Rect(10, 20 + i * 18, 210, 20 + i * 18 + 16),
-					206);
-		s.frameRect(Common::Rect(220, 20 + i * 18, 280, 20 + i * 18 + 16),
-					206);
+		s.frameRect(Common::Rect(10, 20 + i * 18, 210, 20 + i * 18 + 16), 206);
+		s.frameRect(Common::Rect(220, 20 + i * 18, 280, 20 + i * 18 + 16), 206);
 
 		// Write out the name and scores
 		s.print(Common::Point(15, 24 + i * 18), hs._name, 14);

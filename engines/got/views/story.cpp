@@ -31,9 +31,9 @@ namespace Views {
 #define MAX_Y 236
 
 bool Story::msgFocus(const FocusMessage &msg) {
-	res_read(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
+	resourceRead(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
 
-	res_read("STORYPAL", _G(pbuff));
+	resourceRead("STORYPAL", _G(pbuff));
 
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		_G(pbuff[i]) = ((int)_G(pbuff[i]) * 255 + 31) / 63;

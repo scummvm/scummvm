@@ -517,7 +517,7 @@ int Scripts::readScriptFile() {
 	};
 
 	str = Common::String::format("SPEAK%d", _G(area));
-	if (res_read(str.c_str(), sb) < 0) {
+	if (resourceRead(str.c_str(), sb) < 0) {
 		ret = 6;
 		goto done;
 	}

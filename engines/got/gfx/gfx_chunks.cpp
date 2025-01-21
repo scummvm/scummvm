@@ -46,11 +46,11 @@ void GraphicChunk::enable() {
 
 	switch (_compressMode) {
 	case LZSS:
-		lzss_decompress(_data, &_decompressedData[0], _uncompressedSize);
+		decompressLzss(_data, &_decompressedData[0], _uncompressedSize);
 		break;
 
 	case RLE:
-		rle_decompress(_data, &_decompressedData[0], _uncompressedSize);
+		decompressRle(_data, &_decompressedData[0], _uncompressedSize);
 		break;
 
 	default:

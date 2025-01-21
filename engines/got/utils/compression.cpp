@@ -25,7 +25,7 @@
 
 namespace Got {
 
-void lzss_decompress(const byte *src, byte *dest, size_t destSize) {
+void decompressLzss(const byte *src, byte *dest, const size_t destSize) {
 	byte *endP = dest + destSize;
 
 	for (;;) {
@@ -35,14 +35,14 @@ void lzss_decompress(const byte *src, byte *dest, size_t destSize) {
 			if (endP == dest)
 				return;
 
-			bool bit = (v & 1) != 0;
+			const bool bit = (v & 1) != 0;
 			v >>= 1;
 			if (bit) {
 				*dest++ = *src++;
 			} else {
 				uint16 offset = READ_LE_UINT16(src);
 				src += 2;
-				int count = (offset >> 12) + 2;
+				const int count = (offset >> 12) + 2;
 				offset &= 0xfff;
 
 				Common::copy(dest - offset, dest - offset + count, dest);
@@ -52,14 +52,14 @@ void lzss_decompress(const byte *src, byte *dest, size_t destSize) {
 	}
 }
 
-void rle_decompress(const byte *src, byte *dest, size_t destSize) {
+void decompressRle(const byte *src, byte *dest, const size_t destSize) {
 	byte *endP = dest + destSize;
 
 	for (;;) {
 		byte val = *src++;
 
 		if ((val & 0x80) != 0) {
-			byte rep = *src++;
+			const byte rep = *src++;
 			val &= 0x7f;
 			Common::fill(dest, dest + val, rep);
 			dest += val;

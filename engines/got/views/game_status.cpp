@@ -46,21 +46,21 @@ void GameStatus::draw() {
 }
 
 void GameStatus::displayHealth(GfxSurface &s) {
-	int b = 59 + _G(thor)->_health;
+	const int x = 59 + _G(thor)->_health;
 
-	s.fillRect(Common::Rect(59, 8, b, 12), 32);
-	s.fillRect(Common::Rect(b, 8, 209, 12), STAT_COLOR);
+	s.fillRect(Common::Rect(59, 8, x, 12), 32);
+	s.fillRect(Common::Rect(x, 8, 209, 12), STAT_COLOR);
 }
 
 void GameStatus::displayMagic(GfxSurface &s) {
-	int b = 59 + _G(thor_info)._magic;
+	const int x = 59 + _G(thor_info)._magic;
 
-	s.fillRect(Common::Rect(59, 20, b, 24), 96);
-	s.fillRect(Common::Rect(b, 20, 209, 24), STAT_COLOR);
+	s.fillRect(Common::Rect(59, 20, x, 24), 96);
+	s.fillRect(Common::Rect(x, 20, 209, 24), STAT_COLOR);
 }
 
 void GameStatus::displayJewels(GfxSurface &s) {
-	Common::String str = Common::String::format("%d", _G(thor_info)._jewels);
+	const Common::String str = Common::String::format("%d", _G(thor_info)._jewels);
 	int x;
 	if (str.size() == 1)
 		x = 70;
@@ -74,15 +74,15 @@ void GameStatus::displayJewels(GfxSurface &s) {
 }
 
 void GameStatus::displayScore(GfxSurface &s) {
-	Common::String str = Common::String::format("%ld", _G(thor_info)._score);
-	int x = 276 - (str.size() * 8);
+	const Common::String str = Common::String::format("%ld", _G(thor_info)._score);
+	const int x = 276 - (str.size() * 8);
 
 	s.fillRect(Common::Rect(223, 32, 279, 42), STAT_COLOR);
 	s.print(Common::Point(x, 32), str, 14);
 }
 
 void GameStatus::displayKeys(GfxSurface &s) {
-	Common::String str = Common::String::format("%d", _G(thor_info)._keys);
+	const Common::String str = Common::String::format("%d", _G(thor_info)._keys);
 
 	int x;
 	if (str.size() == 1)

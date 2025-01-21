@@ -52,7 +52,7 @@ bool Opening::msgFocus(const FocusMessage &msg) {
 	}
 
 	// Fade in the screen
-	Gfx::Palette63 pal = _G(gfx[35]);
+	const Gfx::Palette63 pal = _G(gfx[35]);
 	draw();
 	fadeIn(pal);
 

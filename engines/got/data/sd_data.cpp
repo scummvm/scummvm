@@ -36,7 +36,7 @@ SdData::~SdData() {
 
 void SdData::load() {
 	Common::String fname = Common::String::format("SDAT%d", _area);
-	res_read(fname, _data);
+	resourceRead(fname, _data);
 }
 
 void SdData::setArea(int area) {

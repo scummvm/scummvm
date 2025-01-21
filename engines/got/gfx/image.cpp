@@ -93,7 +93,7 @@ void make_actor_surface(Actor *actor) {
 }
 
 int loadStandardActors() {
-	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
+	loadActor(0, 100 + _G(thor_info)._armor); // Load Thor
 	_G(actor[0]).loadFixed(_G(tmp_buff) + 5120);
 	setupActor(&_G(actor[0]), 0, 0, 100, 100);
 	_G(thor) = &_G(actor[0]);
@@ -105,7 +105,7 @@ int loadStandardActors() {
 	_G(thor_x2) = _G(thor)->_x + 14;
 	_G(thor_y2) = _G(thor)->_y + 14;
 
-	load_actor(0, 103 + _G(thor_info)._armor); // Load hammer
+	loadActor(0, 103 + _G(thor_info)._armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);
 	setupActor(&_G(actor[1]), 1, 0, 100, 100);
 	_G(actor[1])._active = false;
@@ -114,21 +114,21 @@ int loadStandardActors() {
 	make_actor_surface(&_G(actor[1]));
 
 	// Load sparkle
-	load_actor(0, 106);
+	loadActor(0, 106);
 	_G(sparkle).loadFixed(_G(tmp_buff) + 5120);
 	setupActor(&_G(sparkle), 20, 0, 100, 100);
 	_G(sparkle)._active = false;
 	make_actor_surface(&_G(sparkle));
 
 	// Load explosion
-	load_actor(0, 107);
+	loadActor(0, 107);
 	_G(explosion).loadFixed(_G(tmp_buff) + 5120);
 	setupActor(&_G(explosion), 21, 0, 100, 100);
 	_G(explosion)._active = false;
 	make_actor_surface(&_G(explosion));
 
 	// Load tornado
-	load_actor(0, 108);
+	loadActor(0, 108);
 	_G(magic_item[0]).loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[0]));
 
@@ -136,7 +136,7 @@ int loadStandardActors() {
 	_G(magic_item[0])._active = false;
 
 	// Load shield
-	load_actor(0, 109);
+	loadActor(0, 109);
 	_G(magic_item[1]).loadFixed((const byte *)_G(tmp_buff) + 5120);
 	Common::copy(_G(tmp_buff), _G(tmp_buff) + 1024, _G(magic_pic[1]));
 
@@ -191,7 +191,7 @@ int loadEnemy(const int type) {
 			return i;
 	}
 
-	if (!load_actor(1, type)) {
+	if (!loadActor(1, type)) {
 		return -1;
 	}
 
@@ -265,7 +265,7 @@ void setupMagicItem(const int item) {
 }
 
 void loadNewThor() {
-	load_actor(0, 100 + _G(thor_info)._armor); // Load Thor
+	loadActor(0, 100 + _G(thor_info)._armor); // Load Thor
 
 	make_actor_surface(&_G(actor[0]));
 }

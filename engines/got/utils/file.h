@@ -23,16 +23,14 @@
 #define GOT_UTILS_FILE_H
 
 #include "common/file.h"
-#include "got/data/defines.h"
 
 namespace Got {
 
-extern bool load_actor(int, int num);
-extern void setup_filenames(int level);
-extern bool load_speech(int index);
-extern long res_read(const Common::String &name, void *buff,
-					 bool failAllowed = false);
-extern void *res_falloc_read(const Common::String &name);
+extern bool loadActor(int, int num);
+extern void setupFilenames(int level);
+extern bool loadSpeech(int index);
+extern long resourceRead(const Common::String &name, void *buff, bool failAllowed = false);
+extern void *resourceAllocRead(const Common::String &name);
 
 class File : public Common::File {
 public:

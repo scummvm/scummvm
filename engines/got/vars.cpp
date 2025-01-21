@@ -69,7 +69,7 @@ void Vars::load() {
 
 	_tmp_buff = new byte[TMP_SIZE];
 
-	res_read("RANDOM", _rnd_array);
+	resourceRead("RANDOM", _rnd_array);
 
 	Gfx::loadPalette();
 }

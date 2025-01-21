@@ -35,7 +35,7 @@ bool Credits::msgFocus(const FocusMessage &msg) {
 	_frameCtr = 0;
 
 	draw();
-	Gfx::Palette63 pal = _G(gfx[41]);
+	const Gfx::Palette63 pal = _G(gfx[41]);
 	fadeIn(pal);
 
 	return true;
@@ -49,7 +49,7 @@ void Credits::draw() {
 	s.clear(*(const byte *)bg.getPixels());
 	s.simpleBlitFrom(bg, Common::Point(0, 24));
 
-	int creditNum = _frameCtr / CREDIT_TIME;
+	const int creditNum = _frameCtr / CREDIT_TIME;
 	int subNum = _frameCtr % CREDIT_TIME;
 
 	if (subNum >= (FADE_FRAMES + DISPLAY_TIME)) {
@@ -59,10 +59,10 @@ void Credits::draw() {
 	}
 
 	if (creditNum < CREDITS_COUNT) {
-		int gfxNum1 = 43 + creditNum;
-		int gfxNum2 = 67 + creditNum;
-		int gfxNum3 = 52 + subNum;
-		int gfxNum4 = 76 + subNum;
+		const int gfxNum1 = 43 + creditNum;
+		const int gfxNum2 = 67 + creditNum;
+		const int gfxNum3 = 52 + subNum;
+		const int gfxNum4 = 76 + subNum;
 
 		drawCredit(s, gfxNum1, gfxNum3, 16, 40 + 24);
 		drawCredit(s, gfxNum2, gfxNum4, 16, 40 + 24);
