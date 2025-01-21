@@ -1175,16 +1175,24 @@ int Macs2Engine::MeasureString(Common::String &s) {
 	int sum = 0;
 	GlyphData currentGlyph;
 	bool found = false;
+	uint16 widestGlyph = 0;
 	for (auto current = s.begin(); current != s.end(); current++) {
-		if (*current == ' ') {
-			// TODO: Check if we hit this one
-			sum += 8 + 1;
+		found = FindGlyph(*current, currentGlyph);
+		if (found) {
+			widestGlyph = MAX(widestGlyph, currentGlyph.Width);
+		}
+	}
+
+
+	for (auto current = s.begin(); current != s.end(); current++) {
+		found = FindGlyph(*current, currentGlyph);
+		if (!found) {
+			sum += widestGlyph;
 		} else {
-			found = FindGlyph(*current, currentGlyph);
-			// TODO: Check if found
-			sum += currentGlyph.Width + 1;
+			sum += currentGlyph.Width;
 			// TODO: Check the rules for adding a 1
 		}
+		sum += 1;
 	}
 	return sum;
 }

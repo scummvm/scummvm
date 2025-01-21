@@ -1040,7 +1040,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
-		DrawSpriteSuperAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s); 
+		Common::Point actualPosition = current->GetPosition() - Common::Point(0, current->GetVerticalOffset());
+		DrawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s); 
 
 
 		Common::String number = Common::String::format("%u", scalingFactor);
@@ -1536,6 +1537,38 @@ Common::Point Character::GetPosition() const {
 
 void Character::SetPosition(const Common::Point &newPosition) {
 	GameObject->Position = newPosition;
+}
+
+uint16 Character::GetVerticalOffset() const {
+	// See for example l0037_8F1F for this calculation
+	// l0037_8F1F:
+	uint16 result = g_engine->Func0E8C(GetPosition()); // [bp-0Ch]
+	if (result >= 0xC8) {
+		// l0037_8F38:
+		result = 0;
+	}
+
+	// TODO: Figure out what variable this is and how this code works
+	/*
+l0037_8F3D:
+	les	di,[bp-13h]
+	cmp	word ptr es:[di+8h],0h
+	jz	8F67h
+
+l0037_8F47:
+	mov	ax,[bp-6h]
+	cwd
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,es:[di+8h]
+	xor	dx,dx
+	call	far 00CDh:0C97h
+	mov	cx,64h
+	xor	bx,bx
+	call	far 00CDh:0CD4h
+	mov	[bp-0Ch],ax
+	*/
+	return result;
 }
 
 bool Character::TryFollowPath() {
