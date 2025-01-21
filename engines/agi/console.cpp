@@ -22,6 +22,7 @@
 #include "agi/agi.h"
 #include "agi/opcodes.h"
 #include "agi/graphics.h"
+#include "agi/loader.h"
 
 #include "agi/preagi/preagi.h"
 #include "agi/preagi/mickey.h"

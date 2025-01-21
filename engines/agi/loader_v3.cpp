@@ -20,6 +20,7 @@
  */
 
 #include "agi/agi.h"
+#include "agi/loader.h"
 #include "agi/lzw.h"
 #include "agi/words.h"
 
