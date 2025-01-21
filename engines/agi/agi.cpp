@@ -529,7 +529,11 @@ void AgiEngine::initialize() {
 	_text->charAttrib_Set(15, 0);
 
 	if (getGameType() == GType_GAL) {
-		_loader = new GalLoader(this);
+		if (getPlatform() == Common::kPlatformApple2) {
+			_loader = new GalLoader_A2(this);
+		} else {
+			_loader = new GalLoader(this);
+		}
 	} else if (getPlatform() == Common::kPlatformApple2) {
 		_loader = new AgiLoader_A2(this);
 	} else if (getVersion() <= 0x2001) {

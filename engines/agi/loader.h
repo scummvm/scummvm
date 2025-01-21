@@ -192,6 +192,27 @@ private:
 	static uint32 readDirectoryEntry(Common::SeekableReadStream &stream, uint32 *sectorCount);
 };
 
+class GalLoader_A2 : public AgiLoader {
+public:
+	GalLoader_A2(AgiEngine *vm) : AgiLoader(vm) {}
+	~GalLoader_A2();
+
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
+
+private:
+	Common::Array<Common::SeekableReadStream *> _disks;
+
+	static bool readDiskOne(Common::SeekableReadStream &disk, AgiDir *logicDir);
+	static bool readDirectoryEntry(Common::SeekableReadStream &stream, AgiDir &dirEntry);
+	static bool validateDisk(Common::SeekableReadStream &disk, byte diskIndex, AgiDir *logicDir);
+
+	static bool loadDir(AgiDir *dir, Common::SeekableReadStream &disk, uint32 dirOffset, uint32 dirCount);
+};
+
 } // End of namespace Agi
 
 #endif /* AGI_LOADER_H */

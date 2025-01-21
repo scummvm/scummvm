@@ -129,7 +129,8 @@ private:
 
 	static Common::String getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position);
 	
-	static Common::String getGalDirHashFromDiskImage(Common::SeekableReadStream &stream);
+	static Common::String getGalDirHashFromPcDiskImage(Common::SeekableReadStream &stream);
+	static Common::String getGalDirHashFromA2DiskImage(Common::SeekableReadStream &stream);
 };
 
 ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -380,8 +381,8 @@ ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allF
 		// attempt to locate and hash logdir using both possible inidir disk locations
 		Common::String logdirHash1 = getLogDirHashFromPcDiskImageV1(*stream);
 		Common::String logdirHash2 = getLogDirHashFromPcDiskImageV2001(*stream);
-		// attempt to locate and hash GAL directory 
-		Common::String galDirHash = getGalDirHashFromDiskImage(*stream);
+		// attempt to locate and hash GAL directory
+		Common::String galDirHash = getGalDirHashFromPcDiskImage(*stream);
 		delete stream;
 
 		if (!logdirHash1.empty()) {
@@ -505,10 +506,12 @@ ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allF
 		Common::String logdirHashInitdir = getLogDirHashFromA2DiskImage(*stream);
 		Common::String logdirHashBc = getLogDirHashFromDiskImage(*stream, A2_BC_LOGDIR_POSITION);
 		Common::String logdirHashKq2 = getLogDirHashFromDiskImage(*stream, A2_KQ2_LOGDIR_POSITION);
+		// attempt to locate and hash GAL directory.
+		Common::String logdirHashKq1 = getGalDirHashFromA2DiskImage(*stream);
 		delete stream;
 
 		if (!logdirHashInitdir.empty()) {
-			debug(3, "disk image logdir hash: %s, %s", logdirHashInitdir.c_str(), imageFile.baseName().c_str());
+			debug(3, "disk image initdir hash: %s, %s", logdirHashInitdir.c_str(), imageFile.baseName().c_str());
 		}
 		if (!logdirHashBc.empty()) {
 			debug(3, "disk image logdir hash: %s, %s", logdirHashBc.c_str(), imageFile.baseName().c_str());
@@ -518,7 +521,7 @@ ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allF
 		}
 
 		// if logdir hash found then compare against hashes of Apple II entries
-		if (!logdirHashInitdir.empty() || !logdirHashBc.empty() || !logdirHashKq2.empty()) {
+		if (!logdirHashInitdir.empty() || !logdirHashBc.empty() || !logdirHashKq2.empty() || !logdirHashKq1.empty()) {
 			for (const AGIGameDescription *game = gameDescriptions; game->desc.gameId != nullptr; game++) {
 				if (game->desc.platform == Common::kPlatformApple2 && !(game->desc.flags & skipADFlags)) {
 					const ADGameFileDescription *file;
@@ -526,6 +529,7 @@ ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allF
 						// select the logdir hash to use
 						Common::String &logdirHash = (game->gameID == GID_BC)  ? logdirHashBc :
 						                             (game->gameID == GID_KQ2) ? logdirHashKq2 :
+						                             (game->gameID == GID_KQ1) ? logdirHashKq1 :
 						                             logdirHashInitdir;
 						if (file->md5 != nullptr && !logdirHash.empty() && file->md5 == logdirHash) {
 							debug(3, "disk image match: %s, %s, %s", game->desc.gameId, game->desc.extra, imageFile.baseName().c_str());
@@ -592,7 +596,7 @@ Common::String AgiMetaEngineDetection::getLogDirHashFromDiskImage(Common::Seekab
 	return Common::computeStreamMD5AsString(stream, logDirSize);
 }
 
-Common::String AgiMetaEngineDetection::getGalDirHashFromDiskImage(Common::SeekableReadStream &stream) {
+Common::String AgiMetaEngineDetection::getGalDirHashFromPcDiskImage(Common::SeekableReadStream &stream) {
 	static const uint16 dirPositions[] = { GAL_DIR_POSITION_PCJR, GAL_DIR_POSITION_PC };
 	for (int i = 0; i < 2; i++) {
 		stream.seek(dirPositions[i]);
@@ -628,6 +632,12 @@ Common::String AgiMetaEngineDetection::getGalDirHashFromDiskImage(Common::Seekab
 		return Common::computeStreamMD5AsString(stream, GAL_DIR_SIZE);
 	}
 	return "";
+}
+
+Common::String AgiMetaEngineDetection::getGalDirHashFromA2DiskImage(Common::SeekableReadStream &stream) {
+	// hash the directory
+	stream.seek(GAL_A2_LOGDIR_POSITION);
+	return Common::computeStreamMD5AsString(stream, GAL_A2_LOGDIR_SIZE);
 }
 
 } // end of namespace Agi
