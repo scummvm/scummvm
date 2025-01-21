@@ -42,6 +42,20 @@ byte kEGADefaultPalette[16][3] = {
 	{0xff, 0xff, 0xff}
 };
 
+byte kCGAPalettePinkBlue[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0xaa, 0xaa},
+};
+
+byte kCGAPaletteRedGreen[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+};
+
 byte kHerculesPaletteGreen[2][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0xff, 0x00},
@@ -235,17 +249,10 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 }
 
 byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
-	const CGAPaletteEntry *entry = _rawCGAPaletteByArea;
-	byte *palette = nullptr;
-	while (entry->areaId) {
-		if (entry->areaId == levelID) {
-			palette = entry->palette;
-			break;
-		}
-		entry++;
-	}
-
-	return palette;
+	if (levelID % 2 == 0)
+		return (byte *)&kCGAPalettePinkBlue;
+	else
+		return (byte *)&kCGAPaletteRedGreen;
 }
 
 } // End of namespace Freescape

@@ -43,41 +43,6 @@ byte kDarkCGAPaletteRedGreen[4][3] = {
 	{0xaa, 0x55, 0x00},
 };
 
-static const CGAPaletteEntry rawCGAPaletteByArea[] {
-	{1, (byte *)kDarkCGAPaletteRedGreen},
-	{2, (byte *)kDarkCGAPalettePinkBlue},
-	{3, (byte *)kDarkCGAPaletteRedGreen},
-	{4, (byte *)kDarkCGAPalettePinkBlue},
-	{5, (byte *)kDarkCGAPaletteRedGreen},
-	{6, (byte *)kDarkCGAPalettePinkBlue},
-	{7, (byte *)kDarkCGAPaletteRedGreen},
-	{8, (byte *)kDarkCGAPaletteRedGreen}, // Verified
-	{9, (byte *)kDarkCGAPaletteRedGreen},
-	{10, (byte *)kDarkCGAPalettePinkBlue},
-	{11, (byte *)kDarkCGAPaletteRedGreen},
-	{12, (byte *)kDarkCGAPalettePinkBlue},
-	{13, (byte *)kDarkCGAPaletteRedGreen},
-	{14, (byte *)kDarkCGAPalettePinkBlue},
-	{15, (byte *)kDarkCGAPaletteRedGreen}, // Verified
-	{16, (byte *)kDarkCGAPalettePinkBlue},
-	{17, (byte *)kDarkCGAPalettePinkBlue},
-	{18, (byte *)kDarkCGAPaletteRedGreen}, // Verified
-	{19, (byte *)kDarkCGAPaletteRedGreen},
-	{20, (byte *)kDarkCGAPalettePinkBlue},
-	{21, (byte *)kDarkCGAPaletteRedGreen},
-	{22, (byte *)kDarkCGAPalettePinkBlue},
-	{23, (byte *)kDarkCGAPaletteRedGreen},
-	{24, (byte *)kDarkCGAPalettePinkBlue},
-	{25, (byte *)kDarkCGAPalettePinkBlue},
-	{27, (byte *)kDarkCGAPaletteRedGreen},
-	{28, (byte *)kDarkCGAPalettePinkBlue},
-
-	{31, (byte *)kDarkCGAPaletteRedGreen},
-	{32, (byte *)kDarkCGAPalettePinkBlue},
-	{127, (byte *)kDarkCGAPaletteRedGreen},
-	{0, 0}   // This marks the end
-};
-
 void DarkEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
 		_viewArea = Common::Rect(40, 24, 280, 125);
@@ -86,7 +51,6 @@ void DarkEngine::initDOS() {
 	else
 		error("Invalid or unknown render mode");
 
-	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 	_maxEnergy = 79;
 	_maxShield = 79;
 }

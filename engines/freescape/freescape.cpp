@@ -174,7 +174,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
 	_gfx = nullptr;
-	_rawCGAPaletteByArea = nullptr;
 	_speaker = nullptr;
 	_savedScreen = nullptr;
 

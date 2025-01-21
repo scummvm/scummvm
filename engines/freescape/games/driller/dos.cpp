@@ -27,57 +27,10 @@
 
 namespace Freescape {
 
-extern byte kCGAPalettePinkBlueWhiteData[4][3];
 extern byte kEGADefaultPalette[16][3];
+extern byte kCGAPaletteRedGreen[4][3];
+extern byte kCGAPalettePinkBlue[4][3];
 extern byte kHerculesPaletteGreen[2][3];
-
-byte kDrillerCGAPalettePinkBlue[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0xaa},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0xaa, 0xaa},
-};
-
-byte kDrillerCGAPaletteRedGreen[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x55, 0x00},
-};
-
-static const CGAPaletteEntry rawCGAPaletteByArea[] {
-	{1, (byte *)kDrillerCGAPaletteRedGreen},
-	{2, (byte *)kDrillerCGAPalettePinkBlue},
-	{3, (byte *)kDrillerCGAPaletteRedGreen},
-	{4, (byte *)kDrillerCGAPalettePinkBlue},
-	{5, (byte *)kDrillerCGAPaletteRedGreen},
-	{6, (byte *)kDrillerCGAPalettePinkBlue},
-	{7, (byte *)kDrillerCGAPaletteRedGreen},
-	{8, (byte *)kDrillerCGAPalettePinkBlue},
-	{9, (byte *)kDrillerCGAPaletteRedGreen},
-	{10, (byte *)kDrillerCGAPalettePinkBlue},
-	{11, (byte *)kDrillerCGAPaletteRedGreen},
-	{12, (byte *)kDrillerCGAPalettePinkBlue},
-	{13, (byte *)kDrillerCGAPaletteRedGreen},
-	{14, (byte *)kDrillerCGAPalettePinkBlue},
-	{15, (byte *)kDrillerCGAPaletteRedGreen},
-	{16, (byte *)kDrillerCGAPalettePinkBlue},
-	{17, (byte *)kDrillerCGAPalettePinkBlue},
-	{18, (byte *)kDrillerCGAPalettePinkBlue},
-	{19, (byte *)kDrillerCGAPaletteRedGreen},
-	{20, (byte *)kDrillerCGAPalettePinkBlue},
-	{21, (byte *)kDrillerCGAPaletteRedGreen},
-	{22, (byte *)kDrillerCGAPalettePinkBlue},
-	{23, (byte *)kDrillerCGAPaletteRedGreen},
-	{25, (byte *)kDrillerCGAPalettePinkBlue},
-	{27, (byte *)kDrillerCGAPaletteRedGreen},
-	{28, (byte *)kDrillerCGAPalettePinkBlue},
-
-	{31, (byte *)kDrillerCGAPaletteRedGreen},
-	{32, (byte *)kDrillerCGAPalettePinkBlue},
-	{127, (byte *)kDrillerCGAPaletteRedGreen},
-	{0, 0}   // This marks the end
-};
 
 void DrillerEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
@@ -89,7 +42,6 @@ void DrillerEngine::initDOS() {
 	else
 		error("Invalid or unknown render mode");
 
-	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 	_moveFowardArea = Common::Rect(73, 144, 101, 152);
 	_moveLeftArea = Common::Rect(73, 150, 86, 159);
 	_moveRightArea = Common::Rect(88, 152, 104, 160);
