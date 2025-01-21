@@ -355,14 +355,16 @@ void MacV6Gui::saveScreen() {
 
 		_windowManager->passPalette(palette.data(), 256);
 
-		for (int i = 0; i < 256; i++) {
-			byte r, g, b;
+		if (_vm->_useGammaCorrection) {
+			for (int i = 0; i < 256; i++) {
+				byte r, g, b;
 
-			palette.get(i, r, g, b);
-			r = _vm->_macGammaCorrectionLookUp[r];
-			g = _vm->_macGammaCorrectionLookUp[g];
-			b = _vm->_macGammaCorrectionLookUp[b];
-			palette.set(i, r, g, b);
+				palette.get(i, r, g, b);
+				r = _vm->_macGammaCorrectionLookUp[r];
+				g = _vm->_macGammaCorrectionLookUp[g];
+				b = _vm->_macGammaCorrectionLookUp[b];
+				palette.set(i, r, g, b);
+			}
 		}
 
 		screen->fillRect(Common::Rect(screen->w, screen->h), getBlack());
@@ -556,9 +558,11 @@ void MacV6Gui::runAboutDialog() {
 		if (r == 0 && g == 0 && b == 0)
 			black = i;
 
-		r = _vm->_macGammaCorrectionLookUp[r];
-		g = _vm->_macGammaCorrectionLookUp[g];
-		b = _vm->_macGammaCorrectionLookUp[b];
+		if (_vm->_useGammaCorrection) {
+			r = _vm->_macGammaCorrectionLookUp[r];
+			g = _vm->_macGammaCorrectionLookUp[g];
+			b = _vm->_macGammaCorrectionLookUp[b];
+		}
 
 		palette.set(i, r, g, b);
 	}
