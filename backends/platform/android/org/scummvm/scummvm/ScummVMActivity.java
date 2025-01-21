@@ -12,8 +12,6 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -39,8 +37,8 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -116,9 +114,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	FrameLayout _videoLayout = null;
 
 	private EditableSurfaceView _main_surface = null;
-	private LinearLayout _buttonLayout = null;
+	private GridLayout _buttonLayout = null;
 	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
+	private LedView _ioLed = null;
+	private int _layoutOrientation;
 
 	public View _screenKeyboard = null;
 	static boolean keyboardWithoutTextInputShown = false;
@@ -519,25 +519,35 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	private void layoutButtonLayout(int orientation, boolean force) {
-		int newOrientation = orientation == Configuration.ORIENTATION_LANDSCAPE ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
-
-		if (!force && newOrientation == _buttonLayout.getOrientation()) {
+		if (!force && orientation == _layoutOrientation) {
 			return;
 		}
 
-		_buttonLayout.setOrientation(newOrientation);
-		_buttonLayout.removeAllViews();
-		if (newOrientation == LinearLayout.VERTICAL) {
-			_buttonLayout.addView(_openMenuBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-			_buttonLayout.bringChildToFront(_openMenuBtnIcon);
-			_buttonLayout.addView(_toggleTouchModeKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-			_buttonLayout.bringChildToFront(_toggleTouchModeKeyboardBtnIcon);
+		_layoutOrientation = orientation;
+		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			GridLayout.LayoutParams params;
+			params = (GridLayout.LayoutParams)_openMenuBtnIcon.getLayoutParams();
+			params.rowSpec = GridLayout.spec(0);
+			params.columnSpec = GridLayout.spec(1);
+			params = (GridLayout.LayoutParams)_toggleTouchModeKeyboardBtnIcon.getLayoutParams();
+			params.rowSpec = GridLayout.spec(1);
+			params.columnSpec = GridLayout.spec(1);
+			params = (GridLayout.LayoutParams)_ioLed.getLayoutParams();
+			params.rowSpec = GridLayout.spec(0, 2, GridLayout.TOP);
+			params.columnSpec = GridLayout.spec(0, GridLayout.RIGHT);
 		} else {
-			_buttonLayout.addView(_toggleTouchModeKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-			_buttonLayout.bringChildToFront(_toggleTouchModeKeyboardBtnIcon);
-			_buttonLayout.addView(_openMenuBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-			_buttonLayout.bringChildToFront(_openMenuBtnIcon);
+			GridLayout.LayoutParams params;
+			params = (GridLayout.LayoutParams)_openMenuBtnIcon.getLayoutParams();
+			params.rowSpec = GridLayout.spec(0);
+			params.columnSpec = GridLayout.spec(1);
+			params = (GridLayout.LayoutParams)_toggleTouchModeKeyboardBtnIcon.getLayoutParams();
+			params.rowSpec = GridLayout.spec(0);
+			params.columnSpec = GridLayout.spec(0);
+			params = (GridLayout.LayoutParams)_ioLed.getLayoutParams();
+			params.rowSpec = GridLayout.spec(1, GridLayout.TOP);
+			params.columnSpec = GridLayout.spec(0, 2, GridLayout.RIGHT);
 		}
+		_buttonLayout.requestLayout();
 	}
 
 	public void showScreenKeyboard(boolean force) {
@@ -921,37 +931,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		safSyncObject = new Object();
 
-		_videoLayout = new FrameLayout(this);
-		_videoLayout.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(_videoLayout);
-		_videoLayout.setFocusable(true);
-		_videoLayout.setFocusableInTouchMode(true);
-		_videoLayout.requestFocus();
 
-		_main_surface = new EditableSurfaceView(this);
-		_main_surface.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
-
-		_videoLayout.addView(_main_surface, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-
-		_buttonLayout = new LinearLayout(this);
-		FrameLayout.LayoutParams buttonLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.RIGHT);
-		buttonLayoutParams.topMargin = 5;
-		buttonLayoutParams.rightMargin = 5;
-		_videoLayout.addView(_buttonLayout, buttonLayoutParams);
-		_videoLayout.bringChildToFront(_buttonLayout);
-
-		_openMenuBtnIcon = new ImageView(this);
-		_openMenuBtnIcon.setImageResource(R.drawable.ic_action_menu);
-
-		_toggleTouchModeKeyboardBtnIcon = new ImageView(this);
+		setContentView(R.layout.scummvm_activity);
+		_videoLayout = findViewById(R.id.video_layout);
+		_main_surface = findViewById(R.id.main_surface);
+		_buttonLayout = findViewById(R.id.button_layout);
+		_openMenuBtnIcon = findViewById(R.id.open_menu_button);
+		_toggleTouchModeKeyboardBtnIcon = findViewById(R.id.toggle_touch_button);
+		_ioLed = findViewById(R.id.io_led);
 
 		// Hide by default all buttons, they will be shown when native code will start
 		showToggleOnScreenBtnIcons(0);
 		layoutButtonLayout(getResources().getConfiguration().orientation, true);
 
-		_main_surface.setFocusable(true);
-		_main_surface.setFocusableInTouchMode(true);
 		_main_surface.requestFocus();
 
 		//Log.d(ScummVM.LOG_TAG, "onCreate - captureMouse(true)");
@@ -1057,6 +1050,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (_mouseHelper != null) {
 			_main_surface.setOnHoverListener(_mouseHelper);
 		}
+
+		SAFFSTree.setIOBusyListener(new SAFFSTree.IOBusyListener() {
+			@Override
+			public void onIOBusy(float ratio) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						_ioLed.blinkOnce();
+					}
+				});
+			}
+		});
 
 		_scummvm_thread = new Thread(_scummvm, "ScummVM");
 		_scummvm_thread.start();
@@ -1173,6 +1178,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		Log.d(ScummVM.LOG_TAG, "onDestroy");
 
 		super.onDestroy();
+
+		SAFFSTree.setIOBusyListener(null);
 
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
