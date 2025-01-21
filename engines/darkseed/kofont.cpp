@@ -96,7 +96,7 @@ void KoFont::addToGlyph(uint8 *destPixels, int16 index) const {
 }
 
 void KoFont::addPixels(uint8 *destPixels, const Common::Array<uint8> &pixels) const {
-	for (int i = 0; i < pixels.size(); i++) {
+	for (uint i = 0; i < pixels.size(); i++) {
 		if (pixels[i] != 0) {
 			destPixels[i] = pixels[i];
 		}
