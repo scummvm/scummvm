@@ -135,7 +135,7 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 	};
 
 	bool isWindows = false;
-	if ((idStr.equals("kq6") || idStr.equals("sq4")) && platform == Common::kPlatformWindows) {
+	if ((idStr.equals("kq6") || idStr.equals("sq4") || idStr.equals("ecoquest")) && platform == Common::kPlatformWindows) {
 		guiOptions += GUIO_RENDERWIN_256C;
 		isWindows = true;
 	}
