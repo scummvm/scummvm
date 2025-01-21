@@ -752,6 +752,15 @@ static const ExtraGuiOption enableOriginalGUI = {
 	0
 };
 
+static const ExtraGuiOption enableMacintoshGamma = {
+	_s("Enable gamma correction"),
+	_s("Brighten the graphics to simulate a Macintosh monitor."),
+	"gamma_correction",
+	true,
+	0,
+	0
+};
+
 static const ExtraGuiOption enableLowLatencyAudio = {
 	_s("Enable low latency audio mode"),
 	_s("Allows the game to use low latency audio, at the cost of sound accuracy. "
@@ -811,6 +820,10 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 
 	if (target.empty() || guiOptions.contains(GAMEOPTION_ORIGINALGUI)) {
 		options.push_back(enableOriginalGUI);
+
+		if (platform == Common::kPlatformMacintosh) {
+			options.push_back(enableMacintoshGamma);
+		}
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_COPY_PROTECTION)) {
 		options.push_back(enableCopyProtection);
@@ -881,6 +894,7 @@ void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
 		else
 			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
+	ConfMan.registerDefault("gamma_correction", true);
 }
 
 Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {

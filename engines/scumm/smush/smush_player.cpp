@@ -1288,8 +1288,11 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				if (_vm->_macScreen) {
 					byte palette[768];
 					memcpy(palette, _pal, 768);
-					for (int i = 0; i < ARRAYSIZE(palette); i++) {
-						palette[i] = _vm->_macGammaCorrectionLookUp[_pal[i]];
+
+					if (_vm->_useGammaCorrection) {
+						for (int i = 0; i < ARRAYSIZE(palette); i++) {
+							palette[i] = _vm->_macGammaCorrectionLookUp[_pal[i]];
+						}
 					}
 
 					_vm->_system->getPaletteManager()->setPalette(palette + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);

@@ -1726,7 +1726,7 @@ void ScummEngine::updatePalette() {
 #endif
 #endif
 
-	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
+	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0 && _useGammaCorrection) {
 		for (int i = 0; i < 3 * num; ++i)
 			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
 	}
