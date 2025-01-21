@@ -99,10 +99,11 @@ namespace Agi {
 
 enum AgiGameType {
 	GType_PreAGI = 0,
-	GType_V1 = 1,
-	GType_V2 = 2,
-	GType_V3 = 3,
-	GType_A2 = 4
+	GType_V1     = 1,
+	GType_V2     = 2,
+	GType_V3     = 3,
+	GType_A2     = 4,
+	GType_GAL    = 5
 };
 
 enum AgiGameFeatures {

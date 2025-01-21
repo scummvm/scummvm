@@ -117,7 +117,7 @@ namespace Agi {
 #define A2_CP(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_A2,GAMEOPTIONS_DEFAULT_CP,ADGF_UNSTABLE)
 #define BOOTER(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
 #define BOOTER_UNSTABLE(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
-#define BOOTER_UNSUPPORTED(id,msg,fname,md5,size,ver,gid) GAME_LVFPN_FLAGS(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
+#define BOOTER_GAL(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_GAL,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
 #define GAME3_CP(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT_CP)
@@ -343,13 +343,19 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 1 (Mac) 2.0C 3/26/87
 	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
 
-	// King's Quest 1 (IBM PCjr) 1.00 1502265 5/10/84
-	BOOTER_UNSUPPORTED("kq1", "Early King\'s Quest releases are not currently supported.",
-		"kq1.img", "127675735f9d2c148738c1e96ea9d2cf", 368640, 0x1120, GID_KQ1),
+	// King's Quest 1 (IBM PCjr) 1984-05-10
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "0d1cca805d08438a1dc83431b7348fe3", 0x1000, GID_KQ1),
 
-	// King's Quest 1 (Tandy 1000) 01.01.00 5/24/84
-	BOOTER_UNSUPPORTED("kq1", "Early King\'s Quest releases are not currently supported.",
-		"kq1.img", "0a22131d0eaf66d955afecfdc83ef9d6", 368640, 0x1120, GID_KQ1),
+	// King's Quest 1 (IBM PC CGA) 1984-05-30
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "6ba3a845502508c99a6cb2eed92f030d", 0x1000, GID_KQ1),
+
+	// King's Quest 1 (IBM PC CGA+RGB) 1984-08-16
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "f44abc925bbfee1fede7ba42708a6d00", 0x1000, GID_KQ1),
+
+	// King's Quest 1 (Tandy 1000) 01.01.00 1985-05-24
+	// King's Quest 1 (Tandy 1000 + IBM PCjr) 1985-09-04
+	// These versions have identical resources and resource directories
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "5be8342f00f7d951d0a4ee2e5c9f5b31", 0x1000, GID_KQ1),
 
 	// King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
 	GAME("kq1", "2.0F 1987-05-05 5.25\"/3.5\"", "10ad66e2ecbd66951534a50aedcd0128", 0x2917, GID_KQ1),
