@@ -115,6 +115,7 @@ namespace Agi {
 
 #define A2(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_A2,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
 #define A2_CP(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_A2,GAMEOPTIONS_DEFAULT_CP,ADGF_UNSTABLE)
+#define A2_GAL(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_GAL,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 #define BOOTER(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
 #define BOOTER_UNSTABLE(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
 #define BOOTER_GAL(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_GAL,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
@@ -342,6 +343,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (Mac) 2.0C 3/26/87
 	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
+
+	// King's Quest 1 (Apple II)
+	A2_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "a59f92b2d6e4fd245a8d51acdc58fc6d", 0x1000, GID_KQ1),
 
 	// King's Quest 1 (IBM PCjr) 1984-05-10
 	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "0d1cca805d08438a1dc83431b7348fe3", 0x1000, GID_KQ1),

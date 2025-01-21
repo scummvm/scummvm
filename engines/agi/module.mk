@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	loader.o \
 	loader_a2.o \
 	loader_gal.o \
+	loader_gal_a2.o \
 	loader_v1.o \
 	loader_v2.o \
 	loader_v3.o \
