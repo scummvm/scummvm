@@ -552,6 +552,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "zerozero",			"Zero Zero" },
 
 	// Multimedia or reference products
+	{ "3dna",				"3DNA Desktop" },
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart" },
 	{ "aamn",				"Anatomy & Anaesthesia of the Mandibular Nerve" },
 	{ "acadia",				"The Acadia CD-ROM" },
@@ -950,6 +951,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "braingames",			"Brain Games" },
 	{ "chemicus2",			"Chemicus 2: Die versunkene Stadt" },
 	{ "cklasse",			"Mercedes-Benz C-Class Information Booth" },
+	{ "diedrei1",			"Die drei ???: Das Geheimnis des Magiers" },
+	{ "diedrei2",			"Die drei ???: Bomben in Rocky Beach" },
+	{ "diedrei3",			"Die drei ???: Gespensterjagd" },
+	{ "diedrei4",			"Die drei ???: Alarm im Internet" },
+	{ "diedrei5",			"Die drei ???: Der Schatz der Azteken" },
+	{ "diedrei6",			"Die drei ???: Tödliche Schatten" },
 	{ "diehexenakademie",	"Die Hexenakademie" },
 	{ "dieveteranen",		"Die Veteranen: So nutzlos wie eine Fuge von Bach" },
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
@@ -974,6 +981,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "loewe4",				"Löwenzahn 4" },
 	{ "loewe5",				"Löwenzahn 5" },
 	{ "loewe6",				"Löwenzahn 6" },
+	{ "loewe7",				"Löwenzahn 7" },
+	{ "loewe8",				"Löwenzahn 8" },
 	{ "lulu",				"Das Buch von Lulu" },
 	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
@@ -9202,6 +9211,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("123habloingles", "#14 Karaoke",		   "123 Hablo Ingles.exe", "0c81c84ca4966313ad27d47daba44537", 2660381,
 													   "Intro.dxr",			   "d9c5fa53e38e683465174740bd1a771d", 2789550, Common::ES_ESP, 851),
 
+	// 3D desktop for Windows reminiscent of Microsoft Bob and Packard Bell Navigator
+	WINGAME1("3dna", "", "3DNA_Desktop.exe", "t:9a8f56ed5049f94de6afb295aa43edcc", 4790254, 851),
+
 	WINGAME2t("aaha2007", "Management 1",  "StartCD.exe", "f5e1f52dc03126d4a906f78247b190da", 3437769,
 										   "Select.dxr", "3c766fe5aff43e8eae440d13468cd48a", 1398164, 850),
 	WINGAME2t("aaha2007", "Management 2",  "StartCD.exe", "f5e1f52dc03126d4a906f78247b190da", 3437769,
@@ -9322,6 +9334,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Distributed by Océano Multimedia (Colombia) of Cota, Cundinamarca (2000)
 	WINGAME2_l("deportes", "", "start.exe",    "c163f36141579ee374f7b4b2bddee95a", 2383840,
 							   "Deportes.dxr", "2330cc03f17c2aa4a4a10e76bc774fe8", 3985672, Common::ES_ESP, 850),
+
+	WINGAME2_l("diedrei1", "", "start.exe",		  "t:ac947d9b48efb51f0616a810914f0e52", 3186942,
+							   "data/felsen.dxr", "f:3a12194444fb2dfc0c640498d8e194f5", 1045755, Common::DE_DEU, 800),
+	WINGAME2_l("diedrei2", "", "start.exe",		  "t:ac947d9b48efb51f0616a810914f0e52", 3186942,
+							   "data/felsen.dxr", "f:d5ae34b150bc9991ea0c01e8d651129c", 2057039, Common::DE_DEU, 800),
+	WINGAME2_l("diedrei3", "", "start.exe",		  "t:ac947d9b48efb51f0616a810914f0e52", 3186942,
+							   "data/felsen.dxr", "f:e82b228858c5cbf6379893d929c4ba22", 2074932, Common::DE_DEU, 800),
+	WINGAME2_l("diedrei4", "", "start.exe",		  "t:ac947d9b48efb51f0616a810914f0e52", 3186942,
+							   "data/felsen.dxr", "f:727bb4e0e2464d41a26ff76c80e3f9b9", 2058557, Common::DE_DEU, 800),
+	WINGAME2_l("diedrei5", "", "start.exe",		  "t:44a7c87117591ca8bb5c9bddbb9729c2", 3023174,
+							   "data/felsen.dxr", "f:0aa276520972f0b6d884c2ba30fb0ec3", 2061285, Common::DE_DEU, 850),
+	WINGAME2_l("diedrei6", "", "start.exe",		  "t:44a7c87117591ca8bb5c9bddbb9729c2", 3023174,
+							   "data/felsen.dxr", "f:db945613c1f456c9a4d0d496bcee1882", 1051295, Common::DE_DEU, 850),
 
 	MACGAME1("dispix2and3", "", "2nd and 3rd Grade", "a44511b8ff0e46b4f9c85dd1cb58d458", 220552, 851),
 	WINGAME1("dispix2and3", "", "2nd and 3rd Grade.exe", "68835b24dd317fbc96e4a8c53892a361", 2630239, 851),
@@ -9499,6 +9524,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original Win executable name is Löwenzahn5.exe
 	WINGAME1t_l("loewe5", "", "xn--lwenzahn5.exe-imb", "9c59833b332f0b9f8ecc97f0aa47ec99", 2386566, Common::DE_DEU, 800),
+
+	// Original filenames contain Löwenzahn 7
+	MACGAME1_l("loewe7", "Classic", "xn--Lwenzahn 7 (classic)-39b", "rt:19e9fb7b215165e975ab6c6fcedc07cd", 195151, Common::DE_DEU, 800),
+	MACGAME1_l("loewe7", "OSX",		"xn--Lwenzahn 7 (OS X)-zzb",	"rt:77b66cfdd98d1be9cf2e99f3a8ad8a17", 242617, Common::DE_DEU, 800),
+	WINGAME1_l("loewe7", "",		"Setup/WinRoot/Terzio/xn--Lwenzahn 7-ecb/Loewe_7.exe", "t:e2eebc4104de6c8565295702c5e0b77c", 58572, Common::DE_DEU, 800),
+
+	// Original filenames contain Löwenzahn 8
+	MACGAME1_l("loewe8", "",	"xn--Lwenzahn 8-ecb",		"rt:11588cdc1e3eec81c6052dfdb1cbac6e", 190547, Common::DE_DEU, 851),
+	MACGAME1_l("loewe8", "OSX",	"xn--Lwenzahn 8 (OSX)-mwb", "rt:bdb87b75fe7db4ee20d859bd640f5697", 276263, Common::DE_DEU, 851),
+	WINGAME1_l("loewe8", "",	"Setup/WinRoot/Terzio/Loewenzahn 8/Loewe_8.exe", "t:973b650dd2564c20cc1d3501a7498dc1", 71020, Common::DE_DEU, 851),
 
 	WINGAME1_l("lunes", "", "Lunes.exe", "9482a4a5f6ae02470ce1863808120f6e", 2258509, Common::IT_ITA, 851),
 
