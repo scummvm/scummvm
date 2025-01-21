@@ -720,7 +720,7 @@ int Scripts::cmd_addJewels() {
 
 	_buffPtr++;
 
-	add_jewels(_lValue);
+	addJewels(_lValue);
 	return 0;
 }
 
@@ -729,7 +729,7 @@ int Scripts::cmd_addHealth() {
 		return 5;
 
 	_buffPtr++;
-	add_health((int)_lValue);
+	addHealth((int)_lValue);
 	return 0;
 }
 
@@ -738,7 +738,7 @@ int Scripts::cmd_addMagic() {
 		return 5;
 
 	_buffPtr++;
-	add_magic((int)_lValue);
+	addMagic((int)_lValue);
 	return 0;
 }
 
@@ -747,7 +747,7 @@ int Scripts::cmd_addKeys() {
 		return 5;
 
 	_buffPtr++;
-	add_keys((int)_lValue);
+	addKeys((int)_lValue);
 	return 0;
 }
 
@@ -756,7 +756,7 @@ int Scripts::cmd_addScore() {
 		return 5;
 
 	_buffPtr++;
-	add_score((int)_lValue);
+	addScore((int)_lValue);
 	return 0;
 }
 

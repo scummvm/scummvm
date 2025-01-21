@@ -102,7 +102,7 @@ int killGoodGuy() {
 		_G(killgg_inform) = true;
 	}
 
-	add_score(-1000);
+	addScore(-1000);
 	return 0;
 }
 
@@ -116,7 +116,7 @@ void actorDamaged(Actor *actor, int damage) {
 		actor->_vulnerableCountdown = STAMINA;
 		if (damage >= actor->_health) {
 			if (actor->_type != 4) {
-				add_score(actor->_initHealth * 10);
+				addScore(actor->_initHealth * 10);
 
 			} else {
 				killGoodGuy();

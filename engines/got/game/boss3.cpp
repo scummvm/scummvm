@@ -534,12 +534,12 @@ void boss3ClosingSequence1() {
 }
 
 void boss3ClosingSequence2() {
-	fill_score(20, "CLOSING");
+	fillScore(20, "CLOSING");
 }
 
 void boss3ClosingSequence3() {
-	fill_health();
-	fill_magic();
+	fillHealth();
+	fillMagic();
 
 	for (int rep = 0; rep < 16; rep++)
 		_G(scrn)._actorType[rep] = 0;

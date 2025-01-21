@@ -180,20 +180,20 @@ bool GameContent::tick() {
 			if (_G(thor)->_health > 0) {
 				_G(thor)->_health--;
 				play_sound(WOOP, 1);
-				add_health(-1);
-				add_score(10);
+				addHealth(-1);
+				addScore(10);
 
 			} else if (_G(thor_info)._magic > 0) {
 				_G(thor_info)._magic--;
 				play_sound(WOOP, 1);
-				add_magic(-1);
-				add_score(10);
+				addMagic(-1);
+				addScore(10);
 
 			} else if (_G(thor_info)._jewels) {
 				_G(thor_info)._jewels--;
 				play_sound(WOOP, 1);
-				add_jewels(-1);
-				add_score(10);
+				addJewels(-1);
+				addScore(10);
 
 			} else {
 				_G(gameMode) = MODE_NORMAL;

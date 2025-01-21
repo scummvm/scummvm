@@ -394,12 +394,12 @@ void boss2ClosingSequence2() {
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;
 
-	fill_score(20, "CLOSING");
+	fillScore(20, "CLOSING");
 }
 
 void boss2ClosingSequence3() {
-	fill_health();
-	fill_magic();
+	fillHealth();
+	fillMagic();
 	odinSpeaks(1002, 0, "CLOSING");
 }
 

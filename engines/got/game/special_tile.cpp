@@ -60,10 +60,10 @@ int specialTileThor(const int x, const int y, const int icon) {
 			if ((_G(thor_info)._inventory & 64) && _G(thor_info)._object == 5) {
 				odinSpeaks(2012, 0);
 				deleteObject();
-				_G(setup).f10 = 1;
+				_G(setup).f10 = true;
 			} else if (!_G(setup).f10) {
 				odinSpeaks(2011, 0);
-				_G(setup).f10 = 1;
+				_G(setup).f10 = true;
 			}
 			return 1;
 		}
@@ -246,12 +246,12 @@ int specialTile(Actor *actor, int x, int y, const int icon) {
 	return 0;
 }
 
-void eraseDoor(int x, int y) {
+void eraseDoor(const int x, const int y) {
 	play_sound(DOOR, false);
 	_G(scrn)._iconGrid[y][x] = _G(scrn)._backgroundColor;
 }
 
-int openDoor1(int y, int x) {
+int openDoor1(const int y, const int x) {
 	if (_G(thor_info)._keys > 0) {
 		eraseDoor(x, y);
 		_G(thor_info)._keys--;
@@ -267,7 +267,7 @@ int openDoor1(int y, int x) {
 	return 0;
 }
 
-int cashDoor1(int y, int x, int amount) {
+int cashDoor1(const int y, const int x, const int amount) {
 	if (_G(thor_info)._jewels >= amount) {
 		eraseDoor(x, y);
 		_G(thor_info)._jewels -= amount;

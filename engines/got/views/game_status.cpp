@@ -123,7 +123,7 @@ bool GameStatus::tick() {
 	if (_scoreCountdown > 0) {
 		if ((_scoreCountdown % SCORE_INTERVAL) == 0) {
 			_G(sound).play_sound(WOOP, 1);
-			add_score(1000);
+			addScore(1000);
 		}
 
 		if (--_scoreCountdown == 0) {

@@ -24,14 +24,14 @@
 
 namespace Got {
 
-extern void add_jewels(int num);
-extern void add_score(int num);
-extern void add_magic(int num);
-extern void add_health(int num);
-extern void add_keys(int num);
-extern void fill_health();
-extern void fill_magic();
-extern void fill_score(int num, const char *endMessage = nullptr);
+extern void addJewels(int num);
+extern void addScore(int num);
+extern void addMagic(int num);
+extern void addHealth(int num);
+extern void addKeys(int num);
+extern void fillHealth();
+extern void fillMagic();
+extern void fillScore(int num, const char *endMessage = nullptr);
 
 } // namespace Got
 
