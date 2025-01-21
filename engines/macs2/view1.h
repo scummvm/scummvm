@@ -102,6 +102,9 @@ private:
 		void SetPosition(const Common::Point &newPosition);
 		Macs2::GameObject *GameObject;
 
+
+	uint16 GetVerticalOffset() const;
+
 	// Returns false if we are at the end of the path already or the path is not valid
 	bool TryFollowPath();
 

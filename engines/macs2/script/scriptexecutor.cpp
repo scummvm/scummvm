@@ -1456,6 +1456,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
+		// TODO: For the sake of easier reading the logs, jumping out if we
+		// read a 0 opcode.
+		if (opcode1 == 0x00) {
+			continue;
+		}
 		Common::String opcodeInfo;
 		if (opcode1 != 0x5) {
 			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
@@ -2181,6 +2186,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 			ReadWord();
 			ReadWord();
+		} else if (opcode1 == 0x03C) {
+			// TODO: Unknown opcode so far - probably related to the fade
+			// out as the dude is moving the potatoes in chapter 3
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x03D) {
+			// TODO: Unknown opcode so far - is happening during the "potato moving"
+			// in chapter 3
+			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 			// TODO: No idea what the byte does
