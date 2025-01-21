@@ -395,7 +395,8 @@ struct AnimFrameRange {
 struct InventoryItem {
 	InventoryItem();
 
-	Common::SharedPtr<Graphics::Surface> graphic;
+	Common::SharedPtr<Graphics::ManagedSurface> graphic;
+	Common::SharedPtr<Graphics::ManagedSurface> mask;
 	uint itemID;
 	bool highlighted;
 };
@@ -1007,8 +1008,8 @@ private:
 	void pickupInventoryItem(uint slot);
 
 	void getFileNamesForItemGraphic(uint itemID, Common::String &outGraphicFileName, Common::String &outAlphaFileName) const;
-	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required);
-	Common::SharedPtr<Graphics::Surface> loadGraphicFromPath(const Common::Path &path, bool required);
+	Common::SharedPtr<Graphics::ManagedSurface> loadGraphic(const Common::String &graphicName, bool required);
+	Common::SharedPtr<Graphics::ManagedSurface> loadGraphicFromPath(const Common::Path &path, bool required);
 
 	bool loadSubtitles(Common::CodePage codePage, bool guessCodePage);
 
@@ -1254,13 +1255,13 @@ private:
 	InventoryItem _inventoryPlacedItemCache;
 	Common::Rect _placedItemRect;
 
-	Common::SharedPtr<Graphics::Surface> _trayCompassGraphic;
-	Common::SharedPtr<Graphics::Surface> _trayBackgroundGraphic;
-	Common::SharedPtr<Graphics::Surface> _trayHighlightGraphic;
-	Common::SharedPtr<Graphics::Surface> _trayCornerGraphic;
-	Common::SharedPtr<Graphics::Surface> _backgroundGraphic;
+	Common::SharedPtr<Graphics::ManagedSurface> _trayCompassGraphic;
+	Common::SharedPtr<Graphics::ManagedSurface> _trayBackgroundGraphic;
+	Common::SharedPtr<Graphics::ManagedSurface> _trayHighlightGraphic;
+	Common::SharedPtr<Graphics::ManagedSurface> _trayCornerGraphic;
+	Common::SharedPtr<Graphics::ManagedSurface> _backgroundGraphic;
 
-	Common::Array<Common::SharedPtr<Graphics::Surface> > _uiGraphics;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface> > _uiGraphics;
 
 	uint _panCursors[kPanCursorMaxCount];
 

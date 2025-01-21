@@ -51,7 +51,7 @@ public:
 
 	virtual void commitRect(const Common::Rect &rect) const = 0;
 	virtual bool popOSEvent(OSEvent &evt) const = 0;
-	virtual Graphics::Surface *getUIGraphic(uint index) const = 0;
+	virtual Graphics::ManagedSurface *getUIGraphic(uint index) const = 0;
 	virtual Graphics::ManagedSurface *getMenuSurface() const = 0;
 	virtual bool hasDefaultSave() const = 0;
 	virtual bool hasAnySave() const = 0;
