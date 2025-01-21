@@ -54,9 +54,9 @@ private:
     int   _numLabels = 0;          // number of labels
     char  *_gosubStack[32] = {};   // stack for GOSUB return addresses
     int   _gosubPtr = 0;           // GOSUB stack pointer
-    char  *_forStack[10] = {};     // FOR stack
-    long  _forVal[10] = {};        // current FOR value
-    int8  _forVar[10] = {};        // ending FOR value (target var)
+    char  *_forStack[11] = {};     // FOR stack
+    long  _forVal[11] = {};        // current FOR value
+    int8  _forVar[11] = {};        // ending FOR value (target var)
     int8  _forPtr = 0;	           // FOR stack pointer
     char  *_buffPtr = nullptr;     // pointer to current command
     char  *_buffEnd = nullptr;	   // pointer to end of buffer
@@ -79,7 +79,7 @@ private:
     int  calcString(int mode);
     void getStr();
     int  getInternalVariable();
-    int  exec_command(int num);
+    int  execCommand(int num);
     int getLine(char *src, char *dst);
     void scriptEntry() {}
     void scriptExit();

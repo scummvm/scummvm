@@ -48,7 +48,7 @@ void SelectItem::draw() {
 		return;
 	}
 
-	int b = 1;
+	uint b = 1;
 	for (int l = 0; l < 7; l++, b = b << 1) {
 		if (_G(thor_info)._inventory & b) {
 			if (l < 6)
@@ -80,7 +80,7 @@ bool SelectItem::msgFocus(const FocusMessage &msg) {
 		if (_selectedItem < 1)
 			_selectedItem = 0;
 
-		int b = 1 << _selectedItem;
+		uint b = 1 << _selectedItem;
 		for (;;) {
 			if (_G(thor_info)._inventory & b)
 				break;
@@ -97,7 +97,7 @@ bool SelectItem::msgFocus(const FocusMessage &msg) {
 }
 
 bool SelectItem::msgAction(const ActionMessage &msg) {
-	int b;
+	uint b;
 
 	if (_G(thor_info)._inventory == 0) {
 		close();

@@ -120,9 +120,9 @@ void Scripts::runScript(bool firstTime) {
 	Common::fill(_gosubStack, _gosubStack + 32, (char *)nullptr);
 	_gosubPtr = 0;
 
-	Common::fill(_forVar, _forVar + 10, 0);
-	Common::fill(_forVal, _forVal + 10, 0);
-	Common::fill(_forStack, _forStack + 10, (char *)nullptr);
+	Common::fill(_forVar, _forVar + 11, 0);
+	Common::fill(_forVal, _forVal + 11, 0);
+	Common::fill(_forStack, _forStack + 11, (char *)nullptr);
 	_forPtr = 0;
 
 	int i = readScriptFile();
@@ -154,7 +154,7 @@ void Scripts::scriptLoop() {
 		}
 
 		if (ret > 0) {
-			ret = exec_command(ret);
+			ret = execCommand(ret);
 			if (ret == -100) { // RUN command
 				if (_buffer)
 					free(_buffer);
@@ -1109,7 +1109,7 @@ int Scripts::cmd_exec() {
 	return 0;
 }
 
-int Scripts::exec_command(int num) {
+int Scripts::execCommand(int num) {
 	char ch;
 
 	int ret = 0;
