@@ -421,7 +421,7 @@ void Sound::processSfxQueues() {
 #endif
 		}
 
-		if ((!ConfMan.getBool("subtitles") && finished) || (finished && _vm->_talkDelay == 0)) {
+		if (finished && (!ConfMan.getBool("subtitles") || _vm->_talkDelay == 0)) {
 			if (!(_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 0))
 				_vm->stopTalk();
 		}
