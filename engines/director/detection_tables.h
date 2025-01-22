@@ -7699,6 +7699,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("wine", "", "WIN95.EXE",		 "1a7acbba10a7246ba58c1d53fc7203f5", 1411337,
 						 "160MAIN.DXR",		 "23dbb4744121b077d331b01123709519", 592640, 501),
 
+	WINGAME1_l("winniewitch", "", "ZILLY.EXE", "t:f302a23d9172f018edcd4c46345c40c1", 935225, Common::DE_DEU, 501),
+
 	// Created by Human Code, Inc.
 	// Doesn't require installation
 	MACGAME1("wishbone", "", "WISHBONE/Copy2HD-power mac/Odyssey-power [hi]", "r:ae7c14ee5672c3bc9deac15a8d6d5c77", 94073, 500),
