@@ -37,12 +37,12 @@ namespace Image {
 namespace {
 
 inline void convertYUVToRGB(const byte *clipTable, byte y, int8 u, int8 v, byte &r, byte &g, byte &b) {
-	r = clipTable[y + (v << 1)];
+	r = clipTable[y + (v * 2)];
 	g = clipTable[y - (u >> 1) - v];
-	b = clipTable[y + (u << 1)];
+	b = clipTable[y + (u * 2)];
 }
 
-inline uint32 convertYUVToColor(const byte *clipTable, const Graphics::PixelFormat &format, byte y, byte u, byte v) {
+inline uint32 convertYUVToColor(const byte *clipTable, const Graphics::PixelFormat &format, byte y, int8 u, int8 v) {
 	byte r, g, b;
 	convertYUVToRGB(clipTable, y, u, v, r, g, b);
 	return format.RGBToColor(r, g, b);
