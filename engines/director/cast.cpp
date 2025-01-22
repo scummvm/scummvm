@@ -512,7 +512,7 @@ bool Cast::loadConfig() {
 		check *= field25 + 25;
 		check += _frameRate + 26;
 		check *= platform + 27;
-		check *= (protection * 0xE06) + 0xFFF450000;
+		check *= (protection * 0xE06) + 0xFF450000u;
 		check ^= MKTAG('r', 'a', 'l', 'f');
 
 		if (check != checksum)
