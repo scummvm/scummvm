@@ -334,7 +334,7 @@ const char *variableTypeToStr(VariableType type) {
     case kVariableTypeAssetId:
         return "AssetId";
     case kVariableTypeInt:
-        return "Unknown1";
+        return "Int";
     case kVariableTypeUnk2:
         return "Unknown2";
     case kVariableTypeBoolean:

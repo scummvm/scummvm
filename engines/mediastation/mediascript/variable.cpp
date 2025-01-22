@@ -147,6 +147,14 @@ Operand Variable::getValue() {
 		return returnValue;
 	}
 
+	case kVariableTypeInt: {
+		// TODO: Is this value type correct?
+		// Shouldn't matter too much, though, since it's still an integer type.
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_value.i);
+		return returnValue;
+	}
+
 	case kVariableTypeFloat: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still a floating-point type.
