@@ -24,6 +24,7 @@
 
 #include "graphics/font.h"
 #include "common/file.h"
+#include "darkseed/gamefont.h"
 
 namespace Darkseed {
 
@@ -32,9 +33,11 @@ private:
 	Common::Array<Common::Array<uint8>> _fontDataSet1;
 	Common::Array<Common::Array<uint8>> _fontDataSet2;
 	Common::Array<Common::Array<uint8>> _fontDataSet3;
+	GameFont *_gameFont;
 
 public:
 	KoFont();
+	~KoFont();
 
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;

@@ -35,7 +35,6 @@ Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sou
 		_font = new Big5Font();
 		_lineHeight = 17;
 		_numLines = 3;
-		_isBig5 = true;
 		break;
 	case Common::KO_KOR :
 		_font = new KoFont();
@@ -57,33 +56,37 @@ Console::~Console() {
 }
 
 void Console::printTosText(int tosIndex) {
-	const Common::String &text = _tosText->getText(tosIndex);
+	const Common::U32String &text = _tosText->getText(tosIndex);
 	// debugN("tos %d: ", tosIndex);
 	// for (int i = 0; i < text.size(); i++) {
 	// 	debugN("%02x,", (unsigned char)text[i]);
 	// }
 	// debug("");
 	debug("%s", text.c_str());
-	addTextLine(text);
+	addTextLineU32(text);
 	_sound->playTosSpeech(tosIndex);
 }
 
 void Console::addTextLine(const Common::String &text) {
-	Common::StringArray lines;
-	if (_isBig5) {
-		big5WordWrap(text, 23, lines);
-	} else {
-		_font->wordWrapText(text, consoleArea.width(), lines);
-	}
+	addTextLineU32(Common::U32String(text));
+}
+
+void Console::addToCurrentLine(const Common::String &text) {
+	addToCurrentLineU32(Common::U32String(text));
+}
+
+void Console::addTextLineU32(const Common::U32String &text) {
+	Common::U32StringArray lines;
+	_font->wordWrapText(text, consoleArea.width(), lines);
 	for (auto &line : lines) {
 		addLine(line);
 	}
 }
 
-void Console::addToCurrentLine(const Common::String &text) {
+void Console::addToCurrentLineU32(const Common::U32String &text) {
 	int curIdx = _startIdx == 0 ? _text.size() - 1 : _startIdx - 1;
 	_startIdx = curIdx;
-	addTextLine(_text[_startIdx] + text);
+	addTextLineU32(_text[_startIdx] + text);
 }
 
 void Console::addI18NText(const I18nText &text) {
@@ -107,69 +110,14 @@ void Console::draw(bool forceRedraw) {
 	g_engine->_screen->addDirtyRect(consoleArea);
 }
 
-void Console::drawStringAt(const int x, const int y, const Common::String &text) const {
-	if (_isBig5) {
-		Common::Point charPos = {(int16)x, (int16)y};
-		for (const char *curCharPtr = text.c_str(); *curCharPtr; ++curCharPtr) {
-			byte curChar = *curCharPtr;
-			byte nextChar = curCharPtr[1];
-			if ((curChar & 0x80) && nextChar) {
-				curCharPtr++;
-				uint16 point = (curChar << 8) | nextChar;
-				_font->drawChar(g_engine->_screen, point, charPos.x, charPos.y, 0);
-				charPos.x += (int16)_font->getCharWidth(point) + 1;
-			}
-		}
-	} else if (g_engine->getLanguage() == Common::KO_KOR) {
-		Common::Point charPos = {(int16)x, (int16)y};
-		for (const char *curCharPtr = text.c_str(); *curCharPtr; ++curCharPtr) {
-			byte curChar = *curCharPtr;
-			uint16 point = 0;
-			if ((curChar & 0x80)) {
-				curCharPtr++;
-				byte nextChar = *curCharPtr;
-				point = (curChar << 8) | nextChar;
-				_font->drawChar(g_engine->_screen, point, charPos.x, charPos.y, 0);
-				charPos.x += (int16)_font->getCharWidth(point) + 1;
-			} else if (curChar == ' ') {
-				charPos.x += 17;
-			}
-		}
-	} else {
-		_font->drawString(g_engine->_screen, text, x, y, consoleArea.width(), 0);
-	}
+void Console::drawStringAt(const int x, const int y, const Common::U32String &text) const {
+	_font->drawString(g_engine->_screen, text, x, y, consoleArea.width(), 0);
 }
 
-void Console::addLine(const Common::String &line) {
+void Console::addLine(const Common::U32String &line) {
 	_text[_startIdx] = line;
 	_startIdx = (_startIdx + 1) % _text.size();
 	_redrawRequired = true;
-}
-
-void Console::big5WordWrap(const Common::String &str, int maxWidth, Common::StringArray &lines) {
-	Common::String line;
-	int charCount = 0;
-	for (const char *curCharPtr = str.c_str(); *curCharPtr; ++curCharPtr) {
-		byte curChar = *curCharPtr;
-		byte nextChar = curCharPtr[1];
-		if ((curChar & 0x80) && nextChar) {
-			curCharPtr++;
-			if (charCount < maxWidth) {
-				line += (char)curChar;
-				line += (char)nextChar;
-				charCount++;
-			} else {
-				lines.push_back(line);
-				line.clear();
-				line += (char)curChar;
-				line += (char)nextChar;
-				charCount = 1;
-			}
-		}
-	}
-	if (!line.empty()) {
-		lines.push_back(line);
-	}
 }
 
 } // End of namespace Darkseed

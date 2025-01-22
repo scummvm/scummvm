@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "darkseed/darkseed.h"
 #include "darkseed/tostext.h"
 
 namespace Darkseed {
@@ -38,21 +39,37 @@ bool TosText::load() {
 	return true;
 }
 
-const Common::String &TosText::getText(uint16 textIndex) {
+const Common::U32String &TosText::getText(uint16 textIndex) {
 	assert(textIndex < _numEntries);
 	return _textArray[textIndex];
 }
 
-Common::String TosText::loadString(Common::File &file, uint16 index) const {
-	Common::String str;
+Common::U32String TosText::loadString(Common::File &file, uint16 index) const {
+	Common::U32String str;
 	file.seek(index * 2, SEEK_SET);
 	auto startOffset = file.readUint16LE();
 	uint16 strLen = index == _numEntries - 1
 						? file.size() - startOffset
 						: file.readUint16LE() - startOffset;
 	file.seek(startOffset, SEEK_SET);
-	for (int i = 0; i < strLen; i++) {
-		str += (char)file.readByte();
+	if (g_engine->getLanguage() == Common::KO_KOR || g_engine->getLanguage() == Common::ZH_ANY) {
+		// handle multi-byte languages
+		for (int i = 0; i < strLen; i++) {
+			uint8 byte = (char)file.readByte();
+			if (byte & 0x80) {
+				if (i < strLen - 1) {
+					uint8 byte2 = (char)file.readByte();
+					str += (int)byte << 8 | byte2;
+					i++;
+				}
+			} else {
+				str += byte;
+			}
+		}
+	} else {
+		for (int i = 0; i < strLen; i++) {
+			str += (char)file.readByte();
+		}
 	}
 	return str;
 }

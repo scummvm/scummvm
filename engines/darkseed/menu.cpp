@@ -71,7 +71,7 @@ constexpr I18NTextWithPosition kMenu_quit = {
 
 void drawMenuItem(const I18NTextWithPosition &menuText) {
 	const TextWithPosition &textWithPosition = getI18NTextWithPosition(menuText);
-	g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, textWithPosition.text);
+	g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, Common::U32String(textWithPosition.text));
 }
 
 void Menu::drawSoundMenuItem() {

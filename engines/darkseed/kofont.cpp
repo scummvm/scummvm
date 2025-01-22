@@ -35,6 +35,12 @@ KoFont::KoFont() {
 	loadFontDataSet(_fontDataSet3, 109, fontData);
 
 	fontData.close();
+
+	_gameFont = new GameFont();
+}
+
+KoFont::~KoFont() {
+	delete _gameFont;
 }
 
 void KoFont::loadFontDataSet(Common::Array<Common::Array<uint8> > &dataSet, int size, Common::File &file) {
@@ -68,6 +74,9 @@ int KoFont::getMaxCharWidth() const {
 }
 
 int KoFont::getCharWidth(uint32 chr) const {
+	if (chr < 128) {
+		return _gameFont->getCharWidth(chr);
+	}
 	return getMaxCharWidth();
 }
 
@@ -201,6 +210,10 @@ void KoFont::extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *p
 }
 
 void KoFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	if (chr < 128) {
+		_gameFont->drawChar(dst, chr, x, y, color);
+		return;
+	}
 	uint8 pixels[256];
 	memset(pixels, 0, 256);
 	createGlyph(pixels, chr);

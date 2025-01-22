@@ -29,17 +29,17 @@
 namespace Darkseed {
 
 class TosText {
-	Common::StringArray _textArray;
+	Common::U32StringArray _textArray;
 	uint16 _numEntries = 0;
 
 public:
 	bool load();
 
 	uint16 getNumEntries() const;
-	const Common::String &getText(uint16 textIndex);
+	const Common::U32String &getText(uint16 textIndex);
 
 private:
-	Common::String loadString(Common::File &file, uint16 index) const;
+	Common::U32String loadString(Common::File &file, uint16 index) const;
 };
 
 } // namespace Darkseed
