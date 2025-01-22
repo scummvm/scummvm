@@ -171,9 +171,9 @@ Operand CodeChunk::executeNextStatement() {
 			if (condition.getInteger()) {
 				// TODO: If locals are modified in here, they won't be
 				// propagated up since it's its own code chunk.
-				ifBlock.execute();
+				ifBlock.execute(_args);
 			} else {
-				elseBlock.execute();
+				elseBlock.execute(_args);
 			}
 
 			// If blocks themselves shouldn't return anything.
@@ -302,7 +302,7 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	case kVariableScopeParameter: {
 		uint32 index = id - 1;
 		if (_args == nullptr) {
-			error("CodeChunk::getVariable(): Requested a parameter in a code chunk that has no parameters.");
+			error("CodeChunk::getVariable(): Requested a parameter in a code chunk that has no parameters");
 		}
 		return _args->operator[](index);
 		break;
