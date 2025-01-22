@@ -2803,6 +2803,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
+#define GUIO_LB2_CD_WINDOWS GUIO6(GAMEOPTION_PREFER_DIGITAL_SFX,	\
+							GAMEOPTION_WINDOWS_CURSORS,				\
+							GAMEOPTION_ORIGINAL_SAVELOAD,			\
+							GAMEOPTION_MIDI_MODE,					\
+							GAMEOPTION_RGB_RENDERING,				\
+							GAMEOPTION_ENABLE_GMM_SAVE)
+
 	// Laura Bow 2 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 1.001.069 (just a guess)
@@ -2837,6 +2844,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+
+	// Laura Bow 2 - English Windows CD
+	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
+	{"laurabow2", "CD", {
+		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
+		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_LB2_CD_WINDOWS	},
 
 	// Laura Bow 2 - Korean fan translation, based on English DOS CD
 	// Executable scanning reports "1.001.072", VERSION file reports "1.1"
@@ -2891,6 +2906,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "71f1f0cd9f082da2e750c793a8ed9d84", 286141},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_SPEECH	},
+
+#undef GUIO_LB2_CD_WINDOWS
 
 #define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
 								   GUIO_NOMUSIC, \
@@ -4370,6 +4387,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
 
+#define GUIO_PEPPER_WINDOWS GUIO8(GUIO_NOSPEECH,			\
+							GAMEOPTION_WINDOWS_CURSORS,		\
+							GAMEOPTION_PREFER_DIGITAL_SFX,	\
+							GAMEOPTION_ORIGINAL_SAVELOAD,	\
+							GAMEOPTION_MIDI_MODE,			\
+							GAMEOPTION_RGB_RENDERING,		\
+							GAMEOPTION_TTS,					\
+							GAMEOPTION_ENABLE_GMM_SAVE)
+
 	// Pepper's Adventure In Time 1.000 English
 	// Executable scanning reports "1.001.072", VERSION file reports "1.000"
 	{"pepper", "", {
@@ -4377,6 +4403,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "670d0c53622429f4b11275caf7f8d292", 5459574},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	{"pepper", "", {
+		{"resource.map", 0, "72726dc81c1b4c1110c486be77369bc8", 5179},
+		{"resource.000", 0, "670d0c53622429f4b11275caf7f8d292", 5459574},
+		AD_LISTEND}, Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_PEPPER_WINDOWS },
 
 	// Pepper - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.060", VERSION file reports "1.000"
@@ -4401,6 +4432,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e6a918a2dd7a4bcecd8fb389f43287c2", 1713544},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
+
+#undef GUIO_PEPPER_WINDOWS
 
 	// Police Quest 1 VGA Remake - English DOS (from the Police Quest Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "2.000"

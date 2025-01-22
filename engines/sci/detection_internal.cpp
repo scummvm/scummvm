@@ -116,7 +116,9 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		SciVersion max;
 		const char gfxDriverName[13];
 		const char *guio;
-	} rmodes[] = {
+	};
+
+	static const RMode rmodes[] = {
 		{ SCI_VERSION_0_EARLY,	SCI_VERSION_1_EGA_ONLY,		"EGA320.DRV",		GUIO_RENDEREGA },
 		{ SCI_VERSION_0_EARLY,	SCI_VERSION_1_EGA_ONLY,		"CGA320C.DRV",		GUIO_RENDERCGA },
 		{ SCI_VERSION_0_EARLY,	SCI_VERSION_1_EGA_ONLY,		"CGA320BW.DRV",		GUIO_RENDERCGABW },
@@ -134,10 +136,20 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		{ SCI_VERSION_1_1,		SCI_VERSION_1_1,			"SCIWV.EXE",		GUIO_RENDERWIN_16C }
 	};
 
+	static const char *sci11WinTargets[] = {
+		"ecoquest",
+		"kq6",
+		"laurabow2",
+		"pepper",
+		"sq4"
+	};
+
 	bool isWindows = false;
-	if ((idStr.equals("kq6") || idStr.equals("sq4") || idStr.equals("ecoquest")) && platform == Common::kPlatformWindows) {
-		guiOptions += GUIO_RENDERWIN_256C;
-		isWindows = true;
+	if (platform == Common::kPlatformWindows) {
+		for (const char *const *i = sci11WinTargets; isWindows == false && i != &sci11WinTargets[ARRAYSIZE(sci11WinTargets)]; ++i)
+			isWindows = idStr.equals(*i);
+		if (isWindows)
+			guiOptions += GUIO_RENDERWIN_256C;
 	}
 
 	Common::FSNode node(gamePath);
