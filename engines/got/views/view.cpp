@@ -81,35 +81,35 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 }
 
 void View::playSound(int index, bool priority_override) {
-	_G(sound).play_sound(index, priority_override);
+	_G(sound).playSound(index, priority_override);
 }
 
 void View::playSound(const Gfx::GraphicChunk &src) {
-	_G(sound).play_sound(src);
+	_G(sound).playSound(src);
 }
 
 void View::musicPlay(int num, bool override) {
-	_G(sound).music_play(num, override);
+	_G(sound).musicPlay(num, override);
 }
 
 void View::musicPlay(const char *name, bool override) {
-	_G(sound).music_play(name, override);
+	_G(sound).musicPlay(name, override);
 }
 
 void View::musicPause() {
-	_G(sound).music_pause();
+	_G(sound).musicPause();
 }
 
 void View::musicResume() {
-	_G(sound).music_resume();
+	_G(sound).musicResume();
 }
 
 void View::musicStop() {
-	_G(sound).music_stop();
+	_G(sound).musicStop();
 }
 
 bool View::musicIsOn() const {
-	return _G(sound).music_is_on();
+	return _G(sound).musicIsOn();
 }
 
 void View::fadeOut() {

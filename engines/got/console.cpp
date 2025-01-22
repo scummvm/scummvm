@@ -58,13 +58,13 @@ bool Console::cmdView(int argc, const char **argv) {
 
 bool Console::cmdSound(int argc, const char **argv) {
 	if (argc == 2)
-		_G(sound).play_sound(atoi(argv[1]), true);
+		_G(sound).playSound(atoi(argv[1]), true);
 	return false;
 }
 
 bool Console::cmdMusic(int argc, const char **argv) {
 	if (argc == 2)
-		_G(sound).music_play(atoi(argv[1]), true);
+		_G(sound).musicPlay(atoi(argv[1]), true);
 	return false;
 }
 
@@ -116,18 +116,18 @@ bool Console::cmdFreeze(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("freeze ['health', 'magic', 'gems']\n");
 	} else if (!strcmp(argv[1], "health")) {
-		_G(cheats).freezeHealth = !_G(cheats).freezeHealth;
-		debugPrintf("Health is %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+		_G(cheats)._freezeHealth = !_G(cheats)._freezeHealth;
+		debugPrintf("Health is %s\n", _G(cheats)._freezeHealth ? "frozen" : "unfrozen");
 	} else if (!strcmp(argv[1], "magic")) {
-		_G(cheats).freezeMagic = !_G(cheats).freezeMagic;
-		debugPrintf("Magic is %s\n", _G(cheats).freezeMagic ? "frozen" : "unfrozen");
+		_G(cheats)._freezeMagic = !_G(cheats)._freezeMagic;
+		debugPrintf("Magic is %s\n", _G(cheats)._freezeMagic ? "frozen" : "unfrozen");
 	} else if (!strcmp(argv[1], "jewels")) {
-		_G(cheats).freezeJewels = !_G(cheats).freezeJewels;
-		debugPrintf("Jewels are %s\n", _G(cheats).freezeJewels ? "frozen" : "unfrozen");
+		_G(cheats)._freezeJewels = !_G(cheats)._freezeJewels;
+		debugPrintf("Jewels are %s\n", _G(cheats)._freezeJewels ? "frozen" : "unfrozen");
 	} else if (!strcmp(argv[1], "all")) {
-		_G(cheats).freezeHealth = _G(cheats).freezeMagic =
-			_G(cheats).freezeJewels = !_G(cheats).freezeHealth;
-		debugPrintf("All are %s\n", _G(cheats).freezeHealth ? "frozen" : "unfrozen");
+		_G(cheats)._freezeHealth = _G(cheats)._freezeMagic =
+			_G(cheats)._freezeJewels = !_G(cheats)._freezeHealth;
+		debugPrintf("All are %s\n", _G(cheats)._freezeHealth ? "frozen" : "unfrozen");
 	}
 
 	return true;

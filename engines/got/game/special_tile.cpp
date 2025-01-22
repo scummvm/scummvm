@@ -71,7 +71,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 	case 204:
 		if (GAME2) {
 			if (!_G(setup).f19)
-				_G(slip_flag) = true;
+				_G(slipFlag) = true;
 			return 1;
 		}
 
@@ -114,7 +114,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 				actorVisible(5);
 				Common::fill(_G(scrn)._actorInvis, _G(scrn)._actorInvis + 16, 0);
 				_G(thunder_flag) = 60;
-				play_sound(THUNDER, true);
+				playSound(THUNDER, true);
 				_G(setup).f22 = true;
 			}
 		} else {
@@ -134,7 +134,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 			cy = (_G(thor_real_y1) + 8) / 16;
 			if (_G(scrn)._iconGrid[cy][cx] == icon) {
 				_G(thor)->_vulnerableCountdown = STAMINA;
-				play_sound(WOOP, false);
+				playSound(WOOP, false);
 
 				const int nt = _G(scrn)._newLevelLocation[icon - 214];
 				const int displayPage = _G(pge);
@@ -172,7 +172,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 		if (_G(scrn)._iconGrid[cy][cx] == icon) {
 			_G(thor)->_vulnerableCountdown = STAMINA;
 			if (icon < 224 && icon > 219)
-				play_sound(FALL, false);
+				playSound(FALL, false);
 
 			_G(new_level) = _G(scrn)._newLevel[icon - 220 + (f * 6)];
 			_G(warp_scroll) = false;
@@ -212,7 +212,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 	return 0;
 }
 
-int specialTile(Actor *actor, int x, int y, const int icon) {
+int specialTile(const Actor *actor, int x, int y, const int icon) {
 	switch (icon) {
 	case 201:
 	case 202:
@@ -226,7 +226,6 @@ int specialTile(Actor *actor, int x, int y, const int icon) {
 		return 1;
 	case 209:
 	case 210:
-		return 0;
 	case 214:
 	case 215:
 	case 216:
@@ -247,7 +246,7 @@ int specialTile(Actor *actor, int x, int y, const int icon) {
 }
 
 void eraseDoor(const int x, const int y) {
-	play_sound(DOOR, false);
+	playSound(DOOR, false);
 	_G(scrn)._iconGrid[y][x] = _G(scrn)._backgroundColor;
 }
 

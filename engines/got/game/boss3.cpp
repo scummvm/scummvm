@@ -106,7 +106,7 @@ static int boss3Movement1(Actor *actor) {
 		_G(actor[4])._solid |= 128;
 		_G(actor[5])._solid |= 128;
 		_G(actor[6])._solid |= 128;
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		goto done;
 	}
 	if (actor->_i6) {
@@ -147,7 +147,7 @@ static int boss3Movement1(Actor *actor) {
 		actor->_frameCount = LFC;
 		actor->_temp4 = 40;
 		actor->_temp3 = 0;
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		goto done1;
 	}
 
@@ -397,7 +397,7 @@ new_dir:
 	_G(actor[actor->_shotActor])._temp1 = g_events->getRandomNumber(90, 189);
 	_G(actor[actor->_shotActor])._temp5 = 30;
 	_G(actor[actor->_shotActor])._speed = 2;
-	play_sound(BOSS12, true);
+	playSound(BOSS12, true);
 
 new_dir1:
 	actor->_temp5 = _G(rand1) % 8;
@@ -428,7 +428,7 @@ static void boss3CheckHit() {
 			_G(actor[3])._moveCountdown = 50;
 
 			_G(actor[3])._vulnerableCountdown = 50;
-			play_sound(BOSS13, true);
+			playSound(BOSS13, true);
 
 			for (int rep = 4; rep < 7; rep++) {
 				_G(actor[rep])._magicHit = 0;
@@ -475,8 +475,8 @@ static void bossChangeMode() {
 void boss3SetupLevel() {
 	setupBoss(3);
 	_G(boss_active) = true;
-	music_pause();
-	play_sound(BOSS11, true);
+	musicPause();
+	playSound(BOSS11, true);
 	_G(timer_cnt) = 0;
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
@@ -487,7 +487,7 @@ void boss3SetupLevel() {
 		_G(boss_intro1) = true;
 	}
 
-	music_play(7, true);
+	musicPlay(7, true);
 	_G(apple_drop) = 0;
 	bossMode = 1;
 }
@@ -521,7 +521,7 @@ static int bossDie() {
 			_G(actor[3 + rep])._moveCountdown = _G(actor[3 + rep])._speed;
 		}
 
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		_G(boss_dead) = true;
 	}
 
@@ -529,7 +529,7 @@ static int bossDie() {
 }
 
 void boss3ClosingSequence1() {
-	music_play(6, true);
+	musicPlay(6, true);
 	odinSpeaks(1001, 0, "CLOSING");
 }
 
@@ -552,7 +552,7 @@ void boss3ClosingSequence3() {
 	showLevel(BOSS_LEVEL3);
 
 	_G(exit_flag) = 0;
-	music_pause();
+	musicPause();
 
 	_G(new_level) = ENDING_SCREEN;
 	_G(thor)->_x = 152;
@@ -564,7 +564,7 @@ void endingScreen() {
 	for (int i = 3; i < MAX_ACTORS; i++)
 		_G(actor[i])._moveType = 1;
 	
-	music_play(6, true);
+	musicPlay(6, true);
 	_G(timer_cnt) = 0;
 
 	memset(expf, 0, 4 * 8);
@@ -590,7 +590,7 @@ int endgame_one() {
 	}
 
 	_G(actor[34])._i2 = 6;
-	play_sound(EXPLODE, true);
+	playSound(EXPLODE, true);
 
 	int r = _G(rand1) % 32;
 	while (expf[r / 8][r % 8]) {
@@ -630,7 +630,7 @@ int endGameMovement() {
 		return 0;
 	}
 	_G(actor[34])._i2 = 6;
-	play_sound(EXPLODE, true);
+	playSound(EXPLODE, true);
 
 	int r = _G(rand1) % 8;
 	while (expf[_G(exprow)][r]) {

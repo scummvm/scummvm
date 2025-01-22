@@ -108,7 +108,7 @@ void initGame() {
 	showLevel(_G(current_level));
 
 	if (!_G(auto_load)) {
-		_G(sound).music_play(_G(levelMusic), true);
+		_G(sound).musicPlay(_G(levelMusic), true);
 	}
 
 	g_vars->resetEndgameFlags();

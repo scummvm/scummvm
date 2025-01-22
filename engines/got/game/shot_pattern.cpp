@@ -161,7 +161,7 @@ int shotPatternFive(Actor *actor) {
 		actor->_y += 16;
 		actor->_numShotsAllowed = 3 + _G(setup)._difficultyLevel;
 		actorShoots(actor, 2);
-		play_sound(BOSS12, false);
+		playSound(BOSS12, false);
 
 		const int num = actor->_shotActor;
 		actor->_shotCountdown = 50;

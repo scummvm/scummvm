@@ -122,7 +122,7 @@ bool GameStatus::msgGame(const GameMessage &msg) {
 bool GameStatus::tick() {
 	if (_scoreCountdown > 0) {
 		if ((_scoreCountdown % SCORE_INTERVAL) == 0) {
-			_G(sound).play_sound(WOOP, 1);
+			_G(sound).playSound(WOOP, 1);
 			addScore(1000);
 		}
 

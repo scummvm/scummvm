@@ -81,11 +81,11 @@ void pickUpObject(int p) {
 			cannotCarryMore();
 			return;
 		}
-		play_sound(GULP, false);
+		playSound(GULP, false);
 		addHealth(5);
 		break;
 	case 6: // Bad apple
-		play_sound(OW, false);
+		playSound(OW, false);
 		addHealth(-10);
 		break;
 	case 7: // Key (reset on exit)
@@ -165,7 +165,7 @@ void pickUpObject(int p) {
 	_G(oy) = y * 16;
 	_G(of) = 1;
 
-	play_sound(YAH, false);
+	playSound(YAH, false);
 	_G(object_map[p]) = 0;
 
 	// Reset so it doesn't reappear on reentry to screen
@@ -221,13 +221,13 @@ bool useApple(int flag) {
 			_G(magic_cnt) = 0;
 			addMagic(-2);
 			addHealth(1);
-			play_sound(ANGEL, false);
+			playSound(ANGEL, false);
 		} else if (_G(magic_cnt) > 8) {
 			_G(magic_cnt) = 0;
 			addMagic(-2);
 			addHealth(1);
-			if (!sound_playing())
-				play_sound(ANGEL, false);
+			if (!soundPlaying())
+				playSound(ANGEL, false);
 		}
 		_G(apple_flag) = true;
 		return true;
@@ -244,7 +244,7 @@ bool useThunder(int flag) {
 	if (flag && _G(thor_info)._magic > 29) {
 		if (!_G(thunder_flag)) {
 			addMagic(-30);
-			play_sound(THUNDER, false);
+			playSound(THUNDER, false);
 			_G(thunder_flag) = 60;
 		}
 		return true;
@@ -344,7 +344,7 @@ bool useTornado(int flag) {
 				_G(actor[2])._lastDir = _G(thor)->_dir;
 				_G(actor[2])._moveType = 16;
 				_G(tornado_used) = true;
-				play_sound(WIND, false);
+				playSound(WIND, false);
 			}
 		} else if (!_G(tornado_used)) {
 			notEnoughMagic();
@@ -415,7 +415,7 @@ void useItem() {
 	if (kf) {
 		if (!ret && !_G(useItemFlag)) {
 			if (mf)
-				play_sound(BRAAPP, false);
+				playSound(BRAAPP, false);
 			_G(useItemFlag) = true;
 		}
 	} else {

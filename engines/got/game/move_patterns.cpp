@@ -225,7 +225,7 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	int x2 = (_G(thor)->_dir > 1) ? (x + 12) >> 4 : (x + 10) >> 4;
 	int y2 = (y + 15) >> 4;
 
-	_G(slip_flag) = false;
+	_G(slipFlag) = false;
 
 	// Check for cheat flying mode
 	if (!actor->_flying) {
@@ -283,18 +283,18 @@ int checkMove0(const int x, const int y, Actor *actor) {
 			return 0;
 	}
 
-	if (!_G(slip_flag)) {
+	if (!_G(slipFlag)) {
 		_G(slipping) = false;
 		_G(slip_cnt) = 0;
 	}
 	
-	if (_G(slip_flag) && !_G(slipping))
+	if (_G(slipFlag) && !_G(slipping))
 		_G(slip_cnt++);
 	
 	if (_G(slip_cnt) > 8)
 		_G(slipping) = true;
 	
-	_G(slip_flag) = false;
+	_G(slipFlag) = false;
 
 	x1 = x + 1;
 	y1 = y + 8;
@@ -331,7 +331,7 @@ int checkMove0(const int x, const int y, Actor *actor) {
 			thorDamaged(act);
 			if (act->_solid < 2) {
 				if (!act->_vulnerableCountdown && (!(act->_type & 1)))
-					play_sound(PUNCH1, false);
+					playSound(PUNCH1, false);
 
 				if (!_G(hammer)->_active && _G(key_flag[key_fire]))
 					actorDamaged(act, _G(hammer)->_hitStrength);
@@ -367,7 +367,7 @@ int checkMove1(const int x, const int y, Actor *actor) {
 	const byte icn4 = _G(scrn)._iconGrid[y2][x2];
 	if (icn1 < icn || icn2 < icn || icn3 < icn || icn4 < icn) {
 		if (actor->_actorNum == 1 && actor->_moveType == 2)
-			play_sound(CLANG, false);
+			playSound(CLANG, false);
 
 		return 0;
 	}
@@ -703,7 +703,7 @@ int movementZero(Actor *actor) {
 
 	if (_G(slipping)) {
 		if (_G(slip_cnt) == 8)
-			play_sound(FALL, true);
+			playSound(FALL, true);
 
 		y += 2;
 		_G(slip_cnt--);
@@ -965,13 +965,13 @@ int specialMovementTwo(Actor *actor) {
 	}
 	if (!actor->_funcPass) {
 		if (_G(thor)->_health < 150) {
-			if (!sound_playing())
-				play_sound(ANGEL, false);
+			if (!soundPlaying())
+				playSound(ANGEL, false);
 			_G(thor)->_health += 1;
 		}
 	} else if (_G(thor_info)._magic < 150) {
-		if (!sound_playing())
-			play_sound(ANGEL, false);
+		if (!soundPlaying())
+			playSound(ANGEL, false);
 		_G(thor_info)._magic += 1;
 	}
 
@@ -1385,7 +1385,7 @@ int movementSix(Actor *actor) {
 		if (actor->_nextFrame > 2) {
 			actor->_nextFrame = 0;
 			if (_G(boss_dead))
-				play_sound(EXPLODE, false);
+				playSound(EXPLODE, false);
 		}
 		actor->_currNumShots--;
 	} else {

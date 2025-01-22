@@ -568,11 +568,11 @@ void GameContent::thorDead() {
 }
 
 void GameContent::checkForCheats() {
-	if (_G(cheats).freezeHealth)
+	if (_G(cheats)._freezeHealth)
 		_G(thor)->_health = 150;
-	if (_G(cheats).freezeMagic)
+	if (_G(cheats)._freezeMagic)
 		_G(thor_info)._magic = 150;
-	if (_G(cheats).freezeJewels)
+	if (_G(cheats)._freezeJewels)
 		_G(thor_info)._jewels = 999;
 }
 

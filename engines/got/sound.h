@@ -47,7 +47,7 @@ enum {
 	EXPLODE,
 	BOSS11,
 	BOSS12,
-	BOSS13,
+	BOSS13
 };
 
 #define NUM_SOUNDS 19
@@ -70,27 +70,27 @@ public:
 	}
 	void load();
 
-	void play_sound(int index, bool priority_override);
-	void play_sound(const Gfx::GraphicChunk &src);
-	bool sound_playing() const;
+	void playSound(int index, bool override);
+	void playSound(const Gfx::GraphicChunk &src);
+	bool soundPlaying() const;
 
-	void music_play(int num, bool override) {
-		music_play(getMusicName(num), override);
+	void musicPlay(const int num, const bool override) {
+		musicPlay(getMusicName(num), override);
 	}
-	void music_play(const char *name, bool override);
-	void music_pause();
-	void music_resume();
-	void music_stop();
-	bool music_is_on() const;
+	void musicPlay(const char *name, bool override);
+	void musicPause();
+	void musicResume();
+	void musicStop();
+	bool musicIsOn() const;
 };
 
-extern void play_sound(int index, bool priority_override);
-extern void play_sound(const Gfx::GraphicChunk &src);
-extern bool sound_playing();
-extern void music_play(int num, bool override);
-extern void music_play(const char *name, bool override);
-extern void music_pause();
-extern void music_resume();
+extern void playSound(int index, bool override);
+extern void playSound(const Gfx::GraphicChunk &src);
+extern bool soundPlaying();
+extern void musicPlay(int num, bool override);
+extern void musicPlay(const char *name, bool override);
+extern void musicPause();
+extern void musicResume();
 
 } // namespace Got
 

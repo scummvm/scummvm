@@ -57,7 +57,7 @@ int boss1Movement(Actor *actor) {
 	if (actor->_temp3) { //start striking
 		actor->_temp3--;
 		if (!actor->_temp3)
-			play_sound(BOSS11, false);
+			playSound(BOSS11, false);
 
 		if (_G(hourglass_flag))
 			actor->_numMoves = 3;
@@ -190,7 +190,7 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 
 			_G(actor[3])._moveCountdown = 50;
 			_G(actor[3])._vulnerableCountdown = 100;
-			play_sound(BOSS13, true);
+			playSound(BOSS13, true);
 			_G(actor[3])._nextFrame = 1;
 
 			for (int rep = 4; rep < 7; rep++) {
@@ -207,10 +207,10 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 void boss1SetupLevel() {
 	setupBoss(1);
 	_G(boss_active) = true;
-	music_pause();
-	play_sound(BOSS11, true);
+	musicPause();
+	playSound(BOSS11, true);
 	g_events->send("Game", GameMessage("PAUSE", 40));
-	music_play(5, true);
+	musicPlay(5, true);
 }
 
 static int boss1_dead() {
@@ -241,7 +241,7 @@ static int boss1_dead() {
 			_G(actor[3 + rep])._currNumShots = (10 - _G(actor[3 + rep])._speed) * 10;
 			_G(actor[3 + rep])._moveCountdown = _G(actor[3 + rep])._speed;
 		}
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		_G(boss_dead) = true;
 
 		for (int rep = 7; rep < MAX_ACTORS; rep++) {
@@ -255,7 +255,7 @@ static int boss1_dead() {
 
 void boss1ClosingSequence1() {
 	_G(game_over) = true;
-	music_play(4, true);
+	musicPlay(4, true);
 	odinSpeaks(1001, 13, "CLOSING");
 }
 
@@ -283,7 +283,7 @@ void boss1ClosingSequence4() {
 	_G(scrn)._music = 4;
 	showLevel(BOSS_LEVEL1);
 
-	play_sound(ANGEL, true);
+	playSound(ANGEL, true);
 	placeTile(18, 6, 148);
 	placeTile(19, 6, 202);
 	actorVisible(1);

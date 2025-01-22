@@ -94,7 +94,7 @@ void showLevel(const int newLevel) {
 		_G(current_level) = newLevel; // Force no scroll
 
 	if (_G(music_current) != _G(levelMusic))
-		_G(sound).music_pause();
+		_G(sound).musicPause();
 
 	switch (_G(new_level) - _G(current_level)) {
 	case 0:
@@ -175,7 +175,7 @@ void showLevelDone() {
 		f = false;
 
 	if (f)
-		music_play(_G(levelMusic), false);
+		musicPlay(_G(levelMusic), false);
 }
 
 static void odin_speaks_end() {
@@ -199,7 +199,7 @@ void odinSpeaks(const int index, int item, const char *endMessage) {
 }
 
 int switchIcons() {
-	play_sound(WOOP, false);
+	playSound(WOOP, false);
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
@@ -225,7 +225,7 @@ int switchIcons() {
 }
 
 int rotateArrows() {
-	play_sound(WOOP, false);
+	playSound(WOOP, false);
 
 	for (int y = 0; y < 12; y++) {
 		for (int x = 0; x < 20; x++) {
@@ -270,7 +270,7 @@ void killEnemies(const int iy, const int ix) {
 	y2 = y1 + 5;
 
 	if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x1, y2, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y2, ix, iy, ix + 15, iy + 15)) {
-		if (!_G(cheats).freezeHealth) {
+		if (!_G(cheats)._freezeHealth) {
 			_G(thor)->_health = 0;
 			g_events->send(GameMessage("THOR_DIES"));
 		}

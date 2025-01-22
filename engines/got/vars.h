@@ -80,9 +80,9 @@ enum TransitionDir {
 };
 
 struct Cheats {
-	bool freezeHealth = false;
-	bool freezeMagic = false;
-	bool freezeJewels = false;
+	bool _freezeHealth = false;
+	bool _freezeMagic = false;
+	bool _freezeJewels = false;
 };
 
 class Vars {
@@ -104,7 +104,7 @@ public:
 	Gfx::Pics _odin;
 	Gfx::Pics _status;
 	HighScores _highScores;
-	SdData _sd_data;
+	SdData _sdData;
 	Sound _sound;
 	Scripts _scripts;
 	GameMode _gameMode = MODE_NORMAL;
@@ -112,7 +112,7 @@ public:
 	Cheats _cheats;
 	Common::Queue<byte> _demoKeys;
 	bool _useItemFlag = false;
-	bool _slip_flag = false;
+	bool _slipFlag = false;
 	bool _slipping = false;
 	int _slip_cnt = 0;
 	bool _boss_intro1 = false, _boss_intro2 = false;

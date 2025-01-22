@@ -135,7 +135,7 @@ int boss2Movement(Actor *actor) {
 			_G(actor[3])._temp6 = 40;
 
 			actorAlwaysShoots(actor, 1);
-			play_sound(FALL, false);
+			playSound(FALL, false);
 			_G(actor[actor->_shotActor])._x = actor->_x + 12;
 			_G(actor[actor->_shotActor])._y = actor->_y + 32;
 			_G(actor[actor->_shotActor])._temp2 = 0;
@@ -173,7 +173,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 		actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 		_G(actor[3])._health -= 10;
 		if (_G(actor[3])._health == 50) {
-			play_sound(BOSS12, true);
+			playSound(BOSS12, true);
 
 			g_events->send("Game", GameMessage("PAUSE", 40));
 
@@ -187,7 +187,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 			}
 			_G(actor[3])._currNumShots = 0;
 		} else
-			play_sound(BOSS13, true);
+			playSound(BOSS13, true);
 		
 		_G(actor[3])._moveCountdown = 75;
 		_G(actor[3])._vulnerableCountdown = 75;
@@ -211,15 +211,15 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 void boss2SetupLevel() {
 	setupBoss(2);
 	_G(boss_active) = true;
-	music_pause();
-	play_sound(BOSS11, true);
+	musicPause();
+	playSound(BOSS11, true);
 	_G(timer_cnt) = 0;
 
 	dropFlag = false;
 	Common::fill(su, su + 18, 0);
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
-	music_play(7, true);
+	musicPlay(7, true);
 }
 
 static int boss2Die() {
@@ -253,7 +253,7 @@ static int boss2Die() {
 			_G(actor[3 + rep])._moveCountdown = _G(actor[3 + rep])._speed;
 		}
 
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		_G(boss_dead) = true;
 	}
 
@@ -271,7 +271,7 @@ static int boss2MovementExplode(Actor *actor) {
 	if (actor->_currNumShots || _G(actor[5])._currNumShots)
 		return 0;
 
-	play_sound(EXPLODE, true);
+	playSound(EXPLODE, true);
 	actorAlwaysShoots(&_G(actor[5]), 0);
 	const int an = _G(actor[5])._shotActor;
 	_G(actor[an])._moveType = 9;
@@ -350,7 +350,7 @@ static int boss2MovementShake(Actor *actor) {
 	if (actor->_x < 20 || actor->_x > 270) {
 		_G(thunder_flag) = 100;
 		actor->_i4 = 50;
-		play_sound(EXPLODE, true);
+		playSound(EXPLODE, true);
 		actor->_i2 = 0;
 
 		Common::fill(su, su + 18, 0);
@@ -384,7 +384,7 @@ done:
 }
 
 void boss2ClosingSequence1() {
-	music_play(6, true);
+	musicPlay(6, true);
 	odinSpeaks(1001, 0, "CLOSING");
 }
 
@@ -415,7 +415,7 @@ void boss2ClosingSequence4() {
 
 	showLevel(BOSS_LEVEL2);
 
-	play_sound(ANGEL, true);
+	playSound(ANGEL, true);
 	placeTile(18, 10, 152);
 	placeTile(19, 10, 202);
 	actorVisible(1);
