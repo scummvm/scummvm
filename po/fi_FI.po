@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-22 09:39+0000\n"
-"PO-Revision-Date: 2025-01-01 21:18+0000\n"
+"PO-Revision-Date: 2025-01-22 22:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7527,10 +7527,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685-tukea ei ole käännetty mukaan"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
+msgstr "Pelimoottorin datatiedostoa darkseed.dat ei löydetty."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -8020,17 +8018,15 @@ msgstr "Ammu"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Taika"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Thor kuolee"
 
 #: engines/got/got.cpp:181 engines/got/got.cpp:191
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Pelin tallentaminen ei ole tällä hetkellä mahdollista"
+msgstr "Peliä ei voi tallentaa demotilassa"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -11430,24 +11426,21 @@ msgstr ""
 "fonteilleen."
 
 #: engines/scumm/scumm.cpp:1336
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the '%s' Macintosh executable to read resources from. "
-#| "Music and Mac GUI will be disabled"
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
-"\"%s\":n Macintosh-ohjelmatiedostoa ei löydetty resurssien ja instrumenttien "
-"lukemiseksi. Emme soita musiikkia, emmekä näytä Mac-käyttöliittymää"
+"Macintosh-ohjelmatiedostoa \"%s\" ei löydetty resurssien lukemiseksi. %s "
+"tulee olemaan pois käytöstä."
 
 #: engines/scumm/scumm.cpp:1337
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Mac-käyttöliittymä"
 
 #: engines/scumm/scumm.cpp:1337
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Musiikki ja Mac-käyttöliittymä"
 
 #: engines/scumm/scumm.cpp:1357
 #, c-format
