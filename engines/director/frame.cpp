@@ -304,7 +304,7 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
-				sprite._foreColor = g_director->transformColor((128 + stream.readByte()) & 0xff);
+				sprite._foreColor = g_director->transformColor(stream.readByte() ^ 0x80);
 			}
 			break;
 		case 3:
@@ -312,7 +312,7 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
-				sprite._backColor = g_director->transformColor((128 + stream.readByte()) & 0xff);
+				sprite._backColor = g_director->transformColor(stream.readByte() ^ 0x80);
 			}
 			break;
 		case 4:
@@ -506,8 +506,8 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 22:
 			// loop points for color cycling
-			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 22
-			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 23
+			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80); // 22
+			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80); // 23
 			break;
 		case 24:
 			_mainChannels.palette.flags = stream.readByte(); // 24
@@ -826,8 +826,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			_mainChannels.palette.overTime = (_mainChannels.palette.flags & 0x04) != 0;
 			break;
 		case 30:
-			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 30
-			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 31
+			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80); // 30
+			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80); // 31
 			break;
 		case 32:
 			_mainChannels.palette.frameCount = stream.readUint16(); // 32
