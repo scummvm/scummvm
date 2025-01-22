@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-18 17:21+0000\n"
+"POT-Creation-Date: 2025-01-22 09:39+0000\n"
 "PO-Revision-Date: 2025-01-13 16:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -8144,7 +8144,7 @@ msgstr "Sortilège"
 msgid "Thor Dies"
 msgstr "Thor meurt"
 
-#: engines/got/got.cpp:182 engines/got/got.cpp:192
+#: engines/got/got.cpp:181 engines/got/got.cpp:191
 msgid "Savegames are not available in demo mode"
 msgstr "Sauvegarde impossible en mode démo"
 

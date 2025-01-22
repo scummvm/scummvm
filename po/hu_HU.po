@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-18 17:21+0000\n"
+"POT-Creation-Date: 2025-01-22 09:39+0000\n"
 "PO-Revision-Date: 2025-01-20 18:57+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3655,7 +3655,7 @@ msgid "Skip autosave"
 msgstr "Automatikus mentés kihagyása"
 
 #: engines/engine.cpp:635
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -8002,7 +8002,7 @@ msgstr ""
 msgid "Thor Dies"
 msgstr ""
 
-#: engines/got/got.cpp:182 engines/got/got.cpp:192
+#: engines/got/got.cpp:181 engines/got/got.cpp:191
 #, fuzzy
 #| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
