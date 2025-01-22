@@ -217,7 +217,7 @@ void SpaceMgr::m_parseText(int nargs) {
 			me->_curNode = "";
 			me->_curView = "";
 			if (!(me->_spaceCollections.contains(me->_curSpaceCollection) && me->_checkForDups)) {
-				me->_spaceCollections[me->_curSpaceCollection] = SpaceCollection();
+				me->_spaceCollections.getOrCreateVal(me->_curSpaceCollection);
 			}
 		} else if (type == "SPACE") {
 			me->_curSpace = instruction.nextToken();
@@ -225,7 +225,7 @@ void SpaceMgr::m_parseText(int nargs) {
 			me->_curView = "";
 			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
 			if (!(sc.spaces.contains(me->_curSpaceCollection) && me->_checkForDups)) {
-				sc.spaces[me->_curSpace] = Space();
+				sc.spaces.getOrCreateVal(me->_curSpace);
 			}
 		} else if (type == "NODE") {
 			me->_curNode = instruction.nextToken();
@@ -233,7 +233,7 @@ void SpaceMgr::m_parseText(int nargs) {
 			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
 			Space &s = sc.spaces.getVal(me->_curSpace);
 			if (!(s.nodes.contains(me->_curNode) && me->_checkForDups)) {
-				s.nodes[me->_curNode] = Node();
+				s.nodes.getOrCreateVal(me->_curNode);
 			}
 		} else if (type == "VIEW") {
 			me->_curView = instruction.nextToken();
@@ -241,8 +241,7 @@ void SpaceMgr::m_parseText(int nargs) {
 			Space &s = sc.spaces.getVal(me->_curSpace);
 			Node &n = s.nodes.getVal(me->_curNode);
 			if (!(n.views.contains(me->_curView) && me->_checkForDups)) {
-				n.views[me->_curView] = View();
-				n.views[me->_curView].payload = instruction.nextToken();
+				n.views.getOrCreateVal(me->_curView).payload = instruction.nextToken();
 			}
 		} else if (type == "LLINK") {
 			Common::String target = instruction.nextToken();
@@ -252,8 +251,7 @@ void SpaceMgr::m_parseText(int nargs) {
 			Node &n = s.nodes.getVal(me->_curNode);
 			View &v = n.views.getVal(me->_curView);
 			if (!(v.llinks.contains(target) && me->_checkForDups)) {
-				v.llinks[target] = LLink();
-				v.llinks[target].payload = payload;
+				v.llinks.getOrCreateVal(target).payload = payload;
 			}
 		} else {
 			warning("SpaceMgr::m_parseText: Unhandled instruction %s", instructionBody.c_str());
