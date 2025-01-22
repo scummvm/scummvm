@@ -81,6 +81,7 @@ public:
 	Function *getFunctionById(uint functionId);
 
     Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args);
+	Operand callBuiltInFunction(BuiltInFunction function, Common::Array<Operand> &args);
 	Common::HashMap<uint32, Variable *> _variables;
 
 	Graphics::Screen *_screen = nullptr;
@@ -106,6 +107,8 @@ private:
 	void setPaletteFromHeader(AssetHeader *header);
 	void branchToScreen(uint32 contextId);
 	Asset *findAssetToAcceptMouseEvents(Common::Point point);
+
+	void effectTransition(Common::Array<Operand> &args);
 };
 
 extern MediaStationEngine *g_engine;

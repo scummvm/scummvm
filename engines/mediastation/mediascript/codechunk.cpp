@@ -96,9 +96,10 @@ Operand CodeChunk::executeNextStatement() {
 				// This is a title-defined function.
 				returnValue = function->execute(args);
 			} else {
+				// This is a function built in (and global to) the engine.
 				BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
 				debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
-				returnValue = callBuiltInFunction(builtInFunctionId, args);
+				returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
 			}
 			return returnValue;
 		}
@@ -337,51 +338,6 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 
 	default: {
 		error("CodeChunk::getVariable(): Got unknown variable scope %s (%d)", variableScopeToStr(scope), static_cast<uint>(scope));
-	}
-	}
-}
-
-Operand CodeChunk::callBuiltInFunction(BuiltInFunction id, Common::Array<Operand> &args) {
-	switch (id) {
-	case kEffectTransitionFunction: {
-		switch (args.size()) {
-		// TODO: Discover and handle the different ways
-		// effectTransition can be called.
-		case 1: {
-			//uint dollarSignVariable = args[0].getInteger();
-			break;
-		}
-
-		case 3: {
-			//uint dollarSignVariable = args[0].getInteger();
-			//double percentComplete = args[1].getDouble();
-
-			// TODO: Verify that this is a palette!
-			Asset *asset = args[2].getAsset();
-			g_engine->setPalette(asset);
-			break;
-		}
-
-		default: {
-			error("CodeChunk::callBuiltInFunction(): (BuiltInFunction::effectTransition) Got %d args, which is unexpected", args.size());
-		}
-		}
-
-		warning("CodeChunk::callBuiltInFunction(): effectTransition is not implemented");
-		return Operand();
-		break;
-	}
-
-	case kDrawingFunction: {
-		// Not entirely sure what this function does, but it seems like a way to
-		// call into some drawing functions built into the IBM/Crayola executable.
-		warning("CodeChunk::callBuiltInFunction(): Built-in drawing function not implemented");
-		return Operand();
-		break;
-	}
-
-	default: {
-		error("CodeChunk::callBuiltInFunction(): Got unknown built-in function ID %d", id);
 	}
 	}
 }

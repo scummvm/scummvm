@@ -364,4 +364,26 @@ Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
 	return intersectingAsset;
 }
 
+Operand MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common::Array<Operand> &args) {
+	switch (function) {
+	case kEffectTransitionFunction:
+	case kEffectTransitionOnSyncFunction: {
+		// TODO: effectTransitionOnSync should be split out into its own function.
+		effectTransition(args);
+		return Operand();
+	}
+
+	case kDrawingFunction: {
+		// Not entirely sure what this function does, but it seems like a way to
+		// call into some drawing functions built into the IBM/Crayola executable.
+		warning("MediaStationEngine::callBuiltInFunction(): Built-in drawing function not implemented");
+		return Operand();
+	}
+
+	default: {
+		error("MediaStationEngine::callBuiltInFunction(): Got unknown built-in function %s (%d)", builtInFunctionToStr(function), function);
+	}
+	}
+}
+
 } // End of namespace MediaStation

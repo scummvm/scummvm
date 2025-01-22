@@ -73,6 +73,7 @@ const char *variableScopeToStr(VariableScope scope);
 enum BuiltInFunction {
 	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
 	kEffectTransitionFunction = 12, // PARAMS: 1
+	kEffectTransitionOnSyncFunction = 13,
 	kDrawingFunction = 37, // PARAMS: 5
 	// TODO: Figure out if TimeOfDay = 101 is consistent across titles.
 	kDebugPrintFunction = 180, // PARAMS: 1+

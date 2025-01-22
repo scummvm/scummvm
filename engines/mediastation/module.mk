@@ -30,7 +30,8 @@ MODULE_OBJS = \
 	mediascript/variable.o \
 	mediastation.o \
 	metaengine.o \
-	subfile.o
+	subfile.o \
+	transitions.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MEDIASTATION), DYNAMIC_PLUGIN)

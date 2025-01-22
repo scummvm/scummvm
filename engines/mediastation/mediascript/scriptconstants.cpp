@@ -106,6 +106,8 @@ const char *builtInFunctionToStr(BuiltInFunction function) {
     switch (function) {
     case kEffectTransitionFunction:
         return "EffectTransition";
+    case kEffectTransitionOnSyncFunction:
+        return "EffectTransitionOnSync";
     case kDrawingFunction:
         return "Drawing";
     case kDebugPrintFunction:
