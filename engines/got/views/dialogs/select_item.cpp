@@ -127,7 +127,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				break;
 		}
 
-		play_sound(WOOP, true);
+		playSound(WOOP, true);
 		redraw();
 		break;
 
@@ -143,7 +143,7 @@ bool SelectItem::msgAction(const ActionMessage &msg) {
 				break;
 		}
 
-		play_sound(WOOP, true);
+		playSound(WOOP, true);
 		redraw();
 		break;
 

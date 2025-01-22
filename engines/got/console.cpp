@@ -73,8 +73,8 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	if (argc == 2)
 		filename = argv[1];
 
-	Common::InSaveFile *f;
-	if ((f = g_system->getSavefileManager()->openForLoading(filename)) == nullptr) {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+	if (f == nullptr) {
 		debugPrintf("Could not open %s\n", filename.c_str());
 		return true;
 	}

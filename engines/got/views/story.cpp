@@ -101,7 +101,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	}
 
 	// Play the opening music
-	music_play("OPENSONG", 1);
+	musicPlay("OPENSONG", 1);
 
 	_yp = 0;
 	_scrolling = false;
@@ -111,7 +111,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
 bool Story::msgUnfocus(const UnfocusMessage &msg) {
 	_surface.clear();
-	music_pause();
+	musicPause();
 
 	return true;
 }
@@ -156,7 +156,7 @@ bool Story::tick() {
 }
 
 void Story::done() {
-	music_stop();
+	musicStop();
 
 	fadeOut();
 	Gfx::loadPalette();

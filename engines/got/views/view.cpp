@@ -80,35 +80,35 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	return child ? child->send(msg) : false;
 }
 
-void View::play_sound(int index, bool priority_override) {
+void View::playSound(int index, bool priority_override) {
 	_G(sound).play_sound(index, priority_override);
 }
 
-void View::play_sound(const Gfx::GraphicChunk &src) {
+void View::playSound(const Gfx::GraphicChunk &src) {
 	_G(sound).play_sound(src);
 }
 
-void View::music_play(int num, bool override) {
+void View::musicPlay(int num, bool override) {
 	_G(sound).music_play(num, override);
 }
 
-void View::music_play(const char *name, bool override) {
+void View::musicPlay(const char *name, bool override) {
 	_G(sound).music_play(name, override);
 }
 
-void View::music_pause() {
+void View::musicPause() {
 	_G(sound).music_pause();
 }
 
-void View::music_resume() {
+void View::musicResume() {
 	_G(sound).music_resume();
 }
 
-void View::music_stop() {
+void View::musicStop() {
 	_G(sound).music_stop();
 }
 
-bool View::music_is_on() const {
+bool View::musicIsOn() const {
 	return _G(sound).music_is_on();
 }
 

@@ -54,15 +54,15 @@ private:
 	UIElement *getElementAtPos(const Common::Point &pos) const;
 
 protected:
-	void play_sound(int index, bool priority_override);
-	void play_sound(const Gfx::GraphicChunk &src);
+	void playSound(int index, bool priority_override);
+	void playSound(const Gfx::GraphicChunk &src);
 
-	void music_play(int num, bool override);
-	void music_play(const char *name, bool override);
-	void music_pause();
-	void music_resume();
-	void music_stop();
-	bool music_is_on() const;
+	void musicPlay(int num, bool override);
+	void musicPlay(const char *name, bool override);
+	void musicPause();
+	void musicResume();
+	void musicStop();
+	bool musicIsOn() const;
 
 	void fadeOut();
 	void fadeIn(const byte *pal = nullptr);

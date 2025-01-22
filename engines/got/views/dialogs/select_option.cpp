@@ -101,13 +101,13 @@ bool SelectOption::msgAction(const ActionMessage &msg) {
 
 	switch (msg._action) {
 	case KEYBIND_UP:
-		play_sound(WOOP, true);
+		playSound(WOOP, true);
 		if (--_selectedItem < 0)
 			_selectedItem = (int)_options.size() - 1;
 		break;
 
 	case KEYBIND_DOWN:
-		play_sound(WOOP, true);
+		playSound(WOOP, true);
 		if (++_selectedItem >= (int)_options.size())
 			_selectedItem = 0;
 		break;
@@ -139,7 +139,7 @@ bool SelectOption::tick() {
 	if (_smackCtr != 0) {
 		++_smackCtr;
 		if (_smackCtr == 3)
-			play_sound(CLANG, true);
+			playSound(CLANG, true);
 		if (_smackCtr == 6) {
 			_smackCtr = 0;
 			close();

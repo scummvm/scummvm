@@ -91,7 +91,7 @@ bool Opening::tick() {
 	if (_frameCtr == 20) {
 		drawTitle();
 		redraw();
-		play_sound(_G(gfx[104]));
+		playSound(_G(gfx[104]));
 	} else if (_frameCtr < 40) {
 		if ((_frameCtr % 4) == 0) {
 			_shakeX = g_engine->getRandomNumber(19) - 10;
