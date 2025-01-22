@@ -311,6 +311,13 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 			return Operand();
 		}
 
+		case kReleaseContextMethod: {
+			assert(args.size() == 1);
+			uint32 contextId = args[0].getAssetId();
+			releaseContext(contextId);
+			return Operand();
+		}
+
 		default: {
 			error("MediaStationEngine::callMethod(): Got unimplemented method ID %d", static_cast<uint>(methodId));
 		}
@@ -332,6 +339,29 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 			debugC(5, kDebugScript, "No context entry event handler");
 		}
 	}
+}
+
+void MediaStationEngine::releaseContext(uint32 contextId) {
+	debugC(5, kDebugScript, "MediaStationEngine::releaseContext(): Releasing context %d", contextId);
+	Context *context = _loadedContexts.getValOrDefault(contextId);
+	if (context == nullptr) {
+		error("MediaStationEngine::releaseContext(): Attempted to unload context %d that is not currently loaded", contextId);
+	}
+
+	// Unload any assets currently playing from this context. They should have
+	// already been stopped by scripts, but this is a last check.
+	for (auto it = _assetsPlaying.begin(); it != _assetsPlaying.end();) {
+		uint assetId = (*it)->getHeader()->_id;
+		Asset *asset = context->getAssetById(assetId);
+		if (asset != nullptr) {
+			it = _assetsPlaying.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	delete context;
+	_loadedContexts.erase(contextId);
 }
 
 Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
