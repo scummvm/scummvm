@@ -34,7 +34,7 @@ public:
 	Function(Chunk &chunk);
 	~Function();
 
-	Operand execute(Common::Array<Operand> args);
+	Operand execute(Common::Array<Operand> &args);
 
 	uint _fileId;
 	uint _id;
