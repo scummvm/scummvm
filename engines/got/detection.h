@@ -58,7 +58,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Got (C)";
+		return "Got (C) 1993-1994 Ron Davis";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
