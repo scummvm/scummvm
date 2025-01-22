@@ -1058,7 +1058,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			_main_surface.setOnHoverListener(_mouseHelper);
 		}
 
-		_scummvm_thread = new Thread(_scummvm, "ScummVM");
+		_scummvm_thread = new Thread(null, _scummvm, "ScummVM", 8388608); // 8MB
 		_scummvm_thread.start();
 	}
 
