@@ -57,7 +57,7 @@ Operand CodeChunk::executeNextStatement() {
 		error("CodeChunk::executeNextStatement(): Attempt to read past end of bytecode chunk");
 	}
 
-	InstructionType instructionType = InstructionType(Datum(*_bytecode).u.i);
+	InstructionType instructionType = static_cast<InstructionType>(Datum(*_bytecode).u.i);
 	debugCN(5, kDebugScript, "(%s) ", instructionTypeToStr(instructionType));
 	switch (instructionType) {
 	case kInstructionTypeEmpty: {
@@ -65,12 +65,12 @@ Operand CodeChunk::executeNextStatement() {
 	}
 
 	case kInstructionTypeFunctionCall: {
-		Opcode opcode = Opcode(Datum(*_bytecode).u.i);
+		Opcode opcode = static_cast<Opcode>(Datum(*_bytecode).u.i);
 		debugCN(5, kDebugScript, "%s ", opcodeToStr(opcode));
 		switch (opcode) {
 		case kOpcodeAssignVariable: {
 			uint32 id = Datum(*_bytecode).u.i;
-			VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
+			VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
 			debugC(5, kDebugScript, "%d (%s) ", id, variableScopeToStr(scope));
 			debugCN(5, kDebugScript, "  Value: ");
 			Operand newValue = executeNextStatement();
@@ -272,7 +272,7 @@ Operand CodeChunk::executeNextStatement() {
 
 	case kInstructionTypeVariableRef: {
 		uint32 id = Datum(*_bytecode).u.i;
-		VariableScope scope = VariableScope(Datum(*_bytecode).u.i);
+		VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
 		debugC(5, kDebugScript, "Variable %d (%s)", id, variableScopeToStr(scope));
 		Operand variable = getVariable(id, scope);
 		return variable;

@@ -32,7 +32,7 @@ Variable::Variable(Chunk &chunk, bool readId) {
 	if (readId) {
 		_id = Datum(chunk).u.i;
 	}
-	_type = VariableType(Datum(chunk).u.i);
+	_type = static_cast<VariableType>(Datum(chunk).u.i);
 	debugC(5, kDebugLoading, "Variable::Variable(): id = 0x%x, type %s (%d) (@0x%llx)", 
 		_id, variableTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch ((VariableType)_type) {

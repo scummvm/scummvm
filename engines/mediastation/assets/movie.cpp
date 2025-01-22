@@ -428,7 +428,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 
 			default:
-				error("Sound::readChunk(): Unknown audio encoding 0x%x", (uint)_header->_soundEncoding);
+				error("Movie::readSubfile(): Unknown audio encoding 0x%x", static_cast<uint>(_header->_soundEncoding));
 			}
 			_audioStreams.push_back(stream);
 			chunk = subfile.nextChunk();

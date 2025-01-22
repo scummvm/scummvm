@@ -73,7 +73,7 @@ void Sound::readChunk(Chunk &chunk) {
 	}
 
 	default: {
-		error("Sound::readChunk(): Unknown audio encoding 0x%x", (uint)_encoding);
+		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_encoding));
 		break;
 	}
 	}
