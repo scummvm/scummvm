@@ -488,6 +488,12 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 	if (unzlocal_getShort(us->_stream, &number_entry_CD) != UNZ_OK)
 		err = UNZ_ERRNO;
 
+	if (err != UNZ_OK) {
+		delete us->_stream;
+		delete us;
+		return nullptr;
+	}
+
 	if ((number_entry_CD != us->gi.number_entry) ||
 	    (number_disk_with_CD != 0) ||
 	    (number_disk != 0))
