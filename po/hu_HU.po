@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-22 09:39+0000\n"
-"PO-Revision-Date: 2025-01-20 18:57+0000\n"
+"PO-Revision-Date: 2025-01-22 15:04+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4244,23 +4244,23 @@ msgstr "Egér rögzítés kapcsoló"
 #: engines/wintermute/keymapper_tables.h:1862
 #: engines/wintermute/keymapper_tables.h:1895
 msgid "Save screenshot"
-msgstr "Képernyõkép mentés"
+msgstr "Képernyőkép mentése"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:514
 msgid "Toggle linear filtered scaling"
-msgstr "Lineáris szûrés átkapcsolás"
+msgstr "Lineáris filter méretezés kapcsoló"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:521
 msgid "Cycle through stretch modes"
-msgstr "Nyújtási módok váltása"
+msgstr "Kinyújtási módok közötti váltás"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:527
 msgid "Increase the scale factor"
-msgstr "Skála tényezõ növelése"
+msgstr "Méretező tényező növelése"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:533
 msgid "Decrease the scale factor"
-msgstr "Skála tényezõ csökkentése"
+msgstr "Méretező tényező csökkentése"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:540
 msgid "Switch to the next scaler"
@@ -4280,15 +4280,15 @@ msgstr "Jobb Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Middle Mouse Button"
-msgstr "Középsõ Egérgomb"
+msgstr "Középső Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Mouse Wheel Up"
-msgstr "Egér Kerék Fel"
+msgstr "Egér Görgő Fel"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Down"
-msgstr "Egér Kerék Le"
+msgstr "Egér Görgő Le"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "X1 Mouse Button"
@@ -4320,7 +4320,7 @@ msgstr "Joy Hátra"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Guide"
-msgstr "Joy Vezérlõ"
+msgstr "Joy Irányító"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Start"
@@ -4336,11 +4336,11 @@ msgstr "Jobb Kar"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:207
 msgid "Left Shoulder"
-msgstr "Bal Shoulder"
+msgstr "Bal Ütköző"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:213
 msgid "Right Shoulder"
-msgstr "Jobb Shoulder"
+msgstr "Jobb Ütköző"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:55
@@ -4351,7 +4351,7 @@ msgstr "Jobb Shoulder"
 #: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
-msgstr "D-pad Fel"
+msgstr "Irányválasztó Fel"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:56
@@ -4362,7 +4362,7 @@ msgstr "D-pad Fel"
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
-msgstr "D-pad Le"
+msgstr "Irányválasztó Le"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:57
@@ -4373,7 +4373,7 @@ msgstr "D-pad Le"
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
-msgstr "D-pad Bal"
+msgstr "Irányválasztó Bal"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:58
@@ -4384,19 +4384,19 @@ msgstr "D-pad Bal"
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
-msgstr "D-pad Jobb"
+msgstr "Irányválasztó Jobb"
 
 #: backends/keymapper/hardware-input.cpp:270
 msgid "D-pad Center"
-msgstr "D-pad Közép"
+msgstr "Irányválasztó Közép"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr "Bal Indító"
+msgstr "Bal Ravasz"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr "Jobb Indító"
+msgstr "Jobb Ravasz"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
@@ -4425,17 +4425,19 @@ msgid "Right Stick Y"
 msgstr "Jobb Kar Y"
 
 #: backends/keymapper/hardware-input.cpp:281
+#, fuzzy
 msgid "Hat X"
 msgstr "Kalap X"
 
 #: backends/keymapper/hardware-input.cpp:282
+#, fuzzy
 msgid "Hat Y"
 msgstr "Kalap Y"
 
 #: backends/keymapper/remap-widget.cpp:298
 #: backends/keymapper/remap-widget.cpp:328
 msgid "Reset to defaults"
-msgstr "Visszaállítás alapértelmezett értékre"
+msgstr "Visszaállítás alapértelmezettre"
 
 #: backends/keymapper/remap-widget.cpp:299
 msgid "Clear mapping"
@@ -4459,7 +4461,7 @@ msgstr "Virtuális egér jobbra"
 
 #: backends/keymapper/virtual-mouse.cpp:176
 msgid "Slow down virtual mouse"
-msgstr "Virtuális egér lassítás"
+msgstr "Virtuális egér lassítása"
 
 #: backends/midi/windows.cpp:168
 msgid "Windows MIDI"
@@ -4467,7 +4469,7 @@ msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:58
 msgid "Can't create directory here!"
-msgstr "Nem hozhat létre könyvtárat itt!"
+msgstr "Itt nem hozható létre könyvtár!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:64
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -4486,16 +4488,16 @@ msgstr "Érvénytelen útvonal!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:83
 msgid "Parent directory doesn't exists!"
-msgstr "A szülõ könyvtár nem létezik!"
+msgstr "A szülő könyvtár nem létezik!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr "Nem hozhat létre könyvtárat egy fájlban!"
+msgstr "Nem hozhat létre könyvtárat fájlon belül!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:95
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
 msgid "There is a file with that name in the parent directory!"
-msgstr "Van egy ilyen nevû fájl a szülõ könyvtárban!"
+msgstr "Már van egy ilyen nevű fájl a szülő könyvtárban!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:101
 msgid "Failed to create the directory!"
@@ -4509,7 +4511,7 @@ msgstr "A könyvtár sikeresen létrehozva!"
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:200
 msgid "Back to parent directory"
-msgstr "Vissza a szülõ könyvtárba"
+msgstr "Vissza a szülő könyvtárba"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:66
 msgid "The file doesn't exist!"
@@ -4521,22 +4523,23 @@ msgstr "Nem lehet letölteni egy könyvtárat!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
-msgstr "Nem sikerült elolvasni a fájlt!"
+msgstr "A fájl nem olvasható!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:58
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
-"Az oldal források nélkül nem érhetõ el. Gyõzõdj meg arról, hogy a ScummVM "
-"kiadásából származó wwwroot.zip fájl elérhetõ a 'themepath' -ban."
+"Az oldal források nélkül nem érhető el. Győződjön meg arról, hogy a ScummVM "
+"tárolóból származó wwwroot.zip fájl elérhető a 'themepath'-ban."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:219
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:220
+#, fuzzy
 msgid "Create directory"
-msgstr "Hozz létre könyvtárat"
+msgstr "Új mappa"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
@@ -4548,17 +4551,17 @@ msgstr "Fájlok feltöltése"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:225
 msgid "Type new directory name:"
-msgstr "Írd be az új könyvtár nevét:"
+msgstr "Adja meg az új könyvtár nevét:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 msgid "Select a file to upload:"
-msgstr "Válaszd ki a feltöltendõ fájlt:"
+msgstr "Válassza ki a feltöltendő fájlt:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Vagy válassz egy mappát (csak Chrome-ban mûködik):"
+msgstr "Vagy válasszon egy mappát (csak Chrome-ban működik):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
@@ -4566,7 +4569,7 @@ msgstr "Indexe "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
-msgstr "Hiba történt"
+msgstr "Hiba lépett fel"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:80
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:44
@@ -4581,13 +4584,14 @@ msgstr "Mentett játékok"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:116
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:82
 msgid "Parent directory"
-msgstr "Szülõ könyvtár"
+msgstr "Szülő könyvtár"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:214
 msgid "ScummVM couldn't list the directory you specified."
 msgstr "A ScummVM nem tudta listázni a megadott könyvtárat."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#, fuzzy
 msgid "Index of"
 msgstr "indexe"
 
@@ -4597,11 +4601,11 @@ msgstr "Ez egy helyi webszerver index oldala."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "Open Files manager"
-msgstr "Nyisd meg a Fájlkezelõt"
+msgstr "Fájlkezelő megnyitása"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
-msgstr "A szülõ könyvtár nem létezik!"
+msgstr "Nem létező szülő könyvtár!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
@@ -4609,7 +4613,7 @@ msgstr "Nem lehet fájlba feltölteni!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:204
 msgid "Back to the files manager"
-msgstr "Vissza a Fájlkezelõhöz"
+msgstr "Vissza a Fájlkezelőhöz"
 
 #: backends/networking/sdl_net/localwebserver.cpp:131
 msgid ""
@@ -4617,13 +4621,13 @@ msgid ""
 "Check whether selected port is not used by another application and try again."
 msgstr ""
 "Nem sikerült elindítani a helyi webszervert.\n"
-"Ellenõrizd, hogy a kiválasztott portot nem használja-e egy másik alkalmazás, "
-"és próbáld újra."
+"Ellenőrizze, hogy a kiválasztott portot nem használja-e egy másik program, "
+"és próbálja újra."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:67
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:109
 msgid "Invalid request: headers are too long!"
-msgstr "Érvénytelen kérés: a fejléc túl hosszú!"
+msgstr "Érvénytelen kérés: a fejlécek túl hosszúak!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:151
 msgid "Failed to upload the file!"
@@ -4631,32 +4635,32 @@ msgstr "Nem sikerült feltölteni a fájlt!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:180
 msgid "No file was passed!"
-msgstr "Nincs fájl átadva!"
+msgstr "Fájl nem került átadásra!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:198
 msgid "Uploaded successfully!"
-msgstr "Sikeresen feltöltötte!"
+msgstr "Sikeresen feltöltés!"
 
 #: backends/platform/3ds/options.cpp:64
 msgid "Show mouse cursor"
-msgstr "Egérkurzor látszik"
+msgstr "Egérkurzor mutatása"
 
 #: backends/platform/3ds/options.cpp:65
 msgid "Snap to edges"
-msgstr "Élekre illesztés"
+msgstr "Élekhez igazítás"
 
 #: backends/platform/3ds/options.cpp:66
 msgid "Stretch to fit"
-msgstr "Nyújt, hogy illeszkedjen"
+msgstr "Nyújtás margóig"
 
 #: backends/platform/3ds/options.cpp:68
 msgid "Use Screen:"
-msgstr "Használd képernyõt:"
+msgstr "Ezen képernyő használata:"
 
 #: backends/platform/3ds/options.cpp:70
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr "Legfelsõ"
+msgstr "Legfelső"
 
 #: backends/platform/3ds/options.cpp:71
 msgctxt "3ds-screen"
@@ -4666,7 +4670,7 @@ msgstr "Legalsó"
 #: backends/platform/3ds/options.cpp:72
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr "Mind"
+msgstr "Mindkettő"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:45
@@ -4710,7 +4714,7 @@ msgstr "Y"
 #: engines/got/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:49
 #: engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
-msgstr "Választ"
+msgstr "Megtekintés gomb"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
@@ -4720,7 +4724,7 @@ msgstr "Választ"
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
-msgstr "Start"
+msgstr "Menü Gomb"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:56
@@ -4769,47 +4773,47 @@ msgstr "Érintés"
 
 #: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
-msgstr "Húzási mód váltás"
+msgstr "Húzási mód váltó"
 
 #: backends/platform/3ds/osystem-events.cpp:314
 msgid "Toggle Magnify Mode"
-msgstr "Nagyítás Mód Váltás"
+msgstr "Nagyítás Mód váltó"
 
 #: backends/platform/3ds/osystem-events.cpp:349
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"Nagyítás mód Ki. Húzás mód reaktiválása.\n"
-"Visszatérés az Indítóhoz..."
+"Nagyítás mód Ki. Húzás mód újra aktiválása.\n"
+"Visszatérés az Indítóba..."
 
 #: backends/platform/3ds/osystem-events.cpp:351
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr "Nagyítás mód Ki. Visszatérés az Indítóhoz..."
+msgstr "Nagyítás mód Ki. Visszatérés az Indítóba..."
 
 #: backends/platform/3ds/osystem-events.cpp:385
 msgid "Hover Mode"
-msgstr "Húzás mód"
+msgstr "Lebegő mód"
 
 #: backends/platform/3ds/osystem-events.cpp:389
 msgid "Drag Mode"
-msgstr "Húzási mód"
+msgstr "Húzás mód"
 
 #: backends/platform/3ds/osystem-events.cpp:391
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr "Nem válthat Húzás módba, ha a Nagyítás mód be van kapcsolva"
+msgstr "Nem válthat Húzás módba, amíg a Nagyítás aktív"
 
 #: backends/platform/3ds/osystem-events.cpp:398
 msgid "Magnify Mode cannot be activated in menus."
-msgstr "A nagyítás mód nem aktiválható a menükben."
+msgstr "A Nagyítás mód nem aktiválható a menükben."
 
 #: backends/platform/3ds/osystem-events.cpp:401
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
-"A Nagyítás mód csak akkor aktiválható\n"
-" ha mindkét képernyõ engedélyezve van."
+"A Nagyítás mód csak akkor aktiválható,\n"
+" ha mindkét képernyő engedélyezve van."
 
 #: backends/platform/3ds/osystem-events.cpp:403
 msgid "In-game resolution too small to magnify."
@@ -4817,7 +4821,7 @@ msgstr "A játékon belüli felbontás túl kicsi a nagyításhoz."
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr "Nagyítás mód be. Váltás lebegõ módra..."
+msgstr "Nagyítás mód be. Váltás lebegő módra..."
 
 #: backends/platform/3ds/osystem-events.cpp:411
 msgid "Magnify Mode On"
@@ -4825,7 +4829,7 @@ msgstr "Nagyítás mód Be"
 
 #: backends/platform/3ds/osystem-events.cpp:418
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr "Nagyítás mód ki. Húzás Mód reaktiválása..."
+msgstr "Nagyítás mód ki. Húzás Mód újra aktiválása..."
 
 #: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode Off"
@@ -4833,10 +4837,8 @@ msgstr "Nagyítás Mód Ki"
 
 #: backends/platform/android/android.cpp:1102
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting help"
-msgstr "Beállítások"
+msgstr "Segítség kérése"
 
 #: backends/platform/android/android.cpp:1105
 msgid ""
@@ -4859,14 +4861,31 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Segítség, elvesztem!\n"
+"\n"
+"Első körben győződjön meg, hogy rendelkezésre áll a játék és annak fájljai. "
+"Tekintse át a **Honnan szerezzem be a játékokat** szekciót az **Általános** "
+"fül alatt. Beszerzést követően kövesse a kiemelt lépéseket a **Játékok "
+"hozzáadása**. Figyelmesen tekintse át, mert visszajelzések szerint az új "
+"Android változások miatt sokan futott bele hibákba.\n"
+"\n"
+"Szüksége van még további segítségre? Tanulmányozza az [Android-os online "
+"dokumentációnkat](https://docs.scummvm.org/en/latest/other_platforms/android."
+"html). Kérdése van? Nézzen be a [támogatói fórumunkra](https://forums.scummvm"
+".org/viewforum.php?f=17) vagy nézzen fel a [Discord "
+"szerverünkre](https://discord.gg/4cDsMNtcpG), ahol található egy dedikált ["
+"Android támogatói alcsatorna](https://discord.com/channels/"
+"581224060529148060/1135579923185139862).\n"
+"\n"
+"Azonban maguk a támogatott játékok szándékosan furmányosak, néma már majdnem "
+"észveszejtő szinten. Ha végleg el van akadva egy játékban, érdemes "
+"megtekinteni egy végigjátszást. Sok sikert!\n"
 
 #: backends/platform/android/android.cpp:1114
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "Irányitás"
+msgstr "Érintő irányítás"
 
 #: backends/platform/android/android.cpp:1117
 msgid ""
