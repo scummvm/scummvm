@@ -995,8 +995,9 @@ void Adlib::OnTimer() {
 						Func2792(bp8 + 0x80, r19BE_3.readByte());
 
 						StreamHandler *shBP0E = new StreamHandler(&streamBP0E);
-						r19BE_3 = Func19BE_2(streamBP0E, 0x8);
-						Func2792(bp8 + 0xE0, r19BE_3.readByte());
+						// TODO: Who deletes these when?
+						StreamHandler *r19BE_SH = Func19BE_SH(shBP0E, 0x8);
+						Func2792(bp8 + 0xE0, r19BE_SH->readByte());
 					}
 					// l0017_1FA9:
 					//    TODO: Continue from here
