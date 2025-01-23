@@ -306,23 +306,23 @@ void MediaStationEngine::addPlayingAsset(Asset *assetToAdd) {
 
 Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-		case kBranchToScreenMethod: {
-			assert(args.size() == 1);
-			uint32 contextId = args[0].getAssetId();
-			branchToScreen(contextId);
-			return Operand();
-		}
+	case kBranchToScreenMethod: {
+		assert(args.size() == 1);
+		uint32 contextId = args[0].getAssetId();
+		branchToScreen(contextId);
+		return Operand();
+	}
 
-		case kReleaseContextMethod: {
-			assert(args.size() == 1);
-			uint32 contextId = args[0].getAssetId();
-			releaseContext(contextId);
-			return Operand();
-		}
+	case kReleaseContextMethod: {
+		assert(args.size() == 1);
+		uint32 contextId = args[0].getAssetId();
+		releaseContext(contextId);
+		return Operand();
+	}
 
-		default: {
-			error("MediaStationEngine::callMethod(): Got unimplemented method ID %d", static_cast<uint>(methodId));
-		}
+	default: {
+		error("MediaStationEngine::callMethod(): Got unimplemented method ID %d", static_cast<uint>(methodId));
+	}
 	}
 }
 

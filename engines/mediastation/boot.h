@@ -105,13 +105,13 @@ enum FileDeclarationSectionType {
 // Indicates where a file is intended to be stored.
 // NOTE: This might not be correct and this might be a more general "file type".
 enum IntendedFileLocation {
-    // Usually all files that have numbers remain on the CD-ROM.
-    kFileIntendedOnCdRom = 0x0007,
-    // These UNKs only appear in George Shrinks.
-    kFileIntendedForUnk1 = 0x0008,
-    kFileIntendedForUnk2 = 0x0009,
-    // Usually only INSTALL.CXT is copied to the hard disk.
-    kFileIntendedOnHardDisk = 0x000b
+	// Usually all files that have numbers remain on the CD-ROM.
+	kFileIntendedOnCdRom = 0x0007,
+	// These UNKs only appear in George Shrinks.
+	kFileIntendedForUnk1 = 0x0008,
+	kFileIntendedForUnk2 = 0x0009,
+	// Usually only INSTALL.CXT is copied to the hard disk.
+	kFileIntendedOnHardDisk = 0x000b
 };
 
 class FileDeclaration {

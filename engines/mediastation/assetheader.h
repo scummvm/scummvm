@@ -64,7 +64,7 @@ enum AssetType {
 	kAssetTypeCanvas = 0x001e, // CVS
 	// TODO: Discover how the XSND differs from regular sounds.
 	// Only appears in Ariel.
-	kAssetTypeXsnd= 0x001f,
+	kAssetTypeXsnd = 0x001f,
 	kAssetTypeXsndMidi = 0x0020,
 	// TODO: Figure out what this is. Only appears in Ariel.
 	kAssetTypeRecorder = 0x0021,
@@ -135,20 +135,20 @@ enum AssetHeaderSectionType {
 };
 
 enum TextJustification {
-    kTextJustificationLeft = 0x25c,
-    kTextJustificationRight = 0x25d,
-    kTextJustificationCenter = 0x25e
+	kTextJustificationLeft = 0x25c,
+	kTextJustificationRight = 0x25d,
+	kTextJustificationCenter = 0x25e
 };
 
 enum TextPosition {
-    kTextPositionMiddle = 0x25e,
-    kTextPositionTop = 0x260,
-    kTextPositionBotom = 0x261
+	kTextPositionMiddle = 0x25e,
+	kTextPositionTop = 0x260,
+	kTextPositionBotom = 0x261
 };
 
 struct CharacterClass {
-    uint firstAsciiCode = 0;
-    uint lastAsciiCode = 0;
+	uint firstAsciiCode = 0;
+	uint lastAsciiCode = 0;
 };
 
 enum SoundEncoding {
@@ -205,12 +205,12 @@ public:
 	Common::Array<EventHandler *> _loadCompleteHandlers;
 
 	// TEXT FIELDS.
-    Common::String *_text = nullptr;
-    uint _maxTextLength = 0;
-    uint _fontAssetId = 0;
-    TextJustification _justification;
-    TextPosition _position;
-    Common::Array<CharacterClass> _acceptedInput;
+	Common::String *_text = nullptr;
+	uint _maxTextLength = 0;
+	uint _fontAssetId = 0;
+	TextJustification _justification;
+	TextPosition _position;
+	Common::Array<CharacterClass> _acceptedInput;
 
 private:
 	void readSection(AssetHeaderSectionType sectionType, Chunk &chunk);

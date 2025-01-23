@@ -154,7 +154,7 @@ uint32 MovieFrame::keyframeEndInMilliseconds() {
 }
 
 MovieFrame::~MovieFrame() {
-	// The base class destructor takes care of deleting the bitmap header, so 
+	// The base class destructor takes care of deleting the bitmap header, so
 	// we don't need to delete that here.
 	delete _footer;
 	_footer = nullptr;
@@ -272,7 +272,7 @@ bool Movie::drawNextFrame() {
 	// TODO: We'll need to support persistent frames in movies too. Do movies
 	// have the same distinction between spatialShow and timePlay that sprites
 	// do?
-	
+
 	uint currentTime = g_system->getMillis();
 	uint movieTime = currentTime - _startTime;
 	debugC(5, kDebugGraphics, "GRAPHICS (Movie %d): Starting blitting (movie time: %d)", _header->_id, movieTime);

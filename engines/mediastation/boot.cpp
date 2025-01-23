@@ -75,7 +75,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 			uint32 repeatedFileNumber = Datum(chunk).u.i;
 			if (repeatedFileNumber != _fileNumber) {
 				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", _fileNumber, repeatedFileNumber);
-			} 	
+			}
 		} else {
 			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", static_cast<uint>(sectionType));
 		}

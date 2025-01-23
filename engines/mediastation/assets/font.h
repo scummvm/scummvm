@@ -34,11 +34,11 @@ namespace MediaStation {
 class FontGlyph : public Bitmap {
 public:
 	FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header);
-    uint _asciiCode = 0;
+	uint _asciiCode = 0;
 
 private:
-    int _unk1 = 0;
-    int _unk2 = 0;
+	int _unk1 = 0;
+	int _unk2 = 0;
 };
 
 class Font : public Asset {
@@ -54,7 +54,7 @@ private:
 	Common::HashMap<uint, FontGlyph *> _glyphs;
 
 	// Method implementations.
-    // No methods are implemented as of now.
+	// No methods are implemented as of now.
 };
 
 } // End of namespace MediaStation

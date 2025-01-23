@@ -80,7 +80,7 @@ public:
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 
-    Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args);
+	Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args);
 	Operand callBuiltInFunction(BuiltInFunction function, Common::Array<Operand> &args);
 	Common::HashMap<uint32, Variable *> _variables;
 

@@ -39,8 +39,8 @@ public:
 
 private:
 	// Method implementations.
-    Common::String *text() const;
-    void setText(Common::String *text);
+	Common::String *text() const;
+	void setText(Common::String *text);
 };
 
 } // End of namespace MediaStation

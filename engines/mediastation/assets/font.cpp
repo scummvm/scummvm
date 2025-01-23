@@ -25,32 +25,32 @@
 namespace MediaStation {
 
 FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header) : Bitmap(chunk, header) {
-    _asciiCode = asciiCode;
-    _unk1 = unk1;
-    _unk2 = unk2;
+	_asciiCode = asciiCode;
+	_unk1 = unk1;
+	_unk2 = unk2;
 }
 
 Font::~Font() {
-    for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
-        delete it->_value;
-    }
-    _glyphs.clear();
+	for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
+		delete it->_value;
+	}
+	_glyphs.clear();
 }
 
 Operand Font::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
-    error("Font::callMethod(): Font does not have any callable methods");
+	error("Font::callMethod(): Font does not have any callable methods");
 }
 
 void Font::readChunk(Chunk &chunk) {
 	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
-    uint asciiCode = Datum(chunk).u.i;
-    int unk1 = Datum(chunk).u.i;
-    int unk2 = Datum(chunk).u.i;
+	uint asciiCode = Datum(chunk).u.i;
+	int unk1 = Datum(chunk).u.i;
+	int unk2 = Datum(chunk).u.i;
 	BitmapHeader *header = new BitmapHeader(chunk);
 	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
-    if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
-        error("Font::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
-    }
+	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
+		error("Font::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
+	}
 	_glyphs.setVal(asciiCode, glyph);
 }
 

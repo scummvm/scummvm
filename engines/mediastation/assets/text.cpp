@@ -24,43 +24,43 @@
 namespace MediaStation {
 
 Operand Text::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
-    switch (methodId) {
-    case kTextMethod: {
-        assert(args.empty());
-        error("Text::callMethod(): Text() method not implemented yet");
-    }
+	switch (methodId) {
+	case kTextMethod: {
+		assert(args.empty());
+		error("Text::callMethod(): Text() method not implemented yet");
+	}
 
-    case kSetTextMethod: {
-        assert(args.size() == 1);
-        error("Text::callMethod(): getText() method not implemented yet");
-    }
+	case kSetTextMethod: {
+		assert(args.size() == 1);
+		error("Text::callMethod(): getText() method not implemented yet");
+	}
 
-    case kSpatialShowMethod: {
-        assert(args.empty());
-        _isActive = true;
-        warning("Text::callMethod(): spatialShow method not implemented yet");
-        return Operand();
-    }
+	case kSpatialShowMethod: {
+		assert(args.empty());
+		_isActive = true;
+		warning("Text::callMethod(): spatialShow method not implemented yet");
+		return Operand();
+	}
 
-    case kSpatialHideMethod: {
-        assert(args.empty());
-        _isActive = false;
-        warning("Text::callMethod(): spatialHide method not implemented yet");
-        return Operand();
-    }
+	case kSpatialHideMethod: {
+		assert(args.empty());
+		_isActive = false;
+		warning("Text::callMethod(): spatialHide method not implemented yet");
+		return Operand();
+	}
 
-    default: {
-        error("Got unimplemented method ID %d", methodId);
-    }
-    }
+	default: {
+		error("Got unimplemented method ID %d", methodId);
+	}
+	}
 }
 
 Common::String *Text::text() const {
-    return _header->_text;
+	return _header->_text;
 }
 
 void Text::setText(Common::String *text) {
-    error("Text::setText(): Setting text not implemented yet");
+	error("Text::setText(): Setting text not implemented yet");
 }
 
 } // End of namespace MediaStation

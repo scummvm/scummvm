@@ -275,7 +275,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 			_screenAsset = header;
 			break;
 
-		case kAssetTypeFont: 
+		case kAssetTypeFont:
 			asset = new Font(header);
 			break;
 
