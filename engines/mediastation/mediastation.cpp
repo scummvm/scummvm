@@ -267,6 +267,14 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	// LOAD THE CONTEXT.
 	Common::Path entryCxtFilepath = Common::Path(*fileName);
 	Context *context = new Context(entryCxtFilepath);
+
+	// Some contexts have a built-in palette that becomes active when the
+	// context is loaded, and some rely on scripts to set
+	// the palette later.
+	if (context->_palette != nullptr) {
+		_screen->setPalette(*context->_palette);
+	}
+
 	_loadedContexts.setVal(contextId, context);
 	return context;
 }
@@ -321,8 +329,6 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 void MediaStationEngine::branchToScreen(uint32 contextId) {
 	Context *context = loadContext(contextId);
 	if (context->_screenAsset != nullptr) {
-		setPaletteFromHeader(context->_screenAsset);
-		
 		// TODO: Make the screen an asset just like everything else so we can
 		// run event handlers with runEventHandlerIfExists.
 		EventHandler *entryEvent = context->_screenAsset->_eventHandlers.getValOrDefault(MediaStation::kEntryEvent);
