@@ -13,7 +13,7 @@ set gBugList = [[energy: 10, mood: "Happy"], [energy: -10, mood: "Sad"], [energy
 
 set b to [4, 5, 6, 7]
 scummvmAssertEqual(string(a + b), "[5, 7, 9]")
-scummvmAssertEqual(string(a - b), "[3, 3, 3]")
+scummvmAssertEqual(string(a - b), "[-3, -3, -3]")
 scummvmAssertEqual(string(a * b), "[4, 10, 18]")
 scummvmAssertEqual(string(b / a), "[4, 2, 2]")
 scummvmAssertEqual(string(b mod a), "[0, 1, 0]")
