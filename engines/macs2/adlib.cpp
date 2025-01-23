@@ -994,8 +994,9 @@ void Adlib::OnTimer() {
 						Common::MemorySeekableReadWriteStream r19BE_3 = Func19BE_2(streamBP0E, 0x6);
 						Func2792(bp8 + 0x80, r19BE_3.readByte());
 
-						Common::MemorySeekableReadWriteStream r19BE_4 = Func19BE_2(streamBP0E, 0x8);
-						Func2792(bp8 + 0xE0, r19BE_4.readByte());
+						StreamHandler *shBP0E = new StreamHandler(&streamBP0E);
+						r19BE_3 = Func19BE_2(streamBP0E, 0x8);
+						Func2792(bp8 + 0xE0, r19BE_3.readByte());
 					}
 					// l0017_1FA9:
 					//    TODO: Continue from here
@@ -1075,6 +1076,21 @@ Common::MemorySeekableReadWriteStream Adlib::Func19BE_2(Common::MemorySeekableRe
 	// l0017_19EA
 	pos += seekDelta;
 	result.seek(pos, SEEK_SET);
+	return result;
+}
+
+StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint8 seekDelta) {
+	StreamHandler *result = new StreamHandler(*inHandler);
+	uint16 pos = result->pos();
+	if (seekDelta > 0xF8) {
+		// l0017_19D8:
+		// TODO: Confirm that this works as expected and if it is every used in
+		// the actual game
+		pos &= 0xF;
+	}
+	// l0017_19EA
+	pos += seekDelta;
+	result->seek(pos, SEEK_SET);
 	return result;
 }
 
@@ -1186,6 +1202,30 @@ void Adlib::Init() {
 void Adlib::Deinit() {
 	_opl->stop();
 	delete _opl;
+}
+
+bool StreamHandler::eos() const {
+	_stream->seek(_pos);
+	return _stream->eos();
+}
+
+uint32 StreamHandler::read(void *dataPtr, uint32 dataSize) {
+	_stream->seek(_pos);
+	return _stream->read(dataPtr, dataSize);
+}
+
+int64 StreamHandler::pos() const {
+	return _pos;
+}
+
+int64 StreamHandler::size() const {
+	return _stream->size();
+}
+
+bool StreamHandler::seek(int64 offset, int whence) {
+	bool result = _stream->seek(offset, whence);
+	_pos = _stream->pos();
+	return result;
 }
 
 } // End of namespace Macs2

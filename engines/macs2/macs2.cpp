@@ -319,6 +319,7 @@ void Macs2Engine::readResourceFile() {
 	// Load more characters
 	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].ReadFromMemory(_fileStream);
+		maxGlyphHeight = MAX(_glyphs[i].Height, maxGlyphHeight);
 	}
 
 	// Load the animation frames
@@ -1196,6 +1197,12 @@ int Macs2Engine::MeasureString(Common::String &s) {
 	}
 	return sum;
 }
+
+int Macs2Engine::MeasureStringsVertically(Common::StringArray sa) {
+	// This is implemented around l0037_B318:
+	return sa.size() * (maxGlyphHeight + 2);
+}
+
 
 int Macs2Engine::MeasureStrings(Common::StringArray sa) {
 	int max = -1;

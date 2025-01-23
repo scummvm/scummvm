@@ -199,6 +199,7 @@ public:
 	GlyphData _glyphs[256];
 	// TODO: THis count could be read from the file as well
 	uint16 numGlyphs = 79;
+	uint16 maxGlyphHeight;
 
 	AnimFrame _animFrames[6];
 	// TODO: Figure out how the game knows that there are 6 frames - and confirm that there are only 6 frames
@@ -303,6 +304,7 @@ public:
 	int MeasureString(Common::String &s);
 
 	int MeasureStrings(Common::StringArray sa);
+	int MeasureStringsVertically(Common::StringArray sa);
 
 	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
 
