@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-22 09:39+0000\n"
+"POT-Creation-Date: 2025-01-23 11:18+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -5821,7 +5821,7 @@ msgstr "Usar cursores prateados"
 msgid "Use the checkered cursor from later Apple II models"
 msgstr ""
 
-#: engines/agi/detection_tables.h:261
+#: engines/agi/detection_tables.h:262
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
 
@@ -5937,7 +5937,7 @@ msgstr "Ativar integração Discord"
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:420 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:421 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5945,7 +5945,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "Este jogo não é suportado."
 
-#: engines/agi/metaengine.cpp:443 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:444 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 #, fuzzy
