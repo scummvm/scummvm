@@ -115,7 +115,8 @@ public:
 	bool _slipFlag = false;
 	bool _slipping = false;
 	int _slipCount = 0;
-	bool _bossIntro1 = false, _bossIntro2 = false;
+	bool _bossIntro1 = false;
+	bool _bossIntro2 = false;
 
 	int8 _pge = 0;
 	int _exitFlag = 0;
@@ -123,7 +124,8 @@ public:
 	byte _keyFlag[100] = {};
 	int8 _diag = 0;
 	bool _diagFlag = false;
-	bool _slowMode = false, _startup = true;
+	bool _slowMode = false;
+	bool _startup = true;
 	bool _shot_ok = false;
 	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0, _thor_real_y1 = 0;
 	int _thor_pos = 0;

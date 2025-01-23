@@ -170,7 +170,7 @@ void GotEngine::savegameLoaded() {
 	}
 
 	_G(game_over) = _G(setup)._gameOver != 0;
-	_G(slowMode) = _G(setup)._slowMode != 0;
+	_G(slowMode) = _G(setup)._slowMode;
 
 	g_events->replaceView("Game", true);
 	setupLoad();

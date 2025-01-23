@@ -64,7 +64,7 @@ void Vars::load() {
 	_setup._digitalSound = _sound_flag;
 	_setup._speakerSound = false;
 	_setup._scrollFlag = true;
-	_setup._slowMode = _slowMode ? 1 : 0;
+	_setup._slowMode = _slowMode;
 	_setup._difficultyLevel = 1;
 
 	_tmp_buff = new byte[TMP_SIZE];

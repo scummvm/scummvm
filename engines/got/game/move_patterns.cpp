@@ -753,46 +753,42 @@ int movementZero(Actor *actor) {
 		}
 	}
 	_G(diag) = 0;
-	if (_G(keyFlag[key_right])) {
-		if (!_G(keyFlag[key_left])) {
-			d = 3;
-			actor->_dir = d;
-			if (check_thor_move(x + 2, y, actor)) {
-				nextFrame(actor);
-				return d;
-			}
+	if (_G(keyFlag[key_right]) && !_G(keyFlag[key_left])) {
+		d = 3;
+		actor->_dir = d;
+		if (check_thor_move(x + 2, y, actor)) {
+			nextFrame(actor);
+			return d;
 		}
 	}
-	if (_G(keyFlag[key_left])) {
-		if (!_G(keyFlag[key_right])) {
-			d = 2;
-			actor->_dir = d;
-			if (check_thor_move(x - 2, y, actor)) {
-				nextFrame(actor);
-				return d;
-			}
+
+	if (_G(keyFlag[key_left]) && !_G(keyFlag[key_right])) {
+		d = 2;
+		actor->_dir = d;
+		if (check_thor_move(x - 2, y, actor)) {
+			nextFrame(actor);
+			return d;
 		}
 	}
-	if (_G(keyFlag[key_down])) {
-		if (!_G(keyFlag[key_up])) {
-			d = 1;
-			actor->_dir = d;
-			if (check_thor_move(x, y + 2, actor)) {
-				nextFrame(actor);
-				return d;
-			}
+
+	if (_G(keyFlag[key_down]) && !_G(keyFlag[key_up])) {
+		d = 1;
+		actor->_dir = d;
+		if (check_thor_move(x, y + 2, actor)) {
+			nextFrame(actor);
+			return d;
 		}
 	}
-	if (_G(keyFlag[key_up])) {
-		if (!_G(keyFlag[key_down])) {
-			d = 0;
-			actor->_dir = d;
-			if (check_thor_move(x, y - 2, actor)) {
-				nextFrame(actor);
-				return d;
-			}
+
+	if (_G(keyFlag[key_up]) && !_G(keyFlag[key_down])) {
+		d = 0;
+		actor->_dir = d;
+		if (check_thor_move(x, y - 2, actor)) {
+			nextFrame(actor);
+			return d;
 		}
 	}
+
 	actor->_moveCounter = 5;
 	actor->_nextFrame = 0;
 	actor->_dir = oldDir;
