@@ -173,7 +173,7 @@ void thorDamaged(Actor *actor) {
 			_G(thor)->_vulnerableCountdown = 40;
 			_G(thor)->_show = 0;
 			_G(thor)->_health = 0;
-			_G(exit_flag) = 2;
+			_G(exitFlag) = 2;
 			g_events->send(GameMessage("THOR_DIES"));
 		} else if (damage) {
 			_G(thor)->_vulnerableCountdown = 40;

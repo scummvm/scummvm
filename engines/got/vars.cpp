@@ -64,7 +64,7 @@ void Vars::load() {
 	_setup._digitalSound = _sound_flag;
 	_setup._speakerSound = false;
 	_setup._scrollFlag = true;
-	_setup._slowMode = _slow_mode ? 1 : 0;
+	_setup._slowMode = _slowMode ? 1 : 0;
 	_setup._difficultyLevel = 1;
 
 	_tmp_buff = new byte[TMP_SIZE];
@@ -107,7 +107,7 @@ void Vars::setArea(int areaNum) {
 }
 
 void Vars::clearKeyFlags() {
-	Common::fill(_key_flag, _key_flag + 100, 0);
+	Common::fill(_keyFlag, _keyFlag + 100, 0);
 }
 
 void Vars::resetEndgameFlags() {
@@ -116,7 +116,7 @@ void Vars::resetEndgameFlags() {
 	_end_tile = false;
 	_boss_dead = false;
 	_game_over = false;
-	_boss_intro1 = _boss_intro2 = false;
+	_bossIntro1 = _bossIntro2 = false;
 }
 
 } // namespace Got

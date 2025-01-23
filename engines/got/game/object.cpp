@@ -378,7 +378,7 @@ bool useObject(int flag) {
 void useItem() {
 	bool ret = false;
 
-	int kf = _G(key_flag[key_magic]);
+	int kf = _G(keyFlag[key_magic]);
 
 	if (!kf && _G(tornado_used)) {
 		actorDestroyed(&_G(actor[2]));

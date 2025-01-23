@@ -114,16 +114,16 @@ public:
 	bool _useItemFlag = false;
 	bool _slipFlag = false;
 	bool _slipping = false;
-	int _slip_cnt = 0;
-	bool _boss_intro1 = false, _boss_intro2 = false;
+	int _slipCount = 0;
+	bool _bossIntro1 = false, _bossIntro2 = false;
 
 	int8 _pge = 0;
-	int _exit_flag = 0;
+	int _exitFlag = 0;
 
-	byte _key_flag[100] = {};
+	byte _keyFlag[100] = {};
 	int8 _diag = 0;
-	bool _diag_flag = false;
-	bool _slow_mode = false, _startup = true;
+	bool _diagFlag = false;
+	bool _slowMode = false, _startup = true;
 	bool _shot_ok = false;
 	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0, _thor_real_y1 = 0;
 	int _thor_pos = 0;

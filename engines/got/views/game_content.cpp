@@ -395,7 +395,7 @@ void GameContent::checkForBossDead() {
 		if (loop == 7) {
 			_G(boss_dead) = false;
 
-			_G(exit_flag) = 0;
+			_G(exitFlag) = 0;
 
 			if (_G(boss_active)) {
 				switch (_G(area)) {

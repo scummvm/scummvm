@@ -104,7 +104,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 	case 211:
 		if (GAME1) {
 			placeTile(y, x, 79);
-			_G(exit_flag) = 2;
+			_G(exitFlag) = 2;
 		} else if (GAME2) {
 			if (_G(thor)->_dir == 0 && _G(setup).f29 && _G(setup).f21 && !_G(setup).f22) {
 				actorVisible(1);

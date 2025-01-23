@@ -183,7 +183,7 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 		if ((!_G(actor[3])._vulnerableCountdown) && (_G(actor[3])._nextFrame != 3) &&
 			overlap(x1, y1, x2, y2, actor->_x + 6, actor->_y + 4, actor->_x + 14, actor->_y + 20)) {
 			actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);
-			if (_G(cheat) && _G(key_flag[_Z]))
+			if (_G(cheat) && _G(keyFlag[_Z]))
 				_G(actor[3])._health = 0;
 			else
 				_G(actor[3])._health -= 10;

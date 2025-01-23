@@ -420,7 +420,7 @@ static void boss3CheckHit() {
 		if (!_G(actor[3])._temp2) {
 			actorDamaged(&_G(actor[3]), 10);
 
-			if (_G(cheat) && _G(key_flag[_Z]))
+			if (_G(cheat) && _G(keyFlag[_Z]))
 				_G(actor[3])._health -= 50;
 			else
 				_G(actor[3])._health -= 10;
@@ -463,10 +463,10 @@ static void boss3CheckHit() {
 }
 
 static void bossChangeMode() {
-	if (!_G(boss_intro2)) {
+	if (!_G(bossIntro2)) {
 		Gfx::Pics loki("FACE18", 262);
 		executeScript(1003, loki);
-		_G(boss_intro2) = true;
+		_G(bossIntro2) = true;
 	}
 	
 	bossMode = 0;
@@ -481,10 +481,10 @@ void boss3SetupLevel() {
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
 
-	if (!_G(boss_intro1)) {
+	if (!_G(bossIntro1)) {
 		Gfx::Pics loki("FACE18", 262);
 		executeScript(1002, loki);
-		_G(boss_intro1) = true;
+		_G(bossIntro1) = true;
 	}
 
 	musicPlay(7, true);
@@ -551,7 +551,7 @@ void boss3ClosingSequence3() {
 	_G(scrn)._music = 6;
 	showLevel(BOSS_LEVEL3);
 
-	_G(exit_flag) = 0;
+	_G(exitFlag) = 0;
 	musicPause();
 
 	_G(new_level) = ENDING_SCREEN;

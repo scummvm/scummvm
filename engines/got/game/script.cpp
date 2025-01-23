@@ -141,7 +141,7 @@ void Scripts::runScript(bool firstTime) {
 
 void Scripts::scriptLoop() {
 	while (_paused == SCRIPT_READY) {
-		if (_G(cheat) && _G(key_flag[_B]))
+		if (_G(cheat) && _G(keyFlag[_B]))
 			break;
 
 		int ret = getCommand();
@@ -1049,12 +1049,12 @@ void Scripts::scr_func3() {
 
 	if (y < 0 || x < 0 || y > 11) {
 		playSound(BRAAPP, true);
-		_G(key_flag[key_magic]) = false;
+		_G(keyFlag[key_magic]) = false;
 		return;
 	}
 	if (_G(scrn)._iconGrid[y][x] < 174 || _G(scrn)._iconGrid[y][x] > 178) {
 		playSound(BRAAPP, true);
-		_G(key_flag[key_magic]) = false;
+		_G(keyFlag[key_magic]) = false;
 		return;
 	}
 
@@ -1062,11 +1062,11 @@ void Scripts::scr_func3() {
 	playSound(WOOP, true);
 	if (_G(current_level) == 106 && p == 69) {
 		placeTile(x, y, 220);
-		_G(key_flag[key_magic]) = false;
+		_G(keyFlag[key_magic]) = false;
 		return;
 	}
 
-	_G(key_flag[key_magic]) = false;
+	_G(keyFlag[key_magic]) = false;
 	placeTile(x, y, 191);
 
 	if ((g_events->getRandomNumber(99)) < 25 ||

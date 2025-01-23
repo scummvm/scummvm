@@ -182,7 +182,7 @@ static void odin_speaks_end() {
 	// In case Thor is now dead, flag as such
 	if (!_G(thor)->_health) {
 		_G(thor)->_show = 0;
-		_G(exit_flag) = 2;
+		_G(exitFlag) = 2;
 	}
 
 	// If there's an end message, pass it on to the view hierarchy.
@@ -330,7 +330,7 @@ void actorSpeaks(const Actor *actor, int index, int item) {
 
 	if (!_G(thor)->_health) {
 		_G(thor)->_show = 0;
-		_G(exit_flag) = 2;
+		_G(exitFlag) = 2;
 	}
 }
 

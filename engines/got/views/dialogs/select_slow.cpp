@@ -34,10 +34,10 @@ SelectSlow::SelectSlow() : SelectOption("SelectSlow", "Fast Mode", OPTIONS) {
 void SelectSlow::selected() {
 	switch (_selectedItem) {
 	case 0:
-		_G(slow_mode) = true;
+		_G(slowMode) = true;
 		break;
 	case 1:
-		_G(slow_mode) = false;
+		_G(slowMode) = false;
 		break;
 	default:
 		break;
