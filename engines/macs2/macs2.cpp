@@ -317,6 +317,7 @@ void Macs2Engine::readResourceFile() {
 
 	_fileStream->seek(0x00006DFE);
 	// Load more characters
+	maxGlyphHeight = 0;
 	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].ReadFromMemory(_fileStream);
 		maxGlyphHeight = MAX(_glyphs[i].Height, maxGlyphHeight);
