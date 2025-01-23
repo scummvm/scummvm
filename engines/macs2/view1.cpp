@@ -261,17 +261,17 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::showStringBox(const Common::StringArray &sa) {
-		// TODO: Naive and hardcoded implementation
-		int contentHeight = sa.size() * 10;
-		int contentWidth = g_engine->MeasureStrings(sa);
+		// This calculation can be found at l0037_B368:
 		int borderWidth = 10;
 		int padding = 3;
-		int totalWidth = contentWidth + (borderWidth + padding) * 2;
-		int totalHeight = contentHeight + (borderWidth + padding) * 2;
+		int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
+		int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
 		constexpr int x = 80;
 		constexpr int y = 20;
 
-		drawStringBackground(x, y, totalWidth, totalHeight);
+		// drawStringBackground(x, y, totalWidth, totalHeight);
+		Graphics::ManagedSurface s = getSurface();
+		DrawBorder(Common::Point(x, y), Common::Point(totalWidth, totalHeight), s);
 		// TODO range based
 		int lineOffset = borderWidth + padding;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
