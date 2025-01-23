@@ -228,7 +228,9 @@ scummvmAssertEqual(testList, [5, "URGH", 3, 1])
 
 
 -- findPos
-
+set testList to [#a: 1, #b: 2, #c: 3, #d: 4, #e: 5]
+scummvmAssertEqual(findPos(testList, #b), 2)
+scummvmAssertEqual(findPos(testList, #f), VOID)
 
 -- findPosNear
 

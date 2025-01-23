@@ -785,7 +785,7 @@ void LB::b_duplicateList(int nargs) {
 void LB::b_findPos(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	Datum d(0);
+	Datum d(g_lingo->getVoid());
 	TYPECHECK(list, PARRAY);
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
