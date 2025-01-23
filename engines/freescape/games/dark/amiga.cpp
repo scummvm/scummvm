@@ -26,7 +26,14 @@
 
 namespace Freescape {
 
+extern Common::String centerAndPadString(const Common::String &str, int size);
+
 void DarkEngine::loadAssetsAmigaFullGame() {
+	Common::File file;
+	file.open("0.drk");
+	_title = loadAndConvertNeoImage(&file, 0x9930);
+	file.close();
+
 	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", "0.drk", 798);
 	parseAmigaAtariHeader(stream);
 
@@ -35,6 +42,45 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	loadPalettes(stream, 0x2e528);
 	loadGlobalObjects(stream, 0x30f0 - 50, 24);
 	loadMessagesVariableSize(stream, 0x3d37, 66);
+	loadSoundsFx(stream, 0x34738 + 2, 11);
+
+	Common::Array<Graphics::ManagedSurface *> chars;
+	chars = getCharsAmigaAtariInternal(8, 8, - 7 - 8, 16, 16, stream, 0x1b0bc, 85);
+	_fontBig = Font(chars);
+
+	chars = getCharsAmigaAtariInternal(8, 8, 0, 10, 8, stream, 0x1b0bc + 0x430, 85);
+	_fontMedium = Font(chars);
+
+	chars = getCharsAmigaAtariInternal(8, 5, - 7 - 8, 10, 16, stream, 0x1b0bc + 0x430, 85);
+	_fontSmall = Font(chars);
+	_fontSmall.setCharWidth(4);
+
+	_fontLoaded = true;
+
+	GeometricObject *obj = nullptr;
+	obj = (GeometricObject *)_areaMap[15]->objectWithID(18);
+	assert(obj);
+	obj->_cyclingColors = true;
+
+	obj = (GeometricObject *)_areaMap[15]->objectWithID(26);
+	assert(obj);
+	obj->_cyclingColors = true;
+
+	for (int i = 0; i < 3; i++) {
+		int16 id = 227 + i * 6 - 2;
+		for (int j = 0; j < 2; j++) {
+			//debugC(1, kFreescapeDebugParser, "Restoring object %d to from ECD %d", id, index);
+			obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+			assert(obj);
+			obj->_cyclingColors = true;
+			id--;
+		}
+	}
+
+	for (auto &area : _areaMap) {
+		// Center and pad each area name so we do not have to do it at each frame
+		area._value->_name = centerAndPadString(area._value->_name, 26);
+	}
 }
 
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
