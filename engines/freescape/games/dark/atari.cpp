@@ -60,13 +60,13 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	_border = loadAndConvertNeoImage(stream, 0xd710);
 
 	Common::Array<Graphics::ManagedSurface *> chars;
-	chars = getCharsAmigaAtari(stream, 0xd06a, 85);
+	chars = getCharsAmigaAtariInternal(8, 8, - 7 - 8, 16, 16, stream, 0xd06a, 85);
 	_fontBig = Font(chars);
 
 	chars = getCharsAmigaAtariInternal(8, 8, 0, 10, 8, stream, 0xd49a, 85);
 	_fontMedium = Font(chars);
 
-	chars = getCharsAmigaAtariInternal(8, 5, 0, 10, 16, stream, 0xd49a, 85);
+	chars = getCharsAmigaAtariInternal(8, 5, - 7 - 8, 10, 16, stream, 0xd49a, 85);
 	_fontSmall = Font(chars);
 	_fontSmall.setCharWidth(4);
 

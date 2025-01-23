@@ -46,27 +46,30 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
 
+	uint32 grey8 = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x88, 0x88, 0x88);
+	uint32 greyA = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
+
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.x())), 18, 178, red, red, black, surface);
-	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.z())), 18, 184, red, red, black, surface);
-	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.y())), 18, 190, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.x())), 19, 178, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.z())), 19, 184, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.y())), 19, 190, red, red, black, surface);
 
 	drawString(kDarkFontBig, Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 73, 178, red, red, black, surface);
 	drawString(kDarkFontBig, Common::String::format("%3d", _playerSteps[_playerStepIndex]), 73, 186, red, red, black, surface);
-	drawString(kDarkFontBig, Common::String::format("%07d", score), 93, 16, yellow, orange, black, surface);
-	drawString(kDarkFontBig, Common::String::format("%3d%%", ecds), 181, 16, yellow, orange, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%07d", score), 93, 16, orange, yellow, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%3d%%", ecds), 181, 16, orange, yellow, black, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawString(kDarkFontSmall, message, 32, 157, white, white, transparent, surface);
+		drawString(kDarkFontSmall, message, 32, 157, grey8, greyA, transparent, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	}
 
-	drawString(kDarkFontSmall, _currentArea->_name, 32, 151, white, white, transparent, surface);
+	drawString(kDarkFontSmall, _currentArea->_name, 32, 151, grey8, greyA, transparent, surface);
 	drawBinaryClock(surface, 6, 110, white, grey);
 
 	int x = 229;
