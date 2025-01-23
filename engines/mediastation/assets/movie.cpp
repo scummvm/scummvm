@@ -118,11 +118,7 @@ Common::Rect MovieFrame::boundingBox() {
 }
 
 uint32 MovieFrame::index() {
-	if (_footer != nullptr) {
-		return _footer->_index;
-	} else {
-		error("MovieFrame::index(): Cannot get the index of a keyframe");
-	}
+	return _bitmapHeader->_index;
 }
 
 uint32 MovieFrame::startInMilliseconds() {
@@ -156,7 +152,7 @@ uint32 MovieFrame::keyframeEndInMilliseconds() {
 MovieFrame::~MovieFrame() {
 	// The base class destructor takes care of deleting the bitmap header, so
 	// we don't need to delete that here.
-	delete _footer;
+	// The movie will delete the footer.
 	_footer = nullptr;
 }
 
@@ -366,33 +362,20 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		if (!isAnimationChunk) {
 			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
-		MovieFrameHeader *header = nullptr;
-		MovieFrame *frame = nullptr;
 		while (isAnimationChunk) {
 			uint sectionType = Datum(chunk).u.i;
 			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			switch (MovieSectionType(sectionType)) {
 			case kMovieFrameSection: {
-				header = new MovieFrameHeader(chunk);
-				frame = new MovieFrame(chunk, header);
+				MovieFrameHeader *header = new MovieFrameHeader(chunk);
+				MovieFrame *frame = new MovieFrame(chunk, header);
 				_frames.push_back(frame);
 				break;
 			}
 
 			case kMovieFooterSection: {
 				MovieFrameFooter *footer = new MovieFrameFooter(chunk);
-				// _footers.push_back(footer);
-				// TODO: This does NOT handle the case where there are
-				// keyframes. We need to match the footer to an arbitrary
-				// frame, since some keyframes don't have footers, sigh.
-				if (header == nullptr) {
-					error("Movie::readSubfile(): No frame to match footer to");
-				}
-				if (header->_index == footer->_index) {
-					frame->setFooter(footer);
-				} else {
-					error("Movie::readSubfile(): Footer index does not match frame index: %d != %d", header->_index, footer->_index);
-				}
+				_footers.push_back(footer);
 				break;
 			}
 
@@ -450,7 +433,13 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	}
 
 	// SET THE MOVIE FRAME FOOTERS.
-	// TODO: We donʻt do anything with this yet!
+	for (MovieFrame *frame : _frames) {
+		for (MovieFrameFooter *footer : _footers) {
+			if (frame->index() == footer->_index) {
+				frame->setFooter(footer);
+			}
+		}
+	}
 }
 
 } // End of namespace MediaStation
