@@ -24,10 +24,12 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/stream.h"
 
 namespace Common {
 class MemoryReadStream;
 class MemorySeekableReadWriteStream;
+
 }
 
 namespace OPL {
