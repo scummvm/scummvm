@@ -1448,6 +1448,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (_stream->eos()) {
 			break;
 		}
+		// TODO: Probably only one of these is necessary
+		if (_stream->pos() >= _stream->size() - 1) {
+			break;
+		}
 
 		// Make sure we have read all the bytes we should have read
 		// TODO: Think about if we should also check this on exiting the function,

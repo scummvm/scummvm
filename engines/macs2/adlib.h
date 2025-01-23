@@ -36,6 +36,22 @@ namespace OPL {
 
 namespace Macs2 {
 
+	class StreamHandler : public Common::SeekableReadStream {
+		private:
+			Common::MemorySeekableReadWriteStream *_stream;
+			int64 _pos;
+		public:
+			StreamHandler(Common::MemorySeekableReadWriteStream* s) : _stream(s) {
+			}
+
+	
+		bool eos() const override;
+		uint32 read(void *dataPtr, uint32 dataSize) override;
+		int64 pos() const override;
+		int64 size() const override;
+		bool seek(int64 offset, int whence) override;
+	};
+
 	class Adlib {
 
 	private:
@@ -51,7 +67,10 @@ namespace Macs2 {
 		// TODO: Function should take a pointer to data
 		uint16 Func19BE_TODO(uint8 offset);
 
-		Common::MemorySeekableReadWriteStream Func19BE_2(Common::MemorySeekableReadWriteStream& inStream, uint8 seekDelta);
+		Common::MemorySeekableReadWriteStream Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta);
+
+		// TODO: Consider pointer vs. passing by value
+		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint8 seekDelta);
 
 		// TODO: Maybe need to add the caller
 		void Func24FD();
