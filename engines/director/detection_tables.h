@@ -7858,6 +7858,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 #define SUPPORT_STATUS ADGF_UNSUPPORTED
 	MACGAME1("blinkyprint", "Game will never be supported", "Print & Play", "r:63e8b9f6744efefbb8a004a2b76e2b1d",  115776, 600),
 	WINGAME1("blinkyprint", "Game will never be supported", "PRINTPLA.EXE", "t:6a2fe0b06c7c9cf15736237c06aa300e", 1516941, 600),
+	WINGAME1("blinkyprint", "Game will never be supported", "PRINTPLAY.EXE", "t:6a2fe0b06c7c9cf15736237c06aa300e", 1516941, 600),
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
