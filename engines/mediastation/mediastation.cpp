@@ -250,7 +250,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		warning("MediaStationEngine::loadContext(): Couldn't find file declaration with ID 0x%x", fileId);
 		return nullptr;
 	}
-	Common::String *fileName = fileDeclaration->_name;
+	Common::Path entryCxtFilepath(*fileDeclaration->_name);
 
 	// Load any child contexts before we actually load this one. The child
 	// contexts must be unloaded explicitly later.
@@ -263,9 +263,6 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 			loadContext(childContextId);
 		}
 	}
-
-	// LOAD THE CONTEXT.
-	Common::Path entryCxtFilepath = Common::Path(*fileName);
 	Context *context = new Context(entryCxtFilepath);
 
 	// Some contexts have a built-in palette that becomes active when the
