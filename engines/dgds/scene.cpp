@@ -669,15 +669,15 @@ void SDSScene::checkTriggers() {
 }
 
 
-Dialog *SDSScene::loadDialogData(uint16 num) {
-	if (num == 0)
+Dialog *SDSScene::loadDialogData(uint16 fileNum) {
+	if (fileNum == 0)
 		return &_dialogs.front();
 
 	for (auto &dlg: _dialogs)
-		if (dlg._fileNum == num)
+		if (dlg._fileNum == fileNum)
 			return &dlg;
 
-	const Common::String filename = Common::String::format("D%d.DDS", num);
+	const Common::String filename = Common::String::format("D%d.DDS", fileNum);
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	ResourceManager *resourceManager = engine->getResourceManager();
 	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
@@ -717,7 +717,7 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 			// slight hack, set file version while loading
 			Common::String oldVer = _version;
 			_version = fileVersion;
-			result = readDialogList(stream, _dialogs, num);
+			result = readDialogList(stream, _dialogs, fileNum);
 			_version = oldVer;
 		}
 	}
@@ -736,7 +736,7 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 
 	for (auto &dlg : _dialogs) {
 		if (dlg._nextDialogDlgNum && !dlg._nextDialogFileNum) {
-			dlg._nextDialogFileNum = num;
+			dlg._nextDialogFileNum = fileNum;
 		}
 	}
 
@@ -744,12 +744,12 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 	return &_dialogs.front();
 }
 
-void SDSScene::freeDialogData(uint16 num) {
-	if (!num)
+void SDSScene::freeDialogData(uint16 fileNum) {
+	if (!fileNum)
 		return;
 
 	for (int i = 0; i < (int)_dialogs.size(); i++) {
-		if (_dialogs[i]._num == num) {
+		if (_dialogs[i]._fileNum == fileNum) {
 			_dialogs.remove_at(i);
 			i--;
 		}
