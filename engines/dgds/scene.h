@@ -315,7 +315,7 @@ public:
 	void onDragFinish(const Common::Point &pt);
 	void enableTrigger(uint16 sceneNum, uint16 num, bool enable = true);
 
-	Dialog *loadDialogData(uint16 num);
+	void loadDialogData(uint16 num);
 	void freeDialogData(uint16 num);
 	bool loadTalkData(uint16 num);
 	bool freeTalkData(uint16 num);

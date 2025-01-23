@@ -669,13 +669,14 @@ void SDSScene::checkTriggers() {
 }
 
 
-Dialog *SDSScene::loadDialogData(uint16 fileNum) {
+void SDSScene::loadDialogData(uint16 fileNum) {
 	if (fileNum == 0)
-		return &_dialogs.front();
+		return;
 
 	for (auto &dlg: _dialogs)
 		if (dlg._fileNum == fileNum)
-			return &dlg;
+			// already loaded
+			return;
 
 	const Common::String filename = Common::String::format("D%d.DDS", fileNum);
 	DgdsEngine *engine = DgdsEngine::getInstance();
@@ -688,7 +689,7 @@ Dialog *SDSScene::loadDialogData(uint16 fileNum) {
 		// version.
 		//
 		warning("Dialog file %s not found", filename.c_str());
-		return nullptr;
+		return;
 	}
 
 	DgdsChunkReader chunk(dlgFile);
@@ -732,16 +733,13 @@ Dialog *SDSScene::loadDialogData(uint16 fileNum) {
 	}
 
 	if (!result)
-		return nullptr;
+		return;
 
 	for (auto &dlg : _dialogs) {
 		if (dlg._nextDialogDlgNum && !dlg._nextDialogFileNum) {
 			dlg._nextDialogFileNum = fileNum;
 		}
 	}
-
-	// TODO: Maybe not this?
-	return &_dialogs.front();
 }
 
 void SDSScene::freeDialogData(uint16 fileNum) {
