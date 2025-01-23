@@ -123,22 +123,24 @@ private:
 
 	bool _isVisible;
 
-	// KQ6 Windows has different black and white cursors. If this is true (set
-	// from the windows_cursors ini setting), then we use these and don't scale
-	// them by 2x like the rest of the graphics, like SSCI did. These look very
-	// ugly, which is why they aren't enabled by default.
-	bool _useOriginalKQ6WinCursors;
+	// The Windows CD versions of KQ6, SQ4 and LB2 and the Windows version of
+	// Pepper have extra sets of black and white cursors. Some games have one
+	// extra set (Pepper, SQ4), some have two extra sets (KQ6, LB2). If one of
+	// the kWinCursorBW alternatives is set (from the windows_cursors ini entry)
+	// then we use these b/w cursors instead of the DOS color cursors, which
+	// are the default in 256 colors mode.
+	// The CD version of SQ4 also contains a complete set of silver mouse
+	// cursors. If kWinCursorSilver is set (from the silver_cursors ini entry),
+	// then we use these instead and replace the game's gold cursors with their
+	// silver equivalents.
 
-	// The Windows CD version of SQ4 used its own black and white cursors.
-	// If this is true (set from the windows_cursors ini setting) then we use
-	// them instead of the DOS color cursors, which are the default.
-	bool _useOriginalSQ4WinCursors;
-
-	// The CD version of SQ4 contains a complete set of silver mouse cursors.
-	// If this is true (set from the silver_cursors ini setting), then we use
-	// these instead and replace the game's gold cursors with their silver
-	// equivalents. If this is true, _useOriginalSQ4WinCursors is ignored.
-	bool _useSilverSQ4CDCursors;
+	enum WinCursorStyle : int {
+		kWinCursorStyleDefault = 0,
+		kWinCursorStyleBWAlt1,
+		kWinCursorStyleBWAlt2,
+		kWinCursorStyleSilver
+	};
+	WinCursorStyle _winCursorStyle;
 };
 
 } // End of namespace Sci
