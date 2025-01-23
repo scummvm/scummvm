@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-23 19:42+0000\n"
+"POT-Creation-Date: 2025-01-23 23:39+0000\n"
 "PO-Revision-Date: 2025-01-22 22:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -10222,11 +10222,11 @@ msgstr "Casio CT-460 / CSM-1"
 msgid "Game does not contain menu resources"
 msgstr "Peli ei sisällä valikkoresursseja"
 
-#: engines/sci/detection_tables.h:4725
+#: engines/sci/detection_tables.h:4758
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "Tämä demo käyttää totetuttamatonta versiota Robot-videoista"
 
-#: engines/sci/detection_tables.h:4780
+#: engines/sci/detection_tables.h:4813
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Vaillinainen peli havaittu. Sinun täytyy kopioida data kaikilta CD-levyiltä."
