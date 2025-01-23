@@ -104,8 +104,8 @@ void Events::nextFrame() {
 	_G(rand1) = getRandomNumber(99);
 	_G(rand2) = getRandomNumber(99);
 	_G(pge) = _G(pge) ^ 1;
-	_G(shot_ok) = true;
-	_G(magic_cnt++);
+	_G(shotOk) = true;
+	_G(magicCounter++);
 
 	// In demo mode, handle the next key
 	if (_G(demo) && focusedView()->getName() == "Game") {

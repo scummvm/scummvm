@@ -70,7 +70,7 @@ int boss1Movement(Actor *actor) {
 	// Strike
 	if (actor->_temp1) {
 		actor->_temp1--;
-		if (actor->_x < (_G(thor_x1) + 12))
+		if (actor->_x < (_G(thorX1) + 12))
 			actor->_temp1 = 0;
 		actor->_temp2 = 1;
 		d = 2;
@@ -102,7 +102,7 @@ int boss1Movement(Actor *actor) {
 		actor->_temp2 = 0;
 	}
 
-	if (actor->_x > _G(thor_x1) && ABS((_G(thor_y1)) - (actor->_y + 20)) < 8) {
+	if (actor->_x > _G(thorX1) && ABS((_G(thorY1)) - (actor->_y + 20)) < 8) {
 		actor->_temp3 = 75;
 		actor->_temp1 = 130;
 		actor->_temp2 = 0;

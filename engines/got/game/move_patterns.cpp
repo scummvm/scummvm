@@ -490,7 +490,7 @@ int checkMove2(const int x, const int y, Actor *actor) {
 			continue; // Shot
 
 		if (i == 0) {
-			if (overlap(x1, y1, x2, y2, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+			if (overlap(x1, y1, x2, y2, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 				thorDamaged(actor);
 				return 0;
 			}
@@ -557,7 +557,7 @@ int checkMove3(const int x, const int y, Actor *actor) {
 	x2 = (x + actor->_sizeX) - 1;
 	y2 = (y + actor->_sizeY) - 1;
 
-	if (overlap(x1, y1, x2, y2, _G(thor_x1), _G(thor_real_y1), _G(thor_x2), _G(thor_y2))) {
+	if (overlap(x1, y1, x2, y2, _G(thorX1), _G(thorRealY1), _G(thorX2), _G(thorY2))) {
 		thorDamaged(actor);
 		return 0;
 	}
@@ -597,7 +597,7 @@ int checkMove4(const int x, const int y, Actor *actor) {
 	if (x < 0 || x > (319 - actor->_sizeX) || y < 0 || y > 175)
 		return 0;
 	if (overlap(x, y, x + actor->_sizeX - 1, y + actor->_sizeY - 1,
-				_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+				_G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 		if (actor->_type == 3)
 			thorDamaged(actor);
 		return 0;
@@ -690,7 +690,7 @@ int movementZero(Actor *actor) {
 	setThorVars();
 
 	if (_G(hammer)->_active && _G(hammer)->_moveType == 5) {
-		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2),
+		if (overlap(_G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2),
 					_G(hammer)->_x, _G(hammer)->_y, _G(hammer)->_x + 13, _G(hammer)->_y + 13)) {
 			actorDestroyed(_G(hammer));
 		}
@@ -873,7 +873,7 @@ int checkSpecialMove1(const int x, const int y, Actor *actor) {
 			continue;
 		x4 = act->_x + act->_sizeX;
 		y4 = act->_y + act->_sizeY;
-		if (overlap(_G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2), x3, y3, x4, y4))
+		if (overlap(_G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2), x3, y3, x4, y4))
 			return 0;
 	}
 	actor->_x = x;
@@ -1004,28 +1004,28 @@ int specialMovementFive(Actor *actor) {
 	if (_G(diagFlag)) {
 		switch (_G(diag)) {
 		case 1:
-			if (_G(thor_x1) < (actor->_x + 15))
+			if (_G(thorX1) < (actor->_x + 15))
 				d = 0;
 			else
 				d = 2;
 			break;
 			
 		case 2:
-			if (_G(thor_x2) < actor->_x)
+			if (_G(thorX2) < actor->_x)
 				d = 3;
 			else
 				d = 0;
 			break;
 			
 		case 3:
-			if (_G(thor_x2) > (actor->_x))
+			if (_G(thorX2) > (actor->_x))
 				d = 1;
 			else
 				d = 3;
 			break;
 			
 		case 4:
-			if (_G(thor_x1) > (actor->_x + 15))
+			if (_G(thorX1) > (actor->_x + 15))
 				d = 2;
 			else
 				d = 1;
@@ -1211,11 +1211,11 @@ int movementFour(Actor *actor) {
 	int y1 = actor->_y;
 
 	int f = 0;
-	if (x1 > _G(thor_x1) - 1) {
+	if (x1 > _G(thorX1) - 1) {
 		x1 -= 2;
 		d = 2;
 		f = 1;
-	} else if (x1 < _G(thor_x1) - 1) {
+	} else if (x1 < _G(thorX1) - 1) {
 		x1 += 2;
 		d = 3;
 		f = 1;
@@ -1225,15 +1225,15 @@ int movementFour(Actor *actor) {
 		f = checkMove2(x1, y1, actor);
 
 	if (!f) {
-		if (y1 < (_G(thor_real_y1))) {
-			d = (_G(thor_real_y1)) - y1;
+		if (y1 < (_G(thorRealY1))) {
+			d = (_G(thorRealY1)) - y1;
 			if (d > 2)
 				d = 2;
 			y1 += d;
 			d = 1;
 			f = 1;
-		} else if (y1 > (_G(thor_real_y1))) {
-			d = y1 - (_G(thor_real_y1));
+		} else if (y1 > (_G(thorRealY1))) {
+			d = y1 - (_G(thorRealY1));
 			if (d > 2)
 				d = 2;
 			y1 -= d;
@@ -1265,14 +1265,14 @@ int movementFive(Actor *actor) {
 		xd = 2;
 
 	if (actor->_actorNum == 1) {
-		if (y1 < (_G(thor_y1) - 6))
+		if (y1 < (_G(thorY1) - 6))
 			yd = 2;
-		else if (y1 > (_G(thor_y1) - 6))
+		else if (y1 > (_G(thorY1) - 6))
 			yd = -2;
 	} else {
-		if (y1 < (_G(thor_real_y1) - 1))
+		if (y1 < (_G(thorRealY1) - 1))
 			yd = 2;
-		else if (y1 > (_G(thor_real_y1) + 1))
+		else if (y1 > (_G(thorRealY1) + 1))
 			yd = -2;
 	}
 
@@ -2179,12 +2179,12 @@ int movementTwentySeven(Actor *actor) {
 }
 
 void setThorVars() {
-	_G(thor_x1) = _G(thor)->_x + 1;
-	_G(thor_y1) = _G(thor)->_y + 8;
+	_G(thorX1) = _G(thor)->_x + 1;
+	_G(thorY1) = _G(thor)->_y + 8;
 
-	_G(thor_real_y1) = _G(thor)->_y;
-	_G(thor_x2) = (_G(thor)->_x + 12);
-	_G(thor_y2) = _G(thor)->_y + 15;
+	_G(thorRealY1) = _G(thor)->_y;
+	_G(thorX2) = (_G(thor)->_x + 12);
+	_G(thorY2) = _G(thor)->_y + 15;
 }
 
 // Fish
@@ -2321,7 +2321,7 @@ int movementThirtyOne(Actor *actor) {
 		y1 += 2;
 		if (!checkMove2(x1, y1, actor))
 			actorDestroyed(actor);
-	} else if (_G(thor_y1) > y1 && ABS(x1 - _G(thor_x1)) < 16) {
+	} else if (_G(thorY1) > y1 && ABS(x1 - _G(thorX1)) < 16) {
 		const int cx = (actor->_x + (actor->_sizeX / 2)) >> 4;
 		const int cy = ((actor->_y + actor->_sizeY) - 2) >> 4;
 		const int ty = _G(thor)->_centerY;
@@ -2543,7 +2543,7 @@ int movementThirtyNine(Actor *actor) {
 	
 	if (actor->_passValue == 10) {
 		if (overlap(actor->_x + 1, actor->_y + 1, actor->_x + actor->_sizeX - 1,
-					actor->_y + actor->_sizeY - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+					actor->_y + actor->_sizeY - 1, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 			actor->_hitStrength = 255;
 			thorDamaged(actor);
 		}
@@ -2572,7 +2572,7 @@ int movementThirtyNine(Actor *actor) {
 // Troll 2
 int movementForty(Actor *actor) {
 	if (overlap(actor->_x + 1, actor->_y + 1, actor->_x + actor->_sizeX + 3,
-				actor->_y + actor->_sizeY - 1, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+				actor->_y + actor->_sizeY - 1, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 		actor->_hitStrength = 150;
 		thorDamaged(actor);
 	}

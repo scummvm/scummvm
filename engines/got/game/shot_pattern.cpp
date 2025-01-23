@@ -56,8 +56,8 @@ int shotPatternNone(Actor *actor) {
 int shotPatternOne(Actor *actor) {
 	switch (actor->_lastDir) {
 	case 0:
-		if (ABS(_G(thor_x1) - actor->_x) < 8) {
-			if (actor->_y > _G(thor_real_y1)) { //r
+		if (ABS(_G(thorX1) - actor->_x) < 8) {
+			if (actor->_y > _G(thorRealY1)) { //r
 				if (actorShoots(actor, 0))
 					return 1;
 			}
@@ -65,8 +65,8 @@ int shotPatternOne(Actor *actor) {
 		break;
 		
 	case 1:
-		if (ABS(_G(thor_x1) - actor->_x) < 8) {
-			if (actor->_y < _G(thor_real_y1)) { //r
+		if (ABS(_G(thorX1) - actor->_x) < 8) {
+			if (actor->_y < _G(thorRealY1)) { //r
 				if (actorShoots(actor, 1))
 					return 1;
 			}
@@ -74,8 +74,8 @@ int shotPatternOne(Actor *actor) {
 		break;
 		
 	case 2:
-		if (ABS(_G(thor_real_y1) - actor->_y) < 8) { //r
-			if (actor->_x > _G(thor_x1)) {
+		if (ABS(_G(thorRealY1) - actor->_y) < 8) { //r
+			if (actor->_x > _G(thorX1)) {
 				if (actorShoots(actor, 2))
 					return 1;
 			}
@@ -83,8 +83,8 @@ int shotPatternOne(Actor *actor) {
 		break;
 		
 	case 3:
-		if (ABS(_G(thor_real_y1) - actor->_y) < 8) { //r
-			if (actor->_x < _G(thor_x1)) {
+		if (ABS(_G(thorRealY1) - actor->_y) < 8) { //r
+			if (actor->_x < _G(thorX1)) {
 				if (actorShoots(actor, 3))
 					return 1;
 			}
@@ -179,13 +179,13 @@ int shotPatternFive(Actor *actor) {
 int shotPatternSix(Actor *actor) {
 	const int pos = ((actor->_x) / 16) + (((actor->_y) / 16) * 20);
 
-	if (_G(thor_pos) == pos - 20)
+	if (_G(thorPos) == pos - 20)
 		actorShoots(actor, 0);
-	else if (_G(thor_pos) == pos + 20)
+	else if (_G(thorPos) == pos + 20)
 		actorShoots(actor, 1);
-	else if (_G(thor_pos) == pos - 1)
+	else if (_G(thorPos) == pos - 1)
 		actorShoots(actor, 2);
-	else if (_G(thor_pos) == pos + 1)
+	else if (_G(thorPos) == pos + 1)
 		actorShoots(actor, 3);
 	else
 		return 0;
@@ -211,7 +211,7 @@ int shotPatternEight(Actor *actor) {
 		actor->_i1--;
 	} else if (_G(rand1) < 10) {
 		actor->_i1 = actor->_funcPass;
-		actor->_i2 = _G(thor_real_y1);
+		actor->_i2 = _G(thorRealY1);
 		actorShoots(actor, 0);
 		return 1;
 	}

@@ -270,7 +270,7 @@ int _actor_shoots(Actor *actor, int dir) {
 			actor->_shotActor = i;
 			actor->_currNumShots++;
 			actor->_shotCountdown = 20;
-			_G(shot_ok) = false;
+			_G(shotOk) = false;
 			return 1;
 		}
 	}
@@ -337,12 +337,8 @@ void moveActor(Actor *actor) {
 	if (actor->_show != 0)
 		actor->_show--;
 
-	if (!actor->_shotCountdown && _G(shot_ok)) {
-		if (actor->_numShotsAllowed) {
-			if (actor->_currNumShots < actor->_numShotsAllowed) {
-				shotPatternFunc[actor->_shotPattern](actor);
-			}
-		}
+	if (!actor->_shotCountdown && _G(shotOk) && actor->_numShotsAllowed && actor->_currNumShots < actor->_numShotsAllowed) {
+		shotPatternFunc[actor->_shotPattern](actor);
 	}
 
 	const int scount = actor->_moveCountdown - 1;

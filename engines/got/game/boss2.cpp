@@ -213,7 +213,7 @@ void boss2SetupLevel() {
 	_G(boss_active) = true;
 	musicPause();
 	playSound(BOSS11, true);
-	_G(timer_cnt) = 0;
+	_G(timerCounter) = 0;
 
 	dropFlag = false;
 	Common::fill(su, su + 18, 0);

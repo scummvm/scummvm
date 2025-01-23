@@ -130,8 +130,8 @@ int specialTileThor(const int x, const int y, const int icon) {
 	case 216:
 	case 217:
 		if ((GAME2 && icon == 217) || GAME3) {
-			cx = (_G(thor_x1) + 7) / 16;
-			cy = (_G(thor_real_y1) + 8) / 16;
+			cx = (_G(thorX1) + 7) / 16;
+			cy = (_G(thorRealY1) + 8) / 16;
 			if (_G(scrn)._iconGrid[cy][cx] == icon) {
 				_G(thor)->_vulnerableCountdown = STAMINA;
 				playSound(WOOP, false);
@@ -167,8 +167,8 @@ int specialTileThor(const int x, const int y, const int icon) {
 	case 228:
 	case 229:
 		// Hole tiles
-		cx = (_G(thor_x1) + 7) / 16;
-		cy = (_G(thor_real_y1) + 8) / 16;
+		cx = (_G(thorX1) + 7) / 16;
+		cy = (_G(thorRealY1) + 8) / 16;
 		if (_G(scrn)._iconGrid[cy][cx] == icon) {
 			_G(thor)->_vulnerableCountdown = STAMINA;
 			if (icon < 224 && icon > 219)

@@ -126,12 +126,18 @@ public:
 	bool _diagFlag = false;
 	bool _slowMode = false;
 	bool _startup = true;
-	bool _shot_ok = false;
-	int _thor_x1 = 0, _thor_y1 = 0, _thor_x2 = 0, _thor_y2 = 0, _thor_real_y1 = 0;
-	int _thor_pos = 0;
-	int _max_shot = 0;
+	bool _shotOk = false;
+	int _thorX1 = 0;
+	int _thorY1 = 0;
+	int _thorX2 = 0;
+	int _thorY2 = 0;
+	int _thorRealY1 = 0;
+	int _thorPos = 0;
 
-	uint _timer_cnt = 0, _vbl_cnt = 0, _magic_cnt = 0, _extra_cnt = 0;
+	uint _timerCounter = 0; // unused?
+	uint _vbl_cnt = 0; // unused?
+	uint _magicCounter = 0;
+	uint _extra_cnt = 0; // unused?
 
 	int _ox = 0, _oy = 0, _of = 0;
 	byte _object_map[TILES_COUNT] = {};

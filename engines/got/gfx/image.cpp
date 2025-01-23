@@ -100,10 +100,10 @@ int loadStandardActors() {
 
 	make_actor_surface(&_G(actor[0]));
 
-	_G(thor_x1) = _G(thor)->_x + 2;
-	_G(thor_y1) = _G(thor)->_y + 2;
-	_G(thor_x2) = _G(thor)->_x + 14;
-	_G(thor_y2) = _G(thor)->_y + 14;
+	_G(thorX1) = _G(thor)->_x + 2;
+	_G(thorY1) = _G(thor)->_y + 2;
+	_G(thorX2) = _G(thor)->_x + 14;
+	_G(thorY2) = _G(thor)->_y + 14;
 
 	loadActor(0, 103 + _G(thor_info)._armor); // Load hammer
 	_G(actor[1]).loadFixed(_G(tmp_buff) + 5120);

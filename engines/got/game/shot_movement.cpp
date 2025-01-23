@@ -193,7 +193,7 @@ int shotMovementThree(Actor *actor) {
 	actor->_temp3--;
 	actor->_temp4--;
 
-	if (overlap(_G(thor_x1) - 1, _G(thor_y1) - 1, _G(thor_x2) + 1, _G(thor_y2) + 1,
+	if (overlap(_G(thorX1) - 1, _G(thorY1) - 1, _G(thorX2) + 1, _G(thorY2) + 1,
 				actor->_x, actor->_y, actor->_x + 15, actor->_y + 15)) {
 		actor->_moveType = 0;
 		actor->_speed = 6;
@@ -236,7 +236,7 @@ int shotMovementFour(Actor *actor) {
 			return 0;
 		}
 	}
-	if (overlap(_G(thor)->_x - 1, _G(thor)->_y - 1, _G(thor_x2) + 1, _G(thor_y2) + 1,
+	if (overlap(_G(thor)->_x - 1, _G(thor)->_y - 1, _G(thorX2) + 1, _G(thorY2) + 1,
 				actor->_x, actor->_y, actor->_x + 15, actor->_y + 15)) {
 		thorDamaged(actor);
 		actorDestroyed(actor);
@@ -249,20 +249,20 @@ int shotMovementFour(Actor *actor) {
 	int xd = 0;
 	int d = actor->_lastDir;
 
-	if ((x1 > (_G(thor_x1)) + 1))
+	if ((x1 > (_G(thorX1)) + 1))
 		xd = -2;
-	else if ((x1 < (_G(thor_x1)) - 1))
+	else if ((x1 < (_G(thorX1)) - 1))
 		xd = 2;
 
 	if (actor->_actorNum == 1) {
-		if (y1 < (_G(thor_y1) - 6))
+		if (y1 < (_G(thorY1) - 6))
 			yd = 2;
-		else if (y1 > (_G(thor_y1) - 6))
+		else if (y1 > (_G(thorY1) - 6))
 			yd = -2;
 	} else {
-		if (y1 < (_G(thor_real_y1) - 1))
+		if (y1 < (_G(thorRealY1) - 1))
 			yd = 2;
-		else if (y1 > (_G(thor_real_y1) + 1))
+		else if (y1 > (_G(thorRealY1) + 1))
 			yd = -2;
 	}
 
@@ -573,7 +573,7 @@ int shotMovementEleven(Actor *actor) {
 	int y1 = actor->_y;
 
 	if (!actor->_temp1) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		calc_angle(_G(thorX1), _G(thorRealY1), x1, y1, actor);
 		actor->_temp1 = 1;
 	}
 
@@ -611,7 +611,7 @@ int shotMovementTwelve(Actor *actor) {
 	int y1 = actor->_y;
 
 	if (!actor->_temp5) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		calc_angle(_G(thorX1), _G(thorRealY1), x1, y1, actor);
 		actor->_temp5 = 1;
 	}
 
@@ -638,7 +638,7 @@ int shotMovementTwelve(Actor *actor) {
 		actor->_temp4 = 240;
 		actor->_nextFrame = 2;
 	} else {
-		if (overlap(x1 + 2, y1 + 2, x1 + 14, y1 + 14, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+		if (overlap(x1 + 2, y1 + 2, x1 + 14, y1 + 14, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 			thorDamaged(actor);
 		}
 		actor->_x = x1;
@@ -665,7 +665,7 @@ int shotMovementThirteen(Actor *actor) {
 	int y1 = actor->_y;
 
 	if (!actor->_temp5) {
-		calc_angle(_G(thor_x1), _G(thor_real_y1), x1, y1, actor);
+		calc_angle(_G(thorX1), _G(thorRealY1), x1, y1, actor);
 		actor->_temp5 = 1;
 	}
 
@@ -709,7 +709,7 @@ int shotMovementThirteen(Actor *actor) {
 		else
 			YA = 0 - YA;
 	} else {
-		if (overlap(x1 + 4, y1 + 4, x1 + 12, y1 + 12, _G(thor_x1), _G(thor_y1), _G(thor_x2), _G(thor_y2))) {
+		if (overlap(x1 + 4, y1 + 4, x1 + 12, y1 + 12, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2))) {
 			thorDamaged(actor);
 		}
 		actor->_x = x1;

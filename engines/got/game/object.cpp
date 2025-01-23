@@ -218,12 +218,12 @@ bool useApple(int flag) {
 
 	if (flag && _G(thor_info)._magic > 0) {
 		if (!_G(apple_flag)) {
-			_G(magic_cnt) = 0;
+			_G(magicCounter) = 0;
 			addMagic(-2);
 			addHealth(1);
 			playSound(ANGEL, false);
-		} else if (_G(magic_cnt) > 8) {
-			_G(magic_cnt) = 0;
+		} else if (_G(magicCounter) > 8) {
+			_G(magicCounter) = 0;
 			addMagic(-2);
 			addHealth(1);
 			if (!soundPlaying())
@@ -263,10 +263,10 @@ bool useBoots(int flag) {
 	if (flag) {
 		if (_G(thor_info)._magic > 0) {
 			if (_G(thor)->_numMoves == 1) {
-				_G(magic_cnt) = 0;
+				_G(magicCounter) = 0;
 				addMagic(-1);
-			} else if (_G(magic_cnt) > 8) {
-				_G(magic_cnt) = 0;
+			} else if (_G(magicCounter) > 8) {
+				_G(magicCounter) = 0;
 				addMagic(-1);
 			}
 			_G(thor)->_numMoves = 2;
@@ -289,7 +289,7 @@ bool useShield(int flag) {
 	if (flag) {
 		if (_G(thor_info)._magic) {
 			if (!_G(shield_on)) {
-				_G(magic_cnt) = 0;
+				_G(magicCounter) = 0;
 				addMagic(-1);
 				setupMagicItem(1);
 
@@ -298,8 +298,8 @@ bool useShield(int flag) {
 				_G(actor[2])._moveCountdown = 1;
 				_G(actor[2])._speed = 1;
 				_G(shield_on) = true;
-			} else if (_G(magic_cnt) > 8) {
-				_G(magic_cnt) = 0;
+			} else if (_G(magicCounter) > 8) {
+				_G(magicCounter) = 0;
 				addMagic(-1);
 			}
 
@@ -334,8 +334,8 @@ bool useLightning(int flag) {
 bool useTornado(int flag) {
 	if (flag) {
 		if (_G(thor_info)._magic > 10) {
-			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magic_cnt) > 20) {
-				_G(magic_cnt) = 0;
+			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magicCounter) > 20) {
+				_G(magicCounter) = 0;
 				addMagic(-10);
 				setupMagicItem(0);
 				_G(actor[2]) = _G(magic_item[0]);
@@ -350,9 +350,9 @@ bool useTornado(int flag) {
 			notEnoughMagic();
 			return false;
 		}
-		if (_G(magic_cnt) > 8) {
+		if (_G(magicCounter) > 8) {
 			if (_G(tornado_used)) {
-				_G(magic_cnt) = 0;
+				_G(magicCounter) = 0;
 				addMagic(-1);
 			}
 		}

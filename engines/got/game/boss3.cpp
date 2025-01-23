@@ -137,8 +137,7 @@ static int boss3Movement1(Actor *actor) {
 		while (true) {
 			rx = g_events->getRandomNumber(255) + 16;
 			ry = g_events->getRandomNumber(143);
-			if (!overlap(rx, ry, rx + 32, ry + 32, _G(thor_x1), _G(thor_y1),
-						 _G(thor_x2), _G(thor_y2)))
+			if (!overlap(rx, ry, rx + 32, ry + 32, _G(thorX1), _G(thorY1), _G(thorX2), _G(thorY2)))
 				break;
 		}
 
@@ -477,7 +476,7 @@ void boss3SetupLevel() {
 	_G(boss_active) = true;
 	musicPause();
 	playSound(BOSS11, true);
-	_G(timer_cnt) = 0;
+	_G(timerCounter) = 0;
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
 
@@ -565,7 +564,7 @@ void endingScreen() {
 		_G(actor[i])._moveType = 1;
 	
 	musicPlay(6, true);
-	_G(timer_cnt) = 0;
+	_G(timerCounter) = 0;
 
 	memset(expf, 0, 4 * 8);
 	_G(endgame) = 1;
