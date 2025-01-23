@@ -259,9 +259,18 @@ void SoundClipWaveBase::set_panning(int newPanning) {
 }
 
 void SoundClipWaveBase::set_speed(int new_speed) {
-	if (new_speed != 1000)  // default
-		warning("TODO: SoundClipWaveBase::set_speed=%d", new_speed);
 	_speed = new_speed;
+
+	if (!_stream) {
+		warning("set_speed: sound stream is null");
+		return;
+	}
+
+	// get initial channel rate
+	const uint32_t rate = _stream->getRate();
+
+	// default speed = 1000, calculate new sample rate proportionally
+	_mixer->setChannelRate(_soundHandle, rate * new_speed / 1000);
 }
 
 void SoundClipWaveBase::adjust_volume() {
