@@ -34,20 +34,20 @@ void notEnoughMagic();
 void cannotCarryMore();
 
 void showObjects() {
-	Common::fill(_G(object_map), _G(object_map) + TILES_COUNT, 0);
-	Common::fill(_G(object_index), _G(object_index) + TILES_COUNT, 0);
+	Common::fill(_G(objectMap), _G(objectMap) + TILES_COUNT, 0);
+	Common::fill(_G(objectIndex), _G(objectIndex) + TILES_COUNT, 0);
 
 	for (int i = 0; i < OBJECTS_COUNT; i++) {
 		if (_G(scrn)._staticObject[i]) {
 			const int p = _G(scrn)._staticX[i] + (_G(scrn)._staticY[i] * TILES_X);
-			_G(object_index[p]) = i;
-			_G(object_map[p]) = _G(scrn)._staticObject[i];
+			_G(objectIndex[p]) = i;
+			_G(objectMap[p]) = _G(scrn)._staticObject[i];
 		}
 	}
 }
 
 void pickUpObject(int p) {
-	switch (_G(object_map[p])) {
+	switch (_G(objectMap[p])) {
 	case 1: // Red jewel
 		if (_G(thor_info)._jewels >= 999) {
 			cannotCarryMore();
@@ -119,7 +119,7 @@ void pickUpObject(int p) {
 	case 24:
 	case 25:
 	case 26:
-		if (_G(object_map[p]) == 13 && HERMIT_HAS_DOLL)
+		if (_G(objectMap[p]) == 13 && HERMIT_HAS_DOLL)
 			return;
 		_G(thor)->_numMoves = 1;
 		_G(hammer)->_numMoves = 2;
@@ -128,9 +128,9 @@ void pickUpObject(int p) {
 		_G(tornado_used) = false;
 		_G(thor_info)._inventory |= 64;
 		_G(thor_info)._selectedItem = 7;
-		_G(thor_info)._object = _G(object_map[p]) - 11;
+		_G(thor_info)._object = _G(objectMap[p]) - 11;
 		_G(thor_info)._objectName = OBJECT_NAMES[_G(thor_info)._object - 1];
-		odinSpeaks((_G(object_map[p]) - 12) + 501, _G(object_map[p]) - 1);
+		odinSpeaks((_G(objectMap[p]) - 12) + 501, _G(objectMap[p]) - 1);
 		break;
 	case 27:
 	case 28:
@@ -146,10 +146,10 @@ void pickUpObject(int p) {
 		_G(hammer)->_numMoves = 2;
 		_G(thor)->_numMoves = 1;
 		_G(actor[2])._active = false;
-		const int s = 1 << (_G(object_map[p]) - 27);
+		const int s = 1 << (_G(objectMap[p]) - 27);
 		_G(thor_info)._inventory |= s;
-		odinSpeaks((_G(object_map[p]) - 27) + 516, _G(object_map[p]) - 1);
-		_G(thor_info)._selectedItem = _G(object_map[p]) - 26;
+		odinSpeaks((_G(objectMap[p]) - 27) + 516, _G(objectMap[p]) - 1);
+		_G(thor_info)._selectedItem = _G(objectMap[p]) - 26;
 		addMagic(150);
 		fillScore(5);
 		}
@@ -158,21 +158,15 @@ void pickUpObject(int p) {
 	default:
 		break;
 	}
-	const int x = p % 20;
-	const int y = p / 20;
-
-	_G(ox) = x * 16;
-	_G(oy) = y * 16;
-	_G(of) = 1;
 
 	playSound(YAH, false);
-	_G(object_map[p]) = 0;
+	_G(objectMap[p]) = 0;
 
 	// Reset so it doesn't reappear on reentry to screen
-	if (_G(object_index[p]) < 30)
-		_G(scrn)._staticObject[_G(object_index[p])] = 0;
+	if (_G(objectIndex[p]) < 30)
+		_G(scrn)._staticObject[_G(objectIndex[p])] = 0;
 	
-	_G(object_index[p]) = 0;
+	_G(objectIndex[p]) = 0;
 }
 
 void dropRandomObject(Actor *actor) {
@@ -202,9 +196,9 @@ void dropRandomObject(Actor *actor) {
 
 bool dropObject(Actor *actor, const int objId) {
 	const int p = (actor->_x + (actor->_sizeX / 2)) / 16 + (((actor->_y + (actor->_sizeY / 2)) / 16) * 20);
-	if (!_G(object_map[p]) && _G(scrn)._iconGrid[p / 20][p % 20] >= 140) { //nothing there and solid
-		_G(object_map[p]) = objId;
-		_G(object_index[p]) = 27 + actor->_actorNum; //actor is 3-15
+	if (!_G(objectMap[p]) && _G(scrn)._iconGrid[p / 20][p % 20] >= 140) { //nothing there and solid
+		_G(objectMap[p]) = objId;
+		_G(objectIndex[p]) = 27 + actor->_actorNum; //actor is 3-15
 
 		return true;
 	}
@@ -262,13 +256,11 @@ bool useThunder(int flag) {
 bool useBoots(int flag) {
 	if (flag) {
 		if (_G(thor_info)._magic > 0) {
-			if (_G(thor)->_numMoves == 1) {
-				_G(magicCounter) = 0;
-				addMagic(-1);
-			} else if (_G(magicCounter) > 8) {
+			if (_G(thor)->_numMoves == 1 || _G(magicCounter) > 8) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
 			}
+			
 			_G(thor)->_numMoves = 2;
 			_G(hammer)->_numMoves = 3;
 			return true;

@@ -476,7 +476,6 @@ void boss3SetupLevel() {
 	_G(boss_active) = true;
 	musicPause();
 	playSound(BOSS11, true);
-	_G(timerCounter) = 0;
 
 	g_events->send("Game", GameMessage("PAUSE", 40));
 
@@ -564,7 +563,6 @@ void endingScreen() {
 		_G(actor[i])._moveType = 1;
 	
 	musicPlay(6, true);
-	_G(timerCounter) = 0;
 
 	memset(expf, 0, 4 * 8);
 	_G(endgame) = 1;

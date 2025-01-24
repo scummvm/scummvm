@@ -563,12 +563,15 @@ int Scripts::readScriptFile() {
 			else if (ch == 13 || ch == 10) { // Check for CR
 				tmpBuffer[p] = 0;
 				break;
-			} else if ((ch == 39 || ch == 96) && !quoteFlag) {
+			}
+
+			if ((ch == 39 || ch == 96) && !quoteFlag) {
 				tmpBuffer[p] = 0;
 				break;
 			}
 			if (!quoteFlag)
 				ch = toupper(ch);
+			
 			if (quoteFlag || ch > 32) {
 				tmpBuffer[p++] = ch;
 			}
@@ -1071,13 +1074,13 @@ void Scripts::scr_func3() {
 
 	if ((g_events->getRandomNumber(99)) < 25 ||
 		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
-		if (!_G(object_map[p]) && _G(scrn)._iconGrid[y][x] >= 140) { // nothing there and solid
+		if (!_G(objectMap[p]) && _G(scrn)._iconGrid[y][x] >= 140) { // nothing there and solid
 			int o = g_events->getRandomNumber(1, 5);
 			if (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
 				o = 20;
 
-			_G(object_map[p]) = o;
-			_G(object_index[p]) = 31; // actor is 3-15
+			_G(objectMap[p]) = o;
+			_G(objectIndex[p]) = 31; // actor is 3-15
 		}
 	}
 }

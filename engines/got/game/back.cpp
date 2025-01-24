@@ -253,13 +253,8 @@ void killEnemies(const int iy, const int ix) {
 			x2 = (_G(actor[i])._x + _G(actor[i])._sizeX);
 			y2 = _G(actor[i])._y + _G(actor[i])._sizeY - 1;
 
-			if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15))
-				actorDestroyed(&_G(actor[i]));
-			else if (pointWithin(x2, y1, ix, iy, ix + 15, iy + 15))
-				actorDestroyed(&_G(actor[i]));
-			else if (pointWithin(x1, y2, ix, iy, ix + 15, iy + 15))
-				actorDestroyed(&_G(actor[i]));
-			else if (pointWithin(x2, y2, ix, iy, ix + 15, iy + 15))
+			if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y1, ix, iy, ix + 15, iy + 15)
+				|| pointWithin(x1, y2, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y2, ix, iy, ix + 15, iy + 15))
 				actorDestroyed(&_G(actor[i]));
 		}
 	}
@@ -269,7 +264,8 @@ void killEnemies(const int iy, const int ix) {
 	x2 = x1 + 13;
 	y2 = y1 + 5;
 
-	if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x1, y2, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y2, ix, iy, ix + 15, iy + 15)) {
+	if (pointWithin(x1, y1, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y1, ix, iy, ix + 15, iy + 15)
+		|| pointWithin(x1, y2, ix, iy, ix + 15, iy + 15) || pointWithin(x2, y2, ix, iy, ix + 15, iy + 15)) {
 		if (!_G(cheats)._freezeHealth) {
 			_G(thor)->_health = 0;
 			g_events->send(GameMessage("THOR_DIES"));
@@ -280,9 +276,9 @@ void killEnemies(const int iy, const int ix) {
 void removeObjects(const int y, const int x) {
 	const int p = (y * 20) + x;
 
-	if (_G(object_map[p]) > 0) {
-		_G(object_map[p]) = 0;
-		_G(object_index[p]) = 0;
+	if (_G(objectMap[p]) > 0) {
+		_G(objectMap[p]) = 0;
+		_G(objectIndex[p]) = 0;
 	}
 }
 

@@ -240,7 +240,7 @@ void GameContent::drawObjects(GfxSurface &s) {
 		for (int x = 0; x < TILES_X; ++x) {
 			int p = (y * TILES_X) + x;
 
-			byte currObjId = _G(object_map[p]);
+			byte currObjId = _G(objectMap[p]);
 			if (currObjId) {
 				s.simpleBlitFrom(_G(objects[currObjId - 1]), Common::Point(x * TILE_SIZE, y * TILE_SIZE));
 			}
@@ -347,7 +347,7 @@ void GameContent::checkSwitchFlag() {
 
 void GameContent::checkForItem() {
 	int thor_pos = _G(thor)->getPos();
-	if (_G(object_map[thor_pos]))
+	if (_G(objectMap[thor_pos]))
 		pickUpObject(thor_pos);
 }
 

@@ -134,14 +134,10 @@ public:
 	int _thorRealY1 = 0;
 	int _thorPos = 0;
 
-	uint _timerCounter = 0; // unused?
-	uint _vbl_cnt = 0; // unused?
 	uint _magicCounter = 0;
-	uint _extra_cnt = 0; // unused?
 
-	int _ox = 0, _oy = 0, _of = 0;
-	byte _object_map[TILES_COUNT] = {};
-	byte _object_index[TILES_COUNT] = {};
+	byte _objectMap[TILES_COUNT] = {};
+	byte _objectIndex[TILES_COUNT] = {};
 	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0, _thor_icon4 = 0;
 	int8 _levelMusic = 0;
 	int8 _music_current = -1;
