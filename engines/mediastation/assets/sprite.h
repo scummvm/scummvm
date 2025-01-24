@@ -60,7 +60,7 @@ private:
 
 class Sprite : public Asset {
 public:
-	Sprite(AssetHeader *header) : Asset(header) {};
+	Sprite(AssetHeader *header);
 	~Sprite();
 
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;

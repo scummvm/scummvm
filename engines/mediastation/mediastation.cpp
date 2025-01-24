@@ -272,6 +272,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		_screen->setPalette(*context->_palette);
 	}
 
+	context->registerActiveAssets();
 	_loadedContexts.setVal(contextId, context);
 	return context;
 }

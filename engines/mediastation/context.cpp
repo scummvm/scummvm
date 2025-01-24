@@ -103,6 +103,14 @@ Function *Context::getFunctionById(uint functionId) {
 	return _functions.getValOrDefault(functionId);
 }
 
+void Context::registerActiveAssets() {
+	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
+		if (it->_value->isActive()) {
+			g_engine->addPlayingAsset(it->_value);
+		}
+	}
+}
+
 bool Context::readPreamble() {
 	uint16 signature = _stream->readUint16LE();
 	if (signature != 0x4949) { // "II"

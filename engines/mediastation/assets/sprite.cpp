@@ -66,6 +66,12 @@ uint32 SpriteFrame::index() {
 	return _bitmapHeader->_index;
 }
 
+Sprite::Sprite(AssetHeader *header) : Asset(header) {
+	if (header->_startup == kAssetStartupActive) {
+		_isActive = true;
+	}
+}
+
 Sprite::~Sprite() {
 	for (SpriteFrame *frame : _frames) {
 		delete frame;

@@ -24,6 +24,12 @@
 
 namespace MediaStation {
 
+Image::Image(AssetHeader *header) : Asset(header) {
+	if (header->_startup == kAssetStartupActive) {
+		_isActive = true;
+	}
+}
+
 Image::~Image() {
 	delete _bitmap;
 	_bitmap = nullptr;

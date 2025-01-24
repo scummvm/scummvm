@@ -33,7 +33,7 @@ namespace MediaStation {
 
 class Image : public Asset {
 public:
-	Image(AssetHeader *header) : Asset(header) {};
+	Image(AssetHeader *header);
 	virtual ~Image() override;
 
 	virtual void readChunk(Chunk &chunk) override;

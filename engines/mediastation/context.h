@@ -64,6 +64,7 @@ public:
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
+	void registerActiveAssets();
 
 private:
 	Common::HashMap<uint, Asset *> _assets;
