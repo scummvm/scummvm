@@ -175,13 +175,7 @@ public:
 
 	bool _warpFlag = false;
 
-	int8 *_std_sound_start = nullptr;
-	int8 *_pcstd_sound_start = nullptr;
-	int8 *_std_sound = nullptr;
-	int8 *_pcstd_sounds = nullptr;
 	byte *_boss_sound[3] = {};
-	byte *_boss_pcsound[3] = {};
-	long _pcsound_length[NUM_SOUNDS] = {};
 	int _rand1 = 0, _rand2 = 0;
 	int _hourglass_flag = 0, _thunder_flag = 0;
 	bool _lightning_used = false, _tornado_used = false;
@@ -199,7 +193,6 @@ public:
 	bool _carry_inform = false;
 	bool _killgg_inform = false;
 
-	byte *_pc_sound[NUM_SOUNDS] = {};
 	byte *_dig_sound[NUM_SOUNDS] = {};
 	bool _boss_active = false;
 	bool _story_flag = true;

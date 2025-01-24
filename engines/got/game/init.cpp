@@ -123,8 +123,6 @@ int setupBoss(const int num) {
 		for (int rep = 0; rep < 3; rep++) {
 			if (_G(boss_sound[rep]))
 				free(_G(boss_sound[rep]));
-			if (_G(boss_pcsound[rep]))
-				free(_G(boss_pcsound[rep]));
 		}
 	}
 
@@ -145,49 +143,6 @@ int setupBoss(const int num) {
 	if (!_G(boss_sound[2]))
 		return 0;
 	_G(dig_sound[NUM_SOUNDS - 1]) = _G(boss_sound[2]);
-
-	Common::String prefix = (num == 2) ? "BOSSP1" : Common::String::format("BOSSP%d", num);
-	ressourceName = prefix + "1";
-	_G(boss_pcsound[0]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_pcsound[0]))
-		return 0;
-
-	_G(pc_sound[NUM_SOUNDS - 3]) = _G(boss_pcsound[0]);
-	_G(pc_sound[NUM_SOUNDS - 3][0]) = 0;
-	_G(pc_sound[NUM_SOUNDS - 3][1]) = 0;
-
-	Common::File f;
-	if (!f.open(Common::Path(ressourceName)))
-		return 0;
-	_G(pcsound_length[NUM_SOUNDS - 3]) = f.size();
-	f.close();
-
-	ressourceName = prefix + "2";
-	_G(boss_pcsound[1]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_pcsound[1]))
-		return 0;
-
-	_G(pc_sound[NUM_SOUNDS - 2]) = _G(boss_pcsound[1]);
-	_G(pc_sound[NUM_SOUNDS - 2][0]) = 0;
-	_G(pc_sound[NUM_SOUNDS - 2][1]) = 0;
-
-	if (!f.open(Common::Path(ressourceName)))
-		return 0;
-	_G(pcsound_length[NUM_SOUNDS - 2]) = f.size();
-	f.close();
-
-	ressourceName = prefix + "3";
-	_G(boss_pcsound[2]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_pcsound[2]))
-		return 0;
-	_G(pc_sound[NUM_SOUNDS - 1]) = _G(boss_pcsound[2]);
-	_G(pc_sound[NUM_SOUNDS - 1][0]) = 0;
-	_G(pc_sound[NUM_SOUNDS - 1][1]) = 0;
-
-	if (!f.open(Common::Path(ressourceName)))
-		return 0;
-	_G(pcsound_length[NUM_SOUNDS - 1]) = f.size();
-	f.close();
 
 	_G(currentBossLoaded) = num;
 	return 1;
