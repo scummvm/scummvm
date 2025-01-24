@@ -42,7 +42,7 @@ bool Say::msgFocus(const FocusMessage &msg) {
 	if (!_type)
 		playSound(WOOP, true);
 
-	_content = (const char *)_G(tmp_buff);
+	_content = (const char *)_G(tmpBuff);
 	_contentLength = 0;
 	_waitForResponse = WAIT_NONE;
 	_woopCtr = 0;

@@ -183,14 +183,14 @@ bool GameContent::tick() {
 				addHealth(-1);
 				addScore(10);
 
-			} else if (_G(thor_info)._magic > 0) {
-				_G(thor_info)._magic--;
+			} else if (_G(thorInfo)._magic > 0) {
+				_G(thorInfo)._magic--;
 				playSound(WOOP, true);
 				addMagic(-1);
 				addScore(10);
 
-			} else if (_G(thor_info)._jewels) {
-				_G(thor_info)._jewels--;
+			} else if (_G(thorInfo)._jewels) {
+				_G(thorInfo)._jewels--;
 				playSound(WOOP, true);
 				addJewels(-1);
 				addScore(10);
@@ -215,7 +215,7 @@ bool GameContent::tick() {
 		Gfx::fadeOut();
 
 		// Add name to high scores list if necessary, and then show it
-		_G(highScores).add(_G(area), _G(playerName), _G(thor_info)._score);
+		_G(highScores).add(_G(area), _G(playerName), _G(thorInfo)._score);
 		g_events->send("HighScores", GameMessage("HIGH_SCORES", _G(area)));
 	}
 
@@ -508,12 +508,12 @@ void GameContent::spinThor() {
 }
 
 void GameContent::thorDead() {
-	int li = _G(thor_info)._selectedItem;
-	int ln = _G(thor_info)._inventory;
+	int li = _G(thorInfo)._selectedItem;
+	int ln = _G(thorInfo)._inventory;
 
-	_G(new_level) = _G(thor_info)._lastScreen;
-	_G(thor)->_x = (_G(thor_info)._lastIcon % 20) * 16;
-	_G(thor)->_y = ((_G(thor_info)._lastIcon / 20) * 16) - 1;
+	_G(new_level) = _G(thorInfo)._lastScreen;
+	_G(thor)->_x = (_G(thorInfo)._lastIcon % 20) * 16;
+	_G(thor)->_y = ((_G(thorInfo)._lastIcon / 20) * 16) - 1;
 	if (_G(thor)->_x < 1)
 		_G(thor)->_x = 1;
 	if (_G(thor)->_y < 0)
@@ -522,24 +522,24 @@ void GameContent::thorDead() {
 	_G(thor)->_lastX[1] = _G(thor)->_x;
 	_G(thor)->_lastY[0] = _G(thor)->_y;
 	_G(thor)->_lastY[1] = _G(thor)->_y;
-	_G(thor)->_dir = _G(thor_info)._lastDir;
-	_G(thor)->_lastDir = _G(thor_info)._lastDir;
-	_G(thor)->_health = _G(thor_info)._lastHealth;
-	_G(thor_info)._magic = _G(thor_info)._lastMagic;
-	_G(thor_info)._jewels = _G(thor_info)._lastJewels;
-	_G(thor_info)._keys = _G(thor_info)._lastKeys;
-	_G(thor_info)._score = _G(thor_info)._lastScore;
-	_G(thor_info)._object = _G(thor_info)._lastObject;
-	_G(thor_info)._objectName = _G(thor_info)._lastObjectName;
+	_G(thor)->_dir = _G(thorInfo)._lastDir;
+	_G(thor)->_lastDir = _G(thorInfo)._lastDir;
+	_G(thor)->_health = _G(thorInfo)._lastHealth;
+	_G(thorInfo)._magic = _G(thorInfo)._lastMagic;
+	_G(thorInfo)._jewels = _G(thorInfo)._lastJewels;
+	_G(thorInfo)._keys = _G(thorInfo)._lastKeys;
+	_G(thorInfo)._score = _G(thorInfo)._lastScore;
+	_G(thorInfo)._object = _G(thorInfo)._lastObject;
+	_G(thorInfo)._objectName = _G(thorInfo)._lastObjectName;
 
-	if (ln == _G(thor_info)._lastInventory) {
-		_G(thor_info)._selectedItem = li;
+	if (ln == _G(thorInfo)._lastInventory) {
+		_G(thorInfo)._selectedItem = li;
 	} else {
-		_G(thor_info)._selectedItem = _G(thor_info)._lastItem;
-		_G(thor_info)._inventory = _G(thor_info)._lastInventory;
+		_G(thorInfo)._selectedItem = _G(thorInfo)._lastItem;
+		_G(thorInfo)._inventory = _G(thorInfo)._lastInventory;
 	}
 
-	_G(setup) = _G(last_setup);
+	_G(setup) = _G(lastSetup);
 
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
@@ -571,9 +571,9 @@ void GameContent::checkForCheats() {
 	if (_G(cheats)._freezeHealth)
 		_G(thor)->_health = 150;
 	if (_G(cheats)._freezeMagic)
-		_G(thor_info)._magic = 150;
+		_G(thorInfo)._magic = 150;
 	if (_G(cheats)._freezeJewels)
-		_G(thor_info)._jewels = 999;
+		_G(thorInfo)._jewels = 999;
 }
 
 void GameContent::placePixel(GfxSurface &s, int dir, int num) {

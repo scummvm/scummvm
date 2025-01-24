@@ -260,7 +260,7 @@ void boss1ClosingSequence1() {
 }
 
 void boss1ClosingSequence2() {
-	_G(thor_info)._armor = 1;
+	_G(thorInfo)._armor = 1;
 	loadNewThor();
 	_G(thor)->_dir = 1;
 	_G(thor)->_nextFrame = 0;

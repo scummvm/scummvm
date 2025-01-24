@@ -34,7 +34,7 @@ bool File::open(const Common::Path &filename) {
 bool loadActor(int /*file*/, int num) {
 	Common::String fname = Common::String::format("ACTOR%d", num);
 
-	if (resourceRead(fname, _G(tmp_buff), true) < 0)
+	if (resourceRead(fname, _G(tmpBuff), true) < 0)
 		return false;
 
 	return true;
@@ -98,8 +98,8 @@ bool loadSpeech(int index) {
 		*(p - 1) = 0;
 	*p = 0;
 
-	Common::copy(pm, pm + cnt, _G(tmp_buff));
-	_G(tmp_buff)
+	Common::copy(pm, pm + cnt, _G(tmpBuff));
+	_G(tmpBuff)
 	[cnt] = 0;
 
 	delete[] sp;

@@ -409,22 +409,22 @@ int Scripts::getInternalVariable() {
 	}
 	switch (i) {
 	case 0:
-		_lTemp = _G(thor_info)._jewels;
+		_lTemp = _G(thorInfo)._jewels;
 		break;
 	case 1:
 		_lTemp = _G(thor)->_health;
 		break;
 	case 2:
-		_lTemp = _G(thor_info)._magic;
+		_lTemp = _G(thorInfo)._magic;
 		break;
 	case 3:
-		_lTemp = _G(thor_info)._score;
+		_lTemp = _G(thorInfo)._score;
 		break;
 	case 4:
 		_lTemp = _G(current_level);
 		break;
 	case 5:
-		_lTemp = _G(thor_info)._keys;
+		_lTemp = _G(thorInfo)._keys;
 		break;
 	case 6:
 	case 7:
@@ -454,8 +454,8 @@ int Scripts::getInternalVariable() {
 		_lTemp = _G(setup)._flags[i - 1] ? 1 : 0;
 		break;
 	case 23:
-		if (_G(thor_info)._inventory & 64)
-			_lTemp = _G(thor_info)._object;
+		if (_G(thorInfo)._inventory & 64)
+			_lTemp = _G(thorInfo)._object;
 		else
 			_lTemp = 0;
 		break;
@@ -778,8 +778,8 @@ int Scripts::cmd_say(int mode, int type) {
 			obj += 10;
 	}
 	
-	Common::fill(_G(tmp_buff), _G(tmp_buff) + TMP_SIZE, 0);
-	char *p = (char *)_G(tmp_buff);
+	Common::fill(_G(tmpBuff), _G(tmpBuff) + TMP_SIZE, 0);
+	char *p = (char *)_G(tmpBuff);
 
 	while (calcString(0)) {
 		Common::strcpy_s(p, TMP_SIZE, _tempS);
@@ -800,7 +800,7 @@ int Scripts::cmd_ask() {
 	char title[41], opt[41];
 	Common::StringArray opts;
 
-	memset(_G(tmp_buff), 0, TMP_SIZE);
+	memset(_G(tmpBuff), 0, TMP_SIZE);
 
 	if (!skipColon())
 		return 5;
@@ -926,10 +926,10 @@ int Scripts::cmd_itemGive() {
 	if (i < 1 || i > 15)
 		return 6;
 
-	_G(thor_info)._inventory |= 64;
-	_G(thor_info)._selectedItem = 7;
-	_G(thor_info)._object = i;
-	_G(thor_info)._objectName = OBJECT_NAMES[_G(thor_info)._object - 1];
+	_G(thorInfo)._inventory |= 64;
+	_G(thorInfo)._selectedItem = 7;
+	_G(thorInfo)._object = i;
+	_G(thorInfo)._objectName = OBJECT_NAMES[_G(thorInfo)._object - 1];
 
 	return 0;
 }

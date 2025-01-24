@@ -40,7 +40,7 @@ bool SkillLevel::msgFocus(const FocusMessage &msg) {
 
 void SkillLevel::selected() {
 	_G(setup)._difficultyLevel = _selectedItem;
-	_G(last_setup) = _G(setup);
+	_G(lastSetup) = _G(setup);
 }
 
 } // namespace Dialogs

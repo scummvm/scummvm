@@ -31,7 +31,7 @@ namespace Views {
 #define MAX_Y 236
 
 bool Story::msgFocus(const FocusMessage &msg) {
-	resourceRead(Common::String::format("STORY%d", _G(area)), _G(tmp_buff));
+	resourceRead(Common::String::format("STORY%d", _G(area)), _G(tmpBuff));
 
 	resourceRead("STORYPAL", _G(pbuff));
 
@@ -55,7 +55,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	byte color = 72;
 	char s[21];
 
-	const char *p = (const char *)_G(tmp_buff);
+	const char *p = (const char *)_G(tmpBuff);
 
 	while (i < 46) {
 		if (*p == '\n') {

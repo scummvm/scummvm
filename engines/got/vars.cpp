@@ -67,7 +67,7 @@ void Vars::load() {
 	_setup._slowMode = _slowMode;
 	_setup._difficultyLevel = 1;
 
-	_tmp_buff = new byte[TMP_SIZE];
+	_tmpBuff = new byte[TMP_SIZE];
 
 	resourceRead("RANDOM", _rnd_array);
 
@@ -77,7 +77,7 @@ void Vars::load() {
 Vars::~Vars() {
 	g_vars = nullptr;
 
-	delete[] _tmp_buff;
+	delete[] _tmpBuff;
 }
 
 void Vars::setArea(int areaNum) {

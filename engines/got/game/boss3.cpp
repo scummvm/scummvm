@@ -486,7 +486,7 @@ void boss3SetupLevel() {
 	}
 
 	musicPlay(7, true);
-	_G(apple_drop) = 0;
+	_G(appleDropCounter) = 0;
 	bossMode = 1;
 }
 

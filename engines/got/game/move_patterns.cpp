@@ -155,10 +155,10 @@ int (*specialMovementFunc[])(Actor *actor) = {
 
 // Check Thor move
 int checkMove0(const int x, const int y, Actor *actor) {
-	_G(thor_icon1) = 0;
-	_G(thor_icon2) = 0;
-	_G(thor_icon3) = 0;
-	_G(thor_icon4) = 0;
+	_G(thorIcon1) = 0;
+	_G(thorIcon2) = 0;
+	_G(thorIcon3) = 0;
+	_G(thorIcon4) = 0;
 
 	if (x < 0) {
 		if (_G(current_level) > 0) {
@@ -236,22 +236,22 @@ int checkMove0(const int x, const int y, Actor *actor) {
 		int ti = 0;
 
 		if (icn1 < TILE_FLY) {
-			_G(thor_icon1) = 1;
+			_G(thorIcon1) = 1;
 			ti = 1;
 		}
 		
 		if (icn2 < TILE_FLY) {
-			_G(thor_icon2) = 1;
+			_G(thorIcon2) = 1;
 			ti = 1;
 		}
 		
 		if (icn3 < TILE_FLY) {
-			_G(thor_icon3) = 1;
+			_G(thorIcon3) = 1;
 			ti = 1;
 		}
 		
 		if (icn4 < TILE_FLY) {
-			_G(thor_icon4) = 1;
+			_G(thorIcon4) = 1;
 			ti = 1;
 		}
 		
@@ -617,18 +617,18 @@ int check_thor_move(const int x, const int y, Actor *actor) {
 	if (_G(diagFlag) || _G(thor_special_flag))
 		return 0;
 
-	if (_G(thor_icon1) + _G(thor_icon2) + _G(thor_icon3) + _G(thor_icon4) > 1)
+	if (_G(thorIcon1) + _G(thorIcon2) + _G(thorIcon3) + _G(thorIcon4) > 1)
 		return 0;
 
 	switch (actor->_dir) {
 	case 0:
-		if (_G(thor_icon1)) {
+		if (_G(thorIcon1)) {
 			actor->_dir = 3;
 			if (checkMove0(x + THOR_PAD1, y + 2, actor)) {
 				actor->_dir = 0;
 				return 1;
 			}
-		} else if (_G(thor_icon3)) {
+		} else if (_G(thorIcon3)) {
 			actor->_dir = 2;
 			if (checkMove0(x - THOR_PAD1, y + 2, actor)) {
 				actor->_dir = 0;
@@ -639,13 +639,13 @@ int check_thor_move(const int x, const int y, Actor *actor) {
 		break;
 		
 	case 1:
-		if (_G(thor_icon2)) {
+		if (_G(thorIcon2)) {
 			actor->_dir = 3;
 			if (checkMove0(x + THOR_PAD1, y - 2, actor)) {
 				actor->_dir = 1;
 				return 1;
 			}
-		} else if (_G(thor_icon4)) {
+		} else if (_G(thorIcon4)) {
 			actor->_dir = 2;
 			if (checkMove0(x - THOR_PAD1, y - 2, actor)) {
 				actor->_dir = 1;
@@ -656,20 +656,20 @@ int check_thor_move(const int x, const int y, Actor *actor) {
 		break;
 		
 	case 2:
-		if (_G(thor_icon1)) {
+		if (_G(thorIcon1)) {
 			if (checkMove0(x + 2, y + THOR_PAD1, actor))
 				return 1;
-		} else if (_G(thor_icon2)) {
+		} else if (_G(thorIcon2)) {
 			if (checkMove0(x + 2, y - THOR_PAD1, actor))
 				return 1;
 		}
 		break;
 		
 	case 3:
-		if (_G(thor_icon3)) {
+		if (_G(thorIcon3)) {
 			if (checkMove0(x - 2, y + THOR_PAD1, actor))
 				return 1;
-		} else if (_G(thor_icon4)) {
+		} else if (_G(thorIcon4)) {
 			if (checkMove0(x - 2, y - THOR_PAD1, actor))
 				return 1;
 		}
@@ -965,10 +965,10 @@ int specialMovementTwo(Actor *actor) {
 				playSound(ANGEL, false);
 			_G(thor)->_health += 1;
 		}
-	} else if (_G(thor_info)._magic < 150) {
+	} else if (_G(thorInfo)._magic < 150) {
 		if (!soundPlaying())
 			playSound(ANGEL, false);
-		_G(thor_info)._magic += 1;
+		_G(thorInfo)._magic += 1;
 	}
 
 	return 1;

@@ -49,28 +49,28 @@ void showObjects() {
 void pickUpObject(int p) {
 	switch (_G(objectMap[p])) {
 	case 1: // Red jewel
-		if (_G(thor_info)._jewels >= 999) {
+		if (_G(thorInfo)._jewels >= 999) {
 			cannotCarryMore();
 			return;
 		}
 		addJewels(10);
 		break;
 	case 2: // Blue jewel
-		if (_G(thor_info)._jewels >= 999) {
+		if (_G(thorInfo)._jewels >= 999) {
 			cannotCarryMore();
 			return;
 		}
 		addJewels(1);
 		break;
 	case 3: // Red potion
-		if (_G(thor_info)._magic >= 150) {
+		if (_G(thorInfo)._magic >= 150) {
 			cannotCarryMore();
 			return;
 		}
 		addMagic(10);
 		break;
 	case 4: // Blue potion
-		if (_G(thor_info)._magic >= 150) {
+		if (_G(thorInfo)._magic >= 150) {
 			cannotCarryMore();
 			return;
 		}
@@ -92,7 +92,7 @@ void pickUpObject(int p) {
 		addKeys(1);
 		break;
 	case 8: // Treasure
-		if (_G(thor_info)._jewels >= 999) {
+		if (_G(thorInfo)._jewels >= 999) {
 			cannotCarryMore();
 			return;
 		}
@@ -126,10 +126,10 @@ void pickUpObject(int p) {
 		_G(actor[2])._active = false;
 		_G(shield_on) = false;
 		_G(tornado_used) = false;
-		_G(thor_info)._inventory |= 64;
-		_G(thor_info)._selectedItem = 7;
-		_G(thor_info)._object = _G(objectMap[p]) - 11;
-		_G(thor_info)._objectName = OBJECT_NAMES[_G(thor_info)._object - 1];
+		_G(thorInfo)._inventory |= 64;
+		_G(thorInfo)._selectedItem = 7;
+		_G(thorInfo)._object = _G(objectMap[p]) - 11;
+		_G(thorInfo)._objectName = OBJECT_NAMES[_G(thorInfo)._object - 1];
 		odinSpeaks((_G(objectMap[p]) - 12) + 501, _G(objectMap[p]) - 1);
 		break;
 	case 27:
@@ -147,9 +147,9 @@ void pickUpObject(int p) {
 		_G(thor)->_numMoves = 1;
 		_G(actor[2])._active = false;
 		const int s = 1 << (_G(objectMap[p]) - 27);
-		_G(thor_info)._inventory |= s;
+		_G(thorInfo)._inventory |= s;
 		odinSpeaks((_G(objectMap[p]) - 27) + 516, _G(objectMap[p]) - 1);
-		_G(thor_info)._selectedItem = _G(objectMap[p]) - 26;
+		_G(thorInfo)._selectedItem = _G(objectMap[p]) - 26;
 		addMagic(150);
 		fillScore(5);
 		}
@@ -210,7 +210,7 @@ bool useApple(int flag) {
 	if (_G(thor)->_health == 150)
 		return false;
 
-	if (flag && _G(thor_info)._magic > 0) {
+	if (flag && _G(thorInfo)._magic > 0) {
 		if (!_G(apple_flag)) {
 			_G(magicCounter) = 0;
 			addMagic(-2);
@@ -235,7 +235,7 @@ bool useApple(int flag) {
 }
 
 bool useThunder(int flag) {
-	if (flag && _G(thor_info)._magic > 29) {
+	if (flag && _G(thorInfo)._magic > 29) {
 		if (!_G(thunder_flag)) {
 			addMagic(-30);
 			playSound(THUNDER, false);
@@ -255,7 +255,7 @@ bool useThunder(int flag) {
 
 bool useBoots(int flag) {
 	if (flag) {
-		if (_G(thor_info)._magic > 0) {
+		if (_G(thorInfo)._magic > 0) {
 			if (_G(thor)->_numMoves == 1 || _G(magicCounter) > 8) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
@@ -279,13 +279,13 @@ bool useBoots(int flag) {
 
 bool useShield(int flag) {
 	if (flag) {
-		if (_G(thor_info)._magic) {
+		if (_G(thorInfo)._magic) {
 			if (!_G(shield_on)) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
 				setupMagicItem(1);
 
-				_G(actor[2]) = _G(magic_item[1]);
+				_G(actor[2]) = _G(magicItem[1]);
 				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._moveCountdown = 1;
 				_G(actor[2])._speed = 1;
@@ -312,7 +312,7 @@ bool useShield(int flag) {
 
 bool useLightning(int flag) {
 	if (flag) {
-		if (_G(thor_info)._magic > 14) {
+		if (_G(thorInfo)._magic > 14) {
 			addMagic(-15);
 			g_events->send("Game", GameMessage("THROW_LIGHTNING"));
 		} else {
@@ -325,12 +325,12 @@ bool useLightning(int flag) {
 
 bool useTornado(int flag) {
 	if (flag) {
-		if (_G(thor_info)._magic > 10) {
+		if (_G(thorInfo)._magic > 10) {
 			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magicCounter) > 20) {
 				_G(magicCounter) = 0;
 				addMagic(-10);
 				setupMagicItem(0);
-				_G(actor[2]) = _G(magic_item[0]);
+				_G(actor[2]) = _G(magicItem[0]);
 
 				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._lastDir = _G(thor)->_dir;
@@ -348,7 +348,7 @@ bool useTornado(int flag) {
 				addMagic(-1);
 			}
 		}
-		if (_G(thor_info)._magic < 1) {
+		if (_G(thorInfo)._magic < 1) {
 			actorDestroyed(&_G(actor[2]));
 			_G(tornado_used) = false;
 			notEnoughMagic();
@@ -360,10 +360,10 @@ bool useTornado(int flag) {
 }
 
 bool useObject(int flag) {
-	if (!flag || !(_G(thor_info)._inventory & 64))
+	if (!flag || !(_G(thorInfo)._inventory & 64))
 		return false;
 
-	odinSpeaks((_G(thor_info)._object - 1) + 5501, _G(thor_info)._object - 1);
+	odinSpeaks((_G(thorInfo)._object - 1) + 5501, _G(thorInfo)._object - 1);
 	return true;
 }
 
@@ -378,7 +378,7 @@ void useItem() {
 	}
 
 	bool mf = _G(magic_inform);
-	switch (_G(thor_info)._selectedItem) {
+	switch (_G(thorInfo)._selectedItem) {
 	case 1:
 		ret = useApple(kf);
 		break;
@@ -429,8 +429,8 @@ void cannotCarryMore() {
 }
 
 void deleteObject() {
-	_G(thor_info)._inventory &= 0xbf;
-	_G(thor_info)._selectedItem = 1;
+	_G(thorInfo)._inventory &= 0xbf;
+	_G(thorInfo)._selectedItem = 1;
 }
 
 } // namespace Got

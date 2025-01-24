@@ -32,27 +32,27 @@
 namespace Got {
 
 void setupPlayer() {
-	_G(thor_info).clear();
-	_G(thor_info)._inventory = 0;
+	_G(thorInfo).clear();
+	_G(thorInfo)._inventory = 0;
 	if (_G(area) > 1)
-		_G(thor_info)._inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
+		_G(thorInfo)._inventory |= APPLE_MAGIC + LIGHTNING_MAGIC;
 	if (_G(area) > 2)
-		_G(thor_info)._inventory |= BOOTS_MAGIC + WIND_MAGIC;
+		_G(thorInfo)._inventory |= BOOTS_MAGIC + WIND_MAGIC;
 
 	_G(thor)->_health = 150;
-	_G(thor_info)._magic = _G(area) > 1 ? 150 : 0;
-	_G(thor_info)._jewels = 0;
-	_G(thor_info)._score = 0;
-	_G(thor_info)._keys = 0;
-	_G(thor_info)._lastItem = 0;
-	_G(thor_info)._object = 0;
-	_G(thor_info)._objectName = nullptr;
+	_G(thorInfo)._magic = _G(area) > 1 ? 150 : 0;
+	_G(thorInfo)._jewels = 0;
+	_G(thorInfo)._score = 0;
+	_G(thorInfo)._keys = 0;
+	_G(thorInfo)._lastItem = 0;
+	_G(thorInfo)._object = 0;
+	_G(thorInfo)._objectName = nullptr;
 	_G(thor)->_lastX[0] = _G(thor)->_x;
 	_G(thor)->_lastX[1] = _G(thor)->_x;
 	_G(thor)->_lastY[0] = _G(thor)->_y;
 	_G(thor)->_lastY[1] = _G(thor)->_y;
-	_G(thor_info)._lastIcon = (6 * 20) + 8;
-	_G(thor_info)._lastScreen = 23;
+	_G(thorInfo)._lastIcon = (6 * 20) + 8;
+	_G(thorInfo)._lastScreen = 23;
 	_G(thor)->_dir = 1;
 
 	switch (_G(area)) {
@@ -80,13 +80,13 @@ void initGame() {
 	if (_G(demo)) {
 		g_vars->setArea(1);
 		_G(thor)->_health = 100;
-		_G(thor_info)._magic = 100;
-		_G(thor_info)._jewels = 463;
-		_G(thor_info)._score = 12455;
+		_G(thorInfo)._magic = 100;
+		_G(thorInfo)._jewels = 463;
+		_G(thorInfo)._score = 12455;
 		_G(setup)._difficultyLevel = 0;
-		_G(thor_info)._inventory = 1 + 2;
+		_G(thorInfo)._inventory = 1 + 2;
 		_G(current_level) = 54;
-		_G(thor_info)._selectedItem = 2;
+		_G(thorInfo)._selectedItem = 2;
 
 		File f("DEMO");
 		_G(demoKeys).clear();
@@ -116,10 +116,10 @@ void initGame() {
 }
 
 int setupBoss(const int num) {
-	if (_G(boss_loaded) == num)
+	if (_G(currentBossLoaded) == num)
 		return 1;
 
-	if (_G(boss_loaded)) {
+	if (_G(currentBossLoaded)) {
 		for (int rep = 0; rep < 3; rep++) {
 			if (_G(boss_sound[rep]))
 				free(_G(boss_sound[rep]));
@@ -189,7 +189,7 @@ int setupBoss(const int num) {
 	_G(pcsound_length[NUM_SOUNDS - 1]) = f.size();
 	f.close();
 
-	_G(boss_loaded) = num;
+	_G(currentBossLoaded) = num;
 	return 1;
 }
 

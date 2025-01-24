@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GOT_DATA_THOR_INFO_H
-#define GOT_DATA_THOR_INFO_H
+#ifndef GOT_DATA_THORINFO_H
+#define GOT_DATA_THORINFO_H
 
 #include "common/serializer.h"
 

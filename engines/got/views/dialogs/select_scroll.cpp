@@ -36,7 +36,7 @@ bool SelectScroll::msgFocus(const FocusMessage &msg) {
 
 void SelectScroll::selected() {
 	_G(setup)._scrollFlag = (_selectedItem == 0);
-	_G(last_setup) = _G(setup);
+	_G(lastSetup) = _G(setup);
 }
 
 } // namespace Dialogs

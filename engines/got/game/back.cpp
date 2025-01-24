@@ -74,12 +74,12 @@ void showLevel(const int newLevel) {
 	if (_G(scrn)._iconGrid[_G(thor)->_centerY][_G(thor)->_centerX] == 154)
 		warning("showLevel - Potential short move missing");
 
-	if (_G(warp_flag))
+	if (_G(warpFlag))
 		_G(current_level) = newLevel - 5; // Force phase
-	_G(warp_flag) = false;
+	_G(warpFlag) = false;
 
-	if (_G(warp_scroll)) {
-		_G(warp_scroll) = false;
+	if (_G(warpScroll)) {
+		_G(warpScroll) = false;
 		if (_G(thor)->_dir == 0)
 			_G(current_level) = newLevel + 10;
 		else if (_G(thor)->_dir == 1)
@@ -93,7 +93,7 @@ void showLevel(const int newLevel) {
 	if (!_G(setup)._scrollFlag)
 		_G(current_level) = newLevel; // Force no scroll
 
-	if (_G(music_current) != _G(levelMusic))
+	if (_G(currentMusic) != _G(levelMusic))
 		_G(sound).musicPause();
 
 	switch (_G(new_level) - _G(current_level)) {
@@ -127,20 +127,20 @@ void showLevel(const int newLevel) {
 void showLevelDone() {
 	_G(current_level) = _G(new_level);
 
-	_G(thor_info)._lastHealth = _G(thor)->_health;
-	_G(thor_info)._lastMagic = _G(thor_info)._magic;
-	_G(thor_info)._lastJewels = _G(thor_info)._jewels;
-	_G(thor_info)._lastKeys = _G(thor_info)._keys;
-	_G(thor_info)._lastScore = _G(thor_info)._score;
-	_G(thor_info)._lastItem = _G(thor_info)._selectedItem;
-	_G(thor_info)._lastScreen = _G(current_level);
-	_G(thor_info)._lastIcon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
-	_G(thor_info)._lastDir = _G(thor)->_dir;
-	_G(thor_info)._lastInventory = _G(thor_info)._inventory;
-	_G(thor_info)._lastObject = _G(thor_info)._object;
-	_G(thor_info)._lastObjectName = _G(thor_info)._objectName;
+	_G(thorInfo)._lastHealth = _G(thor)->_health;
+	_G(thorInfo)._lastMagic = _G(thorInfo)._magic;
+	_G(thorInfo)._lastJewels = _G(thorInfo)._jewels;
+	_G(thorInfo)._lastKeys = _G(thorInfo)._keys;
+	_G(thorInfo)._lastScore = _G(thorInfo)._score;
+	_G(thorInfo)._lastItem = _G(thorInfo)._selectedItem;
+	_G(thorInfo)._lastScreen = _G(current_level);
+	_G(thorInfo)._lastIcon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
+	_G(thorInfo)._lastDir = _G(thor)->_dir;
+	_G(thorInfo)._lastInventory = _G(thorInfo)._inventory;
+	_G(thorInfo)._lastObject = _G(thorInfo)._object;
+	_G(thorInfo)._lastObjectName = _G(thorInfo)._objectName;
 
-	_G(last_setup) = _G(setup);
+	_G(lastSetup) = _G(setup);
 
 	bool f = true;
 	if (GAME1 && _G(new_level) == BOSS_LEVEL1) {

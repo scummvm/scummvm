@@ -225,12 +225,12 @@ int shotMovementFour(Actor *actor) {
 		actor->_temp1--;
 		if (!actor->_temp1) {
 			actorDestroyed(actor);
-			_G(apple_drop++);
-			if (_G(apple_drop) == 4) {
+			_G(appleDropCounter++);
+			if (_G(appleDropCounter) == 4) {
 				if (dropObject(actor, 5))
-					_G(apple_drop) = 0;
+					_G(appleDropCounter) = 0;
 				else
-					_G(apple_drop) = 3;
+					_G(appleDropCounter) = 3;
 			} else
 				dropObject(actor, 3);
 			return 0;
@@ -692,12 +692,12 @@ int shotMovementThirteen(Actor *actor) {
 		if (_G(actor[actor->_creator])._currNumShots)
 			_G(actor[actor->_creator])._currNumShots--;
 		actorDestroyed(actor);
-		_G(apple_drop++);
-		if (_G(apple_drop) > 4) {
+		_G(appleDropCounter++);
+		if (_G(appleDropCounter) > 4) {
 			if (dropObject(actor, 5))
-				_G(apple_drop) = 0;
+				_G(appleDropCounter) = 0;
 			else
-				_G(apple_drop) = 4;
+				_G(appleDropCounter) = 4;
 		} else
 			dropObject(actor, 4);
 		return 0;

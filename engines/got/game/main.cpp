@@ -27,9 +27,9 @@ namespace Got {
 
 void setupLoad() {
 	_G(thor)->_active = true;
-	_G(new_level) = _G(thor_info)._lastScreen;
-	_G(thor)->_x = (_G(thor_info)._lastIcon % 20) * 16;
-	_G(thor)->_y = ((_G(thor_info)._lastIcon / 20) * 16) - 1;
+	_G(new_level) = _G(thorInfo)._lastScreen;
+	_G(thor)->_x = (_G(thorInfo)._lastIcon % 20) * 16;
+	_G(thor)->_y = ((_G(thorInfo)._lastIcon / 20) * 16) - 1;
 	if (_G(thor)->_x < 1)
 		_G(thor)->_x = 1;
 	if (_G(thor)->_y < 0)
@@ -38,17 +38,17 @@ void setupLoad() {
 	_G(thor)->_lastX[1] = _G(thor)->_x;
 	_G(thor)->_lastY[0] = _G(thor)->_y;
 	_G(thor)->_lastY[1] = _G(thor)->_y;
-	_G(thor)->_dir = _G(thor_info)._lastDir;
-	_G(thor)->_lastDir = _G(thor_info)._lastDir;
-	_G(thor)->_health = _G(thor_info)._lastHealth;
-	_G(thor_info)._magic = _G(thor_info)._lastMagic;
-	_G(thor_info)._jewels = _G(thor_info)._lastJewels;
-	_G(thor_info)._keys = _G(thor_info)._lastKeys;
-	_G(thor_info)._score = _G(thor_info)._lastScore;
-	_G(thor_info)._selectedItem = _G(thor_info)._lastItem;
-	_G(thor_info)._inventory = _G(thor_info)._lastInventory;
-	_G(thor_info)._object = _G(thor_info)._lastObject;
-	_G(thor_info)._objectName = _G(thor_info)._lastObjectName;
+	_G(thor)->_dir = _G(thorInfo)._lastDir;
+	_G(thor)->_lastDir = _G(thorInfo)._lastDir;
+	_G(thor)->_health = _G(thorInfo)._lastHealth;
+	_G(thorInfo)._magic = _G(thorInfo)._lastMagic;
+	_G(thorInfo)._jewels = _G(thorInfo)._lastJewels;
+	_G(thorInfo)._keys = _G(thorInfo)._lastKeys;
+	_G(thorInfo)._score = _G(thorInfo)._lastScore;
+	_G(thorInfo)._selectedItem = _G(thorInfo)._lastItem;
+	_G(thorInfo)._inventory = _G(thorInfo)._lastInventory;
+	_G(thorInfo)._object = _G(thorInfo)._lastObject;
+	_G(thorInfo)._objectName = _G(thorInfo)._lastObjectName;
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;

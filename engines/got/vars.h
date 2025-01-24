@@ -138,39 +138,42 @@ public:
 
 	byte _objectMap[TILES_COUNT] = {};
 	byte _objectIndex[TILES_COUNT] = {};
-	int8 _thor_icon1 = 0, _thor_icon2 = 0, _thor_icon3 = 0, _thor_icon4 = 0;
+	int8 _thorIcon1 = 0;
+	int8 _thorIcon2 = 0;
+	int8 _thorIcon3 = 0;
+	int8 _thorIcon4 = 0;
 	int8 _levelMusic = 0;
-	int8 _music_current = -1;
-	int8 _boss_loaded = 0;
-	int8 _apple_drop = 0;
+	int8 _currentMusic = -1;
+	int8 _currentBossLoaded = 0;
+	int8 _appleDropCounter = 0;
 	bool _cheat = false;
 	int8 _area = 1;
 
 	Level _scrn;
 
 	Setup _setup;
-	Setup _last_setup;
-	byte *_tmp_buff = nullptr;
+	Setup _lastSetup;
+	byte *_tmpBuff = nullptr;
 
 	Actor _actor[MAX_ACTORS] = {};  //current actors
 	Actor _enemy[MAX_ENEMIES] = {}; //current enemies
 	Actor _shot[MAX_ENEMIES] = {};  //current shots
-	int8 _enemy_type[MAX_ENEMIES] = {};
+	int8 _enemyType[MAX_ENEMIES] = {};
 	int _etype[MAX_ENEMIES] = {};
 
-	Actor _magic_item[2] = {};
-	byte _magic_pic[2][1024] = {};
-	bool _warp_scroll = false;
+	Actor _magicItem[2] = {};
+	byte _magicPic[2][1024] = {};
+	bool _warpScroll = false;
 
 	Actor *_thor = nullptr;
 	Actor *_hammer = nullptr;
 	Actor _explosion;
 	Actor _sparkle;
-	ThorInfo _thor_info;
+	ThorInfo _thorInfo;
 	bool _boss_dead = false;
 	byte _endgame = 0;
 
-	bool _warp_flag = false;
+	bool _warpFlag = false;
 
 	int8 *_std_sound_start = nullptr;
 	int8 *_pcstd_sound_start = nullptr;
