@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-24 06:23+0000\n"
-"PO-Revision-Date: 2025-01-13 03:18+0000\n"
+"PO-Revision-Date: 2025-01-24 13:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10741,14 +10741,12 @@ msgstr ""
 "experiencia más completa."
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Activar la corrección de aspecto"
+msgstr "Activar corrección de gamma"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Aclara los gráficos para simular un monitor de Macintosh."
 
 #: engines/scumm/dialogs.cpp:1305
 msgid "Overture Timing:"
