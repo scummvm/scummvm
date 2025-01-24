@@ -72,13 +72,21 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 
 	VQAPlayer vqaPlayer(_vm, &_surfaceVideo, resNameNoVQASuffix + ".VQA"); // in original game _surfaceFront is used here, but for proper subtitles rendering we need separate surface
 
+	vqaPlayer.open();
+
+	// NOTE: The VQAPlayer::open():
+	// - calls VQAPlayer::close(), and that calls VQADecoder::close(), at its start to cleanup any previous state.
+	// - later it calls _decoder.loadStream() which also calls VQADecoder::close().
+	// Since VQADecoder::close() cleans up (deletes) the VQPTable,
+	// we need to do the allocation for it and loading of its values here, *after* vqaPlayer.open().
+	// The parsing of the VQP files is needed for the case of the non-interactive Blade Runner demo
+	// and the support of other old VQA files that have accompanying VQP files (eg. for demo reels for other Westwood games)
 	if (container == -2) {
 		// container value: -2 indicates potential existence of VQP file
 		if (!vqaPlayer.loadVQPTable(resNameNoVQASuffix + ".VQP")) {
 			debug("Unable to load VQP table");
 		}
 	}
-	vqaPlayer.open();
 
 	_vm->_vqaIsPlaying = true;
 	_vm->_vqaStopIsRequested = false;
