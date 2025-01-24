@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-23 23:39+0000\n"
+"POT-Creation-Date: 2025-01-24 06:23+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -365,7 +365,7 @@ msgstr "JSON-koden innehåller fel."
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:98 engines/vcruise/vcruise.cpp:108
+#: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -6727,7 +6727,7 @@ msgstr ""
 "nästa gång du startar spelet.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:364
+#: engines/vcruise/vcruise.cpp:345
 #, fuzzy
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -9309,12 +9309,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Kunde inte läsa spardata från filen."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -12647,11 +12647,11 @@ msgstr "Skippa aktuellt animation"
 msgid "Cycle item in scene (debug cheat)"
 msgstr "Cykla genom objekt i scenen (felsökningsfusk)"
 
-#: engines/vcruise/vcruise.cpp:89
+#: engines/vcruise/vcruise.cpp:87
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Detta spelkräver JPEG-stöd, vilket inte kompilerats in."
 
-#: engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:94
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12659,7 +12659,7 @@ msgstr ""
 "Musik för detta spel kräver Ogg Vorbis-stöd, vilket inte kompilerats in.\n"
 "Spelet kommer fortfarande att fungera, men utan musik."
 
-#: engines/vcruise/vcruise.cpp:106
+#: engines/vcruise/vcruise.cpp:104
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12667,15 +12667,15 @@ msgstr ""
 "Musik för detta spel kräver MP3-stöd, vilket inte kompilerats in.\n"
 "Spelet kommer fortfarande att fungera, men utan musik."
 
-#: engines/vcruise/vcruise.cpp:349
+#: engines/vcruise/vcruise.cpp:330
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Misslyckades med att ladda sparning, spardatan verkar vara skadad."
 
-#: engines/vcruise/vcruise.cpp:354
+#: engines/vcruise/vcruise.cpp:335
 msgid "Failed to read version information from save file."
 msgstr "Kunde inte läsa versionsinformation från sparfil."
 
-#: engines/vcruise/vcruise.cpp:374
+#: engines/vcruise/vcruise.cpp:355
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ett okänt fel inträffade vid inläsning av sparat spel."
 

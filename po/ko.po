@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-23 23:39+0000\n"
+"POT-Creation-Date: 2025-01-24 06:23+0000\n"
 "PO-Revision-Date: 2025-01-14 16:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -364,7 +364,7 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:98 engines/vcruise/vcruise.cpp:108
+#: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "확인"
@@ -7052,7 +7052,7 @@ msgstr ""
 "니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:364
+#: engines/vcruise/vcruise.cpp:345
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 불러올 수 없습니다."
@@ -9460,14 +9460,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "저장 파일에서 버전 정보를 읽기 실패함"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "저장 파일을 불러오는 데 실패했습니다. 저장 파일에 유효한 버전 정보가 없습니"
 "다."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -12688,11 +12688,11 @@ msgstr "현재 애니메이션 건너뛰기"
 msgid "Cycle item in scene (debug cheat)"
 msgstr "장면에서 아이템 순환 (디버그 치트)"
 
-#: engines/vcruise/vcruise.cpp:89
+#: engines/vcruise/vcruise.cpp:87
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "이 게임은 JPEG 지원이 필요하지만, 컴파일되지 않았습니다."
 
-#: engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:94
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12700,7 +12700,7 @@ msgstr ""
 "이 게임의 음악은 Ogg Vorbis 지원이 필요하지만, 컴파일되지 않았습니다.\n"
 "게임은 계속 플레이되지만, 음악은 없습니다."
 
-#: engines/vcruise/vcruise.cpp:106
+#: engines/vcruise/vcruise.cpp:104
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12708,16 +12708,16 @@ msgstr ""
 "이 게임의 음악은 MP3 지원이 필요하지만, 컴파일되지 않았습니다.\n"
 "게임은 계속 플레이되지만, 음악은 없습니다."
 
-#: engines/vcruise/vcruise.cpp:349
+#: engines/vcruise/vcruise.cpp:330
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장 데이터를 불러오는 데 실패했습니다, 저장 데이터가 손상된 것 같습니다."
 
-#: engines/vcruise/vcruise.cpp:354
+#: engines/vcruise/vcruise.cpp:335
 msgid "Failed to read version information from save file."
 msgstr "저장 파일에서 버전 정보를 읽는데 실패하였습니다."
 
-#: engines/vcruise/vcruise.cpp:374
+#: engines/vcruise/vcruise.cpp:355
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생했습니다."
 

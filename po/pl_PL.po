@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-23 23:39+0000\n"
+"POT-Creation-Date: 2025-01-24 06:23+0000\n"
 "PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -369,7 +369,7 @@ msgstr "Zawartość kodu JSON jest nieprawidłowa."
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:98 engines/vcruise/vcruise.cpp:108
+#: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -7166,7 +7166,7 @@ msgstr ""
 "się ponownie przy następnym uruchomieniu gry.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:364
+#: engines/vcruise/vcruise.cpp:345
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Zapisana gra została utworzona przy użyciu nowszej wersji ScummVM. Nie można "
@@ -9620,14 +9620,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Nie udało się odczytać wersji z pliku stany gry"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Nie udało się wczytać zapisu gry, plik zapisu nie zawiera prawidłowych "
 "informacji o wersji."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -12940,11 +12940,11 @@ msgstr "Pomiń bieżącą animację"
 msgid "Cycle item in scene (debug cheat)"
 msgstr "Przełączanie elementów na scenie (cheat debugowania)"
 
-#: engines/vcruise/vcruise.cpp:89
+#: engines/vcruise/vcruise.cpp:87
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Ta gra wymaga obsługi formatu JPEG, który nie został wkompilowany."
 
-#: engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:94
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12953,7 +12953,7 @@ msgstr ""
 "wkompilowana.\n"
 "Gra będzie działać, ale żadna muzyka nie będzie odtwarzana."
 
-#: engines/vcruise/vcruise.cpp:106
+#: engines/vcruise/vcruise.cpp:104
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -12961,15 +12961,15 @@ msgstr ""
 "Muzyka do tej gry wymaga obsługi MP3, która nie została wkompilowana.\n"
 "Gra będzie działać, ale żadna muzyka nie będzie odtwarzana."
 
-#: engines/vcruise/vcruise.cpp:349
+#: engines/vcruise/vcruise.cpp:330
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Nie udało się wczytać zapisu, dane zapisu wydają się być uszkodzone."
 
-#: engines/vcruise/vcruise.cpp:354
+#: engines/vcruise/vcruise.cpp:335
 msgid "Failed to read version information from save file."
 msgstr "Nie udało się odczytać informacji o wersji z pliku zapisu."
 
-#: engines/vcruise/vcruise.cpp:374
+#: engines/vcruise/vcruise.cpp:355
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Wystąpił nieznany błąd podczas próby wczytania zapisanej gry."
 
