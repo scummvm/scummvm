@@ -626,7 +626,7 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 
 	// HACK: FIXME: Hard coded for now
 	const int sensitivity = 10;
-	const float speedFactor = 0.1f; 
+	const float speedFactor = 0.1f;
 
 	int16 mouseDeltaX = x - _prevMouseX;
 	int16 mouseDeltaY = y - _prevMouseY;
@@ -639,10 +639,10 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 	if (ABS(mouseDeltaY) >= sensitivity) {
 		int newFrame = track->getCurFrame() - round(speedY) * _nav.columns;
 
-		if (newFrame >= 0 && newFrame < track->getFrameCount())
+		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
 			track->setCurFrame(newFrame);
-
-		changed = true;
+			changed = true;
+		}
 	}
 
 	if (ABS(mouseDeltaX) >= sensitivity) {
@@ -651,9 +651,10 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 
 		int newFrame = (track->getCurFrame() - (int)roundf(speedX) - currentRowStart) % _nav.columns + currentRowStart;
 
-		track->setCurFrame(newFrame);
-
-		changed = true;
+		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
+			track->setCurFrame(newFrame);
+			changed = true;
+		}
 	}
 
 	if (changed) {
