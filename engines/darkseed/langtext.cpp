@@ -38,8 +38,34 @@ const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18n
 	case Common::ES_ESP : return i18nTextWithPosition.es;
 	case Common::FR_FRA : return i18nTextWithPosition.fr;
 	case Common::DE_DEU : return i18nTextWithPosition.de;
+	case Common::KO_KOR : return i18nTextWithPosition.ko;
 	default : return i18nTextWithPosition.en;
 	}
+}
+
+Common::U32String convertToU32String(const char *text, Common::Language language) {
+	uint len = strlen(text);
+	switch (language) {
+	case Common::ZH_ANY:
+	case Common::KO_KOR: {
+		Common::U32String str;
+		for (int i = 0; i < len; i++) {
+			uint8 byte = text[i];
+			if (byte & 0x80) {
+				if (i < len - 1) {
+					uint8 byte2 = text[i + 1];
+					str += (int)byte << 8 | byte2;
+					i++;
+				}
+			} else {
+				str += byte;
+			}
+		}
+		return str;
+	}
+	default : break;
+	}
+	return Common::U32String(text);
 }
 
 } // End of namespace Darkseed

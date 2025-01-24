@@ -22,6 +22,8 @@
 #ifndef DARKSEED_LANGTEXT_H
 #define DARKSEED_LANGTEXT_H
 
+#include "common/language.h"
+
 namespace Darkseed {
 
 struct I18nText {
@@ -42,10 +44,14 @@ struct I18NTextWithPosition {
 	const TextWithPosition es;
 	const TextWithPosition fr;
 	const TextWithPosition de;
+	const TextWithPosition ko;
+
 };
 
 const char *getI18NText(const I18nText &text);
 const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18nTextWithPosition);
+
+Common::U32String convertToU32String(const char *text, Common::Language language);
 
 constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"You see the car keys in the ignition.",

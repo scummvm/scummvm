@@ -31,47 +31,53 @@ constexpr I18NTextWithPosition kMenu_load = {
 	{127, 62, "Load"},
 	{119, 62, "CARGAR"},
 	{118, 62, "CHARGER"},
-	{121, 62, "LADEN"}
+	{121, 62, "LADEN"},
+	{120, 62, "\xA6\x89\x9C\xE1\x90\x91"}
 };
 
 constexpr I18NTextWithPosition kMenu_silent = {
 	{123, 136, "Silent"},
 	{115, 136, "SIN SON"},
 	{118, 136, "SILENCE"},
-	{129, 136, "RUHE"}
+	{129, 136, "RUHE"},
+	{121, 136, "\xB7q\xAD\xA1\x88\xE1"}
 };
 
 constexpr I18NTextWithPosition kMenu_sounds = {
 	{117, 136, "Sounds"},
 	{121, 136, "SONIDO"},
 	{126, 136, "SONS"},
-	{123, 136, "SOUND"}
+	{123, 136, "SOUND"},
+	{128, 136, "\xB7q\xD0\xB7"}
 };
 
 constexpr I18NTextWithPosition kMenu_save = {
 	{127, 99, "Save"},
 	{119, 99, "GRABAR"},
 	{121, 99, "SAUVER"},
-	{115, 99, "SICHERN"}
+	{115, 99, "SICHERN"},
+	{128, 99, "\xB8\xE1\xB8w"}
 };
 
 constexpr I18NTextWithPosition kMenu_resume = {
 	{118, 173, "Resume"},
 	{122, 173, "SEQUIR"},
 	{124, 173, "JOUER"},
-	{118, 173, "WEITER"}
+	{118, 173, "WEITER"},
+	{128, 173, "\xA5\xA2\x8A\xE1"}
 };
 
 constexpr I18NTextWithPosition kMenu_quit = {
 	{129, 210, "Quit"},
 	{125, 210, "SALIR"},
 	{117, 210, "QUITTER"},
-	{129, 210, "ENDE"}
+	{129, 210, "ENDE"},
+	{119, 210, "\x8F{\xA0""a\xC3\xB1"}
 };
 
 void drawMenuItem(const I18NTextWithPosition &menuText) {
 	const TextWithPosition &textWithPosition = getI18NTextWithPosition(menuText);
-	g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, Common::U32String(textWithPosition.text));
+	g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, convertToU32String(textWithPosition.text, g_engine->getLanguage()));
 }
 
 void Menu::drawSoundMenuItem() {

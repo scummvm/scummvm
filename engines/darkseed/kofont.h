@@ -33,6 +33,8 @@ private:
 	Common::Array<Common::Array<uint8>> _fontDataSet1;
 	Common::Array<Common::Array<uint8>> _fontDataSet2;
 	Common::Array<Common::Array<uint8>> _fontDataSet3;
+	Common::Array<Common::Array<uint8>> _fontDataSetOther;
+
 	GameFont *_gameFont;
 
 public:
@@ -45,13 +47,15 @@ public:
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
-	void loadFontDataSet(Common::Array<Common::Array<uint8>> &dataSet, int size, Common::File &file);
-	void loadFontGlyph(Common::Array<uint8> &pixels, Common::File &file);
+	void loadFontDataSet(Common::Array<Common::Array<uint8>> &dataSet, int size, int packedGlyphSize, Common::File &file);
+	void loadFontGlyph(Common::Array<uint8> &pixels, int packedGlyphSize, Common::File &file);
 
 	void createGlyph(uint8 *pixels, uint32 chr) const;
 	void addToGlyph(uint8 *destPixels, int16 index) const;
 	void addPixels(uint8 *destPixels, const Common::Array<uint8> &pixels) const;
 	void extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4) const;
+	int getOtherCharIdx(uint32 chr) const;
+	void drawOtherGlyph(Graphics::Surface *dst, uint8 chr, int x, int y) const;
 };
 
 } // namespace Darkseed

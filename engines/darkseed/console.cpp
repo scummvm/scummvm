@@ -27,7 +27,7 @@
 
 namespace Darkseed {
 
-static constexpr Common::Rect consoleArea = {{0x70, 279}, 416, 49};
+static constexpr Common::Rect consoleArea = {{0x70, 277}, 416, 51};
 
 Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sound) {
 	switch (g_engine->getLanguage()) {

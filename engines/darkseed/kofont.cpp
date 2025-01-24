@@ -30,10 +30,18 @@ KoFont::KoFont() {
 		error("Error: failed to open k16.bin");
 	}
 
-	loadFontDataSet(_fontDataSet1, 191, fontData);
-	loadFontDataSet(_fontDataSet2, 85, fontData);
-	loadFontDataSet(_fontDataSet3, 109, fontData);
+	loadFontDataSet(_fontDataSet1, 191, 64, fontData);
+	loadFontDataSet(_fontDataSet2, 85, 64, fontData);
+	loadFontDataSet(_fontDataSet3, 109, 64, fontData);
 
+	Common::File fontOthersData;
+	if (!fontOthersData.open("others.bin")) {
+		error("Error: failed to open others.bin");
+	}
+
+	loadFontDataSet(_fontDataSetOther, 20, 32, fontOthersData);
+
+	fontOthersData.close();
 	fontData.close();
 
 	_gameFont = new GameFont();
@@ -43,20 +51,20 @@ KoFont::~KoFont() {
 	delete _gameFont;
 }
 
-void KoFont::loadFontDataSet(Common::Array<Common::Array<uint8> > &dataSet, int size, Common::File &file) {
+void KoFont::loadFontDataSet(Common::Array<Common::Array<uint8> > &dataSet, int size, int packedGlyphSize, Common::File &file) {
 	dataSet.resize(size);
 
 	for (int i = 0; i < size; i++) {
-		dataSet[i].resize(16 * 16, 0);
-		loadFontGlyph(dataSet[i], file);
+		dataSet[i].resize(packedGlyphSize * 4, 0);
+		loadFontGlyph(dataSet[i], packedGlyphSize, file);
 	}
 }
 
 static constexpr uint8 kFontPal[4] = {0, 2, 4, 11};
 
-void KoFont::loadFontGlyph(Common::Array<uint8> &pixels, Common::File &file) {
+void KoFont::loadFontGlyph(Common::Array<uint8> &pixels, int packedGlyphSize, Common::File &file) {
 	// Unpack 2bpp font data into 8bpp
-	for (int i = 0; i < 64; i++) {
+	for (int i = 0; i < packedGlyphSize; i++) {
 		uint8 byte = file.readByte();
 		for (int j = 0; j < 4; j++) {
 			pixels[i * 4 + j] = kFontPal[(byte >> (3 - j) * 2) & 3];
@@ -75,6 +83,9 @@ int KoFont::getMaxCharWidth() const {
 
 int KoFont::getCharWidth(uint32 chr) const {
 	if (chr < 128) {
+		if (getOtherCharIdx(chr) != -1) {
+			return 10;
+		}
 		return _gameFont->getCharWidth(chr);
 	}
 	return getMaxCharWidth();
@@ -192,32 +203,63 @@ void KoFont::extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *p
 	iVar2 = (charIdx & 31) * 2;
 	uVar5 = (charIdx << 1) >> 5 & 62;
 	uVar4 = (charIdx << 1) >> 10 & 62;
-	uVar1 = SHORT_ARRAY_1000_020a[uVar5/2];
+	uVar1 = SHORT_ARRAY_1000_020a[uVar5 / 2];
 	if (uVar1 > 0) {
-		uVar1 += SHORT_ARRAY_1000_028a[uVar4/2] + SHORT_ARRAY_1000_034a[iVar2/2] - 3;
+		uVar1 += SHORT_ARRAY_1000_028a[uVar4 / 2] + SHORT_ARRAY_1000_034a[iVar2 / 2] - 3;
 	}
-	uVar4 = SHORT_ARRAY_1000_01ca[uVar4/2];
+	uVar4 = SHORT_ARRAY_1000_01ca[uVar4 / 2];
 	if (uVar4 > 0) {
-		uVar4 += SHORT_ARRAY_1000_02ca[uVar5/2] + SHORT_ARRAY_1000_034a[iVar2/2];
+		uVar4 += SHORT_ARRAY_1000_02ca[uVar5 / 2] + SHORT_ARRAY_1000_034a[iVar2 / 2];
 	}
-	uVar3 = SHORT_ARRAY_1000_024a[iVar2/2];
+	uVar3 = SHORT_ARRAY_1000_024a[iVar2 / 2];
 	if (uVar3 > 0) {
-		uVar3 += SHORT_ARRAY_1000_030a[uVar5/2] - 3;
+		uVar3 += SHORT_ARRAY_1000_030a[uVar5 / 2] - 3;
 	}
 	*param_2 = uVar4 >> 5;
 	*param_3 = (uVar1 >> 5) - 2;
 	*param_4 = (uVar3 >> 5) - 2;
 }
 
+int KoFont::getOtherCharIdx(uint32 chr) const {
+	switch (chr) {
+	case '!':
+		return 2;
+	case '"':
+		return 6;
+	case '(':
+		return 3;
+	case ')':
+		return 4;
+	case ',':
+		return 0;
+	case '.':
+		return 1;
+	case '?':
+		return 5;
+	default:
+		break;
+	}
+	return -1;
+}
+
+void KoFont::drawOtherGlyph(Graphics::Surface *dst, uint8 chr, int x, int y) const {
+	g_engine->_screen->copyRectToSurfaceWithKey(_fontDataSetOther[chr].data(), 8, x, y, 8, 16,0xf);
+}
+
 void KoFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	if (chr < 128) {
-		_gameFont->drawChar(dst, chr, x, y, color);
+		int otherCharIdx = getOtherCharIdx(chr);
+		if (otherCharIdx != -1) {
+			drawOtherGlyph(dst, (uint8)otherCharIdx, x, y);
+		} else {
+			_gameFont->drawChar(dst, chr, x, y, color);
+		}
 		return;
 	}
 	uint8 pixels[256];
 	memset(pixels, 0, 256);
 	createGlyph(pixels, chr);
-	g_engine->_screen->copyRectToSurfaceWithKey(pixels, 16, x, y, 16, 16,0xf);
+	g_engine->_screen->copyRectToSurfaceWithKey(pixels, 16, x, y - 2, 16, 16,0xf);
 }
 
 
