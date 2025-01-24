@@ -27,6 +27,12 @@
 
 namespace ZVision {
 
+struct MutationPoint {
+  uint8 Xweight = 0;
+  uint8 Yweight = 0;
+  Common::Rect PixelBlock = Common::Rect(0,0);
+};
+
 class RenderTable {
 public:
 	RenderTable(uint numRows, uint numColumns);
@@ -40,12 +46,14 @@ public:
 	};
 
 private:
-	uint _numColumns, _numRows;
+	uint _numColumns, _numRows; //Working area width, height
 	Common::Point *_internalBuffer;
+//  MutationPoint *_internalBuffer;
 	RenderState _renderState;
+	bool highQuality = false;
 
 	struct {
-		float fieldOfView;
+		float verticalFOV;  //Radians
 		float linearScale;
 		bool reverse;
 		uint16 zeroPoint;
@@ -53,7 +61,7 @@ private:
 
 	// TODO: See if tilt and panorama need to have separate options
 	struct {
-		float fieldOfView;
+		float verticalFOV;  //Radians
 		float linearScale;
 		bool reverse;
 		float gap;
@@ -71,14 +79,14 @@ public:
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
 	void generateRenderTable();
 
-	void setPanoramaFoV(float fov);
+	void setPanoramaFoV(float fov); //Degrees
 	void setPanoramaScale(float scale);
 	void setPanoramaReverse(bool reverse);
 	void setPanoramaZeroPoint(uint16 point);
 	uint16 getPanoramaZeroPoint();
 	bool getPanoramaReverse();
 
-	void setTiltFoV(float fov);
+	void setTiltFoV(float fov); //Degrees
 	void setTiltScale(float scale);
 	void setTiltReverse(bool reverse);
 
@@ -88,6 +96,7 @@ public:
 
 private:
 	void generatePanoramaLookupTable();
+//	Common::Point generatePanoramaLookupPoint();
 	void generateTiltLookupTable();
 };
 
