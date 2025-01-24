@@ -411,6 +411,7 @@ void FreescapeEngine::playMusic(const Common::Path &filename) {
 	Audio::SeekableAudioStream *stream = nullptr;
 	stream = Audio::SeekableAudioStream::openStreamFile(filename);
 	if (stream) {
+		_mixer->stopHandle(_musicHandle);
 		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(stream, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loop);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxChannelVolume / 10);
@@ -452,7 +453,7 @@ void FreescapeEngine::stopAllSounds() {
 
 void FreescapeEngine::waitForSounds() {
 	if (_usePrerecordedSounds || isAmiga() || isAtariST())
-		while (_mixer->isSoundIDActive(-1))
+		while (_mixer->isSoundHandleActive(_soundFxHandle))
 			g_system->delayMillis(10);
 	else {
 		while (!_speaker->endOfStream())
@@ -462,7 +463,7 @@ void FreescapeEngine::waitForSounds() {
 
 bool FreescapeEngine::isPlayingSound() {
 	if (_usePrerecordedSounds || isAmiga() || isAtariST())
-		return _mixer->isSoundIDActive(-1);
+		return _mixer->isSoundHandleActive(_soundFxHandle);
 
 	return (!_speaker->endOfStream());
 }

@@ -265,6 +265,8 @@ void DarkEngine::initGameState() {
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastMinute = minutes;
 	_lastTenSeconds = seconds / 10;
+	// Start playing music, if any, in any supported format
+	playMusic("Dark Side Theme");
 }
 
 void DarkEngine::loadAssets() {
