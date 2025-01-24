@@ -2639,6 +2639,10 @@ EOF
 
 set_flag_if_supported -Wglobal-constructors
 
+# 307200 is a 640x480 CLUT8 buffer.
+# It's an arbitrary not too large but not too small either value.
+set_flag_if_supported -Wframe-larger-than=307200
+
 # If the compiler supports the -Wundefined-var-template flag, silence that warning.
 # We get this warning a lot with regard to the Singleton class as we explicitly
 # instantiate each specialisation. An alternate way to deal with it would be to
