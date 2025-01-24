@@ -61,10 +61,10 @@ static SQInteger aux_printerror(HSQUIRRELVM v) {
 }
 
 static void printfunc(HSQUIRRELVM, const SQChar *s, ...) {
-	char buf[1024 * 1024];
+	char buf[100 * 1024];
 	va_list vl;
 	va_start(vl, s);
-	vsnprintf(buf, 1024 * 1024, s, vl);
+	vsnprintf(buf, 100 * 1024, s, vl);
 	va_end(vl);
 
 	debug("TWP: %s", buf);
