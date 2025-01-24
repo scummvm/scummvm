@@ -494,8 +494,8 @@ void Room::tug3UseCommunicator() {
 			playMidiMusicTracks(MIDITRACK_NONE);
 
 			_awayMission->disableInput = true;
-			if (_awayMission->tug.missionScore < 0)
-				_awayMission->tug.missionScore = 0;
+			// FIXME: Why do we need to clip the mission score? It shouldn't have gone above 32
+			_awayMission->tug.missionScore = CLIP<int16>(_awayMission->tug.missionScore, 0, 32);
 			endMission(_awayMission->tug.missionScore, _awayMission->tug.field2b, _awayMission->tug.field2d);
 		}
 	}
@@ -586,8 +586,8 @@ void Room::tug3SecurityTeamBeamedIn() {
 
 	playMidiMusicTracks(MIDITRACK_NONE);
 	_awayMission->disableInput = true;
-	if (_awayMission->tug.missionScore < 0)
-		_awayMission->tug.missionScore = 0;
+	// FIXME: Why do we need to clip the mission score? It shouldn't have gone above 32
+	_awayMission->tug.missionScore = CLIP<int16>(_awayMission->tug.missionScore, 0, 32);
 	endMission(_awayMission->tug.missionScore, _awayMission->tug.field2b, _awayMission->tug.field2d);
 }
 
