@@ -137,18 +137,21 @@ bool Cutscene::introScene() {
 				{0, 0, ""},
 				{0, 0, ""},
 				{41, 145, "DEVELOPPE DE NOUVELLES METHODE"},
-				{68, 145, "DIE ENTWICKLUNG NEUER, SIE IN"}
+				{68, 145, "DIE ENTWICKLUNG NEUER, SIE IN"},
+				{0, 0, ""}
 			});
 			displayTitleText({
 				{0, 0, ""},
 				{0, 0, ""},
 				{142, 175, "POUR VOUS SURPRENDRE"},
-				{60, 175, "ERSTAUNEN VERSETZENDER WEGE..."}
+				{60, 175, "ERSTAUNEN VERSETZENDER WEGE..."},
+				{0, 0, ""}
 			});
 		} else {
 			displayTitleText({
 				{68, 160, "DEVELOPING NEW WAYS TO AMAZE"},
 				{0, 160, "CREANDO NUEVAS FORMAS DE DIVERTIRSE"},
+				{0, 0, ""},
 				{0, 0, ""},
 				{0, 0, ""}
 			});
@@ -193,7 +196,8 @@ bool Cutscene::introScene() {
 			{250, 160, "PRESENTS"},
 			{250, 160, "PRESENTA"},
 			{250, 160, "PRESENTE"},
-			{232, 160, "PRAESENTIERT"}
+			{232, 160, "PRAESENTIERT"},
+			{0, 0, ""}
 		});
 		g_engine->fadeIn(_palette);
 		break;
@@ -321,6 +325,7 @@ bool Cutscene::introScene() {
 				{155, 90, "EXECUTIVE PRODUCERS"},
 				{137, 90, "PRODUCTORES EJECUTIVOS"},
 				{119, 90, "DIRECTEURS DE PRODUCTION"},
+				{0, 0, ""},
 				{0, 0, ""}
 			});
 
@@ -342,7 +347,8 @@ bool Cutscene::introScene() {
 			{236, 95, "PRODUCERS"},
 			{218, 95, "PRODUCTORES"},
 			{218, 95, "PRODUCTEURS"},
-			{218, 95, "PRODUZENTEN"}
+			{218, 95, "PRODUZENTEN"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(200, 135, "HARALD SEELEY");
 		_titleFont->displayString(218, 165, "MIKE DAWSON");
@@ -360,7 +366,8 @@ bool Cutscene::introScene() {
 			{245, 95, "DESIGNERS"},
 			{227, 95, "DISENADORES"},
 			{218, 95, "DESSINATEURS"},
-			{254, 95, "DESIGNER"}
+			{254, 95, "DESIGNER"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(209, 135, "MIKE CRANFORD");
 		_titleFont->displayString(227, 165, "MIKE DAWSON");
@@ -378,7 +385,8 @@ bool Cutscene::introScene() {
 			{227, 95, "PROGRAMMERS"},
 			{203, 95, "PROGRAMADORES"},
 			{218, 95, "PROGRAMMEURS"},
-			{206, 95, "PROGRAMMIERER"}
+			{206, 95, "PROGRAMMIERER"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
 		_titleFont->displayString(227, 165, "JOHN KRAUSE");
@@ -397,7 +405,8 @@ bool Cutscene::introScene() {
 			{200, 100, "MUSICAL SCORE"},
 			{206, 100, "BANDA SONORA"},
 			{200, 100, "THEME MUSICAL"},
-			{214, 100, "MUSIKSTUECKE"}
+			{214, 100, "MUSIKSTUECKE"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(200, 140, "GREGORY ALPER");
 		g_engine->_screen->makeAllDirty();
@@ -414,7 +423,8 @@ bool Cutscene::introScene() {
 			{119, 100, "MUSIC AND SOUND EFFECTS"},
 			{89, 100, "MUSICA Y EFECTOS DE SONIDO"},
 			{92, 100, "MUSIQUE ET EFFETS SONORES"},
-			{128, 100, "MUSIK-UND SOUNDEFFEKTE"}
+			{128, 100, "MUSIK-UND SOUNDEFFEKTE"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(200, 140, "DAVID A. BEAN");
 		g_engine->_screen->makeAllDirty();
@@ -436,7 +446,8 @@ bool Cutscene::introScene() {
 				{218, 100, "ART DIRECTOR"},
 				{176, 100, "DIRECTOR ARTISTICO"},
 				{146, 100, "DIRECTEUR ARTISTIQUE"},
-				{0, 100, ""}
+				{0, 100, ""},
+				{0, 0, ""}
 			});
 			_titleFont->displayString(236, 140, "BRUMMBAER");
 		}
@@ -458,13 +469,15 @@ bool Cutscene::introScene() {
 				{0, 0, ""},
 				{206, 100, "AYUDANTE DEL"},
 				{218, 100, "ASSISTANT DU"},
-				{119, 100, "ASSISTENZ DER KUNST-UND"}
+				{119, 100, "ASSISTENZ DER KUNST-UND"},
+				{0, 0, ""}
 			});
 			displayTitleText({
 				{0, 0, ""},
 				{176, 130, "DIRECTOR ARTISTICO"},
 				{150, 130, "DIRECTEUR ARTISTIQUE"},
-				{167, 130, "ANIMATIONSDIREKTION"}
+				{167, 130, "ANIMATIONSDIREKTION"},
+				{0, 0, ""}
 			});
 			_titleFont->displayString(191, 170, "PAUL DRZEWIECKI");
 		}
@@ -482,7 +495,8 @@ bool Cutscene::introScene() {
 			{200, 100, "DARK WORLD ART"},
 			{104, 100, "GRAFICOS DEL MUNDO OSCURO"},
 			{137, 100, "L'ART DU MONDE OBSCUR"},
-			{188, 100, "DARK-WORLD-KUNST"}
+			{188, 100, "DARK-WORLD-KUNST"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(245, 140, "H.R. GIGER");
 		g_engine->_screen->makeAllDirty();
@@ -507,7 +521,8 @@ bool Cutscene::introScene() {
 				{182, 90, "COMPUTER ARTISTS"},
 				{242, 90, "GRAFISTAS"},
 				{0, 0, ""},
-				{107, 90, "COMPUTERGRAFIK-KUENSTLER"}
+				{107, 90, "COMPUTERGRAFIK-KUENSTLER"},
+				{0, 0, ""}
 			});
 			_titleFont->displayString(227, 130, "JULIA ULANO");
 			_titleFont->displayString(191, 160, "JOBY ROME-OTERO");
@@ -527,7 +542,8 @@ bool Cutscene::introScene() {
 			{236, 100, "GAME TEXT"},
 			{194, 100, "TEXTO DEL JUEGO"},
 			{173, 100, "LE TEXTE DU JEUX"},
-			{281, 100, "TEXTE"}
+			{281, 100, "TEXTE"},
+			{0, 0, ""}
 		});
 		_titleFont->displayString(209, 140, "MICHEL HORVAT");
 		g_engine->_screen->makeAllDirty();
