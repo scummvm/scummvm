@@ -324,7 +324,19 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 }
 
 void MediaStationEngine::branchToScreen(uint32 contextId) {
+	if (_currentContext != nullptr) {
+		EventHandler *exitEvent = _currentContext->_screenAsset->_eventHandlers.getValOrDefault(kExitEvent);
+		if (exitEvent != nullptr) {
+			debugC(5, kDebugScript, "Executing context exit event handler");
+			exitEvent->execute(_currentContext->_screenAsset->_id);
+		} else {
+			debugC(5, kDebugScript, "No context exit event handler");
+		}
+	}
+
 	Context *context = loadContext(contextId);
+	_currentContext = context;
+
 	if (context->_screenAsset != nullptr) {
 		// TODO: Make the screen an asset just like everything else so we can
 		// run event handlers with runEventHandlerIfExists.

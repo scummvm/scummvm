@@ -86,6 +86,7 @@ public:
 
 	Graphics::Screen *_screen = nullptr;
 	Audio::Mixer *_mixer = nullptr;
+	Context *_currentContext = nullptr;
 
 	// All Media Station titles run at 640x480.
 	const uint16 SCREEN_WIDTH = 640;
