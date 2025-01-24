@@ -46,6 +46,8 @@ const char *opcodeToStr(Opcode opcode) {
 		return "AssignVariable";
 	case kOpcodeOr:
 		return "Or";
+	case kOpcodeNot:
+		return "Not";
 	case kOpcodeAnd:
 		return "And";
 	case kOpcodeEquals:

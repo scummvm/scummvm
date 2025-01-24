@@ -143,6 +143,28 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
+		case kOpcodeNot: {
+			debugCN(5, kDebugScript, "\n    value: ");
+			Operand value = executeNextStatement();
+
+			Operand returnValue(kOperandTypeLiteral1);
+			bool logicalNot = !(static_cast<bool>(value.getInteger()));
+			returnValue.putInteger(static_cast<uint>(logicalNot));
+			return returnValue;
+		}
+
+		case kOpcodeAnd: {
+			debugCN(5, kDebugScript, "\n    value: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue(kOperandTypeLiteral1);
+			bool logicalAnd = (value1 && value2);
+			returnValue.putInteger(static_cast<uint>(logicalAnd));
+			return returnValue;
+		}
+
 		case kOpcodeIfElse: {
 			debugCN(5, kDebugScript, "\n    condition: ");
 			Operand condition = executeNextStatement();

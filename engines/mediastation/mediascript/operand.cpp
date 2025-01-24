@@ -347,6 +347,35 @@ bool Operand::operator||(const Operand &other) const {
 	}
 }
 
+bool Operand::operator!() const {
+	Operand literalValue = getLiteralValue();
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (literalValue.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		return !literalValue.getInteger();
+
+	default:
+		error("Operand::operator!(): Unsupported operand type %d", static_cast<uint>(literalValue.getType()));
+	}
+}
+
+bool Operand::operator&&(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		return lhs.getInteger() && rhs.getInteger();
+
+	default:
+		error("Operand::operator&&(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	}
+}
+
 Operand Operand::operator+(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();

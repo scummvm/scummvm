@@ -36,6 +36,7 @@ enum Opcode {
 	kOpcodeIfElse = 202,
 	kOpcodeAssignVariable = 203,
 	kOpcodeOr = 204,
+	kOpcodeNot = 205,
 	kOpcodeAnd = 206,
 	kOpcodeEquals = 207,
 	kOpcodeNotEquals = 208,
