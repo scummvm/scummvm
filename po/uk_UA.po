@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-24 06:23+0000\n"
-"PO-Revision-Date: 2025-01-03 15:47+0000\n"
+"PO-Revision-Date: 2025-01-24 23:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7546,10 +7546,8 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Підтримку для Versailles 1685 не скомпільовано"
 
 #: engines/darkseed/darkseed.cpp:66
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "Не вдалося знайти файл даних движка %s."
+msgstr "Не вдалося знайти файл даних движка darkseed.dat."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
@@ -8036,17 +8034,15 @@ msgstr "Вогонь"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Магія"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Тор помирає"
 
 #: engines/got/got.cpp:181 engines/got/got.cpp:191
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Збереження гри наразі неможливе"
+msgstr "Збереження гри неможливе у демо-режимі"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -10595,14 +10591,12 @@ msgstr ""
 "підтвердження виходу\" для більш логічної повединки."
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Корекцію співвідношення сторін увімкнено"
+msgstr "Увімкнути гамма-корекцію"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Підвищити яскравість графіки для симуляції монітору Macintosh."
 
 #: engines/scumm/dialogs.cpp:1305
 msgid "Overture Timing:"
@@ -11460,24 +11454,21 @@ msgstr ""
 "шрифтів."
 
 #: engines/scumm/scumm.cpp:1341
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the '%s' Macintosh executable to read resources from. "
-#| "Music and Mac GUI will be disabled"
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
 "Не вдалося знайти файл програми '%s' Macintosh аби прочитати з нього "
-"ресурси. Музику та Mac GUI буде вимкнено"
+"ресурси. %s буде вимкнено."
 
 #: engines/scumm/scumm.cpp:1342
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Mac GUI"
 
 #: engines/scumm/scumm.cpp:1342
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Музику та Mac GUI"
 
 #: engines/scumm/scumm.cpp:1362
 #, c-format
