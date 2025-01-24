@@ -36,9 +36,15 @@ namespace Tony {
 
 class RMSnapshot {
 private:
+	static const int BUFFER_SIZE = RM_SX *RM_SY * 3;
 	// Buffer used to convert to RGB
-	byte _rgb[RM_SX *RM_SY * 3];
+	byte *_rgb;
 public:
+	RMSnapshot() : _rgb(new byte[BUFFER_SIZE]) {}
+	~RMSnapshot() {
+		delete[] _rgb;
+	}
+
 	/**
 	 * Take a screenshot
 	 */
