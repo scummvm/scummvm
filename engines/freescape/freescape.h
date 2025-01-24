@@ -129,6 +129,8 @@ struct CGAPaletteEntry {
 	byte *palette;
 };
 
+extern Common::String shiftStr(const Common::String &str, int shift);
+
 class EventManagerWrapper {
 public:
 	EventManagerWrapper(Common::EventManager *delegate);

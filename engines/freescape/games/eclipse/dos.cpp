@@ -120,7 +120,8 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(_currentArea->_name, 102, 135, black, yellow, surface);
 
 	Common::String scoreStr = Common::String::format("%07d", score);
-	drawStringInSurface(scoreStr, 136, 6, black, white, surface, 'Z' - '0' + 1);
+	Common::String encodedScoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
+	drawStringInSurface(encodedScoreStr, 136, 6, black, white, surface);
 
 	int x = 171;
 	if (shield < 10)
@@ -131,13 +132,13 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	Common::String shieldStr = Common::String::format("%d", shield);
 	drawStringInSurface(shieldStr, x, 162, black, redish, surface);
 
-	drawStringInSurface(Common::String('0' - _angleRotationIndex), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
-	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, black, yellow, surface, 'Z' - '$' + 1);
-	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 135, black, yellow, surface, 'Z' - '$' + 1);
+	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 135, black, yellow, surface);
+	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 135, black, yellow, surface);
+	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 135, black, yellow, surface);
 
 	if (_shootingFrames > 0) {
-		drawStringInSurface("4", 232, 135, black, yellow, surface, 'Z' - '$' + 1);
-		drawStringInSurface("<", 240, 135, black, yellow, surface, 'Z' - '$' + 1);
+		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), 232, 135, black, yellow, surface);
+		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1), 240, 135, black, yellow, surface);
 	}
 	drawAnalogClock(surface, 90, 172, black, red, white);
 

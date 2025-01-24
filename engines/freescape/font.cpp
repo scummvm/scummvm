@@ -24,6 +24,16 @@
 
 namespace Freescape {
 
+Common::String shiftStr(const Common::String &str, int shift) {
+	Common::String result;
+	for (int i = 0; i < int(str.size()); i++) {
+		int c = shift + str[i];
+		assert(c < 256);
+		result += char(c);
+	}
+	return result;
+}
+
 Font::Font() {
 	_backgroundColor = 0;
 	_secondaryColor = 0;
@@ -174,7 +184,8 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtari(Co
 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
 	Common::String ustr = str;
-	ustr.toUppercase();
+	if (!isEclipse())
+		ustr.toUppercase();
 	_font.setBackground(backColor);
 	_font.drawString(surface, ustr, x, y, _screenW, fontColor);
 }
