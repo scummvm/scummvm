@@ -193,6 +193,58 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
+		case kOpcodeNotEquals: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			// TODO: Confirm this is the correct value type?
+			Operand returnValue(kOperandTypeLiteral1);
+			bool notEqual = !(value1 == value2);
+			returnValue.putInteger(static_cast<uint>(notEqual));
+			return returnValue;
+		}
+
+		case kOpcodeLessThan: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			// TODO: Confirm this is the correct value type?
+			Operand returnValue(kOperandTypeLiteral1);
+			bool lessThan = (value1 < value2);
+			returnValue.putInteger(static_cast<uint>(lessThan));
+			return returnValue;
+		}
+
+		case kOpcodeGreaterThan: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			// TODO: Confirm this is the correct value type?
+			Operand returnValue(kOperandTypeLiteral1);
+			bool greaterThan = (value1 > value2);
+			returnValue.putInteger(static_cast<uint>(greaterThan));
+			return returnValue;
+		}
+
+		case kOpcodeLessThanOrEqualTo: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			// TODO: Confirm this is the correct value type?
+			Operand returnValue(kOperandTypeLiteral1);
+			bool lessThanOrEqualTo = (value1 < value2) || (value1 == value2);
+			returnValue.putInteger(static_cast<uint>(lessThanOrEqualTo));
+			return returnValue;
+		}
+
 		case kOpcodeGreaterThanOrEqualTo: {
 			debugCN(5, kDebugScript, "\n    lhs: ");
 			Operand value1 = executeNextStatement();
@@ -201,7 +253,7 @@ Operand CodeChunk::executeNextStatement() {
 
 			// TODO: Confirm this is the correct value type?
 			Operand returnValue(kOperandTypeLiteral1);
-			bool greaterThanOrEqualTo = value1 >= value2;
+			bool greaterThanOrEqualTo = (value1 > value2) || (value1 == value2);
 			returnValue.putInteger(static_cast<uint>(greaterThanOrEqualTo));
 			return returnValue;
 		}

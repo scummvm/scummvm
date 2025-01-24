@@ -62,7 +62,9 @@ public:
 	Operand getLiteralValue() const;
 
 	bool operator==(const Operand &other) const;
-	bool operator>=(const Operand &other) const;
+	bool operator<(const Operand &other) const;
+	bool operator>(const Operand &other) const;
+
 	bool operator||(const Operand &other) const;
 
 	Operand operator-(const Operand &other) const;

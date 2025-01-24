@@ -270,9 +270,10 @@ Operand Operand::getLiteralValue() const {
 bool Operand::operator==(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();
-	// TODO: Maybe some better type checking here. If the types being compared end up being incompatible, the respective get
-	// method on the rhs will raise the error. But better might be checking
-	// both before we try getting values to report a more descriptive error.
+	// TODO: Maybe some better type checking here. If the types being compared 
+	// end up being incompatible, the respective get method on the rhs will 
+	// raise the error. But better might be checking both before we try getting 
+	// values to report a more descriptive error.
 	switch (lhs.getType()) {
 	case kOperandTypeLiteral1: 
 	case kOperandTypeLiteral2:
@@ -293,7 +294,7 @@ bool Operand::operator==(const Operand &other) const {
 	}
 }
 
-bool Operand::operator>=(const Operand &other) const {
+bool Operand::operator<(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();
 	// If the types being compared end up being incompatible, the respective get
@@ -301,14 +302,33 @@ bool Operand::operator>=(const Operand &other) const {
 	switch (lhs.getType()) {
 	case kOperandTypeLiteral1: 
 	case kOperandTypeLiteral2:
-		return lhs.getInteger() >= rhs.getInteger();
+		return lhs.getInteger() < rhs.getInteger();
 
 	case kOperandTypeFloat1:
 	case kOperandTypeFloat2:
-		return lhs.getDouble() >= rhs.getDouble();
+		return lhs.getDouble() < rhs.getDouble();
 
 	default:
-		error("Operand::operator>=(): Unsupported operand types %d and %d", static_cast<uint>(lhs.getType()), static_cast<uint>(rhs.getType()));
+		error("Operand::operator<(): Unsupported operand types %d and %d", static_cast<uint>(lhs.getType()), static_cast<uint>(rhs.getType()));
+	}
+}
+
+bool Operand::operator>(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		return lhs.getInteger() > rhs.getInteger();
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		return lhs.getDouble() > rhs.getDouble();
+
+	default:
+		error("Operand::operator>(): Unsupported operand types %d and %d", static_cast<uint>(lhs.getType()), static_cast<uint>(rhs.getType()));
 	}
 }
 
