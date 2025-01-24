@@ -81,7 +81,7 @@ void drawMenuItem(const I18NTextWithPosition &menuText) {
 }
 
 void Menu::drawSoundMenuItem() {
-	g_engine->_screen->fillRect({{115, 136}, 62, 11}, 0);
+	g_engine->_screen->fillRect({{115, 136}, 62, 13}, 0);
 	if (g_engine->_sound->isMuted()) {
 		drawMenuItem(kMenu_silent);
 	} else {
