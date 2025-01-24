@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-24 06:23+0000\n"
-"PO-Revision-Date: 2025-01-22 22:18+0000\n"
+"PO-Revision-Date: 2025-01-24 13:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4888,7 +4888,6 @@ msgid "Touch Controls"
 msgstr "Érintő irányítás"
 
 #: backends/platform/android/android.cpp:1117
-#, fuzzy
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4964,89 +4963,73 @@ msgstr ""
 "Az érintő irányítás direkt módon történik. A mutató oda ugrik ahol megérinti "
 "a képernyőt (alapértelmezett a menüknél).\n"
 "\n"
-"  ![Direkt egér mód](mouse.png \"Direct mouse mode\"){w=10em}\n"
+"  ![Direkt egér mód](mouse.png \"Direkt egér mód\"){w=10em}\n"
 "\n"
 "### Tapipad emuláció \n"
 "\n"
 "Az érintő irányítás indirekt módon történik, mint egy laptop tapipadján.\n"
 "\n"
-"  ![Tapipad mód](touchpad.png \"Touchpad mode\"){w=10em}\n"
+"  ![Tapipad mód](touchpad.png \"Tapipad mód\"){w=10em}\n"
 "\n"
 "### Gamepad emuláció \n"
 "\n"
-"Fingers must be placed on lower left and right of the screen to emulate a "
-"directional pad and action buttons.\n"
+"Az ujjait helyezze a kép alsó jobb és bal sarkába, hogy így emulálja az "
+"irányválasztó irányzékait és az akciógombokat.\n"
 "\n"
-"  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
+"  ![Gamepad mód](gamepad.png \"Game mód\"){w=10em}\n"
 "\n"
-"To select the preferred touch mode for menus, 2D games, and 3D games, go to "
-"**Global Options > Backend > Choose the preferred touch mode**.\n"
+"Hogy ki tudja választani a preferált érintőmódot a 2D játékokhoz és a 3D "
+"játékokhoz, menjen az **Átfogó Opciók > Backend > Válassza ki a preferált "
+"érintőmódot**.\n"
 "\n"
-"## Touch actions \n"
+"## Érintés műveletek \n"
 "\n"
-"### Two finger scroll \n"
+"### Kétujjas görgetés \n"
 "\n"
-"To scroll, slide two fingers up or down the screen\n"
-"### Two finger tap\n"
+"A görgetéshez húzza a két ujját le vagy fel a képernyőn\n"
+"### Kétujjas érintés\n"
 "\n"
-"To do a two finger tap, hold one finger down and then tap with a second "
-"finger.\n"
+"A kétujjas érintéshez tartsa az egyik ujját a képernyőn, és érintse meg a "
+"másodikkal.\n"
 "\n"
-"### Three finger tap\n"
+"### Háromujjas érintés\n"
 "\n"
-"To do a three finger tap, start with holding down one finger and "
-"progressively touch down the other two fingers, one at a time, while still "
-"holding down the previous fingers. Imagine you are impatiently tapping your "
-"fingers on a surface, but then slow down that movement so it is rhythmic, "
-"but not too slow.\n"
+"A háromujjas érintést kezdje azzal, hogy egy ujját a képernyőn tartja, majd "
+"folyamatosan egyenként érintse meg a képernyőt a másik két ujjával amíg a "
+"korábbi ujjak is a képernyőn maradnak. Hasonlóan mintha türelmetlenül "
+"kopogna a képernyőn, de lassítsa le magát az ütemet ritmusosra, de ne túl "
+"lassú ütemre.\n"
 "\n"
-"### Immersive Sticky fullscreen mode\n"
+"### Belemerülő-ragadós teljesképernyős mód\n"
 "\n"
-"Swipe from the edge to reveal the system bars.  They remain semi-transparent "
-"and disappear after a few seconds unless you interact with them.\n"
+"Ha lehúzza az ujját a képernyő szélétől, akkor feltárja a rendszer "
+"csíkokat.   Áttetszők maradnak, és eltűnnek ha nem érinti meg őket.\n"
 "\n"
-"### Global Main Menu\n"
+"### Átfogó Főmenü\n"
 "\n"
-"To open the Global Main Menu, tap on the menu icon at the top right of the "
-"screen.\n"
+"Az átfogó főmenü megnyitásához nyomjon a menü ikonra a képernyő jobb felső "
+"sarkában.\n"
 "\n"
-"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
+"  ![Menü ikon](menu.png \"Menü ikon\"){w=10em}\n"
 "\n"
-"## Virtual keyboard\n"
+"## Virtuális billentyűzet\n"
 "\n"
-"To open the virtual keyboard, long press on the controller icon at the top "
-"right of the screen, or tap on any editable text field. To hide the virtual "
-"keyboard, tap the controller icon again, or tap outside the text field.\n"
+"A virtuális billentyűzet megnyitásához nyomja hossza a kontroller ikont a "
+"képernyő jobb felső sarkában, vagy nyomjon bármelyik szerkeszthető "
+"szövegmezőbe. Az elrejtéséhez nyomjon újra a kontroller ikonra, vagy a "
+"szövegmezőn kívűlre.\n"
 "\n"
 "\n"
-"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Billentyűzet ikon](keyboard.png \"Billentyűzet ikon\"){w=10em}\n"
 "\n"
 
 #: backends/platform/android/android.cpp:1173
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Add Game..."
 msgid "Adding Games"
-msgstr "Játék hozzáadás"
+msgstr "Játékok hozzáadása"
 
 #: backends/platform/android/android.cpp:1176
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this "
-#| "folder\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5083,30 +5066,54 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
-"A ScummVM Android új verziójában jelentős változtatásokat hajtottak végre a "
-"fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android operációs "
-"rendszer modern verzióinak támogatását.\n"
-"Ezért a játékok hozzáadásához be kell állítania a SAF-et.\n"
+"## Játékok hozzáadása \n"
 "\n"
-"  1. A ScummVM fájlböngészőn belül használd a \"Go Up\" gombot, amíg el nem "
-"éred a \"gyökér\" mappát, ahol megjelenik az \"<Új mappa hozzáadása>\" "
-"opció.\n"
-"  2. Válaszd ezt, majd tallózz és válaszd ki a \"szülő\" mappát a játékok "
-"almappáihoz, pl. \"SD-kártya > myGames\". Kattints a \"Mappa használata\" "
-"gombra.\n"
-"  3. Ezután egy új \"myGames\" mappa jelenik meg a ScummVM böngésző \"root\" "
-"mappájában.\n"
-"  4. Böngéssz ebben a mappában a játék adataihoz."
+"1. Válassza a **Játék hozzáadása...** gombot az indítóban. \n"
+"\n"
+"2. A ScummVM fájlkezelőn belül válassza a **Fel** lehetőséget egészen addig, "
+"amíg nem jut el a gyökérhez ahol már csak az **<Új mappa>** opció érhető el. "
+"\n"
+"\n"
+"  ![ScummVM fájlkezelő gyökér](browser-root.png \"ScummVM fájlkezelő gyökér\""
+"){w=70%}\n"
+"\n"
+"3. Nyomjon duplán az **<Új mappa>** opcióra. Az eszközén navigáljon el ahhoz "
+"a könyvtárhoz, ami tartalmazza az összes játék könyvtárat. Például: ** SD "
+"Kártya > ScummVMjatekok**. \n"
+"\n"
+"4. Válassza a **Ezen könyvtár használata** opciót. \n"
+"\n"
+"  ![OS választható könyvtár](fs-folder.png \"OS választható könyvtár\""
+"){w=70%}\n"
+"\n"
+"5. Válassza az **ENGEDÉLYEZÉS** opciót, hogy hozzáférést biztosítson a "
+"könyvtárhoz a ScummVM számára. \n"
+"\n"
+"  ![OS hozzáférés engedély ablak](fs-permission.png \"OS hozzáférés engedély "
+"ablak\"){w=70%}\n"
+"\n"
+"6. A ScummVM fájlkezelőben nyomjon duplán a mappán belüli böngészéshez. "
+"Hozzáadhat egy játékot egy játék fájlokat tartalmazó alkönyvtár "
+"kiválasztásával, majd a **Kiválaszt** gomb megnyomásával.. \n"
+"\n"
+"  ![SAF mappa hozzáadva](browser-folder-in-list.png \"SAF mappa hozzáadva\""
+"){w=70%}\n"
+"\n"
+"A 2-es és 3-as pontokat csak egyszer kell elvégezni. További játékok "
+"hozzáadásához ismételje meg az 1--es és 6-os pontot. \n"
+"\n"
+"Tekintse meg az [Android dokumentációnkat](https://docs.scummvm.org/en/"
+"latest/other_platforms/android.html) további információkért.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
 msgid "Show On-screen control"
-msgstr "Irányítás a képernyõn megjelenítése"
+msgstr "Képernyőn-megjelenő irányító mutatása"
 
 #: backends/platform/android/options.cpp:132
 #: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
-msgstr "Válaszd ki a kívánt érintési módot:"
+msgstr "Válassza ki a preferált érintési módot:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
@@ -5123,7 +5130,7 @@ msgstr "A menükben"
 #: backends/platform/ios7/ios7_options.mm:137
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 msgid "Touchpad emulation"
-msgstr "Touchpad emuláció"
+msgstr "Tapipad emuláció"
 
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
@@ -5133,7 +5140,7 @@ msgstr "Touchpad emuláció"
 #: backends/platform/ios7/ios7_options.mm:140
 #: backends/platform/ios7/ios7_osys_events.cpp:346
 msgid "Direct mouse"
-msgstr "Közvetlen egér"
+msgstr "Direkt egér"
 
 #: backends/platform/android/options.cpp:138
 #: backends/platform/android/options.cpp:160
@@ -5154,23 +5161,21 @@ msgstr "3D játékokban"
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Válassza ki a tájolást:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Automatikus fúrás"
+msgstr "Automatikus"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
-msgstr ""
+msgstr "Függőleges"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
@@ -5179,14 +5184,12 @@ msgstr ""
 #, fuzzy
 #| msgid "Escape"
 msgid "Landscape"
-msgstr "Escape"
+msgstr "Vízszintes"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "2D játékokban"
+msgstr "Játékokban"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -5195,52 +5198,48 @@ msgstr "Mappaengedélyek eltávolítása..."
 
 #: backends/platform/android/options.cpp:493
 msgid "Remove"
-msgstr "Eltávolít"
+msgstr "Eltávolítás"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
-msgstr "Nem méretezett"
+msgstr "Nem átméretezett"
 
 #: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
-msgstr "Hardveres átméretezés (gyors, alacsony minõség)"
+msgstr "Hardveres átméretezés (gyors, de alacsony minőségű)"
 
 #: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
-msgstr "Szoftveres átméretezés (jó minõség, lassú)"
+msgstr "Szoftveres átméretezés (jó minőség, de lassú)"
 
 #: backends/platform/ios7/ios7_options.mm:97
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "A képernyőn megjelenő vezérlés megjelenítése (iOS 15 és újabb)"
 
 #: backends/platform/ios7/ios7_options.mm:98
 #: backends/platform/ios7/ios7_options.mm:99
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Gamepad emuláció"
+msgstr "Gamepad áttetszőség"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
-msgstr ""
+msgstr "Irányválasztó gomb:"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
-msgstr ""
+msgstr "Botkar"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
-msgstr ""
+msgstr "Irányválasztó"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "Minimális gamepad kiosztás használata"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Billentyűzet funkció sáv mutatása"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:252
 msgid ""
@@ -5262,6 +5261,25 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Segítség, elvesztem!\n"
+"\n"
+"Első körben győződjön meg, hogy rendelkezésre áll a játék és annak fájljai. "
+"Tekintse át a **Honnan szerezzem be a játékokat** szekciót az **Általános** "
+"fül alatt. Beszerzést követően kövesse a kiemelt lépéseket a **Játékok "
+"hozzáadása**. Figyelmesen tekintse át, mert visszajelzések szerint az új "
+"Android változások miatt sokan futott bele hibákba.\n"
+"\n"
+"Szüksége van még további segítségre? Tanulmányozza az [online iOS "
+"dokumentációnkat](https://docs.scummvm.org/en/latest/other_platforms/ios."
+"html). Kérdése van? Nézzen be a [támogatói fórumunkra](https://forums.scummvm"
+".org/viewforum.php?f=15) vagy nézzen fel a [Discord "
+"szerverünkre](https://discord.gg/4cDsMNtcpG), ahol található egy dedikált ["
+"iOS támogatói alcsatorna](https://discord.com/channels/581224060529148060/"
+"1149456560922316911).\n"
+"\n"
+"Azonban maguk a támogatott játékok szándékosan furmányosak, néma már majdnem "
+"észveszejtő szinten. Ha végleg el van akadva egy játékban, érdemes "
+"megtekinteni egy végigjátszást. Sok sikert!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""
