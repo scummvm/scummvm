@@ -152,12 +152,12 @@ ErrorCode CBagSaveGameFile::writeSavedGame() {
 	assert(isValidObject(this));
 
 	// Populate the save data
-	StBagelSave saveData;
-	g_engine->_masterWin->fillSaveBuffer(&saveData);
+	StBagelSave *saveData = new StBagelSave();
+	g_engine->_masterWin->fillSaveBuffer(saveData);
 
-	Common::String str = "./" + Common::String(saveData._szScript);
+	Common::String str = "./" + Common::String(saveData->_szScript);
 	str.replace('/', '\\');
-	Common::strcpy_s(saveData._szScript, str.c_str());
+	Common::strcpy_s(saveData->_szScript, str.c_str());
 
 	// Set up header fields
 	StSavegameHeader header;
@@ -171,10 +171,12 @@ ErrorCode CBagSaveGameFile::writeSavedGame() {
 
 	header.synchronize(s);
 	stream.writeUint32LE(StBagelSave::size());
-	saveData.synchronize(s);
+	saveData->synchronize(s);
 
 	// Add the record
 	addRecord(stream.getData(), stream.size(), true, 0);
+
+	delete saveData;
 
 	return _errCode;
 }
@@ -198,19 +200,21 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			StSavegameHeader header;
 			header.synchronize(s);
 			s.skip(4);		// Skip save data structure size
-			StBagelSave saveData;
-			saveData.synchronize(s);
+			StBagelSave *saveData = new StBagelSave();
+			saveData->synchronize(s);
 
 			bofFree(pBuf);
 
-			CBofString str(saveData._szScript);
+			CBofString str(saveData->_szScript);
 			fixPathName(str);
 			const char *path = str.getBuffer();
 			assert(!strncmp(path, "./", 2));
-			Common::strcpy_s(saveData._szScript, path + 2);
+			Common::strcpy_s(saveData->_szScript, path + 2);
 
 			// Restore the game
-			g_engine->_masterWin->doRestore(&saveData);
+			g_engine->_masterWin->doRestore(saveData);
+
+			delete saveData;
 		}
 	} else {
 		_errCode = ERR_FREAD;
