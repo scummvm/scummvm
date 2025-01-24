@@ -347,18 +347,119 @@ bool Operand::operator||(const Operand &other) const {
 	}
 }
 
-Operand Operand::operator-(const Operand &other) const {
-	Operand returnValue;
-	if (this->_type == kOperandTypeLiteral1 && other._type == kOperandTypeLiteral1) {
-		returnValue._type = kOperandTypeLiteral1;
-		returnValue._u.i = this->_u.i - other._u.i;
-	} else if (this->_type == kOperandTypeFloat1 && other._type == kOperandTypeFloat1) {
-		returnValue._type = kOperandTypeFloat1;
-		returnValue._u.d = this->_u.d - other._u.d;
-	} else {
-		error("Operand::operator-(): Unsupported operand types %d and %d", static_cast<uint>(this->_type), static_cast<uint>(other._type));
+Operand Operand::operator+(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	Operand returnValue(lhs.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		returnValue.putInteger(lhs.getInteger() + rhs.getInteger());
+		return returnValue;
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		returnValue.putDouble(lhs.getDouble() + rhs.getDouble());
+		return returnValue;
+
+	default:
+		error("Operand::operator+(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
 	}
-	return returnValue;
+}
+
+Operand Operand::operator-(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	Operand returnValue(lhs.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		returnValue.putInteger(lhs.getInteger() - rhs.getInteger());
+		return returnValue;
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		returnValue.putDouble(lhs.getDouble() - rhs.getDouble());
+		return returnValue;
+
+	default:
+		error("Operand::operator-(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	}
+}
+
+Operand Operand::operator*(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	Operand returnValue(lhs.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		returnValue.putInteger(lhs.getInteger() * rhs.getInteger());
+		return returnValue;
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		returnValue.putDouble(lhs.getDouble() * rhs.getDouble());
+		return returnValue;
+
+	default:
+		error("Operand::operator*(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	}
+}
+
+Operand Operand::operator/(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	Operand returnValue(lhs.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		if (rhs.getInteger() == 0) {
+			error("Operand::operator/(): Attempted divide by zero");
+		}
+		// Standard integer divison here.
+		returnValue.putInteger(lhs.getInteger() / rhs.getInteger());
+		return returnValue;
+
+	case kOperandTypeFloat1:
+	case kOperandTypeFloat2:
+		if (rhs.getDouble() == 0) {
+			error("Operand::operator/(): Attempted divide by zero");
+		}
+		returnValue.putDouble(lhs.getDouble() / rhs.getDouble());
+		return returnValue;
+
+	default:
+		error("Operand::operator/(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	}
+}
+
+Operand Operand::operator%(const Operand &other) const {
+	Operand lhs = getLiteralValue();
+	Operand rhs = other.getLiteralValue();
+	Operand returnValue(lhs.getType());
+	// If the types being compared end up being incompatible, the respective get
+	// method on the rhs will raise the error.
+	switch (lhs.getType()) {
+	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral2:
+		if (rhs.getInteger() == 0) {
+			error("Operand::operator%%(): Attempted mod by zero");
+		}
+		returnValue.putInteger(lhs.getInteger() % rhs.getInteger());
+		return returnValue;
+
+	default:
+		error("Operand::operator/(): Unsupported operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	}
 }
 
 Operand Operand::operator-() const {

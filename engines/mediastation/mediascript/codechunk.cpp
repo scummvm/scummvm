@@ -143,23 +143,6 @@ Operand CodeChunk::executeNextStatement() {
 			return returnValue;
 		}
 
-		case kOpcodeSubtract: {
-			debugCN(5, kDebugScript, "\n    lhs: ");
-			Operand value1 = executeNextStatement();
-			debugCN(5, kDebugScript, "    rhs: ");
-			Operand value2 = executeNextStatement();
-
-			Operand returnValue = value1 - value2;
-			return returnValue;
-		}
-
-		case kOpcodeNegate: {
-			Operand value = executeNextStatement();
-			debugCN(5, kDebugScript, "    value: ");
-
-			return -value;
-		}
-
 		case kOpcodeIfElse: {
 			debugCN(5, kDebugScript, "\n    condition: ");
 			Operand condition = executeNextStatement();
@@ -256,6 +239,63 @@ Operand CodeChunk::executeNextStatement() {
 			bool greaterThanOrEqualTo = (value1 > value2) || (value1 == value2);
 			returnValue.putInteger(static_cast<uint>(greaterThanOrEqualTo));
 			return returnValue;
+		}
+
+		case kOpcodeAdd: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue = value1 + value2;
+			return returnValue;
+		}
+
+		case kOpcodeSubtract: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue = value1 - value2;
+			return returnValue;
+		}
+
+		case kOpcodeMultiply: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue = value1 * value2;
+			return returnValue;
+		}
+
+		case kOpcodeDivide: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue = value1 / value2;
+			return returnValue;
+		}
+
+		case kOpcodeModulo: {
+			debugCN(5, kDebugScript, "\n    lhs: ");
+			Operand value1 = executeNextStatement();
+			debugCN(5, kDebugScript, "    rhs: ");
+			Operand value2 = executeNextStatement();
+
+			Operand returnValue = value1 % value2;
+			return returnValue;
+		}
+
+		case kOpcodeNegate: {
+			Operand value = executeNextStatement();
+			debugCN(5, kDebugScript, "    value: ");
+
+			return -value;
 		}
 
 		default: {
