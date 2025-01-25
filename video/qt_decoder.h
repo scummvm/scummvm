@@ -127,11 +127,13 @@ private:
 	void updateQTVRCursor(int16 x, int16 y);
 	void setCursor(int curId);
 	void cleanupCursors();
+	void computeInteractivityZones();
 
 	uint16 _width, _height;
 
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
+	Common::Rect _curBbox;
 
 	int _currentQTVRCursor = -1;
 	Common::Archive *_dataBundle = nullptr;

@@ -634,11 +634,10 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 	if (_qtvrType != QTVRType::OBJECT)
 		return;
 
-	if (!_isMouseButtonDown) {
-		updateQTVRCursor(x, y);
+	updateQTVRCursor(x, y);
 
+	if (!_isMouseButtonDown)
 		return;
-	}
 
 	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
 
@@ -688,6 +687,8 @@ void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 		_prevMouseX = x;
 		_prevMouseY = y;
 	}
+
+	updateQTVRCursor(x, y);
 }
 
 void QuickTimeDecoder::setCurrentRow(int row) {
@@ -1250,12 +1251,31 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const 
 
 enum {
 	kCurHand = 129,
+	kCurGrab = 130,
+	kCurObjUp = 171,
+	kCurObjDown = 172,
+	kCurObjLeft = 181,
+	kCurObjRight = 182,
 	kCurLastCursor
 };
 
 void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
-	if (_qtvrType == QTVRType::OBJECT)
-		setCursor(kCurHand);
+	if (_qtvrType == QTVRType::OBJECT) {
+		if (y < _curBbox.top)
+			setCursor(kCurObjUp);
+		else if (y > _curBbox.bottom)
+			setCursor(kCurObjDown);
+		else if (x < _curBbox.left)
+			setCursor(kCurObjLeft);
+		else if (x > _curBbox.right)
+			setCursor(kCurObjRight);
+		else {
+			if (_isMouseButtonDown)
+				setCursor(kCurGrab);
+			else
+				setCursor(kCurHand);
+		}
+	}
 }
 
 void QuickTimeDecoder::cleanupCursors() {
@@ -1283,8 +1303,11 @@ void QuickTimeDecoder::setCursor(int curId) {
 		}
 	}
 
-	if (!_cursorCache)
+	if (!_cursorCache) {
 		_cursorCache = (Graphics::Cursor **)calloc(kCurLastCursor, sizeof(Graphics::Cursor *));
+
+		computeInteractivityZones();
+	}
 
 	if (curId >= kCurLastCursor)
 		error("QTVR: Incorrect cursor ID: %d > %d", curId, kCurLastCursor);
@@ -1310,6 +1333,14 @@ void QuickTimeDecoder::setCursor(int curId) {
 
 	CursorMan.replaceCursor(_cursorCache[curId]);
 	CursorMan.showMouse(true);
+}
+
+void QuickTimeDecoder::computeInteractivityZones() {
+	_curBbox.left = MIN(20, getWidth() / 10);
+	_curBbox.right = getWidth() - _curBbox.left;
+
+	_curBbox.top = MIN(20, getHeight() / 10);
+	_curBbox.bottom = getHeight() - _curBbox.top;
 }
 
 } // End of namespace Video
