@@ -85,11 +85,14 @@ void TinyGLRenderer::init() {
 	_lastColorSet0 = 0;
 	_lastColorSet1 = 0;
 	_stippleTexture = nullptr;
+
+	tglEnable(TGL_SCISSOR_TEST);
 }
 
 void TinyGLRenderer::setViewport(const Common::Rect &rect) {
 	_viewport = rect;
 	tglViewport(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
+	tglScissor(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
 }
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) {
@@ -533,46 +536,12 @@ void TinyGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 }
 
 void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
-	tglClear(TGL_DEPTH_BUFFER_BIT | TGL_STENCIL_BITS);
-	if (ignoreViewport) {
-		tglClearColor(r / 255., g / 255., b / 255., 1.0);
-		tglClear(TGL_COLOR_BUFFER_BIT);
-	} else {
-		// Create a viewport sized quad and color it
-		useColor(r, g, b);
-
-		tglMatrixMode(TGL_PROJECTION);
-		tglPushMatrix();
-		tglLoadIdentity();
-
-		tglOrtho(0, _viewport.width(), _viewport.height(), 0, 0, 1);
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPushMatrix();
-		tglLoadIdentity();
-
-		tglDisable(TGL_DEPTH_TEST);
-		tglDepthMask(TGL_FALSE);
-
-		tglEnableClientState(TGL_VERTEX_ARRAY);
-		copyToVertexArray(0, Math::Vector3d(0, 0, 0));
-		copyToVertexArray(1, Math::Vector3d(0, _viewport.height(), 0));
-		copyToVertexArray(2, Math::Vector3d(_viewport.width(), _viewport.height(), 0));
-
-		copyToVertexArray(3, Math::Vector3d(0, 0, 0));
-		copyToVertexArray(4, Math::Vector3d(_viewport.width(), 0, 0));
-		copyToVertexArray(5, Math::Vector3d(_viewport.width(), _viewport.height(), 0));
-
-		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
-		tglDrawArrays(TGL_TRIANGLES, 0, 6);
-		tglDisableClientState(TGL_VERTEX_ARRAY);
-
-		tglEnable(TGL_DEPTH_TEST);
-		tglDepthMask(TGL_TRUE);
-
-		tglPopMatrix();
-		tglMatrixMode(TGL_PROJECTION);
-		tglPopMatrix();
-	}
+	if (ignoreViewport)
+ 		tglDisable(TGL_SCISSOR_TEST);
+ 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
+ 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT | TGL_STENCIL_BUFFER_BIT);
+ 	if (ignoreViewport)
+ 		tglEnable(TGL_SCISSOR_TEST);
 }
 
 void TinyGLRenderer::drawFloor(uint8 color) {
