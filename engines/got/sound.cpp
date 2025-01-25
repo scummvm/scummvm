@@ -30,6 +30,18 @@ namespace Got {
 
 static const byte SOUND_PRIORITY[] = {1, 2, 3, 3, 3, 1, 4, 4, 4, 5, 4, 3, 1, 2, 2, 5, 1, 3, 1};
 
+Sound::Sound() {
+	for (int i = 0; i < 3; i++)
+		_bossSounds[i] = nullptr;
+}
+
+Sound::~Sound() {
+	delete[] _soundData;
+	for (int i = 0; i < 3; i++) {
+		delete(_bossSounds[i]);
+	}
+}
+
 void Sound::load() {
 	File f("DIGSOUND");
 
@@ -40,6 +52,32 @@ void Sound::load() {
 	// Allocate memory and load sound data
 	_soundData = new byte[f.size() - 16 * 8];
 	f.read(_soundData, f.size() - 16 * 8);
+}
+
+void Sound::setupBoss(const int num) {
+	if (_currentBossLoaded == num)
+		// Boss sounds are already loaded
+		return;
+
+	if (_currentBossLoaded) {
+		// Boss sounds have already been loaded. Delete them to avoid memory leak
+		for (int i = 0; i < 3; i++)
+			delete(_bossSounds[i]);
+	}
+
+	// Information concerning boss sounds is stored in _digiSounds 16 to 18, but the data is stored in _bossSounds
+	for (int i = 0; i < 3; ++i) {
+		Common::String ressourceName = Common::String::format("BOSSV%d%d", num, i + 1);
+		File f(ressourceName);
+		const int size = f.size();
+		_bossSounds[i] = new byte[size];
+		_digiSounds[16 + i]._length = size;
+		_digiSounds[16 + i]._offset = 0;
+		f.read(_bossSounds[i], size);
+		f.close();
+	}
+
+	_currentBossLoaded = num;
 }
 
 void Sound::playSound(const int index, const bool override) {
@@ -54,11 +92,16 @@ void Sound::playSound(const int index, const bool override) {
 		g_engine->_mixer->stopHandle(_soundHandle);
 	}
 
+	Common::MemoryReadStream *stream;
+	if (index >= 16) {
+		// Boss sounds are not stored in the normal sound data, it's in 3 buffers in _bossSounds.
+		stream = new Common::MemoryReadStream(_bossSounds[index - 16], _digiSounds[index]._length);
+	} else {
+		// Normal digital sound
+		stream = new Common::MemoryReadStream(_soundData + _digiSounds[index]._offset, _digiSounds[index]._length);
+	}
 	// Play the new sound
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
-		_soundData + _digiSounds[index]._offset, _digiSounds[index]._length);
-	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED,
-														   DisposeAfterUse::YES);
+	Audio::AudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 }
 
@@ -306,6 +349,10 @@ void musicPause() {
 
 void musicResume() {
 	_G(sound).musicResume();
+}
+
+void setupBoss(int num) {
+	_G(sound).setupBoss(num);
 }
 
 } // namespace Got

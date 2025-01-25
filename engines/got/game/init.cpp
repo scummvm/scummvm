@@ -115,37 +115,4 @@ void initGame() {
 	_G(startup) = false;
 }
 
-int setupBoss(const int num) {
-	if (_G(currentBossLoaded) == num)
-		return 1;
-
-	if (_G(currentBossLoaded)) {
-		for (int rep = 0; rep < 3; rep++) {
-			if (_G(boss_sound[rep]))
-				free(_G(boss_sound[rep]));
-		}
-	}
-
-	Common::String ressourceName = Common::String::format("BOSSV%d1", num);
-	_G(boss_sound[0]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_sound[0]))
-		return 0;
-	_G(dig_sound[NUM_SOUNDS - 3]) = _G(boss_sound[0]);
-
-	ressourceName = Common::String::format("BOSSV%d2", num);
-	_G(boss_sound[1]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_sound[1]))
-		return 0;
-	_G(dig_sound[NUM_SOUNDS - 2]) = _G(boss_sound[1]);
-
-	ressourceName = Common::String::format("BOSSV%d3", num);
-	_G(boss_sound[2]) = (byte *)resourceAllocRead(ressourceName);
-	if (!_G(boss_sound[2]))
-		return 0;
-	_G(dig_sound[NUM_SOUNDS - 1]) = _G(boss_sound[2]);
-
-	_G(currentBossLoaded) = num;
-	return 1;
-}
-
 } // namespace Got

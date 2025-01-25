@@ -144,7 +144,6 @@ public:
 	int8 _thorIcon4 = 0;
 	int8 _levelMusic = 0;
 	int8 _currentMusic = -1;
-	int8 _currentBossLoaded = 0;
 	int8 _appleDropCounter = 0;
 	bool _cheat = false;
 	int8 _area = 1;
@@ -175,7 +174,6 @@ public:
 
 	bool _warpFlag = false;
 
-	byte *_boss_sound[3] = {};
 	int _rand1 = 0, _rand2 = 0;
 	int _hourglass_flag = 0, _thunder_flag = 0;
 	bool _lightning_used = false, _tornado_used = false;
@@ -193,7 +191,6 @@ public:
 	bool _carry_inform = false;
 	bool _killgg_inform = false;
 
-	byte *_dig_sound[NUM_SOUNDS] = {};
 	bool _boss_active = false;
 	bool _story_flag = true;
 	int8 *_scr = nullptr;

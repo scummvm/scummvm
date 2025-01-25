@@ -55,9 +55,11 @@ enum {
 class Sound {
 private:
 	byte *_soundData = nullptr;
+	byte *_bossSounds[3];
 	Header _digiSounds[NUM_SOUNDS];
 	Audio::SoundHandle _soundHandle;
 	int _currentPriority = 0;
+	int8 _currentBossLoaded = 0;
 
 	const char *_currentMusic = nullptr;
 	Audio::SoundHandle _musicHandle;
@@ -65,10 +67,11 @@ private:
 	const char *getMusicName(int num) const;
 
 public:
-	~Sound() {
-		delete[] _soundData;
-	}
+	Sound();
+	~Sound();
+	
 	void load();
+	void setupBoss(int num);
 
 	void playSound(int index, bool override);
 	void playSound(const Gfx::GraphicChunk &src);
@@ -91,6 +94,7 @@ extern void musicPlay(int num, bool override);
 extern void musicPlay(const char *name, bool override);
 extern void musicPause();
 extern void musicResume();
+extern void setupBoss(int num);
 
 } // namespace Got
 
