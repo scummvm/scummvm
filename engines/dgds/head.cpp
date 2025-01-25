@@ -127,9 +127,9 @@ void TalkDataHead::drawHeadType3(Graphics::ManagedSurface *dst, const Image &img
 	}
 }
 
-void TalkDataHead::updateHead() {
-	warning("TODO: Update head");
-	_flags = static_cast<HeadFlags>(_flags & ~(kHeadFlag1 | kHeadFlag8 | kHeadFlag10 | kHeadFlagVisible));
+void TalkDataHead::clearHead() {
+	warning("TODO: Clear head");
+	_flags = static_cast<HeadFlags>(_flags & ~(kHeadFlagFinished | kHeadFlag8 | kHeadFlag10 | kHeadFlagVisible));
 
 	/* This seems to just be a "needs redraw" flag, but we always redraw
 	for (auto tds : _talkData) {
@@ -145,24 +145,28 @@ void TalkDataHead::updateHead() {
 }
 
 
-void TalkData::updateVisibleHeads() {
+void TalkData::clearVisibleHeads() {
 	for (auto &head : _heads) {
 		if (head._flags & kHeadFlagVisible)
-			head.updateHead();
+			head.clearHead();
 	}
 }
 
-void TalkData::drawVisibleHeads(Graphics::ManagedSurface *dst) const {
-	for (const auto &h : _heads) {
-		if ((h._flags & kHeadFlagVisible) && !(h._flags & kHeadFlag40)) {
-			h.drawHead(dst, *this);
+void TalkData::drawAndUpdateVisibleHeads(Graphics::ManagedSurface *dst) {
+	for (auto &h : _heads) {
+		if (h._flags & kHeadFlagVisible) {
+			if (!(h._flags & kHeadFlagOpening)) {
+				h.drawHead(dst, *this);
+			} else {
+				h._flags = static_cast<HeadFlags>(h._flags & ~kHeadFlagOpening);
+			}
 		}
 	}
 }
 
 bool TalkData::hasVisibleHead() const {
 	for (const auto &h : _heads) {
-		if (h._flags & kHeadFlagVisible)
+		if (h._flags & kHeadFlagVisible && !(h._flags & kHeadFlagOpening))
 			return true;
 	}
 	return false;

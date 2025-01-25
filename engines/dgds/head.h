@@ -53,13 +53,13 @@ public:
 
 enum HeadFlags {
 	kHeadFlagNone = 0,
-	kHeadFlag1 = 1,
+	kHeadFlagFinished = 1,
 	kHeadFlag2 = 2,
 	kHeadFlag4 = 4,
 	kHeadFlag8 = 8,
 	kHeadFlag10 = 0x10,
 	kHeadFlagVisible = 0x20,
-	kHeadFlag40 = 0x40,
+	kHeadFlagOpening = 0x40,
 	kHeadFlag80 = 0x80,
 };
 
@@ -70,7 +70,7 @@ public:
 	TalkDataHead() : _num(0), _drawType(0), _drawCol(0), _flags(kHeadFlagNone) {}
 	Common::String dump(const Common::String &indent) const;
 
-	void updateHead();
+	void clearHead();
 
 	void drawHead(Graphics::ManagedSurface *dst, const TalkData &data) const;
 	void drawHeadType1(Graphics::ManagedSurface *dst, const Image &img) const;
@@ -100,8 +100,8 @@ public:
 	uint16 _val;
 	Common::String _bmpFile;
 
-	void updateVisibleHeads();
-	void drawVisibleHeads(Graphics::ManagedSurface *dst) const;
+	void clearVisibleHeads();
+	void drawAndUpdateVisibleHeads(Graphics::ManagedSurface *dst);
 	bool hasVisibleHead() const;
 };
 

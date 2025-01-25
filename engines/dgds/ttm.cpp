@@ -1179,7 +1179,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (seq._executed) // this is a one-shot op
 			break;
 
-		if (_vm->_platform == Common::kPlatformAmiga) {
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 		} else {

@@ -319,9 +319,9 @@ public:
 	void freeDialogData(uint16 num);
 	bool loadTalkData(uint16 num);
 	bool freeTalkData(uint16 num);
-	void updateVisibleTalkers();
+	void clearVisibleTalkers();
 	bool loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
-	void drawVisibleHeads(Graphics::ManagedSurface *dst);
+	void drawAndUpdateHeads(Graphics::ManagedSurface *dst);
 	bool hasVisibleHead() const;
 
 	// dragon-specific scene ops

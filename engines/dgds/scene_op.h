@@ -53,7 +53,7 @@ enum SceneOpCode {
 	// Op 20 onward are common, but not in dragon
 
 	kSceneOpLoadTalkDataAndSetFlags = 20, // args: tdsnum to load, headnum
-	kSceneOpDrawVisibleTalkHeads = 21, // args: none
+	kSceneOpClearVisibleTalkHeads = 21, // args: none
 	kSceneOpLoadTalkData = 22, 	// args: tds num to load
 	kSceneOpLoadDDSData = 24, 	// args: dds num to load
 	kSceneOpFreeDDSData = 25,	// args: dds num to free

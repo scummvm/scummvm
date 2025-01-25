@@ -871,15 +871,15 @@ bool SDSScene::freeTalkData(uint16 num) {
 	return result;
 }
 
-void SDSScene::updateVisibleTalkers() {
+void SDSScene::clearVisibleTalkers() {
 	for (auto &data : _talkData) {
-		data.updateVisibleHeads();
+		data.clearVisibleHeads();
 	}
 }
 
-void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
-	for (const auto &tds : _talkData) {
-		tds.drawVisibleHeads(dst);
+void SDSScene::drawAndUpdateHeads(Graphics::ManagedSurface *dst) {
+	for (auto &tds : _talkData) {
+		tds.drawAndUpdateVisibleHeads(dst);
 	}
 
 	if (_conversation.isForDlg(getVisibleDialog())) {
@@ -897,7 +897,7 @@ bool SDSScene::hasVisibleHead() const {
 
 
 bool SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
-	updateVisibleTalkers();
+	clearVisibleTalkers();
 
 	_conversation._drawRect = DgdsRect();
 	if (loadTalkData(talknum)) {
@@ -910,8 +910,8 @@ bool SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
 					continue;
 
 				_conversation._drawRect = head._rect;
-				head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag10));
-				head._flags = static_cast<HeadFlags>(head._flags | (kHeadFlag8 | kHeadFlagVisible));
+				head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlagFinished | kHeadFlag10));
+				head._flags = static_cast<HeadFlags>(head._flags | (kHeadFlag8 | kHeadFlagVisible | kHeadFlagOpening));
 				break;
 			}
 			break;

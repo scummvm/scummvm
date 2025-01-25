@@ -59,7 +59,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowMouse:		return "showMouse";
 	case kSceneOpHideMouse:		return "hideMouse";
 	case kSceneOpLoadTalkDataAndSetFlags: return "loadTalkDataAndSetFlags";
-	case kSceneOpDrawVisibleTalkHeads: return "drawVisibleTalksHeads";
+	case kSceneOpClearVisibleTalkHeads: return "clearVisibleTalksHeads";
 	case kSceneOpLoadTalkData: 	return "loadTalkData";
 	case kSceneOpLoadDDSData: 	return "loadDDSData";
 	case kSceneOpFreeDDSData: 	return "freeDDSData";
@@ -263,8 +263,8 @@ bool SceneOp::runCommonOp() const {
 	case kSceneOpLoadTalkDataAndSetFlags: // args: tdsnum to load, headnum
 		engine->getScene()->loadTalkDataAndSetFlags(_args[0], _args[1]);
 		break;
-	case kSceneOpDrawVisibleTalkHeads: // args: none
-		engine->getScene()->updateVisibleTalkers();
+	case kSceneOpClearVisibleTalkHeads: // args: none
+		engine->getScene()->clearVisibleTalkers();
 		break;
 	case kSceneOpLoadTalkData: 	// args: tds num to load
 		engine->getScene()->loadTalkData(_args[0]);
