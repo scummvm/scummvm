@@ -85,7 +85,7 @@ void initGame() {
 		_G(thorInfo)._score = 12455;
 		_G(setup)._difficultyLevel = 0;
 		_G(thorInfo)._inventory = 1 + 2;
-		_G(current_level) = 54;
+		_G(currentLevel) = 54;
 		_G(thorInfo)._selectedItem = 2;
 
 		File f("DEMO");
@@ -103,15 +103,12 @@ void initGame() {
 	_G(thor)->_moveCountdown = 6;
 
 	// Load level data
-	_G(new_level) = _G(current_level);
-	_G(scrn).load(_G(current_level));
-	showLevel(_G(current_level));
+	_G(newLevel) = _G(currentLevel);
+	_G(scrn).load(_G(currentLevel));
+	showLevel(_G(currentLevel));
+	_G(sound).musicPlay(_G(levelMusic), true);
 
-	if (!_G(auto_load)) {
-		_G(sound).musicPlay(_G(levelMusic), true);
-	}
-
-	g_vars->resetEndgameFlags();
+	g_vars->resetEndGameFlags();
 	_G(startup) = false;
 }
 

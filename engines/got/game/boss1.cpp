@@ -22,7 +22,6 @@
 #include "got/game/boss1.h"
 #include "got/events.h"
 #include "got/game/back.h"
-#include "got/game/init.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/status.h"
@@ -37,7 +36,7 @@ static int boss1_dead();
 int boss1Movement(Actor *actor) {
 	bool f = false;
 	
-	if (_G(boss_dead))
+	if (_G(bossDead))
 		return boss1_dead();
 
 	int d = actor->_lastDir;
@@ -196,14 +195,14 @@ void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_n
 			}
 
 			if (_G(actor[3])._health == 0)
-				_G(boss_dead) = true;
+				_G(bossDead) = true;
 		}
 	}
 }
 
 void boss1SetupLevel() {
 	setupBoss(1);
-	_G(boss_active) = true;
+	_G(bossActive) = true;
 	musicPause();
 	playSound(BOSS11, true);
 	g_events->send("Game", GameMessage("PAUSE", 40));
@@ -211,7 +210,7 @@ void boss1SetupLevel() {
 }
 
 static int boss1_dead() {
-	if (_G(boss_dead)) {
+	if (_G(bossDead)) {
 		for (int rep = 0; rep < 4; rep++) {
 			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
 			const int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
@@ -238,7 +237,7 @@ static int boss1_dead() {
 			_G(actor[3 + rep])._moveCountdown = _G(actor[3 + rep])._speed;
 		}
 		playSound(EXPLODE, true);
-		_G(boss_dead) = true;
+		_G(bossDead) = true;
 
 		for (int rep = 7; rep < MAX_ACTORS; rep++) {
 			if (_G(actor[rep])._active)
@@ -250,7 +249,7 @@ static int boss1_dead() {
 }
 
 void boss1ClosingSequence1() {
-	_G(game_over) = true;
+	_G(gameOver) = true;
 	musicPlay(4, true);
 	odinSpeaks(1001, 13, "CLOSING");
 }
@@ -273,9 +272,9 @@ void boss1ClosingSequence4() {
 	for (int rep = 0; rep < 16; rep++)
 		_G(scrn)._actorType[rep] = 0;
 
-	_G(boss_dead) = false;
+	_G(bossDead) = false;
 	_G(setup)._bossDead[0] = true;
-	_G(boss_active) = false;
+	_G(bossActive) = false;
 	_G(scrn)._music = 4;
 	showLevel(BOSS_LEVEL1);
 

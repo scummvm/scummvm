@@ -46,7 +46,7 @@ const char *ITEM_NAMES[] = {
 static const char *odinEndMessage;
 
 void showLevel(const int newLevel) {
-	_G(boss_active) = false;
+	_G(bossActive) = false;
 	if (!_G(shieldOn))
 		_G(actor[2])._active = false;
 	_G(slipping) = false;
@@ -58,8 +58,8 @@ void showLevel(const int newLevel) {
 	// This doesn't make sense, because that would put the ending in the middle of _staticY.
 	// Plus, it follows with an entire copy of scrn into sd_data anyway, so the first
 	// move seems entirely redundant.
-	_G(scrn).save(_G(current_level));
-	_G(scrn).load(_G(new_level));
+	_G(scrn).save(_G(currentLevel));
+	_G(scrn).load(_G(newLevel));
 
 	_G(levelMusic) = _G(scrn)._music;
 
@@ -74,28 +74,28 @@ void showLevel(const int newLevel) {
 		warning("showLevel - Potential short move missing");
 
 	if (_G(warpFlag))
-		_G(current_level) = newLevel - 5; // Force phase
+		_G(currentLevel) = newLevel - 5; // Force phase
 	_G(warpFlag) = false;
 
 	if (_G(warpScroll)) {
 		_G(warpScroll) = false;
 		if (_G(thor)->_dir == 0)
-			_G(current_level) = newLevel + 10;
+			_G(currentLevel) = newLevel + 10;
 		else if (_G(thor)->_dir == 1)
-			_G(current_level) = newLevel - 10;
+			_G(currentLevel) = newLevel - 10;
 		else if (_G(thor)->_dir == 2)
-			_G(current_level) = newLevel + 1;
+			_G(currentLevel) = newLevel + 1;
 		else if (_G(thor)->_dir == 3)
-			_G(current_level) = newLevel - 1;
+			_G(currentLevel) = newLevel - 1;
 	}
 
 	if (!_G(setup)._scrollFlag)
-		_G(current_level) = newLevel; // Force no scroll
+		_G(currentLevel) = newLevel; // Force no scroll
 
 	if (_G(currentMusic) != _G(levelMusic))
 		_G(sound).musicPause();
 
-	switch (_G(new_level) - _G(current_level)) {
+	switch (_G(newLevel) - _G(currentLevel)) {
 	case 0:
 		// Nothing to do
 		showLevelDone();
@@ -124,7 +124,7 @@ void showLevel(const int newLevel) {
 }
 
 void showLevelDone() {
-	_G(current_level) = _G(new_level);
+	_G(currentLevel) = _G(newLevel);
 
 	_G(thorInfo)._lastHealth = _G(thor)->_health;
 	_G(thorInfo)._lastMagic = _G(thorInfo)._magic;
@@ -132,7 +132,7 @@ void showLevelDone() {
 	_G(thorInfo)._lastKeys = _G(thorInfo)._keys;
 	_G(thorInfo)._lastScore = _G(thorInfo)._score;
 	_G(thorInfo)._lastItem = _G(thorInfo)._selectedItem;
-	_G(thorInfo)._lastScreen = _G(current_level);
+	_G(thorInfo)._lastScreen = _G(currentLevel);
 	_G(thorInfo)._lastIcon = ((_G(thor)->_x + 8) / 16) + (((_G(thor)->_y + 14) / 16) * 20);
 	_G(thorInfo)._lastDir = _G(thor)->_dir;
 	_G(thorInfo)._lastInventory = _G(thorInfo)._inventory;
@@ -142,29 +142,23 @@ void showLevelDone() {
 	_G(lastSetup) = _G(setup);
 
 	bool f = true;
-	if (GAME1 && _G(new_level) == BOSS_LEVEL1) {
-		if (!_G(setup)._bossDead[0]) {
-			if (!_G(auto_load))
-				boss1SetupLevel();
-			f = false;
-		}
+	if (GAME1 && _G(newLevel) == BOSS_LEVEL1 && !_G(setup)._bossDead[0]) {
+		boss1SetupLevel();
+		f = false;
 	}
-	if (GAME2 && _G(new_level) == BOSS_LEVEL2) {
-		if (!_G(setup)._bossDead[1]) {
-			if (!_G(auto_load))
-				boss2SetupLevel();
-			f = false;
-		}
+
+	if (GAME2 && _G(newLevel) == BOSS_LEVEL2 && !_G(setup)._bossDead[1]) {
+		boss2SetupLevel();
+		f = false;
 	}
+
 	if (GAME3) {
-		if (_G(new_level) == BOSS_LEVEL3) {
-			if (!_G(setup)._bossDead[2]) {
-				if (!_G(auto_load))
-					boss3SetupLevel();
-				f = false;
-			}
+		if (_G(newLevel) == BOSS_LEVEL3 && !_G(setup)._bossDead[2]) {
+			boss3SetupLevel();
+			f = false;
 		}
-		if (_G(current_level) == ENDING_SCREEN) {
+
+		if (_G(currentLevel) == ENDING_SCREEN) {
 			endingScreen();
 			f = false;
 		}
@@ -311,7 +305,7 @@ void actorSpeaks(const Actor *actor, int index, int item) {
 	if (v < 1 || v > 20)
 		return;
 
-	long lind = (long)_G(current_level);
+	long lind = (long)_G(currentLevel);
 	lind = lind * 1000;
 	lind += (long)actor->_actorNum;
 

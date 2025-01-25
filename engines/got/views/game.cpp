@@ -55,11 +55,11 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_f:
 		if (gDebugLevel > 0) {
 			// Hack used for testing end-game sequence
-			if (GAME1 && _G(current_level) == BOSS_LEVEL1)
+			if (GAME1 && _G(currentLevel) == BOSS_LEVEL1)
 				boss1ClosingSequence1();
-			else if (GAME2 && _G(current_level) == BOSS_LEVEL2)
+			else if (GAME2 && _G(currentLevel) == BOSS_LEVEL2)
 				boss2ClosingSequence1();
-			else if (GAME3 && _G(current_level) == BOSS_LEVEL3)
+			else if (GAME3 && _G(currentLevel) == BOSS_LEVEL3)
 				boss3ClosingSequence1();
 		}
 		break;

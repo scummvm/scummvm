@@ -421,7 +421,7 @@ int Scripts::getInternalVariable() {
 		_lTemp = _G(thorInfo)._score;
 		break;
 	case 4:
-		_lTemp = _G(current_level);
+		_lTemp = _G(currentLevel);
 		break;
 	case 5:
 		_lTemp = _G(thorInfo)._keys;
@@ -906,7 +906,7 @@ int Scripts::cmd_setTile() {
 	if (tile < 0 || tile > 230)
 		return 6;
 
-	if (screen == _G(current_level)) {
+	if (screen == _G(currentLevel)) {
 		placeTile(pos % 20, pos / 20, tile);
 	} else {
 		Level tmp;
@@ -1027,10 +1027,10 @@ int Scripts::cmd_random() {
 void Scripts::scr_func1() {
 	playSound(FALL, true);
 
-	_G(new_level) = 109;
-	_G(new_level_tile) = 215;
-	_G(thor)->_x = (_G(new_level_tile) % 20) * 16;
-	_G(thor)->_y = ((_G(new_level_tile) / 20) * 16) - 2;
+	_G(newLevel) = 109;
+	_G(newLevelTile) = 215;
+	_G(thor)->_x = (_G(newLevelTile) % 20) * 16;
+	_G(thor)->_y = ((_G(newLevelTile) / 20) * 16) - 2;
 
 	_G(thor)->_lastX[0] = _G(thor)->_x;
 	_G(thor)->_lastX[1] = _G(thor)->_x;
@@ -1063,7 +1063,7 @@ void Scripts::scr_func3() {
 
 	_numVar[0] = 1;
 	playSound(WOOP, true);
-	if (_G(current_level) == 106 && p == 69) {
+	if (_G(currentLevel) == 106 && p == 69) {
 		placeTile(x, y, 220);
 		_G(keyFlag[key_magic]) = false;
 		return;
@@ -1073,10 +1073,10 @@ void Scripts::scr_func3() {
 	placeTile(x, y, 191);
 
 	if ((g_events->getRandomNumber(99)) < 25 ||
-		(_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
+		(_G(currentLevel) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)) {
 		if (!_G(objectMap[p]) && _G(scrn)._iconGrid[y][x] >= 140) { // nothing there and solid
 			int o = g_events->getRandomNumber(1, 5);
-			if (_G(current_level) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
+			if (_G(currentLevel) == 13 && p == 150 && !_G(setup).f26 && _G(setup).f28)
 				o = 20;
 
 			_G(objectMap[p]) = o;

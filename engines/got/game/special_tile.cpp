@@ -53,7 +53,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 
 		if (_G(thor)->_x > 300)
 			// Ending bridge
-			_G(end_tile) = true;
+			_G(endTile) = true;
 		return 1;
 	case 203:
 		if (!GAME1) {
@@ -77,7 +77,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 
 		if (GAME3) {
 			if (_G(thor)->_x < 4)
-				_G(end_tile) = true;
+				_G(endTile) = true;
 			return 1;
 		}
 		return 0;
@@ -174,14 +174,14 @@ int specialTileThor(const int x, const int y, const int icon) {
 			if (icon < 224 && icon > 219)
 				playSound(FALL, false);
 
-			_G(new_level) = _G(scrn)._newLevel[icon - 220 + (f * 6)];
+			_G(newLevel) = _G(scrn)._newLevel[icon - 220 + (f * 6)];
 			_G(warpScroll) = false;
-			if (_G(new_level) > 119) {
+			if (_G(newLevel) > 119) {
 				_G(warpScroll) = true;
-				_G(new_level) -= 128;
+				_G(newLevel) -= 128;
 			}
 
-			_G(new_level_tile) = _G(scrn)._newLevelLocation[icon - 220 + (f * 6)];
+			_G(newLevelTile) = _G(scrn)._newLevelLocation[icon - 220 + (f * 6)];
 			_G(warpFlag) = true;
 
 			if (_G(warpScroll)) {
@@ -194,8 +194,8 @@ int specialTileThor(const int x, const int y, const int icon) {
 				else if (_G(thor)->_dir == 3)
 					_G(thor)->_x = 0;
 			} else {
-				_G(thor)->_x = (_G(new_level_tile) % 20) * 16;
-				_G(thor)->_y = ((_G(new_level_tile) / 20) * 16) - 2;
+				_G(thor)->_x = (_G(newLevelTile) % 20) * 16;
+				_G(thor)->_y = ((_G(newLevelTile) / 20) * 16) - 2;
 			}
 			_G(thor)->_lastX[0] = _G(thor)->_x;
 			_G(thor)->_lastX[1] = _G(thor)->_x;
@@ -258,9 +258,9 @@ int openDoor1(const int y, const int x) {
 		return 1;
 	}
 
-	if (!_G(door_inform)) {
+	if (!_G(keyDoorInform)) {
 		odinSpeaks(2003, 0);
-		_G(door_inform) = true;
+		_G(keyDoorInform) = true;
 	}
 
 	return 0;
@@ -274,14 +274,14 @@ int cashDoor1(const int y, const int x, const int amount) {
 		return 1;
 	}
 
-	if (amount == 10 && !_G(cash1_inform)) {
+	if (amount == 10 && !_G(cashDoor1Inform)) {
 		odinSpeaks(2005, 0);
-		_G(cash1_inform) = true;
+		_G(cashDoor1Inform) = true;
 	}
 
-	if (amount == 100 && !_G(cash2_inform)) {
+	if (amount == 100 && !_G(cashDoor2Inform)) {
 		odinSpeaks(2004, 0);
-		_G(cash2_inform) = true;
+		_G(cashDoor2Inform) = true;
 	}
 
 	return 0;

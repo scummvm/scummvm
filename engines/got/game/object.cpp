@@ -375,7 +375,7 @@ void useItem() {
 		_G(tornadoUsed) = false;
 	}
 
-	bool mf = _G(magic_inform);
+	const bool mf = _G(magicMissingInform);
 	switch (_G(thorInfo)._selectedItem) {
 	case 1:
 		ret = useApple(kf);
@@ -414,16 +414,19 @@ void useItem() {
 }
 
 void notEnoughMagic() {
-	if (!_G(magic_inform))
-		odinSpeaks(2006, 0);
+	if (_G(magicMissingInform))
+		return;
 
-	_G(magic_inform) = true;
+	odinSpeaks(2006, 0);
+	_G(magicMissingInform) = true;
 }
 
 void cannotCarryMore() {
-	if (!_G(carry_inform))
-		odinSpeaks(2007, 0);
-	_G(carry_inform) = true;
+	if (_G(cantCarryInform))
+		return;
+
+	odinSpeaks(2007, 0);
+	_G(cantCarryInform) = true;
 }
 
 void deleteObject() {

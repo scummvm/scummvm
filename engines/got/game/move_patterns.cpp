@@ -161,8 +161,8 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	_G(thorIcon4) = 0;
 
 	if (x < 0) {
-		if (_G(current_level) > 0) {
-			_G(new_level) = _G(current_level) - 1;
+		if (_G(currentLevel) > 0) {
+			_G(newLevel) = _G(currentLevel) - 1;
 			actor->_x = 304;
 			actor->_lastX[0] = 304;
 			actor->_lastX[1] = 304;
@@ -176,8 +176,8 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	}
 	
 	if (x > 306) {
-		if (_G(current_level) < 119) {
-			_G(new_level) = _G(current_level) + 1;
+		if (_G(currentLevel) < 119) {
+			_G(newLevel) = _G(currentLevel) + 1;
 			actor->_x = 0;
 			actor->_lastX[0] = 0;
 			actor->_lastX[1] = 0;
@@ -191,8 +191,8 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	}
 	
 	if (y < 0) {
-		if (_G(current_level) > 9) {
-			_G(new_level) = _G(current_level) - 10;
+		if (_G(currentLevel) > 9) {
+			_G(newLevel) = _G(currentLevel) - 10;
 			actor->_y = 175;
 			actor->_lastY[0] = 175;
 			actor->_show = 0;
@@ -206,8 +206,8 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	}
 	
 	if (y > 175) {
-		if (_G(current_level) < 110) {
-			_G(new_level) = _G(current_level) + 10;
+		if (_G(currentLevel) < 110) {
+			_G(newLevel) = _G(currentLevel) + 10;
 			actor->_y = 0;
 			actor->_lastY[0] = 0;
 			actor->_lastY[1] = 0;
@@ -405,7 +405,7 @@ int checkMove1(const int x, const int y, Actor *actor) {
 		const int y4 = act->_y + act->_sizeY - 1;
 
 		if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
-			if (_G(boss_active) && !GAME3) {
+			if (_G(bossActive) && !GAME3) {
 				switch (_G(area)) {
 				case 1:
 					boss1CheckHit(act, x1, y1, x2, y2, i);
@@ -979,7 +979,7 @@ int specialMovementThree(Actor *actor) {
 	if (_G(thunderSnakeCounter))
 		return 0;
 
-	long lind = (long)_G(current_level);
+	long lind = (long)_G(currentLevel);
 	lind *= 1000;
 	lind += (long)actor->_actorNum;
 	executeScript(lind, _G(odin));
@@ -1379,14 +1379,14 @@ int movementSix(Actor *actor) {
 		actor->_nextFrame++;
 		if (actor->_nextFrame > 2) {
 			actor->_nextFrame = 0;
-			if (_G(boss_dead))
+			if (_G(bossDead))
 				playSound(EXPLODE, false);
 		}
 		actor->_currNumShots--;
 	} else {
 		actor->_dead = 2;
 		actor->_active = false;
-		if (!_G(boss_dead) && !_G(endgame)) {
+		if (!_G(bossDead) && !_G(endGame)) {
 			if (actor->_type == 2)
 				dropRandomObject(actor);
 		}

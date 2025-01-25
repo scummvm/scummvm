@@ -135,11 +135,11 @@ bool Console::cmdFreeze(int argc, const char **argv) {
 
 bool Console::cmdLevel(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Current level = %d\n", _G(current_level));
+		debugPrintf("Current level = %d\n", _G(currentLevel));
 		return true;
 	}
 
-	_G(new_level) = atoi(argv[1]);
+	_G(newLevel) = atoi(argv[1]);
 	_G(warpFlag) = true;
 	return false;
 }

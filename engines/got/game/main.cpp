@@ -27,7 +27,7 @@ namespace Got {
 
 void setupLoad() {
 	_G(thor)->_active = true;
-	_G(new_level) = _G(thorInfo)._lastScreen;
+	_G(newLevel) = _G(thorInfo)._lastScreen;
 	_G(thor)->_x = (_G(thorInfo)._lastIcon % 20) * 16;
 	_G(thor)->_y = ((_G(thorInfo)._lastIcon / 20) * 16) - 1;
 	if (_G(thor)->_x < 1)
@@ -60,10 +60,10 @@ void setupLoad() {
 	_G(actor[2])._active = false;
 	_G(thor)->_moveCountdown = 6;
 
-	_G(scrn).load(_G(new_level));
+	_G(scrn).load(_G(newLevel));
 
-	_G(current_level) = _G(new_level);
-	showLevel(_G(new_level));
+	_G(currentLevel) = _G(newLevel);
+	showLevel(_G(newLevel));
 }
 
 void pause(int delay) {

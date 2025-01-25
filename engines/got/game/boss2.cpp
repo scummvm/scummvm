@@ -71,7 +71,7 @@ int boss2Movement(Actor *actor) {
 	default:
 		break;
 	}
-	if (_G(boss_dead))
+	if (_G(bossDead))
 		return boss2Die();
 
 	if (actor->_i1) {
@@ -199,7 +199,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 		}
 		
 		if (_G(actor[3])._health == 0) {
-			_G(boss_dead) = true;
+			_G(bossDead) = true;
 			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
 					actorDestroyed(&_G(actor[rep]));
@@ -210,7 +210,7 @@ void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
 
 void boss2SetupLevel() {
 	setupBoss(2);
-	_G(boss_active) = true;
+	_G(bossActive) = true;
 	musicPause();
 	playSound(BOSS11, true);
 
@@ -223,7 +223,7 @@ void boss2SetupLevel() {
 
 static int boss2Die() {
 	_G(thunderSnakeCounter) = 0;
-	if (_G(boss_dead)) {
+	if (_G(bossDead)) {
 		for (int rep = 0; rep < 4; rep++) {
 			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
 			const int y1 = _G(actor[3 + rep])._lastY[_G(pge)];
@@ -252,7 +252,7 @@ static int boss2Die() {
 		}
 
 		playSound(EXPLODE, true);
-		_G(boss_dead) = true;
+		_G(bossDead) = true;
 	}
 
 	return _G(actor[3])._lastDir;
@@ -405,10 +405,10 @@ void boss2ClosingSequence4() {
 	for (int rep = 0; rep < 16; rep++)
 		_G(scrn)._actorType[rep] = 0;
 
-	_G(boss_dead) = false;
+	_G(bossDead) = false;
 	_G(setup)._bossDead[1] = true;
-	_G(game_over) = true;
-	_G(boss_active) = false;
+	_G(gameOver) = true;
+	_G(bossActive) = false;
 	_G(scrn)._music = 6;
 
 	showLevel(BOSS_LEVEL2);

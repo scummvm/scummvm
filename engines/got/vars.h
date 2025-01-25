@@ -93,7 +93,7 @@ public:
 	void load();
 	void setArea(int areaNum);
 	void clearKeyFlags();
-	void resetEndgameFlags();
+	void resetEndGameFlags();
 
 	Common::String _playerName = "ScummVM";
 	Gfx::GfxChunks _gfx;
@@ -169,8 +169,8 @@ public:
 	Actor _explosion;
 	Actor _sparkle;
 	ThorInfo _thorInfo;
-	bool _boss_dead = false;
-	byte _endgame = 0;
+	bool _bossDead = false;
+	byte _endGame = 0;
 
 	bool _warpFlag = false;
 
@@ -182,31 +182,25 @@ public:
 	bool _appleFlag = false;
 	int _switchUsed = 0;
 
-	byte _res_file[16] = {};
-	bool _music_flag = false, _sound_flag = false;
-	bool _cash1_inform = false;
-	bool _cash2_inform = false;
-	bool _door_inform = false;
-	bool _magic_inform = false;
-	bool _carry_inform = false;
-	bool _killgg_inform = false;
+	bool _musicFlag = false;
+	bool _soundFlag = false;
+	bool _cashDoor1Inform = false;
+	bool _cashDoor2Inform = false;
+	bool _keyDoorInform = false;
+	bool _magicMissingInform = false;
+	bool _cantCarryInform = false;
+	bool _killGoodGuyInform = false;
 
-	bool _boss_active = false;
-	bool _story_flag = true;
+	bool _bossActive = false;
+	bool _storyFlag = true;
 	int8 *_scr = nullptr;
 	bool _demo = false;
-	int _rnd_index = 0;
-	int _rnd_array[100] = {};
-	bool _rdemo = false;
-	int8 _test_sdf[80] = {};
-	bool _game_over = false;
-	char _tempstr[80] = {};
-	bool _auto_load = false;
-	bool _end_tile = false;
-	byte _pbuff[PALETTE_SIZE] = {};
-	int _current_level = 23;
-	int _new_level = 0;
-	int _new_level_tile = 0, _current_area = 0;
+	bool _gameOver = false;
+	bool _endTile = false;
+	int _currentLevel = 23;
+	int _newLevel = 0;
+	int _newLevelTile = 0;
+	int _current_area = 0;
 	char _sd_header[128] = {};
 	char _play_speed = 0;
 	bool _thor_special_flag = false;

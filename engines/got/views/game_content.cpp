@@ -54,9 +54,9 @@ void GameContent::draw() {
 	drawObjects(s);
 	drawActors(s);
 
-	if ((GAME1 && _G(current_level) == BOSS_LEVEL1) ||
-		(GAME2 && _G(current_level) == BOSS_LEVEL2) ||
-		(GAME3 && _G(current_level) == BOSS_LEVEL3))
+	if ((GAME1 && _G(currentLevel) == BOSS_LEVEL1) ||
+		(GAME2 && _G(currentLevel) == BOSS_LEVEL2) ||
+		(GAME3 && _G(currentLevel) == BOSS_LEVEL3))
 		drawBossHealth(s);
 
 	// If we're shaking the screen, render the content with the shake X/Y
@@ -147,7 +147,7 @@ bool GameContent::tick() {
 		checkForBossDead();
 		checkForCheats();
 
-		if (_G(endgame))
+		if (_G(endGame))
 			endGameMovement();
 		break;
 
@@ -210,8 +210,8 @@ bool GameContent::tick() {
 	checkForAreaChange();
 
 	// Check for end of game area
-	if (_G(end_tile)) {
-		_G(end_tile) = false;
+	if (_G(endTile)) {
+		_G(endTile) = false;
 		Gfx::fadeOut();
 
 		// Add name to high scores list if necessary, and then show it
@@ -362,7 +362,7 @@ void GameContent::moveActors() {
 			if (i == 0)
 				setThorVars();
 
-			if (_G(new_level) != _G(current_level))
+			if (_G(newLevel) != _G(currentLevel))
 				return;
 		}
 	}
@@ -382,7 +382,7 @@ void GameContent::updateActors() {
 }
 
 void GameContent::checkForBossDead() {
-	if (_G(boss_dead)) {
+	if (_G(bossDead)) {
 		int loop;
 		for (loop = 3; loop < 7; loop++) {
 			if (_G(actor[loop])._active)
@@ -390,11 +390,11 @@ void GameContent::checkForBossDead() {
 		}
 
 		if (loop == 7) {
-			_G(boss_dead) = false;
+			_G(bossDead) = false;
 
 			_G(exitFlag) = 0;
 
-			if (_G(boss_active)) {
+			if (_G(bossActive)) {
 				switch (_G(area)) {
 				case 1:
 					boss1ClosingSequence1();
@@ -409,7 +409,7 @@ void GameContent::checkForBossDead() {
 					break;
 				}
 
-				_G(boss_active) = false;
+				_G(bossActive) = false;
 			}
 		}
 	}
@@ -460,7 +460,7 @@ void GameContent::checkForAreaChange() {
 			showLevelDone();
 		}
 
-	} else if (_G(new_level) != _G(current_level)) {
+	} else if (_G(newLevel) != _G(currentLevel)) {
 		// Area transition beginning
 		_G(thor)->_show = 0;
 		_G(thor)->_active = false;
@@ -474,7 +474,7 @@ void GameContent::checkForAreaChange() {
 
 		// Set up new level
 		_G(thor)->_active = true;
-		showLevel(_G(new_level));
+		showLevel(_G(newLevel));
 	}
 }
 
@@ -508,7 +508,7 @@ void GameContent::thorDead() {
 	int li = _G(thorInfo)._selectedItem;
 	int ln = _G(thorInfo)._inventory;
 
-	_G(new_level) = _G(thorInfo)._lastScreen;
+	_G(newLevel) = _G(thorInfo)._lastScreen;
 	_G(thor)->_x = (_G(thorInfo)._lastIcon % 20) * 16;
 	_G(thor)->_y = ((_G(thorInfo)._lastIcon / 20) * 16) - 1;
 	if (_G(thor)->_x < 1)
@@ -552,12 +552,12 @@ void GameContent::thorDead() {
 	_G(thor)->_active = true;
 
 	// Load saved data for new level back into scrn
-	_G(scrn).load(_G(new_level));
+	_G(scrn).load(_G(newLevel));
 
 	_G(gameMode) = MODE_NORMAL;
 	_deathCtr = 0;
 
-	showLevel(_G(new_level));
+	showLevel(_G(newLevel));
 	setThorVars();
 }
 

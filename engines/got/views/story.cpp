@@ -33,11 +33,12 @@ namespace Views {
 bool Story::msgFocus(const FocusMessage &msg) {
 	resourceRead(Common::String::format("STORY%d", _G(area)), _G(tmpBuff));
 
-	resourceRead("STORYPAL", _G(pbuff));
+	byte paletteBuffer[PALETTE_SIZE] = {};
+	resourceRead("STORYPAL", paletteBuffer);
 
 	for (int i = 0; i < PALETTE_SIZE; ++i)
-		_G(pbuff[i]) = ((int)_G(pbuff[i]) * 255 + 31) / 63;
-	Gfx::setPalette(_G(pbuff));
+		paletteBuffer[i] = ((int)paletteBuffer[i] * 255 + 31) / 63;
+	Gfx::setPalette(paletteBuffer);
 
 	// Create story image and load in it's fragments
 	_surface.create(320, 240 * 2);

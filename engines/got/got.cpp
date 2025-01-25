@@ -152,10 +152,10 @@ void GotEngine::savegameLoaded() {
 	_G(thor)->_moveCountdown = 6;
 	loadNewThor();
 
-	g_vars->resetEndgameFlags();
+	g_vars->resetEndGameFlags();
 
-	_G(setup)._musicEnabled = _G(music_flag);
-	_G(setup)._digitalSound = _G(sound_flag);
+	_G(setup)._musicEnabled = _G(musicFlag);
+	_G(setup)._digitalSound = _G(soundFlag);
 
 	if (_G(setup)._musicEnabled) {
 		if (GAME1 && _G(current_area) == 59) {
@@ -169,7 +169,7 @@ void GotEngine::savegameLoaded() {
 		_G(setup)._musicEnabled = false;
 	}
 
-	_G(game_over) = _G(setup)._gameOver != 0;
+	_G(gameOver) = _G(setup)._gameOver != 0;
 	_G(slowMode) = _G(setup)._slowMode;
 
 	g_events->replaceView("Game", true);
@@ -193,7 +193,7 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	}
 
 	// Don't allowing saving when not in-game
-	if (!firstView() || firstView()->getName() != "Game" || _G(game_over))
+	if (!firstView() || firstView()->getName() != "Game" || _G(gameOver))
 		return false;
 
 	// Only allow if not in the middle of area transition, dying, etc.
@@ -203,12 +203,10 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 void GotEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	bool allSoundIsMuted = ConfMan.getBool("mute");
+	const bool allSoundIsMuted = ConfMan.getBool("mute");
 
-	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType,
-						  ConfMan.getBool("sfx_mute") || allSoundIsMuted);
-	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType,
-						  ConfMan.getBool("music_mute") || allSoundIsMuted);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getBool("sfx_mute") || allSoundIsMuted);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getBool("music_mute") || allSoundIsMuted);
 }
 
 void GotEngine::pauseEngineIntern(bool pause) {

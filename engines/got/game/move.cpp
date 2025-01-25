@@ -97,9 +97,9 @@ void thorShoots() {
 }
 
 int killGoodGuy() {
-	if (!_G(killgg_inform) && !_G(thunderSnakeCounter)) {
+	if (!_G(killGoodGuyInform) && !_G(thunderSnakeCounter)) {
 		odinSpeaks(2010, 0);
-		_G(killgg_inform) = true;
+		_G(killGoodGuyInform) = true;
 	}
 
 	addScore(-1000);
@@ -361,7 +361,7 @@ void moveActor(Actor *actor) {
 		if (i != actor->_dir)
 			actor->_dir = i;
 
-		if (actor->_moveType == 0 && _G(current_level) != _G(new_level) && _G(shieldOn)) {
+		if (actor->_moveType == 0 && _G(currentLevel) != _G(newLevel) && _G(shieldOn)) {
 			_G(actor[2])._x = actor->_x - 2;
 			if (_G(actor[2])._x < 0)
 				_G(actor[2])._x = 0;
