@@ -67,8 +67,8 @@ void Sound::setupBoss(const int num) {
 
 	// Information concerning boss sounds is stored in _digiSounds 16 to 18, but the data is stored in _bossSounds
 	for (int i = 0; i < 3; ++i) {
-		Common::String ressourceName = Common::String::format("BOSSV%d%d", num, i + 1);
-		File f(ressourceName);
+		Common::String resourceName = Common::String::format("BOSSV%d%d", num, i + 1);
+		File f(resourceName);
 		const int size = f.size();
 		_bossSounds[i] = new byte[size];
 		_digiSounds[16 + i]._length = size;
