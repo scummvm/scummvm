@@ -32,7 +32,7 @@ RenderTable::RenderTable(uint numColumns, uint numRows)
 	  _numColumns(numColumns),
 	  _renderState(FLAT) {
 	assert(numRows != 0 && numColumns != 0);
-	_internalBuffer = new Common::Point[numRows * numColumns];
+	_internalBuffer = new FilterPixel[numRows * numColumns];
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
 	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
 }
@@ -72,42 +72,93 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	}
 	uint32 index = point.y * _numColumns + point.x;
 	Common::Point newPoint(point);
-	newPoint.x += _internalBuffer[index].x;
-	newPoint.y += _internalBuffer[index].y;
+	newPoint.x += (_internalBuffer[index].fracX >= 128 ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
+	newPoint.y += (_internalBuffer[index].fracY >= 128 ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
 	return newPoint;
 }
 
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
 	uint32 destOffset = 0;
-	for (int16 y = subRect.top; y < subRect.bottom; ++y) {
-		uint32 sourceOffset = y * _numColumns;
-		for (int16 x = subRect.left; x < subRect.right; ++x) {
-			uint32 normalizedX = x - subRect.left;
-			uint32 index = sourceOffset + x;
-			// RenderTable only stores offsets from the original coordinates
-			uint32 sourceYIndex = y + _internalBuffer[index].y;
-			uint32 sourceXIndex = x + _internalBuffer[index].x;
-			destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
-		}
-		destOffset += destWidth;
-	}
+  uint32 sourceXIndex = 0;
+  uint32 sourceYIndex = 0;
+  if(highQuality) {
+    //TODO - convert to high quality pixel filtering
+	  for (int16 y = subRect.top; y < subRect.bottom; ++y) {
+		  uint32 sourceOffset = y * _numColumns;
+		  for (int16 x = subRect.left; x < subRect.right; ++x) {
+			  uint32 normalizedX = x - subRect.left;
+			  uint32 index = sourceOffset + x;
+			  // RenderTable only stores offsets from the original coordinates
+			  sourceYIndex = y + _internalBuffer[index].Src.top;
+			  sourceXIndex = x + _internalBuffer[index].Src.left;
+			  destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+		  }
+		  destOffset += destWidth;
+	  }
+  }
+  else {
+	  for (int16 y = subRect.top; y < subRect.bottom; ++y) {
+		  uint32 sourceOffset = y * _numColumns;
+		  for (int16 x = subRect.left; x < subRect.right; ++x) {
+			  uint32 normalizedX = x - subRect.left;
+			  uint32 index = sourceOffset + x;
+			  // RenderTable only stores offsets from the original coordinates
+			  sourceYIndex = y + _internalBuffer[index].Src.top;
+			  sourceXIndex = x + _internalBuffer[index].Src.left;
+			  destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+		  }
+		  destOffset += destWidth;
+	  }
+  }
 }
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf) {
 	uint32 destOffset = 0;
+  uint32 srcIndexXL = 0;
+  uint32 srcIndexXR = 0;
+  uint32 srcIndexYT = 0;
+  uint32 srcIndexYB = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
-	for (int16 y = 0; y < srcBuf->h; ++y) {
-		uint32 sourceOffset = y * _numColumns;
-		for (int16 x = 0; x < srcBuf->w; ++x) {
-			uint32 index = sourceOffset + x;
-			// RenderTable only stores offsets from the original coordinates
-			uint32 sourceYIndex = y + _internalBuffer[index].y;
-			uint32 sourceXIndex = x + _internalBuffer[index].x;
-			destBuffer[destOffset] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
-			destOffset++;
-		}
-	}
+	uint32 averageBufferA = 0;
+	uint32 averageBufferB = 0;
+  if(highQuality) {
+    //TODO - convert to high quality pixel filtering
+	  for (int16 y = 0; y < srcBuf->h; ++y) {
+		  uint32 sourceOffset = y * _numColumns;
+		  for (int16 x = 0; x < srcBuf->w; ++x) {
+			  uint32 index = sourceOffset + x;
+			  // RenderTable only stores offsets from the original coordinates
+			  srcIndexYT = y + (_internalBuffer[index].fracY < 170 ? _internalBuffer[index].Src.top : _internalBuffer[index].Src.bottom);
+			  srcIndexYB = y + (_internalBuffer[index].fracY > 85 ? _internalBuffer[index].Src.bottom :  _internalBuffer[index].Src.top);
+			  srcIndexXL = x + (_internalBuffer[index].fracX < 170 ? _internalBuffer[index].Src.left :  _internalBuffer[index].Src.right);
+			  srcIndexXR = x + (_internalBuffer[index].fracX > 85 ? _internalBuffer[index].Src.right :  _internalBuffer[index].Src.left);
+			  
+			  averageBufferA = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
+			  averageBufferA += sourceBuffer[srcIndexYT * _numColumns + srcIndexXR];
+			  averageBufferB = sourceBuffer[srcIndexYB * _numColumns + srcIndexXL];
+			  averageBufferB += sourceBuffer[srcIndexYB * _numColumns + srcIndexXR];
+			  
+        destBuffer[destOffset] = (averageBufferA/2 + averageBufferB/2)/2; //TODO - fix this; naive averaging not working properly.
+			  
+			  //destBuffer[destOffset] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+			  destOffset++;
+		  }
+	  }
+  }
+  else {
+	  for (int16 y = 0; y < srcBuf->h; ++y) {
+		  uint32 sourceOffset = y * _numColumns;
+		  for (int16 x = 0; x < srcBuf->w; ++x) {
+			  uint32 index = sourceOffset + x;
+			  // RenderTable only stores offsets from the original coordinates
+			  srcIndexYT = y + _internalBuffer[index].Src.top;
+    		srcIndexXL = x + _internalBuffer[index].Src.left;
+			  destBuffer[destOffset] = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
+			  destOffset++;
+		  }
+	  }
+  }
 }
 
 void RenderTable::generateRenderTable() {
@@ -126,18 +177,16 @@ void RenderTable::generateRenderTable() {
 	}
 }
 
-/*/
-Common::Point generatePanoramaLookupPoint() {
-
-  }
-//*/
-
 void RenderTable::generatePanoramaLookupTable() {
 	uint halfRows = ceil(_numRows/2);
 	uint halfColumns = ceil(_numColumns/2);
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 	float cylinderRadius = halfHeight / tan(_panoramaOptions.verticalFOV);
+	float xOffset = 0.0f;
+	float yOffset = 0.0f;
+	
+	FilterPixel currentFpixel;
 	
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
 	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
@@ -148,8 +197,7 @@ void RenderTable::generatePanoramaLookupTable() {
 
 		// To get x in cylinder coordinates, we just need to calculate the arc length
 		// We also scale it by _panoramaOptions.linearScale
-		int32 xInCylinderCoords = int32(round((cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth));
-
+		float xInCylinderCoords = (cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth;
 		float cosAlpha = cos(alpha);
 		uint32 columnIndexL = x;
 		uint32 columnIndexR = (_numColumns - 1) - x;
@@ -159,24 +207,23 @@ void RenderTable::generatePanoramaLookupTable() {
 		for (uint y = 0; y < halfRows; ++y) {
 			// To calculate y in cylinder coordinates, we can do similar triangles comparison,
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-			int32 yInCylinderCoords = int32(round(halfHeight + ((float)y - halfHeight) * cosAlpha));
+			float yInCylinderCoords = halfHeight + ((float)y - halfHeight) * cosAlpha;
 			
 			uint32 indexTL = rowIndexT + columnIndexL;
 			uint32 indexBL = rowIndexB + columnIndexL;
 			uint32 indexTR = rowIndexT + columnIndexR;
 			uint32 indexBR = rowIndexB + columnIndexR;
-
+			
+			xOffset = xInCylinderCoords - x; 
+      yOffset = yInCylinderCoords - y;
+      
 			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL].x = xInCylinderCoords - x;
-			_internalBuffer[indexTL].y = yInCylinderCoords - y;
+			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, highQuality);
 			
 			//Store mirrored offset values
-			_internalBuffer[indexBL].x = _internalBuffer[indexTL].x;
-			_internalBuffer[indexBL].y = -_internalBuffer[indexTL].y;
-			_internalBuffer[indexTR].x = -_internalBuffer[indexTL].x;
-			_internalBuffer[indexTR].y = _internalBuffer[indexTL].y;
-			_internalBuffer[indexBR].x = -_internalBuffer[indexTL].x;
-			_internalBuffer[indexBR].y = -_internalBuffer[indexTL].y;
+			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, highQuality);
+			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, highQuality);
+			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, highQuality);
 			
 			//Increment indices
 			rowIndexT += _numColumns;
@@ -191,6 +238,8 @@ void RenderTable::generateTiltLookupTable() {
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 	float cylinderRadius = halfWidth / tan(_tiltOptions.verticalFOV);
+	float xOffset = 0.0f;
+	float yOffset = 0.0f;
 	_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
 	
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
@@ -219,18 +268,17 @@ void RenderTable::generateTiltLookupTable() {
 			uint32 indexBL = columnIndexBL + x;
 			uint32 indexTR = columnIndexTR - x;
 			uint32 indexBR = columnIndexBR - x;
+			
+			xOffset = xInCylinderCoords - x;
+      yOffset = yInCylinderCoords - y;
 
 			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL].x = xInCylinderCoords - x;
-			_internalBuffer[indexTL].y = yInCylinderCoords - y;
+			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, highQuality);
 			
 			//Store mirrored offset values
-			_internalBuffer[indexBL].x = _internalBuffer[indexTL].x;
-			_internalBuffer[indexBL].y = -_internalBuffer[indexTL].y;
-			_internalBuffer[indexTR].x = -_internalBuffer[indexTL].x;
-			_internalBuffer[indexTR].y = _internalBuffer[indexTL].y;
-			_internalBuffer[indexBR].x = -_internalBuffer[indexTL].x;
-			_internalBuffer[indexBR].y = -_internalBuffer[indexTL].y;
+			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, highQuality);
+			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, highQuality);
+			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, highQuality);
 		}
 	}
 }
