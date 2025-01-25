@@ -354,10 +354,6 @@ void GameContent::checkForItem() {
 void GameContent::moveActors() {
 	for (int i = 0; i < MAX_ACTORS; i++) {
 		if (_G(actor[i])._active) {
-			if (_G(hourglass_flag))
-				if ((i > 2) && (!_G(pge)) && (!(_G(actor[i])._magicHurts & LIGHTNING_MAGIC)))
-					continue;
-
 			_G(actor[i])._moveCount = _G(actor[i])._numMoves;
 			while (_G(actor[i])._moveCount--)
 				moveActor(&_G(actor[i]));
@@ -544,7 +540,6 @@ void GameContent::thorDead() {
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
-	_G(hourglass_flag) = 0;
 	_G(apple_flag) = false;
 	_G(bomb_flag) = false;
 	_G(thunder_flag) = 0;

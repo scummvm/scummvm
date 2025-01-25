@@ -229,7 +229,6 @@ void GotEngine::pauseEngineIntern(bool pause) {
 
 	_G(lightning_used) = false;
 	_G(thunder_flag) = 0;
-	_G(hourglass_flag) = 0;
 
 	Engine::pauseEngineIntern(pause);
 }

@@ -174,9 +174,11 @@ public:
 
 	bool _warpFlag = false;
 
-	int _rand1 = 0, _rand2 = 0;
-	int _hourglass_flag = 0, _thunder_flag = 0;
-	bool _lightning_used = false, _tornado_used = false;
+	int _rand1 = 0;
+	int _rand2 = 0;
+	int _thunder_flag = 0;
+	bool _lightning_used = false;
+	bool _tornado_used = false;
 	bool _shield_on = false;
 	bool _apple_flag = false;
 	bool _bomb_flag = false;

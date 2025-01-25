@@ -59,10 +59,7 @@ int boss1Movement(Actor *actor) {
 		if (!actor->_temp3)
 			playSound(BOSS11, false);
 
-		if (_G(hourglass_flag))
-			actor->_numMoves = 3;
-		else
-			actor->_numMoves = 6;
+		actor->_numMoves = 6;
 
 		goto done0;
 	}
@@ -214,7 +211,6 @@ void boss1SetupLevel() {
 }
 
 static int boss1_dead() {
-	_G(hourglass_flag) = 0;
 	if (_G(boss_dead)) {
 		for (int rep = 0; rep < 4; rep++) {
 			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];

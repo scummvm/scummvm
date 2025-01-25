@@ -222,7 +222,6 @@ void boss2SetupLevel() {
 }
 
 static int boss2Die() {
-	_G(hourglass_flag) = 0;
 	_G(thunder_flag) = 0;
 	if (_G(boss_dead)) {
 		for (int rep = 0; rep < 4; rep++) {

@@ -138,7 +138,6 @@ void pickUpObject(int p) {
 	case 30:
 	case 31:
 	case 32: {
-		_G(hourglass_flag) = 0;
 		_G(thunder_flag) = 0;
 		_G(shield_on) = false;
 		_G(lightning_used) = false;

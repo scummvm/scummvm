@@ -52,7 +52,6 @@ void setupLoad() {
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
-	_G(hourglass_flag) = 0;
 	_G(apple_flag) = false;
 	_G(bomb_flag) = false;
 	_G(thunder_flag) = 0;
