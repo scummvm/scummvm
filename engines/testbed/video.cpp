@@ -77,7 +77,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 			if (!video->setOutputPixelFormat(pixelformat)) {
 				// TODO: Search for the pixel format in supportedFormatsList?
-				pixelformat = video->getPixelFormat();
+				warning("Format mismatch. Video will be converted");
 			}
 		}
 	}
