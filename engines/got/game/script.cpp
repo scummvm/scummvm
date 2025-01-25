@@ -1086,7 +1086,7 @@ void Scripts::scr_func3() {
 }
 
 void Scripts::scr_func4() {
-	_G(thunder_flag) = 60;
+	_G(thunderSnakeCounter) = 60;
 }
 
 void Scripts::scr_func5() {

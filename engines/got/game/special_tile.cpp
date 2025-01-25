@@ -113,7 +113,7 @@ int specialTileThor(const int x, const int y, const int icon) {
 				actorVisible(4);
 				actorVisible(5);
 				Common::fill(_G(scrn)._actorInvis, _G(scrn)._actorInvis + 16, 0);
-				_G(thunder_flag) = 60;
+				_G(thunderSnakeCounter) = 60;
 				playSound(THUNDER, true);
 				_G(setup).f22 = true;
 			}

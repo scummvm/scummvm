@@ -97,7 +97,7 @@ void thorShoots() {
 }
 
 int killGoodGuy() {
-	if (!_G(killgg_inform) && !_G(thunder_flag)) {
+	if (!_G(killgg_inform) && !_G(thunderSnakeCounter)) {
 		odinSpeaks(2010, 0);
 		_G(killgg_inform) = true;
 	}

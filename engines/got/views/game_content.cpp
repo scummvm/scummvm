@@ -299,7 +299,7 @@ void GameContent::drawBossHealth(GfxSurface &s) {
 }
 
 void GameContent::checkThunderShake() {
-	if (_G(thunder_flag)) {
+	if (_G(thunderSnakeCounter)) {
 		_G(gameMode) = MODE_THUNDER;
 
 		// Introduce a random screen shake by rendering screen 1 pixel offset randomly
@@ -310,16 +310,16 @@ void GameContent::checkThunderShake() {
 		_moveDelta.x = DELTA_X[delta];
 		_moveDelta.y = DELTA_Y[delta];
 
-		_G(thunder_flag--);
-		if ((_G(thunder_flag) < MAX_ACTORS) && _G(thunder_flag) > 2) {
-			int thunderFl = _G(thunder_flag);
+		_G(thunderSnakeCounter--);
+		if ((_G(thunderSnakeCounter) < MAX_ACTORS) && _G(thunderSnakeCounter) > 2) {
+			int thunderFl = _G(thunderSnakeCounter);
 			if (_G(actor[thunderFl])._active) {
 				_G(actor[thunderFl])._vulnerableCountdown = 0;
 				actorDamaged(&_G(actor[thunderFl]), 20);
 			}
 		}
 
-		if (!_G(thunder_flag)) {
+		if (!_G(thunderSnakeCounter)) {
 			_G(gameMode) = MODE_NORMAL;
 			_moveDelta = Common::Point(0, 0);
 		}
@@ -542,8 +542,7 @@ void GameContent::thorDead() {
 	_G(thor)->_show = 60;
 	_G(apple_flag) = false;
 	_G(bomb_flag) = false;
-	_G(thunder_flag) = 0;
-	_G(lightning_used) = false;
+	_G(thunderSnakeCounter) = 0;
 	_G(tornado_used) = false;
 	_G(shield_on) = false;
 	musicResume();

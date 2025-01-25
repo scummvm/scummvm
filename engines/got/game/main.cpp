@@ -54,8 +54,7 @@ void setupLoad() {
 	_G(thor)->_show = 60;
 	_G(apple_flag) = false;
 	_G(bomb_flag) = false;
-	_G(thunder_flag) = 0;
-	_G(lightning_used) = false;
+	_G(thunderSnakeCounter) = 0;
 	_G(tornado_used) = false;
 	_G(shield_on) = false;
 	_G(actor[1])._active = false;

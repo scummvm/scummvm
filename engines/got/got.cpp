@@ -227,8 +227,7 @@ void GotEngine::pauseEngineIntern(bool pause) {
 		_G(shield_on) = false;
 	}
 
-	_G(lightning_used) = false;
-	_G(thunder_flag) = 0;
+	_G(thunderSnakeCounter) = 0;
 
 	Engine::pauseEngineIntern(pause);
 }

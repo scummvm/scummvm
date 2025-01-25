@@ -138,9 +138,8 @@ void pickUpObject(int p) {
 	case 30:
 	case 31:
 	case 32: {
-		_G(thunder_flag) = 0;
+		_G(thunderSnakeCounter) = 0;
 		_G(shield_on) = false;
-		_G(lightning_used) = false;
 		_G(tornado_used) = false;
 		_G(hammer)->_numMoves = 2;
 		_G(thor)->_numMoves = 1;
@@ -235,18 +234,18 @@ bool useApple(int flag) {
 
 bool useThunder(int flag) {
 	if (flag && _G(thorInfo)._magic > 29) {
-		if (!_G(thunder_flag)) {
+		if (!_G(thunderSnakeCounter)) {
 			addMagic(-30);
 			playSound(THUNDER, false);
-			_G(thunder_flag) = 60;
+			_G(thunderSnakeCounter) = 60;
 		}
 		return true;
 	}
 
-	if (flag && !_G(thunder_flag))
+	if (flag && !_G(thunderSnakeCounter))
 		notEnoughMagic();
 
-	if (_G(thunder_flag))
+	if (_G(thunderSnakeCounter))
 		return true;
 	
 	return false;

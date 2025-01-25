@@ -176,8 +176,7 @@ public:
 
 	int _rand1 = 0;
 	int _rand2 = 0;
-	int _thunder_flag = 0;
-	bool _lightning_used = false;
+	int _thunderSnakeCounter = 0;
 	bool _tornado_used = false;
 	bool _shield_on = false;
 	bool _apple_flag = false;

@@ -222,7 +222,7 @@ void boss2SetupLevel() {
 }
 
 static int boss2Die() {
-	_G(thunder_flag) = 0;
+	_G(thunderSnakeCounter) = 0;
 	if (_G(boss_dead)) {
 		for (int rep = 0; rep < 4; rep++) {
 			const int x1 = _G(actor[3 + rep])._lastX[_G(pge)];
@@ -320,7 +320,7 @@ static int boss2MovementShake(Actor *actor) {
 	if (actor->_i4) {
 		actor->_i4--;
 		if (!actor->_i4)
-			_G(thunder_flag) = 0;
+			_G(thunderSnakeCounter) = 0;
 	}
 	if (!actor->_i2) {
 		if (actor->_x < 144)
@@ -346,7 +346,7 @@ static int boss2MovementShake(Actor *actor) {
 		actor->_x += 2;
 
 	if (actor->_x < 20 || actor->_x > 270) {
-		_G(thunder_flag) = 100;
+		_G(thunderSnakeCounter) = 100;
 		actor->_i4 = 50;
 		playSound(EXPLODE, true);
 		actor->_i2 = 0;

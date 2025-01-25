@@ -976,7 +976,7 @@ int specialMovementTwo(Actor *actor) {
 
 // Yellow globe
 int specialMovementThree(Actor *actor) {
-	if (_G(thunder_flag))
+	if (_G(thunderSnakeCounter))
 		return 0;
 
 	long lind = (long)_G(current_level);
@@ -1082,7 +1082,7 @@ int specialMovementTen(Actor *actor) {
 		return 0;
 	}
 
-	if (_G(thunder_flag))
+	if (_G(thunderSnakeCounter))
 		return 0;
 
 	actor_ctr = 10;
@@ -1147,7 +1147,6 @@ int movementTwo(Actor *actor) {
 		if (actor->_actorNum == 2) {
 			actor->_active = false;
 			actor->_dead = 2;
-			_G(lightning_used) = false;
 			_G(tornado_used) = false;
 		}
 	}
