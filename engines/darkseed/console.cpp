@@ -64,10 +64,10 @@ void Console::printTosText(int tosIndex) {
 		debug("%s", text.encode().c_str());
 	} else {
 		debugN("tos %d: ", tosIndex);
-		for (int i = 0; i < text.size(); i++) {
+		for (uint i = 0; i < text.size(); i++) {
 			debugN("%02x,", (unsigned char)text[i]);
 		}
-		debug("");
+		debug("%s", "");
 	}
 	addTextLineU32(text);
 	_sound->playTosSpeech(tosIndex);

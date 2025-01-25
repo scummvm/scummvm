@@ -49,7 +49,7 @@ Common::U32String convertToU32String(const char *text, Common::Language language
 	case Common::ZH_ANY:
 	case Common::KO_KOR: {
 		Common::U32String str;
-		for (int i = 0; i < len; i++) {
+		for (uint i = 0; i < len; i++) {
 			uint8 byte = text[i];
 			if (byte & 0x80) {
 				if (i < len - 1) {
