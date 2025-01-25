@@ -40,6 +40,7 @@ private:
 	bool _redrawRequired = false;
 	int _numLines = 4;
 	int _lineHeight = 11;
+	bool _isCJKLanguage = false;
 
 public:
 	Console(TosText *tostext, Sound *sound);

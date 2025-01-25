@@ -35,11 +35,13 @@ Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sou
 		_font = new Big5Font();
 		_lineHeight = 17;
 		_numLines = 3;
+		_isCJKLanguage = true;
 		break;
 	case Common::KO_KOR :
 		_font = new KoFont();
 		_lineHeight = 18;
 		_numLines = 3;
+		_isCJKLanguage = true;
 		break;
 	default:
 		_font = new GameFont();
@@ -57,12 +59,16 @@ Console::~Console() {
 
 void Console::printTosText(int tosIndex) {
 	const Common::U32String &text = _tosText->getText(tosIndex);
-	// debugN("tos %d: ", tosIndex);
-	// for (int i = 0; i < text.size(); i++) {
-	// 	debugN("%02x,", (unsigned char)text[i]);
-	// }
-	// debug("");
-	debug("%s", text.c_str());
+
+	if (!_isCJKLanguage) {
+		debug("%s", text.encode().c_str());
+	} else {
+		debugN("tos %d: ", tosIndex);
+		for (int i = 0; i < text.size(); i++) {
+			debugN("%02x,", (unsigned char)text[i]);
+		}
+		debug("");
+	}
 	addTextLineU32(text);
 	_sound->playTosSpeech(tosIndex);
 }
