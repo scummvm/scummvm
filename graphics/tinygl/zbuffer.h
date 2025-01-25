@@ -107,6 +107,14 @@ struct FrameBuffer {
 	FrameBuffer(int width, int height, const Graphics::PixelFormat &format, bool enableStencilBuffer);
 	~FrameBuffer();
 
+	bool getScissorTestEnabled() {
+		return _enableScissorTest;
+	}
+
+	Common::Rect getScissorTestRectangle() {
+		return _scissorTestRectangle;
+	}
+
 	Graphics::PixelFormat getPixelFormat() {
 		return _pbufFormat;
 	}
@@ -620,6 +628,14 @@ public:
 		_polygonStippleEnabled = enable;
 	}
 
+	void enableScissorTest(bool enable) {
+		_enableScissorTest = enable;
+	}
+
+	void setScissorTestRectangle(Common::Rect rect) {
+		_scissorTestRectangle = rect;
+	}
+
 	void setPolygonStipplePattern(const byte *stipple) {
 		_polygonStipplePattern = stipple;
 	}
@@ -769,8 +785,13 @@ private:
 	int _textureSize;
 	int _textureSizeMask;
 
+	// used by internal implementation
 	Common::Rect _clipRectangle;
 	bool _enableScissor;
+
+	// scissor test set by API
+	Common::Rect _scissorTestRectangle;
+	bool _enableScissorTest;
 
 	const TexelBuffer *_currentTexture;
 	uint _wrapS, _wrapT;

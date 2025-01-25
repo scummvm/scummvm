@@ -448,7 +448,12 @@ struct GLContext {
 	float fog_start;
 	float fog_end;
 
+	// implementation uses and modifies _scissorRect. See `tglBlitSetScissorRect`
 	Common::Rect _scissorRect;
+
+	// set by API
+	bool scissor_test_enabled;
+	Common::Rect _scissorTestRect;
 
 	bool _enableDirtyRectangles;
 

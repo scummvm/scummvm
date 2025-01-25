@@ -358,6 +358,9 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	_debugRectsEnabled = false;
 	_profilingEnabled = false;
 
+	// scissor test
+	scissor_test_enabled = false;
+
 	TinyGL::Internal::tglBlitResetScissorRect();
 }
 

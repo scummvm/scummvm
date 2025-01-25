@@ -477,6 +477,9 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.fogColorR = c->fog_color.X;
 	state.fogColorG = c->fog_color.Y;
 	state.fogColorB = c->fog_color.Z;
+	
+	state.scissorTestEnabled = c->scissor_test_enabled;
+	state.scissorRect = c->_scissorTestRect;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
@@ -506,6 +509,9 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setPolygonStipplePattern(state.polygonStipplePattern);
 	c->fb->enablePolygonStipple(state.polygonStippleEnabled);
 
+	c->fb->enableScissorTest(state.scissorTestEnabled);
+	c->fb->setScissorTestRectangle(state.scissorRect);
+
 	c->blending_enabled = state.enableBlending;
 	c->source_blending_factor = state.sfactor;
 	c->destination_blending_factor = state.dfactor;
@@ -526,6 +532,9 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->offset_states = state.offsetStates;
 	c->offset_factor = state.offsetFactor;
 	c->offset_units = state.offsetUnits;
+
+	c->scissor_test_enabled = state.scissorTestEnabled;
+	c->_scissorTestRect = state.scissorRect;
 
 	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
@@ -551,7 +560,10 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
-	c->fb->setScissorRectangle(clippingRectangle);
+
+	// set scissor rectangle here
+	c->fb->setScissorRectangle(c->fb->getScissorTestEnabled() ? c->fb->getScissorTestRectangle() : clippingRectangle);
+
 	execute(restoreState);
 	c->fb->resetScissorRectangle();
 }
@@ -611,7 +623,11 @@ void BlittingDrawCall::execute(bool restoreState) const {
 }
 
 void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
+	// set scissor rectangle here
+	// TinyGL::GLContext *c = gl_get_context();
+	// Internal::tglBlitSetScissorRect(c->fb->getScissorTestEnabled() ? c->fb->getScissorTestRectangle() : clippingRectangle);
 	Internal::tglBlitSetScissorRect(clippingRectangle);
+
 	execute(restoreState);
 	Internal::tglBlitResetScissorRect();
 }
@@ -626,6 +642,9 @@ BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
 	state.alphaFunc = c->alpha_test_func;
 	state.alphaRefValue = c->alpha_test_ref_val;
 	state.depthTestEnabled = c->depth_test_enabled;
+	state.scissorTestEnabled = c->scissor_test_enabled;
+	state.scissorRect = c->_scissorTestRect;
+
 	return state;
 }
 
@@ -705,10 +724,21 @@ void ClearBufferDrawCall::execute(bool restoreState) const {
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
+	
+	// set scissor rectangle here
+	// Common::Rect clearRect = c->fb->getScissorTestEnabled() ? 
+	// 							c->fb->getScissorTestRectangle().findIntersectingRect(getDirtyRegion()) :
+	// 							clippingRectangle.findIntersectingRect(getDirtyRegion());
+	
 	Common::Rect clearRect = clippingRectangle.findIntersectingRect(getDirtyRegion());
+
+	c->fb->setScissorRectangle(c->fb->getScissorTestEnabled() ? c->fb->getScissorTestRectangle() : clearRect);
+
 	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(),
 	                   _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue,
 	                   _clearStencilBuffer, _stencilValue);
+
+	c->fb->resetScissorRectangle();
 }
 
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
@@ -769,7 +799,9 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 		viewportTranslation[2] == other.viewportTranslation[2] &&
 		viewportScaling[0] == other.viewportScaling[0] &&
 		viewportScaling[1] == other.viewportScaling[1] &&
-		viewportScaling[2] == other.viewportScaling[2];
+		viewportScaling[2] == other.viewportScaling[2] &&
+		scissorTestEnabled == other.scissorTestEnabled &&
+		scissorRect == other.scissorRect;
 }
 
 void *Internal::allocateFrame(int size) {

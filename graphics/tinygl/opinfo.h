@@ -56,6 +56,8 @@ ADD_OP(ColorMaterial, 2, "%C %C")
 ADD_OP(Light, 6, "%C %C %f %f %f %f")
 ADD_OP(LightModel, 5, "%C %f %f %f %f")
 
+ADD_OP(Scissor, 4, "%d %d %d %d")
+
 ADD_OP(Clear, 1, "%d")
 ADD_OP(ClearColor, 4, "%f %f %f %f")
 ADD_OP(ClearDepth, 1, "%f")
