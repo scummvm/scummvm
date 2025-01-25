@@ -1305,7 +1305,7 @@ void QuickTimeDecoder::cleanupCursors() {
 	for (int i = 0; i < kCurLastCursor; i++)
 		delete _cursorCache[i];
 
-	delete _cursorCache;
+	free(_cursorCache);
 	_cursorCache = nullptr;
 }
 
