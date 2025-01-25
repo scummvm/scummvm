@@ -200,6 +200,8 @@ public:
 	void stopAll();
 	void stopAllSamples();
 	void stopMusic();
+	void pauseMusic();
+	void resumeMusic();
 	void stopSFX();
 
 	// sound and midi functions

@@ -255,17 +255,15 @@ void SciMusic::resetGlobalPauseCounter() {
 }
 
 void SciMusic::stopAll() {
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		soundStop(*i);
+	for (auto &sound: _playList) {
+		soundStop(sound);
 	}
 }
 
 void SciMusic::stopAllSamples() {
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		if ((*i)->isSample) {
-			soundStop(*i);
+	for (auto &sound: _playList) {
+		if (sound->isSample) {
+			soundStop(sound);
 		}
 	}
 }
@@ -286,34 +284,47 @@ uint16 SciMusic::soundGetVoices() {
 MusicEntry *SciMusic::getSlot(uint32 obj) {
 	Common::StackLock lock(_mutex);
 
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		if ((*i)->soundObj == obj)
-			return *i;
+	for (auto &sound: _playList) {
+		if (sound->soundObj == obj)
+			return sound;
 	}
 
 	return nullptr;
 }
 
 MusicEntry *SciMusic::getFirstSlotWithStatus(SoundStatus status) {
-	for (MusicList::iterator i = _playList.begin(); i != _playList.end(); ++i) {
-		if ((*i)->status == status)
-			return *i;
+	for (auto &sound: _playList) {
+		if (sound->status == status)
+			return sound;
 	}
 	return nullptr;
 }
 
 void SciMusic::stopMusic() {
-	for (MusicList::iterator i = _playList.begin(); i != _playList.end(); ++i) {
-		if ((*i)->soundType == Audio::Mixer::kMusicSoundType)
-			soundStop(*i);
+	for (auto &sound: _playList) {
+		if (sound->soundType == Audio::Mixer::kMusicSoundType)
+			soundStop(sound);
+	}
+}
+
+void SciMusic::pauseMusic() {
+	for (auto &sound: _playList) {
+		if (sound->soundType == Audio::Mixer::kMusicSoundType)
+			soundPause(sound);
+	}
+}
+
+void SciMusic::resumeMusic() {
+	for (auto &sound: _playList) {
+		if (sound->soundType == Audio::Mixer::kMusicSoundType)
+			soundResume(sound);
 	}
 }
 
 void SciMusic::stopSFX() {
-	for (MusicList::iterator i = _playList.begin(); i != _playList.end(); ++i) {
-		if ((*i)->soundType == Audio::Mixer::kSFXSoundType)
-			soundStop(*i);
+	for (auto &sound: _playList) {
+		if (sound->soundType == Audio::Mixer::kSFXSoundType)
+			soundStop(sound);
 	}
 }
 
@@ -325,20 +336,18 @@ void SciMusic::setGlobalReverb(int8 reverb) {
 		_globalReverb = reverb;
 
 		// Check the reverb of the active song...
-		const MusicList::iterator end = _playList.end();
-		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-			if ((*i)->status == kSoundPlaying) {
-				if ((*i)->reverb == 127)			// Active song has no reverb
+		for (const auto &sound: _playList) {
+			if (sound->status == kSoundPlaying) {
+				if (sound->reverb == 127)			// Active song has no reverb
 					_pMidiDrv->setReverb(reverb);	// Set the global reverb
 				break;
 			}
 		}
 	} else {
 		// Set reverb of the active song
-		const MusicList::iterator end = _playList.end();
-		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-			if ((*i)->status == kSoundPlaying) {
-				_pMidiDrv->setReverb((*i)->reverb);	// Set the song's reverb
+		for (const auto &sound: _playList) {
+			if (sound->status == kSoundPlaying) {
+				_pMidiDrv->setReverb(sound->reverb);	// Set the song's reverb
 				break;
 			}
 		}
@@ -783,10 +792,9 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 	Common::StackLock lock(_mutex);
 
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		if ((*i)->pMidiParser)
-			(*i)->pMidiParser->setMasterVolume(vol);
+	for (auto &sound : _playList) {
+		if (sound->pMidiParser)
+			sound->pMidiParser->setMasterVolume(vol);
 	}
 }
 

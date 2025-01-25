@@ -194,7 +194,8 @@ static byte _loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz,
 
 
 Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor) :
-	_mixer(mixer), _resource(resource), _decompressor(decompressor), _music(nullptr) {
+	_mixer(mixer), _resource(resource), _decompressor(decompressor), _music(nullptr),
+	_isMusicMuted(false), _isSfxMuted(false) {
 	ARRAYCLEAR(_channels);
 	_music = new SciMusic(true);
 	_music->init();
@@ -616,8 +617,19 @@ void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audi
 			playPCM(data._data, data._size);
 		} else {
 			int idOffset = soundType == Audio::Mixer::kSFXSoundType ? SND_RESOURCE_OFFSET : MUSIC_RESOURCE_OFFSET;
+
+			// Only play one music at a time, don't play sfx if sfx muted.
+			if (soundType == Audio::Mixer::kMusicSoundType)
+				stopMusic();
+			else if (soundType == Audio::Mixer::kSFXSoundType && _isSfxMuted)
+				return;
+
 			processInitSound(num + idOffset, data, soundType);
 			processPlaySound(num + idOffset, false, false, data);
+
+			// Immediately pause new music if muted
+			if (_isMusicMuted && soundType == Audio::Mixer::kMusicSoundType)
+				_music->pauseMusic();
 		}
 	} else {
 		warning("Sound: Requested to play %d but only have %d tracks", num, dataArray.size());
@@ -627,6 +639,29 @@ void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audi
 void Sound::stopMusic() {
 	debug(1, "Sound: Stop music.");
 	_music->stopMusic();
+}
+
+void Sound::muteSoundType(Audio::Mixer::SoundType soundType) {
+	if (soundType == Audio::Mixer::kMusicSoundType) {
+		_isMusicMuted = true;
+		_music->pauseMusic();
+	} else if (soundType == Audio::Mixer::kSFXSoundType) {
+		_isSfxMuted = true;
+		stopAllSfx();
+	} else {
+		error("Sound: Can only mute music or sfx, not sound type %d", soundType);
+	}
+}
+
+void Sound::unmuteSoundType(Audio::Mixer::SoundType soundType) {
+	if (soundType == Audio::Mixer::kMusicSoundType) {
+		_isMusicMuted = false;
+		_music->resumeMusic();
+	} else if (soundType == Audio::Mixer::kSFXSoundType) {
+		_isSfxMuted = false;
+	} else {
+		error("Sound: Can only unmute music or sfx, not sound type %d", soundType);
+	}
 }
 
 void Sound::unloadMusic() {

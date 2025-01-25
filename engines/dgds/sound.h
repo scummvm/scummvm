@@ -72,6 +72,9 @@ public:
 
 	bool playPCM(const byte *data, uint32 size);
 
+	void muteSoundType(Audio::Mixer::SoundType soundType);
+	void unmuteSoundType(Audio::Mixer::SoundType soundType);
+
 private:
 	void loadSNGSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray);
 	bool loadSXSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray, Common::HashMap<uint16, uint16> &idMap);
@@ -102,6 +105,9 @@ private:
 	Audio::Mixer *_mixer;
 	ResourceManager *_resource;
 	Decompressor *_decompressor;
+
+	bool _isMusicMuted;
+	bool _isSfxMuted;
 };
 
 enum {
