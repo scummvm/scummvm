@@ -102,6 +102,13 @@ void QuickTimeDecoder::close() {
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
 
+	if (isVR()) {
+		_panAngle = (float)getCurrentColumn() / (float)_nav.columns * 360.0;
+		_tiltAngle = ((_nav.rows - 1) / 2.0 - (float)getCurrentRow()) / (float)(_nav.rows - 1) * 180.0;
+
+		debugC(1, kDebugLevelMacGUI, "QTVR: row: %d col: %d  (%d x %d) pan: %f tilt: %f", getCurrentRow(), getCurrentColumn(), _nav.rows, _nav.columns, getPanAngle(), getTiltAngle());
+	}
+
 	// Update audio buffers too
 	// (needs to be done after we find the next track)
 	updateAudioBuffer();
