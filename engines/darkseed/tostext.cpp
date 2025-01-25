@@ -49,7 +49,7 @@ Common::U32String TosText::loadString(Common::File &file, uint16 index) const {
 	file.seek(index * 2, SEEK_SET);
 	auto startOffset = file.readUint16LE();
 	uint16 strLen = index == _numEntries - 1
-						? file.size() - startOffset
+						? (uint16)file.size() - startOffset
 						: file.readUint16LE() - startOffset;
 	file.seek(startOffset, SEEK_SET);
 	if (g_engine->getLanguage() == Common::KO_KOR || g_engine->getLanguage() == Common::ZH_ANY) {

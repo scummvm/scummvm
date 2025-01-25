@@ -46,11 +46,11 @@ class FSList;
 namespace ADDynamicDescription {
 
 static inline uint32 strSizeBuffer(const char * const &field) {
-	return field ? strlen(field) + 1 : 0;
+	return field ? (uint32)strlen(field) + 1 : 0;
 }
 static inline void *strToBuffer(void *buffer, const char *&field) {
 	if (field) {
-		int len = strlen(field) + 1;
+		int len = (int)strlen(field) + 1;
 		memcpy((char *)buffer, field, len);
 		field = (const char *)buffer;
 		buffer = (char *)buffer + len;
