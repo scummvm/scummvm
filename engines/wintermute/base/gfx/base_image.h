@@ -70,7 +70,6 @@ private:
 	const Graphics::Surface *_surface;
 	Graphics::Surface *_deletableSurface;
 	const byte *_palette;
-	byte *_paletteTga;
 	uint16 _paletteCount;
 	BaseFileManager *_fileManager;
 };
