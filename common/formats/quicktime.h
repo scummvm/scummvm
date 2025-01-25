@@ -327,23 +327,23 @@ protected:
 	};
 
 	struct Navigation {
-		uint16 columns;
-		uint16 rows;
-		uint16 loop_size;      // Number of frames shot at each position
-		uint16 frame_duration;
+		uint16 columns = 1;
+		uint16 rows = 1;
+		uint16 loop_size = 0;      // Number of frames shot at each position
+		uint16 frame_duration = 1;
 
-		MovieType movie_type;
+		MovieType movie_type = MovieType::kStandardObject;
 
-		uint16 loop_ticks;	 // Number of ticks before next frame of loop is displayed
+		uint16 loop_ticks = 0;	 // Number of ticks before next frame of loop is displayed
 
-		float field_of_view;
+		float field_of_view = 1.0f;
 
-		float startHPan;
-		float startVPan;
-		float endHPan;
-		float endVPan;
-		float initialHPan;
-		float initialVPan;
+		float startHPan = 1.0f;
+		float startVPan = 1.0f;
+		float endHPan = 1.0f;
+		float endVPan = 1.0f;
+		float initialHPan = 1.0f;
+		float initialVPan = 1.0f;
 	};
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
