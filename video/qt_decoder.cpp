@@ -688,11 +688,22 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 }
 
 void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
-	_isMouseButtonDown = isDown;
-
 	if (isDown) {
-		_prevMouseX = x;
-		_prevMouseY = y;
+		if (y < _curBbox.top) {
+			setCurrentRow(getCurrentRow() + 1);
+		} else if (y > _curBbox.bottom) {
+			setCurrentRow(getCurrentRow() - 1);
+		} else if (x < _curBbox.left) {
+			setCurrentColumn((getCurrentColumn() + 1) % _nav.columns);
+		} else if (x > _curBbox.right) {
+			setCurrentColumn((getCurrentColumn() - 1 + _nav.columns) % _nav.columns);
+		} else {
+			_prevMouseX = x;
+			_prevMouseY = y;
+			_isMouseButtonDown = isDown;
+		}
+	} else {
+		_isMouseButtonDown = isDown;
 	}
 
 	updateQTVRCursor(x, y);
@@ -1259,16 +1270,14 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const 
 enum {
 	kCurHand = 129,
 	kCurGrab = 130,
-	kCurObjUp = 171,
-	kCurObjDown = 172,
-	kCurObjLeft90 = 173,
-	kCurObjRight90 = 174,
-	kCurObjLeft = 181,
-	kCurObjRight = 182,
-	kCurObjLeftM90 = 189,
-	kCurObjRightM90 = 190,
-	kCurObjUpLimit = 191,
-	kCurObjDownLimit = 192,
+	kCurObjUp = 131,
+	kCurObjDown = 132,
+	kCurObjLeft90 = 133,
+	kCurObjRight90 = 134,
+	kCurObjLeftM90 = 149,
+	kCurObjRightM90 = 150,
+	kCurObjUpLimit = 151,
+	kCurObjDownLimit = 152,
 	kCurLastCursor
 };
 
@@ -1277,9 +1286,9 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 		int tiltIdx = int((-_tiltAngle + 90.0) / 21) * 2;
 
 		if (y < _curBbox.top)
-			setCursor(tiltIdx == 0 ? kCurObjUpLimit : kCurObjUp);
+			setCursor(tiltIdx == 16 ? kCurObjUpLimit : kCurObjUp);
 		else if (y > _curBbox.bottom)
-			setCursor(tiltIdx == 16 ? kCurObjDownLimit : kCurObjDown);
+			setCursor(tiltIdx == 0 ? kCurObjDownLimit : kCurObjDown);
 		else if (x < _curBbox.left)
 			setCursor(kCurObjLeft90 + tiltIdx);
 		else if (x > _curBbox.right)
