@@ -43,7 +43,7 @@
 -- Initialization & Finalization --
 -----------------------------------
 new object me
-forget object me -- for Director use only. Invoke by calling me = 0 
+forget object me -- for Director use only. Invoke by calling me = 0
 + QTVREnter object xt --> integer (zero on success)  -- Initialize QTVR
 + QTVRExit  object xt                                -- Release QTVR
 -----------------------------------
@@ -397,7 +397,17 @@ void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
 	}
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)
+void QtvrxtraXtra::m_QTVRIdle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQTVRType", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Graphics::Surface const *frame = me->_video->decodeNextFrame();
+	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
+
+	g_system->copyRectToScreen(dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h);
+}
 
 bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
 	// FIXME: This class needs to inherit from MacWidget and override this function
