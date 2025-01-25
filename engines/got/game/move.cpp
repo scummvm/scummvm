@@ -168,7 +168,7 @@ void thorDamaged(Actor *actor) {
 		else if (_G(setup)._difficultyLevel == 2)
 			damage *= 2;
 	}
-	if ((!_G(thor)->_vulnerableCountdown && !_G(shield_on)) || damage == 255) {
+	if ((!_G(thor)->_vulnerableCountdown && !_G(shieldOn)) || damage == 255) {
 		if (damage >= _G(thor)->_health) {
 			_G(thor)->_vulnerableCountdown = 40;
 			_G(thor)->_show = 0;
@@ -361,7 +361,7 @@ void moveActor(Actor *actor) {
 		if (i != actor->_dir)
 			actor->_dir = i;
 
-		if (actor->_moveType == 0 && _G(current_level) != _G(new_level) && _G(shield_on)) {
+		if (actor->_moveType == 0 && _G(current_level) != _G(new_level) && _G(shieldOn)) {
 			_G(actor[2])._x = actor->_x - 2;
 			if (_G(actor[2])._x < 0)
 				_G(actor[2])._x = 0;

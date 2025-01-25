@@ -177,11 +177,10 @@ public:
 	int _rand1 = 0;
 	int _rand2 = 0;
 	int _thunderSnakeCounter = 0;
-	bool _tornado_used = false;
-	bool _shield_on = false;
-	bool _apple_flag = false;
-	bool _bomb_flag = false;
-	int _switch_flag = 0;
+	bool _tornadoUsed = false;
+	bool _shieldOn = false;
+	bool _appleFlag = false;
+	int _switchUsed = 0;
 
 	byte _res_file[16] = {};
 	bool _music_flag = false, _sound_flag = false;

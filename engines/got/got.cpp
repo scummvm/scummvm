@@ -216,15 +216,15 @@ void GotEngine::pauseEngineIntern(bool pause) {
 	if (_G(gameMode) == MODE_LIGHTNING)
 		_G(gameMode) = MODE_NORMAL;
 
-	if (_G(tornado_used)) {
-		_G(tornado_used) = false;
+	if (_G(tornadoUsed)) {
+		_G(tornadoUsed) = false;
 		actorDestroyed(&_G(actor[2]));
 	}
 
-	if (_G(shield_on)) {
+	if (_G(shieldOn)) {
 		_G(actor[2])._dead = 2;
 		_G(actor[2])._active = false;
-		_G(shield_on) = false;
+		_G(shieldOn) = false;
 	}
 
 	_G(thunderSnakeCounter) = 0;

@@ -506,9 +506,9 @@ int checkMove2(const int x, const int y, Actor *actor) {
 			if (overlap(x1, y1, x2, y2, x3, y3, x4, y4)) {
 				if (actor->_moveType == 38) {
 					if (act->_funcNum == 4)
-						_G(switch_flag) = 1;
+						_G(switchUsed) = 1;
 					else if (act->_funcNum == 7)
-						_G(switch_flag) = 2;
+						_G(switchUsed) = 2;
 				}
 				return 0;
 			}
@@ -993,7 +993,7 @@ int specialMovementFour(Actor *actor) {
 		return 0;
 	actor->_shotCountdown = 30;
 
-	_G(switch_flag) = 1;
+	_G(switchUsed) = 1;
 	return 0;
 }
 
@@ -1052,7 +1052,7 @@ int specialMovementSeven(Actor *actor) {
 
 	actor->_shotCountdown = 30;
 
-	_G(switch_flag) = 2;
+	_G(switchUsed) = 2;
 	return 0;
 }
 
@@ -1147,7 +1147,7 @@ int movementTwo(Actor *actor) {
 		if (actor->_actorNum == 2) {
 			actor->_active = false;
 			actor->_dead = 2;
-			_G(tornado_used) = false;
+			_G(tornadoUsed) = false;
 		}
 	}
 	nextFrame(actor);

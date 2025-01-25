@@ -47,9 +47,8 @@ static const char *odinEndMessage;
 
 void showLevel(const int newLevel) {
 	_G(boss_active) = false;
-	if (!_G(shield_on))
+	if (!_G(shieldOn))
 		_G(actor[2])._active = false;
-	_G(bomb_flag) = false;
 	_G(slipping) = false;
 
 	if (_G(scrn)._iconGrid[_G(thor)->_centerY][_G(thor)->_centerX] == 154)

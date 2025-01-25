@@ -52,11 +52,10 @@ void setupLoad() {
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
-	_G(apple_flag) = false;
-	_G(bomb_flag) = false;
+	_G(appleFlag) = false;
 	_G(thunderSnakeCounter) = 0;
-	_G(tornado_used) = false;
-	_G(shield_on) = false;
+	_G(tornadoUsed) = false;
+	_G(shieldOn) = false;
 	_G(actor[1])._active = false;
 	_G(actor[2])._active = false;
 	_G(thor)->_moveCountdown = 6;

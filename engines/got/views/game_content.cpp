@@ -329,20 +329,21 @@ void GameContent::checkThunderShake() {
 }
 
 void GameContent::checkSwitchFlag() {
-	if (_G(switch_flag)) {
-		switch (_G(switch_flag)) {
-		case 1:
-			switchIcons();
-			break;
-		case 2:
-			rotateArrows();
-			break;
-		default:
-			break;
-		}
-
-		_G(switch_flag) = 0;
+	if (!_G(switchUsed))
+		return;
+	
+	switch (_G(switchUsed)) {
+	case 1:
+		switchIcons();
+		break;
+	case 2:
+		rotateArrows();
+		break;
+	default:
+		break;
 	}
+
+	_G(switchUsed) = 0;
 }
 
 void GameContent::checkForItem() {
@@ -464,7 +465,7 @@ void GameContent::checkForAreaChange() {
 		_G(thor)->_show = 0;
 		_G(thor)->_active = false;
 		_G(hammer)->_active = false;
-		_G(tornado_used) = false;
+		_G(tornadoUsed) = false;
 
 		// Draws the old area without Thor, and then save a copy of it.
 		// This will be used to scroll old area off-screen as new area scrolls in
@@ -489,7 +490,7 @@ void GameContent::thorDies() {
 	// Set the state for showing death animation
 	_G(gameMode) = MODE_THOR_DIES;
 	_deathCtr = 0;
-	_G(shield_on) = false;
+	_G(shieldOn) = false;
 
 	playSound(DEAD, true);
 }
@@ -540,11 +541,10 @@ void GameContent::thorDead() {
 	_G(thor)->_numMoves = 1;
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
-	_G(apple_flag) = false;
-	_G(bomb_flag) = false;
+	_G(appleFlag) = false;
 	_G(thunderSnakeCounter) = 0;
-	_G(tornado_used) = false;
-	_G(shield_on) = false;
+	_G(tornadoUsed) = false;
+	_G(shieldOn) = false;
 	musicResume();
 	_G(actor[1])._active = false;
 	_G(actor[2])._active = false;

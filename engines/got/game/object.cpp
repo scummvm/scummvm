@@ -124,8 +124,8 @@ void pickUpObject(int p) {
 		_G(thor)->_numMoves = 1;
 		_G(hammer)->_numMoves = 2;
 		_G(actor[2])._active = false;
-		_G(shield_on) = false;
-		_G(tornado_used) = false;
+		_G(shieldOn) = false;
+		_G(tornadoUsed) = false;
 		_G(thorInfo)._inventory |= 64;
 		_G(thorInfo)._selectedItem = 7;
 		_G(thorInfo)._object = _G(objectMap[p]) - 11;
@@ -139,8 +139,8 @@ void pickUpObject(int p) {
 	case 31:
 	case 32: {
 		_G(thunderSnakeCounter) = 0;
-		_G(shield_on) = false;
-		_G(tornado_used) = false;
+		_G(shieldOn) = false;
+		_G(tornadoUsed) = false;
 		_G(hammer)->_numMoves = 2;
 		_G(thor)->_numMoves = 1;
 		_G(actor[2])._active = false;
@@ -209,7 +209,7 @@ bool useApple(int flag) {
 		return false;
 
 	if (flag && _G(thorInfo)._magic > 0) {
-		if (!_G(apple_flag)) {
+		if (!_G(appleFlag)) {
 			_G(magicCounter) = 0;
 			addMagic(-2);
 			addHealth(1);
@@ -221,11 +221,11 @@ bool useApple(int flag) {
 			if (!soundPlaying())
 				playSound(ANGEL, false);
 		}
-		_G(apple_flag) = true;
+		_G(appleFlag) = true;
 		return true;
 	}
 
-	_G(apple_flag) = false;
+	_G(appleFlag) = false;
 	if (flag)
 		notEnoughMagic();
 
@@ -278,7 +278,7 @@ bool useBoots(int flag) {
 bool useShield(int flag) {
 	if (flag) {
 		if (_G(thorInfo)._magic) {
-			if (!_G(shield_on)) {
+			if (!_G(shieldOn)) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
 				setupMagicItem(1);
@@ -287,7 +287,7 @@ bool useShield(int flag) {
 				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._moveCountdown = 1;
 				_G(actor[2])._speed = 1;
-				_G(shield_on) = true;
+				_G(shieldOn) = true;
 			} else if (_G(magicCounter) > 8) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
@@ -299,10 +299,10 @@ bool useShield(int flag) {
 		notEnoughMagic();
 	}
 
-	if (_G(shield_on)) {
+	if (_G(shieldOn)) {
 		_G(actor[2])._dead = 2;
 		_G(actor[2])._active = false;
-		_G(shield_on) = false;
+		_G(shieldOn) = false;
 	}
 
 	return false;
@@ -324,7 +324,7 @@ bool useLightning(int flag) {
 bool useTornado(int flag) {
 	if (flag) {
 		if (_G(thorInfo)._magic > 10) {
-			if (!_G(tornado_used) && !_G(actor[2])._dead && _G(magicCounter) > 20) {
+			if (!_G(tornadoUsed) && !_G(actor[2])._dead && _G(magicCounter) > 20) {
 				_G(magicCounter) = 0;
 				addMagic(-10);
 				setupMagicItem(0);
@@ -333,22 +333,22 @@ bool useTornado(int flag) {
 				setupActor(&_G(actor[2]), 2, 0, _G(thor)->_x, _G(thor)->_y);
 				_G(actor[2])._lastDir = _G(thor)->_dir;
 				_G(actor[2])._moveType = 16;
-				_G(tornado_used) = true;
+				_G(tornadoUsed) = true;
 				playSound(WIND, false);
 			}
-		} else if (!_G(tornado_used)) {
+		} else if (!_G(tornadoUsed)) {
 			notEnoughMagic();
 			return false;
 		}
 		if (_G(magicCounter) > 8) {
-			if (_G(tornado_used)) {
+			if (_G(tornadoUsed)) {
 				_G(magicCounter) = 0;
 				addMagic(-1);
 			}
 		}
 		if (_G(thorInfo)._magic < 1) {
 			actorDestroyed(&_G(actor[2]));
-			_G(tornado_used) = false;
+			_G(tornadoUsed) = false;
 			notEnoughMagic();
 			return false;
 		}
@@ -370,9 +370,9 @@ void useItem() {
 
 	int kf = _G(keyFlag[key_magic]);
 
-	if (!kf && _G(tornado_used)) {
+	if (!kf && _G(tornadoUsed)) {
 		actorDestroyed(&_G(actor[2]));
-		_G(tornado_used) = false;
+		_G(tornadoUsed) = false;
 	}
 
 	bool mf = _G(magic_inform);
