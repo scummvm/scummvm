@@ -102,7 +102,7 @@ static const char *const sequenceListPSX[20] = {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Sound *sound, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _resMan(resMan), _sound(sound), _system(system), _textX(0), _textY(0), _textWidth(0), _textHeight(0), _textColor(1) {
+	: _vm(vm), _textMan(textMan), _resMan(resMan), _sound(sound), _system(system), _textX(0), _textY(0), _textWidth(0), _textHeight(0), _textColor(1), _modeChange(false) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
@@ -118,7 +118,7 @@ MoviePlayer::~MoviePlayer() {
  * Plays an animated cutscene.
  * @param id the id of the file
  */
-bool MoviePlayer::load(uint32 id) {
+Common::Error MoviePlayer::load(uint32 id) {
 	Common::Path filename;
 
 	if (SwordEngine::_systemVars.showText) {
@@ -188,16 +188,23 @@ bool MoviePlayer::load(uint32 id) {
 		break;
 	}
 
-	// Need to switch to true color for PSX/MP2 videos
-	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-		initGraphics(g_system->getWidth(), g_system->getHeight(), nullptr);
-
 	if (!_decoder->loadFile(filename)) {
-		// Go back to 8bpp color
-		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-			initGraphics(g_system->getWidth(), g_system->getHeight());
+		return Common::Error(Common::kPathDoesNotExist, filename.toString());
+	}
 
-		return false;
+	// Need to switch to true color for PSX/MP2 videos
+	if (!_decoder->getPixelFormat().isCLUT8()) {
+		if (!_decoder->setOutputPixelFormats(g_system->getSupportedFormats()))
+			return Common::kUnsupportedColorMode;
+
+		Graphics::PixelFormat format = _decoder->getPixelFormat();
+		initGraphics(g_system->getWidth(), g_system->getHeight(), &format);
+
+		if (g_system->getScreenFormat() != format) {
+			return Common::kUnsupportedColorMode;
+		} else {
+			_modeChange = true;
+		}
 	}
 
 	// For DXA/MP2, also add the external sound file
@@ -205,7 +212,7 @@ bool MoviePlayer::load(uint32 id) {
 		_decoder->addStreamFileTrack(sequenceList[id]);
 
 	_decoder->start();
-	return true;
+	return Common::kNoError;
 }
 
 void MoviePlayer::play() {
@@ -231,7 +238,7 @@ void MoviePlayer::play() {
 void MoviePlayer::performPostProcessing(byte *screen) {
 	// TODO: We don't support displaying these in true color yet,
 	// nor using the PSX fonts to display subtitles.
-	if (_vm->isPsx() || _decoderType == kVideoDecoderMP2)
+	if (_vm->isPsx() || _modeChange)
 		return;
 
 	if (!_movieTexts.empty()) {
@@ -425,18 +432,20 @@ bool MoviePlayer::playVideo() {
 	}
 
 	// Need to jump back to paletted color
-	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+	if (_modeChange) {
 		initGraphics(g_system->getWidth(), g_system->getHeight());
+		_modeChange = false;
+	}
 
 	return !_vm->shouldQuit() && !skipped;
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
+	return (_modeChange) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::findTextColor() {
-	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) {
+	if (_modeChange) {
 		// We're in true color mode, so return the actual colors
 		switch (_textColor) {
 		case 1:
@@ -524,15 +533,9 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		filename = ((vm->_systemVars.isDemo && id == 4) ? Common::Path("intro.str") : Common::Path(Common::String(sequenceListPSX[id]) + ".str"));
 
 		if (Common::File::exists(filename)) {
-#ifdef USE_RGB_COLOR
 			// All BS1 PSX videos run the videos at 2x speed
 			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
 			return new MoviePlayer(vm, textMan, resMan, sound, system, psxDecoder, kVideoDecoderPSX);
-#else
-			GUI::MessageDialog dialog(Common::U32String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.toString().c_str()), _("OK"));
-			dialog.runModal();
-			return 0;
-#endif
 		}
 	}
 

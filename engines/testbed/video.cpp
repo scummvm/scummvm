@@ -72,12 +72,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 		if (pixelformat.isCLUT8() && video->setDitheringPalette(Video::quickTimeDefaultPalette256)) {
 			pixelformat = Graphics::PixelFormat::createFormatCLUT8();
 		} else {
-			pixelformat = supportedFormatsList.front();
-
-			if (!video->setOutputPixelFormat(pixelformat)) {
-				// TODO: Search for the pixel format in supportedFormatsList?
-				pixelformat = video->getPixelFormat();
-			}
+			video->setOutputPixelFormats(supportedFormatsList);
+			pixelformat = video->getPixelFormat();
 		}
 	}
 

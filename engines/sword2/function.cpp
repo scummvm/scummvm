@@ -40,6 +40,8 @@
 #include "sword2/sound.h"
 #include "sword2/animation.h"
 
+#include "gui/error.h"
+
 namespace Sword2 {
 
 int32 Logic::fnTestFunction(int32 *params) {
@@ -2143,8 +2145,12 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	_moviePlayer = makeMoviePlayer(filename, _vm, _vm->_system, frameCount);
 
-	if (_moviePlayer && _moviePlayer->load(filename)) {
-		_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
+	if (_moviePlayer) {
+		Common::Error err = _moviePlayer->load(filename);
+		if (err.getCode() == Common::kNoError)
+			_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
+		else
+			GUI::displayErrorDialog(err);
 	}
 
 	_sequenceTextLines = 0;
