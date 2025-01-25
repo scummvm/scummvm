@@ -1261,27 +1261,31 @@ enum {
 	kCurGrab = 130,
 	kCurObjUp = 171,
 	kCurObjDown = 172,
+	kCurObjLeft90 = 173,
+	kCurObjRight90 = 174,
 	kCurObjLeft = 181,
 	kCurObjRight = 182,
+	kCurObjLeftM90 = 189,
+	kCurObjRightM90 = 190,
+	kCurObjUpLimit = 191,
+	kCurObjDownLimit = 192,
 	kCurLastCursor
 };
 
 void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 	if (_qtvrType == QTVRType::OBJECT) {
+		int tiltIdx = int((-_tiltAngle + 90.0) / 21) * 2;
+
 		if (y < _curBbox.top)
-			setCursor(kCurObjUp);
+			setCursor(tiltIdx == 0 ? kCurObjUpLimit : kCurObjUp);
 		else if (y > _curBbox.bottom)
-			setCursor(kCurObjDown);
+			setCursor(tiltIdx == 16 ? kCurObjDownLimit : kCurObjDown);
 		else if (x < _curBbox.left)
-			setCursor(kCurObjLeft);
+			setCursor(kCurObjLeft90 + tiltIdx);
 		else if (x > _curBbox.right)
-			setCursor(kCurObjRight);
-		else {
-			if (_isMouseButtonDown)
-				setCursor(kCurGrab);
-			else
-				setCursor(kCurHand);
-		}
+			setCursor(kCurObjRight90 + tiltIdx);
+		else
+			setCursor(_isMouseButtonDown ? kCurGrab : kCurHand);
 	}
 }
 
