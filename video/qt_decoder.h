@@ -36,10 +36,12 @@
 #include "video/video_decoder.h"
 
 namespace Common {
+class Archive;
 class Rational;
 }
 
 namespace Graphics {
+class Cursor;
 struct PixelFormat;
 }
 
@@ -122,10 +124,18 @@ private:
 
 	void updateAudioBuffer();
 
+	void updateQTVRCursor(int16 x, int16 y);
+	void setCursor(int curId);
+	void cleanupCursors();
+
 	uint16 _width, _height;
 
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
+
+	int _currentQTVRCursor = -1;
+	Common::Archive *_dataBundle = nullptr;
+	Graphics::Cursor **_cursorCache = nullptr;
 
 	bool _isVR;
 

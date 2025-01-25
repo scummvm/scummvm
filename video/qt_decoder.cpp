@@ -32,16 +32,24 @@
 
 #include "audio/audiostream.h"
 
+#include "common/archive.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
+#include "common/compression/unzip.h"
+
+#include "graphics/cursorman.h"
+#include "image/icocur.h"
+
 // Video codecs
 #include "image/codecs/codec.h"
 
 namespace Video {
+
+static const char * const MACGUI_DATA_BUNDLE = "macgui.dat";
 
 ////////////////////////////////////////////
 // QuickTimeDecoder
@@ -85,6 +93,10 @@ void QuickTimeDecoder::close() {
 		delete _scaledSurface;
 		_scaledSurface = 0;
 	}
+
+	delete _dataBundle;
+	_dataBundle = nullptr;
+	cleanupCursors();
 }
 
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
@@ -619,8 +631,14 @@ Common::String QuickTimeDecoder::getAliasPath() {
 }
 
 void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
-	if (_qtvrType != QTVRType::OBJECT || !_isMouseButtonDown )
+	if (_qtvrType != QTVRType::OBJECT)
 		return;
+
+	if (!_isMouseButtonDown) {
+		updateQTVRCursor(x, y);
+
+		return;
+	}
 
 	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
 
@@ -1228,6 +1246,70 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const 
 		ditherFrame<uint32>(frame, *_ditherFrame, _ditherTable);
 
 	return _ditherFrame;
+}
+
+enum {
+	kCurHand = 129,
+	kCurLastCursor
+};
+
+void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
+	if (_qtvrType == QTVRType::OBJECT)
+		setCursor(kCurHand);
+}
+
+void QuickTimeDecoder::cleanupCursors() {
+	if (!_cursorCache)
+		return;
+
+	for (int i = 0; i < kCurLastCursor; i++)
+		delete _cursorCache[i];
+
+	delete _cursorCache;
+	_cursorCache = nullptr;
+}
+
+void QuickTimeDecoder::setCursor(int curId) {
+	if (_currentQTVRCursor == curId)
+		return;
+
+	_currentQTVRCursor = curId;
+
+	if (!_dataBundle) {
+		_dataBundle = Common::makeZipArchive(MACGUI_DATA_BUNDLE);
+
+		if (!_dataBundle) {
+			warning("QTVR: Couldn't load data bundle '%s'.", MACGUI_DATA_BUNDLE);
+		}
+	}
+
+	if (!_cursorCache)
+		_cursorCache = (Graphics::Cursor **)calloc(kCurLastCursor, sizeof(Graphics::Cursor *));
+
+	if (curId >= kCurLastCursor)
+		error("QTVR: Incorrect cursor ID: %d > %d", curId, kCurLastCursor);
+
+	if (!_cursorCache[curId]) {
+		Common::Path path(Common::String::format("qtvr/CURSOR%d_1.cur", curId));
+
+		Common::SeekableReadStream *stream = _dataBundle->createReadStreamForMember(path);
+
+		if (!stream) {
+			warning("QTVR: Cannot load cursor ID %d, file '%s' does not exist", curId, path.toString().c_str());
+			return;
+		}
+
+		Image::IcoCurDecoder decoder;
+		if (!decoder.open(*stream, DisposeAfterUse::YES)) {
+			warning("QTVR: Cannot load cursor ID %d, file '%s' bad format", curId, path.toString().c_str());
+			return;
+		}
+
+		_cursorCache[curId] = decoder.loadItemAsCursor(0);
+	}
+
+	CursorMan.replaceCursor(_cursorCache[curId]);
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Video
