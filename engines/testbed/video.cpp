@@ -27,6 +27,7 @@
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "gui/browser.h"
 
@@ -109,6 +110,9 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			}
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
+			int x = 0, y = 0;
+			int mw = 0, mh = 0;
+
 			if (frame) {
 				const Graphics::Surface *surf = frame;
 				Graphics::Surface *conv = nullptr;
@@ -117,7 +121,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 					surf = conv = frame->convertTo(pixelformat, video->getPalette());
 				}
 
-				int x = 0, y = 0;
+				mw = surf->w;
+				mh = surf->h;
 
 				if (surf->w < w && surf->h < h) {
 					x = (w - surf->w) >> 1;
@@ -134,18 +139,23 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			Common::Event event;
 
 			while (g_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_LBUTTONDOWN:
-					((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x, event.mouse.y);
-					break;
-				case Common::EVENT_LBUTTONUP:
-					((Video::QuickTimeDecoder *)video)->handleMouseButton(false);
-					break;
-				case Common::EVENT_MOUSEMOVE:
-					((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x, event.mouse.y);
-					break;
-				default:
-					break;
+				if (event.mouse.x >= x && event.mouse.x < x + mw &&
+						event.mouse.y >= y && event.mouse.y < y + mh) {
+					switch (event.type) {
+					case Common::EVENT_LBUTTONDOWN:
+						((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						((Video::QuickTimeDecoder *)video)->handleMouseButton(false);
+						break;
+					case Common::EVENT_MOUSEMOVE:
+						((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
+						break;
+					default:
+						break;
+					}
+				} else {
+					CursorMan.showMouse(false);
 				}
 
 				if (Engine::shouldQuit()) {
