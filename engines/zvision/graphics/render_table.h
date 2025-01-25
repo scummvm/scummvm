@@ -27,10 +27,28 @@
 
 namespace ZVision {
 
-struct MutationPoint {
-  uint8 Xweight = 0;
-  uint8 Yweight = 0;
-  Common::Rect PixelBlock = Common::Rect(0,0);
+class FilterPixel {
+public:
+  uint8 fracX = 0;  //Byte fraction of horizontal pixel position, 0 = left, 255 = right
+  uint8 fracY = 0;  //Byte fraction of vertical pixel position, 0 = top, 255 = bottom
+  Common::Rect Src = Common::Rect(0,0);  //Coordinates of four panorama image pixels around actual working window pixel
+  
+  FilterPixel() {};
+  FilterPixel(float x, float y, bool highQuality=false) {
+		if(highQuality) {
+	    Src.left = int16(floor(x));
+	    Src.right = int16(ceil(x));
+	    fracX = uint8((x-Src.left)*255);
+		  Src.top = int16(floor(y));
+		  Src.bottom = int16(ceil(y));
+		  fracY = uint8((y-Src.top)*255);
+	  }
+	  else {
+		  Src.left = int16(round(x));
+  		Src.top = int16(round(y));
+		}
+  };
+  ~FilterPixel() {};
 };
 
 class RenderTable {
@@ -47,10 +65,10 @@ public:
 
 private:
 	uint _numColumns, _numRows; //Working area width, height
-	Common::Point *_internalBuffer;
-//  MutationPoint *_internalBuffer;
+  FilterPixel *_internalBuffer;
 	RenderState _renderState;
 	bool highQuality = false;
+	const uint8 filterPasses = 2;
 
 	struct {
 		float verticalFOV;  //Radians
