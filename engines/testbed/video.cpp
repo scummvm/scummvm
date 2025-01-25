@@ -146,7 +146,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 						((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_LBUTTONUP:
-						((Video::QuickTimeDecoder *)video)->handleMouseButton(false);
+						((Video::QuickTimeDecoder *)video)->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_MOUSEMOVE:
 						((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
