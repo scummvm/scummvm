@@ -345,18 +345,12 @@ Graphics::RendererType TetraedgeEngine::preferredRendererType() const {
 #if defined(USE_OPENGL_GAME)
 			Graphics::kRendererTypeOpenGL |
 #endif
-#if defined(USE_OPENGL_SHADERS)
-			Graphics::kRendererTypeOpenGLShaders |
-#endif
 #if defined(USE_TINYGL)
 			Graphics::kRendererTypeTinyGL |
 #endif
 			0;
 
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
-	// Currently no difference between shaders and otherwise for this engine.
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders)
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
 
 	if (matchingRendererType == 0) {
 		error("No supported renderer available.");
