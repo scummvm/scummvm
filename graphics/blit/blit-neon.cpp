@@ -28,7 +28,7 @@
 
 #include <arm_neon.h>
 
-#if !defined(__aarch64__)
+#if !defined(__aarch64__) && !defined(__ARM_NEON)
 
 #if defined(__clang__)
 #pragma clang attribute push (__attribute__((target("neon"))), apply_to=function)
@@ -37,7 +37,7 @@
 #pragma GCC target("fpu=neon")
 #endif
 
-#endif // !defined(__aarch64__)
+#endif // !defined(__aarch64__) && !defined(__ARM_NEON)
 
 namespace Graphics {
 
@@ -326,7 +326,7 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 
 } // end of namespace Graphics
 
-#if !defined(__aarch64__)
+#if !defined(__aarch64__) && !defined(__ARM_NEON)
 
 #if defined(__clang__)
 #pragma clang attribute pop
@@ -334,6 +334,6 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 #pragma GCC pop_options
 #endif
 
-#endif // !defined(__aarch64__)
+#endif // !defined(__aarch64__) && !defined(__ARM_NEON)
 
 #endif // SCUMMVM_NEON
