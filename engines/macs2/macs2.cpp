@@ -188,8 +188,26 @@ void Macs2Engine::readResourceFile() {
 			_fileStream->read(data, dataSize);
 			// TODO: Place this data in the game object and create the game object
 			gameObject->Blobs.push_back(Common::Array<uint8>(data, dataSize));
+			// Load three values here
+			// l0037_0B62:
+			// Data at offset +Ch
+			uint16 unknown4 = _fileStream->readUint16LE();
+			// Data at offset +Eh
+			uint16 unknown5 = _fileStream->readByte();
+			// Local variable [bp-5h]
+			uint16 unknown6 = _fileStream->readByte();
+
+			// In order to get to l0037_0BBA: where the blob will be mirrored,
+			// the bytes at +Eh and +Fh must be != 0
+			// +Fh is set related to the inner loop - I think it means that
+			// the blob is empty
+			// +Eh is read here
+			if (unknown5 != 0) {
+				debug("Object %.4x need to mirror blob %4.x", i, j);
+			}
+			
 			// Seek forward for the next 2+1+1 bytes reads
-			_fileStream->seek(0x4, SEEK_CUR);
+			// _fileStream->seek(0x4, SEEK_CUR);
 		}
 		// Read the object script
 		// The offset is calculated at l0037_0C9D - also see above for adjustmnets
@@ -507,11 +525,11 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 		// probably missing some valid data or loading wrong data
 		// file.seek(endPos);
 		// TODO: Figure out the trailing values?
-		// Local offset +Ch
+		// Data at offset +Ch
 		uint16 unknown1 = stream->readUint16LE();
-		// Local offset +Eh
+		// Data at offset +Fh
 		uint16 unknown2 = stream->readByte();
-		// Local offset +Fh
+		// Local variable [bp-5h]
 		uint16 unknown3 = stream->readByte();
 
 		// Initialize the blob
@@ -549,7 +567,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
 	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
 	// We have a fixed 0x10 number of entries
-	HotspotOverrides.resize(0x10);
+	HotspotOverrides.resize(0x11);
 	for (int i = 0; i < HotspotOverrides.size(); i++) {
 		HotspotOverrides[i] = 0xFFFF;
 	}

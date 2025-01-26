@@ -273,10 +273,10 @@ View1::View1() : UIElement("View1") {
 		Graphics::ManagedSurface s = getSurface();
 		DrawBorder(Common::Point(x, y), Common::Point(totalWidth, totalHeight), s);
 		// TODO range based
-		int lineOffset = borderWidth + padding;
+		int lineOffset = y + 0x9;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-			renderString(x + borderWidth + padding, y + lineOffset, *iter);
-			lineOffset += 10;
+			renderString(x + 0x9, lineOffset, *iter);
+			lineOffset += g_engine->maxGlyphHeight + 2;
 		}
 	}
 
