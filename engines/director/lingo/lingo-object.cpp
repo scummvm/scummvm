@@ -135,10 +135,12 @@
 #include "director/lingo/xlibs/xwin.h"
 #include "director/lingo/xlibs/yasix.h"
 #include "director/lingo/xtras/directsound.h"
+#include "director/lingo/xtras/filextra.h"
 #include "director/lingo/xtras/keypoll.h"
 #include "director/lingo/xtras/qtvrxtra.h"
 #include "director/lingo/xtras/scrnutil.h"
 #include "director/lingo/xtras/timextra.h"
+#include "director/lingo/xtras/xsound.h"
 
 namespace Director {
 
@@ -247,6 +249,7 @@ static const struct XLibProto {
 	XLIBDEF(FadeGammaXCMD,		kXObj,			400),	// D4
 	XLIBDEF(FileExists,			kXObj,			300),	// D3
 	XLIBDEF(FileIO,				kXObj | kXtraObj,200),	// D2
+	XLIBDEF(FileXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(FindFolder,			kXObj,			300),	// D3
 	XLIBDEF(FindSys,			kXObj,			400),	// D4
 	XLIBDEF(FindWin,			kXObj,			400),	// D4
@@ -289,7 +292,7 @@ static const struct XLibProto {
 	XLIBDEF(PopUpMenuXObj,		kXObj,			200),	// D2
 	XLIBDEF(Porta,				kXObj,			300),	// D3
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
-	XLIBDEF(PrintOMaticXObj,	kXObj,			400),	// D4
+	XLIBDEF(PrintOMaticXObj,	kXObj | kXtraObj,400),	// D4
 	XLIBDEF(ProcessXObj,		kXObj,			400),	// D4
 	XLIBDEF(QTCatMoviePlayerXObj,kXObj,			400),	// D4
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
@@ -320,6 +323,7 @@ static const struct XLibProto {
 	XLIBDEF(XWINXObj,			kXObj,			300),	// D3
 	XLIBDEF(XioXObj,			kXObj,			400),	// D3
 	XLIBDEF(XPlayAnim,			kXObj,			300),	// D3
+	XLIBDEF(XsoundXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(Yasix,				kXObj,			300),	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
 };
