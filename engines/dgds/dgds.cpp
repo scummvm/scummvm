@@ -810,7 +810,9 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 			error("Game references non-existent scene %d", sceneNum);
 
 		_soundPlayer->stopAllSfx();
+		_soundPlayer->stopMusic();
 		_scene->unload();
+		_scene->setDragItem(nullptr);
 		_adsInterp->unload();
 
 		// Clear arcade state completely.
