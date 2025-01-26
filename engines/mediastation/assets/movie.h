@@ -115,7 +115,6 @@ private:
 
 	// Internal helper functions.
 	bool drawNextFrame();
-	void processTimeEventHandlers();
 };
 
 } // End of namespace MediaStation

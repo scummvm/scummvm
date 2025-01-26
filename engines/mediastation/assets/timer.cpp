@@ -87,27 +87,7 @@ void Timer::timeStop() {
 }
 
 void Timer::process() {
-	if (!_isActive) {
-		error("Timer::processTimeEventHandlers(): Attempted to process time event handlers while not playing");
-		return;
-	}
-
-	uint currentTime = g_system->getMillis();
-	//uint movieTime = currentTime - _startTime;
-	debugC(7, kDebugScript, "** Timer %d: ON TIME Event Handlers **", _header->_id);
-	for (EventHandler *timeEvent : _header->_timeHandlers) {
-		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
-		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
-		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
-		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
-		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
-			// TODO: What happens when we try re-run the timer when itʻs already
-			// running? Seems like this would cause re-entrancy issues.
-			timeEvent->execute(_header->_id);
-		}
-	}
-	debugC(7, kDebugScript, "** Timer %d: End ON TIME Event Handlers **", _header->_id);
-	_lastProcessedTime = currentTime - _startTime;
+	processTimeEventHandlers();
 }
 
 } // End of namespace MediaStation

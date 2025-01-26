@@ -45,6 +45,27 @@ int Asset::zIndex() const {
 	return _header->_zIndex;
 }
 
+void Asset::processTimeEventHandlers() {
+	if (!_isActive) {
+		warning("Asset::processTimeEventHandlers(): Attempted to process time event handlers while asset %d is not playing", _header->_id);
+		return;
+	}
+
+	// TODO: Replace with a queue.
+	uint currentTime = g_system->getMillis();
+	for (EventHandler *timeEvent : _header->_timeHandlers) {
+		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
+		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
+		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
+		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
+		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
+			debugC(5, kDebugScript, "Asset::processTimeEventHandlers(): Running On Time handler for time %d ms", timeEventInMilliseconds);
+			timeEvent->execute(_header->_id);
+		}
+	}
+	_lastProcessedTime = currentTime - _startTime;
+}
+
 void Asset::runEventHandlerIfExists(EventType eventType) {
 	EventHandler *eventHandler = _header->_eventHandlers.getValOrDefault(eventType);
 	if (eventHandler != nullptr) {

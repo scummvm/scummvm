@@ -244,26 +244,6 @@ void Movie::process() {
 	drawNextFrame();
 }
 
-void Movie::processTimeEventHandlers() {
-	if (!_isActive) {
-		warning("Movie::processTimeEventHandlers(): Attempted to process time event handlers while movie is not playing");
-		return;
-	}
-
-	uint currentTime = g_system->getMillis();
-	for (EventHandler *timeEvent : _header->_timeHandlers) {
-		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
-		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
-		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
-		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
-		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
-			debugC(5, kDebugScript, "Movie::processTimeEventHandlers(): Running On Time handler for movie time %d ms (real movie time: %d ms)", timeEventInMilliseconds, currentTime - _startTime);
-			timeEvent->execute(_header->_id);
-		}
-	}
-	_lastProcessedTime = currentTime - _startTime;
-}
-
 bool Movie::drawNextFrame() {
 	// TODO: We'll need to support persistent frames in movies too. Do movies
 	// have the same distinction between spatialShow and timePlay that sprites

@@ -24,6 +24,7 @@
 
 #include "common/keyboard.h"
 
+#include "mediastation/mediastation.h"
 #include "mediastation/subfile.h"
 #include "mediastation/chunk.h"
 #include "mediastation/mediascript/scriptconstants.h"
@@ -57,6 +58,7 @@ public:
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
+	void processTimeEventHandlers();
 	void runEventHandlerIfExists(EventType eventType);
 	void runKeyDownEventHandlerIfExists(Common::KeyState keyState);
 
