@@ -87,6 +87,18 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 		return Operand();
 	}
 
+	case kSpatialHideMethod: {
+		assert(args.empty());
+		_isActive = false;
+		return Operand();
+	}
+
+	case kTimeStopMethod: {
+		assert(args.empty());
+		_isActive = false;
+		return Operand();
+	}
+
 	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();

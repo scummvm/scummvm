@@ -50,6 +50,12 @@ Operand Path::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 		return returnValue;
 	}
 
+	case kSetDissolveFactorMethod: {
+		assert(args.size() == 1);
+		warning("Path::callMethod(): setDissolveFactor not implemented yet");
+		return Operand();
+	}
+
 	default: {
 		error("Got unimplemented method ID %d", methodId);
 	}

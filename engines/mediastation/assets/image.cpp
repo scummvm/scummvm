@@ -21,6 +21,7 @@
 
 #include "mediastation/mediastation.h"
 #include "mediastation/assets/image.h"
+#include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
@@ -51,6 +52,13 @@ Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 		break;
 	}
+
+	case kSetDissolveFactorMethod: {
+		assert(args.size() == 1);
+		warning("Image::callMethod(): setDissolveFactor not implemented yet");
+		return Operand();
+	}
+
 
 	default: {
 		error("Image::callMethod(): Got unimplemented method ID %d", methodId);

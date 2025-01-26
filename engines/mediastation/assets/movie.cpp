@@ -186,6 +186,24 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
+	case kSpatialShowMethod: {
+		assert(args.empty());
+		warning("Movie::callMethod(): spatialShow not implemented");
+		return Operand();
+	}
+
+	case kTimeStopMethod: {
+		assert(args.empty());
+		timeStop();
+		return Operand();
+	}
+
+	case kSpatialHideMethod: {
+		assert(args.empty());
+		warning("Movie::callMethod(): spatialHide not implemented");
+		return Operand();
+	}
+
 	default: {
 		error("Got unimplemented method ID %d", methodId);
 	}
