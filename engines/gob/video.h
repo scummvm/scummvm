@@ -50,11 +50,13 @@ public:
 
 	bool isMonospaced() const;
 
+	void drawLetterRaw(Surface &surf, uint8 c, uint16 x, uint16 y,
+					   uint32 color1, uint32 color2, bool transp) const;
 	void drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
-	                uint32 color1, uint32 color2, bool transp) const;
+					uint8 colorIndex1, uint8 colorIndex2, bool transp) const;
 
-	void drawString(const Common::String &str, int16 x, int16 y, uint32 color1, uint32 color2,
-	                bool transp, Surface &dest) const;
+	void drawString(const Common::String &str, int16 x, int16 y, uint8 colorIndex1, uint8 colorIndex2,
+					bool transp, Surface &dest) const;
 
 private:
 	const byte *_dataPtr;

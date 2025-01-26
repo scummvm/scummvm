@@ -762,13 +762,13 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
-					_destSpriteY + _spriteBottom - 1, getColor(_backColor));
+					_destSpriteY + _spriteBottom - 1, _backColor);
 		} else {
 			uint8 strength = 16 - (((uint16) _backColor) >> 12);
 
 			_spritesArray[_destSurface]->shadeRect(_destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
-					_destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
+					_destSpriteY + _spriteBottom - 1, _backColor, strength);
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
@@ -777,14 +777,14 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_DRAWLINE:
 		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, getColor(_frontColor));
+		    _spriteRight, _spriteBottom, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_INVALIDATE:
 		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
-				_destSpriteY, _spriteRight, getColor(_frontColor));
+				_destSpriteY, _spriteRight, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
 				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
@@ -833,19 +833,19 @@ void Draw_v2::spriteOperation(int16 operation) {
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						font->drawLetter(*_spritesArray[_destSurface], READ_LE_UINT16(dataBuf),
-								_destSpriteX, _destSpriteY, getColor(_frontColor),
-								getColor(_backColor), _transparency);
+								_destSpriteX, _destSpriteY, _frontColor,
+								_backColor, _transparency);
 					}
 				} else {
-					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
-							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
+							_backColor, _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
 					font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
-								_destSpriteX, _destSpriteY, getColor(_frontColor),
-								getColor(_backColor), _transparency);
+								_destSpriteX, _destSpriteY, _frontColor,
+								_backColor, _transparency);
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
@@ -906,7 +906,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if ((_backColor != 16) && (_backColor != 144)) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
-			    getColor(_backColor));
+			    _backColor);
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -914,7 +914,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_FILLRECTABS:
 		_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, getColor(_backColor));
+		    _spriteRight, _spriteBottom, _backColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
