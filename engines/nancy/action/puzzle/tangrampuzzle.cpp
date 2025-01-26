@@ -431,7 +431,7 @@ void TangramPuzzle::Tile::drawMask() {
 		uint16 *src = (uint16 *)_drawSurface.getBasePtr(0, y);
 		for (int x = 0; x < _drawSurface.w; ++x) {
 			if (*src == transColor) {
-				_mask[y * _drawSurface.w + x] = -1;
+				_mask[y * _drawSurface.w + x] = (byte)-1;
 			} else {
 				_mask[y * _drawSurface.w + x] = _id;
 			}

@@ -164,7 +164,7 @@ bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
 }
 
 void MidiParser_M::parseNextEvent(EventInfo &info) {
-	assert(_position._playPos - _tracks[0] < _trackLength);
+	assert((uint32)(_position._playPos - _tracks[0]) < _trackLength);
 	info.start = _position._playPos;
 	info.event = *(_position._playPos++);
 	info.delta = 0;

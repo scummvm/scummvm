@@ -115,6 +115,7 @@ int SagaEngine::processInput() {
 			case Common::KEYCODE_F8:
 				break;
 #endif
+			case Common::KEYCODE_INVALID: // Quiet VS C4065 warning
 			default:
 				_interface->processAscii(event.kbd, event.customType);
 				break;
