@@ -200,11 +200,9 @@ public:
 	int _currentLevel = 23;
 	int _newLevel = 0;
 	int _newLevelTile = 0;
-	int _current_area = 0;
-	char _sd_header[128] = {};
-	char _play_speed = 0;
-	bool _thor_special_flag = false;
-	byte _exprow = 0;
+	int _currentArea = 0;
+	bool _thorSpecialFlag = false;
+	byte _explosionRow = 0;
 };
 
 #define _G(X) (g_vars->_##X)

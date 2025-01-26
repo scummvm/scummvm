@@ -22,7 +22,6 @@
 #include "got/game/boss3.h"
 #include "got/events.h"
 #include "got/game/back.h"
-#include "got/game/init.h"
 #include "got/game/move.h"
 #include "got/game/move_patterns.h"
 #include "got/game/status.h"
@@ -43,8 +42,8 @@ static const byte EXPLOSION[4][8] = {
 static int bossMode;
 static int numPods1;
 static byte podSpeed;
-static bool expf[4][8];
-static byte expCounter;
+static bool explosionFlag[4][8];
+static byte explosionCounter;
 
 static int bossDie();
 static void boss3CheckHit();
@@ -564,11 +563,11 @@ void endingScreen() {
 	
 	musicPlay(6, true);
 
-	memset(expf, 0, 4 * 8);
+	memset(explosionFlag, 0, 4 * 8);
 	_G(endGame) = 1;
 
-	_G(exprow) = 0;
-	expCounter = 0;
+	_G(explosionRow) = 0;
+	explosionCounter = 0;
 
 	_G(actor[34]) = _G(explosion);
 	_G(actor[34])._active = false;
@@ -590,12 +589,12 @@ int endgame_one() {
 	playSound(EXPLODE, true);
 
 	int r = _G(rand1) % 32;
-	while (expf[r / 8][r % 8]) {
+	while (explosionFlag[r / 8][r % 8]) {
 		r++;
 		if (r > 31)
 			r = 0;
 	}
-	expf[r / 8][r % 8] = true;
+	explosionFlag[r / 8][r % 8] = true;
 	int x = (EXPLOSION[r / 8][r % 8] % 20) * 16;
 	int y = (EXPLOSION[r / 8][r % 8] / 20) * 16;
 	_G(actor[34])._x = x;
@@ -618,7 +617,7 @@ int endgame_one() {
 int endGameMovement() {
 	if (!_G(endGame))
 		return 0;
-	if (expCounter > 3) {
+	if (explosionCounter > 3) {
 		endgame_one();
 		return 0;
 	}
@@ -630,14 +629,14 @@ int endGameMovement() {
 	playSound(EXPLODE, true);
 
 	int r = _G(rand1) % 8;
-	while (expf[_G(exprow)][r]) {
+	while (explosionFlag[_G(explosionRow)][r]) {
 		r++;
 		if (r > 7)
 			r = 0;
 	}
-	expf[_G(exprow)][r] = true;
-	const int x = (EXPLOSION[_G(exprow)][r] % 20) * 16;
-	const int y = (EXPLOSION[_G(exprow)][r] / 20) * 16;
+	explosionFlag[_G(explosionRow)][r] = true;
+	const int x = (EXPLOSION[_G(explosionRow)][r] % 20) * 16;
+	const int y = (EXPLOSION[_G(explosionRow)][r] / 20) * 16;
 	_G(actor[34])._x = x;
 	_G(actor[34])._y = y;
 	_G(actor[34])._active = true;
@@ -650,10 +649,10 @@ int endGameMovement() {
 	_G(endGame++);
 	if (_G(endGame) > 8) {
 		_G(endGame) = 1;
-		_G(exprow++);
-		expCounter++;
-		if (expCounter > 3) {
-			memset(expf, 0, 32);
+		_G(explosionRow++);
+		explosionCounter++;
+		if (explosionCounter > 3) {
+			memset(explosionFlag, 0, 32);
 		}
 	}
 

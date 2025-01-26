@@ -302,7 +302,7 @@ int checkMove0(const int x, const int y, Actor *actor) {
 	x2 = x + 12;	
 	y2 = y + 15;
 
-	_G(thor_special_flag) = false;
+	_G(thorSpecialFlag) = false;
 	for (int i = 3; i < MAX_ACTORS; i++) {
 		Actor *act = &_G(actor[i]);
 		if ((act->_solid & 128) || !act->_active)
@@ -322,12 +322,12 @@ int checkMove0(const int x, const int y, Actor *actor) {
 					return 0;
 				act->_temp1 = x;
 				act->_temp2 = y;
-				_G(thor_special_flag) = true;
+				_G(thorSpecialFlag) = true;
 				
 				return specialMovementFunc[act->_funcNum](act);
 			}
 
-			_G(thor_special_flag) = false;
+			_G(thorSpecialFlag) = false;
 			thorDamaged(act);
 			if (act->_solid < 2) {
 				if (!act->_vulnerableCountdown && (!(act->_type & 1)))
@@ -614,7 +614,7 @@ int check_thor_move(const int x, const int y, Actor *actor) {
 	if (checkMove0(x, y, actor))
 		return 1;
 	
-	if (_G(diagFlag) || _G(thor_special_flag))
+	if (_G(diagFlag) || _G(thorSpecialFlag))
 		return 0;
 
 	if (_G(thorIcon1) + _G(thorIcon2) + _G(thorIcon3) + _G(thorIcon4) > 1)

@@ -135,7 +135,7 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 }
 
 void GotEngine::savegameLoaded() {
-	_G(current_area) = _G(thorInfo)._lastScreen;
+	_G(currentArea) = _G(thorInfo)._lastScreen;
 
 	_G(thor)->_x = (_G(thorInfo)._lastIcon % 20) * 16;
 	_G(thor)->_y = ((_G(thorInfo)._lastIcon / 20) * 16) - 1;
@@ -158,7 +158,7 @@ void GotEngine::savegameLoaded() {
 	_G(setup)._digitalSound = _G(soundFlag);
 
 	if (_G(setup)._musicEnabled) {
-		if (GAME1 && _G(current_area) == 59) {
+		if (GAME1 && _G(currentArea) == 59) {
 			musicPlay(5, true);
 		} else {
 			musicPlay(_G(levelMusic), true);
