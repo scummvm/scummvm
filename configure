@@ -2850,12 +2850,16 @@ case $_host_os in
 	android)
 		case $_host in
 			android-arm-v7a | android-armeabi-v7a)
-				# Disable NEON for older devices (like with Tegra 2)
-				append_var CXXFLAGS "-mfpu=vfp"
+				# Enable NEON by default
+				# For older devices (like Tegra 2), pass --disable-ext-neon
+				if test "$_ext_neon" = no ; then
+					append_var CXXFLAGS "-mfpu=vfp"
+				else
+					append_var CXXFLAGS "-mfpu=neon"
+					_ext_neon=yes
+				fi
 				# This is really old CPU but might be still used with android 4.1, it slightly increases code size and decreases performance.
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
-				# Allow NEON optimized code after runtime detection
-				_ext_neon=yes
 				ABI="armeabi-v7a"
 				;;
 			android-arm64-v8a)
