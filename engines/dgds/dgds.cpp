@@ -923,14 +923,23 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		if (!_resource->hasResource(sceneFile))
 			error("Game references non-existent scene %d", sceneNum);
 
+		// Reset scene and music etc.
+		setMouseCursor(kDgdsMouseGameDefault);
 		_soundPlayer->stopAllSfx();
+		_soundPlayer->stopMusic();
 		_scene->unload();
+		_scene->setDragItem(nullptr);
 		_adsInterp->unload();
 
 		// Clear arcade state completely.
 		if (getGameId() == GID_DRAGON) {
 			delete _dragonArcade;
 			_dragonArcade = new DragonArcade();
+		} else if (getGameId() == GID_HOC) {
+			delete _chinaTank;
+			delete _chinaTrain;
+			_chinaTank = new ChinaTank();
+			_chinaTrain = new ChinaTrain();
 		}
 
 		_scene->load(sceneFile, _resource, _decompressor);
