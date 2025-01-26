@@ -482,12 +482,30 @@ void FreescapeEngine::releasedKey(const int keycode) {}
 void FreescapeEngine::resetInput() {
 	_shootMode = false;
 	centerCrossair();
-	g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+	warpMouseToCrossair();
 	_eventManager->purgeMouseEvents();
 	_eventManager->purgeKeyboardEvents();
 	rotate(0, 0);
 }
 
+Common::Point FreescapeEngine::crossairPosToMousePos(const Common::Point crossairPos) {
+	Common::Point mousePos;
+	mousePos.x = g_system->getWidth() * crossairPos.x / _screenW;
+	mousePos.y = g_system->getHeight() * crossairPos.y / _screenH;
+	return mousePos;
+}
+
+Common::Point FreescapeEngine::mousePosToCrossairPos(const Common::Point mousePos) {
+	Common::Point crossairPos;
+	crossairPos.x = _screenW * mousePos.x / g_system->getWidth();
+	crossairPos.y = _screenH * mousePos.y / g_system->getHeight();
+	return crossairPos;
+}
+
+void FreescapeEngine::warpMouseToCrossair() {
+	const Common::Point mousePos = crossairPosToMousePos(_crossairPosition);
+	g_system->warpMouse(mousePos.x, mousePos.y);
+}
 
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
@@ -566,7 +584,7 @@ void FreescapeEngine::processInput() {
 					g_system->lockMouse(true);
 				} else {
 					g_system->lockMouse(false);
-					g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+					warpMouseToCrossair();
 					_eventManager->purgeMouseEvents();
 					_eventManager->purgeKeyboardEvents();
 				}
@@ -612,23 +630,18 @@ void FreescapeEngine::processInput() {
 				g_system->warpMouse(mousePos.x, mousePos.y);
 
 			if (_shootMode) {
-				_crossairPosition.x = _screenW * mousePos.x / g_system->getWidth();
-				_crossairPosition.y = _screenH * mousePos.y / g_system->getHeight();
-				break;
+				_crossairPosition = mousePosToCrossairPos(mousePos);
 			} else {
 				// Mouse pointer is locked into the the middle of the screen
 				// since we only need the relative movements. This will not affect any touchscreen device
 				// so on-screen controls are still accesible
-				mousePos.x = g_system->getWidth() * ( _viewArea.left + _viewArea.width() / 2) / _screenW;
-				mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
+				warpMouseToCrossair();
 				if (_invertY)
 					event.relMouse.y = -event.relMouse.y;
 
-				g_system->warpMouse(mousePos.x, mousePos.y);
 				_eventManager->purgeMouseEvents();
-			}
-
-			rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
+				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
+			}			
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
