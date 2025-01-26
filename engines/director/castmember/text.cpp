@@ -482,6 +482,7 @@ bool TextCastMember::hasField(int field) {
 	case kTheBorder:
 	case kTheScrollTop:
 	case kTheWordWrap:
+	case kTheEditable:
 		return _type == kCastText;
 	case kTheButtonType:
 		return _type == kCastButton;
@@ -537,6 +538,13 @@ Datum TextCastMember::getField(int field) {
 	case kTheScrollTop:
 		d = _scroll;
 		break;
+	case kTheWordWrap:
+		warning("STUB: TextCastMember::getField(): wordWrap not implemented");
+		d = 1;
+		break;
+	case kTheEditable:
+		d = (int)_editable;
+		break;
 	case kTheButtonType:
 		switch (_buttonType) {
 		case kTypeCheckBox:
@@ -554,8 +562,6 @@ Datum TextCastMember::getField(int field) {
 			break;
 		}
 		break;
-	case kTheWordWrap:
-		return _type == kCastText;
 	default:
 		d = CastMember::getField(field);
 	}
@@ -659,11 +665,19 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		return true;
-	case kTheScrollTop:
-		_scroll = d.asInt();
-		return true;
 	case kTheBorder:
 		_borderSize = d.asInt();
+		setModified(true);
+		return true;
+	case kTheScrollTop:
+		_scroll = d.asInt();
+		setModified(true);
+		return true;
+	case kTheWordWrap:
+		warning("STUB: TextCastMember::getField(): wordWrap not implemented");
+		return false;
+	case kTheEditable:
+		_editable = d.asInt();
 		setModified(true);
 		return true;
 	case kTheButtonType:
