@@ -357,6 +357,13 @@ bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom,
 	return true;
 }
 
+uint32 Surface::getColorFromIndex(uint8 index) const {
+	if (_bpp == 1 || !_highColorMap)
+		return index;
+	else
+		return _highColorMap[index];
+}
+
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
@@ -526,7 +533,7 @@ void Surface::blitScaled(const Surface &from, Common::Rational scale, int32 tran
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, 0, 0, scale, transp);
 }
 
-void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
+void Surface::fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -585,8 +592,13 @@ void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
+void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	fillRectRaw(left, top, right, bottom, color);
+}
+
 // Fill rectangle with fillColor, except pixels with backgroundColor
-void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor) {
+void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint8 fillColorIndex, uint8 backgroundColorIndex) {
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -610,6 +622,9 @@ void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 
 		// Nothing to do
 		return;
 
+	uint32 fillColor = getColorFromIndex(fillColorIndex);
+	uint32 backgroundColor = getColorFromIndex(backgroundColorIndex);
+
 	Pixel p = get(left, top);
 	while (height-- > 0) {
 		for (uint16 i = 0; i < width; i++, ++p)
@@ -620,7 +635,8 @@ void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
-Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 fillColor) {
+Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint8 fillColorIndex) {
+	uint32 fillColor = getColorFromIndex(fillColorIndex);
 	Common::Rect modifiedArea;
 	if (left < 0 || left >= _width || top < 0  || top >= _height)
 		// Nothing to do
@@ -674,13 +690,15 @@ void Surface::clear() {
 }
 
 void Surface::shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
-		uint32 color, uint8 strength) {
+		uint8 colorIndex, uint8 strength) {
 
 	if (_bpp == 1) {
 		// We can't properly shade in paletted mode, fill the rect instead
-		fillRect(left, top, right, bottom, color);
+		fillRect(left, top, right, bottom, colorIndex);
 		return;
 	}
+
+	uint32 color = getColorFromIndex(colorIndex);
 
 	// Just in case those are swapped
 	if (left > right)
@@ -734,18 +752,29 @@ void Surface::recolor(uint8 from, uint8 to) {
 			p.set(to);
 }
 
-void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
+void Surface::putPixelRaw(uint16 x, uint16 y, uint32 color) {
 	if ((x >= _width) || (y >= _height))
 		return;
 
 	get(x, y).set(color);
 }
 
-void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
+void Surface::putPixel(uint16 x, uint16 y, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	putPixelRaw(x, y, color);
+}
+
+void Surface::drawLineRaw(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
 	SurfacePrimitives().drawLine(x0, y0, x1, y1, color, this);
 }
 
-void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color) {
+void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	drawLineRaw(x0, y0, x1, y1, color);
+}
+
+void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -767,10 +796,10 @@ void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
 	right  = left + width  - 1;
 	bottom = top  + height - 1;
 
-	drawLine(left , top   , left , bottom, color);
-	drawLine(right, top   , right, bottom, color);
-	drawLine(left , top   , right, top   , color);
-	drawLine(left , bottom, right, bottom, color);
+	drawLineRaw(left , top   , left , bottom, color);
+	drawLineRaw(right, top   , right, bottom, color);
+	drawLineRaw(left , top   , right, top   , color);
+	drawLineRaw(left , bottom, right, bottom, color);
 }
 
 /*
@@ -779,7 +808,8 @@ void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
  * version found in the Wikipedia article about the
  * "Bresenham's line algorithm" instead
  */
-void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int16 pattern) {
+void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint8 colorIndex, int16 pattern) {
+	uint32 color = getColorFromIndex(colorIndex);
 	int16 f = 1 - radius;
 	int16 ddFx = 0;
 	int16 ddFy = -2 * radius;
@@ -788,14 +818,14 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 
 	switch (pattern) {
 	case 0xFF:
-		fillRect(x0, y0 + radius, x0, y0 - radius, color);
-		fillRect(x0 + radius, y0, x0 - radius, y0, color);
+		fillRectRaw(x0, y0 + radius, x0, y0 - radius, color);
+		fillRectRaw(x0 + radius, y0, x0 - radius, y0, color);
 		break ;
 	case 0:
-		putPixel(x0, y0 + radius, color);
-		putPixel(x0, y0 - radius, color);
-		putPixel(x0 + radius, y0, color);
-		putPixel(x0 - radius, y0, color);
+		putPixelRaw(x0, y0 + radius, color);
+		putPixelRaw(x0, y0 - radius, color);
+		putPixelRaw(x0 + radius, y0, color);
+		putPixelRaw(x0 - radius, y0, color);
 		break;
 	default:
 		break;
@@ -815,20 +845,20 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 		switch (pattern) {
 		case 0xFF:
 			// Fill circle
-			fillRect(x0 - y, y0 + x, x0 + y, y0 + x, color);
-			fillRect(x0 - x, y0 + y, x0 + x, y0 + y, color);
-			fillRect(x0 - y, y0 - x, x0 + y, y0 - x, color);
-			fillRect(x0 - x, y0 - y, x0 + x, y0 - y, color);
+			fillRectRaw(x0 - y, y0 + x, x0 + y, y0 + x, color);
+			fillRectRaw(x0 - x, y0 + y, x0 + x, y0 + y, color);
+			fillRectRaw(x0 - y, y0 - x, x0 + y, y0 - x, color);
+			fillRectRaw(x0 - x, y0 - y, x0 + x, y0 - y, color);
 			break;
 		case 0:
-			putPixel(x0 + x, y0 + y, color);
-			putPixel(x0 - x, y0 + y, color);
-			putPixel(x0 + x, y0 - y, color);
-			putPixel(x0 - x, y0 - y, color);
-			putPixel(x0 + y, y0 + x, color);
-			putPixel(x0 - y, y0 + x, color);
-			putPixel(x0 + y, y0 - x, color);
-			putPixel(x0 - y, y0 - x, color);
+			putPixelRaw(x0 + x, y0 + y, color);
+			putPixelRaw(x0 - x, y0 + y, color);
+			putPixelRaw(x0 + x, y0 - y, color);
+			putPixelRaw(x0 - x, y0 - y, color);
+			putPixelRaw(x0 + y, y0 + x, color);
+			putPixelRaw(x0 - y, y0 + x, color);
+			putPixelRaw(x0 + y, y0 - x, color);
+			putPixelRaw(x0 - y, y0 - x, color);
 			break;
 		default:
 			fillRect(x0 + y - pattern, y0 + x - pattern, x0 + y, y0 + x, color);

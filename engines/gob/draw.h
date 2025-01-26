@@ -195,8 +195,6 @@ public:
 	void setPalette();
 	void clearPalette();
 
-	uint32 getColor(uint8 index) const;
-
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
 	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 

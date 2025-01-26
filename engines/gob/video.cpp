@@ -97,7 +97,7 @@ bool Font::isMonospaced() const {
 	return _charWidths == nullptr;
 }
 
-void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
+void Font::drawLetterRaw(Surface &surf, uint8 c, uint16 x, uint16 y,
 		uint32 color1, uint32 color2, bool transp) const {
 
 	uint16 data;
@@ -146,8 +146,19 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 	}
 }
 
-void Font::drawString(const Common::String &str, int16 x, int16 y, uint32 color1, uint32 color2,
+void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
+					  uint8 colorIndex1, uint8 colorIndex2, bool transp) const {
+	uint32 color1 = surf.getColorFromIndex(colorIndex1);
+	uint32 color2 = surf.getColorFromIndex(colorIndex2);
+
+	drawLetterRaw(surf, c, x, y, color1, color2, transp);
+}
+
+void Font::drawString(const Common::String &str, int16 x, int16 y, uint8 colorIndex1, uint8 colorIndex2,
 					  bool transp, Surface &dest) const {
+
+	uint32 color1 = dest.getColorFromIndex(colorIndex1);
+	uint32 color2 = dest.getColorFromIndex(colorIndex2);
 
 	const char *s = str.c_str();
 
@@ -156,7 +167,7 @@ void Font::drawString(const Common::String &str, int16 x, int16 y, uint32 color1
 		const int16 charBottom = y + getCharHeight();
 
 		if ((x >= 0) && (y >= 0) && (charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
-			drawLetter(dest, *s, x, y, color1, color2, transp);
+			drawLetterRaw(dest, *s, x, y, color1, color2, transp);
 
 		x += getCharWidth(*s);
 		s++;
@@ -341,7 +352,7 @@ void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 					if (dest.getBPP() == 1)
 						dst.set(val);
 					else
-						dst.set(_vm->_draw->getColor(val));
+						dst.set(dest.getColorFromIndex(val));
 				}
 
 			++dst;

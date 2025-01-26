@@ -130,21 +130,24 @@ public:
 	void blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int32 transp = -1);
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
-	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
-	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor);
-	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 fillColor);
+	void fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
+	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint8 colorIndex);
+	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint8 fillColorIndex, uint8 backgroundColorIndex);
+	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint8 fillColorIndex);
 	void fill(uint32 color);
 	void clear();
 
 	void shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
-			uint32 color, uint8 strength);
+			uint8 colorIndex, uint8 strength);
 
 	void recolor(uint8 from, uint8 to);
 
-	void putPixel(uint16 x, uint16 y, uint32 color);
-	void drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color);
-	void drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color);
-	void drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int16 pattern = 0);
+	void putPixelRaw(uint16 x, uint16 y, uint32 color);
+	void putPixel(uint16 x, uint16 y, uint8 colorIndex);
+	void drawLineRaw(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 colorIndex);
+	void drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint8 colorIndex);
+	void drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colorIndex);
+	void drawCircle(uint16 x0, uint16 y0, uint16 radius, uint8 colorIndex, int16 pattern = 0);
 
 	void blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 x, uint16 y) const;
 
@@ -152,6 +155,8 @@ public:
 				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
 	bool loadImage(Common::SeekableReadStream &stream, ImageType type, int16 left, int16 top, int16 right, int16 bottom,
 				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+
+	uint32 getColorFromIndex(uint8 index) const;
 
 	static ImageType identifyImage(Common::SeekableReadStream &stream);
 	static bool getImageInfo(Common::SeekableReadStream &stream, uint32 &width, uint32 &height, uint32 &bpp);

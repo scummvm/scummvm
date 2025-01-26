@@ -303,15 +303,6 @@ void Draw::clearPalette() {
 	}
 }
 
-uint32 Draw::getColor(uint8 index) const {
-	if (!_vm->isTrueColor())
-		return index;
-
-	return _vm->getPixelFormat().RGBToColor(_vgaPalette[index].red   << 2,
-	                                        _vgaPalette[index].green << 2,
-	                                        _vgaPalette[index].blue  << 2);
-}
-
 void Draw::dirtiedRect(int16 surface,
 		int16 left, int16 top, int16 right, int16 bottom) {
 
