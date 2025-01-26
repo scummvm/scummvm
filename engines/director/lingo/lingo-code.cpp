@@ -1936,7 +1936,7 @@ void LC::c_fieldref() {
 	if (g_director->getVersion() >= 500)
 		castLib = g_lingo->pop();
 	Datum member = g_lingo->pop();
-	Datum res = member.asMemberID(kCastTypeAny, castLib.asInt());
+	Datum res = g_lingo->toCastMemberID(member, castLib);
 	res.type = FIELDREF;
 	g_lingo->push(res);
 }

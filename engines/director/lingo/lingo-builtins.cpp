@@ -3385,35 +3385,15 @@ void LB::b_castLib(int nargs) {
 
 void LB::b_member(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
-	CastMemberID res;
+	Datum library;
+	Datum member;
 	if (nargs == 1) {
-		Datum member = g_lingo->pop();
-		if (member.isCastRef()) {
-			res = member.asMemberID();
-		} else if (member.isNumeric()) {
-			res = movie->getCastMemberIDByMember(member.asInt());
-		} else {
-			res = movie->getCastMemberIDByName(member.asString());
-		}
+		member = g_lingo->pop();
 	} else if (nargs == 2) {
-		Datum library = g_lingo->pop();
-		Datum member = g_lingo->pop();
-		int libId = -1;
-		if (library.type == CASTLIBREF) {
-			libId = library.u.i;
-		} else if (library.isNumeric()) {
-			libId = library.asInt();
-		} else {
-			libId = movie->getCastLibIDByName(library.asString());
-		}
-		if (member.isCastRef()) {
-			res = member.asMemberID();
-		} else if (member.isNumeric()) {
-			res = CastMemberID(member.asInt(), libId);
-		} else {
-			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
-		}
+		library = g_lingo->pop();
+		member = g_lingo->pop();
 	}
+	CastMemberID res = g_lingo->toCastMemberID(member, library);
 	if (!movie->getCastMember(res)) {
 		g_lingo->lingoError("No match found for cast member");
 		return;

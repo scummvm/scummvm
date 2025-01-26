@@ -419,6 +419,7 @@ public:
 	Common::U32String evalChunkRef(const Datum &var);
 	Datum findVarV4(int varType, const Datum &id);
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type);
+	CastMemberID toCastMemberID(const Datum &member, const Datum &castLib);
 	void exposeXObject(const char *name, Datum obj);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool equality);

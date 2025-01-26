@@ -1921,6 +1921,49 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 	return CastMemberID(-1, castLib.asInt());
 }
 
+CastMemberID Lingo::toCastMemberID(const Datum &member, const Datum &castLib) {
+	// Used specifically for unpacking CastMemberIDs when provided by the bytecode
+	// as two Datums. This means no multiplex IDs.
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::toCastMemberID: No movie set");
+		return CastMemberID(-1, 0);
+	}
+	CastMemberID res;
+	if (castLib.type == VOID) {
+		if (member.isCastRef()) {
+			res = member.asMemberID();
+		} else if (member.isNumeric()) {
+			res = movie->getCastMemberIDByMember(member.asInt());
+		} else {
+			res = movie->getCastMemberIDByName(member.asString());
+		}
+	} else {
+		int libId = -1;
+		if (castLib.type == CASTLIBREF) {
+			libId = castLib.u.i;
+		} else if (castLib.isNumeric()) {
+			libId = castLib.asInt();
+		} else {
+			libId = movie->getCastLibIDByName(castLib.asString());
+		}
+		if (member.isCastRef()) {
+			res = member.asMemberID();
+		} else if (member.isNumeric()) {
+			if (libId == 0) {
+				// When specifying 0 as the castlib, D5 will assume this
+				// means the default (i.e. first) cast library. It will not
+				// try other libraries for matches if the member is a number.
+				libId = DEFAULT_CAST_LIB;
+			}
+			res = CastMemberID(member.asInt(), libId);
+		} else {
+			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
+		}
+	}
+	return res;
+}
+
 void Lingo::exposeXObject(const char *name, Datum obj) {
 	_globalvars[name] = obj;
 	_globalvars[name].ignoreGlobal = true;
