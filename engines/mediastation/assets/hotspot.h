@@ -34,6 +34,8 @@ public:
 	Hotspot(AssetHeader *header);
 	virtual ~Hotspot() override = default;
 
+	bool isInside(const Common::Point &pointToCheck);
+
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
 };
 

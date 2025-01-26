@@ -28,6 +28,7 @@
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
+#include "mediastation/assets/hotspot.h"
 #include "mediastation/assets/movie.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -186,9 +187,31 @@ void MediaStationEngine::processEvents() {
 			return;
 		}
 
+		case Common::EVENT_MOUSEMOVE: {
+			Asset *hotspot = findAssetToAcceptMouseEvents(e.mouse);
+			if (hotspot != nullptr) {
+				if (_currentHotspot == nullptr) {
+					_currentHotspot = hotspot;
+					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Entered hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+					hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
+				} else if (_currentHotspot == hotspot) {
+					// We are still in the same hotspot.
+				} else {
+					_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
+					_currentHotspot = hotspot;
+					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+					hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
+				}
+				debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+				hotspot->runEventHandlerIfExists(kMouseMovedEvent);
+			} else {
+				_currentHotspot = nullptr;
+			}
+			break;
+		}
+
 		case Common::EVENT_KEYDOWN: {
-			// TODO: Reading the current mouse position for hotspots might not
-			// be right, need to verify.
+			// Even though this is a keydown event, we need to look at the mouse position.
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
 			Asset *hotspot = findAssetToAcceptMouseEvents(mousePos);
 			if (hotspot != nullptr) {
@@ -381,19 +404,8 @@ Asset *MediaStationEngine::findAssetToAcceptMouseEvents(Common::Point point) {
 	int lowestZIndex = INT_MAX;
 
 	for (Asset *asset : _assetsPlaying) {
-		// TODO: Currently only hotspots are found, but other asset types can
-		// likely get mouse events too.
 		if (asset->type() == kAssetTypeHotspot) {
-			Common::Rect *boundingBox = asset->getHeader()->_boundingBox;
-			if (boundingBox == nullptr) {
-				error("Hotspot %d has no bounding box", asset->getHeader()->_id);
-			}
-
-			if (!asset->isActive()) {
-				continue;
-			}
-
-			if (boundingBox->contains(point)) {
+			if (asset->isActive() && static_cast<Hotspot *>(asset)->isInside(point)) {
 				if (asset->zIndex() < lowestZIndex) {
 					lowestZIndex = asset->zIndex();
 					intersectingAsset = asset;

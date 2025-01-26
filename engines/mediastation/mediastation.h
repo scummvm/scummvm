@@ -103,6 +103,7 @@ private:
 	Boot *_boot = nullptr;
 	Common::Array<Asset *> _assetsPlaying;
 	Common::HashMap<uint, Context *> _loadedContexts;
+	Asset *_currentHotspot = nullptr;
 
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);
