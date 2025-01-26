@@ -391,8 +391,8 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 		if (g_director->getVersion() < 500) {
 			res = id.asMemberID();
 		} else {
-			Datum castName = g_lingo->pop();
-			res = castName.asMemberID(kCastTypeAny, id.asInt());
+			Datum member = g_lingo->pop();
+			res = g_lingo->toCastMemberID(member, id);
 		}
 		res.type = FIELDREF;
 		break;
@@ -747,10 +747,11 @@ void LC::cb_v4theentitypush() {
 		case kTEAItemId:
 			{
 				Datum id = g_lingo->pop();
-				if (entity == kTheCast && g_director->getVersion() >= 500) {
+				if ((entity == kTheCast || entity == kTheField) && g_director->getVersion() >= 500) {
 					// For "the member", D5 and above have a lib ID followed by a member ID
 					// Pre-resolve them here.
-					CastMemberID resolved = g_lingo->resolveCastMember(g_lingo->pop(), id, kCastTypeAny);
+					Datum member = g_lingo->pop();
+					CastMemberID resolved = g_lingo->toCastMemberID(member, id);
 					id = Datum(resolved);
 				}
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
@@ -907,6 +908,13 @@ void LC::cb_v4theentityassign() {
 	case kTEAItemId:
 		{
 			Datum id = g_lingo->pop();
+			if ((entity == kTheCast || entity == kTheField) && g_director->getVersion() >= 500) {
+				// For "the member", D5 and above have a lib ID followed by a member ID
+				// Pre-resolve them here.
+				Datum member = g_lingo->pop();
+				CastMemberID resolved = g_lingo->toCastMemberID(member, id);
+				id = Datum(resolved);
+			}
 			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
