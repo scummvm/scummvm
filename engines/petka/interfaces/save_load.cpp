@@ -70,7 +70,7 @@ void InterfaceSaveLoad::start(int id) {
 	surf.blitFrom(*bmp);
 
 	// TODO: Which font did the original game use?
-	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", 20));
+	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", 18));
 
 	MetaEngine *metaEngine = g_engine->getMetaEngine();
 	for (int i = 0, j = _page * 6; i < 6; ++i, ++j) {
