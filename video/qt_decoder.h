@@ -124,6 +124,8 @@ private:
 
 	void updateAudioBuffer();
 
+	void closeQTVR();
+	void updateAngles();
 	void updateQTVRCursor(int16 x, int16 y);
 	void setCursor(int curId);
 	void cleanupCursors();
@@ -230,14 +232,6 @@ private:
 		mutable bool _dirtyPalette;
 		bool _reversed;
 
-		void constructPanorama();
-		void projectPanorama();
-
-		Graphics::Surface *_constructedPano;
-		Graphics::Surface *_projectedPano;
-
-		bool _isPanoConstructed;
-
 		// Forced dithering of frames
 		byte *_forcedDitherPalette;
 		byte *_ditherTable;
@@ -256,6 +250,41 @@ private:
 		bool atLastEdit() const;
 		bool endOfCurEdit() const;
 		void checkEditListBounds();
+	};
+
+	class PanoTrackHandler {
+	public:
+		PanoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent);
+		~PanoTrackHandler();
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const;
+		bool hasDirtyPalette() const { return _curPalette; }
+		bool canDither() const;
+		void setDither(const byte *palette);
+
+		Common::Rational getScaledWidth() const;
+		Common::Rational getScaledHeight() const;
+
+	private:
+		QuickTimeDecoder *_decoder;
+		Common::QuickTimeParser::Track *_parent;
+
+		const byte *_curPalette;
+
+		void constructPanorama();
+		void projectPanorama();
+
+		const Graphics::Surface *bufferNextFrame();
+
+		Graphics::Surface *_constructedPano;
+		Graphics::Surface *_projectedPano;
+
+		bool _isPanoConstructed;
 	};
 };
 

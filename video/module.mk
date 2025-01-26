@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	paco_decoder.o \
 	psx_decoder.o \
 	qt_decoder.o \
+	qtvr_decoder.o \
 	smk_decoder.o \
 	subtitles.o \
 	video_decoder.o
