@@ -31,6 +31,8 @@ class FilterPixel {
 public:
   uint8 fracX = 0;  //Byte fraction of horizontal pixel position, 0 = left, 255 = right
   uint8 fracY = 0;  //Byte fraction of vertical pixel position, 0 = top, 255 = bottom
+  //TODO - make this a sequential list for recursive filtering.  
+  //TODO - Also include a recursion limit value so that we don't waste filtering operations on pixels that are already accurate enough.
   Common::Rect Src = Common::Rect(0,0);  //Coordinates of four panorama image pixels around actual working window pixel
   
   FilterPixel() {};
@@ -53,7 +55,7 @@ public:
 
 class RenderTable {
 public:
-	RenderTable(uint numRows, uint numColumns);
+	RenderTable(uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
 
 public:
@@ -67,8 +69,10 @@ private:
 	uint _numColumns, _numRows; //Working area width, height
   FilterPixel *_internalBuffer;
 	RenderState _renderState;
-	bool highQuality = false;
+	bool highQuality = true;
 	const uint8 filterPasses = 2;
+	const Graphics::PixelFormat _pixelFormat;
+	uint16 avgL, avgH;
 
 	struct {
 		float verticalFOV;  //Radians
@@ -93,8 +97,15 @@ public:
 
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  //input point in working area coordinates
 
-	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
-	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
+//	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
+  void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
+	
+	inline uint16 avgPixels(uint16 &PixelA, uint16 &PixelB) {
+	  //NB Optimised & valid for RGB555 only!
+  	avgL = (PixelA & 0x3def) + (PixelB & 0x3def);  //Add first 4 respective bits of eagh 5-bit R, G & B value
+	  avgH = (PixelA & 0x4210) + (PixelB & 0x4210);  //Add 5th respective bit of each 5-bit R, G & B value
+	  return (avgH + (avgL & 0x7bde)) >> 1; //Combine upper & lower bits, dropping 1st respective bit of each 5-bit R, G & B value, & then halve to get averages.
+	};
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov); //Degrees
