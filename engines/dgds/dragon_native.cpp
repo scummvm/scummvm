@@ -33,7 +33,10 @@ void DragonNative::drawCountdown(FontManager::FontType fontType, int16 x, int16 
 	int16 countdownEnd = engine->getGameGlobals()->getGlobal(0x22);
 	int16 currentMins = engine->getClock().getMins();
 	const DgdsFont *fnt = engine->getFontMan()->getFont(fontType);
-	Common::String str = Common::String::format("%d", countdownEnd - currentMins);
+	int16 minsLeft = countdownEnd - currentMins;
+	if (minsLeft < 0)
+		minsLeft += 60;
+	Common::String str = Common::String::format("%2d", minsLeft);
 	fnt->drawString(&engine->_compositionBuffer, str, x, y, SCREEN_WIDTH - x, 10);
 }
 
