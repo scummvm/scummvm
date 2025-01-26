@@ -22,12 +22,13 @@
 #ifndef NGI_NGIARCHIVE_H
 #define NGI_NGIARCHIVE_H
 
-#include "common/path.h"
-#include "common/ptr.h"
+#include "common/archive.h"
+
+namespace Common {
+class File;
+}
 
 namespace NGI {
-
-class Archive;
 
 #define NGI_FILENAME_MAX 13
 
@@ -43,7 +44,7 @@ typedef Common::HashMap<Common::Path, Common::ScopedPtr<NgiHeader>, Common::Path
 
 class NGIArchive : public Common::Archive {
 	NgiHeadersMap _headers;
-	Common::Path _ngiFilename;
+	Common::File *_ngiFile;
 
 public:
 	NGIArchive(const Common::Path &name);
