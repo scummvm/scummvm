@@ -19,10 +19,12 @@
  *
  */
 
+#include "audio/decoders/raw.h"
 #include "audio/decoders/adpcm.h"
 
 #include "mediastation/debugchannels.h"
 #include "mediastation/assets/sound.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
@@ -33,50 +35,67 @@ Sound::Sound(AssetHeader *header) : Asset(header) {
 }
 
 Sound::~Sound() {
-	delete _samples;
-	_samples = nullptr;
-	//for (Audio::SeekableAudioStream *stream : _streams) {
-	//    delete stream;
-	//}
+	for (Audio::SeekableAudioStream *stream : _streams) {
+		delete stream;
+	}
+	_streams.clear();
+}
+
+void Sound::process() {
+	processTimeEventHandlers();
+	if (!g_engine->_mixer->isSoundHandleActive(_handle)) {
+		_isActive = false;
+		_startTime = 0;
+		_lastProcessedTime = 0;
+		_handle = Audio::SoundHandle();
+
+		runEventHandlerIfExists(kSoundEndEvent);
+	}
 }
 
 Operand Sound::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
-	default: {
-		error("Got unimplemented method ID %d", methodId);
+	case kTimePlayMethod: {
+		assert(args.empty());
+		timePlay();
+		return Operand();
 	}
-	}
-}
 
-void Sound::process() {
-	// TODO: Process more playing.
+	case kTimeStopMethod: {
+		assert(args.empty());
+		timeStop();
+		return Operand();
+	}
+
+	default: {
+		error("Sound::callMethod(): Got unimplemented method %s (%d)", builtInMethodToStr(methodId), methodId);
+	}
+	}
 }
 
 void Sound::readChunk(Chunk &chunk) {
-	// TODO: Can we read the chunk directly into the audio stream?
-	debugC(5, kDebugLoading, "Sound::readChunk(): (encoding = 0x%x) Reading audio chunk (@0x%llx)", static_cast<uint>(_encoding), static_cast<long long int>(chunk.pos()));
 	byte *buffer = (byte *)malloc(chunk._length);
 	chunk.read((void *)buffer, chunk._length);
-
-	switch (_encoding) {
-	case SoundEncoding::PCM_S16LE_MONO_22050: {
-		// Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer, chunk.length, Sound::RATE, Sound::FLAGS, DisposeAfterUse::NO);
-		//_streams.push_back(stream);
+	Audio::SeekableAudioStream *stream = nullptr;
+	switch (_header->_soundEncoding) {
+	case SoundEncoding::PCM_S16LE_MONO_22050:
+		stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 		break;
-	}
 
-	case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050: {
-		// TODO: Support ADPCM decoding.
-		// Audio::SeekableAudioStream *stream = nullptr; // Audio::makeADPCMStream(buffer, chunk.length, DisposeAfterUse::NO, Audio::ADPCMType::kADPCMMSIma, Sound::RATE, 1, 4);
-		//_streams.push_back(stream);
+	case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
+		// TODO: The interface here is different. We can't pass in the
+		// buffers directly. We have to make a stream first.
+		// stream = Audio::makeADPCMStream(buffer, chunk.length,
+		// DisposeAfterUse::NO, Audio::ADPCMType::kADPCMMSIma, 22050, 1,
+		// 4);
+		warning("Sound::readSubfile(): ADPCM decoding not implemented yet");
+		chunk.skip(chunk.bytesRemaining());
 		break;
-	}
 
-	default: {
-		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_encoding));
-		break;
+	default:
+		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_header->_soundEncoding));
 	}
-	}
+	_streams.push_back(stream);
 	debugC(5, kDebugLoading, "Sound::readChunk(): Finished reading audio chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
@@ -96,4 +115,45 @@ void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
 	}
 }
 
+void Sound::timePlay() {
+	if (_isActive) {
+		warning("Sound::timePlay(): Attempt to play a sound that is already playing");
+		return;
+	}
+	_isActive = true;
+	g_engine->addPlayingAsset(this);
+
+	_startTime = g_system->getMillis();
+	_lastProcessedTime = 0;
+	_handle = Audio::SoundHandle();
+
+	runEventHandlerIfExists(kSoundBeginEvent);
+
+	if (!_streams.empty()) {
+		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
+		for (Audio::SeekableAudioStream *stream : _streams) {
+			stream->rewind();
+			audio->queueAudioStream(stream, DisposeAfterUse::NO);
+		}
+		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audio, -1, Audio::Mixer::kMaxChannelVolume, DisposeAfterUse::YES);
+		audio->finish();
+	}
 }
+
+void Sound::timeStop() {
+	if (!_isActive) {
+		warning("Sound::timeStop(): Attempt to stop a sound that isn't playing");
+		return;
+	}
+
+	_isActive = false;
+	_startTime = 0;
+	_lastProcessedTime = 0;
+
+	g_engine->_mixer->stopHandle(_handle);
+	_handle = Audio::SoundHandle();
+
+	runEventHandlerIfExists(kSoundStoppedEvent);
+}
+
+} // End of namespace MediaStation
