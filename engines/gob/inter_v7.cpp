@@ -2083,9 +2083,11 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 			warning("o7_fillRect: pattern %d & 0x8000 != 0 stub", _vm->_draw->_pattern);
 		else {
 			// Replace a specific color in the rectangle
-			uint8 colorToReplace = (_vm->_draw->_backColor >> 8) & 0xFF;
+			uint8 colorIndexToReplace = (_vm->_draw->_backColor >> 8) & 0xFF;
+			uint32 colorToReplace = _vm->_draw->_spritesArray[_vm->_draw->_destSurface]->getColorFromIndex(colorIndexToReplace);
 			_vm->_draw->_pattern = 4;
 			_vm->_draw->_backColor = _vm->_draw->_backColor & 0xFF;
+			uint32 newColor = _vm->_draw->_spritesArray[_vm->_draw->_destSurface]->getColorFromIndex(_vm->_draw->_backColor);
 			// Additional condition on surface.field_10 in executables (video mode ?), seems to be always true for Adibou2
 			// if (_vm->_draw->_spritesArray[_vm->_draw->_destSurface].field_10  & 0x80)) {
 			SurfacePtr newSurface = _vm->_video->initSurfDesc(_vm->_draw->_spriteRight,
@@ -2096,15 +2098,15 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 							 _vm->_draw->_destSpriteX,
 							 _vm->_draw->_destSpriteY,
 							 _vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1,
-							 _vm->_draw->_destSpriteY + _vm->_draw->_spriteRight - 1,
+							 _vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1,
 							 0,
 							 0,
 							 0);
 
 			for (int y = 0; y < _vm->_draw->_spriteBottom; y++) {
 				for (int x = 0; x < _vm->_draw->_spriteRight; x++) {
-					if ((colorToReplace & 0xFFu) == newSurface->get(x, y).get())
-						newSurface->putPixel(x, y, _vm->_draw->_backColor);
+					if (colorToReplace == newSurface->get(x, y).get())
+						newSurface->putPixelRaw(x, y, newColor);
 				}
 			}
 
