@@ -519,25 +519,12 @@ int MidiPlayer::open() {
 		_parserSfxAccolade->setMidiDriver(_driverMsSfx);
 	}
 
-	if ((_parserSfx || _parserSfxAccolade) && _driverMsSfx == _driver) {
-		// Use MidiPlayer::onTimer to trigger both parsers from the
-		// single driver (it can only have one timer callback).
-		_driver->setTimerCallback(this, &onTimer);
-		if (_parserSfx) {
-			_parserSfx->setTimerRate(_driver->getBaseTempo());
-		} else if (_parserSfxAccolade) {
-			_parserSfxAccolade->setTimerRate(_driver->getBaseTempo());
-		}
-	} else {
-		// Connect each parser to its own driver.
-		_driver->setTimerCallback(_parserMusic, &_parserMusic->timerCallback);
-		if (_parserSfx) {
-			_driverMsSfx->setTimerCallback(_parserSfx, &_parserSfx->timerCallback);
-			_parserSfx->setTimerRate(_driverMsSfx->getBaseTempo());
-		} else if (_parserSfxAccolade) {
-			_driverMsSfx->setTimerCallback(_parserSfxAccolade, &_parserSfxAccolade->timerCallback);
-			_parserSfxAccolade->setTimerRate(_driverMsSfx->getBaseTempo());
-		}
+	// Use MidiPlayer::onTimer to trigger both parsers.
+	_driver->setTimerCallback(this, &onTimer);
+	if (_parserSfx) {
+		_parserSfx->setTimerRate(_driver->getBaseTempo());
+	} else if (_parserSfxAccolade) {
+		_parserSfxAccolade->setTimerRate(_driver->getBaseTempo());
 	}
 
 	return 0;
