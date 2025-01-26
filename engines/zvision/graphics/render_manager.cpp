@@ -56,7 +56,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(_layout.workingArea.width(), _layout.workingArea.height()),
+	  _renderTable(_layout.workingArea.width(), _layout.workingArea.height(), pixelFormat),
 	  _doubleFPS(doubleFPS),
 	  _widescreen(widescreen) {
 	debug(1,"creating render manager");
