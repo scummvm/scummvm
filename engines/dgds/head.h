@@ -72,11 +72,11 @@ public:
 
 	void clearHead();
 
-	void drawHead(Graphics::ManagedSurface *dst, const TalkData &data) const;
-	void drawHeadType1(Graphics::ManagedSurface *dst, const Image &img) const;
-	void drawHeadType2(Graphics::ManagedSurface *dst, const Image &img) const;
-	void drawHeadType3(Graphics::ManagedSurface *dst, const Image &img) const;
-	void drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data) const;
+	void drawHead(Graphics::ManagedSurface &dst, const TalkData &data) const;
+	void drawHeadType1(Graphics::ManagedSurface &dst, const Image &img) const;
+	void drawHeadType2(Graphics::ManagedSurface &dst, const Image &img) const;
+	void drawHeadType3(Graphics::ManagedSurface &dst, const Image &img) const;
+	void drawHeadType3Beamish(Graphics::ManagedSurface &dst, const TalkData &data) const;
 
 	uint16 _num;
 	uint16 _drawType;
@@ -101,7 +101,7 @@ public:
 	Common::String _bmpFile;
 
 	void clearVisibleHeads();
-	void drawAndUpdateVisibleHeads(Graphics::ManagedSurface *dst);
+	void drawAndUpdateVisibleHeads(Graphics::ManagedSurface &dst);
 	bool hasVisibleHead() const;
 };
 

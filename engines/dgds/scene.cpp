@@ -877,7 +877,7 @@ void SDSScene::clearVisibleTalkers() {
 	}
 }
 
-void SDSScene::drawAndUpdateHeads(Graphics::ManagedSurface *dst) {
+void SDSScene::drawAndUpdateHeads(Graphics::ManagedSurface &dst) {
 	for (auto &tds : _talkData) {
 		tds.drawAndUpdateVisibleHeads(dst);
 	}
@@ -1680,7 +1680,7 @@ void SDSScene::activateChoice() {
 	_shouldClearDlg = true;
 }
 
-void SDSScene::drawDebugHotAreas(Graphics::ManagedSurface *dst) const {
+void SDSScene::drawDebugHotAreas(Graphics::ManagedSurface &dst) const {
 	const DgdsPal &pal = DgdsEngine::getInstance()->getGamePals()->getCurPal();
 	byte redish = pal.findBestColor(0xff, 0, 0);
 	byte greenish = pal.findBestColor(0, 0xff, 0);
@@ -1690,10 +1690,10 @@ void SDSScene::drawDebugHotAreas(Graphics::ManagedSurface *dst) const {
 		uint32 color = enabled ? greenish : redish;
 		g_system->getPaletteManager();
 		const Common::Rect &r = area._rect.toCommonRect();
-		dst->drawLine(r.left, r.top, r.right, r.top, color);
-		dst->drawLine(r.left, r.top, r.left, r.bottom, color);
-		dst->drawLine(r.left, r.bottom, r.right, r.bottom, color);
-		dst->drawLine(r.right, r.top, r.right, r.bottom, color);
+		dst.drawLine(r.left, r.top, r.right, r.top, color);
+		dst.drawLine(r.left, r.top, r.left, r.bottom, color);
+		dst.drawLine(r.left, r.bottom, r.right, r.bottom, color);
+		dst.drawLine(r.right, r.top, r.right, r.bottom, color);
 	}
 }
 

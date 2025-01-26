@@ -32,7 +32,7 @@
 
 namespace Dgds {
 
-void TalkDataHead::drawHead(Graphics::ManagedSurface *dst, const TalkData &data) const {
+void TalkDataHead::drawHead(Graphics::ManagedSurface &dst, const TalkData &data) const {
 	uint drawtype = _drawType ? _drawType : 1;
 	// Use specific head shape if available (eg, in Willy Beamish), if not use talk data shape
 	Common::SharedPtr<Image> img = _shape;
@@ -58,40 +58,40 @@ void TalkDataHead::drawHead(Graphics::ManagedSurface *dst, const TalkData &data)
 	}
 }
 
-void TalkDataHead::drawHeadType1(Graphics::ManagedSurface *dst, const Image &img) const {
+void TalkDataHead::drawHeadType1(Graphics::ManagedSurface &dst, const Image &img) const {
 	Common::Rect r = _rect.toCommonRect();
-	dst->fillRect(r, _drawCol);
+	dst.fillRect(r, _drawCol);
 	r.grow(-1);
-	dst->fillRect(r, _drawCol == 0 ? 15 : 0);
+	dst.fillRect(r, _drawCol == 0 ? 15 : 0);
 	r.left += 2;
 	r.top += 2;
 	const int x = _rect.x;
 	const int y = _rect.y;
 	if (img.isLoaded()) {
 		for (const auto &frame : _headFrames) {
-			img.drawBitmap(frame._frameNo & 0xff, x + frame._xoff, y + frame._yoff, r, *dst);
+			img.drawBitmap(frame._frameNo & 0xff, x + frame._xoff, y + frame._yoff, r, dst);
 		}
 	}
 }
 
-void TalkDataHead::drawHeadType2(Graphics::ManagedSurface *dst, const Image &img) const {
+void TalkDataHead::drawHeadType2(Graphics::ManagedSurface &dst, const Image &img) const {
 	if (!img.isLoaded())
 		return;
 	const Common::Rect r = _rect.toCommonRect();
 	for (const auto &frame : _headFrames) {
-		img.drawBitmap(frame._frameNo & 0xff, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+		img.drawBitmap(frame._frameNo & 0xff, r.left + frame._xoff, r.top + frame._yoff, r, dst);
 	}
 }
 
-void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data) const {
+void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface &dst, const TalkData &data) const {
 	const Common::Rect r = _rect.toCommonRect();
 
 	// Note: only really need the 1px border here but just fill the box.
-	dst->fillRect(r, 8);
+	dst.fillRect(r, 8);
 
 	Common::Rect fillRect(r);
 	fillRect.grow(-1);
-	dst->fillRect(fillRect, _drawCol);
+	dst.fillRect(fillRect, _drawCol);
 
 	for (const auto &frame : _headFrames) {
 		int frameNo = frame._frameNo & 0x7fff;
@@ -109,21 +109,21 @@ void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface *dst, const Tal
 		if (frame._flipFlags & 2)
 			flip = static_cast<ImageFlipMode>(flip & kImageFlipV);
 
-		img->drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, fillRect, *dst);
+		img->drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, fillRect, dst);
 	}
 }
 
-void TalkDataHead::drawHeadType3(Graphics::ManagedSurface *dst, const Image &img) const {
+void TalkDataHead::drawHeadType3(Graphics::ManagedSurface &dst, const Image &img) const {
 	Common::Rect r = _rect.toCommonRect();
-	dst->fillRect(r, 0);
+	dst.fillRect(r, 0);
 	if (!img.isLoaded())
 		return;
 	for (const auto &frame : _headFrames) {
 		int frameNo = frame._frameNo;
 		if (frameNo < img.loadedFrameCount())
-			img.drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+			img.drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, r, dst);
 		else
-			dst->fillRect(r, 4);
+			dst.fillRect(r, 4);
 	}
 }
 
@@ -152,7 +152,7 @@ void TalkData::clearVisibleHeads() {
 	}
 }
 
-void TalkData::drawAndUpdateVisibleHeads(Graphics::ManagedSurface *dst) {
+void TalkData::drawAndUpdateVisibleHeads(Graphics::ManagedSurface &dst) {
 	for (auto &h : _heads) {
 		if (h._flags & kHeadFlagVisible) {
 			if (!(h._flags & kHeadFlagOpening)) {

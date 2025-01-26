@@ -775,17 +775,17 @@ Common::Error DgdsEngine::run() {
 			bool haveActiveDialog = _scene->checkDialogActive();
 
 			if (_debugShowHotAreas)
-				_scene->drawDebugHotAreas(&_compositionBuffer);
+				_scene->drawDebugHotAreas(_compositionBuffer);
 
 			if (getGameId() == GID_WILLY) {
 				if (!justChangedScene1())
-					_scene->drawAndUpdateHeads(&_compositionBuffer);
+					_scene->drawAndUpdateHeads(_compositionBuffer);
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
 				_scene->updateHotAreasFromDynamicRects();
 			} else {
 				_scene->drawAndUpdateDialogs(&_compositionBuffer);
 				if (!justChangedScene1())
-					_scene->drawAndUpdateHeads(&_compositionBuffer);
+					_scene->drawAndUpdateHeads(_compositionBuffer);
 			}
 
 			dumpFrame(_compositionBuffer, "comp-with-dlg");

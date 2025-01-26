@@ -321,7 +321,7 @@ public:
 	bool freeTalkData(uint16 num);
 	void clearVisibleTalkers();
 	bool loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
-	void drawAndUpdateHeads(Graphics::ManagedSurface *dst);
+	void drawAndUpdateHeads(Graphics::ManagedSurface &dst);
 	bool hasVisibleHead() const;
 
 	// dragon-specific scene ops
@@ -338,7 +338,7 @@ public:
 	void updateHotAreasFromDynamicRects();
 	void setDynamicSceneRect(int16 num, int16 x, int16 y, int16 width, int16 height);
 	void setSceneNum(int16 num) { _num = num; }
-	void drawDebugHotAreas(Graphics::ManagedSurface *dst) const;
+	void drawDebugHotAreas(Graphics::ManagedSurface &dst) const;
 	void setIgnoreMouseUp() { _ignoreMouseUp = true; }
 	void setShouldClearDlg() { _shouldClearDlg = true; }
 
