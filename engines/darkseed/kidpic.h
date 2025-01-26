@@ -19,35 +19,29 @@
  *
  */
 
-#ifndef DARKSEED_PAL_H
-#define DARKSEED_PAL_H
+#ifndef DARKSEED_KIDPIC_H
+#define DARKSEED_KIDPIC_H
 
-#include "common/path.h"
-#include "common/stream.h"
+#include "common/array.h"
+#include "common/scummsys.h"
+#include "common/file.h"
 
 namespace Darkseed {
 
-#define DARKSEED_NUM_PAL_ENTRIES 16
-#define DARKSEED_PAL_SIZE (DARKSEED_NUM_PAL_ENTRIES * 3)
+class KidPic {
+	Common::Array<uint8> _pixels;
+	int _lineNum = 0;
+	int _lineByteIdx = 0;
 
-
-class Pal {
 public:
-	byte _palData[DARKSEED_PAL_SIZE];
+	KidPic();
+	void draw();
 
-	Pal() {};
-	Pal(const Pal &pal);
-	Pal & operator=(const Pal &pal);
-	void loadFromScreen();
-	void load(const Pal &pal);
-	bool load(const Common::Path &filename, bool shouldInstallPalette = true);
-	bool loadFromStream(Common::SeekableReadStream &readStream, bool shouldInstallPalette = true);
-	void clear();
-	void swapEntries(int idx1, int idx2);
-	void updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette = true);
-	void installPalette() const;
+private:
+	bool unpackRLE(Common::SeekableReadStream &readStream);
+	void unpackByte(uint8 byte);
 };
 
 } // namespace Darkseed
 
-#endif // DARKSEED_PAL_H
+#endif // DARKSEED_KIDPIC_H

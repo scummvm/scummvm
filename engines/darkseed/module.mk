@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	gamefont.o \
 	img.o \
 	inventory.o \
+	kidpic.o \
 	kofont.o \
 	langtext.o \
 	menu.o \

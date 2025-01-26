@@ -22,6 +22,7 @@
 #include "darkseed/cutscene.h"
 #include "darkseed/darkseed.h"
 #include "darkseed/langtext.h"
+#include "kidpic.h"
 
 namespace Darkseed {
 
@@ -118,12 +119,27 @@ static constexpr int CREDITS_DELAY = 25;
 bool Cutscene::introScene() {
 	auto lang = g_engine->getLanguage();
 	switch (_movieStep) {
-	case 1:
-		g_engine->fadeOut();
+	case 1: {
+		if (lang == Common::KO_KOR) {
+			g_engine->_screen->clear();
+			KidPic kidPic;
+			kidPic.draw();
+			g_engine->_screen->makeAllDirty();
+			registTime();
+		} else {
+			g_engine->fadeOut();
+		}
 		break;
+	}
 	case 2:
-		if (g_engine->fadeStep()) {
-			return true;
+		if (lang == Common::KO_KOR) {
+			if (waitTime(CREDITS_DELAY)) {
+				return true;
+			}
+		} else {
+			if (g_engine->fadeStep()) {
+				return true;
+			}
 		}
 		break;
 	case 3: {

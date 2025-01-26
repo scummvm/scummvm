@@ -49,7 +49,12 @@ bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 		loadFromScreen();
 		return false;
 	}
-	uint32 bytesRead = file.read(_palData, DARKSEED_PAL_SIZE);
+
+	return loadFromStream(file, shouldInstallPalette);
+}
+
+bool Pal::loadFromStream(Common::SeekableReadStream &readStream, bool shouldInstallPalette) {
+	uint32 bytesRead = readStream.read(_palData, DARKSEED_PAL_SIZE);
 	assert(bytesRead == DARKSEED_PAL_SIZE);
 
 	for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
@@ -58,6 +63,7 @@ bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 	if (shouldInstallPalette) {
 		installPalette();
 	}
+
 	return true;
 }
 
@@ -67,6 +73,21 @@ void Pal::loadFromScreen() {
 
 void Pal::clear() {
 	memset(_palData, 0, DARKSEED_PAL_SIZE);
+}
+
+void Pal::swapEntries(int idx1, int idx2) {
+	uint8 tmpEntry[3];
+	tmpEntry[0] = _palData[idx1 * 3];
+	tmpEntry[1] = _palData[idx1 * 3 + 1];
+	tmpEntry[2] = _palData[idx1 * 3 + 2];
+
+	_palData[idx1 * 3] = _palData[idx2 * 3];
+	_palData[idx1 * 3 + 1] = _palData[idx2 * 3 + 1];
+	_palData[idx1 * 3 + 2] = _palData[idx2 * 3 + 2];
+
+	_palData[idx2 * 3] = tmpEntry[0];
+	_palData[idx2 * 3 + 1] = tmpEntry[1];
+	_palData[idx2 * 3 + 2] = tmpEntry[2];
 }
 
 void Pal::updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette) {
