@@ -590,6 +590,8 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
     # Lingo Xtras are COM libraries with a generic calling API.
     # Director discovers what functions are available by requesting
     # a msgTable, which unfortunately for us is done with code.
+
+    # Search for the basic case of passing xtra_methtable as a static C string.
     # We need to find the following x86 assembly:
     # 68 [ u32 addr 1 ]  ; push offset "msgTable"
     # 6a 00              ; push 0
@@ -626,11 +628,44 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
                 end = data.find(b"\x00", start)
                 methtable_found = True
                 methtable = data[start:end].decode('iso-8859-1').split('\n')
+
     if not methtable_found:
         raise ValueError("Could not find msgTable!")
 
     for entry in methtable:
         print(entry)
+
+    library_name = methtable[0].split()[1].capitalize()
+    methtable[0] = "-- " + methtable[0]
+
+    return {
+        "type": "Xtra",
+        "name": library_name,
+        "slug": library_name.lower(),
+        "filename": library_name.lower(),
+        "method_table": methtable
+    }
+
+
+def extract_xcode_textfile(file: BinaryIO) -> XCode:
+    # For Xtras, it is entirely possible for the msgTable to be
+    # generated at runtime. In these unlucky cases, your only option
+    # is to load the Xtra into real Director and run
+    #
+    # put mMessageList(xtra("xtraName"))
+    #
+    # then manually copy and save the output to a text file encoded as UTF8.
+
+    file.seek(0)
+
+    # skip past the useless marker Microsoft Notepad appends to UTF8 files
+    if file.read(3) != b"\xef\xbb\xbf":
+        file.seek(0)
+
+    data = file.read().decode("utf8")
+    separator = "\r\n" if "\r\n" in data else "\n"
+
+    methtable = data.split(separator)
 
     library_name = methtable[0].split()[1].capitalize()
     methtable[0] = "-- " + methtable[0]
@@ -679,7 +714,10 @@ def extract_xcode(path: str, resid: str) -> XCode:
             )
             print(f"resource offset: {resource_offset}")
             return extract_xcode_macbinary(file, resource_offset, resid)
-
+        if path.endswith(".txt"):
+            # there's probably a more legit way of checking for text files
+            print("Found text file!")
+            return extract_xcode_textfile(file)
     raise ValueError("Unknown filetype")
 
 
