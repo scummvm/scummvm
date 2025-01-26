@@ -139,6 +139,17 @@ void Sound::musicPlay(const char *name, bool override) {
 #else
 		warning("TODO: play_music %s", name);
 
+#if 0
+		Common::DumpFile *outFile = new Common::DumpFile();
+		const Common::String outName = Common::String::format("%s.dump", name);
+		outFile->open(Common::Path(outName));
+		byte *buffer = new byte[file.size()];
+		file.read(buffer, file.size());
+		outFile->write(buffer, file.size());
+		outFile->finalize();
+		outFile->close();
+#endif
+		
 		// The following is a dump of the music data in the hopes
 		// it will help someone write a decoder for ScummVM based on it.
 		// After an unknown header that doesn't seem to be used, the
