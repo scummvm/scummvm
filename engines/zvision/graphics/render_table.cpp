@@ -27,10 +27,11 @@
 
 namespace ZVision {
 
-RenderTable::RenderTable(uint numColumns, uint numRows)
+RenderTable::RenderTable(uint numColumns, uint numRows, const Graphics::PixelFormat pixelFormat)
 	: _numRows(numRows),
 	  _numColumns(numColumns),
-	  _renderState(FLAT) {
+	  _renderState(FLAT),
+	  _pixelFormat(pixelFormat) {
 	assert(numRows != 0 && numColumns != 0);
 	_internalBuffer = new FilterPixel[numRows * numColumns];
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
@@ -77,6 +78,7 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	return newPoint;
 }
 
+/*/
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
 	uint32 destOffset = 0;
   uint32 sourceXIndex = 0;
@@ -111,6 +113,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 	  }
   }
 }
+//*/
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf) {
 	uint32 destOffset = 0;
@@ -120,33 +123,28 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
   uint32 srcIndexYB = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
-	uint32 averageBufferA = 0;
-	uint32 averageBufferB = 0;
+	uint16 avgBufferT = 0;
+	uint16 avgBufferB = 0;
   if(highQuality) {
-    //TODO - convert to high quality pixel filtering
+    //Apply bilinear interpolation
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
 			  uint32 index = sourceOffset + x;
 			  // RenderTable only stores offsets from the original coordinates
-			  srcIndexYT = y + (_internalBuffer[index].fracY < 170 ? _internalBuffer[index].Src.top : _internalBuffer[index].Src.bottom);
-			  srcIndexYB = y + (_internalBuffer[index].fracY > 85 ? _internalBuffer[index].Src.bottom :  _internalBuffer[index].Src.top);
-			  srcIndexXL = x + (_internalBuffer[index].fracX < 170 ? _internalBuffer[index].Src.left :  _internalBuffer[index].Src.right);
-			  srcIndexXR = x + (_internalBuffer[index].fracX > 85 ? _internalBuffer[index].Src.right :  _internalBuffer[index].Src.left);
-			  
-			  averageBufferA = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
-			  averageBufferA += sourceBuffer[srcIndexYT * _numColumns + srcIndexXR];
-			  averageBufferB = sourceBuffer[srcIndexYB * _numColumns + srcIndexXL];
-			  averageBufferB += sourceBuffer[srcIndexYB * _numColumns + srcIndexXR];
-			  
-        destBuffer[destOffset] = (averageBufferA/2 + averageBufferB/2)/2; //TODO - fix this; naive averaging not working properly.
-			  
-			  //destBuffer[destOffset] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+			  srcIndexYT = y + (_internalBuffer[index].fracY < 192 ? _internalBuffer[index].Src.top : _internalBuffer[index].Src.bottom);
+			  srcIndexYB = y + (_internalBuffer[index].fracY > 64 ? _internalBuffer[index].Src.bottom :  _internalBuffer[index].Src.top);
+			  srcIndexXL = x + (_internalBuffer[index].fracX < 192 ? _internalBuffer[index].Src.left :  _internalBuffer[index].Src.right);
+			  srcIndexXR = x + (_internalBuffer[index].fracX > 64 ? _internalBuffer[index].Src.right :  _internalBuffer[index].Src.left);		  
+			  avgBufferT = avgPixels(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], sourceBuffer[srcIndexYT * _numColumns + srcIndexXR]);
+			  avgBufferB = avgPixels(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], sourceBuffer[srcIndexYB * _numColumns + srcIndexXR]);
+        destBuffer[destOffset] = avgPixels(avgBufferT, avgBufferB);
 			  destOffset++;
 		  }
 	  }
   }
   else {
+    //Apply nearest-neighbour interpolation
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
@@ -185,8 +183,6 @@ void RenderTable::generatePanoramaLookupTable() {
 	float cylinderRadius = halfHeight / tan(_panoramaOptions.verticalFOV);
 	float xOffset = 0.0f;
 	float yOffset = 0.0f;
-	
-	FilterPixel currentFpixel;
 	
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
 	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
