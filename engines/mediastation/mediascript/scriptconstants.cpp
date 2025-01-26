@@ -211,6 +211,10 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "Sort";
 	case kDeleteAtMethod:
 		return "DeleteAt";
+	case kJumbleMethod: 
+		return "Jumble";
+	case kDeleteFirstMethod:
+		return "DeleteFirst";
 	case kOpenLensMethod:
 		return "OpenLens";
 	case kCloseLensMethod:
@@ -320,6 +324,8 @@ const char *operandTypeToStr(OperandType type) {
 		return "AssetId";
 	case kOperandTypeVariableDeclaration:
 		return "VariableDeclaration";
+	case kOperandTypeCollection:
+		return "Collection";
 	case kOperandTypeFunction:
 		return "Function";
 	default:

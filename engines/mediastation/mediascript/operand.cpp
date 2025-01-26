@@ -257,6 +257,45 @@ uint32 Operand::getAssetId() {
 	}
 }
 
+void Operand::putCollection(Collection *collection) {
+	switch (_type) {
+	case kOperandTypeCollection: {
+		_u.collection = collection;
+		break;
+	}
+
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->_type == kVariableTypeCollection);
+		_u.variable->_value.collection = collection;
+		break;
+	}
+
+	default: {
+		error("Operand::putCollection(): Attempt to put collection into operand type %s (%d)", 
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+	}
+}
+
+Collection *Operand::getCollection() {
+	switch (_type) {
+	case kOperandTypeCollection: {
+		return _u.collection;
+	}
+
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->_type == kVariableTypeCollection);
+		return _u.variable->_value.collection;
+		break;
+	}
+
+	default: {
+		error("Operand::getCollection(): Attempt to get collection from operand type %s (%d)",
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+	}
+}
+
 Operand Operand::getLiteralValue() const {
 	// This function dereferences any variable to get the actual
 	// "direct" value (a literal asset ID or otherwise).

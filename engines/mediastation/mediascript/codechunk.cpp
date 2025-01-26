@@ -486,6 +486,12 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 		}
 	}
 
+	case kOperandTypeCollection: {
+		Collection *collection = literalSelf.getCollection();
+		Operand returnValue = collection->callMethod(method, args);
+		return returnValue;
+	}
+
 	default:
 		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)", 
 			operandTypeToStr(literalType), static_cast<uint>(literalType));

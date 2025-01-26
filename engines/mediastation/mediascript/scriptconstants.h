@@ -157,6 +157,8 @@ enum BuiltInMethod {
 	kSeekMethod = 256, // PARAMS: 1
 	kSortMethod = 266, // PARAMS: 0
 	kDeleteAtMethod = 258, // PARAMS: 1
+	kJumbleMethod = 255, // PARAMS: 0
+	kDeleteFirstMethod = 250, // PARAMS: 0
 
 	// PRINTER METHODS.
 	kOpenLensMethod = 346, // PARAMS: 0
@@ -244,6 +246,7 @@ enum OperandType {
 	kOperandTypeDollarSignVariable = 155,
 	kOperandTypeAssetId = 156,
 	kOperandTypeVariableDeclaration = 158,
+	kOperandTypeCollection = 159,
 	kOperandTypeFunction = 160
 };
 const char *operandTypeToStr(OperandType type);

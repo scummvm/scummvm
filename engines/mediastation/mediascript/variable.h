@@ -33,13 +33,18 @@ namespace MediaStation {
 
 class Operand;
 
+class Collection : public Common::Array<Operand> {
+public:
+	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
+};
+
 class Variable {
 public:
 	uint32 _id = 0;
 	VariableType _type = kVariableTypeEmpty;
 	union {
 		Common::String *string;
-		Common::Array<Variable *> *collection;
+		Collection *collection;
 		bool b;
 		int i;
 		double d;
@@ -51,7 +56,6 @@ public:
 
 	Operand getValue();
 	void putValue(Operand value);
-	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
 	~Variable();
 };
 
