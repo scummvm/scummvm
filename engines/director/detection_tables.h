@@ -401,6 +401,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pingu2",				"Pingu and Friends" },
 	{ "pippi",				"Astrid Lindgren's Pippi" },
 	{ "planetarizona",		"Escape from Planet Arizona" },
+	{ "plates",				"Plates are People Too!" },
 	{ "playroom",			"The Playroom" },
 	{ "plbible",			"The Play & Learn Children's Bible On CD-ROM" },
 	{ "poohac",				"Winnie the Pooh Activity Center" },
@@ -5539,6 +5540,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("planetearth", "Demo", "Planet Earth", "r:a546ef2b921a9b48fd93928f1a505f22", 483490, 404),
 	WINDEMO2("planetearth", "Demo", "PLANETE.EXE",	"t:1ab2d4f204eb42c9a8ff5257f7cef149", 690069,
 									"INTRO.DIR",	"f:44456604551f5670f801fc69cbbe5833", 10175740, 404),
+
+	MACGAME1("plates", "", "xn--        Plates        -/Plates Are People Too!", "r:bcd068aaac1177eab7125ea39f66e86f", 483518, 400),
 
 	// Found on the Play-Doh Creations CD
 	MACGAME1("playskool", "", "goHIGmem PPC", "r:a6043fbba9186296faf8a2b82e5e4182",    64250, 404),
