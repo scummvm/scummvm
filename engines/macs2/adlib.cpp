@@ -1000,21 +1000,11 @@ void Adlib::OnTimer() {
 						Func2792(bp8 + 0xE0, r19BE_SH->readByte());
 					}
 					// l0017_1FA9:
+					// TODO: xor ah,ah
+					StreamHandler* shBP10 = Func19BE_SH(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
 					//    TODO: Continue from here
 					/*
-					push	word ptr [224Ah]
-	push	word ptr [2248h]
-	mov	al,[bp-3h]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+225Fh]
-	xor	ah,ah
-	shl	ax,4h
-	add	ax,3h
-	push	ax
-	call	far 0017h:19BEh
-	mov	[bp-10h],ax
-	mov	[bp-0Eh],dx
+					
 	mov	al,[bp-5h]
 	xor	ah,ah
 	shr	ax,4h

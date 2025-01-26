@@ -116,6 +116,9 @@ namespace Macs2 {
 		// [223Eh] - Seems to be a 16 bit value - Initial value?
 		uint16 g223E;
 
+		// Memory being pointed to by [2248] and [224A]
+		StreamHandler* shMem2248;
+
 		// 	[2254h] and [2256h]
 		uint32 _nextEventTimer;
 
