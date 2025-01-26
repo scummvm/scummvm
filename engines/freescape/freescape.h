@@ -385,6 +385,10 @@ public:
 	int _playerStepIndex;
 	Common::Array<int> _playerSteps;
 
+	Common::Point crossairPosToMousePos(const Common::Point crossairPos);
+	Common::Point mousePosToCrossairPos(const Common::Point mousePos);
+	void warpMouseToCrossair(void);
+
 	// Effects
 	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
