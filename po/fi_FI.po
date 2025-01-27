@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-27 09:03+0000\n"
-"PO-Revision-Date: 2025-01-22 22:18+0000\n"
+"PO-Revision-Date: 2025-01-27 18:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -10570,14 +10570,12 @@ msgstr ""
 "kokonaisvaltaisemman kokemuksen."
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Kuvasuhteen korjaus päällä"
+msgstr "Gammakorjaus"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Kirkasta grafiikkaa Macintosh-monitorin simuloimiseksi."
 
 #: engines/scumm/dialogs.cpp:1305
 msgid "Overture Timing:"
@@ -13559,16 +13557,6 @@ msgid "Preferences"
 msgstr "Asetukset"
 
 #: engines/zvision/zvision.cpp:302
-#, fuzzy
-#| msgid ""
-#| "Before playing this game, you'll need to copy the required fonts into "
-#| "ScummVM's extras directory, or into the game directory. On Windows, "
-#| "you'll need the following font files from the Windows font directory: "
-#| "Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
-#| "Alternatively, you can download the Liberation Fonts or the GNU FreeFont "
-#| "package. You'll need all the fonts from the font package you choose, i."
-#| "e., LiberationMono, LiberationSans and LiberationSerif, or FreeMono, "
-#| "FreeSans and FreeSerif respectively."
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -13582,9 +13570,9 @@ msgstr ""
 "n extras-hakemistoon, tai pelin hakemistoon. Windowsissa tarvitset seuraavat "
 "fonttitiedostot Windowsin fonttihakemistosta: Times New Roman, Century "
 "Schoolbook, Garamond, Courier New ja Arial. Vaihtoehtoisesti voit myös "
-"ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
-"fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
-"LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+"ladata Liberation Fonts -paketin. Tarvitset kaikki fontit paketista jonka "
+"valitset, i.e. LiberationMono, LiberationSans ja LiberationSerif riippuen "
+"valinnastasi."
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
