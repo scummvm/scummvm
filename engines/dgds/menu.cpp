@@ -501,7 +501,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 static void _toggleSoundType(Audio::Mixer::SoundType soundType) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Audio::Mixer *mixer = engine->_mixer;
-	const char *typeStr = (soundType == Audio::Mixer::kMusicSoundType) ? "music" : "sfx";
+	//const char *typeStr = (soundType == Audio::Mixer::kMusicSoundType) ? "music" : "sfx";
 	if (!mixer->isSoundTypeMuted(soundType)) {
 		mixer->muteSoundType(soundType, true);
 		engine->_soundPlayer->muteSoundType(soundType);
