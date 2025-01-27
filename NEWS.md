@@ -1,6 +1,11 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.9.1 (XXXX-XX-XX)
+
+ Hopkins:
+   - Fix crash using elevator to go to other floors.
+
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
  New games:

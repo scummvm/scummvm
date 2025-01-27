@@ -114,7 +114,7 @@ private:
 	 * @param separator The directory separator used in str
 	 */
 	static inline bool needsEncoding(const char *str, char separator) {
-		return *str && // String is not empty and
+		return str && *str && // String is not empty and
 		       (separator != SEPARATOR || // separator is not the one we use
 		        *str == ESCAPE); // or string begins with ESCAPE
 	}
