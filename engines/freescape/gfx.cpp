@@ -111,6 +111,14 @@ byte getCGAPixel(byte x, int index) {
 		error("Invalid index %d requested", index);
 }
 
+byte getC64Pixel(byte x, int index) {
+	if (index < 0 || index > 3) {
+		error("Invalid index %d requested\n", index);
+	}
+	// Extract the corresponding 2-bit pair based on the index
+	return ((x >> (index * 2)) & 0x3);
+}
+
 byte getCGAStipple(byte x, int back, int fore) {
 	int c0 = getCGAPixel(x, 0);
 	assert(c0 == back || c0 == fore || back == fore);
@@ -119,6 +127,32 @@ byte getCGAStipple(byte x, int back, int fore) {
 	int c2 = getCGAPixel(x, 2);
 	assert(c2 == back || c2 == fore || back == fore);
 	int c3 = getCGAPixel(x, 3);
+	assert(c3 == back || c3 == fore || back == fore);
+
+	byte st = 0;
+	if (c0 == fore)
+		st = st | 0x3;
+
+	if (c1 == fore)
+		st = st | (0x3 << 2);
+
+	if (c2 == fore)
+		st = st | (0x3 << 4);
+
+	if (c3 == fore)
+		st = st |  (0x3 << 6);
+
+	return st;
+}
+
+byte getC64Stipple(byte x, int back, int fore) {
+	int c0 = getC64Pixel(x, 0);
+	assert(c0 == back || c0 == fore || back == fore);
+	int c1 = getC64Pixel(x, 1);
+	assert(c1 == back || c1 == fore || back == fore);
+	int c2 = getC64Pixel(x, 2);
+	assert(c2 == back || c2 == fore || back == fore);
+	int c3 = getC64Pixel(x, 3);
 	assert(c3 == back || c3 == fore || back == fore);
 
 	byte st = 0;
@@ -150,6 +184,8 @@ void Renderer::fillColorPairArray() {
 			c1 = getCGAPixel(entry[0], 0);
 		else if (_renderMode == Common::kRenderCPC)
 			c1 = getCPCPixel(entry[0], 0, true);
+		else if (_renderMode == Common::kRenderC64)
+			c1 = getC64Pixel(entry[0], 0);
 		else
 			error("Not implemented");
 
@@ -162,6 +198,8 @@ void Renderer::fillColorPairArray() {
 					c = getCGAPixel(entry[j], k);
 				else if (_renderMode == Common::kRenderCPC)
 					c = getCPCPixel(entry[j], k, true);
+				else if (_renderMode == Common::kRenderC64)
+					c = getC64Pixel(entry[j], k);
 				else
 					error("Not implemented");
 				if (c1 != c) {
@@ -226,7 +264,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte c2 = (pair >> 4) & 0xf;
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = getCPCStipple(entry[(j / 8) % 4], c1, c2) ;
+				_stipples[i][j] = getCPCStipple(entry[(j / 8) % 4], c1, c2);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
 		fillColorPairArray();
@@ -236,9 +274,19 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte c2 = (pair >> 4) & 0xf;
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = getCGAStipple(entry[(j / 8) % 4], c1, c2) ;
+				_stipples[i][j] = getCGAStipple(entry[(j / 8) % 4], c1, c2);
 		}
-	}
+	} /*else if (_renderMode == Common::kRenderC64) {
+		fillColorPairArray();
+		for (int i = 4; i < 15; i++) {
+			byte pair = _colorPair[i];
+			byte c1 = pair & 0xf;
+			byte c2 = (pair >> 4) & 0xf;
+			byte *entry = (*_colorMap)[i];
+			for (int j = 0; j < 128; j++)
+				_stipples[i][j] = getC64Stipple(entry[(j / 8) % 4], c1, c2);
+		}
+	}*/
 
 	if (_isAccelerated && _authenticGraphics) {
 		for (int i = 1; i <= 14; i++) {
@@ -315,21 +363,6 @@ void Renderer::extractC64Indexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
 	} else if (cm1 == 0x41 && cm2 == 0x52) {
 		i1 = 0;
 		i2 = 3;
-// Covered by the default of i1 = 0, i2 = 0
-#if 0
-	} else if (cm1 == 0x5a && cm2 == 0xa5) {
-		i1 = 0;
-		i2 = 0;
-	} else if (cm1 == 0xbb && cm2 == 0xee) {
-		i1 = 0;
-		i2 = 0;
-	} else if (cm1 == 0x5f && cm2 == 0xaf) {
-		i1 = 0;
-		i2 = 0;
-	} else if (cm1 == 0xfb && cm2 == 0xfe) {
-		i1 = 0;
-		i2 = 0;
-#endif
 	} else {
 		i1 = 0;
 		i2 = 0;

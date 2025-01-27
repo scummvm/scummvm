@@ -115,7 +115,7 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars(Common::Seek
 	file->read(fontBuffer, 6 * charsNumber);
 
 	Common::BitArray font;
-	font.set_size(48 * charsNumber);
+	font.set_size(48 * charsNumber); // Enough to hold characters for all platforms
 	font.set_bits(fontBuffer);
 
 	Common::Array<Graphics::ManagedSurface *> chars;
@@ -128,15 +128,20 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars(Common::Seek
 		int position = sizeX * sizeY * c;
 
 		Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
-		surface->create(_renderMode == Common::kRenderHercG ? 16 : 8, sizeY, Graphics::PixelFormat::createFormatCLUT8());
+
+		int charWidth = sizeX;
+		if (_renderMode == Common::kRenderHercG || isC64())
+			charWidth *= 2;
+
+		surface->create(charWidth, sizeY, Graphics::PixelFormat::createFormatCLUT8());
 		for (int j = 0; j < sizeY; j++) {
 			for (int i = 0; i < sizeX; i++) {
 				if (font.get(position + additional + j * 8 + i)) {
-					if (_renderMode != Common::kRenderHercG) {
-						surface->setPixel(7 - i, j, 1);
-					} else {
+					if (_renderMode == Common::kRenderHercG || isC64()) {
 						surface->setPixel(2 * (7 - i), j, 1);
 						surface->setPixel(2 * (7 - i) + 1, j, 1);
+					} else {
+						surface->setPixel(7 - i, j, 1);
 					}
 				}
 			}

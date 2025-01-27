@@ -19,6 +19,10 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/softsynth/sid.h"
+
 namespace Freescape {
 
 class DrillerEngine : public FreescapeEngine {
@@ -112,6 +116,35 @@ private:
 enum DrillerReleaseFlags {
 	GF_AMIGA_MAGAZINE_DEMO = (1 << 0),
 	GF_ATARI_MAGAZINE_DEMO = (1 << 1),
+};
+
+class Player_SID : public Audio::AudioStream {
+public:
+	Player_SID(Audio::Mixer *mixer);
+	~Player_SID() override;
+
+	void startMusic();
+	void stopMusic();
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
+
+private:
+	Resid::SID *_sid;
+	void SID_Write(int reg, uint8 data);
+	void initSID();
+	uint8 *getResource(int resID);
+
+	// Unclear if this is needed
+	// number of cpu cycles until next frame update
+	//Resid::cycle_count _cpuCyclesLeft;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+	int _sampleRate;
 };
 
 }

@@ -28,7 +28,7 @@
 namespace Freescape {
 
 void DrillerEngine::initC64() {
-	_viewArea = Common::Rect(32, 16, 288, 119);
+	_viewArea = Common::Rect(32, 16, 288, 120);
 }
 
 void DrillerEngine::loadAssetsC64FullGame() {
@@ -41,23 +41,32 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		loadGlobalObjects(&file, 0x1855, 8);
 	} else if (_targetName.hasPrefix("driller")) {
 		file.open("driller.c64.data");
-		loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
+		//loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
 		//loadFonts(&file, 0xae54);
-		load8bitBinary(&file, 0x8e02 - 0x400, 4);
-		loadGlobalObjects(&file, 0x1855 - 0x400, 8);
+		loadFonts(&file, 0x4ee);
+		load8bitBinary(&file, 0x8eef - 1, 16);
+		loadMessagesFixedSize(&file, 0x1766, 14, 20);
+
+		Graphics::Surface *surf = loadBundledImage("driller_border");
+		surf->convertToInPlace(_gfx->_texturePixelFormat);
+		_border = new Graphics::ManagedSurface();
+		_border->copyFrom(*surf);
+
+		//_border = _title;
+		//loadGlobalObjects(&file, 0x1855 - 0x400, 8);
 	} else
 		error("Unknown C64 release");
 }
 
 
 void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
-	uint32 color = 1;
+
 	uint8 r, g, b;
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
 
-	_gfx->selectColorFromFourColorPalette(color, r, g, b);
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	Common::Rect cover;
 
-	color = 0;
+	uint32 color = 0;
 	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
@@ -66,30 +75,33 @@ void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 200, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 149, 148, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 149, 156, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 149, 164, front, back, surface);
-	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 164, front, back, surface);
-	else
-		drawStringInSurface(Common::String::format("%s", "J"), 54, 164, front, back, surface);
+	drawStringInSurface(_currentArea->_name, 200, 184, front, back, surface);
+	cover = Common::Rect(150, 143, 183, 167);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 148, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 156, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 240, 128, front, back, surface);
+	surface->fillRect(cover, back);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 148 - 4, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 156 - 4, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 164 - 4, front, back, surface);
+	if (_playerHeightNumber >= 0)
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54 + 6, 164 - 3, front, back, surface);
+	else
+		drawStringInSurface(Common::String::format("%s", "J"), 54 + 6, 164 - 3, front, back, surface);
+
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 148 - 3, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 156 - 3, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 239, 128, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d", hours), 209, 11, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 232, 11, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 11, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", hours), 207, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 191, 180, back, front, surface);
+		drawStringInSurface(message, 191, 176, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -100,25 +112,26 @@ void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 191, 180, front, back, surface);
+		drawStringInSurface(message, 191, 176, front, back, surface);
 	}
 
+	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x68, 0xa9, 0x41);
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (energy >= 0) {
-		Common::Rect backBar(25, 187, 89 - energy, 194);
+		Common::Rect backBar(21, 183, 85 - energy, 190);
 		surface->fillRect(backBar, back);
-		Common::Rect energyBar(88 - energy, 187, 88, 194);
-		surface->fillRect(energyBar, front);
+		Common::Rect energyBar(84 - energy, 184, 84, 190);
+		surface->fillRect(energyBar, green);
 	}
 
 	if (shield >= 0) {
-		Common::Rect backBar(25, 180, 89 - shield, 186);
+		Common::Rect backBar(25 - 4, 180 - 4, 89 - shield - 4, 186 - 4);
 		surface->fillRect(backBar, back);
 
-		Common::Rect shieldBar(88 - shield, 180, 88, 186);
-		surface->fillRect(shieldBar, front);
+		Common::Rect shieldBar(88 - 4  - shield, 180 - 4, 88 - 4, 186 - 4);
+		surface->fillRect(shieldBar, green);
 	}
 }
 

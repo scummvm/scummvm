@@ -625,7 +625,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 paperColor = 0;
 	uint8 inkColor = 0;
 
-	if (!(isCastle() && (isSpectrum() || isCPC()))) {
+	if (!(isCastle() && (isSpectrum() || isCPC() || isC64()))) {
 		usualBackgroundColor = readField(file, 8);
 		underFireBackgroundColor = readField(file, 8);
 		paperColor = readField(file, 8);
@@ -993,7 +993,24 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 
 	if (isAmiga() || isAtariST())
 		chars = getCharsAmigaAtari(file, offset, 85);
-	else
+	else if (isC64()) {
+		Common::Array<Graphics::ManagedSurface *> rawChars = getChars(file, offset, 85);
+
+		Common::Rect charRect;
+		for (Graphics::ManagedSurface *rawChar : rawChars) {
+			charRect = Common::Rect(0, 0, 8, 6);
+			Graphics::ManagedSurface *charSurface = new Graphics::ManagedSurface();
+			charSurface->create(8, 6, Graphics::PixelFormat::createFormatCLUT8());
+			charSurface->copyRectToSurface(*rawChar, 0, 0, charRect);
+			chars.push_back(charSurface);
+
+			charRect = Common::Rect(8, 0, 16, 6);
+			charSurface = new Graphics::ManagedSurface();
+			charSurface->create(8, 6, Graphics::PixelFormat::createFormatCLUT8());
+			charSurface->copyRectToSurface(*rawChar, 0, 0, charRect);
+			chars.push_back(charSurface);
+		}
+	} else
 		chars = getChars(file, offset, 85);
 
 	_font = Font(chars);

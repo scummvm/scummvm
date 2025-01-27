@@ -104,6 +104,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
+		"driller", // Tape re-releae
+		"",
+		AD_ENTRY1s("DRILLER.C64.DATA", "606bc969e5442634c8ab057bfde9d9d2", 64750),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
 		"driller",
 		"",
 		{
