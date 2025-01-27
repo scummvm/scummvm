@@ -218,8 +218,9 @@ enum LEvent {
 	kEventResizeWindow,
 	kEventOpenWindow,
 	kEventCloseWindow,
+	kEventZoomWindow,
 
-	kEventKeyUp, // 21
+	kEventKeyUp, // 22
 	kEventKeyDown,
 	kEventMouseUp,
 	kEventMouseDown,
@@ -230,9 +231,9 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStartUp, // 31
+	kEventStartUp, // 32
 
-	kEventMenuCallback // 32
+	kEventMenuCallback // 33
 };
 
 enum TransitionType {
