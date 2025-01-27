@@ -1478,9 +1478,12 @@ bool Control::driveSpaceAvailable() {
 
 	outf->finalize();
 
-	if (outf->err())
+	if (outf->err()) {
+		delete outf;
 		return false;
+	}
 
+	delete outf;
 	return true;
 }
 
