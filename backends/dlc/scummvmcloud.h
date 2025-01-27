@@ -22,6 +22,7 @@
 #ifndef BACKENDS_DLC_SCUMMVMCLOUD_H
 #define BACKENDS_DLC_SCUMMVMCLOUD_H
 
+#include "common/error.h"
 #include "common/queue.h"
 
 #include "backends/dlc/store.h"
