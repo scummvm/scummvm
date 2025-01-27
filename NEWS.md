@@ -7,6 +7,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dark Seed.
    - Added support for God of Thunder.
 
+ Hopkins:
+   - Fix crash using elevator to go to other floors.
+
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
 
