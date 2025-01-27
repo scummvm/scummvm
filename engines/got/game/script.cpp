@@ -400,7 +400,7 @@ int Scripts::getInternalVariable() {
 	while (true) {
 		if (!INTERNAL_VARIABLE[i])
 			return 0; // Lookup internal variable
-		int len = strlen(INTERNAL_VARIABLE[i]);
+		const int len = strlen(INTERNAL_VARIABLE[i]);
 		if (!strncmp(_buffPtr, INTERNAL_VARIABLE[i], len)) {
 			_buffPtr += len;
 			break;

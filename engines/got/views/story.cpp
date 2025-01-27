@@ -102,7 +102,7 @@ bool Story::msgFocus(const FocusMessage &msg) {
 	}
 
 	// Play the opening music
-	musicPlay("OPENSONG", 1);
+	musicPlay("OPENSONG", true);
 
 	_yp = 0;
 	_scrolling = false;

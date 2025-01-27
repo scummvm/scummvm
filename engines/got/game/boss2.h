@@ -28,7 +28,7 @@ namespace Got {
 
 // Boss 2 - Skull (Nognir)
 extern int boss2Movement(Actor *actor);
-extern void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num);
+extern void boss2CheckHit(Actor *actor);
 extern void boss2SetupLevel();
 extern void boss2ClosingSequence1();
 extern void boss2ClosingSequence2();

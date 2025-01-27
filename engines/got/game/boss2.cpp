@@ -22,7 +22,6 @@
 #include "got/game/boss2.h"
 #include "got/events.h"
 #include "got/game/back.h"
-#include "got/game/init.h"
 #include "got/game/move.h"
 #include "got/game/status.h"
 #include "got/gfx/image.h"
@@ -152,7 +151,7 @@ int boss2Movement(Actor *actor) {
 	return d;
 }
 
-static void bossSet(byte d, int x, int y) {
+static void bossSet(const byte d, const int x, const int y) {
 	_G(actor[4])._nextFrame = _G(actor[3])._nextFrame;
 	_G(actor[5])._nextFrame = _G(actor[3])._nextFrame;
 	_G(actor[6])._nextFrame = _G(actor[3])._nextFrame;
@@ -168,8 +167,8 @@ static void bossSet(byte d, int x, int y) {
 	_G(actor[6])._y = y + 16;
 }
 
-void boss2CheckHit(Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
-	if ((!_G(actor[3])._vulnerableCountdown)) {
+void boss2CheckHit(Actor *actor) {
+	if (!_G(actor[3])._vulnerableCountdown) {
 		actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);
 		_G(actor[3])._health -= 10;
 		if (_G(actor[3])._health == 50) {
@@ -300,7 +299,7 @@ static int boss2MovementExplode(Actor *actor) {
 
 // Boss - skull - shake
 static int boss2MovementShake(Actor *actor) {
-	int rep, an, hx;
+	int rep, hx;
 
 	if (_G(hammer)->_active && _G(hammer)->_moveType != 5) {
 		hx = _G(hammer)->_x;
@@ -353,7 +352,7 @@ static int boss2MovementShake(Actor *actor) {
 
 		Common::fill(su, su + 18, 0);
 		actorAlwaysShoots(&_G(actor[4]), 1);
-		an = _G(actor[4])._shotActor;
+		int an = _G(actor[4])._shotActor;
 		hx = (_G(thor)->_x / 16);
 		_G(actor[an])._x = _G(thor)->_x; //hx*16;
 		_G(actor[an])._y = g_events->getRandomNumber(15);

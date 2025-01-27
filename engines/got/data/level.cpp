@@ -54,13 +54,13 @@ void Level::sync(Common::Serializer &s) {
 	s.syncBytes(_filler, 3);
 }
 
-void Level::load(int level) {
+void Level::load(const int level) {
 	Common::MemoryReadStream src(_G(sdData)[level], 512);
 	Common::Serializer s(&src, nullptr);
 	sync(s);
 }
 
-void Level::save(int level) {
+void Level::save(const int level) {
 	Common::MemoryWriteStream dest(_G(sdData)[level], 512);
 	Common::Serializer s(nullptr, &dest);
 	sync(s);

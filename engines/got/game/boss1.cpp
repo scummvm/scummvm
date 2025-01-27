@@ -174,8 +174,8 @@ done1:
 	return d;
 }
 
-void boss1CheckHit(const Actor *actor, int x1, int y1, int x2, int y2, int act_num) {
-	if (actor->_moveType == 15 && act_num == 4) {
+void boss1CheckHit(const Actor *actor, const int x1, const int y1, const int x2, const int y2, const int actorNum) {
+	if (actor->_moveType == 15 && actorNum == 4) {
 		if ((!_G(actor[3])._vulnerableCountdown) && (_G(actor[3])._nextFrame != 3) &&
 			overlap(x1, y1, x2, y2, actor->_x + 6, actor->_y + 4, actor->_x + 14, actor->_y + 20)) {
 			actorDamaged(&_G(actor[3]), _G(hammer)->_hitStrength);

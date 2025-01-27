@@ -35,7 +35,7 @@ SdData::~SdData() {
 }
 
 void SdData::load() {
-	Common::String fname = Common::String::format("SDAT%d", _area);
+	const Common::String fname = Common::String::format("SDAT%d", _area);
 	resourceRead(fname, _data);
 }
 

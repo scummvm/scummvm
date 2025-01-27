@@ -46,7 +46,7 @@ void HighScores::sync(Common::Serializer &s) {
 
 void HighScores::load() {
 	Common::File f;
-	Common::String scoresName = g_engine->getHighScoresSaveName();
+	const Common::String scoresName = g_engine->getHighScoresSaveName();
 	Common::InSaveFile *sf = g_system->getSavefileManager()->openForLoading(scoresName);
 
 	if (sf != nullptr) {
@@ -79,7 +79,7 @@ void HighScores::save() {
 	delete sf;
 }
 
-void HighScores::add(int area, const Common::String &name, uint total) {
+void HighScores::add(const int area, const Common::String &name, const uint total) {
 	// Find the index for the new score in the list
 	int newIndex;
 	for (newIndex = 0; newIndex < HIGH_SCORES_PER_AREA && total < _scores[area - 1][newIndex]._total; ++newIndex) {

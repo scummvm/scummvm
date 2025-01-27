@@ -411,7 +411,7 @@ int checkMove1(const int x, const int y, Actor *actor) {
 					boss1CheckHit(act, x1, y1, x2, y2, i);
 					break;
 				case 2:
-					boss2CheckHit(act, x1, y1, x2, y2, i);
+					boss2CheckHit(act);
 					break;
 				default:
 					// Area 3 boss Loki isn't checked here
