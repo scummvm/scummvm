@@ -121,17 +121,27 @@ void b_rollOver(int nargs);
 void b_spriteBox(int nargs);
 void b_unLoad(int nargs);
 void b_unLoadCast(int nargs);
+void b_unLoadMovie(int nargs);
 void b_updateStage(int nargs);
 void b_zoomBox(int nargs);
 void b_immediateSprite(int nargs);
 
+void b_clearFrame(int nargs);
+void b_deleteFrame(int nargs);
+void b_duplicateFrame(int nargs);
+void b_insertFrame(int nargs);
+void b_updateFrame(int nargs);
+
 void b_abort(int nargs);
+void b_cancelIdleLoad(int nargs);
 void b_continue(int nargs);
 void b_dontPassEvent(int nargs);
 void b_delay(int nargs);
 void b_do(int nargs);
+void b_finishIdleLoad(int nargs);
 void b_go(int nargs);
 void b_halt(int nargs);
+void b_idleLoadDone(int nargs);
 void b_nothing(int nargs);
 void b_pass(int nargs);
 void b_pause(int nargs);
@@ -139,6 +149,7 @@ void b_play(int nargs);
 void b_playAccel(int nargs);
 void b_preLoad(int nargs);
 void b_preLoadCast(int nargs);
+void b_preLoadMovie(int nargs);
 void b_quit(int nargs);
 void b_restart(int nargs);
 void b_shutDown(int nargs);
@@ -154,6 +165,7 @@ void b_openDA(int nargs);
 void b_openResFile(int nargs);
 void b_openXlib(int nargs);
 void b_setCallBack(int nargs);
+void b_save(int nargs);
 void b_saveMovie(int nargs);
 void b_showResFile(int nargs);
 void b_showXlib(int nargs);
@@ -170,6 +182,7 @@ void b_union(int nargs);
 
 void b_member(int nargs);
 void b_window(int nargs);
+void b_windowPresent(int nargs);
 
 void b_beep(int nargs);
 void b_mci(int nargs);
@@ -190,6 +203,13 @@ void b_version(int nargs);
 void b_cast(int nargs);
 void b_castLib(int nargs);
 void b_script(int nargs);
+
+void b_charPosToLoc(int nargs);
+void b_linePosToLocV(int nargs);
+void b_locToCharPos(int nargs);
+void b_locVToLinePos(int nargs);
+void b_scrollByLine(int nargs);
+void b_scrollByPage(int nargs);
 
 void b_numberofchars(int nargs);
 void b_numberofitems(int nargs);

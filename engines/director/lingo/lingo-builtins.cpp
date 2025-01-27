@@ -111,6 +111,7 @@ static const BuiltinProto builtins[] = {
 	{ "openDA",	 		LB::b_openDA, 		1, 1, 200, CBLTIN },	// D2 c
 	{ "openResFile",	LB::b_openResFile,	1, 1, 200, CBLTIN },	// D2 c
 	{ "openXlib",		LB::b_openXlib,		1, 1, 200, CBLTIN },	// D2 c
+	{ "save",			LB::b_save,			1, 1, 500, CBLTIN },	//				D5 c
 	{ "saveMovie",		LB::b_saveMovie,	0, 1, 400, CBLTIN },	//			D4 c
 	{ "setCallBack",	LB::b_setCallBack,	2, 2, 200, CBLTIN },	// D2 c
 	{ "showResFile",	LB::b_showResFile,	0, 1, 200, CBLTIN },	// D2 c
@@ -119,12 +120,15 @@ static const BuiltinProto builtins[] = {
 	{ "xtra",			LB::b_xtra,			1, 1, 500, FBLTIN },	//				D5 f
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
+	{ "cancelIdleLoad",	LB::b_cancelIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
 	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, 200, CBLTIN },	// D2 c
 	{ "delay",	 		LB::b_delay,		1, 1, 200, CBLTIN },	// D2 c
 	{ "do",		 		LB::b_do,			1, 1, 200, CBLTIN },	// D2 c
+	{ "finishIdleLoad",	LB::b_finishIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
 	{ "go",		 		LB::b_go,			1, 2, 200, CBLTIN },	// D2 c
 	{ "halt",	 		LB::b_halt,			0, 0, 400, CBLTIN },	//			D4 c
+	{ "idleLoadDone",	LB::b_idleLoadDone,	1, 1, 500, FBLTIN },	//				D5 f
 	{ "nothing",		LB::b_nothing,		0, 0, 200, CBLTIN },	// D2 c
 	{ "pass",			LB::b_pass,			0, 0, 400, CBLTIN },	//			D4 c
 	{ "pause",			LB::b_pause,		0, 0, 200, CBLTIN },	// D2 c
@@ -134,6 +138,7 @@ static const BuiltinProto builtins[] = {
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadMember",	LB::b_preLoadCast,	-1,0, 500, CBLTIN },	//				D5 c
+	{ "preLoadMovie",	LB::b_preLoadMovie,	1, 1, 500, CBLTIN },	//				D5 c
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
@@ -192,9 +197,16 @@ static const BuiltinProto builtins[] = {
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadMember",	LB::b_unLoadCast,	0, 2, 500, CBLTIN },	//				D5 c
+	{ "unLoadMovie",	LB::b_unLoadMovie,	1, 1, 500, CBLTIN },	//				D5 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, 200, CBLTIN },	// D2 c
 	{"immediateSprite", LB::b_immediateSprite, -1, 0, 200, CBLTIN}, // D2 c
+	// Score recording
+	{ "clearFrame",		LB::b_clearFrame,	0, 0, 500, CBLTIN },	//				D5 c
+	{ "deleteFrame",	LB::b_deleteFrame,	0, 0, 500, CBLTIN },	//				D5 c
+	{ "duplicateFrame",	LB::b_duplicateFrame,0, 0, 500, CBLTIN },	//				D5 c
+	{ "insertFrame",	LB::b_insertFrame,	0, 0, 500, CBLTIN },	//				D5 c
+	{ "updateFrame",	LB::b_updateFrame,	0, 0, 500, CBLTIN },	//				D5 c
 	// Point
 	{ "point",			LB::b_point,		2, 2, 400, FBLTIN },	//			D4 f
 	{ "inside",			LB::b_inside,		2, 2, 400, FBLTIN },	//			D4 f
@@ -224,6 +236,14 @@ static const BuiltinProto builtins[] = {
 	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
+	{ "windowPresent",	LB::b_windowPresent,1, 1, 500, FBLTIN },	//				D5 f
+	// Field operations
+	{ "charPosToLoc",	LB::b_charPosToLoc, 2, 2, 500, FBLTIN },	//				D5 f
+	{ "linePosToLocV",	LB::b_linePosToLocV,2, 2, 500, FBLTIN },	//				D5 f
+	{ "locToCharPos",	LB::b_locToCharPos, 2, 2, 500, FBLTIN },	//				D5 f
+	{ "locVToLinePos",	LB::b_locVToLinePos, 2, 2, 500, FBLTIN },	//				D5 f
+	{ "scrollByLine",	LB::b_scrollByLine, 2, 2, 500, CBLTIN },	//				D5 c
+	{ "scrollByPage",	LB::b_scrollByPage, 2, 2, 500, CBLTIN },	//				D5 c
 	// Chunk operations
 	{ "numberOfChars",	LB::b_numberofchars,1, 1, 300, FBLTIN },	//			D3 f
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, 300, FBLTIN },	//			D3 f
@@ -1466,6 +1486,12 @@ void LB::b_openXlib(int nargs) {
 	}
 }
 
+void LB::b_save(int nargs) {
+	g_lingo->printSTUBWithArglist("b_save", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 void LB::b_saveMovie(int nargs) {
 	g_lingo->printSTUBWithArglist("b_saveMovie", nargs);
 
@@ -1533,6 +1559,11 @@ void LB::b_abort(int nargs) {
 	g_lingo->_abort = true;
 }
 
+void LB::b_cancelIdleLoad(int nargs) {
+	g_lingo->printSTUBWithArglist("b_cancelIdleLoad", nargs);
+	g_lingo->dropStack(nargs);
+}
+
 void LB::b_continue(int nargs) {
 	g_director->_playbackPaused = false;
 }
@@ -1567,6 +1598,11 @@ void LB::b_do(int nargs) {
 		return;
 
 	LC::call(sym, 0, false);
+}
+
+void LB::b_finishIdleLoad(int nargs) {
+	g_lingo->printSTUBWithArglist("b_finishIdleLoad", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_go(int nargs) {
@@ -1639,6 +1675,13 @@ void LB::b_halt(int nargs) {
 	b_quit(nargs);
 
 	warning("Movie halted");
+}
+
+void LB::b_idleLoadDone(int nargs) {
+	g_lingo->printSTUBWithArglist("b_idleLoadDone", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(1);
+	g_lingo->push(res);
 }
 
 void LB::b_pass(int nargs) {
@@ -1715,6 +1758,11 @@ void LB::b_preLoadCast(int nargs) {
 
 	if (nargs == 2)
 		g_lingo->pop();
+}
+
+void LB::b_preLoadMovie(int nargs) {
+	g_lingo->printSTUBWithArglist("b_preLoadMovie", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_framesToHMS(int nargs) {
@@ -2897,6 +2945,11 @@ void LB::b_unLoadCast(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void LB::b_unLoadMovie(int nargs) {
+	g_lingo->printSTUBWithArglist("b_unLoadMovie", nargs);
+	g_lingo->dropStack(nargs);
+}
+
 void LB::b_zoomBox(int nargs) {
 	// zoomBox startSprite, endSprite [, delatTicks]
 	//   ticks are in 1/60th, default 1
@@ -3017,6 +3070,34 @@ void LB::b_updateStage(int nargs) {
 	}
 }
 
+///////////////////
+// Score recording
+///////////////////
+
+void LB::b_clearFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("b_clearFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_deleteFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("b_deleteFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_duplicateFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("b_duplicateFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_insertFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("b_insertFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_updateFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("b_updateFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
 
 ///////////////////
 // Point
@@ -3460,6 +3541,50 @@ void LB::b_window(int nargs) {
 	windowList->arr.push_back(Datum(window));
 
 	g_lingo->push(window);
+}
+
+void LB::b_windowPresent(int nargs) {
+	g_lingo->printSTUBWithArglist("b_windowPresent", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(1));
+}
+
+void LB::b_charPosToLoc(int nargs) {
+	g_lingo->printSTUBWithArglist("b_charPosToLoc", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(Common::Point(0, 0));
+	g_lingo->push(res);
+}
+
+void LB::b_linePosToLocV(int nargs) {
+	g_lingo->printSTUBWithArglist("b_linePosToLocV", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(0);
+	g_lingo->push(res);
+}
+
+void LB::b_locToCharPos(int nargs) {
+	g_lingo->printSTUBWithArglist("b_locToCharPos", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(0);
+	g_lingo->push(res);
+}
+
+void LB::b_locVToLinePos(int nargs) {
+	g_lingo->printSTUBWithArglist("b_locVToLinePos", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(0);
+	g_lingo->push(res);
+}
+
+void LB::b_scrollByLine(int nargs) {
+	g_lingo->printSTUBWithArglist("b_scrollByLine", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_scrollByPage(int nargs) {
+	g_lingo->printSTUBWithArglist("b_scrollByPage", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_numberofchars(int nargs) {
