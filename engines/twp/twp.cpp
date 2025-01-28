@@ -1012,6 +1012,10 @@ Common::Error TwpEngine::run() {
 	const Common::String &gameTarget = ConfMan.getActiveDomainName();
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
 
+	if (!g_system->hasFeature(OSystem::kFeatureShadersForGame)) {
+		error("Thimbleweed Park requires OpenGL with shaders");
+	}
+
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Set the engine's debugger console
