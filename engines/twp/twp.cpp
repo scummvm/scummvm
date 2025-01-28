@@ -1013,7 +1013,7 @@ Common::Error TwpEngine::run() {
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
 
 	if (!g_system->hasFeature(OSystem::kFeatureShadersForGame)) {
-		error("Thimbleweed Park requires OpenGL with shaders");
+		return Common::Error(Common::kUnknownError, "Thimbleweed Park requires OpenGL with shaders which is not supported on your system");
 	}
 
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
