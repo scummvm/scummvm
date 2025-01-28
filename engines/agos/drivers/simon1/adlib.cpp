@@ -88,8 +88,8 @@ MidiDriver_Simon1_AdLib::MidiDriver_Simon1_AdLib(OPL::Config::OplType oplType, c
 }
 
 MidiDriver_Simon1_AdLib::~MidiDriver_Simon1_AdLib() {
-	delete[] _instrumentBankPtr;
-	delete[] _rhythmBankPtr;
+	delete[] _instrumentBank;
+	delete[] _rhythmBank;
 }
 
 int MidiDriver_Simon1_AdLib::open() {
@@ -105,33 +105,33 @@ void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
 	const byte *dataPtr = instrumentData;
 
 	// The instrument data consists of 128 16-byte entries.
-	_instrumentBank = _instrumentBankPtr = new OplInstrumentDefinition[128];
+	OplInstrumentDefinition *instrumentBank = new OplInstrumentDefinition[128];
 
 	for (int i = 0; i < 128; i++) {
-		_instrumentBankPtr[i].fourOperator = false;
+		instrumentBank[i].fourOperator = false;
 
-		_instrumentBankPtr[i].operator0.freqMultMisc = *dataPtr++;
-		_instrumentBankPtr[i].operator1.freqMultMisc = *dataPtr++;
-		_instrumentBankPtr[i].operator0.level = *dataPtr++;
-		_instrumentBankPtr[i].operator1.level = *dataPtr++;
-		_instrumentBankPtr[i].operator0.decayAttack = *dataPtr++;
-		_instrumentBankPtr[i].operator1.decayAttack = *dataPtr++;
-		_instrumentBankPtr[i].operator0.releaseSustain = *dataPtr++;
-		_instrumentBankPtr[i].operator1.releaseSustain = *dataPtr++;
-		_instrumentBankPtr[i].operator0.waveformSelect = *dataPtr++;
-		_instrumentBankPtr[i].operator1.waveformSelect = *dataPtr++;
+		instrumentBank[i].operator0.freqMultMisc = *dataPtr++;
+		instrumentBank[i].operator1.freqMultMisc = *dataPtr++;
+		instrumentBank[i].operator0.level = *dataPtr++;
+		instrumentBank[i].operator1.level = *dataPtr++;
+		instrumentBank[i].operator0.decayAttack = *dataPtr++;
+		instrumentBank[i].operator1.decayAttack = *dataPtr++;
+		instrumentBank[i].operator0.releaseSustain = *dataPtr++;
+		instrumentBank[i].operator1.releaseSustain = *dataPtr++;
+		instrumentBank[i].operator0.waveformSelect = *dataPtr++;
+		instrumentBank[i].operator1.waveformSelect = *dataPtr++;
 
-		_instrumentBankPtr[i].connectionFeedback0 = *dataPtr++;
-		_instrumentBankPtr[i].connectionFeedback1 = 0;
-		_instrumentBankPtr[i].rhythmNote = 0;
-		_instrumentBankPtr[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
+		instrumentBank[i].connectionFeedback0 = *dataPtr++;
+		instrumentBank[i].connectionFeedback1 = 0;
+		instrumentBank[i].rhythmNote = 0;
+		instrumentBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
 
 		// Remaining bytes seem to be unused.
 		dataPtr += 5;
 	}
 
 	// Construct a rhythm bank from the original rhythm map data.
-	_rhythmBank = _rhythmBankPtr = new OplInstrumentDefinition[39];
+	OplInstrumentDefinition *rhythmBank = new OplInstrumentDefinition[39];
 	// MIDI note range 36-74.
 	_rhythmBankFirstNote = 36;
 	_rhythmBankLastNote = 36 + 39 - 1;
@@ -139,20 +139,24 @@ void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
 	for (int i = 0; i < 39; i++) {
 		if (RHYTHM_MAP[i].channel == 0) {
 			// Some notes in the range have no definition.
-			_rhythmBankPtr[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
+			rhythmBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
 		} else {
 			// The rhythm bank makes use of instruments defined in the main instrument bank.
-			_rhythmBankPtr[i] = _instrumentBank[RHYTHM_MAP[i].program];
+			rhythmBank[i] = _instrumentBank[RHYTHM_MAP[i].program];
 			// The MIDI channels used in the rhythm map correspond to OPL rhythm instrument types:
 			// 11 - bass drum
 			// 12 - snare drum
 			// 13 - tom tom
 			// 14 - cymbal
 			// 15 - hi-hat
-			_rhythmBankPtr[i].rhythmType = static_cast<OplInstrumentRhythmType>(6 - (RHYTHM_MAP[i].channel - 10));
-			_rhythmBankPtr[i].rhythmNote = RHYTHM_MAP[i].note;
+			rhythmBank[i].rhythmType = static_cast<OplInstrumentRhythmType>(6 - (RHYTHM_MAP[i].channel - 10));
+			rhythmBank[i].rhythmNote = RHYTHM_MAP[i].note;
 		}
 	}
+
+	// Set the const class variables with our just allocated banks
+	_instrumentBank = instrumentBank;
+	_rhythmBank = rhythmBank;
 }
 
 void MidiDriver_Simon1_AdLib::noteOn(uint8 channel, uint8 note, uint8 velocity, uint8 source) {

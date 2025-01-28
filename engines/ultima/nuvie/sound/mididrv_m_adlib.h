@@ -94,8 +94,6 @@ protected:
 	uint8 _fadeStepDelays[9];
 	// The current fade delay counter value for each channel.
 	uint8 _fadeCurrentDelays[9];
-	// Writable pointers to the instrument definitions
-	OplInstrumentDefinition *_instrumentBankPtr;
 };
 
 } // End of namespace Nuvie

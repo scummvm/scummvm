@@ -45,11 +45,11 @@ MidiDriver_M_AdLib::MidiDriver_M_AdLib() : MidiDriver_ADLIB_Multisource(OPL::Con
 	Common::fill(_fadeStepDelays, _fadeStepDelays + ARRAYSIZE(_fadeStepDelays), 0);
 	Common::fill(_fadeCurrentDelays, _fadeCurrentDelays + ARRAYSIZE(_fadeCurrentDelays), 0);
 
-	_instrumentBank = _instrumentBankPtr = new OplInstrumentDefinition[16];
+	_instrumentBank = new OplInstrumentDefinition[16];
 }
 
 MidiDriver_M_AdLib::~MidiDriver_M_AdLib() {
-	delete[] _instrumentBankPtr;
+	delete[] _instrumentBank;
 }
 
 void MidiDriver_M_AdLib::send(int8 source, uint32 b) {
@@ -244,7 +244,8 @@ void MidiDriver_M_AdLib::metaEvent(int8 source, byte type, byte* data, uint16 le
 
 		byte instrumentNumber = data[0];
 		assert(instrumentNumber < 16);
-		OplInstrumentDefinition *instrument = &_instrumentBankPtr[instrumentNumber];
+		// This was allocated in the constructor so it's not really const
+		OplInstrumentDefinition *instrument = const_cast<OplInstrumentDefinition *>(&_instrumentBank[instrumentNumber]);
 
 		instrument->fourOperator = false;
 		instrument->rhythmType = RHYTHM_TYPE_UNDEFINED;

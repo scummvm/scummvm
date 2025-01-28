@@ -177,18 +177,21 @@ const uint16 MidiDriver_Worx_AdLib::OPL_NOTE_FREQUENCIES[12] = {
 MidiDriver_Worx_AdLib::MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int timerFrequency) :
 	MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
 
-	_instrumentBank = _instrumentBankPtr = new OplInstrumentDefinition[128];
+	OplInstrumentDefinition *instrumentBank = new OplInstrumentDefinition[128];
 
 	for (int i = 0; i < 128; i++) {
-		WORX_INSTRUMENT_BANK[i].toOplInstrumentDefinition(_instrumentBankPtr[i]);
+		WORX_INSTRUMENT_BANK[i].toOplInstrumentDefinition(instrumentBank[i]);
 
 		// The original code does not add the key scale level bits (bits 6 and 7)
 		// from the instrument definition to the level before it writes the 0x4x
 		// register value, so effectively, KSL is always disabled for operator 1.
 		// This is probably an oversight, but this behavior is implemented here
 		// by clearing the KSL bits of operator 1 in the instrument definition.
-		_instrumentBankPtr[i].operator1.level &= 0x3F;
+		instrumentBank[i].operator1.level &= 0x3F;
 	}
+
+	// Set the const class variable with our just allocated bank
+	_instrumentBank = instrumentBank;
 
 	_defaultChannelVolume = 0x7F;
 	_channel10Melodic = true;
@@ -196,7 +199,7 @@ MidiDriver_Worx_AdLib::MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int t
 }
 
 MidiDriver_Worx_AdLib::~MidiDriver_Worx_AdLib() {
-	delete[] _instrumentBankPtr;
+	delete[] _instrumentBank;
 }
 
 uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
