@@ -52,8 +52,67 @@ namespace Video {
 static const char * const MACGUI_DATA_BUNDLE = "macgui.dat";
 
 ////////////////////////////////////////////
-// QuickTimeDecoder
+// QuickTimeDecoder methods related to QTVR
 ////////////////////////////////////////////
+
+static float readAppleFloatField(Common::SeekableReadStream *stream) {
+	int16 a = stream->readSint16BE();
+	uint16 b = stream->readUint16BE();
+
+	float value = (float)a + (float)b / 65536.0f;
+
+	return value;
+}
+
+QuickTimeDecoder::PanoSampleDesc::PanoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
+}
+
+QuickTimeDecoder::PanoSampleDesc::~PanoSampleDesc() {
+}
+
+//
+// Panorama Track Sample Description
+//
+// Source: https://developer.apple.com/library/archive/technotes/tn/tn1035.html
+Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize) {
+
+	PanoSampleDesc *entry = new PanoSampleDesc(track, format);
+
+	entry->_reserved1         = _fd->readUint32BE(); //
+	entry->_reserved2         = _fd->readUint32BE(); // must be zero, also observed to be 1
+	entry->_majorVersion      = _fd->readSint16BE(); // must be zero, also observed to be 1
+	entry->_minorVersion      = _fd->readSint16BE();
+	entry->_sceneTrackID      = _fd->readSint32BE();
+	entry->_loResSceneTrackID = _fd->readSint32BE();
+	_fd->read(entry->_reserved3, 4 * 6);
+	entry->_hotSpotTrackID    = _fd->readSint32BE();
+	_fd->read(entry->_reserved4, 4 * 9);
+	entry->_hPanStart         = readAppleFloatField(_fd);
+	entry->_hPanEnd           = readAppleFloatField(_fd);
+	entry->_vPanTop           = readAppleFloatField(_fd);
+	entry->_vPanBottom        = readAppleFloatField(_fd);
+	entry->_minimumZoom       = readAppleFloatField(_fd);
+	entry->_maximumZoom       = readAppleFloatField(_fd);
+
+	// info for the highest res version of scene track
+	entry->_sceneSizeX        = _fd->readUint32BE();
+	entry->_sceneSizeY        = _fd->readUint32BE();
+	entry->_numFrames         = _fd->readUint32BE();
+	entry->_reserved5         = _fd->readSint16BE();
+	entry->_sceneNumFramesX   = _fd->readSint16BE();
+	entry->_sceneNumFramesY   = _fd->readSint16BE();
+	entry->_sceneColorDepth   = _fd->readSint16BE();
+
+	// info for the highest rest version of hotSpot track
+	entry->_hotSpotSizeX      = _fd->readSint32BE(); // pixel width of the hot spot panorama
+	entry->_hotSpotSizeY      = _fd->readSint32BE(); // pixel height of the hot spot panorama
+	entry->_reserved6         = _fd->readSint16BE();
+	entry->_hotSpotNumFramesX = _fd->readSint16BE(); // diced frames wide
+	entry->_hotSpotNumFramesY = _fd->readSint16BE(); // dices frame high
+	entry->_hotSpotColorDepth = _fd->readSint16BE(); // must be 8
+
+	return entry;
+}
 
 void QuickTimeDecoder::closeQTVR() {
 	delete _dataBundle;

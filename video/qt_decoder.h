@@ -118,6 +118,7 @@ public:
 
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
+	Common::QuickTimeParser::SampleDesc *readPanoSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 
 private:
 	void init();
@@ -184,6 +185,45 @@ private:
 	private:
 		QuickTimeDecoder *_decoder;
 		QuickTimeAudioTrack *_audioTrack;
+	};
+
+	class PanoSampleDesc : public Common::QuickTimeParser::SampleDesc {
+	public:
+		PanoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
+		~PanoSampleDesc();
+
+		uint32 _reserved1;
+		uint32 _reserved2;
+		int16 _majorVersion;
+		int16 _minorVersion;
+		int32 _sceneTrackID;
+		int32 _loResSceneTrackID;
+		byte _reserved3[4 * 6];
+		int32 _hotSpotTrackID;
+		byte _reserved4[4 * 9];
+		float _hPanStart;
+		float _hPanEnd;
+		float _vPanTop;
+		float _vPanBottom;
+		float _minimumZoom;
+		float _maximumZoom;
+
+		// info for the highest res version of scene track
+		uint32 _sceneSizeX;
+		uint32 _sceneSizeY;
+		uint32 _numFrames;
+		int16 _reserved5;
+		int16 _sceneNumFramesX;
+		int16 _sceneNumFramesY;
+		int16 _sceneColorDepth;
+
+		// info for the highest rest version of hotSpot track
+		int32 _hotSpotSizeX;
+		int32 _hotSpotSizeY;
+		int16 _reserved6;
+		int16 _hotSpotNumFramesX;
+		int16 _hotSpotNumFramesY;
+		int16 _hotSpotColorDepth;
 	};
 
 	// The VideoTrackHandler is the bridge between the time of playback

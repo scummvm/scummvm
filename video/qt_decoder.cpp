@@ -219,7 +219,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 
 		return entry;
 	} else if (track->codecType == CODEC_TYPE_PANO) {
-		//return readPanoSampleDesc(track, format, descSize);
+		return readPanoSampleDesc(track, format, descSize);
 	}
 
 	// Pass it on up
