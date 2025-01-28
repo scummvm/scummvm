@@ -69,10 +69,6 @@ private:
 
 	// True if rhythm notes for sources with type MUSIC should not be played.
 	bool _musicRhythmNotesDisabled;
-
-	// Writable pointers to the instrument definitions
-	OplInstrumentDefinition *_instrumentBankPtr;
-	OplInstrumentDefinition *_rhythmBankPtr;
 };
 
 MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType);

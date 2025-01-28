@@ -87,10 +87,6 @@ protected:
 	// Points to one of the OPL_NOTE_FREQUENCIES arrays, depending on the driver version
 	const uint16 *_oplNoteFrequencies;
 
-	// Writable pointers to the instrument definitions
-	OplInstrumentDefinition *_instrumentBankPtr;
-	OplInstrumentDefinition *_rhythmBankPtr;
-
 	// Data used by AdLib SFX (Elvira 2 / Waxworks)
 
 	// Instrument definition for each SFX source
