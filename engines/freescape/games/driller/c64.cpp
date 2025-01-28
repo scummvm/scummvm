@@ -44,8 +44,9 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		//loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
 		//loadFonts(&file, 0xae54);
 		loadFonts(&file, 0x4ee);
-		load8bitBinary(&file, 0x8eef - 1, 16);
+		load8bitBinary(&file, 0x8eee, 16);
 		loadMessagesFixedSize(&file, 0x1766, 14, 20);
+		loadGlobalObjects(&file, 0x1941, 8);
 
 		Graphics::Surface *surf = loadBundledImage("driller_border");
 		surf->convertToInPlace(_gfx->_texturePixelFormat);
