@@ -192,38 +192,41 @@ private:
 		PanoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~PanoSampleDesc();
 
-		uint32 _reserved1;
-		uint32 _reserved2;
-		int16 _majorVersion;
-		int16 _minorVersion;
-		int32 _sceneTrackID;
-		int32 _loResSceneTrackID;
-		byte _reserved3[4 * 6];
-		int32 _hotSpotTrackID;
-		byte _reserved4[4 * 9];
-		float _hPanStart;
-		float _hPanEnd;
-		float _vPanTop;
-		float _vPanBottom;
-		float _minimumZoom;
-		float _maximumZoom;
+		uint32 _reserved1;			// must be zero
+		uint32 _reserved2;			// must be zero
+
+		int16 _majorVersion;		// must be zero, also observed to be 1
+		int16 _minorVersion;		// must be zero, also observed to be 1
+
+		int32 _sceneTrackID;		// ID of video track that contains panoramic scene
+		int32 _loResSceneTrackID;	// ID of video track that contains low res panoramic scene
+		byte _reserved3[4 * 6];		// must be zero
+		int32 _hotSpotTrackID;		// ID of video track that contains hotspot image
+		byte _reserved4[4 * 9];		// must be zero
+
+		float _hPanStart;			// horizontal pan range start angle (e.g. 0)
+		float _hPanEnd;				// horizontal pan range end angle (e.g. 360)
+		float _vPanTop;				// vertical pan range top angle (e.g. 42.5)
+		float _vPanBottom;			// vertical pan range bottom angle (e.g. -42.5)
+		float _minimumZoom;			// minimum zoom angle (e.g. 5; use 0 for default)
+		float _maximumZoom;			// maximum zoom angle (e.g. 65; use 0 for default)
 
 		// info for the highest res version of scene track
-		uint32 _sceneSizeX;
-		uint32 _sceneSizeY;
-		uint32 _numFrames;
-		int16 _reserved5;
-		int16 _sceneNumFramesX;
-		int16 _sceneNumFramesY;
-		int16 _sceneColorDepth;
+		uint32 _sceneSizeX;			// pixel width of the panorama (e.g. 768)
+		uint32 _sceneSizeY;			// pixel height of the panorama (e.g. 2496)
+		uint32 _numFrames;			// number of diced frames (e.g. 24)
+		int16 _reserved5;			// must be zero
+		int16 _sceneNumFramesX;		// diced frames wide (e.g. 1)
+		int16 _sceneNumFramesY;		// diced frames high (e.g. 24)
+		int16 _sceneColorDepth;		// bit depth of the scene track (e.g. 32)
 
 		// info for the highest rest version of hotSpot track
-		int32 _hotSpotSizeX;
-		int32 _hotSpotSizeY;
-		int16 _reserved6;
-		int16 _hotSpotNumFramesX;
-		int16 _hotSpotNumFramesY;
-		int16 _hotSpotColorDepth;
+		int32 _hotSpotSizeX;		// pixel width of the hot spot panorama (e.g. 768)
+		int32 _hotSpotSizeY;		// pixel height of the hot spot panorama  (e.g. 2496)
+		int16 _reserved6;			// must be zero
+		int16 _hotSpotNumFramesX;	// diced frames wide (e.g. 1)
+		int16 _hotSpotNumFramesY;	// diced frames high (e.g. 24)
+		int16 _hotSpotColorDepth;	// must be 8
 	};
 
 	// The VideoTrackHandler is the bridge between the time of playback
