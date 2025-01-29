@@ -167,7 +167,7 @@ void onImGuiInit() {
 	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
-	_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
+	_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
 
 	_logger = new ImGuiEx::ImGuiLogger;
 
