@@ -1002,32 +1002,72 @@ void Adlib::OnTimer() {
 					// l0017_1FA9:
 					// TODO: xor ah,ah
 					StreamHandler* shBP10 = Func19BE_SH(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
+					
+					bp1 = gArray37[((shBP10->peekByte() & 0x3F) >> 0x4) << 0x3 + (bp5 >> 4)];
+					bp1 += g225E;
+					if (bp1 > 0x3F) {
+						// l0017_200C:
+						bp1 = 0x3F;
+					}
+					// 2010h
+
 					//    TODO: Continue from here
 					/*
-					
-	mov	al,[bp-5h]
+
+l0017_2010:
+	mov	al,[bp-3h]
 	xor	ah,ah
-	shr	ax,4h
-	mov	dx,ax
-	les	di,[bp-10h]
-	mov	al,es:[di]
-	and	al,3Fh
-	xor	ah,ah
-	shr	ax,4h
+	sub	ax,0Bh
 	mov	di,ax
-	shl	di,3h
-	add	di,dx
-	mov	al,[di+37h]
-	mov	[bp-1h],al
-	mov	al,[225Eh]
+	mov	al,[di+5Ch]
+	xor	ah,ah
+	add	ax,0B0h
+	push	ax
+	push	0h
+	call	far 0017h:2792h
+	mov	ax,[bp-8h]
+	add	ax,40h
+	push	ax
+	mov	ax,[bp-8h]
+	add	ax,40h
+	push	ax
+	call	far 0017h:2779h
+	and	al,0C0h
 	xor	ah,ah
 	mov	dx,ax
 	mov	al,[bp-1h]
 	xor	ah,ah
 	add	ax,dx
-	mov	[bp-1h],al
-	cmp	byte ptr [bp-1h],3Fh
-	jbe	2010h
+	push	ax
+	call	far 0017h:2792h
+	mov	al,[bp-3h]
+	xor	ah,ah
+	sub	ax,0Bh
+	mov	di,ax
+	mov	al,[di+5Ch]
+	push	ax
+	mov	al,[bp-4h]
+	push	ax
+	push	0h
+	call	far 0017h:2A80h
+	push	0BDh
+	push	0BDh
+	call	far 0017h:2779h
+	xor	ah,ah
+	mov	bx,ax
+	mov	al,[bp-3h]
+	xor	ah,ah
+	mov	dx,ax
+	mov	ax,0Fh
+	sub	ax,dx
+	mov	dx,ax
+	mov	ax,1h
+	mov	cx,dx
+	shl	ax,cl
+	or	ax,bx
+	push	ax
+	call	far 0017h:2792h
+
 	*/
 				}
 				// TODO: This must be 2097h
@@ -1216,6 +1256,12 @@ int64 StreamHandler::size() const {
 bool StreamHandler::seek(int64 offset, int whence) {
 	bool result = _stream->seek(offset, whence);
 	_pos = _stream->pos();
+	return result;
+}
+
+byte StreamHandler::peekByte() {
+	byte result = readByte();
+	seek(-0x1, SEEK_CUR);
 	return result;
 }
 
