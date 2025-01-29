@@ -135,7 +135,7 @@ void VideoEntry::start() {
 			        w = g_system->getOverlayWidth();
 		_subtitles.setBBox(Common::Rect(20, h - 120, w - 20, h - 20));
 		_subtitles.setColor(0xff, 0xff, 0xff);
-		_subtitles.setFont("FreeSans.ttf");
+		_subtitles.setFont("LiberationSans-Regular.ttf");
 
 		g_system->showOverlay(false);
 		g_system->clearOverlay();

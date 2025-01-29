@@ -421,7 +421,7 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 
 	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
 	_subtitles.setColor(0xff, 0xff, 0xff);
-	_subtitles.setFont("FreeSans.ttf");
+	_subtitles.setFont("LiberationSans-Regular.ttf");
 }
 
 bool MoviePlayerSMK::load() {
