@@ -1129,7 +1129,7 @@ void Room608::daemon() {
 
 	case 700:
 		player_update_info(_tt, &_G(player_info));
-		ws_hide_walker();
+		ws_hide_walker(_tt);
 		_ttShadow = series_show("tt walker shadow 3", 0xf00, 0, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
@@ -1316,7 +1316,7 @@ void Room608::daemon() {
 		break;
 
 	case 758:
-		sendWSMessage_10000(1, _ttTalker, _all5a, 760, 7, -1, _all5a, 1, 12, 4);
+		sendWSMessage_10000(1, _ttTalker, _all5a, 7, 7, -1, _all5a, 7, 12, 4);
 		digi_play("608t11", 2, 255, 760);
 		break;
 
@@ -1371,7 +1371,7 @@ void Room608::daemon() {
 		break;
 
 	case 770:
-		sendWSMessage_10000(1, _ttTalker, _all5a, 23, 1, 773, _all5a, 1, 1, 1);
+		sendWSMessage_10000(1, _ttTalker, _tt05, 23, 1, 773, _tt05, 1, 1, 1);
 		break;
 
 	case 771:
