@@ -145,7 +145,7 @@ void Room608::init() {
 			-30, 324, 3, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 105, 324, 5, 20, 1);
 	} else if (_G(flags)[V203] == 6) {
-		_tt02 = series_load("606TT02");
+		_tt02 = series_load("608TT02");
 		_tt03 = series_load("608TT03");
 		_tt05 = series_load("608TT05");
 		_ripHandChin = series_load("RIP TREK HAND CHIN POS3");

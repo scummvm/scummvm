@@ -1115,7 +1115,7 @@ void Room603::daemon() {
 			}
 			break;
 
-		case 12:
+		case 18:
 			switch (_ttShould) {
 			case 7:
 			case 8:
@@ -1363,11 +1363,12 @@ void Room603::parser() {
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 311, 308, -59, 0x100, 1,
 			triggerMachineByHashCallback, "rip");
 		_shadow = series_show("safari shadow 2", 0xf00, 128, -1, -1, 0, 59, 311, 308);
-		_G(kernel).trigger_mode = KT_DAEMON;
 
+		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _ripley, _ripTalk, 1, 1, 300, _ripTalk, 1, 1, 0);
 		sendWSMessage_190000(_ripley, 4);
 		_G(kernel).trigger_mode = KT_PARSE;
+
 		_ripleyMode = 0;
 		_ripleyShould = 0;
 		_ttShould = 7;
@@ -1398,7 +1399,7 @@ void Room603::parser() {
 				}
 			}
 
-			conv_export_value_curr(0, 1);
+			conv_export_value_curr(1, 1);
 			conv_export_value_curr(_G(flags)[V039], 6);
 			conv_play();
 		}
@@ -1857,7 +1858,7 @@ void Room603::conv603b() {
 	int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 1) {
-		if (!(node == 13 && entry == 16)) {
+		if (node != 13 && node != 16) {
 			if (who <= 0) {
 				if (node == 2 || node == 5 || node == 7)
 					_G(flags)[V038] = 1;
@@ -1893,7 +1894,7 @@ void Room603::conv603b() {
 				_ripleyShould = 5;
 		}
 
-		digi_play(sound, 1);
+		digi_play(sound, 1, 255, 1);
 	} else {
 		conv_resume();
 	}

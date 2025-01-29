@@ -30,6 +30,8 @@ Console::Console() : M4::Console() {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("kitty",  WRAP_METHOD(Console, cmdKittyScreaming));
 	registerCmd("start",  WRAP_METHOD(Console, cmdStart));
+	registerCmd("restoreconv", WRAP_METHOD(Console, cmdRestoreConv));
+
 }
 
 bool Console::cmdGlobal(int argc, const char **argv) {
@@ -64,6 +66,12 @@ bool Console::cmdStart(int argc, const char **argv) {
 	interface_show();
 	mouse_show();
 	return false;
+}
+
+bool Console::cmdRestoreConv(int argc, const char **argv) {
+	_GC(restore_conv) = false;
+	debugPrintf("Next conversation will not be restored.\n");
+	return true;
 }
 
 } // End of namespace Riddle
