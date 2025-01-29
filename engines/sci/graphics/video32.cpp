@@ -149,7 +149,7 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 	if (_subtitles.isLoaded()) {
 		setSubtitlePosition();
 		_subtitles.setColor(0xff, 0xff, 0xff);
-		_subtitles.setFont("FreeSans.ttf");
+		_subtitles.setFont("LiberationSans-Regular.ttf");
 
 		g_system->clearOverlay();
 		g_system->showOverlay(false);
