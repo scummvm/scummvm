@@ -306,7 +306,7 @@ void onImGuiInit() {
 
 	_state = new ImGuiState();
 
-	_state->_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
+	_state->_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
 
 	_state->_archive.memEdit.ReadOnly = true;
 
