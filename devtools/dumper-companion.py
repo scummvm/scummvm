@@ -16,25 +16,24 @@
 # Code is formatted with `black`
 
 from __future__ import annotations
-from enum import Enum
 
 import argparse
-import copy
 import logging
 import os
+import re
 import sys
 import unicodedata
 import urllib.request
 import zipfile
 from binascii import crc_hqx
+from enum import Enum
 from io import BytesIO, IOBase, StringIO
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any
 
-import machfs
-import pycdlib
-
+import machfs  # type: ignore
+import pycdlib  # type: ignore
 
 # fmt: off
 decode_map = {
@@ -87,19 +86,21 @@ decode_map = {
 # fmt: on
 
 SPECIAL_SYMBOLS = '/":*|\\?%<>\x7f'
+APPLE_PM_SIGNATURE = b"PM"
+SECTOR_SIZE = 512
 
 
 class FileSystem(Enum):
-    hybrid = 'hybrid'
-    hfs = 'hfs'
-    iso9660 = 'iso9660'
+    hybrid = "hybrid"
+    hfs = "hfs"
+    iso9660 = "iso9660"
 
 
 class Extension(Enum):
     none = None
-    joliet = 'joliet'
-    rr = 'rr'
-    udf = 'udf'
+    joliet = "joliet"
+    rr = "rr"
+    udf = "udf"
 
 
 def decode_macjapanese(text: bytes) -> str:
@@ -118,7 +119,7 @@ def decode_macjapanese(text: bytes) -> str:
         if hi <= 0x7F:  # ASCII
             res += chr(hi)
         elif hi == 0x80:  # reverse solidus
-            res += "\u005C"
+            res += "\u005c"
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
@@ -156,15 +157,15 @@ def decode_macjapanese(text: bytes) -> str:
                 assert assert_tmp  # mypy assert
                 res += assert_tmp
         elif hi == 0xA0:  # no-break space
-            res += "\u00A0"
+            res += "\u00a0"
         elif 0xA1 <= hi <= 0xDF:  # Katakana
             res += chr(hi - 0xA1 + 0xFF61)
         elif hi == 0xFD:  # copyright sign
-            res += "\u00A9"
+            res += "\u00a9"
         elif hi == 0xFE:  # trade mark sign
             res += "\u2122"
         elif hi == 0xFF:  # halfwidth horizontal ellipsis
-            res += "\u2026\uF87F"
+            res += "\u2026\uf87f"
         else:
             raise Exception(f"No mapping for MacJapanese sequence 0x{hi:02x}")
         hi = next(i_text, None)
@@ -175,23 +176,17 @@ def file_to_macbin(out_f: IOBase, f: machfs.File, name: bytes) -> None:
     oldFlags = f.flags >> 8
     newFlags = f.flags & 0xFF
     macbin_header = pack(
-        ">x64p4s4sBxHHHBxIIIIHB14xIHBB",
+        ">x64p4s4sB7xBxIIII2xB20xBB",
         name,
         f.type,
         f.creator,
         oldFlags,
-        0,
-        0,
-        0,
         f.locked,
         len(f.data),
         len(f.rsrc),
         f.crdate,
         f.mddate,
-        0,
         newFlags,
-        0,
-        0,
         129,
         129,
     )
@@ -209,7 +204,7 @@ def file_to_macbin(out_f: IOBase, f: machfs.File, name: bytes) -> None:
 
 
 def macbin_get_datafork(f: bytes) -> bytes:
-    (datalen,) = unpack(">I", f[0x53:0x57])
+    datalen = unpack(">I", f[0x53:0x57])[0]
     print("Data len is:", datalen)
     return f[0x80 : 0x80 + datalen]
 
@@ -261,10 +256,14 @@ def needs_punyencoding(orig: str) -> bool:
     - contains a char that should be escaped or
     - ends with a dot or a space.
     """
+    # fmt:off
     if not all(
         (0x20 <= ord(c) < 0x80) and
-        c not in SPECIAL_SYMBOLS for c in orig):
+        c not in SPECIAL_SYMBOLS
+        for c in orig
+    ):
         return True
+    # fmt:on
     if orig[-1] in " .":
         return True
     return False
@@ -282,7 +281,7 @@ def punyencode(orig: str) -> str:
     # punyencoding adds an '-' at the end when there are no special chars
     # don't use it for comparing
     compare = encoded
-    if encoded.endswith("-"):
+    if encoded[-1] == "-":
         compare = encoded[:-1]
     if orig != compare or compare[-1] in " .":
         return "xn--" + encoded
@@ -300,34 +299,39 @@ def decode_string(orig: str) -> str:
 def encode_string(args: argparse.Namespace) -> int:
     if args.string:
         var = args.string
-    if args.stdin:
+    elif args.stdin:
         var = input()
+    else:
+        return 0
+
     if var.startswith("xn--"):
         print(decode_string(var))
     else:
         print(punyencode(var))
+
     return 0
 
 
-def probe_iso(args: argparse.Namespace):
+def probe_iso(args: argparse.Namespace) -> None:
     fs = check_fs(args.src)
-    print('Detected file system:', fs.value)
+    print("Detected file system:", fs.value)
     args.fs = fs
     args.dryrun = True
-    args.dir = Path('testing')
+    args.dir = Path("testing")
     args.silent = True
     args.forcemacbinary = False
     args.addmacbinaryext = False
-    args.log = 'INFO'
+    args.log = "INFO"
     args.nopunycode = False
     args.japanese = False
     if fs in [FileSystem.hybrid, FileSystem.iso9660]:
         args.extension = check_extension(args)
-        print('Detected extension:', args.extension.value)
-    print('Japanese detected:', check_japanese(args))
+        print("Detected extension:", args.extension.value)
+
+    print("Japanese detected:", check_japanese(args))
 
 
-def check_japanese(args: argparse.Namespace):
+def check_japanese(args: argparse.Namespace) -> bool:
     args.japanese = False
     if args.fs == FileSystem.hybrid:
         fn = extract_volume_hybrid
@@ -337,86 +341,97 @@ def check_japanese(args: argparse.Namespace):
         fn = extract_volume_hfs
     try:
         fn(args)
-    except Exception as e:
+    except Exception:
         args.japanese = True
         try:
             fn(args)
-        except Exception as e:
-            raise Exception('Could not determine japanese')
+        except Exception:
+            raise Exception("Could not determine Japanese")
         else:
             return True
     else:
         return False
 
 
-def check_extension(args: argparse.Namespace):
-    args_copy = copy.copy(args)
-    args_copy.dryrun = True
-    args_copy.dir = args.dir.joinpath('test')
-    args_copy.fs = FileSystem.iso9660
-    args_copy.silent = True
-    for extension in Extension:
-        args_copy.extension = extension
-        try:
-            extract_volume_iso(args_copy)
-        except Exception as e:
-            pass
-        else:
-            return extension
+def check_extension(args: argparse.Namespace) -> Extension:
+    iso = pycdlib.PyCdlib()  # type: ignore
+    try:
+        iso.open(args.src)
+    except Exception:
+        return Extension.none
+    udf = iso.has_udf()
+    rr = iso.has_rock_ridge()
+    joliet = iso.has_joliet()
+    iso.close()
+    if udf:
+        return Extension.udf
+    if rr:
+        return Extension.rr
+    if joliet:
+        return Extension.joliet
     return Extension.none
 
 
-def check_fs(iso):
-    APPLE_PM_SIGNATURE = b"PM\x00\x00"
-    SECTOR_SIZE = 512
-
+def check_fs(iso: str) -> FileSystem:
     disk_formats = []
     f = open(iso, "rb")
 
     # ISO Primary Volume Descriptor
     f.seek(64 * SECTOR_SIZE)
     if f.read(6) == b"\x01CD001":
-        # print('Found ISO PVD')
+        # print("Found ISO PVD")
         disk_formats.append(FileSystem.iso9660)
 
     f.seek(0)
-    mac_1 = f.read(4)
+    mac_1 = f.read(2)
     f.seek(1 * SECTOR_SIZE)
-    mac_2 = f.read(4)
+    mac_2 = f.read(2)
     f.seek(2 * SECTOR_SIZE)
     mac_3 = f.read(2)
     if mac_2 == APPLE_PM_SIGNATURE:
+        f.seek(1 * SECTOR_SIZE + 4)
         partition_num = 1
         while True:
-            num_partitions, partition_start, partition_size = unpack(">III", f.read(12))
-            f.seek(32, 1)
+            num_partitions, partition_size = unpack(">I4xI", f.read(12))
+            f.seek(0x20, 1)
             partition_type = f.read(32).decode("mac-roman").split("\x00")[0]
-            if partition_type == "Apple_HFS":
+            if partition_type == "Apple_HFS" and partition_size > 0:
                 disk_formats.append(FileSystem.hfs)
-                break
             # Check if there are more partitions
             if partition_num <= num_partitions:
                 # Move onto the next partition
                 partition_num += 1
                 f.seek(partition_num * SECTOR_SIZE + 4)
-    # Bootable Mac-only disc
-    elif mac_1 == b"LK\x60\x00" and mac_3 == b"BD":
+            else:
+                # Finished parsing the partition map
+                break
+
+    # Mac-only disc
+    elif mac_3 == b"BD" or mac_1 == b"ER":
+        # (mac_1 == b"LK" and mac_3 == b"BD") is only for bootable volumes
         disk_formats.append(FileSystem.hfs)
 
-    if len(disk_formats) > 1:
+    if len(set(disk_formats)) > 1:
         return FileSystem.hybrid
     return disk_formats[0]
 
 
-def extract_iso(args: argparse.Namespace):
+def extract_iso(args: argparse.Namespace) -> None:
+    loglevel: str = args.log
+
+    numeric_level = getattr(logging, loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError("Invalid log level: %s" % loglevel)
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+
     if not args.fs:
         args.fs = check_fs(args.src)
-        print('Detected filesystem:', args.fs.value)
+        print("Detected filesystem:", args.fs.value)
     else:
         args.fs = FileSystem(args.fs)
     if args.fs in [FileSystem.hybrid, FileSystem.iso9660] and not args.extension:
         args.extension = check_extension(args)
-        print('Detected extension:', args.extension.value)
+        print("Detected extension:", args.extension.value)
     elif args.extension:
         args.extension = Extension(args.extension)
 
@@ -428,40 +443,37 @@ def extract_iso(args: argparse.Namespace):
         extract_volume_hybrid(args)
 
 
-def extract_volume_hfs(args: argparse.Namespace) -> int:
+def extract_volume_hfs(args: argparse.Namespace) -> None:
     """Extract an HFS volume"""
     source_volume: Path = args.src
-    loglevel: str = args.log
     silent: bool = args.silent
-
-    numeric_level = getattr(logging, loglevel.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
-    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
 
     if not silent:
         logging.info(f"Loading {source_volume} ...")
     vol = machfs.Volume()
     partitions = []
     with source_volume.open(mode="rb") as f:
-        f.seek(0x200)
         partition_num = 1
+        f.seek(partition_num * SECTOR_SIZE)
 
         while True:
-            data = f.read(4)
-            if data == b"PM\x00\x00":
+            data = f.read(2)
+            if data == APPLE_PM_SIGNATURE:
+                f.seek(2, 1)
                 num_partitions, partition_start, partition_size = unpack(
                     ">III", f.read(12)
                 )
                 f.seek(0x20, 1)
-                partition_type = f.read(0x20).decode("ascii").split("\x00")[0]
+                partition_type = f.read(32).decode("mac-roman").split("\x00")[0]
                 if partition_type == "Apple_HFS" and partition_size > 0:
                     # Found an HFS partition, log it
-                    partitions.append((partition_start * 0x200, partition_size * 0x200))
+                    partitions.append(
+                        (partition_start * SECTOR_SIZE, partition_size * SECTOR_SIZE)
+                    )
                 if partition_num <= num_partitions:
                     # Move onto the next partition
                     partition_num += 1
-                    f.seek(partition_num * 0x200)
+                    f.seek(partition_num * SECTOR_SIZE)
                 else:
                     # Finished parsing the partition map
                     break
@@ -473,7 +485,18 @@ def extract_volume_hfs(args: argparse.Namespace) -> int:
         if partitions:
             for partition_start, partition_size in partitions:
                 f.seek(partition_start)
-                vol.read(f.read(partition_size))
+                data = f.read(partition_size)
+                if not len(data) == partition_size:
+                    # Malformed partition, skip it
+                    if not silent:
+                        print(f"Skipping bad partition @ 0x{partition_start:x}")
+                    continue
+                try:
+                    vol.read(data)
+                except Exception:
+                    if not silent:
+                        print(f"Error reading partition @ 0x{partition_start:x}")
+                    continue
                 extract_partition(args, vol)
         else:
             f.seek(0)
@@ -481,41 +504,40 @@ def extract_volume_hfs(args: argparse.Namespace) -> int:
             extract_partition(args, vol)
 
 
-def extract_volume_iso(args: argparse.Namespace):
+def extract_volume_iso(args: argparse.Namespace) -> None:
     """Extract an ISO volume"""
+    if not check_pycdlib_version():
+        print(
+            "WARNING: Old version of pycdlib detected. Parsing of Japanese filenames in ISO9660 may not work"
+        )
+
     source_volume = args.src
-    loglevel: str = args.log
     dopunycode: bool = not args.nopunycode
     dryrun: bool = args.dryrun
     japanese: bool = args.japanese
     silent: bool = args.silent
 
-    numeric_level = getattr(logging, loglevel.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
-    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
-
     if not silent:
         logging.info(f"Loading {source_volume} ...")
 
-    iso = pycdlib.PyCdlib()
+    iso = pycdlib.PyCdlib()  # type: ignore
     iso.open(source_volume)
 
     output_dir = str(args.dir)
 
     if not args.extension or args.extension == Extension.none:
-        path_type = 'iso_path'
+        path_type = "iso_path"
     elif args.extension == Extension.joliet:
-        path_type = 'joliet_path'
+        path_type = "joliet_path"
     elif args.extension == Extension.rr:
-        path_type = 'rr_path'
+        path_type = "rr_path"
     else:
-        path_type = 'udf_path'
+        path_type = "udf_path"
 
-    arg = {path_type: '/'}
+    arg = {path_type: "/"}
 
     if japanese:
-        arg['encoding'] = 'shift_jis'
+        arg["encoding"] = "shift_jis"
 
     for dirname, dirlist, filelist in iso.walk(**arg):
         pwd = output_dir + dirname
@@ -523,48 +545,43 @@ def extract_volume_iso(args: argparse.Namespace):
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
-            elif not silent:
-                print(joined_path)
-
-        if dryrun:
-            continue
 
         for file in filelist:
-            filename = file.split(';')[0]
+            filename = file.split(";")[0]
             iso_file_path = os.path.join(dirname, file)
-            with open(os.path.join(pwd, filename), 'wb') as f:
+            out_file_path = os.path.join(pwd, filename)
+            if not silent:
+                print(out_file_path)
+            if dryrun:
+                continue
+
+            # arg[path_type] = iso_file_path
+            # iso.get_file_from_iso(out_file_path, **arg)
+            with open(os.path.join(pwd, filename), "wb") as f:
                 arg[path_type] = iso_file_path
                 iso.get_file_from_iso_fp(outfp=f, **arg)
+
     if dopunycode:
         punyencode_dir(Path(output_dir))
     iso.close()
 
 
-def extract_volume_hybrid(args: argparse.Namespace):
+def extract_volume_hybrid(args: argparse.Namespace) -> None:
     source_volume = args.src
-    loglevel: str = args.log
     silent: bool = args.silent
-
-    numeric_level = getattr(logging, loglevel.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
-    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+    main_dir = args.dir
 
     if not silent:
         logging.info(f"Loading {source_volume} ...")
 
-    main_dir = args.dir
+    args.dir = main_dir.joinpath("hfs")
+    extract_volume_hfs(args)
 
-    args_copy = copy.copy(args)
-
-    args_copy.dir = main_dir.joinpath('hfs')
-    extract_volume_hfs(args_copy)
-
-    args_copy.dir = main_dir.joinpath('iso9660')
-    extract_volume_iso(args_copy)
+    args.dir = main_dir.joinpath("iso9660")
+    extract_volume_iso(args)
 
 
-def extract_partition(args: argparse.Namespace, vol) -> int:
+def extract_partition(args: argparse.Namespace, vol: machfs.Volume) -> int:
     destination_dir: Path = args.dir
     japanese: bool = args.japanese
     dryrun: bool = args.dryrun
@@ -584,7 +601,11 @@ def extract_partition(args: argparse.Namespace, vol) -> int:
         upath = destination_dir
         for el in hpath:
             if japanese:
-                el = decode_macjapanese(el.encode("mac_roman"))
+                try:
+                    el = decode_macjapanese(el.encode("mac_roman"))
+                except Exception:
+                    # If we get an exception from trying to decode it as Mac-Japanese, it's probably not
+                    pass
             else:
                 try:
                     if decode_macjapanese(
@@ -664,7 +685,7 @@ def punyencode_paths(
     return count
 
 
-def demojibake_hfs_bytestring(s: bytes, encoding: str):
+def demojibake_hfs_bytestring(s: bytes, encoding: str) -> str:
     """
     Takes misinterpreted bytestrings from macOS and transforms
     them into the correct interpretation.
@@ -688,7 +709,7 @@ def demojibake_hfs_bytestring(s: bytes, encoding: str):
     )
 
 
-def decode_bytestring(s: bytes, encoding: str):
+def decode_bytestring(s: bytes, encoding: str) -> str:
     """Wrapper for decode() that can dispatch to decode_macjapanese"""
     if encoding == "mac_japanese":
         return decode_macjapanese(s)
@@ -702,17 +723,17 @@ def punyencode_arg(args: argparse.Namespace) -> int:
 
 
 def punyencode_dir(
-    directory: Path, verbose: bool = False, source_encoding: str | None = None
+    directory: Path | bytes, verbose: bool = False, source_encoding: str | None = None
 ) -> int:
     """
     Recursively punyencode all directory and filenames
 
-    Renames the leaves, i.e. files, first and the works it way up the tree by renaming the
+    Renames the leaves, i.e. files, first and the works its way up the tree by renaming the directories.
     """
     files: list[Path] = []
     dirs: list[Path] = []
     if source_encoding is not None:
-        directory = Path(demojibake_hfs_bytestring(directory, source_encoding))
+        directory = Path(demojibake_hfs_bytestring(bytes(directory), source_encoding))
     else:
         directory = Path(os.fsdecode(directory))
     path_glob = directory.glob("**/*")
@@ -747,7 +768,7 @@ def collect_forks(args: argparse.Namespace) -> int:
     - punyencode the filename when requested
     """
     try:
-        import xattr
+        import xattr  # type: ignore
     except ImportError:
         logging.error("xattr is required for the 'mac' mode to work\n")
         exit(1)
@@ -762,14 +783,14 @@ def collect_forks(args: argparse.Namespace) -> int:
         for filename in filenames:
             has_rsrc = has_resource_fork(dirpath, filename)
             if has_rsrc or force_macbinary:
-                logging.info(f"Resource in {filename}")
+                logging.info(f"Resource in {filename!r}")
                 count_resources += 1
-                resource_filename = filename + bytes("/..namedfork/rsrc", "utf8")
+                resource_filename = filename + b"/..namedfork/rsrc"
                 to_filename = filename
 
                 filepath = os.path.join(dirpath, filename)
                 if add_macbinary_ext:
-                    filepath = filepath.with_name(filepath.name + ".bin")
+                    filepath += b".bin"
                 resourcepath = os.path.join(dirpath, resource_filename)
 
                 file = machfs.File()
@@ -782,18 +803,18 @@ def collect_forks(args: argparse.Namespace) -> int:
                 # Get info on creator and type
                 try:
                     finderInfo = xattr.xattr(filepath)["com.apple.FinderInfo"][0:9]
-                except (IOError, OSError) as e:
-                    logging.info(f"Error getting type and creator for: {filename}")
+                except (IOError, OSError):
+                    logging.info(f"Error getting type and creator for: {filename!r}")
                     return 1
 
                 file.type, file.creator, file.flags = unpack("4s4sB", finderInfo)
 
                 with open(filepath, "rb") as data:
-                    file.data = data.read()
+                    file.data = bytearray(data.read())
                 with open(filepath, "wb") as to_file:
                     if has_rsrc:
                         with open(resourcepath, "rb") as rsrc:
-                            file.rsrc = rsrc.read()
+                            file.rsrc = bytearray(rsrc.read())
                     file_to_macbin(to_file, file, to_filename)
 
                     if to_filename != filename:
@@ -805,21 +826,29 @@ def collect_forks(args: argparse.Namespace) -> int:
                     )
     if punify:
         count_renames = punyencode_dir(
-            directory, verbose=True, source_encoding=args.source_encoding
+            Path(directory.decode()), verbose=True, source_encoding=args.source_encoding
         )
 
     logging.info(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
 
 
-def block_copy(dest, dest_offset, src, src_offset, size):
+def block_copy(
+    dest: bytearray, dest_offset: int, src: bytearray, src_offset: int, size: int
+) -> None:
     if size == 0:
         return
     dest[dest_offset : dest_offset + size] = src[src_offset : src_offset + size]
 
 
 # Inserts bytes into sliding window ring buffer, returns new window position
-def insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset, size):
+def insert_sl(
+    sl: bytearray,
+    sl_pos: int,
+    bytes_to_insert: bytearray,
+    insert_src_offset: int,
+    size: int,
+) -> int:
     available = 0x10000 - sl_pos
     if available < size:
         block_copy(sl, sl_pos, bytes_to_insert, insert_src_offset, available)
@@ -834,7 +863,9 @@ def insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset, size):
 
 
 # Reads bytes from sliding window ring buffer
-def read_sl(sl, sl_pos, out_buf, out_buf_pos, size):
+def read_sl(
+    sl: bytearray, sl_pos: int, out_buf: bytearray, out_buf_pos: int, size: int
+) -> None:
     available = 0x10000 - sl_pos
     if available < size:
         block_copy(out_buf, out_buf_pos, sl, sl_pos, available)
@@ -843,7 +874,14 @@ def read_sl(sl, sl_pos, out_buf, out_buf_pos, size):
         block_copy(out_buf, out_buf_pos, sl, sl_pos, size)
 
 
-def read_lz(sl, sl_pos, out_buf, out_buf_pos, coded_offset, length):
+def read_lz(
+    sl: bytearray,
+    sl_pos: int,
+    out_buf: bytearray,
+    out_buf_pos: int,
+    coded_offset: int,
+    length: int,
+) -> None:
     actual_offset = coded_offset + 1
     read_pos = (sl_pos + 0x10000 - actual_offset) % 0x10000
     while actual_offset < length:
@@ -855,19 +893,18 @@ def read_lz(sl, sl_pos, out_buf, out_buf_pos, coded_offset, length):
     read_sl(sl, read_pos, out_buf, out_buf_pos, length)
 
 
-def decompress(in_f, out_f, compressed_data_size):
+def decompress(in_f: BytesIO, out_f: BytesIO, compressed_data_size: int) -> None:
     sl = bytearray(0x10000)
     lz_bytes = bytearray(128)
     sl_pos = 0
     chunk_size = 0
-    output_data = 0
     while compressed_data_size > 0:
         code_byte_0 = in_f.read(1)[0]
         compressed_data_size -= 1
         if code_byte_0 & 0x80:
             # Literal
             chunk_size = (code_byte_0 & 0x7F) + 1
-            output_data = in_f.read(chunk_size)
+            output_data = bytearray(in_f.read(chunk_size))
             compressed_data_size -= chunk_size
         elif code_byte_0 & 0x40:
             # Large offset
@@ -892,7 +929,7 @@ def decompress(in_f, out_f, compressed_data_size):
 def create_macfonts(args: argparse.Namespace) -> int:
     """
     Downloads System 7 image, extracts fonts from it and packs them
-    int classicmacfonts.dat
+    into classicmacfonts.dat
     """
     print("Downloading System 7.0.1 image...", end="")
     with urllib.request.urlopen(
@@ -905,10 +942,10 @@ def create_macfonts(args: argparse.Namespace) -> int:
     print("Decompressing...", end="")
     datafork.seek(-0x200, 2)
     alt_mdb_loc = datafork.tell()
-    datafork.seek(-(0x200 - 0x12), 2)
     _, allocation_block_size, first_allocation_block = unpack(
         ">HI4xH", datafork.read(12)
     )
+    allocation_block_size, first_allocation_block = unpack(">I4xH", datafork.read(12))
     compressed_data_start = first_allocation_block * allocation_block_size
     compressed_data_end = alt_mdb_loc  # ???
     datafork.seek(0)
@@ -923,10 +960,15 @@ def create_macfonts(args: argparse.Namespace) -> int:
     decdatafork.seek(0)
     vol = machfs.Volume()
     vol.read(decdatafork.read())
+    fontsvol = None
     for hpath, obj in vol.iter_paths():
         if hpath == ("Fonts.image",):
             fontsvol = obj.data[0x54:]
             break
+
+    if fontsvol is None:
+        print("Fonts.image not found")
+        return 1
 
     print("Reading Fonts.image...")
     vol = machfs.Volume()
@@ -948,23 +990,18 @@ def create_macfonts(args: argparse.Namespace) -> int:
 
 
 def search_encoding_parameter(s: str) -> bool:
-    l = -1
-    u = -1
-    for i, line in enumerate(s.split('\n')):
-        if line.strip() == 'Parameters:':
-            l = i + 1
-        if line.strip() == 'Yields:':
-            u = i
-            break
-    parameters = [i.split('-')[0].strip() for i in s.split('\n')[l:u]]
-    return 'encoding' in parameters
+    return bool(re.search(r"^ encoding - ", s, re.MULTILINE))
 
 
 def check_pycdlib_version() -> bool:
-    iso_test = pycdlib.PyCdlib()
+    iso_test = pycdlib.PyCdlib()  # type: ignore
     doc_walk = iso_test.walk.__doc__
     doc_get_file_from_iso_fp = iso_test.get_file_from_iso_fp.__doc__
-    return search_encoding_parameter(doc_walk) and search_encoding_parameter(doc_get_file_from_iso_fp)
+    if not doc_walk or not doc_get_file_from_iso_fp:
+        return False
+    return search_encoding_parameter(doc_walk) and search_encoding_parameter(
+        doc_get_file_from_iso_fp
+    )
 
 
 def generate_parser() -> argparse.ArgumentParser:
@@ -999,19 +1036,25 @@ def generate_parser() -> argparse.ArgumentParser:
         help="always encode using MacBinary, even for files with no resource fork",
     )
     parser_iso.add_argument(
-        "--silent",
-        action="store_true",
-        help="do not print anything"
+        "--silent", action="store_true", help="do not print anything"
     )
     parser_iso.add_argument(
         "--addmacbinaryext",
         action="store_true",
         help="add .bin extension when using MacBinary",
     )
-    parser_iso.add_argument("--extension", choices=['joliet', 'rr', 'udf'], metavar="EXTENSION",
-                            help="Use if the iso9660 has an extension")
-    parser_iso.add_argument("--fs", choices=['iso9660', 'hfs', 'hybrid'], metavar="FILE_SYSTEM",
-                            help="Specify the file system of the ISO")
+    parser_iso.add_argument(
+        "--extension",
+        choices=["joliet", "rr", "udf"],
+        metavar="EXTENSION",
+        help="Use if the iso9660 has an extension",
+    )
+    parser_iso.add_argument(
+        "--fs",
+        choices=["iso9660", "hfs", "hybrid"],
+        metavar="FILE_SYSTEM",
+        help="Specify the file system of the ISO",
+    )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
     )
@@ -1020,10 +1063,12 @@ def generate_parser() -> argparse.ArgumentParser:
     parser_dir = subparsers.add_parser(
         "dir", help="Punyencode all files and dirs in place"
     )
-    parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
+    parser_dir.add_argument("directory", metavar="directory", type=Path, help="Path")
     parser_dir.set_defaults(func=punyencode_arg)
 
-    parser_probe = subparsers.add_parser("probe", help="Detect file system and extension of the given ISO")
+    parser_probe = subparsers.add_parser(
+        "probe", help="Detect file system and extension of the given ISO"
+    )
     parser_probe.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_probe.set_defaults(func=probe_iso)
 
@@ -1084,8 +1129,6 @@ def generate_parser() -> argparse.ArgumentParser:
 
 
 if __name__ == "__main__":
-    if not check_pycdlib_version():
-        print('WARNING: Old version of pycdlib detected. Parsing of Japanese filenames in ISO9660 may not work')
     parser = generate_parser()
     args = parser.parse_args()
     try:
@@ -1094,9 +1137,8 @@ if __name__ == "__main__":
         parser.error("too few arguments")
     exit(f(args))
 
-### Test functions
 
-
+# Test functions
 def call_test_parser(input_args: list[str]) -> Any:
     """Helper function to call the parser"""
     parser = generate_parser()
@@ -1104,20 +1146,20 @@ def call_test_parser(input_args: list[str]) -> Any:
     args.func(args)
 
 
-def test_decode_mac_japanese():
-    checks = [
-        [
+def test_decode_mac_japanese() -> None:
+    checks: list[tuple[bytes, str]] = [
+        (
             b"QuickTime\xfe \x89\xb9\x90F\x91\xce\x89\x9e\x95\\",
             "QuickTime™ 音色対応表",
-        ],
-        [b"Asant\x8e", "Asanté"],
+        ),
+        (b"Asant\x8e", "Asanté"),
     ]
     for input, expected in checks:
         assert decode_macjapanese(input) == expected
 
 
 def test_encode_string(capsys):
-    checks = [["Icon\r", "xn--Icon-ja6e"]]
+    checks = [("Icon\r", "xn--Icon-ja6e")]
     for input, output in checks:
         call_test_parser(["str", input])
         captured = capsys.readouterr()
@@ -1135,29 +1177,32 @@ def test_encode_stdin(capsys, monkeypatch):
     assert captured.out == "xn--Icon-ja6e\n"
 
 
-def test_decode_name():
+def test_decode_name() -> None:
     checks = [
-        ["Icon\r", "xn--Icon-ja6e"],
-        ["ends with dot .", "xn--ends with dot .-"],
-        ["ends with space ", "xn--ends with space -"],
-        ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
-        ["Hello*", "xn--Hello-la10a"],
-        ["File I/O", "xn--File IO-oa82b"],
-        ["HDにｺﾋﾟｰして下さい。G3", "xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k"],
-        ["Buried in Time™ Demo", "xn--Buried in Time Demo-eo0l"],
-        ["•Main Menu", "xn--Main Menu-zd0e"],
-        ["Spaceship Warlock™", "xn--Spaceship Warlock-306j"],
-        ["ワロビージャックの大冒険<デモ>", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u"],
-        ["Jönssonligan går på djupet.exe", "xn--Jnssonligan gr p djupet.exe-glcd70c"],
-        ["Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"],
-        ["G3フォルダ", "xn--G3-3g4axdtexf"],
-        [
+        ("Icon\r", "xn--Icon-ja6e"),
+        ("ends with dot .", "xn--ends with dot .-"),
+        ("ends with space ", "xn--ends with space -"),
+        ("バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"),
+        ("Hello*", "xn--Hello-la10a"),
+        ("File I/O", "xn--File IO-oa82b"),
+        ("HDにｺﾋﾟｰして下さい。G3", "xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k"),
+        ("Buried in Time™ Demo", "xn--Buried in Time Demo-eo0l"),
+        ("•Main Menu", "xn--Main Menu-zd0e"),
+        ("Spaceship Warlock™", "xn--Spaceship Warlock-306j"),
+        (
+            "ワロビージャックの大冒険<デモ>",
+            "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u",
+        ),
+        ("Jönssonligan går på djupet.exe", "xn--Jnssonligan gr p djupet.exe-glcd70c"),
+        ("Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"),
+        ("G3フォルダ", "xn--G3-3g4axdtexf"),
+        (
             'Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|"(everything)/":*|\\?%<>,;=',
             "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa",
-        ],
-        ["Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h"],
-        ["ぱそすけPPC", "xn--PPC-873bpbxa3l"],
-        ["Madeline Pre-K\x7f Demo", "xn--Madeline Pre-K Demo-8a06x"],
+        ),
+        ("Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h"),
+        ("ぱそすけPPC", "xn--PPC-873bpbxa3l"),
+        ("Madeline Pre-K\x7f Demo", "xn--Madeline Pre-K Demo-8a06x"),
     ]
     for input, output in checks:
         assert punyencode(input) == output
@@ -1166,19 +1211,19 @@ def test_decode_name():
 
 def test_needs_punyencoding():
     checks = [
-        ["Icon\r", True],
-        ["ascii", False],
-        ["バッドデイ(Power PC)", True],
-        ["ends_with_dot .", True],
-        ["ends_with_space ", True],
-        ["Big[test]", False],
+        ("Icon\r", True),
+        ("ascii", False),
+        ("バッドデイ(Power PC)", True),
+        ("ends_with_dot .", True),
+        ("ends_with_space ", True),
+        ("Big[test]", False),
     ]
     for input, expected in checks:
         assert needs_punyencoding(input) == expected
 
 
 def test_escape_string():
-    checks = [["\r", "\x81\x8d"], ["\x81", "\x81\x79"]]
+    checks = [("\r", "\x81\x8d"), ("\x81", "\x81\x79")]
     for input, output in checks:
         assert escape_string(input) == output
         assert unescape_string(output) == input
