@@ -518,7 +518,7 @@ bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
 #ifndef DISABLE_COMMAND_LINE
 
 // Use this for options which have an *optional* value
-#define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
+#define DO_OPTION_OPT_ALIASED(shortCmd, longCmd, defaultVal, settingsKey) \
 	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !strncmp(s + 2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) { \
@@ -529,11 +529,19 @@ bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
 		const char *option = s; \
 		if (*s == '\0' && !isLongCmd) { option = s2; i++; } \
 		if (!option || *option == '\0') option = defaultVal; \
-		if (option) settings[longCmd] = option;
+		if (option) settings[settingsKey] = option;
+
+#define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
+	DO_OPTION_OPT_ALIASED(shortCmd, longCmd, defaultVal, longCmd)
 
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
+	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
+
+// Use this for options alias which have a required (string) value
+#define DO_OPTION_ALIASED(shortCmd, longCmd, settingsKey) \
+	DO_OPTION_OPT_ALIASED(shortCmd, longCmd, 0, settingsKey) \
 	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
 
 // Use this for options which have a required integer value
@@ -592,6 +600,8 @@ bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
 #define DO_LONG_OPTION_BOOL(longCmd)    DO_OPTION_BOOL(0, longCmd)
 #define DO_LONG_OPTION_PATH(longCmd)    DO_OPTION_PATH(0, longCmd)
 #define DO_LONG_COMMAND(longCmd)        DO_COMMAND(0, longCmd)
+
+#define DO_LONG_OPTION_ALIASED(longCmd, settingsKey)  DO_OPTION_ALIASED(0, longCmd, settingsKey)
 
 // End an option handler
 #define END_OPTION \
@@ -735,6 +745,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("debugflags")
+			END_OPTION
+
+			DO_LONG_OPTION_ALIASED("debug-flags", "debugflags")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("debug-channels-only")
