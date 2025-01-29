@@ -45,6 +45,11 @@ int Asset::zIndex() const {
 	return _header->_zIndex;
 }
 
+Common::Rect *Asset::getBbox() {
+	return _header->_boundingBox;
+}
+
+
 void Asset::processTimeEventHandlers() {
 	if (!_isActive) {
 		warning("Asset::processTimeEventHandlers(): Attempted to process time event handlers while asset %d is not playing", _header->_id);

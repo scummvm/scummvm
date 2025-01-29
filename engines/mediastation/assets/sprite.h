@@ -65,12 +65,14 @@ public:
 
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
 	virtual void process() override;
+	virtual void redraw(Common::Rect &rect) override;
 
 	virtual void readChunk(Chunk &chunk) override;
 
 private:
 	Common::Array<SpriteFrame *> _frames;
-	SpriteFrame *_persistFrame = nullptr;
+	SpriteFrame *_activeFrame = nullptr;
+	bool _isPaused = false;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
 
@@ -79,9 +81,9 @@ private:
 	void timePlay();
 	void movieReset();
 
-	// Helper functions.
-	void drawNextFrame();
-	void drawFrame(SpriteFrame *frame);
+	void updateFrameState();
+	void showFrame(uint frameIndex);
+	Common::Rect getActiveFrameBoundingBox();
 };
 
 } // End of namespace MediaStation

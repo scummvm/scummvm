@@ -122,21 +122,15 @@ void Sprite::spatialShow() {
 	_isActive = true;
 	g_engine->addPlayingAsset(this);
 
-	// Persist the first frame.
-	// TODO: Is there anything that says what the persisted frame should be?
-	SpriteFrame *firstFrame = _frames[0];
-	for (SpriteFrame *frame : _frames) {
-		if (frame->index() < firstFrame->index()) {
-			firstFrame = frame;
-		}
+	_isPaused = true;
+	if (_activeFrame == nullptr) {
+		showFrame(0);
 	}
-	_persistFrame = firstFrame;
 }
 
 void Sprite::timePlay() {
-	debugC(5, kDebugScript, "Called Sprite::timePlay");
 	_isActive = true;
-	_persistFrame = nullptr;
+	_isPaused = false;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
 	_nextFrameTime = 0;
@@ -152,9 +146,9 @@ void Sprite::timePlay() {
 }
 
 void Sprite::movieReset() {
-	debugC(5, kDebugScript, "Called Sprite::movieReset");
 	_isActive = true;
 	// We do NOT reset the persisting frame, because it should keep showing!
+	_isPaused = true;
 	_startTime = 0;
 	_currentFrameIndex = 0;
 	_nextFrameTime = 0;
@@ -162,10 +156,7 @@ void Sprite::movieReset() {
 }
 
 void Sprite::process() {
-	drawNextFrame();
-
-	// TODO: I don't think sprites support time-based event handlers. Because we
-	// have a separate timer for restarting the sprite when it expires.
+	updateFrameState();
 }
 
 void Sprite::readChunk(Chunk &chunk) {
@@ -182,42 +173,31 @@ void Sprite::readChunk(Chunk &chunk) {
 	});
 }
 
-void Sprite::drawNextFrame() {
-	// TODO: With a dirty rect-based system, we would only need to redraw the frame
-	// when it NEEDS to be redrawn. But since the whole screen is currently redrawn
-	// every time, the persisting frame needs to be redrawn too.
-	bool redrawPersistentFrame = _persistFrame != nullptr;
-	if (redrawPersistentFrame) {
-		debugC(5, kDebugGraphics, "GRAPHICS (Sprite %d): Drawing persistent frame %d", _header->_id, _persistFrame->index());
-		drawFrame(_persistFrame);
+void Sprite::updateFrameState() {
+	if (_isPaused) {
 		return;
 	}
 
 	uint currentTime = g_system->getMillis() - _startTime;
-	bool redrawCurrentFrame = currentTime <= _nextFrameTime;
-	if (redrawCurrentFrame) {
-		// Just redraw the current frame in case it was covered over.
-		// See TODO above.
-		SpriteFrame *currentFrame = _frames[_currentFrameIndex];
-		debugC(5, kDebugGraphics, "GRAPHICS (Sprite %d): Re-drawing current frame %d", _header->_id, currentFrame->index());
-		drawFrame(currentFrame);
+	bool drawNextFrame = currentTime >= _nextFrameTime;
+	if (!drawNextFrame) {
 		return;
 	}
 
-	SpriteFrame *nextFrame = _frames[_currentFrameIndex];
-	debugC(5, kDebugGraphics, "GRAPHICS (Sprite %d): Drawing next frame %d (@%d)", _header->_id, nextFrame->index(), _nextFrameTime);
-	uint frameDuration = 1000 / _header->_frameRate;
-	_nextFrameTime = _currentFrameIndex * frameDuration;
-	drawFrame(nextFrame);
+	showFrame(_currentFrameIndex);
 
-	bool spriteFinishedPlaying = (++_currentFrameIndex == _frames.size());
+	uint frameDuration = 1000 / _header->_frameRate;
+	_nextFrameTime = ++_currentFrameIndex * frameDuration;
+
+	bool spriteFinishedPlaying = (_currentFrameIndex == _frames.size());
 	if (spriteFinishedPlaying) {
 		// Sprites always keep their last frame showing until they are hidden
 		// with spatialHide.
-		_persistFrame = _frames[_currentFrameIndex - 1];
-		_isActive = true;
+		showFrame(_currentFrameIndex - 1);
+		_isPaused = true;
 
 		// But otherwise, the sprite's params should be reset.
+		_isActive = true;
 		_startTime = 0;
 		_lastProcessedTime = 0;
 		_currentFrameIndex = 0;
@@ -227,11 +207,37 @@ void Sprite::drawNextFrame() {
 	}
 }
 
-void Sprite::drawFrame(SpriteFrame *frame) {
-	uint frameLeft = frame->left() + _header->_boundingBox->left;
-	uint frameTop = frame->top() + _header->_boundingBox->top;
-	debugC(5, kDebugGraphics, "    Sprite frame %d (%d x %d) @ (%d, %d)", frame->index(), frame->width(), frame->height(), frameLeft, frameTop);
-	g_engine->_screen->simpleBlitFrom(frame->_surface, Common::Point(frameLeft, frameTop));
+void Sprite::redraw(Common::Rect &rect) {
+	if (_activeFrame == nullptr) {
+		return;
+	}
+
+	Common::Rect bbox = getActiveFrameBoundingBox();
+	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
+	if (!areaToRedraw.isEmpty()) {
+		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
+		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox->left, -_activeFrame->top() - _header->_boundingBox->top);
+		g_engine->_screen->simpleBlitFrom(_activeFrame->_surface, areaToRedraw, originOnScreen);
+	}
+}
+
+void Sprite::showFrame(uint frameIndex) {
+	// Erase the previous frame.
+	if (_activeFrame != nullptr) {
+		g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+	}
+	
+	// Show the next frame.
+	_activeFrame = _frames[frameIndex];
+	g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+}
+
+Common::Rect Sprite::getActiveFrameBoundingBox() {
+	// The frame dimensions are relative to those of the sprite movie.
+	// So we must get the absolute coordinates.
+	Common::Rect bbox = _activeFrame->boundingBox();
+	bbox.translate(_header->_boundingBox->left, _header->_boundingBox->top);
+	return bbox;
 }
 
 } // End of namespace MediaStation

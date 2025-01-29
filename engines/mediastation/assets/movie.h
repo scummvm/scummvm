@@ -103,18 +103,24 @@ public:
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
 	virtual void process() override;
 
+	virtual void redraw(Common::Rect &rect) override;
+
 private:
 	Common::Array<MovieFrame *> _frames;
 	Common::Array<MovieFrame *> _stills;
 	Common::Array<MovieFrameFooter *> _footers;
 	Common::Array<Audio::SeekableAudioStream *> _audioStreams;
 
+	Common::Array<MovieFrame *> _framesNotYetShown;
+	Common::Array<MovieFrame *> _framesOnScreen;
+
 	// Method implementations. These should be called from callMethod.
 	void timePlay();
 	void timeStop();
 
-	// Internal helper functions.
-	bool drawNextFrame();
+	void updateFrameState();
+
+	Common::Rect getFrameBoundingBox(MovieFrame *frame);
 };
 
 } // End of namespace MediaStation

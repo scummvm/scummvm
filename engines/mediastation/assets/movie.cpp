@@ -215,23 +215,15 @@ void Movie::timePlay() {
 	// TODO: Play movies one chunk at a time, which more directly approximates
 	// the original's reading from the CD one chunk at a time.
 	if (_isActive) {
-		error("Movie::play(): Attempted to play a movie that is already playing");
+		warning("Movie::timePlay(): Attempted to play a movie that is already playing");
 		return;
 	}
 
-	// SET ANIMATION VARIABLES.
 	_isActive = true;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
 	g_engine->addPlayingAsset(this);
-
-	// GET THE DURATION OF THE MOVIE.
-	_duration = 0;
-	for (MovieFrame *frame : _frames) {
-		if (frame->endInMilliseconds() > _duration) {
-			_duration = frame->endInMilliseconds();
-		}
-	}
+	_framesNotYetShown = _frames;
 
 	// START PLAYING SOUND.
 	// TODO: This won't work when we have some chunks that don't have audio.
@@ -249,59 +241,103 @@ void Movie::timePlay() {
 }
 
 void Movie::timeStop() {
-	// RESET ANIMATION VARIABLES.
+	if (!_isActive) {
+		warning("Movie::timePlay(): Attempted to stop a movie that isn't playing");
+		return;
+	}
 	_isActive = false;
 	_startTime = 0;
 	_lastProcessedTime = 0;
-
+	_framesNotYetShown.clear();
 	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
 void Movie::process() {
 	processTimeEventHandlers();
-	drawNextFrame();
+	updateFrameState();
 }
 
-bool Movie::drawNextFrame() {
+void Movie::updateFrameState() {
 	// TODO: We'll need to support persistent frames in movies too. Do movies
 	// have the same distinction between spatialShow and timePlay that sprites
 	// do?
 
 	uint currentTime = g_system->getMillis();
 	uint movieTime = currentTime - _startTime;
-	debugC(5, kDebugGraphics, "GRAPHICS (Movie %d): Starting blitting (movie time: %d)", _header->_id, movieTime);
-	bool donePlaying = movieTime > _duration;
-	if (donePlaying) {
+	debugC(5, kDebugGraphics, "Movie::updateFrameState (%d): Starting update (movie time: %d)", _header->_id, movieTime);
+	if (_framesNotYetShown.empty()) {
 		_isActive = false;
 		_startTime = 0;
 		_lastProcessedTime = 0;
-
 		runEventHandlerIfExists(kMovieEndEvent);
-		return false;
+		return;
 	}
+	
+	// This complexity is necessary becuase movies can have more than one frame
+	// showing at the same time - for instance, a movie background and an
+	// animation on that background are a part of the saem movie and are on
+	// screen at the same time, it's just the starting and ending times of one
+	// can be different from the starting and ending times of another.
+	//
+	// We can rely on the frames being ordered in order of their start. First,
+	// see if there are any new frames to show.
+	for (auto it = _framesNotYetShown.begin(); it != _framesNotYetShown.end();) {
+		MovieFrame *frame = *it;
+		bool isAfterStart = movieTime >= frame->startInMilliseconds();
+		if (isAfterStart) {
+			_framesOnScreen.push_back(frame);
+			g_engine->_dirtyRects.push_back(getFrameBoundingBox(frame));
 
-	Common::Array<MovieFrame *> framesToDraw;
-	for (MovieFrame *frame : _frames) {
-		bool isAfterStart = _startTime + frame->startInMilliseconds() <= currentTime;
-		bool isBeforeEnd = _startTime + frame->endInMilliseconds() >= currentTime;
-		if (!isAfterStart || (isAfterStart && !isBeforeEnd)) {
-			continue;
+			// We don't need ++it because we will either have another frame
+			// that needs to be drawn, or we have reached the end of the new
+			// frames.
+			it = _framesNotYetShown.erase(it);
+		} else {
+			// We've hit a frame that shouldn't yet be shown.
+			// Rely on the ordering to not bother with any further frames.
+			break;
 		}
-		debugC(5, kDebugGraphics, "    (time: %d ms) Must re-draw frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d", movieTime, frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
-		framesToDraw.push_back(frame);
 	}
 
-	Common::sort(framesToDraw.begin(), framesToDraw.end(), [](MovieFrame * a, MovieFrame * b) {
+	// Now see if there are any old frames that no longer need to be shown.
+	for (auto it = _framesOnScreen.begin(); it != _framesOnScreen.end();) {
+		MovieFrame *frame = *it;
+		bool isAfterEnd = movieTime >= frame->endInMilliseconds();
+		if (isAfterEnd) {
+			g_engine->_dirtyRects.push_back(getFrameBoundingBox(frame));
+			it = _framesOnScreen.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	// Show the frames that are currently active, for debugging purposes.
+	for (MovieFrame *frame : _framesOnScreen) {
+		debugC(5, kDebugGraphics, "   (time: %d ms) Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d", movieTime, frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
+	}
+}
+
+void Movie::redraw(Common::Rect &rect) {
+	// Make sure the frames are ordered properly before we attempt to draw them.
+	Common::sort(_framesOnScreen.begin(), _framesOnScreen.end(), [](MovieFrame * a, MovieFrame * b) {
 		return a->zCoordinate() > b->zCoordinate();
 	});
-	for (MovieFrame *frame : framesToDraw) {
-		g_engine->_screen->simpleBlitFrom(frame->_surface, Common::Point(frame->left(), frame->top()));
-	}
 
-	uint blitEnd = g_system->getMillis() - _startTime;
-	uint elapsedTime = blitEnd - movieTime;
-	debugC(5, kDebugGraphics, "GRAPHICS (Movie %d): Finished blitting in %d ms (movie time: %d ms)", _header->_id, elapsedTime, blitEnd);
-	return true;
+	for (MovieFrame *frame : _framesOnScreen) {
+		Common::Rect bbox = getFrameBoundingBox(frame);
+		Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
+		if (!areaToRedraw.isEmpty()) {
+			Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
+			areaToRedraw.translate(-frame->left() - _header->_boundingBox->left, -frame->top() - _header->_boundingBox->top);
+			g_engine->_screen->simpleBlitFrom(frame->_surface, areaToRedraw, originOnScreen);
+		}
+	}
+}
+
+Common::Rect Movie::getFrameBoundingBox(MovieFrame *frame) {
+	Common::Rect bbox = frame->boundingBox();
+	bbox.translate(_header->_boundingBox->left, _header->_boundingBox->top);
+	return bbox;
 }
 
 void Movie::readChunk(Chunk &chunk) {
