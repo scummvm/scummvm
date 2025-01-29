@@ -86,7 +86,6 @@ public:
 	Common::HashMap<uint32, Variable *> _variables;
 
 	Graphics::Screen *_screen = nullptr;
-	Audio::Mixer *_mixer = nullptr;
 	Context *_currentContext = nullptr;
 
 	Common::Array<Common::Rect> _dirtyRects;

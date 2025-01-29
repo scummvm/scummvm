@@ -51,8 +51,6 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 }
 
 MediaStationEngine::~MediaStationEngine() {
-	_mixer = nullptr;
-
 	delete _screen;
 	_screen = nullptr;
 

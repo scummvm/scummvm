@@ -110,6 +110,7 @@ private:
 	Common::Array<MovieFrame *> _stills;
 	Common::Array<MovieFrameFooter *> _footers;
 	Common::Array<Audio::SeekableAudioStream *> _audioStreams;
+	Audio::SoundHandle _soundHandle;
 
 	Common::Array<MovieFrame *> _framesNotYetShown;
 	Common::Array<MovieFrame *> _framesOnScreen;

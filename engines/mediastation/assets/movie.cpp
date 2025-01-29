@@ -157,6 +157,8 @@ MovieFrame::~MovieFrame() {
 }
 
 Movie::~Movie() {
+	g_engine->_mixer->stopHandle(_soundHandle);
+
 	for (MovieFrame *frame : _frames) {
 		delete frame;
 	}
@@ -230,11 +232,12 @@ void Movie::timePlay() {
 	if (!_audioStreams.empty()) {
 		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
 		for (Audio::SeekableAudioStream *stream : _audioStreams) {
+			stream->rewind();
 			audio->queueAudioStream(stream, DisposeAfterUse::NO);
 		}
 		// Then play the audio!
-		Audio::SoundHandle handle;
-		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, audio, -1, Audio::Mixer::kMaxChannelVolume);
+		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audio, -1, Audio::Mixer::kMaxChannelVolume);
+		audio->finish();
 	}
 
 	runEventHandlerIfExists(kMovieBeginEvent);
@@ -249,6 +252,10 @@ void Movie::timeStop() {
 	_startTime = 0;
 	_lastProcessedTime = 0;
 	_framesNotYetShown.clear();
+	
+	g_engine->_mixer->stopHandle(_soundHandle);
+	_soundHandle = Audio::SoundHandle();
+
 	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
@@ -425,7 +432,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 		// READ THE AUDIO.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAudioChunk = (chunk._id = _header->_audioChunkReference);
+		bool isAudioChunk = (chunk._id == _header->_audioChunkReference);
 		if (isAudioChunk) {
 			byte *buffer = (byte *)malloc(chunk._length);
 			chunk.read((void *)buffer, chunk._length);
@@ -436,12 +443,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 
 			case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
-				// TODO: The interface here is different. We can't pass in the
-				// buffers directly. We have to make a stream first.
-				// stream = Audio::makeADPCMStream(buffer, chunk.length,
-				// DisposeAfterUse::NO, Audio::ADPCMType::kADPCMMSIma, 22050, 1,
-				// 4);
-				error("Movie::readSubfile(): ADPCM decoding not implemented yet");
+				error("Movie::readSubfile(): ADPCM decoding not supported for movies");
 				break;
 
 			default:

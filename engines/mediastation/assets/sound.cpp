@@ -35,6 +35,8 @@ Sound::Sound(AssetHeader *header) : Asset(header) {
 }
 
 Sound::~Sound() {
+	g_engine->_mixer->stopHandle(_handle);
+
 	for (Audio::SeekableAudioStream *stream : _streams) {
 		delete stream;
 	}
