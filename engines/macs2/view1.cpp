@@ -1591,8 +1591,9 @@ bool Character::TryFollowPath() {
 }
 
 bool Character::isAnimationMirrored() const {
-	
-	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
+
+	return false;
+	// return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
 }
 
 uint8 Character::getMirroredAnimation(uint8 original) const {
