@@ -1865,7 +1865,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"English, German and French Demo",
+			"Demo English/German/French",
 			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
@@ -1876,6 +1876,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		"TORTB.EXE"
 	},
+
+	// From MacFormat 18 coverdisc
+	// Only difference is the order of the languages
+	{
+		{
+			"tortoise",
+			"Demo English/German/French",
+			AD_ENTRY1s("The Tortoise and the Hare", "fe58b2cd82b92e4b5a748618798f51af", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Die Schildkröte und der Hase
+	{
+		{
+			"tortoise",
+			"Demo German/French/English",
+			AD_ENTRY1s("xn--Die Schildkrte und der Hase-0yc", "481bd2bcb28653c71511742dd853ff31", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Le Lièvre et la Tortue
+	{
+		{
+			"tortoise",
+			"Demo French/German/English",
+			AD_ENTRY1s("xn--Le Livre et la Tortue-s4b", "62503913bae127a96adf334377c0ad3e", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+
 
 	{
 		{
@@ -1896,9 +1944,9 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"",
+			"Demo Spanish/English",
 			AD_ENTRY1s("BookOutline", "91245b8ac388a54378b94fce65c29d02", 582),
-			Common::EN_ANY,
+			Common::UNK_LANG,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
@@ -2367,6 +2415,52 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"Living Books Player"
+	},
+
+	// From MacFormat 18 coverdisc
+	// Only difference is the order of the languages
+	{
+		{
+			"grandma",
+			"Demo English/German/French",
+			AD_ENTRY1s("Just Grandma and Me", "b5557ac9294279bea9f373a08da4d885", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	{
+		{
+			"grandma",
+			"Demo German/French/English",
+			AD_ENTRY1s("Nur Oma und Ich", "bc74e2931637fd507f9dee50d1153c1d", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Grand-Mère et Moi
+	{
+		{
+			"grandma",
+			"Demo French/German/English",
+			AD_ENTRY1s("xn--Grand-Mre et Moi-zpb", "0ccb20f426ab00a6694e6f6f434aa869", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
 		GF_DEMO,
 		"Living Books Player"
 	},
