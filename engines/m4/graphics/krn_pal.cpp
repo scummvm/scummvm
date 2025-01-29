@@ -387,20 +387,27 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2) {
 	uint8 *ptr;
 	int32 x, y;
+
 	if ((!src) || (!src->data)) return;
-	if ((x2 - x1 < 0) || (y2 - y1 < 0)) return;
-	if (x2 - x1 + 1 > src->w) x2 = src->w - 1;
-	if (y2 - y1 + 1 > src->h) y2 = src->h - 1;
+
+	// WORKAROUND: Fix original bounding that could result in buffer overruns on final y2 line
+	if (x1 < 0) x1 = 0;
+	if (y1 < 0) y1 = 0;
+	if (x2 >= src->w) x2 = src->w - 1;
+	if (y2 >= src->h) y2 = src->h - 1;
+	if (x2 <= x1 || y2 <= y1)
+		return;
 
 	x2 -= x1;
 	y2 -= y1;
+
 	for (y = 0; y <= y2; y++) {
 		ptr = &src->data[(y + y1) * src->stride + x1];
-		for (x = 0; x <= x2; x++)								  // for each pixel in row
-
-			// remap the greyed out pixel to the closest grey in GREY_START to GREY_END range
+		for (x = 0; x <= x2; x++) {
+			// Remap the greyed out pixel to the closest grey in GREY_START to GREY_END range
 			// shift right 3, takes a 255 value and makes it out of 32 (the number of greys in reduced grey ramp)
 			ptr[x] = (uint8)(GREY_START + (_GP(fadeToMe)[ptr[x]].g >> 3));	 // Use green instead of red cause we're having a green screen 
+		}
 
 		if (!(y & 0xff)) {
 			_G(digi).task();
