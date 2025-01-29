@@ -221,7 +221,7 @@ private:
 
 	FontInfo _fontHeader;
 	Common::Array<CharInfo *> _charInfoBlocks;
-	Graphics::Surface _fontSurfaces[256];
+	Graphics::ManagedSurface _fontSurfaces[256];
 	uint16 _fontGfx;
 	int _eLeft, _eRight, _eTop, _eBottom;
 
@@ -239,7 +239,7 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
-	int drawMasked(int x, int y, int alpha = 0xff);
+	int drawMasked(int x, int y, uint8 alpha = 0xff);
 
 	int _width, _height;
 
@@ -261,7 +261,7 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
-	int drawMasked(int x, int y, int alpha = 0xff);
+	int drawMasked(int x, int y, uint8 alpha = 0xff);
 
 	uint32 _flags;
 

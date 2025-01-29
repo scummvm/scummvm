@@ -498,13 +498,13 @@ void Gfx::updateFade() {
 			}
 		}
 	} else {
-		_fadeBuffer2.blitFrom(_globalSurface);
+		_fadeBuffer2.simpleBlitFrom(_globalSurface);
 
 		static int waitAFrame = 0;
 
 		do {
 			// Copy pristine copy of background to modification buffer
-			_fadeBuffer1.blitFrom(_fadeBuffer2);
+			_fadeBuffer1.simpleBlitFrom(_fadeBuffer2);
 
 			// do the actual alphablending
 
@@ -520,7 +520,7 @@ void Gfx::updateFade() {
 					doFadeWhite<uint32>(_fadeBuffer1, _fadeInfo.curStep);
 			}
 
-			_globalSurface.blitFrom(_fadeBuffer1);
+			_globalSurface.simpleBlitFrom(_fadeBuffer1);
 			g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 
 			// step the fading values to the next one and
@@ -971,6 +971,7 @@ bool Gfx::loadFont(const char *string) {
 			}
 
 			_fontSurfaces[i].convertToInPlace(g_hdb->_screenFormat);
+			_fontSurfaces[i].setTransparentColor(_fontSurfaces[i].format.RGBToColor(255, 0, 255));
 
 			memoryStream.seek(curPos);
 
@@ -1022,6 +1023,7 @@ bool Gfx::loadFont(const char *string) {
 			}
 
 			_fontSurfaces[i].convertToInPlace(g_hdb->_screenFormat);
+			_fontSurfaces[i].setTransparentColor(_fontSurfaces[i].format.RGBToColor(255, 0, 255));
 
 			stream->seek(curPos);
 
@@ -1084,8 +1086,7 @@ void Gfx::drawText(const char *string) {
 			width = kFontSpace;
 
 		// Blit the character
-		const uint32 transColor = _fontSurfaces[c].format.RGBToColor(255, 0, 255);
-		_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), transColor);
+		_globalSurface.simpleBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY));
 
 		Common::Rect clip(0, 0, width, _fontHeader.height);
 		clip.moveTo(_cursorX, _cursorY);
@@ -1372,7 +1373,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 }
 
 int Picture::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
@@ -1384,9 +1385,10 @@ int Picture::draw(int x, int y) {
 	return 0;
 }
 
-int Picture::drawMasked(int x, int y, int alpha) {
-	const uint32 transColor = _surface.format.RGBToColor(255, 0, 255);
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), transColor, false, alpha & 0xff);
+int Picture::drawMasked(int x, int y, uint8 alpha) {
+	_surface.setTransparentColor(_surface.format.RGBToColor(255, 0, 255));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y), Graphics::FLIP_NONE, false, alpha);
+	_surface.clearTransparentColor();
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
@@ -1436,7 +1438,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 }
 
 int Tile::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
@@ -1448,9 +1450,10 @@ int Tile::draw(int x, int y) {
 	return 0;
 }
 
-int Tile::drawMasked(int x, int y, int alpha) {
-	const uint32 transColor = _surface.format.RGBToColor(255, 0, 255);
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), transColor, false, alpha & 0xff);
+int Tile::drawMasked(int x, int y, uint8 alpha) {
+	_surface.setTransparentColor(_surface.format.RGBToColor(255, 0, 255));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y), Graphics::FLIP_NONE, false, alpha);
+	_surface.clearTransparentColor();
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
