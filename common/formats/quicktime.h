@@ -196,8 +196,11 @@ protected:
 
 	enum class HotSpotType {
 		undefined,
+		anim,
+		cnod,
 		link,
-		navg
+		navg,
+		soun,
 	};
 
 	struct PanoHotSpot {
