@@ -840,6 +840,10 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 	case kThePicture:
 		if (d.type == PICTUREREF && d.u.picture != nullptr) {
 			setPicture(*d.u.picture);
+			// This is a random PICT from somewhere,
+			// set the external flag so we remap the palette.
+			_external = true;
+			_initialRect = Common::Rect(_picture->_surface.w, _picture->_surface.h);
 			return true;
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kThePicture (or nullptr)", d.type);
