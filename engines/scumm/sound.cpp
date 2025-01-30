@@ -90,6 +90,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	if (_vm->_game.features & GF_DOUBLEFINE_PAK && _vm->_game.id != GID_MANIAC) {
 		_soundSE = new SoundSE(_vm, _mixer);
 		_useRemasteredAudio = ConfMan.getBool("use_remastered_audio");
+		if (_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2)
+			_enableAmbienceSounds = ConfMan.getBool("enable_ambience_sounds");
 	}
 
 	_soundCD = new SoundCD(_vm, _mixer, _soundSE, useReplacementAudioTracks);
@@ -103,6 +105,9 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 }
 
 Sound::~Sound() {
+	if (_enableAmbienceSounds)
+		_soundSE->stopAmbience();
+
 	free(_offsetTable);
 	delete _talkChannelHandle;
 	delete _soundSE;
@@ -314,7 +319,11 @@ void Sound::triggerSound(int soundID) {
 			if (soundID == _soundCD->_currentCDSound && _soundCD->pollCD() == 1)
 				return;
 
-			_soundCD->playCDTrackFromSoundID(soundID);
+			int track = _soundCD->playCDTrackFromSoundID(soundID);
+
+			if (_vm->_game.id == GID_MONKEY && _enableAmbienceSounds) {
+				_soundSE->startAmbience(track);
+			}
 		} else {
 			// All other sound types are ignored
 			warning("Scumm::Sound::triggerSound: encountered audio resource with chunk type 'SOUN' and sound type %d", type);
@@ -928,6 +937,8 @@ void Sound::stopSound(int sound) {
 	int i;
 
 	_soundCD->stopCDSound(sound);
+	if (_enableAmbienceSounds)
+		_soundSE->stopAmbience();
 
 	if (_vm->_game.version < 7)
 		_mixer->stopID(sound);
@@ -950,6 +961,8 @@ void Sound::stopSound(int sound) {
 
 void Sound::stopAllSounds() {
 	_soundCD->stopAllCDSounds();
+	if (_enableAmbienceSounds)
+		_soundSE->stopAmbience();
 
 	// Clear the (secondary) sound queue
 	_lastSound = 0;
@@ -1220,7 +1233,9 @@ void Sound::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Sound::restoreAfterLoad() {
-	_soundCD->restoreAfterLoad();
+	int track = _soundCD->restoreAfterLoad();
+	if (_enableAmbienceSounds && track >= 0)
+		_soundSE->startAmbience(track);
 }
 
 bool Sound::isAudioDisabled() {

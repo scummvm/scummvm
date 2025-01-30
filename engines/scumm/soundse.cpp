@@ -902,4 +902,31 @@ int32 SoundSE::handleMISESpeech(const char *msgString, const char *speechFilenam
 	return -1;
 }
 
+int32 SoundSE::getAmbienceTrack(int32 musicTrack) {
+#if 0
+	// TODO: Read ambience tracks from game resource files
+	if (musicTrack == 8)
+		return 18;	// SCUMM Bar
+	else if (musicTrack == 22)
+		return 2;	// Docks
+#endif
+	return -1;
+}
+
+void SoundSE::startAmbience(int32 musicTrack) {
+	int32 ambienceTrack = getAmbienceTrack(musicTrack);
+	if (ambienceTrack >= 0) {
+		stopAmbience();
+		Audio::SeekableAudioStream *ambienceStream = getAudioStreamFromIndex(ambienceTrack, kSoundSETypeAmbience);
+		if (!ambienceStream)
+			return;
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_ambienceHandle,
+						   Audio::makeLoopingAudioStream(ambienceStream, 0, 0, 0));
+	}
+}
+
+void SoundSE::stopAmbience() {
+	_mixer->stopHandle(_ambienceHandle);
+}
+
 } // End of namespace Scumm

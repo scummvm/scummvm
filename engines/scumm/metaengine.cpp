@@ -808,6 +808,20 @@ static const ExtraGuiOption useRemasteredAudio = {
 	0
 };
 
+// TODO: Ambience sounds are disabled for now, as they require the following:
+// - WMA codec
+// - Read ambience track info from resource files
+#if 0
+static const ExtraGuiOption enableAmbienceSounds = {
+	_s("Enable ambience sounds"),
+	_s("Enable ambience sounds."),
+	"enable_ambience_sounds",
+	true,
+	0,
+	0
+};
+#endif
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -839,6 +853,10 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_USE_REMASTERED_AUDIO)) {
 		options.push_back(useRemasteredAudio);
+#if 0
+		if (gameid == "monkey" || gameid == "monkey2")
+			options.push_back(enableAmbienceSounds);
+#endif
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

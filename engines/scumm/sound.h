@@ -102,6 +102,7 @@ protected:
 	SoundCD *_soundCD = nullptr;
 	SoundSE *_soundSE = nullptr;
 	bool _useRemasteredAudio = false;
+	bool _enableAmbienceSounds = false;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
