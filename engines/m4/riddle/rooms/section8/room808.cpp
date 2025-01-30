@@ -493,12 +493,30 @@ void Room808::parser() {
 			digi_play("808r01", 1, 255, -1, -1);
 		} else if (!scumm_strnicmp(_G(player).noun, "wheel", 5) || !scumm_strnicmp(_G(player).noun, "bridge", 6)) {
 			switch (_G(kernel).trigger) {
-				// TODO Not implemented
+			case -1:
+				player_update_info(_G(my_walker), &_G(player_info));
+				if (_G(player).x >= 300) {
+					ws_turn_to_face(_G(my_walker), 9, 10);
+				} else {
+					ws_walk(_G(my_walker), 202, 179, nullptr, 10, !scumm_strnicmp(_G(player).noun, "bridge", 6) ? 1 : 11, true);
+				}
+
+				break;
+
+			case 10:
+				if (!scumm_strnicmp(_G(player).noun, "bridge", 6)) {
+					digi_play("808r02", 1, 255, -1, -1);
+				} else {
+					digi_play("808r03", 1, 255, -1, -1);
+				}
+
+				break;
+
 			default:
 				break;
 			}
-		} else if (!scumm_stricmp(_G(player).noun, "FARMER'S SHOVEL") && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
-			// TODO Not implemented
+		} else if (!scumm_strnicmp(_G(player).noun, "FARMER'S SHOVEL", 15) && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+			digi_play("808r33", 1, 255, -1, -1);
 		} else if (player_said("chain")) {
 			digi_play("808r04", 1, 255, -1, -1);
 		} else if (player_said("slot")) {
@@ -521,7 +539,41 @@ void Room808::parser() {
 			digi_play("808r13", 1, 255, -1, -1);
 		} else if (player_said("chasm")) {
 			switch (_G(kernel).trigger) {
-				// TODO not implemented
+			case -1:
+				player_set_commands_allowed(false);
+				player_update_info(_G(my_walker), &_G(player_info));
+				if (_G(player_info).facing == 2) {
+					setGlobals3(_808Rp02Series, 1, 17);
+				} else {
+					setGlobals3(_808Rp01Series, 1, 23);
+				}
+
+				sendWSMessage_3840000(_G(my_walker), 10);
+
+				break;
+
+			case 10:
+				kernel_timing_trigger(90, 20, "rip peers");
+				break;
+
+			case 20:
+				digi_play("808r14", 1, 255, -1, -1);
+				if (_G(player_info).facing == 2) {
+					setGlobals3(_808Rp02Series, 1, 17);
+				} else {
+					setGlobals3(_808Rp01Series, 1, 19);
+				}
+
+				sendWSMessage_3840000(_G(my_walker), 30);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				ws_demand_facing(_G(my_walker), _dword1A1964_facing);
+
+				break;
+
 			default:
 				break;
 			}
