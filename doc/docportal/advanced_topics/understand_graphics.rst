@@ -79,11 +79,11 @@ To cycle forwards or backwards between graphical filters, press :kbd:`Ctrl + Alt
 
 .. figure:: ../images/graphics/graphics_mode/advmame3x.png
 
-    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 3x**: Expands each pixel into 9 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/advmame4x.png
 
-    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 4x**: Expands each pixel into 16 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/sai2x.png
 
