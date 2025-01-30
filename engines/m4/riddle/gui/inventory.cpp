@@ -61,7 +61,7 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 	_right_arrow_visible = false;
 
 	_btnScrollLeft = new ButtonClass(RectClass(178, -8, 198, 101), "scroll left", 9, 129, 130, 131, INTERFACE_SPRITES);
-	_btnScrollRight = new ButtonClass(RectClass(551, -8, 571, 101), "scroll right", 9, 133, 134, 135, INTERFACE_SPRITES);
+	_btnScrollRight = new ButtonClass(RectClass(551, -8, 571, 101), "scroll right", 10, 133, 134, 135, INTERFACE_SPRITES);
 	refresh_left_arrow();
 	refresh_right_arrow();
 }
