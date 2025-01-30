@@ -314,6 +314,22 @@ Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledHeight() const {
 	return Common::Rational(_parent->height) / _parent->scaleFactorY;
 }
 
+bool QuickTimeDecoder::PanoTrackHandler::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	return true;
+}
+
+bool QuickTimeDecoder::PanoTrackHandler::canDither() const {
+	return false;
+}
+
+void QuickTimeDecoder::PanoTrackHandler::setDither(const byte *palette) {
+	assert(canDither());
+}
+
+const byte *QuickTimeDecoder::PanoTrackHandler::getPalette() const {
+	return _curPalette;
+}
+
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 	if (!_isPanoConstructed)
 		return nullptr;

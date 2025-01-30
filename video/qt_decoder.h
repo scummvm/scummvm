@@ -295,13 +295,15 @@ private:
 		void checkEditListBounds();
 	};
 
-	class PanoTrackHandler {
+	class PanoTrackHandler : public VideoTrack {
 	public:
 		PanoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent);
 		~PanoTrackHandler();
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
+		int getCurFrame() const { return 1; }
+		uint32 getNextFrameStartTime() const { return 0; }
 		Graphics::PixelFormat getPixelFormat() const;
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		const Graphics::Surface *decodeNextFrame();

@@ -245,6 +245,9 @@ void QuickTimeDecoder::init() {
 
 			addTrack(new VideoTrackHandler(this, tracks[i]));
 		}
+
+		if (tracks[i]->codecType == CODEC_TYPE_PANO)
+			addTrack(new PanoTrackHandler(this, tracks[i]));
 	}
 
 	// Prepare the first video track
