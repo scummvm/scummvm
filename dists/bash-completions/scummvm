@@ -47,7 +47,7 @@ _scummvm()
         # Try our old, now downright ancient, configuration path
         scummvm_config=${HOME}/.scummvmrc
 
-	if [[ ! -f ${scummvm_config} ]]; then
+        if [[ ! -f ${scummvm_config} ]]; then
             if [[ -n ${XDG_CONFIG_HOME} ]]; then
                 scummvm_config=${XDG_CONFIG_HOME}/scummvm/scummvm.ini
             elif [[ -n ${HOME} ]]; then

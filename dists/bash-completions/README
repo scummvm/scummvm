@@ -14,10 +14,11 @@ something like this:
     #     . /etc/bash_completion
     # fi
 
-Uncomment the last three lines. This will the custom tab completions
-for everthing included in the bash-completion package.
+Uncomment the last three lines. This will enable the custom tab completions
+for everything included in the bash-completion package.
 
 Create ~/.local/share/bash-completions/completions if you don't
 already have it, and copy the tab completion script (scummvm) to it.
 Any newly started Bash shell should now have custom completions for
-ScummVM.
+ScummVM. You can also run "source ~/.bashrc" to update your current
+shell process.
