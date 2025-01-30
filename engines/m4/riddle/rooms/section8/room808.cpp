@@ -214,7 +214,7 @@ void Room808::pre_parser() {
 			_G(player).walk_x = 202;
 			_G(player).walk_y = 179;
 			_G(player).walk_facing = 2;
-		} else if (player_said_any("mei chen", "east") || scumm_stricmp(_G(player).noun, "wheel") || scumm_stricmp(_G(player).noun, "bridge")) {
+		} else if (player_said_any("mei chen", "east") || !scumm_strnicmp(_G(player).noun, "wheel", 5) || !scumm_strnicmp(_G(player).noun, "bridge", 6)) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -489,6 +489,85 @@ void Room808::parser() {
 		break;
 
 	case 1:
+		if (player_said(" ")) {
+			digi_play("808r01", 1, 255, -1, -1);
+		} else if (!scumm_strnicmp(_G(player).noun, "wheel", 5) || !scumm_strnicmp(_G(player).noun, "bridge", 6)) {
+			switch (_G(kernel).trigger) {
+				// TODO Not implemented
+			default:
+				break;
+			}
+		} else if (!scumm_stricmp(_G(player).noun, "FARMER'S SHOVEL") && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+			// TODO Not implemented
+		} else if (player_said("chain")) {
+			digi_play("808r04", 1, 255, -1, -1);
+		} else if (player_said("slot")) {
+			digi_play("808r05", 1, 255, -1, -1);
+		} else if (player_said("crank") && inv_object_in_scene("crank", 808)) {
+			digi_play("808r06", 1, 255, -1, -1);
+		} else if (player_said("lit urn")) {
+			digi_play("808r07", 1, 255, -1, -1);
+		} else if (player_said("unlit urn")) {
+			digi_play("com061", 1, 255, -1, 997);
+		} else if (player_said("soldier")) {
+			digi_play("808r09", 1, 255, -1, -1);
+		} else if (player_said ("broken feet")) {
+			digi_play("808r10", 1, 255, -1, -1);
+		} else if (player_said("large hole")) {
+			digi_play("808r11", 1, 255, -1, -1);
+		} else if (player_said_any("corridor", "east")) {
+			digi_play("808r12", 1, 255, -1, -1);
+		} else if (player_said("lower staircase")) {
+			digi_play("808r13", 1, 255, -1, -1);
+		} else if (player_said("chasm")) {
+			switch (_G(kernel).trigger) {
+				// TODO not implemented
+			default:
+				break;
+			}
+		} else if (player_said("hole in bridge")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V278]) && _G(flags[V277]))
+					digi_play("808r16", 1, 255, -1, -1);
+				else {
+					_G(flags[V278]) = 1;
+					digi_play("808r15", 1, 255, _G(flags[V278]) ? 10 : -1, -1);
+				}
+				break;
+
+			case 10:
+				digi_play("808r15a", 1, 255, -1, -1);
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("hole in chasm wall")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V278]) && _G(flags[V277]))
+					digi_play("808r16", 1, 255, -1, -1);
+				else {
+					_G(flags[V277]) = 1;
+					digi_play("808r17", 1, 255, _G(flags[V278])  ? 10 : -1, -1);
+				}
+				break;
+
+			case 10:
+				digi_play("808r17a", 1, 255, -1, -1);
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("mei chen")) {
+			digi_play("808r18", 1, 255, -1, -1);
+		} else
+			break;
+
+		return;
+
 	case 2:
 	case 3:
 		break;

@@ -311,8 +311,8 @@ enum Flag {
 	V274 = 274,
 	V275 = 275,
 	V276 = 276,
-	V277 = 277,
-	V278 = 278,
+	V277 = 277, // look at "hole in chasm wall", 808 -> 1 when animation displayed once
+	V278 = 278, // look at "hole in bridge", 808 -> 1 when animation displayed once
 	V279 = 279,
 	V280 = 280,
 	V281 = 281,
