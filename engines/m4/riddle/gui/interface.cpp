@@ -117,12 +117,15 @@ void Interface::cancel_sentence() {
 }
 
 void Interface::freshen_sentence() {
-	_textField->set_string(" ");
-	_G(player).need_to_walk = false;
-	_G(player).ready_to_walk = _G(player).need_to_walk;
-	_G(player).command_ready = _G(player).ready_to_walk;
-	_prepText[0] = '\0';
+	Common::strcpy_s(_verbText, _nounText);
 	_nounText[0] = '\0';
+
+	_textField->set_string(" ");
+	_iconSelected = true;
+	_G(player).waiting_for_walk = false;
+	_G(player).ready_to_walk = false;
+	_G(player).need_to_walk = false;
+	_G(player).command_ready = false;
 
 	track_hotspots_refresh();
 }

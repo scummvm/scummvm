@@ -499,6 +499,21 @@ void Room604::parser() {
 				if (player_said("LIGHTER"))
 					kernel_timing_trigger(40, 3);
 				break;
+			case 2:
+				_flame = series_play("FLAME ON FLOOR", 0xd00, 4, -1, 5, -1, 100, 0, 0, 0, 7);
+				hotspot_set_active("LIGHTER", true);
+				inv_move_object("LIGHTER", 604);
+				inv_move_object("LIT LIGHTER", NOWHERE);
+				sendWSMessage_140000(5);
+				break;
+			case 3:
+				digi_play("604_s01", 2);
+				break;
+			case 5:
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
 			}
 		} else {
 			digi_play("com118", 1, 255, -1, 997);
@@ -608,6 +623,7 @@ void Room604::parser() {
 			hotspot_set_active("WIRE ", true);
 			kernel_load_variant("604lock1");
 			digi_play("604r48", 1);
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
@@ -1120,6 +1136,7 @@ void Room604::pullCordPlug() {
 
 	case 5:
 		sendWSMessage_150000(-1);
+		player_set_commands_allowed(true);
 		break;
 
 	default:
