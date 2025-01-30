@@ -1247,7 +1247,7 @@ Common::String Frame::formatChannelInfo() {
 		_mainChannels.transType, _mainChannels.transDuration, _mainChannels.transChunkSize);
 	result += Common::String::format("SND: 1  sound1: %d, soundType1: %d\n", _mainChannels.sound1.member, _mainChannels.soundType1);
 	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", _mainChannels.sound2.member, _mainChannels.soundType2);
-	result += Common::String::format("LSCR:   actionId: %d\n", _mainChannels.actionId.member);
+	result += Common::String::format("LSCR:   actionId: %s\n", _mainChannels.actionId.asString().c_str());
 
 	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];

@@ -550,7 +550,7 @@ void showChannels() {
 			frame._mainChannels.transType, frame._mainChannels.transDuration, frame._mainChannels.transChunkSize);
 		ImGui::Text("SND: 1  sound1: %d, soundType1: %d", frame._mainChannels.sound1.member, frame._mainChannels.soundType1);
 		ImGui::Text("SND: 2  sound2: %d, soundType2: %d", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
-		ImGui::Text("LSCR:   actionId: %d", frame._mainChannels.actionId.member);
+		ImGui::Text("LSCR:   actionId: %s", frame._mainChannels.actionId.asString().c_str());
 
 		if (ImGui::BeginTable("Channels", 21, ImGuiTableFlags_Borders)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader;

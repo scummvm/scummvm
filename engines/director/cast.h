@@ -91,6 +91,8 @@ public:
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _castArchive; };
 	Common::String getMacName() const { return _macName; }
+	Common::String getCastName() const { return _castName; }
+	void setCastName(const Common::String &name) { _castName = name; }
 
 	bool loadConfig();
 	void loadCast();
@@ -185,6 +187,7 @@ private:
 	Common::Array<CastMember *> _loadQueue;
 
 	Common::String _macName;
+	Common::String _castName;
 
 	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
