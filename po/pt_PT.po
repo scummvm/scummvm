@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-27 09:03+0000\n"
+"POT-Creation-Date: 2025-01-30 09:32+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1035,7 +1035,7 @@ msgstr "Interagir"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:562 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:950
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:968
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1050,7 +1050,7 @@ msgstr "Cima"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:567 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:917
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:935
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1065,7 +1065,7 @@ msgstr "Baixo"
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:572 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:930 engines/twine/metaengine.cpp:452
+#: engines/scumm/metaengine.cpp:948 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1081,7 +1081,7 @@ msgstr "Esquerda"
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:577 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:937 engines/twine/metaengine.cpp:444
+#: engines/scumm/metaengine.cpp:955 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6672,7 +6672,7 @@ msgstr "Ativar/desativar combate"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:976 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:994 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Ignorar filme"
@@ -7163,7 +7163,7 @@ msgstr "Interagir"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:963
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:981
 msgid "Attack"
 msgstr "Atacar"
 
@@ -11177,33 +11177,43 @@ msgstr "Usar CD áudio"
 msgid "Use the remastered speech and sound effects."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:911
+#: engines/scumm/metaengine.cpp:816
+#, fuzzy
+msgid "Enable ambience sounds"
+msgstr "Ativar armazenamento"
+
+#: engines/scumm/metaengine.cpp:817
+#, fuzzy
+msgid "Enable ambience sounds."
+msgstr "Ativar armazenamento"
+
+#: engines/scumm/metaengine.cpp:929
 #, fuzzy
 msgid "Down Left"
 msgstr "Girar à esquerda"
 
-#: engines/scumm/metaengine.cpp:924
+#: engines/scumm/metaengine.cpp:942
 #, fuzzy
 msgid "Down Right"
 msgstr "Girar à direita"
 
-#: engines/scumm/metaengine.cpp:944
+#: engines/scumm/metaengine.cpp:962
 #, fuzzy
 msgid "Up Left"
 msgstr "Esquerda"
 
-#: engines/scumm/metaengine.cpp:957
+#: engines/scumm/metaengine.cpp:975
 #, fuzzy
 msgid "Up Right"
 msgstr "Direita"
 
-#: engines/scumm/metaengine.cpp:969
+#: engines/scumm/metaengine.cpp:987
 #, fuzzy
 msgid "Switch weapon"
 msgstr "Trocar ecrãs"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:983
+#: engines/scumm/metaengine.cpp:1001
 msgid "Win the bike fight cheat"
 msgstr ""
 

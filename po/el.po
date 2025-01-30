@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-01-27 09:03+0000\n"
+"POT-Creation-Date: 2025-01-30 09:32+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1030,7 +1030,7 @@ msgstr "Αλληλεπίδραση"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:562 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:950
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:968
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1045,7 +1045,7 @@ msgstr "Πάνω"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:567 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:917
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:935
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1060,7 +1060,7 @@ msgstr "Κάτω"
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:572 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:930 engines/twine/metaengine.cpp:452
+#: engines/scumm/metaengine.cpp:948 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1076,7 +1076,7 @@ msgstr "Αριστερά"
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:577 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:937 engines/twine/metaengine.cpp:444
+#: engines/scumm/metaengine.cpp:955 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -7190,7 +7190,7 @@ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:976 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:994 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
@@ -7648,7 +7648,7 @@ msgstr "Μίλα/Αλληλεπίδρασε"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:963
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:981
 msgid "Attack"
 msgstr "Επίθεση"
 
@@ -11707,28 +11707,40 @@ msgstr "Χρήση remastered ήχου"
 msgid "Use the remastered speech and sound effects."
 msgstr "Χρησιμοποιεί τις remastered ομιλίες και ηχητικά εφέ."
 
-#: engines/scumm/metaengine.cpp:911
+#: engines/scumm/metaengine.cpp:816
+#, fuzzy
+#| msgid "Enable sound"
+msgid "Enable ambience sounds"
+msgstr "Ενεργοποίηση ήχου"
+
+#: engines/scumm/metaengine.cpp:817
+#, fuzzy
+#| msgid "Enable sound"
+msgid "Enable ambience sounds."
+msgstr "Ενεργοποίηση ήχου"
+
+#: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
 msgstr "Κάτω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:924
+#: engines/scumm/metaengine.cpp:942
 msgid "Down Right"
 msgstr "Κάτω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:944
+#: engines/scumm/metaengine.cpp:962
 msgid "Up Left"
 msgstr "Πάνω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:957
+#: engines/scumm/metaengine.cpp:975
 msgid "Up Right"
 msgstr "Πάνω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:969
+#: engines/scumm/metaengine.cpp:987
 msgid "Switch weapon"
 msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:983
+#: engines/scumm/metaengine.cpp:1001
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
