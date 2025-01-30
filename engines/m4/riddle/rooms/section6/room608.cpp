@@ -1975,6 +1975,8 @@ bool Room608::takeLighter() {
 		if (inv_object_is_here("LIGHTER")) {
 			player_set_commands_allowed(false);
 			_ripLowReach = series_load("RIP LOW REACH POS1");
+			setGlobals1(_ripLowReach, 1, 16, 16, 16);
+			sendWSMessage_110000(2);
 			return true;
 		}
 		break;
