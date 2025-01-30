@@ -126,8 +126,8 @@ private:
 
 	OffsetToIndexMap _offsetToIndexDOTTAndFT;
 	NameToOffsetMap _nameToOffsetDOTTAndFT;
-	NameToIndexMap _nameToIndex;
-	NameToIndexMap _nameToIndexPatched;
+	NameToIndexMap _nameToIndexMISpeech;
+	NameToIndexMap _nameToIndexMISpeechPatched;
 
 	AudioIndex _musicEntries;
 	AudioIndex _speechEntries;

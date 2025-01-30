@@ -163,10 +163,10 @@ void SoundSE::indexXWBFile(SoundSEType type) {
 			Common::String name = f->readString(0, 64);
 			name.toLowercase();
 
-			if (type != kSoundSETypePatch) {
+			if (type == kSoundSETypeSpeech) {
 				(*audioIndex)[i].name = name;
-				_nameToIndex[name] = i;
-			} else {
+				_nameToIndexMISpeech[name] = i;
+			} else if (type == kSoundSETypePatch) {
 				// Patch audio resources for MI2
 				// Note: We assume that patch XWB files always contain file names
 
@@ -190,10 +190,10 @@ void SoundSE::indexXWBFile(SoundSEType type) {
 				//   yet, so we don't patch them.
 				//   TODO: Process and patch music entries, once we start using
 				//   the SE audio files for music.
-				const int32 originalAudioIndex = _nameToIndex[name];
+				const int32 originalAudioIndex = _nameToIndexMISpeech[name];
 				if (originalAudioIndex < (int32)_speechEntries.size() && _speechEntries[originalAudioIndex].name == name) {
 					_speechEntries[originalAudioIndex].isPatched = true;
-					_nameToIndexPatched[name] = i;
+					_nameToIndexMISpeechPatched[name] = i;
 				}
 			}
 		}
@@ -246,7 +246,7 @@ void SoundSE::indexSpeechXSBFile() {
 
 		if (index < (*audioIndex).size()) {
 			(*audioIndex)[index].name = name;
-			_nameToIndex[name] = index;
+			_nameToIndexMISpeech[name] = index;
 			//debug("indexSpeechXSBFile: %s -> index %d", name.c_str(), index);
 		}
 	}
@@ -774,8 +774,8 @@ Audio::SeekableAudioStream *SoundSE::getAudioStreamFromIndex(int32 index, SoundS
 	audioEntry = (*audioIndex)[index];
 
 	// Load patched audio files, if present
-	if (audioEntry.isPatched && _nameToIndexPatched.contains(audioEntry.name)) {
-		int32 patchedEntry = _nameToIndexPatched[audioEntry.name];
+	if (audioEntry.isPatched && _nameToIndexMISpeechPatched.contains(audioEntry.name)) {
+		int32 patchedEntry = _nameToIndexMISpeechPatched[audioEntry.name];
 		type = kSoundSETypePatch;
 		audioIndex = getAudioEntries(type);
 		audioEntry = (*audioIndex)[patchedEntry];
@@ -896,7 +896,7 @@ int32 SoundSE::handleMISESpeech(const char *msgString, const char *speechFilenam
 	if (entryIndex >= 0 && entryIndex < (int32)_audioEntriesMI.size()) {
 		const AudioEntryMI *entry = &_audioEntriesMI[entryIndex];
 		//debug("Selected entry: %s (%s)", entry->textEnglish.c_str(), entry->speechFile.c_str());
-		return _nameToIndex.contains(entry->speechFile) ? _nameToIndex[entry->speechFile] : -1;
+		return _nameToIndexMISpeech.contains(entry->speechFile) ? _nameToIndexMISpeech[entry->speechFile] : -1;
 	}
 
 	return -1;
