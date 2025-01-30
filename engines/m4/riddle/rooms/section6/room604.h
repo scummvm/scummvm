@@ -34,7 +34,7 @@ private:
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
-	int _val5 = 0;
+	bool _suppressChatter = false;
 	int _ripLowReach1 = 0;
 	int _ripLowReach2 = 0;
 	int _ripMedReach1 = 0;
@@ -54,7 +54,7 @@ private:
 	machine *_shadow = nullptr;
 
 	void daemon1();
-	void useWhaleBoneHorn();
+	bool useWhaleBoneHorn();
 	void takePullCord();
 	void takeSparkPlugTool();
 	void takeLighter();

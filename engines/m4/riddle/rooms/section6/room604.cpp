@@ -41,7 +41,7 @@ void Room604::init() {
 		_val2 = 0;
 		_val3 = 0;
 		_val4 = 0;
-		_val5 = 0;
+		_suppressChatter = false;
 	}
 
 	static const char *DIGI[14] = {
@@ -233,7 +233,7 @@ void Room604::pre_parser() {
 		intr_freshen_sentence(65);
 	if (useFlag && player_said("WHALE BONE HORN") && _G(flags)[V203] == 8) {
 		digi_stop(3);
-		_val5 = 1;
+		_suppressChatter = true;
 	}
 
 	if (_val2) {
@@ -252,8 +252,8 @@ void Room604::parser() {
 	bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (useFlag && player_said("WHALE BONE HORN")) {
-		useWhaleBoneHorn();
+	if (useFlag && player_said("WHALE BONE HORN") && useWhaleBoneHorn()) {
+		// No implementation
 	} else if (player_said("kill rip")) {
 		killRipley();
 	} else if (takeFlag && player_said("PULL CORD")) {
@@ -322,7 +322,7 @@ void Room604::parser() {
 			case 1:
 				if (_G(flags)[V203] == 8) {
 					digi_stop(3);
-					_val5 = 1;
+					_suppressChatter = true;
 				}
 
 				player_set_commands_allowed(false);
@@ -445,7 +445,7 @@ void Room604::parser() {
 
 			if (_G(flags)[V203] == 8) {
 				digi_stop(3);
-				_val5 = 1;
+				_suppressChatter = true;
 			}
 
 			digi_play("wirepull", 2, 255, 2);
@@ -794,15 +794,15 @@ void Room604::parser() {
 	_G(player).command_ready = false;
 }
 
-void Room604::useWhaleBoneHorn() {
+bool Room604::useWhaleBoneHorn() {
 	switch (_G(kernel).trigger) {
 	case 5:
 		_ripley = series_play("BAD GUYS LOOK TO SHED", 0, 0, 6, 6);
-		break;
+		return true;
 
 	case 6:
 		kernel_timing_trigger(30, 7);
-		break;
+		return true;
 
 	case 7:
 		digi_play("604k01", 1);
@@ -812,10 +812,10 @@ void Room604::useWhaleBoneHorn() {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(60, 666);
 		player_set_commands_allowed(true);
-		break;
+		return true;
 
 	default:
-		break;
+		return false;
 	}
 }
 
@@ -1145,7 +1145,7 @@ void Room604::pullCordPlug() {
 }
 
 void Room604::daemon1() {
-	if (_val5)
+	if (_suppressChatter)
 		return;
 
 	static const char *DIGI[3] = { "610_s03a", "610_s03b", "610_s03" };
