@@ -75,6 +75,7 @@ public:
 	void startCDTimer();
 	void stopCDTimer();
 
+	int playCDTrackFromSoundID(int soundId);
 	void playCDTrack(int track, int numLoops, int startFrame, int duration);
 	void stopCD();
 	int pollCD() const;
@@ -82,7 +83,7 @@ public:
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
-	void restoreAfterLoad();
+	int restoreAfterLoad();
 	void restoreCDAudioAfterLoad(AudioCDManager::Status &info);
 
 	bool isRolandLoom() const;
@@ -90,7 +91,7 @@ public:
 private:
 	int getReplacementAudioTrack(int soundID);
 	void playCDTrackInternal(int track, int numLoops, int startFrame, int duration);
-	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
+	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start, int &end);
 };
 
 } // End of namespace Scumm

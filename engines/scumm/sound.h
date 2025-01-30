@@ -154,11 +154,17 @@ public:
 	void startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 numWaits);
 
 	// TODO: Duplicate this in Sound as well?
-	bool isRolandLoom() const { return _soundCD->isRolandLoom(); }
+	bool isRolandLoom() const {
+		return _soundCD->isRolandLoom();
+	}
 
 	// CD audio wrapper methods
-	int pollCD() const { return _soundCD->pollCD(); }
-	void updateCD() { _soundCD->updateCD(); }
+	int pollCD() const {
+		return _soundCD->pollCD();
+	}
+	void updateCD() {
+		_soundCD->updateCD();
+	}
 	void stopCD() {
 		_soundCD->stopCD();
 		_soundCD->stopCDTimer();
@@ -166,11 +172,12 @@ public:
 	void playCDTrack(int track, int numLoops, int startFrame, int duration) {
 		_soundCD->playCDTrack(track, numLoops, startFrame, duration);
 	}
-	int getCurrentCDSound() const { return _soundCD->getCurrentCDSound(); }
+	int getCurrentCDSound() const {
+		return _soundCD->getCurrentCDSound();
+	}
 	void restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
 		_soundCD->restoreCDAudioAfterLoad(info);
 	}
-
 	void setupMISEAudioParams(int32 scriptNum, int32 scriptOffset) {
 		_soundSE->setupMISEAudioParams(scriptNum, scriptOffset);
 	}

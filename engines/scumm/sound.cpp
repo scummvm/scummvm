@@ -87,11 +87,12 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	// Initialize the SE sound engine for all doublefine packed games,
 	// except for Maniac Mansion (within DOTT), which doesn't have
 	// associated SE resources in the PAK file.
-	if (_vm->_game.features & GF_DOUBLEFINE_PAK && _vm->_game.id != GID_MANIAC)
+	if (_vm->_game.features & GF_DOUBLEFINE_PAK && _vm->_game.id != GID_MANIAC) {
 		_soundSE = new SoundSE(_vm, _mixer);
-	_soundCD = new SoundCD(_vm, _mixer, _soundSE, useReplacementAudioTracks);
+		_useRemasteredAudio = ConfMan.getBool("use_remastered_audio");
+	}
 
-	_useRemasteredAudio = ConfMan.getBool("use_remastered_audio");
+	_soundCD = new SoundCD(_vm, _mixer, _soundSE, useReplacementAudioTracks);
 
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
@@ -310,24 +311,10 @@ void Sound::triggerSound(int soundID) {
 
 		if (type == 2) {
 			// CD track resource
-			ptr += 0x16;
 			if (soundID == _soundCD->_currentCDSound && _soundCD->pollCD() == 1)
 				return;
 
-			int track = ptr[0];
-			int loops = ptr[1];
-			int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-			int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
-
-			// Add the user-specified adjustments.
-			if (_vm->_game.id == GID_MONKEY && track == 17) {
-				int adjustment = ConfMan.getInt(start == 0 ? "mi1_intro_adjustment" : "mi1_outlook_adjustment");
-
-				start += ((75 * adjustment) / 100);
-			}
-
-			_soundCD->playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
-			_soundCD->_currentCDSound = soundID;
+			_soundCD->playCDTrackFromSoundID(soundID);
 		} else {
 			// All other sound types are ignored
 			warning("Scumm::Sound::triggerSound: encountered audio resource with chunk type 'SOUN' and sound type %d", type);
