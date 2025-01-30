@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-30 09:32+0000\n"
-"PO-Revision-Date: 2025-01-27 18:18+0000\n"
+"PO-Revision-Date: 2025-01-30 19:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11574,16 +11574,12 @@ msgid "Use the remastered speech and sound effects."
 msgstr "Utilise les dialogues et les effets sonores remastérisés."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Activer les sons"
+msgstr "Activer les sons d'ambiance"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Activer les sons"
+msgstr "Active les sons d'ambiance."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
