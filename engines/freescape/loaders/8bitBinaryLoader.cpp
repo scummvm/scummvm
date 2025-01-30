@@ -344,6 +344,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		readArray(file, byteSizeOfObject - 9);
 		return nullptr;
 	}
+	if (isC64() && isDark())
+		objectType = (ObjectType)(objectType % ObjectType::kGroupType);
+
 	assert(objectType <= ObjectType::kGroupType);
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;

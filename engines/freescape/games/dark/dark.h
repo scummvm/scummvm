@@ -63,6 +63,7 @@ public:
 	void executePrint(FCLInstruction &instruction) override;
 
 	void initDOS();
+	void initC64();
 	void initAmigaAtari();
 	void initZX();
 	void initCPC();
@@ -70,6 +71,7 @@ public:
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
+	void loadAssetsC64FullGame() override;
 	void loadAssetsAmigaFullGame() override;
 	void loadAssetsAtariFullGame() override;
 
@@ -88,6 +90,7 @@ public:
 
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
+	void drawC64UI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;

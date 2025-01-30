@@ -57,6 +57,8 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 		initDOS();
 	else if (isSpectrum())
 		initZX();
+	else if (isC64())
+		initC64();
 	else if (isCPC())
 		initCPC();
 	else if (isAmiga() || isAtariST())

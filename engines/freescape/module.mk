@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	games/castle/zx.o \
 	games/dark/amiga.o \
 	games/dark/atari.o \
+	games/dark/c64.o \
 	games/dark/cpc.o \
 	games/dark/dark.o \
 	games/dark/dos.o \

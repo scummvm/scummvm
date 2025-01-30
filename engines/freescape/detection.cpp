@@ -512,6 +512,15 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
+	{
+		"darkside", // Tape relese
+		"",
+		AD_ENTRY1s("DARKSIDE.C64.DATA", "c0d271d86cf4434ef7c3d823a32c0df5", 61290),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
 	// Total Eclipse
 	{
 		"totaleclipse",
