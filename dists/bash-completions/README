@@ -1,0 +1,23 @@
+Custom Tab completions for the bash shell. This depends on the
+bash-completion package. Consult the documentation for that for how to
+enable this.
+
+Example for how to enable it for a single user in Debian GNU/Linux:
+
+If your ~/.bashrc was automatically generated, it probably contains
+something like this:
+
+    # enable programmable completion features (you don't need to enable
+    # this, if it's already enabled in /etc/bash.bashrc and /etc/profiles
+    # sources /etc/bash.bashrc).
+    # if [ -f /etc/bash_completion ]; then
+    #     . /etc/bash_completion
+    # fi
+
+Uncomment the last three lines. This will the custom tab completions
+for everthing included in the bash-completion package.
+
+Create ~/.local/share/bash-completions/completions if you don't
+already have it, and copy the tab completion script (scummvm) to it.
+Any newly started Bash shell should now have custom completions for
+ScummVM.

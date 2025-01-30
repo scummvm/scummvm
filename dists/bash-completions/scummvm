@@ -1,0 +1,86 @@
+_scummvm()
+{
+    local opt_name
+    _init_completion || return
+
+    # If it's in the middle of a long option, offer completions for that. I'm
+    # adding these as an example until we figure which ones we want.
+
+    if [[ ${cur} == --* ]]; then
+       COMPREPLY=($(compgen -W "--debugflags= --debug-channels-only" -- "${cur}"))
+
+       # If the match ends with "=" we want to continue typing from there
+       # without any space at the end. This seems a bit peculiar to me, because
+       # it will apply to multiple matches, but it's the way that was suggested
+       # to me.
+
+       if [[ ${COMPREPLY[@]} =~ "=" ]]; then
+           compopt -o nospace
+       fi
+       
+       return;
+    fi
+
+    # Handle command line options. Short options are converted into their long
+    # form, and for long options we extract the option being used. At the point
+    # where we can do tab completion on a long option, ${prev} will be "=" so
+    # we have to look further back.
+
+    case ${prev} in
+        -e)
+            opt_name=music-driver
+            ;;
+        =)
+            opt_name=${COMP_WORDS[COMP_CWORD-2]}
+            if [[ ${opt_name} != --* ]]; then
+                return;
+            fi
+            opt_name="${opt_name#--}"
+            ;;
+    esac
+
+    # If it's not an option, try matching a target from the scummvm.init file.
+
+    if [[ -z ${opt_name} ]] && [[ ${cur} != -* ]]; then
+        local scummvm_config
+
+        # Try our old, now downright ancient, configuration path
+        scummvm_config=${HOME}/.scummvmrc
+
+	if [[ ! -f ${scummvm_config} ]]; then
+            if [[ -n ${XDG_CONFIG_HOME} ]]; then
+                scummvm_config=${XDG_CONFIG_HOME}/scummvm/scummvm.ini
+            elif [[ -n ${HOME} ]]; then
+                scummvm_config=${HOME}/.config/scummvm/scummvm.ini
+            else
+                return;
+            fi
+        fi
+
+        if [[ -f ${scummvm_config} ]]; then
+            games=$(sed -n '/^\[scummvm\]/!s/^\[\([^]]*\)\]/\1/p' ${scummvm_config})
+            COMPREPLY=($(compgen -W "${games}" -- "${cur}"))
+        fi
+
+        return;
+    fi
+
+    # Completions for various option values. Not everything, just the ones I
+    # thought were the most useful.
+
+    local opts
+
+    case ${opt_name} in
+        music-driver)
+            opts='fluidsynth mt32 eas null mac towns pc98 segacd adlib core riscos camd sndio seq coremidi stmidi dmedia alsa timidity windows'
+            ;;
+        render-mode)
+            opts='hercGreen hercAmber cga cgaComp cgaBW ega vga amiga fmtowns pc98-256c pc98-16c pc98-8c 2gs atari macintosh macintoshbw cpc zx c64 vgaGrey win256c win16c'
+            ;;
+    esac
+
+    if [[ -n ${opts} ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    fi
+} &&
+    complete -F _scummvm scummvm
