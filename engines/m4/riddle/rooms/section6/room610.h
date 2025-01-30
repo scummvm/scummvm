@@ -41,10 +41,10 @@ private:
 	machine *_k = nullptr;
 	machine *_sgTt = nullptr;
 	machine *_pu01 = nullptr;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _sgMode = 0;
+	int _sgShould = 0;
 	int _val3 = 0;
-	int _val4 = 0;
+	int _kShould = 0;
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
