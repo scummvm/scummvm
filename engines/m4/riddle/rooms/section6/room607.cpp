@@ -188,6 +188,7 @@ void Room607::parser() {
 			terminateMachineAndNull(_tablet);
 			kernel_examine_inventory_object("ping rongorongo tablet", 5, 1, 212, 150, 5,
 				_val1 ? "607r09" : nullptr);
+			_G(flags)[V203] = 8;
 			break;
 		case 5:
 			terminateMachineAndNull(_ripReach);
