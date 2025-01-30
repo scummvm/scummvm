@@ -120,7 +120,9 @@ void M4Engine::m4_inflight() {
 	while (KEEP_PLAYING) {
 		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			midi_stop();
-			kernel_load_game(_G(kernel).restore_slot);
+			int slot = _G(kernel).restore_slot;
+			if (!kernel_load_game(slot))
+				error("Could not restore save slot %d", slot);
 		}
 
 		// Start up next section

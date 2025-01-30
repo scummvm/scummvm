@@ -36,8 +36,7 @@ void Room::preload() {
 }
 
 void Room::restoreAutosave() {
-	if (g_engine->loadGameState(0).getCode() != Common::kNoError)
-		error("Could not restore autosave");
+	g_engine->loadGameState(0);
 }
 
 int Room::checkFlags(bool flag) {
