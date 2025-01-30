@@ -124,8 +124,11 @@ delete object me -- deletes the open file
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "image/pict.h"
 
 #include "director/director.h"
+#include "director/picture.h"
+#include "director/types.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
@@ -450,7 +453,28 @@ void FileIO::m_readWord(int nargs) {
 	FileIO::m_readToken(2);
 }
 
-XOBJSTUB(FileIO::m_readPict, "")
+void FileIO::m_readPict(int nargs) {
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+
+	Datum result;
+
+	if (!me->_inStream || me->_inStream->err()) {
+		g_lingo->push(result);
+		return;
+	}
+
+	me->_inStream->seek(0, SEEK_SET);
+
+	Image::PICTDecoder decoder;
+	if (decoder.loadStream(*me->_inStream)) {
+		result.type = PICTUREREF;
+		result.u.picture = new PictureReference;
+		result.u.picture->_picture = new Picture(decoder);
+	}
+
+	g_lingo->push(result);
+	return;
+}
 
 bool FileIO::charInMatchString(char ch, const Common::String &matchString) {
 	return matchString.contains(ch);
