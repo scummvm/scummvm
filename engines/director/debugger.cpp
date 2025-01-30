@@ -362,7 +362,7 @@ bool Debugger::cmdCast(int argc, const char **argv) {
 		castId = atoi(argv[1]);
 
 	for (auto it : *movie->getCasts()) {
-		debugPrintf("Cast %d (%s):\n", it._key, it._value->getMacName().c_str());
+		debugPrintf("Cast %d (%s, %s):\n", it._key, it._value->getMacName().c_str(), it._value->getCastName().c_str());
 		Cast *cast = it._value;
 		if (!cast) {
 			debugPrintf("[empty]\n");

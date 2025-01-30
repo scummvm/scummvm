@@ -294,6 +294,9 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 		_castsInfo[targetId] = newInfo;
 	}
 	setCastMember(targetId, target);
+	if (info) {
+		rebuildCastNameCache();
+	}
 	return true;
 }
 
@@ -342,7 +345,7 @@ bool Cast::loadConfig() {
 		return false;
 	}
 
-	debugC(1, kDebugLoading, "****** Loading Config VWCF");
+	debugC(1, kDebugLoading, "****** Loading Config VWCF for cast libID %d (%s)", _castLibID, _castName.c_str());
 
 	if (debugChannelSet(5, kDebugLoading))
 		stream->hexdump(stream->size());
@@ -564,6 +567,8 @@ void Cast::loadCast() {
 	// Font Directory
 	_vm->_wm->_fontMan->loadFonts(_castArchive->getPathName());
 
+	debugC(1, kDebugLoading, "****** Loading cast member data for for cast libID %d (%s)", _castLibID, _castName.c_str());
+
 	// CastMember Information Array
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
 		_castIDoffset = _castArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
@@ -636,18 +641,20 @@ void Cast::loadCast() {
 		_loadedCast = new Common::HashMap<int, CastMember *>();
 
 	if (cast.size() > 0) {
-		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d", _castLibID);
+		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), _libResourceId);
 
 		int idx = 0;
 
 		for (auto &iterator : cast) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), iterator);
-			debugC(2, kDebugLoading, "CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 			// Only load cast members which belong to the requested library ID.
 			// External casts only have one library ID, so instead
 			// we use the movie's mapping.
-			if (res.libResourceId != _libResourceId && !_isExternal)
+			if (res.libResourceId != _libResourceId && !_isExternal) {
+				debugC(5, kDebugLoading, "SKIPPED - CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 				continue;
+			}
+			debugC(2, kDebugLoading, "CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), iterator);
 			loadCastData(*stream, res.castId, &res);
 			delete stream;

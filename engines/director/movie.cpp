@@ -181,6 +181,7 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 			cast = _casts.getVal(libId);
 		} else {
 			cast = new Cast(this, libId, false, isExternal, libResourceId);
+			cast->setCastName(name);
 			_casts.setVal(libId, cast);
 		}
 		_castNames[name] = libId;
@@ -488,6 +489,9 @@ bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
 		warning("Movie::duplicateCastMember(): couldn't find source cast member %s", source.asString().c_str());
 	} else if (!targetCast) {
 		warning("Movie::duplicateCastMember(): couldn't find destination castLib %d", target.castLib);
+	} else if (source == target) {
+		warning("Movie::duplicateCastMember(): trying to duplicate cast member %s over itself", source.asString().c_str());
+		return false;
 	} else {
 		CastMember *sourceMember = sourceCast->getCastMember(source.member);
 		CastMemberInfo *sourceInfo = sourceCast->getCastMemberInfo(source.member);
