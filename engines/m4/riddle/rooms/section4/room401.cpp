@@ -1001,8 +1001,8 @@ void Room401::conv401a() {
 			ITEM(11, 8, "WHALE BONE HORN");
 			ITEM(11, 9, "CHISEL");
 			ITEM(11, 10, "INCENSE BURNER");
-			ITEM(11, 11, "ROMANOV EMERALD");
 #undef ITEM
+			if (node == 11 && entry == 11) inv_move_object("ROMANOV EMERALD", NOWHERE);
 
 			if (node != 11)
 				_val3 = 1;

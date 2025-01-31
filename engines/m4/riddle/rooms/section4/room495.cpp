@@ -125,7 +125,7 @@ void Room495::init() {
 			play("495 lima to ny", "495lm02s", 18, 10);
 			break;
 		case 2:
-			play("495 lima to danzig", "495m03s", 70, 4);
+			play("495 lima to danzig", "495lm03s", 70, 4);
 			break;
 		case 3:
 			play("495 lima to sikkim", "495lm04s", 100, 3);
