@@ -1009,37 +1009,15 @@ void Adlib::OnTimer() {
 						// l0017_200C:
 						bp1 = 0x3F;
 					}
-					// 2010h
-
+					// l0017_2010:
+					Func2792(gArray5C[bp3 - 0x0B], 0);
+					uint8 r2779 = Func2779(bp8 + 0x40);
+					Func2792(bp8 + 0x40, bp1 + (r2779 & 0xC0));
+					
 					//    TODO: Continue from here
 					/*
 
-l0017_2010:
-	mov	al,[bp-3h]
-	xor	ah,ah
-	sub	ax,0Bh
-	mov	di,ax
-	mov	al,[di+5Ch]
-	xor	ah,ah
-	add	ax,0B0h
-	push	ax
-	push	0h
-	call	far 0017h:2792h
-	mov	ax,[bp-8h]
-	add	ax,40h
-	push	ax
-	mov	ax,[bp-8h]
-	add	ax,40h
-	push	ax
-	call	far 0017h:2779h
-	and	al,0C0h
-	xor	ah,ah
-	mov	dx,ax
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,dx
-	push	ax
-	call	far 0017h:2792h
+	
 	mov	al,[bp-3h]
 	xor	ah,ah
 	sub	ax,0Bh
@@ -1163,6 +1141,153 @@ uint8 Adlib::peekByteAt(uint16 offset) {
 	uint8 result = data->readByte();
 	data->seek(originalOffset, SEEK_SET);
 	return result;
+}
+
+uint8 Adlib::FuncA280() {
+	// TODO: Continue here
+	// uint8 bp2 = ax;
+	/*
+	;; 
+fn0017_2A80 proc
+	enter	6h,0h
+	mov	al,[bp+8h]
+	xor	ah,ah
+	mov	di,ax
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	al,[bp+8h]
+	xor	ah,ah
+	mov	di,ax
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-2h],ax
+	cmp	byte ptr [bp+6h],0h
+	jnz	2AB1h
+
+l0017_2AAE:
+	jmp	2B81h
+
+l0017_2AB1:
+	cmp	byte ptr [bp+6h],80h
+	jnc	2B1Dh
+
+l0017_2AB7:
+	cmp	byte ptr [bp+8h],7Fh
+	jnc	2AC8h
+
+l0017_2ABD:
+	mov	al,[bp+8h]
+	xor	ah,ah
+	inc	ax
+	mov	[bp-6h],ax
+	jmp	2ACDh
+
+l0017_2AC8:
+	mov	word ptr [bp-6h],7Fh
+
+l0017_2ACD:
+	mov	di,[bp-6h]
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	di,[bp-6h]
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-4h],ax
+	mov	al,[bp+6h]
+	xor	ah,ah
+	xor	dx,dx
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-4h]
+	sub	ax,[bp-2h]
+	xor	dx,dx
+	call	far 00CDh:0C97h
+	mov	cx,7h
+	xor	bx,bx
+	call	far 00CDh:0D7Ah
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	xor	dx,dx
+	add	ax,cx
+	adc	dx,bx
+	mov	[bp-2h],ax
+	jmp	2B81h
+
+l0017_2B1D:
+	cmp	byte ptr [bp+8h],0h
+	jbe	2B2Eh
+
+l0017_2B23:
+	mov	al,[bp+8h]
+	xor	ah,ah
+	dec	ax
+	mov	[bp-6h],ax
+	jmp	2B33h
+
+l0017_2B2E:
+	xor	ax,ax
+	mov	[bp-6h],ax
+
+l0017_2B33:
+	mov	di,[bp-6h]
+	mov	al,[di+9Fh]
+	xor	ah,ah
+	mov	dx,ax
+	mov	di,[bp-6h]
+	mov	al,[di+11Fh]
+	xor	ah,ah
+	shl	ax,8h
+	add	ax,dx
+	mov	[bp-4h],ax
+	mov	al,[bp+6h]
+	xor	ah,ah
+	xor	dx,dx
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	sub	ax,[bp-4h]
+	xor	dx,dx
+	call	far 00CDh:0C97h
+	mov	cx,7h
+	xor	bx,bx
+	call	far 00CDh:0D7Ah
+	mov	cx,ax
+	mov	bx,dx
+	mov	ax,[bp-2h]
+	xor	dx,dx
+	sub	ax,cx
+	sbb	dx,bx
+	mov	[bp-2h],ax
+
+l0017_2B81:
+	mov	al,[bp+0Ah]
+	xor	ah,ah
+	add	ax,0A0h
+	push	ax
+	mov	ax,[bp-2h]
+	and	ax,0FFh
+	push	ax
+	call	far 0017h:2792h
+	mov	al,[bp+0Ah]
+	xor	ah,ah
+	add	ax,0B0h
+	push	ax
+	mov	ax,[bp-2h]
+	shr	ax,8h
+	and	ax,0DFh
+	push	ax
+	call	far 0017h:2792h
+	leave
+	retf	6h
+	*/
+	return 0;
 }
 
 void Adlib::Init() {
