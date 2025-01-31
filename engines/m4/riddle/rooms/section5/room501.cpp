@@ -731,7 +731,7 @@ void Room501::daemon() {
 
 	case 540:
 		_agentShould = 5;
-		_xyzzy7 = kernel_trigger_create(540);
+		_xyzzy7 = kernel_trigger_create(541);
 		break;
 
 	case 541:
@@ -757,7 +757,7 @@ void Room501::daemon() {
 				"CHISEL",  "INCENSE BURNER",  "INCENSE BURNER"
 			};
 
-			inv_move_object(ITEMS[item - 1], (item == 12) ? NOWHERE : 305);
+			inv_move_object(ITEMS[item], (item == 11) ? NOWHERE : 305);
 		}
 		conv_resume();
 		break;
@@ -1102,6 +1102,7 @@ void Room501::daemon() {
 
 	case 611:
 		_ripleyShould = 3;
+		conv_resume();
 		break;
 
 	case 612:
