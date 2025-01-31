@@ -63,7 +63,7 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "subv",               "vv",       &cmdSubV },             // 08
 	{ "load.view",          "n",        &cmdLoadView },         // 09
 	{ "animate.obj",        "n",        &cmdAnimateObj },       // 0A
-	{ "new.room",           "n",        &cmdNewRoom },          // 0B
+	{ "new.room",           "n",        &cmdNewRoom },          // 0B TODO
 	{ "draw.pic",           "v",        &cmdDrawPicV1 },        // 0C
 	{ "print",              "s",        &cmdPrint },            // 0D TODO
 	{ "status",             "",         &cmdStatus },           // 0E TODO
@@ -133,22 +133,22 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "show.obj",           "n",        &cmdShowObj },          // 4E # show.obj (KQ2)
 	{ "load.logics",        "n",        &cmdLoadLogic },        // 4F # load.global.logics
 	{ "display",            "nnns",     &cmdDisplay },          // 50 TODO: 4 vs 3 args
-	{ "prevent.input???",   "",         &cmdUnknown },          // 51
-	{ "...",                "",         &cmdUnknown },          // 52 # nop
+	{ "prevent.input",      "",         &cmdUnknown },          // 51 TODO: disables input by clearing a global, reset on new.room
+	{ "...",                "",         &cmdUnknown },          // 52 nop, 0 args
 	{ "text.screen",        "n",        &cmdUnknown },          // 53
 	{ "graphics",           "",         &cmdUnknown },          // 54
 	{ "stop.motion",        "",         &cmdStopMotion },       // 55
 	{ "discard.view",       "n",        &cmdDiscardView },      // 56
 	{ "discard.pic",        "v",        &cmdDiscardPic },       // 57
 	{ "set.item.view",      "nn",       &cmdSetItemView },      // 58
-	{ "...",                "",         &cmdUnknown },          // 59 # reverse.cycle, unused in KQ2 or BC
+	{ "reverse.cycle",      "n",        &cmdReverseCycle },     // 59
 	{ "last.cel",           "nv",       &cmdLastCel },          // 5A
 	{ "set.cel.v",          "nv",       &cmdSetCelF },          // 5B
-	{ "...",                "",         &cmdUnknown },          // 5C # normal.cycle, unused in KQ2 or BC
-	{ "load.view",          "n",        &cmdLoadView },         // 5D
-	{ "...",                "",         &cmdUnknown },          // 5E unused in KQ2 or BC
+	{ "normal.cycle",       "n",        &cmdNormalCycle },      // 5C
+	{ "load.view",          "n",        &cmdLoadView },         // 5D duplicate opcode: same table entry as 09
+	{ "...",                "n",        &cmdUnknown },          // 5E nop, 1 arg
 	{ "...",                "",         &cmdUnknown },          // 5F BC script 102 when attempting to fill flask
-	{ "set.bit",            "nv",       &cmdSetBit },           // 60 BC
+	{ "set.bit",            "nv",       &cmdSetBit },           // 60
 	{ "clear.bit",          "nv",       &cmdClearBit },         // 61
 	{ "set.upper.left",     "nn",       &cmdSetUpperLeft }      // 62 BC Apple II
 };
