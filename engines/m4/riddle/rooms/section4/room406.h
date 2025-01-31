@@ -43,8 +43,8 @@ private:
 	machine *_cards = nullptr;
 	int _rptmhr = 0;
 	int _rptmr15 = 0;
-	int _drawerState1 = 0;
-	int _drawerState2 = 0;
+	int _gamesDrawerState = 0;
+	int deskDrawerState = 0;
 	int _ripReachHand = 0;
 	int _ripHiHand = 0;
 	int _pickupBall = 0;

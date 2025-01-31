@@ -134,14 +134,14 @@ void Room406::init() {
 	}
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
-		_drawerState1 = 1001;
-		_drawerState2 = 1001;
+		_gamesDrawerState = 1001;
+		deskDrawerState = 1001;
 		hotspot_set_active("CABINET DRAWER OPEN", false);
 		hotspot_set_active("DESK DRAWER OPEN", false);
 		hotspot_set_active("MESSAGES", false);
 		hotspot_set_active("ENVELOPE", false);
 		hotspot_set_active("KEYS", false);
-	} else if (_drawerState2 == 1000) {
+	} else if (deskDrawerState == 1000) {
 		ws_demand_facing(1);
 		_rptmhr = series_load("RPTMHR11");
 		setGlobals1(_rptmhr, 1, 5, 5, 5, 0, 5, 1, 1, 1);
@@ -165,7 +165,7 @@ void Room406::init() {
 				0, 0, 0, 100, 0x200);
 			hotspot_set_active("KEYS", true);
 		}
-	} else if (_drawerState1 == 1000) {
+	} else if (_gamesDrawerState == 1000) {
 		ws_demand_facing(11);
 		_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
 		setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
@@ -317,7 +317,7 @@ void Room406::pre_parser() {
 		kernel_timing_trigger(1, 69, KT_PARSE, KT_PREPARSE);
 	}
 
-	if (_drawerState1 == 1000) {
+	if (_gamesDrawerState == 1000) {
 		_G(player).resetWalk();
 
 		if (!player_said(" ") &&
@@ -328,10 +328,10 @@ void Room406::pre_parser() {
 		}
 
 		intr_cancel_sentence();
-		_drawerState1 = 1001;
+		_gamesDrawerState = 1001;
 		kernel_timing_trigger(1, 10, KT_DAEMON, KT_PARSE);
 
-	} else if (_drawerState2 == 1000) {
+	} else if (deskDrawerState == 1000) {
 		_G(player).resetWalk();
 
 		if (!player_said(" ") &&
@@ -342,7 +342,7 @@ void Room406::pre_parser() {
 		}
 
 		intr_cancel_sentence();
-		_drawerState2 = 1001;
+		deskDrawerState = 1001;
 		kernel_timing_trigger(1, 20, KT_DAEMON, KT_PARSE);
 
 	} else if (player_said("journal") && !takeFlag && !lookFlag &&
@@ -619,7 +619,7 @@ void Room406::parser() {
 			sendWSMessage_110000(1);
 			break;
 		case 1:
-			_drawerState2 = 1000;
+			deskDrawerState = 1000;
 			_emptyDrawer = series_place_sprite("406 DESK DRAWER EMPTY", 0, 0, 0, 100, 0x200);
 			digi_play("406_s02", 2);
 			hotspot_set_active(" ", true);
@@ -652,11 +652,12 @@ void Room406::parser() {
 				break;
 			case 1:
 				if (_G(flags)[V308]) {
-					_drawerState1 = 1000;
+					_gamesDrawerState = 1000;
 					_cards = series_place_sprite("406 GAMES DRAWER WITH CARDS", 0, 0, 0, 100, 0x100);
 					digi_play("406_s02", 2);
+					disableHotspots();
 					hotspot_set_active(" ", true);
-					hotspot_set_active("CABINET DRAW OPEN", true);
+					hotspot_set_active("CABINET DRAWER OPEN", true);
 					player_set_commands_allowed(true);
 				} else {
 					digi_play("406r20", 1);
@@ -692,6 +693,8 @@ void Room406::parser() {
 				digi_play("406_s05", 2);
 				_G(flags)[V308] = 1;
 			}
+
+			sendWSMessage_120000(4);
 			break;
 		case 4:
 			sendWSMessage_150000(5);
@@ -719,6 +722,8 @@ void Room406::parser() {
 				digi_play("406_s05", 2);
 				_G(flags)[V307] = 1;
 			}
+
+			sendWSMessage_120000(4);
 			break;
 		case 4:
 			sendWSMessage_150000(5);
@@ -923,7 +928,7 @@ void Room406::parser() {
 			sendWSMessage_120000(3);
 			break;
 		case 3:
-			sendWSMessage_150000(5);
+			sendWSMessage_150000(4);
 			break;
 		case 4:
 			series_unload(_cabinetOpens);
