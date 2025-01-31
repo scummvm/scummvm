@@ -1505,7 +1505,7 @@ void Room403::pre_parser() {
 
 		intr_cancel_sentence();
 
-		if (player_said("TURTLE TREATS", "GRATE")) {
+		if (useFlag && player_said("GRATE")) {
 			_ripleyMode = 1020;
 			_ripleyShould = 1320;
 		} else {
