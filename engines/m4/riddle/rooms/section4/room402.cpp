@@ -70,13 +70,13 @@ void Room402::init() {
 	digi_preload("950_s21");
 	digi_preload("950_s23");
 
-	if (!_G(flags)[V018] && !_G(flags)[V117]) {
+	if (!_G(flags)[kWolfFled] && !_G(flags)[V117]) {
 		if (!_G(flags)[V110])
-			_G(flags)[V131] = 402;
+			_G(flags)[kWolfLocation] = 402;
 		else if (inv_player_has("TURTLE"))
-			_G(flags)[V131] = 408;
+			_G(flags)[kWolfLocation] = 408;
 		else
-			_G(flags)[V131] = _G(flags)[V124] ? 402 : 403;
+			_G(flags)[kWolfLocation] = _G(flags)[V124] ? 402 : 403;
 	}
 
 	if (inv_player_has("PLANK")) {
@@ -94,7 +94,7 @@ void Room402::init() {
 			hotspot_set_active("WOLF", true);
 			hotspot_set_active("TOPIARY", true);
 
-			_G(flags)[V131] = 402;
+			_G(flags)[kWolfLocation] = 402;
 			_G(flags)[V318] = 0;
 
 			_ripPaysWolfie = series_load("RIP PAYS WOLFIE");
@@ -122,7 +122,7 @@ void Room402::init() {
 				player_set_commands_allowed(true);
 			}
 
-		} else if (_G(flags)[V131] != 402) {
+		} else if (_G(flags)[kWolfLocation] != 402) {
 			hotspot_set_active("TOPIARY ", true);
 
 			switch (_G(game).previous_room) {
@@ -208,9 +208,9 @@ void Room402::init() {
 
 			case 408:
 				if (_G(flags)[V125] == 3) {
-					_G(flags)[V018] = 1;
+					_G(flags)[kWolfFled] = 1;
 					_G(flags)[V125] = 4;
-					_G(flags)[V131] = 999;
+					_G(flags)[kWolfLocation] = NOWHERE;
 
 					_wolfClipping = series_load("WOLF CLIPPING LOOP");
 					_wolfClippersDown = series_load("WOLF CLPRS DOWN TURNS POS9");
@@ -230,7 +230,7 @@ void Room402::init() {
 				} else if (_G(flags)[V117] != 0 && inv_player_has("TURTLE")) {
 					_G(flags)[V117] = 0;
 					hotspot_set_active("TOPIARY ", true);
-					_G(flags)[V131] = 408;
+					_G(flags)[kWolfLocation] = 408;
 					ws_demand_location(517, 239, 3);
 
 					_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
@@ -380,7 +380,7 @@ void Room402::daemon() {
 		ws_unhide_walker();
 		ws_demand_location(345, 275, 3);
 		ws_walk(375, 279, nullptr,
-			(_G(flags)[V131] == 402) ? 56 : 50,
+			(_G(flags)[kWolfLocation] == 402) ? 56 : 50,
 			4);
 		break;
 

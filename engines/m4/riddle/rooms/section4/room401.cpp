@@ -89,7 +89,7 @@ void Room401::init() {
 			!_G(flags)[V020] ||
 			(_G(flags)[V110] && !_G(flags)[V016]) ||
 			(_G(flags)[V017] && player_been_here(407) && !_G(flags)[V019]) ||
-			(_G(flags)[V018] && !_G(flags)[V091])
+			(_G(flags)[kWolfFled] && !_G(flags)[V091])
 		) {
 			ws_walk(346, 267, 0, 7, 3, 1);
 		} else {
@@ -767,7 +767,7 @@ void Room401::daemon() {
 		} else if (_G(flags)[V017] && player_been_here(407) &&
 				!_G(flags)[V019]) {
 			kernel_timing_trigger(30, 600);
-		} else if (_G(flags)[V018] && !_G(flags)[V091]) {
+		} else if (_G(flags)[kWolfFled] && !_G(flags)[V091]) {
 			kernel_timing_trigger(30, 700);
 		} else {
 			player_set_commands_allowed(true);

@@ -221,10 +221,10 @@ void Room404::daemon() {
 		break;
 
 	case 43:
-		if (!_G(flags)[V018] || _G(flags)[V334]) {
+		if (!_G(flags)[kWolfFled] || _G(flags)[kButlerSaidWolfFled]) {
 			player_set_commands_allowed(true);
 		} else {
-			_G(flags)[V334] = 1;
+			_G(flags)[kButlerSaidWolfFled] = 1;
 			kernel_timing_trigger(1, 44);
 		}
 		break;
