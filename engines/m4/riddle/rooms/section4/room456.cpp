@@ -38,8 +38,8 @@ void Room456::init() {
 	_G(player).walker_in_this_scene = false;
 
 	_seriesLighterChain = series_load("456 Lighter chain");
-	_seriesGrateOpens = series_load("45 GRATE OPENS");
-	_seriesCigarBoxTop = series_load("45 CIGAR BOX TOP");
+	_seriesGrateOpens = series_load("456 GRATE OPENS");
+	_seriesCigarBoxTop = series_load("456 CIGAR BOX TOP");
 
 	_lighter = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 		triggerMachineByHashCallback456, "Lighter");
@@ -146,10 +146,11 @@ void Room456::parser() {
 			hotspot_set_active("LID", false);
 			_G(flags)[V336] = 1;
 			hotspot_set_active("LID ", true);
+			hotspot_set_active("CIGAR ", true);
 			digi_play("456_s05", 2);
 			break;
 		case 2:
-			player_set_commands_allowed(false);
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
@@ -163,10 +164,11 @@ void Room456::parser() {
 			hotspot_set_active("LID", true);
 			_G(flags)[V336] = 0;
 			hotspot_set_active("LID ", false);
+			hotspot_set_active("CIGAR ", false);
 			digi_play("456_s05", 2);
 			break;
 		case 2:
-			player_set_commands_allowed(false);
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
@@ -186,7 +188,7 @@ void Room456::parser() {
 			digi_play("950_s36", 2, 255, -1, 950);
 			break;
 		case 2:
-			player_set_commands_allowed(false);
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
@@ -206,7 +208,7 @@ void Room456::parser() {
 			digi_play("950_s36", 2, 255, -1, 950);
 			break;
 		case 2:
-			player_set_commands_allowed(false);
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
@@ -304,6 +306,9 @@ void Room456::parser() {
 			break;
 		case 1:
 			digi_play("456_s07", 1, 255, 2);
+			break;
+		case 2:
+			player_set_commands_allowed(true);
 			break;
 		default:
 			break;
