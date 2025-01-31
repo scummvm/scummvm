@@ -41,16 +41,10 @@ void cmdIncrement(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	byte   varVal = vm->getVar(varNr);
 
-	if (vm->getVersion() < 0x2000) {
-		if (varVal < 0xf0) {
-			varVal++;
-			vm->setVar(varNr, varVal);
-		}
-	} else {
-		if (varVal != 0xff) {
-			varVal++;
-			vm->setVar(varNr, varVal);
-		}
+	byte maxValue = (vm->getVersion() < 0x2000) ? 0xf0 : 0xff;
+	if (varVal < maxValue) {
+		varVal++;
+		vm->setVar(varNr, varVal);
 	}
 }
 
@@ -577,7 +571,9 @@ void cmdNormalCycle(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	screenObj->cycle = kCycleNormal;
-	screenObj->flags |= fCycling;
+	if (vm->getVersion() >= 0x2000) {
+		screenObj->flags |= fCycling;
+	}
 }
 
 void cmdReverseCycle(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -585,7 +581,9 @@ void cmdReverseCycle(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	screenObj->cycle = kCycleReverse;
-	screenObj->flags |= fCycling;
+	if (vm->getVersion() >= 0x2000) {
+		screenObj->flags |= fCycling;
+	}
 }
 
 void cmdSetDir(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
