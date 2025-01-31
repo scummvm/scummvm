@@ -83,7 +83,7 @@ void Room407::init() {
 	_waterFlowStem = series_load("water flws out fauct stem surg");
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
-		if (_val5 == 1010) {
+		if (_drawerState == 1010) {
 			ws_demand_facing(9);
 			_ripMedReach = series_load("RIP TREK MED REACH POS3");
 			setGlobals1(_ripMedReach, 10, 10, 10, 10, 0, 10, 1, 1, 1);
@@ -97,7 +97,7 @@ void Room407::init() {
 				hotspot_set_active("GARDEN HOSE", true);
 			}
 
-			if (_xyzzy5 == 1101) {
+			if (_items3State == 1101) {
 				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("RUBBER PLUG", true);
 			}
@@ -111,7 +111,7 @@ void Room407::init() {
 				_handleInDrawer = series_place_sprite("407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("PUMP GRIPS", true);
 			}
-		} else if (_frotz10 == 1030) {
+		} else if (_tabletopState == 1030) {
 			_tabletopPopup = series_place_sprite("407 TABLETOP POPUP", 0, 0, 0, 100, 0x200);
 			disableHotspots();
 			hotspot_set_active(" ", true);
@@ -126,78 +126,78 @@ void Room407::init() {
 					(_val3 == 1010) ? 1 : 2,
 					0, 0, 100, 0x100);
 
-			if (_val10 == 1113)
+			if (_items4State == 1113)
 				_tabletopPopupWithItems1 = series_place_sprite(
 					"407 TABLETOP POPUP WITH ITEMS", 3, 0, 0, 100, 0x100);
 
-		} else if (_int1 == 1030) {
+		} else if (_pivotState == 1030) {
 			_pivotPopup = series_place_sprite("407 PIVOT POPUP", 0, 0, 0, 100, 0x200);
 
-			if (_val10 == 1113)
+			if (_items4State == 1113)
 				_tabletopPopupWithItems3 = series_place_sprite(
 					"407 TABLE PIVOT WITH LEVER", 0, 0, 0, 100, 0x200);
 
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int3 == 1030) {
+		} else if (_glassTopState == 1030) {
 			_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP", 0, 0, 0, 100, 0x200);
 
 			if (_val6 == 1010)
 				_glassTopPopupWithItems1 = series_place_sprite(
 					"407 GLASS TOP POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
-			else if (_xyzzy6 == 1116)
+			else if (_items1State == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int4 == 1030) {
+		} else if (_glassBottomState == 1030) {
 			_glassTopPopup = series_place_sprite("407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
-			if (_xyzzy6 == 1116)
+			if (_items1State == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
 
-			if (_xyzzy8 == 1116)
+			if (_items2State == 1116)
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-			if (_xyzzy5 == 1116)
+			if (_items3State == 1116)
 				_glassBottomWithItems2 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
 
-			if (_val10 == 1113)
+			if (_items4State == 1113)
 				_tabletopPopupWithItems3 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 5, 0, 0, 100, 0x100);
 
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int2 == 1030) {
+		} else if (_fullGlassState == 1030) {
 			_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
 				0, 0, 0, 100, 0x200);
 
-			if (_xyzzy6 == 1116)
+			if (_items1State == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 FULL GLASS POPUP", 0, 0, 0, 100, 0x100);
 
-			if (_xyzzy8 == 1116)
+			if (_items2State == 1116)
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-			if (_xyzzy5 == 1116)
+			if (_items3State == 1116)
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
 
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int5 == 1030) {
+		} else if (_roofPistonState == 1030) {
 			_roofPiston = series_place_sprite("407 ROOF PISTON/BRACE", 0, 0, 0, 100, 0x200);
 
-			if (_val10 == 1114)
+			if (_items4State == 1114)
 				_tabletopPopupWithItems3 = series_place_sprite(
 					"407 ROOF PISTON WITH ITEMS", 1, 0, 0, 100, 0x100);
 
@@ -208,12 +208,12 @@ void Room407::init() {
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int6 == 1030) {
+		} else if (_glassGoneState == 1030) {
 			_glassGone = series_place_sprite("407 GLASS GONE CU PU", 0, 0, 0, 100, 0x200);
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-		} else if (_int7 == 1030) {
+		} else if (_comboLockState == 1030) {
 			_comboLockPopup = series_place_sprite(
 				"407 COMBINATION LOCK POPUP", 0, 0, 0, 100, 0x200);
 			disableHotspots();
@@ -273,20 +273,20 @@ void Room407::init() {
 
 		_val3 = 1010;
 		_val4 = 1011;
-		_val5 = 1011;
+		_drawerState = 1011;
 		_val6 = 1011;
 		_val7 = 1020;
 		_val8 = 1100;
 		_val9 = 1100;
-		_val10 = 1112;
+		_items4State = 1112;
 		_xyzzy1 = 1115;
 		_xyzzy2 = 1101;
 		_xyzzy3 = 1101;
 		_xyzzy4 = 1101;
-		_xyzzy5 = 1101;
-		_xyzzy6 = 1112;
+		_items3State = 1101;
+		_items1State = 1112;
 		_xyzzy7 = 1112;
-		_xyzzy8 = 1116;
+		_items2State = 1116;
 		_xyzzy9 = 1118;
 		_xyzzy10 = 1040;
 		_frotz1 = 0;
@@ -298,15 +298,15 @@ void Room407::init() {
 		_frotz7 = 0;
 		_frotz8 = 0;
 		_frotz9 = 0;
-		_frotz10 = 1031;
-		_frotz10 = 1031;
-		_int1 = 1031;
-		_int2 = 1031;
-		_int3 = 1031;
-		_int4 = 1031;
-		_int5 = 1031;
-		_int6 = 1031;
-		_int7 = 1031;
+		_tabletopState = 1031;
+		_tabletopState = 1031;
+		_pivotState = 1031;
+		_fullGlassState = 1031;
+		_glassTopState = 1031;
+		_glassBottomState = 1031;
+		_roofPistonState = 1031;
+		_glassGoneState = 1031;
+		_comboLockState = 1031;
 		_buttonFrame1 = 0;
 		_buttonFrame2 = 0;
 		_buttonFrame3 = 0;
@@ -383,7 +383,7 @@ void Room407::init() {
 				break;
 			}
 
-			switch (_xyzzy5) {
+			switch (_items3State) {
 			case 1112:
 				_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xa00);
 				break;
@@ -419,7 +419,7 @@ void Room407::init() {
 				break;
 			}
 
-			switch (_val10) {
+			switch (_items4State) {
 			case 1112:
 				_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xa00);
 				break;
@@ -487,7 +487,7 @@ void Room407::init() {
 			}
 		}
 
-		switch (_xyzzy6) {
+		switch (_items1State) {
 		case 1112:
 			_chart = series_place_sprite("407CHART", 0, 0, -53, 100, 0xf00);
 			break;
@@ -546,13 +546,13 @@ void Room407::init() {
 			_407h, 29, 29, 0);
 		inv_give_to_player("EMERALD/CORK");
 
-		_xyzzy8 = 1000;
+		_items2State = 1000;
 		_frotz2 = 1;
 		_val8 = 1140;
 		_xyzzy2 = 1140;
 		_xyzzy3 = 1140;
 		_xyzzy7 = 1140;
-		_xyzzy5 = 1130;
+		_items3State = 1130;
 		_xyzzy9 = 1130;
 		_xyzzy4 = 1130;
 
@@ -570,7 +570,7 @@ void Room407::daemon() {
 
 		if (_xyzzy2 == 1101)
 			terminateMachineAndNull(_drawerPopupHose);
-		if (_xyzzy5 == 1101)
+		if (_items3State == 1101)
 			terminateMachineAndNull(_stopperInDrawer);
 		if (_xyzzy3 == 1101)
 			terminateMachineAndNull(_tubeInDrawer);
@@ -591,7 +591,7 @@ void Room407::daemon() {
 		break;
 
 	case 20:
-		if (_val10 != 1113) {
+		if (_items4State != 1113) {
 			_407tpis2 = series_load("407tpis2");
 			terminateMachineAndNull(_tpist);
 			_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
@@ -603,10 +603,10 @@ void Room407::daemon() {
 			kernel_timing_trigger(1, 90);
 		} else if (!inv_object_is_here("EMERALD/CORK")) {
 			kernel_timing_trigger(1, 50);
-		} else if (_xyzzy6 != 1116) {
-			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 70 : 50);
+		} else if (_items1State != 1116) {
+			kernel_timing_trigger(1, (_items3State == 1116) ? 70 : 50);
 		} else {
-			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 80 : 60);
+			kernel_timing_trigger(1, (_items3State == 1116) ? 80 : 60);
 		}
 		break;
 
@@ -619,10 +619,10 @@ void Room407::daemon() {
 			kernel_timing_trigger(1, 180);
 		else if (!inv_object_is_here("EMERALD/CORK"))
 			kernel_timing_trigger(1, 185);
-		else if (_xyzzy6 != 1116)
-			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 170 : 150);
+		else if (_items1State != 1116)
+			kernel_timing_trigger(1, (_items3State == 1116) ? 170 : 150);
 		else
-			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 175 : 160);
+			kernel_timing_trigger(1, (_items3State == 1116) ? 175 : 160);
 		break;
 
 	case 50:
@@ -946,7 +946,7 @@ void Room407::daemon() {
 		hotspot_set_active("EMERALD/CORK", false);
 		hotspot_set_active("PERIODIC TABLE/JAR", false);
 		hotspot_set_active("PERIODIC TABLE ", true);
-		_xyzzy6 = 1120;
+		_items1State = 1120;
 
 		midi_play("EMERALD", 255, 0, 194, 949);
 		kernel_examine_inventory_object("PING EMERALD/CORK",
@@ -967,7 +967,7 @@ void Room407::daemon() {
 
 	case 197:
 		series_unload(_ripMedHand1);
-		_xyzzy8 = 1000;
+		_items2State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -980,7 +980,7 @@ void Room407::daemon() {
 			terminateMachineAndNull(_tabletopPopupWithItems1);
 		if (_val9 == 1110)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
-		if (_val10 == 1113)
+		if (_items4State == 1113)
 			terminateMachineAndNull(_tabletopPopupWithItems3);
 
 		setHotspots();
@@ -992,7 +992,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_pivotPopup);
 
-		if (_val10 == 1113)
+		if (_items4State == 1113)
 			terminateMachineAndNull(_tabletopPopupWithItems3);
 
 		setHotspots();
@@ -1004,7 +1004,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_xyzzy6 == 1116)
+		if (_items1State == 1116)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
 		if (_val6 == 1010)
 			terminateMachineAndNull(_tabletopPopupWithItems1);
@@ -1018,11 +1018,11 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_xyzzy6 == 1116)
+		if (_items1State == 1116)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
-		if (_xyzzy8 == 1116)
+		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
-		if (_xyzzy5 == 1116)
+		if (_items3State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems2);
 
 		setHotspots();
@@ -1034,11 +1034,11 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_xyzzy6 == 1116)
+		if (_items1State == 1116)
 			terminateMachineAndNull(_glassTopPopupWithItems2);
-		if (_xyzzy8 == 1116)
+		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
-		if (_xyzzy5 == 1116)
+		if (_items3State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems2);
 		if (_val6 == 1010)
 			terminateMachineAndNull(_glassTopPopupWithItems1);
@@ -1052,7 +1052,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_roofPiston);
 
-		if (_val10 == 1114)
+		if (_items4State == 1114)
 			terminateMachineAndNull(_tabletopPopupWithItems3);
 		if (_xyzzy1 == 1114)
 			terminateMachineAndNull(_roofPistonWithItems);
@@ -1215,7 +1215,7 @@ void Room407::daemon() {
 		break;
 
 	case 322:
-		if (_xyzzy5 == 1116 && _xyzzy9 == 1116 && _xyzzy4 == 1116) {
+		if (_items3State == 1116 && _xyzzy9 == 1116 && _xyzzy4 == 1116) {
 			terminateMachineAndNull(_faucet1);
 			terminateMachineAndNull(_tubeInDrawer);
 			terminateMachineAndNull(_drawerPopupHose);
@@ -1233,7 +1233,7 @@ void Room407::daemon() {
 			sendWSMessage_10000(1, _niche, _407h, 1, 29, 330, _407h, 29, 29, 0);
 			digi_play("407_s21", 2);
 		} else {
-			if (_xyzzy5 == 1116) {
+			if (_items3State == 1116) {
 				_jarWaterFallingLeft = series_load("407 JAR WATER FALLING LEFT");
 				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 					triggerMachineByHashCallback, "407 JAR WATER FALLING LEFT");
@@ -1269,7 +1269,7 @@ void Room407::daemon() {
 		digi_preload("407r37");
 		digi_play("407r37", 1, 255, 666);
 		_frotz2 = 1;
-		_xyzzy5 = 1130;
+		_items3State = 1130;
 		_xyzzy9 = 1130;
 		_xyzzy4 = 1130;
 
@@ -1296,7 +1296,7 @@ void Room407::daemon() {
 
 	case 344:
 		if (!_frotz2) {
-			if (_xyzzy5 != 1115)
+			if (_items3State != 1115)
 				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 20, 35, 350,
 					_jarWaterFallingLeft, 35, 35, 0);
 			if (_xyzzy9 != 1116)
@@ -1341,7 +1341,7 @@ void Room407::daemon() {
 		break;
 
 	case 360:
-		_int7 = 1031;
+		_comboLockState = 1031;
 		digi_preload("407_s24");
 		digi_preload("407_s27");
 		digi_preload("407_s27a");
@@ -1673,76 +1673,76 @@ void Room407::pre_parser() {
 			_val15 = 1031;
 			kernel_timing_trigger(1, 216, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_val5 == 1010) {
+	} else if (_drawerState == 1010) {
 		_G(player).resetWalk();
 
 		if (player_said(" ") || (lookFlag && player_said("MESSAGE LOG"))) {
 			intr_cancel_sentence();
-			_val5 = 1011;
+			_drawerState = 1011;
 			kernel_timing_trigger(1, 10, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_frotz10 == 1030) {
+	} else if (_tabletopState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_frotz10 = 1031;
+			_tabletopState = 1031;
 			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int1 == 1030) {
+	} else if (_pivotState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int1 = 1031;
+			_pivotState = 1031;
 			kernel_timing_trigger(1, 202, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int3 == 1030) {
+	} else if (_glassTopState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int3 = 1031;
+			_glassTopState = 1031;
 			kernel_timing_trigger(1, 204, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int4 == 1030) {
+	} else if (_glassBottomState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int4 = 1031;
+			_glassBottomState = 1031;
 			kernel_timing_trigger(1, 206, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int2 == 1030) {
+	} else if (_fullGlassState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int2 = 1031;
+			_fullGlassState = 1031;
 			kernel_timing_trigger(1, 208, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int5 == 1030) {
+	} else if (_roofPistonState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int5 = 1031;
+			_roofPistonState = 1031;
 			kernel_timing_trigger(1, 210, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int6 == 1030) {
+	} else if (_glassGoneState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int6 = 1031;
+			_glassGoneState = 1031;
 			kernel_timing_trigger(1, 212, KT_DAEMON, KT_PARSE);
 		}
-	} else if (_int7 == 1030) {
+	} else if (_comboLockState == 1030) {
 		_G(player).resetWalk();
 
 		if (player_said(" ")) {
 			intr_cancel_sentence();
-			_int7 = 1031;
+			_comboLockState = 1031;
 			kernel_timing_trigger(1, 214, KT_DAEMON, KT_PARSE);
 		}
 	} else if (_val16 == 1030) {
@@ -1938,17 +1938,17 @@ void Room407::parser() {
 	} else if (player_said("CORK", "GLASS JAR ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
 		corkGlassJar2();
-	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _xyzzy6 == 1000) {
+	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _items1State == 1000) {
 		periodicTableGlassJar();
 	} else if (player_said("SURGICAL TUBE", "NOZZLES") && _xyzzy3 == 1000) {
 		surgicalTubeNozzles();
-	} else if (player_said("LEVER KEY", "TABLE PIVOT") && _val10 == 1000) {
+	} else if (player_said("LEVER KEY", "TABLE PIVOT") && _items4State == 1000) {
 		leverKeyTablePivot();
 	} else if (player_said("PUMP ROD", "BRACKET") && _xyzzy1 == 1000) {
 		pumpRodBracket();
 	} else if ((player_said("LEVER KEY", "BRACKET") ||
 			player_said("LEVER KEY", "PUMP ROD ")) ||
-			_val10 == 1000) {
+			_items4State == 1000) {
 		if (_xyzzy1 == 1114)
 			leverKey1();
 		else
@@ -1965,7 +1965,7 @@ void Room407::parser() {
 			player_said("FAUCET PIPE/TUBE", "FAUCET STEM") ||
 			player_said("FAUCET PIPE/TUBE", "FAUCET HANDLE") ||
 			player_said("FAUCET PIPE/TUBE", "SINK") ||
-			player_said("FAUCET PIPE", "SINK")) ||
+			player_said("FAUCET PIPE", "SINK")) &&
 			_xyzzy3 != 1130) {
 		faucetPipeFaucetHandle2();
 	} else if (player_said("FAUCET HANDLE", "FAUCET STEM") && _val9 == 1000) {
@@ -2007,19 +2007,19 @@ void Room407::parser() {
 	} else if (useFlag && player_said("BUTTONS")) {
 		useButtons();
 	} else if (useFlag && player_said("LEVER KEY  ") &&
-			_val10 == 1114 && _xyzzy7 != 1114 && _xyzzy7 != 1140) {
+			_items4State == 1114 && _xyzzy7 != 1114 && _xyzzy7 != 1140) {
 		useLeverKey();
 	} else if (useFlag && player_said_any("FAUCET HANDLE", "FAUCET STEM") &&
-			_val10 == 1100 && inv_object_is_here("FAUCET HANDLE")) {
+			_items4State == 1100 && inv_object_is_here("FAUCET HANDLE")) {
 		if (_frotz2) {
 			digi_play("407r99e", 1);
 		} else if (_val8 == 1100) {
-			if (_xyzzy6 == 1120)
+			if (_items1State == 1120)
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
 		} else if (_xyzzy3 == 1130 && _val8 != 1130) {
-			if (_xyzzy6 == 1120)
+			if (_items1State == 1120)
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
@@ -2051,7 +2051,7 @@ void Room407::parser() {
 			break;
 
 		case 1:
-			_val5 = 1010;
+			_drawerState = 1010;
 			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
 			hotspot_set_active(" ", true);
 
@@ -2060,7 +2060,7 @@ void Room407::parser() {
 				hotspot_set_active("GARDEN HOSE", true);
 			}
 
-			if (_xyzzy5 == 1101) {
+			if (_items3State == 1101) {
 				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER",
 					0, 0, 0, 100, 0x100);
 				hotspot_set_active("RUBBER PLUG", true);
@@ -2112,7 +2112,7 @@ void Room407::parser() {
 	} else if (takeFlag && player_said("GLASS JAR") &&
 			_val6 == 1010 && _xyzzy7 == 1112) {
 		takeGlassJar2();
-	} else if (takeFlag && player_said("PERIODIC TABLE") && _xyzzy6 == 1112) {
+	} else if (takeFlag && player_said("PERIODIC TABLE") && _items1State == 1112) {
 		takePeriodicTable1();
 	} else if (takeFlag && player_said("PERIODIC TABLE ")) {
 		takePeriodicTable2();
@@ -2130,11 +2130,11 @@ void Room407::parser() {
 		takeJarRubberPlug1();
 	} else if (takeFlag && player_said("JAR/RUBBER PLUG ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140) &&
-			_xyzzy5 == 1116) {
+			_items3State == 1116) {
 		takeJarRubberPlug2();
 	} else if (takeFlag && player_said("NOZZLES/TUBE")) {
 		takeNozzlesTube();
-	} else if (takeFlag && player_said("LEVER KEY") && _val10 == 1112) {
+	} else if (takeFlag && player_said("LEVER KEY") && _items4State == 1112) {
 		takeLeverKey1();
 	} else if (takeFlag && player_said("LEVER KEY ")) {
 		takeLeverKey2();
@@ -2148,12 +2148,12 @@ void Room407::parser() {
 		takePumpRod1();
 	} else if (takeFlag && player_said("PUMP ROD ") &&
 		_xyzzy7 != 1114 && _xyzzy7 != 1140) {
-		if (_val10 == 1114)
+		if (_items4State == 1114)
 			takePumpRod2();
 		else
 			takePumpRod3();
 	} else if (takeFlag && player_said("LEVER KEY  ")) {
-		if (_val10 != 1114 || _xyzzy7 == 1114 || _xyzzy7 == 1140)
+		if (_items4State != 1114 || _xyzzy7 == 1114 || _xyzzy7 == 1140)
 			digi_play("com129", 1);
 		else
 			takeLeverKey3();
@@ -2285,7 +2285,7 @@ void Room407::parser() {
 		case 2:
 			_xyzzy7 = 1056;
 			_xyzzy9 = 1116;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			_xyzzy4 = 1116;
 			inv_move_object("JAR/PLUG/GRIPS", 407);
 			inv_move_object("JAR/CORK/PLUG", 407);
@@ -2310,7 +2310,7 @@ void Room407::parser() {
 		case 2:
 			_xyzzy7 = 1053;
 			_xyzzy9 = 1116;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			inv_move_object("JAR/CORK", 407);
 			inv_move_object("RUBBER PLUG", 407);
@@ -2353,7 +2353,7 @@ void Room407::parser() {
 			break;
 		case 2:
 			_xyzzy7 = 1055;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			_xyzzy4 = 1116;
 			inv_move_object("JAR/GRIPS", 407);
 			inv_move_object("JAR/RUBBER PLUG", 407);
@@ -2402,7 +2402,7 @@ void Room407::parser() {
 			break;
 		}
 	} else if (player_said("GLASS JAR", "RUBBER PLUG") &&
-			_xyzzy7 == 1000 && _xyzzy5 == 1000) {
+			_xyzzy7 == 1000 && _items3State == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING JAR/RUBBER PLUG",
@@ -2410,7 +2410,7 @@ void Room407::parser() {
 			break;
 		case 2:
 			_xyzzy7 = 1050;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			inv_move_object("GLASS JAR", 407);
 			inv_move_object("RUBBER PLUG", 407);
 			inv_give_to_player("JAR/RUBBER PLUG");
@@ -2420,14 +2420,14 @@ void Room407::parser() {
 			break;
 		}
 	} else if (player_said("LEVER KEY", "PUMP ROD") &&
-			_val10 == 1000 && _xyzzy1 == 1000) {
+			_items4State == 1000 && _xyzzy1 == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING LEVER KEY/PUMP ROD",
 				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
 			break;
 		case 2:
-			_val10 = 1041;
+			_items4State = 1041;
 			_xyzzy1 = 1041;
 			_xyzzy10 = 1041;
 			inv_move_object("LEVER KEY", 407);
@@ -2470,7 +2470,7 @@ void Room407::parser() {
 		_xyzzy7 = 1000;
 		_xyzzy9 = 1000;
 		_xyzzy4 = 1000;
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		inv_move_object("JAR/PLUG/CORK/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("PUMP GRIPS");
@@ -2479,7 +2479,7 @@ void Room407::parser() {
 	} else if (useFlag && player_said("JAR/CORK/PLUG") && _xyzzy7 == 1053) {
 		_xyzzy7 = 1000;
 		_xyzzy9 = 1000;
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		inv_move_object("JAR/CORK/PLUG", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("RUBBER PLUG");
@@ -2494,7 +2494,7 @@ void Room407::parser() {
 		inv_give_to_player("CORK");
 	} else if (useFlag && player_said("JAR/PLUG/GRIPS") && _xyzzy7 == 1054) {
 		_xyzzy7 = 1000;
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		_xyzzy4 = 1000;
 		inv_move_object("JAR/PLUG/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
@@ -2514,12 +2514,12 @@ void Room407::parser() {
 		inv_give_to_player("CORK");
 	} else if (useFlag && player_said("JAR/RUBBER PLUG") && _xyzzy7 == 1050) {
 		_xyzzy7 = 1000;
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		inv_move_object("JAR/RUBBER PLUG", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("RUBBER PLUG");
 	} else if (useFlag && player_said("LEVER KEY/PUMP ROD") && _xyzzy10 == 1041) {
-		_val10 = 1000;
+		_items4State = 1000;
 		_xyzzy1 = 1000;
 		_xyzzy10 = 1040;
 		inv_move_object("LEVER KEY/PUMP ROD", 407);
@@ -2527,7 +2527,7 @@ void Room407::parser() {
 		inv_give_to_player("PUMP ROD");
 	} else if (useFlag && player_said("EMERALD/CORK") &&
 			inv_player_has("EMERALD/CORK")) {
-		_xyzzy8 = 1000;
+		_items2State = 1000;
 		_xyzzy9 = 1000;
 		inv_move_object("EMERALD/CORK", NOWHERE);
 		inv_give_to_player("ROMANOV EMERALD");
@@ -2547,21 +2547,21 @@ void Room407::setHotspots() {
 
 	hotspot_set_active(" ", true);
 
-	if (_val5 == 1010) {
+	if (_drawerState == 1010) {
 		if (_xyzzy2 == 1101)
 			hotspot_set_active("GARDEN HOSE", true);
-		if (_xyzzy5 == 1101)
+		if (_items3State == 1101)
 			hotspot_set_active("RUBBER PLUG", true);
 		if (_xyzzy3 == 1101)
 			hotspot_set_active("SURGICAL TUBE", true);
 		if (_xyzzy4 == 1101)
 			hotspot_set_active("PUMP GRIPS", true);
 
-	} else if (_frotz10 == 1030 || _int1 == 1030 ||
-			_int3 == 1030 || _int4 == 1030 || _int2 == 1030 ||
-			_int5 == 1030 || _int6 == 1030) {
+	} else if (_tabletopState == 1030 || _pivotState == 1030 ||
+			_glassTopState == 1030 || _glassBottomState == 1030 || _fullGlassState == 1030 ||
+			_roofPistonState == 1030 || _glassGoneState == 1030) {
 		// No implementation
-	} else if (_int7 == 1030) {
+	} else if (_comboLockState == 1030) {
 		hotspot_set_active("BUTTON", true);
 		hotspot_set_active("BUTTON ", true);
 		hotspot_set_active("BUTTON  ", true);
@@ -2593,32 +2593,32 @@ void Room407::setHotspots() {
 			hotspot_set_active("AIR VALVE/HANDLE", false);
 		if (_val9 != 1110)
 			hotspot_set_active("AIR VALVE", false);
-		if (_val10 != 1112)
+		if (_items4State != 1112)
 			hotspot_set_active("LEVER KEY", false);
-		if (_val10 != 1113)
+		if (_items4State != 1113)
 			hotspot_set_active("LEVER KEY ", false);
-		if (_val10 != 1114)
+		if (_items4State != 1114)
 			hotspot_set_active("LEVER KEY  ", false);
-		if (_val10 != 1117)
+		if (_items4State != 1117)
 			hotspot_set_active("NOZZLES/TUBE", false);
 		if (_xyzzy3 != 1117)
 			hotspot_set_active("NOZZLES", false);
-		if (_xyzzy6 != 1112)
+		if (_items1State != 1112)
 			hotspot_set_active("PERIODIC TABLE", false);
-		if (_xyzzy6 != 1116)
+		if (_items1State != 1116)
 			hotspot_set_active("PERIODIC TABLE/JAR", false);
-		if (_xyzzy6 != 1120)
+		if (_items1State != 1120)
 			hotspot_set_active("PERIODIC TABLE ", false);
 
 		if (inv_object_is_here("EMERALD/CORK"))
 			hotspot_set_active("EMERALD/CORK", false);
 
 		if (_xyzzy7 == 1112) {
-			if (_xyzzy5 != 1116)
+			if (_items3State != 1116)
 				hotspot_set_active("JAR/RUBBER PLUG", false);
 			if (_xyzzy9 != 1116)
 				hotspot_set_active("JAR/CORK", false);
-			if (_xyzzy8 != 1116)
+			if (_items2State != 1116)
 				hotspot_set_active("EMERALD PIN/CORK", false);
 		} else {
 			hotspot_set_active("GLASS JAR", false);
@@ -2633,7 +2633,7 @@ void Room407::setHotspots() {
 			hotspot_set_active("GLASS JAR ", false);
 			hotspot_set_active("JAR/RUBBER PLUG ", false);
 		} else {
-			if (_xyzzy5 != 1116 && _xyzzy5 != 1130)
+			if (_items3State != 1116 && _items3State != 1130)
 				hotspot_set_active("JAR/RUBBER PLUG ", false);
 			if (_xyzzy9 != 1116 && _xyzzy9 != 1130)
 				hotspot_set_active("JAR/CORK ", false);
@@ -2726,11 +2726,11 @@ void Room407::useMicroscope() {
 
 void Room407::roofPistonPopup() {
 	if (_G(kernel).trigger == -1) {
-		_int5 = 1030;
+		_roofPistonState = 1030;
 		_roofPiston = series_place_sprite("407 ROOF PISTON/BRACE",
 			0, 0, 0, 100, 0x200);
 
-		if (_val10 == 1114) {
+		if (_items4State == 1114) {
 			_tabletopPopupWithItems3 = series_place_sprite(
 				"407 ROOF PISTON WITH ITEMS", 1, 0, 0, 100, 0x100);
 		}
@@ -2747,23 +2747,23 @@ void Room407::roofPistonPopup() {
 
 void Room407::glassBottomPopup() {
 	if (_G(kernel).trigger == -1) {
-		_int4 = 1030;
+		_glassBottomState = 1030;
 		_glassTopPopup = series_place_sprite(
 			"407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
-		if (_xyzzy6 == 1116)
+		if (_items1State == 1116)
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
 
-		if (_xyzzy8 == 1116)
+		if (_items2State == 1116)
 			_glassBottomWithItems1 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-		if (_xyzzy5 == 1116)
+		if (_items3State == 1116)
 			_glassBottomWithItems2 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
 
-		if (_val10 == 1113)
+		if (_items4State == 1113)
 			_tabletopPopupWithItems3 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
@@ -2774,7 +2774,7 @@ void Room407::glassBottomPopup() {
 
 void Room407::glassTopPopup() {
 	if (_G(kernel).trigger == -1) {
-		_int3 = 1030;
+		_glassTopState = 1030;
 		_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP",
 			0, 0, 0, 100, 0x200);
 
@@ -2785,7 +2785,7 @@ void Room407::glassTopPopup() {
 			if (!player_said("SMALL GEAR WHEEL"))
 				digi_play("407r66a", 1);
 
-		} else if (_xyzzy6 == 1116) {
+		} else if (_items1State == 1116) {
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -2801,7 +2801,7 @@ void Room407::glassTopPopup() {
 
 void Room407::glassGonePopup() {
 	if (_G(kernel).trigger == -1) {
-		_int6 = 1030;
+		_glassGoneState = 1030;
 		_glassGone = series_place_sprite("407 GLASS GONE CU PU",
 			0, 0, 0, 100, 0x200);
 		disableHotspots();
@@ -2812,11 +2812,11 @@ void Room407::glassGonePopup() {
 
 void Room407::pivotPopup() {
 	if (_G(kernel).trigger == -1) {
-		_int1 = 1030;
+		_pivotState = 1030;
 		_pivotPopup = series_place_sprite("407 PIVOT POPUP",
 			0, 0, 0, 100, 0x200);
 
-		if (_val10 == 1113)
+		if (_items4State == 1113)
 			_tabletopPopupWithItems3 = series_place_sprite(
 				"407 TABLE PIVOT WITH LEVER", 0, 0, 0, 100, 0x200);
 
@@ -2828,7 +2828,7 @@ void Room407::pivotPopup() {
 
 void Room407::tabletopPopup() {
 	if (_G(kernel).trigger == -1) {
-		_frotz10 = 1030;
+		_tabletopState = 1030;
 		_tabletopPopup = series_place_sprite("407 TABLETOP POPUP",
 			0, 0, 0, 100, 0x200);
 		disableHotspots();
@@ -2843,7 +2843,7 @@ void Room407::tabletopPopup() {
 				"407 TABLETOP POPUP WITH ITEMS",
 				(_val3 == 1010) ? 1 : 2, 0, 0, 100, 0x100);
 
-		if (_val10 == 1113)
+		if (_items4State == 1113)
 			_tabletopPopupWithItems3 = series_place_sprite(
 				"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -2883,19 +2883,19 @@ bool Room407::lookGlassJar() {
 
 void Room407::fullglassPopup() {
 	if (_G(kernel).trigger == -1) {
-		_int2 = 1030;
+		_fullGlassState = 1030;
 		_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
 			0, 0, 0, 100, 0x200);
 
-		if (_xyzzy6 == 1116)
+		if (_items1State == 1116)
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
-		if (_xyzzy8 == 1116)
+		if (_items2State == 1116)
 			_glassBottomWithItems1 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-		if (_xyzzy5 == 1116)
+		if (_items3State == 1116)
 			_glassBottomWithItems2 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
 
@@ -3180,7 +3180,7 @@ void Room407::reachLeverKey() {
 
 		switch (_xyzzy7) {
 		case 1050:
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			_stopperInDrawer = series_place_sprite(
@@ -3203,7 +3203,7 @@ void Room407::reachLeverKey() {
 
 		case 1053:
 			_xyzzy9 = 1116;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/CORK ", true);
 			inv_move_object("JAR/CORK/PLUG", 407);
@@ -3213,7 +3213,7 @@ void Room407::reachLeverKey() {
 
 		case 1054:
 			_xyzzy4 = 1116;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
 			inv_move_object("JAR/PLUG/GRIPS", 407);
@@ -3234,7 +3234,7 @@ void Room407::reachLeverKey() {
 		case 1056:
 			_xyzzy9 = 1116;
 			_xyzzy4 = 1116;
-			_xyzzy5 = 1116;
+			_items3State = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/CORK ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
@@ -3495,7 +3495,7 @@ void Room407::placeLeverKey() {
 		hotspot_set_active("LEVER KEY  ", true);
 		hotspot_set_active("PUMP ROD ", true);
 		inv_move_object("LEVER KEY/PUMP ROD", 407);
-		_val10 = 1114;
+		_items4State = 1114;
 		_xyzzy1 = 1114;
 		_xyzzy10 = 1040;
 		series_unload(_placeLeverKey);
@@ -3526,7 +3526,7 @@ void Room407::rubberPlugGlassJar() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		_xyzzy5 = 1116;
+		_items3State = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3557,7 +3557,7 @@ void Room407::rubberPlugGlassJar2() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy5 = 1116;
+		_items3State = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3585,7 +3585,7 @@ void Room407::corkGlassJar() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		_xyzzy5 = 1116;
+		_items3State = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3616,7 +3616,7 @@ void Room407::corkGlassJar2() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy5 = 1116;
+		_items3State = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3693,7 +3693,7 @@ void Room407::periodicTableGlassJar() {
 		series_unload(_rollStuff);
 		inv_move_object("PERIODIC TABLE", 407);
 		hotspot_set_active("PERIODIC TABLE/JAR", true);
-		_xyzzy6 = 1116;
+		_items1State = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3756,7 +3756,7 @@ void Room407::leverKeyTablePivot() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		_val10 = 1113;
+		_items4State = 1113;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3845,7 +3845,7 @@ void Room407::leverKey1() {
 		_lever = series_place_sprite("407LEVRW", 1, 0, -53, 100, 0xf00);
 		hotspot_set_active("LEVER KEY  ", true);
 		inv_move_object("LEVER KEY", 407);
-		_val10 = 1114;
+		_items4State = 1114;
 
 		series_unload(_407rp98);
 		player_set_commands_allowed(true);
@@ -4249,7 +4249,7 @@ void Room407::checkCode() {
 void Room407::useButtons() {
 	if (_G(kernel).trigger == -1) {
 		player_set_commands_allowed(false);
-		_int7 = 1030;
+		_comboLockState = 1030;
 		_comboLockPopup = series_place_sprite("407 COMBINATION LOCK POPUP",
 			0, 0, 0, 100, 0x200);
 		disableHotspots();
@@ -5041,11 +5041,11 @@ void Room407::takeGlassJar1() {
 		inv_give_to_player("GLASS JAR");
 		hotspot_set_active("GLASS JAR ", false);
 
-		if (_xyzzy5 == 1116) {
+		if (_items3State == 1116) {
 			terminateMachineAndNull(_stopperInDrawer);
 			inv_give_to_player("RUBBER PLUG");
 			hotspot_set_active("JAR/RUBBER PLUG ", false);
-			_xyzzy5 = 1000;
+			_items3State = 1000;
 		}
 
 		if (_xyzzy4 == 1116) {
@@ -5099,11 +5099,11 @@ void Room407::takeGlassJar2() {
 		inv_give_to_player("GLASS JAR");
 		hotspot_set_active("GLASS JAR", false);
 
-		if (_xyzzy5 == 1116) {
+		if (_items3State == 1116) {
 			terminateMachineAndNull(_stopperInDrawer);
 			inv_give_to_player("RUBBER PLUG");
 			hotspot_set_active("JAR/RUBBER PLUG", false);
-			_xyzzy5 = 1000;
+			_items3State = 1000;
 		}
 
 		if (_xyzzy9 == 1116) {
@@ -5163,7 +5163,7 @@ void Room407::takePeriodicTable1() {
 
 	case 5:
 		series_unload(_rptmhr11);
-		_xyzzy6 = 1000;
+		_items1State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5196,7 +5196,7 @@ void Room407::takePeriodicTable2() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy6 = 1000;
+		_items1State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5334,7 +5334,7 @@ void Room407::takeJarRubberPlug1() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5370,7 +5370,7 @@ void Room407::takeJarRubberPlug2() {
 
 	case 5:
 		series_unload(_ripHiHand1);
-		_xyzzy5 = 1000;
+		_items3State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5439,7 +5439,7 @@ void Room407::takeLeverKey1() {
 
 	case 4:
 		series_unload(_ripMedReach);
-		_val10 = 1000;
+		_items4State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5472,7 +5472,7 @@ void Room407::takeLeverKey2() {
 
 	case 4:
 		series_unload(_ripMedReach);
-		_val10 = 1000;
+		_items4State = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5524,7 +5524,7 @@ void Room407::takeLeverKey3() {
 		_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xf00);
 		hotspot_set_active("LEVER KEY  ", false);
 		inv_give_to_player("LEVER KEY");
-		_val10 = 1000;
+		_items4State = 1000;
 
 		series_unload(_407rp98);
 		player_set_commands_allowed(true);
@@ -5709,7 +5709,7 @@ void Room407::takePumpRod2() {
 		hotspot_set_active("LEVER KEY  ", false);
 		hotspot_set_active("PUMP ROD ", false);
 		inv_give_to_player("PUMP ROD");
-		_val10 = 1000;
+		_items4State = 1000;
 		_xyzzy1 = 1000;
 		series_unload(_placeLeverKey);
 		player_set_commands_allowed(true);
