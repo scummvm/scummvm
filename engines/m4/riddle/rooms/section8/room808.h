@@ -51,6 +51,10 @@ private:
 	int32 _dword1A1960_rand4 = 0;
 	int32 _dword1A1964_facing = 0;
 
+	const char *_posMachName = nullptr;
+	int32 _posMachFrameNum = 0;
+	int32 _posMachIndex = 0;
+
 	int32 _807Rp04Series = 0;
 	int32 _808McupSeries = 0;
 	int32 _808Rp01Series = 0;
@@ -70,10 +74,7 @@ private:
 	machine *_808PosMach = nullptr;
 	machine *_808RipFallShovelNearSideMach = nullptr;
 	machine *_mcTrekMach = nullptr;
-
-	const char *_posMachName = nullptr;
-	int32 _posMachFrameNum = 0;
-	int32 _posMachIndex = 0;
+	machine *_safariShadowMach = nullptr;
 };
 
 } // namespace Rooms

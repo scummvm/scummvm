@@ -621,6 +621,86 @@ void Room808::parser() {
 		return;
 
 	case 2:
+		if (player_said("FARMER'S SHOVEL   ")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_808PosMach);
+				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 3, 100, 0, 0);
+				_808RipFallShovelNearSideMach = series_play("808rp07", 1, 18, 10, 5, 0, 100, 0, 0, 0, -1);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_safariShadowMach = series_place_sprite(SAFARI_SHADOWS_2[_G(player_info).facing], 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 257);
+
+				break;
+
+			case 10:
+				inv_give_to_player("FARMER'S SHOVEL");
+				hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", false);
+				kernel_examine_inventory_object("PING FARMER'S SHOVEL", _G(master_palette), 5, 1, 125, 125, 20, nullptr, -1);
+
+				break;
+
+			case 20:
+				player_set_commands_allowed(true);
+				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachine(_safariShadowMach);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 2);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if ((player_said("FARMER'S SHOVEL") && inv_object_in_scene("FARMER'S SHOVEL", 808)) || player_said_any("FARMER'S SHOVEL ", "FARMER'S SHOVEL  ", "FARMER'S SHOVEL    ")) {
+			digi_play("808r31", 1, 255, -1, -1);
+		} else if (player_said("crank")) {
+			if (_G(flags[V100])) {
+				switch (_G(kernel).trigger) {
+				case -1:
+					if (!inv_object_in_scene("crank", 808)) {
+						_G(player).command_ready = true;
+						return;
+					}
+
+					player_set_commands_allowed(false);
+					setGlobals3(_ripMedReach1HandPos2Series, 1, 17);
+					sendWSMessage_3840000(_G(my_walker), 10);
+
+					break;
+
+				case 10:
+					inv_give_to_player("CRANK");
+					kernel_examine_inventory_object("PING CRANK", _G(master_palette), 5, 1, 280, 85, 20, nullptr, -1);
+
+					break;
+
+				case 20:
+					terminateMachine(_808HandleSpriteMach);
+					setGlobals3(_ripMedReach1HandPos2Series, 17, 1);
+					sendWSMessage_3840000(_G(my_walker), 30);
+
+					break;
+
+				case 30:
+					player_set_commands_allowed(true);
+					inv_give_to_player("crank");
+					hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+					hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+					ws_demand_facing(_G(my_walker), 10);
+
+					break;
+
+				default:
+					break;
+				}
+			}
+		} else
+			break;
+
+		return;
+
 	case 3:
 		break;
 
