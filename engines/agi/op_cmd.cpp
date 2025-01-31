@@ -2297,6 +2297,14 @@ void cmdNewRoomVV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(13, 1);
 }
 
+void cmdNearWater(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	byte limit = parameter[0];
+	byte varNr = parameter[1];
+
+	byte distance = vm->egoNearWater(limit);
+	vm->setVar(varNr, distance);
+}
+
 void cmdSetBit(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 bit = parameter[0];
 	uint16 varNr = parameter[1];

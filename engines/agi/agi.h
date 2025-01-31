@@ -900,6 +900,8 @@ public:
 	void fixPosition(ScreenObjEntry *screenObj);
 	void updatePosition();
 	int getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize);
+	byte egoNearWater(byte limit);
+	int16 nearWater(ScreenObjEntry &screenObj, byte direction, int16 x, int16 y, byte limit);
 
 	bool _keyHoldMode;
 	Common::KeyCode _keyHoldModeLastKey;

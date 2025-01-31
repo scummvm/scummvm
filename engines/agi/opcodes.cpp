@@ -147,7 +147,7 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "normal.cycle",       "n",        &cmdNormalCycle },      // 5C
 	{ "load.view",          "n",        &cmdLoadView },         // 5D duplicate opcode: same table entry as 09
 	{ "...",                "n",        &cmdUnknown },          // 5E nop, 1 arg
-	{ "...",                "",         &cmdUnknown },          // 5F BC script 102 when attempting to fill flask
+	{ "near.water",         "nv",       &cmdNearWater },        // 5F BC script 102 when attempting to fill flask
 	{ "set.bit",            "nv",       &cmdSetBit },           // 60
 	{ "clear.bit",          "nv",       &cmdClearBit },         // 61
 	{ "set.upper.left",     "nn",       &cmdSetUpperLeft }      // 62 BC Apple II
