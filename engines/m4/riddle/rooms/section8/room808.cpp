@@ -709,13 +709,220 @@ void Room808::parser() {
 			conv_play(conv_get_handle());
 		} else if (_G(flags[V097]) == 0) {
 			switch (_G(kernel).trigger) {
-				// TODO not implemented yet
+			case -1:
+				player_set_commands_allowed(false);
+				setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					digi_play("com034", 1, 255, 10, 997);
+					break;
+
+				case 2:
+					digi_play("com035", 1, 255, 10, 997);
+					break;
+
+				case 3:
+					digi_play("com036", 1, 255, 10, 997);
+					break;
+
+				case 4:
+				default:
+					digi_play("com037", 1, 255, 10, 997);
+					break;
+				}
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				sendWSMessage_150000(_G(my_walker), -1);
+
+				switch (_G(kernel).trigger) {
+				case 1:
+					digi_play("com038", 1, 255, -1, 997);
+					break;
+
+				case 2:
+					digi_play("com039", 1, 255, -1, 997);
+					break;
+
+				case 3:
+					digi_play("com040", 1, 255, -1, 997);
+					break;
+
+				case 4:
+				default:
+					digi_play("com041", 1, 255, -1, 997);
+					break;
+				}
+
+				break;
+
 			default:
 				break;
 			}
 		} else if (_G(flags[V097]) == 1 && inv_object_in_scene("crank", 808) && _G(flags[V100]) == 0) {
 			switch (_G(kernel).trigger) {
-				// TODO not implemented yet
+			case -1:
+				ws_turn_to_face(_G(my_walker), 1, 5);
+				break;
+
+			case 5:
+				player_set_commands_allowed(false);
+				if (_G(flags[V099]) == 0) {
+					_G(flags[V099]) = 1;
+					digi_play("808r26", 1, 255, 10, -1);
+				} else {
+					digi_play("808r27", 1, 255, 10, -1);
+				}
+
+				break;
+
+			case 10:
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(320, 122, -1);
+				ws_custom_walk(_mcTrekMach, 10, 20, true);
+
+				break;
+
+			case 20:
+				ws_hide_walker(_mcTrekMach);
+				if (_G(flags[V098]) == 0)
+					terminateMachine(_808HandleSpriteMach);
+
+				if (_G(flags[V094]) == 1 || _G(flags[V094]) == 2 || _G(flags[V094]) == 3) {
+					series_load("808 bolt going in and out", -1, nullptr);
+					series_play("808 mei chen cranks handle", 1536, 0, 30, 5, 0, 100, 0, 0, 0, 14);
+				} else if (_G(flags[V094]) == 4 || (_G(flags[V094]) == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
+					series_play("808 mei chen cranks handle", 1536, 0, 21, 5, 0, 100, 0, 0, 0, 12);
+				} else {
+					series_play("808 mei chen cranks handle", 1536, 0, 40, 5, 0, 100, 0, 0, 0, 7);
+				}
+
+				digi_preload("808_s10", -1);
+
+				break;
+
+			case 21:
+				series_play("808 mei chen cranks handle", 1536, 0, 22, 5, 0, 100, 0, 0, 13, 24);
+				digi_play("808_s10", 2, 255, -1, -1);
+				break;
+
+			case 22:
+				_808RipFallShovelNearSideMach = series_play("808 mei chen cranks handle", 1536, 16, -1, 5, 0, 100, 0, 0, 25, 29);
+				digi_play("808_s09", 2, 255, -1, -1);
+				kernel_timing_trigger(60, 26, nullptr);
+
+				break;
+
+			case 26:
+				terminateMachine(_808RipFallShovelNearSideMach);
+				series_play("808 mei chen cranks handle", 1536, 2, 38, 5, 0, 100, 0, 0, 8, 29);
+				digi_play("808_s10", 2, 255, -1, -1);
+
+				break;
+
+			case 30:
+				if (_G(flags[V098]) == 0) {
+					terminateMachine(_808HandleSpriteMach);
+				}
+
+				_808RipFallShovelNearSideMach = series_play("808 mei chen cranks handle", 1536, 16, 35, 5, 0, 100, 0, 0, 15, 47);
+				_safariShadowMach = series_play("808 bolt going in and out", 0, 16, -1, 15, 0, 100, 0, 0, 0, -1);
+				_G(flags[V279]) = 1;
+				digi_play("808_s07", 2, 255, -1, -1);
+				digi_play("808_s10", 1, 255, -1, -1);
+
+				break;
+
+			case 35:
+				kernel_timing_trigger(45, 37, "bolt showing");
+				digi_stop(1);
+
+				break;
+
+			case 37:
+				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachine(_safariShadowMach);
+				series_play("808 mei chen cranks handle", 1536, 2, 38, 5, 0, 100, 0, 0, 8, 47);
+				series_play("808 bolt going in and out", 0, 2, -1, 15, 0, 100, 0, 0, 0, -1);
+				digi_play("808_s08", 2, 255, -1, -1);
+				digi_play("808_s10", 1, 255, -1, -1);
+
+				break;
+
+			case 38:
+				_808HandleSpriteMach = series_show("808 handle sprite", 4095, 0, -1, -1, 0, 100, 0, 0);
+				series_play("808 mei chen cranks handle", 1536, 2, 39, 5, 0, 100, 0, 0, 0, 7);
+				digi_stop(1);
+				digi_stop(2);
+
+				break;
+
+			case 39:
+				ws_unhide_walker(_mcTrekMach);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(345, 115, -1);
+				ws_custom_walk(_mcTrekMach, 5, 55, true);
+
+				break;
+
+			case 40:
+				if (_G(flags[V098]) == 0) {
+					terminateMachine(_808HandleSpriteMach);
+				}
+
+				series_play("808 mei chen cranks handle", 1536, 0, 41, 5, 0, 100, 0, 0, 8, 42);
+				digi_play("808_s10", 2, 255, -1, -1);
+
+				break;
+
+			case 41:
+				series_play("808 mei chen cranks handle", 1536, 0, 42, 5, 0, 100, 0, 0, 43, 58);
+				digi_play("808_s03", 2, 255, -1, -1);
+
+				break;
+
+			case 42:
+				_808HandleSpriteMach = series_show("808 handle sprite", 4095, 0, -1, -1, 0, 100, 0, 0);
+				series_play("808 mei chen cranks handle", 1536, 0, 43, 5, 0, 100, 0, 0, 59, -1);
+
+				break;
+
+			case 43:
+				ws_unhide_walker(_mcTrekMach);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(345, 115, -1);
+				ws_custom_walk(_mcTrekMach, 5, 50, true);
+
+				break;
+
+			case 50:
+				player_set_commands_allowed(true);
+				_G(flags[V100]) = 1;
+				_G(flags[V276]) = 0;
+				_G(flags[V098]) = 0;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				digi_unload("808_s10");
+
+				break;
+
+			case 55:
+				player_set_commands_allowed(true);
+
+				if (_G(flags[V094]) == 4 || (_G(flags[V094]) == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
+					digi_play(_G(flags[V279]) ? "808r29" : "808r28", 1, 255, -1, -1);
+				}
+
+				_G(flags[V098]) = 0;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				digi_unload("808_s10");
+
+				break;
+
 			default:
 				break;
 			}
@@ -780,6 +987,7 @@ void Room808::parser() {
 		return;
 
 	case 4:
+		// Empty
 		return;
 
 	case 5:
