@@ -32,15 +32,15 @@ class Room407 : public Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
+	int _valveState2 = 0;
+	int _valveState1 = 0;
 	int _drawerState = 0;
 	int _val6 = 0;
 	int _val7 = 0;
-	int _val8 = 0;
-	int _val9 = 0;
-	int _items4State = 0;
-	int _xyzzy1 = 0;
+	int _faucetPipeState = 0;
+	int _airValveState = 0;
+	int _leverKeyState = 0;
+	int _rodState = 0;
 	int _hoseState = 0;
 	int _tubeState = 0;
 	int _pumpState = 0;
@@ -84,7 +84,7 @@ private:
 	machine *_drawer = nullptr;
 	machine *_escape = nullptr;
 	machine *_faucet1 = nullptr;
-	machine *_faucet2 = nullptr;
+	machine *_airValve = nullptr;
 	machine *_lever = nullptr;
 	machine *_niche = nullptr;
 	machine *_tpist = nullptr;
