@@ -50,7 +50,7 @@ static const char *const SAID[][2] = {
 void Room406::init() {
 	player_set_commands_allowed(false);
 
-	switch (_G(flags)[V312]) {
+	switch (_G(flags)[kBilliardsTableState]) {
 	case 0:
 		hotspot_set_active("STAIRS", false);
 		hotspot_set_active("BILLIARD TABLE ", false);
@@ -83,7 +83,7 @@ void Room406::init() {
 		hotspot_set_active("SMOKING HUTCH", false);
 	}
 
-	if (_G(flags)[V316]) {
+	if (_G(flags)[kCrackedMirror]) {
 		hotspot_set_active("MIRROR", false);
 		_mirror = series_place_sprite("CRACKED MIRROR IN BILLIARD RM",
 			0, 0, 0, 100, 0xf00);
@@ -91,7 +91,7 @@ void Room406::init() {
 		hotspot_set_active("BROKEN MIRROR", false);
 	}
 
-	if (_G(flags)[V310]) {
+	if (_G(flags)[kCardSwitchRevealed]) {
 		_cardDoor = series_place_sprite("406 CARD DOOR OPEN BY PICT",
 			0, 0, 0, 100, 0xf00);
 		hotspot_set_active("ACE OF SPADES", false);
@@ -103,7 +103,7 @@ void Room406::init() {
 		hotspot_set_active("SWITCH", false);
 	}
 
-	if (_G(flags)[V306]) {
+	if (_G(flags)[kGamesCabinetOpen]) {
 		hotspot_set_active("GAMES CABINET", false);
 		_gamesCabinet = series_place_sprite("406 GAMES CABINET OPEN",
 			0, 0, 0, 100, 0xf00);
@@ -123,7 +123,7 @@ void Room406::init() {
 		_desk = series_place_sprite("406 DESK CLOSE", 0, 0, 0, 100, 0x600);
 	}
 
-	if (_G(flags)[V321]) {
+	if (_G(flags)[kBilliardBallInCabinet]) {
 		_poolBall = series_place_sprite("406 POOL BALL IN CABINET",
 			0, 0, 0, 100, 0xf00);
 		hotspot_set_active("BILLIARD BALL", false);
@@ -185,14 +185,14 @@ void Room406::init() {
 	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 
-		if (_G(flags)[V322]) {
+		if (_G(flags)[kBilliardsFan]) {
 			digi_preload("456_s03a");
 			digi_play_loop("456_s03a", 3, 255, -1, 456);
 		}
 		break;
 
 	case 456:
-		if (_G(flags)[V322])
+		if (_G(flags)[kBilliardsFan])
 			digi_play_loop("456_s03a", 3, 255, -1, 456);
 
 		ws_demand_location(400, 340, 1);
@@ -202,7 +202,7 @@ void Room406::init() {
 		break;
 
 	default:
-		if (_G(flags)[V322]) {
+		if (_G(flags)[kBilliardsFan]) {
 			digi_preload("456_s03a");
 			digi_play_loop("456_s03a", 3, 255, -1, 456);
 		}
@@ -262,6 +262,7 @@ void Room406::daemon() {
 	case 310:
 		hotspot_set_active("PAINTING", true);
 		hotspot_set_active("SMOKING HUTCH", false);
+		terminateMachineAndNull(_painting);
 		digi_play("406_s07", 2, 255, 311);
 		_paintingOpening = series_load("406 PAINTING OPENING");
 		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
@@ -292,7 +293,7 @@ void Room406::daemon() {
 		break;
 
 	case 700:
-		if (_G(flags)[V322])
+		if (_G(flags)[kBilliardsFan])
 			digi_play("456_s03", 3, 255, 700);
 		break;
 
@@ -384,21 +385,21 @@ void Room406::parser() {
 	} else if (lookFlag && player_said_any("BILLIARD TABLE", "BILLIARD TABLE ")) {
 		if (!_G(flags)[V030])
 			digi_play("406r41", 1);
-		else if (!_G(flags)[V321])
+		else if (!_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r02", 1);
 		else
 			digi_play("406r28", 1);
 	} else if (lookFlag && player_said("CUE CABINET")) {
 		if (_G(flags)[V030])
 			digi_play("406r42", 1);
-		else if (_G(flags)[V321])
+		else if (_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r29", 1);
 		else
 			digi_play("406r05", 1);
 	} else if (lookFlag && player_said("BALL RACK")) {
 		if (_G(flags)[V030])
 			digi_play("406r42", 1);
-		else if (_G(flags)[V321])
+		else if (_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r29", 1);
 		else
 			digi_play("406r49", 1);
@@ -443,7 +444,7 @@ void Room406::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			digi_preload("406_s13");
-			_G(flags)[V316] = 1;
+			_G(flags)[kCrackedMirror] = 1;
 			_lookMirror = series_load("406 RIP LOOKS MIRROR");
 			ws_hide_walker();
 			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
@@ -529,7 +530,7 @@ void Room406::parser() {
 	} else if (useFlag && player_said("DART BOARD")) {
 		digi_play("406r20", 1);
 	} else if (useFlag && player_said_any("BILLIARD TABLE",
-			"BILLIARD TABLE ") && _G(flags)[V312] == 1) {
+			"BILLIARD TABLE ") && _G(flags)[kBilliardsTableState] == 1) {
 		switch (_G(kernel).trigger) {
 		case 1:
 			_rptmr15 = series_load("RPTMR15");
@@ -559,7 +560,7 @@ void Room406::parser() {
 			hotspot_set_active("BILLIARD TABLE ", false);
 			hotspot_set_active("STAIRS", true);
 			_billiardTable = series_place_sprite("406 BILLIARD TABLE UP", 0, 0, 0, 100, 0x200);
-			_G(flags)[V312] = 2;
+			_G(flags)[kBilliardsTableState] = 2;
 			player_set_commands_allowed(true);
 			break;
 		case 69:
@@ -577,7 +578,7 @@ void Room406::parser() {
 	} else if (useFlag && player_said_any("ACE OF SPADES", "ACE OF SPADES ")) {
 		// Note: The original had two separate blocks for use ace of spades.
 		// Since the second version could never be called, I've omitted it
-		if (_G(flags)[V310])
+		if (_G(flags)[kCardSwitchRevealed])
 			useAceOfSpades1();
 		else
 			useAceOfSpades2();
@@ -837,7 +838,7 @@ void Room406::parser() {
 			hotspot_set_active("GAMES CABINET ", true);
 			hotspot_set_active("GAMES CABINET DRAWER", true);
 			hotspot_set_active("CABINET DRAWER OPEN", false);
-			_G(flags)[V306] = 1;
+			_G(flags)[kGamesCabinetOpen] = 1;
 			kernel_timing_trigger(1, 3);
 			break;
 		case 3:
@@ -887,7 +888,7 @@ void Room406::parser() {
 		case 4:
 			series_unload(_cabinetOpens);
 			series_unload(_ripReachHand);
-			_G(flags)[V306] = 0;
+			_G(flags)[kGamesCabinetOpen] = 0;
 
 			if (player_said("GAMES CABINET ", "KEYS"))
 				_G(flags)[V307] = 0;
@@ -931,7 +932,7 @@ void Room406::parser() {
 		case 4:
 			series_unload(_cabinetOpens);
 			series_unload(_ripReachHand);
-			_G(flags)[V306] = 0;
+			_G(flags)[kGamesCabinetOpen] = 0;
 
 			if (player_said("GAMES CABINET ", "KEYS"))
 				_G(flags)[V307] = 0;
@@ -948,7 +949,7 @@ void Room406::parser() {
 			disable_player_commands_and_fade_init(2);
 			break;
 		case 2:
-			_G(flags)[V312] = 0;
+			_G(flags)[kBilliardsTableState] = 0;
 			_G(game).setRoom(407);
 			break;
 		default:
@@ -963,7 +964,7 @@ void Room406::parser() {
 		case 2:
 			_G(game).setRoom(456);
 
-			if (_G(flags)[V322]) {
+			if (_G(flags)[kBilliardsFan]) {
 				adv_kill_digi_between_rooms(false);
 				digi_play_loop("456_s03a", 3, 255, 700, 456);
 			}
@@ -1005,9 +1006,9 @@ void Room406::setHotspots() {
 	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
 		hs->active = true;
 
-	hotspot_set_active(_G(flags)[V316] ? "MIRROR" : "BROKEN MIRROR", false);
+	hotspot_set_active(_G(flags)[kCrackedMirror] ? "MIRROR" : "BROKEN MIRROR", false);
 
-	if (_G(flags)[V306]) {
+	if (_G(flags)[kGamesCabinetOpen]) {
 		hotspot_set_active("GAMES CABINET", false);
 	} else {
 		hotspot_set_active("GAMES CABINET ", false);
@@ -1021,7 +1022,7 @@ void Room406::setHotspots() {
 		hotspot_set_active("WRITING DESK DRAWER", false);
 	}
 
-	if (inv_player_has("BILLIARD BALL") || _G(flags)[V321])
+	if (inv_player_has("BILLIARD BALL") || _G(flags)[kBilliardBallInCabinet])
 		hotspot_set_active("BILLIARD BALL", false);
 
 	hotspot_set_active("CABINET DRAWER OPEN", false);
@@ -1030,14 +1031,14 @@ void Room406::setHotspots() {
 	hotspot_set_active("ENVELOPE", false);
 	hotspot_set_active("KEYS", false);
 
-	if (_G(flags)[V310]) {
+	if (_G(flags)[kCardSwitchRevealed]) {
 		hotspot_set_active("ACE OF SPADES", false);
 	} else {
 		hotspot_set_active("ACE OF SPADES ", false);
 		hotspot_set_active("SWITCH", false);
 	}
 
-	switch (_G(flags)[V312]) {
+	switch (_G(flags)[kBilliardsTableState]) {
 	case 0:
 		hotspot_set_active("STAIRS", false);
 		hotspot_set_active("BILLIARD TABLE ", false);
@@ -1057,7 +1058,7 @@ void Room406::setHotspots() {
 	}
 
 	hotspot_set_active(_G(flags)[kPaintingOpen] ? "PAINTING" : "SMOKING HUTCH", false);
-	hotspot_set_active(_G(flags)[V316] ? "MIRROR" : "BROKEN MIRROR", false);
+	hotspot_set_active(_G(flags)[kCrackedMirror] ? "MIRROR" : "BROKEN MIRROR", false);
 }
 
 bool Room406::takeKeys() {
@@ -1271,7 +1272,7 @@ void Room406::useAceOfSpades1() {
 
 	case 4:
 		series_unload(_ripHiHand);
-		_G(flags)[V310] = 0;
+		_G(flags)[kCardSwitchRevealed] = 0;
 		player_set_commands_allowed(true);
 		break;
 
@@ -1303,7 +1304,7 @@ void Room406::useAceOfSpades2() {
 
 	case 4:
 		series_unload(_ripHiHand);
-		_G(flags)[V310] = 1;
+		_G(flags)[kCardSwitchRevealed] = 1;
 		player_set_commands_allowed(true);
 		break;
 

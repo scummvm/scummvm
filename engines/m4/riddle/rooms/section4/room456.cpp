@@ -80,11 +80,11 @@ void Room456::init() {
 		digi_preload("456_s03");
 		digi_preload("456_s01");
 
-		if (_G(flags)[V322]) {
+		if (_G(flags)[kBilliardsFan]) {
 			digi_play("456_s03a", 3);
 			kernel_timing_trigger(_trigger, 700);
 		}
-	} else if (_G(flags)[V322]) {
+	} else if (_G(flags)[kBilliardsFan]) {
 		digi_play("456_s03a", 3);
 		kernel_timing_trigger(_trigger, 700);
 	} else {
@@ -95,7 +95,7 @@ void Room456::init() {
 }
 
 void Room456::daemon() {
-	if (_G(kernel).trigger == 700 && _G(flags)[V322]) {
+	if (_G(kernel).trigger == 700 && _G(flags)[kBilliardsFan]) {
 		digi_play_loop("456_s03a", 3);
 	}
 }
@@ -214,19 +214,19 @@ void Room456::parser() {
 			break;
 		}
 	} else if (useFlag && player_said("RED BUTTON")) {
-		if (_G(flags)[V322]) {
+		if (_G(flags)[kBilliardsFan]) {
 			digi_play("456_s01", 2);
 		} else {
-			_G(flags)[V322] = 1;
+			_G(flags)[kBilliardsFan] = 1;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			digi_play("456_s03", 3, 255, 700);
 			_G(kernel).trigger_mode = KT_PARSE;
 		}
 	} else if (useFlag && player_said("BLACK BUTTON")) {
-		if (_G(flags)[V322]) {
+		if (_G(flags)[kBilliardsFan]) {
 			digi_stop(3);
 			digi_play("456_s04", 3);
-			_G(flags)[V322] = 0;
+			_G(flags)[kBilliardsFan] = 0;
 		} else {
 			digi_play("456_s01", 3);
 		}
@@ -285,7 +285,7 @@ void Room456::parser() {
 		case 2:
 			_G(game).setRoom(406);
 
-			if (_G(flags)[V322]) {
+			if (_G(flags)[kBilliardsFan]) {
 				adv_kill_digi_between_rooms(false);
 				digi_play_loop("456_s03a", 3);
 			}
@@ -299,8 +299,8 @@ void Room456::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_G(flags)[V321] = 1;
-			_G(flags)[V312] = 1;
+			_G(flags)[kBilliardBallInCabinet] = 1;
+			_G(flags)[kBilliardsTableState] = 1;
 			inv_move_object("BILLIARD BALL", 456);
 			digi_play("456_s06", 1, 255, 1);
 			break;

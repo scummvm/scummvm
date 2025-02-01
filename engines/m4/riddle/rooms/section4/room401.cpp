@@ -811,7 +811,7 @@ void Room401::parser() {
 		_agentShould = 0;
 		_val3 = 3;
 	} else if (_G(kernel).trigger == 748) {
-		_G(flags)[V322] = 0;
+		_G(flags)[kBilliardsFan] = 0;
 		_G(game).setRoom(495);
 	} else if (player_said("talk to", "agent")) {
 		ws_hide_walker();
