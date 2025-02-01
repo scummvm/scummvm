@@ -121,7 +121,7 @@ public:
 
 	static Common::Array<Common::String> getAllStorageLocations();
 
-	static jobject getNewSAFTree(bool folder, bool writable, const Common::String &initURI, const Common::String &prompt);
+	static jobject getNewSAFTree(bool writable, const Common::String &initURI, const Common::String &prompt);
 	static Common::Array<jobject> getSAFTrees();
 	static jobject findSAFTree(const Common::String &name);
 
