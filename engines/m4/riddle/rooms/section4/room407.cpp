@@ -146,7 +146,7 @@ void Room407::init() {
 			if (_val6 == 1010)
 				_glassTopPopupWithItems1 = series_place_sprite(
 					"407 GLASS TOP POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
-			else if (_items1State == 1116)
+			else if (_periodicTableState == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -156,7 +156,7 @@ void Room407::init() {
 		} else if (_glassBottomState == 1030) {
 			_glassTopPopup = series_place_sprite("407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
-			if (_items1State == 1116)
+			if (_periodicTableState == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -179,7 +179,7 @@ void Room407::init() {
 			_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
 				0, 0, 0, 100, 0x200);
 
-			if (_items1State == 1116)
+			if (_periodicTableState == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
 					"407 FULL GLASS POPUP", 0, 0, 0, 100, 0x100);
 
@@ -284,7 +284,7 @@ void Room407::init() {
 		_tubeState = 1101;
 		_pumpState = 1101;
 		_stopperState = 1101;
-		_items1State = 1112;
+		_periodicTableState = 1112;
 		_xyzzy7 = 1112;
 		_items2State = 1116;
 		_xyzzy9 = 1118;
@@ -487,7 +487,7 @@ void Room407::init() {
 			}
 		}
 
-		switch (_items1State) {
+		switch (_periodicTableState) {
 		case 1112:
 			_chart = series_place_sprite("407CHART", 0, 0, -53, 100, 0xf00);
 			break;
@@ -603,7 +603,7 @@ void Room407::daemon() {
 			kernel_timing_trigger(1, 90);
 		} else if (!inv_object_is_here("EMERALD/CORK")) {
 			kernel_timing_trigger(1, 50);
-		} else if (_items1State != 1116) {
+		} else if (_periodicTableState != 1116) {
 			kernel_timing_trigger(1, (_stopperState == 1116) ? 70 : 50);
 		} else {
 			kernel_timing_trigger(1, (_stopperState == 1116) ? 80 : 60);
@@ -619,7 +619,7 @@ void Room407::daemon() {
 			kernel_timing_trigger(1, 180);
 		else if (!inv_object_is_here("EMERALD/CORK"))
 			kernel_timing_trigger(1, 185);
-		else if (_items1State != 1116)
+		else if (_periodicTableState != 1116)
 			kernel_timing_trigger(1, (_stopperState == 1116) ? 170 : 150);
 		else
 			kernel_timing_trigger(1, (_stopperState == 1116) ? 175 : 160);
@@ -946,7 +946,7 @@ void Room407::daemon() {
 		hotspot_set_active("EMERALD/CORK", false);
 		hotspot_set_active("PERIODIC TABLE/JAR", false);
 		hotspot_set_active("PERIODIC TABLE ", true);
-		_items1State = 1120;
+		_periodicTableState = 1120;
 
 		midi_play("EMERALD", 255, 0, 194, 949);
 		kernel_examine_inventory_object("PING EMERALD/CORK",
@@ -1004,7 +1004,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_items1State == 1116)
+		if (_periodicTableState == 1116)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
 		if (_val6 == 1010)
 			terminateMachineAndNull(_tabletopPopupWithItems1);
@@ -1018,7 +1018,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_items1State == 1116)
+		if (_periodicTableState == 1116)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
 		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
@@ -1034,7 +1034,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_glassTopPopup);
 
-		if (_items1State == 1116)
+		if (_periodicTableState == 1116)
 			terminateMachineAndNull(_glassTopPopupWithItems2);
 		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
@@ -1938,7 +1938,7 @@ void Room407::parser() {
 	} else if (player_said("CORK", "GLASS JAR ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
 		corkGlassJar2();
-	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _items1State == 1000) {
+	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _periodicTableState == 1000) {
 		periodicTableGlassJar();
 	} else if (player_said("SURGICAL TUBE", "NOZZLES") && _tubeState == 1000) {
 		surgicalTubeNozzles();
@@ -2013,12 +2013,12 @@ void Room407::parser() {
 		if (_frotz2) {
 			digi_play("407r99e", 1);
 		} else if (_val8 == 1100) {
-			if (_items1State == 1120)
+			if (_periodicTableState == 1120)
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
 		} else if (_tubeState == 1130 && _val8 != 1130) {
-			if (_items1State == 1120)
+			if (_periodicTableState == 1120)
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
@@ -2120,7 +2120,7 @@ take:
 	} else if (takeFlag && player_said("GLASS JAR") &&
 			_val6 == 1010 && _xyzzy7 == 1112) {
 		takeGlassJar2();
-	} else if (takeFlag && player_said("PERIODIC TABLE") && _items1State == 1112) {
+	} else if (takeFlag && player_said("PERIODIC TABLE") && _periodicTableState == 1112) {
 		takePeriodicTable1();
 	} else if (takeFlag && player_said("PERIODIC TABLE ")) {
 		takePeriodicTable2();
@@ -2566,7 +2566,7 @@ void Room407::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_tubeState);
 	s.syncAsSint16LE(_pumpState);
 	s.syncAsSint16LE(_stopperState);
-	s.syncAsSint16LE(_items1State);
+	s.syncAsSint16LE(_periodicTableState);
 	s.syncAsSint16LE(_xyzzy7);
 	s.syncAsSint16LE(_items2State);
 	s.syncAsSint16LE(_xyzzy9);
@@ -2662,11 +2662,11 @@ void Room407::setHotspots() {
 			hotspot_set_active("NOZZLES/TUBE", false);
 		if (_tubeState != 1117)
 			hotspot_set_active("NOZZLES", false);
-		if (_items1State != 1112)
+		if (_periodicTableState != 1112)
 			hotspot_set_active("PERIODIC TABLE", false);
-		if (_items1State != 1116)
+		if (_periodicTableState != 1116)
 			hotspot_set_active("PERIODIC TABLE/JAR", false);
-		if (_items1State != 1120)
+		if (_periodicTableState != 1120)
 			hotspot_set_active("PERIODIC TABLE ", false);
 
 		if (inv_object_is_here("EMERALD/CORK"))
@@ -2810,7 +2810,7 @@ void Room407::glassBottomPopup() {
 		_glassTopPopup = series_place_sprite(
 			"407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
-		if (_items1State == 1116)
+		if (_periodicTableState == 1116)
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -2844,7 +2844,7 @@ void Room407::glassTopPopup() {
 			if (!player_said("SMALL GEAR WHEEL"))
 				digi_play("407r66a", 1);
 
-		} else if (_items1State == 1116) {
+		} else if (_periodicTableState == 1116) {
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -2946,7 +2946,7 @@ void Room407::fullglassPopup() {
 		_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
 			0, 0, 0, 100, 0x200);
 
-		if (_items1State == 1116)
+		if (_periodicTableState == 1116)
 			_glassTopPopupWithItems2 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
 
@@ -3752,7 +3752,7 @@ void Room407::periodicTableGlassJar() {
 		series_unload(_rollStuff);
 		inv_move_object("PERIODIC TABLE", 407);
 		hotspot_set_active("PERIODIC TABLE/JAR", true);
-		_items1State = 1116;
+		_periodicTableState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5199,8 +5199,8 @@ void Room407::takePeriodicTable1() {
 	switch (_G(kernel).trigger) {	
 	case -1:
 		player_set_commands_allowed(false);
-		_ripHiHand2 = series_load("RPTMHR11");
-		setGlobals1(_ripHiHand2, 1, 11, 11, 11, 0, 11, 1, 1, 1);
+		_rptmhr11 = series_load("RPTMHR11");
+		setGlobals1(_rptmhr11, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 		sendWSMessage_110000(1);
 		break;
 
@@ -5222,7 +5222,7 @@ void Room407::takePeriodicTable1() {
 
 	case 5:
 		series_unload(_rptmhr11);
-		_items1State = 1000;
+		_periodicTableState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5255,7 +5255,7 @@ void Room407::takePeriodicTable2() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_items1State = 1000;
+		_periodicTableState = 1000;
 		player_set_commands_allowed(true);
 		break;
 

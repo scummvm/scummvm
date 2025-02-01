@@ -45,7 +45,7 @@ private:
 	int _tubeState = 0;
 	int _pumpState = 0;
 	int _stopperState = 0;
-	int _items1State = 0;
+	int _periodicTableState = 0;
 	int _xyzzy7 = 0;
 	int _items2State = 0;
 	int _xyzzy9 = 0;
