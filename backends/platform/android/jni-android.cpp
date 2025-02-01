@@ -779,7 +779,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, deinitSurface, "()V");
 	FIND_METHOD(, eglVersion, "()I");
 	FIND_METHOD(, getNewSAFTree,
-	            "(ZZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
+	            "(ZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, findSAFTree, "(Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 
@@ -1069,14 +1069,14 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 	return res;
 }
 
-jobject JNI::getNewSAFTree(bool folder, bool writable, const Common::String &initURI,
+jobject JNI::getNewSAFTree(bool writable, const Common::String &initURI,
                            const Common::String &prompt) {
 	JNIEnv *env = JNI::getEnv();
 	jstring javaInitURI = env->NewStringUTF(initURI.c_str());
 	jstring javaPrompt = env->NewStringUTF(prompt.c_str());
 
 	jobject tree = env->CallObjectMethod(_jobj, _MID_getNewSAFTree,
-	                                     folder, writable, javaInitURI, javaPrompt);
+	                                     writable, javaInitURI, javaPrompt);
 
 	if (env->ExceptionCheck()) {
 		LOGE("getNewSAFTree: error");

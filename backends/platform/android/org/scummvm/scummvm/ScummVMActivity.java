@@ -893,9 +893,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		@Override
 		@RequiresApi(api = Build.VERSION_CODES.N)
-		protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt) {
+		protected SAFFSTree getNewSAFTree(boolean write, String initialURI, String prompt) {
 			Uri initialURI_ = Uri.parse(initialURI);
-			Uri uri = selectWithNativeUI(folder, write, initialURI_, prompt);
+			Uri uri = selectWithNativeUI(true, write, initialURI_, prompt);
 			if (uri == null) {
 				return null;
 			}

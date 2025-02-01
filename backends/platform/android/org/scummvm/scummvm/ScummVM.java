@@ -96,7 +96,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	abstract protected String[] getSysArchives();
 	abstract protected String[] getAllStorageLocations();
 	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
-	abstract protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt);
+	abstract protected SAFFSTree getNewSAFTree(boolean write, String initialURI, String prompt);
 	abstract protected SAFFSTree[] getSAFTrees();
 	abstract protected SAFFSTree findSAFTree(String name);
 
