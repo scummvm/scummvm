@@ -428,13 +428,13 @@ struct CastMemberID {
 	CastMemberID fromMultiplex(int multiplexID) {
 		if (multiplexID < 0)
 			return CastMemberID(multiplexID, -1);
-		return CastMemberID(multiplexID % 0x20000, 1 + (multiplexID / 0x20000));
+		return CastMemberID(multiplexID % 0x20000, 1 + (multiplexID >> 17));
 	}
 
 	int toMultiplex() {
 		if (castLib < 0)
 			return member;
-		return member + 0x20000 * (castLib - 1);
+		return (member % 0x20000) + ((castLib - 1) << 17);
 	}
 };
 

@@ -1923,7 +1923,7 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 
 CastMemberID Lingo::toCastMemberID(const Datum &member, const Datum &castLib) {
 	// Used specifically for unpacking CastMemberIDs when provided by the bytecode
-	// as two Datums. This means no multiplex IDs.
+	// as two Datums. Multiplex IDs are supported, but auto-truncated.
 	Movie *movie = g_director->getCurrentMovie();
 	if (!movie) {
 		warning("Lingo::toCastMemberID: No movie set");
@@ -1950,13 +1950,9 @@ CastMemberID Lingo::toCastMemberID(const Datum &member, const Datum &castLib) {
 		if (member.isCastRef()) {
 			res = member.asMemberID();
 		} else if (member.isNumeric()) {
-			if (libId == 0) {
-				// When specifying 0 as the castlib, D5 will assume this
-				// means the default (i.e. first) cast library. It will not
-				// try other libraries for matches if the member is a number.
-				libId = DEFAULT_CAST_LIB;
-			}
-			res = CastMemberID(member.asInt(), libId);
+			res = CastMemberID().fromMultiplex(member.asInt());
+			if (libId != 0)
+				res.castLib = libId;
 		} else {
 			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
 		}
