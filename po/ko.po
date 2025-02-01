@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-01-30 09:32+0000\n"
-"PO-Revision-Date: 2025-01-14 16:18+0000\n"
+"PO-Revision-Date: 2025-02-01 14:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -10459,7 +10459,7 @@ msgstr "화면비 교정 활성화"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "매킨토시 모니터를 시뮬레이션하기 위해 그래픽을 밝게 합니다."
 
 #: engines/scumm/dialogs.cpp:1305
 msgid "Overture Timing:"
