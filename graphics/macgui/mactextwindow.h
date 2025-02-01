@@ -64,7 +64,28 @@ public:
 	void clearSelection();
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
+	uint32 getTextColor() { return _mactext->getTextColor(); }
+	uint32 getTextColor(int start, int end) { return _mactext->getTextColor(start, end); }
+	void setTextColor(uint32 color, int start, int end) { return _mactext->setTextColor(color, start, end); }
+	int getTextFont() { return _mactext->getTextFont(); }
+	int getTextFont(int start, int end) { return _mactext->getTextFont(start, end); }
+	int getTextSlant() { return _mactext->getTextSlant(); }
+	int getTextSlant(int start, int end) { return _mactext->getTextSlant(start, end); }
 	int getTextHeight() { return _mactext->getTextHeight(); }
+	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true) { return _mactext->getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines); }
+	Common::U32String getPlainText() { return _mactext->getPlainText(); }
+	Common::U32String getEditedString() { return _mactext->getEditedString(); };
+	void enforceTextFont(uint16 fontId) { return _mactext->enforceTextFont(fontId); }
+	void setTextFont(uint16 fontId, int start, int end) { return _mactext->setTextFont(fontId, start, end); }
+	void enforceTextSlant(int textSlant) { return _mactext->enforceTextSlant(textSlant); }
+	void setTextSlant(int textSlant, int start, int end) { return _mactext->setTextSlant(textSlant, start, end); }
+	int getRowCount() { return _mactext->getRowCount(); }
+	int getLineSpacing() { return _mactext->getLineSpacing(); }
+	int getTextSize() { return _mactext->getTextSize(); }
+	int getTextSize(int start, int end) { return _mactext->getTextSize(start, end); }
+	void setTextSize(int textSize) { return _mactext->setTextSize(textSize); }
+	void setTextSize(int textSize, int start, int end) { return _mactext->setTextSize(textSize, start, end); }
+
 	int getMouseLine(int x, int y);
 
 	/**

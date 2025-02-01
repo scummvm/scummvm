@@ -94,6 +94,8 @@ public:
 	int getTextFont() { return _defaultFormatting.fontId; }
 	void enforceTextFont(uint16 fontId);
 
+	int getRowCount();
+
 	// because currently, we are counting linespacing as font height
 	int getTextSize() { return _defaultFormatting.fontSize; }
 	void setTextSize(int textSize);
@@ -107,6 +109,7 @@ public:
 	int getTextFont(int start, int end);
 	void setTextFont(int fontId, int start, int end);
 
+	int getTextSlant() { return _defaultFormatting.textSlant; }
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
 	void enforceTextSlant(int textSlant);

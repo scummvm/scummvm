@@ -209,10 +209,16 @@ void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 		_bgcolor = *bgcolor;
 
 	// if we want to keep the format unchanged, then we need to modify _ftext as well
-	if (_widget)
-		((Graphics::MacText *)_widget)->setColors(_fgcolor, _bgcolor);
-	else
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			((Graphics::MacTextWindow *)target)->setColors(_fgcolor, _bgcolor);
+		} else {
+			((Graphics::MacText *)target)->setColors(_fgcolor, _bgcolor);
+		}
+	} else {
 		_modified = true;
+	}
 }
 
 Graphics::TextAlign TextCastMember::getAlignment() {
@@ -232,10 +238,35 @@ void TextCastMember::setBackColor(uint32 bgCol) {
 	_modified = true;
 }
 
+uint32 TextCastMember::getForeColor(int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getTextColor(start, end);
+		} else {
+			return ((Graphics::MacText *)target)->getTextColor(start, end);
+		}
+	}
+	return _fgcolor;
+}
+
 void TextCastMember::setForeColor(uint32 fgCol) {
 	_fgcolor = fgCol;
 	_modified = true;
 }
+
+void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->setTextColor(fgCol, start, end);
+		} else {
+			return ((Graphics::MacText *)target)->setTextColor(fgCol, start, end);
+		}
+	}
+	_modified = true;
+}
+
 
 void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_style.fontId;
@@ -354,6 +385,30 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	return widget;
 }
 
+Graphics::MacWidget *TextCastMember::getWidget() {
+	// FIXME: The cast member should be the source of truth for the widget.
+	// You don't have the issue you have with e.g. bitmaps where the channel
+	// can stretch: all sprites of the cast member have the same dimensions.
+	// There is technically a small window between typing something in and hitting
+	// enter/defocusing where other copies of the widget are out of sync,
+	// but they will resync pretty quickly.
+	Channel *toEdit = nullptr;
+	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+	for (uint i = 0; i < channels.size(); i++) {
+		if (channels[i]->_sprite->_cast == this) {
+			toEdit = channels[i];
+			break;
+		}
+	}
+	if (toEdit) {
+		Common::Rect bbox = toEdit->getBbox();
+		if (!toEdit->_widget)
+			toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+		return toEdit->_widget;
+	}
+	return _widget;
+}
+
 void TextCastMember::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
@@ -376,22 +431,88 @@ void TextCastMember::setRawText(const Common::String &text) {
 	_modified = true;
 }
 
-// D4 dictionary book said this is line spacing
-int TextCastMember::getTextHeight() {
-	if (_widget)
-		return ((Graphics::MacText *)_widget)->getLineSpacing();
-	else
-		return _lineSpacing;
+int TextCastMember::getLineCount() {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getRowCount();
+		} else {
+			return ((Graphics::MacText *)target)->getRowCount();
+		}
+	}
+	warning("TextCastMember::getLineCount(): no widget available, returning 0");
 	return 0;
 }
 
-// this should be amend when we have some where using this function
-int TextCastMember::getTextSize() {
-	if (_widget)
-		return ((Graphics::MacText *)_widget)->getTextSize();
-	else
-		return _fontSize;
-	return 0;
+// D4 dictionary book said this is line spacing
+int TextCastMember::getTextHeight() {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getLineSpacing();
+		} else {
+			return ((Graphics::MacText *)target)->getLineSpacing();
+		}
+	}
+	return _lineSpacing;
+}
+
+Common::String TextCastMember::getTextFont() {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			int fontId = ((Graphics::MacTextWindow *)target)->getTextFont();
+			return g_director->_wm->_fontMan->getFontName(fontId);
+		} else {
+			int fontId = ((Graphics::MacText *)target)->getTextFont();
+			return g_director->_wm->_fontMan->getFontName(fontId);
+		}
+	}
+	return g_director->_wm->_fontMan->getFontName(_fontId);
+}
+
+Common::String TextCastMember::getTextFont(int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			int fontId = ((Graphics::MacTextWindow *)target)->getTextFont(start, end);
+			return g_director->_wm->_fontMan->getFontName(fontId);
+		} else {
+			int fontId = ((Graphics::MacText *)target)->getTextFont(start, end);
+			return g_director->_wm->_fontMan->getFontName(fontId);
+		}
+	}
+	return g_director->_wm->_fontMan->getFontName(_fontId);
+}
+
+void TextCastMember::setTextFont(const Common::String &fontName) {
+	Graphics::MacWidget *target = getWidget();
+	if (!target)
+		return;
+	if (_textType == kTextTypeScrolling) {
+		((Graphics::MacTextWindow *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
+		_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+		_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+	} else {
+		((Graphics::MacText *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+	}
+}
+
+void TextCastMember::setTextFont(const Common::String &fontName, int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (!target)
+		return;
+	if (_textType == kTextTypeScrolling) {
+		((Graphics::MacTextWindow *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
+		_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+		_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+	} else {
+		((Graphics::MacText *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+	}
 }
 
 Common::U32String TextCastMember::getText() {
@@ -402,19 +523,136 @@ Common::String TextCastMember::getRawText() {
 	return _rtext;
 }
 
-void TextCastMember::setTextSize(int textSize) {
-	if (_widget) {
-		((Graphics::MacText *)_widget)->setTextSize(textSize);
-		((Graphics::MacText *)_widget)->draw();
-	} else {
-		_fontSize = textSize;
-		_modified = true;
+int TextCastMember::getTextSize() {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getTextSize();
+		} else {
+			return ((Graphics::MacText *)target)->getTextSize();
+		}
 	}
+
+	return _fontSize;
+}
+
+int TextCastMember::getTextSize(int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getTextSize(start, end);
+		} else {
+			return ((Graphics::MacText *)target)->getTextSize(start, end);
+		}
+	}
+
+	return _fontSize;
+}
+
+void TextCastMember::setTextSize(int textSize) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			((Graphics::MacTextWindow *)target)->setTextSize(textSize);
+			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+		} else {
+			((Graphics::MacText *)target)->setTextSize(textSize);
+			_ptext = ((Graphics::MacText *)target)->getPlainText();
+			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+			((Graphics::MacText *)target)->draw();
+		}
+	}
+	_fontSize = textSize;
+	_modified = true;
+}
+
+void TextCastMember::setTextSize(int textSize, int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			((Graphics::MacTextWindow *)target)->setTextSize(textSize, start, end);
+			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+		} else {
+			((Graphics::MacText *)target)->setTextSize(textSize, start, end);
+			_ptext = ((Graphics::MacText *)target)->getPlainText();
+			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+			((Graphics::MacText *)target)->draw();
+		}
+	}
+	_modified = true;
+}
+
+Common::String TextCastMember::getTextStyle() {
+	int slantVal = _textSlant;
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			slantVal = ((Graphics::MacTextWindow *)target)->getTextSlant();
+		} else {
+			slantVal = ((Graphics::MacText *)target)->getTextSlant();
+		}
+	}
+	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
+}
+
+Common::String TextCastMember::getTextStyle(int start, int end) {
+	int slantVal = _textSlant;
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			slantVal = ((Graphics::MacTextWindow *)target)->getTextSlant(start, end);
+		} else {
+			slantVal = ((Graphics::MacText *)target)->getTextSlant(start, end);
+		}
+	}
+	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
+}
+
+void TextCastMember::setTextStyle(const Common::String &textStyle) {
+	Graphics::MacWidget *target = getWidget();
+	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			((Graphics::MacTextWindow *)target)->enforceTextSlant(slant);
+			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+		} else {
+			((Graphics::MacText *)target)->enforceTextSlant(slant);
+			_ptext = ((Graphics::MacText *)target)->getPlainText();
+			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+			((Graphics::MacText *)target)->draw();
+		}
+	}
+	_modified = true;
+}
+
+void TextCastMember::setTextStyle(const Common::String &textStyle, int start, int end) {
+	Graphics::MacWidget *target = getWidget();
+	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			((Graphics::MacTextWindow *)target)->setTextSlant(slant, start, end);
+			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
+			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
+		} else {
+			((Graphics::MacText *)target)->setTextSlant(slant, start, end);
+			_ptext = ((Graphics::MacText *)target)->getPlainText();
+			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+			((Graphics::MacText *)target)->draw();
+		}
+	}
+	_modified = true;
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	if (widget && _type == kCastText) {
-		_ptext = ((Graphics::MacText *)widget)->getEditedString();
+		if (_textType == kTextTypeScrolling) {
+			_ptext = ((Graphics::MacTextWindow *)widget)->getEditedString();
+		} else {
+			_ptext = ((Graphics::MacText *)widget)->getEditedString();
+		}
 	}
 }
 
@@ -479,10 +717,16 @@ bool TextCastMember::hasField(int field) {
 	case kTheTextSize:
 	case kTheTextStyle:
 		return true;
+	case kTheAutoTab:
 	case kTheBorder:
+	case kTheBoxDropShadow:
+	case kTheBoxType:
+	case kTheEditable:
+	case kTheLineCount:
+	case kTheMargin:
+	case kThePageHeight:
 	case kTheScrollTop:
 	case kTheWordWrap:
-	case kTheEditable:
 		return _type == kCastText;
 	case kTheButtonType:
 		return _type == kCastButton;
@@ -520,8 +764,7 @@ Datum TextCastMember::getField(int field) {
 		}
 		break;
 	case kTheTextFont:
-		d.type = STRING;
-		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(_fontId));
+		d = getTextFont();
 		break;
 	case kTheTextHeight:
 		d = getTextHeight();
@@ -530,10 +773,32 @@ Datum TextCastMember::getField(int field) {
 		d = getTextSize();
 		break;
 	case kTheTextStyle:
-		d = (int)_textSlant;
+		d = getTextStyle();
+		break;
+	case kTheAutoTab:
+		warning("STUB: TextCastMember::getField(): autoTab not implemented");
+		d = 1;
 		break;
 	case kTheBorder:
 		d = _borderSize;
+		break;
+	case kTheBoxDropShadow:
+		warning("STUB: TextCastMember::getField(): boxDropShadow not implemented");
+		d = 1;
+		break;
+	case kTheEditable:
+		d = (int)_editable;
+		break;
+	case kTheLineCount:
+		d = getLineCount();
+		break;
+	case kTheMargin:
+		warning("STUB: TextCastMember::getField(): margin not implemented");
+		d = 0;
+		break;
+	case kThePageHeight:
+		warning("STUB: TextCastMember::getField(): pageHeight not implemented");
+		d = 0;
 		break;
 	case kTheScrollTop:
 		d = _scroll;
@@ -541,9 +806,6 @@ Datum TextCastMember::getField(int field) {
 	case kTheWordWrap:
 		warning("STUB: TextCastMember::getField(): wordWrap not implemented");
 		d = 1;
-		break;
-	case kTheEditable:
-		d = (int)_editable;
 		break;
 	case kTheButtonType:
 		switch (_buttonType) {
@@ -570,23 +832,6 @@ Datum TextCastMember::getField(int field) {
 }
 
 bool TextCastMember::setField(int field, const Datum &d) {
-	Channel *toEdit = nullptr;
-
-	if (field == kTheTextFont || field == kTheTextSize || field == kTheTextStyle) {
-		Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
-		for (uint i = 0; i < channels.size(); i++) {
-			if (channels[i]->_sprite->_cast == this) {
-				toEdit = channels[i];
-				break;
-			}
-		}
-		if (toEdit) {
-			Common::Rect bbox = toEdit->getBbox();
-			if (!toEdit->_widget)
-				toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
-		}
-	}
-
 	switch (field) {
 	case kTheBackColor:
 		{
@@ -606,21 +851,18 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		_hilite = (bool)d.asInt();
 		_modified = true;
 		return true;
-		break;
 	case kTheText:
 		setRawText(d.asString());
 		return true;
 	case kTheTextAlign:
 		{
-			Common::String select = d.asString(true);
-			select.toLowercase();
-
+			Common::String select = d.asString();
 			TextAlignType align;
-			if (select == "\"left\"") {
+			if (select.equalsIgnoreCase("left")) {
 				align = kTextAlignLeft;
-			} else if (select == "\"center\"") {
+			} else if (select.equalsIgnoreCase("center")) {
 				align = kTextAlignCenter;
-			} else if (select == "\"right\"") {
+			} else if (select.equalsIgnoreCase("right")) {
 				align = kTextAlignRight;
 			} else {
 				warning("TextCastMember::setField(): Unknown text align spec: %s", d.asString(true).c_str());
@@ -629,57 +871,54 @@ bool TextCastMember::setField(int field, const Datum &d) {
 
 			_textAlign = align;
 			_modified = true;
-	}
+		}
 		return true;
 	case kTheTextFont:
-		if (!toEdit) {
-			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
-			return false;
-		}
-		((Graphics::MacText *)toEdit->_widget)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(d.asString()));
-		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
-		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
+		setTextFont(d.asString());
 		return true;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
 		_modified = true;
 		return false;
 	case kTheTextSize:
-		if (!toEdit) {
-			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
-			return false;
-		}
-		((Graphics::MacText *)toEdit->_widget)->setTextSize(d.asInt());
-		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
-		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
+		setTextSize(d.asInt());
 		return true;
 	case kTheTextStyle:
-		if (!toEdit) {
-			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
-			return false;
-		}
-		{
-			int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
-			((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
-		}
-		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
-		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
+		setTextStyle(d.asString());
 		return true;
+	case kTheAutoTab:
+		warning("STUB: TextCastMember::setField(): autoTab not implemented");
+		return false;
 	case kTheBorder:
 		_borderSize = d.asInt();
 		setModified(true);
 		return true;
-	case kTheScrollTop:
-		_scroll = d.asInt();
-		setModified(true);
-		return true;
-	case kTheWordWrap:
-		warning("STUB: TextCastMember::getField(): wordWrap not implemented");
+	case kTheBoxDropShadow:
+		warning("STUB: TextCastMember::setField(): boxDropShadow not implemented");
+		return false;
+	case kTheBoxType:
+		warning("STUB: TextCastMember::setField(): boxType not implemented");
 		return false;
 	case kTheEditable:
 		_editable = d.asInt();
 		setModified(true);
 		return true;
+	case kTheLineCount:
+		warning("BUILDBOT: TextCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		return false;
+	case kTheMargin:
+		warning("STUB: TextCastMember::setField(): margin not implemented");
+		return false;
+	case kThePageHeight:
+		warning("BUILDBOT: TextCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		return false;
+	case kTheScrollTop:
+		_scroll = d.asInt();
+		setModified(true);
+		return true;
+	case kTheWordWrap:
+		warning("STUB: TextCastMember::setField(): wordWrap not implemented");
+		return false;
 	case kTheButtonType:
 		if (d.type == SYMBOL) {
 			if (d.u.s->equalsIgnoreCase("pushButton")) {
@@ -705,6 +944,13 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	return CastMember::setField(field, d);
 }
 
+// This isn't documented particularly well by the Lingo Dictionary;
+// as well as letting you read/write properties on the cast member,
+// Director allows you to read/write some properties to a subset of the text
+// within the cast member defined by a chunk expression, e.g.:
+//
+// set the textStyle of char 2 to 4 of field "Pudge" to "bold"
+
 bool TextCastMember::hasChunkField(int field) {
 	switch (field) {
 	case kTheForeColor:
@@ -722,43 +968,22 @@ bool TextCastMember::hasChunkField(int field) {
 Datum TextCastMember::getChunkField(int field, int start, int end) {
 	Datum d;
 
-	Graphics::MacText *macText = ((Graphics::MacText *)_widget);
-	if (!_widget)
-		warning("TextCastMember::getChunkField getting chunk field when there is no linked widget, returning the default value");
-
 	switch (field) {
 	case kTheForeColor:
-		if (_widget)
-			d.u.i = macText->getTextColor(start, end);
-		else
-			d.u.i = getForeColor();
+		d = (int)getForeColor(start, end);
 		break;
-	case kTheTextFont: {
-		int fontId;
-		if (_widget)
-			fontId = macText->getTextFont(start, end);
-		else
-			fontId = _fontId;
-
-		d.type = STRING;
-		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(fontId));
+	case kTheTextFont:
+		d = getTextFont(start, end);
 		break;
-		}
 	case kTheTextHeight:
-		warning("TextCastMember::getChunkField getting text height(line spacing) is not implemented yet, returning the default one");
-		d.u.i = _lineSpacing;
+		warning("TextCastMember::getChunkField(): getting text height(line spacing) is not implemented yet, returning the default one");
+		d = (int)_lineSpacing;
 		break;
 	case kTheTextSize:
-		if (_widget)
-			d.u.i = macText->getTextSize(start, end);
-		else
-			d.u.i = _fontSize;
+		d = getTextSize(start, end);
 		break;
 	case kTheTextStyle:
-		if (_widget)
-			d.u.i = macText->getTextSlant(start, end);
-		else
-			d.u.i = _textSlant;
+		d = getTextStyle(start, end);
 		break;
 	default:
 		break;
@@ -768,29 +993,22 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 }
 
 bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d) {
-	Graphics::MacText *macText = ((Graphics::MacText *)_widget);
-	if (!_widget)
-		warning("TextCastMember::setChunkField setting chunk field when there is no linked widget");
 
 	switch (field) {
 	case kTheForeColor:
-		if (_widget)
-			macText->setTextColor(d.asInt(), start, end);
+		setForeColor(d.asInt(), start, end);
 		return true;
 	case kTheTextFont:
-		if (_widget)
-			macText->setTextFont(d.asInt(), start, end);
+		setTextFont(d.asString(), start, end);
 		return true;
 	case kTheTextHeight:
-		warning("TextCastMember::setChunkField setting text height(line spacing) is not implemented yet");
+		warning("TextCastMember::setChunkField(): setting text height(line spacing) is not implemented yet");
 		return false;
 	case kTheTextSize:
-		if (_widget)
-			macText->setTextSize(d.asInt(), start, end);
+		setTextSize(d.asInt(), start, end);
 		return true;
 	case kTheTextStyle:
-		if (_widget)
-			macText->setTextSlant(d.asInt(), start, end);
+		setTextStyle(d.asString(), start, end);
 		return true;
 	default:
 		break;

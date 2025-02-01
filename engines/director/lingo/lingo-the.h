@@ -176,6 +176,7 @@ enum TheFieldType {
 	kTheBlend,
 	kTheBorder,
 	kTheBottom,
+	kTheBoxDropShadow,
 	kTheBoxType,
 	kTheButtonType,
 	kTheCastLibNum,

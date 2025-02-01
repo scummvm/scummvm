@@ -496,17 +496,19 @@ void MacText::setTextSlant(int textSlant, int start, int end) {
 void MacText::enforceTextSlant(int textSlant) {
 	for (uint i = 0; i < _canvas._text.size(); i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
-			if (textSlant) {
-				_canvas._text[i].chunks[j].textSlant |= textSlant;
-			} else {
-				_canvas._text[i].chunks[j].textSlant = textSlant;
-			}
+			_canvas._text[i].chunks[j].textSlant = textSlant;
 		}
 	}
 
 	_fullRefresh = true;
 	render();
 	_contentIsDirty = true;
+}
+
+// Return the number of rows of text in the rendered output.
+// This means e.g. a line of text that wraps will count as 2 or more rows.
+int MacText::getRowCount() {
+	return (int)_canvas._text.size();
 }
 
 // this maybe need to amend
