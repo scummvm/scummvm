@@ -41,10 +41,10 @@ private:
 	int _val9 = 0;
 	int _items4State = 0;
 	int _xyzzy1 = 0;
-	int _xyzzy2 = 0;
-	int _xyzzy3 = 0;
-	int _xyzzy4 = 0;
-	int _items3State = 0;
+	int _hoseState = 0;
+	int _tubeState = 0;
+	int _pumpState = 0;
+	int _stopperState = 0;
 	int _items1State = 0;
 	int _xyzzy7 = 0;
 	int _items2State = 0;

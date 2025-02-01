@@ -92,22 +92,22 @@ void Room407::init() {
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-			if (_xyzzy2 == 1101) {
+			if (_hoseState == 1101) {
 				_drawerPopupHose = series_place_sprite("407 DRAWER POPUP HOSE", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("GARDEN HOSE", true);
 			}
 
-			if (_items3State == 1101) {
+			if (_stopperState == 1101) {
 				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("RUBBER PLUG", true);
 			}
 
-			if (_xyzzy3 == 1101) {
+			if (_tubeState == 1101) {
 				_tubeInDrawer = series_place_sprite("407 TUBE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("SURGICAL TUBE", true);
 			}
 
-			if (_xyzzy4 == 1101) {
+			if (_pumpState == 1101) {
 				_handleInDrawer = series_place_sprite("407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("PUMP GRIPS", true);
 			}
@@ -116,7 +116,7 @@ void Room407::init() {
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
-			if (_xyzzy3 == 1117)
+			if (_tubeState == 1117)
 				_tabletopPopupWithItems1 = series_place_sprite(
 					"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0);
 
@@ -164,7 +164,7 @@ void Room407::init() {
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-			if (_items3State == 1116)
+			if (_stopperState == 1116)
 				_glassBottomWithItems2 = series_place_sprite(
 					"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
 
@@ -187,7 +187,7 @@ void Room407::init() {
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-			if (_items3State == 1116)
+			if (_stopperState == 1116)
 				_glassBottomWithItems1 = series_place_sprite(
 					"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
 
@@ -280,10 +280,10 @@ void Room407::init() {
 		_val9 = 1100;
 		_items4State = 1112;
 		_xyzzy1 = 1115;
-		_xyzzy2 = 1101;
-		_xyzzy3 = 1101;
-		_xyzzy4 = 1101;
-		_items3State = 1101;
+		_hoseState = 1101;
+		_tubeState = 1101;
+		_pumpState = 1101;
+		_stopperState = 1101;
 		_items1State = 1112;
 		_xyzzy7 = 1112;
 		_items2State = 1116;
@@ -337,7 +337,7 @@ void Room407::init() {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 410);
 				_G(kernel).trigger_mode = KT_PARSE;
-			} else if (_xyzzy3 == 1130) {
+			} else if (_tubeState == 1130) {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 410);
 				_G(kernel).trigger_mode = KT_PARSE;
@@ -366,7 +366,7 @@ void Room407::init() {
 				_bits = series_place_sprite("407bbits", 0, 0, -53, 100, 0xa00);
 			}
 
-			switch (_xyzzy3) {
+			switch (_tubeState) {
 			case 1100:
 				_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF", 1, 0, 0, 100, 0xa00);
 				break;
@@ -383,7 +383,7 @@ void Room407::init() {
 				break;
 			}
 
-			switch (_items3State) {
+			switch (_stopperState) {
 			case 1112:
 				_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xa00);
 				break;
@@ -406,7 +406,7 @@ void Room407::init() {
 				break;
 			}
 
-			switch (_xyzzy4) {
+			switch (_pumpState) {
 			case 1115:
 				_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xa00);
 				break;
@@ -450,7 +450,7 @@ void Room407::init() {
 				break;
 			}
 
-			switch (_xyzzy2) {
+			switch (_hoseState) {
 			case 1100:
 				_drawerPopupHose = series_place_sprite(
 					"407 TUBE AND HOSE INTO SINK", 1, 0, 0, 100, 0xb00);
@@ -549,12 +549,12 @@ void Room407::init() {
 		_items2State = 1000;
 		_frotz2 = 1;
 		_val8 = 1140;
-		_xyzzy2 = 1140;
-		_xyzzy3 = 1140;
+		_hoseState = 1140;
+		_tubeState = 1140;
 		_xyzzy7 = 1140;
-		_items3State = 1130;
+		_stopperState = 1130;
 		_xyzzy9 = 1130;
-		_xyzzy4 = 1130;
+		_pumpState = 1130;
 
 		setHotspots();
 		ws_demand_location(260, 335, 3);
@@ -568,13 +568,13 @@ void Room407::daemon() {
 		digi_play("407_s02", 2);
 		terminateMachineAndNull(_drawerPopup);
 
-		if (_xyzzy2 == 1101)
+		if (_hoseState == 1101)
 			terminateMachineAndNull(_drawerPopupHose);
-		if (_items3State == 1101)
+		if (_stopperState == 1101)
 			terminateMachineAndNull(_stopperInDrawer);
-		if (_xyzzy3 == 1101)
+		if (_tubeState == 1101)
 			terminateMachineAndNull(_tubeInDrawer);
-		if (_xyzzy4 == 1101)
+		if (_pumpState == 1101)
 			terminateMachineAndNull(_handleInDrawer);
 
 		sendWSMessage_120000(12);
@@ -604,9 +604,9 @@ void Room407::daemon() {
 		} else if (!inv_object_is_here("EMERALD/CORK")) {
 			kernel_timing_trigger(1, 50);
 		} else if (_items1State != 1116) {
-			kernel_timing_trigger(1, (_items3State == 1116) ? 70 : 50);
+			kernel_timing_trigger(1, (_stopperState == 1116) ? 70 : 50);
 		} else {
-			kernel_timing_trigger(1, (_items3State == 1116) ? 80 : 60);
+			kernel_timing_trigger(1, (_stopperState == 1116) ? 80 : 60);
 		}
 		break;
 
@@ -620,9 +620,9 @@ void Room407::daemon() {
 		else if (!inv_object_is_here("EMERALD/CORK"))
 			kernel_timing_trigger(1, 185);
 		else if (_items1State != 1116)
-			kernel_timing_trigger(1, (_items3State == 1116) ? 170 : 150);
+			kernel_timing_trigger(1, (_stopperState == 1116) ? 170 : 150);
 		else
-			kernel_timing_trigger(1, (_items3State == 1116) ? 175 : 160);
+			kernel_timing_trigger(1, (_stopperState == 1116) ? 175 : 160);
 		break;
 
 	case 50:
@@ -976,7 +976,7 @@ void Room407::daemon() {
 		digi_stop(1);
 		terminateMachineAndNull(_tabletopPopup);
 
-		if (_xyzzy3 == 1117)
+		if (_tubeState == 1117)
 			terminateMachineAndNull(_tabletopPopupWithItems1);
 		if (_val9 == 1110)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
@@ -1022,7 +1022,7 @@ void Room407::daemon() {
 			terminateMachineAndNull(_tabletopPopupWithItems2);
 		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
-		if (_items3State == 1116)
+		if (_stopperState == 1116)
 			terminateMachineAndNull(_glassBottomWithItems2);
 
 		setHotspots();
@@ -1038,7 +1038,7 @@ void Room407::daemon() {
 			terminateMachineAndNull(_glassTopPopupWithItems2);
 		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
-		if (_items3State == 1116)
+		if (_stopperState == 1116)
 			terminateMachineAndNull(_glassBottomWithItems2);
 		if (_val6 == 1010)
 			terminateMachineAndNull(_glassTopPopupWithItems1);
@@ -1126,8 +1126,8 @@ void Room407::daemon() {
 		hotspot_set_active("GARDEN HOSE   ", true);
 
 		_val8 = 1140;
-		_xyzzy2 = 1140;
-		_xyzzy3 = 1140;
+		_hoseState = 1140;
+		_tubeState = 1140;
 		_xyzzy7 = 1140;
 		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE TO JAR",
 			0, 0, 0, 100, 0xb00);
@@ -1169,8 +1169,8 @@ void Room407::daemon() {
 		hotspot_set_active("GARDEN HOSE   ", true);
 
 		_val8 = 1140;
-		_xyzzy2 = 1140;
-		_xyzzy3 = 1140;
+		_hoseState = 1140;
+		_tubeState = 1140;
 		_xyzzy7 = 1140;
 
 		sendWSMessage_120000(314);
@@ -1215,7 +1215,7 @@ void Room407::daemon() {
 		break;
 
 	case 322:
-		if (_items3State == 1116 && _xyzzy9 == 1116 && _xyzzy4 == 1116) {
+		if (_stopperState == 1116 && _xyzzy9 == 1116 && _pumpState == 1116) {
 			terminateMachineAndNull(_faucet1);
 			terminateMachineAndNull(_tubeInDrawer);
 			terminateMachineAndNull(_drawerPopupHose);
@@ -1233,7 +1233,7 @@ void Room407::daemon() {
 			sendWSMessage_10000(1, _niche, _407h, 1, 29, 330, _407h, 29, 29, 0);
 			digi_play("407_s21", 2);
 		} else {
-			if (_items3State == 1116) {
+			if (_stopperState == 1116) {
 				_jarWaterFallingLeft = series_load("407 JAR WATER FALLING LEFT");
 				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 					triggerMachineByHashCallback, "407 JAR WATER FALLING LEFT");
@@ -1249,7 +1249,7 @@ void Room407::daemon() {
 					_jarWaterFallingCentre, 12, 15, 0);
 			}
 
-			if (_xyzzy4 != 1116) {
+			if (_pumpState != 1116) {
 				_jarWaterFallingRight = series_load("407 JAR WATER FALLING RIGHT");
 				_jarRight = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 					triggerMachineByHashCallback, "Right jar hole leaks");
@@ -1269,9 +1269,9 @@ void Room407::daemon() {
 		digi_preload("407r37");
 		digi_play("407r37", 1, 255, 666);
 		_frotz2 = 1;
-		_items3State = 1130;
+		_stopperState = 1130;
 		_xyzzy9 = 1130;
-		_xyzzy4 = 1130;
+		_pumpState = 1130;
 
 		hotspot_set_active("MICROSCOPE", true);
 		hotspot_set_active("LETTER", true);
@@ -1296,13 +1296,13 @@ void Room407::daemon() {
 
 	case 344:
 		if (!_frotz2) {
-			if (_items3State != 1115)
+			if (_stopperState != 1115)
 				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 20, 35, 350,
 					_jarWaterFallingLeft, 35, 35, 0);
 			if (_xyzzy9 != 1116)
 				sendWSMessage_10000(1, _jarCentre, _jarWaterFallingCentre, 16, 28, 351,
 					_jarWaterFallingCentre, 28, 28, 0);
-			if (_xyzzy4 != 1116)
+			if (_pumpState != 1116)
 				sendWSMessage_10000(1, _jarRight, _jarWaterFallingRight, 21, 35, 352,
 					_jarWaterFallingRight, 35, 35, 0);
 		}
@@ -1492,9 +1492,9 @@ void Room407::daemon() {
 		break;
 
 	case 410:
-		if (_xyzzy2 == 1100) {
+		if (_hoseState == 1100) {
 			digi_play("407_s32", 3);
-		} else if (_xyzzy3 == 1100) {
+		} else if (_tubeState == 1100) {
 			digi_play_loop("407_s31", 3);
 			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 				triggerMachineByHashCallback, "water into sink");
@@ -1514,7 +1514,7 @@ void Room407::daemon() {
 		break;
 
 	case 420:
-		if (_xyzzy2 == 1130) {
+		if (_hoseState == 1130) {
 			digi_play_loop("407_s32", 3);
 		} else {
 			digi_play_loop("407_s31", 3);
@@ -1531,7 +1531,7 @@ void Room407::daemon() {
 	case 430:
 		digi_stop(3);
 
-		if (_xyzzy2 != 1100) {
+		if (_hoseState != 1100) {
 			hotspot_set_active("WATER ", false);
 			hotspot_set_active("WATER", false);
 			terminateMachineAndNull(_sink);
@@ -1541,7 +1541,7 @@ void Room407::daemon() {
 	case 440:
 		digi_stop(3);
 
-		if (_xyzzy2 != 1130) {
+		if (_hoseState != 1130) {
 			hotspot_set_active("WATER  ", false);
 			terminateMachineAndNull(_sink);
 		}
@@ -1629,7 +1629,7 @@ void Room407::pre_parser() {
 		kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
 	}
 
-	if (useFlag && player_said("SURGICAL TUBE  ") && _xyzzy2 != 1130) {
+	if (useFlag && player_said("SURGICAL TUBE  ") && _hoseState != 1130) {
 		mouse_set_sprite(43);
 		intr_freshen_sentence();
 	}
@@ -1650,7 +1650,7 @@ void Room407::pre_parser() {
 		intr_freshen_sentence();
 	}
 
-	if (useFlag && player_said("GARDEN HOSE ") && _xyzzy3 != 1116) {
+	if (useFlag && player_said("GARDEN HOSE ") && _tubeState != 1116) {
 		mouse_set_sprite(36);
 		intr_freshen_sentence();
 	}
@@ -1660,7 +1660,7 @@ void Room407::pre_parser() {
 		intr_freshen_sentence();
 	}
 
-	if (useFlag && player_said("FAUCET PIPE ") && _xyzzy2 != 1116) {
+	if (useFlag && player_said("FAUCET PIPE ") && _hoseState != 1116) {
 		mouse_set_sprite(44);
 		intr_freshen_sentence();
 	}
@@ -1784,7 +1784,7 @@ void Room407::parser() {
 	} else if (lookFlag && player_said("FAUCET PIPE/HOSE")) {
 		lookItem("PING FAUCET PIPE/HOSE", "407R94");
 	} else if (lookFlag && player_said("FAUCET PIPE ")) {
-		digi_play((_xyzzy3 == 1116) ? "407R86" : "407R07", 1);
+		digi_play((_tubeState == 1116) ? "407R86" : "407R07", 1);
 	} else if (lookFlag && player_said("FAUCET PIPE/HOSE/TUBE")) {
 		lookItem("PING FAUCET PIPE/HOSE/TUBE", "407R95");
 	} else if ((useFlag && player_said("MICROSCOPE")) ||
@@ -1888,7 +1888,7 @@ void Room407::parser() {
 	} else if (lookFlag && player_said("PUMP GRIPS") &&
 			inv_object_is_here("PUMP GRIPS")) {
 		digi_play("407r30", 1);
-	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE   ") && _xyzzy3 == 1100) {
+	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE   ") && _tubeState == 1100) {
 		gardenHoseSurgicalTube();
 	} else if ((player_said("SURGICAL TUBE", "FAUCET PIPE") ||
 			player_said("TUBE/HOSE", "FAUCET PIPE")) && _val8 == 1100) {
@@ -1940,14 +1940,13 @@ void Room407::parser() {
 		corkGlassJar2();
 	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _items1State == 1000) {
 		periodicTableGlassJar();
-	} else if (player_said("SURGICAL TUBE", "NOZZLES") && _xyzzy3 == 1000) {
+	} else if (player_said("SURGICAL TUBE", "NOZZLES") && _tubeState == 1000) {
 		surgicalTubeNozzles();
 	} else if (player_said("LEVER KEY", "TABLE PIVOT") && _items4State == 1000) {
 		leverKeyTablePivot();
 	} else if (player_said("PUMP ROD", "BRACKET") && _xyzzy1 == 1000) {
 		pumpRodBracket();
-	} else if ((player_said("LEVER KEY", "BRACKET") ||
-			player_said("LEVER KEY", "PUMP ROD ")) ||
+	} else if ((player_said("LEVER KEY", "BRACKET") || player_said("LEVER KEY", "PUMP ROD ")) &&
 			_items4State == 1000) {
 		if (_xyzzy1 == 1114)
 			leverKey1();
@@ -1959,14 +1958,14 @@ void Room407::parser() {
 			_val9 == 1000 && _val8 == 1100) {
 		faucetPipeFaucetHandle1();
 	} else if (player_said("FAUCET PIPE", "FAUCET HANDLE") &&
-			_val8 == 1000 && _val9 == 1100 && _xyzzy3 != 1130) {
+			_val8 == 1000 && _val9 == 1100 && _tubeState != 1130) {
 		faucetPipeFaucetHandle2();
 	} else if ((player_said("FAUCET PIPE", "FAUCET STEM") ||
 			player_said("FAUCET PIPE/TUBE", "FAUCET STEM") ||
 			player_said("FAUCET PIPE/TUBE", "FAUCET HANDLE") ||
 			player_said("FAUCET PIPE/TUBE", "SINK") ||
 			player_said("FAUCET PIPE", "SINK")) &&
-			_xyzzy3 != 1130) {
+			_tubeState != 1130) {
 		faucetPipeFaucetHandle2();
 	} else if (player_said("FAUCET HANDLE", "FAUCET STEM") && _val9 == 1000) {
 		faucetPipeFaucetHandle1();
@@ -2018,14 +2017,14 @@ void Room407::parser() {
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
-		} else if (_xyzzy3 == 1130 && _val8 != 1130) {
+		} else if (_tubeState == 1130 && _val8 != 1130) {
 			if (_items1State == 1120)
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
 		} else if (_frotz1) {
 			useFaucet();
-		} else if (_val8 == 1100 || _xyzzy3 == 1130 || _frotz1) {
+		} else if (_val8 == 1100 || _tubeState == 1130 || _frotz1) {
 			digi_play("407r99e", 1);
 		} else {
 			digi_play("407r99n", 1);
@@ -2053,26 +2052,27 @@ void Room407::parser() {
 		case 1:
 			_drawerState = 1010;
 			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
+			disableHotspots();
 			hotspot_set_active(" ", true);
 
-			if (_xyzzy2 == 1101) {
+			if (_hoseState == 1101) {
 				_drawerPopupHose = series_place_sprite("407 DRAWER POPUP HOSE", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("GARDEN HOSE", true);
 			}
 
-			if (_items3State == 1101) {
+			if (_stopperState == 1101) {
 				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER",
 					0, 0, 0, 100, 0x100);
 				hotspot_set_active("RUBBER PLUG", true);
 			}
 
-			if (_xyzzy3 == 1101) {
+			if (_tubeState == 1101) {
 				_tubeInDrawer = series_place_sprite("407 TUBE IN DRAWER",
 					0, 0, 0, 100, 0x100);
 				hotspot_set_active("SURGICAL TUBE", true);
 			}
 
-			if (_xyzzy4 == 1101) {
+			if (_pumpState == 1101) {
 				_handleInDrawer = series_place_sprite(
 					"407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("PUMP GRIPS", true);
@@ -2098,19 +2098,19 @@ take:
 		takeLetter();
 	} else if (takeFlag && player_said("FAUCET PIPE  ") && _val8 == 1130) {
 		takeFaucetPipe1();
-	} else if (takeFlag && player_said("SURGICAL TUBE   ") && _xyzzy3 == 1100) {
+	} else if (takeFlag && player_said("SURGICAL TUBE   ") && _tubeState == 1100) {
 		takeSurgicalTube1();
-	} else if (takeFlag && player_said("GARDEN HOSE    ") && _xyzzy2 == 1100) {
+	} else if (takeFlag && player_said("GARDEN HOSE    ") && _hoseState == 1100) {
 		takeGardenHose1();
-	} else if (takeFlag && player_said("GARDEN HOSE  ") && _xyzzy2 == 1130) {
+	} else if (takeFlag && player_said("GARDEN HOSE  ") && _hoseState == 1130) {
 		takeGardenHose2();
-	} else if (takeFlag && player_said("SURGICAL TUBE  ") && _xyzzy3 == 1130) {
+	} else if (takeFlag && player_said("SURGICAL TUBE  ") && _tubeState == 1130) {
 		takeSurgicalTube2();
 	} else if (takeFlag && player_said("FAUCET PIPE ") && _val8 == 1116) {
 		takeFaucetPipe2();
-	} else if (takeFlag && player_said("GARDEN HOSE ") && _xyzzy2 == 1116) {
+	} else if (takeFlag && player_said("GARDEN HOSE ") && _hoseState == 1116) {
 		takeGardenHose3();
-	} else if (takeFlag && player_said("SURGICAL TUBE ") && _xyzzy3 == 1116) {
+	} else if (takeFlag && player_said("SURGICAL TUBE ") && _tubeState == 1116) {
 		takeSurgicalTube3();
 	} else if (takeFlag && player_said("GLASS JAR ")) {
 		if (_val8 == 1116 || _xyzzy7 != 1114)
@@ -2126,7 +2126,7 @@ take:
 		takePeriodicTable2();
 	} else if (takeFlag && player_said("JAR/GRIPS ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140) &&
-			_xyzzy4 == 1116) {
+			_pumpState == 1116) {
 		takeJarGrips();
 	} else if (takeFlag && player_said("JAR/CORK") && _xyzzy7 == 1112) {
 		takeJarCork1();
@@ -2138,7 +2138,7 @@ take:
 		takeJarRubberPlug1();
 	} else if (takeFlag && player_said("JAR/RUBBER PLUG ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140) &&
-			_items3State == 1116) {
+			_stopperState == 1116) {
 		takeJarRubberPlug2();
 	} else if (takeFlag && player_said("NOZZLES/TUBE")) {
 		takeNozzlesTube();
@@ -2205,16 +2205,16 @@ take:
 	} else if ((player_said("FAUCET PIPE/HOSE", "SURGICAL TUBE") ||
 			player_said("TUBE/HOSE", "FAUCET PIPE") ||
 			player_said("FAUCET PIPE/TUBE", "GARDEN HOSE")) &&
-			(_xyzzy2 == 1060 || _xyzzy2 == 1061 || _xyzzy3 == 1061)) {
+			(_hoseState == 1060 || _hoseState == 1061 || _tubeState == 1061)) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
 				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
 			break;
 		case 2:
-			_xyzzy2 = 1062;
+			_hoseState = 1062;
 			_val8 = 1111;
-			_xyzzy3 = 1111;
+			_tubeState = 1111;
 			inv_move_object("SURGICAL TUBE", 407);
 			inv_move_object("FAUCET PIPE", 407);
 			inv_move_object("GARDEN HOSE", 407);
@@ -2228,14 +2228,14 @@ take:
 			break;
 		}
 	} else if (player_said("FAUCET PIPE", "GARDEN HOSE") &&
-		_xyzzy2 == 1000 && _val8 == 1000) {
+		_hoseState == 1000 && _val8 == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
 				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
 			break;
 		case 2:
-			_xyzzy2 = 1061;
+			_hoseState = 1061;
 			_val8 = 1111;
 			inv_move_object("GARDEN HOSE", 407);
 			inv_move_object("FAUCET PIPE", 407);
@@ -2246,15 +2246,15 @@ take:
 			break;
 		}
 	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE") &&
-			_xyzzy2 == 1000 && _xyzzy3 == 1000) {
+			_hoseState == 1000 && _tubeState == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING TUBE/HOSE",
 				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
 			break;
 		case 2:
-			_xyzzy2 = 1060;
-			_xyzzy3 = 1111;
+			_hoseState = 1060;
+			_tubeState = 1111;
 			inv_move_object("GARDEN HOSE", 407);
 			inv_move_object("SURGICAL TUBE", 407);
 			inv_give_to_player("TUBE/HOSE");
@@ -2264,7 +2264,7 @@ take:
 			break;
 		}
 	} else if (player_said("FAUCET PIPE", "SURGICAL TUBE") &&
-			_val8 == 1000 && _xyzzy3 == 1000) {
+			_val8 == 1000 && _tubeState == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING FAUCET PIPE/TUBE",
@@ -2272,7 +2272,7 @@ take:
 			break;
 		case 2:
 			_val8 = 1060;
-			_xyzzy3 = 1061;
+			_tubeState = 1061;
 			inv_move_object("FAUCET PIPE", 407);
 			inv_move_object("SURGICAL TUBE", 407);
 			inv_give_to_player("FAUCET PIPE/TUBE");
@@ -2293,8 +2293,8 @@ take:
 		case 2:
 			_xyzzy7 = 1056;
 			_xyzzy9 = 1116;
-			_items3State = 1116;
-			_xyzzy4 = 1116;
+			_stopperState = 1116;
+			_pumpState = 1116;
 			inv_move_object("JAR/PLUG/GRIPS", 407);
 			inv_move_object("JAR/CORK/PLUG", 407);
 			inv_move_object("JAR/CORK/GRIPS", 407);
@@ -2318,7 +2318,7 @@ take:
 		case 2:
 			_xyzzy7 = 1053;
 			_xyzzy9 = 1116;
-			_items3State = 1116;
+			_stopperState = 1116;
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			inv_move_object("JAR/CORK", 407);
 			inv_move_object("RUBBER PLUG", 407);
@@ -2340,7 +2340,7 @@ take:
 		case 2:
 			_xyzzy7 = 1055;
 			_xyzzy9 = 1116;
-			_xyzzy4 = 1116;
+			_pumpState = 1116;
 			inv_move_object("JAR/GRIPS", 407);
 			inv_move_object("JAR/CORK", 407);
 			inv_move_object("PUMP GRIPS", 407);
@@ -2361,8 +2361,8 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1055;
-			_items3State = 1116;
-			_xyzzy4 = 1116;
+			_stopperState = 1116;
+			_pumpState = 1116;
 			inv_move_object("JAR/GRIPS", 407);
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			inv_move_object("PUMP GRIPS", 407);
@@ -2392,7 +2392,7 @@ take:
 			break;
 		}
 	} else if (player_said("GLASS JAR", "PUMP GRIPS") &&
-			_xyzzy7 == 1000 && _xyzzy4 == 1000) {
+			_xyzzy7 == 1000 && _pumpState == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING JAR/GRIPS",
@@ -2400,7 +2400,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1052;
-			_xyzzy4 = 1116;
+			_pumpState = 1116;
 			inv_move_object("GLASS JAR", 407);
 			inv_move_object("PUMP GRIPS", 407);
 			inv_give_to_player("JAR/GRIPS");
@@ -2410,7 +2410,7 @@ take:
 			break;
 		}
 	} else if (player_said("GLASS JAR", "RUBBER PLUG") &&
-			_xyzzy7 == 1000 && _items3State == 1000) {
+			_xyzzy7 == 1000 && _stopperState == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING JAR/RUBBER PLUG",
@@ -2418,7 +2418,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1050;
-			_items3State = 1116;
+			_stopperState = 1116;
 			inv_move_object("GLASS JAR", 407);
 			inv_move_object("RUBBER PLUG", 407);
 			inv_give_to_player("JAR/RUBBER PLUG");
@@ -2448,28 +2448,28 @@ take:
 		}
 
 	} else if (useFlag && player_said("FAUCET PIPE/HOSE/TUBE") &&
-			_xyzzy2 == 1062) {
-		_xyzzy2 = 1000;
-		_xyzzy3 = 1000;
+			_hoseState == 1062) {
+		_hoseState = 1000;
+		_tubeState = 1000;
 		_val8 = 1000;
 		inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
 		inv_give_to_player("GARDEN HOSE");
 		inv_give_to_player("SURGICAL TUBE");
 		inv_give_to_player("FAUCET PIPE");
-	} else if (useFlag && player_said("TUBE/HOSE") && _xyzzy2 == 1060) {
-		_xyzzy2 = 1000;
-		_xyzzy3 = 1000;
+	} else if (useFlag && player_said("TUBE/HOSE") && _hoseState == 1060) {
+		_hoseState = 1000;
+		_tubeState = 1000;
 		inv_move_object("TUBE/HOSE", 407);
 		inv_give_to_player("GARDEN HOSE");
 		inv_give_to_player("SURGICAL TUBE");
-	} else if (useFlag && player_said("FAUCET PIPE/HOSE") && _xyzzy2 == 1061) {
-		_xyzzy2 = 1000;
+	} else if (useFlag && player_said("FAUCET PIPE/HOSE") && _hoseState == 1061) {
+		_hoseState = 1000;
 		_val8 = 1000;
 		inv_move_object("FAUCET PIPE/HOSE", 407);
 		inv_give_to_player("GARDEN HOSE");
 		inv_give_to_player("FAUCET PIPE");
-	} else if (useFlag && player_said("FAUCET PIPE/TUBE") && _xyzzy3 == 1061) {
-		_xyzzy3 = 1000;
+	} else if (useFlag && player_said("FAUCET PIPE/TUBE") && _tubeState == 1061) {
+		_tubeState = 1000;
 		_val8 = 1000;
 		inv_move_object("FAUCET PIPE/TUBE", 407);
 		inv_give_to_player("SURGICAL TUBE");
@@ -2477,8 +2477,8 @@ take:
 	} else if (useFlag && player_said("JAR/PLUG/CORK/GRIPS") && _xyzzy7 == 1056) {
 		_xyzzy7 = 1000;
 		_xyzzy9 = 1000;
-		_xyzzy4 = 1000;
-		_items3State = 1000;
+		_pumpState = 1000;
+		_stopperState = 1000;
 		inv_move_object("JAR/PLUG/CORK/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("PUMP GRIPS");
@@ -2487,7 +2487,7 @@ take:
 	} else if (useFlag && player_said("JAR/CORK/PLUG") && _xyzzy7 == 1053) {
 		_xyzzy7 = 1000;
 		_xyzzy9 = 1000;
-		_items3State = 1000;
+		_stopperState = 1000;
 		inv_move_object("JAR/CORK/PLUG", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("RUBBER PLUG");
@@ -2495,22 +2495,22 @@ take:
 	} else if (useFlag && player_said("JAR/CORK/GRIPS") && _xyzzy7 == 1055) {
 		_xyzzy7 = 1000;
 		_xyzzy9 = 1000;
-		_xyzzy4 = 1000;
+		_pumpState = 1000;
 		inv_move_object("JAR/CORK/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("PUMP GRIPS");
 		inv_give_to_player("CORK");
 	} else if (useFlag && player_said("JAR/PLUG/GRIPS") && _xyzzy7 == 1054) {
 		_xyzzy7 = 1000;
-		_items3State = 1000;
-		_xyzzy4 = 1000;
+		_stopperState = 1000;
+		_pumpState = 1000;
 		inv_move_object("JAR/PLUG/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("PUMP GRIPS");
 		inv_give_to_player("RUBBER PLUG");
 	} else if (useFlag && player_said("JAR/GRIPS") && _xyzzy7 == 1052) {
 		_xyzzy7 = 1000;
-		_xyzzy4 = 1000;
+		_pumpState = 1000;
 		inv_move_object("JAR/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("PUMP GRIPS");
@@ -2522,7 +2522,7 @@ take:
 		inv_give_to_player("CORK");
 	} else if (useFlag && player_said("JAR/RUBBER PLUG") && _xyzzy7 == 1050) {
 		_xyzzy7 = 1000;
-		_items3State = 1000;
+		_stopperState = 1000;
 		inv_move_object("JAR/RUBBER PLUG", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("RUBBER PLUG");
@@ -2562,10 +2562,10 @@ void Room407::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_val9);
 	s.syncAsSint16LE(_items4State);
 	s.syncAsSint16LE(_xyzzy1);
-	s.syncAsSint16LE(_xyzzy2);
-	s.syncAsSint16LE(_xyzzy3);
-	s.syncAsSint16LE(_xyzzy4);
-	s.syncAsSint16LE(_items3State);
+	s.syncAsSint16LE(_hoseState);
+	s.syncAsSint16LE(_tubeState);
+	s.syncAsSint16LE(_pumpState);
+	s.syncAsSint16LE(_stopperState);
 	s.syncAsSint16LE(_items1State);
 	s.syncAsSint16LE(_xyzzy7);
 	s.syncAsSint16LE(_items2State);
@@ -2607,13 +2607,13 @@ void Room407::setHotspots() {
 	hotspot_set_active(" ", true);
 
 	if (_drawerState == 1010) {
-		if (_xyzzy2 == 1101)
+		if (_hoseState == 1101)
 			hotspot_set_active("GARDEN HOSE", true);
-		if (_items3State == 1101)
+		if (_stopperState == 1101)
 			hotspot_set_active("RUBBER PLUG", true);
-		if (_xyzzy3 == 1101)
+		if (_tubeState == 1101)
 			hotspot_set_active("SURGICAL TUBE", true);
-		if (_xyzzy4 == 1101)
+		if (_pumpState == 1101)
 			hotspot_set_active("PUMP GRIPS", true);
 
 	} else if (_tabletopState == 1030 || _pivotState == 1030 ||
@@ -2638,7 +2638,7 @@ void Room407::setHotspots() {
 		hotspot_set_active("BUTTON  ", false);
 		hotspot_set_active("BUTTON   ", false);
 
-		if (_xyzzy4 != 1115)
+		if (_pumpState != 1115)
 			hotspot_set_active("PUMP GRIPS ", false);
 		if (_xyzzy1 != 1115)
 			hotspot_set_active("PUMP ROD", false);
@@ -2660,7 +2660,7 @@ void Room407::setHotspots() {
 			hotspot_set_active("LEVER KEY  ", false);
 		if (_items4State != 1117)
 			hotspot_set_active("NOZZLES/TUBE", false);
-		if (_xyzzy3 != 1117)
+		if (_tubeState != 1117)
 			hotspot_set_active("NOZZLES", false);
 		if (_items1State != 1112)
 			hotspot_set_active("PERIODIC TABLE", false);
@@ -2673,7 +2673,7 @@ void Room407::setHotspots() {
 			hotspot_set_active("EMERALD/CORK", false);
 
 		if (_xyzzy7 == 1112) {
-			if (_items3State != 1116)
+			if (_stopperState != 1116)
 				hotspot_set_active("JAR/RUBBER PLUG", false);
 			if (_xyzzy9 != 1116)
 				hotspot_set_active("JAR/CORK", false);
@@ -2692,31 +2692,31 @@ void Room407::setHotspots() {
 			hotspot_set_active("GLASS JAR ", false);
 			hotspot_set_active("JAR/RUBBER PLUG ", false);
 		} else {
-			if (_items3State != 1116 && _items3State != 1130)
+			if (_stopperState != 1116 && _stopperState != 1130)
 				hotspot_set_active("JAR/RUBBER PLUG ", false);
 			if (_xyzzy9 != 1116 && _xyzzy9 != 1130)
 				hotspot_set_active("JAR/CORK ", false);
-			if (_xyzzy4 != 1116 && _xyzzy4 != 1130)
+			if (_pumpState != 1116 && _pumpState != 1130)
 				hotspot_set_active("JAR/GRIP ", false);
 		}
 
 		if (_val8 != 1116 && _val8 != 1140)
 			hotspot_set_active("FAUCET PIPE ", false);
-		if (_xyzzy2 != 1116)
+		if (_hoseState != 1116)
 			hotspot_set_active("GARDEN HOSE ", false);
-		if (_xyzzy3 != 1116)
+		if (_tubeState != 1116)
 			hotspot_set_active("SURGICAL TUBE ", false);
-		if (_xyzzy2 != 1130)
+		if (_hoseState != 1130)
 			hotspot_set_active("GARDEN HOSE  ", false);
 		if (_val8 != 1130)
 			hotspot_set_active("FAUCET PIPE  ", false);
-		if (_xyzzy3 != 1130 && _xyzzy3 != 1140)
+		if (_tubeState != 1130 && _tubeState != 1140)
 			hotspot_set_active("SURGICAL TUBE  ", false);
-		if (_xyzzy3 != 1100)
+		if (_tubeState != 1100)
 			hotspot_set_active("SURGICAL TUBE   ", false);
-		if (_xyzzy2 != 1140)
+		if (_hoseState != 1140)
 			hotspot_set_active("GARDEN HOSE   ", false);
-		if (_xyzzy2 != 1100)
+		if (_hoseState != 1100)
 			hotspot_set_active("GARDEN HOSE    ", false);
 
 		if (_frotz2) {
@@ -2739,12 +2739,12 @@ void Room407::setHotspots() {
 
 		if (!_val4) {
 			if (_val8 == 1100) {
-				if (_xyzzy3 != 1100)
+				if (_tubeState != 1100)
 					hotspot_set_active("WATER", true);
-				else if (_xyzzy2 != 1100)
+				else if (_hoseState != 1100)
 					hotspot_set_active("WATER ", true);
 			} else {
-				if (_xyzzy3 == 1130 && _xyzzy2 != 1130)
+				if (_tubeState == 1130 && _hoseState != 1130)
 					hotspot_set_active("WATER  ", true);
 			}
 		}
@@ -2818,7 +2818,7 @@ void Room407::glassBottomPopup() {
 			_glassBottomWithItems1 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-		if (_items3State == 1116)
+		if (_stopperState == 1116)
 			_glassBottomWithItems2 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
 
@@ -2893,7 +2893,7 @@ void Room407::tabletopPopup() {
 		disableHotspots();
 		hotspot_set_active(" ", true);
 
-		if (_xyzzy3 == 1117)
+		if (_tubeState == 1117)
 			_tabletopPopupWithItems1 = series_place_sprite(
 				"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0);
 
@@ -2954,7 +2954,7 @@ void Room407::fullglassPopup() {
 			_glassBottomWithItems1 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
 
-		if (_items3State == 1116)
+		if (_stopperState == 1116)
 			_glassBottomWithItems2 = series_place_sprite(
 				"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
 
@@ -3058,7 +3058,7 @@ void Room407::gardenHoseSurgicalTube() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy2 = 1100;
+		_hoseState = 1100;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3081,7 +3081,7 @@ void Room407::gardenHoseSurgicalTube2() {
 			"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
 		hotspot_set_active("GARDEN HOSE  ", true);
 
-		if (_xyzzy2 == 1061) {
+		if (_hoseState == 1061) {
 			inv_move_object("GARDEN HOSE", 407);
 		} else {
 			_faucet1 = series_place_sprite("407 FAUCET IN SINK",
@@ -3099,10 +3099,10 @@ void Room407::gardenHoseSurgicalTube2() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		if (_xyzzy2 == 1061)
+		if (_hoseState == 1061)
 			_val8 = 1130;
 
-		_xyzzy2 = 1130;
+		_hoseState = 1130;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3131,12 +3131,12 @@ void Room407::surgicalTubeFaucetPipe() {
 			1, 0, 0, 100, 0xe00);
 		hotspot_set_active("SURGICAL TUBE   ", true);
 
-		if (_xyzzy3 == 1111) {
+		if (_tubeState == 1111) {
 			_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE INTO SINK",
 				1, 0, 0, 100, 0xe00);
 			hotspot_set_active("GARDEN HOSE    ", true);
 			inv_move_object("TUBE/HOSE", 407);
-			_xyzzy2 = 1100;
+			_hoseState = 1100;
 		}
 
 		digi_play("407_s06", 2, 255, 2);
@@ -3152,7 +3152,7 @@ void Room407::surgicalTubeFaucetPipe() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy3 = 1100;
+		_tubeState = 1100;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3172,15 +3172,15 @@ void Room407::surgicalTubeStem() {
 		break;
 
 	case 1:
-		if (_xyzzy3 != 1111) {
+		if (_tubeState != 1111) {
 			inv_move_object("SURGICAL TUBE", 407);
-		} else if (_xyzzy2 == 1060) {
+		} else if (_hoseState == 1060) {
 			_drawerPopupHose = series_place_sprite(
 				"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
 			hotspot_set_active("GARDEN HOSE  ", true);
 			inv_move_object("TUBE/HOSE", 407);
-			_xyzzy2 = 1130;
-		} else if (_xyzzy2 == 1062) {
+			_hoseState = 1130;
+		} else if (_hoseState == 1062) {
 			_drawerPopupHose = series_place_sprite(
 				"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
 			hotspot_set_active("GARDEN HOSE  ", true);
@@ -3188,7 +3188,7 @@ void Room407::surgicalTubeStem() {
 			hotspot_set_active("FAUCET PIPE  ", true);
 			inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
 			_val8 = 1130;
-			_xyzzy2 = 1130;
+			_hoseState = 1130;
 		}
 
 		_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF",
@@ -3239,7 +3239,7 @@ void Room407::reachLeverKey() {
 
 		switch (_xyzzy7) {
 		case 1050:
-			_items3State = 1116;
+			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			_stopperInDrawer = series_place_sprite(
@@ -3254,7 +3254,7 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1052:
-			_xyzzy4 = 1116;
+			_pumpState = 1116;
 			hotspot_set_active("JAR/GRIPS ", true);
 			inv_move_object("JAR/GRIPS", 407);
 			_bits = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
@@ -3262,7 +3262,7 @@ void Room407::reachLeverKey() {
 
 		case 1053:
 			_xyzzy9 = 1116;
-			_items3State = 1116;
+			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/CORK ", true);
 			inv_move_object("JAR/CORK/PLUG", 407);
@@ -3271,8 +3271,8 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1054:
-			_xyzzy4 = 1116;
-			_items3State = 1116;
+			_pumpState = 1116;
+			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
 			inv_move_object("JAR/PLUG/GRIPS", 407);
@@ -3282,7 +3282,7 @@ void Room407::reachLeverKey() {
 
 		case 1055:
 			_xyzzy9 = 1116;
-			_xyzzy4 = 1116;
+			_pumpState = 1116;
 			hotspot_set_active("JAR/CORK ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
 			inv_move_object("JAR/CORK/GRIPS", 407);
@@ -3292,8 +3292,8 @@ void Room407::reachLeverKey() {
 
 		case 1056:
 			_xyzzy9 = 1116;
-			_xyzzy4 = 1116;
-			_items3State = 1116;
+			_pumpState = 1116;
+			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/CORK ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
@@ -3366,13 +3366,13 @@ void Room407::faucetPipeGlassJar() {
 	case 1:
 		if (_val8 != 1111) {
 			inv_move_object("FAUCET PIPE", 407);
-		} else if (_xyzzy2 == 1061) {
+		} else if (_hoseState == 1061) {
 			_drawerPopupHose = series_place_sprite(
 				"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
 			hotspot_set_active("GARDEN HOSE ", true);
 			inv_move_object("FAUCET PIPE/HOSE", 407);
-			_xyzzy2 = 1116;
-		} else if (_xyzzy2 == 1062) {
+			_hoseState = 1116;
+		} else if (_hoseState == 1062) {
 			_drawerPopupHose = series_place_sprite(
 				"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
 			hotspot_set_active("GARDEN HOSE ", true);
@@ -3380,8 +3380,8 @@ void Room407::faucetPipeGlassJar() {
 				1, 0, 0, 100, 0xb00);
 			hotspot_set_active("SURGICAL TUBE ", true);
 			inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
-			_xyzzy3 = 1116;
-			_xyzzy2 = 1116;
+			_tubeState = 1116;
+			_hoseState = 1116;
 		}
 
 		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
@@ -3422,7 +3422,7 @@ void Room407::gardenHoseFaucetPipe() {
 			"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
 		hotspot_set_active("GARDEN HOSE ", true);
 
-		if (_xyzzy2 == 1060) {
+		if (_hoseState == 1060) {
 			_tubeInDrawer = series_place_sprite(
 				"407 HOSE HANG FROM JAR", 1, 0, 0, 100, 0xb00);
 			inv_move_object("TUBE/HOSE", 407);
@@ -3440,10 +3440,10 @@ void Room407::gardenHoseFaucetPipe() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		if (_xyzzy2 == 1060)
-			_xyzzy3 = 1116;
+		if (_hoseState == 1060)
+			_tubeState = 1116;
 
-		_xyzzy2 = 1116;
+		_hoseState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3483,7 +3483,7 @@ void Room407::surgicalTubeGardenHose() {
 
 	case 4:
 		series_unload(_ripLowHand1);
-		_xyzzy3 = 1116;
+		_tubeState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3585,7 +3585,7 @@ void Room407::rubberPlugGlassJar() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		_items3State = 1116;
+		_stopperState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3616,7 +3616,7 @@ void Room407::rubberPlugGlassJar2() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_items3State = 1116;
+		_stopperState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3644,7 +3644,7 @@ void Room407::corkGlassJar() {
 
 	case 4:
 		series_unload(_ripMedHand1);
-		_items3State = 1116;
+		_stopperState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3675,7 +3675,7 @@ void Room407::corkGlassJar2() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_items3State = 1116;
+		_stopperState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3706,7 +3706,7 @@ void Room407::pumpGripsGlassJar() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy4 = 1116;
+		_pumpState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -3786,7 +3786,7 @@ void Room407::surgicalTubeNozzles() {
 	case 4:
 		series_unload(_ripMedHand1);
 		digi_play("407r75", 1);
-		_xyzzy3 = 1117;
+		_tubeState = 1117;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4029,11 +4029,11 @@ void Room407::faucetPipeFaucetHandle2() {
 		inv_move_object("FAUCET PIPE", 407);
 		hotspot_set_active("FAUCET PIPE", true);
 
-		if (_xyzzy3 == 1061) {
+		if (_tubeState == 1061) {
 			_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF",
 				1, 0, 0, 100, 0xb00);
 			hotspot_set_active("SURGICAL TUBE   ", true);
-			_xyzzy3 = 1100;
+			_tubeState = 1100;
 			inv_move_object("FAUCET PIPE/TUBE", 407);
 		}
 
@@ -4130,7 +4130,7 @@ void Room407::pumpGripsPump() {
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
 		series_unload(_pump407);
-		_xyzzy4 = 1115;
+		_pumpState = 1115;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4415,7 +4415,7 @@ void Room407::useFaucet() {
 
 			if (_val8 == 1100) {
 				kernel_timing_trigger(1, 430, KT_DAEMON, KT_PARSE);
-			} else if (_xyzzy3 == 1130) {
+			} else if (_tubeState == 1130) {
 				kernel_timing_trigger(1, 440, KT_DAEMON, KT_PARSE);
 			}
 		}
@@ -4434,7 +4434,7 @@ void Room407::useFaucet() {
 			kernel_timing_trigger(1, 320, KT_DAEMON, KT_PARSE);
 		else if (_val4 == 1010 && _val8 == 1100)
 			kernel_timing_trigger(1, 410, KT_DAEMON, KT_PARSE);
-		else if (_xyzzy3 == 1130)
+		else if (_tubeState == 1130)
 			kernel_timing_trigger(1, 420, KT_DAEMON, KT_PARSE);
 		else
 			player_set_commands_allowed(true);
@@ -4466,7 +4466,7 @@ void Room407::useValveHandle() {
 			if (_val7 == 1021) {
 				_val7 = 1020;
 
-				if (_xyzzy3 == 1117) {
+				if (_tubeState == 1117) {
 					_frotz3 = 1;
 					kernel_timing_trigger(1, 20, KT_DAEMON, KT_PARSE);
 				} else {
@@ -4502,7 +4502,7 @@ void Room407::useValveHandle() {
 bool Room407::usePump() {
 	if (_val7 != 1020) {
 		digi_play("407r70", 1);
-	} else if (_xyzzy1 == 1115 && _xyzzy4 == 1115) {
+	} else if (_xyzzy1 == 1115 && _pumpState == 1115) {
 		if (inv_object_is_here("EMERALD/CORK") || _xyzzy7 != 1112 ||
 				_val6 != 1010) {
 			usePump2();
@@ -4668,24 +4668,24 @@ void Room407::takeFaucetPipe2() {
 		hotspot_set_active("FAUCET PIPE ", false);
 		inv_give_to_player("FAUCET PIPE");
 
-		if (_xyzzy3 == 1116) {
+		if (_tubeState == 1116) {
 			terminateMachineAndNull(_tubeInDrawer);
 			hotspot_set_active("SURGICAL TUBE ", false);
 			inv_give_to_player("SURGICAL TUBE");
-			_xyzzy3 = 1000;
+			_tubeState = 1000;
 
 			terminateMachineAndNull(_drawerPopupHose);
 			hotspot_set_active("GARDEN HOSE ", false);
 			inv_give_to_player("GARDEN HOSE");
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
 				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
-		} else if (_xyzzy2 == 1116) {
+		} else if (_hoseState == 1116) {
 			terminateMachineAndNull(_drawerPopupHose);
 			inv_give_to_player("GARDEN HOSE");
 			hotspot_set_active("GARDEN HOSE ", false);
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
 				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
@@ -4728,24 +4728,24 @@ void Room407::takeFaucetPipe3() {
 		inv_give_to_player("FAUCET PIPE");
 		hotspot_set_active("FAUCET PIPE", false);
 
-		if (_xyzzy2 == 1100) {
+		if (_hoseState == 1100) {
 			terminateMachineAndNull(_tubeInDrawer);
 			inv_give_to_player("GARDEN HOSE");
 			hotspot_set_active("GARDEN HOSE    ", false);
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 
 			terminateMachineAndNull(_tubeInDrawer);
 			hotspot_set_active("SURGICAL TUBE   ", false);
 			inv_give_to_player("SURGICAL TUBE");
-			_xyzzy3 = 1000;
+			_tubeState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
 				_G(master_palette), 5, 1, 75, 200, 2, 0, -1);
-		} else if (_xyzzy3 == 1100) {
+		} else if (_tubeState == 1100) {
 			terminateMachineAndNull(_tubeInDrawer);
 			hotspot_set_active("SURGICAL TUBE   ", false);
 			inv_give_to_player("SURGICAL TUBE");
-			_xyzzy3 = 1000;
+			_tubeState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/TUBE",
 				_G(master_palette), 5, 1, 75, 200, 2, 0, -1);
@@ -4792,11 +4792,11 @@ void Room407::takeSurgicalTube1() {
 		hotspot_set_active("SURGICAL TUBE   ", false);
 		inv_give_to_player("SURGICAL TUBE");
 
-		if (_xyzzy2 == 1100) {
+		if (_hoseState == 1100) {
 			terminateMachineAndNull(_drawerPopupHose);
 			inv_give_to_player("GARDEN HOSE");
 			hotspot_set_active("GARDEN HOSE    ", false);
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 			kernel_examine_inventory_object("PING TUBE/HOSE",
 				_G(master_palette), 5, 1, 75, 200, 2, "407_s06", -1);
 		} else {
@@ -4815,7 +4815,7 @@ void Room407::takeSurgicalTube1() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy3 = 1000;
+		_tubeState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4848,15 +4848,15 @@ void Room407::takeSurgicalTube2() {
 			terminateMachineAndNull(_drawerPopupHose);
 			hotspot_set_active("GARDEN HOSE  ", false);
 			inv_give_to_player("GARDEN HOSE");
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
 				_G(master_palette), 5, 1, 175, 150, 3, "407_s06", -1);
-		} else if (_xyzzy2 == 1130) {
+		} else if (_hoseState == 1130) {
 			terminateMachineAndNull(_drawerPopupHose);
 			inv_give_to_player("GARDEN HOSE");
 			hotspot_set_active("GARDEN HOSE  ", false);
-			_xyzzy2 = 1000;
+			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING TUBE/HOSE",
 				_G(master_palette), 5, 1, 175, 150, 3, "407_s06", -1);
@@ -4876,7 +4876,7 @@ void Room407::takeSurgicalTube2() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy3 = 1000;
+		_tubeState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4912,7 +4912,7 @@ void Room407::takeSurgicalTube3() {
 
 	case 5:
 		series_unload(_ripLowHand1);
-		_xyzzy3 = 1000;
+		_tubeState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4952,7 +4952,7 @@ void Room407::takeGardenHose1() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_xyzzy2 = 1000;
+		_hoseState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4991,7 +4991,7 @@ void Room407::takeGardenHose2() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy2 = 1000;
+		_hoseState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5019,11 +5019,11 @@ void Room407::takeGardenHose3() {
 		inv_give_to_player("GARDEN HOSE");
 		hotspot_set_active("GARDEN HOSE ", false);
 
-		if (_xyzzy3 == 1116) {
+		if (_tubeState == 1116) {
 			terminateMachineAndNull(_tubeInDrawer);
 			hotspot_set_active("SURGICAL TUBE ", false);
 			inv_give_to_player("SURGICAL TUBE");
-			_xyzzy3 = 1000;
+			_tubeState = 1000;
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
 				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
 		} else {
@@ -5042,7 +5042,7 @@ void Room407::takeGardenHose3() {
 
 	case 5:
 		series_unload(_ripHiHand1);
-		_xyzzy2 = 1000;
+		_hoseState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5100,18 +5100,18 @@ void Room407::takeGlassJar1() {
 		inv_give_to_player("GLASS JAR");
 		hotspot_set_active("GLASS JAR ", false);
 
-		if (_items3State == 1116) {
+		if (_stopperState == 1116) {
 			terminateMachineAndNull(_stopperInDrawer);
 			inv_give_to_player("RUBBER PLUG");
 			hotspot_set_active("JAR/RUBBER PLUG ", false);
-			_items3State = 1000;
+			_stopperState = 1000;
 		}
 
-		if (_xyzzy4 == 1116) {
+		if (_pumpState == 1116) {
 			terminateMachineAndNull(_handleInDrawer);
 			inv_give_to_player("PUMP GRIPS");
 			hotspot_set_active("JAR/GRIPS ", false);
-			_xyzzy4 = 1000;
+			_pumpState = 1000;
 		}
 
 		if (_xyzzy9 == 1116) {
@@ -5158,11 +5158,11 @@ void Room407::takeGlassJar2() {
 		inv_give_to_player("GLASS JAR");
 		hotspot_set_active("GLASS JAR", false);
 
-		if (_items3State == 1116) {
+		if (_stopperState == 1116) {
 			terminateMachineAndNull(_stopperInDrawer);
 			inv_give_to_player("RUBBER PLUG");
 			hotspot_set_active("JAR/RUBBER PLUG", false);
-			_items3State = 1000;
+			_stopperState = 1000;
 		}
 
 		if (_xyzzy9 == 1116) {
@@ -5291,7 +5291,7 @@ void Room407::takeJarGrips() {
 
 	case 5:
 		series_unload(_ripHiHand1);
-		_xyzzy4 = 1000;
+		_pumpState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5393,7 +5393,7 @@ void Room407::takeJarRubberPlug1() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_items3State = 1000;
+		_stopperState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5429,7 +5429,7 @@ void Room407::takeJarRubberPlug2() {
 
 	case 5:
 		series_unload(_ripHiHand1);
-		_items3State = 1000;
+		_stopperState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5462,7 +5462,7 @@ void Room407::takeNozzlesTube() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy3 = 1000;
+		_tubeState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5640,7 +5640,7 @@ void Room407::takeFaucetHandle() {
 
 			if (_val8 == 1100)
 				kernel_timing_trigger(1, 430, KT_DAEMON, KT_PARSE);
-			else if (_xyzzy3 == 1130)
+			else if (_tubeState == 1130)
 				kernel_timing_trigger(1, 440, KT_DAEMON, KT_PARSE);
 		}
 
@@ -5688,11 +5688,11 @@ void Room407::takePumpRod1() {
 		break;
 
 	case 1:
-		if (_xyzzy4 == 1115) {
+		if (_pumpState == 1115) {
 			terminateMachineAndNull(_handleInDrawer);
 			inv_give_to_player("PUMP GRIPS");
 			hotspot_set_active("PUMP GRIPS ", false);
-			_xyzzy4 = 1000;
+			_pumpState = 1000;
 			kernel_examine_inventory_object("PING PUMP GRIPS",
 				_G(master_palette), 5, 1, 125, 200, 2, nullptr, -1);
 		} else {
@@ -5829,7 +5829,7 @@ void Room407::takePumpGrips1() {
 	case -1:
 		if (inv_object_is_here("PUMP GRIPS")) {
 			inv_give_to_player("PUMP GRIPS");
-			_xyzzy4 = 1000;
+			_pumpState = 1000;
 
 			hotspot_set_active("PUMP GRIPS", false);
 			terminateMachineAndNull(_handleInDrawer);
@@ -5925,7 +5925,7 @@ void Room407::takeSurgicalTube() {
 	case -1:
 		if (inv_object_is_here("SURGICAL TUBE")) {
 			inv_give_to_player("SURGICAL TUBE");
-			_xyzzy3 = 1000;
+			_tubeState = 1000;
 			hotspot_set_active("SURGICAL TUBE", false);
 			terminateMachineAndNull(_tubeInDrawer);
 			kernel_examine_inventory_object("PING SURGICAL TUBE",
