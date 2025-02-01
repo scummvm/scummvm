@@ -640,8 +640,12 @@ void Cast::loadCast() {
 	if (!_loadedCast)
 		_loadedCast = new Common::HashMap<int, CastMember *>();
 
+	// External casts only have one library ID, so instead
+	// we use the movie's mapping.
+	uint16 libResourceId = _isExternal ? 1024 : _libResourceId;
+
 	if (cast.size() > 0) {
-		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), _libResourceId);
+		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), libResourceId);
 
 		int idx = 0;
 
@@ -650,7 +654,7 @@ void Cast::loadCast() {
 			// Only load cast members which belong to the requested library ID.
 			// External casts only have one library ID, so instead
 			// we use the movie's mapping.
-			if (res.libResourceId != _libResourceId && !_isExternal) {
+			if (res.libResourceId != libResourceId) {
 				debugC(5, kDebugLoading, "SKIPPED - CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 				continue;
 			}
@@ -728,7 +732,7 @@ void Cast::loadCast() {
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
 		// Even for multiple casts, ID is 1024
-		if ((r = _castArchive->getFirstResource(MKTAG('L', 'c', 't', 'x'), 1024)) != nullptr) {
+		if ((r = _castArchive->getFirstResource(MKTAG('L', 'c', 't', 'x'), libResourceId)) != nullptr) {
 			loadLingoContext(*r);
 			delete r;
 		}
@@ -1353,15 +1357,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 	InfoEntries castInfo = Movie::loadInfoEntries(stream, _version);
 
-	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): castId: %s str(%d): '", numToCastNum(id), castInfo.strings.size());
-
-	for (uint i = 0; i < castInfo.strings.size(); i++) {
-		debugCN(4, kDebugLoading, "%s'", utf8ToPrintable(castInfo.strings[i].readString()).c_str());
-		if (i != castInfo.strings.size() - 1)
-			debugCN(4, kDebugLoading, ", '");
-	}
-	debugC(4, kDebugLoading, "'");
-
 	CastMemberInfo *ci = new CastMemberInfo();
 	Common::MemoryReadStreamEndian *entryStream;
 	CastMember *member = _loadedCast->getVal(id);
@@ -1415,6 +1410,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	case 0:
 		break;
 	}
+	debugC(4, kDebugLoading, "Cast::loadCastInfo(): castId: %d, size: %d, script: %s, name: %s, directory: %s, fileName: %s, type: %s",
+			id, castInfo.strings.size(), ci->script.c_str(), ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
 
 	// For D4+ we may force Lingo scripts
 	if (_version < kFileVer400 || debugChannelSet(-1, kDebugNoBytecode)) {
@@ -1618,7 +1615,7 @@ void Cast::rebuildCastNameCache() {
 			if (!_castsNames.contains(cname) || (_castsNames.getVal(cname) > it._key)) {
 				_castsNames[cname] = it._key;
 			} else {
-				debugC(4, kDebugLoading, "Cast::rebuildCastNameCache(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(it._key), numToCastNum(_castsNames[it._value->name]));
+				debugC(4, kDebugLoading, "Cast::rebuildCastNameCache(): duplicate cast name: %s for castIDs: %d %d ", cname.c_str(), it._key, _castsNames[it._value->name]);
 			}
 		}
 	}
