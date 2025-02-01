@@ -104,7 +104,7 @@ private:
 	machine *_tabletopPopupWithItems2 = nullptr;
 	machine *_tabletopPopupWithItems3 = nullptr;
 	machine *_pivotPopup = nullptr;
-	machine *_glassTopPopup = nullptr;
+	machine *_glassJarPopup = nullptr;
 	machine *_glassTopPopupWithItems1 = nullptr;
 	machine *_glassTopPopupWithItems2 = nullptr;
 	machine *_glassBottomWithItems1 = nullptr;
@@ -173,7 +173,7 @@ private:
 	void pivotPopup();
 	void tabletopPopup();
 	bool lookGlassJar();
-	void fullglassPopup();
+	void glassJarPopup();
 	bool lookEmeraldCork();
 	void periodicTablePopup();
 	bool lookLeverKey();

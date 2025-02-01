@@ -141,7 +141,7 @@ void Room407::init() {
 			hotspot_set_active(" ", true);
 
 		} else if (_glassTopState == 1030) {
-			_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP", 0, 0, 0, 100, 0x200);
+			_glassJarPopup = series_place_sprite("407 GLASS TOP POPUP", 0, 0, 0, 100, 0x200);
 
 			if (_val6 == 1010)
 				_glassTopPopupWithItems1 = series_place_sprite(
@@ -154,7 +154,7 @@ void Room407::init() {
 			hotspot_set_active(" ", true);
 
 		} else if (_glassBottomState == 1030) {
-			_glassTopPopup = series_place_sprite("407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
+			_glassJarPopup = series_place_sprite("407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
 			if (_periodicTableState == 1116)
 				_glassTopPopupWithItems2 = series_place_sprite(
@@ -176,7 +176,7 @@ void Room407::init() {
 			hotspot_set_active(" ", true);
 
 		} else if (_fullGlassState == 1030) {
-			_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
+			_glassJarPopup = series_place_sprite("407 FULL GLASS POPUP",
 				0, 0, 0, 100, 0x200);
 
 			if (_periodicTableState == 1116)
@@ -1002,12 +1002,12 @@ void Room407::daemon() {
 	case 204:
 		player_set_commands_allowed(false);
 		digi_stop(1);
-		terminateMachineAndNull(_glassTopPopup);
+		terminateMachineAndNull(_glassJarPopup);
 
 		if (_periodicTableState == 1116)
-			terminateMachineAndNull(_tabletopPopupWithItems2);
+			terminateMachineAndNull(_glassTopPopupWithItems2);
 		if (_val6 == 1010)
-			terminateMachineAndNull(_tabletopPopupWithItems1);
+			terminateMachineAndNull(_glassTopPopupWithItems1);
 
 		setHotspots();
 		player_set_commands_allowed(true);
@@ -1016,7 +1016,7 @@ void Room407::daemon() {
 	case 206:
 		player_set_commands_allowed(false);
 		digi_stop(1);
-		terminateMachineAndNull(_glassTopPopup);
+		terminateMachineAndNull(_glassJarPopup);
 
 		if (_periodicTableState == 1116)
 			terminateMachineAndNull(_tabletopPopupWithItems2);
@@ -1032,7 +1032,7 @@ void Room407::daemon() {
 	case 208:
 		player_set_commands_allowed(false);
 		digi_stop(1);
-		terminateMachineAndNull(_glassTopPopup);
+		terminateMachineAndNull(_glassJarPopup);
 
 		if (_periodicTableState == 1116)
 			terminateMachineAndNull(_glassTopPopupWithItems2);
@@ -2807,7 +2807,7 @@ void Room407::roofPistonPopup() {
 void Room407::glassBottomPopup() {
 	if (_G(kernel).trigger == -1) {
 		_glassBottomState = 1030;
-		_glassTopPopup = series_place_sprite(
+		_glassJarPopup = series_place_sprite(
 			"407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
 
 		if (_periodicTableState == 1116)
@@ -2834,7 +2834,7 @@ void Room407::glassBottomPopup() {
 void Room407::glassTopPopup() {
 	if (_G(kernel).trigger == -1) {
 		_glassTopState = 1030;
-		_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP",
+		_glassJarPopup = series_place_sprite("407 GLASS TOP POPUP",
 			0, 0, 0, 100, 0x200);
 
 		if (_val6 == 1010) {
@@ -2855,6 +2855,10 @@ void Room407::glassTopPopup() {
 			if (!player_said("SMALL GEAR WHEEL"))
 				digi_play("407r19", 1);
 		}
+
+		disableHotspots();
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
 	}
 }
 
@@ -2914,7 +2918,7 @@ bool Room407::lookGlassJar() {
 	if (_xyzzy7 == 1112) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			lookGlassJar();
+			glassJarPopup();
 
 			if (!inv_object_is_here("EMERALD/CORK")) {
 				digi_play("407r99a", 1);
@@ -2940,10 +2944,10 @@ bool Room407::lookGlassJar() {
 	return false;
 }
 
-void Room407::fullglassPopup() {
+void Room407::glassJarPopup() {
 	if (_G(kernel).trigger == -1) {
 		_fullGlassState = 1030;
-		_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
+		_glassJarPopup = series_place_sprite("407 FULL GLASS POPUP",
 			0, 0, 0, 100, 0x200);
 
 		if (_periodicTableState == 1116)
