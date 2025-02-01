@@ -424,7 +424,7 @@ void Room407::init() {
 				_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xa00);
 				break;
 			case 1113:
-				_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xb00);
+				_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
 				break;
 			case 1114:
 				if (!_frotz2)
