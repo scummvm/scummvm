@@ -1970,6 +1970,90 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	member->setField(field, d);
 }
 
+Datum Lingo::getTheCastLib(Datum &id1, int field) {
+	Datum d;
+	if (id1.type != CASTLIBREF) {
+		warning("Lingo::getTheCastLib(): Expected CASTLIBREF, not %s", id1.type2str());
+		return d;
+	}
+
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::getTheCast(): No movie loaded");
+		return d;
+	}
+	Cast *cast = movie->getCast(CastMemberID(0, id1.u.i));
+	if (!cast) {
+		g_lingo->lingoError("Lingo::getTheCastLib(): Cast lib %s not found", id1.asString().c_str());
+		return d;
+	}
+
+	switch (field) {
+	case kTheFileName:
+		d = cast->getArchive()->getPathName().toString(g_director->_dirSeparator);
+		break;
+	case kTheName:
+		d = cast->getCastName();
+		break;
+	case kTheNumber:
+		d = cast->_castLibID;
+		break;
+	case kThePreLoadMode:
+		warning("STUB: Lingo::getTheCastLib(): preLoadMode not implemented");
+		break;
+	case kTheSelectionField:
+		warning("STUB: Lingo::getTheCastLib(): selection not implemented");
+		d.type = ARRAY;
+		d.u.farr = new FArray();
+		d.u.farr->arr.push_back(1);
+		d.u.farr->arr.push_back(1);
+		break;
+	default:
+		break;
+	}
+
+	return d;
+}
+
+void Lingo::setTheCastLib(Datum &id1, int field, Datum &d) {
+	if (id1.type != CASTLIBREF) {
+		warning("Lingo::setTheCastLib(): Expected CASTLIBREF, not %s", id1.type2str());
+		return;
+	}
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheCastLib(): No movie loaded");
+		return;
+	}
+	Cast *cast = movie->getCast(CastMemberID(0, id1.u.i));
+	if (!cast) {
+		g_lingo->lingoError("Lingo::setTheCastLib(): Cast lib %s not found", id1.asString().c_str());
+		return;
+	}
+
+	switch (field) {
+	case kTheFileName:
+		warning("STUB: Lingo::setTheCastLib(): fileName not implemented");
+		break;
+	case kTheName:
+		warning("STUB: Lingo::setTheCastLib(): name not implemented");
+		break;
+	case kTheNumber:
+		warning("Lingo::setTheCastLib(): number is read-only");
+		break;
+	case kThePreLoadMode:
+		warning("STUB: Lingo::setTheCastLib(): preLoadMode not implemented");
+		break;
+	case kTheSelectionField:
+		warning("STUB: Lingo::setTheCastLib(): selection not implemented");
+		break;
+	default:
+		warning("STUB: Lingo::setTheCastLib(): unknown property %d", field);
+		break;
+	}
+}
+
+
 Datum Lingo::getTheField(Datum &id1, int field) {
 	Datum d;
 
@@ -2257,21 +2341,12 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		return;
 	} else if (obj.type == CASTLIBREF) {
-		Movie *movie = _vm->getCurrentMovie();
-		if (!movie) {
-			g_lingo->lingoError("Lingo::getObjectProp(): No movie loaded");
-			g_lingo->push(d);
-			return;
+		Common::String key = Common::String::format("%d%s", kTheCastLib, propName.c_str());
+		if (_theEntityFields.contains(key)) {
+			d = getTheCastLib(obj, _theEntityFields[key]->field);
 		}
-		Cast *cast = movie->getCast(CastMemberID(0, obj.u.i));
-		if (!cast) {
-			g_lingo->lingoError("Lingo::getObjectProp(): CastLib %d not found", obj.u.i);
-			g_lingo->push(d);
-			return;
-		}
-
-
-
+		g_lingo->push(d);
+		return;
 	}
 
 	if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
@@ -2344,17 +2419,10 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			g_lingo->lingoError("Lingo::setObjectProp(): %s has no property '%s'", id.asString().c_str(), propName.c_str());
 		}
 	} else if (obj.type == CASTLIBREF) {
-		Movie *movie = _vm->getCurrentMovie();
-		if (!movie) {
-			g_lingo->lingoError("Lingo::setObjectProp(): No movie loaded");
-			return;
+		Common::String key = Common::String::format("%d%s", kTheCastLib, propName.c_str());
+		if (_theEntityFields.contains(key)) {
+			setTheCastLib(obj, _theEntityFields[key]->field, val);
 		}
-		Cast *cast = movie->getCast(CastMemberID(0, obj.u.i));
-		if (!cast) {
-			g_lingo->lingoError("Lingo::setObjectProp(): CastLib %d not found", obj.u.i);
-			return;
-		}
-
 	} else {
 		g_lingo->lingoError("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}

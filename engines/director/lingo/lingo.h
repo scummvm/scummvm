@@ -484,6 +484,8 @@ public:
 	void setTheSprite(Datum &id, int field, Datum &d);
 	Datum getTheCast(Datum &id, int field);
 	void setTheCast(Datum &id, int field, Datum &d);
+	Datum getTheCastLib(Datum &id, int field);
+	void setTheCastLib(Datum &id, int field, Datum &d);
 	Datum getTheField(Datum &id1, int field);
 	void setTheField(Datum &id1, int field, Datum &d);
 	Datum getTheChunk(Datum &chunk, int field);
