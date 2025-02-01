@@ -38,6 +38,10 @@ public:
 	void unload() override;
 	Common::String formatInfo() override;
 
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
+
 	bool _looping;
 	AudioDecoder *_audio;
 };
