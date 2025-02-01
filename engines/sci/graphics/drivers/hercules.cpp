@@ -141,7 +141,7 @@ void SCI0_HerculesDriver::setShakePos(int shakeXOffset, int shakeYOffset) const 
 }
 
 void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
-	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + _centerY);
+	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + _centerX, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + _centerY);
 	GfxDriver::clearRect(r2);
 }
 
