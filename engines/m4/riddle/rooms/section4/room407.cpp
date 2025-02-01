@@ -2542,6 +2542,57 @@ void Room407::parser() {
 	_G(player).command_ready = false;
 }
 
+void Room407::syncGame(Common::Serializer &s) {
+	s.syncAsSint16LE(_val1);
+	s.syncAsSint16LE(_val2);
+	s.syncAsSint16LE(_val3);
+	s.syncAsSint16LE(_val4);
+	s.syncAsSint16LE(_drawerState);
+	s.syncAsSint16LE(_val6);
+	s.syncAsSint16LE(_val7);
+	s.syncAsSint16LE(_val8);
+	s.syncAsSint16LE(_val9);
+	s.syncAsSint16LE(_items4State);
+	s.syncAsSint16LE(_xyzzy1);
+	s.syncAsSint16LE(_xyzzy2);
+	s.syncAsSint16LE(_xyzzy3);
+	s.syncAsSint16LE(_xyzzy4);
+	s.syncAsSint16LE(_items3State);
+	s.syncAsSint16LE(_items1State);
+	s.syncAsSint16LE(_xyzzy7);
+	s.syncAsSint16LE(_items2State);
+	s.syncAsSint16LE(_xyzzy9);
+	s.syncAsSint16LE(_xyzzy10);
+	s.syncAsSint16LE(_frotz1);
+	s.syncAsSint16LE(_frotz2);
+	s.syncAsSint16LE(_frotz3);
+	s.syncAsSint16LE(_frotz4);
+	s.syncAsSint16LE(_frotz5);
+	s.syncAsSint16LE(_frotz6);
+	s.syncAsSint16LE(_frotz7);
+	s.syncAsSint16LE(_frotz8);
+	s.syncAsSint16LE(_frotz9);
+	s.syncAsSint16LE(_tabletopState);
+	s.syncAsSint16LE(_pivotState);
+	s.syncAsSint16LE(_fullGlassState);
+	s.syncAsSint16LE(_glassTopState);
+	s.syncAsSint16LE(_glassBottomState);
+	s.syncAsSint16LE(_roofPistonState);
+	s.syncAsSint16LE(_glassGoneState);
+	s.syncAsSint16LE(_comboLockState);
+	s.syncAsSint16LE(_buttonFrame1);
+	s.syncAsSint16LE(_buttonFrame2);
+	s.syncAsSint16LE(_buttonFrame3);
+	s.syncAsSint16LE(_buttonFrame4);
+	s.syncAsSint16LE(_val11);
+	s.syncAsSint16LE(_val15);
+	s.syncAsSint16LE(_val16);
+	s.syncAsSint16LE(_waterFlowTube);
+	s.syncAsSint16LE(_waterFlowFaucet);
+	s.syncAsSint16LE(_waterFlowStem);
+	s.syncAsSint16LE(_codeCorrect);
+}
+
 void Room407::setHotspots() {
 	disableHotspots();
 
