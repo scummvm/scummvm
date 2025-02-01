@@ -23,6 +23,7 @@
 
 
 #include "m4/adv_r/other.h"
+#include "m4/burger/core/conv.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
@@ -702,7 +703,81 @@ void Room808::parser() {
 		return;
 
 	case 3:
-		break;
+		if (_G(flags[V097]) == 0 && _G(flags[V094]) == 4 && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+			conv_load("conv808a", 10, 10, 747);
+			conv_export_value_curr(_G(flags[V098]), 0);
+			conv_play(conv_get_handle());
+		} else if (_G(flags[V097]) == 0) {
+			switch (_G(kernel).trigger) {
+				// TODO not implemented yet
+			default:
+				break;
+			}
+		} else if (_G(flags[V097]) == 1 && inv_object_in_scene("crank", 808) && _G(flags[V100]) == 0) {
+			switch (_G(kernel).trigger) {
+				// TODO not implemented yet
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V100]) == 0) {
+					ws_turn_to_face(_G(my_walker), 1, 10);
+				} else {
+					ws_walk(_G(my_walker), 335, 121, nullptr, 10, 1, true);
+				}
+
+				break;
+			case 10:
+				player_set_commands_allowed(false);
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					digi_play("com034", 1, 255, 20, 997);
+					break;
+
+				case 2:
+					digi_play("com035", 1, 255, 20, 997);
+					break;
+
+				case 3:
+					digi_play("com036", 1, 255, 20, 997);
+					break;
+
+				case 4:
+				default:
+					digi_play("com037", 1, 255, 20, 997);
+					break;
+				}
+
+				break;
+
+			case 20:
+				player_set_commands_allowed(true);
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					digi_play("com038", 1,255,-1,997);
+					break;
+				case 2:
+					digi_play("com039", 1, 255, -1, 997);
+					break;
+				case 3:
+					digi_play("com040", 1, 255, -1, 997);
+					break;
+				case 4:
+				default:
+					digi_play("com041", 1, 255, -1, 997);
+					break;
+				}
+
+				break;
+			default:
+				break;
+			}
+		}
+
+
+		return;
 
 	case 4:
 		return;
