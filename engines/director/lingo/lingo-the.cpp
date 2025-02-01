@@ -187,6 +187,7 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"blend",		kTheBlend,		400 },//				D4 p
 	{ kTheSprite,	"bottom",		kTheBottom,		200 },// D2 p
 	{ kTheSprite,	"castNum",		kTheCastNum,	200 },// D2 p
+	{ kTheSprite,	"castLibNum",	kTheCastLibNum,	500 },//					D5 p
 	{ kTheSprite,	"constraint",	kTheConstraint, 200 },// D2 p
 	{ kTheSprite,	"cursor",		kTheCursor,		200 },// D2 p
 	{ kTheSprite,	"editableText", kTheEditableText,400 },//				D4 p
@@ -1484,11 +1485,11 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 			d = sprite->_castId.member;
 		}
 		break;
-	case kTheMemberNum:
-		d = sprite->_castId.member;
-		break;
 	case kTheCastLibNum:
 		d = sprite->_castId.castLib;
+		break;
+	case kTheMemberNum:
+		d = sprite->_castId.member;
 		break;
 	case kTheConstraint:
 		d = (int)channel->_constraint;
@@ -1670,14 +1671,15 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCastNum:
+	case kTheCastLibNum:
 	case kTheMemberNum:
 		{
 			CastMemberID castId = d.asMemberID();
-			if (g_director->getVersion() < 500 || field == kTheMemberNum) {
+			if (field == kTheMemberNum) {
 				// Setting the cast ID as a number will preserve whatever is in castLib
-				if (d.isNumeric() && (sprite->_castId.castLib != 0)) {
-					castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
-				}
+				castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
+			} else if (field == kTheCastLibNum) {
+				castId = CastMemberID(sprite->_castId.member, d.asInt());
 			}
 			CastMember *castMember = movie->getCastMember(castId);
 
