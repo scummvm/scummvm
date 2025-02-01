@@ -297,7 +297,7 @@ void Room407::init() {
 		_frotz6 = 0;
 		_frotz7 = 0;
 		_frotz8 = 0;
-		_frotz9 = 0;
+		_lookedAtLever = 0;
 		_tabletopState = 1031;
 		_tabletopState = 1031;
 		_pivotState = 1031;
@@ -1953,7 +1953,7 @@ void Room407::parser() {
 			leverKey1();
 		else
 			leverKey2();
-	} if (player_said("FAUCET HANDLE", "AIR VALVE") && _val9 == 1000) {
+	} else if (player_said("FAUCET HANDLE", "AIR VALVE") && _val9 == 1000) {
 		faucetHandleAirValve();
 	} else if (player_said("FAUCET PIPE", "FAUCET HANDLE") &&
 			_val9 == 1000 && _val8 == 1100) {
@@ -2086,7 +2086,15 @@ void Room407::parser() {
 			break;
 		}
 
-	} else if (takeFlag && player_said("LETTER")) {
+	} else {
+		goto take;
+	}
+
+	_G(player).command_ready = false;
+	return;
+
+take:
+	if (takeFlag && player_said("LETTER")) {
 		takeLetter();
 	} else if (takeFlag && player_said("FAUCET PIPE  ") && _val8 == 1130) {
 		takeFaucetPipe1();
@@ -2571,7 +2579,7 @@ void Room407::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_frotz6);
 	s.syncAsSint16LE(_frotz7);
 	s.syncAsSint16LE(_frotz8);
-	s.syncAsSint16LE(_frotz9);
+	s.syncAsSint16LE(_lookedAtLever);
 	s.syncAsSint16LE(_tabletopState);
 	s.syncAsSint16LE(_pivotState);
 	s.syncAsSint16LE(_fullGlassState);
@@ -3000,11 +3008,11 @@ void Room407::periodicTablePopup() {
 bool Room407::lookLeverKey() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		if (_frotz9) {
+		if (_lookedAtLever) {
 			digi_play("407r26a", 1);
 		} else {
 			digi_play("407r26", 1, 255, 2);
-			_frotz9 = 1;
+			_lookedAtLever = 1;
 		}
 
 		return true;

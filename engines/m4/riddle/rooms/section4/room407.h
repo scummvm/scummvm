@@ -58,7 +58,7 @@ private:
 	int _frotz6 = 0;
 	int _frotz7 = 0;
 	int _frotz8 = 0;
-	int _frotz9 = 0;
+	int _lookedAtLever = 0;
 	int _tabletopState = 0;
 	int _pivotState = 0;
 	int _fullGlassState = 0;
