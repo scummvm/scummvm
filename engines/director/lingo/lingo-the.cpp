@@ -313,6 +313,8 @@ const TheEntityField fields[] = {
 	// ShapeCastMember fields
 	{ kTheCast,		"filled",		kTheFilled,		500 },//						D5 p
 	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p
+	{ kTheCast,		"pattern",		kThePattern,	500 },//						D5 p
+	{ kTheCast,		"shapeType",	kTheShapeType,	500 },//						D5 p
 
 	// SoundCastMember fields
 	{ kTheCast,		"channelCount",	kTheChannelCount,500 },//						D5 p

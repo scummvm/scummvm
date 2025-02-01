@@ -250,6 +250,7 @@ enum TheFieldType {
 	kTheScriptText,
 	kTheScriptsEnabled,
 	kTheSelectionField,
+	kTheShapeType,
 	kTheShort,
 	kTheSize,
 	kTheSound,
