@@ -227,7 +227,6 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"castLibNum",	kTheCastLibNum,	500 },// 					D5 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
-	{ kTheCast,		"editable",		kTheEditable,	500 },//					D5 p
 	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
 	{ kTheCast,		"idleReadChunkSize",kTheIdleReadChunkSize,500 },//			D5 p
@@ -237,7 +236,6 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
 	{ kTheCast,		"name",			kTheName,		300 },//		D3 p
 	{ kTheCast,		"number",		kTheNumber,		300 },//		D3 p
-	{ kTheCast,		"pageHeight",	kThePageHeight,	500 },//					D5 p
 	{ kTheCast,		"rect",			kTheRect,		400 },//				D4 p
 	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
@@ -285,7 +283,21 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"picture",		kThePicture,	300 },//		D3 p
 
 	// TextCastMember fields
+	{ kTheCast,		"alignment",	kTheTextAlign,	500 },//						D5 p
+	{ kTheCast,		"autoTab",		kTheAutoTab,	500 },//						D5 p
+	{ kTheCast,		"border",		kTheBorder,		500 },//						D5 p
+	{ kTheCast,		"boxDropShadow",kTheBoxDropShadow,	500 },//					D5 p
+	{ kTheCast,		"boxType",		kTheBoxType,	500 },//						D5 p
+	{ kTheCast,		"dropShadow",	kTheDropShadow,	500 },//						D5 p
+	{ kTheCast,		"editable",		kTheEditable,	500 },//						D5 p
+	{ kTheCast,		"font",			kTheTextFont,	500 },//						D5 p
+	{ kTheCast,		"fontSize",		kTheTextSize,	500 },//						D5 p
+	{ kTheCast,		"fontStyle",	kTheTextStyle,	500 },//						D5 p
+	{ kTheCast,		"lineCount",	kTheLineCount,	500 },//						D5 p
+	{ kTheCast,		"lineHeight",	kTheTextHeight,	500 },//						D5 p
 	{ kTheCast,		"hilite",		kTheHilite,		200 },// D2 p
+	{ kTheCast,		"margin",		kTheMargin,		500 },//						D5 p
+	{ kTheCast,		"pageHeight",	kThePageHeight,	500 },//						D5 p
 	{ kTheCast,		"text",			kTheText,		200 },// D2 p
 	{ kTheCast,		"textAlign",	kTheTextAlign,	300 },//		D3 p
 	{ kTheCast,		"textFont",		kTheTextFont,	300 },//		D3 p
@@ -293,6 +305,7 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
 	{ kTheCast,		"scrollTop",	kTheScrollTop,  500 },//						D5 p
+	{ kTheCast,		"wordWrap",		kTheWordWrap,	500 },//						D5 p
 
 	// ButtonCastMember fields
 	{ kTheCast,		"buttonType",	kTheButtonType,	500 },//						D5 p
@@ -307,14 +320,13 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"transitionType",kTheTransitionType,500 },//					D5 p
 
 	// Field fields
-	{ kTheField,	"autoTab",		kTheAutoTab,	500 },//						D5 p
-	{ kTheField,	"border",		kTheBorder,		500 },//						D5 p
-	{ kTheField,	"boxType",		kTheBoxType,	500 },//						D5 p
-	{ kTheField,	"dropShadow",	kTheDropShadow,	500 },//						D5 p
+	{ kTheField,	"alignment",	kTheTextAlign,	500 },//						D5 p
+	{ kTheField,	"font",			kTheTextFont,	500 },//						D5 p
+	{ kTheField,	"fontSize",		kTheTextSize,	500 },//						D5 p
+	{ kTheField,	"fontStyle",	kTheTextStyle,	500 },//						D5 p
 	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheField,	"hilite",		kTheHilite,		200 },// D2 p
-	{ kTheField,	"lineCount",	kTheLineCount,	500 },//						D5 p
-	{ kTheField,	"margin",		kTheMargin,		500 },//						D5 p
+	{ kTheField,	"lineHeight",	kTheTextHeight,	500 },//						D5 p
 	{ kTheField,	"name",			kTheName,		300 },//		D3 p
 	{ kTheField,	"text",			kTheText,		200 },// D2 p
 	{ kTheField,	"textAlign",	kTheTextAlign,	300 },//		D3 p
@@ -322,11 +334,13 @@ const TheEntityField fields[] = {
 	{ kTheField,	"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
-	{ kTheField,	"scrollTop",	kTheScrollTop,  500 },//						D5 p
-	{ kTheField,	"wordWrap",		kTheWordWrap,	500 },//						D5 p
 
 	// Chunk fields
+	{ kTheChunk,	"font",			kTheTextFont,	500 },//						D5 p
+	{ kTheChunk,	"fontSize",		kTheTextSize,	500 },//						D5 p
+	{ kTheChunk,	"fontStyle",	kTheTextStyle,	500 },//						D5 p
 	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
+	{ kTheChunk,	"lineHeight",	kTheTextHeight,	500 },//						D5 p
 	{ kTheChunk,	"textFont",		kTheTextFont,	300 },//		D3 p
 	{ kTheChunk,	"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheChunk,	"textSize",		kTheTextSize,	300 },//		D3 p

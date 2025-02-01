@@ -22,6 +22,7 @@
 #include "common/stream.h"
 #include "common/compression/unzip.h"
 #include "common/macresman.h"
+#include "common/tokenizer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/fonts/winfont.h"
@@ -617,28 +618,64 @@ int MacFontManager::parseFontSlant(Common::String slant) {
 }
 
 int MacFontManager::parseSlantFromName(const Common::String &name) {
-	int slantVal = 0;
+	int slantVal = kMacFontRegular; // 0
 
-	if (name.contains(" Bold") || name.equalsIgnoreCase("Bold"))
-		slantVal |= kMacFontBold;
-	if (name.contains(" Italic") || name.equalsIgnoreCase("Italic"))
-		slantVal |= kMacFontItalic;
-	if (name.contains(" Regular") || name.equalsIgnoreCase("Regular"))
-		slantVal |= kMacFontRegular;
-	if (name.contains(" Underline") || name.equalsIgnoreCase("Underline"))
-		slantVal |= kMacFontUnderline;
-	if (name.contains(" Shadow") || name.equalsIgnoreCase("Shadow"))
-		slantVal |= kMacFontShadow;
-	if (name.contains(" Outline") || name.equalsIgnoreCase("Outline"))
-		slantVal |= kMacFontOutline;
-	if (name.contains(" Condense") || name.equalsIgnoreCase("Condense"))
-		slantVal |= kMacFontCondense;
-	if (name.contains(" Extend") || name.equalsIgnoreCase("Extend"))
-		slantVal |= kMacFontExtend;
-	if (name.contains(" Plain") || name.equalsIgnoreCase("Plain"))
-		slantVal = kMacFontRegular;
-
+	Common::StringArray tokens = Common::StringTokenizer(name, " ,").split();
+	while (tokens.size()) {
+		Common::String subName = tokens.back();
+		tokens.pop_back();
+		if (subName.equalsIgnoreCase("bold"))
+			slantVal |= kMacFontBold;
+		if (subName.equalsIgnoreCase("italic"))
+			slantVal |= kMacFontItalic;
+		if (subName.equalsIgnoreCase("underline"))
+			slantVal |= kMacFontUnderline;
+		if (subName.equalsIgnoreCase("shadow"))
+			slantVal |= kMacFontShadow;
+		if (subName.equalsIgnoreCase("outline"))
+			slantVal |= kMacFontOutline;
+		if (subName.equalsIgnoreCase("condense"))
+			slantVal |= kMacFontCondense;
+		if (subName.equalsIgnoreCase("extend"))
+			slantVal |= kMacFontExtend;
+		// If plain is specified at any point, zero out the flags
+		if (subName.equalsIgnoreCase("plain"))
+			slantVal = kMacFontRegular;
+	}
 	return slantVal;
+}
+
+Common::String MacFontManager::getNameFromSlant(int slantVal) {
+
+	Common::StringArray tokens;
+	if (slantVal == kMacFontRegular)
+		return Common::String("plain");
+
+	if (slantVal & kMacFontBold)
+		tokens.push_back("bold");
+	if (slantVal & kMacFontItalic)
+		tokens.push_back("italic");
+	if (slantVal & kMacFontUnderline)
+		tokens.push_back("underline");
+	if (slantVal & kMacFontShadow)
+		tokens.push_back("shadow");
+	if (slantVal & kMacFontOutline)
+		tokens.push_back("outline");
+	if (slantVal & kMacFontCondense)
+		tokens.push_back("condense");
+	if (slantVal & kMacFontOutline)
+		tokens.push_back("extend");
+
+	if (tokens.begin() == tokens.end())
+		return *tokens.begin();
+
+	Common::String result = *tokens.begin();
+	for (auto it = tokens.begin() + 1; it != tokens.end(); it++) {
+		result += ",";
+		result += *it;
+	}
+
+	return result;
 }
 
 int MacFontManager::registerFontName(Common::String name, int preferredId) {
