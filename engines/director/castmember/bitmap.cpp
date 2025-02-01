@@ -755,6 +755,7 @@ bool BitmapCastMember::hasField(int field) {
 	case kTheDepth:
 	case kTheRegPoint:
 	case kThePalette:
+	case kThePaletteRef:
 	case kThePicture:
 		return true;
 	default:
@@ -782,6 +783,52 @@ Datum BitmapCastMember::getField(int field) {
 			d = Datum(_clut.toMultiplex());
 		} else {
 			d = Datum(_clut.member);
+		}
+		break;
+	case kThePaletteRef:
+		if (_clut.castLib > 0) {
+			d = _clut;
+		} else if (_clut.castLib == -1) {
+			switch (_clut.member) {
+			case kClutSystemMac:
+				d = Datum("systemMac");
+				d.type = SYMBOL;
+				break;
+			case kClutSystemWin:
+				d = Datum("systemWinDir4");
+				d.type = SYMBOL;
+				break;
+			case kClutSystemWinD5:
+				d = Datum("systemWin");
+				d.type = SYMBOL;
+				break;
+			case kClutGrayscale:
+				d = Datum("grayscale");
+				d.type = SYMBOL;
+				break;
+			case kClutMetallic:
+				d = Datum("metallic");
+				d.type = SYMBOL;
+				break;
+			case kClutNTSC:
+				d = Datum("NTSC");
+				d.type = SYMBOL;
+				break;
+			case kClutPastels:
+				d = Datum("pastels");
+				d.type = SYMBOL;
+				break;
+			case kClutRainbow:
+				d = Datum("rainbow");
+				d.type = SYMBOL;
+				break;
+			case kClutVivid:
+				d = Datum("vivid");
+				d.type = SYMBOL;
+				break;
+			default:
+				break;
+			}
 		}
 		break;
 	case kThePicture:
@@ -837,6 +884,39 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 			}
 			return true;
 		}
+	case kThePaletteRef:
+		{
+			CastMemberID newClut = _clut;
+			if (d.isCastRef()) {
+				newClut = *d.u.cast;
+			} else if (d.type == SYMBOL) {
+				Common::String name = *d.u.s;
+				if (name.equalsIgnoreCase("systemMac")) {
+					newClut = CastMemberID(kClutSystemMac, -1);
+				} else if (name.equalsIgnoreCase("systemWinDir4")) {
+					newClut = CastMemberID(kClutSystemWin, -1);
+				} else if (name.equalsIgnoreCase("systemWin")) {
+					newClut = CastMemberID(kClutSystemWinD5, -1);
+				} else if (name.equalsIgnoreCase("grayscale")) {
+					newClut = CastMemberID(kClutGrayscale, -1);
+				} else if (name.equalsIgnoreCase("metallic")) {
+					newClut = CastMemberID(kClutMetallic, -1);
+				} else if (name.equalsIgnoreCase("NTSC")) {
+					newClut = CastMemberID(kClutNTSC, -1);
+				} else if (name.equalsIgnoreCase("pastels")) {
+					newClut = CastMemberID(kClutPastels, -1);
+				} else if (name.equalsIgnoreCase("rainbow")) {
+					newClut = CastMemberID(kClutRainbow, -1);
+				} else if (name.equalsIgnoreCase("vivid")) {
+					newClut = CastMemberID(kClutVivid, -1);
+				}
+			}
+			if (newClut != _clut) {
+				_clut = newClut;
+				_modified = true;
+			}
+		}
+		return true;
 	case kThePicture:
 		if (d.type == PICTUREREF && d.u.picture != nullptr) {
 			setPicture(*d.u.picture);

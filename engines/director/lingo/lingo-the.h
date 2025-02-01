@@ -234,6 +234,7 @@ enum TheFieldType {
 	kThePageHeight,
 	kThePalette,
 	kThePaletteMapping,
+	kThePaletteRef,
 	kThePattern,
 	kThePausedAtStart,
 	kThePicture,
