@@ -60,7 +60,7 @@ const char *const castTypes[] = {
 	"movie",
 	"digitalVideo",
 	"script",
-	"RTE",
+	"richText",
 	"???",
 	"transition",
 };
