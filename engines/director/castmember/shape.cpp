@@ -112,6 +112,8 @@ bool ShapeCastMember::hasField(int field) {
 	switch (field) {
 	case kTheFilled:
 	case kTheLineSize:
+	case kThePattern:
+	case kTheShapeType:
 		return true;
 	default:
 		break;
@@ -129,6 +131,31 @@ Datum ShapeCastMember::getField(int field) {
 	case kTheLineSize:
 		d = Datum(_lineThickness);
 		break;
+	case kThePattern:
+		d = Datum(_pattern);
+		break;
+	case kTheShapeType:
+		switch (_shapeType) {
+		case kShapeRectangle:
+			d = Datum("rect");
+			d.type = SYMBOL;
+			break;
+		case kShapeRoundRect:
+			d = Datum("roundRect");
+			d.type = SYMBOL;
+			break;
+		case kShapeOval:
+			d = Datum("oval");
+			d.type = SYMBOL;
+			break;
+		case kShapeLine:
+			d = Datum("line");
+			d.type = SYMBOL;
+			break;
+		default:
+			break;
+		}
+		break;
 	default:
 		d = CastMember::getField(field);
 		break;
@@ -145,6 +172,24 @@ bool ShapeCastMember::setField(int field, const Datum &d) {
 	case kTheLineSize:
 		_lineThickness = d.asInt();
 		return true;
+	case kThePattern:
+		_pattern = d.asInt();
+		return true;
+	case kTheShapeType:
+		if (d.type == SYMBOL) {
+			Common::String name = *d.u.s;
+			if (name.equalsIgnoreCase("rect")) {
+				_shapeType = kShapeRectangle;
+			} else if (name.equalsIgnoreCase("roundRect")) {
+				_shapeType = kShapeRoundRect;
+			} else if (name.equalsIgnoreCase("oval")) {
+				_shapeType = kShapeOval;
+			} else if (name.equalsIgnoreCase("line")) {
+				_shapeType = kShapeLine;
+			}
+			return true;
+		}
+		break;
 	default:
 		break;
 	}
