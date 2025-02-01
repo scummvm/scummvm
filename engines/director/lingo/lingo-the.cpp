@@ -260,22 +260,25 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
-	{ kTheSprite,	"trackCount",	kTheTrackCount, 500 },//					D5 p
-	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//					D5 p
-	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//					D5 p
-	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//					D5 p
-	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//					D5 p
-	{ kTheSprite,	"trackPreviousSampleTime",	kTheTrackPreviousKeyTime, 500 },//					D5 p
-	{ kTheSprite,	"trackStartTime",	kTheTrackStartTime, 500 },//					D5 p
+	{ kTheSprite,	"trackCount",	kTheTrackCount, 500 },//						D5 p
+	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//						D5 p
+	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//				D5 p
+	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//		D5 p
+	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//		D5 p
+	{ kTheSprite,	"trackPreviousSampleTime",	kTheTrackPreviousKeyTime, 500 },//	D5 p
+	{ kTheSprite,	"trackStartTime",	kTheTrackStartTime, 500 },//				D5 p
 	{ kTheSprite,	"trackStopTime",	kTheTrackStopTime, 500 },//					D5 p
-	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//					D5 p
-	{ kTheSprite,	"trackType",	kTheTrackType, 500 },//					D5 p
+	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//							D5 p
+	{ kTheSprite,	"trackType",	kTheTrackType, 500 },//							D5 p
 	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
 
 	// Movie fields
-	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//			D5 p
-
+	{ kTheCast,		"idleHandlerPeriod",kTheIdleHandlerPeriod, 500 },//				D5 p
+	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//				D5 p
+	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//				D5 p
+	{ kTheCast,		"scoreSelection",	kTheScoreSelection,	500 },//				D5 p
+	{ kTheCast,		"updateLock",		kTheUpdateLock,		500 },//				D5 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
