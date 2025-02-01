@@ -343,10 +343,10 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 
 			if (fromPlatform == Common::kPlatformMacintosh) {
 				_macCharsToWin[fromChar] = toChar;
-				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Mac char %d to Win char %d", fromChar, toChar);
+				debugC(8, kDebugLoading, "Cast::readFXmpLine: Mapping Mac char %d to Win char %d", fromChar, toChar);
 			} else {
 				_winCharsToMac[fromChar] = toChar;
-				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win char %d to Mac char %d", fromChar, toChar);
+				debugC(8, kDebugLoading, "Cast::readFXmpLine: Mapping Win char %d to Mac char %d", fromChar, toChar);
 			}
 
 			tok = readFXmpToken(stream);
