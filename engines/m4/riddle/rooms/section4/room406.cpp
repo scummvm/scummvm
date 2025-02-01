@@ -334,17 +334,14 @@ void Room406::pre_parser() {
 	} else if (deskDrawerState == 1000) {
 		_G(player).resetWalk();
 
-		if (!player_said(" ") &&
-			!(lookFlag && player_said("MESSAGE LOG")) &&
-			!player_said("journal")) {
-			if (!useFlag || !player_said("DESK DRAWER OPEN"))
-				return;
+		if (player_said(" ") ||
+				(lookFlag && player_said("MESSAGE LOG")) ||
+				player_said("journal") ||
+				(useFlag && player_said("DESK DRAWER OPEN"))) {
+			intr_cancel_sentence();
+			deskDrawerState = 1001;
+			kernel_timing_trigger(1, 20, KT_DAEMON, KT_PARSE);
 		}
-
-		intr_cancel_sentence();
-		deskDrawerState = 1001;
-		kernel_timing_trigger(1, 20, KT_DAEMON, KT_PARSE);
-
 	} else if (player_said("journal") && !takeFlag && !lookFlag &&
 			_G(kernel).trigger == -1) {
 		_G(player).resetWalk();
@@ -622,6 +619,7 @@ void Room406::parser() {
 			deskDrawerState = 1000;
 			_emptyDrawer = series_place_sprite("406 DESK DRAWER EMPTY", 0, 0, 0, 100, 0x200);
 			digi_play("406_s02", 2);
+			disableHotspots();
 			hotspot_set_active(" ", true);
 			hotspot_set_active("DESK DRAWER OPEN", true);
 			hotspot_set_active("MESSAGES", true);
