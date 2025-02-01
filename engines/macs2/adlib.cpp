@@ -1143,62 +1143,30 @@ uint8 Adlib::peekByteAt(uint16 offset) {
 	return result;
 }
 
-uint8 Adlib::FuncA280() {
+uint8 Adlib::FuncA280(uint8 bpp6, uint8 bpp8) {
 	// TODO: Continue here
-	// uint8 bp2 = ax;
+	uint16 bp2 = (gArray11F[bpp8] << 8) + gArray9F[bpp8];
+	uint16 bp4;
+	uint16 bp6;
+	if (bpp6 != 0) {
+		// l0017_2AB1:
+		if (bpp6 < 0x80) {
+			// l0017_2AB7:
+			if (bpp8 < 0x7F) {
+				// l0017_2ABD:
+				bp6 = bpp8 + 1;
+			} else {
+				// l0017_2ABD:
+				bp6 = 0x7F;
+			}
+			// l0017_2AC8:
+			bp4 = gArray11F[bp6] << 8 + gArray9F[bp6];
+		}
+	}
 	/*
-	;; 
-fn0017_2A80 proc
-	enter	6h,0h
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-2h],ax
-	cmp	byte ptr [bp+6h],0h
-	jnz	2AB1h
 
-l0017_2AAE:
-	jmp	2B81h
+	
 
-l0017_2AB1:
-	cmp	byte ptr [bp+6h],80h
-	jnc	2B1Dh
-
-l0017_2AB7:
-	cmp	byte ptr [bp+8h],7Fh
-	jnc	2AC8h
-
-l0017_2ABD:
-	mov	al,[bp+8h]
-	xor	ah,ah
-	inc	ax
-	mov	[bp-6h],ax
-	jmp	2ACDh
-
-l0017_2AC8:
-	mov	word ptr [bp-6h],7Fh
-
-l0017_2ACD:
-	mov	di,[bp-6h]
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	di,[bp-6h]
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-4h],ax
 	mov	al,[bp+6h]
 	xor	ah,ah
 	xor	dx,dx

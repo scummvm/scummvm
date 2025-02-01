@@ -178,7 +178,7 @@ void Macs2Engine::readResourceFile() {
 		gameObject->Orientation = orientation;
 		gameObject->Unknown = unknown;
 
-		for (int j = 1; j <= 0x15; j++) {
+		for (int j = 1; j < 0x15; j++) {
 			// We're at l0037_0A3E here
 			// TODO: Compare places and read values with the game
 			uint16 unknown1 = _fileStream->readUint16LE();
