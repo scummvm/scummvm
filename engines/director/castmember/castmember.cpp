@@ -152,8 +152,12 @@ Datum CastMember::getField(int field) {
 		break;
 	case kTheCastType:
 	case kTheType:
+		d = Common::String(castType2str(_type));
+		if (g_director->getVersion() >= 500 && _type == kCastText) {
+			// D5 changes this from "text" to "field"
+			d = Common::String("field");
+		}
 		d.type = SYMBOL;
-		d.u.s = new Common::String(castType2str(_type));
 		break;
 	case kTheFileName:
 		if (castInfo)
