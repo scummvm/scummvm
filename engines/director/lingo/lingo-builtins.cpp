@@ -249,6 +249,11 @@ static const BuiltinProto builtins[] = {
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, 300, FBLTIN },	//			D3 f
 	{ "numberOfLines",	LB::b_numberoflines,1, 1, 300, FBLTIN },	//			D3 f
 	{ "numberOfWords",	LB::b_numberofwords,1, 1, 300, FBLTIN },	//			D3 f
+	// Digital video operations
+	{ "trackCount",		LB::b_trackCount,	1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackStartTime",	LB::b_trackStartTime,1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackStopTime",	LB::b_trackStopTime,1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackType",		LB::b_trackType,	1, 1, 500, FBLTIN },	//				D5 f
 
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
@@ -3614,6 +3619,32 @@ void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum chunkRef = LC::lastChunk(kChunkWord, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
+}
+
+void LB::b_trackCount(int nargs) {
+	g_lingo->printSTUBWithArglist("b_trackCount", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(1);
+}
+
+void LB::b_trackStartTime(int nargs) {
+	g_lingo->printSTUBWithArglist("b_trackStartTime", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(0);
+}
+
+void LB::b_trackStopTime(int nargs) {
+	g_lingo->printSTUBWithArglist("b_trackStopTime", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(0);
+}
+
+void LB::b_trackType(int nargs) {
+	g_lingo->printSTUBWithArglist("b_trackType", nargs);
+	g_lingo->dropStack(nargs);
+	Datum result("video");
+	result.type = SYMBOL;
+	g_lingo->push(result);
 }
 
 void LB::b_scummvmassert(int nargs) {

@@ -216,6 +216,11 @@ void b_numberofitems(int nargs);
 void b_numberoflines(int nargs);
 void b_numberofwords(int nargs);
 
+void b_trackCount(int nargs);
+void b_trackStartTime(int nargs);
+void b_trackStopTime(int nargs);
+void b_trackType(int nargs);
+
 void b_scummvmassert(int nargs);
 void b_scummvmassertequal(int nargs);
 void b_scummvmNoFatalError(int nargs);

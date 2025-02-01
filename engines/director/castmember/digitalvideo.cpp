@@ -431,13 +431,11 @@ bool DigitalVideoCastMember::hasField(int field) {
 	case kTheDuration:
 	case kTheFrameRate:
 	case kTheLoop:
-	case kTheMovieRate:
-	case kTheMovieTime:
 	case kThePausedAtStart:
 	case kThePreLoad:
 	case kTheSound:
+	case kTheTimeScale:
 	case kTheVideo:
-	case kTheVolume:
 		return true;
 	default:
 		break;
@@ -490,6 +488,10 @@ Datum DigitalVideoCastMember::getField(int field) {
 	case kTheSound:
 		d = _enableSound;
 		break;
+	case kTheTimeScale:
+		warning("STUB: DigitalVideoCastMember::getField(): timeScale not implemented");
+		d = Datum(600); // quicktime default
+		break;
 	case kTheVideo:
 		d = _enableVideo;
 		break;
@@ -539,6 +541,9 @@ bool DigitalVideoCastMember::setField(int field, const Datum &d) {
 	case kTheSound:
 		_enableSound = (bool)d.asInt();
 		return true;
+	case kTheTimeScale:
+		warning("DigitalVideoCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		return false;
 	case kTheVideo:
 		_enableVideo = (bool)d.asInt();
 		return true;
