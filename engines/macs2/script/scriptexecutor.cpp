@@ -1953,8 +1953,16 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint32 animationID = Func9F4D_16();
 			uint32 offset = Func9F4D_16();
 			GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
-			BackgroundAnimationBlob::Func1480(gameObject->Blobs[animationID - 1],
-											  true, offset + 0x64);
+			if (animationID == 0x15) {
+				gameObject->useOverloadAnimation = true;
+				BackgroundAnimationBlob::Func1480(gameObject->overloadAnimation,
+												  true, offset + 0x64);
+				
+			} else {
+				BackgroundAnimationBlob::Func1480(gameObject->Blobs[animationID - 1],
+												  true, offset + 0x64);
+			}
+			
 		} else if (opcode1 == 0x1f) {
 			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
 			// Object ID
