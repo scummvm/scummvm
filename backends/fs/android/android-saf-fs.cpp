@@ -915,7 +915,7 @@ void AddSAFFakeNode::makeProxySAF() const {
 	}
 
 	// I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-	jobject saftree = JNI::getNewSAFTree(true, true, "", _("Choose a new folder"));
+	jobject saftree = JNI::getNewSAFTree(true, "", _("Choose a new folder"));
 	if (!saftree) {
 		return;
 	}
