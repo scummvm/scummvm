@@ -312,6 +312,9 @@ const TheEntityField fields[] = {
 	// ButtonCastMember fields
 	{ kTheCast,		"buttonType",	kTheButtonType,	500 },//						D5 p
 
+	// ScriptCastMember fields
+	{ kTheCast,		"scriptType",	kTheScriptType,	500 },//						D5 p
+
 	// ShapeCastMember fields
 	{ kTheCast,		"filled",		kTheFilled,		500 },//						D5 p
 	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p

@@ -33,6 +33,10 @@ public:
 
 	ScriptType _scriptType;
 
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
+
 	Common::String formatInfo() override;
 };
 

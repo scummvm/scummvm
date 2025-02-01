@@ -252,6 +252,7 @@ enum TheFieldType {
 	kTheScript,
 	kTheScriptNum,
 	kTheScriptText,
+	kTheScriptType,
 	kTheScriptsEnabled,
 	kTheSelectionField,
 	kTheShapeType,

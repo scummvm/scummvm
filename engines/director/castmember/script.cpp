@@ -21,6 +21,7 @@
 
 #include "director/director.h"
 #include "director/castmember/script.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -68,6 +69,68 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, ScriptCastMember &
 	_type = kCastLingoScript;
 	_scriptType = source._scriptType;
 	warning("ScriptCastMember(): Duplicating source %d to target %d! This is unlikely to work properly, as the actual scripts aren't yet copied", source._castId, castId);
+}
+
+bool ScriptCastMember::hasField(int field) {
+	switch (field) {
+	case kTheScriptType:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum ScriptCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheScriptType:
+		switch (_scriptType) {
+		case kMovieScript:
+			d = Common::String("movie");
+			d.type = SYMBOL;
+			break;
+		case kScoreScript:
+			d = Common::String("score");
+			d.type = SYMBOL;
+			break;
+		case kParentScript:
+			d = Common::String("parent");
+			d.type = SYMBOL;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+bool ScriptCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheScriptType:
+		warning("ScriptCastMember::setField(): setting scriptType! This probably isn't going to work as it doesn't recategorize the script.");
+		if (d.type == SYMBOL) {
+			if (d.u.s->equalsIgnoreCase("movie")) {
+				_scriptType = kMovieScript;
+			} else if (d.u.s->equalsIgnoreCase("score")) {
+				_scriptType = kScoreScript;
+			} else if (d.u.s->equalsIgnoreCase("parent")) {
+				_scriptType = kParentScript;
+			}
+		}
+		return true;
+		break;
+	default:
+		break;
+	}
+
+	return CastMember::setField(field, d);
 }
 
 Common::String ScriptCastMember::formatInfo() {
