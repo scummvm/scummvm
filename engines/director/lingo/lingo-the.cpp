@@ -314,6 +314,11 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"filled",		kTheFilled,		500 },//						D5 p
 	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p
 
+	// SoundCastMember fields
+	{ kTheCast,		"channelCount",	kTheChannelCount,500 },//						D5 p
+	{ kTheCast,		"sampleRate",	kTheSampleRate,	500 },//						D5 p
+	{ kTheCast,		"sampleSize",	kTheSampleSize,	500 },//						D5 p
+
 	// TransitionCastMember fields
 	{ kTheCast,		"changeArea",	kTheChangeArea,	500 },//						D5 p
 	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//						D5 p

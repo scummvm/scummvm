@@ -23,6 +23,7 @@
 #include "director/cast.h"
 #include "director/sound.h"
 #include "director/castmember/sound.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -144,5 +145,58 @@ void SoundCastMember::unload() {
 
 	_loaded = false;
 }
+
+bool SoundCastMember::hasField(int field) {
+	switch (field) {
+	case kTheChannelCount:
+	case kTheSampleRate:
+	case kTheSampleSize:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum SoundCastMember::getField(int field) {
+	Datum d;
+	load();
+	if (!_audio) {
+		warning("SoundCastMember::getField(): Audio not found");
+		return d;
+	}
+
+	switch (field) {
+	case kTheChannelCount:
+		d = _audio->getChannelCount();
+		break;
+	case kTheSampleRate:
+		d = _audio->getSampleRate();
+		break;
+	case kTheSampleSize:
+		d = _audio->getSampleSize();
+		break;
+	default:
+		d = CastMember::getField(field);
+	}
+
+	return d;
+}
+
+bool SoundCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheChannelCount:
+	case kTheSampleRate:
+	case kTheSampleSize:
+		warning("SoundCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
+		return false;
+	default:
+		break;
+	}
+
+	return CastMember::setField(field, d);
+}
+
+
 
 } // End of namespace Director

@@ -226,6 +226,9 @@ public:
 	virtual ~AudioDecoder() {};
 public:
 	virtual Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
+	virtual int getChannelCount() { return 0; }
+	virtual int getSampleRate() { return 0; }
+	virtual int getSampleSize() { return 0; }
 };
 
 class SNDDecoder : public AudioDecoder {
@@ -241,12 +244,16 @@ public:
 	bool hasLoopBounds();
 	void resetLoopBounds();
 	bool hasValidLoopBounds();
+	int getChannelCount() override { return _channels; }
+	int getSampleRate() override { return _rate; }
+	int getSampleSize() override { return _bits; }
 
 private:
 	byte *_data;
 	uint16 _channels;
 	uint32 _size;
 	uint16 _rate;
+	uint16 _bits;
 	byte _flags;
 	uint32 _loopStart;
 	uint32 _loopEnd;

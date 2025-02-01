@@ -673,6 +673,7 @@ SNDDecoder::SNDDecoder()
 	_channels = 0;
 	_size = 0;
 	_rate = 0;
+	_bits = 0;
 	_flags = 0;
 	_loopStart = _loopEnd = 0;
 }
@@ -764,7 +765,7 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 		return false;
 	}
 	uint32 frameCount = 0;
-	uint16 bits = 8;
+	_bits = 8;
 	if (encoding == 0x00) {
 		// Standard sound header
 		frameCount = param / _channels;
@@ -779,7 +780,7 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 		/*uint32 markerChunk =*/stream.readUint32();
 		/*uint32 instrumentsChunk =*/stream.readUint32();
 		/*uint32 aesRecording =*/stream.readUint32();
-		bits = stream.readUint16();
+		_bits = stream.readUint16();
 
 		// future use
 		stream.readUint16();
@@ -797,9 +798,9 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 
 	_flags = 0;
 	_flags |= (_channels == 2) ? Audio::FLAG_STEREO : 0;
-	_flags |= (bits == 16) ? Audio::FLAG_16BITS : 0;
-	_flags |= (bits == 8) ? Audio::FLAG_UNSIGNED : 0;
-	_size = frameCount * _channels * (bits == 16 ? 2 : 1);
+	_flags |= (_bits == 16) ? Audio::FLAG_16BITS : 0;
+	_flags |= (_bits == 8) ? Audio::FLAG_UNSIGNED : 0;
+	_size = frameCount * _channels * (_bits == 16 ? 2 : 1);
 
 	_data = (byte *)malloc(_size);
 	assert(_data);
