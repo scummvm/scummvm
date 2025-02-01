@@ -2640,7 +2640,7 @@ static const struct PaletteNames {
 	{ "Metallic", kClutMetallic },
 	//{ "Web 216", },
 	//{ "VGA", },
-	//{ "System - Win", },
+	{ "System - Win", kClutSystemWinD5 },
 	{ "SYSTEM - WIN (DIR 4)", kClutSystemWin },
 
 	// Japanese palette names.
@@ -2651,7 +2651,7 @@ static const struct PaletteNames {
 	{ "\x83p\x83>X\x83""e\x83\x8B", kClutPastels },						// パステル
 	{ "\x83r\x83>r\x83""b\x83h", kClutVivid },							// ビビッド
 	{ "\x83\x81\x83^\x83\x8A\x83""b\x83N", kClutMetallic },				// メタリック
-	// { "\x83V\x83X\x83""e\x83\x80 - Win", },							// システム - Win
+	{ "\x83V\x83X\x83""e\x83\x80 - Win", kClutSystemWinD5 },							// システム - Win
 	{ "\x83V\x83X\x83""e\x83\x80 - Win (Dir 4)", kClutSystemWin },		// システム - Win (Dir 4)
 };
 
@@ -2677,9 +2677,14 @@ void LB::b_puppetPalette(int nargs) {
 			Common::String palStr = d.asString();
 
 			for (int i = 0; i < ARRAYSIZE(paletteNames); i++) {
-				if (palStr.equalsIgnoreCase(paletteNames[i].name))
+				if (palStr.equalsIgnoreCase(paletteNames[i].name)) {
 					palette = CastMemberID(paletteNames[i].type, -1);
+					if (g_director->getVersion() < 500 && paletteNames[i].type == kClutSystemWinD5)
+						palette.member = kClutSystemWin;
+					break;
+				}
 			}
+
 		}
 		if (palette.isNull()) {
 			CastMember *member = movie->getCastMember(d.asMemberID());

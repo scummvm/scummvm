@@ -284,6 +284,7 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
 	{ kTheCast,		"regPoint",		kTheRegPoint,	400 },//				D4 p
 	{ kTheCast,		"palette",		kThePalette,	400 },//				D4 p
+	{ kTheCast,		"paletteRef",	kThePaletteRef,	500 },//				D4 p
 	{ kTheCast,		"picture",		kThePicture,	300 },//		D3 p
 
 	// TextCastMember fields
