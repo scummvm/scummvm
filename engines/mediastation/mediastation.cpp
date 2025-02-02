@@ -193,7 +193,11 @@ void MediaStationEngine::processEvents() {
 				debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
 				hotspot->runEventHandlerIfExists(kMouseMovedEvent);
 			} else {
-				_currentHotspot = nullptr;
+				if (_currentHotspot != nullptr) {
+					_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
+					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, _currentHotspot->getHeader()->_id);
+					_currentHotspot = nullptr;
+				}
 			}
 			break;
 		}
@@ -373,6 +377,7 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 	Context *context = loadContext(contextId);
 	_currentContext = context;
 	_dirtyRects.push_back(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
+	_currentHotspot = nullptr;
 
 	if (context->_screenAsset != nullptr) {
 		// TODO: Make the screen an asset just like everything else so we can
