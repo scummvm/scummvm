@@ -983,7 +983,6 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyEnabled = true;
 
 	if (isUsingOriginalGUI()) {
-
 		if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version <= 3) {
 			_savegameThumbnail.free();
 			Graphics::createThumbnail(_savegameThumbnail);
@@ -1202,8 +1201,10 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && isNES) {
 			// We map the GMM to F5, while SPACE (which acts as our pause button) calls the original menu...
 			openMainMenuDialog();
-		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version == 3 && _game.platform == Common::kPlatformMacintosh) {
-			// We don't have original menus for Mac versions of LOOM and INDY3, so let's just open the GMM...
+		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version <= 3 && _game.platform == Common::kPlatformMacintosh) {
+			// We don't have original menus for Mac versions of LOOM and INDY3,
+			// and Maniac Mansion's save/load screen doesn't align with how we
+			// handle saving and loading so let's just open the GMM...
 			openMainMenuDialog();
 			return;
 		}
