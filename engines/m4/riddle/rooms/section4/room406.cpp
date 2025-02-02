@@ -383,21 +383,21 @@ void Room406::parser() {
 	} else if (player_said("BILLIARD BALL", "BILLIARD TABLE") && billiardBallOnTable()) {
 		// No implementation
 	} else if (lookFlag && player_said_any("BILLIARD TABLE", "BILLIARD TABLE ")) {
-		if (!_G(flags)[V030])
+		if (!_G(flags)[kLeftCastleUnderground])
 			digi_play("406r41", 1);
 		else if (!_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r02", 1);
 		else
 			digi_play("406r28", 1);
 	} else if (lookFlag && player_said("CUE CABINET")) {
-		if (_G(flags)[V030])
+		if (_G(flags)[kLeftCastleUnderground])
 			digi_play("406r42", 1);
 		else if (_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r29", 1);
 		else
 			digi_play("406r05", 1);
 	} else if (lookFlag && player_said("BALL RACK")) {
-		if (_G(flags)[V030])
+		if (_G(flags)[kLeftCastleUnderground])
 			digi_play("406r42", 1);
 		else if (_G(flags)[kBilliardBallInCabinet])
 			digi_play("406r29", 1);
@@ -491,7 +491,7 @@ void Room406::parser() {
 		}
 	} else if (lookFlag && player_said("ACE OF SPADES")) {
 		_G(flags)[V311] = 1;
-		digi_play(_G(flags)[V030] ? "406r44" : "406r08", 1);
+		digi_play(_G(flags)[kLeftCastleUnderground] ? "406r44" : "406r08", 1);
 	} else if (lookFlag && player_said_any("SWITCH", "ACE OF SPADES ")) {
 		digi_play(player_been_here(456) ? "406r44" : "456r03", 1);
 	} else if (LOOK("BILLIARD BALL")) {
@@ -526,7 +526,7 @@ void Room406::parser() {
 	} else if (lookFlag && player_said("STAMP")) {
 		digi_play("406r19", 1);
 	} else if (lookFlag && player_said(" ")) {
-		digi_play(_G(flags)[V030] ? "406r40" : "406r01", 1);
+		digi_play(_G(flags)[kLeftCastleUnderground] ? "406r40" : "406r01", 1);
 	} else if (useFlag && player_said("DART BOARD")) {
 		digi_play("406r20", 1);
 	} else if (useFlag && player_said_any("BILLIARD TABLE",

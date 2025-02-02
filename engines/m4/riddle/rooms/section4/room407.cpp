@@ -1463,7 +1463,7 @@ void Room407::daemon() {
 		break;
 
 	case 392:
-		digi_play("407_s7b", 3, 255, 393);
+		digi_play("407_s27b", 3, 255, 393);
 		break;
 
 	case 393:
@@ -1471,7 +1471,7 @@ void Room407::daemon() {
 		break;
 
 	case 395:
-		_G(flags)[V030] = 1;
+		_G(flags)[kLeftCastleUnderground] = 1;
 		midi_stop();
 		digi_stop(3);
 		_G(game).setRoom(408);
@@ -4250,7 +4250,7 @@ void Room407::useButton3() {
 		break;
 
 	case 1:
-		if (++_buttonFrame3 == 1)
+		if (++_buttonFrame3 == 10)
 			_buttonFrame3 = 0;
 
 		sendWSMessage_10000(1, _lockButton3,
@@ -4353,9 +4353,9 @@ void Room407::useButtons() {
 			_407pu08a, frame1, frame1, 0);
 		sendWSMessage_10000(1, _lockButton2, _407pu08b, frame2, frame2, -1,
 			_407pu08b, frame2, frame2, 0);
-		sendWSMessage_10000(1, _lockButton1, _407pu08c, frame3, frame3, -1,
+		sendWSMessage_10000(1, _lockButton3, _407pu08c, frame3, frame3, -1,
 			_407pu08c, frame3, frame3, 0);
-		sendWSMessage_10000(1, _lockButton1, _407pu08d, frame4, frame4, -1,
+		sendWSMessage_10000(1, _lockButton4, _407pu08d, frame4, frame4, -1,
 			_407pu08d, frame4, frame4, 0);
 
 		hotspot_set_active("BUTTON", true);

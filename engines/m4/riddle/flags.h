@@ -62,7 +62,7 @@ enum Flag {
 	V027 =  27,
 	V028 =  28,
 	V029 =  29,
-	V030 =  30,
+	kLeftCastleUnderground =  30,
 	V031 =  31,
 	V032 =  32,
 	V033 =  33,

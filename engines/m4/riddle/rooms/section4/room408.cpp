@@ -200,7 +200,7 @@ void Room408::daemon() {
 	case 42:
 		ws_unhide_walker();
 		DisposePath(_G(my_walker)->walkPath);
-		_G(my_walker)->walkPath = CreateCustomPath(250, 235, -1);
+		_G(my_walker)->walkPath = CreateCustomPath(250, 335, -1);
 		ws_custom_walk(_G(my_walker), 4, -1);
 		sendWSMessage_10000(1, _exit, _ripExits, 31, 1, 44, _ripExits, 1, 1, 0);
 		digi_play("408r31", 1);

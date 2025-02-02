@@ -150,7 +150,7 @@ void Room710::parser() {
 
 		if (_ladderActiveFl) {
 			digi_play("710R21", 1, 255, -1, -1);
-		} else if (_G(flags[V030] == 0)) {
+		} else if (_G(flags[kLeftCastleUnderground] == 0)) {
 			digi_play("710R02", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
