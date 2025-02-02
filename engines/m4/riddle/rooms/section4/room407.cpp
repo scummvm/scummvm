@@ -291,7 +291,7 @@ void Room407::init() {
 		_periodicTableState = 1112;
 		_xyzzy7 = 1112;
 		_items2State = 1116;
-		_xyzzy9 = 1118;
+		_corkState = 1118;
 		_xyzzy10 = 1040;
 		_frotz1 = 0;
 		_frotz2 = 0;
@@ -364,7 +364,7 @@ void Room407::init() {
 			_cpist = series_place_sprite("407CPIST", 0, 0, -53, 100, 0xf00);
 			_niche = series_place_sprite("407NICH", 0, 0, -53, 100, 0xf00);
 
-			if (_xyzzy9 == 1116 || _xyzzy9 == 1130) {
+			if (_corkState == 1116 || _corkState == 1130) {
 				_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xa00);
 			} else if (_xyzzy7 == 1112) {
 				_bits = series_place_sprite("407bbits", 0, 0, -53, 100, 0xa00);
@@ -557,7 +557,7 @@ void Room407::init() {
 		_tubeState = 1140;
 		_xyzzy7 = 1140;
 		_stopperState = 1130;
-		_xyzzy9 = 1130;
+		_corkState = 1130;
 		_pumpState = 1130;
 
 		setHotspots();
@@ -1219,7 +1219,7 @@ void Room407::daemon() {
 		break;
 
 	case 322:
-		if (_stopperState == 1116 && _xyzzy9 == 1116 && _pumpState == 1116) {
+		if (_stopperState == 1116 && _corkState == 1116 && _pumpState == 1116) {
 			terminateMachineAndNull(_faucetPipe);
 			terminateMachineAndNull(_tubeInDrawer);
 			terminateMachineAndNull(_drawerPopupHose);
@@ -1245,7 +1245,7 @@ void Room407::daemon() {
 					_jarWaterFallingLeft, 14, 19, 0);
 			}
 
-			if (_xyzzy9 != 1116) {
+			if (_corkState != 1116) {
 				_jarWaterFallingCentre = series_load("407 JAR WATER FALLING CENTRE");
 				_jarCentre = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 					triggerMachineByHashCallback, "Center jar hole leaks");
@@ -1274,7 +1274,7 @@ void Room407::daemon() {
 		digi_play("407r37", 1, 255, 666);
 		_frotz2 = 1;
 		_stopperState = 1130;
-		_xyzzy9 = 1130;
+		_corkState = 1130;
 		_pumpState = 1130;
 
 		hotspot_set_active("MICROSCOPE", true);
@@ -1303,7 +1303,7 @@ void Room407::daemon() {
 			if (_stopperState != 1115)
 				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 20, 35, 350,
 					_jarWaterFallingLeft, 35, 35, 0);
-			if (_xyzzy9 != 1116)
+			if (_corkState != 1116)
 				sendWSMessage_10000(1, _jarCentre, _jarWaterFallingCentre, 16, 28, 351,
 					_jarWaterFallingCentre, 28, 28, 0);
 			if (_pumpState != 1116)
@@ -2013,7 +2013,7 @@ void Room407::parser() {
 			_leverKeyState == 1114 && _xyzzy7 != 1114 && _xyzzy7 != 1140) {
 		useLeverKey();
 	} else if (useFlag && player_said_any("FAUCET HANDLE", "FAUCET STEM") &&
-			_leverKeyState == 1100 && inv_object_is_here("FAUCET HANDLE")) {
+			_airValveState == 1100 && inv_object_is_here("FAUCET HANDLE")) {
 		if (_frotz2) {
 			digi_play("407r99e", 1);
 		} else if (_faucetPipeState == 1100) {
@@ -2137,7 +2137,7 @@ take:
 		takeJarCork1();
 	} else if (takeFlag && player_said("JAR/CORK ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140) &&
-			_xyzzy9 == 1116) {
+			_corkState == 1116) {
 		takeJarCork2();
 	} else if (takeFlag && player_said("JAR/RUBBER PLUG") && _xyzzy7 == 1112) {
 		takeJarRubberPlug1();
@@ -2297,7 +2297,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1056;
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_stopperState = 1116;
 			_pumpState = 1116;
 			inv_move_object("JAR/PLUG/GRIPS", 407);
@@ -2322,7 +2322,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1053;
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_stopperState = 1116;
 			inv_move_object("JAR/RUBBER PLUG", 407);
 			inv_move_object("JAR/CORK", 407);
@@ -2344,7 +2344,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1055;
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_pumpState = 1116;
 			inv_move_object("JAR/GRIPS", 407);
 			inv_move_object("JAR/CORK", 407);
@@ -2379,7 +2379,7 @@ take:
 			break;
 		}
 	} else if (player_said("GLASS JAR", "CORK") &&
-			_xyzzy7 == 1000 && _xyzzy9 == 1000) {
+			_xyzzy7 == 1000 && _corkState == 1000) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			kernel_examine_inventory_object("PING JAR/CORK",
@@ -2387,7 +2387,7 @@ take:
 			break;
 		case 2:
 			_xyzzy7 = 1051;
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			inv_move_object("GLASS JAR", 407);
 			inv_move_object("CORK", 407);
 			inv_give_to_player("JAR/CORK");
@@ -2481,7 +2481,7 @@ take:
 		inv_give_to_player("FAUCET PIPE");
 	} else if (useFlag && player_said("JAR/PLUG/CORK/GRIPS") && _xyzzy7 == 1056) {
 		_xyzzy7 = 1000;
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		_pumpState = 1000;
 		_stopperState = 1000;
 		inv_move_object("JAR/PLUG/CORK/GRIPS", 407);
@@ -2491,7 +2491,7 @@ take:
 		inv_give_to_player("RUBBER PLUG");
 	} else if (useFlag && player_said("JAR/CORK/PLUG") && _xyzzy7 == 1053) {
 		_xyzzy7 = 1000;
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		_stopperState = 1000;
 		inv_move_object("JAR/CORK/PLUG", 407);
 		inv_give_to_player("GLASS JAR");
@@ -2499,7 +2499,7 @@ take:
 		inv_give_to_player("CORK");
 	} else if (useFlag && player_said("JAR/CORK/GRIPS") && _xyzzy7 == 1055) {
 		_xyzzy7 = 1000;
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		_pumpState = 1000;
 		inv_move_object("JAR/CORK/GRIPS", 407);
 		inv_give_to_player("GLASS JAR");
@@ -2521,7 +2521,7 @@ take:
 		inv_give_to_player("PUMP GRIPS");
 	} else if (useFlag && player_said("JAR/CORK") && _xyzzy7 == 1051) {
 		_xyzzy7 = 1000;
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		inv_move_object("JAR/CORK", 407);
 		inv_give_to_player("GLASS JAR");
 		inv_give_to_player("CORK");
@@ -2541,7 +2541,7 @@ take:
 	} else if (useFlag && player_said("EMERALD/CORK") &&
 			inv_player_has("EMERALD/CORK")) {
 		_items2State = 1000;
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		inv_move_object("EMERALD/CORK", NOWHERE);
 		inv_give_to_player("ROMANOV EMERALD");
 		inv_give_to_player("CORK");
@@ -2574,7 +2574,7 @@ void Room407::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_periodicTableState);
 	s.syncAsSint16LE(_xyzzy7);
 	s.syncAsSint16LE(_items2State);
-	s.syncAsSint16LE(_xyzzy9);
+	s.syncAsSint16LE(_corkState);
 	s.syncAsSint16LE(_xyzzy10);
 	s.syncAsSint16LE(_frotz1);
 	s.syncAsSint16LE(_frotz2);
@@ -2680,7 +2680,7 @@ void Room407::setHotspots() {
 		if (_xyzzy7 == 1112) {
 			if (_stopperState != 1116)
 				hotspot_set_active("JAR/RUBBER PLUG", false);
-			if (_xyzzy9 != 1116)
+			if (_corkState != 1116)
 				hotspot_set_active("JAR/CORK", false);
 			if (_items2State != 1116)
 				hotspot_set_active("EMERALD PIN/CORK", false);
@@ -2699,7 +2699,7 @@ void Room407::setHotspots() {
 		} else {
 			if (_stopperState != 1116 && _stopperState != 1130)
 				hotspot_set_active("JAR/RUBBER PLUG ", false);
-			if (_xyzzy9 != 1116 && _xyzzy9 != 1130)
+			if (_corkState != 1116 && _corkState != 1130)
 				hotspot_set_active("JAR/CORK ", false);
 			if (_pumpState != 1116 && _pumpState != 1130)
 				hotspot_set_active("JAR/GRIP ", false);
@@ -3262,7 +3262,7 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1051:
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			hotspot_set_active("JAR/CORK ", true);
 			inv_move_object("JAR/CORK", 407);
 			_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xb00);
@@ -3276,7 +3276,7 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1053:
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
 			hotspot_set_active("JAR/CORK ", true);
@@ -3296,7 +3296,7 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1055:
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_pumpState = 1116;
 			hotspot_set_active("JAR/CORK ", true);
 			hotspot_set_active("JAR/GRIPS ", true);
@@ -3306,7 +3306,7 @@ void Room407::reachLeverKey() {
 			break;
 
 		case 1056:
-			_xyzzy9 = 1116;
+			_corkState = 1116;
 			_pumpState = 1116;
 			_stopperState = 1116;
 			hotspot_set_active("JAR/RUBBER PLUG ", true);
@@ -3678,7 +3678,7 @@ void Room407::corkGlassJar2() {
 		break;
 
 	case 1:
-		_stopperInDrawer = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xe00);
+		_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xe00);
 		inv_move_object("CORK", 407);
 		hotspot_set_active("JAR/CORK ", true);
 		sendWSMessage_120000(3);
@@ -3690,7 +3690,7 @@ void Room407::corkGlassJar2() {
 
 	case 4:
 		series_unload(_ripHiHand1);
-		_stopperState = 1116;
+		_corkState = 1116;
 		player_set_commands_allowed(true);
 		break;
 
@@ -4011,7 +4011,7 @@ void Room407::faucetPipeFaucetHandle1() {
 	case 1:
 		digi_play("407_s04", 2);
 		_airValve = series_place_sprite("407FAUC",
-			(_valveState2 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
+			(_valveState1 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
 
 		inv_move_object("FAUCET HANDLE", 407);
 		hotspot_set_active("FAUCET HANDLE", true);
@@ -5083,6 +5083,7 @@ void Room407::takeGardenHose4() {
 	case -1:
 		if (inv_object_is_here("GARDEN HOSE")) {
 			inv_give_to_player("GARDEN HOSE");
+			_hoseState = 1000;
 			hotspot_set_active("GARDEN HOSE", false);
 			terminateMachineAndNull(_drawerPopupHose);
 			kernel_examine_inventory_object("PING GARDEN HOSE",
@@ -5130,11 +5131,11 @@ void Room407::takeGlassJar1() {
 			_pumpState = 1000;
 		}
 
-		if (_xyzzy9 == 1116) {
+		if (_corkState == 1116) {
 			terminateMachineAndNull(_bits);
 			inv_give_to_player("CORK");
 			hotspot_set_active("JAR/CORK ", false);
-			_xyzzy9 = 1000;
+			_corkState = 1000;
 		}
 
 		kernel_examine_inventory_object("PING GLASS JAR",
@@ -5181,11 +5182,11 @@ void Room407::takeGlassJar2() {
 			_stopperState = 1000;
 		}
 
-		if (_xyzzy9 == 1116) {
+		if (_corkState == 1116) {
 			terminateMachineAndNull(_bits);
 			inv_give_to_player("CORK");
 			hotspot_set_active("JAR/CORK", false);
-			_xyzzy9 = 1000;
+			_corkState = 1000;
 		}
 
 		kernel_examine_inventory_object("PING GLASS JAR",
@@ -5340,7 +5341,7 @@ void Room407::takeJarCork1() {
 
 	case 5:
 		series_unload(_ripMedHand1);
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		player_set_commands_allowed(true);
 		break;
 
@@ -5376,7 +5377,7 @@ void Room407::takeJarCork2() {
 
 	case 5:
 		series_unload(_ripHiHand1);
-		_xyzzy9 = 1000;
+		_corkState = 1000;
 		player_set_commands_allowed(true);
 		break;
 

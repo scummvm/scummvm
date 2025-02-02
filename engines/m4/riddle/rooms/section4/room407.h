@@ -48,7 +48,7 @@ private:
 	int _periodicTableState = 0;
 	int _xyzzy7 = 0;
 	int _items2State = 0;
-	int _xyzzy9 = 0;
+	int _corkState = 0;
 	int _xyzzy10 = 0;
 	int _frotz1 = 0;
 	int _frotz2 = 0;
