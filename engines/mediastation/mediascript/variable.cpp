@@ -96,7 +96,7 @@ Variable::Variable(Chunk &chunk, bool readId) {
 	case kVariableTypeBoolean: {
 		uint rawValue = Datum(chunk, kDatumTypeUint8).u.i;
 		debugC(7, kDebugLoading, " Variable::Variable(): %s: %d", variableTypeToStr(_type), rawValue);
-		_value.b = (rawValue == 1);
+		_value.i = static_cast<int>(rawValue == 1);
 		break;
 	}
 
@@ -169,7 +169,7 @@ Operand Variable::getValue() {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still an integer type.
 		Operand returnValue(kOperandTypeLiteral1);
-		returnValue.putInteger(_value.b);
+		returnValue.putInteger(_value.i);
 		return returnValue;
 	}
 

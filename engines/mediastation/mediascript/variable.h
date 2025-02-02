@@ -45,7 +45,6 @@ public:
 	union {
 		Common::String *string;
 		Collection *collection;
-		bool b;
 		int i;
 		double d;
 		uint assetId;
