@@ -318,7 +318,7 @@ void Room407::init() {
 		_cpist = series_place_sprite("407CPIST", 0, 0, -53, 100, 0xf00);
 		_drawer = series_place_sprite("407DRAWR", 0, 0, -53, 100, 0xf00);
 		_escape = series_place_sprite("407ESCAP", 0, 0, -53, 100, 0xd00);
-		_faucet1 = series_place_sprite("407FAUC", 0, 0, -53, 100, 0xe00);
+		_faucetPipe = series_place_sprite("407FAUC", 0, 0, -53, 100, 0xe00);
 		_airValve = series_place_sprite("407FAUC", 0, 0, -53, 100, 0xe00);
 		_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xf00);
 		_niche = series_place_sprite("407NICH", 0, 0, -53, 100, 0xf00);
@@ -473,14 +473,14 @@ void Room407::init() {
 
 			switch (_faucetPipeState) {
 			case 1100:
-				_faucet1 = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xb00);
+				_faucetPipe = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xb00);
 				break;
 			case 1116:
 			case 1140:
-				_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+				_faucetPipe = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
 				break;
 			case 1130:
-				_faucet1 = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xb00);
+				_faucetPipe = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xb00);
 				break;
 			default:
 				break;
@@ -529,7 +529,7 @@ void Room407::init() {
 			_ripEnters, 27, 27, 0);
 
 	} else {
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 		terminateMachineAndNull(_tubeInDrawer);
 		terminateMachineAndNull(_drawerPopupHose);
 		terminateMachineAndNull(_bottle);
@@ -1115,7 +1115,7 @@ void Room407::daemon() {
 	case 303:
 		terminateMachineAndNull(_tubeInDrawer);
 		terminateMachineAndNull(_drawerPopupHose);
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 
 		hotspot_set_active("GARDEN HOSE ", false);
 		hotspot_set_active("GARDEN HOSE  ", false);
@@ -1131,7 +1131,7 @@ void Room407::daemon() {
 		_xyzzy7 = 1140;
 		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE TO JAR",
 			0, 0, 0, 100, 0xb00);
-		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		_faucetPipe = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
 		sendWSMessage_120000(304);
 		break;
 
@@ -1158,7 +1158,7 @@ void Room407::daemon() {
 	case 313:
 		terminateMachineAndNull(_tubeInDrawer);
 		terminateMachineAndNull(_drawerPopupHose);
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 
 		hotspot_set_active("GARDEN HOSE ", false);
 		hotspot_set_active("GARDEN HOSE  ", false);
@@ -1194,7 +1194,7 @@ void Room407::daemon() {
 	case 317:
 		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE TO JAR",
 			0, 0, 0, 100, 0xb00);
-		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		_faucetPipe = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
 		sendWSMessage_120000(318);
 		break;
 
@@ -1216,7 +1216,7 @@ void Room407::daemon() {
 
 	case 322:
 		if (_stopperState == 1116 && _xyzzy9 == 1116 && _pumpState == 1116) {
-			terminateMachineAndNull(_faucet1);
+			terminateMachineAndNull(_faucetPipe);
 			terminateMachineAndNull(_tubeInDrawer);
 			terminateMachineAndNull(_drawerPopupHose);
 			terminateMachineAndNull(_bottle);
@@ -2143,9 +2143,9 @@ take:
 	} else if (takeFlag && player_said("NOZZLES/TUBE")) {
 		takeNozzlesTube();
 	} else if (takeFlag && player_said("LEVER KEY") && _leverKeyState == 1112) {
-		takeLeverKey1();
+		takeLeverKeyFromWall();
 	} else if (takeFlag && player_said("LEVER KEY ")) {
-		takeLeverKey2();
+		takeLeverKeyFromBench();
 	} else if (takeFlag && player_said("AIR VALVE/HANDLE") && _airValveState == 1110) {
 		takeAirValveHandle();
 	} else if (takeFlag && player_said("FAUCET HANDLE") && _airValveState == 1100) {
@@ -3088,7 +3088,7 @@ void Room407::gardenHoseSurgicalTube2() {
 		if (_hoseState == 1061) {
 			inv_move_object("GARDEN HOSE", 407);
 		} else {
-			_faucet1 = series_place_sprite("407 FAUCET IN SINK",
+			_faucetPipe = series_place_sprite("407 FAUCET IN SINK",
 				0, 0, 0, 100, 0xe00);
 			hotspot_set_active("FAUCET PIPE  ", true);
 			inv_move_object("FAUCET PIPE/HOSE", 407);
@@ -3188,7 +3188,7 @@ void Room407::surgicalTubeStem() {
 			_drawerPopupHose = series_place_sprite(
 				"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
 			hotspot_set_active("GARDEN HOSE  ", true);
-			_faucet1 = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xe00);
+			_faucetPipe = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xe00);
 			hotspot_set_active("FAUCET PIPE  ", true);
 			inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
 			_faucetPipeState = 1130;
@@ -3343,7 +3343,7 @@ void Room407::faucetPipeGardenHose() {
 		break;
 
 	case 1:
-		_faucet1 = series_place_sprite("407 FAUCET IN SINK",
+		_faucetPipe = series_place_sprite("407 FAUCET IN SINK",
 			0, 0, 0, 100, 0xe00);
 		hotspot_set_active("FAUCET PIPE  ", true);
 		inv_move_object("FAUCET PIPE", 407);
@@ -3388,7 +3388,7 @@ void Room407::faucetPipeGlassJar() {
 			_hoseState = 1116;
 		}
 
-		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		_faucetPipe = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
 		hotspot_set_active("FAUCET PIPE ", true);
 		sendWSMessage_120000(3);
 		break;
@@ -4029,7 +4029,7 @@ void Room407::faucetPipeFaucetHandle2() {
 		break;
 
 	case 1:
-		_faucet1 = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xe00);
+		_faucetPipe = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xe00);
 		inv_move_object("FAUCET PIPE", 407);
 		hotspot_set_active("FAUCET PIPE", true);
 
@@ -4632,7 +4632,7 @@ void Room407::takeFaucetPipe1() {
 		break;
 
 	case 1:
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 		inv_give_to_player("FAUCET PIPE");
 		hotspot_set_active("FAUCET PIPE  ", false);
 		kernel_examine_inventory_object("PING FAUCET PIPE",
@@ -4668,7 +4668,7 @@ void Room407::takeFaucetPipe2() {
 		break;
 
 	case 1:
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 		hotspot_set_active("FAUCET PIPE ", false);
 		inv_give_to_player("FAUCET PIPE");
 
@@ -4728,12 +4728,12 @@ void Room407::takeFaucetPipe3() {
 		break;
 
 	case 1:
-		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_faucetPipe);
 		inv_give_to_player("FAUCET PIPE");
 		hotspot_set_active("FAUCET PIPE", false);
 
 		if (_hoseState == 1100) {
-			terminateMachineAndNull(_tubeInDrawer);
+			terminateMachineAndNull(_drawerPopupHose);
 			inv_give_to_player("GARDEN HOSE");
 			hotspot_set_active("GARDEN HOSE    ", false);
 			_hoseState = 1000;
@@ -4768,7 +4768,7 @@ void Room407::takeFaucetPipe3() {
 		break;
 
 	case 4:
-		series_unload(_ripHiHand1);
+		series_unload(_ripMedHand1);
 		_faucetPipeState = 1000;
 		player_set_commands_allowed(true);
 		break;
@@ -4844,7 +4844,7 @@ void Room407::takeSurgicalTube2() {
 		inv_give_to_player("SURGICAL TUBE");
 
 		if (_faucetPipeState == 1130) {
-			terminateMachineAndNull(_faucet1);
+			terminateMachineAndNull(_faucetPipe);
 			hotspot_set_active("GARDEN HOSE  ", false);
 			inv_give_to_player("FAUCET PIPE");
 			_faucetPipeState = 1000;
@@ -4973,7 +4973,7 @@ void Room407::takeGardenHose2() {
 		hotspot_set_active("GARDEN HOSE  ", false);
 
 		if (_faucetPipeState == 1130) {
-			terminateMachineAndNull(_faucet1);
+			terminateMachineAndNull(_faucetPipe);
 			hotspot_set_active("FAUCET PIPE  ", false);
 			inv_give_to_player("FAUCET PIPE");
 			_faucetPipeState = 1000;
@@ -5475,7 +5475,7 @@ void Room407::takeNozzlesTube() {
 	}
 }
 
-void Room407::takeLeverKey1() {
+void Room407::takeLeverKeyFromWall() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		player_set_commands_allowed(false);
@@ -5511,7 +5511,7 @@ void Room407::takeLeverKey1() {
 	}
 }
 
-void Room407::takeLeverKey2() {
+void Room407::takeLeverKeyFromBench() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		reachHand(10);
@@ -5521,8 +5521,7 @@ void Room407::takeLeverKey2() {
 		terminateMachineAndNull(_lever);
 		inv_give_to_player("LEVER KEY");
 		hotspot_set_active("LEVER KEY ", false);
-		kernel_examine_inventory_object("PING LEVER KEY",
-			_G(master_palette), 5, 1, 175, 200, 2, "407_s07a", -1);
+		kernel_examine_inventory_object("PING LEVER KEY", 5, 1, 175, 200, 2, "407_s07a");
 		break;
 
 	case 2:
@@ -5534,7 +5533,7 @@ void Room407::takeLeverKey2() {
 		break;
 
 	case 4:
-		series_unload(_ripMedReach);
+		series_unload(_ripMedHand1);
 		_leverKeyState = 1000;
 		player_set_commands_allowed(true);
 		break;

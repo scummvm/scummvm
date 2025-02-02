@@ -83,7 +83,7 @@ private:
 	machine *_cpist = nullptr;
 	machine *_drawer = nullptr;
 	machine *_escape = nullptr;
-	machine *_faucet1 = nullptr;
+	machine *_faucetPipe = nullptr;
 	machine *_airValve = nullptr;
 	machine *_lever = nullptr;
 	machine *_niche = nullptr;
@@ -237,8 +237,8 @@ private:
 	void takeJarRubberPlug1();
 	void takeJarRubberPlug2();
 	void takeNozzlesTube();
-	void takeLeverKey1();
-	void takeLeverKey2();
+	void takeLeverKeyFromWall();
+	void takeLeverKeyFromBench();
 	void takeLeverKey3();
 	void takeAirValveHandle();
 	void takeFaucetHandle();
