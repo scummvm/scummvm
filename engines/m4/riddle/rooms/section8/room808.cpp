@@ -1032,10 +1032,81 @@ void Room808::parser() {
 		return;
 
 	case 8:
+		if (player_said("hole in bridge")) {
+			digi_play("808r35",1,255,-1,-1);
+		} else
+			break;
+
+		return;
+
 	case 9:
+		if (player_said("hole in bridge")) {
+			digi_play("com018", 1, 255, -1, 997);
+		} else if (player_said("bridge")) {
+			digi_play("com019", 1, 255, -1, 997);
+		} else
+			break;
+
+		return;
+
 	case 10:
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (conv_sound_to_play()) {
+				if (conv_whos_talking() == 1) {
+					setGlobals1(_ripTalkerPos5Series, 4, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+					sendWSMessage_110000(_G(my_walker), -1);
+					if (conv_current_node() == 2 && conv_current_entry() == 0) {
+						setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+						sendWSMessage_3840000(_mcTrekMach, -1);
+					}
+				} else {
+					sendWSMessage_150000(_G(my_walker), -1);
+				}
+
+				digi_play(conv_sound_to_play(), 1, 255, 10, -1);
+			} else
+				conv_resume(conv_get_handle());
+
+			break;
+		case 10:
+			if (conv_current_node() == 2 && conv_current_entry() == 0) {
+				sendWSMessage_150000(_G(my_walker), -1);
+				ws_walk(_G(my_walker), 185, 156, nullptr, -1, 5, true);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(183, 172, -1);
+				ws_custom_walk(_mcTrekMach, 11, 20, true);
+			} else if (conv_current_node() == 2 && conv_current_entry() == 1) {
+				sendWSMessage_150000(_G(my_walker), -1);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(348, 130, 345, 115, -1);
+				ws_custom_walk(_mcTrekMach, 7, 30, true);
+			} else
+				conv_resume(conv_get_handle());
+
+			break;
+
+		case 20:
+			conv_resume(conv_get_handle());
+			break;
+
+		case 30:
+			_G(flags[V097]) = 1;
+			addMcHotspot(1);
+			conv_resume(conv_get_handle());
+
+			break;
+
+		default:
+			break;
+		}
+
+		return;
+
 	case 11:
-	// TODO Not implemented yet
+		digi_play("com042", 1, 255, -1, 997);
+		break;
+
 	default:
 		break;
 	}
