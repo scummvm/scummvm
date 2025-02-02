@@ -1143,30 +1143,62 @@ uint8 Adlib::peekByteAt(uint16 offset) {
 	return result;
 }
 
-uint8 Adlib::FuncA280(uint8 bpp6, uint8 bpp8) {
-	// TODO: Continue here
-	uint16 bp2 = (gArray11F[bpp8] << 8) + gArray9F[bpp8];
-	uint16 bp4;
-	uint16 bp6;
-	if (bpp6 != 0) {
+uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
+	// AI-reverse engineered by Deepseek
+	// Initial value calculation
+	uint16 base_value = (gArray11F[index] << 8) | gArray9F[index];
+	if (blend_param != 0) {
 		// l0017_2AB1:
-		if (bpp6 < 0x80) {
+		if (blend_param < 0x80) { // Forward blend case
 			// l0017_2AB7:
-			if (bpp8 < 0x7F) {
-				// l0017_2ABD:
-				bp6 = bpp8 + 1;
-			} else {
-				// l0017_2ABD:
-				bp6 = 0x7F;
-			}
-			// l0017_2AC8:
-			bp4 = gArray11F[bp6] << 8 + gArray9F[bp6];
+			// Calculate next index with clamping
+			// l0017_2ABD: and l0017_2AC8:
+			// [bp-6h]
+			uint8 next_idx = (index < 0x7F) ? index + 1 : 0x7F;
+			// l0017_2ACD:
+			// [bp-4h]
+			uint16 next_value = (gArray11F[next_idx] << 8) | gArray9F[next_idx];
 		}
 	}
+	
 	/*
+	
+		
+		
+			
 
+			// Linear interpolation
+			int16 delta = next_value - base_value;
+			base_value += static_cast<uint16>((delta * blend_param) / 7);
+		} else { // Reverse blend case
+			// Calculate previous index with clamping
+			uint8 prev_idx = (index > 0) ? index - 1 : 0;
+			uint16 prev_value = (table_high[prev_idx] << 8) | table_low[prev_idx];
+
+			// Reverse interpolation
+			uint8 adjusted_param = blend_param - 0x80;
+			int16 delta = base_value - prev_value;
+			base_value -= static_cast<uint16>((delta * adjusted_param) / 7);
+		}
+	}
+
+	// Write results to sound chip registers
+	uint8 low_reg = 0xA0 + reg_base;  // Low byte register
+	uint8 high_reg = 0xB0 + reg_base; // High byte register
+
+	// Write low byte (raw value)
+	write_port(low_reg, static_cast<uint8>(base_value & 0xFF));
+
+	// Write high byte (masked to clear bit 5)
+	write_port(high_reg, static_cast<uint8>((base_value >> 8) & 0xDF));
+	*/
+	return 0;
+	/*
+	
 	
 
+l0017_2ACD:
+	
 	mov	al,[bp+6h]
 	xor	ah,ah
 	xor	dx,dx
@@ -1255,7 +1287,6 @@ l0017_2B81:
 	leave
 	retf	6h
 	*/
-	return 0;
 }
 
 void Adlib::Init() {
