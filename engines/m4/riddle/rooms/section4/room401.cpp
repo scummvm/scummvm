@@ -59,7 +59,6 @@ void Room401::init() {
 	_401a04 = series_load("401A04");
 	_401a05 = series_load("401A05");
 	_401a06 = series_load("401A06");
-	_401a01 = series_load("401A01");
 
 	_rip1 = series_load("rip trek hand talk pos3");
 	_rip2 = series_load("RIP TREK ARMS X POS3");
@@ -283,7 +282,7 @@ void Room401::daemon() {
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
-		_val7 = _val3 = 0;
+		_ripleyMode = _ripleyShould = 0;
 
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		_agentShould = 4;
@@ -304,7 +303,7 @@ void Room401::daemon() {
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
-		_val7 = _val3 = 0;
+		_ripleyMode = _ripleyShould = 0;
 
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		_agentShould = 4;
@@ -321,7 +320,7 @@ void Room401::daemon() {
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
-		_val7 = _val3 = 0;
+		_ripleyMode = _ripleyShould = 0;
 
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		_agentShould = 0;
@@ -341,8 +340,8 @@ void Room401::daemon() {
 		break;
 
 	case 201:
-		if (!_val7) {
-			switch (_val3) {
+		if (!_ripleyMode) {
+			switch (_ripleyShould) {
 			case 0:
 				sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 				break;
@@ -353,7 +352,7 @@ void Room401::daemon() {
 			case 2:
 				sendWSMessage_10000(1, _ripMach, _401rp01, 20, 36, 200, _401rp01, 11, 11, 0);
 				sendWSMessage_190000(_ripMach, 13);
-				_val3 = 0;
+				_ripleyShould = 0;
 				break;
 			case 3:
 				sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 202, _401rp01, 1, 1, 0);
@@ -551,7 +550,7 @@ void Room401::daemon() {
 		ws_hide_walker();
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "rip");
-		sendWSMessage_10000(1, _agent, _401rp01, 1, 11, 616, _401rp01, 11, 11, 0);
+		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 616, _401rp01, 11, 11, 0);
 		break;
 
 	case 616:
@@ -560,7 +559,7 @@ void Room401::daemon() {
 		break;
 
 	case 617:
-		sendWSMessage_10000(1, _ripMach, _401a04, 1, 90, 618, _401a01, 1, 1, 0);
+		sendWSMessage_10000(1, _ripMach, _401a04, 64, 90, 618, _401a01, 1, 1, 0);
 		digi_play("950_s35", 2);
 		break;
 
@@ -809,7 +808,7 @@ void Room401::parser() {
 		}
 
 		_agentShould = 0;
-		_val3 = 3;
+		_ripleyShould = 3;
 	} else if (_G(kernel).trigger == 748) {
 		_G(flags)[kBilliardsFan] = 0;
 		_G(game).setRoom(495);
@@ -820,8 +819,8 @@ void Room401::parser() {
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 200, _401rp01, 11, 11, 0);
 
-		_val7 = 0;
-		_val3 = 0;
+		_ripleyMode = 0;
+		_ripleyShould = 0;
 		_G(kernel).trigger_mode = KT_PARSE;
 
 		conv_load("conv401a", 10, 10, 747);
@@ -959,14 +958,14 @@ void Room401::conv401a() {
 
 			if (node == 1 && entry == 3) {
 				_agentShould = 9;
-				_val3 = 0;
+				_ripleyShould = 0;
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 200);
 				_G(kernel).trigger_mode = KT_PARSE;
 				return;
 			}
 
-			_val3 = 0;
+			_ripleyShould = 0;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_timing_trigger(1, 200);
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -1005,7 +1004,7 @@ void Room401::conv401a() {
 			if (node == 11 && entry == 11) inv_move_object("ROMANOV EMERALD", NOWHERE);
 
 			if (node != 11)
-				_val3 = 1;
+				_ripleyShould = 1;
 		}
 
 		digi_play(sound, 1, 255, 1);

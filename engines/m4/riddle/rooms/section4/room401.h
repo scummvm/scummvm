@@ -32,11 +32,11 @@ class Room401 : public Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _ripleyShould = 0;
 	int32 _val4 = 0;
 	int _agentMode = 0;
 	int _agentShould = 0;
-	int _val7 = 0;
+	int _ripleyMode = 0;
 	const char *_digiName1 = nullptr;
 	const char *_digiName2 = nullptr;
 	const char *_digiName3 = nullptr;
