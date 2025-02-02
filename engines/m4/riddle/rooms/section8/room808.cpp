@@ -991,16 +991,55 @@ void Room808::parser() {
 
 	case 5:
 	case 6:
+	// TODO Not implemented yet
 	case 7:
+		if (player_said("hole in bridge")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				inv_move_object("FARMER'S SHOVEL", 808);
+				series_play("808rp07", 256, 0, 5, 5, 0, 100, 0, 0, 0, 22);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_808RipFallShovelNearSideMach = series_place_sprite(SAFARI_SHADOWS_2[_G(player_info).facing], 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 257);
+
+				break;
+
+			case 5:
+				series_play("808rp07", 256, 0, 10, 5, 0, 100, 0, 0, 23, -1);
+				digi_play("808_s06", 2, 255, -1, -1);
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", true);
+				terminateMachine(_808PosMach);
+				_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 3, 100, 0, 0);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 2);
+				terminateMachine(_808RipFallShovelNearSideMach);
+				_G(flags[V095]) = 0;
+
+				break;
+
+			default:
+				break;
+			}
+		} else
+			break;
+
+		return;
+
 	case 8:
 	case 9:
 	case 10:
 	case 11:
+	// TODO Not implemented yet
 	default:
 		break;
 	}
 
-	// TODO Not implemented yet
 	_G(player).command_ready = true;
 }
 
