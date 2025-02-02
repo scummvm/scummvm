@@ -136,7 +136,9 @@ Common::Error MediaStationEngine::run() {
 		warning("MediaStation::run(): Title has no root context");
 	}
 
-	branchToScreen(_boot->_entryContextId);
+	_requestedScreenBranchId = _boot->_entryContextId;
+	doBranchToScreen();
+
 	while (true) {
 		processEvents();
 		if (shouldQuit()) {
@@ -146,6 +148,15 @@ Common::Error MediaStationEngine::run() {
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
 		for (auto it = _assetsPlaying.begin(); it != _assetsPlaying.end();) {
 			(*it)->process();
+
+			// If we're changing screens, exit out now so we don't try to access
+			// any assets that no longer exist.
+			if (_requestedScreenBranchId != 0) {
+				doBranchToScreen();
+				_requestedScreenBranchId = 0;
+				break;
+			}
+
 			if (!(*it)->isActive()) {
 				it = _assetsPlaying.erase(it);
 			} else {
@@ -265,18 +276,20 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		error("Cannot load contexts before BOOT.STM is read");
 	}
 
+	debugC(5, kDebugLoading, "MediaStationEngine::loadContext(): Loading context %d", contextId);
 	if (_loadedContexts.contains(contextId)) {
-		warning("MediaStationEngine::loadContext(): Context 0x%x already loaded, returning existing context", contextId);
+		warning("MediaStationEngine::loadContext(): Context %d already loaded, returning existing context", contextId);
 		return _loadedContexts.getVal(contextId);
 	}
 
 	// GET THE FILE ID.
 	SubfileDeclaration *subfileDeclaration = _boot->_subfileDeclarations.getValOrDefault(contextId);
 	if (subfileDeclaration == nullptr) {
-		warning("MediaStationEngine::loadContext(): Couldn't find subfile declaration with ID 0x%x", contextId);
+		error("MediaStationEngine::loadContext(): Couldn't find subfile declaration with ID %d", contextId);
 		return nullptr;
 	}
-	// The subfile declarations have other assets too, so we need to make sure
+	// There are other assets in a subfile too, so we need to make sure we're
+	// referencing the screen asset, at the start of the file.
 	if (subfileDeclaration->_startOffsetInFile != 16) {
 		warning("MediaStationEngine::loadContext(): Requested ID wasn't for a context.");
 		return nullptr;
@@ -344,9 +357,13 @@ void MediaStationEngine::addPlayingAsset(Asset *assetToAdd) {
 Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
 	case kBranchToScreenMethod: {
-		assert(args.size() == 1);
+		assert(args.size() >= 1);
+		if (args.size() > 1) {
+			// TODO: Figure out what the rest of the args can be.
+			warning("MediaStationEngine::callMethod(): branchToScreen got more than one arg");
+		}
 		uint32 contextId = args[0].getAssetId();
-		branchToScreen(contextId);
+		_requestedScreenBranchId = contextId;
 		return Operand();
 	}
 
@@ -363,7 +380,7 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 	}
 }
 
-void MediaStationEngine::branchToScreen(uint32 contextId) {
+void MediaStationEngine::doBranchToScreen() {
 	if (_currentContext != nullptr) {
 		EventHandler *exitEvent = _currentContext->_screenAsset->_eventHandlers.getValOrDefault(kExitEvent);
 		if (exitEvent != nullptr) {
@@ -372,9 +389,11 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 		} else {
 			debugC(5, kDebugScript, "No context exit event handler");
 		}
+
+		releaseContext(_currentContext->_screenAsset->_id);
 	}
 
-	Context *context = loadContext(contextId);
+	Context *context = loadContext(_requestedScreenBranchId);
 	_currentContext = context;
 	_dirtyRects.push_back(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
 	_currentHotspot = nullptr;
@@ -390,6 +409,8 @@ void MediaStationEngine::branchToScreen(uint32 contextId) {
 			debugC(5, kDebugScript, "No context entry event handler");
 		}
 	}
+
+	_requestedScreenBranchId = 0;
 }
 
 void MediaStationEngine::releaseContext(uint32 contextId) {

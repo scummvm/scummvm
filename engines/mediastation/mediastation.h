@@ -103,9 +103,12 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Boot *_boot = nullptr;
-	Common::Array<Asset *> _assetsPlaying;
+	Common::List<Asset *> _assetsPlaying;
 	Common::HashMap<uint, Context *> _loadedContexts;
 	Asset *_currentHotspot = nullptr;
+
+	uint _requestedScreenBranchId = 0;
+	void doBranchToScreen();
 
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);
