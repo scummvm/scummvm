@@ -946,7 +946,9 @@ Common::Path MacVentureEngine::getFilePath(FilePathID id) const {
 	if (id <= 3) { // We don't want a file in the subdirectory
 		return Common::Path(_filenames->getString(id));
 	} else { // We want a game file
-		return Common::Path(_filenames->getString(3) + "/" + _filenames->getString(id));
+		Common::Path path(_filenames->getString(3));
+		path.joinInPlace(_filenames->getString(id));
+		return path;
 	}
 }
 
