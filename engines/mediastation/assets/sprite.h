@@ -58,6 +58,8 @@ private:
 	SpriteFrameHeader *_bitmapHeader = nullptr;
 };
 
+// Sprites are somewhat like movies, but they strictly show one frame at a time
+// and don't have sound. They are intended for background/recurrent animations.
 class Sprite : public Asset {
 public:
 	Sprite(AssetHeader *header);
@@ -72,17 +74,21 @@ public:
 private:
 	Common::Array<SpriteFrame *> _frames;
 	SpriteFrame *_activeFrame = nullptr;
-	bool _isPaused = false;
+	bool _isShowing = false;
+	bool _isPlaying = false;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
 
 	// Method implementations.
 	void spatialShow();
+	void spatialHide();
 	void timePlay();
+	void timeStop();
 	void movieReset();
+	void setCurrentClip();
 
 	void updateFrameState();
-	void showFrame(uint frameIndex);
+	void showFrame(SpriteFrame *frame);
 	Common::Rect getActiveFrameBoundingBox();
 };
 

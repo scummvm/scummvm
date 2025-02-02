@@ -68,7 +68,14 @@ uint32 SpriteFrame::index() {
 
 Sprite::Sprite(AssetHeader *header) : Asset(header) {
 	if (header->_startup == kAssetStartupActive) {
-		_isActive = true;
+		setActive();
+		_isShowing = true;
+	}
+
+	if (_header->_frameRate == 0) {
+		// It seems that the frame rate is 10 if it's not set in the asset
+		// header, or even if it's set to zero.
+		_header->_frameRate = 10;
 	}
 }
 
@@ -82,33 +89,45 @@ Sprite::~Sprite() {
 Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 	switch (methodId) {
 	case kSpatialShowMethod: {
-		assert(args.size() == 0);
+		assert(args.empty());
 		spatialShow();
 		return Operand();
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
-		_isActive = false;
+		spatialHide();
+		return Operand();
+	}
+
+	case kTimePlayMethod: {
+		assert(args.empty());
+		timePlay();
 		return Operand();
 	}
 
 	case kTimeStopMethod: {
 		assert(args.empty());
-		_isActive = false;
-		return Operand();
-	}
-
-	case kTimePlayMethod: {
-		assert(args.size() == 0);
-		timePlay();
+		timeStop();
 		return Operand();
 	}
 
 	case kMovieResetMethod: {
-		assert(args.size() == 0);
+		assert(args.empty());
 		movieReset();
 		return Operand();
+	}
+
+	case kSetCurrentClipMethod: {
+		assert(args.empty());
+		setCurrentClip();
+		return Operand();
+	}
+
+	case kIsPlayingMethod: {
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(static_cast<int>(_isPlaying));
+		return returnValue;
 	}
 
 	default: {
@@ -118,45 +137,83 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 }
 
 void Sprite::spatialShow() {
-	debugC(5, kDebugScript, "Called Sprite::spatialShow");
-	_isActive = true;
-	g_engine->addPlayingAsset(this);
-
-	_isPaused = true;
-	if (_activeFrame == nullptr) {
-		showFrame(0);
+	if (_isShowing) {
+		warning("Sprite::spatialShow(): (%d) Attempted to spatialShow when already showing", _header->_id);
+		return;
 	}
+	showFrame(_frames[0]);
+
+	setActive();
+	_isShowing = true;
+	_isPlaying = false;
+}
+
+void Sprite::spatialHide() {
+	if (!_isShowing) {
+		warning("Sprite::spatialHide(): (%d) Attempted to spatialHide when not showing", _header->_id);
+		return;
+	}
+	showFrame(nullptr);
+
+	setInactive();
+	_isShowing = false;
+	_isPlaying = false;
 }
 
 void Sprite::timePlay() {
-	_isActive = true;
-	_isPaused = false;
-	_startTime = g_system->getMillis();
-	_lastProcessedTime = 0;
-	_nextFrameTime = 0;
-	g_engine->addPlayingAsset(this);
-
-	if (_header->_frameRate == 0) {
-		// It seems that the frame rate is 10 if it's not set in the asset
-		// header, or even if it's set to zero.
-		_header->_frameRate = 10;
+	if (!_isShowing) {
+		warning("Sprite::timePlay(): (%d) Attempted to timePlay when not showing", _header->_id);
+		return;
+	} else if (_isPlaying) {
+		warning("Sprite::timePlay(): (%d) Attempted to timePlay when already playing", _header->_id);
+		return;
 	}
+
+	setActive();
+	_isPlaying = true;
+	_nextFrameTime = 0;
 
 	runEventHandlerIfExists(kMovieBeginEvent);
 }
 
+void Sprite::timeStop() {
+	if (!_isShowing) {
+		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not showing", _header->_id);
+		return;
+	} else if (!_isPlaying) {
+		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not playing", _header->_id);
+		return;
+	}
+
+	_isPlaying = false;
+	// TODO: Find the right event handler to run here.
+}
+
 void Sprite::movieReset() {
-	_isActive = true;
-	// We do NOT reset the persisting frame, because it should keep showing!
-	_isPaused = true;
+	setActive();
+	if (_isShowing) {
+		showFrame(_frames[0]);
+	} else {
+		showFrame(nullptr);
+	}
+	_isPlaying = false;
 	_startTime = 0;
 	_currentFrameIndex = 0;
 	_nextFrameTime = 0;
 	_lastProcessedTime = 0;
 }
 
+void Sprite::setCurrentClip() {
+	if (_currentFrameIndex < _frames.size()) {
+		showFrame(_frames[_currentFrameIndex++]);
+	} else {
+		warning("Sprite::setCurrentClip(): (%d) Attempted to increment past number of frames", _header->_id);
+	}
+}
+
 void Sprite::process() {
 	updateFrameState();
+	// Sprites don't have time event handlers, separate timers do time handling.
 }
 
 void Sprite::readChunk(Chunk &chunk) {
@@ -174,9 +231,22 @@ void Sprite::readChunk(Chunk &chunk) {
 }
 
 void Sprite::updateFrameState() {
-	if (_isPaused) {
+	if (!_isActive) {
 		return;
 	}
+
+	if (!_isPlaying) {
+		if (_activeFrame != nullptr) {
+			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing. Persistent frame %d (%d x %d) @ (%d, %d)", 
+				_header->_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
+		} else {
+			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing, no persistent frame", _header->_id);
+		}
+		return;
+	}
+
+	debugC(5, kDebugGraphics, "Sprite::updateFrameState(): (%d) Frame %d (%d x %d) @ (%d, %d)",
+		_header->_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
 
 	uint currentTime = g_system->getMillis() - _startTime;
 	bool drawNextFrame = currentTime >= _nextFrameTime;
@@ -184,7 +254,7 @@ void Sprite::updateFrameState() {
 		return;
 	}
 
-	showFrame(_currentFrameIndex);
+	showFrame(_frames[_currentFrameIndex]);
 
 	uint frameDuration = 1000 / _header->_frameRate;
 	_nextFrameTime = ++_currentFrameIndex * frameDuration;
@@ -193,8 +263,8 @@ void Sprite::updateFrameState() {
 	if (spriteFinishedPlaying) {
 		// Sprites always keep their last frame showing until they are hidden
 		// with spatialHide.
-		showFrame(_currentFrameIndex - 1);
-		_isPaused = true;
+		showFrame(_frames[_currentFrameIndex - 1]);
+		_isPlaying = false;
 
 		// But otherwise, the sprite's params should be reset.
 		_isActive = true;
@@ -208,7 +278,7 @@ void Sprite::updateFrameState() {
 }
 
 void Sprite::redraw(Common::Rect &rect) {
-	if (_activeFrame == nullptr) {
+	if (_activeFrame == nullptr || !_isShowing) {
 		return;
 	}
 
@@ -221,15 +291,17 @@ void Sprite::redraw(Common::Rect &rect) {
 	}
 }
 
-void Sprite::showFrame(uint frameIndex) {
+void Sprite::showFrame(SpriteFrame *frame) {
 	// Erase the previous frame.
 	if (_activeFrame != nullptr) {
 		g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
 	}
 	
 	// Show the next frame.
-	_activeFrame = _frames[frameIndex];
-	g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+	_activeFrame = frame;
+	if (frame != nullptr) {
+		g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+	}
 }
 
 Common::Rect Sprite::getActiveFrameBoundingBox() {

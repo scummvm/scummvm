@@ -64,6 +64,8 @@ public:
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
+	void setInactive();
+	void setActive();
 	void processTimeEventHandlers();
 	void runEventHandlerIfExists(EventType eventType);
 	void runKeyDownEventHandlerIfExists(Common::KeyState keyState);

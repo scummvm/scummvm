@@ -161,6 +161,8 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "IsVisible";
 	case kMovieResetMethod:
 		return "MovieReset";
+	case kSetCurrentClipMethod:
+		return "SetCurrentClip";
 	case kSetWorldSpaceExtentMethod:
 		return "SetWorldSpaceExtent";
 	case kSetBoundsMethod:

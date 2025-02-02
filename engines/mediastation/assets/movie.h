@@ -79,8 +79,6 @@ public:
 	// that could be confusing.
 	uint32 zCoordinate();
 
-	bool _showing = false;
-
 private:
 	MovieFrameHeader *_bitmapHeader = nullptr;
 	MovieFrameFooter *_footer = nullptr;
@@ -94,7 +92,7 @@ enum MovieSectionType {
 
 class Movie : public Asset {
 public:
-	Movie(AssetHeader *header) : Asset(header) {};
+	Movie(AssetHeader *header);
 	virtual ~Movie() override;
 
 	virtual void readChunk(Chunk &chunk) override;
@@ -106,6 +104,10 @@ public:
 	virtual void redraw(Common::Rect &rect) override;
 
 private:
+	bool _showByDefault = false;
+	bool _isShowing = false;
+	bool _isPlaying = false;
+
 	Common::Array<MovieFrame *> _frames;
 	Common::Array<MovieFrame *> _stills;
 	Common::Array<MovieFrameFooter *> _footers;
@@ -115,9 +117,11 @@ private:
 	Common::Array<MovieFrame *> _framesNotYetShown;
 	Common::Array<MovieFrame *> _framesOnScreen;
 
-	// Method implementations. These should be called from callMethod.
+	// Script method implementations.
 	void timePlay();
 	void timeStop();
+	void spatialShow();
+	void spatialHide();
 
 	void updateFrameState();
 
