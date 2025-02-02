@@ -4760,11 +4760,11 @@ void Room407::takeFaucetPipe3() {
 		break;
 
 	case 2:
-		sendWSMessage_120000(4);
+		sendWSMessage_120000(3);
 		break;
 
 	case 3:
-		sendWSMessage_150000(5);
+		sendWSMessage_150000(4);
 		break;
 
 	case 4:
