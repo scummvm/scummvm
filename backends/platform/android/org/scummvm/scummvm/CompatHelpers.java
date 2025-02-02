@@ -302,7 +302,7 @@ class CompatHelpers {
 				AudioTrackCompatReturn ret = new AudioTrackCompatReturn();
 				ret.audioTrack = new AudioTrack(
 					new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_MEDIA)
+						.setUsage(AudioAttributes.USAGE_GAME)
 						.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
 						.build(),
 					new AudioFormat.Builder()
@@ -323,7 +323,7 @@ class CompatHelpers {
 				AudioTrackCompatReturn ret = new AudioTrackCompatReturn();
 				ret.audioTrack = new AudioTrack(
 					new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_MEDIA)
+						.setUsage(AudioAttributes.USAGE_GAME)
 						.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
 						.build(),
 					new AudioFormat.Builder()
