@@ -44,7 +44,7 @@ private:
 	void addMcHotspot(int32 val1);
 	bool getWalkPath(machine *machine, int32 walk_x, int32 walk_y);
 	void setBridgeHotspots(int val1, bool activeFl);
-	void room808_sub1();
+	void setPosMachInfo();
 
 	int32 _dword1A195C_facing = 0;
 	int32 _dword1A1958 = 0;

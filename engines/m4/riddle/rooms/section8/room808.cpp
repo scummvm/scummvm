@@ -426,7 +426,7 @@ void Room808::parser() {
 				setBridgeHotspots(_G(flags[V094]), false);
 				ws_hide_walker(_G(my_walker));
 				terminateMachine(_808PosMach);
-				room808_sub1();
+				setPosMachInfo();
 				_808PosMach = series_stream(_posMachName, 5, 1281, 10);
 				series_stream_break_on_frame(_808PosMach, 7, _posMachFrameNum);
 				player_update_info(_G(my_walker), &_G(player_info));
@@ -1891,8 +1891,165 @@ void Room808::addMcHotspot(int32 val1) {
 	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, newHotspot, true);
 }
 
-void Room808::room808_sub1() {
-	// TODO Not implemented yet
+void Room808::setPosMachInfo() {
+	if (_G(flags[V095])) {
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+			switch (_G(flags[V094])) {
+			case 1:
+				_posMachName = "808spn16";
+				_G(flags[V095]) = 0;
+				_posMachIndex = 0;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 0;
+
+				break;
+
+			case 2:
+				_posMachName = "808spn15";
+				_posMachIndex = 6;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 1;
+
+				break;
+
+			case 3:
+				_posMachName = "808spn14";
+				_posMachIndex = 4;
+				_posMachFrameNum = 17;
+				_G(flags[V094]) = 2;
+
+				break;
+
+			case 4:
+				_posMachName = "808spn13";
+				_posMachIndex = 3;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 3;
+
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(flags[V094])) {
+			case 1:
+				_posMachName = "808spn08";
+
+				_G(flags[V095]) = 0;
+				_posMachIndex = 0;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 0;
+
+				break;
+
+			case 2:
+				_posMachName = "808spn07";
+				_posMachIndex = 6;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 1;
+
+				break;
+
+			case 3:
+				_posMachName = "808spn06";
+				_posMachIndex = 5;
+				_posMachFrameNum = 17;
+				_G(flags[V094]) = 2;
+
+				break;
+
+			case 4:
+				_posMachName = "808spn05";
+				_posMachIndex = 3;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 3;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else {
+		if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+			switch (_G(flags[V094])) {
+			case 1:
+				_posMachName = "808spn09";
+				_posMachIndex = 1;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 1;
+
+				break;
+
+			case 2:
+				_posMachName = "808spn10";
+				_posMachIndex = 2;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 2;
+
+				break;
+
+			case 3:
+				_posMachName = "808spn11";
+				_posMachIndex = 3;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 3;
+
+				break;
+
+			case 4:
+				_posMachName = "808spn12";
+				_posMachIndex = 5;
+				_posMachFrameNum = 10;
+				_G(flags[V094]) = 4;
+				_G(flags[V095]) = 1;
+
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(flags[V094])) {
+			case 1:
+				_posMachName = "808spn01";
+				_posMachIndex = 1;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 1;
+
+				break;
+
+			case 2:
+				_posMachName = "808spn02";
+				_posMachIndex = 2;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 2;
+
+				break;
+
+			case 3:
+				_posMachName = "808spn03";
+				_posMachIndex = 3;
+				_posMachFrameNum = 13;
+				_G(flags[V094]) = 3;
+
+				break;
+
+			case 4:
+				_posMachName = "808spn04";
+				_posMachIndex = 4;
+				_posMachFrameNum = 10;
+				_G(flags[V094]) = 4;
+				_G(flags[V095]) = 1;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
 }
 
 } // namespace Rooms
