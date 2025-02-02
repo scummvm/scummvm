@@ -89,6 +89,7 @@ void Room407::init() {
 			setGlobals1(_ripMedReach, 10, 10, 10, 10, 0, 10, 1, 1, 1);
 			sendWSMessage_110000(-1);
 			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
+
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
@@ -113,6 +114,7 @@ void Room407::init() {
 			}
 		} else if (_tabletopState == 1030) {
 			_tabletopPopup = series_place_sprite("407 TABLETOP POPUP", 0, 0, 0, 100, 0x200);
+
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
@@ -210,12 +212,14 @@ void Room407::init() {
 
 		} else if (_glassGoneState == 1030) {
 			_glassGone = series_place_sprite("407 GLASS GONE CU PU", 0, 0, 0, 100, 0x200);
+
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
 		} else if (_comboLockState == 1030) {
 			_comboLockPopup = series_place_sprite(
 				"407 COMBINATION LOCK POPUP", 0, 0, 0, 100, 0x200);
+
 			disableHotspots();
 			hotspot_set_active(" ", true);
 			_407pu08a = series_load("407 COMBINATION LOCK NUMERALS");
@@ -2052,6 +2056,7 @@ void Room407::parser() {
 		case 1:
 			_drawerState = 1010;
 			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
+
 			disableHotspots();
 			hotspot_set_active(" ", true);
 
@@ -2778,6 +2783,7 @@ void Room407::useMicroscope() {
 			_microscopeCloseup = series_place_sprite("407pu07A", 0, 0, 0, 100, 0x200);
 		}
 
+		disableHotspots();
 		hotspot_set_active(" ", true);
 		player_set_commands_allowed(true);
 	}
@@ -2799,6 +2805,7 @@ void Room407::roofPistonPopup() {
 				"407 ROOF PISTON WITH ITEMS", 0, 0, 0, 100, 0);
 		}
 
+		disableHotspots();
 		hotspot_set_active(" ", true);
 		player_set_commands_allowed(true);
 	}
@@ -2826,6 +2833,7 @@ void Room407::glassBottomPopup() {
 			_tabletopPopupWithItems3 = series_place_sprite(
 				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
 
+		disableHotspots();
 		hotspot_set_active(" ", true);
 		player_set_commands_allowed(true);
 	}
@@ -2867,6 +2875,7 @@ void Room407::glassGonePopup() {
 		_glassGoneState = 1030;
 		_glassGone = series_place_sprite("407 GLASS GONE CU PU",
 			0, 0, 0, 100, 0x200);
+
 		disableHotspots();
 		hotspot_set_active(" ", true);
 		player_set_commands_allowed(true);
@@ -2894,6 +2903,7 @@ void Room407::tabletopPopup() {
 		_tabletopState = 1030;
 		_tabletopPopup = series_place_sprite("407 TABLETOP POPUP",
 			0, 0, 0, 100, 0x200);
+
 		disableHotspots();
 		hotspot_set_active(" ", true);
 
@@ -3003,6 +3013,7 @@ void Room407::periodicTablePopup() {
 		_val15 = 1030;
 		_glassTopPopupWithItems2 = series_place_sprite(
 			"Large periodic table", 0, 0, 0, 100, 0);
+
 		disableHotspots();
 		hotspot_set_active(" ", true);
 		player_set_commands_allowed(true);
@@ -4315,6 +4326,7 @@ void Room407::useButtons() {
 		_comboLockState = 1030;
 		_comboLockPopup = series_place_sprite("407 COMBINATION LOCK POPUP",
 			0, 0, 0, 100, 0x200);
+
 		disableHotspots();
 		hotspot_set_active(" ", true);
 
