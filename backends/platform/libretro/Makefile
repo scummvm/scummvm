@@ -674,6 +674,10 @@ libdetect.a: $(DETECT_OBJS)
 	@$(MKDIR) $(*D)
 	$(HIDE)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
 
+# Create empty config.mk, if required by any module.mk (e.g. audio/softsynth/mt32/module.mk)
+config.mk:
+	@touch config.mk
+
 # Dumb compile rule, for C++ compilers that don't allow dependency tracking or
 # where it is broken (such as GCC 2.95).
 .cpp.o:

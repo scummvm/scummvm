@@ -135,7 +135,7 @@ else
 DEFINES += -DUSE_IMGUI
 endif
 
-USE_MPEG2         ?= 1
+USE_MPEG2         ?= 0
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_MPEG2), component_mpeg2)
 ifneq ($(USE_MPEG2),1)
 USE_MPEG2=
@@ -143,7 +143,7 @@ else
 DEFINES += -DUSE_MPEG2
 endif
 
-USE_GIF         ?= 1
+USE_GIF         ?= 0
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_GIF), component_gif)
 ifneq ($(USE_GIF),1)
 USE_GIF=
@@ -151,7 +151,7 @@ else
 DEFINES += -DUSE_GIF
 endif
 
-USE_VPX         ?= 1
+USE_VPX         ?= 0
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_VPX), component_vpx)
 ifneq ($(USE_VPX),1)
 USE_VPX=
@@ -159,7 +159,7 @@ else
 DEFINES += -DUSE_VPX
 endif
 
-USE_MPCDEC         ?= 1
+USE_MPCDEC         ?= 0
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_MPCDEC), component_mpcdec)
 ifneq ($(USE_MPCDEC),1)
 USE_MPCDEC=
