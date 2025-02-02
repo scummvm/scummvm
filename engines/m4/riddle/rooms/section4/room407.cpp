@@ -22,6 +22,7 @@
 #include "m4/riddle/rooms/section4/room407.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -109,7 +110,7 @@ void Room407::init() {
 			}
 
 			if (_pumpState == 1101) {
-				_handleInDrawer = series_place_sprite("407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
+				_grips = series_place_sprite("407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("PUMP GRIPS", true);
 			}
 		} else if (_tabletopState == 1030) {
@@ -293,7 +294,7 @@ void Room407::init() {
 		_items2State = 1116;
 		_corkState = 1118;
 		_xyzzy10 = 1040;
-		_frotz1 = 0;
+		_faucetHookedToJar = 0;
 		_frotz2 = 0;
 		_frotz3 = 0;
 		_frotz4 = 0;
@@ -412,12 +413,12 @@ void Room407::init() {
 
 			switch (_pumpState) {
 			case 1115:
-				_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xa00);
+				_grips = series_place_sprite("407pump", 1, 0, -53, 100, 0xa00);
 				break;
 			case 1116:
 			case 1130:
 				if (_xyzzy7 == 1114 || _xyzzy7 == 1140)
-					_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xa00);
+					_grips = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xa00);
 				break;
 			default:
 				break;
@@ -539,7 +540,7 @@ void Room407::init() {
 		terminateMachineAndNull(_bottle);
 		terminateMachineAndNull(_stopperInDrawer);
 		terminateMachineAndNull(_bits);
-		terminateMachineAndNull(_handleInDrawer);
+		terminateMachineAndNull(_grips);
 		terminateMachineAndNull(_niche);
 		terminateMachineAndNull(_lever);
 
@@ -579,7 +580,7 @@ void Room407::daemon() {
 		if (_tubeState == 1101)
 			terminateMachineAndNull(_tubeInDrawer);
 		if (_pumpState == 1101)
-			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_grips);
 
 		sendWSMessage_120000(12);
 		break;
@@ -1145,7 +1146,7 @@ void Room407::daemon() {
 
 	case 305:
 		series_unload(_ripHiHand1);
-		_frotz1 = 1;
+		_faucetHookedToJar = 1;
 		player_set_commands_allowed(true);
 		break;
 
@@ -1208,7 +1209,7 @@ void Room407::daemon() {
 
 	case 319:
 		series_unload(_ripMedHand1);
-		_frotz1 = 1;
+		_faucetHookedToJar = 1;
 		player_set_commands_allowed(true);
 		break;
 
@@ -1226,7 +1227,7 @@ void Room407::daemon() {
 			terminateMachineAndNull(_bottle);
 			terminateMachineAndNull(_stopperInDrawer);
 			terminateMachineAndNull(_bits);
-			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_grips);
 			terminateMachineAndNull(_niche);
 			terminateMachineAndNull(_lever);
 
@@ -1237,7 +1238,7 @@ void Room407::daemon() {
 			sendWSMessage_10000(1, _niche, _407h, 1, 29, 330, _407h, 29, 29, 0);
 			digi_play("407_s21", 2);
 		} else {
-			if (_stopperState == 1116) {
+			if (_stopperState != 1116) {
 				_jarWaterFallingLeft = series_load("407 JAR WATER FALLING LEFT");
 				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 					triggerMachineByHashCallback, "407 JAR WATER FALLING LEFT");
@@ -1932,8 +1933,8 @@ void Room407::parser() {
 	} else if (player_said("RUBBER PLUG", "GLASS JAR") && _xyzzy7 == 1112) {
 		rubberPlugGlassJar();
 	} else if (player_said("CORK", "GLASS JAR") && _xyzzy7 == 1112) {
-		corkGlassJar();
-	} else if (player_said("pump grips", "glass jar") &&
+		corkGlassJar1();
+	} else if (player_said("pump grips", "glass jar ") &&
 			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
 		pumpGripsGlassJar();
 	} else if (player_said("rubber plug", "glass jar ") &&
@@ -2026,9 +2027,9 @@ void Room407::parser() {
 				digi_play("407r99o", 1);
 			else
 				useFaucet();
-		} else if (_frotz1) {
+		} else if (_faucetHookedToJar) {
 			useFaucet();
-		} else if (_faucetPipeState == 1100 || _tubeState == 1130 || _frotz1) {
+		} else if (_faucetPipeState == 1100 || _tubeState == 1130 || _faucetHookedToJar) {
 			digi_play("407r99e", 1);
 		} else {
 			digi_play("407r99n", 1);
@@ -2078,7 +2079,7 @@ void Room407::parser() {
 			}
 
 			if (_pumpState == 1101) {
-				_handleInDrawer = series_place_sprite(
+				_grips = series_place_sprite(
 					"407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
 				hotspot_set_active("PUMP GRIPS", true);
 			}
@@ -2576,7 +2577,7 @@ void Room407::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_items2State);
 	s.syncAsSint16LE(_corkState);
 	s.syncAsSint16LE(_xyzzy10);
-	s.syncAsSint16LE(_frotz1);
+	s.syncAsSint16LE(_faucetHookedToJar);
 	s.syncAsSint16LE(_frotz2);
 	s.syncAsSint16LE(_frotz3);
 	s.syncAsSint16LE(_frotz4);
@@ -3302,7 +3303,7 @@ void Room407::reachLeverKey() {
 			hotspot_set_active("JAR/GRIPS ", true);
 			inv_move_object("JAR/CORK/GRIPS", 407);
 			_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xe00);
-			_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
+			_grips = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
 			break;
 
 		case 1056:
@@ -3640,7 +3641,7 @@ void Room407::rubberPlugGlassJar2() {
 	}
 }
 
-void Room407::corkGlassJar() {
+void Room407::corkGlassJar1() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		reachHand(10);
@@ -3709,10 +3710,10 @@ void Room407::pumpGripsGlassJar() {
 		break;
 
 	case 1:
-		_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xe00);
+		_grips = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xe00);
 		inv_move_object("PUMP GRIPS", 407);
 		hotspot_set_active("JAR/GRIPS ", true);
-		sendWSMessage_110000(3);
+		sendWSMessage_120000(3);
 		break;
 
 	case 3:
@@ -4133,7 +4134,7 @@ void Room407::pumpGripsPump() {
 		break;
 
 	case 1:
-		_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xe00);
+		_grips = series_place_sprite("407pump", 1, 0, -53, 100, 0xe00);
 		inv_move_object("PUMP GRIPS", 407);
 		hotspot_set_active("PUMP GRIPS ", true);
 		sendWSMessage_10000(1, _ripley, _pump407, 40, 1, 4,
@@ -4446,7 +4447,7 @@ void Room407::useFaucet() {
 	case 4:
 		series_unload(_ripMedHand1);
 
-		if (_frotz1 && _valveState1 == 1010)
+		if (_faucetHookedToJar && _valveState1 == 1010)
 			kernel_timing_trigger(1, 320, KT_DAEMON, KT_PARSE);
 		else if (_valveState1 == 1010 && _faucetPipeState == 1100)
 			kernel_timing_trigger(1, 410, KT_DAEMON, KT_PARSE);
@@ -4570,7 +4571,7 @@ void Room407::usePump2() {
 		break;
 
 	case 4:
-		_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xf00);
+		_grips = series_place_sprite("407pump", 1, 0, -53, 100, 0xf00);
 		terminateMachineAndNull(_ripley);
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
@@ -4602,10 +4603,6 @@ void Room407::takeLetter() {
 		}
 		break;
 
-	case 8:
-		series_unload(_ripMedHand1);
-		break;
-
 	case 11:
 		terminateMachineAndNull(_letter);
 		hotspot_set_active("LETTER", false);
@@ -4632,9 +4629,16 @@ void Room407::takeLetter() {
 		sendWSMessage_150000(8);
 		break;
 
+	case 8:
+		series_unload(_ripMedHand1);
+		sketchInJournal(nullptr);
+		break;
+
 	default:
+		sketchInJournal(nullptr);
 		break;
 	}
+
 }
 
 void Room407::takeFaucetPipe1() {
@@ -5125,7 +5129,7 @@ void Room407::takeGlassJar1() {
 		}
 
 		if (_pumpState == 1116) {
-			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_grips);
 			inv_give_to_player("PUMP GRIPS");
 			hotspot_set_active("JAR/GRIPS ", false);
 			_pumpState = 1000;
@@ -5291,7 +5295,7 @@ void Room407::takeJarGrips() {
 		break;
 
 	case 1:
-		terminateMachineAndNull(_handleInDrawer);
+		terminateMachineAndNull(_grips);
 		inv_give_to_player("PUMP GRIPS");
 		hotspot_set_active("PUMP GRIPS ", false);
 		kernel_examine_inventory_object("PING PUMP GRIPS",
@@ -5705,7 +5709,7 @@ void Room407::takePumpRod1() {
 
 	case 1:
 		if (_pumpState == 1115) {
-			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_grips);
 			inv_give_to_player("PUMP GRIPS");
 			hotspot_set_active("PUMP GRIPS ", false);
 			_pumpState = 1000;
@@ -5855,7 +5859,7 @@ void Room407::takePumpGrips1() {
 			_pumpState = 1000;
 
 			hotspot_set_active("PUMP GRIPS", false);
-			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_grips);
 			kernel_examine_inventory_object("PING PUMP GRIPS",
 				_G(master_palette), 5, 1, 85, 190, 2, nullptr, -1);
 			_G(player).command_ready = false;
@@ -5891,7 +5895,7 @@ void Room407::takePumpGrips2() {
 		break;
 
 	case 1:
-		terminateMachineAndNull(_handleInDrawer);
+		terminateMachineAndNull(_grips);
 		inv_give_to_player("PUMP GRIPS");
 		hotspot_set_active("PUMP GRIPS ", false);
 		_pumpState = 1000;

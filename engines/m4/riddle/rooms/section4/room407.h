@@ -50,7 +50,7 @@ private:
 	int _items2State = 0;
 	int _corkState = 0;
 	int _xyzzy10 = 0;
-	int _frotz1 = 0;
+	int _faucetHookedToJar = 0;
 	int _frotz2 = 0;
 	int _frotz3 = 0;
 	int _frotz4 = 0;
@@ -98,7 +98,7 @@ private:
 	machine *_drawerPopupHose = nullptr;
 	machine *_stopperInDrawer = nullptr;
 	machine *_tubeInDrawer = nullptr;
-	machine *_handleInDrawer = nullptr;
+	machine *_grips = nullptr;
 	machine *_tabletopPopup = nullptr;
 	machine *_tabletopPopupWithItems1 = nullptr;
 	machine *_tabletopPopupWithItems2 = nullptr;
@@ -191,7 +191,7 @@ private:
 	void placeLeverKey();
 	void rubberPlugGlassJar();
 	void rubberPlugGlassJar2();
-	void corkGlassJar();
+	void corkGlassJar1();
 	void corkGlassJar2();
 	void pumpGripsGlassJar();
 	void periodicTableGlassJar();
