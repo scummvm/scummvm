@@ -1077,7 +1077,126 @@ void Room808::parser() {
 		return;
 
 	case 6:
-	// TODO Not implemented yet
+		if (player_said("mei chen")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V100]) != 0) {
+					digi_play("com122", 1, 255, 997);
+				} else if (_G(flags[V097]) == 1 && inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags[V094]) == 4) {
+					ws_walk(_G(my_walker), 185, 156, nullptr, 11, 5, true);
+				} else {
+					digi_play("808r30", 1, 255, -1, -1);
+				}
+
+				break;
+
+			case 7:
+				kernel_timing_trigger(30, 10);
+				break;
+
+			case 10:
+				setGlobals3(_mctd61Series, 1, 5);
+				sendWSMessage_3840000(_mcTrekMach, 15);
+
+				break;
+
+			case 11:
+				player_set_commands_allowed(false);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(348, 130, 193, 163, -1);
+				ws_custom_walk(_mcTrekMach, 11, 1, true);
+
+				break;
+
+			case 15:
+				kernel_timing_trigger(45, 20, "the crank is passed");
+				inv_move_object("CRANK", 808);
+				break;
+
+			case 20:
+				_G(flags[V098]) = 1;
+				if (_G(flags[V097]) == 0) {
+					setGlobals3(_mctd61Series, 5, 1);
+					sendWSMessage_3840000(_mcTrekMach, 25);
+				} else {
+					setGlobals3(_mctd61Series, 5, 1);
+					sendWSMessage_3840000(_mcTrekMach, -1);
+				}
+
+				setGlobals3(_rptmr15Series, 16, 1);
+				sendWSMessage_3840000(_G(my_walker), 30);
+
+				break;
+
+			case 21:
+				setGlobals3(_rptmr15Series, 1, 16);
+				sendWSMessage_3840000(_G(my_walker), 10);
+
+				break;
+
+			case 25:
+				setGlobals3(_meiChienHandsBehindBackSeries, 1, 17);
+				sendWSMessage_3840000(_mcTrekMach, -1);
+				break;
+
+			case 30:
+				if (_G(flags[V097]) != 1) {
+					player_set_commands_allowed(true);
+					ws_demand_facing(_G(my_walker), 7);
+				} else {
+					DisposePath(_mcTrekMach->walkPath);
+					_mcTrekMach->walkPath = CreateCustomPath(348, 130, 345, 115, -1);
+					ws_custom_walk(_mcTrekMach, 5, 41, true);
+				}
+				break;
+
+			case 41:
+				player_set_commands_allowed(true);
+				ws_demand_facing(_G(my_walker), 5);
+
+				break;
+
+			default:
+				break;
+			}
+		} else if (player_said("slot") && _G(flags[V100]) != 0) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				setGlobals3(_ripMedReach1HandPos2Series, 1, 17);
+				sendWSMessage_3840000(_G(my_walker), 10);
+
+				break;
+
+			case 10:
+				inv_move_object("crank", 808);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				kernel_timing_trigger(60, 20, nullptr);
+
+				break;
+
+			case 20:
+				_808HandleSpriteMach = series_show("808 handle sprite", 4095, 0, -1, -1, 0, 100, 0, 0);
+				setGlobals3(_ripMedReach1HandPos2Series, 17, 1);
+				sendWSMessage_3840000(_G(my_walker), 30);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				ws_demand_facing(_G(my_walker), 10);
+
+				break;
+
+			default:
+				break;
+			}
+		} else
+			break;
+
+		return;
+
 	case 7:
 		if (player_said("hole in bridge")) {
 			switch (_G(kernel).trigger) {
