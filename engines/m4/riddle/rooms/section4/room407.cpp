@@ -5703,23 +5703,30 @@ void Room407::takePumpRod1() {
 		}
 		break;
 
+	case 2:
+		kernel_timing_trigger(1, 3);
+		break;
+
 	case 3:
 		kernel_examine_inventory_object("PING PUMP ROD",
 			_G(master_palette), 5, 1, 125, 200, 4, nullptr, -1);
+		break;
+
+	case 4:
+		kernel_timing_trigger(1, 5);
 		break;
 
 	case 5:
 		terminateMachineAndNull(_pump);
 		hotspot_set_active("PUMP ROD", false);
 		inv_give_to_player("PUMP ROD");
-		sendWSMessage_10000(1, _ripley, _pump407, 14, 1, 6,
-			_pump407, 1, 1, 0);
+		sendWSMessage_10000(1, _ripley, _pump407, 14, 1, 6, _pump407, 1, 1, 0);
 		break;
 
 	case 6:
 		terminateMachineAndNull(_ripley);
 		terminateMachineAndNull(_safariShadow);
-		ws_hide_walker();
+		ws_unhide_walker();
 		series_unload(_pump407);
 		_rodState = 1000;
 		player_set_commands_allowed(true);
@@ -5874,6 +5881,7 @@ void Room407::takePumpGrips2() {
 		terminateMachineAndNull(_handleInDrawer);
 		inv_give_to_player("PUMP GRIPS");
 		hotspot_set_active("PUMP GRIPS ", false);
+		_pumpState = 1000;
 		kernel_examine_inventory_object("PING PUMP GRIPS",
 			_G(master_palette), 5, 1, 125, 200, 2, nullptr, -1);
 		break;
@@ -5886,6 +5894,7 @@ void Room407::takePumpGrips2() {
 	case 4:
 		terminateMachineAndNull(_ripley);
 		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
 		series_unload(_pump407);
 		player_set_commands_allowed(true);
 		break;
