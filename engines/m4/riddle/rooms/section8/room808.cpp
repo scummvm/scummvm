@@ -990,6 +990,92 @@ void Room808::parser() {
 		return;
 
 	case 5:
+		if (player_said("west")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (_G(flags[V097]) == 1 && _G(flags[V100]) == 0) {
+					ws_walk(_G(my_walker), 67, 211, nullptr, 2, 7, false);
+				} else {
+					ws_walk(_G(my_walker), 67, 211, nullptr, 10, 7, false);
+				}
+
+				break;
+
+			case 2:
+				player_set_commands_allowed(false);
+				ws_turn_to_face(_G(my_walker), 2, 3);
+
+				break;
+
+			case 3:
+				digi_play("com137", 1, 255, 5, 997);
+				break;
+
+			case 5:
+				ws_walk(_G(my_walker), 17, 214, nullptr, 20, 8, true);
+				_G(flags[V276]) = 1;
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				ws_walk(_G(my_walker), 17, 214, nullptr, 20, 8, true);
+				if (_G(flags[V097]) == 0) {
+					setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+					sendWSMessage_3840000(_mcTrekMach, -1);
+				} else {
+					DisposePath(_mcTrekMach->walkPath);
+					_mcTrekMach->walkPath = CreateCustomPath(318, 134, -1);
+					ws_custom_walk(_mcTrekMach, -1, -1, true);
+				}
+				break;
+
+			case 20:
+				disable_player_commands_and_fade_init(30);
+				ws_hide_walker(_G(my_walker));
+				series_play("808rpdwn", 0, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+
+				break;
+
+			case 30:
+				_G(game).new_room = 807;
+				adv_kill_digi_between_rooms(false);
+				digi_play_loop("950_s29", 3, 255, -1, -1);
+
+				break;
+
+			default:
+				break;
+			}
+
+
+		} else if (player_said("east") && _G(flags[V100]) == 0) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(_G(my_walker), 480, 35, nullptr, 10, 2, true);
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				DisposePath(_mcTrekMach->walkPath);
+				_mcTrekMach->walkPath = CreateCustomPath(413, 103, -1);
+				ws_custom_walk(_mcTrekMach, 1, -1, true);
+				disable_player_commands_and_fade_init(20);
+
+				break;
+
+			case 20:
+				_G(game).new_room = 809;
+				break;
+
+			default:
+				break;
+			}
+		} else
+			break;
+
+		return;
+
 	case 6:
 	// TODO Not implemented yet
 	case 7:
