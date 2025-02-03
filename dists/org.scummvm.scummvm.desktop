@@ -11,6 +11,6 @@ Exec=scummvm
 Icon=org.scummvm.scummvm
 Terminal=false
 Type=Application
-Categories=Game;AdventureGame;
+Categories=Game;AdventureGame;RolePlaying;
 StartupNotify=false
 StartupWMClass=scummvm
