@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-02 05:36+0000\n"
-"PO-Revision-Date: 2025-01-27 18:18+0000\n"
+"PO-Revision-Date: 2025-02-03 19:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -11361,16 +11361,12 @@ msgid "Use the remastered speech and sound effects."
 msgstr "Käytä remasteroitua puhetta ja ääniefektejä."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Äänet päälle"
+msgstr "Ympäristöäänet päälle"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Äänet päälle"
+msgstr "Ympäristöäänet päälle."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
