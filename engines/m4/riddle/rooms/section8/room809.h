@@ -47,6 +47,7 @@ private:
 	
 	const char *_byte1A1988 = nullptr;
 	byte _byte1A1990[12]; // random size for the moment, enough for facings
+	int32 _dword1A1984 = 0;
 	int32 _dword1A1998 = 0;
 
 
@@ -56,8 +57,9 @@ private:
 	int32 _ripTrekHeadTurnPos5Series = 0;
 
 	machine *_809rp01Mach = nullptr;
+	machine *_809hallMach = nullptr;
 	machine *_mcTrekMach = nullptr;
-
+	
 };
 
 } // namespace Rooms

@@ -160,6 +160,219 @@ void Room809::parser() {
 }
 
 void Room809::daemon() {
+	switch (_G(kernel).trigger) {
+	case 2:
+		player_set_commands_allowed(true);
+		series_unload(S8_SHADOW_DIRS2[3]);
+		series_unload(S8_SHADOW_DIRS2[4]);
+		series_unload(S8_SHADOW_DIRS1[3]);
+		series_unload(S8_SHADOW_DIRS1[4]);
+
+		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
+		sendWSMessage_3840000(_mcTrekMach, 38);
+		kernel_timing_trigger(60, 36, "verify mc's position");
+		_byte1A1988 = "MEI CHEN";
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN  ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
+
+		break;
+
+	case 3:
+		g_engine->adv_camera_pan_step(2);
+		g_engine->camera_shift_xy(0, 0);
+		kernel_timing_trigger(60, 4, "finished pan?");
+
+		break;
+
+	case 4:
+		if (g_engine->game_camera_panning())
+			kernel_timing_trigger(60, 4, "finished pan?");
+		else
+			kernel_trigger_dispatchx(kernel_trigger_create(5));
+
+		break;
+
+	case 5:
+		ws_walk(_G(my_walker), 150, 315, nullptr, -1, 3, true);
+		DisposePath(_mcTrekMach->walkPath);
+		_mcTrekMach->walkPath = CreateCustomPath(106, 318, 160, 323, -1);
+		ws_custom_walk(_mcTrekMach, 3, 6, true);
+		_G(camera_reacts_to_player) = true;
+		g_engine->adv_camera_pan_step(10);
+		_dword1A1984 = 255;
+
+		break;
+
+	case 6:
+		if (_dword1A1984 <= 100) {
+			kernel_trigger_dispatchx(kernel_trigger_create(7));
+		} else {
+			_dword1A1984 = imath_max(100, _dword1A1984 - 10);
+			digi_change_panning(3, _dword1A1984);
+			kernel_timing_trigger(10, 6, "fade music");
+		}
+
+		break;
+
+	case 7:
+		kernel_timing_trigger(120, 8, nullptr);
+		break;
+
+	case 8:
+		digi_play("809_s01", 1, 120, -1, -1);
+		kernel_timing_trigger(45, 9, nullptr);
+
+		break;
+
+	case 9:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 10, 4, true);
+
+		break;
+
+	case 10:
+		kernel_timing_trigger(7, 11, nullptr);
+		break;
+
+	case 11:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 12, 5, true);
+
+		break;
+
+	case 12:
+		kernel_timing_trigger(7, 13, nullptr);
+		break;
+
+	case 13:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 14, 6, true);
+
+		break;
+
+	case 14:
+		kernel_timing_trigger(7, 15, nullptr);
+		break;
+
+	case 15:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 16, 7, true);
+
+		break;
+
+	case 16:
+		kernel_timing_trigger(7, 17, nullptr);
+		break;
+
+	case 17:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 18, 8, true);
+
+		break;
+
+	case 18:
+		kernel_timing_trigger(7, 19, nullptr);
+		break;
+
+	case 19:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 20, 9, true);
+
+		break;
+
+	case 20:
+		kernel_timing_trigger(60, 21, nullptr);
+		break;
+
+	case 21:
+		_809hallMach = series_play("809hall", 0, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		kernel_timing_trigger(300, 22, nullptr);
+
+		break;
+
+	case 22:
+		terminateMachine(_809hallMach);
+		_809hallMach = series_play("809hall", 0, 2, 23, 5, 0, 100, 0, 0, 0, -1);
+
+		break;
+
+	case 23:
+		series_unload(_809hallSeries);
+		kernel_timing_trigger(30, 24, nullptr);
+
+		break;
+
+	case 24:
+		digi_play("809m01", 1, 255, 29, -1);
+		kernel_timing_trigger(90, 25, nullptr);
+
+		break;
+
+	case 25:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 8, true);
+		kernel_timing_trigger(7, 26, nullptr);
+
+		break;
+
+	case 26:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 7, true);
+		kernel_timing_trigger(7, 27, nullptr);
+
+		break;
+
+	case 27:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 6, true);
+		kernel_timing_trigger(7, 28, nullptr);
+
+		break;
+
+	case 28:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 5, true);
+
+		break;
+
+	case 29:
+		setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("809r01", 1, 255, 30, -1);
+
+		break;
+
+	case 30:
+		sendWSMessage_150000(_G(my_walker), -1);
+		setGlobals3(_ripTrekHeadTurnPos5Series, 8, 12);
+		sendWSMessage_3840000(_G(my_walker), -1);
+		kernel_timing_trigger(120, 31, nullptr);
+
+		break;
+
+	case 31:
+		setGlobals3(_ripTrekHeadTurnPos5Series, 12, 8);
+		sendWSMessage_3840000(_G(my_walker), 32);
+
+		break;
+
+	case 32:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x + 30, _G(player_info).y, nullptr, 34, 3, true);
+		series_unload(_ripTrekHeadTurnPos5Series);
+
+		break;
+
+	case 34:
+	case 35:
+	case 36:
+	case 37:
+	default:
+		break;
+	}
 	// TODO Not implemented yet
 }
 
