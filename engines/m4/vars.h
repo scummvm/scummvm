@@ -142,6 +142,7 @@ public:
 	int _global_sound_room = 0;
 	CursorChange _toggle_cursor = CURSCHANGE_NONE;
 	bool _i_just_hyperwalked = false;
+	bool _please_hyperwalk = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
 	bool _vmng_Initted = false;
 	ScreenContext *_frontScreen = nullptr;

@@ -395,6 +395,11 @@ void Sections::pal_game_task() {
 		if (!game_buff_ptr)
 			error_show(FL, 'BUF!');
 
+		if _G(please_hyperwalk) {
+			_G(please_hyperwalk) = false;
+			adv_hyperwalk_to_final_destination(nullptr, nullptr);
+		}
+
 		if (_cameraShiftAmount) {
 			if (_G(kernel).camera_pan_instant) {
 				delta = _cameraShiftAmount;

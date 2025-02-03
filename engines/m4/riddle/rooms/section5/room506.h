@@ -34,7 +34,7 @@ private:
 	bool _flag1 = false;
 	bool _flag2 = false;
 	bool _flag3 = false;
-	bool _flag4 = false;
+	bool _towerFlag = false;
 	int _destX = 0, _destY = 0;
 	int _destFacing = 0;
 	machine *_ripley = nullptr;

@@ -83,7 +83,7 @@ private:
 	machine *_vineMachine2 = nullptr;
 	machine *_ripStep = nullptr;
 	machine *_vine = nullptr;
-	bool _flag1 = false;
+	bool _isOnRight = false;
 	bool _flag2 = false;
 	bool _flag3 = false;
 	bool _flag4 = false;
@@ -92,7 +92,7 @@ private:
 	int _trigger2 = 0;
 	int _trigger3 = 0;
 	int _trigger4 = 0;
-	int _val1 = 0;
+	int _vineThrowType = 0;
 	int _val2 = 0;
 	int32 _val3 = 0;
 
