@@ -389,13 +389,13 @@ void Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 
 	switch (id + 5) {
 	case 0:
-		_vm->_game->_hotspots->push(1);
+		_vm->_game->_hotspots->push(1, true);
 		break;
 	case 1:
 		_vm->_game->_hotspots->pop();
 		break;
 	case 2:
-		_vm->_game->_hotspots->push(2);
+		_vm->_game->_hotspots->push(2, true);
 		break;
 	case 3:
 		_vm->_game->_hotspots->removeState(stateType1);
