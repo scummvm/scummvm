@@ -297,7 +297,7 @@ enum Flag {
 	V260 = 260,
 	V261 = 261,
 	V262 = 262,
-	V263 = 263,
+	V263 = 263, // Set after the first walk in room 809
 	V264 = 264,
 	V265 = 265,
 	V266 = 266,

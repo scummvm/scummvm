@@ -22,19 +22,42 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM809_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM809_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room809 : public Room {
+class Room809 : public Section8Room {
 public:
-	Room809() : Room() {}
+	Room809() : Section8Room() {}
 	~Room809() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _field20 = 0;
+	int32 _field24 = 0;
+	int32 _field28 = 0;
+	int32 _field2C = 0;
+	
+	const char *_byte1A1988 = nullptr;
+	byte _byte1A1990[12]; // random size for the moment, enough for facings
+	int32 _dword1A1998 = 0;
+
+
+	int32 _809hallSeries = 0;
+	int32 _mcHandsBehindBackSeries = 0;
+	int32 _ripTalkerPos5Series = 0;
+	int32 _ripTrekHeadTurnPos5Series = 0;
+
+	machine *_809rp01Mach = nullptr;
+	machine *_mcTrekMach = nullptr;
+
 };
 
 } // namespace Rooms
