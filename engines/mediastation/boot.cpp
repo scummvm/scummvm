@@ -52,13 +52,6 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		_isLast = false;
 	}
 
-	// READ THE FILE REFERENCES.
-	while (kContextDeclarationFileReference == sectionType) {
-		int fileReference = Datum(chunk).u.i;
-		_fileReferences.push_back(fileReference);
-		sectionType = getSectionType(chunk);
-	}
-
 	// READ THE OTHER CONTEXT METADATA.
 	if (kContextDeclarationPlaceholder == sectionType) {
 		// READ THE FILE NUMBER.
@@ -100,6 +93,19 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	} else {
 		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 	}
+
+	// READ THE FILE REFERENCES.
+	// We don't know how many file references there are beforehand, so we'll
+	// just read until we get something else.
+	int rewindOffset = 0;
+	sectionType = getSectionType(chunk);
+	while (kContextDeclarationFileReference == sectionType) {
+		int fileReference = Datum(chunk).u.i;
+		_fileReferences.push_back(fileReference);
+		rewindOffset = chunk.pos();
+		sectionType = getSectionType(chunk);
+	}
+	chunk.seek(rewindOffset);
 }
 
 ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
@@ -424,17 +430,6 @@ BootSectionType Boot::getSectionType(Chunk& chunk) {
 	Datum datum = Datum(chunk, kDatumTypeUint16_1);
 	BootSectionType sectionType = static_cast<BootSectionType>(datum.u.i);
 	return sectionType;
-}
-
-uint32 Boot::getRootContextId() {
-	// TODO: Is the ID of the root context actually stored somewhere so
-	// we don't need to find it ourselves? Maybe it is always the
-	for (auto &declaration : _contextDeclarations) {
-		if (declaration._value->_fileReferences.empty()) {
-			return declaration._value->_fileNumber;
-		}
-	}
-	return 0;
 }
 
 Boot::~Boot() {

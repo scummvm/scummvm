@@ -126,15 +126,6 @@ Common::Error MediaStationEngine::run() {
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
 
-	// LOAD THE ROOT CONTEXT.
-	// This is because we might have assets that always need to be loaded.
-	//Context *root = nullptr;
-	uint32 rootContextId = _boot->getRootContextId();
-	if (rootContextId != 0) {
-		loadContext(rootContextId);
-	} else {
-		warning("MediaStation::run(): Title has no root context");
-	}
 
 	_requestedScreenBranchId = _boot->_entryContextId;
 	doBranchToScreen();
