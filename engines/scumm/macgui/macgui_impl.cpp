@@ -115,9 +115,7 @@ bool MacGuiImpl::handleEvent(Common::Event event) {
 	// The situation we're trying to avoid here is the user opening e.g.
 	// the save dialog using keyboard shortcuts while the game is paused.
 
-	// TODO: We need something for Maniac Mansion here
-
-	if (_bannerWindow || _vm->_messageBannerActive)
+	if (_vm->_messageBannerActive)
 		return false;
 
 	return _windowManager->processEvent(event);
