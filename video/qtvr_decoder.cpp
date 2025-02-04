@@ -277,6 +277,7 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_isPanoConstructed = false;
 
 	_constructedPano = nullptr;
+	_constructedHotspots = nullptr;
 	_projectedPano = nullptr;
 }
 
@@ -284,6 +285,9 @@ QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
 	if (_isPanoConstructed) {
 		_constructedPano->free();
 		delete _constructedPano;
+
+		_constructedHotspots->free();
+		delete _constructedHotspots;
 	}
 
 	if (_projectedPano) {
@@ -331,11 +335,6 @@ const byte *QuickTimeDecoder::PanoTrackHandler::getPalette() const {
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 	if (!_isPanoConstructed)
 		return nullptr;
-
-	if (_projectedPano) {
-		_projectedPano->free();
-		delete _projectedPano;
-	}
 
 	projectPanorama();
 	return _projectedPano;
@@ -399,9 +398,7 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
-	warning("hotspot format: %s", track->getPixelFormat().toString().c_str());
-
-	constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
+	_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
 	_isPanoConstructed = true;
 }
@@ -410,9 +407,25 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	if (!_isPanoConstructed)
 		return;
 
-	_projectedPano = new Graphics::Surface();
-	_projectedPano->create(_constructedPano->w, _constructedPano->h, _constructedPano->format);
+	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
 
+	if (!_projectedPano) {
+		_projectedPano = new Graphics::Surface();
+		_projectedPano->create(w, h, _constructedPano->format);
+	}
+
+	for (uint16 y = 0; y < h; y++) {
+		for (uint16 x = 0; x < w; x++) {
+			int setX = y;
+			int setY = x;
+
+			uint32 pixel = _constructedPano->getPixel(setX, setY);
+			_projectedPano->setPixel(x, y, pixel);
+		}
+	}
+
+
+#if 0
 	const float c = _projectedPano->w;
 	const float r = c / (2 * M_PI);
 
@@ -433,6 +446,8 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 			}
 		}
 	}
+
+#endif
 }
 
 enum {
