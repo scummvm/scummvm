@@ -224,7 +224,10 @@ int32 Digi::ticks_to_play(const char *name, int roomNum) {
 }
 
 void Digi::change_panning(int val1, int val2) {
-	warning("TODO: digi_change_panning");
+	if (_G(game).room_id != _panningTodoRoom) {
+		_panningTodoRoom = _G(game).room_id;
+		warning("TODO: digi_change_panning");
+	}
 }
 
 } // namespace Sound
