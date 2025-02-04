@@ -176,7 +176,7 @@ public:
 
 class GalLoader : public AgiLoader {
 public:
-	GalLoader(AgiEngine *vm) : AgiLoader(vm) {}
+	GalLoader(AgiEngine *vm) : _dirOffset(0), AgiLoader(vm) {}
 
 	void init() override;
 	int loadDirs() override;
