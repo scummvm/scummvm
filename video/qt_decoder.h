@@ -259,6 +259,8 @@ private:
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
 
+		const Graphics::Surface *bufferNextFrame();
+
 	private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;
@@ -283,7 +285,6 @@ private:
 		uint32 findKeyFrame(uint32 frame) const;
 		bool isEmptyEdit() const;
 		void enterNewEditListEntry(bool bufferFrames, bool intializingTrack = false);
-		const Graphics::Surface *bufferNextFrame();
 		uint32 getRateAdjustedFrameTime() const; // media time
 		uint32 getCurEditTimeOffset() const;     // media time
 		uint32 getCurEditTrackDuration() const;  // media time

@@ -34,6 +34,7 @@
 
 #include "common/archive.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -43,6 +44,7 @@
 
 #include "graphics/cursorman.h"
 #include "image/icocur.h"
+#include "image/png.h"
 
 // Video codecs
 #include "image/codecs/codec.h"
@@ -352,40 +354,44 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	warning("sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
 	warning("targetTrackID: %d", _parent->targetTrack);
 
-	//PanoTrackHandler *panoTrack = (PanoTrackHandler *)getTrack(Common::QuickTimeParser::_tracks[dtrackNum]->targetTrack);
-	VideoTrack *track = (VideoTrack *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
+	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
 
-	int16 totalWidth = track->getWidth();
-	int16 totalHeight = track->getHeight();
-
-	warning("construct, w: %d, h: %d", totalWidth, totalHeight);
-
-#if 0
-	if (totalWidth <= 0 || totalHeight <= 0)
-		return;
+	int16 framew = track->getWidth();
+	int16 frameh = track->getHeight();
 
 	_constructedPano = new Graphics::Surface();
-	_constructedPano->create(totalWidth, totalHeight, getPixelFormat());
+	_constructedPano->create(desc->_sceneSizeX, desc->_sceneSizeY, track->getPixelFormat());
 
-	for (uint32 frameIndex = 0; frameIndex < _parent->frameCount; frameIndex++) {
-		const Graphics::Surface *frame = bufferNextFrame();
+	Common::Rect srcRect(0, 0, framew, frameh);
 
-		for (int16 y = 0; y < frame->h; y++) {
-			for (int16 x = 0; x < frame->w; x++) {
+	for (uint y = 0; y < desc->_sceneNumFramesY; y++) {
+		for (uint x = 0; x < desc->_sceneNumFramesX; x++) {
+			const Graphics::Surface *frame = track->bufferNextFrame();
 
-				int setX = (totalWidth - 1) - (frameIndex * _parent->height + y);
-				int setY = x;
-
-				if (setX >= 0 && setX < _constructedPano->w && setY >= 0 && setY < _constructedPano->h) {
-					uint32 pixel = frame->getPixel(x, y);
-					_constructedPano->setPixel(setX, setY, pixel);
-				}
+			if (!frame) {
+				warning("QuickTimeDecoder::PanoTrackHandler::constructPanorama(): Out of frames at: %d, %d", x, y);
+				break;
 			}
+
+			_constructedPano->copyRectToSurface(*frame, x * framew, y * frameh, srcRect);
+
 		}
 	}
 
+	Common::Path path = Common::Path("dumps/pano-full.png");
+
+	Common::DumpFile bitmapFile;
+	if (!bitmapFile.open(path, true)) {
+		warning("Cannot dump panorama into file '%s'", path.toString().c_str());
+		return;
+	}
+
+	Image::writePNG(bitmapFile, *_constructedPano);
+	bitmapFile.close();
+
+	debug(0, "Dumped panorama %s of %d x %d", path.toString().c_str(), _constructedPano->w, _constructedPano->h);
+
 	_isPanoConstructed = true;
-#endif
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
