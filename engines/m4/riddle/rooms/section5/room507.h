@@ -30,9 +30,9 @@ namespace Rooms {
 
 class Room507 : public Room {
 private:
-	int _blockSeries[8];
-	machine *_block[8];
-	bool _blockFlag[8];
+	int _blockSeries[8] = { 0 };
+	machine *_block[8] = { nullptr };
+	bool _blockFlag[8] = { false };
 	int _doorSeries = 0;
 	machine *_door = nullptr;
 

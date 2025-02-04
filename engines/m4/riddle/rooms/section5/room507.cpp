@@ -41,9 +41,6 @@ int BLOCK_CORRECT[8] = {
 };
 
 Room507::Room507() : Room() {
-	Common::fill(_blockSeries, _blockSeries + 8, 0);
-	Common::fill(_block, _block + 8, (machine *)nullptr);
-	Common::fill(_blockFlag, _blockFlag + 8, false);
 }
 
 void Room507::preload() {
@@ -65,7 +62,7 @@ void Room507::init() {
 	for (int i = 1; i <= 7; ++i) {
 		_blockFlag[i] = false;
 		_blockSeries[i] = series_load(BLOCK_NAMES[1]);
-		_block[1] = series_show(BLOCK_NAMES[1], 0x400, 16, -1, -1,
+		_block[1] = series_show(BLOCK_NAMES[i], 0x400, 16, -1, -1,
 			_G(flags)[(Flag)(V172 + i)]);
 	}
 
