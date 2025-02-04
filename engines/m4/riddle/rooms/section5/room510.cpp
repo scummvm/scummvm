@@ -364,6 +364,7 @@ void Room510::parser() {
 		case 6:
 			_G(flags)[V292] = 1;
 			series_unload(_ripStartsDownWall);
+			player_set_commands_allowed(true);
 			break;
 		case 7:
 			terminateMachineAndNull(_pu03);
