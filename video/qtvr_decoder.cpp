@@ -128,9 +128,13 @@ void QuickTimeDecoder::updateAngles() {
 }
 
 void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
-	if (_qtvrType != QTVRType::OBJECT)
-		return;
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectMouseMove(x, y);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoMouseMove(x, y);
+}
 
+void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 	updateQTVRCursor(x, y);
 
 	if (!_isMouseButtonDown)
@@ -177,7 +181,18 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 	}
 }
 
+void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
+}
+
+
 void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectMouseButton(isDown, x, y);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoMouseButton(isDown, x, y);
+}
+
+void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
 	if (isDown) {
 		if (y < _curBbox.top) {
 			setCurrentRow(getCurrentRow() + 1);
@@ -197,6 +212,9 @@ void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 	}
 
 	updateQTVRCursor(x, y);
+}
+
+void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
 }
 
 void QuickTimeDecoder::setCurrentRow(int row) {

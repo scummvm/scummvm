@@ -127,6 +127,11 @@ private:
 
 	void updateAudioBuffer();
 
+	void handleObjectMouseMove(int16 x, int16 y);
+	void handleObjectMouseButton(bool isDown, int16 x, int16 y);
+	void handlePanoMouseMove(int16 x, int16 y);
+	void handlePanoMouseButton(bool isDown, int16 x, int16 y);
+
 	void closeQTVR();
 	void updateAngles();
 	void updateQTVRCursor(int16 x, int16 y);
