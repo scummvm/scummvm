@@ -156,6 +156,49 @@ void Room809::pre_parser() {
 }
 
 void Room809::parser() {
+	_G(player).command_ready = false;
+	if (inv_player_has(_G(player).noun)) {
+		_G(player).command_ready = true;
+		return;
+	}
+
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 1:
+	case 39:
+	case 40:
+	case 41:
+	case 42:
+	case 43:
+	case 44:
+	case 45:
+	case 46:
+	case 47:
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+	case 55:
+	case 56:
+	case 57:
+	case 58:
+	case 59:
+	case 60:
+	case 61:
+	case 62:
+	case 63:
+	case 64:
+	case 65:
+	case 66:
+	case 67:
+	default:
+		break;
+	}
+
+	
 	// TODO Not implemented yet
 }
 
@@ -402,7 +445,29 @@ void Room809::daemon() {
 		break;
 
 	case 36:
-		// TODO Not implemented yet
+		player_update_info(_mcTrekMach, &_G(player_info));
+		if (-_G(game_buff_ptr)->x1 < _G(player_info).x) {
+			if (639 - _G(game_buff_ptr)->x1 <= _G(player_info).x) {
+				_dword1A1980_x = room809_sub1(_G(player_info).x, 1);
+				if (669 - _G(game_buff_ptr)->x1 < _G(player_info).x) {
+					ws_demand_facing(_mcTrekMach, 11);
+					ws_demand_location(669 - _G(game_buff_ptr)->x1, 323);
+				}
+
+				ws_walk(_mcTrekMach, _dword1A1980_x, 323, nullptr, 37, 11, true);
+			}
+		} else {
+			_dword1A1980_x = room809_sub1(_G(player_info).x, 0);
+			if (-30 - _G(game_buff_ptr)->x1 > _G(player_info).x) {
+				ws_demand_facing(_mcTrekMach, 1);
+				ws_demand_location(-30 - _G(game_buff_ptr)->x1, 323);
+			}
+
+			ws_walk(_mcTrekMach, _dword1A1980_x, 323, nullptr, 37, 1, true);
+		}
+
+		kernel_timing_trigger(60, 36, "verify mc's position");
+
 		break;
 
 	case 37:
@@ -418,6 +483,12 @@ void Room809::daemon() {
 	default:
 		break;
 	}
+}
+
+int32 Room809::room809_sub1(int32 val1, int32 val2) {
+	//TODO Not implemented yet
+
+	return 0;
 }
 
 } // namespace Rooms

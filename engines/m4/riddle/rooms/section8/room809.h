@@ -40,18 +40,22 @@ public:
 	void daemon() override;
 
 private:
+	int32 room809_sub1(int32 val1, int32 val2);
+
 	int32 _field20 = 0;
 	int32 _field24 = 0;
 	int32 _field28 = 0;
 	int32 _field2C = 0;
 	
 	const char *_enableHotspotName = nullptr;
+
 	byte _byte1A1990[12]; // random size for the moment, enough for facings
-	int32 _809MusicFadingVol = 0;
 	int32 _dword1A1998 = 0;
+	int32 _dword1A1980_x = 0;
 
 
 	int32 _809hallSeries = 0;
+	int32 _809MusicFadingVol = 0;
 	int32 _mcHandsBehindBackSeries = 0;
 	int32 _ripTalkerPos5Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
@@ -59,7 +63,7 @@ private:
 	machine *_809rp01Mach = nullptr;
 	machine *_809hallMach = nullptr;
 	machine *_mcTrekMach = nullptr;
-	
+
 };
 
 } // namespace Rooms
