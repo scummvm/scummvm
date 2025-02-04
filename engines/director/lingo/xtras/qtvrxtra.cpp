@@ -407,6 +407,9 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
 
 	g_system->copyRectToScreen(dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h);
+
+	dither->free();
+	delete dither;
 }
 
 bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
