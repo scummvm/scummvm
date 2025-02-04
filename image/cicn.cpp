@@ -132,6 +132,7 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 				}
 			}
 		}
+		delete[] buf;
 	} else if (pixMap.pixelSize == 2) {
 		byte *buf = new byte[pixMap.rowBytes];
 		for (int y = 0; y < bitmapHeight; y++) {
