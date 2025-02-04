@@ -1146,6 +1146,7 @@ uint8 Adlib::peekByteAt(uint16 offset) {
 uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 	// AI-reverse engineered by Deepseek
 	// Initial value calculation
+	// [bp-2h]
 	uint16 base_value = (gArray11F[index] << 8) | gArray9F[index];
 	if (blend_param != 0) {
 		// l0017_2AB1:
@@ -1158,19 +1159,15 @@ uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 			// l0017_2ACD:
 			// [bp-4h]
 			uint16 next_value = (gArray11F[next_idx] << 8) | gArray9F[next_idx];
+			// Linear interpolation - handled in register only in assembler
+			int16 delta = next_value - base_value;
+			base_value += static_cast<uint16>((delta * blend_param) / 7);
+		} else { // Reverse blend case
+			// l0017_2ACD:
 		}
 	}
 	
 	/*
-	
-		
-		
-			
-
-			// Linear interpolation
-			int16 delta = next_value - base_value;
-			base_value += static_cast<uint16>((delta * blend_param) / 7);
-		} else { // Reverse blend case
 			// Calculate previous index with clamping
 			uint8 prev_idx = (index > 0) ? index - 1 : 0;
 			uint16 prev_value = (table_high[prev_idx] << 8) | table_low[prev_idx];
@@ -1195,9 +1192,6 @@ uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 	return 0;
 	/*
 	
-	
-
-l0017_2ACD:
 	
 	mov	al,[bp+6h]
 	xor	ah,ah
