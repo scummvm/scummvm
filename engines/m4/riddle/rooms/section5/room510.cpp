@@ -49,7 +49,7 @@ void Room510::init() {
 		break;
 
 	case 1:
-		_statue = series_play("510 STATUE LAYED DOWN", 0xa00, 16, -1, 5);
+		_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5);
 		hotspot_set_active("ALTAR POST", false);
 		kernel_load_variant("510lock1");
 		break;
