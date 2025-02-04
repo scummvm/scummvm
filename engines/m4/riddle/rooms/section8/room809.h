@@ -45,9 +45,9 @@ private:
 	int32 _field28 = 0;
 	int32 _field2C = 0;
 	
-	const char *_byte1A1988 = nullptr;
+	const char *_enableHotspotName = nullptr;
 	byte _byte1A1990[12]; // random size for the moment, enough for facings
-	int32 _dword1A1984 = 0;
+	int32 _809MusicFadingVol = 0;
 	int32 _dword1A1998 = 0;
 
 

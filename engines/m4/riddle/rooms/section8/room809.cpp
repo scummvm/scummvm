@@ -80,7 +80,7 @@ void Room809::init() {
 		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _field28, 317, _field2C, Walker::player_walker_callback, "mc_trek");
 		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
 		sendWSMessage_3840000(_mcTrekMach, 38);
-		_byte1A1988 = "MEI CHEN     ";
+		_enableHotspotName = "MEI CHEN     ";
 		_byte1A1990[_field24] = 0;
 
 		kernel_timing_trigger(60, 36, "verify mc's position");
@@ -171,7 +171,7 @@ void Room809::daemon() {
 		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
 		sendWSMessage_3840000(_mcTrekMach, 38);
 		kernel_timing_trigger(60, 36, "verify mc's position");
-		_byte1A1988 = "MEI CHEN";
+		_enableHotspotName = "MEI CHEN";
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
@@ -202,16 +202,16 @@ void Room809::daemon() {
 		ws_custom_walk(_mcTrekMach, 3, 6, true);
 		_G(camera_reacts_to_player) = true;
 		g_engine->adv_camera_pan_step(10);
-		_dword1A1984 = 255;
+		_809MusicFadingVol = 255;
 
 		break;
 
 	case 6:
-		if (_dword1A1984 <= 100) {
+		if (_809MusicFadingVol <= 100) {
 			kernel_trigger_dispatchx(kernel_trigger_create(7));
 		} else {
-			_dword1A1984 = imath_max(100, _dword1A1984 - 10);
-			digi_change_panning(3, _dword1A1984);
+			_809MusicFadingVol = imath_max(100, _809MusicFadingVol - 10);
+			digi_change_panning(3, _809MusicFadingVol);
 			kernel_timing_trigger(10, 6, "fade music");
 		}
 
@@ -367,13 +367,57 @@ void Room809::daemon() {
 		break;
 
 	case 34:
+		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
+		sendWSMessage_3840000(_mcTrekMach, 38);
+		kernel_timing_trigger(60, 36, "verify mc's position");
+		_enableHotspotName = "MEI CHEN";
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN  ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
+
+		kernel_timing_trigger(1, 35, nullptr);
+
+		break;
+
 	case 35:
+		if (_809MusicFadingVol <= 0) {
+			digi_stop(3);
+			digi_unload("809m01");
+			digi_unload("809r01");
+			digi_unload("809_s01");
+
+			digi_play_loop("950_s29", 3, 48, -1, -1);
+			series_load(S8_SHADOW_NAMES2[0], S8_SHADOW_DIRS2[0] , nullptr);
+			series_load(S8_SHADOW_NAMES2[1], S8_SHADOW_DIRS2[1], nullptr);
+			series_load(S8_SHADOW_NAMES1[0], S8_SHADOW_DIRS1[0], nullptr);
+			series_load(S8_SHADOW_NAMES1[1], S8_SHADOW_DIRS1[1], nullptr);
+			player_set_commands_allowed(true);
+		} else {
+			--_809MusicFadingVol;
+			digi_change_panning(3, _809MusicFadingVol);
+			kernel_timing_trigger(1, 35, "fade music");
+		}
+
+		break;
+
 	case 36:
+		// TODO Not implemented yet
+		break;
+
 	case 37:
+		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
+		sendWSMessage_3840000(_mcTrekMach, 38);
+
+		break;
+
+	case 38:
+		hotspot_set_active(_G(currentSceneDef).hotspots, _enableHotspotName, true);
+		break;
+
 	default:
 		break;
 	}
-	// TODO Not implemented yet
 }
 
 } // namespace Rooms
