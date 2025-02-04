@@ -729,7 +729,7 @@ void sketchInJournal(const char *digiName) {
 		series_unload(_G(ripSketching));
 		digi_unload("950_s34");
 		player_set_commands_allowed(true);
-		return;
+		break;
 
 	case 7:
 		if (_G(player_info).facing == 3 || _G(player_info).facing == 9)

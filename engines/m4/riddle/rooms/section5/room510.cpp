@@ -774,6 +774,7 @@ void Room510::parser() {
 			case 6:
 				_G(flags)[V089] = 1;
 				_G(flags)[kMocaMocheCartoon] = 1;
+				sketchInJournal(nullptr);
 				break;
 			case 100:
 				_G(kernel).trigger = -1;
