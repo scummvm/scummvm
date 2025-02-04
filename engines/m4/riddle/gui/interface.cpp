@@ -296,12 +296,14 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 			Common::strlcpy(_verbText, hotspot->verb, 40);
 		}
 
-		Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ?
-			hotspot->vocab : hotspot->prep;
+		Common::String vocab(hotspot->vocab ? hotspot->vocab : "");
+		Common::String prep(hotspot->prep ? hotspot->prep : "");
+
+		Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ? vocab : prep;
 		tmp.toUppercase();
 		_textField->set_string(tmp.c_str());
 
-		tmp = hotspot->vocab;
+		tmp = vocab;
 		tmp.toUppercase();
 		Common::strlcpy(_nounText, tmp.c_str(), 40);
 
