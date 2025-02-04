@@ -54,13 +54,17 @@ Common::Error Videotests::videoTest(const Common::FSNode &node) {
 }
 
 Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Common::String &name) {
-	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
+	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadStream(stream)) {
 		warning("Cannot open video %s", name.c_str());
 		delete stream;
 		delete video;
 		return Common::kReadingFailed;
 	}
+
+	video->setTargetSize(400, 300);
+
+	warning("Video size: %d x %d", video->getWidth(), video->getHeight());
 
 	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
 	Graphics::PixelFormat pixelformat = supportedFormatsList.front();
