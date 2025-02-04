@@ -372,7 +372,7 @@ void Room510::parser() {
 			break;
 		}
 	} else if (takeFlag && player_said_any("VINES ", "ROPE ", "GREEN VINE ", "BROWN VINE ")) {
-		if (!parserSub())
+		if (!useAltarPost())
 			return;
 	} else if (takeFlag && _G(flags)[V170] != 1 &&
 		player_said_any("VINES", "ROPE", "GREEN VINE", "BROWN VINE") && takeVinesRope()) {
@@ -492,16 +492,22 @@ void Room510::parser() {
 	} else if (useFlag && player_said_any("ALTAR POST", "ALTAR POST ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
+		case 1:
+		case 2:
+		case 3:
 		case 4:
 		case 7:
+		case 8:
+		case 9:
+		case 10:
 		case 11:
 		case 666:
-			if (!parserSub())
+			if (!useAltarPost())
 				return;
 			break;
 
 		default:
-			return;
+			break;
 		}
 	} else if (player_said("WOODEN LADDER", "ALTAR") && inv_player_has("WOODEN LADDER")) {
 		if (_G(flags)[V169])
@@ -814,30 +820,29 @@ void Room510::parser() {
 	_G(player).command_ready = false;
 }
 
-bool Room510::parserSub() {
+bool Room510::useAltarPost() {
 	switch (_G(kernel.trigger)) {
 	case -1:
-		ws_walk(382, 111, nullptr, 666, 11, true);
+		ws_walk(382, 111, nullptr, 666, 11);
 		break;
 
 	case 1:
-		ws_unhide_walker(_G(my_walker));
-		terminateMachine(_statue);
-		_statue = nullptr;
+		ws_unhide_walker();
+		terminateMachineAndNull(_statue);
+
 		if (_G(flags[V169]) <= 0) {
-			_statue = series_play(" 510 STATUE LAYED DOWN", 2560, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+			_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			kernel_timing_trigger(1, 2, nullptr);
 			hotspot_set_active("ALTAR POST", false);
 			hotspot_set_active("ALTAR POST ", true);
 			kernel_load_variant("510lock1");
 		} else if (_G(flags[V169]) <= 2) {
-			_statue = series_play(" 510 STATUE", 2560, 16, -1, 5, 0, 100, 0, 0, 0, -1);
-			kernel_timing_trigger(1, 2, nullptr);
+			_statue = series_play(" 510 STATUE", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+			kernel_timing_trigger(1, 2);
 			hotspot_set_active("ALTAR POST", true);
 			hotspot_set_active("ALTAR POST ", false);
 			kernel_load_variant("510lock0");
 		}
-
 		break;
 
 	case 2:
@@ -848,21 +853,20 @@ bool Room510::parserSub() {
 			break;
 
 		case 1:
-			kernel_timing_trigger(1, 4, nullptr);
+			kernel_timing_trigger(1, 4);
 			break;
 
 		case 2:
-			kernel_timing_trigger(1, 8, nullptr);
+			kernel_timing_trigger(1, 8);
 			break;
 
 		default:
 			break;
 		}
-
 		break;
 
 	case 3:
-		digi_play("510_s02", 2, 255, -1, -1);
+		digi_play("510_s02", 2);
 		break;
 
 	case 4:
@@ -878,76 +882,69 @@ bool Room510::parserSub() {
 			break;
 
 		case 2:
-			terminateMachine(_rope);
-			_rope = nullptr;
+			terminateMachineAndNull(_rope);
+
 			if (inv_object_is_here("ROPE")) {
 				inv_give_to_player("ROPE");
-				hotspot_set_active(_G(currentSceneDef).hotspots, "ROPE ", false);
+				hotspot_set_active("ROPE ", false);
 			}
 
 			if (inv_object_is_here("GREEN VINE")) {
 				inv_give_to_player("GREEN VINE");
-				hotspot_set_active(_G(currentSceneDef).hotspots, "GREEN VINE ", false);
+				hotspot_set_active("GREEN VINE ", false);
 			}
 
 			if (inv_object_is_here("BROWN VINE")) {
 				inv_give_to_player("BROWN VINE");
-				hotspot_set_active(_G(currentSceneDef).hotspots, "BROWN VINE ", false);
+				hotspot_set_active("BROWN VINE ", false);
 			}
 
 			if (inv_object_is_here("VINES")) {
 				inv_give_to_player("VINES");
-				hotspot_set_active(_G(currentSceneDef).hotspots, "VINES ", false);
+				hotspot_set_active("VINES ", false);
 			}
 
-			sendWSMessage_140000(_G(my_walker), 11);
-
+			sendWSMessage_140000(11);
 			break;
 
 		default:
 			break;
 		}
-
 		break;
 
 	case 7:
 		return false;
 
 	case 8:
-		_ripLowReach4 = series_load("RIP TREK LOW REACHER POS1", -1, nullptr);
-		kernel_timing_trigger(1, 9, nullptr);
-
+		_ripLowReach4 = series_load("RIP TREK LOW REACHER POS1");
+		kernel_timing_trigger(1, 9);
 		break;
 
 	case 9:
-		setGlobals1(_ripLowReach4, 1, 28, 28, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		sendWSMessage_110000(_G(my_walker), 10);
-
+		setGlobals1(_ripLowReach4, 1, 28, 28, 28);
+		sendWSMessage_110000(10);
 		break;
 
 	case 10:
-		terminateMachine(_rope);
-		_rope = nullptr;
+		terminateMachineAndNull(_rope);
 
 		if (inv_object_is_here("ROPE")) {
-			_rope = series_play("510 STATUE AND ROPE", 3840, 18, 4, 5, 0, 100, 0, 0, 0);
+			_rope = series_play("510 STATUE AND ROPE", 0xf00, 18, 4, 5);
 		}
 
 		if (inv_object_is_here("GREEN VINE") || inv_object_is_here("BROWN VINE")) {
-			_rope = series_play("510 STATUE AND ANY VINE", 3840, 18, 4, 5, 0, 100, 0, 0, 0);
+			_rope = series_play("510 STATUE AND ANY VINE", 0xf00, 18, 4, 5);
 		}
 
 		if (inv_object_is_here("VINES")) {
-			_rope = series_play("510 STATUE AND COMBO VINES", 3840, 18, 4, 5, 0, 100, 0, 0, 0);
+			_rope = series_play("510 STATUE AND COMBO VINES", 0xf00, 18, 4, 5);
 		}
-
 		break;
 
 	case 11:
 		series_unload(_ripLowReach4);
 		_G(flags[V169]) = 0;
 		player_set_commands_allowed(true);
-
 		break;
 
 	case 666:
@@ -966,14 +963,16 @@ bool Room510::parserSub() {
 		}
 
 		player_set_commands_allowed(false);
-		kernel_timing_trigger(130, 3, nullptr);
-		ws_hide_walker(_G(my_walker));
+		kernel_timing_trigger(130, 3);
+		ws_hide_walker();
 
-		if (_G(flags[V169]) <= 0)
-			_statue = series_play("510 RIP LOWERS STATUE", 2560, 16, 1, 5, 0, 100, 0, 0, 0, -1);
-		else if (_G(flags[V169]) == 1)
-			_statue = series_play("510 RIP LOWERS STATUE", 2560, 18, 1, 5, 0, 100, 0, 0, 0, -1);
-
+		if (_G(flags[V169]) <= 0) {
+			terminateMachineAndNull(_statue);
+			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 16, 1, 5);
+		} else if (_G(flags[V169]) == 1) {
+			terminateMachineAndNull(_statue);
+			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 18, 1, 5);
+		}
 		break;
 
 	default:

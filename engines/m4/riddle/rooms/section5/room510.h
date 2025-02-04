@@ -48,7 +48,7 @@ private:
 	machine *_pu03 = nullptr;
 	bool _flag1 = false;
 
-	bool parserSub();
+	bool useAltarPost();
 	bool takeVinesRope();
 	void useVines();
 	void woodenLadder();
