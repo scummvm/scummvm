@@ -75,6 +75,8 @@ public:
 	void enableEditListBoundsCheckQuirk(bool enable) { _enableEditListBoundsCheckQuirk = enable; }
 	Common::String getAliasPath();
 
+	void setTargetSize(uint16 w, uint16 h);
+
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1);
 
@@ -298,6 +300,7 @@ private:
 		PanoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent);
 		~PanoTrackHandler();
 
+		bool endOfTrack() const { return false; }
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 		int getCurFrame() const { return 1; }
@@ -327,6 +330,7 @@ private:
 		const Graphics::Surface *bufferNextFrame();
 
 		Graphics::Surface *_constructedPano;
+		Graphics::Surface *_constructedHotspots;
 		Graphics::Surface *_projectedPano;
 
 		bool _isPanoConstructed;

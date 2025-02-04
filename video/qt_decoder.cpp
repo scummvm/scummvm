@@ -95,6 +95,14 @@ void QuickTimeDecoder::close() {
 	closeQTVR();
 }
 
+void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
+	if (!isVR())
+		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");
+
+	_width = w;
+	_height = h;
+}
+
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
 
@@ -407,7 +415,7 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 	if (!_decoder->_isVR)
 		return _reversed ? (_curEdit == 0 && _curFrame < 0) : atLastEdit();
 	else
-		return false;
+		return true;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
