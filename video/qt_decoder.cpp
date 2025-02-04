@@ -244,16 +244,21 @@ void QuickTimeDecoder::init() {
 				((VideoSampleDesc *)tracks[i]->sampleDescs[j])->initCodec();
 
 			addTrack(new VideoTrackHandler(this, tracks[i]));
+
+			tracks[i]->targetTrack = getNumTracks() - 1;
 		}
 
-		if (tracks[i]->codecType == CODEC_TYPE_PANO)
+		if (tracks[i]->codecType == CODEC_TYPE_PANO) {
 			addTrack(new PanoTrackHandler(this, tracks[i]));
+
+			tracks[i]->targetTrack = getNumTracks() - 1;
+		}
 	}
 
 	if (_qtvrType == QTVRType::PANORAMA) {
 		for (uint32 i = 0; i < Common::QuickTimeParser::_tracks.size(); i++) {
 			if (Common::QuickTimeParser::_tracks[i]->codecType == CODEC_TYPE_PANO) {
-				constructPanorama(i);
+				((PanoTrackHandler *)getTrack(Common::QuickTimeParser::_tracks[i]->targetTrack))->constructPanorama();
 			}
 		}
 	}

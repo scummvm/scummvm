@@ -132,8 +132,6 @@ private:
 	void cleanupCursors();
 	void computeInteractivityZones();
 
-	void constructPanorama(int trackNum);
-
 	uint16 _width, _height;
 
 	uint16 _prevMouseX, _prevMouseY;
@@ -313,6 +311,8 @@ private:
 
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
+
+		void constructPanorama();
 
 	private:
 		QuickTimeDecoder *_decoder;

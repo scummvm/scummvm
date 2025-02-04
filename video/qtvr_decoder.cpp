@@ -78,8 +78,6 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common
 
 	PanoSampleDesc *entry = new PanoSampleDesc(track, format);
 
-	uint32 pos = (uint32)_fd->pos();
-
 	entry->_majorVersion      = _fd->readSint16BE(); // must be zero, also observed to be 1
 	entry->_minorVersion      = _fd->readSint16BE();
 	entry->_sceneTrackID      = _fd->readSint32BE();
@@ -345,17 +343,24 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::bufferNextFrame() {
 	return nullptr;
 }
 
-void QuickTimeDecoder::constructPanorama(int trackNum) {
-	PanoSampleDesc *desc = (PanoSampleDesc *)(Common::QuickTimeParser::_tracks[trackNum]->sampleDescs[0]);
+void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
 	warning("scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
 			desc->_hotSpotTrackID, desc->_hotSpotSizeX, desc->_hotSpotSizeY);
 
-#if 0
-	int16 totalWidth = getHeight() * _parent->frameCount;
-	int16 totalHeight = getWidth();
+	warning("sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
+	warning("targetTrackID: %d", _parent->targetTrack);
+
+	//PanoTrackHandler *panoTrack = (PanoTrackHandler *)getTrack(Common::QuickTimeParser::_tracks[dtrackNum]->targetTrack);
+	VideoTrack *track = (VideoTrack *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
+
+	int16 totalWidth = track->getWidth();
+	int16 totalHeight = track->getHeight();
 
 	warning("construct, w: %d, h: %d", totalWidth, totalHeight);
 
+#if 0
 	if (totalWidth <= 0 || totalHeight <= 0)
 		return;
 
