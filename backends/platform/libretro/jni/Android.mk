@@ -2,6 +2,7 @@ LOCAL_PATH  := $(call my-dir)
 ROOT_PATH   := $(LOCAL_PATH)/..
 TARGET_NAME := scummvm
 HAVE_OPENGLES2 := 1
+USE_IMGUI := 0
 
 # Reset flags not reset to Makefile.common
 DEFINES   :=
@@ -22,9 +23,13 @@ include $(addprefix $(SCUMMVM_PATH)/, $(addsuffix /module.mk,$(MODULES)))
 OBJS_MODULES := $(addprefix $(SCUMMVM_PATH)/, $(foreach MODULE,$(MODULES),$(MODULE_OBJS-$(MODULE))))
 
 #TODO:
+# -Workaround to fix a linker error for tetraengine adding the following twice (both in DETECT_OBJS and MODULE_OBJS)
+DETECT_OBJS := $(filter-out engines/tetraedge/obb_archive.o, $(DETECT_OBJS))
+
+#TODO:
 # -O2 or higher causes segmentation fault with some engines (e.g. hopkins)
 # -Fortify triggers abort with some engines (e.g. sword25)
-COREFLAGS := $(DEFINES) -DUSE_CXX11 -O1 -U_FORTIFY_SOURCE
+COREFLAGS := $(DEFINES) -DUSE_CXX11 -O1 -U_FORTIFY_SOURCE -Wno-undefined-var-template
 
 ifeq ($(TARGET_ARCH),arm)
   COREFLAGS += -D_ARM_ASSEM_
@@ -34,6 +39,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE          := retro
 LOCAL_MODULE_FILENAME := libretro
 LOCAL_SRC_FILES       := $(DETECT_OBJS:%.o=$(SCUMMVM_PATH)/%.cpp)  $(OBJS_DEPS:%.o=%.c) $(OBJS_MODULES:%.o=%.cpp) $(OBJS:%.o=%.cpp)
+
 LOCAL_C_INCLUDES      := $(subst -I,,$(INCLUDES))
 LOCAL_CPPFLAGS        := $(COREFLAGS) -std=c++11
 LOCAL_CFLAGS          := $(COREFLAGS)
