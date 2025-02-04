@@ -160,13 +160,13 @@ void RiddleEngine::global_parser() {
 	} else if (useFlag && player_said("UNLIT URN")) {
 		digi_play("COM073", 1, 255, -1, 997);
 
-	} else if (!player_said("journal", " ") &&
-			!player_said("journal", "tower") &&
-			!player_said("journal", "tower ") &&
-			!player_said("journal", "dome") &&
-			!player_said("journal", "observatory dome") &&
-			!player_said("journal", "terrace") &&
-			!takeFlag && !lookFlag && inv_player_has(_G(player).noun) &&
+	} else if ((player_said("journal", " ") ||
+			player_said("journal", "tower") ||
+			player_said("journal", "tower ") ||
+			player_said("journal", "dome") ||
+			player_said("journal", "observatory dome") ||
+			player_said("journal", "terrace")) &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
 			_G(game).room_id >= 504 && _G(game).room_id <= 510 &&
 			_G(game).room_id != 507) {
 		if (_G(flags)[kMocaMocheCartoon]) {
@@ -176,7 +176,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[V089] = 1;
 				_G(flags)[kMocaMocheCartoon] = 1;
 			}
-			
+
 			sketchInJournal("COM028");
 		}
 	} else if ((player_said("journal", " ") || player_said("journal", "temple")) &&
