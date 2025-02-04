@@ -3006,7 +3006,7 @@ void Room504::parser() {
 				break;
 			case 4:
 				series_unload(_ripLowReach);
-				inv_give_to_player("WHELED TOY");
+				inv_give_to_player("WHEELED TOY");
 				setMiscItems();
 				player_set_commands_allowed(true);
 				break;
@@ -3080,6 +3080,7 @@ void Room504::parser() {
 			sendWSMessage_140000(4);
 			break;
 		case 4:
+			_G(flags)[V155] = 1;
 			inv_give_to_player("WOODEN LADDER");
 			setMiscItems();
 			series_unload(_ripLowReach);
