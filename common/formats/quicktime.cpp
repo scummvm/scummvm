@@ -1296,6 +1296,7 @@ QuickTimeParser::Track::Track() {
 	graphicsMode = GraphicsMode::COPY;
 	opcolor[0] = opcolor[1] = opcolor[2] = 0;
 	soundBalance = 0;
+	targetTrack = 0;
 }
 
 String QuickTimeParser::PanoStringTable::getString(int32 offset) const {

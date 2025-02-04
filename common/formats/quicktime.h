@@ -321,6 +321,8 @@ protected:
 		uint16 opcolor[3];         // RGB values used in the transfer mode specified by graphicsMode.
 
 		uint16 soundBalance; // Controls the sound mix between the computer's two speakers, usually set to 0.
+
+		uint targetTrack;
 	};
 
 	enum class MovieType {
