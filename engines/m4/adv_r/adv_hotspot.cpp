@@ -284,7 +284,7 @@ void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not) 
 	cstrupr(name_str);
 
 	for (i = head; i; i = i->next) {
-		if (!scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE)) {
+		if (i->vocab && !scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE)) {
 			i->active = active_or_not;
 			hotspot_found = true;
 		}

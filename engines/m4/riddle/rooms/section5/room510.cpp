@@ -123,7 +123,7 @@ void Room510::init() {
 		_G(flags)[V292] = 0;
 	}
 
-	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		if (_G(flags)[V170]) {
 			ws_hide_walker();
 			_steps = series_play("RIP DANGLES FROM ROPE", 0x100, 16, -1, 5);
@@ -146,6 +146,7 @@ void Room510::daemon() {
 	switch (_G(kernel).trigger) {
 	case 110:
 		terminateMachineAndNull(_steps);
+		ws_unhide_walker();
 		series_unload(_stepsSeries);
 		ws_walk(407, 97, nullptr, 999, 8);
 		break;
