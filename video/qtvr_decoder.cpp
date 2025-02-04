@@ -345,6 +345,45 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::bufferNextFrame() {
 	return nullptr;
 }
 
+Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname) {
+	int16 framew = track->getWidth();
+	int16 frameh = track->getHeight();
+
+	Graphics::Surface *target = new Graphics::Surface();
+	target->create(w * framew, h * frameh, track->getPixelFormat());
+
+	Common::Rect srcRect(0, 0, framew, frameh);
+
+	for (uint y = 0; y < h; y++) {
+		for (uint x = 0; x < w; x++) {
+			const Graphics::Surface *frame = track->bufferNextFrame();
+
+			if (!frame) {
+				warning("QuickTimeDecoder::PanoTrackHandler::constructPanorama(): Out of frames at: %d, %d", x, y);
+				break;
+			}
+
+			target->copyRectToSurface(*frame, x * framew, y * frameh, srcRect);
+		}
+	}
+
+	Common::Path path = Common::Path(fname);
+
+	Common::DumpFile bitmapFile;
+	if (!bitmapFile.open(path, true)) {
+		warning("Cannot dump panorama into file '%s'", path.toString().c_str());
+		return nullptr;
+	}
+
+	Image::writePNG(bitmapFile, *target, track->getPalette());
+	bitmapFile.close();
+
+	debug(0, "Dumped panorama %s of %d x %d", path.toString().c_str(), target->w, target->h);
+
+	return target;
+}
+
+
 void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 
@@ -356,40 +395,13 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
 
-	int16 framew = track->getWidth();
-	int16 frameh = track->getHeight();
+	_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
 
-	_constructedPano = new Graphics::Surface();
-	_constructedPano->create(desc->_sceneSizeX, desc->_sceneSizeY, track->getPixelFormat());
+	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
-	Common::Rect srcRect(0, 0, framew, frameh);
+	warning("hotspot format: %s", track->getPixelFormat().toString().c_str());
 
-	for (uint y = 0; y < desc->_sceneNumFramesY; y++) {
-		for (uint x = 0; x < desc->_sceneNumFramesX; x++) {
-			const Graphics::Surface *frame = track->bufferNextFrame();
-
-			if (!frame) {
-				warning("QuickTimeDecoder::PanoTrackHandler::constructPanorama(): Out of frames at: %d, %d", x, y);
-				break;
-			}
-
-			_constructedPano->copyRectToSurface(*frame, x * framew, y * frameh, srcRect);
-
-		}
-	}
-
-	Common::Path path = Common::Path("dumps/pano-full.png");
-
-	Common::DumpFile bitmapFile;
-	if (!bitmapFile.open(path, true)) {
-		warning("Cannot dump panorama into file '%s'", path.toString().c_str());
-		return;
-	}
-
-	Image::writePNG(bitmapFile, *_constructedPano);
-	bitmapFile.close();
-
-	debug(0, "Dumped panorama %s of %d x %d", path.toString().c_str(), _constructedPano->w, _constructedPano->h);
+	constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
 	_isPanoConstructed = true;
 }

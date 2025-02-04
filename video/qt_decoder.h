@@ -314,6 +314,7 @@ private:
 		Common::Rational getScaledHeight() const;
 
 		void constructPanorama();
+		Graphics::Surface *constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname);
 
 	private:
 		QuickTimeDecoder *_decoder;
