@@ -980,6 +980,8 @@ protected:
 	 */
 	virtual AudioTrack *getAudioTrack(int index) { return 0; }
 
+	uint getNumTracks() { return _tracks.size(); }
+
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
