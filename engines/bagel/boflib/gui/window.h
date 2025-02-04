@@ -51,6 +51,7 @@ class CBofWindow : public CLList, public CBofObject, public CBofError {
 private:
 	bool _visible = true;
 	bool _enabled = true;
+	bool _lockedScreen = true;
 	Common::List<WindowTimer> _timers;
 	uint32 _lastLButtonTime = 0, _lastRButtonTime = 0;
 

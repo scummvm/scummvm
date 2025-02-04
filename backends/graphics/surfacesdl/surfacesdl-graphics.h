@@ -448,6 +448,7 @@ protected:
 private:
 	void setFullscreenMode(bool enable);
 	void handleScalerHotkeys(uint mode, int factor);
+	bool _lockedScreen = true;
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

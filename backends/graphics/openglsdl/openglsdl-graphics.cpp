@@ -578,7 +578,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_glContext = nullptr;
 	}
 
-	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
+	if (!_lockedScreen) {
+		flags |= SDL_WINDOW_RESIZABLE;
+	}
 
 	if (_wantsFullScreen) {
 		// On Linux/X11, when toggling to fullscreen, the window manager saves

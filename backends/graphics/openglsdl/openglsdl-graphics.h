@@ -97,6 +97,8 @@ private:
 	uint _graphicsScale;
 	bool _gotResize;
 
+	bool _lockedScreen = true;
+
 	bool _vsync;
 	bool _wantsFullScreen;
 	uint _ignoreResizeEvents;
