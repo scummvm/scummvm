@@ -1401,11 +1401,17 @@ void IMuseInternal::musicVolumeReduction(MidiDriver *midi) {
 			_music_volume_eff = (curEffVol + 1) * factor;
 	}
 
+	bool volumeChanged = false;
 	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
-		_channel_volume_eff[i] = _channel_volume[i] * (_master_volume * _music_volume_eff / 255) / 255;
+		uint16 newChannelVolume = _channel_volume[i] * (_master_volume * _music_volume_eff / 255) / 255;
+		if (_channel_volume_eff[i] != newChannelVolume) {
+			_channel_volume_eff[i] = newChannelVolume;
+			volumeChanged = true;
+		}
 	}
 
-	update_volumes();
+	if (volumeChanged)
+		update_volumes();
 }
 
 int IMuseInternal::set_volchan_entry(uint a, uint b) {
