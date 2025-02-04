@@ -78,8 +78,8 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common
 
 	PanoSampleDesc *entry = new PanoSampleDesc(track, format);
 
-	entry->_reserved1         = _fd->readUint32BE(); //
-	entry->_reserved2         = _fd->readUint32BE(); // must be zero, also observed to be 1
+	uint32 pos = (uint32)_fd->pos();
+
 	entry->_majorVersion      = _fd->readSint16BE(); // must be zero, also observed to be 1
 	entry->_minorVersion      = _fd->readSint16BE();
 	entry->_sceneTrackID      = _fd->readSint32BE();
@@ -278,8 +278,6 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 
 	_constructedPano = nullptr;
 	_projectedPano = nullptr;
-
-	constructPanorama();
 }
 
 QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
@@ -303,7 +301,7 @@ uint16 QuickTimeDecoder::PanoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::PanoTrackHandler::getPixelFormat() const {
-	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledWidth() const {
@@ -347,7 +345,12 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::bufferNextFrame() {
 	return nullptr;
 }
 
-void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
+void QuickTimeDecoder::constructPanorama(int trackNum) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)(Common::QuickTimeParser::_tracks[trackNum]->sampleDescs[0]);
+	warning("scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
+			desc->_hotSpotTrackID, desc->_hotSpotSizeX, desc->_hotSpotSizeY);
+
+#if 0
 	int16 totalWidth = getHeight() * _parent->frameCount;
 	int16 totalHeight = getWidth();
 
@@ -377,6 +380,7 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	}
 
 	_isPanoConstructed = true;
+#endif
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {

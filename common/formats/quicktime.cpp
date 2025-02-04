@@ -613,9 +613,9 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		track->sampleDescs.push_back(readSampleDesc(track, format, size - 16));
+		debug(0, "sampledesc %d: size=%d 4CC= %s codec_type=%d", i, size, tag2str(format), track->codecType);
 
-		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), track->codecType);
+		track->sampleDescs.push_back(readSampleDesc(track, format, size - 16));
 
 		if (!track->sampleDescs[i]) {
 			// other codec type, just skip (rtp, mp4s, tmcd ...)

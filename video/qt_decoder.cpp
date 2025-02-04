@@ -250,6 +250,14 @@ void QuickTimeDecoder::init() {
 			addTrack(new PanoTrackHandler(this, tracks[i]));
 	}
 
+	if (_qtvrType == QTVRType::PANORAMA) {
+		for (uint32 i = 0; i < Common::QuickTimeParser::_tracks.size(); i++) {
+			if (Common::QuickTimeParser::_tracks[i]->codecType == CODEC_TYPE_PANO) {
+				constructPanorama(i);
+			}
+		}
+	}
+
 	// Prepare the first video track
 	VideoTrackHandler *nextVideoTrack = (VideoTrackHandler *)findNextVideoTrack();
 
@@ -523,6 +531,21 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() {
+#if 0
+	if (_decoder->_qtvrType == QTVRType::PANORAMA) {
+		if (!_isPanoConstructed)
+			return nullptr;
+
+		if (_projectedPano) {
+			_projectedPano->free();
+			delete _projectedPano;
+		}
+
+		projectPanorama();
+		return _projectedPano;
+	}
+#endif
+
 	if (endOfTrack())
 		return 0;
 

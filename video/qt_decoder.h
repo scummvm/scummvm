@@ -132,6 +132,8 @@ private:
 	void cleanupCursors();
 	void computeInteractivityZones();
 
+	void constructPanorama(int trackNum);
+
 	uint16 _width, _height;
 
 	uint16 _prevMouseX, _prevMouseY;
@@ -191,9 +193,6 @@ private:
 	public:
 		PanoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~PanoSampleDesc();
-
-		uint32 _reserved1;			// must be zero
-		uint32 _reserved2;			// must be zero
 
 		int16 _majorVersion;		// must be zero, also observed to be 1
 		int16 _minorVersion;		// must be zero, also observed to be 1
@@ -321,7 +320,6 @@ private:
 
 		const byte *_curPalette;
 
-		void constructPanorama();
 		void projectPanorama();
 
 		const Graphics::Surface *bufferNextFrame();
