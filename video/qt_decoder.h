@@ -324,8 +324,10 @@ private:
 		void constructPanorama();
 		Graphics::Surface *constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname);
 
-		float getCurAngle() { return _curAngle; }
-		void setCurAngle(float angle);
+		float getPanAngle() { return _curPanAngle; }
+		void setPanAngle(float angle);
+		float getTiltAngle() { return _curTiltAngle; }
+		void setTiltAngle(float angle);
 
 	private:
 		QuickTimeDecoder *_decoder;
@@ -343,7 +345,8 @@ private:
 
 		bool _isPanoConstructed;
 
-		float _curAngle;
+		float _curPanAngle;
+		float _curTiltAngle;
 		bool _dirty;
 	};
 };

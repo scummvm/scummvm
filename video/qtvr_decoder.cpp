@@ -200,12 +200,16 @@ void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	bool changed = false;
 
 	if (ABS(mouseDeltaX) >= sensitivity) {
-		track->setCurAngle(track->getCurAngle() + speedX);
+		track->setPanAngle(track->getPanAngle() + speedX);
 
 		changed = true;
 	}
 
-	(void)speedY;
+	if (ABS(mouseDeltaY) >= sensitivity) {
+		track->setTiltAngle(track->getTiltAngle() + speedY);
+
+		changed = true;
+	}
 
 	if (changed) {
 		_prevMouseX = x;
@@ -333,7 +337,8 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_constructedHotspots = nullptr;
 	_projectedPano = nullptr;
 
-	_curAngle = 0.0f;
+	_curPanAngle = 0.0f;
+	_curTiltAngle = 0.0f;
 
 	_dirty = true;
 }
@@ -461,7 +466,8 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	_isPanoConstructed = true;
 
-	_curAngle = desc->_hPanStart;
+	_curPanAngle = desc->_hPanStart;
+	_curTiltAngle = 0.0f;
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
@@ -476,7 +482,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	}
 
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-	int startY = ((float)desc->_sceneSizeY / (desc->_hPanEnd - desc->_hPanStart)) * (_curAngle - desc->_hPanStart);
+	int startY = ((float)desc->_sceneSizeY / (desc->_hPanEnd - desc->_hPanStart)) * (_curPanAngle - desc->_hPanStart);
 
 	for (uint16 y = 0; y < h; y++) {
 		for (uint16 x = 0; x < w; x++) {
@@ -516,7 +522,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 #endif
 }
 
-void QuickTimeDecoder::PanoTrackHandler::setCurAngle(float angle) {
+void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 
 	if (angle < desc->_hPanStart)
@@ -525,8 +531,24 @@ void QuickTimeDecoder::PanoTrackHandler::setCurAngle(float angle) {
 	if (angle > desc->_hPanEnd)
 		angle = desc->_hPanEnd;
 
-	if (_curAngle != angle) {
-		_curAngle = angle;
+	if (_curPanAngle != angle) {
+		_curPanAngle = angle;
+
+		_dirty = true;
+	}
+}
+
+void QuickTimeDecoder::PanoTrackHandler::setTiltAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
+	if (angle < desc->_vPanBottom)
+		angle = desc->_vPanBottom;
+
+	if (angle > desc->_vPanTop)
+		angle = desc->_vPanTop;
+
+	if (_curTiltAngle != angle) {
+		_curTiltAngle = angle;
 
 		_dirty = true;
 	}
