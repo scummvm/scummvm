@@ -41,7 +41,7 @@ private:
 	int _flick = 0;
 	machine *_ripley = nullptr;
 	machine *_ripStartTurnDome = nullptr;
-	machine *_chainAfterBreak = nullptr;
+	machine *_chainSprite = nullptr;
 	machine *_domeAfterTurn = nullptr;
 	machine *_skull = nullptr;
 	machine *_shovel = nullptr;
