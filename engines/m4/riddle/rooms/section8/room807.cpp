@@ -55,7 +55,7 @@ void Room807::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "wooden post", false);
 	}
 
-	if (_G(flags[V274])) {
+	if (_G(flags)[V274]) {
 		_807DoorMach = series_show("807door", 4095, 0, -1, -1, 0, 100, 0, 0);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
@@ -104,7 +104,7 @@ void Room807::init() {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
 		}
 
-		if (_G(flags[V276]) != 0) {
+		if (_G(flags)[V276] != 0) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "mei chen", false);
 		} else {
 			ws_walk_load_shadow_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
@@ -128,7 +128,7 @@ void Room807::init() {
 		ws_demand_location(_G(my_walker), 273, 270);
 		ws_demand_facing(_G(my_walker), 5);
 
-		if (_G(flags[V276]) != 0) {
+		if (_G(flags)[V276] != 0) {
 			ws_walk(_G(my_walker), 250, 345, nullptr, 5, 2, true);
 		} else {
 			ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
@@ -167,7 +167,7 @@ void Room807::init() {
 			ws_demand_location(_G(my_walker), 366, 500);
 			ws_demand_facing(_G(my_walker), 1);
 
-			if (_G(flags[V276]) != 0) {
+			if (_G(flags)[V276] != 0) {
 				ws_walk(_G(my_walker), 366, 345, nullptr, 5, 2, true);
 			} else {
 				_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 450, 600, 1, Walker::player_walker_callback, "mc_trek");
@@ -183,7 +183,7 @@ void Room807::init() {
 }
 
 void Room807::pre_parser() {
-	if (_G(flags[V274]) || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807)) {
+	if (_G(flags)[V274] || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807)) {
 		if (player_said("gear", "stone block")) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
@@ -245,7 +245,7 @@ void Room807::parser() {
 
 	switch (opCode) {
 	case 0:
-		if (player_said("stone block") && _G(flags[V276]) == 0) {
+		if (player_said("stone block") && _G(flags)[V276] == 0) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				ws_walk(_G(my_walker), 305, 305, nullptr, 10, 1, true);
@@ -283,7 +283,7 @@ void Room807::parser() {
 				break;
 			}
 		} else if (player_said("crank") && inv_object_in_scene("crank", 807)) {
-			if (!_G(flags[V274])) {
+			if (!_G(flags)[V274]) {
 				digi_play("com078", 1, 255, -1, 997);
 			} else if (inv_object_in_scene("wooden post", 807)) {
 				digi_play("807r23a", 1, 255, -1, -1);
@@ -321,7 +321,7 @@ void Room807::parser() {
 
 				case 20:
 					player_set_commands_allowed(true);
-					_G(flags[V274]) = 0;
+					_G(flags)[V274] = 0;
 					_field38 = 1;
 					hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", false);
 					hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", true);
@@ -363,7 +363,7 @@ void Room807::parser() {
 		} else if (player_said("wooden beam") && inv_object_in_scene("wooden beam", 807)) {
 			digi_play("807r11", 1, 255, -1, 997);
 		} else if (player_said("wooden post") && inv_object_in_scene("wooden post", 807)) {
-			if (inv_object_in_scene("crank", 807) && _G(flags[V274]) == 0) {
+			if (inv_object_in_scene("crank", 807) && _G(flags)[V274] == 0) {
 				digi_play("807r10", 1, 255, -1, -1);
 			} else {
 				digi_play("com021", 1, 255, -1, 997);
@@ -395,12 +395,12 @@ void Room807::parser() {
 				break;
 
 			case 5:
-				if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden beam", 807)) {
+				if (_G(flags)[V274] == 0 && !inv_object_in_scene("wooden beam", 807)) {
 					inv_give_to_player("wooden post");
 					kernel_examine_inventory_object("PING WOODEN POST", _G(master_palette), 5, 1, 400, 245, 13, nullptr, -1);
 					terminateMachine(_807BeamMach);
 					series_play("807rp06", 256, 2, 10, 5, 0, 100, 0, 0, 0, 20);
-					_G(flags[V274]) = 1;
+					_G(flags)[V274] = 1;
 				} else {
 					inv_give_to_player("wooden post");
 					kernel_examine_inventory_object("PING WOODEN POST", _G(master_palette), 5, 1, 400, 245, -1, nullptr, -1);
@@ -452,7 +452,7 @@ void Room807::parser() {
 			switch (_G(kernel).trigger) {
 			case -1:
 				if (inv_object_in_scene("crank", 807)) {
-					if (inv_object_in_scene("wooden post", 807) && _G(flags[V274]) == 0) {
+					if (inv_object_in_scene("wooden post", 807) && _G(flags)[V274] == 0) {
 						digi_play("807r23", 1, 255, -1, -1);
 					} else {
 						player_set_commands_allowed(false);
@@ -540,7 +540,7 @@ void Room807::parser() {
 		break;
 
 	case 3:
-		if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden post", 807) && !inv_object_in_scene("wooden beam", 807)) {
+		if (_G(flags)[V274] == 0 && !inv_object_in_scene("wooden post", 807) && !inv_object_in_scene("wooden beam", 807)) {
 			_field34 = 1;
 			conv_load("conv807a", 10, 10, 747);
 			conv_play(conv_get_handle());
@@ -617,7 +617,7 @@ void Room807::parser() {
 			case 10:
 				player_set_commands_allowed(false);
 				ws_walk(_G(my_walker), 305, 190, nullptr, -1, 2, true);
-				if (_G(flags[V276]) == 0) {
+				if (_G(flags)[V276] == 0) {
 					ws_walk(_mcTrekMach, 305, 190, nullptr, -1, -1, true);
 				}
 
@@ -643,8 +643,8 @@ void Room807::parser() {
 				const int32 destX = CLIP(_G(player_info).x, (int32)247, (int32)400);
 				const int32 destY = MAX(_G(player_info).y, (int32)342);
 
-				if (_G(flags[V276]) == 0 && _G(flags[V275]) == 0) {
-					_G(flags[V275]) = 1;
+				if (_G(flags)[V276] == 0 && _G(flags)[V275] == 0) {
+					_G(flags)[V275] = 1;
 					ws_walk(_G(my_walker), destX, destY, nullptr, 10, -1, true);
 				} else {
 					ws_walk(_G(my_walker), destX, destY, nullptr, 35, -1, false);
@@ -676,7 +676,7 @@ void Room807::parser() {
 				break;
 
 			case 35:
-				if (_G(flags[V276]) == 0) {
+				if (_G(flags)[V276] == 0) {
 					ws_walk(_mcTrekMach, 320, 560, nullptr, -1, -1, true);
 				}
 
@@ -747,7 +747,7 @@ void Room807::parser() {
 				inv_move_object("wooden post", 807);
 				_field38 = 0;
 				hotspot_set_active(_G(currentSceneDef).hotspots, "wooden post", true);
-				if (_G(flags[V274]) == 0 && !inv_object_in_scene("wooden beam", 807)) {
+				if (_G(flags)[V274] == 0 && !inv_object_in_scene("wooden beam", 807)) {
 					terminateMachine(_807Crnk2Mach);
 					_807Crnk2Mach = series_show("807crnk2", 4095, 0, -1, -1, 9, 100, 0, 0);
 					series_load("807rp06", -1, nullptr);
@@ -928,7 +928,7 @@ void Room807::daemon() {
 	case 0:
 		ws_unhide_walker(_G(my_walker));
 		_807DoorMach = series_show("807door", 4095, 0, -1, -1, 0, 100, 0, 0);
-		_G(flags[V274]) = 1;
+		_G(flags)[V274] = 1;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", false);
@@ -958,7 +958,7 @@ void Room807::daemon() {
 
 	case 5:
 		player_set_commands_allowed(true);
-		if (_G(flags[V276]) == 0) {
+		if (_G(flags)[V276] == 0) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "mei chen", true);
 			kernel_timing_trigger(imath_ranged_rand(1200, 1800), 13, nullptr);
 		}
@@ -970,12 +970,12 @@ void Room807::daemon() {
 		break;
 
 	case 7:
-		if ((_G(flags[V274]) == 0) && !inv_object_in_scene("wooden beam", 807) && !inv_object_in_scene("wooden post", 807)) {
+		if ((_G(flags)[V274] == 0) && !inv_object_in_scene("wooden beam", 807) && !inv_object_in_scene("wooden post", 807)) {
 			if (_field34)
 				kernel_timing_trigger(60, 7, "thunk!");
 			else {
 				player_set_commands_allowed(false);
-				_G(flags[V274]) = 1;
+				_G(flags)[V274] = 1;
 				hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", true);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "corridor", false);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "chariot ", false);
@@ -1013,14 +1013,14 @@ void Room807::daemon() {
 		break;
 
 	case 11:
-		_G(flags[V274]) = 1;
+		_G(flags)[V274] = 1;
 		disable_player_commands_and_fade_init(12);
 
 		break;
 
 	case 12:
 		_field38 = 1;
-		_G(flags[V274]) = 0;
+		_G(flags)[V274] = 0;
 		other_save_game_for_resurrection();
 		_G(game).new_section = 4;
 		_G(game).new_room = 413;
@@ -1028,7 +1028,7 @@ void Room807::daemon() {
 		break;
 
 	case 13:
-		if (player_commands_allowed() && checkStrings() && (_G(flags[V274]) != 0 || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807))) {
+		if (player_commands_allowed() && checkStrings() && (_G(flags)[V274] != 0 || inv_object_in_scene("wooden post", 807) || inv_object_in_scene("wooden beam", 807))) {
 			player_set_commands_allowed(false);
 			intr_cancel_sentence();
 			switch (imath_ranged_rand(1, 4)) {

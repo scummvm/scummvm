@@ -787,7 +787,7 @@ void Room204::parser() {
 			break;
 
 		case 3:
-			_G(flags[V032]) = 1;
+			_G(flags)[V032] = 1;
 			inv_give_to_player("MALLET");
 			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", false);
 			_field16C = 0;
@@ -1006,12 +1006,12 @@ void Room204::parser() {
 	else if (player_said("CHINESE YUAN", "ACOLYTE") || player_said("CHINESE YUAN", "YOUNG PRIEST"))
 		digi_play("204R25", 1, 255, -1, -1);
 	else if (player_said("journal") && !takeFl && !lookFl && !inv_player_has(_G(player).noun)) {
-		if (_G(flags[kTabletsCartoon]) != 0) {
+		if (_G(flags)[kTabletsCartoon] != 0) {
 			digi_play("204R15", 1, 255, -1, -1);
 		} else {
 			if (_G(kernel).trigger == 6) {
-				_G(flags[V089]) = 1;
-				_G(flags[kTabletsCartoon]) = 1;
+				_G(flags)[V089] = 1;
+				_G(flags)[kTabletsCartoon] = 1;
 			}
 			warning("Room204 Parser : sendWSMessage_multi(nullptr)");
 		}
@@ -3030,7 +3030,7 @@ void Room204::conv204a() {
 		_field134 = 2;
 	else if (who != 1) {
 		if (node == 5 && entry == 2) {
-			_G(flags[V285]) = 1;
+			_G(flags)[V285] = 1;
 		}
 
 		if ((node == 2 && entry == 0) || (node == 11 && entry == 0) || (node == 15 && entry == 0) || (node == 14 && entry == 3) || (node == 20 && entry == 3)) {

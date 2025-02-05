@@ -34,7 +34,7 @@ void Room809::preload() {
 }
 
 void Room809::init() {
-	if (_G(game).previous_room == KERNEL_RESTORING_GAME || _G(flags[V263]))
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME || _G(flags)[V263])
 		digi_preload("950_s29", -1);
 
 	_field20 = 0;
@@ -103,8 +103,8 @@ void Room809::init() {
 		_field24 = 0;
 		_field28 = 160;
 
-		if (_G(flags[V263]) == 0) {
-			_G(flags[V263]) = 1;
+		if (_G(flags)[V263] == 0) {
+			_G(flags)[V263] = 1;
 
 			moveScreen(1280, 0);
 			_G(camera_reacts_to_player) = false;

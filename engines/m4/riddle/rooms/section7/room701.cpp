@@ -34,8 +34,8 @@ void Room701::preload() {
 }
 
 void Room701::init() {
-	if (_G(flags[V286]))
-		_G(flags[V224]) = 1;
+	if (_G(flags)[V286])
+		_G(flags)[V224] = 1;
 
 	_itemDigiName = nullptr;
 	_field8C_unusedFl = false;
@@ -71,7 +71,7 @@ void Room701::init() {
 		_agentPoshExpressMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1792, false, triggerMachineByHashCallback, "agent posh express");
 		sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 13, 13, -1, _agentTalkLoopTjSeries, 13, 13, 0);
 
-		++_G(flags[V006]);
+		++_G(flags)[V006];
 		if (setItemsPlacedFlags()) {
 			_field88 = true;
 			_itemDigiName = getItemsPlacedDigi();
@@ -134,7 +134,7 @@ void Room701::parser() {
 		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (lookFl && player_said("COAT RACK")) {
 		digi_play("com130", 1, 255, -1, -1);
-	} else if (lookFl && player_said("Skin") && !_G(flags[V226])) {
+	} else if (lookFl && player_said("Skin") && !_G(flags)[V226]) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -173,7 +173,7 @@ void Room701::parser() {
 
 		case 25:
 			sendWSMessage_150000(_G(my_walker), -1);
-			_G(flags[V226]) = 1;
+			_G(flags)[V226] = 1;
 			player_set_commands_allowed(true);
 
 			break;
@@ -181,14 +181,14 @@ void Room701::parser() {
 		default:
 			break;
 		}
-	} // ecx && player_said("Skin") && !_G(flags[V226])
+	} // ecx && player_said("Skin") && !_G(flags)[V226]
 
-	else if (lookFl && player_said("Skin") && _G(flags[V226])) {
+	else if (lookFl && player_said("Skin") && _G(flags)[V226]) {
 		player_set_commands_allowed(false);
 		digi_play("701R13", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
 
-	} // ecx && player_said("Skin") && _G(flags[V226])
+	} // ecx && player_said("Skin") && _G(flags)[V226]
 
 	else if (lookFl && player_said("Window"))
 		digi_play("701R17", 1, 255, -1, -1);
@@ -294,7 +294,7 @@ void Room701::parser() {
 		||   (player_said("SIKKIMESE RUPEE", "Agent") && inv_player_has("SIKKIMESE RUPEE"))) {
 		digi_play("com012", 1, 255, -1, 997);
 	} else if (player_said("journal", "skin")) {
-		digi_play(_G(flags[V226]) ? "701R35" : "701R36", 1, 255, -1, -1);
+		digi_play(_G(flags)[V226] ? "701R35" : "701R36", 1, 255, -1, -1);
 	} else if (player_said("rm702")) {
 		if (_field88) {
 			switch (_G(kernel).trigger) {
@@ -590,10 +590,10 @@ void Room701::daemon() {
 		break;
 
 	case 82:
-		if (_G(flags[V286]) != 1 || _G(flags[V362]) || _G(flags[V372]) || _G(flags[V225])) {
+		if (_G(flags)[V286] != 1 || _G(flags)[V362] || _G(flags)[V372] || _G(flags)[V225]) {
 			kernel_timing_trigger(1, 75, nullptr);
 		} else {
-			_G(flags[V225]) = 1;
+			_G(flags)[V225] = 1;
 			kernel_timing_trigger(1, 83, nullptr);
 		}
 
@@ -672,8 +672,8 @@ void Room701::daemon() {
 		break;
 
 	case 95:
-		if (_G(flags[V286]) == 1 && !_G(flags[V362]))
-			_G(flags[V372]) = 1;
+		if (_G(flags)[V286] == 1 && !_G(flags)[V362])
+			_G(flags)[V372] = 1;
 
 		terminateMachine(_safariShadow3Mach);
 		player_set_commands_allowed(true);
@@ -729,7 +729,7 @@ void Room701::daemon() {
 				_lastInventoryCheck = inventoryCheck();
 				_fieldBC_unusedFl = true;
 
-				conv_export_value_curr((_G(flags[V088]) < 3) ? 0 : 1, 0);
+				conv_export_value_curr((_G(flags)[V088] < 3) ? 0 : 1, 0);
 				conv_export_pointer_curr(&_lastInventoryCheck, 1);
 
 				_hasCrystalSkull = inv_player_has("CRYSTAL SKULL") ? 1 : 0;
@@ -1239,32 +1239,32 @@ void Room701::daemon() {
 		if (_itemDigiName) {
 			_field58_digiName = _itemDigiName;
 			_itemDigiName = nullptr;
-		} else if (_G(flags[V364]) == 1) {
+		} else if (_G(flags)[V364] == 1) {
 			_field58_digiName = "201R26";
-		} else if (_G(flags[V365]) == 1) {
+		} else if (_G(flags)[V365] == 1) {
 			_field58_digiName = "201R61";
-		} else if (_G(flags[V366]) == 1) {
+		} else if (_G(flags)[V366] == 1) {
 			_field58_digiName = "401R31";
-		} else if (_G(flags[V373]) == 1) {
+		} else if (_G(flags)[V373] == 1) {
 			_field58_digiName = "401R36";
-		} else if (_G(flags[V370]) == 1) {
+		} else if (_G(flags)[V370] == 1) {
 			_field58_digiName = "501R02";
-		} else if (_G(flags[V371]) == 1) {
+		} else if (_G(flags)[V371] == 1) {
 			_field58_digiName = "501R03";
-		} else if (_G(flags[V372]) == 1) {
+		} else if (_G(flags)[V372] == 1) {
 			_field58_digiName = "701R39";
 			_field5C_digiName = "701R39A";
-		} else if (_G(flags[V367]) == 1) {
+		} else if (_G(flags)[V367] == 1) {
 			_field58_digiName = "401R37";
-			_G(flags[V367]) = 0;
+			_G(flags)[V367] = 0;
 			_field130 = true;
-		} else if (_G(flags[V368]) == 1) {
+		} else if (_G(flags)[V368] == 1) {
 			_field58_digiName = "401R38";
-			_G(flags[V368]) = 0;
+			_G(flags)[V368] = 0;
 			_field130 = true;
-		} else if (_G(flags[V369]) == 1) {
+		} else if (_G(flags)[V369] == 1) {
 			_field58_digiName = "401R39";
-			_G(flags[V369]) = 0;
+			_G(flags)[V369] = 0;
 			_field130 = true;
 		}
 
@@ -1372,19 +1372,19 @@ void Room701::daemon() {
 	case 2601:
 		switch (_travelDest) {
 		case 1:
-			_G(flags[kTravelDest]) = 1;
+			_G(flags)[kTravelDest] = 1;
 			break;
 
 		case 2:
-			_G(flags[kTravelDest]) = 0;
+			_G(flags)[kTravelDest] = 0;
 			break;
 
 		case 3:
-			_G(flags[kTravelDest]) = 4;
+			_G(flags)[kTravelDest] = 4;
 			break;
 
 		case 4:
-			_G(flags[kTravelDest]) = 2;
+			_G(flags)[kTravelDest] = 2;
 			break;
 
 		default:
@@ -1498,23 +1498,23 @@ void Room701::conv701a() {
 }
 
 void Room701::updateCounter() {
-	if (_G(flags[V364]) == 1) {
+	if (_G(flags)[V364] == 1) {
 		++_field50_counter;
-		switch (_G(flags[V005])) {
+		switch (_G(flags)[V005]) {
 		case 1:
-			_G(flags[V351]) = 1;
+			_G(flags)[V351] = 1;
 			break;
 
 		case 2:
-			_G(flags[V352]) = 1;
+			_G(flags)[V352] = 1;
 			break;
 
 		case 3:
-			_G(flags[V353]) = 1;
+			_G(flags)[V353] = 1;
 			break;
 
 		case 4:
-			_G(flags[V354]) = 1;
+			_G(flags)[V354] = 1;
 			break;
 
 		default:
@@ -1522,48 +1522,48 @@ void Room701::updateCounter() {
 		}
 	}
 
-	if (_G(flags[V365]) == 1) {
-		_G(flags[V355]) = 1;
+	if (_G(flags)[V365] == 1) {
+		_G(flags)[V355] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V366]) == 1) {
-		_G(flags[V356]) = 1;
+	if (_G(flags)[V366] == 1) {
+		_G(flags)[V356] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V367]) == 1) {
-		_G(flags[V357]) = 1;
+	if (_G(flags)[V367] == 1) {
+		_G(flags)[V357] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V368]) == 1) {
-		_G(flags[V358]) = 1;
+	if (_G(flags)[V368] == 1) {
+		_G(flags)[V358] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V369]) == 1) {
-		_G(flags[V359]) = 1;
+	if (_G(flags)[V369] == 1) {
+		_G(flags)[V359] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V370]) == 1) {
-		_G(flags[V360]) = 1;
+	if (_G(flags)[V370] == 1) {
+		_G(flags)[V360] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V371]) == 1) {
-		_G(flags[V361]) = 1;
+	if (_G(flags)[V371] == 1) {
+		_G(flags)[V361] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V372]) == 1) {
-		_G(flags[V362]) = 1;
+	if (_G(flags)[V372] == 1) {
+		_G(flags)[V362] = 1;
 		++_field50_counter;
 	}
 
-	if (_G(flags[V373]) == 1) {
-		_G(flags[V363]) = 1;
+	if (_G(flags)[V373] == 1) {
+		_G(flags)[V363] = 1;
 		++_field50_counter;
 	}
 }

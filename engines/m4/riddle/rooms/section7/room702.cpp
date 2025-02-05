@@ -35,7 +35,7 @@ void Room702::preload() {
 
 void Room702::init() {
 	_alreadyBeen702Fl = player_been_here(702);
-	_G(flags[V212]) = 0;
+	_G(flags)[V212] = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_field40 = 0;
@@ -56,10 +56,10 @@ void Room702::init() {
 		_ripShowsRingSeries = series_load("RIP SHOWS RING", -1, nullptr);
 		_ripSafariWalkerPos1Series = series_load("RIP SAFARI WALKER POSITION 1", -1, nullptr);
 		_ringCloseupSeries = series_load("Ring closeup", -1, nullptr);
-		_G(flags[V210]) = 0;
+		_G(flags)[V210] = 0;
 		_field40 = 0;
 
-		if (_G(flags[V224]) == 0) {
+		if (_G(flags)[V224] == 0) {
 			_guardMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 768, false, callback, "guard");
 			sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 1, 1, -1, _guardTalksAndBowsSeries, 1, 1, 0);
 			_guardShadowMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 487, 326, 100, 1024, false, callback, "guard shadow");
@@ -80,9 +80,9 @@ void Room702::init() {
 		_ripShowsRingSeries = series_load("RIP SHOWS RING", -1, nullptr);
 		_ripSafariWalkerPos1Series = series_load("RIP SAFARI WALKER POSITION 1", -1, nullptr);
 		_ringCloseupSeries = series_load("Ring closeup", -1, nullptr);
-		_G(flags[V210]) = 0;
+		_G(flags)[V210] = 0;
 		_field40 = 0;
-		if (_G(flags[V224]) == 0) {
+		if (_G(flags)[V224] == 0) {
 			_guardMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 768, false, callback, "guard");
 			sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 1, 1, -1, _guardTalksAndBowsSeries, 1, 1, 0);
 			_guardShadowMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 487, 326, 100, 1024, false, callback, "guard shadow");
@@ -101,13 +101,13 @@ void Room702::init() {
 }
 
 void Room702::pre_parser() {
-	if (player_said_any("  ", "   ") && _G(flags[V211]) && _G(flags[V210]) && _G(flags[V212])) {
+	if (player_said_any("  ", "   ") && _G(flags)[V211] && _G(flags)[V210] && _G(flags)[V212]) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (_G(flags[V224]) && player_said_any("  ", "   ")) {
+	if (_G(flags)[V224] && player_said_any("  ", "   ")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -120,17 +120,17 @@ void Room702::parser() {
 	bool takeFl = player_said("take");
 	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (player_said("CIGAR BAND", "GUARD") && inv_player_has("CIGAR BAND") && !_G(flags[V211])) {
-		_G(flags[V211]) = 1;
-		_G(flags[V228]) = 1;
+	if (player_said("CIGAR BAND", "GUARD") && inv_player_has("CIGAR BAND") && !_G(flags)[V211]) {
+		_G(flags)[V211] = 1;
+		_G(flags)[V228] = 1;
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(10, 40, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (player_said("conv702a")) {
 		if (_G(kernel).trigger != 1) {
 			conv702a();
-			_G(flags[V211]) = 1;
-			_G(flags[V228]) = 1;
+			_G(flags)[V211] = 1;
+			_G(flags)[V228] = 1;
 		} else {
 			int32 who = conv_whos_talking();
 			if (who <= 0) {
@@ -153,7 +153,7 @@ void Room702::parser() {
 			_field40 = 0;
 			sendWSMessage_10000(1, _guardMach, _guardStepsAsideTalksSeries, 27, 1, 100, _guardStepsAsideTalksSeries, 1, 1, 0);
 			sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow2Series, 1, 1, -1, _702GuardShadow2Series, 1, 1, 0);
-			_G(flags[V212]) = 0;
+			_G(flags)[V212] = 0;
 			_field58 = -1;
 			_field44_mode = 1000;
 			_field48_should = 1100;
@@ -184,7 +184,7 @@ void Room702::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			if (!_G(flags[V214]) && !_G(flags[V228])) {
+			if (!_G(flags)[V214] && !_G(flags)[V228]) {
 				digi_play("702R05", 1, 255, 2, -1);
 			} else {
 				digi_play("702R05", 1, 255, 3, -1);
@@ -229,7 +229,7 @@ void Room702::parser() {
 			break;
 		}
 	} // esi && _G(player).click_y <= 374
-	else if (player_said("  ") && _G(flags[V224])) {
+	else if (player_said("  ") && _G(flags)[V224]) {
 		player_set_commands_allowed(false);
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -256,7 +256,7 @@ void Room702::parser() {
 		default:
 			break;
 		}
-	} // player_said("  ") && _G(flags[V224])
+	} // player_said("  ") && _G(flags)[V224]
 	if (player_said("exit")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -264,8 +264,8 @@ void Room702::parser() {
 			break;
 
 		case 4:
-			if (_G(flags[V211]) && !_G(flags[V210]))
-				_G(flags[V213]) = 1;
+			if (_G(flags)[V211] && !_G(flags)[V210])
+				_G(flags)[V213] = 1;
 
 			_G(game).new_room = 701;
 			break;
@@ -274,16 +274,16 @@ void Room702::parser() {
 			break;
 		}
 	} // player_said("exit")
-	else if (player_said_any("  ", "   ") || (player_said("CIGAR BAND", "GUARD") && _G(flags[V211]))) {
+	else if (player_said_any("  ", "   ") || (player_said("CIGAR BAND", "GUARD") && _G(flags)[V211])) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			if (_G(flags[V224]))
+			if (_G(flags)[V224])
 				kernel_timing_trigger(10, 84, nullptr);
-			else if (!_G(flags[V211]))
+			else if (!_G(flags)[V211])
 				kernel_timing_trigger(10, 5, nullptr);
-			else if (_G(flags[V210]))
-				kernel_timing_trigger(10, _G(flags[V212]) ? 84 : 83, nullptr);
+			else if (_G(flags)[V210])
+				kernel_timing_trigger(10, _G(flags)[V212] ? 84 : 83, nullptr);
 			else {
 				setGlobals1(_ripShowsRingSeries, 1, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 80);
@@ -304,8 +304,8 @@ void Room702::parser() {
 		case 4:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			if (_G(flags[V211]) && !_G(flags[V210])) {
-				_G(flags[V213]) = 1;
+			if (_G(flags)[V211] && !_G(flags)[V210]) {
+				_G(flags)[V213] = 1;
 			}
 
 			_G(game).new_room = 703;
@@ -359,7 +359,7 @@ void Room702::parser() {
 		default:
 			break;
 		}
-	} // player_said_any("  ", "   ") || (player_said("CIGAR BAND", "GUARD") && _G(flags[V211]))
+	} // player_said_any("  ", "   ") || (player_said("CIGAR BAND", "GUARD") && _G(flags)[V211])
 	else if (lookFl && player_said(" ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -368,10 +368,10 @@ void Room702::parser() {
 			break;
 
 		case 2:
-			if (_G(flags[V227])) {
+			if (_G(flags)[V227]) {
 				kernel_timing_trigger(10, 3, nullptr);
 			} else {
-				_G(flags[V227]) = 1;
+				_G(flags)[V227] = 1;
 				digi_play("702R01A", 1, 255, 3, -1);
 			}
 			break;
@@ -399,10 +399,10 @@ void Room702::daemon() {
 	case 40:
 		player_set_commands_allowed(false);
 		setGlobals1(1, _ripShowsRingSeries, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
-		if (_G(flags[V210])) {
+		if (_G(flags)[V210]) {
 			sendWSMessage_110000(_G(my_walker), 41);
 		} else {
-			_G(flags[V210]) = 1;
+			_G(flags)[V210] = 1;
 			sendWSMessage_110000(_G(my_walker), 60);
 		}
 
@@ -454,7 +454,7 @@ void Room702::daemon() {
 	case 50:
 		sendWSMessage_10000(1, _guardMach, _guardStepsAsideTalksSeries, 29, 40, -1, _guardStepsAsideTalksSeries, 40, 40, 0);
 		sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow2Series, 29, 40, -1, _702GuardShadow2Series, 40, 40, 0);
-		_G(flags[V212]) = 1;
+		_G(flags)[V212] = 1;
 
 		digi_play("702R11",1,255,51,-1);
 
@@ -544,9 +544,9 @@ void Room702::daemon() {
 
 			case 1102:
 				conv_load("conv702a",10,10,103);
-				conv_export_value_curr(_G(flags[V211]), 0);
-				conv_export_value_curr(_G(flags[V213]), 1);
-				conv_export_value_curr(_G(flags[V222]), 2);
+				conv_export_value_curr(_G(flags)[V211], 0);
+				conv_export_value_curr(_G(flags)[V213], 1);
+				conv_export_value_curr(_G(flags)[V222], 2);
 				conv_play(conv_get_handle());
 
 				_field48_should = 1103;

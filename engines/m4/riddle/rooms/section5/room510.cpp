@@ -831,13 +831,13 @@ bool Room510::useAltarPost() {
 		ws_unhide_walker();
 		terminateMachineAndNull(_statue);
 
-		if (_G(flags[V169]) <= 0) {
+		if (_G(flags)[V169] <= 0) {
 			_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			kernel_timing_trigger(1, 2, nullptr);
 			hotspot_set_active("ALTAR POST", false);
 			hotspot_set_active("ALTAR POST ", true);
 			kernel_load_variant("510lock1");
-		} else if (_G(flags[V169]) <= 2) {
+		} else if (_G(flags)[V169] <= 2) {
 			_statue = series_play(" 510 STATUE", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			kernel_timing_trigger(1, 2);
 			hotspot_set_active("ALTAR POST", true);
@@ -847,9 +847,9 @@ bool Room510::useAltarPost() {
 		break;
 
 	case 2:
-		switch (_G(flags[V169])) {
+		switch (_G(flags)[V169]) {
 		case 0:
-			_G(flags[V169]) = 1;
+			_G(flags)[V169] = 1;
 			player_set_commands_allowed(true);
 			break;
 
@@ -871,13 +871,13 @@ bool Room510::useAltarPost() {
 		break;
 
 	case 4:
-		switch (_G(flags[V169])) {
+		switch (_G(flags)[V169]) {
 		case 0:
 			player_set_commands_allowed(true);
 			break;
 
 		case 1:
-			_G(flags[V169]) = 0;
+			_G(flags)[V169] = 0;
 			player_set_commands_allowed(true);
 
 			break;
@@ -944,7 +944,7 @@ bool Room510::useAltarPost() {
 
 	case 11:
 		series_unload(_ripLowReach4);
-		_G(flags[V169]) = 0;
+		_G(flags)[V169] = 0;
 		player_set_commands_allowed(true);
 		break;
 
@@ -967,10 +967,10 @@ bool Room510::useAltarPost() {
 		kernel_timing_trigger(130, 3);
 		ws_hide_walker();
 
-		if (_G(flags[V169]) <= 0) {
+		if (_G(flags)[V169] <= 0) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 16, 1, 5);
-		} else if (_G(flags[V169]) == 1) {
+		} else if (_G(flags)[V169] == 1) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 18, 1, 5);
 		}

@@ -39,7 +39,7 @@ void Room704::init() {
 	digi_preload("950_S40A", -1);
 	_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
 
-	if (_G(flags[V224])) {
+	if (_G(flags)[V224]) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MONK #5", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MONK #6", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MONK #7", false);
@@ -47,9 +47,9 @@ void Room704::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "EMPTY NICHE", false);
 	}
 
-	hotspot_set_active(_G(currentSceneDef).hotspots, _G(flags[V218]) ? "EMPTY NICHE" : "PRAYER WHEEL #6", false);
+	hotspot_set_active(_G(currentSceneDef).hotspots, _G(flags)[V218] ? "EMPTY NICHE" : "PRAYER WHEEL #6", false);
 
-	switch (_G(flags[V218])) {
+	switch (_G(flags)[V218]) {
 	case 1:
 		_prayerWheelMach = series_place_sprite("704 PEACE PRAYER WHEEL", 0, 0, 0, 100, 1280);
 		break;
@@ -132,7 +132,7 @@ void Room704::parser() {
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #5") && inv_player_has("PRAYER WHEEL BROCHURE"))
 		playCheckBrochureAnim(_G(kernel).trigger, "704r04");
 	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL #6") && inv_player_has("PRAYER WHEEL BROCHURE")) {
-		switch (_G(flags[V218])) {
+		switch (_G(flags)[V218]) {
 		case 1:
 			playCheckBrochureAnim(_G(kernel).trigger, "704r09");
 			break;
@@ -182,7 +182,7 @@ void Room704::parser() {
 		player_set_commands_allowed(false);
 		digi_play("706r10", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
-	} else if (talkFl && player_said_any("MONK #5", "MONK #6", "MONK #7", "MONK #8") && _G(flags[V286]))
+	} else if (talkFl && player_said_any("MONK #5", "MONK #6", "MONK #7", "MONK #8") && _G(flags)[V286])
 		digi_play("com142", 1, 255, -1, -1);
 	else if (talkFl && player_said("MONK #5")) {
 		switch (_G(kernel).trigger) {
@@ -537,16 +537,16 @@ void Room704::parser() {
 		digi_play("com127", 1, 255, -1, -1);
 	} else if (lookFl && player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (lookFl && player_said("PRAYER WHEEL #6") && _G(flags[V218])) {
+	} else if (lookFl && player_said("PRAYER WHEEL #6") && _G(flags)[V218]) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (takeFl && !player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8") && _G(flags[V286])) {
-		digi_play(_G(flags[V224]) ? "706r26" : "com143", 1, 255, -1, -1);
+	} else if (takeFl && !player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8") && _G(flags)[V286]) {
+		digi_play(_G(flags)[V224] ? "706r26" : "com143", 1, 255, -1, -1);
 	} else if (takeFl && player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_trigger_dispatchx(kernel_trigger_create(player_said("PRAYER WHEEL #6") ? 70 : 80));
 		_G(kernel).trigger_mode = KT_DAEMON;
 	} else if (lookFl && player_said(" ")) {
-		digi_play(_G(flags[V224]) ? "706r24" : "com075", 1, 255, -1, -1);
+		digi_play(_G(flags)[V224] ? "706r24" : "com075", 1, 255, -1, -1);
 	} else if (player_said("CUPOLA")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -642,10 +642,10 @@ void Room704::daemon() {
 		break;
 
 	case 74:
-		switch (_G(flags[V218])) {
+		switch (_G(flags)[V218]) {
 		case 1:
 			inv_give_to_player("PEACE WHEEL");
-			_G(flags[V218]) = 0;
+			_G(flags)[V218] = 0;
 			terminateMachine(_prayerWheelMach);
 			player_update_info(_G(my_walker), &_G(player_info));
 			digi_play("950_S40", 2, 255, -1, 950);
@@ -655,7 +655,7 @@ void Room704::daemon() {
 
 		case 2:
 			inv_give_to_player("INSIGHT WHEEL");
-			_G(flags[V218]) = 0;
+			_G(flags)[V218] = 0;
 			terminateMachine(_prayerWheelMach);
 			player_update_info(_G(my_walker), &_G(player_info));
 			digi_play("950_S40", 2, 255, -1, 950);
@@ -665,7 +665,7 @@ void Room704::daemon() {
 
 		case 3:
 			inv_give_to_player("SERENITY WHEEL");
-			_G(flags[V218]) = 0;
+			_G(flags)[V218] = 0;
 			terminateMachine(_prayerWheelMach);
 			player_update_info(_G(my_walker), &_G(player_info));
 			digi_play("950_S40", 2, 255, -1, 950);
@@ -675,7 +675,7 @@ void Room704::daemon() {
 
 		case 4:
 			inv_give_to_player("TRUTH WHEEL");
-			_G(flags[V218]) = 0;
+			_G(flags)[V218] = 0;
 			terminateMachine(_prayerWheelMach);
 			player_update_info(_G(my_walker), &_G(player_info));
 			digi_play("950_S40", 2, 255, -1, 950);
@@ -685,7 +685,7 @@ void Room704::daemon() {
 
 		case 5:
 			inv_give_to_player("WISDOM WHEEL");
-			_G(flags[V218]) = 0;
+			_G(flags)[V218] = 0;
 			terminateMachine(_prayerWheelMach);
 			player_update_info(_G(my_walker), &_G(player_info));
 			digi_play("950_S40", 2, 255, -1, 950);
@@ -786,9 +786,9 @@ void Room704::daemon() {
 		case 125:
 			conv_load("conv704a", 10, 10, 91);
 			conv_export_value_curr(0, 0);
-			conv_export_value_curr(_G(flags[V211]), 1);
-			conv_export_value_curr(_G(flags[V213]), 2);
-			conv_export_value_curr((_G(flags[V218]) == 3) ? 1 : 0, 0);
+			conv_export_value_curr(_G(flags)[V211], 1);
+			conv_export_value_curr(_G(flags)[V213], 2);
+			conv_export_value_curr((_G(flags)[V218] == 3) ? 1 : 0, 0);
 			conv_play(conv_get_handle());
 
 			break;
@@ -957,7 +957,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 	switch (_G(kernel).trigger) {
 	case -1:
 		player_set_commands_allowed(false);
-		if (_G(flags[V218])) {
+		if (_G(flags)[V218]) {
 			digi_play("com080", 1, 255, 114, -1);
 		} else {
 			setGlobals1(_ripTrekMedReachHandPos1Series, 1, 5, 5, 5, 0, 5, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0);
@@ -979,12 +979,12 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 		break;
 
 	case 104:
-		switch (_G(flags[V218])) {
+		switch (_G(flags)[V218]) {
 		case 0:
 			break;
 		case 1:
 			inv_move_object("PEACE WHEEL", 704);
-			_G(flags[V218]) = 1;
+			_G(flags)[V218] = 1;
 			digi_play("950_S40A", 2, 255, -1, 950);
 			_prayerWheelMach = series_place_sprite("704 PEACE PRAYER WHEEL", 0, 0, 0, 100, 1280);
 			kernel_timing_trigger(5, 105);
@@ -993,7 +993,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 
 		case 2:
 			inv_move_object("INSIGHT WHEEL", 704);
-			_G(flags[V218]) = 2;
+			_G(flags)[V218] = 2;
 			digi_play("950_S40A", 2, 255, -1, 950);
 			_prayerWheelMach = series_place_sprite("704 INSIGHT PRAYER WHEEL", 0, 0, 0, 100, 1280);
 			kernel_timing_trigger(5, 105);
@@ -1002,7 +1002,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 
 		case 3:
 			inv_move_object("SERENITY WHEEL", 704);
-			_G(flags[V218]) = 3;
+			_G(flags)[V218] = 3;
 			digi_play("950_S40A", 2, 255, -1, 950);
 			_prayerWheelMach = series_place_sprite("704 SERENITY PRAYER WHEEL", 0, 0, 0, 100, 1280);
 			kernel_timing_trigger(5, 105);
@@ -1011,7 +1011,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 
 		case 4:
 			inv_move_object("TRUTH WHEEL", 704);
-			_G(flags[V218]) = 4;
+			_G(flags)[V218] = 4;
 			digi_play("950_S40A", 2, 255, -1, 950);
 			_prayerWheelMach = series_place_sprite("704 TRUTH PRAYER WHEEL", 0, 0, 0, 100, 1280);
 			kernel_timing_trigger(5, 105);
@@ -1020,7 +1020,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 
 		case 5:
 			inv_move_object("WISDOM WHEEL", 704);
-			_G(flags[V218]) = 5;
+			_G(flags)[V218] = 5;
 			digi_play("950_S40A", 2, 255, -1, 950);
 			_prayerWheelMach = series_place_sprite("704 WISDOM PRAYER WHEEL", 0, 0, 0, 100, 1280);
 			kernel_timing_trigger(5, 105);
@@ -1098,7 +1098,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 		break;
 
 	case 113:
-		if (_G(flags[V218]) == 3) {
+		if (_G(flags)[V218] == 3) {
 			terminateMachine(_monkMach);
 			series_unload(_704Monk2Series);
 		}

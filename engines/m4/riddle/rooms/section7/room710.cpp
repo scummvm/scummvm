@@ -60,7 +60,7 @@ void Room710::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		digi_preload("950_s41", -1);
-		if (_G(flags[V223])) {
+		if (_G(flags)[V223]) {
 			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
@@ -76,7 +76,7 @@ void Room710::init() {
 		ws_demand_location(_G(my_walker), 320, 282);
 		ws_demand_facing(_G(my_walker), 5);
 
-		if (_G(flags[V223])) {
+		if (_G(flags)[V223]) {
 			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 3840);
@@ -110,7 +110,7 @@ void Room710::init() {
 		ws_demand_location(_G(my_walker), 282, 282);
 		ws_demand_facing(_G(my_walker), 4);
 
-		if (_G(flags[V223])) {
+		if (_G(flags)[V223]) {
 			_ladderActiveFl = true;
 			_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
 			_710Rpld5Mach = series_place_sprite("710rpld5", 0, 0, -53, 100, 4095);
@@ -150,7 +150,7 @@ void Room710::parser() {
 
 		if (_ladderActiveFl) {
 			digi_play("710R21", 1, 255, -1, -1);
-		} else if (_G(flags[kLeftCastleUnderground] == 0)) {
+		} else if (_G(flags)[kLeftCastleUnderground] == 0) {
 			digi_play("710R02", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -206,7 +206,7 @@ void Room710::parser() {
 		digi_play(_ladderActiveFl ? "710R20" : "710R01", 1, 255, -1, -1);
 		player_set_commands_allowed(true);
 	} else if (gearFl && player_said("Rope")) {
-		if (_G(flags[V223])) {
+		if (_G(flags)[V223]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -241,7 +241,7 @@ void Room710::parser() {
 			case 3:
 				terminateMachine(_ripContractionMach02);
 				_710Rpld4Mach = series_place_sprite("710rpld3", 0, 0, -53, 100, 3840);
-				_G(flags[V223]) = 0;
+				_G(flags)[V223] = 0;
 				player_set_commands_allowed(true);
 
 				break;
@@ -297,7 +297,7 @@ void Room710::parser() {
 			case 3:
 				terminateMachine(_ripContractionMach02);
 				_710Rpld4Mach = series_place_sprite("710rpld4", 0, 0, -53, 100, 1541);
-				_G(flags[V223]) = 1;
+				_G(flags)[V223] = 1;
 				player_set_commands_allowed(true);
 				digi_play("710r07", 1, 255, -1, -1);
 

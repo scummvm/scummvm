@@ -35,7 +35,7 @@ void Room711::preload() {
 
 void Room711::init() {
 	digi_preload("711R03", -1);
-	if (_G(flags[V224])) {
+	if (_G(flags)[V224]) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MASTER LU'S BOOK", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "SIKKIMESE LU'S BOOK", false);
 	}
@@ -69,7 +69,7 @@ void Room711::parser() {
 	} else if ((lookFl || player_said("JOURNAL")) && player_said("Master Lu's Book")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if (_G(flags[V286]))
+			if (_G(flags)[V286])
 				digi_play("203r54", 1, 255, -1, -1);
 			else {
 				player_set_commands_allowed(false);
@@ -103,7 +103,7 @@ void Room711::parser() {
 			break;
 
 		case 8:
-			_G(flags[V286]) = 1;
+			_G(flags)[V286] = 1;
 			player_set_commands_allowed(true);
 
 			break;
@@ -134,7 +134,7 @@ void Room711::parser() {
 
 		case 2:
 			player_set_commands_allowed(true);
-			_G(game).new_room = _G(flags[V286]) ? 706 : 710;
+			_G(game).new_room = _G(flags)[V286] ? 706 : 710;
 
 			break;
 
