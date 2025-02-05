@@ -182,6 +182,35 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 }
 
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
+	if (!_isMouseButtonDown)
+		return;
+
+	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+
+	// HACK: FIXME: Hard coded for now
+	const int sensitivity = 10;
+	const float speedFactor = 0.5f;
+
+	int16 mouseDeltaX = x - _prevMouseX;
+	int16 mouseDeltaY = y - _prevMouseY;
+
+	float speedX = (float)mouseDeltaX * speedFactor;
+	float speedY = (float)mouseDeltaY * speedFactor;
+
+	bool changed = false;
+
+	if (ABS(mouseDeltaX) >= sensitivity) {
+		track->setCurAngle(track->getCurAngle() + speedX);
+
+		changed = true;
+	}
+
+	(void)speedY;
+
+	if (changed) {
+		_prevMouseX = x;
+		_prevMouseY = y;
+	}
 }
 
 
@@ -215,6 +244,12 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
 }
 
 void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
+	_isMouseButtonDown = isDown;
+
+	if (isDown) {
+		_prevMouseX = x;
+		_prevMouseY = y;
+	}
 }
 
 void QuickTimeDecoder::setCurrentRow(int row) {
@@ -297,6 +332,10 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_constructedPano = nullptr;
 	_constructedHotspots = nullptr;
 	_projectedPano = nullptr;
+
+	_curAngle = 0.0f;
+
+	_dirty = true;
 }
 
 QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
@@ -354,7 +393,9 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 	if (!_isPanoConstructed)
 		return nullptr;
 
-	projectPanorama();
+	if (_dirty)
+		projectPanorama();
+
 	return _projectedPano;
 }
 
@@ -419,6 +460,8 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
 	_isPanoConstructed = true;
+
+	_curAngle = desc->_hPanStart;
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
@@ -432,15 +475,20 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		_projectedPano->create(w, h, _constructedPano->format);
 	}
 
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+	int startY = ((float)desc->_sceneSizeY / (desc->_hPanEnd - desc->_hPanStart)) * (_curAngle - desc->_hPanStart);
+
 	for (uint16 y = 0; y < h; y++) {
 		for (uint16 x = 0; x < w; x++) {
 			int setX = y;
-			int setY = x;
+			int setY = x + startY;
 
 			uint32 pixel = _constructedPano->getPixel(setX, setY);
 			_projectedPano->setPixel(x, y, pixel);
 		}
 	}
+
+	_dirty = false;
 
 
 #if 0
@@ -466,6 +514,22 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	}
 
 #endif
+}
+
+void QuickTimeDecoder::PanoTrackHandler::setCurAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
+	if (angle < desc->_hPanStart)
+		angle = desc->_hPanStart;
+
+	if (angle > desc->_hPanEnd)
+		angle = desc->_hPanEnd;
+
+	if (_curAngle != angle) {
+		_curAngle = angle;
+
+		_dirty = true;
+	}
 }
 
 enum {
