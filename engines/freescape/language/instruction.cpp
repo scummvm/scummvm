@@ -418,9 +418,20 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 		}
 	} else {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
-		if (src == 0 && dst == 1)
-			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _renderMode == Common::kRenderCGA ? 1 : _currentArea->_underFireBackgroundColor);
-		else if (src == 0 && dst == 0)
+		if (src == 0 && dst == 1) {
+
+			src = _currentArea->_usualBackgroundColor;
+			dst = _currentArea->_underFireBackgroundColor;
+
+			if (_renderMode == Common::kRenderCGA)
+				dst = 1;
+			else if (isC64()) {
+				src %= 16;
+				dst %= 16;
+			}
+
+			_currentArea->remapColor(src, dst);
+		} else if (src == 0 && dst == 0)
 			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
 		else if (src == 15 && dst == 15) // Found in Total Eclipse (DOS)
 			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);

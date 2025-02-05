@@ -847,6 +847,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		file->seek(offset + 0x6);
 	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x14);
+	else if (isDriller() && isC64())
+		file->seek(offset + 0x2a);
 	else
 		file->seek(offset + 0xa);
 

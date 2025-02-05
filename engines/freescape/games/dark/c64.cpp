@@ -34,7 +34,7 @@ void DarkEngine::initC64() {
 void DarkEngine::loadAssetsC64FullGame() {
 	Common::File file;
     file.open("darkside.c64.data");
-    loadMessagesFixedSize(&file, 0x1edf, 14, 20);
+    loadMessagesFixedSize(&file, 0x1edf, 16, 27);
     //loadFonts(&file, 0xae54);
     //loadFonts(&file, 0x4ee);
     loadGlobalObjects(&file, 0x20bd, 23);

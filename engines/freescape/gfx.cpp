@@ -112,11 +112,8 @@ byte getCGAPixel(byte x, int index) {
 }
 
 byte getC64Pixel(byte x, int index) {
-	if (index < 0 || index > 3) {
-		error("Invalid index %d requested\n", index);
-	}
-	// Extract the corresponding 2-bit pair based on the index
-	return ((x >> (index * 2)) & 0x3);
+	// Unknown
+	return 0;
 }
 
 byte getCGAStipple(byte x, int back, int fore) {
@@ -185,7 +182,7 @@ void Renderer::fillColorPairArray() {
 		else if (_renderMode == Common::kRenderCPC)
 			c1 = getCPCPixel(entry[0], 0, true);
 		else if (_renderMode == Common::kRenderC64)
-			c1 = getCPCPixel(entry[0], 0, true);
+			c1 = getC64Pixel(entry[0], 0);
 		else
 			error("Not implemented");
 
@@ -199,7 +196,7 @@ void Renderer::fillColorPairArray() {
 				else if (_renderMode == Common::kRenderCPC)
 					c = getCPCPixel(entry[j], k, true);
 				else if (_renderMode == Common::kRenderC64)
-					c = getCPCPixel(entry[j], k, true);
+					c = getC64Pixel(entry[j], k);
 				else
 					error("Not implemented");
 				if (c1 != c) {
@@ -284,7 +281,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte c2 = (pair >> 4) & 0xf;
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = getCPCStipple(entry[(j / 8) % 4], c1, c2);
+				_stipples[i][j] = getC64Stipple(entry[(j / 8) % 4], c1, c2);
 		}
 	}
 
@@ -295,6 +292,8 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			scaleStipplePattern(_stipples[i], _stipples[15]);
 			memcpy(_stipples[i], _stipples[15], 128);
 		}
+		scaleStipplePattern(_defaultStippleArray, _stipples[15]);
+		memcpy(_defaultStippleArray, _stipples[15], 128);
 	}
 }
 
@@ -343,53 +342,45 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
-
 void Renderer::extractC64Indexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
-	if (cm1 == 0xaa && cm2 == 0x5a) {
-		i1 = 2;
-		i2 = 3;
-	} else if (cm1 == 0x4f && cm2 == 0x46) {
+	if (cm1 == 0x00 && cm2 == 0x00) {
 		i1 = 0;
-		i2 = 2;
-	} else if (cm1 == 0x56 && cm2 == 0x45) {
-		i1 = 0;
+		i2 = 0;
+	} else if (cm1 == 0xf0 && cm2 == 0xf0) {
+		i1 = 1;
 		i2 = 1;
-	} else if (cm1 == 0xa0 && cm2 == 0x55) {
-		i1 = 1;
-		i2 = 3;
-	} else if (cm1 == 0x4c && cm2 == 0x54) {
-		i1 = 1;
+	} else if (cm1 == 0x0f && cm2 == 0x0f) {
+		i1 = 2;
 		i2 = 2;
-	} else if (cm1 == 0x41 && cm2 == 0x52) {
-		i1 = 0;
-		i2 = 3;
-	} else if (cm1 == 0xdd && cm2 == 0xdd) {
+	} else if (cm1 == 0xff && cm2 == 0xff) {
 		i1 = 3;
 		i2 = 3;
 	} else if (cm1 == 0xaa && cm2 == 0x55) {
 		i1 = 3;
 		i2 = 1;
-	} else if (cm1 == 0x05 && cm2 == 0x0a) {
+	} else if (cm1 == 0x05 && cm2 == 0x0a) { // Y?
 		i1 = 1;
 		i2 = 0;
-	} else if (cm1 == 0xf5 && cm2 == 0xfa) {
-		i1 = 2;
+	} else if (cm1 == 0xf5 && cm2 == 0xfa) { // Y
+		i1 = 3;
 		i2 = 2;
 	} else if (cm1 == 0x50 && cm2 == 0xa0) {
 		i1 = 2;
+		i2 = 0;
+	} else if (cm1 == 0x5f && cm2 == 0xaf) { // Y ?
+		i1 = 1;
+		i2 = 3;
+	} else if (cm1 == 0x5a && cm2 == 0xa5) { // Y?
+		i1 = 1;
 		i2 = 2;
-	} else if (cm1 == 0x5f && cm2 == 0xaf) {
-		i1 = 2;
-		i2 = 2;
-	} else if (cm1 == 0x5a && cm2 == 0xa5) {
-		i1 = 2;
-		i2 = 2;
-	} else {
+	} else if (cm1 == 0x55 && cm2 == 0xaa) { // ??
 		i1 = 0;
 		i2 = 0;
+	} else {
+		i1 = 2;
+		i2 = 2;
 	}
 }
-
 
 bool Renderer::getRGBAtC64(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
 	if (index == _keyColor)
@@ -413,15 +404,19 @@ bool Renderer::getRGBAtC64(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return true;
 	}
 	assert (_renderMode == Common::kRenderC64);
+	uint8 i1, i2;
 	stipple = (byte *)_stipples[index - 1];
 	byte *entry = (*_colorMap)[index - 1];
-	uint8 i1 = getCPCPixel(entry[0], 0, true);
-	uint8 i2 = getCPCPixel(entry[0], 1, true);
+	uint8 cm1 = *(entry);
+	entry++;
+	uint8 cm2 = *(entry);
+	extractC64Indexes(cm1, cm2, i1, i2);
 	selectColorFromFourColorPalette(i1, r1, g1, b1);
 	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	if (r1 == r2 && g1 == g2 && b1 == b2) {
 		stipple = nullptr;
-	}
+	} else
+		stipple = nullptr; // TODO: custom stipple support
 	return true;
 }
 

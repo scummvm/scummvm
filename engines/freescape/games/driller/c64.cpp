@@ -48,6 +48,87 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		loadMessagesFixedSize(&file, 0x1766, 14, 20);
 		loadGlobalObjects(&file, 0x1941, 8);
 
+		// The color map from the C64 version looks invalid
+		// so we'll just hardcode the Dark Side one which works fine
+
+		for (int i = 0; i < 15; i++) {
+			_colorMap[i][0] = 0;
+			_colorMap[i][1] = 0;
+			_colorMap[i][2] = 0;
+			_colorMap[i][3] = 0;
+		}
+
+		_colorMap[1][0] = 0xf0;
+		_colorMap[1][1] = 0xf0;
+		_colorMap[1][2] = 0xf0;
+		_colorMap[1][3] = 0xf0;
+
+		_colorMap[2][0] = 0x0f;
+		_colorMap[2][1] = 0x0f;
+		_colorMap[2][2] = 0x0f;
+		_colorMap[2][3] = 0x0f;
+
+		_colorMap[3][0] = 0xff;
+		_colorMap[3][1] = 0xff;
+		_colorMap[3][2] = 0xff;
+		_colorMap[3][3] = 0xff;
+
+		_colorMap[4][0] = 0x05;
+		_colorMap[4][1] = 0x0a;
+		_colorMap[4][2] = 0x05;
+		_colorMap[4][3] = 0x0a;
+
+		_colorMap[5][0] = 0x50;
+		_colorMap[5][1] = 0xa0;
+		_colorMap[5][2] = 0x50;
+		_colorMap[5][3] = 0xa0;
+
+		_colorMap[6][0] = 0x55;
+		_colorMap[6][1] = 0xaa;
+		_colorMap[6][2] = 0x55;
+		_colorMap[6][3] = 0xaa;
+
+		_colorMap[7][0] = 0x5a;
+		_colorMap[7][1] = 0xa5;
+		_colorMap[7][2] = 0x5a;
+		_colorMap[7][3] = 0xa5;
+
+		_colorMap[8][0] = 0x5f;
+		_colorMap[8][1] = 0xaf;
+		_colorMap[8][2] = 0x5f;
+		_colorMap[8][3] = 0xaf;
+
+		_colorMap[9][0] = 0xf5;
+		_colorMap[9][1] = 0xfa;
+		_colorMap[9][2] = 0xf5;
+		_colorMap[9][3] = 0xfa;
+
+		_colorMap[10][0] = 0x0a;
+		_colorMap[10][1] = 0x05;
+		_colorMap[10][2] = 0x0a;
+		_colorMap[10][3] = 0x05;
+
+		_colorMap[11][0] = 0xa0;
+		_colorMap[11][1] = 0x50;
+		_colorMap[11][2] = 0xa0;
+		_colorMap[11][3] = 0x50;
+
+		_colorMap[12][0] = 0xa5;
+		_colorMap[12][1] = 0x5a;
+		_colorMap[12][2] = 0xa5;
+		_colorMap[12][3] = 0x5a;
+
+		_colorMap[13][0] = 0xaa;
+		_colorMap[13][1] = 0x55;
+		_colorMap[13][2] = 0xaa;
+		_colorMap[13][3] = 0x55;
+
+		_colorMap[14][0] = 0xdd;
+		_colorMap[14][1] = 0xdd;
+		_colorMap[14][2] = 0xdd;
+		_colorMap[14][3] = 0xdd;
+
+
 		Graphics::Surface *surf = loadBundledImage("driller_border");
 		surf->convertToInPlace(_gfx->_texturePixelFormat);
 		_border = new Graphics::ManagedSurface();
