@@ -47,11 +47,11 @@ private:
 	bool _alreadyBeen702Fl = false; // Unused : Set but never used
 
 	int32 _field40 = 0;
-	int32 _field44_mode = 0;
-	int32 _field48_should = 0;
+	int32 _ripleyMode = 0;
+	int32 _ripleyShould = 0;
 	int32 _field4C_triggerNum = 0;
-	int32 _field50_mode = 0;
-	int32 _field54_should = 0;
+	int32 _guardMode = 0;
+	int32 _guardShould = 0;
 	int32 _field58 = 0; // Useless (but synchronized?) - Always -1?
 
 	int32 _702GuardShadow1Series = 0;

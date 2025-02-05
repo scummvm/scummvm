@@ -39,11 +39,11 @@ void Room702::init() {
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_field40 = 0;
-		_field44_mode = 0;
-		_field48_should = 0;
+		_ripleyMode = 0;
+		_ripleyShould = 0;
 		_field4C_triggerNum = -1;
-		_field50_mode = 0;
-		_field54_should = 0;
+		_guardMode = 0;
+		_guardShould = 0;
 		_field58 = -1;
 	}
 
@@ -134,9 +134,9 @@ void Room702::parser() {
 		} else {
 			int32 who = conv_whos_talking();
 			if (who <= 0) {
-				_field54_should = 2101;
+				_guardShould = 2101;
 			} else if (who == 1) {
-				_field48_should = 1103;
+				_ripleyShould = 1103;
 			}
 			conv_resume(conv_get_handle());
 		}
@@ -144,8 +144,8 @@ void Room702::parser() {
 		player_set_commands_allowed(false);
 		if (!_field40) {
 			_field58 = -1;
-			_field44_mode = 1000;
-			_field48_should = 1100;
+			_ripleyMode = 1000;
+			_ripleyShould = 1100;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_trigger_dispatchx(kernel_trigger_create(100));
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -155,8 +155,8 @@ void Room702::parser() {
 			sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow2Series, 1, 1, -1, _702GuardShadow2Series, 1, 1, 0);
 			_G(flags)[V212] = 0;
 			_field58 = -1;
-			_field44_mode = 1000;
-			_field48_should = 1100;
+			_ripleyMode = 1000;
+			_ripleyShould = 1100;
 		}
 	} else if (lookFl && player_said("TEMPLE"))
 		digi_play("702R02", 1, 255, -1, -1);
@@ -170,11 +170,11 @@ void Room702::parser() {
 			player_set_commands_allowed(false);
 			_ringCloseupMach = series_place_sprite("Ring closeup", 0, 0, -53, 100, 0);
 			digi_play("702_S01", 1, 255, 2, -1);
-
 			break;
 
 		case 2:
 			terminateMachine(_ringCloseupMach);
+			player_set_commands_allowed(true);
 			break;
 
 		default:
@@ -257,7 +257,7 @@ void Room702::parser() {
 			break;
 		}
 	} // player_said("  ") && _G(flags)[V224]
-	if (player_said("exit")) {
+	else if (player_said("exit")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			disable_player_commands_and_fade_init(4);
@@ -523,8 +523,8 @@ void Room702::daemon() {
 		break;
 
 	case 101:
-		if (_field44_mode == 1000) {
-			switch (_field48_should) {
+		if (_ripleyMode == 1000) {
+			switch (_ripleyShould) {
 			case 1100:
 				ws_hide_walker(_G(my_walker));
 				player_set_commands_allowed(false);
@@ -534,9 +534,9 @@ void Room702::daemon() {
 				sendWSMessage_10000(1, _ripTalksGuardMach, _ripShowsRingSeries, 1, 1, -1, _ripShowsRingSeries, 1, 1, 0);
 				sendWSMessage_10000(1, _ripTalksGuardShadowMach, _safariShadow1Series, 1, 1, 100, _safariShadow1Series, 1, 1, 0);
 
-				_field48_should = 1102;
-				_field50_mode = 2000;
-				_field54_should = 2100;
+				_ripleyShould = 1102;
+				_guardMode = 2000;
+				_guardShould = 2100;
 
 				kernel_trigger_dispatchx(kernel_trigger_create(110));
 
@@ -549,7 +549,7 @@ void Room702::daemon() {
 				conv_export_value_curr(_G(flags)[V222], 2);
 				conv_play(conv_get_handle());
 
-				_field48_should = 1103;
+				_ripleyShould = 1103;
 
 				kernel_trigger_dispatchx(kernel_trigger_create(100));
 
@@ -564,7 +564,7 @@ void Room702::daemon() {
 				terminateMachine(_ripTalksGuardMach);
 				terminateMachine(_ripTalksGuardShadowMach);
 
-				_field54_should = 2106;
+				_guardShould = 2106;
 
 				ws_unhide_walker(_G(my_walker));
 				player_set_commands_allowed(true);
@@ -583,12 +583,12 @@ void Room702::daemon() {
 		break;
 
 	case 103:
-		_field48_should = 1105;
+		_ripleyShould = 1105;
 		break;
 
 	case 110:
-		if (_field50_mode == 2000) {
-			switch (_field54_should) {
+		if (_guardMode == 2000) {
+			switch (_guardShould) {
 			case 2100:
 			case 2101:
 			case 2103:
@@ -607,13 +607,13 @@ void Room702::daemon() {
 		break;
 
 	case 111:
-		if (_field50_mode == 2000) {
-			switch (_field54_should) {
+		if (_guardMode == 2000) {
+			switch (_guardShould) {
 			case 2100:
 			case 2101:
 				sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 8, 8, 110, _guardTalksAndBowsSeries, 8, 8, 0);
 				sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, 8, 8, -1, _702GuardShadow1Series, 8, 8, 0);
-				_field54_should = 2101;
+				_guardShould = 2101;
 
 				break;
 
@@ -621,7 +621,7 @@ void Room702::daemon() {
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 1, -1);
 				_G(kernel).trigger_mode = KT_DAEMON;
-				_field54_should = 2104;
+				_guardShould = 2104;
 				kernel_timing_trigger(1, 111, nullptr);
 
 				break;
@@ -642,7 +642,7 @@ void Room702::daemon() {
 			case 2107:
 				sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 48, 58, 110, _guardTalksAndBowsSeries, 58, 58, 0);
 				sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, 48, 58, -1, _702GuardShadow1Series, 58, 58, 0);
-				_field54_should = 2108;
+				_guardShould = 2108;
 
 				break;
 
@@ -650,13 +650,13 @@ void Room702::daemon() {
 				digi_play("702_S01", 1, 255, -1, -1);
 				sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, 58, 82, 110, _guardTalksAndBowsSeries, 82, 82, 0);
 				sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, 58, 82, -1, _702GuardShadow1Series, 82, 82, 0);
-				_field54_should = 2109;
+				_guardShould = 2109;
 
 				break;
 
 			case 2109:
 				terminateMachine(_ringCloseupMach);
-				_field54_should = 2103;
+				_guardShould = 2103;
 				kernel_timing_trigger(1, 111, nullptr);
 
 				break;
@@ -688,23 +688,23 @@ void Room702::conv702a() {
 		int32 entry = conv_current_entry();
 
 		if (node == 1 && (entry == 1 || entry == 2)) {
-			_field54_should = 2107;
+			_guardShould = 2107;
 		} else {
-			_field54_should = 2103;
+			_guardShould = 2103;
 		}
 	} else if (who == 1) {
-		_field48_should = 1104;
+		_ripleyShould = 1104;
 		digi_play(conv_sound_to_play(), 1, 255, 1, -1);
 	}
 }
 
 void Room702::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_field40);
-	s.syncAsSint32LE(_field44_mode);
-	s.syncAsSint32LE(_field48_should);
+	s.syncAsSint32LE(_ripleyMode);
+	s.syncAsSint32LE(_ripleyShould);
 	s.syncAsSint32LE(_field4C_triggerNum);
-	s.syncAsSint32LE(_field50_mode);
-	s.syncAsSint32LE(_field54_should);
+	s.syncAsSint32LE(_guardMode);
+	s.syncAsSint32LE(_guardShould);
 	s.syncAsSint32LE(_field58);
 }
 } // namespace Rooms
