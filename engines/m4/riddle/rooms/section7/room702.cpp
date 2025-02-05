@@ -594,6 +594,8 @@ void Room702::daemon() {
 			case 2103:
 			case 2104:
 			case 2106:
+			case 2107:
+			case 2108:
 			case 2109:
 				kernel_timing_trigger(1, 111, nullptr);
 				break;
