@@ -1613,6 +1613,10 @@ int32 Room701::inventoryCheck() {
 	return _inventoryCheckCounter > 0 ? 1 : 0;
 }
 
+void Room701::syncGame(Common::Serializer &s) {
+	s.syncAsByte(_field88);
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
