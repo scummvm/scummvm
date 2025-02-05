@@ -279,14 +279,100 @@ void Room809::parser() {
 		break;
 
 	case 48:
+		//TODO Not implemented yet
+		break;
+
 	case 49:
+		_809rp01Mach = series_play("809rp01", 256, 16, 50, 5, 0, 100, 0, 0, 170, -1);
+		digi_play("809_s06", 2, 255, -1, -1);
+
+		break;
+
 	case 50:
+		player_set_commands_allowed(true);
+		inv_move_object("two soldiers' shields", 809);
+		kernel_timing_trigger(imath_ranged_rand(360, 540), 51, nullptr);
+
+		break;
+
 	case 51:
+		if (_field20 == 0 && inv_object_in_scene("two soldiers' shields", 809)) {
+			terminateMachine(_809rp01Mach);
+			_809rp01Mach = series_play("809shufl", 0, 17, -1, 7, 1, 100, 0, 0, 0, -1);
+			digi_play("809_s03", 2, 255, -1, -1);
+			kernel_timing_trigger(imath_ranged_rand(360, 540), 51, nullptr);
+		}
+
+		break;
+
 	case 52:
+		player_set_commands_allowed(true);
+		terminateMachine(_809rp01Mach);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_facing(_G(my_walker), 3);
+		ws_demand_location(_G(my_walker), 1346, 318);
+		// CHECKME: load and unload??
+		_809hallSeries = series_load("809rp01", -1, nullptr);
+		series_unload(_809hallSeries);
+
+		kernel_trigger_dispatchx(kernel_trigger_create(1));
+
+		break;
+
 	case 53:
+		player_set_commands_allowed(false);
+		player_update_info(_mcTrekMach, &_G(player_info));
+		if (_G(player_info).x < 1265) {
+			kernel_timing_trigger(30, 53, nullptr);
+		} else if (inv_object_in_scene("two soldiers' shields", 809)) {
+			_field20 = 1;
+			series_unload(0);
+			series_unload(1);
+			series_unload(3);
+			series_unload(4);
+
+			digi_preload("809_s04", -1);
+			digi_preload("809m05", -1);
+			digi_preload("809r19", -1);
+			digi_preload("809_s05", -1);
+
+			// CHECKME: load and unload??
+			_809hallSeries = series_load("809rp01", -1, nullptr);
+			series_unload(_809hallSeries);
+			_809hallSeries = series_load("809shufl", -1, nullptr);
+			series_unload(_809hallSeries);
+
+			terminateMachine(_809rp01Mach);
+			_809crossMach = series_stream("809cross", 5, 0, 56);
+			series_stream_break_on_frame(_809crossMach, 119, 55);
+			digi_play("809_s04", 2, 255, -1, -1);
+			digi_play("809M05", 1, 255, 54, -1);
+		} else if (_G(flags[V102])) {
+			digi_play("809M02", 1, 255, 64, -1);
+		} else {
+			_G(flags[V102]) = 1;
+			if (_G(flags[V103])) {
+				digi_play("809M02", 1, 255, 61, -1);
+			} else {
+				digi_play("809M02", 1, 255, 59, -1);
+			}
+		}
+		break;
+
 	case 54:
+		digi_play("809r19", 1, 255, -1, -1);
+		break;
+
 	case 55:
+		digi_play("809_s05", 2, 255, -1, -1);
+		break;
+
 	case 56:
+		_809crossMach = series_stream("809exit", 5, 0, -1);
+		series_stream_break_on_frame(_809crossMach, 49, 57);
+
+		break;
+
 	case 57:
 	case 58:
 	case 59:

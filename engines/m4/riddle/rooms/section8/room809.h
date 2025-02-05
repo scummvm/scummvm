@@ -61,8 +61,9 @@ private:
 	int32 _ripTalkerPos5Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 
-	machine *_809rp01Mach = nullptr;
+	machine *_809crossMach = nullptr;
 	machine *_809hallMach = nullptr;
+	machine *_809rp01Mach = nullptr;
 	machine *_mcTrekMach = nullptr;
 
 };
