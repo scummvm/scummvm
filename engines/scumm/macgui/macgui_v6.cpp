@@ -45,7 +45,12 @@
 namespace Scumm {
 
 // ===========================================================================
-// The Mac SCUMM v6 (and later) GUI.
+// The Maniac Mansion + Mac SCUMM v6 (and later) GUI
+//
+// Note that the original Maniac Mansion GUI would not open the Open and Save
+// dialogs directly. Instead it would trigger the built-in save/load screen,
+// and trigger the dialogs from there. At least for now, that's more work than
+// it is worth.
 // ===========================================================================
 
 MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
