@@ -482,11 +482,12 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	}
 
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-	int startY = ((float)desc->_sceneSizeY / (desc->_hPanEnd - desc->_hPanStart)) * (_curPanAngle - desc->_hPanStart);
+	int startY = (((float)desc->_sceneSizeY - w) / (desc->_hPanEnd - desc->_hPanStart)) * (_curPanAngle - desc->_hPanStart);
+	int startX = ((float)(desc->_sceneSizeX - h) / (desc->_vPanTop - desc->_vPanBottom)) * (_curTiltAngle - desc->_vPanBottom);
 
 	for (uint16 y = 0; y < h; y++) {
 		for (uint16 x = 0; x < w; x++) {
-			int setX = y;
+			int setX = y + startX;
 			int setY = x + startY;
 
 			uint32 pixel = _constructedPano->getPixel(setX, setY);
