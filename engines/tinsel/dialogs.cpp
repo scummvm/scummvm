@@ -3661,11 +3661,12 @@ void Dialogs::openMenu(CONFTYPE menuType) {
 	_invD[INV_CONF].resizable = false;
 	_invD[INV_CONF].bMoveable = false;
 
-	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
 	if (menuType == SAVE_MENU || menuType == LOAD_MENU) {
+		Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
 		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
 		keymapper->getKeymap("saveload-shortcuts")->setEnabled(true);
 	}
+
 	switch (menuType) {
 	case MAIN_MENU:
 		setMenuGlobals(&ciOption);
@@ -3868,6 +3869,10 @@ void Dialogs::killInventory() {
 			_vm->_pcmMusic->unDim(false);
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false); // Hide VK after save dialog closes
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("saveload-shortcuts")->setEnabled(false);
 }
 
 void Dialogs::closeInventory() {
@@ -5501,13 +5506,6 @@ bool Dialogs::isConvWindow() {
 }
 
 void Dialogs::callFunction(BFUNC boxFunc) {
-
-	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
-	if (boxFunc == CLOSEWIN || boxFunc == SAVEGAME || boxFunc == LOADGAME) {
-		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
-		keymapper->getKeymap("saveload-shortcuts")->setEnabled(false);
-	}
-
 	switch (boxFunc) {
 	case SAVEGAME:
 		killInventory();
