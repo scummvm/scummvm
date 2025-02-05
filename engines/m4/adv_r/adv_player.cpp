@@ -164,12 +164,9 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 	return true;
 }
 
-void player_first_walk(int32 x1, int32 y1, int32 /*f1*/, int32 x2, int32 y2, int32 /*f2*/, bool /*enable_commands_at_destination*/) {
-	player_demand_location(x1, y1);
-	_G(player).ready_to_walk = true;
-	_G(player).need_to_walk = true;
-	_G(player).walk_x = x2;
-	_G(player).walk_y = y2;
+void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool /*enable_commands_at_destination*/) {
+	ws_demand_location(x1, y1, f1);
+	ws_walk(x2, y2, nullptr, -1, f2);
 }
 
 void player_set_defaults() {
