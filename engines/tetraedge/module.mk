@@ -172,4 +172,4 @@ endif
 include $(srcdir)/rules.mk
 
 # Detection objects
-DETECT_OBJS += $(MODULE)/detection.o $(MODULE)/obb_archive.o
+DETECT_OBJS += $(MODULE)/detection.o
