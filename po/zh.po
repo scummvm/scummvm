@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-04 14:24+0000\n"
+"POT-Creation-Date: 2025-02-05 21:10+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -6413,7 +6413,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:246
-#: engines/freescape/games/dark/dark.cpp:184
+#: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:132
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
@@ -6426,7 +6426,7 @@ msgstr "儲存遊戲"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:251
-#: engines/freescape/games/dark/dark.cpp:189
+#: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:137
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
@@ -6464,7 +6464,7 @@ msgstr ""
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:82
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
-#: engines/freescape/games/dark/dark.cpp:194
+#: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:142
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
@@ -7204,7 +7204,7 @@ msgid "Select Princess"
 msgstr "选择着色器"
 
 #: engines/freescape/games/castle/castle.cpp:268
-#: engines/freescape/games/dark/dark.cpp:204
+#: engines/freescape/games/dark/dark.cpp:206
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 #, fuzzy
@@ -7213,7 +7213,7 @@ msgid "Toggle Sound"
 msgstr "特殊音效音量"
 
 #: engines/freescape/games/castle/castle.cpp:273
-#: engines/freescape/games/dark/dark.cpp:210
+#: engines/freescape/games/dark/dark.cpp:212
 #: engines/freescape/games/driller/driller.cpp:156
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #, fuzzy
@@ -7221,7 +7221,7 @@ msgid "Rotate Left"
 msgstr "向下"
 
 #: engines/freescape/games/castle/castle.cpp:278
-#: engines/freescape/games/dark/dark.cpp:215
+#: engines/freescape/games/dark/dark.cpp:217
 #: engines/freescape/games/driller/driller.cpp:161
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 #, fuzzy
@@ -7247,28 +7247,28 @@ msgid "Face Forward"
 msgstr "后端"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:221
+#: engines/freescape/games/dark/dark.cpp:223
 #: engines/freescape/games/driller/driller.cpp:167
 msgid "Increase Step Size"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:227
+#: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:173
 msgid "Decrease Step Size"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:232
+#: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:178
 msgid "Rise/Fly up"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:238
+#: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:184
 msgid "Lower/Fly down"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:244
+#: engines/freescape/games/dark/dark.cpp:246
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
