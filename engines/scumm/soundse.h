@@ -23,6 +23,7 @@
 #define SCUMM_SOUNDSE_H
 
 #include "common/scummsys.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "scumm/file.h"
 
@@ -31,7 +32,7 @@ class SeekableSubReadStream;
 }
 
 namespace Audio {
-class SeekableAudioStream;
+class WMACodec;
 }
 
 namespace Scumm {
@@ -46,6 +47,26 @@ enum SoundSEType {
 	kSoundSETypeAmbience,
 	kSoundSETypeCommentary,
 	kSoundSETypePatch
+};
+
+enum AudioCodec {
+	kXWBCodecPCM = 0,
+	kXWBCodecXMA = 1,
+	kXWBCodecADPCM = 2,
+	kXWBCodecWMA = 3,
+	kFSBCodecMP3 = 4
+};
+
+struct AudioEntry {
+	uint64 offset;
+	uint32 length;
+	AudioCodec codec;
+	byte channels;
+	uint16 rate;
+	uint16 align;
+	byte bits;
+	Common::String name;
+	bool isPatched;
 };
 
 class SoundSE {
@@ -72,14 +93,6 @@ public:
 	void stopAmbience();
 
 private:
-	enum AudioCodec {
-		kXWBCodecPCM = 0,
-		kXWBCodecXMA = 1,
-		kXWBCodecADPCM = 2,
-		kXWBCodecWMA = 3,
-		kFSBCodecMP3 = 4
-	};
-
 	enum XWBSegmentType {
 		kXWBSegmentBankData = 0,
 		kXWBSegmentEntryMetaData = 1,
@@ -105,18 +118,6 @@ private:
 		Common::String speechFile;  // 32 bytes
 
 		int32 hashFourCharString; // Hash calculated on a four char string, from disasm
-	};
-
-	struct AudioEntry {
-		uint64 offset;
-		uint32 length;
-		AudioCodec codec;
-		byte channels;
-		uint16 rate;
-		uint16 align;
-		byte bits;
-		Common::String name;
-		bool isPatched;
 	};
 
 	ScummEngine *_vm;
@@ -177,6 +178,35 @@ private:
 	Audio::SeekableAudioStream *createSoundStream(Common::SeekableSubReadStream *stream, AudioEntry entry, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 };
 
+#if 0
+/**
+ * A special headerless WMA stream, used in MI1:SE and MI2:SE
+ */
+class HeaderlessWMAStream : public Audio::SeekableAudioStream {
+public:
+	HeaderlessWMAStream(Common::SeekableReadStream *stream,
+						AudioEntry entry,
+						DisposeAfterUse::Flag disposeAfterUse);
+	~HeaderlessWMAStream() override;
+
+	int readBuffer(int16 *buffer, const int numSamples) override;
+
+	bool endOfData() const override { return _stream->eos(); }
+	bool isStereo() const override { return _entry.channels == 2; }
+	int getRate() const override { return _entry.rate; }
+	Audio::Timestamp getLength() const override {
+		return Audio::Timestamp(_entry.length / 10000, _entry.rate);
+	}
+	bool seek(const Audio::Timestamp &where) override;
+
+private:
+	Common::SeekableReadStream *_stream = nullptr;
+	AudioStream *_audioStream = nullptr;
+	AudioEntry _entry;
+	DisposeAfterUse::Flag _disposeAfterUse;
+	Audio::WMACodec *_wmaCodec = nullptr;
+};
+#endif
 
 } // End of namespace Scumm
 

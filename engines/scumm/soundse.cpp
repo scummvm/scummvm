@@ -32,6 +32,7 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/wma.h"
 
 namespace Scumm {
 
@@ -662,17 +663,12 @@ Audio::SeekableAudioStream *SoundSE::createSoundStream(Common::SeekableSubReadSt
 	}
 	case kXWBCodecWMA:
 		// TODO: Implement WMA codec
-		/*return new Audio::WMACodec(
-			2,
-			entry.rate,
-			entry.channels,
-			entry.bits,
-			entry.align,
-			stream
-		);*/
 		warning("createSoundStream: WMA codec not implemented");
 		delete stream;
 		return nullptr;
+#if 0
+		return new HeaderlessWMAStream(stream, entry, disposeAfterUse);
+#endif
 	case kFSBCodecMP3:
 #ifdef USE_MAD
 		return Audio::makeMP3Stream(
@@ -928,5 +924,68 @@ void SoundSE::startAmbience(int32 musicTrack) {
 void SoundSE::stopAmbience() {
 	_mixer->stopHandle(_ambienceHandle);
 }
+
+#if 0
+HeaderlessWMAStream::HeaderlessWMAStream(
+					Common::SeekableReadStream *stream,
+					AudioEntry entry,
+					DisposeAfterUse::Flag disposeAfterUse) :
+					_stream(stream), _entry(entry), _disposeAfterUse(disposeAfterUse) {
+	// Taken from https://github.com/bgbennyboy/Monkey-Island-Explorer/blob/master/uMIExplorer_XWBManager.pas
+	const uint16 blockAlignArray[] = {
+		929, 1487, 1280, 2230, 8917,
+		8192, 4459, 5945, 2304, 1536,
+		1485, 1008, 2731, 4096, 6827,
+		5462, 1280
+	};
+
+	const uint16 index = _entry.align < ARRAYSIZE(blockAlignArray) ? _entry.align : 0;
+	const uint32 blockAlign = blockAlignArray[index];
+	const uint32 bitRate = (_entry.bits + 1) * 8;
+
+	_wmaCodec = new Audio::WMACodec(2, _entry.rate, _entry.channels, bitRate, blockAlign);
+	_audioStream = _wmaCodec->decodeFrame(*stream);
+}
+
+HeaderlessWMAStream::~HeaderlessWMAStream() {
+	delete _wmaCodec;
+	delete _audioStream;
+	if (_disposeAfterUse == DisposeAfterUse::Flag::YES)
+		delete _stream;
+}
+
+bool HeaderlessWMAStream::seek(const Audio::Timestamp &where) {
+	if (where == 0) {
+		return rewind();
+	}
+
+	// Seeking is not supported
+	return false;
+}
+
+int HeaderlessWMAStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesDecoded = 0;
+
+	for (;;) {
+		if (_audioStream) {
+			samplesDecoded += _audioStream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
+
+			if (_audioStream->endOfData()) {
+				delete _audioStream;
+				_audioStream = nullptr;
+			}
+		}
+
+		if (samplesDecoded == numSamples || endOfData())
+			break;
+
+		if (!_audioStream) {
+			_audioStream = _wmaCodec->decodeFrame(*_stream);
+		}
+	}
+
+	return samplesDecoded;
+}
+#endif
 
 } // End of namespace Scumm
