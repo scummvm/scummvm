@@ -164,16 +164,120 @@ void Room809::parser() {
 
 	switch (_G(kernel).trigger) {
 	case -1:
+		if (check_said()) {
+			int32 destX;
+			int32 destY;
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x >= _G(player).click_x) {
+				destY = imath_min(145, _G(player).x + 20);
+				destY = imath_max(destY, 145);
+				if (_G(player).click_y < 315) {
+					if (_dword1A1998 < 0)
+						_dword1A1998 = 11;
+					destX = 315;
+				} else if (_G(player).click_y <= 321) {
+					destX = _G(player).click_y;
+				} else {
+					if (_dword1A1998 < 0)
+						_dword1A1998 = 7;
+
+					destX = 321;
+				}
+			} else {
+				if (_G(player).click_x >= 1340)
+					destY = 1349;
+				else
+					destY = imath_max(_G(player_info).x, _G(player).click_x - 20);
+
+				if (_G(player).click_y < 315) {
+					if (_dword1A1998 < 0)
+						_dword1A1998 = 1;
+					destX = 315;
+				} else if (_G(player).click_y <= 321)
+					destX = _G(player).click_y;
+				else {
+					if (_dword1A1998 < 0)
+						_dword1A1998 = 5;
+
+					destX = 321;
+				}
+			}
+			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _dword1A1998, true);
+		} else {
+			kernel_trigger_dispatchx(kernel_trigger_create(1));
+		}
+
+		break;
+
 	case 1:
+		//TODO Not implemented yet
+		break;
+
 	case 39:
+		_G(flags[V101]) = 1;
+		digi_play("809r07a", 1, 255, -1, -1);
+		break;
+
 	case 40:
+		//TODO Not implemented yet
+		break;
+
 	case 41:
+		digi_play("809r11", 1, 255, -1, -1);
+		break;
+
 	case 42:
+		//TODO Not implemented yet
+		break;
+
 	case 43:
+		player_set_commands_allowed(true);
+		sendWSMessage_150000(_G(my_walker), -1);
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("com038", 1, 255, -1, 997);
+			break;
+
+		case 2:
+			digi_play("com039", 1, 255, -1, 997);
+			break;
+
+		case 3:
+			digi_play("com040", 1, 255, -1, 997);
+			break;
+
+		case 4:
+		default:
+			digi_play("com041", 1, 255, -1, 997);
+			break;
+		}
+
+		break;
+
 	case 44:
+		//TODO Not implemented yet
+		break;
+
 	case 45:
+		series_play("809rp03", 0, 0, 46, 5, 0, 100, 0, 0, 105, -1);
+		digi_play("809_s02", 2, 255, -1, -1);
+
+		break;
+
 	case 46:
+		series_play("809rp03", 0, 2, 47, 5, 0, 100, 0, 0, 0, -1);
+		digi_play("809R17", 1, 255, -1, -1);
+
+		break;
+
 	case 47:
+		player_set_commands_allowed(true);
+		series_unload(_809hallSeries);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_facing(_G(my_walker), 3);
+
+		break;
+
 	case 48:
 	case 49:
 	case 50:
@@ -198,7 +302,7 @@ void Room809::parser() {
 		break;
 	}
 
-	
+
 	// TODO Not implemented yet
 }
 
@@ -489,6 +593,12 @@ int32 Room809::room809_sub1(int32 val1, int32 val2) {
 	//TODO Not implemented yet
 
 	return 0;
+}
+
+bool Room809::check_said() {
+	//TODO Not implemented yet
+
+	return false;
 }
 
 } // namespace Rooms

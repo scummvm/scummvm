@@ -41,12 +41,13 @@ public:
 
 private:
 	int32 room809_sub1(int32 val1, int32 val2);
+	bool check_said();
 
 	int32 _field20 = 0;
 	int32 _field24 = 0;
 	int32 _field28 = 0;
 	int32 _field2C = 0;
-	
+
 	const char *_enableHotspotName = nullptr;
 
 	byte _byte1A1990[12]; // random size for the moment, enough for facings
