@@ -1163,13 +1163,16 @@ uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 			int16 delta = next_value - base_value;
 			base_value += static_cast<uint16>((delta * blend_param) / 7);
 		} else { // Reverse blend case
-			// l0017_2ACD:
+			// l0017_2B1D:
+			// Calculate previous index with clamping
+			// [bp-6h]
+			uint8 prev_idx = (index > 0) ? index - 1 : 0;
+			// l0017_2B33:
 		}
 	}
 	
 	/*
-			// Calculate previous index with clamping
-			uint8 prev_idx = (index > 0) ? index - 1 : 0;
+			
 			uint16 prev_value = (table_high[prev_idx] << 8) | table_low[prev_idx];
 
 			// Reverse interpolation
@@ -1193,41 +1196,8 @@ uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 	/*
 	
 	
-	mov	al,[bp+6h]
-	xor	ah,ah
-	xor	dx,dx
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-4h]
-	sub	ax,[bp-2h]
-	xor	dx,dx
-	call	far 00CDh:0C97h
-	mov	cx,7h
-	xor	bx,bx
-	call	far 00CDh:0D7Ah
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	xor	dx,dx
-	add	ax,cx
-	adc	dx,bx
-	mov	[bp-2h],ax
-	jmp	2B81h
 
-l0017_2B1D:
-	cmp	byte ptr [bp+8h],0h
-	jbe	2B2Eh
 
-l0017_2B23:
-	mov	al,[bp+8h]
-	xor	ah,ah
-	dec	ax
-	mov	[bp-6h],ax
-	jmp	2B33h
-
-l0017_2B2E:
-	xor	ax,ax
-	mov	[bp-6h],ax
 
 l0017_2B33:
 	mov	di,[bp-6h]
