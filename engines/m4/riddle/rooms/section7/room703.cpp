@@ -700,7 +700,11 @@ void Room703::parser() {
 		}
 	} else if (!gearFl && !takeFl && player_said_any("MONK #1", "MONK #2", "MONK #3", "MONK #4")) {
 		digi_play("com017", 1, 255, -1, -1);
+	} else {
+		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 void Room703::daemon() {
