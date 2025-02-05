@@ -65,7 +65,7 @@ public:
 		_cursorY(0),
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
-
+		
 	void showOverlay(bool inGUI) override {
 		_overlayInGUI = inGUI;
 
@@ -114,6 +114,10 @@ public:
 
 	int getWindowWidth() const { return _windowWidth; }
 	int getWindowHeight() const { return _windowHeight; }
+
+	// New methods to lock and unlock the screen
+	virtual void setLockedScreen(bool val) { _lockedScreen = val; }
+	bool isScreenLocked() const { return _lockedScreen; }
 
 protected:
 	/**
@@ -406,6 +410,8 @@ protected:
 	int _cursorX, _cursorY;
 
 private:
+	bool _lockedScreen = true ; // New member variable to track lock state
+
 	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, Common::Rect &drawRect) const {
 		int mode = getStretchMode();
 		Common::RotationMode rotation = getRotationMode();

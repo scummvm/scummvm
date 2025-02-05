@@ -50,6 +50,8 @@ public:
 	void notifyVideoExpose() override;
 	void notifyResize(const int width, const int height) override;
 
+	void setLockedScreen(bool val);
+
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
 	void freeImGuiTexture(void *texture) override;
@@ -96,8 +98,6 @@ private:
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
 	bool _gotResize;
-
-	bool _lockedScreen = true;
 
 	bool _vsync;
 	bool _wantsFullScreen;

@@ -328,6 +328,9 @@ void SdlGraphicsManager::notifyActiveAreaChanged() {
 }
 
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+	if (WindowedGraphicsManager::isScreenLocked()) {
+		return;
+	}
 	_forceRedraw = true;
 }
 
@@ -455,7 +458,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return false;
 	}
 }
-
+void SdlGraphicsManager::setLockedScreen(bool val) {
+	WindowedGraphicsManager ::setLockedScreen(val);
+}
 void SdlGraphicsManager::toggleFullScreen() {
 	/* Don't use g_system for kFeatureOpenGLForGame as it's always supported
 	 * We want to check if we are a 3D graphics manager */

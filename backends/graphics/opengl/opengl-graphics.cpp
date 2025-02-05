@@ -207,6 +207,9 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode, uint flags) {
 int OpenGLGraphicsManager::getGraphicsMode() const {
 	return _currentState.graphicsMode;
 }
+void OpenGLGraphicsManager::setLockedScreen(bool val) {
+	WindowedGraphicsManager::setLockedScreen(val);
+}
 
 #ifdef USE_RGB_COLOR
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
@@ -1272,57 +1275,67 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
 	// Setup backbuffer size.
-	_targetBuffer->setSize(width, height, getRotationMode());
+	if (WindowedGraphicsManager::isScreenLocked()) {
 
-	int rotation = getRotationMode();
-	uint overlayWidth = width;
-	uint overlayHeight = height;
+		if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
+			delete _overlay;
+			_overlay = nullptr;
 
-	int rotatedWidth = _windowWidth;
-	int rotatedHeight = _windowHeight;
-
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
-		overlayWidth = height;
-		overlayHeight = width;
-		rotatedWidth = _windowHeight;
-		rotatedHeight = _windowWidth;
-	}
-
-	// WORKAROUND: We can only support surfaces up to the maximum supported
-	// texture size. Thus, in case we encounter a physical size bigger than
-	// this maximum texture size we will simply use an overlay as big as
-	// possible and then scale it to the physical display size. This sounds
-	// bad but actually all recent chips should support full HD resolution
-	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)OpenGLContext.maxTextureSize
-	    || overlayHeight > (uint)OpenGLContext.maxTextureSize) {
-		const frac_t outputAspect = intToFrac(rotatedWidth) / rotatedHeight;
-
-		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = OpenGLContext.maxTextureSize;
-			overlayHeight = intToFrac(overlayWidth) / outputAspect;
-		} else {
-			overlayHeight = OpenGLContext.maxTextureSize;
-			overlayWidth  = fracToInt(overlayHeight * outputAspect);
+			_overlay = createSurface(_defaultFormatAlpha);
+			assert(_overlay);
 		}
+	} else {
+		_targetBuffer->setSize(width, height, getRotationMode());
+
+		int rotation = getRotationMode();
+		uint overlayWidth = width;
+		uint overlayHeight = height;
+
+		int rotatedWidth = _windowWidth;
+		int rotatedHeight = _windowHeight;
+
+		if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+			overlayWidth = height;
+			overlayHeight = width;
+			rotatedWidth = _windowHeight;
+			rotatedHeight = _windowWidth;
+		}
+
+		// WORKAROUND: We can only support surfaces up to the maximum supported
+		// texture size. Thus, in case we encounter a physical size bigger than
+		// this maximum texture size we will simply use an overlay as big as
+		// possible and then scale it to the physical display size. This sounds
+		// bad but actually all recent chips should support full HD resolution
+		// anyway. Thus, it should not be a real issue for modern hardware.
+		if (overlayWidth > (uint)OpenGLContext.maxTextureSize || overlayHeight > (uint)OpenGLContext.maxTextureSize) {
+			const frac_t outputAspect = intToFrac(rotatedWidth) / rotatedHeight;
+
+			if (outputAspect > (frac_t)FRAC_ONE) {
+				overlayWidth = OpenGLContext.maxTextureSize;
+				overlayHeight = intToFrac(overlayWidth) / outputAspect;
+			} else {
+				overlayHeight = OpenGLContext.maxTextureSize;
+				overlayWidth = fracToInt(overlayHeight * outputAspect);
+			}
+		}
+
+		// HACK: We limit the minimal overlay size to 256x200, which is the
+		// minimum of the dimensions of the two resolutions 256x240 (NES) and
+		// 320x200 (many DOS games use this). This hopefully assure that our
+		// GUI has working layouts.
+		overlayWidth = MAX<uint>(overlayWidth, 256);
+		overlayHeight = MAX<uint>(overlayHeight, 200);
+
+		if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
+			delete _overlay;
+			_overlay = nullptr;
+
+			_overlay = createSurface(_defaultFormatAlpha);
+			assert(_overlay);
+		}
+		_overlay->allocate(overlayWidth, overlayHeight);
+		_overlay->fill(0);
 	}
-
-	// HACK: We limit the minimal overlay size to 256x200, which is the
-	// minimum of the dimensions of the two resolutions 256x240 (NES) and
-	// 320x200 (many DOS games use this). This hopefully assure that our
-	// GUI has working layouts.
-	overlayWidth = MAX<uint>(overlayWidth, 256);
-	overlayHeight = MAX<uint>(overlayHeight, 200);
-
-	if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
-		delete _overlay;
-		_overlay = nullptr;
-
-		_overlay = createSurface(_defaultFormatAlpha);
-		assert(_overlay);
-	}
-	_overlay->allocate(overlayWidth, overlayHeight);
-	_overlay->fill(0);
 
 	// Re-setup the scaling and filtering for the screen and cursor
 	recalculateDisplayAreas();

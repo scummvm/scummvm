@@ -83,6 +83,7 @@ public:
 
 	int16 getHeight() const override;
 	int16 getWidth() const override;
+	void setLockedScreen(bool val) override;
 
 protected:
 	// PaletteManager API
@@ -448,7 +449,6 @@ protected:
 private:
 	void setFullscreenMode(bool enable);
 	void handleScalerHotkeys(uint mode, int factor);
-	bool _lockedScreen = true;
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

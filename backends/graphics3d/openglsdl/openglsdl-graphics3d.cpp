@@ -424,6 +424,10 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 }
 
 void OpenGLSdlGraphics3dManager::handleResizeImpl(const int width, const int height) {
+	if (WindowedGraphicsManager::isScreenLocked()) {
+		// The screen is locked, so we can't resize it.
+		return;
+	}
 	// Update the overlay
 	delete _overlayScreen;
 	_overlayScreen = new OpenGL::TiledSurface(width, height, _overlayFormat);

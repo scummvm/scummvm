@@ -299,6 +299,9 @@ void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 
 	return OpenGLGraphicsManager::initSize(w, h, format);
 }
+void OpenGLSdlGraphicsManager::setLockedScreen(bool val) {
+	WindowedGraphicsManager ::setLockedScreen(val);
+}
 
 void OpenGLSdlGraphicsManager::updateScreen() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -579,7 +582,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 
 	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
-	if (!_lockedScreen) {
+	if (!WindowedGraphicsManager::isScreenLocked()) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
