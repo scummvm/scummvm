@@ -34,7 +34,7 @@ static const char *BLOCK_NAMES[8] = {
 };
 static const char *BLOCK_DIGI[8] = {
 	nullptr, "507_s03", "507_s03a", "507_s03b", "507_s03c",
-	"507_s03d", "507_s0e", "507_s0f"
+	"507_s03d", "507_s03e", "507_s03f"
 };
 int BLOCK_CORRECT[8] = {
 	-1, 12, 4, 12, 8, 0, 8, 4
@@ -61,8 +61,8 @@ void Room507::init() {
 
 	for (int i = 1; i <= 7; ++i) {
 		_blockFlag[i] = false;
-		_blockSeries[i] = series_load(BLOCK_NAMES[1]);
-		_block[1] = series_show(BLOCK_NAMES[i], 0x400, 16, -1, -1,
+		_blockSeries[i] = series_load(BLOCK_NAMES[i]);
+		_block[i] = series_show(BLOCK_NAMES[i], 0x400, 16, -1, -1,
 			_G(flags)[(Flag)(V172 + i)]);
 	}
 
@@ -106,7 +106,7 @@ void Room507::daemon() {
 		break;
 
 	case 6:
-		disable_player_commands_and_fade_init(6);
+		disable_player_commands_and_fade_init(7);
 		break;
 
 	case 7:
@@ -115,6 +115,7 @@ void Room507::daemon() {
 		digi_stop(1);
 		digi_play_loop("507_s02", 3, 170);
 		adv_kill_digi_between_rooms(false);
+		_G(game).setRoom(508);
 		break;
 
 	case 8:
@@ -204,10 +205,10 @@ void Room507::useStoneGlyph(int blockNum) {
 		_G(flags)[(Flag)(V172 + blockNum)] + 1, _G(flags)[(Flag)(V172 + blockNum)] + 4, 3,
 		_blockSeries[blockNum], _G(flags)[(Flag)(V172 + blockNum)] + 5,
 		_G(flags)[(Flag)(V172 + blockNum)] + 5, 0);
-	digi_play("507_s93", 2);
+	digi_play(BLOCK_DIGI[blockNum], 2);
 
 	_G(flags)[(Flag)(V172 + blockNum)] += 4;
-	if (_G(flags)[(Flag)(V172 + blockNum)] > 16)
+	if (_G(flags)[(Flag)(V172 + blockNum)] >= 16)
 		_G(flags)[(Flag)(V172 + blockNum)] = 0;
 }
 
