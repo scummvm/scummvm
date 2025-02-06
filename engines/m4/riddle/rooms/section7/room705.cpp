@@ -91,11 +91,11 @@ void Room705::init() {
 		break;
 
 	case 4:
-		_rightWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 0, 640, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 640, 0, 100, 1280);
 		break;
 
 	case 5:
-		_rightWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 0, 640, 100, 1280);
+		_rightWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 640, 0, 100, 1280);
 		break;
 
 	default:
@@ -137,7 +137,7 @@ void Room705::pre_parser() {
 }
 
 void Room705::parser() {
-	const bool lookFl = player_said_any("look", "look at");
+	const bool lookFl = player_said_any("look", "look at", "look ");
 	const bool talkFl = player_said_any("talk", "talk to");
 	const bool takeFl = player_said("take");
 	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
@@ -612,13 +612,11 @@ void Room705::parser() {
 		digi_play("com080", 1, 255, -1, -1);
 	} else if (lookFl && player_said_any("EMPTY NICHE", "EMPTY NICHE ")) {
 		digi_play("com127", 1, 255, -1, 997);
-	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #9") && _G(flags)[V220]) {
+	} else if (lookFl && player_said("PRAYER WHEEL #9") && _G(flags)[V220]) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #12") && _G(flags)[V221]) {
+	} else if (lookFl && player_said_any("PRAYER WHEEL #12") && _G(flags)[V221]) {
 		digi_play("com076", 1, 255, -1, -1);
-	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #10")) {
-		digi_play("com076", 1, 255, -1, -1);
-	} else if (lookFl && player_said_any("EMPTY NICHE", "PRAYER WHEEL #11")) {
+	} else if (lookFl && player_said_any("PRAYER WHEEL #10", "PRAYER WHEEL #11")) {
 		digi_play("com076", 1, 255, -1, -1);
 	} else if (takeFl && player_said_any("PRAYER WHEEL #9", "PRAYER WHEEL #10", "PRAYER WHEEL #11", "PRAYER WHEEL #12") && _G(flags)[V286]) {
 		digi_play(_G(flags)[V224] ? "706r26" : "com143", 1, 255, -1, -1);
@@ -1302,56 +1300,50 @@ void Room705::useWheelOnLeftNiche(int32 trigger, int val1) {
 		break;
 
 	case 104:
-		switch (_G(flags)[V220]) {
-		case 0:
-			return;
+		if (!_G(flags)[V220]) {
+			switch (val1) {
+			case 1:
+				inv_move_object("PEACE WHEEL", 705);
+				_G(flags)[V220] = 1;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 LEFT PEACE WHEEL", 0, 0, 0, 100, 1280);
+				break;
 
-		case 1:
-			inv_move_object("PEACE WHEEL", 705);
-			_G(flags)[V220] = 1;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 LEFT PEACE WHEEL", 0, 0, 0, 100, 1280);
+			case 2:
+				inv_move_object("INSIGHT WHEEL", 705);
+				_G(flags)[V220] = 2;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 LEFT INSIGHT WHEEL", 0, 0, 0, 100, 1280);
+				break;
 
-			break;
+			case 3:
+				inv_move_object("SERENITY WHEEL", 705);
+				_G(flags)[V220] = 3;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 LEFT SERENITY WHEEL", 0, 0, 0, 100, 1280);
+				break;
 
-		case 2:
-			inv_move_object("INSIGHT WHEEL", 705);
-			_G(flags)[V220] = 2;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 LEFT INSIGHT WHEEL", 0, 0, 0, 100, 1280);
+			case 4:
+				inv_move_object("TRUTH WHEEL", 705);
+				_G(flags)[V220] = 4;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 LEFT TRUTH WHEEL", 0, 0, 0, 100, 1280);
+				break;
 
-			break;
+			case 5:
+				inv_move_object("WISDOM WHEEL", 705);
+				_G(flags)[V220] = 5;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 LEFT WISDOM WHEEL", 0, 0, 0, 100, 1280);
 
-		case 3:
-			inv_move_object("SERENITY WHEEL", 705);
-			_G(flags)[V220] = 3;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 LEFT SERENITY WHEEL", 0, 0, 0, 100, 1280);
+				break;
 
-			break;
+			default:
+				break;
+			}
 
-		case 4:
-			inv_move_object("TRUTH WHEEL", 705);
-			_G(flags)[V220] = 4;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 LEFT TRUTH WHEEL", 0, 0, 0, 100, 1280);
-
-			break;
-
-		case 5:
-			inv_move_object("WISDOM WHEEL", 705);
-			_G(flags)[V220] = 5;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 LEFT WISDOM WHEEL", 0, 0, 0, 100, 1280);
-
-			break;
-
-		default:
-			break;
+			kernel_timing_trigger(5, 105, nullptr);
 		}
-
-		kernel_timing_trigger(5, 105, nullptr);
-
 		break;
 
 	case 105:
@@ -1454,56 +1446,49 @@ void Room705::useWheelOnRightNiche(int32 trigger, int val1) {
 		break;
 
 	case 104:
-		switch (_G(flags)[V221]) {
-		case 0:
-			return;
+		if (!_G(flags)[V221]) {
+			switch (val1) {
+			case 1:
+				inv_move_object("PEACE WHEEL", 705);
+				_G(flags)[V221] = 1;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 RT PEACE WHEEL", 0, 640, 0, 100, 1280);
+				break;
 
-		case 1:
-			inv_move_object("PEACE WHEEL", 705);
-			_G(flags)[V221] = 1;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 RT PEACE WHEEL", 0, 640, 0, 100, 1280);
+			case 2:
+				inv_move_object("INSIGHT WHEEL", 705);
+				_G(flags)[V221] = 2;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 RT INSIGHT WHEEL", 0, 640, 0, 100, 1280);
+				break;
 
-			break;
+			case 3:
+				inv_move_object("SERENITY WHEEL", 705);
+				_G(flags)[V221] = 3;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 RT SERENITY WHEEL", 0, 640, 0, 100, 1280);
+				break;
 
-		case 2:
-			inv_move_object("INSIGHT WHEEL", 705);
-			_G(flags)[V221] = 2;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 RT INSIGHT WHEEL", 0, 640, 0, 100, 1280);
+			case 4:
+				inv_move_object("TRUTH WHEEL", 705);
+				_G(flags)[V221] = 4;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 640, 0, 100, 1280);
+				break;
 
-			break;
+			case 5:
+				inv_move_object("WISDOM WHEEL", 705);
+				_G(flags)[V221] = 5;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_rightWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 640, 0, 100, 1280);
+				break;
 
-		case 3:
-			inv_move_object("SERENITY WHEEL", 705);
-			_G(flags)[V221] = 3;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 RT SERENITY WHEEL", 0, 640, 0, 100, 1280);
+			default:
+				break;
+			}
 
-			break;
-
-		case 4:
-			inv_move_object("TRUTH WHEEL", 705);
-			_G(flags)[V221] = 4;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 RT TRUTH WHEEL", 0, 640, 0, 100, 1280);
-
-			break;
-
-		case 5:
-			inv_move_object("WISDOM WHEEL", 705);
-			_G(flags)[V221] = 5;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_rightWheelMach = series_place_sprite("705 RT WISDOM WHEEL", 0, 640, 0, 100, 1280);
-
-			break;
-
-		default:
-			break;
+			kernel_timing_trigger(5, 105, nullptr);
 		}
-
-		kernel_timing_trigger(5, 105, nullptr);
-
 		break;
 
 	case 105:

@@ -671,7 +671,7 @@ void Room706::daemon() {
 		break;
 
 	case 73:
-		kernel_timing_trigger(5, 73, nullptr);
+		kernel_timing_trigger(5, 74, nullptr);
 		break;
 
 	case 74:

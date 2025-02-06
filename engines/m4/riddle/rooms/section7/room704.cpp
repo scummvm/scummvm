@@ -610,7 +610,7 @@ void Room704::parser() {
 		default:
 			break;
 		}
-	} else if (!gearFl && !takeFl && !player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
+	} else if (!gearFl && !takeFl && player_said_any("PRAYER WHEEL #5", "PRAYER WHEEL #6", "PRAYER WHEEL #7", "PRAYER WHEEL #8")) {
 		digi_play("com017", 1, 255, -1, -1);
 	} else
 		return;
@@ -979,58 +979,52 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 		break;
 
 	case 104:
-		switch (_G(flags)[V218]) {
-		case 0:
-			break;
-		case 1:
-			inv_move_object("PEACE WHEEL", 704);
-			_G(flags)[V218] = 1;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_prayerWheelMach = series_place_sprite("704 PEACE PRAYER WHEEL", 0, 0, 0, 100, 1280);
-			kernel_timing_trigger(5, 105);
+		if (!_G(flags)[V218]) {
+			switch (val1) {
+			case 1:
+				inv_move_object("PEACE WHEEL", 704);
+				_G(flags)[V218] = 1;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_prayerWheelMach = series_place_sprite("704 PEACE PRAYER WHEEL", 0, 0, 0, 100, 1280);
+				kernel_timing_trigger(5, 105);
+				break;
 
-			break;
+			case 2:
+				inv_move_object("INSIGHT WHEEL", 704);
+				_G(flags)[V218] = 2;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_prayerWheelMach = series_place_sprite("704 INSIGHT PRAYER WHEEL", 0, 0, 0, 100, 1280);
+				kernel_timing_trigger(5, 105);
+				break;
 
-		case 2:
-			inv_move_object("INSIGHT WHEEL", 704);
-			_G(flags)[V218] = 2;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_prayerWheelMach = series_place_sprite("704 INSIGHT PRAYER WHEEL", 0, 0, 0, 100, 1280);
-			kernel_timing_trigger(5, 105);
+			case 3:
+				inv_move_object("SERENITY WHEEL", 704);
+				_G(flags)[V218] = 3;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_prayerWheelMach = series_place_sprite("704 SERENITY PRAYER WHEEL", 0, 0, 0, 100, 1280);
+				kernel_timing_trigger(5, 105);
+				break;
 
-			break;
+			case 4:
+				inv_move_object("TRUTH WHEEL", 704);
+				_G(flags)[V218] = 4;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_prayerWheelMach = series_place_sprite("704 TRUTH PRAYER WHEEL", 0, 0, 0, 100, 1280);
+				kernel_timing_trigger(5, 105);
+				break;
 
-		case 3:
-			inv_move_object("SERENITY WHEEL", 704);
-			_G(flags)[V218] = 3;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_prayerWheelMach = series_place_sprite("704 SERENITY PRAYER WHEEL", 0, 0, 0, 100, 1280);
-			kernel_timing_trigger(5, 105);
+			case 5:
+				inv_move_object("WISDOM WHEEL", 704);
+				_G(flags)[V218] = 5;
+				digi_play("950_S40A", 2, 255, -1, 950);
+				_prayerWheelMach = series_place_sprite("704 WISDOM PRAYER WHEEL", 0, 0, 0, 100, 1280);
+				kernel_timing_trigger(5, 105);
+				break;
 
-			break;
-
-		case 4:
-			inv_move_object("TRUTH WHEEL", 704);
-			_G(flags)[V218] = 4;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_prayerWheelMach = series_place_sprite("704 TRUTH PRAYER WHEEL", 0, 0, 0, 100, 1280);
-			kernel_timing_trigger(5, 105);
-
-			break;
-
-		case 5:
-			inv_move_object("WISDOM WHEEL", 704);
-			_G(flags)[V218] = 5;
-			digi_play("950_S40A", 2, 255, -1, 950);
-			_prayerWheelMach = series_place_sprite("704 WISDOM PRAYER WHEEL", 0, 0, 0, 100, 1280);
-			kernel_timing_trigger(5, 105);
-
-			break;
-
-		default:
-			break;
+			default:
+				break;
+			}
 		}
-
 		break;
 
 	case 105:

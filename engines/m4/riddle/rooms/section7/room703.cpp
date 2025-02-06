@@ -549,7 +549,7 @@ void Room703::parser() {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_trigger_dispatchx(kernel_trigger_create(80));
 		_G(kernel).trigger_mode = KT_PARSE;
-	} else if (takeFl && player_said("PRAYER WHEEL #1")) {
+	} else if (takeFl && player_said("PRAYER WHEEL #4")) {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_trigger_dispatchx(kernel_trigger_create(70));
 		_G(kernel).trigger_mode = KT_PARSE;
