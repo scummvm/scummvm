@@ -195,6 +195,7 @@ namespace Director {
 const char *PrintOMaticXObj::xlibName = "PrintOMatic";
 const XlibFileDesc PrintOMaticXObj::fileNames[] = {
 	{ "PrintOMatic",   nullptr },
+	{ "PMATIC",   nullptr },
 	{ nullptr,        nullptr },
 };
 
