@@ -85,7 +85,7 @@ public:
 	float getTiltAngle() const { return _tiltAngle; }
 	void setTiltAngle(float tiltAngle) { _tiltAngle = tiltAngle; }
 	float getFOV() const { return _fov; }
-	void setFOV(float fov) { _fov = fov; }
+	void setFOV(float fov);
 
 	int getCurrentRow() { return _nextVideoTrack->getCurFrame() / _nav.columns; }
 	void setCurrentRow(int row);
@@ -155,7 +155,8 @@ private:
 
 	float _panAngle = 0.0f;
 	float _tiltAngle = 0.0f;
-	float _fov = 0.0f;
+	float _fov = 56.0f;
+	float _hfov = 56.0f;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
@@ -347,6 +348,7 @@ private:
 
 		float _curPanAngle;
 		float _curTiltAngle;
+
 		bool _dirty;
 	};
 };

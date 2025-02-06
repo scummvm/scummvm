@@ -95,14 +95,6 @@ void QuickTimeDecoder::close() {
 	closeQTVR();
 }
 
-void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
-	if (!isVR())
-		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");
-
-	_width = w;
-	_height = h;
-}
-
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
 
