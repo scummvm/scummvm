@@ -39,6 +39,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 #include "common/util.h"
 
 #include "common/compression/unzip.h"
@@ -53,6 +54,8 @@
 namespace Video {
 
 static const char * const MACGUI_DATA_BUNDLE = "macgui.dat";
+
+static void repeatCallback(void *data);
 
 ////////////////////////////////////////////
 // QuickTimeDecoder methods related to QTVR
@@ -119,6 +122,11 @@ void QuickTimeDecoder::closeQTVR() {
 	delete _dataBundle;
 	_dataBundle = nullptr;
 	cleanupCursors();
+
+	if (_repeatTimerActive) {
+		_repeatTimerActive = false;
+		g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+	}
 }
 
 void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
@@ -234,12 +242,34 @@ void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	}
 }
 
+#define REPEAT_DELAY 100000
+
+static void repeatCallback(void *data) {
+	QuickTimeDecoder *decoder = (QuickTimeDecoder *)data;
+
+	if (decoder->_isKeyDown)
+		decoder->handleKey(decoder->_lastKey, true);
+
+	if (decoder->_isMouseButtonDown)
+		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY);
+}
 
 void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 	if (_qtvrType == QTVRType::OBJECT)
 		handleObjectMouseButton(isDown, x, y);
 	else if (_qtvrType == QTVRType::PANORAMA)
 		handlePanoMouseButton(isDown, x, y);
+
+	if (isDown) {
+		if (!_repeatTimerActive)
+			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Mouse Repeat Handler");
+		_repeatTimerActive = true;
+	} else {
+		if (_repeatTimerActive) {
+			_repeatTimerActive = false;
+			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+		}
+	}
 
 	updateQTVRCursor(x, y);
 }
@@ -279,6 +309,20 @@ void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down) {
 	else if (_qtvrType == QTVRType::PANORAMA)
 		handlePanoKey(state, down);
 
+	if (down) {
+		_lastKey = state;
+		_isKeyDown = true;
+		if (!_repeatTimerActive)
+			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Keyboard Repeat Handler");
+		_repeatTimerActive = true;
+	} else {
+		_isKeyDown = false;
+		if (_repeatTimerActive) {
+			_repeatTimerActive = false;
+			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+		}
+	}
+
 	updateQTVRCursor(_prevMouseX, _prevMouseY);
 }
 
@@ -286,7 +330,7 @@ void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down) {
 }
 
 void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down) {
-	if (state.flags & (Common::KBD_SHIFT | Common::KBD_CTRL)) {
+	if ((state.flags & Common::KBD_SHIFT) && (state.flags & Common::KBD_CTRL)) {
 		_zoomState = kZoomQuestion;
 	} else if (state.flags & Common::KBD_SHIFT) {
 		_zoomState = kZoomIn;

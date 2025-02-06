@@ -31,13 +31,13 @@
 #define VIDEO_QT_DECODER_H
 
 #include "audio/decoders/quicktime_intern.h"
+#include "common/keyboard.h"
 #include "common/scummsys.h"
 
 #include "video/video_decoder.h"
 
 namespace Common {
 class Archive;
-struct KeyState;
 class Rational;
 }
 
@@ -146,8 +146,14 @@ private:
 
 	uint16 _width, _height;
 
+public:
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
+
+	bool _isKeyDown = false;
+	Common::KeyState _lastKey;
+
+private:
 	Common::Rect _curBbox;
 
 	int _currentQTVRCursor = -1;
@@ -163,6 +169,7 @@ private:
 	float _fov = 56.0f;
 	float _hfov = 56.0f;
 	int _zoomState = kZoomNone;
+	bool _repeatTimerActive = false;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
