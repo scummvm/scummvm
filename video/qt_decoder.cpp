@@ -404,7 +404,7 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 	// A track is over when we've finished going through all edits
-	if (!_decoder->_isVR)
+	if (_decoder->_qtvrType != QTVRType::PANORAMA)
 		return _reversed ? (_curEdit == 0 && _curFrame < 0) : atLastEdit();
 	else
 		return true;
