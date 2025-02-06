@@ -104,6 +104,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 	video->start();
 
+	Common::Point mouse;
+
 	while (!video->endOfVideo()) {
 		if (video->needsUpdate()) {
 			uint32 pos = video->getTime();
@@ -143,8 +145,11 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			Common::Event event;
 
 			while (g_system->getEventManager()->pollEvent(event)) {
-				if (event.mouse.x >= x && event.mouse.x < x + mw &&
-						event.mouse.y >= y && event.mouse.y < y + mh) {
+				if (Common::isMouseEvent(event))
+					mouse = event.mouse;
+
+				if (mouse.x >= x && mouse.x < x + mw &&
+						mouse.y >= y && mouse.y < y + mh) {
 					switch (event.type) {
 					case Common::EVENT_LBUTTONDOWN:
 						((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
@@ -154,6 +159,10 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 						break;
 					case Common::EVENT_MOUSEMOVE:
 						((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
+						break;
+					case Common::EVENT_KEYUP:
+					case Common::EVENT_KEYDOWN:
+						((Video::QuickTimeDecoder *)video)->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
 						break;
 					default:
 						break;
