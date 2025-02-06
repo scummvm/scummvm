@@ -138,14 +138,14 @@ void Room809::init() {
 
 void Room809::pre_parser() {
 	if (player_said("look at", "gate")) {
-		_dword1A1998 = 9;
+		_dword1A1998_facing = 9;
 	} else if (player_said("look at", "mausoleum") || player_said("go", "west")) {
-		_dword1A1998 = 3;
+		_dword1A1998_facing = 3;
 	} else if (player_said("look at", "urn")) {
-		_dword1A1998 = -1;
+		_dword1A1998_facing = -1;
 	} else {
 		player_update_info(_G(my_walker), &_G(player_info));
-		_dword1A1998 = _G(player_info).x >= _G(player).click_x ? 9 : 3;
+		_dword1A1998_facing = _G(player_info).x >= _G(player).click_x ? 9 : 3;
 	}
 
 	if (!player_said("spleen") || inv_object_in_scene("two soldiers' shields", 809)) {
@@ -172,14 +172,14 @@ void Room809::parser() {
 				destY = imath_min(145, _G(player).x + 20);
 				destY = imath_max(destY, 145);
 				if (_G(player).click_y < 315) {
-					if (_dword1A1998 < 0)
-						_dword1A1998 = 11;
+					if (_dword1A1998_facing < 0)
+						_dword1A1998_facing = 11;
 					destX = 315;
 				} else if (_G(player).click_y <= 321) {
 					destX = _G(player).click_y;
 				} else {
-					if (_dword1A1998 < 0)
-						_dword1A1998 = 7;
+					if (_dword1A1998_facing < 0)
+						_dword1A1998_facing = 7;
 
 					destX = 321;
 				}
@@ -190,19 +190,19 @@ void Room809::parser() {
 					destY = imath_max(_G(player_info).x, _G(player).click_x - 20);
 
 				if (_G(player).click_y < 315) {
-					if (_dword1A1998 < 0)
-						_dword1A1998 = 1;
+					if (_dword1A1998_facing < 0)
+						_dword1A1998_facing = 1;
 					destX = 315;
 				} else if (_G(player).click_y <= 321)
 					destX = _G(player).click_y;
 				else {
-					if (_dword1A1998 < 0)
-						_dword1A1998 = 5;
+					if (_dword1A1998_facing < 0)
+						_dword1A1998_facing = 5;
 
 					destX = 321;
 				}
 			}
-			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _dword1A1998, true);
+			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _dword1A1998_facing, true);
 		} else {
 			kernel_trigger_dispatchx(kernel_trigger_create(1));
 		}
@@ -219,7 +219,25 @@ void Room809::parser() {
 		break;
 
 	case 40:
-		//TODO Not implemented yet
+		player_update_info(_G(my_walker), &_G(player_info));
+		_dword1A1998_facing = _G(player_info).facing;
+		_dword1A199C_x = _G(player_info).x;
+		_dword1A19A0_y = _G(player_info).y;
+
+		player_update_info(_mcTrekMach, &_G(player_info));
+
+		if (_G(player_info).x >= _dword1A199C_x) {
+			if (_G(player_info).x - _dword1A199C_x <= 30) {
+				ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 5, true);
+			} else {
+				ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 4, true);
+			}
+		} else if (_dword1A199C_x - _G(player_info).x <= 30) {
+			ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 7, true);
+		} else {
+			ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 8, true);
+		}
+
 		break;
 
 	case 41:
@@ -374,16 +392,59 @@ void Room809::parser() {
 		break;
 
 	case 57:
+		disable_player_commands_and_fade_init(58);
+		break;
+
 	case 58:
+		_G(game).new_room = 810;
+		break;
+
 	case 59:
+		digi_play("809m04", 1, 255, 60, -1);
+		break;
+
 	case 60:
+		player_set_commands_allowed(true);
+		digi_play("809r14", 1, 255, 63, -1);
+
+		break;
+
 	case 61:
+		digi_play("809m03", 1, 255, 62, -1);
+		break;
+
 	case 62:
+		player_set_commands_allowed(true);
+		digi_play("809r12", 1, 255, 63, -1);
+
+		break;
+
 	case 63:
+		player_set_commands_allowed(true);
+		digi_play("809r13", 1, 255, -1, -1);
+
+		break;
+
 	case 64:
+		player_set_commands_allowed(true);
+		digi_play("809r15", 1, 255, -1, -1);
+
+		break;
+
 	case 65:
+		ws_walk(_G(my_walker), 120, 317, nullptr, 66, -1, false);
+		break;
+
 	case 66:
+		ws_walk(_G(my_walker), 90, 317, nullptr, -1, 9, true);
+		disable_player_commands_and_fade_init(67);
+
+		break;
+
 	case 67:
+		_G(game).new_room = 808;
+		break;
+
 	default:
 		break;
 	}

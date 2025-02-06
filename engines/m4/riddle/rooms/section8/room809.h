@@ -51,9 +51,10 @@ private:
 	const char *_enableHotspotName = nullptr;
 
 	byte _byte1A1990[12]; // random size for the moment, enough for facings
-	int32 _dword1A1998 = 0;
 	int32 _dword1A1980_x = 0;
-
+	int32 _dword1A1998_facing = 0;
+	int32 _dword1A199C_x = 0;
+	int32 _dword1A19A0_y = 0;
 
 	int32 _809hallSeries = 0;
 	int32 _809MusicFadingVol = 0;
