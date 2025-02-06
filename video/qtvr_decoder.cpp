@@ -497,26 +497,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		_projectedPano->create(w, h, _constructedPano->format);
 	}
 
-#if 0
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-	int startY = (((float)desc->_sceneSizeY - w) / (desc->_hPanEnd - desc->_hPanStart)) * (_curPanAngle - desc->_hPanStart);
-	int startX = ((float)(desc->_sceneSizeX - h) / (desc->_vPanTop - desc->_vPanBottom)) * (_curTiltAngle - desc->_vPanBottom);
-
-	for (uint16 y = 0; y < h; y++) {
-		for (uint16 x = 0; x < w; x++) {
-			int setX = y + startX;
-			int setY = x + startY;
-
-			uint32 pixel = _constructedPano->getPixel(setX, setY);
-			_projectedPano->setPixel(x, y, pixel);
-		}
-	}
-
-	_dirty = false;
-#else
-	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-
-	warning("pan: %f  tilt: %f", _curPanAngle, _curTiltAngle);
 
 	for (uint16 y = 0; y < h; y++) {
 		for (uint16 x = 0; x < w; x++) {
@@ -529,7 +510,6 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 
 			// It is flipped 90 degrees
 			int u = ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) / M_PI * 180.0 * panAngle;
-
 
 			float tiltAngle = _curTiltAngle + (y - h / 2) * _decoder->_fov / (float)h;
 			tiltAngle = tan(tiltAngle * M_PI / 180.0);
@@ -547,32 +527,6 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 			_projectedPano->setPixel(x, y, pixel);
 		}
 	}
-
-#endif
-
-#if 0
-	const float c = _projectedPano->w;
-	const float r = c / (2 * M_PI);
-
-	// HACK: FIXME: Hard coded for now
-	const float d = 500.0f;
-
-	for (int16 y = 0; y < _projectedPano->h; y++) {
-		for (int16 x = 0; x < _projectedPano->w; x++) {
-			double u = atan(x / d) / (2.0 * M_PI);
-			double v = y * r * cos(u) / d;
-
-			int setX = round(u * _constructedPano->w);
-			int setY = round(v);
-
-			if (setX >= 0 && setX < _constructedPano->w && setY >= 0 && setY < _constructedPano->h) {
-				uint32 pixel = _constructedPano->getPixel(setX, setY);
-				_projectedPano->setPixel(x, y, pixel);
-			}
-		}
-	}
-
-#endif
 
 	_dirty = false;
 }
