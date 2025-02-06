@@ -276,7 +276,30 @@ void Room809::parser() {
 			break;
 
 		case 3:
-			//TODO Not implemented yet
+			if (inv_object_in_scene("two soldiers' shields", 809)) {
+				player_set_commands_allowed(false);
+				inv_give_to_player("two soldiers' shields");
+				terminateMachine(_809rp01Mach);
+				_809rp01Mach = series_play("809rp01", 256, 18, 52, 5, 0, 100, 0, 0, 0, -1);
+			} else {
+				player_update_info(_G(my_walker), &_G(player_info));
+				_dword1A199C_x = _G(player_info).x;
+				_dword1A19A0_y = _G(player_info).y;
+
+				player_update_info(_mcTrekMach, &_G(player_info));
+
+				if (_dword1A199C_x <= _G(player_info).x) {
+					if (_G(player_info).x - 15 <= _dword1A199C_x) {
+						ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 42, 5, true);
+					} else {
+						ws_walk(_G(my_walker), _G(player_info).x - 15, 315, nullptr, 42, 5, true);
+					}
+				} else if (_G(player_info).x + 15 >= _dword1A199C_x) {
+					ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 42, 7, true);
+				} else {
+					ws_walk(_G(my_walker), _G(player_info).x + 15, 315, nullptr, 42, 7, true);
+				}
+			}
 			break;
 
 		case 4:
@@ -303,7 +326,21 @@ void Room809::parser() {
 
 		case 0:
 		default:
-			//TODO Not implemented yet
+			if (player_said("lake") && inv_player_has(_G(player).verb)) {
+				if (player_said("soldier's shield")) {
+					digi_play("809r18", 1, 255, -1, -1);
+				} else if (player_said("two soldiers' shields")) {
+					ws_walk(_G(my_walker), 1346, 318, nullptr, 48, 3, true);
+				} else if (player_said("farmer's shovel")) {
+					ws_walk(_G(my_walker), 1346, 318, nullptr, 44, 3, true);
+				} else {
+					digi_play("809r16", 1, 255, -1, -1);
+				}
+			} else if (player_said_any("mei chen", "mei chen ", "mei chen  ", "mei chen   ") && inv_player_has(_G(player).verb)) {
+				digi_play("com017", 1, 255, -1, 997);
+			} else {
+				_G(player).command_ready = true;
+			}
 			break;
 		}
 		break;
@@ -581,9 +618,6 @@ void Room809::parser() {
 	default:
 		break;
 	}
-
-
-	// TODO Not implemented yet
 }
 
 void Room809::daemon() {
@@ -876,9 +910,11 @@ int32 Room809::room809_sub1(int32 val1, int32 val2) {
 }
 
 bool Room809::check_said() {
-	//TODO Not implemented yet
+	if (player_said_any("spleen", "west", "mei chen", "mei chen ", "mei chen  ", "mei chen   ", "farmer's shovel", "two soldiers' shields")
+	|| inv_object_in_scene("two soldiers' shields", 809))
+		return false;
 
-	return false;
+	return true;
 }
 
 } // namespace Rooms
