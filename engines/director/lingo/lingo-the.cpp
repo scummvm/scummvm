@@ -146,6 +146,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 400, true },	//			D4 f
+	{ kTheSearchPaths,		"searchPaths",		false, 500, false },	//				D5 p
 	{ kTheSelection,		"selection",		false, 200, true },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false, 200, false },	// D2 p
 	{ kTheSelStart,			"selStart",			false, 200, false },	// D2 p
@@ -930,6 +931,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = 1;
 		break;
 	case kTheSearchPath:
+	case kTheSearchPaths:
 		d = g_lingo->_searchPath;
 		break;
 	case kTheSelection:
@@ -1265,6 +1267,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		warning("BUILDBOT: Trying to set SearchCurrentFolder lingo property");
 		break;
 	case kTheSearchPath:
+	case kTheSearchPaths:
 		g_lingo->_searchPath = d;
 		break;
 	case kTheSelEnd:

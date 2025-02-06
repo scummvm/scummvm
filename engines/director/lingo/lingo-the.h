@@ -130,6 +130,7 @@ enum TheEntityType {
 	kTheScummvmVersion,			// set the Director version via lingo in tests
 	kTheSearchCurrentFolder,
 	kTheSearchPath,
+	kTheSearchPaths,
 	kTheSelection,
 	kTheSelEnd,
 	kTheSelStart,
