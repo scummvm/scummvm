@@ -133,10 +133,12 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	if (!isVR())
 		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");
 
-	_width = w;
-	_height = h;
+	if (_qtvrType == QTVRType::PANORAMA) {
+		_width = w;
+		_height = h;
 
-	setFOV(_fov);
+		setFOV(_fov);
+	}
 }
 
 void QuickTimeDecoder::setFOV(float fov) {
