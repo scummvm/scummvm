@@ -645,6 +645,12 @@ void LC::cb_thepush() {
 			return;
 		}
 
+		if (name.equals("me")) {
+			g_lingo->push(g_lingo->_state->me);
+			g_debugger->propReadHook(name);
+			return;
+		}
+
 		warning("cb_thepush: me object has no property '%s', type: %d", name.c_str(), g_lingo->_state->me.type);
 	} else {
 		debugC(1, kDebugLingoExec, "cb_thepush: attempted to access property '%s' with no me object, returning VOID", name.c_str());
