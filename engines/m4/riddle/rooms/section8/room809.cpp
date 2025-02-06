@@ -162,6 +162,8 @@ void Room809::parser() {
 		return;
 	}
 
+	int32 eax = -1;
+
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (check_said()) {
@@ -210,7 +212,100 @@ void Room809::parser() {
 		break;
 
 	case 1:
-		//TODO Not implemented yet
+		player_update_info(_mcTrekMach, &_G(player_info));
+		if (_G(player_info).x < 1340 && -_G(game_buff_ptr)->x1 < 1259) {
+			g_engine->camera_shift_xy(1259, 0);
+		}
+
+		if (player_said_any("look", "look at"))
+			eax = 1;
+		else if (player_said_any("gear", "use"))
+			eax = 0;
+		else if (player_said("take"))
+			eax = 2;
+		else if (player_said("talk to"))
+			eax = 3;
+		else if (player_said_any("walk to", "spleen", "walk"))
+			eax = 5;
+		else if (player_said("journal"))
+			eax = 4;
+		else if (player_said("go"))
+			eax = 6;
+
+		switch (eax) {
+		case 1:
+			if (player_said(" ")) {
+				digi_play("809r02", 1, 255, -1, -1);
+			} else if (player_said("mountains")) {
+				digi_play("809r34", 1, 255, -1, -1);
+			} else if (player_said("diorama")) {
+				digi_play("809r02", 1, 255, -1, -1);
+			} else if (player_said("lake")) {
+				digi_play("809r03", 1, 255, -1, -1);
+			} else if (player_said("mausoleum")) {
+				digi_play("809r04", 1, 255, -1, -1);
+			} else if (player_said("river")) {
+				digi_play("809r05", 1, 255, -1, -1);
+			} else if (player_said("buildings")) {
+				digi_play("809r06", 1, 255, -1, -1);
+			} else if (player_said("dragon head")) {
+				digi_play("809r07", 1, 255, _G(flags[V101]) ? 39 : -1, -1);
+			} else if (player_said("soldier ")) {
+				digi_play("809r08", 1, 255, -1, -1);
+			} else if (player_said("lit urn")) {
+				digi_play("com060", 1, 255, -1, 997);
+			} else if (player_said("unlit urn")) {
+				digi_play("com061", 1, 255, -1, 997);
+			} else if (player_said("urn")) {
+				digi_play("809r33", 1, 255, -1, -1);
+			} else if (player_said("weir")) {
+				digi_play("809r10", 1, 255, -1, -1);
+			} else if (player_said("gate")) {
+				digi_play("809r09", 1, 255, -1, -1);
+			} else if (player_said_any("mei chen", "mei chen ", "mei chen  ") || (player_said("mei chen   ") && !inv_object_in_scene("two soldiers' shields", 809))) {
+				kernel_trigger_dispatchx(kernel_trigger_create(40));
+			} else if (player_said("mei chen   ")) {
+				digi_play("809r11", 1, 255, -1, -1);
+			} else {
+				_G(player).command_ready = true;
+			}
+			break;
+
+		case 2:
+			_G(player).command_ready = true;
+			break;
+
+		case 3:
+			//TODO Not implemented yet
+			break;
+
+		case 4:
+			digi_play("809r32", 1, 255, -1, -1);
+			break;
+
+		case 5:
+			if (inv_object_in_scene("two soldiers' shields", 809)) {
+				player_set_commands_allowed(false);
+				inv_give_to_player("two soldiers' shields");
+				terminateMachine(_809rp01Mach);
+				_809rp01Mach = series_plain_play("809rp01", 1, 2, 100, 0, 5, 52, true);
+			}
+
+			break;
+		case 6:
+			if (player_said("east")) {
+				kernel_trigger_dispatchx(kernel_trigger_create(53));
+			} else if (player_said("east")) {
+				kernel_trigger_dispatchx(kernel_trigger_create(65));
+			}
+
+			break;
+
+		case 0:
+		default:
+			//TODO Not implemented yet
+			break;
+		}
 		break;
 
 	case 39:
@@ -245,7 +340,28 @@ void Room809::parser() {
 		break;
 
 	case 42:
-		//TODO Not implemented yet
+		player_set_commands_allowed(false);
+		setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("com034", 1, 255, 43, 997);
+			break;
+
+		case 2:
+			digi_play("com035", 1, 255, 43, 997);
+			break;
+
+		case 3:
+			digi_play("com036", 1, 255, 43, 997);
+			break;
+
+		case 4:
+		default:
+			digi_play("com037", 1, 255, 43, 997);
+			break;
+		}
+
 		break;
 
 	case 43:
@@ -273,7 +389,16 @@ void Room809::parser() {
 		break;
 
 	case 44:
-		//TODO Not implemented yet
+		player_set_commands_allowed(false);
+		_G(flags[V103]) = 1;
+		if (-_G(game_buff_ptr)->x1 < 1259) {
+			g_engine->camera_shift_xy(1259, 0);
+		}
+
+		ws_hide_walker(_G(my_walker));
+		_809hallSeries = series_load("809rp03", -1, nullptr);
+		series_play("809rp03", 0, 0, 45, 5, 0, 100, 0, 0, 0, 104);
+
 		break;
 
 	case 45:
@@ -297,8 +422,16 @@ void Room809::parser() {
 		break;
 
 	case 48:
-		//TODO Not implemented yet
+		player_set_commands_allowed(false);
+		if (-_G(game_buff_ptr)->x1 < 1259) {
+			g_engine->camera_shift_xy(1259, 0);
+		}
+
+		ws_hide_walker(_G(my_walker));
+		series_play("809rp01", 256, 0, 49, 5, 0, 100, 0, 0, 0, 169);
+
 		break;
+
 
 	case 49:
 		_809rp01Mach = series_play("809rp01", 256, 16, 50, 5, 0, 100, 0, 0, 170, -1);
