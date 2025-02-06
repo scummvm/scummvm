@@ -449,6 +449,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "15minutes", "15 Minutes" },
 	{ "1bdraculas", "One Billion Draculas are Trying to Enter Your Home" },
 	{ "1dayamosquito", "1 day a mosquito" },
+	{ "1mydungeon", "One Million Years Dungeon" },
 	{ "1000hrpg", "The 1000 Hour RPG" },
 	{ "2000ways", "2000 Ways To Play Badmington" },
 	{ "2034acaftercanada1", "2034 A.C. (After Canada)" },
@@ -656,6 +657,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "arjunaz78", "Arjunaz78 @ AGS" },
 	{ "aroomwithoutyou", "A Room Without You In It" },
 	{ "armageddonmargaret", "Armageddon Margaret" },
+	{ "artifactmags", "Artifact" },
 	{ "artisan", "Artisan" },
 	{ "artofdying", "The Art of Dying" },
 	{ "asecondface", "A Second Face: The Eye of Geltz is Watching You" },
@@ -775,6 +777,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "beyondthedoor", "Beyond the door" },
 	{ "beyondthehorizon", "Beyond the horizon" },
 	{ "bicschristmastale", "Bic's Christmas Tale" },
+	{ "biereamericaine", "Bière Américaine" },
 	{ "bigbadwolf3lilpiggies", "The Big Bad Wolf & Three little pigs" },
 	{ "bigblue", "Big Blue World Domination" },
 	{ "bigfoot", "Bigfoot" },
@@ -2936,6 +2939,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sisyphus", "Sisyphus Reborn" },
 	{ "skippysavestheday", "Skippy Saves The Day" },
 	{ "skrex", "Skrex Banmarist and the Kasalowan Conspiracy" },
+	{ "skrexevalquest", "Skrexeval's Quest" },
 	{ "skumring", "Skumring" },
 	{ "skyadventure", "Sky Adventure" },
 	{ "skyfall", "Skyfall" },
@@ -4697,6 +4701,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348102, 0), // v4.0
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866349023, 0), // v4.0a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866349239, 0), // v4.0b
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866351031, 0), // v5
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866351392, 0), // v5.1
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866352226, 0), // v5.2
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866352218, 0), // v5.2a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830, 0), // Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850, 0), // Mac
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347, 0), // Mac v2.7a
@@ -4707,6 +4715,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866348102, 0), // Mac v4.0-v4.2
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866349023, 0), // Mac v4.3
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866349239, 0), // Mac v4.4
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866352218, 0), // Mac v5.2a
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182, 0),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678, 0),  // with Ita translation
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766, 0),
@@ -4720,6 +4729,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866347850, 0),  // v4.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348771, 0),  // v4.0a
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348987, 0),  // v4.0b
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866350779, 0),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866351140, 0),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866351966, 0),  // v5.2a
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475938, 0),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341384, 0),  // Mac v3.6 updated
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341392, 0),  // Mac v3.6 updated2
@@ -4729,6 +4741,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866347850, 0),  // Mac v4.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866348771, 0),  // Mac v4.0 updated
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866348987, 0),  // Mac v4.0b
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866351966, 0),  // Mac v5.2a
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502, 0),  // En-De-It
@@ -5638,6 +5651,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("1bdraculas", "One Billion Draculas.ags", "4348088bb5ebb641c3ee4c67be83188f", 1323509),
 	GAME_ENTRY_EN("1bdraculas", "One Billion Draculas.ags", "05fe753bb669ca588b1c349c04759c72", 9081074),
 	GAME_ENTRY_EN("1dayamosquito", "mosquito.exe", "465f972675db2da6040518221af5b0ba", 2178983),
+	GAME_ENTRY_EN("1mydungeon", "One Million Years Dungeon.ags", "341f6948467c7b024ad524657b37fcc4", 48267498),
 	GAME_ENTRY_EN("1000hrpg", "1000Hour.exe", "0b7529a76f38283d6e850b8d56526fc1", 833958),
 	GAME_ENTRY_EN("2000ways", "hourgame.exe", "4d17844029d8910fbaae1bdc99e250f2", 1707319),
 	GAME_ENTRY_EN("2034acaftercanada1", "MAGS_01_13.exe", "1280ba7c269a68a9505871516319db0c", 14123278),
@@ -5889,6 +5903,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("armageddonmargaret", "am_game.exe", "06a03fe35791b0578068ab1873455463", 3640885),
 	GAME_ENTRY_EN("armageddonmargaret", "armageddon margaret.exe", "3128b9f90e2f954ba704414ae854d10b", 2951568),
 	GAME_ENTRY_EN("armageddonmargaret", "mags.exe", "3128b9f90e2f954ba704414ae854d10b", 2951568),
+	GAME_ENTRY_EN("artifactmags", "Artifact.exe", "8d1ff95c16500befbdc72260d461d73f", 4789065),
+	GAME_ENTRY_EN("artifactmags", "Artifact.ags", "8f72da3c2ae9be4bc51ca07fc69c5558", 1680181),
 	GAME_ENTRY_EN("artisan", "Artisan.ags", "1baad8bab89fc5ca19abeaf06ae8067c", 10245228),
 	GAME_ENTRY_EN("artofdying", "die.exe", "89df481678b2ddc40ecc9f83caa76b89", 4804446),
 	GAME_ENTRY("asecondface", "eye of geltz.exe", "0e32c4b3380e286dc0cea8550f1c045e", 7061019),  //Multi
@@ -6045,6 +6061,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("beyondterror", "beyondterror.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8219797),
 	GAME_ENTRY_EN("beyondthedoor", "btd.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6450527),
 	GAME_ENTRY("beyondthehorizon", "horizon.exe", "4d7d2addcde045dae6e0363a43f9acad", 15708563),  //En-De
+	GAME_ENTRY_EN("biereamericaine", "MAGS_1-25.exe", "b7e5d205ed7420d4470e37c17426268a", 14101110),
 	GAME_ENTRY_EN("bicschristmastale", "AGS - MAGS 1208.exe", "01d0e6bd812abaa307bcb10fc2193416", 2509865),
 	GAME_ENTRY_EN("bigbadwolf3lilpiggies", "big bad wolf.exe", "06a03fe35791b0578068ab1873455463", 5812024),
 	GAME_ENTRY_EN("bigblue", "WorldDom.exe", "615e73fc1874e92d60a1996c2330ea36", 10079085),
@@ -8687,6 +8704,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("sisyphus", "SisyphusReborn.exe", "548f7dfee3c3567ee43792823532b5ff", 99531181),
 	GAME_ENTRY_EN("skippysavestheday", "First Game Test.exe", "06a03fe35791b0578068ab1873455463", 10473902),
 	GAME_ENTRY_EN("skrex", "Skrex.exe", "43c3b9739bc8ff9b573f40a5c06707b0", 38799705),
+	GAME_ENTRY_EN("skrexevalquest", "SkrexevalsQuest.exe", "592fb44095724dfcfe7c3f99519735d2", 4691196),
 	GAME_ENTRY_EN("skumring", "Skumring.exe", "660bec8a9540e00fc8a61be3bfd54e0a", 855262786),  //v1.0.1
 	GAME_ENTRY_EN_PLATFORM("skumring", "Skumring Extra Noir Edition.exe", "d84cd417bf24f76e9c74ce1f01dc5f3b", 803654540, "Extra Noir Edition"),
 	GAME_ENTRY_EN("skyadventure", "skyadventure.exe", "97f74f77ff127215fc44f35958fd2d55", 4266937),
