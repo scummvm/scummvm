@@ -28,15 +28,11 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-struct Maze709Struc {
-	int32 _leftActive;
-	int32 _rightActive;
-	int32 _straightActive;
-	int32 _backActive;
-	int32 _leftIndex;
-	int32 _rightIndex;
-	int32 _straightIndex;
-	int32 _backIndex;
+struct Maze709Room {
+	byte _left;
+	byte _right;
+	byte _up;
+	byte _down;
 };
 
 class Room709 : public Room {
@@ -85,9 +81,10 @@ private:
 	machine *_ripPullMach05 = nullptr;
 	machine *_safariShadow1Mach = nullptr;
 
-	Maze709Struc _maze709Arr[99];
+	void debugRoomChanged();
 
-	void resetMaze();
+	static const Maze709Room _rooms[99];
+
 	static void clearPressed(void *, void *);
 };
 

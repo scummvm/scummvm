@@ -29,21 +29,118 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-Room709::Room709() : Room() {
-	resetMaze();
-}
+const Maze709Room Room709::_rooms[99] = {
+	{  0,  0,  0,  0 },
+	{  0,  2,  0, 12 },
+	{  1,  0,  0, 13 },
+	{  0,  4,  0, 14 },
+	{  3,  5,  0, 15 },
+	{  4,  6,  0,  0 },
+	{  5,  7,  0, 17 },
+	{  6,  8,  0,  0 },
+	{  7,  9,  0,  0 },
+	{  8,  0,  0, 20 },
 
-void Room709::resetMaze() {
-	for (int i = 0; i < 99; ++i) {
-		_maze709Arr[i]._leftActive = 0;
-		_maze709Arr[i]._rightActive = 0;
-		_maze709Arr[i]._straightActive = 0;
-		_maze709Arr[i]._backActive = 0;
-		_maze709Arr[i]._leftIndex = 0;
-		_maze709Arr[i]._rightIndex = 0;
-		_maze709Arr[i]._straightIndex = 0;
-		_maze709Arr[i]._backIndex = 0;
-	}
+	{  0, 11,  0, 21 },
+	{ 10,  0,  0, 22 },
+	{  0,  0,  1,  0 },
+	{  0,  0,  2, 24 },
+	{  0,  0,  3, 25 },
+	{  0, 16,  4,  0 },
+	{ 15,  0,  0,  0 },
+	{  0,  0,  6,  0 },
+	{  0, 19,  0, 29 },
+	{ 18, 20,  0,  0 },
+
+	{ 19, 21,  9,  0 },
+	{ 20,  0, 10,  0 },
+	{  0,  0, 11,  0 },
+	{  0, 24,  0, 34 },
+	{ 23,  0, 13,  0 },
+	{  0,  0,  1, 36 },
+	{ 25,  0,  0, 37 },
+	{  0, 28,  0, 38 },
+	{ 27,  0,  0,  0 },
+	{  0,  0, 18, 40 },
+
+	{  0, 31,  0, 41 },
+	{ 30, 32,  0, 42 },
+	{ 31, 33,  0,  0 },
+	{ 32,  0,  0, 44 },
+	{  0,  0, 23, 45 },
+	{  0, 36,  0,  0 },
+	{ 35,  0, 25, 47 },
+	{  0, 38, 26,  0 },
+	{ 37,  0, 27,  0 },
+	{  0, 40,  0, 50 },
+
+	{ 39,  0, 29,  0 },
+	{  0,  0, 30, 52 },
+	{  0, 43, 31, 53 },
+	{ 42, 44,  0,  0 },
+	{ 43,  0, 33,  0 },
+	{  0, 46, 34, 56 },
+	{ 45, 47,  0,  0 },
+	{ 46,  0, 36,  0 },
+	{  0, 49,  0, 59 },
+	{ 48,  0,  0,  0 },
+
+	{  0,  0, 39,  0 },
+	{  0, 52,  0, 62 },
+	{ 51,  0, 41,  0 },
+	{  0, 54, 42,  0 },
+	{ 53, 55,  0,  0 },
+	{ 54,  0,  0, 66 },
+	{  0,  0, 45, 67 },
+	{ 56,  0,  0,  0 },
+	{  0, 59,  0, 69 },
+	{ 58,  0, 48, 70 },
+
+	{  0, 61,  0, 71 },
+	{ 60, 62,  0,  0 },
+	{ 61,  0, 51,  0 },
+	{  0, 64,  0,  0 },
+	{ 63, 65,  0, 75 },
+	{ 64, 66,  0,  0 },
+	{ 65,  0, 55,  0 },
+	{  0,  0, 56, 78 },
+	{  0, 69,  0, 79 },
+	{ 68,  0, 58,  0 },
+
+	{  0, 71, 59,  0 },
+	{ 70,  0, 60,  0 },
+	{  0, 73,  0, 83 },
+	{ 72, 74,  0,  0 },
+	{ 73,  0,  0, 85 },
+	{  0, 76, 64,  0 },
+	{ 75, 77,  0,  0 },
+	{ 76,  0,  0, 88 },
+	{  0,  0, 67, 89 },
+	{  0, 80, 68,  0 },
+
+	{ 79, 81,  0, 91 },
+	{ 80,  0,  0, 92 },
+	{  0, 83,  0,  0 },
+	{ 82,  0, 72, 94 },
+	{  0, 85,  0, 95 },
+	{ 84, 86, 74,  0 },
+	{ 85, 87,  0,  0 },
+	{ 86,  0,  0, 98 },
+	{  0,  0, 77, 99 },
+	{  0, 90, 78,  0 },
+
+	{ 89, 91,  0,  0 },
+	{ 90,  0, 80,  0 },
+	{  0, 93, 81,  0 },
+	{ 92,  0,  0,  0 },
+	{  0,  0, 83,  0 },
+	{  0, 96, 84,  0 },
+	{ 95, 97,  0,  0 },
+	{ 96,  0,  0,  0 },
+	{  0, 99, 87,  0 }
+};
+
+Room709::Room709() : Room() {
 }
 
 void Room709::preload() {
@@ -87,402 +184,11 @@ void Room709::init() {
 	_709rpro6Mach = series_place_sprite("709RPRO6", 0, 0, -53, 100, 1792);
 	_709rpro5Mach = series_place_sprite("709RPRO5", 0, 0, -53, 100, 512);
 
-	resetMaze();
-
 	_chiselActiveFl = false;
 	_incenseBurnerActiveFl = false;
 
 	hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
 	hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
-
-	_maze709Arr[1]._rightActive = 1;
-	_maze709Arr[1]._rightIndex = 2;
-	_maze709Arr[1]._backActive = 1;
-	_maze709Arr[1]._backIndex = 12;
-	_maze709Arr[2]._leftActive = 1;
-	_maze709Arr[2]._leftIndex = 1;
-	_maze709Arr[2]._backActive = 1;
-	_maze709Arr[2]._backIndex = 13;
-	_maze709Arr[3]._rightActive = 1;
-	_maze709Arr[3]._rightIndex = 4;
-	_maze709Arr[3]._backActive = 1;
-	_maze709Arr[3]._backIndex = 14;
-	_maze709Arr[4]._rightActive = 1;
-	_maze709Arr[4]._rightIndex = 5;
-	_maze709Arr[4]._leftActive = 1;
-	_maze709Arr[4]._leftIndex = 3;
-	_maze709Arr[4]._backActive = 1;
-	_maze709Arr[4]._backIndex = 15;
-	_maze709Arr[5]._rightActive = 1;
-	_maze709Arr[5]._rightIndex = 6;
-	_maze709Arr[5]._leftActive = 1;
-	_maze709Arr[5]._leftIndex = 4;
-	_maze709Arr[6]._leftActive = 1;
-	_maze709Arr[6]._leftIndex = 5;
-	_maze709Arr[6]._rightActive = 1;
-	_maze709Arr[6]._rightIndex = 7;
-	_maze709Arr[6]._backActive = 1;
-	_maze709Arr[6]._backIndex = 17;
-	_maze709Arr[7]._rightActive = 1;
-	_maze709Arr[7]._rightIndex = 8;
-	_maze709Arr[7]._leftActive = 1;
-	_maze709Arr[7]._leftIndex = 6;
-	_maze709Arr[8]._rightActive = 1;
-	_maze709Arr[8]._rightIndex = 9;
-	_maze709Arr[8]._leftActive = 1;
-	_maze709Arr[8]._leftIndex = 7;
-	_maze709Arr[9]._leftActive = 1;
-	_maze709Arr[9]._leftIndex = 8;
-	_maze709Arr[9]._backActive = 1;
-	_maze709Arr[9]._backIndex = 20;
-	_maze709Arr[10]._rightActive = 1;
-	_maze709Arr[10]._rightIndex = 11;
-	_maze709Arr[10]._backActive = 1;
-	_maze709Arr[10]._backIndex = 21;
-	_maze709Arr[11]._leftActive = 1;
-	_maze709Arr[11]._leftIndex = 10;
-	_maze709Arr[11]._backActive = 1;
-	_maze709Arr[11]._backIndex = 22;
-	_maze709Arr[12]._straightActive = 1;
-	_maze709Arr[12]._straightIndex = 1;
-	_maze709Arr[13]._straightActive = 1;
-	_maze709Arr[13]._straightIndex = 2;
-	_maze709Arr[13]._backActive = 1;
-	_maze709Arr[13]._backIndex = 24;
-	_maze709Arr[14]._straightActive = 1;
-	_maze709Arr[14]._straightIndex = 3;
-	_maze709Arr[14]._backActive = 1;
-	_maze709Arr[14]._backIndex = 25;
-	_maze709Arr[15]._straightActive = 1;
-	_maze709Arr[15]._straightIndex = 4;
-	_maze709Arr[15]._rightActive = 1;
-	_maze709Arr[15]._rightIndex = 16;
-	_maze709Arr[16]._leftActive = 1;
-	_maze709Arr[16]._leftIndex = 15;
-	_maze709Arr[17]._straightActive = 1;
-	_maze709Arr[17]._straightIndex = 6;
-	_maze709Arr[18]._rightActive = 1;
-	_maze709Arr[18]._rightIndex = 19;
-	_maze709Arr[18]._backActive = 1;
-	_maze709Arr[18]._backIndex = 29;
-	_maze709Arr[19]._rightActive = 1;
-	_maze709Arr[19]._rightIndex = 20;
-	_maze709Arr[19]._leftActive = 1;
-	_maze709Arr[19]._leftIndex = 18;
-	_maze709Arr[20]._straightActive = 1;
-	_maze709Arr[20]._straightIndex = 9;
-	_maze709Arr[20]._rightActive = 1;
-	_maze709Arr[20]._rightIndex = 21;
-	_maze709Arr[20]._leftActive = 1;
-	_maze709Arr[20]._leftIndex = 19;
-	_maze709Arr[21]._straightActive = 1;
-	_maze709Arr[21]._straightIndex = 10;
-	_maze709Arr[21]._leftActive = 1;
-	_maze709Arr[21]._leftIndex = 20;
-	_maze709Arr[22]._straightActive = 1;
-	_maze709Arr[22]._straightIndex = 11;
-	_maze709Arr[23]._rightActive = 1;
-	_maze709Arr[23]._rightIndex = 24;
-	_maze709Arr[23]._backActive = 1;
-	_maze709Arr[23]._backIndex = 34;
-	_maze709Arr[24]._straightActive = 1;
-	_maze709Arr[24]._straightIndex = 13;
-	_maze709Arr[24]._leftActive = 1;
-	_maze709Arr[24]._leftIndex = 23;
-	_maze709Arr[25]._straightActive = 1;
-	_maze709Arr[25]._straightIndex = 14;
-	_maze709Arr[25]._backActive = 1;
-	_maze709Arr[25]._backIndex = 36;
-	_maze709Arr[26]._leftActive = 1;
-	_maze709Arr[26]._leftIndex = 25;
-	_maze709Arr[26]._backActive = 1;
-	_maze709Arr[26]._backIndex = 37;
-	_maze709Arr[27]._rightActive = 1;
-	_maze709Arr[27]._rightIndex = 28;
-	_maze709Arr[27]._backActive = 1;
-	_maze709Arr[27]._backIndex = 38;
-	_maze709Arr[28]._leftActive = 1;
-	_maze709Arr[28]._leftIndex = 27;
-	_maze709Arr[29]._straightActive = 1;
-	_maze709Arr[29]._straightIndex = 18;
-	_maze709Arr[29]._backActive = 1;
-	_maze709Arr[29]._backIndex = 40;
-	_maze709Arr[30]._rightActive = 1;
-	_maze709Arr[30]._rightIndex = 31;
-	_maze709Arr[30]._backActive = 1;
-	_maze709Arr[30]._backIndex = 41;
-	_maze709Arr[31]._rightActive = 1;
-	_maze709Arr[31]._rightIndex = 32;
-	_maze709Arr[31]._leftActive = 1;
-	_maze709Arr[31]._leftIndex = 30;
-	_maze709Arr[31]._backActive = 1;
-	_maze709Arr[31]._backIndex = 42;
-	_maze709Arr[32]._rightActive = 1;
-	_maze709Arr[32]._rightIndex = 33;
-	_maze709Arr[32]._leftActive = 1;
-	_maze709Arr[32]._leftIndex = 31;
-	_maze709Arr[33]._leftActive = 1;
-	_maze709Arr[33]._leftIndex = 32;
-	_maze709Arr[33]._backActive = 1;
-	_maze709Arr[33]._backIndex = 44;
-	_maze709Arr[34]._straightActive = 1;
-	_maze709Arr[34]._straightIndex = 23;
-	_maze709Arr[34]._backActive = 1;
-	_maze709Arr[34]._backIndex = 45;
-	_maze709Arr[35]._rightActive = 1;
-	_maze709Arr[35]._rightIndex = 36;
-	_maze709Arr[36]._straightActive = 1;
-	_maze709Arr[36]._straightIndex = 25;
-	_maze709Arr[36]._leftActive = 1;
-	_maze709Arr[36]._leftIndex = 35;
-	_maze709Arr[36]._backActive = 1;
-	_maze709Arr[36]._backIndex = 47;
-	_maze709Arr[37]._straightActive = 1;
-	_maze709Arr[37]._straightIndex = 26;
-	_maze709Arr[37]._rightActive = 1;
-	_maze709Arr[37]._rightIndex = 38;
-	_maze709Arr[38]._straightActive = 1;
-	_maze709Arr[38]._straightIndex = 27;
-	_maze709Arr[38]._leftActive = 1;
-	_maze709Arr[38]._leftIndex = 37;
-	_maze709Arr[39]._rightActive = 1;
-	_maze709Arr[39]._rightIndex = 40;
-	_maze709Arr[39]._backActive = 1;
-	_maze709Arr[39]._backIndex = 50;
-	_maze709Arr[40]._straightActive = 1;
-	_maze709Arr[40]._straightIndex = 29;
-	_maze709Arr[40]._leftActive = 1;
-	_maze709Arr[40]._leftIndex = 39;
-	_maze709Arr[41]._straightActive = 1;
-	_maze709Arr[41]._straightIndex = 30;
-	_maze709Arr[41]._backActive = 1;
-	_maze709Arr[41]._backIndex = 52;
-	_maze709Arr[42]._straightActive = 1;
-	_maze709Arr[42]._straightIndex = 31;
-	_maze709Arr[42]._backActive = 1;
-	_maze709Arr[42]._backIndex = 53;
-	_maze709Arr[42]._rightActive = 1;
-	_maze709Arr[42]._rightIndex = 43;
-	_maze709Arr[43]._leftActive = 1;
-	_maze709Arr[43]._leftIndex = 42;
-	_maze709Arr[43]._rightActive = 1;
-	_maze709Arr[43]._rightIndex = 44;
-	_maze709Arr[44]._straightActive = 1;
-	_maze709Arr[44]._straightIndex = 33;
-	_maze709Arr[44]._leftActive = 1;
-	_maze709Arr[44]._leftIndex = 43;
-	_maze709Arr[45]._straightActive = 1;
-	_maze709Arr[45]._straightIndex = 34;
-	_maze709Arr[45]._rightActive = 1;
-	_maze709Arr[45]._rightIndex = 46;
-	_maze709Arr[45]._backActive = 1;
-	_maze709Arr[45]._backIndex = 56;
-	_maze709Arr[46]._leftActive = 1;
-	_maze709Arr[46]._leftIndex = 45;
-	_maze709Arr[46]._rightActive = 1;
-	_maze709Arr[46]._rightIndex = 47;
-	_maze709Arr[47]._straightActive = 1;
-	_maze709Arr[47]._straightIndex = 36;
-	_maze709Arr[47]._leftActive = 1;
-	_maze709Arr[47]._leftIndex = 46;
-	_maze709Arr[48]._rightActive = 1;
-	_maze709Arr[48]._rightIndex = 49;
-	_maze709Arr[48]._backActive = 1;
-	_maze709Arr[48]._backIndex = 59;
-	_maze709Arr[49]._leftActive = 1;
-	_maze709Arr[49]._leftIndex = 48;
-	_maze709Arr[50]._straightActive = 1;
-	_maze709Arr[50]._straightIndex = 39;
-	_maze709Arr[51]._rightActive = 1;
-	_maze709Arr[51]._rightIndex = 52;
-	_maze709Arr[51]._backActive = 1;
-	_maze709Arr[51]._backIndex = 62;
-	_maze709Arr[52]._straightActive = 1;
-	_maze709Arr[52]._straightIndex = 41;
-	_maze709Arr[52]._leftActive = 1;
-	_maze709Arr[52]._leftIndex = 51;
-	_maze709Arr[53]._straightActive = 1;
-	_maze709Arr[53]._straightIndex = 42;
-	_maze709Arr[53]._rightActive = 1;
-	_maze709Arr[53]._rightIndex = 54;
-	_maze709Arr[54]._rightActive = 1;
-	_maze709Arr[54]._rightIndex = 55;
-	_maze709Arr[54]._leftActive = 1;
-	_maze709Arr[54]._leftIndex = 53;
-	_maze709Arr[55]._leftActive = 1;
-	_maze709Arr[55]._leftIndex = 54;
-	_maze709Arr[55]._backActive = 1;
-	_maze709Arr[55]._backIndex = 66;
-	_maze709Arr[56]._straightActive = 1;
-	_maze709Arr[56]._straightIndex = 45;
-	_maze709Arr[56]._backActive = 1;
-	_maze709Arr[56]._backIndex = 67;
-	_maze709Arr[57]._leftActive = 1;
-	_maze709Arr[57]._leftIndex = 56;
-	_maze709Arr[58]._rightActive = 1;
-	_maze709Arr[58]._rightIndex = 59;
-	_maze709Arr[58]._backActive = 1;
-	_maze709Arr[58]._backIndex = 69;
-	_maze709Arr[59]._straightActive = 1;
-	_maze709Arr[59]._straightIndex = 48;
-	_maze709Arr[59]._leftActive = 1;
-	_maze709Arr[59]._leftIndex = 58;
-	_maze709Arr[59]._backActive = 1;
-	_maze709Arr[59]._backIndex = 70;
-	_maze709Arr[60]._rightActive = 1;
-	_maze709Arr[60]._rightIndex = 61;
-	_maze709Arr[60]._backActive = 1;
-	_maze709Arr[60]._backIndex = 71;
-	_maze709Arr[61]._rightActive = 1;
-	_maze709Arr[61]._rightIndex = 62;
-	_maze709Arr[61]._leftActive = 1;
-	_maze709Arr[61]._leftIndex = 60;
-	_maze709Arr[62]._straightActive = 1;
-	_maze709Arr[62]._straightIndex = 51;
-	_maze709Arr[62]._leftActive = 1;
-	_maze709Arr[62]._leftIndex = 61;
-	_maze709Arr[63]._rightActive = 1;
-	_maze709Arr[63]._rightIndex = 64;
-	_maze709Arr[64]._rightActive = 1;
-	_maze709Arr[64]._rightIndex = 65;
-	_maze709Arr[64]._leftActive = 1;
-	_maze709Arr[64]._leftIndex = 63;
-	_maze709Arr[64]._backActive = 1;
-	_maze709Arr[64]._backIndex = 75;
-	_maze709Arr[65]._rightActive = 1;
-	_maze709Arr[65]._rightIndex = 66;
-	_maze709Arr[65]._leftActive = 1;
-	_maze709Arr[65]._leftIndex = 64;
-	_maze709Arr[66]._straightActive = 1;
-	_maze709Arr[66]._straightIndex = 55;
-	_maze709Arr[66]._leftActive = 1;
-	_maze709Arr[66]._leftIndex = 65;
-	_maze709Arr[67]._straightActive = 1;
-	_maze709Arr[67]._straightIndex = 56;
-	_maze709Arr[67]._backActive = 1;
-	_maze709Arr[67]._backIndex = 78;
-	_maze709Arr[68]._rightActive = 1;
-	_maze709Arr[68]._rightIndex = 69;
-	_maze709Arr[68]._backActive = 1;
-	_maze709Arr[68]._backIndex = 79;
-	_maze709Arr[69]._leftActive = 1;
-	_maze709Arr[69]._leftIndex = 68;
-	_maze709Arr[69]._straightActive = 1;
-	_maze709Arr[69]._straightIndex = 58;
-	_maze709Arr[70]._straightActive = 1;
-	_maze709Arr[70]._straightIndex = 59;
-	_maze709Arr[70]._rightActive = 1;
-	_maze709Arr[70]._rightIndex = 71;
-	_maze709Arr[71]._straightActive = 1;
-	_maze709Arr[71]._straightIndex = 60;
-	_maze709Arr[71]._leftActive = 1;
-	_maze709Arr[71]._leftIndex = 70;
-	_maze709Arr[72]._rightActive = 1;
-	_maze709Arr[72]._rightIndex = 73;
-	_maze709Arr[72]._backActive = 1;
-	_maze709Arr[72]._backIndex = 83;
-	_maze709Arr[73]._leftActive = 1;
-	_maze709Arr[73]._leftIndex = 72;
-	_maze709Arr[73]._rightActive = 1;
-	_maze709Arr[73]._rightIndex = 74;
-	_maze709Arr[74]._leftActive = 1;
-	_maze709Arr[74]._leftIndex = 73;
-	_maze709Arr[74]._backActive = 1;
-	_maze709Arr[74]._backIndex = 85;
-	_maze709Arr[75]._straightActive = 1;
-	_maze709Arr[75]._straightIndex = 64;
-	_maze709Arr[75]._rightActive = 1;
-	_maze709Arr[75]._rightIndex = 76;
-	_maze709Arr[76]._leftActive = 1;
-	_maze709Arr[76]._leftIndex = 75;
-	_maze709Arr[76]._rightActive = 1;
-	_maze709Arr[76]._rightIndex = 77;
-	_maze709Arr[77]._leftActive = 1;
-	_maze709Arr[77]._leftIndex = 76;
-	_maze709Arr[77]._backActive = 1;
-	_maze709Arr[77]._backIndex = 88;
-	_maze709Arr[78]._straightActive = 1;
-	_maze709Arr[78]._straightIndex = 67;
-	_maze709Arr[78]._backActive = 1;
-	_maze709Arr[78]._backIndex = 89;
-	_maze709Arr[79]._straightActive = 1;
-	_maze709Arr[79]._straightIndex = 68;
-	_maze709Arr[79]._rightActive = 1;
-	_maze709Arr[79]._rightIndex = 80;
-	_maze709Arr[80]._rightActive = 1;
-	_maze709Arr[80]._rightIndex = 81;
-	_maze709Arr[80]._leftActive = 1;
-	_maze709Arr[80]._leftIndex = 79;
-	_maze709Arr[80]._backActive = 1;
-	_maze709Arr[80]._backIndex = 91;
-	_maze709Arr[81]._leftActive = 1;
-	_maze709Arr[81]._leftIndex = 80;
-	_maze709Arr[81]._backActive = 1;
-	_maze709Arr[81]._backIndex = 92;
-	_maze709Arr[82]._rightActive = 1;
-	_maze709Arr[82]._rightIndex = 83;
-	_maze709Arr[83]._straightActive = 1;
-	_maze709Arr[83]._straightIndex = 72;
-	_maze709Arr[83]._leftActive = 1;
-	_maze709Arr[83]._leftIndex = 82;
-	_maze709Arr[83]._backActive = 1;
-	_maze709Arr[83]._backIndex = 94;
-	_maze709Arr[84]._rightActive = 1;
-	_maze709Arr[84]._rightIndex = 85;
-	_maze709Arr[84]._backActive = 1;
-	_maze709Arr[84]._backIndex = 95;
-	_maze709Arr[85]._straightActive = 1;
-	_maze709Arr[85]._straightIndex = 74;
-	_maze709Arr[85]._leftActive = 1;
-	_maze709Arr[85]._leftIndex = 84;
-	_maze709Arr[85]._rightActive = 1;
-	_maze709Arr[85]._rightIndex = 86;
-	_maze709Arr[86]._leftActive = 1;
-	_maze709Arr[86]._leftIndex = 85;
-	_maze709Arr[86]._rightActive = 1;
-	_maze709Arr[86]._rightIndex = 87;
-	_maze709Arr[87]._leftActive = 1;
-	_maze709Arr[87]._leftIndex = 86;
-	_maze709Arr[87]._backActive = 1;
-	_maze709Arr[87]._backIndex = 98;
-	_maze709Arr[88]._straightActive = 1;
-	_maze709Arr[88]._straightIndex = 77;
-	_maze709Arr[88]._backActive = 1;
-	_maze709Arr[88]._backIndex = 99;
-	_maze709Arr[89]._straightActive = 1;
-	_maze709Arr[89]._straightIndex = 78;
-	_maze709Arr[89]._rightActive = 1;
-	_maze709Arr[89]._rightIndex = 90;
-	_maze709Arr[90]._rightActive = 1;
-	_maze709Arr[90]._rightIndex = 91;
-	_maze709Arr[90]._leftActive = 1;
-	_maze709Arr[90]._leftIndex = 89;
-	_maze709Arr[91]._straightActive = 1;
-	_maze709Arr[91]._straightIndex = 80;
-	_maze709Arr[91]._leftActive = 1;
-	_maze709Arr[91]._leftIndex = 90;
-	_maze709Arr[92]._straightActive = 1;
-	_maze709Arr[92]._straightIndex = 81;
-	_maze709Arr[92]._rightActive = 1;
-	_maze709Arr[92]._rightIndex = 93;
-	_maze709Arr[93]._leftActive = 1;
-	_maze709Arr[93]._leftIndex = 92;
-	_maze709Arr[94]._straightActive = 1;
-	_maze709Arr[94]._straightIndex = 83;
-	_maze709Arr[95]._straightActive = 1;
-	_maze709Arr[95]._straightIndex = 84;
-	_maze709Arr[95]._rightActive = 1;
-	_maze709Arr[95]._rightIndex = 96;
-	_maze709Arr[96]._leftActive = 1;
-	_maze709Arr[96]._leftIndex = 95;
-	_maze709Arr[96]._rightActive = 1;
-	_maze709Arr[96]._rightIndex = 97;
-	_maze709Arr[97]._leftActive = 1;
-	_maze709Arr[97]._leftIndex = 96;
-	_maze709Arr[98]._straightActive = 1;
-	_maze709Arr[98]._straightIndex = 87;
-	_maze709Arr[98]._rightActive = 1;
-	_maze709Arr[98]._rightIndex = 99;
 	
 	_G(room303_btnFlag) = true;
 	_G(global301) = 88;
@@ -515,26 +221,29 @@ void Room709::init() {
 	case 706:
 		digi_preload("950_s41", -1);
 		_mazeCurrentIndex = 82;
+		debugRoomChanged();
+
 		_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 		sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 10, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
 		_pullLeftFl = true;
 		ws_demand_location(_G(my_walker), 186, 290);
 		ws_demand_facing(_G(my_walker), 2);
 		ws_walk(_G(my_walker), 276, 300, nullptr, -1, 0, true);
-
 		break;
 
 	case 710:
 		_mazeCurrentIndex = 39;
+		debugRoomChanged();
+
 		ws_demand_location(_G(my_walker), 320, 400);
 		ws_demand_facing(_G(my_walker), 1);
-
 		break;
 
 	default:
 		_mazeCurrentIndex = 82;
-		digi_preload("950_s41", -1);
+		debugRoomChanged();
 
+		digi_preload("950_s41", -1);
 		break;
 	}
 
@@ -547,7 +256,7 @@ void Room709::pre_parser() {
 	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close", "RopeS", "RopeL", "RopeR", "RopeB");
 
 	if (player_said("Right")) {
-		if (_maze709Arr[_mazeCurrentIndex]._rightActive == 0 || !_pullRightFl || lookFl || talkFl || gearFl) {
+		if (!_rooms[_mazeCurrentIndex]._right || !_pullRightFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -555,7 +264,7 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Left")) {
-		if (_maze709Arr[_mazeCurrentIndex]._leftActive == 0 || !_pullLeftFl || lookFl || talkFl || gearFl) {
+		if (!_rooms[_mazeCurrentIndex]._left || !_pullLeftFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -569,7 +278,7 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Straight")) {
-		if (_maze709Arr[_mazeCurrentIndex]._straightActive == 0 || !_pullCenterFl || lookFl || talkFl || gearFl) {
+		if (!_rooms[_mazeCurrentIndex]._up || !_pullCenterFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -577,7 +286,7 @@ void Room709::pre_parser() {
 	}
 
 	if (player_said("Back")) {
-		if (_maze709Arr[_mazeCurrentIndex]._backActive == 0 || !_pullNearFl || lookFl || talkFl || gearFl) {
+		if (!_rooms[_mazeCurrentIndex]._down || !_pullNearFl || lookFl || talkFl || gearFl) {
 			_G(player).need_to_walk = false;
 			_G(player).ready_to_walk = true;
 			_G(player).waiting_for_walk = false;
@@ -636,7 +345,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrentIndex]._rightActive != 0 && !_pullRightFl) {
+			if (_rooms[_mazeCurrentIndex]._right && !_pullRightFl) {
 				_ripPullMach03 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach03, _mazeRightDoorLiteSeries, 1, 10, 3, _mazeRightDoorLiteSeries, 10, 10, 0);
 				_pullRightFl = true;
@@ -682,7 +391,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrentIndex]._leftActive != 0 && !_pullLeftFl) {
+			if (_rooms[_mazeCurrentIndex]._left && !_pullLeftFl) {
 				_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, 3, _mazeLeftDoorLiteSeries, 10, 10, 0);
 				_pullLeftFl = true;
@@ -728,7 +437,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrentIndex]._straightActive != 0 && !_pullCenterFl) {
+			if (_rooms[_mazeCurrentIndex]._up && !_pullCenterFl) {
 				_ripPullMach04 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach04, _mazeCenterDoorLiteSeries, 1, 10, 3, _mazeCenterDoorLiteSeries, 10, 10, 0);
 				_pullCenterFl = true;
@@ -775,7 +484,7 @@ void Room709::parser() {
 			break;
 
 		case 2:
-			if (_maze709Arr[_mazeCurrentIndex]._backActive != 0 && !_pullNearFl) {
+			if (_rooms[_mazeCurrentIndex]._down && !_pullNearFl) {
 				_ripPullMach05 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 				sendWSMessage_10000(1, _ripPullMach05, _709NearDoorLiteSeries, 1, 10, 3, _709NearDoorLiteSeries, 10, 10, 0);
 				_pullNearFl = true;
@@ -800,7 +509,7 @@ void Room709::parser() {
 	} // esi && player_said("rope    ")
 
 	else if (player_said("Right")) {
-		if (_maze709Arr[_mazeCurrentIndex]._rightActive == 0 || !_pullRightFl) {
+		if (!_rooms[_mazeCurrentIndex]._right || !_pullRightFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -825,7 +534,7 @@ void Room709::parser() {
 	} // player_said("Right")
 
 	else if (player_said("Left")) {
-		if (_maze709Arr[_mazeCurrentIndex]._leftActive == 0 || !_pullLeftFl) {
+		if (!_rooms[_mazeCurrentIndex]._left || !_pullLeftFl) {
 			if (_mazeCurrentIndex == 82) {
 				switch (_G(kernel).trigger) {
 				case -1:
@@ -870,7 +579,7 @@ void Room709::parser() {
 	} // player_said("Left")
 
 	else if (player_said("Straight")) {
-		if (_maze709Arr[_mazeCurrentIndex]._straightActive == 0 || !_pullCenterFl) {
+		if (!_rooms[_mazeCurrentIndex]._up || !_pullCenterFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -894,7 +603,7 @@ void Room709::parser() {
 	} // player_said("Straight")
 
 	else if (player_said("Back")) {
-		if (_maze709Arr[_mazeCurrentIndex]._backActive == 0 || !_pullNearFl) {
+		if (!_rooms[_mazeCurrentIndex]._down || !_pullNearFl) {
 			digi_play("708R01", 1, 255, -1, -1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -1045,7 +754,9 @@ void Room709::daemon() {
 	case 20: // related to player_said("left")
 		ws_demand_location(_G(my_walker), 410, 300);
 		ws_demand_facing(_G(my_walker), 9);
-		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._leftIndex;
+		_mazeCurrentIndex = _rooms[_mazeCurrentIndex]._left;
+		debugRoomChanged();
+
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
@@ -1105,7 +816,9 @@ void Room709::daemon() {
 	case 30:
 		ws_demand_location(_G(my_walker), 230, 300);
 		ws_demand_facing(_G(my_walker), 3);
-		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._rightIndex;
+		_mazeCurrentIndex = _rooms[_mazeCurrentIndex]._right;
+		debugRoomChanged();
+
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
@@ -1160,7 +873,9 @@ void Room709::daemon() {
 	case 40:
 		ws_demand_location(_G(my_walker), 320, 400);
 		ws_demand_facing(_G(my_walker), 1);
-		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._straightIndex;
+		_mazeCurrentIndex = _rooms[_mazeCurrentIndex]._up;
+		debugRoomChanged();
+
 		if (_chiselActiveFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
 			terminateMachine(_709ChiselMach);
@@ -1215,7 +930,8 @@ void Room709::daemon() {
 	case 50:
 		ws_demand_location(_G(my_walker), 320, 280);
 		ws_demand_facing(_G(my_walker), 5);
-		_mazeCurrentIndex = _maze709Arr[_mazeCurrentIndex]._backIndex;
+		_mazeCurrentIndex = _rooms[_mazeCurrentIndex]._down;
+		debugRoomChanged();
 
 		if (_mazeCurrentIndex == 50) {
 			adv_kill_digi_between_rooms(false);
@@ -1524,6 +1240,31 @@ void Room709::clearPressed(void *, void *) {
 		digi_preload("709_s99", -1);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		disable_player_commands_and_fade_init(500);
+	}
+}
+
+void Room709::debugRoomChanged() {
+	if (gDebugLevel > 0) {
+		// Show room exits
+		const Maze709Room &room = _rooms[_mazeCurrentIndex];
+		debug(1, "Room %.2d, DIRS: %c %c %c %c",
+			_mazeCurrentIndex,
+			room._left ? 'L' : ' ',
+			room._right ? 'R' : ' ',
+			room._up ? 'U' : ' ',
+			room._down ? 'D' : ' '
+		);
+
+		// Assert that room exits match up to the corresponding exits
+		// in the destination room
+		if (room._left)
+			assert(_rooms[room._left]._right == _mazeCurrentIndex);
+		if (room._right)
+			assert(_rooms[room._right]._left == _mazeCurrentIndex);
+		if (room._up)
+			assert(_rooms[room._up]._down == _mazeCurrentIndex);
+		if (room._down)
+			assert(_rooms[room._down]._up == _mazeCurrentIndex);
 	}
 }
 
