@@ -45,8 +45,9 @@ bool MidiParser_M::loadMusic(byte* data, uint32 size) {
 	unloadMusic();
 
 	// M uses only 1 track.
-	_tracks[0] = data;
+	_tracks[0][0] = data;
 	_numTracks = 1;
+	_numSubtracks[0] = 1;
 	_trackLength = size;
 
 	// The global loop defaults to the start of the M data.
@@ -71,8 +72,9 @@ void MidiParser_M::unloadMusic() {
 void MidiParser_M::onTimer() {
 	uint32 endTime;
 	uint32 eventTime;
+	uint32 eventTick;
 
-	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady(_source))
+	if (!_position.isTracking() || !_driver || !_doParse || _pause || !_driver->isReady(_source))
 		return;
 
 	_abortParse = false;
@@ -80,9 +82,10 @@ void MidiParser_M::onTimer() {
 
 	bool loopEvent = false;
 	while (!_abortParse) {
-		EventInfo &info = _nextEvent;
+		EventInfo &info = *_nextEvent;
 
-		eventTime = _position._lastEventTime + info.delta * _psecPerTick;
+		eventTick = _position._subtracks[0]._lastEventTick + info.delta;
+		eventTime = _position._lastEventTime + (eventTick - _position._lastEventTick) * _psecPerTick;
 		if (eventTime > endTime)
 			break;
 
@@ -96,56 +99,64 @@ void MidiParser_M::onTimer() {
 		loopEvent |= info.loop;
 
 		if (!_abortParse) {
+			_position._playTime = eventTime;
 			_position._lastEventTime = eventTime;
-			_position._lastEventTick += info.delta;
-			parseNextEvent(_nextEvent);
+			_position._subtracks[0]._lastEventTime = eventTime;
+
+			_position._playTick = eventTick;
+			_position._lastEventTick = eventTick;
+			_position._subtracks[0]._lastEventTick = eventTick;
+
+			if (_position.isTracking(0)) {
+				parseNextEvent(_nextSubtrackEvents[0]);
+			}
+			determineNextEvent();
 		}
 	}
 
 	if (!_abortParse) {
 		_position._playTime = endTime;
-		_position._playTick = (_position._playTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
+		_position._playTick = (endTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
 		if (loopEvent) {
 			// One of the processed events has looped (part of) the MIDI data.
 			// Infinite looping will cause the tracker to overflow eventually.
 			// Reset the tracker positions to prevent this from happening.
-			_position._playTime -= _position._lastEventTime;
-			_position._lastEventTime = 0;
-			_position._playTick -= _position._lastEventTick;
-			_position._lastEventTick = 0;
+			rebaseTracking();
 		}
 	}
 }
 
 bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
+	byte *playPos = _position._subtracks[0]._playPos;
+
 	if (info.command() == 0x8 && info.channel() == 0x1) {
 		// Call subroutine
 		LoopData loopData { };
-		loopData.returnPos = _position._playPos;
+		loopData.returnPos = playPos;
 		loopData.numLoops = info.ext.data[0];
 		uint16 startOffset = READ_LE_UINT16(info.ext.data + 1);
 		assert(startOffset < _trackLength);
-		loopData.startPos = _tracks[0] + startOffset;
+		loopData.startPos = _tracks[0][0] + startOffset;
 		_loopStack->push(loopData);
-		_position._playPos = loopData.startPos;
+		playPos = loopData.startPos;
 	} else if (info.command() == 0xE) {
 		// Set loop point
-		_loopPoint = _position._playPos;
+		_loopPoint = playPos;
 	} else if (info.command() == 0xF) {
 		// Return
 		if (_loopStack->empty()) {
 			// Global loop: return to the global loop point
-			_position._playPos = _loopPoint;
+			playPos = _loopPoint;
 		} else {
 			// Subroutine loop
 			LoopData *loopData = &_loopStack->top();
 			if (loopData->numLoops > 1) {
 				// Return to the start of the subroutine data
 				loopData->numLoops--;
-				_position._playPos = loopData->startPos;
+				playPos = loopData->startPos;
 			} else {
 				// Return to the call position
-				_position._playPos = loopData->returnPos;
+				playPos = loopData->returnPos;
 				_loopStack->pop();
 			}
 		}
@@ -160,13 +171,17 @@ bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
 		sendToDriver(info.event, info.basic.param1, info.basic.param2);
 	}
 
+	_position._subtracks[0]._playPos = playPos;
+
 	return true;
 }
 
 void MidiParser_M::parseNextEvent(EventInfo &info) {
-	assert(_position._playPos - _tracks[0] < _trackLength);
-	info.start = _position._playPos;
-	info.event = *(_position._playPos++);
+	byte *playPos = _position._subtracks[0]._playPos;
+	assert(playPos - _tracks[0][0] < _trackLength);
+
+	info.start = playPos;
+	info.event = *(playPos++);
 	info.delta = 0;
 	info.basic.param1 = 0;
 	info.basic.param2 = 0;
@@ -183,7 +198,7 @@ void MidiParser_M::parseNextEvent(EventInfo &info) {
 	case 0x6: // Set vibrato
 	case 0x7: // Program change
 		// These commands all have 1 data byte.
-		info.basic.param1 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
 		break;
 
 	case 0x8: // Subcommand
@@ -193,13 +208,13 @@ void MidiParser_M::parseNextEvent(EventInfo &info) {
 			// offset in the M data to jump to (2 bytes).
 			info.ext.type = info.channel();
 			info.length = 3;
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 		case 0x2: // Delay
 			// This command is used to specify a delta time between the
 			// previous and the next event. It does nothing otherwise.
-			info.delta = *(_position._playPos++);
+			info.delta = *(playPos++);
 			info.noop = true;
 			break;
 		case 0x3: // Load instrument
@@ -208,13 +223,13 @@ void MidiParser_M::parseNextEvent(EventInfo &info) {
 			// definition (11 bytes).
 			info.ext.type = info.channel();
 			info.length = 12;
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 		case 0x5: // Fade out
 		case 0x6: // Fade in
 			// These commands have 1 data byte.
-			info.basic.param1 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
 			break;
 		default:
 			info.noop = true;
@@ -235,6 +250,8 @@ void MidiParser_M::parseNextEvent(EventInfo &info) {
 		info.noop = true;
 		break;
 	}
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 void MidiParser_M::allNotesOff() {

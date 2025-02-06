@@ -136,7 +136,7 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 	_jumpingToTick = true;
 
 	if (stopNotes) {
-		if (!_smartJump || !_position._playPos) {
+		if (!_smartJump || !_position.isTracking()) {
 			allNotesOff();
 		} else {
 			hangAllActiveNotes();
@@ -144,8 +144,8 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 	}
 
 	resetTracking();
-	_position._playPos = _trackBranches[_activeTrack][index];
-	parseNextEvent(_nextEvent);
+	_position._subtracks[0]._playPos = _trackBranches[_activeTrack][index];
+	parseNextEvent(*_nextEvent);
 
 	_jumpingToTick = false;
 
@@ -153,17 +153,18 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 }
 
 void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
-	info.start = _position._playPos;
-	info.delta = readVLQ2(_position._playPos);
+	byte *playPos = _position._subtracks[0]._playPos;
+	info.start = playPos;
+	info.delta = readVLQ2(playPos);
 	info.loop = false;
 
 	// Process the next event.
-	info.event = *(_position._playPos++);
+	info.event = *(playPos++);
 	switch (info.event >> 4) {
 	case 0x9: // Note On
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
-		info.length = readVLQ(_position._playPos);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
+		info.length = readVLQ(playPos);
 		if (info.length == 0) {
 			// Notes with length 0 are played with a very short duration by the AIL driver.
 			// However, the MidiParser will treat notes with length 0 as "active notes"; i.e.
@@ -180,20 +181,20 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 	case 0xC:
 	case 0xD:
-		info.basic.param1 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0x8:
 	case 0xA:
 	case 0xE:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		break;
 
 	case 0xB:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 
 		// This isn't a full XMIDI implementation, but it should
 		// hopefully be "good enough" for most things.
@@ -201,7 +202,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		switch (info.basic.param1) {
 		// Simplified XMIDI looping.
 		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
-				byte *pos = _position._playPos;
+				byte *pos = playPos;
 				if (_loopCount < ARRAYSIZE(_loop) - 1)
 					_loopCount++;
 				else
@@ -223,11 +224,11 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 						if (--_loop[_loopCount].repeat == 0) {
 							_loopCount--;
 						} else {
-							_position._playPos = _loop[_loopCount].pos;
+							playPos = _loop[_loopCount].pos;
 							info.loop = true;
 						}
 					} else {
-						_position._playPos = _loop[_loopCount].pos;
+						playPos = _loop[_loopCount].pos;
 						info.loop = true;
 					}
 				}
@@ -273,12 +274,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	case 0xF: // Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_position._playPos++);
-			info.basic.param2 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
+			info.basic.param2 = *(playPos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -292,16 +293,16 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_position._playPos++);
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.ext.type = *(playPos++);
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			if (info.ext.type == 0x51 && info.length == 3) {
 				// Tempo event. We want to make these constant 500,000.
 				info.ext.data[0] = 0x07;
@@ -319,6 +320,8 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	default:
 		break;
 	}
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 void MidiParser_XMIDI::setMidiDriver(MidiDriver_BASE *driver) {
@@ -454,17 +457,18 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				pos += (len + 1) & ~1;
 			} else if (!memcmp(pos, "EVNT", 4)) {
 				// Ahh! What we're looking for at last.
-				_tracks[tracksRead] = pos + 8; // Skip the EVNT and length bytes
+				_tracks[tracksRead][0] = pos + 8; // Skip the EVNT and length bytes
+				_numSubtracks[tracksRead] = 1;
 				pos += 4;
 				len = read4high(pos);
 				pos += (len + 1) & ~1;
 				// Calculate branch index positions using the track position we just found
 				for (int j = 0; j < MAXIMUM_TRACK_BRANCHES; ++j) {
 					if (branchOffsets[j] != 0) {
-						byte *branchPos = _tracks[tracksRead] + branchOffsets[j];
+						byte *branchPos = _tracks[tracksRead][0] + branchOffsets[j];
 						if (branchPos >= pos) {
 							warning("Invalid sequence branch position (after track end)");
-							branchPos = _tracks[tracksRead];
+							branchPos = _tracks[tracksRead][0];
 						}
 						_trackBranches[tracksRead][j] = branchPos;
 					}

@@ -116,7 +116,7 @@ void MidiParser_QT::parseNextEvent(EventInfo &info) {
 }
 
 uint32 MidiParser_QT::readNextEvent() {
-	if (_position._playPos >= _trackInfo[_activeTrack].data + _trackInfo[_activeTrack].size) {
+	if (_position._subtracks[0]._playPos >= _trackInfo[_activeTrack].data + _trackInfo[_activeTrack].size) {
 		// Manually insert end of track when we reach the end
 		EventInfo info;
 		info.event = 0xFF;
@@ -249,7 +249,7 @@ void MidiParser_QT::handleControllerEvent(uint32 control, uint32 part, byte intP
 void MidiParser_QT::handleGeneralEvent(uint32 control) {
 	uint32 part = (control >> 16) & 0xFFF;
 	uint32 dataSize = ((control & 0xFFFF) - 2) * 4;
-	byte subType = READ_BE_UINT16(_position._playPos + dataSize) & 0x3FFF;
+	byte subType = READ_BE_UINT16(_position._subtracks[0]._playPos + dataSize) & 0x3FFF;
 
 	switch (subType) {
 	case 1:
@@ -259,7 +259,7 @@ void MidiParser_QT::handleGeneralEvent(uint32 control) {
 
 		// We have to remap channels because GM needs percussion to be on the
 		// percussion channel but QuickTime can have that anywhere.
-		definePart(part, READ_BE_UINT32(_position._playPos + 80));
+		definePart(part, READ_BE_UINT32(_position._subtracks[0]._playPos + 80));
 		break;
 	case 5: // Tune Difference
 	case 8: // MIDI Channel
@@ -271,7 +271,7 @@ void MidiParser_QT::handleGeneralEvent(uint32 control) {
 		warning("Unhandled general event %d", subType);
 	}
 
-	_position._playPos += dataSize + 4;
+	_position._subtracks[0]._playPos += dataSize + 4;
 }
 
 void MidiParser_QT::definePart(uint32 part, uint32 instrument) {
@@ -464,7 +464,7 @@ void MidiParser_QT::initCommon() {
 	assert(_numTracks > 0);
 
 	for (uint32 i = 0; i < _trackInfo.size(); i++)
-		MidiParser::_tracks[i] = _trackInfo[i].data;
+		MidiParser::_tracks[i][0] = _trackInfo[i].data;
 
 	_ppqn = _trackInfo[0].timeScale;
 	resetTracking();
@@ -506,8 +506,8 @@ byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint3
 }
 
 uint32 MidiParser_QT::readUint32() {
-	uint32 value = READ_BE_UINT32(_position._playPos);
-	_position._playPos += 4;
+	uint32 value = READ_BE_UINT32(_position._subtracks[0]._playPos);
+	_position._subtracks[0]._playPos += 4;
 	return value;
 }
 

@@ -30,7 +30,7 @@ MidiParser_GMF::MidiParser_GMF(int8 source, bool useDosTempos) : MidiParser_SMF(
 }
 
 void MidiParser_GMF::parseNextEvent(EventInfo &info) {
-	byte *parsePos = _position._playPos;
+	byte *parsePos = _position._subtracks[0]._playPos;
 	uint8 *start = parsePos;
 	uint32 delta = readVLQ(parsePos);
 
@@ -64,7 +64,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 		info.ext.data = parsePos;
 		info.noop = false;
 
-		_position._playPos = parsePos;
+		_position._subtracks[0]._playPos = parsePos;
 		return;
 	}
 
@@ -84,7 +84,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 		info.length = 0;
 		info.noop = true;
 
-		_position._playPos = parsePos;
+		_position._subtracks[0]._playPos = parsePos;
 	} else {
 		// Processing of the other events is the same as the SMF format.
 		info.noop = false;
@@ -115,7 +115,7 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 		headerLoop = data[6] == 1;
 
 		// MIDI track data starts immediately after the GMF header.
-		_tracks[0] = data + 7;
+		_tracks[0][0] = data + 7;
 		_tracksEndPos[0] = data + size;
 	} else {
 		// Assume multi-track file.
@@ -145,11 +145,12 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 		// Read all the track start offsets.
 		int tracksRead = 0;
 		while (tracksRead < _numTracks) {
-			_tracks[tracksRead] = trackStart + 7; // Skip 7-byte GMF header
+			_tracks[tracksRead][0] = trackStart + 7; // Skip 7-byte GMF header
 			trackStart = data + READ_LE_UINT16(pos);
 			pos += 2;
 			// Start of the next track is the end of this track.
 			_tracksEndPos[tracksRead] = trackStart;
+			_numSubtracks[tracksRead] = 1;
 
 			tracksRead++;
 		}

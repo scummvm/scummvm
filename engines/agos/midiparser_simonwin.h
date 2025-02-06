@@ -43,17 +43,13 @@ public:
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 
 	MidiParser_SimonWin(int8 source = -1, bool useDosTempos = false);
-	~MidiParser_SimonWin();
 
 	void setTempo(uint32 tempo) override;
 
 	bool loadMusic(byte *data, uint32 size) override;
-	void unloadMusic() override;
 
 protected:
 	void parseNextEvent(EventInfo &info) override;
-
-	byte *_trackData[MAXIMUM_TRACKS];
 
 	bool _useDosTempos;
 };

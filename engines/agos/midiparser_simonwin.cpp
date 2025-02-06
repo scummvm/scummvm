@@ -27,15 +27,10 @@
 namespace AGOS {
 
 MidiParser_SimonWin::MidiParser_SimonWin(int8 source, bool useDosTempos) :
-	MidiParser_SMF(source), _trackData(), _useDosTempos(useDosTempos) { }
-
-MidiParser_SimonWin::~MidiParser_SimonWin() {
-	// Call unloadMusic to make sure any _trackData contents are deallocated.
-	unloadMusic();
-}
+	MidiParser_SMF(source), _useDosTempos(useDosTempos) { }
 
 void MidiParser_SimonWin::parseNextEvent(EventInfo &info) {
-	byte *parsePos = _position._playPos;
+	byte *parsePos = _position._subtracks[info.subtrack]._playPos;
 	uint8 *start = parsePos;
 	uint32 delta = readVLQ(parsePos);
 	uint8 event = *(parsePos++);
@@ -53,7 +48,7 @@ void MidiParser_SimonWin::parseNextEvent(EventInfo &info) {
 		info.length = 0;
 		info.noop = true;
 
-		_position._playPos = parsePos;
+		_position._subtracks[info.subtrack]._playPos = parsePos;
 	} else {
 		// Processing of the other events is the same as the SMF format.
 		info.noop = false;
@@ -106,7 +101,7 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 	// The first byte indicates the number of tracks in the MIDI data.
 	byte *pos = data;
 	_numTracks = *(pos++);
-	if (_numTracks > 16) {
+	if (_numTracks > MAXIMUM_TRACKS) {
 		warning("MidiParser_SimonWin::loadMusic - Can only handle %d tracks but was handed %d", MAXIMUM_TRACKS, _numTracks);
 		return false;
 	}
@@ -136,12 +131,14 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 
 		// Verify that this MIDI is type 0 or 1 (it is expected to be type 1).
 		uint16 numSubtracks = pos[2] << 8 | pos[3];
-		assert(numSubtracks >= 1 && numSubtracks <= 20);
+		assert(numSubtracks >= 1 && numSubtracks <= MAXIMUM_SUBTRACKS);
 		uint8 subtrackMidiType = pos[1];
 		if (subtrackMidiType >= 2) {
 			warning("MidiParser_SimonWin::loadMusic - MIDI track contained a type %d subtrack", subtrackMidiType);
 			return false;
 		}
+
+		_numSubtracks[i] = numSubtracks;
 
 		// Each track could potentially have a different PPQN, but for Simon 1
 		// and 2 all tracks have PPQN 192, so this is not a problem.
@@ -149,7 +146,6 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 		pos += len;
 
 		// Now determine all the MTrk (sub)track start offsets.
-		byte *subtrackStarts[20];
 		for (int j = 0; j < numSubtracks; j++) {
 			if (memcmp(pos, "MTrk", 4) != 0) {
 				warning("MidiParser_SimonWin::loadMusic - Could not find subtrack header at expected location");
@@ -158,29 +154,12 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 			pos += 4;
 			uint32 subtrackLength = READ_BE_UINT32(pos);
 			pos += 4;
-			subtrackStarts[j] = pos;
-			pos += subtrackLength;
-		}
 
-		// We are now at the end of the track, so we can determine the total
-		// track length.
-		uint32 trackDataLength = pos - trackDataStart;
-
-		if (subtrackMidiType == 1) {
-			// Compress the type 1 data to type 0.
-			byte *buffer = new byte[trackDataLength * 2];
-			uint32 compressedDataLength = compressToType0(subtrackStarts, numSubtracks, buffer, true);
-			// Copy the compressed data to the _trackData array.
-			_trackData[i] = new byte[compressedDataLength];
-			memcpy(_trackData[i], buffer, compressedDataLength);
-			delete[] buffer;
-
-			_tracks[i] = _trackData[i];
-		} else {
 			// Note that we assume the original data passed in
 			// will persist beyond this call, i.e. we do NOT
 			// copy the data to our own buffer. Take warning....
-			_tracks[i] = subtrackStarts[0];
+			_tracks[i][j] = pos;
+			pos += subtrackLength;
 		}
 	}
 
@@ -189,18 +168,6 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 	setTempo(500000);
 	setTrack(0);
 	return true;
-}
-
-void MidiParser_SimonWin::unloadMusic() {
-	MidiParser_SMF::unloadMusic();
-
-	// Deallocate the compressed type 0 track data.
-	for (int i = 0; i < MAXIMUM_TRACKS; i++) {
-		if (_trackData[i]) {
-			delete[] _trackData[i];
-			_trackData[i] = nullptr;
-		}
-	}
 }
 
 } // End of namespace AGOS

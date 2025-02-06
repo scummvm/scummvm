@@ -79,35 +79,37 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 
 //	warning("parseNextEvent");
 
+	byte *playPos = _position._subtracks[0]._playPos;
+
 	// there is no delta right at the start of the music data
 	// this order is essential, otherwise notes will get delayed or even go missing
-	if (_position._playPos != _tracks[0]) {
-		info.delta = *(_position._playPos++);
+	if (playPos != _tracks[0][0]) {
+		info.delta = *(playPos++);
 	} else {
 		info.delta = 0;
 	}
 
-	info.start = _position._playPos;
+	info.start = playPos;
 
-	info.event = *_position._playPos++;
+	info.event = *(playPos++);
 	//warning("Event %x", info.event);
-	_position._runningStatus = info.event;
+	_position._subtracks[0]._runningStatus = info.event;
 
 	switch (info.command()) {
 	case 0xC: { // program change
-		int idx = *_position._playPos++;
+		int idx = *playPos++;
 		info.basic.param1 = idx & 0x7f;
 		info.basic.param2 = 0;
 		}
 		break;
 	case 0xD:
-		info.basic.param1 = *_position._playPos++;
+		info.basic.param1 = *(playPos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0xB:
-		info.basic.param1 = *_position._playPos++;
-		info.basic.param2 = *_position._playPos++;
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		info.length = 0;
 		break;
 
@@ -115,8 +117,8 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	case 0x9:
 	case 0xA:
 	case 0xE:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		if (info.command() == 0x9 && info.basic.param2 == 0) {
 			// NoteOn with param2==0 is a NoteOff
 			info.event = info.channel() | 0x80;
@@ -127,7 +129,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		if (info.event == 0xFF) {
 			error("SysEx META event 0xFF");
 
-			byte type = *(_position._playPos++);
+			byte type = *(playPos++);
 			switch(type) {
 			case 0x2F:
 				// End of Track
@@ -137,7 +139,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 				return;
 			case 0x51:
 				warning("TODO: 0xFF / 0x51");
-				return;
+				break;
 			default:
 				warning("TODO: 0xFF / %x Unknown", type);
 				break;
@@ -146,17 +148,17 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 			// Official End-Of-Track signal
 			debugC(kDebugLevelMusic, "Music: System META event 0xFC");
 
-			byte type = *(_position._playPos++);
+			byte type = *(playPos++);
 			switch (type) {
 			case 0x80: // end of track, triggers looping
 				debugC(kDebugLevelMusic, "Music: META event triggered looping");
 				jumpToTick(0, true, true, false);
-				break;
+				return;
 			case 0x81: // end of track, stop playing
 				debugC(kDebugLevelMusic, "Music: META event triggered music stop");
 				stopPlaying();
 				unloadMusic();
-				break;
+				return;
 			default:
 				error("MidiParser_SH::parseNextEvent: Unknown META event 0xFC type %x", type);
 				break;
@@ -170,6 +172,8 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		warning("MidiParser_SH::parseNextEvent: Unsupported event code %x", info.event);
 		break;
 	}// switch (info.command())
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
@@ -194,7 +198,8 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 	_trackEnd = _musData + _musDataSize;
 
 	_numTracks = 1;
-	_tracks[0] = pos;
+	_numSubtracks[0] = 1;
+	_tracks[0][0] = pos;
 
 	_ppqn = 1;
 	setTempo(16667);

@@ -28,6 +28,8 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
+#define AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS 20
+
 class MidiDriver_BASE;
 
 /**
@@ -46,33 +48,82 @@ class MidiDriver_BASE;
 //////////////////////////////////////////////////
 
 /**
- * Maintains time and position state within a MIDI stream.
+ * Maintains time and position state within a MIDI stream, or
+ * multiple parallel MIDI streams.
  * A single Tracker struct is used by MidiParser to keep track
- * of its current position in the MIDI stream. The Tracker
+ * of its current position(s) in the MIDI stream(s). The Tracker
  * struct, however, allows alternative locations to be cached.
  * See MidiParser::jumpToTick() for an example of tracking
  * multiple locations within a MIDI stream. NOTE: It is
  * important to also maintain pre-parsed EventInfo data for
- * each Tracker location.
+ * each subtrack in each Tracker location.
  */
 struct Tracker {
-	byte * _playPos;        ///< A pointer to the next event to be parsed
-	uint32 _playTime;       ///< Current time in microseconds; may be in between event times
-	uint32 _playTick;       ///< Current MIDI tick; may be in between event ticks
+	struct SubtrackStatus {
+		byte * _playPos;        ///< A pointer to the next event to be parsed
+		uint32 _lastEventTime;  ///< The time, in microseconds, of the last event that was parsed
+		uint32 _lastEventTick;  ///< The tick at which the last parsed event occurs
+		byte   _runningStatus;  ///< Cached MIDI command, for MIDI streams that rely on implied event codes
+
+		void clear() {
+			_playPos = nullptr;
+			_lastEventTime = 0;
+			_lastEventTick = 0;
+			_runningStatus = 0;
+		}
+
+		void stopTracking() {
+			_playPos = nullptr;
+		}
+
+		bool isTracking() const {
+			return _playPos != nullptr;
+		}
+	};
+
+	uint32 _playTime;      ///< Current time in microseconds; may be in between event times
+	uint32 _playTick;      ///< Current MIDI tick; may be in between event ticks
 	uint32 _lastEventTime; ///< The time, in microseconds, of the last event that was parsed
-	uint32 _lastEventTick; ///< The tick at which the last parsed event occurs
-	byte   _runningStatus;  ///< Cached MIDI command, for MIDI streams that rely on implied event codes
+						   ///< across all subtracks
+	uint32 _lastEventTick; ///< The tick at which the last parsed event across all subtracks occurs
+	SubtrackStatus _subtracks[AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS];
 
 	Tracker() { clear(); }
 
 	/// Clears all data; used by the constructor for initialization.
 	void clear() {
-		_playPos = 0;
 		_playTime = 0;
 		_playTick = 0;
 		_lastEventTime = 0;
 		_lastEventTick = 0;
-		_runningStatus = 0;
+
+		for (int i = 0; i < AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS; i++) {
+			_subtracks[i].clear();
+		}
+	}
+
+	bool isTracking() const {
+		for (int i = 0; i < AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS; i++) {
+			if (_subtracks[i].isTracking())
+				return true;
+		}
+		return false;
+	}
+
+	bool isTracking(uint8 subtrack) const {
+		assert(subtrack < AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS);
+		return _subtracks[subtrack].isTracking();
+	}
+
+	void stopTracking() {
+		for (int i = 0; i < AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS; i++) {
+			_subtracks[i].stopTracking();
+		}
+	}
+
+	void stopTracking(uint8 subtrack) {
+		assert(subtrack < AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS);
+		_subtracks[subtrack].stopTracking();
 	}
 };
 
@@ -82,11 +133,12 @@ struct Tracker {
  * of MidiParser::parseNextEvent() each time another event is needed.
  */
 struct EventInfo {
-	byte * start; ///< Position in the MIDI stream where the event starts.
-	              ///< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
-	uint32 delta; ///< The number of ticks after the previous event that this event should occur.
-	byte   event; ///< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
-	              ///< For META, event == 0xFF. For SysEx, event == 0xF0.
+	byte * start;    ///< Position in the MIDI stream where the event starts.
+	                 ///< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
+	uint8  subtrack; ///< The subtrack containing this event.
+	uint32 delta;    ///< The number of ticks after the previous event that this event should occur.
+	byte   event;    ///< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
+	                 ///< For META, event == 0xFF. For SysEx, event == 0xF0.
 	union {
 		struct {
 			byte param1; ///< The first parameter in a simple MIDI message.
@@ -108,7 +160,20 @@ struct EventInfo {
 	byte channel() const { return event & 0x0F; } ///< Separates the MIDI channel from the event.
 	byte command() const { return event >> 4; }   ///< Separates the command code from the event.
 
-	EventInfo() : start(0), delta(0), event(0), length(0), loop(false), noop(false) { basic.param1 = 0; basic.param2 = 0; ext.type = 0; ext.data = 0; }
+	void clear() {
+		start = nullptr;
+		delta = 0;
+		event = 0;
+		basic.param1 = 0;
+		basic.param2 = 0;
+		ext.type = 0;
+		ext.data = nullptr;
+		length = 0;
+		loop = false;
+		noop = false;
+	}
+
+	EventInfo() : subtrack(0) { clear(); }
 };
 
 /**
@@ -289,6 +354,7 @@ struct NoteTimer {
 class MidiParser {
 protected:
 	static const uint8 MAXIMUM_TRACKS = 120;
+	static const uint8 MAXIMUM_SUBTRACKS = AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS;
 
 	uint16    _activeNotes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
 	NoteTimer _hangingNotes[32];   ///< Maintains expiration info for up to 32 notes.
@@ -307,14 +373,19 @@ protected:
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
 	bool   _disableAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
-	byte  *_tracks[MAXIMUM_TRACKS];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
+	byte  *_tracks[MAXIMUM_TRACKS][MAXIMUM_SUBTRACKS]; ///< Multi-track MIDI formats are supported, up to 120 tracks with 20 subtracks each.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
+	byte   _numSubtracks[MAXIMUM_TRACKS]; ///< The number of subtracks for each track.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
 
 	Tracker _position;      ///< The current time/position in the active track.
-	EventInfo _nextEvent;  ///< The next event to transmit. Events are preparsed
-	                        ///< so each event is parsed only once; this permits
-	                        ///< simulated events in certain formats.
+	EventInfo *_nextEvent;  ///< The next event to transmit. Points to one of the _nextSubtrackEvents
+							///< entries. Will always point to _nextSubtrackEvents[0] for tracks without
+							///< subtracks.
+	EventInfo _nextSubtrackEvents[MAXIMUM_SUBTRACKS]; ///< The next event to process for each subtrack
+													  ///< of the active track. Events are preparsed
+													  ///< so each event is parsed only once; this permits
+													  ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
 	bool   _doParse;       ///< True if the parser should be parsing; false if it should not be active
@@ -334,6 +405,18 @@ protected:
 	virtual void resetTracking();
 	virtual void allNotesOff();
 	virtual void parseNextEvent(EventInfo &info) = 0;
+	/**
+	 * Determines which event in the active track's subtracks
+	 * should be processed next. This is set in _nextEvent.
+	 */
+	virtual void determineNextEvent();
+	/**
+	 * Resets the track timestamps by subtracting the same value
+	 * from all tick and time values. This function is called after
+	 * the track has been (partially) looped to prevent the timestamps
+	 * from overflowing.
+	 */
+	virtual void rebaseTracking();
 	virtual bool processEvent(const EventInfo &info, bool fireEvents = true);
 
 	void activeNote(byte channel, byte note, bool active);
@@ -448,7 +531,7 @@ public:
 	virtual void setTempo(uint32 tempo);
 	virtual void onTimer();
 
-	bool isPlaying() const { return (_position._playPos != 0 && _doParse); }
+	bool isPlaying() const { return (_position.isTracking() && _doParse); }
 	/**
 	 * Start playback from the current position in the current track, or at
 	 * the beginning if there is no current position.
