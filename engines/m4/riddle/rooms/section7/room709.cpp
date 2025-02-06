@@ -248,6 +248,7 @@ void Room709::init() {
 		break;
 	}
 
+	debugRoomChanged();
 	digi_play_loop("950_s41", 3, 255, -1, -1);
 }
 
