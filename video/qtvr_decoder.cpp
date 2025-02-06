@@ -497,7 +497,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		_projectedPano->create(w, h, _constructedPano->format);
 	}
 
-#if 1
+#if 0
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 	int startY = (((float)desc->_sceneSizeY - w) / (desc->_hPanEnd - desc->_hPanStart)) * (_curPanAngle - desc->_hPanStart);
 	int startX = ((float)(desc->_sceneSizeX - h) / (desc->_vPanTop - desc->_vPanBottom)) * (_curTiltAngle - desc->_vPanBottom);
@@ -516,17 +516,34 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 #else
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 
+	warning("pan: %f  tilt: %f", _curPanAngle, _curTiltAngle);
+
 	for (uint16 y = 0; y < h; y++) {
 		for (uint16 x = 0; x < w; x++) {
-			float panAngle = _curPanAngle + (x - w / 2) * _decoder->_hfov / (float)w;
-			float tiltAngle = _curTiltAngle + (y - h / 2) * _decoder->_fov / (float)h;
-			float vprecalc = (sin(tiltAngle) + 1.0) / 2.0;
+			float panAngle = _curPanAngle + (x - w / 2) * _decoder->_hfov / (float)w - desc->_hPanStart;
+
+			if (panAngle < 0.0f)
+				panAngle += 360.0f;
 
 			// It is flipped 90 degrees
-			int u = (((float)desc->_sceneSizeY - w) / (desc->_hPanEnd - desc->_hPanStart)) * (panAngle - desc->_hPanStart);
+			int u = ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) * panAngle;
+
+
+			float tiltAngle = _curTiltAngle + (y - h / 2) * _decoder->_fov / (float)h;
+			float vprecalc = tan(tiltAngle * M_PI / 180.0);
+
+			if (vprecalc > 1.0)
+				vprecalc = 0;
+			if (vprecalc < -1.0)
+				vprecalc = -1.00;
+
+			vprecalc = (vprecalc + 1.0f) / 2.0f;
+
 			int v = desc->_sceneSizeX * vprecalc;
 
-			warning("u: %d of %d, v: %d of %d", u, _constructedPano->w, v, _constructedPano->h);
+
+			if ((x == 0 && y == 0) || (x == w - 1 && y == h - 1))
+				warning("%f -> %d, %f -> %d  pan: %f  tilt: %f,  vprec: %f", panAngle, u, tiltAngle, v, panAngle, tiltAngle, vprecalc);
 
 			uint32 pixel = _constructedPano->getPixel(v, u);
 			_projectedPano->setPixel(x, y, pixel);
@@ -574,6 +591,8 @@ void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
 	if (_curPanAngle != angle) {
 		_curPanAngle = angle;
 
+		_decoder->setPanAngle(_curPanAngle);
+
 		_dirty = true;
 	}
 }
@@ -589,6 +608,8 @@ void QuickTimeDecoder::PanoTrackHandler::setTiltAngle(float angle) {
 
 	if (_curTiltAngle != angle) {
 		_curTiltAngle = angle;
+
+		_decoder->setTiltAngle(_curTiltAngle);
 
 		_dirty = true;
 	}
