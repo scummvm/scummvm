@@ -509,7 +509,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 			panAngle = panAngle * M_PI / 180.0;
 
 			// It is flipped 90 degrees
-			int u = ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) / M_PI * 180.0 * panAngle;
+			int u = desc->_sceneSizeY - 1 - ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) / M_PI * 180.0 * panAngle;
 
 			float tiltAngle = _curTiltAngle + (y - h / 2) * _decoder->_fov / (float)h;
 			tiltAngle = tan(tiltAngle * M_PI / 180.0);
