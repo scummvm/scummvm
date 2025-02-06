@@ -180,10 +180,6 @@ void b_offsetRect(int nargs);
 void b_rect(int nargs);
 void b_union(int nargs);
 
-void b_member(int nargs);
-void b_window(int nargs);
-void b_windowPresent(int nargs);
-
 void b_beep(int nargs);
 void b_mci(int nargs);
 void b_mciwait(int nargs);
@@ -202,7 +198,11 @@ void b_version(int nargs);
 
 void b_cast(int nargs);
 void b_castLib(int nargs);
+void b_member(int nargs);
 void b_script(int nargs);
+void b_sprite(int nargs);
+void b_window(int nargs);
+void b_windowPresent(int nargs);
 
 void b_charPosToLoc(int nargs);
 void b_linePosToLocV(int nargs);

@@ -1450,7 +1450,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		return d;
 	}
 
-	if (id1.type == INT) {
+	if ((id1.type == SPRITEREF) || (id1.type == INT)) {
 		id = id1.u.i;
 	} else {
 		warning("Lingo::getTheSprite(): Unknown the sprite id type: %s", id1.type2str());
@@ -1614,12 +1614,19 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 }
 
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
-	int id = id1.asInt();
 	Movie *movie = _vm->getCurrentMovie();
 	Score *score = movie->getScore();
+	int id = 0;
 
 	if (!score) {
 		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
+		return;
+	}
+
+	if ((id1.type == SPRITEREF) || (id1.type == INT)) {
+		id = id1.u.i;
+	} else {
+		warning("Lingo::setTheSprite(): Unknown the sprite id type: %s", id1.type2str());
 		return;
 	}
 
@@ -1666,8 +1673,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 			if (targetMember != sprite->_castId) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
-				movie->duplicateCastMember(targetMember, sprite->_castId);
-				channel->_sprite->setCast(sprite->_castId);
+				channel->setCast(targetMember);
 				// Ensure the new sprite, whether larger or smaller, appears correctly on the screen
 				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
@@ -1681,7 +1687,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			CastMemberID castId = d.asMemberID();
 			if (field == kTheMemberNum) {
 				// Setting the cast ID as a number will preserve whatever is in castLib
-				castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
+				// The member part will be demultiplexed if required, and the castLib portion ignored.
+				castId = CastMemberID(castId.member, sprite->_castId.castLib);
 			} else if (field == kTheCastLibNum) {
 				castId = CastMemberID(sprite->_castId.member, d.asInt());
 			}
@@ -2360,6 +2367,13 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		}
 		g_lingo->push(d);
 		return;
+	} else if (obj.type == SPRITEREF) {
+		Common::String key = Common::String::format("%d%s", kTheSprite, propName.c_str());
+		if (_theEntityFields.contains(key)) {
+			d = getTheSprite(obj, _theEntityFields[key]->field);
+		}
+		g_lingo->push(d);
+		return;
 	}
 
 	if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
@@ -2435,6 +2449,11 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		Common::String key = Common::String::format("%d%s", kTheCastLib, propName.c_str());
 		if (_theEntityFields.contains(key)) {
 			setTheCastLib(obj, _theEntityFields[key]->field, val);
+		}
+	} else if (obj.type == SPRITEREF) {
+		Common::String key = Common::String::format("%d%s", kTheSprite, propName.c_str());
+		if (_theEntityFields.contains(key)) {
+			setTheSprite(obj, _theEntityFields[key]->field, val);
 		}
 	} else {
 		g_lingo->lingoError("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());

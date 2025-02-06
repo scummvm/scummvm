@@ -233,8 +233,9 @@ static const BuiltinProto builtins[] = {
 	// References
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
 	{ "castLib",		LB::b_castLib,		1, 1, 500, FBLTIN },	//				D5 f
-	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
+	{ "member",			LB::b_member,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
+	{ "sprite",			LB::b_sprite,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "windowPresent",	LB::b_windowPresent,1, 1, 500, FBLTIN },	//				D5 f
 	// Field operations
@@ -3168,6 +3169,8 @@ void LB::b_intersect(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum r1 = g_lingo->pop();
+	TYPECHECK(r1, RECT);
+	TYPECHECK(r2, RECT);
 	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
@@ -3180,6 +3183,9 @@ void LB::b_inside(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum p1 = g_lingo->pop();
+	TYPECHECK(r2, RECT);
+	TYPECHECK(p1, POINT);
+
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
 
@@ -3476,15 +3482,8 @@ void LB::b_castLib(int nargs) {
 
 void LB::b_member(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
-	Datum library;
-	Datum member;
-	if (nargs == 1) {
-		member = g_lingo->pop();
-	} else if (nargs == 2) {
-		library = g_lingo->pop();
-		member = g_lingo->pop();
-	}
-	CastMemberID res = g_lingo->toCastMemberID(member, library);
+	Datum member = g_lingo->pop();
+	CastMemberID res = member.asMemberID();
 	if (!movie->getCastMember(res)) {
 		g_lingo->lingoError("No match found for cast member");
 		return;
@@ -3523,6 +3522,13 @@ void LB::b_script(int nargs) {
 	}
 	warning("b_script(): No script context found for '%s'", d.asString(true).c_str());
 	g_lingo->push(Datum());
+}
+
+void LB::b_sprite(int nargs) {
+	Datum d = g_lingo->pop();
+	Datum res(d.asInt());
+	res.type = SPRITEREF;
+	g_lingo->push(res);
 }
 
 void LB::b_window(int nargs) {

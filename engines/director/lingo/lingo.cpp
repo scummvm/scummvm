@@ -1177,6 +1177,9 @@ Common::String Datum::asString(bool printonly) const {
 	case FIELDREF:
 		s = Common::String::format("field %d of castLib %d", u.cast->member, u.cast->castLib);
 		break;
+	case SPRITEREF:
+		s = Common::String::format("sprite %d", u.i);
+		break;
 	case CHUNKREF:
 		{
 			Common::String chunkType;

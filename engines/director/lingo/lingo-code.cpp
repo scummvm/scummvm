@@ -972,8 +972,18 @@ void LC::c_intersects() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	Channel *sprite1 = score->getChannelById(d1.asInt());
-	Channel *sprite2 = score->getChannelById(d2.asInt());
+	Channel *sprite1 = nullptr;
+	Channel *sprite2 = nullptr;
+	if (d1.type == SPRITEREF) {
+		sprite1 = score->getChannelById(d1.u.i);
+	} else {
+		sprite1 = score->getChannelById(d1.asInt());
+	}
+	if (d2.type == SPRITEREF) {
+		sprite2 = score->getChannelById(d2.u.i);
+	} else {
+		sprite2 = score->getChannelById(d2.asInt());
+	}
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));
@@ -993,8 +1003,18 @@ void LC::c_within() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	Channel *sprite1 = score->getChannelById(d1.asInt());
-	Channel *sprite2 = score->getChannelById(d2.asInt());
+	Channel *sprite1 = nullptr;
+	Channel *sprite2 = nullptr;
+	if (d1.type == SPRITEREF) {
+		sprite1 = score->getChannelById(d1.u.i);
+	} else {
+		sprite1 = score->getChannelById(d1.asInt());
+	}
+	if (d2.type == SPRITEREF) {
+		sprite2 = score->getChannelById(d2.u.i);
+	} else {
+		sprite2 = score->getChannelById(d2.asInt());
+	}
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));

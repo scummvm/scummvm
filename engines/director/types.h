@@ -382,6 +382,7 @@ enum DatumType {
 	POINT,
 	PROPREF,
 	RECT,
+	SPRITEREF,
 	STRING,
 	SYMBOL,
 	VARREF,
