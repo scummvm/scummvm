@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/file.h"
@@ -61,6 +62,9 @@ Common::Error Window::loadInitialMovie() {
 		return Common::kPathNotFile;
 
 	loadINIStream();
+	if (g_director->getVersion() >= 500) {
+		loadXtrasFromPath();
+	}
 	Common::Path path = findPath(movie);
 	_mainArchive = g_director->openArchive(path);
 
@@ -208,34 +212,6 @@ void Window::probeResources(Archive *archive) {
 			}
 		}
 		delete resFork;
-	}
-
-	// Xtras
-	if (g_director->getVersion() >= 500) {
-		Common::Path basePath(g_director->getEXEName(), g_director->_dirSeparator);
-		basePath = basePath.getParent().appendComponent("Xtras");
-		basePath = findPath(basePath, false, false, true);
-		if (!basePath.empty()) {
-			Common::StringArray directory_list = basePath.splitComponents();
-			Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-			bool escape = false;
-			for (auto &it : directory_list) {
-				d = d.getChild(it);
-				if (!d.exists()) {
-					escape = true;
-					break;
-				}
-			}
-			if (!escape) {
-				debug(0, "Detected Xtras folder");
-				Common::FSList xtras;
-				d.getChildren(xtras, Common::FSNode::kListFilesOnly);
-				for (auto &it : xtras) {
-					debug(0, "Detected Xtra '%s'", it.getName().c_str());
-					g_lingo->openXLib(it.getName(), kXtraObj, basePath.appendComponent(it.getName()));
-				}
-			}
-		}
 	}
 }
 
@@ -589,6 +565,24 @@ Archive *DirectorEngine::loadMac(const Common::Path &movie) {
 		}
 	}
 	return result;
+}
+
+void Window::loadXtrasFromPath() {
+	// For D5 and above, Xtras are considered plug and play.
+	// According to Director Demystified: it considers an
+	// Xtra installed if it's located in the folder named "Xtras"
+	// that's on the same level (i.e., in the same folder)
+	// as the application itself. Xtras can be buried up to
+	// five layers deep in nested folders within this folder,
+	// and they'll still be recognized.
+	Common::ArchiveMemberList targets;
+	SearchMan.listMatchingMembers(targets, Common::Path("xtras/*"), true);
+	for (auto &it : targets) {
+		if (it->isDirectory())
+			continue;
+		debugC(5, kDebugLingoExec, "Window::loadXtrasFromPath(): attempting to open Xtra %s", it->getPathInArchive().toString(g_director->_dirSeparator).c_str());
+		g_lingo->openXLib(it->getFileName(), kXtraObj, it->getPathInArchive());
+	}
 }
 
 void Window::loadStartMovieXLibs() {
