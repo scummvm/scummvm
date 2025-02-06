@@ -37,6 +37,7 @@
 
 namespace Common {
 class Archive;
+struct KeyState;
 class Rational;
 }
 
@@ -79,6 +80,7 @@ public:
 
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1);
+	void handleKey(Common::KeyState &state, bool down);
 
 	float getPanAngle() const { return _panAngle; }
 	void setPanAngle(float panAngle) { _panAngle = panAngle; }
@@ -132,6 +134,9 @@ private:
 	void handlePanoMouseMove(int16 x, int16 y);
 	void handlePanoMouseButton(bool isDown, int16 x, int16 y);
 
+	void handleObjectKey(Common::KeyState &state, bool down);
+	void handlePanoKey(Common::KeyState &state, bool down);
+
 	void closeQTVR();
 	void updateAngles();
 	void updateQTVRCursor(int16 x, int16 y);
@@ -157,12 +162,21 @@ private:
 	float _tiltAngle = 0.0f;
 	float _fov = 56.0f;
 	float _hfov = 56.0f;
+	int _zoomState = kZoomNone;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
 			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
 
 	bool _enableEditListBoundsCheckQuirk;
+
+	enum {
+		kZoomNone,
+		kZoomQuestion,
+		kZoomIn,
+		kZoomOut,
+		kZoomLimit,
+	};
 
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:

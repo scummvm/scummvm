@@ -35,6 +35,7 @@
 #include "common/archive.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -148,11 +149,11 @@ void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 		handleObjectMouseMove(x, y);
 	else if (_qtvrType == QTVRType::PANORAMA)
 		handlePanoMouseMove(x, y);
+
+	updateQTVRCursor(x, y);
 }
 
 void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
-	updateQTVRCursor(x, y);
-
 	if (!_isMouseButtonDown)
 		return;
 
@@ -239,6 +240,8 @@ void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 		handleObjectMouseButton(isDown, x, y);
 	else if (_qtvrType == QTVRType::PANORAMA)
 		handlePanoMouseButton(isDown, x, y);
+
+	updateQTVRCursor(x, y);
 }
 
 void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
@@ -259,8 +262,6 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
 	} else {
 		_isMouseButtonDown = isDown;
 	}
-
-	updateQTVRCursor(x, y);
 }
 
 void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
@@ -269,6 +270,30 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
 	if (isDown) {
 		_prevMouseX = x;
 		_prevMouseY = y;
+	}
+}
+
+void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down) {
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectKey(state, down);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoKey(state, down);
+
+	updateQTVRCursor(_prevMouseX, _prevMouseY);
+}
+
+void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down) {
+}
+
+void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down) {
+	if (state.flags & (Common::KBD_SHIFT | Common::KBD_CTRL)) {
+		_zoomState = kZoomQuestion;
+	} else if (state.flags & Common::KBD_SHIFT) {
+		_zoomState = kZoomIn;
+	} else if (state.flags & Common::KBD_CTRL) {
+		_zoomState = kZoomOut;
+	} else {
+		_zoomState = kZoomNone;
 	}
 }
 
@@ -578,6 +603,14 @@ enum {
 	kCurObjRightM90 = 150,
 	kCurObjUpLimit = 151,
 	kCurObjDownLimit = 152,
+	kCursorPano = 480,
+
+	kCursorZoomIn = 500,
+	kCursorZoomOut = 501,
+	kCursorZoomQuestion = 502,
+	kCursorZoomLimit = 503,
+
+	kCursorPanoNav = 510,
 	kCurLastCursor
 };
 
@@ -595,6 +628,27 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			setCursor(kCurObjRight90 + tiltIdx);
 		else
 			setCursor(_isMouseButtonDown ? kCurGrab : kCurHand);
+	} else if (_qtvrType == QTVRType::PANORAMA) {
+		if (_zoomState != kZoomNone) {
+			switch (_zoomState) {
+			case kZoomIn:
+				setCursor(kCursorZoomIn);
+				break;
+			case kZoomOut:
+				setCursor(kCursorZoomOut);
+				break;
+			case kZoomQuestion:
+				setCursor(kCursorZoomQuestion);
+				break;
+			case kZoomLimit:
+				setCursor(kCursorZoomLimit);
+				break;
+			}
+
+			return;
+		}
+
+		setCursor(_isMouseButtonDown ? kCursorPanoNav : kCursorPano);
 	}
 }
 
