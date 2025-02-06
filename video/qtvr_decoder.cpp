@@ -287,11 +287,10 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
 		} else {
 			_prevMouseX = x;
 			_prevMouseY = y;
-			_isMouseButtonDown = isDown;
 		}
-	} else {
-		_isMouseButtonDown = isDown;
 	}
+
+	_isMouseButtonDown = isDown;
 }
 
 void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
