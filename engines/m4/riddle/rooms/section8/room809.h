@@ -40,7 +40,7 @@ public:
 	void daemon() override;
 
 private:
-	int32 room809_sub1(int32 val1, int32 val2);
+	int32 room809_sub1(int32 val1, bool val2);
 	bool check_said();
 
 	int32 _field20 = 0;

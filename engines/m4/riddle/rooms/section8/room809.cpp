@@ -866,7 +866,7 @@ void Room809::daemon() {
 		player_update_info(_mcTrekMach, &_G(player_info));
 		if (-_G(game_buff_ptr)->x1 < _G(player_info).x) {
 			if (639 - _G(game_buff_ptr)->x1 <= _G(player_info).x) {
-				_dword1A1980_x = room809_sub1(_G(player_info).x, 1);
+				_dword1A1980_x = room809_sub1(_G(player_info).x, true);
 				if (669 - _G(game_buff_ptr)->x1 < _G(player_info).x) {
 					ws_demand_facing(_mcTrekMach, 11);
 					ws_demand_location(669 - _G(game_buff_ptr)->x1, 323);
@@ -875,7 +875,7 @@ void Room809::daemon() {
 				ws_walk(_mcTrekMach, _dword1A1980_x, 323, nullptr, 37, 11, true);
 			}
 		} else {
-			_dword1A1980_x = room809_sub1(_G(player_info).x, 0);
+			_dword1A1980_x = room809_sub1(_G(player_info).x, false);
 			if (-30 - _G(game_buff_ptr)->x1 > _G(player_info).x) {
 				ws_demand_facing(_mcTrekMach, 1);
 				ws_demand_location(-30 - _G(game_buff_ptr)->x1, 323);
@@ -903,10 +903,37 @@ void Room809::daemon() {
 	}
 }
 
-int32 Room809::room809_sub1(int32 val1, int32 val2) {
-	//TODO Not implemented yet
+int32 Room809::room809_sub1(int32 val1, bool val2) {
+	int32 _dword194868[3] = {540, 960, 1282};
+	int32 _dword194864[4] = {160, 540, 960, 1282};
+	int32 index;
 
-	return 0;
+	if (val2) {
+		index = 0;
+		for (; index < 3; ++index) {
+			if (val1 <= _dword194868[index])
+				break;
+		}
+	} else {
+		index = 3;
+		for (; index > 0; --index) {
+			if (val1 > _dword194864[index])
+				break;
+		}
+	}
+
+	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
+	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN  ", false);
+	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
+
+	_enableHotspotName = "MEI CHEN     ";
+	_byte1A1990[index] = 0;
+	_field24 = index;
+	_field28 = _dword194864[index];
+	_field2C = (val2 == false) ? 1 : 11;
+
+	return _dword194864[index];
 }
 
 bool Room809::check_said() {
