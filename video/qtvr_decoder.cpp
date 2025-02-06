@@ -525,25 +525,23 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 			if (panAngle < 0.0f)
 				panAngle += 360.0f;
 
+			panAngle = panAngle * M_PI / 180.0;
+
 			// It is flipped 90 degrees
-			int u = ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) * panAngle;
+			int u = ((float)desc->_sceneSizeY) / (desc->_hPanEnd - desc->_hPanStart) / M_PI * 180.0 * panAngle;
 
 
 			float tiltAngle = _curTiltAngle + (y - h / 2) * _decoder->_fov / (float)h;
-			float vprecalc = tan(tiltAngle * M_PI / 180.0);
+			tiltAngle = tan(tiltAngle * M_PI / 180.0);
 
-			if (vprecalc > 1.0)
-				vprecalc = 0;
-			if (vprecalc < -1.0)
-				vprecalc = -1.00;
+			if (tiltAngle > 1.0)
+				tiltAngle = 1.0;
+			if (tiltAngle < -1.0)
+				tiltAngle = -1.00;
 
-			vprecalc = (vprecalc + 1.0f) / 2.0f;
+			tiltAngle = (tiltAngle + 1.0f) / 2.0f;
 
-			int v = desc->_sceneSizeX * vprecalc;
-
-
-			if ((x == 0 && y == 0) || (x == w - 1 && y == h - 1))
-				warning("%f -> %d, %f -> %d  pan: %f  tilt: %f,  vprec: %f", panAngle, u, tiltAngle, v, panAngle, tiltAngle, vprecalc);
+			int v = desc->_sceneSizeX * tiltAngle;
 
 			uint32 pixel = _constructedPano->getPixel(v, u);
 			_projectedPano->setPixel(x, y, pixel);
