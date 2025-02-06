@@ -123,7 +123,7 @@ public:
 	LingoArchive *getMainLingoArch();
 	LingoArchive *getSharedLingoArch();
 	ScriptContext *getScriptContext(ScriptType type, CastMemberID id);
-	Symbol getHandler(const Common::String &name);
+	Symbol getHandler(const Common::String &name, uint16 castLibHint = 0);
 
 	// events.cpp
 	bool processEvent(Common::Event &event);

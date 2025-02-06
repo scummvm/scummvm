@@ -625,7 +625,13 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 	return result;
 }
 
-Symbol Movie::getHandler(const Common::String &name) {
+Symbol Movie::getHandler(const Common::String &name, uint16 castLibHint) {
+	// Always check the current cast library for a match first
+	if (castLibHint && _casts.contains(castLibHint)) {
+		Cast *cast = _casts.getVal(castLibHint);
+		if (cast->_lingoArchive->functionHandlers.contains(name))
+			return cast->_lingoArchive->functionHandlers[name];
+	}
 	for (auto &it : _casts) {
 		if (it._value->_lingoArchive->functionHandlers.contains(name))
 			return it._value->_lingoArchive->functionHandlers[name];

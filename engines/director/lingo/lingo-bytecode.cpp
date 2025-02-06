@@ -1113,7 +1113,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	} else {
 		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), _assemblyId);
 
-		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", _assemblyId), scriptType, _assemblyId);
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", _assemblyId), scriptType, _assemblyId, archive->cast->_castLibID);
 	}
 
 	// initialise each property
