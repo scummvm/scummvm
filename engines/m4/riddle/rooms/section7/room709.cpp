@@ -54,6 +54,12 @@ void Room709::preload() {
 
 void Room709::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_mazeCurrentIndex);
+	s.syncAsByte(_chiselActiveFl);
+	s.syncAsByte(_incenseBurnerActiveFl);
+	s.syncAsByte(_pullCenterFl);
+	s.syncAsByte(_pullLeftFl);
+	s.syncAsByte(_pullNearFl);
+	s.syncAsByte(_pullRightFl);
 }
 
 void Room709::init() {
@@ -1086,14 +1092,14 @@ void Room709::daemon() {
 			_ripPullMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip pull machine");
 			sendWSMessage_10000(1, _ripPullMach, _mazeLeftDoorLiteSeries, 1, 10, -1, _mazeLeftDoorLiteSeries, 10, 10, 0);
 			_pullLeftFl = true;
-			pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
-			player_set_commands_allowed(true);
-			delay = imath_ranged_rand(1, 10);
-			if (delay == 10) {
-				kernel_timing_trigger(delay, 1000, nullptr);
-			}
 		}
 
+		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+		player_set_commands_allowed(true);
+		delay = imath_ranged_rand(1, 10);
+		if (delay == 10) {
+			kernel_timing_trigger(delay, 1000, nullptr);
+		}
 		break;
 
 	case 30:
