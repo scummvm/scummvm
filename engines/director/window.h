@@ -185,6 +185,7 @@ public:
 	Common::Error loadInitialMovie();
 	void probeResources(Archive *archive);
 	void loadINIStream();
+	void loadXtrasFromPath();
 	void loadStartMovieXLibs();
 
 	// lingo/lingo-object.cpp
