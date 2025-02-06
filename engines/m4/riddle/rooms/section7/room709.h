@@ -83,7 +83,7 @@ private:
 
 	void debugRoomChanged();
 
-	static const Maze709Room _rooms[99];
+	static const Maze709Room _rooms[100];
 
 	static void clearPressed(void *, void *);
 };
