@@ -377,8 +377,8 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 			// For BMP images especially, they'll often have the right colors
 			// but in the wrong palette order.
 			const byte *palPtr = _external ? _picture->_palette : srcPal.palette;
-			int palLength = _external ? _picture->getPaletteSize() : srcPal.length;
-			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palLength, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
+			int palCount = _external ? _picture->getPaletteCount() : srcPal.length;
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palCount, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
 		}
 		break;
 	default:

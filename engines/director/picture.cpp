@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "image/image_decoder.h"
 #include "director/picture.h"
 
@@ -36,14 +37,16 @@ Picture::Picture(Picture &picture) {
 
 Picture::~Picture() {
 	_surface.free();
-	delete[] _palette;
 }
 
 void Picture::copyPalette(const byte *src, int numColors) {
-	delete[] _palette;
 	if (src) {
+		if (numColors > 256) {
+			warning("Picture::copyPalette: tried to load a palette with %d colors, capping to 256", numColors);
+			numColors = 256;
+		}
 		_paletteColors = numColors;
-		_palette = new byte[3 * 256]();
+		memset(_palette, 0, sizeof(_palette));
 		memcpy(_palette, src, getPaletteSize());
 	} else {
 		_paletteColors = 0;
