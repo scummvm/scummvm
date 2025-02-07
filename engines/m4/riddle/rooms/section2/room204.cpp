@@ -1168,8 +1168,7 @@ void Room204::daemon() {
 
 	case 520:
 		_meiShould = 6;
-		_fieldC0_trigger = kernel_trigger_create(520);
-
+		_fieldC0_trigger = kernel_trigger_create(521);
 		break;
 
 	case 521:
@@ -1256,7 +1255,7 @@ void Room204::daemon() {
 	case 535:
 		_fieldD8_facing = 1;
 		_field2C = 1;
-		kernel_timing_trigger(5, 537, nullptr);
+		kernel_timing_trigger(5, 567, nullptr);
 
 		break;
 
