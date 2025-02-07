@@ -1013,21 +1013,13 @@ void Adlib::OnTimer() {
 					Func2792(gArray5C[bp3 - 0x0B], 0);
 					uint8 r2779 = Func2779(bp8 + 0x40);
 					Func2792(bp8 + 0x40, bp1 + (r2779 & 0xC0));
-					
+
+					Func2A80(gArray5C[bp3 - 0x0B], bp4, 0);
 					//    TODO: Continue from here
 					/*
 
 	
-	mov	al,[bp-3h]
-	xor	ah,ah
-	sub	ax,0Bh
-	mov	di,ax
-	mov	al,[di+5Ch]
-	push	ax
-	mov	al,[bp-4h]
-	push	ax
-	push	0h
-	call	far 0017h:2A80h
+
 	push	0BDh
 	push	0BDh
 	call	far 0017h:2779h
@@ -1143,7 +1135,7 @@ uint8 Adlib::peekByteAt(uint16 offset) {
 	return result;
 }
 
-uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
+void Adlib::Func2A80(uint8 blend_param, uint8 index, uint8 reg_base) {
 	// AI-reverse engineered by Deepseek
 	// Initial value calculation
 	// [bp-2h]
@@ -1168,89 +1160,24 @@ uint8 Adlib::FuncA280(uint8 blend_param, uint8 index) {
 			// [bp-6h]
 			uint8 prev_idx = (index > 0) ? index - 1 : 0;
 			// l0017_2B33:
-		}
-	}
-	
-	/*
-			
-			uint16 prev_value = (table_high[prev_idx] << 8) | table_low[prev_idx];
+			uint16 prev_value = (gArray11F[prev_idx] << 8) | gArray9F[prev_idx];
 
 			// Reverse interpolation
-			uint8 adjusted_param = blend_param - 0x80;
 			int16 delta = base_value - prev_value;
-			base_value -= static_cast<uint16>((delta * adjusted_param) / 7);
+			base_value -= static_cast<uint16>((delta * blend_param) / 7);
 		}
 	}
 
+	// l0017_2B81:
 	// Write results to sound chip registers
 	uint8 low_reg = 0xA0 + reg_base;  // Low byte register
 	uint8 high_reg = 0xB0 + reg_base; // High byte register
 
 	// Write low byte (raw value)
-	write_port(low_reg, static_cast<uint8>(base_value & 0xFF));
+	Func2792(low_reg, static_cast<uint8>(base_value & 0xFF));
 
 	// Write high byte (masked to clear bit 5)
-	write_port(high_reg, static_cast<uint8>((base_value >> 8) & 0xDF));
-	*/
-	return 0;
-	/*
-	
-	
-
-
-
-l0017_2B33:
-	mov	di,[bp-6h]
-	mov	al,[di+9Fh]
-	xor	ah,ah
-	mov	dx,ax
-	mov	di,[bp-6h]
-	mov	al,[di+11Fh]
-	xor	ah,ah
-	shl	ax,8h
-	add	ax,dx
-	mov	[bp-4h],ax
-	mov	al,[bp+6h]
-	xor	ah,ah
-	xor	dx,dx
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	sub	ax,[bp-4h]
-	xor	dx,dx
-	call	far 00CDh:0C97h
-	mov	cx,7h
-	xor	bx,bx
-	call	far 00CDh:0D7Ah
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,[bp-2h]
-	xor	dx,dx
-	sub	ax,cx
-	sbb	dx,bx
-	mov	[bp-2h],ax
-
-l0017_2B81:
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	add	ax,0A0h
-	push	ax
-	mov	ax,[bp-2h]
-	and	ax,0FFh
-	push	ax
-	call	far 0017h:2792h
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	add	ax,0B0h
-	push	ax
-	mov	ax,[bp-2h]
-	shr	ax,8h
-	and	ax,0DFh
-	push	ax
-	call	far 0017h:2792h
-	leave
-	retf	6h
-	*/
+	Func2792(high_reg, static_cast<uint8>((base_value >> 8) & 0xDF));
 }
 
 void Adlib::Init() {
