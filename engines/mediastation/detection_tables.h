@@ -22,11 +22,10 @@
 namespace MediaStation {
 
 const PlainGameDescriptor mediastationGames[] = {
-	// Commercially released games
 	{ "georgeshrinks", "George Shrinks Interactive Storybook" },
 	{ "mousecookie", "If You Give a Mouse a Cookie Interactive Storybook" },
 	{ "lionking", "Disney's Animated Storybook: The Lion King" },
-	{ "lambchop", "Lambchop Loves Music" },
+	{ "lambchop", "Lamb Chop Loves Music" },
 	{ "frogprince", "Fractured Fairy Tales: The Frog Prince" },
 	{ "honeytree", "Disney's Animated Storybook: Winnie the Pooh and the Honey Tree" },
 	{ "notredame", "Disney's Animated Storybook: The Hunchback of Notre Dame" },
@@ -34,7 +33,6 @@ const PlainGameDescriptor mediastationGames[] = {
 	{ "ibmcrayola", "IBM/Crayola Print Factory" },
 	{ "ibmcrayolaholiday", "IBM/Crayola Print Factory Holiday Activity Pack" },
 	{ "101dalmatians", "Disney's Animated Storybook: 101 Dalmatians" },
-	{ "rupertsinteractiveadventures", "Rupert's Interactive Adventures" },
 	{ "herculesasb", "Disney's Animated Storybook: Hercules" },
 	{ "barbieasrapunzel", "Magic Fairy Tales: Barbie as Rapunzel" },
 	{ "tonkasearchandrescue", "Tonka Search and Rescue" },
@@ -44,30 +42,13 @@ const PlainGameDescriptor mediastationGames[] = {
 	{ "tonkaworkshop", "Tonka Workshop" },
 	{ "tonkaraceway", "Tonka Raceway" },
 	{ "stuartlittlebigcity", "Stuart Little: Big City Adventures"},
-
-	// Released demos
-	{ "puzzlecastledemo", "Puzzle Castle Demo" }, // From Frog Prince CD-ROM
-
-	// For development purposes - detect any folder as a game
-	{ "mediastation", "Media Station Game" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 const ADGameDescription gameDescriptions[] = {
-	// For testing purposes, any folder with a "MediaStation" file in it can be run.
+	// George Shrinks Interactive Storybook
 	{
-		"mediastation",
-		nullptr,
-		AD_ENTRY1s("MediaStation", 0, AD_NO_SIZE),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
-	},
-
-	// Commercially released games
-	{
-		"georgeshrinks", 
+		"georgeshrinks",
 		nullptr,
 		AD_ENTRY2s(
 			"BOOT.STM", "5b7c08398fe6ae016db9d94ad9240241", 6744,
@@ -78,6 +59,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// If You Give a Mouse a Cookie Interactive Storybook
 	{
 		"mousecookie",
 		nullptr,
@@ -90,9 +73,11 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney's Animated Storybook: The Lion King
 	{
 		"lionking",
-		"2.0GB",
+		"2.0/GB",
 		AD_ENTRY2s(
 			"BOOT.STM", "72e9211eb97b968e8db20c0fec919eb4", 23610,
 			"100.CXT", "069b86f0912627bc1fffb1dee9b68afa", 1455740
@@ -102,6 +87,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Lamb Chop Loves Music
 	{
 		"lambchop",
 		nullptr,
@@ -114,6 +101,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Fractured Fairy Tales: The Frog Prince
 	{
 		"frogprince",
 		nullptr,
@@ -126,18 +115,22 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney's Animated Storybook: Winnie the Pooh and the Honey Tree
 	{
 		"honeytree",
 		nullptr,
 		AD_ENTRY2s(
-			"BOOT.STM", "694bcc9887f159137f3a0d937cfbbb08", 53904,
-			"100.CXT", "fde1e528d69fbd060dfc2691320bc05b", 1971658
+			"BOOT.STM", "9b9f528bf9c9b8ebe194b0c47dbe485e", 55422,
+			"100.CXT", "30f010077fd0489933989a562db81ad6", 1971940
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney's Animated Storybook: The Hunchback of Notre Dame
 	{
 		"notredame",
 		nullptr,
@@ -150,6 +143,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Puzzle Castle
 	{
 		"puzzlecastle",
 		nullptr,
@@ -163,17 +158,19 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOASPECT)
 	},
 	{
-		"puzzlecastledemo",
-		nullptr,
+		"puzzlecastle",
+		"Demo",
 		AD_ENTRY2s(
 			"BOOT.STM", "b7ce005e0d67021f792ebb73e7fbe34c", 5960,
 			"100.CXT", "cc64a6fcb3af2736d622658cff3ef2b5", 1262
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// IBM/Crayola Print Factory
 	{
 		"ibmcrayola",
 		nullptr,
@@ -186,6 +183,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// IBM/Crayola Print Factory Holiday Activity Pack
 	{
 		"ibmcrayolaholiday",
 		nullptr,
@@ -198,30 +197,22 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney's Animated Storybook: 101 Dalmatians
 	{
 		"101dalmatians",
 		nullptr,
 		AD_ENTRY2s(
 			"BOOT.STM", "ee6725a718cbce640d02acec2b84825f", 47970,
 			"100.CXT", "2df853283a3fd2d079b06bc27b50527f", 6784502
-		),	
-		Common::EN_USA,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
-	},
-	{
-		"rupertsinteractiveadventures",
-		nullptr,
-		AD_ENTRY2s(
-			"BOOT.STM", "051ff838587d43edc9836dc3a9888c16", 13112,
-			"100.CXT", "65326647eedc2ad9a8c0ccef274b3389", 5180650
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney's Animated Storybook: Hercules
 	{
 		"herculesasb",
 		nullptr,
@@ -234,6 +225,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Magic Fairy Tales: Barbie as Rapunzel
 	{
 		"barbieasrapunzel",
 		nullptr,
@@ -246,18 +239,22 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Tonka Search and Rescue
 	{
 		"tonkasearchandrescue",
 		nullptr,
 		AD_ENTRY2s(
-			"BOOT.STM", "eef6bdf54d2ae25af0ec29361fd4c126", 17530,
-			"100.CXT", "f0bcc27b61bfb33328db2dd537b2b6e3", 1688902
+			"BOOT.STM", "90c5f17734219c3a442316d21e6833f8", 25362,
+			"100.CXT", "85a05487b6c499ba3ce86d043305ddfd", 6410562
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Disney presents Ariel's Story Studio
 	{
 		"arielstorystudio",
 		"1.0",
@@ -282,6 +279,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Tonka Garage
 	{
 		"tonkagarage",
 		nullptr,
@@ -294,6 +293,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// D.W. the Picky Eater (Living Books)
 	{
 		"dwpickyeater",
 		nullptr,
@@ -306,6 +307,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Tonka Workshop
 	{
 		"tonkaworkshop",
 		nullptr,
@@ -318,6 +321,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Tonka Raceway
 	{
 		"tonkaraceway",
 		nullptr,
@@ -330,6 +335,8 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Stuart Little: Big City Adventures
 	{
 		"stuartlittlebigcity",
 		nullptr,
