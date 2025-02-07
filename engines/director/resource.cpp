@@ -69,7 +69,7 @@ Common::Error Window::loadInitialMovie() {
 	_mainArchive = g_director->openArchive(path);
 
 	if (!_mainArchive) {
-		warning("Cannot open main movie");
+		warning("Window::loadInitialMovie: Cannot open main movie");
 		return Common::kNoGameDataFoundError;
 	}
 	probeResources(_mainArchive);
@@ -128,7 +128,7 @@ Common::Error Window::loadInitialMovie() {
 
 void Window::probeResources(Archive *archive) {
 	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
-		warning("Detected Projector file");
+		debugC(2, kDebugLoading, "Window::probeResources: Detected Projector file");
 
 		if (archive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
 			Common::Array<uint16> vers = archive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
@@ -136,7 +136,7 @@ void Window::probeResources(Archive *archive) {
 				Common::SeekableReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), iterator);
 				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
 
-				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
+				debugC(2, kDebugLoading, "Window::probeResources: Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
@@ -151,17 +151,17 @@ void Window::probeResources(Archive *archive) {
 			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 			int num = name->readUint16();
 			if (num != 1) {
-				warning("Incorrect number of strings in Projector file");
+				warning("Window::probeResources: Incorrect number of strings in Projector file");
 			}
 
 			if (num == 0)
-				error("No strings in Projector file");
+				error("Window::probeResources: No strings in Projector file");
 
 			Common::String sname = decodePlatformEncoding(name->readPascalString());
 			Common::Path moviePath = findMoviePath(sname);
 			if (!moviePath.empty()) {
 				_nextMovie.movie = moviePath.toString(g_director->_dirSeparator);
-				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+				warning("Window::probeResources: Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
 				if (_currentMovie) {
 					delete _currentMovie;
@@ -173,7 +173,7 @@ void Window::probeResources(Archive *archive) {
 					probeResources(subMovie);
 				}
 			} else {
-				warning("Couldn't find score with name: %s", sname.c_str());
+				warning("Window::probeResources: Couldn't find score with name: %s", sname.c_str());
 			}
 			delete name;
 		}
@@ -190,7 +190,7 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xcod = resFork->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 				for (auto &iterator : xcod) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), iterator);
-					debug(0, "Detected XObject '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XObject '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
@@ -198,7 +198,7 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xcmd = resFork->getResourceIDList(MKTAG('X', 'C', 'M', 'D'));
 				for (auto &iterator : xcmd) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), iterator);
-					debug(0, "Detected XCMD '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XCMD '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
@@ -206,7 +206,7 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xfcn = resFork->getResourceIDList(MKTAG('X', 'F', 'C', 'N'));
 				for (auto &iterator : xfcn) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'F', 'C', 'N'), iterator);
-					debug(0, "Detected XFCN '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XFCN '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
@@ -270,7 +270,7 @@ void Window::loadINIStream() {
 		free(script);
 		delete iniStream;
 	} else {
-		warning("No LINGO.INI");
+		debugC(1, kDebugLoading, "Window::loadINIStream: No LINGO.INI");
 	}
 }
 
@@ -464,7 +464,7 @@ Archive *DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
 	uint32 flags = stream->readUint32LE();
 
-	warning("DirectorEngine::loadEXEv4(): PJ93 projector flags: %08x", flags);
+	debugC(1, kDebugLoading, "DirectorEngine::loadEXEv4(): PJ93 projector flags: %08x", flags);
 
 	return loadEXERIFX(stream, rifxOffset);
 }
@@ -489,7 +489,7 @@ Archive *DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	stream->readUint32LE(); // number of driver files
 	stream->readUint32LE(); // fontMapOffset
 
-	warning("DirectorEngine::loadEXEv5(): PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
+	debugC(1, kDebugLoading, "DirectorEngine::loadEXEv5(): PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
 
 	return loadEXERIFX(stream, rifxOffset);
 }

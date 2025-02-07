@@ -220,7 +220,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	initMethods();
 	initXLibs();
 
-	warning("Lingo Inited");
+	debugC(1, kDebugLingoExec, "Lingo inited");
 }
 
 Lingo::~Lingo() {
@@ -234,7 +234,7 @@ Lingo::~Lingo() {
 }
 
 void Lingo::reloadBuiltIns() {
-	debug("Reloading builtins");
+	debugC(1, kDebugLingoExec, "Reloading builtins");
 	cleanupBuiltIns();
 	cleanUpTheEntities();
 	cleanupMethods();
@@ -289,7 +289,7 @@ ScriptContext *LingoArchive::findScriptContext(uint16 id) {
 Common::String LingoArchive::getName(uint16 id) {
 	Common::String result;
 	if (id >= names.size()) {
-		warning("Name id %d not in list", id);
+		warning("LingoArchive::getName: Name id %d not in list", id);
 		return result;
 	}
 	result = names[id];
@@ -349,7 +349,7 @@ Symbol Lingo::getHandler(const Common::String &name) {
 
 
 void LingoArchive::patchCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName, uint32 preprocFlags) {
-	debugC(1, kDebugCompile, "Patching code for type %s(%d) with id %d in '%s%s'\n"
+	debugC(1, kDebugCompile, "LingoArchive::patchCode: Patching code for type %s(%d) with id %d in '%s%s'\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), formatStringForDump(code.encode()).c_str());
 	if (!getScriptContext(type, id)) {
 		// If there's no existing script context, don't try and patch it.
@@ -375,7 +375,7 @@ void LingoArchive::patchCode(const Common::U32String &code, ScriptType type, uin
 
 
 void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName, uint32 preprocFlags) {
-	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
+	debugC(1, kDebugCompile, "LingoArchive::addCode: Add code for type %s(%d) with id %d in '%s%s'\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), formatStringForDump(code.encode()).c_str());
 
 	if (getScriptContext(type, id)) {
@@ -713,19 +713,19 @@ bool Lingo::execute() {
 void Lingo::executeScript(ScriptType type, CastMemberID id) {
 	Movie *movie = _vm->getCurrentMovie();
 	if (!movie) {
-		warning("Request to execute script with no movie");
+		warning("Lingo::executeScript: Request to execute script with no movie");
 		return;
 	}
 
 	ScriptContext *sc = movie->getScriptContext(type, id);
 
 	if (!sc) {
-		debugC(3, kDebugLingoExec, "Request to execute non-existent script type %d id %d of castLib %d", type, id.member, id.castLib);
+		debugC(3, kDebugLingoExec, "Lingo::executeScript: Request to execute non-existent script type %d id %d of castLib %d", type, id.member, id.castLib);
 		return;
 	}
 
 	if (!sc->_eventHandlers.contains(kEventGeneric)) {
-		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d of castLib %d with no scopeless lingo", type, id.member, id.castLib);
+		debugC(3, kDebugLingoExec, "Lingo::executeScript: Request to execute script type %d id %d of castLib %d with no scopeless lingo", type, id.member, id.castLib);
 		return;
 	}
 
