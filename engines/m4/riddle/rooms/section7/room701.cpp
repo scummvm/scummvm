@@ -1241,19 +1241,26 @@ void Room701::daemon() {
 			_itemDigiName = nullptr;
 		} else if (_G(flags)[V364] == 1) {
 			_field58_digiName = "201R26";
+			_G(flags)[V364] = 0;
 		} else if (_G(flags)[V365] == 1) {
 			_field58_digiName = "201R61";
+			_G(flags)[V365] = 0;
 		} else if (_G(flags)[V366] == 1) {
 			_field58_digiName = "401R31";
+			_G(flags)[V366] = 0;
 		} else if (_G(flags)[V373] == 1) {
 			_field58_digiName = "401R36";
+			_G(flags)[V373] = 0;
 		} else if (_G(flags)[V370] == 1) {
 			_field58_digiName = "501R02";
+			_G(flags)[V370] = 0;
 		} else if (_G(flags)[V371] == 1) {
 			_field58_digiName = "501R03";
+			_G(flags)[V371] = 0;
 		} else if (_G(flags)[V372] == 1) {
 			_field58_digiName = "701R39";
 			_field5C_digiName = "701R39A";
+			_G(flags)[V372] = 0;
 		} else if (_G(flags)[V367] == 1) {
 			_field58_digiName = "401R37";
 			_G(flags)[V367] = 0;
