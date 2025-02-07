@@ -744,7 +744,7 @@ void QtvrxtraXtra::m_QTVRNudge(int nargs) {
 	Common::String direction = g_lingo->pop().asString();
 
 	if (!(direction.equalsIgnoreCase("left") || direction.equalsIgnoreCase("right") ||
-		  direction.equalsIgnoreCase("top") || direction.equalsIgnoreCase("bottom"))) {
+		  direction.equalsIgnoreCase("up") || direction.equalsIgnoreCase("down"))) {
 		error("QtvrxtraXtra::m_QTVRNudge(): Invald direction: ('%s')!", direction.c_str());
 		return;
 	}
