@@ -271,7 +271,7 @@ Common::Error DirectorEngine::run() {
 
 	_pixelformat = _wm->_pixelformat;
 
-	debug("Director pixelformat is: %s", _pixelformat.toString().c_str());
+	debugC(1, kDebugImages, "Director pixelformat is: %s", _pixelformat.toString().c_str());
 
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;

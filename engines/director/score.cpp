@@ -1631,7 +1631,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			_framesStream->readUint16(); // Skip
 		}
 
-		warning("STUB: Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
+		debugC(1, kDebugLoading, "Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
 			frame1Offset, _framesVersion, spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else {

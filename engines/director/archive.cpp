@@ -606,7 +606,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		stream->seek(startOffset);
 
 		if (Common::MacResManager::isMacBinary(*stream)) {
-			warning("RIFXArchive::openStream(): MacBinary detected, overriding");
+			warning("RIFXArchive::openStream: MacBinary detected, overriding");
 
 			// We need to look at the resource fork to detect XCOD resources
 			Common::SeekableSubReadStream *macStream = new Common::SeekableSubReadStream(stream, 0, stream->size());
@@ -663,7 +663,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	}
 
 	_rifxType = endianStream.readUint32();
-	warning("RIFX: type: %s", tag2str(_rifxType));
+	debugC(1, kDebugLoading, "RIFX: type: %s", tag2str(_rifxType));
 
 	// Now read the memory map.
 	// At the same time, we will patch the offsets in the dump data.
@@ -729,12 +729,12 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			}
 		}
 
-		warning("No 'File' resource present in APPL archive");
+		warning("RIFXArchive::openStream: No 'File' resource present in APPL archive");
 		return false;
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {
-		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
+		debug("RIFXArchive::openStream: Dumping %d resources", _resources.size());
 
 		Common::DumpFile out;
 
@@ -749,7 +749,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	// A KEY* must be present
 	if (!hasResource(MKTAG('K', 'E', 'Y', '*'), -1)) {
-		warning("No 'KEY*' resource present");
+		warning("RIFXArchive::openStream: No 'KEY*' resource present");
 	} else {
 		// Parse the KEY*
 		Common::SeekableReadStreamEndian *keyStream = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
@@ -793,12 +793,12 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
 	}
 	uint32 version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	warning("mmap: mapversion: %d version: %x offset: 0x%x (%d)", mapversion, version, mmapOffset, mmapOffset);
+	debugC(2, kDebugLoading, "RIFXArchive::readMemoryMap: mapversion: %d version: %x offset: 0x%x (%d)", mapversion, version, mmapOffset, mmapOffset);
 
 	stream.seek(mmapOffset);
 
 	if (stream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
-		warning("RIFXArchive::readMemoryMap(): mmap expected but not found");
+		warning("RIFXArchive::readMemoryMap: mmap expected but not found");
 		return false;
 	}
 
@@ -843,7 +843,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 	}
 
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "RIFXArchive::readMemoryMap(): Resources found:");
+		debugC(5, kDebugLoading, "RIFXArchive::readMemoryMap: Resources found:");
 		for (const auto &it : _types) {
 			debugC(5, kDebugLoading, "%s: %d", tag2str(it._key), it._value.size());
 		}
