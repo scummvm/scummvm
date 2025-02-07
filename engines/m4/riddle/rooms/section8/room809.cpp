@@ -37,7 +37,7 @@ void Room809::init() {
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME || _G(flags)[V263])
 		digi_preload("950_s29", -1);
 
-	_field20 = 0;
+	_field20Fl = false;
 	ws_walk_load_shadow_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
 	ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
 	_mcHandsBehindBackSeries = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
@@ -77,11 +77,11 @@ void Room809::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN  ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
 
-		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _field28, 317, _field2C, Walker::player_walker_callback, "mc_trek");
+		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _mcPosX, 317, _mcFacing, Walker::player_walker_callback, "mc_trek");
 		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
 		sendWSMessage_3840000(_mcTrekMach, 38);
 		_enableHotspotName = "MEI CHEN     ";
-		_byte1A1990[_field24] = 0;
+		_byte1A1990[_field24_index] = 0;
 
 		kernel_timing_trigger(60, 36, "verify mc's position");
 		if (inv_object_in_scene("two soldiers' shields", 809)) {
@@ -100,8 +100,8 @@ void Room809::init() {
 		ws_demand_location(_G(my_walker), 90, 317);
 		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 70, 317, 3, Walker::player_walker_callback, "mc_trek");
 
-		_field24 = 0;
-		_field28 = 160;
+		_field24_index = 0;
+		_mcPosX = 160;
 
 		if (_G(flags)[V263] == 0) {
 			_G(flags)[V263] = 1;
@@ -138,14 +138,14 @@ void Room809::init() {
 
 void Room809::pre_parser() {
 	if (player_said("look at", "gate")) {
-		_dword1A1998_facing = 9;
+		_playerFacing = 9;
 	} else if (player_said("look at", "mausoleum") || player_said("go", "west")) {
-		_dword1A1998_facing = 3;
+		_playerFacing = 3;
 	} else if (player_said("look at", "urn")) {
-		_dword1A1998_facing = -1;
+		_playerFacing = -1;
 	} else {
 		player_update_info(_G(my_walker), &_G(player_info));
-		_dword1A1998_facing = _G(player_info).x >= _G(player).click_x ? 9 : 3;
+		_playerFacing = _G(player_info).x >= _G(player).click_x ? 9 : 3;
 	}
 
 	if (!player_said("spleen") || inv_object_in_scene("two soldiers' shields", 809)) {
@@ -166,7 +166,7 @@ void Room809::parser() {
 
 	switch (_G(kernel).trigger) {
 	case -1:
-		if (check_said()) {
+		if (checkSaid()) {
 			int32 destX;
 			int32 destY;
 			player_update_info(_G(my_walker), &_G(player_info));
@@ -174,14 +174,14 @@ void Room809::parser() {
 				destY = imath_min(145, _G(player).x + 20);
 				destY = imath_max(destY, 145);
 				if (_G(player).click_y < 315) {
-					if (_dword1A1998_facing < 0)
-						_dword1A1998_facing = 11;
+					if (_playerFacing < 0)
+						_playerFacing = 11;
 					destX = 315;
 				} else if (_G(player).click_y <= 321) {
 					destX = _G(player).click_y;
 				} else {
-					if (_dword1A1998_facing < 0)
-						_dword1A1998_facing = 7;
+					if (_playerFacing < 0)
+						_playerFacing = 7;
 
 					destX = 321;
 				}
@@ -192,19 +192,19 @@ void Room809::parser() {
 					destY = imath_max(_G(player_info).x, _G(player).click_x - 20);
 
 				if (_G(player).click_y < 315) {
-					if (_dword1A1998_facing < 0)
-						_dword1A1998_facing = 1;
+					if (_playerFacing < 0)
+						_playerFacing = 1;
 					destX = 315;
 				} else if (_G(player).click_y <= 321)
 					destX = _G(player).click_y;
 				else {
-					if (_dword1A1998_facing < 0)
-						_dword1A1998_facing = 5;
+					if (_playerFacing < 0)
+						_playerFacing = 5;
 
 					destX = 321;
 				}
 			}
-			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _dword1A1998_facing, true);
+			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _playerFacing, true);
 		} else {
 			kernel_trigger_dispatchx(kernel_trigger_create(1));
 		}
@@ -283,19 +283,19 @@ void Room809::parser() {
 				_809rp01Mach = series_play("809rp01", 256, 18, 52, 5, 0, 100, 0, 0, 0, -1);
 			} else {
 				player_update_info(_G(my_walker), &_G(player_info));
-				_dword1A199C_x = _G(player_info).x;
-				_dword1A19A0_y = _G(player_info).y;
+				_playerDestX = _G(player_info).x;
+				_playerDestY = _G(player_info).y;
 
 				player_update_info(_mcTrekMach, &_G(player_info));
 
-				if (_dword1A199C_x <= _G(player_info).x) {
-					if (_G(player_info).x - 15 <= _dword1A199C_x) {
-						ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 42, 5, true);
+				if (_playerDestX <= _G(player_info).x) {
+					if (_G(player_info).x - 15 <= _playerDestX) {
+						ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 42, 5, true);
 					} else {
 						ws_walk(_G(my_walker), _G(player_info).x - 15, 315, nullptr, 42, 5, true);
 					}
-				} else if (_G(player_info).x + 15 >= _dword1A199C_x) {
-					ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 42, 7, true);
+				} else if (_G(player_info).x + 15 >= _playerDestX) {
+					ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 42, 7, true);
 				} else {
 					ws_walk(_G(my_walker), _G(player_info).x + 15, 315, nullptr, 42, 7, true);
 				}
@@ -352,22 +352,22 @@ void Room809::parser() {
 
 	case 40:
 		player_update_info(_G(my_walker), &_G(player_info));
-		_dword1A1998_facing = _G(player_info).facing;
-		_dword1A199C_x = _G(player_info).x;
-		_dword1A19A0_y = _G(player_info).y;
+		_playerFacing = _G(player_info).facing;
+		_playerDestX = _G(player_info).x;
+		_playerDestY = _G(player_info).y;
 
 		player_update_info(_mcTrekMach, &_G(player_info));
 
-		if (_G(player_info).x >= _dword1A199C_x) {
-			if (_G(player_info).x - _dword1A199C_x <= 30) {
-				ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 5, true);
+		if (_G(player_info).x >= _playerDestX) {
+			if (_G(player_info).x - _playerDestX <= 30) {
+				ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 41, 5, true);
 			} else {
-				ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 4, true);
+				ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 41, 4, true);
 			}
-		} else if (_dword1A199C_x - _G(player_info).x <= 30) {
-			ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 7, true);
+		} else if (_playerDestX - _G(player_info).x <= 30) {
+			ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 41, 7, true);
 		} else {
-			ws_walk(_G(my_walker), _dword1A199C_x, _dword1A19A0_y, nullptr, 41, 8, true);
+			ws_walk(_G(my_walker), _playerDestX, _playerDestY, nullptr, 41, 8, true);
 		}
 
 		break;
@@ -484,7 +484,7 @@ void Room809::parser() {
 		break;
 
 	case 51:
-		if (_field20 == 0 && inv_object_in_scene("two soldiers' shields", 809)) {
+		if (!_field20Fl && inv_object_in_scene("two soldiers' shields", 809)) {
 			terminateMachine(_809rp01Mach);
 			_809rp01Mach = series_play("809shufl", 0, 17, -1, 7, 1, 100, 0, 0, 0, -1);
 			digi_play("809_s03", 2, 255, -1, -1);
@@ -499,7 +499,7 @@ void Room809::parser() {
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_facing(_G(my_walker), 3);
 		ws_demand_location(_G(my_walker), 1346, 318);
-		// CHECKME: load and unload??
+		// The load is just used to get the SeriesId if already loaded, to unload it. So it's normal there's a load and unload one after the other, so not remove.
 		_809hallSeries = series_load("809rp01", -1, nullptr);
 		series_unload(_809hallSeries);
 
@@ -513,7 +513,7 @@ void Room809::parser() {
 		if (_G(player_info).x < 1265) {
 			kernel_timing_trigger(30, 53, nullptr);
 		} else if (inv_object_in_scene("two soldiers' shields", 809)) {
-			_field20 = 1;
+			_field20Fl = true;
 			series_unload(0);
 			series_unload(1);
 			series_unload(3);
@@ -524,7 +524,7 @@ void Room809::parser() {
 			digi_preload("809r19", -1);
 			digi_preload("809_s05", -1);
 
-			// CHECKME: load and unload??
+			// The load is just used to get the SeriesId if already loaded, to unload it. So it's normal there's a load and unload one after the other, so not remove.
 			_809hallSeries = series_load("809rp01", -1, nullptr);
 			series_unload(_809hallSeries);
 			_809hallSeries = series_load("809shufl", -1, nullptr);
@@ -866,22 +866,22 @@ void Room809::daemon() {
 		player_update_info(_mcTrekMach, &_G(player_info));
 		if (-_G(game_buff_ptr)->x1 < _G(player_info).x) {
 			if (639 - _G(game_buff_ptr)->x1 <= _G(player_info).x) {
-				_dword1A1980_x = room809_sub1(_G(player_info).x, true);
+				_mcTrekDestX = getMcDestX(_G(player_info).x, true);
 				if (669 - _G(game_buff_ptr)->x1 < _G(player_info).x) {
 					ws_demand_facing(_mcTrekMach, 11);
 					ws_demand_location(669 - _G(game_buff_ptr)->x1, 323);
 				}
 
-				ws_walk(_mcTrekMach, _dword1A1980_x, 323, nullptr, 37, 11, true);
+				ws_walk(_mcTrekMach, _mcTrekDestX, 323, nullptr, 37, 11, true);
 			}
 		} else {
-			_dword1A1980_x = room809_sub1(_G(player_info).x, false);
+			_mcTrekDestX = getMcDestX(_G(player_info).x, false);
 			if (-30 - _G(game_buff_ptr)->x1 > _G(player_info).x) {
 				ws_demand_facing(_mcTrekMach, 1);
 				ws_demand_location(-30 - _G(game_buff_ptr)->x1, 323);
 			}
 
-			ws_walk(_mcTrekMach, _dword1A1980_x, 323, nullptr, 37, 1, true);
+			ws_walk(_mcTrekMach, _mcTrekDestX, 323, nullptr, 37, 1, true);
 		}
 
 		kernel_timing_trigger(60, 36, "verify mc's position");
@@ -903,7 +903,7 @@ void Room809::daemon() {
 	}
 }
 
-int32 Room809::room809_sub1(int32 val1, bool val2) {
+int32 Room809::getMcDestX(int32 val1, bool val2) {
 	int32 _dword194868[3] = {540, 960, 1282};
 	int32 _dword194864[4] = {160, 540, 960, 1282};
 	int32 index;
@@ -929,14 +929,14 @@ int32 Room809::room809_sub1(int32 val1, bool val2) {
 
 	_enableHotspotName = "MEI CHEN     ";
 	_byte1A1990[index] = 0;
-	_field24 = index;
-	_field28 = _dword194864[index];
-	_field2C = (val2 == false) ? 1 : 11;
+	_field24_index = index;
+	_mcPosX = _dword194864[index];
+	_mcFacing = (val2 == false) ? 1 : 11;
 
 	return _dword194864[index];
 }
 
-bool Room809::check_said() {
+bool Room809::checkSaid() {
 	if (player_said_any("spleen", "west", "mei chen", "mei chen ", "mei chen  ", "mei chen   ", "farmer's shovel", "two soldiers' shields")
 	|| inv_object_in_scene("two soldiers' shields", 809))
 		return false;

@@ -40,25 +40,26 @@ public:
 	void daemon() override;
 
 private:
-	int32 room809_sub1(int32 val1, bool val2);
-	bool check_said();
+	bool checkSaid();
+	int32 getMcDestX(int32 val1, bool val2);
 
-	int32 _field20 = 0;
-	int32 _field24 = 0;
-	int32 _field28 = 0;
-	int32 _field2C = 0;
+	bool _field20Fl = false;
+
+	// CHECKME: The array and its index don't seem to be used
+	byte _byte1A1990[4] = {0, 0, 0, 0};
+	int32 _field24_index = 0;
 
 	const char *_enableHotspotName = nullptr;
 
-	byte _byte1A1990[12]; // random size for the moment, enough for facings
-	int32 _dword1A1980_x = 0;
-	int32 _dword1A1998_facing = 0;
-	int32 _dword1A199C_x = 0;
-	int32 _dword1A19A0_y = 0;
-
 	int32 _809hallSeries = 0;
 	int32 _809MusicFadingVol = 0;
+	int32 _mcFacing = 0;
 	int32 _mcHandsBehindBackSeries = 0;
+	int32 _mcPosX = 0;
+	int32 _mcTrekDestX = 0;
+	int32 _playerDestX = 0;
+	int32 _playerDestY = 0;
+	int32 _playerFacing = 0;
 	int32 _ripTalkerPos5Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 
