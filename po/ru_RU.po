@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-06 21:07+0000\n"
-"PO-Revision-Date: 2025-01-24 23:24+0000\n"
+"PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -11410,16 +11410,12 @@ msgid "Use the remastered speech and sound effects."
 msgstr "Іспользовать ремастер для озвучки и звуковых эффектов."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Включить звук"
+msgstr "Включить звуки фона"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Включить звук"
+msgstr "Включить звуки фона."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
@@ -11532,6 +11528,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"Похоже что '%s' -- неверный исполняемый файл Dig. Это может быть лаунчер, "
+"который находился в корне CD, и который не содержит необходимых данных меню "
+"и диалогов. Найдите папку 'The Dig f' на вашем CD. Внутри её подпапок вы "
+"найдёте нужный файл."
 
 #: engines/scumm/scumm.cpp:1756
 msgid ""
@@ -13622,16 +13622,6 @@ msgid "Preferences"
 msgstr "Предпочтения"
 
 #: engines/zvision/zvision.cpp:302
-#, fuzzy
-#| msgid ""
-#| "Before playing this game, you'll need to copy the required fonts into "
-#| "ScummVM's extras directory, or into the game directory. On Windows, "
-#| "you'll need the following font files from the Windows font directory: "
-#| "Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
-#| "Alternatively, you can download the Liberation Fonts or the GNU FreeFont "
-#| "package. You'll need all the fonts from the font package you choose, i."
-#| "e., LiberationMono, LiberationSans and LiberationSerif, or FreeMono, "
-#| "FreeSans and FreeSerif respectively."
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -13645,10 +13635,9 @@ msgstr ""
 "необходимые шрифты в папку extras в ScummVM или же в папку с самой игрой. На "
 "Windows вам потребуются следующие шрифты из системной папки Windows: Times "
 "New Roman, Century Schoolbook, Garamond, Courier New и Arial. Также вы "
-"можете скачать шрифты Liberation Fonts либо пакет GNU FreeFont. Вам "
-"понадобятся все шрифты из выбранного вами пакета, то есть, LiberationMono, "
-"LiberationSans и LiberationSerif, либо FreeMono, FreeSans и FreeSerif "
-"соответственно."
+"можете скачать шрифты Liberation Fonts. Вам понадобятся все шрифты из "
+"выбранного вами пакета, то есть, LiberationMono, LiberationSans и "
+"LiberationSerif."
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
