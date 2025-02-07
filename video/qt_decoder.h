@@ -335,12 +335,7 @@ private:
 		int getCurFrame() const { return 1; }
 		uint32 getNextFrameStartTime() const { return 0; }
 		Graphics::PixelFormat getPixelFormat() const;
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const { return _curPalette; }
-		bool canDither() const;
-		void setDither(const byte *palette);
 
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
@@ -356,8 +351,6 @@ private:
 	private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;
-
-		const byte *_curPalette;
 
 		void projectPanorama();
 

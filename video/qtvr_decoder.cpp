@@ -269,7 +269,10 @@ uint16 QuickTimeDecoder::PanoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::PanoTrackHandler::getPixelFormat() const {
-	return Graphics::PixelFormat::createFormatCLUT8();
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
+
+	return track->getPixelFormat();
 }
 
 Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledWidth() const {
@@ -278,22 +281,6 @@ Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledWidth() const {
 
 Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledHeight() const {
 	return Common::Rational(_parent->height) / _parent->scaleFactorY;
-}
-
-bool QuickTimeDecoder::PanoTrackHandler::setOutputPixelFormat(const Graphics::PixelFormat &format) {
-	return true;
-}
-
-bool QuickTimeDecoder::PanoTrackHandler::canDither() const {
-	return false;
-}
-
-void QuickTimeDecoder::PanoTrackHandler::setDither(const byte *palette) {
-	assert(canDither());
-}
-
-const byte *QuickTimeDecoder::PanoTrackHandler::getPalette() const {
-	return _curPalette;
 }
 
 void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
@@ -590,7 +577,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		int32 srcY = static_cast<int32>(yInterpolator * (float)h);
 		int32 scanlineWidth = static_cast<int32>(xInterpolator * w);
 		int32 startX = (w - scanlineWidth) / 2;
-		int32 endX = startX + scanlineWidth;
+		//int32 endX = startX + scanlineWidth;
 
 		// It would be better to compute a reciprocal and do this as a multiply instead,
 		// doing divides per pixel is SLOW!
