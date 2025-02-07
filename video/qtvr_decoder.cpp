@@ -294,11 +294,13 @@ Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledHeight() const {
 void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 
-	if (angle < desc->_hPanStart + _decoder->_hfov / 2)
-		angle = desc->_hPanStart + _decoder->_hfov / 2;
+	if (desc->_hPanStart != desc->_hPanStart && (desc->_hPanStart != 0.0 || desc->_hPanStart != 360.0)) {
+		if (angle < desc->_hPanStart + _decoder->_hfov / 2)
+			angle = desc->_hPanStart + _decoder->_hfov / 2;
 
-	if (angle > desc->_hPanEnd - _decoder->_hfov / 2)
-		angle = desc->_hPanEnd - _decoder->_hfov / 2;
+		if (angle > desc->_hPanEnd - _decoder->_hfov / 2)
+			angle = desc->_hPanStart - _decoder->_hfov / 2;
+	}
 
 	if (_curPanAngle != angle) {
 		_curPanAngle = angle;
@@ -892,6 +894,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 		} else {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+			bool pano360 = !(desc->_hPanStart != desc->_hPanStart && (desc->_hPanStart != 0.0 || desc->_hPanStart != 360.0));
 
 			// left
 			if (x < _mouseDrag.x - sensitivity) {
@@ -899,7 +902,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// left stop
-				if (_panAngle <= desc->_hPanStart + _hfov / 2)
+				if (!pano360 && _panAngle <= desc->_hPanStart + _hfov / 2)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -912,7 +915,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// right stop
-				if (_panAngle >= desc->_hPanEnd - _hfov / 2)
+				if (!pano360 && _panAngle >= desc->_hPanEnd - _hfov / 2)
 					res |= 1;
 				res <<= 1;
 			} else {
