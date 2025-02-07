@@ -216,11 +216,11 @@ void QuickTimeDecoder::nudge(const Common::String &direction) {
 		newFrame = (curFrame - 1 - currentRowStart) % _nav.columns + currentRowStart;
 	} else if (direction.equalsIgnoreCase("right")) {
 		newFrame = (curFrame + 1 - currentRowStart) % _nav.columns + currentRowStart;
-	} else if (direction.equalsIgnoreCase("top")) {
+	} else if (direction.equalsIgnoreCase("up")) {
 		newFrame = curFrame - _nav.columns;
 		if (newFrame < 0)
 			return;
-	} else if (direction.equalsIgnoreCase("bottom")) {
+	} else if (direction.equalsIgnoreCase("down")) {
 		newFrame = curFrame + _nav.columns;
 		if (newFrame >= track->getFrameCount())
 			return;
