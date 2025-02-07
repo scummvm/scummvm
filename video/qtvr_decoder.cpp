@@ -166,7 +166,7 @@ bool QuickTimeDecoder::setFOV(float fov) {
 
 		_hfov = _fov * (float)_width / (float)_height;
 
-		PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 		track->setDirty();
 	}
 
@@ -757,7 +757,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	if (!repeat)
 		return;
 
-	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 
 	// HACK: FIXME: Hard coded for now
 	const int sensitivity = 5;
