@@ -348,6 +348,8 @@ private:
 		float getTiltAngle() { return _curTiltAngle; }
 		void setTiltAngle(float angle);
 
+		void setDirty() { _dirty = true; }
+
 	private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;

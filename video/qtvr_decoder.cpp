@@ -115,6 +115,12 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common
 	entry->_hotSpotNumFramesY = _fd->readSint16BE(); // dices frame high
 	entry->_hotSpotColorDepth = _fd->readSint16BE(); // must be 8
 
+	if (entry->_minimumZoom == 0.0)
+		entry->_minimumZoom = 5.0;
+
+	if (entry->_maximumZoom == 0.0)
+		entry->_maximumZoom = 65.0;
+
 	return entry;
 }
 
@@ -142,9 +148,22 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 }
 
 void QuickTimeDecoder::setFOV(float fov) {
-	_fov = fov;
+	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
-	_hfov = _fov * (float)_width / (float)_height;
+	if (fov < desc->_minimumZoom)
+		fov = desc->_minimumZoom;
+
+	if (fov > desc->_maximumZoom)
+		fov = desc->_maximumZoom;
+
+	if (_fov != fov) {
+		_fov = fov;
+
+		_hfov = _fov * (float)_width / (float)_height;
+
+		PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+		track->setDirty();
+	}
 }
 
 void QuickTimeDecoder::updateAngles() {
@@ -666,7 +685,7 @@ void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	_prevMouseY = y;
 }
 
-#define REPEAT_DELAY 100000
+#define REPEAT_DELAY 30000
 
 static void repeatCallback(void *data) {
 	QuickTimeDecoder *decoder = (QuickTimeDecoder *)data;
@@ -781,8 +800,12 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 		_zoomState = kZoomQuestion;
 	} else if (state.flags & Common::KBD_SHIFT) {
 		_zoomState = kZoomIn;
+
+		setFOV(getFOV() - 2.0);
 	} else if (state.flags & Common::KBD_CTRL) {
 		_zoomState = kZoomOut;
+
+		setFOV(getFOV() + 2.0);
 	} else {
 		_zoomState = kZoomNone;
 	}
