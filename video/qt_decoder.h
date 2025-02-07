@@ -79,8 +79,8 @@ public:
 	void setTargetSize(uint16 w, uint16 h);
 
 	void handleMouseMove(int16 x, int16 y);
-	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1);
-	void handleKey(Common::KeyState &state, bool down);
+	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1, bool repeat = false);
+	void handleKey(Common::KeyState &state, bool down, bool repeat = false);
 
 	float getPanAngle() const { return _panAngle; }
 	void setPanAngle(float panAngle) { _panAngle = panAngle; }
@@ -130,12 +130,12 @@ private:
 	void updateAudioBuffer();
 
 	void handleObjectMouseMove(int16 x, int16 y);
-	void handleObjectMouseButton(bool isDown, int16 x, int16 y);
+	void handleObjectMouseButton(bool isDown, int16 x, int16 y, bool repeat);
 	void handlePanoMouseMove(int16 x, int16 y);
-	void handlePanoMouseButton(bool isDown, int16 x, int16 y);
+	void handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat);
 
-	void handleObjectKey(Common::KeyState &state, bool down);
-	void handlePanoKey(Common::KeyState &state, bool down);
+	void handleObjectKey(Common::KeyState &state, bool down, bool repeat);
+	void handlePanoKey(Common::KeyState &state, bool down, bool repeat);
 
 	void closeQTVR();
 	void updateAngles();
@@ -159,6 +159,7 @@ private:
 	int _currentQTVRCursor = -1;
 	Common::Archive *_dataBundle = nullptr;
 	Graphics::Cursor **_cursorCache = nullptr;
+	int _cursorDirMap[256];
 
 	bool _isVR;
 

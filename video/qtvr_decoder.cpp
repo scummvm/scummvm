@@ -250,17 +250,17 @@ static void repeatCallback(void *data) {
 	QuickTimeDecoder *decoder = (QuickTimeDecoder *)data;
 
 	if (decoder->_isKeyDown)
-		decoder->handleKey(decoder->_lastKey, true);
+		decoder->handleKey(decoder->_lastKey, true, true);
 
 	if (decoder->_isMouseButtonDown)
-		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY);
+		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY, true);
 }
 
-void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
+void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
 	if (_qtvrType == QTVRType::OBJECT)
-		handleObjectMouseButton(isDown, x, y);
+		handleObjectMouseButton(isDown, x, y, repeat);
 	else if (_qtvrType == QTVRType::PANORAMA)
-		handlePanoMouseButton(isDown, x, y);
+		handlePanoMouseButton(isDown, x, y, repeat);
 
 	if (isDown) {
 		if (!_repeatTimerActive)
@@ -276,7 +276,7 @@ void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 	updateQTVRCursor(x, y);
 }
 
-void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
+void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
 	if (isDown) {
 		if (y < _curBbox.top) {
 			setCurrentRow(getCurrentRow() + 1);
@@ -295,20 +295,20 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y) {
 	_isMouseButtonDown = isDown;
 }
 
-void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y) {
+void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
 	_isMouseButtonDown = isDown;
 
-	if (isDown) {
+	if (isDown && !repeat) {
 		_prevMouseX = x;
 		_prevMouseY = y;
 	}
 }
 
-void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down) {
+void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {
 	if (_qtvrType == QTVRType::OBJECT)
-		handleObjectKey(state, down);
+		handleObjectKey(state, down, repeat);
 	else if (_qtvrType == QTVRType::PANORAMA)
-		handlePanoKey(state, down);
+		handlePanoKey(state, down, repeat);
 
 	if (down) {
 		_lastKey = state;
@@ -327,10 +327,10 @@ void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down) {
 	updateQTVRCursor(_prevMouseX, _prevMouseY);
 }
 
-void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down) {
+void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down, bool repeat) {
 }
 
-void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down) {
+void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool repeat) {
 	if ((state.flags & Common::KBD_SHIFT) && (state.flags & Common::KBD_CTRL)) {
 		_zoomState = kZoomQuestion;
 	} else if (state.flags & Common::KBD_SHIFT) {
@@ -648,7 +648,10 @@ enum {
 	kCurObjRightM90 = 150,
 	kCurObjUpLimit = 151,
 	kCurObjDownLimit = 152,
+
 	kCursorPano = 480,
+	kCursorPanoObjPoint = 484,
+	kCursorPanoObjGrab = 485,
 
 	kCursorZoomIn = 500,
 	kCursorZoomOut = 501,
@@ -656,7 +659,47 @@ enum {
 	kCursorZoomLimit = 503,
 
 	kCursorPanoNav = 510,
+	kCursorPanoL = 511,
+	kCursorPanoLS = 512,
+	kCursorPanoR = 513,
+	kCursorPanoRS = 514,
+	kCursorPanoD = 515,
+	kCursorPanoDS = 516,
+	kCursorPanoU = 525,
+	kCursorPanoUS = 526,
+
+	kCursorPano2 = 540,
+
 	kCurLastCursor
+};
+
+static const char *keyMatrix[] = {
+  // 76543210
+	"l.......", // 511
+	"lL......", // 512
+	"..r.....", // 513
+	"..rR....", // 514
+	"....d...", // 515
+	"....dD..", // 516
+	"l...d...", // 517
+	"l...dD..", // 518
+	"lL..d...", // 519
+	"lL..dD..", // 520
+	"..r.d...", // 521
+	"..r.dD..", // 522
+	"..rRd...", // 523
+	"..rRdD..", // 524
+	"......u.", // 525
+	"......uU", // 526
+	"l.....u.", // 527
+	"l.....uU", // 528
+	"lL....u.", // 529
+	"lL....uU", // 530
+	"..r...u.", // 531
+	"..r...uU", // 532
+	"..rR..u.", // 533
+	"..rR..uU", // 534
+	0
 };
 
 void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
@@ -693,7 +736,42 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			return;
 		}
 
-		setCursor(_isMouseButtonDown ? kCursorPanoNav : kCursorPano);
+		const int sensitivity = 0;
+
+		if (!_isMouseButtonDown) {
+			setCursor(kCursorPano);
+		} else {
+			int res = 0;
+
+			if (x < _prevMouseX - sensitivity)
+				res |= 1;
+			res <<= 1;
+
+			// left stop
+			res <<= 1;
+
+			if (x > _prevMouseX + sensitivity)
+				res |= 1;
+			res <<= 1;
+
+			// right stop
+			res <<= 1;
+
+			if (y > _prevMouseY - sensitivity)
+				res |= 1;
+			res <<= 1;
+
+			// down stop
+			res <<= 1;
+
+			if (y < _prevMouseY + sensitivity)
+				res |= 1;
+			res <<= 1;
+
+			// up stop
+
+			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : kCursorPanoNav);
+		}
 	}
 }
 
@@ -725,7 +803,21 @@ void QuickTimeDecoder::setCursor(int curId) {
 	if (!_cursorCache) {
 		_cursorCache = (Graphics::Cursor **)calloc(kCurLastCursor, sizeof(Graphics::Cursor *));
 
-		computeInteractivityZones();
+		memset(_cursorDirMap, 0, 256 * sizeof(int));
+
+		int n = 511;
+		for (const char **p = keyMatrix; *p; p++, n++) {
+			int res = 0;
+
+			for (int i = 0; i < 8; i++) {
+				res <<= 1;
+
+				if ((*p)[i] != '.')
+					res |= 1;
+			}
+
+			_cursorDirMap[res] = n;
+		}
 	}
 
 	if (curId >= kCurLastCursor)
