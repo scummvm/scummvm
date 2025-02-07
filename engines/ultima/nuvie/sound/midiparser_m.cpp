@@ -178,7 +178,8 @@ bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
 
 void MidiParser_M::parseNextEvent(EventInfo &info) {
 	byte *playPos = _position._subtracks[0]._playPos;
-	assert(playPos - _tracks[0][0] < _trackLength);
+	assert(playPos >= _tracks[0][0]);
+	assert(playPos - _tracks[0][0] < (int)_trackLength);
 
 	info.start = playPos;
 	info.event = *(playPos++);
