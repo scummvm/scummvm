@@ -238,6 +238,7 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_constructedPano = nullptr;
 	_constructedHotspots = nullptr;
 	_projectedPano = nullptr;
+	_planarProjection = nullptr;
 
 	_curPanAngle = 0.0f;
 	_curTiltAngle = 0.0f;
@@ -257,6 +258,9 @@ QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
 	if (_projectedPano) {
 		_projectedPano->free();
 		delete _projectedPano;
+
+		_planarProjection->free();
+		delete _planarProjection;
 	}
 }
 
@@ -401,12 +405,12 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 
 	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
 
-	Graphics::Surface planarProjection;
-	planarProjection.create(w, h, _constructedPano->format);
-
 	if (!_projectedPano) {
 		_projectedPano = new Graphics::Surface();
 		_projectedPano->create(w, h, _constructedPano->format);
+
+		_planarProjection = new Graphics::Surface();
+		_planarProjection->create(w, h, _constructedPano->format);
 	}
 
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
@@ -564,8 +568,8 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 			uint32 pixel1 = _constructedPano->getPixel(sourceYCoord, leftSrcCoord);
 			uint32 pixel2 = _constructedPano->getPixel(sourceYCoord, rightSrcCoord);
 
-			planarProjection.setPixel(x1, y, pixel1);
-			planarProjection.setPixel(x2, y, pixel2);
+			_planarProjection->setPixel(x1, y, pixel1);
+			_planarProjection->setPixel(x2, y, pixel2);
 		}
 	}
 
@@ -583,7 +587,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		// doing divides per pixel is SLOW!
 		for (uint16 x = 0; x < w; x++) {
 			int32 srcX = (2 * x + 1) * scanlineWidth / (2 * w) + startX;
-			uint32 pixel = planarProjection.getPixel(srcX, srcY);
+			uint32 pixel = _planarProjection->getPixel(srcX, srcY);
 			_projectedPano->setPixel(x, y, pixel);
 		}
 	}

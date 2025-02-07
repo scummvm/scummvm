@@ -359,6 +359,7 @@ private:
 		Graphics::Surface *_constructedPano;
 		Graphics::Surface *_constructedHotspots;
 		Graphics::Surface *_projectedPano;
+		Graphics::Surface *_planarProjection;
 
 		bool _isPanoConstructed;
 
