@@ -87,7 +87,7 @@ public:
 	float getTiltAngle() const { return _tiltAngle; }
 	void setTiltAngle(float tiltAngle) { _tiltAngle = tiltAngle; }
 	float getFOV() const { return _fov; }
-	void setFOV(float fov);
+	bool setFOV(float fov);
 
 	int getCurrentRow() { return _nextVideoTrack->getCurFrame() / _nav.columns; }
 	void setCurrentRow(int row);

@@ -147,14 +147,19 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	}
 }
 
-void QuickTimeDecoder::setFOV(float fov) {
+bool QuickTimeDecoder::setFOV(float fov) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+	bool success = true;
 
-	if (fov < desc->_minimumZoom)
+	if (fov <= desc->_minimumZoom) {
 		fov = desc->_minimumZoom;
+		success = false;
+	}
 
-	if (fov > desc->_maximumZoom)
+	if (fov >= desc->_maximumZoom) {
 		fov = desc->_maximumZoom;
+		success = false;
+	}
 
 	if (_fov != fov) {
 		_fov = fov;
@@ -164,6 +169,8 @@ void QuickTimeDecoder::setFOV(float fov) {
 		PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
 		track->setDirty();
 	}
+
+	return success;
 }
 
 void QuickTimeDecoder::updateAngles() {
@@ -801,11 +808,13 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 	} else if (state.flags & Common::KBD_SHIFT) {
 		_zoomState = kZoomIn;
 
-		setFOV(getFOV() - 2.0);
+		if (!setFOV(getFOV() - 2.0))
+			_zoomState = kZoomLimit;
 	} else if (state.flags & Common::KBD_CTRL) {
 		_zoomState = kZoomOut;
 
-		setFOV(getFOV() + 2.0);
+		if (!setFOV(getFOV() + 2.0))
+			_zoomState = kZoomLimit;
 	} else {
 		_zoomState = kZoomNone;
 	}
