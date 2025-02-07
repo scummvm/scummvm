@@ -154,187 +154,6 @@ void QuickTimeDecoder::updateAngles() {
 	debugC(1, kDebugLevelMacGUI, "QTVR: row: %d col: %d  (%d x %d) pan: %f tilt: %f", getCurrentRow(), getCurrentColumn(), _nav.rows, _nav.columns, getPanAngle(), getTiltAngle());
 }
 
-void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
-	if (_qtvrType == QTVRType::OBJECT)
-		handleObjectMouseMove(x, y);
-	else if (_qtvrType == QTVRType::PANORAMA)
-		handlePanoMouseMove(x, y);
-
-	updateQTVRCursor(x, y);
-}
-
-void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
-	if (!_isMouseButtonDown)
-		return;
-
-	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
-
-	// HACK: FIXME: Hard coded for now
-	const int sensitivity = 10;
-	const float speedFactor = 0.1f;
-
-	int16 mouseDeltaX = x - _prevMouseX;
-	int16 mouseDeltaY = y - _prevMouseY;
-
-	float speedX = (float)mouseDeltaX * speedFactor;
-	float speedY = (float)mouseDeltaY * speedFactor;
-
-	bool changed = false;
-
-	if (ABS(mouseDeltaY) >= sensitivity) {
-		int newFrame = track->getCurFrame() - round(speedY) * _nav.columns;
-
-		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
-			track->setCurFrame(newFrame);
-			changed = true;
-		}
-	}
-
-	if (ABS(mouseDeltaX) >= sensitivity) {
-		int currentRow = track->getCurFrame() / _nav.columns;
-		int currentRowStart = currentRow * _nav.columns;
-
-		int newFrame = (track->getCurFrame() - (int)roundf(speedX) - currentRowStart) % _nav.columns + currentRowStart;
-
-		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
-			track->setCurFrame(newFrame);
-			changed = true;
-		}
-	}
-
-	if (changed) {
-		_prevMouseX = x;
-		_prevMouseY = y;
-	}
-}
-
-void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
-	_prevMouseX = x;
-	_prevMouseY = y;
-}
-
-#define REPEAT_DELAY 100000
-
-static void repeatCallback(void *data) {
-	QuickTimeDecoder *decoder = (QuickTimeDecoder *)data;
-
-	if (decoder->_isKeyDown)
-		decoder->handleKey(decoder->_lastKey, true, true);
-
-	if (decoder->_isMouseButtonDown)
-		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY, true);
-}
-
-void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
-	if (_qtvrType == QTVRType::OBJECT)
-		handleObjectMouseButton(isDown, x, y, repeat);
-	else if (_qtvrType == QTVRType::PANORAMA)
-		handlePanoMouseButton(isDown, x, y, repeat);
-
-	if (isDown) {
-		if (!_repeatTimerActive)
-			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Mouse Repeat Handler");
-		_repeatTimerActive = true;
-	} else {
-		if (_repeatTimerActive) {
-			_repeatTimerActive = false;
-			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
-		}
-	}
-
-	updateQTVRCursor(x, y);
-}
-
-void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
-	if (isDown) {
-		if (y < _curBbox.top) {
-			setCurrentRow(getCurrentRow() + 1);
-		} else if (y > _curBbox.bottom) {
-			setCurrentRow(getCurrentRow() - 1);
-		} else if (x < _curBbox.left) {
-			setCurrentColumn((getCurrentColumn() + 1) % _nav.columns);
-		} else if (x > _curBbox.right) {
-			setCurrentColumn((getCurrentColumn() - 1 + _nav.columns) % _nav.columns);
-		} else {
-			_prevMouseX = x;
-			_prevMouseY = y;
-		}
-	}
-
-	_isMouseButtonDown = isDown;
-}
-
-void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
-	_isMouseButtonDown = isDown;
-
-	if (isDown && !repeat) {
-		_prevMouseX = x;
-		_prevMouseY = y;
-
-		_mouseDrag.x = x;
-		_mouseDrag.y = y;
-	}
-
-	if (!repeat)
-		return;
-
-	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
-
-	// HACK: FIXME: Hard coded for now
-	const int sensitivity = 5;
-	const float speedFactor = 0.1f;
-
-	int16 mouseDeltaX = x - _mouseDrag.x;
-	int16 mouseDeltaY = y - _mouseDrag.y;
-
-	float speedX = (float)mouseDeltaX * speedFactor;
-	float speedY = (float)mouseDeltaY * speedFactor;
-
-	if (ABS(mouseDeltaX) >= sensitivity)
-		track->setPanAngle(track->getPanAngle() + speedX);
-
-	if (ABS(mouseDeltaY) >= sensitivity)
-		track->setTiltAngle(track->getTiltAngle() + speedY);
-}
-
-void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {
-	if (_qtvrType == QTVRType::OBJECT)
-		handleObjectKey(state, down, repeat);
-	else if (_qtvrType == QTVRType::PANORAMA)
-		handlePanoKey(state, down, repeat);
-
-	if (down) {
-		_lastKey = state;
-		_isKeyDown = true;
-		if (!_repeatTimerActive)
-			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Keyboard Repeat Handler");
-		_repeatTimerActive = true;
-	} else {
-		_isKeyDown = false;
-		if (_repeatTimerActive) {
-			_repeatTimerActive = false;
-			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
-		}
-	}
-
-	updateQTVRCursor(_prevMouseX, _prevMouseY);
-}
-
-void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down, bool repeat) {
-}
-
-void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool repeat) {
-	if ((state.flags & Common::KBD_SHIFT) && (state.flags & Common::KBD_CTRL)) {
-		_zoomState = kZoomQuestion;
-	} else if (state.flags & Common::KBD_SHIFT) {
-		_zoomState = kZoomIn;
-	} else if (state.flags & Common::KBD_CTRL) {
-		_zoomState = kZoomOut;
-	} else {
-		_zoomState = kZoomNone;
-	}
-}
-
 void QuickTimeDecoder::setCurrentRow(int row) {
 	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
 
@@ -406,6 +225,10 @@ QuickTimeDecoder::NodeData QuickTimeDecoder::getNodeData(uint32 nodeID) {
 	return {};
 }
 
+/////////////////////////
+// PANO Track
+////////////////////////
+
 QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
 	if (decoder->_qtvrType != QTVRType::PANORAMA)
 		error("QuickTimeDecoder::PanoTrackHandler: Incorrect track passed");
@@ -471,6 +294,42 @@ void QuickTimeDecoder::PanoTrackHandler::setDither(const byte *palette) {
 
 const byte *QuickTimeDecoder::PanoTrackHandler::getPalette() const {
 	return _curPalette;
+}
+
+void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
+	if (angle < desc->_hPanStart + _decoder->_hfov / 2)
+		angle = desc->_hPanStart + _decoder->_hfov / 2;
+
+	if (angle > desc->_hPanEnd - _decoder->_hfov / 2)
+		angle = desc->_hPanEnd - _decoder->_hfov / 2;
+
+	if (_curPanAngle != angle) {
+		_curPanAngle = angle;
+
+		_decoder->setPanAngle(_curPanAngle);
+
+		_dirty = true;
+	}
+}
+
+void QuickTimeDecoder::PanoTrackHandler::setTiltAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
+	if (angle < desc->_vPanBottom + _decoder->_fov / 2)
+		angle = desc->_vPanBottom + _decoder->_fov / 2;
+
+	if (angle > desc->_vPanTop - _decoder->_fov / 2)
+		angle = desc->_vPanTop - _decoder->_fov / 2;
+
+	if (_curTiltAngle != angle) {
+		_curTiltAngle = angle;
+
+		_decoder->setTiltAngle(_curTiltAngle);
+
+		_dirty = true;
+	}
 }
 
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
@@ -745,39 +604,190 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	_dirty = false;
 }
 
-void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
-	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
 
-	if (angle < desc->_hPanStart + _decoder->_hfov / 2)
-		angle = desc->_hPanStart + _decoder->_hfov / 2;
 
-	if (angle > desc->_hPanEnd - _decoder->_hfov / 2)
-		angle = desc->_hPanEnd - _decoder->_hfov / 2;
+///////////////////////////////
+// INTERACTIVITY
+//////////////////////////////
 
-	if (_curPanAngle != angle) {
-		_curPanAngle = angle;
+void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectMouseMove(x, y);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoMouseMove(x, y);
 
-		_decoder->setPanAngle(_curPanAngle);
+	updateQTVRCursor(x, y);
+}
 
-		_dirty = true;
+void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
+	if (!_isMouseButtonDown)
+		return;
+
+	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
+
+	// HACK: FIXME: Hard coded for now
+	const int sensitivity = 10;
+	const float speedFactor = 0.1f;
+
+	int16 mouseDeltaX = x - _prevMouseX;
+	int16 mouseDeltaY = y - _prevMouseY;
+
+	float speedX = (float)mouseDeltaX * speedFactor;
+	float speedY = (float)mouseDeltaY * speedFactor;
+
+	bool changed = false;
+
+	if (ABS(mouseDeltaY) >= sensitivity) {
+		int newFrame = track->getCurFrame() - round(speedY) * _nav.columns;
+
+		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
+			track->setCurFrame(newFrame);
+			changed = true;
+		}
+	}
+
+	if (ABS(mouseDeltaX) >= sensitivity) {
+		int currentRow = track->getCurFrame() / _nav.columns;
+		int currentRowStart = currentRow * _nav.columns;
+
+		int newFrame = (track->getCurFrame() - (int)roundf(speedX) - currentRowStart) % _nav.columns + currentRowStart;
+
+		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
+			track->setCurFrame(newFrame);
+			changed = true;
+		}
+	}
+
+	if (changed) {
+		_prevMouseX = x;
+		_prevMouseY = y;
 	}
 }
 
-void QuickTimeDecoder::PanoTrackHandler::setTiltAngle(float angle) {
-	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
+	_prevMouseX = x;
+	_prevMouseY = y;
+}
 
-	if (angle < desc->_vPanBottom + _decoder->_fov / 2)
-		angle = desc->_vPanBottom + _decoder->_fov / 2;
+#define REPEAT_DELAY 100000
 
-	if (angle > desc->_vPanTop - _decoder->_fov / 2)
-		angle = desc->_vPanTop - _decoder->_fov / 2;
+static void repeatCallback(void *data) {
+	QuickTimeDecoder *decoder = (QuickTimeDecoder *)data;
 
-	if (_curTiltAngle != angle) {
-		_curTiltAngle = angle;
+	if (decoder->_isKeyDown)
+		decoder->handleKey(decoder->_lastKey, true, true);
 
-		_decoder->setTiltAngle(_curTiltAngle);
+	if (decoder->_isMouseButtonDown)
+		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY, true);
+}
 
-		_dirty = true;
+void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectMouseButton(isDown, x, y, repeat);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoMouseButton(isDown, x, y, repeat);
+
+	if (isDown) {
+		if (!_repeatTimerActive)
+			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Mouse Repeat Handler");
+		_repeatTimerActive = true;
+	} else {
+		if (_repeatTimerActive) {
+			_repeatTimerActive = false;
+			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+		}
+	}
+
+	updateQTVRCursor(x, y);
+}
+
+void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
+	if (isDown) {
+		if (y < _curBbox.top) {
+			setCurrentRow(getCurrentRow() + 1);
+		} else if (y > _curBbox.bottom) {
+			setCurrentRow(getCurrentRow() - 1);
+		} else if (x < _curBbox.left) {
+			setCurrentColumn((getCurrentColumn() + 1) % _nav.columns);
+		} else if (x > _curBbox.right) {
+			setCurrentColumn((getCurrentColumn() - 1 + _nav.columns) % _nav.columns);
+		} else {
+			_prevMouseX = x;
+			_prevMouseY = y;
+		}
+	}
+
+	_isMouseButtonDown = isDown;
+}
+
+void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
+	_isMouseButtonDown = isDown;
+
+	if (isDown && !repeat) {
+		_prevMouseX = x;
+		_prevMouseY = y;
+
+		_mouseDrag.x = x;
+		_mouseDrag.y = y;
+	}
+
+	if (!repeat)
+		return;
+
+	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+
+	// HACK: FIXME: Hard coded for now
+	const int sensitivity = 5;
+	const float speedFactor = 0.1f;
+
+	int16 mouseDeltaX = x - _mouseDrag.x;
+	int16 mouseDeltaY = y - _mouseDrag.y;
+
+	float speedX = (float)mouseDeltaX * speedFactor;
+	float speedY = (float)mouseDeltaY * speedFactor;
+
+	if (ABS(mouseDeltaX) >= sensitivity)
+		track->setPanAngle(track->getPanAngle() + speedX);
+
+	if (ABS(mouseDeltaY) >= sensitivity)
+		track->setTiltAngle(track->getTiltAngle() + speedY);
+}
+
+void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {
+	if (_qtvrType == QTVRType::OBJECT)
+		handleObjectKey(state, down, repeat);
+	else if (_qtvrType == QTVRType::PANORAMA)
+		handlePanoKey(state, down, repeat);
+
+	if (down) {
+		_lastKey = state;
+		_isKeyDown = true;
+		if (!_repeatTimerActive)
+			g_system->getTimerManager()->installTimerProc(&repeatCallback, REPEAT_DELAY, this, "Keyboard Repeat Handler");
+		_repeatTimerActive = true;
+	} else {
+		_isKeyDown = false;
+		if (_repeatTimerActive) {
+			_repeatTimerActive = false;
+			g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+		}
+	}
+
+	updateQTVRCursor(_prevMouseX, _prevMouseY);
+}
+
+void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down, bool repeat) {
+}
+
+void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool repeat) {
+	if ((state.flags & Common::KBD_SHIFT) && (state.flags & Common::KBD_CTRL)) {
+		_zoomState = kZoomQuestion;
+	} else if (state.flags & Common::KBD_SHIFT) {
+		_zoomState = kZoomIn;
+	} else if (state.flags & Common::KBD_CTRL) {
+		_zoomState = kZoomOut;
+	} else {
+		_zoomState = kZoomNone;
 	}
 }
 
