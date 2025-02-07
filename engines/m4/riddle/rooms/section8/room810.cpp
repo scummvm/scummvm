@@ -41,7 +41,7 @@ void Room810::init() {
 	_ripleyTakesJadeSealFromTombSeries = series_load("RIPLEY TAKES JADE SEAL FROM TOMB", -1, nullptr);
 	_ripPos3LookAroundSeries = series_load("RIP POS 3 LOOK AROUND", -1, nullptr);
 	_ripTrekHandTalkPos3Series = series_load("RIP TREK HAND TALK POS3", -1, nullptr);
-	_810FireFlickerSeries = series_load("810 fire flicker", -1, nullptr);	
+	_810FireFlickerSeries = series_load("810 fire flicker", -1, nullptr);
 	_810LitUrnSeries = series_load("810 lit urn", -1, nullptr);
 	_810MercSeries = series_load("810merc", -1, nullptr);
 	_810BlockSlidesOutSeries = series_load("810 block slides out", -1, nullptr);
@@ -58,8 +58,8 @@ void Room810::init() {
 	_field0 = 0;
 	player_set_commands_allowed(false);
 	ws_demand_facing(_G(my_walker), 3);
-	ws_demand_location(_G(my_walker), 55, 318);	
-	ws_walk(_G(my_walker), 160, 318, nullptr, 1, 3, true);	
+	ws_demand_location(_G(my_walker), 55, 318);
+	ws_walk(_G(my_walker), 160, 318, nullptr, 1, 3, true);
 }
 
 void Room810::pre_parser() {
@@ -78,9 +78,41 @@ void Room810::pre_parser() {
 }
 
 void Room810::parser() {
+	// TODO Not implemented yet
 }
 
 void Room810::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		_ripLooksAroundAndNodsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 160, 318, 46, 768, false, triggerMachineByHashCallback, "rip looks around and nods");
+		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 1, _ripPos3LookAroundSeries, 16, 51, _ripPos3LookAroundSeries, 17, 20, 4);
+		_safariShadow3Mach = series_show("SAFARI SHADOW 3", 1280, 16, -1, -1, 0, 46, 160, 318);
+
+		break;
+
+	case 51:
+		sendWSMessage_190000(_ripLooksAroundAndNodsMach, 20);
+		digi_play("810r01", 1, 255, 52, 810);
+
+		break;
+
+	case 52:
+		sendWSMessage_190000(_ripLooksAroundAndNodsMach, 12);
+		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 16, _ripPos3LookAroundSeries, 1, 53, _ripPos3LookAroundSeries, 1, 1, 0);
+
+		break;
+
+	case 53:
+		terminateMachine(_ripLooksAroundAndNodsMach);
+		terminateMachine(_safariShadow3Mach);
+		ws_unhide_walker(_G(my_walker));
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms

@@ -51,6 +51,8 @@ private:
 	int32 _ripTrekHandTalkPos3Series = 0;
 
 	machine *_810SealMach = nullptr;
+	machine *_ripLooksAroundAndNodsMach = nullptr;
+	machine *_safariShadow3Mach = nullptr;
 };
 
 } // namespace Rooms
