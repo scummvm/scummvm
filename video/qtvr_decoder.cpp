@@ -891,33 +891,58 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			setCursor(kCursorPano);
 		} else {
 			int res = 0;
+			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
-			if (x < _mouseDrag.x - sensitivity)
+			// left
+			if (x < _mouseDrag.x - sensitivity) {
 				res |= 1;
-			res <<= 1;
+				res <<= 1;
 
-			// left stop
-			res <<= 1;
+				// left stop
+				if (_panAngle <= desc->_hPanStart + _hfov / 2)
+					res |= 1;
+				res <<= 1;
+			} else {
+				res <<= 2;
+			}
 
-			if (x > _mouseDrag.x + sensitivity)
+			// right
+			if (x > _mouseDrag.x + sensitivity) {
 				res |= 1;
-			res <<= 1;
+				res <<= 1;
 
-			// right stop
-			res <<= 1;
+				// right stop
+				if (_panAngle >= desc->_hPanEnd - _hfov / 2)
+					res |= 1;
+				res <<= 1;
+			} else {
+				res <<= 2;
+			}
 
-			if (y > _mouseDrag.y + sensitivity)
+			// down
+			if (y > _mouseDrag.y + sensitivity) {
 				res |= 1;
-			res <<= 1;
+				res <<= 1;
 
-			// down stop
-			res <<= 1;
+				// down stop
+				if (_tiltAngle >= desc->_vPanTop - _fov / 2)
+					res |= 1;
+				res <<= 1;
+			} else {
+				res <<= 2;
+			}
 
-			if (y < _mouseDrag.y - sensitivity)
+			// up
+			if (y < _mouseDrag.y - sensitivity) {
 				res |= 1;
-			res <<= 1;
+				res <<= 1;
 
-			// up stop
+				// up stop
+				if (_tiltAngle <= desc->_vPanBottom + _fov / 2)
+					res |= 1;
+			} else {
+				res <<= 1;
+			}
 
 			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : kCursorPanoNav);
 		}
