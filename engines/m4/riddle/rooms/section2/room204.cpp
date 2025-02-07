@@ -57,7 +57,7 @@ void Room204::init() {
 		_field184 = 0;
 		_field188 = 0;
 
-		if (!player_been_here(205) && (!_G(flags)[V056] || _G(flags)[V049] == 1)) {
+		if (!player_been_here(205) && (_G(flags)[V056] == 0 || _G(flags)[V049] == 1)) {
 			_field4 = 1;
 			initWalkerSeries();
 			_G(flags)[V049] = 0;
@@ -103,7 +103,7 @@ void Room204::init() {
 			if (_field4 == 1) {
 				initWalkerSeries();
 
-				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE0_x, 323, _meiMachineFlag ? 10 : 2, Walker::player_walker_callback, "mc walker room 204");
+				_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, _fieldE0_x, 323, _meiMachineFlag ? 10 : 2, Walker::player_walker_callback, "mc walker room 204");
 				addMovingMeiHotspot();
 				if (_fieldE0_x == 472) {
 					deleteMalletHotspot();
@@ -127,7 +127,7 @@ void Room204::init() {
 		ws_demand_location(_G(my_walker), 600, 334);
 		ws_demand_facing(_G(my_walker), 9);
 		sendWSMessage_10000(_G(my_walker), 424, 331, 9, 9, true);
-		_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 620, 340, 9, Walker::player_walker_callback, "mc");
+		_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, 620, 340, 9, Walker::player_walker_callback, "mc");
 		sendWSMessage_10000(_mcMach, 450, 340, 9, -1, true);
 		kernel_timing_trigger(60, 5, nullptr);
 	} else {
@@ -136,7 +136,7 @@ void Room204::init() {
 		player_set_commands_allowed(false);
 		if (!_G(flags)[V070]) {
 			digi_preload("204_S02", -1);
-			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 1864, 334, 9, Walker::player_walker_callback, "mc walker room 204");
+			_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, 1864, 334, 9, Walker::player_walker_callback, "mc walker room 204");
 			DisposePath(_mcMach->walkPath);
 			_ripDropsSeries = series_load("RIP DROPS", -1, nullptr);
 			player_set_commands_allowed(false);
@@ -165,7 +165,7 @@ void Room204::init() {
 				_G(flags)[V078] = 2;
 				ws_demand_location(_G(my_walker), 1864, 334);
 				ws_demand_facing(_G(my_walker), 9);
-				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 1864, 334, 4, Walker::player_walker_callback, "mc walker room 204");
+				_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, 1864, 334, 4, Walker::player_walker_callback, "mc walker room 204");
 				kernel_timing_trigger(1, 536, nullptr);
 				int32 status;
 				ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
@@ -198,7 +198,7 @@ void Room204::init() {
 					break;
 				}
 
-				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE4_walkerDestX, 323, 2, Walker::player_walker_callback, "mc walker room 204");
+				_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, _fieldE4_walkerDestX, 323, 2, Walker::player_walker_callback, "mc walker room 204");
 				addMovingMeiHotspot();
 				kernel_timing_trigger(1, 630, nullptr);
 				kernel_timing_trigger(1, 578, nullptr);
@@ -1152,7 +1152,7 @@ void Room204::daemon() {
 
 	case 517:
 		series_unload(_ripTrekLHandTalkPos4Series);
-		_fieldD4 = 3;
+		_meiShould = 3;
 		_meiMachineFlag = true;
 		_field108 = 1;
 		kernel_timing_trigger(1, 574, nullptr);
@@ -1161,13 +1161,13 @@ void Room204::daemon() {
 		break;
 
 	case 518:
-		_fieldD4 = 3;
+		_meiShould = 3;
 		_fieldBC_trigger = kernel_trigger_create(520);
 
 		break;
 
 	case 520:
-		_fieldD4 = 6;
+		_meiShould = 6;
 		_fieldC0_trigger = kernel_trigger_create(520);
 
 		break;
@@ -1177,7 +1177,7 @@ void Room204::daemon() {
 		break;
 
 	case 522:
-		_fieldD4 = 3;
+		_meiShould = 3;
 		_fieldBC_trigger = kernel_trigger_create(523);
 
 		break;
@@ -1207,7 +1207,7 @@ void Room204::daemon() {
 	case 527:
 		series_unload(_ripTrekLHandTalkPos4Series);
 		_meiShowsRipHerPassesSeries = series_load("MEI SHOWS RIP HER PASSES", -1, nullptr);
-		_fieldD4 = 7;
+		_meiShould = 7;
 		_fieldCC_trigger = kernel_trigger_create(528);
 
 		break;
@@ -1215,7 +1215,7 @@ void Room204::daemon() {
 	case 528:
 		digi_play("204m02", 1, 255, -1, -1);
 		kernel_examine_inventory_object("PING PASS", _G(master_palette), 5, 1, 370, 234, -1, nullptr, -1);
-		_fieldD4 = 3;
+		_meiShould = 3;
 		_fieldBC_trigger = kernel_trigger_create(529);
 
 		break;
@@ -1248,7 +1248,7 @@ void Room204::daemon() {
 	case 533:
 		series_unload(_ripTrekLHandTalkPos4Series);
 		inv_give_to_player("PASS");
-		_fieldD4 = 3;
+		_meiShould = 3;
 		_fieldBC_trigger = kernel_trigger_create(535);
 
 		break;
@@ -1403,23 +1403,23 @@ void Room204::daemon() {
 		break;
 
 	case 569:
-		_field14 = 1;
+		_ripleyMode = 1;
 		_field2C = 0;
 		player_update_info(_G(my_walker), &_G(player_info));
 		ws_hide_walker(_G(my_walker));
 		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, _G(player_info).depth, _ripMachineFlag, triggerMachineByHashCallback, "Rip Absolute Machine State");
-		switch (_field10) {
+		switch (_ripleyShould) {
 		case 8:
 			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
 			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
-			_field14 = 8;
+			_ripleyMode = 8;
 			break;
 
 		case 11:
 			_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
 			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
 			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
-			_field14 = 11;
+			_ripleyMode = 11;
 
 			break;
 
@@ -1427,7 +1427,7 @@ void Room204::daemon() {
 			_ripTrekTalkerPos3Series = series_load("RIP TREK TALKER POS3", -1, nullptr);
 			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
-			_field14 = 16;
+			_ripleyMode = 16;
 
 			break;
 
@@ -1438,7 +1438,7 @@ void Room204::daemon() {
 		break;
 
 	case 570:
-		_field14 = 1;
+		_ripleyMode = 1;
 		_field2C = 0;
 		_field24_triggerNum = -1;
 
@@ -1446,9 +1446,9 @@ void Room204::daemon() {
 		ws_hide_walker(_G(my_walker));
 		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, _G(player_info).depth, false, triggerMachineByHashCallback, "Rip Delta Machine State");
 
-		if (_field10 == 8) {
+		if (_ripleyShould == 8) {
 			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
-			_field14 = 8;
+			_ripleyMode = 8;
 		}
 
 		_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info.scale), _G(player_info).depth);
@@ -1456,42 +1456,42 @@ void Room204::daemon() {
 		break;
 
 	case 571:
-		if (_field14 == 8 && _field10 == 8 && _field18_triggerNum != -1) {
+		if (_ripleyMode == 8 && _ripleyShould == 8 && _field18_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field18_triggerNum);
 			_field18_triggerNum = -1;
 		}
 
-		if (_field14 == 9 && _field10 == 9 && _field24_triggerNum != -1) {
+		if (_ripleyMode == 9 && _ripleyShould == 9 && _field24_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field24_triggerNum);
 				_field24_triggerNum = -1;
 		}
 
-		if (_field14 == 12 && _field10 == 12 && _field44_triggerNum != -1) {
+		if (_ripleyMode == 12 && _ripleyShould == 12 && _field44_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field44_triggerNum);
 			_field44_triggerNum = -1;
 		}
 
-		if (_field14 == 13 && _field10 == 13 && _field48_triggerNum != -1) {
+		if (_ripleyMode == 13 && _ripleyShould == 13 && _field48_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field48_triggerNum);
 			_field48_triggerNum = -1;
 		}
 
-		if (_field14 == 11 && _field10 == 11 && _field18_triggerNum != -1) {
+		if (_ripleyMode == 11 && _ripleyShould == 11 && _field18_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field18_triggerNum);
 			_field18_triggerNum = -1;
 		}
 
-		if (_field14 == 14 && _field10 == 14 && _field28_triggerNum != -1) {
+		if (_ripleyMode == 14 && _ripleyShould == 14 && _field28_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field28_triggerNum);
 			_field28_triggerNum = -1;
 		}
 
-		if (_field14 == 16 && _field10 == 16 && _field18_triggerNum != -1) {
+		if (_ripleyMode == 16 && _ripleyShould == 16 && _field18_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field18_triggerNum);
 			_field18_triggerNum = -1;
 		}
 
-		if (_field14 == 21 && _field10 == 21 && _field28_triggerNum != -1) {
+		if (_ripleyMode == 21 && _ripleyShould == 21 && _field28_triggerNum != -1) {
 			kernel_trigger_dispatchx(_field28_triggerNum);
 			_field28_triggerNum = -1;
 		}
@@ -1505,26 +1505,24 @@ void Room204::daemon() {
 			terminateMachine(_safariShadow3Mach);
 			_ripMachineFlag = false;
 
-			if (_field14 == 16)
+			if (_ripleyMode == 16)
 				series_unload(_ripTrekTalkerPos3Series);
 		}
 
 		break;
 
 	case 572:
-		switch (_field14) {
+		switch (_ripleyMode) {
 		case 8:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 8:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 1, 571, _ripBangsBongSeries, 1, 1, 0);
-				_field14 = 8;
-
+				_ripleyMode = 8;
 				break;
 
 			case 9:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 1, 16, 571, _ripBangsBongSeries, 16, 16, 0);
-				_field14 = 9;
-
+				_ripleyMode = 9;
 				break;
 
 			default:
@@ -1533,47 +1531,42 @@ void Room204::daemon() {
 			break;
 
 		case 9:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 9:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 16, 16, 571, _ripBangsBongSeries, 16, 16, 0);
 				break;
 
 			case 10:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripBangsBongSeries, 17, 34, 571, _ripBangsBongSeries, 34, 34, 0);
-				_field14 = 8;
-				_field10 = 8;
-
+				_ripleyMode = 8;
+				_ripleyShould = 8;
 				break;
 
 			default:
 				break;
 			}
-
 			break;
 
 		case 11:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 11:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
 				break;
 
 			case 12:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 16, 571, _ripTrekLowReachPos2Series, 16, 16, 0);
-				_field14 = 12;
-
+				_ripleyMode = 12;
 				break;
 
 			case 13:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 14, 571, _ripTrekLowReachPos2Series, 14, 14, 0);
-				_field14 = 13;
-
+				_ripleyMode = 13;
 				break;
 
 			case 14:
 			case 15:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, 1, 5, 571, _ripTrekTwoHandTalkPos2Series, 5, 5, 0);
-				_field14 = 14;
-
+				_ripleyMode = 14;
 				break;
 
 			default:
@@ -1583,11 +1576,10 @@ void Room204::daemon() {
 			break;
 
 		case 12:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 11:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 16, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
-				_field14 = 11;
-
+				_ripleyMode = 11;
 				break;
 
 			case 12:
@@ -1598,25 +1590,21 @@ void Room204::daemon() {
 				break;
 
 			}
-
-
 			break;
 
 		case 13:
-			if (_field10 == 11) {
+			if (_ripleyShould == 11) {
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 14, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
-				_field14 = 11;
-			} else if (_field10 == 13) {
+				_ripleyMode = 11;
+			} else if (_ripleyShould == 13) {
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 14, 14, 571, _ripTrekLowReachPos2Series, 14, 14, 0);
 			}
-
 			break;
 		case 14:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 11:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, 13, 19, 571, _ripTrekTwoHandTalkPos2Series, 19, 19, 0);
-				_field14 = 11;
-
+				_ripleyMode = 11;
 				break;
 
 			case 14:
@@ -1627,93 +1615,80 @@ void Room204::daemon() {
 				const int32 rnd = imath_ranged_rand(6, 12);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 571, _ripTrekTwoHandTalkPos2Series, rnd, rnd, 0);
 				}
-
 				break;
 
 			default:
 				break;
 			}
-
 			break;
 
 		case 16:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 16:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
 				break;
 
 			case 18:
-				_field10 = 16;
+				_ripleyShould = 16;
 				_field18_triggerNum = kernel_trigger_create(605);
 				kernel_timing_trigger(1, 571, nullptr);
-
 				break;
 
 			case 19: {
 				const int32 rnd = imath_ranged_rand(1, 5);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, rnd, rnd, 571, _ripTrekTalkerPos3Series, rnd, rnd, 0);
 				}
-
 				break;
 
 			case 20:
 			case 21:
 				_ripTrekHandTalkPos3Series = series_load("RIP TREK HAND TALK POS3", -1, nullptr);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 1, 7, 571, _ripTrekHandTalkPos3Series, 7, 7, 0);
-				_field14 = 21;
-
+				_ripleyMode = 21;
 				break;
 
 			case 22:
 				_ripTrekHandTalkPos3Series = series_load("RIP TREK HAND TALK POS3", -1, nullptr);
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 1, 7, 571, _ripTrekHandTalkPos3Series, 7, 7, 0);
-				_field10 = 23;
-
+				_ripleyShould = 23;
 				break;
 
 			case 23:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 8, 10, -1, _ripTrekHandTalkPos3Series, 8, 10, 4);
 				digi_play(conv_sound_to_play(), 1, 255, 571, -1);
-				_field10 = 24;
-
+				_ripleyShould = 24;
 				break;
 
 			case 24:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 9, 16, 571, _ripTrekHandTalkPos3Series, 16, 16, 0);
-				_field10 = 25;
-
+				_ripleyShould = 25;
 				break;
 
 			case 25:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
 				series_unload(_ripTrekHandTalkPos3Series);
-				_field10 = 16;
+				_ripleyShould = 16;
 				conv_resume(conv_get_handle());
-
 				break;
-
 
 			default:
 				break;
 			}
-
 			break;
 
 		case 21:
-			switch (_field10) {
+			switch (_ripleyShould) {
 			case 16:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 9, 16, 571, _ripTrekHandTalkPos3Series, 16, 16, 0);
-				_field14 = 16;
-				_field10 = 17;
-
+				_ripleyMode = 16;
+				_ripleyShould = 17;
 				break;
 
 			case 17:
 				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
 				series_unload(_ripTrekHandTalkPos3Series);
-				_field10 = 16;
-				_field14 = 16;
-
+				_ripleyShould = 16;
+				_ripleyMode = 16;
 				break;
 
 			case 20: {
@@ -1733,8 +1708,6 @@ void Room204::daemon() {
 		default:
 			break;
 		}
-
-
 		break;
 
 	case 574:
@@ -1751,24 +1724,24 @@ void Room204::daemon() {
 		_meiChenOtherStatesMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _field10C_x, _field110_y, _field118_scale, _field11C_depth, _meiMachineFlag, triggerMachineByHashCallback, "Mei Chen other states machine");
 		_safariShadow2Mach = series_place_sprite("SAFARI SHADOW 2", 0, _field10C_x, _field110_y, _field118_scale, 3840);
 
-		switch (_fieldD4) {
+		switch (_meiShould) {
 		case 3:
 			_meiTrekRtHandOutPos2Series = series_load("MEI TREK RT HAND OUT POS2", -1, nullptr);
 			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
-			_fieldD0 = 3;
+			_meiMode = 3;
 			break;
 
 		case 4:
 			_meiTalksPos3Series = series_load("MEI TALKS POS3", -1, nullptr);
 			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, 1, 1, 576, _meiTalksPos3Series, 1, 1, 0);
-			_fieldD0 = 4;
+			_meiMode = 4;
 
 			break;
 
 		case 5:
 			_meiTrekTalkerPos4Series = series_load("MEI TREK TALKER POS4", -1, nullptr);
 			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, 1, 1, 576, _meiTrekTalkerPos4Series, 1, 1, 0);
-			_fieldD0 = 5;
+			_meiMode = 5;
 
 			break;
 
@@ -1785,27 +1758,27 @@ void Room204::daemon() {
 		break;
 
 	case 576:
-		if (_fieldD0 == 3 && _fieldD4 == 3 && _fieldBC_trigger != -1) {
+		if (_meiMode == 3 && _meiShould == 3 && _fieldBC_trigger != -1) {
 			kernel_trigger_dispatchx(_fieldBC_trigger);
 			_fieldBC_trigger = -1;
 		}
 
-		if (_fieldD0 == 4 && _fieldD4 == 4 && _fieldBC_trigger != -1) {
+		if (_meiMode == 4 && _meiShould == 4 && _fieldBC_trigger != -1) {
 			kernel_trigger_dispatchx(_fieldBC_trigger);
 			_fieldBC_trigger = -1;
 		}
 
-		if (_fieldD0 == 5 && _fieldD4 == 5 && _fieldBC_trigger != -1) {
+		if (_meiMode == 5 && _meiShould == 5 && _fieldBC_trigger != -1) {
 			kernel_trigger_dispatchx(_fieldBC_trigger);
 			_fieldBC_trigger = -1;
 		}
 
-		if (_fieldD0 == 6 && _fieldD4 == 6 && _fieldC0_trigger != -1) {
+		if (_meiMode == 6 && _meiShould == 6 && _fieldC0_trigger != -1) {
 			kernel_trigger_dispatchx(_fieldC0_trigger);
 			_fieldC0_trigger = -1;
 		}
 
-		if (_fieldD0 == 7 && _fieldD4 == 7 && _fieldCC_trigger != -1) {
+		if (_meiMode == 7 && _meiShould == 7 && _fieldCC_trigger != -1) {
 			kernel_trigger_dispatchx(_fieldCC_trigger);
 			_fieldCC_trigger = -1;
 		}
@@ -1818,7 +1791,7 @@ void Room204::daemon() {
 		if (!_field108) {
 			ws_unhide_walker(_mcMach);
 		} else {
-			switch (_fieldD0) {
+			switch (_meiMode) {
 			case 3:
 				_field114_facing = _meiMachineFlag ? 10 : 2;
 				break;
@@ -1835,9 +1808,9 @@ void Room204::daemon() {
 				break;
 			}
 
-			ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
-			ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
-			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _field10C_x, _field110_y, _field114_facing, Walker::player_walker_callback, "mc");
+			ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S8_SHADOW_NAMES2, false);
+			ws_walk_load_walker_series(S2_MEI_SHADOW_DIRS, S8_SHADOW_NAMES1, false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, _field10C_x, _field110_y, _field114_facing, Walker::player_walker_callback, "mc");
 			kernel_timing_trigger(60, 630, nullptr);
 			if (_fieldC8_trigger != -1) {
 				kernel_trigger_dispatchx(_fieldC8_trigger);
@@ -1850,7 +1823,7 @@ void Room204::daemon() {
 		_meiMachineFlag = false;
 		terminateMachine(_safariShadow2Mach);
 
-		switch (_fieldD0) {
+		switch (_meiMode) {
 		case 3:
 			series_unload(_meiTrekRtHandOutPos2Series);
 			break;
@@ -1873,23 +1846,21 @@ void Room204::daemon() {
 		break;
 
 	case 577:
-		switch (_fieldD0) {
+		switch (_meiMode) {
 		case 3:
-			switch (_fieldD4) {
+			switch (_meiShould) {
 			case 3:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
 				break;
 
 			case 6:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 10, 576, _meiTrekRtHandOutPos2Series, 10, 10, 0);
-				_fieldD0 = 6;
-
+				_meiMode = 6;
 				break;
 
 			case 7:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 1, 6, 576, _meiShowsRipHerPassesSeries, 6, 6, 0);
-				_fieldD0 = 7;
-
+				_meiMode = 7;
 				break;
 
 			default:
@@ -1898,7 +1869,7 @@ void Room204::daemon() {
 
 			break;
 		case 4:
-			switch (_fieldD4) {
+			switch (_meiShould) {
 			case 4:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, 1, 1, 576, _meiTalksPos3Series, 1, 1, 0);
 				break;
@@ -1906,7 +1877,6 @@ void Room204::daemon() {
 			case 17: {
 				const int32 rnd = imath_ranged_rand(1, 4);
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, rnd, rnd, 576, _meiTalksPos3Series, rnd, rnd, 0);
-
 				}
 				break;
 
@@ -1917,7 +1887,7 @@ void Room204::daemon() {
 			break;
 
 		case 5:
-			switch (_fieldD4) {
+			switch (_meiShould) {
 			case 5:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, 1, 1, 576, _meiTrekTalkerPos4Series, 1, 1, 0);
 				break;
@@ -1925,22 +1895,19 @@ void Room204::daemon() {
 			case 13: {
 				const int32 rnd = imath_ranged_rand(1, 4);
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, rnd, rnd, 576, _meiTrekTalkerPos4Series, rnd, rnd, 0);
-
-			} break;
+			}
+			break;
 
 			default:
-
 				break;
 			}
-
 			break;
 
 		case 6:
-			switch (_fieldD4) {
+			switch (_meiShould) {
 			case 3:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 10, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
-				_fieldD0 = 3;
-
+				_meiMode = 3;
 				break;
 
 			case 6:
@@ -1948,34 +1915,29 @@ void Room204::daemon() {
 				break;
 
 			default:
-
 				break;
 			}
-
 			break;
 
 		case 7:
-			switch (_fieldD4) {
+			switch (_meiShould) {
 			case 7:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 6, 6, 576, _meiShowsRipHerPassesSeries, 6, 6, 0);
 
 			// Intentional fallthrough
 			case 3:
 				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 6, 1, 576, _meiShowsRipHerPassesSeries, 1, 1, 0);
-				_fieldD0 = 3;
-
+				_meiMode = 3;
 				break;
 
 			default:
 				break;
 			}
-
 			break;
 
 		default:
 			break;
 		}
-
 		break;
 
 	case 578:
@@ -2097,7 +2059,7 @@ void Room204::daemon() {
 
 	case 581:
 		if (_fieldE0_x != _fieldE4_walkerDestX) {
-			_fieldD4 = 3;
+			_meiShould = 3;
 			_fieldBC_trigger = kernel_trigger_create(582);
 		}
 
@@ -2166,7 +2128,7 @@ void Room204::daemon() {
 
 	case 596:
 		_field134 = 1;
-		_field10 = 16;
+		_ripleyShould = 16;
 		_ripMachineFlag = true;
 
 		_field18_triggerNum = kernel_trigger_create(597);
@@ -2176,7 +2138,7 @@ void Room204::daemon() {
 		break;
 
 	case 597:
-		_field10 = 18;
+		_ripleyShould = 18;
 		player_set_commands_allowed(true);
 
 
@@ -2252,7 +2214,7 @@ void Room204::daemon() {
 		break;
 
 	case 607:
-		_field10 = 16;
+		_ripleyShould = 16;
 		_field18_triggerNum = kernel_trigger_create(608);
 		_field134 = 1;
 
@@ -2477,7 +2439,7 @@ void Room204::daemon() {
 		break;
 
 	case 639:
-		_fieldD4 = 4;
+		_meiShould = 4;
 		_meiMachineFlag = true;
 		_field108 = 1;
 		kernel_timing_trigger(1, 574, nullptr);
@@ -2532,7 +2494,7 @@ void Room204::daemon() {
 		break;
 
 	case 661:
-		_field10 = 16;
+		_ripleyShould = 16;
 		_field140 = 1;
 		_field144_triggerNum = kernel_trigger_create(662);
 
@@ -2569,13 +2531,13 @@ void Room204::daemon() {
 		break;
 
 	case 666:
-		_field10 = 20;
+		_ripleyShould = 20;
 		digi_play(_checkNode10NegWhoEntry1Fl ? "204R48" : "204R49", 1, 255, 667, -1);
 
 		break;
 
 	case 667:
-		_field10 = 21;
+		_ripleyShould = 21;
 		_fieldD8_facing = 1;
 		_fieldC8_trigger = kernel_trigger_create(669);
 
@@ -2677,7 +2639,7 @@ void Room204::daemon() {
 		break;
 
 	case 687:
-		_field10 = 16;
+		_ripleyShould = 16;
 		_field18_triggerNum = kernel_trigger_create(688);
 
 		break;
@@ -2716,7 +2678,7 @@ void Room204::daemon() {
 		break;
 
 	case 694:
-		_fieldD4 = 5;
+		_meiShould = 5;
 		_meiMachineFlag = true;
 		_field108 = 1;
 		kernel_timing_trigger(1, 574, nullptr);
@@ -2733,7 +2695,7 @@ void Room204::daemon() {
 		break;
 
 	case 697:
-		_fieldD4 = 13;
+		_meiShould = 13;
 		digi_play("204M03", 1, 255, 699, -1);
 
 		break;
@@ -2790,17 +2752,17 @@ void Room204::daemon() {
 		break;
 
 	case 712:
-		series_unload(S8_SHADOW_DIRS2[4]);
-		series_unload(S8_SHADOW_DIRS2[3]);
-		series_unload(S8_SHADOW_DIRS2[2]);
-		series_unload(S8_SHADOW_DIRS2[1]);
-		series_unload(S8_SHADOW_DIRS2[0]);
+		series_unload(S2_MEI_NORMAL_DIRS[4]);
+		series_unload(S2_MEI_NORMAL_DIRS[3]);
+		series_unload(S2_MEI_NORMAL_DIRS[2]);
+		series_unload(S2_MEI_NORMAL_DIRS[1]);
+		series_unload(S2_MEI_NORMAL_DIRS[0]);
 
-		series_unload(S8_SHADOW_DIRS1[4]);
-		series_unload(S8_SHADOW_DIRS1[3]);
-		series_unload(S8_SHADOW_DIRS1[2]);
-		series_unload(S8_SHADOW_DIRS1[1]);
-		series_unload(S8_SHADOW_DIRS1[0]);
+		series_unload(S2_MEI_SHADOW_DIRS[4]);
+		series_unload(S2_MEI_SHADOW_DIRS[3]);
+		series_unload(S2_MEI_SHADOW_DIRS[2]);
+		series_unload(S2_MEI_SHADOW_DIRS[1]);
+		series_unload(S2_MEI_SHADOW_DIRS[0]);
 
 		break;
 
@@ -2829,13 +2791,13 @@ void Room204::daemon() {
 
 	case 719:
 		digi_preload("0507p02a", 204);
-		_field10 = 19;
+		_ripleyShould = 19;
 		digi_play(conv_sound_to_play(), 1, 255, 720, -1);
 
 		break;
 
 	case 720:
-		_field10 = 16;
+		_ripleyShould = 16;
 		_204pu05Mach = series_stream("204PU04", 3, 0, 722);
 		series_stream_break_on_frame(_204pu05Mach, 6, 721);
 
@@ -2860,22 +2822,22 @@ void Room204::daemon() {
 		break;
 
 	case 726:
-		_fieldD4 = 13;
+		_meiShould = 13;
 		digi_play("204M22", 1, 255, 727, -1);
 		break;
 
 	case 727:
-		_fieldD4 = 5;
+		_meiShould = 5;
 		digi_play("204R38", 1, 255, 728, -1);
 		break;
 
 	case 728:
-		_fieldD4 = 13;
+		_meiShould = 13;
 		digi_play("204M23", 1, 255, 729, -1);
 		break;
 
 	case 729:
-		_fieldD4 = 5;
+		_meiShould = 5;
 		digi_play("204R39", 1, 255, 730, -1);
 		break;
 
@@ -2898,8 +2860,8 @@ void Room204::syncGame(Common::Serializer &s) {
 }
 
 void Room204::initWalkerSeries() {
-	ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
-	ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
+	ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S8_SHADOW_NAMES2, false);
+	ws_walk_load_walker_series(S2_MEI_SHADOW_DIRS, S8_SHADOW_NAMES1, false);
 }
 
 void Room204::addMovingMeiHotspot() {
@@ -3012,7 +2974,7 @@ void Room204::conv204a() {
 
 	if (_G(kernel).trigger == 1) {
 		if (who == 1) {
-			_field10 = 16;
+			_ripleyShould = 16;
 		} else if (who <= 0) {
 			_field134 = 1;
 			if (node == 10 && entry == 1)
@@ -3034,7 +2996,7 @@ void Room204::conv204a() {
 		}
 
 		if ((node == 2 && entry == 0) || (node == 11 && entry == 0) || (node == 15 && entry == 0) || (node == 14 && entry == 3) || (node == 20 && entry == 3)) {
-			_field10 = 22;
+			_ripleyShould = 22;
 			return;
 		}
 
@@ -3044,7 +3006,7 @@ void Room204::conv204a() {
 			return;
 		}
 
-		_field10 = 19;
+		_ripleyShould = 19;
 	}
 
 	const char *sound = conv_sound_to_play();
@@ -3064,7 +3026,7 @@ void Room204::handleRipBangsBong() {
 
 		break;
 	case 2:
-		_field10 = 8;
+		_ripleyShould = 8;
 		_field18_triggerNum = kernel_trigger_create(3);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(2, 570, nullptr);
@@ -3072,14 +3034,14 @@ void Room204::handleRipBangsBong() {
 		break;
 
 	case 3:
-		_field10 = 9;
+		_ripleyShould = 9;
 		_field24_triggerNum = kernel_trigger_create(4);
 
 		break;
 
 	case 4:
 		digi_play("204_S03", 1, 255, -1, -1);
-		_field10 = 10;
+		_ripleyShould = 10;
 		_field18_triggerNum = kernel_trigger_create(5);
 
 		break;

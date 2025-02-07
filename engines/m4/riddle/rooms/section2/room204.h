@@ -64,8 +64,8 @@ private:
 	bool _meiMachineFlag = false;
 
 	int32 _field4 = 0;
-	int32 _field10 = 0;
-	int32 _field14 = 0;
+	int32 _ripleyShould = 0;
+	int32 _ripleyMode = 0;
 	int32 _field18_triggerNum = 0;
 	int32 _field24_triggerNum = 0;
 	int32 _field28_triggerNum = 0;
@@ -82,8 +82,8 @@ private:
 	int32 _fieldC4 = 0;
 	int32 _fieldC8_trigger = 0;
 	int32 _fieldCC_trigger = 0;
-	int32 _fieldD0 = 0;
-	int32 _fieldD4 = 0;
+	int32 _meiMode = 0;
+	int32 _meiShould = 0;
 	int32 _fieldD8_facing = 0;
 	int32 _fieldE0_x = 0;
 	int32 _fieldE4_walkerDestX = 0;
