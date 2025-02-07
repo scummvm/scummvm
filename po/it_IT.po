@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-06 21:07+0000\n"
-"PO-Revision-Date: 2025-01-30 00:18+0000\n"
+"PO-Revision-Date: 2025-02-07 17:53+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11519,16 +11519,12 @@ msgid "Use the remastered speech and sound effects."
 msgstr "Usa il parlato e gli effetti sonori rimasterizzati."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Attiva effetti sonori"
+msgstr "Abilita sonoro ambientale"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Attiva effetti sonori"
+msgstr "Abilita gli effetti sonori ambientali."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
@@ -11642,6 +11638,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"'%s' non sembra essere l'eseguibile corretto di The Dig. Probabilmente è "
+"stato trovato l'eseguibile presente nella root del CD, che non contiene le "
+"definizioni per i menu e le finestre. Prova a cercare una cartella 'The Dig "
+"f' nel CD, e quindi seleziona una sua sottodirectory qualsiasi."
 
 #: engines/scumm/scumm.cpp:1756
 msgid ""
