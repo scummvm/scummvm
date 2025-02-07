@@ -587,9 +587,13 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		if (leftSrcCoord < 0)
 			leftSrcCoord += panoWidth;
 
+		leftSrcCoord = desc->_sceneSizeY - 1 - leftSrcCoord;
+
 		rightSrcCoord = rightSrcCoord % static_cast<int32>(panoWidth);
 		if (rightSrcCoord < 0)
 			rightSrcCoord += w;
+
+		rightSrcCoord = desc->_sceneSizeY - 1 - rightSrcCoord;
 
 		uint16 x1 = halfWidthRoundedUp - 1 - projectionCol;
 		uint16 x2 = w - halfWidthRoundedUp + projectionCol;
