@@ -109,10 +109,7 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 	debug(2, "MidiParser_SimonWin::loadMusic: %d tracks", _numTracks);
 
 	// Read the tracks.
-	byte *trackDataStart;
 	for (int i = 0; i < _numTracks; ++i) {
-		trackDataStart = pos;
-
 		// Read the track header.
 
 		// Make sure there's a MThd.
