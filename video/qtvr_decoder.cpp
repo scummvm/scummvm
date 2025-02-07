@@ -246,6 +246,8 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_curTiltAngle = 0.0f;
 
 	_dirty = true;
+
+	_decoder->updateQTVRCursor(0, 0); // Initialize all things for cursor
 }
 
 QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
