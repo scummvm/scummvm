@@ -29,26 +29,99 @@ namespace ZVision {
 
 class FilterPixel {
 public:
-  uint8 fracX = 0;  //Byte fraction of horizontal pixel position, 0 = left, 255 = right
-  uint8 fracY = 0;  //Byte fraction of vertical pixel position, 0 = top, 255 = bottom
-  //TODO - make this a sequential list for recursive filtering.  
+  const static uint8 colorBits = 5;
+  const static uint8 tol = 1;
+  const static uint8 pFrac = 0xff;
+  //Bitfields representing sequential direction of contraction
+  uint8 xDir = 0; //0 contract left, 1 contract right
+  uint8 yDir = 0; //0 contract up, 1 contract down
+  uint8 xSteps = 0; //Number of X-contractions carried out
+  uint8 ySteps = 0; //Number of y-contractions carried out
+  //TODO - make this a sequential list for recursive filtering.
   //TODO - Also include a recursion limit value so that we don't waste filtering operations on pixels that are already accurate enough.
   Common::Rect Src = Common::Rect(0,0);  //Coordinates of four panorama image pixels around actual working window pixel
   
+  uint8 fracX = 0;
+  uint8 fracY = 0;
+  
+  bool _printDebug = false;
+  
   FilterPixel() {};
-  FilterPixel(float x, float y, bool highQuality=false) {
-		if(highQuality) {
-	    Src.left = int16(floor(x));
-	    Src.right = int16(ceil(x));
-	    fracX = uint8((x-Src.left)*255);
-		  Src.top = int16(floor(y));
-		  Src.bottom = int16(ceil(y));
-		  fracY = uint8((y-Src.top)*255);
+  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
+    Src.left = int16(floor(x));
+    Src.right = int16(ceil(x));
+	  Src.top = int16(floor(y));
+	  Src.bottom = int16(ceil(y));
+
+	  _printDebug = printDebug;
+
+    if(_printDebug)
+      debug(1,"\tTarget pixel offset: %f, %f", x, y);
+
+		//Bilinear
+	  if(highQuality) {
+      fracX = uint8((x-Src.left)*pFrac);  //Fraction of horizontal pixel position, 0 = left, pFrac = right
+      fracY = uint8((y-Src.top)*pFrac); //Fraction of vertical pixel position, 0 = top, pFrac = bottom
+	    uint xBound = pFrac >> 1;
+	    uint yBound = pFrac >> 1;
+      if(_printDebug) {
+        debug(1,"\tBilinear, xBound: %d, yBound: %d, tol: %d", xBound, yBound, tol);
+        debug(1,"\tByte fractions, fracX: %d, fracY: %d", fracX, fracY);
+      }
+	    for(uint8 i = (pFrac >> 2); i > tol; i >>= 1) {
+        if(_printDebug)
+          debug(1,"\txBound %d, yBound %d, i %d", xBound, yBound, i);
+	      if(fracX >= xBound) {
+  	      if(fracX-xBound > tol) {
+    	      xDir += 0x80;
+    	      xDir >>= 1;
+    	      xBound += i;
+    	      xSteps++;
+            if(_printDebug)
+              debug(1,"		Contract right, xDir: 0x%X, xSteps: %d", xDir, xSteps);
+  	      }
+	      }
+	      else {
+  	      if(xBound-fracX > tol) {
+    	      xDir >>= 1;
+    	      xBound -= i;
+    	      xSteps++;
+            if(_printDebug)
+              debug(1,"		Contract left, xDir: 0x%X, xSteps: %d", xDir, xSteps);
+  	      }
+	      }
+	      if(fracY >= yBound) {
+  	      if(fracY-yBound > tol) {
+    	      yDir += 0x80;
+    	      yDir >>= 1;
+    	      yBound += i;
+    	      ySteps++;
+            if(_printDebug)
+              debug(1,"		Contract downward, yDir: 0x%X, ySteps: %d", yDir, ySteps);
+  	      }  
+	      }
+	      else {
+  	      if(yBound-fracY > tol) {
+    	      yDir >>= 1;
+    	      yBound -= i;
+    	      ySteps++;
+            if(_printDebug)
+              debug(1,"		Contract upward, yDir: 0x%X, ySteps: %d", yDir, ySteps);
+  	      }
+	      }
+	    }
+	    xDir >>= (7-xSteps);
+	    yDir >>= (7-ySteps);
+      if(_printDebug)
+		    debug(2,"Xdir 0x%X, Ydir 0x%X, xSteps %d, ySteps %d", xDir, yDir, xSteps, ySteps);
 	  }
 	  else {
-		  Src.left = int16(round(x));
-  		Src.top = int16(round(y));
-		}
+    //Nearest neighbour
+		xDir = (x-Src.left) > 0.5f ? 0x01 : 0x00;
+		yDir = (y-Src.top) > 0.5f ? 0x01 : 0x00;
+    if(_printDebug)
+      debug(1,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+	  }
   };
   ~FilterPixel() {};
 };
@@ -57,6 +130,8 @@ class RenderTable {
 public:
 	RenderTable(uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
+	
+	Common::Point testPixel = Common::Point(30,120);
 
 public:
 	enum RenderState {
@@ -72,7 +147,8 @@ private:
 	bool _highQuality = false;
 	const uint8 filterPasses = 2;
 	const Graphics::PixelFormat _pixelFormat;
-	uint16 avgL, avgH;
+	uint32 avgRB, avgG;
+	uint8 _tol = 10;  //TODO - allow different optimised values for ZGI & Nemesis
 
 	struct {
 		float verticalFOV;  //Radians
@@ -100,12 +176,38 @@ public:
 //	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
   void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter=false);
 	
-	inline uint16 avgPixels(uint16 &PixelA, uint16 &PixelB) {
-	  //NB Optimised & valid for RGB555 only!
-  	avgL = (PixelA & 0x3def) + (PixelB & 0x3def);  //Add first 4 respective bits of eagh 5-bit R, G & B value
-	  avgH = (PixelA & 0x4210) + (PixelB & 0x4210);  //Add 5th respective bit of each 5-bit R, G & B value
-	  return (avgH + (avgL & 0x7bde)) >> 1; //Combine upper & lower bits, dropping 1st respective bit of each 5-bit R, G & B value, & then halve to get averages.
+	template <typename I>
+	Common::String pixelToBinary(I &pixel, bool splitColors=true) {
+	  uint8 bits = sizeof(pixel) << 3;
+    Common::String str("0b");
+    I spaceMask = 0;
+    for(uint8 i = 0; i < 3; i++)
+      spaceMask = (spaceMask << 5) + 0x10;
+	  for(I mask = 0x01 << (bits-1); mask; mask >>= 1) {
+	    if(splitColors && (spaceMask & mask))
+	      str += " ";
+      str += mask & pixel ? "1" : "0";
+    }
+    return str;
+	}
+	
+//Old version
+/*/
+	inline void contractLeft(uint32 &LeftPixel, uint32 &RightPixel) {
+	  //NB Optimised & valid for RGB555 only; ALWAYS ROUNDS DOWN, WILL CAUSE CUMULATIVE ERRORS
+  	avgG = ((LeftPixel & 0x03e0) + (RightPixel & 0x03e0)) & 0x07c0;
+	  RightPixel = ((LeftPixel & 0x7c1f) + (RightPixel & 0x7c1f)) & 0xf83e;
+    RightPixel = (RightPixel | avgG) >> 1;
 	};
+	
+//New version
+/*/
+	inline void contractLeft(uint32 &LeftPixel, uint32 &RightPixel) {
+	  RightPixel = LeftPixel + RightPixel;
+	  LeftPixel <<= 1;
+	};
+//*/
+	
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov); //Degrees
