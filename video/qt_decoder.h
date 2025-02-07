@@ -149,6 +149,7 @@ private:
 public:
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
+	Common::Point _mouseDrag;
 
 	bool _isKeyDown = false;
 	Common::KeyState _lastKey;

@@ -209,39 +209,8 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 }
 
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
-	if (!_isMouseButtonDown)
-		return;
-
-	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
-
-	// HACK: FIXME: Hard coded for now
-	const int sensitivity = 10;
-	const float speedFactor = 0.5f;
-
-	int16 mouseDeltaX = x - _prevMouseX;
-	int16 mouseDeltaY = y - _prevMouseY;
-
-	float speedX = (float)mouseDeltaX * speedFactor;
-	float speedY = (float)mouseDeltaY * speedFactor;
-
-	bool changed = false;
-
-	if (ABS(mouseDeltaX) >= sensitivity) {
-		track->setPanAngle(track->getPanAngle() + speedX);
-
-		changed = true;
-	}
-
-	if (ABS(mouseDeltaY) >= sensitivity) {
-		track->setTiltAngle(track->getTiltAngle() + speedY);
-
-		changed = true;
-	}
-
-	if (changed) {
-		_prevMouseX = x;
-		_prevMouseY = y;
-	}
+	_prevMouseX = x;
+	_prevMouseY = y;
 }
 
 #define REPEAT_DELAY 100000
@@ -301,7 +270,31 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	if (isDown && !repeat) {
 		_prevMouseX = x;
 		_prevMouseY = y;
+
+		_mouseDrag.x = x;
+		_mouseDrag.y = y;
 	}
+
+	if (!repeat)
+		return;
+
+	PanoTrackHandler *track = (PanoTrackHandler *)_nextVideoTrack;
+
+	// HACK: FIXME: Hard coded for now
+	const int sensitivity = 5;
+	const float speedFactor = 0.1f;
+
+	int16 mouseDeltaX = x - _mouseDrag.x;
+	int16 mouseDeltaY = y - _mouseDrag.y;
+
+	float speedX = (float)mouseDeltaX * speedFactor;
+	float speedY = (float)mouseDeltaY * speedFactor;
+
+	if (ABS(mouseDeltaX) >= sensitivity)
+		track->setPanAngle(track->getPanAngle() + speedX);
+
+	if (ABS(mouseDeltaY) >= sensitivity)
+		track->setTiltAngle(track->getTiltAngle() + speedY);
 }
 
 void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {
@@ -736,35 +729,35 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			return;
 		}
 
-		const int sensitivity = 0;
+		int sensitivity = 5;
 
 		if (!_isMouseButtonDown) {
 			setCursor(kCursorPano);
 		} else {
 			int res = 0;
 
-			if (x < _prevMouseX - sensitivity)
+			if (x < _mouseDrag.x - sensitivity)
 				res |= 1;
 			res <<= 1;
 
 			// left stop
 			res <<= 1;
 
-			if (x > _prevMouseX + sensitivity)
+			if (x > _mouseDrag.x + sensitivity)
 				res |= 1;
 			res <<= 1;
 
 			// right stop
 			res <<= 1;
 
-			if (y > _prevMouseY - sensitivity)
+			if (y > _mouseDrag.y + sensitivity)
 				res |= 1;
 			res <<= 1;
 
 			// down stop
 			res <<= 1;
 
-			if (y < _prevMouseY + sensitivity)
+			if (y < _mouseDrag.y - sensitivity)
 				res |= 1;
 			res <<= 1;
 
