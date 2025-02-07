@@ -923,11 +923,10 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			break;
 		case 2:
 			if (sprite._puppet) {
-				stream.skip(4);
+				stream.readSint16();
 			} else {
-				uint16 castLib = stream.readUint16();
-				uint16 memberID = stream.readUint16();
-				sprite._castId = CastMemberID(memberID, castLib);
+				int castLib = stream.readSint16();
+				sprite._castId = CastMemberID(sprite._castId.member, castLib);
 			}
 			break;
 		case 4:
@@ -939,9 +938,8 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			}
 			break;
 		case 6: {
-				uint16 scriptCastLib = stream.readUint16();
-				uint16 scriptMemberID = stream.readUint16();
-				sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
+				int scriptCastLib = stream.readSint16();
+				sprite._scriptId = CastMemberID(sprite._scriptId.member, scriptCastLib);
 			}
 			break;
 		case 8: {
@@ -1139,20 +1137,30 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._backColor = g_director->transformColor(backColor);
 			}
 			break;
-		case 4: {
-				uint16 castLib = stream.readUint16();
+		case 4:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readSint16();
+			} else {
+				int castLib = stream.readSint16();
+				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+			}
+			break;
+		case 6:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readUint16();
+			} else {
 				uint16 memberID = stream.readUint16();
-
-				if (sprite._puppet || sprite.getAutoPuppet(kAPCast))
-					continue;
-
-				sprite._castId = CastMemberID(memberID, castLib);
+				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
 			}
 			break;
 		case 8: {
-				uint16 scriptCastLib = stream.readUint16();
+				int scriptCastLib = stream.readSint16();
+				sprite._scriptId = CastMemberID(sprite._scriptId.member, scriptCastLib);
+			}
+			break;
+		case 10: {
 				uint16 scriptMemberID = stream.readUint16();
-				sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
+				sprite._scriptId = CastMemberID(scriptMemberID, sprite._scriptId.castLib);  // Inherit castLib from previous frame
 			}
 			break;
 		case 12: {

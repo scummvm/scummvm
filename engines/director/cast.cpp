@@ -1436,16 +1436,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version %d", _version);
 	}
 
-	// For FilmLoopCastMember, read the flags in the CastInfo
-	if (_version >= kFileVer400 && _version < kFileVer500 && member->_type == kCastFilmLoop) {
-		((FilmLoopCastMember *)member)->_looping = castInfo.flags & 64 ? 0 : 1;
-		((FilmLoopCastMember *)member)->_enableSound = castInfo.flags & 8 ? 1 : 0;
-		((FilmLoopCastMember *)member)->_crop = castInfo.flags & 2 ? 0 : 1;
-		((FilmLoopCastMember *)member)->_center = castInfo.flags & 1 ? 1 : 0;
-	} else if (_version >= kFileVer500 && member->_type == kCastFilmLoop) {
-		warning("STUB: Cast::loadCastInfo(): Film loop cast member info not yet supported for version %d", _version);
-	}
-
 	// For PaletteCastMember, run load() as we need it right now
 	if (member->_type == kCastPalette)
 		member->load();
