@@ -1105,7 +1105,7 @@ void Room701::daemon() {
 			case 3706:
 				terminateMachine(_agentPoshExpressMach02);
 				_ripleyMode = 1000;
-				_ripleyShould = 98;
+				_ripleyShould = 1103;
 				player_update_info(_G(my_walker), &_G(player_info));
 				_ripTalksAgentMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 256, false, triggerMachineByHashCallback, "rip talks agent");
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 5, 5, 102, _ripTrekTalkerPos3Series, 5, 5, 0);
