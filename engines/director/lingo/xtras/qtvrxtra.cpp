@@ -23,6 +23,7 @@
 #include "common/tokenizer.h"
 
 #include "director/director.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -406,7 +407,9 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
 
-	g_system->copyRectToScreen(dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h);
+	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
+	);
 
 	dither->free();
 	delete dither;
