@@ -125,6 +125,9 @@ public:
 	static Common::Array<jobject> getSAFTrees();
 	static jobject findSAFTree(const Common::String &name);
 
+	static int exportBackup(const Common::U32String &prompt);
+	static int importBackup(const Common::U32String &prompt, const Common::String &path);
+
 private:
 	static pthread_key_t _env_tls;
 
@@ -168,6 +171,8 @@ private:
 	static jmethodID _MID_getNewSAFTree;
 	static jmethodID _MID_getSAFTrees;
 	static jmethodID _MID_findSAFTree;
+	static jmethodID _MID_exportBackup;
+	static jmethodID _MID_importBackup;
 
 	static jmethodID _MID_EGL10_eglSwapBuffers;
 
