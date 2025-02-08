@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-06 21:07+0000\n"
-"PO-Revision-Date: 2025-01-25 09:18+0000\n"
+"PO-Revision-Date: 2025-02-08 11:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh-ის ხმა"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -10365,16 +10365,12 @@ msgid "Use the remastered speech and sound effects."
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "ხმის ჩართვა"
+msgstr "გარემოს ხმების ჩართვა"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "ხმის ჩართვა"
+msgstr "გარემოს ხმების ჩართვა."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
