@@ -99,7 +99,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public static void loadSAFTrees(Context context) {
+	private static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// As this function is called before starting to emit nodes,
@@ -159,7 +159,7 @@ public class SAFFSTree {
 	 * Returns null otherwise and throws a FileNotFoundException if the SAF path doesn't exist.
 	 */
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
-	public static PathResult fullPathToNode(Context context, String path) throws FileNotFoundException {
+	public static PathResult fullPathToNode(Context context, String path, boolean createDirIfNotExists) throws FileNotFoundException {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
 			!path.startsWith("/saf/")) {
 			return null;
@@ -177,7 +177,7 @@ public class SAFFSTree {
 		if (tree == null) {
 			throw new FileNotFoundException();
 		}
-		SAFFSNode node = tree.pathToNode(innerPath);
+		SAFFSNode node = tree.pathToNode(innerPath, createDirIfNotExists);
 		if (node == null) {
 			throw new FileNotFoundException();
 		}
@@ -315,6 +315,12 @@ public class SAFFSTree {
 	public String getTreeId() {
 		return Uri.encode(DocumentsContract.getTreeDocumentId(_treeUri));
 	}
+	public String getTreeName() {
+		return _treeName;
+	}
+	public Uri getTreeDocumentUri() {
+		return DocumentsContract.buildDocumentUriUsingTree(_treeUri, _root._documentId);
+	}
 
 	private void clearCache() {
 		ArrayDeque<SAFFSNode> stack = new ArrayDeque<>();
@@ -334,7 +340,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public SAFFSNode pathToNode(String path) {
+	public SAFFSNode pathToNode(String path, boolean createDirIfNotExists) {
 		String[] components = path.split("/");
 
 		SAFFSNode node = _root;
@@ -349,10 +355,14 @@ public class SAFFSTree {
 				continue;
 			}
 
-			node = getChild(node, component);
-			if (node == null) {
+			SAFFSNode newNode = getChild(node, component);
+			if (newNode == null && createDirIfNotExists) {
+				newNode = createDirectory(node, component);
+			}
+			if (newNode == null) {
 				return null;
 			}
+			node = newNode;
 		}
 		return node;
 	}
