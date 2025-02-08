@@ -27,6 +27,8 @@ namespace Sound {
 
 void Midi::midi_play(const char *name, int volume, int loop, int trigger, int roomNum) {
 	warning("TODO: midi_play");
+	if (trigger != -1)
+		kernel_timing_trigger(10, trigger);
 }
 
 void Midi::task() {

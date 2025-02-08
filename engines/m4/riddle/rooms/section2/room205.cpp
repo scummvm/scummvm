@@ -75,7 +75,7 @@ void Room205::init() {
 	_fieldD8 = 0;
 	_askUnhideMyWalkerFl = false;
 	_fieldE4 = 0;
-	series_show("205PRIES", 3840, 16, -1, -1, 0, 100, 0, 0);
+	series_show("205PRIES", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 	_205LeftEntranceTabletMach = series_show("205 LEFT ENTRANCE TABLET", 257, 16, -1, -1, 0, 100, 0, 0);
 
 	if (!_G(flags)[V028])
@@ -106,7 +106,7 @@ void Room205::init() {
 		if (_G(flags)[V029])
 			hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", false);
 	} else if (_G(flags)[V029])
-		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 3840, 16, -1, -1, 0, 100, 0, 0);
+		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 
 	if (_G(flags)[V025]) {
 		series_show("205 MALLET LAYED ON GONG", 1024, 16, -1, -1, 0, 100, 0, 0);
@@ -122,8 +122,8 @@ void Room205::init() {
 
 	if (_G(flags)[V028]) {
 		_205MeiStanderMach = series_show("205 MEI STANDER", 3845, 16, -1, -1, 0, 100, 0, 0);
-		series_show("205 TABLETS DOWN", 3840, 16, -1, -1, 0, 100, 0, 0);
-		series_show("205GLASS", 3840, 16, -1, -1, 0, 100, 0, 0);
+		series_show("205 TABLETS DOWN", 0xf00, 16, -1, -1, 0, 100, 0, 0);
+		series_show("205GLASS", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "TABLET ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "RIGHT TABLET", false);
@@ -846,9 +846,9 @@ void Room205::daemon() {
 		if (_fieldD8) {
 			_fieldD8 = 0;
 			terminateMachine(_205MeiStanderMach);
-			series_play("205MC02", 1792, 0, 507, 5, 0, 100, 0, 0, 0, 5);
+			series_play("205MC02", 0x700, 0, 507, 5, 0, 100, 0, 0, 0, 5);
 		} else {
-			kernel_timing_trigger(10, 529, nullptr);
+			kernel_timing_trigger(10, 506, nullptr);
 		}
 
 		break;
@@ -980,7 +980,7 @@ void Room205::daemon() {
 
 	case 527:
 		ws_hide_walker(_G(my_walker));
-		_205rp1Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "205rp03");
+		_205rp1Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false, triggerMachineByHashCallback, "205rp03");
 		sendWSMessage_10000(1, _205rp1Mach, _205rp03Series, 1, 11, -1, _205rp03Series, 2, 10, 4);
 		sendWSMessage_1a0000(_205rp1Mach, 11);
 		digi_play("205R02", 1, 255, 528, -1);
@@ -1009,7 +1009,7 @@ void Room205::daemon() {
 			digi_preload("205_s01", -1);
 			digi_preload("205R13", -1);
 			terminateMachine(_205rp1Mach);
-			series_play("205ALL0", 3840, 0, 530, 5, 0, 100, 0, 0, 0, 32);
+			series_play("205ALL0", 0xf00, 0, 530, 5, 0, 100, 0, 0, 0, 32);
 		} else {
 			kernel_timing_trigger(10, 529, nullptr);
 		}
@@ -1018,13 +1018,13 @@ void Room205::daemon() {
 
 	case 530:
 		digi_play("205_s01", 2, 255, -1, -1);
-		series_play("205ALL0", 3840, 0, 531, 5, 0, 100, 0, 0, 33, 56);
+		series_play("205ALL0", 0xf00, 0, 531, 5, 0, 100, 0, 0, 33, 56);
 
 		break;
 
 	case 531:
 		digi_play("205_s01", 2, 255, -1, -1);
-		series_play("205ALL0", 3840, 0, 533, 5, 0, 100, 0, 0, 57, 65);
+		series_play("205ALL0", 0xf00, 0, 533, 5, 0, 100, 0, 0, 57, 65);
 
 		break;
 
@@ -1038,7 +1038,7 @@ void Room205::daemon() {
 		break;
 
 	case 533:
-		series_play("205ALL0", 3840, 0, 534, 5, 0, 100, 0, 0, 66, -1);
+		series_play("205ALL0", 0xf00, 0, 534, 5, 0, 100, 0, 0, 66, -1);
 		_G(flags)[V289] = 1;
 		digi_play("205R13", 1, 255, 538, -1);
 
@@ -1047,10 +1047,10 @@ void Room205::daemon() {
 	case 534:
 		if (_fieldD8) {
 			_fieldD8 = 0;
-			_205all0Mach = series_show("205ALL0", 3840, 16, -1, -1, 88, 100, 0, 0);
+			_205all0Mach = series_show("205ALL0", 0xf00, 16, -1, -1, 88, 100, 0, 0);
 			kernel_timing_trigger(10, 539, nullptr);
 		} else {
-			series_play("205ALL0", 3840, 2, 535, 5, 0, 100, 0, 0, 66, -1);
+			series_play("205ALL0", 0xf00, 2, 535, 5, 0, 100, 0, 0, 66, -1);
 		}
 
 		break;
@@ -1058,12 +1058,11 @@ void Room205::daemon() {
 	case 535:
 		if (_fieldD8) {
 			_fieldD8 = 0;
-			_205all0Mach = series_show("205ALL0", 3840, 16, -1, -1, 88, 100, 0, 0);
+			_205all0Mach = series_show("205ALL0", 0xf00, 16, -1, -1, 88, 100, 0, 0);
 			kernel_timing_trigger(10, 539, nullptr);
 		} else {
-			series_play("205ALL0", 3840, 16, 536, 5, 0, 100, 0, 0, 66, -1);
+			_205all0Mach = series_play("205ALL0", 0xf00, 16, 536, 5, 0, 100, 0, 0, 66, -1);
 		}
-
 		break;
 
 	case 536:
@@ -1098,7 +1097,7 @@ void Room205::daemon() {
 			kernel_timing_trigger(10, 537, nullptr);
 		} else {
 			_fieldD8 = 0;
-			kernel_timing_trigger(10, 538, nullptr);
+			kernel_timing_trigger(10, 539, nullptr);
 		}
 
 		break;
@@ -1117,13 +1116,13 @@ void Room205::daemon() {
 
 	case 540:
 		terminateMachine(_205all0Mach);
-		series_play("205ALL1", 3840, 0, 541, 5, 0, 100, 0, 0, 0, 6);
+		series_play("205ALL1", 0xf00, 0, 541, 5, 0, 100, 0, 0, 0, 6);
 
 		break;
 
 	case 541:
 		digi_play("205_s02", 2, 255, 542, -1);
-		_205all0Mach = series_play("205ALL1", 3840, 16, 545, 5, 0, 100, 0, 0, 7, -1);
+		_205all0Mach = series_play("205ALL1", 0xf00, 16, 545, 5, 0, 100, 0, 0, 7, -1);
 
 		break;
 
@@ -1148,10 +1147,10 @@ void Room205::daemon() {
 			_205TabletsMach = series_show("205 TABLETS", 3584, 16, -1, -1, 0, 100, 0, 0);
 			_fieldD8 = 0;
 			terminateMachine(_205all0Mach);
-			_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 3840, 16, -1, -1, 0, 50, 299, 247);
-			_205MeiStanderMach = series_show("205MTLK1", 3840, 16, -1, -1, 0, 100, 0, 0);
-			_safariShadow1Mach = series_show("SAFARI SHADOW 4", 3840, 16, -1, -1, 0, 51, 356, 253);
-			_205rp1Mach = series_play("205RTLK1", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+			_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 0xf00, 16, -1, -1, 0, 50, 299, 247);
+			_205MeiStanderMach = series_show("205MTLK1", 0xf00, 16, -1, -1, 0, 100, 0, 0);
+			_safariShadow1Mach = series_show("SAFARI SHADOW 4", 0xf00, 16, -1, -1, 0, 51, 356, 253);
+			_205rp1Mach = series_play("205RTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			digi_play("205R04", 1, 255, 546);
 		}
 
@@ -1159,14 +1158,14 @@ void Room205::daemon() {
 
 	case 546:
 		terminateMachine(_205MeiStanderMach);
-		_205MeiStanderMach = series_play("205MTLK1", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		_205MeiStanderMach = series_play("205MTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 		digi_play("205M01", 1, 255, 547, -1);
 
 		break;
 
 	case 547:
 		ws_hide_walker(_kuangWalker205Mach);
-		_kuangsShadow2Mach = series_show("KUANGS SHADOW 2", 3840, 16, -1, -1, 0, 52, 394, 254);
+		_kuangsShadow2Mach = series_show("KUANGS SHADOW 2", 0xf00, 16, -1, -1, 0, 52, 394, 254);
 		_kuangTalkerMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3584, false, triggerMachineByHashCallback, "kuang talker");
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 5, 1);
 		sendWSMessage_1a0000(_kuangTalkerMach, 11);
@@ -1177,7 +1176,7 @@ void Room205::daemon() {
 	case 548:
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 1, 0);
 		terminateMachine(_205rp1Mach);
-		_205rp1Mach = series_play("205RTLK1", 3840, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+		_205rp1Mach = series_play("205RTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 		kernel_timing_trigger(10, 553, nullptr);
 		digi_play("205R05", 1, 255, 549, -1);
 
@@ -1303,11 +1302,11 @@ void Room205::daemon() {
 
 	case 563:
 		sendWSMessage_60000(_shenSuitGunWalkerMach);
-		_shenGuoShadow12Mach = series_show("SHEN GUO SHADOW 12", 3840, 16, -1, -1, 0, 63, 344, 291);
-		_kuangsShadow2Mach = series_show("KUANGS SHADOW 6", 3840, 16, -1, -1, 0, 63, 390, 276);
-		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 3840, 16, -1, -1, 0, 50, 293, 248);
+		_shenGuoShadow12Mach = series_show("SHEN GUO SHADOW 12", 0xf00, 16, -1, -1, 0, 63, 344, 291);
+		_kuangsShadow2Mach = series_show("KUANGS SHADOW 6", 0xf00, 16, -1, -1, 0, 63, 390, 276);
+		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 0xf00, 16, -1, -1, 0, 50, 293, 248);
 		digi_play("205k07", 1, 255, -1, -1);
-		_205all0Mach = series_stream("205ALL3", 5, 3840, 564);
+		_205all0Mach = series_stream("205ALL3", 5, 0xf00, 564);
 
 		break;
 
@@ -1318,7 +1317,7 @@ void Room205::daemon() {
 		ws_demand_facing(_kuangWalker205Mach, 7);
 		sendWSMessage_10000(_kuangWalker205Mach, 400, 600, 0, 565, true);
 		terminateMachine(_shenGuoShadow12Mach);
-		_205all0Mach = series_play("205ALL4", 3840, 16, 567, 5, 0, 100, 0, 0, 0, -1);
+		_205all0Mach = series_play("205ALL4", 0xf00, 16, 567, 5, 0, 100, 0, 0, 0, -1);
 		digi_unload("205k06");
 		digi_unload("205_s05");
 		digi_unload("205_s06");
@@ -1345,7 +1344,7 @@ void Room205::daemon() {
 	case 567:
 		terminateMachine(_205all0Mach);
 		series_unload(_205all4Series);
-		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip talker");
+		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false, triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _205all0Mach, _205rtlk2Series, 1, 14, -1, _205rtlk2Series, 4, 14, 4);
 		digi_play("205r06", 1, 255, 568, -1);
 
@@ -1384,7 +1383,7 @@ void Room205::daemon() {
 		break;
 
 	case 575:
-		series_play("205ALL5", 3840, 0, 576, 5, 0, 100, 0, 0, 0, -1);
+		series_play("205ALL5", 0xf00, 0, 576, 5, 0, 100, 0, 0, 0, -1);
 
 		break;
 
@@ -1392,8 +1391,8 @@ void Room205::daemon() {
 		_unkInventoryId = 0;
 
 		digi_play("205r07", 1, 255, 578, -1);
-		_candlemanShadow3Mach = series_show("MCTSH1", 3840, 16, -1, -1, 2, 51, 290, 251);
-		_205all0Mach = series_play("205RTLK3", 3840, 16, 577, 5, 0, 100, 0, 0, 0, -1);
+		_candlemanShadow3Mach = series_show("MCTSH1", 0xf00, 16, -1, -1, 2, 51, 290, 251);
+		_205all0Mach = series_play("205RTLK3", 0xf00, 16, 577, 5, 0, 100, 0, 0, 0, -1);
 
 		break;
 
@@ -1407,7 +1406,7 @@ void Room205::daemon() {
 			inv_move_object(Inventory::get_name(_unkInventoryId), 999);
 			player_set_commands_allowed(true);
 			player_set_commands_allowed(false);
-			kernel_timing_trigger(30, 277, nullptr);
+			kernel_timing_trigger(30, 577, nullptr);
 		} else {
 			kernel_timing_trigger(1, 577, nullptr);
 		}
@@ -1427,7 +1426,7 @@ void Room205::daemon() {
 			series_unload(_205rtlk3Series);
 			terminateMachine(_candlemanShadow3Mach);
 			_205GunPointedSeries = series_load("205 GUN POINTED", -1, nullptr);
-			_205all0Mach = series_stream("205SRISE", 5, 0, 500);
+			_205all0Mach = series_stream("205SRISE", 5, 0, 580);
 		}
 
 		break;
@@ -1470,8 +1469,8 @@ void Room205::daemon() {
 
 	case 584:
 		digi_play("205r08", 1, 255, 585, -1);
-		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 3840, 16, -1, -1, 0, 61, 312, 283);
-		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "rip talker");
+		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 0xf00, 16, -1, -1, 0, 61, 312, 283);
+		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false, triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _205all0Mach, _205rtlk4Series, 1, 10, -1, _205rtlk4Series, 2, 10, 4);
 
 		break;
@@ -1486,7 +1485,7 @@ void Room205::daemon() {
 		terminateMachine(_205all0Mach);
 		series_unload(_205rtlk4Series);
 		digi_play("205s02", 1, 255, 588, -1);
-		_shenSuitGunWalkerMach = series_play("205STLK1", 3840, 16, 589, 5, 0, 100, 0, 0, 0, -1);
+		_shenSuitGunWalkerMach = series_play("205STLK1", 0xf00, 16, 589, 5, 0, 100, 0, 0, 0, -1);
 
 		break;
 
@@ -1512,7 +1511,7 @@ void Room205::daemon() {
 		terminateMachine(_candlemanShadow3Mach);
 		terminateMachine(_shenSuitGunWalkerMach);
 		series_unload(_205strlk1Series);
-		_205all0Mach = series_play("205RTLK5", 3840, 16, 592, 5, 0, 100, 0, 0, 0, -1);
+		_205all0Mach = series_play("205RTLK5", 0xf00, 16, 592, 5, 0, 100, 0, 0, 0, -1);
 
 		break;
 
@@ -2263,9 +2262,9 @@ void Room205::daemon() {
 		ws_demand_facing(_G(my_walker), 1);
 		ws_demand_location(_G(my_walker), 494, 351);
 		_205MeiStanderMach = series_show("205 MEI STANDER" ,3584, 16, -1, -1, 0, 100, 0, 0);
-		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 3840, 16, -1, -1, 0, 50, 314, 248);
-		series_show("205 TABLETS DOWN", 3840, 16, -1, -1, 0, 100, 0, 0);
-		series_show("205GLASS", 3840, 16, -1, -1, 0, 100, 0, 0);
+		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 0xf00, 16, -1, -1, 0, 50, 314, 248);
+		series_show("205 TABLETS DOWN", 0xf00, 16, -1, -1, 0, 100, 0, 0);
+		series_show("205GLASS", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 		kernel_timing_trigger(180, 1041, nullptr);
 
 		break;
@@ -2279,7 +2278,7 @@ void Room205::daemon() {
 	case 1042:
 		ws_hide_walker(_G(my_walker));
 		terminateMachine(_205MeiStanderMach);
-		_safariShadow1Mach = series_show("SAFARI SHADOW 2", 3840, 16, -1, -1, 0, 51, 324, 252);
+		_safariShadow1Mach = series_show("SAFARI SHADOW 2", 0xf00, 16, -1, -1, 0, 51, 324, 252);
 		series_play("205ALL8", 256, 0, 1043, 7, 0, 100, 0, 0, 0, -1);
 		digi_play("205M03", 1, 255, 1044, -1);
 
@@ -2314,7 +2313,7 @@ void Room205::daemon() {
 		break;
 
 	case 1048:
-		_safariShadow1Mach = series_show("SAFARI SHADOW 3", 3840, 16, -1, -1, 0, 53, 304, 257);
+		_safariShadow1Mach = series_show("SAFARI SHADOW 3", 0xf00, 16, -1, -1, 0, 53, 304, 257);
 		_205MeiStanderMach = series_play("205MTLK2", 1792, 16, -1, 7, 0, 100, 0, 0, 0, -1);
 		digi_play("205M04", 1, 255, 1049, -1);
 
