@@ -530,7 +530,14 @@ public class ZipFile implements ZipConstants, Closeable {
             if (closeRequested)
                 return;
             closeRequested = true;
-            super.close();
+            /* ScummVM-changed:
+                don't call InflaterInputStream.close as it closes the Inflater.
+                This doesn't happen in Android because they pass ownsInflater to false but this
+                function is hidden to us.
+                Directly call the underlying input stream close function instead.
+             */
+            //super.close();
+            in.close();
             synchronized (res.istreams) {
                 res.istreams.remove(this);
             }
