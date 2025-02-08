@@ -178,7 +178,7 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 	static private FileInputStream[] openFiles(Context context, File basePath, String regex) {
 		SAFFSTree.PathResult pr;
 		try {
-			pr = SAFFSTree.fullPathToNode(context, basePath.getPath());
+			pr = SAFFSTree.fullPathToNode(context, basePath.getPath(), false);
 		} catch (FileNotFoundException e) {
 			return new FileInputStream[0];
 		}
