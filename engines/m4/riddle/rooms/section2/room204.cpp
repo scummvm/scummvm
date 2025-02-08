@@ -574,6 +574,7 @@ void Room204::parser() {
 		if (player_said("walk through") && _meiPresent) {
 			if (_G(flags)[V056] == 1) {
 				player_set_commands_allowed(false);
+				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(2, 609, nullptr);
 			} else {
 				player_set_commands_allowed(false);
@@ -2119,12 +2120,12 @@ void Room204::daemon() {
 	case 612:
 		DisposePath(_mcMach->walkPath);
 		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX + 1, 324, -1);
-		ws_custom_walk(_mcMach, 614, 1);
+		ws_custom_walk(_mcMach, 4, 614);
 		break;
 
 	case 613:
 		player_update_info(_G(my_walker), &_G(player_info));
-		if (_fieldE4_walkerDestX + 20 >= _G(player_info).x)
+		if (_G(player_info).x < _fieldE4_walkerDestX + 20)
 			kernel_timing_trigger(15, 613, nullptr);
 		else
 			kernel_timing_trigger(1, 612, nullptr);

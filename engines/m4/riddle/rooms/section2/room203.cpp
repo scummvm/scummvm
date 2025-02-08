@@ -2660,17 +2660,20 @@ void Room203::parser() {
 			setGlobals1(_ripHeadTurn, 1, 6, 6, 6);
 			sendWSMessage_110000(2);
 			break;
-		case 1:
+		case 2:
 			kernel_timing_trigger(60, 7);
 			break;
 		case 3:
 			ws_walk(400, 252, nullptr, 5, 1);
 			break;
 		case 5:
-			disable_player_commands_and_fade_init(5);
+			disable_player_commands_and_fade_init(6);
 			break;
 		case 6:
 			_G(game).setRoom(204);
+			break;
+		case 7:
+			sendWSMessage_140000(3);
 			break;
 		default:
 			break;
