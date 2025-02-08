@@ -676,7 +676,7 @@ void Room204::parser() {
 	}
 
 	if (player_been_here(205)) {
-		if (talkFl && player_said("GONG")) {
+		if (takeFl && player_said("GONG")) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				if (inv_object_is_here("GONG")) {
@@ -728,6 +728,7 @@ void Room204::parser() {
 
 			case 1:
 				terminateMachine(_malletSpriteMach);
+				player_set_commands_allowed(true);
 				goto done;
 				break;
 
