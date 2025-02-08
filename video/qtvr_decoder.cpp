@@ -1016,6 +1016,7 @@ void QuickTimeDecoder::setCursor(int curId) {
 	if (!_cursorCache) {
 		_cursorCache = (Graphics::Cursor **)calloc(kCurLastCursor, sizeof(Graphics::Cursor *));
 
+		computeInteractivityZones();
 		memset(_cursorDirMap, 0, 256 * sizeof(int));
 
 		int n = 511;
