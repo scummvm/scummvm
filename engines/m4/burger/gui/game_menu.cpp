@@ -45,7 +45,6 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
-#define _GM(X) _G(menu).X
 #define LockMouseSprite mouse_lock_sprite
 #define UnlockMouseSprite mouse_unlock_sprite
 

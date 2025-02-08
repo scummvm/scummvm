@@ -47,6 +47,7 @@
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
+#include "m4/gui/gui_menu.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
 #include "m4/gui/hotkeys.h"
@@ -116,6 +117,7 @@ public:
 	ADVScale_Globals _scale;
 	ConvDisplayData _cdd;
 	Rend_Globals _rend;
+	GUI::MenuGlobals _menu;
 
 	const bool _cheating_enabled = true;
 

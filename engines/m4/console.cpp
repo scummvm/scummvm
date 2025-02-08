@@ -26,7 +26,7 @@
 
 namespace M4 {
 
-Console::Console() : GUI::Debugger() {
+Console::Console() : ::GUI::Debugger() {
 	registerCmd("teleport",  WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));

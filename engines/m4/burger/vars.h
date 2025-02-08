@@ -28,7 +28,6 @@
 #include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/gui.h"
 #include "m4/burger/gui/gui_gizmo.h"
-#include "m4/burger/gui/game_menu.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/hotkeys.h"
 #include "m4/burger/inventory.h"
@@ -98,7 +97,6 @@ public:
 	GUI::Gizmo_Globals _gizmo;
 	GUI::Interface _interface;
 	Burger::Hotkeys _hotkeys;
-	GUI::MenuGlobals _menu;
 	SeriesPlayers _seriesPlayers;
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
