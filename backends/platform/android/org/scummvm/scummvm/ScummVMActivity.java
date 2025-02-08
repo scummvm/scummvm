@@ -2281,7 +2281,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 			intent.setType("*/*");
 		}
-		if (initialURI != null) {
+		if (initialURI != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialURI);
 		}
 		if (prompt != null) {
