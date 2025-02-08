@@ -125,17 +125,6 @@ void CreateGameMenuFromMain(RGB8 *myPalette);
 #define GAME_MENU_W		260
 #define GAME_MENU_H		198
 
-enum game_menu_sprites {
-	GM_DIALOG_BOX,
-
-	GM_BUTTON_GREY,
-	GM_BUTTON_NORM,
-	GM_BUTTON_OVER,
-	GM_BUTTON_PRESS,
-
-	GM_TOTAL_SPRITES
-};
-
 enum game_menu_button_tags {
 	GM_TAG_QUIT = 1,
 	GM_TAG_OPTIONS = 2,

@@ -605,5 +605,67 @@ void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	}
 }
 
+
+//-----------------------------    GAME MENU FUNCTIONS    ---------------------------------//
+
+bool menu_LoadSprites(const char *series, int32 numSprites) {
+	int32 i;
+
+	// Load in the game menu series
+	if (LoadSpriteSeries(series, &_GM(menuSeriesHandle), &_GM(menuSeriesOffset),
+		&_GM(menuSeriesPalOffset), _GM(menuPalette)) <= 0) {
+		return false;
+	}
+	_GM(menuSeriesResource) = mem_strdup(series);
+
+	// Update the palette for the menu
+	if (IS_BURGER)
+		gr_pal_set_range(_GM(menuPalette), 59, 197);
+	else
+		gr_pal_set_range(_GM(menuPalette), 128, 128);
+
+	_GM(spriteCount) = numSprites;
+
+	// Create the _GM(menuSprites) array
+	if ((_GM(menuSprites) = (Sprite **)mem_alloc(sizeof(Sprite *) * _GM(spriteCount), "sprites array")) == nullptr) {
+		return false;
+	}
+
+	// Create the menu sprites
+	for (i = 0; i < _GM(spriteCount); i++) {
+		if ((_GM(menuSprites)[i] = CreateSprite(_GM(menuSeriesHandle), _GM(menuSeriesOffset), i, nullptr, nullptr)) == nullptr) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void menu_UnloadSprites() {
+	int32 i;
+
+	if (!_GM(menuSeriesResource)) {
+		return;
+	}
+
+	// Unload the sprites from memory
+	rtoss(_GM(menuSeriesResource));
+	mem_free(_GM(menuSeriesResource));
+	_GM(menuSeriesResource) = nullptr;
+	_GM(menuSeriesHandle) = nullptr;
+	_GM(menuSeriesOffset) = -1;
+	_GM(menuSeriesPalOffset) = -1;
+
+	// Turf the sprites
+	for (i = 0; i < _GM(spriteCount); i++) {
+		mem_free((void *)_GM(menuSprites)[i]);
+	}
+
+	// Turf the sprites array
+	mem_free((void *)_GM(menuSprites));
+	_GM(menuSprites) = nullptr;
+	_GM(spriteCount) = 0;
+}
+
 } // namespace GUI
 } // namespace M4

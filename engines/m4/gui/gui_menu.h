@@ -42,6 +42,18 @@ typedef M4CALLBACK CALLBACK;
 
 typedef M4sprite Sprite;
 
+enum game_menu_sprites {
+	GM_DIALOG_BOX,
+
+	GM_BUTTON_GREY,
+	GM_BUTTON_NORM,
+	GM_BUTTON_OVER,
+	GM_BUTTON_PRESS,
+
+	GM_TOTAL_SPRITES
+};
+
+
 struct menuItem {
 	menuItem *next;
 	menuItem *prev;
@@ -185,6 +197,9 @@ extern GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, i
 extern menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
 extern void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
 extern void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
+
+extern bool menu_LoadSprites(const char *series, int32 numSprites);
+extern void menu_UnloadSprites();
 
 } // namespace GUI
 } // namespace M4

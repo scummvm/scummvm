@@ -29,6 +29,9 @@ namespace M4 {
 namespace Riddle {
 namespace GUI {
 
+#define GAME_MENU_X 190
+#define GAME_MENU_Y 100
+
 extern void CreateGameMenu(RGB8 *myPalette);
 
 } // namespace GUI
