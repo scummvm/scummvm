@@ -248,6 +248,8 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 	_transitionSpeed = 1.0f;
 
 	_updateMode = "normal";
+
+	_widget = nullptr;
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -360,6 +362,10 @@ void QtvrxtraXtra::m_QTVROpen(int nargs) {
 		return;
 	}
 
+	me->_widget = new QtvrxtraWidget(me, g_director->getCurrentWindow(),
+			me->_rect.left, me->_rect.top, me->_rect.width(), me->_rect.height(),
+			g_director->getMacWindowManager());
+
 	g_lingo->push(Common::String());
 }
 
@@ -373,6 +379,8 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 		me->_video->close();
 		delete me->_video;
 		me->_video = nullptr;
+
+		delete me->_widget;
 	}
 }
 
@@ -413,60 +421,6 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 
 	dither->free();
 	delete dither;
-}
-
-bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
-	// FIXME: This class needs to inherit from MacWidget and override this function
-
-	if (!(_capEventsMouseOver && _capEventsMouseDown))
-		return false;
-
-	switch (event.type) {
-	case Common::EVENT_LBUTTONDOWN:
-		if (_mouseDownHandler.empty()) {
-			_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
-		} else {
-			_passMouseDown = false;
-
-			g_lingo->executeHandler(_mouseDownHandler);
-
-			if (_passMouseDown) {
-				_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
-				_passMouseDown = false;
-			}
-		}
-		return true;
-	case Common::EVENT_LBUTTONUP:
-		_video->handleMouseButton(false);
-		if (_capEventsMouseDown)
-			_capEventsMouseDown = false;
-		return true;
-	case Common::EVENT_MOUSEMOVE:
-		_video->handleMouseMove(event.mouse.x, event.mouse.y);
-		if (!_rect.contains(event.mouse))
-			_capEventsMouseOver = false;
-		return true;
-	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_LEFT:
-			_video->nudge("left");
-			break;
-		case Common::KEYCODE_RIGHT:
-			_video->nudge("right");
-			break;
-		case Common::KEYCODE_UP:
-			_video->nudge("top");
-			break;
-		case Common::KEYCODE_DOWN:
-			_video->nudge("bottom");
-			break;
-		default:
-			break;
-		}
-		return true;
-	default:
-		return false;
-	}
 }
 
 void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
@@ -809,6 +763,72 @@ void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
 	g_lingo->push((int)(me->_video && me->_video->isVideoLoaded()));
+}
+
+///////////////
+// Widget
+///////////////
+
+QtvrxtraWidget::QtvrxtraWidget(QtvrxtraXtraObject *xtra, Graphics::MacWidget *parent, int x, int y, int w, int h, Graphics::MacWindowManager *wm) :
+	Graphics::MacWidget(parent, x, y, w, h, wm, true), _xtra(xtra) {
+
+	warning("****** CREATED at %d, %d, %d, %d", x, y, w, h);
+
+	_priority = 10000; // We stay on top of everything
+}
+
+bool QtvrxtraWidget::processEvent(Common::Event &event) {
+	// FIXME: This class needs to inherit from MacWidget and override this function
+
+	//if (!(parent->_capEventsMouseOver && _capEventsMouseDown))
+	//	return false;
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		if (_xtra->_mouseDownHandler.empty()) {
+			_xtra->_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+		} else {
+			_xtra->_passMouseDown = false;
+
+			g_lingo->executeHandler(_xtra->_mouseDownHandler);
+
+			if (_xtra->_passMouseDown) {
+				_xtra->_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+				_xtra->_passMouseDown = false;
+			}
+		}
+		return true;
+	case Common::EVENT_LBUTTONUP:
+		_xtra->_video->handleMouseButton(false);
+		if (_xtra->_capEventsMouseDown)
+			_xtra->_capEventsMouseDown = false;
+		return true;
+	case Common::EVENT_MOUSEMOVE:
+		_xtra->_video->handleMouseMove(event.mouse.x, event.mouse.y);
+		if (!_xtra->_rect.contains(event.mouse))
+			_xtra->_capEventsMouseOver = false;
+		return true;
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_LEFT:
+			_xtra->_video->nudge("left");
+			break;
+		case Common::KEYCODE_RIGHT:
+			_xtra->_video->nudge("right");
+			break;
+		case Common::KEYCODE_UP:
+			_xtra->_video->nudge("top");
+			break;
+		case Common::KEYCODE_DOWN:
+			_xtra->_video->nudge("bottom");
+			break;
+		default:
+			break;
+		}
+		return true;
+	default:
+		return false;
+	}
 }
 
 }
