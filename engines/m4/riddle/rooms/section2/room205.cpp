@@ -450,7 +450,7 @@ void Room205::parser() {
 				hotspot_set_active(_G(currentSceneDef).hotspots, "SHEN GUO", true);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", true);
 				player_update_info(_G(my_walker), &_G(player_info));
-				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, 0, 90, 10, true);
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, 0, 99, 10, true);
 			}
 			break;
 
@@ -2112,7 +2112,7 @@ void Room205::daemon() {
 
 	case 1047:
 		terminateMachine(_205all9Mach);
-		series_play("205ALL9", 256, 0, 1048, 7, 0, 10, 0, 0, 25, -1);
+		series_play("205ALL9", 256, 0, 1048, 7, 0, 100, 0, 0, 25, -1);
 		break;
 
 	case 1048:
