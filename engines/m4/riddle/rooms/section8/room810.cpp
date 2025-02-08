@@ -62,7 +62,7 @@ void Room810::init() {
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME)
 		return;
 
-	_field0 = 0;
+	_alreadyPlayedVideo04aFl = false;
 	player_set_commands_allowed(false);
 	ws_demand_facing(_G(my_walker), 3);
 	ws_demand_location(_G(my_walker), 55, 318);
@@ -85,17 +85,17 @@ void Room810::pre_parser() {
 }
 
 void Room810::parser() {
-	const bool ecx = player_said_any("look", "look at");
+	const bool lookFl = player_said_any("look", "look at");
 	const bool takeFl = player_said_any("talk", "talk to", "take");
 	const bool gearFl = player_said("gear");
 	const bool goFl = player_said("go");
 
-	if (ecx && _G(walker).ripley_said(LOOK)) {
-		// Nothing: ripley_said triggers DIGI_PLAY if a match is found
-	} else if (ecx && player_said("IMPERIAL SEAL")) {
+	if (lookFl && _G(walker).ripley_said(LOOK)) {
+		// Nothing: ripley_said() triggers digi_play() if a match is found - Do not remove!
+	} else if (lookFl && player_said("IMPERIAL SEAL")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if (_field0 == 0) {
+			if (!_alreadyPlayedVideo04aFl) {
 				player_set_commands_allowed(false);
 				digi_play("810r04", 1, 255, 1, 810);
 			} else {
@@ -105,7 +105,7 @@ void Room810::parser() {
 			break;
 		case 1:
 			digi_play("810r04a", 1, 255, 2, 810);
-			_field0 = 1;
+			_alreadyPlayedVideo04aFl = true;
 
 			break;
 
@@ -116,9 +116,9 @@ void Room810::parser() {
 		default:
 			break;
 		}
-	} else if (ecx && player_said("mausoleum")) {
+	} else if (lookFl && player_said("mausoleum")) {
 		// Nothing -> already covered by ripley_said(LOOK)
-	} else if (ecx && player_said("urn")) {
+	} else if (lookFl && player_said("urn")) {
 		digi_play("Com061_1", 1, 255, -1, 997);
 	} else if (goFl && player_said("outside")) {
 		digi_play("810r06", 1, 255, -1, 810);
@@ -127,10 +127,6 @@ void Room810::parser() {
 	} else if (gearFl && player_said("urn")) {
 		digi_play("com073", 1, 255, -1, -1);
 	} else if ((takeFl || gearFl) && player_said("IMPERIAL SEAL")) {
-		// TODO not implemented yet
-	} else if (player_said("journal") && !takeFl && !ecx && !gearFl) {
-		digi_play("com042", 1, 255, -1, 950);
-	} else if (player_said("walk", "mausoleum")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -201,19 +197,70 @@ void Room810::parser() {
 			break;
 
 		case 53:
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 54, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+			break;
+
 		case 54:
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 52, _ripleyTakesJadeSealFromTombSeries, 46, 55, _ripleyTakesJadeSealFromTombSeries, 57, 57, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+
+			break;
+
 		case 55:
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+			break;
+
 		case 56:
+			digi_play("810r09", 1, 255, 58, 810);
+			break;
+
 		case 58:
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 52, _ripleyTakesJadeSealFromTombSeries, 84, 110, _ripleyTakesJadeSealFromTombSeries, 84, 84, 0);
+			kernel_timing_trigger(25, 70, nullptr);
+
+			break;
+
 		case 60:
+			digi_stop(3);
+			digi_unload("810_s01");
+			digi_play_loop("950_s45", 3, 128, -1, 950);
+
+			break;
+
 		case 70:
+			series_play("810merc", 768, 0, 130, 12, 0, 100, 0, 0, 0, 35);
+			break;
+
 		case 110:
+			terminateMachine(_ripLooksAroundAndNodsMach);
+			ws_unhide_walker(_G(my_walker));
+			ws_demand_facing(_G(my_walker), 9);
+			ws_demand_location(_G(my_walker), 404, 311);
+			sendWSMessage_3860000(_G(my_walker), 2);
+			ws_walk(_G(my_walker), 55, 318, nullptr, -1, 9, true);
+
+			break;
+
 		case 130:
+			_810MercMach = series_play("810merc", 768, 16, -1, 12, 0, 100, 0, 0, 36, 41);
+			disable_player_commands_and_fade_init(150);
+			digi_stop(2);
+
+			break;
+
 		case 150:
+			adv_kill_digi_between_rooms(false);
+			digi_unload("950_s29");
+			_G(game).new_room = 860;
+
+			break;
+
 		default:
 			break;
 		}
-	} else
+	} else if (player_said("journal") && !takeFl && !lookFl && !gearFl) {
+		digi_play("com042", 1, 255, -1, 950);
+	} else if (!player_said("walk", "mausoleum"))
 		return;
 
 	_G(player).command_ready = false;
@@ -253,6 +300,10 @@ void Room810::daemon() {
 	}
 }
 
+void Room810::sendWSMessage_3860000(machine *mach, int32 val1) {
+	_G(globals[GLB_TEMP_1]) = kernel_trigger_create(val1);
+	sendWSMessage(ACTION_902 << 16, 0, mach, 0, nullptr, 1);
+}
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

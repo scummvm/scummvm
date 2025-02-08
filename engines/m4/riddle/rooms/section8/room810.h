@@ -40,7 +40,9 @@ public:
 	void daemon() override;
 
 private:
-	int32 _field0 = 0;
+	void sendWSMessage_3860000(machine *mach, int32 val1);
+
+	bool _alreadyPlayedVideo04aFl = false;
 
 	int32 _810BlockSlidesOutSeries = 0;
 	int32 _810FireFlickerSeries = 0;
@@ -50,6 +52,7 @@ private:
 	int32 _ripPos3LookAroundSeries = 0;
 	int32 _ripTrekHandTalkPos3Series = 0;
 
+	machine *_810MercMach = nullptr;
 	machine *_810SealMach = nullptr;
 	machine *_blockSlidesOutMach = nullptr;
 	machine *_ripLooksAroundAndNodsMach = nullptr;

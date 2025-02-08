@@ -52,7 +52,7 @@ void Section8Room::sendWSMessage_3840000(machine *machine, int32 trigger) {
 	if (trigger == 0)
 		num = -1;
 
-	_G(globals)[GLB_TEMP_4] = kernel_trigger_create(num);
+	_G(globals[GLB_TEMP_4]) = kernel_trigger_create(num);
 	sendWSMessage(ACTION_900 << 16, 0, machine, 0, nullptr, 1);
 }
 
