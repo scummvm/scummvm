@@ -144,6 +144,47 @@ public class SAFFSTree {
 		return _trees.get(name);
 	}
 
+	public static class PathResult {
+		public final SAFFSTree tree;
+		public final SAFFSNode node;
+
+		PathResult(SAFFSTree tree, SAFFSNode node) {
+			this.tree = tree;
+			this.node = node;
+		}
+	}
+
+	/**
+	 * Resolves a ScummVM virtual path to SAF objects if it's in the SAF domain.
+	 * Returns null otherwise and throws a FileNotFoundException if the SAF path doesn't exist.
+	 */
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public static PathResult fullPathToNode(Context context, String path) throws FileNotFoundException {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
+			!path.startsWith("/saf/")) {
+			return null;
+		}
+
+		// This is a SAF fake mount point
+		int slash = path.indexOf('/', 5);
+		if (slash == -1) {
+			slash = path.length();
+		}
+		String treeName = path.substring(5, slash);
+		String innerPath = path.substring(slash);
+
+		SAFFSTree tree = SAFFSTree.findTree(context, treeName);
+		if (tree == null) {
+			throw new FileNotFoundException();
+		}
+		SAFFSNode node = tree.pathToNode(innerPath);
+		if (node == null) {
+			throw new FileNotFoundException();
+		}
+
+		return new PathResult(tree, node);
+	}
+
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static void clearCaches() {
 		if (_trees == null) {
