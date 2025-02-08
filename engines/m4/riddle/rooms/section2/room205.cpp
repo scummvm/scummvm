@@ -192,7 +192,6 @@ void Room205::parser() {
 				player_set_commands_allowed(false);
 				setGlobals1(_ripTrekMedReachHandPos1Series, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 3);
-
 				break;
 
 			case 3:
@@ -206,12 +205,10 @@ void Room205::parser() {
 				hotspot_set_active(_G(currentSceneDef).hotspots, "GUN", false);
 				inv_move_object("GONG", 999);
 				sendWSMessage_120000(_G(my_walker), 5);
-
 				break;
 
 			case 5:
 				sendWSMessage_150000(_G(my_walker), 7);
-
 				break;
 
 			case 7:
@@ -220,7 +217,6 @@ void Room205::parser() {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(7200, 1055);
 				_fieldDC = 0;
-
 				break;
 
 			default:
@@ -234,36 +230,30 @@ void Room205::parser() {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
 			series_play("205 RIP GETS BOOK WITH MALLET", 256, 0, 1, 7, 0, 100, 0, 0, 0, -1);
-
 			break;
 
 		case 1:
 			series_play("205 RIP GETS BOOK WITH MALLET", 256, 2, 3, 7, 0, 100, 0, 0, 0, -1);
 			digi_play("205_s32", 1, 255, -1, -1);
-
 			break;
 
 		case 3:
 			ws_unhide_walker(_G(my_walker));
 			ws_walk(_G(my_walker), 215, 336, nullptr, 5, 11, true);
-
 			break;
 
 		case 5:
 			setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 			sendWSMessage_110000(_G(my_walker), 7);
-
 			break;
 
 		case 7:
 			digi_play("202_s01", 1, 255, -1, 202);
 			sendWSMessage_120000(_G(my_walker), 9);
-
 			break;
 
 		case 9:
 			sendWSMessage_150000(_G(my_walker), 11);
-
 			break;
 
 		case 11:
@@ -275,12 +265,10 @@ void Room205::parser() {
 			_G(flags)[V025] = 1;
 			inv_give_to_player("JOURNAL");
 			inv_move_object("MALLET", 999);
-
 			break;
 
 		default:
 			break;
-
 		}
 	} // if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags)[V028] && _G(flags)[V024])
 	else if (player_said("CHARCOAL", "JOURNAL") && _G(flags)[V025] && inv_player_has("CHARCOAL")) {
@@ -296,26 +284,22 @@ void Room205::parser() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			_safariShadow1Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			series_play("205 RIP RUBS CHARCOAL", 256, 0, 2, 7, 0, 100, 0, 0, 0, 13);
-
 			break;
 
 		case 2:
 			series_play("205 RIP RUBS CHARCOAL", 256, 0, 3, 7, 0, 100, 0, 0, 14, 33);
 			digi_play("205_S33", 1, 255, -1, -1);
-
 			break;
 
 		case 3:
 			_205JournalCharcoalPopupMach = series_play("205 JOURNAL CHARCOAL POPUP", 256, 16, -1, 1, 0, 100, 0, 0, 0, -1);
 			_205MeiSighAndTalkSeries = series_load("205 MEI SIGH AND TALK", -1, nullptr);
 			kernel_timing_trigger(180, 5, nullptr);
-
 			break;
 
 		case 5:
 			terminateMachine(_205JournalCharcoalPopupMach);
 			series_play("205 JOURNAL CHARCOAL POPUP", 256, 2, 7, 1, 0, 100, 0, 0, 0, -1);
-
 			break;
 
 		case 7:
@@ -324,30 +308,25 @@ void Room205::parser() {
 			terminateMachine(_205MeiStanderMach);
 			_205MeiStanderMach = series_play("205 MEI SIGH AND TALK", 0xf05, 16, 9, 5, 0, 100, 0, 0, 0, 21);
 			digi_play("205M06", 1, 255, 15, -1);
-
 			break;
 
 		case 9:
 			series_unload(_205JournalRippedPopupSeries);
 			kernel_timing_trigger(180, 11);
-
 			break;
 
 		case 11:
 			terminateMachine(_205MeiStanderMach);
 			series_play("205 MEI SIGH AND TALK", 0xf05, 0, 13, 5, 0, 100, 0, 0, 22, -1);
-
 			break;
 
 		case 13:
 			terminateMachine(_205MeiStanderMach);
 			series_play("205 MEI SIGH AND TALK", 0xf05, 2, 14, 5, 0, 100, 0, 0, 22, 45);
-
 			break;
 
 		case 14:
 			series_show("205 MEI SIGH AND TALK", 0xf05, 16, -1, -1, 22, 100, 0, 0);
-
 			break;
 
 		case 15:
@@ -357,14 +336,13 @@ void Room205::parser() {
 		case 20:
 			_G(flags)[V290] = 1;
 			disable_player_commands_and_fade_init(21);
-
 			break;
+
 		case 21:
 			inv_give_to_player("CHINESE YUAN");
 			inv_move_object("CHARCOAL", 999);
 			_G(game).new_section = 8;
 			_G(game).new_room = 850;
-
 			break;
 
 		default:
@@ -386,7 +364,6 @@ void Room205::parser() {
 				player_set_commands_allowed(false);
 				_fieldE0 = 1;
 				kernel_timing_trigger(10, 1, nullptr);
-
 				break;
 
 			case 1:
@@ -396,7 +373,6 @@ void Room205::parser() {
 					kernel_timing_trigger(10, 2, nullptr);
 					_fieldDC = 1;
 				}
-
 				break;
 
 			case 2:
@@ -406,12 +382,10 @@ void Room205::parser() {
 				terminateMachine(_205LeftEntranceTabletMach);
 				series_stream("205LTEST", 7, 0, 7);
 				kernel_timing_trigger(240, 5, nullptr);
-
 				break;
 
 			case 5:
 				digi_play("205_S30", 1, 255, -1, -1);
-
 				break;
 
 			case 7:
@@ -427,14 +401,12 @@ void Room205::parser() {
 					digi_play("205R32", 1, 255, 9, -1);
 				}
 				ws_unhide_walker(_G(my_walker));
-
 				break;
 
 			case 9:
 				digi_unload("205R31");
 				digi_unload("205R32");
 				digi_play("205R33", 1, 255, 11, -1);
-
 				break;
 
 			case 11:
@@ -442,7 +414,6 @@ void Room205::parser() {
 				_fieldDC = 0;
 				_fieldE0 = 0;
 				player_set_commands_allowed(true);
-
 				break;
 
 			default:
@@ -457,7 +428,6 @@ void Room205::parser() {
 			player_set_commands_allowed(false);
 			_fieldE0 = 1;
 			kernel_timing_trigger(10, 1, nullptr);
-
 			break;
 
 		case 1:
@@ -465,7 +435,6 @@ void Room205::parser() {
 				kernel_timing_trigger(60, 1, nullptr);
 			else
 				kernel_timing_trigger(10, 3, nullptr);
-
 			break;
 
 		case 3:
@@ -491,7 +460,6 @@ void Room205::parser() {
 
 		case 5:
 			digi_play("205_S30", 1, 255, -1, -1);
-
 			break;
 
 		case 7:
@@ -513,7 +481,6 @@ void Room205::parser() {
 			digi_unload("205R31");
 			digi_unload("205R32");
 			digi_play("205R34", 1, 255, 11, -1);
-
 			break;
 
 		case 11:
@@ -521,19 +488,16 @@ void Room205::parser() {
 			_fieldDC = 0;
 			_fieldE0 = 0;
 			player_set_commands_allowed(true);
-
 			break;
 
 		case 15:
 			digi_play("205_s29", 1, 255, -1, -1);
 			kernel_timing_trigger(1, 20, nullptr);
-
 			break;
 
 		case 20:
 			setGlobals1(_ripGetsShotSeries, 14, 32, 32, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 			sendWSMessage_110000(_G(my_walker), 25);
-
 			break;
 
 		case 25:
@@ -554,7 +518,6 @@ void Room205::parser() {
 			other_save_game_for_resurrection();
 			_G(game).new_section = 4;
 			_G(game).new_room = 413;
-
 			break;
 
 		case 99:
@@ -575,30 +538,25 @@ void Room205::parser() {
 				player_set_commands_allowed(false);
 				setGlobals1(_ripTrekLowReacherPos5Series, 1, 25, 25, 25, 0, 25, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 3);
-
 				break;
 
 			case 3:
 				kernel_examine_inventory_object("PING CHARCOAL", nullptr, 5, 1, 144, 271, 4, nullptr, -1);
-
 				break;
 
 			case 4:
 				sendWSMessage_120000(_G(my_walker), 5);
 				inv_give_to_player("CHARCOAL");
-
 				break;
 
 			case 5:
 				sendWSMessage_150000(_G(my_walker), 7);
-
 				break;
 
 			case 7:
 				series_unload(_ripTrekLowReacherPos5Series);
 				player_set_commands_allowed(true);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", false);
-
 				break;
 
 			default:
@@ -627,7 +585,6 @@ void Room205::parser() {
 			player_set_commands_allowed(false);
 			ws_walk(_G(my_walker), 328, 253, nullptr, 1, 10, true);
 			_205JournalRippedPopupSeries = series_load("205 JOURNAL RIPPED POPUP", -1, nullptr);
-
 			break;
 
 		case 1:
@@ -635,24 +592,20 @@ void Room205::parser() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			series_play("205 RIP SHOWS MEI TORN PAGE", 256, 0, 3, 7, 0, 100, 0, 0, 0, -1);
 			_safariShadow1Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y);
-
 			break;
 
 		case 3:
 			_205JournalCharcoalPopupMach = series_play("205 JOURNAL RIPPED POPUP", 256, 16, -1, 1, 0, 100, 0, 0, 0, -1);
 			digi_play("205r23", 1, 255, 5, -1);
-
 			break;
 
 		case 5:
 			terminateMachine(_205JournalCharcoalPopupMach);
 			series_play("205 JOURNAL RIPPED POPUP", 256, 2, 7, 1, 0, 100, 0, 0, 0, -1);
-
 			break;
 
 		case 7:
 			series_play("205 RIP SHOWS MEI TORN PAGE", 256, 2, 9, 7, 0, 100, 0, 0, 0, -1);
-
 			break;
 
 		case 9:
@@ -665,7 +618,6 @@ void Room205::parser() {
 				series_play("205 MEI TALKS", 0xf05, 0, 11, 7, 0, 100, 0, 0, 0, -1);
 				digi_play("205M05", 1, 255, -1, -1);
 			}
-
 			break;
 
 		case 11:
@@ -674,7 +626,6 @@ void Room205::parser() {
 
 			_showMeiTalkFl = true;
 			player_set_commands_allowed(true);
-
 			break;
 
 		case 12:
@@ -684,12 +635,10 @@ void Room205::parser() {
 
 			_showMeiTalkFl = true;
 			player_set_commands_allowed(true);
-
 			break;
 
 		default:
 			break;
-
 		}
 	} // if (ecx && player_said("JOURNAL") && _G(flags)[V025] && !_showMeiTalkFl)
 
@@ -722,16 +671,13 @@ void Room205::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			kernel_examine_inventory_object("PING CHARCOAL", _G(master_palette), 5, 1, 270, 150, 1, nullptr, -1);
-
 			break;
 
 		case 1:
 			player_set_commands_allowed(true);
-
 			break;
 
 		default:
-
 			break;
 		}
 	} // if (ecx && player_said("CHARCOAL") && inv_player_has("CHARCOAL"))
@@ -783,12 +729,10 @@ void Room205::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				disable_player_commands_and_fade_init(1);
-
 				break;
 
 			case 1:
 				_G(game).new_room = 204;
-
 				break;
 
 			default:
@@ -802,7 +746,6 @@ void Room205::parser() {
 }
 
 void Room205::daemon() {
-	debug("%d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 500:
 		player_set_commands_allowed(true);
@@ -813,7 +756,6 @@ void Room205::daemon() {
 		ws_hide_walker(_G(my_walker));
 		_safariShadow1Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale + 1, _G(player_info).x, _G(player_info).y);
 		series_play("205RP01", 1792, 0, 502, 5, 0, 100, 0, 0, 0, 16);
-
 		break;
 
 	case 502:
@@ -822,7 +764,6 @@ void Room205::daemon() {
 		ws_hide_walker(_mcEntranceTrekMach);
 		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 2304, 16, -1, -1, 0, 84, 261, 359);
 		_205MeiStanderMach = series_play("205MC01", 1792, 16, -1, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 503:
@@ -851,13 +792,11 @@ void Room205::daemon() {
 		} else {
 			kernel_timing_trigger(10, 506, nullptr);
 		}
-
 		break;
 
 	case 507:
 		_205MeiStanderMach = series_play("205MC02", 256, 16, 508, 5, 0, 100, 0, 0, 6, -1);
 		digi_play("205M02", 1, 255, -1, -1);
-
 		break;
 
 	case 508:
@@ -866,7 +805,6 @@ void Room205::daemon() {
 		ws_unhide_walker(_G(my_walker));
 		ws_walk(_G(my_walker), 277, 304, nullptr, 509, 9, true);
 		digi_play("205R11", 1, 255, -1, -1);
-
 		break;
 
 	case 509:
@@ -874,7 +812,6 @@ void Room205::daemon() {
 		ws_hide_walker(_G(my_walker));
 		_safariShadow1Mach = series_show("SAFARI SHADOW 3", 2304, 16, -1, -1, 0, _G(player_info).scale + 1, _G(player_info).x, _G(player_info).y);
 		_205rp1Mach = series_play("205RP02", 2048, 16, 510, 5, 0, 100, 0, 0, 0, 13);
-
 		break;
 
 	case 510:
@@ -884,20 +821,17 @@ void Room205::daemon() {
 		sendWSMessage_10000(1, _205rp1Mach, _205rp02Series, 14, 17, -1, _205rp02Series, 14, 17, 1);
 		sendWSMessage_1a0000(_205rp1Mach, 11);
 		digi_play("205R12a", 1, 255, 512, -1);
-
 		break;
 
 	case 512:
 		terminateMachine(_205rp1Mach);
 		series_play("205RP02", 2048, 2, 513, 5, 0, 100, 0, 0, 0, 8);
 		digi_play("205r12b", 1, 255, -1, -1);
-
 		break;
 
 	case 513:
 		ws_unhide_walker(_G(my_walker));
 		ws_walk(_G(my_walker), 277, 304, nullptr, 514, 9, true);
-
 		break;
 
 	case 514:
@@ -916,59 +850,49 @@ void Room205::daemon() {
 		digi_preload("205R02", -1);
 		_205rp03Series = series_load("205RP03", -1, nullptr);
 		kernel_timing_trigger(10, 515, nullptr);
-
 		break;
 
 	case 515:
 		player_update_info(_G(my_walker), &_G(player_info));
 		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 516, 5, true);
-
 		break;
 
 	case 516:
 		setGlobals1(_ripTrekHeadTurnPos5Series, 1, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 517);
-
 		break;
 
 	case 517:
 		sendWSMessage_140000(_G(my_walker), 518);
 		digi_play("205R12c", 1, 255, -1, -1);
-
 		break;
 
 	case 518:
 		setGlobals1(_ripTrekHeadTurnPos5Series, 8, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 519);
-
 		break;
 
 	case 519:
 		sendWSMessage_140000(_G(my_walker), 523);
-
 		break;
 
 	case 520:
 		setGlobals1(_ripTrekHeadTurnPos5Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 521);
-
 		break;
 
 	case 521:
 		sendWSMessage_190000(_G(my_walker), 13);
-
 		break;
 
 	case 522:
 		sendWSMessage_150000(_G(my_walker), 523);
-
 		break;
 
 	case 523:
 		terminateMachine(_205MeiStanderMach);
 		terminateMachine(_candlemanShadow3Mach);
 		series_play("205MC03", 1792, 0, 524, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 524:
@@ -976,7 +900,6 @@ void Room205::daemon() {
 		ws_demand_facing(_mcEntranceTrekMach, 2);
 		sendWSMessage_10000(_mcEntranceTrekMach, 300, 249, 2, 526, 1);
 		ws_walk(_G(my_walker), 349, 249, nullptr, 527, 11, true);
-
 		break;
 
 	case 527:
@@ -985,12 +908,10 @@ void Room205::daemon() {
 		sendWSMessage_10000(1, _205rp1Mach, _205rp03Series, 1, 11, -1, _205rp03Series, 2, 10, 4);
 		sendWSMessage_1a0000(_205rp1Mach, 11);
 		digi_play("205R02", 1, 255, 528, -1);
-
 		break;
 
 	case 528:
 		sendWSMessage_10000(1, _205rp1Mach, _205rp03Series, 11, 11, 529, _205rp03Series, 11, 11, 0);
-
 		break;
 
 	case 529:
@@ -1014,19 +935,16 @@ void Room205::daemon() {
 		} else {
 			kernel_timing_trigger(10, 529, nullptr);
 		}
-
 		break;
 
 	case 530:
 		digi_play("205_s01", 2, 255, -1, -1);
 		series_play("205ALL0", 0xf00, 0, 531, 5, 0, 100, 0, 0, 33, 56);
-
 		break;
 
 	case 531:
 		digi_play("205_s01", 2, 255, -1, -1);
 		series_play("205ALL0", 0xf00, 0, 533, 5, 0, 100, 0, 0, 57, 65);
-
 		break;
 
 	case 532:
@@ -1035,14 +953,12 @@ void Room205::daemon() {
 		series_unload(S8_SHADOW_DIRS2[2]);
 		series_unload(S8_SHADOW_DIRS2[1]);
 		series_unload(S8_SHADOW_DIRS2[0]);
-
 		break;
 
 	case 533:
 		series_play("205ALL0", 0xf00, 0, 534, 5, 0, 100, 0, 0, 66, -1);
 		_G(flags)[V289] = 1;
 		digi_play("205R13", 1, 255, 538, -1);
-
 		break;
 
 	case 534:
@@ -1053,7 +969,6 @@ void Room205::daemon() {
 		} else {
 			series_play("205ALL0", 0xf00, 2, 535, 5, 0, 100, 0, 0, 66, -1);
 		}
-
 		break;
 
 	case 535:
@@ -1090,7 +1005,6 @@ void Room205::daemon() {
 		digi_preload("205k06", -1);
 
 		kernel_timing_trigger(10, 537, nullptr);
-
 		break;
 
 	case 537:
@@ -1100,7 +1014,6 @@ void Room205::daemon() {
 			_fieldD8 = 0;
 			kernel_timing_trigger(10, 539, nullptr);
 		}
-
 		break;
 
 	case 539:
@@ -1112,19 +1025,16 @@ void Room205::daemon() {
 		digi_play("205k01", 1, 255, 544, -1);
 		kernel_timing_trigger(120, 540, nullptr);
 		sendWSMessage_10000(_kuangWalker205Mach, 393, 254, 10, -1, true);
-
 		break;
 
 	case 540:
 		terminateMachine(_205all0Mach);
 		series_play("205ALL1", 0xf00, 0, 541, 5, 0, 100, 0, 0, 0, 6);
-
 		break;
 
 	case 541:
 		digi_play("205_s02", 2, 255, 542, -1);
 		_205all0Mach = series_play("205ALL1", 0xf00, 16, 545, 5, 0, 100, 0, 0, 7, -1);
-
 		break;
 
 	case 542:
@@ -1132,12 +1042,10 @@ void Room205::daemon() {
 		inv_move_object("KEY", 999);
 		player_set_commands_allowed(true);
 		player_set_commands_allowed(false);
-
 		break;
 
 	case 543:
 		digi_play("205K02", 1, 255, 544, -1);
-
 		break;
 
 	case 545:
@@ -1154,14 +1062,12 @@ void Room205::daemon() {
 			_205rp1Mach = series_play("205RTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			digi_play("205R04", 1, 255, 546);
 		}
-
 		break;
 
 	case 546:
 		terminateMachine(_205MeiStanderMach);
 		_205MeiStanderMach = series_play("205MTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 		digi_play("205M01", 1, 255, 547, -1);
-
 		break;
 
 	case 547:
@@ -1171,7 +1077,6 @@ void Room205::daemon() {
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 5, 1);
 		sendWSMessage_1a0000(_kuangTalkerMach, 11);
 		digi_play("205K03", 1, 255, 548, -1);
-
 		break;
 
 	case 548:
@@ -1180,33 +1085,28 @@ void Room205::daemon() {
 		_205rp1Mach = series_play("205RTLK1", 0xf00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 		kernel_timing_trigger(10, 553, nullptr);
 		digi_play("205R05", 1, 255, 549, -1);
-
 		break;
 
 	case 549:
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 5, 1);
 		digi_play("205K04", 1, 255, 550, -1);
-
 		break;
 
 	case 550:
 		sendWSMessage_10000(1, _kuangTalkerMach, _205ktlk1Series, 1, 1, -1, _205ktlk1Series, 1, 1, 0);
 		kernel_timing_trigger(60, 551, nullptr);
-
 		break;
 
 	case 551:
 		terminateMachine(_kuangTalkerMach);
 		_kuangTalkerMach = series_play("205KTLK2", 3584, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 		digi_play("205K05", 1, 255, 552, -1);
-
 		break;
 
 
 	case 553:
 		_shenSuitGunWalkerMach = triggerMachineByHash_3000(8, 18, *WALKER_DIRS2, *SHADOW_DIRS2, 320, 600, 11, triggerMachineByHashCallback3000, "shen suit gun walker");
 		sendWSMessage_10000(_shenSuitGunWalkerMach, 346, 293, 11, 554, true);
-
 		break;
 
 	case 554:
@@ -1216,7 +1116,6 @@ void Room205::daemon() {
 			_fieldD8 = 0;
 			kernel_timing_trigger(10, 555, nullptr);
 		}
-
 		break;
 
 	case 555:
@@ -1234,7 +1133,6 @@ void Room205::daemon() {
 		digi_unload("205k04");
 		series_unload(_205ktlk2Series);
 		digi_unload("205k05");
-
 		break;
 
 	case 556:
@@ -1249,7 +1147,6 @@ void Room205::daemon() {
 		_205rtlk2Series = series_load("205RTLK2", -1, nullptr);
 		digi_preload("205r06", -1);
 		kernel_timing_trigger(10, 557, nullptr);
-
 		break;
 
 	case 557:
@@ -1264,7 +1161,6 @@ void Room205::daemon() {
 		terminateMachine(_candlemanShadow3Mach);
 		_205all0Mach = series_stream("205ALL2", 7, 3328, 563);
 		series_stream_break_on_frame(_205all0Mach, 14, 558);
-
 		break;
 
 	case 558:
@@ -1274,31 +1170,26 @@ void Room205::daemon() {
 		player_set_commands_allowed(true);
 		player_set_commands_allowed(false);
 		series_stream_break_on_frame(_205all0Mach, 21, 559);
-
 		break;
 
 	case 559:
 		digi_play("205_s06", 2, 255, -1, -1);
 		series_stream_break_on_frame(_205all0Mach, 26, 560);
-
 		break;
 
 	case 560:
 		digi_play("205_s06", 2, 255, -1, 1);
 		series_stream_break_on_frame(_205all0Mach, 47, 561);
-
 		break;
 
 	case 561:
 		digi_play("205_s03", 2, 255, -1, 1);
 		series_stream_break_on_frame(_205all0Mach, 64, 562);
-
 		break;
 
 	case 562:
 		digi_play("205_s04", 2, 255, -1, 1);
 		series_stream_break_on_frame(_205all0Mach, -1, -1);
-
 		break;
 
 	case 563:
@@ -1308,7 +1199,6 @@ void Room205::daemon() {
 		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 0xf00, 16, -1, -1, 0, 50, 293, 248);
 		digi_play("205k07", 1, 255, -1, -1);
 		_205all0Mach = series_stream("205ALL3", 5, 0xf00, 564);
-
 		break;
 
 	case 564:
@@ -1325,13 +1215,11 @@ void Room205::daemon() {
 		digi_unload("205_s03");
 		digi_unload("205_s04");
 		digi_unload("205k07");
-
 		break;
 
 	case 565:
 		sendWSMessage_60000(_kuangWalker205Mach);
 		kernel_timing_trigger(10, 566, nullptr);
-
 		break;
 
 	case 566:
@@ -1339,7 +1227,6 @@ void Room205::daemon() {
 		series_unload(WALKER_DIRS[1]);
 		series_unload(SHADOW_DIRS[0]);
 		series_unload(SHADOW_DIRS[1]);
-
 		break;
 
 	case 567:
@@ -1348,7 +1235,6 @@ void Room205::daemon() {
 		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false, triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _205all0Mach, _205rtlk2Series, 1, 14, -1, _205rtlk2Series, 4, 14, 4);
 		digi_play("205r06", 1, 255, 568, -1);
-
 		break;
 
 	case 568:
@@ -1364,28 +1250,23 @@ void Room205::daemon() {
 		series_unload(_205rtlk2Series);
 		terminateMachine(_candlemanShadow3Mach);
 		_205all0Mach = series_stream("205 RIP SMILES", 5, 0, 572);
-
 		break;
 
 	case 572:
 		_205all0Mach = series_play("205 SHEN GOU STARES", 0, 16, 573, 5, 0, 100, 0, 0, 0, 8);
-
 		break;
 
 	case 573:
 		kernel_timing_trigger(60, 574, nullptr);
-
 		break;
 
 	case 574:
 		terminateMachine(_205all0Mach);
 		series_play("205 SHEN GOU STARES", 0, 0, 575, 5, 0, 100, 0, 0, 9, -1);
-
 		break;
 
 	case 575:
 		series_play("205ALL5", 0xf00, 0, 576, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 576:
@@ -1394,7 +1275,6 @@ void Room205::daemon() {
 		digi_play("205r07", 1, 255, 578, -1);
 		_candlemanShadow3Mach = series_show("MCTSH1", 0xf00, 16, -1, -1, 2, 51, 290, 251);
 		_205all0Mach = series_play("205RTLK3", 0xf00, 16, 577, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 577:
@@ -1412,7 +1292,6 @@ void Room205::daemon() {
 			kernel_timing_trigger(1, 577, nullptr);
 		}
 		++_unkInventoryId;
-
 		break;
 
 	case 578:
@@ -1429,13 +1308,11 @@ void Room205::daemon() {
 			_205GunPointedSeries = series_load("205 GUN POINTED", -1, nullptr);
 			_205all0Mach = series_stream("205SRISE", 5, 0, 580);
 		}
-
 		break;
 
 	case 580:
 		midi_play("suspens2", 255, 0, 581, 949);
 		_205GunPointedMach = series_play("205 GUN POINTED", 0, 16, 582, 5, 0, 100, 0, 0, 0, 4);
-
 		break;
 
 	case 581:
@@ -1446,7 +1323,6 @@ void Room205::daemon() {
 			terminateMachine(_205GunPointedMach);
 			series_play("205 GUN POINTED", 0, 0, 584, 5, 0, 100, 0, 0, 12, -1);
 		}
-
 		break;
 
 	case 582:
@@ -1459,13 +1335,11 @@ void Room205::daemon() {
 		digi_preload("205r08", -1);
 
 		_fieldD8 = 1;
-
 		break;
 
 	case 583:
 		terminateMachine(_205GunPointedMach);
 		series_play("205 GUN POINTED", 0, 0, 584, 5, 0, 100, 0, 0, 4, -1);
-
 		break;
 
 	case 584:
@@ -1473,12 +1347,10 @@ void Room205::daemon() {
 		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 0xf00, 16, -1, -1, 0, 61, 312, 283);
 		_205all0Mach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false, triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _205all0Mach, _205rtlk4Series, 1, 10, -1, _205rtlk4Series, 2, 10, 4);
-
 		break;
 
 	case 585:
 		digi_play("205r09", 1, 255, 586, -1);
-
 		break;
 
 	case 586:
@@ -1487,7 +1359,6 @@ void Room205::daemon() {
 		series_unload(_205rtlk4Series);
 		digi_play("205s02", 1, 255, 588, -1);
 		_shenSuitGunWalkerMach = series_play("205STLK1", 0xf00, 16, 589, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 589:
@@ -1497,7 +1368,6 @@ void Room205::daemon() {
 			_fieldD8 = 0;
 			kernel_timing_trigger(10, 590, nullptr);
 		}
-
 		break;
 
 	case 590:
@@ -1513,7 +1383,6 @@ void Room205::daemon() {
 		terminateMachine(_shenSuitGunWalkerMach);
 		series_unload(_205strlk1Series);
 		_205all0Mach = series_play("205RTLK5", 0xf00, 16, 592, 5, 0, 100, 0, 0, 0, -1);
-
 		break;
 
 	case 593:
@@ -1525,19 +1394,16 @@ void Room205::daemon() {
 			series_unload(_205rtlk5Series);
 			series_play("205ALL6", 0x300, 0, 594, 5, 0, 100, 0, 0, 0, 10);
 		}
-
 		break;
 
 	case 594:
 		digi_play("205_s07", 2, 255, -1, -1);
 		series_play("205ALL6", 0x300, 0, 595, 5, 0, 100, 0, 0, 11, 19);
-
 		break;
 
 	case 595:
 		digi_play("205_s08", 2, 255, -1, -1);
 		series_play("205ALL6", 0x300, 0, 596, 5, 0, 100, 0, 0, 20, 40);
-
 		break;
 
 	case 596:
@@ -1545,19 +1411,16 @@ void Room205::daemon() {
 		_205GunPointedMach = series_show("205 GUN IN BRAZIER", 0x300, 16, -1, -1, 0, 100, 0, 0);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", true);
 		series_play("205ALL6", 0x300, 0, 597, 5, 0, 100, 0, 0, 41, -1);
-
 		break;
 
 	case 597:
 		_205MeiStanderMach = series_show("205 MEI SPRITE TO FILL IN", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		series_play("205 RIP GETS BITCH SLAPPED", 3584, 0, 598, 5, 0, 100, 0, 0, 0, 11);
-
 		break;
 
 	case 598:
 		digi_play("205_s22", 2, 255, -1, -1);
 		_205all0Mach = series_play("205 RIP GETS BITCH SLAPPED", 3584, 16, 599, 5, 0, 100, 0, 0, 12, -1);
-
 		break;
 
 	case 599:
@@ -1571,19 +1434,16 @@ void Room205::daemon() {
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
 		_askUnhideMyWalkerFl = true;
 		kernel_timing_trigger(10, 1000, nullptr);
-
 		break;
 
 	case 666:
 		other_save_game_for_resurrection();
 		_G(game).new_section = 4;
 		_G(game).new_room = 413;
-
 		break;
 
 	case 669:
 		sendWSMessage_150000(_G(my_walker), 670);
-
 		break;
 
 	case 670:
@@ -1592,7 +1452,6 @@ void Room205::daemon() {
 		other_save_game_for_resurrection();
 		_G(game).new_section = 4;
 		_G(game).new_room = 413;
-
 		break;
 
 	case 901:
@@ -1611,7 +1470,6 @@ void Room205::daemon() {
 				break;
 
 			default:
-
 				break;
 			}
 		} else {
@@ -1624,48 +1482,40 @@ void Room205::daemon() {
 			case 0:
 				digi_play("205_s26", 1, 255, -1, -1);
 				kernel_timing_trigger(10, 902, nullptr);
-
 				break;
 
 			case 1:
 				digi_play("205_s27", 1, 255, -1, -1);
 				kernel_timing_trigger(10, 902, nullptr);
-
 				break;
 
 			case 2:
 				digi_play("205_s28", 1, 255, -1, -1);
 				kernel_timing_trigger(10, 902, nullptr);
-
 				break;
 
 			case 3:
 				kernel_timing_trigger(10, 906, nullptr);
-
 				break;
 
 			default:
 				break;
 			}
 		}
-
 		break;
 
 	case 902:
 		player_update_info(_G(my_walker), &_G(player_info));
 		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 903, 1, true);
-
 		break;
 
 	case 903:
 		setGlobals1(_ripGetsShotSeries, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 904);
-
 		break;
 
 	case 904:
 		sendWSMessage_140000(_G(my_walker), 905);
-
 		break;
 
 	case 905:
@@ -1673,7 +1523,6 @@ void Room205::daemon() {
 		++_G(flags)[V027];
 		player_set_commands_allowed(true);
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
-
 		break;
 
 	case 906:
@@ -1685,7 +1534,6 @@ void Room205::daemon() {
 		} else {
 			ws_walk(_G(my_walker), 450, _G(player_info).y, nullptr, 907, 1, true);
 		}
-
 		break;
 
 	case 907:
@@ -1694,22 +1542,18 @@ void Room205::daemon() {
 		digi_play("205_s29", 1, 255, -1, -1);
 		setGlobals1(_ripGetsShotSeries, 14, 32, 32, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 908);
-
 		break;
 
 	case 908:
 		kernel_timing_trigger(60, 909, nullptr);
-
 		break;
 
 	case 909:
 		player_set_commands_allowed(false);
 		disable_player_commands_and_fade_init(910);
-
 		break;
 
 	case 910:
-
 		sendWSMessage_150000(_G(my_walker), 666);
 		break;
 
@@ -1749,7 +1593,6 @@ void Room205::daemon() {
 		series_unload(_205RipGetsBitchSlappedSeries);
 		terminateMachine(_205MeiStanderMach);
 		series_play("205FITE1", 0xf05, 0, 1001, 5, 0, 100, 0, 0, 0, 15);
-
 		break;
 
 	case 1001:
@@ -1767,7 +1610,6 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE1", 0xf05, 0, 1002, 5, 0, 100, 0, 0, 16, 29);
-
 		break;
 
 	case 1002:
@@ -1785,7 +1627,6 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE1", 0xf05, 0, 1003, 5, 0, 100, 0, 0, 30, 41);
-
 		break;
 
 	case 1003:
@@ -1836,31 +1677,26 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE2", 0xf05, 0, 1008, 5, 0, 100, 0, 0, 67, 80);
-
 		break;
 
 	case 1008:
 		digi_play("205_s11", 2, 255, -1, -1);
 		series_play("205FITE2", 0xf05, 0, 1009, 5, 0, 100, 0, 0, 81, 91);
-
 		break;
 
 	case 1009:
 		digi_play("205_s13", 2, 255, -1, -1);
 		series_play("205FITE2", 0xf05, 0, 1010, 5, 0, 100, 0, 0, 92, 108);
-
 		break;
 
 	case 1010:
 		digi_play("205_s11", 2, 255, -1, -1);
 		series_play("205FITE2", 0xf05, 0, 1011, 5, 0, 100, 0, 0, 109, 131);
-
 		break;
 
 	case 1011:
 		digi_play("205_s14", 2, 255, -1, -1);
 		_205all0Mach = series_play("205FITE2", 0xf05, 16, 1013, 5, 0, 100, 0, 0, 132, -1);
-
 		break;
 
 	case 1013:
@@ -1877,12 +1713,10 @@ void Room205::daemon() {
 
 			kernel_timing_trigger(10, 1015, nullptr);
 		}
-
 		break;
 
 	case 1014:
 		_fieldE4 = 1;
-
 		break;
 
 	case 1015:
@@ -1899,7 +1733,6 @@ void Room205::daemon() {
 			_fieldDC = 0;
 			ws_walk(_G(my_walker), 482, 351, 0, 1016, 3, true);
 		}
-
 		break;
 
 	case 1016:
@@ -1907,13 +1740,11 @@ void Room205::daemon() {
 		terminateMachine(_205all0Mach);
 		series_unload(_205Fite3Series);
 		series_play("205ALL7", 256, 0, 1037, 7, 0, 100, 0, 0, 9, -1);
-
 		break;
 
 	case 1017:
 		terminateMachine(_205all0Mach);
 		series_play("205FITE3", 0xf05, 0, 1018, 5, 0, 100, 0, 0, 0, 13);
-
 		break;
 
 	case 1018:
@@ -1931,13 +1762,11 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE3", 0xf05, 0, 1019, 5, 0, 100, 0, 0, 14, 26);
-
 		break;
 
 	case 1019:
 		digi_play("205_s14", 2, 255, -1);
 		series_play("205FITE3", 0xf05, 0, 1020, 5, 0, 100, 0, 0, 27, 36);
-
 		break;
 
 	case 1020:
@@ -2040,21 +1869,18 @@ void Room205::daemon() {
 			terminateMachine(_205all0Mach);
 			series_play("205KILLM", 0xf05, 0, 1023, 7, 0, 100, 0, 0, 0, -1);
 		}
-
 		break;
 
 	case 1023:
 		midi_stop();
 		digi_play("205m02", 1, 255, -1, -1);
 		ws_walk(_G(my_walker), 339, 285, nullptr, 1024, 1, true);
-
 		break;
 
 	case 1024:
 		series_play("205KILLR", 0xf05, 16, -1, 7, 0, 100, 0, 0, 0, -1);
 		setGlobals1(_ripGetsShotSeries, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 1026);
-
 		break;
 
 	case 1026:
@@ -2064,7 +1890,6 @@ void Room205::daemon() {
 	case 1027:
 		terminateMachine(_205all0Mach);
 		series_play("205FITE4", 0xf05, 0, 1028, 7, 0, 100, 0, 0, 0, 27);
-
 		break;
 
 	case 1028:
@@ -2082,7 +1907,6 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE4", 0xf05, 0, 1029, 5, 0, 100, 0, 0, 28, 35);
-
 		break;
 
 	case 1029:
@@ -2100,7 +1924,6 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE4", 0xf05, 0, 1030, 5, 0, 100, 0, 0, 36, 47);
-
 		break;
 
 	case 1030:
@@ -2118,19 +1941,16 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE4", 0xf05, 0, 1031, 5, 0, 100, 0, 0, 48, 62);
-
 		break;
 
 	case 1031:
 		digi_play("205_s14", 2, 255, -1, -1);
 		series_play("205FITE4", 0xf05, 0, 1032, 5, 0, 100, 0, 0, 63, 70);
-
 		break;
 
 	case 1032:
 		digi_play("205_s14", 2, 255, -1, -1);
 		series_play("205FITE4", 0xf05, 0, 1033, 5, 0, 100, 0, 0, 71, 82);
-
 		break;
 
 	case 1033:
@@ -2172,7 +1992,6 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE4", 0xf05, 0, 1034, 5, 0, 100, 0, 0, 83, 86);
-
 		break;
 
 	case 1034:
@@ -2214,19 +2033,16 @@ void Room205::daemon() {
 		}
 
 		series_play("205FITE4", 0xf05, 0, 1035, 5, 0, 100, 0, 0, 87, 106);
-
 		break;
 
 	case 1035:
 		digi_play("205_s14", 2, 255, -1, -1);
 		series_play("205FITE4", 0xf05, 0, 1036, 5, 0, 100, 0, 0, 107, -1);
-
 		break;
 
 	case 1036:
 		_205all0Mach = series_show("205FITE3", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		kernel_timing_trigger(10, 1015, nullptr);
-
 		break;
 
 	case 1037:
@@ -2238,19 +2054,16 @@ void Room205::daemon() {
 		digi_preload("205_s31a", -1);
 		_205rp1Mach = series_stream("205 TABLETS FALL", 7, 0, 1040);
 		series_stream_break_on_frame(_205rp1Mach, 20, 1038);
-
 		break;
 
 	case 1038:
 		digi_play("205_S31", 1, 255, -1, -1);
 		series_stream_break_on_frame(_205rp1Mach, 55, 1039);
-
 		break;
 
 	case 1039:
 		midi_stop();
 		digi_play("205_S31a", 1, 255, -1, -1);
-
 		break;
 
 	case 1040:
@@ -2263,13 +2076,11 @@ void Room205::daemon() {
 		series_show("205 TABLETS DOWN", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 		series_show("205GLASS", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 		kernel_timing_trigger(180, 1041, nullptr);
-
 		break;
 
 	case 1041:
 		ws_walk(_G(my_walker), 324, 252, nullptr, 1042, 11, true);
 		_G(flags)[V028] = 1;
-
 		break;
 
 	case 1042:
@@ -2278,49 +2089,41 @@ void Room205::daemon() {
 		_safariShadow1Mach = series_show("SAFARI SHADOW 2", 0xf00, 16, -1, -1, 0, 51, 324, 252);
 		series_play("205ALL8", 256, 0, 1043, 7, 0, 100, 0, 0, 0, -1);
 		digi_play("205M03", 1, 255, 1044, -1);
-
 		break;
 
 	case 1043:
 		_205all0Mach = series_show("205ALL8", 256, 16, -1, -1, 24, 100, 0, 0);
-
 		break;
 
 	case 1044:
 		digi_play("205R44", 1, 255, 1045, -1);
-
 		break;
 
 	case 1045:
 		terminateMachine(_205all0Mach);
 		terminateMachine(_safariShadow1Mach);
 		_205all9Mach = series_play("205ALL9", 256, 16, 1046, 7, 0, 100, 0, 0, 0, 24);
-
 		break;
 
 	case 1046:
 		kernel_timing_trigger(90, 1047);
-
 		break;
 
 	case 1047:
 		terminateMachine(_205all9Mach);
 		series_play("205ALL9", 256, 0, 1048, 7, 0, 10, 0, 0, 25, -1);
-
 		break;
 
 	case 1048:
 		_safariShadow1Mach = series_show("SAFARI SHADOW 3", 0xf00, 16, -1, -1, 0, 53, 304, 257);
 		_205MeiStanderMach = series_play("205MTLK2", 1792, 16, -1, 7, 0, 100, 0, 0, 0, -1);
 		digi_play("205M04", 1, 255, 1049, -1);
-
 		break;
 
 	case 1049:
 		terminateMachine(_205MeiStanderMach);
 		_205rp1Mach = series_play("205RTLK6", 256, 16, -1, 7, 0, 100, 0, 0, 0, -1);
 		digi_play("205R45", 1, 255, 1050, -1);
-
 		break;
 
 	case 1050:
@@ -2331,23 +2134,19 @@ void Room205::daemon() {
 		ws_demand_location(_G(my_walker), 302, 257);
 		ws_demand_facing(_G(my_walker), 3);
 		ws_walk(_G(my_walker), 382, 265, nullptr, 1051, 2, true);
-
 		break;
 
 	case 1051:
 		setGlobals1(_ripTrekLowReachPos2Series, 1, 16, 16, 16, 0, 16, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 1052);
-
 		break;
 
 	case 1052:
 		digi_play("205R46", 1, 255, 1053, -1);
-
 		break;
 
 	case 1053:
 		sendWSMessage_120000(_G(my_walker), 1054);
-
 		break;
 
 	case 1054:
@@ -2359,16 +2158,13 @@ void Room205::daemon() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MASTER LU'S TABLET", true);
 		player_set_commands_allowed(true);
 		_fieldDC = 0;
-
 		break;
 
 	case 1055:
 		_field198 = 1;
-
 		break;
 
 	default:
-
 		break;
 	}
 }
