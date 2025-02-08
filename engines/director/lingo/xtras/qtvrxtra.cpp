@@ -362,6 +362,8 @@ void QtvrxtraXtra::m_QTVROpen(int nargs) {
 		return;
 	}
 
+	me->_video->setTargetSize(me->_rect.width(), me->_rect.height());
+
 	me->_widget = new QtvrxtraWidget(me, g_director->getCurrentWindow(),
 			me->_rect.left, me->_rect.top, me->_rect.width(), me->_rect.height(),
 			g_director->getMacWindowManager());
