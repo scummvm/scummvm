@@ -438,6 +438,9 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
 
 	if (!_projectedPano) {
+		if (w == 0 || h == 0)
+			error("QuickTimeDecoder::PanoTrackHandler::projectPanorama(): setTargetSize() was not called");
+
 		_projectedPano = new Graphics::Surface();
 		_projectedPano->create(w, h, _constructedPano->format);
 
