@@ -32,6 +32,8 @@ namespace M4 {
 namespace GUI {
 
 #define _GM(X) _G(menu).X
+#define LockMouseSprite mouse_lock_sprite
+#define UnlockMouseSprite mouse_unlock_sprite
 
 typedef bool (*ItemHandlerFunction)(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 typedef void (*DrawFunction)(void *source, void *dest, int32 x1, int32 y1, int32 x2, int32 y2);
@@ -163,6 +165,26 @@ struct MenuGlobals {
 		_thumbnail.free();
 	}
 };
+
+//======================================
+//
+//		gamemenu module defines
+//
+#define MEMORY_NEEDED		0	// bytes needed for menus to work
+#define MENU_DEPTH 			9 	// video depth for menu popup boxes
+#define MAX_SLOTS			99	// number of save games you can have
+#define MAX_SLOTS_SHOWN 	8	// number of slots in the scrolling field
+
+// GENERAL MENU FUNCTIONS
+extern bool menu_Initialize(RGB8 *myPalette);
+extern void menu_Shutdown(bool fadeToColor);
+extern guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
+extern void menu_Destroy(guiMenu *myMenu);
+extern void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
+extern GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
+extern menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
+extern void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
+extern void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 } // namespace GUI
 } // namespace M4

@@ -118,6 +118,7 @@ public:
 	ConvDisplayData _cdd;
 	Rend_Globals _rend;
 	GUI::MenuGlobals _menu;
+	bool _menuSystemInitialized = false;
 
 	const bool _cheating_enabled = true;
 

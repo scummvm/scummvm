@@ -103,7 +103,6 @@ public:
 	Burger::Walker _walker;
 
 	int _wilburTerm = 2;
-	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
 	int _roomVal3 = 0;

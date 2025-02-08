@@ -39,16 +39,6 @@ using M4::GUI::Sprite;
 using M4::GUI::CALLBACK;
 using M4::GUI::ItemHandlerFunction;
 
-// GENERAL MENU FUNCTIONS
-bool menu_Initialize(RGB8 *myPalette);
-guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
-void menu_Destroy(guiMenu *myMenu);
-void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
-GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
-menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
-void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
-void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
-
 // SPECIFIC ITEM FUNCTIONS
 
 // Messages
@@ -94,10 +84,6 @@ void CreateGameMenuFromMain(RGB8 *myPalette);
 //
 //		gamemenu module defines
 //
-#define MEMORY_NEEDED		0	// bytes needed for menus to work
-#define MENU_DEPTH 			9 	// video depth for menu popup boxes
-#define MAX_SLOTS				99	// number of save games you can have
-#define MAX_SLOTS_SHOWN 	8	// number of slots in the scrolling field
 
 // 128 very light green
 // 129 light green
