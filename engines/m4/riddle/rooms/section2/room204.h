@@ -63,7 +63,7 @@ private:
 	bool _ripMachineFlag = false;
 	bool _meiMachineFlag = false;
 
-	int32 _field4 = 0;
+	bool _meiPresent = false;
 	int32 _ripleyShould = 0;
 	int32 _ripleyMode = 0;
 	int32 _field18_triggerNum = 0;

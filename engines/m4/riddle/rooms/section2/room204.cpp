@@ -52,13 +52,13 @@ void Room204::init() {
 		_G(flags)[V078] = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
-		_field4 = 0;
+		_meiPresent = false;
 		_field180 = 0;
 		_field184 = 0;
 		_field188 = 0;
 
 		if (!player_been_here(205) && (_G(flags)[V056] == 0 || _G(flags)[V049] == 1)) {
-			_field4 = 1;
+			_meiPresent = true;
 			initWalkerSeries();
 			_G(flags)[V049] = 0;
 		}
@@ -100,7 +100,7 @@ void Room204::init() {
 			_G(camera_reacts_to_player) = false;
 		} else {
 			kernel_timing_trigger(1, 578, nullptr);
-			if (_field4 == 1) {
+			if (_meiPresent) {
 				initWalkerSeries();
 
 				_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, _fieldE0_x, 323, _meiMachineFlag ? 10 : 2, Walker::player_walker_callback, "mc walker room 204");
@@ -153,7 +153,7 @@ void Room204::init() {
 			kernel_timing_trigger(1, 500, nullptr);
 		} else {
 			_G(flags)[V068] = 1;
-			if (!_field4) {
+			if (!_meiPresent) {
 				ws_demand_location(_G(my_walker), 1864, 334);
 				ws_demand_facing(_G(my_walker), 9);
 				int32 status;
@@ -290,7 +290,7 @@ void Room204::parser() {
 			}
 		}
 
-		if (lookFl && player_said("CONFUCIAN ANALECTS ") && !_field4) {
+		if (lookFl && player_said("CONFUCIAN ANALECTS ") && !_meiPresent) {
 			digi_play("204R52", 1, 255, -1, -1);
 			goto done;
 		}
@@ -428,7 +428,7 @@ void Room204::parser() {
 		}
 
 		if (moveAndLookFl) {
-			if  (!_field4)
+			if  (!_meiPresent)
 				digi_play("204R52", 1, 255, -1, -1);
 			else {
 				switch (_G(kernel).trigger) {
@@ -588,7 +588,7 @@ void Room204::parser() {
 			goto done;
 		} // (moveAndLookFl)
 
-		if (player_said("walk through") && _field4 == 1) {
+		if (player_said("walk through") && _meiPresent) {
 			if (_G(flags)[V056] == 1) {
 				player_set_commands_allowed(false);
 				kernel_timing_trigger(2, 609, nullptr);
@@ -600,7 +600,7 @@ void Room204::parser() {
 			goto done;
 		}
 
-		if (player_said("walk through") && _field4 == 0) {
+		if (player_said("walk through") && !_meiPresent) {
 			player_set_commands_allowed(false);
 			_G(kernel).trigger_mode = KT_DAEMON;
 			ws_walk(_G(my_walker), 1874, 333, nullptr, 710, 3, true);
@@ -2856,6 +2856,58 @@ void Room204::daemon() {
 
 void Room204::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_dword1A189C);
+
+	s.syncAsSint32LE(_ripleyShould);
+	s.syncAsSint32LE(_ripleyMode);
+	s.syncAsSint32LE(_meiMode);
+	s.syncAsSint32LE(_meiShould);
+
+	s.syncAsSint32LE(_field18_triggerNum);
+	s.syncAsSint32LE(_field24_triggerNum);
+	s.syncAsSint32LE(_field28_triggerNum);
+	s.syncAsSint32LE(_field2C);
+	s.syncAsSint32LE(_field34_x);
+	s.syncAsSint32LE(_field38_y);
+	s.syncAsSint32LE(_field3C_facing);
+	s.syncAsSint32LE(_field40);
+	s.syncAsSint32LE(_field44_triggerNum);
+	s.syncAsSint32LE(_field48_triggerNum);
+	s.syncAsSint32LE(_ripBangsBongSeries);
+	s.syncAsSint32LE(_fieldBC_trigger);
+	s.syncAsSint32LE(_fieldC0_trigger);
+	s.syncAsSint32LE(_fieldC4);
+	s.syncAsSint32LE(_fieldC8_trigger);
+	s.syncAsSint32LE(_fieldCC_trigger);
+	s.syncAsSint32LE(_fieldD8_facing);
+	s.syncAsSint32LE(_fieldE0_x);
+	s.syncAsSint32LE(_fieldE4_walkerDestX);
+	s.syncAsSint32LE(_fieldEC);
+	s.syncAsSint32LE(_fieldF0);
+	s.syncAsSint32LE(_fieldF4);
+	s.syncAsSint32LE(_fieldF8);
+	s.syncAsSint32LE(_fieldFC_infoX);
+	s.syncAsSint32LE(_field100_infoY);
+	s.syncAsSint32LE(_field104);
+	s.syncAsSint32LE(_field108);
+	s.syncAsSint32LE(_field10C_x);
+	s.syncAsSint32LE(_field110_y);
+	s.syncAsSint32LE(_field114_facing);
+	s.syncAsSint32LE(_field118_scale);
+	s.syncAsSint32LE(_field11C_depth);
+	s.syncAsSint32LE(_field124);
+	s.syncAsSint32LE(_field128);
+	s.syncAsSint32LE(_field12C_triggerNum);
+	s.syncAsSint32LE(_field130);
+	s.syncAsSint32LE(_field134);
+	s.syncAsSint32LE(_field138);
+	s.syncAsSint32LE(_field13C_triggerNum);
+	s.syncAsSint32LE(_field140);
+	s.syncAsSint32LE(_field144_triggerNum);
+	s.syncAsSint32LE(_field16C);
+	s.syncAsSint32LE(_field180);
+	s.syncAsSint32LE(_field184);
+	s.syncAsSint32LE(_field188);
+	s.syncAsByte(_meiPresent);
 }
 
 void Room204::initWalkerSeries() {
