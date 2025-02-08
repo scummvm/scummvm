@@ -99,7 +99,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public static void loadSAFTrees(Context context) {
+	private static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// As this function is called before starting to emit nodes,
@@ -314,6 +314,12 @@ public class SAFFSTree {
 
 	public String getTreeId() {
 		return Uri.encode(DocumentsContract.getTreeDocumentId(_treeUri));
+	}
+	public String getTreeName() {
+		return _treeName;
+	}
+	public Uri getTreeDocumentUri() {
+		return DocumentsContract.buildDocumentUriUsingTree(_treeUri, _root._documentId);
 	}
 
 	private void clearCache() {
