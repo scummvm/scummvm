@@ -3007,7 +3007,7 @@ void Room204::killPriestWalkerMach() {
 void Room204::deleteMeiCheiHotspot() {
 	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
 		if (!strcmp(hs->vocab, "MEI CHEN")) {
-			hotspot_delete_record(_G(currentSceneDef).hotspots, hs);
+			_G(currentSceneDef).hotspots = hotspot_delete_record(_G(currentSceneDef).hotspots, hs);
 			break;
 		}
 	}
