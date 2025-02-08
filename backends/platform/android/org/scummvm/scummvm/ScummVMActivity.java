@@ -895,7 +895,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree getNewSAFTree(boolean write, String initialURI, String prompt) {
 			Uri initialURI_ = Uri.parse(initialURI);
-			Uri uri = selectWithNativeUI(true, write, initialURI_, prompt);
+			Uri uri = selectWithNativeUI(true, write, initialURI_, prompt, null, null);
 			if (uri == null) {
 				return null;
 			}
@@ -2271,15 +2271,22 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// - The Android/data/ directory and all subdirectories.
 	// - The Android/obb/ directory and all subdirectories.
 	@RequiresApi(api = Build.VERSION_CODES.N)
-	public Uri selectWithNativeUI(boolean folder, boolean write, Uri initialURI, String prompt) {
+	public Uri selectWithNativeUI(boolean folder, boolean write, Uri initialURI, String prompt, String mimeType, String fileName) {
 		// Choose a directory using the system's folder picker.
 		Intent intent;
 		if (folder) {
 			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		} else {
-			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			if (write) {
+				intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+				if (fileName != null) {
+					intent.putExtra(Intent.EXTRA_TITLE, fileName);
+				}
+			} else {
+				intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			}
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			intent.setType("*/*");
+			intent.setType(mimeType);
 		}
 		if (initialURI != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialURI);
