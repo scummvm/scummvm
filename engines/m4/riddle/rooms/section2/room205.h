@@ -91,7 +91,7 @@ private:
 	int32 _ripTrekLowReacherPos5Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 	int32 _ripTrekMedReachHandPos1Series = 0;
-	int32 _unkInventoryId = 0;
+	int32 _invItemNum = 0;
 
 	machine *_205all0Mach = nullptr;
 	machine *_205all9Mach = nullptr;

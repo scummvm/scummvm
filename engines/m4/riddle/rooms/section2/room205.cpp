@@ -1270,7 +1270,7 @@ void Room205::daemon() {
 		break;
 
 	case 576:
-		_unkInventoryId = 0;
+		_invItemNum = 0;
 
 		digi_play("205r07", 1, 255, 578, -1);
 		_candlemanShadow3Mach = series_show("MCTSH1", 0xf00, 16, -1, -1, 2, 51, 290, 251);
@@ -1278,20 +1278,20 @@ void Room205::daemon() {
 		break;
 
 	case 577:
-		if (INVENTORY_COUNT - 1 <= _unkInventoryId) {
+		if (_invItemNum >= INVENTORY_COUNT - 1) {
 			_fieldD8 = 1;
 			break;
 		}
 
-		if (inv_player_has(Inventory::get_name(_unkInventoryId))) {
-			inv_move_object(Inventory::get_name(_unkInventoryId), 999);
+		if (inv_player_has(Inventory::get_name(_invItemNum))) {
+			inv_move_object(Inventory::get_name(_invItemNum), 999);
 			player_set_commands_allowed(true);
 			player_set_commands_allowed(false);
 			kernel_timing_trigger(30, 577, nullptr);
 		} else {
 			kernel_timing_trigger(1, 577, nullptr);
 		}
-		++_unkInventoryId;
+		++_invItemNum;
 		break;
 
 	case 578:
