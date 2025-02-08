@@ -464,7 +464,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		}
 		if (objNum < 42 && objNum != 22 && (objNum != 7 || _objectVar[7] == 1)) {
 			_console->printTosText(955); // "You pick up the "
-			_console->addToCurrentLine(Common::String::format("%s.", _objectVar.getObjectName(objNum)));
+			_console->addToCurrentLineU32(formatInjectStrings(Common::U32String("%s."), _objectVar.getObjectName(objNum).c_str()));
 			_inventory.addItem(objNum);
 			g_engine->_room->_collisionType = 0;
 			g_engine->_room->removeObjectFromRoom(objNum);
@@ -1549,161 +1549,100 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	}
 	switch (tosIdx) {
 	case 979:
-		_console->addTextLine(
-			Common::String::format(
-				"%s %s.",
-				getI18NText(kI18N_ThisSentryCannotBeStoppedWithText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_ThisSentryCannotBeStoppedWithText, useObjNum);
 		break;
 	case 980:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_HasNoEffectOnTheAlienTubesText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienTubesText, useObjNum);
 		break;
 	case 981:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_YouIncinerateTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_YouIncinerateTheText, useObjNum);
 		break;
 	case 982:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_HasNoEffectOnTheAlienMonstrosityText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienMonstrosityText, useObjNum);
 		break;
 	case 983:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_cutTheWiresText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_cutTheWiresText, useObjNum);
 		break;
 	case 984:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_NoEffectOnTheProtectedAncientText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_NoEffectOnTheProtectedAncientText, useObjNum);
 		break;
 	case 985:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_YouHideTheObjectUnderThePillowText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_YouHideTheObjectUnderThePillowText, useObjNum);
 		break;
 	case 986:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_DontPutTheObjectInTheTrunkText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_DontPutTheObjectInTheTrunkText, useObjNum);
 		break;
 	case 987:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_TheCarWontStartWithTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_TheCarWontStartWithTheText, useObjNum);
 		break;
 	case 988:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_IfYouPutTheObjectInTheTrunkText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_IfYouPutTheObjectInTheTrunkText, useObjNum);
 		break;
 	case 989:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_TheObjectIsYoursYouHaventLostItText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_TheObjectIsYoursYouHaventLostItText, useObjNum);
 		break;
 	case 990:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_notAGoodPlaceToHideTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_notAGoodPlaceToHideTheText, useObjNum);
 		break;
 	case 991:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText, useObjNum);
 		break;
 	case 992:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_theKitchenIsNoPlaceToKeepTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_theKitchenIsNoPlaceToKeepTheText, useObjNum);
 		break;
 	case 993:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_youllForgetTheObjectHereText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_youllForgetTheObjectHereText, useObjNum);
 		break;
 	case 994:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_youdRatherHaveTheObjectWithYouText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_youdRatherHaveTheObjectWithYouText, useObjNum);
 		break;
 	case 995:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_theObjectHasNoEffectText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_theObjectHasNoEffectText, useObjNum);
 		break;
 	case 996:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_thisIsNotAGoodPlaceForTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_thisIsNotAGoodPlaceForTheText, useObjNum);
 		break;
 	case 997:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_youSeeAReflectionOfTheText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_youSeeAReflectionOfTheText, useObjNum);
 		break;
 	case 998:
-		_console->addTextLine(
-			Common::String::format(
-				getI18NText(kI18N_youDontWantToLeaveTheObjectUnderTheBedText),
-				_objectVar.getObjectName(useObjNum)));
+		genericSingleObjectResponse(kI18N_youDontWantToLeaveTheObjectUnderTheBedText, useObjNum);
 		break;
 	case 999:
 		switch (_genericResponseCounter) {
 		case 0:
 			_console->addTextLine(
-				Common::String::format(
+				formatInjectStrings(
 					getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
-					_objectVar.getObjectName(useObjNum),
-					_objectVar.getObjectName(targetObjNum)
+					_objectVar.getObjectName(useObjNum).c_str(),
+					_objectVar.getObjectName(targetObjNum).c_str()
 				)
 			);
 			break;
 		case 1:
 			_console->addTextLine(
-				Common::String::format(
+				formatInjectStrings(
 					getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
-					_objectVar.getObjectName(useObjNum),
-					_objectVar.getObjectName(targetObjNum)
+					_objectVar.getObjectName(useObjNum).c_str(),
+					_objectVar.getObjectName(targetObjNum).c_str()
 				)
 			);
 			break;
 		case 2:
 			_console->addTextLine(
-				Common::String::format(
+				formatInjectStrings(
 					getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
-					_objectVar.getObjectName(useObjNum),
-					_objectVar.getObjectName(targetObjNum)
+					_objectVar.getObjectName(useObjNum).c_str(),
+					_objectVar.getObjectName(targetObjNum).c_str()
 				)
 			);
 			break;
 		case 3:
 			_console->addTextLine(
-				Common::String::format(
+				formatInjectStrings(
 					getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
-					_objectVar.getObjectName(useObjNum),
-					_objectVar.getObjectName(targetObjNum)
+					_objectVar.getObjectName(useObjNum).c_str(),
+					_objectVar.getObjectName(targetObjNum).c_str()
 				)
 			);
 			break;
@@ -1725,7 +1664,7 @@ void UseCode::putObjUnderPillow(int objNum) {
 	_objectVar.setMoveObjectRoom(objNum, 250);
 	g_engine->_cursor.setCursorType(Pointer);
 	_console->printTosText(946);
-	_console->addToCurrentLine(Common::String::format("%s", g_engine->_objectVar.getObjectName(objNum)));
+	_console->addToCurrentLineU32(g_engine->_objectVar.getObjectName(objNum));
 	_console->printTosText(947);
 }
 
@@ -1747,6 +1686,13 @@ void UseCode::startDigging(int16 targetObjNum) {
 		g_engine->_animation->setupOtherNspAnimation(0, 22);
 	}
 	g_engine->playSound(14, 5, -1);
+}
+
+void UseCode::genericSingleObjectResponse(const I18nText &text, int16 useObjNum) {
+	_console->addTextLine(
+		formatInjectStrings(
+			getI18NText(text),
+			_objectVar.getObjectName(useObjNum).c_str()));
 }
 
 } // End of namespace Darkseed

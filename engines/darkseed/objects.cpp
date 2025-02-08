@@ -184,19 +184,19 @@ void Objects::setObjectRunningCode(int idx, int16 value) {
 	_objectRunningCode[idx] = value;
 }
 
-const char *Objects::getObjectName(int idx) {
+Common::U32String Objects::getObjectName(int idx) {
 	if (idx < 0 || idx >= MAX_OBJECTS) {
 		error("getObjectName: index out of range.");
 	}
 
 	switch (g_engine->getLanguage()) {
-	case Common::FR_FRA: return objectNameTbl_fr[idx];
-	case Common::DE_DEU: return objectNameTbl_de[idx];
-	case Common::ES_ESP: return objectNameTbl_es[idx];
+	case Common::FR_FRA: return Common::U32String(objectNameTbl_fr[idx]);
+	case Common::DE_DEU: return Common::U32String(objectNameTbl_de[idx]);
+	case Common::ES_ESP: return Common::U32String(objectNameTbl_es[idx]);
 	default: break;
 	}
 
-	return objectNameTbl_en[idx];
+	return Common::U32String(objectNameTbl_en[idx]);
 }
 
 static inline void syncPoint(Common::Serializer &s, Common::Point &value) {

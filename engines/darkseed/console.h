@@ -47,8 +47,9 @@ public:
 	~Console();
 
 	void printTosText(int tosIndex);
-	void addTextLine(const Common::String &text);
+	void addTextLine(const Common::U32String &text);
 	void addToCurrentLine(const Common::String &text);
+	void addToCurrentLineU32(const Common::U32String &text);
 
 	void addI18NText(const I18nText &text);
 
@@ -56,8 +57,6 @@ public:
 	void drawStringAt(int x, int y, const Common::U32String &text) const;
 
 private:
-	void addTextLineU32(const Common::U32String &text);
-	void addToCurrentLineU32(const Common::U32String &text);
 	void addLine(const Common::U32String &line);
 };
 

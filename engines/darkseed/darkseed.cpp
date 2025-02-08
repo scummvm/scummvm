@@ -1902,7 +1902,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		}
 		return;
 	}
-	_console->addTextLine(Common::String::format("%s %s.", getI18NText(kI18N_youSeeTheText), _objectVar.getObjectName(objNum)));
+	_console->addTextLine(formatInjectStrings(getI18NText(kI18N_youSeeTheText), _objectVar.getObjectName(objNum).c_str()));
 }
 
 void DarkseedEngine::printTime() {

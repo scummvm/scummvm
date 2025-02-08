@@ -160,7 +160,7 @@ void Inventory::handleClick() {
 	} else {
 		g_engine->_actionMode = icon;
 		g_engine->_console->printTosText(972);
-		g_engine->_console->addToCurrentLine(Common::String::format("%s.", g_engine->_objectVar.getObjectName(icon)));
+		g_engine->_console->addToCurrentLine(formatInjectStrings(Common::U32String("%s."), g_engine->_objectVar.getObjectName(icon).c_str()));
 	}
 }
 

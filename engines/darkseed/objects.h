@@ -62,7 +62,7 @@ public:
 	int getMoveObjectRoom(uint16 idx);
 	void setMoveObjectRoom(uint16 idx, uint8 value);
 
-	const char *getObjectName(int idx);
+	Common::U32String getObjectName(int idx);
 
 	int16 &operator[](uint16 varIdx);
 	const int16 &operator[](uint16 varIdx) const;

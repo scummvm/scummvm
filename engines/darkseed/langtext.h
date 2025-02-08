@@ -49,10 +49,12 @@ struct I18NTextWithPosition {
 
 };
 
-const char *getI18NText(const I18nText &text);
+Common::U32String getI18NText(const I18nText &text);
 const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18nTextWithPosition);
 
 Common::U32String convertToU32String(const char *text, Common::Language language);
+
+Common::U32String formatInjectStrings(Common::U32String format, ...);
 
 constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"You see the car keys in the ignition.",
@@ -95,10 +97,10 @@ constexpr I18nText kI18N_YouSeeTheOpenGloveBoxText = {
 };
 
 constexpr I18nText kI18N_youSeeTheText = {
-  "You see the",
-  "VES",
-  "VOUS VOYEZ",
-  "DU SIEHST",
+  "You see the %s.",
+  "VES %s.",
+  "VOUS VOYEZ %s.",
+  "DU SIEHST %s.",
   nullptr
 };
 
@@ -183,10 +185,10 @@ constexpr I18nText kI18N_YouTouchTheOrnateSignalText = {
 };
 
 constexpr I18nText kI18N_ThisSentryCannotBeStoppedWithText = {
-	"This sentry cannot be stopped with a",
-	"NO PUEDES PARAR A ESTE CENTINELA CON",
-	"VOUS N'ARRETEREZ PAS LA SENTINELLE AVEC",
-	"DIESE WACHE KANN NICHT AUFGEHALTEN WERDEN MIT",
+	"This sentry cannot be stopped with a %s.",
+	"NO PUEDES PARAR A ESTE CENTINELA CON %s.",
+	"VOUS N'ARRETEREZ PAS LA SENTINELLE AVEC %s.",
+	"DIESE WACHE KANN NICHT AUFGEHALTEN WERDEN MIT %s.",
 	nullptr
 };
 

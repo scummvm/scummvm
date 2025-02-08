@@ -90,7 +90,9 @@ private:
 	void putObjUnderPillow(int objNum);
 
 	void startDigging(int16 targetObjNum);
+	void genericSingleObjectResponse(const I18nText &text, int16 useObjNum);
 };
+
 } // namespace Darkseed
 
 #endif // DARKSEED_USECODE_H
