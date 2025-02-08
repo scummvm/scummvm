@@ -786,14 +786,14 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (_xtra->_mouseDownHandler.empty()) {
-			_xtra->_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+			_xtra->_video->handleMouseButton(true, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		} else {
 			_xtra->_passMouseDown = false;
 
 			g_lingo->executeHandler(_xtra->_mouseDownHandler);
 
 			if (_xtra->_passMouseDown) {
-				_xtra->_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+				_xtra->_video->handleMouseButton(true, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 				_xtra->_passMouseDown = false;
 			}
 		}
@@ -804,7 +804,7 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 			_xtra->_capEventsMouseDown = false;
 		return true;
 	case Common::EVENT_MOUSEMOVE:
-		_xtra->_video->handleMouseMove(event.mouse.x, event.mouse.y);
+		_xtra->_video->handleMouseMove(event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		if (!_xtra->_rect.contains(event.mouse))
 			_xtra->_capEventsMouseOver = false;
 		return true;
