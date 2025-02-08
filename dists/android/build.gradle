@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath 'com.android.tools.build:gradle:8.9.1'
     }
 }
 
@@ -30,10 +30,10 @@ tasks.withType(JavaCompile).configureEach {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 35
-    ndkVersion "23.2.8568313"
+    compileSdk = 35
+    ndkVersion = "23.2.8568313"
 
-    namespace "org.scummvm.scummvm"
+    namespace = "org.scummvm.scummvm"
 
     defaultConfig {
         applicationId "org.scummvm.scummvm"
@@ -122,7 +122,7 @@ android {
         }
     }
     lint {
-        abortOnError false
+        abortOnError = false
     }
 
     if (project.hasProperty('splitAssets')) {
