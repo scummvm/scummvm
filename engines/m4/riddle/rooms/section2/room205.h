@@ -34,11 +34,11 @@ public:
 	Room205() : Room() {}
 	~Room205() override {}
 
-	void preload() override;
 	void init() override;
 	void pre_parser() override;
 	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
 
 private:
 	int32 _fieldD8 = 0;

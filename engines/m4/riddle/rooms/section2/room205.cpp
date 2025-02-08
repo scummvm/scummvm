@@ -42,12 +42,6 @@ static const char *WALKER_NAMES2[] = {"shen guo walker 12"};
 static const int16 SHADOW_DIRS2[] = {250, -1};
 static const char *SHADOW_NAMES2[] = {"shen guo shadow 12"};
 
-void Room205::preload() {
-	LoadWSAssets("OTHER SCRIPT", _G(master_palette));
-	_G(player).walker_type = WALKER_ALT;
-	_G(player).shadow_type = SHADOW_ALT;
-}
-
 void Room205::init() {
 	midi_play("vines", 0, -1, -1, 949);
 	_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
@@ -105,8 +99,10 @@ void Room205::init() {
 	if (inv_player_has("CHARCOAL")) {
 		if (_G(flags)[V029])
 			hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", false);
-	} else if (_G(flags)[V029])
-		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 0xf00, 16, -1, -1, 0, 100, 0, 0);
+	} else {
+		if (_G(flags)[V029])
+			_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 0xf00, 16, -1, -1, 0, 100, 0, 0);
+	}
 
 	if (_G(flags)[V025]) {
 		series_show("205 MALLET LAYED ON GONG", 1024, 16, -1, -1, 0, 100, 0, 0);
@@ -1590,8 +1586,13 @@ void Room205::daemon() {
 		}
 
 		terminateMachine(_205all0Mach);
-		series_unload(_205RipGetsBitchSlappedSeries);
 		terminateMachine(_205MeiStanderMach);
+
+		// WORKAROUND: this case can be called by init(), when the
+		// sprite series hasn't actually been loaded
+		if (_205RipGetsBitchSlappedSeries != 0)
+			series_unload(_205RipGetsBitchSlappedSeries);
+
 		series_play("205FITE1", 0xf05, 0, 1001, 5, 0, 100, 0, 0, 0, 15);
 		break;
 
@@ -2167,6 +2168,19 @@ void Room205::daemon() {
 	default:
 		break;
 	}
+}
+
+void Room205::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_fieldD8);
+	s.syncAsSint32LE(_fieldDC);
+	s.syncAsSint32LE(_fieldE0);
+	s.syncAsSint32LE(_fieldE4);
+	s.syncAsSint32LE(_field198);
+	s.syncAsSint32LE(_field19C);
+	s.syncAsSint32LE(_field1A0);
+
+	s.syncAsByte(_askUnhideMyWalkerFl);
+	s.syncAsByte(_showMeiTalkFl);
 }
 
 } // namespace Rooms
