@@ -99,7 +99,7 @@ void Room205::init() {
 		digi_play_loop("205_s34", 3, 166, -1, -1);
 
 		if (_G(flags)[V029])
-			_205GunInBrazierMach = series_show("205 gun in brazier", 768, 16, -1, -1, 0, 100, 0, 0);
+			_205GunInBrazierMach = series_show("205 gun in brazier", 0x300, 16, -1, -1, 0, 100, 0, 0);
 	}
 
 	if (inv_player_has("CHARCOAL")) {
@@ -121,7 +121,7 @@ void Room205::init() {
 	}
 
 	if (_G(flags)[V028]) {
-		_205MeiStanderMach = series_show("205 MEI STANDER", 3845, 16, -1, -1, 0, 100, 0, 0);
+		_205MeiStanderMach = series_show("205 MEI STANDER", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		series_show("205 TABLETS DOWN", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 		series_show("205GLASS", 0xf00, 16, -1, -1, 0, 100, 0, 0);
 
@@ -322,7 +322,7 @@ void Room205::parser() {
 			ws_unhide_walker(_G(my_walker));
 			terminateMachine(_safariShadow1Mach);
 			terminateMachine(_205MeiStanderMach);
-			_205MeiStanderMach = series_play("205 MEI SIGH AND TALK", 3845, 16, 9, 5, 0, 100, 0, 0, 0, 21);
+			_205MeiStanderMach = series_play("205 MEI SIGH AND TALK", 0xf05, 16, 9, 5, 0, 100, 0, 0, 0, 21);
 			digi_play("205M06", 1, 255, 15, -1);
 
 			break;
@@ -335,18 +335,18 @@ void Room205::parser() {
 
 		case 11:
 			terminateMachine(_205MeiStanderMach);
-			series_play("205 MEI SIGH AND TALK", 3845, 0, 13, 5, 0, 100, 0, 0, 22, -1);
+			series_play("205 MEI SIGH AND TALK", 0xf05, 0, 13, 5, 0, 100, 0, 0, 22, -1);
 
 			break;
 
 		case 13:
 			terminateMachine(_205MeiStanderMach);
-			series_play("205 MEI SIGH AND TALK", 3845, 2, 14, 5, 0, 100, 0, 0, 22, 45);
+			series_play("205 MEI SIGH AND TALK", 0xf05, 2, 14, 5, 0, 100, 0, 0, 22, 45);
 
 			break;
 
 		case 14:
-			series_show("205 MEI SIGH AND TALK", 3845, 16, -1, -1, 22, 100, 0, 0);
+			series_show("205 MEI SIGH AND TALK", 0xf05, 16, -1, -1, 22, 100, 0, 0);
 
 			break;
 
@@ -662,14 +662,14 @@ void Room205::parser() {
 				kernel_timing_trigger(10, 12, nullptr);
 			} else {
 				terminateMachine(_205MeiStanderMach);
-				series_play("205 MEI TALKS", 3845, 0, 11, 7, 0, 100, 0, 0, 0, -1);
+				series_play("205 MEI TALKS", 0xf05, 0, 11, 7, 0, 100, 0, 0, 0, -1);
 				digi_play("205M05", 1, 255, -1, -1);
 			}
 
 			break;
 
 		case 11:
-			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
+			_205MeiStanderMach = series_show("205 MEI TALKS", 0xf05, 16, -1, -1, 52, 100, 0, 0);
 			series_unload(_205JournalRippedPopupSeries);
 
 			_showMeiTalkFl = true;
@@ -679,7 +679,7 @@ void Room205::parser() {
 
 		case 12:
 			terminateMachine(_205MeiStanderMach);
-			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
+			_205MeiStanderMach = series_show("205 MEI TALKS", 0xf05, 16, -1, -1, 52, 100, 0, 0);
 			series_unload(_205JournalRippedPopupSeries);
 
 			_showMeiTalkFl = true;
@@ -802,6 +802,7 @@ void Room205::parser() {
 }
 
 void Room205::daemon() {
+	debug("%d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 500:
 		player_set_commands_allowed(true);
@@ -1522,33 +1523,33 @@ void Room205::daemon() {
 			_fieldD8 = 0;
 			terminateMachine(_205all0Mach);
 			series_unload(_205rtlk5Series);
-			series_play("205ALL6", 768, 0, 594, 5, 0, 100, 0, 0, 0, 10);
+			series_play("205ALL6", 0x300, 0, 594, 5, 0, 100, 0, 0, 0, 10);
 		}
 
 		break;
 
 	case 594:
 		digi_play("205_s07", 2, 255, -1, -1);
-		series_play("205ALL6", 768, 0, 595, 5, 0, 100, 0, 0, 11, 19);
+		series_play("205ALL6", 0x300, 0, 595, 5, 0, 100, 0, 0, 11, 19);
 
 		break;
 
 	case 595:
 		digi_play("205_s08", 2, 255, -1, -1);
-		series_play("205ALL6", 768, 0, 596, 5, 0, 100, 0, 0, 20, 40);
+		series_play("205ALL6", 0x300, 0, 596, 5, 0, 100, 0, 0, 20, 40);
 
 		break;
 
 	case 596:
-		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 32767, 16, -1, -1, 0, 100, 0, 0);
-		_205GunPointedMach = series_show("205 GUN IN BRAZIER", 768, 16, -1, -1, 0, 100, 0, 0);
+		_205CharcoalSpriteMach = series_show("205 CHARCOAL SPRITE", 0x7fff, 16, -1, -1, 0, 100, 0, 0);
+		_205GunPointedMach = series_show("205 GUN IN BRAZIER", 0x300, 16, -1, -1, 0, 100, 0, 0);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", true);
-		series_play("205ALL6", 768, 0, 897, 5, 0, 100, 0, 0, 41, -1);
+		series_play("205ALL6", 0x300, 0, 597, 5, 0, 100, 0, 0, 41, -1);
 
 		break;
 
 	case 597:
-		_205MeiStanderMach = series_show("205 MEI SPRITE TO FILL IN", 3845, 16, -1, -1, 0, 100, 0, 0);
+		_205MeiStanderMach = series_show("205 MEI SPRITE TO FILL IN", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		series_play("205 RIP GETS BITCH SLAPPED", 3584, 0, 598, 5, 0, 100, 0, 0, 0, 11);
 
 		break;
@@ -1617,7 +1618,7 @@ void Room205::daemon() {
 			player_set_commands_allowed(false);
 			intr_cancel_sentence();
 			digi_stop(1);
-			series_play("205 gun fire", 768, 0, -1, 3, 0, 100, 0, 0, 0,-1);
+			series_play("205 gun fire", 0x300, 0, -1, 3, 0, 100, 0, 0, 0,-1);
 
 			switch (_G(flags)[V027]) {
 			case 0:
@@ -1747,7 +1748,7 @@ void Room205::daemon() {
 		terminateMachine(_205all0Mach);
 		series_unload(_205RipGetsBitchSlappedSeries);
 		terminateMachine(_205MeiStanderMach);
-		series_play("205FITE1", 3845, 0, 1001, 5, 0, 100, 0, 0, 0, 15);
+		series_play("205FITE1", 0xf05, 0, 1001, 5, 0, 100, 0, 0, 0, 15);
 
 		break;
 
@@ -1765,7 +1766,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE1", 3845, 0, 1002, 5, 0, 100, 0, 0, 16, 29);
+		series_play("205FITE1", 0xf05, 0, 1002, 5, 0, 100, 0, 0, 16, 29);
 
 		break;
 
@@ -1783,7 +1784,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE1", 3845, 0, 1003, 5, 0, 100, 0, 0, 30, 41);
+		series_play("205FITE1", 0xf05, 0, 1003, 5, 0, 100, 0, 0, 30, 41);
 
 		break;
 
@@ -1801,27 +1802,23 @@ void Room205::daemon() {
 			break;
 		}
 
-		_205all0Mach = series_play("205FITE1", 3845, 16, 1004, 5, 0, 100, 0, 0, 42, -1);
-
+		_205all0Mach = series_play("205FITE1", 0xf05, 16, 1004, 5, 0, 100, 0, 0, 42, -1);
 		break;
 
 	case 1004:
 		terminateMachine(_205all0Mach);
 		series_unload(_205Fite1Series);
-		series_play("205FITE2", 3845, 1005, 5, 0, 100, 0, 0, 0, 29);
-
+		series_play("205FITE2", 0xf05, 0, 1005, 5, 0, 100, 0, 0, 0, 29);
 		break;
 
 	case 1005:
 		digi_play("205_s14", 2, 255, -1, -1);
-		series_play("205FITE2", 3845, 0, 1006, 5, 0, 100, 0, 0, 30, 54);
-
+		series_play("205FITE2", 0xf05, 0, 1006, 5, 0, 100, 0, 0, 30, 54);
 		break;
 
 	case 1006:
 		digi_play("205_s14", 2, 255, -1, -1);
-		series_play("205FITE2", 3845, 0, 1007, 5, 0, 100, 0, 0, 55, 66);
-
+		series_play("205FITE2", 0xf05, 0, 1007, 5, 0, 100, 0, 0, 55, 66);
 		break;
 
 	case 1007:
@@ -1838,31 +1835,31 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE2", 3845, 0, 1008, 5, 0, 100, 0, 0, 67, 80);
+		series_play("205FITE2", 0xf05, 0, 1008, 5, 0, 100, 0, 0, 67, 80);
 
 		break;
 
 	case 1008:
 		digi_play("205_s11", 2, 255, -1, -1);
-		series_play("205FITE2", 3845, 0, 1009, 5, 0, 100, 0, 0, 81, 91);
+		series_play("205FITE2", 0xf05, 0, 1009, 5, 0, 100, 0, 0, 81, 91);
 
 		break;
 
 	case 1009:
 		digi_play("205_s13", 2, 255, -1, -1);
-		series_play("205FITE2", 3845, 0, 1010, 5, 0, 100, 0, 0, 92, 108);
+		series_play("205FITE2", 0xf05, 0, 1010, 5, 0, 100, 0, 0, 92, 108);
 
 		break;
 
 	case 1010:
 		digi_play("205_s11", 2, 255, -1, -1);
-		series_play("205FITE2", 3845, 0, 1011, 5, 0, 100, 0, 0, 109, 131);
+		series_play("205FITE2", 0xf05, 0, 1011, 5, 0, 100, 0, 0, 109, 131);
 
 		break;
 
 	case 1011:
 		digi_play("205_s14", 2, 255, -1, -1);
-		_205all0Mach = series_play("205FITE2", 3845, 16, 1013, 5, 0, 100, 0, 0, 132, -1);
+		_205all0Mach = series_play("205FITE2", 0xf05, 16, 1013, 5, 0, 100, 0, 0, 132, -1);
 
 		break;
 
@@ -1874,7 +1871,7 @@ void Room205::daemon() {
 			_205Fite3Series = series_load("205FITE3", -1, nullptr);
 			terminateMachine(_205all0Mach);
 			series_unload(_205Fite2Series);
-			_205all0Mach = series_show("205FITE3", 3845, 16, -1, -1, 0, 100, 0, 0);
+			_205all0Mach = series_show("205FITE3", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 			_205Fite4Series = series_load("205FITE4", -1, nullptr);
 			_fieldDC = 0;
 
@@ -1915,7 +1912,7 @@ void Room205::daemon() {
 
 	case 1017:
 		terminateMachine(_205all0Mach);
-		series_play("205FITE3", 3845, 0, 1018, 5, 0, 100, 0, 0, 0, 13);
+		series_play("205FITE3", 0xf05, 0, 1018, 5, 0, 100, 0, 0, 0, 13);
 
 		break;
 
@@ -1933,13 +1930,13 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE3", 3845, 0, 1019, 5, 0, 100, 0, 0, 14, 26);
+		series_play("205FITE3", 0xf05, 0, 1019, 5, 0, 100, 0, 0, 14, 26);
 
 		break;
 
 	case 1019:
 		digi_play("205_s14", 2, 255, -1);
-		series_play("205FITE3", 3845, 0, 1020, 5, 0, 100, 0, 0, 27, 36);
+		series_play("205FITE3", 0xf05, 0, 1020, 5, 0, 100, 0, 0, 27, 36);
 
 		break;
 
@@ -1981,7 +1978,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE3", 3845, 0, 1021, 5, 0, 100, 0, 0, 37, 45);
+		series_play("205FITE3", 0xf05, 0, 1021, 5, 0, 100, 0, 0, 37, 45);
 		break;
 
 	case 1021:
@@ -2022,7 +2019,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		_205all0Mach = series_play("205FITE3", 3845, 16, 1021, 5, 0, 100, 0, 0, 46, -1);
+		_205all0Mach = series_play("205FITE3", 0xf05, 16, 1022, 5, 0, 100, 0, 0, 46, -1);
 		break;
 
 	case 1022:
@@ -2041,7 +2038,7 @@ void Room205::daemon() {
 			_fieldE0 = 1;
 			series_unload(_205Fite3Series);
 			terminateMachine(_205all0Mach);
-			series_play("205KILLM", 3845, 0, 1023, 7, 0, 100, 0, 0, 0, -1);
+			series_play("205KILLM", 0xf05, 0, 1023, 7, 0, 100, 0, 0, 0, -1);
 		}
 
 		break;
@@ -2054,7 +2051,7 @@ void Room205::daemon() {
 		break;
 
 	case 1024:
-		series_play("205KILLR", 3845, 16, -1, 7, 0, 100, 0, 0, 0, -1);
+		series_play("205KILLR", 0xf05, 16, -1, 7, 0, 100, 0, 0, 0, -1);
 		setGlobals1(_ripGetsShotSeries, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), 1026);
 
@@ -2066,7 +2063,7 @@ void Room205::daemon() {
 
 	case 1027:
 		terminateMachine(_205all0Mach);
-		series_play("205FITE4", 3845, 0, 1028, 7, 0, 100, 0, 0, 0, 27);
+		series_play("205FITE4", 0xf05, 0, 1028, 7, 0, 100, 0, 0, 0, 27);
 
 		break;
 
@@ -2084,7 +2081,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE4", 3845, 0, 1029, 5, 0, 100, 0, 0, 28, 35);
+		series_play("205FITE4", 0xf05, 0, 1029, 5, 0, 100, 0, 0, 28, 35);
 
 		break;
 
@@ -2102,7 +2099,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE4", 3845, 0, 1030, 5, 0, 100, 0, 0, 36, 47);
+		series_play("205FITE4", 0xf05, 0, 1030, 5, 0, 100, 0, 0, 36, 47);
 
 		break;
 
@@ -2120,19 +2117,19 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE4", 3845, 0, 1031, 5, 0, 100, 0, 0, 48, 62);
+		series_play("205FITE4", 0xf05, 0, 1031, 5, 0, 100, 0, 0, 48, 62);
 
 		break;
 
 	case 1031:
 		digi_play("205_s14", 2, 255, -1, -1);
-		series_play("205FITE4", 3845, 0, 1032, 5, 0, 100, 0, 0, 63, 70);
+		series_play("205FITE4", 0xf05, 0, 1032, 5, 0, 100, 0, 0, 63, 70);
 
 		break;
 
 	case 1032:
 		digi_play("205_s14", 2, 255, -1, -1);
-		series_play("205FITE4", 3845, 0, 1033, 5, 0, 100, 0, 0, 71, 82);
+		series_play("205FITE4", 0xf05, 0, 1033, 5, 0, 100, 0, 0, 71, 82);
 
 		break;
 
@@ -2174,7 +2171,7 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE4", 3845, 0, 1034, 5, 0, 100, 0, 0, 83, 86);
+		series_play("205FITE4", 0xf05, 0, 1034, 5, 0, 100, 0, 0, 83, 86);
 
 		break;
 
@@ -2216,18 +2213,18 @@ void Room205::daemon() {
 			break;
 		}
 
-		series_play("205FITE4", 3845, 0, 1035, 5, 0, 100, 0, 0, 87, 106);
+		series_play("205FITE4", 0xf05, 0, 1035, 5, 0, 100, 0, 0, 87, 106);
 
 		break;
 
 	case 1035:
 		digi_play("205_s14", 2, 255, -1, -1);
-		series_play("205FITE4", 3845, 0, 1036, 5, 0, 100, 0, 0, 107, -1);
+		series_play("205FITE4", 0xf05, 0, 1036, 5, 0, 100, 0, 0, 107, -1);
 
 		break;
 
 	case 1036:
-		_205all0Mach = series_show("205FITE3", 3845, 16, -1, -1, 0, 100, 0, 0);
+		_205all0Mach = series_show("205FITE3", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		kernel_timing_trigger(10, 1015, nullptr);
 
 		break;
@@ -2328,7 +2325,7 @@ void Room205::daemon() {
 
 	case 1050:
 		terminateMachine(_205rp1Mach);
-		_205MeiStanderMach = series_show("205 MEI STANDER", 3845, 16, -1, -1, 0, 100, 0, 0);
+		_205MeiStanderMach = series_show("205 MEI STANDER", 0xf05, 16, -1, -1, 0, 100, 0, 0);
 		terminateMachine(_safariShadow1Mach);
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_location(_G(my_walker), 302, 257);
