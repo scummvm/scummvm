@@ -23,6 +23,7 @@
 #include "darkseed/darkseed.h"
 #include "darkseed/usecode.h"
 #include "darkseed/usecode_tos_tables.h"
+#include "darkseed/kofont.h"
 
 namespace Darkseed {
 
@@ -463,8 +464,13 @@ void Darkseed::UseCode::useCode(int objNum) {
 			return;
 		}
 		if (objNum < 42 && objNum != 22 && (objNum != 7 || _objectVar[7] == 1)) {
-			_console->printTosText(955); // "You pick up the "
-			_console->addToCurrentLineU32(formatInjectStrings(Common::U32String("%s."), _objectVar.getObjectName(objNum).c_str()));
+			if (g_engine->getLanguage() == Common::KO_KOR) {
+				_console->addTextLine(KoFont::getObjectString(_objectVar.getObjectName(objNum)));
+				_console->printTosText(955, true); // "You pick up the "
+			} else {
+				_console->printTosText(955); // "You pick up the "
+				_console->addToCurrentLineU32(formatInjectStrings(Common::U32String("%s."), _objectVar.getObjectName(objNum).c_str()));
+			}
 			_inventory.addItem(objNum);
 			g_engine->_room->_collisionType = 0;
 			g_engine->_room->removeObjectFromRoom(objNum);
@@ -1664,8 +1670,12 @@ void UseCode::putObjUnderPillow(int objNum) {
 	_objectVar.setMoveObjectRoom(objNum, 250);
 	g_engine->_cursor.setCursorType(Pointer);
 	_console->printTosText(946);
-	_console->addToCurrentLineU32(g_engine->_objectVar.getObjectName(objNum));
-	_console->printTosText(947);
+	if (g_engine->getLanguage() == Common::KO_KOR) {
+		_console->addToCurrentLineU32(KoFont::getObjectString(g_engine->_objectVar.getObjectName(objNum)));
+	} else {
+		_console->addToCurrentLineU32(g_engine->_objectVar.getObjectName(objNum));
+	}
+	_console->printTosText(947, true);
 }
 
 static constexpr bool diggingxflipTbl[12] = {
