@@ -40,7 +40,7 @@ public:
 	void daemon() override;
 
 private:
-	int32 _field0 = 0;
+	int32 _811MusicFadingVol = 0;
 
 	int32 _811BA01Series = 0;
 	int32 _811BA02Series = 0;
@@ -49,12 +49,12 @@ private:
 	int32 _811BA05Series = 0;
 	int32 _811MC01Series = 0;
 	int32 _811RP01Series = 0;
+	int32 _811EndSeries;
 
 	machine *_811BaronMach = nullptr;
 	machine *_811McMach = nullptr;
 	machine *_811Pu01Mach = nullptr;
 	machine *_811RipleyMach = nullptr;
-	int32 _811EndSeries;
 };
 
 } // namespace Rooms

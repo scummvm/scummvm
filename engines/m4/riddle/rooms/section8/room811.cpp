@@ -38,7 +38,7 @@ void Room811::preload() {
 void Room811::init() {
 	interface_hide();
 	player_set_commands_allowed(false);
-	_field0 = 80;
+	_811MusicFadingVol = 80;
 	digi_stop(1);
 	digi_preload("950_s45", 950);
 	digi_play_loop("950_s45", 3, 80, -1, 950);
@@ -303,21 +303,97 @@ void Room811::daemon() {
 		break;
 
 	case 35:
+		digi_play("811b10", 2, 255, 36, -1);
+		sendWSMessage_10000(1, _811Pu01Mach, _811EndSeries, 61, 61, -1, _811EndSeries, 61, 63, 4);
+		sendWSMessage_1a0000(_811Pu01Mach, 11);
+
+		break;
+
 	case 36:
+		sendWSMessage_10000(1, _811Pu01Mach, _811EndSeries, 64, 73, 65, _811EndSeries, 73, 73, 0);
+		break;
+
 	case 37:
+		digi_play("811r08", 2, 255, 91, -1);
+		break;
+
 	case 40:
+		digi_play("811_s06", 1, 255, 37, -1);
+		break;
+
 	case 64:
+		sendWSMessage_10000(1, _811Pu01Mach, _811EndSeries, 58, 60, 35, _811EndSeries, 60, 60, 0);
+		digi_play("811_s03", 1, 255, -1, -1);
+
+		break;
+
 	case 65:
+		sendWSMessage_10000(1, _811Pu01Mach, _811EndSeries, 74, 87, -1, _811EndSeries, 87, 87, 0);
+		digi_play("811_s04", 1, 255, -1, -1);
+		kernel_timing_trigger(55, 40, nullptr);
+
+		break;
+
 	case 76:
+		digi_play("811_s01", 1, 220, -1, -1);
+		break;
+
 	case 77:
+		digi_play("811_s01", 1, 255, -1, -1);
+		break;
+
 	case 82:
+		sendWSMessage_10000(1, _811BaronMach, _811BA01Series, 12, 12, -1, _811BA01Series, 12, 12, 0);
+		kernel_timing_trigger(15, 83, nullptr);
+
+		break;
+
 	case 83:
+		sendWSMessage_10000(1, _811BaronMach, _811BA04Series, 1, 17, -1, _811BA01Series, 12, 17, 4);
+		sendWSMessage_1a0000(_811BaronMach, 11);
+		digi_play("811B09A", 2, 255, 84, -1);
+
+		break;
+
 	case 84:
+		sendWSMessage_10000(1, _811BaronMach, _811BA01Series, 12, 12, -1, _811BA01Series, 12, 12, 0);
+		kernel_timing_trigger(20, 32, nullptr);
+
+		break;
+
 	case 91:
+		player_set_commands_allowed(false);
+		adv_kill_digi_between_rooms(false);
+		disable_player_commands_and_fade_init(92);
+		digi_stop(1);
+		digi_stop(2);
+
+		break;
+
 	case 92:
+		digi_play_loop("950_s45", 3, 128, -1, 950);
+		_G(game).new_room = 861;
+		break;
+
 	case 1050:
+		_811MusicFadingVol -= 5;
+		if (_811MusicFadingVol <= 0) {
+			digi_stop(1);
+		} else {
+			digi_change_panning(1, _811MusicFadingVol);
+			kernel_timing_trigger(2, 1050, nullptr);
+		}
+
+		break;
+
 	case 1100:
+		digi_play("811_s01a", 1, 255, -1, -1);
+		break;
+
 	case 1110:
+		digi_play("811_s01b", 1, 255, -1, -1);
+		break;
+
 	default:
 		break;
 	}
