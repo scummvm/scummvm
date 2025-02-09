@@ -756,7 +756,8 @@ void Room801::daemon() {
 		break;
 
 	case 14:
-		sendWSMessage_10000(1, _mcTrekMach, _farmerEarthquakeGestureSeries, 1, 20, 15, _farmerEarthquakeGestureSeries, 20, 20, 0);
+		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerEarthquakeGestureSeries, 1, 20, 15,
+			_farmerEarthquakeGestureSeries, 20, 20, 0);
 		digi_play("801f02a", 1, 255, 16, -1);
 		break;
 
