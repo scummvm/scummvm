@@ -553,9 +553,25 @@ bool TouchControls::FunctionRight::isInside(int x, int y) {
 }
 
 void TouchControls::FunctionRight::touch(int dX, int dY, Action action) {
-	if (action == JACTION_CANCEL) {
+	static const Common::JoystickButton buttons[] = {
+		Common::JOYSTICK_BUTTON_Y, Common::JOYSTICK_BUTTON_B,
+		Common::JOYSTICK_BUTTON_A, Common::JOYSTICK_BUTTON_X
+	};
+	static const Common::JoystickButton modifiers[] = {
+		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID,
+		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID
+	};
+	if (action == JACTION_CANCEL ||
+		action == JACTION_UP) {
+		if (button) {
+			buttonUp(buttons[button - 1]);
+			buttonUp(modifiers[button - 1]);
+		}
+		resetState();
 		return;
 	}
+
+	uint32 newButton = 0;
 
 	// norm 2 squared (to avoid square root)
 	unsigned int sqNorm = (unsigned int)(dX * dX) + (unsigned int)(dY * dY);
@@ -573,36 +589,35 @@ void TouchControls::FunctionRight::touch(int dX, int dY, Action action) {
 		if (adY <= adX) {
 			// X or B
 			if (dX < 0) {
-				button = 4;
+				newButton = 4;
 			} else {
-				button = 2;
+				newButton = 2;
 			}
 		} else {
 			// Y or A
 			if (dY < 0) {
-				button = 1;
+				newButton = 1;
 			} else {
-				button = 3;
+				newButton = 3;
 			}
 
 		}
 	} else {
-		button = 0;
+		newButton = 0;
 	}
 
-	static const Common::JoystickButton buttons[] = {
-		Common::JOYSTICK_BUTTON_Y, Common::JOYSTICK_BUTTON_B,
-		Common::JOYSTICK_BUTTON_A, Common::JOYSTICK_BUTTON_X
-	};
-	static const Common::JoystickButton modifiers[] = {
-		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID,
-		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID
-	};
-	if (action == JACTION_UP && button) {
-		buttonDown(modifiers[button - 1]);
-		buttonPress(buttons[button - 1]);
-		buttonUp(modifiers[button - 1]);
-		button = 0;
+	if (button != newButton) {
+		// Release the previously pressed button, if any
+		if (button) {
+			buttonUp(buttons[button - 1]);
+			buttonUp(modifiers[button - 1]);
+		}
+		button = newButton;
+		// Press the new button
+		if (button) {
+			buttonDown(modifiers[button - 1]);
+			buttonDown(buttons[button - 1]);
+		}
 	}
 }
 
@@ -658,9 +673,25 @@ bool TouchControls::FunctionCenter::isInside(int x, int y) {
 }
 
 void TouchControls::FunctionCenter::touch(int dX, int dY, Action action) {
-	if (action == JACTION_CANCEL) {
+	static const Common::JoystickButton buttons[] = {
+		Common::JOYSTICK_BUTTON_GUIDE, Common::JOYSTICK_BUTTON_RIGHT_STICK,
+		Common::JOYSTICK_BUTTON_START, Common::JOYSTICK_BUTTON_LEFT_STICK
+	};
+	static const Common::JoystickButton modifiers[] = {
+		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID,
+		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID
+	};
+	if (action == JACTION_CANCEL ||
+		action == JACTION_UP) {
+		if (button) {
+			buttonUp(buttons[button - 1]);
+			buttonUp(modifiers[button - 1]);
+		}
+		resetState();
 		return;
 	}
+
+	uint32 newButton = 0;
 
 	// norm 2 squared (to avoid square root)
 	unsigned int sqNorm = (unsigned int)(dX * dX) + (unsigned int)(dY * dY);
@@ -678,36 +709,35 @@ void TouchControls::FunctionCenter::touch(int dX, int dY, Action action) {
 		if (adY <= adX) {
 			// X or B
 			if (dX < 0) {
-				button = 4;
+				newButton = 4;
 			} else {
-				button = 2;
+				newButton = 2;
 			}
 		} else {
 			// Y or A
 			if (dY < 0) {
-				button = 1;
+				newButton = 1;
 			} else {
-				button = 3;
+				newButton = 3;
 			}
 
 		}
 	} else {
-		button = 0;
+		newButton = 0;
 	}
 
-	static const Common::JoystickButton buttons[] = {
-		Common::JOYSTICK_BUTTON_GUIDE, Common::JOYSTICK_BUTTON_RIGHT_STICK,
-		Common::JOYSTICK_BUTTON_START, Common::JOYSTICK_BUTTON_LEFT_STICK
-	};
-	static const Common::JoystickButton modifiers[] = {
-		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID,
-		Common::JOYSTICK_BUTTON_INVALID, Common::JOYSTICK_BUTTON_INVALID
-	};
-	if (action == JACTION_UP && button) {
-		buttonDown(modifiers[button - 1]);
-		buttonPress(buttons[button - 1]);
-		buttonUp(modifiers[button - 1]);
-		button = 0;
+	if (button != newButton) {
+		// Release the previously pressed button, if any
+		if (button) {
+			buttonUp(buttons[button - 1]);
+			buttonUp(modifiers[button - 1]);
+		}
+		button = newButton;
+		// Press the new button
+		if (button) {
+			buttonDown(modifiers[button - 1]);
+			buttonDown(buttons[button - 1]);
+		}
 	}
 }
 
