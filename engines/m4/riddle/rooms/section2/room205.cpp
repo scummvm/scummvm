@@ -537,7 +537,7 @@ void Room205::parser() {
 				break;
 
 			case 3:
-				kernel_examine_inventory_object("PING CHARCOAL", nullptr, 5, 1, 144, 271, 4, nullptr, -1);
+				kernel_examine_inventory_object("PING CHARCOAL", 5, 1, 144, 271, 4, nullptr, -1);
 				break;
 
 			case 4:
