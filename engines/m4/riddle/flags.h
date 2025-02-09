@@ -287,7 +287,7 @@ enum Flag {
 	V250 = 250,
 	V251 = 251,
 	kTerracottaSoldiers = 252,
-	V253 = 253,
+	kRiceSackMoved = 253,
 	V254 = 254,
 	V255 = 255,
 	V256 = 256,

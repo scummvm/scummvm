@@ -235,7 +235,7 @@ void Room801::parser() {
 			sendWSMessage_110000(_G(my_walker), 1);
 			break;
 		case 1:
-			if (_G(flags)[V253]) {
+			if (_G(flags)[kRiceSackMoved]) {
 				digi_play("801R15A", 1, 255, 2, -1);
 			} else {
 				digi_play("801R15", 1, 255, 2, -1);
@@ -540,7 +540,7 @@ void Room801::parser() {
 	}
 
 	else if (talkFl && player_said("farmer")) {
-		if (_G(flags)[kTerracottaSoldiers] || _G(flags)[V253] || _G(flags)[V255]) {
+		if (_G(flags)[kTerracottaSoldiers] || _G(flags)[kRiceSackMoved] || _G(flags)[V255]) {
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
 			_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, true, triggerMachineByHashCallback, "rip talking to farmer");
@@ -563,7 +563,7 @@ void Room801::parser() {
 			conv_set_shading(65);
 			conv_export_value(conv_get_handle(), _G(flags)[kTerracottaSoldiers], 0);
 			conv_export_value(conv_get_handle(), _G(flags)[V255], 1);
-			conv_export_value(conv_get_handle(), _G(flags)[V253], 2);
+			conv_export_value(conv_get_handle(), _G(flags)[kRiceSackMoved], 2);
 
 			conv_play(conv_get_handle());
 		} else {

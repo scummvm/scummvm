@@ -46,7 +46,7 @@ void Room802::init() {
 	digi_preload("801_s02", -1);
 	digi_play_loop("801_s02", 3, 35, -1, -1);
 	if (!player_been_here(802)) {
-		_G(flags)[V253] = 0;
+		_G(flags)[kRiceSackMoved] = 0;
 		_G(flags)[V254] = 0;
 		_G(flags)[V255] = 0;
 	}
@@ -78,7 +78,7 @@ void Room802::init() {
 		_holeInWall = series_load("HOLE IN WALL", -1, nullptr);
 	}
 
-	if (_G(flags)[V253]) {
+	if (!_G(flags)[kRiceSackMoved]) {
 		_sackAgainstWall = series_load("SACK AGAINST WALL", -1, nullptr);
 		_ripDragsSack = series_load("RIP DRAGS SACK ASIDE", -1, nullptr);
 	}
@@ -97,7 +97,7 @@ void Room802::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "HOLE ", false);
 	}
 
-	if (_G(flags)[V253]) {
+	if (_G(flags)[kRiceSackMoved]) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "RICE SACK", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "RICE SACK ", true);
 	} else {
@@ -110,7 +110,7 @@ void Room802::init() {
 		_sackAgainstWallMach = series_place_sprite("802SACK2", 0, 0, 0, 100, 768);
 	}
 
-	if (_G(flags)[V255] || !_G(flags)[V253])
+	if (_G(flags)[V255] || !_G(flags)[kRiceSackMoved])
 		hotspot_set_active(_G(currentSceneDef).hotspots, "HAND", false);
 	else {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "HAND", true);
@@ -264,7 +264,8 @@ void Room802::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, false, triggerMachineByHashCallback, "rip moves sack of rice");
+			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
+				triggerMachineByHashCallback, "rip moves sack of rice");
 			ws_hide_walker(_G(my_walker));
 			terminateMachine(_sackAgainstWallMach);
 			sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripDragsSack, 1, 15, 10, _ripDragsSack, 15, 15, 0);
@@ -281,7 +282,7 @@ void Room802::parser() {
 			_handInWallMach = series_place_sprite("HAND IN WALL", 0, 0, 0, 100, 512);
 			series_unload(_ripDragsSack);
 			series_unload(_sackAgainstWall);
-			_G(flags)[V253] = 1;
+			_G(flags)[kRiceSackMoved] = 1;
 			hotspot_set_active(_G(currentSceneDef).hotspots, "rice sack", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "rice sack ", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "hand", true);
@@ -301,7 +302,7 @@ void Room802::parser() {
 	}
 
 	else if ((player_said("farmer's shovel", "hand") || player_said("farmer's shovel", "wall")) && _G(flags)[V254] == 0) {
-		if (_G(flags)[V253]) {
+		if (_G(flags)[kRiceSackMoved]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -456,12 +457,12 @@ void Room802::daemon() {
 		break;
 	case 14:
 		player_set_commands_allowed(false);
-		setGlobals1(1, _ripArmXPos3, 15, 15, 15, 0, 15, 1, 1, 1, 0, 1, 1, 1, 1, 0, 15, 15, 15, 15, 0);
+		setGlobals1(_ripArmXPos3, 1, 15, 15, 15, 0, 15, 1, 1, 1, 0, 1, 1, 1, 1, 0, 15, 15, 15, 15, 0);
 		sendWSMessage_110000(_G(my_walker), 16);
 		break;
 	case 16:
 		sendWSMessage_150000(_G(my_walker), 0);
-		setGlobals1(1, _ripTalkOffTd33, 3, 3, 3, 0, 3, 1, 1, 1, 0, 1, 1, 1, 1, 0, 3, 3, 3, 3, 0);
+		setGlobals1(_ripTalkOffTd33, 1, 3, 3, 3, 0, 3, 1, 1, 1, 0, 1, 1, 1, 1, 0, 3, 3, 3, 3, 0);
 		sendWSMessage_110000(_G(my_walker), 15);
 		if (player_said("rice sack") || player_said("rice sack "))
 			digi_play("802R01", 1, 255, 17, -1);
