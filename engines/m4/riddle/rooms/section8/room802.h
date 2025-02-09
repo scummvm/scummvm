@@ -59,7 +59,7 @@ private:
 	
 	machine *_handInWallMach = nullptr;
 	machine *_holeInWallMach = nullptr;
-	machine *_ripWalksDownstairsMach = nullptr;
+	machine *_ripActionMach = nullptr;
 	machine *_sackAgainstWallMach = nullptr;
 };
 
