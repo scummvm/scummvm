@@ -675,21 +675,25 @@ void Room801::daemon() {
 		sendWSMessage_10000(_mcTrekMach, 124, 304, 4, 11, 1);
 		ws_walk(_G(my_walker), 172, 302, nullptr, 10, 7, true);
 		break;
+
 	case 2:
 		terminateMachine(_planeShadowMach);
 		series_unload(_planeShadowSeries);
 		_unkFlag1 = true;
 		kernel_timing_trigger(70, 31, nullptr);
 		break;
+
 	case 4:
 		// nothing
 		break;
+
 	case 5:
 		sendWSMessage_150000(_G(my_walker), -1);
 		_G(player).disable_hyperwalk = false;
 		_G(kernel).call_daemon_every_loop = false;
 		player_set_commands_allowed(true);
 		break;
+
 	case 6:
 	case 7:
 		player_set_commands_allowed(false);
@@ -705,16 +709,19 @@ void Room801::daemon() {
 			sendWSMessage_10000(1, _ripAnimationMach, _ripReturnsFromRootCellarSeries, 1, 22, 8, _ripReturnsFromRootCellarSeries, 22, 22, 0);
 		}
 		break;
+
 	case 8:
 		terminateMachine(_ripAnimationMach);
 		ws_unhide_walker(_G(my_walker));
 		series_unload(_ripReturnsFromRootCellarSeries);
 		player_set_commands_allowed(true);
 		break;
+
 	case 9:
 		mouse_lock_sprite(5);
 		conv_resume(conv_get_handle());
 		break;
+
 	case 10:
 		terminateMachine(_farmerDisplacementMach);
 		_planeShadowMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 2048, false, triggerMachineByHashCallback, "shadow of de plane");
@@ -729,6 +736,7 @@ void Room801::daemon() {
 		sendWSMessage_10000(1, _ripAnimationMach, _ripLooksToZeroSeries, 1, 13, 51, _ripLooksToZeroSeries, 13, 13, 0);
 		_safariShadow5Mach2 = series_show("SAFARI SHADOW 5", 1280, 144, -1, -1, 0, 48, 172, 302);
 		break;
+
 	case 11:
 		digi_play("801_s01", 2, 255, -1, -1);
 		sendWSMessage_60000(_mcTrekMach);
@@ -736,21 +744,26 @@ void Room801::daemon() {
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 1, 7, 0, _meiPrattleLoopSeries, 7, 7, 0);
 		_safariShadow5Mach = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		break;
+
 	case 12:
 		_unkFlag2 = true;
 		break;
+
 	case 13:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 4, 1, 0, _farmerTalkLoopSeries, 1, 1, 0);
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, 0, _meiPrattleLoopSeries, 42, 55, 4);
 		digi_play("801m02", 1, 255, 35, -1);
 		break;
+
 	case 14:
 		sendWSMessage_10000(1, _mcTrekMach, _farmerEarthquakeGestureSeries, 1, 20, 15, _farmerEarthquakeGestureSeries, 20, 20, 0);
 		digi_play("801f02a", 1, 255, 16, -1);
 		break;
+
 	case 15:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerEarthquakeGestureSeries, 20, 1, 12, _farmerTalkLoopSeries, 1, 1, 0);
 		break;
+
 	case 16:
 		if (_unkFlag2) {
 			_unkFlag2 = false;
@@ -762,28 +775,35 @@ void Room801::daemon() {
 			kernel_timing_trigger(15, 16, nullptr);
 		}
 		break;
+
 	case 17:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerEarthquakeGestureSeries, 20, 1, 18, _farmerEarthquakeGestureSeries, 1, 1, 0);
 		break;
+
 	case 18:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 37, 0, _meiPrattleLoopSeries, 37, 41, 4);
 		digi_play("801m04", 1, 255, 41, -1);
 		break;
+
 	case 19:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerDisplacementSeries, 1, 1, 0, _farmerDisplacementSeries, 1, 1, 0);
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 37, 0, _meiPrattleLoopSeries, 37, 41, 4);
 		digi_play("801m06", 1, 255, 43, -1);
 		break;
+
 	case 31:
 		sendWSMessage_10000(1, _mcTrekMach, _meiLookToZeroSeries, 18, 1, 32, _meiLookToZeroSeries, 1, 1, 0);
 		sendWSMessage_10000(1, _ripAnimationMach, _ripLooksToZeroSeries, 13, 1, 52, _ripLooksToZeroSeries, 1, 1, 0);
 		break;
+
 	case 32:
 		_cellarOpenFl = true;
 		break;
+
 	case 33:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 17, 8, 49, _meiPrattleLoopSeries, 8, 8, 0);
 		break;
+
 	case 34:
 		if (_cellarOpenFl) {
 			_cellarOpenFl = false;
@@ -794,11 +814,13 @@ void Room801::daemon() {
 			kernel_timing_trigger(15, 34, nullptr);
 		}
 		break;
+
 	case 35:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, 0, _meiPrattleLoopSeries, 42, 42, 0);
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 1, 4, 0, _farmerTalkLoopSeries, 5, 7, 4);
 		digi_play("801f02", 1, 255, 14, -1);
 		break;
+
 	case 36:
 		if (_cellarOpenFl) {
 			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, -1, _meiPrattleLoopSeries, 42, 42, 0);
@@ -806,43 +828,54 @@ void Room801::daemon() {
 			kernel_timing_trigger(15, 36, nullptr);
 		}
 		break;
+
 	case 37:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 83, 64, 38, _meiPrattleLoopSeries, 64, 64, 0);
 		kernel_timing_trigger(0, 39, nullptr);
 		break;
+
 	case 38:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 64, 56, 32, _meiPrattleLoopSeries, 56, 56, 0);
 		break;
+
 	case 39:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerEarthquakeGestureSeries, 1, 20, 17, _farmerEarthquakeGestureSeries, 20, 20, 0);
 		break;
+
 	case 41:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 37, 0, _meiPrattleLoopSeries, 37, 37, 0);
 		sendWSMessage_110000(_G(my_walker), 4);
 		digi_play("801r03", 1, 255, 54, -1);
 		break;
+
 	case 42:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 41, 31, 0, _meiPrattleLoopSeries, 31, 31, 0);
 		digi_play("801r04", 1, 255, 55, -1);
 		break;
+
 	case 43:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 41, 31, 0, _meiPrattleLoopSeries, 42, 42, 0);
 		_ripTrekHandsHipPos5Series = series_load("RIP TREK HANDS HIP POS5", -1, nullptr);
 		sendWSMessage_110000(_G(my_walker), -1);
 		digi_play("801r05", 1, 255, 56, -1);
 		break;
+
 	case 48:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 56, 83, 37, _meiPrattleLoopSeries, 83, 83, 0);
 		break;
+
 	case 49:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 18, 30, 50, _meiPrattleLoopSeries, 30, 30, 0);
 		break;
+
 	case 50:
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 30, 18, 32, _meiPrattleLoopSeries, 42, 55, 4);
 		break;
+
 	case 51:
 		digi_play("801r01", 1, 255, -1, -1);
 		break;
+
 	case 52:
 		if (_unkFlag2 && _unkFlag1 && _cellarOpenFl) {
 			terminateMachine(_mcTrekMach);
@@ -867,46 +900,58 @@ void Room801::daemon() {
 			kernel_timing_trigger(15, 52, nullptr);
 		}
 		break;
+
 	case 53:
 		sendWSMessage_120000(_G(my_walker), -1);
 		kernel_timing_trigger(330, 48, nullptr);
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 37, 0, _meiPrattleLoopSeries, 37, 41, 4);
 		digi_play("801m03", 1, 255, 36, -1);
 		break;
+
 	case 54:
 		sendWSMessage_120000(_G(my_walker), -1);
 		sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 37, 0, _meiPrattleLoopSeries, 37, 41, 4);
 		digi_play("801m05", 1, 255, 42, -1);
 		break;
+
 	case 55:
 		sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 1, 4, 0, _farmerTalkLoopSeries, 5, 7, 4);
 		digi_play("801f03", 1, 255, 19, -1);
 		break;
+
 	case 56:
 		sendWSMessage_120000(_G(my_walker), 5);
 		break;
+
 	case 60:
 		sendWSMessage_140000(_G(my_walker), 63);
 		break;
+
 	case 61:
 		sendWSMessage_150000(_G(my_walker), -1);
 		break;
+
 	case 62:
 		setGlobals1(_ripTrekHatTipPos5Series, 1, 12, 12, 12, 0, 12, 1, 1, 1, 0, 1, 12, 12, 12, 0, 12, 12, 12, 12, 0);
 		sendWSMessage_110000(_G(my_walker), 60);
 		break;
+
 	case 63:
 		series_unload(_ripTrekHatTipPos5Series);
 		break;
+
 	case 81:
 		digi_play("801R30", 1, 255, 82, 801);
 		break;
+
 	case 82:
 		disable_player_commands_and_fade_init(83);
 		break;
+
 	case 83:
 		_G(game).new_room = 852;
 		break;
+
 	case 200:
 		switch (_unkVal6) {
 		case 1:
@@ -986,6 +1031,7 @@ void Room801::daemon() {
 			break;
 		}
 		break;
+
 	case 300:
 		switch (_unkVal5) {
 		case 1:
@@ -1049,10 +1095,12 @@ void Room801::daemon() {
 			break;
 		}
 		break;
+
 	case 310:
 		player_set_commands_allowed(true);
 		_unkVal2 = 3;
 		break;
+
 	case 400:
 		if (_ripOpensCellarSeries == 5)
 			_unkVal7 = 5;
