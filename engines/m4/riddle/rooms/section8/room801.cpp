@@ -438,7 +438,7 @@ void Room801::parser() {
 			break;
 		case 12:
 			player_update_info(_G(my_walker), &_G(player_info));
-			ws_walk(_G(my_walker), 8, 6, nullptr, 13, 5, true);
+			ws_walk(_G(my_walker), _G(player_info).x + 8, _G(player_info).y + 6, nullptr, 13, 5);
 			break;
 		case 13:
 			hotspot_set_active(_G(currentSceneDef).hotspots, "farmer's shovel", false);

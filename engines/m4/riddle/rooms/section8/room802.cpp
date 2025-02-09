@@ -357,11 +357,11 @@ void Room802::parser() {
 					_sackAgainstWallMach = series_place_sprite("802SACK2", 0, 0, 0, 100, 768);
 
 					if (inv_player_has("match")) {
-						hotspot_set_active(_G(currentSceneDef).hotspots, "hole", true);
-						hotspot_set_active(_G(currentSceneDef).hotspots, "hole ", false);
-					} else {
-						hotspot_set_active(_G(currentSceneDef).hotspots, "hole", false);
 						hotspot_set_active(_G(currentSceneDef).hotspots, "hole ", true);
+						hotspot_set_active(_G(currentSceneDef).hotspots, "hole", false);
+					} else {
+						hotspot_set_active(_G(currentSceneDef).hotspots, "hole ", false);
+						hotspot_set_active(_G(currentSceneDef).hotspots, "hole", true);
 					}
 
 					hotspot_set_active(_G(currentSceneDef).hotspots, "hand", false);
