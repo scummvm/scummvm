@@ -59,7 +59,7 @@ private:
 	int32 _ripKneelPotterySeries = 0;
 	int32 _ripLooksLRDownSeries = 0;
 	int32 _ripLooksToZeroSeries = 0;
-	int32 _ripOpensCellarSeries = 0;
+	int32 _farmerShould = 0;
 	int32 _ripReturnsFromRootCellarSeries = 0;
 	int32 _ripTrekHandOnChinSeries = 0;
 	int32 _ripTrekHandsBehBackSeries = 0;
@@ -72,11 +72,11 @@ private:
 
 	int32 _cellarDoorOpened = 0;
 	int32 _counter = 0;
-	int32 _unkVal2 = 0;
-	int32 _unkVal3 = 0;
-	int32 _unkVal5 = 0;
-	int32 _unkVal6 = 0;
-	int32 _unkVal7 = 0;
+	int32 _ripleyShould = 0;
+	int32 _meiShould = 0;
+	int32 _ripleyMode = 0;
+	int32 _meiMode = 0;
+	int32 _farmerMode = 0;
 
 	bool _unkFlag1 = false;
 	bool _unkFlag2 = false;

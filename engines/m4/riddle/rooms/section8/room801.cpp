@@ -170,9 +170,9 @@ void Room801::parser() {
 		room801_conv801a();
 
 	else if (_G(kernel).trigger == 747) {
-		_unkVal2 = 4;
-		_unkVal3 = 8;
-		_ripOpensCellarSeries = 5;
+		_ripleyShould = 4;
+		_meiShould = 8;
+		_farmerShould = 5;
 		conv_shutdown();
 		player_set_commands_allowed(true);
 	} // if (_G(kernel).trigger == 747)
@@ -448,15 +448,15 @@ void Room801::parser() {
 				player_set_commands_allowed(false);
 				ws_hide_walker();
 				terminateMachine(_cellarDoorClosedMach);
-				_ripOpensCellarSeries = series_load("RIP OPENS CELLAR", -1, nullptr);
+				_farmerShould = series_load("RIP OPENS CELLAR", -1, nullptr);
 				_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, false, triggerMachineByHashCallback, "rip opens cellar");
-				sendWSMessage_10000(1, _ripAnimationMach, _ripOpensCellarSeries, 1, 28, 10, _ripOpensCellarSeries, 28, 28, 0);
+				sendWSMessage_10000(1, _ripAnimationMach, _farmerShould, 1, 28, 10, _farmerShould, 28, 28, 0);
 			}
 			break;
 		case 1:
 			_cellarOpenFl = true;
 			terminateMachine(_ripAnimationMach);
-			series_unload(_ripOpensCellarSeries);
+			series_unload(_farmerShould);
 			_cellarDoorOpenMach = series_place_sprite("CELLAR DOOR OPEN", 0, 0, -53, 100, 1024);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
@@ -466,12 +466,12 @@ void Room801::parser() {
 			break;
 
 		case 10:
-			sendWSMessage_10000(1, _ripAnimationMach, _ripOpensCellarSeries, 29, 45, 11, _ripOpensCellarSeries, 45, 45, 0);
+			sendWSMessage_10000(1, _ripAnimationMach, _farmerShould, 29, 45, 11, _farmerShould, 45, 45, 0);
 			digi_play("801_s03", 2, 255, -1, -1);
 			break;
 
 		case 11:
-			sendWSMessage_10000(1, _ripAnimationMach, _ripOpensCellarSeries, 46, 56, 1, _ripOpensCellarSeries, 56, 56, 0);
+			sendWSMessage_10000(1, _ripAnimationMach, _farmerShould, 46, 56, 1, _farmerShould, 56, 56, 0);
 			digi_stop(1);
 			break;
 		default:
@@ -524,12 +524,12 @@ void Room801::parser() {
 			_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, true, triggerMachineByHashCallback, "rip talking to farmer");
 			sendWSMessage_10000(1, _ripAnimationMach, _ripTrekHeadTurnSeries, 1, 1, -1, _ripTrekHeadTurnSeries, 1, 1, 0);
 			_safariShadow5Mach2 = series_show("SAFARI SHADOW 5", 1280, 144, -1, -1, 0, 48, 167, 303);
-			_unkVal5 = 1;
-			_unkVal2 = 1;
-			_unkVal6 = 1;
-			_unkVal3 = 1;
-			_unkVal7 = 1;
-			_ripOpensCellarSeries = 1;
+			_ripleyMode = 1;
+			_ripleyShould = 1;
+			_meiMode = 1;
+			_meiShould = 1;
+			_farmerMode = 1;
+			_farmerShould = 1;
 			_G(kernel).trigger_mode = KT_DAEMON;
 
 			kernel_timing_trigger(1, 300, nullptr);
@@ -953,40 +953,40 @@ void Room801::daemon() {
 		break;
 
 	case 200:
-		switch (_unkVal6) {
+		switch (_meiMode) {
 		case 1:
-			switch (_unkVal3) {
+			switch (_meiShould) {
 			case 1:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, -1, _meiPrattleLoopSeries, 42, 42, 0);
 				kernel_timing_trigger(60, 200, nullptr);
 				break;
 			case 2:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 37, 200, _meiPrattleLoopSeries, 37, 41, 4);
-				_unkVal6 = 2;
+				_meiMode = 2;
 				break;
 			case 3:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, 200, _meiPrattleLoopSeries, 42, 55, 4);
-				_unkVal6 = 3;
+				_meiMode = 3;
 				break;
 			case 4:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 56, 84, 200, _meiPrattleLoopSeries, 84, 84, 0);
-				_unkVal6 = 4;
+				_meiMode = 4;
 				break;
 			case 8:
-				_unkVal6 = 8;
+				_meiMode = 8;
 				break;
 			default:
 				break;
 			}
 			break;
 		case 2:
-			switch (_unkVal3) {
+			switch (_meiShould) {
 			case 1:
 			case 3:
 			case 4:
 			case 8:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 31, 200, _meiPrattleLoopSeries, 42, 42, 0);
-				_unkVal6 = 1;
+				_meiMode = 1;
 				break;
 			case 2:
 				kernel_timing_trigger(30, 200, nullptr);
@@ -996,13 +996,13 @@ void Room801::daemon() {
 			}
 			break;
 		case 3:
-			switch (_unkVal3) {
+			switch (_meiShould) {
 			case 1:
 			case 2:
 			case 4:
 			case 8:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, 200, _meiPrattleLoopSeries, 42, 42, 0);
-				_unkVal6 = 1;
+				_meiMode = 1;
 				break;
 			case 3:
 				kernel_timing_trigger(30, 200, nullptr);
@@ -1012,16 +1012,16 @@ void Room801::daemon() {
 			}
 			break;
 		case 4:
-			switch (_unkVal3) {
+			switch (_meiShould) {
 			case 4:
-				_unkVal3 = 1;
+				_meiShould = 1;
 				// Fallthrough
 			case 1:
 			case 2:
 			case 3:
 			case 8:
 				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 84, 56, 200, _meiPrattleLoopSeries, 42, 42, 0);
-				_unkVal6 = 1;
+				_meiMode = 1;
 				break;
 			default:
 				break;
@@ -1033,26 +1033,26 @@ void Room801::daemon() {
 		break;
 
 	case 300:
-		switch (_unkVal5) {
+		switch (_ripleyMode) {
 		case 1:
-			switch (_unkVal2) {
+			switch (_ripleyShould) {
 			case 1:
 				sendWSMessage_10000(1, _ripAnimationMach, _ripTrekHeadTurnSeries, 1, 1, -1, _ripTrekHeadTurnSeries, 1, 1, 0);
 				kernel_timing_trigger(60, 300, nullptr);
 				break;
 			case 2:
 				sendWSMessage_10000(1, _ripAnimationMach, _ripTrekHeadTurnSeries, 1, 4, 300, _ripTrekHeadTurnSeries, 5, 7, 4);
-				_unkVal5 = 2;
+				_ripleyMode = 2;
 				break;
 			case 3:
 				sendWSMessage_10000(1, _ripAnimationMach, _rptmr15Series, 1, 16, 300, _rptmr15Series, 16, 16, 0);
-				_unkVal5 = 3;
+				_ripleyMode = 3;
 				break;
 			case 4:
 				terminateMachine(_ripAnimationMach);
 				terminateMachine(_safariShadow5Mach2);
 				ws_unhide_walker(_G(my_walker));
-				_unkVal5 = 4;
+				_ripleyMode = 4;
 				break;
 			default:
 				break;
@@ -1060,12 +1060,12 @@ void Room801::daemon() {
 
 			break;
 		case 2:
-			switch (_unkVal2) {
+			switch (_ripleyShould) {
 			case 1:
 			case 3:
 			case 4:
 				sendWSMessage_10000(1, _ripAnimationMach, _ripTrekHeadTurnSeries, 4, 1, 300, _ripTrekHeadTurnSeries, 1, 1, 0);
-				_unkVal5 = 1;
+				_ripleyMode = 1;
 				break;
 
 			case 2:
@@ -1076,9 +1076,9 @@ void Room801::daemon() {
 			}
 			break;
 		case 3:
-			switch (_unkVal2) {
+			switch (_ripleyShould) {
 			case 3:
-				_unkVal2 = 1;
+				_ripleyShould = 1;
 				// Fallthrough
 			case 1:
 			case 2:
@@ -1086,7 +1086,7 @@ void Room801::daemon() {
 				sendWSMessage_10000(1, _ripAnimationMach, _rptmr15Series, 16, 1, 300, _rptmr15Series, 1, 1, 0);
 				mouse_lock_sprite(false);
 				kernel_examine_inventory_object("PING MATCH", _G(master_palette), 5, 1, 110, 220, 9, "801R44", -1);
-				_unkVal5 = 1;
+				_ripleyMode = 1;
 			default:
 				break;
 			}
@@ -1098,46 +1098,47 @@ void Room801::daemon() {
 
 	case 310:
 		player_set_commands_allowed(true);
-		_unkVal2 = 3;
+		_ripleyShould = 3;
 		break;
 
 	case 400:
-		if (_ripOpensCellarSeries == 5)
-			_unkVal7 = 5;
+		if (_farmerShould == 5)
+			_farmerMode = 5;
 
-		switch (_unkVal7) {
+		switch (_farmerMode) {
 		case 1:
-			switch (_ripOpensCellarSeries) {
+			switch (_farmerShould) {
 			case 1:
 				sendWSMessage_10000(1, _farmerDisplacementMach, _farmerDisplacementSeries, 14, 14, -1, _farmerDisplacementSeries, 14, 14, 0);
 				kernel_timing_trigger(60, 400, nullptr);
 				break;
 			case 2:
 				sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 1, 4, 400, _farmerTalkLoopSeries, 5, 7, 4);
-				_unkVal7 = 2;
+				_farmerMode = 2;
 				break;
 			case 3:
 				sendWSMessage_10000(1, _farmerDisplacementMach, _farmerGiveTakeBowSeries, 69, 110, 400, _farmerDisplacementSeries, 14, 14, 0);
-				_ripOpensCellarSeries = 1;
+				_farmerShould = 1;
 				break;
 			case 4:
 				sendWSMessage_10000(1, _farmerDisplacementMach, _farmerGiveTakeBowSeries, 2, 68, 400, _farmerDisplacementSeries, 14, 14, 0);
-				_ripOpensCellarSeries = 1;
+				_farmerShould = 1;
 				break;
 			case 5:
-				_unkVal7 = 5;
+				_farmerMode = 5;
 				break;
 			default:
 				break;
 			}
 			break;
+
 		case 2:
-			switch (_ripOpensCellarSeries) {
+			switch (_farmerShould) {
 			case 1:
 			case 4:
 			case 5:
 				sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 4, 1, 400, _farmerDisplacementSeries, 14, 14, 0);
-				_unkVal7 = 1;
+				_farmerMode = 1;
 				break;
 
 			case 2:
@@ -1149,10 +1150,10 @@ void Room801::daemon() {
 				break;
 			}
 			break;
+
 		default:
 			break;
 		}
-
 		break;
 
 	default:
@@ -1171,18 +1172,18 @@ void Room801::room801_conv801a() {
 	if (_G(kernel).trigger == 1) {
 		const int32 who = conv_whos_talking();
 		if (who <= 0) {
-			_unkVal3 = 1;
-			_ripOpensCellarSeries = 1;
+			_meiShould = 1;
+			_farmerShould = 1;
 			if (node == 3 && entry == 0) {
 				inv_give_to_player("MATCH");
-				_ripOpensCellarSeries = 4;
+				_farmerShould = 4;
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(90, 310, nullptr);
 				_G(kernel).trigger_mode = KT_PARSE;
 				return;
 			}
 		} else if (who == 1) {
-			_unkVal2 = 1;
+			_ripleyShould = 1;
 		}
 
 		conv_resume(conv_get_handle());
@@ -1197,17 +1198,17 @@ void Room801::room801_conv801a() {
 	const int32 who = conv_whos_talking();
 	if (who <= 0) {
 		if ((node == 1 && entry == 0) || (node == 1 && entry == 1) || (node == 1 && entry == 2) || (node == 4 && entry == 2))
-			_unkVal3 = 3;
+			_meiShould = 3;
 
 		if ((node == 2 && entry == 1) || (node == 2 && entry == 2) || (node == 4 && entry == 1))
-			_unkVal3 = 2;
+			_meiShould = 2;
 
 		if ((node == 4 && entry == 0) || (node == 2 && entry == 0) || (node == 3 && entry == 0))
-			_unkVal3 = 2;
+			_meiShould = 2;
 
 	} else if (who == 1) {
 		if (node != 1 || entry != 3)
-			_ripOpensCellarSeries = 2;
+			_farmerShould = 2;
 	}
 
 	digi_play(conv_sound_to_play(), 1, 255, 1, -1);
