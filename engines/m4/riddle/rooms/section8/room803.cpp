@@ -467,10 +467,9 @@ void Room803::initWalker() {
 		ws_demand_facing(_G(my_walker), 7);
 		if (_G(flags)[V276] == 0) {
 			ws_hide_walker(_G(my_walker));
-			_meiStepOffPileMach = series_play("MEI STEPS OFF PILE", 0, 15, 2, 5, 0, 100, 0, 0, 0, 0);
+			_meiStepOffPileMach = series_play("MEI STEPS OFF PILE", 0, 16, 2, 5, 0, 100, 0, 0, 0, 0);
 			kernel_timing_trigger(15, 1, nullptr);
 		}
-
 		break;
 	}
 
@@ -490,7 +489,7 @@ void Room803::daemonSub1() {
 	case 1:
 		player_set_commands_allowed(false);
 		terminateMachine(_meiStepOffPileMach);
-		_meiStepOffPileMach = series_play("MEI STEPS OFF PILE", 0, 15, 2, 5, 0, 100, 0, 0, 0, 56);
+		_meiStepOffPileMach = series_play("MEI STEPS OFF PILE", 0, 16, 2, 5, 0, 100, 0, 0, 0, 56);
 		break;
 
 	case 2:
