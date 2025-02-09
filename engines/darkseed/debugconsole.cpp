@@ -49,7 +49,7 @@ bool DebugConsole::Cmd_tostext(int argc, const char **argv) {
 
 	uint16 textIdx = atoi(argv[1]);
 	if (textIdx < _tosText->getNumEntries()) {
-		debugPrintf("%s\n", _tosText->getText(textIdx).c_str());
+		debugPrintf("%s\n", _tosText->getText(textIdx).encode().c_str());
 	} else {
 		debugPrintf("index too large!\n");
 	}

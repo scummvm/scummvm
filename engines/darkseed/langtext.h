@@ -101,7 +101,7 @@ constexpr I18nText kI18N_youSeeTheText = {
   "VES %s.",
   "VOUS VOYEZ %s.",
   "DU SIEHST %s.",
-  nullptr
+  "%s \xac\x69\xcd\x61\xa5\xb3\x93\xa1\x94\x61"
 };
 
 constexpr I18nText kI18N_TheCopsIgnoreYourDemandsText = {

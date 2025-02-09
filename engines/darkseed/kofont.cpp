@@ -193,7 +193,7 @@ int16 SHORT_ARRAY_1000_034a[32] = {
 	32, 32, 32, 32,
 	32, 32, -1, -1};
 
-void KoFont::extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4) const {
+void KoFont::extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4) {
 	int uVar1;
 	int iVar2;
 	int uVar3;
@@ -218,6 +218,22 @@ void KoFont::extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *p
 	*param_2 = uVar4 >> 5;
 	*param_3 = (uVar1 >> 5) - 2;
 	*param_4 = (uVar3 >> 5) - 2;
+}
+
+bool KoFont::isConsonant(uint32 charIdx) {
+	uint16 param1, param2, param3;
+	extractKoIndexComponents(charIdx, &param1, &param2, &param3);
+	return param3 < 109;
+}
+
+Common::U32String KoFont::getObjectString(const Common::U32String &object) {
+	if (object.size() == 0) {
+		return Common::U32String("");
+	}
+	if (isConsonant(object[object.size() - 1])) {
+		return object + convertToU32String("\xb7\x69", Common::KO_KOR); // -eul
+	}
+	return object + convertToU32String("\x9f\x69", Common::KO_KOR); // -reul
 }
 
 int KoFont::getOtherCharIdx(uint32 chr) const {

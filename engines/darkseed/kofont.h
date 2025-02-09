@@ -46,6 +46,9 @@ public:
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
+	static void extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4);
+	static bool isConsonant(uint32 charIdx);
+	static Common::U32String getObjectString(const Common::U32String &object);
 private:
 	void loadFontDataSet(Common::Array<Common::Array<uint8>> &dataSet, int size, int packedGlyphSize, Common::File &file);
 	void loadFontGlyph(Common::Array<uint8> &pixels, int packedGlyphSize, Common::File &file);
@@ -53,7 +56,6 @@ private:
 	void createGlyph(uint8 *pixels, uint32 chr) const;
 	void addToGlyph(uint8 *destPixels, int16 index) const;
 	void addPixels(uint8 *destPixels, const Common::Array<uint8> &pixels) const;
-	void extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4) const;
 	int getOtherCharIdx(uint32 chr) const;
 	void drawOtherGlyph(Graphics::Surface *dst, uint8 chr, int x, int y) const;
 };

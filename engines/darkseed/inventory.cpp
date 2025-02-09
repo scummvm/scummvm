@@ -22,6 +22,7 @@
 #include "darkseed/darkseed.h"
 #include "darkseed/inventory.h"
 #include "darkseed/menu.h"
+#include "darkseed/kofont.h"
 
 namespace Darkseed {
 
@@ -159,8 +160,13 @@ void Inventory::handleClick() {
 		g_engine->lookCode(icon);
 	} else {
 		g_engine->_actionMode = icon;
-		g_engine->_console->printTosText(972);
-		g_engine->_console->addToCurrentLine(formatInjectStrings(Common::U32String("%s."), g_engine->_objectVar.getObjectName(icon).c_str()));
+		if (g_engine->getLanguage() == Common::KO_KOR) {
+			g_engine->_console->addTextLine(KoFont::getObjectString(g_engine->_objectVar.getObjectName(icon)));
+			g_engine->_console->printTosText(972, true);
+		} else {
+			g_engine->_console->printTosText(972);
+			g_engine->_console->addToCurrentLine(formatInjectStrings(Common::U32String("%s."), g_engine->_objectVar.getObjectName(icon).c_str()));
+		}
 	}
 }
 

@@ -68,6 +68,11 @@ public:
 
 	int16 &operator[](uint16 varIdx);
 	const int16 &operator[](uint16 varIdx) const;
+
+private:
+	void loadKoreanObjectNames();
+
+	Common::U32String readU32String(Common::SeekableReadStream &readStream);
 };
 
 } // namespace Darkseed

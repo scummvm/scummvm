@@ -57,7 +57,7 @@ Console::~Console() {
 	delete _font;
 }
 
-void Console::printTosText(int tosIndex) {
+void Console::printTosText(int tosIndex, bool shouldAddToCurrentLine) {
 	const Common::U32String &text = _tosText->getText(tosIndex);
 
 	if (!_isCJKLanguage) {
@@ -69,7 +69,11 @@ void Console::printTosText(int tosIndex) {
 		}
 		debug("%s", "");
 	}
-	addTextLine(text);
+	if (shouldAddToCurrentLine) {
+		addToCurrentLine(text);
+	} else {
+		addTextLine(text);
+	}
 	_sound->playTosSpeech(tosIndex);
 }
 
