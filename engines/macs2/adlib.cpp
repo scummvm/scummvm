@@ -1015,34 +1015,63 @@ void Adlib::OnTimer() {
 					Func2792(bp8 + 0x40, bp1 + (r2779 & 0xC0));
 
 					Func2A80(gArray5C[bp3 - 0x0B], bp4, 0);
+					uint8 bx = Func2779(0xBD);
+					uint8 dx = bp3;
+					dx = 0x0F - dx;
+					Func2792(0xBD, (1 << dx) | bx);
 					//    TODO: Continue from here
-					/*
-
-	
-
-	push	0BDh
-	push	0BDh
-	call	far 0017h:2779h
-	xor	ah,ah
-	mov	bx,ax
-	mov	al,[bp-3h]
-	xor	ah,ah
-	mov	dx,ax
-	mov	ax,0Fh
-	sub	ax,dx
-	mov	dx,ax
-	mov	ax,1h
-	mov	cx,dx
-	shl	ax,cl
-	or	ax,bx
-	push	ax
-	call	far 0017h:2792h
-
-	*/
 				}
 				// TODO: This must be 2097h
+
+				// TODO: I think I lost the indentation level for this one:
+				// l0017_2095:
+				// jmp 209Bh
+
+				// l0017_2097
+				bp6 = 0x80;
 			}
 			// TODO: This must be 209Bh
+			// l0017_209B:
+			if ((bp6 & 0xF0) == 0x80) {
+				// l0017_20A7:
+
+				// TODO: Better place for these two
+				Macs2::StreamHandler *sh2252;
+				Macs2::StreamHandler *sh225A;
+				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x2);
+				sh2252 = shResult;
+				sh225A->seek(2, SEEK_CUR);
+				uint8 bp16 = g2291 - 1;
+				if (0 <= bp16) {
+					// l0017_20E1:
+					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
+						// l0017_20E9:
+						if (gArray222C[bp0A] != 0) {
+							// l0017_20F3:
+							gArray222C[bp0A]++;
+						}
+					}
+				} 
+				// l0017_2102 and l0017_2109:
+				if (g2291 == 0x09 || bp3 < 0x0B) {
+					// l0017_210F:
+					uint8 bp8 = 0;
+					// l0017_2114:
+					while (g2291 > bp8) {
+						// l0017_211E:
+						// TODO: Continue here
+						gArray222C[bp8]
+					}
+					// l0017_2145:
+				} else {
+					// l0017_2172:
+				}
+					
+
+			} else {
+				// l0017_21A3:
+			}
+							
 		}
 	}
 	// TODO: This needs to be l0017_2425
