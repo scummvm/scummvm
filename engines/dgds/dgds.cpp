@@ -397,7 +397,8 @@ void DgdsEngine::loadGameFiles() {
 
 	switch (getGameId()) {
 	case GID_DRAGON:
-		_soundPlayer->loadSFX("SOUNDS.SNG");
+		if (getPlatform() == Common::kPlatformDOS)
+			_soundPlayer->loadSFX("SOUNDS.SNG");
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);

@@ -25,6 +25,7 @@
 #include <common/ptr.h>
 #include <common/rect.h>
 #include <graphics/palette.h>
+#include <dgds/resource.h>
 
 namespace Common {
 class SeekableReadStream;
@@ -75,6 +76,12 @@ public:
 	const Common::String &getFilename() const { return _filename; }
 
 private:
+	void loadAmigaBitmap(Common::SeekableReadStream *stream, DGDS_EX ex);
+	void loadPCBitmap(Common::SeekableReadStream *stream, DGDS_EX ex);
+
+	void loadAmigaScreen(Graphics::ManagedSurface &surf, Common::SeekableReadStream *stream, DGDS_EX ex);
+	void loadPCScreen(Graphics::ManagedSurface &surf, Common::SeekableReadStream *stream, DGDS_EX ex);
+
 	void loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte, uint16 width, uint16 height);
 	void loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	uint32 loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);

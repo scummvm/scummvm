@@ -35,6 +35,7 @@
 #include "dgds/image.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"
+#include "dgds/decompress.h"
 
 namespace Dgds {
 
@@ -76,11 +77,22 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 
 	surface.fillRect(Common::Rect(surface.w, surface.h), 0);
 
+	if (DgdsEngine::getInstance()->getPlatform() == Common::kPlatformAmiga) {
+		loadAmigaScreen(surface, fileStream, ex);
+	} else {
+		loadPCScreen(surface, fileStream, ex);
+	}
+
+	delete fileStream;
+}
+
+
+void Image::loadPCScreen(Graphics::ManagedSurface &surface, Common::SeekableReadStream *fileStream, DGDS_EX ex) {
 	uint16 xsize = surface.w;
 	uint16 ysize = surface.h;
 
 	DgdsChunkReader chunk(fileStream);
-	while (chunk.readNextHeader(ex, filename)) {
+	while (chunk.readNextHeader(ex, _filename)) {
 		if (chunk.isContainer()) {
 			continue;
 		}
@@ -97,7 +109,7 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 					xsize, ysize, surface.w, surface.h);
 			}
 			debug(1, "screen file %s dims %d x %d into surface %d x %d",
-				filename.c_str(), xsize, ysize, surface.w, surface.h);
+				_filename.c_str(), xsize, ysize, surface.w, surface.h);
 		} else if (chunk.isSection(ID_VGA)) {
 			loadBitmap4(&surface, 0, stream, true, xsize, ysize);
 		} else if (chunk.isSection(ID_MA8)) {
@@ -106,9 +118,21 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 			loadVQT(&surface, 0, stream);
 		}
 	}
-
-	delete fileStream;
 }
+
+
+void Image::loadAmigaScreen(Graphics::ManagedSurface &surface, Common::SeekableReadStream *fileStream, DGDS_EX ex) {
+	uint32 magic = fileStream->readUint32BE();
+	if (magic != MKTAG('B', 'A', 'S', 'H'))
+		error("Unexpected magic %08x in Amiga screen %s", magic, _filename.c_str());
+
+	/*
+	uint16 ysize = fileStream->readUint16BE();
+	uint16 xsize = surface.w;
+	uint16 dummy = fileStream->readUint16BE();
+	*/
+}
+
 
 int Image::frameCount(const Common::String &filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
@@ -154,11 +178,57 @@ void Image::loadBitmap(const Common::String &filename) {
 
 	_filename = filename;
 
+	if (DgdsEngine::getInstance()->getPlatform() == Common::kPlatformAmiga) {
+		loadAmigaBitmap(fileStream, ex);
+	} else {
+		loadPCBitmap(fileStream, ex);
+	}
+	delete fileStream;
+}
+
+void Image::loadAmigaBitmap(Common::SeekableReadStream *fileStream, DGDS_EX ex) {
+	uint16 nframes = fileStream->readUint16BE();
+	if (nframes > 1024)
+		error("Image::loadAmigaBitmap: Unexpectedly large number of frames in image (%d)", nframes);
+	_frames.resize(nframes);
+
+	uint32 size = fileStream->readUint32BE(); // always the same as size below?
+	for (int i = 0; i < nframes; i++) {
+		uint16 width = fileStream->readUint16BE();
+		uint16 height = fileStream->readUint16BE();
+		_frames[i].reset(new Graphics::ManagedSurface(width, height, Graphics::PixelFormat::createFormatCLUT8()));
+	}
+
+	char idstr[13];
+	fileStream->read(idstr, 12);
+	idstr[12] = '\0';
+
+	uint32 size2 = fileStream->readUint32BE();
+	if (size != size2)
+		error("Image::loadAmigaBitmap: Expected sizes to match: %d != %d", size, size2);
+	//uint32 insz = fileStream->size() - fileStream->pos();
+	byte row[200];
+	for (int i = 0; i < nframes; i++) {
+		// round up
+		int bytesPerRow = (_frames[i]->w * 5 + 4) / 8;
+		for (int y = 0; y < _frames[i]->h; y++) {
+			fileStream->read(row, bytesPerRow);
+			for (int x = 0; x < _frames[i]->w; x++) {
+				int offset = x * 5 / 8;
+				uint16 val = READ_LE_INT16(row + offset);
+				val = (val >> (11 - (x * 5 % 8))) & 0x1f;
+				_frames[i]->setPixel(x, y, val);
+			}
+		}
+	}
+}
+
+void Image::loadPCBitmap(Common::SeekableReadStream *fileStream, DGDS_EX ex) {
 	int64 vqtpos = -1;
 	int64 scnpos = -1;
 
 	DgdsChunkReader chunk(fileStream);
-	while (chunk.readNextHeader(ex, filename)) {
+	while (chunk.readNextHeader(ex, _filename)) {
 		if (chunk.isContainer()) {
 			continue;
 		}
@@ -211,7 +281,7 @@ void Image::loadBitmap(const Common::String &filename) {
 			scnpos = fileStream->pos();
 		} else if (chunk.isSection(ID_OFF)) {
 			if (vqtpos == -1 && scnpos == -1)
-				error("Expect VQT or SCN chunk before OFF chunk in BMP resource %s", filename.c_str());
+				error("Expect VQT or SCN chunk before OFF chunk in BMP resource %s", _filename.c_str());
 
 			// 2 possibilities: A set of offsets (find the one which we need and use it)
 			// or a single value of 0xffff.  If it's only one tile, the offset is always
@@ -252,8 +322,6 @@ void Image::loadBitmap(const Common::String &filename) {
 			break;
 		}
 	}
-
-	delete fileStream;
 }
 
 void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, ImageFlipMode flipMode, int dstWidth, int dstHeight) const {

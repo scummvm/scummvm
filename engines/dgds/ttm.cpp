@@ -1181,7 +1181,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
-			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
+			_vm->_soundPlayer->playAmigaSfx(sval.c_str(), 0, 255);
 		} else {
 			if (_vm->_soundPlayer->loadMusic(sval.c_str()))
 				_vm->_soundPlayer->playMusic(seq._currentSongId);
