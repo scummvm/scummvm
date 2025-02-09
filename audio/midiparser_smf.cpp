@@ -26,9 +26,6 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-static const byte commandLengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
-static const byte specialLengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
-
 MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source) {
 	for (int i = 0; i < ARRAYSIZE(_noteChannelToTrack); i++)
 		_noteChannelToTrack[i] = -1;
