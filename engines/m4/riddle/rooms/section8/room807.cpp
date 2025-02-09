@@ -154,7 +154,7 @@ void Room807::init() {
 		_field38 = 0;
 
 		if (!player_been_here(807)) {
-			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 450, 60, 1, Walker::player_walker_callback, "mc_trek");
+			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 450, 600, 1, Walker::player_walker_callback, "mc_trek");
 			ws_demand_location(_G(my_walker), 366, 345);
 			ws_demand_facing(_G(my_walker), 11);
 			ws_hide_walker(_G(my_walker));

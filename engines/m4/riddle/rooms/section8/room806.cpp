@@ -254,7 +254,7 @@ void Room806::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (walkFl && player_said_any("  ", "   ")) {
+	if (!walkFl && player_said_any("  ", "   ")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
