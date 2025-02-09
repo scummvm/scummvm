@@ -475,9 +475,10 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 
 	// Compute the side edge vector by interpolating between topRightVector and
 	// bottomRightVector based on the mouse Y position
-	mousePixelVector[0] = topRightVector[0];
-	mousePixelVector[1] = topRightVector[1] + ((float)(my - h / 2) / (float)h * (topRightVector[1] - bottomRightVector[1]));
-	mousePixelVector[2] = topRightVector[2];
+	float yRatio = (float)(my - h / 2) / (float)h;
+	mousePixelVector[0] = topRightVector[0] + yRatio * (bottomRightVector[0] - topRightVector[0]);
+	mousePixelVector[1] = topRightVector[1] + yRatio * (bottomRightVector[1] - topRightVector[1]);
+	mousePixelVector[2] = topRightVector[2] + yRatio * (bottomRightVector[2] - topRightVector[2]);
 
 	// Multiply the X value ([0]) of the result of that on a value ranging from -1 to 1
 	// based on the mouse X position to get the mouse pixel vector
