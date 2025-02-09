@@ -63,6 +63,7 @@ Section8::Section8() : Rooms::Section() {
 	add(834, &_room834);
 	add(844, &_room844);
 	add(850, &_room850);
+	add(852, &_room852);
 	add(860, &_room860);
 	add(861, &_room861);
 }

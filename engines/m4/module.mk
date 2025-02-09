@@ -298,6 +298,7 @@ MODULE_OBJS = \
 	riddle/rooms/section8/room834.o \
 	riddle/rooms/section8/room844.o \
 	riddle/rooms/section8/room850.o \
+	riddle/rooms/section8/room852.o \
 	riddle/rooms/section8/room860.o \
 	riddle/rooms/section8/room861.o \
 	riddle/rooms/section9/section9.o \
