@@ -241,7 +241,6 @@ void digi_unload(const Common::String &name) {
 }
 
 int32 digi_play(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num) {
-	warning("digi_play: %s", name);
 	return _G(digi).play(name, channel, vol, trigger, room_num);
 }
 

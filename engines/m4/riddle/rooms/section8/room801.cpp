@@ -540,7 +540,7 @@ void Room801::parser() {
 	}
 
 	else if (talkFl && player_said("farmer")) {
-		if (_G(flags)[kTerracottaSoldiers] || _G(flags)[kRiceSackMoved] || _G(flags)[V255]) {
+		if (_G(flags)[kTerracottaSoldiers] || _G(flags)[kRiceSackMoved] || _G(flags)[kOpenedHoleInWall]) {
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
 			_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, true, triggerMachineByHashCallback, "rip talking to farmer");
@@ -562,7 +562,7 @@ void Room801::parser() {
 			conv_load("conv801a", 10, 10, 747);
 			conv_set_shading(65);
 			conv_export_value(conv_get_handle(), _G(flags)[kTerracottaSoldiers], 0);
-			conv_export_value(conv_get_handle(), _G(flags)[V255], 1);
+			conv_export_value(conv_get_handle(), _G(flags)[kOpenedHoleInWall], 1);
 			conv_export_value(conv_get_handle(), _G(flags)[kRiceSackMoved], 2);
 
 			conv_play(conv_get_handle());
