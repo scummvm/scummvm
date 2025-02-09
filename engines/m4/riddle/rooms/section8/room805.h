@@ -54,12 +54,6 @@ private:
 	int32 _ripSiftsDirtSeries = 0;
 	int32 _ripTalkerPos3 = 0;
 
-	int32 _unkSeries1 = 0;
-	int32 _unkSeries5 = 0;
-	int32 _unkSeries6 = 0;
-	int32 _unkSeries7 = 0;
-	int32 _unkSeries8 = 0;
-
 	bool _unkFlag1 = false;
 
 	machine *_chariotRestMach = nullptr;
