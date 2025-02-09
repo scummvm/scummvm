@@ -70,7 +70,6 @@ private:
 	int32 _rptmr15Series = 0;
 	int32 _shovelSeries = 0;
 
-	int32 _cellarDoorOpened = 0;
 	int32 _counter = 0;
 	int32 _ripleyShould = 0;
 	int32 _meiShould = 0;

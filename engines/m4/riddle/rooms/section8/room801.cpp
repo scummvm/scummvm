@@ -88,7 +88,7 @@ void Room801::init() {
 		_G(flags)[V251] = 0;
 		_G(flags)[kTerracottaSoldiers] = 0;
 		_G(flags)[V273] = 0;
-		_cellarDoorOpened = 0;
+		_cellarOpenFl = false;
 
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", false);
@@ -111,15 +111,15 @@ void Room801::init() {
 														 20, 310, 3, triggerMachineByHashCallback3000, "mc_trek");
 		kernel_timing_trigger(60, 1, nullptr);
 	} else if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
-		if (_cellarDoorOpened) {
+		if (_cellarOpenFl) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
 			_cellarDoorOpenSeries = series_load("CELLAR DOOR OPEN", -1, nullptr);
 			_cellarDoorOpenMach = series_place_sprite("CELLAR DOOR OPEN", 0, 0, -53, 100, 1024);
 		} else {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", false);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", false);
 			_cellarDoorClosedSeries = series_load("CELLAR DOOR CLOSED", -1, nullptr);
 			_cellarDoorClosedMach = series_place_sprite("CELLAR DOOR CLOSED", 0, 0, -53, 100, 1280);
@@ -132,7 +132,7 @@ void Room801::init() {
 		ws_demand_facing(_G(my_walker), 8);
 		ws_demand_location(_G(my_walker), 525, 301);
 		_ripReturnsFromRootCellarSeries = series_load("rip returns from root cellar", -1, nullptr);
-		_cellarDoorOpened = 1;
+		_cellarOpenFl = true;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
@@ -161,9 +161,9 @@ void Room801::pre_parser() {
 
 void Room801::parser() {
 	const bool lookFl = player_said_any("look", "look at");
-	const bool takeFl = player_said_any("talk", "talk to");
+	const bool talkFl = player_said_any("talk", "talk to");
 	const bool gearFl = player_said("gear");
-	const bool talkFl = player_said("take");
+	const bool takeFl = player_said("take");
 	const bool goFl = player_said("go");
 
 	if (player_said("conv801a"))
@@ -1185,7 +1185,7 @@ void Room801::daemon() {
 }
 
 void Room801::syncGame(Common::Serializer &s) {
-	s.syncAsSint32LE(_cellarDoorOpened);
+	s.syncAsByte(_cellarOpenFl);
 }
 
 void Room801::room801_conv801a() {
