@@ -31,7 +31,7 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-int32 Section8Room::subCE498(int32 val1) {
+int32 Section8Room::getStatueIndex(int32 val1) {
 	if (val1 == _var2)
 		return 0;
 
@@ -63,7 +63,7 @@ int32 Section8Room::subCE52E(int32 val1) {
 	if (_currentRoom == 834 && val1 == 5)
 		return 2;
 
-	if (subCE498(val1) < 0)
+	if (getStatueIndex(val1) < 0)
 		return 0;
 
 	return 1;
@@ -79,7 +79,7 @@ void Section8Room::moveScreen(int32 dx, int32 dy) {
 }
 
 void Section8Room::getSeriesName(int32 val1, bool true_or_False) {
-	if (subCE498(val1) < 0)
+	if (getStatueIndex(val1) < 0)
 		_currentSeriesName = Common::String::format("%dsldf%d", _currentRoom, val1);
 	else if (true_or_False)
 		_currentSeriesName = Common::String::format("%dsldr%d", _currentRoom, val1);
@@ -912,11 +912,10 @@ void Section8Room::daemon() {
 	case 16: {
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		int32 retVal = subCE498(_coordArrayId);
-		if (retVal > 0) {
-			terminateMachine(_machArr[retVal]);
-			_machArr[retVal] = nullptr;
-		}
+
+		int32 retVal = getStatueIndex(_coordArrayId);
+		if (retVal >= 0)
+			terminateMachineAndNull(_machArr[retVal]);
 
 		getSeriesName(_coordArrayId, true);
 		_dynSerie1 = series_load(_currentSeriesName.c_str(), -1, nullptr);
@@ -949,7 +948,7 @@ void Section8Room::daemon() {
 		break;
 
 	case 19:
-		if (subCE498(_coordArrayId) < 0) {
+		if (getStatueIndex(_coordArrayId) < 0) {
 			kernel_timing_trigger(120, 20, nullptr);
 			digi_play("950_s32", 2, 255, -1, -1);
 		} else {
@@ -987,7 +986,7 @@ void Section8Room::daemon() {
 		series_unload(_dynSerie1);
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_facing(_G(my_walker), 3);
-		int32 retVal = subCE498(_coordArrayId);
+		int32 retVal = getStatueIndex(_coordArrayId);
 		if (retVal < 0) {
 			digi_play("com066", 1, 255, -1, 997);
 		} else {

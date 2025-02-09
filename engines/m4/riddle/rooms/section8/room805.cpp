@@ -197,6 +197,7 @@ void Room805::daemonSub1() {
 
 	case 102:
 	case 103:
+	case 107:
 	case 108:
 		ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
 		ws_walk(_mcMach, 250, 201, nullptr, 101, 3, true);
@@ -1194,6 +1195,7 @@ void Room805::daemon() {
 	case 103:
 	case 104:
 	case 105:
+	case 107:
 	case 108:
 	case 109:
 	case 111:

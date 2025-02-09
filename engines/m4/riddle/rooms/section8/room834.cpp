@@ -45,13 +45,13 @@ void Room834::init() {
 	_var5 = 7;
 
 	getSeriesName(2, false);
-	_machArr[0] = series_play(_currentSeriesName.c_str(), 767, 16, -1, 0, 0, 100, 0, 0, 0, -1);
+	_machArr[0] = series_play(_currentSeriesName.c_str(), 0x2ff, 16, -1, 0, 0, 100, 0, 0, 0, -1);
 	getSeriesName(3, false);
-	_machArr[1] = series_play(_currentSeriesName.c_str(), 767, 16, -1, 0, 0, 100, 0, 0, 0, -1);
-	getSeriesName(6, false);
-	_machArr[2] = series_play(_currentSeriesName.c_str(), 767, 16, -1, 0, 0, 100, 0, 0, 0, -1);
+	_machArr[1] = series_play(_currentSeriesName.c_str(), 0x2ff, 16, -1, 0, 0, 100, 0, 0, 0, -1);
+	getSeriesName(5, false);
+	_machArr[2] = series_play(_currentSeriesName.c_str(), 0x2ff, 16, -1, 0, 0, 100, 0, 0, 0, -1);
 	getSeriesName(7, false);
-	_machArr[3] = series_play(_currentSeriesName.c_str(), 767, 16, -1, 0, 0, 100, 0, 0, 0, -1);
+	_machArr[3] = series_play(_currentSeriesName.c_str(), 0x2ff, 16, -1, 0, 0, 100, 0, 0, 0, -1);
 
 	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
 	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", false);
