@@ -88,7 +88,7 @@ void Room802::init() {
 	_ripDownStairs = series_load("802 RIP DOWN STAIRS", -1, nullptr);
 	_ripLooksAtHand = series_load("RIP looks at hand in wall", -1, nullptr);
 
-	if (inv_player_has("match") && !_G(flags)[kOpenedHoleInWall]) {
+	if (inv_player_has("match") && _G(flags)[kOpenedHoleInWall]) {
 		_lookWithMatch = series_load("802 LOOK WITH MATCH", -1, nullptr);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "HOLE", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "HOLE ", true);
@@ -194,7 +194,7 @@ void Room802::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			interface_hide();
-			ws_unhide_walker(_G(my_walker));
+			ws_hide_walker(_G(my_walker));
 			_ripActionMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, false, triggerMachineByHashCallback, "rip lights match");
 			sendWSMessage_10000(1, _ripActionMach, _lookWithMatch, 1, 12, 10, _lookWithMatch, 12, 12, 0);
 			break;
