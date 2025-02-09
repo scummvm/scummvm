@@ -343,6 +343,8 @@ private:
 		void constructPanorama();
 		Graphics::Surface *constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname);
 
+		int lookupHotspot(int16 x, int16 y);
+
 		float getPanAngle() { return _curPanAngle; }
 		void setPanAngle(float angle);
 		float getTiltAngle() { return _curTiltAngle; }

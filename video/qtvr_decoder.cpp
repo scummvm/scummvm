@@ -431,6 +431,66 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	_curTiltAngle = 0.0f;
 }
 
+int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
+	if (!_isPanoConstructed)
+		return -1;
+
+	int hotspot = -1;
+
+	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
+
+	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+
+	float cornerVectors[3][3];
+
+	float *topRightVector = cornerVectors[0];
+	float *bottomRightVector = cornerVectors[1];
+	float *mousePixelVector = cornerVectors[2];
+
+	bottomRightVector[1] = tan(_decoder->_fov * M_PI / 360.0);
+	bottomRightVector[0] = bottomRightVector[1] * (float)w / (float)h;
+	bottomRightVector[2] = 1.0f;
+
+	topRightVector[0] = bottomRightVector[0];
+	topRightVector[1] = -bottomRightVector[1];
+	topRightVector[2] = bottomRightVector[2];
+
+	// Apply pitch (tilt) rotation
+	float cosTilt = cos(_curTiltAngle * M_PI / 180.0);
+	float sinTilt = sin(_curTiltAngle * M_PI / 180.0);
+
+	for (int v = 0; v < 2; v++) {
+		float y = cornerVectors[v][1];
+		float z = cornerVectors[v][2];
+
+		float newZ = z * cosTilt - y * sinTilt;
+		float newY = y * cosTilt + z * sinTilt;
+
+		cornerVectors[v][1] = newY;
+		cornerVectors[v][2] = newZ;
+	}
+
+	float minTiltY = tan(desc->_vPanBottom * M_PI / 180.0f);
+	float maxTiltY = tan(desc->_vPanTop * M_PI / 180.0f);
+
+	mousePixelVector[0] = topRightVector[0] * ((float)(mx - w / 2) / (float)w * 2.0);
+	mousePixelVector[1] = topRightVector[1] + ((float)(my - h / 2) / (float)h * (topRightVector[1] - bottomRightVector[1]));
+	mousePixelVector[2] = topRightVector[2];
+
+	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
+
+	// panorama is turned 90 degrees, width is height
+	int hotX = yawAngle * (float)_constructedPano->h / 2.0 / M_PI;
+
+	float xzVectorLen = sqrt(mousePixelVector[0] * mousePixelVector[0] + mousePixelVector[2] * mousePixelVector[2]);
+
+	int hotY = (int)((float)mousePixelVector[1] / (float)xzVectorLen * (float)_constructedPano->w);
+
+	warning("x: %d y: %d (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
+
+	return hotspot;
+}
+
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	if (!_isPanoConstructed)
 		return;
@@ -697,6 +757,12 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	_prevMouseX = x;
 	_prevMouseY = y;
+
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+	int hotspot = track->lookupHotspot(x, y);
+
+	debug(3, "hotspot: %d", hotspot);
 }
 
 #define REPEAT_DELAY 30000
