@@ -473,17 +473,28 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	float minTiltY = tan(desc->_vPanBottom * M_PI / 180.0f);
 	float maxTiltY = tan(desc->_vPanTop * M_PI / 180.0f);
 
-	mousePixelVector[0] = topRightVector[0] * ((float)(mx - w / 2) / (float)w * 2.0);
+	// Compute the side edge vector by interpolating between topRightVector and
+	// bottomRightVector based on the mouse Y position
+	mousePixelVector[0] = topRightVector[0];
 	mousePixelVector[1] = topRightVector[1] + ((float)(my - h / 2) / (float)h * (topRightVector[1] - bottomRightVector[1]));
 	mousePixelVector[2] = topRightVector[2];
 
+	// Multiply the X value ([0]) of the result of that on a value ranging from -1 to 1
+	// based on the mouse X position to get the mouse pixel vector
+	mousePixelVector[0] = mousePixelVector[0] * ((float)(mx - w / 2) / (float)w * 2.0);
+
+	// The yaw angle is atan2(mousePixelVector[0], mousePixelVector[2]), multiply that
+	// by the panorama width and divide by 2*pi to get the horizontal coordinate
 	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
 
 	// panorama is turned 90 degrees, width is height
 	int hotX = yawAngle * (float)_constructedPano->h / 2.0 / M_PI;
 
+	// To get the vertical coordinate, need to project the vector on to a unit cylinder.
+	// To do that, compute the length of the XZ vector,
 	float xzVectorLen = sqrt(mousePixelVector[0] * mousePixelVector[0] + mousePixelVector[2] * mousePixelVector[2]);
 
+	// then compute projectedY = mousePixelVector[1] / xzVectorLen
 	int hotY = (int)((float)mousePixelVector[1] / (float)xzVectorLen * (float)_constructedPano->w);
 
 	warning("x: %d y: %d (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
