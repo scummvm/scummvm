@@ -33,8 +33,26 @@ public:
 	Room811() : Room() {}
 	~Room811() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _field0 = 0;
+	
+	int32 _811BA01Series = 0;
+	int32 _811BA02Series = 0;
+	int32 _811BA03Series = 0;
+	int32 _811BA04Series = 0;
+	int32 _811BA05Series = 0;
+	int32 _811MC01Series = 0;
+	int32 _811RP01Series = 0;
+	
+	machine *_811BaronMach = nullptr;
+	machine *_811McMach = nullptr;
+	machine *_811RipleyMach = nullptr;
 };
 
 } // namespace Rooms
