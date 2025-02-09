@@ -77,6 +77,7 @@ Common::Error DarkseedEngine::run() {
 	_screen = new Graphics::Screen();
 	_tosText = new TosText();
 	_tosText->load();
+	_objectVar.loadObjectNames();
 	_console = new Console(_tosText, _sound);
 	_player = new Player();
 	_useCode = new UseCode(_console, _player, _objectVar, _inventory);

@@ -37,6 +37,7 @@ class Objects {
 	Common::Array<int16> _objectVar;
 	Common::Array<Common::Point> _moveObjectXY;
 	Common::Array<uint8> _moveObjectRoom;
+	Common::U32StringArray _objectNames;
 
 public:
 	Common::Array<int16> _objectRunningCode;
@@ -45,6 +46,7 @@ public:
 	static constexpr int MAX_OBJECTS = 199;
 	Objects();
 	void reset();
+	void loadObjectNames();
 
 	Common::Error sync(Common::Serializer &s);
 
@@ -62,7 +64,7 @@ public:
 	int getMoveObjectRoom(uint16 idx);
 	void setMoveObjectRoom(uint16 idx, uint8 value);
 
-	Common::U32String getObjectName(int idx);
+	const Common::U32String &getObjectName(int idx);
 
 	int16 &operator[](uint16 varIdx);
 	const int16 &operator[](uint16 varIdx) const;

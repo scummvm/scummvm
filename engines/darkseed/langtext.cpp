@@ -45,7 +45,7 @@ const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18n
 }
 
 Common::U32String convertToU32String(const char *text, Common::Language language) {
-	uint len = strlen(text);
+	size_t len = strlen(text);
 	switch (language) {
 	case Common::ZH_ANY:
 	case Common::KO_KOR: {

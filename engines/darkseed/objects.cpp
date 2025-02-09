@@ -31,6 +31,7 @@ Objects::Objects() {
 	_objectRunningCode.resize(MAX_OBJECTS);
 	_moveObjectXY.resize(MAX_OBJECTS);
 	_moveObjectRoom.resize(MAX_OBJECTS); // The original only allocates 42 entries here but writes 199 in the save file!
+	_objectNames.resize(MAX_OBJECTS);
 	reset();
 }
 
@@ -184,19 +185,12 @@ void Objects::setObjectRunningCode(int idx, int16 value) {
 	_objectRunningCode[idx] = value;
 }
 
-Common::U32String Objects::getObjectName(int idx) {
+const Common::U32String &Objects::getObjectName(int idx) {
 	if (idx < 0 || idx >= MAX_OBJECTS) {
 		error("getObjectName: index out of range.");
 	}
 
-	switch (g_engine->getLanguage()) {
-	case Common::FR_FRA: return Common::U32String(objectNameTbl_fr[idx]);
-	case Common::DE_DEU: return Common::U32String(objectNameTbl_de[idx]);
-	case Common::ES_ESP: return Common::U32String(objectNameTbl_es[idx]);
-	default: break;
-	}
-
-	return Common::U32String(objectNameTbl_en[idx]);
+	return _objectNames[idx];
 }
 
 static inline void syncPoint(Common::Serializer &s, Common::Point &value) {
@@ -211,6 +205,17 @@ Common::Error Objects::sync(Common::Serializer &s) {
 	s.syncArray(_moveObjectXY.data(), _moveObjectXY.size(), syncPoint);
 	s.syncArray(_moveObjectRoom.data(), _moveObjectRoom.size(), Common::Serializer::Byte);
 	return Common::kNoError;
+}
+
+void Objects::loadObjectNames() {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		switch (g_engine->getLanguage()) {
+		case Common::FR_FRA: _objectNames[i] = Common::U32String(objectNameTbl_fr[i]); break;
+		case Common::DE_DEU: _objectNames[i] = Common::U32String(objectNameTbl_de[i]); break;
+		case Common::ES_ESP: _objectNames[i] = Common::U32String(objectNameTbl_es[i]); break;
+		default: _objectNames[i] = Common::U32String(objectNameTbl_en[i]); break;
+		}
+	}
 }
 
 } // End of namespace Darkseed
