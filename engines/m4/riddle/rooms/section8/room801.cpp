@@ -86,7 +86,7 @@ void Room801::init() {
 	if (_G(game).previous_room == 850) {
 		_G(flags)[V250] = 0;
 		_G(flags)[V251] = 0;
-		_G(flags)[V252] = 0;
+		_G(flags)[kTerracottaSoldiers] = 0;
 		_G(flags)[V273] = 0;
 		_cellarDoorOpened = 0;
 
@@ -274,38 +274,56 @@ void Room801::parser() {
 	else if (lookFl && player_said("pottery")) {
 		switch (_G(kernel).trigger) {
 		case -1:
+			if (_G(flags)[kTerracottaSoldiers]) {
+				digi_play("801r22", 1);
+			} else {
+				player_set_commands_allowed(false);
+				ws_hide_walker();
+				_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100,
+					false, triggerMachineByHashCallback, "rip kneel to pottery");
+				sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 1, 3, 1,
+					_ripKneelPotterySeries, 3, 3, 0);
+				digi_play("801r19", 1, 255, 1);
+			}
 			break;
 		case 1:
 			if (_counter == 0)
 				++_counter;
 			else
-				sendWSMessage_10000(1, _ripAnimationMach, _ripEntersRootCellarSeries, 3, 42, 2, _ripEntersRootCellarSeries, 42, 42, 0);
+				sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 3, 42, 2,
+					_ripKneelPotterySeries, 42, 42, 0);
 			break;
 		case 2:
+			_counter = 0;
 			digi_play("801r20", 1, 255, 3, -1);
-			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 40, 3, _meiPrattleLoopSeries, 40, 40, 0);
+			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 31, 40, 3,
+				_meiPrattleLoopSeries, 40, 40, 0);
 			break;
 		case 3:
 			if (_counter == 0)
 				++_counter;
 			else {
 				_counter = 0;
-				sendWSMessage_10000(1, _ripAnimationMach, _ripEntersRootCellarSeries, 42, 26, 4, _ripEntersRootCellarSeries, 26, 26, 0);
-				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 40, 4, _meiPrattleLoopSeries, 37, 40, 1);
+				sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 42, 26, 4,
+					_ripKneelPotterySeries, 26, 26, 0);
+				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 40, 4,
+					_meiPrattleLoopSeries, 37, 40, 1);
 				digi_play("801m10", 1, 255, 4, -1);
 			}
 			break;
 		case 4:
-			if (_counter == 2)
+			if (_counter < 2)
 				++_counter;
 			else {
 				_counter = 0;
-				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 40, 40, 5, _meiPrattleLoopSeries, 40, 40, 0);
-				sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 26, 42, 5, _ripKneelPotterySeries, 42, 42, 0);
+				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 40, 40, 5,
+					_meiPrattleLoopSeries, 40, 40, 0);
+				sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 26, 42, 5,
+					_ripKneelPotterySeries, 42, 42, 0);
 			}
 			break;
 		case 5:
-			if (_counter == 1)
+			if (_counter < 1)
 				++_counter;
 			else {
 				_counter = 0;
@@ -313,11 +331,14 @@ void Room801::parser() {
 			}
 			break;
 		case 6:
-			sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 42, 26, 7, _ripKneelPotterySeries, 26, 26, 0);
+			sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 42, 26, 7,
+				_ripKneelPotterySeries, 26, 26, 0);
 			break;
 		case 7:
-			sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 26, 1, 8, _ripKneelPotterySeries, 1, 1, 0);
-			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 40, 9, _meiPrattleLoopSeries, 37, 40, 1);
+			sendWSMessage_10000(1, _ripAnimationMach, _ripKneelPotterySeries, 26, 1, 8,
+				_ripKneelPotterySeries, 1, 1, 0);
+			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 37, 40, 9,
+				_meiPrattleLoopSeries, 37, 40, 1);
 			digi_play("801m11", 1, 255, 9, -1);
 			break;
 		case 8:
@@ -330,11 +351,12 @@ void Room801::parser() {
 				++_counter;
 			else {
 				_counter = 0;
-				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 40, 31, 10, _meiPrattleLoopSeries, 31, 31, 0);
+				sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 40, 31, 10,
+					_meiPrattleLoopSeries, 31, 31, 0);
 			}
 			break;
 		case 10:
-			_G(flags)[V252] = 1;
+			_G(flags)[kTerracottaSoldiers] = 1;
 			player_set_commands_allowed(true);
 			break;
 		default:
@@ -518,7 +540,7 @@ void Room801::parser() {
 	}
 
 	else if (talkFl && player_said("farmer")) {
-		if (_G(flags)[V252] || _G(flags)[V253] || _G(flags)[V255]) {
+		if (_G(flags)[kTerracottaSoldiers] || _G(flags)[V253] || _G(flags)[V255]) {
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
 			_ripAnimationMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, true, triggerMachineByHashCallback, "rip talking to farmer");
@@ -539,7 +561,7 @@ void Room801::parser() {
 			_G(kernel).trigger_mode = KT_PARSE;
 			conv_load("conv801a", 10, 10, 747);
 			conv_set_shading(65);
-			conv_export_value(conv_get_handle(), _G(flags)[V252], 0);
+			conv_export_value(conv_get_handle(), _G(flags)[kTerracottaSoldiers], 0);
 			conv_export_value(conv_get_handle(), _G(flags)[V255], 1);
 			conv_export_value(conv_get_handle(), _G(flags)[V253], 2);
 

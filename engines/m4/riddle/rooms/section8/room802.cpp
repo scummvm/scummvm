@@ -180,7 +180,7 @@ void Room802::parser() {
 	}
 
 	else if (lookFl && player_said("wall") && _G(flags)[V255] == 0) {
-		if (_G(flags)[V252]) {
+		if (_G(flags)[kTerracottaSoldiers]) {
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_trigger_dispatchx(kernel_trigger_create(14));
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -238,7 +238,7 @@ void Room802::parser() {
 				digi_play("802r09", 1, 255, 2, -1);
 			} else if (_G(flags)[V254]){
 				digi_play("802r15", 1, 255, 2, -1);
-			} else if (_G(flags)[V252]) {
+			} else if (_G(flags)[kTerracottaSoldiers]) {
 				digi_play("802r02", 1, 255, 2, -1);
 			} else {
 				digi_play("802r03", 1, 255, 2, -1);
