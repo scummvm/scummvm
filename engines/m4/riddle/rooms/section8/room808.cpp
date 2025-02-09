@@ -1853,7 +1853,7 @@ void Room808::setBridgeHotspots(int val1, bool activeFl) {
 void Room808::addMcHotspot(int32 val1) {
 	for (HotSpotRec* curr = _G(currentSceneDef).hotspots; curr != nullptr; curr = curr->next) {
 		if (scumm_stricmp(curr->vocab, "MEI CHEN")) {
-			hotspot_delete_record(_G(currentSceneDef).hotspots, curr);
+			_G(currentSceneDef).hotspots = hotspot_delete_record(_G(currentSceneDef).hotspots, curr);
 			break;
 		}
 	}

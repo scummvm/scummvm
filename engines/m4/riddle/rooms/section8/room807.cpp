@@ -65,7 +65,7 @@ void Room807::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "stone block", false);
 
 		if (player_been_here(807)) {
-			_807DoorMach = series_show("807kart", 4095, 0, -1, -1, 100, 0, 0);
+			_807DoorMach = series_show("807kart", 4095, 0, -1, -1, 0, 100, 0, 0);
 		}
 	}
 
@@ -131,8 +131,10 @@ void Room807::init() {
 		if (_G(flags)[V276] != 0) {
 			ws_walk(_G(my_walker), 250, 345, nullptr, 5, 2, true);
 		} else {
-			ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
-			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 295, 250, 5, Walker::player_walker_callback, "mc_trek");
+			ws_walk_load_shadow_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
+			ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
+			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1,
+				295, 250, 5, Walker::player_walker_callback, "mc_trek");
 			ws_walk(_mcTrekMach, 560, 400, nullptr, 5, 11, true);
 			ws_walk(_G(my_walker), 250, 345, nullptr, -1, 2, true);
 		}
@@ -229,15 +231,15 @@ void Room807::parser() {
 		opCode = 3;
 	else if (player_said_any("walk to", "spleen"))
 		opCode = 4;
-	else if (player_said("go"))
+	else if (!scumm_stricmp(_G(player).verb, "go"))
 		opCode = 5;
-	else if (player_said("crank"))
+	else if (!scumm_stricmp(_G(player).verb, "crank"))
 		opCode = 8;
-	else if (player_said("wooden beam"))
+	else if (!scumm_stricmp(_G(player).verb, "wooden beam"))
 		opCode = 6;
-	else if (player_said("wooden post"))
+	else if (!scumm_stricmp(_G(player).verb, "wooden post"))
 		opCode = 7;
-	else if (player_said("journal"))
+	else if (!scumm_stricmp(_G(player).verb, "journal"))
 		opCode = 9;
 	else if (player_said("conv807a"))
 		opCode = 10;
@@ -661,7 +663,7 @@ void Room807::parser() {
 				break;
 
 			case 20:
-				digi_play_loop("807r25", 1, 255, 30, -1);
+				digi_play("807r25", 1, 255, 30, -1);
 				setGlobals1(_ripTalkerPos5Series, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), -1);
 
