@@ -475,7 +475,7 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 
 	// Compute the side edge vector by interpolating between topRightVector and
 	// bottomRightVector based on the mouse Y position
-	float yRatio = (float)(my - h / 2) / (float)h;
+	float yRatio = (float)my / (float)h;
 	mousePixelVector[0] = topRightVector[0] + yRatio * (bottomRightVector[0] - topRightVector[0]);
 	mousePixelVector[1] = topRightVector[1] + yRatio * (bottomRightVector[1] - topRightVector[1]);
 	mousePixelVector[2] = topRightVector[2] + yRatio * (bottomRightVector[2] - topRightVector[2]);
@@ -498,7 +498,7 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	// then compute projectedY = mousePixelVector[1] / xzVectorLen
 	int hotY = (int)((float)mousePixelVector[1] / (float)xzVectorLen * (float)_constructedPano->w);
 
-	warning("x: %d y: %d (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
+	warning("x: %d y: %d (yRatio: %f) (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, yRatio, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
 
 	return hotspot;
 }
