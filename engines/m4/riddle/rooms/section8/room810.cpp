@@ -139,13 +139,13 @@ void Room810::parser() {
 		case 10:
 			_ripLooksAroundAndNodsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 415, 312, 46, 512, false, triggerMachineByHashCallback, "rip takes seal");
 			ws_hide_walker(_G(my_walker));
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 1, _ripTrekHandTalkPos3Series, 6, -1, _ripTrekHandTalkPos3Series, 7, 10, 4);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach,  _ripTrekHandTalkPos3Series,1, 6, -1, _ripTrekHandTalkPos3Series, 7, 10, 4);
 			_safariShadow3Mach = series_show("SAFARI SHADOW 3", 1280, 16, -1, -1, 0, 46, 415, 312);
 
 			break;
 
 		case 18:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 6, _ripTrekHandTalkPos3Series, 1, -1, _ripTrekHandTalkPos3Series, 1, 1, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach,  _ripTrekHandTalkPos3Series, 6, 1, -1, _ripTrekHandTalkPos3Series, 1, 1, 0);
 			kernel_timing_trigger(15, 20, nullptr);
 
 			break;
@@ -157,13 +157,13 @@ void Room810::parser() {
 			break;
 
 		case 22:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 1, _ripTrekHandTalkPos3Series, 6, -1, _ripTrekHandTalkPos3Series, 7, 10, 4);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach,  _ripTrekHandTalkPos3Series, 1, 6, -1, _ripTrekHandTalkPos3Series, 7, 10, 4);
 			kernel_timing_trigger(540, 25, nullptr);
 
 			break;
 
 		case 24:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 6, _ripTrekHandTalkPos3Series, 1, -1, _ripTrekHandTalkPos3Series, 1, 1, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach,  _ripTrekHandTalkPos3Series, 6, 1, -1, _ripTrekHandTalkPos3Series, 1, 1, 0);
 			break;
 
 		case 40:
@@ -171,13 +171,13 @@ void Room810::parser() {
 			terminateMachine(_safariShadow3Mach);
 			terminateMachine(_810SealMach);
 			_ripLooksAroundAndNodsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, false, triggerMachineByHashCallback, "rip takes seal");
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 1, _ripleyTakesJadeSealFromTombSeries, 38, 48, _ripleyTakesJadeSealFromTombSeries, 38, 38, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach,  _ripleyTakesJadeSealFromTombSeries, 1, 38, 48, _ripleyTakesJadeSealFromTombSeries, 38, 38, 0);
 
 			break;
 
 		case 48:
 			_blockSlidesOutMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, false, triggerMachineByHashCallback, "block slides out");
-			sendWSMessage_10000(1, _blockSlidesOutMach, 1, _810BlockSlidesOutSeries, 14, -1, _810BlockSlidesOutSeries, 14, 14, 0);
+			sendWSMessage_10000(1, _blockSlidesOutMach, _810BlockSlidesOutSeries, 1, 14, -1, _810BlockSlidesOutSeries, 14, 14, 0);
 			sendWSMessage_190000(_blockSlidesOutMach, 12);
 			digi_play("810_s01", 3, 255, 60, 810);
 			kernel_timing_trigger(40, 50, nullptr);
@@ -185,7 +185,7 @@ void Room810::parser() {
 			break;
 
 		case 50:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 39, _ripleyTakesJadeSealFromTombSeries, 45, 51, _ripleyTakesJadeSealFromTombSeries, 45, 45, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 39, 45, 51, _ripleyTakesJadeSealFromTombSeries, 45, 45, 0);
 			break;
 
 		case 51:
@@ -197,17 +197,17 @@ void Room810::parser() {
 			break;
 
 		case 53:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 54, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 46, 52, 54, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
 			break;
 
 		case 54:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 52, _ripleyTakesJadeSealFromTombSeries, 46, 55, _ripleyTakesJadeSealFromTombSeries, 57, 57, 0);
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 52, 46, 55, _ripleyTakesJadeSealFromTombSeries, 57, 57, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 46, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
 
 			break;
 
 		case 55:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 46, _ripleyTakesJadeSealFromTombSeries, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 46, 52, 56, _ripleyTakesJadeSealFromTombSeries, 52, 52, 0);
 			break;
 
 		case 56:
@@ -215,7 +215,7 @@ void Room810::parser() {
 			break;
 
 		case 58:
-			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 52, _ripleyTakesJadeSealFromTombSeries, 84, 110, _ripleyTakesJadeSealFromTombSeries, 84, 84, 0);
+			sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripleyTakesJadeSealFromTombSeries, 52, 84, 110, _ripleyTakesJadeSealFromTombSeries, 84, 84, 0);
 			kernel_timing_trigger(25, 70, nullptr);
 
 			break;
@@ -270,7 +270,7 @@ void Room810::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		_ripLooksAroundAndNodsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 160, 318, 46, 768, false, triggerMachineByHashCallback, "rip looks around and nods");
-		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 1, _ripPos3LookAroundSeries, 16, 51, _ripPos3LookAroundSeries, 17, 20, 4);
+		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripPos3LookAroundSeries, 1, 16, 51, _ripPos3LookAroundSeries, 17, 20, 4);
 		_safariShadow3Mach = series_show("SAFARI SHADOW 3", 1280, 16, -1, -1, 0, 46, 160, 318);
 
 		break;
@@ -283,7 +283,7 @@ void Room810::daemon() {
 
 	case 52:
 		sendWSMessage_190000(_ripLooksAroundAndNodsMach, 12);
-		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, 16, _ripPos3LookAroundSeries, 1, 53, _ripPos3LookAroundSeries, 1, 1, 0);
+		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripPos3LookAroundSeries, 16, 1, 53, _ripPos3LookAroundSeries, 1, 1, 0);
 
 		break;
 

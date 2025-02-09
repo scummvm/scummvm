@@ -38,7 +38,7 @@ extern void setGlobals1(int series, int val2, int val3, int val4, int val5,
 extern void setGlobals3(int series, int val1, int val2);
 extern void setGlobals4(int series, int val2, int val3, int val4);
 
-extern void sendWSMessage_10000(int val1, machine *mach, int val2, int val3,
+extern void sendWSMessage_10000(int val1, machine *mach, int series1, int val3,
 	int val4, int trigger, int series2, int val6, int val7, int val8);
 extern void sendWSMessage_10000(machine *mach, int destX, int destY, int facing,
 	int trigger, int complete_walk);
