@@ -1060,17 +1060,74 @@ void Adlib::OnTimer() {
 					while (g2291 > bp8) {
 						// l0017_211E:
 						// TODO: Continue here
-						gArray222C[bp8]
+						if (gArray222C[bp8] == 0) {
+							// l0017_2128:
+							if (gArray227F[bp8] == bp3) {
+								// l0017_2134:
+								if (gArray2235[bp8] == bp4) {
+									break;
+								}
+							}
+						}
+						// l0017_2140:
+						bp8++;
 					}
 					// l0017_2145:
+					if (g2291 != bp8) {
+						// l0017_214F:
+						Func2A80(bp8, bp4, gArray226F[bp3]);
+						gArray222C[bp8] = 1;
+					}
 				} else {
 					// l0017_2172:
+					uint8 bx = Func2779(0xBD);
+					uint8 dx = bp3;
+					uint8 ax = 0x0F - dx;
+					dx = ax;
+					ax = 1 << dx;
+					dx = ax;
+					ax = (0xFF - dx) & bx;
+					Func2792(0xBD, ax);
 				}
-					
-
-			} else {
-				// l0017_21A3:
+			} 
+			// l0017_21A3 and l0017_21AC:
+			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
+				// l0017_21B5:
+				// TODO: Define in the header
+				Macs2::StreamHandler *sh2252;
+				Macs2::StreamHandler *sh225A;
+				sh2252 = Func19BE_SH(sh2252, 0x2);
+				sh225A->seek(0x2, SEEK_CUR);
 			}
+			// l0017_21DF:
+			if ((bp6 & 0xF0) == 0xB0) {
+				// l0017_21EB:
+				Macs2::StreamHandler *sh2252;
+				Macs2::StreamHandler *sh225A;
+				sh2252 = Func19BE_SH(sh2252, 0x2);
+				sh225A->seek(0x2, SEEK_CUR);
+				if (bp4 == 0x66) {
+					// l0017_221C:
+					g2259 = bp5;
+					g2258 = g2258 | 0x20;
+				} else {
+					// l0017_222D:
+					if (bp4 == 0x67) {
+						// TODO: Continue from here
+					}
+					// l0017_2258:
+				}
+				
+				
+
+			}
+			// 231Eh
+			mov	al,[bp-6h]
+	and	al,0F0h
+	cmp	al,0B0h
+	;; #timing_log: 14 take the jump
+	jz	21EBh
+	
 							
 		}
 	}

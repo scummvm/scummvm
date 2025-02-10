@@ -129,6 +129,9 @@ namespace Macs2 {
 		// [2258h] - TODO: Not sure about size - Initialization
 		uint8 g2258;
 
+		// [2259h] - TODO: Not sure about size - Initialization
+		uint8 g2259;
+
 		// [225Eh] - TODO: Not sure about size - Initialization
 		uint8 g225E;
 
