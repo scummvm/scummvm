@@ -632,7 +632,7 @@ void Room808::parser() {
 
 			case 10:
 				inv_give_to_player("FARMER'S SHOVEL");
-				hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", false);
+				hotspot_set_active("FARMER'S SHOVEL   ", false);
 				kernel_examine_inventory_object("PING FARMER'S SHOVEL", _G(master_palette), 5, 1, 125, 125, 20, nullptr, -1);
 
 				break;
@@ -682,8 +682,8 @@ void Room808::parser() {
 				case 30:
 					player_set_commands_allowed(true);
 					inv_give_to_player("crank");
-					hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
-					hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
+					hotspot_set_active("slot", true);
+					hotspot_set_active("crank", false);
 					ws_demand_facing(_G(my_walker), 10);
 
 					break;
@@ -898,8 +898,8 @@ void Room808::parser() {
 				_G(flags)[V100] = 1;
 				_G(flags)[V276] = 0;
 				_G(flags)[V098] = 0;
-				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				hotspot_set_active("crank", true);
+				hotspot_set_active("slot", false);
 				digi_unload("808_s10");
 
 				break;
@@ -912,8 +912,8 @@ void Room808::parser() {
 				}
 
 				_G(flags)[V098] = 0;
-				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				hotspot_set_active("crank", true);
+				hotspot_set_active("slot", false);
 				digi_unload("808_s10");
 
 				break;
@@ -1164,8 +1164,8 @@ void Room808::parser() {
 
 			case 10:
 				inv_move_object("crank", 808);
-				hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-				hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+				hotspot_set_active("crank", true);
+				hotspot_set_active("slot", false);
 				kernel_timing_trigger(60, 20, nullptr);
 
 				break;
@@ -1212,7 +1212,7 @@ void Room808::parser() {
 
 			case 10:
 				player_set_commands_allowed(true);
-				hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", true);
+				hotspot_set_active("FARMER'S SHOVEL   ", true);
 				terminateMachine(_808PosMach);
 				_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 3, 100, 0, 0);
 				ws_unhide_walker(_G(my_walker));
@@ -1732,107 +1732,92 @@ bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
 void Room808::setBridgeHotspots(int val1, bool activeFl) {
 	switch (val1) {
 	case 0:
-		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge", activeFl);
+		hotspot_set_active("wheel", activeFl);
+		hotspot_set_active("bridge", activeFl);
 
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", false);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+		hotspot_set_active("hole in chasm wall", false);
+		hotspot_set_active("hole in bridge", false);
 
-		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL", false);
-		else
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL", true);
+		hotspot_set_active("FARMER'S SHOVEL",
+			inv_object_in_scene("FARMER'S SHOVEL", 808) && activeFl);
 
-		if (inv_object_in_scene("crank", 808) || _G(flags)[V098] != 0) {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		if (inv_object_in_scene("crank", 808) && !_G(flags)[V098]) {
+			hotspot_set_active("crank", true);
+			hotspot_set_active("slot", false);
 		} else {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+			hotspot_set_active("crank", false);
+			hotspot_set_active("slot", true);
 		}
-
 		break;
 
 	case 1:
-		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
+		hotspot_set_active("wheel ", activeFl);
+		hotspot_set_active("bridge ", activeFl);
+		hotspot_set_active("hole in chasm wall", activeFl);
 
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+		hotspot_set_active("hole in bridge", false);
 
-		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL ", false);
-		else
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL ", true);
+		hotspot_set_active("FARMER'S SHOVEL ",
+			inv_object_in_scene("FARMER'S SHOVEL", 808) && activeFl);
 
-		hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
-
+		hotspot_set_active("crank", false);
+		hotspot_set_active("slot", false);
 		break;
 
 	case 2:
-		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel  ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge  ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
+		hotspot_set_active("wheel  ", activeFl);
+		hotspot_set_active("bridge  ", activeFl);
+		hotspot_set_active("hole in chasm wall", activeFl);
 
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+		hotspot_set_active("hole in bridge", false);
 
-		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL  ", false);
-		else
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL  ", true);
+		hotspot_set_active("FARMER'S SHOVEL  ",
+			inv_object_in_scene("FARMER'S SHOVEL", 808) && activeFl);
 
-		if (inv_object_in_scene("crank", 808) || _G(flags)[V098] != 0) {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		if (inv_object_in_scene("crank", 808) && !_G(flags)[V098]) {
+			hotspot_set_active("crank", true);
+			hotspot_set_active("slot", false);
 		} else {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+			hotspot_set_active("crank", false);
+			hotspot_set_active("slot", true);
 		}
-
 		break;
 
 	case 3:
-		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel   ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge   ", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", activeFl);
+		hotspot_set_active("wheel   ", activeFl);
+		hotspot_set_active("bridge   ", activeFl);
+		hotspot_set_active("hole in chasm wall", activeFl);
+		hotspot_set_active("hole in bridge", activeFl);
 
-		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", false);
-		else
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL   ", true);
+		hotspot_set_active("FARMER'S SHOVEL   ",
+			inv_object_in_scene("FARMER'S SHOVEL", 808) && activeFl);
 
-		if (inv_object_in_scene("crank", 808) || _G(flags)[V098] != 0) {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		if (inv_object_in_scene("crank", 808) && !_G(flags)[V098]) {
+			hotspot_set_active("crank", true);
+			hotspot_set_active("slot", false);
 		} else {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+			hotspot_set_active("crank", false);
+			hotspot_set_active("slot", true);
 		}
-
 		break;
 
 	case 4:
-		hotspot_set_active(_G(currentSceneDef).hotspots, "wheel", activeFl);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "bridge", activeFl);
+		hotspot_set_active("wheel", activeFl);
+		hotspot_set_active("bridge", activeFl);
 
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in chasm wall", false);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "hole in bridge", false);
+		hotspot_set_active("hole in chasm wall", false);
+		hotspot_set_active("hole in bridge", false);
 
-		if (inv_object_in_scene("FARMER'S SHOVEL", 808) || activeFl == false)
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL    ", false);
-		else
-			hotspot_set_active(_G(currentSceneDef).hotspots, "FARMER'S SHOVEL    ", true);
+		hotspot_set_active("FARMER'S SHOVEL    ",
+			inv_object_in_scene("FARMER'S SHOVEL", 808) && activeFl);
 
-		if (inv_object_in_scene("crank", 808) || _G(flags)[V098] != 0) {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", false);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", true);
+		if (inv_object_in_scene("crank", 808) && !_G(flags)[V098]) {
+			hotspot_set_active("crank", true);
+			hotspot_set_active("slot", false);
 		} else {
-			hotspot_set_active(_G(currentSceneDef).hotspots, "crank", true);
-			hotspot_set_active(_G(currentSceneDef).hotspots, "slot", false);
+			hotspot_set_active("crank", false);
+			hotspot_set_active("slot", true);
 		}
-
 		break;
 
 	default:
