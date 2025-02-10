@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-08 13:45+0000\n"
+"POT-Creation-Date: 2025-02-10 17:51+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -10218,16 +10218,16 @@ msgstr ""
 msgid "Casio CT-460 / CSM-1"
 msgstr ""
 
-#: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
+#: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
 #, fuzzy
 msgid "Game does not contain menu resources"
 msgstr "Ezin izan da jokoa gorde"
 
-#: engines/sci/detection_tables.h:4758
+#: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4813
+#: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 

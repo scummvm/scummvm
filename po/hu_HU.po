@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-08 13:45+0000\n"
+"POT-Creation-Date: 2025-02-10 17:51+0000\n"
 "PO-Revision-Date: 2025-02-10 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5390,8 +5390,8 @@ msgstr ""
 "| `Egyujjas érintés & lenyomva tartás >0.5mp-en keresztül` | Jobb egérgombos "
 "tartás és áthelyezés, mint a Tony Tough műveleti kerekénél \n"
 "| `Kétujjas félrehúzás (balról jobbra)` | Érintő módok közötti váltás \n"
-"| `Kétujjas félrehúzás (jobbról balra)` | Virtuális kontroller bekapcsolása ("
-">iOS 15) \n"
+"| `Kétujjas félrehúzás (jobbról balra)` | Virtuális kontroller bekapcsolása "
+"(>iOS 15) \n"
 "| `Kétujjas félrehúzás (fentről lefelé)` | Átfogó FŐmenü elérése a "
 "játékokban \n"
 "| `Csípés (nagyítás be/ki)` | Billentyűzet ki/be kapcsolása \n"
@@ -5399,9 +5399,9 @@ msgstr ""
 "### Virtuális Gamepad \n"
 "\n"
 "A legalább iOS 15-el rendelkező eszközök képesek csatlakozni a virtuális "
-"gamepadhoz ha két újjal jobbról balra félrehúzza a képernyőt, vagy a **"
-"Átfogó Opciók > Backend** opción keresztül. Az iránygombok használhatóak joy "
-"karként vagy irányválasztóként.\n"
+"gamepadhoz ha két újjal jobbról balra félrehúzza a képernyőt, vagy a "
+"**Átfogó Opciók > Backend** opción keresztül. Az iránygombok használhatóak "
+"joy karként vagy irányválasztóként.\n"
 "**Jegyzet** Amíg a virtuális kontroller csatlakoztatva van, nem lehet "
 "egérgomb lenyomást eszközölni érintéssel egészen addig amíg a kontroller "
 "látható. Bal egérgomb lenyomást az A gombbal végezhetünk. Az érintő gesztus "
@@ -10537,17 +10537,17 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
+#: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
 #, fuzzy
 #| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
 msgstr "Nem sikerült inicializálni az erõforrásokat"
 
-#: engines/sci/detection_tables.h:4758
+#: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "Ez a demó Robot videók implementálatlan verzióját használja"
 
-#: engines/sci/detection_tables.h:4813
+#: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Hiányos játék észlelve. Adatokat kell másolnia az összes CD-ről."
 

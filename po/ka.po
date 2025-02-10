@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-08 13:45+0000\n"
+"POT-Creation-Date: 2025-02-10 17:51+0000\n"
 "PO-Revision-Date: 2025-02-08 11:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -9332,15 +9332,15 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
+#: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
 msgid "Game does not contain menu resources"
 msgstr "თამაში მენიუს რესურსებს არ შეიცავს"
 
-#: engines/sci/detection_tables.h:4758
+#: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "ფ"
 
-#: engines/sci/detection_tables.h:4813
+#: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 

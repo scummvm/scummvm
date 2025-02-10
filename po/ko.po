@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-08 13:45+0000\n"
+"POT-Creation-Date: 2025-02-10 17:51+0000\n"
 "PO-Revision-Date: 2025-02-10 16:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -10113,15 +10113,15 @@ msgstr "카시오 MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "카시오 CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:1428 engines/sci/detection_tables.h:1439
+#: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
 msgid "Game does not contain menu resources"
 msgstr "게임에는 메뉴 리소스가 포함되어 있지 않음"
 
-#: engines/sci/detection_tables.h:4758
+#: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "이 데모에서는 구현되지 않은 버전의 로봇 비디오를 사용"
 
-#: engines/sci/detection_tables.h:4813
+#: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "완료되지 않은 게임이 감지되었습니다. 모든 CD에서 데이터를 복사해야 합니다."
@@ -11345,9 +11345,9 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
-"'%s'는 잘못된 Dig 실행 파일인 듯합니다. CD 루트에서 찾은 런처일 수 있는데, "
-"여기에는 필요한 메뉴와 대화 상자 정의가 하나도 없습니다. CD에서 'The Dig f' "
-"폴더를 찾으세요. 하위 폴더 중 하나면 필요한 것이 있을 것입니다."
+"'%s'는 잘못된 Dig 실행 파일인 듯합니다. CD 루트에서 찾은 런처일 수 있는데, 여"
+"기에는 필요한 메뉴와 대화 상자 정의가 하나도 없습니다. CD에서 'The Dig f' 폴"
+"더를 찾으세요. 하위 폴더 중 하나면 필요한 것이 있을 것입니다."
 
 #: engines/scumm/scumm.cpp:1756
 msgid ""
@@ -13431,12 +13431,12 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
-"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉터리나 게임 "
-"디렉터리에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉터리에서 Times "
-"New Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 "
-"필요합니다. 또는 Liberation Fonts 패키지를 다운로드할 수 있습니다. 선택한 "
-"글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
-"LiberationSerif가 필요합니다."
+"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉터리나 게임 디렉터리"
+"에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉터리에서 Times New "
+"Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 필요"
+"합니다. 또는 Liberation Fonts 패키지를 다운로드할 수 있습니다. 선택한 글꼴 패"
+"키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, LiberationSerif가 필요합"
+"니다."
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
