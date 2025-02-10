@@ -138,6 +138,7 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 
 	static const char *sci11WinTargets[] = {
 		"ecoquest",
+		"ecoquest2",
 		"kq6",
 		"laurabow2",
 		"pepper",

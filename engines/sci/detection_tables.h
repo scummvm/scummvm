@@ -706,6 +706,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
+#define GUIO_ECO2_WINDOWS GUIO8(GUIO_NOSPEECH,\
+					GAMEOPTION_WINDOWS_CURSORS,\
+					GAMEOPTION_PREFER_DIGITAL_SFX,\
+					GAMEOPTION_ORIGINAL_SAVELOAD,\
+					GAMEOPTION_MIDI_MODE,\
+					GAMEOPTION_RGB_RENDERING,\
+					GAMEOPTION_TTS,\
+					GAMEOPTION_ENABLE_GMM_SAVE)
+
 	// Eco Quest 2 - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.001.055
 	{"ecoquest2", "Demo", {
@@ -721,6 +730,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	// Eco Quest 2 - Included as a bonus game in Sierra's School House.
+	// Executable scanning reports "1.001.069", VERSION file reports "1.000.000"
+	{"ecoquest2", "CD", {
+		{"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
+		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_ECO2_WINDOWS },
 
 	// Eco Quest 2 - French DOS Floppy (from Strangerke)
 	// SCI interpreter version 1.001.081
@@ -761,6 +778,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
         {"resource.msg", 0, "a0fbf7c183ea64f4bc224f71f2862aa0", 219798},
         AD_LISTEND},
         Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16 },
+
+#undef GUIO_ECO2_WINDOWS
 
 	// Freddy Pharkas - English DOS demo (from FRG)
 	// SCI interpreter version 1.001.069

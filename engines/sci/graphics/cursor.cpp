@@ -62,7 +62,7 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	if (g_sci && g_sci->getPlatform() == Common::kPlatformWindows) {
 		int gid = g_sci->getGameId();
 		if (ConfMan.getBool("windows_cursors")) {
-			if (gid == GID_KQ6 || gid == GID_LAURABOW2)
+			if (gid == GID_KQ6 || gid == GID_LAURABOW2 || gid == GID_ECOQUEST2)
 				_winCursorStyle = kWinCursorStyleBWAlt2;
 			else if (gid == GID_SQ4 || gid == GID_PEPPER)
 				_winCursorStyle = kWinCursorStyleBWAlt1;
