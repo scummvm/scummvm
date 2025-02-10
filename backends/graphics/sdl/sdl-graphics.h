@@ -184,6 +184,8 @@ protected:
 	void notifyActiveAreaChanged() override;
 
 	void handleResizeImpl(const int width, const int height) override;
+	void lockWindowReSize();
+	void unlockWindowReSize();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
@@ -207,7 +209,7 @@ protected:
 
 private:
 	void toggleFullScreen();
-	void setLockedScreen(bool val) override;
+	bool _lockedScreen = false;
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 public:

@@ -178,6 +178,7 @@ protected:
 	int _stretchMode;
 	bool _vsync;
 	bool _fullscreen;
+	bool _lockedScreen = false;
 	bool _lockAspectRatio;
 
 	OpenGL::TiledSurface *_overlayScreen;

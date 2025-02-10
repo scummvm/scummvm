@@ -299,10 +299,6 @@ void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 
 	return OpenGLGraphicsManager::initSize(w, h, format);
 }
-void OpenGLSdlGraphicsManager::setLockedScreen(bool val) {
-	WindowedGraphicsManager ::setLockedScreen(val);
-}
-
 void OpenGLSdlGraphicsManager::updateScreen() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	static uint32 lastUpdateTime = 0;
@@ -338,6 +334,29 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	OpenGLGraphicsManager::updateScreen();
 }
 
+void OpenGLSdlGraphicsManager::lockWindowReSize() {
+	_lockedScreen = true;
+	SDL_SetWindowResizable(_window->getSDLWindow(), SDL_FALSE);
+}
+
+void OpenGLSdlGraphicsManager::unlockWindowReSize() {
+	_lockedScreen = false;
+	SDL_SetWindowResizable(_window->getSDLWindow(), SDL_TRUE);
+}
+
+void OpenGLSdlGraphicsManager::toggleLockWindowReSize() {
+	if (_lockedScreen) {
+		unlockWindowSize();
+#ifdef USE_OSD
+		displayMessageOnOSD(_("Window resizing unlocked"));
+#endif
+	} else {
+		lockWindowReSize();
+#ifdef USE_OSD
+		displayMessageOnOSD(_("Window resizing locked"));
+#endif
+	}
+}
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 	_forceRedraw = true;
 }
@@ -365,8 +384,8 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	if (ConfMan.getBool("force_resize", Common::ConfigManager::kApplicationDomain)) {
 		createOrUpdateWindow(currentWidth, currentHeight, 0);
 	}
-
-	handleResize(currentWidth, currentHeight);
+	if (!_lockedScreen)
+		handleResize(currentWidth, currentHeight);
 
 	// Remember window size in windowed mode
 	if (!_wantsFullScreen) {
@@ -582,7 +601,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 
 	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
-	if (!WindowedGraphicsManager::isScreenLocked()) {
+	if (!_lockedScreen) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
@@ -724,7 +743,13 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return SdlGraphicsManager::notifyEvent(event);
 	}
-
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbd.keycode == Common::KEYCODE_F11) {
+			toggleLockWindowReSize();
+			return true;
+		}
+	}
+	
 	switch ((CustomEventAction) event.customType) {
 	case kActionIncreaseScaleFactor:
 	case kActionDecreaseScaleFactor: {
@@ -919,6 +944,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		return true;
 	}
+
 
 	default:
 		return SdlGraphicsManager::notifyEvent(event);

@@ -424,7 +424,7 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 }
 
 void OpenGLSdlGraphics3dManager::handleResizeImpl(const int width, const int height) {
-	if (WindowedGraphicsManager::isScreenLocked()) {
+	if (_lockedScreen) {
 		// The screen is locked, so we can't resize it.
 		return;
 	}

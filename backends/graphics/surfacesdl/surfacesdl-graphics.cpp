@@ -1554,9 +1554,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #endif
 }
 
-void SurfaceSdlGraphicsManager::setLockedScreen(bool val) {
-	WindowedGraphicsManager::setLockedScreen(val);
-}
 
 bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	assert(_hwScreen != nullptr);
@@ -2858,7 +2855,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	deinitializeRenderer();
 
 	uint32 createWindowFlags = 0;
-	if (!WindowedGraphicsManager::isScreenLocked()) {
+	if (!_lockedScreen) {
 		createWindowFlags |= SDL_WINDOW_RESIZABLE;
 	}
 	uint32 rendererFlags = 0;

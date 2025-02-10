@@ -322,15 +322,23 @@ void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 		_eventSource->fakeWarpMouse(mouse.x, mouse.y);
 	}
 }
+void SdlGraphicsManager::lockWindowReSize() {
+	_lockedScreen = true;
+	// Set window flags to disable resizing
+	SDL_SetWindowResizable(_window->getSDLWindow(), SDL_FALSE);
+}
+
+void SdlGraphicsManager::unlockWindowReSize() {
+	_lockedScreen = false;
+	// Set window flags to enable resizing
+	SDL_SetWindowResizable(_window->getSDLWindow(), SDL_TRUE);
+}
 
 void SdlGraphicsManager::notifyActiveAreaChanged() {
 	_window->setMouseRect(_activeArea.drawRect);
 }
 
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
-	if (WindowedGraphicsManager::isScreenLocked()) {
-		return;
-	}
 	_forceRedraw = true;
 }
 
@@ -338,6 +346,12 @@ void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint32 flags) {
 	if (!_window) {
 		return false;
+	}
+	Uint32 windowFlags = flags;
+	if (_lockedScreen) {
+		windowFlags &= ~SDL_WINDOW_RESIZABLE;
+	} else {
+		windowFlags |= SDL_WINDOW_RESIZABLE;
 	}
 	Common::RotationMode rotation = getRotationMode();
 
@@ -457,9 +471,6 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	default:
 		return false;
 	}
-}
-void SdlGraphicsManager::setLockedScreen(bool val) {
-	WindowedGraphicsManager ::setLockedScreen(val);
 }
 void SdlGraphicsManager::toggleFullScreen() {
 	/* Don't use g_system for kFeatureOpenGLForGame as it's always supported

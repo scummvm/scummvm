@@ -78,7 +78,6 @@ public:
 	int getDefaultStretchMode() const override;
 	bool setStretchMode(int mode) override;
 	int getStretchMode() const override;
-	void setLockedScreen(bool val) override;
 
 #ifdef USE_SCALERS
 	uint getDefaultScaler() const override;
