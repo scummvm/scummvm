@@ -299,15 +299,15 @@ void Room808::parser() {
 		opCode = 4;
 	else if (player_said("go"))
 		opCode = 5;
-	else if (player_said("crank"))
+	else if (!scumm_stricmp(_G(player).verb, "crank"))
 		opCode = 6;
-	else if (player_said("FARMER'S SHOVEL"))
+	else if (!scumm_stricmp(_G(player).verb, "FARMER'S SHOVEL"))
 		opCode = 7;
-	else if (player_said("wooden post"))
+	else if (!scumm_stricmp(_G(player).verb, "wooden post"))
 		opCode = 8;
-	else if (player_said("wooden beam"))
+	else if (!scumm_stricmp(_G(player).verb, "wooden beam"))
 		opCode = 9;
-	else if (player_said("journal"))
+	else if (!scumm_stricmp(_G(player).verb, "journal"))
 		opCode = 11;
 	else if (player_said("conv808a"))
 		opCode = 10;
@@ -417,7 +417,6 @@ void Room808::parser() {
 					_dword1A1964_facing = 2;
 					ws_walk(_G(my_walker), 169, 171, nullptr, 5, 2, true);
 				}
-
 				break;
 
 			case 5:
@@ -430,7 +429,6 @@ void Room808::parser() {
 				series_stream_break_on_frame(_808PosMach, 7, _posMachFrameNum);
 				player_update_info(_G(my_walker), &_G(player_info));
 				_808RipFallShovelNearSideMach = series_place_sprite(SAFARI_SHADOWS_2[_G(player_info).facing], 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1282);
-
 				break;
 
 			case 7:
@@ -446,12 +444,10 @@ void Room808::parser() {
 				_808PosMach = series_show(inv_object_in_scene("FARMER'S SHOVEL", 808) ? "808pos2" : "808pos1", 1281, 0, -1, -1, _posMachIndex, 100, 0, 0);
 
 				terminateMachine(_808RipFallShovelNearSideMach);
-
 				break;
 
 			default:
 				break;
-
 			}
 		} else if (player_said("crank") && inv_object_in_scene("crank", 808) && _G(flags)[V100]) {
 			switch (_G(kernel).trigger) {
@@ -483,8 +479,9 @@ void Room808::parser() {
 				break;
 
 			}
+		} else {
+			_G(player).command_ready = true;
 		}
-
 		break;
 
 	case 1:
@@ -614,10 +611,10 @@ void Room808::parser() {
 			}
 		} else if (player_said("mei chen")) {
 			digi_play("808r18", 1, 255, -1, -1);
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 2:
 		if (player_said("FARMER'S SHOVEL   ")) {
@@ -695,10 +692,10 @@ void Room808::parser() {
 					break;
 				}
 			}
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 3:
 		if (_G(flags)[V097] == 0 && _G(flags)[V094] == 4 && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
@@ -980,9 +977,7 @@ void Room808::parser() {
 				break;
 			}
 		}
-
-
-		return;
+		break;
 
 	case 4:
 		// Empty
@@ -1070,10 +1065,10 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 6:
 		if (player_said("mei chen")) {
@@ -1191,10 +1186,10 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 7:
 		if (player_said("hole in bridge")) {
@@ -1230,28 +1225,28 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 8:
 		if (player_said("hole in bridge")) {
 			digi_play("808r35",1,255,-1,-1);
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 9:
 		if (player_said("hole in bridge")) {
 			digi_play("com018", 1, 255, -1, 997);
 		} else if (player_said("bridge")) {
 			digi_play("com019", 1, 255, -1, 997);
-		} else
-			break;
-
-		return;
+		} else {
+			_G(player).command_ready = true;
+		}
+		break;
 
 	case 10:
 		switch (_G(kernel).trigger) {
@@ -1269,9 +1264,9 @@ void Room808::parser() {
 				}
 
 				digi_play(conv_sound_to_play(), 1, 255, 10, -1);
-			} else
+			} else {
 				conv_resume(conv_get_handle());
-
+			}
 			break;
 		case 10:
 			if (conv_current_node() == 2 && conv_current_entry() == 0) {
@@ -1285,9 +1280,9 @@ void Room808::parser() {
 				DisposePath(_mcTrekMach->walkPath);
 				_mcTrekMach->walkPath = CreateCustomPath(348, 130, 345, 115, -1);
 				ws_custom_walk(_mcTrekMach, 7, 30, true);
-			} else
+			} else {
 				conv_resume(conv_get_handle());
-
+			}
 			break;
 
 		case 20:
@@ -1298,14 +1293,12 @@ void Room808::parser() {
 			_G(flags)[V097] = 1;
 			addMcHotspot(1);
 			conv_resume(conv_get_handle());
-
 			break;
 
 		default:
 			break;
 		}
-
-		return;
+		break;
 
 	case 11:
 		digi_play("com042", 1, 255, -1, 997);
@@ -1314,8 +1307,6 @@ void Room808::parser() {
 	default:
 		break;
 	}
-
-	_G(player).command_ready = true;
 }
 
 void Room808::daemon() {
@@ -1900,7 +1891,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 0;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 0;
-
 				break;
 
 			case 2:
@@ -1908,7 +1898,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 6;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 1;
-
 				break;
 
 			case 3:
@@ -1916,7 +1905,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 4;
 				_posMachFrameNum = 17;
 				_G(flags)[V094] = 2;
-
 				break;
 
 			case 4:
@@ -1924,7 +1912,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 3;
-
 				break;
 
 			default:
@@ -1939,7 +1926,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 0;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 0;
-
 				break;
 
 			case 2:
@@ -1947,7 +1933,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 6;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 1;
-
 				break;
 
 			case 3:
@@ -1955,7 +1940,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 5;
 				_posMachFrameNum = 17;
 				_G(flags)[V094] = 2;
-
 				break;
 
 			case 4:
@@ -1963,7 +1947,6 @@ void Room808::setPosMachInfo() {
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 3;
-
 				break;
 
 			default:
@@ -1973,37 +1956,33 @@ void Room808::setPosMachInfo() {
 	} else {
 		if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
 			switch (_G(flags)[V094]) {
-			case 1:
+			case 0:
 				_posMachName = "808spn09";
 				_posMachIndex = 1;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 1;
-
 				break;
 
-			case 2:
+			case 1:
 				_posMachName = "808spn10";
 				_posMachIndex = 2;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 2;
-
 				break;
 
-			case 3:
+			case 2:
 				_posMachName = "808spn11";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 3;
-
 				break;
 
-			case 4:
+			case 3:
 				_posMachName = "808spn12";
 				_posMachIndex = 5;
 				_posMachFrameNum = 10;
 				_G(flags)[V094] = 4;
 				_G(flags)[V095] = 1;
-
 				break;
 
 			default:
@@ -2011,37 +1990,33 @@ void Room808::setPosMachInfo() {
 			}
 		} else {
 			switch (_G(flags)[V094]) {
-			case 1:
+			case 0:
 				_posMachName = "808spn01";
 				_posMachIndex = 1;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 1;
-
 				break;
 
-			case 2:
+			case 1:
 				_posMachName = "808spn02";
 				_posMachIndex = 2;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 2;
-
 				break;
 
-			case 3:
+			case 2:
 				_posMachName = "808spn03";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
 				_G(flags)[V094] = 3;
-
 				break;
 
-			case 4:
+			case 3:
 				_posMachName = "808spn04";
 				_posMachIndex = 4;
 				_posMachFrameNum = 10;
 				_G(flags)[V094] = 4;
 				_G(flags)[V095] = 1;
-
 				break;
 
 			default:
