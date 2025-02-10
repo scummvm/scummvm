@@ -48,8 +48,10 @@ Options:
   --bundle-games=    comma-separated list of demos and freeware games to bundle. 
   -v, --verbose      print all commands run by the script
   --*                all other options are passed on to the configure script
-                     Note: --enable-a52, --enable-faad, --enable-mad, --enable-mpeg2,
-                     --enable-theoradec and --enable-vpx also download and build the dependency
+                     Note: --enable-a52, --enable-faad,
+                     --enable-mad, --enable-mpeg2, --enable-mikmod,
+                     --enable-theoradec and --enable-vpx
+                     also download and build the required library before running configure or make.
 "
 
 _fluidlite=false
@@ -57,6 +59,7 @@ _liba52=false
 _libfaad=false
 _libmad=false
 _libmpeg2=false
+_libmikmod=false
 _libtheoradec=false
 _libvpx=false
 
@@ -81,6 +84,15 @@ for i in "$@"; do
     ;;
   --enable-mpeg2)
     _libmpeg2=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-mpcdec)       
+    _libmpcdec=true  
+    # We don't pass --enable-mpcdec as configure
+    # has to establish which API to use (old or new)
+    ;;
+  --enable-mikmod) 
+    _libmikmod=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --enable-theoradec)
@@ -265,6 +277,34 @@ if [ "$_libmpeg2" = true ]; then
     emmake make install
   fi
   LIBS_FLAGS="${LIBS_FLAGS} --with-mpeg2-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_libmpcdec" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libmpcdec.a" ]]; then
+    echo "building libmpcdec-1.2.6"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://files.musepack.net/source/libmpcdec-1.2.6.tar.bz2"
+    tar -xf libmpcdec-1.2.6.tar.bz2
+    cd "$LIBS_FOLDER/libmpcdec-1.2.6/"
+    CFLAGS="-Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
+    emmake make -j 5
+    emmake make install 
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-mpcdec-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_libmikmod" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libmikmod.a" ]]; then
+    echo "building libmikmod-3.3.13"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://sourceforge.net/projects/mikmod/files/libmikmod/3.3.13/libmikmod-3.3.13.tar.gz"
+    tar -xf libmikmod-3.3.13.tar.gz
+    cd "$LIBS_FOLDER/libmikmod-3.3.13/"
+    CFLAGS="-Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
+    emmake make -j 5
+    emmake make install 
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-mikmod-prefix=$LIBS_FOLDER/build"
 fi
 
 if [ "$_libtheoradec" = true ]; then
