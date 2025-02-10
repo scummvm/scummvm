@@ -57,7 +57,7 @@ void Room408::init() {
 		_edger = series_place_sprite("Edger gone", 0, 0, -53, 100, 0xf00);
 		hotspot_set_active("EDGER", true);
 		inv_move_object("EDGER", 408);
-		ws_demand_location(234, 319, 3);
+		ws_demand_location(_G(my_walker), 234, 319, 3);
 		ws_walk(438, 325, nullptr, 400, 1);
 		
 	} else if (_G(flags)[V139] == 3) {
@@ -68,7 +68,7 @@ void Room408::init() {
 			hotspot_set_active("PLANK", true);
 		}
 
-		ws_demand_location(-20, 345, 3);
+		ws_demand_location(_G(my_walker), -20, 345, 3);
 		ws_walk(234, 319, nullptr, 420, 1);
 
 	} else {
@@ -118,7 +118,7 @@ void Room408::init() {
 					_wolfShould = 2200;
 				}
 
-				ws_demand_location(-20, 345, 3);
+				ws_demand_location(_G(my_walker), -20, 345, 3);
 				ws_walk(35, 345, nullptr, 20, 3);
 			}
 			break;
@@ -139,7 +139,7 @@ void Room408::init() {
 			}
 
 			_ripExits = series_load("RIP EXITS 407");
-			ws_demand_location(201, 287, 4);
+			ws_demand_location(_G(my_walker), 201, 287, 4);
 			ws_hide_walker();
 
 			_exit = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
@@ -168,7 +168,7 @@ void Room408::init() {
 				_wolfShould = 2200;
 			}
 
-			ws_demand_location(660, 345, 9);
+			ws_demand_location(_G(my_walker), 660, 345, 9);
 
 			if (_G(flags)[V125] == 3) {
 				series_simple_play("408 turtle popup", 0, true);

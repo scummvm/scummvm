@@ -69,13 +69,13 @@ void Room506::init() {
 		MoveScreenDelta(-640, 0);
 		player_set_commands_allowed(false);
 		series_play("506 RIP UP STEPS", 0x700, 0, 503, 5);
-		ws_demand_location(1054, 346, 12);
+		ws_demand_location(_G(my_walker), 1054, 346, 12);
 		ws_hide_walker();
 		break;
 
 	case 507:
 		digi_unload("507_s02");
-		ws_demand_location(346, 214, 4);
+		ws_demand_location(_G(my_walker), 346, 214, 4);
 		ws_walk(420, 234, nullptr, 502, 4);
 		player_set_commands_allowed(false);
 		break;
@@ -84,7 +84,7 @@ void Room506::init() {
 		player_set_commands_allowed(false);
 
 		if (_G(flags)[V158]) {
-			ws_demand_location(100, 100);
+			ws_demand_location(_G(my_walker), 100, 100);
 			ws_hide_walker();
 			digi_preload("506_s02");
 			digi_unload("508_s01");
@@ -92,14 +92,14 @@ void Room506::init() {
 			series_stream_break_on_frame(_domeRotation, 45, 500);
 			digi_play("506_S02", 1);
 		} else {
-			ws_demand_location(346, 214, 4);
+			ws_demand_location(_G(my_walker), 346, 214, 4);
 			ws_walk(420, 234, nullptr, 502, 4);
 		}
 		break;
 
 	default:
 		MoveScreenDelta(-432, 0);
-		ws_demand_location(754, 242, 8);
+		ws_demand_location(_G(my_walker), 754, 242, 8);
 		ws_walk(697, 247, nullptr, 502, 8);
 		break;
 	}

@@ -148,13 +148,13 @@ void Room402::init() {
 				break;
 
 			case 408:
-				ws_demand_location(517, 239, 3);
+				ws_demand_location(_G(my_walker), 517, 239, 3);
 				ws_walk(510, 260, nullptr, 50, 8);
 				break;
 
 			default:
 				digi_preload("950_s22");
-				ws_demand_location(660, 290, 3);
+				ws_demand_location(_G(my_walker), 660, 290, 3);
 				ws_walk(612, 287, nullptr, 50, 9);
 				midi_fade_volume(0, 120);
 				break;
@@ -225,27 +225,27 @@ void Room402::init() {
 
 					sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 						_wolfClipping, 10, 10, 0);
-					ws_demand_location(517, 239, 3);
+					ws_demand_location(_G(my_walker), 517, 239, 3);
 					ws_walk(503, 248, nullptr, 350, 7);
 				} else if (_G(flags)[V117] != 0 && inv_player_has("TURTLE")) {
 					_G(flags)[V117] = 0;
 					hotspot_set_active("TOPIARY ", true);
 					_G(flags)[kWolfLocation] = 408;
-					ws_demand_location(517, 239, 3);
+					ws_demand_location(_G(my_walker), 517, 239, 3);
 
 					_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 						475, 300, 11, triggerMachineByHashCallback3000, "wolf_walker");
 					sendWSMessage_10000(_wolfWalker, 549, 239, 9, 42, 0);
 					kernel_timing_trigger(90, 40);
 				} else {
-					ws_demand_location(517, 239, 3);
+					ws_demand_location(_G(my_walker), 517, 239, 3);
 					ws_walk(449, 317, nullptr, 30, 3);
 				}
 				break;
 
 			default:
 				digi_preload("950_s22");
-				ws_demand_location(660, 290, 3);
+				ws_demand_location(_G(my_walker), 660, 290, 3);
 				ws_walk(449, 317, nullptr, 30, 3);
 				midi_fade_volume(0, 120);
 
@@ -265,7 +265,7 @@ void Room402::init() {
 
 		sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 			_wolfClipping, 10, 10, 0);
-		ws_demand_location(517, 239, 3);
+		ws_demand_location(_G(my_walker), 517, 239, 3);
 		ws_walk(510, 260, nullptr, 370, 8);
 	}
 
@@ -378,7 +378,7 @@ void Room402::daemon() {
 		terminateMachineAndNull(_ripEnterLeave);
 		series_unload(_ripDownStairs);
 		ws_unhide_walker();
-		ws_demand_location(345, 275, 3);
+		ws_demand_location(_G(my_walker), 345, 275, 3);
 		ws_walk(375, 279, nullptr,
 			(_G(flags)[kWolfLocation] == 402) ? 56 : 50,
 			4);

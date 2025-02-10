@@ -525,7 +525,7 @@ void Room407::init() {
 		midi_play("DRAMA1", 255, 0, -1, 949);
 		_ripEnters = series_load("407 RIP ENTERS");
 		_stair = series_load("407STAIR");
-		ws_demand_location(250, 331, 3);
+		ws_demand_location(_G(my_walker), 250, 331, 3);
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
@@ -562,7 +562,7 @@ void Room407::init() {
 		_pumpState = 1130;
 
 		setHotspots();
-		ws_demand_location(260, 335, 3);
+		ws_demand_location(_G(my_walker), 260, 335, 3);
 	}
 }
 

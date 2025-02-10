@@ -93,7 +93,7 @@ void Room405::init() {
 	if (!inv_player_has("TURTLE"))
 		inv_move_object("TURTLE", 305);
 
-	ws_demand_location(155, 370, 9);
+	ws_demand_location(_G(my_walker), 155, 370, 9);
 
 	if (player_been_here(405) || _G(kittyScreaming)) {
 		ws_walk(230, 345, nullptr, 50, 2);
@@ -136,7 +136,7 @@ void Room405::daemon() {
 		break;
 
 	case 22:
-		ws_demand_location(286, 324, 7);
+		ws_demand_location(_G(my_walker), 286, 324, 7);
 		ws_hide_walker(_baron);
 		sendWSMessage_150000(-1);
 		ws_hide_walker(_G(my_walker));

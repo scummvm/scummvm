@@ -64,7 +64,7 @@ void Room504::init() {
 
 	case 506:
 		player_set_commands_allowed(false);
-		ws_demand_location(1384, 205, 9);
+		ws_demand_location(_G(my_walker), 1384, 205, 9);
 		ws_hide_walker();
 		MoveScreenDelta(_G(game_buff_ptr), -1280, 0);
 		_isOnRight = true;
@@ -79,7 +79,7 @@ void Room504::init() {
 
 	default:
 		player_set_commands_allowed(false);
-		ws_demand_location(50, 226, 3);
+		ws_demand_location(_G(my_walker), 50, 226, 3);
 		midi_play("MOCAMO", 200, 0, -1, 949);
 
 		if (player_been_here(504)) {
@@ -189,6 +189,7 @@ void Room504::daemon() {
 						digi_play("504_s02b", 2, _volume2);
 						break;
 					case 4:
+					default:
 						digi_play("504_s02c", 2, _volume2);
 						break;
 					}
@@ -994,7 +995,7 @@ void Room504::daemon() {
 
 	case 565:
 		ws_unhide_walker();
-		ws_demand_location(170, 145, 1);
+		ws_demand_location(_G(my_walker), 170, 145, 1);
 		_isOnRight = false;
 		kernel_timing_trigger(5, 566);
 		break;
@@ -1070,7 +1071,7 @@ void Room504::daemon() {
 
 	case 578:
 		ws_unhide_walker();
-		ws_demand_location(532, 165, 3);
+		ws_demand_location(_G(my_walker), 532, 165, 3);
 		_isOnRight = true;
 		digi_unload("504_S05");
 		player_set_commands_allowed(true);
@@ -1266,7 +1267,7 @@ void Room504::daemon() {
 		break;
 
 	case 600:
-		ws_demand_location(528, 168, 8);
+		ws_demand_location(_G(my_walker), 528, 168, 8);
 		ws_unhide_walker();
 		terminateMachineAndNull(_ripley);
 		setVinesRope();
@@ -1507,7 +1508,7 @@ void Room504::daemon() {
 
 	case 626:
 		ws_unhide_walker();
-		ws_demand_location(200, 153, 3);
+		ws_demand_location(_G(my_walker), 200, 153, 3);
 		terminateMachineAndNull(_ripley);
 		series_unload(_ripStepUpLeft);
 		series_unload(_ripThrowFromLeft);

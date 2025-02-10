@@ -86,7 +86,7 @@ void Room404::init() {
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
-		ws_demand_location(58, 347, 3);
+		ws_demand_location(_G(my_walker), 58, 347, 3);
 		ws_walk(90, 347, nullptr, 50, 3);
 		break;
 
@@ -95,7 +95,7 @@ void Room404::init() {
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
-		ws_demand_location(174, 268, 3);
+		ws_demand_location(_G(my_walker), 174, 268, 3);
 		ws_walk(250, 285, nullptr,
 			inv_player_has("BILLIARD BALL") ? 70 : 60,
 			3, 1);
@@ -104,7 +104,7 @@ void Room404::init() {
 	default:
 		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
 		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-		ws_demand_location(340, 480, 2);
+		ws_demand_location(_G(my_walker), 340, 480, 2);
 
 		_machine1 = triggerMachineByHash_3000(8, 10, *NORMAL_DIRS, *SHADOW_DIRS,
 			380, 421, 1, triggerMachineByHashCallback3000, "BUTLER_walker");

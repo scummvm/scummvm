@@ -135,7 +135,7 @@ void Room510::init() {
 		player_set_commands_allowed(false);
 		_stepsSeries = series_load("510 UP STEPS");
 		_steps = series_play("510 UP STEPS", 0xf00, 0, 110, 5);
-		ws_demand_location(409, 86, 11);
+		ws_demand_location(_G(my_walker), 409, 86, 11);
 		ws_hide_walker();
 	}
 
@@ -358,7 +358,7 @@ void Room510::parser() {
 			}
 
 			ws_unhide_walker();
-			ws_demand_location(425, 128, 11);
+			ws_demand_location(_G(my_walker), 425, 128, 11);
 			kernel_timing_trigger(1, 6);
 			break;
 		case 6:
@@ -590,7 +590,7 @@ void Room510::parser() {
 				}
 
 				ws_unhide_walker();
-				ws_demand_location(425, 128, 11);
+				ws_demand_location(_G(my_walker), 425, 128, 11);
 				_G(flags)[V170] = 0;
 				player_set_commands_allowed(true);
 				break;

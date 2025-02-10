@@ -76,7 +76,7 @@ void Room501::init() {
 			++_val4;
 		}
 
-		ws_demand_location(588, 267, 9);
+		ws_demand_location(_G(my_walker), 588, 267, 9);
 		ws_walk(287, 268, nullptr, 522, 9);
 		_val5 = 0;
 		_trigger1 = -1;

@@ -33,7 +33,7 @@ void Room409::init() {
 	digi_preload("409r01b");
 	digi_preload("409r01c");
 	digi_preload("950_s27");
-	ws_demand_location(239, 295, 3);
+	ws_demand_location(_G(my_walker), 239, 295, 3);
 
 	_seriesShadow = series_load("SAFARI SHADOW 3");
 	_seriesDoorOpen = series_load("409 DOOR OPEN");

@@ -82,7 +82,7 @@ void Room401::init() {
 		}
 
 		player_set_commands_allowed(false);
-		ws_demand_location(66, 266, 3);
+		ws_demand_location(_G(my_walker), 66, 266, 3);
 
 		if (_val1 ||
 			!_G(flags)[V020] ||

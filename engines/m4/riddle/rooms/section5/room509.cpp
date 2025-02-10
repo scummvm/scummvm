@@ -44,13 +44,13 @@ void Room509::init() {
 
 	case 510:
 		player_set_commands_allowed(false);
-		ws_demand_location(289, 261, 6);
+		ws_demand_location(_G(my_walker), 289, 261, 6);
 		kernel_timing_trigger(1, 3);
 		break;
 
 	default:
 		player_set_commands_allowed(false);
-		ws_demand_location(342, 320, 2);
+		ws_demand_location(_G(my_walker), 342, 320, 2);
 		kernel_timing_trigger(1, 2);
 		_flag1 = !player_been_here(509);
 		break;

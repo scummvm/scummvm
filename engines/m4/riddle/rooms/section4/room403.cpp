@@ -103,7 +103,7 @@ void Room403::init() {
 		}
 
 		MoveScreenDelta(-640, 0);
-		ws_demand_location(1172, 322, 3);
+		ws_demand_location(_G(my_walker), 1172, 322, 3);
 		ws_walk(1172, 322, nullptr, 400, 1);
 
 	} else if (_G(flags)[V139] == 4) {
@@ -111,7 +111,7 @@ void Room403::init() {
 		_ladder = series_place_sprite("LADDER LEANS AGAINST WALL", 0, 0, 0, 100, 0xf00);
 		hotspot_set_active("STEP LADDER ", true);
 		MoveScreenDelta(-640, 0);
-		ws_demand_location(1083, 322, 3);
+		ws_demand_location(_G(my_walker), 1083, 322, 3);
 		ws_walk(1201, 321, nullptr, 420, 2);
 
 	} else {
@@ -223,7 +223,7 @@ void Room403::init() {
 			_G(flags)[V132] = 0;
 			_G(camera_reacts_to_player) = false;
 			MoveScreenDelta(-640, 0);
-			ws_demand_location(620, 326, 3);
+			ws_demand_location(_G(my_walker), 620, 326, 3);
 			ws_walk_load_shadow_series(S4_SHADOW_DIRS, S4_SHADOW_NAMES);
 			ws_walk_load_walker_series(S4_NORMAL_DIRS, S4_NORMAL_NAMES);
 			kernel_timing_trigger(1, 310);

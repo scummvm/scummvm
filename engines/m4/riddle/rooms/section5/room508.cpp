@@ -52,7 +52,7 @@ void Room508::init() {
 		digi_play("508_S04", 2);
 
 	} else if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
-		ws_demand_location(246, 265, 5);
+		ws_demand_location(_G(my_walker), 246, 265, 5);
 		ws_walk(256, 283, nullptr, 562, 5);
 	}
 
@@ -396,7 +396,7 @@ void Room508::daemon() {
 	case 673:
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		ws_demand_location(437, 349, 1);
+		ws_demand_location(_G(my_walker), 437, 349, 1);
 		ws_walk(436, 359, nullptr, 548, 10);
 		break;
 
