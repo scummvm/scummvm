@@ -139,7 +139,8 @@ public:
 /** CDS data from Willy Beamish CD version talkie */
 class Conversation {
 public:
-	Conversation() : _nextExecMs(0), _runTempFrame(0), _tempFrameNum(0), _stopScript(false), _loadState(0), _dlgNum(-1), _dlgFileNum(-1), _subNum(-1), _finished(false), _haveHeadData(false) {}
+	Conversation() : _thisFrameMs(0), _nextExecMs(0), _runTempFrame(0), _tempFrameNum(0), _stopScript(false), _loadState(0),
+		_dlgNum(-1), _dlgFileNum(-1), _subNum(-1), _finished(false), _haveHeadData(false) {}
 	~Conversation();
 
 	void unloadData();
