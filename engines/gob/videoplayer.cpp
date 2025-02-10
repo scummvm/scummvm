@@ -776,13 +776,13 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 			}
 
 			if (properties.breakKey == 4) {
-				if (_vm->_game->_mouseButtons == 2 || key == kKeyEscape) {
+				if (_vm->_game->_mouseButtons == kMouseButtonsRight || key == kKeyEscape) {
 					properties.canceled = true;
 					return;
 				}
 
 				if (key != kKeyNone ||
-					(_vm->_game->_mouseButtons == 1 &&
+					(_vm->_game->_mouseButtons == kMouseButtonsLeft &&
 					 _vm->_draw->_cursorIndex != -1)) {
 					_vm->_game->_hasForwardedEventsFromVideo = true;
 					_vm->_game->_forwardedKeyFromVideo = key;
