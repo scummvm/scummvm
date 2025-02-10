@@ -317,7 +317,7 @@ void Room809::parser() {
 		case 6:
 			if (player_said("east")) {
 				kernel_trigger_dispatchx(kernel_trigger_create(53));
-			} else if (player_said("east")) {
+			} else if (player_said("west")) {
 				kernel_trigger_dispatchx(kernel_trigger_create(65));
 			}
 
