@@ -737,6 +737,15 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		_currentIndex = 0;
 	}
 
+	if (_vm->getGameType() == kGameTypeAdibou2 &&
+		_currentKey != 0 &&
+		(_hotspots[_currentIndex].id != _currentId ||
+		 _hotspots[_currentIndex].key != _currentKey)) {
+		_currentKey = 0;
+		_currentIndex = 0;
+		_currentId = 0;
+	}
+
 	id    = 0;
 	index = 0;
 
