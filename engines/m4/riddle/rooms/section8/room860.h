@@ -35,8 +35,6 @@ public:
 
 	void preload() override;
 	void init() override;
-	void pre_parser() override;
-	void parser() override;
 	void daemon() override;
 
 private:

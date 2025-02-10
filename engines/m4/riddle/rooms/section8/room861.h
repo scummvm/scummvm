@@ -42,6 +42,7 @@ public:
 	Room861() : Room() {}
 	~Room861() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

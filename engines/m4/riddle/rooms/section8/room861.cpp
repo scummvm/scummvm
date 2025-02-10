@@ -27,6 +27,11 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room861::preload() {
+	Room::preload();
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room861::init() {
 	interface_hide();
 	player_set_commands_allowed(false);
