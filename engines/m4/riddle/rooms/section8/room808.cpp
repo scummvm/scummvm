@@ -1043,7 +1043,7 @@ void Room808::parser() {
 			}
 
 
-		} else if (player_said("east") && _G(flags)[V100] == 0) {
+		} else if (player_said("east") && _G(flags)[V100]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				ws_walk(_G(my_walker), 480, 35, nullptr, 10, 2, true);
