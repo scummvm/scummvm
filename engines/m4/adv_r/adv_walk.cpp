@@ -261,14 +261,12 @@ void ws_demand_facing(machine *myWalker, int32 facing) {
 }
 
 void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
-	frac16 s;
-
 	if (!myWalker || !myWalker->myAnim8) {
 		term_message("demand locn, no walker");
 		return;
 	}
 
-	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 
 	_G(globals)[GLB_TEMP_1] = x << 16;
 	_G(globals)[GLB_TEMP_2] = y << 16;
@@ -281,14 +279,12 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 }
 
 static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, int32 facing) {
-	frac16 s;
-
 	if ((!myWalker) || (!myWalker->myAnim8)) {
 		term_message("demand f & l, no walker");
 		return;
 	}
 
-	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 
 	_G(globals)[GLB_TEMP_1] = x << 16;
 	_G(globals)[GLB_TEMP_2] = y << 16;
