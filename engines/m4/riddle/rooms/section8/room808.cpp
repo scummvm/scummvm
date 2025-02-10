@@ -191,9 +191,9 @@ void Room808::pre_parser() {
 		opCode = 3;
 	else if (player_said("go"))
 		opCode = 5;
-	else if (player_said("crank"))
+	else if (!scumm_stricmp(_G(player).verb, "crank"))
 		opCode = 6;
-	else if (player_said("journal"))
+	else if (!scumm_stricmp(_G(player).verb, "journal"))
 		opCode = 11;
 
 	bool doneFl = true;
@@ -255,10 +255,10 @@ void Room808::pre_parser() {
 		return;
 
 	if (_G(flags)[V094] != 0 && _G(flags)[V094] != 4) {
-		_G(player).need_to_walk = false;
-		_G(player).ready_to_walk = true;
-		_G(player).waiting_for_walk = false;
-	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && (_G(flags)[V094] == 0 || _G(flags)[V100] == 0)) {
+		_G(player).resetWalk();
+
+	} else if ((inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V094] == 0) ||
+			(!inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V100] == 0)) {
 		intr_cancel_sentence();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		if (_G(flags)[V096] == 0) {
@@ -273,7 +273,6 @@ void Room808::pre_parser() {
 		ws_walk(_G(my_walker), 274, 142, nullptr, 8, 2, true);
 		_G(kernel).trigger_mode = KT_PREPARSE;
 	}
-
 }
 
 void Room808::parser() {
