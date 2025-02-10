@@ -77,7 +77,8 @@ void Room809::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN  ", false);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
 
-		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _mcPosX, 317, _mcFacing, Walker::player_walker_callback, "mc_trek");
+		_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1,
+			_mcPosX, 317, _mcFacing, Walker::player_walker_callback, "mc_trek");
 		setGlobals3(_mcHandsBehindBackSeries, 1, 17);
 		sendWSMessage_3840000(_mcTrekMach, 38);
 		_enableHotspotName = "MEI CHEN     ";
@@ -901,6 +902,15 @@ void Room809::daemon() {
 	default:
 		break;
 	}
+}
+
+void Room809::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_mcPosX);
+	s.syncAsSint32LE(_mcFacing);
+	s.syncAsSint32LE(_mcTrekDestX);
+	s.syncAsSint32LE(_playerDestX);
+	s.syncAsSint32LE(_playerDestY);
+	s.syncAsSint32LE(_playerFacing);
 }
 
 int32 Room809::getMcDestX(int32 val1, bool val2) {

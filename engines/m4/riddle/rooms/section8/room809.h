@@ -38,6 +38,7 @@ public:
 	void pre_parser() override;
 	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
 
 private:
 	bool checkSaid();
@@ -51,15 +52,16 @@ private:
 
 	const char *_enableHotspotName = nullptr;
 
-	int32 _809hallSeries = 0;
-	int32 _809MusicFadingVol = 0;
 	int32 _mcFacing = 0;
-	int32 _mcHandsBehindBackSeries = 0;
 	int32 _mcPosX = 0;
 	int32 _mcTrekDestX = 0;
 	int32 _playerDestX = 0;
 	int32 _playerDestY = 0;
 	int32 _playerFacing = 0;
+
+	int32 _809hallSeries = 0;
+	int32 _809MusicFadingVol = 0;
+	int32 _mcHandsBehindBackSeries = 0;
 	int32 _ripTalkerPos5Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 
