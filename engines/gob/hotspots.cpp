@@ -54,7 +54,8 @@ Hotspots::Hotspot::Hotspot(uint16 i,
 	funcEnter = enter;
 	funcLeave = leave;
 	funcPos   = pos;
-	script    = nullptr;
+	scriptFuncPos = nullptr;
+	scriptFuncLeave = nullptr;
 }
 
 void Hotspots::Hotspot::clear() {
@@ -68,7 +69,8 @@ void Hotspots::Hotspot::clear() {
 	funcEnter = 0;
 	funcLeave = 0;
 	funcPos   = 0;
-	script    = nullptr;
+	scriptFuncPos = nullptr;
+	scriptFuncLeave = nullptr;
 }
 
 Hotspots::Type Hotspots::Hotspot::getType() const {
@@ -260,7 +262,8 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		spot.id = id;
 
 		// Remember the current script
-		spot.script = _vm->_game->_script;
+		spot.scriptFuncPos = _vm->_game->_script;
+		spot.scriptFuncLeave = _vm->_game->_script;
 
 		debugC(1, kDebugHotspots, "Adding hotspot %03d: Coord:%3d+%3d+%3d+%3d - id:%04X, key:%04X, flag:%04X - fcts:%5d, %5d, %5d",
 				i, spot.left, spot.top, spot.right, spot.bottom,
@@ -310,7 +313,7 @@ void Hotspots::recalculate(bool force) {
 		// Setting the needed script
 		Script *curScript = _vm->_game->_script;
 
-		_vm->_game->_script = spot.script;
+		_vm->_game->_script = spot.scriptFuncPos;
 		if (!_vm->_game->_script)
 			_vm->_game->_script = curScript;
 
@@ -543,8 +546,14 @@ void Hotspots::leave(uint16 index) {
 	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, spot.id & 0x0FFF);
 
-	if (spot.funcLeave != 0)
+	if (spot.funcLeave != 0) {
+		Script *curScript = _vm->_game->_script;
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			_vm->_game->_script = spot.scriptFuncLeave;
+		}
 		call(spot.funcLeave);
+		_vm->_game->_script = curScript;
+	}
 }
 
 int16 Hotspots::windowCursor(int16 &dx, int16 &dy) const {
@@ -1360,6 +1369,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 				spot.enable();
 				spot.funcEnter = _vm->_game->_script->pos();
 				spot.funcLeave = _vm->_game->_script->pos();
+				spot.scriptFuncLeave = _vm->_game->_script;
 			}
 		}
 

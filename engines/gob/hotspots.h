@@ -118,7 +118,8 @@ private:
 		uint16  funcEnter;
 		uint16  funcLeave;
 		uint16  funcPos;
-		Script *script;
+		Script *scriptFuncLeave;
+		Script *scriptFuncPos;
 
 		Hotspot();
 		Hotspot(uint16 i,
