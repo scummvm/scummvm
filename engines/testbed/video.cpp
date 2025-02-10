@@ -31,6 +31,8 @@
 #include "graphics/paletteman.h"
 #include "gui/browser.h"
 
+#include "video/qt_data.h"
+
 namespace Testbed {
 
 Common::Error Videotests::videoTest(const Common::Path &path) {
@@ -112,7 +114,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			debug(5, "video time: %d", pos);
 
 			if (pixelformat.isCLUT8() && video->hasDirtyPalette()) {
-				g_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
+				g_system->getPaletteManager()->setPalette(Video::quickTimeDefaultPalette256, 0, 256);
 			}
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
@@ -124,7 +126,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				Graphics::Surface *conv = nullptr;
 
 				if (frame->format != pixelformat) {
-					surf = conv = frame->convertTo(pixelformat, video->getPalette());
+					surf = conv = frame->convertTo(pixelformat, Video::quickTimeDefaultPalette256);
 				}
 
 				mw = surf->w;
