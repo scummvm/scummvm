@@ -241,7 +241,6 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 	_objType = ObjectType;
 
 	_video = nullptr;
-	_targetSurface = nullptr;
 
 	_visible = false;
 	_quality = 0.0f;
@@ -385,11 +384,6 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 
 		delete me->_widget;
 	}
-
-	if (me->_targetSurface) {
-		me->_targetSurface->free();
-		delete me->_targetSurface;
-	}
 }
 
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
@@ -419,18 +413,10 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
-	if (!me->_targetSurface) {
-		me->_targetSurface = new Graphics::Surface();
-		me->_targetSurface->create(me->_rect.width(), me->_rect.height(), g_director->_pixelformat);
-	}
-
-	Common::Rect bbox(0, 0, me->_video->getWidth(), me->_video->getHeight());
-
-	copyStretchImg(frame, me->_targetSurface, bbox, me->_rect);
+	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
 
 	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-		me->_targetSurface->getPixels(), me->_targetSurface->pitch,
-		me->_rect.left, me->_rect.top, me->_targetSurface->w, me->_targetSurface->h
+		dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 	);
 }
 

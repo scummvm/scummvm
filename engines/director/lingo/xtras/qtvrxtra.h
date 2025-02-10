@@ -46,7 +46,6 @@ public:
 
 	Video::QuickTimeDecoder *_video;
 	QtvrxtraWidget *_widget;
-	Graphics::Surface *_targetSurface;
 
 	Common::Rect _rect;
 	bool _visible;
