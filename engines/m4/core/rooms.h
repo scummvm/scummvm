@@ -158,6 +158,7 @@ public:
 
 	void pal_game_task();
 	void camera_shift_xy(int32 x, int32 y);
+	void set_camera_delta_pan(int32 deltaX, int32 deltaY);
 	void adv_camera_pan_step(int32 step);
 	bool game_camera_panning() const {
 		return _cameraShiftAmount != 0 || _cameraShift_vert_Amount != 0;
