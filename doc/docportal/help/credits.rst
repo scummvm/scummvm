@@ -586,6 +586,17 @@ Gob
    * - Eugene Sandulenko
      -
 
+Got
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Paul Gilbert
+     -
+   * - Arnaud Boutonné
+     -
+
 Griffon
 ^^^^^^^
 
@@ -814,6 +825,8 @@ M4
 
    * - Paul Gilbert
      -
+   * - Arnaud Boutonné
+     -
 
 MacVenture
 ^^^^^^^^^^
@@ -846,6 +859,15 @@ MADS
    * - Paul Gilbert
      -
    * - Filippos Karapetis
+     -
+
+Media Station
+^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Nathanael Gentry
      -
 
 MM (Xeen)
