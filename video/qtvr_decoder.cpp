@@ -426,9 +426,11 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	warning("sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
 	warning("targetTrackID: %d", _parent->targetTrack);
 
-	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
+	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
+	//VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
 
-	_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
+	//_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
+	_constructedPano = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
 	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
@@ -442,9 +444,7 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	if (!_isPanoConstructed)
-		return -1;
-
-	int hotspot = -1;
+		return 0;
 
 	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
 
@@ -498,11 +498,11 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
 
 	// panorama is turned 90 degrees, width is height
-	int hotX = (yawAngle / (2.0 * M_PI) + _curPanAngle / 360.0f) * (float)_constructedPano->h;
+	int hotX = (yawAngle / (2.0 * M_PI) + _curPanAngle / 360.0f) * (float)_constructedHotspots->h;
 
-	hotX = hotX % _constructedPano->h;
+	hotX = hotX % _constructedHotspots->h;
 	if (hotX < 0)
-		hotX += _constructedPano->h;
+		hotX += _constructedHotspots->h;
 
 	// To get the vertical coordinate, need to project the vector on to a unit cylinder.
 	// To do that, compute the length of the XZ vector,
@@ -513,16 +513,14 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 
 	float normalizedYCoordinate = (projectedY - minTiltY) / (maxTiltY - minTiltY);
 
-	int hotY = (int)(normalizedYCoordinate * (float)_constructedPano->w);
+	int hotY = (int)(normalizedYCoordinate * (float)_constructedHotspots->w);
 
 	if (hotY < 0)
 		hotY = 0;
-	else if (hotY > _constructedPano->w)
-		hotY = _constructedPano->w;
+	else if (hotY > _constructedHotspots->w)
+		hotY = _constructedHotspots->w;
 
-	warning("x: %d y: %d (yRatio: %f) (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, yRatio, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
-
-	return hotspot;
+	return (int)_constructedHotspots->getPixel(hotY, hotX);
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
@@ -796,7 +794,7 @@ void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 
 	int hotspot = track->lookupHotspot(x, y);
 
-	debug(3, "hotspot: %d", hotspot);
+	debug(0, "hotspot: %d", hotspot);
 }
 
 #define REPEAT_DELAY 30000
