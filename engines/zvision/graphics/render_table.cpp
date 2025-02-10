@@ -19,17 +19,22 @@
  *
  */
 
-#include "zvision/graphics/render_table.h"
-
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "math/utils.h"
+#include "zvision/zvision.h"
+#include "common/system.h"
+
+#include "zvision/graphics/render_table.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
-RenderTable::RenderTable(uint numColumns, uint numRows, const Graphics::PixelFormat pixelFormat)
-	: _numRows(numRows),
-	  _numColumns(numColumns),
+RenderTable::RenderTable(ZVision *engine, uint numColumns, uint numRows, const Graphics::PixelFormat pixelFormat)
+	: _engine(engine),
+	  _system(engine->_system),
+	  _numRows(numRows),
+    _numColumns(numColumns),
 	  _renderState(FLAT),
 	  _pixelFormat(pixelFormat) {
 	assert(numRows != 0 && numColumns != 0);
@@ -73,8 +78,8 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	}
 	uint32 index = point.y * _numColumns + point.x;
 	Common::Point newPoint(point);
-	newPoint.x += (_internalBuffer[index].xDir & 0x01 ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
-	newPoint.y += (_internalBuffer[index].yDir & 0x01 ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
+	newPoint.x += (_internalBuffer[index].xDir ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
+	newPoint.y += (_internalBuffer[index].yDir ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
 	return newPoint;
 }
 
@@ -127,41 +132,23 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	uint32 bufferBL = 0;
 	uint32 bufferTR = 0;
 	uint32 bufferBR = 0;
-	uint32 bufferTL_G = 0;
-	uint32 bufferBL_G = 0;
-	uint32 bufferTR_G = 0;
-	uint32 bufferBR_G = 0;
-
-
 	if(highQuality != _highQuality) {
 	  _highQuality = highQuality;
 	  generateRenderTable();
 	}
-	
+  uint32 mutationTime = _system->getMillis();
   if(_highQuality) {
     //Apply bilinear interpolation
 	  FilterPixel _curP;
-	  uint8 xCount = 0;
-	  uint8 yCount = 0;
-	  uint8 xDir = 0;
-	  uint8 yDir = 0;
-	  
-    //Deb
-	  uint8 r = 0;
-	  uint8 g = 0;
-	  uint8 b = 0;
-	  
+	  uint32 index;
+	  uint8 rTL,rTR,rBL,rBR,rF;
+	  uint8 gTL,gTR,gBL,gBR,gF;
+	  uint8 bTL,bTR,bBL,bBR,bF;
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
-		    xCount = 0;
-		    yCount = 0;
-			  uint32 index = sourceOffset + x;
-			  // RenderTable only stores offsets from the original coordinates
+			  index = sourceOffset + x;
 			  _curP = _internalBuffer[index];
-			  xDir = _curP.xDir;
-			  yDir = _curP.yDir;
-
 			  srcIndexYT = y + _curP.Src.top;
 			  srcIndexYB = y + _curP.Src.bottom;
 			  srcIndexXL = x + _curP.Src.left;
@@ -170,326 +157,18 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 			  bufferTR = sourceBuffer[srcIndexYT * _numColumns + srcIndexXR];
 			  bufferBL = sourceBuffer[srcIndexYB * _numColumns + srcIndexXL];
 			  bufferBR = sourceBuffer[srcIndexYB * _numColumns + srcIndexXR];
-        if(_curP._printDebug) {
-          _pixelFormat.colorToRGB(bufferTL,r,g,b);
-          debug(2,"Original pixel value TL %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferTR,r,g,b);
-          debug(2,"Original pixel value TR %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBL,r,g,b);
-          debug(2,"Original pixel value BL %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBR,r,g,b);
-          debug(2,"Original pixel value BR %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-			  }
-			  //Extract green values
-			  bufferTL_G = bufferTL & 0x03e0;
-			  bufferBL_G = bufferBL & 0x03e0;
-			  bufferTR_G = bufferTR & 0x03e0;
-			  bufferBR_G = bufferBR & 0x03e0;
-		    //Mask for red & blue values
-			  bufferTL &= 0x7c1f;
-			  bufferBL &= 0x7c1f;
-			  bufferTR &= 0x7c1f;
-			  bufferBR &= 0x7c1f;
-			  
-			  if(_curP._printDebug) {
-  			  debug(2,"\tTest pixel %d,%d", x, y);
-  			  debug(2,"\tX byte fraction %d, Y byte fraction %d", _curP.fracX, _curP.fracY);
-  			  debug(2,"\tX steps %d, Y steps %d", _curP.xSteps, _curP.ySteps);
-  			  debug(2,"\tXdir 0x%X, Ydir 0x%X", xDir, _curP.yDir);
-			  }
-			  
-        if(_curP._printDebug) {
-          _pixelFormat.colorToRGB(bufferTL,r,g,b);
-          debug(2,"Separated pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-          _pixelFormat.colorToRGB(bufferTR,r,g,b);
-          debug(2,"Separated pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBL,r,g,b);
-          debug(2,"Separated pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBR,r,g,b);
-          debug(2,"Separated pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-          debug(2,"Separated pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-          debug(2,"Separated pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-          debug(2,"Separated pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-          _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-          debug(2,"Separated pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-		    }
-			  
-        //Horizontal contraction
-		    if(_curP.ySteps > 1) {
-          while(_curP.xSteps > xCount+1) {
-            xCount++;
-            if(_curP.xDir & 0x01) {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting right, T&B");
-		          contractLeft(bufferTR, bufferTL);
-		          contractLeft(bufferBR, bufferBL);
-		          contractLeft(bufferTR_G, bufferTL_G);
-		          contractLeft(bufferBR_G, bufferBL_G);
-            }
-            else {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting left, T&B");
-		          contractLeft(bufferTL, bufferTR);
-		          contractLeft(bufferBL, bufferBR);
-		          contractLeft(bufferTL_G, bufferTR_G);
-		          contractLeft(bufferBL_G, bufferBR_G);
-            }
-            _curP.xDir >>= 1;
-            		          
-            if(_curP._printDebug) {
-		          debug(2,"\t\txDir 0x%X", _curP.xDir);	   
-              _pixelFormat.colorToRGB(bufferTL,r,g,b);
-              debug(2,"Contracted pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-              _pixelFormat.colorToRGB(bufferTR,r,g,b);
-              debug(2,"Contracted pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBL,r,g,b);
-              debug(2,"Contracted pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBR,r,g,b);
-              debug(2,"Contracted pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-              debug(2,"Contracted pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-              debug(2,"Contracted pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-              debug(2,"Contracted pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-              debug(2,"Contracted pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-			      }
-          }
-//*/
-          if(_curP.xDir & 0x01) {
-            bufferBR = (bufferBR >> xCount) & 0x7c1f;
-            bufferBR_G = (bufferBR_G >> xCount) & 0x03e0;
-            bufferTR = (bufferTR >> xCount) & 0x7c1f;
-            bufferTR_G = (bufferTR_G >> xCount) & 0x03e0;
-          }
-          else {
-            bufferBL = (bufferBL >> xCount) & 0x7c1f;
-            bufferBL_G = (bufferBL_G >> xCount) & 0x03e0;
-            bufferTL = (bufferTL >> xCount) & 0x7c1f;
-            bufferTL_G = (bufferTL_G >> xCount) & 0x03e0;
-          }
-          if(_curP._printDebug) {
-            debug(2,"\tShifted back %d places", xCount);
-            _pixelFormat.colorToRGB(bufferTL,r,g,b);
-            debug(2,"Shifted pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-            _pixelFormat.colorToRGB(bufferTR,r,g,b);
-            debug(2,"Shifted pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBL,r,g,b);
-            debug(2,"Shifted pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBR,r,g,b);
-            debug(2,"Shifted pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-            debug(2,"Shifted pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-            debug(2,"Shifted pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-            debug(2,"Shifted pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-            debug(2,"Shifted pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-			    }
-//*/
-        }
-        else if (_curP.yDir) {
-          while(_curP.xSteps > xCount+1) {
-            xCount++;
-            if(_curP.xDir & 0x01) {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting right, B");
-		          contractLeft(bufferBR, bufferBL);
-		          contractLeft(bufferBR_G, bufferBL_G);
-            }
-            else {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting left, B");
-		          contractLeft(bufferBL, bufferBR);
-		          contractLeft(bufferBL_G, bufferBR_G);
-            }
-            _curP.xDir >>= 1;
-            
-            if(_curP._printDebug) {
-              _pixelFormat.colorToRGB(bufferBL,r,g,b);
-              debug(2,"Contracted pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBR,r,g,b);
-              debug(2,"Contracted pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-              debug(2,"Contracted pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-              debug(2,"Contracted pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-			      }
-          }
-//*/
-          if(_curP.xDir & 0x01) {
-            bufferBR = (bufferBR >> xCount) & 0x7c1f;
-            bufferBR_G = (bufferBR_G >> xCount) & 0x03e0;
-          }
-          else {
-            bufferBL = (bufferBL >> xCount) & 0x7c1f;
-            bufferBL_G = (bufferBL_G >> xCount) & 0x03e0;
-          }
-          if(_curP._printDebug) {
-            debug(2,"\tShifted back %d places", xCount);
-            _pixelFormat.colorToRGB(bufferBL,r,g,b);
-            debug(2,"Shifted pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBR,r,g,b);
-            debug(2,"Shifted pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-            debug(2,"Shifted pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-            debug(2,"Shifted pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-			    }
-//*/
-        }
-        else {
-          while(_curP.xSteps > xCount+1) {
-            xCount++;
-            if(_curP.xDir & 0x01) {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting right, T");
-		          contractLeft(bufferTR, bufferTL);
-		          contractLeft(bufferTR_G, bufferTL_G);
-            }
-            else {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting left, T");
-		          contractLeft(bufferTL, bufferTR);
-		          contractLeft(bufferTL_G, bufferTR_G);
-            }
-            _curP.xDir >>= 1;
-            
-            if(_curP._printDebug) {
-              _pixelFormat.colorToRGB(bufferTL,r,g,b);
-              debug(2,"Contracted pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-              _pixelFormat.colorToRGB(bufferTR,r,g,b);
-              debug(2,"Contracted pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-              debug(2,"Contracted pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-              debug(2,"Contracted pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-			      }
-          }
-//*/
-          if(_curP.xDir & 0x01) {
-            bufferTR = (bufferTR >> xCount) & 0x7c1f;
-            bufferTR_G = (bufferTR_G >> xCount) & 0x03e0;
-          }
-          else {
-            bufferTL = (bufferTL >> xCount) & 0x7c1f;
-            bufferTL_G = (bufferTL_G >> xCount) & 0x03e0;
-          }
-          if(_curP._printDebug) {
-            debug(2,"\tShifted back %d places", xCount);
-            _pixelFormat.colorToRGB(bufferTL,r,g,b);
-            debug(2,"Shifted pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-            _pixelFormat.colorToRGB(bufferTR,r,g,b);
-            debug(2,"Shifted pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-            debug(2,"Shifted pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-            _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-            debug(2,"Shifted pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-			    }
-//*/
-        }
-        
-        //Vertical contraction
-        if(_curP.xDir & 0x01) {
-          while(_curP.ySteps > yCount+1) {
-            yCount++;
-            if(_curP.yDir & 0x01) {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting downward, R");
-		          contractLeft(bufferBR, bufferTR);
-		          contractLeft(bufferBR_G, bufferTR_G);
-            }
-            else {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting upward, R");
-		          contractLeft(bufferTR, bufferBR);
-		          contractLeft(bufferTR_G, bufferBR_G);
-            }
-            _curP.yDir >>= 1;
-            
-            if(_curP._printDebug) {
-              _pixelFormat.colorToRGB(bufferTR,r,g,b);
-              debug(2,"Contracted pixel value TR   %s, RGB: %d,%d,%d", pixelToBinary(bufferTR).c_str(), r,g,b);
-              _pixelFormat.colorToRGB(bufferBR,r,g,b);
-              debug(2,"Contracted pixel value BR   %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTR_G,r,g,b);
-              debug(2,"Contracted pixel value TR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTR_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBR_G,r,g,b);
-              debug(2,"Contracted pixel value BR_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBR_G).c_str(),r,g,b);
-			      }
-          }
-        }
-        else {
-          while(_curP.ySteps > yCount+1) {
-            yCount++;
-		        if(_curP._printDebug)
-		          debug(2,"yDir %x", _curP.yDir);
-            if(_curP.yDir & 0x01) {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting downward, L");
-		          contractLeft(bufferBL, bufferTL);
-		          contractLeft(bufferBL_G, bufferTL_G);
-            }
-            else {
-			        if(_curP._printDebug)
-			          debug(2,"\t\tContracting upward, L");
-		          contractLeft(bufferTL, bufferBL);
-		          contractLeft(bufferTL_G, bufferBL_G);
-            }
-            _curP.yDir >>= 1;
-            
-            if(_curP._printDebug) {
-              _pixelFormat.colorToRGB(bufferTL,r,g,b);
-              debug(2,"Contracted pixel value TL   %s, RGB: %d,%d,%d", pixelToBinary(bufferTL).c_str(), r,g,b);
-              _pixelFormat.colorToRGB(bufferBL,r,g,b);
-              debug(2,"Contracted pixel value BL   %s, RGB: %d,%d,%d", pixelToBinary(bufferBL).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferTL_G,r,g,b);
-              debug(2,"Contracted pixel value TL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferTL_G).c_str(),r,g,b);
-              _pixelFormat.colorToRGB(bufferBL_G,r,g,b);
-              debug(2,"Contracted pixel value BL_G %s, RGB: %d,%d,%d", pixelToBinary(bufferBL_G).c_str(),r,g,b);
-			      }
-          }
-        }
-        if(_curP._printDebug)
-          debug(2,"yCount %d", yCount);
-        //Final value
-        if(_curP.yDir & 0x01) {
-          if(_curP.xDir & 0x01) {
-		        if(_curP._printDebug)
-		          debug(2,"\t\tPicking final value, BR");
-            destBuffer[destOffset] = ((bufferBR >> yCount) & 0x7c1f) | ((bufferBR_G >> yCount) & 0x03e0);
-          }
-          else {
-		        if(_curP._printDebug)
-		          debug(2,"\t\tPicking final value, BL");
-            destBuffer[destOffset] = ((bufferBL >> yCount) & 0x7c1f) | ((bufferBL_G >> yCount) & 0x03e0);
-          }
-        }
-        else {
-          if(_curP.xDir & 0x01) {
-		        if(_curP._printDebug)
-		          debug(2,"\t\tPicking final value, TR");
-            destBuffer[destOffset] = ((bufferTR >> yCount) & 0x7c1f) | ((bufferTR_G >> yCount) & 0x03e0);
-          }
-          else {
-		        if(_curP._printDebug)
-		          debug(2,"\t\tPicking final value, TL");
-            destBuffer[destOffset] = ((bufferTL >> yCount) & 0x7c1f) | ((bufferTL_G >> yCount) & 0x03e0);
-          }
-        }        
-        if(_curP._printDebug) { 
-          _pixelFormat.colorToRGB(destBuffer[destOffset],r,g,b);
-          debug(2,"Final pixel value %s, RGB: %d,%d,%d", pixelToBinary(bufferBR).c_str(),r,g,b);
-        }    
-		    destOffset++;     
-		  }
-	  }
-  }
+        _pixelFormat.colorToRGB(bufferTL,rTL,gTL,bTL);
+        _pixelFormat.colorToRGB(bufferTR,rTR,gTR,bTR);
+        _pixelFormat.colorToRGB(bufferBL,rBL,gBL,bBL);
+        _pixelFormat.colorToRGB(bufferBR,rBR,gBR,bBR);
+        rF = round(_curP.fTL*rTL + _curP.fTR*rTR + _curP.fBL*rBL + _curP.fBR*rBR);
+        gF = round(_curP.fTL*gTL + _curP.fTR*gTR + _curP.fBL*gBL + _curP.fBR*gBR);
+        bF = round(_curP.fTL*bTL + _curP.fTR*bTR + _curP.fBL*bBL + _curP.fBR*bBR);
+        destBuffer[destOffset] = _pixelFormat.RGBToColor(rF,gF,bF);
+		    destOffset++;
+      }
+    }
+	}
   else {
     //Apply nearest-neighbour interpolation
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
@@ -504,17 +183,23 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 		  }
 	  }
   }
+  mutationTime = _system->getMillis() - mutationTime;
+  debug(1,"\tPanorama mutation time %dms, %s quality", mutationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
 }
 
 void RenderTable::generateRenderTable() {
 	switch (_renderState) {
-	  case ZVision::RenderTable::PANORAMA:
+	  case RenderTable::PANORAMA: {
+      uint32 generationTime = _system->getMillis();
 		  generatePanoramaLookupTable();
+      generationTime = _system->getMillis() - generationTime;		  
+      debug(1,"\tRender table generation time %dms, %s quality", generationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
 		  break;
-	  case ZVision::RenderTable::TILT:
+	  }
+	  case RenderTable::TILT:
 		  generateTiltLookupTable();
 		  break;
-	  case ZVision::RenderTable::FLAT:
+	  case RenderTable::FLAT:
 		  // Intentionally left empty
 		  break;
 	  default:
@@ -534,8 +219,6 @@ void RenderTable::generatePanoramaLookupTable() {
 	
 	debug(1,"halfWidth %f, halfHeight %f", halfWidth, halfHeight);
 	debug(1,"halfRows %d, halfColumns %d", halfRows, halfColumns);
-	
-	uint pixelAverageCount = 0;
 	
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
 	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
@@ -581,14 +264,12 @@ void RenderTable::generatePanoramaLookupTable() {
 			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
 			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, _highQuality);
 			
-			pixelAverageCount += _internalBuffer[indexTL].xSteps + _internalBuffer[indexTL].ySteps;
-			
 			//Increment indices
 			rowIndexT += _numColumns;
 			rowIndexB -= _numColumns;
 		}
 	}
-	debug(1,"Render table generated, %s quality, filter tolerance %d, total pixel averaging operations per frame %e", _highQuality ? "high" : "low", _internalBuffer[0].tol, (float)pixelAverageCount*4);
+	debug(1,"Render table generated, %s quality", _highQuality ? "high" : "low");
 }
 
 void RenderTable::generateTiltLookupTable() {
@@ -636,13 +317,11 @@ void RenderTable::generateTiltLookupTable() {
       bool _printDebug = (Common::Point(x,y)==testPixel);
       if(_printDebug) {
         debug(2,"\tGenerating test pixel %d, %d", x, y);
-        debug(2,"\tCylinder coordinates %f, %f", xInCylinderCoords, yInCylinderCoords);
+        debug(2,"\tCylinder coordinates %d, %d", xInCylinderCoords, yInCylinderCoords);
         debug(2,"\tOffsets %f,%f", xOffset, yOffset);
       }
-
 			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
-			
+			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);			
 			//Store mirrored offset values
 			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, _highQuality);
 			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
