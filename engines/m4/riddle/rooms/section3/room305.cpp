@@ -174,7 +174,7 @@ void Room305::init() {
 		}
 
 		if (_drawerOpen) {
-			ws_demand_facing(11);
+			ws_demand_facing(_G(my_walker), 11);
 			player_update_info();
 
 			if (_G(flags)[V000]) {

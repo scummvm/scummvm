@@ -2357,7 +2357,7 @@ void Room203::daemon() {
 
 	case 358:
 		sendWSMessage_150000(_official, -1);
-		ws_demand_facing(11);
+		ws_demand_facing(_G(my_walker), 11);
 		sendWSMessage_10000(_official, 1025, 290, 11, 359, 1);
 		break;
 
@@ -2386,7 +2386,7 @@ void Room203::daemon() {
 
 	case 365:
 		sendWSMessage_150000(_official, -1);
-		ws_demand_facing(7);
+		ws_demand_facing(_G(my_walker), 7);
 		sendWSMessage_10000(_official, 1010, 345, 9, 366, 1);
 		break;
 

@@ -801,7 +801,7 @@ void Room603::daemon() {
 		terminateMachineAndNull(_ttNote);
 		terminateMachineAndNull(_shadow);
 		ws_unhide_walker();
-		ws_demand_facing(4);
+		ws_demand_facing(_G(my_walker), 4);
 		ws_walk(345, 300, nullptr, -1, 10);
 		break;
 

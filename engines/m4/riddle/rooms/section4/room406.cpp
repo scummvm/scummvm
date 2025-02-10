@@ -142,7 +142,7 @@ void Room406::init() {
 		hotspot_set_active("ENVELOPE", false);
 		hotspot_set_active("KEYS", false);
 	} else if (deskDrawerState == 1000) {
-		ws_demand_facing(1);
+		ws_demand_facing(_G(my_walker), 1);
 		_rptmhr = series_load("RPTMHR11");
 		setGlobals1(_rptmhr, 1, 5, 5, 5, 0, 5, 1, 1, 1);
 		sendWSMessage_110000(-1);
@@ -166,7 +166,7 @@ void Room406::init() {
 			hotspot_set_active("KEYS", true);
 		}
 	} else if (_gamesDrawerState == 1000) {
-		ws_demand_facing(11);
+		ws_demand_facing(_G(my_walker), 11);
 		_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
 		setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 		sendWSMessage_110000(-1);

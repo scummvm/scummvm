@@ -730,7 +730,7 @@ void Room301::daemon() {
 		break;
 
 	case 208:
-		ws_demand_facing(3);
+		ws_demand_facing(_G(my_walker), 3);
 		kernel_timing_trigger(1, 209);
 		break;
 

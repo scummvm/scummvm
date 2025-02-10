@@ -112,7 +112,7 @@ void Room402::init() {
 				_wolfClipping, 10, 10, 0);
 			_wolfMode = 2001;
 			_wolfShould = 2300;
-			ws_demand_facing(11);
+			ws_demand_facing(_G(my_walker), 11);
 
 			if (!_G(kittyScreaming)) {
 				ws_demand_location(660, 290);

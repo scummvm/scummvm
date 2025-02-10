@@ -167,7 +167,7 @@ void Room403::init() {
 			}
 
 			if (_ladderMode) {
-				ws_demand_facing(11);
+				ws_demand_facing(_G(my_walker), 11);
 				ws_hide_walker();
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 					triggerMachineByHashCallback, "RIP on ladder/plank");

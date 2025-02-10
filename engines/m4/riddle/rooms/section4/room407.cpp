@@ -85,7 +85,7 @@ void Room407::init() {
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		if (_drawerState == 1010) {
-			ws_demand_facing(9);
+			ws_demand_facing(_G(my_walker), 9);
 			_ripMedReach = series_load("RIP TREK MED REACH POS3");
 			setGlobals1(_ripMedReach, 10, 10, 10, 10, 0, 10, 1, 1, 1);
 			sendWSMessage_110000(-1);
