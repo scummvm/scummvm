@@ -82,7 +82,7 @@ private:
 	uint16 _pitch;
 };
 
-void copyStretchImg(Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal = 0);
+void copyStretchImg(const Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal = 0);
 
 } // End of namespace Director
 

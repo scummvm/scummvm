@@ -23,6 +23,7 @@
 #include "common/tokenizer.h"
 
 #include "director/director.h"
+#include "director/images.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
@@ -202,8 +203,8 @@ static const MethodProto xlibMethods[] = {
 	{ "QTVRSetTransitionSpeed",			QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 1,	500 },
 	{ "QTVRGetUpdateMode",				QtvrxtraXtra::m_QTVRGetUpdateMode,		 0, 0,	500 },
 	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 1,	500 },
-		{ "QTVRGetVisible",				QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
-		{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 1,	500 },
+	{ "QTVRGetVisible",					QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
+	{ "QTVRSetVisible",					QtvrxtraXtra::m_QTVRSetVisible,		 1, 1,	500 },
 	{ "QTVRGetWarpMode",				QtvrxtraXtra::m_QTVRGetWarpMode,		 0, 0,	500 },
 	{ "QTVRSetWarpMode",				QtvrxtraXtra::m_QTVRSetWarpMode,		 1, 0,	500 },
 	{ "QTVRCollapseToHotSpotRgn",		QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn,		 0, 0,	500 },
@@ -240,6 +241,7 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 	_objType = ObjectType;
 
 	_video = nullptr;
+	_targetSurface = nullptr;
 
 	_visible = false;
 	_quality = 0.0f;
@@ -372,7 +374,6 @@ void QtvrxtraXtra::m_QTVROpen(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRClose(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRClose", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -383,6 +384,11 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 		me->_video = nullptr;
 
 		delete me->_widget;
+	}
+
+	if (me->_targetSurface) {
+		me->_targetSurface->free();
+		delete me->_targetSurface;
 	}
 }
 
@@ -411,16 +417,21 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
-
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
-	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
+
+	if (!me->_targetSurface) {
+		me->_targetSurface = new Graphics::Surface();
+		me->_targetSurface->create(me->_rect.width(), me->_rect.height(), g_director->_pixelformat);
+	}
+
+	Common::Rect bbox(0, 0, me->_video->getWidth(), me->_video->getHeight());
+
+	copyStretchImg(frame, me->_targetSurface, bbox, me->_rect);
 
 	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
+		me->_targetSurface->getPixels(), me->_targetSurface->pitch,
+		me->_rect.left, me->_rect.top, me->_targetSurface->w, me->_targetSurface->h
 	);
-
-	dither->free();
-	delete dither;
 }
 
 void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
@@ -770,8 +781,6 @@ void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
 
 QtvrxtraWidget::QtvrxtraWidget(QtvrxtraXtraObject *xtra, Graphics::MacWidget *parent, int x, int y, int w, int h, Graphics::MacWindowManager *wm) :
 	Graphics::MacWidget(parent, x, y, w, h, wm, true), _xtra(xtra) {
-
-	warning("****** CREATED at %d, %d, %d, %d", x, y, w, h);
 
 	_priority = 10000; // We stay on top of everything
 }
