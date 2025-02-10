@@ -144,7 +144,7 @@ void Room604::init() {
 	case 603:
 		player_set_commands_allowed(false);
 		_shedDoor = series_play("SHED DOOR OPENS", 0xf00, 16, 50, 11);
-		ws_demand_location(156, 338, 3);
+		ws_demand_location(_G(my_walker), 156, 338, 3);
 		digi_play("DOOROPEN", 2);
 		break;
 
@@ -152,14 +152,14 @@ void Room604::init() {
 		_shedDoor = series_show("SHED DOOR OPENS", 0xf00, 16);
 
 		if (_G(flags)[V203] == 8) {
-			ws_demand_location(380, 304, 3);
+			ws_demand_location(_G(my_walker), 380, 304, 3);
 			ws_hide_walker();
 			series_load("rip crawls through window");
 			_ripley = series_play("RIP CRAWLS THROUGH WINDOW", 0x100, 2, 10, 6);
 			player_set_commands_allowed(false);
 
 		} else {
-			ws_demand_location(381, 329, 10);
+			ws_demand_location(_G(my_walker), 381, 329, 10);
 		}
 		break;
 	}

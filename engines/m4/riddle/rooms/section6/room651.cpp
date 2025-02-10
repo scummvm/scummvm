@@ -36,20 +36,20 @@ void Room651::init() {
 
 	case 647:
 		if (_G(flags)[V206])
-			ws_demand_location(548, 372, 11);
+			ws_demand_location(_G(my_walker), 548, 372, 11);
 		else
-			ws_demand_location(277, 353, 11);
+			ws_demand_location(_G(my_walker), 277, 353, 11);
 		break;
 
 	case 650:
-		ws_demand_location(-30, 310, 3);
+		ws_demand_location(_G(my_walker), -30, 310, 3);
 		ws_walk(20, 310, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 
 	default:
 		digi_preload("950_s28c");
-		ws_demand_location(277, 353, 11);
+		ws_demand_location(_G(my_walker), 277, 353, 11);
 		break;
 	}
 

@@ -34,28 +34,28 @@ void Room641::init() {
 		break;
 
 	case 635:
-		ws_demand_location(305, 342, 1);
+		ws_demand_location(_G(my_walker), 305, 342, 1);
 		break;
 
 	case 640:
-		ws_demand_location(-30, 326, 3);
+		ws_demand_location(_G(my_walker), -30, 326, 3);
 		ws_walk(24, 326, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 
 	case 642:
-		ws_demand_location(670, 319, 9);
+		ws_demand_location(_G(my_walker), 670, 319, 9);
 		ws_walk(614, 319, nullptr, 1, 9);
 		player_set_commands_allowed(false);
 		break;
 
 	case 647:
-		ws_demand_location(315, 282, 5);
+		ws_demand_location(_G(my_walker), 315, 282, 5);
 		break;
 
 	default:
 		digi_preload("950_s28c");
-		ws_demand_location(305, 342, 1);
+		ws_demand_location(_G(my_walker), 305, 342, 1);
 		break;
 	}
 

@@ -183,7 +183,7 @@ void Room603::init() {
 	case 604:
 		player_set_commands_allowed(false);
 		digi_preload("950_s28a");
-		ws_demand_location(542, 230, 2);
+		ws_demand_location(_G(my_walker), 542, 230, 2);
 		ws_walk(534, 240, nullptr, 5, 7);
 		break;
 
@@ -197,14 +197,14 @@ void Room603::init() {
 		}
 
 		player_set_commands_allowed(false);
-		ws_demand_location(670, 232, 2);
+		ws_demand_location(_G(my_walker), 670, 232, 2);
 		ws_walk(497, 245, nullptr, 1, 8);
 		break;
 
 	default:
 		player_set_commands_allowed(false);
 		digi_preload("950_s28a");
-		ws_demand_location(67, 391, 2);
+		ws_demand_location(_G(my_walker), 67, 391, 2);
 		ws_walk(135, 356, nullptr, 1, 2);
 		break;
 	}

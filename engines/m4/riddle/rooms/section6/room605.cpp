@@ -82,7 +82,7 @@ void Room605::init() {
 		if (_G(flags)[V203] == 2) {
 			player_set_commands_allowed(false);
 			_G(player).disable_hyperwalk = true;
-			ws_demand_location(451, 368, 1);
+			ws_demand_location(_G(my_walker), 451, 368, 1);
 			ws_walk(513, 316, nullptr, -1, 10);
 
 			ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
@@ -92,7 +92,7 @@ void Room605::init() {
 			sendWSMessage_10000(_tt, 476, 290, 5, 10, 1);
 
 		} else {
-			ws_demand_location(451, 353, 10);
+			ws_demand_location(_G(my_walker), 451, 353, 10);
 		}
 		break;
 
@@ -100,18 +100,18 @@ void Room605::init() {
 		digi_preload("950_s28");
 		digi_stop(3);
 		digi_unload("950_s28b");
-		ws_demand_location(534, 219, 7);
+		ws_demand_location(_G(my_walker), 534, 219, 7);
 		ws_walk(520, 263, nullptr, -1, 7);
 		break;
 
 	case 623:
-		ws_demand_location(-30, 272, 3);
+		ws_demand_location(_G(my_walker), -30, 272, 3);
 		ws_walk(34, 272, nullptr, 1, 3);
 		break;
 
 	default:
 		digi_preload("950_s28");
-		ws_demand_location(451, 353, 10);
+		ws_demand_location(_G(my_walker), 451, 353, 10);
 		break;
 	}
 

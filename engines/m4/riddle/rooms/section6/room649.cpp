@@ -34,12 +34,12 @@ void Room649::init() {
 		break;
 
 	case 643:
-		ws_demand_location(334, 347, 11);
+		ws_demand_location(_G(my_walker), 334, 347, 11);
 		break;
 
 	default:
 		digi_preload("950_s28c");
-		ws_demand_location(334, 347, 11);
+		ws_demand_location(_G(my_walker), 334, 347, 11);
 		break;
 	}
 

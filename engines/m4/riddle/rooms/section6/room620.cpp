@@ -34,18 +34,18 @@ void Room620::init() {
 		break;
 
 	case 621:
-		ws_demand_location(670, 322, 9);
+		ws_demand_location(_G(my_walker), 670, 322, 9);
 		ws_walk(605, 322, nullptr, 1, 9);
 		player_set_commands_allowed(false);
 		break;
 
 	case 626:
-		ws_demand_location(418, 285, 5);
+		ws_demand_location(_G(my_walker), 418, 285, 5);
 		break;
 
 	default:
 		digi_preload("950_s28c");
-		ws_demand_location(418, 285, 5);
+		ws_demand_location(_G(my_walker), 418, 285, 5);
 		break;
 	}
 

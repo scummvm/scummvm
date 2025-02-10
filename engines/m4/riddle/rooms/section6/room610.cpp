@@ -81,7 +81,7 @@ void Room610::init() {
 		midi_play("tensions", 255, 1, -1, 949);
 
 		if (_flag1)
-			ws_demand_location(615, 364, 10);
+			ws_demand_location(_G(my_walker), 615, 364, 10);
 
 		setup();
 		kernel_timing_trigger(300, 135);
@@ -92,7 +92,7 @@ void Room610::init() {
 		digi_preload("950_s28a");
 		setup();
 		kernel_timing_trigger(300, 135);
-		ws_demand_location(472, 262, 3);
+		ws_demand_location(_G(my_walker), 472, 262, 3);
 		break;
  
 	default:
@@ -103,7 +103,7 @@ void Room610::init() {
 		if (player_been_here(610)) {
 			setup();
 			player_set_commands_allowed(false);
-			ws_demand_location(665, 364, 9);
+			ws_demand_location(_G(my_walker), 665, 364, 9);
 			ws_walk(615, 364, nullptr, 1, 10);
 		} else {
 			sendWSMessage_10000(1, _k, _k00, 1, 50, -1, _k00, 50, 60, 4);
@@ -111,7 +111,7 @@ void Room610::init() {
 				_sgSlapsTt1, 1, 1, 4);
 
 			player_set_commands_allowed(false);
-			ws_demand_location(665, 364, 9);
+			ws_demand_location(_G(my_walker), 665, 364, 9);
 			ws_walk(240, 272, nullptr, 10, 10);
 			kernel_timing_trigger(1, 100);
 		}
@@ -134,7 +134,7 @@ void Room610::daemon() {
 	case 10:
 		_pu01 = series_stream("610pu01", 5, 0, 103);
 		series_stream_break_on_frame(_pu01, 6, 102);
-		ws_demand_location(272, 273, 7);
+		ws_demand_location(_G(my_walker), 272, 273, 7);
 		ws_hide_walker();
 
 		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,

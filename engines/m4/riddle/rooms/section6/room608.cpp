@@ -135,7 +135,7 @@ void Room608::init() {
 
 		player_set_commands_allowed(false);
 		_G(player).disable_hyperwalk = true;
-		ws_demand_location(-30, 345, 1);
+		ws_demand_location(_G(my_walker), -30, 345, 1);
 		ws_walk(43, 345, nullptr, 18, 3);
 	
 		ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
@@ -156,7 +156,7 @@ void Room608::init() {
 
 		player_set_commands_allowed(false);
 		_G(player).disable_hyperwalk = true;
-		ws_demand_location(-30, 345, 1);
+		ws_demand_location(_G(my_walker), -30, 345, 1);
 		kernel_timing_trigger(1, 698);
 
 		ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
@@ -185,7 +185,7 @@ void Room608::init() {
 
 		if (_G(flags)[V203] != 2) {
 			player_set_commands_allowed(false);
-			ws_demand_location(-30, 345, 3);
+			ws_demand_location(_G(my_walker), -30, 345, 3);
 			ws_walk(43, 345, nullptr, 1, 3);
 		}
 		break;
@@ -1008,7 +1008,7 @@ void Room608::daemon() {
 		_ripHandTalk3 = series_load("RIP TREK HAND TALK POS3");
 		_end2 = series_show("608END2", 0xe00, 16);
 		ws_unhide_walker();
-		ws_demand_location(494, 276, 3);
+		ws_demand_location(_G(my_walker), 494, 276, 3);
 
 		sendWSMessage_10000(_G(my_walker), 524, 296, 9, 532, 1);
 		_ol = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
@@ -1265,7 +1265,7 @@ void Room608::daemon() {
 
 	case 747:
 		ws_unhide_walker();
-		ws_demand_location(461, 293, 3);
+		ws_demand_location(_G(my_walker), 461, 293, 3);
 		sendWSMessage_10000(_G(my_walker), 432, 297, 3, 738, 1);
 		break;
 
