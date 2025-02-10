@@ -94,8 +94,8 @@ const ADGameDescription gameDescriptions[] = {
 		"lionking",
 		"2.0GB",
 		AD_ENTRY2s(
-			"BOOT.STM", "c90200e52bcaad52524520d461caef2b", 29884,
-			"100.CXT", "ce40843604b8c52701694cd543072a88", 3253600
+			"BOOT.STM", "72e9211eb97b968e8db20c0fec919eb4", 23610,
+			"100.CXT", "069b86f0912627bc1fffb1dee9b68afa", 1455740
 		),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
