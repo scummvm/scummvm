@@ -489,14 +489,27 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
 
 	// panorama is turned 90 degrees, width is height
-	int hotX = yawAngle * (float)_constructedPano->h / 2.0 / M_PI;
+	int hotX = (yawAngle / (2.0 * M_PI) + _curPanAngle / 360.0f) * (float)_constructedPano->h;
+
+	hotX = hotX % _constructedPano->h;
+	if (hotX < 0)
+		hotX += _constructedPano->h;
 
 	// To get the vertical coordinate, need to project the vector on to a unit cylinder.
 	// To do that, compute the length of the XZ vector,
 	float xzVectorLen = sqrt(mousePixelVector[0] * mousePixelVector[0] + mousePixelVector[2] * mousePixelVector[2]);
 
 	// then compute projectedY = mousePixelVector[1] / xzVectorLen
-	int hotY = (int)((float)mousePixelVector[1] / (float)xzVectorLen * (float)_constructedPano->w);
+	float projectedY = mousePixelVector[1] / xzVectorLen;
+
+	float normalizedYCoordinate = (projectedY - minTiltY) / (maxTiltY - minTiltY);
+
+	int hotY = (int)(normalizedYCoordinate * (float)_constructedPano->w);
+
+	if (hotY < 0)
+		hotY = 0;
+	else if (hotY > _constructedPano->w)
+		hotY = _constructedPano->w;
 
 	warning("x: %d y: %d (yRatio: %f) (min: %f max: %f) m: [%f, %f, %f] vectorLen: %f", hotX, hotY, yRatio, minTiltY, maxTiltY, mousePixelVector[0], mousePixelVector[1], mousePixelVector[2], xzVectorLen);
 
