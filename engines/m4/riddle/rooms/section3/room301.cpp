@@ -78,7 +78,7 @@ void Room301::init() {
 
 		_val12 = checkFlags(false);
 		player_set_commands_allowed(false);
-		ws_demand_location(55, 270, 3);
+		ws_demand_location(_G(my_walker), 55, 270, 3);
 
 		if (_val12 || (!player_been_here(401) && _G(flags)[V092] && !_G(flags)[V093])) {
 			ws_walk(352, 269, nullptr, 60, 3);

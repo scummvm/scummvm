@@ -142,7 +142,7 @@ void Room201::init() {
 			}
 		} else {
 			player_set_commands_allowed(false);
-			ws_demand_location(79, 257, 3);
+			ws_demand_location(_G(my_walker), 79, 257, 3);
 
 			if (_G(flags)[V053] == 2 && _G(game).previous_room != KERNEL_RESTORING_GAME) {
 				++_G(flags)[V006];

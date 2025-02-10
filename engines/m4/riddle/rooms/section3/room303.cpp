@@ -143,7 +143,7 @@ void Room303::init() {
 			playSeries(false);
 
 			_door = series_show_sprite("DOOR", 7, 0xf05);
-			ws_demand_location(393, 260, 5);
+			ws_demand_location(_G(my_walker), 393, 260, 5);
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
@@ -194,7 +194,7 @@ void Room303::init() {
 
 	case 305:
 		player_set_commands_allowed(false);
-		ws_demand_location(28, 267, 3);
+		ws_demand_location(_G(my_walker), 28, 267, 3);
 		playSeries();
 
 		if (!player_been_here(301)) {
@@ -222,7 +222,7 @@ void Room303::init() {
 
 	case 309:
 		interface_show();
-		ws_demand_location(230, 258, 10);
+		ws_demand_location(_G(my_walker), 230, 258, 10);
 		player_set_commands_allowed(false);
 
 		if (!player_been_here(301)) {
@@ -281,7 +281,7 @@ void Room303::init() {
 		_val12 = KT_PARSE;
 		kernel_load_variant("303lock1");
 		setFengActive(true);
-		ws_demand_location(145, 289, 3);
+		ws_demand_location(_G(my_walker), 145, 289, 3);
 		setupMei();
 		setShadow4(true);
 
@@ -315,7 +315,7 @@ void Room303::daemon() {
 
 	case 5:
 	case 61:
-		ws_demand_location(230, 258);
+		ws_demand_location(_G(my_walker), 230, 258);
 		player_set_commands_allowed(true);
 		break;
 
@@ -334,12 +334,12 @@ void Room303::daemon() {
 		break;
 
 	case 9:
-		ws_demand_location(1350, 276, 9);
+		ws_demand_location(_G(my_walker), 1350, 276, 9);
 		ws_walk(1208, 276, nullptr, 75, 9);
 		break;
 
 	case 10:
-		ws_demand_location(425, 227, 7);
+		ws_demand_location(_G(my_walker), 425, 227, 7);
 		ws_walk(399, 260, nullptr, 50, 7);
 		break;
 
@@ -1165,7 +1165,7 @@ void Room303::parser() {
 		case 1:
 			setShadow5(false);
 			if (player_said("giant matchstick"))
-				ws_demand_location(610, 256);
+				ws_demand_location(_G(my_walker), 610, 256);
 
 			sendWSMessage_10000(_fengLi, 706, 256, 5, 2, 1);
 			break;

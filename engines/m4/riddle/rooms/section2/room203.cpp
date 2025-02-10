@@ -139,7 +139,7 @@ void Room203::init() {
 	case 202:
 		player_set_commands_allowed(false);
 		MoveScreenDelta(_G(game_buff_ptr), -300, 0);
-		ws_demand_location(547, 316, 1);
+		ws_demand_location(_G(my_walker), 547, 316, 1);
 
 		setupGk();
 		setupOldLady();
@@ -181,7 +181,7 @@ void Room203::init() {
 		hotspot_set_active("PEASANT", false);
 		hotspot_set_active("SOLDIER'S HELMET", false);
 		kernel_timing_trigger(1, 130);
-		ws_demand_location(348, 273, 1);
+		ws_demand_location(_G(my_walker), 348, 273, 1);
 		ws_walk(231, 331, nullptr, 303, 4);
 		break;
 
@@ -193,7 +193,7 @@ void Room203::init() {
 		setupPigeons();
 
 		if (_G(flags)[V067]) {
-			ws_demand_location(1100, 290, 9);
+			ws_demand_location(_G(my_walker), 1100, 290, 9);
 			_G(player).disable_hyperwalk = true;
 
 			_peskyYellsThief = series_load("pesky yells thief");
@@ -236,7 +236,7 @@ void Room203::init() {
 			kernel_timing_trigger(1, 350);
 
 		} else {
-			ws_demand_location(1055, 295, 7);
+			ws_demand_location(_G(my_walker), 1055, 295, 7);
 			ws_walk(1045, 345, nullptr, 303, 7);
 			kernel_timing_trigger(1, 300);
 		}
@@ -244,7 +244,7 @@ void Room203::init() {
 
 	default:
 		player_set_commands_allowed(false);
-		ws_demand_location(-40, 352, 3);
+		ws_demand_location(_G(my_walker), -40, 352, 3);
 
 		if (keyCheck()) {
 			_G(kernel).call_daemon_every_loop = true;
@@ -510,7 +510,7 @@ void Room203::daemon() {
 		_ripYouSeeToIt = series_load("rip says you see to it");
 		_meiTalkToRip = series_load("mc talk to rip");
 		_meiTurnAndTalk = series_load("mc turn and talk");
-		ws_demand_location(100, 360);
+		ws_demand_location(_G(my_walker), 100, 360);
 		kernel_timing_trigger(1, 29);
 		break;
 
@@ -2372,7 +2372,7 @@ void Room203::daemon() {
 		break;
 
 	case 363:
-		ws_demand_location(1100, 290, 9);
+		ws_demand_location(_G(my_walker), 1100, 290, 9);
 		ws_walk(1060, 290, nullptr, 364, 7);
 		break;
 

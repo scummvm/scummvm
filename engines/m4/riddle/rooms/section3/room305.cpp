@@ -211,7 +211,7 @@ void Room305::init() {
 		player_set_commands_allowed(false);
 
 		if (player_been_here(301)) {
-			ws_demand_location(1320, 296, 9);
+			ws_demand_location(_G(my_walker), 1320, 296, 9);
 
 			if (player_been_here(201)) {
 				_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, true,
@@ -227,7 +227,7 @@ void Room305::init() {
 			MoveScreenDelta(game_buff_ptr, -640, 0);
 			kernel_timing_trigger(1, 10);
 		} else {
-			ws_demand_location(1320, 296, 9);
+			ws_demand_location(_G(my_walker), 1320, 296, 9);
 			hotspot_set_active("FENG LI", false);
 			kernel_timing_trigger(1, 10);
 			MoveScreenDelta(game_buff_ptr, -640, 0);
@@ -236,7 +236,7 @@ void Room305::init() {
 		break;
 
 	default:
-		ws_demand_location(1180, 320, 9);
+		ws_demand_location(_G(my_walker), 1180, 320, 9);
 		hotspot_set_active("FENG LI", false);
 		break;
 	}

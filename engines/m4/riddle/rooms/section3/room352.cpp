@@ -40,7 +40,7 @@ void Room352::init() {
 	AddSystemHotkey(KEY_ESCAPE, escapeKeyPressed);
 	_G(kernel).call_daemon_every_loop = true;
 
-	ws_demand_location(584, 334, 3);
+	ws_demand_location(_G(my_walker), 584, 334, 3);
 	ws_hide_walker();
 	player_set_commands_allowed(false);
 	_val1 = 0;

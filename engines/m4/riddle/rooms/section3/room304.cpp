@@ -58,7 +58,7 @@ void Room304::init() {
 
 	case 303:
 		player_set_commands_allowed(false);
-		ws_demand_location(458, 263, 8);
+		ws_demand_location(_G(my_walker), 458, 263, 8);
 
 		if (_G(flags)[V084] == 2 || player_been_here(201)) {
 			_sword = series_show_sprite("one frame sword", 0, 0xa00);
@@ -83,7 +83,7 @@ void Room304::init() {
 
 			_useSword = _useHandlingStick = false;
 			_val4 = 0;
-			ws_demand_location(452, 285, 9);
+			ws_demand_location(_G(my_walker), 452, 285, 9);
 			kernel_timing_trigger(1, 49);
 			_trunk = series_show_sprite("one frame trunk", 0, 0);
 			_stick = series_show_sprite("one frame stick", 0, 0xf00);
@@ -421,7 +421,7 @@ void Room304::intrMsg(frac16 myMessage, struct machine *sender) {
 		}
 
 		if (r->_useHandlingStick) {
-			ws_demand_location(382, 295);
+			ws_demand_location(_G(my_walker), 382, 295);
 			ws_hide_walker();
 			player_set_commands_allowed(false);
 			terminateMachineAndNull(r->_machine2);
@@ -438,7 +438,7 @@ void Room304::intrMsg(frac16 myMessage, struct machine *sender) {
 	}
 
 	if ((myMessage >> 16) == 58 && r->_useSword) {
-		ws_demand_location(382, 295);
+		ws_demand_location(_G(my_walker), 382, 295);
 		ws_hide_walker();
 		player_set_commands_allowed(false);
 		terminateMachineAndNull(r->_machine2);
@@ -492,8 +492,7 @@ void Room304::handlingStickAndSword() {
 
 		ws_unhide_walker();
 		player_update_info();
-		ws_demand_location(_G(player_info).x - 28,
-			_G(player_info).y + 9);
+		ws_demand_location(_G(my_walker), _G(player_info).x - 28, _G(player_info).y + 9);
 
 		ws_walk_load_walker_series(S3_NORMAL_DIRS2, S3_NORMAL_NAMES2);
 		ws_walk_load_shadow_series(S3_SHADOW_DIRS2, S3_SHADOW_NAMES2);
