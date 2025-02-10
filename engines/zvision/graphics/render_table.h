@@ -25,24 +25,18 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
+class OSystem;
+
 namespace ZVision {
 
 class FilterPixel {
 public:
-  const static uint8 colorBits = 5;
-  const static uint8 tol = 1;
-  const static uint8 pFrac = 0xff;
   //Bitfields representing sequential direction of contraction
-  uint8 xDir = 0; //0 contract left, 1 contract right
-  uint8 yDir = 0; //0 contract up, 1 contract down
-  uint8 xSteps = 0; //Number of X-contractions carried out
-  uint8 ySteps = 0; //Number of y-contractions carried out
-  //TODO - make this a sequential list for recursive filtering.
-  //TODO - Also include a recursion limit value so that we don't waste filtering operations on pixels that are already accurate enough.
+  bool xDir = 0; //0 left, 1 right
+  bool yDir = 0; //0 up, 1 down
   Common::Rect Src = Common::Rect(0,0);  //Coordinates of four panorama image pixels around actual working window pixel
   
-  uint8 fracX = 0;
-  uint8 fracY = 0;
+  float fX, fY, fTL, fTR, fBL, fBR;
   
   bool _printDebug = false;
   
@@ -52,75 +46,25 @@ public:
     Src.right = int16(ceil(x));
 	  Src.top = int16(floor(y));
 	  Src.bottom = int16(ceil(y));
-
 	  _printDebug = printDebug;
-
     if(_printDebug)
       debug(1,"\tTarget pixel offset: %f, %f", x, y);
-
-		//Bilinear
-	  if(highQuality) {
-      fracX = uint8((x-Src.left)*pFrac);  //Fraction of horizontal pixel position, 0 = left, pFrac = right
-      fracY = uint8((y-Src.top)*pFrac); //Fraction of vertical pixel position, 0 = top, pFrac = bottom
-	    uint xBound = pFrac >> 1;
-	    uint yBound = pFrac >> 1;
-      if(_printDebug) {
-        debug(1,"\tBilinear, xBound: %d, yBound: %d, tol: %d", xBound, yBound, tol);
-        debug(1,"\tByte fractions, fracX: %d, fracY: %d", fracX, fracY);
-      }
-	    for(uint8 i = (pFrac >> 2); i > tol; i >>= 1) {
-        if(_printDebug)
-          debug(1,"\txBound %d, yBound %d, i %d", xBound, yBound, i);
-	      if(fracX >= xBound) {
-  	      if(fracX-xBound > tol) {
-    	      xDir += 0x80;
-    	      xDir >>= 1;
-    	      xBound += i;
-    	      xSteps++;
-            if(_printDebug)
-              debug(1,"		Contract right, xDir: 0x%X, xSteps: %d", xDir, xSteps);
-  	      }
-	      }
-	      else {
-  	      if(xBound-fracX > tol) {
-    	      xDir >>= 1;
-    	      xBound -= i;
-    	      xSteps++;
-            if(_printDebug)
-              debug(1,"		Contract left, xDir: 0x%X, xSteps: %d", xDir, xSteps);
-  	      }
-	      }
-	      if(fracY >= yBound) {
-  	      if(fracY-yBound > tol) {
-    	      yDir += 0x80;
-    	      yDir >>= 1;
-    	      yBound += i;
-    	      ySteps++;
-            if(_printDebug)
-              debug(1,"		Contract downward, yDir: 0x%X, ySteps: %d", yDir, ySteps);
-  	      }  
-	      }
-	      else {
-  	      if(yBound-fracY > tol) {
-    	      yDir >>= 1;
-    	      yBound -= i;
-    	      ySteps++;
-            if(_printDebug)
-              debug(1,"		Contract upward, yDir: 0x%X, ySteps: %d", yDir, ySteps);
-  	      }
-	      }
-	    }
-	    xDir >>= (7-xSteps);
-	    yDir >>= (7-ySteps);
+    if(highQuality) {
+      fX = x-(float)Src.left;
+      fY = y-(float)Src.top;
+      fTL = (1-fX)*(1-fY);
+      fTR = fX*(1-fY);
+      fBL = (1-fX)*fY;
+      fBR = fX*fY;
       if(_printDebug)
-		    debug(2,"Xdir 0x%X, Ydir 0x%X, xSteps %d, ySteps %d", xDir, yDir, xSteps, ySteps);
-	  }
+        debug(1,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
+    }
 	  else {
-    //Nearest neighbour
-		xDir = (x-Src.left) > 0.5f ? 0x01 : 0x00;
-		yDir = (y-Src.top) > 0.5f ? 0x01 : 0x00;
-    if(_printDebug)
-      debug(1,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+      //Nearest neighbour
+		  xDir = (x-Src.left) > 0.5f;
+		  yDir = (y-Src.top) > 0.5f;
+      if(_printDebug)
+        debug(1,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
 	  }
   };
   ~FilterPixel() {};
@@ -128,7 +72,7 @@ public:
 
 class RenderTable {
 public:
-	RenderTable(uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
+	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
 	
 	Common::Point testPixel = Common::Point(30,120);
@@ -141,6 +85,8 @@ public:
 	};
 
 private:
+	ZVision *_engine;
+	OSystem *_system;
 	uint _numColumns, _numRows; //Working area width, height
   FilterPixel *_internalBuffer;
 	RenderState _renderState;
