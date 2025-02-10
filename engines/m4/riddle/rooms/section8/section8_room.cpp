@@ -47,6 +47,10 @@ int32 Section8Room::getStatueIndex(int32 val1) {
 	return -1;
 }
 
+void Section8Room::sendWSMessage_3840000(int32 trigger) {
+	sendWSMessage_3840000(_G(my_walker), trigger);
+}
+
 void Section8Room::sendWSMessage_3840000(machine *machine, int32 trigger) {
 	int32 num = trigger;
 	if (trigger == 0)

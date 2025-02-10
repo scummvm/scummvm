@@ -87,6 +87,7 @@ protected:
 	machine *_ripPushMach = nullptr;
 
 	int32 getStatueIndex(int32 val1);
+	void sendWSMessage_3840000(int32 trigger);
 	void sendWSMessage_3840000(machine *machine, int32 trigger);
 	int32 subCE52E(int32 val1);
 	void moveScreen(int32 dx, int32 dy);

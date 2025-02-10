@@ -1015,7 +1015,7 @@ void Room808::parser() {
 				player_set_commands_allowed(false);
 				ws_walk(_G(my_walker), 17, 214, nullptr, 20, 8, true);
 				if (_G(flags)[V097] == 0) {
-					setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+					setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 					sendWSMessage_3840000(_mcTrekMach, -1);
 				} else {
 					DisposePath(_mcTrekMach->walkPath);
@@ -1074,14 +1074,23 @@ void Room808::parser() {
 		if (player_said("mei chen")) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				if (_G(flags)[V100] != 0) {
-					digi_play("com122", 1, 255, 997);
-				} else if (_G(flags)[V097] == 1 && inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V094] == 4) {
-					ws_walk(_G(my_walker), 185, 156, nullptr, 11, 5, true);
+				if (_G(flags)[V100]) {
+					digi_play("com122", 1, 255, -1, 997);
+				} else if (_G(flags)[V097] == 0) {
+					player_set_commands_allowed(false);
+					setGlobals3(_rptmr15Series, 1, 16);
+					sendWSMessage_3840000(-1);
+					setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
+					sendWSMessage_3840000(_mcTrekMach, 7);
+				} else if (_G(flags)[V097] == 1) {
+					if (inv_object_in_scene("FARMER'S SHOVEL", 808) &&
+						_G(flags)[V094] == 4)
+						ws_walk(185, 156, nullptr, 11, 5);
+					else
+						digi_play("808r30", 1);
 				} else {
-					digi_play("808r30", 1, 255, -1, -1);
-				}
-
+					digi_play("808r30", 1);
+				}				
 				break;
 
 			case 7:
@@ -1091,15 +1100,13 @@ void Room808::parser() {
 			case 10:
 				setGlobals3(_mctd61Series, 1, 5);
 				sendWSMessage_3840000(_mcTrekMach, 15);
-
 				break;
 
 			case 11:
 				player_set_commands_allowed(false);
 				DisposePath(_mcTrekMach->walkPath);
 				_mcTrekMach->walkPath = CreateCustomPath(348, 130, 193, 163, -1);
-				ws_custom_walk(_mcTrekMach, 11, 1, true);
-
+				ws_custom_walk(_mcTrekMach, 11, 21);
 				break;
 
 			case 15:
@@ -1109,6 +1116,7 @@ void Room808::parser() {
 
 			case 20:
 				_G(flags)[V098] = 1;
+
 				if (_G(flags)[V097] == 0) {
 					setGlobals3(_mctd61Series, 5, 1);
 					sendWSMessage_3840000(_mcTrekMach, 25);
@@ -1119,17 +1127,15 @@ void Room808::parser() {
 
 				setGlobals3(_rptmr15Series, 16, 1);
 				sendWSMessage_3840000(_G(my_walker), 30);
-
 				break;
 
 			case 21:
 				setGlobals3(_rptmr15Series, 1, 16);
 				sendWSMessage_3840000(_G(my_walker), 10);
-
 				break;
 
 			case 25:
-				setGlobals3(_meiChienHandsBehindBackSeries, 1, 17);
+				setGlobals3(_meiChenHandsBehindBackSeries, 1, 17);
 				sendWSMessage_3840000(_mcTrekMach, -1);
 				break;
 
@@ -1147,7 +1153,6 @@ void Room808::parser() {
 			case 41:
 				player_set_commands_allowed(true);
 				ws_demand_facing(_G(my_walker), 5);
-
 				break;
 
 			default:
@@ -1256,7 +1261,7 @@ void Room808::parser() {
 					setGlobals1(_ripTalkerPos5Series, 4, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 					sendWSMessage_110000(_G(my_walker), -1);
 					if (conv_current_node() == 2 && conv_current_entry() == 0) {
-						setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+						setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 						sendWSMessage_3840000(_mcTrekMach, -1);
 					}
 				} else {
@@ -1322,8 +1327,8 @@ void Room808::daemon() {
 		addMcHotspot(_G(flags)[V097]);
 
 		if (_G(flags)[V097] == 0) {
-			_meiChienHandsBehindBackSeries = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
-			setGlobals3(_meiChienHandsBehindBackSeries, 1, 17);
+			_meiChenHandsBehindBackSeries = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
+			setGlobals3(_meiChenHandsBehindBackSeries, 1, 17);
 			sendWSMessage_3840000(_mcTrekMach, -1);
 		}
 
@@ -1461,7 +1466,7 @@ void Room808::daemon() {
 		digi_play("808_s02", 2, 255, -1, -1);
 
 		if (_G(flags)[V097] == 0) {
-			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 			sendWSMessage_3840000(_mcTrekMach, 16);
 		} else {
 			ws_hide_walker(_mcTrekMach);
@@ -1477,7 +1482,7 @@ void Room808::daemon() {
 		digi_play("808_s02", 2, 255, -1, -1);
 
 		if (_G(flags)[V097] == 0) {
-			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 			sendWSMessage_3840000(_mcTrekMach, 16);
 		} else {
 			ws_hide_walker(_mcTrekMach);
@@ -1494,7 +1499,7 @@ void Room808::daemon() {
 		digi_play("808_s02", 2, 255, -1, -1);
 
 		if (_G(flags)[V097] == 0) {
-			setGlobals3(_meiChienHandsBehindBackSeries, 17, 1);
+			setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 			sendWSMessage_3840000(_mcTrekMach, 16);
 		} else {
 			ws_demand_location(_mcTrekMach, -1000, -1000);

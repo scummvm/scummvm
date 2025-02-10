@@ -62,7 +62,7 @@ private:
 	int32 _808RpupSeries = 0;
 	int32 _mctd61Series = 0;
 	int32 _mctd82aSeries = 0;
-	int32 _meiChienHandsBehindBackSeries = 0;
+	int32 _meiChenHandsBehindBackSeries = 0;
 	int32 _ripLooksAroundInAweSeries = 0;
 	int32 _ripMedReach1HandPos2Series = 0;
 	int32 _ripPos3LookAroundSeries = 0;
