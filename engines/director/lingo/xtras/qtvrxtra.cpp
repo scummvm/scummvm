@@ -389,7 +389,6 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
 
 void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQTVRType", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -409,7 +408,6 @@ void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRIdle(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQTVRType", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -759,12 +757,11 @@ void QtvrxtraXtra::m_QTVRPassMouseDown(int nargs) {
 }
 
 void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_IsQTVRMovie", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
-	g_lingo->push((int)(me->_video && me->_video->isVideoLoaded()));
+	g_lingo->push((int)(me->_video && me->_video->isVideoLoaded() && me->_video->isVR()));
 }
 
 ///////////////
