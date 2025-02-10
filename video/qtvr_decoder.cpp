@@ -144,6 +144,15 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 		_height = h;
 
 		setFOV(_fov);
+	} if (_qtvrType == QTVRType::OBJECT) {
+		if (_width != w)
+			_scaleFactorX *= Common::Rational(_width, w);
+
+		if (_height != h)
+			_scaleFactorY *= Common::Rational(_height, h);
+
+		_width = w;
+		_height = h;
 	}
 }
 
