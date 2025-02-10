@@ -194,7 +194,7 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
-	{	// Demo
+	{	// Demo // TODO: which?
 		{
 			"riddle",
 			"Demo",
@@ -207,7 +207,35 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesDemo
 	},
-
+	{	// Game Version NYUK -- July 13, 1995
+		{
+			"riddle",
+			"Demo",
+			// Small/Medium/Vast installation
+			AD_ENTRY1s("ripley.has", "2c5e80441c4ace6ff4ffe0ecd4099a58", 149057),
+			// Large/Huge installation
+			// AD_ENTRY1s("ripley.has", "daaff94287aec861e27b1e7b37811229", 164319),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
+	{	// Game Version OBVIATE -- Aug 2, 1995
+		{
+			"riddle",
+			"Demo",
+			AD_ENTRY1s("ripley.has", "df74ee9ceefb006638839572f0144256", 74353),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
