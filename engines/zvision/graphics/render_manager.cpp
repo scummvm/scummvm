@@ -56,7 +56,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(_layout.workingArea.width(), _layout.workingArea.height(), pixelFormat),
+	  _renderTable(engine, _layout.workingArea.width(), _layout.workingArea.height(), pixelFormat),
 	  _doubleFPS(doubleFPS),
 	  _widescreen(widescreen) {
 	debug(1,"creating render manager");
@@ -213,10 +213,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 	    case RenderTable::PANORAMA:
 	    case RenderTable::TILT:
 		    if (!_backgroundSurfaceDirtyRect.isEmpty()) {
-		      uint32 mutationTime = _system->getMillis();
 			    _renderTable.mutateImage(&_warpedSceneSurface, in, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
-          mutationTime = _system->getMillis() - mutationTime;
-          debug(1,"Panorama mutation time %dms, %s quality", mutationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
 			    out = &_warpedSceneSurface;
 			    outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
 		    }
