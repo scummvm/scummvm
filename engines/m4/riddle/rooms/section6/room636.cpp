@@ -35,7 +35,7 @@ void Room636::init() {
 
 	case 635:
 		ws_demand_location(_G(my_walker), -30, 346, 3);
-		ws_walk(30, 346, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 30, 346, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 

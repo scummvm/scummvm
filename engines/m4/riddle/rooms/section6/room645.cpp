@@ -39,13 +39,13 @@ void Room645::init() {
 
 	case 644:
 		ws_demand_location(_G(my_walker), -30, 323, 3);
-		ws_walk(25, 323, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 25, 323, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 
 	case 646:
 		ws_demand_location(_G(my_walker), 670, 298, 3);
-		ws_walk(608, 298, nullptr, 1, 9);
+		ws_walk(_G(my_walker), 608, 298, nullptr, 1, 9);
 		player_set_commands_allowed(false);
 		break;
 

@@ -73,13 +73,13 @@ void Room607::init() {
 
 	case 638:
 		ws_demand_location(_G(my_walker), -30, 334, 3);
-		ws_walk(32, 334, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 32, 334, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 
 	case 640:
 		ws_demand_location(_G(my_walker), 670, 288, 9);
-		ws_walk(604, 288, nullptr, 1, 9);
+		ws_walk(_G(my_walker), 604, 288, nullptr, 1, 9);
 		player_set_commands_allowed(false);
 		break;
 
@@ -173,7 +173,7 @@ void Room607::parser() {
 			player_set_commands_allowed(false);
 			terminateMachineAndNull(_rock);
 			_rock = series_show("ROCK BOTTOM", 0x400, 16);
-			ws_walk(360, 315, nullptr, 1, 1);
+			ws_walk(_G(my_walker), 360, 315, nullptr, 1, 1);
 			break;
 		case 1:
 			ws_hide_walker();
@@ -197,7 +197,7 @@ void Room607::parser() {
 			break;
 		case 7:
 			ws_unhide_walker();
-			ws_walk(383, 319, nullptr, 9, 0);
+			ws_walk(_G(my_walker), 383, 319, nullptr, 9, 0);
 			break;
 		case 9:
 			terminateMachineAndNull(_rock);
@@ -211,7 +211,7 @@ void Room607::parser() {
 	} else if (useFlag && player_said("GREY ROCK") && !_G(flags)[V193]) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(431, 311, nullptr, 2, 9);
+			ws_walk(_G(my_walker), 431, 311, nullptr, 2, 9);
 			break;
 		case 2:
 			player_set_commands_allowed(false);
@@ -272,7 +272,7 @@ void Room607::parser() {
 	} else if (player_said("HORN/PULL CORD/WATER", "CLAY") && !_G(flags)[V193]) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(311, 349, nullptr, 1, 1);
+			ws_walk(_G(my_walker), 311, 349, nullptr, 1, 1);
 			break;
 		case 1:
 			player_set_commands_allowed(false);

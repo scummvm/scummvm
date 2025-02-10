@@ -165,12 +165,12 @@ void Room806::init() {
 
 		} else if (!_G(flags)[V265]) {
 			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, 101, 1);
-			ws_walk(221, 316, nullptr, 12001, 3, true);
+			ws_walk(_G(my_walker), 221, 316, nullptr, 12001, 3, true);
 		} else {
 			if (!_G(flags)[V276])
 				sendWSMessage_10000(_mcTrekMach, 225, 306, 3, -1, 1);
 
-			ws_walk(221, 316, nullptr, 999, 3, true);
+			ws_walk(_G(my_walker), 221, 316, nullptr, 999, 3, true);
 
 			if (!_G(flags)[V276]) {
 				if (!player_been_here(809))

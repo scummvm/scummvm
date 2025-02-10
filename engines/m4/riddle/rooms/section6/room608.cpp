@@ -136,7 +136,7 @@ void Room608::init() {
 		player_set_commands_allowed(false);
 		_G(player).disable_hyperwalk = true;
 		ws_demand_location(_G(my_walker), -30, 345, 1);
-		ws_walk(43, 345, nullptr, 18, 3);
+		ws_walk(_G(my_walker), 43, 345, nullptr, 18, 3);
 	
 		ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
 		ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
@@ -186,7 +186,7 @@ void Room608::init() {
 		if (_G(flags)[V203] != 2) {
 			player_set_commands_allowed(false);
 			ws_demand_location(_G(my_walker), -30, 345, 3);
-			ws_walk(43, 345, nullptr, 1, 3);
+			ws_walk(_G(my_walker), 43, 345, nullptr, 1, 3);
 		}
 		break;
 
@@ -876,7 +876,7 @@ void Room608::daemon() {
 		break;
 
 	case 501:
-		ws_walk(465, 284, nullptr, 503, 1);
+		ws_walk(_G(my_walker), 465, 284, nullptr, 503, 1);
 		break;
 
 	case 503:
@@ -1124,7 +1124,7 @@ void Room608::daemon() {
 		break;
 
 	case 699:
-		ws_walk(43, 345, nullptr, -1, 3);
+		ws_walk(_G(my_walker), 43, 345, nullptr, -1, 3);
 		break;
 
 	case 700:
@@ -1520,7 +1520,7 @@ void Room608::parser() {
 	} else if (player_said("POLE", "DRIFTWOOD STUMP ") && inv_player_has("POLE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(453, 311, nullptr, 1, 1);
+			ws_walk(_G(my_walker), 453, 311, nullptr, 1, 1);
 			break;
 		case 1:
 			player_set_commands_allowed(false);
@@ -1560,7 +1560,7 @@ void Room608::parser() {
 	} else if (takeFlag && player_said("POLE") && !inv_player_has("POLE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(453, 311, nullptr, 1, 1);
+			ws_walk(_G(my_walker), 453, 311, nullptr, 1, 1);
 			break;
 		case 1:
 			player_set_commands_allowed(false);
@@ -1901,7 +1901,7 @@ bool Room608::stumpHole() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (inv_player_has("DRIFTWOOD STUMP")) {
-			ws_walk(474, 309, nullptr, 1, 2);
+			ws_walk(_G(my_walker), 474, 309, nullptr, 1, 2);
 			return true;
 		}
 		break;
@@ -1939,7 +1939,7 @@ bool Room608::takeStump2() {
 	} else {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(474, 309, nullptr, 1, 2);
+			ws_walk(_G(my_walker), 474, 309, nullptr, 1, 2);
 			break;
 
 		case 1:
@@ -2011,7 +2011,7 @@ bool Room608::hornCordWater() {
 	} else {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(64, 354, nullptr, 1, 7);
+			ws_walk(_G(my_walker), 64, 354, nullptr, 1, 7);
 			return true;
 
 		case 1:
@@ -2086,7 +2086,7 @@ bool Room608::lookPuffin() {
 void Room608::usePole() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(453, 311, nullptr, 1, 1);
+		ws_walk(_G(my_walker), 453, 311, nullptr, 1, 1);
 		break;
 
 	case 1:
@@ -2140,7 +2140,7 @@ void Room608::usePole() {
 
 		ws_unhide_walker();
 		player_update_info();
-		ws_walk(_G(player_info).x + 1, _G(player_info).y,
+		ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y,
 			nullptr, 12, 4);
 		break;
 
@@ -2162,7 +2162,7 @@ void Room608::usePole() {
 		// call for animating old lady. Is something supposed to set a value?
 		// For now, do a dummy ws_walk to reset internal states
 		player_update_info();
-		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 4);
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 4);
 
 		sendWSMessage_110000(2);
 		digi_play("608r16", 1, 255, 20);

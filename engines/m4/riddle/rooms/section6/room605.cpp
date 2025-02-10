@@ -83,7 +83,7 @@ void Room605::init() {
 			player_set_commands_allowed(false);
 			_G(player).disable_hyperwalk = true;
 			ws_demand_location(_G(my_walker), 451, 368, 1);
-			ws_walk(513, 316, nullptr, -1, 10);
+			ws_walk(_G(my_walker), 513, 316, nullptr, -1, 10);
 
 			ws_walk_load_walker_series(TT_NORMAL_DIRS, TT_NORMAL_NAMES);
 			ws_walk_load_shadow_series(TT_SHADOW_DIRS, TT_SHADOW_NAMES);
@@ -101,12 +101,12 @@ void Room605::init() {
 		digi_stop(3);
 		digi_unload("950_s28b");
 		ws_demand_location(_G(my_walker), 534, 219, 7);
-		ws_walk(520, 263, nullptr, -1, 7);
+		ws_walk(_G(my_walker), 520, 263, nullptr, -1, 7);
 		break;
 
 	case 623:
 		ws_demand_location(_G(my_walker), -30, 272, 3);
-		ws_walk(34, 272, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 34, 272, nullptr, 1, 3);
 		break;
 
 	default:
@@ -322,7 +322,7 @@ void Room605::daemon() {
 		break;
 
 	case 211:
-		ws_walk(680, 183, nullptr, -1, 3);
+		ws_walk(_G(my_walker), 680, 183, nullptr, -1, 3);
 		break;
 
 	case 300:
@@ -571,7 +571,7 @@ void Room605::conv605a() {
 		break;
 
 	case 2:
-		ws_walk(513, 316, nullptr, 3, 10);
+		ws_walk(_G(my_walker), 513, 316, nullptr, 3, 10);
 		return;
 
 	case 3:

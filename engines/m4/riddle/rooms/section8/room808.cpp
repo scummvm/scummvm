@@ -1085,7 +1085,7 @@ void Room808::parser() {
 				} else if (_G(flags)[V097] == 1) {
 					if (inv_object_in_scene("FARMER'S SHOVEL", 808) &&
 						_G(flags)[V094] == 4)
-						ws_walk(185, 156, nullptr, 11, 5);
+						ws_walk(_G(my_walker), 185, 156, nullptr, 11, 5);
 					else
 						digi_play("808r30", 1);
 				} else {

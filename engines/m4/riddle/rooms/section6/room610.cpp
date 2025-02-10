@@ -104,7 +104,7 @@ void Room610::init() {
 			setup();
 			player_set_commands_allowed(false);
 			ws_demand_location(_G(my_walker), 665, 364, 9);
-			ws_walk(615, 364, nullptr, 1, 10);
+			ws_walk(_G(my_walker), 615, 364, nullptr, 1, 10);
 		} else {
 			sendWSMessage_10000(1, _k, _k00, 1, 50, -1, _k00, 50, 60, 4);
 			sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 1, 1, -1,
@@ -112,7 +112,7 @@ void Room610::init() {
 
 			player_set_commands_allowed(false);
 			ws_demand_location(_G(my_walker), 665, 364, 9);
-			ws_walk(240, 272, nullptr, 10, 10);
+			ws_walk(_G(my_walker), 240, 272, nullptr, 10, 10);
 			kernel_timing_trigger(1, 100);
 		}
 		break;
@@ -743,7 +743,7 @@ void Room610::daemonPostprocess() {
 				!player_said("talk to", "SAMANTHA") &&
 				_G(player_info).x <= 222) {
 			intr_cancel_sentence();
-			ws_walk(202, 244, nullptr, 666, 11);
+			ws_walk(_G(my_walker), 202, 244, nullptr, 666, 11);
 			_flag1 = true;
 			_val5 = 2;
 			_sgShould = 4;

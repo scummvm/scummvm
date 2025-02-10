@@ -36,14 +36,14 @@ void Room625::init() {
 
 	case 624:
 		ws_demand_location(_G(my_walker), -30, 310, 3);
-		ws_walk(30, 310, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 30, 310, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 
 	default:
 		digi_preload("950_28c");
 		ws_demand_location(_G(my_walker), -30, 310, 3);
-		ws_walk(30, 310, nullptr, 1, 3);
+		ws_walk(_G(my_walker), 30, 310, nullptr, 1, 3);
 		player_set_commands_allowed(false);
 		break;
 	}
