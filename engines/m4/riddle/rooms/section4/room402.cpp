@@ -115,10 +115,10 @@ void Room402::init() {
 			ws_demand_facing(_G(my_walker), 11);
 
 			if (!_G(kittyScreaming)) {
-				ws_demand_location(660, 290);
+				ws_demand_location(_G(my_walker), 660, 290);
 				digi_play("402_S03", 1, 255, 19);
 			} else {
-				ws_demand_location(425, 285);
+				ws_demand_location(_G(my_walker), 425, 285);
 				player_set_commands_allowed(true);
 			}
 

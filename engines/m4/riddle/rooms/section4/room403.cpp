@@ -246,10 +246,10 @@ void Room403::init() {
 
 			if (_G(kittyScreaming)) {
 				MoveScreenDelta(-640, 0);
-				ws_demand_location(1110, 322);
+				ws_demand_location(_G(my_walker), 1110, 322);
 				player_set_commands_allowed(true);
 			} else {
-				ws_demand_location(4, 296);
+				ws_demand_location(_G(my_walker), 4, 296);
 				ws_walk(80, 300, nullptr, 300, 3);
 			}
 		}
