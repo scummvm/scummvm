@@ -1114,24 +1114,147 @@ void Adlib::OnTimer() {
 					// l0017_222D:
 					if (bp4 == 0x67) {
 						// TODO: Continue from here
-					}
-					// l0017_2258:
-				}
-				
-				
+						// l0017_2231:
+						if (bp5 != 0) {
+							// l0017_2237:
+							g2291 = 0x6;
+							Func2792(0xBD, 0x20);
+						} else {
+							// l0017_2247:
+							g2291 = 0x9;
+							Func2792(0xBD, 0);
+						}
+					} else {
+						// l0017_2258:
+						if (bp4 == 0x69) {
+							// l0017_225C:
+							// TODO: Check if the neg works out the right way
+							bp5 = -bp5;
+							gArray226F[bp3] = bp5;
+							uint8 bp16 = g2291 - 1;
+							if (0 <= bp16) {
+								// l0017_2289:
+								for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+									// l0017_228C:
+									if (gArray227F[bp8] != bp3) {
+										continue;
+									}
+									// l0017_2298:
+									if (gArray222C[bp8] != 0) {
+										continue;
+									}
 
+									// l0017_22A2:
+									Func294E(bp8, gArray2235[bp8], bp5);
+								}
+							}
+						}
+						// l0017_22C1:
+						if (bp4 == 0x68) {
+							// l0017_22C5:
+							gArray226F[bp3] = bp5;
+							uint16 bp16 = g2291 - 1;
+							if (0 <= bp16) {
+								// l0017_22E3:
+								for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+									// l0017_22EB:
+									if (gArray227F[bp8] != bp3) {
+										continue;
+									}
+									// l0017_22F7:
+									if (gArray222C[bp8] != 0) {
+										continue;
+									}
+									// l0017_2301:
+									Func294E(bp8, gArray2235[bp8], bp5);
+								}
+							}
+						}
+						
+					}
+				}
 			}
-			// 231Eh
-			mov	al,[bp-6h]
-	and	al,0F0h
-	cmp	al,0B0h
-	;; #timing_log: 14 take the jump
-	jz	21EBh
-	
-							
-		}
+			// TODO: Not sure about indentation level here
+			// l0017_231E:
+			if ((bp6 & 0xF0) == 0xC0) {
+				// l0017_2327:
+				Macs2::StreamHandler *sh2252;
+				Macs2::StreamHandler *sh225A;
+				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
+				sh2252 = shResult;
+				// TODO: Check if this is the right way to handle the plus operation
+				sh225A->seek(1, SEEK_CUR);
+				gArray225F[bp3] = bp4;
+			}
+			// l0017_2355:
+			if ((bp6 & 0xF0) == 0xD0) {
+				// l0017_235E:
+				Macs2::StreamHandler *sh2252;
+				Macs2::StreamHandler *sh225A;
+				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
+				sh2252 = shResult;
+				// TODO: Check if this is the right way to handle the plus operation
+				sh225A->seek(1, SEEK_CUR);
+			}
+			// l0017_237E:
+			if ((bp6 & 0xF0) == 0xF0) {
+				// l0017_2387:
+				if (bp4 == 0x2F) {
+					// l0017_238D:
+					Macs2::StreamHandler *sh2244;
+					Macs2::StreamHandler *sh2250;
+					sh2250 = sh2244;
+					// TODO: Setting 225C and 225A to 0 - ?
+					// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
+					// mov	byte ptr [2259h],0h
+					// mov byte ptr[2242h], 1h
+					Func1A03();
+				} else {
+					// l0017_23B4:
+					// TODO: Identical code as the previous branch?
+				}
+			} else {
+				// l0017_23DB:
+				Func1A03();
+			}
+			// l0017_23E0:
+			// TODO: Check the logic of the if here
+			if ((g2256 <= 0) || ((g2256 >= 0) && (g2254 > 0x0FFF)) {
+				// l0017_23F1:
+				// TODO: Identical code as the previous branch?
+				// The code in l0017_238D:
+			}
+			// l0017_2416:
+			if ((g2256 | g2256) == 0) {
+				// TODO: Big jump back up
+				// l0017_241F:
+				// jmp 1B1Ah
+			} else {
+				// l0017_2422:
+				// TODO: sti
+			}
+			// TODO: Absolutely not sure about indentation here any more
+			// l0017_2423:
+			// jmp	2438h
 	}
-	// TODO: This needs to be l0017_2425
+	// l0017_2425:
+	if ((g2258 & 0xC2) != 0) {
+		// l0017_242E:
+		Func1A74();
+	}
+	// l0017_2433:
+	Func27E4();
+
+	// l0017_2438:
+	if (g229A == 0) {
+		// l0017_243F
+		// TODO
+		// mov al,20h
+		// out 20h,al
+	}
+	// l0017_2443:
+	// Just epilogue and interrupt return
+
 }
 
 uint16 Adlib::Func19BE(uint8 offset) {
