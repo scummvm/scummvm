@@ -150,9 +150,7 @@ void Room809::pre_parser() {
 	}
 
 	if (!player_said("spleen") || inv_object_in_scene("two soldiers' shields", 809)) {
-		_G(player).need_to_walk = false;
-		_G(player).ready_to_walk = true;
-		_G(player).waiting_for_walk = false;
+		_G(player).resetWalk();
 	}
 }
 
@@ -213,7 +211,7 @@ void Room809::parser() {
 		break;
 
 	case 1:
-		player_update_info(_mcTrekMach, &_G(player_info));
+		player_update_info();
 		if (_G(player_info).x < 1340 && -_G(game_buff_ptr)->x1 < 1259) {
 			g_engine->camera_shift_xy(1259, 0);
 		}
@@ -226,7 +224,7 @@ void Room809::parser() {
 			eax = 2;
 		else if (player_said("talk to"))
 			eax = 3;
-		else if (player_said_any("walk to", "spleen", "walk"))
+		else if (player_said_any("walk to", "walk", "spleen"))
 			eax = 5;
 		else if (player_said("journal"))
 			eax = 4;
@@ -865,12 +863,13 @@ void Room809::daemon() {
 
 	case 36:
 		player_update_info(_mcTrekMach, &_G(player_info));
+
 		if (-_G(game_buff_ptr)->x1 < _G(player_info).x) {
 			if (639 - _G(game_buff_ptr)->x1 <= _G(player_info).x) {
 				_mcTrekDestX = getMcDestX(_G(player_info).x, true);
 				if (669 - _G(game_buff_ptr)->x1 < _G(player_info).x) {
 					ws_demand_facing(_mcTrekMach, 11);
-					ws_demand_location(669 - _G(game_buff_ptr)->x1, 323);
+					ws_demand_location(_mcTrekMach, 669 - _G(game_buff_ptr)->x1, 323);
 				}
 
 				ws_walk(_mcTrekMach, _mcTrekDestX, 323, nullptr, 37, 11, true);
@@ -879,7 +878,7 @@ void Room809::daemon() {
 			_mcTrekDestX = getMcDestX(_G(player_info).x, false);
 			if (-30 - _G(game_buff_ptr)->x1 > _G(player_info).x) {
 				ws_demand_facing(_mcTrekMach, 1);
-				ws_demand_location(-30 - _G(game_buff_ptr)->x1, 323);
+				ws_demand_location(_mcTrekMach, -30 - _G(game_buff_ptr)->x1, 323);
 			}
 
 			ws_walk(_mcTrekMach, _mcTrekDestX, 323, nullptr, 37, 1, true);
@@ -913,21 +912,22 @@ void Room809::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(_playerFacing);
 }
 
-int32 Room809::getMcDestX(int32 val1, bool val2) {
-	int32 _dword194868[3] = {540, 960, 1282};
-	int32 _dword194864[4] = {160, 540, 960, 1282};
+int32 Room809::getMcDestX(int32 xPos, bool facing) {
+	static const uint16 X_THRESHOLDS1[3] = { 540, 960, 1282 };
+	static const uint16 X_THRESHOLDS2[4] = { 0x7fff, 160, 540, 960 };
+	static const uint16 X_DESTS[5] = { 160, 540, 960, 1282 };
 	int32 index;
 
-	if (val2) {
+	if (facing) {
 		index = 0;
 		for (; index < 3; ++index) {
-			if (val1 <= _dword194868[index])
+			if (xPos <= X_THRESHOLDS1[index])
 				break;
 		}
 	} else {
 		index = 3;
 		for (; index > 0; --index) {
-			if (val1 > _dword194864[index])
+			if (xPos > X_THRESHOLDS2[index])
 				break;
 		}
 	}
@@ -940,15 +940,17 @@ int32 Room809::getMcDestX(int32 val1, bool val2) {
 	_enableHotspotName = "MEI CHEN     ";
 	_byte1A1990[index] = 0;
 	_field24_index = index;
-	_mcPosX = _dword194864[index];
-	_mcFacing = (val2 == false) ? 1 : 11;
+	_mcPosX = X_DESTS[index];
+	_mcFacing = facing ? 11 : 1;
 
-	return _dword194864[index];
+	return _mcPosX;
 }
 
 bool Room809::checkSaid() {
-	if (player_said_any("spleen", "west", "mei chen", "mei chen ", "mei chen  ", "mei chen   ", "farmer's shovel", "two soldiers' shields")
-	|| inv_object_in_scene("two soldiers' shields", 809))
+	if (player_said_any("spleen", "west", "mei chen", "mei chen ",
+			"mei chen  ", "mei chen   ", "farmer's shovel",
+			"two soldiers' shields")
+			|| inv_object_in_scene("two soldiers' shields", 809))
 		return false;
 
 	return true;

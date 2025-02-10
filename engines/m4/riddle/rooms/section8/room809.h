@@ -42,7 +42,7 @@ public:
 
 private:
 	bool checkSaid();
-	int32 getMcDestX(int32 val1, bool val2);
+	int32 getMcDestX(int32 xPos, bool facing);
 
 	bool _field20Fl = false;
 
