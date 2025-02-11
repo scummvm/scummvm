@@ -38,16 +38,16 @@
 /**
  * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
  */
-#define GAMEFLAG_INVENTORY_DISABLED 70
+#define GAMEFLAG_INVENTORY_DISABLED 70 // Any prison FLAG_CONSIGNE
 // Hit
 #define GAMEFLAG_VIDEO_BAFFE 200
 // Hit, band-aid
 #define GAMEFLAG_VIDEO_BAFFE2 201
 // Hit, black eye
 #define GAMEFLAG_VIDEO_BAFFE3 202
-// Ferry #1
+// Ferry #1 Citadel Island <-> Principal Island
 #define GAMEFLAG_VIDEO_BATEAU 203
-// Temple of Bu
+// White Leaf Desert, Temple of Bu
 #define GAMEFLAG_VIDEO_TEMPLE 204
 // White Leaf Desert, flute
 #define GAMEFLAG_VIDEO_FLUTE2 205
@@ -57,7 +57,7 @@
 #define GAMEFLAG_VIDEO_NEIGE2 207
 // Hamalayi Mountains, ski lift
 #define GAMEFLAG_VIDEO_SURF 208
-// Ferry #2
+// Ferry #2 Citadel Island <-> Principal Island
 #define GAMEFLAG_VIDEO_BATEAU2 209
 // Fortress, Zoe Clone
 #define GAMEFLAG_VIDEO_CAPTURE 210

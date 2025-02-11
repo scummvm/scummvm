@@ -531,7 +531,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 			_engine->_actor->initBody(BodyType::btMageTir, OWN_ACTOR_SCENE_INDEX);
 		}
 
-		_engine->_animations->initAnim(GEN_ANIM_LANCE, AnimType::kAnimationTypeRepeat, OWN_ACTOR_SCENE_INDEX);
+		_engine->_animations->initAnim(AnimationTypes::kThrowBall, AnimType::kAnimationTypeRepeat, OWN_ACTOR_SCENE_INDEX);
 
 		/* control direction pendant Aiming */
 		if (!ptrobj->_workFlags.bIsRotationByAnim) {
