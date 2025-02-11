@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/util.h"
+#include "engines/enhancements.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_state.h"
@@ -440,14 +441,22 @@ bool Scene::loadSceneLBA1() {
 		point->z = stream.readSint16LE();
 	}
 
-	if (_enableEnhancements) {
-		switch (_numCube) {
-		case LBA1SceneId::Hamalayi_Mountains_landing_place:
+	if (_engine->enhancementEnabled(kEnhMinorBugFixes)) {
+		if (_numCube == LBA1SceneId::Hamalayi_Mountains_landing_place) {
 			// move the mine a little bit, as it's too close to the change cube zone
 			_sceneActors[21]._posObj.x = _sceneActors[21]._oldPos.x = 6656 + 256;
 			_sceneActors[21]._posObj.z = _sceneActors[21]._oldPos.z = 768;
-			break;
-		case LBA1SceneId::Principal_Island_outside_the_fortress:
+		}
+#if 0
+		else if (_numCube == LBA1SceneId::Tippet_Island_Secret_passage_scene_1) {
+			_sceneZones[6].maxs.z = 3616;
+		} else if (_numCube == LBA1SceneId::Principal_Island_inside_the_fortress) {
+			_sceneZones[11].type = (ZoneType)50;
+		}
+#endif
+	}
+	if (_engine->enhancementEnabled(kEnhGameBreakingBugFixes)) {
+		if (_numCube == LBA1SceneId::Principal_Island_outside_the_fortress) {
 			// https://bugs.scummvm.org/ticket/13818
 			_sceneActors[29]._posObj.z = _sceneActors[29]._oldPos.z = 1795;
 
@@ -471,13 +480,6 @@ bool Scene::loadSceneLBA1() {
 			_sceneZones[22].maxs.x = 8865;
 			_sceneZones[22].maxs.z = 6881;
 #endif
-			break;
-		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
-			_sceneZones[6].maxs.z = 3616;
-			break;
-		case LBA1SceneId::Principal_Island_inside_the_fortress:
-			_sceneZones[11].type = (ZoneType)50;
-			break;
 		}
 	}
 
@@ -544,7 +546,7 @@ void Scene::dumpSceneScripts() const {
 
 void Scene::changeCube() {
 	if (_engine->isLBA1()) {
-		if (_enableEnhancements) {
+		if (_engine->enhancementEnabled(kEnhMinorBugFixes)) {
 			if (_numCube == LBA1SceneId::Citadel_Island_Harbor && _newCube == LBA1SceneId::Principal_Island_Harbor) {
 				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];

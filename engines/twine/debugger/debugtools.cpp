@@ -467,7 +467,6 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 
 		ImGuiEx::InputInt("Currently followed actor", &scene->_numObjFollow);
 
-		ImGui::Checkbox("Enable enhancements", &scene->_enableEnhancements);
 		ImGui::Checkbox("Render grid tiles", &scene->_flagRenderGrid);
 		ImGuiEx::InputInt("Current script value", &scene->_currentScriptValue);
 		ImGuiEx::InputInt("Talking actor", &scene->_talkingActor);

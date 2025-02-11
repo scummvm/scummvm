@@ -55,7 +55,6 @@ private:
 	bool doToggleActorRendering(int argc, const char **argv);
 	bool doToggleTrackRendering(int argc, const char **argv);
 	bool doToggleGodMode(int argc, const char **argv);
-	bool doToggleEnhancements(int argc, const char **argv);
 	bool doToggleFreeCamera(int argc, const char **argv);
 	bool doToggleSceneRendering(int argc, const char **argv);
 	bool doSetTrackObject(int argc, const char **argv);

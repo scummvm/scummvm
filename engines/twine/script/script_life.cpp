@@ -21,6 +21,7 @@
 
 #include "twine/script/script_life.h"
 #include "common/memstream.h"
+#include "engines/enhancements.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_state.h"
@@ -1425,7 +1426,7 @@ int32 ScriptLife::lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 trackIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::POS_POINT(%i)", (int)trackIdx);
-	if (engine->_scene->_enableEnhancements) {
+	if (engine->enhancementEnabled(kEnhMinorBugFixes)) {
 		if (IS_HERO(ctx.actorIdx) && engine->_scene->_numCube == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
 			ctx.stream.rewind(2);
 			ctx.stream.writeByte(0x34); // CHANGE_CUBE
