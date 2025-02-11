@@ -48,8 +48,8 @@ Options:
   --bundle-games=    comma-separated list of demos and freeware games to bundle. 
   -v, --verbose      print all commands run by the script
   --*                all other options are passed on to the configure script
-                     Note: --enable-a52, --enable-faad,
-                     --enable-mad, --enable-mpeg2, --enable-mikmod,
+                     Note: --enable-a52, --enable-faad, --enable-fluidlite,
+                     --enable-mad, --enable-mpcdec, --enable-mpeg2,  --enable-mikmod,
                      --enable-theoradec and --enable-vpx
                      also download and build the required library before running configure or make.
 "
@@ -58,6 +58,7 @@ _fluidlite=false
 _liba52=false
 _libfaad=false
 _libmad=false
+_libmpcdec=false
 _libmpeg2=false
 _libmikmod=false
 _libtheoradec=false
@@ -91,8 +92,8 @@ for i in "$@"; do
     # We don't pass --enable-mpcdec as configure
     # has to establish which API to use (old or new)
     ;;
-  --enable-mikmod) 
-    _libmikmod=true
+  --enable-openmpt) 
+    _libopenmpt=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --enable-theoradec)
@@ -293,18 +294,17 @@ if [ "$_libmpcdec" = true ]; then
   LIBS_FLAGS="${LIBS_FLAGS} --with-mpcdec-prefix=$LIBS_FOLDER/build"
 fi
 
-if [ "$_libmikmod" = true ]; then
-  if [[ ! -f "$LIBS_FOLDER/build/lib/libmikmod.a" ]]; then
-    echo "building libmikmod-3.3.13"
+if [ "$_libopenmpt" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libopenmpt.a" ]]; then
+    echo "building libopenmpt-0.7.13"
     cd "$LIBS_FOLDER"
-    wget -nc "https://sourceforge.net/projects/mikmod/files/libmikmod/3.3.13/libmikmod-3.3.13.tar.gz"
-    tar -xf libmikmod-3.3.13.tar.gz
-    cd "$LIBS_FOLDER/libmikmod-3.3.13/"
-    CFLAGS="-Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
-    emmake make -j 5
-    emmake make install 
+    wget -nc "https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.6.22+release.makefile.tar.gz"
+    tar -xf libopenmpt-0.6.22+release.makefile.tar.gz
+    cd "$LIBS_FOLDER/libopenmpt-0.6.22+release/"
+    CFLAGS="-fPIC -Oz" emmake make -j 5 CONFIG=emscripten EMSCRIPTEN_TARGET=wasm
+    emmake make install CONFIG=emscripten EMSCRIPTEN_TARGET=wasm PREFIX="$LIBS_FOLDER/build/"
   fi
-  LIBS_FLAGS="${LIBS_FLAGS} --with-mikmod-prefix=$LIBS_FOLDER/build"
+  LIBS_FLAGS="${LIBS_FLAGS} --with-openmpt-prefix=$LIBS_FOLDER/build"
 fi
 
 if [ "$_libtheoradec" = true ]; then
