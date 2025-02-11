@@ -436,13 +436,13 @@ void Actor::giveExtraBonus(int32 actorIdx) {
 	}
 	if (actor->_workFlags.bIsDead) {
 		_engine->_extra->addExtraBonus(actor->posObj(), LBAAngles::ANGLE_90, LBAAngles::ANGLE_0, bonusSprite, actor->_bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->posObj(), actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->posObj(), actorIdx);
 	} else {
 		const ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 		const int32 angle = _engine->_movements->getAngle(actor->posObj(), sceneHero->posObj());
 		const IVec3 pos(actor->_posObj.x, actor->_posObj.y + actor->_boundingBox.maxs.y, actor->_posObj.z);
 		_engine->_extra->addExtraBonus(pos, LBAAngles::ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, pos, actorIdx);
 	}
 }
 

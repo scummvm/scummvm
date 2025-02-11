@@ -112,7 +112,7 @@ void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volume
 	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
-void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
+void Sound::playSample(int32 index, uint16 pitchbend, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
@@ -130,6 +130,9 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 	} else {
 		samplesPlayingActors[channelIdx] = -1;
 	}
+
+	// TODO: implement pitchbend - see https://bugs.scummvm.org/ticket/15735
+	// frequency would be 11025 + (pitchbend - 0x1000);
 
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
 	uint32 sampSize = _engine->_resources->_samplesSizeTable[index];

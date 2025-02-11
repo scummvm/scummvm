@@ -44,7 +44,7 @@ enum _Samples {
 	TaskCompleted = 41,
 	Hit = 86,
 	ItemFound = 97,
-	WalkFloorBegin = 126,
+	WalkFloorBegin = 126, // BASE_STEP_SOUND
 	WalkFloorRightBegin = 141
 };
 }
@@ -100,11 +100,10 @@ public:
 	 * @param z sound generating entity z position
 	 * @param actorIdx
 	 */
-	void playSample(int32 index, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1); // HQ_3D_MixSample
-	void playSample(int32 index, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) { // HQ_MixSample
-		playSample(index, repeat, pos.x, pos.y, pos.z, actorIdx);
+	void playSample(int32 index, uint16 pitchbend = 0x1000, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1); // HQ_3D_MixSample
+	void playSample(int32 index, uint16 pitchbend, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) { // HQ_MixSample
+		playSample(index, pitchbend, repeat, pos.x, pos.y, pos.z, actorIdx);
 	}
-
 	/** Pause samples */
 	void pauseSamples();
 
