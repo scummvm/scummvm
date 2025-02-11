@@ -48,7 +48,16 @@ void MainMenu::selected() {
 	switch (_selectedItem) {
 	case 0:
 		_G(demo) = false;
-		addView("SelectGame");
+
+		if (g_events->isDemo()) {
+			// The shareware release only has part 1
+			g_vars->setArea(1);
+			initGame();
+			replaceView("Story", true, true);
+		} else {
+			// Full game. Select the game part
+			addView("SelectGame");
+		}
 		break;
 
 	case 1:

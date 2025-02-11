@@ -58,7 +58,7 @@ void Events::runGame() {
 			saveSlot = -1;
 	}
 	if (saveSlot == -1)
-		addView(isDemo() ? "Game" : "SplashScreen");
+		addView("SplashScreen");
 
 	// Main game loop
 	Common::Event e;

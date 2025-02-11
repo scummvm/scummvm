@@ -52,10 +52,6 @@ void Vars::load() {
 	_musicFlag = !ConfMan.getBool("music_mute");
 	_soundFlag = !ConfMan.getBool("sfx_mute");
 
-	if (g_engine->isDemo()) {
-		_demo = _cheat = true;
-	}
-
 	if (_currentLevel != 23)
 		_storyFlag = false;
 
