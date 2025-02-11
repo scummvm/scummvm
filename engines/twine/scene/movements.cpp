@@ -245,6 +245,7 @@ void Movements::update() {
 void Movements::processBehaviourExecution(int actorIdx) {
 	switch (_engine->_actor->_heroBehaviour) {
 	case HeroBehaviourType::kNormal:
+		_actionNormal = true;
 		break;
 	case HeroBehaviourType::kAthletic:
 		_engine->_animations->initAnim(AnimationTypes::kJump, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
