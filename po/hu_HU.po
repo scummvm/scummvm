@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-10 17:51+0000\n"
-"PO-Revision-Date: 2025-02-10 16:18+0000\n"
+"PO-Revision-Date: 2025-02-11 16:18+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5497,6 +5497,24 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## Játékok hozzáadása \n"
+"\n"
+"1. Másolja a szükséges fájlokat a ScummVM applikációba. Erre többféle "
+"lehetőség is van, tekintse meg erről szóló [Játék fájlok másolása "
+"dokumentációnkat](https://docs.scummvm.org/en/latest/other_platforms/ios.html"
+"#transferring-game-files) a további információkért.\n"
+"\n"
+"2. Válassza a **Játék hozzáadása...** gombot az indítóból. \n"
+"\n"
+"3. A ScummVM fájl böngészőben dupla érintéssel keresse ki a hozzáadott "
+"könyvtárját. A játékot hozzá tudja adni szimplán a játékfájlokat tartalmazó "
+"alkönyvtár kiválasztásával, amit ki tud választani a **Kiválaszt** gombbal. "
+"\n"
+"\n"
+"További játékok hozzáadásához ismételje meg a fenti lépéseket. \n"
+"\n"
+"Tekintse meg az [iOS dokumentációnkat](https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html) a további információkért.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:360
 msgid ""
@@ -5519,6 +5537,24 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## Érintési műveletek \n"
+"\n"
+"### Nyomja meg az Érintési területet \n"
+"\n"
+"Nyomja meg az érintési területet a bal egér gombnyomáshoz\n"
+"### Lejátszás/Szünet\n"
+"\n"
+"Nyomja meg a Lejátszás/Szünet-et a jobb egér gombnyomáshoz\n"
+"\n"
+"### Átfogó Fő Menü\n"
+"\n"
+"Az Átfogó Fő Menü megnyitásához nyomja meg a Vissza/Menü gombot.\n"
+"\n"
+"## Virtuális billentyűzet\n"
+"\n"
+"A virtuális billentyűzet megnyitásához nyomja meg és tartsa lenyomva a "
+"Lejátszás/Szünet gombot. Elrejtéséhez nyomja meg a Vissza/Menü gombot.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:383
 msgid ""
@@ -5540,90 +5576,88 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## Játékok hozzáadása \n"
+"\n"
+"1. Másolja a szükséges fájlokat a ScummVM applikációba. Erre többféle "
+"lehetőség is van, tekintse meg erről szóló [Játék fájlok másolása "
+"dokumentációnkat](https://docs.scummvm.org/en/latest/other_platforms/tvos."
+"html#transferring-game-files) a további információkért.\n"
+"\n"
+"2. Válassza a **Játék hozzáadása...** gombot az indítóból. \n"
+"\n"
+"3. A ScummVM fájl böngészőben dupla érintéssel keresse ki a hozzáadott "
+"könyvtárját. A játékot hozzá tudja adni szimplán a játékfájlokat tartalmazó "
+"alkönyvtár kiválasztásával, amit ki tud választani a **Kiválaszt** gombbal. "
+"\n"
+"\n"
+"További játékok hozzáadásához ismételje meg a fenti lépéseket. \n"
+"\n"
+"Tekintse meg az [tvOS dokumentációnkat](https://docs.scummvm.org/en/latest/"
+"other_platforms/tvos.html) a további információkért.\n"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "LIBRETRO JÁTÉKLISTA GENERÁTOR"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(check '? > Libretro játéklista' további információkért)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Plugin Mappa:"
+msgstr "Játéklista Elérési út"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Játékmentések helyének meghatározása"
+msgstr "Játéklisták elérési útjának meghatározása."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Platform:"
+msgstr "Játéklista formátum:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Ugrás a helyre"
+msgstr "Hook helye:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Új mappa hozzáadása"
+msgstr "Minden a mentési könyvtárban"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Mappánként egy"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Már meglevő Hook-ok törlése"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Játéklista generálása"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Státusz:"
+msgstr "Státusz: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Nem sikerült a játékállás mentése fájlba."
+msgstr "Sikertelen, a játéklista nem elérhető"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "A Beolvasott adat hibás"
+msgstr "sikertelen tisztítás"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Nem sikerült elolvasni a fájlt!"
+msgstr "Sikertelen, hook fájl nem hozható létre"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Válassz mappát a játék kiegészítõkhöz"
+msgstr "Játéklista mappa kiválasztása"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Libretro játéklista"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
 msgid ""
@@ -5640,6 +5674,17 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Libretro játéklista ScummVM maghoz\n"
+"A Libretro frontend-ekben (pl: Retroarch) használatos játéklisták egyszerű "
+"szöveg lista, amit a játékok közvetlen indítására használnak egy specifikus "
+"maggal a kezelői felületről. Ezen fájlok felépítése úgy van kialakítva, hogy "
+"a maghoz eljuttassák a megfelelő fájlokat (pl: ROM).\n"
+"\n"
+"A ScummVM el tudja fogadni a játékok könyvtárait tartalomként, a felismerő "
+"rendszer megpróbálja automatikusan felismerni a játékot a tőkönyvtárból, és "
+"elindítja a játékot az alapértelmezett ScummVM opciókkal.\n"
+"\n"
+"A mag támogat még játék orientált **hook** egyszerű szöveg formában **-val."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5647,7 +5692,7 @@ msgstr "Kattintás Mód"
 
 #: backends/platform/sdl/sdl.cpp:1054
 msgid "Keyboard"
-msgstr "Billentyûzet"
+msgstr "Billentyűzet"
 
 #: backends/platform/sdl/sdl.cpp:1057
 msgid ""
@@ -5666,22 +5711,37 @@ msgid ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
+"## Billentyű kombinációk\n"
+"\n"
+"A ScummVM különféle játékon belüli billentyű és egér kombinációkat támogat, "
+"a 2.2.0-s verzió óta beállíthatóak a **Gombkiosztás fülön**, vagy a **"
+"konfigurációs fájlban**.\n"
+"\n"
+"A játék specifikus kiosztáshoz keresse fel [wiki bejegyzésünket](https://wiki"
+".scummvm.org/index.php?title=Category:Supported_Games), és tekintse meg a "
+"kívánt játékot.\n"
+"\n"
+"Alapértelmezett kombinációk láthatóak a táblában.\n"
+"\n"
+"| Kombináció      | Leírás      \n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | Az átfogó Fő Menü megjelenítése\n"
 
 #: backends/platform/sdl/sdl.cpp:1069
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | Kilépés (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1071
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | Kilépés (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1073
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | Kilépés (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1074
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | Kilépés (más platformok)\n"
 
 #: backends/platform/sdl/sdl.cpp:1077
 msgid ""
@@ -5700,6 +5760,19 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u`  | Minden hang némítása\n"
+"| `Ctrl+m`  | Egér felvétel ki/be kapcsolása\n"
+"| `Ctrl+Alt` és `9` vagy `0` | Grafikus filterek közötti váltás\n"
+"| `Ctrl+Alt` és `+` vagy `-` | Növeli/Csökkenti a méretezési tényezőt\n"
+"| `Ctrl+Alt+a` | Képarány korrekció ki/be kapcsolása\n"
+"| `Ctrl+Alt+f` | Közeli szomszédos pixel és bilineáris interpoláció közötti "
+"váltás (grafikus filterezés be/ki)\n"
+"| `Ctrl+Alt+s` | Végigvált az összes széthúzási módon\n"
+"| `Alt+Enter`   | Teljes/Ablakos mód közötti váltás\n"
+"| `Alt+s`          | Képernyőkép készítése\n"
+"| `Ctrl+F7`       | Virtuális billentyű megnyitása (ha be van kapcsolva). Ez "
+"megnyitható a középső egérgomb hosszú nyomásával.\n"
+"| `Ctrl+Alt+d` | A ScummVM debugger megnyitása\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:298
 msgid "Hide ScummVM"
@@ -5711,7 +5784,7 @@ msgstr "Többi elrejtése"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:300
 msgid "Show All"
-msgstr "Mutasd mind"
+msgstr "Mind mutatása"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:305
 msgid "Window"
@@ -5733,7 +5806,7 @@ msgstr "Súgó"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:317
 msgid "User Manual"
-msgstr "Használati utasítás"
+msgstr "Felhasználói útmutató"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
 msgid "General Information"
@@ -5745,7 +5818,7 @@ msgstr "A ScummVM újdonságai"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:322
 msgid "Credits"
-msgstr "Stáblista"
+msgstr "Közreműködők"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:323
 msgid "GPL License"
@@ -5768,64 +5841,44 @@ msgid "BSD License"
 msgstr "BSD Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL Licensz"
+msgstr "Apache Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD Licensz"
+msgstr "BSL Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL Licensz"
+msgstr "GLAD Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD Licensz"
+msgstr "ISC Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL Licensz"
+msgstr "Lua Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL Licensz"
+msgstr "MIT Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL Licensz"
+msgstr "MKV Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL Licensz"
+msgstr "MPL Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL Licensz"
+msgstr "TinyGL Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont Licensz"
+msgstr "Catharon Licensz"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -5893,7 +5946,7 @@ msgstr "R1"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr "Minusz"
+msgstr "Mínusz"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
@@ -5910,19 +5963,19 @@ msgstr "Jelenlegi videómód:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
-msgstr "Dupla érintés"
+msgstr "Dupla-csapás"
 
 #: backends/platform/wii/options.cpp:59
 msgid "Horizontal underscan:"
-msgstr "Vízszintes eltolás:"
+msgstr "Vízszintes alul-pásztázás:"
 
 #: backends/platform/wii/options.cpp:65
 msgid "Vertical underscan:"
-msgstr "Függõleges eltolás:"
+msgstr "Függőleges alul-pásztázás:"
 
 #: backends/platform/wii/options.cpp:70
 msgid "Input"
-msgstr "Bemenet"
+msgstr "Bemeneti jel"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
@@ -5930,7 +5983,7 @@ msgstr "GC Pad érzékenység:"
 
 #: backends/platform/wii/options.cpp:79
 msgid "GC Pad acceleration:"
-msgstr "GC Pad felbontás:"
+msgstr "GC Pad gyorsulás:"
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
@@ -5946,11 +5999,11 @@ msgstr "Ismeretlen"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
-msgstr "DVD csatolás"
+msgstr "DVD mountolása"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Unmount DVD"
-msgstr "DVD kiadás"
+msgstr "DVD ki-mountolása"
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
@@ -5962,7 +6015,7 @@ msgstr "Szerver:"
 
 #: backends/platform/wii/options.cpp:109
 msgid "Share:"
-msgstr "Megoszt:"
+msgstr "Megosztás:"
 
 #: backends/platform/wii/options.cpp:117
 msgid "Password:"
@@ -5974,39 +6027,39 @@ msgstr "Hálózat inicializálás"
 
 #: backends/platform/wii/options.cpp:122
 msgid "Mount SMB"
-msgstr "SMB csatolás"
+msgstr "SMB mountolása"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Unmount SMB"
-msgstr "SMB kiadás"
+msgstr "SMB ki-mountolása"
 
 #: backends/platform/wii/options.cpp:142
 msgid "DVD Mounted successfully"
-msgstr "DVD csatlakoztatva"
+msgstr "DVD sikeresen mountolva"
 
 #: backends/platform/wii/options.cpp:145
 msgid "Error while mounting the DVD"
-msgstr "Hiba a DVD csatlakoztatásakor"
+msgstr "Hiba a DVD mountolásakor"
 
 #: backends/platform/wii/options.cpp:147
 msgid "DVD not mounted"
-msgstr "DVD nincs csatolva"
+msgstr "DVD nem mountolva"
 
 #: backends/platform/wii/options.cpp:160
 msgid "Network up, share mounted"
-msgstr "Hálózat és megosztás csatlakozva"
+msgstr "Hálózat működik, mountolt megosztása"
 
 #: backends/platform/wii/options.cpp:162
 msgid "Network up"
-msgstr "Hálózat csatlakozva"
+msgstr "Hálózat működik"
 
 #: backends/platform/wii/options.cpp:165
 msgid ", error while mounting the share"
-msgstr ", hiba a megosztás csatolásakor"
+msgstr ", hiba a megosztás mountolásakor"
 
 #: backends/platform/wii/options.cpp:167
 msgid ", share not mounted"
-msgstr ", megosztás nincs csatolva"
+msgstr ", megosztás nincs mountolva"
 
 #: backends/platform/wii/options.cpp:173
 msgid "Network down"
@@ -6018,12 +6071,12 @@ msgstr "Hálózat inicializálása"
 
 #: backends/platform/wii/options.cpp:181
 msgid "Timeout while initializing network"
-msgstr "Idõtúllépés a hálózat inicializálásakor"
+msgstr "Időtúllépés a hálózat inicializálásakor"
 
 #: backends/platform/wii/options.cpp:185
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "(%d) Hálózat nincs inicializálva"
+msgstr "Hálózat nincs inicializálva (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
