@@ -944,6 +944,7 @@ void onImGuiRender() {
 }
 
 void onImGuiCleanup() {
+	Common::setLogWatcher(nullptr);
 	delete _logger;
 	_logger = nullptr;
 }
