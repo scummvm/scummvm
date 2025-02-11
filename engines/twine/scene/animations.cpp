@@ -294,9 +294,14 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			}
 			break;
 		case ActionType::ACTION_SAMPLE:
+			if (action.animFrame == actor->_frame) {
+				_engine->_sound->playSample(action.sampleIndex, 0x1000, 1, actor->posObj(), actorIdx);
+			}
+			break;
 		case ActionType::ACTION_SAMPLE_FREQ:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(action.frequency) - (action.frequency / 2);
+				_engine->_sound->playSample(action.sampleIndex, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_EXTRA_BONUS:
@@ -311,7 +316,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_SAMPLE_REPEAT:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, action.repeat, actor->posObj(), actorIdx);
+				_engine->_sound->playSample(action.sampleIndex, 0x1000, action.repeat, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_SEARCH:
@@ -332,13 +337,15 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_LEFT_STEP:
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
+				_engine->_sound->playSample(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_RIGHT_STEP:
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorRightBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
+				_engine->_sound->playSample(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_HERO_HITTING:
@@ -400,7 +407,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 	}
 }
 
-bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes genNextAnim, int32 actorIdx) {
+bool Animations::initAnim(AnimationTypes genNewAnim, AnimType flag, AnimationTypes genNextAnim, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->_body == -1) {
 		return false;
@@ -410,7 +417,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 		return false;
 	}
 
-	if (newAnim == actor->_genAnim && actor->_anim != -1) {
+	if (genNewAnim == actor->_genAnim && actor->_anim != -1) {
 		return true;
 	}
 
@@ -418,7 +425,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 		genNextAnim = actor->_genAnim;
 	}
 
-	int32 newanim = searchAnim(newAnim, actorIdx);
+	int32 newanim = searchAnim(genNewAnim, actorIdx);
 
 	if (newanim == -1) {
 		newanim = searchAnim(AnimationTypes::kStanding, actorIdx);
@@ -428,7 +435,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 	}
 
 	if (flag != AnimType::kAnimationSet && actor->_flagAnim == AnimType::kAnimationAllThen) {
-		actor->_nextGenAnim = newAnim;
+		actor->_nextGenAnim = genNewAnim;
 		return false;
 	}
 
@@ -455,7 +462,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 	}
 
 	actor->_anim = newanim;
-	actor->_genAnim = newAnim;
+	actor->_genAnim = genNewAnim;
 	actor->_nextGenAnim = genNextAnim;
 	actor->_ptrAnimAction = _currentActorAnimExtraPtr;
 

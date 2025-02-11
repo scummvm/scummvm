@@ -280,7 +280,7 @@ int32 ScriptMove::mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SAMPLE(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->posObj(), ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 0x1000, 1, ctx.actor->posObj(), ctx.actorIdx);
 	return 0;
 }
 
@@ -491,7 +491,8 @@ int32 ScriptMove::mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SAMPLE_RND(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->posObj(), ctx.actorIdx);
+	const uint16 pitchbend = 0x800 + engine->getRandomNumber(0x800);
+	engine->_sound->playSample(sampleIdx, pitchbend, 1, ctx.actor->posObj(), ctx.actorIdx);
 	return 0;
 }
 
@@ -503,7 +504,7 @@ int32 ScriptMove::mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SAMPLE_ALWAYS(%i)", (int)sampleIdx);
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
-		engine->_sound->playSample(sampleIdx, -1, ctx.actor->posObj(), ctx.actorIdx);
+		engine->_sound->playSample(sampleIdx, 0x1000, 0, ctx.actor->posObj(), ctx.actorIdx);
 	}
 	return 0;
 }
@@ -552,8 +553,8 @@ int32 ScriptMove::mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x1F
  */
 int32 ScriptMove::mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
-	ctx.numRepeatSample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::REPEAT_SAMPLE(%i)", (int)ctx.numRepeatSample);
+	ctx.bigSampleRepeat = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::REPEAT_SAMPLE(%i)", (int)ctx.bigSampleRepeat);
 	return 0;
 }
 
@@ -564,8 +565,8 @@ int32 ScriptMove::mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SIMPLE_SAMPLE(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->posObj(), ctx.actorIdx);
-	ctx.numRepeatSample = 1;
+	engine->_sound->playSample(sampleIdx, 0x1000, ctx.bigSampleRepeat, ctx.actor->posObj(), ctx.actorIdx);
+	ctx.bigSampleRepeat = 1;
 	return 0;
 }
 

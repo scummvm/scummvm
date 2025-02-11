@@ -30,7 +30,7 @@ namespace TwinE {
 struct MoveScriptContext {
 	int32 actorIdx;
 	ActorStruct *actor;
-	int32 numRepeatSample = 1;
+	int32 bigSampleRepeat = 1;
 
 	Common::MemorySeekableReadWriteStream stream;
 
