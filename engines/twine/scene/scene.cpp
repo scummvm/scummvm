@@ -459,6 +459,7 @@ bool Scene::loadSceneLBA1() {
 				// https://bugs.scummvm.org/ticket/13818
 				_sceneActors[29]._posObj.z = _sceneActors[29]._oldPos.z = 1795;
 			} else if (_numCube == LBA1SceneId::Principal_Island_inside_the_fortress) {
+				// https://bugs.scummvm.org/ticket/13819
 				// Set this zone to something invalid to fix a getting-stuck-bug
 				// the original value was ZoneType::kGrid (3)
 				_sceneZones[11].type = (ZoneType)50;
