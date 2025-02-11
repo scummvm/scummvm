@@ -39,6 +39,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
+#include "common/zip-set.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -113,6 +114,9 @@ static const char HELP_STRING1[] =
 	"  -f, --fullscreen         Force full-screen mode\n"
 	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  -g, --gfx-mode=MODE      Select graphics mode\n"
+#ifdef USE_OPENGL
+	"  --shader=PATH            Name of internal shader of path to shader files (OpenGL only)\n"
+#endif
 	"  --stretch-mode=MODE      Select stretch mode (center, pixel-perfect, even-pixels,\n"
 	"                           fit, stretch, fit_force_aspect)\n"
 	"  --scaler=MODE            Select graphics scaler (normal,hq,edge,advmame,sai,\n"
@@ -813,6 +817,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('g', "gfx-mode")
 			END_OPTION
 
+
 			DO_LONG_OPTION("stretch-mode")
 			END_OPTION
 
@@ -964,6 +969,21 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_PATH("themepath")
+			END_OPTION
+
+			DO_LONG_OPTION("shader")
+				Common::SearchSet _shaderSet;
+				Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
+				Common::FSNode path(Common::Path::fromCommandLine(option));
+				
+				if (!_shaderSet.hasFile(Common::Path::fromCommandLine(option))) {
+					if (!path.exists()) {
+						usage("Non-existent shader path '%s' or internal shader", option);
+					} else if (!path.isReadable()) {
+						usage("Non-readable shader path '%s'", option);
+					}
+				}
+				settings["shader"] = path.getPath().toConfig();
 			END_OPTION
 
 			DO_LONG_COMMAND("list-themes")
@@ -2105,6 +2125,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"stretch-mode",
 		"scaler",
 		"scale-factor",
+		"shader",
 		"filtering",
 		"gui-theme",
 		"themepath",
