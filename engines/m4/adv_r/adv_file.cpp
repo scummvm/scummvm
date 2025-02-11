@@ -408,4 +408,8 @@ Common::String expand_name_2_RAW(const Common::String &name, int32 room_num) {
 	}
 }
 
+Common::String expand_name_2_HMP(const Common::String &name, int32 room_num) {
+	return f_extension_new(name, "HMP");
+}
+
 } // End of namespace M4

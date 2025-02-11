@@ -23,17 +23,21 @@
 #ifndef M4_SOUND_PLATFORM_MIDI_H
 #define M4_SOUND_PLATFORM_MIDI_H
 
+#include "audio/midiplayer.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 namespace Sound {
 
-class Midi {
+class Midi : public Audio::MidiPlayer {
+private:
+	static int _midiEndTrigger;
 public:
+	Midi();
+
 	void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
 	void task();
 	void loop();
-	void stop();
 	void set_overall_volume(int vol);
 };
 
