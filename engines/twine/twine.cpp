@@ -781,10 +781,10 @@ void TwinEEngine::processInventoryAction() {
 		_screens->_flagFade = true;
 		break;
 	case kiMagicBall:
-		if (_gameState->_usingSabre) {
+		if (_gameState->_weapon) {
 			_actor->initBody(BodyType::btNormal, OWN_ACTOR_SCENE_INDEX);
 		}
-		_gameState->_usingSabre = false;
+		_gameState->_weapon = false;
 		break;
 	case kiUseSabre:
 		if (_scene->_sceneHero->_genBody != BodyType::btSabre) {
@@ -794,7 +794,7 @@ void TwinEEngine::processInventoryAction() {
 			_actor->initBody(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
 			_animations->initAnim(AnimationTypes::kSabreUnknown, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
-			_gameState->_usingSabre = true;
+			_gameState->_weapon = true;
 		}
 		break;
 	case kiBookOfBu: {

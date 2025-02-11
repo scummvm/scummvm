@@ -94,7 +94,7 @@ void GameState::initHeroVars() {
 	_nbLittleKeys = 0;
 	_magicPoint = 0;
 
-	_usingSabre = false;
+	_weapon = false;
 
 	_engine->_scene->_sceneHero->_genBody = BodyType::btNormal;
 	_engine->_scene->_sceneHero->setLife(_engine->getMaxLife());
@@ -131,7 +131,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->_cropBottomScreen = 0;
 
 	_magicLevelIdx = 0;
-	_usingSabre = false;
+	_weapon = false;
 
 	setChapter(0);
 
@@ -218,7 +218,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	file->read(_inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	setLeafs(file->readByte());
-	_usingSabre = file->readByte();
+	_weapon = file->readByte();
 
 	if (saveFileVersion == 4) {
 		// the time the game was played
@@ -283,7 +283,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(_inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(_inventoryNumLeafs);
-	file->writeByte(_usingSabre ? 1 : 0);
+	file->writeByte(_weapon ? 1 : 0);
 	file->writeByte(0);
 
 	return true;

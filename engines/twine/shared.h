@@ -648,7 +648,7 @@ enum class TextId : int16 {
 
 enum InventoryItems {
 	kiHolomap = 0,             // lba1/lba2
-	kiMagicBall = 1,           // lba1/lba2
+	kiMagicBall = 1,           // lba1/lba2 FLAG_BALLE_MAGIQUE
 	kiUseSabre = 2,            // lba1
 	kiDart = 2,                // lba2
 	kiGawleysHorn = 3,         // lba1

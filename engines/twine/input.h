@@ -144,7 +144,7 @@ public:
 
 	bool isQuickBehaviourActionActive() const;
 	bool isMoveOrTurnActionActive() const;
-	bool isHeroActionActive() const;
+	bool isHeroActionActive() const; // MyFire & F_SPACE
 	bool resetHeroActions();
 
 	/**

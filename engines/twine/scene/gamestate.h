@@ -121,7 +121,7 @@ public:
 	int16 _inventoryNumGas = 0;
 
 	/** Its using FunFrock Sabre */
-	bool _usingSabre = false;
+	bool _weapon = false;
 	bool _endGameItems = false;
 
 	/**
