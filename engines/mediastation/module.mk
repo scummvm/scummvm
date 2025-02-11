@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	chunk.o \
 	context.o \
 	contextparameters.o \
+	cursors.o \
 	datafile.o \
 	datum.o \
 	mediascript/codechunk.o \

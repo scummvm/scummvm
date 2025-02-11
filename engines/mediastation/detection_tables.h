@@ -227,6 +227,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"101dalmatians",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"101 Dalmatians StoryBook", "1611f83747b3ac4dd33c8b866535e425", 1046272,
+			"BOOT.STM", "ee6725a718cbce640d02acec2b84825f", 47970,
+			"100.CXT", "2df853283a3fd2d079b06bc27b50527f", 6784502
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Disney's Animated Storybook: Hercules
 	{

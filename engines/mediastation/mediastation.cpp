@@ -54,6 +54,9 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _screen;
 	_screen = nullptr;
 
+	delete _cursor;
+	_cursor = nullptr;
+
 	delete _boot;
 	_boot = nullptr;
 
@@ -106,6 +109,10 @@ Common::String MediaStationEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Platform MediaStationEngine::getPlatform() const {
+	return _gameDescription->platform;
+}
+
 const char *MediaStationEngine::getAppName() const {
 	return _gameDescription->filesDescriptions[0].fileName;
 }
@@ -130,6 +137,14 @@ Common::Error MediaStationEngine::run() {
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
 
+	if (getPlatform() == Common::kPlatformWindows) {
+		_cursor = new WindowsCursorManager(getAppName());
+	} else if (getPlatform() == Common::kPlatformMacintosh) {
+		_cursor = new MacCursorManager(getAppName());
+	} else {
+		error("MediaStationEngine::run(): Attempted to use unsupported platform %s", Common::getPlatformDescription(getPlatform()));
+	}
+	_cursor->showCursor();
 
 	_requestedScreenBranchId = _boot->_entryContextId;
 	doBranchToScreen();
@@ -182,29 +197,7 @@ void MediaStationEngine::processEvents() {
 		}
 
 		case Common::EVENT_MOUSEMOVE: {
-			Asset *hotspot = findAssetToAcceptMouseEvents(e.mouse);
-			if (hotspot != nullptr) {
-				if (_currentHotspot == nullptr) {
-					_currentHotspot = hotspot;
-					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Entered hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
-					hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
-				} else if (_currentHotspot == hotspot) {
-					// We are still in the same hotspot.
-				} else {
-					_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
-					_currentHotspot = hotspot;
-					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
-					hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
-				}
-				debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
-				hotspot->runEventHandlerIfExists(kMouseMovedEvent);
-			} else {
-				if (_currentHotspot != nullptr) {
-					_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
-					debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, _currentHotspot->getHeader()->_id);
-					_currentHotspot = nullptr;
-				}
-			}
+			refreshActiveHotspot();
 			break;
 		}
 
@@ -239,6 +232,43 @@ void MediaStationEngine::processEvents() {
 			break;
 		}
 		}
+	}
+}
+
+void MediaStationEngine::setCursor(uint id) {
+	// The cursor ID is not a resource ID in the executable, but a numeric ID
+	// that's a lookup into BOOT.STM, which gives actual name the name of the
+	// resource in the executable.
+	if (id != 0) {
+		CursorDeclaration *cursorDeclaration = _boot->_cursorDeclarations.getValOrDefault(id);
+		if (cursorDeclaration == nullptr) {
+			error("MediaStationEngine::setCursor(): Cursor %d not declared", id);
+		}
+		_cursor->setCursor(*cursorDeclaration->_name);
+	}
+}
+
+void MediaStationEngine::refreshActiveHotspot() {
+	Asset *hotspot = findAssetToAcceptMouseEvents(_eventMan->getMousePos());
+	if (hotspot != _currentHotspot) {
+		if (_currentHotspot != nullptr) {
+			_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
+			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, _currentHotspot->getHeader()->_id);
+		}
+		_currentHotspot = hotspot;
+		if (hotspot != nullptr) {
+			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Entered hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+			setCursor(hotspot->getHeader()->_cursorResourceId);
+			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
+		} else {
+			// There is no hotspot, so set the default cursor for this screen instead.
+			setCursor(_currentContext->_screenAsset->_cursorResourceId);
+		}
+	}
+
+	if (hotspot != nullptr) {
+		debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+		hotspot->runEventHandlerIfExists(kMouseMovedEvent);
 	}
 }
 

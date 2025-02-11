@@ -41,6 +41,7 @@
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
+#include "mediastation/cursors.h"
 
 namespace MediaStation {
 
@@ -66,6 +67,7 @@ public:
 
 	uint32 getFeatures() const;
 	Common::String getGameId() const;
+	Common::Platform getPlatform() const;
 	const char *getAppName() const;
 	bool hasFeature(EngineFeature f) const override {
 		return
@@ -74,6 +76,7 @@ public:
 
 	bool isFirstGenerationEngine();
 	void processEvents();
+	void refreshActiveHotspot();
 	void redraw();
 
 	void setPalette(Asset *palette);
@@ -104,6 +107,12 @@ private:
 	Common::FSNode _gameDataDir;
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+	// In Media Station, only the cursors are stored in the executable; everything
+	// else is in the Context (*.CXT) data files.
+	CursorManager *_cursor;
+	void setCursor(uint id);
+
 	Boot *_boot = nullptr;
 	Common::List<Asset *> _assetsPlaying;
 	Common::HashMap<uint, Context *> _loadedContexts;

@@ -74,12 +74,14 @@ Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args
 		assert(args.empty());
 		_isActive = true;
 		g_engine->addPlayingAsset(this);
+		g_engine->refreshActiveHotspot();
 		return Operand();
 	}
 
 	case kMouseDeactivateMethod: {
 		assert(args.empty());
 		_isActive = false;
+		g_engine->refreshActiveHotspot();
 		return Operand();
 	}
 
