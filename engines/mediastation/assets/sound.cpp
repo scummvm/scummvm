@@ -45,10 +45,10 @@ Sound::~Sound() {
 
 void Sound::process() {
 	processTimeEventHandlers();
-	if (!g_engine->_mixer->isSoundHandleActive(_handle)) {
-		_isActive = false;
-		_startTime = 0;
-		_lastProcessedTime = 0;
+
+	if (_isActive && !g_engine->_mixer->isSoundHandleActive(_handle)) {
+		_isPlaying = false;
+		setInactive();
 		_handle = Audio::SoundHandle();
 
 		runEventHandlerIfExists(kSoundEndEvent);
@@ -122,15 +122,17 @@ void Sound::timePlay() {
 		warning("Sound::timePlay(): Attempt to play a sound that is already playing");
 		return;
 	}
-	_isActive = true;
-	g_engine->addPlayingAsset(this);
 
-	_startTime = g_system->getMillis();
-	_lastProcessedTime = 0;
-	_handle = Audio::SoundHandle();
+	if (_streams.empty()) {
+		warning("Sound::timePlay(): Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet");
+		return;
+	}
+	_isPlaying = true;
+	setActive();
 
 	runEventHandlerIfExists(kSoundBeginEvent);
 
+	_handle = Audio::SoundHandle();
 	if (!_streams.empty()) {
 		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
 		for (Audio::SeekableAudioStream *stream : _streams) {
@@ -148,9 +150,7 @@ void Sound::timeStop() {
 		return;
 	}
 
-	_isActive = false;
-	_startTime = 0;
-	_lastProcessedTime = 0;
+	setInactive();
 
 	g_engine->_mixer->stopHandle(_handle);
 	_handle = Audio::SoundHandle();

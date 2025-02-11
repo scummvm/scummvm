@@ -48,6 +48,7 @@ private:
 	SoundEncoding _encoding;
 	Audio::SoundHandle _handle;
 	Common::Array<Audio::SeekableAudioStream *> _streams;
+	bool _isPlaying = true;
 
 	// Script method implementations
 	void timePlay();
