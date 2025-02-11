@@ -287,38 +287,38 @@ enum class ControlMode {
 
 enum class AnimationTypes {
 	kAnimNone = -1,
-	kStanding = 0,  // GEN_ANIM_RIEN
-	kForward = 1,   // GEN_ANIM_MARCHE
-	kBackward = 2,  // GEN_ANIM_RECULE
-	kTurnLeft = 3,  // GEN_ANIM_GAUCHE
-	kTurnRight = 4, // GEN_ANIM_DROITE
-	kHit = 5,
-	kBigHit = 6,
-	kFall = 7,
-	kLanding = 8,
-	kLandingHit = 9,
-	kLandDeath = 10,
-	kAction = 11,
-	kClimbLadder = 12,
-	kTopLadder = 13,
-	kJump = 14,
-	kThrowBall = 15,
-	kHide = 16,
-	kKick = 17,
-	kRightPunch = 18,
-	kLeftPunch = 19,
-	kFoundItem = 20,
-	kDrawn = 21,
-	kHit2 = 22,
-	kSabreAttack = 23,
-	kPush = 27, // GEN_ANIM_POUSSE
-	kSabreUnknown = 24,
+	kStanding = 0,      // GEN_ANIM_RIEN
+	kForward = 1,       // GEN_ANIM_MARCHE
+	kBackward = 2,      // GEN_ANIM_RECULE
+	kTurnLeft = 3,      // GEN_ANIM_GAUCHE
+	kTurnRight = 4,     // GEN_ANIM_DROITE
+	kHit = 5,           // GEN_ANIM_ENCAISSE
+	kBigHit = 6,        // GEN_ANIM_CHOC
+	kFall = 7,          // GEN_ANIM_TOMBE
+	kLanding = 8,       // GEN_ANIM_RECEPTION
+	kLandingHit = 9,    // GEN_ANIM_RECEPTION_2
+	kLandDeath = 10,    // GEN_ANIM_MORT
+	kAction = 11,       // GEN_ANIM_ACTION
+	kClimbLadder = 12,  // GEN_ANIM_MONTE
+	kTopLadder = 13,    // GEN_ANIM_ECHELLE
+	kJump = 14,         // GEN_ANIM_SAUTE
+	kThrowBall = 15,    // GEN_ANIM_LANCE
+	kHide = 16,         // GEN_ANIM_CACHE
+	kKick = 17,         // GEN_ANIM_COUP_1
+	kRightPunch = 18,   // GEN_ANIM_COUP_2
+	kLeftPunch = 19,    // GEN_ANIM_COUP_3
+	kFoundItem = 20,    // GEN_ANIM_TROUVE
+	kDrawn = 21,        // GEN_ANIM_NOYADE
+	kHit2 = 22,         // GEN_ANIM_CHOC2
+	kSabreAttack = 23,  // GEN_ANIM_SABRE
+	kSabreUnknown = 24, // GEN_ANIM_DEGAINE
+	kPush = 27,         // GEN_ANIM_POUSSE
 	kCarStarting = 303,
 	kCarDriving = 304,
 	kCarDrivingBackwards = 305,
 	kCarStopping = 306,
 	kCarFrozen = 307,
-	kAnimInvalid = 255
+	kAnimInvalid = 255 // NO_ANIM
 };
 
 enum class AnimType {
