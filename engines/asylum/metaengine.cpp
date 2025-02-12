@@ -235,6 +235,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to previous image in internal game resouce viewer
 	act = new Action("PREVRESOURCE", _("Previous resource"));
 	act->setCustomEngineActionEvent(kAsylumActionPreviousResource);
 	act->addDefaultInputMapping("BACKSPACE");
@@ -242,6 +243,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to next image in internal game resouce viewer
 	act = new Action("NEXTRESOURCE", _("Next resource"));
 	act->setCustomEngineActionEvent(kAsylumActionNextResource);
 	act->addDefaultInputMapping("SPACE");
@@ -249,6 +251,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to previous palette in internal game resouce viewer
 	act = new Action("PREVPALETTE", _("Previous palette"));
 	act->setCustomEngineActionEvent(kAsylumActionPreviousPalette);
 	act->addDefaultInputMapping("PAGEUP");
@@ -256,6 +259,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to next palette in internal game resouce viewer
 	act = new Action("NEXTPALETTE", _("Next palette"));
 	act->setCustomEngineActionEvent(kAsylumActionNextPalette);
 	act->addDefaultInputMapping("PAGEDOWN");
