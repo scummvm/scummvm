@@ -55,8 +55,9 @@ void Midi::midi_play(const char *name, int volume, int loop, int trigger, int ro
 		error("Could not find music - %s", fileName.c_str());
 
 	HLock(workHandle);
-	byte *pSrc = (byte *)*workHandle;
 #ifdef TODO
+	byte *pSrc = (byte *)*workHandle;
+
 	MidiParser *parser = MidiParser::createParser_SMF();
 	bool loaded = parser->loadMusic(pSrc, assetSize);
 
