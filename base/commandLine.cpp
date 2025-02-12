@@ -817,7 +817,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('g', "gfx-mode")
 			END_OPTION
 
-
 			DO_LONG_OPTION("stretch-mode")
 			END_OPTION
 
@@ -890,7 +889,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("disable-sdl-audio")
 			END_OPTION
 #endif
-
+			
 			DO_LONG_OPTION_BOOL("multi-midi")
 			END_OPTION
 
