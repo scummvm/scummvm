@@ -835,12 +835,6 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	_prevMouseX = x;
 	_prevMouseY = y;
-
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-
-	int hotspot = track->lookupHotspot(x, y);
-
-	debug(0, "hotspot: %d", hotspot);
 }
 
 #define REPEAT_DELAY 30000
@@ -1070,10 +1064,14 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			return;
 		}
 
+		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+		int hotspot = track->lookupHotspot(x, y);
+
 		int sensitivity = 5;
 
 		if (!_isMouseButtonDown) {
-			setCursor(kCursorPano);
+			setCursor(hotspot == 0 ? kCursorPano : kCursorPanoObjPoint);
 		} else {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
@@ -1130,7 +1128,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 			}
 
-			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : kCursorPanoNav);
+			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : hotspot == 0 ? kCursorPanoNav : kCursorPanoObjGrab);
 		}
 	}
 }
