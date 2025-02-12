@@ -83,6 +83,49 @@ l0017_27E0:
 	*/
 }
 
+void Adlib::Func27E4() {
+	// AI-reverse engineered by DeepSeek v1 via Perplexity
+		uint16 local_counter; // bp-2h (2-byte local variable)
+
+		// First loop section (27EF-27F2 labels)
+		local_counter = 0;
+		do { // l0017_27F2
+			// if (local_counter >= 9)
+			//	break; // Original jmp condition
+			// Note: Deepseek put this here as well as the bottom where it is
+			// originally
+
+			// Body of first loop
+			uint16 param = local_counter + 0xB0;
+			// Note: Deepseek got confused about the arguments being pushed (as did I
+			// the first time I saw it)
+			uint8 result = Func2779(param);
+			// Note: Local hallucination where it mixes it up with a string operation
+			result &= 0xDF;                                     // Convert to uppercase
+			Func2792(param, result);
+
+			// l0017_27EF
+			local_counter++;
+		} while (local_counter <= 8); // cmp 8h, jnz 27EFh
+
+		// TODO: Continue from here
+
+		// Second loop section (2813-281D labels)
+		local_counter = 0;
+		do { // l0017_281D
+			// Access memory at [di+69h]
+			unsigned char mem_value = *(unsigned char *)(local_counter + 0x69);
+			unsigned short param = mem_value + 0x40;
+
+			far_call_2792(param); // 0017h:2792h
+			far_call_2792(0xFF);  // Push FFh
+
+			// l0017_281A
+			local_counter++;
+		} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
+	}
+}
+
 void Adlib::Func2686() {
 	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
 	/*
@@ -1240,7 +1283,8 @@ void Adlib::OnTimer() {
 	// l0017_2425:
 	if ((g2258 & 0xC2) != 0) {
 		// l0017_242E:
-		Func1A74();
+		// TODO: I think this just calls the function again
+		// Func1A74();
 	}
 	// l0017_2433:
 	Func27E4();
