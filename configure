@@ -206,7 +206,7 @@ _pandoc=no
 _curl=yes
 _lld=no
 _mold=no
-_gold=auto
+_gold=no
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
@@ -2508,19 +2508,6 @@ else
 	define_in_config_if_yes yes 'NO_CXX11_ALIGNAS'
 fi
 
-# The Gold linker had known issues on at least i386 and ppc32, in some cases.
-# Since this linker is not very maintained anymore, and since alternatives exist,
-# avoid using it on non-mainstream archs, unless --enable-gold was explicitly given.
-if test "$_gold" = auto; then
-	case $_host_cpu in
-		aarch64 | x86_64 | amd64)
-			;;
-		*)
-			_gold=no
-			;;
-	esac
-fi
-
 #
 # Determine extra build flags for debug and/or release builds
 #
@@ -2556,7 +2543,7 @@ if test "$_debug_build" != no; then
 			append_var LDFLAGS "-fuse-ld=mold"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + Mold"
-		elif test "$_gold" != no && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+		elif test "$_gold" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
 			append_var LDFLAGS "-fuse-ld=gold"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + Gold"
@@ -2582,6 +2569,28 @@ if ! echo "$LDFLAGS" | grep -q -e -fuse-ld; then
 	echo "Using Mold linker... $_mold"
 	if test "$_mold" =  yes ; then
 		append_var LDFLAGS -fuse-ld=mold
+	fi
+fi
+
+if ! echo "$LDFLAGS" | grep -q -e -fuse-ld; then
+	echo "Using Gold linker... $_gold"
+	if test "$_gold" = yes ; then
+		append_var LDFLAGS -fuse-ld=gold
+	fi
+fi
+
+# The Gold linker has known issues on at least i386 and ppc32, in some
+# cases. Since it's mostly unmaintained and now deprecated with GNU
+# Binutils 2.44, avoid using it, unless --enable-gold was explicitly
+# given (and then you're on your own).
+if $LD $LDFLAGS -Wl,--version 2>/dev/null | grep -q -e 'GNU gold'; then
+	# Trying to help systems where Gold may (unwisely) be the default;
+	# thus we only try to provide a GNU LD (BFD) fallback in that case,
+	# since it appears to only impact some (past?) GNU systems anyway.
+	if test "$_gold" != yes && $LD $LDFLAGS -fuse-ld=bfd -Wl,--version >/dev/null 2>&1; then
+		append_var LDFLAGS -fuse-ld=bfd
+	else
+		echo "WARNING: Using deprecated Gold linker; build may fail on some platforms"
 	fi
 fi
 
