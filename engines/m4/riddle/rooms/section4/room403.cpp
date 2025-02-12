@@ -1417,7 +1417,7 @@ void Room403::daemon() {
 		ws_unhide_walker();
 		series_unload(_ripPutBoard);
 
-		ws_walk(620, 326, nullptr, 1);
+		ws_walk(_G(my_walker), 620, 326, nullptr, -1, 1, true);
 		kernel_timing_trigger(60, 444);
 		break;
 
@@ -2041,7 +2041,7 @@ bool Room403::edgerUrn() {
 	case 69:
 		if (inv_player_has("EDGER")) {
 			player_set_commands_allowed(false);
-			ws_walk(_G(my_walker), 1201, 321, 0, 1, 2);
+			ws_walk(_G(my_walker), 1201, 321, nullptr, 1, 2, true);
 			return true;
 		}
 		return false;

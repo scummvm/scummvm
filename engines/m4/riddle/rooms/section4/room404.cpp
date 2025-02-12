@@ -97,8 +97,7 @@ void Room404::init() {
 			_butlerTalkLoop, 1, 1, 0);
 		ws_demand_location(_G(my_walker), 174, 268, 3);
 		ws_walk(_G(my_walker), 250, 285, nullptr,
-			inv_player_has("BILLIARD BALL") ? 70 : 60,
-			3, 1);
+			inv_player_has("BILLIARD BALL") ? 70 : 60, 3, true);
 		break;
 
 	default:
