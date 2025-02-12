@@ -88,6 +88,8 @@ namespace Macs2 {
 		void Func2792r(byte value, byte registerIndex) {
 			Func2792(registerIndex, value);
 		}
+
+		void Func27E4();
 		
 		// TODO: Consider adding the caller
 		// TODO: Mocked input parameters so far, should be an 8 bit value
