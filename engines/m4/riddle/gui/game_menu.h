@@ -29,8 +29,16 @@ namespace M4 {
 namespace Riddle {
 namespace GUI {
 
-#define GAME_MENU_X 190
-#define GAME_MENU_Y 100
+class GameMenu {
+private:
+	static void DestroyGameMenu();
+	static void cbQuitGame(void *, void *);
+	static void cbMainMenu(void *, void *);
+	static void cbResume(void *, void *);
+
+public:
+	static void show(RGB8 *myPalette);
+};
 
 extern void CreateGameMenu(RGB8 *myPalette);
 

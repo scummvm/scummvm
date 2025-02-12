@@ -120,10 +120,6 @@ void CreateGameMenuFromMain(RGB8 *myPalette);
 //
 //		Game menu enums and defines
 //
-#define GAME_MENU_X		190
-#define GAME_MENU_Y		100
-#define GAME_MENU_W		260
-#define GAME_MENU_H		198
 
 enum game_menu_button_tags {
 	GM_TAG_QUIT = 1,
@@ -133,36 +129,6 @@ enum game_menu_button_tags {
 	GM_TAG_LOAD = 5,
 	GM_TAG_MAIN = 6
 };
-
-#define GM_MAIN_X			 45
-#define GM_MAIN_Y			 53
-#define GM_MAIN_W			 24
-#define GM_MAIN_H			 24
-
-#define GM_OPTIONS_X		 45
-#define GM_OPTIONS_Y		 94
-#define GM_OPTIONS_W		 24
-#define GM_OPTIONS_H		 24
-
-#define GM_RESUME_X		 45
-#define GM_RESUME_Y		135
-#define GM_RESUME_W		 24
-#define GM_RESUME_H		 24
-
-#define GM_QUIT_X			141
-#define GM_QUIT_Y			135
-#define GM_QUIT_W			 24
-#define GM_QUIT_H		    24
-
-#define GM_SAVE_X			141
-#define GM_SAVE_Y			 53
-#define GM_SAVE_W			 24
-#define GM_SAVE_H		    24
-
-#define GM_LOAD_X			141
-#define GM_LOAD_Y			 94
-#define GM_LOAD_W			 24
-#define GM_LOAD_H			 24
 
 //======================================
 //

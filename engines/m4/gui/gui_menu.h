@@ -31,7 +31,7 @@
 namespace M4 {
 namespace GUI {
 
-#define _GM(X) _G(menu).X
+#define _GM(X) ::M4::g_vars->_menu.X
 #define LockMouseSprite mouse_lock_sprite
 #define UnlockMouseSprite mouse_unlock_sprite
 

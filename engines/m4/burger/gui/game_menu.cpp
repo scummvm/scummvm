@@ -1979,6 +1979,42 @@ menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 
 
 //-------------------------------------   GAME MENU   -------------------------------------//
 
+
+#define GAME_MENU_X		190
+#define GAME_MENU_Y		100
+#define GAME_MENU_W		260
+#define GAME_MENU_H		198
+
+#define GM_MAIN_X			 45
+#define GM_MAIN_Y			 53
+#define GM_MAIN_W			 24
+#define GM_MAIN_H			 24
+
+#define GM_OPTIONS_X		 45
+#define GM_OPTIONS_Y		 94
+#define GM_OPTIONS_W		 24
+#define GM_OPTIONS_H		 24
+
+#define GM_RESUME_X		 45
+#define GM_RESUME_Y		135
+#define GM_RESUME_W		 24
+#define GM_RESUME_H		 24
+
+#define GM_QUIT_X			141
+#define GM_QUIT_Y			135
+#define GM_QUIT_W			 24
+#define GM_QUIT_H		    24
+
+#define GM_SAVE_X			141
+#define GM_SAVE_Y			 53
+#define GM_SAVE_W			 24
+#define GM_SAVE_H		    24
+
+#define GM_LOAD_X			141
+#define GM_LOAD_Y			 94
+#define GM_LOAD_W			 24
+#define GM_LOAD_H			 24
+
 static void DestroyGameMenu();
 
 void cb_Game_Quit(void *, void *) {
