@@ -109,8 +109,9 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 static void create_luminance_map(RGB8 *pal) {
 	for (int i = GREY_START; i <= FREE_END; i++) {
 		Byte luminance = (Byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
-		_GP(fadeToMe)[i].g = (Byte)imath_min(255, luminance);		 // New green screen!
-		_GP(fadeToMe)[i].r = _GP(fadeToMe)[i].b = 0;
+		_GP(fadeToMe)[i].g = luminance;
+		// Orion Burger uses green shading, Riddle uses grey shading
+		_GP(fadeToMe)[i].r = _GP(fadeToMe)[i].b = IS_RIDDLE ? luminance : 0;
 	}
 }
 
@@ -162,18 +163,13 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 	memcpy(_GP(picPal), pal, sizeof(RGB8) * 256);
 	create_luminance_map(pal);
 
-	grey_fade(pal, TO_GREY, 21, 255, steps, delay);
+	grey_fade(pal, TO_GREY, GREY_START, GREY_END, steps, delay);
 
 	// Make translation table to translate colors using entries 59-255 into 21-58 range
 
 	for (i = 0; i < 32; i++) {
 		bestMatch = 65;
 		minDist = 255;
-
-		if (!(i & 0x3ff)) {
-			_G(digi).task();
-			_G(midi).task();
-		}
 
 		for (j = 59; j <= 255; j++) {
 			if (imath_abs((_GP(fadeToMe)[j].r >> 2) - i) < minDist) {
@@ -212,11 +208,11 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	// Make new trickPal with grey-scale ramp entries and load it into VGA registers
 	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// trick pal is the greyed version plus the grey ramp overlayed on top
-	int8 grey_step = 256 / NUM_GREYS;
-	int8 grey_ramp = 0;
+	byte grey_step = 256 / NUM_GREYS;
+	byte grey_ramp = 0;
 	for (i = GREY_START; i <= GREY_END; i++) {
-		_GP(trick)[i].g = (Byte)(grey_ramp);		  // New green screen
-		_GP(trick)[i].r = _GP(trick)[i].b = 0;
+		_GP(trick)[i].g = grey_ramp;
+		_GP(trick)[i].r = _GP(trick)[i].b = IS_RIDDLE ? grey_ramp : 0;
 		grey_ramp += grey_step;
 	}
 
