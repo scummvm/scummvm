@@ -471,7 +471,7 @@ void Room171::daemon() {
 			player_update_info();
 
 			if (_flag1 && (_G(player_info).x != 436 || _G(player_info).y != 288))
-				ws_walk(436, 288, 0, kRESUME_CONVERSATION, 2);
+				ws_walk(436, 288, nullptr, kRESUME_CONVERSATION, 2);
 
 			digi_play_loop("171_009", 2, 50);
 			_series[0] = series_play("171ap11", 0x8ff, 32, 4, 6, -1);

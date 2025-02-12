@@ -134,7 +134,7 @@ void Room139_144::init() {
 
 	case 142:
 		ws_demand_location(670, 257, 9);
-		ws_walk(596, 245, 0, -1, 8);
+		ws_walk(596, 245, nullptr, -1, 8);
 		break;
 
 	default:

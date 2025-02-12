@@ -78,18 +78,18 @@ static const seriesPlayBreak PLAY1[] = {
 };
 
 static const seriesPlayBreak PLAY2[] = {
-	{  0,  0, "103_002", 2, 100, -1, 0, 0, 0, 0 },
-	{  1,  1, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  2,  2, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  1,  1, "103_002", 2, 100, -1, 0, 0, 0, 0 },
-	{  0,  0, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  1,  1, "103_002", 2, 100, -1, 0, 0, 0, 0 },
-	{  0,  0, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  1,  1, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  2,  2, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  1,  1, "103_002", 2, 100, -1, 0, 0, 0, 0 },
-	{  0,  0, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  1,  1, nullptr,   1, 255, -1, 0, 0, 0, 0 },
+	{  0,  0, "103_002", 2, 100, -1, 0, 0, nullptr, 0 },
+	{  1,  1, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  2,  2, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  1,  1, "103_002", 2, 100, -1, 0, 0, nullptr, 0 },
+	{  0,  0, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  1,  1, "103_002", 2, 100, -1, 0, 0, nullptr, 0 },
+	{  0,  0, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  1,  1, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  2,  2, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  1,  1, "103_002", 2, 100, -1, 0, 0, nullptr, 0 },
+	{  0,  0, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  1,  1, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -246,7 +246,7 @@ void Room103::daemon() {
 				(_G(player_info).x > 490 && _G(player_info).y < 374) ||
 				(_G(player_info).x > 215 && _G(player_info).y < 267) ||
 				(_G(player_info).y < 224)) {
-			ws_walk(271, 265, 0, 19, 2);
+			ws_walk(271, 265, nullptr, 19, 2);
 			term_message("walk to caught");
 
 		} else {
@@ -483,7 +483,7 @@ void Room103::daemon() {
 		_G(flags)[kHarryComingToRoof] = 0;
 		_G(wilbur_should) = 6;
 		_G(flags)[kDisableFootsteps] = 0;
-		ws_walk(325, 173, 0, 10016);
+		ws_walk(325, 173, nullptr, 10016);
 		break;
 
 	case 19:
@@ -547,7 +547,7 @@ void Room103::daemon() {
 
 		_G(flags)[V009] = _G(flags).get_boonsville_time_and_display() + 1800;
 		_G(flags)[V012] = 2;
-		ws_walk(271, 265, 0, 24, 2);
+		ws_walk(271, 265, nullptr, 24, 2);
 		break;
 
 	case 24:

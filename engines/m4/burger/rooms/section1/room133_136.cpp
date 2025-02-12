@@ -38,18 +38,18 @@ static const char *SAID[][4] = {
 };
 
 static const seriesPlayBreak PLAY1[] = {
-	{  0, 12, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{ 13, 30, "136_002", 2, 255, -1,    0, 0, 0, 0 },
-	{ 31, 57, "136_002", 2, 255, -1,    0, 0, 0, 0 },
-	{ 58, -1, nullptr,   2, 255, -1, 2048, 0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 },
+	{  0, 12, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{ 13, 30, "136_002", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 31, 57, "136_002", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 58, -1, nullptr,   2, 255, -1, 2048, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesStreamBreak SERIES1[] = {
-	{  6, nullptr,   2, 255,  9, 0, 0, 0 },
-	{ 10, "100_022", 2, 255, -1, 0, 0, 0 },
-	{ -1, nullptr,   0,   0, -1, 0, 0, 0 },
+	{  6, nullptr,   2, 255,  9, 0, nullptr, 0 },
+	{ 10, "100_022", 2, 255, -1, 0, nullptr, 0 },
+	{ -1, nullptr,   0,   0, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -101,8 +101,6 @@ void Room133_136::init() {
 }
 
 void Room133_136::daemon() {
-	int frame;
-
 	if (player_commands_allowed() && _G(player).walker_visible) {
 		player_update_info();
 
@@ -129,10 +127,10 @@ void Room133_136::daemon() {
 
 	case 3:
 		if (_val1 == 1) {
-			frame = imath_ranged_rand(8, 10);
+			const int frame = imath_ranged_rand(8, 10);
 			series_play("136cw01", 0xf00, 0, 3, 6, 0, 100, 0, 0, frame, frame);
 		} else {
-			ws_walk(217, 268, 0, 4, 2);
+			ws_walk(217, 268, nullptr, 4, 2);
 			series_play("136cw01", 0xf00, 2, -1, 6, 0, 100, 0, 0, 0, 10);
 		}
 		break;
@@ -300,7 +298,7 @@ void Room133_136::pre_parser() {
 }
 
 void Room133_136::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("gear", "sign") && !_G(flags)[kRoadOpened]) {

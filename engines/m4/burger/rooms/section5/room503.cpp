@@ -688,7 +688,7 @@ void Room503::daemon() {
 			if (_G(player).walker_visible && player_commands_allowed()) {
 				intr_cancel_sentence();
 				player_set_commands_allowed(false);
-				ws_walk(260, 300, 0, 17, 2, true);
+				ws_walk(260, 300, nullptr, 17, 2, true);
 			} else {
 				kernel_timing_trigger(15, 16);
 			}
@@ -824,7 +824,7 @@ void Room503::daemon() {
 
 		case 6:
 			ws_unhide_walker();
-			ws_walk(260, 300, 0, -1, 2);
+			ws_walk(260, 300, nullptr, -1, 2);
 			kernel_timing_trigger(imath_ranged_rand(180, 360), 19);
 			break;
 

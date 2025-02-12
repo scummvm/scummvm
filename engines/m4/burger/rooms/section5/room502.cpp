@@ -289,7 +289,7 @@ void Room502::init() {
 
 	case 503:
 		ws_demand_location(620, 311, 9);
-		ws_walk(304, 308, 0, -1, -1);
+		ws_walk(304, 308, nullptr, -1, -1);
 		player_set_commands_allowed(true);
 		kernel_trigger_dispatch_now(24);
 		break;

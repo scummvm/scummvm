@@ -152,7 +152,7 @@ void Room143::init() {
 	case 142:
 		player_set_commands_allowed(false);
 		ws_demand_location(148, 247, 3);
-		ws_walk(249, 252, 0, 13, 4);
+		ws_walk(249, 252, nullptr, 13, 4);
 		break;
 
 	default:
@@ -1095,7 +1095,7 @@ void Room143::daemon() {
 
 			player_update_info();
 			if (_G(player_info).y < 304) {
-				ws_walk(220, 304, 0, -1, 2);
+				ws_walk(220, 304, nullptr, -1, 2);
 				_G(flags)[kDisableFootsteps] = 1;
 			}
 
@@ -1139,7 +1139,7 @@ void Room143::daemon() {
 			Section1::walk();
 
 			if (_G(player_info).y < 300)
-				ws_walk(213, 287, 0, -1, 2);
+				ws_walk(213, 287, nullptr, -1, 2);
 
 			showEmptyPlates();
 			_burlShould = 45;

@@ -54,7 +54,7 @@ static const seriesStreamBreak STREAMS3[] = {
 };
 
 static const seriesStreamBreak STREAMS4[] = {
-	{ 6,"102_035", 2, 255, -1, 0, 0, 0 },
+	{ 6,"102_035", 2, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -98,7 +98,7 @@ static const seriesPlayBreak PLAY4[] = {
 
 void Room102::init() {
 	_val1 = 0;
-	_series3 = 0;
+	_series3 = nullptr;
 	_val3 = -1;
 	_val4 = 0;
 	_val5 = 0;
@@ -461,7 +461,7 @@ void Room102::daemon() {
 
 				if (++_val5 > 24 && _val5 != -666 && player_commands_allowed()) {
 					_val5 = -666;
-					conv_load_and_prepare("conv05", 20, 0);
+					conv_load_and_prepare("conv05", 20, false);
 					conv_export_pointer_curr(&_G(flags)[V016], 0);
 					conv_play_curr();
 				}
@@ -833,7 +833,7 @@ void Room102::daemon() {
 
 	case 12:
 		series_set_frame_rate(_stream1, 30000);
-		ws_walk(324, 341, 0, 13, 10, 1);
+		ws_walk(324, 341, nullptr, 13, 10, true);
 		break;
 
 	case 13:
@@ -856,7 +856,7 @@ void Room102::daemon() {
 		break;
 
 	case 16:
-		ws_walk(318, 343, 0, -1, 2, 1);
+		ws_walk(318, 343, nullptr, -1, 2, 1);
 		break;
 
 	case 17:
@@ -961,7 +961,7 @@ void Room102::daemon() {
 			ws_demand_location(628, 325);
 			ws_demand_facing(9);
 			_G(wilbur_should) = 2;
-			ws_walk(435, 329, 0, kCHANGE_WILBUR_ANIMATION, 9);
+			ws_walk(435, 329, nullptr, kCHANGE_WILBUR_ANIMATION, 9);
 			break;
 
 		case 2:
@@ -1507,7 +1507,7 @@ void Room102::conv04() {
 				_harryMode = 26;
 				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				player_update_info();
-				ws_walk(192, 327, 0, -1, 4);
+				ws_walk(192, 327, nullptr, -1, 4);
 				conv_resume_curr();
 
 			} else if (node == 4 && entry == 0) {
@@ -1551,7 +1551,7 @@ void Room102::conv04() {
 			player_update_info();
 
 			if (_G(player).walker_visible && _G(player_info).facing != 2) {
-				ws_walk(192, 327, 0, 7, 2);
+				ws_walk(192, 327, nullptr, 7, 2);
 			} else if (node == 4 && entry == 1) {
 				digi_preload("04p0502", 102);
 				digi_play(sound, 1, 255, 22);

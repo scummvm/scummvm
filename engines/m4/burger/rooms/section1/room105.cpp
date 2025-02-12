@@ -1065,7 +1065,7 @@ void Room105::daemon() {
 		break;
 
 	case 11:
-		ws_walk(186, 263, 0, -1, 10);
+		ws_walk(186, 263, nullptr, -1, 10);
 		break;
 
 	case 12:
@@ -1073,7 +1073,7 @@ void Room105::daemon() {
 		break;
 
 	case 13:
-		ws_walk(415, 254, 0, -1, 2);
+		ws_walk(415, 254, nullptr, -1, 2);
 		break;
 
 	case 15:
@@ -1158,7 +1158,7 @@ void Room105::daemon() {
 		break;
 
 	case 24:
-		ws_walk(385, 254, 0, -1, 2);
+		ws_walk(385, 254, nullptr, -1, 2);
 		break;
 
 	case 25:
@@ -1297,10 +1297,10 @@ void Room105::daemon() {
 			if (_G(flags)[kPerkinsLostIsland] && !_G(flags)[V034]) {
 				player_set_commands_allowed(false);
 				_G(flags)[V034] = 1;
-				ws_walk(199, 279, 0, 19, 9);
+				ws_walk(199, 279, nullptr, 19, 9);
 
 			} else {
-				ws_walk(301, 313, 0, -1, 11);
+				ws_walk(301, 313, nullptr, -1, 11);
 			}
 			break;
 

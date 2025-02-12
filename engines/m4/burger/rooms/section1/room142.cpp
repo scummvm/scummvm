@@ -182,27 +182,27 @@ void Room142::init() {
 
 	case 101:
 		ws_demand_location(120, 400, 2);
-		ws_walk(120, 344, 0, -1, -1);
+		ws_walk(120, 344, nullptr, -1, -1);
 		break;
 
 	case 139:
 		ws_demand_location(-40, 375, 2);
-		ws_walk(25, 344, 0, -1, -1);
+		ws_walk(25, 344, nullptr, -1, -1);
 		break;
 
 	case 143:
 		ws_demand_location(350, 270, 8);
-		ws_walk(297, 275, 0, -1, -1);
+		ws_walk(297, 275, nullptr, -1, -1);
 		break;
 
 	case 145:
 		ws_demand_location(293, 275, 7);
-		ws_walk(282, 280, 0, -1, -1);
+		ws_walk(282, 280, nullptr, -1, -1);
 		break;
 
 	case 170:
 		ws_demand_location(680, 325, 9);
-		ws_walk(613, 331, 0, -1, -1);
+		ws_walk(613, 331, nullptr, -1, -1);
 		break;
 
 	default:

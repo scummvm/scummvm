@@ -418,12 +418,12 @@ void Room104::daemon() {
 		case 1:
 			ws_demand_location(315, 373);
 			ws_demand_facing(10);
-			ws_walk(271, 348, 0, -1, 10);
+			ws_walk(271, 348, nullptr, -1, 10);
 			break;
 		case 2:
 			ws_demand_location(208, 243);
 			ws_demand_facing(7);
-			ws_walk(180, 287, 0, -1, 7);
+			ws_walk(180, 287, nullptr, -1, 7);
 			break;
 		case 3:
 			ws_demand_location(417, 361);

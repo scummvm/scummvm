@@ -226,22 +226,22 @@ void Room303::doDaemon(int trigger) {
 	case 2:
 		if (_G(flags)[V115] > 1) {
 			player_set_commands_allowed(true);
-			ws_walk(290, 325, 0, 4, 1);
+			ws_walk(290, 325, nullptr, 4, 1);
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(290, 325, 0, kCHANGE_WILBUR_ANIMATION, 1);
+			ws_walk(290, 325, nullptr, kCHANGE_WILBUR_ANIMATION, 1);
 		}
 		break;
 
 	case 3:
 		if (_G(flags)[V115] > 1) {
 			player_set_commands_allowed(true);
-			ws_walk(261, 276, 0, 4, 3);
+			ws_walk(261, 276, nullptr, 4, 3);
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(261, 276, 0, kCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(261, 276, nullptr, kCHANGE_WILBUR_ANIMATION, 3);
 		}
 		break;
 

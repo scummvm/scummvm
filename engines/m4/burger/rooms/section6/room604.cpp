@@ -562,7 +562,7 @@ void Room604::daemon() {
 			player_update_info();
 			_G(wilbur_should) = 15;
 
-			ws_walk(_G(player_info).x + 1, 316, 0, kCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(_G(player_info).x + 1, 316, nullptr, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 15:

@@ -999,7 +999,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			player_update_info();
 			_G(wilbur_should) = 21;
-			ws_walk(_G(player_info).x + 1, 304, 0, kCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(_G(player_info).x + 1, 304, nullptr, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 21:

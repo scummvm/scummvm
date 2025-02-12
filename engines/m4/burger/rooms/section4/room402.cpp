@@ -738,7 +738,7 @@ void Room402::daemon() {
 		if (++_val4 == 2) {
 			_val4 = 0;
 			_stolieShould = 6;
-			ws_walk(316, 354, 0, -1, 2);
+			ws_walk(316, 354, nullptr, -1, 2);
 		}
 		break;
 
