@@ -528,9 +528,7 @@ void QtvrxtraXtra::m_QTVRSetNodeID(int nargs) {
 	if (newNode.nodeID)
 		me->_currentNode = newNode;
 
-	me->_video->setPanAngle(me->_currentNode.defHPan);
-	me->_video->setTiltAngle(me->_currentNode.defVPan);
-	me->_video->setFOV(me->_currentNode.defZoom);
+	me->_video->goToNode(newNode.nodeID);
 }
 
 void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
