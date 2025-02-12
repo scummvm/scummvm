@@ -60,6 +60,8 @@ QuickTimeDecoder::QuickTimeDecoder() {
 	_prevMouseX = _prevMouseY = 0;
 	_isMouseButtonDown = false;
 	_isVR = false;
+
+	_currentSample = 1;
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
@@ -258,7 +260,7 @@ void QuickTimeDecoder::init() {
 	if (_qtvrType == QTVRType::PANORAMA) {
 		for (uint32 i = 0; i < Common::QuickTimeParser::_tracks.size(); i++) {
 			if (Common::QuickTimeParser::_tracks[i]->codecType == CODEC_TYPE_PANO) {
-				((PanoTrackHandler *)getTrack(Common::QuickTimeParser::_tracks[i]->targetTrack))->constructPanorama();
+				((PanoTrackHandler *)getTrack(Common::QuickTimeParser::_tracks[i]->targetTrack))->initPanorama();
 			}
 		}
 	}

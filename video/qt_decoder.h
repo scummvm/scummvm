@@ -119,6 +119,7 @@ public:
 	};
 
 	NodeData getNodeData(uint32 nodeID);
+	void goToNode(uint32 nodeID);
 
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
@@ -147,6 +148,7 @@ private:
 	uint16 _width, _height;
 
 public:
+	int _currentSample;
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
 	Common::Point _mouseDrag;
@@ -340,6 +342,7 @@ private:
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
 
+		void initPanorama();
 		void constructPanorama();
 		Graphics::Surface *constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname);
 

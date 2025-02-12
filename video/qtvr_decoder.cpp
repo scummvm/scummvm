@@ -262,6 +262,29 @@ QuickTimeDecoder::NodeData QuickTimeDecoder::getNodeData(uint32 nodeID) {
 	return {};
 }
 
+void QuickTimeDecoder::goToNode(uint32 nodeID) {
+	int idx = -1;
+	for (int i = 0; i < _panoTrack->panoSamples.size(); i++) {
+		if (_panoTrack->panoSamples[i].hdr.nodeID == nodeID) {
+			idx = i;
+			break;
+		}
+	}
+
+	if (idx == -1) {
+		warning("QuickTimeDecoder::goToNode(): Incorrect nodeID: %d", nodeID);
+		return;
+	}
+
+	_currentSample = idx;
+
+	setPanAngle(_panoTrack->panoSamples[_currentSample].hdr.defHPan);
+	setTiltAngle(_panoTrack->panoSamples[_currentSample].hdr.defVPan);
+	setFOV(_panoTrack->panoSamples[_currentSample].hdr.defZoom);
+
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->constructPanorama();
+}
+
 /////////////////////////
 // PANO Track
 ////////////////////////
@@ -416,21 +439,46 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 	return target;
 }
 
+void QuickTimeDecoder::PanoTrackHandler::initPanorama() {
+	_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
+}
 
 void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
+	PanoTrackSample *sample = &_parent->panoSamples[_decoder->_currentSample];
 
 	warning("scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
 			desc->_hotSpotTrackID, desc->_hotSpotSizeX, desc->_hotSpotSizeY);
 
 	warning("sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
-	warning("targetTrackID: %d", _parent->targetTrack);
+
+	warning("Node idx: %d", sample->hdr.nodeID);
+
+	int nodeidx = -1;
+	for (int i = 0; i < (int)_parent->panoInfo.nodes.size(); i++)
+		if (_parent->panoInfo.nodes[i].nodeID == sample->hdr.nodeID) {
+			nodeidx = i;
+			break;
+		}
+
+	if (nodeidx == -1) {
+		warning("constructPanorama(): Missing node %d in anoInfo", sample->hdr.nodeID);
+		nodeidx = 0;
+	}
+
+	uint32 timestamp = _parent->panoInfo.nodes[nodeidx].timestamp;
+
+	warning("Timestamp: %d", timestamp);
 
 	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
+
+	track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
 
 	_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
 
 	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
+
+	track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
 
 	_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
