@@ -817,7 +817,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('g', "gfx-mode")
 			END_OPTION
 
-
 			DO_LONG_OPTION("stretch-mode")
 			END_OPTION
 
