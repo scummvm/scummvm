@@ -320,7 +320,7 @@ void Room303::daemon() {
 		break;
 
 	case 6:
-		ws_walk(128, 267, nullptr, 75, 3);
+		ws_walk(_G(my_walker), 128, 267, nullptr, 75, 3);
 		break;
 
 	case 7:
@@ -329,18 +329,18 @@ void Room303::daemon() {
 		break;
 
 	case 8:
-		ws_walk(145, 289, nullptr, -1, 2);
+		ws_walk(_G(my_walker), 145, 289, nullptr, -1, 2);
 		kernel_timing_trigger(200, 38);
 		break;
 
 	case 9:
 		ws_demand_location(_G(my_walker), 1350, 276, 9);
-		ws_walk(1208, 276, nullptr, 75, 9);
+		ws_walk(_G(my_walker), 1208, 276, nullptr, 75, 9);
 		break;
 
 	case 10:
 		ws_demand_location(_G(my_walker), 425, 227, 7);
-		ws_walk(399, 260, nullptr, 50, 7);
+		ws_walk(_G(my_walker), 399, 260, nullptr, 50, 7);
 		break;
 
 	case 18:
@@ -453,7 +453,7 @@ void Room303::daemon() {
 		break;
 
 	case 107:
-		ws_walk(700, 305, 0, -1, 3);
+		ws_walk(_G(my_walker), 700, 305, 0, -1, 3);
 		sendWSMessage_10000(_mei, 393, 260, 9, 109, 0);
 		break;
 
@@ -481,7 +481,7 @@ void Room303::daemon() {
 		kernel_timing_trigger(60, 103);
 		series_unload(_suitTalk1);
 		series_unload(_chinTalk4);
-		ws_walk(700, 305, nullptr, -1, 3);
+		ws_walk(_G(my_walker), 700, 305, nullptr, -1, 3);
 		break;
 
 	case 117:
@@ -492,7 +492,7 @@ void Room303::daemon() {
 		break;
 
 	case 118:
-		ws_walk(444, 295, nullptr, 119, 10);
+		ws_walk(_G(my_walker), 444, 295, nullptr, 119, 10);
 		break;
 
 	case 119:
@@ -516,7 +516,7 @@ void Room303::daemon() {
 	case 122:
 		series_unload(_chinTalk4);
 		player_update_info();
-		ws_walk(_G(player_info).x + 1, _G(player_info).y - 1,
+		ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y - 1,
 			nullptr, 123, 1);
 		break;
 
@@ -547,7 +547,7 @@ void Room303::daemon() {
 		break;
 
 	case 127:
-		ws_walk(_G(player_info).x + 50, _G(player_info).y + 10,
+		ws_walk(_G(my_walker), _G(player_info).x + 50, _G(player_info).y + 10,
 			nullptr, -1, 10);
 		break;
 
@@ -568,7 +568,7 @@ void Room303::daemon() {
 		break;
 
 	case 132:
-		ws_walk(565, 306, nullptr, 170, 10);
+		ws_walk(_G(my_walker), 565, 306, nullptr, 170, 10);
 		kernel_timing_trigger(1, 133);
 		break;
 
@@ -597,7 +597,7 @@ void Room303::daemon() {
 
 	case 138:
 		series_unload(_chinTalk4);
-		ws_walk(500, 300, nullptr, 125, 3);
+		ws_walk(_G(my_walker), 500, 300, nullptr, 125, 3);
 		break;
 
 	case 143:
@@ -674,7 +674,7 @@ void Room303::daemon() {
 		break;
 
 	case 198:
-		ws_walk(444, 295, nullptr, 111, 11);
+		ws_walk(_G(my_walker), 444, 295, nullptr, 111, 11);
 		break;
 
 	case 200:
@@ -1496,7 +1496,7 @@ void Room303::parser() {
 		if (player_been_here(301)) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				ws_walk(409, 266, nullptr, 1, 1);
+				ws_walk(_G(my_walker), 409, 266, nullptr, 1, 1);
 				break;
 
 			case 1:
@@ -1518,7 +1518,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(417, 232, nullptr, -1, 2);
+				ws_walk(_G(my_walker), 417, 232, nullptr, -1, 2);
 				break;
 
 			case 5:
@@ -1554,7 +1554,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(417, 232, nullptr, -1, 2);
+				ws_walk(_G(my_walker), 417, 232, nullptr, -1, 2);
 				disable_player_commands_and_fade_init(6);
 				break;
 

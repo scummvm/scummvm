@@ -260,7 +260,7 @@ void Room305::daemon() {
 		break;
 
 	case 10:
-		ws_walk(1220, 296, 0, 50, 9);
+		ws_walk(_G(my_walker), 1220, 296, nullptr, 50, 9);
 		break;
 
 	case 40:
@@ -760,7 +760,7 @@ next2:
 				(takeFlag && inv_object_is_here(_G(player).noun))) {
 				if (chiselFlag) {
 					if (player_said("CHISEL")) {
-						ws_walk(186, 279, 0, 1, 10);
+						ws_walk(_G(my_walker), 186, 279, 0, 1, 10);
 					}
 				} else {
 					kernel_timing_trigger(1, 1);
@@ -819,15 +819,15 @@ next3:
 					(takeFlag && inv_object_is_here(_G(player).noun))) {
 				if (caseFlag) {
 					if (player_said("GERMAN BANKNOTE"))
-						ws_walk(88, 305, nullptr, 1, 10);
+						ws_walk(_G(my_walker), 88, 305, nullptr, 1, 10);
 					else if (player_said("REBUS AMULET"))
-						ws_walk(66, 319, nullptr, 1, 10);
+						ws_walk(_G(my_walker), 66, 319, nullptr, 1, 10);
 					else if (player_said("SILVER BUTTERFLY"))
-						ws_walk(124, 302, nullptr, 1, 10);
+						ws_walk(_G(my_walker), 124, 302, nullptr, 1, 10);
 					else if (player_said("POSTAGE STAMP"))
-						ws_walk(164, 288, nullptr, 1, 10);
+						ws_walk(_G(my_walker), 164, 288, nullptr, 1, 10);
 					else if (player_said("STICK AND SHELL MAP"))
-						ws_walk(120, 299, nullptr, 1, 10);
+						ws_walk(_G(my_walker), 120, 299, nullptr, 1, 10);
 				} else {
 					kernel_timing_trigger(1, 1);
 				}
@@ -1277,26 +1277,26 @@ void Room305::conv305a() {
 
 bool Room305::walkToObject() {
 	if (player_said("SHRUNKEN HEAD")) {
-		ws_walk(98, 313, 0, 1, 10, 1);
+		ws_walk(_G(my_walker), 98, 313, nullptr, 1, 10, true);
 		return true;
 	} else if (player_said("INCENSE BURNER")) {
-		ws_walk(171, 285, 0, 1, 10, 1);
+		ws_walk(_G(my_walker), 171, 285, nullptr, 1, 10, true);
 		return true;
 	} else if (player_said("CRYSTAL SKULL")) {
-		ws_walk(70, 320, 0, 1, 10, 1);
+		ws_walk(_G(my_walker), 70, 320, nullptr, 1, 10, true);
 		return true;
 	} else if (player_said("WHALE BONE HORN")) {
-		ws_walk(116, 304, 0, 1, 10, 1);
+		ws_walk(_G(my_walker), 116, 304, nullptr, 1, 10, true);
 		return true;
 	} else if (player_said("WHEELED TOY")) {
-		ws_walk(151, 296, 0, 1, 10, 1);
+		ws_walk(_G(my_walker), 151, 296, nullptr, 1, 10, true);
 		return true;
 	} else if (player_said("ROMANOV EMERALD")) {
 		if (_G(flags)[V090] == 3) {
 			digi_play("305f08", 1, 255, 6);
 			_fengShould = 2;
 		} else {
-			ws_walk(183, 288, 0, 1, 10, 1);
+			ws_walk(_G(my_walker), 183, 288, nullptr, 1, 10, true);
 		}
 		return true;
 	}

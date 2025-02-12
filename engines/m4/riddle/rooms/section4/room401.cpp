@@ -90,9 +90,9 @@ void Room401::init() {
 			(_G(flags)[V017] && player_been_here(407) && !_G(flags)[V019]) ||
 			(_G(flags)[kWolfFled] && !_G(flags)[V091])
 		) {
-			ws_walk(346, 267, 0, 7, 3, 1);
+			ws_walk(_G(my_walker), 346, 267, nullptr, 7, 3, true);
 		} else {
-			ws_walk(158, 266, 0, 7, 3, 1);
+			ws_walk(_G(my_walker), 158, 266, nullptr, 7, 3, true);
 		}
 	}
 
@@ -864,8 +864,7 @@ void Room401::parser() {
 				break;
 			case 1:
 				player_update_info();
-				ws_walk(_G(player_info).x + 1, _G(player_info).y,
-					nullptr, 2, 3);
+				ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y, nullptr, 2, 3);
 				_agentShould = 4;
 				break;
 			case 2:

@@ -149,13 +149,13 @@ void Room402::init() {
 
 			case 408:
 				ws_demand_location(_G(my_walker), 517, 239, 3);
-				ws_walk(510, 260, nullptr, 50, 8);
+				ws_walk(_G(my_walker), 510, 260, nullptr, 50, 8);
 				break;
 
 			default:
 				digi_preload("950_s22");
 				ws_demand_location(_G(my_walker), 660, 290, 3);
-				ws_walk(612, 287, nullptr, 50, 9);
+				ws_walk(_G(my_walker), 612, 287, nullptr, 50, 9);
 				midi_fade_volume(0, 120);
 				break;
 			}
@@ -226,7 +226,7 @@ void Room402::init() {
 					sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 						_wolfClipping, 10, 10, 0);
 					ws_demand_location(_G(my_walker), 517, 239, 3);
-					ws_walk(503, 248, nullptr, 350, 7);
+					ws_walk(_G(my_walker), 503, 248, nullptr, 350, 7);
 				} else if (_G(flags)[V117] != 0 && inv_player_has("TURTLE")) {
 					_G(flags)[V117] = 0;
 					hotspot_set_active("TOPIARY ", true);
@@ -239,14 +239,14 @@ void Room402::init() {
 					kernel_timing_trigger(90, 40);
 				} else {
 					ws_demand_location(_G(my_walker), 517, 239, 3);
-					ws_walk(449, 317, nullptr, 30, 3);
+					ws_walk(_G(my_walker), 449, 317, nullptr, 30, 3);
 				}
 				break;
 
 			default:
 				digi_preload("950_s22");
 				ws_demand_location(_G(my_walker), 660, 290, 3);
-				ws_walk(449, 317, nullptr, 30, 3);
+				ws_walk(_G(my_walker), 449, 317, nullptr, 30, 3);
 				midi_fade_volume(0, 120);
 
 				if (inv_player_has("TURTLE"))
@@ -266,7 +266,7 @@ void Room402::init() {
 		sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 			_wolfClipping, 10, 10, 0);
 		ws_demand_location(_G(my_walker), 517, 239, 3);
-		ws_walk(510, 260, nullptr, 370, 8);
+		ws_walk(_G(my_walker), 510, 260, nullptr, 370, 8);
 	}
 
 	digi_play_loop("950_s22", 3, 120);
@@ -277,7 +277,7 @@ void Room402::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 19:
-		ws_walk(449, 317, nullptr, 20, 3);
+		ws_walk(_G(my_walker), 449, 317, nullptr, 20, 3);
 		midi_fade_volume(0, 120);
 		break;
 
@@ -362,7 +362,7 @@ void Room402::daemon() {
 		break;
 
 	case 40:
-		ws_walk(510, 260, nullptr, -1, 8);
+		ws_walk(_G(my_walker), 510, 260, nullptr, -1, 8);
 		break;
 
 	case 42:
@@ -379,13 +379,13 @@ void Room402::daemon() {
 		series_unload(_ripDownStairs);
 		ws_unhide_walker();
 		ws_demand_location(_G(my_walker), 345, 275, 3);
-		ws_walk(375, 279, nullptr,
+		ws_walk(_G(my_walker), 375, 279, nullptr,
 			(_G(flags)[kWolfLocation] == 402) ? 56 : 50,
 			4);
 		break;
 
 	case 56:
-		ws_walk(449, 317, nullptr, 30, 3);
+		ws_walk(_G(my_walker), 449, 317, nullptr, 30, 3);
 		break;
 
 	case 100:
@@ -1278,7 +1278,7 @@ void Room402::daemon() {
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
 		_G(flags)[V114] = 0;
-		ws_walk(517, 239, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 517, 239, nullptr, -1, 9);
 		kernel_timing_trigger(60, 304);
 		break;
 
@@ -1361,7 +1361,7 @@ void Room402::daemon() {
 
 	case 372:
 		digi_play("402r07", 1);
-		ws_walk(517, 239, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 517, 239, nullptr, -1, 9);
 		kernel_timing_trigger(90, 373);
 		break;
 
@@ -1508,7 +1508,7 @@ void Room402::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			ws_walk(517, 239, nullptr, 2, 11);
+			ws_walk(_G(my_walker), 517, 239, nullptr, 2, 11);
 			break;
 		case 2:
 			disable_player_commands_and_fade_init(3);
@@ -1544,7 +1544,7 @@ void Room402::parser() {
 		if (_G(flags)[kCastleCartoon])
 			digi_play("com016", 1);
 		else if (_G(kernel).trigger == -1)
-			ws_walk(190, 333, nullptr, 8, 2);
+			ws_walk(_G(my_walker), 190, 333, nullptr, 8, 2);
 		else {
 			if (_G(kernel).trigger == 6) {
 				_G(flags)[kCastleCartoon] = 1;

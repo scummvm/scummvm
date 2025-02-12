@@ -81,13 +81,13 @@ void Room301::init() {
 		ws_demand_location(_G(my_walker), 55, 270, 3);
 
 		if (_val12 || (!player_been_here(401) && _G(flags)[V092] && !_G(flags)[V093])) {
-			ws_walk(352, 269, nullptr, 60, 3);
+			ws_walk(_G(my_walker), 352, 269, nullptr, 60, 3);
 		} else if (!player_been_here(301)) {
 			digi_preload("301r37");
 			digi_play("301r37", 1, 255, 51);
-			ws_walk(165, 270, nullptr, -1, 3);
+			ws_walk(_G(my_walker), 165, 270, nullptr, -1, 3);
 		} else {
-			ws_walk(165, 270, nullptr, 51, 3);
+			ws_walk(_G(my_walker), 165, 270, nullptr, 51, 3);
 		}
 	}
 
@@ -892,7 +892,7 @@ void Room301::parser() {
 				_marshalMatt = series_load("marshall matt");
 				digi_preload("301s01");
 				_ripTrekArms = series_load("rip trek arms x pos3");
-				ws_walk(200, 269, nullptr, 1, 9);
+				ws_walk(_G(my_walker), 200, 269, nullptr, 1, 9);
 			} else if (_G(kernel).trigger == 1) {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				_machine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
@@ -935,7 +935,7 @@ void Room301::parser() {
 				break;
 			case 1:
 				player_update_info();
-				ws_walk(_G(player_info).x, _G(player_info).y,
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y,
 					nullptr, 2, 3);
 				break;
 			case 2:

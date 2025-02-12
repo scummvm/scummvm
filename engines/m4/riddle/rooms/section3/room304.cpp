@@ -132,7 +132,7 @@ void Room304::init() {
 void Room304::daemon() {
 	switch (_G(kernel).trigger) {
 	case 49:
-		ws_walk(387, 292, nullptr, 50, 9);
+		ws_walk(_G(my_walker), 387, 292, nullptr, 50, 9);
 		digi_play("304m01", 1, 255, 60);
 		break;
 
@@ -141,7 +141,7 @@ void Room304::daemon() {
 		break;
 
 	case 51:
-		ws_walk(431, 287, nullptr, 50, 8);
+		ws_walk(_G(my_walker), 431, 287, nullptr, 50, 8);
 		break;
 
 	case 60:
@@ -638,7 +638,7 @@ void Room304::handlingStickAndSword() {
 		series_unload(_suit1);
 		_safe1 = series_load("rip opens safe part 1");
 		_safe2 = series_load("rip opens safe part 2");
-		ws_walk(510, 300, nullptr, 43, 3);
+		ws_walk(_G(my_walker), 510, 300, nullptr, 43, 3);
 		digi_preload("304r51");
 		digi_play("304r51", 1, 255, 79);
 		break;
@@ -684,7 +684,7 @@ void Room304::handlingStickAndSword() {
 		_safe1 = series_load("one frame safe open");
 		series_show_sprite("one frame safe open", 0, 0xa00);
 		_suit3 = series_load("mc hand to chin pos3");
-		ws_walk(260, 279, nullptr, 80, 8);
+		ws_walk(_G(my_walker), 260, 279, nullptr, 80, 8);
 		break;
 
 	case 51:
@@ -783,7 +783,7 @@ void Room304::handlingStickAndSword() {
 		break;
 
 	case 69:
-		ws_walk(458, 263, nullptr, -1, 2);
+		ws_walk(_G(my_walker), 458, 263, nullptr, -1, 2);
 		kernel_timing_trigger(30, 678);
 		break;
 

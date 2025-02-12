@@ -96,7 +96,7 @@ void Room352::daemon() {
 		_meiChecksShoe = series_stream("mei checks her shoe", 7, 0, -1);
 		series_stream_break_on_frame(_meiChecksShoe, 47, 17);
 		ws_unhide_walker();
-		ws_walk(319, 301, nullptr, 20, 1);
+		ws_walk(_G(my_walker), 319, 301, nullptr, 20, 1);
 		break;
 
 	case 17:

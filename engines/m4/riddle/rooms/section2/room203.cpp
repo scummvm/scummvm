@@ -2373,7 +2373,7 @@ void Room203::daemon() {
 
 	case 363:
 		ws_demand_location(_G(my_walker), 1100, 290, 9);
-		ws_walk(1060, 290, nullptr, 364, 7);
+		ws_walk(_G(my_walker), 1060, 290, nullptr, 364, 7);
 		break;
 
 	case 364:
@@ -2381,7 +2381,7 @@ void Room203::daemon() {
 		ws_demand_facing(_official, 9);
 		setGlobals1(_officialTurn3_7, 1, 27, 27, 27);
 		sendWSMessage_110000(_official, 365);
-		ws_walk(1062, 313, nullptr, 8888, 7);
+		ws_walk(_G(my_walker), 1062, 313, nullptr, 8888, 7);
 		break;
 
 	case 365:
@@ -2391,7 +2391,7 @@ void Room203::daemon() {
 		break;
 
 	case 366:
-		ws_walk(280, 345, nullptr, 103, 9);
+		ws_walk(_G(my_walker), 280, 345, nullptr, 103, 9);
 		kernel_timing_trigger(50, 367);
 		break;
 
@@ -2476,7 +2476,7 @@ void Room203::daemon() {
 		break;
 
 	case 8888:
-		ws_walk(940, 345, nullptr, -1, 7);
+		ws_walk(_G(my_walker), 940, 345, nullptr, -1, 7);
 		break;
 
 	case 9000:
@@ -2517,7 +2517,7 @@ void Room203::daemon() {
 		break;
 
 	case 9008:
-		ws_walk(417, 240, nullptr, -1, 1);
+		ws_walk(_G(my_walker), 417, 240, nullptr, -1, 1);
 		kernel_timing_trigger(60, 9010);
 		break;
 
@@ -2583,7 +2583,7 @@ void Room203::pre_parser() {
 	if (lookFlag && player_said("ALLEY WALL") && _G(kernel).trigger == -1) {
 		_G(player).resetWalk();
 		_G(kernel).trigger_mode = KT_PARSE;
-		ws_walk(710, 300, nullptr, 230, 11);
+		ws_walk(_G(my_walker), 710, 300, nullptr, 230, 11);
 		_G(kernel).trigger_mode = KT_PREPARSE;
 	}
 }
@@ -2664,7 +2664,7 @@ void Room203::parser() {
 			kernel_timing_trigger(60, 7);
 			break;
 		case 3:
-			ws_walk(400, 252, nullptr, 5, 1);
+			ws_walk(_G(my_walker), 400, 252, nullptr, 5, 1);
 			break;
 		case 5:
 			disable_player_commands_and_fade_init(6);
@@ -3054,7 +3054,7 @@ void Room203::parser() {
 		case 4:
 			inv_move_object("SOLDIER'S HELMET", 203);
 			player_update_info();
-			ws_walk(_G(player_info).x + 65, _G(player_info).y + 10, nullptr, -1, 10);
+			ws_walk(_G(my_walker), _G(player_info).x + 65, _G(player_info).y + 10, nullptr, -1, 10);
 			_val1 = 1;
 
 			if (_peasantMode == 4050) {
@@ -3305,9 +3305,9 @@ void Room203::peasantWalk() {
 			_G(player_info).x > 735 && _G(player_info).x < 1140) {
 			if (_G(player_info).facing == 1 || _G(player_info).facing == 2 ||
 				_G(player_info).facing == 10 || _G(player_info).facing == 11)
-				ws_walk(_G(player_info).x, 294, nullptr, -1, 0);
+				ws_walk(_G(my_walker), _G(player_info).x, 294, nullptr, -1, 0);
 			else
-				ws_walk(_G(player_info).x, 350, nullptr, -1, 0);
+				ws_walk(_G(my_walker), _G(player_info).x, 350, nullptr, -1, 0);
 		}
 		break;
 
@@ -3315,7 +3315,7 @@ void Room203::peasantWalk() {
 	case 4175:
 		if (_G(player_info).y > 315 && _G(player_info).y < 335 &&
 			_G(player_info).x > 373 && _G(player_info).x < 763) {
-			ws_walk(_G(player_info).x, 350, nullptr, -1, 0);
+			ws_walk(_G(my_walker), _G(player_info).x, 350, nullptr, -1, 0);
 		}
 		break;
 
