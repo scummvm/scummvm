@@ -128,10 +128,6 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
   uint32 srcIndexYB = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
-	uint32 bufferTL = 0;
-	uint32 bufferBL = 0;
-	uint32 bufferTR = 0;
-	uint32 bufferBR = 0;
 	if(highQuality != _highQuality) {
 	  _highQuality = highQuality;
 	  generateRenderTable();
@@ -141,9 +137,9 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
     //Apply bilinear interpolation
 	  FilterPixel _curP;
 	  uint32 index;
-	  uint8 rTL,rTR,rBL,rBR,rF;
-	  uint8 gTL,gTR,gBL,gBR,gF;
-	  uint8 bTL,bTR,bBL,bBR,bF;
+	  uint32 rTL,rTR,rBL,rBR,rF;
+	  uint32 gTL,gTR,gBL,gBR,gF;
+	  uint32 bTL,bTR,bBL,bBR,bF;
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
@@ -153,18 +149,14 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 			  srcIndexYB = y + _curP.Src.bottom;
 			  srcIndexXL = x + _curP.Src.left;
 			  srcIndexXR = x + _curP.Src.right;
-			  bufferTL = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
-			  bufferTR = sourceBuffer[srcIndexYT * _numColumns + srcIndexXR];
-			  bufferBL = sourceBuffer[srcIndexYB * _numColumns + srcIndexXL];
-			  bufferBR = sourceBuffer[srcIndexYB * _numColumns + srcIndexXR];
-        _pixelFormat.colorToRGB(bufferTL,rTL,gTL,bTL);
-        _pixelFormat.colorToRGB(bufferTR,rTR,gTR,bTR);
-        _pixelFormat.colorToRGB(bufferBL,rBL,gBL,bBL);
-        _pixelFormat.colorToRGB(bufferBR,rBR,gBR,bBR);
+        splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
+        splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
+        splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
+        splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);      
         rF = round(_curP.fTL*rTL + _curP.fTR*rTR + _curP.fBL*rBL + _curP.fBR*rBR);
         gF = round(_curP.fTL*gTL + _curP.fTR*gTR + _curP.fBL*gBL + _curP.fBR*gBR);
         bF = round(_curP.fTL*bTL + _curP.fTR*bTR + _curP.fBL*bBL + _curP.fBR*bBR);
-        destBuffer[destOffset] = _pixelFormat.RGBToColor(rF,gF,bF);
+        destBuffer[destOffset] = mergeColor(rF,gF,bF);
 		    destOffset++;
       }
     }
@@ -222,6 +214,7 @@ void RenderTable::generatePanoramaLookupTable() {
 	
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
 	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
+	//TODO - find & fix cause of vertial "seam" in Nemesis.
 	for (uint x = 0; x < halfColumns; ++x) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
 		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
