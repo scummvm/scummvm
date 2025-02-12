@@ -184,7 +184,7 @@ void Room603::init() {
 		player_set_commands_allowed(false);
 		digi_preload("950_s28a");
 		ws_demand_location(_G(my_walker), 542, 230, 2);
-		ws_walk(534, 240, nullptr, 5, 7);
+		ws_walk(_G(my_walker), 534, 240, nullptr, 5, 7);
 		break;
 
 	case 605:
@@ -198,14 +198,14 @@ void Room603::init() {
 
 		player_set_commands_allowed(false);
 		ws_demand_location(_G(my_walker), 670, 232, 2);
-		ws_walk(497, 245, nullptr, 1, 8);
+		ws_walk(_G(my_walker), 497, 245, nullptr, 1, 8);
 		break;
 
 	default:
 		player_set_commands_allowed(false);
 		digi_preload("950_s28a");
 		ws_demand_location(_G(my_walker), 67, 391, 2);
-		ws_walk(135, 356, nullptr, 1, 2);
+		ws_walk(_G(my_walker), 135, 356, nullptr, 1, 2);
 		break;
 	}
 
@@ -531,7 +531,7 @@ void Room603::daemon() {
 		Common::strcpy_s(_G(player).verb, "talk to");
 		Common::strcpy_s(_G(player).noun, "person in pit");
 		_G(kernel).trigger_mode = KT_PARSE;
-		ws_walk(311, 306, nullptr, 666, 10);
+		ws_walk(_G(my_walker), 311, 306, nullptr, 666, 10);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		_G(player).disable_hyperwalk = false;
 		break;
@@ -590,7 +590,7 @@ void Room603::daemon() {
 				terminateMachineAndNull(_ripley);
 				ws_unhide_walker();
 				terminateMachineAndNull(_shadow);
-				ws_walk(670, 232, nullptr, -1, 3);
+				ws_walk(_G(my_walker), 670, 232, nullptr, -1, 3);
 				break;
 
 			default:
@@ -802,7 +802,7 @@ void Room603::daemon() {
 		terminateMachineAndNull(_shadow);
 		ws_unhide_walker();
 		ws_demand_facing(_G(my_walker), 4);
-		ws_walk(345, 300, nullptr, -1, 10);
+		ws_walk(_G(my_walker), 345, 300, nullptr, -1, 10);
 		break;
 
 	case 326:
@@ -976,7 +976,7 @@ void Room603::daemon() {
 		break;
 
 	case 406:
-		ws_walk(459, 236, nullptr, 404, 2);
+		ws_walk(_G(my_walker), 459, 236, nullptr, 404, 2);
 		break;
 
 	case 410:
@@ -1728,7 +1728,7 @@ void Room603::conv603a() {
 		break;
 
 	case 15:
-		ws_walk(345, 300, nullptr, 16, 10);
+		ws_walk(_G(my_walker), 345, 300, nullptr, 16, 10);
 		break;
 
 	case 16:
@@ -1951,9 +1951,9 @@ bool Room603::takeSleeve() {
 		case -1:
 			if (inv_object_is_here("sleeve")) {
 				if (_val5)
-					ws_walk(345, 300, nullptr, 1, 10);
+					ws_walk(_G(my_walker), 345, 300, nullptr, 1, 10);
 				else
-					ws_walk(311, 308, nullptr, 1, 10);
+					ws_walk(_G(my_walker), 311, 308, nullptr, 1, 10);
 				return true;
 			}
 			break;
@@ -1989,7 +1989,7 @@ bool Room603::takeSleeve() {
 			_ttShould = 17;
 			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
 			sendWSMessage_150000(-1);
-			ws_walk(365, 298, nullptr, 666, 10);
+			ws_walk(_G(my_walker), 365, 298, nullptr, 666, 10);
 			_val4 = 1;
 			return true;
 

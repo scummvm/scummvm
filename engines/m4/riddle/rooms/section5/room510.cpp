@@ -148,7 +148,7 @@ void Room510::daemon() {
 		terminateMachineAndNull(_steps);
 		ws_unhide_walker();
 		series_unload(_stepsSeries);
-		ws_walk(407, 97, nullptr, 999, 8);
+		ws_walk(_G(my_walker), 407, 97, nullptr, 999, 8);
 		break;
 
 	case 999:
@@ -382,7 +382,7 @@ void Room510::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			if (inv_object_is_here("WOODEN LADDER") && !_G(flags)[V169]) {
-				ws_walk(395, 121, nullptr, 1, 5);
+				ws_walk(_G(my_walker), 395, 121, nullptr, 1, 5);
 			}
 			break;
 		case 1:
@@ -516,7 +516,7 @@ void Room510::parser() {
 
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(395, 121, nullptr, 1, 7);
+			ws_walk(_G(my_walker), 395, 121, nullptr, 1, 7);
 			break;
 		case 1:
 			player_set_commands_allowed(false);
@@ -603,7 +603,7 @@ void Room510::parser() {
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
-				ws_walk(425, 128, nullptr, 1, 11);
+				ws_walk(_G(my_walker), 425, 128, nullptr, 1, 11);
 				break;
 			case 1:
 				player_set_commands_allowed(false);
@@ -766,7 +766,7 @@ void Room510::parser() {
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
-				ws_walk(407, 97, nullptr, 1, 10);
+				ws_walk(_G(my_walker), 407, 97, nullptr, 1, 10);
 				break;
 			case 1:
 				player_set_commands_allowed(false);
@@ -824,7 +824,7 @@ void Room510::parser() {
 bool Room510::useAltarPost() {
 	switch (_G(kernel.trigger)) {
 	case -1:
-		ws_walk(382, 111, nullptr, 666, 11);
+		ws_walk(_G(my_walker), 382, 111, nullptr, 666, 11);
 		break;
 
 	case 1:
@@ -993,7 +993,7 @@ bool Room510::takeVinesRope() {
 				return true;
 		}
 
-		ws_walk(395, 121, nullptr, 1, 5);
+		ws_walk(_G(my_walker), 395, 121, nullptr, 1, 5);
 		break;
 
 	case 1:
@@ -1077,7 +1077,7 @@ void Room510::useVines() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		other_save_game_for_resurrection();
-		ws_walk(425, 128, nullptr, 1, 11);
+		ws_walk(_G(my_walker), 425, 128, nullptr, 1, 11);
 		break;
 
 	case 1:
@@ -1202,7 +1202,7 @@ void Room510::woodenLadder() {
 void Room510::altar() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(395, 121, nullptr, 1, 7);
+		ws_walk(_G(my_walker), 395, 121, nullptr, 1, 7);
 		break;
 
 	case 1:

@@ -53,7 +53,7 @@ void Room508::init() {
 
 	} else if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		ws_demand_location(_G(my_walker), 246, 265, 5);
-		ws_walk(256, 283, nullptr, 562, 5);
+		ws_walk(_G(my_walker), 256, 283, nullptr, 562, 5);
 	}
 
 	if (_G(flags)[V157] == 1) {
@@ -102,7 +102,7 @@ void Room508::daemon() {
 	switch (_G(kernel).trigger) {
 	case 503:
 		player_set_commands_allowed(false);
-		ws_walk(423, 356, nullptr, 504, 1);
+		ws_walk(_G(my_walker), 423, 356, nullptr, 504, 1);
 		break;
 
 	case 504:
@@ -397,7 +397,7 @@ void Room508::daemon() {
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
 		ws_demand_location(_G(my_walker), 437, 349, 1);
-		ws_walk(436, 359, nullptr, 548, 10);
+		ws_walk(_G(my_walker), 436, 359, nullptr, 548, 10);
 		break;
 
 	case 675:
@@ -463,7 +463,7 @@ void Room508::parser() {
 		case -1:
 		case 666:
 			player_set_commands_allowed(false);
-			ws_walk(317, 360, nullptr, 2, 1);
+			ws_walk(_G(my_walker), 317, 360, nullptr, 2, 1);
 			break;
 
 		case 2:
@@ -496,7 +496,7 @@ void Room508::parser() {
 		case -1:
 		case 666:
 			player_set_commands_allowed(false);
-			ws_walk(237, 255, nullptr, -1, 11);
+			ws_walk(_G(my_walker), 237, 255, nullptr, -1, 11);
 			pal_fade_init(21, 255, 0, 30, 2);
 			break;
 
@@ -510,7 +510,7 @@ void Room508::parser() {
 	} else if (player_said("SHOVEL") && player_said("HOLE IN CAPSTAN")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(423, 356, nullptr, 2, 1);
+			ws_walk(_G(my_walker), 423, 356, nullptr, 2, 1);
 			break;
 
 		case 2:
@@ -545,7 +545,7 @@ void Room508::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
-			ws_walk(317, 360, nullptr, 2, 1);
+			ws_walk(_G(my_walker), 317, 360, nullptr, 2, 1);
 			break;
 
 		case 2:
@@ -583,7 +583,7 @@ void Room508::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
-			ws_walk(333, 290, nullptr, 2, 3);
+			ws_walk(_G(my_walker), 333, 290, nullptr, 2, 3);
 			break;
 
 		case 2:
@@ -593,7 +593,7 @@ void Room508::parser() {
 
 			_skull = series_place_sprite("SKULL SPRITE AFTER DOME TURN", 0, 0, 0, 100, 0x450);
 			inv_move_object("CRYSTAL SKULL", 508);
-			ws_walk(317, 360, nullptr, 3, 1);
+			ws_walk(_G(my_walker), 317, 360, nullptr, 3, 1);
 			break;
 
 		case 3:
@@ -608,7 +608,7 @@ void Room508::parser() {
 		case -1:
 		case 666:
 			if (inv_object_is_here("CRYSTAL SKULL")) {
-				ws_walk(333, 290, nullptr, 2, 3);
+				ws_walk(_G(my_walker), 333, 290, nullptr, 2, 3);
 			}
 			break;
 
@@ -620,7 +620,7 @@ void Room508::parser() {
 
 		case 3:
 			inv_give_to_player("CRYSTAL SKULL");
-			ws_walk(317, 360, nullptr, 4, 1);
+			ws_walk(_G(my_walker), 317, 360, nullptr, 4, 1);
 			break;
 
 		case 4:
