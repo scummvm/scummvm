@@ -93,8 +93,17 @@ private:
 	bool _highQuality = false;
 	const uint8 filterPasses = 2;
 	const Graphics::PixelFormat _pixelFormat;
-	uint32 avgRB, avgG;
-	uint8 _tol = 10;  //TODO - allow different optimised values for ZGI & Nemesis
+	
+  inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
+    //NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
+    r = color & 0x001f;
+    g = color & 0x03e0;
+    b = color & 0x7c00;
+  };
+  inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
+    return (r & 0x001f) | (g & 0x03e0) | (b & 0x7c00);
+  };
+
 
 	struct {
 		float verticalFOV;  //Radians
@@ -136,23 +145,6 @@ public:
     }
     return str;
 	}
-	
-//Old version
-/*/
-	inline void contractLeft(uint32 &LeftPixel, uint32 &RightPixel) {
-	  //NB Optimised & valid for RGB555 only; ALWAYS ROUNDS DOWN, WILL CAUSE CUMULATIVE ERRORS
-  	avgG = ((LeftPixel & 0x03e0) + (RightPixel & 0x03e0)) & 0x07c0;
-	  RightPixel = ((LeftPixel & 0x7c1f) + (RightPixel & 0x7c1f)) & 0xf83e;
-    RightPixel = (RightPixel | avgG) >> 1;
-	};
-	
-//New version
-/*/
-	inline void contractLeft(uint32 &LeftPixel, uint32 &RightPixel) {
-	  RightPixel = LeftPixel + RightPixel;
-	  LeftPixel <<= 1;
-	};
-//*/
 	
 	void generateRenderTable();
 
