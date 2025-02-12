@@ -39,11 +39,15 @@ jobs:
         uses: actions/checkout@v4
       - uses: ilammy/setup-nasm@v1
         if: matrix.useNasm == 'true'
+      - name: Force CMake < 4.0 usage
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.31'
       - name: Install vcpkg
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
-          vcpkgGitCommitId: 943c5ef1c8f6b5e6ced092b242c8299caae2ff01
+          vcpkgGitCommitId: b02e341c927f16d991edbd915d8ea43eac52096c
       - name: Integrate vcpkg
         run: |
           ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}/vcpkg integrate install
@@ -113,9 +117,6 @@ jobs:
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --use-xcframework --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-taskbar --disable-tts
             packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v3.zip
-    env:
-      BUILDCACHE_MAX_CACHE_SIZE: 2000000000
-      BUILDCACHE_HARD_LINKS: true
     defaults:
       run:
         # Must be explicit for proper pipefail support
@@ -143,9 +144,11 @@ jobs:
           ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configFlags }}
           ls
       - name: Build cache
-        uses: mikehardy/buildcache-action@v2
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
-          cache_key: ${{ matrix.platform }}
+          key: ${{ matrix.platform }}
+          max-size: 1G
+          create-symlink: true
       - name: Build scummvm
         run: |
           xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
@@ -162,7 +165,7 @@ jobs:
             cxx: ccache g++
             aptPackages: 'liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmikmod-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl2-dev libsdl2-net-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
             configFlags: --enable-discord --with-discord-prefix=/usr/local
-          - platform: ubuntu-20.04
+          - platform: ubuntu-22.04
             sdlConfig: sdl-config
             cxx: ccache g++-4.8
             aptPackages: 'g++-4.8 liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmikmod-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl-net1.2-dev libsdl1.2-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
@@ -177,10 +180,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Add Ubuntu Xenial package sources
-        if: matrix.platform == 'ubuntu-20.04'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
-          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main'
-          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial universe'
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key 40976EAF437D05B5
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key 3B4FE6ACC0B21F32
+          sudo apt-add-repository 'deb http://azure.archive.ubuntu.com/ubuntu/ xenial main'
+          sudo apt-add-repository 'deb http://azure.archive.ubuntu.com/ubuntu/ xenial universe'
       - name: Install packages
         run: |
           sudo apt-get update
