@@ -96,13 +96,13 @@ void Room405::init() {
 	ws_demand_location(_G(my_walker), 155, 370, 9);
 
 	if (player_been_here(405) || _G(kittyScreaming)) {
-		ws_walk(230, 345, nullptr, 50, 2);
+		ws_walk(_G(my_walker), 230, 345, nullptr, 50, 2);
 	} else {
 		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
 		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
 		_baron = triggerMachineByHash_3000(8, 11, *NORMAL_DIRS, *SHADOW_DIRS, 185, 365, 1,
 			triggerMachineByHashCallback3000, "BARON_walker");
-		ws_walk(329, 320, nullptr, 20, 9);
+		ws_walk(_G(my_walker), 329, 320, nullptr, 20, 9);
 	}
 }
 
@@ -827,7 +827,7 @@ void Room405::conv405a1() {
 bool Room405::lookDoor() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(245, 367, nullptr, 2, 9);
+		ws_walk(_G(my_walker), 245, 367, nullptr, 2, 9);
 		return true;
 	case 2:
 		digi_play("405r30", 1);
@@ -843,7 +843,7 @@ bool Room405::lookDoor() {
 bool Room405::useDoor() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(245, 367, nullptr, 2, 9);
+		ws_walk(_G(my_walker), 245, 367, nullptr, 2, 9);
 		return true;
 	case 2:
 		digi_play("405r31", 1);
@@ -858,7 +858,7 @@ bool Room405::useDoor() {
 
 bool Room405::takeDoor() {
 	if (_G(kernel).trigger == 1) {
-		ws_walk(245, 367, nullptr, 2, 9);
+		ws_walk(_G(my_walker), 245, 367, nullptr, 2, 9);
 		return true;
 	}
 

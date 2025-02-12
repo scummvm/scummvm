@@ -1976,7 +1976,7 @@ void Room403::plankUrn() {
 	switch (_G(kernel).trigger) {
 	case 69:
 		player_set_commands_allowed(false);
-		ws_walk(1110, 322, nullptr, 1, 11);
+		ws_walk(_G(my_walker), 1110, 322, nullptr, 1, 11);
 		_plank = 2;
 		break;
 
@@ -2041,7 +2041,7 @@ bool Room403::edgerUrn() {
 	case 69:
 		if (inv_player_has("EDGER")) {
 			player_set_commands_allowed(false);
-			ws_walk(1201, 321, 0, 1, 2);
+			ws_walk(_G(my_walker), 1201, 321, 0, 1, 2);
 			return true;
 		}
 		return false;

@@ -937,7 +937,7 @@ void Room407::daemon() {
 		break;
 
 	case 190:
-		ws_walk(155, 335, nullptr, 192, 11);
+		ws_walk(_G(my_walker), 155, 335, nullptr, 192, 11);
 		break;
 
 	case 192:
@@ -1108,7 +1108,7 @@ void Room407::daemon() {
 		break;
 
 	case 300:
-		ws_walk(441, 331, nullptr, 302, 1);
+		ws_walk(_G(my_walker), 441, 331, nullptr, 302, 1);
 		break;
 
 	case 302:
@@ -1151,7 +1151,7 @@ void Room407::daemon() {
 		break;
 
 	case 310:
-		ws_walk(441, 331, nullptr, 312, 1);
+		ws_walk(_G(my_walker), 441, 331, nullptr, 312, 1);
 		break;
 
 	case 312:
@@ -1187,7 +1187,7 @@ void Room407::daemon() {
 
 	case 315:
 		series_unload(_ripHiHand1);
-		ws_walk(155, 335, nullptr, 316, 11);
+		ws_walk(_G(my_walker), 155, 335, nullptr, 316, 11);
 		break;
 
 	case 316:
@@ -1375,7 +1375,7 @@ void Room407::daemon() {
 
 	case 362:
 		player_update_info();
-		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 363, 1);
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 363, 1);
 		break;
 
 	case 363:
@@ -1386,7 +1386,7 @@ void Room407::daemon() {
 		break;
 
 	case 364:
-		ws_walk(409, 320, nullptr, 365, 1);
+		ws_walk(_G(my_walker), 409, 320, nullptr, 365, 1);
 		break;
 
 	case 365:
@@ -1481,7 +1481,7 @@ void Room407::daemon() {
 		ws_unhide_walker();
 		sendWSMessage_10000(1, _ripley, _stair, 1, 30, 402, _stair, 30, 30, 0);
 		kernel_timing_trigger(60, 401);
-		ws_walk(347, 331, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 347, 331, nullptr, -1, 9);
 		break;
 
 	case 401:
@@ -3047,7 +3047,7 @@ bool Room407::lookLeverKey() {
 void Room407::gardenHoseSurgicalTube() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(170, 335, nullptr, 0, 11, 1);
+		ws_walk(_G(my_walker), 170, 335, nullptr, 0, 11, 1);
 		break;
 	case 0:
 		if (_valveState1 == 1010) {
@@ -3173,7 +3173,7 @@ void Room407::surgicalTubeFaucetPipe() {
 		break;
 
 	case 777:
-		ws_walk(170, 335, nullptr, 0, 11);
+		ws_walk(_G(my_walker), 170, 335, nullptr, 0, 11);
 		break;
 
 	default:
@@ -3337,7 +3337,7 @@ void Room407::reachLeverKey() {
 
 	case 777:
 		player_set_commands_allowed(false);
-		ws_walk(463, 323, nullptr, 0, 1);
+		ws_walk(_G(my_walker), 463, 323, nullptr, 0, 1);
 		break;
 
 	default:
@@ -3423,7 +3423,7 @@ void Room407::faucetPipeGlassJar() {
 		break;
 
 	case 777:
-		ws_walk(436, 331, nullptr, 70, 1);
+		ws_walk(_G(my_walker), 436, 331, nullptr, 70, 1);
 		break;
 
 	default:
@@ -3469,7 +3469,7 @@ void Room407::gardenHoseFaucetPipe() {
 		break;
 
 	case 777:
-		ws_walk(436, 331, nullptr, 70, 1);
+		ws_walk(_G(my_walker), 436, 331, nullptr, 70, 1);
 		break;
 
 	default:
@@ -4405,7 +4405,7 @@ void Room407::useLeverKey() {
 
 	case 777:
 		player_set_commands_allowed(false);
-		ws_walk(466, 330, nullptr, 1, 1);
+		ws_walk(_G(my_walker), 466, 330, nullptr, 1, 1);
 		break;
 
 	default:
@@ -5024,7 +5024,7 @@ void Room407::takeGardenHose2() {
 		break;
 
 	case 777:
-		ws_walk(170, 335, nullptr, 70, 11);
+		ws_walk(_G(my_walker), 170, 335, nullptr, 70, 11);
 		break;
 
 	default:
@@ -5074,7 +5074,7 @@ void Room407::takeGardenHose3() {
 		break;
 
 	case 777:
-		ws_walk(436, 331, nullptr, 70, 1);
+		ws_walk(_G(my_walker), 436, 331, nullptr, 70, 1);
 		break;
 
 	default:

@@ -58,7 +58,7 @@ void Room408::init() {
 		hotspot_set_active("EDGER", true);
 		inv_move_object("EDGER", 408);
 		ws_demand_location(_G(my_walker), 234, 319, 3);
-		ws_walk(438, 325, nullptr, 400, 1);
+		ws_walk(_G(my_walker), 438, 325, nullptr, 400, 1);
 		
 	} else if (_G(flags)[V139] == 3) {
 		_G(flags)[V139] = 0;
@@ -69,7 +69,7 @@ void Room408::init() {
 		}
 
 		ws_demand_location(_G(my_walker), -20, 345, 3);
-		ws_walk(234, 319, nullptr, 420, 1);
+		ws_walk(_G(my_walker), 234, 319, nullptr, 420, 1);
 
 	} else {
 		if (inv_player_has("TURTLE") && !inv_player_has("EDGER") &&
@@ -119,7 +119,7 @@ void Room408::init() {
 				}
 
 				ws_demand_location(_G(my_walker), -20, 345, 3);
-				ws_walk(35, 345, nullptr, 20, 3);
+				ws_walk(_G(my_walker), 35, 345, nullptr, 20, 3);
 			}
 			break;
 
@@ -172,9 +172,9 @@ void Room408::init() {
 
 			if (_G(flags)[V125] == 3) {
 				series_simple_play("408 turtle popup", 0, true);
-				ws_walk(438, 325, nullptr, 350, 1);
+				ws_walk(_G(my_walker), 438, 325, nullptr, 350, 1);
 			} else {
-				ws_walk(615, 345, nullptr, 30, 9);
+				ws_walk(_G(my_walker), 615, 345, nullptr, 30, 9);
 			}
 			break;
 		}
@@ -467,7 +467,7 @@ void Room408::daemon() {
 		break;
 
 	case 322:
-		ws_walk(414, 336, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 414, 336, nullptr, -1, 9);
 		break;
 
 	case 323:
@@ -495,7 +495,7 @@ void Room408::daemon() {
 
 	case 354:
 		series_unload(_ripLowReacher);
-		ws_walk(234, 319, nullptr, 355, 1);
+		ws_walk(_G(my_walker), 234, 319, nullptr, 355, 1);
 		_ripLowReacher = series_load("RIP TREK MED REACH HAND POS1");
 		break;
 
@@ -517,7 +517,7 @@ void Room408::daemon() {
 
 	case 358:
 		series_unload(_ripLowReacher);
-		ws_walk(-20, 345, nullptr, -1, 9);
+		ws_walk(_G(my_walker), -20, 345, nullptr, -1, 9);
 		kernel_timing_trigger(60, 359);
 		break;
 
@@ -702,7 +702,7 @@ void Room408::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			ws_walk(-20, 345, nullptr, 1, 9);
+			ws_walk(_G(my_walker), -20, 345, nullptr, 1, 9);
 			break;
 		case 1:
 			disable_player_commands_and_fade_init(2);
@@ -719,7 +719,7 @@ void Room408::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			ws_walk(660, 345, nullptr, 1, 3);
+			ws_walk(_G(my_walker), 660, 345, nullptr, 1, 3);
 			break;
 		case 1:
 			disable_player_commands_and_fade_init(2);

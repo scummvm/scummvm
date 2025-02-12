@@ -208,7 +208,7 @@ void Room406::init() {
 		}
 
 		ws_demand_location(_G(my_walker), 603, 327, 9);
-		ws_walk(530, 332, nullptr, 300, 9);
+		ws_walk(_G(my_walker), 530, 332, nullptr, 300, 9);
 		break;
 	}
 }
@@ -565,7 +565,7 @@ void Room406::parser() {
 			break;
 		case 69:
 			player_set_commands_allowed(false);
-			ws_walk(205, 333, nullptr, 1, 5);
+			ws_walk(_G(my_walker), 205, 333, nullptr, 1, 5);
 			break;
 		default:
 			break;

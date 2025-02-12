@@ -87,7 +87,7 @@ void Room404::init() {
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
 		ws_demand_location(_G(my_walker), 58, 347, 3);
-		ws_walk(90, 347, nullptr, 50, 3);
+		ws_walk(_G(my_walker), 90, 347, nullptr, 50, 3);
 		break;
 
 	case 406:
@@ -96,7 +96,7 @@ void Room404::init() {
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
 		ws_demand_location(_G(my_walker), 174, 268, 3);
-		ws_walk(250, 285, nullptr,
+		ws_walk(_G(my_walker), 250, 285, nullptr,
 			inv_player_has("BILLIARD BALL") ? 70 : 60,
 			3, 1);
 		break;
@@ -127,7 +127,7 @@ void Room404::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 20:
-		ws_walk(370, 347, nullptr, -1, 1);
+		ws_walk(_G(my_walker), 370, 347, nullptr, -1, 1);
 		break;
 
 	case 21:
@@ -194,7 +194,7 @@ void Room404::daemon() {
 		break;
 
 	case 33:
-		ws_walk(58, 347, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 58, 347, nullptr, -1, 9);
 		kernel_timing_trigger(90, 34);
 		break;
 
@@ -209,7 +209,7 @@ void Room404::daemon() {
 		break;
 
 	case 40:
-		ws_walk(370, 347, nullptr, -1, 1);
+		ws_walk(_G(my_walker), 370, 347, nullptr, -1, 1);
 		break;
 
 	case 42:
@@ -254,7 +254,7 @@ void Room404::daemon() {
 	case 48:
 		_val8 = 2102;
 		digi_play("404r22", 1, 255, 49);
-		ws_walk(368, 349, nullptr, -1, 8);
+		ws_walk(_G(my_walker), 368, 349, nullptr, -1, 8);
 		break;
 
 	case 49:
@@ -274,7 +274,7 @@ void Room404::daemon() {
 
 	case 72:
 		_val8 = 2102;
-		ws_walk(174, 268, nullptr, 73, 9);
+		ws_walk(_G(my_walker), 174, 268, nullptr, 73, 9);
 
 		if (_G(flags)[V128] == 1)
 			digi_play("404r23", 1);
@@ -458,7 +458,7 @@ void Room404::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			player_update_info();
-			ws_walk(_G(player_info).x, _G(player_info).y + 50, nullptr, -1, 5);
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y + 50, nullptr, -1, 5);
 			disable_player_commands_and_fade_init(1);
 			break;
 		case 1:
@@ -473,7 +473,7 @@ void Room404::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			ws_walk(58, 347, nullptr, -1, 9);
+			ws_walk(_G(my_walker), 58, 347, nullptr, -1, 9);
 			disable_player_commands_and_fade_init(1);
 			break;
 		case 1:
@@ -488,7 +488,7 @@ void Room404::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			ws_walk(58, 347, nullptr, -1, 9);
+			ws_walk(_G(my_walker), 58, 347, nullptr, -1, 9);
 			disable_player_commands_and_fade_init(1);
 			break;
 		case 1:
@@ -527,11 +527,11 @@ void Room404::parser() {
 		digi_play(player_been_here(405) ? "404r08a" : "404r08", 1);
 	} else if (player_said("SITTING ROOM") && (useFlag || takeFlag) &&
 			_G(kernel).trigger >= -1) {
-		ws_walk(115, 350, nullptr, 2, 9);
+		ws_walk(_G(my_walker), 115, 350, nullptr, 2, 9);
 	} else if (lookFlag && player_said("SITTING ROOM")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(115, 350, nullptr, 2, 9);
+			ws_walk(_G(my_walker), 115, 350, nullptr, 2, 9);
 			break;
 		default:
 			digi_play("404r09", 1);

@@ -77,7 +77,7 @@ void Room501::init() {
 		}
 
 		ws_demand_location(_G(my_walker), 588, 267, 9);
-		ws_walk(287, 268, nullptr, 522, 9);
+		ws_walk(_G(my_walker), 287, 268, nullptr, 522, 9);
 		_val5 = 0;
 		_trigger1 = -1;
 		_trigger4 = -1;
@@ -1226,12 +1226,12 @@ void Room501::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
-			ws_walk(595, 267, nullptr, 2, 3);
+			ws_walk(_G(my_walker), 595, 267, nullptr, 2, 3);
 			break;
 		case 2:
 			player_set_commands_allowed(false);
 			digi_play("501R40", 1);
-			ws_walk(287, 268, nullptr, 3, 9);
+			ws_walk(_G(my_walker), 287, 268, nullptr, 3, 9);
 			break;
 		case 3:
 			player_set_commands_allowed(true);
@@ -1242,7 +1242,7 @@ void Room501::parser() {
 	} else if (player_said("WALK THROUGH") && player_been_here(504)) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(595, 267, nullptr, 2, 3);
+			ws_walk(_G(my_walker), 595, 267, nullptr, 2, 3);
 			break;
 		case 2:
 			player_set_commands_allowed(false);

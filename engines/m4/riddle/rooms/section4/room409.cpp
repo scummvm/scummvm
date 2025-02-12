@@ -89,7 +89,7 @@ void Room409::daemon() {
 		break;
 
 	case 353:
-		ws_walk(323, 295, nullptr, 354, 3);
+		ws_walk(_G(my_walker), 323, 295, nullptr, 354, 3);
 		break;
 
 	case 354:
@@ -97,7 +97,7 @@ void Room409::daemon() {
 		break;
 
 	case 355:
-		ws_walk(333, 319, nullptr, 356, 5);
+		ws_walk(_G(my_walker), 333, 319, nullptr, 356, 5);
 		break;
 
 	case 356:
@@ -168,7 +168,7 @@ void Room409::daemon() {
 	case 368:
 		terminateMachineAndNull(_ripley);
 		ws_unhide_walker();
-		ws_walk(379, 330, nullptr, 380, 1);
+		ws_walk(_G(my_walker), 379, 330, nullptr, 380, 1);
 		break;
 
 	case 380:
@@ -187,7 +187,7 @@ void Room409::daemon() {
 		break;
 
 	case 384:
-		ws_walk(377, 332, nullptr, 385, 5);
+		ws_walk(_G(my_walker), 377, 332, nullptr, 385, 5);
 		break;
 
 	case 385:
@@ -238,7 +238,7 @@ void Room409::daemon() {
 		terminateMachineAndNull(_ripley);
 		terminateMachineAndNull(_shadow);
 		ws_unhide_walker();
-		ws_walk(379, 330, nullptr, 403, 1);
+		ws_walk(_G(my_walker), 379, 330, nullptr, 403, 1);
 		break;
 
 	case 403:
@@ -266,7 +266,7 @@ void Room409::daemon() {
 		break;
 
 	case 407:
-		ws_walk(333, 319, nullptr, 408, 5);
+		ws_walk(_G(my_walker), 333, 319, nullptr, 408, 5);
 		_volume = 255;
 		break;
 

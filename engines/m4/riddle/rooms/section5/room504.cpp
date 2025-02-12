@@ -85,13 +85,13 @@ void Room504::init() {
 		if (player_been_here(504)) {
 			inv_give_to_player("ROPE");
 			_G(flags)[V154] = 3;
-			ws_walk(183, 207, nullptr, 762, 3);
+			ws_walk(_G(my_walker), 183, 207, nullptr, 762, 3);
 		} else {
 			_G(flags)[V152] = 6;
 			_G(flags)[V153] = 6;
 			_G(flags)[V154] = 2;
 			_G(flags)[V171] = 3;
-			ws_walk(183, 207, nullptr, 655, 3);
+			ws_walk(_G(my_walker), 183, 207, nullptr, 655, 3);
 		}
 
 		_isOnRight = false;
@@ -1002,7 +1002,7 @@ void Room504::daemon() {
 
 	case 566:
 		player_update_info();
-		ws_walk(_G(player_info).x + 10, _G(player_info).y, nullptr, 567, 3);
+		ws_walk(_G(my_walker), _G(player_info).x + 10, _G(player_info).y, nullptr, 567, 3);
 		break;
 
 	case 567:
@@ -2036,7 +2036,7 @@ void Room504::daemon() {
 		break;
 
 	case 708:
-		ws_walk(173, 198, nullptr, 709, 11);
+		ws_walk(_G(my_walker), 173, 198, nullptr, 709, 11);
 		break;
 
 	case 709:
@@ -2059,7 +2059,7 @@ void Room504::daemon() {
 
 	case 711:
 		series_unload(_ripLowReach);
-		ws_walk(200, 153, nullptr, _flag2 ? 570 : 714, 3);
+		ws_walk(_G(my_walker), 200, 153, nullptr, _flag2 ? 570 : 714, 3);
 		break;
 
 	case 714:
@@ -2118,7 +2118,7 @@ void Room504::daemon() {
 		break;
 
 	case 726:
-		ws_walk(530, 161, nullptr, 727, 11);
+		ws_walk(_G(my_walker), 530, 161, nullptr, 727, 11);
 		break;
 
 	case 727:
@@ -2162,7 +2162,7 @@ void Room504::daemon() {
 		if (inv_player_has("SHOVEL")) {
 			kernel_timing_trigger(1, 756);
 		} else {
-			ws_walk(528, 168, nullptr, _flag2 ? 558 : 734, 8);
+			ws_walk(_G(my_walker), 528, 168, nullptr, _flag2 ? 558 : 734, 8);
 		}
 		break;
 
@@ -2221,12 +2221,12 @@ void Room504::daemon() {
 
 	case 746:
 		player_set_commands_allowed(false);
-		ws_walk(50, 226, nullptr, 747, 9);
+		ws_walk(_G(my_walker), 50, 226, nullptr, 747, 9);
 		break;
 
 	case 747:
 		disable_player_commands_and_fade_init(748);
-		ws_walk(0, 226, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 0, 226, nullptr, -1, 9);
 		break;
 
 	case 748:
@@ -2236,11 +2236,11 @@ void Room504::daemon() {
 
 	case 749:
 		player_set_commands_allowed(false);
-		ws_walk(50, 226, nullptr, 750, 9);
+		ws_walk(_G(my_walker), 50, 226, nullptr, 750, 9);
 		break;
 
 	case 750:
-		ws_walk(183, 207, nullptr, 751, 3);
+		ws_walk(_G(my_walker), 183, 207, nullptr, 751, 3);
 		break;
 
 	case 751:
@@ -2259,7 +2259,7 @@ void Room504::daemon() {
 
 	case 756:
 		player_set_commands_allowed(false);
-		ws_walk(546, 143, nullptr, 757, 11);
+		ws_walk(_G(my_walker), 546, 143, nullptr, 757, 11);
 		break;
 
 	case 757:
@@ -2277,7 +2277,7 @@ void Room504::daemon() {
 
 	case 759:
 		series_unload(_ripLowReach);
-		ws_walk(528, 168, nullptr, _flag2 ? 558 : 734, 8);
+		ws_walk(_G(my_walker), 528, 168, nullptr, _flag2 ? 558 : 734, 8);
 		break;
 
 	default:
@@ -2448,7 +2448,7 @@ void Room504::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				player_update_info();
-				ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 9);
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 9);
 				disable_player_commands_and_fade_init(2);
 				break;
 			case 2:
@@ -2462,7 +2462,7 @@ void Room504::parser() {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
-				ws_walk(183, 207, nullptr, 2, 3);
+				ws_walk(_G(my_walker), 183, 207, nullptr, 2, 3);
 				break;
 			case 2:
 				digi_play("504R44", 1, 255, 3);
@@ -2506,7 +2506,7 @@ void Room504::parser() {
 			player_said_any("ROPE ", "ROPE  ", "ROPE   ") ||
 			player_said_any("GREEN VINE   ", "BROWN VINE   ")) &&
 			lookVines()) {
-		// No implementation
+		// No implementation: lookVines contains digi_play calls which return true
 	} else if (lookFlag && player_said(" ")) {
 		if (_G(flags)[V150]) {
 			digi_play("504R02", 1);
@@ -2821,7 +2821,7 @@ void Room504::parser() {
 		_vineThrowType = 3;
 		_G(flags)[V153] = 5;
 		_G(kernel).trigger_mode = KT_DAEMON;
-		ws_walk(485, 166, nullptr, 675, 11);
+		ws_walk(_G(my_walker), 485, 166, nullptr, 675, 11);
 	} else if (useFlag && player_said("VINES ") &&
 			_G(flags)[V171] == 2 && _isOnRight) {
 		player_set_commands_allowed(false);
