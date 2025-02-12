@@ -115,7 +115,7 @@ static const char HELP_STRING1[] =
 	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  -g, --gfx-mode=MODE      Select graphics mode\n"
 #ifdef USE_OPENGL
-	"  --shader=PATH            Name of internal shader of path to shader files (OpenGL only)\n"
+	"  --shader=PATH            Name of internal shader or path to shader file (OpenGL only)\n"
 #endif
 	"  --stretch-mode=MODE      Select stretch mode (center, pixel-perfect, even-pixels,\n"
 	"                           fit, stretch, fit_force_aspect)\n"
