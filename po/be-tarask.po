@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-10 17:51+0000\n"
+"POT-Creation-Date: 2025-02-12 14:51+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -6473,23 +6473,27 @@ msgstr "Пералучэньне рэжыму поўнага экрану"
 msgid "Return to gameplay"
 msgstr "У 2D гульнях"
 
-#: engines/asylum/metaengine.cpp:238
+#. I18N: Switch to previous image in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:239
 #, fuzzy
 #| msgid "Previous page"
 msgid "Previous resource"
 msgstr "Папярэдняя старонка"
 
-#: engines/asylum/metaengine.cpp:245
+#. I18N: Switch to next image in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:247
 msgid "Next resource"
 msgstr ""
 
-#: engines/asylum/metaengine.cpp:252
+#. I18N: Switch to previous palette in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:255
 #, fuzzy
 #| msgid "Previous page"
 msgid "Previous palette"
 msgstr "Папярэдняя старонка"
 
-#: engines/asylum/metaengine.cpp:259
+#. I18N: Switch to next palette in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:263
 #, fuzzy
 #| msgid "Next page"
 msgid "Next palette"

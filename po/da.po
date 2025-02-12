@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-10 17:51+0000\n"
+"POT-Creation-Date: 2025-02-12 14:51+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6503,23 +6503,27 @@ msgstr "Fuldskærm til/fra"
 msgid "Return to gameplay"
 msgstr "Gemte spil"
 
-#: engines/asylum/metaengine.cpp:238
+#. I18N: Switch to previous image in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:239
 #, fuzzy
 msgid "Previous resource"
 msgstr "Fo~r~rige"
 
-#: engines/asylum/metaengine.cpp:245
+#. I18N: Switch to next image in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:247
 #, fuzzy
 #| msgid "[ Resources ]"
 msgid "Next resource"
 msgstr "[ Ressourcer ]"
 
-#: engines/asylum/metaengine.cpp:252
+#. I18N: Switch to previous palette in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:255
 #, fuzzy
 msgid "Previous palette"
 msgstr "Fo~r~rige"
 
-#: engines/asylum/metaengine.cpp:259
+#. I18N: Switch to next palette in internal game resouce viewer
+#: engines/asylum/metaengine.cpp:263
 #, fuzzy
 msgid "Next palette"
 msgstr "Næste"
