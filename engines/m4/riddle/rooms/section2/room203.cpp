@@ -182,7 +182,7 @@ void Room203::init() {
 		hotspot_set_active("SOLDIER'S HELMET", false);
 		kernel_timing_trigger(1, 130);
 		ws_demand_location(_G(my_walker), 348, 273, 1);
-		ws_walk(231, 331, nullptr, 303, 4);
+		ws_walk(_G(my_walker), 231, 331, nullptr, 303, 4);
 		break;
 
 	case 207:
@@ -237,7 +237,7 @@ void Room203::init() {
 
 		} else {
 			ws_demand_location(_G(my_walker), 1055, 295, 7);
-			ws_walk(1045, 345, nullptr, 303, 7);
+			ws_walk(_G(my_walker), 1045, 345, nullptr, 303, 7);
 			kernel_timing_trigger(1, 300);
 		}
 		break;
@@ -273,7 +273,7 @@ void Room203::init() {
 
 			_mei = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS,
 				-95, 352, 3, triggerMachineByHashCallback3000, "mc");
-			ws_walk(196, 335, nullptr, 9000, 3);
+			ws_walk(_G(my_walker), 196, 335, nullptr, 9000, 3);
 			sendWSMessage_10000(_mei, 173, 344, 3, -1, 1);
 			_G(player).disable_hyperwalk = true;
 
@@ -299,7 +299,7 @@ void Room203::init() {
 				setupPigeons();
 				setupOfficial();
 				kernel_timing_trigger(1, 130);
-				ws_walk(115, 353, nullptr, 371, 3);
+				ws_walk(_G(my_walker), 115, 353, nullptr, 371, 3);
 
 			} else {
 				_ripLooksAtHeads = series_load("rip looks at heads pos2");
@@ -341,7 +341,7 @@ void Room203::daemon() {
 		break;
 
 	case 4:
-		ws_walk(115, 353, nullptr, 5, 3);
+		ws_walk(_G(my_walker), 115, 353, nullptr, 5, 3);
 		break;
 
 	case 5:
@@ -419,11 +419,11 @@ void Room203::daemon() {
 
 	case 15:
 		sendWSMessage_150000(-1);
-		ws_walk(315, 353, nullptr, 16);
+		ws_walk(_G(my_walker), 315, 353, nullptr, 16, -1);
 		break;
 
 	case 16:
-		ws_walk(350, 328, nullptr, 17, 10);
+		ws_walk(_G(my_walker), 350, 328, nullptr, 17, 10);
 		break;
 
 	case 17:
@@ -809,7 +809,7 @@ void Room203::daemon() {
 		break;
 
 	case 98:
-		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 4);
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 4);
 		terminateMachineAndNull(_official);
 		terminateMachineAndNull(_officialShadow);
 		ws_walk_load_shadow_series(OFFICIAL_SHADOW_DIRS, OFFICIAL_SHADOW_NAMES);
@@ -828,12 +828,12 @@ void Room203::daemon() {
 
 	case 100:
 		sendWSMessage_120000(_official, -1);
-		ws_walk(656, 335, nullptr, 101, 9);
+		ws_walk(_G(my_walker), 656, 335, nullptr, 101, 9);
 		break;
 
 	case 101:
 		sendWSMessage_130000(_official, 102);
-		ws_walk(280, 345, nullptr, 103, 9);
+		ws_walk(_G(my_walker), 280, 345, nullptr, 103, 9);
 		break;
 
 	case 102:
@@ -869,7 +869,7 @@ void Room203::daemon() {
 
 	case 108:
 		sendWSMessage_150000(-1);
-		ws_walk(-30, 355, nullptr, -1);
+		ws_walk(_G(my_walker), -30, 355, nullptr, -1, -1);
 		kernel_timing_trigger(40, 109);
 		break;
 

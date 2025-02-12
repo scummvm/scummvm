@@ -155,7 +155,7 @@ void Room201::init() {
 
 			if (_G(flags)[V053] > 0) {
 				hotspot_set_active("MEI CHEN", false);
-				ws_walk(356, 256, nullptr, 1000, 3);
+				ws_walk(_G(my_walker), 356, 256, nullptr, 1000, 3);
 				_G(flags)[V068] = 1;
 
 				if (_G(flags)[V053] == 1)
@@ -184,7 +184,7 @@ void Room201::daemon() {
 		break;
 
 	case 75:
-		ws_walk(237, 247, nullptr, 205, 10);
+		ws_walk(_G(my_walker), 237, 247, nullptr, 205, 10);
 		break;
 
 	case 100:
@@ -394,7 +394,7 @@ void Room201::daemon() {
 
 	case 235:
 		player_update_info();
-		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 240, 3);
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 240, 3);
 		break;
 
 	case 240:
@@ -435,7 +435,7 @@ void Room201::daemon() {
 
 	case 279:
 		_meiShould = 2;
-		ws_walk(356, 256, nullptr, 280, 3);
+		ws_walk(_G(my_walker), 356, 256, nullptr, 280, 3);
 		break;
 
 	case 280:
@@ -1673,7 +1673,7 @@ void Room201::parser() {
 	} else if (player_said("walk through")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			ws_walk(66, 254, nullptr, 2, 7);
+			ws_walk(_G(my_walker), 66, 254, nullptr, 2, 7);
 			break;
 
 		case 2:
