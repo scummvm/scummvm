@@ -1087,6 +1087,10 @@ int QuickTimeParser::readPHOT(Atom atom) {
 			pHotSpotTable.hotSpots[i].type = HotSpotType::cnod;
 			break;
 
+		case MKTAG('c', 'm', 'o', 'v'):
+			pHotSpotTable.hotSpots[i].type = HotSpotType::cmov;
+			break;
+
 		case MKTAG('l', 'i', 'n', 'k'):
 			pHotSpotTable.hotSpots[i].type = HotSpotType::link;
 			break;

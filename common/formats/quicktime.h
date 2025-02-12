@@ -201,6 +201,7 @@ protected:
 		link,
 		navg,
 		soun,
+		cmov,
 	};
 
 	struct PanoHotSpot {
