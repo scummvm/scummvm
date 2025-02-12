@@ -21,6 +21,7 @@
 
 #include "twine/audio/sound.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
