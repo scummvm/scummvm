@@ -131,14 +131,13 @@ void Sound::playSample(int32 index, uint16 pitchbend, int32 repeat, int32 x, int
 		samplesPlayingActors[channelIdx] = -1;
 	}
 
-	// TODO: implement pitchbend - see https://bugs.scummvm.org/ticket/15735
-	// frequency would be 11025 + (pitchbend - 0x1000);
-
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
 	uint32 sampSize = _engine->_resources->_samplesSizeTable[index];
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::NO);
-	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType);
+	uint16 frequency = 11025 + (pitchbend - 0x1000);
+	_engine->_system->getMixer()->setChannelRate(samplesPlaying[channelIdx], frequency);
 }
 
 bool Sound::playVoxSample(const TextEntry *text) {
