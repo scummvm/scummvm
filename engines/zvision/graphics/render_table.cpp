@@ -247,16 +247,16 @@ void RenderTable::generatePanoramaLookupTable() {
         debug(2,"\tGenerating test pixel %d, %d", x, y);
         debug(2,"\tCylinder coordinates %f, %f", xInCylinderCoords, yInCylinderCoords);
         debug(2,"\tOffsets %f,%f", xOffset, yOffset);
-      }
-      
+      } 
 			// Only store the (x,y) offsets instead of the absolute positions
 			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
-			
 			//Store mirrored offset values
-			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, _highQuality);
-			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
-			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, _highQuality);
-			
+			_internalBuffer[indexBL] = _internalBuffer[indexTL];
+			_internalBuffer[indexBL].flipV();
+			_internalBuffer[indexTR] = _internalBuffer[indexTL];
+			_internalBuffer[indexTR].flipH();
+			_internalBuffer[indexBR] = _internalBuffer[indexBL];
+			_internalBuffer[indexBR].flipH();
 			//Increment indices
 			rowIndexT += _numColumns;
 			rowIndexB -= _numColumns;
