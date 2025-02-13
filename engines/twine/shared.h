@@ -57,6 +57,9 @@
 #define GAMEFLAG_VIDEO_NEIGE2 207
 // Hamalayi Mountains, ski lift
 #define GAMEFLAG_VIDEO_SURF 208
+// Twinsen is no longer sick after he bought the catamaran
+// you get this video if you take the ferry after you've
+// bought the catamaran
 // Ferry #2 Citadel Island <-> Principal Island
 #define GAMEFLAG_VIDEO_BATEAU2 209
 // Fortress, Zoe Clone
@@ -420,7 +423,8 @@ enum class ZoneType {
 	// lba2
 	kEscalator = 7,
 	kHit = 8,
-	kRail = 9
+	kRail = 9,
+	kFunFrockFix = 50
 };
 
 #define SCENE_CEILING_GRID_FADE_1 (-1)

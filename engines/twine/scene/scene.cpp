@@ -462,7 +462,7 @@ bool Scene::loadSceneLBA1() {
 				// https://bugs.scummvm.org/ticket/13819
 				// Set this zone to something invalid to fix a getting-stuck-bug
 				// the original value was ZoneType::kGrid (3)
-				_sceneZones[11].type = (ZoneType)50;
+				_sceneZones[11].type = ZoneType::kFunFrockFix;
 			}
 		}
 	}
@@ -784,6 +784,8 @@ void Scene::checkZoneSce(int32 actorIdx) {
 			switch (zone->type) {
 			default:
 				error("lba2 zone types not yet implemented");
+			case ZoneType::kFunFrockFix:
+				break;
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
 					_newCube = zone->num;
