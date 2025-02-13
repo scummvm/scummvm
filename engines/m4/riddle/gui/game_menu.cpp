@@ -62,6 +62,30 @@ namespace GUI {
 #define GM_MAIN_W		26
 #define GM_MAIN_H		26
 
+#define GM_TAG_OPTIONS	3
+#define GM_OPTIONS_X	162
+#define GM_OPTIONS_Y	31
+#define GM_OPTIONS_W	26
+#define GM_OPTIONS_H	26
+
+#define GM_TAG_RESUME	4
+#define GM_RESUME_X		54
+#define GM_RESUME_Y		94
+#define GM_RESUME_W		26
+#define GM_RESUME_H		26
+
+#define GM_TAG_SAVE		5
+#define GM_SAVE_X		108
+#define GM_SAVE_Y		94
+#define GM_SAVE_W		26
+#define GM_SAVE_H		26
+
+#define GM_TAG_LOAD		6
+#define GM_LOAD_X		162
+#define GM_LOAD_Y		94
+#define GM_LOAD_W		26
+#define GM_LOAD_H		26
+
 void GameMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
@@ -84,24 +108,22 @@ void GameMenu::show(RGB8 *myPalette) {
 		GM_QUIT_X, GM_QUIT_Y, GM_QUIT_W, GM_QUIT_H, cbQuitGame);
 	menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_MAIN,
 		GM_MAIN_X, GM_MAIN_Y, GM_MAIN_W, GM_MAIN_H, cbMainMenu);
-
-	#if 0
-	menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_OPTIONS, GM_OPTIONS_X, GM_OPTIONS_Y, GM_OPTIONS_W, GM_OPTIONS_H, cb_Game_Options);
-	menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_RESUME, GM_RESUME_X, GM_RESUME_Y, GM_RESUME_W, GM_RESUME_H, cb_Game_Resume);
+	menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_OPTIONS, GM_OPTIONS_X, GM_OPTIONS_Y, GM_OPTIONS_W, GM_OPTIONS_H, cbOptions);
+	menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_RESUME, GM_RESUME_X, GM_RESUME_Y, GM_RESUME_W, GM_RESUME_H, cbResume);
 
 	if (!_GM(gameMenuFromMain)) {
-		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_SAVE, GM_SAVE_X, GM_SAVE_Y, GM_SAVE_W, GM_SAVE_H, cb_Game_Save);
+		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_SAVE, GM_SAVE_X, GM_SAVE_Y, GM_SAVE_W, GM_SAVE_H, cbSave);
 	} else {
-		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_SAVE, GM_SAVE_X, GM_SAVE_Y, GM_SAVE_W, GM_SAVE_H, cb_Game_Save, BTN_TYPE_GM_GENERIC, true);
+		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_SAVE, GM_SAVE_X, GM_SAVE_Y, GM_SAVE_W, GM_SAVE_H, cbSave, menuItemButton::BTN_TYPE_GM_GENERIC, true);
 	}
 
 	// See if there are any games to load
 	if (g_engine->savesExist()) {
-		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_LOAD, GM_LOAD_X, GM_LOAD_Y, GM_LOAD_W, GM_LOAD_H, cb_Game_Load);
+		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_LOAD, GM_LOAD_X, GM_LOAD_Y, GM_LOAD_W, GM_LOAD_H, cbLoad);
 	} else {
-		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_LOAD, GM_LOAD_X, GM_LOAD_Y, GM_LOAD_W, GM_LOAD_H, cb_Game_Load, BTN_TYPE_GM_GENERIC, true);
+		menuItemButton::buttonAdd(_GM(gameMenu), GM_TAG_LOAD, GM_LOAD_X, GM_LOAD_Y, GM_LOAD_W, GM_LOAD_H, cbLoad, menuItemButton::BTN_TYPE_GM_GENERIC, true);
 	}
-#endif
+
 	// Configure the game so pressing <esc> will cause the menu to disappear and the game to resume
 	guiMenu::configure(_GM(gameMenu), cbResume, cbResume);
 
@@ -164,6 +186,18 @@ void GameMenu::cbResume(void *, void *) {
 
 	// Shutdown the menu system
 	guiMenu::shutdown(true);
+}
+
+void GameMenu::cbOptions(void *, void *) {
+	// TODO
+}
+
+void GameMenu::cbSave(void *, void *) {
+	// TODO
+}
+
+void GameMenu::cbLoad(void *, void *) {
+	// TODO
 }
 
 /*-------------------- ACCESS METHODS --------------------*/

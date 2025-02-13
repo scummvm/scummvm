@@ -35,6 +35,9 @@ private:
 	static void cbQuitGame(void *, void *);
 	static void cbMainMenu(void *, void *);
 	static void cbResume(void *, void *);
+	static void cbOptions(void *, void *);
+	static void cbSave(void *, void *);
+	static void cbLoad(void *, void *);
 
 public:
 	static void show(RGB8 *myPalette);
