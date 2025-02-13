@@ -142,6 +142,7 @@ const XlibFileDesc FileIO::fileNames[] = {
 	{ "FileIO",		nullptr },
 	{ "shFILEIO",	nullptr }, // TD loads this up using openXLib("@:shFILEIO.DLL")
 	{ "FILE",		nullptr },
+	{ "FILEIO16",	nullptr },
 	{ nullptr,		nullptr },
 };
 
