@@ -195,23 +195,23 @@ void Sound::musicPlay(const char *name, bool override) {
         MU_playNote     endp
         */
 
-		const int hdrCount = file.readUint16LE();
-		file.skip((hdrCount - 1) * 2);
+		const int startLoop = file.readUint16LE();
 
 		while (!file.eos()) {
-			int pause = file.readByte();
-			if (pause & 0x80)
-				pause = ((pause & 0x7f) << 8) | file.readByte();
+			int delayAfter = file.readByte();
+			if (delayAfter & 0x80)
+				delayAfter = ((delayAfter & 0x7f) << 8) | file.readByte();
 
-			const int freq = file.readByte();
-			const int duration = file.readByte();
-			if (freq == 0 && duration == 0) {
+			const int reg = file.readByte();
+			const int value = file.readByte();
+			if (reg == 0 && value == 0) {
 				debug(1, "End of song");
 				break;
 			}
 
-			debug(1, "Pause %d, freq %d, duration %d", pause, freq, duration);
+			debug(1, "DelayAfter %d, OPL reg 0x%X, value %d", delayAfter, reg, value);
 		}
+		debug(1, "looping at pos %d", startLoop);
 #endif
 	}
 }
