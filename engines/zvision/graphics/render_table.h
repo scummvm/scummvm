@@ -68,6 +68,14 @@ public:
 	  }
   };
   ~FilterPixel() {};
+  inline void flipH() {
+    Src.left = -Src.left;
+    Src.right = -Src.right;
+  };
+  inline void flipV() {
+    Src.top = -Src.top;
+    Src.bottom = -Src.bottom;
+  };
 };
 
 class RenderTable {
