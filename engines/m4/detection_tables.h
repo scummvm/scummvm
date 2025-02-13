@@ -208,7 +208,7 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
-	{	// Demo // TODO: which?
+	{	// Game Version DELTOID - June 8, 1995
 		{
 			"riddle",
 			"Demo",
@@ -243,6 +243,19 @@ static const M4GameDescription gameDescriptions[] = {
 			"Demo",
 			AD_ENTRY1s("ripley.has", "df74ee9ceefb006638839572f0144256", 74353),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
+	{	// Game Version German version 1.1 -- Apr 2, 1996
+		{
+			"riddle",
+			"Demo",
+			AD_ENTRY1s("RIPLEY.HAS", "810b27cf5e2c119ad2ec0a9e550eb32c", 119097),
+			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
