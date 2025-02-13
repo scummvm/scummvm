@@ -129,7 +129,8 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Burger,
 		kFeaturesNonInteractiveDemo
 	},
-	{
+
+	{	// v1.08 English
 		{
 			"riddle",
 			nullptr,
@@ -142,7 +143,7 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
-	{
+	{	// v2.05 English Kixx rerelease
 		{
 			"riddle",
 			nullptr,
@@ -187,6 +188,19 @@ static const M4GameDescription gameDescriptions[] = {
 			nullptr,
 			AD_ENTRY1s("ripley.has", "5ee011cff7178dae3ddf6f9b7d4102ac", 701691),
 			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesCD
+	},
+	{
+		{
+			"riddle",
+			nullptr,
+			AD_ENTRY1s("ripley.has", "30ad07f5c52af0cb72020df042674aa8", 704511),
+			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
