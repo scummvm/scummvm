@@ -94,6 +94,8 @@ MODULE_OBJS += \
 endif
 
 ifdef EMSCRIPTEN
+MODULE_OBJS += \
+	midi/webmidi.o 
 ifdef USE_TTS
 MODULE_OBJS += \
 	text-to-speech/emscripten/emscripten-text-to-speech.o
