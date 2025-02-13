@@ -383,7 +383,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem, OWN_ACTOR_SCENE_INDEX);
 	const AnimData &ptranim = _engine->_resources->_animData[bodyAnimIdx];
 
-	_engine->_animations->stockInterAnim(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
+	_engine->_animations->stockInterAnim(bodyData, &bodyData._animTimerData);
 
 	uint frameanim = 0;
 

@@ -289,7 +289,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		switch (action.type) {
 		case ActionType::ACTION_HITTING:
 			if (action.animFrame - 1 == actor->_frame) {
-				actor->_strengthOfHit = action.strength;
+				actor->_hitForce = action.strength;
 				actor->_workFlags.bIsHitting = 1;
 			}
 			break;
@@ -350,7 +350,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_HERO_HITTING:
 			if (action.animFrame - 1 == actor->_frame) {
-				actor->_strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->_magicLevelIdx];
+				actor->_hitForce = magicLevelStrengthOfHit[_engine->_gameState->_magicLevelIdx];
 				actor->_workFlags.bIsHitting = 1;
 			}
 			break;
@@ -421,7 +421,7 @@ bool Animations::initAnim(AnimationTypes genNewAnim, AnimType flag, AnimationTyp
 		return true;
 	}
 
-	if (genNextAnim == AnimationTypes::kAnimInvalid && actor->_flagAnim != AnimType::kAnimationAllThen) {
+	if (genNextAnim == AnimationTypes::kNoAnim && actor->_flagAnim != AnimType::kAnimationAllThen) {
 		genNextAnim = actor->_genAnim;
 	}
 
@@ -453,12 +453,13 @@ bool Animations::initAnim(AnimationTypes genNewAnim, AnimType flag, AnimationTyp
 		flag = AnimType::kAnimationAllThen;
 	}
 
+	BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
 	if (actor->_anim == -1) {
 		// if no previous animation
-		setAnimObjet(0, _engine->_resources->_animData[newanim], actor->_entityDataPtr->getBody(actor->_body), &actor->_animTimerData);
+		setAnimObjet(0, _engine->_resources->_animData[newanim], bodyData, &bodyData._animTimerData);
 	} else {
 		// interpolation between animations
-		stockInterAnim(actor->_entityDataPtr->getBody(actor->_body), &actor->_animTimerData);
+		stockInterAnim(bodyData, &bodyData._animTimerData);
 	}
 
 	actor->_anim = newanim;
@@ -494,7 +495,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 	IVec3 &processActor = actor->_processActor;
 	if (actor->_flags.bSprite3D) {
-		if (actor->_strengthOfHit) {
+		if (actor->_hitForce) {
 			actor->_workFlags.bIsHitting = 1;
 		}
 
@@ -585,8 +586,9 @@ void Animations::doAnim(int32 actorIdx) {
 			const AnimData &animData = _engine->_resources->_animData[actor->_anim];
 
 			bool keyFramePassed = false;
-			if (actor->_entityDataPtr->getBody(actor->_body).isAnimated()) {
-				keyFramePassed = setInterDepObjet(actor->_frame, animData, &actor->_animTimerData);
+			BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
+			if (bodyData.isAnimated()) {
+				keyFramePassed = setInterDepObjet(actor->_frame, animData, &bodyData._animTimerData);
 			}
 
 			if (_animMasterRot) {
@@ -636,7 +638,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 						actor->_flagAnim = AnimType::kAnimationTypeRepeat;
 						actor->_frame = 0;
-						actor->_strengthOfHit = 0;
+						actor->_hitForce = 0;
 					}
 
 					processAnimActions(actorIdx);
@@ -795,10 +797,10 @@ void Animations::doAnim(int32 actorIdx) {
 							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_genAnim == AnimationTypes::kForward) {
 								actor->_workFlags.bWasWalkingBeforeFalling = 1;
 							} else {
-								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
+								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 							}
 						} else {
-							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
+							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 						}
 					}
 				}

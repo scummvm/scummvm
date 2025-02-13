@@ -321,7 +321,7 @@ enum class AnimationTypes {
 	kCarDrivingBackwards = 305,
 	kCarStopping = 306,
 	kCarFrozen = 307,
-	kAnimInvalid = 255 // NO_ANIM
+	kNoAnim = 255 // NO_ANIM
 };
 
 enum class AnimType {

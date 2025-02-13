@@ -538,7 +538,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 				ImGui::TableNextColumn();
 				ImGui::Text("Strength");
 				ImGui::TableNextColumn();
-				ImGui::Text("%i", actor->_strengthOfHit);
+				ImGui::Text("%i", actor->_hitForce);
 				ImGui::TableNextColumn();
 				ImGui::Text("Hit by");
 				ImGui::TableNextColumn();

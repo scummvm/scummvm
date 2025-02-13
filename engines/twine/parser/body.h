@@ -32,6 +32,12 @@
 
 namespace TwinE {
 
+/** Actors animation timer structure */
+struct AnimTimerDataStruct {
+	const KeyFrame *ptr = nullptr;
+	int32 time = 0; // keyframe time
+};
+
 class BodyData : public Parser {
 private:
 	void loadVertices(Common::SeekableReadStream &stream);
@@ -55,6 +61,7 @@ protected:
 
 public:
 	bool animated = false;
+	AnimTimerDataStruct _animTimerData;
 
 	BoundingBox bbox;
 	int16 offsetToData = 0;
