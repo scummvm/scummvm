@@ -722,10 +722,11 @@ void Scene::processEnvironmentSound() {
 
 			const int16 sampleIdx = _sampleAmbiance[currentAmb];
 			if (sampleIdx != -1) {
-				/*int16 decal = _sampleRound[currentAmb];*/
+				int16 decal = _sampleRound[currentAmb];
 				int16 repeat = _sampleRepeat[currentAmb];
 
-				_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
+				const uint16 pitchbend = 0x1000 + _engine->getRandomNumber(decal) - (decal / 2);
+				_engine->_sound->playSample(sampleIdx, pitchbend, repeat, 110, 110);
 				break;
 			}
 		}

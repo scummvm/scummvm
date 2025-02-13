@@ -192,6 +192,8 @@ bool Sound::playSample(int channelIdx, int index, Audio::SeekableAudioStream *au
 		warning("Failed to create audio stream for %s: %i", name, index);
 		return false;
 	}
+
+	// infinite loop
 	if (loop == -1) {
 		loop = 0;
 	}
