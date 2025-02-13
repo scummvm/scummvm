@@ -649,12 +649,10 @@ void TwinEEngine::introduction() {
 		}
 	}
 
-	if (!abort) {
-		if (isLBA1()) {
-			_movie->playMovie(FLA_DRAGON3);
-		} else {
-			_movie->playMovie("INTRO");
-		}
+	if (isLBA1()) {
+		_movie->playMovie(FLA_DRAGON3);
+	} else {
+		_movie->playMovie("INTRO");
 	}
 }
 
