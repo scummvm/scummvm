@@ -108,6 +108,9 @@ enum save_load_menu_item_tags {
 	SL_TAG_THUMBNAIL
 };
 
+constexpr int SL_THUMBNAIL_W = 215;
+constexpr int SL_THUMBNAIL_H = 162;
+
 } // namespace GUI
 } // namespace Burger
 
@@ -181,7 +184,6 @@ struct menuItem {
 	static bool cursorInsideItem(menuItem *myItem, int32 cursorX, int32 cursorY);
 };
 
-
 struct menuItemMsg : public menuItem {
 private:
 	static void drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32);
@@ -225,7 +227,7 @@ public:
 	menuItem *assocItem = nullptr;
 	int32 specialTag = 0;
 
-	static menuItemButton *buttonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
+	static menuItemButton *add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
 		int32 buttonType = 0, bool ghosted = false, bool transparent = false,
 		const char *prompt = nullptr, ItemHandlerFunction i_handler = (ItemHandlerFunction)handler);
 	static void disableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
@@ -235,21 +237,61 @@ public:
 };
 
 struct menuItemHSlider : public menuItem {
+private:
+	static void drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32);
+	static bool handler(menuItemHSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+
+public:
 	int32 itemFlags = 0;
 
 	int32 thumbW = 0, thumbH = 0;
 	int32 thumbX = 0, maxThumbX = 0;
 
 	int32 percent = 0;
+
+	enum {
+		H_THUMB_NORM = 0,
+		H_THUMB_OVER = 1,
+		H_THUMB_PRESS = 2
+	};
+
+	static menuItemHSlider *add(guiMenu *myMenu, int32 tag,
+		int32 x, int32 y, int32 w, int32 h, int32 initPercent = 0,
+		CALLBACK callback = nullptr, bool transparent = false);
 };
 
 struct menuItemVSlider : public menuItem {
+private:
+	static int32 whereIsCursor(menuItemVSlider *myVSlider, int32 y);
+
+public:
 	int32 itemFlags = 0;
 
 	int32 thumbW = 0, thumbH = 0;
 	int32 thumbY = 0, minThumbY = 0, maxThumbY = 0;
 
 	int32 percent = 0;
+
+	enum {
+		VS_NORM = 0x0000,
+		VS_OVER = 0x0001,
+		VS_PRESS = 0x0002,
+		VS_GREY = 0x0003,
+		VS_STATUS = 0x000f,
+		VS_UP = 0x0010,
+		VS_PAGE_UP = 0x0020,
+		VS_THUMB = 0x0030,
+		VS_PAGE_DOWN = 0x0040,
+		VS_DOWN = 0x0050,
+		VS_COMPONENT = 0x00f0
+	};
+
+	static menuItemVSlider *add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+		int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
+	static void disableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
+	static void enableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
+	static void drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32);
+	static bool handler(menuItemVSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 };
 
 struct menuItemTextField : public menuItem {
@@ -345,6 +387,10 @@ struct MenuGlobals {
 };
 
 extern void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y);
+extern bool LoadThumbNail(int32 slotNum);
+extern void UnloadThumbNail(int32 slotNum);
+extern void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu);
+extern void SetFirstSlot(int32 firstSlot, guiMenu *myMenu);
 
 //======================================
 //

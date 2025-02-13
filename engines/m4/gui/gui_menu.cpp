@@ -78,6 +78,106 @@ void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
 	}
 }
 
+bool LoadThumbNail(int32 slotNum) {
+	Sprite *&thumbNailSprite = _GM(thumbNails)[slotNum];
+	return g_engine->loadSaveThumbnail(slotNum + 1, thumbNailSprite);
+}
+
+void UnloadThumbNail(int32 slotNum) {
+	if (_GM(thumbNails)[slotNum]->sourceHandle) {
+		HUnLock(_GM(thumbNails)[slotNum]->sourceHandle);
+		DisposeHandle(_GM(thumbNails)[slotNum]->sourceHandle);
+		_GM(thumbNails)[slotNum]->sourceHandle = nullptr;
+	}
+}
+
+void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
+	int32 i, startIndex, endIndex;
+
+	// Make sure there is something to update
+	if (firstSlot == _GM(thumbIndex)) {
+		return;
+	}
+
+	// Ensure firstSlot is in a valid range
+	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
+
+	if (firstSlot > _GM(thumbIndex)) {
+		// Dump Out all thumbnails in slots which don't overlap
+		startIndex = _GM(thumbIndex);
+		endIndex = imath_min(_GM(thumbIndex) + 9, firstSlot - 1);
+		for (i = startIndex; i <= endIndex; i++) {
+			UnloadThumbNail(i);
+		}
+
+		// Load in all thumbnails missing thumbnails
+		startIndex = imath_max(_GM(thumbIndex) + 10, firstSlot);
+		endIndex = imath_min(firstSlot + 9, 98);
+		for (i = startIndex; i <= endIndex; i++) {
+			if (_GM(slotInUse)[i]) {
+				if (!LoadThumbNail(i)) {
+					_GM(slotInUse)[i] = false;
+					menuItemButton::disableButton(nullptr, 1001 + i - firstSlot, myMenu);
+					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
+				}
+			}
+		}
+	} else {
+		// Else firstSlot < _GM(thumbIndex)
+		// Dump Out all thumbnails in slots which don't overlap
+		startIndex = imath_max(firstSlot + 10, _GM(thumbIndex));
+		endIndex = imath_min(_GM(thumbIndex) + 9, 98);
+		for (i = startIndex; i <= endIndex; i++) {
+			UnloadThumbNail(i);
+		}
+
+		// Load in all thumbnails missing thumbnails
+		startIndex = firstSlot;
+		endIndex = imath_min(firstSlot + 9, _GM(thumbIndex) - 1);
+		for (i = startIndex; i <= endIndex; i++) {
+			if (_GM(slotInUse)[i]) {
+				if (!LoadThumbNail(i)) {
+					_GM(slotInUse)[i] = false;
+					menuItemButton::disableButton(nullptr, 1001 + i - firstSlot, myMenu);
+					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
+				}
+			}
+		}
+	}
+
+	// Set the var
+	_GM(thumbIndex) = firstSlot;
+}
+
+void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
+	menuItemButton *myButton;
+	int32 i;
+
+	if (!myMenu) {
+		return;
+	}
+
+	// Ensure firstSlot is in a valid range
+	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
+
+	// Change the prompt and special tag of each of the slot buttons
+	for (i = 0; i < MAX_SLOTS_SHOWN; i++) {
+		myButton = (menuItemButton *)guiMenu::getItem(i + 1001, myMenu);
+
+		myButton->prompt = _GM(slotTitles)[firstSlot + i];
+		if (_GM(currMenuIsSave) || _GM(slotInUse)[firstSlot + i]) {
+			myButton->itemFlags = menuItemButton::BTN_STATE_NORM;
+		} else {
+			myButton->itemFlags = menuItemButton::BTN_STATE_GREY;
+		}
+
+		myButton->specialTag = firstSlot + i + 1;
+		guiMenu::itemRefresh(myButton, i + 1001, myMenu);
+	}
+}
+
+//-----------------------------  MENU DIALOG FUNCTIONS    ---------------------------------//
+
 bool guiMenu::initialize(RGB8 *myPalette) {
 	int32 i, memAvail;
 
@@ -1040,7 +1140,7 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 	return handled;
 }
 
-menuItemButton *menuItemButton::buttonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
+menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
 	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
 	menuItemButton *newItem;
 	ScreenContext *myScreen;
@@ -1210,16 +1310,15 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 		}
 	}
 
-	// Get the button info and select the sprite
-	//myMsg = (menuItemMsg *)myItem->itemInfo;
+	// Select the sprite
 	switch (myItem->tag) {
-	case SL_TAG_SAVE_LABEL:
+	case Burger::GUI::SL_TAG_SAVE_LABEL:
 		mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_LABEL];
 		break;
-	case SL_TAG_LOAD_LABEL:
+	case Burger::GUI::SL_TAG_LOAD_LABEL:
 		mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_LABEL];
 		break;
-	case SL_TAG_THUMBNAIL:
+	case Burger::GUI::SL_TAG_THUMBNAIL:
 		mySprite = _GM(saveLoadThumbNail);
 		break;
 	}
@@ -1234,11 +1333,11 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 	if (backgroundBuff) {
 		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
 		myItem->background->release();
-	} else if (myItem->tag == SL_TAG_THUMBNAIL && mySprite->w == 160) {
+	} else if (myItem->tag == Burger::GUI::SL_TAG_THUMBNAIL && mySprite->w == 160) {
 		// Hack for handling smaller ScummVM thumbnails
-		for (int yp = y; yp < (y + SL_THUMBNAIL_H); ++yp) {
+		for (int yp = y; yp < (y + Burger::GUI::SL_THUMBNAIL_H); ++yp) {
 			byte *line = myBuff->data + myBuff->stride * yp + x;
-			Common::fill(line, line + SL_THUMBNAIL_W, 0);
+			Common::fill(line, line + Burger::GUI::SL_THUMBNAIL_W, 0);
 		}
 
 		x += 25;
@@ -1251,6 +1350,654 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 	// Release the menu buffer
 	myMenu->menuBuffer->release();
 }
+
+
+//-------------------------------    HSLIDER MENU ITEM    ---------------------------------//
+
+void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
+	Buffer *myBuff = nullptr;
+	Buffer *backgroundBuff = nullptr;
+	Sprite *mySprite = nullptr;
+
+	// Verify params
+	if (!myItem || !myMenu)
+		return;
+
+	// If the item is marked transparent, get the background buffer
+	if (myItem->transparent) {
+		if (!myItem->background) {
+			return;
+		}
+		backgroundBuff = myItem->background->get_buffer();
+		if (!backgroundBuff) {
+			return;
+		}
+	}
+
+	// Get the menu buffer and draw the sprite to it
+	myBuff = myMenu->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	// If the item is tagged as transparent, we need to fill in it's background behind it
+	if (backgroundBuff) {
+		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
+		myItem->background->release();
+	}
+
+	// Get the slider info and select the thumb sprite
+	switch (myItem->itemFlags) {
+	case H_THUMB_OVER:
+		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_OVER];
+		break;
+	case H_THUMB_PRESS:
+		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_PRESS];
+		break;
+	default:
+	case H_THUMB_NORM:
+		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM];
+		break;
+	}
+
+	// Fill in everything left of the thumb with a hilite color
+	if (myItem->thumbX > 2) {
+		gr_color_set(menuItem::SLIDER_BAR_COLOR);
+		gr_buffer_rect_fill(myBuff, myItem->x1 + 3, myItem->y1 + 9, myItem->thumbX, myItem->thumbH - 18);
+	}
+
+	// Draw in the thumb
+	gui_DrawSprite(mySprite, myBuff, myItem->x1 + myItem->thumbX, myItem->y1);
+
+	// Release the menu buffer
+	myMenu->menuBuffer->release();
+}
+
+bool menuItemHSlider::handler(menuItemHSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
+	bool redrawItem, execCallback, handled;
+	ScreenContext *myScreen;
+	int32 status;
+	int32 deltaSlide;
+	static bool movingFlag;
+	static int32 movingX;
+
+	// Verify params
+	if (!myItem)
+		return false;
+
+	if (!(eventType == EVENT_MOUSE)) {
+		return false;
+	}
+
+	redrawItem = false;
+	handled = true;
+	execCallback = false;
+
+	switch (event) {
+	case _ME_L_click:
+	case _ME_doubleclick:
+		if (menuItem::cursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+			(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			myItem->itemFlags = H_THUMB_PRESS;
+			movingFlag = true;
+			movingX = x;
+			*currItem = myItem;
+			redrawItem = true;
+		} else {
+			*currItem = nullptr;
+			myItem->itemFlags = 0;
+			redrawItem = true;
+		}
+		break;
+
+	case _ME_L_drag:
+	case _ME_doubleclick_drag:
+		if (!*currItem) {
+			return true;
+		}
+		if (movingFlag) {
+			if (x < movingX) {
+				deltaSlide = imath_min(myItem->thumbX, movingX - x);
+				if (deltaSlide > 0) {
+					myItem->thumbX -= deltaSlide;
+					redrawItem = true;
+					myItem->percent = myItem->thumbX * 100 / myItem->maxThumbX;
+					execCallback = true;
+				}
+			} else if (x > movingX) {
+				deltaSlide = imath_min(myItem->maxThumbX - myItem->thumbX, x - movingX);
+				if (deltaSlide > 0) {
+					myItem->thumbX += deltaSlide;
+					redrawItem = true;
+					myItem->percent = myItem->thumbX * 100 / myItem->maxThumbX;
+					execCallback = true;
+				}
+			}
+			movingX = x;
+			if (movingX < (myItem->thumbX + myItem->x1)) {
+				movingX = myItem->thumbX + myItem->x1;
+			} else if (movingX > (myItem->thumbX + myItem->thumbW - 1 + myItem->x1)) {
+				movingX = myItem->thumbX + myItem->thumbW - 1 + myItem->x1;
+			}
+		} else {
+			*currItem = nullptr;
+		}
+		break;
+
+	case _ME_L_release:
+	case _ME_doubleclick_release:
+		if (!*currItem) {
+			return true;
+		}
+		movingFlag = false;
+		if (menuItem::cursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+			(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			myItem->itemFlags = H_THUMB_OVER;
+			*currItem = myItem;
+		} else {
+			myItem->itemFlags = H_THUMB_NORM;
+			*currItem = nullptr;
+		}
+		redrawItem = true;
+		execCallback = true;
+		break;
+
+	case _ME_move:
+		if (menuItem::cursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+			(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			if (myItem->itemFlags != H_THUMB_OVER) {
+				myItem->itemFlags = H_THUMB_OVER;
+				*currItem = myItem;
+				redrawItem = true;
+			}
+		} else {
+			if (myItem->itemFlags != H_THUMB_NORM) {
+				myItem->itemFlags = H_THUMB_NORM;
+				*currItem = nullptr;
+				redrawItem = true;
+				handled = false;
+			}
+		}
+		break;
+
+	case _ME_L_hold:
+	case _ME_doubleclick_hold:
+		break;
+	}
+
+	// See if we need to redraw the hslider
+	if (redrawItem) {
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if (myScreen && (status == SCRN_ACTIVE)) {
+			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
+				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
+		}
+	}
+
+	// See if we need to call the callback function
+	if (execCallback && myItem->callback) {
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if ((!myScreen) || (status != SCRN_ACTIVE)) {
+			*currItem = nullptr;
+		}
+	}
+
+	return handled;
+}
+
+menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+	int32 initPercent, CALLBACK callback, bool transparent) {
+	menuItemHSlider *newItem;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu) {
+		return nullptr;
+	}
+
+	// Allocate a new one
+	newItem = new menuItemHSlider();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = callback;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	// Intialize the new slider
+	newItem->itemFlags = H_THUMB_NORM;
+	newItem->thumbW = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->w;
+	newItem->thumbH = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->h;
+	newItem->maxThumbX = w - _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->w;
+
+	if (initPercent < 0) {
+		initPercent = 0;
+	} else if (initPercent > 100) {
+		initPercent = 100;
+	}
+
+	// Calculate the initial thumbX
+	newItem->percent = initPercent;
+	newItem->thumbX = initPercent * newItem->maxThumbX / 100;
+
+	newItem->redraw = (DrawFunction)menuItemHSlider::drawHSlider;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = (ItemHandlerFunction)menuItemHSlider::handler;
+
+	// Draw the slider in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
+
+
+//-------------------------------    VSLIDER MENU ITEM    ---------------------------------//
+
+void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
+	Buffer *myBuff = nullptr;
+	Buffer *backgroundBuff = nullptr;
+	Sprite *upSprite = nullptr;
+	Sprite *thumbSprite = nullptr;
+	Sprite *downSprite = nullptr;
+	Sprite *vbarSprite = nullptr;
+
+	// Verify params
+	if (!myItem || !myMenu)
+		return;
+
+	// If the item is marked transparent, get the background buffer
+	if (myItem->transparent) {
+		if (!myItem->background) {
+			return;
+		}
+		backgroundBuff = myItem->background->get_buffer();
+		if (!backgroundBuff) {
+			return;
+		}
+	}
+
+	// Get the menu buffer
+	myBuff = myMenu->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	// If the item is tagged as transparent, we need to fill in it's background behind it
+	if (backgroundBuff) {
+		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
+		myItem->background->release();
+	}
+
+	// Set the different sprite components
+	vbarSprite = _GM(menuSprites)[Burger::GUI::SL_SCROLL_BAR];
+	upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM];
+	thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM];
+	downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_NORM];
+
+	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
+		upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_GREY];
+		thumbSprite = nullptr;
+		downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_GREY];
+	} else if ((myItem->itemFlags & VS_STATUS) == VS_OVER) {
+		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
+			upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_OVER];
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
+			thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_OVER];
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
+			downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_OVER];
+		}
+	} else if ((myItem->itemFlags & VS_STATUS) == VS_PRESS) {
+		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
+			upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_PRESS];
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
+			thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_PRESS];
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
+			downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_PRESS];
+		}
+	}
+
+	// Draw the sprite comonents
+	gui_DrawSprite(vbarSprite, myBuff, x, y + upSprite->h);
+	gui_DrawSprite(upSprite, myBuff, x, y);
+	gui_DrawSprite(thumbSprite, myBuff, x, y + myItem->thumbY);
+	gui_DrawSprite(downSprite, myBuff, x, y + upSprite->h + vbarSprite->h);
+
+	// Release the menu buffer
+	myMenu->menuBuffer->release();
+}
+
+int32 menuItemVSlider::whereIsCursor(menuItemVSlider *myVSlider, int32 y) {
+	if (y < myVSlider->minThumbY) {
+		return VS_UP;
+	} else if (y < myVSlider->thumbY) {
+		return VS_PAGE_UP;
+	} else if (y < myVSlider->thumbY + myVSlider->thumbH) {
+		return VS_THUMB;
+	} else if (y < myVSlider->maxThumbY + myVSlider->thumbH) {
+		return VS_PAGE_DOWN;
+	} else {
+		return VS_DOWN;
+	}
+}
+
+bool menuItemVSlider::handler(menuItemVSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
+	bool redrawItem, execCallback, handled;
+	int32 tempFlags;
+	ScreenContext *myScreen;
+	int32 status;
+	int32 deltaSlide;
+	int32 currTime;
+	static bool movingFlag;
+	static int32 movingY;
+	static int32 callbackTime;
+
+	// Verify params
+	if (!myItem)
+		return false;
+
+	if (!(eventType == EVENT_MOUSE))
+		return false;
+
+	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
+		*currItem = nullptr;
+		return false;
+	}
+
+	currTime = timer_read_60();
+	redrawItem = false;
+	handled = true;
+	execCallback = false;
+
+	switch (event) {
+	case _ME_L_click:
+	case _ME_doubleclick:
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			//				  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
+			*currItem = myItem;
+			tempFlags = menuItemVSlider::whereIsCursor(myItem, y - myItem->y1);
+			if (tempFlags == VS_THUMB) {
+				movingFlag = true;
+				movingY = y;
+			}
+			if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
+				myItem->itemFlags = tempFlags + VS_NORM;
+			} else {
+				myItem->itemFlags = tempFlags + VS_PRESS;
+				redrawItem = true;
+			}
+			execCallback = true;
+		} else {
+			*currItem = nullptr;
+			myItem->itemFlags = VS_NORM;
+			redrawItem = true;
+		}
+		break;
+
+	case _ME_L_drag:
+	case _ME_doubleclick_drag:
+		if (!*currItem) {
+			return true;
+		}
+		if (movingFlag) {
+			if (y < movingY) {
+				deltaSlide = imath_min(myItem->thumbY - myItem->minThumbY, movingY - y);
+				if (deltaSlide > 0) {
+					myItem->thumbY -= deltaSlide;
+					myItem->percent = ((myItem->thumbY - myItem->minThumbY) * 100) /
+						(myItem->maxThumbY - myItem->minThumbY);
+					redrawItem = true;
+					execCallback = true;
+				}
+			} else if (y > movingY) {
+				deltaSlide = imath_min(myItem->maxThumbY - myItem->thumbY, y - movingY);
+				if (deltaSlide > 0) {
+					myItem->thumbY += deltaSlide;
+					myItem->percent = ((myItem->thumbY - myItem->minThumbY) * 100) /
+						(myItem->maxThumbY - myItem->minThumbY);
+					redrawItem = true;
+					execCallback = true;
+				}
+			}
+			movingY = y;
+			if (movingY < (myItem->thumbY + myItem->y1)) {
+				movingY = myItem->thumbY + myItem->y1;
+			} else if (movingY > (myItem->thumbY + myItem->thumbH - 1 + myItem->y1)) {
+				movingY = myItem->thumbY + myItem->thumbH - 1 + myItem->y1;
+			}
+		} else {
+			if (menuItem::cursorInsideItem(myItem, x, y)) {
+				tempFlags = menuItemVSlider::whereIsCursor(myItem, y - myItem->y1);
+				if ((myItem->itemFlags & VS_COMPONENT) == tempFlags) {
+					if ((tempFlags != VS_PAGE_UP) && (tempFlags != VS_PAGE_DOWN) &&
+						((myItem->itemFlags & VS_STATUS) != VS_PRESS)) {
+						myItem->itemFlags = tempFlags + VS_PRESS;
+						redrawItem = true;
+					}
+					if (currTime - callbackTime > 6) {
+						execCallback = true;
+					}
+				} else {
+					if ((myItem->itemFlags & VS_STATUS) != VS_OVER) {
+						myItem->itemFlags = (myItem->itemFlags & VS_COMPONENT) + VS_OVER;
+						redrawItem = true;
+					}
+				}
+				execCallback = true;
+			} else {
+				if ((myItem->itemFlags & VS_STATUS) != VS_OVER) {
+					myItem->itemFlags = (myItem->itemFlags & VS_COMPONENT) + VS_OVER;
+					redrawItem = true;
+				}
+			}
+		}
+		break;
+
+	case _ME_L_release:
+	case _ME_doubleclick_release:
+		movingFlag = false;
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			tempFlags = menuItemVSlider::whereIsCursor(myItem, y - myItem->y1);
+			if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
+				myItem->itemFlags = VS_NORM;
+			} else {
+				myItem->itemFlags = tempFlags + VS_OVER;
+				*currItem = myItem;
+			}
+		} else {
+			myItem->itemFlags = VS_NORM;
+			*currItem = nullptr;
+		}
+		redrawItem = true;
+		if (!_GM(currMenuIsSave)) {
+			UpdateThumbNails(_GM(firstSlotIndex), (guiMenu *)myItem->myMenu);
+		}
+		break;
+
+	case _ME_move:
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			*currItem = myItem;
+			tempFlags = menuItemVSlider::whereIsCursor(myItem, y - myItem->y1);
+			if ((myItem->itemFlags & VS_COMPONENT) != tempFlags) {
+				if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
+					myItem->itemFlags = VS_NORM;
+				} else {
+					myItem->itemFlags = tempFlags + VS_OVER;
+				}
+				redrawItem = true;
+			}
+		} else {
+			*currItem = nullptr;
+			if (myItem->itemFlags != VS_NORM) {
+				myItem->itemFlags = VS_NORM;
+				redrawItem = true;
+				handled = false;
+			}
+		}
+		break;
+
+	case _ME_L_hold:
+	case _ME_doubleclick_hold:
+		if (!*currItem) {
+			return true;
+		}
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			tempFlags = menuItemVSlider::whereIsCursor(myItem, y - myItem->y1);
+			if ((myItem->itemFlags & VS_COMPONENT) == tempFlags) {
+				if (currTime - callbackTime > 6) {
+					execCallback = true;
+				}
+			}
+		}
+		break;
+	}
+
+	// See if we need to redraw the vslider
+	if (redrawItem) {
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if (myScreen && (status == SCRN_ACTIVE)) {
+			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
+				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
+		}
+	}
+
+	// See if we need to call the callback function
+	if (execCallback && myItem->callback) {
+		callbackTime = currTime;
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if ((!myScreen) || (status != SCRN_ACTIVE)) {
+			*currItem = nullptr;
+		}
+	}
+
+	return handled;
+}
+
+
+menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+	int32 initPercent, CALLBACK callback, bool transparent) {
+	menuItemVSlider *newItem;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu)
+		return nullptr;
+
+	// Allocate a new one
+	newItem = new menuItemVSlider();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = callback;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	newItem->itemFlags = menuItemVSlider::VS_NORM;
+
+	newItem->thumbW = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->w;
+	newItem->thumbH = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->h;
+
+	newItem->minThumbY = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM]->h + 1;
+	newItem->maxThumbY = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM]->h + _GM(menuSprites)[Burger::GUI::SL_SCROLL_BAR]->h
+		- _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->h - 1;
+
+	// Calculate the initial thumbY
+	newItem->percent = imath_max(imath_min(initPercent, 100), 0);
+	newItem->thumbY = newItem->minThumbY +
+		((newItem->percent * (newItem->maxThumbY - newItem->minThumbY)) / 100);
+
+	newItem->redraw = (DrawFunction)menuItemVSlider::drawVSlider;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = (ItemHandlerFunction)menuItemVSlider::handler;
+
+	// Draw the vslider in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
+
+void menuItemVSlider::disableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
+	// Verify params
+	if (!myMenu)
+		return;
+
+	if (!myItem)
+		myItem = (menuItemVSlider *)guiMenu::getItem(tag, myMenu);
+	if (!myItem)
+		return;
+
+	myItem->itemFlags = menuItemVSlider::VS_GREY;
+}
+
+void menuItemVSlider::enableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
+	// Verify params
+	if (!myMenu)
+		return;
+
+	if (!myItem)
+		myItem = (menuItemVSlider *)guiMenu::getItem(tag, myMenu);
+	if (!myItem)
+		return;
+
+	myItem->itemFlags = menuItemVSlider::VS_NORM;
+}
+
+
 
 } // namespace GUI
 } // namespace M4

@@ -43,18 +43,6 @@ using M4::GUI::Sprite;
 using M4::GUI::CALLBACK;
 using M4::GUI::ItemHandlerFunction;
 
-// SPECIFIC ITEM FUNCTIONS
-
-// Horizontal sliders
-menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
-	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
-
-// Vertical sliders
-menuItemVSlider *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
-	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
-void menu_DisableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
-void menu_EnableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
-
 // Textfields
 menuItemTextField *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
 	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
@@ -143,8 +131,6 @@ enum game_menu_button_tags {
 
 #define SL_THUMBNAIL_X			 66
 #define SL_THUMBNAIL_Y			 28
-#define SL_THUMBNAIL_W			215
-#define SL_THUMBNAIL_H		   162
 
 /**
  * Options menu defines
