@@ -109,7 +109,7 @@ void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volume
 	}
 
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
-	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
