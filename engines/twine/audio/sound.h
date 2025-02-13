@@ -54,56 +54,57 @@ class Sound {
 private:
 	TwinEEngine *_engine;
 
-	/** Get the channel where the sample is playing */
-	int32 getSampleChannel(int32 index);
-
 	/** Samples playing at the same time */
-	Audio::SoundHandle samplesPlaying[NUM_CHANNELS];
+	Audio::SoundHandle _samplesPlaying[NUM_CHANNELS];
 
 	/** Samples playing at a actors position */
-	int32 samplesPlayingActors[NUM_CHANNELS]{0};
+	int32 _samplesPlayingActors[NUM_CHANNELS]{0};
 
-	bool playSample(int channelIdx, int index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	bool playSample(int32 channelIdx, int32 index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
-	bool isChannelPlaying(int32 channel);
+	bool isChannelPlaying(int32 channelIdx);
 
 	/** Find a free channel slot to use */
 	int32 getFreeSampleChannelIndex();
 
 	/** Remove a sample from the channel usage list */
-	void removeSampleChannel(int32 index);
-
+	void removeChannelWatch(int32 channelIdx);
 public:
 	Sound(TwinEEngine *engine);
 	~Sound();
+
+	/** Get the channel where the sample is playing */
+	int32 getSampleChannel(int32 index);
 
 	/**
 	 * Play FLA movie samples
 	 * @param index sample index under flasamp.hqr file
 	 * @param repeat number of times to repeat the sample
 	 */
-	void playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volumeLeft, int32 volumeRight);
+	void playFlaSample(int32 index, int16 rate, int32 repeat, uint8 volumeLeft, uint8 volumeRight);
+
+	void setChannelBalance(int32 channelIdx, uint8 volumeLeft, uint8 volumeRight);
+
+	void setChannelRate(int32 channelIdx, uint32 rate);
 
 	/** Update sample position in channel */
-	void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);
+	void setChannelPosition(int32 channelIdx, int32 x, int32 y, int32 z);
 
-	inline void setSamplePosition(int32 channelIdx, const IVec3 &pos) {
-		setSamplePosition(channelIdx, pos.x, pos.y, pos.z);
+	inline void setChannelPosition(int32 channelIdx, const IVec3 &pos) {
+		setChannelPosition(channelIdx, pos.x, pos.y, pos.z);
 	}
 
 	/**
 	 * Play samples
 	 * @param index sample index under flasamp.hqr file
 	 * @param repeat number of times to repeat the sample
-	 * @param x sound generating entity x position
-	 * @param y sound generating entity y position
-	 * @param z sound generating entity z position
+	 * @param pos sound generating entity position
 	 * @param actorIdx
 	 */
-	void playSample(int32 index, uint16 pitchbend = 0x1000, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1); // HQ_3D_MixSample
-	void playSample(int32 index, uint16 pitchbend, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) { // HQ_MixSample
-		playSample(index, pitchbend, repeat, pos.x, pos.y, pos.z, actorIdx);
-	}
+	void mixSample3D(int32 index, uint16 pitchbend, int32 repeat, const IVec3 &pos, int32 actorIdx); // HQ_3D_MixSample
+
+	void mixSample(int32 index, uint16 pitchbend, int32 repeat, uint8 volumeLeft, uint8 volumeRight); // HQ_MixSample
+
 	/** Pause samples */
 	void pauseSamples();
 
@@ -116,13 +117,13 @@ public:
 	void stopSamples();
 
 	/** Get the channel where the actor sample is playing */
-	int32 getActorChannel(int32 index);
+	int32 getActorChannel(int32 actorIdx);
 
 	/** Stops a specific sample */
 	void stopSample(int32 index); // HQ_StopOneSample
 
 	/** Check if a sample is playing */
-	int32 isSamplePlaying(int32 index); // IsSamplePlaying
+	int32 isSamplePlaying(int32 index);
 
 	/** Play VOX sample */
 	bool playVoxSample(const TextEntry *text);

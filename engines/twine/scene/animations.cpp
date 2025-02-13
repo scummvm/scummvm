@@ -295,13 +295,13 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_SAMPLE:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, 0x1000, 1, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(action.sampleIndex, 0x1000, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_SAMPLE_FREQ:
 			if (action.animFrame == actor->_frame) {
 				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(action.frequency) - (action.frequency / 2);
-				_engine->_sound->playSample(action.sampleIndex, pitchBend, 1, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(action.sampleIndex, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_EXTRA_BONUS:
@@ -316,7 +316,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_SAMPLE_REPEAT:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, 0x1000, action.repeat, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(action.sampleIndex, 0x1000, action.repeat, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_SEARCH:
@@ -338,14 +338,14 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorBegin;
 				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
-				_engine->_sound->playSample(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_RIGHT_STEP:
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorRightBegin;
 				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
-				_engine->_sound->playSample(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_HERO_HITTING:
