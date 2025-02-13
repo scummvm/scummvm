@@ -304,6 +304,17 @@ struct menuItemTextField : public menuItem {
 	char *promptEnd = nullptr;
 
 	char *cursor = nullptr;
+
+	enum {
+		TF_NORM = 0,
+		TF_OVER = 1,
+		TF_GREY = 2
+	};
+
+	static menuItemTextField *add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
+		const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
+	static bool handler(menuItemTextField *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+	static void drawTextField(menuItemTextField *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32);
 };
 
 struct guiMenu {

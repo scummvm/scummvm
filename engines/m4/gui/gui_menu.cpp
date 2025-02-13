@@ -1998,6 +1998,332 @@ void menuItemVSlider::enableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu 
 }
 
 
+//-----------------------------    TEXTFIELD MENU ITEM    ---------------------------------//
+
+void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
+	menuItemTextField *myText = nullptr;
+	Buffer *myBuff = nullptr;
+	Buffer *backgroundBuff = nullptr;
+	Sprite *mySprite = nullptr;
+	char tempStr[64], tempChar;
+	int32 cursorX;
+
+	// Verify params
+	if (!myItem || !myMenu)
+		return;
+
+	// If the item is marked transparent, get the background buffer
+	if (myItem->transparent) {
+		if (!myItem->background) {
+			return;
+		}
+		backgroundBuff = myItem->background->get_buffer();
+		if (!backgroundBuff) {
+			return;
+		}
+	}
+
+	// Select the sprite
+	switch (myText->itemFlags) {
+	case TF_GREY:
+		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+		break;
+
+	case TF_OVER:
+		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+		break;
+
+	case TF_NORM:
+	default:
+		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+		break;
+	}
+
+	// Get the menu buffer and draw the sprite to it
+	myBuff = myMenu->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	// If the item is tagged as transparent, we need to fill in it's background behind it
+	if (backgroundBuff) {
+		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
+		myItem->background->release();
+	}
+
+	// Draw the item sprite in
+	gui_DrawSprite(mySprite, myBuff, x, y);
+
+	//write in the special tag
+	gr_font_set_color(menuItem::TEXT_COLOR_NORM_FOREGROUND);
+	Common::sprintf_s(tempStr, 64, "%02d", myText->specialTag);
+	gr_font_set(_GM(menuFont));
+	gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
+
+	//write in the text
+	gr_font_write(myBuff, &myText->prompt[0], x + 26, y + 1, 0, -1);
+
+	if (myText->itemFlags == TF_OVER) {
+		// Draw in the cursor
+		if (myText->cursor) {
+			tempChar = *myText->cursor;
+			*myText->cursor = '\0';
+			cursorX = gr_font_string_width(&myText->prompt[0], -1);
+			*myText->cursor = tempChar;
+
+			gr_color_set(menuItem::TEXT_COLOR_OVER_FOREGROUND);
+			gr_vline(myBuff, x + cursorX + 26, y + 1, y + 12);
+		}
+	}
+
+	// Release the menu buffer
+	myMenu->menuBuffer->release();
+}
+
+bool menuItemTextField::handler(menuItemTextField *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
+	bool redrawItem, execCallback, handled;
+	ScreenContext *myScreen;
+	int32 status, temp;
+	char tempStr[80], *tempPtr;
+
+	// Verify params
+	if (!myItem)
+		return false;
+
+	if (myItem->itemFlags == TF_GREY) {
+		return false;
+	}
+
+	redrawItem = false;
+	execCallback = false;
+	handled = true;
+
+	if (eventType == EVENT_MOUSE) {
+		switch (event) {
+		case _ME_L_click:
+		case _ME_doubleclick:
+			_GM(deleteSaveDesc) = false;
+			if (menuItem::cursorInsideItem(myItem, x, y)) {
+				*currItem = myItem;
+			}
+			break;
+
+		case _ME_L_drag:
+		case _ME_doubleclick_drag:
+			break;
+
+		case _ME_L_release:
+		case _ME_doubleclick_release:
+			if (!*currItem) {
+				return true;
+			}
+			*currItem = nullptr;
+			if (menuItem::cursorInsideItem(myItem, x, y)) {
+				if (myItem->itemFlags == TF_OVER) {
+					temp = strlen(myItem->prompt);
+					if (temp > 0) {
+						Common::strcpy_s(tempStr, myItem->prompt);
+						tempPtr = &tempStr[temp];
+						gr_font_set(_GM(menuFont));
+						temp = gr_font_string_width(tempStr, -1);
+						while ((tempPtr != &tempStr[0]) && (temp > x - myItem->x1 - 26)) {
+							*--tempPtr = '\0';
+							temp = gr_font_string_width(tempStr, -1);
+						}
+						myItem->cursor = &myItem->prompt[tempPtr - &tempStr[0]];
+						redrawItem = true;
+					}
+				} else if (event == _ME_doubleclick_release) {
+					execCallback = true;
+				}
+			}
+			break;
+
+		case _ME_move:
+		case _ME_L_hold:
+		case _ME_doubleclick_hold:
+			break;
+		}
+	} else if ((eventType == EVENT_KEY) && (myItem->itemFlags == TF_OVER)) {
+		switch (event) {
+		case KEY_RETURN:
+			_GM(deleteSaveDesc) = false;
+			execCallback = true;
+			break;
+
+		case KEY_HOME:
+			_GM(deleteSaveDesc) = false;
+			myItem->cursor = &myItem->prompt[0];
+			redrawItem = true;
+			break;
+
+		case KEY_END:
+			_GM(deleteSaveDesc) = false;
+			myItem->cursor = myItem->promptEnd;
+			redrawItem = true;
+			break;
+
+		case KEY_LEFT:
+			_GM(deleteSaveDesc) = false;
+			if (myItem->cursor > &myItem->prompt[0]) {
+				myItem->cursor--;
+				redrawItem = true;
+			}
+			break;
+
+		case KEY_RIGHT:
+			_GM(deleteSaveDesc) = false;
+			if (myItem->cursor < myItem->promptEnd) {
+				myItem->cursor++;
+				redrawItem = true;
+			}
+			break;
+
+		case KEY_DELETE:
+			if (_GM(deleteSaveDesc)) {
+				myItem->prompt[0] = '\0';
+				myItem->promptEnd = &myItem->prompt[0];
+				myItem->cursor = myItem->promptEnd;
+				redrawItem = true;
+			} else if (myItem->cursor < myItem->promptEnd) {
+				Common::strcpy_s(tempStr, (char *)(myItem->cursor + 1));
+				Common::strcpy_s(myItem->cursor, 80, tempStr);
+				myItem->promptEnd--;
+				redrawItem = true;
+			}
+			break;
+
+		case KEY_BACKSP:
+			_GM(deleteSaveDesc) = false;
+			if (myItem->cursor > &myItem->prompt[0]) {
+				Common::strcpy_s(tempStr, myItem->cursor);
+				myItem->promptEnd--;
+				myItem->cursor--;
+				Common::strcpy_s(myItem->cursor, 80, tempStr);
+				redrawItem = true;
+			}
+			break;
+
+		default:
+			_GM(deleteSaveDesc) = false;
+			gr_font_set(_GM(menuFont));
+			temp = gr_font_string_width(&myItem->prompt[0], -1);
+			if ((strlen(&myItem->prompt[0]) < 79) && (temp < myItem->pixWidth - 12) && (event >= 32) && (event <= 127)) {
+				if (myItem->cursor < myItem->promptEnd) {
+					Common::strcpy_s(tempStr, (char *)myItem->cursor);
+					Common::sprintf_s(myItem->cursor, 80, "%c%s", (char)event, tempStr);
+				} else {
+					*myItem->cursor = (char)event;
+					*(myItem->cursor + 1) = '\0';
+				}
+				myItem->cursor++;
+				myItem->promptEnd++;
+
+				redrawItem = true;
+			}
+			break;
+		}
+	} else if ((eventType == EVENT_KEY) && (event == KEY_RETURN)) {
+		// The only events a NORM textfield can respond to are doubleclick_release and <return> keypress
+		execCallback = true;
+	} else {
+		// Otherwise the event will not be handled
+		return false;
+	}
+
+	// See if we need to redraw the button
+	if (redrawItem) {
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if (myScreen && (status == SCRN_ACTIVE)) {
+			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
+				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
+		}
+	}
+
+	// See if we need to call the callback function
+	if (execCallback && myItem->callback) {
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+
+		if ((!myScreen) || (status != SCRN_ACTIVE)) {
+			*currItem = nullptr;
+		}
+	}
+
+	return handled;
+}
+
+menuItemTextField *menuItemTextField::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
+	const char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
+	menuItemTextField *newItem;
+	menuItemTextField *textInfo;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu)
+		return nullptr;
+
+	// Allocate a new one
+	newItem = new menuItemTextField();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = callback;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	if ((textInfo = (menuItemTextField *)mem_alloc(sizeof(menuItemTextField), "menu item textfield")) == nullptr) {
+		return nullptr;
+	}
+	textInfo->itemFlags = initFlags;
+
+	textInfo->specialTag = specialTag;
+	textInfo->pixWidth = w - 27;
+	if (prompt) {
+		Common::strcpy_s(&textInfo->prompt[0], 80, prompt);
+		textInfo->promptEnd = &textInfo->prompt[strlen(prompt)];
+	} else {
+		textInfo->prompt[0] = '\0';
+		textInfo->promptEnd = &textInfo->prompt[0];
+	}
+	textInfo->cursor = textInfo->promptEnd;
+
+	newItem->redraw = (DrawFunction)menuItemTextField::drawTextField;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = (ItemHandlerFunction)menuItemTextField::handler;
+
+	// Draw the vslider in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
 
 } // namespace GUI
 } // namespace M4

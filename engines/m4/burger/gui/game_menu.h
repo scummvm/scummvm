@@ -43,10 +43,6 @@ using M4::GUI::Sprite;
 using M4::GUI::CALLBACK;
 using M4::GUI::ItemHandlerFunction;
 
-// Textfields
-menuItemTextField *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
-	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
-
 //GAME MENU FUNCTIONS
 extern void CreateGameMenu(RGB8 *myPalette);
 extern void CreateOptionsMenu(RGB8 *myPalette);
