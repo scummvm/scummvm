@@ -30,7 +30,7 @@
 namespace M4 {
 
 // Hash entry format:
-//    Filebame 33 bytes, Hagfile 1 byte, Disks 1 byte, Offset 4 bytes,
+//    Filename 33 bytes, Hagfile 1 byte, Disks 1 byte, Offset 4 bytes,
 //    Size 4 bytes  Next_record 4 Bytes, Total is 47 bytes.
 #define  HASH_RECORD_LENGTH 47
 
