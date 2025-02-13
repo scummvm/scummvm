@@ -51,12 +51,6 @@ struct RealValue {
 	int16 getRealAngle(int32 time);
 };
 
-/** Actors animation timer structure */
-struct AnimTimerDataStruct {
-	const KeyFrame *ptr = nullptr;
-	int32 time = 0;
-};
-
 /** Actors static flags structure */
 struct StaticFlagsStruct {
 	uint32 bComputeCollisionWithObj : 1;    // 0x000001 CHECK_OBJ_COL
@@ -189,7 +183,7 @@ public:
 		int32 Fin;
 	} A3DS;
 
-	int32 _strengthOfHit = 0;
+	int32 _hitForce = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
 	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
@@ -251,7 +245,6 @@ public:
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	RealValue realAngle;
-	AnimTimerDataStruct _animTimerData;
 };
 
 inline const IVec3 &ActorStruct::posObj() const {

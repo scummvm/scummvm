@@ -247,7 +247,7 @@ bool Scene::loadSceneLBA2() {
 		act->_posObj.y = (int16)stream.readUint16LE();
 		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
-		act->_strengthOfHit = stream.readByte();
+		act->_hitForce = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_beta = (int16)stream.readUint16LE();
 		act->_srot = (int16)stream.readUint16LE();
@@ -381,7 +381,7 @@ bool Scene::loadSceneLBA1() {
 		act->_posObj.y = (int16)stream.readUint16LE();
 		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
-		act->_strengthOfHit = stream.readByte();
+		act->_hitForce = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_bonusParameter.givenNothing = 0;
 		act->_beta = (int16)stream.readUint16LE();
@@ -866,7 +866,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 							if (actor->_posObj.y >= (zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
-								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
+								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx); // go up in ladder
 							}
 						}
 					}

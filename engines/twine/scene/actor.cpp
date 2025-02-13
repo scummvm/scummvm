@@ -125,7 +125,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	sceneHero->_genAnim = AnimationTypes::kAnimNone;
 	sceneHero->_flagAnim = AnimType::kAnimationTypeRepeat;
 
-	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
+	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, OWN_ACTOR_SCENE_INDEX);
 }
 
 void Actor::setFrame(int32 actorIdx, uint32 frame) {
@@ -207,7 +207,8 @@ void Actor::setFrame(int32 actorIdx, uint32 frame) {
 void Actor::initSprite(int32 spriteNum, int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
-	localActor->_sprite = spriteNum;
+	localActor->_sprite = spriteNum; // lba2
+
 	if (!localActor->_flags.bSprite3D) {
 		return;
 	}
@@ -240,25 +241,25 @@ int32 Actor::searchBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &acto
 	return (int)bodyIdx;
 }
 
-void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
+void Actor::initBody(BodyType gennewbody, int16 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	if (localActor->_flags.bSprite3D) {
 		return;
 	}
 
-	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
+	debug(1, "Load body %i for actor %i", (int)gennewbody, actorIdx);
 
-	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && bodyIdx != BodyType::btTunic && bodyIdx != BodyType::btNormal) {
+	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && gennewbody != BodyType::btTunic && gennewbody != BodyType::btNormal) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
 
 	ActorBoundingBox actorBoundingBox;
-	const int32 newBody = searchBody(bodyIdx, actorIdx, actorBoundingBox);
+	const int32 newBody = searchBody(gennewbody, actorIdx, actorBoundingBox);
 	if (newBody == -1) {
 		localActor->_genBody = BodyType::btNone;
 		localActor->_body = -1;
 		localActor->_boundingBox = BoundingBox();
-		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
+		debug("Failed to initialize body %i for actor %i", (int)gennewbody, actorIdx);
 		return;
 	}
 
@@ -268,7 +269,7 @@ void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 
 	const int32 oldBody = localActor->_body;
 	localActor->_body = newBody;
-	localActor->_genBody = bodyIdx;
+	localActor->_genBody = gennewbody;
 
 	if (actorBoundingBox.hasBoundingBox) {
 		localActor->_boundingBox = actorBoundingBox.bbox;
@@ -305,6 +306,8 @@ void Actor::copyInterAnim(const BodyData &src, BodyData &dest) {
 		return;
 	}
 
+	dest._animTimerData = src._animTimerData;
+
 	const int16 numBones = MIN<int16>((int16)src.getNumBones(), (int16)dest.getNumBones());
 	for (int16 i = 0; i < numBones; ++i) {
 		const BoneFrame *srcBoneFrame = src.getBoneState(i);
@@ -317,7 +320,7 @@ void Actor::startInitObj(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	if (actor->_flags.bSprite3D) {
-		if (actor->_strengthOfHit != 0) {
+		if (actor->_hitForce != 0) {
 			actor->_workFlags.bIsHitting = 1;
 		}
 
@@ -340,7 +343,7 @@ void Actor::startInitObj(int16 actorIdx) {
 		actor->_flagAnim = AnimType::kAnimationTypeRepeat;
 
 		if (actor->_body != -1) {
-			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
+			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 		}
 
 		_engine->_movements->initRealAngle(actor->_beta, actor->_beta, LBAAngles::ANGLE_0, &actor->realAngle);
@@ -393,9 +396,9 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 			}
 
 			if (_engine->getRandomNumber() & 1) {
-				_engine->_animations->initAnim(AnimationTypes::kHit2, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kHit2, AnimType::kAnimationInsert, AnimationTypes::kNoAnim, actorIdxAttacked);
 			} else {
-				_engine->_animations->initAnim(AnimationTypes::kBigHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kBigHit, AnimType::kAnimationInsert, AnimationTypes::kNoAnim, actorIdxAttacked);
 			}
 		}
 
@@ -410,7 +413,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 			actor->_lifePoint = 0;
 		}
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationInsert, AnimationTypes::kNoAnim, actorIdxAttacked);
 	}
 }
 

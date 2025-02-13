@@ -328,7 +328,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
-					_engine->_actor->hitObj(actorIdx, a, ptrobj->_strengthOfHit, ptrobj->_beta + LBAAngles::ANGLE_180);
+					_engine->_actor->hitObj(actorIdx, a, ptrobj->_hitForce, ptrobj->_beta + LBAAngles::ANGLE_180);
 					ptrobj->_workFlags.bIsHitting = 0;
 				}
 			}
