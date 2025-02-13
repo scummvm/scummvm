@@ -5240,6 +5240,11 @@ int main(void) { return 0; }
 EOF
 			cc_check -ObjC++ -lobjc && _tts=yes
 			;;
+		
+		emscripten)
+			# Emscripten has the "Web Speech API" available
+			_tts=yes
+			;;
 	esac
 fi
 echo "$_tts"
@@ -7089,6 +7094,10 @@ else
 		;;
 	darwin*)
 		echo "osx"
+		_tts=yes
+		;;
+	emscripten)
+		echo "Web Speech API"
 		_tts=yes
 		;;
 	*)
