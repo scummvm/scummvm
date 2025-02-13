@@ -286,16 +286,15 @@ void menu_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags) {
 	guiMenu *newMenu;
 	Buffer *tempBuff, drawSpriteBuff;
-	DrawRequest			spriteDrawReq;
+	DrawRequest spriteDrawReq;
 
 	// Verify params
 	if (!backgroundSprite) {
 		return nullptr;
 	}
 
-	if ((newMenu = (guiMenu *)mem_alloc(sizeof(guiMenu), "gui menu")) == nullptr) {
-		return nullptr;
-	}
+	newMenu = new guiMenu();
+
 	newMenu->menuBuffer = new GrBuff(backgroundSprite->w, backgroundSprite->h);
 	newMenu->itemList = nullptr;
 	newMenu->cb_return = nullptr;
@@ -364,7 +363,7 @@ void menu_Destroy(guiMenu *myMenu) {
 	myItem = myMenu->itemList;
 	while (myItem) {
 		myMenu->itemList = myItem->next;
-		(myItem->destroy)((void *)myItem);
+		(myItem->destroy)(myItem);
 		myItem = myMenu->itemList;
 	}
 
@@ -372,7 +371,7 @@ void menu_Destroy(guiMenu *myMenu) {
 	delete myMenu->menuBuffer;
 
 	// Destroy the menu
-	mem_free((void *)myMenu);
+	delete myMenu;
 }
 
 void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc) {
@@ -574,7 +573,7 @@ void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 
 	// Destroy the item;
 	if (myItem->destroy) {
-		myItem->destroy((void *)myItem);
+		myItem->destroy(myItem);
 	}
 }
 
@@ -595,7 +594,7 @@ void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	}
 
 	// Draw myItem
-	(myItem->redraw)(myItem, (void *)myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+	(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
 
 	// Update the video
 	myScreen = vmng_screen_find((void *)myItem->myMenu, &status);

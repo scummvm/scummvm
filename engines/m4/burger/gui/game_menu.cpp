@@ -282,36 +282,29 @@ void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
 }
 
 
-void item_Destroy(void *theItem) {
-	menuItem *myItem = (menuItem *)theItem;
-
+void item_Destroy(menuItem *theItem) {
 	// Verify params
-	if (!myItem) {
+	if (!theItem) {
 		return;
 	}
-	if (myItem->background) {
-		delete myItem->background;
+	if (theItem->background) {
+		delete theItem->background;
 	}
 
-	if (myItem->itemInfo) {
-		mem_free((void *)myItem->itemInfo);
-	}
-	mem_free((void *)myItem);
+	delete theItem;
 }
 
 
 //-------------------------------    MESSAGE MENU ITEM    ---------------------------------//
 
 
-void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
+void menu_DrawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
+	if (!myItem || !myMenu) {
 		return;
 	}
 
@@ -369,9 +362,8 @@ void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) 
 }
 
 
-menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent) {
-	menuItem *newItem;
-	menuItemMsg *msgInfo;
+menuItemMsg *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent) {
+	menuItemMsg *newItem;
 	ScreenContext *myScreen;
 	int32 status;
 
@@ -381,9 +373,7 @@ menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int
 	}
 
 	// Allocate a new one
-	if ((newItem = (menuItem *)mem_alloc(sizeof(menuItem), "gui menu item")) == nullptr) {
-		return nullptr;
-	}
+	newItem = new menuItemMsg();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -393,7 +383,7 @@ menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int
 	}
 	myMenu->itemList = newItem;
 
-	newItem->myMenu = (void *)myMenu;
+	newItem->myMenu = myMenu;
 	newItem->tag = tag;
 	newItem->x1 = x;
 	newItem->y1 = y;
@@ -409,20 +399,15 @@ menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int
 		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
 	}
 
-	if ((msgInfo = (menuItemMsg *)mem_alloc(sizeof(menuItemMsg), "menu item message")) == nullptr) {
-		return nullptr;
-	}
-	newItem->itemInfo = (void *)msgInfo;
-
-	newItem->redraw = menu_DrawMsg;
-	newItem->destroy = item_Destroy;
+	newItem->redraw = (DrawFunction)menu_DrawMsg;
+	newItem->destroy = (DestroyFunction)item_Destroy;
 	newItem->itemEventHandler = nullptr;
 
 	// Draw the message in now
-	(newItem->redraw)(newItem, (void *)myMenu, x, y, 0, 0);
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find((void *)myMenu, &status);
+	myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -455,17 +440,14 @@ enum button_types {
 };
 
 
-void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemButton *myButton = nullptr;
+void menu_DrawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
 	char tempStr[32];
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
+	if (!myItem || !myMenu) {
 		return;
 	}
 
@@ -480,12 +462,10 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		}
 	}
 
-	// Get the button info and select the sprite
-	myButton = (menuItemButton *)myItem->itemInfo;
-
-	switch (myButton->buttonType) {
+	// Select the sprite
+	switch (myItem->buttonType) {
 	case BTN_TYPE_GM_GENERIC:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[GM_BUTTON_NORM];
 			break;
@@ -503,7 +483,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_SAVE:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_SAVE_BTN_NORM];
 			break;
@@ -521,7 +501,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_LOAD:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_LOAD_BTN_NORM];
 			break;
@@ -539,7 +519,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_TEXT:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_OVER:
 			font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
 			// Gr_font_set_color(TEXT_COLOR_OVER);
@@ -565,7 +545,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_CANCEL:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_CANCEL_BTN_NORM];
 			break;
@@ -583,7 +563,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_OM_DONE:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[OM_DONE_BTN_NORM];
 			break;
@@ -601,7 +581,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_OM_CANCEL:
-		switch (myButton->itemFlags) {
+		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[OM_CANCEL_BTN_NORM];
 			break;
@@ -635,13 +615,13 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 	gui_DrawSprite(mySprite, myBuff, x, y);
 
 	// If the button is a textbutton, write in the text
-	if ((myButton->buttonType == BTN_TYPE_SL_TEXT) && (myButton->prompt)) {
+	if ((myItem->buttonType == BTN_TYPE_SL_TEXT) && (myItem->prompt)) {
 		// Write in the special tag
 		Common::sprintf_s(tempStr, 32, "%02d", myItem->tag - 1000 + _GM(firstSlotIndex));
 
 		gr_font_set(_GM(menuFont));
 		gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
-		gr_font_write(myBuff, myButton->prompt, x + 26, y + 1, 0, -1);
+		gr_font_write(myBuff, myItem->prompt, x + 26, y + 1, 0, -1);
 	}
 
 	// Release the menu buffer
@@ -649,9 +629,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 }
 
 
-bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemButton *myButton;
+bool button_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status;
@@ -660,16 +638,15 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 	menuItem *tempItem;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem) {
 		return false;
 	}
-	myButton = (menuItemButton *)myItem->itemInfo;
 
 	if (!(eventType == EVENT_MOUSE)) {
 		return false;
 	}
 
-	if (myButton->itemFlags == BTN_STATE_GREY) {
+	if (myItem->itemFlags == BTN_STATE_GREY) {
 		return false;
 	}
 
@@ -681,13 +658,13 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 	case _ME_L_click:
 	case _ME_doubleclick:
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			myButton->itemFlags = BTN_STATE_PRESS;
-			*currItem = theItem;
+			myItem->itemFlags = BTN_STATE_PRESS;
+			*currItem = myItem;
 			redrawItem = true;
 		} else {
 			*currItem = nullptr;
-			if (myButton->itemFlags != BTN_STATE_NORM) {
-				myButton->itemFlags = BTN_STATE_NORM;
+			if (myItem->itemFlags != BTN_STATE_NORM) {
+				myItem->itemFlags = BTN_STATE_NORM;
 				redrawItem = true;
 			}
 		}
@@ -699,13 +676,13 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 			return true;
 		}
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			if (myButton->itemFlags != BTN_STATE_PRESS) {
-				myButton->itemFlags = BTN_STATE_PRESS;
+			if (myItem->itemFlags != BTN_STATE_PRESS) {
+				myItem->itemFlags = BTN_STATE_PRESS;
 				redrawItem = true;
 			}
 		} else {
-			if (myButton->itemFlags != BTN_STATE_OVER) {
-				myButton->itemFlags = BTN_STATE_OVER;
+			if (myItem->itemFlags != BTN_STATE_OVER) {
+				myItem->itemFlags = BTN_STATE_OVER;
 				redrawItem = true;
 			}
 		}
@@ -717,13 +694,13 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 			if (*currItem) {
 				execCallback = true;
 			} else {
-				*currItem = theItem;
+				*currItem = myItem;
 			}
-			myButton->itemFlags = BTN_STATE_OVER;
+			myItem->itemFlags = BTN_STATE_OVER;
 			redrawItem = true;
 		} else {
 			*currItem = nullptr;
-			myButton->itemFlags = BTN_STATE_NORM;
+			myItem->itemFlags = BTN_STATE_NORM;
 			redrawItem = true;
 			handled = false;
 		}
@@ -731,15 +708,15 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 
 	case _ME_move:
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			*currItem = theItem;
-			if (myButton->itemFlags != BTN_STATE_OVER) {
-				myButton->itemFlags = BTN_STATE_OVER;
+			*currItem = myItem;
+			if (myItem->itemFlags != BTN_STATE_OVER) {
+				myItem->itemFlags = BTN_STATE_OVER;
 				redrawItem = true;
 			}
 		} else {
 			*currItem = nullptr;
-			if (myButton->itemFlags != BTN_STATE_NORM) {
-				myButton->itemFlags = BTN_STATE_NORM;
+			if (myItem->itemFlags != BTN_STATE_NORM) {
+				myItem->itemFlags = BTN_STATE_NORM;
 				redrawItem = true;
 				handled = false;
 			}
@@ -753,8 +730,8 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 
 	// See if we need to redraw the button
 	if (redrawItem) {
-		(myItem->redraw)((void *)myItem, (void *)myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if (myScreen && (status == SCRN_ACTIVE)) {
 			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
 				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
@@ -768,10 +745,10 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 		currTag = myItem->tag;
 		buttonClosesDialog = false;
 
-		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
+		(myItem->callback)((void *)myItem, myItem->myMenu);
 
 		status = 0;
-		myScreen = buttonClosesDialog ? nullptr : vmng_screen_find((void *)myItem->myMenu, &status);
+		myScreen = buttonClosesDialog ? nullptr : vmng_screen_find(myItem->myMenu, &status);
 
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
@@ -787,10 +764,9 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 }
 
 
-menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
+menuItemButton *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
 	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
-	menuItem *newItem;
-	menuItemButton *buttonInfo;
+	menuItemButton *newItem;
 	ScreenContext *myScreen;
 	int32 status;
 
@@ -800,9 +776,7 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 	}
 
 	// Allocate a new one
-	if ((newItem = (menuItem *)mem_alloc(sizeof(menuItem), "gui menu item")) == nullptr) {
-		return nullptr;
-	}
+	newItem = new menuItemButton();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -812,7 +786,7 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 	}
 	myMenu->itemList = newItem;
 
-	newItem->myMenu = (void *)myMenu;
+	newItem->myMenu = myMenu;
 	newItem->tag = tag;
 	newItem->x1 = x;
 	newItem->y1 = y;
@@ -828,31 +802,26 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
 	}
 
-	if ((buttonInfo = (menuItemButton *)mem_alloc(sizeof(menuItemButton), "menu item button")) == nullptr) {
-		return nullptr;
-	}
 	if (greyed) {
-		buttonInfo->itemFlags = BTN_STATE_GREY;
+		newItem->itemFlags = BTN_STATE_GREY;
 	} else {
-		buttonInfo->itemFlags = BTN_STATE_NORM;
+		newItem->itemFlags = BTN_STATE_NORM;
 	}
-	buttonInfo->buttonType = buttonType;
+	newItem->buttonType = buttonType;
 
 	// Note: prompt is not duplicated, therefore, make sure the name is stored in non-volatile memory
-	buttonInfo->prompt = prompt;
-	buttonInfo->specialTag = tag - 1000;
+	newItem->prompt = prompt;
+	newItem->specialTag = tag - 1000;
 
-	newItem->itemInfo = (void *)buttonInfo;
-
-	newItem->redraw = menu_DrawButton;
-	newItem->destroy = item_Destroy;
+	newItem->redraw = (DrawFunction)menu_DrawButton;
+	newItem->destroy = (DestroyFunction)item_Destroy;
 	newItem->itemEventHandler = i_handler;
 
 	// Draw the button in now
-	(newItem->redraw)(newItem, (void *)myMenu, x, y, 0, 0);
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find((void *)myMenu, &status);
+	myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -862,43 +831,31 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 }
 
 
-void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	menuItemButton *myButton;
-
+void menu_DisableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return;
-	}
 
-	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
-	}
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
+		myItem = (menuItemButton *)menu_GetItem(tag, myMenu);
+	if (!myItem)
 		return;
-	}
 
-	myButton = (menuItemButton *)myItem->itemInfo;
-	myButton->itemFlags = BTN_STATE_GREY;
+	myItem->itemFlags = BTN_STATE_GREY;
 }
 
 
-void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	menuItemButton *myButton;
-
+void menu_EnableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return;
-	}
 
-	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
-	}
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
+		myItem = (menuItemButton *)menu_GetItem(tag, myMenu);
+	if (!myItem)
 		return;
-	}
 
-	myButton = (menuItemButton *)myItem->itemInfo;
-	myButton->itemFlags = BTN_STATE_NORM;
+	myItem->itemFlags = BTN_STATE_NORM;
 }
 
 
@@ -911,18 +868,14 @@ enum {
 };
 
 
-void menu_DrawHSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemHSlider *mySlider = nullptr;
+void menu_DrawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
+	if (!myItem || !myMenu)
 		return;
-	}
 
 	// If the item is marked transparent, get the background buffer
 	if (myItem->transparent) {
@@ -948,8 +901,7 @@ void menu_DrawHSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 	}
 
 	// Get the slider info and select the thumb sprite
-	mySlider = (menuItemHSlider *)myItem->itemInfo;
-	switch (mySlider->itemFlags) {
+	switch (myItem->itemFlags) {
 	case H_THUMB_OVER:
 		mySprite = _GM(menuSprites)[OM_SLIDER_BTN_OVER];
 		break;
@@ -963,22 +915,20 @@ void menu_DrawHSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 	}
 
 	// Fill in everything left of the thumb with a hilite color
-	if (mySlider->thumbX > 2) {
+	if (myItem->thumbX > 2) {
 		gr_color_set(SLIDER_BAR_COLOR);
-		gr_buffer_rect_fill(myBuff, myItem->x1 + 3, myItem->y1 + 9, mySlider->thumbX, mySlider->thumbH - 18);
+		gr_buffer_rect_fill(myBuff, myItem->x1 + 3, myItem->y1 + 9, myItem->thumbX, myItem->thumbH - 18);
 	}
 
 	// Draw in the thumb
-	gui_DrawSprite(mySprite, myBuff, myItem->x1 + mySlider->thumbX, myItem->y1);
+	gui_DrawSprite(mySprite, myBuff, myItem->x1 + myItem->thumbX, myItem->y1);
 
 	// Release the menu buffer
 	myMenu->menuBuffer->release();
 }
 
 
-bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemHSlider *mySlider;
+bool hslider_Handler(menuItemHSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status;
@@ -987,10 +937,8 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	static int32 movingX;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
 		return false;
-	}
-	mySlider = (menuItemHSlider *)myItem->itemInfo;
 
 	if (!(eventType == EVENT_MOUSE)) {
 		return false;
@@ -1003,17 +951,16 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	switch (event) {
 	case _ME_L_click:
 	case _ME_doubleclick:
-		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= mySlider->thumbX) &&
-			(x - myItem->x1 <= mySlider->thumbX + mySlider->thumbW - 1)) {
-			//				  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
-			mySlider->itemFlags = H_THUMB_PRESS;
+		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+				(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			myItem->itemFlags = H_THUMB_PRESS;
 			movingFlag = true;
 			movingX = x;
-			*currItem = theItem;
+			*currItem = myItem;
 			redrawItem = true;
 		} else {
 			*currItem = nullptr;
-			mySlider->itemFlags = 0;
+			myItem->itemFlags = 0;
 			redrawItem = true;
 		}
 		break;
@@ -1025,27 +972,27 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 		}
 		if (movingFlag) {
 			if (x < movingX) {
-				deltaSlide = imath_min(mySlider->thumbX, movingX - x);
+				deltaSlide = imath_min(myItem->thumbX, movingX - x);
 				if (deltaSlide > 0) {
-					mySlider->thumbX -= deltaSlide;
+					myItem->thumbX -= deltaSlide;
 					redrawItem = true;
-					mySlider->percent = mySlider->thumbX * 100 / mySlider->maxThumbX;
+					myItem->percent = myItem->thumbX * 100 / myItem->maxThumbX;
 					execCallback = true;
 				}
 			} else if (x > movingX) {
-				deltaSlide = imath_min(mySlider->maxThumbX - mySlider->thumbX, x - movingX);
+				deltaSlide = imath_min(myItem->maxThumbX - myItem->thumbX, x - movingX);
 				if (deltaSlide > 0) {
-					mySlider->thumbX += deltaSlide;
+					myItem->thumbX += deltaSlide;
 					redrawItem = true;
-					mySlider->percent = mySlider->thumbX * 100 / mySlider->maxThumbX;
+					myItem->percent = myItem->thumbX * 100 / myItem->maxThumbX;
 					execCallback = true;
 				}
 			}
 			movingX = x;
-			if (movingX < (mySlider->thumbX + myItem->x1)) {
-				movingX = mySlider->thumbX + myItem->x1;
-			} else if (movingX > (mySlider->thumbX + mySlider->thumbW - 1 + myItem->x1)) {
-				movingX = mySlider->thumbX + mySlider->thumbW - 1 + myItem->x1;
+			if (movingX < (myItem->thumbX + myItem->x1)) {
+				movingX = myItem->thumbX + myItem->x1;
+			} else if (movingX > (myItem->thumbX + myItem->thumbW - 1 + myItem->x1)) {
+				movingX = myItem->thumbX + myItem->thumbW - 1 + myItem->x1;
 			}
 		} else {
 			*currItem = nullptr;
@@ -1058,12 +1005,12 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 			return true;
 		}
 		movingFlag = false;
-		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= mySlider->thumbX) &&
-			(x - myItem->x1 <= mySlider->thumbX + mySlider->thumbW - 1)) {
-			mySlider->itemFlags = H_THUMB_OVER;
-			*currItem = theItem;
+		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+			(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			myItem->itemFlags = H_THUMB_OVER;
+			*currItem = myItem;
 		} else {
-			mySlider->itemFlags = H_THUMB_NORM;
+			myItem->itemFlags = H_THUMB_NORM;
 			*currItem = nullptr;
 		}
 		redrawItem = true;
@@ -1071,16 +1018,16 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 		break;
 
 	case _ME_move:
-		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= mySlider->thumbX) &&
-			(x - myItem->x1 <= mySlider->thumbX + mySlider->thumbW - 1)) {
-			if (mySlider->itemFlags != H_THUMB_OVER) {
-				mySlider->itemFlags = H_THUMB_OVER;
-				*currItem = theItem;
+		if (menu_CursorInsideItem(myItem, x, y) && (x - myItem->x1 >= myItem->thumbX) &&
+			(x - myItem->x1 <= myItem->thumbX + myItem->thumbW - 1)) {
+			if (myItem->itemFlags != H_THUMB_OVER) {
+				myItem->itemFlags = H_THUMB_OVER;
+				*currItem = myItem;
 				redrawItem = true;
 			}
 		} else {
-			if (mySlider->itemFlags != H_THUMB_NORM) {
-				mySlider->itemFlags = H_THUMB_NORM;
+			if (myItem->itemFlags != H_THUMB_NORM) {
+				myItem->itemFlags = H_THUMB_NORM;
 				*currItem = nullptr;
 				redrawItem = true;
 				handled = false;
@@ -1095,8 +1042,8 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 
 	// See if we need to redraw the hslider
 	if (redrawItem) {
-		(myItem->redraw)((void *)myItem, (void *)myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if (myScreen && (status == SCRN_ACTIVE)) {
 			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
 				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
@@ -1105,8 +1052,8 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
-		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		}
@@ -1116,10 +1063,9 @@ bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 }
 
 
-menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent, CALLBACK callback, bool transparent) {
-	menuItem *newItem;
-	menuItemHSlider *sliderInfo;
+	menuItemHSlider *newItem;
 	ScreenContext *myScreen;
 	int32 status;
 
@@ -1129,9 +1075,7 @@ menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	}
 
 	// Allocate a new one
-	if ((newItem = (menuItem *)mem_alloc(sizeof(menuItem), "gui menu item")) == nullptr) {
-		return nullptr;
-	}
+	newItem = new menuItemHSlider();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1141,7 +1085,7 @@ menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	}
 	myMenu->itemList = newItem;
 
-	newItem->myMenu = (void *)myMenu;
+	newItem->myMenu = myMenu;
 	newItem->tag = tag;
 	newItem->x1 = x;
 	newItem->y1 = y;
@@ -1157,16 +1101,11 @@ menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
 	}
 
-	// Create a new slider
-	if ((sliderInfo = (menuItemHSlider *)mem_alloc(sizeof(menuItemHSlider), "menu item hslider")) == nullptr) {
-		return nullptr;
-	}
-
 	// Intialize the new slider
-	sliderInfo->itemFlags = H_THUMB_NORM;
-	sliderInfo->thumbW = _GM(menuSprites)[OM_SLIDER_BTN_NORM]->w;
-	sliderInfo->thumbH = _GM(menuSprites)[OM_SLIDER_BTN_NORM]->h;
-	sliderInfo->maxThumbX = w - _GM(menuSprites)[OM_SLIDER_BTN_NORM]->w;
+	newItem->itemFlags = H_THUMB_NORM;
+	newItem->thumbW = _GM(menuSprites)[OM_SLIDER_BTN_NORM]->w;
+	newItem->thumbH = _GM(menuSprites)[OM_SLIDER_BTN_NORM]->h;
+	newItem->maxThumbX = w - _GM(menuSprites)[OM_SLIDER_BTN_NORM]->w;
 
 	if (initPercent < 0) {
 		initPercent = 0;
@@ -1175,20 +1114,18 @@ menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	}
 
 	// Calculate the initial thumbX
-	sliderInfo->percent = initPercent;
-	sliderInfo->thumbX = initPercent * sliderInfo->maxThumbX / 100;
+	newItem->percent = initPercent;
+	newItem->thumbX = initPercent * newItem->maxThumbX / 100;
 
-	newItem->itemInfo = (void *)sliderInfo;
-
-	newItem->redraw = menu_DrawHSlider;
-	newItem->destroy = item_Destroy;
-	newItem->itemEventHandler = hslider_Handler;
+	newItem->redraw = (DrawFunction)menu_DrawHSlider;
+	newItem->destroy = (DestroyFunction)item_Destroy;
+	newItem->itemEventHandler = (ItemHandlerFunction)hslider_Handler;
 
 	// Draw the slider in now
-	(newItem->redraw)(newItem, (void *)myMenu, x, y, 0, 0);
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find((void *)myMenu, &status);
+	myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1215,10 +1152,7 @@ enum {
 };
 
 
-void menu_DrawVSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemVSlider *myVSlider = nullptr;
+void menu_DrawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *upSprite = nullptr;
@@ -1227,9 +1161,8 @@ void menu_DrawVSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 	Sprite *vbarSprite = nullptr;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
+	if (!myItem || !myMenu)
 		return;
-	}
 
 	// If the item is marked transparent, get the background buffer
 	if (myItem->transparent) {
@@ -1241,8 +1174,6 @@ void menu_DrawVSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 			return;
 		}
 	}
-
-	myVSlider = (menuItemVSlider *)myItem->itemInfo;
 
 	// Get the menu buffer
 	myBuff = myMenu->menuBuffer->get_buffer();
@@ -1262,24 +1193,24 @@ void menu_DrawVSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 	thumbSprite = _GM(menuSprites)[SL_SLIDER_BTN_NORM];
 	downSprite = _GM(menuSprites)[SL_DOWN_BTN_NORM];
 
-	if ((myVSlider->itemFlags & VS_STATUS) == VS_GREY) {
+	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
 		upSprite = _GM(menuSprites)[SL_UP_BTN_GREY];
 		thumbSprite = nullptr;
 		downSprite = _GM(menuSprites)[SL_DOWN_BTN_GREY];
-	} else if ((myVSlider->itemFlags & VS_STATUS) == VS_OVER) {
-		if ((myVSlider->itemFlags & VS_COMPONENT) == VS_UP) {
+	} else if ((myItem->itemFlags & VS_STATUS) == VS_OVER) {
+		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
 			upSprite = _GM(menuSprites)[SL_UP_BTN_OVER];
-		} else if ((myVSlider->itemFlags & VS_COMPONENT) == VS_THUMB) {
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
 			thumbSprite = _GM(menuSprites)[SL_SLIDER_BTN_OVER];
-		} else if ((myVSlider->itemFlags & VS_COMPONENT) == VS_DOWN) {
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
 			downSprite = _GM(menuSprites)[SL_DOWN_BTN_OVER];
 		}
-	} else if ((myVSlider->itemFlags & VS_STATUS) == VS_PRESS) {
-		if ((myVSlider->itemFlags & VS_COMPONENT) == VS_UP) {
+	} else if ((myItem->itemFlags & VS_STATUS) == VS_PRESS) {
+		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
 			upSprite = _GM(menuSprites)[SL_UP_BTN_PRESS];
-		} else if ((myVSlider->itemFlags & VS_COMPONENT) == VS_THUMB) {
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
 			thumbSprite = _GM(menuSprites)[SL_SLIDER_BTN_PRESS];
-		} else if ((myVSlider->itemFlags & VS_COMPONENT) == VS_DOWN) {
+		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
 			downSprite = _GM(menuSprites)[SL_DOWN_BTN_PRESS];
 		}
 	}
@@ -1287,7 +1218,7 @@ void menu_DrawVSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 	// Draw the sprite comonents
 	gui_DrawSprite(vbarSprite, myBuff, x, y + upSprite->h);
 	gui_DrawSprite(upSprite, myBuff, x, y);
-	gui_DrawSprite(thumbSprite, myBuff, x, y + myVSlider->thumbY);
+	gui_DrawSprite(thumbSprite, myBuff, x, y + myItem->thumbY);
 	gui_DrawSprite(downSprite, myBuff, x, y + upSprite->h + vbarSprite->h);
 
 	// Release the menu buffer
@@ -1308,9 +1239,7 @@ int32 vslider_WhereIsCursor(menuItemVSlider *myVSlider, int32 y) {
 	}
 }
 
-bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemVSlider *myVSlider;
+bool vslider_Handler(menuItemVSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	bool redrawItem, execCallback, handled;
 	int32 tempFlags;
 	ScreenContext *myScreen;
@@ -1322,16 +1251,13 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	static int32 callbackTime;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
 		return false;
-	}
 
-	if (!(eventType == EVENT_MOUSE)) {
+	if (!(eventType == EVENT_MOUSE))
 		return false;
-	}
 
-	myVSlider = (menuItemVSlider *)myItem->itemInfo;
-	if ((myVSlider->itemFlags & VS_STATUS) == VS_GREY) {
+	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
 		*currItem = nullptr;
 		return false;
 	}
@@ -1346,22 +1272,22 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	case _ME_doubleclick:
 		if (menu_CursorInsideItem(myItem, x, y)) {
 			//				  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
-			*currItem = theItem;
-			tempFlags = vslider_WhereIsCursor(myVSlider, y - myItem->y1);
+			*currItem = myItem;
+			tempFlags = vslider_WhereIsCursor(myItem, y - myItem->y1);
 			if (tempFlags == VS_THUMB) {
 				movingFlag = true;
 				movingY = y;
 			}
 			if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
-				myVSlider->itemFlags = tempFlags + VS_NORM;
+				myItem->itemFlags = tempFlags + VS_NORM;
 			} else {
-				myVSlider->itemFlags = tempFlags + VS_PRESS;
+				myItem->itemFlags = tempFlags + VS_PRESS;
 				redrawItem = true;
 			}
 			execCallback = true;
 		} else {
 			*currItem = nullptr;
-			myVSlider->itemFlags = VS_NORM;
+			myItem->itemFlags = VS_NORM;
 			redrawItem = true;
 		}
 		break;
@@ -1373,52 +1299,52 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 		}
 		if (movingFlag) {
 			if (y < movingY) {
-				deltaSlide = imath_min(myVSlider->thumbY - myVSlider->minThumbY, movingY - y);
+				deltaSlide = imath_min(myItem->thumbY - myItem->minThumbY, movingY - y);
 				if (deltaSlide > 0) {
-					myVSlider->thumbY -= deltaSlide;
-					myVSlider->percent = ((myVSlider->thumbY - myVSlider->minThumbY) * 100) /
-						(myVSlider->maxThumbY - myVSlider->minThumbY);
+					myItem->thumbY -= deltaSlide;
+					myItem->percent = ((myItem->thumbY - myItem->minThumbY) * 100) /
+						(myItem->maxThumbY - myItem->minThumbY);
 					redrawItem = true;
 					execCallback = true;
 				}
 			} else if (y > movingY) {
-				deltaSlide = imath_min(myVSlider->maxThumbY - myVSlider->thumbY, y - movingY);
+				deltaSlide = imath_min(myItem->maxThumbY - myItem->thumbY, y - movingY);
 				if (deltaSlide > 0) {
-					myVSlider->thumbY += deltaSlide;
-					myVSlider->percent = ((myVSlider->thumbY - myVSlider->minThumbY) * 100) /
-						(myVSlider->maxThumbY - myVSlider->minThumbY);
+					myItem->thumbY += deltaSlide;
+					myItem->percent = ((myItem->thumbY - myItem->minThumbY) * 100) /
+						(myItem->maxThumbY - myItem->minThumbY);
 					redrawItem = true;
 					execCallback = true;
 				}
 			}
 			movingY = y;
-			if (movingY < (myVSlider->thumbY + myItem->y1)) {
-				movingY = myVSlider->thumbY + myItem->y1;
-			} else if (movingY > (myVSlider->thumbY + myVSlider->thumbH - 1 + myItem->y1)) {
-				movingY = myVSlider->thumbY + myVSlider->thumbH - 1 + myItem->y1;
+			if (movingY < (myItem->thumbY + myItem->y1)) {
+				movingY = myItem->thumbY + myItem->y1;
+			} else if (movingY > (myItem->thumbY + myItem->thumbH - 1 + myItem->y1)) {
+				movingY = myItem->thumbY + myItem->thumbH - 1 + myItem->y1;
 			}
 		} else {
 			if (menu_CursorInsideItem(myItem, x, y)) {
-				tempFlags = vslider_WhereIsCursor(myVSlider, y - myItem->y1);
-				if ((myVSlider->itemFlags & VS_COMPONENT) == tempFlags) {
+				tempFlags = vslider_WhereIsCursor(myItem, y - myItem->y1);
+				if ((myItem->itemFlags & VS_COMPONENT) == tempFlags) {
 					if ((tempFlags != VS_PAGE_UP) && (tempFlags != VS_PAGE_DOWN) &&
-						((myVSlider->itemFlags & VS_STATUS) != VS_PRESS)) {
-						myVSlider->itemFlags = tempFlags + VS_PRESS;
+						((myItem->itemFlags & VS_STATUS) != VS_PRESS)) {
+						myItem->itemFlags = tempFlags + VS_PRESS;
 						redrawItem = true;
 					}
 					if (currTime - callbackTime > 6) {
 						execCallback = true;
 					}
 				} else {
-					if ((myVSlider->itemFlags & VS_STATUS) != VS_OVER) {
-						myVSlider->itemFlags = (myVSlider->itemFlags & VS_COMPONENT) + VS_OVER;
+					if ((myItem->itemFlags & VS_STATUS) != VS_OVER) {
+						myItem->itemFlags = (myItem->itemFlags & VS_COMPONENT) + VS_OVER;
 						redrawItem = true;
 					}
 				}
 				execCallback = true;
 			} else {
-				if ((myVSlider->itemFlags & VS_STATUS) != VS_OVER) {
-					myVSlider->itemFlags = (myVSlider->itemFlags & VS_COMPONENT) + VS_OVER;
+				if ((myItem->itemFlags & VS_STATUS) != VS_OVER) {
+					myItem->itemFlags = (myItem->itemFlags & VS_COMPONENT) + VS_OVER;
 					redrawItem = true;
 				}
 			}
@@ -1429,15 +1355,15 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	case _ME_doubleclick_release:
 		movingFlag = false;
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			tempFlags = vslider_WhereIsCursor(myVSlider, y - myItem->y1);
+			tempFlags = vslider_WhereIsCursor(myItem, y - myItem->y1);
 			if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
-				myVSlider->itemFlags = VS_NORM;
+				myItem->itemFlags = VS_NORM;
 			} else {
-				myVSlider->itemFlags = tempFlags + VS_OVER;
-				*currItem = theItem;
+				myItem->itemFlags = tempFlags + VS_OVER;
+				*currItem = myItem;
 			}
 		} else {
-			myVSlider->itemFlags = VS_NORM;
+			myItem->itemFlags = VS_NORM;
 			*currItem = nullptr;
 		}
 		redrawItem = true;
@@ -1448,20 +1374,20 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 
 	case _ME_move:
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			*currItem = theItem;
-			tempFlags = vslider_WhereIsCursor(myVSlider, y - myItem->y1);
-			if ((myVSlider->itemFlags & VS_COMPONENT) != tempFlags) {
+			*currItem = myItem;
+			tempFlags = vslider_WhereIsCursor(myItem, y - myItem->y1);
+			if ((myItem->itemFlags & VS_COMPONENT) != tempFlags) {
 				if ((tempFlags == VS_PAGE_UP) || (tempFlags == VS_PAGE_DOWN)) {
-					myVSlider->itemFlags = VS_NORM;
+					myItem->itemFlags = VS_NORM;
 				} else {
-					myVSlider->itemFlags = tempFlags + VS_OVER;
+					myItem->itemFlags = tempFlags + VS_OVER;
 				}
 				redrawItem = true;
 			}
 		} else {
 			*currItem = nullptr;
-			if (myVSlider->itemFlags != VS_NORM) {
-				myVSlider->itemFlags = VS_NORM;
+			if (myItem->itemFlags != VS_NORM) {
+				myItem->itemFlags = VS_NORM;
 				redrawItem = true;
 				handled = false;
 			}
@@ -1474,8 +1400,8 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 			return true;
 		}
 		if (menu_CursorInsideItem(myItem, x, y)) {
-			tempFlags = vslider_WhereIsCursor(myVSlider, y - myItem->y1);
-			if ((myVSlider->itemFlags & VS_COMPONENT) == tempFlags) {
+			tempFlags = vslider_WhereIsCursor(myItem, y - myItem->y1);
+			if ((myItem->itemFlags & VS_COMPONENT) == tempFlags) {
 				if (currTime - callbackTime > 6) {
 					execCallback = true;
 				}
@@ -1486,8 +1412,8 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 
 	// See if we need to redraw the vslider
 	if (redrawItem) {
-		(myItem->redraw)((void *)myItem, (void *)myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if (myScreen && (status == SCRN_ACTIVE)) {
 			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
 				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
@@ -1497,8 +1423,8 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
 		callbackTime = currTime;
-		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		}
@@ -1508,23 +1434,18 @@ bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32
 }
 
 
-menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
-	int32 initPercent, CALLBACK callback, bool transparent) {
-
-	menuItem *newItem;
-	menuItemVSlider *vsliderInfo;
+menuItemVSlider *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+		int32 initPercent, CALLBACK callback, bool transparent) {
+	menuItemVSlider *newItem;
 	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return nullptr;
-	}
 
 	// Allocate a new one
-	if ((newItem = (menuItem *)mem_alloc(sizeof(menuItem), "gui menu item")) == nullptr) {
-		return nullptr;
-	}
+	newItem = new menuItemVSlider();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1534,7 +1455,7 @@ menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	}
 	myMenu->itemList = newItem;
 
-	newItem->myMenu = (void *)myMenu;
+	newItem->myMenu = myMenu;
 	newItem->tag = tag;
 	newItem->x1 = x;
 	newItem->y1 = y;
@@ -1550,34 +1471,29 @@ menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
 	}
 
-	if ((vsliderInfo = (menuItemVSlider *)mem_alloc(sizeof(menuItemVSlider), "menu item vslider")) == nullptr) {
-		return nullptr;
-	}
-	vsliderInfo->itemFlags = VS_NORM;
+	newItem->itemFlags = VS_NORM;
 
-	vsliderInfo->thumbW = _GM(menuSprites)[SL_SLIDER_BTN_NORM]->w;
-	vsliderInfo->thumbH = _GM(menuSprites)[SL_SLIDER_BTN_NORM]->h;
+	newItem->thumbW = _GM(menuSprites)[SL_SLIDER_BTN_NORM]->w;
+	newItem->thumbH = _GM(menuSprites)[SL_SLIDER_BTN_NORM]->h;
 
-	vsliderInfo->minThumbY = _GM(menuSprites)[SL_UP_BTN_NORM]->h + 1;
-	vsliderInfo->maxThumbY = _GM(menuSprites)[SL_UP_BTN_NORM]->h + _GM(menuSprites)[SL_SCROLL_BAR]->h
+	newItem->minThumbY = _GM(menuSprites)[SL_UP_BTN_NORM]->h + 1;
+	newItem->maxThumbY = _GM(menuSprites)[SL_UP_BTN_NORM]->h + _GM(menuSprites)[SL_SCROLL_BAR]->h
 		- _GM(menuSprites)[SL_SLIDER_BTN_NORM]->h - 1;
 
 	// Calculate the initial thumbY
-	vsliderInfo->percent = imath_max(imath_min(initPercent, 100), 0);
-	vsliderInfo->thumbY = vsliderInfo->minThumbY +
-		((vsliderInfo->percent * (vsliderInfo->maxThumbY - vsliderInfo->minThumbY)) / 100);
+	newItem->percent = imath_max(imath_min(initPercent, 100), 0);
+	newItem->thumbY = newItem->minThumbY +
+		((newItem->percent * (newItem->maxThumbY - newItem->minThumbY)) / 100);
 
-	newItem->itemInfo = (void *)vsliderInfo;
-
-	newItem->redraw = menu_DrawVSlider;
-	newItem->destroy = item_Destroy;
-	newItem->itemEventHandler = vslider_Handler;
+	newItem->redraw = (DrawFunction)menu_DrawVSlider;
+	newItem->destroy = (DestroyFunction)item_Destroy;
+	newItem->itemEventHandler = (ItemHandlerFunction)vslider_Handler;
 
 	// Draw the vslider in now
-	(newItem->redraw)(newItem, (void *)myMenu, x, y, 0, 0);
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find((void *)myMenu, &status);
+	myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1587,43 +1503,31 @@ menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 }
 
 
-void menu_DisableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	menuItemVSlider *mySlider;
-
+void menu_DisableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return;
-	}
 
-	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
-	}
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
+		myItem = (menuItemVSlider *)menu_GetItem(tag, myMenu);
+	if (!myItem)
 		return;
-	}
 
-	mySlider = (menuItemVSlider *)myItem->itemInfo;
-	mySlider->itemFlags = VS_GREY;
+	myItem->itemFlags = VS_GREY;
 }
 
 
-void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	menuItemVSlider *mySlider;
-
+void menu_EnableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return;
-	}
 
-	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
-	}
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
+		myItem = (menuItemVSlider *)menu_GetItem(tag, myMenu);
+	if (!myItem)
 		return;
-	}
 
-	mySlider = (menuItemVSlider *)myItem->itemInfo;
-	mySlider->itemFlags = VS_NORM;
+	myItem->itemFlags = VS_NORM;
 }
 
 
@@ -1635,9 +1539,7 @@ enum {
 	TF_GREY = 2
 };
 
-void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
+void menu_DrawTextField(menuItemTextField *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	menuItemTextField *myText = nullptr;
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
@@ -1646,9 +1548,8 @@ void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, i
 	int32 cursorX;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
+	if (!myItem || !myMenu)
 		return;
-	}
 
 	// If the item is marked transparent, get the background buffer
 	if (myItem->transparent) {
@@ -1661,9 +1562,7 @@ void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, i
 		}
 	}
 
-	// Get the button info and select the sprite
-	myText = (menuItemTextField *)myItem->itemInfo;
-
+	// Select the sprite
 	switch (myText->itemFlags) {
 	case TF_GREY:
 		mySprite = _GM(menuSprites)[SL_LINE_NORM];
@@ -1721,21 +1620,17 @@ void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, i
 }
 
 
-bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemTextField *myText;
+bool textfield_Handler(menuItemTextField *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status, temp;
 	char tempStr[80], *tempPtr;
 
 	// Verify params
-	if ((!myItem) || (!myItem->itemInfo)) {
+	if (!myItem)
 		return false;
-	}
-	myText = (menuItemTextField *)myItem->itemInfo;
 
-	if (myText->itemFlags == TF_GREY) {
+	if (myItem->itemFlags == TF_GREY) {
 		return false;
 	}
 
@@ -1749,7 +1644,7 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 		case _ME_doubleclick:
 			_GM(deleteSaveDesc) = false;
 			if (menu_CursorInsideItem(myItem, x, y)) {
-				*currItem = theItem;
+				*currItem = myItem;
 			}
 			break;
 
@@ -1764,10 +1659,10 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 			}
 			*currItem = nullptr;
 			if (menu_CursorInsideItem(myItem, x, y)) {
-				if (myText->itemFlags == TF_OVER) {
-					temp = strlen(myText->prompt);
+				if (myItem->itemFlags == TF_OVER) {
+					temp = strlen(myItem->prompt);
 					if (temp > 0) {
-						Common::strcpy_s(tempStr, myText->prompt);
+						Common::strcpy_s(tempStr, myItem->prompt);
 						tempPtr = &tempStr[temp];
 						gr_font_set(_GM(menuFont));
 						temp = gr_font_string_width(tempStr, -1);
@@ -1775,7 +1670,7 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 							*--tempPtr = '\0';
 							temp = gr_font_string_width(tempStr, -1);
 						}
-						myText->cursor = &myText->prompt[tempPtr - &tempStr[0]];
+						myItem->cursor = &myItem->prompt[tempPtr - &tempStr[0]];
 						redrawItem = true;
 					}
 				} else if (event == _ME_doubleclick_release) {
@@ -1789,7 +1684,7 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 		case _ME_doubleclick_hold:
 			break;
 		}
-	} else if ((eventType == EVENT_KEY) && (myText->itemFlags == TF_OVER)) {
+	} else if ((eventType == EVENT_KEY) && (myItem->itemFlags == TF_OVER)) {
 		switch (event) {
 		case KEY_RETURN:
 			_GM(deleteSaveDesc) = false;
@@ -1798,53 +1693,53 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 		case KEY_HOME:
 			_GM(deleteSaveDesc) = false;
-			myText->cursor = &myText->prompt[0];
+			myItem->cursor = &myItem->prompt[0];
 			redrawItem = true;
 			break;
 
 		case KEY_END:
 			_GM(deleteSaveDesc) = false;
-			myText->cursor = myText->promptEnd;
+			myItem->cursor = myItem->promptEnd;
 			redrawItem = true;
 			break;
 
 		case KEY_LEFT:
 			_GM(deleteSaveDesc) = false;
-			if (myText->cursor > &myText->prompt[0]) {
-				myText->cursor--;
+			if (myItem->cursor > &myItem->prompt[0]) {
+				myItem->cursor--;
 				redrawItem = true;
 			}
 			break;
 
 		case KEY_RIGHT:
 			_GM(deleteSaveDesc) = false;
-			if (myText->cursor < myText->promptEnd) {
-				myText->cursor++;
+			if (myItem->cursor < myItem->promptEnd) {
+				myItem->cursor++;
 				redrawItem = true;
 			}
 			break;
 
 		case KEY_DELETE:
 			if (_GM(deleteSaveDesc)) {
-				myText->prompt[0] = '\0';
-				myText->promptEnd = &myText->prompt[0];
-				myText->cursor = myText->promptEnd;
+				myItem->prompt[0] = '\0';
+				myItem->promptEnd = &myItem->prompt[0];
+				myItem->cursor = myItem->promptEnd;
 				redrawItem = true;
-			} else if (myText->cursor < myText->promptEnd) {
-				Common::strcpy_s(tempStr, (char *)(myText->cursor + 1));
-				Common::strcpy_s(myText->cursor, 80, tempStr);
-				myText->promptEnd--;
+			} else if (myItem->cursor < myItem->promptEnd) {
+				Common::strcpy_s(tempStr, (char *)(myItem->cursor + 1));
+				Common::strcpy_s(myItem->cursor, 80, tempStr);
+				myItem->promptEnd--;
 				redrawItem = true;
 			}
 			break;
 
 		case KEY_BACKSP:
 			_GM(deleteSaveDesc) = false;
-			if (myText->cursor > &myText->prompt[0]) {
-				Common::strcpy_s(tempStr, myText->cursor);
-				myText->promptEnd--;
-				myText->cursor--;
-				Common::strcpy_s(myText->cursor, 80, tempStr);
+			if (myItem->cursor > &myItem->prompt[0]) {
+				Common::strcpy_s(tempStr, myItem->cursor);
+				myItem->promptEnd--;
+				myItem->cursor--;
+				Common::strcpy_s(myItem->cursor, 80, tempStr);
 				redrawItem = true;
 			}
 			break;
@@ -1852,17 +1747,17 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 		default:
 			_GM(deleteSaveDesc) = false;
 			gr_font_set(_GM(menuFont));
-			temp = gr_font_string_width(&myText->prompt[0], -1);
-			if ((strlen(&myText->prompt[0]) < 79) && (temp < myText->pixWidth - 12) && (event >= 32) && (event <= 127)) {
-				if (myText->cursor < myText->promptEnd) {
-					Common::strcpy_s(tempStr, (char *)myText->cursor);
-					Common::sprintf_s(myText->cursor, 80, "%c%s", (char)event, tempStr);
+			temp = gr_font_string_width(&myItem->prompt[0], -1);
+			if ((strlen(&myItem->prompt[0]) < 79) && (temp < myItem->pixWidth - 12) && (event >= 32) && (event <= 127)) {
+				if (myItem->cursor < myItem->promptEnd) {
+					Common::strcpy_s(tempStr, (char *)myItem->cursor);
+					Common::sprintf_s(myItem->cursor, 80, "%c%s", (char)event, tempStr);
 				} else {
-					*myText->cursor = (char)event;
-					*(myText->cursor + 1) = '\0';
+					*myItem->cursor = (char)event;
+					*(myItem->cursor + 1) = '\0';
 				}
-				myText->cursor++;
-				myText->promptEnd++;
+				myItem->cursor++;
+				myItem->promptEnd++;
 
 				redrawItem = true;
 			}
@@ -1878,8 +1773,8 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 	// See if we need to redraw the button
 	if (redrawItem) {
-		(myItem->redraw)((void *)myItem, (void *)myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 		if (myScreen && (status == SCRN_ACTIVE)) {
 			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
 				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
@@ -1888,8 +1783,8 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
-		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
-		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+		(myItem->callback)((void *)myItem, myItem->myMenu);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
 
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
@@ -1900,22 +1795,19 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 }
 
 
-menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
+menuItemTextField *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
 		const char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
-	menuItem *newItem;
+	menuItemTextField *newItem;
 	menuItemTextField *textInfo;
 	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
-	if (!myMenu) {
+	if (!myMenu)
 		return nullptr;
-	}
 
 	// Allocate a new one
-	if ((newItem = (menuItem *)mem_alloc(sizeof(menuItem), "gui menu item")) == nullptr) {
-		return nullptr;
-	}
+	newItem = new menuItemTextField();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1925,7 +1817,7 @@ menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 
 	}
 	myMenu->itemList = newItem;
 
-	newItem->myMenu = (void *)myMenu;
+	newItem->myMenu = myMenu;
 	newItem->tag = tag;
 	newItem->x1 = x;
 	newItem->y1 = y;
@@ -1957,17 +1849,15 @@ menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 
 	}
 	textInfo->cursor = textInfo->promptEnd;
 
-	newItem->itemInfo = (void *)textInfo;
-
-	newItem->redraw = menu_DrawTextField;
-	newItem->destroy = item_Destroy;
-	newItem->itemEventHandler = textfield_Handler;
+	newItem->redraw = (DrawFunction)menu_DrawTextField;
+	newItem->destroy = (DestroyFunction)item_Destroy;
+	newItem->itemEventHandler = (ItemHandlerFunction)textfield_Handler;
 
 	// Draw the vslider in now
-	(newItem->redraw)(newItem, (void *)myMenu, x, y, 0, 0);
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find((void *)myMenu, &status);
+	myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -2175,15 +2065,10 @@ void cb_Options_Game_Done(void *, void *) {
 	CreateGameMenuMain(nullptr);
 }
 
-void cb_Options_Digi(void *theItem, void *theMenu) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemHSlider *mySlider;
-
-	mySlider = (menuItemHSlider *)myItem->itemInfo;
+void cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
 	// Set the digi volume
-	digi_set_overall_volume(mySlider->percent);
-	term_message("digi volume: %d", mySlider->percent);
+	digi_set_overall_volume(myItem->percent);
+	term_message("digi volume: %d", myItem->percent);
 
 	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
@@ -2191,15 +2076,9 @@ void cb_Options_Digi(void *theItem, void *theMenu) {
 
 }
 
-void cb_Options_Digestability(void *theItem, void *theMenu) {
-	menuItem *myItem = (menuItem *)theItem;
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemHSlider *mySlider;
-
-	mySlider = (menuItemHSlider *)myItem->itemInfo;
-	// Set the midi volume
-	term_message("digestability: %d", mySlider->percent);
-	_G(flags)[digestability] = mySlider->percent;
+void cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu) {
+	term_message("digestability: %d", myItem->percent);
+	_G(flags)[digestability] = myItem->percent;
 
 	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
@@ -2207,10 +2086,8 @@ void cb_Options_Digestability(void *theItem, void *theMenu) {
 }
 
 void DestroyOptionsMenu(void) {
-
-	if (!_GM(opMenu)) {
+	if (!_GM(opMenu))
 		return;
-	}
 
 	// Remove the screen from the gui
 	vmng_screen_dispose(_GM(opMenu));
@@ -2244,9 +2121,11 @@ void CreateOptionsMenu(RGB8 *myPalette) {
 
 	menu_ButtonAdd(_GM(opMenu), OM_TAG_CANCEL, OM_CANCEL_X, OM_CANCEL_Y, OM_CANCEL_W, OM_CANCEL_H, cb_Options_Game_Cancel, BTN_TYPE_OM_CANCEL);
 	menu_ButtonAdd(_GM(opMenu), OM_TAG_DONE, OM_DONE_X, OM_DONE_Y, OM_DONE_W, OM_DONE_H, cb_Options_Game_Done, BTN_TYPE_OM_DONE, true);
-	menu_HSliderAdd(_GM(opMenu), OM_TAG_DIGI, OM_DIGI_X, OM_DIGI_Y, OM_DIGI_W, OM_DIGI_H, digi_get_overall_volume(), cb_Options_Digi, true);
+	menu_HSliderAdd(_GM(opMenu), OM_TAG_DIGI, OM_DIGI_X, OM_DIGI_Y, OM_DIGI_W, OM_DIGI_H, digi_get_overall_volume(),
+		(CALLBACK)cb_Options_Digi, true);
 	menu_HSliderAdd(_GM(opMenu), OM_TAG_DIGESTABILITY, OM_DIGESTABILITY_X, OM_DIGESTABILITY_Y,
-		OM_DIGESTABILITY_W, OM_DIGESTABILITY_H, _G(flags)[digestability], cb_Options_Digestability, true);
+		OM_DIGESTABILITY_W, OM_DIGESTABILITY_H, _G(flags)[digestability],
+		(CALLBACK)cb_Options_Digestability, true);
 
 	// Remember the values of the items in case the user cancels
 	_GM(remember_digi_volume) = digi_get_overall_volume();
@@ -2263,7 +2142,7 @@ void CreateOptionsMenu(RGB8 *myPalette) {
 //--------------------------------   ERR MENU   --------------------------------------//
 //------------------------------------------------------------------------------------//
 
-void DestroyErrMenu(void);
+void DestroyErrMenu();
 
 void cb_Err_Done(void *, void *) {
 	// Destroy the game menu
@@ -2345,8 +2224,8 @@ void CreateErrMenu(RGB8 *myPalette) {
 //--------------------------------   SAVE / LOAD MENU   -----------------------------------//
 
 void DestroySaveLoadMenu(bool saveMenu);
-void cb_SaveLoad_Slot(void *theItem, void *theMenu);
-bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+void cb_SaveLoad_Slot(menuItemButton *theItem, guiMenu *myMenu);
+bool load_Handler(menuItemButton *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 
 
 bool LoadThumbNail(int32 slotNum) {
@@ -2424,7 +2303,6 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 
 
 void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
-	menuItem *tempItem;
 	menuItemButton *myButton;
 	int32 i;
 
@@ -2437,63 +2315,57 @@ void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
 
 	// Change the prompt and special tag of each of the slot buttons
 	for (i = 0; i < MAX_SLOTS_SHOWN; i++) {
-		tempItem = menu_GetItem(i + 1001, myMenu);
-		myButton = (menuItemButton *)tempItem->itemInfo;
+		myButton = (menuItemButton *)menu_GetItem(i + 1001, myMenu);
+
 		myButton->prompt = _GM(slotTitles)[firstSlot + i];
 		if (_GM(currMenuIsSave) || _GM(slotInUse)[firstSlot + i]) {
 			myButton->itemFlags = BTN_STATE_NORM;
 		} else {
 			myButton->itemFlags = BTN_STATE_GREY;
 		}
+
 		myButton->specialTag = firstSlot + i + 1;
-		menu_ItemRefresh(tempItem, i + 1001, myMenu);
+		menu_ItemRefresh(myButton, i + 1001, myMenu);
 	}
 }
 
 
-void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemVSlider *mySlider;
+void cb_SaveLoad_VSlider(menuItemVSlider *myItem, guiMenu *myMenu) {
 	bool redraw;
 
-	if ((!myMenu) || (!myItem) || (!myItem->itemInfo)) {
+	if (!myMenu || !myItem)
 		return;
-	}
 
-	// Get my slider
-	mySlider = (menuItemVSlider *)myItem->itemInfo;
+	if ((myItem->itemFlags & VS_COMPONENT) != VS_THUMB) {
 
-	if ((mySlider->itemFlags & VS_COMPONENT) != VS_THUMB) {
-
-		redraw = false;
-		switch (mySlider->itemFlags & VS_COMPONENT) {
+		redraw = (DrawFunction)false;
+		switch (myItem->itemFlags & VS_COMPONENT) {
 
 		case VS_UP:
 			if (_GM(firstSlotIndex) > 0) {
 				_GM(firstSlotIndex)--;
-				redraw = true;
+				redraw = (DrawFunction)true;
 			}
 			break;
 
 		case VS_PAGE_UP:
 			if (_GM(firstSlotIndex) > 0) {
 				_GM(firstSlotIndex) = imath_max(_GM(firstSlotIndex) - 10, 0);
-				redraw = true;
+				redraw = (DrawFunction)true;
 			}
 			break;
 
 		case VS_PAGE_DOWN:
 			if (_GM(firstSlotIndex) < 89) {
 				_GM(firstSlotIndex) = imath_min(_GM(firstSlotIndex) + 10, 89);
-				redraw = true;
+				redraw = (DrawFunction)true;
 			}
 			break;
 
 		case VS_DOWN:
 			if (_GM(firstSlotIndex) < 89) {
 				_GM(firstSlotIndex)++;
-				redraw = true;
+				redraw = (DrawFunction)true;
 			}
 			break;
 		}
@@ -2503,11 +2375,11 @@ void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
 			SetFirstSlot(_GM(firstSlotIndex), myMenu);
 
 			// Calculate the new percent
-			mySlider->percent = (_GM(firstSlotIndex) * 100) / 89;
+			myItem->percent = (_GM(firstSlotIndex) * 100) / 89;
 
 			// Calculate the new thumbY
-			mySlider->thumbY = mySlider->minThumbY +
-				((mySlider->percent * (mySlider->maxThumbY - mySlider->minThumbY)) / 100);
+			myItem->thumbY = myItem->minThumbY +
+				((myItem->percent * (myItem->maxThumbY - myItem->minThumbY)) / 100);
 
 			// Redraw the slider
 			menu_ItemRefresh(myItem, -1, myMenu);
@@ -2516,15 +2388,13 @@ void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
 
 	// Else the callback came from the thumb - set the _GM(firstSlotIndex) based on the slider percent
 	else {
-		_GM(firstSlotIndex) = (mySlider->percent * 89) / 100;
+		_GM(firstSlotIndex) = (myItem->percent * 89) / 100;
 		SetFirstSlot(_GM(firstSlotIndex), myMenu);
 	}
 }
 
 
-void cb_SaveLoad_Save(void *, void *theMenu) {
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItem *myTextItem;
+void cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 	menuItemTextField *myText;
 	bool saveGameFailed;
 
@@ -2534,11 +2404,10 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 	}
 
 	// First make the textfield NORM
-	myTextItem = menu_GetItem(2000, myMenu);
-	if ((!myTextItem) || (!myTextItem->itemInfo)) {
+	myText = (menuItemTextField *)menu_GetItem(2000, myMenu);
+	if (myText)
 		return;
-	}
-	myText = (menuItemTextField *)myTextItem->itemInfo;
+
 	myText->itemFlags = TF_NORM;
 
 	// Set the vars
@@ -2569,7 +2438,7 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 }
 
 
-void cb_SaveLoad_Load(void *, void *theMenu) {
+void cb_SaveLoad_Load(menuItemButton *, guiMenu *) {
 	KernelTriggerType oldMode;
 
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
@@ -2600,8 +2469,7 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 }
 
 
-void cb_SaveLoad_Cancel(void *, void *theMenu) {
-	guiMenu *myMenu = (guiMenu *)theMenu;
+void cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 	menuItem *myItem;
 	int32 i, x, y, w, h;
 
@@ -2628,10 +2496,12 @@ void cb_SaveLoad_Cancel(void *, void *theMenu) {
 		// Add the button back in
 		if (_GM(currMenuIsSave)) {
 			menu_ButtonAdd(myMenu, 1000 + _GM(slotSelected) - _GM(firstSlotIndex), x, y, w, h,
-				cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1], button_Handler);
+				(CALLBACK)cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1],
+				(ItemHandlerFunction)button_Handler);
 		} else {
 			menu_ButtonAdd(myMenu, 1000 + _GM(slotSelected) - _GM(firstSlotIndex), x, y, w, h,
-				cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1], load_Handler);
+				(CALLBACK)cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1],
+				(ItemHandlerFunction)load_Handler);
 
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
@@ -2676,21 +2546,16 @@ void cb_SaveLoad_Cancel(void *, void *theMenu) {
 }
 
 
-void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
-	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemButton *myButton;
+void cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 	int32 i, x, y, w, h;
 	char prompt[80];
 	int32 specialTag;
 
 	// Verify params
-	if ((!myMenu) || (!myItem) || (!myItem->itemInfo)) {
+	if (!myMenu || !myButton)
 		return;
-	}
 
 	// Get the button
-	myButton = (menuItemButton *)myItem->itemInfo;
 	Common::strcpy_s(prompt, 80, myButton->prompt);
 	specialTag = myButton->specialTag;
 
@@ -2700,31 +2565,31 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 
 	// Disable all other buttons
 	for (i = 1001; i <= 1010; i++) {
-		if (i != myItem->tag) {
+		if (i != myButton->tag) {
 			menu_DisableButton(nullptr, i, myMenu);
 			menu_ItemRefresh(nullptr, i, myMenu);
 		}
 	}
 
 	// Get the slot coords, and delete it
-	x = myItem->x1;
-	y = myItem->y1;
-	w = myItem->x2 - myItem->x1 + 1;
-	h = myItem->y2 - myItem->y1 + 1;
-	menu_ItemDelete(myItem, -1, myMenu);
+	x = myButton->x1;
+	y = myButton->y1;
+	w = myButton->x2 - myButton->x1 + 1;
+	h = myButton->y2 - myButton->y1 + 1;
+	menu_ItemDelete(myButton, -1, myMenu);
 
 	if (_GM(currMenuIsSave)) {
 		// Replace the current button with a textfield
 		if (!strcmp(prompt, "<empty>")) {
 			menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_OVER,
-				nullptr, specialTag, cb_SaveLoad_Save, true);
+				nullptr, specialTag, (CALLBACK)cb_SaveLoad_Save, true);
 		} else {
 			menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_OVER,
-				prompt, specialTag, cb_SaveLoad_Save, true);
+				prompt, specialTag, (CALLBACK)cb_SaveLoad_Save, true);
 		}
 	} else {
 		menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_NORM,
-			prompt, specialTag, cb_SaveLoad_Load, true);
+			prompt, specialTag, (CALLBACK)cb_SaveLoad_Load, true);
 	}
 
 	// Disable the slider
@@ -2759,13 +2624,11 @@ void InitializeSlotTables(void) {
 	}
 }
 
-bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	menuItem *myItem = (menuItem *)theItem;
-	menuItemButton *myButton;
+bool load_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	bool handled;
 
 	// Handle the event just like any other button
-	handled = button_Handler(theItem, eventType, event, x, y, currItem);
+	handled = button_Handler(myItem, eventType, event, x, y, currItem);
 
 	// If we've selected a slot, we want the thumbNail to remain on the menu permanently
 	if (_GM(slotSelected) >= 0) {
@@ -2777,16 +2640,14 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 		(event == _ME_doubleclick_drag) || (event == _ME_doubleclick_release))) {
 
 		// Get the button
-		if ((!myItem) || (!myItem->itemInfo)) {
+		if (!myItem)
 			return handled;
-		}
-		myButton = (menuItemButton *)myItem->itemInfo;
 
 		// This determines that we are over the button
-		if ((myButton->itemFlags == BTN_STATE_OVER) || (myButton->itemFlags == BTN_STATE_PRESS)) {
+		if ((myItem->itemFlags == BTN_STATE_OVER) || (myItem->itemFlags == BTN_STATE_PRESS)) {
 			// See if the current _GM(saveLoadThumbNail) is pointing to the correct sprite
-			if (_GM(saveLoadThumbNail) != _GM(thumbNails)[myButton->specialTag - 1]) {
-				_GM(saveLoadThumbNail) = _GM(thumbNails)[myButton->specialTag - 1];
+			if (_GM(saveLoadThumbNail) != _GM(thumbNails)[myItem->specialTag - 1]) {
+				_GM(saveLoadThumbNail) = _GM(thumbNails)[myItem->specialTag - 1];
 				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 			}
 		}
@@ -2810,6 +2671,7 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 			}
 		}
 	}
+
 	return handled;
 }
 
@@ -2880,34 +2742,34 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	if (_GM(currMenuIsSave)) {
 		menu_MsgAdd(_GM(slMenu), SL_TAG_SAVE_LABEL, SL_SAVE_LABEL_X, SL_SAVE_LABEL_Y, SL_SAVE_LABEL_W, SL_SAVE_LABEL_H);
 		menu_ButtonAdd(_GM(slMenu), SL_TAG_SAVE, SL_SAVE_X, SL_SAVE_Y, SL_SAVE_W, SL_SAVE_H,
-			cb_SaveLoad_Save, BTN_TYPE_SL_SAVE, true);
+			(CALLBACK)cb_SaveLoad_Save, BTN_TYPE_SL_SAVE, true);
 	} else {
 		menu_MsgAdd(_GM(slMenu), SL_TAG_LOAD_LABEL, SL_LOAD_LABEL_X, SL_LOAD_LABEL_Y, SL_LOAD_LABEL_W, SL_LOAD_LABEL_H);
 		menu_ButtonAdd(_GM(slMenu), SL_TAG_LOAD, SL_LOAD_X, SL_LOAD_Y, SL_LOAD_W, SL_LOAD_H,
-			cb_SaveLoad_Load, BTN_TYPE_SL_LOAD, true);
+			(CALLBACK)cb_SaveLoad_Load, BTN_TYPE_SL_LOAD, true);
 	}
 
 	menu_ButtonAdd(_GM(slMenu), SL_TAG_CANCEL, SL_CANCEL_X, SL_CANCEL_Y, SL_CANCEL_W, SL_CANCEL_H,
-		cb_SaveLoad_Cancel, BTN_TYPE_SL_CANCEL);
+		(CALLBACK)cb_SaveLoad_Cancel, BTN_TYPE_SL_CANCEL);
 
 	menu_VSliderAdd(_GM(slMenu), SL_TAG_VSLIDER, SL_SLIDER_X, SL_SLIDER_Y, SL_SLIDER_W, SL_SLIDER_H,
-		0, cb_SaveLoad_VSlider);
+		0, (CALLBACK)cb_SaveLoad_VSlider);
 
 	InitializeSlotTables();
 
 	if (_GM(currMenuIsSave)) {
 		buttonGreyed = false;
-		i_handler = button_Handler;
+		i_handler = (ItemHandlerFunction)button_Handler;
 	} else {
 		buttonGreyed = true;
-		i_handler = load_Handler;
+		i_handler = (ItemHandlerFunction)load_Handler;
 	}
 
 	for (int32 i = 0; i < MAX_SLOTS_SHOWN; i++) {
 		menu_ButtonAdd(_GM(slMenu), 1001 + i,
 			SL_SCROLL_FIELD_X, SL_SCROLL_FIELD_Y + i * SL_SCROLL_LINE_H,
 			SL_SCROLL_LINE_W, SL_SCROLL_LINE_H,
-			cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT,
+			(CALLBACK)cb_SaveLoad_Slot, BTN_TYPE_SL_TEXT,
 			buttonGreyed && (!_GM(slotInUse)[i]), true, _GM(slotTitles)[i], i_handler);
 	}
 
@@ -2928,11 +2790,11 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	if (_GM(currMenuIsSave)) {
 		//<return> - if a slot has been selected, saves the game
 		//<esc> - cancels and returns to the game menu
-		menu_Configure(_GM(slMenu), cb_SaveLoad_Save, cb_SaveLoad_Cancel);
+		menu_Configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Save, (CALLBACK)cb_SaveLoad_Cancel);
 	} else {
 		//<return> - if a slot has been selected, loads the selected game
 		//<esc> - cancels and returns to the game menu
-		menu_Configure(_GM(slMenu), cb_SaveLoad_Load, cb_SaveLoad_Cancel);
+		menu_Configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Load, (CALLBACK)cb_SaveLoad_Cancel);
 	}
 
 	vmng_screen_show((void *)_GM(slMenu));

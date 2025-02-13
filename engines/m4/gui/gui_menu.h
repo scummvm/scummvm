@@ -35,9 +35,12 @@ namespace GUI {
 #define LockMouseSprite mouse_lock_sprite
 #define UnlockMouseSprite mouse_unlock_sprite
 
-typedef bool (*ItemHandlerFunction)(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
-typedef void (*DrawFunction)(void *source, void *dest, int32 x1, int32 y1, int32 x2, int32 y2);
-typedef void (*DestroyFunction)(void *theItem);
+struct menuItem;
+struct guiMenu;
+
+typedef bool (*ItemHandlerFunction)(menuItem *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+typedef void (*DrawFunction)(void *source, guiMenu *dest, int32 x1, int32 y1, int32 x2, int32 y2);
+typedef void (*DestroyFunction)(menuItem *theItem);
 typedef M4CALLBACK CALLBACK;
 
 typedef M4sprite Sprite;
@@ -53,20 +56,19 @@ enum game_menu_sprites {
 	GM_TOTAL_SPRITES
 };
 
+struct guiMenu;
 
 struct menuItem {
 	menuItem *next;
 	menuItem *prev;
 
-	void *myMenu;
+	guiMenu *myMenu;
 	int32 tag;
 
 	int32 x1, y1, x2, y2;
 
 	bool transparent;
 	GrBuff *background;
-
-	void *itemInfo;
 
 	CALLBACK callback;
 	DrawFunction redraw;
@@ -75,11 +77,11 @@ struct menuItem {
 };
 
 
-struct menuItemMsg {
+struct menuItemMsg : public menuItem {
 	int32 itemFlags;
 };
 
-struct menuItemButton {
+struct menuItemButton : public menuItem {
 	int32 itemFlags;
 	int32 buttonType;
 	const char *prompt;
@@ -87,7 +89,7 @@ struct menuItemButton {
 	int32 specialTag;
 };
 
-struct menuItemHSlider {
+struct menuItemHSlider : public menuItem {
 	int32 itemFlags;
 
 	int32 thumbW, thumbH;
@@ -96,7 +98,7 @@ struct menuItemHSlider {
 	int32 percent;
 };
 
-struct menuItemVSlider {
+struct menuItemVSlider : public menuItem {
 	int32 itemFlags;
 
 	int32 thumbW, thumbH;
@@ -105,7 +107,7 @@ struct menuItemVSlider {
 	int32 percent;
 };
 
-struct menuItemTextField {
+struct menuItemTextField : public menuItem {
 	int32 itemFlags;
 
 	int32 specialTag;

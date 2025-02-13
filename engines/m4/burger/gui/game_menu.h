@@ -34,7 +34,11 @@ namespace Burger {
 namespace GUI {
 
 using M4::GUI::guiMenu;
-using M4::GUI::menuItem;
+using M4::GUI::menuItemButton;
+using M4::GUI::menuItemMsg;
+using M4::GUI::menuItemHSlider;
+using M4::GUI::menuItemVSlider;
+using M4::GUI::menuItemTextField;
 using M4::GUI::Sprite;
 using M4::GUI::CALLBACK;
 using M4::GUI::ItemHandlerFunction;
@@ -42,30 +46,30 @@ using M4::GUI::ItemHandlerFunction;
 // SPECIFIC ITEM FUNCTIONS
 
 // Messages
-menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent = false);
-void menu_DisableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
-void menu_EnableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
+extern menuItemMsg *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent = false);
+extern void menu_DisableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
+extern void menu_EnableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
 
 // Buttons
-bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
-menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
+bool button_Handler(menuItemButton *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+menuItemButton *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
 	int32 buttonType = 0, bool ghosted = false, bool transparent = false,
-	const char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
-void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
-void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
+	const char *prompt = nullptr, ItemHandlerFunction i_handler = (ItemHandlerFunction)button_Handler);
+void menu_DisableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
+void menu_EnableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
 
 // Horizontal sliders
-menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 // Vertical sliders
-menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+menuItemVSlider *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
-void menu_DisableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
-void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_DisableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
+void menu_EnableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu);
 
 // Textfields
-menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
+menuItemTextField *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
 	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 //GAME MENU FUNCTIONS
