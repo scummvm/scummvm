@@ -50,14 +50,6 @@ extern menuItemMsg *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, in
 extern void menu_DisableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
 extern void menu_EnableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
 
-// Buttons
-bool button_Handler(menuItemButton *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
-menuItemButton *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
-	int32 buttonType = 0, bool ghosted = false, bool transparent = false,
-	const char *prompt = nullptr, ItemHandlerFunction i_handler = (ItemHandlerFunction)button_Handler);
-void menu_DisableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
-void menu_EnableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
-
 // Horizontal sliders
 menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
@@ -83,43 +75,6 @@ extern void CreateF3LoadMenu(RGB8 *myPalette);
 void CreateLoadMenuFromMain(RGB8 *myPalette);
 void CreateGameMenuFromMain(RGB8 *myPalette);
 
-
-//======================================
-//
-//		gamemenu module defines
-//
-
-// 128 very light green
-// 129 light green
-// 130 medium green
-// 131 dark green
-// 133 light red
-// 136 red
-// 142 dark red
-// 186 purple
-// 206 dark grey
-// 236 very dark purple
-
-#define TEXT_COLOR_GREY_HILITE		192  
-#define TEXT_COLOR_GREY_FOREGROUND  210
-#define TEXT_COLOR_GREY_SHADOW		229  
-
-#define TEXT_COLOR_NORM_HILITE		3  
-#define TEXT_COLOR_NORM_FOREGROUND	2  
-#define TEXT_COLOR_NORM_SHADOW		1  
-
-#define TEXT_COLOR_OVER_HILITE		3  
-#define TEXT_COLOR_OVER_FOREGROUND	2  
-#define TEXT_COLOR_OVER_SHADOW		1
-
-#define TEXT_COLOR_PRESS_HILITE		3	 
-#define TEXT_COLOR_PRESS_FOREGROUND 2  		
-#define TEXT_COLOR_PRESS_SHADOW		1  
-
-#define SLIDER_BAR_COLOR	129
-
-
-
 //======================================
 //
 //		Game menu enums and defines
@@ -142,51 +97,6 @@ enum game_menu_button_tags {
 #define SAVE_LOAD_MENU_Y		 10
 #define SAVE_LOAD_MENU_W		344
 #define SAVE_LOAD_MENU_H		460
-
-enum save_load_menu_sprites {
-
-	SL_DIALOG_BOX,
-	SL_EMPTY_THUMB,
-
-	SL_SAVE_BTN_GREY,
-	SL_SAVE_BTN_NORM,
-	SL_SAVE_BTN_OVER,
-	SL_SAVE_BTN_PRESS,
-
-	SL_LOAD_BTN_GREY,
-	SL_LOAD_BTN_NORM,
-	SL_LOAD_BTN_OVER,
-	SL_LOAD_BTN_PRESS,
-
-	SL_CANCEL_BTN_NORM,
-	SL_CANCEL_BTN_OVER,
-	SL_CANCEL_BTN_PRESS,
-
-	SL_UP_BTN_GREY,
-	SL_UP_BTN_NORM,
-	SL_UP_BTN_OVER,
-	SL_UP_BTN_PRESS,
-
-	SL_DOWN_BTN_GREY,
-	SL_DOWN_BTN_NORM,
-	SL_DOWN_BTN_OVER,
-	SL_DOWN_BTN_PRESS,
-
-	SL_SAVE_LABEL,
-	SL_LOAD_LABEL,
-
-	SL_SLIDER_BTN_NORM,
-	SL_SLIDER_BTN_OVER,
-	SL_SLIDER_BTN_PRESS,
-
-	SL_LINE_NORM,
-	SL_LINE_OVER,
-	SL_LINE_PRESS,
-
-	SL_SCROLL_BAR,
-
-	SL_TOTAL_SPRITES
-};
 
 enum save_load_menu_item_tags {
 	SL_TAG_SAVE = 100,
@@ -252,29 +162,8 @@ enum save_load_menu_item_tags {
 #define SL_THUMBNAIL_H		   162
 
 /**
- * Options menu enums and defines
+ * Options menu defines
  */
-enum options_menu_sprites {
-
-	OM_DIALOG_BOX,
-
-	OM_SLIDER_BTN_NORM,
-	OM_SLIDER_BTN_OVER,
-	OM_SLIDER_BTN_PRESS,
-
-	OM_SLIDER_BAR,
-
-	OM_DONE_BTN_GREY,
-	OM_DONE_BTN_NORM,
-	OM_DONE_BTN_OVER,
-	OM_DONE_BTN_PRESS,
-
-	OM_CANCEL_BTN_NORM,
-	OM_CANCEL_BTN_OVER,
-	OM_CANCEL_BTN_PRESS,
-
-	OM_TOTAL_SPRITES
-};
 
 #define OPTIONS_MENU_X		175
 #define OPTIONS_MENU_Y		100

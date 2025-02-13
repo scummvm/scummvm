@@ -29,6 +29,78 @@
 #include "m4/gui/gui_univ.h"
 
 namespace M4 {
+
+namespace Burger {
+namespace GUI {
+
+enum save_load_menu_sprites {
+	SL_DIALOG_BOX,
+	SL_EMPTY_THUMB,
+
+	SL_SAVE_BTN_GREY,
+	SL_SAVE_BTN_NORM,
+	SL_SAVE_BTN_OVER,
+	SL_SAVE_BTN_PRESS,
+
+	SL_LOAD_BTN_GREY,
+	SL_LOAD_BTN_NORM,
+	SL_LOAD_BTN_OVER,
+	SL_LOAD_BTN_PRESS,
+
+	SL_CANCEL_BTN_NORM,
+	SL_CANCEL_BTN_OVER,
+	SL_CANCEL_BTN_PRESS,
+
+	SL_UP_BTN_GREY,
+	SL_UP_BTN_NORM,
+	SL_UP_BTN_OVER,
+	SL_UP_BTN_PRESS,
+
+	SL_DOWN_BTN_GREY,
+	SL_DOWN_BTN_NORM,
+	SL_DOWN_BTN_OVER,
+	SL_DOWN_BTN_PRESS,
+
+	SL_SAVE_LABEL,
+	SL_LOAD_LABEL,
+
+	SL_SLIDER_BTN_NORM,
+	SL_SLIDER_BTN_OVER,
+	SL_SLIDER_BTN_PRESS,
+
+	SL_LINE_NORM,
+	SL_LINE_OVER,
+	SL_LINE_PRESS,
+
+	SL_SCROLL_BAR,
+
+	SL_TOTAL_SPRITES
+};
+
+enum options_menu_sprites {
+	OM_DIALOG_BOX,
+
+	OM_SLIDER_BTN_NORM,
+	OM_SLIDER_BTN_OVER,
+	OM_SLIDER_BTN_PRESS,
+
+	OM_SLIDER_BAR,
+
+	OM_DONE_BTN_GREY,
+	OM_DONE_BTN_NORM,
+	OM_DONE_BTN_OVER,
+	OM_DONE_BTN_PRESS,
+
+	OM_CANCEL_BTN_NORM,
+	OM_CANCEL_BTN_OVER,
+	OM_CANCEL_BTN_PRESS,
+
+	OM_TOTAL_SPRITES
+};
+
+} // namespace GUI
+} // namespace Burger
+
 namespace GUI {
 
 #define _GM(X) ::M4::g_vars->_menu.X
@@ -59,64 +131,119 @@ enum game_menu_sprites {
 struct guiMenu;
 
 struct menuItem {
-	menuItem *next;
-	menuItem *prev;
+	enum {
+		TEXT_COLOR_GREY_HILITE		= 192,
+		TEXT_COLOR_GREY_FOREGROUND  = 210,
+		TEXT_COLOR_GREY_SHADOW		= 229,
 
-	guiMenu *myMenu;
-	int32 tag;
+		TEXT_COLOR_NORM_HILITE		= 3,
+		TEXT_COLOR_NORM_FOREGROUND	= 2,
+		TEXT_COLOR_NORM_SHADOW		= 1,
 
-	int32 x1, y1, x2, y2;
+		TEXT_COLOR_OVER_HILITE		= 3,
+		TEXT_COLOR_OVER_FOREGROUND	= 2,
+		TEXT_COLOR_OVER_SHADOW		= 1,
 
-	bool transparent;
-	GrBuff *background;
+		TEXT_COLOR_PRESS_HILITE		= 3,
+		TEXT_COLOR_PRESS_FOREGROUND = 2,
+		TEXT_COLOR_PRESS_SHADOW		= 1,
 
-	CALLBACK callback;
-	DrawFunction redraw;
-	DestroyFunction destroy;
-	ItemHandlerFunction	itemEventHandler;
+		SLIDER_BAR_COLOR			= 129
+	};
+
+	menuItem *next = nullptr;
+	menuItem *prev = nullptr;
+
+	guiMenu *myMenu = nullptr;
+	int32 tag = 0;
+
+	int32 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+
+	bool transparent = false;
+	GrBuff *background = nullptr;
+
+	CALLBACK callback = nullptr;
+	DrawFunction redraw = nullptr;
+	DestroyFunction destroy = nullptr;
+	ItemHandlerFunction	itemEventHandler = nullptr;
+
+	static void destroyItem(menuItem *theItem);
+	static bool cursorInsideItem(menuItem *myItem, int32 cursorX, int32 cursorY);
 };
 
 
 struct menuItemMsg : public menuItem {
-	int32 itemFlags;
+	int32 itemFlags = 0;
 };
 
 struct menuItemButton : public menuItem {
-	int32 itemFlags;
-	int32 buttonType;
-	const char *prompt;
-	menuItem *assocItem;
-	int32 specialTag;
+private:
+	static void drawButton(menuItemButton *myItem, guiMenu *myMenu,
+		int32 x, int32 y, int32, int32);
+
+public:
+	enum button_states {
+		BTN_STATE_NORM = 0,
+		BTN_STATE_OVER = 1,
+		BTN_STATE_PRESS = 2,
+		BTN_STATE_GREY = 3
+	};
+
+	enum button_types {
+		BTN_TYPE_GM_GENERIC,
+		BTN_TYPE_SL_SAVE,
+		BTN_TYPE_SL_LOAD,
+		BTN_TYPE_SL_CANCEL,
+		BTN_TYPE_SL_TEXT,
+		BTN_TYPE_OM_DONE,
+		BTN_TYPE_OM_CANCEL,
+
+		BTN_TYPE_TOTAL_NUMBER
+	};
+
+	int32 itemFlags = 0;
+	int32 buttonType = 0;
+	const char *prompt = nullptr;
+	menuItem *assocItem = nullptr;
+	int32 specialTag = 0;
+
+	static menuItemButton *buttonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
+		int32 buttonType = 0, bool ghosted = false, bool transparent = false,
+		const char *prompt = nullptr, ItemHandlerFunction i_handler = (ItemHandlerFunction)handler);
+	static void disableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
+	static void enableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu);
+	static bool handler(menuItemButton *theItem, int32 eventType, int32 event,
+		int32 x, int32 y, void **currItem);
 };
 
 struct menuItemHSlider : public menuItem {
-	int32 itemFlags;
+	int32 itemFlags = 0;
 
-	int32 thumbW, thumbH;
-	int32 thumbX, maxThumbX;
+	int32 thumbW = 0, thumbH = 0;
+	int32 thumbX = 0, maxThumbX = 0;
 
-	int32 percent;
+	int32 percent = 0;
 };
 
 struct menuItemVSlider : public menuItem {
-	int32 itemFlags;
+	int32 itemFlags = 0;
 
-	int32 thumbW, thumbH;
-	int32 thumbY, minThumbY, maxThumbY;
+	int32 thumbW = 0, thumbH = 0;
+	int32 thumbY = 0, minThumbY = 0, maxThumbY = 0;
 
-	int32 percent;
+	int32 percent = 0;
 };
 
 struct menuItemTextField : public menuItem {
-	int32 itemFlags;
+	int32 itemFlags = 0;
 
-	int32 specialTag;
-	int32 pixWidth;
+	int32 specialTag = 0;
+	int32 pixWidth = 0;
 
-	char prompt[80];
-	char *promptEnd;
+	char prompt[80] = { 0 };
+	char *promptEnd = nullptr;
 
-	char *cursor;
+	char *cursor = nullptr;
 };
 
 struct guiMenu {
@@ -125,11 +252,11 @@ private:
 	static bool eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen);
 
 public:
-	GrBuff *menuBuffer;
-	menuItem *itemList;
-	CALLBACK cb_return;
-	CALLBACK cb_esc;
-	EventHandler menuEventHandler;
+	GrBuff *menuBuffer = nullptr;
+	menuItem *itemList = nullptr;
+	CALLBACK cb_return = nullptr;
+	CALLBACK cb_esc = nullptr;
+	EventHandler menuEventHandler = nullptr;
 
 	static bool initialize(RGB8 *myPalette);
 	static void shutdown(bool fadeToColor);
@@ -148,6 +275,7 @@ public:
 struct MenuGlobals {
 	//GLOBAL VARS
 	bool menuSystemInitialized = false;
+	bool buttonClosesDialog = false;
 	bool interfaceWasVisible = false;
 	RGB8 *menuPalette = nullptr;
 	bool dumpedCodes = false;
@@ -197,6 +325,8 @@ struct MenuGlobals {
 		_thumbnail.free();
 	}
 };
+
+extern void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y);
 
 //======================================
 //

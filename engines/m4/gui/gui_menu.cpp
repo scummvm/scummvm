@@ -42,6 +42,42 @@
 namespace M4 {
 namespace GUI {
 
+void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
+	DrawRequest spriteDrawReq;
+	Buffer drawSpriteBuff;
+
+	if ((!mySprite) || (!myBuff)) {
+		return;
+	}
+
+	if (mySprite->sourceHandle) {
+		HLock(mySprite->sourceHandle);
+		mySprite->data = (uint8 *)((intptr) * (mySprite->sourceHandle) + mySprite->sourceOffset);
+
+		drawSpriteBuff.w = mySprite->w;
+		drawSpriteBuff.stride = mySprite->w;
+		drawSpriteBuff.h = mySprite->h;
+		drawSpriteBuff.encoding = (mySprite->encoding) & (uint8)0x7f;
+		drawSpriteBuff.data = mySprite->data;
+
+		spriteDrawReq.Src = &drawSpriteBuff;
+		spriteDrawReq.Dest = myBuff;
+		spriteDrawReq.x = x;
+		spriteDrawReq.y = y;
+		spriteDrawReq.scaleX = 100;
+		spriteDrawReq.scaleY = 100;
+		spriteDrawReq.srcDepth = 0;
+		spriteDrawReq.depthCode = nullptr;
+		spriteDrawReq.Pal = nullptr;
+		spriteDrawReq.ICT = nullptr;
+
+		gr_sprite_draw(&spriteDrawReq);
+
+		// Unlock the handle
+		HUnLock(mySprite->sourceHandle);
+	}
+}
+
 bool guiMenu::initialize(RGB8 *myPalette) {
 	int32 i, memAvail;
 
@@ -599,9 +635,6 @@ void guiMenu::itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	}
 }
 
-
-//-----------------------------    GAME MENU FUNCTIONS    ---------------------------------//
-
 bool guiMenu::loadSprites(const char *series, int32 numSprites) {
 	int32 i;
 
@@ -659,6 +692,444 @@ void guiMenu::unloadSprites() {
 	mem_free((void *)_GM(menuSprites));
 	_GM(menuSprites) = nullptr;
 	_GM(spriteCount) = 0;
+}
+
+//-----------------------------  GENERAL ITEM FUNCTIONS    ---------------------------------//
+
+void menuItem::destroyItem(menuItem *theItem) {
+	// Verify params
+	if (!theItem) {
+		return;
+	}
+	if (theItem->background) {
+		delete theItem->background;
+	}
+
+	delete theItem;
+}
+
+bool menuItem::cursorInsideItem(menuItem *myItem, int32 cursorX, int32 cursorY) {
+	if ((cursorX >= myItem->x1) && (cursorX <= myItem->x2) && (cursorY >= myItem->y1) && (cursorY <= myItem->y2)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//-----------------------------  BUTTON FUNCTIONS    ---------------------------------//
+
+void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
+	Buffer *myBuff = nullptr;
+	Buffer *backgroundBuff = nullptr;
+	Sprite *mySprite = nullptr;
+	char tempStr[32];
+
+	// Verify params
+	if (!myItem || !myMenu) {
+		return;
+	}
+
+	// If the item is marked transparent, get the background buffer
+	if (myItem->transparent) {
+		if (!myItem->background) {
+			return;
+		}
+		backgroundBuff = myItem->background->get_buffer();
+		if (!backgroundBuff) {
+			return;
+		}
+	}
+
+	// Select the sprite
+	switch (myItem->buttonType) {
+	case BTN_TYPE_GM_GENERIC:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[GM_BUTTON_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[GM_BUTTON_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[GM_BUTTON_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[GM_BUTTON_GREY];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_SL_SAVE:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_GREY];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_SL_LOAD:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_GREY];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_SL_TEXT:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_OVER:
+			font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
+			// Gr_font_set_color(TEXT_COLOR_OVER);
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			font_set_colors(TEXT_COLOR_PRESS_SHADOW, TEXT_COLOR_PRESS_FOREGROUND, TEXT_COLOR_PRESS_HILITE);
+			// Gr_font_set_color(TEXT_COLOR_PRESS);
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_PRESS];
+			break;
+		case BTN_STATE_GREY:
+			font_set_colors(TEXT_COLOR_GREY_SHADOW, TEXT_COLOR_GREY_FOREGROUND, TEXT_COLOR_GREY_HILITE);
+			// Gr_font_set_color(TEXT_COLOR_GREY);
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+			break;
+		default:
+		case BTN_STATE_NORM:
+			font_set_colors(TEXT_COLOR_NORM_SHADOW, TEXT_COLOR_NORM_FOREGROUND, TEXT_COLOR_NORM_HILITE);
+			// Gr_font_set_color(TEXT_COLOR_NORM);
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_SL_CANCEL:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_NORM];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_OM_DONE:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_GREY];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_OM_CANCEL:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_NORM:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_NORM];
+			break;
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_PRESS];
+			break;
+		default:
+		case BTN_STATE_GREY:
+			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_NORM];
+			break;
+		}
+		break;
+	}
+
+	// Get the menu buffer
+	myBuff = myMenu->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	// If the item is tagged as transparent, we need to fill in it's background behind it
+	if (backgroundBuff) {
+		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
+		myItem->background->release();
+	}
+
+	// Draw the button sprite in
+	gui_DrawSprite(mySprite, myBuff, x, y);
+
+	// If the button is a textbutton, write in the text
+	if ((myItem->buttonType == BTN_TYPE_SL_TEXT) && (myItem->prompt)) {
+		// Write in the special tag
+		Common::sprintf_s(tempStr, 32, "%02d", myItem->tag - 1000 + _GM(firstSlotIndex));
+
+		gr_font_set(_GM(menuFont));
+		gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
+		gr_font_write(myBuff, myItem->prompt, x + 26, y + 1, 0, -1);
+	}
+
+	// Release the menu buffer
+	myMenu->menuBuffer->release();
+}
+
+bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
+	bool redrawItem, execCallback, handled;
+	ScreenContext *myScreen;
+	int32 status;
+	int32 currTag;
+	guiMenu *currMenu;
+	menuItem *tempItem;
+
+	// Verify params
+	if (!myItem) {
+		return false;
+	}
+
+	if (!(eventType == EVENT_MOUSE)) {
+		return false;
+	}
+
+	if (myItem->itemFlags == BTN_STATE_GREY) {
+		return false;
+	}
+
+	redrawItem = false;
+	execCallback = false;
+	handled = true;
+
+	switch (event) {
+	case _ME_L_click:
+	case _ME_doubleclick:
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			myItem->itemFlags = BTN_STATE_PRESS;
+			*currItem = myItem;
+			redrawItem = true;
+		} else {
+			*currItem = nullptr;
+			if (myItem->itemFlags != BTN_STATE_NORM) {
+				myItem->itemFlags = BTN_STATE_NORM;
+				redrawItem = true;
+			}
+		}
+		break;
+
+	case _ME_L_drag:
+	case _ME_doubleclick_drag:
+		if (!*currItem) {
+			return true;
+		}
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			if (myItem->itemFlags != BTN_STATE_PRESS) {
+				myItem->itemFlags = BTN_STATE_PRESS;
+				redrawItem = true;
+			}
+		} else {
+			if (myItem->itemFlags != BTN_STATE_OVER) {
+				myItem->itemFlags = BTN_STATE_OVER;
+				redrawItem = true;
+			}
+		}
+		break;
+
+	case _ME_L_release:
+	case _ME_doubleclick_release:
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			if (*currItem) {
+				execCallback = true;
+			} else {
+				*currItem = myItem;
+			}
+			myItem->itemFlags = BTN_STATE_OVER;
+			redrawItem = true;
+		} else {
+			*currItem = nullptr;
+			myItem->itemFlags = BTN_STATE_NORM;
+			redrawItem = true;
+			handled = false;
+		}
+		break;
+
+	case _ME_move:
+		if (menuItem::cursorInsideItem(myItem, x, y)) {
+			*currItem = myItem;
+			if (myItem->itemFlags != BTN_STATE_OVER) {
+				myItem->itemFlags = BTN_STATE_OVER;
+				redrawItem = true;
+			}
+		} else {
+			*currItem = nullptr;
+			if (myItem->itemFlags != BTN_STATE_NORM) {
+				myItem->itemFlags = BTN_STATE_NORM;
+				redrawItem = true;
+				handled = false;
+			}
+		}
+		break;
+
+	case _ME_L_hold:
+	case _ME_doubleclick_hold:
+		break;
+	}
+
+	// See if we need to redraw the button
+	if (redrawItem) {
+		(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
+		myScreen = vmng_screen_find(myItem->myMenu, &status);
+		if (myScreen && (status == SCRN_ACTIVE)) {
+			RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
+				myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
+		}
+	}
+
+	// See if we need to call the callback function
+	if (execCallback && myItem->callback) {
+		//		  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
+		currMenu = myItem->myMenu;
+		currTag = myItem->tag;
+		_GM(buttonClosesDialog) = false;
+
+		(myItem->callback)(myItem, myItem->myMenu);
+
+		status = 0;
+		myScreen = _GM(buttonClosesDialog) ? nullptr : vmng_screen_find(myItem->myMenu, &status);
+
+		if ((!myScreen) || (status != SCRN_ACTIVE)) {
+			*currItem = nullptr;
+		} else {
+			tempItem = guiMenu::getItem(currTag, currMenu);
+			if (!tempItem) {
+				*currItem = nullptr;
+			}
+		}
+	}
+
+	return handled;
+}
+
+menuItemButton *menuItemButton::buttonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
+	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
+	menuItemButton *newItem;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu) {
+		return nullptr;
+	}
+
+	// Allocate a new one
+	newItem = new menuItemButton();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = callback;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	if (greyed) {
+		newItem->itemFlags = BTN_STATE_GREY;
+	} else {
+		newItem->itemFlags = BTN_STATE_NORM;
+	}
+	newItem->buttonType = buttonType;
+
+	// Note: prompt is not duplicated, therefore, make sure the name is stored in non-volatile memory
+	newItem->prompt = prompt;
+	newItem->specialTag = tag - 1000;
+
+	newItem->redraw = (DrawFunction)menuItemButton::drawButton;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = i_handler;
+
+	// Draw the button in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
+
+void menuItemButton::disableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
+	// Verify params
+	if (!myMenu)
+		return;
+
+	if (!myItem)
+		myItem = (menuItemButton *)guiMenu::getItem(tag, myMenu);
+	if (!myItem)
+		return;
+
+	myItem->itemFlags = BTN_STATE_GREY;
+}
+
+void menuItemButton::enableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
+	// Verify params
+	if (!myMenu)
+		return;
+
+	if (!myItem)
+		myItem = (menuItemButton *)guiMenu::getItem(tag, myMenu);
+	if (!myItem)
+		return;
+
+	myItem->itemFlags = BTN_STATE_NORM;
 }
 
 } // namespace GUI
