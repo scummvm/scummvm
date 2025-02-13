@@ -396,7 +396,7 @@ menuItemMsg *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 		newItem->background = nullptr;
 	} else {
 		newItem->transparent = true;
-		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
 	newItem->redraw = (DrawFunction)menu_DrawMsg;
@@ -753,7 +753,7 @@ bool button_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		} else {
-			tempItem = menu_GetItem(currTag, currMenu);
+			tempItem = guiMenu::getItem(currTag, currMenu);
 			if (!tempItem) {
 				*currItem = nullptr;
 			}
@@ -799,7 +799,7 @@ menuItemButton *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int
 		newItem->background = nullptr;
 	} else {
 		newItem->transparent = true;
-		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
 	if (greyed) {
@@ -837,7 +837,7 @@ void menu_DisableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
 		return;
 
 	if (!myItem)
-		myItem = (menuItemButton *)menu_GetItem(tag, myMenu);
+		myItem = (menuItemButton *)guiMenu::getItem(tag, myMenu);
 	if (!myItem)
 		return;
 
@@ -851,7 +851,7 @@ void menu_EnableButton(menuItemButton *myItem, int32 tag, guiMenu *myMenu) {
 		return;
 
 	if (!myItem)
-		myItem = (menuItemButton *)menu_GetItem(tag, myMenu);
+		myItem = (menuItemButton *)guiMenu::getItem(tag, myMenu);
 	if (!myItem)
 		return;
 
@@ -1098,7 +1098,7 @@ menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, i
 		newItem->background = nullptr;
 	} else {
 		newItem->transparent = true;
-		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
 	// Intialize the new slider
@@ -1468,7 +1468,7 @@ menuItemVSlider *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, i
 		newItem->background = nullptr;
 	} else {
 		newItem->transparent = true;
-		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
 	newItem->itemFlags = VS_NORM;
@@ -1509,7 +1509,7 @@ void menu_DisableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
 		return;
 
 	if (!myItem)
-		myItem = (menuItemVSlider *)menu_GetItem(tag, myMenu);
+		myItem = (menuItemVSlider *)guiMenu::getItem(tag, myMenu);
 	if (!myItem)
 		return;
 
@@ -1523,7 +1523,7 @@ void menu_EnableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
 		return;
 
 	if (!myItem)
-		myItem = (menuItemVSlider *)menu_GetItem(tag, myMenu);
+		myItem = (menuItemVSlider *)guiMenu::getItem(tag, myMenu);
 	if (!myItem)
 		return;
 
@@ -1830,7 +1830,7 @@ menuItemTextField *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 
 		newItem->background = nullptr;
 	} else {
 		newItem->transparent = true;
-		newItem->background = menu_CopyBackground(myMenu, x, y, w, h);
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
 	if ((textInfo = (menuItemTextField *)mem_alloc(sizeof(menuItemTextField), "menu item textfield")) == nullptr) {
@@ -1912,7 +1912,7 @@ void cb_Game_Quit(void *, void *) {
 	DestroyGameMenu();
 
 	// Shutdown the menu system
-	menu_Shutdown(false);
+	guiMenu::shutdown(false);
 
 	// Set the global that will cause the entire game to exit to dos
 	_G(kernel).going = false;
@@ -1923,13 +1923,13 @@ void cb_Game_Resume(void *, void *) {
 	DestroyGameMenu();
 
 	// Shutdown the menu system
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 }
 
 void cb_Game_Save(void *, void *) {
 	// Destroy the game menu
 	DestroyGameMenu();
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 	buttonClosesDialog = true;
 
 	// Create the save game menu
@@ -1939,7 +1939,7 @@ void cb_Game_Save(void *, void *) {
 void cb_Game_Load(void *, void *) {
 	// Destroy the game menu
 	DestroyGameMenu();
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 	buttonClosesDialog = true;
 
 	// Create the save game menu
@@ -1960,9 +1960,9 @@ void cb_Game_Main(void *, void *) {
 		_GM(interfaceWasVisible) = false;
 
 		// Shutdown the menu system
-		menu_Shutdown(false);
+		guiMenu::shutdown(false);
 	} else {
-		menu_Shutdown(true);
+		guiMenu::shutdown(true);
 	}
 
 	// Go to the main menu
@@ -1987,15 +1987,15 @@ void DestroyGameMenu(void) {
 	vmng_screen_dispose(_GM(gameMenu));
 
 	// Destroy the menu resources
-	menu_Destroy(_GM(gameMenu));
+	guiMenu::destroy(_GM(gameMenu));
 
 	// Unload the menu sprites
-	menu_UnloadSprites();
+	guiMenu::unloadSprites();
 }
 
 void CreateGameMenuMain(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
-		menu_Initialize(myPalette);
+		guiMenu::initialize(myPalette);
 	}
 
 	// Keep the memory tidy
@@ -2003,11 +2003,11 @@ void CreateGameMenuMain(RGB8 *myPalette) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!menu_LoadSprites("gamemenu", GM_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("gamemenu", GM_TOTAL_SPRITES)) {
 		return;
 	}
 
-	_GM(gameMenu) = menu_Create(_GM(menuSprites)[GM_DIALOG_BOX], GAME_MENU_X, GAME_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
+	_GM(gameMenu) = guiMenu::create(_GM(menuSprites)[GM_DIALOG_BOX], GAME_MENU_X, GAME_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(gameMenu)) {
 		return;
 	}
@@ -2031,7 +2031,7 @@ void CreateGameMenuMain(RGB8 *myPalette) {
 	}
 
 	// Configure the game so pressing <esc> will cause the menu to disappear and the game to resume
-	menu_Configure(_GM(gameMenu), cb_Game_Resume, cb_Game_Resume);
+	guiMenu::configure(_GM(gameMenu), cb_Game_Resume, cb_Game_Resume);
 
 	vmng_screen_show((void *)_GM(gameMenu));
 	LockMouseSprite(0);
@@ -2072,7 +2072,7 @@ void cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
 
 	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
-	menu_ItemRefresh(nullptr, OM_TAG_DONE, myMenu);
+	guiMenu::itemRefresh(nullptr, OM_TAG_DONE, myMenu);
 
 }
 
@@ -2082,7 +2082,7 @@ void cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu) {
 
 	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
-	menu_ItemRefresh(nullptr, OM_TAG_DONE, myMenu);
+	guiMenu::itemRefresh(nullptr, OM_TAG_DONE, myMenu);
 }
 
 void DestroyOptionsMenu(void) {
@@ -2093,16 +2093,16 @@ void DestroyOptionsMenu(void) {
 	vmng_screen_dispose(_GM(opMenu));
 
 	// Destroy the menu resources
-	menu_Destroy(_GM(opMenu));
+	guiMenu::destroy(_GM(opMenu));
 
 	// Unload the menu sprites
-	menu_UnloadSprites();
+	guiMenu::unloadSprites();
 }
 
 
 void CreateOptionsMenu(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
-		menu_Initialize(myPalette);
+		guiMenu::initialize(myPalette);
 	}
 
 	// Keep the memory tidy
@@ -2110,11 +2110,11 @@ void CreateOptionsMenu(RGB8 *myPalette) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!menu_LoadSprites("opmenu", OM_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("opmenu", OM_TOTAL_SPRITES)) {
 		return;
 	}
 
-	_GM(opMenu) = menu_Create(_GM(menuSprites)[OM_DIALOG_BOX], OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
+	_GM(opMenu) = guiMenu::create(_GM(menuSprites)[OM_DIALOG_BOX], OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(opMenu)) {
 		return;
 	}
@@ -2132,7 +2132,7 @@ void CreateOptionsMenu(RGB8 *myPalette) {
 	_GM(remember_digestability) = _G(flags)[digestability];
 
 	// Configure the game so pressing <esc> will cause the menu to disappear and the gamemenu to reappear
-	menu_Configure(_GM(opMenu), cb_Options_Game_Done, cb_Options_Game_Cancel);
+	guiMenu::configure(_GM(opMenu), cb_Options_Game_Done, cb_Options_Game_Cancel);
 
 	vmng_screen_show((void *)_GM(opMenu));
 	LockMouseSprite(0);
@@ -2149,7 +2149,7 @@ void cb_Err_Done(void *, void *) {
 	DestroyErrMenu();
 
 	// Shutdown the menu system
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 }
 
 
@@ -2162,10 +2162,10 @@ void DestroyErrMenu(void) {
 	vmng_screen_dispose(_GM(errMenu));
 
 	// Destroy the menu resources
-	menu_Destroy(_GM(errMenu));
+	guiMenu::destroy(_GM(errMenu));
 
 	// Unload the menu sprites
-	menu_UnloadSprites();
+	guiMenu::unloadSprites();
 }
 
 
@@ -2173,7 +2173,7 @@ void CreateErrMenu(RGB8 *myPalette) {
 	Buffer *myBuff;
 
 	if (!_G(menuSystemInitialized)) {
-		menu_Initialize(myPalette);
+		guiMenu::initialize(myPalette);
 	}
 
 	// Keep the memory tidy
@@ -2181,11 +2181,11 @@ void CreateErrMenu(RGB8 *myPalette) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!menu_LoadSprites("errmenu", 5)) {
+	if (!guiMenu::loadSprites("errmenu", 5)) {
 		return;
 	}
 
-	_GM(errMenu) = menu_Create(_GM(menuSprites)[EM_DIALOG_BOX], ERROR_MENU_X, ERROR_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
+	_GM(errMenu) = guiMenu::create(_GM(menuSprites)[EM_DIALOG_BOX], ERROR_MENU_X, ERROR_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(errMenu)) {
 		return;
 	}
@@ -2214,7 +2214,7 @@ void CreateErrMenu(RGB8 *myPalette) {
 	menu_ButtonAdd(_GM(errMenu), EM_TAG_RETURN, EM_RETURN_X, EM_RETURN_Y, EM_RETURN_W, EM_RETURN_H, cb_Err_Done);
 
 	// Configure the game so pressing <esc> will cause the menu to disappear and the gamemenu to reappear
-	menu_Configure(_GM(errMenu), cb_Err_Done, cb_Err_Done);
+	guiMenu::configure(_GM(errMenu), cb_Err_Done, cb_Err_Done);
 
 	vmng_screen_show((void *)_GM(errMenu));
 	LockMouseSprite(0);
@@ -2270,7 +2270,7 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 				if (!LoadThumbNail(i)) {
 					_GM(slotInUse)[i] = false;
 					menu_DisableButton(nullptr, 1001 + i - firstSlot, myMenu);
-					menu_ItemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
+					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
 				}
 			}
 		}
@@ -2291,7 +2291,7 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 				if (!LoadThumbNail(i)) {
 					_GM(slotInUse)[i] = false;
 					menu_DisableButton(nullptr, 1001 + i - firstSlot, myMenu);
-					menu_ItemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
+					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
 				}
 			}
 		}
@@ -2315,7 +2315,7 @@ void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
 
 	// Change the prompt and special tag of each of the slot buttons
 	for (i = 0; i < MAX_SLOTS_SHOWN; i++) {
-		myButton = (menuItemButton *)menu_GetItem(i + 1001, myMenu);
+		myButton = (menuItemButton *)guiMenu::getItem(i + 1001, myMenu);
 
 		myButton->prompt = _GM(slotTitles)[firstSlot + i];
 		if (_GM(currMenuIsSave) || _GM(slotInUse)[firstSlot + i]) {
@@ -2325,7 +2325,7 @@ void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
 		}
 
 		myButton->specialTag = firstSlot + i + 1;
-		menu_ItemRefresh(myButton, i + 1001, myMenu);
+		guiMenu::itemRefresh(myButton, i + 1001, myMenu);
 	}
 }
 
@@ -2382,7 +2382,7 @@ void cb_SaveLoad_VSlider(menuItemVSlider *myItem, guiMenu *myMenu) {
 				((myItem->percent * (myItem->maxThumbY - myItem->minThumbY)) / 100);
 
 			// Redraw the slider
-			menu_ItemRefresh(myItem, -1, myMenu);
+			guiMenu::itemRefresh(myItem, -1, myMenu);
 		}
 	}
 
@@ -2404,7 +2404,7 @@ void cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 	}
 
 	// First make the textfield NORM
-	myText = (menuItemTextField *)menu_GetItem(2000, myMenu);
+	myText = (menuItemTextField *)guiMenu::getItem(2000, myMenu);
 	if (myText)
 		return;
 
@@ -2434,7 +2434,7 @@ void cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 	DestroySaveLoadMenu(true);
 
 	// Shutdown the menu system
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 }
 
 
@@ -2450,7 +2450,7 @@ void cb_SaveLoad_Load(menuItemButton *, guiMenu *) {
 	DestroySaveLoadMenu(false);
 
 	// Shutdown the menu system
-	menu_Shutdown(false);
+	guiMenu::shutdown(false);
 
 	// See if we need to reset the ESC, F2, and F3 hotkeys
 	if (_GM(gameMenuFromMain)) {
@@ -2479,19 +2479,19 @@ void cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 		for (i = 1001; i <= 1010; i++) {
 			if (_GM(currMenuIsSave) || _GM(slotInUse)[i - 1001 + _GM(firstSlotIndex)]) {
 				menu_EnableButton(nullptr, i, myMenu);
-				menu_ItemRefresh(nullptr, i, myMenu);
+				guiMenu::itemRefresh(nullptr, i, myMenu);
 			}
 		}
 
 		// Find the textfield and use it's coords to place the button
-		myItem = menu_GetItem(2000, myMenu);
+		myItem = guiMenu::getItem(2000, myMenu);
 		x = myItem->x1;
 		y = myItem->y1;
 		w = myItem->x2 - myItem->x1 + 1;
 		h = myItem->y2 - myItem->y1 + 1;
 
 		// Delete the textfield
-		menu_ItemDelete(myItem, 2000, myMenu);
+		guiMenu::itemDelete(myItem, 2000, myMenu);
 
 		// Add the button back in
 		if (_GM(currMenuIsSave)) {
@@ -2506,22 +2506,22 @@ void cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
 				_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
-				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
+				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
 			}
 		}
 		SetFirstSlot(_GM(firstSlotIndex), myMenu);
 
 		// Enable the slider
 		menu_EnableVSlider(nullptr, SL_TAG_VSLIDER, myMenu);
-		menu_ItemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
 
 		// Disable the save/load button
 		if (_GM(currMenuIsSave)) {
 			menu_DisableButton(nullptr, SL_TAG_SAVE, myMenu);
-			menu_ItemRefresh(nullptr, SL_TAG_SAVE, myMenu);
+			guiMenu::itemRefresh(nullptr, SL_TAG_SAVE, myMenu);
 		} else {
 			menu_DisableButton(nullptr, SL_TAG_LOAD, myMenu);
-			menu_ItemRefresh(nullptr, SL_TAG_LOAD, myMenu);
+			guiMenu::itemRefresh(nullptr, SL_TAG_LOAD, myMenu);
 		}
 
 		// Reset the slot selected var
@@ -2535,7 +2535,7 @@ void cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 
 		if (_GM(saveLoadFromHotkey)) {
 			// Shutdown the menu system
-			menu_Shutdown(true);
+			guiMenu::shutdown(true);
 		} else {
 			// Create the game menu
 			CreateGameMenuMain(nullptr);
@@ -2567,7 +2567,7 @@ void cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 	for (i = 1001; i <= 1010; i++) {
 		if (i != myButton->tag) {
 			menu_DisableButton(nullptr, i, myMenu);
-			menu_ItemRefresh(nullptr, i, myMenu);
+			guiMenu::itemRefresh(nullptr, i, myMenu);
 		}
 	}
 
@@ -2576,7 +2576,7 @@ void cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 	y = myButton->y1;
 	w = myButton->x2 - myButton->x1 + 1;
 	h = myButton->y2 - myButton->y1 + 1;
-	menu_ItemDelete(myButton, -1, myMenu);
+	guiMenu::itemDelete(myButton, -1, myMenu);
 
 	if (_GM(currMenuIsSave)) {
 		// Replace the current button with a textfield
@@ -2594,15 +2594,15 @@ void cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 
 	// Disable the slider
 	menu_DisableVSlider(nullptr, SL_TAG_VSLIDER, myMenu);
-	menu_ItemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
+	guiMenu::itemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
 
 	// Enable the save/load button
 	if (_GM(currMenuIsSave)) {
 		menu_EnableButton(nullptr, SL_TAG_SAVE, myMenu);
-		menu_ItemRefresh(nullptr, SL_TAG_SAVE, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_SAVE, myMenu);
 	} else {
 		menu_EnableButton(nullptr, SL_TAG_LOAD, myMenu);
-		menu_ItemRefresh(nullptr, SL_TAG_LOAD, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_LOAD, myMenu);
 	}
 }
 
@@ -2648,7 +2648,7 @@ bool load_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x,
 			// See if the current _GM(saveLoadThumbNail) is pointing to the correct sprite
 			if (_GM(saveLoadThumbNail) != _GM(thumbNails)[myItem->specialTag - 1]) {
 				_GM(saveLoadThumbNail) = _GM(thumbNails)[myItem->specialTag - 1];
-				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
+				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 			}
 		}
 
@@ -2666,7 +2666,7 @@ bool load_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x,
 				// Remove the thumbnail
 				if (_GM(saveLoadThumbNail)) {
 					_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
-					menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
+					guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 				}
 			}
 		}
@@ -2702,10 +2702,10 @@ void DestroySaveLoadMenu(bool saveMenu) {
 
 	// Destroy the screen
 	vmng_screen_dispose(_GM(slMenu));
-	menu_Destroy(_GM(slMenu));
+	guiMenu::destroy(_GM(slMenu));
 
 	// Unload the save/load menu sprites
-	menu_UnloadSprites();
+	guiMenu::unloadSprites();
 }
 
 
@@ -2714,7 +2714,7 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	bool buttonGreyed;
 
 	if (!_G(menuSystemInitialized)) {
-		menu_Initialize(myPalette);
+		guiMenu::initialize(myPalette);
 	}
 
 	// Keep the memory tidy
@@ -2722,7 +2722,7 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!menu_LoadSprites("slmenu", SL_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("slmenu", SL_TOTAL_SPRITES)) {
 		return;
 	}
 
@@ -2733,7 +2733,7 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	_GM(thumbIndex) = 100;
 	_GM(currMenuIsSave) = saveMenu;
 
-	_GM(slMenu) = menu_Create(_GM(menuSprites)[SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
+	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
 		MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(slMenu)) {
 		return;
@@ -2790,11 +2790,11 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	if (_GM(currMenuIsSave)) {
 		//<return> - if a slot has been selected, saves the game
 		//<esc> - cancels and returns to the game menu
-		menu_Configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Save, (CALLBACK)cb_SaveLoad_Cancel);
+		guiMenu::configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Save, (CALLBACK)cb_SaveLoad_Cancel);
 	} else {
 		//<return> - if a slot has been selected, loads the selected game
 		//<esc> - cancels and returns to the game menu
-		menu_Configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Load, (CALLBACK)cb_SaveLoad_Cancel);
+		guiMenu::configure(_GM(slMenu), (CALLBACK)cb_SaveLoad_Load, (CALLBACK)cb_SaveLoad_Cancel);
 	}
 
 	vmng_screen_show((void *)_GM(slMenu));

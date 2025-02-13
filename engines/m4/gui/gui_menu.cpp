@@ -42,11 +42,11 @@
 namespace M4 {
 namespace GUI {
 
-bool menu_Initialize(RGB8 *myPalette) {
+bool guiMenu::initialize(RGB8 *myPalette) {
 	int32 i, memAvail;
 
 	// This procedure is called before *any* menu is created - the following global var is used
-	// By the menu_eventhandler() to trap events - it must be cleared.
+	// By the guiMenu::eventHandler() to trap events - it must be cleared.
 	_GM(menuCurrItem) = nullptr;
 
 	if (_G(menuSystemInitialized)) {
@@ -130,7 +130,7 @@ bool menu_Initialize(RGB8 *myPalette) {
 	return true;
 }
 
-void menu_Shutdown(bool fadeToColor) {
+void guiMenu::shutdown(bool fadeToColor) {
 	int32 i;
 
 	// Verify that we need to shutdown
@@ -197,9 +197,7 @@ void menu_Shutdown(bool fadeToColor) {
 	_G(menuSystemInitialized) = false;
 }
 
-bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen);
-
-GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h) {
+GrBuff *guiMenu::copyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h) {
 	GrBuff *copyOfBackground;
 	Buffer *srcBuff, *destBuff;
 
@@ -233,7 +231,7 @@ GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h)
 	return copyOfBackground;
 }
 
-void menu_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
+void guiMenu::show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	RectList *myRectList = (RectList *)r;
 	Buffer *destBuffer = (Buffer *)b;
@@ -283,7 +281,7 @@ void menu_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	myMenuBuffer->release();
 }
 
-guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags) {
+guiMenu *guiMenu::create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags) {
 	guiMenu *newMenu;
 	Buffer *tempBuff, drawSpriteBuff;
 	DrawRequest spriteDrawReq;
@@ -299,7 +297,7 @@ guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFla
 	newMenu->itemList = nullptr;
 	newMenu->cb_return = nullptr;
 	newMenu->cb_esc = nullptr;
-	newMenu->menuEventHandler = menu_EventHandler;
+	newMenu->menuEventHandler = (EventHandler)guiMenu::eventHandler;
 
 	// Draw the background in to the menuBuffer
 	tempBuff = newMenu->menuBuffer->get_buffer();
@@ -344,14 +342,14 @@ guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFla
 	newMenu->menuBuffer->release();
 
 	if (!vmng_screen_create(x1, y1, x1 + backgroundSprite->w - 1, y1 + backgroundSprite->h - 1, 69, scrnFlags, (void *)newMenu,
-		(RefreshFunc)menu_Show, menu_EventHandler)) {
+		(RefreshFunc)guiMenu::show, (EventHandler)guiMenu::eventHandler)) {
 		return nullptr;
 	}
 
 	return newMenu;
 }
 
-void menu_Destroy(guiMenu *myMenu) {
+void guiMenu::destroy(guiMenu *myMenu) {
 	menuItem *myItem;
 
 	// Verify params
@@ -374,7 +372,7 @@ void menu_Destroy(guiMenu *myMenu) {
 	delete myMenu;
 }
 
-void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc) {
+void guiMenu::configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc) {
 	if (!myMenu) {
 		return;
 	}
@@ -382,7 +380,7 @@ void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc) {
 	myMenu->cb_esc = cb_esc;
 }
 
-bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen) {
+bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen) {
 	ScreenContext *myScreen;
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem;
@@ -505,7 +503,7 @@ bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2,
 	return true;
 }
 
-menuItem *menu_GetItem(int32 tag, guiMenu *myMenu) {
+menuItem *guiMenu::getItem(int32 tag, guiMenu *myMenu) {
 	menuItem *myItem;
 
 	// Verify params
@@ -521,8 +519,7 @@ menuItem *menu_GetItem(int32 tag, guiMenu *myMenu) {
 	return myItem;
 }
 
-
-void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
+void guiMenu::itemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	Buffer *myBuff, *backgroundBuff;
 
 	// Verify params
@@ -530,12 +527,10 @@ void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 		return;
 	}
 
-	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
-	}
-	if (!myItem) {
+	if (!myItem)
+		myItem = guiMenu::getItem(tag, myMenu);
+	if (!myItem)
 		return;
-	}
 
 	// Remove myItem from the item list
 	if (myItem->next) {
@@ -577,7 +572,7 @@ void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	}
 }
 
-void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
+void guiMenu::itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	ScreenContext *myScreen;
 	int32 status;
 
@@ -587,7 +582,7 @@ void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	}
 
 	if (!myItem) {
-		myItem = menu_GetItem(tag, myMenu);
+		myItem = guiMenu::getItem(tag, myMenu);
 	}
 	if (!myItem) {
 		return;
@@ -607,7 +602,7 @@ void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 
 //-----------------------------    GAME MENU FUNCTIONS    ---------------------------------//
 
-bool menu_LoadSprites(const char *series, int32 numSprites) {
+bool guiMenu::loadSprites(const char *series, int32 numSprites) {
 	int32 i;
 
 	// Load in the game menu series
@@ -640,7 +635,7 @@ bool menu_LoadSprites(const char *series, int32 numSprites) {
 	return true;
 }
 
-void menu_UnloadSprites() {
+void guiMenu::unloadSprites() {
 	int32 i;
 
 	if (!_GM(menuSeriesResource)) {

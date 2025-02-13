@@ -120,11 +120,29 @@ struct menuItemTextField : public menuItem {
 };
 
 struct guiMenu {
+private:
+	static void show(void *s, void *r, void *b, int32 destX, int32 destY);
+	static bool eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen);
+
+public:
 	GrBuff *menuBuffer;
 	menuItem *itemList;
 	CALLBACK cb_return;
 	CALLBACK cb_esc;
 	EventHandler menuEventHandler;
+
+	static bool initialize(RGB8 *myPalette);
+	static void shutdown(bool fadeToColor);
+	static guiMenu *create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
+	static void destroy(guiMenu *myMenu);
+	static void configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
+	static GrBuff *copyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
+	static menuItem *getItem(int32 tag, guiMenu *myMenu);
+	static void itemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
+	static void itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
+
+	static bool loadSprites(const char *series, int32 numSprites);
+	static void unloadSprites();
 };
 
 struct MenuGlobals {
@@ -188,20 +206,6 @@ struct MenuGlobals {
 #define MENU_DEPTH 			9 	// video depth for menu popup boxes
 #define MAX_SLOTS			99	// number of save games you can have
 #define MAX_SLOTS_SHOWN 	8	// number of slots in the scrolling field
-
-// GENERAL MENU FUNCTIONS
-extern bool menu_Initialize(RGB8 *myPalette);
-extern void menu_Shutdown(bool fadeToColor);
-extern guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
-extern void menu_Destroy(guiMenu *myMenu);
-extern void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
-extern GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
-extern menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
-extern void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
-
-extern bool menu_LoadSprites(const char *series, int32 numSprites);
-extern void menu_UnloadSprites();
 
 } // namespace GUI
 } // namespace M4

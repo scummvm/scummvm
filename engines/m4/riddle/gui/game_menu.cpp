@@ -64,7 +64,7 @@ namespace GUI {
 
 void GameMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
-		menu_Initialize(myPalette);
+		guiMenu::initialize(myPalette);
 	}
 
 	// Keep the memory tidy
@@ -72,11 +72,11 @@ void GameMenu::show(RGB8 *myPalette) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!menu_LoadSprites("gamemenu", GM_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("gamemenu", GM_TOTAL_SPRITES)) {
 		return;
 	}
 
-	_GM(gameMenu) = menu_Create(_GM(menuSprites)[GM_DIALOG_BOX],
+	_GM(gameMenu) = guiMenu::create(_GM(menuSprites)[GM_DIALOG_BOX],
 		GAME_MENU_X, GAME_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	assert(_GM(gameMenu));
 
@@ -103,7 +103,7 @@ void GameMenu::show(RGB8 *myPalette) {
 	}
 #endif
 	// Configure the game so pressing <esc> will cause the menu to disappear and the game to resume
-	menu_Configure(_GM(gameMenu), cbResume, cbResume);
+	guiMenu::configure(_GM(gameMenu), cbResume, cbResume);
 
 	vmng_screen_show((void *)_GM(gameMenu));
 	LockMouseSprite(0);
@@ -118,10 +118,10 @@ void GameMenu::DestroyGameMenu() {
 	vmng_screen_dispose(_GM(gameMenu));
 
 	// Destroy the menu resources
-	menu_Destroy(_GM(gameMenu));
+	guiMenu::destroy(_GM(gameMenu));
 
 	// Unload the menu sprites
-	menu_UnloadSprites();
+	guiMenu::unloadSprites();
 }
 
 void GameMenu::cbQuitGame(void *, void *) {
@@ -129,7 +129,7 @@ void GameMenu::cbQuitGame(void *, void *) {
 	DestroyGameMenu();
 
 	// Shutdown the menu system
-	menu_Shutdown(false);
+	guiMenu::shutdown(false);
 
 	// Set the global that will cause the entire game to exit to dos
 	_G(kernel).going = false;
@@ -149,9 +149,9 @@ void GameMenu::cbMainMenu(void *, void *) {
 		_GM(interfaceWasVisible) = false;
 
 		// Shutdown the menu system
-		menu_Shutdown(false);
+		guiMenu::shutdown(false);
 	} else {
-		menu_Shutdown(true);
+		guiMenu::shutdown(true);
 	}
 
 	// Go to the main menu
@@ -163,7 +163,7 @@ void GameMenu::cbResume(void *, void *) {
 	DestroyGameMenu();
 
 	// Shutdown the menu system
-	menu_Shutdown(true);
+	guiMenu::shutdown(true);
 }
 
 /*-------------------- ACCESS METHODS --------------------*/
