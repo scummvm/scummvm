@@ -92,7 +92,7 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSConsoles"))
 		return new AGSConsoles::AGSConsoles();
 
-	if (fname.equalsIgnoreCase("AGSController"))
+	if (fname.equalsIgnoreCase("AGSController") || fname.equalsIgnoreCase("agscontrollerpulp"))
 		return new AGSController::AGSController();
 
 	if (fname.equalsIgnoreCase("agscontrollerplugin"))
