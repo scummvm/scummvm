@@ -978,8 +978,12 @@ enum {
 	kCurObjDownLimit = 152,
 
 	kCursorPano = 480,
-	kCursorPanoObjPoint = 484,
-	kCursorPanoObjGrab = 485,
+	kCursorPanoLinkOver = 481,
+	kCursorPanoLinkDown = 482,
+	kCursorPanoLinkUp = 482,
+	kCursorPanoObjOver = 484,
+	kCursorPanoObjDown = 485,
+	kCursorPanoObjUp = 486,
 
 	kCursorZoomIn = 500,
 	kCursorZoomOut = 501,
@@ -1068,10 +1072,43 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 
 		int hotspot = track->lookupHotspot(x, y);
 
+		if (hotspot && _currentSample != -1) {
+			if (_hotSpotIdx == -1 || _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[_hotSpotIdx].id != hotspot) {
+				for (int i = 0; i < _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots.size(); i++) {
+					if (_panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[i].id == hotspot) {
+						_hotSpotIdx = i;
+						break;
+					}
+				}
+			}
+		} else {
+			_hotSpotIdx = -1;
+		}
+
+		HotSpotType hsType = HotSpotType::undefined;
+		if (_hotSpotIdx != -1)
+			hsType = _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[_hotSpotIdx].type;
+
+		int hsOver, hsDown, hsUp;
+
+		switch (hsType) {
+		case HotSpotType::link:
+			hsOver = kCursorPanoLinkOver;
+			hsDown = kCursorPanoLinkDown;
+			hsUp = kCursorPanoLinkUp;
+			break;
+
+		default:
+			hsOver = kCursorPanoObjOver;
+			hsDown = kCursorPanoObjDown;
+			hsUp = kCursorPanoObjUp;
+			break;
+		}
+
 		int sensitivity = 5;
 
 		if (!_isMouseButtonDown) {
-			setCursor(hotspot == 0 ? kCursorPano : kCursorPanoObjPoint);
+			setCursor(hotspot == 0 ? kCursorPano : hsOver);
 		} else {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
@@ -1128,7 +1165,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 			}
 
-			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : hotspot == 0 ? kCursorPanoNav : kCursorPanoObjGrab);
+			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : hotspot == 0 ? kCursorPanoNav : hsDown);
 		}
 	}
 }

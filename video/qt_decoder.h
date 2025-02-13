@@ -148,7 +148,7 @@ private:
 	uint16 _width, _height;
 
 public:
-	int _currentSample;
+	int _currentSample = -1;
 	uint16 _prevMouseX, _prevMouseY;
 	bool _isMouseButtonDown;
 	Common::Point _mouseDrag;
@@ -174,6 +174,8 @@ private:
 	float _hfov = 56.0f;
 	int _zoomState = kZoomNone;
 	bool _repeatTimerActive = false;
+
+	int _hotSpotIdx = -1;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
