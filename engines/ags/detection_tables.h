@@ -5423,6 +5423,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("oldskies", "OldSkies.exe", "0bdccc3f90f28de88de050672565cb5a", 1577321264), // Steam Windows
 	DEMO_ENTRY_EN("oldskies", "OldSkies.exe", "820aa7e78063aa8aaf5e7f495472089a", 1580456994), // Steam Windows v0.1.7.9
 	DEMO_ENTRY_EN("oldskies", "ac2game.dat", "008b1273459fa04425423c48ef655385", 1573980025), // Steam Mac
+	DEMO_ENTRY_EN("oldskies", "OldSkies.ags", "f3c8508a468c2ac6e5140b3063521701", 2465074762), // Steam Windows OSDemo v1.0
+	DEMO_ENTRY_EN("oldskies", "ac2game.dat", "8154489357641982ec86cbd59dd409df", 2465268910), // Steam Mac OSDemo v1.0
+	DEMO_ENTRY_EN("oldskies", "OldSkies.ags", "8154489357641982ec86cbd59dd409df", 2465268910), // Steam Linux OSDemo v1.0
+	DEMO_ENTRY_EN("oldskies", "OldSkies.ags", "8154489357641982ec86cbd59dd409df", 2465268955), // Steam Steam Deck OSDemo v1.0
 	DEMO_ENTRY_EN("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
 	DEMO_ENTRY_EN("osdlgs", "OSD - Leather Gear Smooth.exe", "82da2565c456dcfb265ded6fe3189c0b", 114550556),
 	DEMO_ENTRY_EN("osdrots", "Rise of the spirit.exe", "415faaf03c892f5a8ce2c136a8fa3478", 17049026),
