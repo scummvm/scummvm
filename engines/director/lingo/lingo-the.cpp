@@ -86,9 +86,11 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheFreeBytes,		"freeBytes",		false, 200, true },	// D2 f
 	{ kTheFrontWindow,		"frontWindow",		false, 500, false },//					D5 p
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 200, false },	// D2 p
+	{ kTheIdleHandlerPeriod,"idleHandlerPeriod",false, 500, false },//					D5 p
 	{ kTheIdleLoadMode,		"idleLoadMode",		false, 500, false },//					D5 p
 	{ kTheIdleLoadPeriod,	"idleLoadPeriod",	false, 500, false },//					D5 p
 	{ kTheIdleLoadTag,		"idleLoadTag",		false, 500, false },//					D5 p
+	{ kTheIdleReadChunkSize,"idleReadChunkSize",false, 500, false },//			D5 p
 	{ kTheImageDirect,		"imageDirect",		false, 200, false },	// D2 p
 	{ kTheItemDelimiter,	"itemDelimiter",	false, 400, false },	//			D4 p
 	{ kTheKey,				"key",				false, 200, true },	// D2 f
@@ -231,7 +233,6 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
 	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
-	{ kTheCast,		"idleReadChunkSize",kTheIdleReadChunkSize,500 },//			D5 p
 	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
 	{ kTheCast,		"media",		kTheMedia,		500 },//					D5 p
 	{ kTheCast,		"memberNum",	kTheMemberNum,	500 },//					D5 p
@@ -272,7 +273,6 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
 
 	// Movie fields
-	{ kTheCast,		"idleHandlerPeriod",kTheIdleHandlerPeriod, 500 },//				D5 p
 	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//				D5 p
 	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//				D5 p
 	{ kTheCast,		"scoreSelection",	kTheScoreSelection,	500 },//				D5 p
