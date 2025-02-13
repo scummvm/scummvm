@@ -977,6 +977,19 @@ enum {
 	kCurObjUpLimit = 151,
 	kCurObjDownLimit = 152,
 
+	kCurDirAll = 211,
+	kCurDirL = 212,
+	kCurDirR = 213,
+	kCurDirD = 214,
+	kCurDirDL = 215,
+	kCurDirDR = 216,
+	kCurDirU = 217,
+	kCurDirUL = 218,
+	kCurDirUR = 219,
+
+	kCurDirAllDown = 220,
+	kCurDirURDown = 228,
+
 	kCursorPano = 480,
 	kCursorPanoLinkOver = 481,
 	kCursorPanoLinkDown = 482,
