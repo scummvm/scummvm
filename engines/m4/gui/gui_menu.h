@@ -98,6 +98,16 @@ enum options_menu_sprites {
 	OM_TOTAL_SPRITES
 };
 
+enum save_load_menu_item_tags {
+	SL_TAG_SAVE = 100,
+	SL_TAG_SAVE_LABEL,
+	SL_TAG_LOAD,
+	SL_TAG_LOAD_LABEL,
+	SL_TAG_CANCEL,
+	SL_TAG_VSLIDER,
+	SL_TAG_THUMBNAIL
+};
+
 } // namespace GUI
 } // namespace Burger
 
@@ -173,7 +183,15 @@ struct menuItem {
 
 
 struct menuItemMsg : public menuItem {
+private:
+	static void drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32);
+
+public:
 	int32 itemFlags = 0;
+
+	static menuItemMsg *msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent = false);
+	static void disableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
+	static void enableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
 };
 
 struct menuItemButton : public menuItem {

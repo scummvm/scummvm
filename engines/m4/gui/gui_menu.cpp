@@ -1132,5 +1132,125 @@ void menuItemButton::enableButton(menuItemButton *myItem, int32 tag, guiMenu *my
 	myItem->itemFlags = BTN_STATE_NORM;
 }
 
+
+//-----------------------------  MSG FUNCTIONS    ---------------------------------//
+
+menuItemMsg *menuItemMsg::msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent) {
+	menuItemMsg *newItem;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu) {
+		return nullptr;
+	}
+
+	// Allocate a new one
+	newItem = new menuItemMsg();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = nullptr;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	newItem->redraw = (DrawFunction)menuItemMsg::drawMsg;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = nullptr;
+
+	// Draw the message in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
+
+void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
+	Buffer *myBuff = nullptr;
+	Buffer *backgroundBuff = nullptr;
+	Sprite *mySprite = nullptr;
+
+	// Verify params
+	if (!myItem || !myMenu) {
+		return;
+	}
+
+	// If the item is marked transparent, get the background buffer
+	if (myItem->transparent) {
+		if (!myItem->background) {
+			return;
+		}
+		backgroundBuff = myItem->background->get_buffer();
+		if (!backgroundBuff) {
+			return;
+		}
+	}
+
+	// Get the button info and select the sprite
+	//myMsg = (menuItemMsg *)myItem->itemInfo;
+	switch (myItem->tag) {
+	case SL_TAG_SAVE_LABEL:
+		mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_LABEL];
+		break;
+	case SL_TAG_LOAD_LABEL:
+		mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_LABEL];
+		break;
+	case SL_TAG_THUMBNAIL:
+		mySprite = _GM(saveLoadThumbNail);
+		break;
+	}
+
+	// Get the menu buffer and draw the sprite to it
+	myBuff = myMenu->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	// If the item is tagged as transparent, we need to fill in it's background behind it
+	if (backgroundBuff) {
+		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
+		myItem->background->release();
+	} else if (myItem->tag == SL_TAG_THUMBNAIL && mySprite->w == 160) {
+		// Hack for handling smaller ScummVM thumbnails
+		for (int yp = y; yp < (y + SL_THUMBNAIL_H); ++yp) {
+			byte *line = myBuff->data + myBuff->stride * yp + x;
+			Common::fill(line, line + SL_THUMBNAIL_W, 0);
+		}
+
+		x += 25;
+		y += 25;
+	}
+
+	// Draw the sprite in
+	gui_DrawSprite(mySprite, myBuff, x, y);
+
+	// Release the menu buffer
+	myMenu->menuBuffer->release();
+}
+
 } // namespace GUI
 } // namespace M4

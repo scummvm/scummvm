@@ -45,11 +45,6 @@ using M4::GUI::ItemHandlerFunction;
 
 // SPECIFIC ITEM FUNCTIONS
 
-// Messages
-extern menuItemMsg *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent = false);
-extern void menu_DisableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_EnableMsg(menuItemMsg *myItem, int32 tag, guiMenu *myMenu);
-
 // Horizontal sliders
 menuItemHSlider *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
@@ -97,16 +92,6 @@ enum game_menu_button_tags {
 #define SAVE_LOAD_MENU_Y		 10
 #define SAVE_LOAD_MENU_W		344
 #define SAVE_LOAD_MENU_H		460
-
-enum save_load_menu_item_tags {
-	SL_TAG_SAVE = 100,
-	SL_TAG_SAVE_LABEL,
-	SL_TAG_LOAD,
-	SL_TAG_LOAD_LABEL,
-	SL_TAG_CANCEL,
-	SL_TAG_VSLIDER,
-	SL_TAG_THUMBNAIL
-};
 
 #define SL_SAVE_X			214
 #define SL_SAVE_Y			384
