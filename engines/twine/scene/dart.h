@@ -38,21 +38,21 @@ private:
 
 public:
 	struct T_DART {
-		int32 PosX;
-		int32 PosY;
-		int32 PosZ;
-		int32 Alpha;
-		int32 Beta;
-		int32 Body;
-		int32 NumCube; // Number of the cube in which the dart is located
-		uint32 Flags;
+		int32 PosX = 0;
+		int32 PosY = 0;
+		int32 PosZ = 0;
+		int32 Alpha = 0;
+		int32 Beta = 0;
+		int32 Body = 0;
+		int32 NumCube = 0; // Number of the cube in which the dart is located
+		uint32 Flags = 0u;
 
-		int32 XMin; // ZV of the darts
-		int32 YMin;
-		int32 ZMin;
-		int32 XMax;
-		int32 YMax;
-		int32 ZMax;
+		int32 XMin = 0; // ZV of the darts
+		int32 YMin = 0;
+		int32 ZMin = 0;
+		int32 XMax = 0;
+		int32 YMax = 0;
+		int32 ZMax = 0;
 	};
 	T_DART ListDart[MAX_DARTS];
 

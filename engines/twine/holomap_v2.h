@@ -43,17 +43,17 @@ public:
 	virtual ~HolomapV2() = default;
 
 	struct Location {
-		int32 X; // Position Island X Y Z
-		int32 Y;
-		int32 Z;
-		int32 Alpha; // Position Planet Alpha, Beta and Altitude
-		int32 Beta;
-		int32 Alt;
-		int32 Mess;
-		int8 ObjFix;    // Eventual Obj Inventory 3D (FREE NOT USED!)
-		uint8 FlagHolo; // Flag for Planet display, active, etc.
-		uint8 Planet;
-		uint8 Island;
+		int32 X = 0; // Position Island X Y Z
+		int32 Y = 0;
+		int32 Z = 0;
+		int32 Alpha = 0; // Position Planet Alpha, Beta and Altitude
+		int32 Beta = 0;
+		int32 Alt = 0;
+		int32 Mess = 0;
+		int8 ObjFix = 0;    // Eventual Obj Inventory 3D (FREE NOT USED!)
+		uint8 FlagHolo = 0u; // Flag for Planet display, active, etc.
+		uint8 Planet = 0u;
+		uint8 Island = 0u;
 	};
 	static_assert(sizeof(Location) == 32, "Invalid Location size");
 	Location _locations[MAX_OBJECTIF + MAX_CUBE];

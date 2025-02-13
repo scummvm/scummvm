@@ -384,6 +384,7 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 		_engine->_gameState->_magicBall = throwExtra(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
 		break;
 	case 5:
+		assert(extraIdx != -1);
 		_engine->_gameState->_magicBall = extraSearchKey(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, extraIdx);
 		break;
 	}

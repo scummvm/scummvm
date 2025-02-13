@@ -223,6 +223,10 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	if (isLBA1()) {
 		_scriptLife = new ScriptLifeV1(this);
 		_scriptMove = new ScriptMoveV1(this);
+		_buggy = nullptr;
+		_dart = nullptr;
+		_rain = nullptr;
+		_wagon = nullptr;
 		_holomap = new HolomapV1(this);
 	} else {
 		_scriptLife = new ScriptLifeV2(this);
@@ -261,6 +265,10 @@ TwinEEngine::~TwinEEngine() {
 	delete _screens;
 	delete _scriptLife;
 	delete _scriptMove;
+	delete _buggy;
+	delete _dart;
+	delete _rain;
+	delete _wagon;
 	delete _holomap;
 	delete _sound;
 	delete _text;
