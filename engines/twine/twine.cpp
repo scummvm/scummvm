@@ -735,7 +735,7 @@ void TwinEEngine::restoreTimer() {
 void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 	const ActorStruct *actor = _scene->getActor(actorIdx);
 	const int32 channelIdx = _sound->getActorChannel(actorIdx);
-	_sound->setSamplePosition(channelIdx, actor->posObj());
+	_sound->setChannelPosition(channelIdx, actor->posObj());
 }
 
 void TwinEEngine::processBookOfBu() {
@@ -1097,7 +1097,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 #endif
 			} else {
 				const uint16 pitchBend = 0x1000 + getRandomNumber(2000) - (2000 / 2);
-				_sound->playSample(Samples::Explode, pitchBend, 1, actor->posObj(), a);
+				_sound->mixSample3D(Samples::Explode, pitchBend, 1, actor->posObj(), a);
 
 				if (a == _scene->_mecaPenguinIdx) {
 					_extra->extraExplo(actor->posObj());
@@ -1162,7 +1162,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					}
 				} else {
 					const uint16 pitchBend = 0x1000 + getRandomNumber(2000) - (2000 / 2);
-					_sound->playSample(Samples::Explode, pitchBend, 1, actor->posObj(), a);
+					_sound->mixSample3D(Samples::Explode, pitchBend, 1, actor->posObj(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
 						if (!actor->_bonusParameter.givenNothing) {
 							_actor->giveExtraBonus(a);

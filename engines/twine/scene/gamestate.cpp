@@ -366,7 +366,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	const int32 boxBottomRightX = projPos.x + (SIZE_FOUND_OBJ / 2);
 	const int32 boxBottomRightY = projPos.y + (SIZE_FOUND_OBJ / 2);
 	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
-	_engine->_sound->playSample(Samples::BigItemFound);
+	_engine->_sound->mixSample(Samples::BigItemFound, 0x1000, 1, 128, 128);
 
 	// process vox play
 	_engine->_music->stopMusic();
@@ -543,7 +543,8 @@ void GameState::processGameoverAnimation() {
 		debugC(3, kDebugLevels::kDebugTimers, "GameOver time: %i", _engine->timerRef);
 	}
 
-	_engine->_sound->playSample(Samples::Explode);
+	const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(2000) - (2000 / 2);
+	_engine->_sound->mixSample(Samples::Explode, pitchBend, 1, 128, 128);
 	_engine->blitWorkToFront(rect);
 	_engine->_renderer->setFollowCamera(0, 0, 0, 0, 0, 0, zoom);
 	_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);

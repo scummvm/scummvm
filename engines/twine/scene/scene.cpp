@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "engines/enhancements.h"
 #include "twine/audio/music.h"
@@ -726,7 +727,7 @@ void Scene::processEnvironmentSound() {
 				int16 repeat = _sampleRepeat[currentAmb];
 
 				const uint16 pitchbend = 0x1000 + _engine->getRandomNumber(decal) - (decal / 2);
-				_engine->_sound->playSample(sampleIdx, pitchbend, repeat, 110, 110);
+				_engine->_sound->mixSample(sampleIdx, pitchbend, repeat, 110, 110);
 				break;
 			}
 		}
@@ -784,7 +785,8 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
 			default:
-				error("lba2 zone types not yet implemented");
+				warning("lba2 zone types not yet implemented");
+				break;
 			case ZoneType::kFunFrockFix:
 				break;
 			case ZoneType::kCube:

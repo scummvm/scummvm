@@ -234,7 +234,7 @@ void Movies::drawNextFrameFla() {
 			sample.balance = stream.readByte();
 			sample.volumeLeft = stream.readByte();
 			sample.volumeRight = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.balance, sample.volumeLeft, sample.volumeRight);
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.volumeLeft, sample.volumeRight);
 			break;
 		}
 		case kStopSample: {
@@ -276,13 +276,14 @@ void Movies::drawNextFrameFla() {
 			break;
 		}
 		case kSampleBalance: {
-			/* int16 num = */ stream.readSint16LE();
-			/* uint8 offset = */ stream.readByte();
+			const int16 sampleNum = stream.readSint16LE();
+			/* const uint8 offset = */ stream.readByte();
 			stream.skip(1); // padding
-			/* int16 balance = */ stream.readSint16LE();
-			/* uint8 volumeLeft = */ stream.readByte();
-			/* uint8 volumeRight = */ stream.readByte();
-			// TODO: change balance
+			/* const int16 balance = */ stream.readSint16LE();
+			const uint8 volumeLeft = stream.readByte();
+			const uint8 volumeRight = stream.readByte();
+			const int32 channelIdx = _engine->_sound->getSampleChannel(sampleNum);
+			_engine->_sound->setChannelBalance(channelIdx, volumeLeft, volumeRight);
 			break;
 		}
 		default: {

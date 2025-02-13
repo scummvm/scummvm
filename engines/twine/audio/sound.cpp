@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/system.h"
@@ -36,6 +37,7 @@
 #include "twine/resources/hqr.h"
 #include "twine/scene/movements.h"
 #include "twine/resources/resources.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -55,19 +57,37 @@ void Sound::startRainSample() {
 #if 0
 	const int sample = SAMPLE_RAIN;
 	if (CubeMode == CUBE_EXTERIEUR && !TEMPETE_FINIE && !isSamplePlaying(sample)) {
-		//const int frequency = 0x1000;
+		const int rate = 0x1000;
 		const int offset = 300;
 		const int repeat = 0;
 		const int panning = 64;
 		const int volumeRain = 70;
-		// TODO: playSample(sample, /*frequency,*/ offset, repeat, panning, volumeRain);
+		// TODO: mixSample(sample, rate, offset, repeat, panning, volumeRain);
 	}
 
 	RestartRainSample = false;
 #endif
 }
 
-void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
+void Sound::setChannelRate(int32 channelIdx, uint32 rate) {
+	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
+		return;
+	}
+	_engine->_system->getMixer()->setChannelRate(_samplesPlaying[channelIdx], rate);
+}
+
+void Sound::setChannelBalance(int32 channelIdx, uint8 volumeLeft, uint8 volumeRight) {
+	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
+		return;
+	}
+	Audio::Mixer *mixer = _engine->_system->getMixer();
+	const Audio::SoundHandle &handle = _samplesPlaying[channelIdx];
+	// balance value ranges from -127 to 127
+	int8 balance = (int8)(((int16)volumeRight - (int16)volumeLeft) * 127 / 255);
+	mixer->setChannelBalance(handle, balance);
+}
+
+void Sound::setChannelPosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
 		return;
 	}
@@ -77,13 +97,13 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	int32 distance = getDistance3D(camX, camY, camZ, x, y, z);
 	distance = boundRuleThree(0, distance, 10000, 255);
 	byte targetVolume = 0;
-	if (distance < 255) {
-		targetVolume = 255 - distance;
+	if (distance < Audio::Mixer::kMaxChannelVolume) {
+		targetVolume = Audio::Mixer::kMaxChannelVolume - distance;
 	}
-	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[channelIdx], targetVolume);
+	_engine->_system->getMixer()->setChannelVolume(_samplesPlaying[channelIdx], targetVolume);
 }
 
-void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volumeLeft, int32 volumeRight) {
+void Sound::playFlaSample(int32 index, int16 rate, int32 repeat, uint8 volumeLeft, uint8 volumeRight) {
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
@@ -110,10 +130,19 @@ void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volume
 
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_FLASAMP_FILE);
+	if (playSample(channelIdx, index, audioStream, repeat, Resources::HQR_FLASAMP_FILE)) {
+		setChannelRate(channelIdx, rate);
+		setChannelBalance(channelIdx, volumeLeft, volumeRight);
+	}
 }
 
-void Sound::playSample(int32 index, uint16 pitchbend, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
+void Sound::mixSample(int32 index, uint16 pitchbend, int32 repeat, uint8 volumeLeft, uint8 volumeRight) {
+	mixSample3D(index, pitchbend, repeat, {}, -1);
+	int channelIdx = getSampleChannel(index);
+	setChannelBalance(channelIdx, volumeLeft, volumeRight);
+}
+
+void Sound::mixSample3D(int32 index, uint16 pitchbend, int32 repeat, const IVec3 &pos, int32 actorIdx) {
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
@@ -125,11 +154,12 @@ void Sound::playSample(int32 index, uint16 pitchbend, int32 repeat, int32 x, int
 	}
 
 	if (actorIdx != -1) {
-		setSamplePosition(channelIdx, x, y, z);
+		// TODO: implement balance
+		setChannelPosition(channelIdx, pos.x, pos.y, pos.z);
 		// save the actor index for the channel so we can check the position
-		samplesPlayingActors[channelIdx] = actorIdx;
+		_samplesPlayingActors[channelIdx] = actorIdx;
 	} else {
-		samplesPlayingActors[channelIdx] = -1;
+		_samplesPlayingActors[channelIdx] = -1;
 	}
 
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
@@ -137,8 +167,8 @@ void Sound::playSample(int32 index, uint16 pitchbend, int32 repeat, int32 x, int
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::NO);
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType);
-	uint16 frequency = 11025 + (pitchbend - 0x1000);
-	_engine->_system->getMixer()->setChannelRate(samplesPlaying[channelIdx], frequency);
+	uint32 rate = 11025 + (pitchbend - 0x1000);
+	setChannelRate(channelIdx, rate);
 }
 
 bool Sound::playVoxSample(const TextEntry *text) {
@@ -187,7 +217,7 @@ bool Sound::playVoxSample(const TextEntry *text) {
 	return playSample(channelIdx, text->index, audioStream, 1, _engine->_text->_currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
 }
 
-bool Sound::playSample(int channelIdx, int index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType) {
+bool Sound::playSample(int32 channelIdx, int32 index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType) {
 	if (audioStream == nullptr) {
 		warning("Failed to create audio stream for %s: %i", name, index);
 		return false;
@@ -198,9 +228,8 @@ bool Sound::playSample(int channelIdx, int index, Audio::SeekableAudioStream *au
 		loop = 0;
 	}
 	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(audioStream, loop);
-	Audio::SoundHandle *handle = &samplesPlaying[channelIdx];
+	Audio::SoundHandle *handle = &_samplesPlaying[channelIdx];
 	const byte volume = Audio::Mixer::kMaxChannelVolume;
-	// TODO: implement balance
 	_engine->_system->getMixer()->playStream(soundType, handle, loopStream, index, volume);
 	return true;
 }
@@ -224,64 +253,64 @@ void Sound::stopSamples() { // HQ_StopSample
 		return;
 	}
 
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		_engine->_system->getMixer()->stopHandle(samplesPlaying[i]);
+	for (int channelIdx = 0; channelIdx < NUM_CHANNELS; channelIdx++) {
+		_engine->_system->getMixer()->stopHandle(_samplesPlaying[channelIdx]);
 	}
-	memset(samplesPlayingActors, -1, sizeof(samplesPlayingActors));
+	memset(_samplesPlayingActors, -1, sizeof(_samplesPlayingActors));
 }
 
-int32 Sound::getActorChannel(int32 index) {
-	for (int32 c = 0; c < NUM_CHANNELS; c++) {
-		if (samplesPlayingActors[c] == index) {
-			return c;
+int32 Sound::getActorChannel(int32 actorIdx) {
+	for (int32 channelIdx = 0; channelIdx < NUM_CHANNELS; channelIdx++) {
+		if (_samplesPlayingActors[channelIdx] == actorIdx) {
+			return channelIdx;
 		}
 	}
 	return -1;
 }
 
 int32 Sound::getSampleChannel(int32 index) {
-	for (int32 c = 0; c < NUM_CHANNELS; c++) {
-		if (_engine->_system->getMixer()->getSoundID(samplesPlaying[c]) == index) {
-			return c;
+	for (int32 channelIdx = 0; channelIdx < NUM_CHANNELS; channelIdx++) {
+		if (_engine->_system->getMixer()->getSoundID(_samplesPlaying[channelIdx]) == index) {
+			return channelIdx;
 		}
 	}
 	return -1;
 }
 
-void Sound::removeSampleChannel(int32 c) {
-	samplesPlayingActors[c] = -1;
+void Sound::removeChannelWatch(int32 channelIdx) {
+	_samplesPlayingActors[channelIdx] = -1;
 }
 
 void Sound::stopSample(int32 index) {
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
-	const int32 stopChannel = getSampleChannel(index);
-	if (stopChannel != -1) {
+	const int32 channelIdx = getSampleChannel(index);
+	if (channelIdx != -1) {
 		_engine->_system->getMixer()->stopID(index);
-		removeSampleChannel(stopChannel);
+		removeChannelWatch(channelIdx);
 	}
 }
 
-bool Sound::isChannelPlaying(int32 chan) {
-	if (chan >= 0 && chan < ARRAYSIZE(samplesPlaying)) {
-		if (_engine->_system->getMixer()->isSoundHandleActive(samplesPlaying[chan])) {
+bool Sound::isChannelPlaying(int32 channelIdx) {
+	if (channelIdx >= 0 && channelIdx < ARRAYSIZE(_samplesPlaying)) {
+		if (_engine->_system->getMixer()->isSoundHandleActive(_samplesPlaying[channelIdx])) {
 			return true;
 		}
-		removeSampleChannel(chan);
+		removeChannelWatch(channelIdx);
 	}
 	return false;
 }
 
 int32 Sound::isSamplePlaying(int32 index) {
-	const int32 chan = getSampleChannel(index);
-	return isChannelPlaying(chan);
+	const int32 channelIdx = getSampleChannel(index);
+	return isChannelPlaying(channelIdx);
 }
 
 int32 Sound::getFreeSampleChannelIndex() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (!_engine->_system->getMixer()->isSoundHandleActive(samplesPlaying[i])) {
-			return i;
+	for (int channelIdx = 0; channelIdx < NUM_CHANNELS; channelIdx++) {
+		if (!_engine->_system->getMixer()->isSoundHandleActive(_samplesPlaying[channelIdx])) {
+			return channelIdx;
 		}
 	}
 	return -1;

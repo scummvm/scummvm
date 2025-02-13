@@ -333,7 +333,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			if (_engine->timerRef - extra->spawnTime > 35) {
 				extra->spawnTime = _engine->timerRef;
 				extra->type &= ~ExtraType::TIME_IN;
-				_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, extra->pos);
+				_engine->_sound->mixSample3D(Samples::ItemPopup, 0x1000, 1, extra->pos, -1);
 			}
 			continue;
 		}
