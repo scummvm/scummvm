@@ -979,6 +979,7 @@ void Datum::reset() {
 		case ARGC:
 		case ARGCNORET:
 		case CASTLIBREF:
+		case SPRITEREF:
 			break;
 		case VARREF:
 		case GLOBALREF:
@@ -1478,7 +1479,7 @@ uint32 Datum::compareTo(Datum &d) const {
 		} else {
 			return kCompareGreater;
 		}
-	} else if (alignType == STRING) {
+	} else if (alignType == STRING || alignType == SYMBOL) {
 		int res = compareStrings(asString(), d.asString());
 		if (res < 0) {
 			return kCompareLess;
