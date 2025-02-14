@@ -19,47 +19,34 @@
  *
  */
 
-#ifndef DIRECTOR_RTE_H
-#define DIRECTOR_RTE_H
+#ifndef DIRECTOR_CASTMEMBER_RICHTEXT_H
+#define DIRECTOR_CASTMEMBER_RICHTEXT_H
 
-#include "common/array.h"
-#include "common/stream.h"
-#include "graphics/surface.h"
-
-namespace Common {
-class SeekableReadStreamEndian;
-}
+#include "director/types.h"
+#include "director/castmember/castmember.h"
 
 namespace Director {
 
-class Cast;
-
-class RTE0 {
+class RichTextCastMember : public CastMember {
 public:
-	RTE0(Cast *cast, Common::SeekableReadStreamEndian &stream);
+	RichTextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	RichTextCastMember(Cast *cast, uint16 castId, RichTextCastMember &source);
+	~RichTextCastMember();
 
-	Cast *_cast;
-	Common::Array<byte> data;
-};
+	void load() override;
 
-class RTE1 {
-public:
-	RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream);
+	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	Cast *_cast;
-	Common::Array<byte> data;
-};
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
-class RTE2 {
-public:
-	RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream);
-	~RTE2();
+	Common::String formatInfo() override;
 
-	Cast *_cast;
-	uint16 width;
-	uint16 height;
-	uint32 bpp;
-	Graphics::Surface *_surface;
+private:
+	Common::U32String _plainText;
+	uint32 _bgColor;
+	Picture *_picture;
 };
 
 } // End of namespace Director
