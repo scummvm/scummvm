@@ -140,6 +140,7 @@ private:
 
 	void closeQTVR();
 	void updateAngles();
+	void lookupHotspot(int16 x, int16 y);
 	void updateQTVRCursor(int16 x, int16 y);
 	void setCursor(int curId);
 	void cleanupCursors();

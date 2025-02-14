@@ -836,6 +836,8 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
 	_prevMouseX = x;
 	_prevMouseY = y;
+
+	lookupHotspot(x, y);
 }
 
 #define REPEAT_DELAY 30000
@@ -891,6 +893,8 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bo
 
 void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
 	_isMouseButtonDown = isDown;
+
+	lookupHotspot(x, y);
 
 	if (isDown && !repeat) {
 		_prevMouseX = x;
@@ -963,6 +967,19 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 			_zoomState = kZoomLimit;
 	} else {
 		_zoomState = kZoomNone;
+	}
+}
+
+void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+	int hotspotId = track->lookupHotspot(x, y);
+
+	if (hotspotId && _currentSample != -1) {
+		if (!_currentHotspot || _currentHotspot->id != hotspotId)
+			_currentHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
+	} else {
+		_currentHotspot = nullptr;
 	}
 }
 
@@ -1082,17 +1099,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			return;
 		}
 
-		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-
-		int hotspotId = track->lookupHotspot(x, y);
-
-		if (hotspotId && _currentSample != -1) {
-			if (!_currentHotspot || _currentHotspot->id != hotspotId)
-				_currentHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
-		} else {
-			_currentHotspot = nullptr;
-		}
-
+		// Get hotspot cursors
 		HotSpotType hsType = HotSpotType::undefined;
 
 		if (_currentHotspot)
@@ -1112,6 +1119,17 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			hsDown = kCursorPanoObjDown;
 			hsUp = kCursorPanoObjUp;
 			break;
+		}
+
+		if (_currentHotspot) {
+			if (_currentHotspot->mouseOverCursorID)
+				hsOver = _currentHotspot->mouseOverCursorID;
+
+			if (_currentHotspot->mouseDownCursorID)
+				hsDown = _currentHotspot->mouseDownCursorID;
+
+			if (_currentHotspot->mouseUpCursorID)
+				hsUp = _currentHotspot->mouseUpCursorID;
 		}
 
 		int sensitivity = 5;
