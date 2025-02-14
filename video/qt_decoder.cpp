@@ -57,7 +57,6 @@ QuickTimeDecoder::QuickTimeDecoder() {
 	_scaledSurface = 0;
 	_width = _height = 0;
 	_enableEditListBoundsCheckQuirk = false;
-	_prevMouseX = _prevMouseY = 0;
 	_isMouseButtonDown = false;
 	_isVR = false;
 

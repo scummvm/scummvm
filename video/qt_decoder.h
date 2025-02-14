@@ -150,7 +150,7 @@ private:
 
 public:
 	int _currentSample = -1;
-	uint16 _prevMouseX, _prevMouseY;
+	Common::Point _prevMouse;
 	bool _isMouseButtonDown;
 	Common::Point _mouseDrag;
 

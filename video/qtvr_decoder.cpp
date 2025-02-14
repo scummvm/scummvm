@@ -808,8 +808,8 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 	const int sensitivity = 10;
 	const float speedFactor = 0.1f;
 
-	int16 mouseDeltaX = x - _prevMouseX;
-	int16 mouseDeltaY = y - _prevMouseY;
+	int16 mouseDeltaX = x - _prevMouse.x;
+	int16 mouseDeltaY = y - _prevMouse.y;
 
 	float speedX = (float)mouseDeltaX * speedFactor;
 	float speedY = (float)mouseDeltaY * speedFactor;
@@ -838,14 +838,14 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 	}
 
 	if (changed) {
-		_prevMouseX = x;
-		_prevMouseY = y;
+		_prevMouse.x = x;
+		_prevMouse.y = y;
 	}
 }
 
 void QuickTimeDecoder::handlePanoMouseMove(int16 x, int16 y) {
-	_prevMouseX = x;
-	_prevMouseY = y;
+	_prevMouse.x = x;
+	_prevMouse.y = y;
 
 	lookupHotspot(x, y);
 }
@@ -859,7 +859,7 @@ static void repeatCallback(void *data) {
 		decoder->handleKey(decoder->_lastKey, true, true);
 
 	if (decoder->_isMouseButtonDown)
-		decoder->handleMouseButton(true, decoder->_prevMouseX, decoder->_prevMouseY, true);
+		decoder->handleMouseButton(true, decoder->_prevMouse.x, decoder->_prevMouse.y, true);
 }
 
 void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
@@ -893,8 +893,8 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bo
 		} else if (x > _curBbox.right) {
 			setCurrentColumn((getCurrentColumn() - 1 + _nav.columns) % _nav.columns);
 		} else {
-			_prevMouseX = x;
-			_prevMouseY = y;
+			_prevMouse.x = x;
+			_prevMouse.y = y;
 		}
 	}
 
@@ -907,8 +907,8 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	lookupHotspot(x, y);
 
 	if (isDown && !repeat) {
-		_prevMouseX = x;
-		_prevMouseY = y;
+		_prevMouse.x = x;
+		_prevMouse.y = y;
 
 		_mouseDrag.x = x;
 		_mouseDrag.y = y;
@@ -970,7 +970,7 @@ void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat
 		}
 	}
 
-	updateQTVRCursor(_prevMouseX, _prevMouseY);
+	updateQTVRCursor(_prevMouse.x, _prevMouse.y);
 }
 
 void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down, bool repeat) {
