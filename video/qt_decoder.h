@@ -175,7 +175,7 @@ private:
 	int _zoomState = kZoomNone;
 	bool _repeatTimerActive = false;
 
-	int _hotSpotIdx = -1;
+	const PanoHotSpot *_currentHotspot = nullptr;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,

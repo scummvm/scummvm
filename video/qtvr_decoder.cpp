@@ -440,7 +440,8 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 }
 
 void QuickTimeDecoder::PanoTrackHandler::initPanorama() {
-	_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
+	//_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
+	_decoder->goToNode(2);
 }
 
 void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
@@ -1083,24 +1084,19 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 
-		int hotspot = track->lookupHotspot(x, y);
+		int hotspotId = track->lookupHotspot(x, y);
 
-		if (hotspot && _currentSample != -1) {
-			if (_hotSpotIdx == -1 || _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[_hotSpotIdx].id != hotspot) {
-				for (int i = 0; i < _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots.size(); i++) {
-					if (_panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[i].id == hotspot) {
-						_hotSpotIdx = i;
-						break;
-					}
-				}
-			}
+		if (hotspotId && _currentSample != -1) {
+			if (!_currentHotspot || _currentHotspot->id != hotspotId)
+				_currentHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
 		} else {
-			_hotSpotIdx = -1;
+			_currentHotspot = nullptr;
 		}
 
 		HotSpotType hsType = HotSpotType::undefined;
-		if (_hotSpotIdx != -1)
-			hsType = _panoTrack->panoSamples[_currentSample].hotSpotTable.hotSpots[_hotSpotIdx].type;
+
+		if (_currentHotspot)
+			hsType = _currentHotspot->type;
 
 		int hsOver, hsDown, hsUp;
 
@@ -1121,7 +1117,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 		int sensitivity = 5;
 
 		if (!_isMouseButtonDown) {
-			setCursor(hotspot == 0 ? kCursorPano : hsOver);
+			setCursor(_currentHotspot ? hsOver : kCursorPano);
 		} else {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
@@ -1178,7 +1174,8 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 			}
 
-			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : hotspot == 0 ? kCursorPanoNav : hsDown);
+			(void)hsUp;
+			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : _currentHotspot ? hsDown : kCursorPanoNav);
 		}
 	}
 }
