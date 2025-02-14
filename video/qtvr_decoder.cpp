@@ -33,6 +33,7 @@
 #include "audio/audiostream.h"
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/keyboard.h"
@@ -425,18 +426,20 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 		}
 	}
 
-	Common::Path path = Common::Path(fname);
+	if (ConfMan.getBool("dump_scripts")) {
+		Common::Path path = Common::Path(fname);
 
-	Common::DumpFile bitmapFile;
-	if (!bitmapFile.open(path, true)) {
-		warning("Cannot dump panorama into file '%s'", path.toString().c_str());
-		return nullptr;
+		Common::DumpFile bitmapFile;
+		if (!bitmapFile.open(path, true)) {
+			warning("Cannot dump panorama into file '%s'", path.toString().c_str());
+			return nullptr;
+		}
+
+		Image::writePNG(bitmapFile, *target, track->getPalette());
+		bitmapFile.close();
+
+		debug(0, "Dumped panorama %s of %d x %d", path.toString().c_str(), target->w, target->h);
 	}
-
-	Image::writePNG(bitmapFile, *target, track->getPalette());
-	bitmapFile.close();
-
-	debug(0, "Dumped panorama %s of %d x %d", path.toString().c_str(), target->w, target->h);
 
 	return target;
 }
