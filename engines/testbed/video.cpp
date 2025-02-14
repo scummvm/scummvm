@@ -80,11 +80,6 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			pixelformat = Graphics::PixelFormat::createFormatCLUT8();
 		} else {
 			pixelformat = supportedFormatsList.front();
-
-			if (!video->setOutputPixelFormat(pixelformat)) {
-				// TODO: Search for the pixel format in supportedFormatsList?
-				warning("Format mismatch. Video will be converted");
-			}
 		}
 	}
 
