@@ -96,9 +96,8 @@ void GameMenu::show(RGB8 *myPalette) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!guiMenu::loadSprites("gamemenu", GM_TOTAL_SPRITES)) {
-		return;
-	}
+	if (!guiMenu::loadSprites("gamemenu", GM_TOTAL_SPRITES))
+		error("Error loading gamemenu");
 
 	_GM(gameMenu) = guiMenu::create(_GM(menuSprites)[GM_DIALOG_BOX],
 		GAME_MENU_X, GAME_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
@@ -131,10 +130,9 @@ void GameMenu::show(RGB8 *myPalette) {
 	LockMouseSprite(0);
 }
 
-void GameMenu::DestroyGameMenu() {
-	if (!_GM(gameMenu)) {
+void GameMenu::destroyGameMenu() {
+	if (!_GM(gameMenu))
 		return;
-	}
 
 	// Remove the screen from the gui
 	vmng_screen_dispose(_GM(gameMenu));
@@ -148,7 +146,7 @@ void GameMenu::DestroyGameMenu() {
 
 void GameMenu::cbQuitGame(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyGameMenu();
 
 	// Shutdown the menu system
 	guiMenu::shutdown(false);
@@ -159,7 +157,7 @@ void GameMenu::cbQuitGame(void *, void *) {
 
 void GameMenu::cbMainMenu(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyGameMenu();
 
 	if (!_GM(gameMenuFromMain)) {
 		// Save the game so we can resume from here if possible
@@ -182,14 +180,20 @@ void GameMenu::cbMainMenu(void *, void *) {
 
 void GameMenu::cbResume(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyGameMenu();
 
 	// Shutdown the menu system
 	guiMenu::shutdown(true);
 }
 
 void GameMenu::cbOptions(void *, void *) {
-	// TODO
+	// Destroy the game menu
+	destroyGameMenu();
+
+	_GM(buttonClosesDialog) = true;
+
+	// Create the options menu
+	OptionsMenu::show();
 }
 
 void GameMenu::cbSave(void *, void *) {
@@ -198,6 +202,72 @@ void GameMenu::cbSave(void *, void *) {
 
 void GameMenu::cbLoad(void *, void *) {
 	// TODO
+}
+
+/*-------------------- OPTIONS MENU --------------------*/
+
+#define OPTIONS_MENU_X 212
+#define OPTIONS_MENU_Y 160
+#define OPTIONS_MENU_SPRITE 0
+
+#define OM_TAG_GAMEMENU		1
+#define OM_GAMEMENU_X		14
+#define OM_GAMEMENU_Y		94
+#define OM_GAMEMENU_W		26
+#define OM_GAMEMENU_H		26
+
+#define OM_TAG_SCROLLING	4
+#define OM_SCROLLING_X		131
+#define OM_SCROLLING_Y		113
+#define OM_SCROLLING_W		39
+#define OM_SCROLLING_H		39
+
+void OptionsMenu::show() {
+	// Load in the options menu sprites
+	if (!guiMenu::loadSprites("opmenu", GM_TOTAL_SPRITES))
+		error("Error loading opmenu");
+
+	_GM(opMenu) = guiMenu::create(_GM(menuSprites)[OPTIONS_MENU_SPRITE],
+		OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
+	if (!_GM(opMenu)) {
+		return;
+	}
+
+	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
+		OM_GAMEMENU_X, OM_GAMEMENU_Y, OM_GAMEMENU_W, OM_GAMEMENU_H,
+		cbGameMenu, menuItemButton::BTN_TYPE_GM_GENERIC);
+
+
+	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
+		OM_SCROLLING_X, OM_SCROLLING_Y, OM_SCROLLING_W, OM_SCROLLING_H, cbGameMenu,
+		_G(kernel).cameraPans() ? menuItemButton::BTN_TYPE_OM_SCROLLING_ON :
+			menuItemButton::BTN_TYPE_OM_SCROLLING_OFF);
+
+	guiMenu::configure(_GM(opMenu), cbGameMenu, cbGameMenu);
+	vmng_screen_show((void *)_GM(opMenu));
+	LockMouseSprite(0);
+}
+
+void OptionsMenu::destroyOptionsMenu() {
+	// Remove the screen from the gui
+	vmng_screen_dispose(_GM(opMenu));
+
+	// Destroy the menu resources
+	guiMenu::destroy(_GM(opMenu));
+
+	// Unload the menu sprites
+	guiMenu::unloadSprites();
+}
+
+void OptionsMenu::cbGameMenu(void *, void *) {
+	destroyOptionsMenu();
+
+	GameMenu::show(nullptr);
+}
+
+void OptionsMenu::cbScrolling(M4::GUI::menuItemButton *myItem, M4::GUI::guiMenu *) {
+	_G(kernel).camera_pan_instant = myItem->buttonType ==
+		menuItemButton::BTN_TYPE_OM_SCROLLING_ON;
 }
 
 /*-------------------- ACCESS METHODS --------------------*/

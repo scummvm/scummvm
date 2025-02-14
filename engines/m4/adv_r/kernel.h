@@ -69,6 +69,7 @@ struct Kernel {
 	bool unused = false;
 
 	size_t mem_avail() const { return 7999999; }
+	bool cameraPans() const { return !camera_pan_instant; }
 };
 
 } // namespace M4

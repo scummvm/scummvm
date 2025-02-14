@@ -26,7 +26,7 @@
 #include "graphics/surface.h"
 #include "m4/m4_types.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/gui/gui_menu.h"
+#include "m4/gui/gui_menu_items.h"
 #include "m4/gui/gui_univ.h"
 
 namespace M4 {
@@ -131,11 +131,6 @@ enum game_menu_button_tags {
 /**
  * Options menu defines
  */
-
-#define OPTIONS_MENU_X		175
-#define OPTIONS_MENU_Y		100
-#define OPTIONS_MENU_W		298
-#define OPTIONS_MENU_H		218
 
 enum option_menu_item_tags {
 	OM_TAG_DONE = 1,

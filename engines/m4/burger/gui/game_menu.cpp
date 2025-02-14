@@ -404,6 +404,11 @@ void CreateGameMenuMain(RGB8 *myPalette) {
 
 //----------------------------------   OPTIONS MENU   -------------------------------------//
 
+#define OPTIONS_MENU_X		175
+#define OPTIONS_MENU_Y		100
+#define OPTIONS_MENU_W		298
+#define OPTIONS_MENU_H		218
+
 void DestroyOptionsMenu();
 
 

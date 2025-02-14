@@ -20,7 +20,7 @@
  */
 
 #include "graphics/thumbnail.h"
-#include "m4/gui/gui_menu.h"
+#include "m4/gui/gui_menu_items.h"
 #include "m4/adv_r/other.h"
 #include "m4/adv_r/adv_background.h"
 #include "m4/adv_r/adv_control.h"

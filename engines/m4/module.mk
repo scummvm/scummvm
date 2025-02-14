@@ -52,7 +52,7 @@ MODULE_OBJS = \
 	gui/gui_cheapo.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \
-	gui/gui_menu.o \
+	gui/gui_menu_items.o \
 	gui/gui_mouse.o \
 	gui/gui_sys.o \
 	gui/gui_vmng_core.o \

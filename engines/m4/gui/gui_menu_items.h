@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef M4_GUI_GUI_MENU_H
-#define M4_GUI_GUI_MENU_H
+#ifndef M4_GUI_GUI_MENU_ITEMS_H
+#define M4_GUI_GUI_MENU_ITEMS_H
 
 #include "graphics/surface.h"
 #include "m4/m4_types.h"
@@ -211,12 +211,18 @@ public:
 
 	enum button_types {
 		BTN_TYPE_GM_GENERIC,
-		BTN_TYPE_SL_SAVE,
-		BTN_TYPE_SL_LOAD,
-		BTN_TYPE_SL_CANCEL,
-		BTN_TYPE_SL_TEXT,
-		BTN_TYPE_OM_DONE,
-		BTN_TYPE_OM_CANCEL,
+
+		// Riddle
+		BTN_TYPE_OM_SCROLLING_ON = 1,
+		BTN_TYPE_OM_SCROLLING_OFF = 2,
+
+		// Burger
+		BTN_TYPE_SL_SAVE = 1,
+		BTN_TYPE_SL_LOAD = 2,
+		BTN_TYPE_SL_CANCEL = 3,
+		BTN_TYPE_SL_TEXT = 4,
+		BTN_TYPE_OM_DONE = 5,
+		BTN_TYPE_OM_CANCEL = 6,
 
 		BTN_TYPE_TOTAL_NUMBER
 	};

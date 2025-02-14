@@ -47,7 +47,7 @@
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
-#include "m4/gui/gui_menu.h"
+#include "m4/gui/gui_menu_items.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
 #include "m4/gui/hotkeys.h"

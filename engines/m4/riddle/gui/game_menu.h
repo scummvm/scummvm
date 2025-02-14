@@ -23,7 +23,7 @@
 #ifndef M4_RIDDLE_GUI_GAME_MENU_H
 #define M4_RIDDLE_GUI_GAME_MENU_H
 
-#include "m4/m4_types.h"
+#include "m4/gui/gui_menu_items.h"
 
 namespace M4 {
 namespace Riddle {
@@ -31,7 +31,7 @@ namespace GUI {
 
 class GameMenu {
 private:
-	static void DestroyGameMenu();
+	static void destroyGameMenu();
 	static void cbQuitGame(void *, void *);
 	static void cbMainMenu(void *, void *);
 	static void cbResume(void *, void *);
@@ -41,6 +41,16 @@ private:
 
 public:
 	static void show(RGB8 *myPalette);
+};
+
+class OptionsMenu {
+private:
+	static void destroyOptionsMenu();
+	static void cbGameMenu(void *, void *);
+	static void cbScrolling(M4::GUI::menuItemButton *myItem, M4::GUI::guiMenu *);
+
+public:
+	static void show();
 };
 
 extern void CreateGameMenu(RGB8 *myPalette);
