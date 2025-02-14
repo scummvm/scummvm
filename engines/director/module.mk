@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	castmember/filmloop.o \
 	castmember/movie.o \
 	castmember/palette.o \
+	castmember/richtext.o \
 	castmember/script.o \
 	castmember/shape.o \
 	castmember/sound.o \

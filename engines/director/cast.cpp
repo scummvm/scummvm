@@ -45,6 +45,7 @@
 #include "director/castmember/filmloop.h"
 #include "director/castmember/movie.h"
 #include "director/castmember/palette.h"
+#include "director/castmember/richtext.h"
 #include "director/castmember/script.h"
 #include "director/castmember/shape.h"
 #include "director/castmember/sound.h"
@@ -277,8 +278,8 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	case kCastText:
 		target = (CastMember *)(new TextCastMember(this, targetId, *(TextCastMember *)source));
 		break;
-	case kCastRTE:
-		target = (CastMember *)(new RTECastMember(this, targetId, *(RTECastMember *)source));
+	case kCastRichText:
+		target = (CastMember *)(new RichTextCastMember(this, targetId, *(RichTextCastMember *)source));
 		break;
 	case kCastTransition:
 		target = (CastMember *)(new TransitionCastMember(this, targetId, *(TransitionCastMember *)source));
@@ -1077,9 +1078,9 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastLingoScript");
 		_loadedCast->setVal(id, new ScriptCastMember(this, id, castStream, _version));
 		break;
-	case kCastRTE:
-		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastRTE (%d children)", res->children.size());
-		_loadedCast->setVal(id, new RTECastMember(this, id, castStream, _version));
+	case kCastRichText:
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastRichText (%d children)", res->children.size());
+		_loadedCast->setVal(id, new RichTextCastMember(this, id, castStream, _version));
 		break;
 	case kCastDigitalVideo:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastDigitalVideo (%d children)", res->children.size());
