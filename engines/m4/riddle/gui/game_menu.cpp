@@ -208,7 +208,6 @@ void GameMenu::cbLoad(void *, void *) {
 
 #define OPTIONS_MENU_X 212
 #define OPTIONS_MENU_Y 160
-#define OPTIONS_MENU_SPRITE 0
 
 #define OM_TAG_GAMEMENU		1
 #define OM_GAMEMENU_X		14
@@ -224,10 +223,10 @@ void GameMenu::cbLoad(void *, void *) {
 
 void OptionsMenu::show() {
 	// Load in the options menu sprites
-	if (!guiMenu::loadSprites("opmenu", GM_TOTAL_SPRITES))
+	if (!guiMenu::loadSprites("opmenu", OM_TOTAL_SPRITES))
 		error("Error loading opmenu");
 
-	_GM(opMenu) = guiMenu::create(_GM(menuSprites)[OPTIONS_MENU_SPRITE],
+	_GM(opMenu) = guiMenu::create(_GM(menuSprites)[OM_DIALOG_BOX],
 		OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(opMenu)) {
 		return;
@@ -239,7 +238,7 @@ void OptionsMenu::show() {
 
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
-		OM_SCROLLING_X, OM_SCROLLING_Y, OM_SCROLLING_W, OM_SCROLLING_H, cbGameMenu,
+		OM_SCROLLING_X, OM_SCROLLING_Y, OM_SCROLLING_W, OM_SCROLLING_H, (CALLBACK)cbScrolling,
 		_G(kernel).cameraPans() ? menuItemButton::BTN_TYPE_OM_SCROLLING_ON :
 			menuItemButton::BTN_TYPE_OM_SCROLLING_OFF);
 

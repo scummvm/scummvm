@@ -114,6 +114,41 @@ constexpr int SL_THUMBNAIL_H = 162;
 } // namespace GUI
 } // namespace Burger
 
+namespace Riddle {
+namespace GUI {
+
+enum options_menu_sprites {
+	OM_DIALOG_BOX,
+
+	OM_SCROLLING_ON_BTN_NORM = 8,
+	OM_SCROLLING_ON_BTN_OVER = 9,
+	OM_SCROLLING_ON_BTN_PRESS = 13,
+
+	OM_SCROLLING_OFF_BTN_NORM = 11,
+	OM_SCROLLING_OFF_BTN_OVER = 12,
+	OM_SCROLLING_OFF_BTN_PRESS = 10,
+#if 0
+	OM_SLIDER_BTN_NORM,
+	OM_SLIDER_BTN_OVER,
+	OM_SLIDER_BTN_PRESS,
+
+	OM_SLIDER_BAR,
+
+	OM_DONE_BTN_GREY,
+	OM_DONE_BTN_NORM,
+	OM_DONE_BTN_OVER,
+	OM_DONE_BTN_PRESS,
+
+	OM_CANCEL_BTN_NORM,
+	OM_CANCEL_BTN_OVER,
+	OM_CANCEL_BTN_PRESS,
+#endif
+	OM_TOTAL_SPRITES = 14
+};
+
+} // namespace GUI
+} // namespace Riddle
+
 namespace GUI {
 
 #define _GM(X) ::M4::g_vars->_menu.X
@@ -212,19 +247,17 @@ public:
 	enum button_types {
 		BTN_TYPE_GM_GENERIC,
 
-		// Riddle
-		BTN_TYPE_OM_SCROLLING_ON = 1,
-		BTN_TYPE_OM_SCROLLING_OFF = 2,
-
 		// Burger
-		BTN_TYPE_SL_SAVE = 1,
-		BTN_TYPE_SL_LOAD = 2,
-		BTN_TYPE_SL_CANCEL = 3,
-		BTN_TYPE_SL_TEXT = 4,
-		BTN_TYPE_OM_DONE = 5,
-		BTN_TYPE_OM_CANCEL = 6,
+		BTN_TYPE_SL_SAVE,
+		BTN_TYPE_SL_LOAD,
+		BTN_TYPE_SL_CANCEL,
+		BTN_TYPE_SL_TEXT,
+		BTN_TYPE_OM_DONE,
+		BTN_TYPE_OM_CANCEL,
 
-		BTN_TYPE_TOTAL_NUMBER
+		// Riddle
+		BTN_TYPE_OM_SCROLLING_ON,
+		BTN_TYPE_OM_SCROLLING_OFF
 	};
 
 	int32 itemFlags = 0;

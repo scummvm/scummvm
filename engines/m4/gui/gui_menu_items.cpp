@@ -860,6 +860,7 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 		}
 		break;
 
+	/** ORION BURGER BUTTON TYPES **/
 	case BTN_TYPE_SL_SAVE:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
@@ -975,6 +976,40 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 			break;
 		}
 		break;
+
+	/** RIDDLE BUTTON TYPES **/
+	case BTN_TYPE_OM_SCROLLING_ON:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_PRESS];
+			break;
+		case BTN_STATE_NORM:
+		default:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_NORM];
+			break;
+		}
+		break;
+
+	case BTN_TYPE_OM_SCROLLING_OFF:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_OVER:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_OVER];
+			break;
+		case BTN_STATE_PRESS:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_PRESS];
+			break;
+		case BTN_STATE_NORM:
+		default:
+			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_NORM];
+			break;
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	// Get the menu buffer
@@ -1070,6 +1105,11 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 		if (menuItem::cursorInsideItem(myItem, x, y)) {
 			if (*currItem) {
 				execCallback = true;
+
+				if (myItem->buttonType == BTN_TYPE_OM_SCROLLING_ON)
+					myItem->buttonType = BTN_TYPE_OM_SCROLLING_OFF;
+				else if (myItem->buttonType == BTN_TYPE_OM_SCROLLING_OFF)
+					myItem->buttonType = BTN_TYPE_OM_SCROLLING_ON;
 			} else {
 				*currItem = myItem;
 			}
@@ -1117,7 +1157,9 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
-		//		  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
+		if (IS_RIDDLE)
+			digi_play("950_s51", 2, 255, -1, 950);
+
 		currMenu = myItem->myMenu;
 		currTag = myItem->tag;
 		_GM(buttonClosesDialog) = false;
