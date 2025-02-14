@@ -2896,7 +2896,12 @@ void LB::b_ramNeeded(int nargs) {
 void LB::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res(0);
-	int arg = d.asInt();
+	int arg = 0;
+	if (d.type == SPRITEREF) {
+		arg = d.u.i;
+	} else {
+		arg = d.asInt();
+	}
 
 	Score *score = g_director->getCurrentMovie()->getScore();
 
