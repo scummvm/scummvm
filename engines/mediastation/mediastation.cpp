@@ -106,6 +106,10 @@ Common::String MediaStationEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+const char *MediaStationEngine::getAppName() const {
+	return _gameDescription->filesDescriptions[0].fileName;
+}
+
 bool MediaStationEngine::isFirstGenerationEngine() {
 	if (_boot == nullptr) {
 		error("Attempted to get engine version before BOOT.STM was read");

@@ -66,10 +66,12 @@ public:
 
 	uint32 getFeatures() const;
 	Common::String getGameId() const;
+	const char *getAppName() const;
 	bool hasFeature(EngineFeature f) const override {
 		return
 		    (f == kSupportsReturnToLauncher);
 	};
+
 	bool isFirstGenerationEngine();
 	void processEvents();
 	void redraw();
