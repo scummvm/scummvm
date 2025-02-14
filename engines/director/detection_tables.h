@@ -1110,6 +1110,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "intro1",				"INTRO No. 1 1994" },
 	{ "intro2",				"INTRO No. 2 1994" },
 	{ "intro4",				"INTRO No. 4" },
+	{ "intro6",				"INTRO No. 6" },
 	{ "jinkakuzukan",		"人格図鑑" }, // Personality Profile
 	{ "junglepark",			"Jungle Park" },
 	{ "jyajya",				"Jya jya" },										// HyperCard with D3 movie
@@ -4628,6 +4629,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 							 "INTRO.DIR", "542e9b1dda64de784066a65a557b1496", 2063096, Common::JA_JPN, 404),
 	WINGAME2t_l("intro4", "", "INTRO_04.EXE", "192f16367c1d249beff3d416f1e99c6c", 2221741,
 							  "INTRO.DIR", 	  "1917276c6c3af2efdb740a36903ae7e7", 2063096, Common::JA_JPN, 404),
+
+	MACGAME2_l("intro6", "", "Intro_06",  "r:f5033f237ad1b1639fc46d01a82ac380", 286124,
+							 "MAIN_IF.DIR", "d:682629a2c1fdd55250788cc5faa930a8", 548036, Common::JA_JPN, 404),
+	WINGAME2t_l("intro6", "", "INTRO_06.EXE", "d7f2b292aa9e70cc92a95916ac41b3a5", 1077367,
+							  "MAIN_IF.DIR", 	  "3830502a30c8361d707771ea9b68eec0", 548036, Common::JA_JPN, 404),
 
 	// Original filename is チュートリアル
 	MACDEMO1_l("inposition", "Tutorial", "Tutorial", "r:77f4098988d5386794d1530065f514cd", 305277, Common::JA_JPN, 400),
