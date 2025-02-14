@@ -537,21 +537,6 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() {
-#if 0
-	if (_decoder->_qtvrType == QTVRType::PANORAMA) {
-		if (!_isPanoConstructed)
-			return nullptr;
-
-		if (_projectedPano) {
-			_projectedPano->free();
-			delete _projectedPano;
-		}
-
-		projectPanorama();
-		return _projectedPano;
-	}
-#endif
-
 	if (endOfTrack())
 		return 0;
 
