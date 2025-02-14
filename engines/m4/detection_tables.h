@@ -129,7 +129,8 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Burger,
 		kFeaturesNonInteractiveDemo
 	},
-	{
+
+	{	// v1.08 English
 		{
 			"riddle",
 			nullptr,
@@ -142,7 +143,7 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
-	{
+	{	// v2.05 English Kixx rerelease
 		{
 			"riddle",
 			nullptr,
@@ -194,7 +195,20 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
-	{	// Demo
+	{
+		{
+			"riddle",
+			nullptr,
+			AD_ENTRY1s("ripley.has", "30ad07f5c52af0cb72020df042674aa8", 704511),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesCD
+	},
+	{	// Game Version DELTOID - June 8, 1995
 		{
 			"riddle",
 			"Demo",
@@ -207,7 +221,48 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesDemo
 	},
-
+	{	// Game Version NYUK -- July 13, 1995
+		{
+			"riddle",
+			"Demo",
+			// Small/Medium/Vast installation
+			AD_ENTRY1s("ripley.has", "2c5e80441c4ace6ff4ffe0ecd4099a58", 149057),
+			// Large/Huge installation
+			// AD_ENTRY1s("ripley.has", "daaff94287aec861e27b1e7b37811229", 164319),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
+	{	// Game Version OBVIATE -- Aug 2, 1995
+		{
+			"riddle",
+			"Demo",
+			AD_ENTRY1s("ripley.has", "df74ee9ceefb006638839572f0144256", 74353),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
+	{	// Game Version German version 1.1 -- Apr 2, 1996
+		{
+			"riddle",
+			"Demo",
+			AD_ENTRY1s("RIPLEY.HAS", "810b27cf5e2c119ad2ec0a9e550eb32c", 119097),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
