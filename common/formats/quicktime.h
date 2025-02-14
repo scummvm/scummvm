@@ -226,6 +226,14 @@ protected:
 
 	struct PanoHotSpotTable {
 		Array<PanoHotSpot> hotSpots;
+
+		PanoHotSpot *get(uint16 id) {
+			for (int i = 0; i < hotSpots.size(); i++)
+				if (hotSpots[i].id == id)
+					return &hotSpots[i];
+
+			return nullptr;
+		}
 	};
 
 	struct PanoStringTable {
@@ -249,6 +257,14 @@ protected:
 
 	struct PanoLinkTable {
 		Array<PanoLink> links;
+
+		PanoLink *get(uint16 id) {
+			for (int i = 0; i < links.size(); i++)
+				if (links[i].id == id)
+					return &links[i];
+
+			return nullptr;
+		}
 	};
 
 	struct PanoNavigation {
@@ -267,6 +283,14 @@ protected:
 
 	struct PanoNavigationTable {
 		Array<PanoNavigation> navs;
+
+		PanoNavigation *get(uint16 id) {
+			for (int i = 0; i < navs.size(); i++)
+				if (navs[i].id == id)
+					return &navs[i];
+
+			return nullptr;
+		}
 	};
 
 	struct PanoTrackSample {
