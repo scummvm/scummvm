@@ -914,7 +914,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 		_mouseDrag.y = y;
 	}
 
-	if (_currentHotspot && _currentHotspot->type == HotSpotType::link) {
+	if (!repeat && !isDown && _currentHotspot && _currentHotspot->type == HotSpotType::link) {
 		PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_currentHotspot->typeData);
 
 		if (link) {
