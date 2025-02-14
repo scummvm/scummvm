@@ -136,6 +136,12 @@ void QuickTimeDecoder::closeQTVR() {
 	}
 }
 
+void QuickTimeDecoder::renderHotspots(bool mode) {
+	_renderHotspots = mode;
+
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
 void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	if (!isVR())
 		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");
@@ -445,8 +451,7 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 }
 
 void QuickTimeDecoder::PanoTrackHandler::initPanorama() {
-	//_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
-	_decoder->goToNode(2);
+	_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
 }
 
 void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
@@ -707,8 +712,10 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	if (angleT < 0.0f)
 		angleT += 1.0f;
 
-	int32 panoWidth = _constructedPano->h;
-	int32 panoHeight = _constructedPano->w;
+	Graphics::Surface *srcSurf = _decoder->_renderHotspots ? _constructedHotspots : _constructedPano;
+
+	int32 panoWidth = srcSurf->h;
+	int32 panoHeight = srcSurf->w;
 
 	uint16 angleOffset = static_cast<uint32>(angleT * panoWidth);
 
@@ -756,8 +763,15 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		for (uint16 y = 0; y < h; y++) {
 			int32 sourceYCoord = (2 * y + 1) * (bottomSrcCoord - topSrcCoord) / (2 * h) + topSrcCoord;
 
-			uint32 pixel1 = _constructedPano->getPixel(sourceYCoord, leftSrcCoord);
-			uint32 pixel2 = _constructedPano->getPixel(sourceYCoord, rightSrcCoord);
+			uint32 pixel1 = srcSurf->getPixel(sourceYCoord, leftSrcCoord);
+			uint32 pixel2 = srcSurf->getPixel(sourceYCoord, rightSrcCoord);
+
+			if (_decoder->_renderHotspots) {
+				const byte *col = &quickTimeDefaultPalette256[pixel1 * 3];
+				pixel1 = _planarProjection->format.RGBToColor(col[0], col[1], col[2]);
+				col = &quickTimeDefaultPalette256[pixel2 * 3];
+				pixel2 = _planarProjection->format.RGBToColor(col[0], col[1], col[2]);
+			}
 
 			_planarProjection->setPixel(x1, y, pixel1);
 			_planarProjection->setPixel(x2, y, pixel2);

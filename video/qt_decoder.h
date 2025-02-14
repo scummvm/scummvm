@@ -102,6 +102,8 @@ public:
 	uint8 getWarpMode() const { return _warpMode; }
 	void setWarpMode(uint8 warpMode) { _warpMode = warpMode; }
 
+	void renderHotspots(bool mode);
+
 	struct NodeData {
 		uint32 nodeID;
 
@@ -177,6 +179,7 @@ private:
 	bool _repeatTimerActive = false;
 
 	const PanoHotSpot *_currentHotspot = nullptr;
+	bool _renderHotspots = false;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
