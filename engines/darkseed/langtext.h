@@ -349,7 +349,7 @@ constexpr I18nText kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeada
 	"UTILIZAR %s EN %s NO TIENE SENTIDO, TE PRODUCIRA DOLOR DE CABEZA",
 	"POURQUOI UTILISER %s SUR %s PRENEZ DONC DE L'ASPIRINE!",
 	"GEBRAUCHEN VON %s AUF %s MACHT KEINEN SINN, DAS MUSS AN DEINEN KOPFSCHMERZEN LIEGEN!",
-	nullptr
+	"%s %s\xb5\x41\x20\xac\x61\xb6\x77\xd0\x61\x93\x65\x88\xf5\xb7\x65\x20\xa0\x69\x95\xa1\x96\x41\xbb\xa1\x20\xb4\x67\xaf\x73\x93\xa1\x94\x61\x2e\x20\x8b\x61\x20\xaf\xb1\xd0\x65\x20\x96\x81\xc9\xb7\x98\x81\xa2\x85\xb5\x41\x20\x8b\x61\x9c\xe1\x93\x65\x88\xf5\xb7\xa1\x20\xb4\x61\x93\xa9\x8c\x61\xb6\x61\x3f"
 };
 
 constexpr I18nText kI18N_genResponse1_theObjectWillDoNothingToTheText = {
@@ -357,7 +357,7 @@ constexpr I18nText kI18N_genResponse1_theObjectWillDoNothingToTheText = {
 	"%s NO TIENE NADA QUE VER CON %s.",
 	"%s NE FERONT RIEN A %s.",
 	"%s HAT NICHTS ZU TUN MIT %s",
-	nullptr
+	"%s %s\xb5\x41\x20\xac\x61\xb6\x77\xd0\x61\x93\x65\x88\xf5\xb7\x65\x20\xb4\x61\xa2\x81\x9c\xe5\x20\xad\xa1\xb6\x77\xb7\xa1\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText = {
@@ -365,7 +365,7 @@ constexpr I18nText kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText = {
 	"%s NO LE CAUSARA EFECTO A %s.",
 	"%s N'AURA AUCUN EFFET SUR %s.",
 	"%s BEWIRKT NICHTS MIT %s.",
-	nullptr
+	"%s %s\xb5\x41\x20\xb4\x61\xa2\x81\xb5\x77\xd0\xb7\x95\xa1\x20\xa3\xa1\xc3\xa1\xbb\xa1\xa1\xb5\xd0\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_genResponse3_theObjectHasNothingToDoWithTheText = {
@@ -373,7 +373,7 @@ constexpr I18nText kI18N_genResponse3_theObjectHasNothingToDoWithTheText = {
 	"%s NO TIENE NADA QUE VER CON %s.",
 	"%s N'A AUCUN RAPPORT AVEC %s.",
 	"%s HAT NICHTS ZU TUN MIT %s.",
-	nullptr
+	"%s %s \xb8\xe5\xd1\x61\x20\x89\xc5\x89\x81\x88\x61\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_genResponse4_areYouFeelingAlrightText = {
@@ -381,7 +381,7 @@ constexpr I18nText kI18N_genResponse4_areYouFeelingAlrightText = {
 	"TE ENCUENTRAS BIEN?",
 	"VOUS ETES SUR QUE CA VA BIEN?",
 	"FUEHLST DU DICH GUT?",
-	nullptr
+	"\xbb\xa1\x8b\x71\x20\xb8\xf7\xaf\xa5\xb7\xa1\x20\xb5\xa5\xb8\xe5\xd0\x73\x93\xa1\x8c\x61\x3f\x0a"
 };
 
 constexpr I18nText kI18N_blankText = {

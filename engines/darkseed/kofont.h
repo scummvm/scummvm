@@ -49,6 +49,8 @@ public:
 	static void extractKoIndexComponents(uint32 charIdx, uint16 *param_2, uint16 *param_3, uint16 *param_4);
 	static bool isConsonant(uint32 charIdx);
 	static Common::U32String getObjectString(const Common::U32String &object);
+	static Common::U32String getTopicString(const Common::U32String &object);
+	static Common::U32String getLinkingString(const Common::U32String &object);
 private:
 	void loadFontDataSet(Common::Array<Common::Array<uint8>> &dataSet, int size, int packedGlyphSize, Common::File &file);
 	void loadFontGlyph(Common::Array<uint8> &pixels, int packedGlyphSize, Common::File &file);

@@ -1549,6 +1549,7 @@ void UseCode::useCodeEmptyUrn(int16 targetObjNum) {
 }
 
 void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
+	auto lang = g_engine->getLanguage();
 	_genericResponseCounter++;
 	if (_genericResponseCounter > 4) {
 		_genericResponseCounter = 0;
@@ -1617,40 +1618,80 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	case 999:
 		switch (_genericResponseCounter) {
 		case 0:
-			_console->addTextLine(
-				formatInjectStrings(
-					getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
-					_objectVar.getObjectName(useObjNum).c_str(),
-					_objectVar.getObjectName(targetObjNum).c_str()
-				)
-			);
+			if (lang == Common::KO_KOR) {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
+						KoFont::getObjectString(_objectVar.getObjectName(useObjNum)).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			} else {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
+						_objectVar.getObjectName(useObjNum).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			}
 			break;
 		case 1:
-			_console->addTextLine(
-				formatInjectStrings(
-					getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
-					_objectVar.getObjectName(useObjNum).c_str(),
-					_objectVar.getObjectName(targetObjNum).c_str()
-				)
-			);
+			if (lang == Common::KO_KOR) {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
+						KoFont::getObjectString(_objectVar.getObjectName(useObjNum)).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			} else {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
+						_objectVar.getObjectName(useObjNum).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			}
 			break;
 		case 2:
-			_console->addTextLine(
-				formatInjectStrings(
-					getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
-					_objectVar.getObjectName(useObjNum).c_str(),
-					_objectVar.getObjectName(targetObjNum).c_str()
-				)
-			);
+			if (lang == Common::KO_KOR) {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
+						KoFont::getTopicString(_objectVar.getObjectName(useObjNum)).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			} else {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
+						_objectVar.getObjectName(useObjNum).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			}
 			break;
 		case 3:
-			_console->addTextLine(
-				formatInjectStrings(
-					getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
-					_objectVar.getObjectName(useObjNum).c_str(),
-					_objectVar.getObjectName(targetObjNum).c_str()
-				)
-			);
+			if (lang ==Common::KO_KOR) {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
+						KoFont::getTopicString(_objectVar.getObjectName(useObjNum)).c_str(),
+						KoFont::getLinkingString(_objectVar.getObjectName(targetObjNum)).c_str()
+					)
+				);
+			} else {
+				_console->addTextLine(
+					formatInjectStrings(
+						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
+						_objectVar.getObjectName(useObjNum).c_str(),
+						_objectVar.getObjectName(targetObjNum).c_str()
+					)
+				);
+			}
 			break;
 		case 4:
 			_console->addTextLine(getI18NText(kI18N_genResponse4_areYouFeelingAlrightText));
