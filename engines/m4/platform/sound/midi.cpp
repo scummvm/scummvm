@@ -91,11 +91,11 @@ void Midi::loop() {
 }
 
 void Midi::set_overall_volume(int vol) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol * 255 / 100);
 }
 
 int Midi::get_overall_volume() const {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 100 / 255;
 }
 
 } // namespace Sound
