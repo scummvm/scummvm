@@ -65,7 +65,7 @@ public:
 		_cursorY(0),
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
-		
+
 	void showOverlay(bool inGUI) override {
 		_overlayInGUI = inGUI;
 

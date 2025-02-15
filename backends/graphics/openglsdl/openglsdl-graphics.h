@@ -101,7 +101,7 @@ private:
 	uint _graphicsScale;
 	bool _gotResize;
 
-	bool _lockedScreen = false; // New member variable to track lock state
+	bool _lockedScreen = false; // Variable to track lock state
 
 	bool _vsync;
 	bool _wantsFullScreen;

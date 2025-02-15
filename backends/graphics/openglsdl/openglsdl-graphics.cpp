@@ -299,6 +299,7 @@ void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 
 	return OpenGLGraphicsManager::initSize(w, h, format);
 }
+
 void OpenGLSdlGraphicsManager::updateScreen() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	static uint32 lastUpdateTime = 0;
@@ -944,7 +945,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		return true;
 	}
-
 
 	default:
 		return SdlGraphicsManager::notifyEvent(event);

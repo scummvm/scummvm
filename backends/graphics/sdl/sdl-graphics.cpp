@@ -472,6 +472,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return false;
 	}
 }
+
 void SdlGraphicsManager::toggleFullScreen() {
 	/* Don't use g_system for kFeatureOpenGLForGame as it's always supported
 	 * We want to check if we are a 3D graphics manager */
