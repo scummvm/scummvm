@@ -47,8 +47,45 @@ static const char *const SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
+struct HotspotPatch {
+	const char *_vocab;
+	const char *_verb;
+	int16 _x1;
+	int16 _y1;
+	int16 _x2;
+	int16 _y2;
+	int16 _feetX;
+	int16 _feetY;
+};
+
+static const HotspotPatch HOTSPOT_PATCHES[] = {
+	{ "BILLIARD BALL",  "LOOK AT", 204, 304, 214, 312, 180, 348 },
+	{ "SWITCH",         "LOOK AT", 419, 233, 428, 244, 400, 340 },
+	{ "ACE OF SPADES ", "LOOK AT", 412, 233, 426, 244, 400, 340 },
+	{ "ACE OF SPADES",  "LOOK AT", 412, 233, 426, 244, 400, 340 },
+	{ nullptr, nullptr, 0, 0, 0, 0, 0, 0 }
+};
+
+void Room406::patchHotspots() {
+	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
+		for (const HotspotPatch *p = HOTSPOT_PATCHES; p->_vocab; ++p) {
+			if (hs->vocab && hs->verb && !strcmp(hs->vocab, p->_vocab) &&
+					!strcmp(hs->verb, p->_verb)) {
+				hs->ul_x = p->_x1;
+				hs->ul_y = p->_y1;
+				hs->lr_x = p->_x2;
+				hs->lr_y = p->_y2;
+				hs->feet_x = p->_feetX;
+				hs->feet_y = p->_feetY;
+				break;
+			}
+		}
+	}
+}
+
 void Room406::init() {
 	player_set_commands_allowed(false);
+	patchHotspots();
 
 	switch (_G(flags)[kBilliardsTableState]) {
 	case 0:
