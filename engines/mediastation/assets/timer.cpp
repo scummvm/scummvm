@@ -40,6 +40,13 @@ Operand Timer::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
+	case kIsPlayingMethod: {
+		assert(args.size() == 0);
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(static_cast<int>(_isActive));
+		return returnValue;
+	}
+
 	default: {
 		error("Got unimplemented method ID %d", methodId);
 	}
