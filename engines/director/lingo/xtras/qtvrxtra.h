@@ -52,6 +52,7 @@ public:
 
 	bool _passMouseDown;
 
+	Common::String _rolloverHotSpotHandler;
 	Common::String _mouseDownHandler;
 };
 

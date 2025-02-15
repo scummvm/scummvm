@@ -22,6 +22,10 @@
 #include "common/system.h"
 #include "common/tokenizer.h"
 
+#include "common/formats/quicktime.h"
+
+#include "video/qt_decoder.h"
+
 #include "director/director.h"
 #include "director/images.h"
 #include "director/window.h"
@@ -29,7 +33,6 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xtras/qtvrxtra.h"
-#include "video/qt_decoder.h"
 
 /**************************************************
  *
@@ -407,6 +410,10 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (!me->_visible)
+		return;
+
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
 	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
@@ -417,7 +424,60 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 }
 
 XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRMouseOver, 0)
+
+void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+
+	if (!me->_visible || !me->_rect.contains(pos)) {
+		g_lingo->pushVoid();
+		return;
+	}
+
+	while (true) {
+		Graphics::Surface const *frame = me->_video->decodeNextFrame();
+
+		Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
+
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
+		);
+
+		g_director->getCurrentWindow()->setDirty(true);
+
+		Common::Event event;
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (Common::isMouseEvent(event)) {
+				pos = g_director->getCurrentWindow()->getMousePos();
+
+				if (!me->_rect.contains(pos))
+					break;
+			}
+
+			const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getCurrentHotspot();
+
+			me->_widget->processEvent(event);
+
+			if (hotspot !=  me->_video->getCurrentHotspot()) {
+				g_lingo->push(hotspot ? hotspot->id : 0);
+
+				g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
+			}
+		}
+
+		g_director->draw();
+
+		if (!me->_rect.contains(pos))
+			break;
+
+		g_director->delayMillis(10);
+	}
+
+	g_lingo->push(Common::String("pan ,0"));
+}
 
 void QtvrxtraXtra::m_QTVRGetPanAngle(int nargs) {
 	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetPanAngle", nargs);
@@ -512,7 +572,6 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetUpdateMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetUpdateMode, 1)
 
 void QtvrxtraXtra::m_QTVRGetVisible(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetVisible", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -521,7 +580,6 @@ void QtvrxtraXtra::m_QTVRGetVisible(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetVisible", nargs);
 	ARGNUMCHECK(1);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -613,8 +671,23 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeLeaveHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeLeaveHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanZoomStartHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetPanZoomStartHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetRolloverHotSpotHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetRolloverHotSpotHandler, 0)
+
+void QtvrxtraXtra::m_QTVRGetRolloverHotSpotHandler(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_rolloverHotSpotHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetRolloverHotSpotHandler(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_rolloverHotSpotHandler = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRExitMouseOver, 0)
 
 void QtvrxtraXtra::m_QTVRPassMouseDown(int nargs) {
