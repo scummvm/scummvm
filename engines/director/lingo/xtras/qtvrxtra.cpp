@@ -436,6 +436,14 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		return;
 	}
 
+	// Execute handler on first call to MouseOver
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getCurrentHotspot();
+
+	if (!me->_rolloverHotSpotHandler.empty()) {
+		g_lingo->push(hotspot ? hotspot->id : 0);
+		g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
+	}
+
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
@@ -457,11 +465,11 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 					break;
 			}
 
-			const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getCurrentHotspot();
+			hotspot = me->_video->getCurrentHotspot();
 
 			me->_widget->processEvent(event);
 
-			if (hotspot !=  me->_video->getCurrentHotspot()) {
+			if (!me->_rolloverHotSpotHandler.empty() && hotspot != me->_video->getCurrentHotspot()) {
 				g_lingo->push(hotspot ? hotspot->id : 0);
 
 				g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
