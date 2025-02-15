@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-12 14:51+0000\n"
-"PO-Revision-Date: 2025-01-20 18:57+0000\n"
+"PO-Revision-Date: 2025-02-15 11:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -12287,10 +12287,8 @@ msgid "Toggle panel style"
 msgstr "高速モードの切り替え"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "テキストの読み上げ機能を使用する"
+msgstr "読み上げの切替"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -13533,16 +13531,6 @@ msgid "Preferences"
 msgstr "環境設定"
 
 #: engines/zvision/zvision.cpp:302
-#, fuzzy
-#| msgid ""
-#| "Before playing this game, you'll need to copy the required fonts into "
-#| "ScummVM's extras directory, or into the game directory. On Windows, "
-#| "you'll need the following font files from the Windows font directory: "
-#| "Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
-#| "Alternatively, you can download the Liberation Fonts or the GNU FreeFont "
-#| "package. You'll need all the fonts from the font package you choose, i."
-#| "e., LiberationMono, LiberationSans and LiberationSerif, or FreeMono, "
-#| "FreeSans and FreeSerif respectively."
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -13554,10 +13542,9 @@ msgid ""
 msgstr ""
 "このゲームをプレイする前に、以下のフォントをScummVMのextrasディレクトリー、も"
 "しくはゲームのディレクトリーにコピーしてください。Windowsのシステムフォントを"
-"使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier New、"
-"Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
-"LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
-"FreeMono、FreeSans、FreeSerifが必要です。"
+"使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier "
+"New、Arialが必要です。Liberation Fontsを使用する場合、LiberationMono、Liberat"
+"ionSans、LiberationSerifが必要です。"
 
 #, fuzzy
 #~| msgid ""
