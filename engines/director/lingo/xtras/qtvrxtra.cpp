@@ -465,6 +465,9 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 				g_lingo->push(hotspot ? hotspot->id : 0);
 
 				g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
+
+				// TODO We need to redraw current frame because the handler could change
+				// some fields etc. FIXME
 			}
 		}
 
