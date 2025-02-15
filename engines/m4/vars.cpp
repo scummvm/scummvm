@@ -40,7 +40,7 @@ namespace M4 {
 
 Vars *g_vars;
 
-Vars::Vars() : _digi(g_engine->_mixer) {
+Vars::Vars() : _digi(g_engine->_mixer), _midi(g_engine->_mixer) {
 	g_vars = this;
 
 	Common::fill(_sizeMem, _sizeMem + _MEMTYPE_LIMIT, 0);

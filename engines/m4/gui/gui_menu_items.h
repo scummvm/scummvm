@@ -120,6 +120,10 @@ namespace GUI {
 enum options_menu_sprites {
 	OM_DIALOG_BOX,
 
+	OM_SLIDER_BTN_NORM = 5,
+	OM_SLIDER_BTN_OVER = 6,
+	OM_SLIDER_BTN_PRESS = 7,
+
 	OM_SCROLLING_ON_BTN_NORM = 8,
 	OM_SCROLLING_ON_BTN_OVER = 9,
 	OM_SCROLLING_ON_BTN_PRESS = 13,
@@ -195,8 +199,6 @@ struct menuItem {
 		TEXT_COLOR_PRESS_HILITE		= 3,
 		TEXT_COLOR_PRESS_FOREGROUND = 2,
 		TEXT_COLOR_PRESS_SHADOW		= 1,
-
-		SLIDER_BAR_COLOR			= 129
 	};
 
 	menuItem *next = nullptr;

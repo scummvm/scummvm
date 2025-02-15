@@ -48,6 +48,8 @@ private:
 	static void destroyOptionsMenu();
 	static void cbGameMenu(void *, void *);
 	static void cbScrolling(M4::GUI::menuItemButton *myItem, M4::GUI::guiMenu *);
+	static void cbSetDigi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *);
+	static void cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *);
 
 public:
 	static void show();

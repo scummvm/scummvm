@@ -129,37 +129,6 @@ enum game_menu_button_tags {
 #define SL_THUMBNAIL_Y			 28
 
 /**
- * Options menu defines
- */
-
-enum option_menu_item_tags {
-	OM_TAG_DONE = 1,
-	OM_TAG_CANCEL,
-	OM_TAG_DIGI,
-	OM_TAG_DIGESTABILITY,
-};
-
-#define OM_DONE_X 168
-#define OM_DONE_Y 141
-#define OM_DONE_W  74
-#define OM_DONE_H  43
-
-#define OM_CANCEL_X  93
-#define OM_CANCEL_Y 141
-#define OM_CANCEL_W  74
-#define OM_CANCEL_H  43
-
-#define OM_DIGI_X	  47
-#define OM_DIGI_Y	  64
-#define OM_DIGI_W	 212
-#define OM_DIGI_H	  24
-
-#define OM_DIGESTABILITY_X	  47
-#define OM_DIGESTABILITY_Y	 104
-#define OM_DIGESTABILITY_W	 212
-#define OM_DIGESTABILITY_H	  24
-
-/**
  * Error menu enums and defines
  */
 enum error_menu_sprites {

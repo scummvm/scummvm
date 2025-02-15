@@ -29,7 +29,7 @@ namespace Sound {
 
 int Midi::_midiEndTrigger;
 
-Midi::Midi() {
+Midi::Midi(Audio::Mixer *mixer) : _mixer(mixer) {
 	Midi::createDriver();
 
 	int ret = _driver->open();
@@ -91,7 +91,11 @@ void Midi::loop() {
 }
 
 void Midi::set_overall_volume(int vol) {
-	// No implementation
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+}
+
+int Midi::get_overall_volume() const {
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 }
 
 } // namespace Sound
@@ -110,6 +114,10 @@ void midi_stop() {
 
 void midi_set_overall_volume(int vol) {
 	_G(midi).set_overall_volume(vol);
+}
+
+int midi_get_overall_volume() {
+	return _G(midi).get_overall_volume();
 }
 
 void midi_fade_volume(int val1, int val2) {

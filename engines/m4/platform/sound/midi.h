@@ -32,13 +32,15 @@ namespace Sound {
 class Midi : public Audio::MidiPlayer {
 private:
 	static int _midiEndTrigger;
+	Audio::Mixer *_mixer;
 public:
-	Midi();
+	Midi(Audio::Mixer *mixer);
 
 	void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
 	void task();
 	void loop();
 	void set_overall_volume(int vol);
+	int get_overall_volume() const;
 };
 
 } // namespace Sound
@@ -47,6 +49,7 @@ void midi_play(const char *name, int volume, int loop, int trigger, int roomNum)
 void midi_loop();
 void midi_stop();
 void midi_set_overall_volume(int vol);
+int midi_get_overall_volume();
 void midi_fade_volume(int val1, int val2);
 
 } // namespace M4

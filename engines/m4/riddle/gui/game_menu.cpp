@@ -215,6 +215,18 @@ void GameMenu::cbLoad(void *, void *) {
 #define OM_GAMEMENU_W		26
 #define OM_GAMEMENU_H		26
 
+#define OM_TAG_DIGI			2
+#define OM_DIGI_X			70
+#define OM_DIGI_Y			29
+#define OM_DIGI_W			108
+#define OM_DIGI_H			14
+
+#define OM_TAG_MIDI			3
+#define OM_MIDI_X			70
+#define OM_MIDI_Y			72
+#define OM_MIDI_W			108
+#define OM_MIDI_H			14
+
 #define OM_TAG_SCROLLING	4
 #define OM_SCROLLING_X		131
 #define OM_SCROLLING_Y		113
@@ -228,16 +240,21 @@ void OptionsMenu::show() {
 
 	_GM(opMenu) = guiMenu::create(_GM(menuSprites)[OM_DIALOG_BOX],
 		OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
-	if (!_GM(opMenu)) {
-		return;
-	}
+	assert(_GM(opMenu));
+
+	int digiPercent = digi_get_overall_volume();
+	int midiPercent = midi_get_overall_volume();
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
 		OM_GAMEMENU_X, OM_GAMEMENU_Y, OM_GAMEMENU_W, OM_GAMEMENU_H,
 		cbGameMenu, menuItemButton::BTN_TYPE_GM_GENERIC);
-
-
-	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
+	menuItemHSlider::add(_GM(opMenu), OM_TAG_DIGI,
+		OM_DIGI_X, OM_DIGI_Y, OM_DIGI_W, OM_DIGI_H,
+		digiPercent, (CALLBACK)cbSetDigi, true);
+	menuItemHSlider::add(_GM(opMenu), OM_TAG_MIDI,
+		OM_MIDI_X, OM_MIDI_Y, OM_MIDI_W, OM_MIDI_H,
+		midiPercent, (CALLBACK)cbSetMidi, true);
+	menuItemButton::add(_GM(opMenu), OM_TAG_SCROLLING,
 		OM_SCROLLING_X, OM_SCROLLING_Y, OM_SCROLLING_W, OM_SCROLLING_H, (CALLBACK)cbScrolling,
 		_G(kernel).cameraPans() ? menuItemButton::BTN_TYPE_OM_SCROLLING_ON :
 			menuItemButton::BTN_TYPE_OM_SCROLLING_OFF);
@@ -267,6 +284,14 @@ void OptionsMenu::cbGameMenu(void *, void *) {
 void OptionsMenu::cbScrolling(M4::GUI::menuItemButton *myItem, M4::GUI::guiMenu *) {
 	_G(kernel).camera_pan_instant = myItem->buttonType ==
 		menuItemButton::BTN_TYPE_OM_SCROLLING_ON;
+}
+
+void OptionsMenu::cbSetDigi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *) {
+	digi_set_overall_volume(myItem->percent);
+}
+
+void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *) {
+	midi_set_overall_volume(myItem->percent);
 }
 
 /*-------------------- ACCESS METHODS --------------------*/

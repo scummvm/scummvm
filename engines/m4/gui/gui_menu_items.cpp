@@ -1431,21 +1431,31 @@ void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int3
 	// Get the slider info and select the thumb sprite
 	switch (myItem->itemFlags) {
 	case H_THUMB_OVER:
-		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_OVER];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_OVER :
+			Burger::GUI::OM_SLIDER_BTN_OVER];
 		break;
 	case H_THUMB_PRESS:
-		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_PRESS];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_PRESS :
+			Burger::GUI::OM_SLIDER_BTN_PRESS];
 		break;
 	default:
 	case H_THUMB_NORM:
-		mySprite = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_NORM :
+			Burger::GUI::OM_SLIDER_BTN_NORM];
 		break;
 	}
 
 	// Fill in everything left of the thumb with a hilite color
 	if (myItem->thumbX > 2) {
-		gr_color_set(menuItem::SLIDER_BAR_COLOR);
-		gr_buffer_rect_fill(myBuff, myItem->x1 + 3, myItem->y1 + 9, myItem->thumbX, myItem->thumbH - 18);
+		if (IS_RIDDLE) {
+			gr_color_set(120);
+			gr_buffer_rect_fill(myBuff, myItem->x1 + 2, myItem->y1 + 3,
+				myItem->thumbX - 2, myItem->thumbH - 6);
+		} else {
+			gr_color_set(129);
+			gr_buffer_rect_fill(myBuff, myItem->x1 + 3, myItem->y1 + 9,
+				myItem->thumbX, myItem->thumbH - 18);
+		}
 	}
 
 	// Draw in the thumb
@@ -1629,9 +1639,11 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 
 	// Intialize the new slider
 	newItem->itemFlags = H_THUMB_NORM;
-	newItem->thumbW = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->w;
-	newItem->thumbH = _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->h;
-	newItem->maxThumbX = w - _GM(menuSprites)[Burger::GUI::OM_SLIDER_BTN_NORM]->w;
+	auto *thumb = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_NORM :
+		Burger::GUI::OM_SLIDER_BTN_NORM];
+	newItem->thumbW = thumb->w;
+	newItem->thumbH = thumb->h;
+	newItem->maxThumbX = w - thumb->w;
 
 	if (initPercent < 0) {
 		initPercent = 0;
