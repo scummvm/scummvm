@@ -150,7 +150,7 @@ void Hugo::runGame() {
 	pbuffer[0] = '\0';
 
 	ResourceArchive *res = new ResourceArchive();
-	SearchMan.add("Resouces", res);
+	SearchMan.add("Resources", res);
 
 	gameseg = 0;
 
