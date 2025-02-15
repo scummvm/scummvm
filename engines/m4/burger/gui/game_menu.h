@@ -27,6 +27,7 @@
 #include "m4/m4_types.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/gui/gui_menu_items.h"
+#include "m4/gui/game_menu.h"
 #include "m4/gui/gui_univ.h"
 
 namespace M4 {
@@ -42,6 +43,21 @@ using M4::GUI::menuItemTextField;
 using M4::GUI::Sprite;
 using M4::GUI::CALLBACK;
 using M4::GUI::ItemHandlerFunction;
+
+class SaveLoadMenu : public M4::GUI::SaveLoadMenuBase {
+private:
+	static void destroyMenu(bool saveMenu);
+	static bool load_Handler(menuItemButton *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+
+	static void cb_SaveLoad_Save(void *, guiMenu *myMenu);
+	static void cb_SaveLoad_Load(menuItemButton *, guiMenu *);
+	static void cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu);
+	static void cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu);
+	static void cb_SaveLoad_VSlider(menuItemVSlider *myItem, guiMenu *myMenu);
+
+public:
+	static void show(RGB8 *myPalette, bool saveMenu);
+};
 
 //GAME MENU FUNCTIONS
 extern void CreateGameMenu(RGB8 *myPalette);
@@ -67,66 +83,6 @@ enum game_menu_button_tags {
 	GM_TAG_LOAD = 5,
 	GM_TAG_MAIN = 6
 };
-
-//======================================
-//
-//		Save/Load menu enums and defines
-//
-#define SAVE_LOAD_MENU_X		145
-#define SAVE_LOAD_MENU_Y		 10
-#define SAVE_LOAD_MENU_W		344
-#define SAVE_LOAD_MENU_H		460
-
-#define SL_SAVE_X			214
-#define SL_SAVE_Y			384
-#define SL_SAVE_W			 74
-#define SL_SAVE_H		    43
-
-#define SL_LOAD_X			214
-#define SL_LOAD_Y			384
-#define SL_LOAD_W			 74
-#define SL_LOAD_H		    43
-
-#define SL_UP_X			292
-#define SL_UP_Y			255
-#define SL_UP_W			 20
-#define SL_UP_H		    17
-
-#define SL_DOWN_X			293
-#define SL_DOWN_Y			363
-#define SL_DOWN_W			 20
-#define SL_DOWN_H		    17
-
-#define SL_SLIDER_X			291
-#define SL_SLIDER_Y			255
-#define SL_SLIDER_W			 23
-#define SL_SLIDER_H		   127
-
-#define SL_CANCEL_X			139	
-#define SL_CANCEL_Y			384	
-#define SL_CANCEL_W			 74	
-#define SL_CANCEL_H		    43	
-
-#define SL_SAVE_LABEL_X			 50
-#define SL_SAVE_LABEL_Y			241
-#define SL_SAVE_LABEL_W			 70
-#define SL_SAVE_LABEL_H		    16
-
-#define SL_LOAD_LABEL_X			 50
-#define SL_LOAD_LABEL_Y			241
-#define SL_LOAD_LABEL_W			 70
-#define SL_LOAD_LABEL_H		    16
-
-#define SL_SCROLL_FIELD_X 		 50
-#define SL_SCROLL_FIELD_Y 		256
-#define SL_SCROLL_FIELD_W 		238
-#define SL_SCROLL_FIELD_H 		121
-
-#define SL_SCROLL_LINE_W 		238
-#define SL_SCROLL_LINE_H 		 15	//was 16
-
-#define SL_THUMBNAIL_X			 66
-#define SL_THUMBNAIL_Y			 28
 
 /**
  * Error menu enums and defines

@@ -48,6 +48,7 @@ MODULE_OBJS = \
 	graphics/gr_surface.o \
 	graphics/krn_pal.o \
 	graphics/rend.o \
+	gui/game_menu.o \
 	gui/gui_buffer.o \
 	gui/gui_cheapo.o \
 	gui/gui_dialog.o \

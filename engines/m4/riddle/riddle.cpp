@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "m4/riddle/gui/game_menu.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/triggers.h"
 #include "m4/riddle/console.h"
@@ -62,6 +63,32 @@ void RiddleEngine::showEngineInfo() {
 
 void RiddleEngine::syncFlags(Common::Serializer &s) {
 	g_vars->_flags.sync(s);
+}
+
+void RiddleEngine::showSaveScreen() {
+	if (_useOriginalSaveLoad) {
+		GUI::CreateF2SaveMenu(_G(master_palette));
+	} else {
+		M4Engine::showSaveScreen();
+	}
+}
+
+void RiddleEngine::showLoadScreen(LoadDialogSource source) {
+	if (_useOriginalSaveLoad) {
+		switch (source) {
+		case kLoadFromMainMenu:
+			GUI::CreateLoadMenuFromMain(_G(master_palette));
+			break;
+		case kLoadFromGameDialog:
+			GUI::CreateLoadMenu(_G(master_palette));
+			break;
+		case kLoadFromHotkey:
+			GUI::CreateF3LoadMenu(_G(master_palette));
+			break;
+		}
+	} else {
+		M4Engine::showLoadScreen(source);
+	}
 }
 
 void RiddleEngine::global_daemon() {

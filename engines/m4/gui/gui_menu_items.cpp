@@ -27,6 +27,7 @@
 #include "m4/adv_r/adv_player.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
+#include "m4/gui/game_menu.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/graphics/gr_line.h"
@@ -75,104 +76,6 @@ void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
 
 		// Unlock the handle
 		HUnLock(mySprite->sourceHandle);
-	}
-}
-
-bool LoadThumbNail(int32 slotNum) {
-	Sprite *&thumbNailSprite = _GM(thumbNails)[slotNum];
-	return g_engine->loadSaveThumbnail(slotNum + 1, thumbNailSprite);
-}
-
-void UnloadThumbNail(int32 slotNum) {
-	if (_GM(thumbNails)[slotNum]->sourceHandle) {
-		HUnLock(_GM(thumbNails)[slotNum]->sourceHandle);
-		DisposeHandle(_GM(thumbNails)[slotNum]->sourceHandle);
-		_GM(thumbNails)[slotNum]->sourceHandle = nullptr;
-	}
-}
-
-void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
-	int32 i, startIndex, endIndex;
-
-	// Make sure there is something to update
-	if (firstSlot == _GM(thumbIndex)) {
-		return;
-	}
-
-	// Ensure firstSlot is in a valid range
-	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
-
-	if (firstSlot > _GM(thumbIndex)) {
-		// Dump Out all thumbnails in slots which don't overlap
-		startIndex = _GM(thumbIndex);
-		endIndex = imath_min(_GM(thumbIndex) + 9, firstSlot - 1);
-		for (i = startIndex; i <= endIndex; i++) {
-			UnloadThumbNail(i);
-		}
-
-		// Load in all thumbnails missing thumbnails
-		startIndex = imath_max(_GM(thumbIndex) + 10, firstSlot);
-		endIndex = imath_min(firstSlot + 9, 98);
-		for (i = startIndex; i <= endIndex; i++) {
-			if (_GM(slotInUse)[i]) {
-				if (!LoadThumbNail(i)) {
-					_GM(slotInUse)[i] = false;
-					menuItemButton::disableButton(nullptr, 1001 + i - firstSlot, myMenu);
-					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
-				}
-			}
-		}
-	} else {
-		// Else firstSlot < _GM(thumbIndex)
-		// Dump Out all thumbnails in slots which don't overlap
-		startIndex = imath_max(firstSlot + 10, _GM(thumbIndex));
-		endIndex = imath_min(_GM(thumbIndex) + 9, 98);
-		for (i = startIndex; i <= endIndex; i++) {
-			UnloadThumbNail(i);
-		}
-
-		// Load in all thumbnails missing thumbnails
-		startIndex = firstSlot;
-		endIndex = imath_min(firstSlot + 9, _GM(thumbIndex) - 1);
-		for (i = startIndex; i <= endIndex; i++) {
-			if (_GM(slotInUse)[i]) {
-				if (!LoadThumbNail(i)) {
-					_GM(slotInUse)[i] = false;
-					menuItemButton::disableButton(nullptr, 1001 + i - firstSlot, myMenu);
-					guiMenu::itemRefresh(nullptr, 1001 + i - firstSlot, myMenu);
-				}
-			}
-		}
-	}
-
-	// Set the var
-	_GM(thumbIndex) = firstSlot;
-}
-
-void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
-	menuItemButton *myButton;
-	int32 i;
-
-	if (!myMenu) {
-		return;
-	}
-
-	// Ensure firstSlot is in a valid range
-	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
-
-	// Change the prompt and special tag of each of the slot buttons
-	for (i = 0; i < MAX_SLOTS_SHOWN; i++) {
-		myButton = (menuItemButton *)guiMenu::getItem(i + 1001, myMenu);
-
-		myButton->prompt = _GM(slotTitles)[firstSlot + i];
-		if (_GM(currMenuIsSave) || _GM(slotInUse)[firstSlot + i]) {
-			myButton->itemFlags = menuItemButton::BTN_STATE_NORM;
-		} else {
-			myButton->itemFlags = menuItemButton::BTN_STATE_GREY;
-		}
-
-		myButton->specialTag = firstSlot + i + 1;
-		guiMenu::itemRefresh(myButton, i + 1001, myMenu);
 	}
 }
 
@@ -1891,7 +1794,7 @@ bool menuItemVSlider::handler(menuItemVSlider *myItem, int32 eventType, int32 ev
 		}
 		redrawItem = true;
 		if (!_GM(currMenuIsSave)) {
-			UpdateThumbNails(_GM(firstSlotIndex), (guiMenu *)myItem->myMenu);
+			SaveLoadMenuBase::updateThumbnails(_GM(firstSlotIndex), (guiMenu *)myItem->myMenu);
 		}
 		break;
 

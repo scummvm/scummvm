@@ -24,6 +24,7 @@
 #define M4_RIDDLE_GUI_GAME_MENU_H
 
 #include "m4/gui/gui_menu_items.h"
+#include "m4/gui/game_menu.h"
 
 namespace M4 {
 namespace Riddle {
@@ -55,7 +56,27 @@ public:
 	static void show();
 };
 
+class SaveLoadMenu : public M4::GUI::SaveLoadMenuBase {
+private:
+	static void destroyMenu(bool saveMenu);
+	static bool load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType,
+		int32 event, int32 x, int32 y, void **currItem);
+	static void cbCancel(void *, void *);
+	static void cbSave(void *, void *);
+	static void cbLoad(void *, void *);
+	static void cbSlot(void *, void *);
+	static void cbVSlider(void *, void *);
+public:
+	static void show(RGB8 *myPalette, bool saveMenu);
+};
+
 extern void CreateGameMenu(RGB8 *myPalette);
+extern void CreateF2SaveMenu(RGB8 *myPalette);
+extern void CreateLoadMenu(RGB8 *myPalette);
+extern void CreateF3LoadMenu(RGB8 *myPalette);
+// Routines used by the main menu
+void CreateLoadMenuFromMain(RGB8 *myPalette);
+void CreateGameMenuFromMain(RGB8 *myPalette);
 
 } // namespace GUI
 } // namespace Riddle

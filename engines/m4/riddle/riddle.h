@@ -88,6 +88,8 @@ public:
 	void showEngineInfo() override;
 
 	void syncFlags(Common::Serializer &s) override;
+	void showSaveScreen() override;
+	void showLoadScreen(LoadDialogSource source) override;
 
 	void global_daemon() override;
 	void global_parser() override;

@@ -131,23 +131,54 @@ enum options_menu_sprites {
 	OM_SCROLLING_OFF_BTN_NORM = 11,
 	OM_SCROLLING_OFF_BTN_OVER = 12,
 	OM_SCROLLING_OFF_BTN_PRESS = 10,
-#if 0
-	OM_SLIDER_BTN_NORM,
-	OM_SLIDER_BTN_OVER,
-	OM_SLIDER_BTN_PRESS,
 
-	OM_SLIDER_BAR,
-
-	OM_DONE_BTN_GREY,
-	OM_DONE_BTN_NORM,
-	OM_DONE_BTN_OVER,
-	OM_DONE_BTN_PRESS,
-
-	OM_CANCEL_BTN_NORM,
-	OM_CANCEL_BTN_OVER,
-	OM_CANCEL_BTN_PRESS,
-#endif
 	OM_TOTAL_SPRITES = 14
+};
+
+enum save_load_menu_sprites {
+	SL_DIALOG_BOX,
+
+#ifdef TODO
+	SL_SAVE_BTN_GREY,
+	SL_SAVE_BTN_NORM,
+	SL_SAVE_BTN_OVER,
+	SL_SAVE_BTN_PRESS,
+
+	SL_LOAD_BTN_GREY,
+	SL_LOAD_BTN_NORM,
+	SL_LOAD_BTN_OVER,
+	SL_LOAD_BTN_PRESS,
+
+	SL_CANCEL_BTN_NORM,
+	SL_CANCEL_BTN_OVER,
+	SL_CANCEL_BTN_PRESS,
+
+	SL_UP_BTN_GREY,
+	SL_UP_BTN_NORM,
+	SL_UP_BTN_OVER,
+	SL_UP_BTN_PRESS,
+
+	SL_DOWN_BTN_GREY,
+	SL_DOWN_BTN_NORM,
+	SL_DOWN_BTN_OVER,
+	SL_DOWN_BTN_PRESS,
+
+	SL_SAVE_LABEL,
+	SL_LOAD_LABEL,
+
+	SL_SLIDER_BTN_NORM,
+	SL_SLIDER_BTN_OVER,
+	SL_SLIDER_BTN_PRESS,
+
+	SL_LINE_NORM,
+	SL_LINE_OVER,
+	SL_LINE_PRESS,
+
+	SL_SCROLL_BAR,
+#endif
+	SL_EMPTY_THUMB = 25,
+
+	SL_TOTAL_SPRITES = 26
 };
 
 } // namespace GUI
@@ -439,10 +470,6 @@ struct MenuGlobals {
 };
 
 extern void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y);
-extern bool LoadThumbNail(int32 slotNum);
-extern void UnloadThumbNail(int32 slotNum);
-extern void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu);
-extern void SetFirstSlot(int32 firstSlot, guiMenu *myMenu);
 
 //======================================
 //
