@@ -114,13 +114,15 @@ void Adlib::Func27E4() {
 		local_counter = 0;
 		do { // l0017_281D
 			// Access memory at [di+69h]
-			unsigned char mem_value = *(unsigned char *)(local_counter + 0x69);
-			unsigned short param = mem_value + 0x40;
 
-			far_call_2792(param); // 0017h:2792h
-			far_call_2792(0xFF);  // Push FFh
+			uint8 mem_value = gArray69[local_counter];
+			uint16 param = mem_value + 0x40;
+
+			Func2792(param, 0xFF);
 
 			// l0017_281A
+			// Note: Deepseek again mixed up the order in the loop a bit,
+			// but is seems to be equivalent in effect
 			local_counter++;
 		} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
 	}
@@ -680,13 +682,10 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 
 void Adlib::OnTimer() {
 
-	/* TODO: Skipped:
-	mov	ax,0DDh
-	mov	ds,ax
-	*/
 	g2296++;
 
 	if (g2296 >= g2298) {
+		// Every nth time we execute this code
 		// l0017_1ABD:
 		g2296 = 0;
 
@@ -698,6 +697,7 @@ void Adlib::OnTimer() {
 		mov	byte ptr [229Ah],1h
 		jmp	1AD3h
 		*/
+		g229A = true;
 	} else {
 		// l0017_1ACE:
 		g229A = false;
