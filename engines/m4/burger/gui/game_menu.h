@@ -84,33 +84,6 @@ enum game_menu_button_tags {
 	GM_TAG_MAIN = 6
 };
 
-/**
- * Error menu enums and defines
- */
-enum error_menu_sprites {
-	EM_DIALOG_BOX,
-
-	EM_RETURN_BTN_NORM,
-	EM_RETURN_BTN_OVER,
-	EM_RETURN_BTN_PRESS,
-
-	EM_TOTAL_SPRITES
-};
-
-enum error_menu_tags {
-	EM_TAG_RETURN = 1
-};
-#define ERROR_MENU_X	 100
-#define ERROR_MENU_Y	 100
-#define ERROR_MENU_W	 100
-#define ERROR_MENU_H	 100
-
-#define EM_RETURN_X	  15
-#define EM_RETURN_Y	  15
-#define EM_RETURN_W	  15
-#define EM_RETURN_H	  15
-
-
 void CreateGameMenuMain(RGB8 *myPalette);
 
 } // namespace GUI

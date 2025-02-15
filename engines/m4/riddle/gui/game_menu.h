@@ -61,13 +61,23 @@ private:
 	static void destroyMenu(bool saveMenu);
 	static bool load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType,
 		int32 event, int32 x, int32 y, void **currItem);
-	static void cbCancel(void *, void *);
-	static void cbSave(void *, void *);
-	static void cbLoad(void *, void *);
-	static void cbSlot(void *, void *);
-	static void cbVSlider(void *, void *);
+	static void cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu);
+	static void cbSave(void *, M4::GUI::guiMenu *myMenu);
+	static void cbLoad(void *, M4::GUI::guiMenu *myMenu);
+	static void cbSlot(M4::GUI::menuItemButton *myButton, M4::GUI::guiMenu *myMenu);
+	static void cbVSlider(M4::GUI::menuItemVSlider *myItem, M4::GUI::guiMenu *myMenu);
+
 public:
 	static void show(RGB8 *myPalette, bool saveMenu);
+};
+
+class ErrorMenu {
+private:
+	static void destroyMenu();
+	static void cbDone(void *, void *);
+
+public:
+	static void show(RGB8 *myPalette);
 };
 
 extern void CreateGameMenu(RGB8 *myPalette);

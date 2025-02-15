@@ -526,24 +526,369 @@ bool SaveLoadMenu::load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType
 	return handled;
 }
 
-void SaveLoadMenu::cbCancel(void *, void *) {
+void SaveLoadMenu::cbSave(void *, M4::GUI::guiMenu *myMenu) {
+	menuItemTextField *myText;
+	bool saveGameFailed;
 
+	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
+	if (_GM(slotSelected) < 0) {
+		return;
+	}
+
+	// First make the textfield NORM
+	myText = (menuItemTextField *)guiMenu::getItem(2000, myMenu);
+	if (myText)
+		return;
+
+	myText->itemFlags = menuItemTextField::TF_NORM;
+
+	// Set the vars
+	_GM(slotInUse)[_GM(slotSelected) - 1] = true;
+	Common::strcpy_s(_GM(slotTitles)[_GM(slotSelected) - 1], 80, myText->prompt);
+
+	// Save the game
+	saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
+		myText->prompt, _GM(_thumbnail));
+
+	// If the save game failed, bring up the err menu
+	if (saveGameFailed) {
+		// Kill the save menu
+		destroyMenu(true);
+
+		// Create the err menu
+		ErrorMenu::show(nullptr);
+
+		// Abort this procedure
+		return;
+	}
+
+	// Kill the save menu
+	destroyMenu(true);
+
+	// Shutdown the menu system
+	guiMenu::shutdown(true);
 }
 
-void SaveLoadMenu::cbSave(void *, void *) {
+void SaveLoadMenu::cbLoad(void *, M4::GUI::guiMenu *) {
+	KernelTriggerType oldMode;
 
+	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
+	if (_GM(slotSelected) < 0) {
+		return;
+	}
+
+	// Kill the menu
+	destroyMenu(false);
+
+	// Shutdown the menu system
+	guiMenu::shutdown(false);
+
+	// See if we need to reset the ESC, F2, and F3 hotkeys
+	if (_GM(gameMenuFromMain)) {
+		AddSystemHotkey(KEY_ESCAPE, Riddle::Hotkeys::escape_key_pressed);
+		AddSystemHotkey(KEY_F2, M4::Hotkeys::saveGame);
+		AddSystemHotkey(KEY_F3, M4::Hotkeys::loadGame);
+	}
+
+	// Start the restore process
+	_G(kernel).restore_slot = _GM(slotSelected);
+	oldMode = _G(kernel).trigger_mode;
+
+	_G(kernel).trigger_mode = KT_DAEMON;
+	kernel_trigger_dispatch_now(TRIG_RESTORE_GAME);
+	_G(kernel).trigger_mode = oldMode;
 }
 
-void SaveLoadMenu::cbLoad(void *, void *) {
+void SaveLoadMenu::cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu) {
+	menuItem *myItem;
+	int32 i, x, y, w, h;
 
+	// If a slot has been selected, cancel will re-enable all slots
+	if (_GM(slotSelected) >= 0) {
+		// Enable the prev buttons
+		for (i = 1001; i <= 1010; i++) {
+			if (_GM(currMenuIsSave) || _GM(slotInUse)[i - 1001 + _GM(firstSlotIndex)]) {
+				menuItemButton::enableButton(nullptr, i, myMenu);
+				guiMenu::itemRefresh(nullptr, i, myMenu);
+			}
+		}
+
+		// Find the textfield and use it's coords to place the button
+		myItem = guiMenu::getItem(2000, myMenu);
+		x = myItem->x1;
+		y = myItem->y1;
+		w = myItem->x2 - myItem->x1 + 1;
+		h = myItem->y2 - myItem->y1 + 1;
+
+		// Delete the textfield
+		guiMenu::itemDelete(myItem, 2000, myMenu);
+
+		// Add the button back in
+		if (_GM(currMenuIsSave)) {
+			menuItemButton::add(myMenu, 1000 + _GM(slotSelected) - _GM(firstSlotIndex), x, y, w, h,
+				(CALLBACK)cbSlot, menuItemButton::BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1]);
+		} else {
+			menuItemButton::add(myMenu, 1000 + _GM(slotSelected) - _GM(firstSlotIndex), x, y, w, h,
+				(CALLBACK)cbSlot, menuItemButton::BTN_TYPE_SL_TEXT, false, true, _GM(slotTitles)[_GM(slotSelected) - 1],
+				(ItemHandlerFunction)load_Handler);
+
+			// Remove the thumbnail
+			if (_GM(saveLoadThumbNail)) {
+				_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
+			}
+		}
+		setFirstSlot(_GM(firstSlotIndex), myMenu);
+
+		// Enable the slider
+		menuItemVSlider::enableVSlider(nullptr, SL_TAG_VSLIDER, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
+
+		// Disable the save/load button
+		if (_GM(currMenuIsSave)) {
+			menuItemButton::disableButton(nullptr, SL_TAG_SAVE, myMenu);
+			guiMenu::itemRefresh(nullptr, SL_TAG_SAVE, myMenu);
+		} else {
+			menuItemButton::disableButton(nullptr, SL_TAG_LOAD, myMenu);
+			guiMenu::itemRefresh(nullptr, SL_TAG_LOAD, myMenu);
+		}
+
+		// Reset the slot selected var
+		_GM(slotSelected) = -1;
+
+	} else {
+		// Otherwise, back to the game menu
+
+		// Destroy the menu
+		destroyMenu(_GM(currMenuIsSave));
+
+		if (_GM(saveLoadFromHotkey)) {
+			// Shutdown the menu system
+			guiMenu::shutdown(true);
+		} else {
+			// Create the game menu
+			GameMenu::show(nullptr);
+		}
+	}
+
+	_GM(buttonClosesDialog) = true;
 }
 
-void SaveLoadMenu::cbSlot(void *, void *) {
+void SaveLoadMenu::cbSlot(M4::GUI::menuItemButton *myButton, M4::GUI::guiMenu *myMenu) {
+	int32 i, x, y, w, h;
+	char prompt[80];
+	int32 specialTag;
 
+	// Verify params
+	if (!myMenu || !myButton)
+		return;
+
+	// Get the button
+	Common::strcpy_s(prompt, 80, myButton->prompt);
+	specialTag = myButton->specialTag;
+
+	// Set the globals
+	_GM(slotSelected) = myButton->specialTag;
+	_GM(deleteSaveDesc) = true;
+
+	// Disable all other buttons
+	for (i = 1001; i <= 1010; i++) {
+		if (i != myButton->tag) {
+			menuItemButton::disableButton(nullptr, i, myMenu);
+			guiMenu::itemRefresh(nullptr, i, myMenu);
+		}
+	}
+
+	// Get the slot coords, and delete it
+	x = myButton->x1;
+	y = myButton->y1;
+	w = myButton->x2 - myButton->x1 + 1;
+	h = myButton->y2 - myButton->y1 + 1;
+	guiMenu::itemDelete(myButton, -1, myMenu);
+
+	if (_GM(currMenuIsSave)) {
+		// Replace the current button with a textfield
+		if (!strcmp(prompt, "<empty>")) {
+			menuItemTextField::add(myMenu, 2000, x, y, w, h, menuItemTextField::TF_OVER,
+				nullptr, specialTag, (CALLBACK)cbSave, true);
+		} else {
+			menuItemTextField::add(myMenu, 2000, x, y, w, h, menuItemTextField::TF_OVER,
+				prompt, specialTag, (CALLBACK)cbSave, true);
+		}
+	} else {
+		menuItemTextField::add(myMenu, 2000, x, y, w, h, menuItemTextField::TF_NORM,
+			prompt, specialTag, (CALLBACK)cbLoad, true);
+	}
+
+	// Disable the slider
+	menuItemVSlider::disableVSlider(nullptr, SL_TAG_VSLIDER, myMenu);
+	guiMenu::itemRefresh(nullptr, SL_TAG_VSLIDER, myMenu);
+
+	// Enable the save/load button
+	if (_GM(currMenuIsSave)) {
+		menuItemButton::enableButton(nullptr, SL_TAG_SAVE, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_SAVE, myMenu);
+	} else {
+		menuItemButton::enableButton(nullptr, SL_TAG_LOAD, myMenu);
+		guiMenu::itemRefresh(nullptr, SL_TAG_LOAD, myMenu);
+	}
 }
 
-void SaveLoadMenu::cbVSlider(void *, void *) {
+void SaveLoadMenu::cbVSlider(M4::GUI::menuItemVSlider *myItem, M4::GUI::guiMenu *myMenu) {
+	bool redraw;
 
+	if (!myMenu || !myItem)
+		return;
+
+	if ((myItem->itemFlags & menuItemVSlider::VS_COMPONENT) != menuItemVSlider::VS_THUMB) {
+		redraw = (DrawFunction)false;
+		switch (myItem->itemFlags & menuItemVSlider::VS_COMPONENT) {
+		case menuItemVSlider::VS_UP:
+			if (_GM(firstSlotIndex) > 0) {
+				_GM(firstSlotIndex)--;
+				redraw = (DrawFunction)true;
+			}
+			break;
+
+		case menuItemVSlider::VS_PAGE_UP:
+			if (_GM(firstSlotIndex) > 0) {
+				_GM(firstSlotIndex) = imath_max(_GM(firstSlotIndex) - 10, 0);
+				redraw = (DrawFunction)true;
+			}
+			break;
+
+		case menuItemVSlider::VS_PAGE_DOWN:
+			if (_GM(firstSlotIndex) < 89) {
+				_GM(firstSlotIndex) = imath_min(_GM(firstSlotIndex) + 10, 89);
+				redraw = (DrawFunction)true;
+			}
+			break;
+
+		case menuItemVSlider::VS_DOWN:
+			if (_GM(firstSlotIndex) < 89) {
+				_GM(firstSlotIndex)++;
+				redraw = (DrawFunction)true;
+			}
+			break;
+		}
+
+		// See if we were able to set a new first slot index
+		if (redraw) {
+			setFirstSlot(_GM(firstSlotIndex), myMenu);
+
+			// Calculate the new percent
+			myItem->percent = (_GM(firstSlotIndex) * 100) / 89;
+
+			// Calculate the new thumbY
+			myItem->thumbY = myItem->minThumbY +
+				((myItem->percent * (myItem->maxThumbY - myItem->minThumbY)) / 100);
+
+			// Redraw the slider
+			guiMenu::itemRefresh(myItem, -1, myMenu);
+		}
+	} else {
+		// Else the callback came from the thumb - set the _GM(firstSlotIndex) based on the slider percent
+		_GM(firstSlotIndex) = (myItem->percent * 89) / 100;
+		setFirstSlot(_GM(firstSlotIndex), myMenu);
+	}
+}
+
+/*------------------ ERROR MENU METHODS ------------------*/
+
+enum error_menu_sprites {
+	EM_DIALOG_BOX,
+
+	EM_RETURN_BTN_NORM,
+	EM_RETURN_BTN_OVER,
+	EM_RETURN_BTN_PRESS,
+
+	EM_TOTAL_SPRITES = 5
+};
+
+#define ERROR_MENU_X	237
+#define ERROR_MENU_Y	191
+
+#define EM_TAG_RETURN	1
+#define EM_RETURN_X		12
+#define EM_RETURN_Y		50
+#define EM_RETURN_W		26
+#define EM_RETURN_H		26
+
+void ErrorMenu::show(RGB8 *myPalette) {
+	Buffer *myBuff;
+
+	if (!_G(menuSystemInitialized)) {
+		guiMenu::initialize(myPalette);
+	}
+
+	// Keep the memory tidy
+	PurgeMem();
+	CompactMem();
+
+	// Load in the game menu sprites
+	if (!guiMenu::loadSprites("errmenu", EM_TOTAL_SPRITES)) {
+		return;
+	}
+
+	_GM(errMenu) = guiMenu::create(_GM(menuSprites)[EM_DIALOG_BOX],
+		ERROR_MENU_X, ERROR_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
+	if (!_GM(errMenu)) {
+		return;
+	}
+
+	// Get the menu buffer
+	myBuff = _GM(errMenu)->menuBuffer->get_buffer();
+	if (!myBuff) {
+		return;
+	}
+
+	//write the err message
+	gr_font_set_color(96);
+	gr_font_write(myBuff, "Save game failed!", 48, 8, 0, -1);
+
+	gr_font_write(myBuff, "A disk error has", 48, 23, 0, -1);
+	gr_font_write(myBuff, "occurred.", 48, 33, 0, -1);
+
+	gr_font_write(myBuff, "Please ensure you", 48, 48, 0, -1);
+	gr_font_write(myBuff, "have write access", 48, 58, 0, -1);
+	gr_font_write(myBuff, "and sufficient", 48, 68, 0, -1);
+	gr_font_write(myBuff, "disk space (40k).", 48, 78, 0, -1);
+
+	_GM(errMenu)->menuBuffer->release();
+
+	// Add the done button
+	menuItemButton::add(_GM(errMenu), EM_TAG_RETURN, EM_RETURN_X, EM_RETURN_Y,
+		EM_RETURN_W, EM_RETURN_H, cbDone);
+
+	// Configure the game so pressing <esc> will cause the menu to disappear and the gamemenu to reappear
+	guiMenu::configure(_GM(errMenu), cbDone, cbDone);
+
+	vmng_screen_show((void *)_GM(errMenu));
+	LockMouseSprite(0);
+}
+
+void ErrorMenu::cbDone(void *, void *) {
+	// Destroy the game menu
+	destroyMenu();
+
+	// Shutdown the menu system
+	guiMenu::shutdown(true);
+}
+
+
+void ErrorMenu::destroyMenu() {
+	if (!_GM(errMenu)) {
+		return;
+	}
+
+	// Remove the screen from the gui
+	vmng_screen_dispose(_GM(errMenu));
+
+	// Destroy the menu resources
+	guiMenu::destroy(_GM(errMenu));
+
+	// Unload the menu sprites
+	guiMenu::unloadSprites();
 }
 
 /*-------------------- ACCESS METHODS --------------------*/
