@@ -88,6 +88,7 @@ public:
 	void setTiltAngle(float tiltAngle) { _tiltAngle = tiltAngle; }
 	float getFOV() const { return _fov; }
 	bool setFOV(float fov);
+	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
 
 	int getCurrentRow() { return _nextVideoTrack->getCurFrame() / _nav.columns; }
 	void setCurrentRow(int row);
