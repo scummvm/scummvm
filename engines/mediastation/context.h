@@ -38,7 +38,7 @@ enum ContextSectionType {
 	kContextOldStyleSection = 0x000d,
 	kContextParametersSection = 0x000e,
 	kContextPaletteSection = 0x05aa,
-	kContextEndSection = 0x0010,
+	kContextUnkAtEndSection = 0x0010,
 	kContextAssetHeaderSection = 0x0011,
 	kContextPoohSection = 0x057a,
 	kContextAssetLinkSection = 0x0013,

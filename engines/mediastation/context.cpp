@@ -328,8 +328,10 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		break;
 	}
 
-	case kContextEndSection: {
-		error("Context::readHeaderSection(): END Not implemented yet");
+	case kContextUnkAtEndSection: {
+		int unk1 = Datum(chunk).u.i;
+		int unk2 = Datum(chunk).u.i;
+		debugC(5, kDebugLoading, "Context::readHeaderSection(): unk1 = %d, unk2 = %d", unk1, unk2);
 		return false;
 	}
 
