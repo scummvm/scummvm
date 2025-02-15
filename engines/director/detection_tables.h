@@ -819,6 +819,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "seinfeldondvd",		"Seinfeld on DVD" },
 	{ "sensei",				"Sensei" },
 	{ "simpsontrivia",		"The Simpsons Trivia" },
+	{ "smartstart",			"CIBC SmartStart" },
 	{ "smile",				"SMILE! The Splattering" },
 	{ "sorgato",			"Sylvain Sorgato's Drawings in variable color" },
 	{ "spitwad",			"High School High Spitwad Game" },
@@ -7532,6 +7533,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("smallhouse", "Demo 2", "Demo SH",    "552992fb31c736ca67ffd403096596d6", 719626, Common::JA_JPN, 501),
 	WINDEMO2t_l("smallhouse", "Demo 2", "DEMOSH.EXE",    "73246839eb7cc3acaf10e67b837a32c1", 1411908,
 								 "S_DEMO/OPEN/MAIN.Dxr", "29c1134c7ffe2e7f1d3fc271443405ea", 361806, Common::JA_JPN, 501),
+
+	WINGAME1("smartstart", "", "SSTART.EXE", "t:2c0ba688150dafd663749f0ac6634810", 933967, 501),
 
 	MACGAME1("smarty", "", "Smarty.PPC", "559818fe064f608c69bf86d4c60dee93", 107863, 501),
 	MACGAME2("smarty", "Uplink rerelease", "MacPPC",			"r:d2531c0b8c0553be7c7cd5f6c6a07b78",  107863,
