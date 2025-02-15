@@ -47,6 +47,14 @@ namespace GUI {
 
 //-------------------------------------   GAME MENU   -------------------------------------//
 
+enum game_menu_button_tags {
+	GM_TAG_QUIT = 1,
+	GM_TAG_OPTIONS = 2,
+	GM_TAG_RESUME = 3,
+	GM_TAG_SAVE = 4,
+	GM_TAG_LOAD = 5,
+	GM_TAG_MAIN = 6
+};
 
 #define GAME_MENU_X		190
 #define GAME_MENU_Y		100
@@ -83,11 +91,11 @@ namespace GUI {
 #define GM_LOAD_W			 24
 #define GM_LOAD_H			 24
 
-static void DestroyGameMenu();
 
-void cb_Game_Quit(void *, void *) {
+
+void GameMenu::cb_Game_Quit(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 
 	// Shutdown the menu system
 	guiMenu::shutdown(false);
@@ -96,17 +104,17 @@ void cb_Game_Quit(void *, void *) {
 	_G(kernel).going = false;
 }
 
-void cb_Game_Resume(void *, void *) {
+void GameMenu::cb_Game_Resume(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 
 	// Shutdown the menu system
 	guiMenu::shutdown(true);
 }
 
-void cb_Game_Save(void *, void *) {
+void GameMenu::cb_Game_Save(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 	guiMenu::shutdown(true);
 	_GM(buttonClosesDialog) = true;
 
@@ -114,9 +122,9 @@ void cb_Game_Save(void *, void *) {
 	g_engine->showSaveScreen();
 }
 
-void cb_Game_Load(void *, void *) {
+void GameMenu::cb_Game_Load(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 	guiMenu::shutdown(true);
 	_GM(buttonClosesDialog) = true;
 
@@ -124,9 +132,9 @@ void cb_Game_Load(void *, void *) {
 	g_engine->showLoadScreen(M4Engine::kLoadFromGameDialog);
 }
 
-void cb_Game_Main(void *, void *) {
+void GameMenu::cb_Game_Main(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 
 	if (!_GM(gameMenuFromMain)) {
 		// Save the game so we can resume from here if possible
@@ -147,16 +155,16 @@ void cb_Game_Main(void *, void *) {
 	_G(game).setRoom(_G(executing) == WHOLE_GAME ? 903 : 901);
 }
 
-void cb_Game_Options(void *, void *) {
+void GameMenu::cb_Game_Options(void *, void *) {
 	// Destroy the game menu
-	DestroyGameMenu();
+	destroyMenu();
 	_GM(buttonClosesDialog) = true;
 
 	// Create the options menu
-	CreateOptionsMenu(nullptr);
+	OptionsMenu::show(nullptr);
 }
 
-void DestroyGameMenu(void) {
+void GameMenu::destroyMenu() {
 	if (!_GM(gameMenu)) {
 		return;
 	}
@@ -171,7 +179,7 @@ void DestroyGameMenu(void) {
 	guiMenu::unloadSprites();
 }
 
-void CreateGameMenuMain(RGB8 *myPalette) {
+void GameMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
 	}
@@ -251,32 +259,29 @@ enum option_menu_item_tags {
 #define OM_DIGESTABILITY_W	 212
 #define OM_DIGESTABILITY_H	  24
 
-void DestroyOptionsMenu();
-
-
-void cb_Options_Game_Cancel(void *, void *) {
+void OptionsMenu::cb_Options_Game_Cancel(void *, void *) {
 	// Reset values of items to what they were when options menu came up
 	digi_set_overall_volume(_GM(remember_digi_volume));
 	_G(flags)[digestability] = _GM(remember_digestability);
 
 	// Destroy the options menu
-	DestroyOptionsMenu();
+	destroyMenu();
 	_GM(buttonClosesDialog) = true;
 
 	// Create the options menu
-	CreateGameMenuMain(nullptr);
+	GameMenu::show(nullptr);
 }
 
-void cb_Options_Game_Done(void *, void *) {
+void OptionsMenu::cb_Options_Game_Done(void *, void *) {
 	// Destroy the options menu
-	DestroyOptionsMenu();
+	destroyMenu();
 	_GM(buttonClosesDialog) = true;
 
 	// Create the options menu
-	CreateGameMenuMain(nullptr);
+	GameMenu::show(nullptr);
 }
 
-void cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
+void OptionsMenu::cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
 	// Set the digi volume
 	digi_set_overall_volume(myItem->percent);
 	term_message("digi volume: %d", myItem->percent);
@@ -287,7 +292,7 @@ void cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
 
 }
 
-void cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu) {
+void OptionsMenu::cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu) {
 	term_message("digestability: %d", myItem->percent);
 	_G(flags)[digestability] = myItem->percent;
 
@@ -296,7 +301,7 @@ void cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu) {
 	guiMenu::itemRefresh(nullptr, OM_TAG_DONE, myMenu);
 }
 
-void DestroyOptionsMenu(void) {
+void OptionsMenu::destroyMenu(void) {
 	if (!_GM(opMenu))
 		return;
 
@@ -310,8 +315,7 @@ void DestroyOptionsMenu(void) {
 	guiMenu::unloadSprites();
 }
 
-
-void CreateOptionsMenu(RGB8 *myPalette) {
+void OptionsMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
 	}
@@ -377,18 +381,16 @@ enum error_menu_tags {
 #define EM_RETURN_W	  15
 #define EM_RETURN_H	  15
 
-void DestroyErrMenu();
 
-void cb_Err_Done(void *, void *) {
+void ErrorMenu::cb_Err_Done(void *, void *) {
 	// Destroy the game menu
-	DestroyErrMenu();
+	destroyMenu();
 
 	// Shutdown the menu system
 	guiMenu::shutdown(true);
 }
 
-
-void DestroyErrMenu(void) {
+void ErrorMenu::destroyMenu() {
 	if (!_GM(errMenu)) {
 		return;
 	}
@@ -403,8 +405,7 @@ void DestroyErrMenu(void) {
 	guiMenu::unloadSprites();
 }
 
-
-void CreateErrMenu(RGB8 *myPalette) {
+void ErrorMenu::show(RGB8 *myPalette) {
 	Buffer *myBuff;
 
 	if (!_G(menuSystemInitialized)) {
@@ -454,7 +455,6 @@ void CreateErrMenu(RGB8 *myPalette) {
 	vmng_screen_show((void *)_GM(errMenu));
 	LockMouseSprite(0);
 }
-
 
 //--------------------------------   SAVE / LOAD MENU   -----------------------------------//
 
@@ -730,7 +730,7 @@ void SaveLoadMenu::cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 		destroyMenu(true);
 
 		// Create the err menu
-		CreateErrMenu(nullptr);
+		ErrorMenu::show(nullptr);
 
 		// Abort this procedure
 		return;
@@ -841,7 +841,7 @@ void SaveLoadMenu::cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 			guiMenu::shutdown(true);
 		} else {
 			// Create the game menu
-			CreateGameMenuMain(nullptr);
+			GameMenu::show(nullptr);
 		}
 	}
 
@@ -967,7 +967,7 @@ void CreateGameMenu(RGB8 *myPalette) {
 	}
 
 	_GM(gameMenuFromMain) = false;
-	CreateGameMenuMain(myPalette);
+	GameMenu::show(myPalette);
 }
 
 void CreateGameMenuFromMain(RGB8 *myPalette) {
@@ -976,7 +976,7 @@ void CreateGameMenuFromMain(RGB8 *myPalette) {
 	}
 
 	_GM(gameMenuFromMain) = true;
-	CreateGameMenuMain(myPalette);
+	GameMenu::show(myPalette);
 }
 
 void CreateSaveMenu(RGB8 *myPalette) {
