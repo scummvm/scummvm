@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -7413,7 +7413,7 @@ msgstr "قم بإنهاء اللعبة"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "لم يتم تجميع دعم Versailles 1685"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 #, fuzzy
 #| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."

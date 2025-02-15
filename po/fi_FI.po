@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2025-02-03 19:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -7530,7 +7530,7 @@ msgstr "Lopeta peli"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685-tukea ei ole käännetty mukaan"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Pelimoottorin datatiedostoa darkseed.dat ei löydetty."
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7549,7 +7549,7 @@ msgstr "Вийти з гри"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Підтримку для Versailles 1685 не скомпільовано"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Не вдалося знайти файл даних движка darkseed.dat."
 

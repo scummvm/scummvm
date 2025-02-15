@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2025-02-14 14:47+0000\n"
 "Last-Translator: mdv <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7617,7 +7617,7 @@ msgstr "Játék Vége"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 támogatás nincs lefordítva"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 #, fuzzy
 #| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."

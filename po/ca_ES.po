@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2025-02-12 14:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7141,7 +7141,7 @@ msgstr "Surt del joc"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "No s'ha compilat el suport per a Versalles 1685"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "No s'ha pogut localitzar el fitxer de dades del motor darkseed.dat."
 

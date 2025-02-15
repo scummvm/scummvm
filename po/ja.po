@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-12 14:51+0000\n"
+"POT-Creation-Date: 2025-02-15 22:42+0000\n"
 "PO-Revision-Date: 2025-02-15 11:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7328,7 +7328,7 @@ msgstr "ゲーム終了"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685のサポートはコンパイルされていません"
 
-#: engines/darkseed/darkseed.cpp:66
+#: engines/darkseed/darkseed.cpp:67
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "データファイルdarkseed.datが見つかりません。"
 
@@ -13542,9 +13542,9 @@ msgid ""
 msgstr ""
 "このゲームをプレイする前に、以下のフォントをScummVMのextrasディレクトリー、も"
 "しくはゲームのディレクトリーにコピーしてください。Windowsのシステムフォントを"
-"使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier "
-"New、Arialが必要です。Liberation Fontsを使用する場合、LiberationMono、Liberat"
-"ionSans、LiberationSerifが必要です。"
+"使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier New、"
+"Arialが必要です。Liberation Fontsを使用する場合、LiberationMono、"
+"LiberationSans、LiberationSerifが必要です。"
 
 #, fuzzy
 #~| msgid ""
