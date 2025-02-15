@@ -7,6 +7,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Dark Seed hinzugefügt.
    - Unterstützung für God of Thunder hinzugefügt.
 
+ Hopkins:
+   - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
+
  Nuvie:
    - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
 
