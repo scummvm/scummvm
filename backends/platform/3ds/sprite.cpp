@@ -45,7 +45,8 @@ Sprite::Sprite()
 }
 
 Sprite::~Sprite() {
-	//
+	free();
+	linearFree(vertices);
 }
 
 void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode, bool vram) {
@@ -84,7 +85,6 @@ void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode, bool vr
 }
 
 void Sprite::free() {
-	linearFree(vertices);
 	linearFree(pixels);
 	C3D_TexDelete(&texture);
 	pixels = 0;
