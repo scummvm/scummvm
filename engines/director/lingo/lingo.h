@@ -361,7 +361,7 @@ public:
 	int getCastLibsNum();
 	int getMembersNum(uint16 castLibID);
 
-	void executeHandler(const Common::String &name);
+	void executeHandler(const Common::String &name, int numargs = 0);
 	void executeScript(ScriptType type, CastMemberID id);
 	Common::String formatStack();
 	void printStack(const char *s, uint pc);
