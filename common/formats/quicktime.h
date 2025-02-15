@@ -127,8 +127,10 @@ protected:
 		Rational mediaRate;
 	};
 
+public:
 	struct Track;
 
+protected:
 	class SampleDesc {
 	public:
 		SampleDesc(Track *parentTrack, uint32 codecTag);
@@ -144,6 +146,7 @@ protected:
 		uint32 _codecTag;
 	};
 
+public:
 	enum CodecType {
 		CODEC_TYPE_MOV_OTHER,
 		CODEC_TYPE_VIDEO,
@@ -376,6 +379,7 @@ protected:
 		float initialVPan = 1.0f;
 	};
 
+protected:
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
 	uint32 _timeScale;      // movie time
