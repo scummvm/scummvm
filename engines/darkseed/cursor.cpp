@@ -35,6 +35,7 @@ void Cursor::setCursorType(enum CursorType newType) {
 		surf.create(cursorSprite._width, cursorSprite._height, Graphics::PixelFormat::createFormatCLUT8());
 		surf.copyRectToSurface(cursorSprite._pixels.data(), cursorSprite._pitch, 0, 0, cursorSprite._width, cursorSprite._height);
 		CursorMan.replaceCursor(surf, 0, 0, 0xf);
+		surf.free();
 	}
 }
 
