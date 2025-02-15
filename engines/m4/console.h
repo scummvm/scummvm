@@ -38,6 +38,7 @@ private:
 	bool cmdCel(int argc, const char **argv);
 	bool cmdInterface(int argc, const char **argv);
 	bool cmdMusic(int argc, const char **argv);
+	bool cmdHotspots(int argc, const char **argv);
 
 public:
 	Console();

@@ -36,6 +36,7 @@ Console::Console() : ::GUI::Debugger() {
 	registerCmd("cel",       WRAP_METHOD(Console, cmdCel));
 	registerCmd("interface", WRAP_METHOD(Console, cmdInterface));
 	registerCmd("music",     WRAP_METHOD(Console, cmdMusic));
+	registerCmd("hotspots",  WRAP_METHOD(Console, cmdHotspots));
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
@@ -156,6 +157,20 @@ bool Console::cmdMusic(int argc, const char **argv) {
 		midi_play(argv[1], 255, 0, -1, 999);
 		return false;
 	}
+}
+
+bool Console::cmdHotspots(int argc, const char **argv) {
+	for (HotSpotRec *hs = _G(currentSceneDef).hotspots;
+			hs; hs = hs->next) {
+		debugPrintf("vocab=%s, verb=%s, prep=%s, pos=(%d,%d,%d,%d), feet=(%d,%d)\n",
+			hs->vocab ? hs->vocab : "",
+			hs->verb ? hs->verb : "",
+			hs->prep ? hs->prep : "",
+			hs->ul_x, hs->ul_y, hs->lr_x, hs->lr_y,
+			hs->feet_x, hs->feet_y);
+	}
+
+	return true;
 }
 
 } // End of namespace M4
