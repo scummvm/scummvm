@@ -407,7 +407,7 @@ public:
 	void processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent);
 
 public:
-	bool execute();
+	bool execute(int targetFrame = -1);
 	void switchStateFromWindow();
 	void freezeState();
 	void freezePlayState();

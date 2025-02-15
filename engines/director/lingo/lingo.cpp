@@ -615,10 +615,13 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 	return result;
 }
 
-bool Lingo::execute() {
+bool Lingo::execute(int targetFrame) {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
+		if (targetFrame != -1 && _state->callstack.size() == targetFrame)
+			break;
+
 		if ((_exec._state == kPause) || (_exec._shouldPause && _exec._shouldPause())) {
 			// if execution is in pause -> poll event + update screen
 			_exec._state = kPause;
@@ -739,8 +742,10 @@ void Lingo::executeScript(ScriptType type, CastMemberID id) {
 void Lingo::executeHandler(const Common::String &name, int numargs) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	Symbol sym = getHandler(name);
+
+	int frame = _state->callstack.size();
 	LC::call(sym, numargs, false);
-	execute();
+	execute(frame);
 }
 
 void Lingo::lingoError(const char *s, ...) {
