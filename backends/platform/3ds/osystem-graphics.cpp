@@ -113,12 +113,7 @@ void OSystem_3DS::init3DSGraphics() {
 
 void OSystem_3DS::destroy3DSGraphics() {
 	_gameScreen.free();
-	_gameTopTexture.free();
-	_gameBottomTexture.free();
 	_cursor.free();
-	_cursorTexture.free();
-	_overlay.free();
-	_activityIcon.free();
 
 	shaderProgramFree(&_program);
 	DVLB_Free(_dvlb);
