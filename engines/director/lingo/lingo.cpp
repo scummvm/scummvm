@@ -338,7 +338,7 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	if (_state->context && _state->context->_functionHandlers.contains(name))
 		return _state->context->_functionHandlers[name];
 
-	sym = g_director->getCurrentMovie()->getHandler(name, _state->context->_castLibHint);
+	sym = g_director->getCurrentMovie()->getHandler(name, _state->context ? _state->context->_castLibHint : 0);
 	if (sym.type != VOIDSYM)
 		return sym;
 
