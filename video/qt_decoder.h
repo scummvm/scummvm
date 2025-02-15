@@ -95,6 +95,8 @@ public:
 	int getCurrentColumn() { return _nextVideoTrack->getCurFrame() % _nav.columns; }
 	void setCurrentColumn(int column);
 
+	const PanoHotSpot *getCurrentHotspot() { return _currentHotspot; }
+
 	void nudge(const Common::String &direction);
 
 	bool isVR() const { return _isVR; }
