@@ -1,6 +1,11 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.9.1 (XXXX-XX-XX)
+
+ Hopkins:
+   - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
+
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (22.12.2024)
 
  Neue Spiele:
