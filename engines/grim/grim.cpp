@@ -778,7 +778,7 @@ void GrimEngine::handleDebugLoadResource() {
 		warning("Resource type not understood");
 	}
 	if (!resource)
-		warning("Requested resouce (%s) not found", buf);
+		warning("Requested resource (%s) not found", buf);
 }
 
 void GrimEngine::drawTextObjects() {
