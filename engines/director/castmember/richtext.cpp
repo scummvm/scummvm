@@ -42,9 +42,10 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 		_boundingRect = Movie::readRect(stream);
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "RichTextCastMember(): unk");
-			stream.hexdump(12);
+			stream.hexdump(8);
 		}
-		stream.seek(12, SEEK_CUR);
+		stream.seek(8, SEEK_CUR);
+		_foreColor = stream.readUint32BE();
 		_bgColor = (stream.readUint16BE() >> 8) << 16;
 		_bgColor |= (stream.readUint16BE() >> 8) << 8;
 		_bgColor |= (stream.readUint16BE() >> 8);
@@ -177,6 +178,8 @@ Datum RichTextCastMember::getField(int field) {
 
 	switch (field) {
 	case kTheText:
+		d = Datum(Common::String(_plainText));
+		break;
 	case kTheHilite:
 	case kThePageHeight:
 	case kTheScrollTop:
@@ -190,8 +193,11 @@ Datum RichTextCastMember::getField(int field) {
 
 bool RichTextCastMember::setField(int field, const Datum &d) {
 	switch (field) {
-	case kTheHilite:
 	case kTheText:
+		_plainText = Common::U32String(d.asString());
+		warning("STUB: RichTextCastMember::setField: text set to \"%s\", but won't rerender!", d.asString().c_str());
+		break;
+	case kTheHilite:
 	case kThePageHeight:
 	case kTheScrollTop:
 	default:

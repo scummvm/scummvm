@@ -45,6 +45,7 @@ public:
 
 private:
 	Common::U32String _plainText;
+	uint32 _foreColor;
 	uint32 _bgColor;
 	Picture *_picture;
 };

@@ -381,6 +381,40 @@ on exitFrame \r\
 end \r\
 ";
 
+/* GADGET: Past As Future was released on 4 CDs, and detects which CD is present by reading
+ * a file "diskid.txt". Replace this with the honour system so we can support merging the
+ * contents of all 4 discs.
+ */
+const char *const gadgetPafDetectionFixAlert = " \
+on exitFrame \r\
+end \r\
+";
+const char *const gadgetPafDetectionFix12 = " \
+on exitFrame \r\
+  go(\"start-ok\")\r\
+end \r\
+";
+const char *const gadgetPafDetectionFix13 = " \
+on exitFrame \r\
+  go(\"load-ok\")\r\
+end \r\
+";
+const char *const gadgetPafDetectionFix4 = " \
+on exitFrame \r\
+  go(\"eject1-ok\")\r\
+end \r\
+";
+const char *const gadgetPafDetectionFix6 = " \
+on exitFrame \r\
+  go(\"eject3-ok\")\r\
+end \r\
+";
+const char *const gadgetPafDetectionFix9 = " \
+on exitFrame \r\
+  go(\"eject2-ok\")\r\
+end \r\
+";
+
 /*
  * Pink Gear Collection has a check to ensure that the CD and hard disk data are on
 * different drive letters by checking if "PINKPINK.TXT" is the first file in the
@@ -435,6 +469,16 @@ struct ScriptHandlerPatch {
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{"frankenstein", nullptr, kPlatformWindows, "FRANKIE.EXE", kScoreScript, 21, DEFAULT_CAST_LIB, &frankensteinSwapFix},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 2, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 8, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 10, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 11, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 18, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 12, DEFAULT_CAST_LIB, &gadgetPafDetectionFix12},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 13, DEFAULT_CAST_LIB, &gadgetPafDetectionFix13},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 4, DEFAULT_CAST_LIB, &gadgetPafDetectionFix4},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 6, DEFAULT_CAST_LIB, &gadgetPafDetectionFix6},
+	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\GADGET.EXE", kScoreScript, 9, DEFAULT_CAST_LIB, &gadgetPafDetectionFix9},
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix1},
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix2},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
