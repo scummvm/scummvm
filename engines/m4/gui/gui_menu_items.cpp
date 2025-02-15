@@ -767,17 +767,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_SL_SAVE:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_OVER];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_PRESS];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_BTN_GREY];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_GREY];
 			break;
 		}
 		break;
@@ -785,17 +785,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_SL_LOAD:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_OVER];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_PRESS];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_BTN_GREY];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_GREY];
 			break;
 		}
 		break;
@@ -805,23 +805,23 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 		case BTN_STATE_OVER:
 			font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
 			// Gr_font_set_color(TEXT_COLOR_OVER);
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
 			break;
 		case BTN_STATE_PRESS:
 			font_set_colors(TEXT_COLOR_PRESS_SHADOW, TEXT_COLOR_PRESS_FOREGROUND, TEXT_COLOR_PRESS_HILITE);
 			// Gr_font_set_color(TEXT_COLOR_PRESS);
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_PRESS];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_PRESS];
 			break;
 		case BTN_STATE_GREY:
 			font_set_colors(TEXT_COLOR_GREY_SHADOW, TEXT_COLOR_GREY_FOREGROUND, TEXT_COLOR_GREY_HILITE);
 			// Gr_font_set_color(TEXT_COLOR_GREY);
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
 			break;
 		default:
 		case BTN_STATE_NORM:
 			font_set_colors(TEXT_COLOR_NORM_SHADOW, TEXT_COLOR_NORM_FOREGROUND, TEXT_COLOR_NORM_HILITE);
 			// Gr_font_set_color(TEXT_COLOR_NORM);
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
 			break;
 		}
 		break;
@@ -829,17 +829,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_SL_CANCEL:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_OVER];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_PRESS];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[Burger::GUI::SL_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
 			break;
 		}
 		break;
@@ -1257,13 +1257,13 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 
 	// Select the sprite
 	switch (myItem->tag) {
-	case Burger::GUI::SL_TAG_SAVE_LABEL:
-		mySprite = _GM(menuSprites)[Burger::GUI::SL_SAVE_LABEL];
+	case SL_TAG_SAVE_LABEL:
+		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_LABEL];
 		break;
-	case Burger::GUI::SL_TAG_LOAD_LABEL:
-		mySprite = _GM(menuSprites)[Burger::GUI::SL_LOAD_LABEL];
+	case SL_TAG_LOAD_LABEL:
+		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_LABEL];
 		break;
-	case Burger::GUI::SL_TAG_THUMBNAIL:
+	case SL_TAG_THUMBNAIL:
 		mySprite = _GM(saveLoadThumbNail);
 		break;
 	}
@@ -1278,11 +1278,11 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 	if (backgroundBuff) {
 		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
 		myItem->background->release();
-	} else if (myItem->tag == Burger::GUI::SL_TAG_THUMBNAIL && mySprite->w == 160) {
+	} else if (myItem->tag == SL_TAG_THUMBNAIL && mySprite->w == 160) {
 		// Hack for handling smaller ScummVM thumbnails
-		for (int yp = y; yp < (y + Burger::GUI::SL_THUMBNAIL_H); ++yp) {
+		for (int yp = y; yp < (y + SaveLoadMenuBase::SL_THUMBNAIL_H); ++yp) {
 			byte *line = myBuff->data + myBuff->stride * yp + x;
-			Common::fill(line, line + Burger::GUI::SL_THUMBNAIL_W, 0);
+			Common::fill(line, line + SaveLoadMenuBase::SL_THUMBNAIL_W, 0);
 		}
 
 		x += 25;
@@ -1578,6 +1578,85 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 
 //-------------------------------    VSLIDER MENU ITEM    ---------------------------------//
 
+menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+	int32 initPercent, CALLBACK callback, bool transparent) {
+	menuItemVSlider *newItem;
+	ScreenContext *myScreen;
+	int32 status;
+
+	// Verify params
+	if (!myMenu)
+		return nullptr;
+
+	// Allocate a new one
+	newItem = new menuItemVSlider();
+
+	// Initialize the struct
+	newItem->next = myMenu->itemList;
+	newItem->prev = nullptr;
+	if (myMenu->itemList) {
+		myMenu->itemList->prev = newItem;
+	}
+	myMenu->itemList = newItem;
+
+	newItem->myMenu = myMenu;
+	newItem->tag = tag;
+	newItem->x1 = x;
+	newItem->y1 = y;
+	newItem->x2 = x + w - 1;
+	newItem->y2 = y + h - 1;
+	newItem->callback = callback;
+
+	if (!transparent) {
+		newItem->transparent = false;
+		newItem->background = nullptr;
+	} else {
+		newItem->transparent = true;
+		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
+	}
+
+	newItem->itemFlags = menuItemVSlider::VS_NORM;
+
+	if (IS_RIDDLE) {
+		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->w;
+		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h;
+
+		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h;
+		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h +
+			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR]->h
+			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h - 1;
+	} else {
+		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->w;
+		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h;
+
+		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h + 1;
+		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h +
+			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR]->h
+			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h - 1;
+	}
+
+	// Calculate the initial thumbY
+	newItem->percent = imath_max(imath_min(initPercent, 100), 0);
+	newItem->thumbY = newItem->minThumbY +
+		((newItem->percent * (newItem->maxThumbY - newItem->minThumbY)) / 100);
+
+	newItem->redraw = (DrawFunction)menuItemVSlider::drawVSlider;
+	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
+	newItem->itemEventHandler = (ItemHandlerFunction)menuItemVSlider::handler;
+
+	// Draw the vslider in now
+	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
+
+	// See if the screen is currently visible
+	myScreen = vmng_screen_find(myMenu, &status);
+	if (myScreen && (status == SCRN_ACTIVE)) {
+		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
+			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
+	}
+
+	return newItem;
+}
+
 void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
@@ -1614,30 +1693,30 @@ void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int3
 	}
 
 	// Set the different sprite components
-	vbarSprite = _GM(menuSprites)[Burger::GUI::SL_SCROLL_BAR];
-	upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM];
-	thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM];
-	downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_NORM];
+	vbarSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR];
+	upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM];
+	thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM];
+	downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_NORM];
 
 	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
-		upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_GREY];
+		upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_GREY];
 		thumbSprite = nullptr;
-		downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_GREY];
+		downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_GREY];
 	} else if ((myItem->itemFlags & VS_STATUS) == VS_OVER) {
 		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
-			upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_OVER];
+			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_OVER];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
-			thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_OVER];
+			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_OVER];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
-			downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_OVER];
+			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_OVER];
 		}
 	} else if ((myItem->itemFlags & VS_STATUS) == VS_PRESS) {
 		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
-			upSprite = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_PRESS];
+			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_PRESS];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
-			thumbSprite = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_PRESS];
+			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_PRESS];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
-			downSprite = _GM(menuSprites)[Burger::GUI::SL_DOWN_BTN_PRESS];
+			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_PRESS];
 		}
 	}
 
@@ -1859,75 +1938,6 @@ bool menuItemVSlider::handler(menuItemVSlider *myItem, int32 eventType, int32 ev
 	return handled;
 }
 
-
-menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
-	int32 initPercent, CALLBACK callback, bool transparent) {
-	menuItemVSlider *newItem;
-	ScreenContext *myScreen;
-	int32 status;
-
-	// Verify params
-	if (!myMenu)
-		return nullptr;
-
-	// Allocate a new one
-	newItem = new menuItemVSlider();
-
-	// Initialize the struct
-	newItem->next = myMenu->itemList;
-	newItem->prev = nullptr;
-	if (myMenu->itemList) {
-		myMenu->itemList->prev = newItem;
-	}
-	myMenu->itemList = newItem;
-
-	newItem->myMenu = myMenu;
-	newItem->tag = tag;
-	newItem->x1 = x;
-	newItem->y1 = y;
-	newItem->x2 = x + w - 1;
-	newItem->y2 = y + h - 1;
-	newItem->callback = callback;
-
-	if (!transparent) {
-		newItem->transparent = false;
-		newItem->background = nullptr;
-	} else {
-		newItem->transparent = true;
-		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
-	}
-
-	newItem->itemFlags = menuItemVSlider::VS_NORM;
-
-	newItem->thumbW = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->w;
-	newItem->thumbH = _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->h;
-
-	newItem->minThumbY = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM]->h + 1;
-	newItem->maxThumbY = _GM(menuSprites)[Burger::GUI::SL_UP_BTN_NORM]->h + _GM(menuSprites)[Burger::GUI::SL_SCROLL_BAR]->h
-		- _GM(menuSprites)[Burger::GUI::SL_SLIDER_BTN_NORM]->h - 1;
-
-	// Calculate the initial thumbY
-	newItem->percent = imath_max(imath_min(initPercent, 100), 0);
-	newItem->thumbY = newItem->minThumbY +
-		((newItem->percent * (newItem->maxThumbY - newItem->minThumbY)) / 100);
-
-	newItem->redraw = (DrawFunction)menuItemVSlider::drawVSlider;
-	newItem->destroy = (DestroyFunction)menuItem::destroyItem;
-	newItem->itemEventHandler = (ItemHandlerFunction)menuItemVSlider::handler;
-
-	// Draw the vslider in now
-	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
-
-	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
-	if (myScreen && (status == SCRN_ACTIVE)) {
-		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
-			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
-	}
-
-	return newItem;
-}
-
 void menuItemVSlider::disableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu *myMenu) {
 	// Verify params
 	if (!myMenu)
@@ -1983,16 +1993,16 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 	// Select the sprite
 	switch (myText->itemFlags) {
 	case TF_GREY:
-		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_NORM];
+		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
 		break;
 
 	case TF_OVER:
-		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
 		break;
 
 	case TF_NORM:
 	default:
-		mySprite = _GM(menuSprites)[Burger::GUI::SL_LINE_OVER];
+		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
 		break;
 	}
 

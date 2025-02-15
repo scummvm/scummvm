@@ -26,6 +26,7 @@
 #include "m4/core/errors.h"
 #include "m4/dbg/debug.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/gui/game_menu.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_mouse.h"
@@ -69,6 +70,7 @@ Vars::~Vars() {
 bool Vars::init() {
 	param_init();
 	parse_all_flags();
+	GUI::SaveLoadMenuBase::init();
 
 	if (_G(system_shutting_down))
 		return false;

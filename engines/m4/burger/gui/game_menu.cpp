@@ -29,6 +29,7 @@
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/gui/gui_event.h"
+#include "m4/gui/gui_menu_items.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/graphics/gr_line.h"
 #include "m4/graphics/gr_sprite.h"
@@ -528,7 +529,7 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!guiMenu::loadSprites("slmenu", SL_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("slmenu", GUI::SaveLoadMenuBase::SL_TOTAL_SPRITES)) {
 		return;
 	}
 
@@ -539,7 +540,7 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	_GM(thumbIndex) = 100;
 	_GM(currMenuIsSave) = saveMenu;
 
-	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
+	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[GUI::SaveLoadMenuBase::SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
 		MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(slMenu)) {
 		return;
@@ -588,10 +589,12 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 
 	} else {
 		updateThumbnails(0, _GM(slMenu));
-		_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+		_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 	}
 
-	menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y, SL_THUMBNAIL_W, SL_THUMBNAIL_H, false);
+	menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y,
+		M4::GUI::SaveLoadMenuBase::SL_THUMBNAIL_W,
+		M4::GUI::SaveLoadMenuBase::SL_THUMBNAIL_H, false);
 
 	if (_GM(currMenuIsSave)) {
 		//<return> - if a slot has been selected, saves the game
@@ -808,7 +811,7 @@ void SaveLoadMenu::cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
-				_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+				_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
 			}
 		}
@@ -949,7 +952,7 @@ bool SaveLoadMenu::load_Handler(menuItemButton *myItem, int32 eventType, int32 e
 
 				// Remove the thumbnail
 				if (_GM(saveLoadThumbNail)) {
-					_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+					_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 					guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 				}
 			}

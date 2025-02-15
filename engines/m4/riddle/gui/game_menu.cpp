@@ -309,33 +309,24 @@ void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *
 #define SAVE_LOAD_MENU_X 42
 #define SAVE_LOAD_MENU_Y 155
 
-#define SL_TAG_SAVE_LABEL	1
-#define SL_TAG_LOAD_LABEL	2
 #define SL_LABEL_X		111
 #define SL_LABEL_Y		2
 #define SL_LABEL_W		110
 #define SL_LABEL_H		17
 
-#define SL_TAG_THUMBNAIL	5
 #define SL_THUMBNAIL_X		333
 #define SL_THUMBNAIL_Y		5
-#define SL_THUMBNAIL_W		213
-#define SL_THUMBNAIL_H		160
 
-#define SL_TAG_SAVE		100
-#define SL_TAG_LOAD		101
 #define SL_SAVELOAD_X	10
 #define SL_SAVELOAD_Y	74
 #define SL_SAVELOAD_W	26
 #define SL_SAVELOAD_H	26
 
-#define SL_TAG_CANCEL	102
 #define SL_CANCEL_X		10
 #define SL_CANCEL_Y		122
 #define SL_CANCEL_W		26
 #define SL_CANCEL_H		26
 
-#define SL_TAG_VSLIDER	103
 #define SL_SLIDER_X		305
 #define SL_SLIDER_Y		21
 #define SL_SLIDER_W		20
@@ -360,7 +351,7 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	CompactMem();
 
 	// Load in the game menu sprites
-	if (!guiMenu::loadSprites("slmenu", SL_TOTAL_SPRITES)) {
+	if (!guiMenu::loadSprites("slmenu", GUI::SaveLoadMenuBase::SL_TOTAL_SPRITES)) {
 		return;
 	}
 
@@ -371,7 +362,7 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	_GM(thumbIndex) = 100;
 	_GM(currMenuIsSave) = saveMenu;
 
-	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
+	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[GUI::SaveLoadMenuBase::SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
 		MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(slMenu)) {
 		return;
@@ -425,10 +416,11 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 
 	} else {
 		updateThumbnails(0, _GM(slMenu));
-		_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+		_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 	}
 
-	menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y, SL_THUMBNAIL_W, SL_THUMBNAIL_H, false);
+	menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y,
+		SaveLoadMenuBase::SL_THUMBNAIL_W, SaveLoadMenuBase::SL_THUMBNAIL_H, false);
 
 	if (_GM(currMenuIsSave)) {
 		//<return> - if a slot has been selected, saves the game
@@ -516,7 +508,7 @@ bool SaveLoadMenu::load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType
 
 				// Remove the thumbnail
 				if (_GM(saveLoadThumbNail)) {
-					_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+					_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 					guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 				}
 			}
@@ -634,7 +626,7 @@ void SaveLoadMenu::cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu)
 
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
-				_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
+				_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
 				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
 			}
 		}

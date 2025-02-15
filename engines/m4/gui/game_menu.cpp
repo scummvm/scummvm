@@ -28,6 +28,88 @@
 namespace M4 {
 namespace GUI {
 
+uint16 SaveLoadMenuBase::SL_THUMBNAIL_W;
+uint16 SaveLoadMenuBase::SL_THUMBNAIL_H;
+uint16 SaveLoadMenuBase::SL_DIALOG_BOX;
+uint16 SaveLoadMenuBase::SL_EMPTY_THUMB;
+uint16 SaveLoadMenuBase::SL_SAVE_BTN_GREY;
+uint16 SaveLoadMenuBase::SL_SAVE_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_SAVE_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_SAVE_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_LOAD_BTN_GREY;
+uint16 SaveLoadMenuBase::SL_LOAD_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_LOAD_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_LOAD_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_CANCEL_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_CANCEL_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_CANCEL_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_UP_BTN_GREY;
+uint16 SaveLoadMenuBase::SL_UP_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_UP_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_UP_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_DOWN_BTN_GREY;
+uint16 SaveLoadMenuBase::SL_DOWN_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_DOWN_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_DOWN_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_SAVE_LABEL;
+uint16 SaveLoadMenuBase::SL_LOAD_LABEL;
+uint16 SaveLoadMenuBase::SL_SLIDER_BTN_NORM;
+uint16 SaveLoadMenuBase::SL_SLIDER_BTN_OVER;
+uint16 SaveLoadMenuBase::SL_SLIDER_BTN_PRESS;
+uint16 SaveLoadMenuBase::SL_LINE_NORM;
+uint16 SaveLoadMenuBase::SL_LINE_OVER;
+uint16 SaveLoadMenuBase::SL_LINE_PRESS;
+uint16 SaveLoadMenuBase::SL_SCROLL_BAR;
+uint16 SaveLoadMenuBase::SL_TOTAL_SPRITES;
+
+void SaveLoadMenuBase::init() {
+	SL_DIALOG_BOX = 0;
+
+	if (IS_RIDDLE) {
+		SL_THUMBNAIL_W = 213;
+		SL_THUMBNAIL_H = 160;
+
+		SL_UP_BTN_NORM = 13;
+		SL_SLIDER_BTN_NORM = 21;
+
+	} else {
+		SL_THUMBNAIL_W = 215;
+		SL_THUMBNAIL_H = 162;
+
+		SL_EMPTY_THUMB = 1;
+		SL_SAVE_BTN_GREY = 2;
+		SL_SAVE_BTN_NORM = 3;
+		SL_SAVE_BTN_OVER = 4;
+		SL_SAVE_BTN_PRESS = 5;
+		SL_LOAD_BTN_GREY = 6;
+		SL_LOAD_BTN_NORM = 7;
+		SL_LOAD_BTN_OVER = 8;
+		SL_LOAD_BTN_PRESS = 9;
+		SL_CANCEL_BTN_NORM = 10;
+		SL_CANCEL_BTN_OVER = 11;
+		SL_CANCEL_BTN_PRESS = 12;
+		SL_UP_BTN_GREY = 13;
+		SL_UP_BTN_NORM = 14;
+		SL_UP_BTN_OVER = 15;
+		SL_UP_BTN_PRESS = 16;
+		SL_DOWN_BTN_GREY = 17;
+		SL_DOWN_BTN_NORM = 18;
+		SL_DOWN_BTN_OVER = 19;
+		SL_DOWN_BTN_PRESS = 20;
+		SL_SAVE_LABEL = 21;
+		SL_LOAD_LABEL = 22;
+		SL_SLIDER_BTN_NORM = 23;
+		SL_SLIDER_BTN_OVER = 24;
+		SL_SLIDER_BTN_PRESS = 25;
+		SL_LINE_NORM = 26;
+		SL_LINE_OVER = 27;
+		SL_LINE_PRESS = 28;
+		SL_SCROLL_BAR = 29;
+
+		SL_TOTAL_SPRITES = 30;
+	}
+}
+
 void SaveLoadMenuBase::initializeSlotTables(void) {
 	const SaveStateList saves = g_engine->listSaves();
 

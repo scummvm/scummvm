@@ -30,6 +30,44 @@ namespace M4 {
 namespace GUI {
 
 class SaveLoadMenuBase {
+public:
+	static void init();
+
+	static uint16 SL_THUMBNAIL_W;
+	static uint16 SL_THUMBNAIL_H;
+
+	static uint16 SL_DIALOG_BOX;
+	static uint16 SL_EMPTY_THUMB;
+	static uint16 SL_SAVE_BTN_GREY;
+	static uint16 SL_SAVE_BTN_NORM;
+	static uint16 SL_SAVE_BTN_OVER;
+	static uint16 SL_SAVE_BTN_PRESS;
+	static uint16 SL_LOAD_BTN_GREY;
+	static uint16 SL_LOAD_BTN_NORM;
+	static uint16 SL_LOAD_BTN_OVER;
+	static uint16 SL_LOAD_BTN_PRESS;
+	static uint16 SL_CANCEL_BTN_NORM;
+	static uint16 SL_CANCEL_BTN_OVER;
+	static uint16 SL_CANCEL_BTN_PRESS;
+	static uint16 SL_UP_BTN_GREY;
+	static uint16 SL_UP_BTN_NORM;
+	static uint16 SL_UP_BTN_OVER;
+	static uint16 SL_UP_BTN_PRESS;
+	static uint16 SL_DOWN_BTN_GREY;
+	static uint16 SL_DOWN_BTN_NORM;
+	static uint16 SL_DOWN_BTN_OVER;
+	static uint16 SL_DOWN_BTN_PRESS;
+	static uint16 SL_SAVE_LABEL;
+	static uint16 SL_LOAD_LABEL;
+	static uint16 SL_SLIDER_BTN_NORM;
+	static uint16 SL_SLIDER_BTN_OVER;
+	static uint16 SL_SLIDER_BTN_PRESS;
+	static uint16 SL_LINE_NORM;
+	static uint16 SL_LINE_OVER;
+	static uint16 SL_LINE_PRESS;
+	static uint16 SL_SCROLL_BAR;
+	static uint16 SL_TOTAL_SPRITES;
+
 protected:
 	static void initializeSlotTables();
 	static Sprite *menu_CreateThumbnail(int32 *spriteSize);
