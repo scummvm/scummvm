@@ -9864,12 +9864,51 @@ static const uint16 larry6HiresPhoneOperatorPatch[] = {
 	PATCH_END
 };
 
+// The Interface Help feature does not display its help cursor, but it instructs
+//  the player to expect this. The script attempts to set the cursor, but it is
+//  immediately reverted by the narration script. This is a script bug that
+//  originated in the low resolution version; it only worked in text mode and
+//  was incompatible with CD narration.
+//
+// We fix this by temporarily setting the global cursor variables to helpCusor
+//  during Interface Help. This causes LarryTalker to use helpCursor instead of
+//  waitCursor or the previous cursor. Sierra fixed this in the Mac version by
+//  changing LarryTalker, so we limit this patch to PC versions by using little
+//  endian values in the signature.
+//
+// Applies to: All PC versions
+// Responsible method: nClickHelp:doit
+// Fixes bug: #14591
+static const uint16 larry6HiresHelpCusorSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setCursor),    // pushi setCusor
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa helpCusor
+	0x36,                               // push
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x06, 0x00,                   // send 06 [ LSL6 setCursor: helpCursor ]
+	SIG_ADDTOOFFSET(+213),
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 larry6HiresHelpCusorPatch[] = {
+	0x89, 0x15,                         // lsg 15   [ store gWaitCursor on stack ]
+	PATCH_GETORIGINALBYTES(4, 3),       // lofsa helpCursor
+	0xa0, PATCH_UINT16(0x0015),         // sag 0015 [ gWaitCursor = helpCursor ]
+	0xa0, PATCH_UINT16(0x0013),         // sag 0013 [ gTheCursor = helpCursor ]
+	PATCH_GETORIGINALBYTES(13, 213),
+	0xa9, 0x15,                         // ssg 15   [ restore gWaitCursor from stack ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
 	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,             sci2VolumeResetPatch },
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
+	{  true,    75, "fix help cursor",                             1, larry6HiresHelpCusorSignature,        larry6HiresHelpCusorPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
