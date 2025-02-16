@@ -1156,6 +1156,8 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			break;
 
 		default:
+			if (hsType != HotSpotType::undefined)
+				warning("Hotspot type: %s", tag2str((uint32)hsType));
 			hsOver = kCursorPanoObjOver;
 			hsDown = kCursorPanoObjDown;
 			hsUp = kCursorPanoObjUp;
