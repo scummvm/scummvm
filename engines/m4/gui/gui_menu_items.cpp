@@ -1948,7 +1948,6 @@ void menuItemVSlider::enableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu 
 //-----------------------------    TEXTFIELD MENU ITEM    ---------------------------------//
 
 void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
-	menuItemTextField *myText = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite;
 	char tempStr[64];
@@ -1969,7 +1968,7 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 	}
 
 	// Select the sprite
-	switch (myText->itemFlags) {
+	switch (myItem->itemFlags) {
 	case TF_GREY:
 		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_NORM];
 		break;
@@ -2001,20 +2000,20 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 
 	//write in the special tag
 	gr_font_set_color(menuItem::TEXT_COLOR_NORM_FOREGROUND);
-	Common::sprintf_s(tempStr, 64, "%02d", myText->specialTag);
+	Common::sprintf_s(tempStr, 64, "%02d", myItem->specialTag);
 	gr_font_set(_GM(menuFont));
 	gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
 
 	//write in the text
-	gr_font_write(myBuff, &myText->prompt[0], x + 26, y + 1, 0, -1);
+	gr_font_write(myBuff, &myItem->prompt[0], x + 26, y + 1, 0, -1);
 
-	if (myText->itemFlags == TF_OVER) {
+	if (myItem->itemFlags == TF_OVER) {
 		// Draw in the cursor
-		if (myText->cursor) {
-			const char tempChar = *myText->cursor;
-			*myText->cursor = '\0';
-			const int32 cursorX = gr_font_string_width(&myText->prompt[0], -1);
-			*myText->cursor = tempChar;
+		if (myItem->cursor) {
+			const char tempChar = *myItem->cursor;
+			*myItem->cursor = '\0';
+			const int32 cursorX = gr_font_string_width(&myItem->prompt[0], -1);
+			*myItem->cursor = tempChar;
 
 			gr_color_set(menuItem::TEXT_COLOR_OVER_FOREGROUND);
 			gr_vline(myBuff, x + cursorX + 26, y + 1, y + 12);
