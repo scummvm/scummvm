@@ -59,7 +59,7 @@ namespace SciSpanInternal {
 
 	public:
 		typedef typename Span::difference_type difference_type;
-		typedef typename Common::RemoveConst<span_value_type>::type value_type;
+		typedef typename Common::remove_const<span_value_type>::type value_type;
 		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
 		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
@@ -210,7 +210,7 @@ public:
 // SpanOwner, since this will result in the wrong pointer to memory to be
 // deleted
 private:
-	typedef typename Common::RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename Common::remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 public:
 	inline const_reference operator*() const {

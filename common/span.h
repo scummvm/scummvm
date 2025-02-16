@@ -69,7 +69,7 @@ namespace SpanInternal {
 
 	public:
 		typedef typename Span::difference_type difference_type;
-		typedef typename RemoveConst<span_value_type>::type value_type;
+		typedef typename remove_const<span_value_type>::type value_type;
 		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
 		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
@@ -254,7 +254,7 @@ template <typename ValueType, template <typename> class Derived>
 class SpanBase : public SafeBool<Derived<ValueType> > {
 	typedef Derived<ValueType> derived_type;
 	typedef typename AddConst<derived_type>::type const_derived_type;
-	typedef typename RemoveConst<derived_type>::type mutable_derived_type;
+	typedef typename remove_const<derived_type>::type mutable_derived_type;
 
 	template <typename T, bool U> friend class SpanInternal::SpanIterator;
 	template <typename T, template <typename> class U> friend class SpanBase;
@@ -534,7 +534,7 @@ template <typename ValueType, template <typename> class Derived>
 class SpanImpl : public SpanBase<ValueType, Derived> {
 	typedef SpanBase<ValueType, Derived> super_type;
 	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class SpanImpl;
 #ifdef CXXTEST_RUNNING
@@ -644,7 +644,7 @@ protected:
 #pragma mark SpanImpl - Allocation
 
 private:
-	typedef typename RemoveConst<value_type>::type mutable_value_type;
+	typedef typename remove_const<value_type>::type mutable_value_type;
 	typedef Derived<mutable_value_type> mutable_value_derived_type;
 
 public:
@@ -690,7 +690,7 @@ template <typename ValueType>
 class Span : public SpanImpl<ValueType, Span> {
 	typedef SpanImpl<ValueType, ::Common::Span> super_type;
 	typedef typename AddConst<Span<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Span<ValueType> >::type mutable_derived_type;
+	typedef typename remove_const<Span<ValueType> >::type mutable_derived_type;
 	template <typename T> friend class Span;
 
 public:
@@ -713,7 +713,7 @@ template <typename ValueType, template <typename> class Derived>
 class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 	typedef SpanImpl<ValueType, Derived> super_type;
 	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class NamedSpanImpl;
 #ifdef CXXTEST_RUNNING
@@ -820,7 +820,7 @@ public:
 #pragma mark NamedSpanImpl - Allocation
 
 private:
-	typedef typename RemoveConst<value_type>::type mutable_value_type;
+	typedef typename remove_const<value_type>::type mutable_value_type;
 	typedef Derived<mutable_value_type> mutable_value_derived_type;
 
 public:
@@ -924,7 +924,7 @@ public:
 			return *this;
 		}
 
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span.clear();
 
 		// Allocating memory when copy-assigning from an unallocated owner
@@ -938,7 +938,7 @@ public:
 	}
 
 	inline ~SpanOwner() {
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 	}
 
 	/**
@@ -949,7 +949,7 @@ public:
 			return *this;
 		}
 
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span = other._span;
 		other.release();
 		return *this;
@@ -968,7 +968,7 @@ public:
 	 * Destroys the memory owned by this owner.
 	 */
 	inline void clear() {
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span.clear();
 	}
 
