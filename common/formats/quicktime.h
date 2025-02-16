@@ -198,13 +198,13 @@ public:
 	};
 
 	enum class HotSpotType {
-		undefined,
-		anim,
-		cnod,
-		link,
-		navg,
-		soun,
-		cmov,
+		undefined = MKTAG('u','n','d','f'),
+		anim = MKTAG('a','n','i','m'),
+		cnod = MKTAG('c','n','o','d'),
+		link = MKTAG('l','i','n','k'),
+		navg = MKTAG('n','a','v','g'),
+		soun = MKTAG('s','o','u','n'),
+		cmov = MKTAG('c','m','o','v'),
 	};
 
 	struct PanoHotSpot {
