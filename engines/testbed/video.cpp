@@ -59,7 +59,6 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadStream(stream)) {
 		warning("Cannot open video %s", name.c_str());
-		delete stream;
 		delete video;
 		return Common::kReadingFailed;
 	}
