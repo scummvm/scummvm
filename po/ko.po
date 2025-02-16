@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-15 22:42+0000\n"
-"PO-Revision-Date: 2025-02-10 16:18+0000\n"
+"PO-Revision-Date: 2025-02-16 19:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11238,11 +11238,11 @@ msgstr "리마스터된 대사와 사운드 효과를 사용합니다."
 
 #: engines/scumm/metaengine.cpp:816
 msgid "Enable ambience sounds"
-msgstr "사운드 활성화"
+msgstr "공연장 분위기 사운드 활성화"
 
 #: engines/scumm/metaengine.cpp:817
 msgid "Enable ambience sounds."
-msgstr "사운드 활성화"
+msgstr "공연장 분위기 사운드 활성화합니다."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
