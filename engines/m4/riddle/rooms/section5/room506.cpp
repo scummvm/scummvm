@@ -204,9 +204,9 @@ void Room506::pre_parser() {
 }
 
 void Room506::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (takeFlag && player_said("CLUMP OF VINES")) {
 		switch (_G(kernel).trigger) {
@@ -426,9 +426,9 @@ void Room506::setupPalette() {
 		hotspot_set_active("    ", false);
 
 		for (int i = 0; i < PALETTE_BLOCK; ++i) {
-			int palR = MAX(_G(master_palette)[7 + i].r - 100, 0);
-			int palG = MAX(_G(master_palette)[7 + i].g - 100, 0);
-			int palB = MAX(_G(master_palette)[7 + i].b - 100, 0);
+			const int palR = MAX(_G(master_palette)[7 + i].r - 100, 0);
+			const int palG = MAX(_G(master_palette)[7 + i].g - 100, 0);
+			const int palB = MAX(_G(master_palette)[7 + i].b - 100, 0);
 
 			_G(master_palette)[7 + i].r = palR;
 			_G(master_palette)[7 + i].g = palG;
