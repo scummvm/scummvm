@@ -95,7 +95,9 @@ public:
 	int getCurrentColumn() { return _nextVideoTrack->getCurFrame() % _nav.columns; }
 	void setCurrentColumn(int column);
 
-	const PanoHotSpot *getCurrentHotspot() { return _currentHotspot; }
+	const PanoHotSpot *getCurrentHotspot() { return _rolloverHotspot; }
+	const PanoHotSpot *getRolloverHotspot() { return _rolloverHotspot; }
+	const PanoHotSpot *getClickedHotspot() { return _clickedHotspot; }
 
 	void nudge(const Common::String &direction);
 
@@ -181,7 +183,8 @@ private:
 	int _zoomState = kZoomNone;
 	bool _repeatTimerActive = false;
 
-	const PanoHotSpot *_currentHotspot = nullptr;
+	const PanoHotSpot *_rolloverHotspot = nullptr;
+	const PanoHotSpot *_clickedHotspot = nullptr;
 	bool _renderHotspots = false;
 
 	Graphics::Surface *_scaledSurface;

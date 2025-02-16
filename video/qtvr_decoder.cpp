@@ -929,10 +929,13 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 
 		_mouseDrag.x = x;
 		_mouseDrag.y = y;
+
+		if (_rolloverHotspot)
+			_clickedHotspot = _rolloverHotspot;
 	}
 
-	if (!repeat && !isDown && _currentHotspot && _currentHotspot->type == HotSpotType::link && _prevMouse == _mouseDrag) {
-		PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_currentHotspot->typeData);
+	if (!repeat && !isDown && _rolloverHotspot && _rolloverHotspot->type == HotSpotType::link && _prevMouse == _mouseDrag) {
+		PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_rolloverHotspot->typeData);
 
 		if (link) {
 			goToNode(link->toNodeID);
@@ -1017,10 +1020,10 @@ void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	int hotspotId = track->lookupHotspot(x, y);
 
 	if (hotspotId && _currentSample != -1) {
-		if (!_currentHotspot || _currentHotspot->id != hotspotId)
-			_currentHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
+		if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
+			_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
 	} else {
-		_currentHotspot = nullptr;
+		_rolloverHotspot = nullptr;
 	}
 }
 
@@ -1143,8 +1146,8 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 		// Get hotspot cursors
 		HotSpotType hsType = HotSpotType::undefined;
 
-		if (_currentHotspot)
-			hsType = _currentHotspot->type;
+		if (_rolloverHotspot)
+			hsType = _rolloverHotspot->type;
 
 		int hsOver, hsDown, hsUp;
 
@@ -1164,21 +1167,21 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			break;
 		}
 
-		if (_currentHotspot) {
-			if (_currentHotspot->mouseOverCursorID)
-				hsOver = _currentHotspot->mouseOverCursorID;
+		if (_rolloverHotspot) {
+			if (_rolloverHotspot->mouseOverCursorID)
+				hsOver = _rolloverHotspot->mouseOverCursorID;
 
-			if (_currentHotspot->mouseDownCursorID)
-				hsDown = _currentHotspot->mouseDownCursorID;
+			if (_rolloverHotspot->mouseDownCursorID)
+				hsDown = _rolloverHotspot->mouseDownCursorID;
 
-			if (_currentHotspot->mouseUpCursorID)
-				hsUp = _currentHotspot->mouseUpCursorID;
+			if (_rolloverHotspot->mouseUpCursorID)
+				hsUp = _rolloverHotspot->mouseUpCursorID;
 		}
 
 		int sensitivity = 5;
 
 		if (!_isMouseButtonDown) {
-			setCursor(_currentHotspot ? hsOver : kCursorPano);
+			setCursor(_rolloverHotspot ? hsOver : kCursorPano);
 		} else {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
@@ -1236,7 +1239,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			}
 
 			(void)hsUp;
-			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : _currentHotspot ? hsDown : kCursorPanoNav);
+			setCursor(_cursorDirMap[res] ? _cursorDirMap[res] : _rolloverHotspot ? hsDown : kCursorPanoNav);
 		}
 	}
 }
