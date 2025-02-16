@@ -622,11 +622,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		return false;
 	}
 
-#ifdef USE_IMGUI
-	// Setup Dear ImGui
-	initImGui(nullptr, _glContext);
-#endif
-
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
@@ -636,6 +631,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	getWindowSizeFromSdl(&actualWidth, &actualHeight);
 
 	handleResize(actualWidth, actualHeight);
+
+#ifdef USE_IMGUI
+	// Setup Dear ImGui
+	initImGui(nullptr, _glContext);
+#endif
 
 #ifdef WIN32
 	// WORKAROUND: Prevent (nearly) offscreen positioning of the ScummVM window by forcefully

@@ -592,6 +592,13 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 	_imGuiSDLRenderer = nullptr;
 #ifdef USE_OPENGL
 	if (!_imGuiReady && glContext) {
+		// Only OpenGL and GLES2 are supported, not GLES
+		if ((OpenGLContext.type != OpenGL::kContextGL) &&
+			(OpenGLContext.type != OpenGL::kContextGLES2)) {
+			ImGui::DestroyContext();
+			return;
+		}
+
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 		if (!ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), glContext)) {
@@ -599,7 +606,13 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 			return;
 		}
 
-		if (!ImGui_ImplOpenGL3_Init("#version 110")) {
+		const char *glslVersion;
+		if (OpenGLContext.type == OpenGL::kContextGLES2) {
+			glslVersion = "#version 100";
+		} else {
+			glslVersion = "#version 110";
+		}
+		if (!ImGui_ImplOpenGL3_Init(glslVersion)) {
 			ImGui_ImplSDL2_Shutdown();
 			ImGui::DestroyContext();
 			return;
