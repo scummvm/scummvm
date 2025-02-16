@@ -273,7 +273,7 @@ void Room305::daemon() {
 
 	case 42:
 		sendWSMessage_60000(_stander);
-		_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, 1,
+		_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, true,
 			triggerMachineByHashCallback, "fl stander");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _stander, _feng3, 1, 1, 400, _feng3, 1, 6, 1);
@@ -293,7 +293,7 @@ void Room305::daemon() {
 
 			if (_showWalker) {
 				ws_unhide_walker();
-				_showWalker = 0;
+				_showWalker = false;
 			}
 		}
 
@@ -573,8 +573,8 @@ void Room305::daemon() {
 }
 
 void Room305::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
 
 	if (_drawerOpen && !(takeFlag && player_said("turtle treats"))
 			&& !(lookFlag && player_said("turtle treats"))) {
@@ -617,9 +617,9 @@ void Room305::pre_parser() {
 }
 
 void Room305::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 	bool itemFlag = false;
 	bool chiselFlag = false;
 	bool caseFlag = false;
@@ -915,14 +915,15 @@ next4:
 		case -1:
 		case 1: {
 			player_set_commands_allowed(true);
-			int area = getXAreaNum();
-			const int32 flags[8] = {
+			const int area = getXAreaNum();
+			const int32 flags[9] = {
 				_G(flags)[kEasterIslandCartoon], _G(flags)[kChinshiCartoon],
 				_G(flags)[kTabletsCartoon], _G(flags)[kEpitaphCartoon],
 				_G(flags)[kGraveyardCartoon], _G(flags)[kCastleCartoon],
-				_G(flags)[kMocaMocheCartoon], _G(flags)[kTempleCartoon]
+				_G(flags)[kMocaMocheCartoon], _G(flags)[kTempleCartoon],
+				_G(flags)[kEmeraldCartoon]
 			};
-			bool flag = flags[area - 1] != 0;
+			const bool flag = flags[area - 1] != 0;
 			if (flag && (area == 3 || area == 9))
 				player_set_commands_allowed(true);
 
@@ -1232,9 +1233,9 @@ void Room305::setShadow5(bool active) {
 }
 
 void Room305::conv305a() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 1) {
@@ -1305,7 +1306,7 @@ bool Room305::walkToObject() {
 }
 
 int Room305::getXAreaNum() const {
-	int x = _G(player).click_x;
+	const int x = _G(player).click_x;
 
 	if (x < 300)
 		return 1;
