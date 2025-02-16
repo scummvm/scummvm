@@ -1,0 +1,10 @@
+in vec2 TexCoord;
+
+OUTPUT
+
+uniform sampler2D skyTexture;
+
+void main()
+{
+	outColor = texture(skyTexture, TexCoord);
+}
