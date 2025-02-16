@@ -29,7 +29,7 @@ public:
 			0xa4, 0x2e, 0x00,
 		};
 
-		const uint32 utf32[] = {
+		const Common::u32char_type_t utf32[] = {
 			0xac8c, 0xc784, 0xc911, 0xc9c0, 0x0020, 0xacc4,
 			0xc18d, 0xd558, 0xb824, 0xba74, 0x0020, 0xc2a4,
 			0xd398, 0xc774, 0xc2a4, 0xd0a4, 0xb97c, 0x0020,
@@ -68,7 +68,7 @@ public:
 			0xe6, 0x88, 0xb2, 0xe3, 0x80, 0x82, 0x00,
 		};
 
-		const uint32 utf32[] = {
+		const Common::u32char_type_t utf32[] = {
 			0x904a, 0x6232, 0x66ab, 0x505c, 0x3002, 0x6309,
 			0x4e0b, 0x7a7a, 0x0021, 0x767d, 0x9375, 0x7e7c,
 			0x7e8c, 0x904a, 0x6232, 0x3002, 0
@@ -108,7 +108,7 @@ public:
 			0xe3, 0x81, 0x84, 0xe3, 0x80, 0x82, 0
 		};
 
-		const uint32 utf32[] = {
+		const Common::u32char_type_t utf32[] = {
 			0x4e00, 0x6642, 0x505c, 0x6b62, 0x3002, 0x7d9a,
 			0x3051, 0x308b, 0x5834, 0x5408, 0x306f, 0x30b9,
 			0x30da, 0x30fc, 0x30b9, 0x30d0, 0x30fc, 0x3092,
@@ -165,12 +165,12 @@ public:
 
 		// UTF32 to UTF8
 
-		resultstr8 = Common::U32String((uint32 *) utf32, 3).encode(Common::kUtf8);
+		resultstr8 = Common::U32String((Common::u32char_type_t *) utf32, 3).encode(Common::kUtf8);
 		TS_ASSERT(resultstr8.c_str() != NULL);
 		TS_ASSERT_EQUALS(memcmp(resultstr8.c_str(), utf8, 7), 0);
 
 		// UTF32 to UTF16
-		uint16 *result16 = Common::U32String((uint32 *) utf32, 3).encodeUTF16Native(NULL);
+		uint16 *result16 = Common::U32String((Common::u32char_type_t *) utf32, 3).encodeUTF16Native(NULL);
 		TS_ASSERT(result16 != NULL);
 		TS_ASSERT_EQUALS(memcmp(result16, utf16, 8), 0);
 		delete[] result16;
