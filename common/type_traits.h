@@ -84,8 +84,18 @@ using add_const_t     = typename add_const<T>::type;
 template<class T>
 using add_volatile_t  = typename add_volatile<T>::type;
 
-	template <bool b, class T, class U> struct Conditional { typedef T type; };
-	template <class T, class U> struct Conditional<false, T, U> { typedef U type; };
+template<bool b, class T, class F>
+struct conditional {
+	typedef T type;
+};
+template<class T, class F>
+struct conditional<false, T, F> {
+	typedef F type;
+};
+
+template<bool b, class T, class F>
+using conditional_t = typename conditional<b, T, F>::type;
+
 } // End of namespace Common
 
 #endif

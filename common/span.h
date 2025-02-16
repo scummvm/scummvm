@@ -65,13 +65,13 @@ namespace SpanInternal {
 	template <typename Span, bool IsConst>
 	class SpanIterator {
 		typedef typename Span::value_type span_value_type;
-		typedef typename Conditional<IsConst, const Span, Span>::type span_type;
+		typedef typename conditional<IsConst, const Span, Span>::type span_type;
 
 	public:
 		typedef typename Span::difference_type difference_type;
 		typedef typename remove_const<span_value_type>::type value_type;
-		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
-		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
+		typedef typename conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
+		typedef typename conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
 		inline SpanIterator() : _span(nullptr), _index(0) {}
 
