@@ -862,17 +862,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_OM_DONE:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_NORM];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_DONE_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_OVER];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_DONE_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_PRESS];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_DONE_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_DONE_BTN_GREY];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_DONE_BTN_GREY];
 			break;
 		}
 		break;
@@ -880,17 +880,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_OM_CANCEL:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_CANCEL_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_OVER];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_CANCEL_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_PRESS];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_CANCEL_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[Burger::GUI::OM_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[(int)Burger::GUI::OM_CANCEL_BTN_NORM];
 			break;
 		}
 		break;
@@ -899,14 +899,14 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_OM_SCROLLING_ON:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_OVER];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_ON_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_PRESS];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_ON_BTN_PRESS];
 			break;
 		case BTN_STATE_NORM:
 		default:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_ON_BTN_NORM];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_ON_BTN_NORM];
 			break;
 		}
 		break;
@@ -914,14 +914,14 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_OM_SCROLLING_OFF:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_OVER];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_OFF_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_PRESS];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_OFF_BTN_PRESS];
 			break;
 		case BTN_STATE_NORM:
 		default:
-			mySprite = _GM(menuSprites)[Riddle::GUI::OM_SCROLLING_OFF_BTN_NORM];
+			mySprite = _GM(menuSprites)[(int)Riddle::GUI::OM_SCROLLING_OFF_BTN_NORM];
 			break;
 		}
 		break;
@@ -1357,17 +1357,17 @@ void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int3
 	// Get the slider info and select the thumb sprite
 	switch (myItem->itemFlags) {
 	case H_THUMB_OVER:
-		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_OVER :
-			Burger::GUI::OM_SLIDER_BTN_OVER];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? (int)Riddle::GUI::OM_SLIDER_BTN_OVER :
+			(int)Burger::GUI::OM_SLIDER_BTN_OVER];
 		break;
 	case H_THUMB_PRESS:
-		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_PRESS :
-			Burger::GUI::OM_SLIDER_BTN_PRESS];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? (int)Riddle::GUI::OM_SLIDER_BTN_PRESS :
+			(int)Burger::GUI::OM_SLIDER_BTN_PRESS];
 		break;
 	default:
 	case H_THUMB_NORM:
-		mySprite = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_NORM :
-			Burger::GUI::OM_SLIDER_BTN_NORM];
+		mySprite = _GM(menuSprites)[IS_RIDDLE ? (int)Riddle::GUI::OM_SLIDER_BTN_NORM :
+			(int)Burger::GUI::OM_SLIDER_BTN_NORM];
 		break;
 	}
 
@@ -1565,8 +1565,8 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 
 	// Intialize the new slider
 	newItem->itemFlags = H_THUMB_NORM;
-	auto *thumb = _GM(menuSprites)[IS_RIDDLE ? Riddle::GUI::OM_SLIDER_BTN_NORM :
-		Burger::GUI::OM_SLIDER_BTN_NORM];
+	auto *thumb = _GM(menuSprites)[IS_RIDDLE ? (int)Riddle::GUI::OM_SLIDER_BTN_NORM :
+		(int)Burger::GUI::OM_SLIDER_BTN_NORM];
 	newItem->thumbW = thumb->w;
 	newItem->thumbH = thumb->h;
 	newItem->maxThumbX = w - thumb->w;
