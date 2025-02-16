@@ -549,19 +549,17 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 			hotspot = me->_video->getRolloverHotspot();
 
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
-				// MouseDownHandler
-				// PassMouseDown
-
-				//if (!PassMouseDown) {
-				//  g_lingo->push(0);
-				//	return
-				//}
-
+				// MouseDownHandler is processed inside
 				me->_widget->processEvent(event);
+
+				if (!me->_passMouseDown) {
+					g_lingo->push(0);
+					return;
+				}
 
 				m_QTVRMouseDown(-1337);
 
-				return; // MouseDown will take care of the return value
+				return; // MouseDown will take care of the return value on the stack
 			}
 
 			me->_widget->processEvent(event);
@@ -874,11 +872,6 @@ QtvrxtraWidget::QtvrxtraWidget(QtvrxtraXtraObject *xtra, Graphics::MacWidget *pa
 }
 
 bool QtvrxtraWidget::processEvent(Common::Event &event) {
-	// FIXME: This class needs to inherit from MacWidget and override this function
-
-	//if (!(parent->_capEventsMouseOver && _capEventsMouseDown))
-	//	return false;
-
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (_xtra->_mouseDownHandler.empty()) {
@@ -888,10 +881,8 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 
 			g_lingo->executeHandler(_xtra->_mouseDownHandler);
 
-			if (_xtra->_passMouseDown) {
+			if (_xtra->_passMouseDown)
 				_xtra->_video->handleMouseButton(true, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
-				_xtra->_passMouseDown = false;
-			}
 		}
 		return true;
 	case Common::EVENT_LBUTTONUP:
