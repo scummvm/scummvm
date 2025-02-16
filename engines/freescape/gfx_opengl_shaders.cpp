@@ -52,6 +52,11 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::Ren
 	_bitmapShader = nullptr;
 	_bitmapVBO = 0;
 
+	_cubemapShader = nullptr;
+	_cubemapVertVBO = 0;
+	_cubemapTexCoordVBO = 0;
+	_cubemapEBO = 0;
+
 	_texturePixelFormat = getRGBAPixelFormat();
 	_isAccelerated = true;
 }
@@ -61,6 +66,10 @@ OpenGLShaderRenderer::~OpenGLShaderRenderer() {
 	delete _triangleShader;
 	OpenGL::Shader::freeBuffer(_bitmapVBO);
 	delete _bitmapShader;
+	OpenGL::Shader::freeBuffer(_cubemapVertVBO);
+	OpenGL::Shader::freeBuffer(_cubemapTexCoordVBO);
+	OpenGL::Shader::freeBuffer(_cubemapEBO);
+	delete _cubemapShader;
 	free(_verts);
 }
 
@@ -94,6 +103,15 @@ void OpenGLShaderRenderer::init() {
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(bitmapVertices), bitmapVertices);
 	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+
+	static const char *cubemapAttributes[] = { "position", "texcoord", nullptr };
+	_cubemapShader = OpenGL::Shader::fromFiles("freescape_cubemap", cubemapAttributes);
+	_cubemapVertVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(_skyVertices), _skyVertices);
+	_cubemapTexCoordVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(_skyUvs1008), _skyUvs1008);
+	_cubemapEBO = OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(_skyIndices), _skyIndices);
+
+	_cubemapShader->enableVertexAttribute("position", _cubemapVertVBO, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), 0);
+	_cubemapShader->enableVertexAttribute("texcoord", _cubemapTexCoordVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	// populate default stipple data for shader rendering
 	for(int i = 0; i < 128; i++)
@@ -138,6 +156,45 @@ void OpenGLShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, co
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	_bitmapShader->unbind();
+}
+
+void OpenGLShaderRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
+	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
+
+	Math::Matrix4 proj = _projectionMatrix;
+	Math::Matrix4 model = _modelViewMatrix;
+	// remove translation
+	model(3, 0) = 0.0f;
+	model(3, 1) = 0.0f;
+	model(3, 2) = 0.0f;
+
+	proj.transpose();
+	model.transpose();
+
+	Math::Matrix4 skyboxMVP = proj * model;
+	skyboxMVP.transpose();
+
+	_cubemapShader->use();
+	_cubemapShader->setUniform("mvpMatrix", skyboxMVP);
+
+	glDisable(GL_DEPTH_TEST);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _cubemapTexCoordVBO);
+	if (texture->_width == 1008)
+		glBufferData(GL_ARRAY_BUFFER, sizeof(_skyUvs1008), _skyUvs1008, GL_DYNAMIC_DRAW);
+	else if (texture->_width == 128)
+		glBufferData(GL_ARRAY_BUFFER, sizeof(_skyUvs128), _skyUvs128, GL_DYNAMIC_DRAW);
+	else
+		error("Unsupported skybox texture width %d", texture->_width);
+
+	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
+
+	_cubemapShader->unbind();
 }
 
 void OpenGLShaderRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {

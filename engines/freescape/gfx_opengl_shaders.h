@@ -60,8 +60,12 @@ public:
 
 	OpenGL::Shader *_triangleShader;
 	OpenGL::Shader *_bitmapShader;
+	OpenGL::Shader *_cubemapShader;
 	GLuint _triangleVBO;
 	GLuint _bitmapVBO;
+	GLuint _cubemapVertVBO;
+	GLuint _cubemapTexCoordVBO;
+	GLuint _cubemapEBO;
 
 	int _defaultShaderStippleArray[128];
 	int _variableStippleArray[128];
@@ -88,6 +92,7 @@ public:
 	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) override;
 	virtual void renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewPort) override;
 	void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) override;
+	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
 
 	virtual void renderCrossair(const Common::Point crossairPosition) override;
 
