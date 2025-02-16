@@ -490,6 +490,11 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		if (!me->_rect.contains(pos))
 			break;
 
+		if (event.type == Common::EVENT_QUIT) {
+			g_director->processEventQUIT();
+			break;
+		}
+
 		g_director->delayMillis(10);
 	}
 
