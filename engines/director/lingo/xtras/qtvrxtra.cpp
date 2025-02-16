@@ -429,7 +429,70 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
+void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+	const Common::QuickTimeParser::PanoHotSpot *hotspot;
+
+	Common::Event event;
+	bool cont = true;
+
+	if (nargs != -1337 && g_system->getEventManager()->pollEvent(event)) {
+		if (event.type != Common::EVENT_LBUTTONDOWN)
+			cont = false;
+	}
+
+	if (!cont) {
+		if (me->_video->getQTVRType() == Common::QuickTimeParser::QTVRType::PANORAMA)
+			g_lingo->push(Common::String("pan ,0"));
+		else
+			g_lingo->pushVoid();
+		return;
+	}
+
+	while (true) {
+		Graphics::Surface const *frame = me->_video->decodeNextFrame();
+
+		Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
+
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
+		);
+
+		g_director->getCurrentWindow()->setDirty(true);
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			me->_widget->processEvent(event);
+
+			if (event.type == Common::EVENT_LBUTTONUP)
+				break;
+		}
+
+		// MouseStillDownHandler
+		// NodeLeaveHandler
+		// PanZoomStartHandler
+
+		g_director->draw();
+
+		if (event.type == Common::EVENT_QUIT) {
+			g_director->processEventQUIT();
+			break;
+		}
+
+		if (event.type == Common::EVENT_LBUTTONUP)
+			break;
+
+		g_director->delayMillis(10);
+	}
+
+	hotspot = me->_video->getClickedHotspot();
+
+	if (!hotspot) {
+		g_lingo->push(Common::String("pan ,0"));
+		return;
+	}
+
+	g_lingo->push(Common::String::format("%s,%d", tag2str((uint32)hotspot->type), hotspot->id));
+}
 
 void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 	ARGNUMCHECK(0);
@@ -443,12 +506,14 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 	}
 
 	// Execute handler on first call to MouseOver
-	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getCurrentHotspot();
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getRolloverHotspot();
 
 	if (!me->_rolloverHotSpotHandler.empty()) {
 		g_lingo->push(hotspot ? hotspot->id : 0);
 		g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
 	}
+
+	int nextTick = g_system->getMillis();
 
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
@@ -471,19 +536,48 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 					break;
 			}
 
-			hotspot = me->_video->getCurrentHotspot();
+			hotspot = me->_video->getRolloverHotspot();
+
+			if (event.type == Common::EVENT_LBUTTONDOWN) {
+				// MouseDownHandler
+				// PassMouseDown
+
+				//if (!PassMouseDown) {
+				//  g_lingo->push(0);
+				//	return
+				//}
+
+				me->_widget->processEvent(event);
+
+				m_QTVRMouseDown(-1337);
+
+				return; // MouseDown will take care of the return value
+			}
 
 			me->_widget->processEvent(event);
 
-			if (!me->_rolloverHotSpotHandler.empty() && hotspot != me->_video->getCurrentHotspot()) {
+			if (!me->_rolloverHotSpotHandler.empty() && hotspot != me->_video->getRolloverHotspot()) {
 				g_lingo->push(hotspot ? hotspot->id : 0);
 
 				g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
+
+				if (me->_exitMouseOver)
+					break;
 
 				// TODO We need to redraw current frame because the handler could change
 				// some fields etc. FIXME
 			}
 		}
+
+		if (g_system->getMillis() > nextTick) {
+			nextTick = g_system->getMillis() + 500;
+
+			if (!me->_mouseOverHandler.empty())
+				g_lingo->executeHandler(me->_mouseOverHandler);
+		}
+
+		if (me->_exitMouseOver)
+			break;
 
 		g_director->draw();
 
@@ -498,11 +592,13 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		g_director->delayMillis(10);
 	}
 
-	g_lingo->push(Common::String("pan ,0"));
+	if (me->_video->getQTVRType() == Common::QuickTimeParser::QTVRType::PANORAMA)
+		g_lingo->push(0);
+	else
+		g_lingo->pushVoid();
 }
 
 void QtvrxtraXtra::m_QTVRGetPanAngle(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetPanAngle", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -511,7 +607,6 @@ void QtvrxtraXtra::m_QTVRGetPanAngle(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRSetPanAngle(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetPanAngle", nargs);
 	ARGNUMCHECK(1);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -520,7 +615,6 @@ void QtvrxtraXtra::m_QTVRSetPanAngle(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRGetTiltAngle(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTiltAngle", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -529,7 +623,6 @@ void QtvrxtraXtra::m_QTVRGetTiltAngle(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRSetTiltAngle(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTiltAngle", nargs);
 	ARGNUMCHECK(1);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -538,7 +631,6 @@ void QtvrxtraXtra::m_QTVRSetTiltAngle(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRGetFOV(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetFOV", nargs);
 	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -547,7 +639,6 @@ void QtvrxtraXtra::m_QTVRGetFOV(int nargs) {
 }
 
 void QtvrxtraXtra::m_QTVRSetFOV(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetFOV", nargs);
 	ARGNUMCHECK(1);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
@@ -685,8 +776,22 @@ void QtvrxtraXtra::m_QTVRSetMouseDownHandler(int nargs) {
 	me->_mouseDownHandler = g_lingo->pop().asString();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseOverHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseOverHandler, 0)
+void QtvrxtraXtra::m_QTVRGetMouseOverHandler(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_mouseOverHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetMouseOverHandler(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_mouseOverHandler = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseStillDownHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseStillDownHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeLeaveHandler, 0)
@@ -710,7 +815,13 @@ void QtvrxtraXtra::m_QTVRSetRolloverHotSpotHandler(int nargs) {
 	me->_rolloverHotSpotHandler = g_lingo->pop().asString();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRExitMouseOver, 0)
+void QtvrxtraXtra::m_QTVRExitMouseOver(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_exitMouseOver = true;
+}
 
 void QtvrxtraXtra::m_QTVRPassMouseDown(int nargs) {
 	ARGNUMCHECK(0);

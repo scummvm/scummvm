@@ -51,9 +51,11 @@ public:
 	bool _visible;
 
 	bool _passMouseDown;
+	bool _exitMouseOver = false;
 
 	Common::String _rolloverHotSpotHandler;
 	Common::String _mouseDownHandler;
+	Common::String _mouseOverHandler;
 };
 
 namespace QtvrxtraXtra {
