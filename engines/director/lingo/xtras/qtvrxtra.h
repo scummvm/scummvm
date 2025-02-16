@@ -56,6 +56,7 @@ public:
 	Common::String _rolloverHotSpotHandler;
 	Common::String _mouseDownHandler;
 	Common::String _mouseOverHandler;
+	Common::String _mouseStillDownHandler;
 };
 
 namespace QtvrxtraXtra {

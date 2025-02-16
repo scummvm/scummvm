@@ -240,6 +240,8 @@ static const BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
+#define HANDLER_TICKS 500
+
 QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXtraObject>("Qtvrxtra") {
 	_objType = ObjectType;
 
@@ -449,6 +451,8 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 		return;
 	}
 
+	int nextTick = g_system->getMillis();
+
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
@@ -467,7 +471,13 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 				break;
 		}
 
-		// MouseStillDownHandler
+		if (g_system->getMillis() > nextTick) {
+			nextTick = g_system->getMillis() + HANDLER_TICKS;
+
+			if (!me->_mouseStillDownHandler.empty())
+				g_lingo->executeHandler(me->_mouseStillDownHandler);
+		}
+
 		// NodeLeaveHandler
 		// PanZoomStartHandler
 
@@ -570,7 +580,7 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		}
 
 		if (g_system->getMillis() > nextTick) {
-			nextTick = g_system->getMillis() + 500;
+			nextTick = g_system->getMillis() + HANDLER_TICKS;
 
 			if (!me->_mouseOverHandler.empty())
 				g_lingo->executeHandler(me->_mouseOverHandler);
@@ -792,8 +802,22 @@ void QtvrxtraXtra::m_QTVRSetMouseOverHandler(int nargs) {
 	me->_mouseOverHandler = g_lingo->pop().asString();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseStillDownHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseStillDownHandler, 0)
+void QtvrxtraXtra::m_QTVRGetMouseStillDownHandler(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_mouseStillDownHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetMouseStillDownHandler(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_mouseStillDownHandler = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeLeaveHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeLeaveHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanZoomStartHandler, 0)
