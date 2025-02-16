@@ -195,10 +195,10 @@ void Room207::init() {
 }
 
 void Room207::pre_parser() {
-	bool ecx = player_said("take");
-	bool esi = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool lookFl = player_said_any("look", "look at");
 
-	if (esi && player_said(" ")) {
+	if (lookFl && player_said(" ")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -266,13 +266,13 @@ void Room207::pre_parser() {
 		}
 	} // if (_fieldAA)
 
-	if (ecx && player_said("PIPES") && inv_object_is_here("LEAD PIPE") && _G(flags)[V061] == 0) {
+	if (takeFl && player_said("PIPES") && inv_object_is_here("LEAD PIPE") && _G(flags)[V061] == 0) {
 		_G(player).need_to_walk = false;
 		_G(kernel).trigger_mode = KT_PARSE;
 		kernel_timing_trigger(1, 1, nullptr);
 	}
 
-	if (ecx && player_said("REBUS AMULET") && inv_object_is_here("REBUS AMULET") && _G(flags)[V061] != 0) {
+	if (takeFl && player_said("REBUS AMULET") && inv_object_is_here("REBUS AMULET") && _G(flags)[V061] != 0) {
 		_G(player).need_to_walk = false;
 		_G(kernel).trigger_mode = KT_PARSE;
 		kernel_timing_trigger(1, 1, nullptr);
@@ -297,10 +297,10 @@ void Room207::pre_parser() {
 }
 
 void Room207::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && player_said_any("anvil", "forge"))
 		_G(flags)[V036] = 1;
@@ -1191,7 +1191,7 @@ void Room207::daemon() {
 			break;
 
 		case 2: {
-			int32 rnd = imath_ranged_rand(3, 5);
+			const int32 rnd = imath_ranged_rand(3, 5);
 			sendWSMessage_10000(1, _ripInConvMach, _ripHeadDownTalkOffTd33Series, rnd, rnd, 20, _ripHeadDownTalkOffTd33Series, rnd, rnd, 0);
 			}
 			break;
@@ -1339,7 +1339,7 @@ void Room207::daemon() {
 					_pipeFlag = true;
 				}
 
-				int32 rnd = imath_ranged_rand(17, 21);
+				const int32 rnd = imath_ranged_rand(17, 21);
 				if (_ripForegroundFl) {
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipForegroundSeries, rnd, rnd, 100, _peskyPointsRipForegroundSeries, rnd, rnd, 0);
 				} else {
@@ -1471,10 +1471,10 @@ void Room207::daemon() {
 
 			case 14:
 				if (inv_player_has("REBUS AMULET")) {
-					int32 rnd = imath_ranged_rand(75, 77);
+					const int32 rnd = imath_ranged_rand(75, 77);
 					sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, rnd, rnd, 100, _withoutAmuletSeries, rnd, rnd, 0);
 				} else {
-					int32 rnd = imath_ranged_rand(75, 77);
+					const int32 rnd = imath_ranged_rand(75, 77);
 					sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, rnd, rnd, 100, _ppShowsAmuletTakesMoneySeries, rnd, rnd, 0);
 				}
 
@@ -1710,16 +1710,13 @@ void Room207::daemon() {
 }
 
 void Room207::convHandler() {
-	conv_sound_to_play();
-
+	const int32 who = conv_whos_talking();
 	if (_G(kernel).trigger == 1) {
-		int32 who = conv_whos_talking();
 		if (who <= 0)
 			_peasantShould = 15;
 		else if (who == 1)
 			_fieldC2 = 0;
 	} else {
-		int32 who = conv_whos_talking();
 		if (who <= 0)
 			_peasantShould = 14;
 		else if (who == 1) {
