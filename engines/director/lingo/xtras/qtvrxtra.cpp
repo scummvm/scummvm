@@ -464,11 +464,18 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 
 		g_director->getCurrentWindow()->setDirty(true);
 
+		int node = me->_video->getCurrentNodeID();
+
 		while (g_system->getEventManager()->pollEvent(event)) {
 			me->_widget->processEvent(event);
 
 			if (event.type == Common::EVENT_LBUTTONUP)
 				break;
+		}
+
+		if (node != 0 && me->_video->getCurrentNodeID() != node) {
+			if (!me->_nodeLeaveHandler.empty())
+				g_lingo->executeHandler(me->_nodeLeaveHandler);
 		}
 
 		if (g_system->getMillis() > nextTick) {
@@ -477,9 +484,6 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 			if (!me->_mouseStillDownHandler.empty())
 				g_lingo->executeHandler(me->_mouseStillDownHandler);
 		}
-
-		// NodeLeaveHandler
-		// PanZoomStartHandler
 
 		g_director->draw();
 
@@ -816,8 +820,21 @@ void QtvrxtraXtra::m_QTVRSetMouseStillDownHandler(int nargs) {
 	me->_mouseStillDownHandler = g_lingo->pop().asString();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeLeaveHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeLeaveHandler, 0)
+void QtvrxtraXtra::m_QTVRGetNodeLeaveHandler(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_nodeLeaveHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetNodeLeaveHandler(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_nodeLeaveHandler = g_lingo->pop().asString();
+}
 
 void QtvrxtraXtra::m_QTVRGetPanZoomStartHandler(int nargs) {
 	ARGNUMCHECK(0);
