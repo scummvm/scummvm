@@ -28,39 +28,39 @@
 namespace M4 {
 namespace GUI {
 
-uint16 SaveLoadMenuBase::SL_THUMBNAIL_W;
-uint16 SaveLoadMenuBase::SL_THUMBNAIL_H;
-uint16 SaveLoadMenuBase::SL_DIALOG_BOX;
-uint16 SaveLoadMenuBase::SL_EMPTY_THUMB;
-uint16 SaveLoadMenuBase::SL_SAVE_BTN_GREY;
-uint16 SaveLoadMenuBase::SL_SAVE_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_SAVE_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_SAVE_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_LOAD_BTN_GREY;
-uint16 SaveLoadMenuBase::SL_LOAD_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_LOAD_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_LOAD_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_CANCEL_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_CANCEL_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_CANCEL_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_UP_BTN_GREY;
-uint16 SaveLoadMenuBase::SL_UP_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_UP_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_UP_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_DOWN_BTN_GREY;
-uint16 SaveLoadMenuBase::SL_DOWN_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_DOWN_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_DOWN_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_SAVE_LABEL;
-uint16 SaveLoadMenuBase::SL_LOAD_LABEL;
-uint16 SaveLoadMenuBase::SL_SLIDER_BTN_NORM;
-uint16 SaveLoadMenuBase::SL_SLIDER_BTN_OVER;
-uint16 SaveLoadMenuBase::SL_SLIDER_BTN_PRESS;
-uint16 SaveLoadMenuBase::SL_LINE_NORM;
-uint16 SaveLoadMenuBase::SL_LINE_OVER;
-uint16 SaveLoadMenuBase::SL_LINE_PRESS;
-uint16 SaveLoadMenuBase::SL_SCROLL_BAR;
-uint16 SaveLoadMenuBase::SL_TOTAL_SPRITES;
+int16 SaveLoadMenuBase::SL_THUMBNAIL_W;
+int16 SaveLoadMenuBase::SL_THUMBNAIL_H;
+int16 SaveLoadMenuBase::SL_DIALOG_BOX;
+int16 SaveLoadMenuBase::SL_EMPTY_THUMB_25;
+int16 SaveLoadMenuBase::SL_SAVE_BTN_GREY;
+int16 SaveLoadMenuBase::SL_SAVE_BTN_NORM;
+int16 SaveLoadMenuBase::SL_SAVE_BTN_OVER;
+int16 SaveLoadMenuBase::SL_SAVE_BTN_PRESS;
+int16 SaveLoadMenuBase::SL_LOAD_BTN_GREY;
+int16 SaveLoadMenuBase::SL_LOAD_BTN_NORM;
+int16 SaveLoadMenuBase::SL_LOAD_BTN_OVER;
+int16 SaveLoadMenuBase::SL_LOAD_BTN_PRESS;
+int16 SaveLoadMenuBase::SL_CANCEL_BTN_NORM;
+int16 SaveLoadMenuBase::SL_CANCEL_BTN_OVER;
+int16 SaveLoadMenuBase::SL_CANCEL_BTN_PRESS;
+int16 SaveLoadMenuBase::SL_UP_BTN_GREY_19;
+int16 SaveLoadMenuBase::SL_UP_BTN_NORM_13;
+int16 SaveLoadMenuBase::SL_UP_BTN_OVER_15;
+int16 SaveLoadMenuBase::SL_UP_BTN_PRESS_17;
+int16 SaveLoadMenuBase::SL_DOWN_BTN_GREY_20;
+int16 SaveLoadMenuBase::SL_DOWN_BTN_NORM_14;
+int16 SaveLoadMenuBase::SL_DOWN_BTN_OVER_16;
+int16 SaveLoadMenuBase::SL_DOWN_BTN_PRESS_18;
+int16 SaveLoadMenuBase::SL_SAVE_LABEL_11;
+int16 SaveLoadMenuBase::SL_LOAD_LABEL_12;
+int16 SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21;
+int16 SaveLoadMenuBase::SL_SLIDER_BTN_OVER_22;
+int16 SaveLoadMenuBase::SL_SLIDER_BTN_PRESS_23;
+int16 SaveLoadMenuBase::SL_LINE_NORM;
+int16 SaveLoadMenuBase::SL_LINE_OVER;
+int16 SaveLoadMenuBase::SL_LINE_PRESS;
+int16 SaveLoadMenuBase::SL_SCROLL_BAR_24;
+int16 SaveLoadMenuBase::SL_TOTAL_SPRITES;
 
 void SaveLoadMenuBase::init() {
 	SL_DIALOG_BOX = 0;
@@ -69,14 +69,46 @@ void SaveLoadMenuBase::init() {
 		SL_THUMBNAIL_W = 213;
 		SL_THUMBNAIL_H = 160;
 
-		SL_UP_BTN_NORM = 13;
-		SL_SLIDER_BTN_NORM = 21;
+		SL_LINE_NORM = 5;
+		SL_LINE_OVER = 6;
+		SL_LINE_PRESS = 6;
+
+		SL_SAVE_LABEL_11 = 11;
+		SL_LOAD_LABEL_12 = 12;
+		SL_UP_BTN_NORM_13 = 13;
+		SL_DOWN_BTN_NORM_14 = 14;
+		SL_UP_BTN_OVER_15 = 15;
+		SL_DOWN_BTN_OVER_16 = 16;
+		SL_UP_BTN_PRESS_17 = 17;
+		SL_DOWN_BTN_PRESS_18 = 18;
+		SL_UP_BTN_GREY_19 = 19;
+		SL_DOWN_BTN_GREY_20 = 20;
+		SL_SLIDER_BTN_NORM_21 = 21;
+		SL_SLIDER_BTN_OVER_22 = 22;
+		SL_SLIDER_BTN_PRESS_23 = 23;
+		SL_SCROLL_BAR_24 = 24;
+		SL_EMPTY_THUMB_25 = 25;
+
+		SL_TOTAL_SPRITES = 26;
+
+		// Unused
+		SL_SAVE_BTN_GREY = -1;
+		SL_SAVE_BTN_NORM = -1;
+		SL_SAVE_BTN_OVER = -1;
+		SL_SAVE_BTN_PRESS = -1;
+		SL_LOAD_BTN_GREY = -1;
+		SL_LOAD_BTN_NORM = -1;
+		SL_LOAD_BTN_OVER = -1;
+		SL_LOAD_BTN_PRESS = -1;
+		SL_CANCEL_BTN_NORM = -1;
+		SL_CANCEL_BTN_OVER = -1;
+		SL_CANCEL_BTN_PRESS = -1;
 
 	} else {
 		SL_THUMBNAIL_W = 215;
 		SL_THUMBNAIL_H = 162;
 
-		SL_EMPTY_THUMB = 1;
+		SL_EMPTY_THUMB_25 = 1;
 		SL_SAVE_BTN_GREY = 2;
 		SL_SAVE_BTN_NORM = 3;
 		SL_SAVE_BTN_OVER = 4;
@@ -88,23 +120,23 @@ void SaveLoadMenuBase::init() {
 		SL_CANCEL_BTN_NORM = 10;
 		SL_CANCEL_BTN_OVER = 11;
 		SL_CANCEL_BTN_PRESS = 12;
-		SL_UP_BTN_GREY = 13;
-		SL_UP_BTN_NORM = 14;
-		SL_UP_BTN_OVER = 15;
-		SL_UP_BTN_PRESS = 16;
-		SL_DOWN_BTN_GREY = 17;
-		SL_DOWN_BTN_NORM = 18;
-		SL_DOWN_BTN_OVER = 19;
-		SL_DOWN_BTN_PRESS = 20;
-		SL_SAVE_LABEL = 21;
-		SL_LOAD_LABEL = 22;
-		SL_SLIDER_BTN_NORM = 23;
-		SL_SLIDER_BTN_OVER = 24;
-		SL_SLIDER_BTN_PRESS = 25;
+		SL_UP_BTN_GREY_19 = 13;
+		SL_UP_BTN_NORM_13 = 14;
+		SL_UP_BTN_OVER_15 = 15;
+		SL_UP_BTN_PRESS_17 = 16;
+		SL_DOWN_BTN_GREY_20 = 17;
+		SL_DOWN_BTN_NORM_14 = 18;
+		SL_DOWN_BTN_OVER_16 = 19;
+		SL_DOWN_BTN_PRESS_18 = 20;
+		SL_SAVE_LABEL_11 = 21;
+		SL_LOAD_LABEL_12 = 22;
+		SL_SLIDER_BTN_NORM_21 = 23;
+		SL_SLIDER_BTN_OVER_22 = 24;
+		SL_SLIDER_BTN_PRESS_23 = 25;
 		SL_LINE_NORM = 26;
 		SL_LINE_OVER = 27;
 		SL_LINE_PRESS = 28;
-		SL_SCROLL_BAR = 29;
+		SL_SCROLL_BAR_24 = 29;
 
 		SL_TOTAL_SPRITES = 30;
 	}

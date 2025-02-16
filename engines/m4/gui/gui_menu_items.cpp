@@ -763,21 +763,62 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 		}
 		break;
 
+	case BTN_TYPE_SL_TEXT:
+		switch (myItem->itemFlags) {
+		case BTN_STATE_OVER:
+			if (IS_RIDDLE)
+				gr_font_set_color(96);
+			else
+				font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
+
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_OVER];
+			break;
+
+		case BTN_STATE_PRESS:
+			if (IS_RIDDLE)
+				gr_font_set_color(96);
+			else
+				font_set_colors(TEXT_COLOR_PRESS_SHADOW, TEXT_COLOR_PRESS_FOREGROUND, TEXT_COLOR_PRESS_HILITE);
+
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_PRESS];
+			break;
+
+		case BTN_STATE_GREY:
+			if (IS_RIDDLE)
+				gr_font_set_color(202);
+			else
+				font_set_colors(TEXT_COLOR_GREY_SHADOW, TEXT_COLOR_GREY_FOREGROUND, TEXT_COLOR_GREY_HILITE);
+
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_NORM];
+			break;
+
+		default:
+		case BTN_STATE_NORM:
+			if (IS_RIDDLE)
+				gr_font_set_color(96);
+			else
+				font_set_colors(TEXT_COLOR_NORM_SHADOW, TEXT_COLOR_NORM_FOREGROUND, TEXT_COLOR_NORM_HILITE);
+
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_NORM];
+			break;
+		}
+		break;
+
 	/** ORION BURGER BUTTON TYPES **/
 	case BTN_TYPE_SL_SAVE:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_NORM];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_OVER];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_PRESS];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_BTN_GREY];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_BTN_GREY];
 			break;
 		}
 		break;
@@ -785,43 +826,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_SL_LOAD:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_NORM];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_OVER];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_PRESS];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_BTN_GREY];
-			break;
-		}
-		break;
-
-	case BTN_TYPE_SL_TEXT:
-		switch (myItem->itemFlags) {
-		case BTN_STATE_OVER:
-			font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
-			// Gr_font_set_color(TEXT_COLOR_OVER);
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
-			break;
-		case BTN_STATE_PRESS:
-			font_set_colors(TEXT_COLOR_PRESS_SHADOW, TEXT_COLOR_PRESS_FOREGROUND, TEXT_COLOR_PRESS_HILITE);
-			// Gr_font_set_color(TEXT_COLOR_PRESS);
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_PRESS];
-			break;
-		case BTN_STATE_GREY:
-			font_set_colors(TEXT_COLOR_GREY_SHADOW, TEXT_COLOR_GREY_FOREGROUND, TEXT_COLOR_GREY_HILITE);
-			// Gr_font_set_color(TEXT_COLOR_GREY);
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
-			break;
-		default:
-		case BTN_STATE_NORM:
-			font_set_colors(TEXT_COLOR_NORM_SHADOW, TEXT_COLOR_NORM_FOREGROUND, TEXT_COLOR_NORM_HILITE);
-			// Gr_font_set_color(TEXT_COLOR_NORM);
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_BTN_GREY];
 			break;
 		}
 		break;
@@ -829,17 +844,17 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	case BTN_TYPE_SL_CANCEL:
 		switch (myItem->itemFlags) {
 		case BTN_STATE_NORM:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
 			break;
 		case BTN_STATE_OVER:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_OVER];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_CANCEL_BTN_OVER];
 			break;
 		case BTN_STATE_PRESS:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_PRESS];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_CANCEL_BTN_PRESS];
 			break;
 		default:
 		case BTN_STATE_GREY:
-			mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
+			mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_CANCEL_BTN_NORM];
 			break;
 		}
 		break;
@@ -1258,10 +1273,10 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 	// Select the sprite
 	switch (myItem->tag) {
 	case SL_TAG_SAVE_LABEL:
-		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_SAVE_LABEL];
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_LABEL_11];
 		break;
 	case SL_TAG_LOAD_LABEL:
-		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LOAD_LABEL];
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_LABEL_12];
 		break;
 	case SL_TAG_THUMBNAIL:
 		mySprite = _GM(saveLoadThumbNail);
@@ -1618,21 +1633,21 @@ menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 	newItem->itemFlags = menuItemVSlider::VS_NORM;
 
 	if (IS_RIDDLE) {
-		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->w;
-		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h;
+		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->w;
+		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->h;
 
-		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h;
-		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h +
-			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR]->h
-			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h - 1;
+		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13]->h;
+		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13]->h +
+			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR_24]->h
+			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->h - 1;
 	} else {
-		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->w;
-		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h;
+		newItem->thumbW = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->w;
+		newItem->thumbH = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->h;
 
-		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h + 1;
-		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM]->h +
-			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR]->h
-			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM]->h - 1;
+		newItem->minThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13]->h + 1;
+		newItem->maxThumbY = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13]->h +
+			_GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR_24]->h
+			- _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21]->h - 1;
 	}
 
 	// Calculate the initial thumbY
@@ -1693,30 +1708,30 @@ void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int3
 	}
 
 	// Set the different sprite components
-	vbarSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR];
-	upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM];
-	thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM];
-	downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_NORM];
+	vbarSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR_24];
+	upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13];
+	thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21];
+	downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_NORM_14];
 
 	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
-		upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_GREY];
+		upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_GREY_19];
 		thumbSprite = nullptr;
-		downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_GREY];
+		downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_GREY_20];
 	} else if ((myItem->itemFlags & VS_STATUS) == VS_OVER) {
 		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
-			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_OVER];
+			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_OVER_15];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
-			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_OVER];
+			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_OVER_22];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
-			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_OVER];
+			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_OVER_16];
 		}
 	} else if ((myItem->itemFlags & VS_STATUS) == VS_PRESS) {
 		if ((myItem->itemFlags & VS_COMPONENT) == VS_UP) {
-			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_PRESS];
+			upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_PRESS_17];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_THUMB) {
-			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_PRESS];
+			thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_PRESS_23];
 		} else if ((myItem->itemFlags & VS_COMPONENT) == VS_DOWN) {
-			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_PRESS];
+			downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_PRESS_18];
 		}
 	}
 
@@ -1993,16 +2008,16 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 	// Select the sprite
 	switch (myText->itemFlags) {
 	case TF_GREY:
-		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_NORM];
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_NORM];
 		break;
 
 	case TF_OVER:
-		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_OVER];
 		break;
 
 	case TF_NORM:
 	default:
-		mySprite = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_LINE_OVER];
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LINE_OVER];
 		break;
 	}
 

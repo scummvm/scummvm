@@ -362,7 +362,8 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	_GM(thumbIndex) = 100;
 	_GM(currMenuIsSave) = saveMenu;
 
-	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[GUI::SaveLoadMenuBase::SL_DIALOG_BOX], SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
+	_GM(slMenu) = guiMenu::create(_GM(menuSprites)[GUI::SaveLoadMenuBase::SL_DIALOG_BOX],
+		SAVE_LOAD_MENU_X, SAVE_LOAD_MENU_Y,
 		MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	if (!_GM(slMenu)) {
 		return;
@@ -373,17 +374,17 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 			SL_LABEL_W, SL_LABEL_H);
 		menuItemButton::add(_GM(slMenu), SL_TAG_SAVE, SL_SAVELOAD_X, SL_SAVELOAD_Y,
 			SL_SAVELOAD_W, SL_SAVELOAD_H, (CALLBACK)cbSave,
-			menuItemButton::BTN_TYPE_SL_SAVE, true);
+			menuItemButton::BTN_TYPE_GM_GENERIC, true);
 	} else {
 		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_LOAD_LABEL, SL_LABEL_X, SL_LABEL_Y,
 			SL_LABEL_W, SL_LABEL_H);
 		menuItemButton::add(_GM(slMenu), SL_TAG_LOAD, SL_SAVELOAD_X, SL_SAVELOAD_Y,
 			SL_SAVELOAD_W, SL_SAVELOAD_H, (CALLBACK)cbSave,
-			menuItemButton::BTN_TYPE_SL_SAVE, true);
+			menuItemButton::BTN_TYPE_GM_GENERIC, true);
 	}
 
 	menuItemButton::add(_GM(slMenu), SL_TAG_CANCEL, SL_CANCEL_X, SL_CANCEL_Y, SL_CANCEL_W, SL_CANCEL_H,
-		(CALLBACK)cbCancel, menuItemButton::BTN_TYPE_SL_CANCEL);
+		(CALLBACK)cbCancel, menuItemButton::BTN_TYPE_GM_GENERIC);
 
 	menuItemVSlider::add(_GM(slMenu), SL_TAG_VSLIDER, SL_SLIDER_X, SL_SLIDER_Y, SL_SLIDER_W, SL_SLIDER_H,
 		0, (CALLBACK)cbVSlider);
@@ -416,7 +417,7 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 
 	} else {
 		updateThumbnails(0, _GM(slMenu));
-		_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
+		_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB_25];
 	}
 
 	menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y,
@@ -508,7 +509,7 @@ bool SaveLoadMenu::load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType
 
 				// Remove the thumbnail
 				if (_GM(saveLoadThumbNail)) {
-					_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
+					_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB_25];
 					guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 				}
 			}
@@ -626,7 +627,7 @@ void SaveLoadMenu::cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu)
 
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
-				_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB];
+				_GM(saveLoadThumbNail) = _GM(menuSprites)[GUI::SaveLoadMenuBase::SL_EMPTY_THUMB_25];
 				guiMenu::itemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
 			}
 		}
