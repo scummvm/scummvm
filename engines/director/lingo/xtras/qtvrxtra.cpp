@@ -385,7 +385,13 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 	}
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
+void QtvrxtraXtra::m_QTVRUpdate(int nargs) {
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+	me->_visible = true;
+
+	m_QTVRIdle(0);
+}
+
 
 void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
 	ARGNUMCHECK(0);
