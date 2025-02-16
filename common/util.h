@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/type_traits.h"
+
 /**
  * @defgroup common_util Util
  * @ingroup common
@@ -129,26 +131,6 @@ class U32String;
  * @addtogroup common_util
  * @{
  */
-
-/**
- * A set of templates which removes the reference over types.
- * Use remove_reference_t<T> for this.
- */
-template<class T>
-struct remove_reference {
-	typedef T type;
-};
-template<class T>
-struct remove_reference<T &> {
-	typedef T type;
-};
-template<class T>
-struct remove_reference<T &&> {
-	typedef T type;
-};
-
-template<class T>
-using remove_reference_t = typename remove_reference<T>::type;
 
 /**
  * A reimplementation of std::move.

@@ -31,7 +31,7 @@
 #ifndef COMMON_STD_UTILITY_H
 #define COMMON_STD_UTILITY_H
 
-#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Std {
 
@@ -51,32 +51,7 @@ pair<T1, T2> make_pair(T1 first, T2 second) {
 	return pair<T1, T2>(first, second);
 }
 
-// STRUCT TEMPLATE remove_reference
-template <class _Ty>
-struct remove_reference {
-	typedef _Ty type;
-};
-
-template<class _Ty>
-struct remove_reference<_Ty &> {
-	typedef _Ty type;
-};
-
-template<class _Ty>
-struct remove_reference<_Ty &&> {
-	typedef _Ty type;
-};
-
-template <class _Ty>
-using remove_reference_t = typename remove_reference<_Ty>::type;
-
-// FUNCTION TEMPLATE move
-// TODO: Haven't been able to get this to properly work to reset
-// the source when moving the contents of Std::vector arrays
-template <class _Ty>
-constexpr remove_reference_t<_Ty> &&move(_Ty &&_Arg) noexcept {
-	return static_cast<remove_reference_t<_Ty> &&>(_Arg);
-}
+using Common::move;
 
 } // namespace Std
 

@@ -84,6 +84,26 @@ using add_const_t     = typename add_const<T>::type;
 template<class T>
 using add_volatile_t  = typename add_volatile<T>::type;
 
+/**
+ * A set of templates which removes the reference over types.
+ * Use remove_reference_t<T> for this.
+ */
+template<class T>
+struct remove_reference {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &> {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &&> {
+	typedef T type;
+};
+
+template<class T>
+using remove_reference_t = typename remove_reference<T>::type;
+
 template<bool b, class T, class F>
 struct conditional {
 	typedef T type;
