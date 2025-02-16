@@ -253,7 +253,7 @@ namespace SpanInternal {
 template <typename ValueType, template <typename> class Derived>
 class SpanBase : public SafeBool<Derived<ValueType> > {
 	typedef Derived<ValueType> derived_type;
-	typedef typename AddConst<derived_type>::type const_derived_type;
+	typedef typename add_const<derived_type>::type const_derived_type;
 	typedef typename remove_const<derived_type>::type mutable_derived_type;
 
 	template <typename T, bool U> friend class SpanInternal::SpanIterator;
@@ -533,7 +533,7 @@ protected:
 template <typename ValueType, template <typename> class Derived>
 class SpanImpl : public SpanBase<ValueType, Derived> {
 	typedef SpanBase<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
+	typedef typename add_const<Derived<ValueType> >::type const_derived_type;
 	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class SpanImpl;
@@ -689,7 +689,7 @@ public:
 template <typename ValueType>
 class Span : public SpanImpl<ValueType, Span> {
 	typedef SpanImpl<ValueType, ::Common::Span> super_type;
-	typedef typename AddConst<Span<ValueType> >::type const_derived_type;
+	typedef typename add_const<Span<ValueType> >::type const_derived_type;
 	typedef typename remove_const<Span<ValueType> >::type mutable_derived_type;
 	template <typename T> friend class Span;
 
@@ -712,7 +712,7 @@ public:
 template <typename ValueType, template <typename> class Derived>
 class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 	typedef SpanImpl<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
+	typedef typename add_const<Derived<ValueType> >::type const_derived_type;
 	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class NamedSpanImpl;

@@ -23,6 +23,7 @@
 #define COMMON_TYPE_TRAITS_H
 
 namespace Common {
+
 /**
  * A set of templates which removes const and/or volatile specifiers.
  * Use the remove_*_t<T> variants.
@@ -54,6 +55,21 @@ template<class T> struct remove_volatile<volatile T> {
 	typedef T type;
 };
 
+/**
+ * A set of templates which add const or volatile qualifiers
+ */
+template<class T>
+struct add_cv {
+	typedef const volatile T type;
+};
+template<class T>
+struct add_const {
+	typedef const T type;
+};
+template<class T> struct add_volatile {
+	typedef volatile T type;
+};
+
 template<class T>
 using remove_cv_t        = typename remove_cv<T>::type;
 template<class T>
@@ -61,9 +77,15 @@ using remove_const_t     = typename remove_const<T>::type;
 template<class T>
 using remove_volatile_t  = typename remove_volatile<T>::type;
 
+template<class T>
+using add_cv_t        = typename add_cv<T>::type;
+template<class T>
+using add_const_t     = typename add_const<T>::type;
+template<class T>
+using add_volatile_t  = typename add_volatile<T>::type;
+
 	template <bool b, class T, class U> struct Conditional { typedef T type; };
 	template <class T, class U> struct Conditional<false, T, U> { typedef U type; };
-	template <typename T> struct AddConst { typedef const T type; };
 } // End of namespace Common
 
 #endif
