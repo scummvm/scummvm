@@ -892,6 +892,11 @@ int QuickTimeParser::readCTYP(Atom atom) {
 		_qtvrType = QTVRType::PANORAMA;
 		break;
 
+	case MKTAG('q', 't', 'v', 'r'):
+		_qtvrType = QTVRType::OTHER;
+		warning("QuickTimeParser::readCTYP(): QTVR 2.0 files are not yet supported");
+		break;
+
 	default:
 		_qtvrType = QTVRType::OTHER;
 		warning("QuickTimeParser::readCTYP(): Unknown QTVR Type ('%s')", tag2str(ctype));
