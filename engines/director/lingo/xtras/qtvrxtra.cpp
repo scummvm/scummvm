@@ -918,7 +918,7 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 		}
 		return true;
 	case Common::EVENT_LBUTTONUP:
-		_xtra->_video->handleMouseButton(false);
+		_xtra->_video->handleMouseButton(false, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		return true;
 	case Common::EVENT_MOUSEMOVE:
 		_xtra->_video->handleMouseMove(event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
