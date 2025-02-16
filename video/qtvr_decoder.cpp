@@ -994,6 +994,25 @@ void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat
 }
 
 void QuickTimeDecoder::handleObjectKey(Common::KeyState &state, bool down, bool repeat) {
+	if (!down)
+		return;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_LEFT:
+		nudge("left");
+		break;
+	case Common::KEYCODE_RIGHT:
+		nudge("right");
+		break;
+	case Common::KEYCODE_UP:
+		nudge("up");
+		break;
+	case Common::KEYCODE_DOWN:
+		nudge("bottom");
+		break;
+	default:
+		break;
+	}
 }
 
 void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool repeat) {
