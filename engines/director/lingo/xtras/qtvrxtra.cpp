@@ -818,8 +818,22 @@ void QtvrxtraXtra::m_QTVRSetMouseStillDownHandler(int nargs) {
 
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeLeaveHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeLeaveHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanZoomStartHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetPanZoomStartHandler, 0)
+
+void QtvrxtraXtra::m_QTVRGetPanZoomStartHandler(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_panZoomStartHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetPanZoomStartHandler(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_panZoomStartHandler = g_lingo->pop().asString();
+}
 
 void QtvrxtraXtra::m_QTVRGetRolloverHotSpotHandler(int nargs) {
 	ARGNUMCHECK(0);
@@ -892,22 +906,21 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 		_xtra->_video->handleMouseMove(event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		return true;
 	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_LEFT:
-			_xtra->_video->nudge("left");
-			break;
-		case Common::KEYCODE_RIGHT:
-			_xtra->_video->nudge("right");
-			break;
-		case Common::KEYCODE_UP:
-			_xtra->_video->nudge("top");
-			break;
-		case Common::KEYCODE_DOWN:
-			_xtra->_video->nudge("bottom");
-			break;
-		default:
-			break;
+	case Common::EVENT_KEYUP: {
+		int zoomState = _xtra->_video->getZoomState();
+		_xtra->_video->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
+
+		int newZoomState = _xtra->_video->getZoomState();
+
+		if (zoomState == Video::QuickTimeDecoder::kZoomNone &&
+			(newZoomState == Video::QuickTimeDecoder::kZoomIn || newZoomState == Video::QuickTimeDecoder::kZoomOut)) {
+
+			if (!_xtra->_panZoomStartHandler.empty())
+				g_lingo->executeHandler(_xtra->_panZoomStartHandler);
 		}
+
+		}
+
 		return true;
 	default:
 		return false;

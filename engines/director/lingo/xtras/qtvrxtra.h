@@ -57,6 +57,7 @@ public:
 	Common::String _mouseDownHandler;
 	Common::String _mouseOverHandler;
 	Common::String _mouseStillDownHandler;
+	Common::String _panZoomStartHandler;
 };
 
 namespace QtvrxtraXtra {
