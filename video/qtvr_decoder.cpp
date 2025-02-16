@@ -163,6 +163,42 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	}
 }
 
+void QuickTimeDecoder::setPanAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+
+	if (desc->_hPanStart != desc->_hPanStart && (desc->_hPanStart != 0.0 || desc->_hPanStart != 360.0)) {
+		if (angle < desc->_hPanStart)
+			angle = desc->_hPanStart + _hfov / 2;
+
+		if (angle > desc->_hPanEnd - _hfov / 2)
+			angle = desc->_hPanStart - _hfov / 2;
+	}
+
+	if (_panAngle != angle) {
+		_panAngle = angle;
+
+		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+		track->setDirty();
+	}
+}
+
+void QuickTimeDecoder::setTiltAngle(float angle) {
+	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+
+	if (angle < desc->_vPanBottom + _fov / 2)
+		angle = desc->_vPanBottom + _fov / 2;
+
+	if (angle > desc->_vPanTop - _fov / 2)
+		angle = desc->_vPanTop - _fov / 2;
+
+	if (_tiltAngle != angle) {
+		_tiltAngle = angle;
+
+		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+		track->setDirty();
+	}
+}
+
 bool QuickTimeDecoder::setFOV(float fov) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 	bool success = true;
@@ -307,9 +343,6 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 	_projectedPano = nullptr;
 	_planarProjection = nullptr;
 
-	_curPanAngle = 0.0f;
-	_curTiltAngle = 0.0f;
-
 	_dirty = true;
 
 	_decoder->updateQTVRCursor(0, 0); // Initialize all things for cursor
@@ -354,44 +387,6 @@ Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledWidth() const {
 
 Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledHeight() const {
 	return Common::Rational(_parent->height) / _parent->scaleFactorY;
-}
-
-void QuickTimeDecoder::PanoTrackHandler::setPanAngle(float angle) {
-	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-
-	if (desc->_hPanStart != desc->_hPanStart && (desc->_hPanStart != 0.0 || desc->_hPanStart != 360.0)) {
-		if (angle < desc->_hPanStart + _decoder->_hfov / 2)
-			angle = desc->_hPanStart + _decoder->_hfov / 2;
-
-		if (angle > desc->_hPanEnd - _decoder->_hfov / 2)
-			angle = desc->_hPanStart - _decoder->_hfov / 2;
-	}
-
-	if (_curPanAngle != angle) {
-		_curPanAngle = angle;
-
-		_decoder->setPanAngle(_curPanAngle);
-
-		_dirty = true;
-	}
-}
-
-void QuickTimeDecoder::PanoTrackHandler::setTiltAngle(float angle) {
-	PanoSampleDesc *desc = (PanoSampleDesc *)_parent->sampleDescs[0];
-
-	if (angle < desc->_vPanBottom + _decoder->_fov / 2)
-		angle = desc->_vPanBottom + _decoder->_fov / 2;
-
-	if (angle > desc->_vPanTop - _decoder->_fov / 2)
-		angle = desc->_vPanTop - _decoder->_fov / 2;
-
-	if (_curTiltAngle != angle) {
-		_curTiltAngle = angle;
-
-		_decoder->setTiltAngle(_curTiltAngle);
-
-		_dirty = true;
-	}
 }
 
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
@@ -503,8 +498,8 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	_isPanoConstructed = true;
 
-	_curPanAngle = desc->_hPanStart;
-	_curTiltAngle = 0.0f;
+	_decoder->_panAngle = desc->_hPanStart;
+	_decoder->_tiltAngle = 0.0f;
 }
 
 int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
@@ -530,8 +525,8 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	topRightVector[2] = bottomRightVector[2];
 
 	// Apply pitch (tilt) rotation
-	float cosTilt = cos(_curTiltAngle * M_PI / 180.0);
-	float sinTilt = sin(_curTiltAngle * M_PI / 180.0);
+	float cosTilt = cos(_decoder->_tiltAngle * M_PI / 180.0);
+	float sinTilt = sin(_decoder->_tiltAngle * M_PI / 180.0);
 
 	for (int v = 0; v < 2; v++) {
 		float y = cornerVectors[v][1];
@@ -563,7 +558,7 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
 
 	// panorama is turned 90 degrees, width is height
-	int hotX = (1.0f - (yawAngle / (2.0 * M_PI) + _curPanAngle / 360.0f)) * (float)_constructedHotspots->h;
+	int hotX = (1.0f - (yawAngle / (2.0 * M_PI) + _decoder->_panAngle / 360.0f)) * (float)_constructedHotspots->h;
 
 	hotX = hotX % _constructedHotspots->h;
 	if (hotX < 0)
@@ -621,8 +616,8 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	topRightVector[2] = bottomRightVector[2];
 
 	// Apply pitch (tilt) rotation
-	float cosTilt = cos(_curTiltAngle * M_PI / 180.0);
-	float sinTilt = sin(_curTiltAngle * M_PI / 180.0);
+	float cosTilt = cos(_decoder->_tiltAngle * M_PI / 180.0);
+	float sinTilt = sin(_decoder->_tiltAngle * M_PI / 180.0);
 
 	for (int v = 0; v < 2; v++) {
 		float y = cornerVectors[v][1];
@@ -708,7 +703,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		cylinderAngleOffsets[x] = atan(xCoord) * 0.5f / M_PI;
 	}
 
-	float angleT = fmod(_curPanAngle / 360.0, 1.0);
+	float angleT = fmod(_decoder->_panAngle / 360.0, 1.0);
 	if (angleT < 0.0f)
 		angleT += 1.0f;
 
@@ -951,8 +946,6 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	if (!repeat)
 		return;
 
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-
 	// HACK: FIXME: Hard coded for now
 	const int sensitivity = 5;
 	const float speedFactor = 0.1f;
@@ -964,10 +957,10 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	float speedY = (float)mouseDeltaY * speedFactor;
 
 	if (ABS(mouseDeltaX) >= sensitivity)
-		track->setPanAngle(track->getPanAngle() + speedX);
+		setPanAngle(getPanAngle() + speedX);
 
 	if (ABS(mouseDeltaY) >= sensitivity)
-		track->setTiltAngle(track->getTiltAngle() + speedY);
+		setTiltAngle(getTiltAngle() + speedY);
 }
 
 void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {

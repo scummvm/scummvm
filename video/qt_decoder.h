@@ -83,9 +83,9 @@ public:
 	void handleKey(Common::KeyState &state, bool down, bool repeat = false);
 
 	float getPanAngle() const { return _panAngle; }
-	void setPanAngle(float panAngle) { _panAngle = panAngle; }
+	void setPanAngle(float panAngle);
 	float getTiltAngle() const { return _tiltAngle; }
-	void setTiltAngle(float tiltAngle) { _tiltAngle = tiltAngle; }
+	void setTiltAngle(float tiltAngle);
 	float getFOV() const { return _fov; }
 	bool setFOV(float fov);
 	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
@@ -361,11 +361,6 @@ private:
 
 		int lookupHotspot(int16 x, int16 y);
 
-		float getPanAngle() { return _curPanAngle; }
-		void setPanAngle(float angle);
-		float getTiltAngle() { return _curTiltAngle; }
-		void setTiltAngle(float angle);
-
 		void setDirty() { _dirty = true; }
 
 	private:
@@ -382,9 +377,6 @@ private:
 		Graphics::Surface *_planarProjection;
 
 		bool _isPanoConstructed;
-
-		float _curPanAngle;
-		float _curTiltAngle;
 
 		bool _dirty;
 	};
