@@ -6887,6 +6887,15 @@ else
 	echo "$_imgui"
 fi
 
+# When GLAD is not available (in emscripten for example), make ImGui use GLES2 statically
+if test "$_imgui" = "yes" -a "$_opengl_glad" != yes; then
+	case $_opengl_mode in
+	gles2)
+		append_var DEFINES "-DIMGUI_IMPL_OPENGL_ES2"
+		;;
+	esac
+fi
+
 #
 # Enable vkeybd / event recorder
 #
