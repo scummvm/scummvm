@@ -2101,7 +2101,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 							 _vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1,
 							 0,
 							 0,
-							 0);
+							 -1);
 
 			for (int y = 0; y < _vm->_draw->_spriteBottom; y++) {
 				for (int x = 0; x < _vm->_draw->_spriteRight; x++) {
@@ -2117,7 +2117,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 																	  _vm->_draw->_spriteBottom - 1,
 																	  _vm->_draw->_destSpriteX,
 																	  _vm->_draw->_destSpriteY,
-																	  0);
+																	  -1);
 
 			_vm->_draw->dirtiedRect(_vm->_draw->_destSurface,
 									_vm->_draw->_destSpriteX,
