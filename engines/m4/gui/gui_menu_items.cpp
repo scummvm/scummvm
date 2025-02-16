@@ -82,7 +82,7 @@ void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
 //-----------------------------  MENU DIALOG FUNCTIONS    ---------------------------------//
 
 bool guiMenu::initialize(RGB8 *myPalette) {
-	int32 i, memAvail;
+	int32 i;
 
 	// This procedure is called before *any* menu is created - the following global var is used
 	// By the guiMenu::eventHandler() to trap events - it must be cleared.
@@ -118,7 +118,7 @@ bool guiMenu::initialize(RGB8 *myPalette) {
 	// Make sure we have enough memory
 	PurgeMem();
 	CompactMem();
-	memAvail = mem_avail();
+	int32 memAvail = mem_avail();
 
 	// Dump the screen codes if necessary
 	if (memAvail < MEMORY_NEEDED) {
@@ -155,7 +155,7 @@ bool guiMenu::initialize(RGB8 *myPalette) {
 		return false;
 	}
 
-	// Allocate space for the thumnail sprites
+	// Allocate space for the thumbnail sprites
 	if ((_GM(thumbNails) = (Sprite **)mem_alloc(sizeof(Sprite *) * MAX_SLOTS, "thumbNail array")) == nullptr) {
 		return false;
 	}
@@ -237,23 +237,20 @@ void guiMenu::shutdown(bool fadeToColor) {
 }
 
 GrBuff *guiMenu::copyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h) {
-	GrBuff *copyOfBackground;
-	Buffer *srcBuff, *destBuff;
-
 	// Verify params
 	if ((!myMenu) || (!myMenu->menuBuffer)) {
 		return nullptr;
 	}
 
 	// Create a new grbuff struct
-	copyOfBackground = new GrBuff(w, h);
+	GrBuff *copyOfBackground = new GrBuff(w, h);
 	if (!copyOfBackground) {
 		return nullptr;
 	}
 
 	// Get the source and destination buffers
-	srcBuff = myMenu->menuBuffer->get_buffer();
-	destBuff = copyOfBackground->get_buffer();
+	Buffer *srcBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *destBuff = copyOfBackground->get_buffer();
 	if ((!srcBuff) || (!destBuff)) {
 		delete copyOfBackground;
 
@@ -274,24 +271,21 @@ void guiMenu::show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	RectList *myRectList = (RectList *)r;
 	Buffer *destBuffer = (Buffer *)b;
-	guiMenu *myMenu;
-	GrBuff *myMenuBuffer;
-	Buffer *myBuffer;
 	RectList *myRect;
 
 	// Parameter verification
 	if (!myScreen) {
 		return;
 	}
-	myMenu = (guiMenu *)(myScreen->scrnContent);
+	guiMenu *myMenu = (guiMenu *)(myScreen->scrnContent);
 	if (!myMenu) {
 		return;
 	}
-	myMenuBuffer = myMenu->menuBuffer;
+	GrBuff *myMenuBuffer = myMenu->menuBuffer;
 	if (!myMenuBuffer) {
 		return;
 	}
-	myBuffer = myMenuBuffer->get_buffer();
+	Buffer *myBuffer = myMenuBuffer->get_buffer();
 	if (!myBuffer) {
 		return;
 	}
@@ -321,8 +315,7 @@ void guiMenu::show(void *s, void *r, void *b, int32 destX, int32 destY) {
 }
 
 guiMenu *guiMenu::create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags) {
-	guiMenu *newMenu;
-	Buffer *tempBuff, drawSpriteBuff;
+	Buffer drawSpriteBuff;
 	DrawRequest spriteDrawReq;
 
 	// Verify params
@@ -330,7 +323,7 @@ guiMenu *guiMenu::create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scr
 		return nullptr;
 	}
 
-	newMenu = new guiMenu();
+	guiMenu *newMenu = new guiMenu();
 
 	newMenu->menuBuffer = new GrBuff(backgroundSprite->w, backgroundSprite->h);
 	newMenu->itemList = nullptr;
@@ -339,7 +332,7 @@ guiMenu *guiMenu::create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scr
 	newMenu->menuEventHandler = (EventHandler)guiMenu::eventHandler;
 
 	// Draw the background in to the menuBuffer
-	tempBuff = newMenu->menuBuffer->get_buffer();
+	Buffer *tempBuff = newMenu->menuBuffer->get_buffer();
 
 	// Copy background into menu-buffer because it is not rectangular (matte ink effect)
 	Buffer *matte = _G(gameDrawBuff)->get_buffer(); // get a pointer to the game background buffer
@@ -389,15 +382,13 @@ guiMenu *guiMenu::create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scr
 }
 
 void guiMenu::destroy(guiMenu *myMenu) {
-	menuItem *myItem;
-
 	// Verify params
 	if (!myMenu) {
 		return;
 	}
 
 	// Destroy the items
-	myItem = myMenu->itemList;
+	menuItem *myItem = myMenu->itemList;
 	while (myItem) {
 		myMenu->itemList = myItem->next;
 		(myItem->destroy)(myItem);
@@ -420,22 +411,20 @@ void guiMenu::configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc) {
 }
 
 bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen) {
-	ScreenContext *myScreen;
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem;
-	int32 status, menuX, menuY;
-	bool handled;
+	int32 status;
 	static int32 movingX;
 	static int32 movingY;
 	static bool movingScreen = false;
 
 	// Initialize the vars
-	handled = false;
+	bool handled = false;
 	if (currScreen)
 		*currScreen = false;
 
 	// Make sure the screen exists and is active
-	myScreen = vmng_screen_find(theMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(theMenu, &status);
 	if ((!myScreen) || (status != SCRN_ACTIVE)) {
 		return false;
 	}
@@ -459,8 +448,8 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 	}
 
 	// Convert the global coordinates to coords relative to the menu
-	menuX = parm2 - myScreen->x1;
-	menuY = parm3 - myScreen->y1;
+	const int32 menuX = parm2 - myScreen->x1;
+	const int32 menuY = parm3 - myScreen->y1;
 
 	// If we are currently handling the events for an item, continue until that item releases control
 	if (_GM(menuCurrItem)) {
@@ -543,14 +532,12 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 }
 
 menuItem *guiMenu::getItem(int32 tag, guiMenu *myMenu) {
-	menuItem *myItem;
-
 	// Verify params
 	if (!myMenu) {
 		return nullptr;
 	}
 
-	myItem = myMenu->itemList;
+	menuItem *myItem = myMenu->itemList;
 	while (myItem && (myItem->tag != tag)) {
 		myItem = myItem->next;
 	}
@@ -559,8 +546,6 @@ menuItem *guiMenu::getItem(int32 tag, guiMenu *myMenu) {
 }
 
 void guiMenu::itemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	Buffer *myBuff, *backgroundBuff;
-
 	// Verify params
 	if (!myMenu) {
 		return;
@@ -586,13 +571,13 @@ void guiMenu::itemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 		if (!myItem->background) {
 			return;
 		}
-		backgroundBuff = myItem->background->get_buffer();
+		Buffer *backgroundBuff = myItem->background->get_buffer();
 		if (!backgroundBuff) {
 			return;
 		}
 
 		// Get the menu buffer and draw the sprite to it
-		myBuff = myMenu->menuBuffer->get_buffer();
+		Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 		if (!myBuff) {
 			return;
 		}
@@ -612,7 +597,6 @@ void guiMenu::itemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 }
 
 void guiMenu::itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -631,7 +615,7 @@ void guiMenu::itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	(myItem->redraw)(myItem, myItem->myMenu, myItem->x1, myItem->y1, 0, 0);
 
 	// Update the video
-	myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + myItem->x1, myScreen->y1 + myItem->y1,
 			myScreen->x1 + myItem->x2, myScreen->y1 + myItem->y2);
@@ -639,8 +623,6 @@ void guiMenu::itemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 }
 
 bool guiMenu::loadSprites(const char *series, int32 numSprites) {
-	int32 i;
-
 	// Load in the game menu series
 	if (LoadSpriteSeries(series, &_GM(menuSeriesHandle), &_GM(menuSeriesOffset),
 		&_GM(menuSeriesPalOffset), _GM(menuPalette)) <= 0) {
@@ -662,7 +644,7 @@ bool guiMenu::loadSprites(const char *series, int32 numSprites) {
 	}
 
 	// Create the menu sprites
-	for (i = 0; i < _GM(spriteCount); i++) {
+	for (int32 i = 0; i < _GM(spriteCount); i++) {
 		if ((_GM(menuSprites)[i] = CreateSprite(_GM(menuSeriesHandle), _GM(menuSeriesOffset), i, nullptr, nullptr)) == nullptr) {
 			return false;
 		}
@@ -672,8 +654,6 @@ bool guiMenu::loadSprites(const char *series, int32 numSprites) {
 }
 
 void guiMenu::unloadSprites() {
-	int32 i;
-
 	if (!_GM(menuSeriesResource)) {
 		return;
 	}
@@ -687,7 +667,7 @@ void guiMenu::unloadSprites() {
 	_GM(menuSeriesPalOffset) = -1;
 
 	// Turf the sprites
-	for (i = 0; i < _GM(spriteCount); i++) {
+	for (int32 i = 0; i < _GM(spriteCount); i++) {
 		mem_free((void *)_GM(menuSprites)[i]);
 	}
 
@@ -722,7 +702,6 @@ bool menuItem::cursorInsideItem(menuItem *myItem, int32 cursorX, int32 cursorY) 
 //-----------------------------  BUTTON FUNCTIONS    ---------------------------------//
 
 void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
-	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
 	char tempStr[32];
@@ -931,7 +910,7 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 	}
 
 	// Get the menu buffer
-	myBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -960,12 +939,8 @@ void menuItemButton::drawButton(menuItemButton *myItem, guiMenu *myMenu, int32 x
 }
 
 bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status;
-	int32 currTag;
-	guiMenu *currMenu;
-	menuItem *tempItem;
 
 	// Verify params
 	if (!myItem) {
@@ -980,9 +955,9 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 		return false;
 	}
 
-	redrawItem = false;
-	execCallback = false;
-	handled = true;
+	bool redrawItem = false;
+	bool execCallback = false;
+	bool handled = true;
 
 	switch (event) {
 	case _ME_L_click:
@@ -1078,8 +1053,8 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 		if (IS_RIDDLE)
 			digi_play("950_s51", 2, 255, -1, 950);
 
-		currMenu = myItem->myMenu;
-		currTag = myItem->tag;
+		guiMenu *currMenu = myItem->myMenu;
+		int32 currTag = myItem->tag;
 		_GM(buttonClosesDialog) = false;
 
 		(myItem->callback)(myItem, myItem->myMenu);
@@ -1090,7 +1065,7 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		} else {
-			tempItem = guiMenu::getItem(currTag, currMenu);
+			menuItem *tempItem = guiMenu::getItem(currTag, currMenu);
 			if (!tempItem) {
 				*currItem = nullptr;
 			}
@@ -1102,8 +1077,6 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 
 menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
 	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
-	menuItemButton *newItem;
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -1112,7 +1085,7 @@ menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y
 	}
 
 	// Allocate a new one
-	newItem = new menuItemButton();
+	menuItemButton *newItem = new menuItemButton();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1157,7 +1130,7 @@ menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y
 	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1196,8 +1169,6 @@ void menuItemButton::enableButton(menuItemButton *myItem, int32 tag, guiMenu *my
 //-----------------------------  MSG FUNCTIONS    ---------------------------------//
 
 menuItemMsg *menuItemMsg::msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent) {
-	menuItemMsg *newItem;
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -1206,7 +1177,7 @@ menuItemMsg *menuItemMsg::msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, i
 	}
 
 	// Allocate a new one
-	newItem = new menuItemMsg();
+	menuItemMsg *newItem = new menuItemMsg();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1240,7 +1211,7 @@ menuItemMsg *menuItemMsg::msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, i
 	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1250,7 +1221,6 @@ menuItemMsg *menuItemMsg::msgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, i
 }
 
 void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
-	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
 
@@ -1292,7 +1262,7 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 	}
 
 	// Get the menu buffer and draw the sprite to it
-	myBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -1323,9 +1293,8 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 //-------------------------------    HSLIDER MENU ITEM    ---------------------------------//
 
 void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
-	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
-	Sprite *mySprite = nullptr;
+	Sprite *mySprite;
 
 	// Verify params
 	if (!myItem || !myMenu)
@@ -1343,7 +1312,7 @@ void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int3
 	}
 
 	// Get the menu buffer and draw the sprite to it
-	myBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -1392,7 +1361,6 @@ void menuItemHSlider::drawHSlider(menuItemHSlider *myItem, guiMenu *myMenu, int3
 }
 
 bool menuItemHSlider::handler(menuItemHSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status;
 	int32 deltaSlide;
@@ -1407,9 +1375,9 @@ bool menuItemHSlider::handler(menuItemHSlider *myItem, int32 eventType, int32 ev
 		return false;
 	}
 
-	redrawItem = false;
-	handled = true;
-	execCallback = false;
+	bool redrawItem = false;
+	bool handled = true;
+	bool execCallback = false;
 
 	switch (event) {
 	case _ME_L_click:
@@ -1527,8 +1495,6 @@ bool menuItemHSlider::handler(menuItemHSlider *myItem, int32 eventType, int32 ev
 
 menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent, CALLBACK callback, bool transparent) {
-	menuItemHSlider *newItem;
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -1537,7 +1503,7 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 	}
 
 	// Allocate a new one
-	newItem = new menuItemHSlider();
+	menuItemHSlider *newItem = new menuItemHSlider();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1589,7 +1555,7 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1603,8 +1569,6 @@ menuItemHSlider *menuItemHSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 
 menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent, CALLBACK callback, bool transparent) {
-	menuItemVSlider *newItem;
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -1612,7 +1576,7 @@ menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 		return nullptr;
 
 	// Allocate a new one
-	newItem = new menuItemVSlider();
+	menuItemVSlider *newItem = new menuItemVSlider();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -1671,7 +1635,7 @@ menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
@@ -1681,12 +1645,7 @@ menuItemVSlider *menuItemVSlider::add(guiMenu *myMenu, int32 tag, int32 x, int32
 }
 
 void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
-	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
-	Sprite *upSprite = nullptr;
-	Sprite *thumbSprite = nullptr;
-	Sprite *downSprite = nullptr;
-	Sprite *vbarSprite = nullptr;
 
 	// Verify params
 	if (!myItem || !myMenu)
@@ -1704,7 +1663,7 @@ void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int3
 	}
 
 	// Get the menu buffer
-	myBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -1716,10 +1675,10 @@ void menuItemVSlider::drawVSlider(menuItemVSlider *myItem, guiMenu *myMenu, int3
 	}
 
 	// Set the different sprite components
-	vbarSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR_24];
-	upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13];
-	thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21];
-	downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_NORM_14];
+	Sprite *vbarSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SCROLL_BAR_24];
+	Sprite *upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_NORM_13];
+	Sprite *thumbSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21];
+	Sprite *downSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_DOWN_BTN_NORM_14];
 
 	if ((myItem->itemFlags & VS_STATUS) == VS_GREY) {
 		upSprite = _GM(menuSprites)[SaveLoadMenuBase::SL_UP_BTN_GREY_19];
@@ -1768,12 +1727,10 @@ int32 menuItemVSlider::whereIsCursor(menuItemVSlider *myVSlider, int32 y) {
 }
 
 bool menuItemVSlider::handler(menuItemVSlider *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	bool redrawItem, execCallback, handled;
 	int32 tempFlags;
 	ScreenContext *myScreen;
 	int32 status;
 	int32 deltaSlide;
-	int32 currTime;
 	static bool movingFlag;
 	static int32 movingY;
 	static int32 callbackTime;
@@ -1790,10 +1747,10 @@ bool menuItemVSlider::handler(menuItemVSlider *myItem, int32 eventType, int32 ev
 		return false;
 	}
 
-	currTime = timer_read_60();
-	redrawItem = false;
-	handled = true;
-	execCallback = false;
+	const int32 currTime = timer_read_60();
+	bool redrawItem = false;
+	bool handled = true;
+	bool execCallback = false;
 
 	switch (event) {
 	case _ME_L_click:
@@ -1992,11 +1949,9 @@ void menuItemVSlider::enableVSlider(menuItemVSlider *myItem, int32 tag, guiMenu 
 
 void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu, int32 x, int32 y, int32, int32) {
 	menuItemTextField *myText = nullptr;
-	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
-	Sprite *mySprite = nullptr;
-	char tempStr[64], tempChar;
-	int32 cursorX;
+	Sprite *mySprite;
+	char tempStr[64];
 
 	// Verify params
 	if (!myItem || !myMenu)
@@ -2030,7 +1985,7 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 	}
 
 	// Get the menu buffer and draw the sprite to it
-	myBuff = myMenu->menuBuffer->get_buffer();
+	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -2056,9 +2011,9 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 	if (myText->itemFlags == TF_OVER) {
 		// Draw in the cursor
 		if (myText->cursor) {
-			tempChar = *myText->cursor;
+			const char tempChar = *myText->cursor;
 			*myText->cursor = '\0';
-			cursorX = gr_font_string_width(&myText->prompt[0], -1);
+			const int32 cursorX = gr_font_string_width(&myText->prompt[0], -1);
 			*myText->cursor = tempChar;
 
 			gr_color_set(menuItem::TEXT_COLOR_OVER_FOREGROUND);
@@ -2071,10 +2026,9 @@ void menuItemTextField::drawTextField(menuItemTextField *myItem, guiMenu *myMenu
 }
 
 bool menuItemTextField::handler(menuItemTextField *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
 	int32 status, temp;
-	char tempStr[80], *tempPtr;
+	char tempStr[80];
 
 	// Verify params
 	if (!myItem)
@@ -2084,9 +2038,9 @@ bool menuItemTextField::handler(menuItemTextField *myItem, int32 eventType, int3
 		return false;
 	}
 
-	redrawItem = false;
-	execCallback = false;
-	handled = true;
+	bool redrawItem = false;
+	bool execCallback = false;
+	const bool handled = true;
 
 	if (eventType == EVENT_MOUSE) {
 		switch (event) {
@@ -2113,7 +2067,7 @@ bool menuItemTextField::handler(menuItemTextField *myItem, int32 eventType, int3
 					temp = strlen(myItem->prompt);
 					if (temp > 0) {
 						Common::strcpy_s(tempStr, myItem->prompt);
-						tempPtr = &tempStr[temp];
+						char *tempPtr = &tempStr[temp];
 						gr_font_set(_GM(menuFont));
 						temp = gr_font_string_width(tempStr, -1);
 						while ((tempPtr != &tempStr[0]) && (temp > x - myItem->x1 - 26)) {
@@ -2246,9 +2200,7 @@ bool menuItemTextField::handler(menuItemTextField *myItem, int32 eventType, int3
 
 menuItemTextField *menuItemTextField::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
 	const char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
-	menuItemTextField *newItem;
 	menuItemTextField *textInfo;
-	ScreenContext *myScreen;
 	int32 status;
 
 	// Verify params
@@ -2256,7 +2208,7 @@ menuItemTextField *menuItemTextField::add(guiMenu *myMenu, int32 tag, int32 x, i
 		return nullptr;
 
 	// Allocate a new one
-	newItem = new menuItemTextField();
+	menuItemTextField *newItem = new menuItemTextField();
 
 	// Initialize the struct
 	newItem->next = myMenu->itemList;
@@ -2306,7 +2258,7 @@ menuItemTextField *menuItemTextField::add(guiMenu *myMenu, int32 tag, int32 x, i
 	(newItem->redraw)(newItem, myMenu, x, y, 0, 0);
 
 	// See if the screen is currently visible
-	myScreen = vmng_screen_find(myMenu, &status);
+	ScreenContext *myScreen = vmng_screen_find(myMenu, &status);
 	if (myScreen && (status == SCRN_ACTIVE)) {
 		RestoreScreens(myScreen->x1 + newItem->x1, myScreen->y1 + newItem->y1,
 			myScreen->x1 + newItem->x2, myScreen->y1 + newItem->y2);
