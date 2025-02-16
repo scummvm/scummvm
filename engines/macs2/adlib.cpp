@@ -126,7 +126,6 @@ void Adlib::Func27E4() {
 			local_counter++;
 		} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
 	}
-}
 
 void Adlib::Func2686() {
 	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
@@ -410,6 +409,9 @@ l0017_2629:
 	push	di
 	call	far 0017h:2FD6h
 	mov	byte ptr [0036h],1h
+	*/
+	g2258 = 0x10;
+	/*
 	mov	byte ptr [2258h],10h
 	sti
 	xor	ax,ax
@@ -709,10 +711,9 @@ void Adlib::OnTimer() {
 		// interrupt
 	}
 	// l0017_1ADE:
-	;
-	;
 	g2258 = g2258 & 0xDF;
 	if (g2258 & 0x2) {
+		// [2258] & 2 was not zero
 		// l0017_1AEF:
 		g2258 |= 0x40;
 	}
@@ -723,563 +724,555 @@ void Adlib::OnTimer() {
 		// l0017_1B03:
 		if (_nextEventTimer != 0) {
 			_nextEventTimer--;
-			// TODO: There is some more to do in theory, but might be neglible
-			/*
-			* l0017_2438:
-				cmp	byte ptr [229Ah],0h
-				jnz	2443h
-
-			l0017_243F:
-				mov	al,20h
-				out	20h,al
-			*/
+			// Original code also sends the "End of Interrupt" signal, which
+			// we don't need
 			return;
 		}
-		// l0017_1B19:
-		// TODO: Code does a cli, but probably neglible
+		///* Commented out from here on to fix indentation levels
+		//// l0017_1B19:
+		//// TODO: Code does a cli, but probably neglible
 
-		// TODO: Handle the loop properly
+		//// TODO: Handle the loop properly
 		for (;;) {
-			// l0017_1B1A:
-			uint8 current = peekByte();
-			if (current & 0x80) {
-				// l0017_1B27:
-				uint8 copy = peekByte();
-				g229B = copy;
-				g223E = copy;
-				data->seek(Func19BE(1), SEEK_SET);
-				g225A++;
-			}
-			// l0017_1B5F:
-			uint8 bp1;
-			uint8 bp2;
-			uint8 bp3 = g229B & 0x0F;
-			uint8 bp6 = g229B;
-			uint8 bp4 = peekByte();
-			uint16 bp10 = Func19BE(1);
-			// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
-			uint16 bp12;
-			uint8 bp5 = peekByteAt(bp10);
+		//	// l0017_1B1A:
+		//	uint8 current = peekByte();
+		//	if (current & 0x80) {
+		//		// l0017_1B27:
+		//		uint8 copy = peekByte();
+		//		g229B = copy;
+		//		g223E = copy;
+		//		data->seek(Func19BE(1), SEEK_SET);
+		//		g225A++;
+		//	}
+		//	// l0017_1B5F:
+		//	uint8 bp1;
+		//	uint8 bp2;
+		//	uint8 bp3 = g229B & 0x0F;
+		//	uint8 bp6 = g229B;
+		//	uint8 bp4 = peekByte();
+		//	uint16 bp10 = Func19BE(1);
+		//	// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
+		//	uint16 bp12;
+		//	uint8 bp5 = peekByteAt(bp10);
 
-			if ((bp6 & 0x0F) == 0x90) {
-				// l0017_1BA1:
-				if (bp5 != 0) {
-					// l0017_1BAA:
-					data->seek(Func19BE(2), SEEK_SET);
-					g225A += 2;
+		//	if ((bp6 & 0x0F) == 0x90) {
+		//		// l0017_1BA1:
+		//		if (bp5 != 0) {
+		//			// l0017_1BAA:
+		//			data->seek(Func19BE(2), SEEK_SET);
+		//			g225A += 2;
 
-					if (g2291 == 0x09 || bp3 < 0x0B) {
-						// l0017_1BE4:
-						// TODO: Is this the first usage?
-						uint8 bp8 = 0;
-						// TODO: Figure out the loop conditions and correct indentation
-						do {
-							// l0017_1BE9:
-							// TODO: Not sure if it's important to remove the higher bits as the
-							// original does
-							if (g2291 > bp8) {
-								// l0017_1BF3:
-								if (gArray222C[bp8] == 0) {
-									// l0017_1BFD:
-									uint8 v = gArray227F[bp8];
-									if (v == bp3) {
-										// l0017_1C09:
-										uint8 v2 = gArray2235[bp8];
-										if (v2 != bp4) {
-											// l0017_1C15:
-											bp8++;
-										} else {
-											break;
-										}
-									}
-								}
-							}
-							// TODO: Check if there is a better exit condition
-						} while (true);
-						// l0017_1C1A:
-						// TODO: Not sure about removal of AH bits in the original
-						if (g2291 == bp8) {
-							// l0017_1C27:
-							uint16 bp0C = 0;
-							// TODO: Not sure about upper bits removal for both
-							bp8 = g2291;
-							uint16 bp16 = g2291 - 1;
-							if (bp16 <= 0) {
-								// l0017_1C44:
-								uint16 bp0A = 0;
-								// TODO: Loop condition
-								do {
-									// l0017_1C49:
-									bp0A++;
-									// l0017_1C4C:
-									if (gArray222C[bp0A] != 0) {
-										// l0017_1C56:
-										gArray222C[bp0A]++;
-									}
-									// l0017_1C5D:
-									// TODO: Again several struct accesses that are not
-									// implemented yet
-									if (gArray222C[bp0A] > bp0C) {
-										// l0017_1C6B:
-										bp0C = gArray222C[bp0A];
-										bp8 = bp0A;
-									}
-									// l0017_1C7D:
-									if (bp0A == bp16) {
-										break;
-									}
-									// TODO: Continue from here
-								} while (true);
-							}
-							// l0017_1C85:
-							if (bp0C != 0) {
-								gArray222C[bp8] = 0;
-								gArray227F[bp8] = bp3;
-								// TODO: Original code uses a 16 bit register and clears the upper bit
-								// Not sure if this is really needed
-								if (gArray225F[bp3] != gArray2288[bp8]) {
-									// l0017_1CB1:
-									// TODO: Original uses 16 bit again and throws away
-									// upper 8
-									gArray2288[bp8] = gArray225F[bp3];
-									// TODO: Access an array via bp-3h
+		//			if (g2291 == 0x09 || bp3 < 0x0B) {
+		//				// l0017_1BE4:
+		//				// TODO: Is this the first usage?
+		//				uint8 bp8 = 0;
+		//				// TODO: Figure out the loop conditions and correct indentation
+		//				do {
+		//					// l0017_1BE9:
+		//					// TODO: Not sure if it's important to remove the higher bits as the
+		//					// original does
+		//					if (g2291 > bp8) {
+		//						// l0017_1BF3:
+		//						if (gArray222C[bp8] == 0) {
+		//							// l0017_1BFD:
+		//							uint8 v = gArray227F[bp8];
+		//							if (v == bp3) {
+		//								// l0017_1C09:
+		//								uint8 v2 = gArray2235[bp8];
+		//								if (v2 != bp4) {
+		//									// l0017_1C15:
+		//									bp8++;
+		//								} else {
+		//									break;
+		//								}
+		//							}
+		//						}
+		//					}
+		//					// TODO: Check if there is a better exit condition
+		//				} while (true);
+		//				// l0017_1C1A:
+		//				// TODO: Not sure about removal of AH bits in the original
+		//				if (g2291 == bp8) {
+		//					// l0017_1C27:
+		//					uint16 bp0C = 0;
+		//					// TODO: Not sure about upper bits removal for both
+		//					bp8 = g2291;
+		//					uint16 bp16 = g2291 - 1;
+		//					if (bp16 <= 0) {
+		//						// l0017_1C44:
+		//						uint16 bp0A = 0;
+		//						// TODO: Loop condition
+		//						do {
+		//							// l0017_1C49:
+		//							bp0A++;
+		//							// l0017_1C4C:
+		//							if (gArray222C[bp0A] != 0) {
+		//								// l0017_1C56:
+		//								gArray222C[bp0A]++;
+		//							}
+		//							// l0017_1C5D:
+		//							// TODO: Again several struct accesses that are not
+		//							// implemented yet
+		//							if (gArray222C[bp0A] > bp0C) {
+		//								// l0017_1C6B:
+		//								bp0C = gArray222C[bp0A];
+		//								bp8 = bp0A;
+		//							}
+		//							// l0017_1C7D:
+		//							if (bp0A == bp16) {
+		//								break;
+		//							}
+		//							// TODO: Continue from here
+		//						} while (true);
+		//					}
+		//					// l0017_1C85:
+		//					if (bp0C != 0) {
+		//						gArray222C[bp8] = 0;
+		//						gArray227F[bp8] = bp3;
+		//						// TODO: Original code uses a 16 bit register and clears the upper bit
+		//						// Not sure if this is really needed
+		//						if (gArray225F[bp3] != gArray2288[bp8]) {
+		//							// l0017_1CB1:
+		//							// TODO: Original uses 16 bit again and throws away
+		//							// upper 8
+		//							gArray2288[bp8] = gArray225F[bp3];
+		//							// TODO: Access an array via bp-3h
 
-									// TODO: Move an offset in global 2248 forward based on
-									// the struct
-									// TODO: Pushes
-									// push word ptr[224Ah]
-									// push word ptr[2248h]
-									// TODO: Is the data type wide enough?
-									// TODO: In the original code, we throw away the upper byte
-									// before the calculation
+		//							// TODO: Move an offset in global 2248 forward based on
+		//							// the struct
+		//							// TODO: Pushes
+		//							// push word ptr[224Ah]
+		//							// push word ptr[2248h]
+		//							// TODO: Is the data type wide enough?
+		//							// TODO: In the original code, we throw away the upper byte
+		//							// before the calculation
 
-									// TODO: Not sure if I have the resurn value of Func19BE completely
-									// TODO: Stay consistent which of the locals we use to save
-									// the return value
-									bp12 = Func19BE(gArray2288[bp8] << 0x4);
-									Func2839(bp8, bp12);
-								}
-								// l0017_1CF2:
-								if (g2291 == bp8) {
-									// l0017_1CFF:
-									gArray2235[bp4] = bp8;
-									// TODO: Argument missing so far
-									/* push word ptr[224Ah]
-									push	word ptr [2248h]
-									*/
-									// TODO: Original code throws away AH before and after
-									// the array access
-									uint16 value = gArray225F[bp3];
-									bp10 = Func19BE_TODO(value << 4);
-									// TODO: Not sure about amount of bits necessary
-									// for the following calculations
-									uint16 temp = bp5;
-									temp &= 0x7F;
-									// TODO: We throw away AH - should be superfluous
-									// after the AND
-									temp = temp >> 0x1;
-									temp -= 0x3F;
-									temp = temp >> 0x1;
-									// TODO: Again throwing away AH in the original
-									bp1 = temp >> 0x1;
-									// TODO: Need to give as argument
-									// push word ptr[bp - 0Eh]
-									// push word ptr[bp - 10h]
-									bp12 = Func19BE_TODO(0x2);
-									// TODO: Set result back
-									// mov	[bp-14h],ax
-									// mov[bp - 12h], dx
+		//							// TODO: Not sure if I have the resurn value of Func19BE completely
+		//							// TODO: Stay consistent which of the locals we use to save
+		//							// the return value
+		//							bp12 = Func19BE(gArray2288[bp8] << 0x4);
+		//							Func2839(bp8, bp12);
+		//						}
+		//						// l0017_1CF2:
+		//						if (g2291 == bp8) {
+		//							// l0017_1CFF:
+		//							gArray2235[bp4] = bp8;
+		//							// TODO: Argument missing so far
+		//							/* push word ptr[224Ah]
+		//							push	word ptr [2248h]
+		//							*/
+		//							// TODO: Original code throws away AH before and after
+		//							// the array access
+		//							uint16 value = gArray225F[bp3];
+		//							bp10 = Func19BE_TODO(value << 4);
+		//							// TODO: Not sure about amount of bits necessary
+		//							// for the following calculations
+		//							uint16 temp = bp5;
+		//							temp &= 0x7F;
+		//							// TODO: We throw away AH - should be superfluous
+		//							// after the AND
+		//							temp = temp >> 0x1;
+		//							temp -= 0x3F;
+		//							temp = temp >> 0x1;
+		//							// TODO: Again throwing away AH in the original
+		//							bp1 = temp >> 0x1;
+		//							// TODO: Need to give as argument
+		//							// push word ptr[bp - 0Eh]
+		//							// push word ptr[bp - 10h]
+		//							bp12 = Func19BE_TODO(0x2);
+		//							// TODO: Set result back
+		//							// mov	[bp-14h],ax
+		//							// mov[bp - 12h], dx
 
-									temp = g225E;         // TODO: xor	ah,ah
-									uint8 temp2 = temp; // bx = ax
-									// TODO: Read from [bp-14h] - using temp for al
-									// les	di,[bp-14h]
-									// mov al, es : [di]
-									temp &= 0x3F;         // TODO: xor	ah,ah
-									uint8 temp3 = temp; // dx = ax
-									temp = 0x3F;
-									// TODO: Not sure if these should be 16 bit values
-									temp -= temp3;
-									temp3 = temp;
-									temp = bp1; // TODO: xor	ah,ah
-									// TODO: Should these be 16 bit?
-									temp = temp * temp3;
+		//							temp = g225E;         // TODO: xor	ah,ah
+		//							uint8 temp2 = temp; // bx = ax
+		//							// TODO: Read from [bp-14h] - using temp for al
+		//							// les	di,[bp-14h]
+		//							// mov al, es : [di]
+		//							temp &= 0x3F;         // TODO: xor	ah,ah
+		//							uint8 temp3 = temp; // dx = ax
+		//							temp = 0x3F;
+		//							// TODO: Not sure if these should be 16 bit values
+		//							temp -= temp3;
+		//							temp3 = temp;
+		//							temp = bp1; // TODO: xor	ah,ah
+		//							// TODO: Should these be 16 bit?
+		//							temp = temp * temp3;
 
-									// TODO: cwd
-									uint16 tempCX = 0x3F;
-									temp /= tempCX;
-									temp += temp2;
-									temp3 = temp;
-									// TODO: Need to read from pointer
-									// les	di,[bp-14h]
-									// mov al, es : [di]
-									temp &= 0x3F; // TODO: xor ah,ah
-									temp += temp3;
-									bp2 = temp;
-									// TODO: Need to pass arguments
-									// push	word ptr [bp-0Eh]
-									// push word ptr[bp - 10h]
-									Func19BE_TODO(0x3);
-									// TODO: Assign result to pointer
-									// mov	[bp-14h],ax
-									// mov[bp - 12h], dx
-									temp = g225E; // TODO: xor ah,ah
-									uint16 tempBX = temp;
-									// TODO: Assign from pointer
-									// les	di,[bp-14h]
-									// mov al, es : [di]
-									temp &= 0x3F; // TODO: xor ah, ah
-									uint16 tempDX = temp;
-									temp = 0x3F;
-									temp -= tempDX;
-									tempDX = temp;
-									temp = bp1; // TODO: xor ah, ah
-									temp *= tempDX;
-									// TODO: CWD
-									tempCX = 0x3F;
-									temp /= tempCX;
-									temp += tempBX;
-									tempDX = temp;
-									// TODO: Load from data
-									// les	di,[bp-14h]
-									// mov al, es : [di]
-									temp &= 0x3F; // TODO: xor ah,ah
-									temp += tempDX;
-									bp1 = temp; // TODO: al part only
-									if (bp1 > 0x3F) {
-										// l0017_1DEC:
-										bp1 = 0x3F;
-									}
-									// l0017_1DF0:
-									if (bp2 > 0x3F) {
-										// l0017_1DF6:
-										bp2 = 0x3F;
-									}
-									// 1DFAh
-									// TODO: Careful if argument are correct here,
-									// I stumbled over the 2 pushed values before calling
-									// the 1-arg function 2779
-									Func2792(bp8 + 0xb0, 0);
+		//							// TODO: cwd
+		//							uint16 tempCX = 0x3F;
+		//							temp /= tempCX;
+		//							temp += temp2;
+		//							temp3 = temp;
+		//							// TODO: Need to read from pointer
+		//							// les	di,[bp-14h]
+		//							// mov al, es : [di]
+		//							temp &= 0x3F; // TODO: xor ah,ah
+		//							temp += temp3;
+		//							bp2 = temp;
+		//							// TODO: Need to pass arguments
+		//							// push	word ptr [bp-0Eh]
+		//							// push word ptr[bp - 10h]
+		//							Func19BE_TODO(0x3);
+		//							// TODO: Assign result to pointer
+		//							// mov	[bp-14h],ax
+		//							// mov[bp - 12h], dx
+		//							temp = g225E; // TODO: xor ah,ah
+		//							uint16 tempBX = temp;
+		//							// TODO: Assign from pointer
+		//							// les	di,[bp-14h]
+		//							// mov al, es : [di]
+		//							temp &= 0x3F; // TODO: xor ah, ah
+		//							uint16 tempDX = temp;
+		//							temp = 0x3F;
+		//							temp -= tempDX;
+		//							tempDX = temp;
+		//							temp = bp1; // TODO: xor ah, ah
+		//							temp *= tempDX;
+		//							// TODO: CWD
+		//							tempCX = 0x3F;
+		//							temp /= tempCX;
+		//							temp += tempBX;
+		//							tempDX = temp;
+		//							// TODO: Load from data
+		//							// les	di,[bp-14h]
+		//							// mov al, es : [di]
+		//							temp &= 0x3F; // TODO: xor ah,ah
+		//							temp += tempDX;
+		//							bp1 = temp; // TODO: al part only
+		//							if (bp1 > 0x3F) {
+		//								// l0017_1DEC:
+		//								bp1 = 0x3F;
+		//							}
+		//							// l0017_1DF0:
+		//							if (bp2 > 0x3F) {
+		//								// l0017_1DF6:
+		//								bp2 = 0x3F;
+		//							}
+		//							// 1DFAh
+		//							// TODO: Careful if argument are correct here,
+		//							// I stumbled over the 2 pushed values before calling
+		//							// the 1-arg function 2779
+		//							Func2792(bp8 + 0xb0, 0);
 
-									// TODO: Confirm that these are indeed identical
-									uint8 arg1 = gArray96[bp8] + 0x40;
-									uint8 arg2 = gArray96[bp8] + 0x40;
+		//							// TODO: Confirm that these are indeed identical
+		//							uint8 arg1 = gArray96[bp8] + 0x40;
+		//							uint8 arg2 = gArray96[bp8] + 0x40;
 
-									uint8 result = Func2779(arg2);
-									Func2792(arg1, (result & 0xC0) + bp1);
-									result = Func2779(
-										gArray8d[bp8] + 0x40);
+		//							uint8 result = Func2779(arg2);
+		//							Func2792(arg1, (result & 0xC0) + bp1);
+		//							result = Func2779(
+		//								gArray8d[bp8] + 0x40);
 
-									// Note that we again push one more copy of the
-									// value which is not used in g2779 above.
-									Func2792(gArray8d[bp8] + 0x40,
-											 result & 0xC0 + bp2);
-									// TODO: Do we need to do something about
-									// the upper 8 bits?
-									gArray226F[bp3] = 0;
-									Func294E(bp8, bp4, gArray226F[bp3]);
-								}
-								// TODO: Figure out the logic here, I think
-								// I got lost with jumps
-								// l0017_1E91:
-								// jmp 2095h
-							}
-						}
-						// TODO: Should be 1CF2
-						// TODO: Check if this is an else or just an if
-					}
-					// TODO: Should be 1E94h
-					// l0017_1E94:
+		//							// Note that we again push one more copy of the
+		//							// value which is not used in g2779 above.
+		//							Func2792(gArray8d[bp8] + 0x40,
+		//									 result & 0xC0 + bp2);
+		//							// TODO: Do we need to do something about
+		//							// the upper 8 bits?
+		//							gArray226F[bp3] = 0;
+		//							Func294E(bp8, bp4, gArray226F[bp3]);
+		//						}
+		//						// TODO: Figure out the logic here, I think
+		//						// I got lost with jumps
+		//						// l0017_1E91:
+		//						// jmp 2095h
+		//					}
+		//				}
+		//				// TODO: Should be 1CF2
+		//				// TODO: Check if this is an else or just an if
+		//			}
+		//			// TODO: Should be 1E94h
+		//			// l0017_1E94:
 
-					// TODO: These pushes are not arguments for 19BE
-					// push	word ptr [224Ah]
-					// push word ptr[2248h]
-					// TODO: xor ah, ah
-					// Note: Original code returns a pointer via ax:dx, we just save the offset here so far
-					// Original code saves results to bp10 and bp0E
-					bp10 = Func19BE(gArray225F[bp3] << 0x4);
-					// TODO: Several xor ah,ahs in here
-					uint8 bp8 = gArray57[bp3 - 0xB];
-					if (bp3 == 0xB) {
-						// l0017_1ED1:
-						// TODO: These pushes are not arguments for 19BE
-						// push	word ptr [224Ah]
-						// push word ptr[2248h]
-						// TODO: Some xor ah,ah in here
-						uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
+		//			// TODO: These pushes are not arguments for 19BE
+		//			// push	word ptr [224Ah]
+		//			// push word ptr[2248h]
+		//			// TODO: xor ah, ah
+		//			// Note: Original code returns a pointer via ax:dx, we just save the offset here so far
+		//			// Original code saves results to bp10 and bp0E
+		//			bp10 = Func19BE(gArray225F[bp3] << 0x4);
+		//			// TODO: Several xor ah,ahs in here
+		//			uint8 bp8 = gArray57[bp3 - 0xB];
+		//			if (bp3 == 0xB) {
+		//				// l0017_1ED1:
+		//				// TODO: These pushes are not arguments for 19BE
+		//				// push	word ptr [224Ah]
+		//				// push word ptr[2248h]
+		//				// TODO: Some xor ah,ah in here
+		//				uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
 
-						// TODO: xor ah,ah
-						Func2839(gArray5C[bp3 - 0xB], bp14);
-						
-					} else {
-						// l0017_1F12:
-						// TODO: Not sure if the way of using [bp-10h] is working 
-						Func2792(bp8 + 0x20, peekByteAt(bp10));
-						// TODO: Really need to rework 19BE implementation
-						// TODO: Actual call and arguments for 19BE
-						/*
-						push	word ptr [bp-0Eh]
-						push	word ptr [bp-10h]
-						push	2h
-						call	far 0017h:19BEh
-						*/
-						// TODO: Need to start applying these
-						Common::MemorySeekableReadWriteStream streamBP0E(nullptr, 0);
-						Common::MemorySeekableReadWriteStream r19BE = Func19BE_2(streamBP0E, 2);
-						// TODO: For some reason, the argument for 2729 is pushed before
-						// the call to 19BE above
-						// 						
-						Func2792(bp8 + 0x40, r19BE.readByte());
-						
-						Common::MemorySeekableReadWriteStream r19BE_2 = Func19BE_2(streamBP0E, 0x4);
-						Func2792(bp8 + 0x60, r19BE_2.readByte());
+		//				// TODO: xor ah,ah
+		//				Func2839(gArray5C[bp3 - 0xB], bp14);
+		//
+		//			} else {
+		//				// l0017_1F12:
+		//				// TODO: Not sure if the way of using [bp-10h] is working
+		//				Func2792(bp8 + 0x20, peekByteAt(bp10));
+		//				// TODO: Really need to rework 19BE implementation
+		//				// TODO: Actual call and arguments for 19BE
+		//				/*
+		//				push	word ptr [bp-0Eh]
+		//				push	word ptr [bp-10h]
+		//				push	2h
+		//				call	far 0017h:19BEh
+		//				*/
+		//				// TODO: Need to start applying these
+		//				Common::MemorySeekableReadWriteStream streamBP0E(nullptr, 0);
+		//				Common::MemorySeekableReadWriteStream r19BE = Func19BE_2(streamBP0E, 2);
+		//				// TODO: For some reason, the argument for 2729 is pushed before
+		//				// the call to 19BE above
+		//				//
+		//				Func2792(bp8 + 0x40, r19BE.readByte());
+		//
+		//				Common::MemorySeekableReadWriteStream r19BE_2 = Func19BE_2(streamBP0E, 0x4);
+		//				Func2792(bp8 + 0x60, r19BE_2.readByte());
 
-						Common::MemorySeekableReadWriteStream r19BE_3 = Func19BE_2(streamBP0E, 0x6);
-						Func2792(bp8 + 0x80, r19BE_3.readByte());
+		//				Common::MemorySeekableReadWriteStream r19BE_3 = Func19BE_2(streamBP0E, 0x6);
+		//				Func2792(bp8 + 0x80, r19BE_3.readByte());
 
-						StreamHandler *shBP0E = new StreamHandler(&streamBP0E);
-						// TODO: Who deletes these when?
-						StreamHandler *r19BE_SH = Func19BE_SH(shBP0E, 0x8);
-						Func2792(bp8 + 0xE0, r19BE_SH->readByte());
-					}
-					// l0017_1FA9:
-					// TODO: xor ah,ah
-					StreamHandler* shBP10 = Func19BE_SH(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
-					
-					bp1 = gArray37[((shBP10->peekByte() & 0x3F) >> 0x4) << 0x3 + (bp5 >> 4)];
-					bp1 += g225E;
-					if (bp1 > 0x3F) {
-						// l0017_200C:
-						bp1 = 0x3F;
-					}
-					// l0017_2010:
-					Func2792(gArray5C[bp3 - 0x0B], 0);
-					uint8 r2779 = Func2779(bp8 + 0x40);
-					Func2792(bp8 + 0x40, bp1 + (r2779 & 0xC0));
+		//				StreamHandler *shBP0E = new StreamHandler(&streamBP0E);
+		//				// TODO: Who deletes these when?
+		//				StreamHandler *r19BE_SH = Func19BE_SH(shBP0E, 0x8);
+		//				Func2792(bp8 + 0xE0, r19BE_SH->readByte());
+		//			}
+		//			// l0017_1FA9:
+		//			// TODO: xor ah,ah
+		//			StreamHandler* shBP10 = Func19BE_SH(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
+		//
+		//			bp1 = gArray37[((shBP10->peekByte() & 0x3F) >> 0x4) << 0x3 + (bp5 >> 4)];
+		//			bp1 += g225E;
+		//			if (bp1 > 0x3F) {
+		//				// l0017_200C:
+		//				bp1 = 0x3F;
+		//			}
+		//			// l0017_2010:
+		//			Func2792(gArray5C[bp3 - 0x0B], 0);
+		//			uint8 r2779 = Func2779(bp8 + 0x40);
+		//			Func2792(bp8 + 0x40, bp1 + (r2779 & 0xC0));
 
-					Func2A80(gArray5C[bp3 - 0x0B], bp4, 0);
-					uint8 bx = Func2779(0xBD);
-					uint8 dx = bp3;
-					dx = 0x0F - dx;
-					Func2792(0xBD, (1 << dx) | bx);
-					//    TODO: Continue from here
-				}
-				// TODO: This must be 2097h
+		//			Func2A80(gArray5C[bp3 - 0x0B], bp4, 0);
+		//			uint8 bx = Func2779(0xBD);
+		//			uint8 dx = bp3;
+		//			dx = 0x0F - dx;
+		//			Func2792(0xBD, (1 << dx) | bx);
+		//			//    TODO: Continue from here
+		//		}
+		//		// TODO: This must be 2097h
 
-				// TODO: I think I lost the indentation level for this one:
-				// l0017_2095:
-				// jmp 209Bh
+		//		// TODO: I think I lost the indentation level for this one:
+		//		// l0017_2095:
+		//		// jmp 209Bh
 
-				// l0017_2097
-				bp6 = 0x80;
-			}
-			// TODO: This must be 209Bh
-			// l0017_209B:
-			if ((bp6 & 0xF0) == 0x80) {
-				// l0017_20A7:
+		//		// l0017_2097
+		//		bp6 = 0x80;
+		//	}
+		//	// TODO: This must be 209Bh
+		//	// l0017_209B:
+		//	if ((bp6 & 0xF0) == 0x80) {
+		//		// l0017_20A7:
 
-				// TODO: Better place for these two
-				Macs2::StreamHandler *sh2252;
-				Macs2::StreamHandler *sh225A;
-				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x2);
-				sh2252 = shResult;
-				sh225A->seek(2, SEEK_CUR);
-				uint8 bp16 = g2291 - 1;
-				if (0 <= bp16) {
-					// l0017_20E1:
-					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
-						// l0017_20E9:
-						if (gArray222C[bp0A] != 0) {
-							// l0017_20F3:
-							gArray222C[bp0A]++;
-						}
-					}
-				} 
-				// l0017_2102 and l0017_2109:
-				if (g2291 == 0x09 || bp3 < 0x0B) {
-					// l0017_210F:
-					uint8 bp8 = 0;
-					// l0017_2114:
-					while (g2291 > bp8) {
-						// l0017_211E:
-						// TODO: Continue here
-						if (gArray222C[bp8] == 0) {
-							// l0017_2128:
-							if (gArray227F[bp8] == bp3) {
-								// l0017_2134:
-								if (gArray2235[bp8] == bp4) {
-									break;
-								}
-							}
-						}
-						// l0017_2140:
-						bp8++;
-					}
-					// l0017_2145:
-					if (g2291 != bp8) {
-						// l0017_214F:
-						Func2A80(bp8, bp4, gArray226F[bp3]);
-						gArray222C[bp8] = 1;
-					}
-				} else {
-					// l0017_2172:
-					uint8 bx = Func2779(0xBD);
-					uint8 dx = bp3;
-					uint8 ax = 0x0F - dx;
-					dx = ax;
-					ax = 1 << dx;
-					dx = ax;
-					ax = (0xFF - dx) & bx;
-					Func2792(0xBD, ax);
-				}
-			} 
-			// l0017_21A3 and l0017_21AC:
-			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
-				// l0017_21B5:
-				// TODO: Define in the header
-				Macs2::StreamHandler *sh2252;
-				Macs2::StreamHandler *sh225A;
-				sh2252 = Func19BE_SH(sh2252, 0x2);
-				sh225A->seek(0x2, SEEK_CUR);
-			}
-			// l0017_21DF:
-			if ((bp6 & 0xF0) == 0xB0) {
-				// l0017_21EB:
-				Macs2::StreamHandler *sh2252;
-				Macs2::StreamHandler *sh225A;
-				sh2252 = Func19BE_SH(sh2252, 0x2);
-				sh225A->seek(0x2, SEEK_CUR);
-				if (bp4 == 0x66) {
-					// l0017_221C:
-					g2259 = bp5;
-					g2258 = g2258 | 0x20;
-				} else {
-					// l0017_222D:
-					if (bp4 == 0x67) {
-						// TODO: Continue from here
-						// l0017_2231:
-						if (bp5 != 0) {
-							// l0017_2237:
-							g2291 = 0x6;
-							Func2792(0xBD, 0x20);
-						} else {
-							// l0017_2247:
-							g2291 = 0x9;
-							Func2792(0xBD, 0);
-						}
-					} else {
-						// l0017_2258:
-						if (bp4 == 0x69) {
-							// l0017_225C:
-							// TODO: Check if the neg works out the right way
-							bp5 = -bp5;
-							gArray226F[bp3] = bp5;
-							uint8 bp16 = g2291 - 1;
-							if (0 <= bp16) {
-								// l0017_2289:
-								for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-									// l0017_228C:
-									if (gArray227F[bp8] != bp3) {
-										continue;
-									}
-									// l0017_2298:
-									if (gArray222C[bp8] != 0) {
-										continue;
-									}
+		//		// TODO: Better place for these two
+		//		Macs2::StreamHandler *sh2252;
+		//		Macs2::StreamHandler *sh225A;
+		//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x2);
+		//		sh2252 = shResult;
+		//		sh225A->seek(2, SEEK_CUR);
+		//		uint8 bp16 = g2291 - 1;
+		//		if (0 <= bp16) {
+		//			// l0017_20E1:
+		//			for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
+		//				// l0017_20E9:
+		//				if (gArray222C[bp0A] != 0) {
+		//					// l0017_20F3:
+		//					gArray222C[bp0A]++;
+		//				}
+		//			}
+		//		}
+		//		// l0017_2102 and l0017_2109:
+		//		if (g2291 == 0x09 || bp3 < 0x0B) {
+		//			// l0017_210F:
+		//			uint8 bp8 = 0;
+		//			// l0017_2114:
+		//			while (g2291 > bp8) {
+		//				// l0017_211E:
+		//				// TODO: Continue here
+		//				if (gArray222C[bp8] == 0) {
+		//					// l0017_2128:
+		//					if (gArray227F[bp8] == bp3) {
+		//						// l0017_2134:
+		//						if (gArray2235[bp8] == bp4) {
+		//							break;
+		//						}
+		//					}
+		//				}
+		//				// l0017_2140:
+		//				bp8++;
+		//			}
+		//			// l0017_2145:
+		//			if (g2291 != bp8) {
+		//				// l0017_214F:
+		//				Func2A80(bp8, bp4, gArray226F[bp3]);
+		//				gArray222C[bp8] = 1;
+		//			}
+		//		} else {
+		//			// l0017_2172:
+		//			uint8 bx = Func2779(0xBD);
+		//			uint8 dx = bp3;
+		//			uint8 ax = 0x0F - dx;
+		//			dx = ax;
+		//			ax = 1 << dx;
+		//			dx = ax;
+		//			ax = (0xFF - dx) & bx;
+		//			Func2792(0xBD, ax);
+		//		}
+		//	}
+		//	// l0017_21A3 and l0017_21AC:
+		//	if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
+		//		// l0017_21B5:
+		//		// TODO: Define in the header
+		//		Macs2::StreamHandler *sh2252;
+		//		Macs2::StreamHandler *sh225A;
+		//		sh2252 = Func19BE_SH(sh2252, 0x2);
+		//		sh225A->seek(0x2, SEEK_CUR);
+		//	}
+		//	// l0017_21DF:
+		//	if ((bp6 & 0xF0) == 0xB0) {
+		//		// l0017_21EB:
+		//		Macs2::StreamHandler *sh2252;
+		//		Macs2::StreamHandler *sh225A;
+		//		sh2252 = Func19BE_SH(sh2252, 0x2);
+		//		sh225A->seek(0x2, SEEK_CUR);
+		//		if (bp4 == 0x66) {
+		//			// l0017_221C:
+		//			g2259 = bp5;
+		//			g2258 = g2258 | 0x20;
+		//		} else {
+		//			// l0017_222D:
+		//			if (bp4 == 0x67) {
+		//				// TODO: Continue from here
+		//				// l0017_2231:
+		//				if (bp5 != 0) {
+		//					// l0017_2237:
+		//					g2291 = 0x6;
+		//					Func2792(0xBD, 0x20);
+		//				} else {
+		//					// l0017_2247:
+		//					g2291 = 0x9;
+		//					Func2792(0xBD, 0);
+		//				}
+		//			} else {
+		//				// l0017_2258:
+		//				if (bp4 == 0x69) {
+		//					// l0017_225C:
+		//					// TODO: Check if the neg works out the right way
+		//					bp5 = -bp5;
+		//					gArray226F[bp3] = bp5;
+		//					uint8 bp16 = g2291 - 1;
+		//					if (0 <= bp16) {
+		//						// l0017_2289:
+		//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+		//							// l0017_228C:
+		//							if (gArray227F[bp8] != bp3) {
+		//								continue;
+		//							}
+		//							// l0017_2298:
+		//							if (gArray222C[bp8] != 0) {
+		//								continue;
+		//							}
 
-									// l0017_22A2:
-									Func294E(bp8, gArray2235[bp8], bp5);
-								}
-							}
-						}
-						// l0017_22C1:
-						if (bp4 == 0x68) {
-							// l0017_22C5:
-							gArray226F[bp3] = bp5;
-							uint16 bp16 = g2291 - 1;
-							if (0 <= bp16) {
-								// l0017_22E3:
-								for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-									// l0017_22EB:
-									if (gArray227F[bp8] != bp3) {
-										continue;
-									}
-									// l0017_22F7:
-									if (gArray222C[bp8] != 0) {
-										continue;
-									}
-									// l0017_2301:
-									Func294E(bp8, gArray2235[bp8], bp5);
-								}
-							}
-						}
-						
-					}
-				}
-			}
-			// TODO: Not sure about indentation level here
-			// l0017_231E:
-			if ((bp6 & 0xF0) == 0xC0) {
-				// l0017_2327:
-				Macs2::StreamHandler *sh2252;
-				Macs2::StreamHandler *sh225A;
-				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
-				sh2252 = shResult;
-				// TODO: Check if this is the right way to handle the plus operation
-				sh225A->seek(1, SEEK_CUR);
-				gArray225F[bp3] = bp4;
-			}
-			// l0017_2355:
-			if ((bp6 & 0xF0) == 0xD0) {
-				// l0017_235E:
-				Macs2::StreamHandler *sh2252;
-				Macs2::StreamHandler *sh225A;
-				Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
-				sh2252 = shResult;
-				// TODO: Check if this is the right way to handle the plus operation
-				sh225A->seek(1, SEEK_CUR);
-			}
-			// l0017_237E:
-			if ((bp6 & 0xF0) == 0xF0) {
-				// l0017_2387:
-				if (bp4 == 0x2F) {
-					// l0017_238D:
-					Macs2::StreamHandler *sh2244;
-					Macs2::StreamHandler *sh2250;
-					sh2250 = sh2244;
-					// TODO: Setting 225C and 225A to 0 - ?
-					// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
-					// mov	byte ptr [2259h],0h
-					// mov byte ptr[2242h], 1h
-					Func1A03();
-				} else {
-					// l0017_23B4:
-					// TODO: Identical code as the previous branch?
-				}
-			} else {
-				// l0017_23DB:
-				Func1A03();
-			}
-			// l0017_23E0:
-			// TODO: Check the logic of the if here
-			if ((g2256 <= 0) || ((g2256 >= 0) && (g2254 > 0x0FFF)) {
-				// l0017_23F1:
-				// TODO: Identical code as the previous branch?
-				// The code in l0017_238D:
-			}
-			// l0017_2416:
-			if ((g2256 | g2256) == 0) {
-				// TODO: Big jump back up
-				// l0017_241F:
-				// jmp 1B1Ah
-			} else {
-				// l0017_2422:
-				// TODO: sti
-			}
-			// TODO: Absolutely not sure about indentation here any more
-			// l0017_2423:
-			// jmp	2438h
+		//							// l0017_22A2:
+		//							Func294E(bp8, gArray2235[bp8], bp5);
+		//						}
+		//					}
+		//				}
+		//				// l0017_22C1:
+		//				if (bp4 == 0x68) {
+		//					// l0017_22C5:
+		//					gArray226F[bp3] = bp5;
+		//					uint16 bp16 = g2291 - 1;
+		//					if (0 <= bp16) {
+		//						// l0017_22E3:
+		//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+		//							// l0017_22EB:
+		//							if (gArray227F[bp8] != bp3) {
+		//								continue;
+		//							}
+		//							// l0017_22F7:
+		//							if (gArray222C[bp8] != 0) {
+		//								continue;
+		//							}
+		//							// l0017_2301:
+		//							Func294E(bp8, gArray2235[bp8], bp5);
+		//						}
+		//					}
+		//				}
+		//
+		//			}
+		//		}
+		//	}
+		//	// TODO: Not sure about indentation level here
+		//	// l0017_231E:
+		//	if ((bp6 & 0xF0) == 0xC0) {
+		//		// l0017_2327:
+		//		Macs2::StreamHandler *sh2252;
+		//		Macs2::StreamHandler *sh225A;
+		//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
+		//		sh2252 = shResult;
+		//		// TODO: Check if this is the right way to handle the plus operation
+		//		sh225A->seek(1, SEEK_CUR);
+		//		gArray225F[bp3] = bp4;
+		//	}
+		//	// l0017_2355:
+		//	if ((bp6 & 0xF0) == 0xD0) {
+		//		// l0017_235E:
+		//		Macs2::StreamHandler *sh2252;
+		//		Macs2::StreamHandler *sh225A;
+		//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
+		//		sh2252 = shResult;
+		//		// TODO: Check if this is the right way to handle the plus operation
+		//		sh225A->seek(1, SEEK_CUR);
+		//	}
+		//	// l0017_237E:
+		//	if ((bp6 & 0xF0) == 0xF0) {
+		//		// l0017_2387:
+		//		if (bp4 == 0x2F) {
+		//			// l0017_238D:
+		//			Macs2::StreamHandler *sh2244;
+		//			Macs2::StreamHandler *sh2250;
+		//			sh2250 = sh2244;
+		//			// TODO: Setting 225C and 225A to 0 - ?
+		//			// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
+		//			// mov	byte ptr [2259h],0h
+		//			// mov byte ptr[2242h], 1h
+		//			Func1A03();
+		//		} else {
+		//			// l0017_23B4:
+		//			// TODO: Identical code as the previous branch?
+		//		}
+		//	} else {
+		//		// l0017_23DB:
+		//		Func1A03();
+		//	}
+		//	// l0017_23E0:
+		//	// TODO: Check the logic of the if here
+		//	if ((g2256 <= 0) || ((g2256 >= 0) && (g2254 > 0x0FFF)) {
+		//		// l0017_23F1:
+		//		// TODO: Identical code as the previous branch?
+		//		// The code in l0017_238D:
+		//	}
+		
+		//	// TODO: Absolutely not sure about indentation here any more
+		//	// l0017_2423:
+		//	// jmp	2438h
+
+		// l0017_2416:
+		if (_nextEventTimer != 0) {
+			break;
+		}
 	}
+	// l0017_2422
+	// TODO: sti
 	// l0017_2425:
 	if ((g2258 & 0xC2) != 0) {
 		// l0017_242E:
@@ -1298,7 +1291,6 @@ void Adlib::OnTimer() {
 	}
 	// l0017_2443:
 	// Just epilogue and interrupt return
-
 }
 
 uint16 Adlib::Func19BE(uint8 offset) {
