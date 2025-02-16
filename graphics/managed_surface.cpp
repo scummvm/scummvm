@@ -41,7 +41,7 @@ ManagedSurface::ManagedSurface(const ManagedSurface &surf) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0), _transparentColorSet(false), _palette(nullptr) {
-	*this = surf;
+	copyFrom(surf);
 }
 
 ManagedSurface::ManagedSurface(ManagedSurface &&surf) :
