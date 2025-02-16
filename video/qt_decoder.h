@@ -95,6 +95,8 @@ public:
 	int getCurrentColumn() { return _nextVideoTrack->getCurFrame() % _nav.columns; }
 	void setCurrentColumn(int column);
 
+	int getZoomState() { return _zoomState; }
+
 	const PanoHotSpot *getRolloverHotspot() { return _rolloverHotspot; }
 	const PanoHotSpot *getClickedHotspot() { return _clickedHotspot; }
 
@@ -163,6 +165,14 @@ public:
 	bool _isKeyDown = false;
 	Common::KeyState _lastKey;
 
+	enum {
+		kZoomNone,
+		kZoomQuestion,
+		kZoomIn,
+		kZoomOut,
+		kZoomLimit,
+	};
+
 private:
 	Common::Rect _curBbox;
 
@@ -191,14 +201,6 @@ private:
 			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
 
 	bool _enableEditListBoundsCheckQuirk;
-
-	enum {
-		kZoomNone,
-		kZoomQuestion,
-		kZoomIn,
-		kZoomOut,
-		kZoomLimit,
-	};
 
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
