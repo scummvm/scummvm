@@ -906,6 +906,7 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (_xtra->_mouseDownHandler.empty()) {
+			_xtra->_passMouseDown = true;
 			_xtra->_video->handleMouseButton(true, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		} else {
 			_xtra->_passMouseDown = false;
