@@ -105,7 +105,29 @@ void KeypollXtra::m_new(int nargs) {
 }
 
 XOBJSTUB(KeypollXtra::m_xtra, 0)
-XOBJSTUB(KeypollXtra::m_bgOneKey, 0)
+
+void KeypollXtra::m_bgOneKey(int nargs) {
+	ARGNUMCHECK(1);
+
+	Common::Event event;
+
+	int requestedKey = g_lingo->pop().asInt();
+
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == requestedKey) {
+				g_lingo->push(1);
+				return;
+			}
+		default:
+			break;
+		}
+	}
+
+	g_lingo->push(0);
+}
+
 XOBJSTUB(KeypollXtra::m_bgAllKeys, 0)
 
 }
