@@ -633,7 +633,7 @@ void Room305::parser() {
 
 		_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-			0x500, 0, triggerMachineByHashCallback, "rip");
+			0x500, false, triggerMachineByHashCallback, "rip");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _rip6, 1, 1, 1,
 			_G(flags)[V000] == 1 ? 200 : 300,
@@ -760,7 +760,7 @@ next2:
 				(takeFlag && inv_object_is_here(_G(player).noun))) {
 				if (chiselFlag) {
 					if (player_said("CHISEL")) {
-						ws_walk(_G(my_walker), 186, 279, 0, 1, 10);
+						ws_walk(_G(my_walker), 186, 279, nullptr, 1, 10);
 					}
 				} else {
 					kernel_timing_trigger(1, 1);
@@ -810,9 +810,8 @@ next2:
 next3:
 	caseFlag = player_said_any("GERMAN BANKNOTE", "REBUS AMULET", "SILVER BUTTERFLY",
 		"POSTAGE STAMP", "STICK AND SHELL MAP") && player_said("DISPLAY CASE");
-	// The second or parameter looks redundant, but I'm keeping it in as a reminder,
-	// just in case there's something actually different in the original disassembly
-	if (caseFlag || (takeFlag && caseFlag)) {
+
+	if (caseFlag || (takeFlag && player_said_any("GERMAN BANKNOTE", "REBUS AMULET", "SILVER BUTTERFLY", "POSTAGE STAMP", "STICK AND SHELL MAP"))) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			if ((caseFlag && inv_player_has(_G(player).verb)) ||
@@ -1371,17 +1370,17 @@ Common::String Room305::getXAreaDigi2() const {
 }
 
 int Room305::getItemX(int seriesHash) const {
-	int w = ws_get_sprite_width(seriesHash, 0);
+	const int w = ws_get_sprite_width(seriesHash, 0);
 	int result = (640 - w) / 2;
 
-	int sx1 = _G(game_buff_ptr)->x1;
+	const int sx1 = _G(game_buff_ptr)->x1;
 	result += imath_abs(sx1);
 
 	return result;
 }
 
 int Room305::getItemY(int seriesHash) const {
-	int h = ws_get_sprite_height(seriesHash, 0);
+	const int h = ws_get_sprite_height(seriesHash, 0);
 	return (374 - h) / 2;
 }
 
