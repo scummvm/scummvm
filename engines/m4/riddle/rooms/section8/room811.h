@@ -49,7 +49,7 @@ private:
 	int32 _811BA05Series = 0;
 	int32 _811MC01Series = 0;
 	int32 _811RP01Series = 0;
-	int32 _811EndSeries;
+	int32 _811EndSeries = 0;
 
 	machine *_811BaronMach = nullptr;
 	machine *_811McMach = nullptr;
