@@ -452,6 +452,8 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 	}
 
 	int nextTick = g_system->getMillis();
+	int node;
+	bool nodeChanged = false;
 
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
@@ -464,7 +466,7 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 
 		g_director->getCurrentWindow()->setDirty(true);
 
-		int node = me->_video->getCurrentNodeID();
+		node = me->_video->getCurrentNodeID();
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			me->_widget->processEvent(event);
@@ -476,6 +478,8 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 		if (node != 0 && me->_video->getCurrentNodeID() != node) {
 			if (!me->_nodeLeaveHandler.empty())
 				g_lingo->executeHandler(me->_nodeLeaveHandler);
+
+			nodeChanged = true;
 		}
 
 		if (g_system->getMillis() > nextTick) {
@@ -501,7 +505,10 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 	hotspot = me->_video->getClickedHotspot();
 
 	if (!hotspot) {
-		g_lingo->push(Common::String("pan ,0"));
+		if (nodeChanged)
+			g_lingo->push(Common::String::format("jump,%d", node));
+		else
+			g_lingo->push(Common::String("pan ,0"));
 		return;
 	}
 
