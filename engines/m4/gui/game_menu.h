@@ -57,8 +57,8 @@ public:
 	static int16 SL_DOWN_BTN_NORM_14;
 	static int16 SL_DOWN_BTN_OVER_16;
 	static int16 SL_DOWN_BTN_PRESS_18;
-	static int16 SL_SAVE_LABEL_11;
-	static int16 SL_LOAD_LABEL_12;
+	static int16 SL_SAVE_LABEL_7;
+	static int16 SL_LOAD_LABEL_9;
 	static int16 SL_SLIDER_BTN_NORM_21;
 	static int16 SL_SLIDER_BTN_OVER_22;
 	static int16 SL_SLIDER_BTN_PRESS_23;
@@ -67,6 +67,11 @@ public:
 	static int16 SL_LINE_PRESS;
 	static int16 SL_SCROLL_BAR_24;
 	static int16 SL_TOTAL_SPRITES;
+
+	static constexpr int16 SL_SAVE_TITLE = 11;
+	static constexpr int16 SL_LOAD_TITLE = 12;
+	static constexpr int16 SL_SAVE_LABEL_GREY = 8;
+	static constexpr int16 SL_LOAD_LABEL_GREY = 10;
 
 protected:
 	static void initializeSlotTables();

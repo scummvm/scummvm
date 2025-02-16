@@ -51,8 +51,8 @@ int16 SaveLoadMenuBase::SL_DOWN_BTN_GREY_20;
 int16 SaveLoadMenuBase::SL_DOWN_BTN_NORM_14;
 int16 SaveLoadMenuBase::SL_DOWN_BTN_OVER_16;
 int16 SaveLoadMenuBase::SL_DOWN_BTN_PRESS_18;
-int16 SaveLoadMenuBase::SL_SAVE_LABEL_11;
-int16 SaveLoadMenuBase::SL_LOAD_LABEL_12;
+int16 SaveLoadMenuBase::SL_SAVE_LABEL_7;
+int16 SaveLoadMenuBase::SL_LOAD_LABEL_9;
 int16 SaveLoadMenuBase::SL_SLIDER_BTN_NORM_21;
 int16 SaveLoadMenuBase::SL_SLIDER_BTN_OVER_22;
 int16 SaveLoadMenuBase::SL_SLIDER_BTN_PRESS_23;
@@ -73,8 +73,8 @@ void SaveLoadMenuBase::init() {
 		SL_LINE_OVER = 6;
 		SL_LINE_PRESS = 6;
 
-		SL_SAVE_LABEL_11 = 11;
-		SL_LOAD_LABEL_12 = 12;
+		SL_SAVE_LABEL_7 = 7;
+		SL_LOAD_LABEL_9 = 9;
 		SL_UP_BTN_NORM_13 = 13;
 		SL_DOWN_BTN_NORM_14 = 14;
 		SL_UP_BTN_OVER_15 = 15;
@@ -128,8 +128,8 @@ void SaveLoadMenuBase::init() {
 		SL_DOWN_BTN_NORM_14 = 18;
 		SL_DOWN_BTN_OVER_16 = 19;
 		SL_DOWN_BTN_PRESS_18 = 20;
-		SL_SAVE_LABEL_11 = 21;
-		SL_LOAD_LABEL_12 = 22;
+		SL_SAVE_LABEL_7 = 21;
+		SL_LOAD_LABEL_9 = 22;
 		SL_SLIDER_BTN_NORM_21 = 23;
 		SL_SLIDER_BTN_OVER_22 = 24;
 		SL_SLIDER_BTN_PRESS_23 = 25;

@@ -309,10 +309,10 @@ void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *
 #define SAVE_LOAD_MENU_X 42
 #define SAVE_LOAD_MENU_Y 155
 
-#define SL_LABEL_X		111
-#define SL_LABEL_Y		2
-#define SL_LABEL_W		110
-#define SL_LABEL_H		17
+#define SL_TITLE_X		111
+#define SL_TITLE_Y		2
+#define SL_TITLE_W		110
+#define SL_TITLE_H		17
 
 #define SL_THUMBNAIL_X		333
 #define SL_THUMBNAIL_Y		5
@@ -321,6 +321,11 @@ void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *
 #define SL_SAVELOAD_Y	74
 #define SL_SAVELOAD_W	26
 #define SL_SAVELOAD_H	26
+
+#define SL_SAVELOAD_LABEL_X		8
+#define SL_SAVELOAD_LABEL_Y		103
+#define SL_SAVELOAD_LABEL_W		30
+#define SL_SAVELOAD_LABEL_H		14
 
 #define SL_CANCEL_X		10
 #define SL_CANCEL_Y		122
@@ -370,17 +375,27 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 	}
 
 	if (_GM(currMenuIsSave)) {
-		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_SAVE_LABEL, SL_LABEL_X, SL_LABEL_Y,
-			SL_LABEL_W, SL_LABEL_H);
-		menuItemButton::add(_GM(slMenu), SL_TAG_SAVE, SL_SAVELOAD_X, SL_SAVELOAD_Y,
+		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_SAVE_TITLE_LABEL,
+			SL_TITLE_X, SL_TITLE_Y, SL_TITLE_W, SL_TITLE_H);
+
+		menuItemButton::add(_GM(slMenu), SL_TAG_SAVE,
+			SL_SAVELOAD_X, SL_SAVELOAD_Y,
 			SL_SAVELOAD_W, SL_SAVELOAD_H, (CALLBACK)cbSave,
 			menuItemButton::BTN_TYPE_GM_GENERIC, true);
+		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_SAVE_LABEL,
+			SL_SAVELOAD_LABEL_X, SL_SAVELOAD_LABEL_Y,
+			SL_SAVELOAD_LABEL_W, SL_SAVELOAD_LABEL_H);
 	} else {
-		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_LOAD_LABEL, SL_LABEL_X, SL_LABEL_Y,
-			SL_LABEL_W, SL_LABEL_H);
-		menuItemButton::add(_GM(slMenu), SL_TAG_LOAD, SL_SAVELOAD_X, SL_SAVELOAD_Y,
+		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_LOAD_TITLE_LABEL,
+			SL_TITLE_X, SL_TITLE_Y, SL_TITLE_W, SL_TITLE_H);
+
+		menuItemButton::add(_GM(slMenu), SL_TAG_LOAD,
+			SL_SAVELOAD_X, SL_SAVELOAD_Y,
 			SL_SAVELOAD_W, SL_SAVELOAD_H, (CALLBACK)cbSave,
 			menuItemButton::BTN_TYPE_GM_GENERIC, true);
+		menuItemMsg::msgAdd(_GM(slMenu), SL_TAG_LOAD_LABEL,
+			SL_SAVELOAD_LABEL_X, SL_SAVELOAD_LABEL_Y,
+			SL_SAVELOAD_LABEL_W, SL_SAVELOAD_LABEL_H);
 	}
 
 	menuItemButton::add(_GM(slMenu), SL_TAG_CANCEL, SL_CANCEL_X, SL_CANCEL_Y, SL_CANCEL_W, SL_CANCEL_H,

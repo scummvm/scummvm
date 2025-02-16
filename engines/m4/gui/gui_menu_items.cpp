@@ -1272,11 +1272,19 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 
 	// Select the sprite
 	switch (myItem->tag) {
+	case SL_TAG_SAVE_TITLE_LABEL:
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_TITLE];
+		break;
+	case SL_TAG_LOAD_TITLE_LABEL:
+		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_TITLE];
+		break;
 	case SL_TAG_SAVE_LABEL:
-		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_SAVE_LABEL_11];
+		mySprite = _GM(menuSprites)[myItem->itemFlags ?
+			SaveLoadMenuBase::SL_SAVE_LABEL_GREY : SaveLoadMenuBase::SL_SAVE_LABEL_7];
 		break;
 	case SL_TAG_LOAD_LABEL:
-		mySprite = _GM(menuSprites)[SaveLoadMenuBase::SL_LOAD_LABEL_12];
+		mySprite = _GM(menuSprites)[myItem->itemFlags ?
+			SaveLoadMenuBase::SL_LOAD_LABEL_GREY : SaveLoadMenuBase::SL_LOAD_LABEL_9];
 		break;
 	case SL_TAG_THUMBNAIL:
 		mySprite = _GM(saveLoadThumbNail);
