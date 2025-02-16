@@ -218,7 +218,7 @@ void Room603::init() {
 
 		_door = series_show("603DOOR", 0xf00, 16, -1, -1, 23, 100, 0, 0);
 		_ttDigShirtOff = series_load("TT DIG LOOP NO SHIRT");
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 			triggerMachineByHashCallback, "tt");
 		sendWSMessage_10000(1, _tt, _ttDigShirtOff, 2, 2, 200, _ttDigShirtOff, 2, 2, 0);
 
@@ -246,7 +246,7 @@ void Room603::init() {
 		hotspot_set_active("person in pit", false);
 
 		if (_val5) {
-			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
 				triggerMachineByHashCallback, "tt");
 			sendWSMessage_10000(1, _tt, _ttD01, 1, 1, 400, _ttD01, 1, 1, 0);
 			_trigger1 = 400;
@@ -254,7 +254,7 @@ void Room603::init() {
 			_ttShadow = series_show("tt walker shadow 4", 0xf00, 0, -1, -1, 0, 53, 291, 293);
 
 		} else {
-			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 				triggerMachineByHashCallback, "tt");
 			sendWSMessage_10000(1, _tt, _ttDigShirtOn, 1, 1, 500,
 				_ttDigShirtOn, 1, 1, 0);
@@ -427,11 +427,6 @@ void Room603::daemon() {
 				break;
 
 			case 5:
-				sendWSMessage_10000(1, _tt, _ttDigShirtOff, 14, 1, 200,
-					_ttDigShirtOff, 2, 2, 0);
-				_ttMode = 1;
-				break;
-
 			case 22:
 				sendWSMessage_10000(1, _tt, _ttDigShirtOff, 14, 1, 200,
 					_ttDigShirtOff, 2, 2, 0);
@@ -781,7 +776,7 @@ void Room603::daemon() {
 	case 320:
 		terminateMachineAndNull(_ripley);
 		_ttNote = series_show("603rp02a", 0x100, 16);
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
 			triggerMachineByHashCallback, "tt");
 		sendWSMessage_10000(1, _tt, _tt03, 1, 39, 322, _tt03, 39, 39, 0);
 		break;
@@ -807,7 +802,7 @@ void Room603::daemon() {
 
 	case 326:
 		terminateMachineAndNull(_tt);
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
 			triggerMachineByHashCallback, "tt");
 		sendWSMessage_10000(1, _tt, _ttD01, 1, 1, 400, _ttD01, 1, 1, 0);
 		_ttShould = 6;
@@ -1260,8 +1255,8 @@ void Room603::pre_parser() {
 }
 
 void Room603::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
 
 	if (player_said("conv603a")) {
 		conv603a();
@@ -1315,7 +1310,7 @@ void Room603::parser() {
 		case 2:
 			sendWSMessage_150000(-1);
 			ws_hide_walker();
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 311, 308, -59, 0x100, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 311, 308, -59, 0x100, false,
 				triggerMachineByHashCallback, "rip");
 			_G(kernel).trigger_mode = KT_DAEMON;
 			sendWSMessage_10000(1, _ripley, _rp01, 1, 15, 302, _rp01, 15, 15, 0);
@@ -1578,9 +1573,9 @@ void Room603::parser() {
 
 void Room603::conv603a() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	switch (_G(kernel).trigger) {
 	case 1:
@@ -1832,8 +1827,9 @@ void Room603::conv603a() {
 					_ripleyShould = 10;
 				} else if (node == 25 && entry == 2) {
 					_ripleyShould = 7;
-				} else if ((node == 12 && entry == 1) ||
-						(node == 7 && entry == 0)) {
+				} else if (node == 12 && entry == 1) {
+					// The original is also testing the following: (node == 7 && entry == 0)
+					// This is logically dead code, as (node == 7) is already checked earlier in the if cascade
 					_ripleyShould = 6;
 				} else if (node == 5 && entry == 0) {
 					_ripleyShould = 10;
@@ -1853,9 +1849,9 @@ void Room603::conv603a() {
 
 void Room603::conv603b() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 1) {
 		if (node != 13 && node != 16) {
@@ -2217,7 +2213,7 @@ void Room603::playRandomDigi(int max) {
 	static const char *SOUNDS[4] = {
 		"603_s02", "603_s02a", "603_s02b", "603_s02c"
 	};
-	int num = imath_ranged_rand(1, max) - 1;
+	const int num = imath_ranged_rand(1, max) - 1;
 	if (num < 4)
 		digi_play(SOUNDS[num], 2);
 }
