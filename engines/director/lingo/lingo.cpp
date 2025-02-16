@@ -619,7 +619,7 @@ bool Lingo::execute(int targetFrame) {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
-		if (targetFrame != -1 && _state->callstack.size() == targetFrame)
+		if (targetFrame != -1 && (int)_state->callstack.size() == targetFrame)
 			break;
 
 		if ((_exec._state == kPause) || (_exec._shouldPause && _exec._shouldPause())) {
