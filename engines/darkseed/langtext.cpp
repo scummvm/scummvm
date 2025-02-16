@@ -69,15 +69,15 @@ Common::U32String convertToU32String(const char *text, Common::Language language
 	return Common::U32String(text);
 }
 
-Common::U32String formatInjectStrings(Common::U32String format, ...) {
+Common::U32String formatInjectStrings(const Common::u32char_type_t *format, ...) {
 	Common::U32String outString;
 	va_list args;
 	va_start(args, format);
 
-	for (Common::U32String::const_iterator itr = format.begin(); itr != format.end(); itr++) {
+	for (const Common::u32char_type_t *itr = format; *itr; itr++) {
 		if (*itr == '%') {
 			itr++;
-			if (itr == format.end()) {
+			if (!*itr) {
 				outString += '%';
 				break;
 			}

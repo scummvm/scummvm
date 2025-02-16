@@ -1909,9 +1909,9 @@ void DarkseedEngine::lookCode(int objNum) {
 		return;
 	}
 	if (g_engine->getLanguage() == Common::KO_KOR) {
-		_console->addTextLine(formatInjectStrings(getI18NText(kI18N_youSeeTheText), KoFont::getObjectString(_objectVar.getObjectName(objNum)).c_str()));
+		_console->addTextLine(formatInjectStrings(getI18NText(kI18N_youSeeTheText).c_str(), KoFont::getObjectString(_objectVar.getObjectName(objNum)).c_str()));
 	} else {
-		_console->addTextLine(formatInjectStrings(getI18NText(kI18N_youSeeTheText), _objectVar.getObjectName(objNum).c_str()));
+		_console->addTextLine(formatInjectStrings(getI18NText(kI18N_youSeeTheText).c_str(), _objectVar.getObjectName(objNum).c_str()));
 	}
 }
 

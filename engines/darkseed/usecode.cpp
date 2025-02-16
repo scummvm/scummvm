@@ -469,7 +469,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 				_console->printTosText(955, true); // "You pick up the "
 			} else {
 				_console->printTosText(955); // "You pick up the "
-				_console->addToCurrentLineU32(formatInjectStrings(Common::U32String("%s."), _objectVar.getObjectName(objNum).c_str()));
+				_console->addToCurrentLineU32(formatInjectStrings(Common::U32String("%s.").c_str(), _objectVar.getObjectName(objNum).c_str()));
 			}
 			_inventory.addItem(objNum);
 			g_engine->_room->_collisionType = 0;
@@ -1621,7 +1621,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			if (lang == Common::KO_KOR) {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
+						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText).c_str(),
 						KoFont::getObjectString(_objectVar.getObjectName(useObjNum)).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1629,7 +1629,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			} else {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText),
+						getI18NText(kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText).c_str(),
 						_objectVar.getObjectName(useObjNum).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1640,7 +1640,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			if (lang == Common::KO_KOR) {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
+						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText).c_str(),
 						KoFont::getObjectString(_objectVar.getObjectName(useObjNum)).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1648,7 +1648,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			} else {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText),
+						getI18NText(kI18N_genResponse1_theObjectWillDoNothingToTheText).c_str(),
 						_objectVar.getObjectName(useObjNum).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1659,7 +1659,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			if (lang == Common::KO_KOR) {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
+						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText).c_str(),
 						KoFont::getTopicString(_objectVar.getObjectName(useObjNum)).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1667,7 +1667,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			} else {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText),
+						getI18NText(kI18N_genResponse2_theObjectDoesntHaveAnyEffectOnTheText).c_str(),
 						_objectVar.getObjectName(useObjNum).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1678,7 +1678,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			if (lang ==Common::KO_KOR) {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
+						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText).c_str(),
 						KoFont::getTopicString(_objectVar.getObjectName(useObjNum)).c_str(),
 						KoFont::getLinkingString(_objectVar.getObjectName(targetObjNum)).c_str()
 					)
@@ -1686,7 +1686,7 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 			} else {
 				_console->addTextLine(
 					formatInjectStrings(
-						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText),
+						getI18NText(kI18N_genResponse3_theObjectHasNothingToDoWithTheText).c_str(),
 						_objectVar.getObjectName(useObjNum).c_str(),
 						_objectVar.getObjectName(targetObjNum).c_str()
 					)
@@ -1742,7 +1742,7 @@ void UseCode::startDigging(int16 targetObjNum) {
 void UseCode::genericSingleObjectResponse(const I18nText &text, int16 useObjNum) {
 	_console->addTextLine(
 		formatInjectStrings(
-			getI18NText(text),
+			getI18NText(text).c_str(),
 			_objectVar.getObjectName(useObjNum).c_str()));
 }
 

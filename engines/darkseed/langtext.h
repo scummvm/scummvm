@@ -54,7 +54,7 @@ const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18n
 
 Common::U32String convertToU32String(const char *text, Common::Language language);
 
-Common::U32String formatInjectStrings(Common::U32String format, ...);
+Common::U32String formatInjectStrings(const Common::u32char_type_t *format, ...);
 
 constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"You see the car keys in the ignition.",
