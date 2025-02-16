@@ -653,7 +653,7 @@ public:
 		assert(numEntries != kSpanMaxSize);
 		_data = new mutable_value_type[numEntries];
 		_size = numEntries;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename Other>
@@ -663,7 +663,7 @@ public:
 		_data = new mutable_value_type[other.size()];
 		_size = other.size();
 		copy(other.begin(), other.end(), const_cast<mutable_value_type *>(_data));
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize) {
@@ -676,7 +676,7 @@ public:
 		allocate(numEntries);
 		const uint32 bytesRead = stream.read((void *)const_cast<mutable_value_type *>(_data), bytesRequested);
 		assert(bytesRead == bytesRequested);
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	value_type *_data;
@@ -828,7 +828,7 @@ public:
 		super_type::allocate(numEntries);
 		_name = name_;
 		_sourceByteOffset = 0;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename OtherValueType>
@@ -836,20 +836,20 @@ public:
 		super_type::allocateFromSpan(other);
 		_name = other.name();
 		_sourceByteOffset = other.sourceByteOffset();
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename OtherValueType, template <typename> class OtherDerived>
 	mutable_value_derived_type &allocateFromSpan(const SpanImpl<OtherValueType, OtherDerived> &other) {
 		super_type::allocateFromSpan(other);
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize, const String &name_ = String()) {
 		super_type::allocateFromStream(stream, numEntries);
 		_name = name_;
 		_sourceByteOffset = 0;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(File &file, const size_type numEntries = kSpanMaxSize) {
