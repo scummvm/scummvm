@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/safe-bool.h"
 #include "common/scummsys.h"
-#include "common/type-traits.h"
+#include "common/type_traits.h"
 
 namespace Common {
 
