@@ -271,7 +271,7 @@ QuickTimeDecoder::NodeData QuickTimeDecoder::getNodeData(uint32 nodeID) {
 
 void QuickTimeDecoder::goToNode(uint32 nodeID) {
 	int idx = -1;
-	for (int i = 0; i < _panoTrack->panoSamples.size(); i++) {
+	for (uint i = 0; i < _panoTrack->panoSamples.size(); i++) {
 		if (_panoTrack->panoSamples[i].hdr.nodeID == nodeID) {
 			idx = i;
 			break;
