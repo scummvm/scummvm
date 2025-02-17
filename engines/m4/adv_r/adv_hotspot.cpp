@@ -140,9 +140,7 @@ static int32 hotspot_area(HotSpotRec *h) {
 }
 
 HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
-	int hArea = hotspot_area(h);
-	int iArea;
-	HotSpotRec *i;
+	const int hArea = hotspot_area(h);
 
 	// Is head nullptr?
 	if (!head)
@@ -154,9 +152,9 @@ HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
 		return h;
 	}
 
-	i = head;
+	HotSpotRec *i = head;
 	while (i) {
-		iArea = hotspot_area(i->next);
+		const int iArea = hotspot_area(i->next);
 		if (hArea < iArea) {
 			h->next = i->next;
 			i->next = h;
@@ -210,7 +208,7 @@ void kill_hotspot_node(HotSpotRec *h) {
 HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 	HotSpotRec *i;
 
-	if (!(h || head))
+	if (!h || !head)
 		return head;
 
 	// Are we deleting the head node?
@@ -225,7 +223,8 @@ HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 		if (i->next == h)
 			break;
 
-	i->next = h->next;
+	if (i)
+		i->next = h->next;
 
 	kill_hotspot_node(h);
 	return head;
@@ -234,7 +233,7 @@ HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h) {
 	HotSpotRec *i;
 
-	if (!(h || head))
+	if (!h || !head)
 		return head;
 
 	// Are we deleting the head node?
@@ -248,23 +247,23 @@ HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h) {
 		if (i->next == h)
 			break;
 
-	i->next = h->next;
+	if (i)
+		i->next = h->next;
+
 	return head;
 }
 
 void hotspot_delete_all(HotSpotRec *head) {
-	HotSpotRec *i;
 	HotSpotRec *next;
 
-	for (i = head; i; i = next) {
+	for (HotSpotRec *i = head; i; i = next) {
 		next = i->next;
 		kill_hotspot_node(i);
 	}
 }
 
 HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y) {
-	HotSpotRec *i;
-	for (i = head; i; i = i->next)
+	for (HotSpotRec *i = head; i; i = i->next)
 		if ((x >= i->ul_x) && (x <= i->lr_x) && (y >= i->ul_y) && (y <= i->lr_y) && i->active)
 			return i;
 
@@ -277,13 +276,12 @@ HotSpotRec *hotspot_which(int x, int y) {
 
 void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
-	HotSpotRec *i;
 	bool hotspot_found = false;
 
 	cstrncpy(name_str, name, MAX_FILENAME_SIZE);
 	cstrupr(name_str);
 
-	for (i = head; i; i = i->next) {
+	for (HotSpotRec *i = head; i; i = i->next) {
 		if (i->vocab && !scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE)) {
 			i->active = active_or_not;
 			hotspot_found = true;
@@ -299,13 +297,12 @@ void hotspot_set_active(const char *name, bool active_or_not) {
 
 void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
-	HotSpotRec *i;
 
 	cstrncpy(name_str, name, MAX_FILENAME_SIZE);
 
 	cstrupr(name_str);
 
-	for (i = head; i; i = i->next)
+	for (HotSpotRec *i = head; i; i = i->next)
 		if (!scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE))
 			if ((x >= i->ul_x) && (x <= i->lr_x) && (y >= i->ul_y) && (y <= i->lr_y))
 				i->active = active_or_not;
