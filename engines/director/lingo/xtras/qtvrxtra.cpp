@@ -667,11 +667,63 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanLoc, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetHotSpotID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotName, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotType, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotViewAngles, 0)
+
+void QtvrxtraXtra::m_QTVRGetHotSpotID(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setClickedHotSpot(g_lingo->pop().asInt());
+}
+
+void QtvrxtraXtra::m_QTVRSetHotSpotID(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	g_lingo->push(hotspot ? hotspot->id : 0);
+}
+
+void QtvrxtraXtra::m_QTVRGetHotSpotName(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	if (!hotspot) {
+		g_lingo->push(Common::String(""));
+		return;
+	}
+
+	g_lingo->push(me->_video->getHotSpotName(hotspot->id));
+}
+
+void QtvrxtraXtra::m_QTVRGetHotSpotType(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	g_lingo->push(hotspot ? Common::tag2string((uint32)hotspot->type) : "undf");
+}
+
+void QtvrxtraXtra::m_QTVRGetHotSpotViewAngles(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	if (hotspot)
+		g_lingo->push(Common::String::format("%.4f,%.4f,%.4f", hotspot->viewHPan, hotspot->viewVPan, hotspot->viewZoom);
+	else
+		g_lingo->push(Common::String(""));
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectViewAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectZoomRect, 0)
 
