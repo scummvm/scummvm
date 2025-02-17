@@ -25,8 +25,7 @@
 #include "common/keyboard.h"
 
 #include "mediastation/mediastation.h"
-#include "mediastation/subfile.h"
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptconstants.h"
 #include "mediastation/mediascript/operand.h"
 #include "mediastation/assetheader.h"

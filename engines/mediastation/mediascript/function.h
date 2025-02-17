@@ -24,7 +24,7 @@
 
 #include "common/array.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/codechunk.h"
 
 namespace MediaStation {

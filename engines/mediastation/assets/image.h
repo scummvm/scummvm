@@ -23,7 +23,7 @@
 #define MEDIASTATION_IMAGE_H
 
 #include "mediastation/asset.h"
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/operand.h"

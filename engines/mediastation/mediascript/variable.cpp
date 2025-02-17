@@ -20,9 +20,7 @@
  */
 
 #include "mediastation/mediascript/variable.h"
-#include "mediastation/chunk.h"
 #include "mediastation/datum.h"
-#include "mediastation/datafile.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/operand.h"
 
@@ -61,7 +59,7 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		_id = Datum(chunk).u.i;
 	}
 	_type = static_cast<VariableType>(Datum(chunk).u.i);
-	debugC(1, kDebugLoading, "Variable::Variable(): id = %d, type %s (%d) (@0x%llx)", 
+	debugC(1, kDebugLoading, "Variable::Variable(): id = %d, type %s (%d) (@0x%llx)",
 		_id, variableTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch ((VariableType)_type) {
 	case kVariableTypeCollection: {
@@ -141,7 +139,7 @@ Variable::~Variable() {
 	}
 }
 
-Operand Variable::getValue() {	
+Operand Variable::getValue() {
 	switch (_type) {
 	case kVariableTypeEmpty: {
 		error("Variable::getValue(): Attempt to get value from an empty variable");

@@ -40,21 +40,26 @@
 
 namespace MediaStation {
 
-Context::Context(const Common::Path &path) :
-	Datafile(path) {
-	// This stuff isn't part of any graphics palette.
-	readPreamble();
+Context::Context(const Common::Path &path) : Datafile(path) {
+	uint32 signature = _handle->readUint32BE();
+	if (signature != MKTAG('I', 'I', '\0', '\0')) {
+		error("Context::Context(): Wrong signature for file %s: 0x%08x", _name.c_str(), signature);
+	}
 
-	// READ THE FIRST SUBFILE.
-	Subfile subfile = Subfile(_stream);
+	_unk1 = _handle->readUint32LE();
+	_subfileCount = _handle->readUint32LE();
+	_fileSize = _handle->readUint32LE();
+	debugC(5, kDebugLoading, "Context::Context(): _unk1 = 0x%x", _unk1);
+
+	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
-	// First, read the header sections.
+
 	if (g_engine->isFirstGenerationEngine()) {
 		readOldStyleHeaderSections(subfile, chunk);
 	} else {
 		readNewStyleHeaderSections(subfile, chunk);
 	}
-	// Then, read any asset data.
+
 	chunk = subfile._currentChunk;
 	while (!subfile.atEnd()) {
 		readAssetInFirstSubfile(chunk);
@@ -63,9 +68,9 @@ Context::Context(const Common::Path &path) :
 		}
 	}
 
-	// Then, assets in the rest of the subfiles.
+	// Read assets in the rest of the subfiles.
 	for (uint i = 1; i < _subfileCount; i++) {
-		subfile = Subfile(_stream);
+		subfile = getNextSubfile();
 		readAssetFromLaterSubfile(subfile);
 	}
 }
@@ -111,31 +116,11 @@ void Context::registerActiveAssets() {
 	}
 }
 
-bool Context::readPreamble() {
-	uint16 signature = _stream->readUint16LE();
-	if (signature != 0x4949) { // "II"
-		warning("Datafile::openFile(): Wrong signature for file %s. Got 0x%04X", _path.toString(Common::Path::kNativeSeparator).c_str(), signature);
-		close();
-		return false;
-	}
-	_stream->skip(2); // 0x00 0x00
-
-	_unk1 = _stream->readUint32LE();
-	debugC(5, kDebugLoading, "Context::openFile(): _unk1 = 0x%x", _unk1);
-
-	_subfileCount = _stream->readUint32LE();
-	// The total size of this file, including this header.
-	// (Basically the true file size shown on the filesystem.)
-	_fileSize = _stream->readUint32LE();
-	return true;
-}
-
 void Context::readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	error("Context::readOldStyleHeaderSections(): Not implemented yet");
 }
 
 void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
-	// READ THE PALETTE.
 	bool moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
 	if (!moreSectionsToRead) {
 		warning("Context::readNewStyleHeaderSections(): Got no header sections (@0x%llx)", static_cast<long long int>(chunk.pos()));

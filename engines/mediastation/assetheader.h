@@ -27,7 +27,7 @@
 #include "common/hashmap.h"
 #include "graphics/palette.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/eventhandler.h"
 
 namespace MediaStation {

@@ -25,7 +25,7 @@
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/assetheader.h"
 
 namespace MediaStation {

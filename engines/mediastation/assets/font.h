@@ -25,7 +25,7 @@
 #include "mediastation/asset.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/bitmap.h"
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/operand.h"
 #include "mediastation/mediascript/scriptconstants.h"
 

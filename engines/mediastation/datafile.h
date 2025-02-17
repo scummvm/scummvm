@@ -22,22 +22,67 @@
 #ifndef MEDIASTATION_DATAFILE_H
 #define MEDIASTATION_DATAFILE_H
 
-#include "common/path.h"
+#include "common/file.h"
 #include "common/stream.h"
+#include "common/path.h"
 
 namespace MediaStation {
 
-class Datafile {
+// A Media Station datafile consists of one or more RIFF-style "subfiles". Aside
+// from some oddness at the start of the subfile, each subfile is basically
+// standard sequence of chunks inside a LIST chunk, like you'd see in any RIFF
+// file. These chunks have special IDs:
+//  - igod: Indicates a chunk that contains metadata about asset(s) in metadata sections.
+//  - a000, where 000 is a string that represents a 3-digit hexadecimal number.
+//          Indicates a chunk that contains actor data (sounds and bitmaps).
+
+class Chunk : public Common::SeekableReadStream {
+public:
+	Chunk() = default;
+	Chunk(Common::SeekableReadStream *stream);
+
+	uint32 bytesRemaining();
+
+	uint32 _id = 0;
+	uint32 _length = 0;
+
+	// ReadStream implementation
+	virtual bool eos() const { return _parentStream->eos(); };
+	virtual bool err() const {return _parentStream->err(); };
+	virtual void clearErr() { _parentStream->clearErr(); };
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual int64 pos() const { return _parentStream->pos(); };
+	virtual int64 size() const { return _parentStream->size(); };
+	virtual bool skip(uint32 offset) { return seek(offset, SEEK_CUR); };
+	virtual bool seek(int64 offset, int whence = SEEK_SET);
+
+private:
+	Common::SeekableReadStream *_parentStream = nullptr;
+	uint32 _dataStartOffset = 0;
+	uint32 _dataEndOffset = 0;
+};
+
+class Subfile {
+public:
+	Subfile() = default;
+	Subfile(Common::SeekableReadStream *stream);
+
+	Chunk nextChunk();
+	bool atEnd();
+
+	Chunk _currentChunk;
+	uint32 _rate;
+
+private:
+	Common::SeekableReadStream *_stream = nullptr;
+	Chunk _rootChunk;
+};
+
+class Datafile : public Common::File {
 public:
 	Datafile(const Common::Path &path);
-	virtual ~Datafile();
 
-	virtual bool openFile(const Common::Path &path);
-	virtual void close();
-
-protected:
-	Common::Path _path;
-	Common::SeekableReadStream *_stream = nullptr;
+	Subfile getNextSubfile();
 };
 
 } // End of namespace MediaStation

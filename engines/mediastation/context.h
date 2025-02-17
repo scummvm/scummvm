@@ -22,9 +22,9 @@
 #ifndef MEDIASTATION_CONTEXT_H
 #define MEDIASTATION_CONTEXT_H
 
-#include "graphics/palette.h"
 #include "common/path.h"
 #include "common/hashmap.h"
+#include "graphics/palette.h"
 
 #include "mediastation/datafile.h"
 #include "mediastation/contextparameters.h"
@@ -45,12 +45,10 @@ enum ContextSectionType {
 	kContextFunctionSection = 0x0031
 };
 
-class Context : Datafile {
+class Context : public Datafile {
 public:
 	Context(const Common::Path &path);
 	~Context();
-
-	bool readPreamble();
 
 	uint32 _unk1;
 	uint32 _subfileCount;

@@ -27,8 +27,6 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 
-#include "mediastation/subfile.h"
-#include "mediastation/chunk.h"
 #include "mediastation/datafile.h"
 
 namespace MediaStation {
@@ -193,8 +191,6 @@ enum BootSectionType {
 
 class Boot : Datafile {
 private:
-	Subfile subfile;
-
 	BootSectionType getSectionType(Chunk &chunk);
 
 public:

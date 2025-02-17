@@ -25,8 +25,7 @@
 #include "audio/audiostream.h"
 
 #include "mediastation/asset.h"
-#include "mediastation/chunk.h"
-#include "mediastation/subfile.h"
+#include "mediastation/datafile.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/operand.h"
 #include "mediastation/mediascript/scriptconstants.h"

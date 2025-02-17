@@ -17,7 +17,6 @@ MODULE_OBJS = \
 	assets/timer.o \
 	bitmap.o \
 	boot.o \
-	chunk.o \
 	context.o \
 	contextparameters.o \
 	cursors.o \
@@ -31,7 +30,6 @@ MODULE_OBJS = \
 	mediascript/variable.o \
 	mediastation.o \
 	metaengine.o \
-	subfile.o \
 	transitions.o
 
 # This module can be built as a plugin

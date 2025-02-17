@@ -25,7 +25,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/variable.h"
 #include "mediastation/mediascript/function.h"
 

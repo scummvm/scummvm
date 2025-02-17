@@ -25,7 +25,7 @@
 #include "common/str.h"
 #include "common/array.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/scriptconstants.h"
 

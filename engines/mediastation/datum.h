@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
-#include "mediastation/chunk.h"
+#include "mediastation/datafile.h"
 
 namespace MediaStation {
 
