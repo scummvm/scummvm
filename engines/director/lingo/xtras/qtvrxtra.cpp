@@ -583,9 +583,6 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 
 				if (me->_exitMouseOver)
 					break;
-
-				// TODO We need to redraw current frame because the handler could change
-				// some fields etc. FIXME
 			}
 		}
 
