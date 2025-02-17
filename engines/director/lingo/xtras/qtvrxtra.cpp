@@ -452,7 +452,7 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 		return;
 	}
 
-	int nextTick = g_system->getMillis();
+	uint32 nextTick = g_system->getMillis();
 	int node;
 	bool nodeChanged = false;
 
@@ -535,7 +535,7 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		g_lingo->executeHandler(me->_rolloverHotSpotHandler, 1);
 	}
 
-	int nextTick = g_system->getMillis();
+	uint32 nextTick = g_system->getMillis();
 
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
