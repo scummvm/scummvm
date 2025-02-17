@@ -99,6 +99,7 @@ public:
 
 	const PanoHotSpot *getRolloverHotspot() { return _rolloverHotspot; }
 	const PanoHotSpot *getClickedHotspot() { return _clickedHotspot; }
+	Common::String getHotSpotName(int id);
 
 	void nudge(const Common::String &direction);
 

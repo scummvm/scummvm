@@ -1039,6 +1039,15 @@ void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	}
 }
 
+Common::String QuickTimeDecoder::getHotSpotName(int id) {
+	if (id <= 0)
+		return "";
+
+	PanoHotSpot *hotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
+
+	return _panoTrack->panoSamples[_currentSample].strTable.getString(hotspot->nameStrOffset);
+}
+
 enum {
 	kCurHand = 129,
 	kCurGrab = 130,
