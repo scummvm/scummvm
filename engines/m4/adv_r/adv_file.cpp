@@ -26,7 +26,6 @@
 #include "m4/adv_r/adv_chk.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/db_env.h"
-#include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
@@ -90,8 +89,6 @@ void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer)
 
 
 bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig) {
-	char *tempName;
-
 	if (!scr_orig_data || !scr_orig) {
 		error_show(FL, 'BUF!', "load_picture_and_codes");
 		return false;
@@ -116,7 +113,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	_G(currBackgroundFN) = get_background_filename(rdef);
 
-	tempName = env_find(_G(currBackgroundFN));
+	char *tempName = env_find(_G(currBackgroundFN));
 	if (tempName) {
 		// In normal rooms.db mode
 		_G(currBackgroundFN) = f_extension_new(tempName, "TT");
@@ -170,10 +167,9 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 
-	if (pic_file) {
-		pic_file->close();
-		delete pic_file;
-	}
+	pic_file->close();
+	delete pic_file;
+
 	if (code_file) {
 		code_file->close();
 		delete code_file;
@@ -201,10 +197,13 @@ bool kernel_load_variant(const char *variant) {
 	if (_G(kernel).hag_mode) {
 		filename = f_extension_new(variant, "COD");
 	} else {
-		char lastChar = variant[strlen(variant) - 1];
+		const char lastChar = variant[strlen(variant) - 1];
 
 		char *base = env_find(sceneDef.art_base);
-		char *dotPos = strchr(base, '.');
+		char *dotPos = nullptr;
+		if (base)
+			dotPos = strchr(base, '.');
+
 		if (!dotPos)
 			return false;
 
@@ -243,8 +242,8 @@ GrBuff *load_codes(SysFile *code_file) {
 	if (!code_file)			
 		return nullptr;
 
-	int16 x_size = code_file->readSint16LE();
-	int16 y_size = code_file->readSint16LE();
+	const int16 x_size = code_file->readSint16LE();
+	const int16 y_size = code_file->readSint16LE();
 
 	GrBuff *temp = new GrBuff(x_size, y_size);
 	if (!temp) {
@@ -266,13 +265,11 @@ GrBuff *load_codes(SysFile *code_file) {
 }
 
 bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
-	int32 num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y, x_end, y_end;
-	int i, j;
+	int32 num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y;
 	int32 count = 0;
-	Buffer *out;
 
 	tt_read_header(pic_file, &file_x, &file_y,
-		&num_x_tiles, &num_y_tiles, &tile_x, &tile_y, palette);
+	               &num_x_tiles, &num_y_tiles, &tile_x, &tile_y, palette);
 
 	*loadBuffer = new GrBuff(file_x, file_y);
 
@@ -281,14 +278,14 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 
 	Buffer *theBuff = (**loadBuffer).get_buffer();
 
-	for (i = 0; i < num_y_tiles; i++) {
-		for (j = 0; j < num_x_tiles; j++) {
-			out = tt_read(pic_file, count, tile_x, tile_y);
+	for (int i = 0; i < num_y_tiles; i++) {
+		for (int j = 0; j < num_x_tiles; j++) {
+			Buffer *out = tt_read(pic_file, count, tile_x, tile_y);
 			count++;
 
 			if (out && (out->data)) {
-				x_end = imath_min(file_x, (1 + j) * tile_x);
-				y_end = imath_min(file_y, (1 + i) * tile_y);
+				const int32 x_end = imath_min(file_x, (1 + j) * tile_x);
+				const int32 y_end = imath_min(file_y, (1 + i) * tile_y);
 				gr_buffer_rect_copy_2(out, theBuff, 0, 0, j * tile_x, i * tile_y,
 					x_end - (j * tile_x), y_end - (i * tile_y));
 				mem_free(out->data);
@@ -310,7 +307,7 @@ static Common::SeekableReadStream *openForLoading(int slot) {
 
 bool kernel_save_game_exists(int32 slot) {
 	Common::SeekableReadStream *save = openForLoading(slot);
-	bool result = save != nullptr;
+	const bool result = save != nullptr;
 	delete save;
 
 	return result;
@@ -379,8 +376,7 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 
 static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry) {
 	bool gotOne = false;
-	int16 pal_iter;
-	for (pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++)	// accept any colours that came with the background
+	for (int16 pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++)	// accept any colors that came with the background
 		if (gotOne || (newPal[pal_iter].r | newPal[pal_iter].g | newPal[pal_iter].b))
 		{
 			gotOne = true;
@@ -390,7 +386,7 @@ static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry)
 			_G(master_palette)[pal_iter].b = newPal[pal_iter].b << 2;
 		}
 	if (gotOne) {
-		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colours
+		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colors
 	}
 }
 
