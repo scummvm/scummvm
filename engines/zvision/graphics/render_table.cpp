@@ -143,7 +143,7 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
-			  index = sourceOffset + x;
+		    index = sourceOffset + x;
 			  _curP = _internalBuffer[index];
 			  srcIndexYT = y + _curP.Src.top;
 			  srcIndexYB = y + _curP.Src.bottom;
@@ -158,6 +158,11 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
         bF = round(_curP.fTL*bTL + _curP.fTR*bTR + _curP.fBL*bBL + _curP.fBR*bBR);
         destBuffer[destOffset] = mergeColor(rF,gF,bF);
 		    destOffset++;
+        if(Common::Point(x,y)==testPixel) {
+          debug(2,"\tMutated test pixel %d, %d", x, y);
+          debug(2,"\tfX: %f, fY: %f", _curP.fX, _curP.fY);
+          debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", srcIndexYT, srcIndexYB, srcIndexXL, srcIndexXR);
+        } 
       }
     }
 	}
@@ -201,11 +206,11 @@ void RenderTable::generateRenderTable() {
 
 void RenderTable::generatePanoramaLookupTable() {
   debug(1,"Generating panorama lookup table.");
-	uint halfRows = ceil(_numRows/2);
-	uint halfColumns = ceil(_numColumns/2);
-	float halfWidth = (float)_numColumns / 2.0f;
-	float halfHeight = (float)_numRows / 2.0f;
-	float cylinderRadius = halfHeight / tan(_panoramaOptions.verticalFOV);
+	uint halfRows = floor((_numRows-1)/2);
+	uint halfColumns = floor((_numColumns-1)/2);
+	float halfWidth = (float)_numColumns / 2.0f - 0.5f; //Centre axis to midpoint of outermost pixel
+	float halfHeight = (float)_numRows / 2.0f - 0.5f; //Centre axis to midpoint of outermost pixel
+	float cylinderRadius = (halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
 	float xOffset = 0.0f;
 	float yOffset = 0.0f;
 	
@@ -215,10 +220,9 @@ void RenderTable::generatePanoramaLookupTable() {
 	//Transformation is both horizontally and vertically symmetrical about the camera axis,
 	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
 	//TODO - find & fix cause of vertial "seam" in Nemesis.
-	for (uint x = 0; x < halfColumns; ++x) {
-		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
-		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
-		float alpha = atan(((float)x - halfWidth + 0.01f) / cylinderRadius);
+	for (uint x = 0; x <= halfColumns; ++x) {
+		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and the centre of pixel index (x,y)
+		float alpha = atan(((float)x - halfWidth) / cylinderRadius);
 
 		// To get x in cylinder coordinates, we just need to calculate the arc length
 		// We also scale it by _panoramaOptions.linearScale
@@ -229,7 +233,7 @@ void RenderTable::generatePanoramaLookupTable() {
 		uint32 rowIndexT = 0;
 		uint32 rowIndexB = _numColumns * (_numRows - 1);
 
-		for (uint y = 0; y < halfRows; ++y) {
+		for (uint y = 0; y <= halfRows; ++y) {
 			// To calculate y in cylinder coordinates, we can do similar triangles comparison,
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
 			float yInCylinderCoords = halfHeight + ((float)y - halfHeight) * cosAlpha;
