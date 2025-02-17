@@ -128,6 +128,9 @@ namespace Macs2 {
 		// Memory being pointed to by [2248] and [224A]
 		StreamHandler* shMem2248;
 
+		// Memory being pointed to by [2250] and [2252]
+		StreamHandler *shMem2250;
+
 		// 	[2254h] and [2256h]
 		uint32 _nextEventTimer;
 
