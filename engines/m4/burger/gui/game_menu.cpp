@@ -23,15 +23,12 @@
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/adv_r/other.h"
-#include "m4/adv_r/adv_background.h"
-#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_menu_items.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/graphics/gr_line.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_sys.h"
@@ -407,8 +404,6 @@ void ErrorMenu::destroyMenu() {
 }
 
 void ErrorMenu::show(RGB8 *myPalette) {
-	Buffer *myBuff;
-
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
 	}
@@ -428,7 +423,7 @@ void ErrorMenu::show(RGB8 *myPalette) {
 	}
 
 	// Get the menu buffer
-	myBuff = _GM(errMenu)->menuBuffer->get_buffer();
+	Buffer *myBuff = _GM(errMenu)->menuBuffer->get_buffer();
 	if (!myBuff) {
 		return;
 	}
@@ -611,8 +606,6 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 }
 
 void SaveLoadMenu::destroyMenu(bool saveMenu) {
-	int32 i;
-
 	if (!_GM(slMenu)) {
 		return;
 	}
@@ -628,7 +621,7 @@ void SaveLoadMenu::destroyMenu(bool saveMenu) {
 		}
 	} else {
 		// Else there may be up to 10 somewhere in the list to be unloaded
-		for (i = 0; i < MAX_SLOTS; i++) {
+		for (int32 i = 0; i < MAX_SLOTS; i++) {
 			unloadThumbnail(i);
 		}
 		_GM(saveLoadThumbNail) = nullptr;
@@ -643,13 +636,11 @@ void SaveLoadMenu::destroyMenu(bool saveMenu) {
 }
 
 void SaveLoadMenu::cb_SaveLoad_VSlider(menuItemVSlider *myItem, guiMenu *myMenu) {
-	bool redraw;
-
 	if (!myMenu || !myItem)
 		return;
 
 	if ((myItem->itemFlags & menuItemVSlider::VS_COMPONENT) != menuItemVSlider::VS_THUMB) {
-		redraw = (DrawFunction)false;
+		bool redraw = (DrawFunction)false;
 		switch (myItem->itemFlags & menuItemVSlider::VS_COMPONENT) {
 		case menuItemVSlider::VS_UP:
 			if (_GM(firstSlotIndex) > 0) {
@@ -704,17 +695,14 @@ void SaveLoadMenu::cb_SaveLoad_VSlider(menuItemVSlider *myItem, guiMenu *myMenu)
 }
 
 void SaveLoadMenu::cb_SaveLoad_Save(void *, guiMenu *myMenu) {
-	menuItemTextField *myText;
-	bool saveGameFailed;
-
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
 		return;
 	}
 
 	// First make the textfield NORM
-	myText = (menuItemTextField *)guiMenu::getItem(2000, myMenu);
-	if (myText)
+	menuItemTextField *myText = (menuItemTextField *)guiMenu::getItem(2000, myMenu);
+	if (!myText)
 		return;
 
 	myText->itemFlags = menuItemTextField::TF_NORM;
@@ -724,8 +712,8 @@ void SaveLoadMenu::cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 	Common::strcpy_s(_GM(slotTitles)[_GM(slotSelected) - 1], 80, myText->prompt);
 
 	// Save the game
-	saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
-		myText->prompt, _GM(_thumbnail));
+	bool saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
+	                                                  myText->prompt, _GM(_thumbnail));
 
 	// If the save game failed, bring up the err menu
 	if (saveGameFailed) {
@@ -747,8 +735,6 @@ void SaveLoadMenu::cb_SaveLoad_Save(void *, guiMenu *myMenu) {
 }
 
 void SaveLoadMenu::cb_SaveLoad_Load(menuItemButton *, guiMenu *) {
-	KernelTriggerType oldMode;
-
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
 		return;
@@ -769,7 +755,7 @@ void SaveLoadMenu::cb_SaveLoad_Load(menuItemButton *, guiMenu *) {
 
 	// Start the restore process
 	_G(kernel).restore_slot = _GM(slotSelected);
-	oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	kernel_trigger_dispatch_now(TRIG_RESTORE_GAME);
@@ -777,13 +763,10 @@ void SaveLoadMenu::cb_SaveLoad_Load(menuItemButton *, guiMenu *) {
 }
 
 void SaveLoadMenu::cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
-	menuItem *myItem;
-	int32 i, x, y, w, h;
-
 	// If a slot has been selected, cancel will re-enable all slots
 	if (_GM(slotSelected) >= 0) {
 		// Enable the prev buttons
-		for (i = 1001; i <= 1010; i++) {
+		for (int32 i = 1001; i <= 1010; i++) {
 			if (_GM(currMenuIsSave) || _GM(slotInUse)[i - 1001 + _GM(firstSlotIndex)]) {
 				menuItemButton::enableButton(nullptr, i, myMenu);
 				guiMenu::itemRefresh(nullptr, i, myMenu);
@@ -791,11 +774,11 @@ void SaveLoadMenu::cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 		}
 
 		// Find the textfield and use it's coords to place the button
-		myItem = guiMenu::getItem(2000, myMenu);
-		x = myItem->x1;
-		y = myItem->y1;
-		w = myItem->x2 - myItem->x1 + 1;
-		h = myItem->y2 - myItem->y1 + 1;
+		menuItem *myItem = guiMenu::getItem(2000, myMenu);
+		int32 x = myItem->x1;
+		int32 y = myItem->y1;
+		int32 w = myItem->x2 - myItem->x1 + 1;
+		int32 h = myItem->y2 - myItem->y1 + 1;
 
 		// Delete the textfield
 		guiMenu::itemDelete(myItem, 2000, myMenu);
@@ -852,9 +835,7 @@ void SaveLoadMenu::cb_SaveLoad_Cancel(menuItemButton *, guiMenu *myMenu) {
 }
 
 void SaveLoadMenu::cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
-	int32 i, x, y, w, h;
 	char prompt[80];
-	int32 specialTag;
 
 	// Verify params
 	if (!myMenu || !myButton)
@@ -862,14 +843,14 @@ void SaveLoadMenu::cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 
 	// Get the button
 	Common::strcpy_s(prompt, 80, myButton->prompt);
-	specialTag = myButton->specialTag;
+	int32 specialTag = myButton->specialTag;
 
 	// Set the globals
 	_GM(slotSelected) = myButton->specialTag;
 	_GM(deleteSaveDesc) = true;
 
 	// Disable all other buttons
-	for (i = 1001; i <= 1010; i++) {
+	for (int32 i = 1001; i <= 1010; i++) {
 		if (i != myButton->tag) {
 			menuItemButton::disableButton(nullptr, i, myMenu);
 			guiMenu::itemRefresh(nullptr, i, myMenu);
@@ -877,10 +858,10 @@ void SaveLoadMenu::cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 	}
 
 	// Get the slot coords, and delete it
-	x = myButton->x1;
-	y = myButton->y1;
-	w = myButton->x2 - myButton->x1 + 1;
-	h = myButton->y2 - myButton->y1 + 1;
+	int32 x = myButton->x1;
+	int32 y = myButton->y1;
+	int32 w = myButton->x2 - myButton->x1 + 1;
+	int32 h = myButton->y2 - myButton->y1 + 1;
 	guiMenu::itemDelete(myButton, -1, myMenu);
 
 	if (_GM(currMenuIsSave)) {
@@ -912,10 +893,8 @@ void SaveLoadMenu::cb_SaveLoad_Slot(menuItemButton *myButton, guiMenu *myMenu) {
 }
 
 bool SaveLoadMenu::load_Handler(menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
-	bool handled;
-
 	// Handle the event just like any other button
-	handled = menuItemButton::handler(myItem, eventType, event, x, y, currItem);
+	bool handled = menuItemButton::handler(myItem, eventType, event, x, y, currItem);
 
 	// If we've selected a slot, we want the thumbNail to remain on the menu permanently
 	if (_GM(slotSelected) >= 0) {

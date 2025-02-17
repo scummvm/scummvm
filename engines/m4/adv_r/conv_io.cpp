@@ -387,7 +387,6 @@ static void conv_save_state(Conv *c) {
 
 	int32 file_size = 0;
 	int32 offset;
-	int32 prev_size;
 	char *conv_save_buff;
 	bool overwrite_file = false;
 
@@ -409,7 +408,7 @@ static void conv_save_state(Conv *c) {
 
 		if (offset != -1) {
 			overwrite_file = true;
-			prev_size = READ_LE_UINT32(&conv_save_buff[offset]);
+			int32 prev_size = READ_LE_UINT32(&conv_save_buff[offset]);
 			prev_size += 3 * sizeof(int32);
 			offset += sizeof(int32);	// Skip header. (name + size)
 		} else {

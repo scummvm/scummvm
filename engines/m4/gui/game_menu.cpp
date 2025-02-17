@@ -142,7 +142,7 @@ void SaveLoadMenuBase::init() {
 	}
 }
 
-void SaveLoadMenuBase::initializeSlotTables(void) {
+void SaveLoadMenuBase::initializeSlotTables() {
 	const SaveStateList saves = g_engine->listSaves();
 
 	// First reset all the slots to empty
@@ -162,40 +162,38 @@ void SaveLoadMenuBase::initializeSlotTables(void) {
 
 Sprite *SaveLoadMenuBase::menu_CreateThumbnail(int32 *spriteSize) {
 	Sprite *thumbNailSprite;
-	GrBuff *thumbNail;
-	Buffer *scrnBuff, *intrBuff, *destBuff, RLE8Buff;
+	Buffer RLE8Buff;
 	uint8 *srcPtr, *srcPtr2, *srcPtr3, *srcRowPtr, *destPtr;
-	ScreenContext *gameScreen;
 	int32 i, status;
-	int32 currRow, beginRow, endRow;
+	int32 currRow, beginRow;
 
 	// Create a Sprite for the thumbNail
 	if ((thumbNailSprite = (Sprite *)mem_alloc(sizeof(Sprite), "sprite")) == nullptr) {
 		return nullptr;
 	}
 
-	thumbNail = new GrBuff((MAX_VIDEO_X + 1) / 3, (MAX_VIDEO_Y + 1) / 3);
+	GrBuff *thumbNail = new GrBuff((MAX_VIDEO_X + 1) / 3, (MAX_VIDEO_Y + 1) / 3);
 	if (!thumbNail) {
 		return nullptr;
 	}
 
-	destBuff = thumbNail->get_buffer();
+	Buffer *destBuff = thumbNail->get_buffer();
 	if (!destBuff) {
 		return nullptr;
 	}
 
-	gameScreen = vmng_screen_find(_G(gameDrawBuff), &status);
+	ScreenContext *gameScreen = vmng_screen_find(_G(gameDrawBuff), &status);
 	if ((!gameScreen) || (status != SCRN_ACTIVE)) {
 		return nullptr;
 	}
 
-	scrnBuff = _G(gameDrawBuff)->get_buffer();
+	Buffer *scrnBuff = _G(gameDrawBuff)->get_buffer();
 	if (!scrnBuff) {
 		return nullptr;
 	}
 
 	// Grab the interface buffer
-	intrBuff = _G(gameInterfaceBuff)->get_buffer();
+	Buffer *intrBuff = _G(gameInterfaceBuff)->get_buffer();
 
 	if (gameScreen->y1 > 0) {
 		// Paint the top of the thumbnail black
@@ -208,7 +206,7 @@ Sprite *SaveLoadMenuBase::menu_CreateThumbnail(int32 *spriteSize) {
 		beginRow = 0;
 		destPtr = destBuff->data;
 	}
-	endRow = imath_min(MAX_VIDEO_Y, gameScreen->y2);
+	int32 endRow = imath_min(MAX_VIDEO_Y, gameScreen->y2);
 
 	for (currRow = beginRow; currRow <= endRow; currRow += 3) {
 
@@ -418,9 +416,6 @@ void SaveLoadMenuBase::updateThumbnails(int32 firstSlot, guiMenu *myMenu) {
 }
 
 void SaveLoadMenuBase::setFirstSlot(int32 firstSlot, guiMenu *myMenu) {
-	menuItemButton *myButton;
-	int32 i;
-
 	if (!myMenu) {
 		return;
 	}
@@ -429,8 +424,8 @@ void SaveLoadMenuBase::setFirstSlot(int32 firstSlot, guiMenu *myMenu) {
 	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
 
 	// Change the prompt and special tag of each of the slot buttons
-	for (i = 0; i < MAX_SLOTS_SHOWN; i++) {
-		myButton = (menuItemButton *)guiMenu::getItem(i + 1001, myMenu);
+	for (int32 i = 0; i < MAX_SLOTS_SHOWN; i++) {
+		menuItemButton *myButton = (menuItemButton *)guiMenu::getItem(i + 1001, myMenu);
 
 		myButton->prompt = _GM(slotTitles)[firstSlot + i];
 		if (_GM(currMenuIsSave) || _GM(slotInUse)[firstSlot + i]) {
