@@ -735,6 +735,11 @@ void Adlib::OnTimer() {
 		//// TODO: Handle the loop properly
 		for (;;) {
 		//	// l0017_1B1A:
+			uint8 current = shMem2250->peekByte();
+		if (current & 0x80) {
+			// l0017_1B27:
+		}
+		// l0017_1B5F:
 		//	uint8 current = peekByte();
 		//	if (current & 0x80) {
 		//		// l0017_1B27:
