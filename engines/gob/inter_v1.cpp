@@ -1411,8 +1411,18 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		if (cmd < 20) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
-		} else
+		} else {
+			if (_vm->getGameType() == kGameTypeAdibou2) {
+				// The engine calls updateLive() every 100ms while waiting there
+				while (cmd > 100) {
+					_vm->_vidPlayer->updateLive();
+					_vm->_util->longDelay(100);
+					cmd -= 100;
+				}
+			}
+
 			_vm->_util->longDelay(cmd);
+		}
 		break;
 	}
 }
