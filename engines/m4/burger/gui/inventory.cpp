@@ -64,8 +64,7 @@ Inventory::~Inventory() {
 
 bool Inventory::add(const Common::String &name, const Common::String &verb, int32 invSprite, int32 cursor) {
 	// Don't add something twice
-	int iter;
-	for (iter = 0; iter < _num_cells; iter++) {
+	for (int16 iter = 0; iter < _num_cells; iter++) {
 		if (name.equals(_items[iter]._name))
 			return true;
 	}
@@ -111,8 +110,7 @@ void Inventory::set_scroll(int32 new_scroll) {
 }
 
 bool Inventory::remove(const Common::String &name) {
-	int iter;
-	for (iter = 0; iter < _num_cells; iter++) {
+	for (int16 iter = 0; iter < _num_cells; iter++) {
 		// Found the thing?
 		if (name.equals(_items[iter]._name)) {
 			// Eat up its slot by moving everything down
@@ -178,7 +176,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
 		return;
 
-	int cell_iter;
+	int16 cell_iter;
 
 	Buffer *myBuff = myBuffer->get_buffer();
 
