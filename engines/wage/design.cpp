@@ -239,7 +239,7 @@ class PlotDataPrimitives : public Graphics::Primitives {
 
 				*((byte *)p->surface->getBasePtr(xu, yu)) =
 					(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-						color : kColorWhite;
+						color : (byte)kColorWhite;
 			}
 		} else {
 			int x1 = x - p->thickness / 2;
@@ -254,7 +254,7 @@ class PlotDataPrimitives : public Graphics::Primitives {
 						uint yu = (uint)y;
 						*((byte *)p->surface->getBasePtr(xu, yu)) =
 							(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-								color : kColorWhite;
+								color : (byte)kColorWhite;
 					}
 		}
 	}
@@ -295,7 +295,7 @@ class PlotDataCirclePrimitives : public Graphics::Primitives {
 				uint yu = (uint)y;
 
 				*((byte *)p->surface->getBasePtr(xu, yu)) =
-					(pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
+					(pat[yu % 8] & (1 << (7 - xu % 8))) ? color : (byte)kColorWhite;
 			}
 		} else {
 			int x1 = x - p->thickness / 2;
