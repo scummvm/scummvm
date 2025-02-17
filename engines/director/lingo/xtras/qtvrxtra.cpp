@@ -30,7 +30,8 @@
 #include "director/images.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xtras/qtvrxtra.h"
 
@@ -489,7 +490,7 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 				g_lingo->executeHandler(me->_mouseStillDownHandler);
 		}
 
-		g_director->draw();
+		LB::b_updateStage(0);
 
 		if (event.type == Common::EVENT_QUIT) {
 			g_director->processEventQUIT();
@@ -598,7 +599,7 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		if (me->_exitMouseOver)
 			break;
 
-		g_director->draw();
+		LB::b_updateStage(0);
 
 		if (!me->_rect.contains(pos))
 			break;
