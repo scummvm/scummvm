@@ -344,6 +344,7 @@ static void conv_save_state(Conv *c) {
 	int32 next, tag;	// receive conv_ops_get_entry results
 	int32 myCNode = c->myCNode;
 	char fname[9];
+	memset(fname, 0, 9);
 
 	int32 num_decls = 0;
 	int32 num_entries = 0;
