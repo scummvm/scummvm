@@ -257,8 +257,6 @@ void CBofWindow::move(const int x, const int y, bool bRepaint) {
 }
 
 void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
-	if (_lockedScreen)
-		return;
 	assert(isValidObject(this));
 	assert(isCreated());
 	assert(pRect != nullptr);
