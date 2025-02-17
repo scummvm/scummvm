@@ -74,28 +74,28 @@ Vars::~Vars() {
 }
 
 void Vars::setArea(int areaNum) {
-	if (areaNum != _area) {
-		_area = areaNum;
-		_setup._areaNum = areaNum;
-		_sdData.setArea(areaNum);
-		_bgPics.setArea(areaNum);
+	_area = areaNum;
+	_setup = Setup();
+	_setup._areaNum = areaNum;
 
-		switch (areaNum) {
-		case 1:
-			_currentLevel = 23;
-			break;
+	_sdData.setArea(areaNum);
+	_bgPics.setArea(areaNum);
 
-		case 2:
-			_currentLevel = 51;
-			break;
+	switch (areaNum) {
+	case 1:
+		_currentLevel = 23;
+		break;
 
-		case 3:
-			_currentLevel = 33;
-			break;
+	case 2:
+		_currentLevel = 51;
+		break;
 
-		default:
-			break;
-		}
+	case 3:
+		_currentLevel = 33;
+		break;
+
+	default:
+		break;
 	}
 }
 

@@ -25,7 +25,7 @@
 namespace Got {
 
 SetupFlags &SetupFlags::operator=(const Got::SetupFlags &src) {
-	Common::copy(src._flags, src._flags + 8, _flags);
+	Common::copy(src._flags, src._flags + 64, _flags);
 	return *this;
 }
 
