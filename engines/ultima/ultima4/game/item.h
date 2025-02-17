@@ -43,7 +43,7 @@ class Items;
 typedef bool (Items::*IsInInventoryProc)(int item);
 typedef void (Items::*InventoryActionProc)(int item);
 
-struct ItemLocation {
+struct alignas(8) ItemLocation {
 	const char *_name;
 	const char *_shortName;
 	const char *_locationLabel;
