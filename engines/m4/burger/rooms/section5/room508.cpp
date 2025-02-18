@@ -441,7 +441,6 @@ void Room508::daemon() {
 
 				case 2:
 					_val1 = 3;
-					_val1 = 1;
 					_series4 = series_play("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
