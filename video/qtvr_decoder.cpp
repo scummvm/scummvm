@@ -502,9 +502,9 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	_decoder->_tiltAngle = 0.0f;
 }
 
-int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
+Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 my) {
 	if (!_isPanoConstructed)
-		return 0;
+		return Common::Point(-1, -1);
 
 	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
 
@@ -580,7 +580,7 @@ int QuickTimeDecoder::PanoTrackHandler::lookupHotspot(int16 mx, int16 my) {
 	else if (hotY > _constructedHotspots->w)
 		hotY = _constructedHotspots->w;
 
-	return (int)_constructedHotspots->getPixel(hotY, hotX);
+	return Common::Point(hotX, hotY);
 }
 
 void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
@@ -1026,16 +1026,42 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 	}
 }
 
+Common::Point QuickTimeDecoder::getPanLoc(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+	return track->projectPoint(x, y);
+}
+
+Graphics::FloatPoint QuickTimeDecoder::getPanAngles(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+	Common::Point pos = track->projectPoint(x, y);
+
+	Graphics::FloatPoint res;
+
+	res.x = desc->_hPanStart + (desc->_hPanStart - desc->_hPanEnd) / (float)desc->_sceneSizeY * pos.x;
+	res.y = desc->_vPanTop + (desc->_vPanTop - desc->_vPanBottom) / (float)desc->_sceneSizeX * pos.y;
+
+	return res;
+}
+
 void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 
-	int hotspotId = track->lookupHotspot(x, y);
+	Common::Point hotspotPoint = track->projectPoint(x, y);
 
-	if (hotspotId && _currentSample != -1) {
-		if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
-			_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
-	} else {
+	if (hotspotPoint.x < 0) {
 		_rolloverHotspot = nullptr;
+	} else {
+		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
+
+
+		if (hotspotId && _currentSample != -1) {
+			if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
+				_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
+		} else {
+			_rolloverHotspot = nullptr;
+		}
 	}
 }
 

@@ -34,6 +34,8 @@
 #include "common/keyboard.h"
 #include "common/scummsys.h"
 
+#include "graphics/transform_tools.h"
+
 #include "video/video_decoder.h"
 
 namespace Common {
@@ -101,6 +103,9 @@ public:
 
 	const PanoHotSpot *getRolloverHotspot() { return _rolloverHotspot; }
 	const PanoHotSpot *getClickedHotspot() { return _clickedHotspot; }
+	Common::Point getPanLoc(int16 x, int16 y);
+	Graphics::FloatPoint getPanAngles(int16 x, int16 y);
+
 	Common::String getHotSpotName(int id);
 	void setClickedHotSpot(int id);
 	const PanoHotSpot *getHotSpotByID(int id);
@@ -364,7 +369,7 @@ private:
 		void constructPanorama();
 		Graphics::Surface *constructMosaic(VideoTrackHandler *track, uint w, uint h, Common::String fname);
 
-		int lookupHotspot(int16 x, int16 y);
+		Common::Point projectPoint(int16 x, int16 y);
 
 		void setDirty() { _dirty = true; }
 
@@ -376,11 +381,13 @@ private:
 
 		const Graphics::Surface *bufferNextFrame();
 
+	public:
 		Graphics::Surface *_constructedPano;
 		Graphics::Surface *_constructedHotspots;
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
 
+	private:
 		bool _isPanoConstructed;
 
 		bool _dirty;
