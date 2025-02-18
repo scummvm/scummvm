@@ -72,10 +72,10 @@ struct EntranceInfo {
 };
 
 struct Rectangle {
-	int16 x1 = 0;
-	int16 y1 = 0;
-	int16 x2 = 0;
-	int16 y2 = 0;
+	int16 x1;
+	int16 y1;
+	int16 x2;
+	int16 y2;
 };
 
 class Mine : public Section3Room {
