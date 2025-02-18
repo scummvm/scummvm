@@ -206,6 +206,8 @@ void dbg_AddOpcodeToMachineInstr(int instruction) {
 			Common::strcat_s(g_instructionText, PCODE_OPCODES[instruction]);
 		} else if (instruction >= 64)
 			Common::strcat_s(g_instructionText, COND_OPCODES[instruction - 64]);
+		else if (instruction >= 16 || instruction < 0)
+			warning("dbg_AddOpcodeToMachineInstr - Unexpected value for instruction: %d", instruction);
 		else
 			Common::strcat_s(g_instructionText, IMM_OPCODES[instruction]);
 		Common::strcat_s(g_instructionText, " ");
