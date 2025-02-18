@@ -699,11 +699,30 @@ void QtvrxtraXtra::m_QTVRSetClickLoc(int nargs) {
 	me->_video->handleMouseButton(true, pos.x, pos.y);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanAngles, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanLoc, 0)
+void QtvrxtraXtra::m_QTVRGetClickPanAngles(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::Point pos = me->_video->getLastClick();
+	Graphics::FloatPoint loc = me->_video->getPanAngles(pos.x, pos.y);
+
+	g_lingo->push(Common::String::format("%.4f,%.4f", loc.x, loc.y));
+}
+
+void QtvrxtraXtra::m_QTVRGetClickPanLoc(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::Point pos = me->_video->getLastClick();
+	Common::Point loc = me->_video->getPanLoc(pos.x, pos.y);
+
+	g_lingo->push(Common::String::format("%d,%d", loc.x, loc.y));
+}
 
 void QtvrxtraXtra::m_QTVRGetHotSpotID(int nargs) {
-	ARGNUMCHECK(1);
+	ARGNUMCHECK(0);
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
