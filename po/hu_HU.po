@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-18 01:07+0000\n"
-"PO-Revision-Date: 2025-02-18 12:55+0000\n"
+"PO-Revision-Date: 2025-02-18 19:03+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -7643,19 +7643,15 @@ msgstr "Fő menü megnyitása"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "A egér mutató és az utolsó játék tárgy közötti váltogatás"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
-msgstr "Tárgylista Kinyit/Bezár"
+msgstr "Előző tárgy a felszerelésben"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
-msgstr "Tárgylista Kinyit/Bezár"
+msgstr "Következő tárgy a felszerelésben"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7665,10 +7661,10 @@ msgid ""
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
-"Hiba: A '%s' fájlt nem sikerült helyesen kitömöríteni. \n"
-"Kérlek, olvasd el a wiki oldalt\n"
-"%s a DTSPEECH.XA és *.STR fájlok megfelelő kibontásával kapcsolatos "
-"részletekért a játéklemezről."
+"Hiba: A '%s' fájl kitömörítése sikertelen. \n"
+"Kérem olvassa el a wiki oldalt\n"
+"%s azzal kapcsolatban, hogy hogyan tudja megfelelően kicsomagolni a "
+"DTSPEECH.XA és *.STR fájlokat a lemezről."
 
 #: engines/dragons/metaengine.cpp:121
 #, c-format
@@ -7680,12 +7676,12 @@ msgid ""
 "\n"
 " See %s"
 msgstr ""
-"Hiba: Úgy tûnik, hogy a játék adatfájljait helytelenül csomagolták ki.\n"
+"Hiba: Úgy tűnik, a játék adat fájlok kitömörítése sikertelen volt.\n"
 "\n"
 "Csak az STR és XA fájlokat szabad kicsomagolnia a speciális módszerrel. A "
-"többit általában a játék CD-jérõl kell átmásolni.\n"
+"többit a játék CD-jéről kell átmásolni.\n"
 "\n"
-" Nézd meg %s"
+" További információ %s"
 
 #: engines/dragons/metaengine.cpp:219
 msgid "Debug Graphics"
@@ -7701,12 +7697,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM régi játékmentést talált a Drascula-hoz, ezt át kell alakítani.\n"
-"A régi játékmentés forma többé nem támogatott, ezért a játék mentése nem "
-"töltõdik be ha nem akítod át azt.\n"
+"A ScummVM szerint a mentései régi típusúak, amelyeket át kell konvertálni.\n"
+"A régi mentés formátum immáron nem támogatott, így nem fogja tudni betölteni "
+"őlet konvertálás nélkül.\n"
 "\n"
-"Nyomj OK-t ha átalakítod most, vagy rákérdezek újra ha legközelebb elindítod "
-"a játékot.\n"
+"Az OK megnyomásával átkonvertálhatja őket, ellenkező esetben a ScummVM újra "
+"meg fogja kérdezni a játék következő indításánál.\n"
 
 #: engines/dreamweb/metaengine.cpp:60
 msgid "Use bright palette mode"
@@ -7714,13 +7710,12 @@ msgstr "Fényes paletta mód használata"
 
 #: engines/dreamweb/metaengine.cpp:61
 msgid "Display graphics using the game's bright palette"
-msgstr "Grafikus megjelenítésre használja a játék fényes palettáját"
+msgstr "Grafika megjelenítése a játék világos palettájának segítségével"
 
 #: engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
-"Szövegfelolvasó engedélyezése az objektumok, opciók és a Biblia idézet "
-"számára"
+"Szövegfelolvasó engedélyezése az objektumok, Opciók és a Biblia idézet esetén"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -7744,10 +7739,8 @@ msgid "Automatic drilling"
 msgstr "Automatikus fúrás"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
-msgstr "Hagyja sikeresen fúrni a terület bármely részén a Drillerben"
+msgstr "Sikeres fúrás engedélyezése bármely területen a Driller-ben"
 
 #: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
@@ -7775,43 +7768,37 @@ msgstr "A játékos nem eshet át a széleken"
 
 #: engines/freescape/metaengine.cpp:108
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Egér Y tengely invertálása"
 
 #: engines/freescape/metaengine.cpp:109
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Alternatív paletta használat"
+msgstr "Alternatív kamera irányítás használata"
 
 #: engines/freescape/metaengine.cpp:119
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Grafika szûrése"
+msgstr "Autentikus grafika"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "A grafika az eredetihez lehető legjobban közelítsen"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Tároló engedélyezése"
+msgstr "Kő utazás engedélyezése"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "A kezdésnél lehessen kő kilövéssel utazni"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe Left"
-msgstr "Ágyútűz Balra"
+msgstr "Balra oldalazás"
 
 #: engines/freescape/movement.cpp:56 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe Right"
-msgstr "Ágyútűz Jobbra"
+msgstr "Oldalazás jobbra"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
@@ -7819,124 +7806,96 @@ msgid "Shoot"
 msgstr "Lövés"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Forgatás"
+msgstr "Forgatás felfelé"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Forgatás"
+msgstr "Forgatás lefelé"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn back"
-msgstr "Futás hátra"
+msgstr "Visszafordulás"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Utasítás Változtatás"
+msgstr "Módváltás"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menü"
+msgstr "Infó Menü"
 
 #: engines/freescape/games/castle/castle.cpp:236
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "Válassz Shadert"
+msgstr "Királyfi kiválasztása"
 
 #: engines/freescape/games/castle/castle.cpp:241
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "Válassz Shadert"
+msgstr "Királykisasszony kiválasztása"
 
 #: engines/freescape/games/castle/castle.cpp:268
 #: engines/freescape/games/dark/dark.cpp:206
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:222
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Váltás némításra"
+msgstr "Hang ki/be kapcsolása"
 
 #: engines/freescape/games/castle/castle.cpp:273
 #: engines/freescape/games/dark/dark.cpp:212
 #: engines/freescape/games/driller/driller.cpp:156
 #: engines/freescape/games/eclipse/eclipse.cpp:227
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Ágyútűz Balra"
+msgstr "Forgatás Balra"
 
 #: engines/freescape/games/castle/castle.cpp:278
 #: engines/freescape/games/dark/dark.cpp:217
 #: engines/freescape/games/driller/driller.cpp:161
 #: engines/freescape/games/eclipse/eclipse.cpp:232
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Ágyútűz Jobbra"
+msgstr "Forgatás Jobbra"
 
 #. I18N: Action in In Cold Blood
 #: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:592 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
-msgstr "Futtat"
+msgstr "Futtatás"
 
 #: engines/freescape/games/castle/castle.cpp:294
 msgid "Crawl"
-msgstr ""
+msgstr "Kúszás"
 
 #: engines/freescape/games/castle/castle.cpp:300
 #: engines/freescape/games/eclipse/eclipse.cpp:259
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Mozgás elõre"
+msgstr "Arccal előre"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
 #: engines/freescape/games/driller/driller.cpp:167
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Skála tényezõ növelése"
+msgstr "Lépés táv növelése"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:173
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Skála tényezõ csökkentése"
+msgstr "Lépés táv csökkentése"
 
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:178
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Felemelkedés/Repülés"
 
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:184
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Repülés le"
+msgstr "Leereszkedés/Repülés"
 
 #: engines/freescape/games/dark/dark.cpp:246
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Jetpack ki/be kapcsolás"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:191
