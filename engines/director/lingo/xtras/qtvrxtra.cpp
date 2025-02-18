@@ -719,7 +719,7 @@ void QtvrxtraXtra::m_QTVRGetHotSpotViewAngles(int nargs) {
 	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
 
 	if (hotspot)
-		g_lingo->push(Common::String::format("%.4f,%.4f,%.4f", hotspot->viewHPan, hotspot->viewVPan, hotspot->viewZoom);
+		g_lingo->push(Common::String::format("%.4f,%.4f,%.4f", hotspot->viewHPan, hotspot->viewVPan, hotspot->viewZoom));
 	else
 		g_lingo->push(Common::String(""));
 }
