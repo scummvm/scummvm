@@ -315,7 +315,7 @@ static Common::Rect stringToRect(const Common::String &rectStr) {
 	Common::StringArray tokens(tokenizer.split());
 
 	if (tokens.size() != 4) {
-		error("stringToRect(): The string should contain exactly 4 numbers separated by commas!");
+		error("stringToRect(): The string should contain exactly 4 numbers separated by commas");
 		return {};
 	}
 
@@ -326,6 +326,22 @@ static Common::Rect stringToRect(const Common::String &rectStr) {
 	rect.bottom = atoi(tokens[3].c_str());
 
 	return rect;
+}
+
+static Common::Point stringToPoint(const Common::String &pointStr) {
+	Common::StringTokenizer tokenizer(pointStr, Common::String(','));
+	Common::StringArray tokens(tokenizer.split());
+
+	if (tokens.size() != 2) {
+		error("stringToPoint(): The string should contain exactly 2 numbers separated by commas");
+		return {};
+	}
+
+	Common::Point point;
+	point.x = atoi(tokens[0].c_str());
+	point.y = atoi(tokens[1].c_str());
+
+	return point;
 }
 
 void QtvrxtraXtra::m_QTVROpen(int nargs) {
@@ -663,8 +679,26 @@ void QtvrxtraXtra::m_QTVRSetFOV(int nargs) {
 	me->_video->setFOV(atof(g_lingo->pop().asString().c_str()));
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickLoc, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetClickLoc, 0)
+void QtvrxtraXtra::m_QTVRGetClickLoc(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::Point pos = me->_video->getLastClick();
+
+	g_lingo->push(Common::String::format("%d,%d", pos.x, pos.y));
+}
+
+void QtvrxtraXtra::m_QTVRSetClickLoc(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::Point pos = stringToPoint(g_lingo->pop().asString());
+
+	me->_video->handleMouseButton(true, pos.x, pos.y);
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanLoc, 0)
 
