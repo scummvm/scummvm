@@ -82,6 +82,8 @@ public:
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1, bool repeat = false);
 	void handleKey(Common::KeyState &state, bool down, bool repeat = false);
 
+	Common::Point getLastClick() { return _mouseDrag; }
+
 	float getPanAngle() const { return _panAngle; }
 	void setPanAngle(float panAngle);
 	float getTiltAngle() const { return _tiltAngle; }
