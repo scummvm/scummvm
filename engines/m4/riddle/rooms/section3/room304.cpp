@@ -30,6 +30,18 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room304::preload() {
+	if (_G(flags)[V000]) {
+		_G(art_base_override) = "RIPLEYS OFFICE-TREK";
+		_G(use_alternate_attribute_file) = false;
+		_G(player).walker_type = WALKER_ALT;
+		_G(player).shadow_type = SHADOW_ALT;
+	} else {
+		_G(player).walker_type = WALKER_PLAYER;
+		_G(player).shadow_type = SHADOW_PLAYER;
+	}
+}
+
 void Room304::init() {
 	interface_show();
 	_val1 = 0;
@@ -695,7 +707,7 @@ void Room304::handlingStickAndSword() {
 		ws_hide_walker(_mei);
 
 		_field60 = series_ranged_play_xy("mc hand to chin pos3",
-			1, 0, 0, 17, 29, 295, 100, 0x100, 9);
+			1, 0, 0, 17, 29, 295, 100, 0x100, 9, -1, true);
 		digi_play("304m06", 1, 255, 55);
 		break;
 
