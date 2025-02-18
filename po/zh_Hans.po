@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-18 01:07+0000\n"
+"POT-Creation-Date: 2025-02-18 21:14+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -562,7 +562,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
 #: backends/graphics/atari/atari-graphics.cpp:1033
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 msgid "Graphics"
 msgstr "图形"
 
@@ -1819,7 +1819,7 @@ msgstr "下载着色器"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "登陆 scummvm.org 网站获取光影包更新"
 
-#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:476
+#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:516
 msgid "Fullscreen mode"
 msgstr "全屏模式"
 
@@ -3996,89 +3996,89 @@ msgid "Choose a new folder"
 msgstr "选择新文件夹"
 
 #: backends/graphics/atari/atari-graphics.cpp:1037
-#: backends/graphics/sdl/sdl-graphics.cpp:507
+#: backends/graphics/sdl/sdl-graphics.cpp:547
 msgid "Toggle aspect ratio correction"
 msgstr "开关宽高比矫正"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
 #: backends/graphics3d/ios/ios-graphics3d.cpp:356
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:271
 #: engines/twine/metaengine.cpp:312
 msgid "Center"
 msgstr "中心"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
 #: backends/graphics3d/ios/ios-graphics3d.cpp:357
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:272
 msgid "Pixel-perfect scaling"
 msgstr "像素完美缩放"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/ios/ios-graphics3d.cpp:358
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:273
 msgid "Even pixels scaling"
 msgstr "偶像素缩放"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
 #: backends/graphics3d/ios/ios-graphics3d.cpp:359
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:274
 msgid "Fit to window"
 msgstr "适应窗口"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:130
 #: backends/graphics3d/ios/ios-graphics3d.cpp:360
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:275
 msgid "Stretch to window"
 msgstr "拉伸到窗口"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:131
 #: backends/graphics3d/ios/ios-graphics3d.cpp:361
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:276
 msgid "Fit to window (4:3)"
 msgstr "适应窗口 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:800
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:847
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "分辨率：%dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:844
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2684
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:891
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Active graphics filter:"
 msgstr "活动图形过滤器："
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:865
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:912
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2979
 msgid "Enabled aspect ratio correction"
 msgstr "已启用宽高比矫正"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:867
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:914
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2985
 msgid "Disabled aspect ratio correction"
 msgstr "已禁用宽高比矫正"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:880
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:927
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3001
 msgid "Filtering enabled"
 msgstr "过滤已启用"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:882
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2742
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:929
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3003
 msgid "Filtering disabled"
 msgstr "过滤已禁用"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:908
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2769
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:955
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3030
 msgid "Stretch mode"
 msgstr "拉伸模式"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:121
 msgid "SDL Surface"
 msgstr "SDL 表面"
 
@@ -4086,29 +4086,29 @@ msgstr "SDL 表面"
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr "SDL 表面（强制使用 8bpp 模式）"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:456
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "已保存截图“%s”"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:471
 msgid "Could not save screenshot"
 msgstr "无法保存截图"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:478
+#: backends/graphics/sdl/sdl-graphics.cpp:518
 msgid "Windowed mode"
 msgstr "窗口模式"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:489 engines/scumm/help.cpp:88
+#: backends/graphics/sdl/sdl-graphics.cpp:529 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "切换全屏"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:496 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:536 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "切换鼠标捕获"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:501 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:541 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4121,27 +4121,27 @@ msgstr "切换鼠标捕获"
 msgid "Save screenshot"
 msgstr "保存截图"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:514
+#: backends/graphics/sdl/sdl-graphics.cpp:554
 msgid "Toggle linear filtered scaling"
 msgstr "开关线性过滤缩放"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:561
 msgid "Cycle through stretch modes"
 msgstr "循环切换拉伸模式"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:527
+#: backends/graphics/sdl/sdl-graphics.cpp:567
 msgid "Increase the scale factor"
 msgstr "增大缩放系数"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:533
+#: backends/graphics/sdl/sdl-graphics.cpp:573
 msgid "Decrease the scale factor"
 msgstr "减小缩放系数"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:580
 msgid "Switch to the next scaler"
 msgstr "切换到下一个缩放器"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:545
+#: backends/graphics/sdl/sdl-graphics.cpp:585
 msgid "Switch to the previous scaler"
 msgstr "切换至上一个缩放器"
 
@@ -5508,11 +5508,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "点击模式"
 
-#: backends/platform/sdl/sdl.cpp:1054
+#: backends/platform/sdl/sdl.cpp:1136
 msgid "Keyboard"
 msgstr "键盘"
 
-#: backends/platform/sdl/sdl.cpp:1057
+#: backends/platform/sdl/sdl.cpp:1139
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5543,23 +5543,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | 显示全局主菜单\n"
 
-#: backends/platform/sdl/sdl.cpp:1069
+#: backends/platform/sdl/sdl.cpp:1151
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | 退出 (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1071
+#: backends/platform/sdl/sdl.cpp:1153
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | 退出 (Windows)\n"
 
-#: backends/platform/sdl/sdl.cpp:1073
+#: backends/platform/sdl/sdl.cpp:1155
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | 退出 (Linux/Unix)\n"
 
-#: backends/platform/sdl/sdl.cpp:1074
+#: backends/platform/sdl/sdl.cpp:1156
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | 退出（其他平台）\n"
 
-#: backends/platform/sdl/sdl.cpp:1077
+#: backends/platform/sdl/sdl.cpp:1159
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"

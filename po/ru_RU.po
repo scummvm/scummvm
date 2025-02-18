@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-18 01:07+0000\n"
+"POT-Creation-Date: 2025-02-18 21:14+0000\n"
 "PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -568,7 +568,7 @@ msgstr "Грф"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
 #: backends/graphics/atari/atari-graphics.cpp:1033
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 msgid "Graphics"
 msgstr "Графика"
 
@@ -1858,7 +1858,7 @@ msgstr "Скачать шейдеры"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Проверяет обновления пакетов шейдеров на сайте scummvm.org"
 
-#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:476
+#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:516
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -4121,89 +4121,89 @@ msgid "Choose a new folder"
 msgstr "Выберите новую папку"
 
 #: backends/graphics/atari/atari-graphics.cpp:1037
-#: backends/graphics/sdl/sdl-graphics.cpp:507
+#: backends/graphics/sdl/sdl-graphics.cpp:547
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
 #: backends/graphics3d/ios/ios-graphics3d.cpp:356
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:271
 #: engines/twine/metaengine.cpp:312
 msgid "Center"
 msgstr "По центру"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
 #: backends/graphics3d/ios/ios-graphics3d.cpp:357
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:272
 msgid "Pixel-perfect scaling"
 msgstr "Масштабирование пиксель-в-пиксель"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/ios/ios-graphics3d.cpp:358
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:273
 msgid "Even pixels scaling"
 msgstr "Равеомерное масштабирование пиксель-в-пиксель"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
 #: backends/graphics3d/ios/ios-graphics3d.cpp:359
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:274
 msgid "Fit to window"
 msgstr "Уменьшить до размеров окна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:130
 #: backends/graphics3d/ios/ios-graphics3d.cpp:360
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:275
 msgid "Stretch to window"
 msgstr "Растянуть до размеров окна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:131
 #: backends/graphics3d/ios/ios-graphics3d.cpp:361
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:276
 msgid "Fit to window (4:3)"
 msgstr "Подходит к окну (4: 3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:800
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:847
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Разрешение: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:844
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2684
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:891
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:865
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:912
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2979
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:867
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:914
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2985
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:880
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:927
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3001
 msgid "Filtering enabled"
 msgstr "Фильтрация включена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:882
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2742
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:929
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3003
 msgid "Filtering disabled"
 msgstr "Фильтрация выключена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:908
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2769
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:955
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3030
 msgid "Stretch mode"
 msgstr "Режим растягивания"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:121
 msgid "SDL Surface"
 msgstr "Поверхность SDL"
 
@@ -4211,29 +4211,29 @@ msgstr "Поверхность SDL"
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr "SDL Surface (8-битный режим)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:456
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Сохранён скриншот '%s'"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:471
 msgid "Could not save screenshot"
 msgstr "Не удалось сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:478
+#: backends/graphics/sdl/sdl-graphics.cpp:518
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:489 engines/scumm/help.cpp:88
+#: backends/graphics/sdl/sdl-graphics.cpp:529 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Переключение на весь экран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:496 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:536 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Переключение перехвата мыши"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:501 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:541 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4246,27 +4246,27 @@ msgstr "Переключение перехвата мыши"
 msgid "Save screenshot"
 msgstr "Сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:514
+#: backends/graphics/sdl/sdl-graphics.cpp:554
 msgid "Toggle linear filtered scaling"
 msgstr "Использовать линейное сглаживание при масштабировании"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:561
 msgid "Cycle through stretch modes"
 msgstr "Переключение режима растягивания"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:527
+#: backends/graphics/sdl/sdl-graphics.cpp:567
 msgid "Increase the scale factor"
 msgstr "Увеличить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:533
+#: backends/graphics/sdl/sdl-graphics.cpp:573
 msgid "Decrease the scale factor"
 msgstr "Уменьшить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:580
 msgid "Switch to the next scaler"
 msgstr "Переключить на предыдущий фильтр масштабирования"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:545
+#: backends/graphics/sdl/sdl-graphics.cpp:585
 msgid "Switch to the previous scaler"
 msgstr "Переключить на следующий фильтр масштабирования"
 
@@ -5692,11 +5692,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Режим щелчка"
 
-#: backends/platform/sdl/sdl.cpp:1054
+#: backends/platform/sdl/sdl.cpp:1136
 msgid "Keyboard"
 msgstr "Клавиатура"
 
-#: backends/platform/sdl/sdl.cpp:1057
+#: backends/platform/sdl/sdl.cpp:1139
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5728,23 +5728,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Отображает глобальное главное меню\n"
 
-#: backends/platform/sdl/sdl.cpp:1069
+#: backends/platform/sdl/sdl.cpp:1151
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | Выход (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1071
+#: backends/platform/sdl/sdl.cpp:1153
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | Выход (Windows)\n"
 
-#: backends/platform/sdl/sdl.cpp:1073
+#: backends/platform/sdl/sdl.cpp:1155
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | Выход (Linux/Unix)\n"
 
-#: backends/platform/sdl/sdl.cpp:1074
+#: backends/platform/sdl/sdl.cpp:1156
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | Выход (другие платформы)\n"
 
-#: backends/platform/sdl/sdl.cpp:1077
+#: backends/platform/sdl/sdl.cpp:1159
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"

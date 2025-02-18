@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-18 01:07+0000\n"
+"POT-Creation-Date: 2025-02-18 21:14+0000\n"
 "PO-Revision-Date: 2025-02-18 19:03+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -570,7 +570,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
 #: backends/graphics/atari/atari-graphics.cpp:1033
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 msgid "Graphics"
 msgstr "Grafika"
 
@@ -1861,7 +1861,7 @@ msgstr "Shaderek letöltése"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Látogasson el a scummvm.org oldalra a shader csomag frissítésekért"
 
-#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:476
+#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:516
 msgid "Fullscreen mode"
 msgstr "Teljesképernyős mód"
 
@@ -4121,89 +4121,89 @@ msgid "Choose a new folder"
 msgstr "Új mappa kiválasztása"
 
 #: backends/graphics/atari/atari-graphics.cpp:1037
-#: backends/graphics/sdl/sdl-graphics.cpp:507
+#: backends/graphics/sdl/sdl-graphics.cpp:547
 msgid "Toggle aspect ratio correction"
 msgstr "Képarány korrekció váltása"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
 #: backends/graphics3d/ios/ios-graphics3d.cpp:356
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:271
 #: engines/twine/metaengine.cpp:312
 msgid "Center"
 msgstr "Közép"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
 #: backends/graphics3d/ios/ios-graphics3d.cpp:357
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:272
 msgid "Pixel-perfect scaling"
 msgstr "Ideális-pixel méretezés"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/ios/ios-graphics3d.cpp:358
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:273
 msgid "Even pixels scaling"
 msgstr "Egyenletes pixel méretezés"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
 #: backends/graphics3d/ios/ios-graphics3d.cpp:359
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:274
 msgid "Fit to window"
 msgstr "Ablak szintű nagyítás"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:130
 #: backends/graphics3d/ios/ios-graphics3d.cpp:360
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:275
 msgid "Stretch to window"
 msgstr "Ablak szintű nyújtás"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:131
 #: backends/graphics3d/ios/ios-graphics3d.cpp:361
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:276
 msgid "Fit to window (4:3)"
 msgstr "Ablak szintű nagyítás (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:800
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:847
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Felbontás: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:844
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2684
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:891
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus filterek:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:865
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:912
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2979
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:867
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:914
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2985
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció kikapcsolva"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:880
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:927
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3001
 msgid "Filtering enabled"
 msgstr "Filter-ezés engedélyezve"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:882
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2742
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:929
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3003
 msgid "Filtering disabled"
 msgstr "Filter-ezés kikapcsolva"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:908
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2769
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:955
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:3030
 msgid "Stretch mode"
 msgstr "Nyújtás mód"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:121
 msgid "SDL Surface"
 msgstr "SDL Felület"
 
@@ -4211,29 +4211,29 @@ msgstr "SDL Felület"
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr "SDL Felület (kényszerített 8bpp mód)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:456
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "'%s' képernyőkép mentve"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:471
 msgid "Could not save screenshot"
 msgstr "Sikertelen képernyőkép mentés"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:478
+#: backends/graphics/sdl/sdl-graphics.cpp:518
 msgid "Windowed mode"
 msgstr "Ablakos mód"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:489 engines/scumm/help.cpp:88
+#: backends/graphics/sdl/sdl-graphics.cpp:529 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Teljesképernyős kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:496 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:536 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Egér rögzítés kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:501 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:541 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4246,27 +4246,27 @@ msgstr "Egér rögzítés kapcsoló"
 msgid "Save screenshot"
 msgstr "Képernyőkép mentése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:514
+#: backends/graphics/sdl/sdl-graphics.cpp:554
 msgid "Toggle linear filtered scaling"
 msgstr "Lineáris filter méretezés kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:561
 msgid "Cycle through stretch modes"
 msgstr "Kinyújtási módok közötti váltás"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:527
+#: backends/graphics/sdl/sdl-graphics.cpp:567
 msgid "Increase the scale factor"
 msgstr "Méretező tényező növelése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:533
+#: backends/graphics/sdl/sdl-graphics.cpp:573
 msgid "Decrease the scale factor"
 msgstr "Méretező tényező csökkentése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:580
 msgid "Switch to the next scaler"
 msgstr "Váltás a következő skálázóra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:545
+#: backends/graphics/sdl/sdl-graphics.cpp:585
 msgid "Switch to the previous scaler"
 msgstr "Váltás az előző skálázóra"
 
@@ -5690,11 +5690,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Kattintás Mód"
 
-#: backends/platform/sdl/sdl.cpp:1054
+#: backends/platform/sdl/sdl.cpp:1136
 msgid "Keyboard"
 msgstr "Billentyűzet"
 
-#: backends/platform/sdl/sdl.cpp:1057
+#: backends/platform/sdl/sdl.cpp:1139
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5727,23 +5727,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Az átfogó Fő Menü megjelenítése\n"
 
-#: backends/platform/sdl/sdl.cpp:1069
+#: backends/platform/sdl/sdl.cpp:1151
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | Kilépés (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1071
+#: backends/platform/sdl/sdl.cpp:1153
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | Kilépés (Windows)\n"
 
-#: backends/platform/sdl/sdl.cpp:1073
+#: backends/platform/sdl/sdl.cpp:1155
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | Kilépés (Linux/Unix)\n"
 
-#: backends/platform/sdl/sdl.cpp:1074
+#: backends/platform/sdl/sdl.cpp:1156
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | Kilépés (más platformok)\n"
 
-#: backends/platform/sdl/sdl.cpp:1077
+#: backends/platform/sdl/sdl.cpp:1159
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -7663,8 +7663,8 @@ msgid ""
 msgstr ""
 "Hiba: A '%s' fájl kitömörítése sikertelen. \n"
 "Kérem olvassa el a wiki oldalt\n"
-"%s azzal kapcsolatban, hogy hogyan tudja megfelelően kicsomagolni a "
-"DTSPEECH.XA és *.STR fájlokat a lemezről."
+"%s azzal kapcsolatban, hogy hogyan tudja megfelelően kicsomagolni a DTSPEECH."
+"XA és *.STR fájlokat a lemezről."
 
 #: engines/dragons/metaengine.cpp:121
 #, c-format
