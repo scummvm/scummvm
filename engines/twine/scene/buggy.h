@@ -47,7 +47,7 @@ public:
 		int32 Z = 0;
 	};
 
-	typedef struct {
+	struct S_BUGGY {
 		int32 X = 0;
 		int32 Y = 0;
 		int32 Z = 0;
@@ -61,7 +61,7 @@ public:
 		int32 SpeedRot = 0;
 		int32 Speed = 0;
 		int32 LastTimer = 0;
-	} S_BUGGY;
+	};
 
 	// TODO: rename and hide
 	S_BUGGY ListBuggy[MAX_BUGGYS];
