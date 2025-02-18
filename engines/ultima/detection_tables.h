@@ -156,6 +156,12 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 				Common::DE_DEU,
 				Common::kPlatformDOS),
 
+	// Ultima VI - German Patch 1.7 https://sirjohn.de/ultima-6/
+	// Note: Not all user interface elements are translated in ScummVM
+	ENTRY_ULTIMA6("converse.a", "f4e9280402baff12e5132e62f7bbb54f", 198810,
+				Common::DE_DEU,
+				Common::kPlatformDOS),
+
 	// PC98 Ultima 6
 	ENTRY_ULTIMA6_NORMAL_UNSTABLE("converse.a", "99975e79e7cae3ee24a8e33982f60fe4", 190920,
 				Common::JA_JPN,
