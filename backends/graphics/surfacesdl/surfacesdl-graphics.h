@@ -95,7 +95,11 @@ protected:
 	 * @param in    The SDL pixel format to convert
 	 * @param out   A pixel format to be written to
 	 */
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	Graphics::PixelFormat convertSDLPixelFormat(SDL_PixelFormat in) const;
+#else
 	Graphics::PixelFormat convertSDLPixelFormat(SDL_PixelFormat *in) const;
+#endif
 public:
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	Graphics::Surface *lockScreen() override;
@@ -129,7 +133,7 @@ public:
 	void notifyVideoExpose() override;
 	void notifyResize(const int width, const int height) override;
 
-#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+#if defined(USE_IMGUI) && (defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3))
 	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
 	void freeImGuiTexture(void *texture) override;
 #endif

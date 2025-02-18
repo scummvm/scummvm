@@ -187,12 +187,18 @@
 
 #endif
 
+#ifdef USE_SDL3
+#include <SDL3/SDL.h>
+#else
 #include <SDL.h>
+#endif
 
 // Ignore warnings from system headers pulled by SDL
 #pragma warning(push)
 #pragma warning(disable:4121) // alignment of a member was sensitive to packing
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 #include <SDL_syswm.h>
+#endif
 #pragma warning(pop)
 
 // Restore the forbidden exceptions from the hack above

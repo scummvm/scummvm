@@ -34,6 +34,36 @@
 #include "common/translation.h"
 #endif
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static void sdlGLDestroyContext(SDL_GLContext context) {
+	SDL_GL_DestroyContext(context);
+}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+static void sdlGLDestroyContext(SDL_GLContext context) {
+	SDL_GL_DeleteContext(context);
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlSetSwapInterval(int interval) {
+	return SDL_GL_SetSwapInterval(interval);
+}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+static bool sdlSetSwapInterval(int interval) {
+	return SDL_GL_SetSwapInterval(interval) == 0;
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value);
+}
+#else
+static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value) != 0;
+}
+#endif
+
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
 	: SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -91,16 +121,16 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	// because then we already set up what we want to use.
 	//
 	// In case no defaults are given we prefer OpenGL over OpenGL ES.
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask)) {
 		_glContextProfileMask = 0;
 		noDefaults = true;
 	}
 
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor)) {
 		noDefaults = true;
 	}
 
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor)) {
 		noDefaults = true;
 	}
 
@@ -201,7 +231,7 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #endif
 
 	notifyContextDestroy();
-	SDL_GL_DeleteContext(_glContext);
+	sdlGLDestroyContext(_glContext);
 #else
 	if (_hwScreen) {
 		notifyContextDestroy();
@@ -255,7 +285,14 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (_window && _window->getSDLWindow()) {
+			// SDL_GetWindowFullscreenMode returns a pointer to the exclusive fullscreen mode to use or NULL for borderless
+			return ((SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN) != 0) && (SDL_GetWindowFullscreenMode(_window->getSDLWindow()) == NULL);
+		} else {
+			return _wantsFullScreen;
+		}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window && _window->getSDLWindow()) {
 			return (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
 		} else {
@@ -574,11 +611,15 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		destroyImGui();
 #endif
 
-		SDL_GL_DeleteContext(_glContext);
+		sdlGLDestroyContext(_glContext);
 		_glContext = nullptr;
 	}
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+#else
 	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+#endif
 
 	if (_wantsFullScreen) {
 		// On Linux/X11, when toggling to fullscreen, the window manager saves
@@ -596,7 +637,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		width  = _desiredFullscreenWidth;
 		height = _desiredFullscreenHeight;
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		flags |= SDL_WINDOW_FULLSCREEN;
+		SDL_SetWindowFullscreenMode(_window->getSDLWindow(), NULL);
+		SDL_SyncWindow(_window->getSDLWindow());
+#else
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 	}
 
 	if (!_wantsFullScreen && ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain)) {
@@ -608,7 +655,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
-#ifdef NINTENDO_SWITCH
+#if defined(NINTENDO_SWITCH) && !SDL_VERSION_ATLEAST(3, 0, 0)
 	// Switch quirk: Switch seems to need this flag, otherwise the screen
 	// is zoomed when switching from Normal graphics mode to OpenGL
 	flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -622,7 +669,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		return false;
 	}
 
-	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
+	if (!sdlSetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
 

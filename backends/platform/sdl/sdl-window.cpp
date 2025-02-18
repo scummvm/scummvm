@@ -29,7 +29,9 @@
 
 #include "icons/scummvm.xpm"
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN;
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN;
 #endif
 
@@ -122,7 +124,11 @@ void SdlWindow::setupIcon() {
 		}
 	}
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Surface *sdl_surf = SDL_CreateSurfaceFrom(w, h, SDL_GetPixelFormatForMasks(32, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000), icon, w * 4);
+#else
 	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+#endif
 	if (!sdl_surf) {
 		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
 	}
@@ -135,7 +141,11 @@ void SdlWindow::setupIcon() {
 	SDL_WM_SetIcon(sdl_surf, NULL);
 #endif
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_DestroySurface(sdl_surf);
+#else
 	SDL_FreeSurface(sdl_surf);
+#endif
 	free(icon);
 #endif
 }
@@ -154,7 +164,11 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 void SdlWindow::grabMouse(bool grab) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_window) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_SetWindowMouseGrab(_window, grab);
+#else
 		SDL_SetWindowGrab(_window, grab ? SDL_TRUE : SDL_FALSE);
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 18)
 		SDL_SetWindowMouseRect(_window, grab ? &grabRect : NULL);
 #endif
@@ -187,7 +201,10 @@ void SdlWindow::setMouseRect(const Common::Rect &rect) {
 }
 
 bool SdlWindow::lockMouse(bool lock) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_SetWindowRelativeMouseMode(_window, lock);
+	_inputLockState = lock;
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetRelativeMouseMode(lock ? SDL_TRUE : SDL_FALSE);
 	_inputLockState = lock;
 #else
@@ -244,6 +261,7 @@ void SdlWindow::iconifyWindow() {
 #endif
 }
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	SDL_VERSION(&info->version);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -254,9 +272,17 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	return false;
 #endif
 }
+#endif
 
 Common::Rect SdlWindow::getDesktopResolution() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	const SDL_DisplayMode* pDisplayMode = SDL_GetDesktopDisplayMode(getDisplayIndex());
+	if (pDisplayMode) {
+		_desktopRes = Common::Rect(pDisplayMode->w, pDisplayMode->h);
+	} else {
+		warning("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+	}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_DisplayMode displayMode;
 	if (!SDL_GetDesktopDisplayMode(getDisplayIndex(), &displayMode)) {
 		_desktopRes = Common::Rect(displayMode.w, displayMode.h);
@@ -279,7 +305,9 @@ void SdlWindow::getDisplayDpi(float *dpi, float *defaultDpi) const {
 		*defaultDpi = systemDpi;
 
 	if (dpi) {
-#if SDL_VERSION_ATLEAST(2, 0, 4)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		*dpi = SDL_GetWindowDisplayScale(_window) * systemDpi;
+#elif SDL_VERSION_ATLEAST(2, 0, 4)
 		if (SDL_GetDisplayDPI(getDisplayIndex(), nullptr, dpi, nullptr) != 0) {
 			*dpi = systemDpi;
 		}
@@ -303,7 +331,9 @@ float SdlWindow::getDpiScalingFactor() const {
 }
 
 float SdlWindow::getSdlDpiScalingFactor() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	return SDL_GetWindowDisplayScale(getSDLWindow());
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(getSDLWindow(), &windowWidth, &windowHeight);
 	int realWidth, realHeight;
@@ -316,6 +346,15 @@ float SdlWindow::getSdlDpiScalingFactor() const {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	const bool locked = SDL_MUSTLOCK(src);
+
+	if (locked) {
+		if (!SDL_LockSurface(src)) {
+			return nullptr;
+		}
+	}
+#else
 	const bool locked = SDL_MUSTLOCK(src) == SDL_TRUE;
 
 	if (locked) {
@@ -323,11 +362,17 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 			return nullptr;
 		}
 	}
+#endif
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Surface *res = SDL_CreateSurfaceFrom(src->w, src->h, src->format,
+						   src->pixels, src->pitch);
+#else
 	SDL_Surface *res = SDL_CreateRGBSurfaceFrom(src->pixels,
 	                       src->w, src->h, src->format->BitsPerPixel,
 	                       src->pitch, src->format->Rmask, src->format->Gmask,
 	                       src->format->Bmask, src->format->Amask);
+#endif
 
 	if (locked) {
 		SDL_UnlockSurface(src);
@@ -337,6 +382,16 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 }
 
 int SdlWindow::getDisplayIndex() const {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	int display = 0;
+	int num_displays;
+	SDL_DisplayID *displays = SDL_GetDisplays(&num_displays);
+	if (num_displays > 0) {
+		display = static_cast<int>(displays[0]);
+	}
+	SDL_free(displays);
+	return display;
+#else
 	if (_window) {
 		int displayIndex = SDL_GetWindowDisplayIndex(_window);
 		if (displayIndex >= 0)
@@ -344,12 +399,19 @@ int SdlWindow::getDisplayIndex() const {
 	}
 	// Default to primary display
 	return 0;
+#endif
 }
 
 bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (_inputGrabState) {
+		flags |= SDL_WINDOW_MOUSE_GRABBED;
+	}
+#else
 	if (_inputGrabState) {
 		flags |= SDL_WINDOW_INPUT_GRABBED;
 	}
+#endif
 
 	// SDL_WINDOW_RESIZABLE can also be updated without recreating the window
 	// starting with SDL 2.0.5, but it is not treated as updateable here
@@ -360,7 +422,11 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// 2. Users (particularly on Windows) will sometimes swap older SDL DLLs
 	//    to avoid bugs, which would be impossible if the feature was enabled
 	//    at compile time using SDL_VERSION_ATLEAST.
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_MOUSE_GRABBED;
+#else
 	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED;
+#endif
 
 	const uint32 oldNonUpdateableFlags = _lastFlags & ~updateableFlagsMask;
 	const uint32 newNonUpdateableFlags = flags & ~updateableFlagsMask;
@@ -387,7 +453,9 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	) {
 		int top, left, bottom, right;
 
-#if SDL_VERSION_ATLEAST(2, 0, 5)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (!_window || !SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right))
+#elif SDL_VERSION_ATLEAST(2, 0, 5)
 		if (!_window || SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right) < 0)
 #endif
 		{
@@ -408,13 +476,31 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 
 	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {
 		destroyWindow();
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_PropertiesID props = SDL_CreateProperties();
+		SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, _windowCaption.c_str());
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_X_NUMBER, _lastX);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_Y_NUMBER, _lastY);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, width);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, height);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, flags);
+		_window = SDL_CreateWindowWithProperties(props);
+		SDL_DestroyProperties(props);
+#else
 		_window = SDL_CreateWindow(_windowCaption.c_str(), _lastX,
 								   _lastY, width, height, flags);
+#endif
 		if (_window) {
 			setupIcon();
 		}
 	} else {
 		if (fullscreenFlags) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+			if (!SDL_SetWindowFullscreenMode(_window, NULL))
+				warning("SDL_SetWindowFullscreenMode failed: %s", SDL_GetError());
+			if (!SDL_SyncWindow(_window))
+				warning("SDL_SyncWindow failed: %s", SDL_GetError());
+#else
 			SDL_DisplayMode fullscreenMode;
 			fullscreenMode.w = width;
 			fullscreenMode.h = height;
@@ -422,6 +508,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 			fullscreenMode.format = 0;
 			fullscreenMode.refresh_rate = 0;
 			SDL_SetWindowDisplayMode(_window, &fullscreenMode);
+#endif
 		} else {
 			SDL_SetWindowSize(_window, width, height);
 		}
@@ -429,8 +516,13 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		SDL_SetWindowFullscreen(_window, fullscreenFlags);
 	}
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	const bool shouldGrab = (flags & SDL_WINDOW_MOUSE_GRABBED) || fullscreenFlags;
+	SDL_SetWindowMouseGrab(_window, shouldGrab);
+#else
 	const bool shouldGrab = (flags & SDL_WINDOW_INPUT_GRABBED) || fullscreenFlags;
 	SDL_SetWindowGrab(_window, shouldGrab ? SDL_TRUE : SDL_FALSE);
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 18)
 	SDL_SetWindowMouseRect(_window, shouldGrab ? &grabRect : NULL);
 #endif

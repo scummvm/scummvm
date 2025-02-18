@@ -38,7 +38,15 @@
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #endif
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(3, 0, 0)
+#include "backends/imgui/backends/imgui_impl_sdl3.h"
+#ifdef USE_OPENGL
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
+#endif
+#ifdef USE_IMGUI_SDLRENDERER3
+#include "backends/imgui/backends/imgui_impl_sdlrenderer3.h"
+#endif
+#elif defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 #include "backends/imgui/backends/imgui_impl_sdl2.h"
 #ifdef USE_OPENGL
 #include "backends/imgui/backends/imgui_impl_opengl3.h"
@@ -48,6 +56,18 @@
 #endif
 #endif
 
+
+static void getMouseState(int *x, int *y) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	float fx, fy;
+	SDL_GetMouseState(&fx, &fy);
+	*x = static_cast<int>(fx);
+	*y = static_cast<int>(fy);
+#else
+	SDL_GetMouseState(x, y);
+#endif
+}
+
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -56,7 +76,7 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 
-	SDL_GetMouseState(&_cursorX, &_cursorY);
+	getMouseState(&_cursorX, &_cursorY);
 }
 
 void SdlGraphicsManager::activateManager() {
@@ -220,7 +240,7 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 		// area, so we need to ask SDL where the system's mouse cursor is
 		// instead
 		int x, y;
-		SDL_GetMouseState(&x, &y);
+		getMouseState(&x, &y);
 		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
 			showCursor = true;
 		}
@@ -312,7 +332,15 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 }
 
 void SdlGraphicsManager::showSystemMouseCursor(bool visible) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (visible) {
+		SDL_ShowCursor();
+	} else {
+		SDL_HideCursor();
+	}
+#else
 	SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE);
+#endif
 }
 
 void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
@@ -354,7 +382,11 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	// resized the game window), or when the launcher is visible (since a user
 	// may change the scaler, which should reset the window size)
 	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN)) != 0;
+#else
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
+#endif
 		const bool maximized = (flags & SDL_WINDOW_MAXIMIZED);
 		if (!fullscreen && !maximized) {
 			if (_hintedWidth > width) {
@@ -368,6 +400,14 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 		if (!_window->createOrUpdateWindow(width, height, flags)) {
 			return false;
 		}
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (fullscreen) {
+			if (!SDL_SetWindowFullscreenMode(_window->getSDLWindow(), NULL))
+				return false;
+			if (!SDL_SyncWindow(_window->getSDLWindow()))
+				return false;
+		}
+#endif
 
 		_lastFlags = flags;
 		_allowWindowSizeReset = false;
@@ -601,7 +641,11 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (!ImGui_ImplSDL3_InitForOpenGL(_window->getSDLWindow(), glContext)) {
+#else
 		if (!ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), glContext)) {
+#endif
 			ImGui::DestroyContext();
 			return;
 		}
@@ -613,7 +657,11 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 			glslVersion = "#version 110";
 		}
 		if (!ImGui_ImplOpenGL3_Init(glslVersion)) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+			ImGui_ImplSDL3_Shutdown();
+#else
 			ImGui_ImplSDL2_Shutdown();
+#endif
 			ImGui::DestroyContext();
 			return;
 		}
@@ -621,7 +669,23 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 		_imGuiReady = true;
 	}
 #endif
-#ifdef USE_IMGUI_SDLRENDERER2
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (!_imGuiReady && renderer) {
+		if (!ImGui_ImplSDL3_InitForSDLRenderer(_window->getSDLWindow(), renderer)) {
+			ImGui::DestroyContext();
+			return;
+		}
+
+		if (!ImGui_ImplSDLRenderer3_Init(renderer)) {
+			ImGui_ImplSDL3_Shutdown();
+			ImGui::DestroyContext();
+			return;
+		}
+
+		_imGuiReady = true;
+		_imGuiSDLRenderer = renderer;
+	}
+#elif defined(USE_IMGUI_SDLRENDERER2)
 	if (!_imGuiReady && renderer) {
 		if (!ImGui_ImplSDL2_InitForSDLRenderer(_window->getSDLWindow(), renderer)) {
 			ImGui::DestroyContext();
@@ -662,7 +726,11 @@ void SdlGraphicsManager::renderImGui() {
 		_imGuiInited = true;
 	}
 
-#ifdef USE_IMGUI_SDLRENDERER2
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_NewFrame();
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
 	if (_imGuiSDLRenderer) {
 		ImGui_ImplSDLRenderer2_NewFrame();
 	} else {
@@ -670,15 +738,23 @@ void SdlGraphicsManager::renderImGui() {
 #ifdef USE_OPENGL
 		ImGui_ImplOpenGL3_NewFrame();
 #endif
-#ifdef USE_IMGUI_SDLRENDERER2
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
 	}
 #endif
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	ImGui_ImplSDL3_NewFrame();
+#else
 	ImGui_ImplSDL2_NewFrame();
+#endif
 
 	ImGui::NewFrame();
 	_imGuiCallbacks.render();
 	ImGui::Render();
-#ifdef USE_IMGUI_SDLRENDERER2
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), _imGuiSDLRenderer);
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
 	if (_imGuiSDLRenderer) {
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _imGuiSDLRenderer);
 	} else {
@@ -692,7 +768,7 @@ void SdlGraphicsManager::renderImGui() {
 		ImGui::RenderPlatformWindowsDefault();
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 #endif
-#ifdef USE_IMGUI_SDLRENDERER2
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
 	}
 #endif
 }
@@ -709,7 +785,11 @@ void SdlGraphicsManager::destroyImGui() {
 	_imGuiInited = false;
 	_imGuiReady = false;
 
-#ifdef USE_IMGUI_SDLRENDERER2
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_Shutdown();
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
 	if (_imGuiSDLRenderer) {
 		ImGui_ImplSDLRenderer2_Shutdown();
 	} else {
@@ -717,10 +797,14 @@ void SdlGraphicsManager::destroyImGui() {
 #ifdef USE_OPENGL
 		ImGui_ImplOpenGL3_Shutdown();
 #endif
-#ifdef USE_IMGUI_SDLRENDERER2
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
 	}
 #endif
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	ImGui_ImplSDL3_Shutdown();
+#else
 	ImGui_ImplSDL2_Shutdown();
+#endif
 	ImGui::DestroyContext();
 }
 #endif

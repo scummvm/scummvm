@@ -28,16 +28,25 @@
 
 #include "common/textconsole.h"
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static Uint32 timer_handler(void *userdata, SDL_TimerID timerID, Uint32 interval) {
+	((DefaultTimerManager *)userdata)->handler();
+	return interval;
+}
+#else
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
+#endif
 
 SdlTimerManager::SdlTimerManager() {
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	// Initializes the SDL timer subsystem
 	if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
+#endif
 
 	// Creates the timer callback
 	_timerID = SDL_AddTimer(10, &timer_handler, this);
@@ -47,7 +56,9 @@ SdlTimerManager::~SdlTimerManager() {
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	SDL_QuitSubSystem(SDL_INIT_TIMER);
+#endif
 }
 
 #endif
