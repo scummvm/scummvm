@@ -193,6 +193,28 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+	{ // Amiga French edition.
+		{
+			"cruise",
+			nullptr,
+			AD_ENTRY1s("D1", "2d3e257103f0ee7427f8c81f9c3943f7", 701349),
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+	{ // Amiga French edition (alternate).
+		{
+			"cruise",
+			nullptr,
+			AD_ENTRY1s("D1", "d0433cda44dbcdef52eac709d7b04001", 700965),
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 	{ // Amiga Italian (Fanmade translation 1.0).
 		{
 			"cruise",
