@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-15 22:42+0000\n"
+"POT-Creation-Date: 2025-02-18 01:07+0000\n"
 "PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6750,22 +6750,22 @@ msgstr "Вкл/выкл анимацию"
 msgid "Return to gameplay"
 msgstr "Вернуться в игру"
 
-#. I18N: Switch to previous image in internal game resouce viewer
+#. I18N: Switch to previous image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:239
 msgid "Previous resource"
 msgstr "Предыдущий ресурс"
 
-#. I18N: Switch to next image in internal game resouce viewer
+#. I18N: Switch to next image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:247
 msgid "Next resource"
 msgstr "Следующий ресурс"
 
-#. I18N: Switch to previous palette in internal game resouce viewer
+#. I18N: Switch to previous palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:255
 msgid "Previous palette"
 msgstr "Предыдущая палитра"
 
-#. I18N: Switch to next palette in internal game resouce viewer
+#. I18N: Switch to next palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:263
 msgid "Next palette"
 msgstr "Следующая палитра"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-15 22:42+0000\n"
+"POT-Creation-Date: 2025-02-18 01:07+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6796,22 +6796,22 @@ msgstr "Skru animasjoner på/av"
 msgid "Return to gameplay"
 msgstr "Gå tilbake til spill"
 
-#. I18N: Switch to previous image in internal game resouce viewer
+#. I18N: Switch to previous image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:239
 msgid "Previous resource"
 msgstr "Forrige ressurs"
 
-#. I18N: Switch to next image in internal game resouce viewer
+#. I18N: Switch to next image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:247
 msgid "Next resource"
 msgstr "Neste ressurs"
 
-#. I18N: Switch to previous palette in internal game resouce viewer
+#. I18N: Switch to previous palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:255
 msgid "Previous palette"
 msgstr "Forrige palett"
 
-#. I18N: Switch to next palette in internal game resouce viewer
+#. I18N: Switch to next palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:263
 msgid "Next palette"
 msgstr "Neste palett"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-15 22:42+0000\n"
+"POT-Creation-Date: 2025-02-18 01:07+0000\n"
 "PO-Revision-Date: 2025-02-15 11:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6527,22 +6527,22 @@ msgstr "アニメ ON/OFFの切替"
 msgid "Return to gameplay"
 msgstr "ゲームへ戻る"
 
-#. I18N: Switch to previous image in internal game resouce viewer
+#. I18N: Switch to previous image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:239
 msgid "Previous resource"
 msgstr "前へ"
 
-#. I18N: Switch to next image in internal game resouce viewer
+#. I18N: Switch to next image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:247
 msgid "Next resource"
 msgstr "次へ"
 
-#. I18N: Switch to previous palette in internal game resouce viewer
+#. I18N: Switch to previous palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:255
 msgid "Previous palette"
 msgstr "前へ"
 
-#. I18N: Switch to next palette in internal game resouce viewer
+#. I18N: Switch to next palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:263
 msgid "Next palette"
 msgstr "次へ"
