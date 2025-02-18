@@ -1964,7 +1964,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
 #ifdef SDL_BACKEND
-#ifdef USE_SDL2
+#ifdef USE_SDL3
+		int sdlLinkedVersion = SDL_GetVersion();
+		printf("Using SDL backend with SDL %d.%d.%d\n", SDL_VERSIONNUM_MAJOR(sdlLinkedVersion), SDL_VERSIONNUM_MINOR(sdlLinkedVersion), SDL_VERSIONNUM_MICRO(sdlLinkedVersion));
+#elif defined(USE_SDL2)
 		SDL_version sdlLinkedVersion;
 		SDL_GetVersion(&sdlLinkedVersion);
 		printf("Using SDL backend with SDL %d.%d.%d\n", sdlLinkedVersion.major, sdlLinkedVersion.minor, sdlLinkedVersion.patch);

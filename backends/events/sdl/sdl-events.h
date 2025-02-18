@@ -73,7 +73,10 @@ protected:
 	/** Joystick */
 	SDL_Joystick *_joystick;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	/** Game controller */
+	SDL_Gamepad *_controller;
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	/** Game controller */
 	SDL_GameController *_controller;
 #endif
@@ -186,15 +189,17 @@ protected:
 	bool handleResizeEvent(Common::Event &event, int w, int h);
 
 	/**
-	 * Extracts unicode information for the specific key sym.
+	 * Extracts unicode information for the specific key.
 	 * May only be used for key down events.
 	 */
-	uint32 obtainUnicode(const SDL_Keysym keySym);
+	uint32 obtainUnicode(const SDL_KeyboardEvent &key);
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	/**
 	 * Extracts the keycode for the specified key sym.
 	 */
 	SDL_Keycode obtainKeycode(const SDL_Keysym keySym);
+#endif
 
 	/**
 	 * Whether _fakeMouseMove contains an event we need to send.

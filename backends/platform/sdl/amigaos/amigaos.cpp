@@ -29,6 +29,16 @@
 
 static bool cleanupDone = false;
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlGLLoadLibrary(const char *path) {
+	return SDL_GL_LoadLibrary(path);
+}
+#else
+static bool sdlGLLoadLibrary(const char *path) {
+	return SDL_GL_LoadLibrary(path) != 0;
+}
+#endif
+
 static void cleanup() {
 	if (!cleanupDone)
 		g_system->destroy();
@@ -83,7 +93,7 @@ void OSystem_AmigaOS::initBackend() {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-		if (SDL_GL_LoadLibrary(NULL) < 0) {
+		if (!sdlGLLoadLibrary(NULL)) {
 			if (force) {
 				warning("OpenGL implementation chosen is unsupported, falling back");
 				force = 0;
@@ -101,7 +111,7 @@ void OSystem_AmigaOS::initBackend() {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, 0);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		if (SDL_GL_LoadLibrary(NULL) < 0) {
+		if (!sdlGLLoadLibrary(NULL)) {
 			if (force) {
 				warning("OpenGL implementation chosen is unsupported, falling back");
 				force = 0;

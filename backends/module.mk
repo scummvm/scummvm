@@ -185,13 +185,30 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
-	events/sdl/sdl-events.o \
+	events/sdl/sdl-common-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/sdl/sdl-mixer.o \
 	mixer/null/null-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	timer/sdl/sdl-timer.o
+
+ifndef USE_SDL3
+ifndef USE_SDL2
+MODULE_OBJS += \
+	events/sdl/sdl1-events.o
+endif
+endif
+
+ifdef USE_SDL2
+MODULE_OBJS += \
+	events/sdl/sdl2-events.o
+endif
+
+ifdef USE_SDL3
+MODULE_OBJS += \
+	events/sdl/sdl3-events.o
+endif
 
 ifndef RISCOS
 ifndef KOLIBRIOS
@@ -507,6 +524,21 @@ MODULE_OBJS += \
 endif
 MODULE_OBJS += \
 	imgui/backends/imgui_impl_sdl2.o
+endif
+endif
+
+ifdef USE_SDL3
+ifdef USE_IMGUI
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	imgui/backends/imgui_impl_opengl3.o
+endif
+ifdef USE_IMGUI_SDLRENDERER3
+MODULE_OBJS += \
+	imgui/backends/imgui_impl_sdlrenderer3.o
+endif
+MODULE_OBJS += \
+	imgui/backends/imgui_impl_sdl3.o
 endif
 endif
 

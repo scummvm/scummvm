@@ -161,7 +161,10 @@ protected:
 	 * values stored by the graphics manager.
 	 */
 	void getWindowSizeFromSdl(int *width, int *height) const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		assert(_window);
+		SDL_GetWindowSizeInPixels(_window->getSDLWindow(), width, height);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		assert(_window);
 		SDL_GL_GetDrawableSize(_window->getSDLWindow(), width, height);
 #else

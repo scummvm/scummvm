@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define SDL_FUNCTION_POINTER_IS_VOID_POINTER
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
@@ -72,8 +73,20 @@
 #include <SDL_net.h>
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+#include <SDL3/SDL_clipboard.h>
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 #include <SDL_clipboard.h>
+#endif
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value);
+}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value) != 0;
+}
 #endif
 
 OSystem_SDL::OSystem_SDL()
@@ -97,7 +110,11 @@ OSystem_SDL::OSystem_SDL()
 }
 
 OSystem_SDL::~OSystem_SDL() {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_ShowCursor();
+#else
 	SDL_ShowCursor(SDL_ENABLE);
+#endif
 
 #ifdef USE_MULTIPLE_RENDERERS
 	clearGraphicsModes();
@@ -162,8 +179,12 @@ void OSystem_SDL::init() {
 #endif
 
 #if !defined(OPENPANDORA)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_HideCursor();
+#else
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
+#endif
 #endif
 
 	if (_window == nullptr)
@@ -206,7 +227,13 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	if (f == kFeatureDLC) return true;
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (f == kFeatureTouchpadMode) {
+		int count = 0;
+		SDL_free(SDL_GetTouchDevices(&count));
+		return count > 0;
+	}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureTouchpadMode) {
 		return SDL_GetNumTouchDevices() > 0;
 	}
@@ -383,18 +410,28 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 #else
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_PropertiesID props = SDL_CreateProperties();
+	SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, "");
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, 32);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, 32);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+	SDL_Window *window = SDL_CreateWindowWithProperties(props);
+	SDL_DestroyProperties(props);
+#else
 	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+#endif
 	if (!window) {
 		return;
 	}
 
 	int glContextProfileMask, glContextMajor;
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &glContextProfileMask) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &glContextProfileMask)) {
 		SDL_DestroyWindow(window);
 		return;
 	}
 	if (glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
-		if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &glContextMajor) != 0) {
+		if (!sdlGetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &glContextMajor)) {
 			SDL_DestroyWindow(window);
 			return;
 		}
@@ -417,7 +454,11 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_GL_DestroyContext(glContext);
+#else
 	SDL_GL_DeleteContext(glContext);
+#endif
 	SDL_DestroyWindow(window);
 #else
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
@@ -443,7 +484,17 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_PropertiesID props = SDL_CreateProperties();
+		SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, "");
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, 32);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, 32);
+		SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+		SDL_Window *window = SDL_CreateWindowWithProperties(props);
+		SDL_DestroyProperties(props);
+#else
 		SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+#endif
 		if (window) {
 			SDL_GLContext glContext = SDL_GL_CreateContext(window);
 			if (glContext) {
@@ -454,7 +505,11 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 					_antiAliasLevels.push_back(requestedSamples);
 				}
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+				SDL_GL_DestroyContext(glContext);
+#else
 				SDL_GL_DeleteContext(glContext);
+#endif
 			}
 
 			SDL_DestroyWindow(window);
@@ -533,11 +588,17 @@ void OSystem_SDL::initSDL() {
 		// or otherwise the application won't start.
 		uint32 sdlFlags = SDL_INIT_VIDEO;
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
+#endif
 
 		// Initialize SDL (SDL Subsystems are initialized in the corresponding sdl managers)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (!SDL_Init(sdlFlags))
+#else
 		if (SDL_Init(sdlFlags) == -1)
+#endif
 			error("Could not initialize SDL: %s", SDL_GetError());
 
 		_initedSDL = true;
@@ -657,7 +718,19 @@ Common::WriteStream *OSystem_SDL::createLogFile() {
 
 Common::String OSystem_SDL::getSystemLanguage() const {
 
-#if SDL_VERSION_ATLEAST(2, 0, 14)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	int count = 0;
+	SDL_Locale **pLocales = SDL_GetPreferredLocales(&count);
+	if (pLocales) {
+		SDL_Locale *locales = *pLocales;
+		if (locales[0].language != NULL) {
+			Common::String str = Common::String::format("%s_%s", locales[0].country, locales[0].language);
+			SDL_free(locales);
+			return str;
+		}
+		SDL_free(pLocales);
+	}
+#elif SDL_VERSION_ATLEAST(2, 0, 14)
 	SDL_Locale *locales = SDL_GetPreferredLocales();
 	if (locales) {
 		if (locales[0].language != NULL) {
@@ -667,7 +740,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		}
 		SDL_free(locales);
 	}
-#endif // SDL_VERSION_ATLEAST(2, 0, 14)
+#endif
 #if defined(USE_DETECTLANG) && !defined(WIN32)
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
@@ -703,8 +776,13 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+
 bool OSystem_SDL::hasTextInClipboard() {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	return SDL_HasClipboardText();
+#else
 	return SDL_HasClipboardText() == SDL_TRUE;
+#endif
 }
 
 Common::U32String OSystem_SDL::getTextFromClipboard() {
@@ -748,7 +826,11 @@ void OSystem_SDL::messageBox(LogMessageType::Type type, const char *message) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 14)
 bool OSystem_SDL::openUrl(const Common::String &url) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (!SDL_OpenURL(url.c_str())) {
+#else
 	if (SDL_OpenURL(url.c_str()) != 0) {
+#endif
 		warning("Failed to open URL: %s", SDL_GetError());
 		return false;
 	}

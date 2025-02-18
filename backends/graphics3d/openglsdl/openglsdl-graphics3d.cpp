@@ -46,6 +46,36 @@
 #include "image/bmp.h"
 #endif
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value);
+}
+#else
+static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
+	return SDL_GL_GetAttribute(attr, value) != 0;
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static void sdlGLDestroyContext(SDL_GLContext context) {
+	SDL_GL_DestroyContext(context);
+}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+static void sdlGLDestroyContext(SDL_GLContext context) {
+	SDL_GL_DeleteContext(context);
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlSetSwapInterval(int interval) {
+	return SDL_GL_SetSwapInterval(interval);
+}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+static bool sdlSetSwapInterval(int interval) {
+	return SDL_GL_SetSwapInterval(interval) == 0;
+}
+#endif
+
 OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
 	: SdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -98,16 +128,16 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	// because then we already set up what we want to use.
 	//
 	// In case no defaults are given we prefer OpenGL over OpenGL ES.
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask)) {
 		_glContextProfileMask = 0;
 		noDefaults = true;
 	}
 
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor)) {
 		noDefaults = true;
 	}
 
-	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+	if (!sdlGetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor)) {
 		noDefaults = true;
 	}
 
@@ -385,7 +415,10 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 		g_system->quit();
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 1)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	int obtainedWidth = 0, obtainedHeight = 0;
+	SDL_GetWindowSizeInPixels(_window->getSDLWindow(), &obtainedWidth, &obtainedHeight);
+#elif SDL_VERSION_ATLEAST(2, 0, 1)
 	int obtainedWidth = 0, obtainedHeight = 0;
 	SDL_GL_GetDrawableSize(_window->getSDLWindow(), &obtainedWidth, &obtainedHeight);
 #else
@@ -410,8 +443,13 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Get the updated size directly from SDL, in case there are multiple
 	// resize events in the message queue.
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	int newWidth = 0, newHeight = 0;
+	SDL_GetWindowSizeInPixels(_window->getSDLWindow(), &newWidth, &newHeight);
+#else
 	int newWidth = 0, newHeight = 0;
 	SDL_GL_GetDrawableSize(_window->getSDLWindow(), &newWidth, &newHeight);
+#endif
 
 	if (newWidth == _overlayScreen->getWidth() && newHeight == _overlayScreen->getHeight()) {
 		return; // nothing to do
@@ -457,7 +495,7 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 	OpenGLContext.initialize(_glContextType);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
+	if (!sdlSetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
 #endif
@@ -787,7 +825,15 @@ int16 OpenGLSdlGraphics3dManager::getOverlayWidth() const {
 }
 
 bool OpenGLSdlGraphics3dManager::showMouse(bool visible) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (visible) {
+		SDL_ShowCursor();
+	} else {
+		SDL_HideCursor();
+	}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE);
+#endif
 	return true;
 }
 
@@ -803,7 +849,7 @@ void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 	destroyImGui();
 #endif
 
-	SDL_GL_DeleteContext(_glContext);
+	sdlGLDestroyContext(_glContext);
 	_glContext = nullptr;
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
