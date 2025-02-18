@@ -8249,6 +8249,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 							 "MEDIA/DATA/BAUWAGEN.DXR", "d:56702894e84d310c5b7548b689953fbd",  8361884, Common::DE_DEU, 602),
 	WINGAME2_l("loewe2", "", "MEDIA/WIN95.exe",			"t:f808f4b3d526367fa8a1e32bf463dd64",  1512856,
 							 "MEDIA/DATA/BAUWAGEN.DXR", "f:56702894e84d310c5b7548b689953fbd",  8361884, Common::DE_DEU, 602),
+	// Version 2.0 adds networking features
+	MACGAME1_l("loewe2", "v2.0",		"MEDIA/xn--Lwenzahn 2-ecb", "rt:282d2d4d2959fbf698b2cdf238c7d588", 1033198, Common::DE_DEU, 602),
+	WINGAME1_l("loewe2", "v2.0 Win3.1", "SETUP/WIN31/LZ2_31.EXE",	"t:f6ad85eeb4b069357603379bc15a56a0",  1291107, Common::DE_DEU, 602),
+	WINGAME1_l("loewe2", "v2.0 Win95",  "SETUP/WIN95/LZ2_95.EXE",	"t:0772adacde0f8fa5a9767de25be13527",  1514451, Common::DE_DEU, 650),
 
 	// Original Mac filename is Löwenzahn 3
 	MACGAME1_l("loewe3", "", "xn--Lwenzahn 3-ecb",					"rt:e03c6cc5f2cdeef199f75c02928edafe", 1032378, Common::DE_DEU, 602),
