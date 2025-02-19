@@ -777,8 +777,43 @@ void QtvrxtraXtra::m_QTVRGetHotSpotViewAngles(int nargs) {
 		g_lingo->push(Common::String(""));
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectViewAngles, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectZoomRect, 0)
+void QtvrxtraXtra::m_QTVRGetObjectViewAngles(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	if (hotspot) {
+		const Common::QuickTimeParser::PanoNavigation *navg = me->_video->getHotSpotNavByID(hotspot->id);
+
+		if (navg) {
+			g_lingo->push(Common::String::format("%.4f,%.4f", navg->navgHPan, navg->navgVPan));
+			return;
+		}
+	}
+
+	g_lingo->pushVoid();
+}
+
+void QtvrxtraXtra::m_QTVRGetObjectZoomRect(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	if (hotspot) {
+		const Common::QuickTimeParser::PanoNavigation *navg = me->_video->getHotSpotNavByID(hotspot->id);
+
+		if (navg) {
+			g_lingo->push(Common::String::format("%d,%d,%d,%d", navg->zoomRect.left, navg->zoomRect.top, navg->zoomRect.right, navg->zoomRect.bottom));
+			return;
+		}
+	}
+
+	g_lingo->pushVoid();
+}
 
 void QtvrxtraXtra::m_QTVRGetNodeID(int nargs) {
 	ARGNUMCHECK(0);
@@ -796,7 +831,14 @@ void QtvrxtraXtra::m_QTVRSetNodeID(int nargs) {
 	me->_video->goToNode(g_lingo->pop().asInt());
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeName, 0)
+void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getCurrentNodeName());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetQuality, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetQuality, 1)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
