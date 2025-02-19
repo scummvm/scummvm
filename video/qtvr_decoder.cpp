@@ -931,6 +931,70 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	_dirty = false;
 }
 
+Common::Point QuickTimeDecoder::getPanLoc(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+	return track->projectPoint(x, y);
+}
+
+Graphics::FloatPoint QuickTimeDecoder::getPanAngles(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
+	Common::Point pos = track->projectPoint(x, y);
+
+	Graphics::FloatPoint res;
+
+	res.x = desc->_hPanStart + (desc->_hPanStart - desc->_hPanEnd) / (float)desc->_sceneSizeY * pos.x;
+	res.y = desc->_vPanTop + (desc->_vPanTop - desc->_vPanBottom) / (float)desc->_sceneSizeX * pos.y;
+
+	return res;
+}
+
+void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
+	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+	Common::Point hotspotPoint = track->projectPoint(x, y);
+
+	if (hotspotPoint.x < 0) {
+		_rolloverHotspot = nullptr;
+	} else {
+		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
+
+
+		if (hotspotId && _currentSample != -1) {
+			if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
+				_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
+		} else {
+			_rolloverHotspot = nullptr;
+		}
+	}
+}
+
+Common::String QuickTimeDecoder::getHotSpotName(int id) {
+	if (id <= 0)
+		return "";
+
+	PanoHotSpot *hotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
+
+	return _panoTrack->panoSamples[_currentSample].strTable.getString(hotspot->nameStrOffset);
+}
+
+const QuickTimeDecoder::PanoHotSpot *QuickTimeDecoder::getHotSpotByID(int id) {
+	return _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
+}
+
+const QuickTimeDecoder::PanoNavigation *QuickTimeDecoder::getHotSpotNavByID(int id) {
+	const QuickTimeDecoder::PanoHotSpot *hotspot = getHotSpotByID(id);
+
+	if (hotspot->type != HotSpotType::navg)
+		return nullptr;
+
+	return _panoTrack->panoSamples[_currentSample].navTable.get(hotspot->typeData);
+}
+
+void QuickTimeDecoder::setClickedHotSpot(int id) {
+	_clickedHotspot = getHotSpotByID(id);
+}
 
 
 ///////////////////////////////
@@ -1160,71 +1224,6 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 	} else {
 		_zoomState = kZoomNone;
 	}
-}
-
-Common::Point QuickTimeDecoder::getPanLoc(int16 x, int16 y) {
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-
-	return track->projectPoint(x, y);
-}
-
-Graphics::FloatPoint QuickTimeDecoder::getPanAngles(int16 x, int16 y) {
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
-	Common::Point pos = track->projectPoint(x, y);
-
-	Graphics::FloatPoint res;
-
-	res.x = desc->_hPanStart + (desc->_hPanStart - desc->_hPanEnd) / (float)desc->_sceneSizeY * pos.x;
-	res.y = desc->_vPanTop + (desc->_vPanTop - desc->_vPanBottom) / (float)desc->_sceneSizeX * pos.y;
-
-	return res;
-}
-
-void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-
-	Common::Point hotspotPoint = track->projectPoint(x, y);
-
-	if (hotspotPoint.x < 0) {
-		_rolloverHotspot = nullptr;
-	} else {
-		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
-
-
-		if (hotspotId && _currentSample != -1) {
-			if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
-				_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
-		} else {
-			_rolloverHotspot = nullptr;
-		}
-	}
-}
-
-Common::String QuickTimeDecoder::getHotSpotName(int id) {
-	if (id <= 0)
-		return "";
-
-	PanoHotSpot *hotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
-
-	return _panoTrack->panoSamples[_currentSample].strTable.getString(hotspot->nameStrOffset);
-}
-
-const QuickTimeDecoder::PanoHotSpot *QuickTimeDecoder::getHotSpotByID(int id) {
-	return _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
-}
-
-const QuickTimeDecoder::PanoNavigation *QuickTimeDecoder::getHotSpotNavByID(int id) {
-	const QuickTimeDecoder::PanoHotSpot *hotspot = getHotSpotByID(id);
-
-	if (hotspot->type != HotSpotType::navg)
-		return nullptr;
-
-	return _panoTrack->panoSamples[_currentSample].navTable.get(hotspot->typeData);
-}
-
-void QuickTimeDecoder::setClickedHotSpot(int id) {
-	_clickedHotspot = getHotSpotByID(id);
 }
 
 enum {
