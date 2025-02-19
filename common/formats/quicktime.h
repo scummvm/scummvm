@@ -273,11 +273,12 @@ public:
 	struct PanoNavigation {
 		uint16 id;
 
-		uint32 hPan;
-		uint32 vPan;
-		uint32 zoom;
+		// Info for Navigable Movie Controller
+		float navgHPan;	// the object's orientation in the scene
+		float navgVPan;
+		float navgZoom;
 
-		Rect rect; // Starting rect for zoom out transitions
+		Rect zoomRect; // Starting rect for zoom out transitions
 
 		// Values to set at the destination node
 		int32 nameStrOffset;

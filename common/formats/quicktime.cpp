@@ -1126,8 +1126,8 @@ int QuickTimeParser::readPHOT(Atom atom) {
 
 		pHotSpotTable.hotSpots[i].rect.top = _fd->readSint16BE();
 		pHotSpotTable.hotSpots[i].rect.left = _fd->readSint16BE();
-		pHotSpotTable.hotSpots[i].rect.bottom = _fd->readSint16BE();
 		pHotSpotTable.hotSpots[i].rect.right = _fd->readSint16BE();
+		pHotSpotTable.hotSpots[i].rect.bottom = _fd->readSint16BE();
 
 		pHotSpotTable.hotSpots[i].mouseOverCursorID = _fd->readSint32BE();
 		pHotSpotTable.hotSpots[i].mouseDownCursorID = _fd->readSint32BE();
@@ -1195,10 +1195,14 @@ int QuickTimeParser::readPNAV(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint32BE(); // reserved2
 
-		pLinkTable.navs[i].rect.top = _fd->readSint16BE();
-		pLinkTable.navs[i].rect.left = _fd->readSint16BE();
-		pLinkTable.navs[i].rect.bottom = _fd->readSint16BE();
-		pLinkTable.navs[i].rect.right = _fd->readSint16BE();
+		pLinkTable.navs[i].navgHPan = readAppleFloatField(_fd);
+		pLinkTable.navs[i].navgVPan = readAppleFloatField(_fd);
+		pLinkTable.navs[i].navgZoom = readAppleFloatField(_fd);
+
+		pLinkTable.navs[i].zoomRect.top = _fd->readSint16BE();
+		pLinkTable.navs[i].zoomRect.left = _fd->readSint16BE();
+		pLinkTable.navs[i].zoomRect.right = _fd->readSint16BE();
+		pLinkTable.navs[i].zoomRect.bottom = _fd->readSint16BE();
 
 		_fd->readSint32BE(); // reserved3
 
