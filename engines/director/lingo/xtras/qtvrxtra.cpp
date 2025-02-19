@@ -492,9 +492,11 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 				break;
 		}
 
-		if (node != 0 && me->_video->getCurrentNodeID() != node) {
-			if (!me->_nodeLeaveHandler.empty())
-				g_lingo->executeHandler(me->_nodeLeaveHandler);
+		if (me->_video->getCurrentNodeID() != node) {
+			if (!me->_nodeLeaveHandler.empty()) {
+				g_lingo->push(me->_video->getCurrentNodeID());
+				g_lingo->executeHandler(me->_nodeLeaveHandler, 1);
+			}
 
 			nodeChanged = true;
 		}
