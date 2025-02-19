@@ -4271,6 +4271,15 @@ EOF
 #include "SDL3/SDL.h"
 int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
 EOF
+	else
+		find_sdlconfig
+
+		_sdlversion=`$_sdlconfig --version`
+
+		cat > $TMPC << EOF
+#include "SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
 	fi
 
 	append_var SDL_CFLAGS "`$_sdlconfig --cflags | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
