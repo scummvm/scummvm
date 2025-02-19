@@ -839,14 +839,69 @@ void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
 	g_lingo->push(me->_video->getCurrentNodeName());
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetQuality, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetQuality, 1)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionMode, 1)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionSpeed, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionSpeed, 1)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetUpdateMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetUpdateMode, 1)
+void QtvrxtraXtra::m_QTVRGetQuality(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getQuality());
+}
+
+void QtvrxtraXtra::m_QTVRSetQuality(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setQuality(g_lingo->pop().asInt());
+}
+
+void QtvrxtraXtra::m_QTVRGetTransitionMode(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getTransitionMode());
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionMode(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTransitionMode(g_lingo->pop().asString());
+}
+
+void QtvrxtraXtra::m_QTVRGetTransitionSpeed(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getTransitionSpeed());
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionSpeed(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTransitionSpeed(g_lingo->pop().asFloat());
+}
+
+void QtvrxtraXtra::m_QTVRGetUpdateMode(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getUpdateMode());
+}
+
+void QtvrxtraXtra::m_QTVRSetUpdateMode(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setUpdateMode(g_lingo->pop().asString());
+}
 
 void QtvrxtraXtra::m_QTVRGetVisible(int nargs) {
 	ARGNUMCHECK(0);
@@ -864,8 +919,22 @@ void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
 	me->_visible = (bool)g_lingo->pop().asInt();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetWarpMode, 1)
+void QtvrxtraXtra::m_QTVRGetWarpMode(int nargs) {
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getWarpMode());
+}
+
+void QtvrxtraXtra::m_QTVRSetWarpMode(int nargs) {
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setWarpMode(g_lingo->pop().asInt());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRZoomOutEffect, 0)
 
