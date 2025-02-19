@@ -1319,8 +1319,7 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 		while (myMatte) {
 			myGrBuff->refresh_video(myMatte->x1, myMatte->y1, myMatte->x1 - myScreen->x1, myMatte->y1 - myScreen->y1,
 				myMatte->x2 - myScreen->x1, myMatte->y2 - myScreen->y1);
-			//vmng_refresh_video(myMatte->x1, myMatte->y1, myMatte->x1 - myScreen->x1, myMatte->y1 - myScreen->y1,
-			//							myMatte->x2 - myScreen->x1, myMatte->y2 - myScreen->y1, myBuff);
+
 			myMatte = myMatte->nextMatte;
 		}
 	} else {
