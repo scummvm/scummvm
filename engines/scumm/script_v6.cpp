@@ -362,7 +362,7 @@ int ScummEngine_v6::findFreeArrayId() {
 
 	for (i = 1; i < _numArray; i++) {
 		if (!rtd[i]._address)
-			return i;
+			return (_game.heversion >= 80 ? (i | MAGIC_ARRAY_NUMBER) : i);
 	}
 	error("Out of array pointers, %d max", _numArray);
 	return -1;
