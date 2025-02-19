@@ -661,8 +661,8 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 	topRightVector[2] = bottomRightVector[2];
 
 	// Apply pitch (tilt) rotation
-	float cosTilt = cos(_decoder->_tiltAngle * M_PI / 180.0);
-	float sinTilt = sin(_decoder->_tiltAngle * M_PI / 180.0);
+	float cosTilt = cos(-_decoder->_tiltAngle * M_PI / 180.0);
+	float sinTilt = sin(-_decoder->_tiltAngle * M_PI / 180.0);
 
 	for (int v = 0; v < 2; v++) {
 		float y = cornerVectors[v][1];
@@ -752,8 +752,8 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 	topRightVector[2] = bottomRightVector[2];
 
 	// Apply pitch (tilt) rotation
-	float cosTilt = cos(_decoder->_tiltAngle * M_PI / 180.0);
-	float sinTilt = sin(_decoder->_tiltAngle * M_PI / 180.0);
+	float cosTilt = cos(-_decoder->_tiltAngle * M_PI / 180.0);
+	float sinTilt = sin(-_decoder->_tiltAngle * M_PI / 180.0);
 
 	for (int v = 0; v < 2; v++) {
 		float y = cornerVectors[v][1];
@@ -1160,7 +1160,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 		setPanAngle(getPanAngle() - speedX);
 
 	if (ABS(mouseDeltaY) >= sensitivity)
-		setTiltAngle(getTiltAngle() + speedY);
+		setTiltAngle(getTiltAngle() - speedY);
 }
 
 void QuickTimeDecoder::handleKey(Common::KeyState &state, bool down, bool repeat) {
