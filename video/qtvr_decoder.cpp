@@ -142,6 +142,136 @@ void QuickTimeDecoder::renderHotspots(bool mode) {
 	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
 }
 
+void QuickTimeDecoder::setQuality(float quality) {
+	_quality = quality;
+
+	warning("STUB: Quality mode set to %f", quality);
+
+	// 4.0 Highest quality rendering. The rendered image is fully anti-aliased.
+	//
+	// 2.0 The rendered image is partially anti-aliased.
+	//
+	// 1.0 The rendered image is not anti-aliased.
+	//
+	// 0.0 Images are rendered at quality 1.0 when the user is interactively
+	//     panning or zooming, and are automatically updated at quality
+	//     4.0 during idle time when the user stops panning or zooming.
+	//     All other updates are rendered at quality 4.0.
+
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
+void QuickTimeDecoder::setWarpMode(int warpMode) {
+	_warpMode = warpMode;
+
+	warning("STUB: Warp mode set to %d", warpMode);
+
+	// 2 Two-dimensional warping. This produces perspectively correct
+	//   images from a panoramic source picture.
+	//
+	// 1 One-dimensional warping.
+	//
+	// 0 No warping. This reproduces the source panorama directly,
+	//   without warping it at all.
+
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
+void QuickTimeDecoder::setTransitionMode(Common::String mode) {
+	if (mode.equalsIgnoreCase("swing"))
+		_transitionMode = kTransitionModeSwing;
+	else
+		_transitionMode = kTransitionModeNormal;
+
+	warning("STUB: Transition mode set to '%s'", getTransitionMode().c_str());
+
+	// normal The new view is imaged and displayed. No transition effect is
+	//        used. The user sees a "cut" from the current view to the new
+	//        view.
+	//
+	// swing  If the new view is in the current node, the view point moves
+	//        smoothly from the current view to the new view, taking the
+	//        shortest path if the panorama wraps around. The speed of the
+	//        swing is controlled by the transitionSpeed property. If the new
+	//        view is in a different node, the new view is imaged and
+	//        displayed with a "normal" transition.
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
+void QuickTimeDecoder::setTransitionSpeed(float speed) {
+	_transitionSpeed = speed;
+
+	warning("STUB: Transition Speed set to %f", speed);
+
+	// The TransitionSpeed is a floating point quantity that provides the slowest swing transition
+	// at 1.0 and faster transitions at higher values. On mid-range computers, a rate of 4.0
+	// performs well off CD-ROM.
+	//
+	// If the TransitionSpeed property value is set to a negative number, swing updates will act
+	// the same as normal updates
+
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
+Common::String QuickTimeDecoder::getUpdateMode() const {
+	switch (_updateMode) {
+	case kUpdateModeUpdateBoth:
+		return "updateBoth";
+	case kUpdateModeOffscreenOnly:
+		return "offscreenOnly";
+	case kUpdateModeFromOffscreen:
+		return "fromOffscreen";
+	case kUpdateModeDirectToScreen:
+		return "directToScreen";
+	case kUpdateModeNormal:
+	default:
+		return "normal";
+	}
+}
+
+void QuickTimeDecoder::setUpdateMode(Common::String mode) {
+	if (mode.equalsIgnoreCase("updateBoth"))
+		_updateMode = kUpdateModeUpdateBoth;
+	else if (mode.equalsIgnoreCase("offscreenOnly"))
+		_updateMode = kUpdateModeOffscreenOnly;
+	else if (mode.equalsIgnoreCase("fromOffscreen"))
+		_updateMode = kUpdateModeFromOffscreen;
+	else if (mode.equalsIgnoreCase("directToScreen"))
+		_updateMode = kUpdateModeDirectToScreen;
+	else
+		_updateMode = kUpdateModeNormal;
+
+	warning("STUB: Update mode set to '%s'", getUpdateMode().c_str());
+
+	// normal         Images are computed and displayed directly onto the screen
+	//                while interactively panning and zooming. Provides the fastest
+	//                overall frame rate, but individual frame draw times may be
+	//                relatively slow for high-quality images on lower performance
+	//                systems. Programmatic updates are displayed into the offscreen
+	//                buffer, and then onto the screen.
+	//
+	// update         Both Images are computed and displayed into the offscreen buffer,and
+	//                then onto the screen. The use of the back buffer reduces the
+	//                overall frame rate but provides the fastest imaging time for each
+	//                frame.
+	//
+	// offscreenOnly  Images are computed and displayed into the offscreen buffer
+	//                only, and are not copied to the screen. Useful for preparing for a
+	//                screen refresh that will have to happen quickly.
+	//
+	// fromOffscreen  The offscreen buffer is copied directly to the screen. The offscreen
+	//                buffer is refreshed only if it is out of date. The offscreen buffer is
+	//                automatically updated if necessary to keep it in sync with the
+	//                screen image.
+	//
+	// directToScreen Images are computed and displayed directly to the screen,
+	//                without changing the offscreen buffer. Provides the fastest
+	//                overall frame rate, but individual frame draw times may be
+	//                relatively slow for high-quality images on lower performance
+	//                systems.
+	((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->setDirty();
+}
+
 void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	if (!isVR())
 		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");

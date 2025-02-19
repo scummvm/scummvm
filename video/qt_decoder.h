@@ -78,6 +78,9 @@ public:
 	void enableEditListBoundsCheckQuirk(bool enable) { _enableEditListBoundsCheckQuirk = enable; }
 	Common::String getAliasPath();
 
+	////////////////
+	// QTVR stuff
+	////////////////
 	void setTargetSize(uint16 w, uint16 h);
 
 	void handleMouseMove(int16 x, int16 y);
@@ -117,8 +120,16 @@ public:
 	bool isVR() const { return _isVR; }
 	QTVRType getQTVRType() const { return _qtvrType; }
 
-	uint8 getWarpMode() const { return _warpMode; }
-	void setWarpMode(uint8 warpMode) { _warpMode = warpMode; }
+	int getWarpMode() const { return _warpMode; }
+	void setWarpMode(int warpMode);
+	float getQuality() const { return _quality; }
+	void setQuality(float quality);
+	Common::String getTransitionMode() const { return _transitionMode == kTransitionModeNormal ? "normal" : "swing"; }
+	void setTransitionMode(Common::String mode);
+	float getTransitionSpeed() const { return _transitionSpeed; }
+	void setTransitionSpeed(float speed);
+	Common::String getUpdateMode() const;
+	void setUpdateMode(Common::String mode);
 
 	void renderHotspots(bool mode);
 
@@ -171,7 +182,7 @@ private:
 public:
 	int _currentSample = -1;
 	Common::Point _prevMouse;
-	bool _isMouseButtonDown;
+	bool _isMouseButtonDown = false;
 	Common::Point _mouseDrag;
 
 	bool _isKeyDown = false;
@@ -183,6 +194,15 @@ public:
 		kZoomIn,
 		kZoomOut,
 		kZoomLimit,
+
+		kTransitionModeNormal,
+		kTransitionModeSwing,
+
+		kUpdateModeNormal,
+		kUpdateModeUpdateBoth,
+		kUpdateModeOffscreenOnly,
+		kUpdateModeFromOffscreen,
+		kUpdateModeDirectToScreen,
 	};
 
 private:
@@ -193,9 +213,13 @@ private:
 	Graphics::Cursor **_cursorCache = nullptr;
 	int _cursorDirMap[256];
 
-	bool _isVR;
+	bool _isVR = false;
 
-	uint8 _warpMode; // (2 | 1 | 0) for 2-d, 1-d or no warping
+	uint8 _warpMode = 2; // (2 | 1 | 0) for 2-d, 1-d or no warping
+	float _quality = 0.0f;
+	int _transitionMode = kTransitionModeNormal;
+	float _transitionSpeed = 1.0f;
+	int _updateMode = kUpdateModeNormal;
 
 	float _panAngle = 0.0f;
 	float _tiltAngle = 0.0f;

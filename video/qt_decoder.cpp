@@ -54,13 +54,9 @@ namespace Video {
 ////////////////////////////////////////////
 
 QuickTimeDecoder::QuickTimeDecoder() {
-	_scaledSurface = 0;
+	_scaledSurface = nullptr;
 	_width = _height = 0;
 	_enableEditListBoundsCheckQuirk = false;
-	_isMouseButtonDown = false;
-	_isVR = false;
-
-	_currentSample = 1;
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
