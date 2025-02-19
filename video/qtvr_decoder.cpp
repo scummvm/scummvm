@@ -986,7 +986,7 @@ const QuickTimeDecoder::PanoHotSpot *QuickTimeDecoder::getHotSpotByID(int id) {
 const QuickTimeDecoder::PanoNavigation *QuickTimeDecoder::getHotSpotNavByID(int id) {
 	const QuickTimeDecoder::PanoHotSpot *hotspot = getHotSpotByID(id);
 
-	if (hotspot->type != HotSpotType::navg)
+	if ((uint32)hotspot->type != MKTAG('n','a','v','g'))
 		return nullptr;
 
 	return _panoTrack->panoSamples[_currentSample].navTable.get(hotspot->typeData);
@@ -1129,7 +1129,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 			_clickedHotspot = _rolloverHotspot;
 	}
 
-	if (!repeat && !isDown && _rolloverHotspot && _rolloverHotspot->type == HotSpotType::link && _prevMouse == _mouseDrag) {
+	if (!repeat && !isDown && _rolloverHotspot && (uint32)_rolloverHotspot->type == MKTAG('l','i','n','k') && _prevMouse == _mouseDrag) {
 		PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_rolloverHotspot->typeData);
 
 		if (link) {
@@ -1343,22 +1343,22 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 		}
 
 		// Get hotspot cursors
-		HotSpotType hsType = HotSpotType::undefined;
+		uint32 hsType = MKTAG('u','n','d','f');
 
 		if (_rolloverHotspot)
-			hsType = _rolloverHotspot->type;
+			hsType = (uint32)_rolloverHotspot->type;
 
 		int hsOver, hsDown, hsUp;
 
 		switch (hsType) {
-		case HotSpotType::link:
+		case MKTAG('l','i','n','k'):
 			hsOver = kCursorPanoLinkOver;
 			hsDown = kCursorPanoLinkDown;
 			hsUp = kCursorPanoLinkUp;
 			break;
 
 		default:
-			if (hsType != HotSpotType::undefined)
+			if (hsType !=  MKTAG('u','n','d','f'))
 				debug(3, "Hotspot type: %s", tag2str((uint32)hsType));
 			hsOver = kCursorPanoObjOver;
 			hsDown = kCursorPanoObjDown;
