@@ -250,7 +250,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 		}
 	}
 	if (_mouseSurface) {
-		destroySurface(_mouseOrigSurface);
+		destroySurface(_mouseSurface);
 	}
 	free(_currentPalette);
 	free(_overlayPalette);
@@ -2473,11 +2473,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	if (sizeChanged || !_mouseSurface) {
 		if (_mouseSurface)
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-			SDL_DestroySurface(_mouseSurface);
-#else
-			SDL_FreeSurface(_mouseSurface);
-#endif
+			destroySurface(_mouseSurface);
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 		const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(_mouseOrigSurface->format);
