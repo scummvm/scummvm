@@ -253,7 +253,10 @@ void Context::initialize(ContextType contextType) {
 		// No mirror repeat in GLES
 		debug(5, "OpenGL: GLES context initialized");
 	} else if (type == kContextGL) {
-		shadersSupported = glslVersion >= 100;
+		// Official support of shaders starts with version 110
+		// Older versions didn't support the #version directive and were only available through
+		// ARB extensions which we removed support for
+		shadersSupported = glslVersion >= 110;
 
 		// In GL mode engines need GLSL 1.20
 		enginesShadersSupported = glslVersion >= 120;
