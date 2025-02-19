@@ -157,6 +157,8 @@ got_mem:
 	if (fileOffset > 0) {
 		// If (fseek(newStream->srcFile, fileOffset, SEEK_SET) != 0) {
 		if (!newStream->srcFile->seek(fileOffset)) {
+			HUnLock(newStream->strmHandle);
+			DisposeHandle(newStream->strmHandle);
 			delete newStream->srcFile;
 			mem_free(newStream);
 			return nullptr;
