@@ -506,9 +506,6 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
 
 	_isPanoConstructed = true;
-
-	_decoder->_panAngle = desc->_hPanStart;
-	_decoder->_tiltAngle = 0.0f;
 }
 
 Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 my) {
