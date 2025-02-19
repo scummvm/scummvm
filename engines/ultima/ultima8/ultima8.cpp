@@ -341,6 +341,9 @@ void Ultima8Engine::deinitialize() {
 	delete _ucMachine;
 	_ucMachine = nullptr;
 
+	// This process will be cleared in kernel reset.
+	_avatarMoverProcess = nullptr;
+
 	_kernel->reset();
 	_paletteManager->reset();
 	_fontManager->resetGameFonts();
@@ -1060,6 +1063,10 @@ void Ultima8Engine::resetEngine() {
 	// now, reset everything (order matters)
 	_world->reset();
 	_ucMachine->reset();
+
+	// This process will be cleared by kernel reset.
+	_avatarMoverProcess = nullptr;
+
 	// ObjectManager, Kernel have to be last, because they kill
 	// all processes/objects
 	_objectManager->reset();
