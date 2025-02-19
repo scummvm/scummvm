@@ -529,6 +529,7 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
+	// I18N: Skipping cutscene plaback
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
@@ -579,16 +580,19 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
+	// I18N: Cycle means rotate through
 	act = new Action("COUP", _("Cycle Objects Up"));
 	act->setKeyEvent(KeyState(KEYCODE_PAGEUP));
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	engineKeyMap->addAction(act);
 
+	// I18N: Cycle means rotate through
 	act = new Action("CODW", _("Cycle Objects Down"));
 	act->setKeyEvent(KeyState(KEYCODE_PAGEDOWN));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);
 
+	// I18N: Run is a movement type
 	act = new Action("BRUN", _("Run"));
 	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
@@ -625,6 +629,7 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
+	// I18N: Skipping cutscene plaback
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
