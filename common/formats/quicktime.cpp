@@ -1081,43 +1081,7 @@ int QuickTimeParser::readPHOT(Atom atom) {
 
 		_fd->readUint16BE(); // reserved
 
-		uint32 type = _fd->readUint32BE();
-
-		switch (type) {
-		case MKTAG('a', 'n', 'i', 'm'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::anim;
-			break;
-
-		case MKTAG('c', 'n', 'o', 'd'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::cnod;
-			break;
-
-		case MKTAG('c', 'm', 'o', 'v'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::cmov;
-			break;
-
-		case MKTAG('l', 'i', 'n', 'k'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::link;
-			break;
-
-		case MKTAG('n', 'a', 'v', 'g'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::navg;
-			break;
-
-		case MKTAG('s', 'o', 'u', 'n'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::soun;
-			break;
-
-		case MKTAG('u', 'n', 'd', 'f'):
-			pHotSpotTable.hotSpots[i].type = HotSpotType::undefined;
-			break;
-
-		default:
-			pHotSpotTable.hotSpots[i].type = HotSpotType::undefined;
-			warning("QuickTimeParser::readPHOT(): Unknown HotSpot Type ('%s')", tag2str(type));
-			break;
-		}
-
+		pHotSpotTable.hotSpots[i].type = _fd->readUint32BE();
 		pHotSpotTable.hotSpots[i].typeData = _fd->readUint32BE();
 
 		pHotSpotTable.hotSpots[i].viewHPan = readAppleFloatField(_fd);
