@@ -726,7 +726,9 @@ void QtvrxtraXtra::m_QTVRGetHotSpotID(int nargs) {
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
-	me->_video->setClickedHotSpot(g_lingo->pop().asInt());
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	g_lingo->push(hotspot ? hotspot->id : 0);
 }
 
 void QtvrxtraXtra::m_QTVRSetHotSpotID(int nargs) {
@@ -734,9 +736,7 @@ void QtvrxtraXtra::m_QTVRSetHotSpotID(int nargs) {
 
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
-	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
-
-	g_lingo->push(hotspot ? hotspot->id : 0);
+	me->_video->setClickedHotSpot(g_lingo->pop().asInt());
 }
 
 void QtvrxtraXtra::m_QTVRGetHotSpotName(int nargs) {
