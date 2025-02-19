@@ -93,6 +93,7 @@ public:
 	float getFOV() const { return _fov; }
 	bool setFOV(float fov);
 	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
+	Common::String getCurrentNodeName();
 
 	int getCurrentRow() { return _nextVideoTrack->getCurFrame() / _nav.columns; }
 	void setCurrentRow(int row);
@@ -109,6 +110,7 @@ public:
 	Common::String getHotSpotName(int id);
 	void setClickedHotSpot(int id);
 	const PanoHotSpot *getHotSpotByID(int id);
+	const PanoNavigation *getHotSpotNavByID(int id);
 
 	void nudge(const Common::String &direction);
 

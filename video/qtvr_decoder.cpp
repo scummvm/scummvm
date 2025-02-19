@@ -225,6 +225,15 @@ bool QuickTimeDecoder::setFOV(float fov) {
 	return success;
 }
 
+Common::String QuickTimeDecoder::getCurrentNodeName() {
+	if (_currentSample == -1)
+		return Common::String();
+
+	PanoTrackSample *sample = &_panoTrack->panoSamples[_currentSample];
+
+	return sample->strTable.getString(sample->hdr.nameStrOffset);
+}
+
 void QuickTimeDecoder::updateAngles() {
 	if (_qtvrType == QTVRType::OBJECT) {
 		_panAngle = (float)getCurrentColumn() / (float)_nav.columns * 360.0;
@@ -1076,6 +1085,15 @@ Common::String QuickTimeDecoder::getHotSpotName(int id) {
 
 const QuickTimeDecoder::PanoHotSpot *QuickTimeDecoder::getHotSpotByID(int id) {
 	return _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
+}
+
+const QuickTimeDecoder::PanoNavigation *QuickTimeDecoder::getHotSpotNavByID(int id) {
+	const QuickTimeDecoder::PanoHotSpot *hotspot = getHotSpotByID(id);
+
+	if (hotspot->type != HotSpotType::navg)
+		return nullptr;
+
+	return _panoTrack->panoSamples[_currentSample].navTable.get(hotspot->typeData);
 }
 
 void QuickTimeDecoder::setClickedHotSpot(int id) {
