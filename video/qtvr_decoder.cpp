@@ -944,8 +944,8 @@ Graphics::FloatPoint QuickTimeDecoder::getPanAngles(int16 x, int16 y) {
 
 	Graphics::FloatPoint res;
 
-	res.x = desc->_hPanStart + (desc->_hPanStart - desc->_hPanEnd) / (float)desc->_sceneSizeY * pos.x;
-	res.y = desc->_vPanTop + (desc->_vPanTop - desc->_vPanBottom) / (float)desc->_sceneSizeX * pos.y;
+	res.x = desc->_hPanStart + (desc->_hPanStart - desc->_hPanEnd) * (float)pos.x / (float)desc->_sceneSizeY;
+	res.y = desc->_vPanTop + (desc->_vPanBottom - desc->_vPanTop) * (float)pos.y / (float)desc->_sceneSizeX;
 
 	return res;
 }
