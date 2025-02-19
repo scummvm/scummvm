@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-18 21:14+0000\n"
+"POT-Creation-Date: 2025-02-19 12:32+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -1021,7 +1021,7 @@ msgstr "Interagir"
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:481 engines/grim/grim.cpp:562 engines/icb/icb.cpp:68
+#: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:968
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
@@ -1036,7 +1036,7 @@ msgstr "Cima"
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:486 engines/grim/grim.cpp:567 engines/icb/icb.cpp:73
+#: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:935
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
@@ -1051,7 +1051,7 @@ msgstr "Baixo"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
-#: engines/grim/grim.cpp:572 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
+#: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
 #: engines/scumm/metaengine.cpp:948 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:320
@@ -1067,7 +1067,7 @@ msgstr "Esquerda"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
-#: engines/grim/grim.cpp:577 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
+#: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
 #: engines/scumm/metaengine.cpp:955 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/wintermute/keymapper_tables.h:326
@@ -3831,7 +3831,7 @@ msgstr "Clique com Botão Direito"
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:79 engines/agos/metaengine.cpp:252
 #: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:191
-#: engines/grim/grim.cpp:549 engines/hdb/metaengine.cpp:258
+#: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
 #: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
@@ -3843,9 +3843,10 @@ msgstr "Pausar"
 msgid "Game menu"
 msgstr "Menu do jogo"
 
+#. I18N: Skipping cutscene plaback
 #: engines/metaengine.cpp:92 engines/composer/metaengine.cpp:125
-#: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:532
-#: engines/grim/grim.cpp:628 engines/illusions/metaengine.cpp:142
+#: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:533
+#: engines/grim/grim.cpp:633 engines/illusions/metaengine.cpp:142
 #: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
@@ -3868,8 +3869,8 @@ msgstr "Caixa de diálogo de entrada preditivo"
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:111 engines/bladerunner/metaengine.cpp:273
-#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:538
-#: engines/grim/grim.cpp:634 engines/sky/metaengine.cpp:101
+#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:539
+#: engines/grim/grim.cpp:639 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Confirmar"
@@ -5918,8 +5919,8 @@ msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
-#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:544
-#: engines/grim/grim.cpp:640 engines/hdb/metaengine.cpp:264
+#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:545
+#: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr "Menu"
@@ -7423,7 +7424,7 @@ msgstr "Pegar"
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:180
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:521 engines/grim/grim.cpp:617
+#: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
@@ -7901,9 +7902,10 @@ msgstr "Girar para Esquerda"
 msgid "Rotate Right"
 msgstr "Girar para Direita"
 
+#. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
 #: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
-#: engines/grim/grim.cpp:592 engines/hpl1/metaengine.cpp:82
+#: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "Correr"
@@ -8126,35 +8128,37 @@ msgstr ""
 "Executar o ScummVM desta forma pode causar bugs ou até travar o jogo.\n"
 "Ainda deseja executar %s?"
 
-#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:607
+#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
 msgid "Use/Talk"
 msgstr "Usar/Conversar"
 
-#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:612
+#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
 msgid "Pick up/Put away"
 msgstr "Pegar/Deixar"
 
-#: engines/grim/grim.cpp:526 engines/grim/grim.cpp:622
+#: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
 msgid "Skip dialog lines"
 msgstr "Pular linha de diálogo"
 
-#: engines/grim/grim.cpp:582
+#. I18N: Cycle means rotate through
+#: engines/grim/grim.cpp:584
 msgid "Cycle Objects Up"
 msgstr "Percorrer por Objetos para Cima"
 
-#: engines/grim/grim.cpp:587
+#. I18N: Cycle means rotate through
+#: engines/grim/grim.cpp:590
 msgid "Cycle Objects Down"
 msgstr "Percorrer por Objetos para Baixo"
 
-#: engines/grim/grim.cpp:597
+#: engines/grim/grim.cpp:601
 msgid "Quick Room Exit"
 msgstr "Saída Rápida do Cômodo"
 
-#: engines/grim/grim.cpp:602
+#: engines/grim/grim.cpp:606
 msgid "Examine/Look"
 msgstr "Examinar/Olhar"
 
-#: engines/grim/grim.cpp:1389
+#: engines/grim/grim.cpp:1394
 msgid "Error: the game could not be saved."
 msgstr "Erro: o jogo não pôde ser salvo."
 
