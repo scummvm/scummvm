@@ -65,6 +65,8 @@ public:
 
 	void playMusicOrSFX(int num);
 	void stopMusicOrSFX(int num);
+	void pauseMusicOrSFX(int num);
+	void unpauseMusicOrSFX(int num);
 
 	void stopSfxForChannel(byte channel);
 	void stopSfxByNum(int num);

@@ -35,7 +35,6 @@
 #include "dgds/image.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"
-#include "dgds/decompress.h"
 
 namespace Dgds {
 

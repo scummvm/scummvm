@@ -41,7 +41,7 @@ class TTMEnviro : public ScriptParserData {
 public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), _creditScrollMeasure(0),
 			_creditScrollYOffset(0), _xOff(0), _yOff(0), _xScroll(0), _yScroll(0),
-			ScriptParserData() {
+			_lastSelectedSample(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
 	}
 
@@ -65,6 +65,7 @@ public:
 	int16 _xScroll;
 	int16 _yScroll;
 	Common::SharedPtr<SoundRaw> _soundRaw;
+	int16 _lastSelectedSample;
 };
 
 enum TTMRunType {

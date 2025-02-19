@@ -1088,29 +1088,61 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xc020: {	// LOAD SAMPLE: filename:str
-		// Ignore this?
-		//_vm->_soundPlayer->loadMusic(sval.c_str());
-		//_vm->_soundPlayer->stopMusic();
+		// Ignore this?  Tries to load music files which don't exist in Willy
+		// Beamish - everything is integrated into WILLYSND.SX and WILLYMUS.SX
+		// _vm->_soundPlayer->loadMusic(sval.c_str());
+		// _vm->_soundPlayer->stopMusic();
 		break;
 	}
 	case 0xc030: {	// SELECT SAMPLE: int: i
-		// Do nothing for now?
+		// Often this is just the same number as gets passed to the following
+		// PLAY SAMPLE, but if PLAY SAMPLE gets 0 then this number should be
+		// used.
+		env._lastSelectedSample = ivals[0];
 		break;
+	}
+	case 0xc040: {	// DESELECT SAMPLE: int: i
+		// This is not quite the same as the original.  It looks like:
+		// * 0 is "deselect all samples"
+		// * -1 is "deselect stopped samples"
+		// * -2 is "deselect playing samples"
+		// (-1 and -2 might be the other way around?)
+		// -1 may not be used anywhere?  -2 is used in SQ5 demo.
+		if (ivals[0] == 0 || ivals[0] == -2) {
+			_vm->_soundPlayer->stopAllSfx();
+		}
+		env._lastSelectedSample = 0;
 	}
 	case 0xc050: {	// PLAY SAMPLE: int: i
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->_soundPlayer->playMusicOrSFX(ivals[0]);
+		int16 sample = ivals[0] ? ivals[0] : env._lastSelectedSample;
+		if (sample)
+			_vm->_soundPlayer->playMusicOrSFX(sample);
 		break;
 	}
 	case 0xc060: {	// STOP SAMPLE: int: i
-		_vm->_soundPlayer->stopMusicOrSFX(ivals[0]);
+		if (ivals[0] == -2)
+			_vm->_soundPlayer->stopAllSfx();
+		else if (ivals[0] == -1)
+			// Handled in original but maybe never used?
+			warning("TODO: Implement stop sample for arg -1");
+		else
+			_vm->_soundPlayer->stopMusicOrSFX(ivals[0]);
+		break;
+	}
+	case 0xc070: {	// PAUSE SAMPLE: int: i
+		_vm->_soundPlayer->pauseMusicOrSFX(ivals[0]);
+		break;
+	}
+	case 0xc080: {	// UNPAUSE SAMPLE: int: i
+		_vm->_soundPlayer->unpauseMusicOrSFX(ivals[0]);
 		break;
 	}
 	case 0xc210: {  // LOAD RAW SFX filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		// Stop existing raw sound before we deallocate it.
+		// Stop any existing raw sound before we deallocate it.
 		if (env._soundRaw)
 			env._soundRaw->stop();
 		if (_vm->getResourceManager()->hasResource(sval)) {
@@ -1118,24 +1150,24 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			snd->load(sval);
 			env._soundRaw.reset(snd);
 		} else {
-			warning("TTM 0xC210: Skip loading RAW %s, not found.", sval.c_str());
+			warning("TTM 0xC21F: Skip loading RAW %s, not found.", sval.c_str());
 		}
 		break;
 	}
 	case 0xc220: {	// PLAY RAW SFX
 		if (seq._executed) // this is a one-shot op
 			break;
-		if (!env._soundRaw)
-			warning("TODO: Trying to play raw SFX but nothing loaded");
-		else
+		if (env._soundRaw)
 			env._soundRaw->play();
+		else
+			warning("TTM 0xC220: Trying to play raw SFX but nothing loaded");
 		break;
 	}
 	case 0xc240: {	// STOP RAW SFX
 		if (env._soundRaw) {
 			env._soundRaw->stop();
 		} else {
-			warning("TODO: Trying to stop raw SFX but nothing loaded");
+			warning("TTM 0xC240: Trying to stop raw SFX but nothing loaded");
 		}
 		break;
 	}

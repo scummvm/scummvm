@@ -484,6 +484,25 @@ void Sound::stopMusicOrSFX(int num) {
 	}
 }
 
+void Sound::pauseMusicOrSFX(int num) {
+	if (_musicIdMap.contains(num)) {
+		// NOTE: We assume there is only ever one music here..
+		_music->pauseMusic();
+	} else {
+		warning("Sound: TODO: Implement pause SFX %d", num);
+	}
+}
+
+void Sound::unpauseMusicOrSFX(int num) {
+	if (_musicIdMap.contains(num)) {
+		// NOTE: We assume there is only ever one music here..
+		_music->resumeMusic();
+	} else {
+		warning("Sound: TODO: Implement unpause SFX %d", num);
+	}
+}
+
+
 void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::SoundType soundType) {
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
