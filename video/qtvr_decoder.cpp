@@ -694,7 +694,7 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 	float yawAngle = atan2(mousePixelVector[0], mousePixelVector[2]);
 
 	// panorama is turned 90 degrees, width is height
-	int hotX = (1.0f - (yawAngle / (2.0 * M_PI) + _decoder->_panAngle / 360.0f)) * (float)_constructedHotspots->h;
+	int hotX = (1.0f - (yawAngle / (2.0 * M_PI) + (360.0f - _decoder->_panAngle) / 360.0f)) * (float)_constructedHotspots->h;
 
 	hotX = hotX % _constructedHotspots->h;
 	if (hotX < 0)
@@ -839,7 +839,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		cylinderAngleOffsets[x] = atan(xCoord) * 0.5f / M_PI;
 	}
 
-	float angleT = fmod(_decoder->_panAngle / 360.0, 1.0);
+	float angleT = fmod((360.0f - _decoder->_panAngle) / 360.0f, 1.0f);
 	if (angleT < 0.0f)
 		angleT += 1.0f;
 
@@ -1157,7 +1157,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 	float speedY = (float)mouseDeltaY * speedFactor;
 
 	if (ABS(mouseDeltaX) >= sensitivity)
-		setPanAngle(getPanAngle() + speedX);
+		setPanAngle(getPanAngle() - speedX);
 
 	if (ABS(mouseDeltaY) >= sensitivity)
 		setTiltAngle(getTiltAngle() + speedY);
