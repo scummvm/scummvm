@@ -76,7 +76,7 @@ void Room303::init() {
 		_triggerMode1 = _triggerMode2 = KT_DAEMON;
 		_val5 = 0;
 		_val6 = 0;
-		_val7 = 0;
+		_meiLipsFlag = false;
 		_val8 = 0;
 	}
 
@@ -143,7 +143,7 @@ void Room303::init() {
 			playSeries(false);
 
 			_door = series_show_sprite("DOOR", 7, 0xf05);
-			ws_demand_location(_G(my_walker), 393, 260, 5);
+			ws_demand_location(393, 260, 5);
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
@@ -194,7 +194,7 @@ void Room303::init() {
 
 	case 305:
 		player_set_commands_allowed(false);
-		ws_demand_location(_G(my_walker), 28, 267, 3);
+		ws_demand_location(28, 267, 3);
 		playSeries();
 
 		if (!player_been_here(301)) {
@@ -222,7 +222,7 @@ void Room303::init() {
 
 	case 309:
 		interface_show();
-		ws_demand_location(_G(my_walker), 230, 258, 10);
+		ws_demand_location(230, 258, 10);
 		player_set_commands_allowed(false);
 
 		if (!player_been_here(301)) {
@@ -281,7 +281,7 @@ void Room303::init() {
 		_val12 = KT_PARSE;
 		kernel_load_variant("303lock1");
 		setFengActive(true);
-		ws_demand_location(_G(my_walker), 145, 289, 3);
+		ws_demand_location(145, 289, 3);
 		setupMei();
 		setShadow4(true);
 
@@ -315,12 +315,13 @@ void Room303::daemon() {
 
 	case 5:
 	case 61:
-		ws_demand_location(_G(my_walker), 230, 258);
+		series_unload(_ripBends);
+		ws_demand_location(230, 258);
 		player_set_commands_allowed(true);
 		break;
 
 	case 6:
-		ws_walk(_G(my_walker), 128, 267, nullptr, 75, 3);
+		ws_walk(128, 267, nullptr, 75, 3);
 		break;
 
 	case 7:
@@ -329,18 +330,18 @@ void Room303::daemon() {
 		break;
 
 	case 8:
-		ws_walk(_G(my_walker), 145, 289, nullptr, -1, 2);
+		ws_walk(145, 289, nullptr, -1, 2);
 		kernel_timing_trigger(200, 38);
 		break;
 
 	case 9:
-		ws_demand_location(_G(my_walker), 1350, 276, 9);
-		ws_walk(_G(my_walker), 1208, 276, nullptr, 75, 9);
+		ws_demand_location(1350, 276, 9);
+		ws_walk(1208, 276, nullptr, 75, 9);
 		break;
 
 	case 10:
-		ws_demand_location(_G(my_walker), 425, 227, 7);
-		ws_walk(_G(my_walker), 399, 260, nullptr, 50, 7);
+		ws_demand_location(425, 227, 7);
+		ws_walk(399, 260, nullptr, 50, 7);
 		break;
 
 	case 18:
@@ -453,7 +454,7 @@ void Room303::daemon() {
 		break;
 
 	case 107:
-		ws_walk(_G(my_walker), 700, 305, 0, -1, 3);
+		ws_walk(700, 305, nullptr, -1, 3);
 		sendWSMessage_10000(_mei, 393, 260, 9, 109, 0);
 		break;
 
@@ -481,7 +482,7 @@ void Room303::daemon() {
 		kernel_timing_trigger(60, 103);
 		series_unload(_suitTalk1);
 		series_unload(_chinTalk4);
-		ws_walk(_G(my_walker), 700, 305, nullptr, -1, 3);
+		ws_walk(700, 305, nullptr, -1, 3);
 		break;
 
 	case 117:
@@ -492,7 +493,7 @@ void Room303::daemon() {
 		break;
 
 	case 118:
-		ws_walk(_G(my_walker), 444, 295, nullptr, 119, 10);
+		ws_walk(444, 295, nullptr, 119, 10);
 		break;
 
 	case 119:
@@ -516,7 +517,7 @@ void Room303::daemon() {
 	case 122:
 		series_unload(_chinTalk4);
 		player_update_info();
-		ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y - 1,
+		ws_walk(_G(player_info).x + 1, _G(player_info).y - 1,
 			nullptr, 123, 1);
 		break;
 
@@ -547,7 +548,7 @@ void Room303::daemon() {
 		break;
 
 	case 127:
-		ws_walk(_G(my_walker), _G(player_info).x + 50, _G(player_info).y + 10,
+		ws_walk(_G(player_info).x + 50, _G(player_info).y + 10,
 			nullptr, -1, 10);
 		break;
 
@@ -555,6 +556,7 @@ void Room303::daemon() {
 		series_unload(_chinTalk4);
 		_chinTalk4 = series_load("rip suit rt hand gest talk pos2");
 		setGlobals1(_chinTalk4, 1, 5, 5, 5);
+		sendWSMessage_110000(130);
 		digi_play("303r08", 1, 255, 131);
 		break;
 
@@ -568,8 +570,8 @@ void Room303::daemon() {
 		break;
 
 	case 132:
-		ws_walk(_G(my_walker), 565, 306, nullptr, 170, 10);
-		kernel_timing_trigger(1, 133);
+		ws_walk(565, 306, nullptr, 170, 10);
+		kernel_timing_trigger(60, 133);
 		break;
 
 	case 133:
@@ -591,13 +593,13 @@ void Room303::daemon() {
 		sendWSMessage_60000(_mei);
 		setupMei();
 		setShadow4(true);
-		_val11 = 7;
+		_meiShould = 7;
 		kernel_timing_trigger(1, 160);
 		break;
 
 	case 138:
 		series_unload(_chinTalk4);
-		ws_walk(_G(my_walker), 500, 300, nullptr, 125, 3);
+		ws_walk(500, 300, nullptr, 125, 3);
 		break;
 
 	case 143:
@@ -674,11 +676,11 @@ void Room303::daemon() {
 		break;
 
 	case 198:
-		ws_walk(_G(my_walker), 444, 295, nullptr, 111, 11);
+		ws_walk(444, 295, nullptr, 111, 11);
 		break;
 
 	case 200:
-		if (_val10 == 0 && _val11 == 0 && _destTrigger != -1) {
+		if (_meiMode == 0 && _meiShould == 0 && _destTrigger != -1) {
 			kernel_trigger_dispatchx(_destTrigger);
 			_destTrigger = -1;
 
@@ -692,13 +694,13 @@ void Room303::daemon() {
 		break;
 
 	case 201:
-		switch (_val10) {
+		switch (_meiMode) {
 		case 0:
-			switch (_val11) {
+			switch (_meiShould) {
 			case 0:
-				if (_val7) {
+				if (_meiLipsFlag) {
 					series_unload(_meiLips);
-					_val7 = 0;
+					_meiLipsFlag = false;
 				}
 
 				if (_digiName1) {
@@ -716,13 +718,13 @@ void Room303::daemon() {
 					case 1:
 						sendWSMessage_10000(1, _mei, _mei2, 1, 14, 200,
 							_mei2, 14, 14, 0);
-						_val10 = _val11 = 1;
+						_meiMode = _meiShould = 1;
 						break;
 
 					case 2:
 						sendWSMessage_10000(1, _mei, _mei1, 2, 9, 200,
 							_mei1, 9, 9, 0);
-						_val10 = _val11 = 1;
+						_meiMode = _meiShould = 1;
 						break;
 
 					case 3:
@@ -740,26 +742,26 @@ void Room303::daemon() {
 			case 3:
 				sendWSMessage_10000(1, _mei, _mei3, 1, 12, 200,
 					_mei3, 12, 12, 0);
-				_val10 = 3;
+				_meiMode = 3;
 				break;
 
 			case 4:
 			case 5:
 				sendWSMessage_10000(1, _mei, _mei3, 17, 17, 200,
 					_mei3, 17, 17, 0);
-				_val10 = 4;
+				_meiMode = 4;
 				break;
 
 			case 6:
 				sendWSMessage_10000(1, _mei, _meiLips, 1, 13, 200,
 					_meiLips, 13, 13, 0);
-				_val10 = 6;
+				_meiMode = 6;
 				break;
 
 			case 7:
 				sendWSMessage_10000(1, _mei, _mei2, 1, 14, 200,
 					_mei2, 14, 14, 0);
-				_val10 = _val11 = 1;
+				_meiMode = _meiShould = 1;
 				break;
 
 			default:
@@ -768,7 +770,7 @@ void Room303::daemon() {
 			break;
 
 		case 1:
-			if (_val11 == 1) {
+			if (_meiShould == 1) {
 				++_val8;
 				if (imath_ranged_rand(7, 12) < _val8) {
 					_val8 = 0;
@@ -777,7 +779,7 @@ void Room303::daemon() {
 					case 1:
 						sendWSMessage_10000(1, _mei, _mei2, 14, 1, 200,
 							_mei1, 1, 1, 0);
-						_val10 = _val11 = 0;
+						_meiMode = _meiShould = 0;
 						break;
 
 					case 2:
@@ -793,12 +795,12 @@ void Room303::daemon() {
 			} else {
 				sendWSMessage_10000(1, _mei, _mei2, 14, 1, 200,
 					_mei1, 1, 1, 0);
-				_val10 = 0;
+				_meiMode = 0;
 			}
 			break;
 
 		case 2:
-			if (_val11 == 2) {
+			if (_meiShould == 2) {
 				++_val8;
 				if (imath_ranged_rand(7, 12) < _val8) {
 					_val8 = 0;
@@ -823,23 +825,23 @@ void Room303::daemon() {
 			} else {
 				sendWSMessage_10000(1, _mei, _mei1, 9, 2, 200,
 					_mei1, 1, 1, 0);
-				_val10 = 0;
+				_meiMode = 0;
 			}
 			break;
 
 		case 3:
-			if (_val11 == 3) {
+			if (_meiShould == 3) {
 				sendWSMessage_10000(1, _mei, _mei3, 13, 13, 200,
 					_mei3, 13, 16, 0);
 			} else {
 				sendWSMessage_10000(1, _mei, _mei3, 12, 1, 200,
 					_mei1, 1, 1, 0);
-				_val10 = 0;
+				_meiMode = 0;
 			}
 			break;
 
 		case 4:
-			switch (_val11) {
+			switch (_meiShould) {
 			case 4:
 				sendWSMessage_10000(1, _mei, _mei3, 17, 17, 200,
 					_mei3, 17, 17, 0);
@@ -854,20 +856,20 @@ void Room303::daemon() {
 			default:
 				sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200,
 					_mei1, 1, 1, 0);
-				_val10 = 0;
+				_meiMode = 0;
 				break;
 			}
 			break;
 
 		case 6:
-			if (_val11 == 6) {
+			if (_meiShould == 6) {
 				frame = imath_ranged_rand(14, 16);
 				sendWSMessage_10000(1, _mei, _meiLips, frame, frame, 200,
 					_meiLips, frame, frame, 0);
 			} else {
 				sendWSMessage_10000(1, _mei, _meiLips, 17, 24, 200,
 					_mei1, 1, 1, 0);
-				_val10 = 0;
+				_meiMode = 0;
 			}
 			break;
 
@@ -877,7 +879,7 @@ void Room303::daemon() {
 		break;
 
 	case 300:
-		if (_val17 == 0 && _val16 == 0 && _destTrigger != -1) {
+		if (_ripleyMode == 0 && _ripleyShould == 0 && _destTrigger != -1) {
 			kernel_trigger_dispatchx(_destTrigger);
 			_destTrigger = -1;
 
@@ -891,9 +893,9 @@ void Room303::daemon() {
 		break;
 
 	case 301:
-		switch (_val17) {
+		switch (_ripleyMode) {
 		case 0:
-			switch (_val16) {
+			switch (_ripleyShould) {
 			case 0:
 				if (_digiName1) {
 					digi_play(_digiName1, 1, 255, _val18);
@@ -907,13 +909,13 @@ void Room303::daemon() {
 
 			case 1:
 				sendWSMessage_10000(1, _machine3, _suit2, 1, 10, 300, _suit2, 10, 10, 0);
-				_val17 = 1;
+				_ripleyMode = 1;
 				break;
 
 			case 2:
 				sendWSMessage_10000(1, _machine3, _suit1, 1, 17, 300,
 					_suit1, 17, 17, 0);
-				_val17 = 2;
+				_ripleyMode = 2;
 				break;
 
 			case 3:
@@ -938,27 +940,27 @@ void Room303::daemon() {
 			break;
 
 		case 1:
-			if (_val16 == 1) {
+			if (_ripleyShould == 1) {
 				sendWSMessage_10000(1, _machine3, _suit2, 10, 10, 300,
 					_suit2, 10, 10, 0);
 			} else {
 				sendWSMessage_10000(1, _machine3, _suit2, 11, 18, 300, 1, 1, 1, 0);
-				_val17 = 0;
+				_ripleyMode = 0;
 			}
 			break;
 
 		case 2:
-			if (_val16 == 2) {
+			if (_ripleyShould == 2) {
 				sendWSMessage_10000(1, _machine3, _suit1, 17, 17, 300,
 					_suit1, 17, 17, 0);
 			} else {
 				sendWSMessage_10000(1, _machine3, _suit1, 17, 1, 300, 1, 1, 1, 0);
-				_val17 = 0;
+				_ripleyMode = 0;
 			}
 			break;
 
 		case 3:
-			switch (_val16) {
+			switch (_ripleyShould) {
 			case 3:
 				sendWSMessage_10000(1, _machine3, _ripGesture, 14, 14, 300,
 					_ripGesture, 14, 14, 0);
@@ -970,19 +972,19 @@ void Room303::daemon() {
 			default:
 				sendWSMessage_10000(1, _machine3, _ripGesture, 14,
 					1, 300, 1, 1, 1, 0);
-				_val17 = 0;
+				_ripleyMode = 0;
 				break;
 			}
 			break;
 
 		case 4:
-			if (_val16 == 4) {
+			if (_ripleyShould == 4) {
 				sendWSMessage_10000(1, _machine3, _ripGesture, 25, 25, 300,
 					_ripGesture, 25, 25, 0);
 			} else {
 				sendWSMessage_10000(1, _machine3, _ripGesture, 25, 15, 300,
 					_ripGesture, 14, 14, 0);
-				_val17 = 3;
+				_ripleyMode = 3;
 			}
 			break;
 
@@ -1165,7 +1167,7 @@ void Room303::parser() {
 		case 1:
 			setShadow5(false);
 			if (player_said("giant matchstick"))
-				ws_demand_location(_G(my_walker), 610, 256);
+				ws_demand_location(610, 256);
 
 			sendWSMessage_10000(_fengLi, 706, 256, 5, 2, 1);
 			break;
@@ -1496,7 +1498,7 @@ void Room303::parser() {
 		if (player_been_here(301)) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				ws_walk(_G(my_walker), 409, 266, nullptr, 1, 1);
+				ws_walk(409, 266, nullptr, 1, 1);
 				break;
 
 			case 1:
@@ -1518,7 +1520,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(_G(my_walker), 417, 232, nullptr, -1, 2);
+				ws_walk(417, 232, nullptr, -1, 2);
 				break;
 
 			case 5:
@@ -1554,7 +1556,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(_G(my_walker), 417, 232, nullptr, -1, 2);
+				ws_walk(417, 232, nullptr, -1, 2);
 				disable_player_commands_and_fade_init(6);
 				break;
 
@@ -1628,21 +1630,21 @@ void Room303::parser() {
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
 
-		_val17 = _val16 = 0;
+		_ripleyMode = _ripleyShould = 0;
 		_G(kernel).trigger_mode = KT_PARSE;
 
 		conv_load("conv303b", 10, 10, 747);
 		conv_play(conv_get_handle());
-		_val11 = 4;
-		_val16 = 0;
+		_meiShould = 4;
+		_ripleyShould = 0;
 
 	} else if (_G(kernel).trigger == 747) {
 		midi_fade_volume(0, 120);
 		kernel_timing_trigger(120, 749);
 		_lonelyFlag = false;
-		_val7 = 1;
-		_val11 = 0;
-		_val16 = 5;
+		_meiLipsFlag = true;
+		_meiShould = 0;
+		_ripleyShould = 5;
 
 	} else if (_G(kernel).trigger == 749) {
 		midi_stop();
@@ -1671,7 +1673,7 @@ void Room303::parser() {
 
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
-		_val16 = _val17 = 0;
+		_ripleyShould = _ripleyMode = 0;
 
 		_G(kernel).trigger_mode = KT_PARSE;
 		player_set_commands_allowed(false);
@@ -1680,7 +1682,7 @@ void Room303::parser() {
 		conv_export_value(conv_get_handle(), _G(flags)[V086], 0);
 		conv_play();
 		_fengMode = 1;
-		_val16 = 0;
+		_ripleyShould = 0;
 
 	} else if (_G(kernel).trigger == 748) {
 		_G(flags)[V082] = 1;
@@ -1689,7 +1691,7 @@ void Room303::parser() {
 		kernel_timing_trigger(120, 749);
 		_lonelyFlag = false;
 		_fengMode = 4;
-		_val16 = 5;
+		_ripleyShould = 5;
 
 	} else if (player_said("exit left")) {
 		switch (_G(kernel).trigger) {
@@ -1739,7 +1741,7 @@ void Room303::setupMei() {
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200, _mei1, 1, 1, 0);
-	_val10 = _val11 = 0;
+	_meiMode = _meiShould = 0;
 }
 
 void Room303::loadFengLi() {
@@ -1818,9 +1820,9 @@ void Room303::conv303a() {
 
 			if (node != 1 || entry != 1) {
 				if (node != 3 || entry != 1)
-					_val16 = 0;
+					_ripleyShould = 0;
 			} else {
-				_val16 = 3;
+				_ripleyShould = 3;
 			}
 		}
 
@@ -1832,7 +1834,7 @@ void Room303::conv303a() {
 	} else {
 		if (who <= 0) {
 			if (node == 3 && !entry)
-				_val16 = 2;
+				_ripleyShould = 2;
 			if ((node != 3 || entry != 1) && (node != 3 || entry))
 				_fengMode = 2;
 			else
@@ -1842,12 +1844,12 @@ void Room303::conv303a() {
 			if (node != 1 || entry != 1) {
 				if (node != 5 || entry) {
 					if (node != 3 || entry != 1)
-						_val16 = 1;
+						_ripleyShould = 1;
 				} else {
-					_val16 = 0;
+					_ripleyShould = 0;
 				}
 			} else {
-				_val16 = 4;
+				_ripleyShould = 4;
 			}
 		}
 
@@ -1864,13 +1866,13 @@ void Room303::conv303b() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		if (who <= 0) {
-			_val11 = 4;
+			_meiShould = 4;
 
 			if (node == 1 && entry == 0) {
 				digi_unload("08_01n01");
 				digi_unload("08_02n01");
 			} else if (node == 2 && entry == 2) {
-				_val16 = 0;
+				_ripleyShould = 0;
 			} else if (node == 1 && entry == 2) {
 				digi_preload("com119");
 				_ripPonders = series_stream("303 rip reacts", 4, 0, 667);
@@ -1895,9 +1897,9 @@ void Room303::conv303b() {
 			} else if (node == 1 && entry == 2) {
 				// No implementation
 			} else if ((node == 2 && entry == 0) || (node == 2 && entry == 2)) {
-				_val16 = 3;
+				_ripleyShould = 3;
 			} else {
-				_val16 = 0;
+				_ripleyShould = 0;
 			}
 		}
 		break;
@@ -1912,7 +1914,7 @@ void Room303::conv303b() {
 		return;
 
 	case 4:
-		_val11 = 5;
+		_meiShould = 5;
 		return;
 
 	case 5:
@@ -1924,7 +1926,7 @@ void Room303::conv303b() {
 		return;
 
 	case 7:
-		_val16 = 0;
+		_ripleyShould = 0;
 		series_stream_break_on_frame(_ripPonders, 22, 5);
 		return;
 
@@ -1952,25 +1954,25 @@ void Room303::conv303b() {
 		break;
 
 	case 700:
-		_val16 = 0;
+		_ripleyShould = 0;
 		break;
 
 	default:
 		if (sound) {
 			if (who <= 0) {
 				if (node != 2 || entry != 1)
-					_val11 = 5;
+					_meiShould = 5;
 			} else if (who == 1) {
 				if (node == 1 && entry == 2) {
-					_val16 = 2;
+					_ripleyShould = 2;
 				} else if (node == 2 && entry == 1) {
-					_val11 = 6;
+					_meiShould = 6;
 					kernel_timing_trigger(150, 4);
 				} else if ((node == 2 && entry == 0) ||
 						(node == 2 && entry == 2)) {
-					_val16 = 4;
+					_ripleyShould = 4;
 				} else {
-					_val16 = 1;
+					_ripleyShould = 1;
 				}
 			}
 
