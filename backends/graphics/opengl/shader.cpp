@@ -103,8 +103,8 @@ void ShaderManager::notifyCreate() {
 	// Ensure everything is destroyed
 	notifyDestroy();
 
-	_builtIn[kDefault] = Shader::fromStrings("default", g_defaultVertexShader, g_defaultFragmentShader, g_defaultShaderAttributes, 110);
-	_builtIn[kCLUT8LookUp] = Shader::fromStrings("clut8lookup", g_defaultVertexShader, g_lookUpFragmentShader, g_defaultShaderAttributes, 110);
+	_builtIn[kDefault] = Shader::fromStrings("default", g_defaultVertexShader, g_defaultFragmentShader, g_defaultShaderAttributes, 100);
+	_builtIn[kCLUT8LookUp] = Shader::fromStrings("clut8lookup", g_defaultVertexShader, g_lookUpFragmentShader, g_defaultShaderAttributes, 100);
 	_builtIn[kCLUT8LookUp]->setUniform("palette", 1);
 
 	for (uint i = 0; i < kMaxUsages; ++i) {
