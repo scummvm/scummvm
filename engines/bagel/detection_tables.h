@@ -24,6 +24,7 @@ namespace Bagel {
 const PlainGameDescriptor bagelGames[] = {
 	{ "bagel", "Bagel" },
 	{ "spacebar", "The Space Bar" },
+	{ "hodjnpodj", "Hodj'n'Podj" },
 	{ 0, 0 }
 };
 
@@ -91,6 +92,17 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"hodjnpodj",
+		nullptr,
+		AD_ENTRY2s("video/hodj.avi", "6c565ce6e4ab878c7f26e1d344e211a7", 3653624,
+				   "meta/meta.gtl", "35f9d5c944f718768a233d9d62447d07", 43441),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
 
