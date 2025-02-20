@@ -106,6 +106,13 @@ void BgPics::setArea(int area) {
 void BgPics::load() {
 	const Common::String name = Common::String::format("BPICS%d", _area);
 	GfxPics::load(name, 262);
+
+	if (_area == 2) {
+		// FIXME: Background tile 0xbe in part 2 is used for the invisible
+		// maze in part 2 to get the shovel, but it's not drawing as black.
+		// Manually set the transparent color for it so it's properly transparent
+		(*this)[0xbe].setTransparentColor(31);
+	}
 }
 
 } // namespace Gfx
