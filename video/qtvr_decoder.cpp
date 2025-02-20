@@ -1418,7 +1418,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// down stop
-				if (_tiltAngle >= desc->_vPanTop - _fov / 2)
+				if (_tiltAngle <= desc->_vPanBottom + _fov / 2)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -1431,7 +1431,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// up stop
-				if (_tiltAngle <= desc->_vPanBottom + _fov / 2)
+				if (_tiltAngle >= desc->_vPanTop - _fov / 2)
 					res |= 1;
 			} else {
 				res <<= 1;
