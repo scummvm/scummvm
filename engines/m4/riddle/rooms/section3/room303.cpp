@@ -1548,6 +1548,14 @@ void Room303::parser() {
 					_G(player_info).scale, _G(player_info).depth, 7, 1);
 				break;
 
+			case 1:
+				terminateMachine(_door);
+				series_plain_play("DOOR", 1, 0, 100, 3845, 7, 2, false);
+				digi_play("303_s01", 1, 255, -1, -1);
+				_med1 = series_load("SUIT DOOR OPENER POS1", -1, nullptr);
+				series_play_xy("SUIT DOOR OPENER POS1", 1, 2, _G(player_info).x, _G(player_info).y, _G(player_info).scale, _G(player_info).depth, 7, 3);
+				break;
+				
 			case 2:
 				series_show_sprite("DOOR", 7, 0xf05);
 				break;
@@ -1559,7 +1567,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(417, 232, nullptr, -1, 2);
+				ws_walk(417, 232, nullptr, -1, 2, true);
 				disable_player_commands_and_fade_init(6);
 				break;
 
