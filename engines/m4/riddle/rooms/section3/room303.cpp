@@ -539,12 +539,12 @@ void Room303::daemon() {
 	case 125:
 		_chinTalk4 = series_load("rip suit lft hand gest talk");
 		setGlobals4(_chinTalk4, 6, 6, 13);
-		sendWSMessage_C0000(126);
+		sendWSMessage_C0000(_G(my_walker), 126);
 		break;
 
 	case 126:
 		digi_play("303r07", 1, 255, 150);
-		sendWSMessage_D0000();
+		sendWSMessage_D0000(_G(my_walker));
 		break;
 
 	case 127:
@@ -623,7 +623,7 @@ void Room303::daemon() {
 		break;
 
 	case 150:
-		sendWSMessage_B0000(127);
+		sendWSMessage_B0000(_G(my_walker), 127);
 		playSound("303f02", -1, 129);
 		break;
 
@@ -1234,12 +1234,12 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("suit chin in hand pos4");
 				setGlobals4(_chinTalk4, 15, 15, 15);
-				sendWSMessage_C0000(0);
+				sendWSMessage_C0000(_G(my_walker), 0);
 				digi_play("303r37", 1, 255, 2);
 				break;
 
 			case 2:
-				sendWSMessage_B0000(3);
+				sendWSMessage_B0000(_G(my_walker), 3);
 				break;
 
 			case 3:
@@ -1257,7 +1257,7 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("rip hand to chin talk pos4");
 				setGlobals4(_chinTalk4, 15, 16, 19);
-				sendWSMessage_C0000(0);
+				sendWSMessage_C0000(_G(my_walker), 0);
 				digi_play("303F13", 1, 255, 1);
 				_fengShould = 2;
 				break;
@@ -1268,12 +1268,12 @@ void Room303::parser() {
 				break;
 
 			case 2:
-				sendWSMessage_D0000();
-				digi_play("303r26", 1, 255, 3);
+				sendWSMessage_D0000(_G(my_walker));
+				digi_play("303r26", 1, 255, 3, -1);
 				break;
 
 			case 3:
-				sendWSMessage_E0000();
+				sendWSMessage_E0000(_G(my_walker));
 				sendWSMessage(0xe0000, 0, _G(my_walker), 0, nullptr, 1);
 				kernel_timing_trigger(30, 4);
 				break;
@@ -1289,12 +1289,12 @@ void Room303::parser() {
 				break;
 
 			case 6:
-				sendWSMessage_D0000();
+				sendWSMessage_D0000(_G(my_walker));
 				digi_play("303r27", 1, 255, 7);
 				break;
 
 			case 7:
-				sendWSMessage_B0000(8);
+				sendWSMessage_B0000(_G(my_walker), 8);
 				break;
 
 			case 8:
@@ -1318,12 +1318,12 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("suit hand in pocket pos2");
 				setGlobals4(_chinTalk4, 19, 19, 19);
-				sendWSMessage_C0000(0);
+				sendWSMessage_C0000(_G(my_walker), 0);
 				digi_play("303r31", 1, 255, 2);
 				break;
 
 			case 2:
-				sendWSMessage_B0000(3);
+				sendWSMessage_B0000(_G(my_walker), 3);
 				break;
 
 			case 3:
@@ -1345,16 +1345,17 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("suit chin in hand pos4");
 				setGlobals4(_chinTalk4, 15, 15, 15);
-				sendWSMessage_C0000(-2);
+				sendWSMessage_C0000(_G(my_walker), -2);
 				digi_play("303r28a", 1, 255, 1);
 				break;
 
 			case 1:
-				sendWSMessage_B0000(3);
+				sendWSMessage_B0000(_G(my_walker), 3);
 				break;
 
 			case 3:
 				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
 				break;
 
 			default:
@@ -1367,18 +1368,23 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("rip suit talker pos4");
 				setGlobals4(_chinTalk4, 1, 1, 5);
-				sendWSMessage_C0000(-1);
+				sendWSMessage_C0000(_G(my_walker), -1);
 				digi_play("303F15", 1, 255, 1);
-				_fengShould = 2;
+				_fengMode = 2;
 				break;
 
+			case 1:
+				_fengMode = 1;
+				kernel_timing_trigger(30, 2);
+				break;
+				
 			case 2:
-				sendWSMessage_D0000();
+				sendWSMessage_D0000(_G(my_walker));
 				digi_play("303r28", 1, 255, 3);
 				break;
 
 			case 3:
-				sendWSMessage_B0000(4);
+				sendWSMessage_B0000(_G(my_walker), 4);
 				break;
 
 			case 4:
@@ -1424,14 +1430,14 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("rip hand to chin talk pos4");
 				setGlobals4(_chinTalk4, 15, 16, 19);
-				sendWSMessage_C0000(0);
+				sendWSMessage_C0000(_G(my_walker), 0);
 				digi_play("303F10", 1, 255, 6);
 				_fengShould = 2;
 				break;
 
 			case 1:
 				digi_play("303r24", 1, 255, 3);
-				sendWSMessage_D0000();
+				sendWSMessage_D0000(_G(my_walker));
 				_fengShould = 0;
 				break;
 
@@ -1440,7 +1446,7 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				sendWSMessage_B0000(7);
+				sendWSMessage_B0000(_G(my_walker), 7);
 				_fengShould = 3;
 				digi_play("303f11", 1, 255, 5);
 				break;
@@ -1474,18 +1480,18 @@ void Room303::parser() {
 				player_set_commands_allowed(false);
 				_chinTalk4 = series_load("rip suit talker pos4");
 				setGlobals4(_chinTalk4, 1, 1, 5);
-				sendWSMessage_C0000(1);
+				sendWSMessage_C0000(_G(my_walker), 1);
 				break;
 
 			case 2:
-				sendWSMessage_D0000();
+				sendWSMessage_D0000(_G(my_walker));
 				digi_play("303r25", 1, 255, 3);
 				break;
 
 			case 3:
 				digi_play("303F12", 1, 255, 4);
 				_fengShould = 2;
-				sendWSMessage_B0000(0);
+				sendWSMessage_B0000(_G(my_walker), 0);
 				break;
 
 			case 4:

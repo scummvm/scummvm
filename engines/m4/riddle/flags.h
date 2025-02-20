@@ -112,8 +112,8 @@ enum Flag {
 	kTabletsCartoon =  77,
 	V078 =  78,
 	V079 =  79,
-	V080 =  80,
-	V081 =  81,
+	V080 =  80, // Room 303 Puffball : first look animation played
+	V081 =  81, // Room 303 Torso Tomato : first look animation played
 	V082 =  82,
 	V083 =  83,
 	V084 =  84,

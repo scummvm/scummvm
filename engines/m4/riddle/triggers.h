@@ -49,13 +49,9 @@ machine *triggerMachineByHash_3000(int myHash, int dataHash,
 extern void sendWSMessage_60000(machine *mach);
 extern void sendWSMessage_80000(machine *mach);
 extern void sendWSMessage_B0000(machine *mach, int trigger);
-extern void sendWSMessage_B0000(int trigger);
 extern void sendWSMessage_C0000(machine *mach, int trigger);
-extern void sendWSMessage_C0000(int trigger);
 extern void sendWSMessage_D0000(machine *mach);
-extern void sendWSMessage_D0000();
 extern void sendWSMessage_E0000(machine *mach);
-extern void sendWSMessage_E0000();
 extern void sendWSMessage_F0000(machine *mach, int trigger);
 extern void sendWSMessage_F0000(int trigger);
 extern void sendWSMessage_110000(machine *mach, int trigger);
