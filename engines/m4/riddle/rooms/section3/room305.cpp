@@ -1151,6 +1151,7 @@ next4:
 
 		case 3:
 			series_unload(_lookUp);
+			player_set_commands_allowed(true);
 			break;
 
 		default:
