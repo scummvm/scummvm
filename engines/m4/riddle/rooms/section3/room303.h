@@ -43,8 +43,8 @@ private:
 	int _meiShould = 0;
 	KernelTriggerType _val12 = KT_DAEMON;
 	bool _fengFlag = false;
-	int _fengShould = 0;
 	int _fengMode = 0;
+	int _fengShould = 0;
 	int _ripleyShould = 0;
 	int _ripleyMode = 0;
 	int _val18 = 0;
@@ -63,7 +63,7 @@ private:
 	machine *_shadow5 = nullptr;
 	machine *_fengLi = nullptr;
 	machine *_machine2 = nullptr;
-	machine *_machine3 = nullptr;
+	machine *_ripley = nullptr;
 	machine *_ripPonders = nullptr;
 	int _gestTalk4 = 0;
 	int _ripBends = 0;
