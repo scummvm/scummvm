@@ -129,31 +129,14 @@ void Sound::musicPlay(const char *name, bool override) {
 		File file(name);
 
 #ifdef TODO
-		// Just a POC + Not working - No volume, maybe?
+		// FIXME: Completely wrong. Don't know music format yet
+		// Open it up for access
+		Common::SeekableReadStream *f = file.readStream(file.size());
+		Audio::AudioStream *audioStream = Audio::makeRawStream(
+			f, 11025, 0, DisposeAfterUse::YES);
+		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType,
+									 &_musicHandle, audioStream);
 
-		OPL::OPL *opl = OPL::Config::create();
-		opl->init();
-		opl->start()
-		const int startLoop = file.readUint16LE();
-
-		while (!file.eos()) {
-			int delayAfter = file.readByte();
-			if (delayAfter & 0x80)
-				delayAfter = ((delayAfter & 0x7f) << 8) | file.readByte();
-
-			const int reg = file.readByte();
-			const int value = file.readByte();
-			if (reg == 0 && value == 0) {
-				debug(1, "End of song");
-				break;
-			}
-
-			opl->writeReg(reg, value);
-			debug("DelayAfter %d, OPL reg 0x%X, value %d", delayAfter, reg, value);
-			g_engine->_system->delayMillis(delayAfter);
-		}
-		debug(1, "looping at pos %d", startLoop);
-		
 #else
 		warning("TODO: play_music %s", name);
 
