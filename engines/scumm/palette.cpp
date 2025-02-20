@@ -1729,6 +1729,19 @@ void ScummEngine::updatePalette() {
 	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0 && _useGammaCorrection) {
 		for (int i = 0; i < 3 * num; ++i)
 			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
+	} else if (_game.platform == Common::kPlatformSegaCD && _game.id == GID_MONKEY && !enhancementEnabled(kEnhVisualChanges)) {
+		// This works on the assumption that the original interpreter
+		// used just the three most significant bits of each color
+		// component. Furthermore, the graphcis were drawn in "shadow
+		// mode" (possibly by accident), halving the color intensity.
+		// Without access to a proper Sega CD emulator, this is the
+		// best I can do at the moment.
+		//
+		// You can tell the developers were aware that the graphics
+		// were dark, becaues they made the SCUMM Bar sign brighter
+		// than in other versions.
+		for (int i = 0; i < 3 * num; ++i)
+			paletteColors[i] = (paletteColors[i] & 0xE0) >> 1;
 	}
 
 	_system->getPaletteManager()->setPalette(paletteColors, first, num);
