@@ -17,6 +17,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
    - Added support for the remastered speech and sound effects in the
      remastered version of Day of the Tentacle.
+   - Improved graphics support for Macintosh DOTT, Sam & Max, The Dig, Full
+     Throttle, and Maniac Mansion.
+   - Fixed pops in Sega CD MI1 sound effects.
 
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
