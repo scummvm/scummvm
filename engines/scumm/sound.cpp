@@ -272,7 +272,12 @@ void Sound::triggerSound(int soundID) {
 		// 80 80 80 80 80 80 80 80  |........|
 		// 80 80 80 80 80 80 80 80  |........|
 
-		size = READ_BE_UINT32(ptr + 4) - 27;
+		// Skip to the VOC header, and adjust the size. Note that while
+		// ptr points to the beginning of the resource, 'size' refers
+		// to the size of the SBL data. That is why there it an eight
+		// byte difference. See bug #15369.
+
+		size = READ_BE_UINT32(ptr + 4) - 19;
 		ptr += 27;
 
 		// Fingolfin says: after eyeballing a single SEGA
