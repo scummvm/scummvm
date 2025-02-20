@@ -22,6 +22,8 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/sound.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -61,14 +63,14 @@ new object me
 * dsGetLoop integer ID
 * dsSetLoop integer ID, integer loopFlag
 * dsIsPlaying integer ID
-* dsGetCaps 
+* dsGetCaps
 --
 * ds3DOpen
 * ds3DLGetPosition
 * ds3DLSetPosition float X, float Y, float Z
-* ds3DLGetOrientation 
+* ds3DLGetOrientation
 * ds3DLSetOrientation float xFront,float yFront,float zFront,float xTop,float yTop,float zTop
-* ds3DLGetVelocity 
+* ds3DLGetVelocity
 * ds3DLSetVelocity float X, float Y, float Z
 * ds3DLGetDopplerFactor
 * ds3DLSetDopplerFactor float DopplerFactor
@@ -172,44 +174,154 @@ Datum DirectsoundXtraObject::getProp(const Common::String &propName) {
 }
 
 void DirectsoundXtra::open(ObjectType type, const Common::Path &path) {
-    DirectsoundXtraObject::initMethods(xlibMethods);
-    DirectsoundXtraObject *xobj = new DirectsoundXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
-    g_lingo->exposeXObject(xlibName, xobj);
-    g_lingo->initBuiltIns(xlibBuiltins);
+	DirectsoundXtraObject::initMethods(xlibMethods);
+	DirectsoundXtraObject *xobj = new DirectsoundXtraObject(type);
+	if (type == kXtraObj)
+		g_lingo->_openXtras.push_back(xlibName);
+	g_lingo->exposeXObject(xlibName, xobj);
+	g_lingo->initBuiltIns(xlibBuiltins);
 }
 
 void DirectsoundXtra::close(ObjectType type) {
     DirectsoundXtraObject::cleanupMethods();
     g_lingo->_globalvars[xlibName] = Datum();
-
 }
 
 void DirectsoundXtra::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("DirectsoundXtra::m_new", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(0);
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(DirectsoundXtra::m_dsOpen, 1)
-XOBJSTUB(DirectsoundXtra::m_dsNewSound, 0)
-XOBJSTUB(DirectsoundXtra::m_dsDelSound, 0)
+void DirectsoundXtra::m_dsOpen(int nargs) {
+	ARGNUMCHECK(0);
+	g_lingo->push(1); // We are always open
+}
+
+void DirectsoundXtra::m_dsNewSound(int nargs) {
+	ARGNUMCHECK(2);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+
+	DirectsoundXtraObject::DXSound newSound;
+	newSound.parameter = g_lingo->pop().asInt();
+	newSound.fname = g_lingo->pop().asString();
+
+	int newId = -1;
+
+	for (int i = 0; i < me->_sounds.size(); i++) {
+		if (me->_sounds[i].free) {
+			newId = i;
+			break;
+		}
+	}
+
+	if (newId == -1) {
+		newSound.channel = 1000 + me->_sounds.size();
+		me->_sounds.push_back(newSound);
+		newId = me->_sounds.size() - 1;
+	} else {
+		newSound.channel = me->_sounds[newId].channel; // Reuse sound channel
+		me->_sounds[newId] = newSound;
+	}
+
+	g_lingo->push(Common::String::format("DSoundXtra:%d", newId));
+}
+
+static int parseId(Common::String id) {
+	if (id.empty() || id.equals("0"))
+		return -1;
+
+	if (!id.hasPrefix("DSoundXtra:")) {
+		warning("DirectsoundXtra: Malformed sound reference: %s", id.c_str());
+		return -1;
+	}
+
+	return atoi(&id.c_str()[11]);
+}
+
+void DirectsoundXtra::m_dsDelSound(int nargs) {
+	ARGNUMCHECK(1);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+	int id = parseId(g_lingo->pop().asString());
+
+	if (id == -1)
+		return;
+
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+
+	if (me->_sounds[id].channel != -1)
+		sound->stopSound(me->_sounds[id].channel);
+
+	me->_sounds[id].free = true;
+}
+
 XOBJSTUB(DirectsoundXtra::m_dsDupSound, 0)
-XOBJSTUB(DirectsoundXtra::m_dsPlay, 0)
+
+void DirectsoundXtra::m_dsPlay(int nargs) {
+	ARGNUMCHECK(1);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+	int id = parseId(g_lingo->pop().asString());
+
+	if (id == -1)
+		return;
+
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+
+	if (me->_sounds[id].channel != -1)
+		sound->playFile(me->_sounds[id].fname, me->_sounds[id].channel);
+}
+
 XOBJSTUB(DirectsoundXtra::m_dsStop, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetSize, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetFreq, 0)
 XOBJSTUB(DirectsoundXtra::m_dsSetFreq, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetVolume, 0)
-XOBJSTUB(DirectsoundXtra::m_dsSetVolume, 0)
+
+void DirectsoundXtra::m_dsSetVolume(int nargs) {
+	ARGNUMCHECK(2);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+	int vol = g_lingo->pop().asInt();
+	int id = parseId(g_lingo->pop().asString());
+
+	if (id == -1)
+		return;
+
+	// original range is 0..-10000
+	vol = (10000 + vol) * 256 / 10000;
+
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+
+	if (me->_sounds[id].channel != -1)
+		sound->setChannelVolume(me->_sounds[id].channel, vol);
+}
+
 XOBJSTUB(DirectsoundXtra::m_dsGetPan, 0)
 XOBJSTUB(DirectsoundXtra::m_dsSetPan, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetPosition, 0)
 XOBJSTUB(DirectsoundXtra::m_dsSetPosition, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetLoop, 0)
 XOBJSTUB(DirectsoundXtra::m_dsSetLoop, 0)
-XOBJSTUB(DirectsoundXtra::m_dsIsPlaying, 0)
+
+void DirectsoundXtra::m_dsIsPlaying(int nargs) {
+	ARGNUMCHECK(1);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+	int id = parseId(g_lingo->pop().asString());
+
+	if (id == -1)
+		return;
+
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+
+	if (me->_sounds[id].channel != -1)
+		g_lingo->push(sound->isChannelActive(me->_sounds[id].channel) ? 1 : 0);
+	else
+		g_lingo->push(0);
+}
+
 XOBJSTUB(DirectsoundXtra::m_dsGetCaps, 0)
 XOBJSTUB(DirectsoundXtra::m_ds3DOpen, 0)
 XOBJSTUB(DirectsoundXtra::m_ds3DLGetPosition, 0)
@@ -236,6 +348,19 @@ XOBJSTUB(DirectsoundXtra::m_ds3DGetMaxDistance, 0)
 XOBJSTUB(DirectsoundXtra::m_ds3DSetMaxDistance, 0)
 XOBJSTUB(DirectsoundXtra::m_ds3DGetMinDistance, 0)
 XOBJSTUB(DirectsoundXtra::m_ds3DSetMinDistance, 0)
-XOBJSTUB(DirectsoundXtra::m_dsClose, 0)
+
+void DirectsoundXtra::m_dsClose(int nargs) {
+	ARGNUMCHECK(0);
+
+	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+
+	for (int i = 0; i < me->_sounds.size(); i++) {
+		if (me->_sounds[i].channel != -1)
+			sound->stopSound(me->_sounds[i].channel);
+
+		me->_sounds[i].free = true;
+	}
+}
 
 }

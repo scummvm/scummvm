@@ -30,6 +30,16 @@ public:
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
+
+	struct DXSound {
+		Common::String fname;
+		int parameter = -1;
+		bool free = false;
+		int channel = -1;
+		bool loop = false;
+	};
+
+	Common::Array<DXSound> _sounds;
 };
 
 namespace DirectsoundXtra {
