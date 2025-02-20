@@ -441,6 +441,9 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
+	if (!frame)
+		return;
+
 	Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
 
 	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
@@ -557,6 +560,11 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 
 	while (true) {
 		Graphics::Surface const *frame = me->_video->decodeNextFrame();
+
+		if (!frame) {
+			g_lingo->pushVoid();
+			return;
+		}
 
 		Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
 
