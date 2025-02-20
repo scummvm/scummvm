@@ -135,7 +135,7 @@ int db_def_chk_read(int16 room_code, SceneDef *rdef) {
 	_G(myDef) = rdef;
 
 	_G(def_filename) = Common::String::format("%03d.chk", room_code);
-	SysFile fpdef(_G(def_filename), BINARY);
+	SysFile fpdef(_G(def_filename));
 
 	load_def(&fpdef);
 	fpdef.close();

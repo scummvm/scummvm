@@ -384,7 +384,6 @@ extern void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y);
 //
 //		gamemenu module defines
 //
-#define MEMORY_NEEDED		0	// bytes needed for menus to work
 #define MENU_DEPTH 			9 	// video depth for menu popup boxes
 #define MAX_SLOTS			99	// number of save games you can have
 #define MAX_SLOTS_SHOWN 	8	// number of slots in the scrolling field

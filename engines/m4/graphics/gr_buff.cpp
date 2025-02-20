@@ -24,7 +24,6 @@
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
-#include "m4/core/term.h"
 
 namespace M4 {
 
@@ -66,15 +65,6 @@ void GrBuff::release() {
 
 void GrBuff::alloc_pixmap() {
 	pixmap = NewHandle(pitch * height, "pixmap");
-	if (!pixmap) {
-		term_message("GrBuff::alloc_pixmap(): Trying to free up %d bytes", pitch * height);
-		if (MakeMem(pitch * height, "pixmap")) {
-			pixmap = NewHandle(pitch * height, "pixmap");
-			if (!pixmap)
-				error_show(FL, 15, "pixmap h:%d w:%d bytes:%d", height, pitch, pitch * height);
-		} else
-			error_show(FL, 1, "GrBuff::alloc_pixmap() x, y: %d %d", pitch, height);
-	}
 	HLock(pixmap);
 	memset(*pixmap, __BLACK, pitch * height);
 	HUnLock(pixmap);

@@ -115,30 +115,6 @@ bool guiMenu::initialize(RGB8 *myPalette) {
 	_GM(dumpedCodes) = false;
 	_GM(dumpedBackground) = false;
 
-	// Make sure we have enough memory
-	PurgeMem();
-	CompactMem();
-	int32 memAvail = mem_avail();
-
-	// Dump the screen codes if necessary
-	if (memAvail < MEMORY_NEEDED) {
-		adv_GetCodeMemory();
-		_GM(dumpedCodes) = true;
-		memAvail = mem_avail();
-	}
-
-	// Dump the background if necessary
-	if (memAvail < MEMORY_NEEDED) {
-		adv_GetBackgroundMemory();
-		_GM(dumpedBackground) = true;
-		memAvail = mem_avail();
-	}
-
-	// If we still don't have enough memory, we are hosed
-	if (memAvail < MEMORY_NEEDED) {
-		return false;
-	}
-
 	// Load in the font
 	_GM(menuFont) = gr_font_load("FONTMENU.FNT");
 
@@ -201,8 +177,6 @@ void guiMenu::shutdown(bool fadeToColor) {
 	mem_free((void *)_GM(thumbNails));
 
 	// Restore the background and codes if necessary
-	PurgeMem();
-	CompactMem();
 	if (_GM(dumpedBackground)) {
 		if (!adv_restoreBackground()) {
 			error_show(FL, 0, "unable to restore background");

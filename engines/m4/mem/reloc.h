@@ -41,15 +41,8 @@ inline bool MakeMem(size_t FreeBlockNeeded, const char *) {
 
 MemHandle MakeNewHandle(size_t size, const Common::String &);
 bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
-MemHandle NewHandle(size_t size, const Common::String &);
+MemHandle NewHandle(size_t size, const Common::String &str);
 void DisposeHandle(MemHandle handle);
-uint32 MaxMem(Size *growBytes);
-
-inline void PurgeMem() {}
-inline void CompactMem() {}
-inline size_t mem_avail() { return 0; }
-inline void adv_GetCodeMemory() {}
-inline void adv_GetBackgroundMemory() {}
 
 } // namespace M4
 

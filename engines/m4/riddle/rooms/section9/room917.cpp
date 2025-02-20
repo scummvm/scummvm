@@ -152,7 +152,6 @@ void Room917::daemon() {
 		digi_unload("950_S48b");
 		digi_unload("950_S48c");
 		digi_unload("950_S50");
-		MaxMem(nullptr);
 		_G(game).new_room = 493;
 		_G(game).new_section = 4;
 		break;

@@ -751,7 +751,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	else
 		Common::sprintf_s(fullpathname, "%s.chk", filename);
 
-	SysFile fp(fullpathname, BINARY);
+	SysFile fp(fullpathname);
 	if (!fp.exists()) {
 		// Force the file open
 		error_show(FL, 'CNVL', "couldn't conv_load %s", fullpathname);

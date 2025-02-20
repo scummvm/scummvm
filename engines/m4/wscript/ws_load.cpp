@@ -620,8 +620,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	assetSize = f.size();
 
 	// Create a handle big enough to hold the contents of the file
-	if ((workHandle = NewHandle(assetSize, "ss file")) == nullptr)
-		return -1;
+	workHandle = NewHandle(assetSize, "ss file");
 
 	// Lock the handle and read the contents of the file intoit
 	HLock(workHandle);
@@ -1092,11 +1091,9 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 }
 
 int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	MemHandle workHandle;
 	Common::File f;
 	int32 celsSize, *celsPtr, *palPtr;
-	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
-	uint32 assetSize;
+	char *parseAssetPtr;
 
 	// This loads a sprite series into the provided vars, rather than the WS tables.
 	// The WS loader is not involved with this procedure.
@@ -1106,17 +1103,14 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 		return -1;
 
 	// Get the size
-	assetSize = f.size();
+	const uint32 assetSize = f.size();
 
 	// Create a handle big enough to hold the contents of the file
-	if ((workHandle = NewHandle(assetSize, "ss file")) == nullptr) {
-		f.close();
-		return -1;
-	}
+	MemHandle workHandle = NewHandle(assetSize, "ss file");
 
 	// Lock the handle and read the contents of the file intoit
 	HLock(workHandle);
-	mainAssetPtr = (char *)*workHandle;
+	char *mainAssetPtr = (char *)*workHandle;
 	if (f.read(mainAssetPtr, assetSize) < assetSize) {
 		f.close();
 		mem_free(workHandle);
@@ -1127,7 +1121,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 	f.close();
 
 	// Set up some pointers
-	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -1146,7 +1140,6 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 
 CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	bool streamSeries;
-	M4sprite *mySprite;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1180,7 +1173,7 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	}
 
 	//The source for a CCB is a sprite.  create the sprite from the WS tables hash, index
-	mySprite = myCCB->source;
+	M4sprite *mySprite = myCCB->source;
 	if ((mySprite = GetWSAssetSprite(nullptr, hash, index, mySprite, &streamSeries)) == nullptr) {
 		// Term messages for whatever went wrong are printed from within GetWSAssetSprite()
 		return nullptr;
@@ -1202,8 +1195,6 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 }
 
 int32 GetWSAssetCELCount(uint32 hash) {
-	uint32 *celsPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1223,7 +1214,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 	}
 
 	// Find and return the number of sprites in the SS
-	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return FROM_LE_32(celsPtr[CELS_COUNT]);
 }
 

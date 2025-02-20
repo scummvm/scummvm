@@ -319,9 +319,7 @@ Sprite *SaveLoadMenuBase::menu_CreateThumbnail(int32 *spriteSize) {
 	thumbNailSprite->h = destBuff->h;
 	thumbNailSprite->encoding = RLE8;
 	thumbNailSprite->data = nullptr;
-	if ((thumbNailSprite->sourceHandle = NewHandle(*spriteSize, "thumbNail source")) == nullptr) {
-		return nullptr;
-	}
+	thumbNailSprite->sourceHandle = NewHandle(*spriteSize, "thumbNail source");
 	thumbNailSprite->sourceOffset = 0;
 
 	// Now copy the RLE8Buff into the thumbNail source handle

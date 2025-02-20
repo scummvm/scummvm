@@ -360,7 +360,7 @@ Font *gr_font_load(const char *fontName) {
 	uint32 tag;
 	Font *newFont;
 
-	SysFile fontFile(fontName, BINARY);
+	SysFile fontFile(fontName);
 	if (!fontFile.exists())
 		return nullptr;
 

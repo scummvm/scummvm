@@ -102,14 +102,14 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 		*resourceSize = 0;
 
 	if (!(resEntry = findAndSetResEntry(resourceName))) {
-		term_message("rgetting:%s  -> failed!", resourceName.c_str());
+		term_message("rget:%s  -> failed!", resourceName.c_str());
 		return nullptr;
 	}
 
 	// Check if resource is fully buffered
 	// All resources are currently fully buffered!
 	if (!(resEntry->Flags & FULLY_BUFFERED)) {
-		term_message("rgetting:%s  -> failed!", resourceName.c_str());
+		term_message("rget:%s  -> failed!", resourceName.c_str());
 		return nullptr;
 	}
 
@@ -121,7 +121,7 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 
 		HNoPurge(resEntry->RHandle);
 		resEntry->Flags &= ~MARKED_PURGE;
-		term_message("rgetting:%s  -> from memory", resourceName.c_str());
+		term_message("rget:%s  -> from memory", resourceName.c_str());
 		return resEntry->RHandle; 
 	}
 
@@ -135,22 +135,11 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 
 	// Check if resource handle allocated
 	if (!resEntry->RHandle)
-		if (!(resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->name.c_str())))
-			error("rgetting: %s  -> failed", resEntry->name.c_str());
+		resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->name.c_str());
 
 	// Check if resource handle has valid memory block allocated to	it
 	if (!*resEntry->RHandle)
-		if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
-			if (MakeMem(resEntry->BufferSize, resEntry->name.c_str())) {
-				if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
-					term_message("rgetting:%s  -> failed!", resourceName.c_str());
-					return nullptr;
-				}
-			} else {
-				term_message("rgetting:%s  -> failed!", resourceName.c_str());
-				return nullptr;
-			}
-		}
+		mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str());
 
 	if (!do_file(resEntry->RHandle))
 		error("rget: do_file -> %s", resourceName.c_str());
@@ -158,7 +147,7 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 	if (resourceSize)		    // xi change
 		*resourceSize = resEntry->Size;
 
-	term_message("rgetting:%s  -> from disk", resourceName.c_str());
+	term_message("rget:%s  -> from disk", resourceName.c_str());
 	return resEntry->RHandle;
 }
 

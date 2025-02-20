@@ -122,7 +122,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 		_G(currBackgroundFN) = f_extension_new(_G(currBackgroundFN), "TT");
 	}
 
-	SysFile *pic_file = new SysFile(_G(currBackgroundFN), BINARY);
+	SysFile *pic_file = new SysFile(_G(currBackgroundFN));
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Select attributes code file
@@ -138,7 +138,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 		_G(currCodeFN) = f_extension_new(_G(currCodeFN), "COD");
 	}
 
-	SysFile *code_file = new SysFile(_G(currCodeFN), BINARY);
+	SysFile *code_file = new SysFile(_G(currCodeFN));
 	if (!code_file->exists()) {
 		delete code_file;
 		code_file = nullptr;

@@ -129,13 +129,31 @@ void Sound::musicPlay(const char *name, bool override) {
 		File file(name);
 
 #ifdef TODO
-		// FIXME: Completely wrong. Don't know music format yet
-		// Open it up for access
-		Common::SeekableReadStream *f = file.readStream(file.size());
-		Audio::AudioStream *audioStream = Audio::makeRawStream(
-			f, 11025, 0, DisposeAfterUse::YES);
-		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType,
-									 &_musicHandle, audioStream);
+		// Just a POC + Not working - No volume, maybe?
+
+		OPL::OPL *opl = OPL::Config::create();
+		opl->init();
+		opl->start()
+		const int startLoop = file.readUint16LE();
+
+		while (!file.eos()) {
+			int delayAfter = file.readByte();
+			if (delayAfter & 0x80)
+				delayAfter = ((delayAfter & 0x7f) << 8) | file.readByte();
+
+			const int reg = file.readByte();
+			const int value = file.readByte();
+			if (reg == 0 && value == 0) {
+				debug(1, "End of song");
+				break;
+			}
+
+			opl->writeReg(reg, value);
+			debug("DelayAfter %d, OPL reg 0x%X, value %d", delayAfter, reg, value);
+			g_engine->_system->delayMillis(delayAfter);
+		}
+		debug(1, "looping at pos %d", startLoop);
+		
 #else
 		warning("TODO: play_music %s", name);
 
@@ -149,51 +167,6 @@ void Sound::musicPlay(const char *name, bool override) {
 		outFile->finalize();
 		outFile->close();
 #endif
-		
-		// The following is a dump of the music data in the hopes
-		// it will help someone write a decoder for ScummVM based on it.
-		// After an unknown header that doesn't seem to be used, the
-		// music seems to be a set of pauses followed by what I think
-		// are single byte combinations of frequency and duration that
-		/*
-        Following is a dump of the "play note" method, in case it's useful:
-        MU_playNote     proc far
-
-        freq            = byte ptr  6
-        duration        = byte ptr  8
-
-                        push    bp
-                        mov     bp, sp
-                        pushf
-                        cli
-                        mov     al, [bp+freq]
-                        mov     ah, 0
-                        mov     dl, [bp+duration]
-                        mov     bx, ax
-                        mov     MU_lookupTable[bx], dl
-                        mov     dx, 388h
-                        mov     al, [bp+freq]
-                        out     dx, al
-                        in      al, dx
-                        in      al, dx
-                        in      al, dx
-                        in      al, dx
-                        in      al, dx
-                        in      al, dx
-                        inc     dx
-                        mov     al, [bp+duration]
-                        out     dx, al
-                        popf
-                        dec     dx
-                        mov     cx, 35
-
-        loc_246C8:
-                        in      al, dx
-                        loop    loc_246C8
-                        pop     bp
-                        retf
-        MU_playNote     endp
-        */
 
 		const int startLoop = file.readUint16LE();
 

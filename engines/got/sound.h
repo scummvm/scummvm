@@ -22,6 +22,8 @@
 #ifndef GOT_SOUND_H
 #define GOT_SOUND_H
 
+#include "audio/fmopl.h"
+
 #include "audio/mixer.h"
 #include "got/data/defines.h"
 #include "got/gfx/gfx_chunks.h"

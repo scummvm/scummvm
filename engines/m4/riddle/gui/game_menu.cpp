@@ -23,16 +23,11 @@
 #include "m4/riddle/vars.h"
 #include "graphics/thumbnail.h"
 #include "m4/adv_r/other.h"
-#include "m4/adv_r/adv_background.h"
-#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_player.h"
-#include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/graphics/gr_line.h"
 #include "m4/graphics/gr_sprite.h"
-#include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
@@ -90,10 +85,6 @@ void GameMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
 	}
-
-	// Keep the memory tidy
-	PurgeMem();
-	CompactMem();
 
 	// Load in the game menu sprites
 	if (!guiMenu::loadSprites("gamemenu", GM_TOTAL_SPRITES))
@@ -350,10 +341,6 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 
 	if (!_G(menuSystemInitialized))
 		guiMenu::initialize(myPalette);
-
-	// Keep the memory tidy
-	PurgeMem();
-	CompactMem();
 
 	// Load in the game menu sprites
 	if (!guiMenu::loadSprites("slmenu", GUI::SaveLoadMenuBase::SL_TOTAL_SPRITES)) {
@@ -828,10 +815,6 @@ void ErrorMenu::show(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
 		guiMenu::initialize(myPalette);
 	}
-
-	// Keep the memory tidy
-	PurgeMem();
-	CompactMem();
 
 	// Load in the game menu sprites
 	if (!guiMenu::loadSprites("errmenu", EM_TOTAL_SPRITES)) {

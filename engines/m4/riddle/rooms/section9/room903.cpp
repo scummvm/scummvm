@@ -103,7 +103,6 @@ void Room903::daemon() {
 		digi_unload("gunshot1");
 		digi_unload("gunshot2");
 		digi_unload("ricochet");
-		MaxMem(nullptr);
 		series_plain_play("903 hold frame", -1, 0, 100, 256, 3000, -1, false);
 		kernel_timing_trigger(120, 201, nullptr);
 		break;
