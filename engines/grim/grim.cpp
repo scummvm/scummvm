@@ -629,7 +629,7 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	// I18N: Skipping cutscene plaback
+	// I18N: Skipping cutscene playback
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
