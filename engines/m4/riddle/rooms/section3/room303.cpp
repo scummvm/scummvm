@@ -1022,7 +1022,7 @@ void Room303::daemon() {
 			case 1:
 			case 2:
 			case 4:
-				sendWSMessage_10000(1, _fengLi, _feng1, 1, 18, 400,
+				sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
 					_feng4, 1, 6, 1);
 				_fengMode = 1;
 				break;
