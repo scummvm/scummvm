@@ -107,11 +107,11 @@ void Room303::init() {
 			loadFengLi();
 
 			if (_fengFlag) {
-				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 					triggerMachineByHashCallback, "fl");
 				setShadow5(true);
 			} else {
-				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, false,
 					triggerMachineByHashCallback, "fl state machine");
 				setShadow5(false);
 			}
@@ -290,7 +290,7 @@ void Room303::init() {
 
 		_fengFlag = true;
 		loadFengLi();
-		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 			triggerMachineByHashCallback, "fl");
 		sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400, _feng4, 1, 6, 0);
 		_fengMode = _fengShould = 1;
@@ -385,7 +385,7 @@ void Room303::daemon() {
 
 	case 40:
 		sendWSMessage_60000(_fengLi);
-		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 			triggerMachineByHashCallback, "fl");
 		sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
 			_feng4, 1, 6, 0);
@@ -1153,7 +1153,7 @@ void Room303::pre_parser() {
 }
 
 void Room303::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 
 	if (player_said("conv303b")) {
 		conv303b();
@@ -1177,7 +1177,7 @@ void Room303::parser() {
 
 		case 2:
 			setShadow5Alt(true);
-			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, false,
 				triggerMachineByHashCallback, "fl state machine");
 
 			_G(kernel).trigger_mode = KT_DAEMON;
@@ -1206,7 +1206,7 @@ void Room303::parser() {
 		case 2:
 			setShadow5(true);
 			sendWSMessage_60000(_fengLi);
-			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 				triggerMachineByHashCallback, "fl state machine");
 
 			_G(kernel).trigger_mode = KT_DAEMON;
@@ -1642,7 +1642,7 @@ void Room303::parser() {
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-			0x500, 1, triggerMachineByHashCallback, "rip");
+			0x500, true, triggerMachineByHashCallback, "rip");
 
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _ripley, 1, 1, 1, 300, 1, 1, 1, 0);
@@ -1753,7 +1753,7 @@ void Room303::setupMei() {
 	_mei1 = series_load("MC NY hands behind back pos4");
 	_mei2 = series_load("MC NY hand on hip pos4");
 	_mei3 = series_load("MC NY hand out talk pos4");
-	_mei = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, 0,
+	_mei = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, false,
 		triggerMachineByHashCallback, "mc");
 
 	_G(kernel).trigger_mode = KT_DAEMON;
@@ -1875,9 +1875,9 @@ void Room303::conv303a() {
 }
 
 void Room303::conv303b() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	switch (_G(kernel).trigger) {
@@ -2048,7 +2048,7 @@ void Room303::playSound(const Common::String &assetName, int trigger1, int trigg
 	if (!trigger2)
 		trigger2 = -1;
 
-	int size = MAX(getSize(assetName), 0);
+	const int size = MAX(getSize(assetName), 0);
 	_G(globals)[GLB_TEMP_1] = size << 16;
 	_G(globals)[GLB_TEMP_2] = trigger2 << 16;
 	sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
