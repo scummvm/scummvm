@@ -178,7 +178,7 @@ void Room303::init() {
 				ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 				loadFengLi();
 
-				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 					triggerMachineByHashCallback, "fl");
 				sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
 					_feng4, 1, 6, 0);
@@ -206,7 +206,7 @@ void Room303::init() {
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			loadFengLi();
 
-			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 				triggerMachineByHashCallback, "fl");
 			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400, _feng1, 1, 6, 0);
 			_fengMode = _fengShould = 1;
@@ -1507,20 +1507,20 @@ void Room303::parser() {
 		if (player_been_here(301)) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				ws_walk(409, 266, nullptr, 1, 1);
+				ws_walk(_G(my_walker),409, 266, nullptr, 1, 1, true);
 				break;
 
 			case 1:
 				player_set_commands_allowed(false);
 				_med1 = series_load("RIP TREK MED REACH HAND POS1");
 				setGlobals1(_med1, 1, 10, 10, 10, 1);
-				sendWSMessage_110000(2);
+				sendWSMessage_110000(_G(my_walker), 2);
 				break;
 
 			case 2:
 				sendWSMessage_140000(4);
 				terminateMachineAndNull(_door);
-				series_plain_play("DOOR", 1, 0, 100, 0xf05, 7, 3);
+				series_plain_play("DOOR", 1, 0, 100, 0xf05, 7, 3, false);
 				digi_play("303_s01", 1);
 				break;
 
@@ -1529,7 +1529,8 @@ void Room303::parser() {
 				break;
 
 			case 4:
-				ws_walk(417, 232, nullptr, -1, 2);
+				ws_walk(_G(my_walker), 417, 232, nullptr, -1, 2, true);
+				disable_player_commands_and_fade_init(5);
 				break;
 
 			case 5:
@@ -1678,14 +1679,14 @@ void Room303::parser() {
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-				0x500, 0, triggerMachineByHashCallback, "rip");
+				0x500, false, triggerMachineByHashCallback, "rip");
 
 		} else {
 			_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, -1, 0,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-				0x500, 1, triggerMachineByHashCallback, "rip");
+				0x500, true, triggerMachineByHashCallback, "rip");
 		}
 
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -1819,9 +1820,9 @@ void Room303::playSeries(bool cow) {
 }
 
 void Room303::conv303a() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 1) {
@@ -2007,8 +2008,8 @@ void Room303::conv303b() {
 
 void Room303::priestTalkCallback(frac16 myMessage, machine *sender) {
 	Room303 *room = (Room303 *)g_engine->_activeRoom;
-	auto oldMode = _G(kernel).trigger_mode;
-	int trigger = myMessage >> 16;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const int trigger = myMessage >> 16;
 
 	if (trigger > 0) {
 		_G(kernel).trigger_mode = room->_val12;
@@ -2039,7 +2040,7 @@ void Room303::priestTalk(bool flag, int trigger) {
 
 int Room303::getSize(const Common::String &assetName, int roomNum) {
 	Common::String name = expand_name_2_RAW(assetName, roomNum);
-	size_t fileSize = f_info_get_file_size(Common::Path(name));
+	const size_t fileSize = f_info_get_file_size(Common::Path(name));
 
 	return static_cast<int>((double)fileSize * 0.000090702946);
 }
