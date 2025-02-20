@@ -1897,6 +1897,7 @@ void Room303::conv303b() {
 				series_unload(4);
 				_ripPonders = series_stream("303pu01", 4, 0x100, 666);
 				series_stream_break_on_frame(_ripPonders, 5, 700);
+				return;
 			} else if (node == 1 && entry == 2) {
 				// No implementation
 			} else if ((node == 2 && entry == 0) || (node == 2 && entry == 2)) {
@@ -1905,33 +1906,35 @@ void Room303::conv303b() {
 				_ripleyShould = 0;
 			}
 		}
+
+		conv_resume();
 		break;
 
 	case 2:
 		series_set_frame_rate(_ripPonders, 20);
 		series_stream_break_on_frame(_ripPonders, 27, 3);
-		return;
+		break;
 
 	case 3:
 		series_set_frame_rate(_ripPonders, 5);
-		return;
+		break;
 
 	case 4:
 		_meiShould = 5;
-		return;
+		break;
 
 	case 5:
 		digi_play("com119", 1, 255, 6);
-		return;
+		break;
 
 	case 6:
 		digi_unload("com119");
-		return;
+		break;
 
 	case 7:
 		_ripleyShould = 0;
 		series_stream_break_on_frame(_ripPonders, 22, 5);
-		return;
+		break;
 
 	case 666:
 		kernel_timing_trigger(1, 668);
@@ -1947,13 +1950,14 @@ void Room303::conv303b() {
 		digi_preload("08_02n01");
 		_ripPonders = series_stream("303 rip ponders", 5, 0, -1);
 		series_stream_break_on_frame(_ripPonders, 5, 2);
-		return;
+		break;
 
 	case 670:
 		series_load("test1");
 		series_load("test3");
 		series_load("test4");
 		series_load("test5");
+		conv_resume();
 		break;
 
 	case 700:
@@ -1980,12 +1984,11 @@ void Room303::conv303b() {
 			}
 
 			digi_play(sound, 1, 255, 1);
-			return;
+		} else {
+			conv_resume();
 		}
 		break;
 	}
-
-	conv_resume();
 }
 
 void Room303::priestTalkCallback(frac16 myMessage, machine *sender) {
