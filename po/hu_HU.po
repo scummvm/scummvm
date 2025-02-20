@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-19 21:31+0000\n"
-"PO-Revision-Date: 2025-02-18 19:03+0000\n"
+"PO-Revision-Date: 2025-02-20 10:49+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -8303,11 +8303,11 @@ msgstr "Játék mentés nem sikerült"
 
 #: engines/groovie/script.cpp:853 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr "Szeretne menteni vagy visszaállítani egy játékot?"
+msgstr "Szeretne menteni vagy visszaállítani egy játékállást?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "A Minotaurusz minijáték még nem támogatott. Kihagyás"
+msgstr "A Minótaurosz minijáték még nem támogatott. Kihagyás"
 
 #: engines/hadesch/rooms/medisle.cpp:647
 msgid "The Medusa minigame is not supported yet. Skipping"
@@ -8319,15 +8319,15 @@ msgstr "A Trója minijáték még nem támogatott. Kihagyás"
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
-msgstr "Csaló mód engedélyezés"
+msgstr "Csalás mód engedélyezés"
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr "Hibakeresési információ és szintválasztás elérhetõvé válik"
+msgstr "Hibakeresési információ és pályaválasztás elérhetővé válik"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
-msgstr "Útpontok törlése"
+msgstr "Útvonal-pontok törlése"
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
@@ -8335,21 +8335,19 @@ msgstr "Hibakeresés"
 
 #: engines/hopkins/metaengine.cpp:47 engines/hopkins/metaengine.cpp:59
 msgid "Gore Mode"
-msgstr "Gore Mód"
+msgstr "Véres Mód"
 
 #: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Enable Gore Mode when available"
-msgstr "Gore mód engedélyezés ha elérhetõ"
+msgstr "Véres mód engedélyezése ha lehetséges"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Dialógus kihagyása"
+msgstr "Opció ablak"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
-msgstr "Elõre"
+msgstr "Előre"
 
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
@@ -8357,11 +8355,11 @@ msgstr "Hátra"
 
 #: engines/hpl1/metaengine.cpp:80
 msgid "Lean Left"
-msgstr "Sovány Balra"
+msgstr "Balra dőlés"
 
 #: engines/hpl1/metaengine.cpp:81
 msgid "Lean Right"
-msgstr "Sovány Jobbra"
+msgstr "Jobbra dőlés"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -8383,7 +8381,7 @@ msgstr "Néző Mód"
 
 #: engines/hpl1/metaengine.cpp:89
 msgid "Holster"
-msgstr "Pisztolytáska"
+msgstr "Elrak"
 
 #: engines/hpl1/metaengine.cpp:95 engines/tinsel/metaengine.cpp:318
 msgid "Notebook"
@@ -8402,29 +8400,21 @@ msgid "Glowstick"
 msgstr "Világító rúd"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Felhasználói megszakítás"
+msgstr "Felhasználói segítség"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle sound"
-msgstr "Váltás némításra"
+msgstr "Hang ki/be Kapcsolása"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last line"
-msgstr "Utolsó mentés újratöltése"
+msgstr "Utolsó sor megismétlése"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Játékmenet visszaállítása:"
+msgstr "Játék visszaállítása"
 
 #: engines/hugo/metaengine.cpp:142 engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -8442,67 +8432,51 @@ msgstr "Új játék"
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
-msgstr "Mutasd a tárgylistát"
+msgstr "Felszerelés megjelenítése"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Továbbfejlesztett mód"
+msgstr "Turbó mód"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Mozgás fel"
+msgstr "Ugrás a tetejére"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Ugrás az aljára"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
-msgstr "Mozgás balra"
+msgstr "Ugrás balra"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
-msgstr "Mozgás jobbra"
+msgstr "Ugrás jobbra"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Mozgás balra"
+msgstr "Ugrás bal fentre"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Mozgás jobbra"
+msgstr "Ugrás jobb fentre"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Mozgás balra"
+msgstr "Ugrás bal alulra"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Mozgás jobbra"
+msgstr "Ugrás jobb alulra"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8514,16 +8488,17 @@ msgstr "Engedélyezi a csalásokat a C billentyűvel."
 
 #: engines/hypno/metaengine.cpp:44
 msgid "Enable infinite health cheat"
-msgstr "Engedélyezd a végtelen egészség csalást"
+msgstr "Végtelen élet csalást engedélyezése"
 
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
-"A játékos egészsége soha nem fog csökkenni (kivéve a játék vége jeleneteket)."
+"A játékos életereje soha nem fog csökkenni (kivéve a \"játék vége\" "
+"jeleneteket)."
 
 #: engines/hypno/metaengine.cpp:55
 msgid "Enable infinite ammo cheat"
-msgstr "Engedélyezd a végtelen lőszer csalást"
+msgstr "Végtelen lőszer csalás engedélyezése"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
@@ -8531,11 +8506,11 @@ msgstr "A játékos lőszere soha nem fog csökkenni."
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr "Kinyit minden szintet"
+msgstr "Minden pálya elérhetővé"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr "Minden szint elérhető lesz játszani."
+msgstr "Minden pálya elérhetővé válik a játékos számára."
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
@@ -8544,7 +8519,8 @@ msgstr "Visszaállított tartalom engedélyezése"
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
-"Hozzáad további tartalmat, mely nem engedélyezte az eredeti megvalósítást."
+"További tartalmakat ad hozzá melyek nem voltak elérhetőek az eredeti "
+"implementációban."
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -8562,28 +8538,20 @@ msgid "Side Step"
 msgstr "Oldallépés"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor up"
-msgstr "Menj balra"
+msgstr "Kurzor mozgatás fel"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor down"
-msgstr "Menj balra"
+msgstr "Kurzor mozgatás le"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Menj balra"
+msgstr "Kurzor mozgatás balra"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Menj jobbra"
+msgstr "Kurzor mozgatás jobbra"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -8592,15 +8560,15 @@ msgstr "Megszakít"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
-msgstr "Hiányzik a nyelvre jellemző játékkód és/vagy erőforrás."
+msgstr "Hiányzó nyelv specifikus játék kód és/vagy forrás."
 
 #: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
-"Hiányzik a nyelvre jellemző játékkód és/vagy erőforrás ehhez a rajongói "
-"fordításhoz."
+"Hiányzó nyelv specifikus játék kód és/vagy forrás ennél a rajongói "
+"fordításnál."
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
@@ -8610,7 +8578,7 @@ msgstr ""
 #: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
-"Helytelenül adtad hozzá a játékot. Kérlek, add hozzá a játék gyökérmappáját."
+"Helytelenül adta hozzá a játékot. Kérem, adja hozzá a játék tőkönyvtárát."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1385
