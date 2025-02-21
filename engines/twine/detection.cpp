@@ -423,6 +423,14 @@ static const ADGameDescription twineGameDescriptions[] = {
 	TWINE_DETECTION_ENTRY("lba2", "CD Original European Version", AD_ENTRY1s("LBA2.EXE", "ba915d65b3c7a743a87804f73f29675b", 616448), Common::kPlatformDOS, ADGF_UNSTABLE),
 	TWINE_DETECTION_ENTRY("lba2", "CD Original European Version", AD_ENTRY1s("text.hqr", "dafcec7d9f1b2ab4a12d478786eb0f61", 443010), Common::kPlatformDOS, ADGF_UNSTABLE),
 
+	// Little Big Adventure 2 - Demo 1996
+	// Do 05 Sep 1996 12:13:28 CEST
+	TWINE_DETECTION_ENTRY("lba2", "Demo Version", AD_ENTRY1s("text.hqr", "227c6da541e310531dd3f86763360dda", 29826), Common::kPlatformDOS, ADGF_UNSUPPORTED | ADGF_DEMO),
+
+	// Little Big Adventure 2 - Playable Demo 1997
+	// June 2nd, 1997
+	TWINE_DETECTION_ENTRY("lba2", "Playable Demo Version", AD_ENTRY1s("text.hqr", "63bfc42fb50a041f953db923b9397d00", 231241), Common::kPlatformDOS, ADGF_UNSUPPORTED | ADGF_DEMO),
+
 	AD_TABLE_END_MARKER
 };
 
