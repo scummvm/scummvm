@@ -303,7 +303,19 @@ XOBJSTUB(DirectsoundXtra::m_dsSetPan, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetPosition, 0)
 XOBJSTUB(DirectsoundXtra::m_dsSetPosition, 0)
 XOBJSTUB(DirectsoundXtra::m_dsGetLoop, 0)
-XOBJSTUB(DirectsoundXtra::m_dsSetLoop, 0)
+
+void DirectsoundXtra::m_dsSetLoop(int nargs) {
+	ARGNUMCHECK(2);
+
+	int loops = g_lingo->pop().asInt();
+	int id = parseId(g_lingo->pop().asString());
+
+	if (id == -1)
+		return;
+
+	if (loops > 1)
+		warning("STUB: DirectsoundXtra::m_dsSetLoop(\"DSoundXtra:%d\", %d)", id, loops);
+}
 
 void DirectsoundXtra::m_dsIsPlaying(int nargs) {
 	ARGNUMCHECK(1);
