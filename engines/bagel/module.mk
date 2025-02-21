@@ -103,7 +103,8 @@ MODULE_OBJS = \
 	spacebar/sraf_computer.o \
 	spacebar/thud.o \
 	spacebar/vid_wnd.o \
-	hodjnpodj/hodjnpodj.o
+	hodjnpodj/hodjnpodj.o \
+	hodjnpodj/mazedoom/game_exe.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

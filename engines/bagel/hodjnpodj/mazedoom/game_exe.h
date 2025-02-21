@@ -19,30 +19,21 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_H
-#define BAGEL_HODJNPODJ_H
+#ifndef HODJNPODJ_MAZEDOOM_GAME_EXE_H
+#define HODJNPODJ_MAZEDOOM_GAME_EXE_H
 
 #include "bagel/bagel.h"
-#include "bagel/hodjnpodj/libs/game_dll.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace MazeDoom {
 
-class HodjNPodjEngine : public BagelEngine {
-protected:
-	// Engine APIs
-	Common::Error run() override;
-
+class CTheApp {
 public:
-	GAMESTRUCT gGameInfo;
-
-public:
-	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~HodjNPodjEngine() override;
+	static bool run();
 };
 
-extern HodjNPodjEngine *g_engine;
-
+} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
 

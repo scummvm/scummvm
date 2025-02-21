@@ -19,29 +19,38 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_H
-#define BAGEL_HODJNPODJ_H
+#ifndef HODJNPODJ_LIBS_GAME_DLL_H
+#define HODJNPODJ_LIBS_GAME_DLL_H
 
 #include "bagel/bagel.h"
-#include "bagel/hodjnpodj/libs/game_dll.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-class HodjNPodjEngine : public BagelEngine {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+#define	PATHSPECSIZE		256
 
-public:
-	GAMESTRUCT gGameInfo;
+#define SKILLLEVEL_LOW      0
+#define SKILLLEVEL_MEDIUM   1
+#define SKILLLEVEL_HIGH     2
 
-public:
-	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~HodjNPodjEngine() override;
+#define	INSTALL_NONE		0
+#define	INSTALL_MINIMAL		1
+#define INSTALL_BASIC		2
+#define	INSTALL_EXTRA		3
+#define INSTALL_FULL		4
+
+
+struct GAMESTRUCT {
+	long lCrowns = 0;
+	long lScore = 0;
+	int nSkillLevel = 0;
+	bool bSoundEffectsEnabled = false;
+	bool bMusicEnabled = false;
+	bool bPlayingMetagame = false;
+	bool bPlayingHodj = false;
 };
 
-extern HodjNPodjEngine *g_engine;
+typedef GAMESTRUCT *LPGAMESTRUCT;
 
 } // namespace HodjNPodj
 } // namespace Bagel

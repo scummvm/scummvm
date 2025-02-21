@@ -21,6 +21,7 @@
 
 #include "engines/util.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/mazedoom/game_exe.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -41,6 +42,7 @@ Common::Error HodjNPodjEngine::run() {
 	initGraphics(320, 200);
 
 	// TODO: overall game
+	MazeDoom::CTheApp::run();
 
 	return Common::kNoError;
 }
