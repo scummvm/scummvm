@@ -33,6 +33,7 @@
 #ifndef IMAGE_TGA_H
 #define IMAGE_TGA_H
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
 
@@ -68,8 +69,8 @@ public:
 	virtual ~TGADecoder();
 	virtual void destroy();
 	virtual const Graphics::Surface *getSurface() const { return &_surface; }
-	virtual const byte *getPalette() const { return _colorMap; }
-	virtual uint16 getPaletteColorCount() const { return _colorMapLength; }
+	virtual const byte *getPalette() const { return _colorMap.data(); }
+	virtual uint16 getPaletteColorCount() const { return _colorMap.size(); }
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 private:
 	// Format-spec from:
@@ -85,7 +86,7 @@ private:
 
 	// Color-map:
 	bool _colorMapSize;
-	byte *_colorMap;
+	Graphics::Palette _colorMap;
 	int16 _colorMapOrigin;
 	int16 _colorMapLength;
 	byte _colorMapEntryLength;

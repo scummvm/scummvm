@@ -36,11 +36,7 @@
 
 namespace Image {
 
-BitmapDecoder::BitmapDecoder() {
-	_surface = 0;
-	_palette = 0;
-	_paletteColorCount = 0;
-	_codec = 0;
+BitmapDecoder::BitmapDecoder(): _codec(nullptr), _surface(nullptr), _palette(0) {
 }
 
 BitmapDecoder::~BitmapDecoder() {
@@ -48,15 +44,11 @@ BitmapDecoder::~BitmapDecoder() {
 }
 
 void BitmapDecoder::destroy() {
-	_surface = 0;
-
-	delete[] _palette;
-	_palette = 0;
-
-	_paletteColorCount = 0;
-
 	delete _codec;
-	_codec = 0;
+	_codec = nullptr;
+
+	_surface = nullptr;
+	_palette.clear();
 }
 
 bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -111,22 +103,24 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	uint32 imageSize = stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
-	_paletteColorCount = stream.readUint32LE();
+	uint32 paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
 	stream.seek(infoSize - 40, SEEK_CUR);
 
 	if (bitsPerPixel == 4 || bitsPerPixel == 8) {
-		if (_paletteColorCount == 0)
-			_paletteColorCount = bitsPerPixel == 8 ? 256 : 16;
+		if (paletteColorCount == 0)
+			paletteColorCount = bitsPerPixel == 8 ? 256 : 16;
 
 		// Read the palette
-		_palette = new byte[_paletteColorCount * 3];
-		for (uint16 i = 0; i < _paletteColorCount; i++) {
-			_palette[i * 3 + 2] = stream.readByte();
-			_palette[i * 3 + 1] = stream.readByte();
-			_palette[i * 3 + 0] = stream.readByte();
+		_palette.resize(paletteColorCount, false);
+		for (uint16 i = 0; i < paletteColorCount; i++) {
+			byte b = stream.readByte();
+			byte g = stream.readByte();
+			byte r = stream.readByte();
 			stream.readByte();
+
+			_palette.set(i, r, g, b);
 		}
 	}
 

@@ -35,10 +35,7 @@
 
 namespace Image {
 
-PCXDecoder::PCXDecoder() {
-	_surface = 0;
-	_palette = 0;
-	_paletteColorCount = 0;
+PCXDecoder::PCXDecoder(): _surface(nullptr), _palette(0) {
 }
 
 PCXDecoder::~PCXDecoder() {
@@ -49,12 +46,10 @@ void PCXDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
+		_surface = nullptr;
 	}
 
-	delete[] _palette;
-	_palette = 0;
-	_paletteColorCount = 0;
+	_palette.clear();
 }
 
 bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -87,11 +82,12 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.skip(4);	// HDpi, VDpi
 
 	// Read the EGA palette (colormap)
-	_palette = new byte[16 * 3];
+	_palette.resize(16, false);
 	for (uint16 i = 0; i < 16; i++) {
-		_palette[i * 3 + 0] = stream.readByte();
-		_palette[i * 3 + 1] = stream.readByte();
-		_palette[i * 3 + 2] = stream.readByte();
+		byte r = stream.readByte();
+		byte g = stream.readByte();
+		byte b = stream.readByte();
+		_palette.set(i, r, g, b);
 	}
 
 	if (stream.readByte() != 0)	// reserved, should be set to 0
@@ -118,7 +114,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		_surface->create(width, height, format);
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 0;
+		_palette.clear();
 
 		for (y = 0; y < height; y++) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
@@ -136,7 +132,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	} else if (nPlanes == 1 && bitsPerPixel == 8) {	// 8bpp indexed
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 16;
+		_palette.resize(16, true);
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
@@ -151,20 +147,18 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 			}
 
 			// Read the VGA palette
-			delete[] _palette;
-			_palette = new byte[256 * 3];
+			_palette.resize(256, false);
 			for (uint16 i = 0; i < 256; i++) {
-				_palette[i * 3 + 0] = stream.readByte();
-				_palette[i * 3 + 1] = stream.readByte();
-				_palette[i * 3 + 2] = stream.readByte();
+				byte r = stream.readByte();
+				byte g = stream.readByte();
+				byte b = stream.readByte();
+				_palette.set(i, r, g, b);
 			}
-
-			_paletteColorCount = 256;
 		}
 	} else if ((nPlanes == 2 || nPlanes == 3 || nPlanes == 4) && bitsPerPixel == 1) {	// planar, 4, 8 or 16 colors
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 16;
+		_palette.resize(16, true);
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);

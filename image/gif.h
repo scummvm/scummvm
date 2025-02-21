@@ -22,6 +22,7 @@
 #ifndef IMAGE_GIF_H
 #define IMAGE_GIF_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 #ifdef USE_GIF
@@ -55,15 +56,14 @@ public:
 
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _colorCount; }
+	const byte *getPalette() const override { return _palette.data(); }
+	uint16 getPaletteColorCount() const override { return _palette.size(); }
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
 	bool hasTransparentColor() const override { return _hasTransparentColor; }
 	uint32 getTransparentColor() const override { return _transparentColor; }
 private:
 	Graphics::Surface *_outputSurface;
-	uint8 *_palette;
-	uint16 _colorCount;
+	Graphics::Palette _palette;
 	bool _hasTransparentColor;
 	uint32 _transparentColor;
 };

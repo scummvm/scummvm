@@ -36,10 +36,7 @@ enum CCBFlags {
 	kCCBNoPre0 = 1 << 22
 };
 
-Cel3DODecoder::Cel3DODecoder() {
-	_surface = 0;
-	_palette = 0;
-	_paletteColorCount = 0;
+Cel3DODecoder::Cel3DODecoder(): _surface(nullptr), _palette(0) {
 }
 
 Cel3DODecoder::~Cel3DODecoder() {
@@ -47,12 +44,8 @@ Cel3DODecoder::~Cel3DODecoder() {
 }
 
 void Cel3DODecoder::destroy() {
-	_surface = 0;
-
-	delete[] _palette;
-	_palette = 0;
-
-	_paletteColorCount = 0;
+	_surface = nullptr;
+	_palette.clear();
 }
 
 bool Cel3DODecoder::loadStream(Common::SeekableReadStream &stream) {

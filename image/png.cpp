@@ -42,7 +42,6 @@ namespace Image {
 PNGDecoder::PNGDecoder() :
 		_outputSurface(0),
 		_palette(0),
-		_paletteColorCount(0),
 		_skipSignature(false),
 		_keepTransparencyPaletted(false),
 		_hasTransparentColor(false),
@@ -59,8 +58,7 @@ void PNGDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
-	delete[] _palette;
-	_palette = NULL;
+	_palette.clear();
 	_hasTransparentColor = false;
 }
 
@@ -177,12 +175,10 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 			return false;
 		}
-		_paletteColorCount = numPalette;
-		_palette = new byte[_paletteColorCount * 3];
-		for (int i = 0; i < _paletteColorCount; i++) {
-			_palette[(i * 3)] = palette[i].red;
-			_palette[(i * 3) + 1] = palette[i].green;
-			_palette[(i * 3) + 2] = palette[i].blue;
+
+		_palette.resize(numPalette, false);
+		for (int i = 0; i < numPalette; i++) {
+			_palette.set(i, palette[i].red, palette[i].green, palette[i].blue);
 		}
 
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
@@ -209,16 +205,14 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (hasRgbaPalette) {
 			// Build up the RGBA palette using the transparency alphas
 			Common::fill(&rgbaPalette[0], &rgbaPalette[256], 0);
-			for (int i = 0; i < _paletteColorCount; ++i) {
+			for (int i = 0; i < numPalette; ++i) {
 				byte a = (i < numTrans) ? trans[i] : 0xff;
 				rgbaPalette[i] = _outputSurface->format.ARGBToColor(
 					a, palette[i].red, palette[i].green, palette[i].blue);
 			}
 
 			// We won't be needing a separate palette
-			_paletteColorCount = 0;
-			delete[] _palette;
-			_palette = nullptr;
+			_palette.clear();
 		}
 	} else {
  		bool isAlpha = (colorType & PNG_COLOR_MASK_ALPHA);

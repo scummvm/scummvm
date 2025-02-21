@@ -22,6 +22,7 @@
 #ifndef IMAGE_CICN_H
 #define IMAGE_CICN_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Image {
@@ -46,14 +47,13 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	const byte *getPalette() const override { return _palette.data(); }
+	uint16 getPaletteColorCount() const override { return _palette.size(); }
 	const Graphics::Surface *getMask() const override { return _mask; }
 
 private:
 	Graphics::Surface *_surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 	Graphics::Surface *_mask;
 };
 

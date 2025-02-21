@@ -88,6 +88,19 @@ public:
 
 	const byte *data() const { return _data; }
 	uint size() const { return _size; }
+	
+	/**
+	 * Clears the palette of all entries and resets the size to zero.
+	 */
+	void clear();
+
+	/**
+	 * Changes the number of palette entries.
+	 * 
+	 * @param newSize the new number of palette entries
+	 * @param preserve indicates the existing entry values should be preserved
+	 */
+	void resize(uint newSize, bool preserve);
 
 	void set(uint entry, byte r, byte g, byte b) {
 		assert(entry < _size);
@@ -124,8 +137,6 @@ public:
 	 * @return the palette index
 	 */
 	byte findBestColor(byte r, byte g, byte b, ColorDistanceMethod method = kColorDistanceRedmean) const;
-
-	void clear();
 
 	/**
 	 * Replace the specified range of the palette with new colors.
