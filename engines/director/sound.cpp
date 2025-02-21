@@ -509,6 +509,9 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 void DirectorSound::stopSound() {
 	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping all channels");
 	for (auto it : _channels) {
+		if (!it._value)
+			continue;
+
 		if (it._value->loopPtr)
 			it._value->loopPtr = nullptr;
 		cancelFade(it._key);
@@ -641,7 +644,7 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 }
 
 void DirectorSound::setChannelVolumeInternal(uint8 soundChannel, uint8 volume) {
-	if (volume == _channels[soundChannel]->volume)
+	if (!(_channels[soundChannel]) || volume == _channels[soundChannel]->volume)
 		return;
 
 	cancelFade(soundChannel);
