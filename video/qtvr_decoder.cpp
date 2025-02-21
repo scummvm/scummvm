@@ -1357,9 +1357,12 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			hsUp = kCursorPanoLinkUp;
 			break;
 
+		case MKTAG('n','a','v','g'):
+			debug(3, "Hotspot type: %s", tag2str((uint32)hsType));
+			// TODO FIXME: Implement
+			// fallthrough
+
 		default:
-			if (hsType !=  MKTAG('u','n','d','f'))
-				debug(3, "Hotspot type: %s", tag2str((uint32)hsType));
 			hsOver = kCursorPanoObjOver;
 			hsDown = kCursorPanoObjDown;
 			hsUp = kCursorPanoObjUp;
