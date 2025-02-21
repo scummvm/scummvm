@@ -83,6 +83,27 @@ bool Palette::contains(const Palette& p) const {
 	return p._size <= _size && !memcmp(_data, p._data, p._size * 3);
 }
 
+void Palette::clear() {
+	delete[] _data;
+	_data = nullptr;
+	_size = 0;
+}
+
+void Palette::resize(uint newSize, bool preserve) {
+	if (newSize > _size) {
+		byte *newData = nullptr;
+		if (newSize > 0) {
+			newData = new byte[newSize * 3]();
+			if (_size > 0 && preserve)
+				memcpy(newData, _data, _size * 3);
+		}
+
+		delete[] _data;
+		_data = newData;
+	}
+	_size = newSize;
+}
+
 byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod method) const {
 	uint bestColor = 0;
 	uint32 min = 0xFFFFFFFF;
@@ -125,11 +146,6 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod metho
 	}
 
 	return bestColor;
-}
-
-void Palette::clear() {
-	if (_size > 0)
-		memset(_data, 0, _size);
 }
 
 void Palette::set(const byte *colors, uint start, uint num) {

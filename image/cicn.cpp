@@ -29,11 +29,7 @@
 
 namespace Image {
 
-CicnDecoder::CicnDecoder() {
-	_surface = nullptr;
-	_palette = nullptr;
-	_paletteColorCount = 0;
-	_mask = nullptr;
+CicnDecoder::CicnDecoder(): _surface(nullptr), _palette(0), _mask(nullptr) {
 }
 
 CicnDecoder::~CicnDecoder() {
@@ -46,11 +42,8 @@ void CicnDecoder::destroy() {
 		delete _surface;
 		_surface = nullptr;
 	}
-
-	delete[] _palette;
-	_palette = nullptr;
-	_paletteColorCount = 0;
-
+	
+	_palette.clear();
 	if (_mask) {
 		_mask->free();
 		delete _mask;
@@ -106,17 +99,16 @@ bool CicnDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Palette
 	stream.skip(6);
-	_paletteColorCount = stream.readUint16BE() + 1;
+	uint16 paletteColorCount = stream.readUint16BE() + 1;
 
-	_palette = new byte[3 * _paletteColorCount];
+	_palette.resize(paletteColorCount, false);
 
-	byte *p = _palette;
-
-	for (uint i = 0; i < _paletteColorCount; i++) {
+	for (uint i = 0; i < paletteColorCount; i++) {
 		stream.skip(2);
-		*p++ = stream.readUint16BE() >> 8;
-		*p++ = stream.readUint16BE() >> 8;
-		*p++ = stream.readUint16BE() >> 8;
+		byte r = stream.readUint16BE() >> 8;
+		byte g = stream.readUint16BE() >> 8;
+		byte b = stream.readUint16BE() >> 8;
+		_palette.set(i, r, g, b);
 	}
 
 	_surface = new Graphics::Surface();

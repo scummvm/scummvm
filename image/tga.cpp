@@ -33,12 +33,11 @@
 
 namespace Image {
 
-TGADecoder::TGADecoder() {
+TGADecoder::TGADecoder() : _colorMap(0) {
 	_colorMapSize = 0;
 	_colorMapOrigin = 0;
 	_colorMapLength = 0;
 	_colorMapEntryLength = 0;
-	_colorMap = NULL;
 }
 
 TGADecoder::~TGADecoder() {
@@ -47,7 +46,7 @@ TGADecoder::~TGADecoder() {
 
 void TGADecoder::destroy() {
 	_surface.free();
-	delete[] _colorMap;
+	_colorMap.clear();
 }
 
 bool TGADecoder::loadStream(Common::SeekableReadStream &tga) {
@@ -182,8 +181,8 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 }
 
 bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth) {
-	_colorMap = new byte[3 * _colorMapLength];
-	for (int i = 0; i < _colorMapLength * 3; i += 3) {
+	_colorMap.resize(_colorMapLength, false);
+	for (int i = 0; i < _colorMapLength; i++) {
 		byte r, g, b;
 		if (_colorMapEntryLength == 32) {
 			b = tga.readByte();
@@ -203,9 +202,7 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 			warning("Unsupported image type: %d", imageType);
 			r = g = b = 0;
 		}
-		_colorMap[i] = r;
-		_colorMap[i + 1] = g;
-		_colorMap[i + 2] = b;
+		_colorMap.set(i, r, g, b);
 	}
 	return true;
 }

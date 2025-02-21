@@ -27,10 +27,7 @@
 
 namespace Image {
 
-IFFDecoder::IFFDecoder() {
-	_surface = 0;
-	_palette = 0;
-
+IFFDecoder::IFFDecoder(): _surface(nullptr), _palette(0) {
 	// these 2 properties are not reset by destroy(), so the default is set here.
 	_numRelevantPlanes = 8;
 	_pixelPacking = false;
@@ -46,18 +43,14 @@ void IFFDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
+		_surface = nullptr;
 	}
 
-	if (_palette) {
-		delete[] _palette;
-		_palette = 0;
-	}
+	_palette.clear();
 
 	memset(&_header, 0, sizeof(Header));
 	_paletteRanges.clear();
 	_type = TYPE_UNKNOWN;
-	_paletteColorCount = 0;
 }
 
 bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -152,9 +145,14 @@ void IFFDecoder::loadHeader(Common::SeekableReadStream &stream) {
 }
 
 void IFFDecoder::loadPalette(Common::SeekableReadStream &stream, const uint32 size) {
-	_palette = new byte[size];
-	stream.read(_palette, size);
-	_paletteColorCount = size / 3;
+	_palette.resize(size / 3, false);
+	for (uint i = 0; i < _palette.size(); i++) {
+		byte r = stream.readByte();
+		byte g = stream.readByte();
+		byte b = stream.readByte();
+
+		_palette.set(i, r, g, b);
+	}
 }
 
 void IFFDecoder::loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size) {

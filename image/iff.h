@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/endian.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "image/image_decoder.h"
@@ -85,9 +86,9 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream);
 	const Header *getHeader() const { return &_header; }
 	const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
+	const byte *getPalette() const { return _palette.data(); }
 	const Common::Array<PaletteRange> &getPaletteRanges() const { return _paletteRanges; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteColorCount() const { return _palette.size(); }
 
 	/**
 	* The number of planes to decode, also determines the pixel packing if _packPixels is true.
@@ -111,10 +112,9 @@ private:
 
 	Header _header;
 	Graphics::Surface *_surface;
-	byte *_palette;
+	Graphics::Palette _palette;
 	Common::Array<PaletteRange> _paletteRanges;
 	Type _type;
-	uint16 _paletteColorCount;
 	uint8 _numRelevantPlanes;
 	bool _pixelPacking;
 

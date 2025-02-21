@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "image/image_decoder.h"
 
@@ -61,8 +62,8 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	const byte *getPalette() const override { return _palette.data(); }
+	uint16 getPaletteColorCount() const override { return _palette.size(); }
 	bool hasTransparentColor() const override { return _hasTransparentColor; }
 	uint32 getTransparentColor() const override { return _transparentColor; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
@@ -70,8 +71,7 @@ public:
 private:
 	Graphics::PixelFormat getByteOrderRgbaPixelFormat(bool isAlpha) const;
 
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 
 	// flag to skip the png signature check for headless png files
 	bool _skipSignature;

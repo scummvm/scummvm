@@ -32,7 +32,7 @@
 
 namespace Image {
 
-GIFDecoder::GIFDecoder() : _outputSurface(0), _palette(0), _colorCount(0) {
+GIFDecoder::GIFDecoder() : _outputSurface(nullptr), _palette(0) {
 }
 
 GIFDecoder::~GIFDecoder() {
@@ -89,15 +89,15 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_colorCount = colorMap->ColorCount;
+	int colorCount = colorMap->ColorCount;
 	_outputSurface = new Graphics::Surface();
-	_palette = new uint8[_colorCount * 3];
+	_palette.resize(colorCount, false);
 
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	for (int i = 0; i < _colorCount; ++i) {
-		_palette[(i * 3) + 0] = colorMap->Colors[i].Red;
-		_palette[(i * 3) + 1] = colorMap->Colors[i].Green;
-		_palette[(i * 3) + 2] = colorMap->Colors[i].Blue;
+	for (int i = 0; i < colorCount; ++i) {
+		_palette.set(i, colorMap->Colors[i].Red,
+						colorMap->Colors[i].Green,
+						colorMap->Colors[i].Blue);
 	}
 
 	// TODO: support transparency
@@ -128,10 +128,7 @@ void GIFDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
-	if (_palette) {
-		delete[] _palette;
-		_palette = 0;
-	}
+	_palette.clear();
 }
 
 } // End of namespace Image
