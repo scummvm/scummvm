@@ -103,18 +103,169 @@ namespace MazeDoom {
 #define TIME_HEIGHT			 15
 
 extern void run();
-extern void initialize_maze();                             // draw the surrounding wall and start/end squares 
-extern void create_maze();                                 // create a maze layout given the intiialized maze 
-extern int choose_door();                                  // pick a new path 
-extern int backup();                                       // back up a move
+
+/**
+ * Draw the surrounding wall and start/end squares
+ */
+extern void initialize_maze();
+
+/**
+ * Create a maze layout given the intiialized maze 
+ */
+extern void create_maze();
+
+/**
+ * Pick a new path
+ */
+extern int choose_door();
+
+/**
+ * Back up a move
+ */
+extern int backup();
+
+/**
+ * Translates the random maze generated into the mazeTile grid for the game
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      maze[][]            The randomly generated maze
+ *      struct TILE mazeTile[][] grid
+ *      start_y
+ *      exit_y
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] grid
+ */
 extern void SetUpMaze();
+
+/*****************************************************************
+ * Randomly sets a number of walls invisible
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      none
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] grid
+ *      m_nDifficulty       If it's MIN_DIFFICULTY, no walls are invisible
+ *                          If it's MAX_DIFFICULTY, all walls are invisible
+ *                          Otherwise, every m_nDifficulty-th wall is visible
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] grid
+**/
 extern void SetInvisibleWalls();
+
+/*****************************************************************
+ * Sets traps in the maze
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      none
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] array
+ *      m_nDifficulty       The the number of traps = difficulty setting
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] array
+**/
 extern void SetTraps();
+
+/*****************************************************************
+ * Draws fancy edgework around a piece of wall on the sides
+ * where possible
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      CDC     *pDC        The Device context to which it will draw
+ *      int     x           Column of piece to check
+ *      int     y           Row of piece to check
+ *      int     offset_x    Width offset for drawing the bitmap ( Main window has a border)
+ *      int     offset_y    Hieght offset as above
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][]
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      [External data modified]
+**/
 extern void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y);
+
 extern void PaintMaze(CDC *pDC);
+
+/*****************************************************************
+ * Gets a random Grid Point in the maze, which is a PATH (not START or EXIT)
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      none
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      struct TILE mazeTile[][] grid
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      none
+ *
+ *  RETURN VALUE:
+ *
+ *      CPoint      the random X and Y of a path space in the mazeTile grid
+**/
 extern CPoint GetRandomPoint(bool bRight);
+
+/*****************************************************************
+ * Converts a point in screen coordinates to x & y location on maze grid
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      CPoint pointScreen      a point in screen coordinates
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      none
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      none
+ *
+ *  RETURN VALUE:
+ *
+ *      CPoint  point       the x & y grid coordinates where pointScreen fell
+**/
 extern CPoint ScreenToTile(CPoint pointScreen);
+
+/*****************************************************************
+ * Checks to see if a point is within the Artwork region of the window
+ *
+ *  FORMAL PARAMETERS:
+ *
+ *      CPoint point    The point to check
+ *
+ *  IMPLICIT INPUT PARAMETERS:
+ *
+ *      Extents of the main game window, and the extents of the artwork
+ *
+ *  IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      none
+ *
+ *  RETURN VALUE:
+ *
+ *      bool:   true if point is within the Art Region,
+ *              false if point is outside the Art Region
+**/
 extern bool InArtRegion(CPoint point);
+
 extern LPGAMESTRUCT pGameInfo;
 
 } // namespace MazeDoom

@@ -19,38 +19,19 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "engines/util.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
+#include "bagel/hodjnpodj/mazedoom/maze_gen.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace MazeDoom {
 
-HodjNPodjEngine *g_engine;
+uint16 maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
+PosDir move_list[MOVE_LIST_SIZE];
 
-HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc) {
-	g_engine = this;
-}
+int maze_size_x, maze_size_y;
+int sqnum, cur_sq_x, cur_sq_y;
+int start_x, start_y, end_x, end_y;
 
-HodjNPodjEngine::~HodjNPodjEngine() {
-	g_engine = nullptr;
-}
-
-Common::Error HodjNPodjEngine::run() {
-	initGraphics(640, 480);
-
-	Common::String minigame = ConfMan.get("minigame");
-	if (minigame == "mazedoom")
-		MazeDoom::run();
-	else
-		warning("TODO: entire game");
-
-	// TODO: overall game
-
-	return Common::kNoError;
-}
-
+} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel

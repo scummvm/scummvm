@@ -106,7 +106,8 @@ MODULE_OBJS = \
 	hodjnpodj/hodjnpodj.o \
 	hodjnpodj/libs/frame_wnd.o \
 	hodjnpodj/mazedoom/main_window.o \
-	hodjnpodj/mazedoom/maze_doom.o
+	hodjnpodj/mazedoom/maze_doom.o \
+	hodjnpodj/mazedoom/maze_gen.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

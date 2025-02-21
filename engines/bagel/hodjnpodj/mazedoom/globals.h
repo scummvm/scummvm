@@ -19,38 +19,29 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "engines/util.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
+#ifndef HODJNPODJ_MAZEDOOM_GLOBALS_H
+#define HODJNPODJ_MAZEDOOM_GLOBALS_H
+
+#include "common/scummsys.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace MazeDoom {
 
-HodjNPodjEngine *g_engine;
+// Main Window positioning constants
+#define GAME_WIDTH		640
+#define GAME_HEIGHT		480
 
-HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc) {
-	g_engine = this;
-}
+// Scroll button size and positioning information
+#define IDC_SCROLL			850
 
-HodjNPodjEngine::~HodjNPodjEngine() {
-	g_engine = nullptr;
-}
+#define SCROLL_BUTTON_X		250
+#define SCROLL_BUTTON_Y		0
+#define SCROLL_BUTTON_DX	140
+#define SCROLL_BUTTON_DY	23
 
-Common::Error HodjNPodjEngine::run() {
-	initGraphics(640, 480);
-
-	Common::String minigame = ConfMan.get("minigame");
-	if (minigame == "mazedoom")
-		MazeDoom::run();
-	else
-		warning("TODO: entire game");
-
-	// TODO: overall game
-
-	return Common::kNoError;
-}
-
+} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

@@ -132,6 +132,10 @@ public:
 extern BagelEngine *g_engine;
 #define SHOULD_QUIT ::Bagel::g_engine->shouldQuit()
 
+inline int brand() {
+	return g_engine->getRandomNumber();
+}
+
 } // End of namespace Bagel
 
 #endif // BAGEL_H
