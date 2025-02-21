@@ -210,6 +210,7 @@ void b_locToCharPos(int nargs);
 void b_locVToLinePos(int nargs);
 void b_scrollByLine(int nargs);
 void b_scrollByPage(int nargs);
+void b_lineHeight(int nargs);
 
 void b_numberofchars(int nargs);
 void b_numberofitems(int nargs);

@@ -245,6 +245,7 @@ static const BuiltinProto builtins[] = {
 	{ "locVToLinePos",	LB::b_locVToLinePos, 2, 2, 500, FBLTIN },	//				D5 f
 	{ "scrollByLine",	LB::b_scrollByLine, 2, 2, 500, CBLTIN },	//				D5 c
 	{ "scrollByPage",	LB::b_scrollByPage, 2, 2, 500, CBLTIN },	//				D5 c
+	{ "lineHeight",		LB::b_lineHeight,   2, 2, 500, FBLTIN },	//				D5 f
 	// Chunk operations
 	{ "numberOfChars",	LB::b_numberofchars,1, 1, 300, FBLTIN },	//			D3 f
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, 300, FBLTIN },	//			D3 f
@@ -3619,6 +3620,13 @@ void LB::b_scrollByLine(int nargs) {
 void LB::b_scrollByPage(int nargs) {
 	g_lingo->printSTUBWithArglist("b_scrollByPage", nargs);
 	g_lingo->dropStack(nargs);
+}
+
+void LB::b_lineHeight(int nargs) {
+	g_lingo->printSTUBWithArglist("b_lineHeight", nargs);
+	g_lingo->dropStack(nargs);
+	Datum res(1);
+	g_lingo->push(res);
 }
 
 void LB::b_numberofchars(int nargs) {
