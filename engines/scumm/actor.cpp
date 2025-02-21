@@ -659,11 +659,11 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	int tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
+	int tmpX = _pos.x * 0x10000 + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
 	_walkdata.xfrac = (uint16)tmpX;
 	_pos.x = (tmpX >> 16);
 
-	int tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
+	int tmpY = _pos.y * 0x10000 + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
 	_walkdata.yfrac = (uint16)tmpY;
 	_pos.y = (tmpY >> 16);
 
