@@ -1778,7 +1778,6 @@ void Room303::setFengActive(bool flag) {
 			} else {
 				hotspot->active = hotspot->lr_x > 600;
 			}
-			break;
 		}
 	}
 }
@@ -1875,6 +1874,7 @@ void Room303::conv303a() {
 	}
 }
 
+// Conversation with Mei
 void Room303::conv303b() {
 	const int who = conv_whos_talking();
 	const int node = conv_current_node();
