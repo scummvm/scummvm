@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-21 05:40+0000\n"
-"PO-Revision-Date: 2025-02-20 16:08+0000\n"
+"PO-Revision-Date: 2025-02-21 10:35+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -8945,84 +8945,62 @@ msgid "TTS Narrator"
 msgstr "TTS Narrátor"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Game Options"
 msgid "Fight sequence keymappings"
-msgstr "Játék Opciók"
+msgstr "Harc jelenet gombkiosztás"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game Options"
 msgid "Index keymappings"
-msgstr "Játék Opciók"
+msgstr "Index gombkiosztás"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Game Options"
 msgid "Yes/No keymappings"
-msgstr "Játék Opciók"
+msgstr "Igen/Nem gombkiosztások"
 
 #: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Játékmenet visszaállítása:"
+msgstr "Játék újraindítása"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Kurzor Bal"
+msgstr "Kurzor eltolása - Bal fentre"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Kurzor eltolása - Közép balra"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Kurzor eltolása - Bal lentre"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Kurzor Jobb"
+msgstr "Kurzor eltolása - Jobb fentre"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Kurzor Jobb"
+msgstr "Kurzor eltolása - Közép jobbra"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Kurzor Jobb"
+msgstr "Kurzor eltolása - Jobb lentre"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next index"
-msgstr "Lépj a beállítás menübe"
+msgstr "Átlépés a következő indexre"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous index"
-msgstr "Vissza az elõzõ könyvtárszintre"
+msgstr "Visszalépés az előző indexre"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Válassz Shadert"
+msgstr "Index kiválasztása"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -9030,57 +9008,47 @@ msgstr "A játék nem támogatott motort használ"
 
 #: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
-msgstr "Játsszon digitális hangsávot a nyitófilm alatt"
+msgstr "Játsszon digitális betétdalt a nyitófilm alatt"
 
 #: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-"Ha ez a lehetőség van kiválasztva, a játék digitális filmzenét használ a "
-"bevezetésnél. Ellenkező esetben MIDI zenét játszik le."
+"Bekapcsolása esetén a játék a digitális betétdalt játssza le a nyitófilm "
+"alatt. Ellenkező esetben a MIDI zene került lejátszásra."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Kurzor Fel"
+msgstr "Kurzor fel"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Kurzor Le"
+msgstr "Kurzor le"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Kurzor Bal"
+msgstr "Kurzor bal"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Kurzor Jobb"
+msgstr "Kurzor jobb"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last message"
-msgstr "Utolsó mentés újratöltése"
+msgstr "Utolsó üzenet megismétlése"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
-msgstr "Egyszerû egér interfész"
+msgstr "Egyszerű egér interfész"
 
 #: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Megmutatja a tárgyak nevét amikor az egeret felettük tartod"
+msgstr "Megmutatja a tárgyak nevét amikor az egeret felettük tartja"
 
 #: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
-msgstr "Animált tárgylista tételek"
+msgstr "Animált felszerelés tárgyak"
 
 #: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
@@ -9091,74 +9059,56 @@ msgid "Naughty game mode"
 msgstr "Pajkos játékmód"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game Options"
 msgid "Start menu keymappings"
-msgstr "Játék Opciók"
+msgstr "Start menü gombkiosztások"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Fõmenü megnyitása"
+msgstr "Játék menü megnyitása"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "Görgess fel"
+msgstr "Szkroll sáv fel"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "Görgess le"
+msgstr "Szkroll sáv le"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Játékmenet visszaállítása:"
+msgstr "Játék indítása"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Játékmenet visszaállítása:"
+msgstr "Játék folytatása"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Mutass tippeket"
+msgstr "Bevezető megjelenítése"
 
 #: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
 msgid "Show credits"
-msgstr "Kreditek megjelenítése"
+msgstr "Stáblista megjelenítése"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show quotes"
-msgstr "Beszéd Beállítások"
+msgstr "Idézetek megjelenítése"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Gyorsabb animációk"
+msgstr "Animáció újraindítása"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
-msgstr "Elem költségek megjelenítése a szokásos leltári módban"
+msgstr "Szokásos felszerelés nézetben a tárgyak értékének mutatása"
 
 #: engines/mm/metaengine.cpp:58
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
-"Az elem költségeket a szokásos leltári módban mutatja, lehetõvé téve az elem "
-"értékek összehasonlítását"
+"Szokványos felszerelés nézetben mutassa a tárgyak értékét, lehetővé téve az "
+"összehasonlításukat"
 
 #: engines/mm/metaengine.cpp:68
 msgid "More durable armor"
@@ -9166,41 +9116,39 @@ msgstr "Tartósabb páncél"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr "A páncél nem szakad el, karakter -80 HP-nál, hanem csak -10 HP-nál"
+msgstr "A páncél nem törik amíg a játékos nem éri el a -80HP-t, a -10HP helyett"
 
 #: engines/mm/metaengine.cpp:79
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Hit point sáv grafika engedélyezése"
+msgstr "Életerő sávok"
 
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "Az életerő és varázspontok sávjainak lecserélése színes ékkövekre."
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
-msgstr "Csapattárs 1 Megtekintése"
+msgstr "1. csapattag megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View Party Member 2"
-msgstr "Csapattárs 2 Megtekintése"
+msgstr "2. csapattag megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View Party Member 3"
-msgstr "Csapattárs 3 Megtekintése"
+msgstr "3. csapattag megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View Party Member 4"
-msgstr "Csapattárs 4 Megtekintése"
+msgstr "4. csapattag megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View Party Member 5"
-msgstr "Csapattárs 5 Megtekintése"
+msgstr "5. csapattag megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
-msgstr "Csapattárs 6 Megtekintése"
+msgstr "6. csapattárs megtekintése"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
@@ -9230,7 +9178,7 @@ msgstr "Visszavonulás"
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr "Kivár"
+msgstr "Kivárás"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
@@ -9241,16 +9189,16 @@ msgstr "Védés"
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
 msgid "Forwards"
-msgstr "Előrefelé"
+msgstr "Menetelés előre"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
 msgid "Backwards"
-msgstr "Hátrafelé"
+msgstr "Menetelés hátra"
 
 #: engines/mm/mm1/metaengine.cpp:104
 msgid "Toggle Minimap"
-msgstr "Minitérkép Váltás"
+msgstr "Minitérkép ki/be kapcsolás"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
@@ -9273,17 +9221,15 @@ msgstr "Felold"
 
 #: engines/mm/mm1/metaengine.cpp:122
 msgid "Goto location"
-msgstr "Ugrás a helyre"
+msgstr "Ugrás helyszínre"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - Menük"
 
 #: engines/mm/mm1/metaengine.cpp:138
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr "Might and Magic 1 - Menük"
+msgstr "Might and Magic 1 - Minimális gombok"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
@@ -9308,6 +9254,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Nem futtathatja a játékot közvetlenül a Graphical Overhaul Mod-ból. Ehelyett "
+"automatikusan opcióként jelenik meg, ha felismerteti az eredeti játékot és a "
+"Javított módot aktiválja."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -9315,15 +9264,17 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"A javított mód indításához másolja a xeen.cc fájlt a World of Xeen-ből\n"
+"vagy a Clouds of Xeen-ből a Might and Magic 1 könyvtárába"
 
 #: engines/mm/xeen/saves.cpp:294
 msgid "Failed to autosave"
-msgstr "Az automatikus mentés nem sikerült"
+msgstr "Sikertelen automata mentés"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
 msgid "~Z~ip Mode Activated"
-msgstr "~Z~ip Mód aktiválva"
+msgstr "~Z~ip mód aktiválva"
 
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:357
 msgid ""
