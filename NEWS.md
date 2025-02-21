@@ -21,6 +21,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      Throttle, and Maniac Mansion.
    - Fixed pops in Sega CD MI1 sound effects.
 
+ TwinE:
+   - Fixed meca penguin movement.
+   - Fixed sound related issues.
+   - Activate original bug fixes (FunFrock's HQ door and safe bugs).
+   - Fixed normal mode action triggering.
+
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
