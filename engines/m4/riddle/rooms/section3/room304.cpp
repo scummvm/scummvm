@@ -122,7 +122,7 @@ void Room304::init() {
 			_G(globals)[GLB_TEMP_1] = _smoke << 24;
 			_G(globals)[GLB_TEMP_2] = 0x10000;
 
-			_machine2 = TriggerMachineByHash(45, nullptr, -1, -1, intrMsg, 0, "MACHINE fl snake rock");
+			_machine2 = TriggerMachineByHash(45, nullptr, -1, -1, intrMsg, false, "MACHINE fl snake rock");
 		}
 
 		_sword = series_show_sprite("one frame sword", 0, 0xa00);
@@ -166,8 +166,8 @@ void Room304::daemon() {
 }
 
 void Room304::pre_parser() {
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (_flag1) {
 		terminateMachineAndNull(_machine3);
@@ -202,9 +202,9 @@ void Room304::pre_parser() {
 }
 
 void Room304::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && player_said("cartoon")) {
 		if (_G(flags)[V001]) {
@@ -412,7 +412,7 @@ void Room304::parser() {
 
 void Room304::intrMsg(frac16 myMessage, struct machine *sender) {
 	Room304 *r = static_cast<Room304 *>(g_engine->_activeRoom);
-	auto oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
 	if ((myMessage >> 16) == 57) {
 		if ((_G(globals)[GLB_TEMP_1] >> 16) == 1) {
