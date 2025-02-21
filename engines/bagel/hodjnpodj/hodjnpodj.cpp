@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "engines/util.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/mazedoom/game_exe.h"
@@ -41,8 +42,13 @@ Common::Error HodjNPodjEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 
+	Common::String minigame = ConfMan.get("minigame");
+	if (minigame == "mazedoom")
+		MazeDoom::CTheApp::run();
+	else
+		warning("TODO: entire game");
+
 	// TODO: overall game
-	MazeDoom::CTheApp::run();
 
 	return Common::kNoError;
 }
