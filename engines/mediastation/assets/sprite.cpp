@@ -237,7 +237,7 @@ void Sprite::updateFrameState() {
 
 	if (!_isPlaying) {
 		if (_activeFrame != nullptr) {
-			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing. Persistent frame %d (%d x %d) @ (%d, %d)", 
+			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing. Persistent frame %d (%d x %d) @ (%d, %d)",
 				_header->_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
 		} else {
 			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing, no persistent frame", _header->_id);
@@ -296,7 +296,7 @@ void Sprite::showFrame(SpriteFrame *frame) {
 	if (_activeFrame != nullptr) {
 		g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
 	}
-	
+
 	// Show the next frame.
 	_activeFrame = frame;
 	if (frame != nullptr) {

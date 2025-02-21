@@ -29,7 +29,7 @@
 
 namespace MediaStation {
 
-// A Screen holds asset data and processes event handlers for a Context. 
+// A Screen holds asset data and processes event handlers for a Context.
 // The original separated them this way - there is a ContextParameters section,
 // then a Screen asset header.
 class Screen : public Asset {

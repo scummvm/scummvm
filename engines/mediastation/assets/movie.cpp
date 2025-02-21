@@ -64,7 +64,7 @@ MovieFrameFooter::MovieFrameFooter(Chunk &chunk) {
 		_index = Datum(chunk).u.i;
 		_keyframeIndex = Datum(chunk).u.i;
 		_unk9 = Datum(chunk).u.i;
-		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = %d, _endInMilliseconds = %d, _left = %d, _top = %d, _index = %d, _keyframeIndex = %d (@0x%llx)", 
+		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = %d, _endInMilliseconds = %d, _left = %d, _top = %d, _index = %d, _keyframeIndex = %d (@0x%llx)",
 			_startInMilliseconds, _endInMilliseconds, _left, _top, _index, _keyframeIndex, static_cast<long long int>(chunk.pos()));
 		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _zIndex = %d, _diffBetweenKeyframeAndFrameX = %d, _diffBetweenKeyframeAndFrameY = %d, _unk4 = %d, _unk9 = %d",
 			_zIndex, _diffBetweenKeyframeAndFrameX, _diffBetweenKeyframeAndFrameY, _unk4,_unk9);
@@ -345,7 +345,7 @@ void Movie::updateFrameState() {
 	if (!_isPlaying) {
 		debugC(6, kDebugGraphics, "Movie::updateFrameState (%d): Not playing", _header->_id);
 		for (MovieFrame *frame : _framesOnScreen) {
-			debugC(6, kDebugGraphics, "   PERSIST: Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d", 
+			debugC(6, kDebugGraphics, "   PERSIST: Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d",
 				frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
 		}
 		return;

@@ -40,7 +40,7 @@ void Operand::putInteger(int i) {
 	}
 
 	default: {
-		error("Operand::putInteger(): Attempt to put integer into operand type %s (%d)", 
+		error("Operand::putInteger(): Attempt to put integer into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -80,7 +80,7 @@ void Operand::putDouble(double d) {
 	}
 
 	default: {
-		error("Operand::putDouble(): Attempt to put double into operand type %s (%d)", 
+		error("Operand::putDouble(): Attempt to put double into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -119,7 +119,7 @@ void Operand::putString(Common::String *string) {
 	}
 
 	default: {
-		error("Operand::putString(): Attempt to put string into operand type %s (%d)", 
+		error("Operand::putString(): Attempt to put string into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -151,7 +151,7 @@ void Operand::putVariable(Variable *variable) {
 	}
 
 	default: {
-		error("Operand::putVariable(): Attempt to put variable into operand type %s (%d)", 
+		error("Operand::putVariable(): Attempt to put variable into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -178,7 +178,7 @@ void Operand::putFunction(uint functionId) {
 	}
 
 	default: {
-		error("Operand::putFunction(): Attempt to put function ID into operand type %s (%d)", 
+		error("Operand::putFunction(): Attempt to put function ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -211,7 +211,7 @@ void Operand::putAsset(uint32 assetId) {
 	}
 
 	default: {
-		error("Operand::putAsset(): Attempt to put asset ID into operand type %s (%d)", 
+		error("Operand::putAsset(): Attempt to put asset ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -271,7 +271,7 @@ void Operand::putCollection(Collection *collection) {
 	}
 
 	default: {
-		error("Operand::putCollection(): Attempt to put collection into operand type %s (%d)", 
+		error("Operand::putCollection(): Attempt to put collection into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 	}
@@ -309,12 +309,12 @@ Operand Operand::getLiteralValue() const {
 bool Operand::operator==(const Operand &other) const {
 	Operand lhs = getLiteralValue();
 	Operand rhs = other.getLiteralValue();
-	// TODO: Maybe some better type checking here. If the types being compared 
-	// end up being incompatible, the respective get method on the rhs will 
-	// raise the error. But better might be checking both before we try getting 
+	// TODO: Maybe some better type checking here. If the types being compared
+	// end up being incompatible, the respective get method on the rhs will
+	// raise the error. But better might be checking both before we try getting
 	// values to report a more descriptive error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return lhs.getInteger() == rhs.getInteger();
 
@@ -339,7 +339,7 @@ bool Operand::operator<(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return lhs.getInteger() < rhs.getInteger();
 
@@ -358,7 +358,7 @@ bool Operand::operator>(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return lhs.getInteger() > rhs.getInteger();
 
@@ -377,7 +377,7 @@ bool Operand::operator||(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return lhs.getInteger() || rhs.getInteger();
 
@@ -391,7 +391,7 @@ bool Operand::operator!() const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (literalValue.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return !literalValue.getInteger();
 
@@ -406,7 +406,7 @@ bool Operand::operator&&(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		return lhs.getInteger() && rhs.getInteger();
 
@@ -422,7 +422,7 @@ Operand Operand::operator+(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		returnValue.putInteger(lhs.getInteger() + rhs.getInteger());
 		return returnValue;
@@ -444,7 +444,7 @@ Operand Operand::operator-(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		returnValue.putInteger(lhs.getInteger() - rhs.getInteger());
 		return returnValue;
@@ -466,7 +466,7 @@ Operand Operand::operator*(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		returnValue.putInteger(lhs.getInteger() * rhs.getInteger());
 		return returnValue;
@@ -488,7 +488,7 @@ Operand Operand::operator/(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		if (rhs.getInteger() == 0) {
 			error("Operand::operator/(): Attempted divide by zero");
@@ -517,7 +517,7 @@ Operand Operand::operator%(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		if (rhs.getInteger() == 0) {
 			error("Operand::operator%%(): Attempted mod by zero");
@@ -536,7 +536,7 @@ Operand Operand::operator-() const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (literalValue.getType()) {
-	case kOperandTypeLiteral1: 
+	case kOperandTypeLiteral1:
 	case kOperandTypeLiteral2:
 		returnValue.putInteger(-literalValue.getInteger());
 		return returnValue;

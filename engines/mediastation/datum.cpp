@@ -74,15 +74,15 @@ void Datum::readWithType(Common::SeekableReadStream &chunk) {
 		u.point = new Common::Point(x, y);
 
 	} else if (kDatumTypeBoundingBox == t) {
-		Common::Point *left_top = Datum(chunk, kDatumTypePoint2).u.point;
+		Common::Point *leftTop = Datum(chunk, kDatumTypePoint2).u.point;
 		Common::Point *dimensions = Datum(chunk, kDatumTypePoint1).u.point;
-		u.bbox = new Common::Rect(*left_top, dimensions->x, dimensions->y);
-		delete left_top;
+		u.bbox = new Common::Rect(*leftTop, dimensions->x, dimensions->y);
+		delete leftTop;
 		delete dimensions;
 
 	} else if (kDatumTypePolygon == t) {
-		uint16 total_points = Datum(chunk, kDatumTypeUint16_1).u.i;
-		for (int i = 0; i < total_points; i++) {
+		uint16 totalPoints = Datum(chunk, kDatumTypeUint16_1).u.i;
+		for (int i = 0; i < totalPoints; i++) {
 			Common::Point *point = Datum(chunk, kDatumTypePoint1).u.point;
 			u.polygon->push_back(point);
 		}

@@ -82,7 +82,7 @@ AssetHeader::~AssetHeader() {
 
 	delete _name;
 	_name = nullptr;
-	
+
 	delete _startPoint;
 	_startPoint = nullptr;
 

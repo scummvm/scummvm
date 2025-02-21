@@ -106,7 +106,7 @@ Operand CodeChunk::executeNextStatement() {
 		case kOpcodeCallMethod: {
 			// In Media Station, all methods seem be built-in - there don't
 			// seem to be custom objects or methods individual titles can
-			// define. Functions, however, CAN be title-defined. 
+			// define. Functions, however, CAN be title-defined.
 			// But here, we're only looking for built-in methods.
 			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 			uint32 parameterCount = Datum(*_bytecode).u.i;
@@ -492,7 +492,7 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 	}
 
 	default:
-		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)", 
+		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unsupported operand type %s (%d)",
 			operandTypeToStr(literalType), static_cast<uint>(literalType));
 	}
 }

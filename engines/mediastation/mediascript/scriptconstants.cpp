@@ -213,7 +213,7 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "Sort";
 	case kDeleteAtMethod:
 		return "DeleteAt";
-	case kJumbleMethod: 
+	case kJumbleMethod:
 		return "Jumble";
 	case kDeleteFirstMethod:
 		return "DeleteFirst";
