@@ -64,7 +64,7 @@ DirectorSound::~DirectorSound() {
 	this->stopSound();
 	unloadSampleSounds();
 	delete _speaker;
-	for (auto it : _channels)
+	for (auto &it : _channels)
 		delete it._value;
 }
 
@@ -455,7 +455,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 }
 
 void DirectorSound::changingMovie() {
-	for (auto it : _channels) {
+	for (auto &it : _channels) {
 		it._value->movieChanged = true;
 		if (isChannelPuppet(it._key)) {
 			setPuppetSound(SoundID(), it._key); // disable puppet sound
@@ -508,7 +508,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 void DirectorSound::stopSound() {
 	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping all channels");
-	for (auto it : _channels) {
+	for (auto &it : _channels) {
 		if (!it._value)
 			continue;
 
@@ -665,8 +665,8 @@ void DirectorSound::setChannelVolume(int channel, uint8 volume) {
 		setChannelVolumeInternal(channel, volume);
 	} else {
 		debugC(5, kDebugSound, "DirectorSound::setChannelVolume: setting all channels to volume %d", volume);
-		for (uint i = 0; i < _channels.size(); i++)
-			setChannelVolumeInternal(i + 1, volume);
+			for (auto &it : _channels)
+				setChannelVolumeInternal(it._key, volume);
 	}
 }
 
