@@ -102,7 +102,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "meta/meta.gtl", "35f9d5c944f718768a233d9d62447d07", 43441),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 

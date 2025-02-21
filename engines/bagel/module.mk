@@ -102,7 +102,8 @@ MODULE_OBJS = \
 	spacebar/slot_wnd.o \
 	spacebar/sraf_computer.o \
 	spacebar/thud.o \
-	spacebar/vid_wnd.o
+	spacebar/vid_wnd.o \
+	hodjnpodj/hodjnpodj.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

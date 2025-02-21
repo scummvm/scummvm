@@ -26,6 +26,7 @@
 #include "bagel/metaengine.h"
 #include "bagel/detection.h"
 #include "bagel/spacebar/spacebar.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 
@@ -69,7 +70,13 @@ const ADExtraGuiOptionsMap *BagelMetaEngine::getAdvancedExtraGuiOptions() const 
 }
 
 Common::Error BagelMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Bagel::SpaceBar::SpaceBarEngine(syst, desc);
+	if (!strcmp(desc->gameId, "spacebar"))
+		*engine = new Bagel::SpaceBar::SpaceBarEngine(syst, desc);
+	else if (!strcmp(desc->gameId, "hodjnpodj"))
+		*engine = new Bagel::HodjNPodj::HodjNPodjEngine(syst, desc);
+	else
+		return Common::kUnknownError;
+
 	return Common::kNoError;
 }
 
