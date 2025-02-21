@@ -23,7 +23,7 @@
 #define BAGEL_HODJNPODJ_H
 
 #include "bagel/bagel.h"
-#include "bagel/hodjnpodj/libs/game_dll.h"
+#include "bagel/hodjnpodj/libs/types.h"
 
 namespace Bagel {
 namespace HodjNPodj {

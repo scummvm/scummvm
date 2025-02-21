@@ -144,6 +144,8 @@ protected:
 	int _nMaskColor;
 };
 
+#define CBmpButton CBofBmpButton
+
 } // namespace Bagel
 
 #endif

@@ -19,26 +19,15 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_GAME_DLL_H
-#define HODJNPODJ_LIBS_GAME_DLL_H
+#ifndef HODJNPODJ_LIBS_TYPES_H
+#define HODJNPODJ_LIBS_TYPES_H
 
 #include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-#define	PATHSPECSIZE		256
-
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
-
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
-
+typedef int CDC;
 
 struct GAMESTRUCT {
 	long lCrowns = 0;
@@ -49,7 +38,6 @@ struct GAMESTRUCT {
 	bool bPlayingMetagame = false;
 	bool bPlayingHodj = false;
 };
-
 typedef GAMESTRUCT *LPGAMESTRUCT;
 
 } // namespace HodjNPodj

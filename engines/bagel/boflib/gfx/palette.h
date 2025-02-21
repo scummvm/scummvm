@@ -152,6 +152,8 @@ public:
 	static CBofPalette *getSharedPalette();
 };
 
+#define CPalette CBofPalette
+
 } // namespace Bagel
 
 #endif

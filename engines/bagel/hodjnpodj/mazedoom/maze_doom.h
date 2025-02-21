@@ -23,11 +23,11 @@
 #define HODJNPODJ_MAZEDOOM_MAZE_DOOM_H
 
 #include "bagel/bagel.h"
+#include "bagel/hodjnpodj/libs/types.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
-
 
 // Border info              
 #define SIDE_BORDER 	 20
@@ -103,6 +103,19 @@ namespace MazeDoom {
 #define TIME_HEIGHT			 15
 
 extern void run();
+extern void initialize_maze();                             // draw the surrounding wall and start/end squares 
+extern void create_maze();                                 // create a maze layout given the intiialized maze 
+extern int choose_door();                                  // pick a new path 
+extern int backup();                                       // back up a move
+extern void SetUpMaze();
+extern void SetInvisibleWalls();
+extern void SetTraps();
+extern void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y);
+extern void PaintMaze(CDC *pDC);
+extern CPoint GetRandomPoint(bool bRight);
+extern CPoint ScreenToTile(CPoint pointScreen);
+extern bool InArtRegion(CPoint point);
+extern LPGAMESTRUCT pGameInfo;
 
 } // namespace MazeDoom
 } // namespace HodjNPodj

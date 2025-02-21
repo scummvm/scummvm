@@ -32,6 +32,8 @@ enum {
 	SW_SHOWNORMAL
 };
 
+typedef int CDC;
+
 class CFrameWnd {
 protected:
 	virtual bool OnCommand(uint16 wParam, int32 lParam) {

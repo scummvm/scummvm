@@ -230,6 +230,8 @@ protected:
 	static int _nWorkDY;
 };
 
+#define CSprite CBofSprite
+
 } // namespace Bagel
 
 #endif

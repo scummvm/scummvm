@@ -317,6 +317,7 @@ protected:
 	static int   _tabStop;     // tabstop table
 };
 
+#define CText CBofText
 
 // Global text functions
 //
