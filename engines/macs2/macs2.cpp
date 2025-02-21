@@ -1274,6 +1274,19 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	go->Blobs[slotIndex - 1] = data;
 }
 
+void Macs2Engine::loadSongFromSceneData() {
+	uint8 songID = 1;
+
+	uint32 address = array520D[songID - 1];
+	_fileStream->seek(address);
+	uint32 size = _fileStream->readUint32LE();
+	_fileStream->seek(address + 0x4 + 0xC);
+	Common::Array<uint8> data;
+	data.resize(size);
+	_fileStream->read(data.data(), size);
+	
+}
+
 Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
