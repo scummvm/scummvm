@@ -73,6 +73,41 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 		subfile = getNextSubfile();
 		readAssetFromLaterSubfile(subfile);
 	}
+
+	// Some sprites and images don't have any image data themselves, they just
+	// reference the same image data in another asset. So we need to check for
+	// these and create the appropriate references.
+	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
+		Asset *asset = it->_value;
+		uint referencedAssetId = asset->getHeader()->_assetReference;
+		if (referencedAssetId != 0) {
+			switch (asset->getHeader()->_type) {
+			case kAssetTypeImage: {
+				Image *image = static_cast<Image *>(asset);
+				Image *referencedImage = static_cast<Image *>(getAssetById(referencedAssetId));
+				if (referencedImage == nullptr) {
+					error("Context::Context(): Asset %d references non-existent asset %d", asset->getHeader()->_id, referencedAssetId);
+				}
+				image->_bitmap = referencedImage->_bitmap;
+				break;
+			}
+
+			case kAssetTypeSprite: {
+				Sprite *sprite = static_cast<Sprite *>(asset);
+				Sprite *referencedSprite = static_cast<Sprite *>(getAssetById(referencedAssetId));
+				if (referencedSprite == nullptr) {
+					error("Context::Context(): Asset %d references non-existent asset %d", asset->getHeader()->_id, referencedAssetId);
+				}
+				sprite->_frames = referencedSprite->_frames;
+				break;
+			}
+
+			default: {
+				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", asset->getHeader()->_type);
+			}
+			}
+		}
+	}
 }
 
 Context::~Context() {

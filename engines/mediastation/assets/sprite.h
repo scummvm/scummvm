@@ -61,6 +61,8 @@ private:
 // Sprites are somewhat like movies, but they strictly show one frame at a time
 // and don't have sound. They are intended for background/recurrent animations.
 class Sprite : public Asset {
+friend class Context;
+
 public:
 	Sprite(AssetHeader *header);
 	~Sprite();

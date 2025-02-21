@@ -32,6 +32,8 @@
 namespace MediaStation {
 
 class Image : public Asset {
+friend class Context;
+
 public:
 	Image(AssetHeader *header);
 	virtual ~Image() override;

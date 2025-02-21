@@ -80,8 +80,12 @@ Sprite::Sprite(AssetHeader *header) : Asset(header) {
 }
 
 Sprite::~Sprite() {
-	for (SpriteFrame *frame : _frames) {
-		delete frame;
+	// If we're just referencing another asset's frames,
+	// don't delete those frames.
+	if (_header->_assetReference == 0) {
+		for (SpriteFrame *frame : _frames) {
+			delete frame;
+		}
 	}
 	_frames.clear();
 }

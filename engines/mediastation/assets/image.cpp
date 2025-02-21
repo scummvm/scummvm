@@ -32,7 +32,11 @@ Image::Image(AssetHeader *header) : Asset(header) {
 }
 
 Image::~Image() {
-	delete _bitmap;
+	if (_header->_assetReference == 0) {
+		// If we're just referencing another asset's bitmap,
+		// don't delete that bitmap.
+		delete _bitmap;
+	}
 	_bitmap = nullptr;
 }
 
