@@ -1273,7 +1273,9 @@ Common::Error ScummEngine::init() {
 			{ GID_DIG,      "The Dig"                  },
 			{ GID_DIG,      "The Dig Demo"             },
 			{ GID_FT,       "Full Throttle"            },
-			{ GID_FT,       "Full Throttle Demo"       }
+			{ GID_FT,       "Full Throttle Demo"       },
+			{ GID_FT,       "Vollgas"                  },
+			{ GID_FT,       "Vollgas Demo"             }
 		};
 
 		bool macScumm = false;
