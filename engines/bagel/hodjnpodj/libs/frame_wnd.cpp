@@ -19,38 +19,19 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "engines/util.h"
+#include "bagel/hodjnpodj/libs/frame_wnd.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-HodjNPodjEngine *g_engine;
-
-HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc) {
-	g_engine = this;
+void CFrameWnd::ShowWindow(int) {
 }
 
-HodjNPodjEngine::~HodjNPodjEngine() {
-	g_engine = nullptr;
+void CFrameWnd::UpdateWindow() {
 }
 
-Common::Error HodjNPodjEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
-
-	Common::String minigame = ConfMan.get("minigame");
-	if (minigame == "mazedoom")
-		MazeDoom::run();
-	else
-		warning("TODO: entire game");
-
-	// TODO: overall game
-
-	return Common::kNoError;
+void CFrameWnd::SetActiveWindow() {
 }
 
 } // namespace HodjNPodj

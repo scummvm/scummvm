@@ -104,7 +104,9 @@ MODULE_OBJS = \
 	spacebar/thud.o \
 	spacebar/vid_wnd.o \
 	hodjnpodj/hodjnpodj.o \
-	hodjnpodj/mazedoom/game_exe.o
+	hodjnpodj/libs/frame_wnd.o \
+	hodjnpodj/mazedoom/main_window.o \
+	hodjnpodj/mazedoom/maze_doom.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

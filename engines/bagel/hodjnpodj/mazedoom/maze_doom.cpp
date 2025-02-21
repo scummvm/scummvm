@@ -19,22 +19,30 @@
  *
  */
 
-#ifndef HODJNPODJ_MAZEDOOM_GAME_EXE_H
-#define HODJNPODJ_MAZEDOOM_GAME_EXE_H
-
-#include "bagel/bagel.h"
+#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
+#include "bagel/hodjnpodj/mazedoom/main_window.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-class CTheApp {
-public:
-	static bool run();
-};
+void run() {
+	CMainWindow *pMain;
+
+#if 0
+	pGameInfo = lpGameInfo;
+	ghParentWnd = hParentWnd;
+#endif
+
+	if ((pMain = new CMainWindow) != NULL) {
+
+		pMain->ShowWindow(SW_SHOWNORMAL);
+		pMain->UpdateWindow();
+		pMain->SetActiveWindow();
+	}
+}
 
 } // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
