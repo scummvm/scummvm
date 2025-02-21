@@ -828,7 +828,10 @@ int32 Sound::checkSpeechStatus() {
 
 	if (!_mixer->isSoundHandleActive(_hSampleSpeech)) {
 		_speechSampleBusy = 0;
-		restoreMusicVolume();
+
+		if (!SwordEngine::_systemVars.useWindowsAudioMode)
+			restoreMusicVolume();
+
 		return S_STATUS_FINISHED;
 	}
 
