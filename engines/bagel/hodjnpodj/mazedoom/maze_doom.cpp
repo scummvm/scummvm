@@ -38,7 +38,7 @@ namespace MazeDoom {
 
 CBmpButton *m_pScrollButton;
 CSprite *pPlayerSprite;
-CPalette *pGamePalette,                   // Palette of current artwork 
+CPalette *pGamePalette,                   // Palette of current artwork
 	*pOldPal;
 CBitmap *pMazeBitmap,
 	*pOldBmp,
@@ -91,7 +91,7 @@ LPGAMESTRUCT pGameInfo;
 static void init() {
 	m_pScrollButton = nullptr;
 	pPlayerSprite = nullptr;
-	pGamePalette = nullptr,                   // Palette of current artwork 
+	pGamePalette = nullptr,                   // Palette of current artwork
 	pOldPal = nullptr;
 	pMazeBitmap = nullptr;
 	pOldBmp = nullptr;
@@ -161,7 +161,7 @@ void SetUpMaze() {
 	for (x = 0; x < MAX_MAZE_SIZE_X; x++) {
 		for (y = 0; y < MAX_MAZE_SIZE_Y; y++) {
 			mazeTile[x * 2 + 1][y * 2 + 1].m_nWall = PATH;          // Always is PATH
-			mazeTile[x * 2][y * 2].m_nWall = PATH;              // Will be changed to WALL if 
+			mazeTile[x * 2][y * 2].m_nWall = PATH;              // Will be changed to WALL if
 			if (maze[x][y] & WALL_TOP) {                   //...it is found below
 				mazeTile[x * 2][y * 2].m_nWall = WALL;
 				mazeTile[x * 2 + 1][y * 2].m_nWall = WALL;
@@ -183,7 +183,7 @@ void SetUpMaze() {
 				if (mazeTile[x + 1][y + 1].m_nWall == PATH && (mazeTile[x + 1][y].m_nWall == PATH &&
 					(mazeTile[x][y + 1].m_nWall == PATH &&
 						(mazeTile[x - 1][y].m_nWall == WALL && mazeTile[x][y - 1].m_nWall == WALL))))
-					mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner 
+					mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner
 
 				if (mazeTile[x][y + 1].m_nWall == PATH && (mazeTile[x + 1][y - 1].m_nWall == PATH &&
 					(mazeTile[x - 1][y - 1].m_nWall == PATH &&
@@ -208,12 +208,12 @@ void SetUpMaze() {
 
 	m_PlayerPos.x = x - 1;                              // Start player in one space from the entrance
 
-	if (mazeTile[x - 1][y].m_nWall == WALL) {          // If a wall runs into the entry space 
+	if (mazeTile[x - 1][y].m_nWall == WALL) {          // If a wall runs into the entry space
 		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the entry
 		mazeTile[x][y + 1].m_nWall = START;             //...space under that
 		m_PlayerPos.y = y;                              // Put the player there
 	} else {
-		mazeTile[x][y].m_nWall = START;                 // Put in the entry way where it was     
+		mazeTile[x][y].m_nWall = START;                 // Put in the entry way where it was
 		mazeTile[x][y + 1].m_nWall = WALL;              //...and make sure the one below is a wall
 		m_PlayerPos.y = y;                              // Put the player there
 	}
@@ -222,7 +222,7 @@ void SetUpMaze() {
 	y = end_y * 2;
 	m_pExit.x = x;
 
-	if (mazeTile[x + 1][y].m_nWall == WALL) {          // If a wall runs into the top exit space 
+	if (mazeTile[x + 1][y].m_nWall == WALL) {          // If a wall runs into the top exit space
 		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the exit
 		m_pExit.y = y + 1;                              //...one space above that
 	} else {
@@ -276,7 +276,7 @@ void SetTraps() {
 	int nNumTraps;
 	CPoint In;
 
-	nNumTraps = MIN_TRAPS + (m_nDifficulty / 2);          // 4 + ([1...10]/2) = 4 to 9 
+	nNumTraps = MIN_TRAPS + (m_nDifficulty / 2);          // 4 + ([1...10]/2) = 4 to 9
 
 	for (nTrapCount = 0; nTrapCount < nNumTraps; nTrapCount++) {
 		In = GetRandomPoint(false);                                       // Pick a random PATH square
@@ -301,7 +301,7 @@ CPoint GetRandomPoint(bool bRight) {
 		if (mazeTile[point.x][point.y].m_nWall == PATH)
 			bLocated = true;                                                // OK if it's a pathway
 		else {                                                              // Otherwise, keep lookin'
-			point.x++;                                                      // Increment Column 
+			point.x++;                                                      // Increment Column
 			point.y++;                                                      // Increment Row
 			if (point.x == NUM_COLUMNS) point.x = 1;                      // If we're at the end,
 			if (point.y == NUM_ROWS) point.y = 1;                         //...reset the counter
@@ -320,7 +320,7 @@ void SetInvisibleWalls() {
 	for (x = 1; x < (NUM_COLUMNS - 1); x++) {                     // Don't make edge walls invisible !!
 		for (y = 1; y < (NUM_ROWS - 1); y++) {
 			if (mazeTile[x][y].m_nWall == WALL) {
-				if (m_nDifficulty > MIN_DIFFICULTY)               // Most difficult has all walls hidden  
+				if (m_nDifficulty > MIN_DIFFICULTY)               // Most difficult has all walls hidden
 					mazeTile[x][y].m_bHidden = true;                // Start with all walls hidden
 				else
 					mazeTile[x][y].m_bHidden = false;               // Least difficult has no walls hidden
@@ -345,7 +345,7 @@ void SetInvisibleWalls() {
 					} // end j
 				} // end i
 			} // end if
-			x += (brand() % NUM_NEIGHBORS);// + 1;                                   // Increment Column 
+			x += (brand() % NUM_NEIGHBORS);// + 1;                                   // Increment Column
 			y += (brand() % NUM_NEIGHBORS);// + 1;                                   // Increment Row
 			if (x >= (NUM_COLUMNS - 2))
 				x = (brand() % (NUM_COLUMNS - 4)) + 2;               // If we're at the end,

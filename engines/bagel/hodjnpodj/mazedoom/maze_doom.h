@@ -31,10 +31,10 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-// Border info              
+// Border info
 #define SIDE_BORDER 	 20
-#define TOP_BORDER		 28	 
-#define BOTTOM_BORDER	 16	 
+#define TOP_BORDER		 28
+#define BOTTOM_BORDER	 16
 #define HILITE_BORDER	  3
 
 // Dimensions constants
@@ -42,14 +42,14 @@ namespace MazeDoom {
 #define ART_HEIGHT	432
 
 #define SQ_SIZE_X	24
-#define SQ_SIZE_Y   24 
+#define SQ_SIZE_Y   24
 #define EDGE_SIZE	 5
 
 // Starting value defaults
 #define MAX_DIFFICULTY	10	//8
-#define MIN_DIFFICULTY	 1	//0 
+#define MIN_DIFFICULTY	 1	//0
 
-// Timer constants         
+// Timer constants
 #define MIN_TIME			 15						//  15 Seconds
 #define MAX_TIME			180						// 180 Seconds = 3 minute max
 #define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
@@ -75,13 +75,13 @@ namespace MazeDoom {
 
 // Timer stuff
 #define GAME_TIMER 		1
-#define CLICK_TIME	 1000		// Every Second, update timer clock 
+#define CLICK_TIME	 1000		// Every Second, update timer clock
 
 // Rules files
 #define	RULES_TEXT		"MAZEOD.TXT"
 #define	RULES_WAV		".\\SOUND\\MAZEOD.WAV"
 
-// Sound files                          
+// Sound files
 #define WIN_SOUND	".\\sound\\fanfare2.wav"
 #define LOSE_SOUND	".\\sound\\buzzer.wav"
 #define HIT_SOUND	".\\sound\\thud.wav"
@@ -112,7 +112,7 @@ extern void run();
 extern void initialize_maze();
 
 /**
- * Create a maze layout given the intiialized maze 
+ * Create a maze layout given the intiialized maze
  */
 extern void create_maze();
 
@@ -271,7 +271,7 @@ extern bool InArtRegion(CPoint point);
 
 extern CBmpButton *m_pScrollButton;
 extern CSprite *pPlayerSprite;
-extern CPalette *pGamePalette,                   // Palette of current artwork 
+extern CPalette *pGamePalette,                   // Palette of current artwork
 	*pOldPal;
 extern CBitmap *pMazeBitmap,
 	*pOldBmp,
