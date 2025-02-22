@@ -208,7 +208,7 @@ void DirectsoundXtra::m_dsNewSound(int nargs) {
 
 	int newId = -1;
 
-	for (int i = 0; i < me->_sounds.size(); i++) {
+	for (uint i = 0; i < me->_sounds.size(); i++) {
 		if (me->_sounds[i].free) {
 			newId = i;
 			break;
@@ -367,7 +367,7 @@ void DirectsoundXtra::m_dsClose(int nargs) {
 	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 
-	for (int i = 0; i < me->_sounds.size(); i++) {
+	for (uint i = 0; i < me->_sounds.size(); i++) {
 		if (me->_sounds[i].channel != -1)
 			sound->stopSound(me->_sounds[i].channel);
 
