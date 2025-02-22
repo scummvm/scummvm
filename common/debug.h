@@ -30,10 +30,10 @@ inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
 inline void debugN(const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 debugChannels, const char *s, ...) {}
-inline void debugC(uint32 debugChannels, const char *s, ...) {}
-inline void debugCN(int level, uint32 debugChannels, const char *s, ...) {}
-inline void debugCN(uint32 debugChannels, const char *s, ...) {}
+inline void debugC(int level, uint32 debugChannel, const char *s, ...) {}
+inline void debugC(uint32 debugChannel, const char *s, ...) {}
+inline void debugCN(int level, uint32 debugChannel, const char *s, ...) {}
+inline void debugCN(uint32 debugChannel, const char *s, ...) {}
 
 #else
 
@@ -82,10 +82,10 @@ void debugN(int level, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
  * @see enableDebugChannel
  *
  * @param level         Debug level that must be active for the message to be printed.
- * @param debugChannels Bitfield of channels to check against.
+ * @param debugChannel  Channel to check against.
  * @param s             Message to print.
  */
-void debugC(int level, uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC_PRINTF(3, 4);
+void debugC(int level, uint32 debugChannel, MSVC_PRINTF const char *s, ...) GCC_PRINTF(3, 4);
 
 /**
  * Print a debug message to the text console (stdout), but only if
@@ -96,11 +96,11 @@ void debugC(int level, uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC
  * @see enableDebugChannel
  *
  * @param level         Debug level that must be active for the message to be printed.
- * @param debugChannels Bitfield of channels to check against.
+ * @param debugChannel  Channel to check against.
  * @param s             Message to print.
  *
  */
-void debugCN(int level, uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC_PRINTF(3, 4);
+void debugCN(int level, uint32 debugChannel, MSVC_PRINTF const char *s, ...) GCC_PRINTF(3, 4);
 
 /**
  * Print a debug message to the text console (stdout), but only if
@@ -108,10 +108,10 @@ void debugCN(int level, uint32 debugChannels, MSVC_PRINTF const char *s, ...) GC
  * Automatically appends a newline.
  * @see enableDebugChannel
  *
- * @param debugChannels Bitfield of channels to check against.
+ * @param debugChannel  Channel to check against.
  * @param s             Message to print.
  */
-void debugC(uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
+void debugC(uint32 debugChannel, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
  * Print a debug message to the text console (stdout), but only if
@@ -119,10 +119,10 @@ void debugC(uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 
  * Does not append a newline automatically.
  * @see enableDebugChannel
  *
- * @param debugChannels Bitfield of channels to check against.
+ * @param debugChannel  Channel to check against.
  * @param s             Message to print.
  */
-void debugCN(uint32 debugChannels, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
+void debugCN(uint32 debugChannel, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
 
 #endif
 
@@ -135,10 +135,10 @@ bool debugLevelSet(int level);
  * Check whether the debug level and channel are active.
  *
  * @param level         Debug level to check against. If set to -1, only channel check is active.
- * @param debugChannels Bitfield of channels to check against.
+ * @param debugChannel  Channel to check against.
  * @see enableDebugChannel
  */
-bool debugChannelSet(int level, uint32 debugChannels);
+bool debugChannelSet(int level, uint32 debugChannel);
 
 /**
  * The debug level. Initially set to -1, indicating that no debug output

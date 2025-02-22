@@ -136,7 +136,7 @@ static const char *toString(ShapeType type) {
 	}
 }
 
-static void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const char *message) {
+static void onLog(LogMessageType::Type type, int level, uint32 debugChannel, const char *message) {
 	switch (type) {
 	case LogMessageType::kError:
 		_logger->addLog("[error]%s", message);
