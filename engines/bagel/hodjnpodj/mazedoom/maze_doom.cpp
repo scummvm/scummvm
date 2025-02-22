@@ -59,7 +59,7 @@ bool bSuccess;
 bool m_bIgnoreScrollClick;
 bool bPlaying;
 bool m_bGameOver;
-POINT m_PlayerPos;
+CBofPoint m_PlayerPos;
 uint m_nPlayerID;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
 int m_nDifficulty;
@@ -69,10 +69,10 @@ int tempTime;
 
 // Data type for each square of the underlying Grid of the Maze
 struct TILE {
-	POINT   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
+	CBofPoint   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
 	uint    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
 	uint    m_nTrap;    // Index of trap bitmap to use for drawing
-	POINT   m_nDest;    // x,y Tile location of Trap exit point 
+	CBofPoint   m_nDest;    // x,y Tile location of Trap exit point
 	bool    m_bHidden;  // 0 = Visible, 1 = Invisible
 
 	void clear() {

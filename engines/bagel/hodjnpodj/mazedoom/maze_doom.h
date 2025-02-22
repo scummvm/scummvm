@@ -292,7 +292,7 @@ extern bool bSuccess;
 extern bool m_bIgnoreScrollClick;
 extern bool bPlaying;
 extern bool m_bGameOver;
-extern POINT m_PlayerPos;
+extern CBofPoint m_PlayerPos;
 extern uint m_nPlayerID;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
 extern int m_nDifficulty;
