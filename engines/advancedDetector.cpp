@@ -869,7 +869,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 		}
 	}
 
-	debugC(2, "Totally found %d matches", matched.size());
+	debugC(2, kDebugGlobalDetection, "Totally found %d matches", matched.size());
 
 	return matched;
 }
