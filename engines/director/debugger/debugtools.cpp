@@ -273,7 +273,7 @@ static void showSettings() {
 	ImGui::End();
 }
 
-void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const char *message) {
+void onLog(LogMessageType::Type type, int level, uint32 debugChannel, const char *message) {
 	switch (type) {
 	case LogMessageType::kError:
 		_state->_logger->addLog("[error]%s", message);

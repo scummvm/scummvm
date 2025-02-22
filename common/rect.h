@@ -374,8 +374,8 @@ struct Rect {
 	 /**
 	 * Print debug messages related to this class.
 	 */
-	void debugPrintC(int debuglevel, uint32 debugChannels, const char *caption = "Rect:") const {
-		debugC(debuglevel, debugChannels, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
+	void debugPrintC(int debuglevel, uint32 debugChannel, const char *caption = "Rect:") const {
+		debugC(debuglevel, debugChannel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
 	/**
