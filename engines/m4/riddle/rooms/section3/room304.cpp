@@ -47,7 +47,7 @@ void Room304::init() {
 	_val1 = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
-		_flag1 = false;
+		_closeCartoonFl = false;
 
 	if (_G(game).previous_room == 303 && _G(flags)[V001])
 		_G(game).previous_room = 354;
@@ -169,9 +169,9 @@ void Room304::pre_parser() {
 	const bool takeFlag = player_said("take");
 	const bool useFlag = player_said("gear");
 
-	if (_flag1) {
-		terminateMachineAndNull(_machine3);
-		_flag1 = false;
+	if (_closeCartoonFl) {
+		terminateMachineAndNull(_cartoonMach);
+		_closeCartoonFl = false;
 		intr_cancel_sentence();
 		hotspot_restore_all();
 		interface_show();
@@ -216,8 +216,8 @@ void Room304::parser() {
 			intr_cancel_sentence();
 			hotspot_add_dynamic("x", " ", 0, 0, 1500, 374, 0);
 
-			_flag1 = true;
-			_pu = series_show_sprite(_G(flags)[V000] ? "394pu99" : "304pu99", 0, 0);
+			_closeCartoonFl = true;
+			_cartoonMach = series_show_sprite(_G(flags)[V000] ? "394pu99" : "304pu99", 0, 0);
 			digi_play("304r59", 1);
 		}
 	} else if (_G(kernel).trigger == 749) {

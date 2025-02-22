@@ -187,8 +187,8 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 }
 
 bool kernel_load_variant(const char *variant) {
-	auto &sceneDef = _G(currentSceneDef);
-	auto *codeBuff = _G(screenCodeBuff);
+	SceneDef &sceneDef = _G(currentSceneDef);
+	GrBuff *codeBuff = _G(screenCodeBuff);
 	Common::String filename;
 
 	if (!codeBuff)

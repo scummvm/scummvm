@@ -78,7 +78,7 @@ bool Inventory::add(const Common::String &name, const Common::String &verb, int3
 	for (int i = _num_cells; i > 0; --i)
 		_items[i] = _items[i - 1];
 
-	auto &item = _items[0];
+	Entry &item = _items[0];
 	item._name = name;
 	item._verb = verb;
 	item._cell = invSprite;
