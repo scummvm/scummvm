@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-21 20:40+0000\n"
+"POT-Creation-Date: 2025-02-22 22:14+0000\n"
 "PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7122,7 +7122,7 @@ msgstr "База улик"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
-#: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:82
+#: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:93
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
@@ -7569,17 +7569,29 @@ msgstr "Поддержка для Versailles 1685 не скомпилирова�
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Не удалось найти файл движка darkseed.dat."
 
+#: engines/darkseed/metaengine.cpp:47
+#, fuzzy
+#| msgid "Use DOS version music tempos"
+msgid "Use floppy version music"
+msgstr "Использовать темп музыки DOS-версии"
+
+#: engines/darkseed/metaengine.cpp:48
+msgid ""
+"Use the music from the floppy version. The floppy version's music files must "
+"be copied to the SOUND directory."
+msgstr ""
+
 #. I18N: Perform action on object where cursor points
-#: engines/darkseed/metaengine.cpp:64 engines/dragons/metaengine.cpp:136
+#: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
 #: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
 msgid "Action"
 msgstr "Действие"
 
-#: engines/darkseed/metaengine.cpp:70 engines/dragons/metaengine.cpp:142
+#: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
 msgid "Change Command"
 msgstr "Изменить команду"
 
-#: engines/darkseed/metaengine.cpp:76
+#: engines/darkseed/metaengine.cpp:87
 msgid "Time Advance"
 msgstr "Продвинуть время"
 
