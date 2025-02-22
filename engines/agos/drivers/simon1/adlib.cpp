@@ -142,7 +142,7 @@ void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
 			rhythmBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
 		} else {
 			// The rhythm bank makes use of instruments defined in the main instrument bank.
-			rhythmBank[i] = _instrumentBank[RHYTHM_MAP[i].program];
+			rhythmBank[i] = instrumentBank[RHYTHM_MAP[i].program];
 			// The MIDI channels used in the rhythm map correspond to OPL rhythm instrument types:
 			// 11 - bass drum
 			// 12 - snare drum
