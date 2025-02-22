@@ -36,6 +36,7 @@ const DebugChannelDef gDebugChannels[] = {
 	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
 	{ kDebugLevelMainGUI,    "maingui",   "debug messages for GUI" },
 	{ kDebugLevelMacGUI,     "macgui",    "debug messages for MacGUI" },
+	{ kDebugLevelGGraphics,  "ggraphics", "debug messages for global graphics" },
 	DEBUG_CHANNEL_END
 };
 namespace Common {
