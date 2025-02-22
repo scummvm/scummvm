@@ -106,18 +106,18 @@ void PICTDecoder::o_nop(Common::SeekableReadStream &) {
 void PICTDecoder::o_clip(Common::SeekableReadStream &stream) {
 	// Ignore
 	int size = stream.readUint16BE();
-	debug(3, "CLIP: size is %d", size);
+	debugC(3, kDebugLevelGGraphics, "CLIP: size is %d", size);
 	if (size >= 10) {
 		int x1 = stream.readSint16BE();
 		int y1 = stream.readSint16BE();
 		int x2 = stream.readSint16BE();
 		int y2 = stream.readSint16BE();
-		debug(3, "CLIP: RECT encountered: %d %d %d %d", x1, y1, x2, y2);
+		debugC(3, kDebugLevelGGraphics, "CLIP: RECT encountered: %d %d %d %d", x1, y1, x2, y2);
 		stream.skip(size - 10);
-		debug(3, "CLIP: skipped %d bytes", size - 10);
+		debugC(3, kDebugLevelGGraphics, "CLIP: skipped %d bytes", size - 10);
 	} else {
 		stream.skip(size - 2);
-		debug(3, "CLIP: skipped %d bytes", size - 2);
+		debugC(3, kDebugLevelGGraphics, "CLIP: skipped %d bytes", size - 2);
 	}
 }
 
@@ -334,7 +334,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_imageRect.left = stream.readUint16BE();
 	_imageRect.bottom = stream.readUint16BE();
 	_imageRect.right = stream.readUint16BE();
-	_imageRect.debugPrint(8, "PICTDecoder::loadStream(): loaded rect: ");
+	_imageRect.debugPrintC(8, kDebugLevelGGraphics, "PICTDecoder::loadStream(): loaded rect: ");
 
 	// NOTE: This is only a subset of the full PICT format.
 	//     - Only V2 (Extended) Images Supported
@@ -363,7 +363,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 		for (uint32 i = 0; i < _opcodes.size(); i++) {
 			if (_opcodes[i].op == opcode) {
-				debug(4, "Running PICT opcode %04x '%s'", opcode, _opcodes[i].desc);
+				debugC(4, kDebugLevelGGraphics, "Running PICT opcode %04x '%s'", opcode, _opcodes[i].desc);
 				(this->*(_opcodes[i].proc))(stream);
 				break;
 			} else if (i == _opcodes.size() - 1) {
