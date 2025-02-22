@@ -268,7 +268,19 @@ void MusicPlayer::play(uint8 priority, bool loop) {
 	if (_floppyAdLibDriver != nullptr)
 		_floppyAdLibDriver->setSourcePriority(0, priority);
 
+	if (_driver->isFading())
+		_driver->abortFade();
+	_driver->resetSourceVolume(0);
+
 	_parser->startPlaying();
+}
+
+void MusicPlayer::startFadeOut() {
+	_driver->startFade(0, 1100, 0);
+}
+
+bool MusicPlayer::isFading() {
+	return _driver->isFading();
 }
 
 } // namespace Darkseed

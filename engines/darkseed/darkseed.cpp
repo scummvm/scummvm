@@ -1076,6 +1076,15 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 }
 
 void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AKA LoadNewRoom
+	MusicId newMusicId = Room::getMusicIdForRoom(newRoomNumber);
+	if (g_engine->_sound->isPlayingMusic() && Room::getMusicIdForRoom(_room->_roomNumber) != newMusicId) {
+		g_engine->_sound->startFadeOut();
+		while (g_engine->_sound->isFading()) {
+			waitxticks(1);
+		}
+		g_engine->_sound->stopMusic();
+	}
+
 	_objectVar[99] = 0;
 	_objectVar[66] = 0;
 	_objectVar[67] = 0;

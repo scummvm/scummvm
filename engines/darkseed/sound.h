@@ -88,6 +88,9 @@ public:
 	void stopSfx();
 	void syncSoundSettings();
 	void killAllSound();
+	void startFadeOut();
+	bool isFading();
+
 private:
 	void playDosCDSfx(int sfxId);
 	void playFloppySpeech(int tosIdx);

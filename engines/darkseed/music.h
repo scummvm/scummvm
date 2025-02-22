@@ -68,6 +68,9 @@ public:
 	void stop();
 	void pause(bool pause);
 
+	void startFadeOut();
+	bool isFading();
+
 	void syncSoundSettings();
 
 private:

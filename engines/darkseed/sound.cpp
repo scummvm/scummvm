@@ -364,4 +364,12 @@ void Sound::playFloppySpeech(int tosIdx) {
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 }
 
+void Sound::startFadeOut() {
+	_musicPlayer->startFadeOut();
+}
+
+bool Sound::isFading() {
+	return _musicPlayer->isFading();
+}
+
 } // End of namespace Darkseed

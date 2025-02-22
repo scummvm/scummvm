@@ -99,6 +99,14 @@ Common::KeyCode Menu::getLocalisedConfirmToQuitKeycode() {
 }
 
 void Menu::loadMenu() {
+	if (g_engine->_sound->isPlayingMusic()) {
+		g_engine->_sound->startFadeOut();
+		while (g_engine->_sound->isFading()) {
+			g_engine->wait();
+		}
+		g_engine->_sound->stopMusic();
+	}
+
 	_open = true;
 	Graphics::Surface screenCopy;
 	screenCopy.copyFrom(*g_engine->_screen);
@@ -198,6 +206,8 @@ void Menu::loadMenu() {
 		g_engine->_screen->update();
 		g_engine->wait();
 	}
+
+	g_engine->_room->loadRoomMusic();
 
 	g_engine->removeFullscreenPic();
 	_open = false;

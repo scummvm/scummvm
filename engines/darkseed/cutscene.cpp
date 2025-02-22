@@ -592,11 +592,12 @@ bool Cutscene::introScene() {
 		}
 		break;
 	case 51:
-		g_engine->_sound->stopMusic();
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 52:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -734,11 +735,12 @@ bool Cutscene::embryoInsertedScene() {
 		}
 		break;
 	case 16:
-		g_engine->_sound->stopMusic();
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 17:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -828,10 +830,12 @@ bool Cutscene::shipLaunchScene() {
 		}
 		break;
 	case 13:
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 14:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -887,10 +891,12 @@ bool Cutscene::alienBornScene() {
 		}
 		break;
 	case 7:
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 8:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -975,10 +981,12 @@ bool Cutscene::babyDollScene() {
 		}
 		break;
 	case 11:
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 12:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		freeMorph();
@@ -1076,10 +1084,12 @@ bool Cutscene::bookScene() {
 		break;
 	case 14:
 		freeMorph();
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 15:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -1190,10 +1200,12 @@ bool Cutscene::nightmare2Scene() {
 		break;
 	case 16:
 		freeMorph();
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 17:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
@@ -1269,15 +1281,16 @@ bool Cutscene::nightmare3Scene() {
 		}
 		break;
 	case 11:
+		if (g_engine->_sound->isPlayingMusic())
+			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
 	case 12:
-		if (g_engine->fadeStep()) {
+		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
 		break;
 	default:
-		g_engine->_sound->stopMusic();
 		_movieStep = 9999;
 		return false;
 	}
