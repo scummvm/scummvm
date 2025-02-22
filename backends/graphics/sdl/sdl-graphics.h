@@ -141,6 +141,7 @@ protected:
 	enum CustomEventAction {
 		kActionToggleFullscreen = 100,
 		kActionToggleMouseCapture,
+		kActionToggleResizableWindow,
 		kActionSaveScreenshot,
 		kActionToggleAspectRatioCorrection,
 		kActionToggleFilteredScaling,

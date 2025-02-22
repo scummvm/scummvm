@@ -483,6 +483,10 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		getWindow()->grabMouse(!getWindow()->mouseIsGrabbed());
 		return true;
 
+	case kActionToggleResizableWindow:
+		getWindow()->setResizable(!getWindow()->resizable());
+		return true;
+
 	case kActionToggleFullscreen:
 		toggleFullScreen();
 		return true;
@@ -536,6 +540,11 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	act = new Action("CAPT", _("Toggle mouse capture"));
 	act->addDefaultInputMapping("C+m");
 	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
+	keymap->addAction(act);
+
+	act = new Action("RSZW", _("Toggle resizable window"));
+	act->addDefaultInputMapping("C+r");
+	act->setCustomBackendActionEvent(kActionToggleResizableWindow);
 	keymap->addAction(act);
 
 	act = new Action("SCRS", _("Save screenshot"));
