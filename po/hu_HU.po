@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-22 22:14+0000\n"
+"POT-Creation-Date: 2025-02-22 23:10+0000\n"
 "PO-Revision-Date: 2025-02-21 10:35+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -570,7 +570,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2082 gui/options.cpp:2263
 #: backends/graphics/atari/atari-graphics.cpp:1033
-#: backends/graphics/sdl/sdl-graphics.cpp:525
+#: backends/graphics/sdl/sdl-graphics.cpp:529
 msgid "Graphics"
 msgstr "Grafika"
 
@@ -1861,7 +1861,7 @@ msgstr "Shaderek letöltése"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Látogasson el a scummvm.org oldalra a shader csomag frissítésekért"
 
-#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:516
+#: gui/options.cpp:1706 backends/graphics/sdl/sdl-graphics.cpp:520
 msgid "Fullscreen mode"
 msgstr "Teljesképernyős mód"
 
@@ -4123,7 +4123,7 @@ msgid "Choose a new folder"
 msgstr "Új mappa kiválasztása"
 
 #: backends/graphics/atari/atari-graphics.cpp:1037
-#: backends/graphics/sdl/sdl-graphics.cpp:547
+#: backends/graphics/sdl/sdl-graphics.cpp:556
 msgid "Toggle aspect ratio correction"
 msgstr "Képarány korrekció váltása"
 
@@ -4222,20 +4222,24 @@ msgstr "'%s' képernyőkép mentve"
 msgid "Could not save screenshot"
 msgstr "Sikertelen képernyőkép mentés"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:518
+#: backends/graphics/sdl/sdl-graphics.cpp:522
 msgid "Windowed mode"
 msgstr "Ablakos mód"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:529 engines/scumm/help.cpp:88
+#: backends/graphics/sdl/sdl-graphics.cpp:533 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Teljesképernyős kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:536 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:540 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Egér rögzítés kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:541 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:545
+msgid "Toggle resizable window"
+msgstr ""
+
+#: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4248,27 +4252,27 @@ msgstr "Egér rögzítés kapcsoló"
 msgid "Save screenshot"
 msgstr "Képernyőkép mentése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:554
+#: backends/graphics/sdl/sdl-graphics.cpp:563
 msgid "Toggle linear filtered scaling"
 msgstr "Lineáris filter méretezés kapcsoló"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:561
+#: backends/graphics/sdl/sdl-graphics.cpp:570
 msgid "Cycle through stretch modes"
 msgstr "Kinyújtási módok közötti váltás"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:567
+#: backends/graphics/sdl/sdl-graphics.cpp:576
 msgid "Increase the scale factor"
 msgstr "Méretező tényező növelése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:573
+#: backends/graphics/sdl/sdl-graphics.cpp:582
 msgid "Decrease the scale factor"
 msgstr "Méretező tényező csökkentése"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:580
+#: backends/graphics/sdl/sdl-graphics.cpp:589
 msgid "Switch to the next scaler"
 msgstr "Váltás a következő skálázóra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:585
+#: backends/graphics/sdl/sdl-graphics.cpp:594
 msgid "Switch to the previous scaler"
 msgstr "Váltás az előző skálázóra"
 
