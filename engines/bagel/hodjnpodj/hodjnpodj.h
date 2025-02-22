@@ -28,10 +28,18 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+struct Minigame {
+	const char *_name;
+	void (*_run)();
+};
+
 class HodjNPodjEngine : public BagelEngine, public CBagel {
 private:
+	static const Minigame MINIGAMES[];
+
 	ErrorCode InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
 	ErrorCode ShutDownSoundSystem();
+	void playMinigame(const Common::String &name);
 
 protected:
 	// Engine APIs

@@ -80,18 +80,18 @@ namespace MazeDoom {
 
 // Rules files
 #define	RULES_TEXT		"MAZEOD.TXT"
-#define	RULES_WAV		".\\SOUND\\MAZEOD.WAV"
+#define	RULES_WAV		"SOUND/MAZEOD.WAV"
 
 // Sound files
-#define WIN_SOUND	".\\sound\\fanfare2.wav"
-#define LOSE_SOUND	".\\sound\\buzzer.wav"
-#define HIT_SOUND	".\\sound\\thud.wav"
-#define TRAP_SOUND	".\\sound\\boing.wav"
+#define WIN_SOUND	"sound/fanfare2.wav"
+#define LOSE_SOUND	"sound/buzzer.wav"
+#define HIT_SOUND	"sound/thud.wav"
+#define TRAP_SOUND	"sound/boing.wav"
 
-#define GAME_THEME	".\\sound\\mazeod.mid"
+#define GAME_THEME	"sound/mazeod.mid"
 
 // Backdrop bitmaps
-#define MAINSCREEN	".\\ART\\DOOM2.BMP"
+#define MAIN_SCREEN	"art/doom2.BMP"
 
 // New Game button area
 #define	NEWGAME_LOCATION_X	 15

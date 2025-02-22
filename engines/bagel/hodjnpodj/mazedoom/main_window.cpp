@@ -66,7 +66,7 @@ CMainWindow::CMainWindow() {
 	CDibDoc *pSourceDoc;                // Get the game palette
 	pSourceDoc = new CDibDoc();
 	assert(pSourceDoc != nullptr);
-	(*pSourceDoc).OpenDocument(MAINSCREEN);
+	(*pSourceDoc).OpenDocument(MAIN_SCREEN);
 	pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art     
 	delete pSourceDoc;
 

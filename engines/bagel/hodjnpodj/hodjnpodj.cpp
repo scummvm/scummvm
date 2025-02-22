@@ -43,6 +43,12 @@ static const BagelReg HODJNPODJ_REG = {
 	480
 };
 
+const Minigame HodjNPodjEngine::MINIGAMES[] = {
+	{ "mazedoom", &MazeDoom::run },
+	{ nullptr, nullptr }
+};
+
+
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		BagelEngine(syst, gameDesc), CBagel(&HODJNPODJ_REG) {
 	g_engine = this;
@@ -93,8 +99,8 @@ Common::Error HodjNPodjEngine::run() {
 	initialize();
 
 	Common::String minigame = ConfMan.get("minigame");
-	if (minigame == "mazedoom")
-		MazeDoom::run();
+	if (!minigame.empty())
+		playMinigame(minigame);
 	else
 		warning("TODO: entire game");
 
@@ -105,6 +111,23 @@ Common::Error HodjNPodjEngine::run() {
 	postShutDown();
 
 	return Common::kNoError;
+}
+
+void HodjNPodjEngine::playMinigame(const Common::String &name) {
+	for (const Minigame *game = MINIGAMES; game->_name; ++game) {
+		if (name == game->_name) {
+			// Add the minigame's folder to the search path
+			Common::FSNode gamePath(ConfMan.getPath("path"));
+			SearchMan.addDirectory("minigame", gamePath.getChild(game->_name), 0, 2);
+
+			game->_run();
+
+			SearchMan.remove("minigame");
+			return;
+		}
+	}
+
+	error("Unknown minigame specified - %s", name.c_str());
 }
 
 } // namespace HodjNPodj

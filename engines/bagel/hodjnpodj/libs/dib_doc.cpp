@@ -112,20 +112,18 @@ bool CDibDoc::OpenDocument(const char *pszPathName) {
 	Image::BitmapDecoder decoder;
 	if (!decoder.loadStream(f))
 		error("Unable to load artwork file: %s", pszPathName);
-	assert(decoder.hasPalette());
+	assert(decoder.hasPalette() && decoder.getPaletteColorCount() == 256);
 
 	m_hDIB = new Graphics::ManagedSurface();
 	m_hDIB->copyFrom(decoder.getSurface());
+	m_hDIB->setPalette(decoder.getPalette(), 0, 256);
 
 	m_sizeDoc = CBofSize(m_hDIB->w, m_hDIB->h);
 
 	// Create copy of palette
-	assert(decoder.getPaletteColorCount() == 256);
 	delete m_palDIB;
-	m_palDIB->setData(decoder.getPalette());
-
 	m_palDIB = new CPalette();
-	m_hDIB->setPalette(decoder.getPalette(), 0, 256);
+	m_palDIB->setData(decoder.getPalette());
 
 	SetPathName(pszPathName);
 	SetModifiedFlag(false);
