@@ -28,10 +28,20 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-class HodjNPodjEngine : public BagelEngine {
+class HodjNPodjEngine : public BagelEngine, public CBagel {
+private:
+	ErrorCode InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
+	ErrorCode ShutDownSoundSystem();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
+	ErrorCode initialize() override;
+	ErrorCode shutdown() override;
+	bool shouldQuit() const override {
+		return BagelEngine::shouldQuit();
+	}
 
 public:
 	GAMESTRUCT gGameInfo;
