@@ -195,6 +195,8 @@ protected:
 	uint16 _nBufferSize; // does not include terminating 0
 };
 
+#define CString CBofString
+
 // Inline Comparison operators
 //
 inline bool operator==(const CBofString &s1, const CBofString &s2) {

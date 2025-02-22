@@ -19,39 +19,59 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_TYPES_H
-#define HODJNPODJ_LIBS_TYPES_H
+#ifndef HODJNPODJ_LIBS_DIB_DOC_H
+#define HODJNPODJ_LIBS_DIB_DOC_H
 
-#include "common/rect.h"
-#include "common/serializer.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/gfx/sprite.h"
+#include "bagel/hodjnpodj/mfc/document.h"
+#include "bagel/hodjnpodj/libs/types.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-#define DECLARE_MESSAGE_MAP()
+class CDibDoc : public CDocument {
+	friend class CSprite;
+public:
+	CDibDoc();
 
-typedef int CDC;
-typedef void *HANDLE;
-typedef void *HDIB;
-typedef void *HDC;
-typedef Common::Rect *LPRECT;
-typedef Common::Serializer CDumpContext;
-typedef char *LPSTR;
-typedef void *HBITMAP;
-typedef void *LPBITMAPINFO;
-typedef void *LPBITMAPINFOHEADER;
+	// Attributes
+public:
+	HDIB GetHDIB() const {
+		return m_hDIB;
+	}
+	CPalette *GetDocPalette(void) const {
+		return m_palDIB;
+	}
+	CPalette *DetachPalette(void);
+	CSize GetDocSize() const {
+		return m_sizeDoc;
+	}
 
-struct GAMESTRUCT {
-	long lCrowns = 0;
-	long lScore = 0;
-	int nSkillLevel = 0;
-	bool bSoundEffectsEnabled = false;
-	bool bMusicEnabled = false;
-	bool bPlayingMetagame = false;
-	bool bPlayingHodj = false;
+	// Operations
+public:
+	void ReplaceHDIB(HDIB hDIB);
+	void InitDIBData();
+
+	// Implementation
+public:
+	virtual ~CDibDoc();
+	virtual bool SaveDocument(const char *pszPathName);
+	virtual bool OpenDocument(const char *pszPathName);
+	virtual bool OpenResourceDocument(const int nResID);
+	virtual bool OpenResourceDocument(const char *pszPathName);
+
+private:
+	HDIB m_hDIB;
+	CPalette *m_palDIB;
+	CSize m_sizeDoc;
+
+	// Generated message map functions
+protected:
+	//{{AFX_MSG(CDibDoc)
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
-typedef GAMESTRUCT *LPGAMESTRUCT;
 
 } // namespace HodjNPodj
 } // namespace Bagel

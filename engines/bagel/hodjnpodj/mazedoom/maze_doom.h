@@ -24,6 +24,8 @@
 
 #include "bagel/bagel.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/boflib/gui/button.h"
+#include "bagel/boflib/gfx/sprite.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -265,6 +267,38 @@ extern CPoint ScreenToTile(CPoint pointScreen);
  *              false if point is outside the Art Region
 **/
 extern bool InArtRegion(CPoint point);
+
+
+extern CBmpButton *m_pScrollButton;
+extern CSprite *pPlayerSprite;
+extern CPalette *pGamePalette,                   // Palette of current artwork 
+	*pOldPal;
+extern CBitmap *pMazeBitmap,
+	*pOldBmp,
+	*pWallBitmap,
+	*pPathBitmap,
+	*pStartBitmap,
+	*pTopEdgeBmp,
+	*pRightEdgeBmp,
+	*pBottomEdgeBmp,
+	*pLeftEdgeBmp,
+	*TrapBitmap[NUM_TRAP_MAPS];
+extern CDC *pMazeDC;                    // DC for the MazeBitmap
+extern CText *m_pTimeText;              // Time to be posted in Locale box of screen
+extern CBitmap *pLocaleBitmap,          // Locale of game bitmap for title bar
+	*pBlankBitmap;               // Blank area of locale for time display
+
+extern bool bSuccess;
+extern bool m_bIgnoreScrollClick;
+extern bool bPlaying;
+extern bool m_bGameOver;
+extern POINT m_PlayerPos;
+extern uint m_nPlayerID;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
+
+extern int m_nDifficulty;
+extern int m_nTime, nSeconds, nMinutes;
+extern int tempDifficulty;
+extern int tempTime;
 
 extern LPGAMESTRUCT pGameInfo;
 

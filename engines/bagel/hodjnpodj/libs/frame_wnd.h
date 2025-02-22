@@ -55,6 +55,8 @@ protected:
 	virtual long OnMCINotify(uint16, int32) { return 0; }
 	virtual long OnMMIONotify(uint16, int32) { return 0; }
 
+	void BeginWaitCursor() {}
+
 public:
 	void ShowWindow(int);
 	void UpdateWindow();

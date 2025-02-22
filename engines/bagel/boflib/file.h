@@ -202,6 +202,8 @@ public:
 	}
 };
 
+#define CFile CBofFile
+
 } // namespace Bagel
 
 #endif

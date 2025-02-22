@@ -1,0 +1,261 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "bagel/hodjnpodj/libs/dib_doc.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+CDibDoc::CDibDoc() {
+	m_hDIB = NULL;
+	m_palDIB = NULL;
+	m_sizeDoc = CSize(1, 1);     // dummy value to make CScrollView happy
+}
+
+CDibDoc::~CDibDoc() {
+	if (m_hDIB != NULL)
+		free(m_hDIB);
+	if (m_palDIB != NULL) {
+		(*m_palDIB).DeleteObject();
+		delete m_palDIB;
+	}
+}
+
+void CDibDoc::InitDIBData() {
+	if (m_palDIB != NULL) {
+		delete m_palDIB;
+		m_palDIB = NULL;
+	}
+	if (m_hDIB == NULL) {
+		return;
+	}
+
+#ifdef TODO
+	// Set up document size
+	LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL)m_hDIB);
+
+	if (::DIBWidth(lpDIB) > INT_MAX || ::DIBHeight(lpDIB) > INT_MAX)
+	{
+		::GlobalUnlock((HGLOBAL)m_hDIB);
+		free((HGLOBAL)m_hDIB);
+		m_hDIB = NULL;
+		return;
+	}
+
+	m_sizeDoc = CSize((int) ::DIBWidth(lpDIB), (int) ::DIBHeight(lpDIB));
+
+	::GlobalUnlock((HGLOBAL)m_hDIB);
+	// Create copy of palette
+	m_palDIB = new CPalette;
+	if (m_palDIB == NULL)
+	{
+		// we must be really low on memory
+		free((HGLOBAL)m_hDIB);
+		m_hDIB = NULL;
+		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
+		return;
+	}
+
+	if (::CreateDIBPalette(m_hDIB, m_palDIB) == NULL)
+	{
+		// DIB may not have a palette
+		delete m_palDIB;
+		m_palDIB = NULL;
+		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
+		return;
+	}
+#else
+	error("TODO: InitDIBData");
+#endif
+}
+
+
+bool CDibDoc::OpenResourceDocument(const int nResID) {
+#ifdef TODO
+	char	chResID[8];
+
+	DeleteContents();
+
+	sprintf(chResID, "#%d", nResID);
+	m_hDIB = ReadDIBResource(chResID);
+	if (m_hDIB != NULL)
+		InitDIBData();
+
+	if (m_hDIB == NULL)
+	{
+		char	buf[128];
+
+		sprintf(buf, "Unable to load artwork resource: %s", chResID);
+		ShowMemoryInfo(buf, "Internal Problem");
+		return FALSE;
+	}
+	SetPathName(chResID);
+	SetModifiedFlag(FALSE);     // start off with unmodified
+	return TRUE;
+#else
+	error("TODO: OpenResourceDocument");
+#endif
+}
+
+
+bool CDibDoc::OpenResourceDocument(const char *pszPathName) {
+#ifdef TODO
+	DeleteContents();
+
+	m_hDIB = ReadDIBResource(pszPathName);
+	if (m_hDIB != NULL)
+		InitDIBData();
+
+	if (m_hDIB == NULL)
+	{
+		char	buf[128];
+
+		sprintf(buf, "Unable to load artwork file: %s", pszPathName);
+		ShowMemoryInfo(buf, "Internal Problem");
+		return FALSE;
+	}
+	SetPathName(" ");
+	SetModifiedFlag(FALSE);     // start off with unmodified
+	return TRUE;
+#else
+	error("TODO: OpenResourceDocument");
+#endif
+}
+
+
+
+CPalette *CDibDoc::DetachPalette() {
+	CPalette *pMyPalette;
+
+	pMyPalette = m_palDIB;
+	m_palDIB = NULL;
+	return(pMyPalette);
+}
+
+
+bool CDibDoc::OpenDocument(const char *pszPathName) {
+#ifdef TODO
+	CFile file;
+	CFileException fe;
+	if (!file.Open(pszPathName, CFile::modeRead | CFile::shareDenyWrite, &fe))
+	{
+		char	buf[128];
+
+		sprintf(buf, "Unable to open artwork file: %s", pszPathName);
+		ShowMemoryInfo(buf, "Internal Problem");
+
+		ReportSaveLoadException(pszPathName, &fe,
+			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
+		return FALSE;
+	}
+
+	DeleteContents();
+	//	BeginWaitCursor();
+
+		// replace calls to Serialize with ReadDIBFile function
+	TRY
+	{
+		m_hDIB = ::ReadDIBFile(file);
+
+		if (m_hDIB == NULL) {
+			char	buf[128];
+
+			sprintf(buf,"Unable to load artwork file: %s",pszPathName);
+			ShowMemoryInfo(buf, "Internal Problem");
+		}
+	}
+		CATCH(CFileException, eLoad) {
+		file.Abort(); // will not throw an exception
+		//		EndWaitCursor();
+		ReportSaveLoadException(pszPathName, eLoad,
+			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
+		m_hDIB = NULL;
+		return FALSE;
+	}
+	END_CATCH
+
+		InitDIBData();
+	//	EndWaitCursor();
+
+	if (m_hDIB == NULL)
+	{
+		char	buf[128];
+
+		sprintf(buf, "Unable to load artwork file: %s", pszPathName);
+		ShowMemoryInfo(buf, "Internal Problem");
+		return FALSE;
+	}
+
+	SetPathName(pszPathName);
+	SetModifiedFlag(FALSE);     // start off with unmodified
+	return TRUE;
+#else
+	error("TODO: OpenDocument");
+#endif
+}
+
+
+bool CDibDoc::SaveDocument(const char *pszPathName) {
+#ifdef TODO
+	CFile file;
+	CFileException fe;
+
+	if (!file.Open(pszPathName, CFile::modeCreate |
+		CFile::modeReadWrite | CFile::shareExclusive, &fe))
+	{
+		ReportSaveLoadException(pszPathName, &fe,
+			TRUE, AFX_IDP_INVALID_FILENAME);
+		return FALSE;
+	}
+
+	// replace calls to Serialize with SaveDIB function
+	bool bSuccess = FALSE;
+	TRY
+	{
+		//		BeginWaitCursor();
+				bSuccess = ::SaveDIB(m_hDIB, file);
+				file.Close();
+	}
+		CATCH(CException, eSave) {
+		file.Abort(); // will not throw an exception
+		//		EndWaitCursor();
+		ReportSaveLoadException(pszPathName, eSave,
+			TRUE, AFX_IDP_FAILED_TO_SAVE_DOC);
+		return FALSE;
+	}
+	END_CATCH
+
+		//	EndWaitCursor();
+		SetModifiedFlag(FALSE);     // back to unmodified
+
+	return bSuccess;
+#else
+	error("TODO: SaveDocument");
+#endif
+}
+
+void CDibDoc::ReplaceHDIB(HDIB hDIB) {
+	free(m_hDIB);
+	m_hDIB = hDIB;
+}
+
+} // namespace HodjNPodj
+} // namespace Bagel

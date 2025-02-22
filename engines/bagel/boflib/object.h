@@ -30,6 +30,8 @@ public:
 	static bool isValidObject(const CBofObject *pObject) {
 		return true;
 	}
+
+	virtual void DeleteObject() {}
 };
 
 } // namespace Bagel
