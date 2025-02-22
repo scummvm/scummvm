@@ -202,7 +202,7 @@ MidiDriver_Worx_AdLib::~MidiDriver_Worx_AdLib() {
 	delete[] _instrumentBank;
 }
 
-uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
 	uint8 allocatedChannel = 0xFF;
 
 	_allocationMutex.lock();

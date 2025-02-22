@@ -208,7 +208,11 @@ void MidiDriver_Simon1_AdLib::disableMusicRhythmNotes() {
 	_musicRhythmNotesDisabled = true;
 }
 
-uint8 MidiDriver_Simon1_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_Simon1_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
+	// Use the regular allocation algorithm for rhythm instruments.
+	if (channel == MIDI_RHYTHM_CHANNEL)
+		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
+
 	// When allocating an OPL channel for playback of a note, the algorithm
 	// looks for the following types of channels:
 	// - An OPL channel already allocated to this source and MIDI channel that

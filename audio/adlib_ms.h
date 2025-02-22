@@ -965,12 +965,12 @@ protected:
 	 * 
 	 * @param channel The MIDI channel on which the note is played.
 	 * @param source The source playing the note.
-	 * @param instrumentId The ID of the instrument playing the note. Not used
+	 * @param instrumentInfo Data of the instrument playing the note. Not used
 	 * by the static channel allocation mode.
 	 * @return The number of the allocated OPL channel; 0xFF if allocation
 	 * failed (not possible using the dynamic channel allocation mode).
 	 */
-	virtual uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId);
+	virtual uint8 allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo);
 	/**
 	 * Determines which melodic channels are available based on the OPL chip
 	 * type and rhythm mode setting and sets _melodicChannels and

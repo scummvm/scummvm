@@ -130,7 +130,9 @@ void MidiDriver_M_AdLib::send(int8 source, uint32 b) {
 		oplChannel = 0xFF;
 		activeNote = nullptr;
 		// Allocate a melodic OPL channel.
-		oplChannel = allocateOplChannel(channel, source, 0);
+		InstrumentInfo instrumentInfo;
+		instrumentInfo = { };
+		oplChannel = allocateOplChannel(channel, source, instrumentInfo);
 		if (oplChannel != 0xFF)
 			activeNote = &_activeNotes[oplChannel];
 
@@ -293,7 +295,7 @@ void MidiDriver_M_AdLib::modulation(uint8 channel, uint8 modulation, uint8 sourc
 	writeRegister(OPL_REGISTER_BASE_LEVEL + registerOffset, modulation);
 }
 
-uint8 MidiDriver_M_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_M_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
 	// Allocation of M data channels to OPL output channels is simply 1 on 1.
 	return channel;
 }

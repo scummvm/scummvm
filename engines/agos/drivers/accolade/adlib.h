@@ -62,7 +62,7 @@ public:
 protected:
 	InstrumentInfo determineInstrument(uint8 channel, uint8 source, uint8 note) override;
 
-	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
+	uint8 allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) override;
 	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
 	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 

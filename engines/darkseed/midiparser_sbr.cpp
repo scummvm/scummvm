@@ -33,7 +33,7 @@ MidiParser_SBR::MidiParser_SBR(int8 source, bool sfx) : MidiParser_SMF(source), 
 
 	// SBR uses a fixed tempo.
 	_ppqn = 96;
-	setTempo(1318200);
+	setTempo(1318214);
 }
 
 void MidiParser_SBR::parseNextEvent(EventInfo &info) {

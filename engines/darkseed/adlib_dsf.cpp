@@ -108,13 +108,13 @@ void MidiDriver_DarkSeedFloppy_AdLib::loadInstrumentBank(uint8 *instrumentBankDa
 	}
 }
 
-uint8 MidiDriver_DarkSeedFloppy_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_DarkSeedFloppy_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
 	uint8 allocatedChannel = 0xFF;
 
 	_allocationMutex.lock();
 	_activeNotesMutex.lock();
 
-	if (instrumentId <= 0xE) {
+	if (instrumentInfo.instrumentId <= 0xE) {
 		// The first 15 instruments are rhythm instruments. These get assigned
 		// to the corresponding OPL rhythm instruments.
 		// Note: original code also processes instrument 0xF, leading to
@@ -122,7 +122,7 @@ uint8 MidiDriver_DarkSeedFloppy_AdLib::allocateOplChannel(uint8 channel, uint8 s
 
 		// The order of the rhythm instruments is flipped compared to the order
 		// in the _activeRhythmNotes array.
-		uint8 rhythmInstType = 4 - (instrumentId / 3);
+		uint8 rhythmInstType = 4 - (instrumentInfo.instrumentId / 3);
 		allocatedChannel = OPL_RHYTHM_INSTRUMENT_CHANNELS[rhythmInstType];
 		if (_activeRhythmNotes[rhythmInstType].channelAllocated && _activeRhythmNotes[rhythmInstType].source != source) {
 			// OPL rhythm instrument is already allocated

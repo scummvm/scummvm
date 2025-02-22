@@ -165,7 +165,7 @@ void MidiDriver_Accolade_AdLib::deinitSource(uint8 source) {
 	MidiDriver_ADLIB_Multisource::deinitSource(source);
 }
 
-uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
 	Common::StackLock lock(_allocationMutex);
 
 	if (_sources[source].type == SOURCE_TYPE_SFX) {
@@ -177,7 +177,7 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 				allocatedChannel = 6 - source;
 			} else {
 				// For OPL3, use the dynamic allocation algorithm.
-				allocatedChannel = MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
+				allocatedChannel = MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
 			}
 
 			_activeNotesMutex.lock();
@@ -202,6 +202,10 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 
 	// Channel allocation for music sources.
 	if (_oplType != OPL::Config::kOpl3) {
+		// Use the regular allocation algorithm for rhythm instruments.
+		if (channel == MIDI_RHYTHM_CHANNEL)
+			return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
+
 		// For OPL2, discard events for channels 6 and 7 and channels allocated
 		// for SFX.
 		if (channel >= 6 || _activeNotes[channel].channelAllocated)
@@ -211,7 +215,7 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 		return channel;
 	} else {
 		// For OPL3, use the dynamic allocation algorithm.
-		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
+		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
 	}
 }
 
@@ -232,7 +236,7 @@ void MidiDriver_Accolade_AdLib::loadSfxInstrument(uint8 source, byte *instrument
 	// Allocate a channel
 	programChange(0, 0, source);
 	InstrumentInfo instrument = determineInstrument(0, source, 0);
-	uint8 oplChannel = allocateOplChannel(0, source, instrument.instrumentId);
+	uint8 oplChannel = allocateOplChannel(0, source, instrument);
 
 	// Update the active note data.
 	ActiveNote *activeNote = &_activeNotes[oplChannel];
