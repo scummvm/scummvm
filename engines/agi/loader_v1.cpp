@@ -75,7 +75,7 @@ void AgiLoader_v1::init() {
 		delete stream;
 
 		if (success) {
-			debugC(3, "AgiLoader_v1: disk one found: %s", imageFile.baseName().c_str());
+			debugC(3, kDebugLevelResources, "AgiLoader_v1: disk one found: %s", imageFile.baseName().c_str());
 			_imageFiles.push_back(imageFile.baseName());
 			if (_vm->getVersion() < 0x2001) {
 				// the first disk contains volumes 0 and 1.
@@ -121,7 +121,7 @@ void AgiLoader_v1::init() {
 		delete stream;
 
 		if (magic == 0x1234 && volume == 2) {
-			debugC(3, "AgiLoader_v1: disk two found: %s", imageFile.baseName().c_str());
+			debugC(3, kDebugLevelResources, "AgiLoader_v1: disk two found: %s", imageFile.baseName().c_str());
 			_imageFiles.push_back(imageFile.baseName());
 			_volumes.push_back(AgiDiskVolume(_imageFiles.size() - 1, 0));
 			break;

@@ -79,7 +79,7 @@ void GalLoader_A2::init() {
 
 		// read image as disk one
 		if (readDiskOne(*stream, logicDir)) {
-			debugC(3, "GalLoader_A2: disk one found: %s", imageFile.baseName().c_str());
+			debugC(3, kDebugLevelResources, "GalLoader_A2: disk one found: %s", imageFile.baseName().c_str());
 			_disks.resize(GAL_A2_DISK_COUNT);
 			_disks[0] = stream;
 			break;

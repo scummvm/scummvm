@@ -85,7 +85,7 @@ void AgiLoader_A2::init() {
 		// read image as disk one
 		diskCount = readDiskOne(*stream, volumeMap);
 		if (diskCount > 0) {
-			debugC(3, "AgiLoader_A2: disk one found: %s", imageFile.baseName().c_str());
+			debugC(3, kDebugLevelResources, "AgiLoader_A2: disk one found: %s", imageFile.baseName().c_str());
 			_disks.resize(diskCount);
 			_disks[0] = stream;
 			break;
