@@ -789,6 +789,12 @@ int movementZero(Actor *actor) {
 		}
 	}
 
+	if (_G(eyeballs)) {
+		nextFrame(actor);
+		actor->_dir = oldDir;
+		return d;
+	}
+
 	actor->_moveCounter = 5;
 	actor->_nextFrame = 0;
 	actor->_dir = oldDir;

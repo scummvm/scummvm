@@ -207,6 +207,14 @@ bool GameContent::tick() {
 		break;
 	}
 
+	if (_G(eyeballs) == 1) { // eyeballs movement animation
+		if (!_G(setup).f25) {
+			_G(thor)->_dir = 0;
+		} else {
+			_G(thor)->_dir = 1;
+		}
+	}
+
 	checkForAreaChange();
 
 	// Check for end of game area
@@ -499,8 +507,10 @@ void GameContent::thorDies() {
 void GameContent::spinThor() {
 	static const byte DIRS[] = {0, 2, 1, 3};
 
-	_G(thor)->_dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
-	_G(thor)->_lastDir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+	if (!_G(eyeballs)) {
+		_G(thor)->_dir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+		_G(thor)->_lastDir = DIRS[(_deathCtr / SPIN_INTERVAL) % 4];
+	}
 
 	++_deathCtr;
 }

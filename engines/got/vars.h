@@ -203,6 +203,7 @@ public:
 	int _currentArea = 0;
 	bool _thorSpecialFlag = false;
 	byte _explosionRow = 0;
+	bool _eyeballs = 0;
 };
 
 #define _G(X) (g_vars->_##X)
