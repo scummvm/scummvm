@@ -85,7 +85,7 @@ static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
 }
 #elif SDL_VERSION_ATLEAST(2, 0, 0)
 static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
-	return SDL_GL_GetAttribute(attr, value) != 0;
+	return SDL_GL_GetAttribute(attr, value) == 0;
 }
 #endif
 
