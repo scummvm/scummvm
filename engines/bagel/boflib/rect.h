@@ -42,6 +42,7 @@ public:
 	CBofRect(const CBofRect &srcRect);
 	CBofRect(const CBofPoint &point, const CBofSize &size);
 	CBofRect(const CBofPoint &pttopLeft, const CBofPoint &ptBottomRight);
+	virtual ~CBofRect() {}
 
 	// Attributes
 	int width() const;

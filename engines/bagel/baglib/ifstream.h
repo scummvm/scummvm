@@ -40,6 +40,7 @@ private:
 
 public:
 	CBagIfstream(char *buffer, int length);
+	virtual ~CBagIfstream() {}
 
 	int getCh();
 	int getLine(char *buffer, int length);

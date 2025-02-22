@@ -32,6 +32,7 @@ class CBofSize : public StSize, public CBofObject {
 public:
 	// Constructors
 	CBofSize();
+	virtual ~CBofSize() {}
 	CBofSize(int initCX, int initCY);
 	CBofSize(const StSize &stSize);
 	CBofSize(const CBofSize &cSize);

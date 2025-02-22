@@ -43,6 +43,7 @@ public:
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);
 	}
+	virtual ~CBofPoint() {}
 
 	void setWinPoint(const POINT *pPoint);
 	POINT GetWinPoint() const;

@@ -58,6 +58,7 @@ protected:
 	void BeginWaitCursor() {}
 
 public:
+	virtual ~CFrameWnd() {}
 	void ShowWindow(int);
 	void UpdateWindow();
 	void SetActiveWindow();
