@@ -80,7 +80,7 @@ bool File::open(SeekableReadStream *stream, const String &name) {
 		_handle = stream;
 		_name = name;
 	} else {
-		debug(2, "File::open: opening '%s' failed", name.c_str());
+		debug(8, "File::open: opening '%s' failed", name.c_str());
 	}
 	return _handle != nullptr;
 }
