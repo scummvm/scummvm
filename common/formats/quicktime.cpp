@@ -259,7 +259,7 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 		total_size += 8;
 		a.offset += 8;
-		debug(4, "type: %08x  %.4s  sz: %x %x %x", a.type, tag2str(a.type), a.size, atom.size, total_size);
+		debugC(4, kDebugLevelGVideo, "type: %08x  %.4s  sz: %x %x %x", a.type, tag2str(a.type), a.size, atom.size, total_size);
 
 		if (a.size == 1) { // 64 bit extended size
 			warning("64 bit extended size is not supported in QuickTime");
@@ -284,10 +284,10 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 		if (a.size + (uint32)_fd->pos() > (uint32)_fd->size()) {
 			_fd->seek(_fd->size());
-			debug(0, "Skipping junk found at the end of the QuickTime file");
+			debugC(0, kDebugLevelGVideo, "Skipping junk found at the end of the QuickTime file");
 			return 0;
 		} else if (_parseTable[i].type == 0) { // skip leaf atom data
-			debug(0, ">>> Skipped [%s] (%08x) at %d (0x%x)", tag2str(a.type), a.type, (uint32)_fd->pos(), (uint32)_fd->pos());
+			debugC(0, kDebugLevelGVideo, ">>> Skipped [%s] (%08x) at %d (0x%x)", tag2str(a.type), a.type, (uint32)_fd->pos(), (uint32)_fd->pos());
 
 			_fd->seek(a.size, SEEK_CUR);
 		} else {
@@ -391,7 +391,7 @@ int QuickTimeParser::readMVHD(Atom atom) {
 	}
 
 	_timeScale = _fd->readUint32BE(); // time scale
-	debug(0, "time scale = %i\n", _timeScale);
+	debugC(0, kDebugLevelGVideo, "time scale = %i\n", _timeScale);
 
 	// duration
 	_duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE();
@@ -412,8 +412,8 @@ int QuickTimeParser::readMVHD(Atom atom) {
 	_scaleFactorX = Rational(0x10000, xMod);
 	_scaleFactorY = Rational(0x10000, yMod);
 
-	_scaleFactorX.debugPrint(1, "readMVHD(): scaleFactorX =");
-	_scaleFactorY.debugPrint(1, "readMVHD(): scaleFactorY =");
+	_scaleFactorX.debugPrintC(1, kDebugLevelGVideo, "readMVHD(): scaleFactorX =");
+	_scaleFactorY.debugPrintC(1, kDebugLevelGVideo, "readMVHD(): scaleFactorY =");
 
 	_fd->readUint32BE(); // preview time
 	_fd->readUint32BE(); // preview duration
@@ -487,8 +487,8 @@ int QuickTimeParser::readTKHD(Atom atom) {
 	track->scaleFactorX = Rational(0x10000, xMod);
 	track->scaleFactorY = Rational(0x10000, yMod);
 
-	track->scaleFactorX.debugPrint(1, "readTKHD(): scaleFactorX =");
-	track->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
+	track->scaleFactorX.debugPrintC(1, kDebugLevelGVideo, "readTKHD(): scaleFactorX =");
+	track->scaleFactorY.debugPrintC(1, kDebugLevelGVideo, "readTKHD(): scaleFactorY =");
 
 	// these are fixed-point, 16:16
 	//_fd->readUint32BE() >> 16; // track width
@@ -507,7 +507,7 @@ int QuickTimeParser::readELST(Atom atom) {
 	uint32 editCount = _fd->readUint32BE();
 	track->editList.resize(editCount);
 
-	debug(2, "Track %d edit list count: %d", _tracks.size() - 1, editCount);
+	debugC(2, kDebugLevelGVideo, "Track %d edit list count: %d", _tracks.size() - 1, editCount);
 
 	uint32 offset = 0;
 
@@ -516,8 +516,8 @@ int QuickTimeParser::readELST(Atom atom) {
 		track->editList[i].mediaTime = _fd->readSint32BE();
 		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);
 		track->editList[i].timeOffset = offset;
-		debugN(3, "\tDuration = %d (Offset = %d), Media Time = %d, ", track->editList[i].trackDuration, offset, track->editList[i].mediaTime);
-		track->editList[i].mediaRate.debugPrint(3, "Media Rate =");
+		debugCN(3, kDebugLevelGVideo, "\tDuration = %d (Offset = %d), Media Time = %d, ", track->editList[i].trackDuration, offset, track->editList[i].mediaTime);
+		track->editList[i].mediaRate.debugPrintC(3, kDebugLevelGVideo, "Media Rate =");
 		offset += track->editList[i].trackDuration;
 	}
 
@@ -534,13 +534,13 @@ int QuickTimeParser::readHDLR(Atom atom) {
 	uint32 ctype = _fd->readUint32BE();
 	uint32 type = _fd->readUint32BE(); // component subtype
 
-	debug(0, "ctype= %s (0x%08lx)", tag2str(ctype), (long)ctype);
-	debug(0, "stype= %s", tag2str(type));
+	debugC(0, kDebugLevelGVideo, "ctype= %s (0x%08lx)", tag2str(ctype), (long)ctype);
+	debugC(0, kDebugLevelGVideo, "stype= %s", tag2str(type));
 
 	if (ctype == MKTAG('m', 'h', 'l', 'r')) // MOV
-		debug(0, "MOV detected");
+		debugC(0, kDebugLevelGVideo, "MOV detected");
 	else if (ctype == 0)
-		debug(0, "MPEG-4 detected");
+		debugC(0, kDebugLevelGVideo, "MPEG-4 detected");
 
 	if (type == MKTAG('v', 'i', 'd', 'e'))
 		track->codecType = CODEC_TYPE_VIDEO;
@@ -613,7 +613,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		debug(0, "sampledesc %d: size=%d 4CC= %s codec_type=%d", i, size, tag2str(format), track->codecType);
+		debugC(0, kDebugLevelGVideo, "sampledesc %d: size=%d 4CC= %s codec_type=%d", i, size, tag2str(format), track->codecType);
 
 		track->sampleDescs.push_back(readSampleDesc(track, format, size - 16));
 
@@ -641,7 +641,7 @@ int QuickTimeParser::readSTSC(Atom atom) {
 
 	track->sampleToChunkCount = _fd->readUint32BE();
 
-	debug(0, "track[%i].stsc.entries = %i", _tracks.size() - 1, track->sampleToChunkCount);
+	debugC(0, kDebugLevelGVideo, "track[%i].stsc.entries = %i", _tracks.size() - 1, track->sampleToChunkCount);
 
 	track->sampleToChunk = new SampleToChunkEntry[track->sampleToChunkCount];
 
@@ -666,7 +666,7 @@ int QuickTimeParser::readSTSS(Atom atom) {
 
 	track->keyframeCount = _fd->readUint32BE();
 
-	debug(0, "keyframeCount = %d", track->keyframeCount);
+	debugC(0, kDebugLevelGVideo, "keyframeCount = %d", track->keyframeCount);
 
 	track->keyframes = new uint32[track->keyframeCount];
 
@@ -675,7 +675,7 @@ int QuickTimeParser::readSTSS(Atom atom) {
 
 	for (uint32 i = 0; i < track->keyframeCount; i++) {
 		track->keyframes[i] = _fd->readUint32BE() - 1; // Adjust here, the frames are based on 1
-		debug(6, "keyframes[%d] = %d", i, track->keyframes[i]);
+		debugC(6, kDebugLevelGVideo, "keyframes[%d] = %d", i, track->keyframes[i]);
 
 	}
 	return 0;
@@ -690,7 +690,7 @@ int QuickTimeParser::readSTSZ(Atom atom) {
 	track->sampleSize = _fd->readUint32BE();
 	track->sampleCount = _fd->readUint32BE();
 
-	debug(5, "sampleSize = %d sampleCount = %d", track->sampleSize, track->sampleCount);
+	debugC(5, kDebugLevelGVideo, "sampleSize = %d sampleCount = %d", track->sampleSize, track->sampleCount);
 
 	if (track->sampleSize)
 		return 0; // there isn't any table following
@@ -702,7 +702,7 @@ int QuickTimeParser::readSTSZ(Atom atom) {
 
 	for(uint32 i = 0; i < track->sampleCount; i++) {
 		track->sampleSizes[i] = _fd->readUint32BE();
-		debug(6, "sampleSizes[%d] = %d", i, track->sampleSizes[i]);
+		debugC(6, kDebugLevelGVideo, "sampleSizes[%d] = %d", i, track->sampleSizes[i]);
 	}
 
 	return 0;
@@ -718,13 +718,13 @@ int QuickTimeParser::readSTTS(Atom atom) {
 	track->timeToSampleCount = _fd->readUint32BE();
 	track->timeToSample = new TimeToSampleEntry[track->timeToSampleCount];
 
-	debug(0, "track[%d].stts.entries = %d", _tracks.size() - 1, track->timeToSampleCount);
+	debugC(0, kDebugLevelGVideo, "track[%d].stts.entries = %d", _tracks.size() - 1, track->timeToSampleCount);
 
 	for (int32 i = 0; i < track->timeToSampleCount; i++) {
 		track->timeToSample[i].count = _fd->readUint32BE();
 		track->timeToSample[i].duration = _fd->readUint32BE();
 
-		debug(1, "\tCount = %d, Duration = %d", track->timeToSample[i].count, track->timeToSample[i].duration);
+		debugC(1, kDebugLevelGVideo, "\tCount = %d, Duration = %d", track->timeToSample[i].count, track->timeToSample[i].duration);
 
 		totalSampleCount += track->timeToSample[i].count;
 	}
@@ -857,7 +857,7 @@ int QuickTimeParser::readESDS(Atom atom) {
 
 	sampleDesc->_extraData = _fd->readStream(length);
 
-	debug(0, "MPEG-4 object type = %02x", sampleDesc->_objectTypeMP4);
+	debugC(0, kDebugLevelGVideo, "MPEG-4 object type = %02x", sampleDesc->_objectTypeMP4);
 	return 0;
 }
 
@@ -1008,12 +1008,12 @@ int QuickTimeParser::readDREF(Atom atom) {
 				track->filename = _fd->readString('\0', filenameSize);
 				_fd->seek(63 - filenameSize, SEEK_CUR);
 				_fd->seek(16, SEEK_CUR);
-				debug(5, "volume: %s, filename: %s", track->volume.c_str(), track->filename.c_str());
+				debugC(5, kDebugLevelGVideo, "volume: %s, filename: %s", track->volume.c_str(), track->filename.c_str());
 
 				track->nlvlFrom = _fd->readSint16BE();
 				track->nlvlTo = _fd->readSint16BE();
 				_fd->seek(16, SEEK_CUR);
-				debug(5, "nlvlFrom: %d, nlvlTo: %d", track->nlvlFrom, track->nlvlTo);
+				debugC(5, kDebugLevelGVideo, "nlvlFrom: %d, nlvlTo: %d", track->nlvlFrom, track->nlvlTo);
 
 				for (int16 subType = 0; subType != -1 && _fd->pos() < endPos;) {
 					subType = _fd->readSint16BE();
@@ -1024,10 +1024,10 @@ int QuickTimeParser::readDREF(Atom atom) {
 						if (track->path.substr(0, volumeSize) == track->volume) {
 							track->path = track->path.substr(volumeSize);
 						}
-						debug(5, "path: %s", track->path.c_str());
+						debugC(5, kDebugLevelGVideo, "path: %s", track->path.c_str());
 					} else if (subType == 0) {
 						track->directory = _fd->readString('\0', subTypeSize);
-						debug(5, "directory: %s", track->directory.c_str());
+						debugC(5, kDebugLevelGVideo, "directory: %s", track->directory.c_str());
 					} else {
 						_fd->seek(subTypeSize, SEEK_CUR);
 					}
