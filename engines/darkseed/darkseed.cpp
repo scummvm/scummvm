@@ -403,6 +403,12 @@ void DarkseedEngine::syncSoundSettings() {
 	_sound->syncSoundSettings();
 }
 
+void DarkseedEngine::pauseEngineIntern(bool pause) {
+	_sound->pauseMusic(pause);
+
+	Engine::pauseEngineIntern(pause);
+}
+
 static constexpr uint8 walkToDirTbl[] = {
 	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
 	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,

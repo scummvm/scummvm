@@ -79,7 +79,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FLOPPY_MUSIC)
 	},
 	{	// 1.51 according to DS.BAT, 1.5P according to intro
 		"darkseed",
@@ -88,7 +88,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FLOPPY_MUSIC)
 	},
 	{
 		"darkseed",
@@ -97,7 +97,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FLOPPY_MUSIC)
 	},
 {
 		"darkseed",
@@ -106,7 +106,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FLOPPY_MUSIC)
 	},
 {
 		"darkseed",
@@ -115,7 +115,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FLOPPY_MUSIC)
 	},
 	{
 		"darkseed",

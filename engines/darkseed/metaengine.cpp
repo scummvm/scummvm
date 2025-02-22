@@ -41,6 +41,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_FLOPPY_MUSIC,
+		{
+			_s("Use floppy version music"),
+			_s("Use the music from the floppy version. The floppy version's music files must be copied to the SOUND directory."),
+			"use_floppy_music",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

@@ -133,8 +133,8 @@ static constexpr char sfxCDFilenameTbl[][14] = {
 };
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
-	// TODO Add config setting for CD version with floppy music
-	_useFloppyMusic = !g_engine->isCdVersion();
+	bool floppyMusicSetting = ConfMan.hasKey("use_floppy_music") ? ConfMan.getBool("use_floppy_music") : false;
+	_useFloppyMusic = !g_engine->isCdVersion() || floppyMusicSetting;
 	_musicPlayer = new MusicPlayer(g_engine, _useFloppyMusic);
 	_didSpeech.resize(978);
 	resetSpeech();
@@ -145,15 +145,16 @@ Sound::~Sound() {
 }
 
 int Sound::init() {
-	Common::File file;
-	Common::Path path = Common::Path("tos1.sit");
-	if (file.open(path)) {
-		_musicPlayer->loadTosInstrumentBankData(&file, (int32)file.size());
+	if (_useFloppyMusic) {
+		Common::File file;
+		Common::Path path = g_engine->isCdVersion() ? Common::Path("sound").join("tos1.sit") : Common::Path("tos1.sit");
+		if (file.open(path)) {
+			_musicPlayer->loadTosInstrumentBankData(&file, (int32)file.size());
+		} else {
+			debug("Failed to load TOS instrument bank data %s", path.toString().c_str());
+		}
+		file.close();
 	}
-	else {
-		debug("Failed to load TOS instrument bank data %s", path.toString().c_str());
-	}
-	file.close();
 
 	return _musicPlayer->open();
 }
@@ -231,8 +232,8 @@ void Sound::playMusic(Common::String const &musicFilename, Common::String const 
 	Common::Path path;
 	if (_useFloppyMusic) {
 		if (instrBankFilename != nullptr) {
-			debug("Loading instrument bank: %s", instrBankFilename->c_str());
-			path = Common::Path(instrBankFilename->c_str());
+			path = g_engine->isCdVersion() ? Common::Path("sound").join(instrBankFilename->c_str()) : Common::Path(instrBankFilename->c_str());
+			debug("Loading instrument bank: %s", path.toString().c_str());
 			if (!file.open(path)) {
 				debug("Failed to load %s", path.toString().c_str());
 				return;
@@ -245,12 +246,8 @@ void Sound::playMusic(Common::String const &musicFilename, Common::String const 
 			_musicPlayer->loadTosInstrumentBank();
 		}
 	}
-	debug("Loading music: %s", musicFilename.c_str());
-	if (_useFloppyMusic) {
-		path = Common::Path(musicFilename);
-	} else {
-		path = Common::Path("sound").join(musicFilename);
-	}
+	path = g_engine->isCdVersion() ? Common::Path("sound").join(musicFilename) : Common::Path(musicFilename);
+	debug("Loading music: %s", path.toString().c_str());
 	if (!file.open(path)) {
 		debug("Failed to load %s", path.toString().c_str());
 		return;
@@ -263,6 +260,10 @@ void Sound::playMusic(Common::String const &musicFilename, Common::String const 
 
 void Sound::stopMusic() {
 	_musicPlayer->stop();
+}
+
+void Sound::pauseMusic(bool pause) {
+	_musicPlayer->pause(pause);
 }
 
 void Sound::killAllSound() {

@@ -39,6 +39,7 @@ extern const PlainGameDescriptor darkseedGames[];
 extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FLOPPY_MUSIC GUIO_GAMEOPTIONS2
 
 } // End of namespace Darkseed
 

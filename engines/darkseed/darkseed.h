@@ -167,6 +167,7 @@ public:
 	void waitForSpeechOrSfx();
 
 	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;

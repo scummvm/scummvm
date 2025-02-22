@@ -84,6 +84,7 @@ public:
 	void playMusic(StartMusicId musicId);
 	void playMusic(Common::String const &filename, Common::String const *instrBankFilename = nullptr, uint8 priority = 0xFF, bool loop = false);
 	void stopMusic();
+	void pauseMusic(bool pause);
 	void playSfx(uint8 sfxId, int unk1, int unk2);
 	void stopSfx();
 	void syncSoundSettings();
