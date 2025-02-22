@@ -26,10 +26,6 @@
 
 namespace Immortal {
 
-enum ImmortalDebugChannels {
-	kDebugTest = 1 << 0
-};
-
 extern const PlainGameDescriptor immortalGames[];
 extern const ADGameDescription gameDescriptions[];
 

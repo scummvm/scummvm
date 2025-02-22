@@ -92,8 +92,8 @@ const unsigned int kNumPersonTexts = 1026;
 
 // Engine Debug Flags
 enum {
-	kDebugAnimation = (1 << 0),
-	kDebugSaveLoad = (1 << 1)
+	kDebugAnimation = 1,
+	kDebugSaveLoad,
 };
 
 struct DreamWebGameDescription;

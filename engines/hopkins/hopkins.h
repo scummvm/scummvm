@@ -71,8 +71,8 @@ enum HOPKINSAction {
 };
 
 enum HopkinsDebugChannels {
-	kDebugPath     = 1 << 0,
-	kDebugGraphics = 1 << 1
+	kDebugPath = 1,
+	kDebugGraphics,
 };
 
 /**

@@ -26,11 +26,6 @@
 
 #include "kingdom/kingdom.h"
 
-static const DebugChannelDef debugFlagList[] = {
-	{Kingdom::kDebugGeneral, "general", "General debug level"},
-	DEBUG_CHANNEL_END
-};
-
 static const PlainGameDescriptor kingdomGames[] = {
 	{"kingdom", "Kingdom: The Far Reaches"},
 	{nullptr, nullptr}
@@ -103,10 +98,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Kingdom: The far Reaches (C) 1995 Virtual Image Productions";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 

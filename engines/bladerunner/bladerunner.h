@@ -56,9 +56,9 @@ struct ADGameDescription;
 namespace BladeRunner {
 
 enum DebugLevels {
-	kDebugScript = 1 << 0,
-	kDebugSound = 1 << 1,
-	kDebugAnimation = 1 << 2
+	kDebugScript = 1,
+	kDebugSound,
+	kDebugAnimation,
 };
 
 class Actor;

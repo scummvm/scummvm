@@ -65,9 +65,9 @@ class DATSeekableStream;
 
 // Engine Debug Flags
 enum {
-	kDebugFile     = (1 << 0),
-	kDebugVariable = (1 << 1),
-	kDebugSaveLoad = (1 << 2)
+	kDebugFile = 1,
+	kDebugVariable,
+	kDebugSaveLoad,
 };
 
 enum DragStatus {

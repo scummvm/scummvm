@@ -70,11 +70,11 @@ class SeekableAudioStream;
 namespace AGOS {
 
 enum {
-	kDebugOpcode = 1 << 0,
-	kDebugVGAOpcode = 1 << 1,
-	kDebugSubroutine = 1 << 2,
-	kDebugVGAScript = 1 << 3,
-	kDebugImageDump = 1 << 4
+	kDebugOpcode = 1,
+	kDebugVGAOpcode,
+	kDebugSubroutine,
+	kDebugVGAScript,
+	kDebugImageDump,
 };
 
 enum AGOSAction {

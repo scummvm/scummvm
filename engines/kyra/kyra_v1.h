@@ -93,17 +93,17 @@ struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
 // in the future we maybe merge some flags  and/or create new ones
 enum DebugLevels {
-	kDebugLevelScriptFuncs = 1 <<  0, ///< debug level for o#_* functions
-	kDebugLevelScript      = 1 <<  1, ///< debug level for "EMCInterpreter" functions
-	kDebugLevelSprites     = 1 <<  2, ///< debug level for "Sprites" functions
-	kDebugLevelScreen      = 1 <<  3, ///< debug level for "Screen" functions
-	kDebugLevelSound       = 1 <<  4, ///< debug level for "Sound" functions
-	kDebugLevelAnimator    = 1 <<  5, ///< debug level for "ScreenAnimator" functions
-	kDebugLevelMain        = 1 <<  6, ///< debug level for common "KyraEngine(_v#)" functions && "TextDisplayer" functions
-	kDebugLevelGUI         = 1 <<  7, ///< debug level for "KyraEngine*" gui functions
-	kDebugLevelSequence    = 1 <<  8, ///< debug level for "SeqPlayer" functions
-	kDebugLevelMovie       = 1 <<  9, ///< debug level for movie specific funtions
-	kDebugLevelTimer       = 1 << 10  ///< debug level for "TimerManager" functions
+	kDebugLevelScriptFuncs = 1, ///< debug level for o#_* functions
+	kDebugLevelScript,			///< debug level for "EMCInterpreter" functions
+	kDebugLevelSprites,			///< debug level for "Sprites" functions
+	kDebugLevelScreen,			///< debug level for "Screen" functions
+	kDebugLevelSound,			///< debug level for "Sound" functions
+	kDebugLevelAnimator,		///< debug level for "ScreenAnimator" functions
+	kDebugLevelMain,		 	///< debug level for common "KyraEngine(_v#)" functions && "TextDisplayer" functions
+	kDebugLevelGUI,				///< debug level for "KyraEngine*" gui functions
+	kDebugLevelSequence,		///< debug level for "SeqPlayer" functions
+	kDebugLevelMovie,			///< debug level for movie specific funtions
+	kDebugLevelTimer,			///< debug level for "TimerManager" functions
 };
 
 enum AudioResourceSet {

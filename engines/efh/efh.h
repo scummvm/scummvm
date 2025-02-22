@@ -59,11 +59,11 @@ static const uint8 kSavegameVersion = 1;
 #define EFH_SAVE_HEADER MKTAG('E', 'F', 'H', 'S')
 
 enum EfhDebugChannels {
-	kDebugEngine = 1 << 0,
-	kDebugUtils = 1 << 1,
-	kDebugGraphics = 1 << 2,
-	kDebugScript = 1 << 3,
-	kDebugFight = 1 << 4
+	kDebugEngine = 1,
+	kDebugUtils,
+	kDebugGraphics,
+	kDebugScript,
+	kDebugFight,
 };
 
 class EfhGraphicsStruct {

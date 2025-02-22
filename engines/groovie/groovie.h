@@ -58,19 +58,17 @@ class Script;
 class VideoPlayer;
 
 enum DebugLevels {
-	kDebugVideo = 1 << 0,
-	kDebugResource = 1 << 1,
-	kDebugScript = 1 << 2,
-	kDebugUnknown = 1 << 3,
-	kDebugHotspots = 1 << 4,
-	kDebugCursor = 1 << 5,
-	kDebugMIDI = 1 << 6,
-	kDebugScriptvars = 1 << 7,
-	kDebugLogic = 1 << 8,
-	kDebugFast = 1 << 9
-	//kDebugTlcGame = 1 << 10
-	// the current limitation is 32 debug levels (1 << 31 is the last one)
-	// but some are used by system, so avoid high values.
+	kDebugVideo = 1,
+	kDebugResource,
+	kDebugScript,
+	kDebugUnknown,
+	kDebugHotspots,
+	kDebugCursor,
+	kDebugMIDI,
+	kDebugScriptvars,
+	kDebugLogic,
+	kDebugFast,
+	//kDebugTlcGame,
 };
 
 /**

@@ -151,17 +151,17 @@ enum AGIErrors {
 };
 
 enum kDebugLevels {
-	kDebugLevelMain =      1 << 0,
-	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites =   1 << 2,
-	kDebugLevelPictures =  1 << 3,
-	kDebugLevelInventory = 1 << 4,
-	kDebugLevelInput =     1 << 5,
-	kDebugLevelMenu =      1 << 6,
-	kDebugLevelScripts =   1 << 7,
-	kDebugLevelSound =     1 << 8,
-	kDebugLevelText =      1 << 9,
-	kDebugLevelSavegame =  1 << 10
+	kDebugLevelMain = 1,
+	kDebugLevelResources,
+	kDebugLevelSprites,
+	kDebugLevelPictures,
+	kDebugLevelInventory,
+	kDebugLevelInput,
+	kDebugLevelMenu,
+	kDebugLevelScripts,
+	kDebugLevelSound,
+	kDebugLevelText,
+	kDebugLevelSavegame,
 };
 
 /**

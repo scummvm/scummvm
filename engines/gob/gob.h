@@ -69,7 +69,7 @@
  * - Nathan Vacances CM1/CE2
  * - The Bizarre Adventures of Woodruff and the Schnibble
  * - Fascination
- * - Inca II: Nations of Immortality 
+ * - Inca II: Nations of Immortality
  * - Urban Runner
  * - Bambou le sauveur de la jungle
  * - Playtoons 1 Uncle Archibald
@@ -146,18 +146,18 @@ enum EndiannessMethod {
 };
 
 enum {
-	kDebugFuncOp     = 1 <<  0,
-	kDebugDrawOp     = 1 <<  1,
-	kDebugGobOp      = 1 <<  2,
-	kDebugSound      = 1 <<  3,
-	kDebugExpression = 1 <<  4,
-	kDebugGameFlow   = 1 <<  5,
-	kDebugFileIO     = 1 <<  6,
-	kDebugSaveLoad   = 1 <<  7,
-	kDebugGraphics   = 1 <<  8,
-	kDebugVideo      = 1 <<  9,
-	kDebugHotspots   = 1 << 10,
-	kDebugDemo       = 1 << 11
+	kDebugFuncOp = 1,
+	kDebugDrawOp,
+	kDebugGobOp,
+	kDebugSound,
+	kDebugExpression,
+	kDebugGameFlow,
+	kDebugFileIO,
+	kDebugSaveLoad,
+	kDebugGraphics,
+	kDebugVideo,
+	kDebugHotspots,
+	kDebugDemo,
 };
 
 class GobEngine : public Engine {

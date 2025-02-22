@@ -34,7 +34,7 @@ namespace Dgds {
 
 /** Engine debug levels */
 enum kSciDebugLevels {
-    kDebugLevelSound = 1 << 7,
+    kDebugLevelSound = 1,
 };
 
 

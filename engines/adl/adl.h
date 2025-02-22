@@ -66,7 +66,7 @@ class GraphicsMan;
 class ScriptEnv;
 
 enum kDebugChannels {
-	kDebugChannelScript = 1 << 0
+	kDebugChannelScript = 1,
 };
 
 enum ADLAction {
