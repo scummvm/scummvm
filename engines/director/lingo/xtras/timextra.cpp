@@ -97,7 +97,6 @@ void TimextraXtra::open(ObjectType type, const Common::Path &path) {
 void TimextraXtra::close(ObjectType type) {
     TimextraXtraObject::cleanupMethods();
     g_lingo->_globalvars[xlibName] = Datum();
-
 }
 
 void TimextraXtra::m_new(int nargs) {
