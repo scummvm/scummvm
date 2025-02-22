@@ -21,6 +21,7 @@
 
 #include "common/rect.h"
 #include "common/serializer.h"
+#include "graphics/managed_surface.h"
 
 #ifndef BAGEL_HODJNPODJ_MFC_TYPES_H
 #define BAGEL_HODJNPODJ_MFC_TYPES_H
@@ -38,7 +39,7 @@ typedef uint UINT;
 #define FALSE false
 
 typedef void *HANDLE;
-typedef void *HDIB;
+typedef Graphics::ManagedSurface *HDIB;
 typedef void *HDC;
 typedef Common::Rect *LPRECT;
 typedef Common::Serializer CDumpContext;

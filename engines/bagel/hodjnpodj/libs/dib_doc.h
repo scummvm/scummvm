@@ -48,10 +48,11 @@ public:
 		return m_sizeDoc;
 	}
 
+	void SetModifiedFlag(bool) {}
+	void SetPathName(const char *) {}
 	// Operations
 public:
 	void ReplaceHDIB(HDIB hDIB);
-	void InitDIBData();
 
 	// Implementation
 public:
@@ -62,8 +63,8 @@ public:
 	virtual bool OpenResourceDocument(const char *pszPathName);
 
 private:
-	HDIB m_hDIB;
-	CPalette *m_palDIB;
+	HDIB m_hDIB = nullptr;
+	CPalette *m_palDIB = nullptr;
 	CSize m_sizeDoc;
 
 	// Generated message map functions

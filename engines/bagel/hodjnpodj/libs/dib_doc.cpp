@@ -19,74 +19,27 @@
  *
  */
 
+#include "common/file.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 CDibDoc::CDibDoc() {
-	m_hDIB = NULL;
-	m_palDIB = NULL;
+	m_hDIB = nullptr;
+	m_palDIB = nullptr;
 	m_sizeDoc = CSize(1, 1);     // dummy value to make CScrollView happy
 }
 
 CDibDoc::~CDibDoc() {
-	if (m_hDIB != NULL)
+	if (m_hDIB != nullptr)
 		free(m_hDIB);
-	if (m_palDIB != NULL) {
+	if (m_palDIB != nullptr) {
 		(*m_palDIB).DeleteObject();
 		delete m_palDIB;
 	}
 }
-
-void CDibDoc::InitDIBData() {
-	if (m_palDIB != NULL) {
-		delete m_palDIB;
-		m_palDIB = NULL;
-	}
-	if (m_hDIB == NULL) {
-		return;
-	}
-
-#ifdef TODO
-	// Set up document size
-	LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL)m_hDIB);
-
-	if (::DIBWidth(lpDIB) > INT_MAX || ::DIBHeight(lpDIB) > INT_MAX)
-	{
-		::GlobalUnlock((HGLOBAL)m_hDIB);
-		free((HGLOBAL)m_hDIB);
-		m_hDIB = NULL;
-		return;
-	}
-
-	m_sizeDoc = CSize((int) ::DIBWidth(lpDIB), (int) ::DIBHeight(lpDIB));
-
-	::GlobalUnlock((HGLOBAL)m_hDIB);
-	// Create copy of palette
-	m_palDIB = new CPalette;
-	if (m_palDIB == NULL)
-	{
-		// we must be really low on memory
-		free((HGLOBAL)m_hDIB);
-		m_hDIB = NULL;
-		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
-		return;
-	}
-
-	if (::CreateDIBPalette(m_hDIB, m_palDIB) == NULL)
-	{
-		// DIB may not have a palette
-		delete m_palDIB;
-		m_palDIB = NULL;
-		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
-		return;
-	}
-#else
-	error("TODO: InitDIBData");
-#endif
-}
-
 
 bool CDibDoc::OpenResourceDocument(const int nResID) {
 #ifdef TODO
@@ -96,10 +49,10 @@ bool CDibDoc::OpenResourceDocument(const int nResID) {
 
 	sprintf(chResID, "#%d", nResID);
 	m_hDIB = ReadDIBResource(chResID);
-	if (m_hDIB != NULL)
+	if (m_hDIB != nullptr)
 		InitDIBData();
 
-	if (m_hDIB == NULL)
+	if (m_hDIB == nullptr)
 	{
 		char	buf[128];
 
@@ -121,10 +74,10 @@ bool CDibDoc::OpenResourceDocument(const char *pszPathName) {
 	DeleteContents();
 
 	m_hDIB = ReadDIBResource(pszPathName);
-	if (m_hDIB != NULL)
+	if (m_hDIB != nullptr)
 		InitDIBData();
 
-	if (m_hDIB == NULL)
+	if (m_hDIB == nullptr)
 	{
 		char	buf[128];
 
@@ -146,72 +99,39 @@ CPalette *CDibDoc::DetachPalette() {
 	CPalette *pMyPalette;
 
 	pMyPalette = m_palDIB;
-	m_palDIB = NULL;
+	m_palDIB = nullptr;
 	return(pMyPalette);
 }
 
 
 bool CDibDoc::OpenDocument(const char *pszPathName) {
-#ifdef TODO
-	CFile file;
-	CFileException fe;
-	if (!file.Open(pszPathName, CFile::modeRead | CFile::shareDenyWrite, &fe))
-	{
-		char	buf[128];
+	Common::File f;
+	if (!f.open(pszPathName))
+		error("Unable to open artwork file: %s", pszPathName);
 
-		sprintf(buf, "Unable to open artwork file: %s", pszPathName);
-		ShowMemoryInfo(buf, "Internal Problem");
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(f))
+		error("Unable to load artwork file: %s", pszPathName);
+	assert(decoder.hasPalette());
 
-		ReportSaveLoadException(pszPathName, &fe,
-			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
-		return FALSE;
-	}
+	m_hDIB = new Graphics::ManagedSurface();
+	m_hDIB->copyFrom(decoder.getSurface());
 
-	DeleteContents();
-	//	BeginWaitCursor();
+	m_sizeDoc = CBofSize(m_hDIB->w, m_hDIB->h);
 
-		// replace calls to Serialize with ReadDIBFile function
-	TRY
-	{
-		m_hDIB = ::ReadDIBFile(file);
+	// Create copy of palette
+	assert(decoder.getPaletteColorCount() == 256);
+	delete m_palDIB;
+	m_palDIB->setData(decoder.getPalette());
 
-		if (m_hDIB == NULL) {
-			char	buf[128];
-
-			sprintf(buf,"Unable to load artwork file: %s",pszPathName);
-			ShowMemoryInfo(buf, "Internal Problem");
-		}
-	}
-		CATCH(CFileException, eLoad) {
-		file.Abort(); // will not throw an exception
-		//		EndWaitCursor();
-		ReportSaveLoadException(pszPathName, eLoad,
-			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
-		m_hDIB = NULL;
-		return FALSE;
-	}
-	END_CATCH
-
-		InitDIBData();
-	//	EndWaitCursor();
-
-	if (m_hDIB == NULL)
-	{
-		char	buf[128];
-
-		sprintf(buf, "Unable to load artwork file: %s", pszPathName);
-		ShowMemoryInfo(buf, "Internal Problem");
-		return FALSE;
-	}
+	m_palDIB = new CPalette();
+	m_hDIB->setPalette(decoder.getPalette(), 0, 256);
 
 	SetPathName(pszPathName);
-	SetModifiedFlag(FALSE);     // start off with unmodified
-	return TRUE;
-#else
-	error("TODO: OpenDocument");
-#endif
-}
+	SetModifiedFlag(false);
 
+	return TRUE;
+}
 
 bool CDibDoc::SaveDocument(const char *pszPathName) {
 #ifdef TODO
