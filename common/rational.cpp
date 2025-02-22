@@ -300,6 +300,10 @@ void Rational::debugPrint(int debuglevel, const char *caption) const {
 	debug(debuglevel, "%s %d/%d", caption, _num, _denom);
 }
 
+void Rational::debugPrintC(int debuglevel, uint32 debugChannel, const char *caption) const {
+	debugC(debuglevel, debugChannel, "%s %d/%d", caption, _num, _denom);
+}
+
 bool operator==(int left, const Rational &right) {
 	return right == left;
 }

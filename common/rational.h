@@ -96,6 +96,7 @@ public:
 	bool isOne() const { return _num == _denom; }
 
 	void debugPrint(int debuglevel = 0, const char *caption = "Rational:") const;
+	void debugPrintC(int debuglevel, uint32 debugChannel, const char *caption = "Rational:") const;
 
 private:
 	int _num;
