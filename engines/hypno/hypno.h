@@ -46,10 +46,10 @@ namespace Hypno {
 
 // debug channels
 enum {
-	kHypnoDebugMedia = 1 << 0,
-	kHypnoDebugParser = 1 << 1,
-	kHypnoDebugArcade = 1 << 2,
-	kHypnoDebugScene = 1 << 3
+	kHypnoDebugMedia = 1,
+	kHypnoDebugParser,
+	kHypnoDebugArcade,
+	kHypnoDebugScene,
 };
 
 // Player positions

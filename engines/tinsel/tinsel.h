@@ -94,10 +94,10 @@ enum TINSELAction {
 };
 
 enum {
-	kTinselDebugAnimations = 1 << 0,
-	kTinselDebugActions = 1 << 1,
-	kTinselDebugSound = 1 << 2,
-	kTinselDebugMusic = 2 << 3
+	kTinselDebugAnimations = 1,
+	kTinselDebugActions,
+	kTinselDebugSound,
+	kTinselDebugMusic,
 };
 
 // Just for development

@@ -34,8 +34,9 @@ namespace Testbed {
 class TestbedConfigManager;
 
 enum {
-	kTestbedLogOutput = 1 << 0,
-	kTestbedEngineDebug = 1 << 2,
+	kTestbedLogOutput = 1,
+	kTestbedEngineDebug,
+
 	kCmdRerunTestbed = 'crtb'
 };
 

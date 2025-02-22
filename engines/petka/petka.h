@@ -70,10 +70,10 @@ class QSystem;
 class VideoSystem;
 
 enum {
-	kPetkaDebugGeneral = 1 << 0,
-	kPetkaDebugResources = 1 << 1,
-	kPetkaDebugMessagingSystem = 1 << 2,
-	kPetkaDebugDialogs = 1 << 3
+	kPetkaDebugGeneral = 1,
+	kPetkaDebugResources,
+	kPetkaDebugMessagingSystem,
+	kPetkaDebugDialogs,
 };
 
 enum {

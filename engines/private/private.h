@@ -45,9 +45,9 @@ namespace Private {
 
 // debug channels
 enum {
-	kPrivateDebugFunction = 1 << 0,
-	kPrivateDebugCode = 1 << 1,
-	kPrivateDebugScript = 1 << 2
+	kPrivateDebugFunction = 1,
+	kPrivateDebugCode,
+	kPrivateDebugScript,
 };
 
 // sounds

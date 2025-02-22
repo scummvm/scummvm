@@ -104,9 +104,9 @@ enum CGEAction {
 
 // our engine debug channels
 enum {
-	kCGEDebugBitmap = 1 << 0,
-	kCGEDebugFile = 1 << 1,
-	kCGEDebugEngine = 1 << 2
+	kCGEDebugBitmap = 1,
+	kCGEDebugFile,
+	kCGEDebugEngine,
 };
 
 enum SnList {

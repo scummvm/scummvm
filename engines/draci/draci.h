@@ -121,13 +121,13 @@ public:
 };
 
 enum {
-	kDraciGeneralDebugLevel   = 1 << 0,
-	kDraciBytecodeDebugLevel  = 1 << 1,
-	kDraciArchiverDebugLevel  = 1 << 2,
-	kDraciLogicDebugLevel     = 1 << 3,
-	kDraciAnimationDebugLevel = 1 << 4,
-	kDraciSoundDebugLevel     = 1 << 5,
-	kDraciWalkingDebugLevel   = 1 << 6
+	kDraciGeneralDebugLevel = 1,
+	kDraciBytecodeDebugLevel,
+	kDraciArchiverDebugLevel,
+	kDraciLogicDebugLevel,
+	kDraciAnimationDebugLevel,
+	kDraciSoundDebugLevel,
+	kDraciWalkingDebugLevel,
 };
 
 } // End of namespace Draci

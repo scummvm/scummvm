@@ -31,15 +31,15 @@
 namespace LastExpress {
 
 enum {
-	kLastExpressDebugGraphics = 1 << 0,
-	kLastExpressDebugResource = 1 << 1,
-	kLastExpressDebugCursor   = 1 << 2,
-	kLastExpressDebugSound    = 1 << 3,
-	kLastExpressDebugSubtitle = 1 << 4,
-	kLastExpressDebugSavegame = 1 << 5,
-	kLastExpressDebugLogic    = 1 << 6,
-	kLastExpressDebugScenes   = 1 << 7,
-	kLastExpressDebugUnknown  = 1 << 8
+	kLastExpressDebugGraphics = 1,
+	kLastExpressDebugResource,
+	kLastExpressDebugCursor,
+	kLastExpressDebugSound,
+	kLastExpressDebugSubtitle,
+	kLastExpressDebugSavegame,
+	kLastExpressDebugLogic,
+	kLastExpressDebugScenes,
+	kLastExpressDebugUnknown,
 };
 
 class LastExpressEngine;

@@ -105,11 +105,11 @@ typedef Common::Array<byte *> ColorMap;
 typedef Common::HashMap<uint16, int32> StateVars;
 
 enum {
-	kFreescapeDebugMove = 1 << 0,
-	kFreescapeDebugParser = 1 << 1,
-	kFreescapeDebugCode = 1 << 2,
-	kFreescapeDebugMedia = 1 << 4,
-	kFreescapeDebugGroup = 1 << 5,
+	kFreescapeDebugMove = 1,
+	kFreescapeDebugParser,
+	kFreescapeDebugCode,
+	kFreescapeDebugMedia,
+	kFreescapeDebugGroup,
 };
 
 enum {

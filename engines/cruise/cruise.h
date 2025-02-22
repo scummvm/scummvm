@@ -47,7 +47,7 @@ namespace Cruise {
 
 #define MAX_LANGUAGE_STRINGS 25
 
-	
+
 
 enum CRUISEAction {
 	kActionNone,
@@ -161,8 +161,8 @@ enum {
 };
 
 enum {
-	kCruiseDebugScript = 1 << 0,
-	kCruiseDebugSound = 1 << 1
+	kCruiseDebugScript = 1,
+	kCruiseDebugSound,
 };
 
 enum {

@@ -56,13 +56,13 @@ struct SludgeGameDescription;
 
 // debug channels
 enum {
-	kSludgeDebugFatal = 1 << 0,
-	kSludgeDebugDataLoad = 1 << 1,
-	kSludgeDebugStackMachine = 1 << 2,
-	kSludgeDebugBuiltin = 1 << 3,
-	kSludgeDebugGraphics = 1 << 4,
-	kSludgeDebugZBuffer = 1 << 5,
-	kSludgeDebugSound = 1 << 6
+	kSludgeDebugFatal = 1,
+	kSludgeDebugDataLoad,
+	kSludgeDebugStackMachine,
+	kSludgeDebugBuiltin,
+	kSludgeDebugGraphics,
+	kSludgeDebugZBuffer,
+	kSludgeDebugSound,
 };
 
 class SludgeEngine: public Engine {

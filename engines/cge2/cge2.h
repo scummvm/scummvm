@@ -135,7 +135,7 @@ enum GamePhase { kPhaseInGame, kPhaseIntro, kPhaseOver };
 
 // our engine debug channels
 enum {
-	kCGE2DebugOpcode = 1 << 0
+	kCGE2DebugOpcode = 1,
 };
 
 enum CallbackType {
