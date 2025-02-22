@@ -45,6 +45,13 @@ public:
 	void setWindowCaption(const Common::String &caption);
 
 	/**
+	 * Allows the window to be resized or not
+	 *
+	 * @param resizable Whether the window can be resizable or not.
+	 */
+	void setResizable(bool resizable);
+
+	/**
 	 * Grab or ungrab the mouse cursor. This decides whether the cursor can leave
 	 * the window or not.
 	 */
@@ -110,6 +117,15 @@ public:
 	 */
 	virtual float getDpiScalingFactor() const;
 
+	bool resizable() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_window) {
+			return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
+		}
+#endif
+		return _resizable;
+	}
+
 	bool mouseIsGrabbed() const {
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 		if (_window) {
@@ -135,6 +151,7 @@ public:
 
 private:
 	Common::Rect _desktopRes;
+	bool _resizable;
 	bool _inputGrabState, _inputLockState;
 	SDL_Rect grabRect;
 

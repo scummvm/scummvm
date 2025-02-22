@@ -40,7 +40,8 @@ SdlWindow::SdlWindow() :
 	_window(nullptr), _windowCaption("ScummVM"),
 	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED),
 #endif
-	_inputGrabState(false), _inputLockState(false)
+	_inputGrabState(false), _inputLockState(false),
+	_resizable(true)
 	{
 		memset(&grabRect, 0, sizeof(grabRect));
 
@@ -159,6 +160,15 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 #else
 	SDL_WM_SetCaption(caption.c_str(), caption.c_str());
 #endif
+}
+
+void SdlWindow::setResizable(bool resizable) {
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+	if (_window) {
+		SDL_SetWindowResizable(_window, resizable ? SDL_TRUE : SDL_FALSE);
+	}
+#endif
+	_resizable = resizable;
 }
 
 void SdlWindow::grabMouse(bool grab) {
@@ -413,17 +423,18 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	}
 #endif
 
-	// SDL_WINDOW_RESIZABLE can also be updated without recreating the window
-	// starting with SDL 2.0.5, but it is not treated as updateable here
-	// because:
-	// 1. It is currently only changed in conjunction with the SDL_WINDOW_OPENGL
-	//    flag, so the window will always be recreated anyway when changing
-	//    resizability; and
-	// 2. Users (particularly on Windows) will sometimes swap older SDL DLLs
-	//    to avoid bugs, which would be impossible if the feature was enabled
-	//    at compile time using SDL_VERSION_ATLEAST.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_resizable) {
+		flags |= SDL_WINDOW_RESIZABLE;
+	}
+#endif
+
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_MOUSE_GRABBED;
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_RESIZABLE;
+#elif SDL_VERSION_ATLEAST(2, 0, 5)
+	// SDL_WINDOW_RESIZABLE can be updated without recreating the window starting with SDL 2.0.5
+	// Even though some users may switch the SDL version when it's linked dynamically, 2.0.5 is now getting quite old
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE;
 #else
 	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED;
 #endif
@@ -525,6 +536,10 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 18)
 	SDL_SetWindowMouseRect(_window, shouldGrab ? &grabRect : NULL);
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+	SDL_SetWindowResizable(_window, _resizable ? SDL_TRUE : SDL_FALSE);
 #endif
 
 	if (!_window) {
