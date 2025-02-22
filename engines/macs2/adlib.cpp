@@ -684,6 +684,11 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 
 void Adlib::OnTimer() {
 
+	// TODO: Check if original code pauses the timer if no song is playing
+	if (shMem2250 == nullptr) {
+		return;
+	}
+
 	g2296++;
 
 	if (g2296 >= g2298) {
