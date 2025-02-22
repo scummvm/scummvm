@@ -1170,13 +1170,14 @@ void Room303::parser() {
 		case 1:
 			setShadow5(false);
 			if (player_said("giant matchstick"))
-				ws_demand_location(610, 256);
+				ws_demand_location(_fengLi, 610, 256);
 
 			sendWSMessage_10000(_fengLi, 706, 256, 5, 2, 1);
 			break;
 
 		case 2:
 			setShadow5Alt(true);
+			sendWSMessage_60000(_fengLi);
 			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, false,
 				triggerMachineByHashCallback, "fl state machine");
 
