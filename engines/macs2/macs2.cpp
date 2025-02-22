@@ -1287,6 +1287,7 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	data->resize(size);
 	_fileStream->read(data->data(), size);
 	StreamHandler *sh = new StreamHandler(data);
+	_adlib->SetSong(sh);
 	
 }
 
