@@ -1190,6 +1190,13 @@ GUI::CheckboxWidget *ScummOptionsContainerWidget::createGammaCorrectionCheckbox(
 	);
 }
 
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createSegaShadowModeCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Simulate Sega colors"),
+		_("Instead of using the colors defined in the game, simulate colors used on actual Sega hardware. These are significantly darker, though it's unclear if that was intended or not.")
+	);
+}
+
 GUI::CheckboxWidget *ScummOptionsContainerWidget::createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name) {
 	return new GUI::CheckboxWidget(boss, name,
 		_("Enable copy protection"),
@@ -1587,7 +1594,12 @@ void LoomVgaGameOptionsWidget::updatePlaybackAdjustmentValue() {
 
 MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		ScummOptionsContainerWidget(boss, name, "MI1CdGameOptionsDialog", domain) {
-	Common::String extra = ConfMan.get("extra", domain);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+
+	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
+
+	if (platform == Common::kPlatformSegaCD)
+		_enableSegaShadowModeCheckbox = createSegaShadowModeCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableSegaShadowMode");
 
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.IntroAdjustmentLabel", _("Intro Adjust:"));
 
@@ -1616,11 +1628,13 @@ MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::St
 	_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
 	createEnhancementsWidget(widgetsBoss(), "MI1CdGameOptionsDialog");
-	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
 }
 
 void MI1CdGameOptionsWidget::load() {
 	ScummOptionsContainerWidget::load();
+
+	if (_enableSegaShadowModeCheckbox)
+		_enableSegaShadowModeCheckbox->setState(ConfMan.getBool("enable_sega_shadow_mode", _domain));
 
 	int introAdjustment = 0;
 	int outlookAdjustment = 0;
@@ -1642,6 +1656,9 @@ void MI1CdGameOptionsWidget::load() {
 bool MI1CdGameOptionsWidget::save() {
 	ScummOptionsContainerWidget::save();
 
+	if (_enableSegaShadowModeCheckbox)
+		ConfMan.setBool("enable_sega_shadow_mode", _enableSegaShadowModeCheckbox->getState(), _domain);
+
 	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
 	ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
@@ -1649,12 +1666,18 @@ bool MI1CdGameOptionsWidget::save() {
 }
 
 void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
 				.addWidget("EnableOriginalGUI", "Checkbox");
+
+	if (platform == Common::kPlatformSegaCD)
+		layouts.addWidget("EnableSegaShadowMode", "Checkbox");
+
 	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)

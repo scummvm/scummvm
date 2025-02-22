@@ -280,6 +280,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			_voiceMode = ConfMan.getBool("subtitles");
 	}
 
+	_enableSegaShadowMode = ConfMan.getBool("enable_sega_shadow_mode");
+
 	if (ConfMan.hasKey("render_mode")) {
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 	} else {

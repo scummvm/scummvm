@@ -240,6 +240,7 @@ protected:
 	GUI::ThemeEval &addEnhancementsLayout(GUI::ThemeEval &layouts) const;
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createGammaCorrectionCheckbox(GuiObject *boss, const Common::String &name);
+	GUI::CheckboxWidget *createSegaShadowModeCheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 
@@ -374,6 +375,7 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
+	GUI::CheckboxWidget *_enableSegaShadowModeCheckbox = nullptr;
 
 	GUI::SliderWidget *_introAdjustmentSlider = nullptr;
 	GUI::StaticTextWidget *_introAdjustmentValue = nullptr;
