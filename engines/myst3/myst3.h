@@ -44,10 +44,10 @@ namespace Myst3 {
 
 // Engine Debug Flags
 enum {
-	kDebugVariable = (1 << 0),
-	kDebugSaveLoad = (1 << 1),
-	kDebugNode     = (1 << 2),
-	kDebugScript   = (1 << 3)
+	kDebugVariable = 1,
+	kDebugSaveLoad,
+	kDebugNode,
+	kDebugScript,
 };
 
 enum TransitionType {

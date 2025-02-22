@@ -86,20 +86,20 @@ class TileModeManager;
 struct SAGA2GameDescription;
 
 enum {
-	kDebugResources = 1 << 0,
-	kDebugActors    = 1 << 1,
-	kDebugScripts   = 1 << 2,
-	kDebugEventLoop = 1 << 3,
-	kDebugInit      = 1 << 4,
-	kDebugTiles     = 1 << 5,
-	kDebugPalettes  = 1 << 6,
-	kDebugLoading   = 1 << 7,
-	kDebugTimers    = 1 << 8,
-	kDebugPath      = 1 << 9,
-	kDebugTasks     = 1 << 10,
-	kDebugSound     = 1 << 11,
-	kDebugSaveload  = 1 << 12,
-	kDebugSensors   = 1 << 13
+	kDebugResources = 1,
+	kDebugActors,
+	kDebugScripts,
+	kDebugEventLoop,
+	kDebugInit,
+	kDebugTiles,
+	kDebugPalettes,
+	kDebugLoading,
+	kDebugTimers,
+	kDebugPath,
+	kDebugTasks,
+	kDebugSound,
+	kDebugSaveload,
+	kDebugSensors,
 };
 
 #define TICKSPERSECOND (728L/10L)

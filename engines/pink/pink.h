@@ -79,11 +79,11 @@ class Page;
 class LeadActor;
 
 enum {
-	kPinkDebugGeneral = 1 << 0,
-	kPinkDebugLoadingResources = 1 << 1,
-	kPinkDebugLoadingObjects = 1 << 2,
-	kPinkDebugScripts = 1 << 3,
-	kPinkDebugActions = 1 << 4
+	kPinkDebugGeneral = 1,
+	kPinkDebugLoadingResources,
+	kPinkDebugLoadingObjects,
+	kPinkDebugScripts,
+	kPinkDebugActions,
 };
 
 enum {

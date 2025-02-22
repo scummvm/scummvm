@@ -44,7 +44,7 @@ namespace Mohawk {
 
 // Engine Debug Flags
 enum {
-	kDebugCode = (1 << 0)
+	kDebugCode = 1,
 };
 
 #define LBKEY_MOD_CTRL 1

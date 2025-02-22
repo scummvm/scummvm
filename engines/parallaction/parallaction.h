@@ -53,16 +53,16 @@
 namespace Parallaction {
 
 enum {
-	kDebugDisk = 1 << 0,
-	kDebugWalk = 1 << 1,
-	kDebugParser = 1 << 2,
-	kDebugDialogue = 1 << 3,
-	kDebugGraphics = 1 << 4,
-	kDebugExec = 1 << 5,
-	kDebugInput = 1 << 6,
-	kDebugAudio = 1 << 7,
-	kDebugMenu = 1 << 8,
-	kDebugInventory = 1 << 9
+	kDebugDisk = 1,
+	kDebugWalk,
+	kDebugParser,
+	kDebugDialogue,
+	kDebugGraphics,
+	kDebugExec,
+	kDebugInput,
+	kDebugAudio,
+	kDebugMenu,
+	kDebugInventory,
 };
 
 enum EngineFlags {

@@ -42,17 +42,17 @@ class SoundHandle;
 namespace NGI {
 
 enum {
-	kDebugPathfinding	= 1 << 0,
-	kDebugDrawing		= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugAnimation		= 1 << 3,
-	kDebugMemory		= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugBehavior		= 1 << 6,
-	kDebugInventory		= 1 << 7,
-	kDebugSceneLogic	= 1 << 8,
-	kDebugInteractions	= 1 << 9,
-	kDebugXML			= 1 << 10
+	kDebugPathfinding = 1,
+	kDebugDrawing,
+	kDebugLoading,
+	kDebugAnimation,
+	kDebugMemory,
+	kDebugEvents,
+	kDebugBehavior,
+	kDebugInventory,
+	kDebugSceneLogic,
+	kDebugInteractions,
+	kDebugXML,
 };
 
 #define MAXGAMEOBJH 10000

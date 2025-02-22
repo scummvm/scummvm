@@ -91,32 +91,32 @@ class GfxCursor32;
 
 /** Engine debug levels */
 enum kDebugLevels {
-	kDebugLevelError         = 1 << 0,
-	kDebugLevelNodes         = 1 << 1,
-	kDebugLevelGraphics      = 1 << 2,
-	kDebugLevelStrings       = 1 << 3,
-	kDebugLevelMemory        = 1 << 4,
-	kDebugLevelFuncCheck     = 1 << 5,
-	kDebugLevelBresen        = 1 << 6,
-	kDebugLevelSound         = 1 << 7,
-	kDebugLevelBaseSetter    = 1 << 8,
-	kDebugLevelParser        = 1 << 9,
-	kDebugLevelSaid          = 1 << 10,
-	kDebugLevelFile          = 1 << 11,
-	kDebugLevelTime          = 1 << 12,
-	kDebugLevelRoom          = 1 << 13,
-	kDebugLevelAvoidPath     = 1 << 14,
-	kDebugLevelDclInflate    = 1 << 15,
-	kDebugLevelVM            = 1 << 16,
-	kDebugLevelScripts       = 1 << 17,
-	kDebugLevelGC            = 1 << 18,
-	kDebugLevelResMan        = 1 << 19,
-	kDebugLevelOnStartup     = 1 << 20,
-	kDebugLevelDebugMode     = 1 << 21,
-	kDebugLevelPatcher       = 1 << 22,
-	kDebugLevelWorkarounds   = 1 << 23,
-	kDebugLevelVideo         = 1 << 24,
-	kDebugLevelGame          = 1 << 25
+	kDebugLevelError = 1,
+	kDebugLevelNodes,
+	kDebugLevelGraphics,
+	kDebugLevelStrings,
+	kDebugLevelMemory,
+	kDebugLevelFuncCheck,
+	kDebugLevelBresen,
+	kDebugLevelSound,
+	kDebugLevelBaseSetter,
+	kDebugLevelParser,
+	kDebugLevelSaid,
+	kDebugLevelFile,
+	kDebugLevelTime,
+	kDebugLevelRoom,
+	kDebugLevelAvoidPath,
+	kDebugLevelDclInflate,
+	kDebugLevelVM,
+	kDebugLevelScripts,
+	kDebugLevelGC,
+	kDebugLevelResMan,
+	kDebugLevelOnStartup,
+	kDebugLevelDebugMode,
+	kDebugLevelPatcher,
+	kDebugLevelWorkarounds,
+	kDebugLevelVideo,
+	kDebugLevelGame,
 };
 
 
@@ -184,21 +184,21 @@ public:
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
 	Common::Language getLanguage() const;
-	
+
 	/**
 	 * Returns true if the game's language direction is Right To Left.
 	 * RTL support did not exist in the original SCI engine.
 	 * This is a ScummVM feature to support modern fan translations.
 	 */
 	bool isLanguageRTL() const;
-	
+
 	/** Returns the original platform of the game. */
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
 	bool useHiresGraphics() const;
 
-	/** 
+	/**
 	 * Returns true if the game's original platform is Macintosh or Amiga.
 	 * Note that this is not necessarily the endianness of the game's resources.
 	 */
@@ -208,7 +208,7 @@ public:
 
 	/** Returns true if the game supports native Mac fonts and the fonts are available. */
 	bool hasMacFonts() const;
-	
+
 	/** Returns true if the game is a Mac version with an icon bar on the bottom. */
 	bool hasMacIconBar() const;
 
@@ -365,7 +365,7 @@ private:
 	 * or restoring a game re-initializes certain states and continues the loop.
 	 */
 	void runGame();
-	
+
 	/**
 	 * Initializes the stack to call a method in the game object once the VM starts.
 	 * When starting a game or restarting via kRestartGame16, the play method is called.
@@ -401,7 +401,7 @@ private:
 	 * we handle those with our own script patches just like any other script.
 	 */
 	bool gameHasFanMadePatch();
-	
+
 	/**
 	 * For multilingual games, this function sets the game object's printLang
 	 * and parseLang properties based on the ScummVM "language" config value.

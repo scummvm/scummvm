@@ -27,9 +27,9 @@
 namespace M4 {
 
 enum M4DebugChannels {
-	kDebugScripts = 1 << 0,
-	kDebugMessages = 1 << 1,
-	kDebugCore = 1 << 2
+	kDebugScripts = 1,
+	kDebugMessages,
+	kDebugCore,
 };
 
 enum M4GameType {

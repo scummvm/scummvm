@@ -54,11 +54,11 @@ namespace Lilliput {
 static const int kSavegameVersion = 1;
 
 enum LilliputDebugChannels {
-	kDebugEngine    = 1 << 0,
-	kDebugScript    = 1 << 1,
-	kDebugSound     = 1 << 2,
-	kDebugEngineTBC = 1 << 3,
-	kDebugScriptTBC = 1 << 4
+	kDebugEngine = 1,
+	kDebugScript,
+	kDebugSound,
+	kDebugEngineTBC,
+	kDebugScriptTBC,
 };
 
 enum InterfaceHotspotStatus {

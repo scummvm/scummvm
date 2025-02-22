@@ -46,7 +46,7 @@ namespace Plumbers {
 class Console;
 
 enum PlumbersDebugChannels {
-	kDebugGeneral = 1 << 0
+	kDebugGeneral = 1,
 };
 
 static const int kMaxChoice = 3;

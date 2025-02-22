@@ -27,11 +27,11 @@
 namespace Tetraedge {
 
 enum TetraedgeDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
+	kDebugGraphics = 1,
+	kDebugPath,
+	kDebugScan,
+	kDebugFilePath,
+	kDebugScript,
 };
 
 enum GameFeatures {

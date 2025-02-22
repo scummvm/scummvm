@@ -805,17 +805,17 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 #define COLOR_158 158
 
 enum kDebugLevels {
-	kDebugScriptsMove = 1 << 0,
-	kDebugScriptsLife = 1 << 1,
-	kDebugTimers = 1 << 2,
-	kDebugResources = 1 << 3,
-	kDebugImGui = 1 << 4,
-	kDebugInput = 1 << 5,
-	kDebugMovies = 1 << 6,
-	kDebugPalette = 1 << 7,
-	kDebugCollision = 1 << 8,
-	kDebugAnimation = 1 << 9,
-	kDebugHolomap = 1 << 10
+	kDebugScriptsMove = 1,
+	kDebugScriptsLife,
+	kDebugTimers,
+	kDebugResources,
+	kDebugImGui,
+	kDebugInput,
+	kDebugMovies,
+	kDebugPalette,
+	kDebugCollision,
+	kDebugAnimation,
+	kDebugHolomap,
 };
 
 } // namespace TwinE

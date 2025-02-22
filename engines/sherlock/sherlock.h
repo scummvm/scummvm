@@ -54,10 +54,10 @@
 namespace Sherlock {
 
 enum {
-	kDebugLevelScript      = 1 << 0,
-	kDebugLevelAdLibDriver = 2 << 0,
-	kDebugLevelMT32Driver  = 3 << 0,
-	kDebugLevelMusic       = 4 << 0
+	kDebugLevelScript = 1,
+	kDebugLevelAdLibDriver,
+	kDebugLevelMT32Driver,
+	kDebugLevelMusic,
 };
 
 #define SHERLOCK_SCREEN_WIDTH _vm->_screen->width()

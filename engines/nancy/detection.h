@@ -54,12 +54,12 @@ struct NancyGameDescription {
 };
 
 enum NancyDebugChannels {
-	kDebugEngine		= 1 << 0,
-	kDebugActionRecord	= 1 << 1,
-	kDebugScene			= 1 << 2,
-	kDebugSound			= 1 << 3,
-	kDebugVideo			= 1 << 4,
-	kDebugHypertext		= 1 << 5
+	kDebugEngine = 1,
+	kDebugActionRecord,
+	kDebugScene,
+	kDebugSound,
+	kDebugVideo,
+	kDebugHypertext,
 };
 
 // Settings found in the original engine

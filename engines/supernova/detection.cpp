@@ -25,11 +25,6 @@
 #include "supernova/supernova.h"
 #include "supernova/detection.h"
 
-static const DebugChannelDef debugFlagList[] = {
-	{Supernova::kDebugGeneral, "general", "Supernova general debug channel"},
-	DEBUG_CHANNEL_END
-};
-
 static const PlainGameDescriptor supernovaGames[] = {
 	{"msn1", "Mission Supernova - Part 1: The fate of Horst Hummel"},
 	{"msn2", "Mission Supernova - Part 2: The Doppelg\303\244nger"},
@@ -104,10 +99,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 

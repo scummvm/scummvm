@@ -64,17 +64,17 @@ class Pack;
 
 // Engine Debug Flags
 enum {
-	kDebugActor     = (1 << 0),
-	kDebugAnimation = (1 << 1),
-	kDebugCallbacks = (1 << 2),
-	kDebugDialog    = (1 << 3),
-	kDebugFont      = (1 << 4),
-	kDebugInventory = (1 << 5),
-	kDebugMusic     = (1 << 6),
-	kDebugObject    = (1 << 7),
-	kDebugPack      = (1 << 8),
-	kDebugScene     = (1 << 9),
-	kDebugSurface   = (1 << 10)
+	kDebugActor = 1,
+	kDebugAnimation,
+	kDebugCallbacks,
+	kDebugDialog,
+	kDebugFont,
+	kDebugInventory,
+	kDebugMusic,
+	kDebugObject,
+	kDebugPack,
+	kDebugScene,
+	kDebugSurface,
 };
 
 const uint16 kScreenWidth = 320;

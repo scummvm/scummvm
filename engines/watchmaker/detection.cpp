@@ -31,11 +31,6 @@ static const PlainGameDescriptor watchmakerGames[] = {
 	{nullptr, nullptr}
 };
 
-static const DebugChannelDef debugFlagList[] = {
-	{Watchmaker::kDebugGeneral, "general", "General debug level"},
-	DEBUG_CHANNEL_END
-};
-
 namespace Watchmaker {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -81,10 +76,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "The Watchmaker (C) 2002 Trecision SpA.";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 

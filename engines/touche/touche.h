@@ -298,12 +298,12 @@ struct ProgramConversationData {
 };
 
 enum {
-	kDebugEngine   = 1 << 0,
-	kDebugGraphics = 1 << 1,
-	kDebugResource = 1 << 2,
-	kDebugOpcodes  = 1 << 3,
-	kDebugMenu     = 1 << 4,
-	kDebugCharset  = 1 << 5
+	kDebugEngine = 1,
+	kDebugGraphics,
+	kDebugResource,
+	kDebugOpcodes,
+	kDebugMenu,
+	kDebugCharset,
 };
 
 enum ResourceType {
