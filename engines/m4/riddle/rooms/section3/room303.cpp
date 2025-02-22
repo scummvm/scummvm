@@ -1483,6 +1483,10 @@ void Room303::parser() {
 				sendWSMessage_C0000(_G(my_walker), 1);
 				break;
 
+			case 1:
+				kernel_timing_trigger(10, 2, nullptr);
+				break;
+				
 			case 2:
 				sendWSMessage_D0000(_G(my_walker));
 				digi_play("303r25", 1, 255, 3);
@@ -1497,6 +1501,7 @@ void Room303::parser() {
 			case 4:
 				_fengShould = 1;
 				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
 				break;
 
 			default:
