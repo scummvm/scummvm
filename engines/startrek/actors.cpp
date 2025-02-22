@@ -92,7 +92,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 }
 
 bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
-	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
+	debugC(6, kDebugGeneral, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
 
 	Actor *actor = &_actorList[actorIndex];
 
