@@ -275,7 +275,7 @@ public:
 	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex);
 
 	// TODO: Arguments
-	void loadSongFromSceneData();
+	void loadSongFromSceneData(uint8 dataIndex);
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;

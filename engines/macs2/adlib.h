@@ -46,6 +46,8 @@ namespace Macs2 {
 			StreamHandler(Common::MemorySeekableReadWriteStream* s) : _stream(s) {
 			}
 
+			StreamHandler(Common::Array<uint8>* data);
+
 	
 		bool eos() const override;
 		uint32 read(void *dataPtr, uint32 dataSize) override;
@@ -202,6 +204,8 @@ namespace Macs2 {
 	void Init();
 
 	void Deinit();
+
+	void SetSong(Macs2::StreamHandler *sh);
 
 		// TODO: Check where these contents live
 		// Memory pointed to by [2250] global
