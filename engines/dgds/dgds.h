@@ -64,6 +64,7 @@ class HocIntro;
 class ChinaTank;
 class ChinaTrain;
 
+// This is not actually MS per frame - it's MS per timer tick that is used for delays.
 const float MS_PER_FRAME = 16.6667f;
 
 enum DgdsGameId {
@@ -271,6 +272,7 @@ public:
 	ChinaTank *getChinaTank() { return _chinaTank; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
 	uint32 getThisFrameMs() const { return _thisFrameMs; }
+	void updateThisFrameMillis();
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }

@@ -37,6 +37,9 @@
 #include "dgds/sound/music.h"
 #include "dgds/sound/resource/sci_resource.h"
 
+#include "common/debug.h"
+
+
 namespace Dgds {
 
 static const uint16 SIGNAL_OFFSET = 0xffff;
@@ -465,7 +468,7 @@ void Sound::stopSfxByNum(int num) {
 void Sound::playMusic(int num) {
 	int mappedNum = mapMusicNum(num);
 	debug(1, "Sound: Play music %d (-> %d, %s), have %d entries", num, mappedNum, _currentMusic.c_str(), _musicData.size());
-	playPCSound(mappedNum, _musicData, Audio::Mixer::kMusicSoundType);
+	//playPCSound(mappedNum, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
 void Sound::playMusicOrSFX(int num) {
@@ -519,8 +522,8 @@ void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::So
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
-	debug(10, "processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
-			obj, newSound->loop, newSound->priority, newSound->volume);
+	//debug(10, "processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
+	//		obj, newSound->loop, newSound->priority, newSound->volume);
 
 	initSoundResource(newSound, data, soundType);
 

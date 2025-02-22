@@ -125,6 +125,7 @@ void Image::loadAmigaScreen(Graphics::ManagedSurface &surface, Common::SeekableR
 	if (magic != MKTAG('B', 'A', 'S', 'H'))
 		error("Unexpected magic %08x in Amiga screen %s", magic, _filename.c_str());
 
+	error("Image::loadAmigaScreen: TODO - Finish this.");
 	/*
 	uint16 ysize = fileStream->readUint16BE();
 	uint16 xsize = surface.w;

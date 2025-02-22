@@ -37,6 +37,9 @@ void SoundRaw::load(const Common::String &filename) {
 	if (!fileStream)
 		error("SoundRaw::load: Couldn't get raw resource '%s'", filename.c_str());
 
+	_filename = filename;
+	_data.clear();
+
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(EX_RAW, filename)) {
 		chunk.readContent(_decompressor);
@@ -46,6 +49,9 @@ void SoundRaw::load(const Common::String &filename) {
 			break;
 		}
 	}
+
+	if (_data.empty())
+		warning("SoundRaw::load: Didn't load any data from '%s'", filename.c_str());
 }
 
 SoundRaw::~SoundRaw() {
@@ -58,6 +64,7 @@ void SoundRaw::loadFromStream(Common::SeekableReadStream *stream, int size) {
 }
 
 void SoundRaw::play() {
+	debug(10, "SoundRaw: Play %d bytes from %s", _data.size(), _filename.c_str());
 	Audio::Mixer *mixer = DgdsEngine::getInstance()->_mixer;
 	Audio::AudioStream *input = Audio::makeRawStream(_data.data(), _data.size(),
 													 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);

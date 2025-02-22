@@ -620,6 +620,10 @@ void DgdsEngine::dimPalForWillyDialog(bool force) {
 	}
 }
 
+void DgdsEngine::updateThisFrameMillis() {
+	_thisFrameMs = getTotalPlayTime();
+}
+
 Common::Error DgdsEngine::run() {
 	syncSoundSettings();
 	_isLoading = true;
@@ -637,7 +641,7 @@ Common::Error DgdsEngine::run() {
 	uint32 frameCount = 0;
 
 	while (!shouldQuit()) {
-		_thisFrameMs = getTotalPlayTime();
+		updateThisFrameMillis();
 
 		if (_lastMouseEvent == Common::EVENT_INVALID)
 			pumpMessages();

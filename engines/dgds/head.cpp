@@ -27,6 +27,7 @@
 #include "dgds/drawing.h"
 #include "dgds/scene.h"
 #include "dgds/dialog.h"
+#include "dgds/ads.h"
 
 #include "graphics/cursorman.h"
 
@@ -191,8 +192,8 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 	case 0x1020: { // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		int delayMillis = (int)round(ivals[0] * MS_PER_FRAME);
-		env._cdsDelay = delayMillis;
+		int16 delayMillis = (int16)round(ivals[0] * MS_PER_FRAME);
+		env._cdsDelay = MAX(env._cdsDelay, delayMillis);
 		break;
 	}
 	case 0x1050: // SELECT BMP:  id:int [0]
@@ -256,12 +257,13 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 		uint16 hi = (uint16)ivals[1];
 		uint16 lo = (uint16)ivals[0];
 		uint32 offset = ((uint32)hi << 16) + lo;
-		debug("TODO: 0xC250 Sync raw sfx?? offset %d", offset);
-		/*if (env._soundRaw->playedOffset() < offset) {
-			// Not played to this point yet.
-			env.scr->seek(-6, SEEK_CUR);
-			return false;
-		}*/
+		// The offset is in bytes of the sample.
+		uint32 playedOffset = env._soundRaw->playedOffset();
+		if (playedOffset < offset) {
+			// Not played to this point yet.  Add a delay until that point.
+			env._cdsDelay = MAX(env._cdsDelay, (int16)(1000 * (offset - playedOffset) / 11025));
+			debug(10, "CDS SYNC SFX: played %d wait for %d (%d ms)", playedOffset, offset, env._cdsDelay);
+		}
 		break;
 	}
 	case 0xa100: // DRAW FILLED RECT
@@ -331,7 +333,7 @@ void Conversation::loadData(uint16 dlgFileNum, uint16 dlgNum, int16 sub, bool ha
 	_dlgFileNum = dlgFileNum;
 	_subNum = sub;
 	_nextExecMs = 0;
-	_runTempFrame = 0;
+	_runTempFrame = -1;
 	_tempFrameNum = 0;
 	_thisFrameMs = 0;
 	_stopScript = false;
@@ -388,7 +390,8 @@ bool Conversation::runScriptFrame(int16 frameNum) {
 	TTMSeq *seq = _ttmSeqs[0].get();
 	seq->_currentFrame = frameNum;
 
-	debug(10, "CDS: Running TTM sequence %d frame %d", seq->_seqNum, seq->_currentFrame);
+	debug(10, "CDS: Running TTM sequence %d frame %d current millis %d", seq->_seqNum,
+		seq->_currentFrame, _thisFrameMs);
 
 	seq->_drawWin = _drawRect.toCommonRect();
 	return _ttmScript->run(_ttmEnv, *seq);
@@ -409,6 +412,7 @@ void Conversation::checkAndRunScript() {
 	runScriptFrame(_ttmEnv._cdsFrame);
 	if (_ttmEnv._cdsDelay > 0) {
 		_nextExecMs = _thisFrameMs + _ttmEnv._cdsDelay;
+		debug(10, "CDS: This fame %d. Next frame will be on or after %d", _thisFrameMs, _nextExecMs);
 		_ttmEnv._cdsDelay = -1;
 	} else {
 		_nextExecMs = 0;
@@ -464,6 +468,37 @@ void Conversation::runScript() {
 	if (!_ttmScript)
 		return;
 
+	//
+	// If we have head data, run the script and don't return until it's
+	// finished - stop all other activity.
+	//
+	// If not, just run the script at the same time as it's supposed to animate over
+	// the top of the other game movements.
+	//
+	if (_haveHeadData)
+		runScriptExclusive();
+	else
+		runScriptStep();
+}
+
+void Conversation::runScriptStep() {
+	DgdsEngine *engine = DgdsEngine::getInstance();
+
+	if (_runTempFrame == -1)
+		_runTempFrame = 2;
+
+	if (!isScriptRunning())
+		return;
+
+	_thisFrameMs = engine->getThisFrameMs();
+	if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
+		incrementFrame();
+		checkAndRunScript();
+	}
+}
+
+
+void Conversation::runScriptExclusive() {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	engine->disableKeymapper();
 
