@@ -400,8 +400,10 @@ void unload_game() {
 	_GP(thisroom).Free();
 
 	// Free game state and game struct
-	_GP(play) = GameState();
-	_GP(game) = GameSetupStruct();
+	delete _G(play);
+	_G(play) = new GameState();
+	delete _G(game);
+	_G(game) = new GameSetupStruct();
 
 	// Reset all resource caches
 	// IMPORTANT: this is hard reset, including locked items
