@@ -109,7 +109,7 @@ DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
 	_surface = new Graphics::Surface();
 	_surface->format = Graphics::PixelFormat::createFormatCLUT8();
 
-	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate().toInt());
+	debugC(2, kDebugLevelGVideo, "flags 0x0%x framesCount %d width %d height %d rate %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate().toInt());
 
 	_frameSize = _width * _height;
 	_decompBufferSize = _frameSize;

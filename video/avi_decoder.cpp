@@ -184,7 +184,7 @@ bool AVIDecoder::parseNextChunk() {
 	if (_fileStream->eos())
 		return false;
 
-	debug(6, "Decoding tag %s", tag2str(tag));
+	debugC(6, kDebugLevelGVideo, "Decoding tag %s", tag2str(tag));
 
 	switch (tag) {
 	case ID_LIST:
@@ -249,7 +249,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 	listSize -= 4; // Subtract away listType's 4 bytes
 	uint32 curPos = _fileStream->pos();
 
-	debug(7, "Found LIST of type %s", tag2str(listType));
+	debugC(7, kDebugLevelGVideo, "Found LIST of type %s", tag2str(listType));
 
 	switch (listType) {
 	case ID_MOVI: // Movie List
@@ -541,7 +541,7 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 		if (status.track->getTrackType() == Track::kTrackTypeVideo) {
 			// Horrible AVI video has a premature end
 			// Force the frame to be the last frame
-			debug(7, "Forcing end of AVI video");
+			debugC(7, kDebugLevelGVideo, "Forcing end of AVI video");
 			((AVIVideoTrack *)status.track)->forceTrackEnd();
 		}
 
@@ -563,7 +563,7 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 			if (status.track->getTrackType() == Track::kTrackTypeVideo) {
 				// Horrible AVI video has a premature end
 				// Force the frame to be the last frame
-				debug(7, "Forcing end of AVI video");
+				debugC(7, kDebugLevelGVideo, "Forcing end of AVI video");
 				((AVIVideoTrack *)status.track)->forceTrackEnd();
 			}
 
@@ -866,7 +866,7 @@ byte AVIDecoder::getStreamIndex(uint32 tag) {
 void AVIDecoder::readOldIndex(uint32 size) {
 	uint32 entryCount = size / 16;
 
-	debug(7, "Old Index: %d entries", entryCount);
+	debugC(7, kDebugLevelGVideo, "Old Index: %d entries", entryCount);
 
 	if (entryCount == 0)
 		return;
@@ -882,12 +882,12 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	// If it's absolute, the offset will equal the start of the movie list
 	bool isAbsolute = firstEntry.offset == _movieListStart;
 
-	debug(6, "Old index is %s", isAbsolute ? "absolute" : "relative");
+	debugC(6, kDebugLevelGVideo, "Old index is %s", isAbsolute ? "absolute" : "relative");
 
 	if (!isAbsolute)
 		firstEntry.offset += _movieListStart - 4;
 
-	debug(7, "Index 0: Tag '%s', Offset = %d, Size = %d (Flags = %d)", tag2str(firstEntry.id), firstEntry.offset, firstEntry.size, firstEntry.flags);
+	debugC(7, kDebugLevelGVideo, "Index 0: Tag '%s', Offset = %d, Size = %d (Flags = %d)", tag2str(firstEntry.id), firstEntry.offset, firstEntry.size, firstEntry.flags);
 	_indexEntries.push_back(firstEntry);
 
 	for (uint32 i = 1; i < entryCount; i++) {
@@ -902,7 +902,7 @@ void AVIDecoder::readOldIndex(uint32 size) {
 			indexEntry.offset += _movieListStart - 4;
 
 		_indexEntries.push_back(indexEntry);
-		debug(7, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
+		debugC(7, kDebugLevelGVideo, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
 	}
 }
 
@@ -1041,7 +1041,7 @@ void AVIDecoder::AVIVideoTrack::forceDimensions(uint16 width, uint16 height) {
 
 bool AVIDecoder::AVIVideoTrack::rewind() {
 	_curFrame = -1;
-	 
+
 	useInitialPalette();
 
 	delete _videoCodec;

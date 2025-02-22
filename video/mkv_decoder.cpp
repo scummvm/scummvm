@@ -155,7 +155,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 i = 0;
 	const unsigned long j = _pTracks->GetTracksCount();
 
-	debug(1, "Number of tracks: %lu", j);
+	debugC(1, kDebugLevelGVideo, "Number of tracks: %lu", j);
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	_vTrack = -1;
@@ -321,7 +321,7 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
 	if (_pixelFormat.bytesPerPixel == 1)
 		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
-	debug(1, "VideoTrack: %d x %d", _width, _height);
+	debugC(1, kDebugLevelGVideo, "VideoTrack: %d x %d", _width, _height);
 
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
@@ -391,7 +391,7 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	const long long audioBitDepth = pAudioTrack->GetBitDepth();
 	const double audioSampleRate = pAudioTrack->GetSamplingRate();
 
-	debug(1, "audioChannels %lld audioBitDepth %lld audioSamplerate %f", audioChannels, audioBitDepth, audioSampleRate);
+	debugC(1, kDebugLevelGVideo, "audioChannels %lld audioBitDepth %lld audioSamplerate %f", audioChannels, audioBitDepth, audioSampleRate);
 
 	size_t audioHeaderSize;
 	byte *audioHeader = const_cast<byte *>(pAudioTrack->GetCodecPrivate(audioHeaderSize));

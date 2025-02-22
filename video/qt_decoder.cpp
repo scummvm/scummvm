@@ -118,7 +118,7 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 
 Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize) {
 	if (track->codecType == CODEC_TYPE_VIDEO) {
-		debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
+		debugC(0, kDebugLevelGVideo, "Video Codec FourCC: \'%s\'", tag2str(format));
 
 		VideoSampleDesc *entry = new VideoSampleDesc(track, format);
 
@@ -158,7 +158,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 		byte colorDepth = entry->_bitsPerSample & 0x1F;
 		bool colorGreyscale = (entry->_bitsPerSample & 0x20) != 0;
 
-		debug(0, "color depth: %d", colorDepth);
+		debugC(0, kDebugLevelGVideo, "color depth: %d", colorDepth);
 
 		// if the depth is 2, 4, or 8 bpp, file is palettized
 		if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
@@ -166,7 +166,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 			entry->_palette = new byte[256 * 3]();
 
 			if (colorGreyscale) {
-				debug(0, "Greyscale palette");
+				debugC(0, kDebugLevelGVideo, "Greyscale palette");
 
 				// compute the greyscale palette
 				uint16 colorCount = 1 << colorDepth;
@@ -182,7 +182,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				// if flag bit 3 is set, use the default palette
 				//uint16 colorCount = 1 << colorDepth;
 
-				debug(0, "Predefined palette! %dbpp", colorDepth);
+				debugC(0, kDebugLevelGVideo, "Predefined palette! %dbpp", colorDepth);
 				if (colorDepth == 2)
 					memcpy(entry->_palette, quickTimeDefaultPalette4, 4 * 3);
 				else if (colorDepth == 4)
@@ -190,7 +190,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				else if (colorDepth == 8)
 					memcpy(entry->_palette, quickTimeDefaultPalette256, 256 * 3);
 			} else {
-				debug(0, "Palette from file");
+				debugC(0, kDebugLevelGVideo, "Palette from file");
 
 				// load the palette from the file
 				uint32 colorStart = _fd->readUint32BE();
