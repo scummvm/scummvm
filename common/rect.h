@@ -371,6 +371,13 @@ struct Rect {
 		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
+	 /**
+	 * Print debug messages related to this class.
+	 */
+	void debugPrintC(int debuglevel, uint32 debugChannels, const char *caption = "Rect:") const {
+		debugC(debuglevel, debugChannels, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
+	}
+
 	/**
 	 * Create a rectangle around the given center.
 	 * @note The center point is rounded up and left when given an odd width and height.
