@@ -1729,7 +1729,7 @@ void ScummEngine::updatePalette() {
 	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0 && _useGammaCorrection) {
 		for (int i = 0; i < 3 * num; ++i)
 			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
-	} else if (_game.platform == Common::kPlatformSegaCD && _game.id == GID_MONKEY && !enhancementEnabled(kEnhVisualChanges)) {
+	} else if (_game.platform == Common::kPlatformSegaCD && _game.id == GID_MONKEY && _enableSegaShadowMode) {
 		// This works on the assumption that the original interpreter
 		// used just the three most significant bits of each color
 		// component. Furthermore, the graphcis were drawn in "shadow

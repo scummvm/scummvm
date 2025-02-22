@@ -1425,6 +1425,7 @@ protected:
 	byte *_hercCGAScaleBuf = nullptr;
 	bool _enableEGADithering = false;
 	bool _supportsEGADithering = false;
+	bool _enableSegaShadowMode = false;
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
