@@ -274,7 +274,7 @@ void QuickTimeDecoder::setUpdateMode(Common::String mode) {
 
 void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	if (!isVR())
-		error("QuickTimeDecoder::setTargetSize() called on non-VR movie");
+		warning("QuickTimeDecoder::setTargetSize() called on non-VR movie");
 
 	if (_qtvrType == QTVRType::PANORAMA) {
 		_width = w;
