@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/libs/frame_wnd.h"
+#include "bagel/hodjnpodj/mfc/frame_wnd.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
@@ -32,6 +32,14 @@ void CFrameWnd::UpdateWindow() {
 }
 
 void CFrameWnd::SetActiveWindow() {
+}
+
+CDC *CFrameWnd::GetDC() {
+	return new CDC();
+}
+
+void CFrameWnd::ReleaseDC(CDC *dc) {
+	delete dc;
 }
 
 } // namespace HodjNPodj

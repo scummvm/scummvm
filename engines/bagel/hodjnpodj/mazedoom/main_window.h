@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_MAZEDOOM_MAIN_WINDOW_H
 #define HODJNPODJ_MAZEDOOM_MAIN_WINDOW_H
 
-#include "bagel/hodjnpodj/libs/frame_wnd.h"
+#include "bagel/hodjnpodj/mfc/frame_wnd.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -38,9 +38,6 @@ public:
 	//added data members:
 
 	virtual void SplashScreen();
-
-private:
-	void OnSoundNotify(CSound *pSound);
 
 protected:
 	bool OnCommand(uint16 wParam, int32 lParam) override;

@@ -24,6 +24,7 @@
 
 #include "bagel/bagel.h"
 #include "bagel/boflib/point.h"
+#include "bagel/hodjnpodj/mfc/dc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -32,7 +33,11 @@ enum {
 	SW_SHOWNORMAL
 };
 
-typedef int CDC;
+enum {
+	CS_BYTEALIGNWINDOW = 1,
+	CS_OWNDC = 2,
+	WS_POPUP
+};
 
 class CFrameWnd {
 protected:
@@ -55,13 +60,24 @@ protected:
 	virtual long OnMCINotify(uint16, int32) { return 0; }
 	virtual long OnMMIONotify(uint16, int32) { return 0; }
 
+	// Dummy functions
 	void BeginWaitCursor() {}
+	void EndWaitCursor() {}
+
+	CBofString AfxRegisterWndClass(int flags, void *, void *, void *) const {
+		return CBofString();
+	}
+	void Create(const CBofString &, const char *, int, const CBofRect &, void *, void *) const {
+	}
 
 public:
 	virtual ~CFrameWnd() {}
 	void ShowWindow(int);
 	void UpdateWindow();
 	void SetActiveWindow();
+
+	static CDC *GetDC();
+	static void ReleaseDC(CDC *dc);
 };
 
 } // namespace HodjNPodj

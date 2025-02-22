@@ -104,10 +104,11 @@ MODULE_OBJS = \
 	spacebar/thud.o \
 	spacebar/vid_wnd.o \
 	hodjnpodj/hodjnpodj.o \
+	hodjnpodj/mfc/dc.o \
 	hodjnpodj/mfc/document.o \
+	hodjnpodj/mfc/frame_wnd.o \
 	hodjnpodj/libs/dib_api.o \
 	hodjnpodj/libs/dib_doc.o \
-	hodjnpodj/libs/frame_wnd.o \
 	hodjnpodj/mazedoom/main_window.o \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o

@@ -24,6 +24,7 @@
 
 #include "bagel/bagel.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/hodjnpodj/mfc/afx.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gfx/sprite.h"
 

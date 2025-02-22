@@ -26,6 +26,7 @@
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/file.h"
+#include "bagel/hodjnpodj/mfc/afx.h"
 #include "bagel/hodjnpodj/libs/types.h"
 
 namespace Bagel {

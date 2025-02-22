@@ -22,7 +22,7 @@
 #ifndef BAGEL_HODJNPODJ_MFC_DOCUMENT_H
 #define BAGEL_HODJNPODJ_MFC_DOCUMENT_H
 
-#include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/hodjnpodj/mfc/mfc_types.h"
 
 namespace Bagel {
 namespace HodjNPodj {

@@ -19,26 +19,33 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_TYPES_H
-#define HODJNPODJ_LIBS_TYPES_H
-
 #include "common/rect.h"
 #include "common/serializer.h"
-#include "bagel/hodjnpodj/mfc/mfc_types.h"
+
+#ifndef BAGEL_HODJNPODJ_MFC_TYPES_H
+#define BAGEL_HODJNPODJ_MFC_TYPES_H
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct GAMESTRUCT {
-	long lCrowns = 0;
-	long lScore = 0;
-	int nSkillLevel = 0;
-	bool bSoundEffectsEnabled = false;
-	bool bMusicEnabled = false;
-	bool bPlayingMetagame = false;
-	bool bPlayingHodj = false;
-};
-typedef GAMESTRUCT *LPGAMESTRUCT;
+#define DECLARE_MESSAGE_MAP()
+
+typedef bool BOOL;
+typedef uint16 WPARAM;
+typedef int32 LPARAM;
+typedef uint UINT;
+#define TRUE true
+#define FALSE false
+
+typedef void *HANDLE;
+typedef void *HDIB;
+typedef void *HDC;
+typedef Common::Rect *LPRECT;
+typedef Common::Serializer CDumpContext;
+typedef char *LPSTR;
+typedef void *HBITMAP;
+typedef void *LPBITMAPINFO;
+typedef void *LPBITMAPINFOHEADER;
 
 } // namespace HodjNPodj
 } // namespace Bagel

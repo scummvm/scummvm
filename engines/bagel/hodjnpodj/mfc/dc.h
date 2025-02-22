@@ -19,26 +19,26 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_TYPES_H
-#define HODJNPODJ_LIBS_TYPES_H
+#ifndef BAGEL_HODJNPODJ_MFC_DC_H
+#define BAGEL_HODJNPODJ_MFC_DC_H
 
-#include "common/rect.h"
-#include "common/serializer.h"
-#include "bagel/hodjnpodj/mfc/mfc_types.h"
+#include "bagel/boflib/gfx/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct GAMESTRUCT {
-	long lCrowns = 0;
-	long lScore = 0;
-	int nSkillLevel = 0;
-	bool bSoundEffectsEnabled = false;
-	bool bMusicEnabled = false;
-	bool bPlayingMetagame = false;
-	bool bPlayingHodj = false;
+enum DeviceCaps {
+	HORZRES, VERTRES
 };
-typedef GAMESTRUCT *LPGAMESTRUCT;
+
+class CDC {
+private:
+	CPalette _palette;
+public:
+	int GetDeviceCaps(int field) const;
+	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
+	void RealizePalette();
+};
 
 } // namespace HodjNPodj
 } // namespace Bagel

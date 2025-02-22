@@ -19,28 +19,34 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_TYPES_H
-#define HODJNPODJ_LIBS_TYPES_H
-
-#include "common/rect.h"
-#include "common/serializer.h"
-#include "bagel/hodjnpodj/mfc/mfc_types.h"
+#include "common/system.h"
+#include "graphics/paletteman.h"
+#include "bagel/hodjnpodj/mfc/dc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct GAMESTRUCT {
-	long lCrowns = 0;
-	long lScore = 0;
-	int nSkillLevel = 0;
-	bool bSoundEffectsEnabled = false;
-	bool bMusicEnabled = false;
-	bool bPlayingMetagame = false;
-	bool bPlayingHodj = false;
-};
-typedef GAMESTRUCT *LPGAMESTRUCT;
+int CDC::GetDeviceCaps(int field) const {
+	switch (field) {
+	case HORZRES:
+		return 640;
+	case VERTRES:
+		return 480;
+	default:
+		return 0;
+	}
+}
+
+CPalette *CDC::SelectPalette(CPalette *pPalette, bool bForceBackground) {
+	assert(!bForceBackground);
+	_palette = *pPalette;
+	return &_palette;
+}
+
+void CDC::RealizePalette() {
+	const HPALETTE &pal = _palette.getPalette();
+	g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
