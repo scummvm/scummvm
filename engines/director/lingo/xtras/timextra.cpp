@@ -41,6 +41,17 @@ new object me, any
 
  */
 
+
+/**************************************************
+ Return value is hours * 3600 + minutes * 60 + seconds
+ where the starting point 01:00 is 0.
+
+ Safecrackers only needs the number of seconds since the start of the game.
+ Since not all platforms that run ScummVM have a clock, it's implemented as
+ the number of seconds since the start of ScummVM.
+ **************************************************/
+
+
 namespace Director {
 
 const char *const TimextraXtra::xlibName = "Timextra";
@@ -95,6 +106,11 @@ void TimextraXtra::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(TimextraXtra::m_getTime, 0)
+void TimextraXtra::m_getTime(int nargs) {
+	ARGNUMCHECK(0);
+	int32 seconds = g_system->getMillis() / 1000;
+	Datum const res(seconds);
+	g_lingo->push(res);
+}
 
 }
