@@ -234,7 +234,7 @@ static const BuiltinProto builtins[] = {
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
 	{ "castLib",		LB::b_castLib,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
-	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
+	{ "script",			LB::b_script,		1, 2, 400, FBLTIN },	//			D4 f
 	{ "sprite",			LB::b_sprite,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "windowPresent",	LB::b_windowPresent,1, 1, 500, FBLTIN },	//				D5 f
@@ -3511,13 +3511,15 @@ void LB::b_member(int nargs) {
 }
 
 void LB::b_script(int nargs) {
-	Datum d = g_lingo->pop();
-	// FIXME: Check with later versions of director
-	//        The kCastText check version breaks Phibos, which loads a
-	//        non-kCastText script using this builtin.
-	//        With the kCastText version, Phibos crashes during its intro.
-	// CastMemberID memberID = d.asMemberID(kCastText);
-	CastMemberID memberID = d.asMemberID();
+	CastMemberID memberID;
+	if (nargs == 1) {
+		Datum member = g_lingo->pop();
+		memberID = member.asMemberID();
+	} else if (nargs == 2) {
+		Datum library = g_lingo->pop();
+		Datum member = g_lingo->pop();
+		memberID = g_lingo->toCastMemberID(member, library);
+	}
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
 
 	if (cast) {
@@ -3539,7 +3541,7 @@ void LB::b_script(int nargs) {
 			return;
 		}
 	}
-	warning("b_script(): No script context found for '%s'", d.asString(true).c_str());
+	warning("b_script(): No script context found for '%s'", memberID.asString().c_str());
 	g_lingo->push(Datum());
 }
 
