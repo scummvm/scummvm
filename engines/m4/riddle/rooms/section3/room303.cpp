@@ -1820,7 +1820,8 @@ void Room303::playSeries(bool cow) {
 	series_plain_play("SPINNING TOMATO MAN", -1, 0, 100, 0, 7);
 	series_plain_play("PUFFBALL", -1, 0, 100, 0, 8);
 	series_plain_play("CREATURE FEATURE LONG VIEW", 1, 0, 100, 0xf05, 7, 70);
-	series_plain_play("303cow1", -1, 0, 100, 0, 9);
+	if (cow)
+		series_plain_play("303cow1", -1, 0, 100, 0, 9);
 }
 
 void Room303::conv303a() {
