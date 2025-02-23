@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-23 07:45+0000\n"
-"PO-Revision-Date: 2024-11-16 14:18+0000\n"
+"PO-Revision-Date: 2025-02-24 01:19+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -4232,7 +4232,7 @@ msgstr "Przełącz przechwytywanie myszy"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Przełącz zmianę rozmiaru okna"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -7576,22 +7576,20 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Obsługa Versailles 1685 nie jest wkompilowana"
 
 #: engines/darkseed/darkseed.cpp:67
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "Nie udało się znaleźć plików silnika %s."
+msgstr "Nie udało się znaleźć plików silnika darkseed.dat."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Użyj tempa muzyki w wersji DOS"
+msgstr "Użyj muzyki z wersji dyskietkowej"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Użyj muzyki z wersji dyskietkowej. Pliki muzyczne wersji dyskietkowej muszą "
+"zostać skopiowane do katalogu SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -7604,10 +7602,8 @@ msgid "Change Command"
 msgstr "Zmień polecenie"
 
 #: engines/darkseed/metaengine.cpp:87
-#, fuzzy
-#| msgid "Timer On"
 msgid "Time Advance"
-msgstr "Zegar właczony"
+msgstr "Przesunięcie czasu"
 
 #: engines/dgds/metaengine.cpp:75
 msgid "Toggle Menu"
@@ -7850,8 +7846,6 @@ msgid "Rotate down"
 msgstr "Obrót w dół"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
 msgstr "Odwróć się do tyłu"
 
@@ -8088,17 +8082,15 @@ msgstr "Strzał"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Magia"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Thor umiera"
 
 #: engines/got/got.cpp:185 engines/got/got.cpp:195
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Zapisywanie stanu gry jest aktualnie niedostępne"
+msgstr "Zapisywanie stanu gry nie jest dostępne w trybie demonstracyjnym"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -10271,10 +10263,8 @@ msgstr ""
 "GMM mogą być uszkodzone i bezużyteczne. Używasz na własne ryzyko!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Repair speech audio"
-msgstr "Prędkość czytania"
+msgstr "Naprawa dźwięku mowy"
 
 #: engines/sci/detection_options.h:249
 msgid ""
