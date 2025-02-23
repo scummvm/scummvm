@@ -1224,6 +1224,9 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 	} else {
 		_zoomState = kZoomNone;
 	}
+
+	if (state.keycode == Common::KEYCODE_h && down && !repeat)
+		renderHotspots(!_renderHotspots);
 }
 
 enum {
