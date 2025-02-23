@@ -68,6 +68,8 @@
 namespace Bagel {
 namespace SpaceBar {
 
+#define SAVEGAME_VERSION 1
+
 #define SMK_LOGO1        "$SBARDIR\\INTRO\\LOGO1.SMK"
 #define SMK_LOGO2        "$SBARDIR\\INTRO\\LOGO2.SMK"
 #define SMK_LOGO3        "$SBARDIR\\INTRO\\LOGO3.SMK"
@@ -126,6 +128,8 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; ++i)
 		g_cBetAreas[i] = CBetArea(BET_AREAS[i]);
+
+	_saveData.clear();
 }
 
 SpaceBarEngine::~SpaceBarEngine() {
@@ -308,6 +312,90 @@ Common::Error SpaceBarEngine::run() {
 	shutdown();
 	postShutDown();
 
+	return Common::kNoError;
+}
+
+void SpaceBarEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_midi->pause();
+	} else {
+		_midi->resume();
+	}
+}
+
+
+bool SpaceBarEngine::canSaveLoadFromWindow(bool save) const {
+	CBofWindow *win = CBofWindow::getActiveWindow();
+
+	// Don't allow saves when capture/focus is active
+	if (CBofApp::getApp()->getCaptureControl() != nullptr ||
+		CBofApp::getApp()->getFocusControl() != nullptr ||
+		win == nullptr)
+		return false;
+
+	// These two dialogs need to allow save/load for the ScummVM
+	// dialogs to work from them when original save/load is disabled
+	if ((dynamic_cast<CBagStartDialog *>(win) != nullptr && !save) ||
+		dynamic_cast<CBagOptWindow *>(win) != nullptr)
+		return true;
+
+	// Otherwise, allow save/load if it's not a dialog, and it's
+	// not a special view that shows the system cursor, like the
+	// Nav Window minigame or Drink Mixer
+	return dynamic_cast<CBofDialog *>(win) == nullptr &&
+		!CBagCursor::isSystemCursorVisible();
+}
+
+bool SpaceBarEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveLoadFromWindow(false);
+}
+
+bool SpaceBarEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return canSaveLoadFromWindow(true);
+}
+
+Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	_masterWin->fillSaveBuffer(&_saveData);
+
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
+Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc,
+	bool isAutosave, StBagelSave &saveData) {
+	_saveData = saveData;
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
+Common::Error SpaceBarEngine::loadGameState(int slot) {
+	Common::Error result = Engine::loadGameState(slot);
+
+	if (result.getCode() == Common::kNoError) {
+		// Make sure we close any GUI windows before loading from GMM
+		CBofWindow *win = CBofWindow::getActiveWindow();
+		if (win)
+			win->close();
+		_masterWin->doRestore(&_saveData);
+	}
+
+	return result;
+}
+
+Common::Error SpaceBarEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+
+	Common::Serializer s(nullptr, stream);
+	_saveData.synchronize(s);
+	return Common::kNoError;
+}
+
+Common::Error SpaceBarEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	const byte version = stream->readByte();
+	if (version > SAVEGAME_VERSION)
+		error("Tried to load unsupported savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	_saveData.synchronize(s);
 	return Common::kNoError;
 }
 

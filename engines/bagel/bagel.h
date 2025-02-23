@@ -36,12 +36,6 @@ class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	SpaceBar::StBagelSave _saveData;
-
-	bool canSaveLoadFromWindow(bool save) const;
-
-protected:
-	Audio::MidiPlayer *_midiPlayer = nullptr;
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -86,31 +80,6 @@ public:
 		    (f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
-
-	/**
-	 * Save a game state
-	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave,
-		SpaceBar::StBagelSave &saveData);
-
-	/**
-	 * Load a game state
-	 */
-	Common::Error loadGameState(int slot) override;
-
-	/**
-	 * Handles saving the game
-	 */
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-
-	/**
-	 * Handles loading a savegame
-	 */
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-
 	/**
 	 * Returns a list of savegames
 	 */
@@ -120,11 +89,6 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savesExist() const;
-
-	/**
-	 * Pause all internal timers.
-	 */
-	void pauseEngineIntern(bool pause) override;
 
 	void errorDialog(const char *msg) const;
 
