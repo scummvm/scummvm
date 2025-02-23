@@ -58,7 +58,7 @@ static int16 mapper_get_retro_key_index(const char *retro_key_value) {
 
 int8 mapper_get_mapper_key_index(int16 key_retro_id, uint8 start_index) {
 	uint8 i = start_index;
-	while (i < RETRO_DEVICE_ID_JOYPAD_LAST - 1) {
+	while (i < RETRO_DEVICE_ID_JOYPAD_LAST) {
 		if (mapper_keys[i].retro_id == key_retro_id)
 			return i;
 		++i;
