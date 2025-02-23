@@ -166,6 +166,7 @@ void Menu::loadMenu() {
 		if (menuItemIdx == 1) {
 			// restore game screen back for the save game thumbnail
 			g_engine->_screen->copyRectToSurface(screenCopy, 0, 0, {screenCopy.w, screenCopy.h});
+			g_engine->_room->installPalette(); // restore room working palette
 			g_engine->_screen->update();
 			_open = false; // mark menu as closed to allow saving.
 			g_engine->saveGameDialog();

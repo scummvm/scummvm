@@ -1392,6 +1392,10 @@ void Room::restorePalette() {
 	_palLoaded = false;
 }
 
+void Room::installPalette() {
+	_workPal.installPalette();
+}
+
 void Room::darkenSky() {
 	if (isOutside() && g_engine->_currentTimeInSeconds / 3600 > 16) {
 		_workPal.load(_pal);

@@ -105,6 +105,7 @@ public:
 	void mikeStickThrowAnim();
 	void loadRoom61AWalkableLocations();
 	void restorePalette();
+	void installPalette();
 	void darkenSky();
 	void loadLocationSprites(const Common::Path &path);
 	Common::Point getExitPointForRoom(uint8 roomNumber);
