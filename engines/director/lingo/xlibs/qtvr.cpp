@@ -120,18 +120,87 @@ void QTVR::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUBNR(QTVR::m_dispose)
-XOBJSTUB(QTVR::m_getHPanAngle, "")
-XOBJSTUB(QTVR::m_getMovieRect, "")
-XOBJSTUB(QTVR::m_getNodeID, 0)
-XOBJSTUB(QTVR::m_getQuality, 0)
-XOBJSTUB(QTVR::m_getVPanAngle, "")
-XOBJSTUB(QTVR::m_getZoomAngle, "")
+void QTVR::m_dispose(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	if (me->_video) {
+		me->_video->close();
+		delete me->_video;
+	}
+}
+
+void QTVR::m_getHPanAngle(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getPanAngle());
+}
+
+void QTVR::m_getMovieRect(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%d,%d,%d,%d", me->_rect.left, me->_rect.top, me->_rect.right, me->_rect.bottom));
+}
+
+void QTVR::m_getNodeID(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)me->_video->getCurrentNodeID());
+}
+
+void QTVR::m_getQuality(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getQuality());
+}
+
+void QTVR::m_getVPanAngle(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getTiltAngle());
+}
+
+void QTVR::m_getZoomAngle(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getFOV());
+}
+
 XOBJSTUB(QTVR::m_mouseOver, "")
-XOBJSTUB(QTVR::m_name, "")
+
+void QTVR::m_name(int nargs) {
+	// TODO Clarify that it is indeed hotspot name
+	g_lingo->printArgs("QTVR::m_name", nargs);
+
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getClickedHotspot();
+
+	if (!hotspot) {
+		g_lingo->push(Common::String(""));
+		return;
+	}
+
+	g_lingo->push(me->_video->getHotSpotName(hotspot->id));
+}
 
 void QTVR::m_openMovie(int nargs) {
-	g_lingo->printArgs("QtvrxtraXtra::m_QTVROpen", nargs);
+	g_lingo->printArgs("QTVR::m_QTVROpen", nargs);
 	ARGNUMCHECK(3);
 
 	int top = g_lingo->pop().asInt();
@@ -167,7 +236,13 @@ void QTVR::m_openMovie(int nargs) {
 	g_lingo->push(path.toString());
 }
 
-XOBJSTUB(QTVR::m_setActive, 0)
+void QTVR::m_setActive(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_active = (g_lingo->pop().asInt() != 0);
+}
 
 void QTVR::m_setHPanAngle(int nargs) {
 	ARGNUMCHECK(1);
@@ -177,8 +252,21 @@ void QTVR::m_setHPanAngle(int nargs) {
 	me->_video->setPanAngle(atof(g_lingo->pop().asString().c_str()));
 }
 
-XOBJSTUB(QTVR::m_setNodeID, 0)
-XOBJSTUB(QTVR::m_setQuality, 0)
+void QTVR::m_setNodeID(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->goToNode(g_lingo->pop().asInt());
+}
+
+void QTVR::m_setQuality(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setQuality(g_lingo->pop().asInt());
+}
 
 void QTVR::m_setRolloverCallback(int nargs) {
 	ARGNUMCHECK(1);
@@ -225,6 +313,9 @@ void QTVR::m_update(int nargs) {
 
 	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
 
+	if (!me->_active)
+		return;
+
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
 	if (!frame)
@@ -249,6 +340,9 @@ QtvrWidget::QtvrWidget(QTVRXObject *xtra, Graphics::MacWidget *parent, int x, in
 }
 
 bool QtvrWidget::processEvent(Common::Event &event) {
+	if (!_active)
+		return false;
+
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		_xtra->_video->handleMouseButton(true, event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
