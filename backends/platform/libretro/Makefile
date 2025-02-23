@@ -223,7 +223,7 @@ else ifeq ($(platform), ctr)
    ifeq ($(strip $(CTRULIB)),)
       $(error "Please set CTRULIB in your environment. export CTRULIB=<path to>libctru")
    endif
-   DEFINES += -DARM11 -D_3DS -I$(CTRULIB)/include
+   DEFINES += -DARM11 -D_3DS -D__3DS__ -DARM -I$(CTRULIB)/include
    DEFINES += -march=armv6k -mtune=mpcore -mfloat-abi=hard
    DEFINES += -Wall -mword-relocations
    DEFINES += -fomit-frame-pointer -ffast-math -DDEFAULT_PERF_TUNER
