@@ -54,11 +54,11 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/qtvr.h"
 #include "director/window.h"
-
 
 namespace Director {
 
@@ -179,7 +179,102 @@ void QTVR::m_getZoomAngle(int nargs) {
 	g_lingo->push(me->_video->getFOV());
 }
 
-XOBJSTUB(QTVR::m_mouseOver, "")
+void QTVR::m_mouseOver(int nargs) {
+	ARGNUMCHECK(0);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+
+	if (!me->_active || !me->_rect.contains(pos)) {
+		g_lingo->pushVoid();
+		return;
+	}
+
+	// Execute handler on first call to MouseOver
+	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getRolloverHotspot();
+
+	if (!me->_rolloverCallback.empty()) {
+		g_lingo->push(hotspot ? hotspot->id : 0);
+		g_lingo->executeHandler(me->_rolloverCallback, 1);
+	}
+
+	int node;
+	bool nodeChanged = false;
+
+	while (true) {
+		Graphics::Surface const *frame = me->_video->decodeNextFrame();
+
+		if (!frame) {
+			g_lingo->pushVoid();
+			return;
+		}
+
+		Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, me->_video->getPalette(), 256, g_director->getPalette(), 256, Graphics::kDitherNaive);
+
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
+		);
+
+		g_director->getCurrentWindow()->setDirty(true);
+
+		Common::Event event;
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (Common::isMouseEvent(event)) {
+				pos = g_director->getCurrentWindow()->getMousePos();
+
+				if (!me->_rect.contains(pos))
+					break;
+			}
+
+			node = me->_video->getCurrentNodeID();
+			hotspot = me->_video->getRolloverHotspot();
+
+			if (event.type == Common::EVENT_LBUTTONUP) {
+				me->_widget->processEvent(event);
+
+				if (me->_video->getCurrentNodeID() != node)
+					nodeChanged = true;
+
+				hotspot = me->_video->getClickedHotspot();
+
+				if (!hotspot) {
+					if (nodeChanged)
+						g_lingo->push(Common::String::format("jump,%d", node));
+					else
+						g_lingo->push(Common::String("pan ,0"));
+					return;
+				}
+
+				g_lingo->push(Common::String::format("%s,%d", tag2str((uint32)hotspot->type), hotspot->id));
+
+				return;
+			}
+
+			me->_widget->processEvent(event);
+
+			if (!me->_rolloverCallback.empty() && hotspot != me->_video->getRolloverHotspot()) {
+				g_lingo->push(hotspot ? hotspot->id : 0);
+
+				g_lingo->executeHandler(me->_rolloverCallback, 1);
+			}
+		}
+
+		LB::b_updateStage(0);
+
+		if (!me->_rect.contains(pos))
+			break;
+
+		if (event.type == Common::EVENT_QUIT) {
+			g_director->processEventQUIT();
+			break;
+		}
+
+		g_director->delayMillis(10);
+	}
+
+	g_lingo->_theResult = 0;
+}
 
 void QTVR::m_name(int nargs) {
 	// TODO Clarify that it is indeed hotspot name
@@ -313,8 +408,7 @@ void QTVR::m_update(int nargs) {
 
 	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
 
-	if (!me->_active)
-		return;
+	me->_active = true;
 
 	Graphics::Surface const *frame = me->_video->decodeNextFrame();
 
@@ -340,7 +434,7 @@ QtvrWidget::QtvrWidget(QTVRXObject *xtra, Graphics::MacWidget *parent, int x, in
 }
 
 bool QtvrWidget::processEvent(Common::Event &event) {
-	if (!_active)
+	if (!_xtra->_active)
 		return false;
 
 	switch (event.type) {
