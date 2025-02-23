@@ -163,11 +163,13 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 }
 
 void SdlWindow::setResizable(bool resizable) {
-#if SDL_VERSION_ATLEAST(2, 0, 5)
 	if (_window) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_SetWindowResizable(_window, resizable);
+#elif SDL_VERSION_ATLEAST(2, 0, 5)
 		SDL_SetWindowResizable(_window, resizable ? SDL_TRUE : SDL_FALSE);
-	}
 #endif
+	}
 	_resizable = resizable;
 }
 
@@ -538,7 +540,9 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	SDL_SetWindowMouseRect(_window, shouldGrab ? &grabRect : NULL);
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 5)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_SetWindowResizable(_window, _resizable);
+#elif SDL_VERSION_ATLEAST(2, 0, 5)
 	SDL_SetWindowResizable(_window, _resizable ? SDL_TRUE : SDL_FALSE);
 #endif
 
