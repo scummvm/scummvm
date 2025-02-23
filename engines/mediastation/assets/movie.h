@@ -63,7 +63,7 @@ public:
 class MovieFrame : public Bitmap {
 public:
 	MovieFrame(Chunk &chunk, MovieFrameHeader *header);
-	~MovieFrame();
+	virtual ~MovieFrame() override;
 
 	void setFooter(MovieFrameFooter *footer);
 	uint32 left();

@@ -40,7 +40,7 @@ enum BitmapCompressionType {
 class BitmapHeader {
 public:
 	BitmapHeader(Chunk &chunk);
-	~BitmapHeader();
+	virtual ~BitmapHeader();
 
 	bool isCompressed();
 
@@ -54,7 +54,7 @@ public:
 	BitmapHeader *_bitmapHeader = nullptr;
 
 	Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader);
-	~Bitmap();
+	virtual ~Bitmap();
 
 	uint16 width();
 	uint16 height();
