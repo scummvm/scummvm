@@ -150,6 +150,10 @@ void GotEngine::savegameLoaded() {
 	_G(thor)->_vulnerableCountdown = 60;
 	_G(thor)->_show = 60;
 	_G(thor)->_moveCountdown = 6;
+	if (_G(area) == 2)
+		_G(thorInfo)._armor = 1;
+	if (_G(area) == 3)
+		_G(thorInfo)._armor = 10;
 	loadNewThor();
 
 	g_vars->resetEndGameFlags();
