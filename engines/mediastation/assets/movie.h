@@ -123,6 +123,7 @@ private:
 	void spatialHide();
 
 	void updateFrameState();
+	void showPersistentFrame();
 
 	Common::Rect getFrameBoundingBox(MovieFrame *frame);
 };

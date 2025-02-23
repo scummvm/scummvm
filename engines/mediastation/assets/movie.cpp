@@ -354,14 +354,7 @@ void Movie::updateFrameState() {
 	uint currentTime = g_system->getMillis();
 	uint movieTime = currentTime - _startTime;
 	debugC(5, kDebugGraphics, "Movie::updateFrameState (%d): Starting update (movie time: %d)", _header->_id, movieTime);
-	if (_framesNotYetShown.empty()) {
-		_isPlaying = false;
-		setInactive();
-		_framesOnScreen.clear();
-		runEventHandlerIfExists(kMovieEndEvent);
-		return;
-	}
-	
+
 	// This complexity is necessary becuase movies can have more than one frame
 	// showing at the same time - for instance, a movie background and an
 	// animation on that background are a part of the saem movie and are on
@@ -400,9 +393,31 @@ void Movie::updateFrameState() {
 		}
 	}
 
+	// Now see if we're at the end of the movie.
+	if (_framesOnScreen.empty() && _framesNotYetShown.empty()) {
+		_isPlaying = false;
+		_framesOnScreen.clear();
+		if (_stills.empty()) {
+			setInactive();
+		} else {
+			showPersistentFrame();
+		}
+
+		runEventHandlerIfExists(kMovieEndEvent);
+		return;
+	}
+
+
 	// Show the frames that are currently active, for debugging purposes.
 	for (MovieFrame *frame : _framesOnScreen) {
 		debugC(5, kDebugGraphics, "   (time: %d ms) Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d", movieTime, frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
+	}
+}
+
+void Movie::showPersistentFrame() {
+	for (MovieFrame *still : _stills) {
+		_framesOnScreen.push_back(still);
+		g_engine->_dirtyRects.push_back(getFrameBoundingBox(still));
 	}
 }
 
