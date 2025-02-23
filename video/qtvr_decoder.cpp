@@ -1125,8 +1125,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 		_mouseDrag.x = x;
 		_mouseDrag.y = y;
 
-		if (_rolloverHotspot)
-			_clickedHotspot = _rolloverHotspot;
+		_clickedHotspot = _rolloverHotspot;
 	}
 
 	if (!repeat && !isDown && _rolloverHotspot && _rolloverHotspot->type == MKTAG('l','i','n','k') && _prevMouse == _mouseDrag) {
