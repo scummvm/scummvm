@@ -26,7 +26,6 @@
 
 class DE : public LangConstants {
 public:
-	virtual ~DE() {}
 	const char *CLOUDS_CREDITS() {
 		return "\v012\t000\x3"
 			   "c\f35Designed and Directed By:\n"
@@ -2130,6 +2129,20 @@ public:
 			return _soxm;
 		}
 
+		virtual ~DE_KeyConstants() {
+			delete _dci;
+			delete _dcp;
+			delete _dcc;
+			delete _dd;
+			delete _di;
+			delete _dp;
+			delete _dq;
+			delete _dqf;
+			delete _ds;
+			delete _l;
+			delete _soxm;
+		}
+
 	private:
 		DE_DialogsCharInfo     *_dci = NULL;
 		DE_DialogsControlPanel *_dcp = NULL;
@@ -2149,6 +2162,9 @@ public:
 		return _kc;
 	}
 
+	virtual ~DE() {
+		delete _kc;
+	}
 private:
 	DE_KeyConstants *_kc = NULL;
 };

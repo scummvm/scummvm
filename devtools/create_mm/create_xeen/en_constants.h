@@ -26,7 +26,6 @@
 
 class EN : public LangConstants {
 public:
-	virtual ~EN() {}
 	const char *CLOUDS_CREDITS() {
 		return "\v012\t000\x3"
 			   "c\f35Designed and Directed By:\n"
@@ -2132,6 +2131,20 @@ public:
 			return _soxm;
 		}
 
+		virtual ~EN_KeyConstants() {
+			delete _dci;
+			delete _dcp;
+			delete _dcc;
+			delete _dd;
+			delete _di;
+			delete _dp;
+			delete _dq;
+			delete _dqf;
+			delete _ds;
+			delete _l;
+			delete _soxm;
+		}
+
 	private:
 		EN_DialogsCharInfo     *_dci = NULL;
 		EN_DialogsControlPanel *_dcp = NULL;
@@ -2149,6 +2162,10 @@ public:
 	EN_KeyConstants *keyConstants() {
 		if (!_kc)_kc = new EN_KeyConstants();
 		return _kc;
+	}
+
+	virtual ~EN() {
+		delete _kc;
 	}
 
 private:
