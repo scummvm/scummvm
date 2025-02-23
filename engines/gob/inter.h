@@ -743,8 +743,8 @@ protected:
 	void o7_findNextDatabaseRecord();
 	void o7_getDatabaseRecordValue();
 	void o7_checkAnyDatabaseRecordFound();
-	void o7_draw0xC0();
-	void o7_draw0xC1();
+	void o7_seekHtmlFile();
+	void o7_nextKeywordHtmlFile();
 	void o7_draw0xC3();
 	void o7_openTranlsationDB();
 	void o7_closeTranslationDB();
@@ -752,8 +752,8 @@ protected:
 	void o7_draw0xCC();
 	void o7_draw0xCD();
 	void o7_draw0xCE();
-	void o7_draw0xBE();
-	void o7_draw0xBF();
+	void o7_openHtmlFile();
+	void o7_closeHtmlFile();
 	void o7_draw0xDC();
 	void o7_draw0xDD();
 	void o7_draw0xDE();
@@ -791,6 +791,74 @@ protected:
 	void o7_getFreeDiskSpace(OpGobParams &params);
 
 private:
+	static const uint32 kMaxNbrOfHtmlMarks = 20;
+
+	struct HtmlMark {
+		uint32 _field_0;
+		uint32 _field_4;
+		uint32 _field_8;
+		uint32 _field_C;
+		uint32 _pos;
+		uint32 _field_14[5];
+		uint32 _field_28;
+	};
+
+	class HtmlContext {
+	public:
+		HtmlContext(Common::SeekableReadStream *stream);
+		~HtmlContext();
+
+		enum HtmlTagType {
+			kHtmlTagType_None = -1,
+			kHtmlTagType_Error,
+			kHtmlTagType_OutsideTag,
+			kHtmlTagType_Body,
+			kHtmlTagType_Font,
+			kHtmlTagType_Font_Close,
+			kHtmlTagType_Img,
+			kHtmlTagType_A,
+			kHtmlTagType_A_Close,
+			kHtmlTagType_Title,
+			kHtmlTagType_Title_Close,
+			kHtmlTagType_HTML_Close,
+			kHtmlTagType_BR,
+			kHtmlTagType_P,
+			kHtmlTagType_P_Close,
+			kHtmlTagType_U,
+			kHtmlTagType_U_Close,
+			kHtmlTagType_B,
+			kHtmlTagType_B_Close,
+			kHtmlTagType_EM,
+			kHtmlTagType_EM_Close,
+			kHtmlTagType_I,
+			kHtmlTagType_I_Close,
+			kHtmlTagType_SUB,
+			kHtmlTagType_SUB_Close,
+			kHtmlTagType_SUP,
+			kHtmlTagType_SUP_Close,
+		};
+
+		static Common::HashMap<Common::String, HtmlTagType> *_htmlTagsTypesMap;
+		static Common::HashMap<Common::String, char> *_htmlEntitiesMap;
+		static Common::String popStringPrefix(const char **charPtr, char sep);
+		static HtmlTagType getHtmlTagType(const char *tag);
+		static char getHtmlEntityLatin1Char(const char *entity);
+		static Common::String substituteHtmlEntities(const char *text);
+
+		void parseTagAttributes(const char* tagAttributes);
+		void cleanTextNode(int animDataSize);
+
+		HtmlTagType _currentTagType;
+		Common::SeekableReadStream *_stream;
+		int _pos;
+		int _posBak;
+		bool _field_10;
+		char _buffer[256];
+		HtmlMark _marks[kMaxNbrOfHtmlMarks];
+		uint32 _currentMarkIndex;
+		Common::String _htmlVariables[10];
+	};
+
 	INIConfig _inis;
 	TranslationDatabases _translationDatabases;
 	Common::HashMap<Common::String, Database, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _databases;
@@ -798,7 +866,9 @@ private:
 	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
 	Common::String _currentCDPath;
 
-	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
+	Common::String _currentHtmlFile;
+	HtmlContext *_currentHtmlContext;
+
 	void copyFile(const Common::String &sourceFile, bool sourceIsCd, const Common::String &destFile);
 
 	bool setCurrentCDPath(const Common::String &dir);
