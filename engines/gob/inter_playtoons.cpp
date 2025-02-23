@@ -220,6 +220,17 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 		return;
 	}
 
+	if (_vm->getGameType() == kGameTypeAdibou2 &&
+		_vm->_util->getFrameRate() == 5 &&
+		_vm->isCurrentTot("BS_LAB50.TOT")) {
+		// WORKAROUND: In the "puzzle shapes" game of Adibou2/Sciences, the script
+		// sets the frame rate to 5Hz for a special animation but forgets to reset it
+		// afterward, making some videos laggy (e.g. Adibou help mode).
+		// The sound was not affected in the original engine (while it is laggy as well
+		// in ScummVM), making the bug more discrete.
+		_vm->_util->setFrameRate(12);
+	}
+
 	_vm->_draw->freeSprite(index);
 }
 
