@@ -481,6 +481,25 @@ void Macs2Engine::readResourceFile() {
 	_adlib->data = new Common::MemoryReadStream(adlibData, 15610);
 }
 
+void Macs2Engine::readExecutable() {
+	Common::MemoryReadStream *exeFileStream;
+	// TODO: Memory management
+	{
+		// Extra scope in order to make sure no code tries to read from the file directly.
+		Common::File file;
+		if (!file.open("MCSEXEC.EXE"))
+			error("readExecutable(): Error reading executable file");
+
+		int64 size = file.size();
+		byte *fileData = new byte[size];
+		file.read(fileData, size);
+
+		exeFileStream = new Common::MemoryReadStream(fileData, size);
+	}
+
+	_adlib->ReadDataFromExecutable(exeFileStream);
+}
+
 void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 	// Offset 50F5 in scene data
 	// TODO: Remove the non-blob implementation
@@ -1298,6 +1317,7 @@ Common::String Macs2Engine::getGameId() const {
 Common::Error Macs2Engine::run() {
 
 	readResourceFile();
+	readExecutable();
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
