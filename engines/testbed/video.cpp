@@ -101,7 +101,6 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 	video->start();
 
 	Common::Point mouse;
-	bool renderHotspots = false;
 
 	while (!video->endOfVideo()) {
 		if (video->needsUpdate()) {
@@ -159,11 +158,6 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 						break;
 					case Common::EVENT_KEYUP:
 					case Common::EVENT_KEYDOWN:
-						if (event.kbd == Common::KEYCODE_h && event.type == Common::EVENT_KEYDOWN) {
-							renderHotspots = !renderHotspots;
-							((Video::QuickTimeDecoder *)video)->renderHotspots(renderHotspots);
-						}
-
 						((Video::QuickTimeDecoder *)video)->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
 						break;
 					default:
