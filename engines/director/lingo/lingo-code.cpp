@@ -1777,8 +1777,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 				// Set "the result" to return value!, when a method
 				// this is for handling result after execution!
 				Datum top = g_lingo->peek(0);
-				if (top.type == INT)
-					g_lingo->_theResult = top;
+				g_lingo->_theResult = top;
 
 				if (!allowRetVal) {
 					Datum extra = g_lingo->pop();
