@@ -307,6 +307,4 @@ void KoFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 c
 	g_engine->_screen->copyRectToSurfaceWithKey(pixels, 16, x, y - 2, 16, 16,0xf);
 }
 
-
-
 } // namespace Darkseed

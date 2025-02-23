@@ -69,7 +69,7 @@ constexpr I18nText kI18N_CarKeysIgnitionText = {
 	"VES LAS LLAVES DEL COCHE EN EL CONTACTO.",
 	"VOUS VOYEZ LES CLEFS DE LA VOTTURE DAUS LE STARTER.",
 	"DU SIEHSTDIE AUTOSCHLUSSEL IM ANLASSER.",
-	nullptr
+	"\xb8\x61\x95\xb7\xc0\x61\x20\xb5\x69\xae\x41\x88\x61\x20\xb7\xa1\x8b\x61\x93\xa1\xad\x65\xb5\x41\x20\x8d\xb9\xd1\x61\xb7\xb6\x93\x65\x88\xf5\xb7\xa1\x20\xa5\xa1\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouSeeIronBarsText = {
@@ -77,7 +77,7 @@ constexpr I18nText kI18N_YouSeeIronBarsText = {
 	"VES LAS BARRAS DE HIERRO DE TU CELDA.",
 	"VOUS VOYEZ LES BARREAUX DE FER DE VOTRE CELLULE.",
 	"DU SIEHST DIE EISENSTANGEN IN DER ZELLE.",
-	nullptr
+	"\x88\x71\xa4\x77\xb7\x81\x20\xb8\x61\xa2\x89\xae\x41\xc9\xb7\x20\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouSeeDelbertText = {
@@ -85,7 +85,7 @@ constexpr I18nText kI18N_YouSeeDelbertText = {
 	"VES A DELBERT, NO HAY MUCHO QUE VER.",
 	"VOUS VOYEZ DELBERT, PAS GRAND CHOSE A VOIR.",
 	"DU SIEHST DELBERT, NICHT VIEL ZU SEHEN",
-	nullptr
+	"\xd0\x65\x88\x61\x9d\xb3\x89\x41\x20\xb4\x81\x89\x65\x89\xc1\xb7\x81\x20\x91\xa9\xb7\xa1\xb5\x41\x20\xb5\x69\xba\x97\xd0\x61\x89\xa1\xb7\xb6\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouSeeTheClerkText = {
@@ -93,7 +93,7 @@ constexpr I18nText kI18N_YouSeeTheClerkText = {
 	"VES AL EMPLEADO.",
 	"VOUS VOYEZ L'HOMME.",
 	"DU SIEHST DEN MANN.",
-	nullptr
+	"\xb7\xa1\x20\x88\x61\x89\x41\xb7\x81\x20\xb8\xf1\xb6\xa5\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouSeeTheOpenGloveBoxText = {
@@ -101,7 +101,7 @@ constexpr I18nText kI18N_YouSeeTheOpenGloveBoxText = {
 	"VES LA CAJA DE LOS GUANTES ABIERTA.",
 	"VOUS VOYEZ LA BOITE DE GANT OUVERTE.",
 	"DU SIEHST DAS OFFENE HANDSCHUHFACH.",
-	nullptr
+	"\xb8\x77\x88\x73\xc9\xb7\xb7\xa1\x20\xb5\x69\x9d\x61\xb7\xb6\x93\x65\x88\xf5\xb7\xa1\x20\xa5\xa1\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_youSeeTheText = {
@@ -117,7 +117,7 @@ constexpr I18nText kI18N_TheCopsIgnoreYourDemandsText = {
   "LOS POLICIAS IGNORAN TUS LLAMADAS DE ATENCION.",
   "LES FLICS IGNORENT VOTRE DEMANDE D'ATTENTION.",
   "DIE POLIZISTEN BEACHTEN NICHT DEINE FORDERUNGEN.",
-  nullptr
+  "\xb4\x61\xa2\x81\x9f\xa1\x20\xaf\xa5\xd1\xa1\x9f\x69\x20\xa5\xa1\x90\x81\x95\xa1\x20\x89\x77\xc0\x69\x97\x69\xb7\x65\x20\xc1\x61\x94\x61\xa5\xa9\x20\xac\x97\x88\x62\x95\xa1\x20\xd0\x61\xbb\xa1\x20\xb4\x67\x93\x65\x8a\x85\xb6\x61\x2e"
 };
 
 constexpr I18nText kI18N_ThePhoneIsRingingText = {
@@ -133,7 +133,7 @@ constexpr I18nText kI18N_TheDoorbellIsRingingText = {
   "EL TIMBRE DE LA PUERTA ESTA SONANDO.",
   "LA SONETTE DE LA PORTE SONNE.",
   "DIE TUERKLINGEL LAEUTET.",
-  nullptr
+  "\xd1\x65\x89\xc5\x20\xc1\xa1\xb7\xa5\xb9\xb7\xb7\xa1\x20\xb6\x89\x9f\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_ChooseAnItemBeforeText = {
@@ -141,7 +141,7 @@ constexpr I18nText kI18N_ChooseAnItemBeforeText = {
   "ELIGE UN OBJETO ANTES DE DARLE AL EMPLEADO MAS DINERO.",
   "CHOISISSEZ QUELQUE CHOSE AVANT DE REMETTRE L'ARGENT A VENDEUR.",
   "SUCHE ETWAS AUS BEVOR DU DEN MANN BEZAHLST.",
-  nullptr
+  "\xb8\xf1\xb6\xa5\xb5\x41\x89\x41\x20\x95\xa5\xb7\x69\x20\x94\xe1\x20\xba\x81\x8b\xa1\xb8\xe5\xb5\x41\x20\xa0\xe5\xb8\xe1\x20\x8a\x81\xb7\xb3\xd0\x69\x20\xa2\x89\x88\xe5\xb7\x69\x20\x89\xa1\x9f\x61\xad\x41\xb6\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouTouchDelbertText = {
@@ -149,7 +149,7 @@ constexpr I18nText kI18N_YouTouchDelbertText = {
   "TOCAS A DELBERT...",
   "VOUS TOUCHEZ DELBERT.",
   "GREIFE DELBERT AN...",
-  nullptr
+  "\xae\x89\xb7\x69\x20\xd0\x65\xa4\xe5\x20\x8a\xa5\xd0\x81\x20\xa5\xa1\x93\x65\x88\xf5\xb7\xa1\x20\xb4\xe1\x98\xe9\x8c\x61\xb6\x61\x3f"
 };
 
 constexpr I18nText kI18N_YouTouchTheColdIronBarsText = {
@@ -157,7 +157,7 @@ constexpr I18nText kI18N_YouTouchTheColdIronBarsText = {
   "TOCAS LAS FRIAS BARRAS DE HIERRO.",
   "VOUS TOUCHEZ LES BARREAUX DE FER.",
   "GREIFE DIE KALTEN EISEN STANGEN AN.",
-  nullptr
+  "\xc0\x77\xac\x69\xb7\x81\x20\x88\x71\xc1\xa2\xb7\x65\x20\xb5\x62\xaf\xa1\x20\xc0\x61\x88\x73\x8a\x85\xb6\x61\x21"
 };
 
 constexpr I18nText kI18N_TheSergeantSaysNiceGunText = {
@@ -165,7 +165,7 @@ constexpr I18nText kI18N_TheSergeantSaysNiceGunText = {
   "EL SARGENTO DICE: 'BUENA PISTOLA, EH? ES UNA BROWNING.'",
   "LE SERGENT DIT: BEAU REVOLVER HEIN, C'EST UN BROWNING.",
   "DER SEARGENT SAGT 'SCHOENE PISTOLE, EH? ES IST EIN BROWNING.'",
-  nullptr
+  "\xc1\xb7\x20\x8b\x65\xc0\xe1\xb5\x41\xac\xe1\x20\x98\xe9\xb4\xe1\xbb\xa1\xaf\xa1\xb6\x61\x21"
 };
 
 constexpr I18nText kI18N_YouTurnOnTheMusicText = {
@@ -173,7 +173,7 @@ constexpr I18nText kI18N_YouTurnOnTheMusicText = {
   "PONES MUSICA.",
   "VOUS METTEZ LA MUSIQUE.",
   "SCHALTE DIE MUSIK AN.",
-  nullptr
+  "\xc0\x61\x20\x20\x9c\x61\x97\xa1\xb5\xa1\x9f\x69\x20\xc5\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouTurnOffTheMusicText = {
@@ -181,7 +181,7 @@ constexpr I18nText kI18N_YouTurnOffTheMusicText = {
   "QUITAS LA MUSICA.",
   "VOUS ARRETEZ LA MUSIQUE.",
   "SCHALTE DIE MUSIK AB.",
-  nullptr
+  "\xc0\x61\x20\x9c\x61\x97\xa1\xb5\xa1\x9f\x69\x20\x8f\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouTouchTheOrnateSignalText = {
@@ -189,7 +189,7 @@ constexpr I18nText kI18N_YouTouchTheOrnateSignalText = {
   "TOCAS LA SUPERFICIE DE LA FIGURA ADORNADA.",
   "VOUS TOUCHEZ LA SURFACE DE LA PIERRE MAGIQUE.",
   "GREIFE DIE VERZAUBERTEN STEINE AN.",
-  nullptr
+  "\xac\xe2\xa2\x61\xb7\x81\x20\xa5\xb7\xb7\xa5\xb7\x69\x20\xa0\x65\xb9\x61\xa5\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_ThisSentryCannotBeStoppedWithText = {
@@ -197,7 +197,7 @@ constexpr I18nText kI18N_ThisSentryCannotBeStoppedWithText = {
 	"NO PUEDES PARAR A ESTE CENTINELA CON %s.",
 	"VOUS N'ARRETEREZ PAS LA SENTINELLE AVEC %s.",
 	"DIESE WACHE KANN NICHT AUFGEHALTEN WERDEN MIT %s.",
-	nullptr
+	"%s\x9d\xa1\x93\x65\x20\x88\x65\xae\x81\x9f\x69\x20\xb8\xe1\xbb\xa1\xd0\x69\x20\xae\x81\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_HasNoEffectOnTheAlienTubesText = {
@@ -397,7 +397,7 @@ constexpr I18nText kI18N_blankText = {
 	"",
 	"",
 	"",
-	nullptr
+	""
 };
 } // namespace Darkseed
 
