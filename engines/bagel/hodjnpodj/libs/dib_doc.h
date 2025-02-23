@@ -23,9 +23,8 @@
 #define HODJNPODJ_LIBS_DIB_DOC_H
 
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/gfx/sprite.h"
 #include "bagel/mfc/document.h"
-#include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace HodjNPodj {

@@ -19,13 +19,13 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_MFC_DOCUMENT_H
-#define BAGEL_HODJNPODJ_MFC_DOCUMENT_H
+#ifndef BAGEL_MFC_DOCUMENT_H
+#define BAGEL_MFC_DOCUMENT_H
 
 #include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 class CDocument {
 public:

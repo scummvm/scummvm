@@ -3,9 +3,11 @@ MODULE := engines/bagel
 MODULE_OBJS = \
 	bagel.o \
 	metaengine.o \
+	mfc/button.o \
 	mfc/dc.o \
 	mfc/document.o \
 	mfc/frame_wnd.o \
+	mfc/palette.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
 	spacebar/baglib/base_pda.o \
@@ -109,6 +111,9 @@ MODULE_OBJS = \
 	hodjnpodj/hodjnpodj.o \
 	hodjnpodj/libs/dib_api.o \
 	hodjnpodj/libs/dib_doc.o \
+	hodjnpodj/boflib/bitmaps.o \
+	hodjnpodj/boflib/button.o \
+	hodjnpodj/boflib/sprite.o \
 	hodjnpodj/mazedoom/main_window.o \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o

@@ -19,20 +19,14 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_HODJNPODJ_BOFLIB_SPRITE_H
+#define BAGEL_HODJNPODJ_BOFLIB_SPRITE_H
 
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/frame_wnd.h"
-#include "bagel/mfc/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-using namespace Bagel::MFC;
 
 } // namespace HodjNPodj
 } // namespace Bagel

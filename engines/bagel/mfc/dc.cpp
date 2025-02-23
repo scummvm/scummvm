@@ -22,10 +22,10 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "bagel/mfc/dc.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 int CDC::GetDeviceCaps(int field) const {
 	switch (field) {
@@ -60,5 +60,5 @@ bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	return true;
 }
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel

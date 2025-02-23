@@ -19,13 +19,14 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_MFC_DC_H
-#define BAGEL_HODJNPODJ_MFC_DC_H
+#ifndef BAGEL_MFC_DC_H
+#define BAGEL_MFC_DC_H
 
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/palette.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 enum DeviceCaps {
 	HORZRES, VERTRES
@@ -36,6 +37,20 @@ enum {
 
 class CDC;
 typedef CDC *HDC;
+
+struct DRAWITEMSTRUCT {
+	UINT   CtlType;    // Control type (button, list box, etc.)
+	UINT   CtlID;      // Control ID
+	UINT   itemID;     // Item ID (for list boxes, combo boxes)
+	UINT   itemAction; // Action to perform (e.g., redraw)
+	UINT   itemState;  // State of the item (selected, focused, etc.)
+	HWND   hwndItem;   // Handle to the control
+	HDC    hDC;        // Handle to the device context for drawing
+	RECT   rcItem;     // Bounding rectangle for the item
+	uint32 *itemData;  // Application-defined data
+};
+typedef DRAWITEMSTRUCT *LPDRAWITEMSTRUCT;
+
 
 class CDC {
 private:
@@ -67,7 +82,7 @@ public:
 		int xSrc, int ySrc, uint32 dwRop);
 };
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

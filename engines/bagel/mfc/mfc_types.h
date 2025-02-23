@@ -24,24 +24,32 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 
-#ifndef BAGEL_HODJNPODJ_MFC_TYPES_H
-#define BAGEL_HODJNPODJ_MFC_TYPES_H
+#ifndef BAGEL_MFC_TYPES_H
+#define BAGEL_MFC_TYPES_H
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
+
+#define GAME_WIDTH		640
+#define GAME_HEIGHT		480
 
 #define DECLARE_MESSAGE_MAP()
+#define DECLARE_DYNCREATE(KLASS)
+#define afx_msg
 
 typedef bool BOOL;
 typedef uint16 WPARAM;
 typedef int32 LPARAM;
 typedef uint UINT;
+typedef uint32 DWORD;
+
 #define TRUE true
 #define FALSE false
 
 typedef void *HANDLE;
 typedef Graphics::ManagedSurface CBitmap;
 typedef Graphics::ManagedSurface *HDIB;
+typedef Common::Rect RECT;
 typedef Common::Rect *LPRECT;
 typedef Common::Rect CRect;
 typedef Common::Point CPoint;
@@ -50,11 +58,15 @@ typedef Common::File CFile;
 typedef Common::Serializer CDumpContext;
 typedef Graphics::Palette *HPALETTE;
 typedef Common::String CString;
+typedef uint32 COLORREF;
 
 typedef char *LPSTR;
+typedef char *LPCSTR;
 typedef void *HBITMAP;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
+typedef void *HWND;
+
 
 class CBmpButton {
 };
@@ -64,17 +76,12 @@ class CText {
 };
 class CSound {
 };
-
-class CPalette : public Graphics::Palette {
-public:
-	CPalette() : Graphics::Palette(PALETTE_COUNT) {}
-	CPalette(uint size) : Graphics::Palette(size) {}
-	CPalette(const byte *data, uint size) : Graphics::Palette(data, size) {}
-
-	void DeleteObject() {}
+class CWnd {
+};
+class CDibDoc {
 };
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

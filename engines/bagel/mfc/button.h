@@ -19,22 +19,22 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_MFC_BUTTON_H
+#define BAGEL_MFC_BUTTON_H
 
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/frame_wnd.h"
 #include "bagel/mfc/palette.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+class CButton {
+};
 
-} // namespace HodjNPodj
+class CBitmapButton {
+};
+
+} // namespace MFC
 } // namespace Bagel
 
 #endif

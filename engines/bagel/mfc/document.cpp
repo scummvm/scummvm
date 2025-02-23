@@ -22,8 +22,8 @@
 #include "bagel/mfc/document.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel

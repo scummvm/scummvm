@@ -22,13 +22,13 @@
 #ifndef HODJNPODJ_LIB_FRAME_WND_H
 #define HODJNPODJ_LIB_FRAME_WND_H
 
-#include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/point.h"
+#include "bagel/mfc/frame_wnd.h"
 #include "bagel/mfc/dc.h"
+#include "bagel/mfc/palette.h"
 #include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 enum {
 	SW_SHOWNORMAL
@@ -84,7 +84,7 @@ public:
 		CRect *lpSrcRect, CPalette *hPal);
 };
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

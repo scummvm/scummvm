@@ -19,22 +19,38 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_HODJNPODJ_MFC_DC_H
+#define BAGEL_HODJNPODJ_MFC_DC_H
 
+#include "graphics/palette.h"
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/frame_wnd.h"
-#include "bagel/mfc/palette.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+class CPalette {
+private:
+	Graphics::Palette _palette;
+public:
+	CPalette(uint size = PALETTE_COUNT) : _palette(size) {}
 
-} // namespace HodjNPodj
+	void set(const byte *colors, int start, int count) {
+		_palette.set(colors, start, count);
+	}
+
+	const byte *data() const {
+		return _palette.data();
+	}
+	int getEntryCount() const {
+		return _palette.size();
+	}
+	int size() const {
+		return _palette.size();
+	}
+	void DeleteObject() {}
+};
+
+} // namespace MFC
 } // namespace Bagel
 
 #endif

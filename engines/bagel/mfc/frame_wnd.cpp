@@ -20,10 +20,11 @@
  */
 
 #include "bagel/mfc/frame_wnd.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/mfc/afx.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 void CFrameWnd::ShowWindow(int) {
 }

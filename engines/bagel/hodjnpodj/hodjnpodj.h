@@ -28,9 +28,6 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define GAME_WIDTH		640
-#define GAME_HEIGHT		480
-
 struct Minigame {
 	const char *_name;
 	void (*_run)();
