@@ -22,14 +22,14 @@
 #include "bagel/spacebar/filter.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/spacebar.h"
-#include "bagel/boflib/gfx/palette.h"
-#include "bagel/boflib/string.h"
-#include "bagel/boflib/gfx/text.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/boflib/log.h"
-#include "bagel/boflib/misc.h"
-#include "bagel/boflib/sound.h"
-#include "bagel/boflib/string_functions.h"
+#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/spacebar/boflib/string.h"
+#include "bagel/spacebar/boflib/gfx/text.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/boflib/log.h"
+#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/spacebar/boflib/string_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

@@ -22,7 +22,7 @@
 #include "audio/midiparser_qt.h"
 
 #include "bagel/music.h"
-#include "bagel/boflib/sound.h"
+#include "bagel/spacebar/boflib/sound.h"
 
 namespace Bagel {
 

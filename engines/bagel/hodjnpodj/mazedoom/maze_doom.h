@@ -24,9 +24,9 @@
 
 #include "bagel/bagel.h"
 #include "bagel/hodjnpodj/libs/types.h"
-#include "bagel/hodjnpodj/mfc/afx.h"
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gfx/sprite.h"
+#include "bagel/mfc/afx.h"
+#include "bagel/spacebar/boflib/gui/button.h"
+#include "bagel/spacebar/boflib/gfx/sprite.h"
 
 namespace Bagel {
 namespace HodjNPodj {

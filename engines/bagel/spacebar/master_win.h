@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_MAsTER_WIN_H
 #define BAGEL_SPACEBAR_MAsTER_WIN_H
 
-#include "bagel/baglib/master_win.h"
+#include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
 namespace SpaceBar {

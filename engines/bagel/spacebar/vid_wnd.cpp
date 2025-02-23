@@ -21,10 +21,10 @@
 
 #include "bagel/spacebar/vid_wnd.h"
 #include "bagel/spacebar/main_window.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/baglib/master_win.h"
-#include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/stdinc.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

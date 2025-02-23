@@ -24,8 +24,8 @@
 #define BAGEL_SPACEBAR_VID_WND_H
 
 #include "bagel/spacebar/main_window.h"
-#include "bagel/baglib/button_object.h"
-#include "bagel/baglib/character_object.h"
+#include "bagel/spacebar/baglib/button_object.h"
+#include "bagel/spacebar/baglib/character_object.h"
 
 namespace Bagel {
 namespace SpaceBar {

@@ -23,12 +23,12 @@
 #ifndef BAGEL_SPACEBAR_SRAF_COMPUTER_H
 #define BAGEL_SPACEBAR_SRAF_COMPUTER_H
 
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gui/list_box.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflib/file.h"
-#include "bagel/baglib/storage_dev_win.h"
+#include "bagel/spacebar/boflib/gui/button.h"
+#include "bagel/spacebar/boflib/gui/list_box.h"
+#include "bagel/spacebar/boflib/gui/text_box.h"
+#include "bagel/spacebar/boflib/gui/dialog.h"
+#include "bagel/spacebar/boflib/file.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
 namespace SpaceBar {

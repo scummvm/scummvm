@@ -20,9 +20,9 @@
  */
 
 #include "bagel/spacebar/full_wnd.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/baglib/master_win.h"
-#include "bagel/baglib/pan_window.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/spacebar/baglib/pan_window.h"
 
 namespace Bagel {
 namespace SpaceBar {

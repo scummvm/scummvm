@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_BIB_ODDS_WND_H
 #define BAGEL_SPACEBAR_BIB_ODDS_WND_H
 
-#include "bagel/baglib/chat_wnd.h"
+#include "bagel/spacebar/baglib/chat_wnd.h"
 
 namespace Bagel {
 namespace SpaceBar {

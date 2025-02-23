@@ -28,12 +28,12 @@
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/main_window.h"
-#include "bagel/boflib/app.h"
-#include "bagel/dialogs/start_dialog.h"
-#include "bagel/dialogs/opt_window.h"
-#include "bagel/baglib/button_object.h"
-#include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/gui/movie.h"
+#include "bagel/spacebar/boflib/app.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/dialogs/opt_window.h"
+#include "bagel/spacebar/baglib/button_object.h"
+#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/spacebar/boflib/gui/movie.h"
 
 namespace Bagel {
 namespace SpaceBar {

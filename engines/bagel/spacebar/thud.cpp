@@ -20,9 +20,9 @@
  */
 
 #include "bagel/spacebar/thud.h"
-#include "bagel/baglib/menu_dlg.h"
-#include "bagel/baglib/sprite_object.h"
-#include "bagel/boflib/app.h"
+#include "bagel/spacebar/baglib/menu_dlg.h"
+#include "bagel/spacebar/baglib/sprite_object.h"
+#include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
 namespace SpaceBar {

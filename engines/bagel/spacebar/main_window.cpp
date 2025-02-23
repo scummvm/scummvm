@@ -22,9 +22,9 @@
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/main_link_object.h"
 #include "bagel/spacebar/filter.h"
-#include "bagel/baglib/event_sdev.h"
+#include "bagel/spacebar/baglib/event_sdev.h"
 #include "bagel/bagel.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {

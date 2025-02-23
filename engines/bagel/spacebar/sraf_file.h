@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_SRAF_FILE_H
 #define BAGEL_SPACEBAR_SRAF_FILE_H
 
-#include "bagel/boflib/stdinc.h"
+#include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

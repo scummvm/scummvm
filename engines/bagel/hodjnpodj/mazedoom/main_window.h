@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_MAZEDOOM_MAIN_WINDOW_H
 #define HODJNPODJ_MAZEDOOM_MAIN_WINDOW_H
 
-#include "bagel/hodjnpodj/mfc/frame_wnd.h"
+#include "bagel/mfc/frame_wnd.h"
 
 namespace Bagel {
 namespace HodjNPodj {

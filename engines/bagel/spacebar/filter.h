@@ -23,8 +23,8 @@
 #ifndef BAGEL_SPACEBAR_FILTER_H
 #define BAGEL_SPACEBAR_FILTER_H
 
-#include "bagel/boflib/gfx/bitmap.h"
-#include "bagel/boflib/rect.h"
+#include "bagel/spacebar/boflib/gfx/bitmap.h"
+#include "bagel/spacebar/boflib/rect.h"
 
 namespace Bagel {
 namespace SpaceBar {

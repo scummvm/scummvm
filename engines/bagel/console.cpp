@@ -21,10 +21,10 @@
 
 #include "common/savefile.h"
 #include "bagel/console.h"
-#include "bagel/baglib/var.h"
-#include "bagel/baglib/master_win.h"
-#include "bagel/baglib/save_game_file.h"
-#include "bagel/boflib/app.h"
+#include "bagel/spacebar/baglib/var.h"
+#include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/spacebar/baglib/save_game_file.h"
+#include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
 

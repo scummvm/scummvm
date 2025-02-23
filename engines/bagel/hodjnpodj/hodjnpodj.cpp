@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "engines/util.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/console.h"

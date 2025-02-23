@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_THUD_H
 #define BAGEL_SPACEBAR_THUD_H
 
-#include "bagel/baglib/storage_dev_bmp.h"
+#include "bagel/spacebar/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
 namespace SpaceBar {

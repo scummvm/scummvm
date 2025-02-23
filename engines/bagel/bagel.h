@@ -26,7 +26,7 @@
 
 #include "bagel/detection.h"
 #include "bagel/music.h"
-#include "bagel/baglib/master_win.h"
+#include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
 

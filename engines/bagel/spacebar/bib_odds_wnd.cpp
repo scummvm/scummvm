@@ -22,10 +22,10 @@
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/bibble_window.h"
 #include "bagel/spacebar/spacebar.h"
-#include "bagel/baglib/master_win.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/baglib/pan_window.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/pan_window.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {

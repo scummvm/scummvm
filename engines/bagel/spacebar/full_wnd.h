@@ -23,8 +23,8 @@
 #ifndef BAGEL_SPACEBAR_FULL_WND_H
 #define BAGEL_SPACEBAR_FULL_WND_H
 
-#include "bagel/baglib/storage_dev_win.h"
-#include "bagel/baglib/object.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
+#include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
 namespace SpaceBar {

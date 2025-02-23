@@ -23,7 +23,7 @@
 #define BAGEL_MUSIC_H
 
 #include "audio/midiplayer.h"
-#include "bagel/boflib/sound.h"
+#include "bagel/spacebar/boflib/sound.h"
 
 namespace Bagel {
 

@@ -23,9 +23,9 @@
 #ifndef BAGEL_SPACEBAR_MAIN_WINDOW_H
 #define BAGEL_SPACEBAR_MAIN_WINDOW_H
 
-#include "bagel/boflib/gfx/palette.h"
-#include "bagel/baglib/pan_window.h"
-#include "bagel/baglib/menu_dlg.h"
+#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/spacebar/baglib/pan_window.h"
+#include "bagel/spacebar/baglib/menu_dlg.h"
 #include "bagel/spacebar/thud.h"
 
 namespace Bagel {

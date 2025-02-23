@@ -23,7 +23,7 @@
 #define BAGEL_SPACEBAR_H
 
 #include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/bibble_window.h"
 
 namespace Bagel {
