@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_LINGO_XLIBS_QTVR_H
 #define DIRECTOR_LINGO_XLIBS_QTVR_H
 
+#include "video/qt_decoder.h"
+
 namespace Director {
 
 namespace QTVR {
@@ -56,9 +58,25 @@ void m_update(int nargs);
 
 } // End of namespace QTVR
 
+class QTVRXObject;
+
+class QtvrWidget : public Graphics::MacWidget {
+public:
+	QtvrWidget(QTVRXObject *xtra, Graphics::MacWidget *parent, int x, int y, int w, int h, Graphics::MacWindowManager *wm);
+
+	virtual bool processEvent(Common::Event &event);
+
+	QTVRXObject *_xtra;
+};
+
+
 class QTVRXObject : public Object<QTVRXObject> {
 public:
 	QTVRXObject(ObjectType objType);
+
+	Common::Rect _rect;
+	Video::QuickTimeDecoder *_video = nullptr;
+	QtvrWidget *_widget = nullptr;
 };
 
 } // End of namespace Director
