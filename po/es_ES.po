@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-23 07:45+0000\n"
-"PO-Revision-Date: 2025-02-07 11:04+0000\n"
+"PO-Revision-Date: 2025-02-23 12:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4274,7 +4274,7 @@ msgstr "Activar/Desactivar captura de ratón"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Activar/Desactivar cambio de tamaño de ventana"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -7650,16 +7650,16 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "No se puede localizar el archivo de datos darkseed.dat del motor."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Usar tempos de la versión para DOS en la música"
+msgstr "Usar música de la versión en disquetes"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Utiliza la música de la versión en disquetes. Los archivos de música de "
+"dicha versión deben copiarse en el directorio SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
