@@ -1058,7 +1058,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 }
 
 machine *TriggerMachineByHash(MessageCB intrMsg, const char *machName) {
-	return TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+	return TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 		intrMsg, machName);
 }
 

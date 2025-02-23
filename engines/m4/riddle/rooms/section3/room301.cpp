@@ -117,7 +117,7 @@ void Room301::daemon() {
 				_trigger1 = -1;
 
 				if (_showWalkerFlag) {
-					ws_unhide_walker();
+					ws_unhide_walker(_G(my_walker));
 					_showWalkerFlag = false;
 				}
 			}
@@ -126,6 +126,7 @@ void Room301::daemon() {
 				conv_resume();
 				_convResumeFlag = false;
 			}
+
 			if (_msgRipleyFlag) {
 				sendWSMessage_80000(_ripley);
 				sendWSMessage_10000(1, _ripley, _ripTrekTravel, 10,
@@ -177,7 +178,9 @@ void Room301::daemon() {
 			case 1:
 			case 2:
 				sendWSMessage_10000(1, _george, _agentCheckingList,
-					1, 26, 10, _agentCheckingList, 27, 27, 0);
+									1, 26, 10, _agentCheckingList, 27, 27, 0);
+				_georgeShould = 1;
+				
 				break;
 
 			case 3:
@@ -625,6 +628,7 @@ void Room301::daemon() {
 		_G(global301) = 0;
 		setGlobals1(_ripTrekTalker3, 1, 1, 1, 5, 1);
 		sendWSMessage_110000(68);
+		_georgeMode = 8;
 		digi_play("301r01a", 1, 255, 68);
 		break;
 
@@ -632,7 +636,7 @@ void Room301::daemon() {
 		if (_G(global301) >= 1) {
 			_G(global301) = 0;
 			sendWSMessage_140000(-1);
-			_georgeMode = 0;
+			_georgeMode = 9;
 			_soundName = "301a04a";
 			_val16 = 70;
 		} else {
@@ -877,11 +881,11 @@ void Room301::pre_parser() {
 }
 
 void Room301::parser() {
-	auto oldMode = _G(kernel).trigger_mode;
-	bool lookFlag = player_said_any("look", "look at");		// ecx
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");					// edi
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close"); // esi
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const bool lookFlag = player_said_any("look", "look at");		// ecx
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");					// edi
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close"); // esi
 
 	if (player_said("conv301a")) {
 		conv301a();
