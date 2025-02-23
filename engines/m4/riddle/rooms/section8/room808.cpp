@@ -1079,7 +1079,7 @@ void Room808::parser() {
 				} else if (_G(flags)[V097] == 0) {
 					player_set_commands_allowed(false);
 					setGlobals3(_rptmr15Series, 1, 16);
-					sendWSMessage_3840000(-1);
+					sendWSMessage_3840000(_G(my_walker), -1);
 					setGlobals3(_meiChenHandsBehindBackSeries, 17, 1);
 					sendWSMessage_3840000(_mcTrekMach, 7);
 				} else if (_G(flags)[V097] == 1) {

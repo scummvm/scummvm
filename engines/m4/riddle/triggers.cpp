@@ -304,6 +304,20 @@ void sendWSMessage_29a0000(int val1) {
 	sendWSMessage_29a0000(_G(my_walker), val1);
 }
 
+void sendWSMessage_3840000(machine *machine, int32 trigger) {
+	int32 num = trigger;
+	if (trigger == 0)
+		num = -1;
+
+	_G(globals[GLB_TEMP_4]) = kernel_trigger_create(num);
+	sendWSMessage(ACTION_900 << 16, 0, machine, 0, nullptr, 1);
+}
+
+void sendWSMessage_3860000(machine *mach, int32 trigger) {
+	_G(globals[GLB_TEMP_1]) = kernel_trigger_create(trigger);
+	sendWSMessage(ACTION_902 << 16, 0, mach, 0, nullptr, 1);
+}
+
 void intrMsgNull(frac16 myMessage, machine *sender) {
 }
 

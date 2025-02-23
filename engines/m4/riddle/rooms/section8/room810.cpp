@@ -300,10 +300,6 @@ void Room810::daemon() {
 	}
 }
 
-void Room810::sendWSMessage_3860000(machine *mach, int32 val1) {
-	_G(globals[GLB_TEMP_1]) = kernel_trigger_create(val1);
-	sendWSMessage(ACTION_902 << 16, 0, mach, 0, nullptr, 1);
-}
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

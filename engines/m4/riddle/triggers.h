@@ -81,6 +81,10 @@ extern void sendWSMessage_210000(machine *recv, int trigger);
 extern void sendWSMessage_29a0000(machine *recv, int val1);
 extern void sendWSMessage_29a0000(int val1);
 
+// Specific to room section 8
+extern void sendWSMessage_3840000(machine *mach, int32 val1);
+extern void sendWSMessage_3860000(machine *mach, int32 trigger);
+
 extern void intrMsgNull(frac16 myMessage, machine *sender);
 extern void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
 extern void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);

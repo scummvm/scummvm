@@ -40,8 +40,6 @@ public:
 	void daemon() override;
 
 private:
-	void sendWSMessage_3860000(machine *mach, int32 val1);
-
 	bool _alreadyPlayedVideo04aFl = false;
 
 	int32 _810BlockSlidesOutSeries = 0;

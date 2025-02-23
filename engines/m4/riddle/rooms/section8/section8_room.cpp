@@ -47,19 +47,6 @@ int32 Section8Room::getStatueIndex(int32 val1) {
 	return -1;
 }
 
-void Section8Room::sendWSMessage_3840000(int32 trigger) {
-	sendWSMessage_3840000(_G(my_walker), trigger);
-}
-
-void Section8Room::sendWSMessage_3840000(machine *machine, int32 trigger) {
-	int32 num = trigger;
-	if (trigger == 0)
-		num = -1;
-
-	_G(globals[GLB_TEMP_4]) = kernel_trigger_create(num);
-	sendWSMessage(ACTION_900 << 16, 0, machine, 0, nullptr, 1);
-}
-
 int32 Section8Room::subCE52E(int32 val1) {
 	if (_currentRoom == 844 && val1 == 1 && _G(flags)[V271] != 0)
 		return 3;
