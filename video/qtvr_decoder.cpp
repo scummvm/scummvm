@@ -369,7 +369,7 @@ void QuickTimeDecoder::updateAngles() {
 		_panAngle = (float)getCurrentColumn() / (float)_nav.columns * 360.0;
 		_tiltAngle = ((_nav.rows - 1) / 2.0 - (float)getCurrentRow()) / (float)(_nav.rows - 1) * 180.0;
 
-		debugC(1, kDebugLevelMacGUI, "QTVR: row: %d col: %d  (%d x %d) pan: %f tilt: %f", getCurrentRow(), getCurrentColumn(), _nav.rows, _nav.columns, getPanAngle(), getTiltAngle());
+		debugC(1, kDebugLevelGVideo, "QTVR: row: %d col: %d  (%d x %d) pan: %f tilt: %f", getCurrentRow(), getCurrentColumn(), _nav.rows, _nav.columns, getPanAngle(), getTiltAngle());
 	}
 }
 
@@ -549,7 +549,7 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 	Graphics::Surface *target = new Graphics::Surface();
 	target->create(w * framew, h * frameh, track->getPixelFormat());
 
-	warning("Pixel format: %s", track->getPixelFormat().toString().c_str());
+	debugC(1, kDebugLevelGVideo, "Pixel format: %s", track->getPixelFormat().toString().c_str());
 
 	Common::Rect srcRect(0, 0, framew, frameh);
 
@@ -600,12 +600,12 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 		delete _constructedHotspots;
 	}
 
-	warning("scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
+	debugC(1, kDebugLevelGVideo, "scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
 			desc->_hotSpotTrackID, desc->_hotSpotSizeX, desc->_hotSpotSizeY);
 
-	warning("sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
+	debugC(1, kDebugLevelGVideo, "sceneNumFrames: %d x %d sceneColorDepth: %d", desc->_sceneNumFramesX, desc->_sceneNumFramesY, desc->_sceneColorDepth);
 
-	warning("Node idx: %d", sample->hdr.nodeID);
+	debugC(1, kDebugLevelGVideo, "Node idx: %d", sample->hdr.nodeID);
 
 	int nodeidx = -1;
 	for (int i = 0; i < (int)_parent->panoInfo.nodes.size(); i++)
@@ -621,7 +621,7 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	uint32 timestamp = _parent->panoInfo.nodes[nodeidx].timestamp;
 
-	warning("Timestamp: %d", timestamp);
+	debugC(1, kDebugLevelGVideo, "Timestamp: %d", timestamp);
 
 	VideoTrackHandler *track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_sceneTrackID - 1]->targetTrack));
 

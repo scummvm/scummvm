@@ -64,6 +64,8 @@ QuickTimeDecoder::~QuickTimeDecoder() {
 }
 
 bool QuickTimeDecoder::loadFile(const Common::Path &filename) {
+	debugC(1, kDebugLevelGVideo, "QuickTimeDecoder::loadFile(\"%s\")", filename.toString().c_str());
+
 	if (!Common::QuickTimeParser::parseFile(filename))
 		return false;
 
