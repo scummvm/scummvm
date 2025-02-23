@@ -130,16 +130,21 @@ public:
 
 class MemFile : public Stream {
 private:
-	byte _data[MAX_MEM_SIZE];
+	byte *_data;
 	size_t _size, _offset;
 public:
 	MemFile() : _size(0), _offset(0) {
+		_data = new byte[MAX_MEM_SIZE];
 		memset(_data, 0, MAX_MEM_SIZE);
 	}
 	MemFile(const byte *data, size_t size) : _size(size), _offset(0) {
+		assert(size <= MAX_MEM_SIZE);
+		_data = new byte[MAX_MEM_SIZE];
 		memcpy(_data, data, size);
+		memset(_data + size, 0, MAX_MEM_SIZE - size);
 	}
 	virtual ~MemFile() {
+		delete[] _data;
 	}
 
 	bool open() {
