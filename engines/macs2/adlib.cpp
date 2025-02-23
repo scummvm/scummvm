@@ -31,19 +31,9 @@ void Adlib::Func2792(byte registerIndex, byte value) {
 	debug("OPL: Write %.2x to port %.2x", value, registerIndex);
 	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
+	gArray229C[registerIndex = value];
 
-	// TODO: What I think happens here is that we save a copy of the register values
-	// at the +229Ch location
-	/*
-	mov	dl,[bp+6h]
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	mov	[di+229Ch],dl
-	xor	ax,ax
-	mov	[bp-2h],ax
-	jmp	27B5h
-	*/
+	
 
 	/*
 
@@ -689,6 +679,8 @@ void Adlib::OnTimer() {
 		return;
 	}
 
+	// fn0017_1AA7 proc
+
 	g2296++;
 
 	if (g2296 >= g2298) {
@@ -725,7 +717,7 @@ void Adlib::OnTimer() {
 	// l0017_1AF7:
 
 	// TODO: This is a huge jump, maybe should go for a separate function
-	if (g2258 & 0xC3) {
+	if (!(g2258 & 0xC3)) {
 		// l0017_1B03:
 		if (_nextEventTimer != 0) {
 			_nextEventTimer--;
@@ -733,11 +725,11 @@ void Adlib::OnTimer() {
 			// we don't need
 			return;
 		}
-		///* Commented out from here on to fix indentation levels
-		//// l0017_1B19:
-		//// TODO: Code does a cli, but probably neglible
 
-		//// TODO: Handle the loop properly
+		// l0017_1B19:
+		// TODO: Code does a cli, but probably neglible
+
+		// TODO: Handle the loop properly
 		for (;;) {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
@@ -1282,8 +1274,10 @@ void Adlib::OnTimer() {
 			}
 		}
 	}
+
 	// l0017_2422
 	// TODO: sti
+
 	// l0017_2425:
 	if ((g2258 & 0xC2) != 0) {
 		// l0017_242E:
@@ -1440,6 +1434,8 @@ void Adlib::Init() {
 	_opl = OPL::Config::create();
 	int status = _opl->init();
 
+	gArray229C.resize(256);
+
 #define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
@@ -1510,8 +1506,15 @@ void Adlib::SetSong(Macs2::StreamHandler *sh) {
 	shMem2250 = sh;
 }
 
+void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
+	fileStream->seek(0x0001B669, SEEK_SET);
+	constexpr uint32 size = 255;
+	gArray69.resize(size);
+	fileStream->read(gArray69.data(), size);
+}
+
 StreamHandler::StreamHandler(Common::Array<uint8>* data) {
-	_stream = new Common::MemorySeekableReadWriteStream(data->data(), data->size());
+	StreamHandler(new Common::MemorySeekableReadWriteStream(data->data(), data->size()));
 }
 
 bool StreamHandler::eos() const {

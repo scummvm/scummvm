@@ -40,10 +40,10 @@ namespace Macs2 {
 
 	class StreamHandler : public Common::SeekableReadStream {
 		private:
-			Common::MemorySeekableReadWriteStream *_stream;
-			int64 _pos;
+			Common::MemorySeekableReadWriteStream *_stream = nullptr;
+			int64 _pos = 0;
 		public:
-			StreamHandler(Common::MemorySeekableReadWriteStream* s) : _stream(s) {
+			StreamHandler(Common::MemorySeekableReadWriteStream* s) : _stream(s), _pos(s->pos()) {
 			}
 
 			StreamHandler(Common::Array<uint8>* data);
@@ -113,6 +113,7 @@ namespace Macs2 {
 		Common::Array<uint8> gArray5C;
 
 		// Array accessed as [di + 69]
+		// Used for looking up data in 27E4, loaded from the executable
 		Common::Array<uint8> gArray69;
 
 		// Array accesed as [di + 96]
@@ -156,7 +157,8 @@ namespace Macs2 {
 		uint16 g2296;
 
 		// [2298h] - Set in 24FD
-		uint16 g2298;
+		// TODO: Hardcoded to 5 for now
+		uint16 g2298 = 5;
 
 		// [225Ah] - TODO: Initial value?
 		uint16 g225A;
@@ -179,6 +181,8 @@ namespace Macs2 {
 
 		// Array at [229Ch] - accessed with byte values
 		// TODO: Initialization, access pattern, size
+		// Seems to save copies of values written to registers
+		// Trying with an initial size of 255 bytes
 		Common::Array<uint8> gArray229C;
 
 		// Array at [2235h] - accessed with bytes values
@@ -206,6 +210,8 @@ namespace Macs2 {
 	void Deinit();
 
 	void SetSong(Macs2::StreamHandler *sh);
+
+	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
 		// TODO: Check where these contents live
 		// Memory pointed to by [2250] global
