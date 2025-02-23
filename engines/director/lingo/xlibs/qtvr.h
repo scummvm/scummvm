@@ -77,6 +77,7 @@ public:
 	Common::Rect _rect;
 	Video::QuickTimeDecoder *_video = nullptr;
 	QtvrWidget *_widget = nullptr;
+	Common::String _rolloverCallback;
 };
 
 } // End of namespace Director

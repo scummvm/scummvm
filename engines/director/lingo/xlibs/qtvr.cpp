@@ -168,14 +168,57 @@ void QTVR::m_openMovie(int nargs) {
 }
 
 XOBJSTUB(QTVR::m_setActive, 0)
-XOBJSTUBNR(QTVR::m_setHPanAngle)
+
+void QTVR::m_setHPanAngle(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setPanAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
 XOBJSTUB(QTVR::m_setNodeID, 0)
 XOBJSTUB(QTVR::m_setQuality, 0)
-XOBJSTUBNR(QTVR::m_setRolloverCallback)
-XOBJSTUB(QTVR::m_setTransitionMode, 0)
-XOBJSTUB(QTVR::m_setTransitionSpeed, 0)
-XOBJSTUBNR(QTVR::m_setVPanAngle)
-XOBJSTUBNR(QTVR::m_setZoomAngle)
+
+void QTVR::m_setRolloverCallback(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_rolloverCallback = g_lingo->pop().asString();
+}
+
+void QTVR::m_setTransitionMode(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTransitionMode(g_lingo->pop().asString());
+}
+
+void QTVR::m_setTransitionSpeed(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTransitionSpeed(g_lingo->pop().asFloat());
+}
+
+void QTVR::m_setVPanAngle(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTiltAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
+void QTVR::m_setZoomAngle(int nargs) {
+	ARGNUMCHECK(1);
+
+	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setFOV(atof(g_lingo->pop().asString().c_str()));
+}
 
 void QTVR::m_update(int nargs) {
 	ARGNUMCHECK(0);
