@@ -43,8 +43,9 @@ new object me, any
 
 
 /**************************************************
- Return value is hours * 3600 + minutes * 60 + seconds
- where the starting point 01:00 is 0.
+ Return value is hours * 3600 + minutes * 60 + seconds in UTC.
+ The underlying function in the XTRA is GetSystemTime:
+	https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtime
 
  Safecrackers only needs the number of seconds since the start of the game.
  Since not all platforms that run ScummVM have a clock, it's implemented as
