@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define NUM_POINT_SIZES 32
 
@@ -119,7 +120,7 @@ enum {
 #define TEXT_DEFAULT_FACE       TEXT_BOLD
 
 
-class CBofText: public CBofObject, public CBofError {
+class CBofText : public CBofObject, public CBofError {
 public:
 	// Constructors
 	CBofText();
@@ -240,11 +241,11 @@ public:
 	 * @return				Error return Code
 	 */
 	ErrorCode displayShadowed(CBofWindow *pWnd, const char *pszText, int nSize,
-							  int nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
-							  int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int nFont = FONT_DEFAULT);
+		int nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
+		int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int nFont = FONT_DEFAULT);
 
-	
-	void flushBackground()       {
+
+	void flushBackground() {
 		_bSaved = false;
 	}
 
@@ -317,8 +318,6 @@ protected:
 	static int   _tabStop;     // tabstop table
 };
 
-#define CText CBofText
-
 // Global text functions
 //
 ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *, int nSize, int nWeight, RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
@@ -333,6 +332,7 @@ ErrorCode paintShadowedText(CBofBitmap *, CBofRect *pRect, const char *, int nSi
 CBofRect calculateTextRect(CBofWindow *pWnd, const CBofString *pStr, int nSize, int nFont);
 CBofRect calculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int nFont);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

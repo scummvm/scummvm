@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define TEXT_ITEM_HEIGHT 24
 
@@ -51,7 +52,7 @@ CBofListBox::CBofListBox() {
 CBofListBox::~CBofListBox() {
 	// Kill the temporary work area
 	delete _pWork;
-	_pWork  = nullptr;
+	_pWork = nullptr;
 
 	deleteAll(false);
 }
@@ -64,8 +65,8 @@ void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepa
 	assert(isValidObject(this));
 
 	ListBoxItem lbi;
-	lbi._pTextStr          = new CBofString(cString);
-	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr = new CBofString(cString);
+	lbi._nTextLineColor = COLOR_USE_DEFAULT;
 
 	_cTextItems.insertBefore(nIndex, lbi);
 
@@ -84,8 +85,8 @@ void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepai
 	assert(isValidObject(this));
 
 	ListBoxItem lbi;
-	lbi._pTextStr          = new CBofString(cString);
-	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr = new CBofString(cString);
+	lbi._nTextLineColor = COLOR_USE_DEFAULT;
 
 	_cTextItems.insertAfter(nIndex, lbi);
 
@@ -102,8 +103,8 @@ void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
 	assert(isValidObject(this));
 
 	ListBoxItem lbi;
-	lbi._pTextStr          = new CBofString(cString);
-	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr = new CBofString(cString);
+	lbi._nTextLineColor = COLOR_USE_DEFAULT;
 
 	_cTextItems.addToHead(lbi);
 
@@ -122,8 +123,8 @@ void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 	assert(isValidObject(this));
 
 	ListBoxItem lbi;
-	lbi._pTextStr          = new CBofString(cString);
-	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr = new CBofString(cString);
+	lbi._nTextLineColor = COLOR_USE_DEFAULT;
 
 	_cTextItems.addToTail(lbi);
 
@@ -392,14 +393,14 @@ ErrorCode CBofListBox::repaintAll() {
 					if ((i + _n1stVisible == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 						// display text highlighted
 						paintText(_pWork,
-						          &cRect,
-						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
-						          _nTextSize,
-						          _nTextWeight,
-						          _cHighColor,
-						          JUSTIFY_LEFT,
-						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-						          getFont());
+							&cRect,
+							*(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
+							_nTextSize,
+							_nTextWeight,
+							_cHighColor,
+							JUSTIFY_LEFT,
+							FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+							getFont());
 					} else {
 						// Display text
 						// Allow list items of different colors.
@@ -409,14 +410,14 @@ ErrorCode CBofListBox::repaintAll() {
 						}
 
 						paintText(_pWork,
-						          &cRect,
-						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
-						          _nTextSize,
-						          _nTextWeight,
-						          rgbTextColor,
-						          JUSTIFY_LEFT,
-						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-						          getFont());
+							&cRect,
+							*(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
+							_nTextSize,
+							_nTextWeight,
+							rgbTextColor,
+							JUSTIFY_LEFT,
+							FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+							getFont());
 					}
 
 					CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
@@ -467,14 +468,14 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			if ((nIndex == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 				// Display text highlighted
 				paintText(_pWork,
-				          &cRect,
-				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
-				          _nTextSize,
-				          _nTextWeight,
-				          _cHighColor,
-				          JUSTIFY_LEFT,
-				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-				          getFont());
+					&cRect,
+					*(_cTextItems.getNodeItem(nIndex)._pTextStr),
+					_nTextSize,
+					_nTextWeight,
+					_cHighColor,
+					JUSTIFY_LEFT,
+					FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+					getFont());
 
 			} else {
 				// Display text
@@ -484,14 +485,14 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 					rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
 				paintText(_pWork,
-				          &cRect,
-				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
-				          _nTextSize,
-				          _nTextWeight,
-				          rgbTextColor,
-				          JUSTIFY_LEFT,
-				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-				          getFont());
+					&cRect,
+					*(_cTextItems.getNodeItem(nIndex)._pTextStr),
+					_nTextSize,
+					_nTextWeight,
+					rgbTextColor,
+					JUSTIFY_LEFT,
+					FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+					getFont());
 			}
 			CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
 			_pWork->line(&bl, &br, (byte)nIndexedColor);
@@ -544,4 +545,5 @@ void CBofListBox::setTextLineColor(int nIndex, RGBCOLOR rgbColor) {
 	_cTextItems.setNodeItem(nIndex, lbi);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

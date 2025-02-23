@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_LOG_H
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * Builds a string like sprintf()
@@ -35,6 +36,7 @@ extern void logInfo(const char *msg);
 extern void logWarning(const char *msg);
 extern void logError(const char *msg);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

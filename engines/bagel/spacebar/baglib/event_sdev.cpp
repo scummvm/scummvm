@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/sound_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 bool CBagEventSDev::_evalTurnEventsFl;
 
@@ -104,4 +105,5 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 	return errorCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

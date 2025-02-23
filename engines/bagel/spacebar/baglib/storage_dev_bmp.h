@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
@@ -96,11 +97,12 @@ public:
 	 * Called on the mouse left button down of the bagbmobj
 	 * and redirected to the lbutton down of the CBagStorageDev
 	 */
-	void onLButtonDown(uint32 nFlags, CPoint *xPoint, void *info = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr) override;
 
 	const CBofPoint devPtToViewPort(const CBofPoint &xPoint) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

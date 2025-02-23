@@ -28,6 +28,7 @@
 #include "bagel/spacebar/baglib/time_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 bool CBagPDA::_flashingFl;
 bool CBagPDA::_soundsPausedFl;
@@ -46,7 +47,7 @@ void CBagPDA::initialize() {
 
 CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevBmp(pParent, xRect),
-	  SBBasePda(pParent, xRect, bActivated) {
+	SBBasePda(pParent, xRect, bActivated) {
 	_xSDevType = SDEV_PDA;
 
 	_activeHeight = 0;
@@ -94,7 +95,7 @@ ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 	assert(isValidObject(this));
 
 	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
-	
+
 	if (_mooWnd) {
 		removeObject(_mooWnd);
 	}
@@ -239,7 +240,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 	if (_hidePdaFl)
 		return errorCode;
-	
+
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
 
@@ -286,8 +287,8 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 	bool bMoviePlaying = false;
 
 	if ((!isActivated()) &&                             // Must be down
-	        ((_pdaMode == PDA_MAP_MODE) ||
-	         (bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
+		((_pdaMode == PDA_MAP_MODE) ||
+			(bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
 
 		// Reset to reflect we know it happened
 		setPreFiltered(false);
@@ -527,8 +528,8 @@ bool CBagPDA::isMovieWaiting() {
 void CBagPDA::runWaitingMovie() {
 	// Will only run a movie if it is ready to be run
 	if (!_movieList)
-	return;
-	
+		return;
+
 	int nCount = _movieList->getCount();
 	for (int i = 0; i < nCount; i++) {
 		CBagMovieObject *pMObj = _movieList->getNodeItem(i);
@@ -564,4 +565,5 @@ ErrorCode CBagPDA::detachActiveObjects() {
 	return CBagStorageDevBmp::detachActiveObjects();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

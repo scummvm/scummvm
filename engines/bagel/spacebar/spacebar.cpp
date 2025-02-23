@@ -22,18 +22,48 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
-#include "bagel/console.h"
-#include "bagel/music.h"
+#include "bagel/spacebar/console.h"
+#include "bagel/spacebar/music.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/boflib/app.h"
-#include "bagel/spacebar/dialogs/start_dialog.h"
-#include "bagel/spacebar/dialogs/opt_window.h"
 #include "bagel/spacebar/baglib/button_object.h"
 #include "bagel/spacebar/boflib/file_functions.h"
 #include "bagel/spacebar/boflib/gui/movie.h"
+
+#include "bagel/spacebar/music.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/character_object.h"
+#include "bagel/spacebar/baglib/cursor.h"
+#include "bagel/spacebar/baglib/dossier_object.h"
+#include "bagel/spacebar/baglib/event_sdev.h"
+#include "bagel/spacebar/baglib/expression.h"
+#include "bagel/spacebar/baglib/inv.h"
+#include "bagel/spacebar/baglib/log_msg.h"
+#include "bagel/spacebar/baglib/menu_dlg.h"
+#include "bagel/spacebar/baglib/moo.h"
+#include "bagel/spacebar/baglib/paint_table.h"
+#include "bagel/spacebar/baglib/pan_window.h"
+#include "bagel/spacebar/baglib/parse_object.h"
+#include "bagel/spacebar/baglib/pda.h"
+#include "bagel/spacebar/baglib/sound_object.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/dialogs/opt_window.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
+#include "bagel/spacebar/baglib/var.h"
+#include "bagel/spacebar/baglib/wield.h"
+#include "bagel/spacebar/baglib/zoom_pda.h"
+
+#include "bagel/spacebar/boflib/cache.h"
+#include "bagel/spacebar/boflib/gfx/cursor.h"
+#include "bagel/spacebar/boflib/error.h"
+#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/spacebar/boflib/gfx/sprite.h"
+#include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -64,14 +94,50 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	g_engine = this;
 
+	// baglib/ class statics initializations
+	CBagCharacterObject::initialize();
+	CBagCursor::initialize();
+	CBagDossierObject::initialize();
+	CBagEventSDev::initialize();
+	CBagExpression::initialize();
+	CBagInv::initialize();
+	CBagLog::initialize();
+	CBagMenu::initialize();
+	CBagMenuDlg::initialize();
+	CBagMoo::initialize();
+	CBagPanWindow::initialize();
+	CBagParseObject::initialize();
+	CBagPDA::initialize();
+	CBagSoundObject::initialize();
+	CBagStorageDev::initialize();
+	CBagStorageDevWnd::initialize();
+	CBagVarManager::initialize();
+	CBagWield::initialize();
+	SBZoomPda::initialize();
+
+	// boflib/ class statics initializations
+	CCache::initialize();
+	CBofCursor::initialize();
+	CBofError::initialize();
+	CBofPalette::initialize();
+	CBofSound::initialize();
+	CBofSprite::initialize();
+	CBofWindow::initialize();
+
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; ++i)
 		g_cBetAreas[i] = CBetArea(BET_AREAS[i]);
 }
 
 SpaceBarEngine::~SpaceBarEngine() {
-	g_engine = nullptr;
-
+	CBofSound::shutdown();
+	CBofSprite::shutdown();
+	CBagCursor::shutdown();
+	CBagExpression::shutdown();
+	CBagStorageDev::shutdown();
 	CMainWindow::shutdown();
+
+	g_engine = nullptr;
+	delete _midi;
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {

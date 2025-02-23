@@ -25,6 +25,7 @@
 #include "bagel/bagel.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/bibble_window.h"
+#include "bagel/spacebar/music.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -40,19 +41,21 @@ protected:
 
 	ErrorCode initialize() override;
 	ErrorCode shutdown() override;
-	bool shouldQuit() const override {
-		return BagelEngine::shouldQuit();
-	}
 
 public:
 	CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
 	const CBofRect viewPortRect = CBofRect(80, 10, 559, 369);
 	CBofRect viewRect;
+	MusicPlayer *&_midi = reinterpret_cast<MusicPlayer *&>(_midiPlayer);
 
 public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~SpaceBarEngine() override;
 	void initializePath(const Common::FSNode &gamePath) override;
+
+	bool shouldQuit() const override {
+		return BagelEngine::shouldQuit();
+	}
 };
 
 extern SpaceBarEngine *g_engine;

@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagCommandObject transfers objects from one location to another
@@ -48,6 +49,7 @@ public:
 	bool runObject() override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

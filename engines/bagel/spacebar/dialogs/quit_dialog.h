@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/gui/button.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define NUM_QUIT_BUTTONS 3
 
@@ -47,6 +48,7 @@ protected:
 	CBofBmpButton *_pButtons[NUM_QUIT_BUTTONS];
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

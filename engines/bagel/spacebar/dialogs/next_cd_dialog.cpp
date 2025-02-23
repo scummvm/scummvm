@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define OK_BTN 5
 
@@ -95,7 +96,7 @@ void CBagNextCDDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	assert(isValidObject(this));
 
 	switch (lKey) {
-	// Cancel
+		// Cancel
 	case BKEY_ENTER:
 	case BKEY_ESC:
 		close();
@@ -115,4 +116,5 @@ void CBagNextCDDialog::onBofButton(CBofObject * /*pObject*/, int nFlags) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

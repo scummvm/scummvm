@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct WindowTimer {
 	uint32 _interval = 0;
@@ -105,6 +106,7 @@ public:
 	bool        _bActive;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

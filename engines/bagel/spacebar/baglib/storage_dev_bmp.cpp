@@ -23,6 +23,7 @@
 #include "bagel/spacebar/baglib/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect, bool bTrans)
 	: CBagBmpObject() {
@@ -32,7 +33,7 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 	setRect(xRect);
 	_pWorkBmp = nullptr;
 	_nMaskColor = CBagel::getBagApp()->getChromaColor();
-	
+
 	CBagStorageDev::setAssociateWnd(pParent);
 
 	setVisible();       // This object is visible
@@ -152,4 +153,5 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 	return _errCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/error.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_OPTION_LEN 100
 
@@ -162,6 +163,7 @@ public:
 	void release();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

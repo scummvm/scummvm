@@ -30,6 +30,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 bool fileExists(const char *pszFileName) {
 	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
@@ -74,4 +75,5 @@ const char *formPath(const char *dir, const char *pszFile) {
 	return &szBuf[0];
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

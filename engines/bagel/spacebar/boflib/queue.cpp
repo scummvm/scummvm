@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CQueue::CQueue() {
 }
@@ -110,4 +111,5 @@ void CQueue::flush() {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

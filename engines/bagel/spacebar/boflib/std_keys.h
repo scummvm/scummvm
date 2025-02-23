@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Boffo Key defs
 //
@@ -160,6 +161,7 @@ namespace Bagel {
 #define BKEY_CTRL   BKF_CTRL
 #define BKEY_ALT    BKF_ALT
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

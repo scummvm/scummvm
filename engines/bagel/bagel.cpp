@@ -21,41 +21,26 @@
 
 #include "bagel/bagel.h"
 #include "bagel/detection.h"
-#include "bagel/music.h"
-
 #include "backends/keymapper/keymapper.h"
 
-#include "bagel/spacebar/baglib/bagel.h"
-#include "bagel/spacebar/baglib/character_object.h"
-#include "bagel/spacebar/baglib/cursor.h"
-#include "bagel/spacebar/baglib/dossier_object.h"
-#include "bagel/spacebar/baglib/event_sdev.h"
-#include "bagel/spacebar/baglib/expression.h"
-#include "bagel/spacebar/baglib/inv.h"
-#include "bagel/spacebar/baglib/log_msg.h"
-#include "bagel/spacebar/baglib/menu_dlg.h"
-#include "bagel/spacebar/baglib/moo.h"
-#include "bagel/spacebar/dialogs/opt_window.h"
-#include "bagel/spacebar/baglib/paint_table.h"
-#include "bagel/spacebar/baglib/pan_window.h"
-#include "bagel/spacebar/baglib/parse_object.h"
-#include "bagel/spacebar/baglib/pda.h"
-#include "bagel/spacebar/baglib/sound_object.h"
+// TODO: Refactor stuff into SpaceBarEngine
+#include "bagel/spacebar/boflib/gui/dialog.h"
 #include "bagel/spacebar/dialogs/start_dialog.h"
-#include "bagel/spacebar/baglib/storage_dev_win.h"
-#include "bagel/spacebar/baglib/var.h"
-#include "bagel/spacebar/baglib/wield.h"
-#include "bagel/spacebar/baglib/zoom_pda.h"
-
-#include "bagel/spacebar/boflib/cache.h"
-#include "bagel/spacebar/boflib/gfx/cursor.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/sound.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
-#include "bagel/spacebar/boflib/gfx/sprite.h"
-#include "bagel/spacebar/boflib/gui/window.h"
+#include "bagel/spacebar/dialogs/opt_window.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/baglib/cursor.h"
 
 namespace Bagel {
+
+// TODO: Refactor stuff into SpaceBarEngine
+using SpaceBar::CBofWindow;
+using SpaceBar::CBofApp;
+using SpaceBar::CBagStartDialog;
+using SpaceBar::CBagOptWindow;
+using SpaceBar::CBofDialog;
+using SpaceBar::CBofCursor;
+using SpaceBar::CBagCursor;
+using SpaceBar::StBagelSave;
 
 #define SAVEGAME_VERSION 1
 
@@ -65,47 +50,10 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_gameDescription(gameDesc), _randomSource("Bagel") {
 	g_engine = this;
 
-	// baglib/ class statics initializations
-	CBagCharacterObject::initialize();
-	CBagCursor::initialize();
-	CBagDossierObject::initialize();
-	CBagEventSDev::initialize();
-	CBagExpression::initialize();
-	CBagInv::initialize();
-	CBagLog::initialize();
-	CBagMenu::initialize();
-	CBagMenuDlg::initialize();
-	CBagMoo::initialize();
-	CBagPanWindow::initialize();
-	CBagParseObject::initialize();
-	CBagPDA::initialize();
-	CBagSoundObject::initialize();
-	CBagStorageDev::initialize();
-	CBagStorageDevWnd::initialize();
-	CBagVarManager::initialize();
-	CBagWield::initialize();
-	SBZoomPda::initialize();
-
-	// boflib/ class statics initializations
-	CCache::initialize();
-	CBofCursor::initialize();
-	CBofError::initialize();
-	CBofPalette::initialize();
-	CBofSound::initialize();
-	CBofSprite::initialize();
-	CBofWindow::initialize();
-
 	_saveData.clear();
 }
 
 BagelEngine::~BagelEngine() {
-	CBofSound::shutdown();
-	CBofSprite::shutdown();
-	CBagCursor::shutdown();
-	CBagExpression::shutdown();
-	CBagStorageDev::shutdown();
-
-	delete _midi;
 	delete _screen;
 }
 
@@ -210,9 +158,9 @@ bool BagelEngine::savesExist() const {
 void BagelEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (pause) {
-		_midi->pause();
+		_midiPlayer->pause();
 	} else {
-		_midi->resume();
+		_midiPlayer->resume();
 	}
 }
 

@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define DIALOG_WIDTH    640
 #define DIALOG_HEIGHT   480
@@ -102,7 +103,7 @@ ErrorCode CBagRestoreDialog::attach() {
 		pPal = _pBackdrop->getPalette();
 		CBofApp::getApp()->setPalette(pPal);
 	}
-	
+
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(buildSysDir("SAVELIST.BMP"), pPal);
@@ -310,14 +311,14 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		}
 		break;
 
-	// Save into current slot, and exit
+		// Save into current slot, and exit
 	case BKEY_ENTER:
 		if (_nSelectedItem != -1)
 			RestoreAndclose();
 		break;
 
 
-	// Cancel without saving
+		// Cancel without saving
 	case BKEY_ESC:
 		close();
 		break;
@@ -339,12 +340,12 @@ void CBagRestoreDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 	switch (pButton->getControlID()) {
 
-	// Do actual save
+		// Do actual save
 	case RESTORE_BTN:
 		RestoreAndclose();
 		break;
 
-	// Cancel without saving
+		// Cancel without saving
 	case CANCEL_BTN:
 		close();
 		break;
@@ -422,4 +423,5 @@ void CBagRestoreDialog::onInitDialog() {
 	attach();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -22,6 +22,7 @@
 #include "bagel/spacebar/baglib/area_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /* Private methods*/
 
@@ -60,4 +61,5 @@ void CBagAreaObject::setSize(const CBofSize &xSize) {
 	_xSize = xSize;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

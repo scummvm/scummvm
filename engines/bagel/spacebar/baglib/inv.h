@@ -26,14 +26,17 @@
 #include "bagel/spacebar/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagInv : public CBagStorageDevBmp {
 protected:
 	static bool _firstStashFl;
 
 public:
-	CBagInv() : CBagStorageDevBmp() {}
-	virtual ~CBagInv() {}
+	CBagInv() : CBagStorageDevBmp() {
+	}
+	virtual ~CBagInv() {
+	}
 	static void initialize() {
 		_firstStashFl = true;
 	}
@@ -42,6 +45,7 @@ public:
 	ErrorCode deactivateLocalObject(const CBofString &objectName) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

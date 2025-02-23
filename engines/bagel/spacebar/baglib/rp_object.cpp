@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // constants for save/restore
 #define NUM_RP_FIELDS 9
@@ -1652,4 +1653,5 @@ DossierObj::~DossierObj() {
 	_xDosExp = nullptr;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

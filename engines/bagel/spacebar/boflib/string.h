@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // The buffer size and string len members are shorts, and use the high byte
 // of the buffer size to tell us if it is stack memory being used.
@@ -195,8 +196,6 @@ protected:
 	uint16 _nBufferSize; // does not include terminating 0
 };
 
-#define CString CBofString
-
 // Inline Comparison operators
 //
 inline bool operator==(const CBofString &s1, const CBofString &s2) {
@@ -271,6 +270,7 @@ inline bool operator>=(const char *s1, const CBofString &s2) {
 	return s2.compare(s1) <= 0;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/movie_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define PDA_INCREMENT 13
 
@@ -163,6 +164,7 @@ public:
 	void handleZoomButton(bool bButtonDown);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

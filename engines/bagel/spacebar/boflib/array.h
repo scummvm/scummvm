@@ -26,6 +26,7 @@
 #include "common/array.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 template<class T>
 class Array : public Common::Array<T> {
@@ -50,6 +51,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

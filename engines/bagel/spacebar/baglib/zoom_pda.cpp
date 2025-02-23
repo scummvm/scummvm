@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/zoom_pda.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define ZOOM_MOO_WLD      "MOOZ_WLD"
 #define ZOOM_INV_WLD      "INVZ_WLD"
@@ -42,7 +43,7 @@ void SBZoomPda::initialize() {
 
 SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevWnd(),
-	  SBBasePda(pParent, xRect, bActivated) {
+	SBBasePda(pParent, xRect, bActivated) {
 	_xSDevType = SDEV_ZOOMPDA;
 }
 
@@ -78,7 +79,7 @@ ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		if (bUpdate && (_curDisplay != nullptr))
 			_curDisplay->update(pBmp, _curDisplay->getPosition(), pRect);
 	}
-	
+
 	return _errCode;
 }
 
@@ -313,4 +314,5 @@ ErrorCode SBZoomPda::detachActiveObjects() {
 	return CBagStorageDevWnd::detachActiveObjects();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

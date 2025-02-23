@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/gui/scroll_bar.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define BMP_SCROLL_TIMER    9999
 #define DEF_TIMER_INTERVAL  100
@@ -107,7 +108,7 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 			CBofPoint cPoint = _parent->getWindowRect().topLeft();
 			CBofRect cTempRect = _cWindowRect - cPoint;
 
-			cTempRect -= CPoint(0, 20);
+			cTempRect -= CBofPoint(0, 20);
 			cTempRect.right += 20;
 
 			_pScrollText = new CBofText(&cTempRect, nJustify);
@@ -484,4 +485,5 @@ void CBofScrollBar::onTimer(uint32 nWhichTimer) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

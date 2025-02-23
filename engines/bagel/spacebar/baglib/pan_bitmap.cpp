@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/paint_table.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 const CBofRect CBagPanBitmap::getMaxView(CBofSize s) {
 	CBofRect r;
@@ -52,7 +53,7 @@ const CBofRect CBagPanBitmap::getMaxView(CBofSize s) {
 }
 
 CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
-		CBofBitmap(pszFileName, pPalette, true) {
+	CBofBitmap(pszFileName, pPalette, true) {
 	int nW = width();
 	int nH = height();
 
@@ -134,9 +135,9 @@ CBofRect CBagPanBitmap::getWarpSrcRect() {
 	int nH2 = height() >> 1;
 
 	return CBofRect(_xCurrView.left,
-	                nH2 + (int)(*_pCosineTable * CBofFixed(_xCurrView.top - nH2)),
-	                _xCurrView.right,
-	                nH2 + (int)(*_pCosineTable * CBofFixed(_xCurrView.bottom - nH2)));
+		nH2 + (int)(*_pCosineTable * CBofFixed(_xCurrView.top - nH2)),
+		_xCurrView.right,
+		nH2 + (int)(*_pCosineTable * CBofFixed(_xCurrView.bottom - nH2)));
 }
 
 CBofPoint CBagPanBitmap::warpedPoint(CBofPoint &xPoint) {
@@ -183,9 +184,9 @@ ErrorCode CBagPanBitmap::paintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			// Set the source
 			//
 			PanSrcRect.setRect(srcRect.left + i,
-			                   nTop + (int)(*pSrcHeight * srcTop),
-			                   nRight + i,
-			                   nTop + (int)(*pSrcHeight * srcBottom));
+				nTop + (int)(*pSrcHeight * srcTop),
+				nRight + i,
+				nTop + (int)(*pSrcHeight * srcBottom));
 
 			pSrcBmp->paint(pBmp, &WndDstRect, &PanSrcRect);
 
@@ -200,9 +201,9 @@ ErrorCode CBagPanBitmap::paintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		for (int i = 0; i < dstRect.width(); i += nWidth, stripNumber++) {
 			// Set the source
 			PanSrcRect.setRect(srcRect.left + i,
-			                   STRIP_POINTS[tableSlot][stripNumber]._top,
-			                   nRight + i,
-			                   STRIP_POINTS[tableSlot][stripNumber]._bottom);
+				STRIP_POINTS[tableSlot][stripNumber]._top,
+				nRight + i,
+				STRIP_POINTS[tableSlot][stripNumber]._bottom);
 
 			pSrcBmp->paintStretch4(pBmp, &WndDstRect, &PanSrcRect);
 
@@ -213,9 +214,9 @@ ErrorCode CBagPanBitmap::paintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		for (int i = 0; i < dstRect.width(); i += nWidth) {
 			// Set the source
 			PanSrcRect.setRect(srcRect.left + i,
-			                   nTop + (int)(*pSrcHeight * srcTop),
-			                   nRight + i,
-			                   nTop + (int)(*pSrcHeight * srcBottom));
+				nTop + (int)(*pSrcHeight * srcTop),
+				nRight + i,
+				nTop + (int)(*pSrcHeight * srcBottom));
 
 			pSrcBmp->paintStretchOpt(pBmp, &WndDstRect, &PanSrcRect, nWidth);
 
@@ -430,4 +431,5 @@ double CBagPanBitmap::setUnityFOV() {
 	return getFOV();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

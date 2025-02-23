@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 COption::COption(const char *pszInit) {
 	_szBuf[0] = '\0';
@@ -356,4 +357,5 @@ bool CBofOptions::readLine(Common::SeekableReadStream *pFile, char *pszBuf) {
 	return true;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

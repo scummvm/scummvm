@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofStringTable::CBofStringTable(const char *pszFileName) : CBofFile(nullptr) {
 	assert(pszFileName != nullptr);
@@ -158,4 +159,5 @@ const char *CBofStringTable::getString(int nId) {
 	return pszString;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

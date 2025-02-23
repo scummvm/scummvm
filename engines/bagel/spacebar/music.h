@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/sound.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class MusicPlayer : public Audio::MidiPlayer {
 private:
@@ -38,6 +39,7 @@ public:
 	void stop() override;
 };
 
-} // End of namespace Bagel
+} // namespace SpaceBar
+} // namespace Bagel
 
 #endif

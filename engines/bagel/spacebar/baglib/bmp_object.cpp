@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagBmpObject::CBagBmpObject() : CBagObject() {
 	_xObjType = BMP_OBJ;
@@ -104,4 +105,5 @@ bool CBagBmpObject::isInside(const CBofPoint &pt) {
 	return false;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

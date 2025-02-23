@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/character_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagThingObject : public CBagCharacterObject {
 public:
@@ -34,6 +35,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

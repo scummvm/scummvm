@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/gui/dialog.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagCreditsDialog : public CBofDialog {
 public:
@@ -63,6 +64,7 @@ protected:
 	bool _bDisplay;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -34,6 +34,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Initialize global variables.
 //
@@ -238,18 +239,18 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	switch (diskId) {
 
 	case 1:
-		pBmp = Bagel::loadBitmap(buildSysDir("DISK1.BMP"), pPal);
+		pBmp = SpaceBar::loadBitmap(buildSysDir("DISK1.BMP"), pPal);
 		break;
 
 	case 2:
-		pBmp = Bagel::loadBitmap(buildSysDir("DISK2.BMP"), pPal);
+		pBmp = SpaceBar::loadBitmap(buildSysDir("DISK2.BMP"), pPal);
 		break;
 
 	case 3:
-		pBmp = Bagel::loadBitmap(buildSysDir("DISK3.BMP"), pPal);
+		pBmp = SpaceBar::loadBitmap(buildSysDir("DISK3.BMP"), pPal);
 		break;
 
-	// Shouldn't ever get here
+		// Shouldn't ever get here
 	default:
 		assert(false);
 		break;
@@ -266,4 +267,5 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	cNextCDDialog.doModal();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

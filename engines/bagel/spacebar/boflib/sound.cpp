@@ -26,7 +26,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
-#include "bagel/bagel.h"
+#include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/event_loop.h"
 #include "bagel/spacebar/boflib/sound.h"
@@ -35,12 +35,13 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MEMORY_THRESHOLD    20000L
 #define MEMORY_MARGIN       100000L
 
 char    CBofSound::_szDrivePath[MAX_DIRPATH];
-CBofSound  *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked Sounds
+CBofSound *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked Sounds
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
 int     CBofSound::_nWavCount = 0;              // Available wave sound devices
 int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
@@ -48,7 +49,7 @@ bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is availab
 bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
-CBofWindow   *CBofSound::_pMainWnd = nullptr;   // Window for message processing
+CBofWindow *CBofSound::_pMainWnd = nullptr;   // Window for message processing
 
 bool    CBofSound::_bInit = false;
 
@@ -740,8 +741,8 @@ bool CBofSound::soundsPlayingNotOver() {
 	CSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() &&
-		        (pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
-		        !(pSound->_wFlags & SOUND_OVEROK)) {
+			(pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
+			!(pSound->_wFlags & SOUND_OVEROK)) {
 			bPlaying = true;
 			break;
 		}
@@ -915,4 +916,5 @@ void CBofSound::setQVol(int nSlot, int nVol) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

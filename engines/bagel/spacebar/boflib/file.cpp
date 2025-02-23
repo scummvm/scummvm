@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define CHUNK_SIZE 0x00007FFF
 
@@ -105,7 +106,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 		return _errCode;
 
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
-			!fileExists(pszFileName))) {
+		!fileExists(pszFileName))) {
 		create(pszFileName, lFlags);
 
 	} else {
@@ -247,7 +248,7 @@ uint32 CBofFile::getPosition() {
 
 	if (rs)
 		return rs->pos();
-	
+
 	if (ws)
 		return ws->pos();
 
@@ -292,4 +293,5 @@ void CBofFile::commit() {
 		ws->finalize();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

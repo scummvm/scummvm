@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define IDOK        1
 #define IDCANCEL    2
@@ -137,6 +138,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

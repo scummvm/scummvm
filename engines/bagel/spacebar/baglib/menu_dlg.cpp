@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MENU_DFLT_HEIGHT 20
 
@@ -223,9 +224,9 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 							menuLoc.x = nBaseMenuLocX + 1;
 						}
 					} else if (wndRect.height() <= ((objSize.height() + menuLoc.y) + 41)) {
-							menuLoc.y = 1;
-							nBaseMenuLocX += (menuSize.cx + 2);
-							menuLoc.x = nBaseMenuLocX;
+						menuLoc.y = 1;
+						nBaseMenuLocX += (menuSize.cx + 2);
+						menuLoc.x = nBaseMenuLocX;
 					}
 
 					// CHECKME: the previous assignment seems to indicate that the following line should be removed in order to keep this slightly different value
@@ -492,7 +493,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	return bReturn;
 }
 
-bool CBagMenu::addItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
+bool CBagMenu::addItem(CBagObject *pObj, void *(* /*func*/)(int, void *), void * /*info*/) {
 	pObj->setPosition(CBofPoint(0, _nY));
 
 	_nY = (int16)(_nY + (int16)(pObj->getRect().height() + 1));
@@ -653,13 +654,13 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 	assert(isValidObject(this));
 
 	switch (nID) {
-	// Auto close for text-Captions
+		// Auto close for text-Captions
 	case TIMER_CLOSE_ID:
 		killTimer(nID);
 		close();
 		break;
 
-	// Can now allow user input
+		// Can now allow user input
 	case TIMER_HACK_ID:
 		killTimer(nID);
 		_bAcceptInput = true;
@@ -686,4 +687,5 @@ void CBagMenuDlg::onDeActivate() {
 	close();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

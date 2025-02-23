@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001
@@ -152,8 +153,7 @@ public:
 	static CBofPalette *getSharedPalette();
 };
 
-#define CPalette CBofPalette
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

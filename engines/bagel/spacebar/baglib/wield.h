@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagWield : public CBagStorageDevBmp {
 private:
@@ -67,6 +68,7 @@ public:
 	ErrorCode deactivateLocalObject(CBagObject *pObj) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

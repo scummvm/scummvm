@@ -30,10 +30,13 @@
 #include "bagel/spacebar/boflib/rect.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofMovie : public CBofDialog {
 public:
-	enum MVSTATUS { STOPPED, PAUSED, FORWARD, REVERSE};
+	enum MVSTATUS {
+		STOPPED, PAUSED, FORWARD, REVERSE
+	};
 protected:
 	Graphics::ManagedSurface *_pSbuf;
 	Video::SmackerDecoder *_pSmk;
@@ -75,8 +78,8 @@ public:
 
 	virtual bool        open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual bool        play(bool bLoop,  bool bEscCanStop = true);
-	virtual bool        reverse(bool bLoop,  bool bEscCanStop = true);
+	virtual bool        play(bool bLoop, bool bEscCanStop = true);
+	virtual bool        reverse(bool bLoop, bool bEscCanStop = true);
 	virtual bool        pause();
 	virtual bool        stop();
 
@@ -92,16 +95,17 @@ public:
 
 	virtual bool        centerRect();
 
-	Graphics::ManagedSurface *getSmackBuffer()  {
+	Graphics::ManagedSurface *getSmackBuffer() {
 		return _pSbuf;
 	}
-	Video::SmackerDecoder *getSmackMovie()   {
+	Video::SmackerDecoder *getSmackMovie() {
 		return _pSmk;
 	}
 };
 
 ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

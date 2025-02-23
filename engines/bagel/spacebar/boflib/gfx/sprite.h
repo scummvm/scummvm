@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define SPRITE_TOPMOST 0
 #define SPRITE_FOREGROUND 64
@@ -230,8 +231,7 @@ protected:
 	static int _nWorkDY;
 };
 
-#define CSprite CBofSprite
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

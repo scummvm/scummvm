@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagDossierObject *CBagDossierObject::_curDossier;
 
@@ -63,14 +64,14 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 		const char ch = (char)istr.peek();
 		switch (ch) {
 
-		//  SIZE n - n point size of the txt
-		//
-		//  -or-
-		//
-		// SUSPECTVAR is a variable that will be in the LOGPDA list of
-		// objects and will be tightly tied to residue printing.  If a res print
-		// yields positive results on a character then set the rp field of the
-		// associated suspect object to true.
+			//  SIZE n - n point size of the txt
+			//
+			//  -or-
+			//
+			// SUSPECTVAR is a variable that will be in the LOGPDA list of
+			// objects and will be tightly tied to residue printing.  If a res print
+			// yields positive results on a character then set the rp field of the
+			// associated suspect object to true.
 		case 'S':
 			getAlphaNumFromStream(istr, sStr);
 
@@ -90,9 +91,9 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 			}
 			break;
 
-		//
-		//  NOTACTIVE KEYWORD MEANS DON'T DO ANYTHING ON MOUSE DOWN!!!
-		//
+			//
+			//  NOTACTIVE KEYWORD MEANS DON'T DO ANYTHING ON MOUSE DOWN!!!
+			//
 		case 'N':
 			getAlphaNumFromStream(istr, sStr);
 
@@ -104,9 +105,9 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 			}
 			break;
 
-		//
-		//  FONT MONO or DEFAULT
-		//
+			//
+			//  FONT MONO or DEFAULT
+			//
 		case 'F':
 			getAlphaNumFromStream(istr, sStr);
 
@@ -122,10 +123,10 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 			}
 			break;
 
-		//
-		//  INDEX line, required.  This is the line that will show up in the
-		//  log entry.
-		//
+			//
+			//  INDEX line, required.  This is the line that will show up in the
+			//  log entry.
+			//
 		case 'I':
 			getAlphaNumFromStream(istr, sStr);
 
@@ -154,8 +155,8 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 			}
 			break;
 
-		//
-		//  AS [CAPTION]  - how to run the link
+			//
+			//  AS [CAPTION]  - how to run the link
 		case 'A':
 			getAlphaNumFromStream(istr, sStr);
 
@@ -195,9 +196,9 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 				putbackStringOnStream(istr, sStr);
 			}
 			break;
-		//
-		//  no match return from function
-		//
+			//
+			//  no match return from function
+			//
 		default:
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
@@ -387,4 +388,5 @@ void CBagDossierObject::showDossierText() {
 	pRPObj->setActiveDossier(this);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

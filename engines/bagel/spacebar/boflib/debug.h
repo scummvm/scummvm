@@ -26,11 +26,12 @@
 #include "bagel/spacebar/boflib/options.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * Declare a debug-options (.INI) file
  */
-class CBofDebugOptions: public CBofOptions {
+class CBofDebugOptions : public CBofOptions {
 public:
 	/**
 	 * Constructor
@@ -48,6 +49,7 @@ public:
 
 extern CBofDebugOptions *g_pDebugOptions;
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

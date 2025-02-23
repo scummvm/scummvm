@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct ST_BUTTONS {
 	const char *_pszName;
@@ -163,4 +164,5 @@ void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

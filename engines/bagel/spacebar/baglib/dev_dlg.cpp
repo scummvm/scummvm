@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MENU_DFLT_HEIGHT 20
 
@@ -144,7 +145,7 @@ void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
 		}
 
 		// Close dialog box when enter key is hit
-		if (keyCode ==  BKEY_ENTER) {
+		if (keyCode == BKEY_ENTER) {
 			onClose();
 		}
 	}
@@ -161,8 +162,8 @@ void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
 void CDevDlg::paintText() {
 	assert(isValidObject(this));
 
-	char achTemp[ACH_GUESS_MAX_CHARS+1];
-	snprintf(achTemp, ACH_GUESS_MAX_CHARS+1, "%s", _achGuess);
+	char achTemp[ACH_GUESS_MAX_CHARS + 1];
+	snprintf(achTemp, ACH_GUESS_MAX_CHARS + 1, "%s", _achGuess);
 
 	_guessText->display(getBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
@@ -191,4 +192,5 @@ ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	return errorCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

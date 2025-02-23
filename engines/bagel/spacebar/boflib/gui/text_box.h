@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofTextBox : public CBofObject, public CBofError {
 public:
@@ -133,6 +134,7 @@ protected:
 	int _nTextFont;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

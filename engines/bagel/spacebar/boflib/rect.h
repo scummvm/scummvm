@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/size.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 typedef Common::Rect RECT;
 
@@ -42,7 +43,8 @@ public:
 	CBofRect(const CBofRect &srcRect);
 	CBofRect(const CBofPoint &point, const CBofSize &size);
 	CBofRect(const CBofPoint &pttopLeft, const CBofPoint &ptBottomRight);
-	virtual ~CBofRect() {}
+	virtual ~CBofRect() {
+	}
 
 	// Attributes
 	int width() const;
@@ -361,7 +363,7 @@ inline bool CBofRect::operator==(const CBofRect &rect) {
 	assert(isValidObject(this));
 
 	return (left == rect.left && right == rect.right &&
-	        top == rect.top && bottom == rect.bottom);
+		top == rect.top && bottom == rect.bottom);
 }
 
 inline bool CBofRect::operator!=(const CBofRect &rect) {
@@ -369,7 +371,7 @@ inline bool CBofRect::operator!=(const CBofRect &rect) {
 	assert(isValidObject(this));
 
 	return (left != rect.left || right != rect.right ||
-	        top != rect.top || bottom != rect.bottom);
+		top != rect.top || bottom != rect.bottom);
 }
 
 inline void CBofRect::operator+=(const CBofPoint &point) {
@@ -444,8 +446,7 @@ inline CBofRect CBofRect::operator|(const CBofRect &rect2) {
 	return rect;
 }
 
-#define CRect CBofRect
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

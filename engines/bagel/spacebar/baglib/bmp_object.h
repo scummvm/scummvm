@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagBmpObject is an object that can be place within the slide window.
@@ -50,7 +51,7 @@ public:
 
 	ErrorCode attach(CBofPalette *palette);
 	ErrorCode detach() override;
-	
+
 	bool isAttached() override {
 		return _bmp != nullptr;
 	}
@@ -65,6 +66,7 @@ public:
 	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

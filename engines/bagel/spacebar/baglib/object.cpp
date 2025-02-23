@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 extern bool g_noMenuFl;
 
@@ -114,7 +115,7 @@ ErrorCode CBagObject::detach() {
 	return CBagParseObject::detach();
 }
 
-ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 
@@ -214,10 +215,11 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		istr.eatWhite();
 		const char ch = (char)istr.getCh();
 		switch (ch) {
-		//
-		//  =filename.ext
-		//
-		case '=': {
+			//
+			//  =filename.ext
+			//
+		case '=':
+		{
 			parseCode = UPDATED_OBJECT;
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
@@ -230,7 +232,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  { menu objects .... }  - Add menu items
 		//
-		case '{': {
+		case '{':
+		{
 			parseCode = UPDATED_OBJECT;
 			if (!_pMenu) {
 				_pMenu = new CBagMenu;
@@ -253,7 +256,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  ^id;  - Set id
 		//
-		case '^': {
+		case '^':
+		{
 			parseCode = UPDATED_OBJECT;
 			const char c = (char)istr.peek();
 			if (Common::isDigit(c)) {
@@ -272,7 +276,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  *state;  - Set state
 		//
-		case '*': {
+		case '*':
+		{
 			parseCode = UPDATED_OBJECT;
 			int nState;
 			getIntFromStream(istr, nState);
@@ -282,7 +287,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  %cursor;  - Set cursor
 		//
-		case '%': {
+		case '%':
+		{
 			parseCode = UPDATED_OBJECT;
 			int nCursor;
 			getIntFromStream(istr, nCursor);
@@ -292,23 +298,25 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  [left,top,right,bottom]  - Set position
 		//
-		case '[': {
+		case '[':
+		{
 			parseCode = UPDATED_OBJECT;
 			CBofRect r;
 			istr.putBack();
 			getRectFromStream(istr, r);
 			setPosition(r.topLeft());
 			if (r.width() && r.height())
-				setSize(CSize(r.width(), r.height()));
+				setSize(CBofSize(r.width(), r.height()));
 			break;
 		}
 		//
 		//  IS [NOT] [MOVABLE|MODAL|VISIBLE|STRETCHABLE|HIGHLIGHT|ACTIVE|TRANSPARENT|HIDE_ON_CLICK|IMMEDIATE_RUN|LOCAL|CONSTANT_UPDATE|PRELOAD|FOREGROUND]
 		//
-		case 'I': {
+		case 'I':
+		{
 			if (istr.peek() != 'S') {
 				istr.putBack();
-				
+
 				return parseCode;
 			}
 			char szLocalBuff[256];
@@ -371,9 +379,9 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		case ';':
 			return PARSING_DONE;
 
-		//
-		//  no match return from function
-		//
+			//
+			//  no match return from function
+			//
 		default:
 			istr.putBack();
 			return parseCode;
@@ -391,7 +399,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 		pWnd->screenToClient(&pt);
 
 		// Just send the mouse pos
-		CRect r = getRect();
+		CBofRect r = getRect();
 		getMenuPtr()->trackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
@@ -401,7 +409,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	runObject();
 }
 
-bool CBagObject::onMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
+bool CBagObject::onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *) {
 	return false;
 }
 
@@ -463,4 +471,5 @@ void CBagObject::setRefName(const CBofString &s) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/gfx/sprite.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagSpriteObject is an object that can be place within the slide window.
@@ -90,6 +91,7 @@ public:
 	uint32 _nLastUpdate;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

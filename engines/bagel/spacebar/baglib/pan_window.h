@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define BOFCURS 1
 
@@ -55,12 +56,12 @@ private:
 	//
 	// private data members
 	//
-	CPoint _xViewPortPos; // Position of the viewport
-	CRect _xMovementRect; // if mouse is in this region will not scroll
-	CRect _cLeftRect;
-	CRect _cRightRect;
-	CRect _cTopRect;
-	CRect _cBottomRect;
+	CBofPoint _xViewPortPos; // Position of the viewport
+	CBofRect _xMovementRect; // if mouse is in this region will not scroll
+	CBofRect _cLeftRect;
+	CBofRect _cRightRect;
+	CBofRect _cTopRect;
+	CBofRect _cBottomRect;
 
 	CBagPanBitmap *_pSlideBitmap; // Contains the full bitmap of the world
 	CBofBitmap *_pViewPortBitmap; // Contains the current viewport bitmap
@@ -83,7 +84,7 @@ public:
 
 	ErrorCode attachActiveObjects() override;
 
-	ErrorCode onRender(CBofBitmap *pBmp, CRect *pRect = nullptr) override;
+	ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr) override;
 
 	/**
 	 * The modal object is painted to the screen until it is done with
@@ -97,14 +98,14 @@ public:
 	void deleteFGObjects();
 	CBagObject *getFGObjects(const CBofString &sObjName);
 
-	CBofPalette *setSlideBitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
+	CBofPalette *setSlideBitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect = CBofRect(0, 0, 0, 0));
 
 	/**
 	 * Clear the last pan bitmaps and return a rect of the current view
 	 */
 	CBofRect unSetSlideBitmap();
 
-	uint32 rotateTo(CPoint &xPoint, int nRate = 8);
+	uint32 rotateTo(CBofPoint &xPoint, int nRate = 8);
 
 	void activateView();
 	void deActivateView();
@@ -112,20 +113,20 @@ public:
 	void enable() override;
 	void disable() override;
 
-	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
-	                        CBofList<CRect> * = nullptr, bool tempVar = true) override;
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewOffsetRect,
+		CBofList<CBofRect> * = nullptr, bool tempVar = true) override;
 
 	const CBofPoint devPtToViewPort(const CBofPoint &xPoint) override;
 	const CBofPoint viewPortToDevPt(const CBofPoint &xPoint) override;
 
-	void setViewPortSize(const CSize &xViewSize);
-	const CRect getViewPort();
-	const CSize getViewPortSize();
+	void setViewPortSize(const CBofSize &xViewSize);
+	const CBofRect getViewPort();
+	const CBofSize getViewPortSize();
 
 	CBagPanBitmap *getSlideBitmap() const {
 		return _pSlideBitmap;
 	}
-	void setViewPortPos(const CPoint &pos) {
+	void setViewPortPos(const CBofPoint &pos) {
 		_xViewPortPos = pos;    // Position of the viewport
 	}
 
@@ -136,17 +137,17 @@ public:
 		return _nPanSpeed;
 	}
 
-	const CPoint getViewPortPos() {
+	const CBofPoint getViewPortPos() {
 		return _xViewPortPos;
 	}
 
-	const CRect getMaxView() {
+	const CBofRect getMaxView() {
 		return _pSlideBitmap->getMaxView();
 	}
-	void setMovementRect(const CRect &rect) {
+	void setMovementRect(const CBofRect &rect) {
 		_xMovementRect = rect;
 	}
-	const CRect &getMovementRect() {
+	const CBofRect &getMovementRect() {
 		return _xMovementRect;
 	}
 	void setPaintToBackdrop(const bool bPaint) {
@@ -213,6 +214,7 @@ public:
 	void waitForPDA();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

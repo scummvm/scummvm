@@ -2,9 +2,7 @@ MODULE := engines/bagel
 
 MODULE_OBJS = \
 	bagel.o \
-	console.o \
 	metaengine.o \
-	music.o \
 	mfc/dc.o \
 	mfc/document.o \
 	mfc/frame_wnd.o \
@@ -96,11 +94,13 @@ MODULE_OBJS = \
 	spacebar/bib_odds_wnd.o \
 	spacebar/bibble_window.o \
 	spacebar/computer.o \
+	spacebar/console.o \
 	spacebar/filter.o \
 	spacebar/full_wnd.o \
 	spacebar/main_link_object.o \
 	spacebar/main_window.o \
 	spacebar/master_win.o \
+	spacebar/music.o \
 	spacebar/nav_window.o \
 	spacebar/slot_wnd.o \
 	spacebar/sraf_computer.o \

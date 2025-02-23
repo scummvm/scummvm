@@ -32,6 +32,7 @@
 #include "engines/savestate.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define NUM_BUTTONS 6
 
@@ -74,6 +75,7 @@ protected:
 	SaveStateList _savesList;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

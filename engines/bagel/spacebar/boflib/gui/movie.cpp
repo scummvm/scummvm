@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofMovie::CBofMovie(CBofWindow *pParent, const char *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
 	_bStretch = bStretch;
@@ -242,8 +243,8 @@ bool CBofMovie::play() {
 
 }
 
-bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
-	_bEscCanStop   = bEscCanStop;
+bool CBofMovie::reverse(bool bLoop, bool bEscCanStop) {
+	_bEscCanStop = bEscCanStop;
 	_bLoop = bLoop;
 
 	bool bSuccess = reverse();
@@ -315,7 +316,7 @@ uint32 CBofMovie::getFrame() {
 		return _pSmk->getCurFrame();
 	}
 
-	return (uint32) -1;
+	return (uint32)-1;
 }
 
 
@@ -371,4 +372,5 @@ ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *
 	return cMovie.getErrorCode();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

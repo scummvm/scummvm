@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/error.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CSystemCursor;
 
@@ -124,6 +125,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

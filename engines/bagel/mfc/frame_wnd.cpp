@@ -42,14 +42,14 @@ void CFrameWnd::ReleaseDC(CDC *dc) {
 	delete dc;
 }
 
-void CFrameWnd::GetClientRect(CBofRect &r) {
+void CFrameWnd::GetClientRect(CRect &r) {
 	r.left = r.top = 0;
 	r.right = GAME_WIDTH;
 	r.bottom = GAME_HEIGHT;
 }
 
-bool CFrameWnd::PaintDIB(HDC, CBofRect *lpDestRect, HDIB hSrc,
-		CBofRect *lpSrcRect, CBofPalette *hPal) {
+bool CFrameWnd::PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
+		CRect *lpSrcRect, CPalette *hPal) {
 	Graphics::Screen &screen = *g_engine->_screen;
 	screen.blitFrom(*hSrc, *lpSrcRect, *lpDestRect);
 	return true;

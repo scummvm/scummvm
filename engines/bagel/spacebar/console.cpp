@@ -20,23 +20,24 @@
  */
 
 #include "common/savefile.h"
-#include "bagel/console.h"
+#include "bagel/spacebar/console.h"
 #include "bagel/spacebar/baglib/var.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/save_game_file.h"
 #include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("var",       WRAP_METHOD(Console, cmdVar));
-	registerCmd("vars",      WRAP_METHOD(Console, cmdVars));
-	registerCmd("jammer",    WRAP_METHOD(Console, cmdJammer));
-	registerCmd("megawave",  WRAP_METHOD(Console, cmdMegawave));
+	registerCmd("var", WRAP_METHOD(Console, cmdVar));
+	registerCmd("vars", WRAP_METHOD(Console, cmdVars));
+	registerCmd("jammer", WRAP_METHOD(Console, cmdJammer));
+	registerCmd("megawave", WRAP_METHOD(Console, cmdMegawave));
 	registerCmd("microwave", WRAP_METHOD(Console, cmdMegawave));
-	registerCmd("save",      WRAP_METHOD(Console, cmdSave));
-	registerCmd("load",      WRAP_METHOD(Console, cmdLoad));
-	registerCmd("video",     WRAP_METHOD(Console, cmdVideo));
+	registerCmd("save", WRAP_METHOD(Console, cmdSave));
+	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
+	registerCmd("video", WRAP_METHOD(Console, cmdVideo));
 	registerCmd("timefreeze", WRAP_METHOD(Console, cmdTimefreeze));
 }
 
@@ -82,7 +83,7 @@ bool Console::cmdJammer(int argc, const char **argv) {
 	CBofString inner = g_VarManager->getVariable("NDJAM_INNERDIAL_DISPLAY")->getValue();
 	CBofString outer = g_VarManager->getVariable("NDJAM_OUTERDIAL_DISPLAY")->getValue();
 	bool isDone = g_VarManager->getVariable("HFJAM_DONE")->getNumValue() != 0;
-	
+
 	debugPrintf("Frequency is %s.%s, jammer is %s\n",
 		inner.getBuffer(), outer.getBuffer(),
 		isDone ? "correctly set" : "incorrectly set"
@@ -90,7 +91,7 @@ bool Console::cmdJammer(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdMegawave(int argc, const char **argv){
+bool Console::cmdMegawave(int argc, const char **argv) {
 	CBofString wavetime = g_VarManager->getVariable("VEDJWAVETICKS")->getValue();
 
 	debugPrintf("Megawave cooking time is %s\n", wavetime.getBuffer());
@@ -166,4 +167,5 @@ bool Console::cmdTimefreeze(int argc, const char **argv) {
 	return true;
 }
 
-} // End of namespace Bagel
+} // namespace SpaceBar
+} // namespace Bagel

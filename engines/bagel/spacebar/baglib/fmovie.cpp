@@ -30,7 +30,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
-
+namespace SpaceBar {
 
 CBagFMovie::CBagFMovie(CBofWindow *parent, const char *filename, CBofRect *bounds, bool useNewPalette, bool blackOutWindow) {
 	// Allow movie to not shift to new palette.
@@ -168,7 +168,7 @@ void CBagFMovie::onMainLoop() {
 	if (!_smk->needsUpdate() || (_movieStatus == MOVIE_STOPPED))
 		return;
 
-	
+
 	// Smack the current frame into the buffer
 	const Graphics::Surface *frame = _smk->decodeNextFrame();
 	if (_smk->hasDirtyPalette()) {
@@ -354,7 +354,7 @@ uint32 CBagFMovie::getFrame() {
 		return _smk->getCurFrame();
 	}
 
-	return (uint32) -1;
+	return (uint32)-1;
 }
 
 bool CBagFMovie::setFrame(uint32 frameNum) {
@@ -389,4 +389,5 @@ bool CBagFMovie::centerRect() {
 	return true;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/log_msg.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagDossierObject : public CBagTextObject {
 private:
@@ -83,6 +84,7 @@ public:
 	static CBagDossierObject *_curDossier;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

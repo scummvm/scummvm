@@ -22,7 +22,7 @@
 #include "bagel/spacebar/boflib/crc.h"
 
 namespace Bagel {
-
+namespace SpaceBar {
 
 static const uint16 crc32tabLo[256] = {
 	0x0000, 0x3096, 0x612c, 0x51ba, 0xc419, 0xf48f, 0xa535, 0x95a3,
@@ -128,4 +128,5 @@ uint32 calculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	return lCrcValue;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

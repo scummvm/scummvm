@@ -28,6 +28,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define DOUBLE_CLICK_TIME 250
 
@@ -500,35 +501,56 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 
 // Default version of these virtual functions don't do anything
 //
-void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {}
+void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {
+}
 
-void CBofWindow::onLButtonDown(uint32, CBofPoint *, void *) {}
-void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {}
-void CBofWindow::onLButtonDblClk(uint32, CBofPoint *) {}
+void CBofWindow::onLButtonDown(uint32, CBofPoint *, void *) {
+}
+void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {
+}
+void CBofWindow::onLButtonDblClk(uint32, CBofPoint *) {
+}
 
-void CBofWindow::onRButtonDown(uint32, CBofPoint *) {}
-void CBofWindow::onRButtonUp(uint32, CBofPoint *) {}
-void CBofWindow::onRButtonDblClk(uint32, CBofPoint *) {}
+void CBofWindow::onRButtonDown(uint32, CBofPoint *) {
+}
+void CBofWindow::onRButtonUp(uint32, CBofPoint *) {
+}
+void CBofWindow::onRButtonDblClk(uint32, CBofPoint *) {
+}
 
-void CBofWindow::onKeyHit(uint32, uint32) {}
+void CBofWindow::onKeyHit(uint32, uint32) {
+}
 
-void CBofWindow::onReSize(CBofSize *) {}
-void CBofWindow::onPaint(CBofRect *) {}
-void CBofWindow::onTimer(uint32) {}
+void CBofWindow::onReSize(CBofSize *) {
+}
+void CBofWindow::onPaint(CBofRect *) {
+}
+void CBofWindow::onTimer(uint32) {
+}
 
-void CBofWindow::onClose() {}
+void CBofWindow::onClose() {
+}
 
-void CBofWindow::onBofButton(CBofObject *, int) {}
-void CBofWindow::onBofScrollBar(CBofObject *, int) {}
-void CBofWindow::onBofListBox(CBofObject *, int) {}
-void CBofWindow::onUserMessage(uint32, uint32) {}
-void CBofWindow::onMainLoop() {}
+void CBofWindow::onBofButton(CBofObject *, int) {
+}
+void CBofWindow::onBofScrollBar(CBofObject *, int) {
+}
+void CBofWindow::onBofListBox(CBofObject *, int) {
+}
+void CBofWindow::onUserMessage(uint32, uint32) {
+}
+void CBofWindow::onMainLoop() {
+}
 
-void CBofWindow::onSoundNotify(CBofObject *, uint32) {}
-void CBofWindow::onMovieNotify(uint32, uint32) {}
+void CBofWindow::onSoundNotify(CBofObject *, uint32) {
+}
+void CBofWindow::onMovieNotify(uint32, uint32) {
+}
 
-void CBofWindow::onActivate() {}
-void CBofWindow::onDeActivate() {}
+void CBofWindow::onActivate() {
+}
+void CBofWindow::onDeActivate() {
+}
 
 void CBofWindow::onMCINotify(uint32 wParam, uint32 lParam) {
 	assert(isValidObject(this));
@@ -576,7 +598,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		// Window is disabled or hidden
 		return;
 
-	CPoint mousePos(event.mouse.x - _cWindowRect.left,
+	CBofPoint mousePos(event.mouse.x - _cWindowRect.left,
 		event.mouse.y - _cWindowRect.top);
 	for (auto parent = _parent; parent; parent = parent->_parent) {
 		mousePos.x -= parent->_cWindowRect.left;
@@ -588,12 +610,13 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP: {
+	case Common::EVENT_RBUTTONUP:
+	{
 		// Check if the mouse is within the area of a child control
 		for (uint i = 0; i < _children.size(); ++i) {
 			auto &child = *_children[i];
 			if (child.isVisible() && child.isEnabled() &&
-					child.getWindowRect().ptInRect(mousePos)) {
+				child.getWindowRect().ptInRect(mousePos)) {
 				child.handleEvent(event);
 				return;
 			}
@@ -781,4 +804,5 @@ ErrorCode CBofWindow::paintBeveledText(CBofRect *rect, const CBofString &cString
 	return errorCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

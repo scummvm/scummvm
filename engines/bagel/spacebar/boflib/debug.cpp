@@ -25,6 +25,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofDebugOptions *g_pDebugOptions = nullptr;
 
@@ -34,7 +35,7 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 	ConfMan.registerDefault("MessageBoxOn", true);
 	ConfMan.registerDefault("RandomOn", true);
 	ConfMan.registerDefault("DebugLevel", gDebugLevel);
-	ConfMan.registerDefault("ShowIO",false);
+	ConfMan.registerDefault("ShowIO", false);
 	ConfMan.registerDefault("MessageSpy", false);
 
 
@@ -46,4 +47,5 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 	readSetting("DebugOptions", "MessageSpy", &_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

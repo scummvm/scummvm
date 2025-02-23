@@ -19,9 +19,10 @@
  *
  */
 
-#include "bagel/spacebar/boflib/rect.h"
+#include "common/file.h"
 #include "common/serializer.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #ifndef BAGEL_HODJNPODJ_MFC_TYPES_H
 #define BAGEL_HODJNPODJ_MFC_TYPES_H
@@ -39,13 +40,39 @@ typedef uint UINT;
 #define FALSE false
 
 typedef void *HANDLE;
+typedef Graphics::ManagedSurface CBitmap;
 typedef Graphics::ManagedSurface *HDIB;
-typedef CBofRect *LPRECT;
+typedef Common::Rect *LPRECT;
+typedef Common::Rect CRect;
+typedef Common::Point CPoint;
+typedef Common::Point CSize;
+typedef Common::File CFile;
 typedef Common::Serializer CDumpContext;
+typedef Graphics::Palette *HPALETTE;
+typedef Common::String CString;
+
 typedef char *LPSTR;
 typedef void *HBITMAP;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
+
+class CBmpButton {
+};
+class CSprite {
+};
+class CText {
+};
+class CSound {
+};
+
+class CPalette : public Graphics::Palette {
+public:
+	CPalette() : Graphics::Palette(PALETTE_COUNT) {}
+	CPalette(uint size) : Graphics::Palette(size) {}
+	CPalette(const byte *data, uint size) : Graphics::Palette(data, size) {}
+
+	void DeleteObject() {}
+};
 
 } // namespace HodjNPodj
 } // namespace Bagel

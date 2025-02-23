@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 extern bool g_pauseTimerFl;
 
@@ -233,10 +234,11 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		char ch = (char)istr.peek();
 		switch (ch) {
 
-		//
-		//  VAR var - var is a BAGEL CBagVar variable (replaces all %s in text)
-		//
-		case 'V': {
+			//
+			//  VAR var - var is a BAGEL CBagVar variable (replaces all %s in text)
+			//
+		case 'V':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -260,7 +262,8 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		//
 		//  SIZE n - n point size of the txt
 		//
-		case 'S': {
+		case 'S':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -288,7 +291,8 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		//
 		//  FONT MONO or DEFAULT
 		//
-		case 'F': {
+		case 'F':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -311,7 +315,8 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS [CAPTION]  - how to run the link
 		//
-		case 'A': {
+		case 'A':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -341,7 +346,8 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		//
 		//  COLOR n - n color index
 		//
-		case 'C': {
+		case 'C':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -363,7 +369,8 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		//
 		// No match return from function
 		//
-		default: {
+		default:
+		{
 			ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -608,4 +615,5 @@ void CBagTextObject::setPSText(CBofString *p) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

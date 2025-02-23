@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagCharacterObject : public CBagObject {
 protected:
@@ -101,7 +102,7 @@ public:
 	bool isPanim() const {
 		return _pAnim;
 	}
-	
+
 	void setNumOfLoops(int n);
 	void setPlaybackSpeed(int n);
 	void setStartFrame(int n);
@@ -123,6 +124,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

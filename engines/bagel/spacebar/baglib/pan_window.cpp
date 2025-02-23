@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagPDA *CBagPanWindow::_pPDABmp;      // Pointer to the PDA object
 int CBagPanWindow::_nCorrection;
@@ -320,10 +321,10 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							if (pCharObj->getNumberOfLoops() == 1) {
 								setPreFilterPan(true);
 							} else if (pObj->isAttached() &&                       // don't care if it's not running...
-								        (pCharObj->isStationary() == false) &&
-								        (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
-								        ((pObj->getRect().width() != 480) &&
-								         (pObj->getRect().height() != 360))) {
+								(pCharObj->isStationary() == false) &&
+								(pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
+								((pObj->getRect().width() != 480) &&
+									(pObj->getRect().height() != 360))) {
 
 								// Redraw everything inside of the closeup... but not the PDA...
 								// only want to redraw the closeup, not everything else.
@@ -594,8 +595,8 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pActObj = getLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
-			(pActObj->getType() == BUTTON_OBJ) &&
-			(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
+		(pActObj->getType() == BUTTON_OBJ) &&
+		(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
 		pActObj->onLButtonUp(nFlags, xPoint, this);
 
 		// We are not dragging a slider anymore
@@ -805,11 +806,11 @@ bool CBagPanWindow::activatePDA() {
 
 	// PDA already activated
 	return false;
-	
+
 }
 
 const CBofPoint CBagPanWindow::devPtToViewPort(const CBofPoint &xPoint) {
-	CRect r = _pSlideBitmap->getCurrView();
+	CBofRect r = _pSlideBitmap->getCurrView();
 
 	CBofPoint p;
 	p.x = xPoint.x + r.left - _xViewPortPos.x;
@@ -831,7 +832,7 @@ const CBofPoint CBagPanWindow::devPtToViewPort(const CBofPoint &xPoint) {
 
 
 const CBofPoint CBagPanWindow::viewPortToDevPt(const CBofPoint &xPoint) {
-	CRect r = _pSlideBitmap->getCurrView();
+	CBofRect r = _pSlideBitmap->getCurrView();
 	CBofPoint p(xPoint.x - r.left, xPoint.y - r.top);
 
 	if (p.x < 0)
@@ -850,20 +851,20 @@ ErrorCode CBagPanWindow::attachActiveObjects() {
 	return _errCode;
 }
 
-void CBagPanWindow::setViewPortSize(const CSize &xViewSize) {
+void CBagPanWindow::setViewPortSize(const CBofSize &xViewSize) {
 	if (_pSlideBitmap)
 		_pSlideBitmap->setViewSize(xViewSize);
 }
 
-const CRect CBagPanWindow::getViewPort() {
-	CRect r;
+const CBofRect CBagPanWindow::getViewPort() {
+	CBofRect r;
 	if (_pSlideBitmap)
 		r = _pSlideBitmap->getCurrView();
 	return r;
 }
 
-const CSize CBagPanWindow::getViewPortSize() {
-	CRect r;
+const CBofSize CBagPanWindow::getViewPortSize() {
+	CBofRect r;
 	if (_pSlideBitmap)
 		r = _pSlideBitmap->getCurrView();
 	return r.size();
@@ -878,4 +879,5 @@ void CBagPanWindow::waitForPDA() {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

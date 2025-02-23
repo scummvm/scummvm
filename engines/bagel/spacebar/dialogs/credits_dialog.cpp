@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/string_functions.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct ST_CREDITS {
 	const char *_pszBackground;
@@ -292,7 +293,7 @@ ErrorCode CBagCreditsDialog::nextScreen() {
 
 	if (++_iScreen < NUM_SCREENS) {
 		// Load next screen (flushes previous backdrop)
-		CBofBitmap *pBmp = Bagel::loadBitmap(buildSysDir(g_cScreen[_iScreen]._pszBackground));
+		CBofBitmap *pBmp = SpaceBar::loadBitmap(buildSysDir(g_cScreen[_iScreen]._pszBackground));
 		if (pBmp != nullptr) {
 			setBackdrop(pBmp);
 			g_b1 = true;
@@ -345,4 +346,5 @@ void CBagCreditsDialog::nextLine() {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

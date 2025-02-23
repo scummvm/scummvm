@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/sound_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define ASYNCH_DONT_QUEUE 0x0001
 #define ASYNCH_PLAY_IMMEDIATE 0x0002
@@ -37,7 +38,9 @@ namespace Bagel {
  */
 class CBagMovieObject : public CBagObject {
 public:
-	enum class dispType { MOVIE, EXAMINE, PDA_MSG, ASYNCH_PDA_MSG };
+	enum class dispType {
+		MOVIE, EXAMINE, PDA_MSG, ASYNCH_PDA_MSG
+	};
 
 private:
 	dispType _xDisplayType;
@@ -55,7 +58,7 @@ public:
 	void setAssociatedSound(CBagSoundObject *p) {
 		_pSndObj = p;
 	}
-	
+
 	CBagSoundObject *getAssociatedSound() const {
 		return _pSndObj;
 	}
@@ -71,19 +74,19 @@ public:
 	void setDontQueue() {
 		_nAsynchFlags |= ASYNCH_DONT_QUEUE;
 	}
-	
+
 	void setDontOverride() {
 		_nAsynchFlags |= ASYNCH_DONT_OVERRIDE;
 	}
-	
+
 	void setPlayImmediate() {
 		_nAsynchFlags |= ASYNCH_PLAY_IMMEDIATE;
 	}
-	
+
 	void setIncrement(bool b = true) {
 		_bIncrement = b;
 	}
-	
+
 	void setOnBlack(bool b = true) {
 		_bOnBlack = b;
 	}
@@ -91,24 +94,25 @@ public:
 	bool isDontQueue() const {
 		return (_nAsynchFlags & ASYNCH_DONT_QUEUE) != 0;
 	}
-	
+
 	bool isDontOverride() const {
 		return (_nAsynchFlags & ASYNCH_DONT_OVERRIDE) != 0;
 	}
-	
+
 	bool isPlayImmediate() const {
 		return (_nAsynchFlags & ASYNCH_PLAY_IMMEDIATE) != 0;
 	}
-	
+
 	bool isIncrement() const {
 		return _bIncrement;
 	}
-	
+
 	bool isOnBlack() const {
 		return _bOnBlack;
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * Checks to see if specified file exists
@@ -31,7 +32,7 @@ namespace Bagel {
  * @return              true if file exists, false if file does not exist
  *
  **/
-// for mac, use this routine to replace the diskid
+ // for mac, use this routine to replace the diskid
 extern bool fileExists(const char *pszFileName);
 
 /**
@@ -51,6 +52,7 @@ extern char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
  */
 extern const char *formPath(const char *dir, const char *pszFile);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

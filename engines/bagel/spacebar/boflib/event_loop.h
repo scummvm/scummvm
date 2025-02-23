@@ -26,6 +26,7 @@
 #include "graphics/framelimiter.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class EventLoop {
 public:
@@ -46,6 +47,7 @@ public:
 	bool frame();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

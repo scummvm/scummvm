@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define RECT_START_DELIM '['
 #define RECT_END_DELIM ']'
@@ -40,7 +41,9 @@ namespace Bagel {
 #define OBJ_START_DELIM '='
 #define OBJ_END_DELIM ';'
 
-enum ParseCodes { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
+enum ParseCodes {
+	PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN
+};
 
 class CBagParseObject {
 public:
@@ -64,7 +67,8 @@ private:
 
 public:
 	CBagParseObject();
-	virtual ~CBagParseObject() {}
+	virtual ~CBagParseObject() {
+	}
 	static void initialize();
 
 	virtual ErrorCode attach() {
@@ -94,6 +98,7 @@ public:
 	int parseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

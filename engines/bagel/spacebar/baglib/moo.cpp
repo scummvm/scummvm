@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/pan_window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagCharacterObject *CBagMoo::_pMovie;
 PdaMode CBagMoo::_eSavePDAMode;
@@ -117,4 +118,5 @@ void CBagMoo::stopMovie(bool bResetPDA) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

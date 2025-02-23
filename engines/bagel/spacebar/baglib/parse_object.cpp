@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 void CBagParseObject::initialize() {
 }
@@ -241,4 +242,5 @@ int CBagParseObject::parseAlertBox(CBagIfstream &istr, const char *sTitle, const
 	return 0;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

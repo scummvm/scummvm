@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define LISTBOX_NORMAL 0
 #define LISTBOX_SELECT 1
@@ -40,8 +41,8 @@ public:
 		_pTextStr = nullptr;
 		_nTextLineColor = COLOR_USE_DEFAULT;
 	}
-	
-	
+
+
 	CBofString *_pTextStr;
 	RGBCOLOR _nTextLineColor;
 };
@@ -172,6 +173,7 @@ protected:
 	int _nState;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

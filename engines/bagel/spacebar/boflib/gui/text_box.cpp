@@ -22,6 +22,7 @@
 #include "bagel/spacebar/boflib/gui/text_box.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define DEFAULT_PAGE_SIZE   10
 #define DEFAULT_WEIGHT      TEXT_NORMAL
@@ -268,4 +269,5 @@ void CBofTextBox::flushBackground() {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

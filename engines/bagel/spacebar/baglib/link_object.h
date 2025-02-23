@@ -26,13 +26,16 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagLinkObject is an object that can be place within the slide window.
  */
 class CBagLinkObject : public CBagObject {
 public:
-	enum LinkType { LINK = 0, CLOSEUP = 1 };
+	enum LinkType {
+		LINK = 0, CLOSEUP = 1
+	};
 
 private:
 	CBofSize _size;
@@ -73,6 +76,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

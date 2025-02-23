@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/string_functions.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_LINE_LEN 100
 
@@ -177,4 +178,5 @@ int mapWindowsPointSize(int pointSize) {
 	return pointSize;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

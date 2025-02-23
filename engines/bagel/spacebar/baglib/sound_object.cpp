@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // There is only one allowed at a time
 CBofSound *CBagSoundObject::_pMidiSound;
@@ -141,9 +142,10 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		char ch = (char)istr.peek();
 		switch (ch) {
 
-		// VOLUME
-		//
-		case 'V': {
+			// VOLUME
+			//
+		case 'V':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -165,7 +167,8 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS [WAVE|MIDI]  - how to run the link
 		//
-		case 'A': {
+		case 'A':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
@@ -229,7 +232,8 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		// LOOP PROPERTY FOR SOUNDS
-		case 'L': {
+		case 'L':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
@@ -247,7 +251,8 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		// Oversound attribute for sound object
-		case 'S': {
+		case 'S':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
@@ -266,7 +271,8 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		//
 		//  No match return from function
 		//
-		default: {
+		default:
+		{
 			ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -417,4 +423,5 @@ void CBagSoundObject::setSync(bool b) {
 		_wFlags |= SOUND_ASYNCH;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagLogResidue : public CBagTextObject {
 protected:
@@ -34,7 +35,8 @@ protected:
 
 public:
 	CBagLogResidue(int sdevWidth);
-	virtual ~CBagLogResidue() {}
+	virtual ~CBagLogResidue() {
+	}
 
 	void setSize(const CBofSize &size) override;
 
@@ -52,7 +54,8 @@ protected:
 
 public:
 	CBagLogMsg(int sdevWidth);
-	virtual ~CBagLogMsg() {}
+	virtual ~CBagLogMsg() {
+	}
 
 	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
@@ -106,7 +109,8 @@ protected:
 
 public:
 	CBagLogSuspect(int sdevWidth);
-	virtual ~CBagLogSuspect() {}
+	virtual ~CBagLogSuspect() {
+	}
 
 	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
@@ -241,7 +245,8 @@ private:
 
 public:
 	CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize);
-	virtual ~CBagLogClue() {}
+	virtual ~CBagLogClue() {
+	}
 
 	ErrorCode attach() override;
 
@@ -250,6 +255,7 @@ public:
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -30,6 +30,7 @@
 #include "bagel/spacebar/baglib/parse_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagObject;
 typedef void *(*BagFuncPtr)(int, void *);
@@ -280,14 +281,15 @@ public:
 
 	// Init variables
 	virtual const CBofString *getInitInfo() const;
-	virtual void setInitInfo(const CBofString &) {}
+	virtual void setInitInfo(const CBofString &) {
+	}
 	virtual int getProperty(const CBofString &sProp);
 	virtual void setProperty(const CBofString &, int nVal);
 
 	bool isDirty() {
 		return _bDirty != 0;
 	}
-	
+
 	void setDirty(bool b = true) {
 		_bDirty = (byte)b;
 	}
@@ -296,7 +298,7 @@ public:
 	bool isMsgWaiting() {
 		return _bMsgWaiting != 0;
 	}
-	
+
 	void setMsgWaiting(bool b = true) {
 		_bMsgWaiting = (byte)b;
 	}
@@ -304,7 +306,7 @@ public:
 	bool isAlwaysUpdate() {
 		return _bAlwaysUpdate != 0;
 	}
-	
+
 	void setAlwaysUpdate(bool b = true) {
 		_bAlwaysUpdate = (byte)b;
 	}
@@ -312,7 +314,7 @@ public:
 	bool isNoMenu() {
 		return _bNoMenu;
 	}
-	
+
 	void setNoMenu(bool b = true) {
 		_bNoMenu = (byte)b;
 	}
@@ -327,7 +329,8 @@ public:
 	virtual const CBofString &getRefName();
 	virtual void setRefName(const CBofString &s);
 	virtual void setFileName(const CBofString &s);
-	virtual void setSize(const CBofSize &) {}
+	virtual void setSize(const CBofSize &) {
+	}
 	virtual void setRefId(int id);
 	virtual void setOverCursor(int curs);
 	virtual void setState(int state);
@@ -344,7 +347,8 @@ public:
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/);
-	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
+	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {
+	}
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); // run menu if available
 	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
@@ -358,6 +362,7 @@ inline void CBagObject::setMenuPtr(CBagMenu *pm) {
 	_pMenu = pm;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

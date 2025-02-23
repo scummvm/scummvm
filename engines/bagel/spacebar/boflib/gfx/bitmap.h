@@ -34,6 +34,7 @@
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Color constants
 //
@@ -410,8 +411,6 @@ public:
 	}
 };
 
-#define CBitmap CBofBitmap
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // Misc graphics routines
@@ -438,8 +437,9 @@ extern CBofBitmap *loadBitmap(const char *pszFileName, CBofPalette *pPalette = n
  * @return                  Error return code
  */
 extern ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
-                              CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -28,6 +28,7 @@
 #include "bagel/spacebar/baglib/pda.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagMoo : public CBagStorageDevBmp {
 private:
@@ -36,15 +37,18 @@ private:
 	static PdaPos _eSavePDAPos;
 
 public:
-	CBagMoo() : CBagStorageDevBmp() {}
+	CBagMoo() : CBagStorageDevBmp() {
+	}
 	virtual ~CBagMoo();
 	static void initialize();
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1) override;
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*info*/) override {}
-	void onLButtonDown(uint32 /*nFlags*/, CPoint * /*xPoint*/, void * = nullptr) override {}
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*info*/) override {
+	}
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) override {
+	}
 
 	// For public access to our movie object
 
@@ -66,6 +70,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

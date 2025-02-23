@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagExpression : public CBagParseObject, public CBofObject {
 public:
@@ -126,6 +127,7 @@ public:
 	virtual bool onStatus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

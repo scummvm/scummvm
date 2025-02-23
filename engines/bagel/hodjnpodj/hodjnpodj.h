@@ -36,23 +36,20 @@ struct Minigame {
 	void (*_run)();
 };
 
-class HodjNPodjEngine : public BagelEngine, public CBagel {
+class HodjNPodjEngine : public BagelEngine {
 private:
 	static const Minigame MINIGAMES[];
 
-	ErrorCode InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
-	ErrorCode ShutDownSoundSystem();
+	void InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
+	void ShutDownSoundSystem();
 	void playMinigame(const Common::String &name);
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	ErrorCode initialize() override;
-	ErrorCode shutdown() override;
-	bool shouldQuit() const override {
-		return BagelEngine::shouldQuit();
-	}
+	void initialize();
+	void shutdown();
 
 public:
 	GAMESTRUCT gGameInfo;

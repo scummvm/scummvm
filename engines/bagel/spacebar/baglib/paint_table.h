@@ -26,6 +26,7 @@
 #include "common/stream.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct stripEnds {
 	int16 _top;
@@ -42,6 +43,7 @@ public:
 	static void initialize(Common::SeekableReadStream &src);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

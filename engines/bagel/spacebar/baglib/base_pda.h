@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define PDA_MAP (100)
 #define PDA_STASH (101)
@@ -138,7 +139,7 @@ public:
 	void setDeactivate(bool b) {
 		_deactivateFl = b;
 	}
-	
+
 	bool getDeactivate() const {
 		return _deactivateFl;
 	}
@@ -196,6 +197,7 @@ public:
 	CBofRect getViewRect() const;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

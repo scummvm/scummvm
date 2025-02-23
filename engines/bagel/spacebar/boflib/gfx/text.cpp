@@ -24,6 +24,7 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define START_SIZE 8
 #define MONO_FONT "LiberationMono-Regular.ttf"
@@ -382,7 +383,7 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 }
 
 void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,
-		const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
+	const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
 	if (!line.contains('\t')) {
 		font->drawString(&surface, line, left, top, width, color, align);
 
@@ -471,4 +472,5 @@ CBofRect calculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int
 	return CBofRect(0, 0, maxWidth, (int)lines.size() * font->getFontHeight());
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

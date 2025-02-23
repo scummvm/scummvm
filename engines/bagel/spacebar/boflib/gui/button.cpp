@@ -24,6 +24,7 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define SELECTED_TEXT_OFFSET_DX 1
 #define SELECTED_TEXT_OFFSET_DY 1
@@ -544,7 +545,7 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 
 	_pButtonDown = new CBofBitmap(pszDown, pPalette);
 	_pButtonDown->setReadOnly(true);
-	
+
 	_pButtonFocus = new CBofBitmap(pszFocus, pPalette);
 	_pButtonFocus->setReadOnly(true);
 
@@ -616,4 +617,5 @@ void CBofBmpButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

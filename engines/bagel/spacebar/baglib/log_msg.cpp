@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagLog *CBagLog::_lastFloatPage;
 
@@ -365,7 +366,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			CBagObject *curObj = _queuedMsgList->removeHead();
 
 			if (curObj) {
-				CRect  r = getRect();
+				CBofRect  r = getRect();
 
 				errorCode = CBagStorageDev::activateLocalObject(curObj);
 				CBagMenu *objMenu = curObj->getMenuPtr();
@@ -1063,4 +1064,5 @@ ErrorCode CBagLogClue::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *srcRect,
 	return CBagTextObject::update(pBmp, pt, srcRect, maskColor);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/sprite_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define SAVE_BTN 0
 #define CANCEL_BTN 1
@@ -119,6 +120,7 @@ public:
 	int getProperty(const CBofString &prop) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

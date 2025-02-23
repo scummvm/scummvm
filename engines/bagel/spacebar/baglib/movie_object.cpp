@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define SOUND_FILE_EXT_LOWER ".wav"
 #define SOUND_FILE_EXT_UPPER ".WAV"
@@ -75,7 +76,7 @@ bool CBagMovieObject::runObject() {
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 	const bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
-	
+
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
@@ -95,11 +96,12 @@ bool CBagMovieObject::runObject() {
 		// This would be much cooler if it were a cast to another object type and
 		// then a run.  But this is a quicker fix.
 		//
-		enum class MovieFileType { NONE = 0,
-		                   TEXT = 1,
-		                   SOUND = 2,
-		                   MOVIE = 3
-		                 } nMovFileType;
+		enum class MovieFileType {
+			NONE = 0,
+			TEXT = 1,
+			SOUND = 2,
+			MOVIE = 3
+		} nMovFileType;
 		const CBofString sBaseStr = sFileName.left(nExt);
 
 		if (sFileName.find(".smk") > 0 || sFileName.find(".SMK") > 0) {
@@ -131,7 +133,7 @@ bool CBagMovieObject::runObject() {
 				nMovFileType = MovieFileType::NONE;
 				break;
 
-			// We should never get here
+				// We should never get here
 			case MovieFileType::NONE:
 			default:
 				logError(buildString("Movie does not have a correct file name: %s.", sFileName.getBuffer()));
@@ -312,10 +314,10 @@ bool CBagMovieObject::runObject() {
 							pWnd->flushAllMessages();
 							pMovie->play(false);
 						}
-						
+
 						delete pMovie;
 						pMovie = nullptr;
-						
+
 						// If we put a black window up, then
 						delete pNewWin;
 						pNewWin = nullptr;
@@ -371,10 +373,11 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		const char ch = (char)istr.peek();
 		switch (ch) {
-		//
-		//  AS  - n number of slides in sprite
-		//
-		case 'A': {
+			//
+			//  AS  - n number of slides in sprite
+			//
+		case 'A':
+		{
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
@@ -404,7 +407,8 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
-		case 'D': {
+		case 'D':
+		{
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("DONTQUEUE")) {
@@ -425,7 +429,8 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
-		case 'P': {
+		case 'P':
+		{
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("PLAYIMMEDIATE")) {
@@ -441,7 +446,8 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// mac version... give the option of playing the movie on a black
 		// background.  this solves the problem of palette shifts on examine
 		// movies.
-		case 'O': {
+		case 'O':
+		{
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("ONBLACK")) {
@@ -455,7 +461,8 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Associate a sound file with this movie (primarily for examine
 		// movies).
-		case 'S': {
+		case 'S':
+		{
 			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("SND")) {
 				nObjectUpdated = true;
@@ -473,7 +480,8 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//
 		//  No match return from function
 		//
-		default: {
+		default:
+		{
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -522,9 +530,9 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 
 	if (pPDA && pPDAz) {
 		if (pPDAz->getZoomed() ||              // We're zoomed
-		        (pMainWin->isCIC() && !isDontOverride()) || // We're in a character closeup
-		        CBofSound::soundsPlayingNotOver() ||        // A sound is playing
-		        pPDA->getPdaMode() == PDA_MOO_MODE) {            // An asynch movie is already playing
+			(pMainWin->isCIC() && !isDontOverride()) || // We're in a character closeup
+			CBofSound::soundsPlayingNotOver() ||        // A sound is playing
+			pPDA->getPdaMode() == PDA_MOO_MODE) {            // An asynch movie is already playing
 			bCanPlay = false;
 		}
 	}
@@ -532,4 +540,5 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	return bCanPlay;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

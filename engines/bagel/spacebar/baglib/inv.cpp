@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/pda.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define FIRS_STASH_MOV        "FIRST_STASH_MOVIE"
 
@@ -114,4 +115,5 @@ ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
 	return CBagStorageDevBmp::deactivateLocalObject(objectName);;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

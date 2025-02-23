@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define BSB_LEFT 800
 #define BSB_RIGHT 801
@@ -148,6 +149,7 @@ protected:
 	uint32 _nTimerCount;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

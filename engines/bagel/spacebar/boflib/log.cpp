@@ -25,6 +25,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 static const char *const g_pszLogTypes[4] = {
 	"Fatal Error: ",
@@ -66,4 +67,5 @@ const char *buildString(const char *pszFormat, ...) {
 	return nullptr;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

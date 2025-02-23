@@ -24,6 +24,7 @@
 #include "bagel/spacebar/baglib/var.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagVariableObject::CBagVariableObject() : CBagObject() {
 	_xObjType = VAR_OBJ;
@@ -68,10 +69,11 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 		char ch = (char)istr.peek();
 		switch (ch) {
-		//
-		// SIZE n - n point size of the txt
-		//
-		case 'S': {
+			//
+			// SIZE n - n point size of the txt
+			//
+		case 'S':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -91,7 +93,8 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 		//
 		// COLOR n - n color index
 		//
-		case 'C': {
+		case 'C':
+		{
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -187,4 +190,5 @@ ErrorCode CBagVariableObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 	return errorCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

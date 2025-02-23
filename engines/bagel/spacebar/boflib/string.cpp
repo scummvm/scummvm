@@ -25,6 +25,7 @@
 #include "bagel/spacebar/boflib/string_functions.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_STRING 256
 
@@ -601,4 +602,5 @@ void CBofString::makeUpper() {
 	strncpy(_pszData, s.c_str(), _nLength);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagHelp : public CBofDialog {
 public:
@@ -54,6 +55,7 @@ protected:
 	CBofPalette *_savePalette;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

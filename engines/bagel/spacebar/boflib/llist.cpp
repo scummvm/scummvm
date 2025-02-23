@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/llist.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CLList::CLList() {
 	_pPrev = nullptr;
@@ -164,4 +165,5 @@ CLList *CLList::getTail() {
 	return pList;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

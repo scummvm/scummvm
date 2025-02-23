@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/file.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define CDF_NOFLAGS 0x00000000
 #define CDF_READONLY CBF_READONLY   // Open for Read-only access
@@ -53,7 +54,9 @@ public:
 	uint32 _lKey;
 
 	void synchronize(Common::Serializer &s);
-	static int size() { return 16; }
+	static int size() {
+		return 16;
+	}
 };
 
 struct HeadInfo {
@@ -63,7 +66,9 @@ struct HeadInfo {
 	uint32 _lFootCrc; // CRC of the footer
 
 	void synchronize(Common::Serializer &s);
-	static int size() { return 16; }
+	static int size() {
+		return 16;
+	}
 };
 
 class CBofDataFile : public CBofFile {
@@ -234,6 +239,7 @@ public:
 	ErrorCode write(HeadInfo &rec);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

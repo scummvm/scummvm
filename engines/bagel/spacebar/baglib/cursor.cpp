@@ -23,7 +23,7 @@
 #include "bagel/spacebar/baglib/cursor.h"
 
 namespace Bagel {
-
+namespace SpaceBar {
 
 static const int CURSOR_W = 12;
 static const int CURSOR_H = 20;
@@ -161,4 +161,5 @@ void CSystemCursor::setCurrent() {
 	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

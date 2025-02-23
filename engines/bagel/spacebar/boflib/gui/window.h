@@ -39,6 +39,8 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
+
 class CBofString;
 
 #define MAX_TITLE 64
@@ -471,6 +473,7 @@ public:
 
 extern CBofWindow *g_hackWindow;
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

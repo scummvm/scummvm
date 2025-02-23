@@ -33,6 +33,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define DEBUG_LOG "DEBUG.LOG"
 #define DEBUG_INI "BOFFO.INI"
@@ -142,7 +143,7 @@ ErrorCode CBofApp::runApp() {
 		CBofSound::audioTask();
 		CBofTimer::handleTimers();
 
-		if (nCount < 0)  {
+		if (nCount < 0) {
 			nCount++;
 			if (nCount == 0)
 				nCount = 1;
@@ -247,4 +248,5 @@ void bofMessageBox(const char *pszTitle, const char *pszMessage) {
 	g_engine->errorDialog(msg.c_str());
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

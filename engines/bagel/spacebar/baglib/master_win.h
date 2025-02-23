@@ -34,6 +34,7 @@
 #include "bagel/spacebar/baglib/var.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define g_SDevManager CBagel::getBagApp()->getMasterWnd()->getStorageDevManager()
 #define g_VarManager CBagel::getBagApp()->getMasterWnd()->getVariableManager()
@@ -43,12 +44,12 @@ class CBagStorageDevWnd;
 class CBagStorageDev;
 
 enum SpaceBarEventType {
-	WM_ENTER_PAN_WINDOW     = 1001,
+	WM_ENTER_PAN_WINDOW = 1001,
 	WM_ENTER_CLOSE_UP_WINDOW = 1002,
-	WM_EXIT_CLOSE_UP_WINDOW  = 1003,
-	WM_ENTER_NEW_WLD        = 1004,
-	WM_DIE                = 1005,
-	WM_SHOW_SYSTEM_DLG      = 1006
+	WM_EXIT_CLOSE_UP_WINDOW = 1003,
+	WM_ENTER_NEW_WLD = 1004,
+	WM_DIE = 1005,
+	WM_SHOW_SYSTEM_DLG = 1006
 };
 
 #define MAX_CURSORS 60
@@ -207,6 +208,7 @@ ErrorCode waitForInput();
 
 extern bool g_waitOKFl;
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct ST_BUTTONS {
 	const char *_pszName;
@@ -50,7 +51,7 @@ static const ST_BUTTONS g_stStartButtons[NUM_START_BTNS] = {
 
 
 CBagStartDialog::CBagStartDialog(const char *pszFileName, CBofWindow *pWin)
-		: CBofDialog(pszFileName, pWin) {
+	: CBofDialog(pszFileName, pWin) {
 	// Inits
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
 	Common::fill(_buttons, _buttons + NUM_START_BTNS, (CBofBmpButton *)nullptr);
@@ -160,4 +161,5 @@ void CBagStartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

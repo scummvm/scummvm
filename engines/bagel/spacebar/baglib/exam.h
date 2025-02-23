@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/gui/movie.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagExam : public CBofMovie {
 protected:
@@ -36,12 +37,16 @@ protected:
 
 public:
 	CBagExam(CBofWindow *pParent = nullptr) : CBofMovie(pParent),
-		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
+		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {
+	}
 	CBagExam(CBofWindow *pParent, const char *sFilename) : CBofMovie(pParent, sFilename),
-		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
+		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {
+	}
 	CBagExam(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds) : CBofMovie(pParent, sFilename, pBounds),
-			_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
-	~CBagExam() {}
+		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {
+	}
+	~CBagExam() {
+	}
 
 	/**
 	 * Initialize exam object after opened and ready to play
@@ -53,7 +58,7 @@ public:
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
 	 */
-	void onMouseMove(uint32 /* flags */ , CBofPoint *point, void * /* extraInfo */ = nullptr) override;
+	void onMouseMove(uint32 /* flags */, CBofPoint *point, void * /* extraInfo */ = nullptr) override;
 
 	/**
 	 * Resize the examination window
@@ -89,6 +94,7 @@ public:
 	bool rotateStop();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

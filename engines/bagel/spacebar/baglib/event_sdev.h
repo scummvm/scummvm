@@ -26,14 +26,17 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagEventSDev : public CBagStorageDev {
 private:
 	static bool _evalTurnEventsFl;
 
 public:
-	CBagEventSDev() : CBagStorageDev() {}
-	virtual ~CBagEventSDev() {}
+	CBagEventSDev() : CBagStorageDev() {
+	}
+	virtual ~CBagEventSDev() {
+	}
 
 	static void initialize() {
 		_evalTurnEventsFl = false;
@@ -70,8 +73,10 @@ public:
 
 class CBagTurnEventSDev : public CBagStorageDev {
 public:
-	CBagTurnEventSDev() : CBagStorageDev() {}
-	virtual ~CBagTurnEventSDev() {}
+	CBagTurnEventSDev() : CBagStorageDev() {
+	}
+	virtual ~CBagTurnEventSDev() {
+	}
 
 	ErrorCode setBackground(CBofBitmap * /* bmp, unused */) override {
 		return ERR_NONE;
@@ -84,6 +89,7 @@ public:
 	virtual ErrorCode evaluateExpressions();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

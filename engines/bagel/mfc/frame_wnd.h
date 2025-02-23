@@ -65,10 +65,10 @@ protected:
 	void BeginWaitCursor() {}
 	void EndWaitCursor() {}
 
-	CBofString AfxRegisterWndClass(int flags, void *, void *, void *) const {
-		return CBofString();
+	CString AfxRegisterWndClass(int flags, void *, void *, void *) const {
+		return CString();
 	}
-	void Create(const CBofString &, const char *, int, const CBofRect &, void *, void *) const {
+	void Create(const CString &, const char *, int, const CRect &, void *, void *) const {
 	}
 
 public:
@@ -79,9 +79,9 @@ public:
 
 	static CDC *GetDC();
 	static void ReleaseDC(CDC *dc);
-	static void GetClientRect(CBofRect &r);
-	static bool PaintDIB(HDC, CBofRect *lpDestRect, HDIB hSrc,
-		CBofRect *lpSrcRect, CBofPalette *hPal);
+	static void GetClientRect(CRect &r);
+	static bool PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
+		CRect *lpSrcRect, CPalette *hPal);
 };
 
 } // namespace HodjNPodj

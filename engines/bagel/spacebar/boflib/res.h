@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CResString : public CLList, public CBofObject {
 public:
@@ -89,6 +90,7 @@ public:
 	const char *getString(int nId);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

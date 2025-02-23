@@ -28,6 +28,7 @@
 #include "bagel/spacebar/dialogs/save_dialog.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define NUM_RESTART_BTNS 2
 
@@ -49,6 +50,7 @@ protected:
 	CBofPalette *_pSavePalette;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

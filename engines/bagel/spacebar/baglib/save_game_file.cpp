@@ -27,6 +27,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define WORLD_DIR "$SBARDIR\\WLD\\%s"
 
@@ -311,4 +312,5 @@ bool CBagSaveGameFile::anySavedGames() {
 	return false;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

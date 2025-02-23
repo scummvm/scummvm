@@ -26,6 +26,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 static int HASHVAR(const char *p, int l);
 
@@ -242,7 +243,7 @@ ErrorCode CBagVarManager::updateRegistration() {
 
 	// Make sure there are no more timers in the list
 	if (bFoundLastTimer) {
-		for (/*- i determined in previous for loop -*/ ; i < _xVarList.getCount(); ++i) {
+		for (/*- i determined in previous for loop -*/; i < _xVarList.getCount(); ++i) {
 			if (_xVarList[i]->isTimer()) {
 				CBagVar *pVar = _xVarList[i];
 				_xVarList.remove(i);
@@ -371,4 +372,5 @@ void CBagVar::setName(const CBofString &s) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

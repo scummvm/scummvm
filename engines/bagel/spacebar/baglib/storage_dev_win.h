@@ -29,6 +29,7 @@
 #include "bagel/spacebar/baglib/save_game_file.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define SDEV_UNDEF 00
 #define SDEV_WND 11
@@ -77,7 +78,9 @@ typedef bool (*FilterFunction)(uint16 nFilterId, CBofBitmap *, CBofRect *);
  */
 class CBagStorageDev : public CBagParseObject {
 public:
-	enum MouseActivity { kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001 };
+	enum MouseActivity {
+		kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001
+	};
 
 private:
 	CBofString _sName;           // Name of this storage device
@@ -216,7 +219,8 @@ public:
 	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
 	virtual ErrorCode detachActiveObjects();
 
-	virtual void setHelpFilename(const CBofString &) {}
+	virtual void setHelpFilename(const CBofString &) {
+	}
 
 	const CBofString &getName() const {
 		return _sName;
@@ -435,7 +439,7 @@ public:
 
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	virtual ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                               CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
+		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 
 	virtual CBofRect getLocation() {
 		return getWindowRect();
@@ -489,7 +493,7 @@ public:
 
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
+		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return paintObjects(list, pBmp, emptyRect);
@@ -577,6 +581,7 @@ public:
 extern bool g_allowPaintFl;
 extern CBagStorageDevWnd *g_lastWindow;
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

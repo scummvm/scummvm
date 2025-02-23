@@ -32,6 +32,7 @@
 #include "bagel/spacebar/boflib/vhash_table.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Set a default hash table size here.
 // Note: Best performance is achieved if this value is a prime number!
@@ -197,6 +198,7 @@ private:
 	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *_cacheFileList;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

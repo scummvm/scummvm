@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define USER_OPTIONS "UserOptions"
 
@@ -392,11 +393,12 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			returnToDefaults();
 			break;
 
-		case QUIT_ID: {
+		case QUIT_ID:
+		{
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
-				if ((pWin != nullptr) &&  pWin->showQuitDialog(this)) {
+				if ((pWin != nullptr) && pWin->showQuitDialog(this)) {
 					_nReturnValue = 0;
 					killBackground();
 					close();
@@ -407,7 +409,8 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			break;
 		}
 
-		case SAVE_ID: {
+		case SAVE_ID:
+		{
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
@@ -419,7 +422,8 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			break;
 		}
 
-		case RESTORE_ID: {
+		case RESTORE_ID:
+		{
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
@@ -434,7 +438,8 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			break;
 		}
 
-		case RESTART_ID: {
+		case RESTART_ID:
+		{
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
@@ -598,7 +603,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagel *pApp;
 
 	switch (lKey) {
-	// Help
+		// Help
 	case BKEY_F1:
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
@@ -609,7 +614,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 		break;
 
-	// Save
+		// Save
 	case BKEY_ALT_s:
 	case BKEY_F2:
 	case BKEY_SAVE:
@@ -622,7 +627,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 		break;
 
-	// Restore
+		// Restore
 	case BKEY_ALT_r:
 	case BKEY_RESTORE:
 		pApp = CBagel::getBagApp();
@@ -638,7 +643,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 		break;
 
-	// Restart
+		// Restart
 	case BKEY_F12:
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
@@ -653,9 +658,10 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 		break;
 
-	// Quit
+		// Quit
 	case BKEY_ALT_F4:
-	case BKEY_ALT_q: {
+	case BKEY_ALT_q:
+	{
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
@@ -693,4 +699,5 @@ const char *buildSysDir(const char *pszFile) {
 	return &szBuf[0];
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

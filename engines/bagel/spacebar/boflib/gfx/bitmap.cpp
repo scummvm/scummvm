@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/misc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define TEST_DEBUG 0
 
@@ -1120,4 +1121,5 @@ Graphics::ManagedSurface CBofBitmap::getSurface() {
 	return s;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

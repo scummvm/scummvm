@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 template<class T, int S>
 class CBofVHashTable {
@@ -64,7 +65,7 @@ private:
 //
 template<class T, int S>
 CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : _nHashTableSize(S),
-	_pHashFunction(hashFun), _bisEmpty(true) {
+_pHashFunction(hashFun), _bisEmpty(true) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.
@@ -118,6 +119,7 @@ bool CBofVHashTable<T, S>::contains(const T &val) {
 	return returnValue;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

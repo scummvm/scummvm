@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 int CBagWield::_nWieldCursor = -1;
 
@@ -179,4 +180,5 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 	return ERR_NONE;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagIfstream : public CBofObject {
 private:
@@ -57,7 +58,7 @@ public:
 	const CBofString &getLineString() const { return _lineString; }
 };
 
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

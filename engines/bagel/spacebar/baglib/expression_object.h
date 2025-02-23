@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/expression.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagExpressionObject is an object that can be place within the slide window.
@@ -51,6 +52,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/gui/text_box.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 struct SYSTEM_DATA {
 	int _nMusicVolume;
@@ -38,7 +39,7 @@ struct SYSTEM_DATA {
 	bool _bPanimations;
 	int _nCorrection;
 	int _nPanSpeed;
-} ;
+};
 
 #define NUM_SYS_BUTTONS 8
 
@@ -102,6 +103,7 @@ protected:
 
 const char *buildSysDir(const char *pszFile);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

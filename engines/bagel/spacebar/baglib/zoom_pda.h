@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/base_pda.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class SBZoomPda : public CBagStorageDevWnd, public SBBasePda {
 public:
@@ -60,6 +61,7 @@ public:
 	ErrorCode detachActiveObjects() override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

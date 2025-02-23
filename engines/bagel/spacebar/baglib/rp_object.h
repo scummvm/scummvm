@@ -29,6 +29,7 @@
 #include "bagel/spacebar/baglib/text_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class DossierObj {
 public:
@@ -155,6 +156,7 @@ public:
 	static void synchronizeResiduePrintedObjects(bool);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

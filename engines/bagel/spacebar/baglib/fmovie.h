@@ -30,10 +30,13 @@
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagFMovie : public CBofDialog {
 public:
-	enum MovieStatus { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FORWARD, MOVIE_REVERSE };
+	enum MovieStatus {
+		MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FORWARD, MOVIE_REVERSE
+	};
 
 protected:
 	Video::SmackerDecoder *_smk;
@@ -68,7 +71,8 @@ protected:
 	 */
 	virtual void closeMovie();
 
-	void onReSize(CBofSize *pSize) override {};
+	void onReSize(CBofSize *pSize) override {
+	};
 
 	virtual bool play();
 	virtual bool reverse();
@@ -76,7 +80,8 @@ protected:
 	void onLButtonUp(uint32 flags, CBofPoint *point, void * = nullptr) override {
 		onButtonUp(flags, point);
 	}
-	virtual void onButtonUp(uint32 flags, CBofPoint *point) {};
+	virtual void onButtonUp(uint32 flags, CBofPoint *point) {
+	};
 	void onPaint(CBofRect *pRect) override;
 	virtual void onMovieDone();
 	void onClose() override;
@@ -97,7 +102,7 @@ public:
 	 * @param blackOutWindow
 	 */
 	CBagFMovie(CBofWindow *parent = nullptr, const char *filename = nullptr,
-	           CBofRect *bounds = nullptr, bool useNewPalette = true, bool blackOutWindow = false);
+		CBofRect *bounds = nullptr, bool useNewPalette = true, bool blackOutWindow = false);
 
 	/**
 	 * Destructor
@@ -128,6 +133,7 @@ public:
 	virtual bool centerRect();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

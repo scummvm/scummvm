@@ -24,6 +24,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 void CBofCursor::initialize() {
 	show();
@@ -67,4 +68,5 @@ void CBofCursor::show() {
 	CursorMan.showMouse(true);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

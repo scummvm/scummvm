@@ -30,6 +30,7 @@
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_APP_NAME 128
 #define DEFAULT_MAINLOOPS   1
@@ -158,6 +159,7 @@ void bofMessageBox(const char *pszTitle, const char *pszMessage);
 
 CBofPoint getMousePos();
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef BAGEL_CONSOLE_H
-#define BAGEL_CONSOLE_H
+#ifndef BAGEL_SPACEBAR_CONSOLE_H
+#define BAGEL_SPACEBAR_CONSOLE_H
 
 #include "gui/debugger.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class Console : public GUI::Debugger {
 private:
@@ -43,6 +44,7 @@ public:
 	~Console() override;
 };
 
-} // End of namespace Bagel
+} // namespace SpaceBar
+} // namespace Bagel
 
-#endif // BAGEL_CONSOLE_H
+#endif

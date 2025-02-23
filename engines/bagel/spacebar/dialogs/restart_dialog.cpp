@@ -28,6 +28,7 @@
 #include "bagel/spacebar/dialogs/opt_window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define LOADING_BMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
@@ -69,7 +70,7 @@ void CBagRestartDialog::onInitDialog() {
 
 	if (_pBackdrop == nullptr)
 		fatalError(ERR_UNKNOWN, "Unexpected null value found in _paBackdrop");
-	
+
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
@@ -137,8 +138,9 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	switch (lKey) {
 
-	// Start a new game
-	case BKEY_ENTER: {
+		// Start a new game
+	case BKEY_ENTER:
+	{
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
@@ -192,14 +194,16 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 	switch (pButton->getControlID()) {
 
-	// Cancel
-	case CANCEL_BTN: {
+		// Cancel
+	case CANCEL_BTN:
+	{
 		close();
 		break;
 	}
 
 	// Restart a new game
-	case RESTART_BTN: {
+	case RESTART_BTN:
+	{
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
@@ -237,4 +241,5 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

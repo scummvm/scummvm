@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagAreaObject is an object that can be placed within the slide window.
@@ -46,6 +47,7 @@ public:
 	void setSize(const CBofSize &xSize) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

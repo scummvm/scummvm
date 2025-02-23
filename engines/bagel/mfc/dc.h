@@ -22,7 +22,7 @@
 #ifndef BAGEL_HODJNPODJ_MFC_DC_H
 #define BAGEL_HODJNPODJ_MFC_DC_H
 
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -45,7 +45,7 @@ public:
 	HDC m_hDC;
 
 public:
-	CDC() : m_hDC(this) {}
+	CDC() : m_hDC(this), _palette(PALETTE_COUNT) {}
 
 	int GetDeviceCaps(int field) const;
 	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);

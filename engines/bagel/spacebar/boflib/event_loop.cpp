@@ -24,9 +24,10 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
-	_mode(mode) {
+_mode(mode) {
 }
 
 bool EventLoop::frame() {
@@ -51,4 +52,5 @@ bool EventLoop::frame() {
 	return false;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

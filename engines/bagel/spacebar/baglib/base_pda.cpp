@@ -30,6 +30,7 @@
 #include "bagel/spacebar/baglib/wield.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Init static members
 PdaMode SBBasePda::_pdaMode;
@@ -60,7 +61,7 @@ SBBasePda::SBBasePda(CBofWindow *parent, const CBofRect & /* xRect*/, bool activ
 	// Other classes need to know if we're zoomed
 	setZoomed(false);
 	setDeactivate(false);
-	
+
 }
 
 SBBasePda::~SBBasePda() {
@@ -187,7 +188,7 @@ bool SBBasePda::hideInventory() {
 
 bool SBBasePda::showInventory() {
 	synchronizePdaState();
-	
+
 	// if a movie is playing, then stop it.
 	stopMovie(false);
 
@@ -212,19 +213,19 @@ bool SBBasePda::showInventory() {
 
 bool SBBasePda::showMap() {
 	synchronizePdaState();
-	
+
 	// If a movie is playing, then stop it.
 	stopMovie(false);
 
 	// if we have a map window
-	if (_mapWnd)  {
+	if (_mapWnd) {
 		if (_curDisplay) {
 			// Turn off the current display
 			_curDisplay->setVisible(false);
 		}
 
 		// Turn on the map
-		_mapWnd->setVisible(true);	
+		_mapWnd->setVisible(true);
 
 		// Set the current display = Map
 		_curDisplay = _mapWnd;
@@ -274,7 +275,7 @@ bool SBBasePda::showLog() {
 		}
 
 		// Turn on the map
-		_logWnd->setVisible(true);	
+		_logWnd->setVisible(true);
 
 		// Set the current display = Map
 		_curDisplay = _logWnd;
@@ -315,7 +316,8 @@ void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 		curPda->zoom();
 		break;
 
-	case PDA_SYSTEM: {
+	case PDA_SYSTEM:
+	{
 		CBagel *curApp = CBagel::getBagApp();
 		if (curApp != nullptr) {
 			CBagMasterWin *curWnd = curApp->getMasterWnd();
@@ -592,4 +594,5 @@ ErrorCode SBBasePda::detachActiveObjects() {
 	return ERR_NONE;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -25,6 +25,7 @@
 #include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 bool CBagExam::initExam() {
 	CBofRect paintRect(155, 55, 155 + 330 - 1, 55 + 250 - 1);
@@ -133,4 +134,5 @@ void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void * 
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

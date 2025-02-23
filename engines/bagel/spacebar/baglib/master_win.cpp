@@ -45,6 +45,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define STARTWORLD "$SBARDIR\\WLD\\BAR.WLD"
 #define GLOBALWORLD "$SBARDIR\\WLD\\GLOBAL.WLD"
@@ -156,7 +157,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 		logInfo("Showing System Screen");
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *dialogBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *dialogBmp = SpaceBar::loadBitmap(_sysScreen.getBuffer());
 
 		CBagOptWindow optionDialog;
 		optionDialog.setBackdrop(dialogBmp);
@@ -197,7 +198,7 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	logInfo("Showing Credits Screen");
 
 	// Use specified bitmap as this dialog's image
-	CBofBitmap *barBmp = Bagel::loadBitmap(buildSysDir("BARAREA.BMP"));
+	CBofBitmap *barBmp = SpaceBar::loadBitmap(buildSysDir("BARAREA.BMP"));
 
 	CBagCreditsDialog creditsDialog;
 	creditsDialog.setBackdrop(barBmp);
@@ -245,7 +246,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		}
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *dialogBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *dialogBmp = SpaceBar::loadBitmap(_sysScreen.getBuffer());
 
 		CBagQuitDialog quitDialog;
 		quitDialog.setBackdrop(dialogBmp);
@@ -991,7 +992,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		backGround = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
 		fixPathName(backGround);
 
-		CBofBitmap *bmp = Bagel::loadBitmap(backGround);
+		CBofBitmap *bmp = SpaceBar::loadBitmap(backGround);
 		CBagHelp help;
 		help.setBackdrop(bmp);
 
@@ -1517,7 +1518,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 		saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *bmp = SpaceBar::loadBitmap(_sysScreen.getBuffer());
 
 		saveDialog.setBackdrop(bmp);
 
@@ -1677,7 +1678,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 		CBagRestoreDialog restoreDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *pBmp = SpaceBar::loadBitmap(_sysScreen.getBuffer());
 
 		restoreDialog.setBackdrop(pBmp);
 
@@ -1993,4 +1994,5 @@ bool getCICStatus() {
 	return retValFl;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

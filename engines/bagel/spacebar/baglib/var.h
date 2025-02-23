@@ -28,10 +28,13 @@
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagVar : public CBagParseObject, public CBofObject {
 public:
-	enum VARTYPE { STRING = 0, NUMBER = 1, BOOLEAN = 2 };
+	enum VARTYPE {
+		STRING = 0, NUMBER = 1, BOOLEAN = 2
+	};
 
 private:
 	CBofString _sVarName;  // Name of the variable
@@ -155,6 +158,7 @@ public:
 	CBofList<CBagVar *> _xVarHashList[VAR_HASH_TABLE_SIZE];
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

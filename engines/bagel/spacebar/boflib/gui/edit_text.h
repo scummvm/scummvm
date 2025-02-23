@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/string.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofEditText : public CBofWindow {
 private:
@@ -38,7 +39,8 @@ protected:
 	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
-	CBofEditText() {}
+	CBofEditText() {
+	}
 
 	CBofEditText(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent);
 
@@ -54,6 +56,7 @@ public:
 	void onPaint(CBofRect *pRect) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define ACH_GUESS_MAX_CHARS 40
 
@@ -56,6 +57,7 @@ public:
 	ErrorCode onRender(CBofBitmap *bmp, CBofRect *rect = nullptr) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

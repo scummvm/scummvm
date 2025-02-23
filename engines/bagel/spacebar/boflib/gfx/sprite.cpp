@@ -23,6 +23,7 @@
 #include "bagel/spacebar/boflib/misc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofRect *CBofSprite::_cDirtyRect;
 CBofSprite *CBofSprite::_pSpriteChain = nullptr;          // Pointer to chain of linked sprites
@@ -115,7 +116,8 @@ void CBofSprite::linkSprite() {
 				_pSpriteChain = this;
 				break;
 
-			default: {
+			default:
+			{
 				CBofSprite *pSprite;
 				CBofSprite *pLastSprite = pSprite = _pSpriteChain;
 				while (pSprite != nullptr && pSprite->_nZOrder > _nZOrder) {
@@ -362,7 +364,7 @@ void CBofSprite::batchPaint(const int x, const int y) {
 
 	// If the sprite is already on screen, then we must also add it's old
 	// current location to the dirty rect list so that it is erase properly
-	if (_bPositioned)  {
+	if (_bPositioned) {
 		addToDirtyRect(&_cRect);
 	}
 
@@ -724,4 +726,5 @@ void CBofSprite::setZOrder(int nValue) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

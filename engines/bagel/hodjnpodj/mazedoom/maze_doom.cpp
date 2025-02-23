@@ -59,7 +59,7 @@ bool bSuccess;
 bool m_bIgnoreScrollClick;
 bool bPlaying;
 bool m_bGameOver;
-CBofPoint m_PlayerPos;
+CPoint m_PlayerPos;
 uint m_nPlayerID;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
 int m_nDifficulty;
@@ -69,17 +69,17 @@ int tempTime;
 
 // Data type for each square of the underlying Grid of the Maze
 struct TILE {
-	CBofPoint   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
+	CPoint   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
 	uint    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
 	uint    m_nTrap;    // Index of trap bitmap to use for drawing
-	CBofPoint   m_nDest;    // x,y Tile location of Trap exit point
+	CPoint   m_nDest;    // x,y Tile location of Trap exit point
 	bool    m_bHidden;  // 0 = Visible, 1 = Invisible
 
 	void clear() {
-		m_nStart = POINT();
+		m_nStart = CPoint();
 		m_nWall = 0;
 		m_nTrap = 0;
-		m_nDest = POINT();
+		m_nDest = CPoint();
 		m_bHidden = false;
 	}
 } mazeTile[NUM_COLUMNS][NUM_ROWS];
@@ -102,7 +102,7 @@ static void init() {
 	pRightEdgeBmp = nullptr;
 	pBottomEdgeBmp = nullptr;
 	pLeftEdgeBmp = nullptr;
-	Common::fill(TrapBitmap, TrapBitmap + NUM_TRAP_MAPS, (CBofBitmap *)nullptr);
+	Common::fill(TrapBitmap, TrapBitmap + NUM_TRAP_MAPS, (CBitmap *)nullptr);
 	pMazeDC = nullptr;
 	m_pTimeText = nullptr;
 	pLocaleBitmap = nullptr;
@@ -112,7 +112,7 @@ static void init() {
 	m_bIgnoreScrollClick = false;
 	bPlaying = false;
 	m_bGameOver = false;
-	m_PlayerPos = POINT();
+	m_PlayerPos = CPoint();
 	m_nPlayerID = PODJ;         // Hodj = 0; Podj = 4 to Offset the Bitmap ID for player
 
 	m_nDifficulty = 0;

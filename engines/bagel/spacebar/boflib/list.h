@@ -27,7 +27,7 @@
 #include "bagel/spacebar/boflib/misc.h"
 
 namespace Bagel {
-
+namespace SpaceBar {
 
 #define MIN_NODES 5 // Minimum # of pre-allocated nodes in node array
 
@@ -490,6 +490,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

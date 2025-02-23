@@ -52,6 +52,7 @@
 #include "bagel/spacebar/boflib/file_functions.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Globals (hacks)
 bool g_allowPaintFl = true;
@@ -2044,4 +2045,5 @@ bool CBagStorageDev::isCIC() {
 	return false;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

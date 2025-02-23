@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_LLIST_H
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * Linked list class
@@ -112,7 +113,7 @@ public:
 	CLList *getPrev() const {
 		return _pPrev;
 	}
-	
+
 	CLList *getNext() const {
 		return _pNext;
 	}
@@ -120,7 +121,7 @@ public:
 	void *getData() const {
 		return _pData;
 	}
-	
+
 	void PutData(void *pObj) {
 		_pData = pObj;
 	}
@@ -131,7 +132,7 @@ public:
 	void FlushList();
 };
 
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -25,6 +25,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagIfstream::CBagIfstream(char *buffer, int length) {
 	_currPtr = _buffer = buffer;
@@ -107,5 +108,5 @@ bool CBagIfstream::eatWhite() {
 	return (ch != -1);
 }
 
-
+} // namespace SpaceBar
 } // namespace Bagel

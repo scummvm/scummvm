@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define RULES_DIR "$SBARDIR\\GENERAL\\RULES\\"
 
@@ -269,4 +270,5 @@ void CBagHelp::onInitDialog() {
 	attach();
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

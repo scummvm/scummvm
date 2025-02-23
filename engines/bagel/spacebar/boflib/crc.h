@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * Calculates the CRC (Cyclic Redundancy Check) for a buffer
@@ -37,6 +38,7 @@ namespace Bagel {
 extern uint32 calculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
 extern uint32 calculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

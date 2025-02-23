@@ -22,6 +22,7 @@
 #include "bagel/spacebar/boflib/vector.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CVector::CVector() {
 	this->x = 0;
@@ -225,4 +226,5 @@ bool CVector::operator==(Vector v) {
 	return bReturn;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

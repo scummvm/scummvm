@@ -26,12 +26,13 @@
 #include "log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 bool CBofTimer::_bModified = false;
 CBofTimer *CBofTimer::_pTimerList = nullptr;
 
 WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
-		_interval(interval), _id(id), _callback(callback) {
+	_interval(interval), _id(id), _callback(callback) {
 	_lastExpiryTime = g_system->getMillis();
 }
 
@@ -121,4 +122,5 @@ void CBofTimer::handleTimers() {
 	}
 }
 
-} // end of namespace Bagel
+} // namespace SpaceBar
+} // namespace Bagel

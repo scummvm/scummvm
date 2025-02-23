@@ -31,6 +31,7 @@
 #include "bagel/spacebar/boflib/error.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define CBF_TEXT 0x00000001
 #define CBF_BINARY 0x00000002
@@ -52,7 +53,8 @@ class SaveReadStream : public Common::SeekableReadStream {
 private:
 	Common::MemoryWriteStreamDynamic *_owner;
 public:
-	SaveReadStream(Common::MemoryWriteStreamDynamic *owner) : _owner(owner) {}
+	SaveReadStream(Common::MemoryWriteStreamDynamic *owner) : _owner(owner) {
+	}
 
 	bool eos() const override {
 		return _owner->pos() >= _owner->size();
@@ -202,8 +204,7 @@ public:
 	}
 };
 
-#define CFile CBofFile
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -45,8 +45,7 @@ CPalette *CDC::SelectPalette(CPalette *pPalette, bool bForceBackground) {
 }
 
 void CDC::RealizePalette() {
-	const HPALETTE &pal = _palette.getPalette();
-	g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
+	g_system->getPaletteManager()->setPalette(_palette.data(), 0, _palette.size());
 }
 
 bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,

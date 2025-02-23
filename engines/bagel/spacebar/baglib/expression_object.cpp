@@ -25,6 +25,7 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	_xObjType = EXPRESS_OBJ;
@@ -100,4 +101,5 @@ ParseCodes CBagExpressionObject::setInfo(CBagIfstream &istr) {
 	return PARSING_DONE;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

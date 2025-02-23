@@ -23,6 +23,7 @@
 #include "bagel/spacebar/baglib/text_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagChatWnd::CBagChatWnd() : CBagStorageDevWnd() {
 }
@@ -74,4 +75,5 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

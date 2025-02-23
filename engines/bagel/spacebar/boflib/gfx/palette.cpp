@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/file_functions.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofPalette *CBofPalette::_pSharedPalette;
 char CBofPalette::_szSharedPalFile[MAX_FNAME];
@@ -156,4 +157,5 @@ CBofPalette *CBofPalette::getSharedPalette() {
 	return _pSharedPalette;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

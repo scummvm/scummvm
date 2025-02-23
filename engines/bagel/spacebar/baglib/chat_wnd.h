@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagChatWnd : public CBagStorageDevWnd {
 public:
@@ -40,6 +41,7 @@ public:
 	void onMouseMove(uint32 flags, CBofPoint *pos, void * = nullptr) override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

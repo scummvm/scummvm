@@ -32,7 +32,7 @@
 #include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {
-
+namespace SpaceBar {
 
 //
 // Wavemix-related constants
@@ -214,6 +214,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, boo
 // Support legacy code
 #define CSound CBofSound
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

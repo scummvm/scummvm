@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/sound.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagSoundObject is an object that can be place within the slide window.
@@ -118,6 +119,7 @@ public:
 	void setPlaying(bool bVal = true);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

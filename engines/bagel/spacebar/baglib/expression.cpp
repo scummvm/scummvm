@@ -27,6 +27,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagVar *CBagExpression::_tempVar;	// Used as a default param
 
@@ -570,7 +571,8 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 		istr.eatWhite();
 		int ch = istr.peek();
 		switch (ch) {
-		case '(': {
+		case '(':
+		{
 			istr.getCh();
 			istr.eatWhite();
 
@@ -742,4 +744,5 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 	return errorCode;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

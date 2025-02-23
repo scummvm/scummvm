@@ -27,10 +27,12 @@
 #include "bagel/spacebar/boflib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofCursor : public CBofObject, public CBofError {
 public:
-	CBofCursor() {}
+	CBofCursor() {
+	}
 	~CBofCursor();
 	static void initialize();
 
@@ -43,6 +45,7 @@ public:
 	static void hide();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

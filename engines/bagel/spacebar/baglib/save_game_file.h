@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/dat_file.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_SAVED_GAMES 40
 #define MAX_SAVE_TITLE 128
@@ -152,6 +153,7 @@ public:
 	ErrorCode readTitleOnly(int32 lSlot, char *pGameTitle);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

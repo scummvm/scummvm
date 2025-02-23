@@ -20,11 +20,11 @@
  */
 
 #include "audio/midiparser_qt.h"
-
-#include "bagel/music.h"
+#include "bagel/spacebar/music.h"
 #include "bagel/spacebar/boflib/sound.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 MusicPlayer::MusicPlayer() {
 
@@ -41,7 +41,7 @@ MusicPlayer::MusicPlayer() {
 	}
 }
 
-void MusicPlayer::play(CBofSound *sound) {
+void MusicPlayer::play(SpaceBar::CBofSound *sound) {
 	Common::StackLock lock(_mutex);
 
 	if (_isPlaying && sound == _sound) {
@@ -89,4 +89,5 @@ void MusicPlayer::stop() {
 	_sound = nullptr;
 }
 
-} // End of namespace Bagel
+} // namespace SpaceBar
+} // namespace Bagel

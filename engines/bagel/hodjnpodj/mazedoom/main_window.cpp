@@ -203,7 +203,7 @@ void CMainWindow::SplashScreen() {
 	CPalette *pPalOld = nullptr;                                                    // Old palette holder
 	CDibDoc myDoc;
 	HDIB hDIB;
-	char msg[64];
+	//char msg[64];
 
 	pDC = GetDC();
 
@@ -367,6 +367,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  ****************************************************************/
 void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+#ifdef TODO
 	CRect   rectTitle;
 
 	rectTitle.setRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
@@ -381,6 +382,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 
 	CFrameWnd::OnLButtonDown(nFlags, point);
+#endif
 }
 
 /*****************************************************************

@@ -24,6 +24,7 @@
 #define BAGEL_BAGLIB_RES_H
 
 namespace Bagel {
+namespace SpaceBar {
 
 // This section should not change, the first cursor is always invalid
 #define BOF_INVALID 0
@@ -67,6 +68,7 @@ namespace Bagel {
 #define THUD_WLD "THUD_WLD"
 #define WIELD_WLD "BWIELD_WLD"
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

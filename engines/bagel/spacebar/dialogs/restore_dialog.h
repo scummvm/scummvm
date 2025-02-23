@@ -31,6 +31,7 @@
 #include "bagel/spacebar/dialogs/save_dialog.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define NUM_RESTORE_BTNS 6
 
@@ -80,6 +81,7 @@ public:
 	void onInitDialog() override;
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -29,6 +29,7 @@
 #include "bagel/spacebar/boflib/log.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagCharacterObject *CBagCharacterObject::_pdaWand;
 bool CBagCharacterObject::_pdaAnimating;
@@ -369,8 +370,9 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		const char ch = (char)istr.peek();
 		switch (ch) {
-		//  SAVESTATE - Maintain the state of the character
-		case 'K': {
+			//  SAVESTATE - Maintain the state of the character
+		case 'K':
+		{
 			char localStr[256];
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
@@ -390,7 +392,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//  LOOP n - n number of times to loop (-1 infinate)
-		case 'L': {
+		case 'L':
+		{
 			char localStr[256];
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
@@ -408,7 +411,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//  SPEED n - n pace of playback (negative is backward), (0 to hold at current frame)
-		case 'S': {
+		case 'S':
+		{
 			char localStr[256];
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
@@ -426,7 +430,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//  EXITATEND - detach at end of looping (call run after objects)
-		case 'E': {
+		case 'E':
+		{
 			char localStr[256];
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
@@ -446,7 +451,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 		//  PANIM - Specifies if this object should be affected by the user
 		// option Panimations On/Off
-		case 'P': {
+		case 'P':
+		{
 			CBofString str;
 
 			getAlphaNumFromStream(istr, str);
@@ -465,7 +471,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//  FRAME [start, end]- start and end frames of the move
-		case 'F': {
+		case 'F':
+		{
 			char localStr[256];
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
@@ -493,7 +500,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		}
 
 		// No match return from function
-		default: {
+		default:
+		{
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -666,4 +674,5 @@ bool CBagCharacterObject::pdaWandAnimating() {
 	return _pdaAnimating;
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

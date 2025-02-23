@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_OBJECT_H
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofObject {
 public:
@@ -35,6 +36,7 @@ public:
 	virtual void DeleteObject() {}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

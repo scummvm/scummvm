@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/llist.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CQueue : public CBofObject {
 protected:
@@ -73,6 +74,7 @@ public:
 	void flush();
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

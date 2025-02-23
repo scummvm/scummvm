@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/fixed.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define MAX_DIV_VIEW (12.8 / 3)     // Ratio for 480x380 Screen
 #define DEF_FOV (360 / MAX_DIV_VIEW) //    1TO1 Paint FOV
@@ -71,7 +72,7 @@ public:
 	ErrorCode paint(CBofBitmap *pBmp, CBofPoint xDstOffset = CBofPoint(0, 0));
 	ErrorCode paintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect);
 	ErrorCode paintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
-	
+
 	CBofRect getWarpSrcRect();
 	CBofPoint warpedPoint(CBofPoint &xPoint);
 
@@ -127,6 +128,7 @@ public:
 
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

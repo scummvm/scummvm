@@ -25,7 +25,7 @@
 #include "common/random.h"
 
 #include "bagel/detection.h"
-#include "bagel/music.h"
+#include "bagel/spacebar/music.h"
 #include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
@@ -36,16 +36,18 @@ class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	StBagelSave _saveData;
+	SpaceBar::StBagelSave _saveData;
 
 	bool canSaveLoadFromWindow(bool save) const;
 
+protected:
+	Audio::MidiPlayer *_midiPlayer = nullptr;
+
 public:
 	Graphics::Screen *_screen = nullptr;
-	MusicPlayer *_midi = nullptr;
 	bool _useOriginalSaveLoad = false;
-	CBagMasterWin *_masterWin = nullptr;
-	CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
+	SpaceBar::CBagMasterWin *_masterWin = nullptr;
+	SpaceBar::CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 	bool g_bUseInitLoc = false;
 	bool g_getVilVarsFl = true;
 
@@ -92,7 +94,7 @@ public:
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave,
-		StBagelSave &saveData);
+		SpaceBar::StBagelSave &saveData);
 
 	/**
 	 * Load a game state

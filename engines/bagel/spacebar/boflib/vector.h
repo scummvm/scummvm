@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_Vector_H
-#define BAGEL_BOFLIB_Vector_H
+#ifndef BAGEL_BOFLIB_VECTOR_H
+#define BAGEL_BOFLIB_VECTOR_H
 
 #include "bagel/spacebar/boflib/stdinc.h"
 #include "bagel/spacebar/boflib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 #define PI (double)3.141592653
 #define RADCNVT ((double)180 / PI) // PI is 180 degrees
@@ -98,6 +99,7 @@ public:
 	bool operator==(Vector);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

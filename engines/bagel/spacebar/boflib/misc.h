@@ -26,6 +26,7 @@
 #include "bagel/spacebar/boflib/stdinc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 extern int mapWindowsPointSize(int pointSize);
 
@@ -100,6 +101,7 @@ void encrypt(void *pBuf, int32 lSize, const char *pszPassword = nullptr);
 extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr);
 #define decryptPartial encryptPartial
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

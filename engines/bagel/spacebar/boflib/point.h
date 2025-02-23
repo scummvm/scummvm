@@ -28,6 +28,7 @@
 #include "bagel/spacebar/boflib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 typedef Common::Point POINT;
 
@@ -43,7 +44,8 @@ public:
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);
 	}
-	virtual ~CBofPoint() {}
+	virtual ~CBofPoint() {
+	}
 
 	void setWinPoint(const POINT *pPoint);
 	POINT GetWinPoint() const;
@@ -244,8 +246,7 @@ inline CBofPoint CBofPoint::operator-() const {
 	return CBofPoint(-x, -y);
 }
 
-#define CPoint CBofPoint
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

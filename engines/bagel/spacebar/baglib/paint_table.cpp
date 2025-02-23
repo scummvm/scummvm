@@ -23,11 +23,12 @@
 #include "bagel/spacebar/baglib/paint_table.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 stripEnds STRIP_POINTS[153][120];
 
 void PaintTable::initialize(Common::SeekableReadStream &src) {
- 	for (int stripNum = 0; stripNum < 153; ++stripNum) {
+	for (int stripNum = 0; stripNum < 153; ++stripNum) {
 		// Read comment line
 		Common::String line = src.readLine();
 		assert(line.hasPrefix("/*"));
@@ -53,4 +54,5 @@ void PaintTable::initialize(Common::SeekableReadStream &src) {
 	}
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -29,6 +29,7 @@
 #include "bagel/bagel.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBofDialog::CBofDialog() {
 	// Inits
@@ -289,4 +290,5 @@ int CBofDialog::doModal() {
 
 void CBofDialog::onInitDialog() {}
 
+} // namespace SpaceBar
 } // namespace Bagel

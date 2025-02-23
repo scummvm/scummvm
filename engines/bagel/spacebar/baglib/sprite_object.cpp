@@ -25,6 +25,7 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	_xObjType = SPRITE_OBJ;
@@ -126,10 +127,11 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 
 		char ch = (char)istr.peek();
 		switch (ch) {
-		//
-		//  +n  - n number of slides in sprite
-		//
-		case '+': {
+			//
+			//  +n  - n number of slides in sprite
+			//
+		case '+':
+		{
 			int cels;
 			istr.getCh();
 			getIntFromStream(istr, cels);
@@ -137,7 +139,8 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			nObjectUpdated = true;
 		}
 		break;
-		case '#': {
+		case '#':
+		{
 			int curs;
 			istr.getCh();
 			getIntFromStream(istr, curs);
@@ -145,7 +148,8 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			nObjectUpdated = true;
 		}
 		break;
-		case 'N': { // NOANIM
+		case 'N':
+		{ // NOANIM
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
@@ -162,7 +166,8 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		// handle a maximum framerate...
-		case 'F': { // NOANIM
+		case 'F':
+		{ // NOANIM
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -186,7 +191,8 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		//
 		//  no match return from function
 		//
-		default: {
+		default:
+		{
 			ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -274,4 +280,5 @@ void CBagSpriteObject::setAnimated(bool b) {
 		_xSprite->setAnimated(b);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/misc.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBofFixed : public CBofObject {
 private:
@@ -100,6 +101,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

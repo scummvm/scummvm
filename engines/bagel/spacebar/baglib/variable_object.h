@@ -26,6 +26,7 @@
 #include "bagel/spacebar/baglib/object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * CBagVariableObject is an object that can be place within the slide window.
@@ -64,6 +65,7 @@ public:
 	}
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

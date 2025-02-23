@@ -27,6 +27,7 @@
 #include "bagel/spacebar/baglib/sprite_object.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 class CBagMenu : public CBagStorageDev {
 private:
@@ -98,6 +99,7 @@ public:
 
 extern bool g_pauseTimerFl;
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

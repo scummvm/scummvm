@@ -27,6 +27,7 @@
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 // Button states
 //
@@ -144,8 +145,7 @@ protected:
 	int _nMaskColor;
 };
 
-#define CBmpButton CBofBmpButton
-
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif
