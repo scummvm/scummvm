@@ -107,7 +107,7 @@ void TimextraXtra::m_new(int nargs) {
 
 void TimextraXtra::m_getTime(int nargs) {
 	ARGNUMCHECK(0);
-	int32 seconds = g_system->getMillis() / 1000;
+	int seconds = g_system->getMillis() / 1000;
 	Datum const res(seconds);
 	g_lingo->push(res);
 }
