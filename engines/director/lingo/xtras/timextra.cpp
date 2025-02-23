@@ -37,7 +37,7 @@
 /*
 -- xtra TimeXtra
 new object me, any
-* getTime -- add two numbers 
+* getTime -- add two numbers
 
  */
 
@@ -108,7 +108,7 @@ void TimextraXtra::m_new(int nargs) {
 
 void TimextraXtra::m_getTime(int nargs) {
 	ARGNUMCHECK(0);
-	int seconds = g_system->getMillis() / 1000;
+	int32 seconds = g_system->getMillis() / 1000;
 	Datum const res(seconds);
 	g_lingo->push(res);
 }
