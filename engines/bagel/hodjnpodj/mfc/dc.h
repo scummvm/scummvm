@@ -30,14 +30,41 @@ namespace HodjNPodj {
 enum DeviceCaps {
 	HORZRES, VERTRES
 };
+enum {
+	SRCCOPY
+};
+
+class CDC;
+typedef CDC *HDC;
 
 class CDC {
 private:
 	CPalette _palette;
+
 public:
+	HDC m_hDC;
+
+public:
+	CDC() : m_hDC(this) {}
+
 	int GetDeviceCaps(int field) const;
 	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
 	void RealizePalette();
+
+	/**
+	 * Performs a bit-block transfer of bitmaps
+	 * @param x			Destination x
+	 * @param y			Destination y
+	 * @param nWidth	Width of area
+	 * @param nHeight	Height of area
+	 * @param pSrcDC	Source bitmap
+	 * @param xSrc		Source x co-ordinate
+	 * @param ySrc		Source y co-ordinate
+	 * @param dwRop		Raster operation code
+	 * @return		Returns true if successful
+	 */
+	bool BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, uint32 dwRop);
 };
 
 } // namespace HodjNPodj

@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/rect.h"
+#include "bagel/boflib/rect.h"
 #include "common/serializer.h"
 #include "graphics/managed_surface.h"
 
@@ -40,8 +40,7 @@ typedef uint UINT;
 
 typedef void *HANDLE;
 typedef Graphics::ManagedSurface *HDIB;
-typedef void *HDC;
-typedef Common::Rect *LPRECT;
+typedef CBofRect *LPRECT;
 typedef Common::Serializer CDumpContext;
 typedef char *LPSTR;
 typedef void *HBITMAP;

@@ -28,10 +28,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-// Main Window positioning constants
-#define GAME_WIDTH		640
-#define GAME_HEIGHT		480
-
 // Scroll button size and positioning information
 #define IDC_SCROLL			850
 

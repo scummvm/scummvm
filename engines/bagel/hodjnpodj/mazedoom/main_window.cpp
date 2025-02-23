@@ -63,16 +63,6 @@ CMainWindow::CMainWindow() {
 	// this is because the game's background art will fill the entire 640x480 area.
 	Create(WndClass, "Boffo Games -- Maze o' Doom", WS_POPUP, MainRect, nullptr, nullptr);
 
-	CDibDoc *pSourceDoc;                // Get the game palette
-	pSourceDoc = new CDibDoc();
-	assert(pSourceDoc != nullptr);
-	(*pSourceDoc).OpenDocument(MAIN_SCREEN);
-	pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art     
-	delete pSourceDoc;
-
-	pDC->SelectPalette(pGamePalette, false);            // select the game palette
-	pDC->RealizePalette();                              //...and realize it
-
 	ShowWindow(SW_SHOWNORMAL);
 	SplashScreen();
 #ifdef TODO
@@ -201,52 +191,43 @@ CMainWindow::CMainWindow() {
 // function.  CPaintDC's constructor needs the window (this).
 //
 void CMainWindow::OnPaint() {
-#ifdef TODO
-	PAINTSTRUCT lpPaint;
-
-	InvalidateRect(nullptr, false);              // invalidate the entire window
-	BeginPaint(&lpPaint);
 	SplashScreen();
-	EndPaint(&lpPaint);
-#endif
 }
 
 // Paint the background art (splash screen) in the client area;
 // called by both OnPaint and InitInstance.
 void CMainWindow::SplashScreen() {
-#ifdef TODO
-	CRect   rcDest;
-	CRect   rcDIB;
+	CRect rcDest;
+	CRect rcDIB;
 	CDC *pDC;
 	CPalette *pPalOld = nullptr;                                                    // Old palette holder
 	CDibDoc myDoc;
-	HDIB    hDIB;
-	char    msg[64];
+	HDIB hDIB;
+	char msg[64];
 
 	pDC = GetDC();
 
-	myDoc.OpenDocument(MAINSCREEN);
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
-	pDC->RealizePalette();                              // Realize the palette to prevent palette shifting
+	myDoc.OpenDocument(MAIN_SCREEN);
+	pGamePalette = myDoc.DetachPalette();				// Acquire the shared palette for our game from the art
+	pPalOld = pDC->SelectPalette(pGamePalette, false);	// Select Game Palette
+	pDC->RealizePalette();								// Realize the palette to prevent palette shifting
 
 	hDIB = myDoc.GetHDIB();
 
-	if (pDC && hDIB) {
+	if (hDIB) {
+#ifdef TODO
 		GetClientRect(rcDest);
-		LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
-		int cxDIB = (int) ::DIBWidth(lpDIB);
-		int cyDIB = (int) ::DIBHeight(lpDIB);
-		::GlobalUnlock((HGLOBAL)hDIB);
-		rcDIB.top = rcDIB.left = 0;
-		rcDIB.right = cxDIB;
-		rcDIB.bottom = cyDIB;
-		::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		rcDIB = CBofRect(0, 0, hDIB->w, hDIB->h);
+
+		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+
 		pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pMazeDC, 0, SQ_SIZE_Y / 2, SRCCOPY);    // Draw Maze
 		if ((pPlayerSprite != nullptr) && bPlaying)
 			(*pPlayerSprite).PaintSprite(pDC, (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 				(m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Update PLAYER
+#endif
 	}
-
+#ifdef TODO
 	if (bPlaying) {                       // only false when the options are displayed
 		PaintBitmap(pDC, pGamePalette, pBlankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 		if (m_nTime == 0)
@@ -259,22 +240,10 @@ void CMainWindow::SplashScreen() {
 		if (pLocaleBitmap != nullptr)
 			PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
-
+#endif
 	(*pDC).SelectPalette(pPalOld, false);                                         // Select back old palette
 	ReleaseDC(pDC);
-#endif
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Process messages and controls
-//
-/////////////////////////////////////////////////////////////////////////////
-
-// OnCommand
-// This function is called when a WM_COMMAND message is issued,
-// typically in order to process control related activities.
-//
 
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 #ifdef TODO

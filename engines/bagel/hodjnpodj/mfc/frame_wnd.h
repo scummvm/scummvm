@@ -25,6 +25,7 @@
 #include "bagel/bagel.h"
 #include "bagel/boflib/point.h"
 #include "bagel/hodjnpodj/mfc/dc.h"
+#include "bagel/hodjnpodj/mfc/mfc_types.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -78,6 +79,9 @@ public:
 
 	static CDC *GetDC();
 	static void ReleaseDC(CDC *dc);
+	static void GetClientRect(CBofRect &r);
+	static bool PaintDIB(HDC, CBofRect *lpDestRect, HDIB hSrc,
+		CBofRect *lpSrcRect, CBofPalette *hPal);
 };
 
 } // namespace HodjNPodj

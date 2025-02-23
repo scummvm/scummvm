@@ -40,6 +40,10 @@ public:
 	virtual void SplashScreen();
 
 protected:
+	/**
+	 * This function is called when a WM_COMMAND message is issued,
+	 * typically in order to process control related activities.
+	 */
 	bool OnCommand(uint16 wParam, int32 lParam) override;
 
 	//{{AFX_MSG( CMainWindow )

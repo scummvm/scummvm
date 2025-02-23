@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/mfc/dc.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -46,6 +47,18 @@ CPalette *CDC::SelectPalette(CPalette *pPalette, bool bForceBackground) {
 void CDC::RealizePalette() {
 	const HPALETTE &pal = _palette.getPalette();
 	g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
+}
+
+bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, uint32 dwRop) {
+#ifdef TODO
+	Graphics::Screen &screen = *g_engine->_screen;
+	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
+	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
+
+	screen.blitFrom(*pSrcDC, srcRect, destRect);
+#endif
+	return true;
 }
 
 } // namespace HodjNPodj
