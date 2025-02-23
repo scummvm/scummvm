@@ -720,8 +720,6 @@ static void conv_set_disp_default(void) {
 }
 
 Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box) {
-	Conv *convers = nullptr;
-	int32 cSize = 0;
 	char fullpathname[MAX_FILENAME_SIZE];
 
 	term_message("conv_load");
@@ -755,20 +753,15 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	if (!fp.exists()) {
 		// Force the file open
 		error_show(FL, 'CNVL', "couldn't conv_load %s", fullpathname);
-		conv_set_handle(nullptr);
-		convers = nullptr;
-		fp.close();
-
-		return nullptr;
 	}
 
-	cSize = fp.size();
+	int32 cSize = fp.size();
 
 	if (conv_get_handle() != nullptr) {
 		conv_unload();
 	}
 
-	convers = new Conv();
+	Conv *convers = new Conv();
 
 	if (!convers) {
 		conv_set_handle(nullptr);

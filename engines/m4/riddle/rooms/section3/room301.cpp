@@ -1054,8 +1054,6 @@ void Room301::conv301a() {
 			} else if (node != 13) {
 				_ripleyShould = 0;
 				conv_resume();
-			} else {
-				conv_resume();
 			}
 		} else {
 			conv_resume();

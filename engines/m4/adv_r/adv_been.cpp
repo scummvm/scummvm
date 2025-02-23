@@ -87,14 +87,12 @@ bool player_enters_scene(int16 scene_num) {
 }
 
 void player_forgets_scene(int16 scene_num) {
-	int i, j;
-
 	// Check the list
-	for (i = 0; i < _G(scene_list).tail; i++) {
+	for (int i = 0; i < _G(scene_list).tail; i++) {
 		// Found a match
 		if (_G(scene_list).table[i] == scene_num) {
 			// Close the table
-			for (j = i; j < _G(scene_list).tail; j++) {
+			for (int j = i; j < _G(scene_list).tail; j++) {
 				_G(scene_list).table[j] = _G(scene_list).table[j + 1];
 			}
 
