@@ -536,7 +536,7 @@ else ifeq ($(platform), osx)
    DEFINES += -fPIC -Wno-undefined-var-template -Wno-pragma-pack -DHAVE_POSIX_MEMALIGN=1 -DUSE_CXX11
    LDFLAGS += -dynamiclib -fPIC
    CXXFLAGS := -std=c++11
-   HAVE_OPENGL := 1
+   HAVE_OPENGL := 0 # cocoagl does not support GLAD
    ifeq ($(CROSS_COMPILE),1)
       TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
       CFLAGS   += $(TARGET_RULE)
