@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 #include "got/game/back.h"
 #include "got/vars.h"
+#include "got/gfx/image.h" // loadNewThor
 
 namespace Got {
 
@@ -64,6 +65,12 @@ void setupLoad() {
 
 	_G(currentLevel) = _G(newLevel);
 	showLevel(_G(newLevel));
+
+	if (_G(currentLevel) == 105) { // Shovel Maze
+		_G(thorInfo)._armor = 2; // eyeballs mode
+		loadNewThor();
+		_G(eyeballs) = 1;
+	}
 }
 
 void pause(int delay) {

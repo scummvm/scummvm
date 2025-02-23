@@ -46,6 +46,17 @@ const char *ITEM_NAMES[] = {
 static const char *odinEndMessage;
 
 void showLevel(const int newLevel) {
+	if (newLevel == 105) { // Shovel Maze
+		_G(thorInfo)._armor = 2; // eyeballs mode
+		loadNewThor();
+		_G(eyeballs) = 1;
+	} else if (_G(eyeballs) == 1) {
+		_G(setup).f25 = 0;
+		_G(thorInfo)._armor = 1;
+		loadNewThor();
+		_G(eyeballs) = 0;
+	}
+
 	_G(bossActive) = false;
 	if (!_G(shieldOn))
 		_G(actor[2])._active = false;
