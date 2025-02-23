@@ -468,7 +468,7 @@ void Sound::stopSfxByNum(int num) {
 void Sound::playMusic(int num) {
 	int mappedNum = mapMusicNum(num);
 	debug(1, "Sound: Play music %d (-> %d, %s), have %d entries", num, mappedNum, _currentMusic.c_str(), _musicData.size());
-	//playPCSound(mappedNum, _musicData, Audio::Mixer::kMusicSoundType);
+	playPCSound(mappedNum, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
 void Sound::playMusicOrSFX(int num) {
@@ -517,7 +517,7 @@ void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::So
 	newSound->resourceId = obj;
 	newSound->soundObj = obj;
 	newSound->loop = 0; // set in processPlaySound
-	newSound->overridePriority = false;
+	newSound->overridePriority = true;
 	newSound->priority = 255;
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
@@ -612,7 +612,8 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
 		musicSlot->priority = resourcePriority;
 	} else {
-		musicSlot->priority = 255;
+		// Set higher priority on music than sounds.
+		musicSlot->priority = (musicSlot->soundType == Audio::Mixer::kMusicSoundType ? 255 : 127);
 	}
 
 	// Reset hold when starting a new song. kDoSoundSetHold is always called after
