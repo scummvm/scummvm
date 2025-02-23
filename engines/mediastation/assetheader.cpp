@@ -228,7 +228,7 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 	}
 
 	case kAssetHeaderFrameRate: {
-		_frameRate = Datum(chunk).u.i;
+		_frameRate = static_cast<uint32>(Datum(chunk, kDatumTypeFloat64_2).u.f);
 		break;
 	}
 

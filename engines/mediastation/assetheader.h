@@ -177,7 +177,7 @@ public:
 	bool _transparency = false;
 	bool _hasOwnSubfile = false;
 	uint32 _cursorResourceId = 0;
-	uint32 _frameRate = 10; // This is the default for sprites, which are the only ones that use this field.
+	uint32 _frameRate = 0;
 	uint32 _loadType = 0;
 	uint32 _rate = 0;
 	bool _editable = 0;
