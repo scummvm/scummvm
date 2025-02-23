@@ -138,6 +138,10 @@ protected:
 
 	void readResourceFile();
 
+	// We also need some data from the executable, specifically embedded
+	// Adlib data
+	void readExecutable();
+
 	// Assumes that the stream is at the location of the number of background animations
 	void ReadBackgroundAnimations(Common::MemoryReadStream *stream);
 
