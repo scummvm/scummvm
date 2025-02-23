@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-22 23:10+0000\n"
+"POT-Creation-Date: 2025-02-23 07:45+0000\n"
 "PO-Revision-Date: 2025-02-16 19:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7965,7 +7965,7 @@ msgstr "마법"
 msgid "Thor Dies"
 msgstr "토르가 죽음"
 
-#: engines/got/got.cpp:181 engines/got/got.cpp:191
+#: engines/got/got.cpp:185 engines/got/got.cpp:195
 msgid "Savegames are not available in demo mode"
 msgstr "데모 모드에서는 저장 게임을 사용할 수 없음"
 
