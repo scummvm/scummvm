@@ -333,6 +333,9 @@ bool QuickTimeDecoder::setFOV(float fov) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 	bool success = true;
 
+	if (fov == 0.0f) // No change
+		return true;
+
 	if (fov <= desc->_minimumZoom) {
 		fov = desc->_minimumZoom;
 		success = false;
