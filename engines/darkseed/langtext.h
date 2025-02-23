@@ -26,6 +26,14 @@
 
 namespace Darkseed {
 
+enum class KoreanObjectSuffixType {
+	None,
+	Object,
+	Topic,
+	Linking,
+	Location
+};
+
 struct I18nText {
 	const char *en;
 	const char *es;
@@ -197,7 +205,7 @@ constexpr I18nText kI18N_HasNoEffectOnTheAlienTubesText = {
 	"%s NO TIENE EFECTO SOBRE LOS TUBOS ALIENIGENAS.",
 	"%s RESTE SANS EFFET SUR LES TUBES EXTRA-TERRESTRES.",
 	"%s BEWIRKT NICHTS AN AUSSERIRDISCHEN TUNNELS.",
-	nullptr
+	"%s \x95\xb7\x9d\x62\xac\xe5\xb5\x41\x20\xb4\x61\xa2\x81\x9c\xe5\x20\xb5\x77\xd0\xb7\xb7\x69\x20\xa3\xa1\xc3\xa1\xbb\xa1\x20\xa1\xb5\xd0\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouIncinerateTheText = {
@@ -205,7 +213,7 @@ constexpr I18nText kI18N_YouIncinerateTheText = {
 	"INCINERAS %s DENTRO DE LA FUENTA DE ENERGIA.",
 	"VOUS INCINEREZ %s A L'INTERIEUR DU LIEN DE PUISSANCE.",
 	"DU VERNICHTEST %s MIT DER STROMVERSORGUNG!",
-	nullptr
+	"%s \xb5\xc5\xb8\xe5\xd3\xa1\x20\xcc\x61\x8a\x41\xaf\xa1\xc5\x76\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_HasNoEffectOnTheAlienMonstrosityText = {
@@ -213,7 +221,7 @@ constexpr I18nText kI18N_HasNoEffectOnTheAlienMonstrosityText = {
 	"%s NO TIENE EFECTO SOBRE ESTA MONSTRUOSIDAD ALIENIGENA.",
 	"%s RESTE SANS EFFET SUR CETTE MONSTRUOSITE EXTRA-TERRESTRE.",
 	"%s BEWIRKT NICHTS AM AUSSERIRDISCHEN MONSTRUM.",
-	nullptr
+	"%s \xb7\x41\x8b\xa1\xc1\x41\x20\xc4\xf1\xcf\x41\xc8\xe1\xb5\x41\x20\xb5\x77\xd0\xb7\xb7\x69\x20\xa3\xa1\xc3\xa9\xae\x85\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_cutTheWiresText = {
@@ -221,7 +229,7 @@ constexpr I18nText kI18N_cutTheWiresText = {
 	"%s NO ES LO BASTANTE RESISTENTE COMO PARA CORTAR LOS CABLES.\nY SI TUVIERAS UN CORTACABLES?",
 	"%s NE POURRA PAS COUPER LES CABLES.\nET SI VOUS AVIEZ DES PINCES COUPANTES?",
 	"%s IST NICHT STARK GENUG, UM DIE KABEL ABZUSCHNEIDEN.\nHAST DU VIELLEICHT EINEN KABELSCHNEIDER?",
-	nullptr
+	"%s \xc5\x41\xb7\xa1\xa7\x69\xb7\x69\x20\xb8\xe9\x94\x65\xd0\x69\x20\xae\x81\x20\xb7\xb6\xb7\x69\x20\xb8\xf7\x95\xa1\x9d\xa1\x20\x88\x77\xd0\x61\xbb\xa5\x20\xa1\xb5\xd0\x73\x93\xa1\x94\x61\x2e\x20\x89\xc1\xb5\x65\x20\xc5\x41\xb7\xa1\xa7\x69\xb7\x69\x20\xb8\xe9\x94\x65\xd0\x69\x20\xae\x81\x20\xb7\xb6\xb7\x69\x8c\x61\xb6\x61\x3f"
 };
 
 constexpr I18nText kI18N_NoEffectOnTheProtectedAncientText = {
@@ -229,7 +237,7 @@ constexpr I18nText kI18N_NoEffectOnTheProtectedAncientText = {
 	"%s NO TIENE EFECTO SOBRE EL ANTEPASADO PROTEGIDO.",
 	"%s N'A AUCUN EFFET SUR L'ANCIEN PROTEGE.",
 	"%s BEWIRKT NICHTS BEI DEM GESCHUETZTEN ALTEN.",
-	nullptr
+	"%s \xc4\x93\xaf\x49\xad\xa2\xb7\x81\x20\xa3\xa1\xb7\xa1\x9c\x61\xb5\x41\x89\x41\x20\xb5\x77\xd0\xb7\xb7\x69\x20\xa3\xa1\xc3\xa1\xbb\xa1\x20\xa1\xb5\xd0\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_YouHideTheObjectUnderThePillowText = {
@@ -237,7 +245,7 @@ constexpr I18nText kI18N_YouHideTheObjectUnderThePillowText = {
 	"OCULTAS %s BAJO LA ALMOHADA.",
 	"VOUS CACHEZ %s SOUS L'OREILLER.",
 	"DU VERSTECKST %s UNTER DEM KISSEN.",
-	nullptr
+	"%s \xa5\x41\x88\x81\xa3\xbb\xb5\x41\x20\xae\x91\x8b\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_DontPutTheObjectInTheTrunkText = {
@@ -245,7 +253,7 @@ constexpr I18nText kI18N_DontPutTheObjectInTheTrunkText = {
 	"NO PONGAS %s EN EL BAUL, TE OLVIDARAS.",
 	"NE METTEZ PAS %s DANS LE COFFRE, VOUS L'OUBLIEREZ.",
 	"WENN DU %s IN DEN TRUHE LEGST, VERGISST DU ES.", // TODO check this is correct.
-	nullptr
+	"%s \xcb\x61\x9c\xf7\xc7\x61\xb5\x41\x20\x90\xfd\xbb\xa1\x20\xa0\x61\xaf\xb3\xaf\xa1\xb6\x61\x2e"
 };
 
 constexpr I18nText kI18N_TheCarWontStartWithTheText = {
@@ -253,7 +261,7 @@ constexpr I18nText kI18N_TheCarWontStartWithTheText = {
 	"EL COCHE NO SE PONDRA EN MARCHA CON %s.",
 	"LA VOITURE NE DEMARRERA PAS AVEC %s.",
 	"DAS AUTO SPRINGT NICHT AN MIT %s.",
-	nullptr
+	"%s\x9d\xa1\x93\x65\x20\xb8\x61\x95\xb7\xc0\x61\xb7\x81\x20\xaf\xa1\x95\xb7\xb7\x69\x20\x88\xe9\x20\xae\x81\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_IfYouPutTheObjectInTheTrunkText = {
@@ -261,7 +269,7 @@ constexpr I18nText kI18N_IfYouPutTheObjectInTheTrunkText = {
 	"SI PONES %s EN EL BAUL, TE OLVIDARAS.",
 	"SI VOUS METTEZ %s DANS LE COFFRE, VOUS L'OUBLIEREZ.",
 	"WENN DU %s IN DEN TRUHE LEGST, VERGISST DU ES.",
-	nullptr
+	"%s \xb7\xb0\xb4\xe1\xa4\xe1\x9f\xa1\x89\xa1\x20\xaf\xbc\xb7\x61\xaf\xb3\x93\xa1\x8c\x61\x3f"
 };
 
 constexpr I18nText kI18N_TheObjectIsYoursYouHaventLostItText = {
@@ -269,7 +277,7 @@ constexpr I18nText kI18N_TheObjectIsYoursYouHaventLostItText = {
 	"%s ES TUYA, NO LA HASA PERDIDO.",
 	"%s EST A VOUS, VOUS NE L'AVEZ PAS PERDUE.",
 	"%s GEHOERT DIR, DU HAST ES NICHT VERLOREN.",
-	nullptr
+	"%s \xb7\xa1\xa3\xa1\x20\x94\x77\xaf\xa5\xb7\x81\x20\x88\xf5\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_notAGoodPlaceToHideTheText = {
@@ -277,7 +285,7 @@ constexpr I18nText kI18N_notAGoodPlaceToHideTheText = {
 	"NO ES UN BUEN SITIO PARA OCULTAR %S.",
 	"VOUS NE POURREZ PAS CACHER %S.",
 	"KEIN GUTES VERSTECK FUER %S.",
-	nullptr
+	"%s \x91\xbd\xb4\x61\x96\x89\xa0\x65\xd0\x65\x20\xb8\x77\xad\xa1\x93\x65\x20\xb4\x61\x93\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText = {
@@ -285,7 +293,7 @@ constexpr I18nText kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText = {
 	"INTENTAS PONER %s DENTRO, PERO LA PUERTA NO SE ABRIRA.",
 	"VOUS ESSAYEZ DE METTRE %s A L'INTERIEUR, MAIS LA PORTE NE S'OUVRIRA PAS.",
 	"DU VERSUCHST, %s HINEINZUSTELLEN, ABER DIE TUER OEFFNET SICH NICHT.",
-	nullptr
+	"%s \x8b\x61\x89\xb5\xb5\x41\x20\xac\x61\xb6\x77\xd0\x69\x20\xcf\xa9\xb6\x61\x88\x61\x20\xb7\xb6\xb7\x69\x8c\x61\xb6\x61\x3f"
 };
 
 constexpr I18nText kI18N_theKitchenIsNoPlaceToKeepTheText = {
@@ -293,7 +301,7 @@ constexpr I18nText kI18N_theKitchenIsNoPlaceToKeepTheText = {
 	"LA COCINA NO ES LUGAR PARA GUARDAR %s.",
 	"LA CUISINE NE CONVIENT PAS A %s.",
 	"DIE KUECHE IST KEIN PLATZ FUER %s.",
-	nullptr
+	"\xa6\x81\xb4\xfa\xb5\x41\x93\x65 %s \x91\xbd\xb4\x61\x96\x89\xa0\x65\xd0\x65\x20\xb8\x77\xad\xa1\x88\x61\x20\xb4\x61\x93\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_youllForgetTheObjectHereText = {
@@ -301,7 +309,7 @@ constexpr I18nText kI18N_youllForgetTheObjectHereText = {
 	"OLIVIDARAS %s AQUI.",
 	"VOUS OUBLIEREZ %s ICI.",
 	"DU WIRST NOCH %s HIER VERGESSEN.",
-	nullptr
+	"\xb5\x61\x8b\xa1\x94\x61 %s \x91\xbd\xb4\x61\x96\x81\xa1\x65\x20\xb7\xb0\xb4\xe1\xa4\xe1\x9f\xa9\x20\x88\xf5\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_youdRatherHaveTheObjectWithYouText = {
@@ -309,7 +317,7 @@ constexpr I18nText kI18N_youdRatherHaveTheObjectWithYouText = {
 	"SERIA MEJOR TENER %s CONTIGO.",
 	"IL VAUDRAIT MIEUX AVOIR %s SUR VOUS.",
 	"DU HAETTEST LIEBER %s BEI DIR.",
-	nullptr
+	"\xc0\x61\x9c\x61\x9f\xa1 %s \x88\x61\xbb\xa1\x93\x65\x89\x41\x20\xb9\xbd\xb7\x69\x88\xf5\x20\xb7\xb3\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_theObjectHasNoEffectText = {
@@ -317,7 +325,7 @@ constexpr I18nText kI18N_theObjectHasNoEffectText = {
 	"%s NO TIENE EFECTO.",
 	"%s N'A AUCUN EFFET.",
 	"%s BEWIRKT NICHTS.",
-	nullptr
+	"%s \xb5\x77\xd0\xb7\xb7\x69\x20\xa3\xa1\xc3\xa1\xbb\xa1\x20\xa1\xb5\xd0\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_thisIsNotAGoodPlaceForTheText = {
@@ -325,7 +333,7 @@ constexpr I18nText kI18N_thisIsNotAGoodPlaceForTheText = {
 	"NO ES UN BUEN SITIO PARA %s.",
 	"CE N'EST PAS UN BON ENDROIT POUR %s.",
 	"DAS IST KEIN GUTER PLATZ FUER %s.",
-	nullptr
+	"%s \x91\xbd\xb4\x61\x96\x89\x20\xb8\x77\xad\xa1\x9d\xa1\xac\xe1\x93\x65\x20\xb8\xe2\xd0\x73\xd0\x61\xbb\xa1\x20\xb4\x67\xb7\x65\x88\xf5\x20\x88\x7b\x8a\x85\xb6\x61\x2e"
 };
 
 constexpr I18nText kI18N_youSeeAReflectionOfTheText = {
@@ -333,7 +341,7 @@ constexpr I18nText kI18N_youSeeAReflectionOfTheText = {
 	"VES UN REFLEJO DE %s.",
 	"VOUS VOYEZ UN REFLET REPRESENTANT %s.",
 	"DU SIEHST EIN SPIEGELBILD VON %s.",
-	nullptr
+	"%s \x88\xe1\xb6\x89\xb9\xa1\x88\x62\xb5\x41\x20\xa7\xa1\xc2\xa1\x95\xa1\x20\xb4\x61\xa2\x81\x9c\xe5\x20\xa4\x65\xb7\x77\xb7\xa1\x20\xb4\xf4\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_youDontWantToLeaveTheObjectUnderTheBedText = {
@@ -341,7 +349,7 @@ constexpr I18nText kI18N_youDontWantToLeaveTheObjectUnderTheBedText = {
 	"NO QUIERES DEJAR %s DEBAJO DE LA CAMA.",
 	"POURQUOI LAISSERIEZ-VOUS %s SOUS LE LIT?",
 	"DU WILLST %s NICHT UNTER DEM BETT LASSEN.",
-	nullptr
+	"%s \xc3\xb1\x94\x81\xa3\xbb\xb5\x41\x20\x90\xfd\x93\x65\x88\xf5\xb7\x65\x20\xa5\x69\x9d\xa1\x20\xb9\xbd\xb7\x65\x20\xac\x97\x88\x62\xb7\xa1\x20\xb4\x61\x93\xa5\x88\xf5\x20\x88\x7b\xaf\x73\x93\xa1\x94\x61\x2e"
 };
 
 constexpr I18nText kI18N_genResponse0_usingTheObjectOnTheObjectItMustBeYourHeadachesText = {

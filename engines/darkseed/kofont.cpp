@@ -256,6 +256,15 @@ Common::U32String KoFont::getLinkingString(const Common::U32String &object) {
 	return object + convertToU32String("\xb5\xc1", Common::KO_KOR); // -wa
 }
 
+Common::U32String KoFont::getLocationString(const Common::U32String &object) {
+	if (object.size() == 0) {
+		return Common::U32String("");
+	}
+	if (isConsonant(object[object.size() - 1])) {
+		return object + convertToU32String("\xb7\x61", Common::KO_KOR); // -eu
+	}
+}
+
 int KoFont::getOtherCharIdx(uint32 chr) const {
 	switch (chr) {
 	case '!':

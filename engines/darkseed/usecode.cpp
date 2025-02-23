@@ -1556,64 +1556,64 @@ void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	}
 	switch (tosIdx) {
 	case 979:
-		genericSingleObjectResponse(kI18N_ThisSentryCannotBeStoppedWithText, useObjNum);
+		genericSingleObjectResponse(kI18N_ThisSentryCannotBeStoppedWithText, useObjNum, KoreanObjectSuffixType::Location);
 		break;
 	case 980:
-		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienTubesText, useObjNum);
+		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienTubesText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 981:
 		genericSingleObjectResponse(kI18N_YouIncinerateTheText, useObjNum);
 		break;
 	case 982:
-		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienMonstrosityText, useObjNum);
+		genericSingleObjectResponse(kI18N_HasNoEffectOnTheAlienMonstrosityText, useObjNum, KoreanObjectSuffixType::Topic);
 		break;
 	case 983:
-		genericSingleObjectResponse(kI18N_cutTheWiresText, useObjNum);
+		genericSingleObjectResponse(kI18N_cutTheWiresText, useObjNum, KoreanObjectSuffixType::Topic);
 		break;
 	case 984:
-		genericSingleObjectResponse(kI18N_NoEffectOnTheProtectedAncientText, useObjNum);
+		genericSingleObjectResponse(kI18N_NoEffectOnTheProtectedAncientText, useObjNum, KoreanObjectSuffixType::Topic);
 		break;
 	case 985:
-		genericSingleObjectResponse(kI18N_YouHideTheObjectUnderThePillowText, useObjNum);
+		genericSingleObjectResponse(kI18N_YouHideTheObjectUnderThePillowText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 986:
-		genericSingleObjectResponse(kI18N_DontPutTheObjectInTheTrunkText, useObjNum);
+		genericSingleObjectResponse(kI18N_DontPutTheObjectInTheTrunkText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 987:
-		genericSingleObjectResponse(kI18N_TheCarWontStartWithTheText, useObjNum);
+		genericSingleObjectResponse(kI18N_TheCarWontStartWithTheText, useObjNum, KoreanObjectSuffixType::Location);
 		break;
 	case 988:
-		genericSingleObjectResponse(kI18N_IfYouPutTheObjectInTheTrunkText, useObjNum);
+		genericSingleObjectResponse(kI18N_IfYouPutTheObjectInTheTrunkText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 989:
-		genericSingleObjectResponse(kI18N_TheObjectIsYoursYouHaventLostItText, useObjNum);
+		genericSingleObjectResponse(kI18N_TheObjectIsYoursYouHaventLostItText, useObjNum, KoreanObjectSuffixType::Topic);
 		break;
 	case 990:
-		genericSingleObjectResponse(kI18N_notAGoodPlaceToHideTheText, useObjNum);
+		genericSingleObjectResponse(kI18N_notAGoodPlaceToHideTheText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 991:
-		genericSingleObjectResponse(kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText, useObjNum);
+		genericSingleObjectResponse(kI18N_youTryToPutTheObjectInsideButTheDoorWontOpenText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 992:
-		genericSingleObjectResponse(kI18N_theKitchenIsNoPlaceToKeepTheText, useObjNum);
+		genericSingleObjectResponse(kI18N_theKitchenIsNoPlaceToKeepTheText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 993:
-		genericSingleObjectResponse(kI18N_youllForgetTheObjectHereText, useObjNum);
+		genericSingleObjectResponse(kI18N_youllForgetTheObjectHereText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 994:
-		genericSingleObjectResponse(kI18N_youdRatherHaveTheObjectWithYouText, useObjNum);
+		genericSingleObjectResponse(kI18N_youdRatherHaveTheObjectWithYouText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 995:
-		genericSingleObjectResponse(kI18N_theObjectHasNoEffectText, useObjNum);
+		genericSingleObjectResponse(kI18N_theObjectHasNoEffectText, useObjNum, KoreanObjectSuffixType::Topic);
 		break;
 	case 996:
-		genericSingleObjectResponse(kI18N_thisIsNotAGoodPlaceForTheText, useObjNum);
+		genericSingleObjectResponse(kI18N_thisIsNotAGoodPlaceForTheText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 997:
-		genericSingleObjectResponse(kI18N_youSeeAReflectionOfTheText, useObjNum);
+		genericSingleObjectResponse(kI18N_youSeeAReflectionOfTheText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 998:
-		genericSingleObjectResponse(kI18N_youDontWantToLeaveTheObjectUnderTheBedText, useObjNum);
+		genericSingleObjectResponse(kI18N_youDontWantToLeaveTheObjectUnderTheBedText, useObjNum, KoreanObjectSuffixType::Object);
 		break;
 	case 999:
 		switch (_genericResponseCounter) {
@@ -1739,11 +1739,21 @@ void UseCode::startDigging(int16 targetObjNum) {
 	g_engine->playSound(14, 5, -1);
 }
 
-void UseCode::genericSingleObjectResponse(const I18nText &text, int16 useObjNum) {
+void UseCode::genericSingleObjectResponse(const I18nText &text, int16 useObjNum, KoreanObjectSuffixType krObjSuffixType) {
+ Common::U32String objectString = _objectVar.getObjectName(useObjNum);
+	if (g_engine->getLanguage() == Common::KO_KOR) {
+		switch (krObjSuffixType) {
+		case KoreanObjectSuffixType::Object : objectString = KoFont::getObjectString(objectString); break;
+		case KoreanObjectSuffixType::Topic : objectString = KoFont::getTopicString(objectString); break;
+		case KoreanObjectSuffixType::Linking : objectString = KoFont::getLinkingString(objectString); break;
+		case KoreanObjectSuffixType::Location : objectString = KoFont::getLocationString(objectString); break;
+		default: break;
+		}
+	}
 	_console->addTextLine(
 		formatInjectStrings(
 			getI18NText(text).c_str(),
-			_objectVar.getObjectName(useObjNum).c_str()));
+			objectString.c_str()));
 }
 
 } // End of namespace Darkseed

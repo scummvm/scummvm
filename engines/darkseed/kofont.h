@@ -51,6 +51,7 @@ public:
 	static Common::U32String getObjectString(const Common::U32String &object);
 	static Common::U32String getTopicString(const Common::U32String &object);
 	static Common::U32String getLinkingString(const Common::U32String &object);
+	static Common::U32String getLocationString(const Common::U32String &object);
 private:
 	void loadFontDataSet(Common::Array<Common::Array<uint8>> &dataSet, int size, int packedGlyphSize, Common::File &file);
 	void loadFontGlyph(Common::Array<uint8> &pixels, int packedGlyphSize, Common::File &file);
