@@ -465,6 +465,11 @@ Boot::~Boot() {
 		delete unknownDeclaration;
 	}
 	_unknownDeclarations.clear();
+
+	for (auto it = _fileDeclarations.begin(); it != _fileDeclarations.end(); ++it) {
+		delete it->_value;
+	}
+	_fileDeclarations.clear();
 }
 #pragma endregion
 
