@@ -87,6 +87,13 @@ bool BagelMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 	Common::KeymapArray keymapArray;
+
+	// The current keymaps are only applicable for Space Bar
+	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
+	Common::String gameId = domain->getVal("gameid");
+	if (gameId != "spacebar")
+		return keymapArray;
+
 	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel", _s("General Keys"));
 	keymapArray.push_back(keyMap);
 
