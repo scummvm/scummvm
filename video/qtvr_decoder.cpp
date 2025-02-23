@@ -963,10 +963,14 @@ void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	} else {
 		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
 
-
 		if (hotspotId && _currentSample != -1) {
 			if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
 				_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
+
+			if (!_rolloverHotspot)
+				debugC(1, kDebugLevelGVideo, "Hotspot id: %d has no data", hotspotId);
+			else
+				debugC(1, kDebugLevelGVideo, "Hotspot id: %d is of type '%s'", hotspotId, tag2str(_rolloverHotspot->type));
 		} else {
 			_rolloverHotspot = nullptr;
 		}
@@ -1131,15 +1135,19 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 		_clickedHotspot = _rolloverHotspot;
 	}
 
-	if (!repeat && !isDown && _rolloverHotspot && _rolloverHotspot->type == MKTAG('l','i','n','k') && _prevMouse == _mouseDrag) {
-		PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_rolloverHotspot->typeData);
+	if (!repeat && !isDown && _rolloverHotspot && _prevMouse == _mouseDrag) {
+		if (_rolloverHotspot->type == MKTAG('l','i','n','k')) {
+			PanoLink *link = _panoTrack->panoSamples[_currentSample].linkTable.get(_rolloverHotspot->typeData);
 
-		if (link) {
-			goToNode(link->toNodeID);
+			if (link) {
+				goToNode(link->toNodeID);
 
-			setPanAngle(link->toHPan);
-			setTiltAngle(link->toVPan);
-			setFOV(link->toZoom);
+				setPanAngle(link->toHPan);
+				setTiltAngle(link->toVPan);
+				setFOV(link->toZoom);
+			}
+		} else if (_rolloverHotspot->type == MKTAG('n','a','v','g')) {
+			warning("navg hotpot id #%d not processed", _rolloverHotspot->id);
 		}
 	}
 
