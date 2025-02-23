@@ -201,6 +201,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 	}
 
+	if (_game.platform == Common::kPlatformSegaCD) {
+		ConfMan.registerDefault("enable_sega_shadow_mode", false);
+		if (ConfMan.hasKey("enable_sega_shadow_mode", _targetName)) {
+			_enableSegaShadowMode = ConfMan.getBool("enable_sega_shadow_mode");
+		}
+	}
+
 	if (ConfMan.hasKey("gamma_correction", _targetName)) {
 		_useGammaCorrection = ConfMan.getBool("gamma_correction");
 	}
@@ -279,8 +286,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		else
 			_voiceMode = ConfMan.getBool("subtitles");
 	}
-
-	_enableSegaShadowMode = ConfMan.getBool("enable_sega_shadow_mode");
 
 	if (ConfMan.hasKey("render_mode")) {
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
