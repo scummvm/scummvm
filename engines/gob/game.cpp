@@ -453,6 +453,24 @@ bool TotFunctions::call(const Tot &tot, uint16 offset) const {
 	return true;
 }
 
+Common::String TotFunctions::getFunctionName(const Common::String &totFile, uint16 offset) const {
+	int index = find(totFile);
+	if (index < 0) {
+		warning("TotFunctions::getFunctionName(): No such TOT \"%s\"", totFile.c_str());
+		return "";
+	}
+
+	const Tot &tot = _tots[index];
+
+	Common::List<Function>::const_iterator it;
+	for (it = tot.functions.begin(); it != tot.functions.end(); ++it) {
+		if (it->offset == offset)
+			return it->name;
+	}
+
+	return "";
+}
+
 
 Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 	_captureCount = 0;
@@ -1040,6 +1058,13 @@ bool Game::callFunction(const Common::String &tot, const Common::String &functio
 		return _totFunctions.call(tot, Common::String(function.c_str(), 16));
 
 	return _totFunctions.call(tot, function);
+}
+
+Common::String Game::getFunctionName(const Common::String &tot, uint16 offset) {
+	if (_totFunctions.find(tot) < 0)
+		loadFunctions(tot, 0);
+
+	return _totFunctions.getFunctionName(tot, offset);
 }
 
 } // End of namespace Gob

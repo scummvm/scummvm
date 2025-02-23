@@ -25,6 +25,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "common/str.h"
 
 #include "gob/gob.h"
@@ -689,8 +690,20 @@ void Inter_v1::o1_freeFontToSprite() {
 void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
-	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
-			_vm->_game->_curTotFile.c_str(), offset);
+	if (gDebugLevel >= 5 && DebugMan.isDebugChannelEnabled(kDebugGameFlow)) {
+		Common::String functionName = _vm->_game->getFunctionName(_vm->_game->_curTotFile, offset);
+		Common::String functionNameInLog;
+
+		if (!functionName.empty()) {
+			functionNameInLog = Common::String::format(", function = \"%s\"",
+													   functionName.c_str());
+		}
+
+		debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d%s",
+			   _vm->_game->_curTotFile.c_str(),
+			   offset,
+			   functionNameInLog.c_str());
+	}
 
 	if (offset < 128) {
 		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "

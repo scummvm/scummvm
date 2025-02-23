@@ -99,6 +99,7 @@ public:
 
 	bool call(const Common::String &totFile, const Common::String &function) const;
 	bool call(const Common::String &totFile, uint16 offset) const;
+	Common::String getFunctionName(const Common::String &totFile, uint16 offset) const;
 
 private:
 	static const uint8 kTotCount = 100;
@@ -184,6 +185,7 @@ public:
 
 	bool loadFunctions(const Common::String &tot, uint16 flags);
 	bool callFunction(const Common::String &tot, const Common::String &function, int16 param);
+	Common::String getFunctionName(const Common::String &tot, uint16 offset);
 
 protected:
 	GobEngine *_vm;
