@@ -45,41 +45,43 @@ EventHandler::EventHandler(Chunk &chunk) {
 Operand EventHandler::execute(uint assetId) {
 	// TODO: The assetId is only passed in for debug visibility, there should be
 	// a better way to handle that.
-	switch (_argumentType) {
-	case kNullEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %s) (no argument) **********", assetId, eventTypeToStr(_type));
-		break;
-	}
+	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
 
-	case kAsciiCodeEventHandlerArgument: {
-		// Not sure why the ASCII code isn't just stored as an integer, but it's not.
-		uint asciiCode = static_cast<uint>(_argumentValue.u.f);
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %s) (ASCII code = %d) **********", assetId, eventTypeToStr(_type), asciiCode);
-		break;
-	}
-
-	case kContextEventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %s) (context = %d) **********", assetId, eventTypeToStr(_type), _argumentValue.u.i);
-		break;
-	}
-
-	case kTimeEventHandlerArgument:
-	case kUnk1EventHandlerArgument: {
-		debugC(5, kDebugScript, "\n********** EVENT HANDLER (asset %d) (type = %s) (time = %f) **********", assetId, eventTypeToStr(_type), _argumentValue.u.f);
-		break;
-	}
-	}
-
-	// The only argument that can be provided to an event handler is the
-	// _argumentValue.
+	// The only argument that can be provided to an
+	// event handler is the _argumentValue.
 	Operand returnValue = _code->execute();
-	debugC(5, kDebugScript, "********** END EVENT HANDLER **********");
+
+	debugC(5, kDebugScript, "********** END EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
 	return returnValue;
 }
 
 EventHandler::~EventHandler() {
 	delete _code;
 	_code = nullptr;
+}
+
+Common::String EventHandler::getDebugHeader(uint assetId) {
+	switch (_argumentType) {
+	case kNullEventHandlerArgument:
+		return Common::String::format("(asset %d) (type = %s) (no argument)", assetId, eventTypeToStr(_type));
+
+	case kAsciiCodeEventHandlerArgument: {
+		// Not sure why the ASCII code isn't just stored as an integer, but it's not.
+		uint asciiCode = static_cast<uint>(_argumentValue.u.f);
+		return Common::String::format("(asset %d) (type = %s) (ASCII code = %d)", assetId, eventTypeToStr(_type), asciiCode);
+	}
+
+	case kContextEventHandlerArgument:
+		return Common::String::format("(asset %d) (type = %s) (context = %d)", assetId, eventTypeToStr(_type), _argumentValue.u.i);
+
+	case kTimeEventHandlerArgument:
+	case kUnk1EventHandlerArgument:
+		return Common::String::format("(asset %d) (type = %s) (time = %f)", assetId, eventTypeToStr(_type), _argumentValue.u.f);
+
+	default:
+		error("EventHandler::getDebugHeader(): Unimplemented argument type %s (%d)",
+			eventHandlerArgumentTypeToStr(_argumentType), static_cast<uint>(_argumentType));
+	}
 }
 
 } // End of namespace MediaStation

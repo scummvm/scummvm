@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_EVENTHANDLER_H
 #define MEDIASTATION_MEDIASCRIPT_EVENTHANDLER_H
 
+#include "common/str.h"
+
 #include "mediastation/datafile.h"
 #include "mediastation/datum.h"
 #include "mediastation/mediascript/codechunk.h"
@@ -40,6 +42,8 @@ public:
 	Datum _argumentValue;
 
 private:
+	Common::String getDebugHeader(uint assetId);
+
 	CodeChunk *_code = nullptr;
 };
 
