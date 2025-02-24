@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-23 07:45+0000\n"
-"PO-Revision-Date: 2025-02-24 01:19+0000\n"
+"PO-Revision-Date: 2025-02-24 15:18+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -10271,6 +10271,8 @@ msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Wykryj i podejmij próbę naprawy przepełnień w dźwięku DPCM8, które powodują "
+"zauważalne trzaski."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
@@ -10422,14 +10424,6 @@ msgstr ""
 "pobranie, resztę operacji trzeba wykonać ręcznie)\n"
 
 #: engines/sci/sci.cpp:532
-#, fuzzy
-#| msgid ""
-#| "GK2 has a fan made subtitles, available thanks to the good persons at "
-#| "SierraHelp.\n"
-#| "\n"
-#| "Installation:\n"
-#| "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-#| "GK2Subtitles.zip\n"
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -10663,14 +10657,12 @@ msgstr ""
 "\"Pytaj o potwierdzenie przy wyjściu”, aby uzyskać pełniejsze wrażenia."
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Włączono korekcję proporcji obrazu"
+msgstr "Włącz korekcję gamma"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Rozjaśnij grafikę, aby symulować monitor Macintosh."
 
 #: engines/scumm/dialogs.cpp:1305
 msgid "Overture Timing:"
@@ -11450,26 +11442,20 @@ msgstr ""
 "Włącza tryb demonstracyjny w pełnej wersji detalicznej gry Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Użyj CD audio"
+msgstr "Użyj zremasterowanego dźwięku"
 
 #: engines/scumm/metaengine.cpp:804
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Użyj zremasterowanej mowy i efektów dźwiękowych."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Włącz dźwięk"
+msgstr "Włącz dźwięki otoczenia"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Włącz dźwięk"
+msgstr "Włącza dźwięki otoczenia."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
@@ -11533,44 +11519,32 @@ msgstr ""
 "do 320x200 w zakładce \"silnik”."
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
-msgstr ""
-"Ta gra wymaga pliku wykonywalnego \"Indy” Macintosh dla swoich czcionek."
+msgstr "Ta gra wymaga pliku wykonywalnego Macintosh '%s' dla swoich czcionek."
 
 #: engines/scumm/scumm.cpp:1339
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
-msgstr ""
-"Ta gra wymaga pliku wykonywalnego \"Loom” dla komputerów Macintosh dla "
-"muzyki i czcionek."
+msgstr "Ta gra wymaga pliku wykonywalnego Macintosh '%s' dla muzyki i czcionek."
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read "
-#| "resources\n"
-#| "and instruments from. Music and Mac GUI will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
-"Nie można znaleźć pliku wykonywalnego \"Monkey Island” dla komputera "
-"Macintosh,\n"
-"z którego można odczytać instrumenty. Muzyka oraz GUI Mac zostaną wyłączone."
+"Nie można odnaleźć pliku wykonywalnego Macintosh '%s' w celu odczytania "
+"zasobów. %s zostanie wyłączony."
 
 #: engines/scumm/scumm.cpp:1344
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Interfejs graficzny Maca"
 
 #: engines/scumm/scumm.cpp:1344
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Muzyka i interfejs graficzny Maca"
 
 #: engines/scumm/scumm.cpp:1364
 #, c-format
@@ -11590,6 +11564,11 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"'%s' wydaje się być niewłaściwym plikiem wykonywalnym Dig. Może to być "
+"program uruchamiający znaleziony w katalogu głównym CD, który nie zawiera "
+"żadnych niezbędnych definicji menu i dialogów. Poszukaj folderu 'The Dig f' "
+"na swoim CD. Którykolwiek z jego podfolderów powinien być tym, czego "
+"potrzebujesz."
 
 #: engines/scumm/scumm.cpp:1758
 msgid ""
@@ -13689,16 +13668,6 @@ msgid "Preferences"
 msgstr "Preferencje"
 
 #: engines/zvision/zvision.cpp:302
-#, fuzzy
-#| msgid ""
-#| "Before playing this game, you'll need to copy the required fonts into "
-#| "ScummVM's extras directory, or into the game directory. On Windows, "
-#| "you'll need the following font files from the Windows font directory: "
-#| "Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
-#| "Alternatively, you can download the Liberation Fonts or the GNU FreeFont "
-#| "package. You'll need all the fonts from the font package you choose, i."
-#| "e., LiberationMono, LiberationSans and LiberationSerif, or FreeMono, "
-#| "FreeSans and FreeSerif respectively."
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -13712,10 +13681,9 @@ msgstr ""
 "dodatków ScummVM lub do katalogu gry. W systemie Windows potrzebne będą "
 "następujące pliki czcionek z katalogu czcionek systemu Windows: Times New "
 "Roman, Century Schoolbook, Garamond, Courier New i Arial. Alternatywnie "
-"możesz pobrać czcionki Liberation lub pakiet GNU FreeFont. Będą potrzebne "
-"wszystkie czcionki z wybranego pakietu czcionek, odpowiednio np. "
-"LiberationMono, LiberationSans i LiberationSerif lub FreeMono, FreeSans i "
-"FreeSerif."
+"możesz pobrać czcionki Liberation. Będą potrzebne wszystkie czcionki z "
+"wybranego pakietu czcionek, odpowiednio np. LiberationMono, LiberationSans i "
+"LiberationSerif."
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
