@@ -619,10 +619,10 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObje
 	if (platform == Common::kPlatformMacintosh && extra != "Steam")
 		return new Scumm::MacGameOptionsWidget(boss, name, target, GID_MONKEY, extra);
 
-	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
-		return nullptr;
+	if (extra == "CD" || platform == Common::kPlatformFMTowns || platform == Common::kPlatformSegaCD)
+		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
 
-	return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+	return nullptr;
 }
 
 
