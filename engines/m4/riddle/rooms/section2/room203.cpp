@@ -60,7 +60,7 @@ void Room203::init() {
 
 	_val4 = _val5 = 0;
 	_val6 = _val8 = 0;
-	_ripley80000 = 0;
+	_ripley80000 = false;
 	_digiName1 = _digiName3 = nullptr;
 	_showWalker = false;
 	_flag2 = false;
@@ -2575,7 +2575,7 @@ void Room203::daemon() {
 }
 
 void Room203::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 
 	if (lookFlag && player_said(" "))
 		_G(player).resetWalk();
@@ -2589,9 +2589,9 @@ void Room203::pre_parser() {
 }
 
 void Room203::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
 
 	if (player_said("conv203c")) {
 		if (_G(kernel).trigger == 1) {
@@ -2800,12 +2800,14 @@ void Room203::parser() {
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, false,
 			triggerMachineByHashCallback, "rip in conv");
+		
+		_G(kernel).trigger_mode = KT_DAEMON;
 		_ripleyMode = 1001;
 		_ripleyShould = 1010;
 		sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
 			_ripHandsBehBack, 11, 11, 0);
-
 		_G(kernel).trigger_mode = KT_PARSE;
+		
 		_peasantMode2 = _peasantMode;
 		_peasantMode = 4055;
 	} else if (talkFlag && player_said("OFFICIAL")) {
@@ -2818,11 +2820,12 @@ void Room203::parser() {
 			_ripleyMode = 1003;
 			_ripleyShould = 1210;
 			kernel_trigger_dispatchx(kernel_trigger_create(150));
-			_G(kernel).trigger_mode = KT_PARSE;
 		} else {
 			_officialMode = 2001;
 			_officialShould = 2020;
+			kernel_trigger_dispatchx(kernel_trigger_create(140));
 		}
+		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (talkFlag && player_said("GATEKEEPER")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -3340,9 +3343,9 @@ void Room203::peasantAnim2() {
 
 void Room203::conv203c() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		digi_play(sound, 1, 255, (node == 3 && entry == 0 && who == 0) ? -1 : 1);
@@ -3359,7 +3362,7 @@ void Room203::conv203c() {
 
 void Room203::conv203d() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0)
@@ -3383,9 +3386,9 @@ void Room203::conv203d() {
 
 void Room203::conv203e() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 1) {
 		if (who == 1)
