@@ -537,8 +537,13 @@ void VideoPlayer::updateLive(int slot, bool force) {
 			++nbrOfLiveVideos;
 	}
 
-	if (_vm->getGameType() == kGameTypeAdibou2)
+	if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (video->decoder->hasVideo() &&
+			!(video->properties.flags & 0x100))
+			return;
+
 		video->properties.startFrame = video->decoder->getCurFrame();
+	}
 
 	if (video->properties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
