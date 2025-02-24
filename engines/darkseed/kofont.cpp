@@ -263,6 +263,7 @@ Common::U32String KoFont::getLocationString(const Common::U32String &object) {
 	if (isConsonant(object[object.size() - 1])) {
 		return object + convertToU32String("\xb7\x61", Common::KO_KOR); // -eu
 	}
+	return object;
 }
 
 int KoFont::getOtherCharIdx(uint32 chr) const {
