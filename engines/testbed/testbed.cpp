@@ -34,6 +34,7 @@
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
+#include "testbed/image.h"
 #include "testbed/midi.h"
 #include "testbed/misc.h"
 #include "testbed/networking.h"
@@ -133,6 +134,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	Testsuite *ts;
 	// GFX
 	ts = new GFXTestSuite();
+	testsuiteList.push_back(ts);
+	// Image
+	ts = new ImageTestSuite();
 	testsuiteList.push_back(ts);
 	// FS
 	ts = new FSTestSuite();
