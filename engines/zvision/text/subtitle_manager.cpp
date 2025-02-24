@@ -216,9 +216,9 @@ void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) 
 		}
 	  _renderManager->renderSceneToScreen(true);
 		if (_doubleFPS)
-			_system->delayMillis(33);
+			_system->delayMillis(17);
 		else
-			_system->delayMillis(66);
+			_system->delayMillis(33);
 	}
 	destroy(msgid);
 	_engine->startClock();
