@@ -85,15 +85,36 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8B, o7_findNextFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
+	OPCODEDRAW(0x8E, o7_getImageInfo);
 	OPCODEDRAW(0x90, o7_loadImage);
 	OPCODEDRAW(0x93, o7_setVolume);
 	OPCODEDRAW(0x95, o7_zeroVar);
+	OPCODEDRAW(0xA0, o7_draw0xA0);
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
 	OPCODEDRAW(0xA4, o7_loadIFFPalette);
+	OPCODEDRAW(0xAA, o7_draw0xAA);
+	OPCODEDRAW(0xAC, o7_draw0xAC);
+	OPCODEDRAW(0xAF, o7_draw0xAF);
+	OPCODEDRAW(0xB0, o7_draw0xB0);
+	OPCODEDRAW(0xB1, o7_draw0xB1);
+	OPCODEDRAW(0xB4, o7_draw0xB4);
+	OPCODEDRAW(0xB6, o7_draw0xB6);
 	OPCODEDRAW(0xC4, o7_opendBase);
 	OPCODEDRAW(0xC5, o7_closedBase);
 	OPCODEDRAW(0xC6, o7_getDBString);
+	OPCODEDRAW(0xCC, o7_draw0xCC);
+	OPCODEDRAW(0xCD, o7_draw0xCD);
+	OPCODEDRAW(0xCE, o7_draw0xCE);
+	OPCODEDRAW(0xDC, o7_draw0xDC);
+	OPCODEDRAW(0xDD, o7_draw0xDD);
+	OPCODEDRAW(0xDE, o7_draw0xDE);
+	OPCODEDRAW(0xDF, o7_draw0xDF);
+	OPCODEDRAW(0xE0, o7_draw0xE0);
+	OPCODEDRAW(0xE1, o7_draw0xE1);
+	OPCODEDRAW(0xE2, o7_draw0xE2);
+	OPCODEDRAW(0xE3, o7_draw0xE3);
+	OPCODEDRAW(0xE4, o7_draw0xE4);
 }
 
 void Inter_v7::setupOpcodesFunc() {
@@ -850,6 +871,13 @@ void Inter_v7::o7_getSystemProperty() {
 	storeValue(0);
 }
 
+void Inter_v7::o7_getImageInfo() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+}
+
 void Inter_v7::o7_loadImage() {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 	if (!file.contains('.'))
@@ -904,6 +932,13 @@ void Inter_v7::o7_zeroVar() {
 
 	WRITE_VARO_UINT32(index, 0);
 }
+
+void Inter_v7::o7_draw0xA0() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readValExpr();
+}
+
 
 void Inter_v7::o7_getINIValue() {
 	Common::String file = getFile(_vm->_game->_script->evalString());
@@ -982,6 +1017,50 @@ void Inter_v7::o7_loadIFFPalette() {
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
+void Inter_v7::o7_draw0xAA() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xAA (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xAC() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xAC (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xAF() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xAF (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xB0() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+}
+
+void Inter_v7::o7_draw0xB1() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+}
+
+void Inter_v7::o7_draw0xB4() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+}
+
+void Inter_v7::o7_draw0xB6() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+}
+
 void Inter_v7::o7_opendBase() {
 	Common::String dbFile = getFile(_vm->_game->_script->evalString());
 	Common::String id     = _vm->_game->_script->evalString();
@@ -1022,6 +1101,65 @@ void Inter_v7::o7_getDBString() {
 	storeString(result.c_str());
 	WRITE_VAR(27, 1); // Success
 }
+
+void Inter_v7::o7_draw0xCC() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xCC (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xCD() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xCD (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xCE() {
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xCE (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xDC() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xDC (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xDD() {
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xDD (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xDE() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xDE (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xDF() {
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xDF (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xE0() {
+	warning("STUB: o7_draw0xE0 (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xE1() {
+	warning("STUB: o7_draw0xE1 (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xE2() {
+	warning("STUB: o7_draw0xE2 (Adibou/Anglais)");
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+}
+void Inter_v7::o7_draw0xE3() {
+	warning("STUB: o7_draw0xE3 (Adibou/Anglais)");
+}
+void Inter_v7::o7_draw0xE4() {
+	warning("STUB: o7_draw0xE4 (Adibou/Anglais)");
+}
+
 
 void Inter_v7::o7_printText(OpFuncParams &params) {
 	char buf[60];
