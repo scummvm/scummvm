@@ -233,7 +233,7 @@ void Room303::init() {
 			_fengFlag = true;
 			loadFengLi();
 
-			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 				triggerMachineByHashCallback, "fl");
 			sendWSMessage_10000(1, _fengLi, _feng4, 1, 16, 400,
 				_feng4, 1, 6, 0);
@@ -1920,7 +1920,9 @@ void Room303::conv303b() {
 				_ripPonders = series_stream("303pu01", 4, 0x100, 666);
 				series_stream_break_on_frame(_ripPonders, 5, 700);
 				return;
-			} else if (node == 1 && entry == 2) {
+			}
+
+			if (node == 1 && entry == 2) {
 				// No implementation
 			} else if ((node == 2 && entry == 0) || (node == 2 && entry == 2)) {
 				_ripleyShould = 3;

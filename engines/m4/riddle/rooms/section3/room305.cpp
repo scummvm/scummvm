@@ -712,7 +712,6 @@ void Room305::parser() {
 				break;
 			default:
 				goto next1;
-				break;
 			}
 		}
 	} else {
@@ -800,7 +799,6 @@ next2:
 
 		default:
 			goto next3;
-			break;
 		}
 	} else {
 		goto next3;
@@ -883,7 +881,6 @@ next3:
 
 		default:
 			goto next4;
-			break;
 		}
 	} else {
 		goto next4;
