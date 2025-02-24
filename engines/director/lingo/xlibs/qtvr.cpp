@@ -86,7 +86,7 @@ static const MethodProto xlibMethods[] = {
 	{ "setHPanAngle",			QTVR::m_setHPanAngle,			1, 1,	400 },	// D4
 	{ "setNodeID",				QTVR::m_setNodeID,				1, 1,	400 },	// D4
 	{ "setQuality",				QTVR::m_setQuality,				1, 1,	400 },	// D4
-	{ "setRolloverCallback",	QTVR::m_setQuality,				2, 2,	400 },	// D4
+	{ "setRolloverCallback",	QTVR::m_setRolloverCallback,	2, 2,	400 },	// D4
 	{ "setTransitionMode",		QTVR::m_setTransitionMode,		1, 1,	400 },	// D4
 	{ "setTransitionSpeed",		QTVR::m_setTransitionSpeed,		1, 1,	400 },	// D4
 	{ "setVPanAngle",			QTVR::m_setVPanAngle,			1, 1,	400 },	// D4
