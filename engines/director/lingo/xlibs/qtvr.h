@@ -77,7 +77,8 @@ public:
 	Common::Rect _rect;
 	Video::QuickTimeDecoder *_video = nullptr;
 	QtvrWidget *_widget = nullptr;
-	Common::String _rolloverCallback;
+	Datum _rolloverCallbackObject;
+	Common::String _rolloverCallbackMethod;
 	bool _active = true;
 };
 

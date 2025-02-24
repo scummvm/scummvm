@@ -55,6 +55,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
+#include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/qtvr.h"
@@ -191,12 +192,7 @@ void QTVR::m_mouseOver(int nargs) {
 	}
 
 	// Execute handler on first call to MouseOver
-	const Common::QuickTimeParser::PanoHotSpot *hotspot = me->_video->getRolloverHotspot();
-
-	if (!me->_rolloverCallback.empty()) {
-		g_lingo->push(hotspot ? hotspot->id : 0);
-		g_lingo->executeHandler(me->_rolloverCallback, 1);
-	}
+	int hotspot;
 
 	int node;
 	bool nodeChanged = false;
@@ -228,7 +224,7 @@ void QTVR::m_mouseOver(int nargs) {
 			}
 
 			node = me->_video->getCurrentNodeID();
-			hotspot = me->_video->getRolloverHotspot();
+			hotspot = me->_video->getRolloverHotspotID();
 
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				me->_widget->processEvent(event);
@@ -236,7 +232,7 @@ void QTVR::m_mouseOver(int nargs) {
 				if (me->_video->getCurrentNodeID() != node)
 					nodeChanged = true;
 
-				hotspot = me->_video->getClickedHotspot();
+				hotspot = me->_video->getClickedHotspotID();
 
 				if (!hotspot) {
 					if (nodeChanged)
@@ -246,17 +242,18 @@ void QTVR::m_mouseOver(int nargs) {
 					return;
 				}
 
-				g_lingo->push(Common::String::format("%s,%d", tag2str((uint32)hotspot->type), hotspot->id));
+				const Common::QuickTimeParser::PanoHotSpot *hotspotData = me->_video->getHotSpotByID(hotspot);
+				g_lingo->push(Common::String::format("%s,%d", hotspotData ? tag2str((uint32)hotspotData->type) : "undf", hotspot));
 
 				return;
 			}
 
 			me->_widget->processEvent(event);
 
-			if (!me->_rolloverCallback.empty() && hotspot != me->_video->getRolloverHotspot()) {
-				g_lingo->push(hotspot ? hotspot->id : 0);
-
-				g_lingo->executeHandler(me->_rolloverCallback, 1);
+			if (!me->_rolloverCallbackMethod.empty()) {
+				g_lingo->push(hotspot);
+				g_lingo->push(me->_rolloverCallbackObject);
+				LC::call(me->_rolloverCallbackMethod, 2, false);
 			}
 		}
 
@@ -364,11 +361,12 @@ void QTVR::m_setQuality(int nargs) {
 }
 
 void QTVR::m_setRolloverCallback(int nargs) {
-	ARGNUMCHECK(1);
+	ARGNUMCHECK(2);
 
 	QTVRXObject *me = (QTVRXObject *)g_lingo->_state->me.u.obj;
 
-	me->_rolloverCallback = g_lingo->pop().asString();
+	me->_rolloverCallbackMethod = g_lingo->pop().asString();
+	me->_rolloverCallbackObject = g_lingo->pop();
 }
 
 void QTVR::m_setTransitionMode(int nargs) {
