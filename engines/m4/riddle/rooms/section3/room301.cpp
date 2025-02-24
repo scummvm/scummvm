@@ -279,7 +279,7 @@ void Room301::daemon() {
 				if (val == 1) {
 					sendWSMessage_10000(1, _george, _agentStander, 7, 7, 10,
 						_agentStander, 7, 7, 0);
-				} else {
+				} else if (val == 2) {
 					sendWSMessage_10000(1, _george, _agentStander, 7, 1, 10,
 						_agentStander, 1, 1, 0);
 					_georgeShould = _georgeMode = 0;
@@ -377,12 +377,16 @@ void Room301::daemon() {
 			case 9:
 				sendWSMessage_10000(1, _george, _agentTalk, 6, 15, 10,
 					_agentTalk, 15, 15, 0);
+				_georgeShould = 8;
+				
 				break;
 
 			default:
 				sendWSMessage_10000(1, _george, _agentTalk, 6, 1, 10,
 					_agentStander, 1, 1, 0);
 				_georgeShould = 0;
+				_val8 = 0;
+				
 				break;
 			}
 			break;
@@ -393,6 +397,7 @@ void Room301::daemon() {
 				sendWSMessage_10000(1, _george, _agentTalk, 15, 15, 10,
 					_agentTalk, 15, 15, 0);
 				break;
+				
 			case 9:
 				if (_soundName) {
 					digi_play(_soundName, 1, 255, _val16);
@@ -401,11 +406,15 @@ void Room301::daemon() {
 
 				sendWSMessage_10000(1, _george, _agentTalk, 16, 32, 10,
 					_agentTalk, 15, 15, 0);
+				_georgeShould = 8;
+				
 				break;
 			default:
 				sendWSMessage_10000(1, _george, _agentTalk, 15, 6, 10,
 					_agentTalk, 6, 6, 0);
 				_georgeShould = 7;
+				_val8 = 0;
+				
 				break;
 			}
 			break;
@@ -668,6 +677,8 @@ void Room301::daemon() {
 	case 100:
 		sendWSMessage_10000(1, _george, _agentCheckingList, 8,
 			1, 10, _agentStander, 1, 1, 0);
+		_georgeShould = 0;
+		
 		break;
 
 	case 200:
