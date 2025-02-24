@@ -204,7 +204,7 @@ uint8 MidiDriver_DarkSeedFloppy_AdLib::allocateOplChannel(uint8 channel, uint8 s
 }
 
 uint16 MidiDriver_DarkSeedFloppy_AdLib::calculateFrequency(uint8 channel, uint8 source, uint8 note) {
-	uint8 octaveNote = ((note >= 120) ? 0x7B : (note % 12));
+	uint8 octaveNote = ((note >= 120) ? 11 : (note % 12));
 	uint8 block;
 	if (note < 12) {
 		block = 0;
