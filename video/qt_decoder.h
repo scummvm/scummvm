@@ -106,7 +106,9 @@ public:
 	int getZoomState() { return _zoomState; }
 
 	const PanoHotSpot *getRolloverHotspot() { return _rolloverHotspot; }
+	int getRolloverHotspotID() { return _rolloverHotspotID; }
 	const PanoHotSpot *getClickedHotspot() { return _clickedHotspot; }
+	int getClickedHotspotID() { return _clickedHotspotID; }
 	Common::Point getPanLoc(int16 x, int16 y);
 	Graphics::FloatPoint getPanAngles(int16 x, int16 y);
 
@@ -229,7 +231,9 @@ private:
 	bool _repeatTimerActive = false;
 
 	const PanoHotSpot *_rolloverHotspot = nullptr;
+	int _rolloverHotspotID = 0;
 	const PanoHotSpot *_clickedHotspot = nullptr;
+	int _clickedHotspotID = 0;
 	bool _renderHotspots = false;
 
 	Graphics::Surface *_scaledSurface;

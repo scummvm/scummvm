@@ -963,6 +963,8 @@ void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	} else {
 		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
 
+		_rolloverHotspotID = hotspotId;
+
 		if (hotspotId && _currentSample != -1) {
 			if (!_rolloverHotspot || _rolloverHotspot->id != hotspotId)
 				_rolloverHotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(hotspotId);
@@ -1001,6 +1003,7 @@ const QuickTimeDecoder::PanoNavigation *QuickTimeDecoder::getHotSpotNavByID(int 
 
 void QuickTimeDecoder::setClickedHotSpot(int id) {
 	_clickedHotspot = getHotSpotByID(id);
+	_clickedHotspotID = id;
 }
 
 
@@ -1133,6 +1136,7 @@ void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool
 		_mouseDrag.y = y;
 
 		_clickedHotspot = _rolloverHotspot;
+		_clickedHotspotID = _rolloverHotspotID;
 	}
 
 	if (!repeat && !isDown && _rolloverHotspot && _prevMouse == _mouseDrag) {
