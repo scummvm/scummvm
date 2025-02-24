@@ -224,7 +224,6 @@ void QTVR::m_mouseOver(int nargs) {
 			}
 
 			node = me->_video->getCurrentNodeID();
-			hotspot = me->_video->getRolloverHotspotID();
 
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				me->_widget->processEvent(event);
@@ -248,10 +247,12 @@ void QTVR::m_mouseOver(int nargs) {
 				return;
 			}
 
+			hotspot = me->_video->getRolloverHotspotID();
+
 			me->_widget->processEvent(event);
 
-			if (!me->_rolloverCallbackMethod.empty()) {
-				g_lingo->push(hotspot);
+			if (hotspot != me->_video->getRolloverHotspotID() && !me->_rolloverCallbackMethod.empty()) {
+				g_lingo->push(me->_video->getRolloverHotspotID());
 				g_lingo->push(me->_rolloverCallbackObject);
 				LC::call(me->_rolloverCallbackMethod, 2, false);
 			}
