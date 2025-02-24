@@ -200,6 +200,8 @@ void ZVision::initialize() {
 	
 	//Graphics
 	_widescreen = ConfMan.getBool("widescreen");
+	_doubleFPS = ConfMan.getBool("doublefps");
+	_desiredFrameTime = _doubleFPS ? 17 : 33;
 	
   //Keymaps
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
@@ -253,7 +255,6 @@ void ZVision::initialize() {
 
 	// Create debugger console. It requires GFX to be initialized
 	setDebugger(new Console(this));
-	_doubleFPS = ConfMan.getBool("doublefps");
 
 	// Initialize FPS timer callback
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
@@ -359,6 +360,8 @@ Common::Error ZVision::run() {
 		_subtitleManager->process(deltaTime);
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
+		//TODO - figure out _doubleFPS effect, apply framerate limiter to get smoother rendering of panorama
+		//Current framerate limiter implementation is buggy, delay is applied based on previous frame time
 		_renderManager->prepareBackground();
 		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
@@ -369,8 +372,6 @@ Common::Error ZVision::run() {
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
-		if (_doubleFPS)
-			delay >>= 1;
 		_system->delayMillis(delay);
 	}
 	return Common::kNoError;

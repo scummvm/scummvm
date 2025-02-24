@@ -37,6 +37,7 @@
 #include "image/tga.h"
 
 #include "graphics/blit.h"
+#include "graphics/framelimiter.h"
 
 //FOR BUG TEST ONLY
 #include "common/debug.h"
