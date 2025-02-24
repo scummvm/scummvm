@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	events.o \
 	fs.o \
 	graphics.o \
+	image.o \
 	metaengine.o \
 	midi.o \
 	misc.o \
