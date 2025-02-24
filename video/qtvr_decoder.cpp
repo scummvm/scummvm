@@ -960,6 +960,7 @@ void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 
 	if (hotspotPoint.x < 0) {
 		_rolloverHotspot = nullptr;
+		_rolloverHotspotID = 0;
 	} else {
 		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
 
