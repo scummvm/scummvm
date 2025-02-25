@@ -83,7 +83,7 @@ public:
 	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
 	
-	Common::Point testPixel = Common::Point(30,120);
+	Common::Point testPixel = Common::Point(255,0);
 
 public:
 	enum RenderState {
@@ -95,11 +95,11 @@ public:
 private:
 	ZVision *_engine;
 	OSystem *_system;
-	uint _numColumns, _numRows; //Working area width, height
+	uint _numRows, _numColumns, halfRows, halfColumns; //Working area width, height; half width, half height, in whole pixels
+	float halfWidth, halfHeight;  //Centre axis to midpoint of outermost pixel
   FilterPixel *_internalBuffer;
 	RenderState _renderState;
 	bool _highQuality = false;
-	const uint8 filterPasses = 2;
 	const Graphics::PixelFormat _pixelFormat;
 	
   inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
@@ -172,6 +172,7 @@ public:
 	float getLinscale();
 
 private:
+  void generateLookupTable(bool tilt = false);
 	void generatePanoramaLookupTable();
 //	Common::Point generatePanoramaLookupPoint();
 	void generateTiltLookupTable();

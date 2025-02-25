@@ -41,6 +41,10 @@ RenderTable::RenderTable(ZVision *engine, uint numColumns, uint numRows, const G
 	_internalBuffer = new FilterPixel[numRows * numColumns];
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
 	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
+	halfRows = floor((_numRows-1)/2);
+	halfColumns = floor((_numColumns-1)/2);
+	halfWidth = (float)_numColumns / 2.0f - 0.5f;
+	halfHeight = (float)_numRows / 2.0f - 0.5f;
 }
 
 RenderTable::~RenderTable() {
@@ -187,14 +191,11 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 void RenderTable::generateRenderTable() {
 	switch (_renderState) {
 	  case RenderTable::PANORAMA: {
-      uint32 generationTime = _system->getMillis();
-		  generatePanoramaLookupTable();
-      generationTime = _system->getMillis() - generationTime;		  
-      debug(1,"\tRender table generation time %dms, %s quality", generationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
+      generateLookupTable(false);
 		  break;
 	  }
 	  case RenderTable::TILT:
-		  generateTiltLookupTable();
+	    generateLookupTable(true);
 		  break;
 	  case RenderTable::FLAT:
 		  // Intentionally left empty
@@ -204,127 +205,89 @@ void RenderTable::generateRenderTable() {
 	}
 }
 
-void RenderTable::generatePanoramaLookupTable() {
-  debug(1,"Generating panorama lookup table.");
-	uint halfRows = floor((_numRows-1)/2);
-	uint halfColumns = floor((_numColumns-1)/2);
-	float halfWidth = (float)_numColumns / 2.0f - 0.5f; //Centre axis to midpoint of outermost pixel
-	float halfHeight = (float)_numRows / 2.0f - 0.5f; //Centre axis to midpoint of outermost pixel
-	float cylinderRadius = (halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
-	float xOffset = 0.0f;
-	float yOffset = 0.0f;
-	
+void RenderTable::generateLookupTable(bool tilt) {
+  debug(1,"Generating %s lookup table.", tilt ? "tilt" : "panorama");
 	debug(1,"halfWidth %f, halfHeight %f", halfWidth, halfHeight);
 	debug(1,"halfRows %d, halfColumns %d", halfRows, halfColumns);
-	
-	//Transformation is both horizontally and vertically symmetrical about the camera axis,
-	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
-	//TODO - find & fix cause of vertial "seam" in Nemesis.
-	for (uint x = 0; x <= halfColumns; ++x) {
-		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and the centre of pixel index (x,y)
-		float alpha = atan(((float)x - halfWidth) / cylinderRadius);
-
-		// To get x in cylinder coordinates, we just need to calculate the arc length
-		// We also scale it by _panoramaOptions.linearScale
-		float xInCylinderCoords = (cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth;
-		float cosAlpha = cos(alpha);
-		uint32 columnIndexL = x;
-		uint32 columnIndexR = (_numColumns - 1) - x;
-		uint32 rowIndexT = 0;
-		uint32 rowIndexB = _numColumns * (_numRows - 1);
-
-		for (uint y = 0; y <= halfRows; ++y) {
-			// To calculate y in cylinder coordinates, we can do similar triangles comparison,
-			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-			float yInCylinderCoords = halfHeight + ((float)y - halfHeight) * cosAlpha;
-			
-			uint32 indexTL = rowIndexT + columnIndexL;
-			uint32 indexBL = rowIndexB + columnIndexL;
-			uint32 indexTR = rowIndexT + columnIndexR;
-			uint32 indexBR = rowIndexB + columnIndexR;
-			
-			xOffset = xInCylinderCoords - x; 
-      yOffset = yInCylinderCoords - y;
-      
-      bool _printDebug = (Common::Point(x,y)==testPixel);
-      if(_printDebug) {
-        debug(2,"\tGenerating test pixel %d, %d", x, y);
-        debug(2,"\tCylinder coordinates %f, %f", xInCylinderCoords, yInCylinderCoords);
-        debug(2,"\tOffsets %f,%f", xOffset, yOffset);
-      } 
-			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
-			//Store mirrored offset values
-			_internalBuffer[indexBL] = _internalBuffer[indexTL];
-			_internalBuffer[indexBL].flipV();
-			_internalBuffer[indexTR] = _internalBuffer[indexTL];
-			_internalBuffer[indexTR].flipH();
-			_internalBuffer[indexBR] = _internalBuffer[indexBL];
-			_internalBuffer[indexBR].flipH();
-			//Increment indices
-			rowIndexT += _numColumns;
-			rowIndexB -= _numColumns;
-		}
-	}
-	debug(1,"Render table generated, %s quality", _highQuality ? "high" : "low");
-}
-
-void RenderTable::generateTiltLookupTable() {
-	uint halfRows = ceil(_numRows/2);
-	uint halfColumns = ceil(_numColumns/2);
-	float halfWidth = (float)_numColumns / 2.0f;
-	float halfHeight = (float)_numRows / 2.0f;
-	float cylinderRadius = halfWidth / tan(_tiltOptions.verticalFOV);
-	float xOffset = 0.0f;
-	float yOffset = 0.0f;
-	_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
-	
-	//Transformation is both horizontally and vertically symmetrical about the camera axis,
-	//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y
-	for (uint y = 0; y < halfRows; ++y) {
-		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
-		// Alpha represents the vertical angle between the viewer at the center of a cylinder and y
-		float alpha = atan(((float)y - halfHeight + 0.01f) / cylinderRadius);
-
-		// To get y in cylinder coordinates, we just need to calculate the arc length
-		// We also scale it by _tiltOptions.linearScale
-		int32 yInCylinderCoords = int32(round((cylinderRadius * _tiltOptions.linearScale * alpha) + halfHeight));
-
-		float cosAlpha = cos(alpha);
-		uint32 columnIndexTL = y * _numColumns;
-		uint32 columnIndexBL = (_numRows-(y+1)) * _numColumns;
-		uint32 columnIndexTR = columnIndexTL + (_numColumns - 1);
-		uint32 columnIndexBR = columnIndexBL + (_numColumns - 1);
-
-  //TODO - all four pixel values are always the same; find out why & fix.
-
-		for (uint x = 0; x < halfColumns; ++x) {
-			// To calculate x in cylinder coordinates, we can do similar triangles comparison,
-			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-			int32 xInCylinderCoords = int32(round(halfWidth + ((float)x - halfWidth) * cosAlpha));
-
-			uint32 indexTL = columnIndexTL + x;
-			uint32 indexBL = columnIndexBL + x;
-			uint32 indexTR = columnIndexTR - x;
-			uint32 indexBR = columnIndexBR - x;
-			
-			xOffset = xInCylinderCoords - x;
-      yOffset = yInCylinderCoords - y;
-      
-      bool _printDebug = (Common::Point(x,y)==testPixel);
-      if(_printDebug) {
-        debug(2,"\tGenerating test pixel %d, %d", x, y);
-        debug(2,"\tCylinder coordinates %d, %d", xInCylinderCoords, yInCylinderCoords);
-        debug(2,"\tOffsets %f,%f", xOffset, yOffset);
+  uint32 generationTime = _system->getMillis();
+	float alpha, cosAlpha, polarCoordInCylinderCoords, linearCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
+	uint32 indexTL, indexBL, indexTR, indexBR;
+	uint x=0;
+	uint y=0;
+	auto outerLoop = [&](uint &polarCoord, float &halfPolarSize, float &scale) {
+    //polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
+    //halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
+		//alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
+		alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
+		// To map the polar coordinate to the cylinder surface coordinates, we just need to calculate the arc length
+		// We also scale it by linearScale
+		polarCoordInCylinderCoords = (cylinderRadius * scale * alpha) + halfPolarSize;
+		cosAlpha = cos(alpha);
+  };	  
+  auto innerLoop = [&](uint &polarCoord, uint &linearCoord, float &halfLinearSize,  float &polarOffset, float &linearOffset) {
+		// To calculate linear coordinate in cylinder coordinates, we can do similar triangles comparison,
+		// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
+		linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
+		linearOffset = linearCoordInCylinderCoords - linearCoord;
+    polarOffset = polarCoordInCylinderCoords - polarCoord;
+    bool _printDebug = (Common::Point(x,y)==testPixel);
+    if(_printDebug) {
+      debug(2,"\tGenerating test pixel %d, %d", x, y);
+      debug(2,"\tOffsets %f,%f", xOffset, yOffset);
+    } 
+		// Only store the (x,y) offsets instead of the absolute positions
+		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
+    //Transformation is both horizontally and vertically symmetrical about the camera axis,
+    //We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:
+		_internalBuffer[indexBL] = _internalBuffer[indexTL];
+		_internalBuffer[indexBL].flipV();
+		_internalBuffer[indexTR] = _internalBuffer[indexTL];
+		_internalBuffer[indexTR].flipH();
+		_internalBuffer[indexBR] = _internalBuffer[indexBL];
+		_internalBuffer[indexBR].flipH();
+  };
+  if(tilt) {
+    uint32 columnIndexTL, columnIndexBL, columnIndexTR, columnIndexBR;
+	  cylinderRadius = (halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
+	  _tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
+	  for (y = 0; y <= halfRows; ++y) {
+	    outerLoop(y, halfHeight, _tiltOptions.linearScale);
+		  columnIndexTL = y * _numColumns;
+		  columnIndexBL = (_numRows-(y+1)) * _numColumns;
+		  columnIndexTR = columnIndexTL + (_numColumns - 1);
+		  columnIndexBR = columnIndexBL + (_numColumns - 1);
+	    for (x = 0; x <= halfColumns; ++x) {
+			  indexTL = columnIndexTL + x;
+			  indexBL = columnIndexBL + x;
+			  indexTR = columnIndexTR - x;
+			  indexBR = columnIndexBR - x;
+	      innerLoop(y, x, halfWidth, yOffset, xOffset);
       }
-			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);			
-			//Store mirrored offset values
-			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, _highQuality);
-			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
-			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, _highQuality);
-		}
+    }
 	}
+  else {
+    uint32 rowIndexT, rowIndexB, columnIndexL, columnIndexR;
+    cylinderRadius = (halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
+	  for (x = 0; x <= halfColumns; ++x) {
+  		columnIndexL = x;
+		  columnIndexR = (_numColumns - 1) - x;
+		  rowIndexT = 0;
+		  rowIndexB = _numColumns * (_numRows - 1);
+	    outerLoop(x, halfWidth, _panoramaOptions.linearScale);
+		  for (y = 0; y <= halfRows; ++y) {
+		    indexTL = rowIndexT + columnIndexL;
+		    indexBL = rowIndexB + columnIndexL;
+		    indexTR = rowIndexT + columnIndexR;
+		    indexBR = rowIndexB + columnIndexR;
+		    innerLoop(x, y, halfHeight, xOffset, yOffset);
+		    rowIndexT += _numColumns;
+		    rowIndexB -= _numColumns;
+	    }
+	  }
+  }
+  generationTime = _system->getMillis() - generationTime;		  
+	debug(1,"Render table generated, %s quality", _highQuality ? "high" : "low");
+  debug(1,"\tRender table generation time %dms, %s quality", generationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
 }
 
 void RenderTable::setPanoramaFoV(float fov) {
