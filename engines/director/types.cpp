@@ -20,6 +20,7 @@
  */
 
 #include "common/array.h"
+#include "common/str.h"
 #include "director/types.h"
 
 namespace Director {
@@ -138,6 +139,40 @@ const char *inkType2str(InkType type) {
 
 	return "<unknown>";
 
+}
+
+#define defFlag(x) { x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static objFlagList[] = {
+	defFlag(kNoneObj),
+	defFlag(kFactoryObj),
+	defFlag(kXObj),
+	defFlag(kScriptObj),
+	defFlag(kXtraObj),
+	defFlag(kWindowObj),
+	defFlag(kCastMemberObj),
+};
+
+Common::String objectType2str(int fl) {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(objFlagList); i++) {
+		if (fl & objFlagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += objFlagList[i].s;
+			fl &= ~objFlagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
 }
 
 } // End of namespace Director
