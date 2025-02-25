@@ -1345,6 +1345,70 @@ StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint8 seekDelta) {
 	return result;
 }
 
+void Adlib::Func244D(StreamHandler *song) {
+	// TODO: No idea yet what [0036] does
+	/*
+
+	cmp	byte ptr [0036h],0h
+	jz	2460h
+
+l0017_2458:
+	mov	word ptr [bp-2h],3h
+	jmp	24F6h
+	*/
+	StreamHandler* sh = Func19BE_SH(song, 0x6);
+	uint16 delta = sh->peekByte();
+	
+	/*
+l0017_2460:
+	push	word ptr [bp+8h]
+	push	word ptr [bp+6h]
+	les	di,[bp-6h]
+	push	word ptr es:[di]
+	call	far 0017h:19BEh
+	// TODO: Continue here
+	mov	[2248h],ax
+	mov	[224Ah],dx
+	push	word ptr [bp+8h]
+	push	word ptr [bp+6h]
+	push	8h
+	call	far 0017h:19BEh
+	mov	[bp-6h],ax
+	mov	[bp-4h],dx
+	push	word ptr [bp+8h]
+	push	word ptr [bp+6h]
+	les	di,[bp-6h]
+	push	word ptr es:[di]
+	call	far 0017h:19BEh
+	mov	[2244h],ax
+	mov	[2246h],dx
+	push	word ptr [bp+8h]
+	push	word ptr [bp+6h]
+	push	24h
+	call	far 0017h:19BEh
+	mov	[bp-6h],ax
+	mov	[bp-4h],dx
+	les	di,[bp-6h]
+	mov	ax,es:[di]
+	mov	[224Ch],ax
+	push	word ptr [bp+8h]
+	push	word ptr [bp+6h]
+	push	0Ch
+	call	far 0017h:19BEh
+	mov	[bp-6h],ax
+	mov	[bp-4h],dx
+	les	di,[bp-6h]
+	mov	ax,es:[di]
+	mov	[224Eh],ax
+	call	far 0017h:24FDh
+	mov	[bp-2h],ax
+
+l0017_24F6:
+	mov	ax,[bp-2h]
+	leave
+	retf	4h*/
+}
+
 
 void Adlib::Func1A03() {
 
@@ -1513,8 +1577,12 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	fileStream->read(gArray69.data(), size);
 }
 
-StreamHandler::StreamHandler(Common::Array<uint8>* data) {
-	StreamHandler(new Common::MemorySeekableReadWriteStream(data->data(), data->size()));
+inline StreamHandler::StreamHandler(Common::MemorySeekableReadWriteStream *s) : _stream(s), _pos(s->pos()) {
+}
+
+StreamHandler::StreamHandler(Common::Array<uint8> *data) {
+	_stream = new Common::MemorySeekableReadWriteStream(data->data(), data->size());
+	_pos = _stream->pos();
 }
 
 bool StreamHandler::eos() const {
@@ -1544,6 +1612,12 @@ bool StreamHandler::seek(int64 offset, int whence) {
 byte StreamHandler::peekByte() {
 	byte result = readByte();
 	seek(-0x1, SEEK_CUR);
+	return result;
+}
+
+uint16 StreamHandler::peekWord() {
+	uint16 result = readUint16LE();
+	seek(-0x2, SEEK_CUR);
 	return result;
 }
 
