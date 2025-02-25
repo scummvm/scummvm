@@ -283,12 +283,12 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_WINDOWS_AUDIO_MODE, GAMEOPTION_MULTILANGUAGE)
 	},
 
-	{ // GOG.com version + german translation
+	{ // GOG.com version + german translation from tickets #14592, #14642, #15763
 		"sword1",
 		"GOG.com",
-		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
 				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
-				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,
 				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7397543),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
