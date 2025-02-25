@@ -255,7 +255,9 @@ void QTVR::m_mouseOver(int nargs) {
 				g_lingo->push(me->_rolloverCallbackObject);
 				g_lingo->push(me->_video->getRolloverHotspotID());
 
+				int cframe = g_lingo->_state->callstack.size();
 				LC::call(me->_rolloverCallbackObject.u.obj->getMethod(me->_rolloverCallbackMethod), 2, false);
+				g_lingo->execute(cframe);
 			}
 		}
 
