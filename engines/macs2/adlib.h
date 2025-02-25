@@ -43,8 +43,7 @@ namespace Macs2 {
 			Common::MemorySeekableReadWriteStream *_stream = nullptr;
 			int64 _pos = 0;
 		public:
-			StreamHandler(Common::MemorySeekableReadWriteStream* s) : _stream(s), _pos(s->pos()) {
-			}
+			StreamHandler(Common::MemorySeekableReadWriteStream *s);
 
 			StreamHandler(Common::Array<uint8>* data);
 
@@ -55,6 +54,7 @@ namespace Macs2 {
 		int64 size() const override;
 		bool seek(int64 offset, int whence) override;
 		byte peekByte();
+		uint16 peekWord();
 	};
 
 	class Adlib {
@@ -76,6 +76,8 @@ namespace Macs2 {
 
 		// TODO: Consider pointer vs. passing by value
 		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint8 seekDelta);
+
+		void Func244D(StreamHandler *song);
 
 		// TODO: Maybe need to add the caller
 		void Func24FD();
