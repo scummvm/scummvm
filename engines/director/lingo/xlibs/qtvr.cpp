@@ -252,9 +252,10 @@ void QTVR::m_mouseOver(int nargs) {
 			me->_widget->processEvent(event);
 
 			if (hotspot != me->_video->getRolloverHotspotID() && !me->_rolloverCallbackMethod.empty()) {
-				g_lingo->push(me->_video->getRolloverHotspotID());
 				g_lingo->push(me->_rolloverCallbackObject);
-				LC::call(me->_rolloverCallbackMethod, 2, false);
+				g_lingo->push(me->_video->getRolloverHotspotID());
+
+				LC::call(me->_rolloverCallbackObject.u.obj->getMethod(me->_rolloverCallbackMethod), 2, false);
 			}
 		}
 
@@ -368,6 +369,9 @@ void QTVR::m_setRolloverCallback(int nargs) {
 
 	me->_rolloverCallbackMethod = g_lingo->pop().asString();
 	me->_rolloverCallbackObject = g_lingo->pop();
+
+	if (me->_rolloverCallbackObject.type != OBJECT || !(me->_rolloverCallbackObject.u.obj->getObjType() & kFactoryObj))
+		error("QTVR::m_setRolloverCallback(): first argument is not a Factory but %s", me->_rolloverCallbackObject.type2str());
 }
 
 void QTVR::m_setTransitionMode(int nargs) {
