@@ -25,6 +25,9 @@
 namespace Bagel {
 namespace MFC {
 
+void CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
+	error("TODO: CBitmap::CreateCompatibleBitmap");
+}
 
 } // namespace MFC
 } // namespace Bagel

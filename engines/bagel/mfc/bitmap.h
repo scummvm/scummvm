@@ -28,6 +28,8 @@
 namespace Bagel {
 namespace MFC {
 
+class CDC;
+
 class CGdiObject {
 private:
 	HBITMAP _bitmap = nullptr;
@@ -52,7 +54,7 @@ public:
 
 class CBitmap : public CGdiObject {
 public:
-
+	void CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
 };
 
 } // namespace MFC

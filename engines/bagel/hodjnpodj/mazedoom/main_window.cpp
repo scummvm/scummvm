@@ -77,7 +77,7 @@ CMainWindow::CMainWindow() {
 	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, nullptr, nullptr);
 	assert(bSuccess);
 	m_bIgnoreScrollClick = false;
-#ifdef TODO
+
 	pMazeBitmap = new CBitmap();
 	pMazeDC = new CDC();
 
@@ -87,7 +87,7 @@ CMainWindow::CMainWindow() {
 	pOldPal = pMazeDC->SelectPalette(pGamePalette, false);            // select the game palette
 	pMazeDC->RealizePalette();                                          //...and realize it
 
-	//
+#ifdef TODO
 	// Load up the various bitmaps for wall, edge, booby traps, etc.
 	//
 	pPartsBitmap = FetchResourceBitmap(pDC, nullptr, IDB_PARTS);

@@ -63,6 +63,11 @@ CPalette *CDC::SelectPalette(CPalette *pPalette, bool bForceBackground) {
 	return &_palette;
 }
 
+CBitmap *CDC::SelectObject(CBitmap *bitmap) {
+	error("TODO: CDC::SelectObject");
+	return nullptr;
+}
+
 void CDC::RealizePalette() {
 	g_system->getPaletteManager()->setPalette(_palette.data(), 0, _palette.size());
 }
@@ -73,6 +78,15 @@ void CDC::Attach(HDC dc) {
 
 void CDC::Detach() {
 	m_hDC = nullptr;
+}
+
+CBitmap *CDC::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
+	error("TODO: CreateCompatibleBitmap");
+	return nullptr;
+}
+
+void CDC::CreateCompatibleDC(CDC *pDC) {
+	error("TODO: CDC::CreateCompatibleDC");
 }
 
 bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,

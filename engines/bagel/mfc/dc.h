@@ -23,6 +23,7 @@
 #define BAGEL_MFC_DC_H
 
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/bitmap.h"
 #include "bagel/mfc/font.h"
 #include "bagel/mfc/palette.h"
 #include "bagel/mfc/rect.h"
@@ -113,10 +114,13 @@ public:
 
 	int GetDeviceCaps(int field) const;
 	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
+	CBitmap *SelectObject(CBitmap *bitmap);
 	void RealizePalette();
 
 	void Attach(HDC dc);
 	void Detach();
+	CBitmap *CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
+	void CreateCompatibleDC(CDC *pDC);
 
 	CPen *SelectObject(CPen *pen);
 	CBrush *SelectObject(CBrush *brush);
