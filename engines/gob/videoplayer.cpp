@@ -674,7 +674,13 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 	}
 
-	if (primary && properties.waitEndFrame)
+	bool needCheckAbort = false;
+	if (_vm->getGameType() == kGameTypeAdibou2)
+		needCheckAbort = properties.breakKey != 0;
+	else
+		needCheckAbort = primary && properties.waitEndFrame;
+
+	if (needCheckAbort)
 		checkAbort(*video, properties);
 
 	if ((video->decoder->getCurFrame() - 1) < properties.startFrame)
@@ -698,28 +704,52 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
-		_vm->_inter->storeKey(_vm->_util->checkKey());
+		int16 key = _vm->_util->checkKey();
+		_vm->_inter->storeKey(key);
 
 		// Check for that specific key
 		bool pressedBreak = (VAR(0) == (unsigned)properties.breakKey);
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			if (pressedBreak ||
+				_vm->_game->_mouseButtons == properties.breakKey) {
+				properties.canceled = true;
+				return;
+			}
 
-		// Mouse buttons
-		if (properties.breakKey < 4)
-			if (_vm->_game->_mouseButtons & properties.breakKey)
-				pressedBreak = true;
+			if (properties.breakKey == 4) {
+				if (_vm->_game->_mouseButtons == 2 || key == kKeyEscape) {
+					properties.canceled = true;
+					return;
+				}
 
-		// Any key
-		if (properties.breakKey == 4)
-			if (VAR(0) != 0)
-				pressedBreak = true;
+				if (key != kKeyNone ||
+					(_vm->_game->_mouseButtons == 1 &&
+					 _vm->_draw->_cursorIndex != -1)) {
+					_vm->_game->_hasForwardedEventsFromVideo = true;
+					_vm->_game->_forwardedKeyFromVideo = key;
+					_vm->_game->_forwardedMouseButtonsFromVideo = _vm->_game->_mouseButtons;
+					properties.canceled = true;
+					return;
+				}
+			}
+		} else {
+			// Mouse buttons
+			if (properties.breakKey < 4)
+				if (_vm->_game->_mouseButtons & properties.breakKey)
+					pressedBreak = true;
 
-		if (pressedBreak) {
-			video.decoder->disableSound();
+			// Any key
+			if (properties.breakKey == 4)
+				if (VAR(0) != 0)
+					pressedBreak = true;
 
-			// Seek to the last frame. Some scripts depend on that.
-			video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+			if (pressedBreak) {
+				video.decoder->disableSound();
 
-			properties.canceled = true;
+				// Seek to the last frame. Some scripts depend on that.
+				video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+				properties.canceled = true;
+			}
 		}
 	}
 }

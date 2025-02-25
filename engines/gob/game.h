@@ -144,6 +144,10 @@ public:
 	int32 _startTimeKey;
 	MouseButtons _mouseButtons;
 
+	bool _hasForwardedEventsFromVideo;
+	MouseButtons _forwardedMouseButtonsFromVideo;
+	int16 _forwardedKeyFromVideo;
+
 	bool _noScroll;
 	bool _preventScroll;
 
